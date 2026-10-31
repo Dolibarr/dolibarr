@@ -653,4 +653,90 @@ class CommandeFournisseurTest extends CommonClassTest
 		$commande->delete($user);
 		$product->delete($user);
 	}
+
+	/**
+	 * testUpdateLinkedBuyPriceSeveralPurchaseOrders
+	 *
+	 * The cost price proposed on a customer order is the average net unit price of the ordered purchase orders linked to it, weighted by the quantities.
+	 *
+	 * @return	void
+	 */
+	public function testUpdateLinkedBuyPriceSeveralPurchaseOrders()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$optionbefore = getDolGlobalString('MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS');
+		$conf->global->MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS = 1;
+
+		$societe = new Societe($db);
+		$societe->fetch(1);
+
+		$product = new Product($db);
+		$product->initAsSpecimen();
+		$product->ref = 'PHPUNIT_SEVERAL_PO_'.dol_now();
+		$productid = $product->create($user);
+		$this->assertGreaterThan(0, $productid, 'Failed to create product: '.$product->errorsToString());
+
+		// A customer order with a cost price of 10 on the product
+		$commande = new Commande($db);
+		$commande->initAsSpecimen();
+		$commande->lines = array();
+		$commande->socid = $societe->id;
+		$this->assertGreaterThan(0, $commande->create($user), 'Failed to create customer order: '.$commande->errorsToString());
+		$commandelineid = $commande->addline('Line', 100, 4, 0, 0, 0, $productid);
+		$this->assertGreaterThan(0, $commandelineid, $commande->errorsToString());
+		$db->query("UPDATE ".MAIN_DB_PREFIX."commandedet SET buy_price_ht = 10 WHERE rowid = ".((int) $commandelineid));
+
+		// Purchase orders linked to it: 1 unit at 12 with 10% discount (net 10.8), 3 units at 12 and, linked the other way round, 4 units at 12
+		$orders = array();
+		foreach (array(array(1, 10), array(3, 0), array(4, 0)) as $data) {
+			$order = new CommandeFournisseur($db);
+			$order->initAsSpecimen();
+			$order->ref = '';
+			$order->socid = $societe->id;
+			$order->lines = array();
+			$line = new CommandeFournisseurLigne($db);
+			$line->desc = 'phpunit line';
+			$line->qty = $data[0];
+			$line->subprice = 12;
+			$line->remise_percent = $data[1];
+			$line->fk_product = $productid;
+			$order->lines[] = $line;
+			$orderid = $order->create($user);
+			$this->assertGreaterThan(0, $orderid, 'Failed to create supplier order: '.$order->errorsToString());
+			$order->fetch($orderid);
+			if (count($orders) < 2) {
+				$order->add_object_linked('commande', $commande->id);
+			} else {
+				$commande->add_object_linked('order_supplier', $order->id);
+			}
+			$orders[] = $order;
+		}
+		$lineid = $orders[1]->lines[0]->id;
+
+		// The other purchase order counts when it is ordered or received (average of 1 at 10.8 and 3 at 12), not before nor when canceled
+		foreach (array(CommandeFournisseur::STATUS_DRAFT => 12, CommandeFournisseur::STATUS_ACCEPTED => 12, CommandeFournisseur::STATUS_ORDERSENT => 11.7, CommandeFournisseur::STATUS_RECEIVED_COMPLETELY => 11.7, CommandeFournisseur::STATUS_CANCELED => 12) as $status => $expected) {
+			$db->query("UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".((int) $status)." WHERE rowid = ".((int) $orders[0]->id));
+			$documents = $orders[1]->getLinkedBuyPriceDocuments($user, $lineid);
+			$this->assertEquals($expected, price2num($documents['commande']['buyprice'], 'MU'), 'Cost with the other purchase order at the status '.$status);
+		}
+
+		// The purchase order linked the other way round counts too
+		$db->query("UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".((int) CommandeFournisseur::STATUS_ORDERSENT)." WHERE rowid IN (".((int) $orders[0]->id).", ".((int) $orders[2]->id).")");
+		$documents = $orders[1]->getLinkedBuyPriceDocuments($user, $lineid);
+		$this->assertEquals(11.85, price2num($documents['commande']['buyprice'], 'MU'), 'Average of 1 at 10.8, 3 at 12 and 4 at 12');
+
+		$conf->global->MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS = $optionbefore;
+
+		$db->query("UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".((int) CommandeFournisseur::STATUS_DRAFT)." WHERE rowid IN (".((int) $orders[0]->id).", ".((int) $orders[2]->id).")");
+		foreach ($orders as $order) {
+			$order->delete($user);
+		}
+		$commande->delete($user);
+		$product->delete($user);
+	}
 }
