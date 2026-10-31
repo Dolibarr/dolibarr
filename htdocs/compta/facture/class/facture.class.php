@@ -2084,6 +2084,7 @@ class Facture extends CommonInvoice
 		$langs->load('bills');
 
 		$datas = [];
+		$nofetch = !empty($params['nofetch']);
 		$moretitle = $params['moretitle'] ?? '';
 
 		$picto = $this->picto;
