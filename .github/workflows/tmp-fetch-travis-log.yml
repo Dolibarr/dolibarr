@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v7
       - name: Fetch Travis log tail and commit it back
         run: |
-          curl -sL "https://api.travis-ci.com/v3/job/641395018/log.txt" -o /tmp/travis.log
+          curl -sL "https://api.travis-ci.com/v3/job/641395120/log.txt" -o /tmp/travis.log
           wc -c /tmp/travis.log
           tail -c 120000 /tmp/travis.log > travis-tail.txt
           git config user.name "github-actions[bot]"
