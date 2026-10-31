@@ -197,6 +197,9 @@ NoRecordFoundIBankcAccount=No record found in bank account. Commonly, this occur
 AlreadyOneBankAccount=Already one bank account defined
 SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation=SEPA file variant
 SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp=Yes = Store 'Payment Type' in 'Credit Transfer' section of SEPA file<br><br>When generating a SEPA XML file for Credit transfers, the section "PaymentTypeInformation" can now be placed inside the "CreditTransferTransactionInformation" section (instead of "Payment" section). We strongly recommend to keep this unchecked to place PaymentTypeInformation at Payment level, as all banks will not necessarily accept it at CreditTransferTransactionInformation level. Contact your bank before placing PaymentTypeInformation at CreditTransferTransactionInformation level.
+CreditTransferFileFormat=Credit transfer file format
+CreditTransferFileFormatHelp=Format of the credit transfer files made from this account. Swiss banks expect pain.001.001.09 (Swiss Payment Standards).
+CreditTransferFileFormatOfSetup=Same as the setup: %s
 ToCreateRelatedRecordIntoBank=To create missing related bank record
 XNewLinesConciliated=%s new line(s) conciliated
 InSepa=SEPA Area
@@ -215,3 +218,4 @@ PaymentReferenceOfAccount=Payment reference
 PaymentReferenceOfAccountHelp=Reference to give when paying to this account, the same for all the invoices: the RF (ISO 11649) or national reference a supplier gave you for your contract, meter or customer account. An RF reference is checked.
 ErrorPaymentReferenceOfAccountTooLong=The payment reference is too long (35 characters at most)
 ErrorPaymentReferenceOfAccountNotValid=The RF payment reference is not valid: check digits do not match
+ErrorQRReferenceNotValid=The QR reference is not valid: it must have 27 digits and its last digit must match the check digit

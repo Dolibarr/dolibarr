@@ -189,6 +189,13 @@ class Account extends CommonObject
 	public $sepa_local_instrument = 'CORE';
 
 	/**
+	 * Version of the credit transfer file made from this account, one of self::SEPA_TRANSFER_SCHEMA_VERSIONS.
+	 * Empty to use PAYMENTBYBANKTRANSFER_SEPA_SCHEMA_VERSION.
+	 * @var string
+	 */
+	public $sepa_transfer_schema_version = '';
+
+	/**
 	 * Name of account holder
 	 * @var string
 	 * @deprecated Use $owner_name
@@ -452,6 +459,11 @@ class Account extends CommonObject
 	 */
 	const SEPA_LOCAL_INSTRUMENTS = array('CORE', 'INST');
 
+	/**
+	 * Versions of the credit transfer file: '3' = pain.001.001.03 (SEPA), '9' = pain.001.001.09 (ISO 20022 2019, Swiss Payment Standards).
+	 */
+	const SEPA_TRANSFER_SCHEMA_VERSIONS = array('3', '9');
+
 
 	/**
 	 *  Constructor
@@ -505,6 +517,19 @@ class Account extends CommonObject
 	{
 		$code = strtoupper(trim((string) $this->sepa_local_instrument));
 		return (in_array($code, self::SEPA_LOCAL_INSTRUMENTS) ? $code : 'CORE');
+	}
+
+	/**
+	 * Return the version of the credit transfer file made from this account, the one of the setup when the account has none.
+	 *
+	 * @return string	One of self::SEPA_TRANSFER_SCHEMA_VERSIONS
+	 */
+	public function getSepaTransferSchemaVersion()
+	{
+		if (in_array($this->sepa_transfer_schema_version, self::SEPA_TRANSFER_SCHEMA_VERSIONS, true)) {
+			return $this->sepa_transfer_schema_version;
+		}
+		return (getDolGlobalString('PAYMENTBYBANKTRANSFER_SEPA_SCHEMA_VERSION') == '9' ? '9' : '3');
 	}
 
 	/**
@@ -878,6 +903,7 @@ class Account extends CommonObject
 		$sql .= ", pti_in_ctti";
 		$sql .= ", sepa_category_purpose";
 		$sql .= ", sepa_local_instrument";
+		$sql .= ", sepa_transfer_schema_version";
 		$sql .= ", proprio";
 		$sql .= ", owner_address";
 		$sql .= ", owner_zip";
@@ -910,6 +936,7 @@ class Account extends CommonObject
 		$sql .= ", ".((int) $this->pti_in_ctti);
 		$sql .= ", '".$this->db->escape($this->getSepaCategoryPurpose())."'";
 		$sql .= ", '".$this->db->escape($this->getSepaLocalInstrument())."'";
+		$sql .= ", ".(in_array($this->sepa_transfer_schema_version, self::SEPA_TRANSFER_SCHEMA_VERSIONS, true) ? "'".$this->db->escape($this->sepa_transfer_schema_version)."'" : "null");
 		$sql .= ", '".$this->db->escape($this->owner_name)."'";
 		$sql .= ", '".$this->db->escape($this->owner_address)."'";
 		$sql .= ", '".$this->db->escape($this->owner_zip)."'";
@@ -1040,6 +1067,7 @@ class Account extends CommonObject
 		$sql .= ",pti_in_ctti=".((int) $this->pti_in_ctti);
 		$sql .= ",sepa_category_purpose = '".$this->db->escape($this->getSepaCategoryPurpose())."'";
 		$sql .= ",sepa_local_instrument = '".$this->db->escape($this->getSepaLocalInstrument())."'";
+		$sql .= ",sepa_transfer_schema_version = ".(in_array($this->sepa_transfer_schema_version, self::SEPA_TRANSFER_SCHEMA_VERSIONS, true) ? "'".$this->db->escape($this->sepa_transfer_schema_version)."'" : "null");
 		$sql .= ",proprio = '".$this->db->escape($this->owner_name)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 		$sql .= ",owner_zip = '".$this->db->escape($this->owner_zip)."'";
@@ -1187,7 +1215,7 @@ class Account extends CommonObject
 
 		$sql = "SELECT ba.rowid, ba.ref, ba.label, ba.bank, ba.number, ba.courant as type, ba.clos as status, ba.rappro, ba.url, ba.entity,";
 		$sql .= " ba.code_banque, ba.code_guichet, ba.cle_rib, ba.bic, ba.iban_prefix as iban,";
-		$sql .= " ba.domiciliation as address, ba.pti_in_ctti, ba.sepa_category_purpose, ba.sepa_local_instrument, ba.proprio as owner_name, ba.owner_address, ba.owner_zip, ba.owner_town, ba.owner_country_id, ba.state_id, ba.fk_pays as country_id,";
+		$sql .= " ba.domiciliation as address, ba.pti_in_ctti, ba.sepa_category_purpose, ba.sepa_local_instrument, ba.sepa_transfer_schema_version, ba.proprio as owner_name, ba.owner_address, ba.owner_zip, ba.owner_town, ba.owner_country_id, ba.state_id, ba.fk_pays as country_id,";
 		$sql .= " ba.account_number, ba.fk_accountancy_journal, ba.currency_code,";
 		$sql .= " ba.min_allowed, ba.min_desired, ba.comment,";
 		$sql .= " ba.datec as date_creation, ba.tms as date_modification, ba.ics, ba.ics_transfer,";
@@ -1243,6 +1271,7 @@ class Account extends CommonObject
 				$this->pti_in_ctti   = $obj->pti_in_ctti;
 				$this->sepa_category_purpose = (in_array($obj->sepa_category_purpose, self::SEPA_CATEGORY_PURPOSES) ? $obj->sepa_category_purpose : 'CORE');
 				$this->sepa_local_instrument = (in_array($obj->sepa_local_instrument, self::SEPA_LOCAL_INSTRUMENTS) ? $obj->sepa_local_instrument : 'CORE');
+				$this->sepa_transfer_schema_version = (string) $obj->sepa_transfer_schema_version;
 
 				$this->state_id        = $obj->state_id;
 				$this->state_code      = $obj->state_code;
