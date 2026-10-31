@@ -10,7 +10,8 @@
 # shellcheck disable=2006,2044,2086,2164,2268
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-cd $DIR/../..
+ROOT="$( cd $DIR/../.. >/dev/null 2>&1 && pwd )"
+cd $ROOT
 
 # Syntax
 if [ "x$1" = "x" ]
@@ -61,6 +62,26 @@ else
 	echo "tx pull -l $1 $2 $3 $4 $5"
 	tx pull -l $1 $2 $3 $4 $5
 fi
+
+# Remove the entries a translator broke by translating the content of a 'notranslate' tag.
+# Such an entry makes the test LangTest::testLang fail, so better drop it now than push it and
+# redden every open pull request. The key then falls back to its en_US value until the
+# translation is fixed into Transifex, and the link to fix it is printed for each entry.
+# The language and the file are the ones that were just pulled: -r dolibarr.other means other.lang.
+langtoreview="$1"
+filetoreview="all"
+previous=""
+for arg in "$@"
+do
+	if [ "x$previous" = "x-r" ]
+	then
+		filetoreview="${arg#dolibarr.}.lang"
+	fi
+	previous="$arg"
+done
+
+cd $ROOT
+php dev/translation/fix_notranslate.php $langtoreview $filetoreview
 
 echo Think to launch also:
 echo "> dev/tools/fixaltlanguages.sh fix all"
