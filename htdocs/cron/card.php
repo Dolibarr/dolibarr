@@ -807,7 +807,7 @@ if (($action == "create") || ($action == "edit")) {
 
 
 	print "\n\n".'<div class="tabsAction">'."\n";
-	print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Edit").'</a>';
+	print dolGetButtonAction($langs->trans("Edit"), '', 'edit', $_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$object->id);
 
 	if (!$permissiontoexecute) {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("CronExecute").'</a>';
@@ -828,7 +828,7 @@ if (($action == "create") || ($action == "edit")) {
 
 
 	if (!$permissiontodelete) {
-		print '<a class="butActionDeleteRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("Delete").'</a>';
+		print dolGetButtonAction('', $langs->trans("Delete"), 'delete', '', '', 0);
 	} else {
 		print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$object->id, '', true, array('attr' => array('class' => 'reposition')))."\n";
 	}

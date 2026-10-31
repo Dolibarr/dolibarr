@@ -256,7 +256,7 @@ if ($action == 'edit') {
 	print '<div class="tabsAction">';
 
 	if ($action != 'test') {
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
+		print dolGetButtonAction($langs->trans("Modify"), '', 'edit', $_SERVER["PHP_SELF"].'?action=edit');
 
 		if (count($listofmethods) && getDolGlobalString('MAIN_SMS_SENDMODE')) {
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&mode=init&token='.newToken().'">'.$langs->trans("DoTestSend").'</a>';

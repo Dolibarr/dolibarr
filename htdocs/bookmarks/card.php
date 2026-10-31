@@ -349,7 +349,7 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 
 	// Edit
 	if ($permissiontoadd && $action != 'edit') {
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Edit").'</a>'."\n";
+		print dolGetButtonAction($langs->trans("Edit"), '', 'edit', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken());
 	}
 
 	// Remove

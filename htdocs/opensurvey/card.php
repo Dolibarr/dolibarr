@@ -416,7 +416,7 @@ print '<div class="tabsAction">';
 
 if ($action != 'edit' && $user->hasRight('opensurvey', 'write')) {
 	// Modify button
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.urlencode($numsondage).'">'.$langs->trans("Modify").'</a>';
+	print dolGetButtonAction($langs->trans("Modify"), '', 'edit', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.urlencode($numsondage));
 
 	if ($object->status == Opensurveysondage::STATUS_DRAFT) {
 		// Validate button

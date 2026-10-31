@@ -790,7 +790,7 @@ if ($id > 0 || !empty($ref)) {
 					print '<a class="butAction reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=reopen&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('ReOpen').'</a>';
 				}
 				//if ($object->status != $object::STATUS_CLOSED) {
-				print '<a class="butAction reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Modify').'</a>';
+				print dolGetButtonAction($langs->trans('Modify'), '', 'edit', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'&withproject='.((int) $withproject), '', true, ['attr' => ['class' => 'reposition']]);
 				//}
 
 				if ($object->status != $object::STATUS_CLOSED) {
@@ -801,7 +801,7 @@ if ($id > 0 || !empty($ref)) {
 
 				print '<a class="butActionDelete classfortooltip reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=merge&token='.newToken().'&withproject='.((int) $withproject).'" title="'.$langs->trans("MergeTasks").'">'.$langs->trans('Merge').'</a>';
 			} else {
-				print '<a class="butActionRefused classfortooltip reposition" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Modify').'</a>';
+				print dolGetButtonAction($langs->trans("NotAllowed"), $langs->trans('Modify'), 'edit', '', '', -1, ['attr' => ['class' => 'reposition']]);
 			}
 
 			// Delete

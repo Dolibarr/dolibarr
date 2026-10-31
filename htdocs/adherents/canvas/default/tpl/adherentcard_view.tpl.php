@@ -136,7 +136,7 @@ if (empty($user->socid)) {
 	echo '<div class="tabsAction">';
 
 	if ($user->hasRight('adherent', 'creer')) {
-		echo '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=edit&token='.newToken().'&canvas='.$canvas.'">'.$langs->trans('Modify').'</a>';
+		echo dolGetButtonAction($langs->trans('Modify'), '', 'edit', $_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=edit&token='.newToken().'&canvas='.$canvas);
 	}
 
 	if (!$this->control->tpl['user_id'] && $user->hasRight('user', 'user', 'creer')) {

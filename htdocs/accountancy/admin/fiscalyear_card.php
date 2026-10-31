@@ -458,7 +458,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print dolGetButtonAction($langs->trans("ReOpen"), '', 'reopen', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken(), 'reopen', (int) $permissiontoadd);
 		}
 
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$id.'">'.$langs->trans('Modify').'</a>';
+		print dolGetButtonAction($langs->trans('Modify'), '', 'edit', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$id);
 
 		print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', (int) $permissiontodelete);
 
