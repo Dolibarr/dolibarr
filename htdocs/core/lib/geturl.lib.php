@@ -474,39 +474,6 @@ function getIPv4EmbeddedInIPv6($ip)
 
 
 /**
- * Return the IPv4 address carried by an IPv6 address, if any (the IPv6 address is then a way to reach this IPv4 address).
- * Covers IPv4-mapped ::ffff:a.b.c.d, IPv4-compatible ::a.b.c.d, NAT64 64:ff9b::/96 and 6to4 2002::/16.
- *
- * @param	string	$ip		IP to analyse
- * @return	string			The IPv4 address (like '127.0.0.1') or '' if $ip is not an IPv6 address that carries an IPv4 address
- */
-function getIPv4EmbeddedInIPv6($ip)
-{
-	if (strpos($ip, ':') === false) {
-		return '';
-	}
-	// Native strlen()/substr() are used on purpose: $packed is binary data, not a text string.
-	$packed = @inet_pton($ip);
-	if ($packed === false || strlen($packed) != 16) {
-		return '';
-	}
-
-	$ipv4bytes = '';
-	if (substr($packed, 0, 10) === str_repeat("\x00", 10) && substr($packed, 10, 2) === "\xff\xff") {
-		$ipv4bytes = substr($packed, 12, 4);	// ::ffff:0:0/96 IPv4-mapped
-	} elseif (substr($packed, 0, 12) === str_repeat("\x00", 12) && substr($packed, 12, 3) !== str_repeat("\x00", 3)) {
-		$ipv4bytes = substr($packed, 12, 4);	// ::/96 IPv4-compatible (:: and ::1 are excluded, filter_var() knows them as reserved)
-	} elseif (substr($packed, 0, 12) === "\x00\x64\xff\x9b".str_repeat("\x00", 8)) {
-		$ipv4bytes = substr($packed, 12, 4);	// 64:ff9b::/96 NAT64
-	} elseif (substr($packed, 0, 2) === "\x20\x02") {
-		$ipv4bytes = substr($packed, 2, 4);		// 2002::/16 6to4
-	}
-
-	return ($ipv4bytes !== '' ? (string) inet_ntop($ipv4bytes) : '');
-}
-
-
-/**
  * Is IP allowed
  *
  * @param 	string	$iptocheck		IP to check
