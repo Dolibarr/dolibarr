@@ -340,8 +340,8 @@ class Commande extends CommonOrder
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 26),
 		'ref_client' => array('type' => 'varchar(255)', 'label' => 'RefCustomer', 'enabled' => 1, 'visible' => -1, 'position' => 28, 'uieditable' => 1, 'alwayseditable' => 1),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'visible' => -1, 'notnull' => 1, 'position' => 20),
-		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 25),
-		'date_commande' => array('type' => 'date', 'label' => 'Date', 'enabled' => 1, 'visible' => 1, 'position' => 60, 'csslist' => 'nowraponall'),
+		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 25, 'uieditable' => 1, 'alwayseditable' => 1),
+		'date_commande' => array('type' => 'date', 'label' => 'Date', 'enabled' => 1, 'visible' => 1, 'position' => 60, 'csslist' => 'nowraponall', 'uieditable' => 1),
 		'date_valid' => array('type' => 'datetime', 'label' => 'DateValidation', 'enabled' => 1, 'visible' => -1, 'position' => 62, 'csslist' => 'nowraponall'),
 		'date_cloture' => array('type' => 'datetime', 'label' => 'DateClosing', 'enabled' => 1, 'visible' => -1, 'position' => 65, 'csslist' => 'nowraponall'),
 		'fk_user_valid' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'visible' => -1, 'position' => 85),
@@ -356,16 +356,16 @@ class Commande extends CommonOrder
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 150, 'uieditable' => 1, 'alwayseditable' => 1),
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 155, 'uieditable' => 1, 'alwayseditable' => 1),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'PDFTemplate', 'enabled' => 1, 'visible' => 0, 'position' => 160),
-		'fk_account' => array('type' => 'integer', 'label' => 'BankAccount', 'enabled' => 'isModEnabled("bank")', 'visible' => -1, 'position' => 170),
+		'fk_account' => array('type' => 'integer', 'label' => 'BankAccount', 'enabled' => 'isModEnabled("bank")', 'visible' => -1, 'position' => 170, 'uieditable' => 1, 'alwayseditable' => 1),
 		'fk_currency' => array('type' => 'varchar(3)', 'label' => 'MulticurrencyID', 'enabled' => 1, 'visible' => -1, 'position' => 175),
-		'fk_cond_reglement' => array('type' => 'integer', 'label' => 'PaymentTerm', 'enabled' => 1, 'visible' => -1, 'position' => 180),
+		'fk_cond_reglement' => array('type' => 'integer', 'label' => 'PaymentTerm', 'enabled' => 1, 'visible' => -1, 'position' => 180, 'uieditable' => 1, 'alwayseditable' => 1),
 		'deposit_percent' => array('type' => 'varchar(63)', 'label' => 'DepositPercent', 'enabled' => 1, 'visible' => -1, 'position' => 181),
-		'fk_mode_reglement' => array('type' => 'integer', 'label' => 'PaymentMode', 'enabled' => 1, 'visible' => -1, 'position' => 185),
-		'date_livraison' => array('type' => 'date', 'label' => 'DateDeliveryPlanned', 'enabled' => 1, 'visible' => -1, 'position' => 190, 'csslist' => 'nowraponall'),
-		'fk_shipping_method' => array('type' => 'integer', 'label' => 'ShippingMethod', 'enabled' => 1, 'visible' => -1, 'position' => 195),
+		'fk_mode_reglement' => array('type' => 'integer', 'label' => 'PaymentMode', 'enabled' => 1, 'visible' => -1, 'position' => 185, 'uieditable' => 1, 'alwayseditable' => 1),
+		'date_livraison' => array('type' => 'date', 'label' => 'DateDeliveryPlanned', 'enabled' => 1, 'visible' => -1, 'position' => 190, 'csslist' => 'nowraponall', 'uieditable' => 1, 'alwayseditable' => 1),
+		'fk_shipping_method' => array('type' => 'integer', 'label' => 'ShippingMethod', 'enabled' => 1, 'visible' => -1, 'position' => 195, 'uieditable' => 1, 'alwayseditable' => 1),
 		'fk_warehouse' => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php', 'label' => 'DefaultWarehouse', 'enabled' => 'isModEnabled("stock")', 'visible' => -1, 'position' => 200, 'nodepth' => 1),
-		'fk_availability' => array('type' => 'integer', 'label' => 'Availability', 'enabled' => 1, 'visible' => -1, 'position' => 205),
-		'fk_input_reason' => array('type' => 'integer', 'label' => 'InputReason', 'enabled' => 1, 'visible' => -1, 'position' => 210),
+		'fk_availability' => array('type' => 'integer', 'label' => 'Availability', 'enabled' => 1, 'visible' => -1, 'position' => 205, 'uieditable' => 1, 'alwayseditable' => 1),
+		'fk_input_reason' => array('type' => 'integer', 'label' => 'InputReason', 'enabled' => 1, 'visible' => -1, 'position' => 210, 'uieditable' => 1, 'alwayseditable' => 1),
 		//'fk_delivery_address' =>array('type'=>'integer', 'label'=>'DeliveryAddress', 'enabled'=>1, 'visible'=>-1, 'position'=>215),
 		'extraparams' => array('type' => 'varchar(255)', 'label' => 'Extraparams', 'enabled' => 1, 'visible' => -1, 'position' => 225),
 		'fk_incoterms' => array('type' => 'integer', 'label' => 'IncotermCode', 'enabled' => 'isModEnabled("incoterm")', 'visible' => -1, 'position' => 230),
@@ -458,8 +458,120 @@ class Commande extends CommonOrder
 	}
 
 	/**
+	 * Return the name of the property of the object holding the value of a field of $fields.
+	 * Override of CommonObject::getFieldPropertyName(): the date of orders is in the property date.
+	 *
+	 * @param	string	$field	Field name
+	 * @return	string			Property name
+	 */
+	protected function getFieldPropertyName($field)
+	{
+		if ($field == 'date_commande') {
+			return 'date';
+		}
+
+		return parent::getFieldPropertyName($field);
+	}
+
+	/**
+	 * Return the value of a field posted by an ajax edition of the card (core/ajax/objectfield.php).
+	 * Override of CommonObject::getFieldValueFromAjaxPost(): the planned delivery date of orders has a time on the card.
+	 *
+	 * @param	string	$field	Field name, already checked with isFieldEditableFromUi()
+	 * @return	mixed			Value to save, null if the input is not posted
+	 */
+	public function getFieldValueFromAjaxPost($field)
+	{
+		if ($field == 'date_livraison') {
+			return GETPOSTISSET('ajaxfield_'.$field.'year') ? GETPOSTDATE('ajaxfield_'.$field, 'getpost') : null;
+		}
+
+		return parent::getFieldValueFromAjaxPost($field);
+	}
+
+	/**
+	 * Return the input html of a field for an ajax edition of the card (core/ajax/objectfield.php).
+	 * Override of CommonObject::ajaxInputField(): the planned delivery date of orders has a time on the card.
+	 *
+	 * @param	string	$field	Field name, already checked with isFieldEditableFromUi()
+	 * @return	string			Input html
+	 */
+	public function ajaxInputField($field)
+	{
+		if ($field == 'date_livraison') {
+			$form = new Form($this->db);
+
+			return $form->selectDate($this->delivery_date ? $this->delivery_date : -1, 'ajaxfield_'.$field, 1, 1, 0, '', 1, 0);
+		}
+
+		return parent::ajaxInputField($field);
+	}
+
+	/**
+	 * Return the output html of a field for an ajax refresh of the card (core/ajax/objectfield.php).
+	 * Override of CommonObject::ajaxOutputField(): the dates of orders are shown like on the card, see getCardDateHtml().
+	 *
+	 * @param	string	$field	Field name, already checked with isFieldReadableFromUi()
+	 * @return	string			Output html
+	 */
+	public function ajaxOutputField($field)
+	{
+		if ($field == 'date_commande' || $field == 'date_livraison') {
+			return $this->getCardDateHtml($field);
+		}
+
+		return parent::ajaxOutputField($field);
+	}
+
+	/**
+	 * Return the html of the date or the planned delivery date of the order, like the card shows it:
+	 * with the warning of delay, and the icon telling if the order can be shipped for the delivery date.
+	 *
+	 * @param	string	$field	'date_commande' or 'date_livraison'
+	 * @return	string			Html
+	 */
+	public function getCardDateHtml($field)
+	{
+		global $langs;
+
+		$form = new Form($this->db);
+		$out = '';
+
+		if ($field == 'date_commande') {
+			$out .= $this->date ? dol_print_date($this->date, 'day') : '&nbsp;';
+			if ($this->hasDelay() && empty($this->delivery_date)) {	// If there is a delivery date planned, warning should be on this date
+				$out .= ' '.img_picto($langs->trans("Late").' : '.$this->showDelay(), "warning");
+			}
+
+			return $out;
+		}
+
+		$out .= $this->delivery_date ? dol_print_date($this->delivery_date, 'dayhour') : '&nbsp;';
+		if ($this->hasDelay() && !empty($this->delivery_date)) {
+			$out .= ' '.img_picto($langs->trans("Late").' : '.$this->showDelay(), "warning");
+		}
+		// Shippable icon
+		if (isModEnabled('stock') && isModEnabled('shipping') && !getDolGlobalString('ORDER_DISABLE_SHIPPABLE_ICON_ON_CARD') && !empty($this->delivery_date)) {
+			$shippableInfos = $this->getShippableInfos();
+
+			if (!empty($shippableInfos['has_product'])) {
+				$out .= ' ';
+				$out .= $form->textwithtooltip('', $shippableInfos['textinfo'], 2, 1, $shippableInfos['texticon'], '', 2);
+
+				if (!empty($shippableInfos['warning'])) {
+					$out .= ' ';
+					$out .= $form->textwithtooltip('', $langs->trans("NotEnoughForAllOrders"), 2, 1, img_picto('', 'error', '', 0, 0, 0, '', '2'), '', 2);
+				}
+			}
+		}
+
+		return $out;
+	}
+
+	/**
 	 * Save into database the current value of one field, called by updateFieldFromUi().
-	 * Override of CommonObject::persistFieldValue(): the customer ref of orders is saved with set_ref_client().
+	 * Override of CommonObject::persistFieldValue(): fields of orders are saved with their setters, like on the card
+	 * (set_ref_client(), set_date()...).
 	 *
 	 * @param User   $user  User making the change
 	 * @param string $field Field name
@@ -467,8 +579,17 @@ class Commande extends CommonOrder
 	 */
 	protected function persistFieldValue(User $user, $field)
 	{
-		if ($field == 'ref_client') {
-			return $this->set_ref_client($user, (string) $this->ref_client);
+		switch ($field) {
+			case 'ref_client':
+				return $this->set_ref_client($user, (string) $this->ref_client);
+			case 'date_commande':
+				return $this->set_date($user, (int) $this->date);
+			case 'date_livraison':
+				return $this->setDeliveryDate($user, (int) $this->delivery_date);
+			case 'fk_availability':
+				return $this->availability((int) $this->availability_id);
+			case 'fk_input_reason':
+				return $this->demand_reason((int) $this->demand_reason_id);
 		}
 
 		return parent::persistFieldValue($user, $field);
