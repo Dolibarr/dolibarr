@@ -332,6 +332,11 @@ class modUser extends DolibarrModules
 			'u.datec' => "DateCreation",
 			'u.statut' => 'Status'
 		);
+		// The civility of a user is only shown on its card when MAIN_USE_TITLE_FOR_USER is set
+		// (see user/card.php), so the import offers it under the same condition.
+		if (getDolGlobalString('MAIN_USE_TITLE_FOR_USER')) {
+			$this->import_fields_array[$r]['u.civility'] = "UserTitle";
+		}
 		// Add extra fields
 		$keyforselect = 'user';
 		$keyforelement = 'user';
@@ -351,7 +356,7 @@ class modUser extends DolibarrModules
 			'u.birth' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$'
 		);
 		$this->import_examplevalues_array[$r] = array(
-			'u.lastname' => "Doe", 'u.firstname' => 'John', 'u.login' => 'jdoe', 'u.employee' => '0 or 1', 'u.job' => 'CTO', 'u.gender' => 'man or woman',
+			'u.lastname' => "Doe", 'u.firstname' => 'John', 'u.login' => 'jdoe', 'u.employee' => '0 or 1', 'u.job' => 'CTO', 'u.gender' => 'man or woman', 'u.civility' => 'Title of civility eg: MR...matches field "code" in table "'.MAIN_DB_PREFIX.'c_civility"',
 			'u.pass_crypted' => 'Encrypted password',
 			'u.fk_soc' => '0 (internal user) or company name (external user)', 'u.address' => "61 jump street",
 			'u.zip' => "123456", 'u.town' => "Big town", 'u.fk_country' => 'US, FR, DE...', 'u.office_phone' => "0101010101", 'u.office_fax' => "0101010102",
