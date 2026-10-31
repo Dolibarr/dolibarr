@@ -4642,6 +4642,11 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 		$attr['id'] = $id;
 	}
 
+	// Kept even when the button is refused, so the theme can group generic buttons (MAIN_ACTION_BUTTONS_GENERIC_ON_FIRST_ROW)
+	if (empty($params['isDropdown']) && empty($params['isDropDown']) && in_array($actionType, array('edit', 'email', 'clone', 'delete', 'danger'))) {
+		$attr['data-action-type'] = ($actionType == 'danger' ? 'delete' : $actionType);
+	}
+
 	// Override attr
 	if (!empty($params['attr']) && is_array($params['attr'])) {
 		foreach ($params['attr'] as $key => $value) {

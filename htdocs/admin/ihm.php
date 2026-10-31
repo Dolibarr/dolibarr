@@ -530,6 +530,12 @@ if ($mode == 'other') {
 	print '</td>';
 	print '</tr>';
 
+	// Generic action buttons on a separate row
+	print '<tr class="oddeven"><td>' . $form->textwithpicto($langs->trans("ActionButtonsGenericOnFirstRow"), $langs->trans("ActionButtonsGenericOnFirstRowDesc")) . '</td><td>';
+	print ajax_constantonoff("MAIN_ACTION_BUTTONS_GENERIC_ON_FIRST_ROW", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
+	print '</td>';
+	print '</tr>';
+
 	// Hide version link
 	/*
 

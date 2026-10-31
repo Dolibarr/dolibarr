@@ -531,6 +531,37 @@ div.pagination .btnTitle:hover .btnTitle-label{
 }
 <?php } ?>
 
+<?php if (getDolGlobalString('MAIN_ACTION_BUTTONS_GENERIC_ON_FIRST_ROW')) { ?>
+/* Generic buttons (edit, email, clone, delete) on a first row, object specific buttons on a second row */
+div.tabsAction {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	align-items: center;
+}
+div.tabsAction > * {
+	order: 10;
+}
+div.tabsAction > [data-action-type="edit"] {
+	order: 1;
+}
+div.tabsAction > [data-action-type="email"] {
+	order: 2;
+}
+div.tabsAction > [data-action-type="clone"] {
+	order: 3;
+}
+div.tabsAction > [data-action-type="delete"], div.tabsAction > .divButAction:has(> [data-action-type="delete"]) {
+	order: 4;
+}
+div.tabsAction::after {
+	content: "";
+	flex-basis: 100%;
+	height: 0;
+	order: 5;
+}
+<?php } ?>
+
 
 /*
  * BTN LINK
