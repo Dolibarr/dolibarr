@@ -163,6 +163,7 @@ if ($action == 'remove_file' && $permissiontoadd) {
 
 			setEventMessages($langs->trans("FileWasRemoved", $filetodelete), null, 'mesgs');
 		} else {
+			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFailToDeleteFile", $filetodelete), null, 'errors');
 		}
 
