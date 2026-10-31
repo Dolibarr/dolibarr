@@ -666,7 +666,7 @@ if ($action != 'editxxx') {
 		print '</table>';
 
 		print '<div class="tabsAction">';
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
+		print dolGetButtonAction($langs->trans("Modify"), '', 'edit', $_SERVER["PHP_SELF"].'?action=edit');
 		print '</div>';
 	} else {
 		print '<br>'.$langs->trans("NothingToSetup");

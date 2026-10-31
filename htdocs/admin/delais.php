@@ -476,7 +476,7 @@ if ($action == 'edit') {
 	print '</form>';
 } else {
 	print '<br><br><div class="tabsAction">';
-	print '<a class="butAction reposition" href="delais.php?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
+	print dolGetButtonAction($langs->trans("Modify"), '', 'edit', 'delais.php?action=edit&token='.newToken(), '', true, ['attr' => ['class' => 'reposition']]);
 	print '</div>';
 }
 

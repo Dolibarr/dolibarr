@@ -206,7 +206,7 @@ print '<div class="center">';
 print '<input type="submit" class="butAction button-save" value="'.$langs->trans("Save").'">';
 print '<span id="back" class="butAction">'.$langs->trans("GoBack").'</span>';
 if ($eid == 0) {
-	print '<div class="inline-block divButAction"><span id="action-delete" class="butActionRefused classfortooltip">'.$langs->trans('Delete').'</span></div>'."\n";
+	print dolGetButtonAction('', $langs->trans('Delete'), 'delete', '', 'action-delete', -1);
 } else {
 	print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$id.'&tab='.$tab.'&eid='.$eid.'&action=delete&token='.newToken(), '', true, array('attr' => array('class' => 'reposition'))).'</div>'."\n";
 }

@@ -141,7 +141,7 @@ print '</table>';
 
 if (empty($conf->use_javascript_ajax)) {
 	print '<div class="tabsAction">';
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
+	print dolGetButtonAction($langs->trans("Modify"), '', 'edit', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken());
 	print '</div>';
 }
 

@@ -375,9 +375,9 @@ if ($rowid && $action != 'edit') {
 
 	if ($user->hasRight('adherent', 'cotisation', 'creer')) {
 		if (empty($bankline) || empty($bankline->rappro)) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"]."?rowid=".((int) $object->id).'&action=edit&token='.newToken().'">'.$langs->trans("Modify")."</a></div>";
+			print dolGetButtonAction($langs->trans("Modify"), '', 'edit', $_SERVER["PHP_SELF"]."?rowid=".((int) $object->id).'&action=edit&token='.newToken());
 		} else {
-			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.$langs->trans("BankLineConciliated").'" href="#">'.$langs->trans("Modify")."</a></div>";
+			print dolGetButtonAction($langs->trans("BankLineConciliated"), $langs->trans("Modify"), 'edit', '', '', -1);
 		}
 	}
 

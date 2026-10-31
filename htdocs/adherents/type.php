@@ -778,7 +778,7 @@ if ($rowid > 0) {
 
 		// Edit
 		if ($user->hasRight('adherent', 'configurer')) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'edit', 'rowid' => $object->id], true).'">'.$langs->trans("Modify").'</a></div>';
+			print dolGetButtonAction($langs->trans("Modify"), '', 'edit', dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'edit', 'rowid' => $object->id], true));
 		}
 
 		// Add
