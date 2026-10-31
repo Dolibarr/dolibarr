@@ -260,6 +260,10 @@ ALTER TABLE llx_user ADD COLUMN state_job_id integer DEFAULT NULL;
 ALTER TABLE llx_bank_account ADD COLUMN sepa_category_purpose varchar(4) DEFAULT 'CORE' AFTER pti_in_ctti;
 ALTER TABLE llx_bank_account ADD COLUMN sepa_local_instrument varchar(4) DEFAULT 'CORE' AFTER sepa_category_purpose;
 
+-- Track how many times a proposal or an order was sent by email, like llx_facture already does
+ALTER TABLE llx_propal ADD COLUMN email_sent_counter integer DEFAULT 0;
+ALTER TABLE llx_commande ADD COLUMN email_sent_counter integer DEFAULT 0;
+
 -- end of migration - nothing after this line
 
 -- Variants: allow standard import/export of variants (attributes, values, combinations,
