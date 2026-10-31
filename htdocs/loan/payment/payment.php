@@ -30,6 +30,7 @@ require '../../main.inc.php';
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
+ * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  */
@@ -67,6 +68,8 @@ $echance = 0;
 $amount_capital = 0;
 $amount_insurance = 0;
 $amount_interest = 0;
+// VAT on the charge, prefilled with the loan's (editable per payment)
+$charge_vat = loanVatKey($loan->charge_tva_tx, $loan->charge_vat_src_code);
 
 $ls = new LoanSchedule($db);
 // grab all loanschedule
@@ -183,6 +186,9 @@ if ($action == 'add_payment' && $permissiontoadd) {
 			$payment->amount_capital	= $pay_amount_capital;
 			$payment->amount_insurance	= $pay_amount_insurance;
 			$payment->amount_interest	= $pay_amount_interest;
+			// VAT included in the charge (interest and capital are not subject to VAT)
+			list($payment->tva_tx, $payment->vat_src_code) = loanParseVatKey(GETPOST('charge_vat', 'alphanohtml'));
+			$payment->total_tva			= loanVatIncluded($pay_amount_insurance, $payment->tva_tx);
 			$payment->fk_bank           = GETPOSTINT('accountid');
 			$payment->paymenttype       = GETPOSTINT('paymenttype');
 			$payment->num_payment		= GETPOST('num_payment', 'alphanohtml');
@@ -401,6 +407,7 @@ if ($action == 'create') {
 	print '<br>';
 	if ($sumpaid < $loan->capital) {
 		print loanChargeLabel($loan->charge_type, $langs).': <input type="text" size="8" name="amount_insurance" value="'.(GETPOSTISSET('amount_insurance') ? GETPOST('amount_insurance') : $amount_insurance).'">';
+		print ' '.$form->textwithpicto($form->load_tva('charge_vat', GETPOSTISSET('charge_vat') ? GETPOST('charge_vat', 'alphanohtml') : $charge_vat, $mysoc, null, 0, 0, 1, false, 1, 2), $langs->trans('LoanChargeVatHelp'));
 	} else {
 		print '-';
 	}
