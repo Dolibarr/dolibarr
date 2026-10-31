@@ -337,4 +337,125 @@ class BookKeepingTest extends CommonClassTest
 
 		return $fiscalperiod;
 	}
+
+	/**
+	 * An abandoned customer invoice already in accounting is reversed once, at its closing date, and one not in accounting is not.
+	 *
+	 * @return	void
+	 */
+	public function testAbandonedCustomerInvoiceReversal()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
+		require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
+
+		$savcustomeraccount = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER');
+		$conf->global->ACCOUNTING_ACCOUNT_CUSTOMER = '1100';
+		$fiscalperiod = $this->createFiscalPeriod('2095', '2095-01-01', '2095-12-31');
+		$bookkeeping = new BookKeeping($db);
+		$bookkeeping->getCanModifyBookkeepingSQL('', true);	// Reload the active fiscal periods
+
+		try {
+			$soc = new Societe($db);
+			$soc->name = 'Test abandoned invoice '.dol_print_date(dol_now(), 'dayhourlog');
+			$soc->client = 1;
+			$soc->code_client = -1;
+			$this->assertGreaterThan(0, $soc->create($user), $soc->errorsToString());
+			$db->query("UPDATE ".MAIN_DB_PREFIX."societe SET code_compta = 'C-PHPUNIT' WHERE rowid = ".((int) $soc->id));
+
+			$invoicedate = dol_mktime(0, 0, 0, 3, 1, 2095);
+			$closingdate = dol_mktime(12, 0, 0, 6, 15, 2095);
+			$accounted = $this->createAbandonedInvoice($soc->id, $invoicedate, $closingdate);
+			$notaccounted = $this->createAbandonedInvoice($soc->id, $invoicedate, $closingdate);
+
+			$originallines = array(
+				array('1100', 'C-PHPUNIT', 120, 0),
+				array('3200', '', 0, 100),
+				array('2200', '', 0, 20),
+			);
+			foreach ($originallines as $originalline) {
+				$line = new BookKeeping($db);
+				$line->doc_date = $invoicedate;
+				$line->doc_type = 'customer_invoice';
+				$line->doc_ref = $accounted->ref;
+				$line->fk_doc = $accounted->id;
+				$line->fk_docdet = 0;
+				$line->numero_compte = $originalline[0];
+				$line->label_compte = 'Test';
+				$line->subledger_account = $originalline[1];
+				$line->label_operation = 'Test abandoned invoice - '.$originalline[0];
+				$line->debit = $originalline[2];
+				$line->credit = $originalline[3];
+				$line->montant = $originalline[2] + $originalline[3];
+				$line->sens = $originalline[2] ? 'D' : 'C';
+				$line->code_journal = 'VT';
+				$line->journal_label = 'Sale journal';
+				$line->fk_user_author = $user->id;
+				$this->assertGreaterThanOrEqual(0, $line->create($user, 1), $line->errorsToString());
+			}
+			$originalpiecenum = $line->piece_num;
+
+			$this->assertSame(array(), $bookkeeping->getAbandonedCustomerInvoiceReversal($notaccounted->id, 'VT', 'Sale journal'));
+			$this->assertEquals(0, $bookkeeping->createAbandonedCustomerInvoiceReversal($user, $notaccounted->id, 'VT', 'Sale journal'));
+
+			$result = $bookkeeping->createAbandonedCustomerInvoiceReversal($user, $accounted->id, 'VT', 'Sale journal');
+			$this->assertEquals(3, $result, $bookkeeping->errorsToString());
+
+			$resql = $db->query("SELECT numero_compte, subledger_account, debit, credit, doc_date, piece_num, label_operation FROM ".MAIN_DB_PREFIX."accounting_bookkeeping WHERE doc_type = 'customer_invoice' AND fk_doc = ".((int) $accounted->id)." AND piece_num <> ".((int) $originalpiecenum)." ORDER BY rowid");
+			$reversallines = array();
+			while ($obj = $db->fetch_object($resql)) {
+				$reversallines[] = $obj;
+			}
+			$this->assertCount(3, $reversallines);
+			foreach ($originallines as $i => $originalline) {
+				$this->assertEquals($originalline[0], $reversallines[$i]->numero_compte);
+				$this->assertEquals($originalline[1], (string) $reversallines[$i]->subledger_account);
+				$this->assertEquals($originalline[3], (float) $reversallines[$i]->debit);
+				$this->assertEquals($originalline[2], (float) $reversallines[$i]->credit);
+				$this->assertEquals(dol_print_date($closingdate, 'day'), dol_print_date($db->jdate($reversallines[$i]->doc_date), 'day'));
+				$this->assertEquals($reversallines[0]->piece_num, $reversallines[$i]->piece_num);
+				$this->assertStringContainsString($langs->transnoentitiesnoconv("CancellationOfAbandonedInvoice"), $reversallines[$i]->label_operation);
+			}
+
+			$resql = $db->query("SELECT SUM(debit) - SUM(credit) as balance FROM ".MAIN_DB_PREFIX."accounting_bookkeeping WHERE doc_type = 'customer_invoice' AND fk_doc = ".((int) $accounted->id)." AND numero_compte = '1100' AND subledger_account = 'C-PHPUNIT'");
+			$this->assertEquals(0, (float) $db->fetch_object($resql)->balance);
+
+			$this->assertSame(array(), $bookkeeping->getAbandonedCustomerInvoiceReversal($accounted->id, 'VT', 'Sale journal'));
+			$this->assertEquals(0, $bookkeeping->createAbandonedCustomerInvoiceReversal($user, $accounted->id, 'VT', 'Sale journal'));
+		} finally {
+			$conf->global->ACCOUNTING_ACCOUNT_CUSTOMER = $savcustomeraccount;
+			$fiscalperiod->delete($user);
+		}
+	}
+
+	/**
+	 * Create a validated customer invoice then classify it abandoned at a given date.
+	 *
+	 * @param	int		$socid			Thirdparty id
+	 * @param	int		$invoicedate	Invoice date
+	 * @param	int		$closingdate	Date the invoice is abandoned
+	 * @return	Facture
+	 */
+	private function createAbandonedInvoice($socid, $invoicedate, $closingdate)
+	{
+		global $db, $user;
+
+		$invoice = new Facture($db);
+		$invoice->socid = $socid;
+		$invoice->type = Facture::TYPE_STANDARD;
+		$invoice->date = $invoicedate;
+		$invoice->cond_reglement_id = 1;
+		$this->assertGreaterThan(0, $invoice->create($user), $invoice->errorsToString());
+		$this->assertGreaterThan(0, $invoice->addline('Service', 100, 1, 20), $invoice->errorsToString());
+		$this->assertGreaterThan(0, $invoice->validate($user), $invoice->errorsToString());
+		$this->assertGreaterThan(0, $invoice->setCanceled($user, Facture::CLOSECODE_ABANDONED), $invoice->errorsToString());
+		$db->query("UPDATE ".MAIN_DB_PREFIX."facture SET date_closing = '".$db->idate($closingdate)."' WHERE rowid = ".((int) $invoice->id));
+
+		return $invoice;
+	}
 }

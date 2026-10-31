@@ -3971,6 +3971,138 @@ class BookKeeping extends CommonObject
 			return 1;
 		}
 	}
+	/**
+	 * Return the lines that reverse an abandoned customer invoice already in accounting whose customer account is not back to zero
+	 *
+	 * @param	int		$invoiceid		Id of the customer invoice
+	 * @param	string	$code_journal	Accounting journal code
+	 * @param	string	$journal_label	Accounting journal label
+	 * @return	BookKeeping[]|int<-1,-1>	Lines to record, empty if there is nothing to reverse, -1 if KO
+	 */
+	public function getAbandonedCustomerInvoiceReversal($invoiceid, $code_journal, $journal_label)
+	{
+		global $conf, $langs;
+
+		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+
+		$langs->load("accountancy");
+
+		$invoice = new Facture($this->db);
+		if ($invoice->fetch($invoiceid) <= 0 || $invoice->fetch_thirdparty() <= 0) {
+			$this->error = $invoice->error;
+			return -1;
+		}
+		if ($invoice->status != Facture::STATUS_ABANDONED || $invoice->close_code != Facture::CLOSECODE_ABANDONED) {
+			return array();
+		}
+		$invoice->info($invoice->id);
+
+		$customergeneralaccount = $invoice->thirdparty->accountancy_code_customer_general;
+		if (empty($customergeneralaccount) || $customergeneralaccount == '-1') {
+			$customergeneralaccount = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER');
+		}
+		$customersubledgeraccount = getSubledgerAccountWithDefault($invoice->thirdparty->code_compta_client, 'customer');
+
+		$sql = "SELECT doc_ref, date_lim_reglement, thirdparty_code, subledger_account, subledger_label, numero_compte, label_compte, label_operation, debit, credit, montant";
+		$sql .= " FROM ".$this->db->prefix().$this->table_element;
+		$sql .= " WHERE doc_type = 'customer_invoice' AND fk_doc = ".((int) $invoice->id);
+		$sql .= " AND entity = ".((int) $conf->entity);
+		$sql .= " ORDER BY rowid";
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		$customerbalance = 0;
+		$lines = array();
+		while ($obj = $this->db->fetch_object($resql)) {
+			if ($obj->numero_compte == $customergeneralaccount && (string) $obj->subledger_account == $customersubledgeraccount) {
+				$customerbalance += $obj->debit - $obj->credit;
+			}
+
+			$line = new BookKeeping($this->db);
+			$line->doc_date = $invoice->date_closing;
+			$line->date_lim_reglement = $this->db->jdate($obj->date_lim_reglement);
+			$line->doc_ref = $obj->doc_ref;
+			$line->doc_type = 'customer_invoice';
+			$line->fk_doc = $invoice->id;
+			$line->fk_docdet = 0;
+			$line->thirdparty_code = $obj->thirdparty_code;
+			$line->subledger_account = $obj->subledger_account;
+			$line->subledger_label = $obj->subledger_label;
+			$line->numero_compte = $obj->numero_compte;
+			$line->label_compte = $obj->label_compte;
+			$line->label_operation = $obj->label_operation.' - '.$langs->transnoentitiesnoconv("CancellationOfAbandonedInvoice");
+			$line->debit = (float) $obj->credit;
+			$line->credit = (float) $obj->debit;
+			$line->montant = (float) $obj->montant;
+			$line->sens = ($line->debit > 0) ? 'D' : 'C';
+			$line->code_journal = $code_journal;
+			$line->journal_label = $journal_label;
+			$line->entity = $conf->entity;
+			$lines[] = $line;
+		}
+		$this->db->free($resql);
+
+		if (price2num($customerbalance, 'MT') == 0) {
+			return array();
+		}
+
+		return $lines;
+	}
+
+	/**
+	 * Record, at its closing date, the reversal of an abandoned customer invoice already in accounting
+	 *
+	 * @param	User	$user			User that records the reversal
+	 * @param	int		$invoiceid		Id of the customer invoice
+	 * @param	string	$code_journal	Accounting journal code
+	 * @param	string	$journal_label	Accounting journal label
+	 * @return	int						Return integer <0 if KO, 0 if there is nothing to reverse, number of recorded lines if OK
+	 */
+	public function createAbandonedCustomerInvoiceReversal(User $user, $invoiceid, $code_journal, $journal_label)
+	{
+		$lines = $this->getAbandonedCustomerInvoiceReversal($invoiceid, $code_journal, $journal_label);
+		if (!is_array($lines)) {
+			return -1;
+		}
+		if (empty($lines)) {
+			return 0;
+		}
+
+		$this->db->begin();
+
+		$piecenum = $this->getNextNumMvt();
+		$ref = $lines[0]->getNextNumRef();
+
+		$ids = array();
+		foreach ($lines as $line) {
+			$line->date_creation = dol_now();
+			$line->fk_user_author = $user->id;
+			if ($line->create($user) < 0) {
+				$this->error = $line->error;
+				$this->errors = $line->errors;
+				$this->db->rollback();
+				return -1;
+			}
+			$ids[] = $line->id;
+		}
+
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element;
+		$sql .= " SET piece_num = ".((int) $piecenum).", ref = '".$this->db->escape($ref)."'";
+		$sql .= " WHERE rowid IN (".$this->db->sanitize(implode(',', $ids)).")";
+		if (!$this->db->query($sql)) {
+			$this->error = $this->db->lasterror();
+			$this->db->rollback();
+			return -1;
+		}
+
+		$this->db->commit();
+
+		return count($ids);
+	}
 }
 
 /**
