@@ -465,7 +465,7 @@ if (empty($reshook)) {
 									$lines[$i]->pa_ht,
 									$label,
 									$array_options,
-									$lines[$i]->ref_supplier,
+									(property_exists($lines[$i], 'ref_supplier') ? $lines[$i]->ref_supplier : ''),
 									$lines[$i]->fk_unit
 								);
 
