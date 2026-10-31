@@ -143,6 +143,34 @@ class OpensurveyquestionTest extends CommonClassTest
 	}
 
 	/**
+	 * testBuildList
+	 *
+	 * @return void
+	 */
+	public function testBuildList()
+	{
+		global $db;
+
+		$errors = array();
+		$list = Opensurveyquestion::buildList($db, '', array(
+			array('question' => '  ', 'type' => 'text'),																// ignored (no text)
+			array('question' => 'Name ?', 'type' => 'text', 'available_answers' => "x\ny"),							// answers dropped for a text
+			array('question' => 'Color ?', 'type' => 'checkbox', 'available_answers' => "red\nblue", 'mandatory' => '1'),
+			array('question' => 'Age ?'),																				// default type radio but no answers
+		), $errors);
+		$this->assertCount(2, $list);
+		$this->assertSame(array('ErrorOpenSurveyQuestionNeedTwoAnswers'), $errors);
+		$this->assertSame('Name ?', $list[0]->question);
+		$this->assertSame(1, $list[0]->position);
+		$this->assertSame('', $list[0]->available_answers);
+		$this->assertSame(2, $list[1]->position);
+		$this->assertSame(1, $list[1]->mandatory);
+		$this->assertSame("red\nblue", $list[1]->available_answers);
+
+		$this->assertSame(array(), Opensurveyquestion::buildList($db, '', array()));
+	}
+
+	/**
 	 * testCheckAnswer
 	 *
 	 * @return void
