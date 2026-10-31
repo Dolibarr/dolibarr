@@ -27,7 +27,8 @@
  *                  CommonObject::getFieldValueFromAjaxPost()) updates one field allowed by CommonObject::isFieldEditableFromUi()
  *                  (attribute "uieditable"). The value is saved with CommonObject::updateFieldFromUi(), so triggers are called.
  *                  Answer is a JsonResponse, data contains the values and their output html (CommonObject::ajaxOutputField()).
- *                  After an update, it also contains the other fields changed by the update (computed fields, triggers...).
+ *                  After an update, it also contains the other fields changed by the update (computed fields, triggers...),
+ *                  and the event messages set by the update (JsonResponse::addSessionEventMessages()).
  *                  A line of an object (ex: a line of evaluation) is checked with the permissions of its parent object.
  */
 
@@ -215,6 +216,9 @@ $jsonResponse->data = array(
 	'fields' => $fields,
 	'tms' => empty($object->date_modification) ? null : (int) $object->date_modification,
 );
+
+// Messages set by the update (triggers, hooks...) are displayed now by the ajax caller, not on the next page
+$jsonResponse->addSessionEventMessages();
 
 $jsonResponse->setSuccess();
 $jsonResponse->output();
