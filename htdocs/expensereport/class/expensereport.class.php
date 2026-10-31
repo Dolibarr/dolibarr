@@ -701,7 +701,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " d.date_debut, d.date_fin, d.date_create, d.tms as date_modif, d.date_valid, d.date_approve,"; // DATES (datetime)
 		$sql .= " d.fk_user_creat, d.fk_user_author, d.fk_user_modif, d.fk_user_validator,";
 		$sql .= " d.fk_user_valid, d.fk_user_approve,";
-		$sql .= " d.fk_statut as status, d.fk_c_paiement, d.paid";
+		$sql .= " d.fk_statut as status, d.fk_c_paiement, d.paid, d.multicurrency_code";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as d";
 		if ($ref) {
 			$sql .= " WHERE d.ref = '".$this->db->escape($ref)."'";
@@ -728,6 +728,7 @@ class ExpenseReport extends CommonObject
 				$this->localtax2    = $obj->total_localtax2;		// For backward compatibility
 				$this->total_localtax1 = $obj->total_localtax1;
 				$this->total_localtax2 = $obj->total_localtax2;
+				$this->multicurrency_code = $obj->multicurrency_code;
 
 				$this->note_public  = $obj->note_public;
 				$this->note_private = $obj->note_private;
@@ -2903,5 +2904,115 @@ class ExpenseReport extends CommonObject
 		$return .= '</div>';
 		$return .= '</div>';
 		return $return;
+	}
+
+	/**
+	 *	Return the amount of the credit transfer requests not processed yet or in a transfer order not credited yet
+	 *
+	 *	@return	float		Amount, or -1 if KO
+	 */
+	public function getCreditTransferPendingAmount(): float
+	{
+		$sql = "SELECT SUM(pfd.amount) as amount";
+		$sql .= " FROM ".$this->db->prefix()."prelevement_demande as pfd";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."prelevement_lignes as pl ON pl.fk_prelevement_demande = pfd.rowid";
+		$sql .= " WHERE pfd.fk_expensereport = ".((int) $this->id);
+		$sql .= " AND pfd.type = 'ban'";
+		$sql .= " AND (pfd.traite = 0 OR pl.statut = 0)";
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		$obj = $this->db->fetch_object($resql);
+
+		return (float) $obj->amount;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *	Create a credit transfer request to pay the expense report to its user
+	 *
+	 *	@param	User	$fuser		User asking the credit transfer
+	 *	@param	float	$amount		Amount we request credit transfer for
+	 *	@return	int					Return integer <0 if KO, 0 if a request already exists, >0 if OK
+	 */
+	public function demande_prelevement(User $fuser, float $amount): int
+	{
+		// phpcs:enable
+		global $conf, $langs;
+
+		if ($this->status != self::STATUS_APPROVED || $this->paid != 0) {
+			$this->error = "Status of expense report does not allow this";
+			dol_syslog(get_class($this)."::demande_prelevement ".$this->error, LOG_WARNING);
+			return -3;
+		}
+		if (!empty($this->multicurrency_code) && $this->multicurrency_code != getDolCurrency()) {
+			$this->error = $langs->trans('ErrorCreditTransferExpenseReportNotInCompanyCurrency', $this->multicurrency_code, getDolCurrency());
+			return -5;
+		}
+		if ($amount == 0) {
+			$this->error = 'WithdrawRequestErrorNilAmount';
+			return -1;
+		}
+		$pending = $this->getCreditTransferPendingAmount();
+		if ($pending < 0) {
+			return -2;
+		}
+		$remaintopay = (float) price2num($this->total_ttc - $this->getSumPayments() - $pending, 'MT');
+		if ((float) price2num($amount, 'MT') > $remaintopay) {
+			$this->error = $langs->trans('ErrorCreditTransferHigherThanRemainToPay', price($amount, 0, $langs, 1, -1, -1, $conf->currency), price($remaintopay, 0, $langs, 1, -1, -1, $conf->currency));
+			return -4;
+		}
+		if ($pending > 0) {
+			$this->error = "A request already exists";
+			return 0;
+		}
+
+		$sql = 'INSERT INTO '.$this->db->prefix().'prelevement_demande(';
+		$sql .= 'fk_expensereport, amount, multicurrency_code, multicurrency_amount, date_demande, fk_user_demande, sourcetype, type, entity)';
+		$sql .= " VALUES (".((int) $this->id);
+		$sql .= ", ".((float) price2num($amount));
+		$sql .= ", '".$this->db->escape(getDolCurrency())."'";
+		$sql .= ", ".((float) price2num($amount));
+		$sql .= ", '".$this->db->idate(dol_now())."'";
+		$sql .= ", ".((int) $fuser->id);
+		$sql .= ", 'expensereport'";
+		$sql .= ", 'ban'";
+		$sql .= ", ".((int) $conf->entity);
+		$sql .= ")";
+
+		dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
+		if (!$this->db->query($sql)) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		return 1;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Remove a credit transfer request
+	 *
+	 *  @param  User	$fuser      User making delete
+	 *  @param  int		$did        ID of request to delete
+	 *  @return	int					Return integer <0 if KO, 0 if OK
+	 */
+	public function demande_prelevement_delete(User $fuser, int $did): int
+	{
+		// phpcs:enable
+		$sql = 'DELETE FROM '.$this->db->prefix().'prelevement_demande';
+		$sql .= ' WHERE rowid = '.((int) $did);
+		$sql .= ' AND fk_expensereport = '.((int) $this->id);
+		$sql .= ' AND traite = 0';
+		if ($this->db->query($sql)) {
+			return 0;
+		} else {
+			$this->error = $this->db->lasterror();
+			dol_syslog(get_class($this).'::demande_prelevement_delete Error '.$this->error);
+			return -1;
+		}
 	}
 }

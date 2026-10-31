@@ -524,6 +524,20 @@ if (empty($reshook)) {
 	if ($action == 'settransportmode' && $usercancreate) {
 		// transport mode
 		$result = $object->setTransportMode(GETPOSTINT('transport_mode_id'));
+	} elseif ($action == 'setpayment_reference' && $usercancreate) {
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+		$object->fetch($id);
+		$object->payment_reference = CompanyBankAccount::cleanPaymentReference(GETPOST('payment_reference', 'alphanohtml'));
+		$errorkey = FactureFournisseur::checkPaymentReference($object->payment_reference);
+		if ($errorkey) {
+			setEventMessages($langs->trans($errorkey), null, 'errors');
+			$action = 'editpayment_reference';
+		} else {
+			$result = $object->update($user);
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
 	} elseif ($action == 'setlabel' && $usercancreate) {
 		// Set label
 		$object->fetch($id);
@@ -3980,6 +3994,13 @@ if ($action == 'create') {
 				print img_warning($langs->trans('Late'));
 			}
 			print '</td>';
+
+			// Payment reference
+			print '<tr><td>';
+			print $form->editfieldkey("PaymentReference", 'payment_reference', $object->payment_reference, $object, (int) $form_permission);
+			print '</td><td>';
+			print $form->editfieldval("PaymentReference", 'payment_reference', $object->payment_reference, $object, $form_permission, 'string', GETPOST('payment_reference', 'alphanohtml'), null, null, '', 1, '', 'id', 'auto', array(), $action);
+			print '</td></tr>';
 
 			// Mode of payment
 			$langs->load('bills');
