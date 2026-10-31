@@ -8726,11 +8726,33 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 	}
 
 	global $dolibarr_main_use_dol_eval_new;			// experimental option, not yet ready
-	if (!empty($dolibarr_main_use_dol_eval_new)) {
-		return dol_eval_new($s);
-	} else {
-		return dol_eval_standard($s, $hideerrors, $onlysimplestring);
+	global $dolibarr_main_use_dol_eval_safe;		// 0 (default)=eval() with checks, 1=same and the result is compared with the one of DolSafeEval (differences are logged), 2=DolSafeEval, that never uses eval()
+
+	$modesafe = (empty($dolibarr_main_use_dol_eval_safe) ? 0 : (int) $dolibarr_main_use_dol_eval_safe);
+	if ($modesafe == 2) {
+		require_once DOL_DOCUMENT_ROOT.'/core/class/dolsafeeval.class.php';
+		return DolSafeEval::dolEval($s, $hideerrors, $onlysimplestring);
 	}
+
+	if (!empty($dolibarr_main_use_dol_eval_new)) {
+		$result = dol_eval_new($s);
+	} else {
+		$result = dol_eval_standard($s, $hideerrors, $onlysimplestring);
+	}
+
+	if ($modesafe == 1) {
+		// Shadow mode: the result of eval() is returned. DolSafeEval is only run to log the conditions it does not manage the same way.
+		require_once DOL_DOCUMENT_ROOT.'/core/class/dolsafeeval.class.php';
+		$safe = DolSafeEval::dolEval($s, $hideerrors, $onlysimplestring);
+		$regexerror = '/^(Bad call of|Bad string syntax to evaluate)|Exception during/';
+		$resultiserror = (is_string($result) && preg_match($regexerror, $result));
+		$safeiserror = (is_string($safe) && preg_match($regexerror, $safe));
+		if ($resultiserror != $safeiserror || (!$resultiserror && $safe != $result)) {
+			dol_syslog('dol_eval shadow mode: different result for "'.$s.'": eval='.json_encode($result).' DolSafeEval='.json_encode($safe), LOG_WARNING);
+		}
+	}
+
+	return $result;
 }
 
 /**
@@ -9051,7 +9073,7 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 
 		// Set $dolibarr_main_restrict_eval_methods_array
 		if (!isset($dolibarr_main_restrict_eval_methods)) {
-			$dolibarr_main_restrict_eval_methods = 'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isExternalUser, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match';
+			$dolibarr_main_restrict_eval_methods = 'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isExternalUser, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match, floor, ceil, intdiv, fmod, sqrt, pow, exp, log, log10, sin, cos, tan, pi, is_numeric, is_nan, is_finite, intval, floatval';
 		}
 		//print '$dolibarr_main_restrict_eval_methods = '.$dolibarr_main_restrict_eval_methods."\n";
 		$dolibarr_main_restrict_eval_methods_array = explode(',', str_replace(" ", "", $dolibarr_main_restrict_eval_methods));
