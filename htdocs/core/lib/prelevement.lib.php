@@ -66,6 +66,9 @@ function prelevement_prepare_head(BonPrelevement $object)
 	}
 	if ($salary > 0) {
 		$titleoftab = $langs->trans("Salaries");
+		if ($object->checkIfExpenseReportBonPrelevement()) {
+			$titleoftab = $langs->trans("ExpenseReports");
+		}
 	}
 
 	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/prelevement/factures.php', ['id' => $object->id]);
@@ -130,9 +133,10 @@ function prelevement_check_config($type = 'direct-debit')
  *  @param	BonPrelevement	$object         	Member
  *  @param  int     		$nbOfInvoices   	No of invoices
  *  @param  int     		$nbOfSalaryInvoice  No of salary invoices
+ *  @param  int     		$nbOfExpenseReports No of expense reports
  * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
-function bon_prelevement_prepare_head(BonPrelevement $object, $nbOfInvoices, $nbOfSalaryInvoice)
+function bon_prelevement_prepare_head(BonPrelevement $object, $nbOfInvoices, $nbOfSalaryInvoice, $nbOfExpenseReports)
 {
 	global $langs, $conf;
 
@@ -149,6 +153,11 @@ function bon_prelevement_prepare_head(BonPrelevement $object, $nbOfInvoices, $nb
 	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/prelevement/create.php', ['type' => 'bank-transfer', 'sourcetype' => 'salary']);
 	$head[$h][1] = ($nbOfSalaryInvoice <= 0 ? $langs->trans("Salaries") : $langs->trans("Salaries").'<span class="badge marginleftonlyshort">'.$nbOfSalaryInvoice.'</span>');
 	$head[$h][2] = 'salary';
+	$h++;
+
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/prelevement/create.php', ['type' => 'bank-transfer', 'sourcetype' => 'expensereport']);
+	$head[$h][1] = ($nbOfExpenseReports <= 0 ? $langs->trans("ExpenseReports") : $langs->trans("ExpenseReports").'<span class="badge marginleftonlyshort">'.$nbOfExpenseReports.'</span>');
+	$head[$h][2] = 'expensereport';
 	$h++;
 
 	// Show more tabs from modules

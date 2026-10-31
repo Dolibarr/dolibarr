@@ -264,6 +264,39 @@ class FactureFournisseurTest extends CommonClassTest
 	}
 
 	/**
+	 * testFactureFournisseurPaymentReference
+	 *
+	 * The payment reference given by the supplier is checked (QR reference or RF), then stored and read back.
+	 *
+	 * @return void
+	 */
+	public function testFactureFournisseurPaymentReference()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$this->assertSame('', FactureFournisseur::checkPaymentReference(''));
+		$this->assertSame('', FactureFournisseur::checkPaymentReference('210000000003139471430009017'));
+		$this->assertSame('', FactureFournisseur::checkPaymentReference('RF18539007547034'));
+		$this->assertSame('ErrorQRReferenceNotValid', FactureFournisseur::checkPaymentReference('210000000003139471430009018'));
+		$this->assertSame('ErrorPaymentReferenceOfAccountNotValid', FactureFournisseur::checkPaymentReference('RF19539007547034'));
+
+		$localobject = new FactureFournisseur($db);
+		$localobject->initAsSpecimen();
+		$this->assertGreaterThan(0, $localobject->create($user), $localobject->errorsToString());
+		$localobject->fetch($localobject->id);
+
+		$localobject->payment_reference = '210000000003139471430009017';
+		$this->assertGreaterThan(0, $localobject->update($user), $localobject->errorsToString());
+
+		$localobject->fetch($localobject->id);
+		$this->assertSame('210000000003139471430009017', $localobject->payment_reference);
+	}
+
+	/**
 	 * testFactureFournisseurRecGetNextDate
 	 *
 	 * @return	void
