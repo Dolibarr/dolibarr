@@ -599,3 +599,11 @@ ALTER TABLE llx_category_bankline ADD PRIMARY KEY pk_category_bankline(lineid, f
 -- VPGSQL8.2 ALTER TABLE llx_user_param ADD COLUMN rowid SERIAL PRIMARY KEY;
 -- VMYSQL4.3 ALTER TABLE llx_opensurvey_user_formanswers ADD COLUMN rowid integer AUTO_INCREMENT PRIMARY KEY;
 -- VPGSQL8.2 ALTER TABLE llx_opensurvey_user_formanswers ADD COLUMN rowid SERIAL PRIMARY KEY;
+
+-- Opensurvey: the survey of format 'F' (form): type, position and mandatory flag of a question, and the keys of the 2 tables of the form.
+ALTER TABLE llx_opensurvey_formquestions ADD COLUMN type VARCHAR(16) NOT NULL DEFAULT 'radio';
+ALTER TABLE llx_opensurvey_formquestions ADD COLUMN position INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE llx_opensurvey_formquestions ADD COLUMN mandatory TINYINT NOT NULL DEFAULT 0;
+ALTER TABLE llx_opensurvey_formquestions ADD INDEX idx_opensurvey_formquestions_id_sondage (id_sondage);
+ALTER TABLE llx_opensurvey_user_formanswers ADD UNIQUE INDEX uk_opensurvey_user_formanswers (fk_user_survey, fk_question);
+ALTER TABLE llx_opensurvey_user_formanswers ADD INDEX idx_opensurvey_user_formanswers_fk_question (fk_question);

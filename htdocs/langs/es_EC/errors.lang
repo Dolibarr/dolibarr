@@ -162,7 +162,6 @@ ErrorDiscountLargerThanRemainToPaySplitItBefore=El descuento que usted intenta a
 ErrorFileNotFoundWithSharedLink=Archivo no fue encontrado. Puede ser que la clave compartida se haya modificado o que el archivo se haya eliminado recientemente.
 ErrorDescRequiredForFreeProductLines=La descripción es obligatoria para campos con producto gratis
 ErrorDuringChartLoad=Error al cargar el plan de cuentas. Si no se cargaron algunas cuentas, aún puede ingresarlas manualmente.
-ErrorBadSyntaxForParamKeyForContent=Mala sintaxis para param keyforcontent. Debe tener un valor que comience con %s o %s
 ErrorVariableKeyForContentMustBeSet=Error, se debe establecer la constante con el nombre %s (con contenido de texto para mostrar) o %s (con url externa para mostrar).
 ErrorURLMustStartWithHttp=La URL %s debe comenzar con http: // o https: //
 ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible=Error, no es posible eliminar el pago vinculado a una factura cerrada.

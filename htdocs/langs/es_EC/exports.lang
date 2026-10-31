@@ -39,7 +39,6 @@ ChooseFormatOfFileToImport=Elija el formato de archivo para usar como formato de
 SourceFileFormat=Formato del archivo fuente
 FieldsInSourceFile=Campos del archivo de origen
 NoFields=Sin campos
-MoveField=Mover número de columna de campo%s
 ExampleOfImportFile=Ejemplo_de_archivo_import
 ErrorImportDuplicateProfil=Error al guardar este perfil de importación con este nombre. Ya existe un perfil existente con este nombre.
 TablesTarget=Tablas específicas

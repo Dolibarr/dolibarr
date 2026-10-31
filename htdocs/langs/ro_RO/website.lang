@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - website
 Shortname=Cod
 WebsiteName=Nume site web
-WebsiteSetupDesc=Creați aici site-urile pe care doriți să le utilizați. Apoi intrați în meniul Site-uri pentru a le edita.
+WebsiteSetupDesc=Create here the websites you wish to use. Then go to menu Websites to edit them.
 DeleteWebsite=Şterge website
 ConfirmDeleteWebsite=Sigur doriți să ștergeți acest site web? Toate paginile și conținutul său vor fi, de asemenea, şterse. Fișierele încărcate (cele din directorul media sau din modulul ECM, ...) vor rămâne.
 WEBSITE_TYPE_CONTAINER=Tipul paginii/containerului
@@ -17,8 +17,8 @@ WEBSITE_ROBOT=Fișier robot (robots.txt)
 WEBSITE_HTACCESS=Fișier .htaccess site
 WEBSITE_MANIFEST_JSON=Fişier manifest.json website
 WEBSITE_KEYWORDSDesc=Foloseşte virgula pentru a separa valorile
-EnterHereReadmeInformation=Introdu aici o descriere a site-ului. Dacă distribuiți site-ul web ca șablon, fișierul va fi inclus în pachetul șablon.
-EnterHereLicenseInformation=Introdu aici LICENȚA codului site-ului. Dacă distribuiți site-ul web ca șablon, fișierul va fi inclus în pachetul șablon.
+EnterHereReadmeInformation=Enter here a description of the website. If you distribute your website as a template, the file will be included in the template package.
+EnterHereLicenseInformation=Enter here the LICENSE of the code of the website. If you distribute your website as a template, the file will be included in the template package.
 HtmlHeaderPage=Antet HTML (specific numai pentru această pagină)
 PageNameAliasHelp=Numele sau aliasul paginii. <br> Acest alias este, de asemenea, folosit pentru a crea un URL SEO când site-ul web este rulat de o gazdă virtuală a unui server Web (cum ar fi Apacke, Nginx, ...). Utilizați butonul "<strong> %s </strong>" pentru a edita acest alias.
 EditTheWebSiteForACommonHeader=Notă: dacă doriți să definiți un antet personalizat pentru toate paginile, modificați antetul la nivelul site-ului şi nu la nivelul paginii/containerului.
@@ -51,12 +51,12 @@ ToDeployYourWebsiteOnLiveYouHave3Solutions=Pentru a implementa acest site web î
 SetHereVirtualHost=<u>Utilizați cu Apache/NGinx/...</u><br> Creați pe serverul dvs. web (Apache, Nginx, ...) un vhost dedicat cu PHP activat și un director Root activat pentru<br><strong>%s</strong>
 ExampleToUseInApacheVirtualHostConfig=Exemplu configuraţie utilizabilă vhost Apache:
 YouCanAlsoTestWithPHPS=<u>Utilizezi serverul PHP încorporat</u><br> În mediul de dezvoltare, este posibil să preferi să testezi site-ul cu serverul web încorporat PHP rulând
-YouCanAlsoDeployToAnotherWHP=<u>Rulezi site-ul tău web la un furnizor de găzduire web Dolibarr</u><br> Dacă nu ai un server web precum Apache sau NGinx disponibil pe internet, poți exporta și importa site-ul tău web într-o altă instanță Dolibarr furnizată de un alt furnizor de găzduire Dolibarr care oferă o integrare completă cu modulul Site web. Poți găsi o listă a unor furnizori de găzduire Dolibarr pe <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
+YouCanAlsoDeployToAnotherWHP=<u>Run your web site inside a Dolibarr web Hosting provider</u><br>If you don't have a web server like Apache or NGinx available on the internet, you can export and import your web site to another Dolibarr instance provided by another Dolibarr hosting provider that provides full integration with the Website module. You can find a list of some Dolibarr hosting providers on <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
 CheckVirtualHostPerms=Verificați, de asemenea, dacă utilizatorul gazdă virtuală (de exemplu, www-data) are permisiuni <strong>%s</strong> pentru fișiere în <br><strong>%s</strong>
 ReadPerm=Citire
 WritePerm=Scriere
 TestDeployOnWeb=Testare/implementare pe web
-PreviewSiteServedByWebServer=<u>Previzualizați %s într-o filă nouă. </u> <br> <br> %s va fi deservit de un server web extern (cum ar fi Apache, Nginx, IIS). Trebuie să instalați și să configurați acest server înainte să indicați directorul: <br> <strong> %s </strong> <br> URL server extern: <br> <strong> %s </strong>
+PreviewSiteServedByWebServer=<u>Preview %s in a new tab.</u><br><br>The %s will be served by an external web server (like Apache, Nginx, IIS). You must install and setup this server before pointing to the directory:<br><strong>%s</strong><br>URL served by external server:<br><strong>%s</strong>
 PreviewSiteServedByDolibarr=<u>Previzualizare %s într-o filă nouă.</u><br><br>%s va fi servit de serverul Dolibarr, așa că nu are nevoie de niciun server web suplimentar (cum ar fi Apache, Nginx, IIS) pentru a fi instalat.<br> Inconveninetul este că adresele URL ale paginilor nu sunt ușor de utilizat și încep cu calea Dolibarr.<br> URL-ul tău deservit de Dolibarr:<br><strong>%s</strong><br><br> Pentru a implementa sau testa folosind propriul tău server web extern (cum ar fi Apache, Nginx, Lighttp) utilizează link-ul "%s".
 VirtualHostUrlNotDefined=URL virtualhost server web extern nu este definit
 NoPageYet=Nicio pagină încă
@@ -65,12 +65,13 @@ SyntaxHelp=Ajutor şi sfaturi pentru sintaxa specifică
 YouCanEditHtmlSourceckeditor=Puteți edita codul sursă HTML folosind butonul "Sursă" din editor.
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span>Poți include cod PHP în această sursă folosind etichetele <strong>&lt;?php ?&gt;</strong>. Sunt disponibile următoarele variabile globale: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> De asemenea, poți include conținutul unei alte pagini/container cu următoarea sintaxă:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> Poți face o redirecționare către o altă pagină/container cu următoarea sintaxă (Notă: nu afișa niciun conținut înainte de redirecționare):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>De asemenea, poți face o redirecționare cu parametri GET:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> Pentru a adăuga un link către o altă pagină, utilizează sintaxa:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br>
 YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span>Poți seta dinamic <strong>titlul SEO și metaetichetele </strong>(titlu, cuvinte cheie, descriere). Pur și simplu definește următoarele variabile:<br><code> define('__SEO_PAGE_TITLE__', "Valoarea titlului …");</code><br><code> define('__SEO_PAGE_KEYWORDS__', 'cuvânt cheie1, cuvânt cheie2, cuvânt cheie3 …');</code><br><code> define('__SEO_PAGE_DESC__', "Descriere …");</code><br>
-YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span>Pentru a include <strong>un link de descărcare</strong> fișier stocat în directorul de <strong>documente</strong>, utilizează <strong>document.php</strong> wrapper:<br> De exemplu, pentru un fișier în documente/ecm (trebuie să te autentifici), sintaxa este:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>Pentru un fișier în documente/ecm, (director cu accesul public) sintaxa este:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
+YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored in the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file in documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file in documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSourced=Pentru un fișier partajat cu un link de partajare (acces deschis folosind cheia hash de partajare a fișierului), sintaxa este:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span>Pentru a include o <strong>imagine</strong> stocată în directorul <strong>medias</strong> (director deschis pentru acces public), utilizează calea relativă care începe cu <strong>/medias</strong>, de exemplu:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored in the <strong>medias</strong> directory (directory open for public access), use the relative path starting with <strong>/medias</strong>, example:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=Pentru o imagine partajată cu un link de partajare (acces deschis folosind cheia hash de partajare a fișierului), utilizează wrapper-ul:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=Pentru a obține adresa URL a imaginii unui obiect PHP, utilizează <br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
-YouCanEditHtmlSource4=Pentru a obține adresa URL a unei imagini în conținutul html al unui articol, utilizează <br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource4=To get the URL of an image inside a HTML content of an article, use<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource5=<br><span class="fa fa-edit paddingright"></span> To let a part of the page be changed with mode <strong>Edit inline</strong>, add the attributes <strong>contenteditable="true"</strong> and <strong>id</strong> to its tag. It must contain no PHP code, only text with formatting tags (bold, color, font size...), links, paragraphs, titles, lists and div, example:<br><strong>&lt;p id="intro" contenteditable="true"&gt;My &lt;b&gt;text&lt;/b&gt;&lt;/p&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>Mai multe exemple HTML sau cod dinamic sunt disponibile în <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">documentația wiki</a>.<br>
 ClonePage=Clonare pagină/container
 CloneSite=Clonare site
@@ -88,6 +89,8 @@ ImportSite=Importați șablonul de site web
 IDOfPage=ID pagină
 Banner=Afiş banner
 BlogPost=Postare blog
+PageHeader=Antet
+PageFooter=Subsol
 WebsiteAccount=Cont site
 WebsiteAccounts=Conturi site
 AddWebsiteAccount=Creare cont site web
@@ -119,7 +122,7 @@ NoWebSiteCreateOneFirst=Niciun site nu a fost creat încă. Creați unul mai în
 GoTo=Mergi la
 DynamicPHPCodeContainsAForbiddenInstruction=Adăugați cod PHP dinamic care conține instrucțiunea PHP '<strong>%s</strong>' care este interzisă în mod implicit ca şi conținut dinamic (consultați opțiunile ascunse WEBSITE_PHP_ALLOW_xxx pentru a extinde lista comenzilor permise).
 NotAllowedToAddDynamicContent=Nu ai permisiunea de a adăuga sau edita conținut PHP dinamic pe site-uri web. Cere permisiunea sau păstrează codul din etichetele PHP nemodificat.
-NotAllowedToAddDynamicContentDisabledGlobaly=În prezent, nu poți adăuga sau edita conținut PHP dinamic pe acest site web (chiar dacă ai permisiunea de a face acest lucru), deoarece această funcție trebuie mai întâi activată global prin setarea parametrului %s=1 în fișierul conf.php.<br> Editează fișierul conf.php pentru a adăuga acest parametru sau solicită administratorului tehnic să o facă pentru tine. 
+NotAllowedToAddDynamicContentDisabledGlobaly=În prezent, nu poți adăuga sau edita conținut PHP dinamic pe acest site web (chiar dacă ai permisiunea de a face acest lucru), deoarece această funcție trebuie mai întâi activată global prin setarea parametrului %s=1 în fișierul conf.php.<br> Editează fișierul conf.php pentru a adăuga acest parametru sau solicită administratorului sau echipei de asistență să o facă pentru tine.
 ReplaceWebsiteContent=Căutare sau înlocuire conținut website
 DeleteAlsoJs=Șterg și toate fișierele JavaScript specifice acestui site?
 DeleteAlsoMedias=Șterg și toate fișierele media specifice acestui site?
@@ -140,10 +143,10 @@ MainLanguage=Limba principală
 OtherLanguages=Alte limbi
 UseManifest=Furnizați un fișier manifest.json
 PublicAuthorAlias=Alias public autor
-AvailableLanguagesAreDefinedIntoWebsiteProperties=Limbile disponibile sunt definite în proprietățile website-ului
+AvailableLanguagesAreDefinedIntoWebsiteProperties=Available languages are defined in website properties
 ReplacementDoneInXPages=Înlocuirea s-a făcut în %s pagini sau containere
 RSSFeed=Feed RSS
-RSSFeedDesc=Puteți obține un flux RSS al celor mai recente articole de tipul 'blogpost' folosind această adresă URL
+RSSFeedDesc=You can get an RSS feed of latest articles with type 'blogpost' using this URL
 PagesRegenerated=%s pagină(i) /container(e) regenerate
 RegenerateWebsiteContent=Regenerați fișierele cache ale site-ului web
 AllowedInFrames=Permis în Frame-uri
@@ -151,6 +154,7 @@ DefineListOfAltLanguagesInWebsiteProperties=Definiți lista tuturor limbilor dis
 GenerateSitemaps=Generare fișier sitemap.xml website
 ConfirmGenerateSitemaps=Dacă confirmi, vei şterge fişierul sitemap existent...
 ConfirmSitemapsCreation=Confirmare generare sitemap
+ConfirmSetAsHomePage=Are you sure you want to set the page <b>%s</b> as the home page of the website?
 SitemapGenerated=Fişierul sitemap <b>%s</b> a fost generat
 ImportFavicon=Favicon
 ErrorFaviconType=Favicon-ul trebuie să fie png
@@ -191,19 +195,19 @@ WebPortalPartnerShipCardAccessHelp=Activare acces la înregistrare parteneriat (
 WEBPORTAL_PROPAL_LIST_ACCESS=Activare acces la oferte
 WEBPORTAL_ORDER_LIST_ACCESS=Activare acces la comenzi
 WEBPORTAL_INVOICE_LIST_ACCESS=Activare acces la facturi
-WEBPORTAL_FICHEINTER_LIST_ACCESS=Enable access to interventions
-WEBPORTAL_TICKET_LIST_ACCESS=Enable access to tickets
+WEBPORTAL_FICHEINTER_LIST_ACCESS=Activare acces la intervenții
+WEBPORTAL_TICKET_LIST_ACCESS=Activare acces la tichete
 WebPortalFicheinterListMenu=Intervenţii
 WebPortalFicheinterListTitle=Intervenţii
-WebPortalFicheinterListDesc=You will find here all your interventions
-WebPortalFicheinterListNothing=Interventions not found
+WebPortalFicheinterListDesc=Găsești aici toate intervențiile tale
+WebPortalFicheinterListNothing=Intervențiile nu au fost găsite
 WebPortalTicketListMenu=Tichete de suport
 WebPortalTicketListTitle=Tichete de suport
-WebPortalTicketListDesc=You will find here all your tickets
-WebPortalTicketListNothing=Tickets not found
-WebPortalTicketConsultation=Consultation
+WebPortalTicketListDesc=Vei găsi aici toate tichetele tale
+WebPortalTicketListNothing=Tichetele nu au fost găsite
+WebPortalTicketConsultation=Consultare
 WebPortalTicketConsultationLink=Vizualizare
-WebPortalTicketConsultationTooltipNotPublic=The ticket was not created from the public interface.
+WebPortalTicketConsultationTooltipNotPublic=Tichetul nu a fost creat din interfața publică.
 WebPortalTicketNotAssigned=Ne-asociat
 StatusInterInDraft=Schiţă
 StatusInterInValidated=Validat
@@ -267,7 +271,7 @@ WebPortalErrorFetchLoggedThirdParty=Eroare la încărcarea terțului (Id : %s)
 WebPortalErrorFetchLoggedMember=Eroare la încărcarea membrului (Id : %s)
 WebPortalErrorFetchLoggedPartnership=Eroare la încărcarea parteneriatului (ID terț: %s, ID membru: %s)
 WebPortalErrorNoFetchMethod=Eroare: Nu a fost găsită nicio metodă de preluare pentru autentificare.
-WebPortalErrorNoThirdPartyScope=No third-party associated with the logged account: access denied
+WebPortalErrorNoThirdPartyScope=Niciun terț asociat contului conectat: acces refuzat
 DownloadZip=Descărcare zip
 ExportIntoGIT=Export în director server
 WebPortalMember=Adeziune membru
@@ -507,5 +511,15 @@ WebPortalSharedDocsDirHelp=Introdu numele directorului, situat în folderul ECM/
 DateM=Dată modificare
 ThisDirectoryIsEmpty=Acest director este gol
 WrittenBy=Scris de %s
-ImportOfWebsiteTemplateIncludingPHPIsAllowedIf=Import of website templates using dynamic content in PHP is allowed only if $dolibarr_website_allow_custom_php is set to 2 in conf.php.
-ImportOfWebsiteTemplateIncludingPHPIsDisabled=Import of website templates using dynamic content in PHP need to have $dolibarr_website_allow_custom_php set to 1 or 2 in conf.php to be allowed.
+ImportOfWebsiteTemplateIncludingPHPIsAllowedIf=Importul șabloanelor de site web folosind conținut dinamic în PHP este permis numai dacă $dolibarr_website_allow_custom_php este setat la 2 în conf.php.
+ImportOfWebsiteTemplateIncludingPHPIsDisabled=Importul șabloanelor de site web care utilizează conținut dinamic în PHP trebuie să aibă $dolibarr_website_allow_custom_php setat la 1 sau 2 în conf.php pentru a fi permis.
+CurrentPageVersion=Current page
+ListOfPageVersions=List of archived versions of page (a backup file of page is created each time you save a change, for example on the HTML source)
+EditInLineAllowedAreas=In mode Edit inline, the tags with contenteditable="true", an id and no PHP code inside can be changed and are saved when you leave them. Text formatting (bold, color, font size...), links, paragraphs, titles and lists are allowed, images and other HTML can only be changed in the HTML source.
+ErrorEditInlineElementNoId=This element has contenteditable="true" but no id, so it can not be edited inline.
+ErrorEditInlineElementNotFound=No element with id %s and contenteditable="true" was found in the source of the page.
+ErrorEditInlineElementNotUnique=The id %s is used by several elements with contenteditable="true" in the source of the page.
+ErrorEditInlineElementWithPhp=The element with id %s contains PHP code in the source of the page, so it can only be changed in the HTML source.
+ErrorEditInlineElementNotAllowedHtml=The element with id %s contains HTML that can not be edited inline (image, form, script, comment, other tags or attributes...), so it can only be changed in the HTML source.
+ErrorEditInlineElementNotPlainText=The element with id %s contains HTML in the source of the page and can only be edited inline as plain text, so it can only be changed in the HTML source.
+ErrorEditInlineContentNotAllowed=The new content of the element with id %s contains HTML tags or attributes that are not allowed, so it was not saved.

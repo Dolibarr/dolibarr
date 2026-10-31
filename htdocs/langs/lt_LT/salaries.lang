@@ -27,6 +27,7 @@ Earnings=Earnings
 TotalEarnings=Total earnings
 TotalDeductions=Total deductions
 NetPaid=Grynasis apmokėtas
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Sąskaita (iš sąskaitų plano), pagal numatytuosius nustatymus naudojama atlyginimų „vartotojams“
@@ -55,8 +56,6 @@ FillFieldFirst=Pirmiausia užpildykite darbuotojo laukelį
 UpdateAmountWithLastSalary=Nustatykite paskutinio atlyginimo dydį
 MakeTransferRequest=Pateikti perkėlimo užklausą
 VirementOrder=Kredito perkėlimo užklausa
-WithdrawalReceipt=Kredito pervedimo pavedimas
-OrderWaiting=Laukiamas užsakymas
 FillEndOfMonth=Mėnesio pabaiga
 
 # Shortcuts

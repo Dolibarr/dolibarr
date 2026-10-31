@@ -204,16 +204,11 @@ InstrucToEncodePass=Para tener una contraseña codificada en el archivo <b>conf.
 InstrucToClearPass=Para que la contraseña se decodifique (borre) en el archivo <b>conf.php</b> , reemplace la línea <br> <b>$ dolibarr_main_db_pass = &quot;crypted: ...&quot;;</b> <br> por <br> <b>$ dolibarr_main_db_pass = &quot;%s&quot;;</b>
 ProtectAndEncryptPdfFiles=Proteger los archivos PDF generados. Esto NO se recomienda ya que interrumpe la generación masiva de PDF.
 Feature=Característica
-Developpers=Desarrolladores/Contribuidores
 OfficialWiki=Documentación Dolibarr en Wiki
 OfficialDemo=Dolibarr demo en línea
 OfficialMarketPlace=Tienda oficial para módulos / complementos
 OfficialWebHostingService=Servicios de alojamiento web referenciados (alojamiento en la nube)
 SocialNetworks=Redes Sociales
-ForDocumentationSeeWiki=Para la documentación del usuario o desarrollador (Doc, Preguntas frecuentes ...), <br> Echa un vistazo a la Wiki Dolibarr: <br> <b><a href="%s" target="_blank">%s</a></b>
-ForAnswersSeeForum=Para cualquier otra pregunta o ayuda, puede usar el foro Dolibarr: <br> <b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
-HelpCenterDesc1=Aquí hay algunos recursos para obtener ayuda y apoyo con Dolibarr.
-HelpCenterDesc2=Algunos de estos recursos solo están disponibles en <b>inglés</b> .
 CurrentMenuHandler=Administrador de menú actual
 SpaceX=Espacio X
 SpaceY=Espacio Y
@@ -283,8 +278,6 @@ DictionarySocialNetworks=Redes Sociales
 SuppliersPayment=Pagos al proveedor
 LDAPServerUseTLS=Usar TLS
 LDAPFieldFirstName=Nombre(s)
-Buy=Comprar
-Sell=Vender
 AGENDA_SHOW_LINKED_OBJECT =Mostrar objeto vinculado en la vista de agenda
 ShowFiscalYear=Mostrar período contable
 Format=Formato

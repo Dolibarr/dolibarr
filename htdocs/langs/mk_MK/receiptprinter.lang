@@ -69,7 +69,6 @@ DOL_VALUE_DAY=Ден на фактура
 DOL_VALUE_DAY_LETTERS=Ден на фактура со букви
 DOL_LINE_FEED_REVERSE=Напојување на линијата обратно
 InvoiceID=ИД на фактура
-InvoiceRef=Фактура број
 DOL_PRINT_OBJECT_LINES=Линии за фактура
 DOL_VALUE_CUSTOMER_FIRSTNAME=Име на клиентот
 DOL_VALUE_CUSTOMER_LASTNAME=Презиме на клиентот

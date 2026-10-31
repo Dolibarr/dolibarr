@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = Przeglądaj zaplanowane zadania
-Permission23102 = Stwórz/zaktualizuj zaplanowane zadanie
-Permission23103 = Usuń zaplanowane zadanie
-Permission23104 = Wykonaj zaplanowane zadanie
 # Admin
 CronSetup=Konfiguracja zarządzania zaplanowanymi zadaniami
 URLToLaunchCronJobs=Adres URL do sprawdzania i uruchamiania kwalifikowanych zadań cron z przeglądarki
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=W środowisku Unix należy użyć następującego wpisu 
 CronExplainHowToRunWin=W środowisku Microsoft (tm) Windows można używać narzędzi do zaplanowanych zadań, aby uruchamiać wiersz poleceń co 5 minut
 CronMethodDoesNotExists=Klasa %s nie zawiera żadnej metody %s
 CronMethodNotAllowed=Metoda %s klasy %s znajduje się na liście blokowanych metod zabronionych
-CronJobDefDesc=Profile zadań Cron są zdefiniowane w pliku deskryptora modułu. Gdy moduł jest aktywowany, są one ładowane i dostępne, dzięki czemu można administrować zadaniami z menu narzędzi administracyjnych %s.
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=Lista predefiniowanych profili zawodowych Cron
 # Menu
 EnabledAndDisabled=Włączone i wyłączone
@@ -27,7 +22,7 @@ CronDelete=Usuwanie zaplanowanych zadań
 CronConfirmDelete=Czy jesteś pewien, że chcesz usunąć te zaplanowane zadania?
 CronExecute=Uruchom teraz
 CronConfirmExecute=Jesteś pewien, że chcesz wykonać te zaplanowane zadania teraz?
-CronInfo=Moduł zaplanowanych zadań umożliwia planowanie zadań w celu ich automatycznego wykonania. Zadania można również uruchamiać ręcznie.
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=Zadanie
 CronNone=Następne uruchomienie zaplanowanego zadania
 CronNotYetRan=Nigdy nie wykonano
@@ -79,7 +74,7 @@ CronType_command=Polecenie powłoki
 CronCannotLoadClass=Nie można załadować pliku klasy %s (aby użyć klasy %s)
 CronModuleNotEnabledInThisEntity=Moduł Cron nie jest włączony w tej jednostce (aby użyć metody %s obiektu %s)
 CronCannotLoadObject=Załadowano plik klasy %s, ale nie znaleziono w nim obiektu %s
-UseMenuModuleToolsToAddCronJobs=Przejdź do menu "<a href="%s"> Strona główna - Narzędzia administracyjne - Zaplanowane zadania </a>", aby wyświetlić i edytować zaplanowane zadania.
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=Zadanie wyłączone
 MakeLocalDatabaseDumpShort=Backup lokalnej bazy danych
 MakeLocalDatabaseDump=Utwórz zrzut lokalnej bazy danych. Parametry to: kompresja („gz” lub „bz” lub „none”), typ kopii zapasowej („mysql”, „pgsql”, „auto”), 1, „auto” lub nazwa pliku do zbudowania, liczba plików kopii zapasowych do zachowania

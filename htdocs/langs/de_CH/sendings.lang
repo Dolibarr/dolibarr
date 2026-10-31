@@ -35,7 +35,6 @@ Sender=Absender
 ErrorStockIsNotEnough=Der Lagerbestand ist zu klein
 ShowReceiving=Lieferschein anzeigen
 NonExistentOrder=Nicht vorhandene Bestellung
-DocumentModelTyphon=Vollständig Dokumentvorlage für die Lieferungscheine (Logo, ...)
 SumOfProductVolumes=Summe der Produktevolumen
 SumOfProductWeights=Summe der Produktegewichte
 DetailWarehouseNumber=Warenlager-Details

@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - website
 Shortname=Код
 WebsiteName=Веб-сайттың атауы
-WebsiteSetupDesc=Қолданғыңыз келетін веб -сайттарды осы жерден жасаңыз. Содан кейін оларды өңдеу үшін веб -сайттар мәзіріне өтіңіз.
+WebsiteSetupDesc=Create here the websites you wish to use. Then go to menu Websites to edit them.
 DeleteWebsite=Веб -сайтты жою
 ConfirmDeleteWebsite=Бұл веб -сайтты шынымен жойғыңыз келе ме? Оның барлық беттері мен мазмұны жойылады. Жүктелген файлдар (мысалы медиа каталогында, ECM модулінде ...) қалады.
 WEBSITE_TYPE_CONTAINER=Бет/контейнер түрі
@@ -17,8 +17,8 @@ WEBSITE_ROBOT=Роботтық файл (robots.txt)
 WEBSITE_HTACCESS=Веб -сайт .htaccess файлы
 WEBSITE_MANIFEST_JSON=Manifest.json веб -сайты
 WEBSITE_KEYWORDSDesc=Мәндерді ажырату үшін үтірді қолданыңыз
-EnterHereReadmeInformation=Мұнда веб-сайттың сипаттамасын енгізіңіз. Веб-сайтыңызды үлгі ретінде таратсаңыз, файл шаблондар бумасына қосылады.
-EnterHereLicenseInformation=Мұнда веб-сайт кодының ЛИЦЕНЗИЯсын енгізіңіз. Веб-сайтыңызды үлгі ретінде таратсаңыз, файл шаблондар бумасына қосылады.
+EnterHereReadmeInformation=Enter here a description of the website. If you distribute your website as a template, the file will be included in the template package.
+EnterHereLicenseInformation=Enter here the LICENSE of the code of the website. If you distribute your website as a template, the file will be included in the template package.
 HtmlHeaderPage=HTML тақырыбы (тек осы бетке тән)
 PageNameAliasHelp=Беттің аты немесе бүркеншік аты. <br> Бұл бүркеншік атау веб -сервердің виртуалды хостынан (Apacke, Nginx, ... сияқты) жұмыс жасағанда, SEO URL мекенжайын жасау үшін де қолданылады. Бұл бүркеншік атты өңдеу үшін «<strong> %s </strong>» түймесін пайдаланыңыз.
 EditTheWebSiteForACommonHeader=Ескерту: Егер сіз барлық беттерге арналған дербес тақырыпты анықтағыңыз келсе, тақырыпты бетте/контейнерде емес, сайт деңгейінде өңдеңіз.
@@ -51,12 +51,12 @@ ToDeployYourWebsiteOnLiveYouHave3Solutions=Бұл веб-сайтты тікел
 SetHereVirtualHost=<u>Apache/NGinx/...</u><br> қосулыreate қолданбасымен пайдалану веб-серверіңіз (Apache, Nginx, ...) PHP қосылған арнайы виртуалды хост және<br><strong> жүйесіндегі түбірлік каталог. %s</strong>
 ExampleToUseInApacheVirtualHostConfig=Apache виртуалды хостын орнатуда қолданылатын мысал:
 YouCanAlsoTestWithPHPS=<u>PHP ендірілген серверімен пайдалану</u><br>Ортаны әзірлеуге болады. сайтты іске қосу арқылы PHP ендірілген веб-серверімен сынауды қалайды
-YouCanAlsoDeployToAnotherWHP=<u>Run your web site inside a Dolibarr web Hosting provider</u><br>If you don't have a web server like Apache or NGinx available on internet, you can export and import your web site onto another Dolibarr instance provided by another Dolibarr hosting provider that provide full integration with the Website module. You can find a list of some Dolibarr hosting providers on <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
+YouCanAlsoDeployToAnotherWHP=<u>Run your web site inside a Dolibarr web Hosting provider</u><br>If you don't have a web server like Apache or NGinx available on the internet, you can export and import your web site to another Dolibarr instance provided by another Dolibarr hosting provider that provides full integration with the Website module. You can find a list of some Dolibarr hosting providers on <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
 CheckVirtualHostPerms=Check also that the virtual host user (for example www-data) has <strong>%s</strong> permissions on files into<br><strong>%s</strong>
 ReadPerm=Оқыңыз
 WritePerm=Жазу
 TestDeployOnWeb=Вебте тестілеу/орналастыру
-PreviewSiteServedByWebServer=<u>Preview %s in a new tab.</u><br><br>The %s will be served by an external web server (like Apache, Nginx, IIS). You must install and setup this server before to point to directory:<br><strong>%s</strong><br>URL served by external server:<br><strong>%s</strong>
+PreviewSiteServedByWebServer=<u>Preview %s in a new tab.</u><br><br>The %s will be served by an external web server (like Apache, Nginx, IIS). You must install and setup this server before pointing to the directory:<br><strong>%s</strong><br>URL served by external server:<br><strong>%s</strong>
 PreviewSiteServedByDolibarr=<u>Preview %s in a new tab.</u><br><br>The %s will be served by Dolibarr server so it does not need any extra web server (like Apache, Nginx, IIS) to be installed.<br>The inconvenient is that the URLs of pages are not user friendly and start with the path of your Dolibarr.<br>URL served by Dolibarr:<br><strong>%s</strong><br><br>To deploy or test using your own external web server (like Apache, Nginx, Lighttp) use the link "%s".
 VirtualHostUrlNotDefined=Сыртқы веб -сервер қызмет ететін виртуалды хосттың URL мекенжайы анықталмаған
 NoPageYet=Әлі беттер жоқ
@@ -65,12 +65,13 @@ SyntaxHelp=Нақты синтаксистік кеңестер бойынша �
 YouCanEditHtmlSourceckeditor=Редактордағы «Дереккөз» батырмасы арқылы HTML бастапқы кодын өңдеуге болады.
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>You can also make a redirection with GET parameters:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br>
 YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> You can dynamically set <strong>SEO title and meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>define('__SEO_PAGE_TITLE__', "Title value …");</code><br> <code>define('__SEO_PAGE_KEYWORDS__', 'keyword1, keyword2, keyword3 …');</code><br> <code>define('__SEO_PAGE_DESC__', "Description …");</code><br>
-YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
+YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored in the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file in documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file in documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSourced=For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored into the <strong>medias</strong> directory (directory open for public access), use the relative path starting with <strong>/medias</strong>, example:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored in the <strong>medias</strong> directory (directory open for public access), use the relative path starting with <strong>/medias</strong>, example:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), use the wrapper:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=To get the URL of the image of a PHP object, use<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
-YouCanEditHtmlSource4=To get the URL of an image inside a html content of an article, use<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource4=To get the URL of an image inside a HTML content of an article, use<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource5=<br><span class="fa fa-edit paddingright"></span> To let a part of the page be changed with mode <strong>Edit inline</strong>, add the attributes <strong>contenteditable="true"</strong> and <strong>id</strong> to its tag. It must contain no PHP code, only text with formatting tags (bold, color, font size...), links, paragraphs, titles, lists and div, example:<br><strong>&lt;p id="intro" contenteditable="true"&gt;My &lt;b&gt;text&lt;/b&gt;&lt;/p&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">the wiki documentation</a>.<br>
 ClonePage=Бетті/контейнерді клондау
 CloneSite=Сайтты клондау
@@ -88,6 +89,8 @@ ImportSite=Веб -сайт үлгісін импорттау
 IDOfPage=Беттің идентификаторы
 Banner=Баннер
 BlogPost=Блог посты
+PageHeader=Header
+PageFooter=Footer
 WebsiteAccount=Веб -сайттың есептік жазбасы
 WebsiteAccounts=Веб -сайттағы есептік жазбалар
 AddWebsiteAccount=Веб -сайт тіркелгісін жасаңыз
@@ -102,7 +105,7 @@ YouMustDefineTheHomePage=Сіз алдымен әдепкі Басты анық�
 OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users and can work only pages rendered with HTML and CSS only. Importing pages rendered by JS frameworks are NOT supported. Depending on the complexity of the source page, the result of importation will probably differ from the original page. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quick way to create a page for very advanced users when source page allows it, but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor might not work correctly when used on a page that was grabbed.
 OnlyEditionOfSourceForGrabbedContent=Only HTML source modification is possible when content is grabbed from an external site
 GrabImagesInto=Сонымен қатар CSS пен бетке табылған суреттерді алыңыз.
-ImagesShouldBeSavedInto=Суреттер каталогта сақталуы керек
+ImagesShouldBeSavedInto=Images should be saved in the directory
 WebsiteRootOfImages=Веб -сайт суреттері үшін түбірлік каталог
 SubdirOfPage=Бетке арналған ішкі каталог
 AliasPageAlreadyExists=Бүркеншік атау <strong> %s </strong> бұрыннан бар
@@ -119,7 +122,7 @@ NoWebSiteCreateOneFirst=Әзірге веб -сайт жасалмаған. Ал
 GoTo=Бару
 DynamicPHPCodeContainsAForbiddenInstruction=Сіз динамикалық мазмұн ретінде әдепкі бойынша тыйым салынған PHP нұсқаулығын қамтитын '<strong> %s </strong>' динамикалық PHP кодын қосасыз (рұқсат етілген пәрмендер тізімін ұлғайту үшін WEBSITE_PHP_ALLOW_xxx жасырын опцияларын қараңыз).
 NotAllowedToAddDynamicContent=You don't have permission to add or edit dynamic PHP content in websites. Ask permission or just keep code into php tags unmodified.
-NotAllowedToAddDynamicContentDisabledGlobaly=You currently can't add or edit dynamic PHP content in this website (even if you have permission to), because this feature must be first enabled globally by setting the parameter %s=1 int the conf.php file.<br>Edit your conf.php file to add this parameter, or ask your administrator or support to do it for you.
+NotAllowedToAddDynamicContentDisabledGlobaly=You currently can't add or edit dynamic PHP content in this website (even if you have permission to), because this feature must be first enabled globally by setting the parameter %s=1 into the conf.php file.<br>Edit your conf.php file to add this parameter, or ask your administrator or support team to do it for you.
 ReplaceWebsiteContent=Веб -сайт мазмұнын іздеңіз немесе ауыстырыңыз
 DeleteAlsoJs=Осы веб-сайтқа тән барлық JavaScript файлдарын жою керек пе?
 DeleteAlsoMedias=Осы веб-сайтқа тән барлық медиа файлдарды жою керек пе?
@@ -140,10 +143,10 @@ MainLanguage=Негізгі тіл
 OtherLanguages=Басқа тілдер
 UseManifest=Manifest.json файлын беріңіз
 PublicAuthorAlias=Қоғамдық автордың бүркеншік аты
-AvailableLanguagesAreDefinedIntoWebsiteProperties=Қол жетімді тілдер веб -сайт сипаттарында анықталған
+AvailableLanguagesAreDefinedIntoWebsiteProperties=Available languages are defined in website properties
 ReplacementDoneInXPages=Ауыстыру %s беттерде немесе контейнерлерде орындалады
 RSSFeed=RSS арнасы
-RSSFeedDesc=Сіз осы блогты қолдана отырып, 'blogpost' түріндегі соңғы мақалалардың RSS арнасын ала аласыз
+RSSFeedDesc=You can get an RSS feed of latest articles with type 'blogpost' using this URL
 PagesRegenerated=%s бет (тер)/контейнер (лер) жаңартылды
 RegenerateWebsiteContent=Веб -сайттың кэш файлдарын қалпына келтіріңіз
 AllowedInFrames=Кадрларда рұқсат етілген
@@ -151,6 +154,7 @@ DefineListOfAltLanguagesInWebsiteProperties=Веб -сайт сипаттары�
 GenerateSitemaps=Веб-сайттың sitemap.xml файлын жасаңыз
 ConfirmGenerateSitemaps=Егер растасаңыз, сайт картасының файлын өшіресіз ...
 ConfirmSitemapsCreation=Сайт картасының құрылуын растаңыз
+ConfirmSetAsHomePage=Are you sure you want to set the page <b>%s</b> as the home page of the website?
 SitemapGenerated=<b> %s </b> сайт картасының файлы жасалды
 ImportFavicon=Фавикон
 ErrorFaviconType=Фавикон PNG болуы керек
@@ -509,3 +513,13 @@ ThisDirectoryIsEmpty=This directory is empty
 WrittenBy=Written by %s
 ImportOfWebsiteTemplateIncludingPHPIsAllowedIf=Import of website templates using dynamic content in PHP is allowed only if $dolibarr_website_allow_custom_php is set to 2 in conf.php.
 ImportOfWebsiteTemplateIncludingPHPIsDisabled=Import of website templates using dynamic content in PHP need to have $dolibarr_website_allow_custom_php set to 1 or 2 in conf.php to be allowed.
+CurrentPageVersion=Current page
+ListOfPageVersions=List of archived versions of page (a backup file of page is created each time you save a change, for example on the HTML source)
+EditInLineAllowedAreas=In mode Edit inline, the tags with contenteditable="true", an id and no PHP code inside can be changed and are saved when you leave them. Text formatting (bold, color, font size...), links, paragraphs, titles and lists are allowed, images and other HTML can only be changed in the HTML source.
+ErrorEditInlineElementNoId=This element has contenteditable="true" but no id, so it can not be edited inline.
+ErrorEditInlineElementNotFound=No element with id %s and contenteditable="true" was found in the source of the page.
+ErrorEditInlineElementNotUnique=The id %s is used by several elements with contenteditable="true" in the source of the page.
+ErrorEditInlineElementWithPhp=The element with id %s contains PHP code in the source of the page, so it can only be changed in the HTML source.
+ErrorEditInlineElementNotAllowedHtml=The element with id %s contains HTML that can not be edited inline (image, form, script, comment, other tags or attributes...), so it can only be changed in the HTML source.
+ErrorEditInlineElementNotPlainText=The element with id %s contains HTML in the source of the page and can only be edited inline as plain text, so it can only be changed in the HTML source.
+ErrorEditInlineContentNotAllowed=The new content of the element with id %s contains HTML tags or attributes that are not allowed, so it was not saved.

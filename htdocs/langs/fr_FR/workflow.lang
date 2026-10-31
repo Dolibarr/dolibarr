@@ -24,7 +24,7 @@ descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Lorsqu'une réception est validé
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Lorsqu'une réception est clôturée, classez les bons de commande source liés comme reçus (et si la quantité reçue par toutes les réceptions issues de la commande d'achat est le même que dans la commande d'achat à mettre à jour)
 # Autoclassify shipment
 descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Lorsqu'une facture client est validée, classez l'expédition source liée comme fermée (et si le montant de la facture est le même que le montant total des expéditions liées)
-descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Lorsqu'une facture client est validée, classez l'expédition source liée comme facturé (et si le montant de la facture est le même que le montant total des expéditions liées)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Lorsqu'un client facture est validé, classez l'expédition source liée comme facturé (et si le montant du facture est identique au montant total des expéditions liées, à l'exception d'une expédition sans vente commande, qui n'a pas de montant).
 # Autoclassify receptions
 descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Lorsqu'une facture d'achat est validée, classez les réceptions sources liées comme fermées (et si le montant de la facture est le même que le montant total des réceptions liées)
 descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Lorsqu'une facture d'achat est validée, classez les réceptions sources liées comme facturé (et si le montant de la facture est le même que le montant total des réceptions liées)

@@ -18,10 +18,8 @@ AccountancyCodeDepreciationAsset=Codi de compte (compte d'amortització d'actius
 AccountancyCodeDepreciationExpense=Codi de compte (compte de despeses d'amortització)
 AssetsLines=Actius
 ConfirmValidateAsset=Esteu segur que voleu validar aquest actiu amb la referència <b>%s</b>?
-DeleteType=Elimina
 DeleteAnAssetType=Suprimir un model d'actiu
 ConfirmDeleteAssetType=Esteu segur que voleu suprimir aquest model de recursos?
-ShowTypeCard=Mostra el model '%s'
 # Module label 'ModuleAssetsName'
 ModuleAssetsName=Actius
 # Module description 'ModuleAssetsDesc'
@@ -29,13 +27,18 @@ ModuleAssetsDesc=Descripció dels actius
 # Admin page
 AssetSetup=Configuració dels actius
 AssetSetupPage=Pàgina de configuració dels actius
-ExtraFieldsAssetModel=Atributs complementaris (model de l'actiu)
+ExtraFieldsAssetModel=Additionnal fields (Asset's model)
 AssetsType=Model d'actiu
 AssetsTypeId=Identificador del model d'actiu
 AssetsTypeLabel=Nom del model d'actiu
 AssetsTypes=Models d'actius
 ASSET_ACCOUNTANCY_CATEGORY=Grup de comptabilitat de l'immobilitzat
 ASSET_DEPRECIATION_DURATION_PER_YEAR=Període proporcional en dies per al càlcul d'amortització superior a un any
+ASSET_DEPRECIATION_DAY_COUNT_CONVENTION=Day count convention of the prorata temporis
+ASSET_DEPRECIATION_DAY_COUNT_CONVENTIONTooltip=How the depreciation of a <b>partial</b> period is computed, which means the first and the last year of an asset. A full annuity is always the value divided by the duration and is never impacted by this setting.<br><br>A convention defines <b>both</b> how the days of the period are counted <b>and</b> by how many days a full year is divided. The two must always match: counting real calendar days and dividing them by 360 overestimates every partial period by about 1.39 percent.<br><br><b>30/360</b>: every month counts 30 days and every year 360 days. The convention applied by most accounting firms in France.<br><b>Real days / 365</b>: real calendar days of the period, divided by 365.<br><b>Real days / real year</b>: real calendar days, each year divided by its own real length, 365 or 366. The most accurate on a period covering a leap day.<br><br>Example on an asset of 13000 depreciated over 5 years, put in service on March 10th and sold on February 23rd of the fourth year, fiscal years running from August to July. Cumulated depreciation at the disposal: 7684.44 with 30/360, 7700.27 with real days / 365, 7697.29 with real days / real year.<br><br><b>Warning</b>: changing this setting does not recompute the plans already generated. Save the depreciation options of an asset again to regenerate its plan.
+AssetDayCountConventionThirty360=30/360 - every month counts 30 days, every year 360 days (usual in France)
+AssetDayCountConventionAct365=Real days / 365 - real calendar days divided by 365
+AssetDayCountConventionActAct=Real days / real year - real calendar days, each year divided by its own length (365 or 366)
 # Menu
 MenuAssets=Actius
 MenuNewAsset=Actiu nou
@@ -142,5 +145,6 @@ AssetErrorCalculationDepreciationLines=Error en el càlcul de les línies d'amor
 AssetErrorReversalDateNotProvidedForMode=La data de reversió no es proporciona per al mètode d'amortització "%s"
 AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=La data de reversió ha de ser superior o igual a l'inici de l'exercici fiscal en curs per al mètode d'amortització "%s"
 AssetErrorReversalAmountNotProvidedForMode=L'import de la reversió no es proporciona per al mode d'amortització «%s».
+AssetErrorDegressiveDailyDurationForMode=A degressive depreciation needs a duration in years or in months for the depreciation mode '%s'.
 AssetErrorFetchCumulativeDepreciation=Error en recuperar l'import de l'amortització acumulada de la línia d'amortització
 AssetErrorSetLastCumulativeDepreciation=Error en registrar l'últim import de l'amortització acumulada

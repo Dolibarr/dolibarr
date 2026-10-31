@@ -215,6 +215,5 @@ PDFOctopusSituationInvoiceTitle=Situation Rechnung
 invoiceLineProgressError=Rechnungszeile Fortschritt kann nicht grösser oder gleich der nächsten Rechnungszeile sein
 ToCreateARecurringInvoice=Um eine wiederkehrende Rechnung für diesen Vertrag zu erstellen, zuerst einen Rechnungsentwurf erstellen und diesen dann in eine Vorlage umwandeln und zuletzt den Rechnungsintervall erfassen.
 ToCreateARecurringInvoiceGene=Um zukünftige wiederkehrende Rechnungen manuell zu erstellen, gehen Sie zum Menü <strong>%s - %s - %s</strong>.
-Salaries=Löhne
 SalaryInvoice=Lohn
 Sales=Verkauf

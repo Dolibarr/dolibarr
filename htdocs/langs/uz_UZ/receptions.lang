@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=Tasdiqlangan
 StatusReceptionProcessedShort=Qayta ishlangan
 ReceptionSheet=Qabul qilish varaqasi
 ValidateReception=Qabulni tasdiqlash
+DeleteReception=Delete reception
 ConfirmDeleteReception=Ushbu qabulxonani o'chirishni xohlaysizmi?
 ConfirmValidateReception=Are you sure you want to validate this reception with the reference <b>%s</b>?
 ConfirmCancelReception=Haqiqatan ham ushbu ziyofatni bekor qilmoqchimisiz?

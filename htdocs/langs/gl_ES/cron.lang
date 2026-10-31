@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = Consultar. tarefa programada
-Permission23102 = Crear/actualizar. tarefa programada
-Permission23103 = Borrar tarefa programada
-Permission23104 = Executar tarefa programada
 # Admin
 CronSetup=Configuración da xestión de tarefas programadas
 URLToLaunchCronJobs=URL para comprobar e iniciar tarefas programadas de cron desde un navegador
@@ -79,7 +74,7 @@ CronType_command=Comando Shell
 CronCannotLoadClass=Non se pode cargar o ficheiro de clase %s (para usar a clase %s)
 CronModuleNotEnabledInThisEntity=Módulo cron non activado nesta entidade (para usar o método %s do obxecto %s)
 CronCannotLoadObject=Cargouse o ficheiro de clase %s, pero o obxecto %s non se atopou nel
-UseMenuModuleToolsToAddCronJobs=Vaia ao menú "<a href="%s">Home - Ferramentas de administración - Traballos programados</a>" para ver e editar os traballos programados.
+UseMenuModuleToolsToAddCronJobs=Vaia ao menú "<a href="%s">Inicio - Ferramentas de administración - Tarefas programadas</a>" para ver e editar as tarefas programadas.
 JobDisabled=Tarefa deshabilitada
 MakeLocalDatabaseDumpShort=Copia local da base de datos
 MakeLocalDatabaseDump=Cree un volcado da base de datos local. Os parámetros son: compresión ('gz' ou 'bz' ou 'none'), tipo de copia de seguridade ('mysql', 'pgsql', 'auto'), 1, 'auto' ou nome de ficheiro para construír, número de ficheiros de copia de seguridade que gardar

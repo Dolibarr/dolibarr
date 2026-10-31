@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = Ukázať naplánovanú úlohu
-Permission23102 = Vytvoriť / upraviť naplánovanú úlohu
-Permission23103 = Odstrániť naplánovanú úlohu
-Permission23104 = Spustiť naplánovanú úlohu
 # Admin
 CronSetup=Naplánované úlohy správy Nastavenie
 URLToLaunchCronJobs=URL na kontrolu a spustenie kvalifikovaných úloh cron z prehliadača
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=V prostredí Unix by ste mali použiť nasledujúci záz
 CronExplainHowToRunWin=V prostredí Microsoft(tm) Windows môžete použiť nástroje Scheduled Task na spustenie príkazového riadka každých 5 minút
 CronMethodDoesNotExists=Trieda %s neobsahuje žiadnu metódu %s
 CronMethodNotAllowed=Metóda %s triedy %s je v zozname blokovaných metód
-CronJobDefDesc=Profily úloh cron sú definované v súbore deskriptora modulu. Keď je modul aktivovaný, sú načítané a dostupné, takže úlohy môžete spravovať z ponuky správcovských nástrojov %s.
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=Zoznam preddefinovaných profilov úloh cron
 # Menu
 EnabledAndDisabled=Povolené a zakázané
@@ -27,7 +22,7 @@ CronDelete=Odstrániť naplánované úlohy
 CronConfirmDelete=Naozaj chcete odstrániť tieto naplánované úlohy?
 CronExecute=Spustite teraz
 CronConfirmExecute=Naozaj chcete vykonať tieto naplánované úlohy teraz?
-CronInfo=Modul plánovanej úlohy umožňuje naplánovať úlohy tak, aby sa vykonávali automaticky. Úlohy je možné spustiť aj manuálne.
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=Práca
 CronNone=Ďalšie spustenie naplánovanej úlohy
 CronNotYetRan=Nikdy popravený
@@ -79,7 +74,7 @@ CronType_command=Shell príkaz
 CronCannotLoadClass=Nie je možné načítať súbor triedy %s (na použitie triedy %s)
 CronModuleNotEnabledInThisEntity=Modul Cron nie je v tejto entite povolený (na použitie metódy %s objektu %s)
 CronCannotLoadObject=Súbor triedy %s bol načítaný, ale nenašiel sa v ňom objekt %s
-UseMenuModuleToolsToAddCronJobs=Ak chcete zobraziť a upraviť naplánované úlohy, prejdite do ponuky "<a href="%s">Domov - Nástroje správcu - Naplánované úlohy</a>".
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=Práca je zakázaná
 MakeLocalDatabaseDumpShort=Lokálna záloha databázy
 MakeLocalDatabaseDump=Vytvorte lokálny výpis databázy. Parametre sú: kompresia ('gz' alebo 'bz' alebo 'none'), typ zálohy ('mysql', 'pgsql', 'auto'), 1, 'auto' alebo názov súboru na zostavenie, počet záložných súborov, ktoré sa majú zachovať

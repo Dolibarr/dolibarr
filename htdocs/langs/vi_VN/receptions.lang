@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=Đã xác nhận
 StatusReceptionProcessedShort=Đã xử lý
 ReceptionSheet=Phiếu tiếp nhận
 ValidateReception=Xác thực việc tiếp nhận
+DeleteReception=Delete reception
 ConfirmDeleteReception=Bạn có chắc chắn muốn xóa tiếp nhận này?
 ConfirmValidateReception=Bạn có chắc chắn muốn xác thực việc tiếp nhận này bằng tham chiếu <b>%s</b>?
 ConfirmCancelReception=Bạn có chắc chắn muốn hủy tiếp nhận này?

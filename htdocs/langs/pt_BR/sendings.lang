@@ -74,7 +74,6 @@ ShowShippableStatus=Mostrar status de entrega
 ShowReceiving=Mostrar recibo de entrega
 NonExistentOrder=Pedido inexistente
 StockQuantitiesAlreadyAllocatedOnPreviousLines =Quantidades de estoque já alocadas em linhas anteriores
-DocumentModelTyphon=Modelo de Documento Typhon
 DocumentModelStorm=Modelo de documento mais completo para comprovantes de entrega e compatibilidade com extracampos (logo ...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constante EXPEDITION_ADDON_NUMBER não definida
 SumOfProductVolumes=Soma do volume dos pedidos

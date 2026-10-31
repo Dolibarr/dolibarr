@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = Ütemezett feladat olvasása
-Permission23102 = Ütemezett feladat létrehozása/frissítése
-Permission23103 = Ütemezett feladat törlése
-Permission23104 = Ütemezett feladat végrehajtása
 # Admin
 CronSetup=Ütemezett feladatkezelés beállítása
 URLToLaunchCronJobs=URL a minősített cron-feladatok böngészőből történő ellenőrzéséhez és elindításához
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=Unix környezetben a következő crontab bejegyzést kel
 CronExplainHowToRunWin=A Microsoft(tm) Windows környezetben az Ütemezett feladat eszközöket használhatja a parancssor 5 percenkénti futtatására
 CronMethodDoesNotExists=A %s osztály nem tartalmaz metódusokat: %s
 CronMethodNotAllowed=A %s osztály %s metódusa a tiltott metódusok tiltólistáján található
-CronJobDefDesc=A Cron jobprofilok a modulleíró fájlban vannak meghatározva. Amikor a modul aktiválva van, azok betöltődnek és elérhetők, így a feladatokat a %s adminisztrációs eszközök menüből adminisztrálhatja.
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=Előre meghatározott cron feladatprofilok listája
 # Menu
 EnabledAndDisabled=Engedélyezve és letiltva
@@ -27,7 +22,7 @@ CronDelete=Ütemezett munkák törlése
 CronConfirmDelete=Biztosan törölni szeretné ezeket az ütemezett munkákat?
 CronExecute=Indítsa el most
 CronConfirmExecute=Biztosan most végre akarja hajtani ezeket az ütemezett feladatokat?
-CronInfo=Az ütemezett feladat modul lehetővé teszi a feladatok ütemezését az automatikus végrehajtásra. A munkák manuálisan is elindíthatók.
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=Fealdat
 CronNone=Az ütemezett feladat következő futtatása
 CronNotYetRan=Soha nem végezték ki
@@ -79,7 +74,7 @@ CronType_command=Shell parancs
 CronCannotLoadClass=Nem sikerült betölteni a %s osztályfájlt (a %s osztály használatához)
 CronModuleNotEnabledInThisEntity=A Cron modul nincs engedélyezve ebben az entitásban (a %s objektum %s metódusának használatához)
 CronCannotLoadObject=A(z) %s osztályfájl betöltve, de a(z) %s objektum nem található benne
-UseMenuModuleToolsToAddCronJobs=Lépjen be a "<a href="%s">Főoldal - Felügyeleti eszközök - Ütemezett munkák</a>" menübe az ütemezett munkák megtekintéséhez és szerkesztéséhez.
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=A feladat letiltva
 MakeLocalDatabaseDumpShort=Helyi adatbázis biztonsági mentése
 MakeLocalDatabaseDump=Helyi adatbázis kiíratásának létrehozása. A paraméterek a következők: tömörítés ('gz' vagy 'bz' vagy 'none'), biztonsági mentés típusa ('mysql', 'pgsql', 'auto'), 1, 'auto' vagy felépítendő fájlnév, megőrzendő biztonsági mentési fájlok száma

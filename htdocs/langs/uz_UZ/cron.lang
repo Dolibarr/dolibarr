@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = Rejalashtirilgan ishni o'qing
-Permission23102 = Rejalashtirilgan ishni yaratish / yangilash
-Permission23103 = Rejalashtirilgan ishni o'chirish
-Permission23104 = Rejalashtirilgan ishni bajaring
 # Admin
 CronSetup=Rejalashtirilgan ishni boshqarish
 URLToLaunchCronJobs=Brauzerdan malakali cron ishlarini tekshirish va ishga tushirish uchun URL
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=Unix muhitida buyruq satrini har 5 daqiqada bajarish uch
 CronExplainHowToRunWin=Microsoft (tm) Windows muhitida har 5 daqiqada buyruq satrini bajarish uchun Rejalashtirilgan Vazifa vositalaridan foydalanishingiz mumkin
 CronMethodDoesNotExists=%s sinfida hech qanday usul mavjud emas %s
 CronMethodNotAllowed=%s sinfining %s usuli taqiqlangan usullar bloklangan ro‘yxatida
-CronJobDefDesc=Cron ishi profillari modul identifikatori faylida aniqlanadi. Modul faollashtirilganda, ular yuklanadi va mavjud bo'ladi, shuning uchun siz ishlarni administrator vositalari menyusidan %s boshqarishingiz mumkin.
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=Oldindan belgilangan cron ish profillari ro'yxati
 # Menu
 EnabledAndDisabled=Yoqilgan va o'chirilgan
@@ -27,7 +22,7 @@ CronDelete=Rejalashtirilgan ishlarni o'chirish
 CronConfirmDelete=Ushbu rejalashtirilgan ishlarni o'chirishni xohlaysizmi?
 CronExecute=Hozir ishga tushiring
 CronConfirmExecute=Ushbu rejalashtirilgan ishlarni hoziroq bajarishni xohlaysizmi?
-CronInfo=Rejalashtirilgan ish moduli ishlarni avtomatik ravishda bajarilishini rejalashtirishga imkon beradi. Ishlarni qo'lda boshlash ham mumkin.
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=Ish
 CronNone=Rejalashtirilgan vazifaning keyingi ishga tushirilishi
 CronNotYetRan=Hech qachon ijro etilmagan
@@ -79,7 +74,7 @@ CronType_command=Shell buyrug'i
 CronCannotLoadClass=%s sinf fayli yuklanmadi (%s sinfidan foydalanish uchun)
 CronModuleNotEnabledInThisEntity=Bu obyektda Cron moduli yoqilmagan (%s obyektining %s usulidan foydalanish uchun)
 CronCannotLoadObject=%s sinf fayli yuklandi, lekin %s ob'ekti topilmadi
-UseMenuModuleToolsToAddCronJobs=Rejalashtirilgan ishlarni ko'rish va tahrirlash uchun "<a href="%s"> Bosh sahifa - Administrator vositalari - Rejalashtirilgan ish o'rinlari </a>" menyusiga o'ting.
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=Ish o'chirilgan
 MakeLocalDatabaseDumpShort=Mahalliy ma'lumotlar bazasini zaxiralash
 MakeLocalDatabaseDump=Mahalliy ma'lumotlar bazasi axlatxonasini yarating. Parametrlar quyidagilardir: siqish ('gz' yoki 'bz' yoki 'yo'q'), zaxira turi ('mysql', 'pgsql', 'auto'), 1, 'auto' yoki fayl nomi yaratish, saqlash uchun zaxira fayllar soni

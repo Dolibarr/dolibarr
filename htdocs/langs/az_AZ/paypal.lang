@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal modulunun qurulması
-PaypalDesc=Bu modul müştərilərə <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a> vasitəsilə ödəniş etməyə imkan verir. Bu, ad-hoc ödəniş və ya Dolibarr obyekti ilə əlaqəli ödəniş üçün istifadə edilə bilər (qaimə, sifariş, ...)
+PaypalDesc=This module allows payment by customers via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. This can be used for an ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
 PaypalOrCBDoPayment=PayPal ilə ödəyin (Kart və ya PayPal)
 PaypalDoPayment=PayPal ilə ödəyin
 PAYPAL_API_SANDBOX=Rejim testi/qum qutusu
@@ -19,7 +19,7 @@ NewOnlinePaymentFailed=Yeni onlayn ödəniş cəhd edildi, lakin alınmadı
 ONLINE_PAYMENT_SENDEMAIL=Hər ödəniş cəhdindən sonra bildirişlər üçün e-poçt ünvanı (uğur və uğursuzluq üçün)
 ReturnURLAfterPayment=Ödənişdən sonra URL-i qaytarın
 ValidationOfOnlinePaymentFailed=Onlayn ödənişin doğrulanması uğursuz oldu
-PaymentSystemConfirmPaymentPageWasCalledButFailed=Ödənişin təsdiqi səhifəsi ödəniş sistemi tərəfindən çağırıldı xəta qaytardı
+PaymentSystemConfirmPaymentPageWasCalledButFailed=The payment confirmation page was called by the online payment system and returned an error
 SetExpressCheckoutAPICallFailed=SetExpressCheckout API çağırışı uğursuz oldu.
 DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API çağırışı uğursuz oldu.
 DetailedErrorMessage=Ətraflı Xəta Mesajı

@@ -44,3 +44,6 @@ markRateShouldBeLesserThan100=Le taux de marque doit être inférieur à 100
 ShowMarginInfos=Afficher les infos de marges
 CheckMargins=Détails des marges
 MarginPerSaleRepresentativeWarning=Le rapport de marge par représentant commercial utilise le lien entre les représentants commerciaux tiers pour calculer la marge de chaque représentant. Étant donné que certains représentants commerciaux tiers n'ont pas de représentant dédié, tandis que d'autres peuvent être liés à plusieurs, certains montants peuvent ne pas figurer dans ce rapport (en l'absence de représentant). Certains montants peuvent également apparaître sur des lignes différentes (pour chaque représentant commercial).
+MarginUpdateLinkedBuyingPrice=Suggest to propagate the cost price modified on a line to all the lines of the linked proposals, orders and invoices that has the same product (users will decide yes or no at eachmodification)
+UpdateLinkedBuyingPrice=Update the cost price on all lines (with the same product) of the linked documents
+UpdateLinkedBuyingPriceQuestion=The cost price of this line has changed. Apply it to the lines of the linked documents that has the same product ?

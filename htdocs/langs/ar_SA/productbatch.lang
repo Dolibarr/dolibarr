@@ -47,9 +47,13 @@ HideLots=إخفاء الكثير
 OutOfOrder=خارج عن السيطرة
 InWorkingOrder=عمل الأمر بسلاسة
 ToReplace=يحل محل
-CantMoveNonExistantSerial=خطأ. أنت تطلب نقلًا على سجل لمسلسل لم يعد موجودًا بعد الآن. قد تأخذ نفس المسلسل في نفس المستودع عدة مرات في نفس الشحنة أو تم استخدامه بواسطة شحنة أخرى. قم بإزالة هذه الشحنة وإعداد واحدة أخرى.
+CantMoveNonExistantSerial=Error: You requested a stock movement on a record for a serial that no longer exists. Maybe you used the same serial in the same warehouse several times in the same shipment or it was used by another shipment. Remove this shipment and prepare another one.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=إصلاح تشغيل جدول الدفعة غير مكتمل باستخدام المعلمة '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= مطلوب تصحيح المخزون بسبب الرقم التسلسلي الفريد.
 ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
 ForceBatchesNeedStockManagement=A product with batch/lot management must be managed in stock (stock management force to yes)
 BatchInformationNotfound=لم يتم العثور على معلومات الدفعة
+EnterMultipleSerialNumbers=Enter multiple serial numbers
+EnterOneSerialNumberPerLine=Type, paste or scan the serial numbers, one per line
+NbOfSerialNumbersDetected=%s serial number(s) detected
+ErrorDuplicateSerialNumberInList=Serial number %s is present several times in the list

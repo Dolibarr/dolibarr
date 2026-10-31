@@ -5,7 +5,7 @@ StripeOrCBDoPayment=الدفع ببطاقة ائتمان أو عبر Stripe
 FollowingUrlAreAvailableToMakePayments=عناوين URL التالية متاحة لتقديم صفحة للعميل كي يسدد دفعة مرتبطة بعناصر Dolibarr
 PaymentForm=نموذج الدفع
 WelcomeOnPaymentPage=مرحبًا بك في خدمة الدفع الإلكتروني
-ThisScreenAllowsYouToPay=تتيح لك هذه الشاشة إجراء دفعة إلكترونية إلى %s.
+ThisScreenAllowsYouToPay=This screen allows you to make an online payment to %s.
 ThisIsInformationOnPayment=هذه معلومات الدفعة المطلوب تنفيذها
 ToComplete=للإكمال
 YourEMail=البريد الإلكتروني لاستلام تأكيد الدفع
@@ -25,7 +25,7 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=عنوان URL لتقديم صفحة د
 ToOfferALinkForOnlinePaymentOnMemberSubscription=عنوان URL لتقديم صفحة دفع إلكتروني عبر %s لاشتراك عضو
 ToOfferALinkForOnlinePaymentOnDonation=عنوان URL لتقديم صفحة دفع إلكتروني عبر %s لسداد تبرع
 YouCanAddTagOnUrl=يمكنك أيضًا إضافة معلمة عنوان URL ‏<b>&tag=value</b> إلى أي من هذه العناوين (وهي إلزامية فقط للدفعات غير المرتبطة بعنصر) لإضافة وسم تعليق خاص بالدفعة.<br>ولعناوين URL الخاصة بالدفعات غير المرتبطة بعنصر موجود، يمكنك أيضًا إضافة المعلمة <strong>&noidempotency=1</strong> للسماح باستخدام الرابط نفسه والوسم نفسه عدة مرات (قد تقيّد بعض طرق الدفع العملية بدفعة واحدة لكل رابط مختلف عند غياب هذه المعلمة)
-YouCanEmbedOnWebsite=لدمج صفحة الدفع في موقع Dolibarr، يمكنك تضمين المعلمة: <b>&ws=website_ref</b>.<br>ويجب أيضًا إنشاء صفحتين في الموقع باسمي <b>paymentok</b> و<b>paymentko</b> لاستقبال إعادة التوجيه بعد نجاح الدفع الإلكتروني أو فشله.
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful or failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=اضبط Stripe باستخدام عنوان URL ‏<b>%s</b> لتُنشأ الدفعة تلقائيًا بعد اعتمادها من Stripe.
 AccountParameter=معلمات الحساب
 UsageParameter=معلمات الاستخدام
@@ -110,3 +110,4 @@ PAYBOX_PBX_RANG=قيمة PBX RANG
 PAYBOX_PBX_IDENTIFIANT=قيمة PBX ID
 PAYBOX_HMAC_KEY=مفتاح HMAC
 FeatureNotUsedAccordingtoSetup=هذه الميزة غير مستخدمة وفق إعدادات %s
+PaymentRecordedButPostPocessingKo=Your payment was recorded by the payment system. However, it appears that our post-payment processing could not be fully completed. We were alerted and will try to solve this soon. We recommend you to not try to pay a second time, and send us a screenshot of this page by email to be sure so we take into account the issue.

@@ -27,6 +27,7 @@ Earnings=Earnings
 TotalEarnings=Total earnings
 TotalDeductions=Total deductions
 NetPaid=净支出
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "users" on salaries
@@ -55,8 +56,6 @@ FillFieldFirst=先填写雇员字段
 UpdateAmountWithLastSalary=Set amount of last salary
 MakeTransferRequest=Make transfer request
 VirementOrder=汇款请求
-WithdrawalReceipt=银行转账的订单
-OrderWaiting=待处理订单
 FillEndOfMonth=End of month
 
 # Shortcuts
