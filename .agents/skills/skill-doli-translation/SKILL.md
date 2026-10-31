@@ -62,6 +62,19 @@ Usage (from the repository root):
 - `-r dolimed.<file>` limits the pull to one resource.
 - The script ends by reminding to also run: `dev/fixaltlanguages.sh fix all` (see below).
 
+## Check that translations do not contain the keyword "notranslate"
+
+After a pull, check that no translated value contains the keyword `notranslate` (it must never be part of a translation):
+
+```
+grep -rn "notranslate" htdocs/`projectname`/langs/ --include=*.lang | grep -v "/en_US/"
+```
+
+- Such translations must not be fixed in the local files (they would be overwritten by the next pull) but on Transifex.
+- For each language `ll_LL` found (e.g. `fr_FR`), the following link opens the Transifex page listing the translations to fix:
+  `https://app.transifex.com/`organizationname`/`projectname`/translate/#ll_LL/$?q=translated_text%3Anotranslate`
+- Once fixed on Transifex, pull the language again with `txpull.sh ll_LL`.
+
 ## Complete workflow for a new translation key
 
 Example: add the key `DossierMedical=Dossier médical` feature string.
@@ -72,6 +85,7 @@ Example: add the key `DossierMedical=Dossier médical` feature string.
 4. Wait for translators (or the translation memory) to translate it on Transifex.
 5. Run `./dev/translation/txpull.sh fr_FR` (or `all`) to get the translated files.
 6. Run `dev/fixaltlanguages.sh fix all` to deduplicate entries that already exist in the parent language file.
+7. Check that no translation contains the keyword `notranslate` (see above) and fix them on Transifex if any.
 
 ## Related tools in dev/translation/
 
