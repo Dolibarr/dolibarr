@@ -383,39 +383,57 @@ if (empty($reshook)) {
 		$tmpmember = new Adherent($db);
 		$adht = new AdherentType($db);
 		$note = GETPOST('note', 'restricthtml');
+		$activemode = GETPOST('activemode', 'aZ09') ?: 'extend';
 
 		$nbcreated = 0;
 		$now = dol_now();
 		$amount = price2num(GETPOST('amount', 'alpha'));
 		$error_array = array();
-		// Honour MEMBER_SUBSCRIPTION_SUGGEST_END_OF_MONTH and
-		// MEMBER_SUBSCRIPTION_SUGGEST_END_OF_YEAR the same way as the
-		// single subscription form (adherents/subscription.php), otherwise
-		// the mass action falls back to a one-year duration in
-		// Adherent::subscription() and ignores the global setting.
-		$datesubend = 0;
-		if (getDolGlobalInt('MEMBER_SUBSCRIPTION_SUGGEST_END_OF_MONTH')) {
-			$datesubend = dol_get_last_day((int) dol_print_date($now, "%Y"), (int) dol_print_date($now, "%m"));
-		} elseif (getDolGlobalInt('MEMBER_SUBSCRIPTION_SUGGEST_END_OF_YEAR')) {
-			$datesubend = dol_get_last_day((int) dol_print_date($now, "%Y"));
-		}
+
 		$db->begin();
+		$today = dol_mktime(0, 0, 0, (int) dol_print_date($now, "%m"), (int) dol_print_date($now, "%d"), (int) dol_print_date($now, "%Y"));
 		foreach ($toselect as $id) {
 			$res = $tmpmember->fetch($id);
 			if ($res > 0) {
-				// Mirror the single subscription form (adherents/subscription.php): if no
-				// global EOM/EOY override was set, compute the end date from the member's
-				// AdherentType duration_value/duration_unit so a 6-month type does not
-				// silently fall back to the 1-year default in Adherent::subscription()
-				$datesubendthismember = $datesubend;
-				if (!$datesubendthismember && $tmpmember->typeid > 0) {
-					if ($adht->fetch($tmpmember->typeid) > 0) {
-						$delay = !empty($adht->duration_value) ? $adht->duration_value : 1;
-						$delayunit = !empty($adht->duration_unit) ? $adht->duration_unit : 'y';
-						$datesubendthismember = dol_time_plus_duree(dol_time_plus_duree($now, $delay, $delayunit), -1, 'd');
-					}
+				// Is the member still up to date?
+				$isactive = !empty($tmpmember->datefin) && $tmpmember->datefin >= $today;
+
+				if ($isactive && $activemode == 'ignore') {
+					// Silently skip: the user explicitly asked not to touch up-to-date members.
+					continue;
 				}
-				$result = $tmpmember->subscription($now, (float) $amount, 0, '', $note, '', '', '', $datesubendthismember);
+
+				if ($isactive && $activemode == 'error') {
+					// Treat an active subscription as an error: nothing is created and the batch is rolled back.
+					$error++;
+					$error_array[$id] = $tmpmember->getNomUrl(1) . '&mdash;' . $langs->trans("ErrorMemberSubscriptionStillActive", dol_print_date($tmpmember->datefin, 'day'));
+					continue;
+				}
+
+				// Rule 1: expired member -> new subscription starts today.
+				// Rule 2: up-to-date member + 'extend' -> new subscription starts the day after current datefin,
+				// mirroring the single subscription form (adherents/subscription.php).
+				$datestart = $now;
+				if ($isactive) {	// only 'extend' reaches this point
+					$datestart = dol_time_plus_duree($tmpmember->datefin, 1, 'd');
+				}
+
+				// Compute the end date. Honour MEMBER_SUBSCRIPTION_SUGGEST_END_OF_MONTH /
+				// MEMBER_SUBSCRIPTION_SUGGEST_END_OF_YEAR like the single subscription form, otherwise
+				// compute from the start date and the AdherentType duration so a 6-month type does not
+				// silently fall back to the 1-year default in Adherent::subscription().
+				$datesubendthismember = 0;
+				if (getDolGlobalInt('MEMBER_SUBSCRIPTION_SUGGEST_END_OF_MONTH')) {
+					$datesubendthismember = dol_get_last_day((int) dol_print_date($datestart, "%Y"), (int) dol_print_date($datestart, "%m"));
+				} elseif (getDolGlobalInt('MEMBER_SUBSCRIPTION_SUGGEST_END_OF_YEAR')) {
+					$datesubendthismember = dol_get_last_day((int) dol_print_date($datestart, "%Y"));
+				} elseif ($tmpmember->typeid > 0 && $adht->fetch($tmpmember->typeid) > 0) {
+					$delay = !empty($adht->duration_value) ? $adht->duration_value : 1;
+					$delayunit = !empty($adht->duration_unit) ? $adht->duration_unit : 'y';
+					$datesubendthismember = dol_time_plus_duree(dol_time_plus_duree($datestart, $delay, $delayunit), -1, 'd');
+				}
+
+				$result = $tmpmember->subscription($datestart, (float) $amount, 0, '', $note, '', '', '', $datesubendthismember);
 				if ($result < 0) {
 					$error++;
 					$error_array[$id] = $tmpmember->getNomUrl(1) . '&mdash;' . $tmpmember->error;
@@ -938,6 +956,16 @@ if ($massaction == 'createsubscription') {
 		array('label' => $langs->trans("DateSubscription"), 'type' => 'other', 'value' => $date),
 		array('label' => $langs->trans("Amount"), 'type' => 'text', 'value' => price($amount, 0, '', 0), 'name' => 'amount'),
 		array('label' => $langs->trans("Note"), 'type' => 'text', 'value' => '', 'name' => 'note'),
+		array('type' => 'separator'),
+		array('label' => $langs->trans("MembersWithActiveSubscription"),
+			'type' => 'select',
+			'name' => 'activemode',
+			'values' => array(
+				'extend' => $langs->trans("ExtendActiveSubscription"),
+				'ignore' => $langs->trans("IgnoreActiveSubscription"),
+				'error' => $langs->trans("ErrorActiveSubscription"),
+			),
+			'default' => 'extend'),
 		array('type' => 'separator'),
 		array('label' => $langs->trans("MoreActions"), 'type' => 'other', 'value' => $langs->trans("None").' '.img_warning($langs->trans("WarningNoComplementaryActionDone"))),
 	);
