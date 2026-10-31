@@ -90,14 +90,14 @@ $objecttype = 'myobject';
 $object = new MyObject($db);
 
 // List of object we want to manage statistics
-$usercanreadstatistic = 1;
+// BEGIN MODULEBUILDER RIGHTS
 $enablepermissioncheck = getDolGlobalInt('MYMODULE_ENABLE_PERMISSION_CHECK');
 if ($enablepermissioncheck) {
-	$usercanreadstatistic = $user->hasRight($objecttype, 'read');
-	if (getDolGlobalInt('MAIN_NEED_EXPORT_PERMISSION_TO_READ_STATISTICS')) {
-		$usercanreadstatistic = $user->hasRight($objecttype, 'export');
-	}
+	$usercanreadstatistic = $user->hasRight('mymodule', 'myobject', 'read');
+} else {
+	$usercanreadstatistic = 1;
 }
+// END MODULEBUILDER RIGHTS
 
 if (!$usercanreadstatistic) {
 	accessforbidden();

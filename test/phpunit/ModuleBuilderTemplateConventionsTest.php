@@ -288,6 +288,29 @@ class ModuleBuilderTemplateConventionsTest extends CommonClassTest
 	}
 
 	/**
+	 * Every page generated for an object carries exactly one RIGHTS block, and the class one RIGHTSCONFIG pair.
+	 *
+	 * @return void
+	 */
+	public function testRightsMarkersArePresentOnceInTemplates()
+	{
+		$dir = __DIR__.'/../../htdocs/modulebuilder/template/';
+		$pages = array(
+			'myobject_card.php', 'myobject_list.php', 'myobject_contact.php', 'myobject_document.php',
+			'myobject_note.php', 'myobject_agenda.php', 'ajax/myobject.php', 'stats/myobject_index.php',
+		);
+		foreach ($pages as $page) {
+			$content = file_get_contents($dir.$page);
+			$this->assertSame(1, preg_match_all('/^\h*\/\/ BEGIN MODULEBUILDER RIGHTS$/m', $content), 'BEGIN MODULEBUILDER RIGHTS in '.$page);
+			$this->assertSame(1, preg_match_all('/^\h*\/\/ END MODULEBUILDER RIGHTS$/m', $content), 'END MODULEBUILDER RIGHTS in '.$page);
+		}
+
+		$class = file_get_contents(self::CLASS_TPL);
+		$this->assertSame(1, preg_match_all('/^\h*\/\/ BEGIN MODULEBUILDER RIGHTSCONFIG$/m', $class));
+		$this->assertSame(1, preg_match_all('/^\h*\/\/ END MODULEBUILDER RIGHTSCONFIG$/m', $class));
+	}
+
+	/**
 	 * Copy a template into a temporary file, so the generation functions can work on it.
 	 *
 	 * @param	string	$tpl	Path of the template

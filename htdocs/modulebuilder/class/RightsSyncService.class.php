@@ -139,7 +139,7 @@ final class DescriptorRightsSyncService implements RightsSyncService
 
 		if ($cmd->scope === RightsSyncCommand::SCOPE_OBJECT) {
 			if ($cmd->actionType === RightsSyncCommand::ACTION_ADD) {
-				return $this->addObjectRights($permissions, $cmd->module, $cmd->objectName);
+				return $this->addObjectRights($permissions, $cmd->module, $cmd->objectName, $cmd->crudCodes, $cmd->rightsKey);
 			}
 			return $this->removeObjectRights($permissions, $cmd->objectName);
 		}
@@ -168,23 +168,32 @@ final class DescriptorRightsSyncService implements RightsSyncService
 	}
 
 	/**
-	 * Append the three CRUD rights of a freshly generated object.
+	 * Append the CRUD rights of a freshly generated object that its key does not declare yet.
 	 *
 	 * @param array<int,array<int,string>> $permissions Current rights
 	 * @param string                       $module      Module name
 	 * @param string                       $objectName  Object being generated
-	 * @return array<int,array<int,string>>|null New rights, or null when the object already owns rights
+	 * @param string[]                     $crudCodes   Crud codes the generated pages check
+	 * @param string                       $rightsKey   Permission key replacing the object key, '' to keep the object key
+	 * @return array<int,array<int,string>>|null New rights, or null when the key already declares every code
 	 */
-	private function addObjectRights(array $permissions, string $module, string $objectName): ?array
+	private function addObjectRights(array $permissions, string $module, string $objectName, array $crudCodes, string $rightsKey): ?array
 	{
-		$target = dol_strtolower($objectName);
+		$target = $rightsKey !== '' ? $rightsKey : dol_strtolower($objectName);
+		$missing = array_fill_keys($crudCodes, true);
 		foreach ($permissions as $right) {
-			if (isset($right[self::INDEX_OBJECT]) && dol_strtolower((string) $right[self::INDEX_OBJECT]) === $target) {
-				return null;
+			if (isset($right[self::INDEX_OBJECT], $right[self::INDEX_CRUD]) && dol_strtolower((string) $right[self::INDEX_OBJECT]) === $target) {
+				unset($missing[(string) $right[self::INDEX_CRUD]]);
 			}
+		}
+		if (empty($missing)) {
+			return null;
 		}
 
 		foreach (self::CRUD_LABELS as $crud => $template) {
+			if (!isset($missing[$crud])) {
+				continue;
+			}
 			$permissions[] = array(
 				self::INDEX_LABEL => sprintf($template, $objectName, dol_ucfirst($module)),
 				self::INDEX_OBJECT => $target,

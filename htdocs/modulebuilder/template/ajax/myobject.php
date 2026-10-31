@@ -90,9 +90,11 @@ $value = GETPOST('value', 'aZ09');
 $object = new MyObject($db);
 
 // Security check
+// BEGIN MODULEBUILDER RIGHTS
 if (!$user->hasRight('mymodule', 'myobject', 'write')) {
 	accessforbidden();
 }
+// END MODULEBUILDER RIGHTS
 
 /*
  * View
