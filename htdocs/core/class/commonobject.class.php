@@ -4934,6 +4934,66 @@ abstract class CommonObject
 	}
 
 	/**
+	 * Link this new order or invoice to the other documents of the sales chain (proposal, order, invoice) that are linked to the proposal
+	 * or order it is created from (see $this->linked_objects). For example the order and the invoice created from the same proposal are linked together.
+	 *
+	 * @return	void
+	 * @see		add_object_linked()
+	 */
+	protected function addLinkedFromOrigins()
+	{
+		$rank = array('propal' => 1, 'commande' => 2, 'facture' => 3);	// The oldest document of the sales chain is the source of the link
+		$mytype = $this->getElementType();
+		// @phan-suppress-next-line PhanUndeclaredProperty
+		$mysocid = (property_exists($this, 'socid') ? (int) $this->socid : 0);
+		$savedlinks = array($this->linkedObjectsIds, $this->linkedObjects);
+
+		$this->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0);
+		$linked = $this->linkedObjectsIds;	// Documents already linked to this object, by type
+		$sqlvalues = '';
+		foreach ((array) $this->linked_objects as $origintype => $originids) {
+			$originids = array_filter(array_map('intval', (array) $originids));
+			if (!isset($rank[$mytype], $rank[$origintype]) || $rank[$origintype] >= $rank[$mytype] || empty($originids)) {
+				continue;
+			}
+			// Follow the links of the origins of the same thirdparty and entity only
+			$origins = array();
+			$sql = "SELECT rowid FROM ".$this->db->prefix().$this->db->sanitize($origintype);
+			$sql .= " WHERE rowid IN (".$this->db->sanitize(implode(',', $originids)).") AND fk_soc = ".((int) $mysocid)." AND entity IN (".getEntity($origintype).")";
+			$resql = $this->db->query($sql);
+			while ($resql && $obj = $this->db->fetch_object($resql)) {
+				$origins[] = (int) $obj->rowid;
+			}
+			if (empty($origins)) {
+				continue;
+			}
+
+			// Documents linked to these origins, as source or as target
+			$sql = "SELECT fk_source, sourcetype, fk_target, targettype FROM ".$this->db->prefix()."element_element";
+			$sql .= " WHERE (sourcetype = '".$this->db->escape($origintype)."' AND fk_source IN (".$this->db->sanitize(implode(',', $origins))."))";
+			$sql .= " OR (targettype = '".$this->db->escape($origintype)."' AND fk_target IN (".$this->db->sanitize(implode(',', $origins))."))";
+			$resql = $this->db->query($sql);
+			while ($resql && $obj = $this->db->fetch_object($resql)) {
+				$fromorigin = ($obj->sourcetype == $origintype && in_array((int) $obj->fk_source, $origins));
+				$type = ($fromorigin ? $obj->targettype : $obj->sourcetype);
+				$id = (int) ($fromorigin ? $obj->fk_target : $obj->fk_source);
+				if (!isset($rank[$type]) || $type == $mytype || in_array($id, $linked[$type] ?? array())) {
+					continue;
+				}
+				$linked[$type][] = $id;
+				$link = ($rank[$type] < $rank[$mytype]) ? array($id, $type, (int) $this->id, $mytype) : array((int) $this->id, $mytype, $id, $type);	// fk_source, sourcetype, fk_target, targettype
+				$sqlvalues .= ($sqlvalues ? ", " : " ")."(".((int) $link[0]).", '".$this->db->escape($link[1])."', ".((int) $link[2]).", '".$this->db->escape($link[3])."')";
+			}
+		}
+		if ($sqlvalues) {
+			$sql = "INSERT INTO ".$this->db->prefix()."element_element (fk_source, sourcetype, fk_target, targettype) VALUES".$sqlvalues;
+			$this->db->query($sql); // Best-effort: do not fail the creation
+		}
+
+		list($this->linkedObjectsIds, $this->linkedObjects) = $savedlinks;
+	}
+
+	/**
 	 * Return an element type string formatted like element_element target_type and source_type
 	 *
 	 * @return string

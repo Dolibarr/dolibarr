@@ -859,6 +859,7 @@ class Facture extends CommonInvoice
 						}
 					}
 				}
+				$this->addLinkedFromOrigins();
 			}
 
 			// Propagate contacts
