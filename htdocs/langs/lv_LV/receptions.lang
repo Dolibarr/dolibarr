@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=Apstiprināts
 StatusReceptionProcessedShort=Apstrādāts
 ReceptionSheet=Uzņemšanas lapa
 ValidateReception=Apstipriniet uzņemšanu
+DeleteReception=Delete reception
 ConfirmDeleteReception=Vai tiešām vēlaties dzēst šo uztveršanu?
 ConfirmValidateReception=Vai tiešām vēlaties apstiprināt šo saņemšanu ar atsauci <b>%s</b> >?
 ConfirmCancelReception=Vai tiešām vēlaties atcelt šo uzņemšanu?

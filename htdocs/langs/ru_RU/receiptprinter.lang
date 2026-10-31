@@ -69,7 +69,6 @@ DOL_VALUE_DAY=День выставления счета
 DOL_VALUE_DAY_LETTERS=День счета буквами
 DOL_LINE_FEED_REVERSE=Перенос строки в обратном направлении
 InvoiceID=ID Счета-фактуры
-InvoiceRef=Ссылка Счета-фактуры
 DOL_PRINT_OBJECT_LINES=Строки счета-фактуры
 DOL_VALUE_CUSTOMER_FIRSTNAME=Имя клиента
 DOL_VALUE_CUSTOMER_LASTNAME=Фамилия клиента

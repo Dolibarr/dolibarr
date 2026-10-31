@@ -2271,7 +2271,7 @@ if ($ispaymentok) {
 
 		$companylangs = new Translate('', $conf);
 		$companylangs->setDefaultLang($myCompanyDefaultLang);
-		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'paybox', 'stripe'));
+		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'stripe'));
 
 		$sendto = $sendemail;
 		$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
@@ -2380,7 +2380,7 @@ if ($ispaymentok) {
 	if ($sendemail) {
 		$companylangs = new Translate('', $conf);
 		$companylangs->setDefaultLang($mysoc->default_lang);
-		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'paybox', 'stripe'));
+		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'stripe'));
 
 		$sendto = $sendemail;
 		$from = getDolGlobalString('MAILING_EMAIL_FROM', getDolGlobalString("MAIN_MAIL_EMAIL_FROM"));

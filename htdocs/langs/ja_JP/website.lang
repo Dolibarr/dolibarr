@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - website
 Shortname=コー​​ド
 WebsiteName=ウェブサイトの名前
-WebsiteSetupDesc=使用したいウェブサイトをここに作成する。次に、メニューのWebサイトに移動して編集する。
+WebsiteSetupDesc=使用したいウェブサイトをここに作成してください。その後、メニュー ウェブサイトに移動して編集してください。
 DeleteWebsite=ウェブサイトを削除
 ConfirmDeleteWebsite=このWebサイトを削除してもよいか？その全ページとコンテンツも削除される。アップロードされたファイル(メディアディレクトリ、ECMモジュールなど)は残る。
 WEBSITE_TYPE_CONTAINER=ページ/コンテナのタイプ
@@ -17,8 +17,8 @@ WEBSITE_ROBOT=ロボットファイル(robots.txt)
 WEBSITE_HTACCESS=ウェブサイトの.htaccessファイル
 WEBSITE_MANIFEST_JSON=ウェブサイトmanifest.jsonファイル
 WEBSITE_KEYWORDSDesc=値を区切るにはコンマを使用する
-EnterHereReadmeInformation=ここに ウェブサイトの説明を入力する。 ウェブサイトをテンプレートとして配布する場合、ファイルは temptate パッケージに含まれる。
-EnterHereLicenseInformation=ここにウェブサイトのコードのライセンスを入力すること。 ウェブサイトをテンプレートとして配布する場合、ファイルは temptate パッケージに含まれる。
+EnterHereReadmeInformation=ここに ウェブサイト の説明を入力してください。ウェブサイト をテンプレートとして配布する場合、ファイル がテンプレート パッケージに含まれます。
+EnterHereLicenseInformation=ここに、ウェブサイト の コード のライセンスを入力してください。ウェブサイト をテンプレートとして配布する場合、ファイル がテンプレート パッケージに含まれます。
 HtmlHeaderPage=HTMLヘッダー(このページにのみ固有)
 PageNameAliasHelp=ページの名前またはエイリアス。 <br>このエイリアスは、WebサイトがWebサーバーの仮想ホスト(Apacke、Nginxなど)から実行されるときにSEOURLを偽造するためにも使用される。このエイリアスを編集するには、ボタン「<strong>%s</strong>」を使用する。
 EditTheWebSiteForACommonHeader=注：全ページにパーソナライズされたヘッダーを定義する場合は、ページ/コンテナーではなくサイトレベルでヘッダーを編集する。
@@ -51,12 +51,12 @@ ToDeployYourWebsiteOnLiveYouHave3Solutions=この ウェブサイト をライ�
 SetHereVirtualHost=<u>Apache/NGinx/...で使用 </u><br>専用の仮想ホストをWEBサーバ (Apache, Nginx, ...) 上に作成し、PHP 使用可で、ルートディレクトリを以下に指定する<br><strong>%s</strong>
 ExampleToUseInApacheVirtualHostConfig=Apache仮想ホストの設定で使用する例：
 YouCanAlsoTestWithPHPS=<u>PHP埋め込みサーバーで使用</u><br>開発環境では、PHP埋め込みWeb サーバを実行してサイトをテストすることをお勧めする。
-YouCanAlsoDeployToAnotherWHP=<u>Dolibarr Web ホスティング プロバイダー内で Web サイトを実行する</u><br>インターネット上で Apache や NGinx などの Web サーバ が利用できない場合は、ウェブサイト モジュールとの完全な統合を提供する別の Dolibarr ホスティング プロバイダーによって提供される別の Dolibarr インスタンスに Web サイトをエクスポートおよびインポートできる。 Dolibarr ホスティング プロバイダーの一覧は、<a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a> で見つけられる。
+YouCanAlsoDeployToAnotherWHP=<u>Dolibarr ウェブ ホスティング プロバイダー内で Web サイトを実行します。</u><br>インターネット上に Apache や NGinx などのウェブ サーバ が利用できない場合は、Web サイトをエクスポートして、ウェブサイト モジュールとの完全な統合を提供する別の Dolibarr ホスティング プロバイダーが提供する別の Dolibarr インスタンスにインポートできます。 Dolibarr ホスティング プロバイダーの一覧は、<a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a> で確認できます。
 CheckVirtualHostPerms=また、仮想ホストユーザ（www-dataなど）が、 <strong> %s </strong> 権限があり、ファイルに対して<br><strong>%s</strong>へが可能であることをも確認する。
 ReadPerm=読む
 WritePerm=書く
 TestDeployOnWeb=Webでのテスト/デプロイ
-PreviewSiteServedByWebServer=<u>新規タブで %s をプレビュー。</u><br><br>  %s は、外部Webサーバ (Apache, Nginx, IIS など) から提供される。 以下のディレクトリを指定するには、当該サーバをインストールして設定する必要あり:<br><strong>%s</strong><br>URL は外部サーバ:<br><strong>%s</strong> による
+PreviewSiteServedByWebServer=<u>プレビュー %sを新しいタブで開きます。</u><br><br>は、外部のWebサーバーサーバ（Apache、Nginx、IISなど）によって提供されます。外部の <span によって提供されるディレクトリ URL <span が対象とする前に、この サーバ をインストールして設定する必要があります。:<br><strong>%s</strong><br> URL を指定します。サーバ:<br><strong>%s</strong>
 PreviewSiteServedByDolibarr=<u>新規タブで %s をプレビューする。</u><br><br> %s は Dolibarr サーバ によって提供されるため、追加の Web サーバ (Apache など) は必要ありない。 Nginx、IIS などの他のアプリケーションをインストールする必要がある。<br>不便なのは、ページの URL が ユーザ フレンドリーではなく、Dolibarr のパスで始まることだ。<br>Dolibarr によって提供される URL:<br><strong>%s</strong><br><br>独自の外部 Web サーバ (Apache、Nginx、Lighttp など) を使用してデプロイまたはテストするには、リンク "%s" を使用する。
 VirtualHostUrlNotDefined=外部Webサーバーによって提供される仮想ホストのURLが定義されていない
 NoPageYet=まだページはない
@@ -65,12 +65,13 @@ SyntaxHelp=特定の構文のヒントに関するヘルプ
 YouCanEditHtmlSourceckeditor=エディタの "ソース" ボタンを使用して、HTMLソースコードを編集できる。
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> このソースに PHP コード を含めるには、タグ <strong>&lt;?php ?&gt;</strong>。以下のグローバル変数が利用可能。: $conf、$db、$mysoc、$ユーザ、$ウェブサイト、$websitepage、$weblangs、$pagelangs。<br><br><span class="fa fa-bug paddingright"></span> また、次の構文を使用して、別のページ/コンテナーのコンテンツを含めることもできる。:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> 次の構文を使用して、別のページ/コンテナーにリダイレクトできる (注意: リダイレクト前にコンテンツを出力しないこと):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>GET パラメータを使用してリダイレクトすることもできる:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> 別のページへのリンクを追加するには、構文:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br>
 YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> SEO タイトルとメタタグ <strong> (タイトル、キーワード、説明) を動的に設定できる。</strong>以下の変数を定義するだけです:<br> <code>define('__SEO_PAGE_TITLE__', "タイトル値…");</code><br> <code>define('__SEO_PAGE_KEYWORDS__', 'keyword1,キーワード 2, キーワード 3 …');</code><br> <code>define('__SEO_PAGE_DESC__', "説明 …");</code><br>
-YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> <strong>documents</strong>ディレクトリに保存されている ファイル<strong>ダウンロードへのリンク</strong>を含めるには、<strong>document.php</strong> ラッパーを使用する:<br>たとえば、ファイル を documents/ecm にエクスポートする場合 (ログに記録する必要あり)、構文は次のようになる:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>documents/medias（パブリックアクセス用のオープンディレクトリ）への ファイル の場合、構文は次のようになる。:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
+YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored in the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file in documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file in documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSourced=共有リンクで共有された ファイル の場合 (共有ハッシュ キー ファイル を使用してアクセスを開く)、構文は :<br><strong>&lt;a href="/ドキュメント.php?hashp=publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span><strong>medias</strong>ディレクトリ（パブリックアクセスに公開されているディレクトリ）に保存されている <strong>image</strong> を含めるには、<strong>/medias</strong>、例:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> <strong>image</strong>をmedias></strong>ディレクトリ（パブリックアクセス可能なディレクトリ）に保存するには、相対パスを使用します。 <strong>/medias</strong> から始まり、例:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=共有リンクで共有された画像（共有ハッシュキー ファイル を使用してオープンアクセス）の場合は、ラッパー :<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=PHP オブジェクトの画像の URL を取得する時に使用するのは<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
-YouCanEditHtmlSource4=記事の HTML コンテンツ内の画像の URL を取得する、用法は<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource4=記事の HTML コンテンツ内の画像の URL を取得するには、<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource5=<br><span class="fa fa-edit paddingright"></span> To let a part of the page be changed with mode <strong>Edit inline</strong>, add the attributes <strong>contenteditable="true"</strong> and <strong>id</strong> to its tag. It must contain no PHP code, only text with formatting tags (bold, color, font size...), links, paragraphs, titles, lists and div, example:<br><strong>&lt;p id="intro" contenteditable="true"&gt;My &lt;b&gt;text&lt;/b&gt;&lt;/p&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>HTML または動的コードの例は<a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible"> the wiki documentation</a>で利用可能.<br>
 ClonePage=クローンページ/コンテナ
 CloneSite=クローンサイト
@@ -88,6 +89,8 @@ ImportSite=ウェブサイトテンプレートをインポートする
 IDOfPage=ページのID
 Banner=バナー
 BlogPost=ブログ投稿
+PageHeader=Header
+PageFooter=Footer
 WebsiteAccount=ウェブサイトアカウント
 WebsiteAccounts=ウェブサイトアカウント
 AddWebsiteAccount=Webサイトアカウントを作成する
@@ -102,7 +105,7 @@ YouMustDefineTheHomePage=最初にデフォルトのホームページを定義�
 OnlyEditionOfSourceForGrabbedContentFuture=警告: 外部 Web ページをインポートして Web ページを作成することは、経験豊富なユーザー向けであり、HTML と CSS でレンダリングされたページでのみ機能する。JS フレームワークによってレンダリングされたページのインポートはサポートされていない。ソース ページの複雑さによっては、インポートの結果が元のページと異なる可能性がある。また、ソース ページで一般的な CSS スタイルや競合する JavaScript が使用されている場合、このページで作業する際に ウェブサイト エディターの外観や機能が損なわれる可能性がある。この方法は、ソース ページで許可されている場合、最上級ユーザーにとってページ作成するための手軽な方法なのだが、お勧めなのは新規ページを最初から作成するか、提案されたページ テンプレートから作成することだ。<br> また、取得したページでインライン エディターを使用した場合、正しく機能しない可能性があることにも注意してべし。
 OnlyEditionOfSourceForGrabbedContent=外部サイトからコンテンツを取得する場合は、HTML ソースの変更のみが可能だ。
 GrabImagesInto=cssとページにある画像も取得する。
-ImagesShouldBeSavedInto=画像はディレクトリに保存する必要がある
+ImagesShouldBeSavedInto=画像は以下のディレクトリに保存する必要があります
 WebsiteRootOfImages=ウェブサイト画像のルートディレクトリ
 SubdirOfPage=ページ専用のサブディレクトリ
 AliasPageAlreadyExists=エイリアスページ<strong>%s</strong>は既に存在する
@@ -119,7 +122,7 @@ NoWebSiteCreateOneFirst=ウェブサイトはまだ作成されていない。�
 GoTo=に移動
 DynamicPHPCodeContainsAForbiddenInstruction=動的コンテンツとしてデフォルトで禁止されているPHP命令 '<strong> %s </strong>'を含む動的PHPコードを追加する(許可されるコマンドのリストを増やすには、非表示のオプションWEBSITE_PHP_ALLOW_xxxを参照すること)。
 NotAllowedToAddDynamicContent=ウェブサイトに動的なPHPコンテンツを追加または編集する権限がありません。権限を申請するか、PHPのコードをタグにそのまま変更しないでください。
-NotAllowedToAddDynamicContentDisabledGlobaly=現在、この ウェブサイト で動的な PHP コンテンツを追加または編集することはできません (権限がある場合でも)。この機能は、まず conf.php の ファイル にパラメータ %s=1 を設定してグローバルに有効にする必要があるためです。<br> conf.php を編集して ファイル し、このパラメータを追加するか、管理者またはサポートに依頼してください。
+NotAllowedToAddDynamicContentDisabledGlobaly=現在、この ウェブサイト では動的な PHP コンテンツを追加または編集することはできません (権限があっても)。これは、まず conf.php ファイル にパラメータ %s=1 を設定して、この機能をグローバルに有効にする必要があるためです。<br> conf.php ファイル を編集してこのパラメータを追加するか、管理者またはサポート チームに依頼してください。
 ReplaceWebsiteContent=Webサイトのコンテンツを検索または置換する
 DeleteAlsoJs=削除 この ウェブサイト に固有のすべての JavaScript ファイルも対象 か?
 DeleteAlsoMedias=削除 この ウェブサイト に固有のすべてのメディア ファイルも対象か?
@@ -140,10 +143,10 @@ MainLanguage=主な言語
 OtherLanguages=他の言語
 UseManifest=マニフェスト.jsonファイルを提供する
 PublicAuthorAlias=公開著者エイリアス
-AvailableLanguagesAreDefinedIntoWebsiteProperties=利用可能な言語はウェブサイトのプロパティに定義されている
+AvailableLanguagesAreDefinedIntoWebsiteProperties=利用可能な言語は、ウェブサイト プロパティで定義されています。
 ReplacementDoneInXPages=%sページまたはコンテナで行われた交換
 RSSFeed=RSSフィード
-RSSFeedDesc=このURLを使用して、タイプ「blogpost」の最新項目のRSSフィードを取得できる。
+RSSFeedDesc=このURLを使用すると、「ブログ記事」タイプの最新記事のRSSフィードを取得できます。
 PagesRegenerated=%sページ(s)/コンテナ(s)が再生成された
 RegenerateWebsiteContent=Webサイトのキャッシュファイルを再生成する
 AllowedInFrames=フレームで許可
@@ -151,6 +154,7 @@ DefineListOfAltLanguagesInWebsiteProperties=使用可能な全言語のリスト
 GenerateSitemaps=ウェブサイトの sitemap.xml ファイルを生成する
 ConfirmGenerateSitemaps=確定すると、既存のサイトマップファイルが消去される...
 ConfirmSitemapsCreation=サイトマップの生成を確定する
+ConfirmSetAsHomePage=Are you sure you want to set the page <b>%s</b> as the home page of the website?
 SitemapGenerated=サイトマップファイル<b>%s</b>が生成された
 ImportFavicon=ファビコン
 ErrorFaviconType=ファビコンはpngを必要とする
@@ -267,7 +271,7 @@ WebPortalErrorFetchLoggedThirdParty=取引先 の読み込み中にエラーが�
 WebPortalErrorFetchLoggedMember=メンバーのロード時のエラー (Id : %s)
 WebPortalErrorFetchLoggedPartnership=パートナーシップの読み込み時のエラー (取引先 ID : %s、メンバー ID : %s )
 WebPortalErrorNoFetchMethod=エラー: 認証する の取得メソッドが見つかりません
-WebPortalErrorNoThirdPartyScope=No third-party associated with the logged account: access denied
+WebPortalErrorNoThirdPartyScope=ログインしたアカウントに関連付けられた取引先がありません: アクセスが拒否されました
 DownloadZip=zipをダウンロード
 ExportIntoGIT=サーバ ディレクトリにエクスポート
 WebPortalMember=メンバーシップ
@@ -509,3 +513,13 @@ ThisDirectoryIsEmpty=このディレクトリは空である
 WrittenBy=%s によって書かれました
 ImportOfWebsiteTemplateIncludingPHPIsAllowedIf=PHP の動的コンテンツを使用した ウェブサイト テンプレートのインポートは、conf.php で $dolibarr_website_allow_custom_php が 2 に設定されている場合にのみ許可されます。
 ImportOfWebsiteTemplateIncludingPHPIsDisabled=PHP の動的コンテンツを使用する ウェブサイト テンプレートのインポートを許可するには、conf.php で $dolibarr_website_allow_custom_php を 1 または 2 に設定する必要があります。
+CurrentPageVersion=Current page
+ListOfPageVersions=List of archived versions of page (a backup file of page is created each time you save a change, for example on the HTML source)
+EditInLineAllowedAreas=In mode Edit inline, the tags with contenteditable="true", an id and no PHP code inside can be changed and are saved when you leave them. Text formatting (bold, color, font size...), links, paragraphs, titles and lists are allowed, images and other HTML can only be changed in the HTML source.
+ErrorEditInlineElementNoId=This element has contenteditable="true" but no id, so it can not be edited inline.
+ErrorEditInlineElementNotFound=No element with id %s and contenteditable="true" was found in the source of the page.
+ErrorEditInlineElementNotUnique=The id %s is used by several elements with contenteditable="true" in the source of the page.
+ErrorEditInlineElementWithPhp=The element with id %s contains PHP code in the source of the page, so it can only be changed in the HTML source.
+ErrorEditInlineElementNotAllowedHtml=The element with id %s contains HTML that can not be edited inline (image, form, script, comment, other tags or attributes...), so it can only be changed in the HTML source.
+ErrorEditInlineElementNotPlainText=The element with id %s contains HTML in the source of the page and can only be edited inline as plain text, so it can only be changed in the HTML source.
+ErrorEditInlineContentNotAllowed=The new content of the element with id %s contains HTML tags or attributes that are not allowed, so it was not saved.

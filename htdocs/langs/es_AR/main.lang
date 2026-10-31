@@ -357,7 +357,6 @@ FindBug=Informar un error
 NbOfThirdParties=Número de terceras partes
 NbOfLines=Número de líneas
 NbOfObjectReferers=Número de items relacionados
-Referers=Items relacionados
 DateFromTo=Desde %s a %s
 DateFrom=Desde %s
 Check=Cheque

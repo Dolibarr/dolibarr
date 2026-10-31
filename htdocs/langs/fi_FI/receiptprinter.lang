@@ -69,7 +69,6 @@ DOL_VALUE_DAY=Laskun päivä
 DOL_VALUE_DAY_LETTERS=Laskupäivä kirjeissä
 DOL_LINE_FEED_REVERSE=Rivinsyöttö taaksepäin
 InvoiceID=Laskun tunnus
-InvoiceRef=Laskun ref
 DOL_PRINT_OBJECT_LINES=Laskun rivit
 DOL_VALUE_CUSTOMER_FIRSTNAME=Asiakkaan etunimi
 DOL_VALUE_CUSTOMER_LASTNAME=Asiakkaan sukunimi

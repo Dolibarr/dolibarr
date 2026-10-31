@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - website
 Shortname=Kood
 WebsiteName=Veebisaidi nimi
-WebsiteSetupDesc=Loo siia veebilehed, mida soovid kasutada. Seejärel mine menüüsse Veebilehed, et neid muuta.
+WebsiteSetupDesc=Create here the websites you wish to use. Then go to menu Websites to edit them.
 DeleteWebsite=Veebisaidi kustutamine
 ConfirmDeleteWebsite=Kas olete kindel, et soovite selle veebisaidi kustutada? Kõik selle lehed ja sisu eemaldatakse samuti. Üleslaaditud failid (näiteks meediakausta, ECM-moodulisse jne) jäävad alles.
 WEBSITE_TYPE_CONTAINER=Lehe/konteineri tüüp
@@ -17,8 +17,8 @@ WEBSITE_ROBOT=Robotifail (robots.txt)
 WEBSITE_HTACCESS=Veebisaidi .htaccess-fail
 WEBSITE_MANIFEST_JSON=Veebisaidi manifest.json-fail
 WEBSITE_KEYWORDSDesc=Kasutage väärtuste eraldamiseks koma
-EnterHereReadmeInformation=Sisesta siia veebisaidi kirjeldus. Kui levitad oma veebisaiti mallina, lisatakse fail temptate paketti.
-EnterHereLicenseInformation=Sisesta siia veebisaidi koodi LITSENTS. Kui levitad oma veebisaiti mallina, lisatakse fail temptate paketti.
+EnterHereReadmeInformation=Enter here a description of the website. If you distribute your website as a template, the file will be included in the template package.
+EnterHereLicenseInformation=Enter here the LICENSE of the code of the website. If you distribute your website as a template, the file will be included in the template package.
 HtmlHeaderPage=HTML-päis (ainult selle lehe jaoks)
 PageNameAliasHelp=Lehe nimi või alias.<br>Seda aliast kasutatakse ka SEO URL-i võltsimiseks, kui veebisaiti käitatakse veebiserveri virtuaalhostist (nt Apacke, Nginx jne). Selle aliasi muutmiseks kasutage nuppu "<strong>%s</strong>".
 EditTheWebSiteForACommonHeader=Märkus. Kui soovite määrata kõigile lehtedele isikupärastatud päise, muutke päist saidi tasandil, mitte lehel/konteineris.
@@ -51,12 +51,12 @@ ToDeployYourWebsiteOnLiveYouHave3Solutions=Selle veebisaidi reaalajas juurutamis
 SetHereVirtualHost=<u>Use with Apache/NGinx/...</u><br>Create on your web server (Apache, Nginx, ...) a dedicated Virtual Host with PHP enabled and a Root directory on<br><strong>%s</strong>
 ExampleToUseInApacheVirtualHostConfig=Näide Apache virtuaalse hosti seadistamiseks:
 YouCanAlsoTestWithPHPS=<u>Kasutamine PHP sisseehitatud serveriga</u><br>Arenduskeskkonnas võite eelistada saidi testimist PHP sisseehitatud veebiserveriga, käivitades
-YouCanAlsoDeployToAnotherWHP=<u>Käita oma veebisaiti Dolibarri veebimajutusteenuse pakkuja sees</u><br>Kui sul pole internetis saadaval veebiserverit nagu Apache või NGinx, saad oma veebisaidi eksportida ja importida teise Dolibarri eksemplari, mida pakub teine Dolibarri majutusteenuse pakkuja, mis pakub täielikku integratsiooni veebisaidi mooduliga. Mõnede Dolibarri majutusteenuse pakkujate nimekirja leiate aadressilt <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
+YouCanAlsoDeployToAnotherWHP=<u>Run your web site inside a Dolibarr web Hosting provider</u><br>If you don't have a web server like Apache or NGinx available on the internet, you can export and import your web site to another Dolibarr instance provided by another Dolibarr hosting provider that provides full integration with the Website module. You can find a list of some Dolibarr hosting providers on <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
 CheckVirtualHostPerms=Kontrollige ka, et virtuaalse hosti kasutajal (näiteks www-data) on <strong>%s</strong> õigused failidele <br><strong>%s</strong>
 ReadPerm=Loe
 WritePerm=Kirjuta
 TestDeployOnWeb=Testi/paigalda veebis
-PreviewSiteServedByWebServer=<u>Vaata eelvaadet %s uuel vahelehel.</u><br><br>Funktsiooni %s teenindab väline veebiserver (nt Apache, Nginx, IIS). Enne kataloogile osutamist peate selle serveri installima ja seadistama:<br><strong>%s</strong><br>Välise serveri pakutav URL:<br><strong>%s</strong>
+PreviewSiteServedByWebServer=<u>Preview %s in a new tab.</u><br><br>The %s will be served by an external web server (like Apache, Nginx, IIS). You must install and setup this server before pointing to the directory:<br><strong>%s</strong><br>URL served by external server:<br><strong>%s</strong>
 PreviewSiteServedByDolibarr=<u>Vaata eelvaadet %s uuel vahelehel.</u><br><br> %s teenindab Dolibarri server, seega pole vaja installida täiendavat veebiserverit (nt Apache, Nginx, IIS).<br>Ebamugav on see, et lehtede URL-id pole kasutajasõbralikud ja algavad teie Dolibarri teega.<br>Dolibarri pakutav URL:<br><strong>%s</strong><br><br>Oma välise veebiserveri (nt Apache, Nginx, Lighttp) abil juurutamiseks või testimiseks kasutage linki "%s".
 VirtualHostUrlNotDefined=Välise veebiserveri poolt teenindatava virtuaalse hosti URL-i pole määratletud
 NoPageYet=Lehekülgi pole veel
@@ -65,12 +65,13 @@ SyntaxHelp=Abi konkreetsete süntaksinõuannete kohta
 YouCanEditHtmlSourceckeditor=HTML-i lähtekoodi saab muuta redaktoris nupu „Allikas” abil.
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> Sellesse lähteteksti saab PHP-koodi lisada siltide <strong>&lt;?php ?&gt;</strong> abil. Saadaval on järgmised globaalsed muutujad: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> Saate lisada ka teise lehe/konteineri sisu järgmise süntaksiga:<br><strong>&lt;?php includeContainer('lisatava_konteineri_alias'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> Saate suunata ümber teisele lehele/konteinerile järgmise süntaksiga (märkus: ärge väljastage enne suunamist sisu):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>Ümbersuunamise saate teha ka GET-parameetritega:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> Teisele lehele lingi lisamiseks kasutage järgmist süntaksit:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;minu link&lt;a&gt;</strong><br><br>
 YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> You can dynamically set <strong>SEO title and meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>define('__SEO_PAGE_TITLE__', "Title value …");</code><br> <code>define('__SEO_PAGE_KEYWORDS__', 'keyword1, keyword2, keyword3 …');</code><br> <code>define('__SEO_PAGE_DESC__', "Description …");</code><br>
-YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> Kausta <strong> salvestatud faili </strong> allalaadimiseks lingi <strong> lisamiseks kasutage kausta <strong>document.php</strong> wrapper:<br>Näiteks faili jaoks, mis on lisatud kausta documents/ecm (vajab logimist), on süntaks järgmine:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]failinimi.ext"&gt;</strong><br>Dokumentidesse/meediatesse (avalik avatud kataloog) paigutatud faili süntaks on järgmine:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]failinimi.ext"&gt;</strong><br>
+YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored in the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file in documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file in documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSourced=Jagamislingi kaudu jagatud faili puhul (avatud juurdepääs faili jagamisräsivõtme abil) on süntaks järgmine:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> <strong>pildi</strong> lisamiseks kataloogi <strong>meediafailid</strong> (avalikuks juurdepääsuks avatud kataloog), kasutage suhtelist teed, mis algab <strong>/medias</strong>-ga, näiteks:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored in the <strong>medias</strong> directory (directory open for public access), use the relative path starting with <strong>/medias</strong>, example:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=Jagamislingiga jagatud pildi puhul (avatud juurdepääs faili jagamisvõtme abil) kasutage järgmist wrapperit:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=PHP-objekti pildi URL-i saamiseks kasutage käsku <br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
-YouCanEditHtmlSource4=Artikli HTML-sisu sees oleva pildi URL-i saamiseks kasutage käsku <br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource4=To get the URL of an image inside a HTML content of an article, use<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource5=<br><span class="fa fa-edit paddingright"></span> To let a part of the page be changed with mode <strong>Edit inline</strong>, add the attributes <strong>contenteditable="true"</strong> and <strong>id</strong> to its tag. It must contain no PHP code, only text with formatting tags (bold, color, font size...), links, paragraphs, titles, lists and div, example:<br><strong>&lt;p id="intro" contenteditable="true"&gt;My &lt;b&gt;text&lt;/b&gt;&lt;/p&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>Rohkem HTML-i või dünaamilise koodi näiteid on saadaval <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">wiki dokumentatsioonis</a>.<br>
 ClonePage=Klooni leht/konteiner
 CloneSite=Klooni sait
@@ -88,6 +89,8 @@ ImportSite=Veebisaidi malli importimine
 IDOfPage=Lehe ID
 Banner=Bänner
 BlogPost=Blogipostitus
+PageHeader=Header
+PageFooter=Footer
 WebsiteAccount=Veebisaidi konto
 WebsiteAccounts=Veebilehe kontod
 AddWebsiteAccount=Loo veebisaidi konto
@@ -102,7 +105,7 @@ YouMustDefineTheHomePage=Esmalt peate määrama vaikimisi avalehe
 OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users and can work only pages rendered with HTML and CSS only. Importing pages rendered by JS frameworks are NOT supported. Depending on the complexity of the source page, the result of importation will probably differ from the original page. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quick way to create a page for very advanced users when source page allows it, but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor might not work correctly when used on a page that was grabbed.
 OnlyEditionOfSourceForGrabbedContent=HTML-i lähtekoodi muutmine on võimalik ainult siis, kui sisu on hangitud väliselt saidilt.
 GrabImagesInto=Haara ka leitud pildid css-i ja lehele.
-ImagesShouldBeSavedInto=Pildid tuleks salvestada kataloogi
+ImagesShouldBeSavedInto=Images should be saved in the directory
 WebsiteRootOfImages=Veebisaidi piltide juurkataloog
 SubdirOfPage=Lehele pühendatud alamkataloog
 AliasPageAlreadyExists=Alias-leht <strong>%s</strong> on juba olemas
@@ -119,7 +122,7 @@ NoWebSiteCreateOneFirst=Ühtegi veebilehte pole veel loodud. Loo see esmalt.
 GoTo=Mine lehele
 DynamicPHPCodeContainsAForbiddenInstruction=Lisate dünaamilise PHP koodi, mis sisaldab PHP käsku '<strong>%s</strong>', mis on dünaamilise sisuna vaikimisi keelatud (lubatud käskude loendi suurendamiseks vaadake peidetud valikuid WEBSITE_PHP_ALLOW_xxx).
 NotAllowedToAddDynamicContent=You don't have permission to add or edit dynamic PHP content in websites. Ask permission or just keep code into php tags unmodified.
-NotAllowedToAddDynamicContentDisabledGlobaly=You currently can't add or edit dynamic PHP content in this website (even if you have permission to), because this feature must be first enabled globally by setting the parameter %s=1 int the conf.php file.<br>Edit your conf.php file to add this parameter, or ask your administrator or support to do it for you.
+NotAllowedToAddDynamicContentDisabledGlobaly=You currently can't add or edit dynamic PHP content in this website (even if you have permission to), because this feature must be first enabled globally by setting the parameter %s=1 into the conf.php file.<br>Edit your conf.php file to add this parameter, or ask your administrator or support team to do it for you.
 ReplaceWebsiteContent=Otsi või asenda veebisaidi sisu
 DeleteAlsoJs=Kas kustutada ka kõik sellele veebisaidile omased JavaScripti failid?
 DeleteAlsoMedias=Kas kustutada ka kõik sellele veebisaidile omased meediafailid?
@@ -140,10 +143,10 @@ MainLanguage=Põhikeel
 OtherLanguages=Teised keeled
 UseManifest=Esitage manifest.json-fail
 PublicAuthorAlias=Avaliku autori alias
-AvailableLanguagesAreDefinedIntoWebsiteProperties=Saadaval olevad keeled on määratletud veebisaidi atribuutides
+AvailableLanguagesAreDefinedIntoWebsiteProperties=Available languages are defined in website properties
 ReplacementDoneInXPages=Asendamine on tehtud %s lehtedel või konteinerites
 RSSFeed=RSS voog
-RSSFeedDesc=Selle URL-i abil saate RSS-voo uusimate artiklitega, mille tüüp on 'blogipostitus'.
+RSSFeedDesc=You can get an RSS feed of latest articles with type 'blogpost' using this URL
 PagesRegenerated=%s leht(ed)/konteiner(id) taastatud
 RegenerateWebsiteContent=Veebisaidi vahemälu failide taastamine
 AllowedInFrames=Lubatud raamides
@@ -151,6 +154,7 @@ DefineListOfAltLanguagesInWebsiteProperties=Määrake veebisaidi atribuutides k�
 GenerateSitemaps=Veebisaidi sitemap.xml faili genereerimine
 ConfirmGenerateSitemaps=Kinnitamisel kustutate olemasoleva saidikaardi faili...
 ConfirmSitemapsCreation=Kinnita saidikaardi genereerimine
+ConfirmSetAsHomePage=Are you sure you want to set the page <b>%s</b> as the home page of the website?
 SitemapGenerated=Saidiplaani fail <b>%s</b>genereeritud
 ImportFavicon=Favicon
 ErrorFaviconType=Favicon peab olema png
@@ -509,3 +513,13 @@ ThisDirectoryIsEmpty=This directory is empty
 WrittenBy=Written by %s
 ImportOfWebsiteTemplateIncludingPHPIsAllowedIf=Import of website templates using dynamic content in PHP is allowed only if $dolibarr_website_allow_custom_php is set to 2 in conf.php.
 ImportOfWebsiteTemplateIncludingPHPIsDisabled=Import of website templates using dynamic content in PHP need to have $dolibarr_website_allow_custom_php set to 1 or 2 in conf.php to be allowed.
+CurrentPageVersion=Current page
+ListOfPageVersions=List of archived versions of page (a backup file of page is created each time you save a change, for example on the HTML source)
+EditInLineAllowedAreas=In mode Edit inline, the tags with contenteditable="true", an id and no PHP code inside can be changed and are saved when you leave them. Text formatting (bold, color, font size...), links, paragraphs, titles and lists are allowed, images and other HTML can only be changed in the HTML source.
+ErrorEditInlineElementNoId=This element has contenteditable="true" but no id, so it can not be edited inline.
+ErrorEditInlineElementNotFound=No element with id %s and contenteditable="true" was found in the source of the page.
+ErrorEditInlineElementNotUnique=The id %s is used by several elements with contenteditable="true" in the source of the page.
+ErrorEditInlineElementWithPhp=The element with id %s contains PHP code in the source of the page, so it can only be changed in the HTML source.
+ErrorEditInlineElementNotAllowedHtml=The element with id %s contains HTML that can not be edited inline (image, form, script, comment, other tags or attributes...), so it can only be changed in the HTML source.
+ErrorEditInlineElementNotPlainText=The element with id %s contains HTML in the source of the page and can only be edited inline as plain text, so it can only be changed in the HTML source.
+ErrorEditInlineContentNotAllowed=The new content of the element with id %s contains HTML tags or attributes that are not allowed, so it was not saved.

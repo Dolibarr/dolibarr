@@ -2084,6 +2084,7 @@ class Facture extends CommonInvoice
 		$langs->load('bills');
 
 		$datas = [];
+		$nofetch = !empty($params['nofetch']);
 		$moretitle = $params['moretitle'] ?? '';
 
 		$picto = $this->picto;
@@ -2121,8 +2122,22 @@ class Facture extends CommonInvoice
 			if (!empty($this->ref)) {
 				$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 			}
-			if (!empty($this->ref_customer)) {
-				$datas['refcustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '.$this->ref_customer;
+			if (!$nofetch) {
+				$langs->load('companies');
+				if (empty($this->thirdparty)) {
+					$this->fetch_thirdparty();
+				}
+				$datas['customer'] = '<br><b>'.$langs->trans('Customer').':</b> '.$this->thirdparty->getNomUrl(1, '', 0, 1);
+			}
+			$datas['RefCustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '.(empty($this->ref_customer) ? (empty($this->ref_client) ? '' : $this->ref_client) : $this->ref_customer);
+			if (!$nofetch) {
+				$langs->load('project');
+				if (is_null($this->project) || (is_object($this->project) && $this->project->isEmpty())) {
+					$res = $this->fetchProject();
+					if ($res > 0 && $this->project instanceof Project) {
+						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, '1');
+					}
+				}
 			}
 			if (!empty($this->date)) {
 				$datas['date'] = '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->date, 'day');
@@ -2219,6 +2234,7 @@ class Facture extends CommonInvoice
 			'objecttype' => $this->element,
 			'moretitle' => $moretitle,
 			'option' => $option,
+			'nofetch' => 1,
 		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
@@ -6023,6 +6039,19 @@ class Facture extends CommonInvoice
 			$this->error = $this->db->error();
 			return -1;
 		}
+	}
+
+	/**
+	 *	Return the display context of the lines, as defined by the card before printObjectLines() and formAddObjectLine()
+	 *
+	 *	@return	array{seller:Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	See CommonObject::getObjectLinesDisplayContext()
+	 */
+	public function getObjectLinesDisplayContext()
+	{
+		$context = parent::getObjectLinesDisplayContext();
+		$context['inputalsopricewithtax'] = 1;
+
+		return $context;
 	}
 
 	/**

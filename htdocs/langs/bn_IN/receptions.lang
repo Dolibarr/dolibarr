@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=যাচাই করা হয়েছে
 StatusReceptionProcessedShort=প্রক্রিয়াকৃত
 ReceptionSheet=অভ্যর্থনা শীট
 ValidateReception=অভ্যর্থনা যাচাই
+DeleteReception=Delete reception
 ConfirmDeleteReception=আপনি কি নিশ্চিত আপনি এই অভ্যর্থনা মুছে দিতে চান?
 ConfirmValidateReception=Are you sure you want to validate this reception with the reference <b>%s</b>?
 ConfirmCancelReception=আপনি কি নিশ্চিত আপনি এই অভ্যর্থনা বাতিল করতে চান?

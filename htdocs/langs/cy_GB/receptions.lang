@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=Wedi'i ddilysu
 StatusReceptionProcessedShort=Wedi'i brosesu
 ReceptionSheet=Taflen dderbyn
 ValidateReception=Dilysu derbyniad
+DeleteReception=Delete reception
 ConfirmDeleteReception=Ydych chi'n siŵr eich bod am ddileu'r derbyniad hwn?
 ConfirmValidateReception=Ydych chi'n siŵr eich bod am ddilysu'r derbyniad hwn gyda'r cyfeirnod <b>%s</b> >?
 ConfirmCancelReception=Ydych chi'n siŵr eich bod am ganslo'r derbyniad hwn?

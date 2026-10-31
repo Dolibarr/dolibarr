@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = Planlaşdırılmış işi oxuyun
-Permission23102 = Planlaşdırılmış işi yaradın/yeniləyin
-Permission23103 = Planlaşdırılmış işi silin
-Permission23104 = Planlaşdırılmış işi yerinə yetirin
 # Admin
 CronSetup=Planlaşdırılmış işin idarə edilməsinin qurulması
 URLToLaunchCronJobs=Brauzerdən ixtisaslı cron işlərini yoxlamaq və işə salmaq üçün URL
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=Unix mühitində hər 5 dəqiqədən bir komanda xəttin
 CronExplainHowToRunWin=Microsoft(tm) Windows mühitində hər 5 dəqiqədən bir əmr xəttini işə salmaq üçün Planlaşdırılmış Tapşırıq alətlərindən istifadə edə bilərsiniz
 CronMethodDoesNotExists=%s sinfində heç bir metod yoxdur %s
 CronMethodNotAllowed=%s sinfinin %s metodu qadağan olunmuş metodların blok siyahısındadır
-CronJobDefDesc=Cron iş profilləri modul deskriptor faylında müəyyən edilir. Modul aktivləşdirildikdə, onlar yüklənir və əlçatan olur ki, siz %s admin alətləri menyusundan işləri idarə edə bilərsiniz.
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=Əvvəlcədən təyin edilmiş cron iş profillərinin siyahısı
 # Menu
 EnabledAndDisabled=Aktiv və qeyri-aktiv
@@ -27,7 +22,7 @@ CronDelete=Planlaşdırılmış işləri silin
 CronConfirmDelete=Bu planlaşdırılan işləri silmək istədiyinizə əminsiniz?
 CronExecute=İndi işə salın
 CronConfirmExecute=Bu planlaşdırılan işləri indi yerinə yetirmək istədiyinizə əminsiniz?
-CronInfo=Planlaşdırılmış iş modulu işlərin avtomatik yerinə yetirilməsini planlaşdırmağa imkan verir. İşlərə əl ilə də başlamaq olar.
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=İş
 CronNone=Planlaşdırılmış tapşırığın növbəti icrası
 CronNotYetRan=Heç vaxt edam edilməyib
@@ -79,7 +74,7 @@ CronType_command=Shell əmri
 CronCannotLoadClass=%s sinif faylını yükləmək mümkün deyil (%s sinfindən istifadə etmək üçün)
 CronModuleNotEnabledInThisEntity=Cron modulu bu qurumda aktiv deyil (%s obyektinin %s metodundan istifadə etmək üçün)
 CronCannotLoadObject=%s sinif faylı yükləndi, lakin %s obyekti onda tapılmadı
-UseMenuModuleToolsToAddCronJobs=Planlaşdırılmış işlərə baxmaq və redaktə etmək üçün "<a href="%s">Ev - Admin alətləri - Planlaşdırılmış işlər</a>" menyusuna daxil olun.
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=İş əlil
 MakeLocalDatabaseDumpShort=Yerli verilənlər bazası ehtiyat nüsxəsi
 MakeLocalDatabaseDump=Yerli verilənlər bazası zibilini yaradın. Parametrlər bunlardır: sıxılma ('gz' və ya 'bz' və ya 'yox'), ehtiyat nüsxə növü ('mysql', 'pgsql', 'auto'), 1, 'auto' və ya qurmaq üçün fayl adı, saxlanılacaq ehtiyat fayllarının sayı

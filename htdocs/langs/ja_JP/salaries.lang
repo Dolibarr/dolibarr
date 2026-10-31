@@ -27,6 +27,7 @@ Earnings=収益
 TotalEarnings=総収入
 TotalDeductions=控除合計額
 NetPaid=純支払額
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=給与の「ユーザー」にデフォルトで使用される勘定科目 (勘定科目表から)
@@ -55,8 +56,6 @@ FillFieldFirst=最初に従業員フィールドに入力する
 UpdateAmountWithLastSalary=最終給与額の設定
 MakeTransferRequest=転送リクエストを行う
 VirementOrder=単位振替リクエスト
-WithdrawalReceipt=債権譲渡注文
-OrderWaiting=未決注文
 FillEndOfMonth=月末
 
 # Shortcuts

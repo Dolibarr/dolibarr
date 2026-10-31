@@ -2196,4 +2196,25 @@ abstract class CommonDocGenerator
 		);
 		*/
 	}
+
+	/**
+	 * Return if the terms of sale file must be concatenated to the generated document.
+	 * Option MAIN_PDF_ADD_TERMSOFSALE_xxx: 0 = never, 1 = added by default, 2 = not added by default.
+	 * The choice made on the document generation form (moreparams 'addtermsofsale') overrides the default.
+	 *
+	 * @param	CommonObject	$object		Object the document is generated for
+	 * @param	string			$type		Type of document: 'PROPAL', 'ORDER', 'CONTRACT' or 'INVOICE'
+	 * @return	bool						True if the terms of sale file must be added
+	 */
+	public function mustAddTermsOfSale($object, $type)
+	{
+		$option = getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_'.$type);
+		if (empty($option)) {
+			return false;
+		}
+		if (isset($object->context['moreparams']['addtermsofsale'])) {
+			return !empty($object->context['moreparams']['addtermsofsale']);
+		}
+		return ($option == 1);
+	}
 }

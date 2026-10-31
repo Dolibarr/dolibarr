@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = طے شدہ کام پڑھیں
-Permission23102 = شیڈول شدہ جاب بنائیں/اپ ڈیٹ کریں۔
-Permission23103 = طے شدہ کام کو حذف کریں۔
-Permission23104 = طے شدہ کام کو انجام دیں۔
 # Admin
 CronSetup=شیڈول جاب مینجمنٹ سیٹ اپ
 URLToLaunchCronJobs=براؤزر سے کوالیفائیڈ کرون جابز کو چیک کرنے اور لانچ کرنے کے لیے URL
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=یونکس ماحول پر آپ کو ہر 5 منٹ می�
 CronExplainHowToRunWin=مائیکروسافٹ (ٹی ایم) ونڈوز ماحول پر آپ ہر 5 منٹ میں کمانڈ لائن چلانے کے لیے شیڈول ٹاسک ٹولز استعمال کر سکتے ہیں۔
 CronMethodDoesNotExists=کلاس %s میں کوئی طریقہ نہیں ہے %s
 CronMethodNotAllowed=طریقہ %s کلاس کا %s ممنوع طریقوں کی بلاک لسٹ میں ہے
-CronJobDefDesc=کرون جاب پروفائلز کی وضاحت ماڈیول ڈسکرپٹر فائل میں کی گئی ہے۔ جب ماڈیول فعال ہو جاتا ہے، تو وہ لوڈ اور دستیاب ہو جاتے ہیں تاکہ آپ ایڈمن ٹولز مینو %s سے جابز کا انتظام کر سکیں۔
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=پہلے سے طے شدہ کرون جاب پروفائلز کی فہرست
 # Menu
 EnabledAndDisabled=فعال اور غیر فعال
@@ -27,7 +22,7 @@ CronDelete=طے شدہ ملازمتوں کو حذف کریں۔
 CronConfirmDelete=کیا آپ واقعی ان شیڈول کردہ جابز کو حذف کرنا چاہتے ہیں؟
 CronExecute=ابھی لانچ کریں۔
 CronConfirmExecute=کیا آپ واقعی ان طے شدہ ملازمتوں کو ابھی انجام دینا چاہتے ہیں؟
-CronInfo=شیڈول کردہ جاب ماڈیول ملازمتوں کو خود بخود انجام دینے کے لیے شیڈول کرنے کی اجازت دیتا ہے۔ ملازمتیں دستی طور پر بھی شروع کی جا سکتی ہیں۔
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=جاب
 CronNone=طے شدہ کام کا اگلا دوڑ
 CronNotYetRan=کبھی پھانسی نہیں دی گئی۔
@@ -79,7 +74,7 @@ CronType_command=شیل کمانڈ
 CronCannotLoadClass=کلاس فائل %s لوڈ نہیں کی جا سکتی (کلاس %s استعمال کرنے کے لیے)
 CronModuleNotEnabledInThisEntity=Cron module not enabled in this entity (to use %s method of %s object)
 CronCannotLoadObject=کلاس فائل %s لوڈ کی گئی تھی، لیکن اس میں آبجیکٹ %s نہیں ملا
-UseMenuModuleToolsToAddCronJobs=مینو میں جائیں " <a href="%s"> ہوم - ایڈمن ٹولز - شیڈیولڈ جابز </a>" شیڈول جابز کو دیکھنے اور ان میں ترمیم کرنے کے لیے۔
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=ملازمت غیر فعال
 MakeLocalDatabaseDumpShort=مقامی ڈیٹا بیس کا بیک اپ
 MakeLocalDatabaseDump=ایک مقامی ڈیٹا بیس ڈمپ بنائیں۔ پیرامیٹرز ہیں: کمپریشن ('gz' یا 'bz' یا 'none')، بیک اپ کی قسم ('mysql'، 'pgsql'، 'auto')، 1، 'auto' یا فائل کا نام، رکھنے کے لیے بیک اپ فائلوں کی تعداد

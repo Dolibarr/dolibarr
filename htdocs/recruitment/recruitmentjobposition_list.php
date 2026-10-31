@@ -653,6 +653,8 @@ while ($i < $imaxinloop) {
 				$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
 			} elseif ($key == 'ref') {
 				$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
+			} elseif ($key == 'label') {
+				$cssforfield = '';
 			}
 
 			if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('rowid', 'status')) && empty($val['arrayofkeyval'])) {
@@ -661,9 +663,15 @@ while ($i < $imaxinloop) {
 			//if (in_array($key, array('fk_soc', 'fk_user', 'fk_warehouse'))) $cssforfield = 'tdoverflowmax100';
 
 			if (!empty($arrayfields['t.'.$key]['checked'])) {
-				print '<td'.($cssforfield ? ' class="'.$cssforfield.'"' : '').'>';
+				print '<td'.($cssforfield ? ' class="'.$cssforfield.'"' : '').(($key == 'label' || preg_match('/tdoverflow/', $cssforfield)) && !is_numeric($object->$key) ? ' title="'.dolPrintHTMLForAttribute((string) $object->$key).'"' : '').'>';
 				if ($key == 'status') {
 					print $object->getLibStatut(5);
+				} elseif ($key == 'label') {
+					print '<div class="twolinesmax-normallineheight minwidth200onall">';
+					print '<span class="spantitle">';
+					print dolPrintHTML($object->label);
+					print '</span>';
+					print '</div>';
 				} elseif ($key == 'rowid') {
 					print $object->showOutputField($val, $key, (string) $object->id, '');
 				} else {

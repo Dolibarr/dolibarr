@@ -10,23 +10,24 @@ SalariesPaymentsOf=Плащания на заплати на %s
 ShowSalaryPayment=Показване на плащане на заплата
 SalaryID=Идентификационен номер на заплатата
 SalaryAmount=Размер на заплатата
-SalaryDate=Salary date
+SalaryDate=Дата на заплатата
 SalaryPaid=Заплати платени
-SalaryNotPaid=Salary not paid
+SalaryNotPaid=Неплатена заплата
 
-SalarySlip=Salary slip
-StandardSalaryDocModel=Standard salary slip document
+SalarySlip=Фиш за заплата
+StandardSalaryDocModel=Стандартен документ за фиш за заплата
 
-BasicSalary=Basic salary
-Bonus=Bonus
-Allowance=Allowance
-Overtime=Overtime
-Deduction=Deduction
-Deductions=Deductions
-Earnings=Earnings
-TotalEarnings=Total earnings
-TotalDeductions=Total deductions
+BasicSalary=Основна заплата
+Bonus=Бонус
+Allowance=Добавка
+Overtime=Извънреден труд
+Deduction=Удръжка
+Deductions=Удръжки
+Earnings=Начисления
+TotalEarnings=Общо начисления
+TotalDeductions=Общо удръжки
 NetPaid=Платен (нето)
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Сметка (от сметкоплана), използвана по подразбиране за „потребители“ на заплати
@@ -41,7 +42,7 @@ AllSalaries=Всички заплати
 SalariesStatistics=Статистика на заплати
 SalariesAndPayments=Заплати и плащания
 UserPaySlip=Фиш за заплата
-PayPeriod=Pay period
+PayPeriod=Период на заплащане
 
 # THM / TJM
 THM=Средна почасова ставка
@@ -55,13 +56,11 @@ FillFieldFirst=Първо попълнете полето Служител
 UpdateAmountWithLastSalary=Определете размера на последната заплата
 MakeTransferRequest=Направете превод Искане
 VirementOrder=Кредитен превод Искане
-WithdrawalReceipt=Нареждане за кредитен превод
-OrderWaiting=Чакаща поръчка
 FillEndOfMonth=Край на месеца
 
 # Shortcuts
 PreviousMonthShort=Предишен месец
 CurrentMonthShort=Текущ месец
-NextMonthShort=Next month
+NextMonthShort=Следващ месец
 PreviousWeekShort=Предишната седмица
 CurrentWeekShort=Текуща седмица

@@ -4670,8 +4670,7 @@ function migrate_reload_menu($db, $langs, $conf)
 
 	// Define list of menu handlers to initialize
 	$listofmenuhandler = array();
-	if (getDolGlobalString('MAIN_MENU_STANDARD') == 'auguria_menu' || getDolGlobalString('MAIN_MENU_SMARTPHONE') == 'auguria_menu'
-		|| getDolGlobalString('MAIN_MENUFRONT_STANDARD') == 'auguria_menu' || getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE') == 'auguria_menu') {
+	if (getDolGlobalString('MAIN_MENU_STANDARD') == 'auguria_menu' || getDolGlobalString('MAIN_MENUFRONT_STANDARD') == 'auguria_menu') {
 		$listofmenuhandler['auguria'] = 1; // We set here only dynamic menu handlers
 	}
 

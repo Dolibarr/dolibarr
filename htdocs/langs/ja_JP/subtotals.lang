@@ -3,7 +3,6 @@
 #
 # Global
 #
-Subtotal=小計
 SubTotalModuleDesc=特定の文書の小計とタイトル行
 #
 # Admin
@@ -12,12 +11,19 @@ SubtotalSetup=小計モジュールの設定
 MaxSubtotalLevel=最大レベル
 SubtotalLineBackColor=レベル %s 行の背景色
 NotSupportedByAllPDF=新しい PDF では機能しますが、古い PDF では機能しない %s
+SubtotalsPredefinedTitles=小計の事前定義済みタイトル
+SubtotalsPredefinedTexts=小計の事前定義テキスト
+SubtotalTextColumnTitle=テキスト
 
 #
 # Card
 #
 AddTitleLine=タイトル行を追加
 AddSubtotalLine=小計行を追加
+AddTextLine=テキスト行を追加する
+PredefinedTitle=定義済みタイトル
+PredefinedText=定義済みテキスト
+SubtotalTextContent=テキストコンテンツ
 TitleNeedDesc=タイトルを作成するには、有効な説明を入力する必要がある。
 TitleAddedLevelTooHigh=追加されたタイトル レベルが高すぎる (代わりにレベル %s が追加された)。
 TitleEditedLevelTooHigh=編集されたタイトルのレベルが高すぎる (代わりにレベル %s で編集した)。

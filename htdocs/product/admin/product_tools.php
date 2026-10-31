@@ -31,6 +31,7 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
@@ -327,7 +328,8 @@ llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-product page-admin_product_
 
 print load_fiche_titre($title, '', 'title_setup');
 
-print $langs->trans("ProductVatMassChangeDesc").'<br><br>';
+print '<div class="info">'.$langs->trans("ProductVatMassChangeDesc").'</div>';
+print '<br>';
 
 if (empty($mysoc->country_code)) {
 	$langs->load("errors");
@@ -363,6 +365,7 @@ if (empty($mysoc->country_code)) {
 		print '<option value="'.dol_escape_htmltag($optval).'"'.((string) $oldvatrate === (string) $optval ? ' selected' : '').'>'.$optlbl.'</option>';
 	}
 	print '</select>';
+	print ajax_combobox('oldvatrate');
 	print '</td>'."\n";
 	print '</tr>'."\n";
 
@@ -371,6 +374,7 @@ if (empty($mysoc->country_code)) {
 	print '<td>'.$langs->trans("NewVATRates").'</td>'."\n";
 	print '<td width="60" class="right">'."\n";
 	print $form->load_tva('newvatrate', $newvatrate, $mysoc, null, 0, 0, '', false, 1);
+	print ajax_combobox('newvatrate');
 	print '</td>'."\n";
 	print '</tr>'."\n";
 

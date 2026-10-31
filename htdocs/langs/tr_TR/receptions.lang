@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=Doğrulandı
 StatusReceptionProcessedShort=İşlenmiş
 ReceptionSheet=Mal kabulü sayfası
 ValidateReception=Mal kabulünü doğrula
+DeleteReception=Delete reception
 ConfirmDeleteReception=Bu mal kabulünü silmek istediğinizden emin misiniz?
 ConfirmValidateReception=Bu mal kabulünü <b>%s</b> referansıyla doğrulamak istediğinizden emin misiniz? >?
 ConfirmCancelReception=Bu mal kabulünü iptal yapmak istediğinizden emin misiniz?

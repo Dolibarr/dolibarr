@@ -27,6 +27,7 @@ Earnings=المستحقات
 TotalEarnings=إجمالي المستحقات
 TotalDeductions=إجمالي الحسميات
 NetPaid=صافي المبلغ المدفوع
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=الحساب (من دليل الحسابات) المستخدم افتراضيًا للمستخدمين في الرواتب
@@ -55,8 +56,6 @@ FillFieldFirst=املأ حقل الموظف أولًا
 UpdateAmountWithLastSalary=تعيين المبلغ وفق آخر راتب
 MakeTransferRequest=إنشاء طلب تحويل مصرفي
 VirementOrder=طلب تحويل مصرفي
-WithdrawalReceipt=أمر تحويل مصرفي
-OrderWaiting=طلب قيد الانتظار
 FillEndOfMonth=نهاية الشهر
 
 # Shortcuts

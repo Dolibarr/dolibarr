@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=bekræftet
 StatusReceptionProcessedShort=Behandlet
 ReceptionSheet=Modtagelse ark
 ValidateReception=Bekræft modtagelse
+DeleteReception=Slet modtagelse
 ConfirmDeleteReception=Er du sikker på, at du vil slette denne modtagelse?
 ConfirmValidateReception=Er du sikker på, at du vil validere denne modtagelse med referencen <b>%s</b>?
 ConfirmCancelReception=Er du sikker på, at du vil annullere denne modtagelse?

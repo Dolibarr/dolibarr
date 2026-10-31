@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = Baca pekerjaan terjadwal
-Permission23102 = Buat/perbarui pekerjaan yang Dijadwalkan
-Permission23103 = Hapus pekerjaan terjadwal
-Permission23104 = Jalankan pekerjaan yang Dijadwalkan
 # Admin
 CronSetup=Penyiapan manajemen pekerjaan terjadwal
 URLToLaunchCronJobs=URL untuk memeriksa dan meluncurkan tugas cron yang memenuhi syarat dari browser
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=Pada lingkungan Unix Anda harus menggunakan entri cronta
 CronExplainHowToRunWin=Pada lingkungan Microsoft (tm) Windows Anda dapat menggunakan alat Tugas Terjadwal untuk menjalankan baris perintah setiap 5 menit
 CronMethodDoesNotExists=Kelas %s tidak berisi metode apa pun %s
 CronMethodNotAllowed=Metode %s dari kelas %s ada dalam daftar blokir metode terlarang
-CronJobDefDesc=Profil pekerjaan Cron didefinisikan ke dalam file deskriptor modul. Ketika modul diaktifkan, mereka dimuat dan tersedia sehingga Anda dapat mengelola pekerjaan dari menu alat admin %s.
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=Daftar profil pekerjaan cron yang telah ditentukan
 # Menu
 EnabledAndDisabled=Diaktifkan dan dinonaktifkan
@@ -27,7 +22,7 @@ CronDelete=Hapus pekerjaan terjadwal
 CronConfirmDelete=Anda yakin ingin menghapus pekerjaan terjadwal ini?
 CronExecute=Luncurkan sekarang
 CronConfirmExecute=Apakah Anda yakin ingin menjalankan pekerjaan terjadwal ini sekarang?
-CronInfo=Modul pekerjaan terjadwal memungkinkan untuk menjadwalkan pekerjaan untuk melaksanakannya secara otomatis. Pekerjaan juga dapat dimulai secara manual.
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=Pekerjaan
 CronNone=Jalankan tugas terjadwal berikutnya
 CronNotYetRan=Tidak pernah dieksekusi
@@ -79,7 +74,7 @@ CronType_command=Perintah shell
 CronCannotLoadClass=Tidak dapat memuat file kelas %s (untuk menggunakan kelas %s)
 CronModuleNotEnabledInThisEntity=Modul Cron tidak diaktifkan dalam entitas ini (untuk menggunakan metode %s dari objek %s)
 CronCannotLoadObject=File kelas %s dimuat, tetapi objek %s tidak ditemukan di dalamnya
-UseMenuModuleToolsToAddCronJobs=Buka menu "<a href="%s"> Beranda - Alat Admin - Pekerjaan terjadwal </a>" untuk melihat dan mengedit pekerjaan yang dijadwalkan.
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=Pekerjaan dinonaktifkan
 MakeLocalDatabaseDumpShort=Pencadangan basis data lokal
 MakeLocalDatabaseDump=Buat dump basis data lokal. Parameternya adalah: kompresi ('gz' atau 'bz' atau 'tidak ada'), jenis cadangan ('mysql', 'pgsql', 'auto'), 1, 'otomatis' atau nama file yang akan dibuat, jumlah file cadangan yang akan disimpan

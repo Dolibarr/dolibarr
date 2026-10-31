@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=Validado
 StatusReceptionProcessedShort=Procesados
 ReceptionSheet=Hoja de recepción
 ValidateReception=Validar recepción
+DeleteReception=Delete reception
 ConfirmDeleteReception=¿Está seguro de querer eliminar esta recepción?
 ConfirmValidateReception=Are you sure you want to validate this reception with the reference <b>%s</b>?
 ConfirmCancelReception=¿Está seguro de querer cancelar esta recepción?

@@ -69,7 +69,6 @@ DOL_VALUE_DAY=Rechnungstag
 DOL_VALUE_DAY_LETTERS=Rechnungstag (als Wort)
 DOL_LINE_FEED_REVERSE=Zeilenvorschub umgekehrt
 InvoiceID=Rechnungs-ID
-InvoiceRef=Rechnungs-Nr.
 DOL_PRINT_OBJECT_LINES=Rechnungspositionen
 DOL_VALUE_CUSTOMER_FIRSTNAME=Vorname des Kunden
 DOL_VALUE_CUSTOMER_LASTNAME=Nachname des Kunden

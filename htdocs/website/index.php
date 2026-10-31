@@ -2206,6 +2206,7 @@ if ($action == 'updatemeta' && $usercanedit) {
 		$objectpage->image = GETPOST('WEBSITE_IMAGE', 'alpha');
 		$objectpage->keywords = str_replace(array('<', '>'), '', GETPOST('WEBSITE_KEYWORDS', 'alphanohtml'));
 		$objectpage->allowed_in_frames = GETPOST('WEBSITE_ALLOWED_IN_FRAMES', 'aZ09') ? 1 : 0;
+		$objectpage->keep_history = GETPOSTINT('WEBSITE_KEEP_HISTORY');
 		$objectpage->htmlheader = trim(GETPOST('htmlheader', 'restricthtmlallowlinkscript'));		// Must accept tags like '<script>' and '<link>'
 		$objectpage->fk_page = (GETPOSTINT('pageidfortranslation') > 0 ? GETPOSTINT('pageidfortranslation') : 0);
 		$objectpage->author_alias = trim(GETPOST('WEBSITE_AUTHORALIAS', 'alphanohtml'));
@@ -4845,6 +4846,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		$pageusermodifid = $objectpage->fk_user_modif;
 		$pageauthoralias = $objectpage->author_alias;
 		$pagestatus = $objectpage->status;
+		$pagekeephistory = (strlen((string) $objectpage->keep_history) ? $objectpage->keep_history : 5);
 	} else {	// $action = 'createcontainer'
 		$type_container = 'page';
 		$pageurl = '';
@@ -4862,6 +4864,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		$pageusermodifid = 0;
 		$pageauthoralias = '';
 		$pagestatus = 1;
+		$pagekeephistory = 5;
 	}
 	if (GETPOST('WEBSITE_TITLE', 'alpha')) {
 		$pagetitle = str_replace(array('<', '>'), '', GETPOST('WEBSITE_TITLE', 'alphanohtml'));
@@ -4886,6 +4889,9 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	}
 	if (GETPOST('WEBSITE_ALLOWED_IN_FRAMES', 'aZ09')) {
 		$pageallowedinframes = 1;
+	}
+	if (GETPOSTISSET('WEBSITE_KEEP_HISTORY')) {
+		$pagekeephistory = GETPOSTINT('WEBSITE_KEEP_HISTORY');
 	}
 	if (GETPOST('htmlheader', 'restricthtmlallowlinkscript')) {		// Must accept tags like '<script>' and '<link>'
 		$pagehtmlheader = GETPOST('htmlheader', 'restricthtmlallowlinkscript');
@@ -5262,6 +5268,16 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	print '</td><td>';
 	print '<input type="checkbox" class="flat" name="WEBSITE_ALLOWED_IN_FRAMES" value="1"'.($pageallowedinframes ? 'checked="checked"' : '').'>';
 	print '</td></tr>';
+
+	// Number of versions to keep in history
+	if ($action != 'createcontainer') {
+		print '<tr><td>';
+		$htmlhelp = $langs->trans("NumberOfVersionsToKeepInHistoryHelp");
+		print $form->textwithpicto($langs->trans('NumberOfVersionsToKeepInHistory'), $htmlhelp, 1, 'help', '', 0, 2, 'keephistorytooltip');
+		print '</td><td>';
+		print '<input type="text" class="flat maxwidth50" name="WEBSITE_KEEP_HISTORY" value="'.dol_escape_htmltag((string) $pagekeephistory).'">';
+		print '</td></tr>';
+	}
 
 	print '</table>';
 

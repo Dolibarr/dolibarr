@@ -1069,6 +1069,29 @@ class CommandeFournisseur extends CommonOrder
 	}
 
 	/**
+	 *	Return the display context of the lines, as defined by the card before printObjectLines() and formAddObjectLine()
+	 *	On supplier documents, the supplier is the seller.
+	 *
+	 *	@return	array{seller:Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	See CommonObject::getObjectLinesDisplayContext()
+	 */
+	public function getObjectLinesDisplayContext()
+	{
+		global $mysoc;
+
+		$context = parent::getObjectLinesDisplayContext();
+		// The supplier is the seller, an empty third party is used if it is not loaded (same as a failed fetch in the card)
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		$context['seller'] = (is_object($this->thirdparty) ? $this->thirdparty : new Societe($this->db));
+		$context['buyer'] = $mysoc;
+		$context['forceall'] = 1;
+		$context['inputalsopricewithtax'] = 1;
+		// 2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum
+		$context['senderissupplier'] = (getDolGlobalInt('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY') ? getDolGlobalInt('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY') : 2);
+
+		return $context;
+	}
+
+	/**
 	 *	Return clickable name (with picto eventually)
 	 *
 	 *	@param		int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
@@ -1598,6 +1621,94 @@ class CommandeFournisseur extends CommonOrder
 		}
 
 		return ($error ? -1 : 1);
+	}
+
+	/**
+	 * 	Save the price of the predefined product lines as supplier price (with its history, created if the supplier has none for the product) and as cost price of the products
+	 *
+	 * 	@param		User	$user		User making change
+	 * 	@return		int					Return integer <0 if KO, number of prices updated if OK
+	 */
+	public function updateProductBuyPrices($user)
+	{
+		if (empty($this->thirdparty)) {
+			$this->fetch_thirdparty();
+		}
+
+		// Same rights as the buying prices tab of the product card
+		if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+			$canproduct = $canservice = $user->hasRight('product', 'product_advance', 'write_supplier_prices');
+		} else {
+			$canproduct = $user->hasRight('produit', 'creer');
+			$canservice = $user->hasRight('service', 'creer');
+		}
+
+		// Products for which the supplier already has a price, whatever its ref
+		$withprice = array();
+		$productids = array(0);
+		foreach ($this->lines as $line) {
+			$productids[] = (int) $line->fk_product;
+		}
+		$sql = "SELECT DISTINCT fk_product FROM ".$this->db->prefix()."product_fournisseur_price";
+		$sql .= " WHERE fk_soc = ".((int) $this->socid)." AND entity IN (".getEntity('productsupplierprice').") AND fk_product IN (".$this->db->sanitize(implode(',', $productids)).")";
+		$resql = $this->db->query($sql);
+		while ($resql && $obj = $this->db->fetch_object($resql)) {
+			$withprice[(int) $obj->fk_product] = 1;
+		}
+
+		$nbupdated = 0;
+		foreach ($this->lines as $line) {
+			if ($line->fk_product <= 0 || $line->qty <= 0 || $line->subprice <= 0 || ($line->product_type == Product::TYPE_SERVICE ? !$canservice : !$canproduct)) {
+				continue;
+			}
+
+			// Supplier price. History and triggers are managed by update_buyprice(). Nothing to update if no price line exists for this supplier ref.
+			$productsupplier = new ProductFournisseur($this->db);
+			if ($productsupplier->get_buyprice(0, $line->qty, $line->fk_product, $line->ref_supplier, (int) $this->socid) > 0
+				&& $productsupplier->fetch_product_fournisseur_price($productsupplier->product_fourn_price_id) > 0
+				&& (price2num($productsupplier->fourn_unitprice, 'MU') != price2num($line->subprice, 'MU') || (float) $productsupplier->fourn_remise_percent != (float) $line->remise_percent)) {
+				$qty = $productsupplier->fourn_qty;
+				$productsupplier->product_fourn_packaging = $productsupplier->packaging;	// Keep the packaging of the price line
+				$mcsubprice = (empty($line->multicurrency_subprice) ? $line->subprice : $line->multicurrency_subprice);
+				$result = $productsupplier->update_buyprice($qty, $line->subprice * $qty, $user, 'HT', $this->thirdparty, $productsupplier->fk_availability, $productsupplier->ref_supplier, (float) $productsupplier->fourn_tva_tx, (float) $productsupplier->fourn_charges, $line->remise_percent, $productsupplier->fourn_remise, $productsupplier->fourn_tva_npr, $productsupplier->delivery_time_days, $productsupplier->supplier_reputation, array(), $productsupplier->default_vat_code, $mcsubprice * $qty, 'HT', (float) $this->multicurrency_tx, $this->multicurrency_code, $productsupplier->desc_supplier, $productsupplier->supplier_barcode, (int) $productsupplier->supplier_fk_barcode_type);
+				if ($result < 0) {
+					$this->setErrorsFromObject($productsupplier);
+					return -1;
+				}
+				$nbupdated++;
+			}
+
+			// The supplier has no price for this product: create it for the quantity 1, like the buying prices tab of the product does.
+			// The supplier ref is the one of the line or else the ref of the product, as it must be unique for a supplier and a quantity.
+			$newprice = new ProductFournisseur($this->db);
+			if (empty($productsupplier->product_fourn_price_id) && empty($withprice[$line->fk_product]) && $newprice->fetch($line->fk_product) > 0) {
+				$ref = ($line->ref_supplier ? (string) $line->ref_supplier : $newprice->ref);
+				$result = $newprice->add_fournisseur($user, (int) $this->socid, $ref, 1);	// -3 if this supplier ref is used by another product
+				if ($result > 0) {
+					$withprice[$line->fk_product] = 1;
+					$result = $newprice->update_buyprice(1, (float) $line->subprice, $user, 'HT', $this->thirdparty, 0, $ref, (float) $line->tva_tx, 0, $line->remise_percent, 0, 0, 0, '', array(), (string) $line->vat_src_code, (float) ($line->multicurrency_subprice ?: $line->subprice), 'HT', (float) $this->multicurrency_tx, $this->multicurrency_code);
+					$nbupdated++;
+				}
+				if ($result < 0 && $result != -3) {
+					$this->setErrorsFromObject($newprice);
+					return -1;
+				}
+			}
+
+			// Cost price (net unit price of the line)
+			$costprice = price2num($line->subprice * (1 - $line->remise_percent / 100), 'MU');
+			$product = new Product($this->db);
+			if ($product->fetch($line->fk_product) > 0 && price2num($product->cost_price, 'MU') != $costprice) {
+				$result = $product->setValueFrom('cost_price', $costprice, '', null, 'text', '', $user, 'PRODUCT_MODIFY');
+				if ($result < 0) {
+					$this->setErrorsFromObject($product);
+					return -1;
+				}
+				$nbupdated++;
+			}
+		}
+
+		return $nbupdated;
 	}
 
 	/**

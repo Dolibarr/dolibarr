@@ -490,8 +490,8 @@ if (getDolGlobalString('PROPOSAL_ALLOW_ONLINESIGN')) {
 if (isModEnabled('cron')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("SendReminderForExpiringProposalsTitle").'</td>';
-	print '<td class="right">';
-	print '<a href="'.DOL_URL_ROOT.'/cron/list.php?search_label=SendReminderForExpiringProposalsTitle&status=-1">'.$langs->trans("ConfigureContractReminderCronjobToSetFrequency").'</a>';
+	print '<td>';
+	print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.DOL_URL_ROOT.'/cron/list.php?search_label=SendReminderForExpiringProposalsTitle&status=-1">'.$langs->trans("ConfigureContractReminderCronjobToSetFrequency").'</a>';
 	print '</td>';
 	print '</tr>';
 }

@@ -13,7 +13,7 @@ descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=عند تصنيف طلب عميل عل
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=عند اعتماد فاتورة عميل، تُصنّف عروض المصدر المرتبطة على أنها مفوترة إذا كان مبلغ الفاتورة مساويًا لإجمالي مبالغ العروض المرتبطة والموقعة.
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=عند تصنيف فاتورة عميل على أنها مدفوعة، تُصنّف طلبات العملاء المصدر المرتبطة على أنها مفوترة إذا كان مبلغ الفاتورة مساويًا لإجمالي مبالغ الطلبات المرتبطة. إذا أنشأت فاتورة واحدة لعدة طلبات، فقد يؤدي ذلك أيضًا إلى تصنيف جميع الطلبات على أنها مفوترة.
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=عند اعتماد فاتورة عميل، تُصنّف جميع طلبات العملاء المصدر المرتبطة على أنها مفوترة إذا كان مبلغ الفاتورة مساويًا لإجمالي مبالغ طلبات المصدر المرتبطة. إذا أنشأت فاتورة موحدة واحدة لعدة طلبات، فقد يؤدي ذلك إلى تصنيف جميع طلبات المصدر على أنها مفوترة.
-descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=عند اعتماد فاتورة عميل، يُصنّف طلب العميل المرتبط، إذا كان طلبًا واحدًا فقط، على أنه مفوتر عندما يساوي إجمالي مبلغ الطلب إجمالي مبالغ جميع الفواتير الصادرة عنه. وإذا أنشأت عدة فواتير لطلب واحد، فسيُصنّف الطلب على أنه مفوتر بعد اعتماد جميع الفواتير.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=When a customer invoice is validated, classify the linked sales order (if there is only one) as billed, if the total amount of the linked sales order is equal to the total amount of all invoices issued from it. If you generate n invoices for 1 order, this allows you to set the order to billed as soon as all invoices are validated.
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=عند اعتماد شحنة، تُصنّف طلبات العملاء المصدر المرتبطة على أنها مشحونة إذا كانت الكمية المشحونة عبر جميع الشحنات مساوية للكمية الواردة في الطلب.
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=عند إغلاق شحنة، يُصنّف طلب العميل المصدر المرتبط على أنه مشحون إذا كانت الكمية المشحونة عبر جميع الشحنات مساوية للكمية الواردة في الطلب.
 # Autoclassify purchase proposal
@@ -24,7 +24,7 @@ descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=عند اعتماد استلام�
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=عند إغلاق استلام، تُصنّف أوامر الشراء المصدر المرتبطة على أنها مستلمة إذا كانت الكمية المستلمة عبر جميع عمليات الاستلام الناتجة عن أمر الشراء مساوية للكمية الواردة فيه.
 # Autoclassify shipment
 descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=عند اعتماد فاتورة عميل، تُصنّف شحنة المصدر المرتبطة على أنها مغلقة إذا كان مبلغ الفاتورة مساويًا لإجمالي مبالغ الشحنات المرتبطة.
-descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=عند اعتماد فاتورة عميل، تُصنّف شحنة المصدر المرتبطة على أنها مفوترة إذا كان مبلغ الفاتورة مساويًا لإجمالي مبالغ الشحنات المرتبطة.
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=When a customer invoice is validated, classify the linked source shipment as billed (and if the amount of the invoice is the same as the total amount of the linked shipments, except for a shipment without sales order, which has no amount)
 # Autoclassify receptions
 descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=عند اعتماد فاتورة مورد، تُصنّف عمليات الاستلام المصدر المرتبطة على أنها مغلقة إذا كان مبلغ الفاتورة مساويًا لإجمالي مبالغ عمليات الاستلام المرتبطة.
 descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=عند اعتماد فاتورة مورد، تُصنّف عمليات الاستلام المصدر المرتبطة على أنها مفوترة إذا كان مبلغ الفاتورة مساويًا لإجمالي مبالغ عمليات الاستلام المرتبطة.

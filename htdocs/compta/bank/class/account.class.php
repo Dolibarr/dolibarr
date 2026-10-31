@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2010	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015-2016	Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2015-2017	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2016		Ferran Marcet   		<fmarcet@2byte.es>
  * Copyright (C) 2019		JC Prieto				<jcprieto@virtual20.com><prietojc@gmail.com>
  * Copyright (C) 2022-2026  Frédéric France         <frederic.france@free.fr>

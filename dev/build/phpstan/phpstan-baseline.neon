@@ -151,12 +151,6 @@ parameters:
 			path: ../../../htdocs/modulebuilder/template/stats/myobject_index.php
 
 		-
-			message: '#^PHPDoc type array\<array\<string, int\|string\>\> of property Opensurveysondage\:\:\$lines is not covariant with PHPDoc type array\<CommonObject\|stdClass\> of overridden property CommonObject\:\:\$lines\.$#'
-			identifier: property.phpDocType
-			count: 1
-			path: ../../../htdocs/opensurvey/class/opensurveysondage.class.php
-
-		-
 			message: '#^Strict comparison using \=\=\= between ''0'' and ''0'' will always evaluate to true\.$#'
 			identifier: identical.alwaysTrue
 			count: 1
@@ -251,12 +245,6 @@ parameters:
 			identifier: argument.unresolvableType
 			count: 2
 			path: ../../../htdocs/public/webportal/tpl/menu.tpl.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between ''nolink'' and ''nolink'' will always evaluate to true\.$#'
-			identifier: identical.alwaysTrue
-			count: 1
-			path: ../../../htdocs/webportal/class/webportalmember.class.php
 
 		-
 			message: '#^Strict comparison using \=\=\= between ''nolink'' and ''nolink'' will always evaluate to true\.$#'

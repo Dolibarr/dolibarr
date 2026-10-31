@@ -1462,8 +1462,10 @@ class ToolApiBridge extends McpTool
 	 * per-context allow-lists, their 'right' blocks are checked per call, and
 	 * every 'write' goes through the confirmation gate.
 	 *
-	 * Expected module return (in $this->results of its actions class):
-	 *   array('endpointkey' => array('label' => ..., 'methods' => array(...)))
+	 * Expected module return (in $this->results of its actions class), nested
+	 * under the module name since the results of all modules are merged:
+	 *   array('mymodule' => array('endpointkey' => array('label' => ..., 'methods' => array(...))))
+	 * where 'endpointkey' is the X of the module's api_X.class.php file.
 	 *
 	 * @return void
 	 */
@@ -1824,6 +1826,33 @@ class ToolApiBridge extends McpTool
 					'suffix' => 'triggers',
 					'description' => "All trigger codes a webhook can subscribe to (business event codes like COMPANY_CREATE, BILL_VALIDATE...).",
 					'right' => array('webhook', 'webhook_target', 'read')
+				)
+			)
+		);
+
+		// Object links (llx_element_element): which record is linked to which.
+		// Rights are dynamic - the REST class checks lire/read on the module of
+		// EACH side of the link - so everything is enforced downstream. The
+		// write side (create/delete links) needs rights on both element types
+		// too and is left for a follow-up.
+		$this->enrichments['objectlinks'] = array(
+			'label' => 'links between records',
+			'methods' => array(
+				'getById' => array(
+					'suffix' => 'get',
+					'description' => "One object link by its rowid: the pair it joins, (fk_source, sourcetype) to (fk_target, targettype).",
+					'params' => array('id' => "Rowid of the object link.")
+				),
+				'getByValues' => array(
+					'suffix' => 'get_by_values',
+					'description' => "Whether two records are linked: give the rowid and element type of each side. Answers 'is invoice X linked to proposal Y'. Element types are names like 'propal' (proposal), 'commande' (customer order), 'facture' (customer invoice), 'contrat', 'project', 'task', 'ticket', 'actioncomm' (agenda event), 'subscription' (membership), 'shipping', 'reception'.",
+					'params' => array(
+						'fk_source' => "Rowid of the record the link starts from.",
+						'sourcetype' => "Element type of the source record (e.g. 'propal', 'facture', 'project').",
+						'fk_target' => "Rowid of the record the link points to.",
+						'targettype' => "Element type of the target record (e.g. 'commande', 'task', 'ticket').",
+						'relationtype' => "Relation qualifier, usually left empty."
+					)
 				)
 			)
 		);
@@ -3101,6 +3130,44 @@ class ToolApiBridge extends McpTool
 		if (file_put_contents($tmpfile, $payload) !== false) {
 			@rename($tmpfile, $cachefile);
 		}
+	}
+
+	/**
+	 * Delete every bridge_tooldefs_*.json cache file of the ai temp directories
+	 * (current entity and the other ones), so the tool definitions are rebuilt
+	 * from scratch on the next request. Called by the /reload command of the
+	 * assistant chat.
+	 *
+	 * @return int Number of cache files deleted
+	 */
+	public function purgeDefsCache(): int
+	{
+		global $conf;
+
+		$dirs = array();
+		if (!empty($conf->ai->multidir_temp) && is_array($conf->ai->multidir_temp)) {
+			foreach ($conf->ai->multidir_temp as $dir) {
+				if (is_string($dir) && $dir !== '') {
+					$dirs[] = rtrim($dir, '/');
+				}
+			}
+		}
+		if (!empty($conf->ai->dir_temp) && is_string($conf->ai->dir_temp)) {
+			$dirs[] = rtrim($conf->ai->dir_temp, '/');
+		}
+
+		$count = 0;
+		foreach (array_unique($dirs) as $dir) {
+			// Same @unlink as writeDefsCache() pruning the previous states: no
+			// dol_delete_file() here, files.lib.php is not loaded in every context.
+			foreach ((array) glob($dir.'/bridge_tooldefs_*.json') as $file) {
+				if (is_string($file) && @unlink($file)) {
+					$count++;
+				}
+			}
+		}
+
+		return $count;
 	}
 
 	/**

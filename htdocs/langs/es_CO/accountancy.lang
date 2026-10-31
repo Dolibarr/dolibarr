@@ -156,7 +156,6 @@ ThirdpartyAccountNotDefined=Cuenta por tercero no definida.
 ProductAccountNotDefined=Cuenta por producto no definido.
 FeeAccountNotDefined=Cuenta por tarifa no definida
 BankAccountNotDefined=Cuenta para banco no definida
-CustomerInvoicePayment=Pago de factura al cliente.
 ThirdPartyAccount=Cuenta de terceros
 NewAccountingMvt=Nueva transaccion
 NumMvts=Numero de transacción

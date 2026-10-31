@@ -325,11 +325,9 @@ ActionsOnTicket=Events on ticket
 # Boxes
 BoxLastTicket=Latest created tickets
 BoxLastTicketDescription=Latest %s created tickets
-BoxLastTicketContent=
 BoxLastTicketNoRecordedTickets=No recent unread tickets
 BoxLastModifiedTicket=Latest modified tickets
 BoxLastModifiedTicketDescription=Latest %s modified tickets
-BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=No recent modified tickets
 BoxTicketType=Distribution of open tickets by type
 BoxTicketSeverity=Number of open tickets by severity
