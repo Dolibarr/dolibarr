@@ -1456,13 +1456,21 @@ class Ldap
 			$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
 			return -1;
 		} else {
-			$this->name       = $this->convToOutputCharset($result[0][$this->attr_name][0] ?? '', $this->ldapcharset);
-			$this->firstname  = $this->convToOutputCharset($result[0][$this->attr_firstname][0] ?? '', $this->ldapcharset);
-			$this->login      = $this->convToOutputCharset($result[0][$this->attr_login][0] ?? '', $this->ldapcharset);
-			$this->phone      = $this->convToOutputCharset($result[0][$this->attr_phone][0] ?? '', $this->ldapcharset);
-			$this->fax        = $this->convToOutputCharset($result[0][$this->attr_fax][0] ?? '', $this->ldapcharset);
-			$this->mail       = $this->convToOutputCharset($result[0][$this->attr_mail][0] ?? '', $this->ldapcharset);
-			$this->mobile     = $this->convToOutputCharset($result[0][$this->attr_mobile][0] ?? '', $this->ldapcharset);
+			$attr_name = !empty($this->attr_name) ? dol_strtolower((string) $this->attr_name) : '';
+			$attr_firstname = !empty($this->attr_firstname) ? dol_strtolower((string) $this->attr_firstname) : '';
+			$attr_login = !empty($this->attr_login) ? dol_strtolower((string) $this->attr_login) : '';
+			$attr_phone = !empty($this->attr_phone) ? dol_strtolower((string) $this->attr_phone) : '';
+			$attr_fax = !empty($this->attr_fax) ? dol_strtolower((string) $this->attr_fax) : '';
+			$attr_mail = !empty($this->attr_mail) ? dol_strtolower((string) $this->attr_mail) : '';
+			$attr_mobile = !empty($this->attr_mobile) ? dol_strtolower((string) $this->attr_mobile) : '';
+
+			$this->name       = $this->convToOutputCharset($result[0][$attr_name][0] ?? $result[0][$this->attr_name][0] ?? '', $this->ldapcharset);
+			$this->firstname  = $this->convToOutputCharset($result[0][$attr_firstname][0] ?? $result[0][$this->attr_firstname][0] ?? '', $this->ldapcharset);
+			$this->login      = $this->convToOutputCharset($result[0][$attr_login][0] ?? $result[0][$this->attr_login][0] ?? '', $this->ldapcharset);
+			$this->phone      = $this->convToOutputCharset($result[0][$attr_phone][0] ?? $result[0][$this->attr_phone][0] ?? '', $this->ldapcharset);
+			$this->fax        = $this->convToOutputCharset($result[0][$attr_fax][0] ?? $result[0][$this->attr_fax][0] ?? '', $this->ldapcharset);
+			$this->mail       = $this->convToOutputCharset($result[0][$attr_mail][0] ?? $result[0][$this->attr_mail][0] ?? '', $this->ldapcharset);
+			$this->mobile     = $this->convToOutputCharset($result[0][$attr_mobile][0] ?? $result[0][$this->attr_mobile][0] ?? '', $this->ldapcharset);
 
 			$this->uacf       = $this->parseUACF($this->convToOutputCharset($result[0]["useraccountcontrol"][0] ?? '', $this->ldapcharset));
 			if (isset($result[0]["pwdlastset"][0])) {	// If expiration on password exists
@@ -1482,7 +1490,7 @@ class Ldap
 
 			// Set ldapUserDn (each user can have a different dn)
 			//var_dump($result[0]);exit;
-			$this->ldapUserDN = $result[0]['dn'];
+			$this->ldapUserDN = isset($result[0]['dn']) ? $result[0]['dn'] : '';
 
 			ldap_free_result($this->result);
 			return 1;
