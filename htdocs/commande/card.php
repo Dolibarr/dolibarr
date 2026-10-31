@@ -3556,10 +3556,8 @@ if ($action == 'create' && $usercancreate) {
 			// Get object lines
 			$result = $object->getLinesArray();
 
-			// Add products/services form
-			//$forceall = 1;
-			global $inputalsopricewithtax;
-			$inputalsopricewithtax = 1;
+			// Display context of lines, also sets the global variables used by the line templates
+			$linesContext = $object->initObjectLinesDisplay();
 
 			print '<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">
 			<input type="hidden" name="token" value="' . newToken() . '">
@@ -3582,8 +3580,9 @@ if ($action == 'create' && $usercancreate) {
 			print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 			// Show object lines
-			if (!empty($object->lines)) {
-				$object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
+			// With nolines=1, the card is loaded without its lines, to refresh the other parts of the page in ajax
+			if (!empty($object->lines) && !GETPOSTINT('nolines')) {
+				$object->printObjectLines($action, $linesContext['seller'], $linesContext['buyer'], $lineid, $linesContext['dateSelector']);
 			}
 
 			/*
@@ -3600,7 +3599,7 @@ if ($action == 'create' && $usercancreate) {
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 					}
 					if (empty($reshook)) {
-						$object->formAddObjectLine(1, $mysoc, $soc);
+						$object->formAddObjectLine($linesContext['dateSelector'], $linesContext['seller'], $linesContext['buyer']);
 					}
 				} else {
 					$parameters = array();
