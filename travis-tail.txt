@@ -1,0 +1,1536 @@
+u can use it to make any REST API call, or enter it into the DOLAPIKEY field to use the Dolibarr API explorer."
+    }
+}',
+  'curl_error_no' => 0,
+  'curl_error_msg' => '',
+)
+RestAPIBankAccountsTest::setUp curl_error_no: 0
+RestAPIBankAccountsTest::setUp api_key: demokey 
+.RestAPISupplierOrderTest::setUp result = array (
+  'url' => 'http://127.0.0.1/api/index.php/login?login=admin&password=admin',
+  'content_type' => 'application/json; charset=utf-8',
+  'http_code' => 200,
+  'header_size' => 517,
+  'request_size' => 219,
+  'filetime' => -1,
+  'ssl_verify_result' => 0,
+  'redirect_count' => 0,
+  'total_time' => 0.073621,
+  'namelookup_time' => 2.5E-5,
+  'connect_time' => 0.000108,
+  'pretransfer_time' => 0.000153,
+  'size_upload' => 0.0,
+  'size_download' => 215.0,
+  'speed_download' => 2920.0,
+  'speed_upload' => 0.0,
+  'download_content_length' => 215.0,
+  'upload_content_length' => 0.0,
+  'starttransfer_time' => 0.073555,
+  'redirect_time' => 0.0,
+  'redirect_url' => '',
+  'primary_ip' => '127.0.0.1',
+  'certinfo' => 
+  array (
+  ),
+  'primary_port' => 80,
+  'local_ip' => '127.0.0.1',
+  'local_port' => 35238,
+  'http_version' => 2,
+  'protocol' => 1,
+  'ssl_verifyresult' => 0,
+  'scheme' => 'HTTP',
+  'appconnect_time_us' => 0,
+  'connect_time_us' => 108,
+  'namelookup_time_us' => 25,
+  'pretransfer_time_us' => 153,
+  'redirect_time_us' => 0,
+  'starttransfer_time_us' => 73555,
+  'total_time_us' => 73621,
+  'request_header' => 'GET /api/index.php/login?login=admin&password=admin HTTP/1.1
+Host: 127.0.0.1
+User-Agent: Dolibarr geturl function
+Accept-Encoding: deflate, gzip, br, zstd
+Content-Type: application/json
+Accept: application/json
+
+',
+  'effective_method' => 'GET',
+  'content' => '{
+    "success": {
+        "code": 200,
+        "token": "demokey",
+        "entity": "0",
+        "message": "Welcome admin - This is your token (recorded for your user). You can use it to make any REST API call, or enter it into the DOLAPIKEY field to use the Dolibarr API explorer."
+    }
+}',
+  'curl_error_no' => 0,
+  'curl_error_msg' => '',
+)
+RestAPISupplierOrderTest::setUp curl_error_no: 0
+RestAPISupplierOrderTest::setUp api_key: demokey 
+.RestAPISupplierOrderTest::setUp result = array (
+  'url' => 'http://127.0.0.1/api/index.php/login?login=admin&password=admin',
+  'content_type' => 'application/json; charset=utf-8',
+  'http_code' => 200,
+  'header_size' => 517,
+  'request_size' => 219,
+  'filetime' => -1,
+  'ssl_verify_result' => 0,
+  'redirect_count' => 0,
+  'total_time' => 0.073941,
+  'namelookup_time' => 2.8E-5,
+  'connect_time' => 0.000115,
+  'pretransfer_time' => 0.00016,
+  'size_upload' => 0.0,
+  'size_download' => 215.0,
+  'speed_download' => 2907.0,
+  'speed_upload' => 0.0,
+  'download_content_length' => 215.0,
+  'upload_content_length' => 0.0,
+  'starttransfer_time' => 0.073874,
+  'redirect_time' => 0.0,
+  'redirect_url' => '',
+  'primary_ip' => '127.0.0.1',
+  'certinfo' => 
+  array (
+  ),
+  'primary_port' => 80,
+  'local_ip' => '127.0.0.1',
+  'local_port' => 35286,
+  'http_version' => 2,
+  'protocol' => 1,
+  'ssl_verifyresult' => 0,
+  'scheme' => 'HTTP',
+  'appconnect_time_us' => 0,
+  'connect_time_us' => 115,
+  'namelookup_time_us' => 28,
+  'pretransfer_time_us' => 160,
+  'redirect_time_us' => 0,
+  'starttransfer_time_us' => 73874,
+  'total_time_us' => 73941,
+  'request_header' => 'GET /api/index.php/login?login=admin&password=admin HTTP/1.1
+Host: 127.0.0.1
+User-Agent: Dolibarr geturl function
+Accept-Encoding: deflate, gzip, br, zstd
+Content-Type: application/json
+Accept: application/json
+
+',
+  'effective_method' => 'GET',
+  'content' => '{
+    "success": {
+        "code": 200,
+        "token": "demokey",
+        "entity": "0",
+        "message": "Welcome admin - This is your token (recorded for your user). You can use it to make any REST API call, or enter it into the DOLAPIKEY field to use the Dolibarr API explorer."
+    }
+}',
+  'curl_error_no' => 0,
+  'curl_error_msg' => '',
+)
+RestAPISupplierOrderTest::setUp curl_error_no: 0
+RestAPISupplierOrderTest::setUp api_key: demokey 
+.RestAPISupplierOrderTest::setUp result = array (
+  'url' => 'http://127.0.0.1/api/index.php/login?login=admin&password=admin',
+  'content_type' => 'application/json; charset=utf-8',
+  'http_code' => 200,
+  'header_size' => 517,
+  'request_size' => 219,
+  'filetime' => -1,
+  'ssl_verify_result' => 0,
+  'redirect_count' => 0,
+  'total_time' => 0.074038,
+  'namelookup_time' => 2.5E-5,
+  'connect_time' => 0.000124,
+  'pretransfer_time' => 0.000171,
+  'size_upload' => 0.0,
+  'size_download' => 215.0,
+  'speed_download' => 2903.0,
+  'speed_upload' => 0.0,
+  'download_content_length' => 215.0,
+  'upload_content_length' => 0.0,
+  'starttransfer_time' => 0.073972,
+  'redirect_time' => 0.0,
+  'redirect_url' => '',
+  'primary_ip' => '127.0.0.1',
+  'certinfo' => 
+  array (
+  ),
+  'primary_port' => 80,
+  'local_ip' => '127.0.0.1',
+  'local_port' => 35306,
+  'http_version' => 2,
+  'protocol' => 1,
+  'ssl_verifyresult' => 0,
+  'scheme' => 'HTTP',
+  'appconnect_time_us' => 0,
+  'connect_time_us' => 124,
+  'namelookup_time_us' => 25,
+  'pretransfer_time_us' => 171,
+  'redirect_time_us' => 0,
+  'starttransfer_time_us' => 73972,
+  'total_time_us' => 74038,
+  'request_header' => 'GET /api/index.php/login?login=admin&password=admin HTTP/1.1
+Host: 127.0.0.1
+User-Agent: Dolibarr geturl function
+Accept-Encoding: deflate, gzip, br, zstd
+Content-Type: application/json
+Accept: application/json
+
+',
+  'effective_method' => 'GET',
+  'content' => '{
+    "success": {
+        "code": 200,
+        "token": "demokey",
+        "entity": "0",
+        "message": "Welcome admin - This is your token (recorded for your user). You can use it to make any REST API call, or enter it into the DOLAPIKEY field to use the Dolibarr API explorer."
+    }
+}',
+  'curl_error_no' => 0,
+  'curl_error_msg' => '',
+)
+RestAPISupplierOrderTest::setUp curl_error_no: 0
+RestAPISupplierOrderTest::setUp api_key: demokey 
+.RestAPISupplierOrderTest::setUp result = array (
+  'url' => 'http://127.0.0.1/api/index.php/login?login=admin&password=admin',
+  'content_type' => 'application/json; charset=utf-8',
+  'http_code' => 200,
+  'header_size' => 517,
+  'request_size' => 219,
+  'filetime' => -1,
+  'ssl_verify_result' => 0,
+  'redirect_count' => 0,
+  'total_time' => 0.073777,
+  'namelookup_time' => 2.6E-5,
+  'connect_time' => 0.000114,
+  'pretransfer_time' => 0.000161,
+  'size_upload' => 0.0,
+  'size_download' => 215.0,
+  'speed_download' => 2914.0,
+  'speed_upload' => 0.0,
+  'download_content_length' => 215.0,
+  'upload_content_length' => 0.0,
+  'starttransfer_time' => 0.073707,
+  'redirect_time' => 0.0,
+  'redirect_url' => '',
+  'primary_ip' => '127.0.0.1',
+  'certinfo' => 
+  array (
+  ),
+  'primary_port' => 80,
+  'local_ip' => '127.0.0.1',
+  'local_port' => 35326,
+  'http_version' => 2,
+  'protocol' => 1,
+  'ssl_verifyresult' => 0,
+  'scheme' => 'HTTP',
+  'appconnect_time_us' => 0,
+  'connect_time_us' => 114,
+  'namelookup_time_us' => 26,
+  'pretransfer_time_us' => 161,
+  'redirect_time_us' => 0,
+  'starttransfer_time_us' => 73707,
+  'total_time_us' => 73777,
+  'request_header' => 'GET /api/index.php/login?login=admin&password=admin HTTP/1.1
+Host: 127.0.0.1
+User-Agent: Dolibarr geturl function
+Accept-Encoding: deflate, gzip, br, zstd
+Content-Type: application/json
+Accept: application/json
+
+',
+  'effective_method' => 'GET',
+  'content' => '{
+    "success": {
+        "code": 200,
+        "token": "demokey",
+        "entity": "0",
+        "message": "Welcome admin - This is your token (recorded for your user). You can use it to make any REST API call, or enter it into the DOLAPIKEY field to use the Dolibarr API explorer."
+    }
+}',
+  'curl_error_no' => 0,
+  'curl_error_msg' => '',
+)
+RestAPISupplierOrderTest::setUp curl_error_no: 0
+RestAPISupplierOrderTest::setUp api_key: demokey 
+.RestAPISupplierOrderTest::setUp result = array (
+  'url' => 'http://127.0.0.1/api/index.php/login?login=admin&password=admin',
+  'content_type' => 'application/json; charset=utf-8',
+  'http_code' => 200,
+  'header_size' => 517,
+  'request_size' => 219,
+  'filetime' => -1,
+  'ssl_verify_result' => 0,
+  'redirect_count' => 0,
+  'total_time' => 0.073715,
+  'namelookup_time' => 2.6E-5,
+  'connect_time' => 0.000141,
+  'pretransfer_time' => 0.000189,
+  'size_upload' => 0.0,
+  'size_download' => 215.0,
+  'speed_download' => 2916.0,
+  'speed_upload' => 0.0,
+  'download_content_length' => 215.0,
+  'upload_content_length' => 0.0,
+  'starttransfer_time' => 0.07365,
+  'redirect_time' => 0.0,
+  'redirect_url' => '',
+  'primary_ip' => '127.0.0.1',
+  'certinfo' => 
+  array (
+  ),
+  'primary_port' => 80,
+  'local_ip' => '127.0.0.1',
+  'local_port' => 35396,
+  'http_version' => 2,
+  'protocol' => 1,
+  'ssl_verifyresult' => 0,
+  'scheme' => 'HTTP',
+  'appconnect_time_us' => 0,
+  'connect_time_us' => 141,
+  'namelookup_time_us' => 26,
+  'pretransfer_time_us' => 189,
+  'redirect_time_us' => 0,
+  'starttransfer_time_us' => 73650,
+  'total_time_us' => 73715,
+  'request_header' => 'GET /api/index.php/login?login=admin&password=admin HTTP/1.1
+Host: 127.0.0.1
+User-Agent: Dolibarr geturl function
+Accept-Encoding: deflate, gzip, br, zstd
+Content-Type: application/json
+Accept: application/json
+
+',
+  'effective_method' => 'GET',
+  'content' => '{
+    "success": {
+        "code": 200,
+        "token": "demokey",
+        "entity": "0",
+        "message": "Welcome admin - This is your token (recorded for your user). You can use it to make any REST API call, or enter it into the DOLAPIKEY field to use the Dolibarr API explorer."
+    }
+}',
+  'curl_error_no' => 0,
+  'curl_error_msg' => '',
+)
+RestAPISupplierOrderTest::setUp curl_error_no: 0
+RestAPISupplierOrderTest::setUp api_key: demokey 
+.RestAPISupplierOrderTest::setUp result = array (
+  'url' => 'http://127.0.0.1/api/index.php/login?login=admin&password=admin',
+  'content_type' => 'application/json; charset=utf-8',
+  'http_code' => 200,
+  'header_size' => 517,
+  'request_size' => 219,
+  'filetime' => -1,
+  'ssl_verify_result' => 0,
+  'redirect_count' => 0,
+  'total_time' => 0.073977,
+  'namelookup_time' => 2.8E-5,
+  'connect_time' => 0.000106,
+  'pretransfer_time' => 0.000154,
+  'size_upload' => 0.0,
+  'size_download' => 215.0,
+  'speed_download' => 2906.0,
+  'speed_upload' => 0.0,
+  'download_content_length' => 215.0,
+  'upload_content_length' => 0.0,
+  'starttransfer_time' => 0.07391,
+  'redirect_time' => 0.0,
+  'redirect_url' => '',
+  'primary_ip' => '127.0.0.1',
+  'certinfo' => 
+  array (
+  ),
+  'primary_port' => 80,
+  'local_ip' => '127.0.0.1',
+  'local_port' => 35420,
+  'http_version' => 2,
+  'protocol' => 1,
+  'ssl_verifyresult' => 0,
+  'scheme' => 'HTTP',
+  'appconnect_time_us' => 0,
+  'connect_time_us' => 106,
+  'namelookup_time_us' => 28,
+  'pretransfer_time_us' => 154,
+  'redirect_time_us' => 0,
+  'starttransfer_time_us' => 73910,
+  'total_time_us' => 73977,
+  'request_header' => 'GET /api/index.php/login?login=admin&password=admin HTTP/1.1
+Host: 127.0.0.1
+User-Agent: Dolibarr geturl function
+Accept-Encoding: deflate, gzip, br, zstd
+Content-Type: application/json
+Accept: application/json
+
+',
+  'effective_method' => 'GET',
+  'content' => '{
+    "success": {
+        "code": 200,
+        "token": "demokey",
+        "entity": "0",
+        "message": "Welcome admin - This is your token (recorded for your user). You can use it to make any REST API call, or enter it into the DOLAPIKEY field to use the Dolibarr API explorer."
+    }
+}',
+  'curl_error_no' => 0,
+  'curl_error_msg' => '',
+)
+RestAPISupplierOrderTest::setUp curl_error_no: 0
+RestAPISupplierOrderTest::setUp api_key: demokey 
+.RestAPISupplierOrderTest::setUp result = array (
+  'url' => 'http://127.0.0.1/api/index.php/login?login=admin&password=admin',
+  'content_type' => 'application/json; charset=utf-8',
+  'http_code' => 200,
+  'header_size' => 517,
+  'request_size' => 219,
+  'filetime' => -1,
+  'ssl_verify_result' => 0,
+  'redirect_count' => 0,
+  'total_time' => 0.073975,
+  'namelookup_time' => 3.6E-5,
+  'connect_time' => 0.00011,
+  'pretransfer_time' => 0.000155,
+  'size_upload' => 0.0,
+  'size_download' => 215.0,
+  'speed_download' => 2906.0,
+  'speed_upload' => 0.0,
+  'download_content_length' => 215.0,
+  'upload_content_length' => 0.0,
+  'starttransfer_time' => 0.073903,
+  'redirect_time' => 0.0,
+  'redirect_url' => '',
+  'primary_ip' => '127.0.0.1',
+  'certinfo' => 
+  array (
+  ),
+  'primary_port' => 80,
+  'local_ip' => '127.0.0.1',
+  'local_port' => 35434,
+  'http_version' => 2,
+  'protocol' => 1,
+  'ssl_verifyresult' => 0,
+  'scheme' => 'HTTP',
+  'appconnect_time_us' => 0,
+  'connect_time_us' => 110,
+  'namelookup_time_us' => 36,
+  'pretransfer_time_us' => 155,
+  'redirect_time_us' => 0,
+  'starttransfer_time_us' => 73903,
+  'total_time_us' => 73975,
+  'request_header' => 'GET /api/index.php/login?login=admin&password=admin HTTP/1.1
+Host: 127.0.0.1
+User-Agent: Dolibarr geturl function
+Accept-Encoding: deflate, gzip, br, zstd
+Content-Type: application/json
+Accept: application/json
+
+',
+  'effective_method' => 'GET',
+  'content' => '{
+    "success": {
+        "code": 200,
+        "token": "demokey",
+        "entity": "0",
+        "message": "Welcome admin - This is your token (recorded for your user). You can use it to make any REST API call, or enter it into the DOLAPIKEY field to use the Dolibarr API explorer."
+    }
+}',
+  'curl_error_no' => 0,
+  'curl_error_msg' => '',
+)
+RestAPISupplierOrderTest::setUp curl_error_no: 0
+RestAPISupplierOrderTest::setUp api_key: demokey 
+.RestAPISupplierOrderTest::setUp result = array (
+  'url' => 'http://127.0.0.1/api/index.php/login?login=admin&password=admin',
+  'content_type' => 'application/json; charset=utf-8',
+  'http_code' => 200,
+  'header_size' => 517,
+  'request_size' => 219,
+  'filetime' => -1,
+  'ssl_verify_result' => 0,
+  'redirect_count' => 0,
+  'total_time' => 0.07388,
+  'namelookup_time' => 2.7E-5,
+  'connect_time' => 0.000104,
+  'pretransfer_time' => 0.000152,
+  'size_upload' => 0.0,
+  'size_download' => 215.0,
+  'speed_download' => 2910.0,
+  'speed_upload' => 0.0,
+  'download_content_length' => 215.0,
+  'upload_content_length' => 0.0,
+  'starttransfer_time' => 0.073811,
+  'redirect_time' => 0.0,
+  'redirect_url' => '',
+  'primary_ip' => '127.0.0.1',
+  'certinfo' => 
+  array (
+  ),
+  'primary_port' => 80,
+  'local_ip' => '127.0.0.1',
+  'local_port' => 35480,
+  'http_version' => 2,
+  'protocol' => 1,
+  'ssl_verifyresult' => 0,
+  'scheme' => 'HTTP',
+  'appconnect_time_us' => 0,
+  'connect_time_us' => 104,
+  'namelookup_time_us' => 27,
+  'pretransfer_time_us' => 152,
+  'redirect_time_us' => 0,
+  'starttransfer_time_us' => 73811,
+  'total_time_us' => 73880,
+  'request_header' => 'GET /api/index.php/login?login=admin&password=admin HTTP/1.1
+Host: 127.0.0.1
+User-Agent: Dolibarr geturl function
+Accept-Encoding: deflate, gzip, br, zstd
+Content-Type: application/json
+Accept: application/json
+
+',
+  'effective_method' => 'GET',
+  'content' => '{
+    "success": {
+        "code": 200,
+        "token": "demokey",
+        "entity": "0",
+        "message": "Welcome admin - This is your token (recorded for your user). You can use it to make any REST API call, or enter it into the DOLAPIKEY field to use the Dolibarr API explorer."
+    }
+}',
+  'curl_error_no' => 0,
+  'curl_error_msg' => '',
+)
+RestAPISupplierOrderTest::setUp curl_error_no: 0
+RestAPISupplierOrderTest::setUp api_key: demokey 
+.RestAPISupplierOrderTest::setUp result = array (
+  'url' => 'http://127.0.0.1/api/index.php/login?login=admin&password=admin',
+  'content_type' => 'application/json; charset=utf-8',
+  'http_code' => 200,
+  'header_size' => 517,
+  'request_size' => 219,
+  'filetime' => -1,
+  'ssl_verify_result' => 0,
+  'redirect_count' => 0,
+  'total_time' => 0.073413,
+  'namelookup_time' => 2.6E-5,
+  'connect_time' => 0.000101,
+  'pretransfer_time' => 0.000147,
+  'size_upload' => 0.0,
+  'size_download' => 215.0,
+  'speed_download' => 2928.0,
+  'speed_upload' => 0.0,
+  'download_content_length' => 215.0,
+  'upload_content_length' => 0.0,
+  'starttransfer_time' => 0.073347,
+  'redirect_time' => 0.0,
+  'redirect_url' => '',
+  'primary_ip' => '127.0.0.1',
+  'certinfo' => 
+  array (
+  ),
+  'primary_port' => 80,
+  'local_ip' => '127.0.0.1',
+  'local_port' => 35522,
+  'http_version' => 2,
+  'protocol' => 1,
+  'ssl_verifyresult' => 0,
+  'scheme' => 'HTTP',
+  'appconnect_time_us' => 0,
+  'connect_time_us' => 101,
+  'namelookup_time_us' => 26,
+  'pretransfer_time_us' => 147,
+  'redirect_time_us' => 0,
+  'starttransfer_time_us' => 73347,
+  'total_time_us' => 73413,
+  'request_header' => 'GET /api/index.php/login?login=admin&password=admin HTTP/1.1
+Host: 127.0.0.1
+User-Agent: Dolibarr geturl function
+Accept-Encoding: deflate, gzip, br, zstd
+Content-Type: application/json
+Accept: application/json
+
+',
+  'effective_method' => 'GET',
+  'content' => '{
+    "success": {
+        "code": 200,
+        "token": "demokey",
+        "entity": "0",
+        "message": "Welcome admin - This is your token (recorded for your user). You can use it to make any REST API call, or enter it into the DOLAPIKEY field to use the Dolibarr API explorer."
+    }
+}',
+  'curl_error_no' => 0,
+  'curl_error_msg' => '',
+)
+RestAPISupplierOrderTest::setUp curl_error_no: 0
+RestAPISupplierOrderTest::setUp api_key: demokey 
+.WebservicesProductsTest::testWSProductsCreateProductOrService create nusoap_client for URL=http://127.0.0.1/webservices/server_productorservice.php
+WebservicesProductsTest::testWSProductsCreateProductOrService call method createProductOrService
+array (
+  'result' => 
+  array (
+    'result_code' => 'OK',
+    'result_label' => '',
+  ),
+  'id' => '111',
+)WebservicesProductsTest::testWSProductsCreateProductOrService count(result)=2
+.WebservicesProductsTest::testWSProductsGetProductOrService create nusoap_client for URL=http://127.0.0.1/webservices/server_productorservice.php
+WebservicesProductsTest::testWSProductsGetProductOrService call method getProductOrService
+WebservicesProductsTest::testWSProductsGetProductOrService count(result)=2
+.WebservicesProductsTest::testWSProductsDeleteProductOrService create nusoap_client for URL=http://127.0.0.1/webservices/server_productorservice.php
+WebservicesProductsTest::testWSProductsDeleteProductOrService call method deleteProductOrService
+WebservicesProductsTest::testWSProductsDeleteProductOrService count(result)=2
+WebservicesInvoicesTest::setUpBeforeClass societe created or found with id=118
+WebservicesInvoicesTest::setUpBeforeClass
+.WebservicesInvoicesTest::setUp create nusoap_client for URL=http://127.0.0.1/webservices/server_invoice.php
+WebservicesInvoicesTest::setUp db->type=mysqli user->id=1
+WebservicesInvoicesTest::testWSInvoicesCreateInvoice call method createInvoice
+WebservicesInvoicesTest::testWSInvoicesCreateInvoice result=OK 
+.WebservicesInvoicesTest::setUp create nusoap_client for URL=http://127.0.0.1/webservices/server_invoice.php
+WebservicesInvoicesTest::setUp db->type=mysqli user->id=1
+WebservicesInvoicesTest::testWSInvoicesGetInvoiceByRefExt call method getInvoice
+WebservicesInvoicesTest::testWSInvoicesGetInvoiceByRefExt result=OK
+.WebservicesInvoicesTest::setUp create nusoap_client for URL=http://127.0.0.1/webservices/server_invoice.php
+WebservicesInvoicesTest::setUp db->type=mysqli user->id=1
+WebservicesInvoicesTest::testWSInvoicesUpdateInvoiceByRefExt call method updateInvoice
+WebservicesInvoicesTest::testWSInvoicesUpdateInvoiceByRefExt count(result)=4
+WebservicesInvoicesTest::testWSInvoicesUpdateInvoiceByRefExt result=OK
+.  915 / 1023 ( 89%)
+WebservicesOrdersTest::testWSOrderGetOrder create nusoap_client for URL=http://127.0.0.1/webservices/server_order.php
+WebservicesOrdersTest::testWSOrderGetOrder call method getOrder
+WebservicesOrdersTest::testWSOrderGetOrder count(result)=2
+.WebservicesOtherTest::testWSOtherGetVersions create nusoap_client for URL=http://127.0.0.1/webservices/server_other.php
+WebservicesOtherTest::testWSOtherGetVersions call method getVersions
+WebservicesOtherTest::testWSOtherGetVersions count(result)=5
+WebservicesOtherTest::testWSOtherGetVersions call method methodthatdoesnotexists
+SOAP-ENV:Client: Operation 'methodthatdoesnotexists' is not defined in the WSDL for this service
+<br>
+POST /webservices/server_other.php HTTP/1.0
+Host: 127.0.0.1
+User-Agent: NuSOAP/0.9.11 (1.123)
+Content-Type: text/xml; charset=UTF-8
+SOAPAction: ""
+Content-Length: 787
+
+<?xml version="1.0" encoding="UTF-8"?><SOAP-ENV:Envelope SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"><SOAP-ENV:Body><ns5483:methodthatdoesnotexists xmlns:ns5483="http://www.dolibarr.org/ns/"><authentication><dolibarrkey xsi:type="xsd:string">dolibarrkey</dolibarrkey><sourceapplication xsi:type="xsd:string">DEMO</sourceapplication><login xsi:type="xsd:string">admin</login><password xsi:type="xsd:string">admin</password><entity xsi:type="xsd:string"></entity></authentication></ns5483:methodthatdoesnotexists></SOAP-ENV:Body></SOAP-ENV:Envelope>
+<br>
+HTTP/1.0 500 Internal Server Error
+Date: Sat, 31 Oct 2026 10:13:34 GMT
+Server: Apache/2.4.52 (Ubuntu)
+Status: 500 Internal Server Error
+X-SOAP-Server: NuSOAP/0.9.11 (1.123)
+Content-Length: 718
+Connection: close
+Content-Type: text/xml; charset=UTF-8
+
+<?xml version="1.0" encoding="UTF-8"?><SOAP-ENV:Envelope SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+  xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/">
+<SOAP-ENV:Body><SOAP-ENV:Fault><faultcode xsi:type="xsd:string">SOAP-ENV:Client</faultcode><faultstring xsi:type="xsd:string">Operation &apos;methodthatdoesnotexists&apos; is not defined in the WSDL for this service</faultstring><faultactor xsi:type="xsd:string"></faultactor><detail xsi:type="xsd:string"></detail></SOAP-ENV:Fault></SOAP-ENV:Body></SOAP-ENV:Envelope>
+WebservicesOtherTest::testWSOtherGetVersions count(result)=4
+.WebservicesThirdpartyTest::setUp create nusoap_client for URL=http://127.0.0.1/webservices/server_thirdparty.php
+WebservicesThirdpartyTest::setUp db->type=mysqli user->id=1
+WebservicesThirdpartyTest::testWSThirdpartycreateThirdParty call method createThirdParty
+WebservicesThirdpartyTest::testWSThirdpartycreateThirdParty result=OK
+.WebservicesThirdpartyTest::setUp create nusoap_client for URL=http://127.0.0.1/webservices/server_thirdparty.php
+WebservicesThirdpartyTest::setUp db->type=mysqli user->id=1
+WebservicesThirdpartyTest::testWSThirdpartygetThirdPartyById call method getThirdParty
+WebservicesThirdpartyTest::testWSThirdpartygetThirdPartyById result=OK
+.WebservicesThirdpartyTest::setUp create nusoap_client for URL=http://127.0.0.1/webservices/server_thirdparty.php
+WebservicesThirdpartyTest::setUp db->type=mysqli user->id=1
+WebservicesThirdpartyTest::testWSThirdpartygetThirdPartyByRefExt call method getThirdParty
+HTTP/1.1 200 OK
+Date: Sat, 31 Oct 2026 10:13:34 GMT
+Server: Apache/2.4.52 (Ubuntu)
+X-SOAP-Server: NuSOAP/0.9.11 (1.123)
+Content-Length: 1790
+Vary: Accept-Encoding
+Connection: close
+Content-Type: text/xml; charset=UTF-8
+
+<?xml version="1.0" encoding="UTF-8"?><SOAP-ENV:Envelope SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://www.dolibarr.org/ns/"><SOAP-ENV:Body><ns1:getThirdPartyResponse xmlns:ns1="http://www.dolibarr.org/ns/"><result xsi:type="tns:result"><result_code xsi:type="xsd:string">OK</result_code><result_label xsi:type="xsd:string"></result_label></result><thirdparty xsi:type="tns:thirdparty"><id xsi:type="xsd:string">119</id><ref xsi:type="xsd:string">name</ref><ref_ext xsi:type="xsd:string">12</ref_ext><status xsi:type="xsd:string">0</status><client xsi:type="xsd:string">1</client><supplier xsi:type="xsd:string">0</supplier><customer_code xsi:type="xsd:string">CU0901-5678</customer_code><customer_code_accountancy xsi:type="xsd:string">411CU09015678</customer_code_accountancy><date_creation xsi:type="xsd:dateTime">2026-10-31T10:13:34Z</date_creation><date_modification xsi:type="xsd:dateTime">2026-10-31T10:13:34Z</date_modification><address xsi:type="xsd:string"></address><country_code xsi:type="xsd:string"></country_code><country xsi:type="xsd:string"></country><profid1 xsi:type="xsd:string"></profid1><profid2 xsi:type="xsd:string"></profid2><profid3 xsi:type="xsd:string"></profid3><profid4 xsi:type="xsd:string"></profid4><profid5 xsi:type="xsd:string"></profid5><profid6 xsi:type="xsd:string"></profid6><capital xsi:type="xsd:string">0.00000000</capital><vat_used xsi:type="xsd:string">0</vat_used><vat_number xsi:type="xsd:string"></vat_number></thirdparty></ns1:getThirdPartyResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>WebservicesThirdpartyTest::testWSThirdpartygetThirdPartyByRefExt result=OK
+.WebservicesThirdpartyTest::setUp create nusoap_client for URL=http://127.0.0.1/webservices/server_thirdparty.php
+WebservicesThirdpartyTest::setUp db->type=mysqli user->id=1
+WebservicesThirdpartyTest::testWSThirdpartydeleteThirdPartyById call method deleteThirdParty
+WebservicesThirdpartyTest::testWSThirdpartydeleteThirdPartyById count(result)=2
+.WebservicesUserTest::testWSUserGetUser Create nusoap_client for URL=http://127.0.0.1/webservices/server_user.php
+WebservicesUserTest::testWSUserGetUser Call method getUser
+WebservicesUserTest::testWSUserGetUser count(result)=2
+WebservicesUserTest::testWSUserGetUserCall method getUser
+WebservicesUserTest::testWSUserGetUser count(result)=2
+.EXPORT_CSV_SEPARATOR_TO_USE = ,ExportTest::testExportCsvUtf valtotest=A simple string
+ExportTest::testExportCsvUtf result=A simple string
+ExportTest::testExportCsvUtf valtotest=A string with , and ; inside
+ExportTest::testExportCsvUtf result="A string with , and ; inside"
+ExportTest::testExportCsvUtf valtotest=A string with " inside
+ExportTest::testExportCsvUtf result="A string with "" inside"
+ExportTest::testExportCsvUtf valtotest=A string with " inside and 
+ carriage returns
+ExportTest::testExportCsvUtf result="A string with "" inside and \n carriage returns"
+ExportTest::testExportCsvUtf valtotest=A string with <a href="aaa"><strong>html<br>content</strong></a> inside<br>
+
+ExportTest::testExportCsvUtf result="A string with <a href=""aaa""><strong>html<br>content</strong></a> inside"
+ExportTest::testExportCsvUtf valtotest=A simple string
+ExportTest::testExportCsvUtf result=A simple string
+ExportTest::testExportCsvUtf valtotest=A string with , and ; inside
+ExportTest::testExportCsvUtf result="A string with , and ; inside"
+ExportTest::testExportCsvUtf valtotest=A string with " inside
+ExportTest::testExportCsvUtf result="A string with "" inside"
+ExportTest::testExportCsvUtf valtotest=A string with " inside and 
+ carriage returns
+ExportTest::testExportCsvUtf result="A string with "" inside and 
+ carriage returns"
+ExportTest::testExportCsvUtf valtotest=A string with <a href="aaa"><strong>html<br>content</strong></a> inside<br>
+
+ExportTest::testExportCsvUtf result="A string with <a href=""aaa""><strong>html<br>content</strong></a> inside"
+.EXPORT_CSV_SEPARATOR_TO_USE = ,ExportTest::testExportOther valtotest=A simple string
+ExportTest::testExportOther result=A simple string
+ExportTest::testExportOther valtotest=A string with , and ; inside
+ExportTest::testExportOther result="A string with , and ; inside"
+ExportTest::testExportOther valtotest=A string with " inside
+ExportTest::testExportOther result="A string with "" inside"
+ExportTest::testExportOther valtotest=A string with " inside and 
+ carriage returns
+ExportTest::testExportOther result="A string with "" inside and \n carriage returns"
+ExportTest::testExportOther valtotest=A string with <a href="aaa"><strong>html<br>content</strong></a> inside<br>
+
+ExportTest::testExportOther result="A string with <a href=""aaa""><strong>html<br>content</strong></a> inside"
+ExportTest::testExportOther valtotest=A simple string
+ExportTest::testExportOther result=A simple string
+ExportTest::testExportOther valtotest=A string with , and ; inside
+ExportTest::testExportOther result="A string with , and ; inside"
+ExportTest::testExportOther valtotest=A string with " inside
+ExportTest::testExportOther result="A string with "" inside"
+ExportTest::testExportOther valtotest=A string with " inside and 
+ carriage returns
+ExportTest::testExportOther result="A string with "" inside and 
+ carriage returns"
+ExportTest::testExportOther valtotest=A string with <a href="aaa"><strong>html<br>content</strong></a> inside<br>
+
+ExportTest::testExportOther result="A string with <a href=""aaa""><strong>html<br>content</strong></a> inside"
+.Process build_file for model = csviso
+Process build_file for model = csvutf8
+Process build_file for model = tsv
+Process build_file for model = excel2007
+..ccccccccccccccccc
+\DoliDBMysqli::__set_state(array(
+   'db' => 
+  \mysqli::__set_state(array(
+  )),
+   'type' => 'mysqli',
+   'forcecharset' => 'utf8',
+   'forcecollate' => 'utf8_unicode_ci',
+   '_results' => NULL,
+   'connected' => true,
+   'database_selected' => true,
+   'database_name' => 'travis',
+   'database_user' => 'root',
+   'database_host' => '127.0.0.1',
+   'database_port' => 3306,
+   'transaction_opened' => 1,
+   'lastquery' => 'SELECT f.ref as f_ref, f.total_ht as f_total, f.total_tva as f_tva FROM llx_facture f',
+   'lastqueryerror' => 'INSERT INTO llx_c_tva (entity, fk_pays, fk_department_buyer, code, type_vat, taux, use_default, recuperableonly, active) VALUES (1, 1, 77, \'TESTVATINACT\', 0, 25, 0, 0, 0)',
+   'lasterror' => 'Data too long for column \'code\' at row 1',
+   'lasterrno' => 'DB_ERROR_1406',
+   'prefix_db' => NULL,
+   'ok' => true,
+   'error' => NULL,
+   '_results' => 
+  \mysqli_result::__set_state(array(
+  )),
+))\DoliDBMysqli::__set_state(array(
+   'db' => 
+  \mysqli::__set_state(array(
+  )),
+   'type' => 'mysqli',
+   'forcecharset' => 'utf8',
+   'forcecollate' => 'utf8_unicode_ci',
+   '_results' => NULL,
+   'connected' => true,
+   'database_selected' => true,
+   'database_name' => 'travis',
+   'database_user' => 'root',
+   'database_host' => '127.0.0.1',
+   'database_port' => 3306,
+   'transaction_opened' => 1,
+   'lastquery' => 'SELECT f.ref as f_ref, f.total_ht as f_total, f.total_tva as f_tva FROM llx_facture f',
+   'lastqueryerror' => 'INSERT INTO llx_c_tva (entity, fk_pays, fk_department_buyer, code, type_vat, taux, use_default, recuperableonly, active) VALUES (1, 1, 77, \'TESTVATINACT\', 0, 25, 0, 0, 0)',
+   'lasterror' => 'Data too long for column \'code\' at row 1',
+   'lasterrno' => 'DB_ERROR_1406',
+   'prefix_db' => NULL,
+   'ok' => true,
+   'error' => NULL,
+   '_results' => 
+  \mysqli_result::__set_state(array(
+  )),
+))Process export for dataset reception_1 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_reception_1.csv
+Process export for dataset accounting_1 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_accounting_1.csv
+Process export for dataset leaverequest_1 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_leaverequest_1.csv
+Process export for dataset stock_emplacement into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_stock_emplacement.csv
+Process export for dataset stock_emplacement_product into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_stock_emplacement_product.csv
+Process export for dataset stock_emplacement_product_lot into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_stock_emplacement_product_lot.csv
+Process export for dataset stock_movement into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_stock_movement.csv
+Process export for dataset stock_inventory into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_stock_inventory.csv
+Process export for dataset eventorganization_1 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_eventorganization_1.csv
+Process export for dataset eventorganization_2 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_eventorganization_2.csv
+Process export for dataset user_1 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_user_1.csv
+Process export for dataset user_2 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_user_2.csv
+Process export for dataset adherent_1 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_adherent_1.csv
+Process export for dataset categorie_list into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_categorie_list.csv
+Process export for dataset categorie_0_product into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_categorie_0_product.csv
+Process export for dataset categorie_1_supplier into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_categorie_1_supplier.csv
+Process export for dataset categorie_2_customer into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_categorie_2_customer.csv
+Process export for dataset categorie_3_member into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_categorie_3_member.csv
+Process export for dataset categorie_4_contact into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_categorie_4_contact.csv
+Process export for dataset categorie_6_project into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_categorie_6_project.csv
+Process export for dataset categorie_7_user into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_categorie_7_user.csv
+Process export for dataset categorie__order into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_categorie__order.csv
+Process export for dataset categorie__invoice into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_categorie__invoice.csv
+Process export for dataset categorie__supplier_order into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_categorie__supplier_order.csv
+Process export for dataset categorie__supplier_invoice into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_categorie__supplier_invoice.csv
+Process export for dataset variants_attribute into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_variants_attribute.csv
+Process export for dataset variants_combination into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_variants_combination.csv
+Process export for dataset service_1 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_service_1.csv
+Process export for dataset banque_1 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_banque_1.csv
+Process export for dataset banque_2 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_banque_2.csv
+Process export for dataset banque_3 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_banque_3.csv
+Process export for dataset website_1 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_website_1.csv
+Process export for dataset tax_1 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_tax_1.csv
+Process export for dataset propale_1 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_propale_1.csv
+Process export for dataset expedition_1 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_expedition_1.csv
+Process export for dataset ficheinter_1 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_ficheinter_1.csv
+Process export for dataset facture_0 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_facture_0.csv
+Process export for dataset facture_1 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_facture_1.csv
+Process export for dataset contrat_1 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_contrat_1.csv
+Process export for dataset commande_1 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_commande_1.csv
+Process export for dataset expensereport_1 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_expensereport_1.csv
+Process export for dataset produit_1 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_produit_1.csv
+Process export for dataset produit_2 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_produit_2.csv
+Process export for dataset produit_3 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_produit_3.csv
+Process export for dataset projet_1 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_projet_1.csv
+Process export for dataset ticket_1 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_ticket_1.csv
+Process export for dataset mrp_1 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_mrp_1.csv
+Process export for dataset mrp_2 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_mrp_2.csv
+Process export for dataset societe_1 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_societe_1.csv
+Process export for dataset societe_2 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_societe_2.csv
+Process export for dataset societe_3 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_societe_3.csv
+Process export for dataset bom_1 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_bom_1.csv
+Process export for dataset salaries_1 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_salaries_1.csv
+Process export for dataset resource_1 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_resource_1.csv
+Process export for dataset agenda_1 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_agenda_1.csv
+Process export for dataset fournisseur_1 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_fournisseur_1.csv
+Process export for dataset fournisseur_2 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_fournisseur_2.csv
+Process export for dataset fournisseur_3 into /home/travis/build/Dolibarr/dolibarr/documents/export/temp/1/export_fournisseur_3.csv
+.ExportTest::testExportDatasetSqlScopingForRestrictedUser dataset=contrat_1 sql=SELECT DISTINCT  FROM llx_societe as s LEFT JOIN llx_c_country as c on s.fk_pays = c.rowid INNER JOIN llx_contrat as co ON co.fk_soc = s.rowid INNER JOIN llx_contratdet as cod ON co.rowid = cod.fk_contrat LEFT JOIN llx_product as p ON (cod.fk_product = p.rowid) LEFT JOIN llx_societe_commerciaux as sc ON sc.fk_soc = s.rowid LEFT JOIN llx_contrat_extrafields as coextra on (co.rowid = coextra.fk_object) LEFT JOIN llx_contratdet_extrafields as codextra on (cod.rowid = codextra.fk_object) WHERE co.entity IN (1) AND (co.fk_soc IS NULL OR sc.fk_user = 999999901)
+ExportTest::testExportDatasetSqlScopingForRestrictedUser dataset=ficheinter_1 sql=SELECT DISTINCT  FROM llx_fichinter as f LEFT JOIN llx_fichinter_extrafields as extra ON f.rowid = extra.fk_object LEFT JOIN llx_projet as pj ON f.fk_projet = pj.rowid LEFT JOIN llx_fichinterdet as fd ON f.rowid = fd.fk_fichinter LEFT JOIN llx_fichinterdet_extrafields as extradet ON fd.rowid = extradet.fk_object, llx_societe as s LEFT JOIN llx_societe_commerciaux as sc ON sc.fk_soc = s.rowid WHERE f.fk_soc = s.rowid AND f.entity IN (1) AND (f.fk_soc IS NULL OR sc.fk_user = 999999901)
+ExportTest::testExportDatasetSqlScopingForRestrictedUser dataset=ticket_1 sql=SELECT DISTINCT  FROM llx_ticket as t LEFT JOIN llx_ticket_extrafields as extra on (t.rowid = extra.fk_object) WHERE 1 = 1 AND t.entity IN (1) AND (t.fk_soc IS NULL OR EXISTS (SELECT sc.fk_soc FROM llx_societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = 999999901))
+ExportTest::testExportDatasetSqlScopingForRestrictedUser dataset=projet_1 sql=SELECT DISTINCT  FROM llx_projet as p LEFT JOIN llx_projet_extrafields as extra ON p.rowid = extra.fk_object LEFT JOIN llx_c_lead_status as cls ON p.fk_opp_status = cls.rowid LEFT JOIN llx_projet_task as pt ON p.rowid = pt.fk_projet LEFT JOIN llx_projet_task_extrafields as extra2 ON pt.rowid = extra2.fk_object LEFT JOIN llx_element_time as ptt ON (pt.rowid = ptt.fk_element AND ptt.elementtype = 'task') LEFT JOIN llx_societe as s ON p.fk_soc = s.rowid LEFT JOIN llx_facture as f ON ptt.invoice_id = f.rowid WHERE p.entity IN (1) AND p.rowid IN (4,5,12)
+ExportTest::testExportDatasetSqlScopingForRestrictedUser dataset=expensereport_1 sql=SELECT DISTINCT  FROM llx_expensereport as d LEFT JOIN llx_expensereport_extrafields as extra on d.rowid = extra.fk_object LEFT JOIN llx_user_rib as user_rib ON user_rib.fk_user = d.fk_user_author, llx_user as u LEFT JOIN llx_user_extrafields as extrau ON u.rowid = extrau.fk_object, llx_expensereport_det as ed LEFT JOIN llx_c_type_fees as tf ON ed.fk_c_type_fees = tf.id LEFT JOIN llx_projet as p ON ed.fk_projet = p.rowid WHERE ed.fk_expensereport = d.rowid AND d.fk_user_author = u.rowid AND d.entity IN (1) AND d.fk_user_author IN (999999901)
+ExportTest::testExportDatasetSqlScopingForRestrictedUser dataset=salaries_1 sql=SELECT DISTINCT  FROM llx_salary as s LEFT JOIN llx_user as u ON s.fk_user = u.rowid LEFT JOIN llx_payment_salary as p ON p.fk_salary = s.rowid LEFT JOIN llx_c_paiement as cp ON p.fk_typepayment = cp.id WHERE s.entity IN (1) AND s.fk_user = 999999901
+.....ScriptsTest::testBank result=Failed to find bank account with ref BANKDUMMY.
+ScriptsTest::testBank output=***** export-bank-receipts.php (25.0.0-alpha) pid=20037 *****
+Use language fr_FR.
+Failed to find bank account with ref BANKDUMMY.
+ScriptsTest::testBank returnvar=1
+..ScriptsTest::testContracts result=No email sent (test mode)
+ScriptsTest::testContracts output=***** email_expire_services_to_customers.php (25.0.0-alpha) pid=20039 *****
+email_expire_services_to_customers.php launched with mode test default lang=en_US
+We found 6 couples (services to expire-thirdparties) qualified
+Service to expire CONTRAT1, label Cake making contribution, due date 01/02/2023, customer id 2 Teclib, email , lang fr_FR: disqualified (no email).
+Service to expire CONTRAT1, label Abonnement annuel assurance, due date 01/04/2023, customer id 2 Teclib, email , lang fr_FR: disqualified (no email).
+Service to expire CONTRAT1, label Cake making contribution
+gdfg, due date 01/04/2023, customer id 2 Teclib, email , lang fr_FR: disqualified (no email).
+- No email sent for 'Teclib', total: 46.1
+Service to expire CT1303-0001, label gfdg, due date 03/07/2015, customer id 19 Magic Food Store, email myemail@domain.com, lang en_US: qualified.
+- Send email to 'Magic Food Store' (myemail@domain.com), total: 10
+No email sent (test mode)
+Service to expire CT2501-0003, label Service SaaS Hébergement Dolibarr ERP CRM<br>
+Service SaaS d&#39;hébergement de la solution Dolibarr ERP CRM, due date 01/18/2025, customer id 39 Testldr1, email testldr1@dolicloud.com, lang fr_FR: qualified.
+Service to expire CT2501-0002, label Service SaaS Hébergement Dolibarr ERP CRM<br>
+Service SaaS d&#39;hébergement de la solution Dolibarr ERP CRM, due date 01/23/2025, customer id 39 Testldr1, email testldr1@dolicloud.com, lang fr_FR: qualified.
+- Send email to 'Testldr1' (testldr1@dolicloud.com), total: 18
+No email sent (test mode)
+ScriptsTest::testContracts returnvar=0
+ScriptsTest::testContracts result=No services to expire found
+ScriptsTest::testContracts output=***** email_expire_services_to_customers.php (25.0.0-alpha) pid=20039 *****
+email_expire_services_to_customers.php launched with mode test default lang=en_US
+We found 6 couples (services to expire-thirdparties) qualified
+Service to expire CONTRAT1, label Cake making contribution, due date 01/02/2023, customer id 2 Teclib, email , lang fr_FR: disqualified (no email).
+Service to expire CONTRAT1, label Abonnement annuel assurance, due date 01/04/2023, customer id 2 Teclib, email , lang fr_FR: disqualified (no email).
+Service to expire CONTRAT1, label Cake making contribution
+gdfg, due date 01/04/2023, customer id 2 Teclib, email , lang fr_FR: disqualified (no email).
+- No email sent for 'Teclib', total: 46.1
+Service to expire CT1303-0001, label gfdg, due date 03/07/2015, customer id 19 Magic Food Store, email myemail@domain.com, lang en_US: qualified.
+- Send email to 'Magic Food Store' (myemail@domain.com), total: 10
+No email sent (test mode)
+Service to expire CT2501-0003, label Service SaaS Hébergement Dolibarr ERP CRM<br>
+Service SaaS d&#39;hébergement de la solution Dolibarr ERP CRM, due date 01/18/2025, customer id 39 Testldr1, email testldr1@dolicloud.com, lang fr_FR: qualified.
+Service to expire CT2501-0002, label Service SaaS Hébergement Dolibarr ERP CRM<br>
+Service SaaS d&#39;hébergement de la solution Dolibarr ERP CRM, due date 01/23/2025, customer id 39 Testldr1, email testldr1@dolicloud.com, lang fr_FR: qualified.
+- Send email to 'Testldr1' (testldr1@dolicloud.com), total: 18
+No email sent (test mode)
+***** email_expire_services_to_customers.php (25.0.0-alpha) pid=20041 *****
+email_expire_services_to_customers.php launched with mode test default lang=en_US delay=-30
+We found 0 couples (services to expire-contacts) qualified
+No services to expire found
+ScriptsTest::testContracts returnvar=0
+ScriptsTest::testContracts result=No email sent (test mode)
+ScriptsTest::testContracts output=***** email_expire_services_to_customers.php (25.0.0-alpha) pid=20039 *****
+email_expire_services_to_customers.php launched with mode test default lang=en_US
+We found 6 couples (services to expire-thirdparties) qualified
+Service to expire CONTRAT1, label Cake making contribution, due date 01/02/2023, customer id 2 Teclib, email , lang fr_FR: disqualified (no email).
+Service to expire CONTRAT1, label Abonnement annuel assurance, due date 01/04/2023, customer id 2 Teclib, email , lang fr_FR: disqualified (no email).
+Service to expire CONTRAT1, label Cake making contribution
+gdfg, due date 01/04/2023, customer id 2 Teclib, email , lang fr_FR: disqualified (no email).
+- No email sent for 'Teclib', total: 46.1
+Service to expire CT1303-0001, label gfdg, due date 03/07/2015, customer id 19 Magic Food Store, email myemail@domain.com, lang en_US: qualified.
+- Send email to 'Magic Food Store' (myemail@domain.com), total: 10
+No email sent (test mode)
+Service to expire CT2501-0003, label Service SaaS Hébergement Dolibarr ERP CRM<br>
+Service SaaS d&#39;hébergement de la solution Dolibarr ERP CRM, due date 01/18/2025, customer id 39 Testldr1, email testldr1@dolicloud.com, lang fr_FR: qualified.
+Service to expire CT2501-0002, label Service SaaS Hébergement Dolibarr ERP CRM<br>
+Service SaaS d&#39;hébergement de la solution Dolibarr ERP CRM, due date 01/23/2025, customer id 39 Testldr1, email testldr1@dolicloud.com, lang fr_FR: qualified.
+- Send email to 'Testldr1' (testldr1@dolicloud.com), total: 18
+No email sent (test mode)
+***** email_expire_services_to_customers.php (25.0.0-alpha) pid=20041 *****
+email_expire_services_to_customers.php launched with mode test default lang=en_US delay=-30
+We found 0 couples (services to expire-contacts) qualified
+No services to expire found
+***** email_expire_services_to_representatives.php (25.0.0-alpha) pid=20043 *****
+email_expire_services_to_representatives.php launched with mode test default lang=en_US delay=-30
+We found 7 couples (services to expire - sale representative) qualified
+Warning: Sale representative test test has no email. Notice disabled.
+Service to expire CT2501-0002, label Service SaaS Hébergement Dolibarr ERP CRM<br>
+Service SaaS d&#39;hébergement de la solution Dolibarr ERP CRM, due date 01/23/2025 (linked to company Testldr1, sale representative test test, email ): disqualified (no email).
+Service to expire CT2501-0003, label Service SaaS Hébergement Dolibarr ERP CRM<br>
+Service SaaS d&#39;hébergement de la solution Dolibarr ERP CRM, due date 01/18/2025 (linked to company Testldr1, sale representative test test, email ): disqualified (no email).
+- No email sent for test test, total: 18
+Service to expire CT1303-0001, label gfdg, due date 03/07/2015 (linked to company Magic Food Store, sale representative Albert Einstein, email aeinstein@example.com): qualified.
+- Send email for Albert Einstein (aeinstein@example.com), total: 10
+No email sent (test mode)
+Service to expire CONTRAT1, label Abonnement annuel assurance, due date 01/04/2023 (linked to company Teclib, sale representative David Doe, email daviddoe@example.com): qualified.
+Service to expire CONTRAT1, label Cake making contribution
+gdfg, due date 01/04/2023 (linked to company Teclib, sale representative David Doe, email daviddoe@example.com): qualified.
+Service to expire CONTRAT1, label Cake making contribution, due date 01/02/2023 (linked to company Teclib, sale representative David Doe, email daviddoe@example.com): qualified.
+- Send email for David Doe (daviddoe@example.com), total: 46.1
+No email sent (test mode)
+Service to expire CT1303-0001, label gfdg, due date 03/07/2015 (linked to company Magic Food Store, sale representative Pierre Curie, email pcurie@example.com): qualified.
+- Send email for Pierre Curie (pcurie@example.com), total: 10
+No email sent (test mode)
+ScriptsTest::testContracts returnvar=0
+.ScriptsTest::testInvoices result=Unpaid invoice FA2606-0001, price 34.8, due date 06/02/2026, customer id 59 Boulangerie AFA, email , lang en_US: disqualified (no email).
+ScriptsTest::testInvoices output=***** email_unpaid_invoices_to_customers.php (25.0.0-alpha) pid=20045 *****
+email_unpaid_invoices_to_customers.php launched with mode test default lang=en_US
+We found 1 couples (unpayed validated invoices-thirdparties) qualified
+Unpaid invoice FA2606-0001, price 34.8, due date 06/02/2026, customer id 59 Boulangerie AFA, email , lang en_US: disqualified (no email).
+ScriptsTest::testInvoices returnvar=0
+ScriptsTest::testInvoices result=No unpaid invoices found
+ScriptsTest::testInvoices output=***** email_unpaid_invoices_to_customers.php (25.0.0-alpha) pid=20045 *****
+email_unpaid_invoices_to_customers.php launched with mode test default lang=en_US
+We found 1 couples (unpayed validated invoices-thirdparties) qualified
+Unpaid invoice FA2606-0001, price 34.8, due date 06/02/2026, customer id 59 Boulangerie AFA, email , lang en_US: disqualified (no email).
+***** email_unpaid_invoices_to_customers.php (25.0.0-alpha) pid=20047 *****
+email_unpaid_invoices_to_customers.php launched with mode test default lang=en_US delay=-30
+We found 0 couples (unpayed validated invoices-contacts) qualified
+No unpaid invoices found
+ScriptsTest::testInvoices returnvar=0
+ScriptsTest::testInvoices result=No email sent (test mode)
+ScriptsTest::testInvoices output=***** email_unpaid_invoices_to_customers.php (25.0.0-alpha) pid=20045 *****
+email_unpaid_invoices_to_customers.php launched with mode test default lang=en_US
+We found 1 couples (unpayed validated invoices-thirdparties) qualified
+Unpaid invoice FA2606-0001, price 34.8, due date 06/02/2026, customer id 59 Boulangerie AFA, email , lang en_US: disqualified (no email).
+***** email_unpaid_invoices_to_customers.php (25.0.0-alpha) pid=20047 *****
+email_unpaid_invoices_to_customers.php launched with mode test default lang=en_US delay=-30
+We found 0 couples (unpayed validated invoices-contacts) qualified
+No unpaid invoices found
+***** email_unpaid_invoices_to_representatives.php (25.0.0-alpha) pid=20049 *****
+email_unpaid_invoices_to_representatives.php launched with mode test default lang=en_US
+We found 1 couples (unpaid validated invoice - sale representative) qualified
+Unpaid invoice FA2606-0001, price 34.8, due date 06/02/2026 (linked to company Boulangerie AFA, sale representative Alice Adminson, email laurent@destailleur.fr, lang en_US): qualified.
+- Send email for Alice Adminson (laurent@destailleur.fr), total: 34.8
+No email sent (test mode)
+ScriptsTest::testInvoices returnvar=0
+.FormAdminTest::testSelectPaperFormat result=<select class="flat" id="paperformat_id" name="paperformat_id"><option value="EUA4">Format A4 - 210x297 mm</option></select>
+.FormTest::testSelectProduitsList count result=5
+FormTest::testSelectProduitsList count result=5
+.......................................  976 / 1023 ( 95%)
+.........PaypalTest::setUpBeforeClass
+.urltotest=http://127.0.0.1/public/payment/newpayment.php?amount=0&tag=your_tag
+PaypalTest::testPaypalOk result=200
+StripeTest::setUpBeforeClass
+.urltotest=http://127.0.0.1/public/payment/newpayment.php?amount=0&tag=your_tag
+StripeTest::testStripeOk result=200
+.StripeTest::testStripeConvertAmount amount=7999
+StripeTest::testStripeConvertAmount amount=7999
+StripeTest::testStripeConvertAmount amount=7999
+StripeTest::testStripeConvertAmount amount=79.99
+StripeTest::testStripeConvertAmount amount=79.99
+StripeTest::testStripeConvertAmount amount=79.99
+StripeTest::testStripeConvertAmount amount=7999
+.EmailCollectorTest::testEmailCollectorCreate result=18
+.EmailCollectorTest::testEmailCollectorFetch id=18 result=18
+.EmailCollectorTest::testEmailCollectorCollect id=18 result={localhost:993/service=imap/ssl/novalidate-cert}
+..EmailCollectorTest::testEmailCollectorDelete id=18 result=1
+.........WebsiteTest::testGetPagesFromSearchCriterias message=KO
+..WebsiteTest::testCheckPHPCode result checkPHPCode=0
+WebsiteTest::testCheckPHPCode result checkPHPCode=0
+WebsiteTest::testCheckPHPCode result checkPHPCode=1
+WebsiteTest::testCheckPHPCode result checkPHPCode=1
+WebsiteTest::testCheckPHPCode result checkPHPCode=1
+WebsiteTest::testCheckPHPCode result checkPHPCode=1
+WebsiteTest::testCheckPHPCode result checkPHPCode=1
+WebsiteTest::testCheckPHPCode result checkPHPCode=1
+WebsiteTest::testCheckPHPCode result checkPHPCode=1
+WebsiteTest::testCheckPHPCode result checkPHPCode=0
+.WebsiteTest::testDolKeepOnlyPhpCode result dolKeepOnlyPhpCode=<?php exec("eee"); ?>
+WebsiteTest::testDolKeepOnlyPhpCode result dolKeepOnlyPhpCode=<?php exec("eee"); ?>
+WebsiteTest::testDolKeepOnlyPhpCode result dolKeepOnlyPhpCode=<?php test() ?><?php test2(); ?>
+.WebsiteTest::testGetImageFromHtmlContent result firstImage=image1.jpg
+WebsiteTest::testGetImageFromHtmlContent result secondImage=/mydir/image2.jpg
+.RepositoryTest::testJqueryOnce count(founddirs)=1
+RepositoryTest::testJqueryOnce count(founddirs)=1
+..DoliDBTest::testDDLCreateTable db->type = mysqli
+DoliDBTest::testDDLCreateTable result=1
+.DoliDBTest::testDDLUpdateField db->type = mysqli
+DoliDBTest::testDDLUpdateField result=1
+DoliDBTest::testDDLUpdateField result=1
+.result=Le module <b><b>é</b><span class="red">aaa</span></b> doit être activé
+result=Le module <b><b>&eacute;</b><span class="red">aaa</span></b> doit &ecirc;tre activ&eacute;
+.result=Connexion &agrave; la base
+result=%d/%m/%Y %H:%M:%S
+result=%B %d, %Y, %I:%M %p
+
+##[group]LangTest::testLang failed - .
+## PHPUnit\Framework\ExpectationFailedException: Found a sequence tag 'notranslate' in the translation file da_DK/other.lang in line AIPreviewAddDocumentLine=Tilføj %s x %s til %s (<span> class=
+Failed asserting that false is true.
+## backtrace(3): From /home/travis/build/Dolibarr/dolibarr/test/phpunit/LangTest.php:268.
+## backtrace(10): From /home/travis/build/Dolibarr/dolibarr/htdocs/includes/phpunit/phpunit/src/TextUI/TestRunner.php:651.
+## backtrace(11): From /home/travis/build/Dolibarr/dolibarr/htdocs/includes/phpunit/phpunit/src/TextUI/Command.php:146.
+## backtrace(12): From /home/travis/build/Dolibarr/dolibarr/htdocs/includes/phpunit/phpunit/src/TextUI/Command.php:99.
+## backtrace(13): From /home/travis/build/Dolibarr/dolibarr/htdocs/includes/phpunit/phpunit/phpunit:107.
+## backtrace(14): From /home/travis/build/Dolibarr/dolibarr/htdocs/includes/bin/phpunit:123.
+
+########## We output the last 50 lines of the file dolibarr.log for the failed test testLang (file has 17 lines) 
+## Show last 17 lines of dolibarr.log file -----
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='am_ET' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='ar_DZ' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='ar_EG' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='ar_IQ' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='ar_JO' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='ar_SA' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='ar_SY' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='az_AZ' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='bg_BG' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='bn_BD' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='bn_IN' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='br_FR' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='bs_BA' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='ca_ES' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='cs_CZ' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='cy_GB' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='da_DK' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+########## end of dolibarr.log for LangTest::testLang
+##[endgroup]
+
+F
+LangTest::testLang(am_ET) Check language files
+LangTest::testLang(am_ET) FONTFORPDF=freeserif
+LangTest::testLang(am_ET) DIRECTION=ltr
+LangTest::testLang(am_ET) SeparatorDecimal=.
+LangTest::testLang(am_ET) SeparatorThousand=,
+LangTest::testLang(am_ET) FormatDateShortJava=MM/dd/yyyy
+LangTest::testLang(am_ET) FormatDateShortJavaInput=MM/dd/yyyy
+LangTest::testLang(am_ET) Check syntax rules in the language files
+
+LangTest::testLang(ar_DZ) Check language files
+LangTest::testLang(ar_DZ) FONTFORPDF=helvetica
+LangTest::testLang(ar_DZ) DIRECTION=ltr
+LangTest::testLang(ar_DZ) SeparatorDecimal=.
+LangTest::testLang(ar_DZ) SeparatorThousand=,
+LangTest::testLang(ar_DZ) FormatDateShortJava=MM/dd/yyyy
+LangTest::testLang(ar_DZ) FormatDateShortJavaInput=MM/dd/yyyy
+LangTest::testLang(ar_DZ) Check syntax rules in the language files
+
+LangTest::testLang(ar_EG) Check language files
+LangTest::testLang(ar_EG) FONTFORPDF=DejaVuSans
+LangTest::testLang(ar_EG) DIRECTION=rtl
+LangTest::testLang(ar_EG) SeparatorDecimal=.
+LangTest::testLang(ar_EG) SeparatorThousand=None
+LangTest::testLang(ar_EG) FormatDateShortJava=dd/MM/yyyy
+LangTest::testLang(ar_EG) FormatDateShortJavaInput=dd/MM/yyyy
+LangTest::testLang(ar_EG) Check syntax rules in the language files
+
+LangTest::testLang(ar_IQ) Check language files
+LangTest::testLang(ar_IQ) FONTFORPDF=helvetica
+LangTest::testLang(ar_IQ) DIRECTION=ltr
+LangTest::testLang(ar_IQ) SeparatorDecimal=.
+LangTest::testLang(ar_IQ) SeparatorThousand=,
+LangTest::testLang(ar_IQ) FormatDateShortJava=MM/dd/yyyy
+LangTest::testLang(ar_IQ) FormatDateShortJavaInput=MM/dd/yyyy
+LangTest::testLang(ar_IQ) Check syntax rules in the language files
+
+LangTest::testLang(ar_JO) Check language files
+LangTest::testLang(ar_JO) FONTFORPDF=helvetica
+LangTest::testLang(ar_JO) DIRECTION=ltr
+LangTest::testLang(ar_JO) SeparatorDecimal=.
+LangTest::testLang(ar_JO) SeparatorThousand=,
+LangTest::testLang(ar_JO) FormatDateShortJava=MM/dd/yyyy
+LangTest::testLang(ar_JO) FormatDateShortJavaInput=MM/dd/yyyy
+LangTest::testLang(ar_JO) Check syntax rules in the language files
+
+LangTest::testLang(ar_SA) Check language files
+LangTest::testLang(ar_SA) FONTFORPDF=DejaVuSans
+LangTest::testLang(ar_SA) DIRECTION=rtl
+LangTest::testLang(ar_SA) SeparatorDecimal=.
+LangTest::testLang(ar_SA) SeparatorThousand=None
+LangTest::testLang(ar_SA) FormatDateShortJava=dd/MM/yyyy
+LangTest::testLang(ar_SA) FormatDateShortJavaInput=dd/MM/yyyy
+LangTest::testLang(ar_SA) Check syntax rules in the language files
+
+LangTest::testLang(ar_SY) Check language files
+LangTest::testLang(ar_SY) FONTFORPDF=helvetica
+LangTest::testLang(ar_SY) DIRECTION=ltr
+LangTest::testLang(ar_SY) SeparatorDecimal=.
+LangTest::testLang(ar_SY) SeparatorThousand=,
+LangTest::testLang(ar_SY) FormatDateShortJava=MM/dd/yyyy
+LangTest::testLang(ar_SY) FormatDateShortJavaInput=MM/dd/yyyy
+LangTest::testLang(ar_SY) Check syntax rules in the language files
+
+LangTest::testLang(az_AZ) Check language files
+LangTest::testLang(az_AZ) FONTFORPDF=DejaVuSans
+LangTest::testLang(az_AZ) DIRECTION=ltr
+LangTest::testLang(az_AZ) SeparatorDecimal=.
+LangTest::testLang(az_AZ) SeparatorThousand=,
+LangTest::testLang(az_AZ) FormatDateShortJava=MM/dd/yyyy
+LangTest::testLang(az_AZ) FormatDateShortJavaInput=MM/dd/yyyy
+LangTest::testLang(az_AZ) Check syntax rules in the language files
+
+LangTest::testLang(bg_BG) Check language files
+LangTest::testLang(bg_BG) FONTFORPDF=DejaVuSans
+LangTest::testLang(bg_BG) DIRECTION=ltr
+LangTest::testLang(bg_BG) SeparatorDecimal=,
+LangTest::testLang(bg_BG) SeparatorThousand=Space
+LangTest::testLang(bg_BG) FormatDateShortJava=dd.MM.yyyy
+LangTest::testLang(bg_BG) FormatDateShortJavaInput=dd.MM.yyyy
+LangTest::testLang(bg_BG) Check syntax rules in the language files
+
+LangTest::testLang(bn_BD) Check language files
+LangTest::testLang(bn_BD) FONTFORPDF=helvetica
+LangTest::testLang(bn_BD) DIRECTION=ltr
+LangTest::testLang(bn_BD) SeparatorDecimal=.
+LangTest::testLang(bn_BD) SeparatorThousand=,
+LangTest::testLang(bn_BD) FormatDateShortJava=dd/MM/yyyy
+LangTest::testLang(bn_BD) FormatDateShortJavaInput=dd/MM/yyyy
+LangTest::testLang(bn_BD) Check syntax rules in the language files
+
+LangTest::testLang(bn_IN) Check language files
+LangTest::testLang(bn_IN) FONTFORPDF=helvetica
+LangTest::testLang(bn_IN) DIRECTION=ltr
+LangTest::testLang(bn_IN) SeparatorDecimal=.
+LangTest::testLang(bn_IN) SeparatorThousand=,
+LangTest::testLang(bn_IN) FormatDateShortJava=MM/dd/yyyy
+LangTest::testLang(bn_IN) FormatDateShortJavaInput=MM/dd/yyyy
+LangTest::testLang(bn_IN) Check syntax rules in the language files
+
+LangTest::testLang(br_FR) Check language files
+LangTest::testLang(br_FR) FONTFORPDF=helvetica
+LangTest::testLang(br_FR) DIRECTION=ltr
+LangTest::testLang(br_FR) SeparatorDecimal=.
+LangTest::testLang(br_FR) SeparatorThousand=,
+LangTest::testLang(br_FR) FormatDateShortJava=MM/dd/yyyy
+LangTest::testLang(br_FR) FormatDateShortJavaInput=MM/dd/yyyy
+LangTest::testLang(br_FR) Check syntax rules in the language files
+
+LangTest::testLang(bs_BA) Check language files
+LangTest::testLang(bs_BA) FONTFORPDF=DejaVuSans
+LangTest::testLang(bs_BA) DIRECTION=ltr
+LangTest::testLang(bs_BA) SeparatorDecimal=,
+LangTest::testLang(bs_BA) SeparatorThousand=Space
+LangTest::testLang(bs_BA) FormatDateShortJava=dd/MM/yyyy
+LangTest::testLang(bs_BA) FormatDateShortJavaInput=dd/MM/yyyy
+LangTest::testLang(bs_BA) Check syntax rules in the language files
+
+LangTest::testLang(ca_ES) Check language files
+LangTest::testLang(ca_ES) FONTFORPDF=helvetica
+LangTest::testLang(ca_ES) DIRECTION=ltr
+LangTest::testLang(ca_ES) SeparatorDecimal=,
+LangTest::testLang(ca_ES) SeparatorThousand=.
+LangTest::testLang(ca_ES) FormatDateShortJava=dd/MM/yyyy
+LangTest::testLang(ca_ES) FormatDateShortJavaInput=dd/MM/yyyy
+LangTest::testLang(ca_ES) Check syntax rules in the language files
+
+LangTest::testLang(cs_CZ) Check language files
+LangTest::testLang(cs_CZ) FONTFORPDF=DejaVuSans
+LangTest::testLang(cs_CZ) DIRECTION=ltr
+LangTest::testLang(cs_CZ) SeparatorDecimal=,
+LangTest::testLang(cs_CZ) SeparatorThousand=Space
+LangTest::testLang(cs_CZ) FormatDateShortJava=dd.MM.yyyy
+LangTest::testLang(cs_CZ) FormatDateShortJavaInput=dd.MM.yyyy
+LangTest::testLang(cs_CZ) Check syntax rules in the language files
+
+LangTest::testLang(cy_GB) Check language files
+LangTest::testLang(cy_GB) FONTFORPDF=helvetica
+LangTest::testLang(cy_GB) DIRECTION=ltr
+LangTest::testLang(cy_GB) SeparatorDecimal=.
+LangTest::testLang(cy_GB) SeparatorThousand=,
+LangTest::testLang(cy_GB) FormatDateShortJava=dd/MM/yyyy
+LangTest::testLang(cy_GB) FormatDateShortJavaInput=dd/MM/yyyy
+LangTest::testLang(cy_GB) Check syntax rules in the language files
+
+LangTest::testLang(da_DK) Check language files
+LangTest::testLang(da_DK) FONTFORPDF=helvetica
+LangTest::testLang(da_DK) DIRECTION=ltr
+LangTest::testLang(da_DK) SeparatorDecimal=,
+LangTest::testLang(da_DK) SeparatorThousand=.
+LangTest::testLang(da_DK) FormatDateShortJava=dd/MM/yyyy
+LangTest::testLang(da_DK) FormatDateShortJavaInput=dd/MM/yyyy
+LangTest::testLang(da_DK) Check syntax rules in the language files
+
+
+Time: 00:40.163, Memory: 170.25 MB
+
+There was 1 failure:
+
+1) LangTest::testLang
+Found a sequence tag 'notranslate' in the translation file da_DK/other.lang in line AIPreviewAddDocumentLine=Tilføj %s x %s til %s (<span> class=
+Failed asserting that false is true.
+
+/home/travis/build/Dolibarr/dolibarr/test/phpunit/LangTest.php:268
+
+FAILURES!
+Tests: 1013, Assertions: 14735, Failures: 1, Skipped: 10.
+Phpunit return code = 1
+Content of end of apache error.log
+===== Sat Oct 31 10:13:38 AM UTC 2026 end =====
+travis_time:end:052cb42c:start=1793441578131098032,finish=1793441618869963109,duration=40738865077,event=script[0K[31;1mThe command "echo ===== $(date) Unit testing
+# Note: We do not use set -e here because it stops the Travis shell, so after_failure is never run and we can't see dolibarr.log.
+# The step still fails because the last command returns the phpunit result.
+set +e
+# Execute phpunit, check its exit status and that the phpunit output shows a test summary
+if [ "x$TRAVIS_RUN_PHPUNIT_SOURCE_SCAN" = "xyes" ]; then
+  phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php | tee /dev/tty | grep -qE "(OK .*[0-9]+ tests.*[0-9]+ assertions|Tests: [0-9]+)" ; phpunitresult=$((PIPESTATUS[0]?PIPESTATUS[0]:PIPESTATUS[2]))
+else
+  PHPUNIT_DISABLE_SOURCE_SCAN=1 phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php | tee /dev/tty | grep -qE "(OK .*[0-9]+ tests.*[0-9]+ assertions|Tests: [0-9]+)" ; phpunitresult=$((PIPESTATUS[0]?PIPESTATUS[0]:PIPESTATUS[2]))
+fi
+echo "Phpunit return code = $phpunitresult"
+echo "Content of end of apache error.log"
+sudo tail -n 200 /var/log/apache2/travis_error_log
+echo ===== $(date) end =====
+[ "$phpunitresult" = "0" ]
+" exited with 1.[0m
+travis_fold:start:cache.2[0Kstore build cache
+travis_time:start:01cf7000[0Ktravis_time:end:01cf7000:start=1793441618875437709,finish=1793441618879332069,duration=3894360,event=cache[0Ktravis_time:start:0c394278[0K[32;1mchanges detected (content changed, file is created, or file is deleted):\n/home/travis/.cache/composer/files/doctrine/instantiator/aec949ed19ddb531e84e57fd63404e18bf6af392.zip
+/home/travis/.cache/composer/files/myclabs/deep-copy/b779fa11206a042f91c9d0810a71e04415cb5c2d.zip
+/home/travis/.cache/composer/files/nikic/php-parser/1f04cdb8b266832987c12f93ca05b7948db43442.zip
+/home/travis/.cache/composer/files/phar-io/manifest/76bff606ca30e559b645a1f35d005f1f29c3c86e.zip
+/home/travis/.cache/composer/files/phar-io/version/1495d1d88b1ae7e031b437037ce96298d897a969.zip
+/home/travis/.cache/composer/files/phpunit/php-code-coverage/adab9f41475083d2f8998cc113a78cb8bc4901ec.zip
+/home/travis/.cache/composer/files/phpunit/php-file-iterator/4fd4ef934d9b090aff1c14e5987f251c5d6b2d0c.zip
+/home/travis/.cache/composer/files/phpunit/php-invoker/18d90380b8ff6f566265ca070b4bcfe4c4bbd34c.zip
+/home/travis/.cache/composer/files/phpunit/php-text-template/b8d58f7d3789d6fd84cb6a82ebcb5776ab609787.zip
+/home/travis/.cache/composer/files/phpunit/php-timer/b71ded866a460bbdb922b5eb818f4ed163f38f0\n...[0m
+[32;1mchanges detected, packing new archive[0m
+gzip: warning: GZIP environment variable is deprecated; use an alias or script
+[32;1muploading PR.42476/cache--linux-jammy-1e5eea370d7d1937b86944f134ff5daa86178d1bd4077e049643d8caa3beb03e.tgz[0m
+[32;1mcache uploaded[0m
+travis_time:end:0c394278:start=1793441618884195276,finish=1793441621551183470,duration=2666988194,event=cache[0Ktravis_fold:end:cache.2[0K
+travis_fold:start:after_failure[0Ktravis_time:start:181248de[0K$ echo ===== $(date) Failure detected, so we show samples of log to help diagnose
+  # This part of code is executed only if the command that fails are enclosed with set +e
+  # Show upgrade log files
+  #for ficlog in `ls $TRAVIS_BUILD_DIR/*.log`
+  #do
+    #echo "Debugging information for file $ficlog"
+    #cat $ficlog
+  #done
+  # Show Apache log file
+  echo "Debugging information for file apache error.log"
+  sudo tail -n 200 /var/log/apache2/travis_error_log
+  if [ "$DEBUG" = true ]; then
+    # Dolibarr log file
+    echo "Debugging information for file dolibarr.log (latest 50 lines)"
+    tail -n 200 $TRAVIS_BUILD_DIR/documents/dolibarr.log
+    # Database log file
+    echo "Debugging information for file mysql error.log"
+    sudo tail -n 200 /var/log/mysql/error.log
+    # TODO: PostgreSQL log file
+    echo
+  fi
+===== Sat Oct 31 10:13:41 AM UTC 2026 Failure detected, so we show samples of log to help diagnose
+Debugging information for file apache error.log
+Debugging information for file dolibarr.log (latest 50 lines)
+2026-10-31 10:13:37 INFO    ???               19971 travis   Trigger 'WebhookTriggers' for action 'ACTION_CREATE' launched by /home/travis/build/Dolibarr/dolibarr/htdocs/core/triggers/interface_95_modWebhook_WebhookTriggers.class.php. id=2392 -> nbPost=0
+2026-10-31 10:13:37 DEBUG   ???               19971 travis  Target::fetchAll
+2026-10-31 10:13:37 DEBUG   ???               19971 travis  sql=SELECT t.rowid, t.ref, t.label, t.type, t.trigger_codes, t.url, t.description, t.note_public, t.note_private, t.date_creation, t.tms, t.fk_user_creat, t.fk_user_modif, t.import_key, t.status FROM llx_webhook_target as t WHERE 1 = 1
+2026-10-31 10:13:37 INFO    ???               19971 travis  Trigger 'WebhookTriggers' for action 'CONTACT_CREATE' launched by /home/travis/build/Dolibarr/dolibarr/htdocs/core/triggers/interface_95_modWebhook_WebhookTriggers.class.php. id=55 -> nbPost=0
+2026-10-31 10:13:37 DEBUG   ???               19971 travis  Contact::create
+2026-10-31 10:13:37 DEBUG   ???               19971 travis  sql=INSERT INTO llx_socpeople ( datec, fk_soc, name_alias, lastname, firstname, fk_user_creat, priv, fk_stcommcontact, statut, canvas, entity, ref_ext, import_key, ip) VALUES ('2026-10-31 10:13:37',null,'','zttestctclim20261031101337Limit3','Contact', 1, 0, 0, 1, null, 1,'', null, null)
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   Contact::update
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   sql=UPDATE llx_socpeople SET civility='', name_alias='', lastname='zttestctclim20261031101337Limit3', firstname='Contact', address='', zip='', town='', ref_ext = NULL, fk_pays=NULL, fk_departement=NULL, poste='', fax='', email='', socialnetworks = 'null', photo='', birthday=null, note_private = NULL, note_public = NULL, phone = '', phone_perso = '', phone_mobile = '', priv = 0, fk_prospectlevel = '', statut = 1, fk_user_modif='1', default_lang=NULL, entity = 1 WHERE rowid = 56
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   Contact::update_perso this->birthday= -
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   sql=UPDATE llx_socpeople SET birthday = null, photo = null, fk_user_modif = 1 WHERE rowid = 56
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   sql=DELETE FROM llx_user_alert WHERE type=1 AND fk_contact=56 AND fk_user=1
+2026-10-31 10:13:37 INFO    ???               19971 travis  Trigger 'ActionsAuto' for action 'CONTACT_CREATE' launched by /home/travis/build/Dolibarr/dolibarr/htdocs/core/triggers/interface_50_modAgenda_ActionsAuto.class.php. id=56
+2026-10-31 10:13:37 DEBUG   ???               19971 travis  CActionComm::fetch
+2026-10-31 10:13:37 DEBUG   ???               19971 travis  sql=SELECT id, code, type, libelle as label, color, active, picto FROM llx_c_actioncomm WHERE code = 'AC_OTH_AUTO'
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   ActionComm::add
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   sql=INSERT INTO llx_actioncomm(ref,datec,datep,datep2,durationp,fk_action,code,ref_ext,fk_soc,fk_project,note,fk_contact,fk_user_author,fk_user_action,fk_task,label,percent,priority,fulldayevent,location,max_participants,transparency,fk_element,elementtype,fk_bookcal_calendar,entity,extraparams,email_msgid,email_from,email_sender,email_to,email_tocc,email_tobcc,email_subject,errors_to,recurid,recurrule,recurdateend,num_vote,event_paid,status,ip) VALUES ('(PROV)', '2026-10-31 10:13:37', '2026-10-31 10:13:37', '2026-10-31 10:13:37', '0', 40,'AC_CONTACT_CREATE', null, null, null,  'Contact Contact zttestctclim20261031101337Limit3 created', 56, 1, 1, null, 'Contact Contact zttestctclim20261031101337Limit3 created', '-1', '0', '0', '', null, '0', null, null, null, 1,null, null, null, null, null, null, null, null, null, null, null, null, null, 0, 0, null)
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   sql=UPDATE llx_actioncomm SET ref='2393' WHERE id=2393
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   sql=INSERT INTO llx_actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status) VALUES(2393, 'user', 1, 0, 0, 0)
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   sql=INSERT INTO llx_actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status) VALUES(2393, 'socpeople', 56, 0, 0, 0)
+2026-10-31 10:13:37 INFO    ???               19971 travis   Trigger 'Notification' for action 'ACTION_CREATE' launched by /home/travis/build/Dolibarr/dolibarr/htdocs/core/triggers/interface_50_modNotification_Notification.class.php. id=2393
+2026-10-31 10:13:37 INFO    ???               19971 travis   Notify::send notifcode=ACTION_CREATE, object id=2393
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   sql=SELECT 'touserid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.lang as default_lang, a.rowid as adid, a.label, a.code, n.rowid, n.threshold, n.context, n.type FROM llx_user as c, llx_c_action_trigger as a, llx_notify_def as n WHERE n.fk_user = c.rowid AND a.rowid = n.fk_action AND n.entity IN (1) AND c.statut = 1 AND a.code = 'ACTION_CREATE'
+2026-10-31 10:13:37 INFO    ???               19971 travis   No notification to thirdparty sent, nothing into notification setup for the thirdparty socid = 
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   Target::fetchAll
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   sql=SELECT t.rowid, t.ref, t.label, t.type, t.trigger_codes, t.url, t.description, t.note_public, t.note_private, t.date_creation, t.tms, t.fk_user_creat, t.fk_user_modif, t.import_key, t.status FROM llx_webhook_target as t WHERE 1 = 1
+2026-10-31 10:13:37 INFO    ???               19971 travis   Trigger 'WebhookTriggers' for action 'ACTION_CREATE' launched by /home/travis/build/Dolibarr/dolibarr/htdocs/core/triggers/interface_95_modWebhook_WebhookTriggers.class.php. id=2393 -> nbPost=0
+2026-10-31 10:13:37 DEBUG   ???               19971 travis  Target::fetchAll
+2026-10-31 10:13:37 DEBUG   ???               19971 travis  sql=SELECT t.rowid, t.ref, t.label, t.type, t.trigger_codes, t.url, t.description, t.note_public, t.note_private, t.date_creation, t.tms, t.fk_user_creat, t.fk_user_modif, t.import_key, t.status FROM llx_webhook_target as t WHERE 1 = 1
+2026-10-31 10:13:37 INFO    ???               19971 travis  Trigger 'WebhookTriggers' for action 'CONTACT_CREATE' launched by /home/travis/build/Dolibarr/dolibarr/htdocs/core/triggers/interface_95_modWebhook_WebhookTriggers.class.php. id=56 -> nbPost=0
+2026-10-31 10:13:37 DEBUG   ???               19971 travis Form::selectcontacts
+2026-10-31 10:13:37 DEBUG   ???               19971 travis sql=SELECT sp.rowid, sp.lastname, sp.statut, sp.firstname, sp.poste, sp.email, sp.phone, sp.phone_perso, sp.phone_mobile, sp.town AS contact_town FROM llx_socpeople as sp WHERE sp.entity IN (1) AND ((sp.fk_user_creat = 1 AND sp.priv = 1) OR sp.priv = 0) AND (((lastname LIKE 'zttestctclim20261031101337%'))) ORDER BY sp.lastname ASC
+2026-10-31 10:13:37 DEBUG   ???               19971 travis Form::selectcontacts
+2026-10-31 10:13:37 DEBUG   ???               19971 travis sql=SELECT sp.rowid, sp.lastname, sp.statut, sp.firstname, sp.poste, sp.email, sp.phone, sp.phone_perso, sp.phone_mobile, sp.town AS contact_town FROM llx_socpeople as sp WHERE sp.entity IN (1) AND ((sp.fk_user_creat = 1 AND sp.priv = 1) OR sp.priv = 0) AND (((lastname LIKE 'zttestctclim20261031101337%'))) ORDER BY sp.lastname ASC LIMIT 2
+2026-10-31 10:13:37 DEBUG   ???               19971 travis Form::selectcontacts
+2026-10-31 10:13:37 DEBUG   ???               19971 travis sql=SELECT sp.rowid, sp.lastname, sp.statut, sp.firstname, sp.poste, sp.email, sp.phone, sp.phone_perso, sp.phone_mobile, sp.town AS contact_town FROM llx_socpeople as sp WHERE sp.entity IN (1) AND ((sp.fk_user_creat = 1 AND sp.priv = 1) OR sp.priv = 0) AND (((lastname LIKE 'zttestctclim20261031101337%'))) ORDER BY sp.lastname ASC LIMIT 2,2
+2026-10-31 10:13:37 DEBUG   ???               19971 travis  Contact::create
+2026-10-31 10:13:37 DEBUG   ???               19971 travis  sql=INSERT INTO llx_socpeople ( datec, fk_soc, name_alias, lastname, firstname, fk_user_creat, priv, fk_stcommcontact, statut, canvas, entity, ref_ext, import_key, ip) VALUES ('2026-10-31 10:13:37',null,'','Selectedzttestctcmul20261031101337','Contact', 1, 0, 0, 1, null, 1,'', null, null)
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   Contact::update
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   sql=UPDATE llx_socpeople SET civility='', name_alias='', lastname='Selectedzttestctcmul20261031101337', firstname='Contact', address='', zip='', town='', ref_ext = NULL, fk_pays=NULL, fk_departement=NULL, poste='', fax='', email='', socialnetworks = 'null', photo='', birthday=null, note_private = NULL, note_public = NULL, phone = '', phone_perso = '', phone_mobile = '', priv = 0, fk_prospectlevel = '', statut = 1, fk_user_modif='1', default_lang=NULL, entity = 1 WHERE rowid = 57
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   Contact::update_perso this->birthday= -
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   sql=UPDATE llx_socpeople SET birthday = null, photo = null, fk_user_modif = 1 WHERE rowid = 57
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   sql=DELETE FROM llx_user_alert WHERE type=1 AND fk_contact=57 AND fk_user=1
+2026-10-31 10:13:37 INFO    ???               19971 travis  Trigger 'ActionsAuto' for action 'CONTACT_CREATE' launched by /home/travis/build/Dolibarr/dolibarr/htdocs/core/triggers/interface_50_modAgenda_ActionsAuto.class.php. id=57
+2026-10-31 10:13:37 DEBUG   ???               19971 travis  CActionComm::fetch
+2026-10-31 10:13:37 DEBUG   ???               19971 travis  sql=SELECT id, code, type, libelle as label, color, active, picto FROM llx_c_actioncomm WHERE code = 'AC_OTH_AUTO'
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   ActionComm::add
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   sql=INSERT INTO llx_actioncomm(ref,datec,datep,datep2,durationp,fk_action,code,ref_ext,fk_soc,fk_project,note,fk_contact,fk_user_author,fk_user_action,fk_task,label,percent,priority,fulldayevent,location,max_participants,transparency,fk_element,elementtype,fk_bookcal_calendar,entity,extraparams,email_msgid,email_from,email_sender,email_to,email_tocc,email_tobcc,email_subject,errors_to,recurid,recurrule,recurdateend,num_vote,event_paid,status,ip) VALUES ('(PROV)', '2026-10-31 10:13:37', '2026-10-31 10:13:37', '2026-10-31 10:13:37', '0', 40,'AC_CONTACT_CREATE', null, null, null,  'Contact Contact Selectedzttestctcmul20261031101337 created', 57, 1, 1, null, 'Contact Contact Selectedzttestctcmul20261031101337 created', '-1', '0', '0', '', null, '0', null, null, null, 1,null, null, null, null, null, null, null, null, null, null, null, null, null, 0, 0, null)
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   sql=UPDATE llx_actioncomm SET ref='2394' WHERE id=2394
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   sql=INSERT INTO llx_actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status) VALUES(2394, 'user', 1, 0, 0, 0)
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   sql=INSERT INTO llx_actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status) VALUES(2394, 'socpeople', 57, 0, 0, 0)
+2026-10-31 10:13:37 INFO    ???               19971 travis   Trigger 'Notification' for action 'ACTION_CREATE' launched by /home/travis/build/Dolibarr/dolibarr/htdocs/core/triggers/interface_50_modNotification_Notification.class.php. id=2394
+2026-10-31 10:13:37 INFO    ???               19971 travis   Notify::send notifcode=ACTION_CREATE, object id=2394
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   sql=SELECT 'touserid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.lang as default_lang, a.rowid as adid, a.label, a.code, n.rowid, n.threshold, n.context, n.type FROM llx_user as c, llx_c_action_trigger as a, llx_notify_def as n WHERE n.fk_user = c.rowid AND a.rowid = n.fk_action AND n.entity IN (1) AND c.statut = 1 AND a.code = 'ACTION_CREATE'
+2026-10-31 10:13:37 INFO    ???               19971 travis   No notification to thirdparty sent, nothing into notification setup for the thirdparty socid = 
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   Target::fetchAll
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   sql=SELECT t.rowid, t.ref, t.label, t.type, t.trigger_codes, t.url, t.description, t.note_public, t.note_private, t.date_creation, t.tms, t.fk_user_creat, t.fk_user_modif, t.import_key, t.status FROM llx_webhook_target as t WHERE 1 = 1
+2026-10-31 10:13:37 INFO    ???               19971 travis   Trigger 'WebhookTriggers' for action 'ACTION_CREATE' launched by /home/travis/build/Dolibarr/dolibarr/htdocs/core/triggers/interface_95_modWebhook_WebhookTriggers.class.php. id=2394 -> nbPost=0
+2026-10-31 10:13:37 DEBUG   ???               19971 travis  Target::fetchAll
+2026-10-31 10:13:37 DEBUG   ???               19971 travis  sql=SELECT t.rowid, t.ref, t.label, t.type, t.trigger_codes, t.url, t.description, t.note_public, t.note_private, t.date_creation, t.tms, t.fk_user_creat, t.fk_user_modif, t.import_key, t.status FROM llx_webhook_target as t WHERE 1 = 1
+2026-10-31 10:13:37 INFO    ???               19971 travis  Trigger 'WebhookTriggers' for action 'CONTACT_CREATE' launched by /home/travis/build/Dolibarr/dolibarr/htdocs/core/triggers/interface_95_modWebhook_WebhookTriggers.class.php. id=57 -> nbPost=0
+2026-10-31 10:13:37 DEBUG   ???               19971 travis  Contact::create
+2026-10-31 10:13:37 DEBUG   ???               19971 travis  sql=INSERT INTO llx_socpeople ( datec, fk_soc, name_alias, lastname, firstname, fk_user_creat, priv, fk_stcommcontact, statut, canvas, entity, ref_ext, import_key, ip) VALUES ('2026-10-31 10:13:37',null,'','NotSelectedzttestctcmul20261031101337','Contact', 1, 0, 0, 1, null, 1,'', null, null)
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   Contact::update
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   sql=UPDATE llx_socpeople SET civility='', name_alias='', lastname='NotSelectedzttestctcmul20261031101337', firstname='Contact', address='', zip='', town='', ref_ext = NULL, fk_pays=NULL, fk_departement=NULL, poste='', fax='', email='', socialnetworks = 'null', photo='', birthday=null, note_private = NULL, note_public = NULL, phone = '', phone_perso = '', phone_mobile = '', priv = 0, fk_prospectlevel = '', statut = 1, fk_user_modif='1', default_lang=NULL, entity = 1 WHERE rowid = 58
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   Contact::update_perso this->birthday= -
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   sql=UPDATE llx_socpeople SET birthday = null, photo = null, fk_user_modif = 1 WHERE rowid = 58
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   sql=DELETE FROM llx_user_alert WHERE type=1 AND fk_contact=58 AND fk_user=1
+2026-10-31 10:13:37 INFO    ???               19971 travis  Trigger 'ActionsAuto' for action 'CONTACT_CREATE' launched by /home/travis/build/Dolibarr/dolibarr/htdocs/core/triggers/interface_50_modAgenda_ActionsAuto.class.php. id=58
+2026-10-31 10:13:37 DEBUG   ???               19971 travis  CActionComm::fetch
+2026-10-31 10:13:37 DEBUG   ???               19971 travis  sql=SELECT id, code, type, libelle as label, color, active, picto FROM llx_c_actioncomm WHERE code = 'AC_OTH_AUTO'
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   ActionComm::add
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   sql=INSERT INTO llx_actioncomm(ref,datec,datep,datep2,durationp,fk_action,code,ref_ext,fk_soc,fk_project,note,fk_contact,fk_user_author,fk_user_action,fk_task,label,percent,priority,fulldayevent,location,max_participants,transparency,fk_element,elementtype,fk_bookcal_calendar,entity,extraparams,email_msgid,email_from,email_sender,email_to,email_tocc,email_tobcc,email_subject,errors_to,recurid,recurrule,recurdateend,num_vote,event_paid,status,ip) VALUES ('(PROV)', '2026-10-31 10:13:37', '2026-10-31 10:13:37', '2026-10-31 10:13:37', '0', 40,'AC_CONTACT_CREATE', null, null, null,  'Contact Contact NotSelectedzttestctcmul20261031101337 created', 58, 1, 1, null, 'Contact Contact NotSelectedzttestctcmul20261031101337 created', '-1', '0', '0', '', null, '0', null, null, null, 1,null, null, null, null, null, null, null, null, null, null, null, null, null, 0, 0, null)
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   sql=UPDATE llx_actioncomm SET ref='2395' WHERE id=2395
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   sql=INSERT INTO llx_actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status) VALUES(2395, 'user', 1, 0, 0, 0)
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   sql=INSERT INTO llx_actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status) VALUES(2395, 'socpeople', 58, 0, 0, 0)
+2026-10-31 10:13:37 INFO    ???               19971 travis   Trigger 'Notification' for action 'ACTION_CREATE' launched by /home/travis/build/Dolibarr/dolibarr/htdocs/core/triggers/interface_50_modNotification_Notification.class.php. id=2395
+2026-10-31 10:13:37 INFO    ???               19971 travis   Notify::send notifcode=ACTION_CREATE, object id=2395
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   sql=SELECT 'touserid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.lang as default_lang, a.rowid as adid, a.label, a.code, n.rowid, n.threshold, n.context, n.type FROM llx_user as c, llx_c_action_trigger as a, llx_notify_def as n WHERE n.fk_user = c.rowid AND a.rowid = n.fk_action AND n.entity IN (1) AND c.statut = 1 AND a.code = 'ACTION_CREATE'
+2026-10-31 10:13:37 INFO    ???               19971 travis   No notification to thirdparty sent, nothing into notification setup for the thirdparty socid = 
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   Target::fetchAll
+2026-10-31 10:13:37 DEBUG   ???               19971 travis   sql=SELECT t.rowid, t.ref, t.label, t.type, t.trigger_codes, t.url, t.description, t.note_public, t.note_private, t.date_creation, t.tms, t.fk_user_creat, t.fk_user_modif, t.import_key, t.status FROM llx_webhook_target as t WHERE 1 = 1
+2026-10-31 10:13:37 INFO    ???               19971 travis   Trigger 'WebhookTriggers' for action 'ACTION_CREATE' launched by /home/travis/build/Dolibarr/dolibarr/htdocs/core/triggers/interface_95_modWebhook_WebhookTriggers.class.php. id=2395 -> nbPost=0
+2026-10-31 10:13:37 DEBUG   ???               19971 travis  Target::fetchAll
+2026-10-31 10:13:37 DEBUG   ???               19971 travis  sql=SELECT t.rowid, t.ref, t.label, t.type, t.trigger_codes, t.url, t.description, t.note_public, t.note_private, t.date_creation, t.tms, t.fk_user_creat, t.fk_user_modif, t.import_key, t.status FROM llx_webhook_target as t WHERE 1 = 1
+2026-10-31 10:13:37 INFO    ???               19971 travis  Trigger 'WebhookTriggers' for action 'CONTACT_CREATE' launched by /home/travis/build/Dolibarr/dolibarr/htdocs/core/triggers/interface_95_modWebhook_WebhookTriggers.class.php. id=58 -> nbPost=0
+2026-10-31 10:13:37 DEBUG   ???               19971 travis Contact::fetch id=57 ref_ext= email=
+2026-10-31 10:13:37 DEBUG   ???               19971 travis sql=SELECT c.rowid, c.entity, c.fk_soc, c.ref_ext, c.civility as civility_code, c.name_alias, c.lastname, c.firstname, c.address, c.statut as status, c.zip, c.town, c.fk_pays as country_id, c.fk_departement as state_id, c.birthday, c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.socialnetworks, c.photo, c.priv, c.note_private, c.note_public, c.default_lang, c.canvas, c.fk_prospectlevel, c.fk_stcommcontact, st.libelle as stcomm, st.picto as stcomm_picto, c.import_key, c.datec as date_creation, GREATEST(c.tms, COALESCE(cef.tms, c.tms)) as date_modification, c.fk_user_creat, c.fk_user_modif, co.label as country, co.code as country_code, d.nom as state, d.code_departement as state_code, u.rowid as user_id, u.login as user_login, s.nom as socname, s.address as socaddress, s.zip as soccp, s.town as soccity, s.default_lang as socdefault_lang FROM llx_socpeople as c LEFT JOIN llx_socpeople_extrafields as cef ON cef.fk_object=c.rowid LEFT JOIN llx_c_country as co ON c.fk_pays = co.rowid LEFT JOIN llx_c_departements as d ON c.fk_departement = d.rowid LEFT JOIN llx_user as u ON c.rowid = u.fk_socpeople LEFT JOIN llx_societe as s ON c.fk_soc = s.rowid LEFT JOIN llx_c_stcommcontact as st ON c.fk_stcommcontact = st.id WHERE c.rowid = 57
+2026-10-31 10:13:37 DEBUG   ???               19971 travis sql=SELECT u.rowid  FROM llx_user as u WHERE u.fk_socpeople = 57
+2026-10-31 10:13:37 DEBUG   ???               19971 travis sql=SELECT rowid, ccc, ddd FROM llx_socpeople_extrafields WHERE fk_object = 57
+2026-10-31 10:13:37 DEBUG   ???               19971 travis Form::selectcontacts
+2026-10-31 10:13:37 DEBUG   ???               19971 travis sql=SELECT sp.rowid, sp.lastname, sp.statut, sp.firstname, sp.poste, sp.email, sp.phone, sp.phone_perso, sp.phone_mobile, sp.town AS contact_town FROM llx_socpeople as sp WHERE sp.entity IN (1) AND ((sp.fk_user_creat = 1 AND sp.priv = 1) OR sp.priv = 0) ORDER BY sp.lastname ASC
+2026-10-31 10:13:37 DEBUG   ???               19971 travis ROLLBACK Transaction
+2026-10-31 10:13:37 DEBUG   ???               19971 travis BEGIN Transaction
+2026-10-31 10:13:37 INFO    ???               19971 travis getURLContent postorget=GET URL=http://127.0.0.1/public/payment/newpayment.php?amount=0&tag=your_tag
+2026-10-31 10:13:37 DEBUG   127.0.0.1         19897   2000 NEW TOKEN generated by : /public/payment/newpayment.php
+2026-10-31 10:13:37 DEBUG   127.0.0.1         19897   2000 DefaultValues::fetchAll
+2026-10-31 10:13:37 DEBUG   127.0.0.1         19897   2000 sql=SELECT rowid, type, user_id, page, param, value FROM llx_default_values as t WHERE 1 = 1 AND ((t.user_id IN (0,0)) AND (entity IN (1,1)))
+2026-10-31 10:13:37 NOTICE  127.0.0.1         19897   2000 --- Access to GET /public/payment/newpayment.php - action=, massaction=
+2026-10-31 10:13:37 DEBUG   127.0.0.1         19897   2000 sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='en_US' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:37 DEBUG   127.0.0.1         19897   2000 sql=SELECT m.rowid, m.type, m.module, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.url, m.titre, m.prefix, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu, m.position, m.showtopmenuinframe FROM llx_menu as m WHERE m.entity IN (0,1) AND m.menu_handler IN ('eldy','all') AND m.usertype IN (0,2) ORDER BY m.type DESC, m.position, m.rowid
+2026-10-31 10:13:37 INFO    127.0.0.1         19897   2000 --- End access to /public/payment/newpayment.php
+2026-10-31 10:13:37 INFO    ???               19971 travis getURLContent request without content body=GET /public/payment/newpayment.php?amount=0&tag=your_tag HTTP/1.1
+Host: 127.0.0.1
+User-Agent: Dolibarr geturl function
+Accept: */*
+Accept-Encoding: deflate, gzip, br, zstd
+
+
+2026-10-31 10:13:37 INFO    ???               19971 travis getURLContent response size=33
+2026-10-31 10:13:37 INFO    ???               19971 travis getURLContent http_code=200
+2026-10-31 10:13:37 DEBUG   ???               19971 travis ROLLBACK Transaction
+2026-10-31 10:13:37 DEBUG   ???               19971 travis BEGIN Transaction
+2026-10-31 10:13:38 INFO    ???               19971 travis getURLContent postorget=GET URL=http://127.0.0.1/public/payment/newpayment.php?amount=0&tag=your_tag
+2026-10-31 10:13:38 DEBUG   127.0.0.1         19898   2000 NEW TOKEN generated by : /public/payment/newpayment.php
+2026-10-31 10:13:38 DEBUG   127.0.0.1         19898   2000 DefaultValues::fetchAll
+2026-10-31 10:13:38 DEBUG   127.0.0.1         19898   2000 sql=SELECT rowid, type, user_id, page, param, value FROM llx_default_values as t WHERE 1 = 1 AND ((t.user_id IN (0,0)) AND (entity IN (1,1)))
+2026-10-31 10:13:38 NOTICE  127.0.0.1         19898   2000 --- Access to GET /public/payment/newpayment.php - action=, massaction=
+2026-10-31 10:13:38 DEBUG   127.0.0.1         19898   2000 sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='en_US' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   127.0.0.1         19898   2000 sql=SELECT m.rowid, m.type, m.module, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.url, m.titre, m.prefix, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu, m.position, m.showtopmenuinframe FROM llx_menu as m WHERE m.entity IN (0,1) AND m.menu_handler IN ('eldy','all') AND m.usertype IN (0,2) ORDER BY m.type DESC, m.position, m.rowid
+2026-10-31 10:13:38 INFO    127.0.0.1         19898   2000 --- End access to /public/payment/newpayment.php
+2026-10-31 10:13:38 INFO    ???               19971 travis getURLContent request without content body=GET /public/payment/newpayment.php?amount=0&tag=your_tag HTTP/1.1
+Host: 127.0.0.1
+User-Agent: Dolibarr geturl function
+Accept: */*
+Accept-Encoding: deflate, gzip, br, zstd
+
+
+2026-10-31 10:13:38 INFO    ???               19971 travis getURLContent response size=33
+2026-10-31 10:13:38 INFO    ???               19971 travis getURLContent http_code=200
+2026-10-31 10:13:38 DEBUG   ???               19971 travis ROLLBACK Transaction
+2026-10-31 10:13:38 DEBUG   ???               19971 travis BEGIN Transaction
+2026-10-31 10:13:38 DEBUG   ???               19971 travis EmailCollector::createCommon create
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=INSERT INTO llx_emailcollector_emailcollector (ref, label, description, host, port, imap_encryption, hostcharset, norsh, acces_type, login, password, oauth_service, source_directory, target_directory, maxemailpercollect, datelastresult, codelastresult, lastresult, datelastok, note_public, note_private, date_creation, fk_user_creat, fk_user_modif, import_key, status) VALUES ('ABCD1234', 'This is label', 'This is a description', 'localhost', '993', 'ssl', 'UTF-8', NULL, 0, 'alogin', NULL, NULL, 'Inbox', NULL, 50, NULL, NULL, NULL, NULL, 'Public note', 'Private note', '2026-10-29 10:13:38', 1, 1, NULL, 0)
+2026-10-31 10:13:38 DEBUG   ???               19971 travis Target::fetchAll
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT t.rowid, t.ref, t.label, t.type, t.trigger_codes, t.url, t.description, t.note_public, t.note_private, t.date_creation, t.tms, t.fk_user_creat, t.fk_user_modif, t.import_key, t.status FROM llx_webhook_target as t WHERE 1 = 1
+2026-10-31 10:13:38 INFO    ???               19971 travis Trigger 'WebhookTriggers' for action 'EMAILCOLLECTOR_CREATE' launched by /home/travis/build/Dolibarr/dolibarr/htdocs/core/triggers/interface_95_modWebhook_WebhookTriggers.class.php. id=18 -> nbPost=0
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT t.rowid, t.ref, t.label, t.description, t.host, t.port, t.imap_encryption, t.hostcharset, t.norsh, t.acces_type, t.login, t.password, t.oauth_service, t.source_directory, t.target_directory, t.maxemailpercollect, t.datelastresult, t.codelastresult, t.lastresult, t.datelastok, t.note_public, t.note_private, t.date_creation, t.tms, t.fk_user_creat, t.fk_user_modif, t.import_key, t.status FROM llx_emailcollector_emailcollector as t WHERE t.rowid = 18 LIMIT 1
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT rowid, name, label, type, size, elementtype, fieldunique, fieldrequired, param, pos, alwayseditable, emptyonclone, perms, langs, list, printable, showintooltip, totalizable, fielddefault, fieldcomputed, entity, enabled, help, aiprompt , css, cssview, csslist, personal_data FROM llx_extrafields WHERE elementtype = 'emailcollector_emailcollector' ORDER BY pos
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT t.rowid, t.ref, t.label, t.description, t.host, t.port, t.imap_encryption, t.hostcharset, t.norsh, t.acces_type, t.login, t.password, t.oauth_service, t.source_directory, t.target_directory, t.maxemailpercollect, t.datelastresult, t.codelastresult, t.lastresult, t.datelastok, t.note_public, t.note_private, t.date_creation, t.tms, t.fk_user_creat, t.fk_user_modif, t.import_key, t.status FROM llx_emailcollector_emailcollector as t WHERE t.rowid = 18 LIMIT 1
+2026-10-31 10:13:38 DEBUG   ???               19971 travis EmailCollector::deleteCommon delete
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=DELETE FROM llx_emailcollector_emailcollectorfilter WHERE fk_emailcollector = 18
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=DELETE FROM llx_emailcollector_emailcollectoraction WHERE fk_emailcollector = 18
+2026-10-31 10:13:38 DEBUG   ???               19971 travis Target::fetchAll
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT t.rowid, t.ref, t.label, t.type, t.trigger_codes, t.url, t.description, t.note_public, t.note_private, t.date_creation, t.tms, t.fk_user_creat, t.fk_user_modif, t.import_key, t.status FROM llx_webhook_target as t WHERE 1 = 1
+2026-10-31 10:13:38 INFO    ???               19971 travis Trigger 'WebhookTriggers' for action 'EMAILCOLLECTOR_DELETE' launched by /home/travis/build/Dolibarr/dolibarr/htdocs/core/triggers/interface_95_modWebhook_WebhookTriggers.class.php. id=18 -> nbPost=0
+2026-10-31 10:13:38 DEBUG   ???               19971 travis  sql=DELETE FROM llx_ecm_files_extrafields WHERE fk_object IN (SELECT rowid FROM llx_ecm_files WHERE src_object_type = 'emailcollector_emailcollector' AND src_object_id = 18)
+2026-10-31 10:13:38 DEBUG   ???               19971 travis  sql=DELETE FROM llx_ecm_files WHERE src_object_type = 'emailcollector_emailcollector' AND src_object_id = 18
+2026-10-31 10:13:38 DEBUG   ???               19971 travis  Target::fetchAll
+2026-10-31 10:13:38 DEBUG   ???               19971 travis  sql=SELECT t.rowid, t.ref, t.label, t.type, t.trigger_codes, t.url, t.description, t.note_public, t.note_private, t.date_creation, t.tms, t.fk_user_creat, t.fk_user_modif, t.import_key, t.status FROM llx_webhook_target as t WHERE 1 = 1
+2026-10-31 10:13:38 INFO    ???               19971 travis  Trigger 'WebhookTriggers' for action 'OBJECT_LINK_DELETE' launched by /home/travis/build/Dolibarr/dolibarr/htdocs/core/triggers/interface_95_modWebhook_WebhookTriggers.class.php. id=18 -> nbPost=0
+2026-10-31 10:13:38 DEBUG   ???               19971 travis  EmailCollector::deleteObjectLinked
+2026-10-31 10:13:38 DEBUG   ???               19971 travis  sql=DELETE FROM llx_element_element WHERE (fk_source = 18 AND sourcetype = 'emailcollector') OR (fk_target = 18 AND targettype = 'emailcollector')
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=DELETE FROM llx_emailcollector_emailcollector WHERE rowid = 18
+2026-10-31 10:13:38 DEBUG   ???               19971 travis ROLLBACK Transaction
+2026-10-31 10:13:38 DEBUG   ???               19971 travis BEGIN Transaction
+2026-10-31 10:13:38 DEBUG   ???               19971 travis ROLLBACK Transaction
+2026-10-31 10:13:38 DEBUG   ???               19971 travis BEGIN Transaction
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT wp.rowid FROM llx_website_page as wp WHERE wp.fk_website = 0 AND wp.status = 1 AND wp.lang = 'en' AND wp.type_container IN ('page','blogpost') AND (wp.title LIKE '%123\') OR 1=1-- \\\\\' xxx%' OR wp.description LIKE '%123\') OR 1=1-- \\\\\' xxx%' OR wp.pageurl LIKE '%123\') OR 1=1-- \\\\\' xxx%' OR wp.aliasalt LIKE '%123\') OR 1=1-- \\\\\' xxx%' OR wp.keywords LIKE '123\') OR 1=1-- \\\\\' xxx,%' OR wp.keywords LIKE '% 123\') OR 1=1-- \\\\\' xxx%' OR wp.content LIKE '%123\') OR 1=1-- \\\\\' xxx%') ORDER BY date_creation DESC LIMIT 2
+2026-10-31 10:13:38 DEBUG   ???               19971 travis ROLLBACK Transaction
+2026-10-31 10:13:38 DEBUG   ???               19971 travis BEGIN Transaction
+2026-10-31 10:13:38 INFO    ???               19971 travis files.lib.php::dol_dir_list path=/home/travis/build/Dolibarr/dolibarr/htdocs/includes/ types=files recursive=1 filter="^jquery\\.js" excludefilter=["ckeditor"]
+2026-10-31 10:13:38 INFO    ???               19971 travis files.lib.php::dol_dir_list path=/home/travis/build/Dolibarr/dolibarr/htdocs/includes/ types=files recursive=1 filter="^jquery\\.min\\.js" excludefilter=["ckeditor"]
+2026-10-31 10:13:38 INFO    ???               19971 travis files.lib.php::dol_dir_list path=/home/travis/build/Dolibarr/dolibarr/htdocs types=directories recursive=1 filter="" excludefilter=["\\\/custom\\\/","\\\/phpunit\\\/"]
+2026-10-31 10:13:38 DEBUG   ???               19971 travis ROLLBACK Transaction
+2026-10-31 10:13:38 DEBUG   ???               19971 travis BEGIN Transaction
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=DROP TABLE llx_tmptesttabletoremove
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=CREATE TABLE llx_tmptesttabletoremove(rowid integer AUTO_INCREMENT PRIMARY KEY, code varchar(255) NOT NULL, label varchar(255) NOT NULL, position integer NULL, use_default varchar(1) DEFAULT '1', active integer) engine=InnoDB
+2026-10-31 10:13:38 DEBUG   ???               19971 travis DoliDBMysqli::DDLDescTable DESC llx_c_paper_format code
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=DESC llx_c_paper_format code
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=UPDATE llx_c_paper_format SET code = '' WHERE code IS NULL
+2026-10-31 10:13:38 DEBUG   ???               19971 travis DoliDBMysqli::DDLUpdateField ALTER TABLE llx_c_paper_format MODIFY COLUMN code varchar(17) NOT NULL
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=ALTER TABLE llx_c_paper_format MODIFY COLUMN code varchar(17) NOT NULL
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=UPDATE llx_c_paper_format SET code = 'aaaabbbbccccdddd' WHERE code IS NULL
+2026-10-31 10:13:38 DEBUG   ???               19971 travis DoliDBMysqli::DDLUpdateField ALTER TABLE llx_c_paper_format MODIFY COLUMN code varchar(16) NOT NULL DEFAULT 'aaaabbbbccccdddd'
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=ALTER TABLE llx_c_paper_format MODIFY COLUMN code varchar(16) NOT NULL DEFAULT 'aaaabbbbccccdddd'
+2026-10-31 10:13:38 DEBUG   ???               19971 travis ROLLBACK Transaction
+2026-10-31 10:13:38 DEBUG   ???               19971 travis BEGIN Transaction
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='fr_FR' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='fr_FR' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='en_US' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='am_ET' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='ar_DZ' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='ar_EG' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='ar_IQ' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='ar_JO' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='ar_SA' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='ar_SY' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='az_AZ' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='bg_BG' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='bn_BD' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='bn_IN' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='br_FR' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='bs_BA' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='ca_ES' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='cs_CZ' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='cy_GB' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='da_DK' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis ROLLBACK Transaction
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=DELETE FROM llx_const WHERE name = 'API_ENABLE_LOGIN_API' AND entity = 1
+2026-10-31 10:13:38 INFO    ???               19971 travis --- End access to /dolibarr/htdocs/admin/index.php/aaa%bbb
+Debugging information for file mysql error.log
+
+travis_time:end:181248de:start=1793441621556975967,finish=1793441621584910074,duration=27934107,event=after_failure[0Ktravis_fold:end:after_failure[0Ktravis_fold:start:after_script[0Ktravis_time:start:1c8863a2[0K$ echo ===== $(date) After script - Output last lines of dolibarr.log
+  ls $TRAVIS_BUILD_DIR/documents
+  #cat $TRAVIS_BUILD_DIR/documents/dolibarr.log
+  sudo tail -n 50 $TRAVIS_BUILD_DIR/documents/dolibarr.log
+  echo "After script - Output last lines of apache error.log"
+  sudo ls /var/log/apache2
+  sudo tail -n 200 /var/log/apache2/travis_error_log
+  
+===== Sat Oct 31 10:13:41 AM UTC 2026 After script - Output last lines of dolibarr.log
+accounting  commande	       expensereport	    margin	 reception
+admin	    doctemplates       export		    medias	 recruitment
+agenda	    dolibarr.log       facture		    mrp		 salaries
+ai	    dolibarr_mail.log  ficheinter	    partnership  societe
+api	    don		       fournisseur	    prelevement  users
+bank	    ecm		       holiday		    product	 website
+barcode     eventorganization  knowledgemanagement  projet
+bom	    expedition	       loan		    propale
+2026-10-31 10:13:38 DEBUG   ???               19971 travis  EmailCollector::deleteObjectLinked
+2026-10-31 10:13:38 DEBUG   ???               19971 travis  sql=DELETE FROM llx_element_element WHERE (fk_source = 18 AND sourcetype = 'emailcollector') OR (fk_target = 18 AND targettype = 'emailcollector')
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=DELETE FROM llx_emailcollector_emailcollector WHERE rowid = 18
+2026-10-31 10:13:38 DEBUG   ???               19971 travis ROLLBACK Transaction
+2026-10-31 10:13:38 DEBUG   ???               19971 travis BEGIN Transaction
+2026-10-31 10:13:38 DEBUG   ???               19971 travis ROLLBACK Transaction
+2026-10-31 10:13:38 DEBUG   ???               19971 travis BEGIN Transaction
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT wp.rowid FROM llx_website_page as wp WHERE wp.fk_website = 0 AND wp.status = 1 AND wp.lang = 'en' AND wp.type_container IN ('page','blogpost') AND (wp.title LIKE '%123\') OR 1=1-- \\\\\' xxx%' OR wp.description LIKE '%123\') OR 1=1-- \\\\\' xxx%' OR wp.pageurl LIKE '%123\') OR 1=1-- \\\\\' xxx%' OR wp.aliasalt LIKE '%123\') OR 1=1-- \\\\\' xxx%' OR wp.keywords LIKE '123\') OR 1=1-- \\\\\' xxx,%' OR wp.keywords LIKE '% 123\') OR 1=1-- \\\\\' xxx%' OR wp.content LIKE '%123\') OR 1=1-- \\\\\' xxx%') ORDER BY date_creation DESC LIMIT 2
+2026-10-31 10:13:38 DEBUG   ???               19971 travis ROLLBACK Transaction
+2026-10-31 10:13:38 DEBUG   ???               19971 travis BEGIN Transaction
+2026-10-31 10:13:38 INFO    ???               19971 travis files.lib.php::dol_dir_list path=/home/travis/build/Dolibarr/dolibarr/htdocs/includes/ types=files recursive=1 filter="^jquery\\.js" excludefilter=["ckeditor"]
+2026-10-31 10:13:38 INFO    ???               19971 travis files.lib.php::dol_dir_list path=/home/travis/build/Dolibarr/dolibarr/htdocs/includes/ types=files recursive=1 filter="^jquery\\.min\\.js" excludefilter=["ckeditor"]
+2026-10-31 10:13:38 INFO    ???               19971 travis files.lib.php::dol_dir_list path=/home/travis/build/Dolibarr/dolibarr/htdocs types=directories recursive=1 filter="" excludefilter=["\\\/custom\\\/","\\\/phpunit\\\/"]
+2026-10-31 10:13:38 DEBUG   ???               19971 travis ROLLBACK Transaction
+2026-10-31 10:13:38 DEBUG   ???               19971 travis BEGIN Transaction
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=DROP TABLE llx_tmptesttabletoremove
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=CREATE TABLE llx_tmptesttabletoremove(rowid integer AUTO_INCREMENT PRIMARY KEY, code varchar(255) NOT NULL, label varchar(255) NOT NULL, position integer NULL, use_default varchar(1) DEFAULT '1', active integer) engine=InnoDB
+2026-10-31 10:13:38 DEBUG   ???               19971 travis DoliDBMysqli::DDLDescTable DESC llx_c_paper_format code
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=DESC llx_c_paper_format code
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=UPDATE llx_c_paper_format SET code = '' WHERE code IS NULL
+2026-10-31 10:13:38 DEBUG   ???               19971 travis DoliDBMysqli::DDLUpdateField ALTER TABLE llx_c_paper_format MODIFY COLUMN code varchar(17) NOT NULL
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=ALTER TABLE llx_c_paper_format MODIFY COLUMN code varchar(17) NOT NULL
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=UPDATE llx_c_paper_format SET code = 'aaaabbbbccccdddd' WHERE code IS NULL
+2026-10-31 10:13:38 DEBUG   ???               19971 travis DoliDBMysqli::DDLUpdateField ALTER TABLE llx_c_paper_format MODIFY COLUMN code varchar(16) NOT NULL DEFAULT 'aaaabbbbccccdddd'
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=ALTER TABLE llx_c_paper_format MODIFY COLUMN code varchar(16) NOT NULL DEFAULT 'aaaabbbbccccdddd'
+2026-10-31 10:13:38 DEBUG   ???               19971 travis ROLLBACK Transaction
+2026-10-31 10:13:38 DEBUG   ???               19971 travis BEGIN Transaction
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='fr_FR' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='fr_FR' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='en_US' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='am_ET' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='ar_DZ' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='ar_EG' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='ar_IQ' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='ar_JO' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='ar_SA' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='ar_SY' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='az_AZ' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='bg_BG' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='bn_BD' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='bn_IN' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='br_FR' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='bs_BA' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='ca_ES' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='cs_CZ' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='cy_GB' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=SELECT transkey, transvalue FROM llx_overwrite_trans where (lang='da_DK' OR lang IS NULL) AND entity IN (0, 0,1) ORDER BY lang DESC
+2026-10-31 10:13:38 DEBUG   ???               19971 travis ROLLBACK Transaction
+2026-10-31 10:13:38 DEBUG   ???               19971 travis sql=DELETE FROM llx_const WHERE name = 'API_ENABLE_LOGIN_API' AND entity = 1
+2026-10-31 10:13:38 INFO    ???               19971 travis --- End access to /dolibarr/htdocs/admin/index.php/aaa%bbb
+After script - Output last lines of apache error.log
+access.log  error.log  other_vhosts_access.log	travis_error_log
+travis_time:end:1c8863a2:start=1793441621590540591,finish=1793441621627951173,duration=37410582,event=after_script[0Ktravis_fold:end:after_script[0K
+Done. Your build exited with 1.
+/home/travis/.travis/functions: line 654: 19698 Killed                  sudo mysqld_safe --skip-grant-tables --socket=/tmp/aaa
