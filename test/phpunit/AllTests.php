@@ -297,6 +297,8 @@ class AllTests
 		$suite->addTestSuite('ExpeditionLineFetchTest');
 		require_once dirname(__FILE__).'/ExpeditionDispatchTest.php';
 		$suite->addTestSuite('ExpeditionDispatchTest');
+		require_once dirname(__FILE__).'/ExpeditionLineFormTest.php';
+		$suite->addTestSuite('ExpeditionLineFormTest');
 		require_once dirname(__FILE__).'/WorkflowManagerTest.php';
 		$suite->addTestSuite('WorkflowManagerTest');
 		require_once dirname(__FILE__).'/ReceptionTest.php';
