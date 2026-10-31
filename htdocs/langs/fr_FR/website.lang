@@ -71,6 +71,7 @@ YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> Pour in
 YouCanEditHtmlSource2=Pour une image partagée avec un lien de partage (accès libre à l'aide de la clé de partage de fichier), utilisez l'encapsuleur :<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=Pour obtenir l'adresse URL de l'image d'un objet PHP, utilisez<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
 YouCanEditHtmlSource4=Pour obtenir l'URL d'une image dans le contenu HTML d'un article, utilisez<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource5=<br><span class="fa fa-edit paddingright"></span> Pour permettre la modification d'une partie de la page en mode <strong>Modification en ligne</strong>, ajoutez l'attribut <strong>contenteditable="true" class='notranslate'></strong> et <strong>id</strong> à son tag/catégorie. Il ne doit contenir aucun code PHP, uniquement du texte formaté (gras, couleur, taille de police…), des liens, des paragraphes, des titres, des listes, des balises div, des exemples (par exemple, :, <br>, <strong>, &lt;). L'élément id="intro" contenteditable="true" class='notranslate'>&gt;Mon &lt;b&gt;text&lt;/b&gt;&lt;/p&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>Plus d'exemples de code HTML ou dynamique disponibles sur <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">la documentation wiki</a>.<br>
 ClonePage=Cloner la page/container
 CloneSite=Cloner le site
@@ -88,6 +89,8 @@ ImportSite=Importer modèle de site web
 IDOfPage=Id de page
 Banner=Bandeau
 BlogPost=Article de Blog
+PageHeader=Entête
+PageFooter=Bas de page
 WebsiteAccount=Compte de site Web
 WebsiteAccounts=Comptes de site web
 AddWebsiteAccount=Créer un compte de site web
@@ -151,6 +154,7 @@ DefineListOfAltLanguagesInWebsiteProperties=Définir la liste des langues dispon
 GenerateSitemaps=Générer le fichier sitemap.xml du site Web
 ConfirmGenerateSitemaps=Si vous confirmez, vous effacerez le fichier de plan du site existant...
 ConfirmSitemapsCreation=Confirmer la génération du plan du site
+ConfirmSetAsHomePage=Are you sure you want to set the page <b>%s</b> as the home page of the website?
 SitemapGenerated=Fichier de plan du site <b> %s </b> généré
 ImportFavicon=Favicon
 ErrorFaviconType=Le Favicon doit être en png
@@ -509,3 +513,13 @@ ThisDirectoryIsEmpty=Ce répertoire est vide.
 WrittenBy=Écrit par %s
 ImportOfWebsiteTemplateIncludingPHPIsAllowedIf=L'importation de modèles de sites Web utilisant du contenu dynamique en PHP n'est autorisée que si la variable $dolibarr_website_allow_custom_php est définie sur 2 dans conf.php.
 ImportOfWebsiteTemplateIncludingPHPIsDisabled=L'importation de modèles de sites web utilisant du contenu dynamique en PHP nécessite que la variable $dolibarr_website_allow_custom_php soit définie sur 1 ou 2 dans le fichier conf.php pour être autorisée.
+CurrentPageVersion=Page actuelle
+ListOfPageVersions=Liste des versions archivées de la page (une sauvegarde fichier de la page est créée à chaque fois que vous enregistrez une modification, par exemple sur la source HTML)
+EditInLineAllowedAreas=En mode Édition en ligne, les éléments tags/catégories avec contenteditable="true", un id et ne peuvent pas être modifiés. Aucun code PHP ne peut être modifié à l'intérieur. Les éléments et sont enregistrés lorsque vous les quittez. La mise en forme du texte (gras, couleur, taille de police…), les liens, les paragraphes, les titres, les listes sont autorisés. Les images et autres éléments HTML ne peuvent être modifiés que dans le code source HTML.
+ErrorEditInlineElementNoId=Cet élément possède la propriété contenteditable="true" mais pas d'identifiant, il ne peut donc pas être modifié directement.
+ErrorEditInlineElementNotFound=Aucun élément avec l'identifiant %s et contenteditable="true" n'a été trouvé dans le code source de la page.
+ErrorEditInlineElementNotUnique=L'identifiant %s est utilisé par plusieurs éléments avec contenteditable="true" dans le code source de la page.
+ErrorEditInlineElementWithPhp=L'élément avec l'identifiant %s contient du code PHP dans la source de la page, il ne peut donc être modifié que dans la source HTML.
+ErrorEditInlineElementNotAllowedHtml=L'élément avec l'identifiant %s contient du HTML qui ne peut pas être modifié en ligne (image, formulaire, script, commentaire, autre tags/catégories ou attributs...), il ne peut donc être modifié que dans la source HTML.
+ErrorEditInlineElementNotPlainText=L'élément avec l'identifiant %s contient du HTML dans la source de la page et ne peut être modifié qu'en ligne comme du texte brut, il ne peut donc être modifié que dans la source HTML.
+ErrorEditInlineContentNotAllowed=Le nouveau contenu de l'élément avec l'identifiant %s contient du HTML tags/catégories ou des attributs qui ne sont pas autorisés, il n'a donc pas été enregistré.

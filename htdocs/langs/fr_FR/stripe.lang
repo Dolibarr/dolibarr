@@ -25,7 +25,7 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL offrant une interface de paiement e
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL offrant une interface de paiement en ligne %s pour le paiement d'une cotisation d'adhérent
 ToOfferALinkForOnlinePaymentOnDonation=URL offrant une interface de paiement en ligne %s pour le paiement de dons
 YouCanAddTagOnUrl=Vous pouvez également ajouter le paramètre d'URL <b>&tag/catégorie=value</b> à l'une de ces URL (obligatoire uniquement pour les paiements non liés à un objet) pour ajouter votre propre commentaire de paiement tag/catégorie.<br>Pour l'URL des paiements sans objet existant, vous pouvez également ajouter le paramètre <strong>&noidempotency=1</strong> ainsi le même lien avec le même tag/catégorie peut être utilisé plusieurs fois (certains modes de paiement peuvent limiter le paiement à 1 pour chaque lien différent sans ce paramètre)
-YouCanEmbedOnWebsite=Si vous souhaitez intégrer la page de paiement dans un site Dolibarr, vous pouvez inclure le paramètre : <b>&ws=website_ref</b>.<br>De plus, deux pages nommées <b>paymentok</b> et <b>paymentko</b> doivent être créés sur le site pour gérer la redirection après une réussite ou un échec du paiement en ligne.
+YouCanEmbedOnWebsite=Si vous souhaitez intégrer la page de paiement à un site web Dolibarr, vous pouvez inclure le paramètre : <b>&ws=website_ref</b>.<br>. De plus, deux pages nommées <b>paymentok</b> et <b>paymentko</b> doit être créé sur le site Web pour recevoir la redirection après un paiement en ligne réussi ou échoué.
 SetupStripeToHavePaymentCreatedAutomatically=Configurez votre URL Stripe à <b>%s</b> pour avoir le paiement créé automatiquement si validé.
 AccountParameter=Paramètres du compte
 UsageParameter=Paramètres d'utilisation
@@ -110,3 +110,4 @@ PAYBOX_PBX_RANG=Rang
 PAYBOX_PBX_IDENTIFIANT=Identifiant
 PAYBOX_HMAC_KEY=Clé HMAC
 FeatureNotUsedAccordingtoSetup=Fonctionnalité non utilisée selon votre configuration %s
+PaymentRecordedButPostPocessingKo=Votre paiement a bien été enregistré par le système. Cependant, il semble que le traitement post-paiement n'ait pas pu être mené à terme. Nous avons été alertés et nous nous efforcerons de résoudre ce problème rapidement. Nous vous recommandons de ne pas effectuer un second paiement et de nous envoyer une capture d'écran de cette page par e-mail afin que nous puissions prendre en compte le problème.

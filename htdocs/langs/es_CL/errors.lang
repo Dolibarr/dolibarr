@@ -164,7 +164,6 @@ ErrorProductBarCodeAlreadyExists=El código de barras del producto %s ya existe 
 ErrorDescRequiredForFreeProductLines=La descripción es obligatoria para líneas con producto gratis
 ErrorAPageWithThisNameOrAliasAlreadyExists=La página / contenedor <strong>%s</strong> tiene el mismo nombre o alias alternativo que el que intenta utilizar
 ErrorDuringChartLoad=Error al cargar el cuadro de cuentas. Si algunas cuentas no se cargaron, aún puede ingresarlas manualmente.
-ErrorBadSyntaxForParamKeyForContent=Mala sintaxis para param keyforcontent. Debe tener un valor que comience con %s o %s
 ErrorVariableKeyForContentMustBeSet=Error, la constante con el nombre %s (con contenido de texto para mostrar) o %s (con url externa para mostrar) debe configurarse.
 ErrorURLMustStartWithHttp=La URL %s debe comenzar con http: // o https: //
 ErrorNewRefIsAlreadyUsed=Error, la nueva referencia ya está en uso.

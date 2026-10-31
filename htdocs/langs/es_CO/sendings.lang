@@ -43,7 +43,6 @@ Delivery=Entrega
 DeliveryRef=Ref de entrega
 StatusDeliveryCanceled=Cancelado
 Deliverer=Quien entrega:
-DocumentModelTyphon=Modelo de documento más completo para recibos de entrega (logotipo ...)
 DocumentModelStorm=Modelo de documento más completo para recibos de entrega y compatibilidad de campos extra (logotipo ...)
 SumOfProductVolumes=Suma de volúmenes de producto
 SumOfProductWeights=Suma de pesos de producto
