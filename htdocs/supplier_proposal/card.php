@@ -465,7 +465,7 @@ if (empty($reshook)) {
 									$lines[$i]->pa_ht,
 									$label,
 									$array_options,
-									$lines[$i]->ref_supplier,
+									(property_exists($lines[$i], 'ref_supplier') ? $lines[$i]->ref_supplier : ''),
 									$lines[$i]->fk_unit
 								);
 
@@ -1717,7 +1717,7 @@ if ($action == 'create') {
 		if (isModEnabled("shipping")) {
 			print '<tr><td>'.$langs->trans('SendingMethod').'</td><td colspan="2">';
 			print img_picto('', 'dolly', 'class="pictofixedwidth"');
-			$form->selectShippingMethod(GETPOST('shipping_method_id') > 0 ? GETPOSTINT('shipping_method_id') : "", 'shipping_method_id', '', 1);
+			$form->selectShippingMethod(GETPOST('shipping_method_id') > 0 ? (string) GETPOSTINT('shipping_method_id') : "", 'shipping_method_id', '', 1);
 			print '</td></tr>';
 		}
 
