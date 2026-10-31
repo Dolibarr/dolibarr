@@ -828,6 +828,7 @@ ReGeneratePDF=Re-generate PDF
 PDFMerge=PDF Merge
 Merge=Merge
 DocumentModelStandardPDF=Standard PDF template
+DocumentModelAcroFormPDF=Official PDF form to fill (AcroForm)
 PrintContentArea=Show page to print main content area
 MenuManager=Menu manager
 WarningYouAreInMaintenanceMode=Warning, you are in maintenance mode: only login <b>%s</b> is allowed to use the application in this mode.
