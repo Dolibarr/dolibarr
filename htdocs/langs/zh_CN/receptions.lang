@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=已验证
 StatusReceptionProcessedShort=已处理
 ReceptionSheet=收货单表单
 ValidateReception=验证收货单
+DeleteReception=Delete reception
 ConfirmDeleteReception=您确定要删除此收货单吗？
 ConfirmValidateReception=Are you sure you want to validate this reception with the reference <b>%s</b>?
 ConfirmCancelReception=您确定要取消此收货单吗？

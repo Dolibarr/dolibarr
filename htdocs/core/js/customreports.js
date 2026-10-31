@@ -239,7 +239,9 @@ function initCustomReportsCombo(componentid)
 	{
 		$component.find('.customreportscombo-element').removeClass('open').show();
 		$component.find('.customreportscombo-fields, .customreportscombo-children').hide();
-		$component.find('.customreportscombo-field').show();
+		$component.find('.customreportscombo-field, .customreportscombo-datefield').show();
+		$component.find('.customreportscombo-datefield').removeClass('open').children('.customreportscombo-variants').hide();
+		$component.find('.customreportscombo-field.selected').closest('.customreportscombo-datefield').addClass('open').children('.customreportscombo-variants').show();
 		$component.find('.customreportscombo-list > .customreportscombo-element').addClass('open').children('.customreportscombo-fields, .customreportscombo-children').show();
 		$component.find('.customreportscombo-field.selected').parents('.customreportscombo-element').addClass('open').children('.customreportscombo-fields, .customreportscombo-children').show();
 	}
@@ -276,17 +278,25 @@ function initCustomReportsCombo(componentid)
 		var wasopen = $element.hasClass('open');
 		$component.find('.customreportscombo-element').removeClass('open');
 		$component.find('.customreportscombo-fields, .customreportscombo-children').hide();
-		$component.find('.customreportscombo-field').show();
+		$component.find('.customreportscombo-field, .customreportscombo-datefield').show();
 		$element.parents('.customreportscombo-element').addClass('open').show().children('.customreportscombo-fields, .customreportscombo-children').show();
 		if (!wasopen) {
 			$element.addClass('open').show().children('.customreportscombo-fields, .customreportscombo-children').show();
 		}
 	});
 
+	// Click on a date field: show or hide its variants (by year, by month, by day)
+	$component.on('click', '.customreportscombo-datefieldheader', function(e) {
+		e.stopPropagation();
+		var $datefield = jQuery(this).closest('.customreportscombo-datefield');
+		$datefield.toggleClass('open').children('.customreportscombo-variants').toggle($datefield.hasClass('open'));
+		$datefield.find('.customreportscombo-field').show();
+	});
+
 	// Click on a field: select it and close the panel
 	$component.on('click', '.customreportscombo-field', function(e) {
 		e.stopPropagation();
-		var fieldlabel = jQuery(this).text();
+		var fieldlabel = jQuery(this).attr('data-label') || jQuery(this).text();	// A variant of a date field has the full label into data-label
 		var elementlabelhtml = jQuery(this).closest('.customreportscombo-element').find('.customreportscombo-elementlabel').first().html();
 		$component.find('.customreportscombo-field').removeClass('selected');
 		jQuery(this).addClass('selected');
@@ -314,6 +324,18 @@ function initCustomReportsCombo(componentid)
 				jQuery(this).toggle(fieldmatch);
 				hasfieldmatch = hasfieldmatch || fieldmatch;
 			});
+			// A date field matches on its label or on the label of its variants, its matching variants are shown
+			jQuery(this).children('.customreportscombo-fields').children('.customreportscombo-datefield').each(function() {
+				var datefieldmatch = elementmatch || jQuery(this).children('.customreportscombo-datefieldheader').text().toLowerCase().indexOf(term) > -1;
+				var hasvariantmatch = false;
+				jQuery(this).find('.customreportscombo-field').each(function() {
+					var variantmatch = datefieldmatch || jQuery(this).text().toLowerCase().indexOf(term) > -1;
+					jQuery(this).toggle(variantmatch);
+					hasvariantmatch = hasvariantmatch || variantmatch;
+				});
+				jQuery(this).toggle(hasvariantmatch).toggleClass('open', hasvariantmatch).children('.customreportscombo-variants').toggle(hasvariantmatch);
+				hasfieldmatch = hasfieldmatch || hasvariantmatch;
+			});
 			jQuery(this).toggleClass('open', elementmatch || hasfieldmatch);
 			jQuery(this).children('.customreportscombo-fields').toggle(elementmatch || hasfieldmatch);
 		});
@@ -337,7 +359,7 @@ function initCustomReportsCombo(componentid)
 
 	// Up and down arrows into the panel move on the previous or next visible row
 	$panel.on('keydown', function(e) {
-		customReportsMoveFocusInList(e, $component.find('.customreportscombo-elementheader:visible, .customreportscombo-field:visible'), $search);
+		customReportsMoveFocusInList(e, $component.find('.customreportscombo-elementheader:visible, .customreportscombo-datefieldheader:visible, .customreportscombo-field:visible'), $search);
 	});
 
 	// Escape closes the panel, Enter on a row activates it
@@ -354,7 +376,7 @@ function initCustomReportsCombo(componentid)
 			e.preventDefault();	// Do not submit the form
 		}
 	});
-	$component.on('keydown', '.customreportscombo-elementheader, .customreportscombo-field', function(e) {
+	$component.on('keydown', '.customreportscombo-elementheader, .customreportscombo-datefieldheader, .customreportscombo-field', function(e) {
 		if (e.which === 13) {
 			e.preventDefault();
 			jQuery(this).trigger('click');

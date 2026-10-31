@@ -169,7 +169,7 @@ if ($reshook < 0) {
 	print '</body></html>';
 } elseif (empty($reshook)) {
 	// Check exportkey
-	if (!GETPOST("exportkey") || getDolGlobalString('MAIN_FICHINTER_XCAL_EXPORTKEY') != GETPOST("exportkey")) {
+	if (!GETPOST("exportkey") || !hash_equals(getDolGlobalString('MAIN_FICHINTER_XCAL_EXPORTKEY'), (string) GETPOST("exportkey"))) {
 		top_httphead();
 
 		print '<html><title>Export fichinter cal</title><body>';

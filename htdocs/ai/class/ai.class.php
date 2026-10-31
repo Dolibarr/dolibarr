@@ -68,7 +68,7 @@ class Ai
 	const AI_DEFAULT_PROMPT_FOR_TEXT_SPELLCHECKER = 'You are a proofreader, write your response in the same language as the original text in order to correct spelling and grammar errors. If there is carriage return or line feed in original message, keep them. Keep also any HTML or markdown formatting without changing it or adding one, just fix spelling and grammar errors in text content. Answer with the corrected text and the original HTML formatting if there was, with no additional comment and explanation even to highlight the fixed errors.';
 	const AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER = 'You are a writer, write your response in the same language as the original text to rephrase. Give only one answer with no comment and explanation. If there is carriage return or line feed in original message, keep them. Keep also any HTML or markdown formatting without adding one.';
 	const AI_DEFAULT_PROMPT_FOR_EXTRAFIELD_FILLER = 'Give only one answer with no comment and explanation, I want the text to be ready to copy and paste.';
-	const AI_DEFAULT_PROMPT_FOR_DOC_PARSING = 'You are an Assistant to analyze documents. Return your answer with a JSON string and only a JSON string, do not add any other comment.';
+	const AI_DEFAULT_PROMPT_FOR_DOC_PARSING = 'You are an Assistant to analyze documents. Return your answer with a JSON string and only a JSON string, do not add any other comment. The JSON must be valid: values must be literals, never expressions or calculations, and no comments.';
 
 
 	/**
@@ -104,7 +104,7 @@ class Ai
 	 * @param	string						$format			Format for output ('', 'html', ...)
 	 * @param	array<string,string>		$moreheaders	More headers
 	 * @param	string						$moreendpoint	Add a part to endpoint url
-	 * @return  string|array{error:bool,message:string,code?:int,curl_error_no?:int,format?:string,service?:string,function?:string}	$response		Text or array if error
+	 * @return  string|array{error:bool,message:string,code?:int,curl_error_no?:int,format?:string,service?:string,model?:string,function?:string}	$response		Text or array if error
 	 */
 	public function generateContent($instructions, $model = 'auto', $function = 'textgeneration', $format = '', $moreheaders = array(), $moreendpoint = '')
 	{
@@ -140,10 +140,13 @@ class Ai
 				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'files';
 			} elseif ($function == 'assistant') {
 				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
-				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'assistans';
+				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'assistants';
 			} elseif ($function == 'thread') {
 				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
 				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'threads';
+			} elseif ($function == 'ocr') {
+				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
+				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'ocr';
 			} else {	// if $function == 'docparsing', 'text...', ...
 				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
 				if ($this->apiService == 'google') {
@@ -175,8 +178,8 @@ class Ai
 				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TRANSCRIPT', $arrayofai[$this->apiService][$function]['default']);
 			} elseif ($function == 'translation') {
 				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TRANSLATE', $arrayofai[$this->apiService][$function]['default']);
-			} elseif ($function == 'docparsing') {
-				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_DOCPARSING', $arrayofai[$this->apiService][$function]['default']);
+			} elseif (in_array($function, array('docparsing', 'ocr'))) {
+				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_DOCPARSING', $arrayofai[$this->apiService]['docparsing']['default']);
 			} else {
 				// else 'textgenerationemail', 'textgenerationwebpage', 'textgeneration', 'texttranslation', 'textsummarize', 'textrephraser', 'textspellchecker', ...
 				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TEXT', $arrayofai[$this->apiService]['textgeneration']['default']);
@@ -184,7 +187,7 @@ class Ai
 		}
 
 		// Google Gemini: append /models/<model>:generateContent now that $model is resolved.
-		if ($this->apiService == 'google' && !in_array($function, array('file', 'assistant', 'thread'))
+		if ($this->apiService == 'google' && !in_array($function, array('file', 'assistant', 'thread', 'ocr'))
 			&& strpos($this->apiEndpoint, ':generateContent') === false) {
 			$this->apiEndpoint .= '/models/'.rawurlencode($model).':generateContent';
 		}
@@ -318,6 +321,15 @@ class Ai
 				}
 			}
 
+			// For document parsing, ask the services that support it to return only a valid JSON
+			if ($function == 'docparsing' && !is_array($instructions)) {
+				if ($this->apiService == 'google') {
+					$arrayforpayload['generationConfig'] = array('responseMimeType' => 'application/json');
+				} elseif (in_array($this->apiService, array('chatgpt', 'groq', 'mistral', 'deepseek'))) {
+					$arrayforpayload['response_format'] = array('type' => 'json_object');
+				}
+			}
+
 			/*
 			$arrayforpayload['temperature'] = 0.7;
 			$arrayforpayload['max_tokens'] = -1;
@@ -355,9 +367,9 @@ class Ai
 					$fp = fopen($outputfile, "a");
 
 					if ($fp) {
-						if ($function == 'docparsing') {
+						if ($function == 'docparsing' || $function == 'ocr') {
 							fwrite($fp, "Call endpoint ".$this->apiEndpoint." with POST and the following file to upload:\n");
-							fwrite($fp, $instructions."\n");
+							fwrite($fp, (is_string($instructions) ? $instructions : var_export($instructions, true))."\n");
 						} else {
 							fwrite($fp, "Call endpoint ".$this->apiEndpoint." with POST and the following message:\n");
 							fwrite($fp, $fullInstructions."\n");
@@ -380,10 +392,16 @@ class Ai
 			global $dolibarr_ai_allow_local_endpoints;
 			$localurl = $dolibarr_ai_allow_local_endpoints ?? 0;
 
-			$response = getURLContent($this->apiEndpoint, 'POST', $payload, 1, $headers, array('http', 'https'), $localurl);
+			// Parsing a document is long, so we use a response timeout of at least 90 seconds for this case
+			$timeoutresponse = 0;
+			if (in_array($function, array('docparsing', 'ocr'))) {
+				$timeoutresponse = max(90, getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
+			}
+
+			$response = getURLContent($this->apiEndpoint, 'POST', $payload, 1, $headers, array('http', 'https'), $localurl, -1, 0, $timeoutresponse);
 
 			if (empty($response['http_code'])) {
-				throw new Exception('API request failed. No http received');
+				throw new Exception('API request failed. No http received'.(empty($response['curl_error_no']) ? '' : ' (curl error '.$response['curl_error_no'].': '.$response['curl_error_msg'].')'));
 			}
 			if (!empty($response['http_code']) && $response['http_code'] != 200) {
 				if (in_array($response['http_code'], array(400, 401, 403, 429)) && !empty($response['content'])) {
@@ -396,6 +414,7 @@ class Ai
 							'curl_error_no' => (empty($response['curl_error_no']) ? 0 : $response['curl_error_no']),
 							'format' => $format,
 							'service' => $this->apiService,
+							'model' => $model,
 							'function' => $function
 						);
 					}
@@ -432,6 +451,14 @@ class Ai
 				} else {
 					$generatedContent = (string) var_export($decodedResponse['error'], true);
 				}
+			} elseif ($function == 'ocr' && !empty($decodedResponse['pages']) && is_array($decodedResponse['pages'])) {
+				// Response of the OCR endpoint (Mistral /v1/ocr): the text extracted from each page is into pages[].markdown
+				$generatedContent = '';
+				foreach ($decodedResponse['pages'] as $page) {
+					if (isset($page['markdown']) && is_scalar($page['markdown'])) {
+						$generatedContent .= ($generatedContent ? "\n" : '').(string) $page['markdown'];
+					}
+				}
 			} elseif ($this->apiService == 'google') {
 				// Google Gemini response shape: candidates[0].content.parts[*].text
 				// (parts is an array because Gemini can return mixed-modality output;
@@ -451,6 +478,22 @@ class Ai
 				// array raises a TypeError, which the catch below does not take (TypeError
 				// implements Throwable but does not extend Exception) and so ends as a fatal
 				// error on the ajax endpoints calling this method.
+				// Reasoning models (Mistral, ...) may return content as an array of chunks
+				// ({"type":"thinking",...}, {"type":"text","text":"..."}): we keep only the text chunks.
+				if (isset($decodedResponse['choices'][0]['message']['content'])
+					&& is_array($decodedResponse['choices'][0]['message']['content'])) {
+					$textofchunks = '';
+					$foundtextchunk = false;
+					foreach ($decodedResponse['choices'][0]['message']['content'] as $chunk) {
+						if (is_array($chunk) && ($chunk['type'] ?? '') == 'text' && isset($chunk['text']) && is_string($chunk['text'])) {
+							$textofchunks .= $chunk['text'];
+							$foundtextchunk = true;
+						}
+					}
+					if ($foundtextchunk) {
+						$decodedResponse['choices'][0]['message']['content'] = $textofchunks;
+					}
+				}
 				if (!isset($decodedResponse['choices'][0]['message']['content'])
 					|| !is_string($decodedResponse['choices'][0]['message']['content'])) {
 					throw new Exception('API response of AI endpoint '.$this->apiEndpoint.' does not contain the expected choices[0].message.content string');
@@ -517,9 +560,71 @@ class Ai
 				'curl_error_no' => (empty($response['curl_error_no']) ? 0 : $response['curl_error_no']),
 				'format' => $format,
 				'service' => $this->apiService,
+				'model' => $model,
 				'function' => $function
 			);
 		}
+	}
+
+	/**
+	 * Build the payload of the first call of the raw file mode: the call that converts the raw binary file into text,
+	 * so the OCR is done by the AI service instead of by a local tool. For Mistral, the call targets the dedicated OCR
+	 * endpoint of the service, for the other OpenAI-compatible services, it is a multimodal chat completion with the
+	 * file encoded into base64. The model used is AI_API_<SERVICE>_MODEL_DOCPARSING or its default value.
+	 * As generateContent() does not complete the payload when it is an array, the model is set here.
+	 *
+	 * @param	string		$filepath	Full path of the file to send
+	 * @return	array<string,mixed>		Array with keys 'payload' and 'function' for generateContent(), or array with key 'error' set if the service or the file type is not supported
+	 */
+	public function getPayloadToConvertRawFileIntoText($filepath)
+	{
+		// Only the OpenAI-compatible services support the raw file mode
+		if (!in_array($this->apiService, array('chatgpt', 'mistral', 'groq', 'deepseek', 'perplexity', 'zai', 'custom'))) {
+			return array('error' => true, 'message' => 'The AI service '.$this->apiService.' does not support sending a raw file');
+		}
+
+		$isimage = preg_match('/\.(png|jpe?g|gif|bmp|tiff?|webp)$/i', $filepath);
+		$ispdf = preg_match('/\.pdf$/i', $filepath);
+		if (!$isimage && !$ispdf) {
+			return array('error' => true, 'message' => 'The AI service '.$this->apiService.' does not support sending a raw file with this file type (only PDF and image files are supported)');
+		}
+
+		$arrayofai = getListOfAIServices();
+		$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_DOCPARSING', (empty($arrayofai[$this->apiService]['docparsing']['default']) ? '' : $arrayofai[$this->apiService]['docparsing']['default']));
+		if (empty($model) || $model == 'na') {
+			return array('error' => true, 'message' => 'No AI model defined to parse documents for the service '.$this->apiService);
+		}
+
+		$mimetype = dol_mimetype($filepath);
+		$filecontentb64 = base64_encode((string) file_get_contents(dol_osencode($filepath)));
+
+		if ($this->apiService == 'mistral') {
+			// Mistral OCR endpoint: it accepts images and PDF files as a base64 into a data URI
+			// (into a image_url part for images, a document_url part for PDF) and returns the text of each page as markdown
+			$typedoc = ($isimage ? 'image_url' : 'document_url');
+			$payload = array(
+				'model' => $model,
+				'document' => array('type' => $typedoc, $typedoc => 'data:'.$mimetype.';base64,'.$filecontentb64)
+			);
+			return array('payload' => $payload, 'function' => 'ocr');
+		}
+
+		// Other OpenAI-compatible services: multimodal chat completion with the file into base64
+		if ($isimage) {
+			$filepart = array('type' => 'image_url', 'image_url' => array('url' => 'data:'.$mimetype.';base64,'.$filecontentb64));
+		} else {
+			$filepart = array('type' => 'file', 'file' => array('filename' => dol_basename($filepath), 'file_data' => 'data:'.$mimetype.';base64,'.$filecontentb64));
+		}
+		$payload = array(
+			'messages' => array(
+				array('role' => 'user', 'content' => array(
+					array('type' => 'text', 'text' => 'Convert the content of this document into text. Return only the text of the document, no comment.'),
+					$filepart
+				))
+			),
+			'model' => $model
+		);
+		return array('payload' => $payload, 'function' => 'docparsing');
 	}
 
 	/**
@@ -535,11 +640,20 @@ class Ai
 
 		//var_dump($json['items']);
 		if ($type == 'supplier_invoice') {
+			// The AI service may put the invoice data into another section than document_info, so we complete document_info with them
+			foreach (array('invoice_details', 'invoice_info', 'invoice') as $keysection) {
+				if (!empty($json[$keysection]) && is_array($json[$keysection])) {
+					$json['document_info'] = array_merge($json[$keysection], (isset($json['document_info']) && is_array($json['document_info'])) ? $json['document_info'] : array());
+				}
+			}
+
 			// Invoice info
 			if (!empty($json['document_info']['reference'])) {
 				$tmparray['supplierref'] = $json['document_info']['reference'];
 			} elseif (!empty($json['document_info']['invoice_number'])) {
 				$tmparray['supplierref'] = $json['document_info']['invoice_number'];
+			} elseif (!empty($json['document_info']['document_ref'])) {
+				$tmparray['supplierref'] = $json['document_info']['document_ref'];
 			}
 
 			if (!empty($json['document_info']['title'])) {
@@ -553,6 +667,8 @@ class Ai
 			// Issue date
 			if (!empty($json['document_info']['issue_date']) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}((\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}Z?)?$/', $json['document_info']['issue_date'])) {
 				$tmparray['issue_date'] = dol_stringtotime($json['document_info']['issue_date'], 'tzuserrel');
+			} elseif (!empty($json['document_info']['invoice_date']) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}((\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}Z?)?$/', $json['document_info']['invoice_date'])) {
+				$tmparray['issue_date'] = dol_stringtotime($json['document_info']['invoice_date'], 'tzuserrel');
 			} elseif (!empty($json['document_info']['submission_date']) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}((\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}Z?)?$/', $json['document_info']['submission_date'])) {
 				$tmparray['issue_date'] = dol_stringtotime($json['document_info']['submission_date'], 'tzuserrel');
 			} elseif (!empty($json['document_info']['date']) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}((\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}Z?)?$/', $json['document_info']['date'])) {
@@ -625,8 +741,35 @@ class Ai
 				}
 				if (!empty($arrayforthirdparty['vat_number'])) {
 					$tmparray['vendor_vat_number'] = $arrayforthirdparty['vat_number'];
+				} elseif (!empty($arrayforthirdparty['vatnumber'])) {
+					$tmparray['vendor_vat_number'] = $arrayforthirdparty['vatnumber'];
 				} elseif (!empty($arrayforthirdparty['tva_num'])) {
 					$tmparray['vendor_vat_number'] = $arrayforthirdparty['tva_num'];
+				}
+				if (!empty($arrayforthirdparty['address'])) {
+					if (is_array($arrayforthirdparty['address'])) {
+						// The address may be returned as an array with its parts separated
+						$vendoraddress = $arrayforthirdparty['address'];
+						if (!empty($vendoraddress['street'])) {
+							$tmparray['vendor_address'] = $vendoraddress['street'];
+						}
+						if (!empty($vendoraddress['postal_code'])) {
+							$tmparray['vendor_zip'] = $vendoraddress['postal_code'];
+						}
+						if (!empty($vendoraddress['city'])) {
+							$tmparray['vendor_town'] = $vendoraddress['city'];
+						}
+						if (!empty($vendoraddress['country'])) {
+							$tmparray['vendor_country'] = $vendoraddress['country'];
+						}
+					} else {
+						$tmparray['vendor_address'] = $arrayforthirdparty['address'];
+					}
+				}
+				if (!empty($arrayforthirdparty['phone'])) {
+					$tmparray['vendor_phone'] = $arrayforthirdparty['phone'];
+				} elseif (!empty($arrayforthirdparty['phone_number'])) {
+					$tmparray['vendor_phone'] = $arrayforthirdparty['phone_number'];
 				}
 			}
 
