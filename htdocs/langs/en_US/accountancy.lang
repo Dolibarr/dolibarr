@@ -653,3 +653,17 @@ Clone=Clone
 AlreadyReturnedAccount=Entry n°%s has already been reversed
 SuccessReturnedAccount=Entry n°%s has been reversed
 AccountancyCodeToSet=Accountancy code to set on products/services for
+
+## Deferred revenue
+MenuAccountancyAdjustments=Adjustments
+DeferredRevenue=Deferred revenue
+DeferredRevenueDescription=Estimates based on validated invoice lines and their service periods, using calendar days including the start and end dates. Payments do not determine the deferred amount. Review lines with missing or inconsistent dates and progress invoices separately.
+DeferredRevenueCutoffDate=Cutoff date
+DeferredRevenueAmount=Deferred amount (excl. tax)
+DeferredRevenueCalculated=Calculated
+DeferredRevenueToReview=To review
+DeferredRevenueMissingDates=Missing service dates
+DeferredRevenueInvalidDates=Inconsistent service dates
+DeferredRevenueProgressInvoice=Progress invoice: review required
+DeferredRevenuePageTotal=Calculated deferred revenue on this page
+DeferredRevenueDays=Deferred days / total days
