@@ -1,0 +1,23 @@
+name: tmp fetch travis log
+on:
+  push:
+    branches: [tmp-travis-log-42476]
+  workflow_dispatch:
+
+jobs:
+  fetch-log:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+      - name: Fetch Travis log tail and commit it back
+        run: |
+          curl -sL "https://api.travis-ci.com/v3/job/641395018/log.txt" -o /tmp/travis.log
+          wc -c /tmp/travis.log
+          tail -c 120000 /tmp/travis.log > travis-tail.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add travis-tail.txt
+          git commit -m "Add tail of travis log"
+          git push
