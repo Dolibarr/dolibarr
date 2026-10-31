@@ -1355,8 +1355,10 @@ class Facture extends CommonInvoice
 		$object->date_creation      = '';
 		$object->date_modification = '';
 		$object->date_validation    = '';
-		$object->ref_client         = '';
-		$object->ref_customer         = '';
+		if (!getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING')) {
+			$object->ref_client         = '';
+			$object->ref_customer         = '';
+		}
 		$object->close_code         = '';
 		$object->close_note         = '';
 		if (getDolGlobalInt('MAIN_DONT_KEEP_NOTE_ON_CLONING') == 1) {
