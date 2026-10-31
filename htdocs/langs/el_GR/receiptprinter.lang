@@ -69,7 +69,6 @@ DOL_VALUE_DAY=Ημέρα τιμολογίου
 DOL_VALUE_DAY_LETTERS=Ημέρα τιμολογίου με γράμματα
 DOL_LINE_FEED_REVERSE=Αντίστροφη τροφοδοσία γραμμής
 InvoiceID=Αναγνωριστικό τιμολογίου
-InvoiceRef=Κωδ. τιμολογίου
 DOL_PRINT_OBJECT_LINES=Γραμμές τιμολογίου
 DOL_VALUE_CUSTOMER_FIRSTNAME=Όνομα πελάτη
 DOL_VALUE_CUSTOMER_LASTNAME=Επώνυμο πελάτη

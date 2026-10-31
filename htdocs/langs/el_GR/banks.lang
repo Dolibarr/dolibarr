@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=Τράπεζα
 MenuBankCash=Τράπεζες | Μετρητά
+BankArea=Τράπεζες και μετρητά
+LatestBankTransactionsModified=Τελευταίες %s τροποποιημένες τραπεζικές συναλλαγές
 MenuVariousPayment=Χειροκίνητες Εγγραφές Ημερολογίου
 MenuNewVariousPayment=Νέα χειροκίνητη καταχώρηση ημερολογίου
 BankName=Όνομα Τράπεζας
@@ -47,6 +49,9 @@ LastAccountStatements=Τελευταίες Κινήσεις Λογαριασμο
 IOMonthlyReporting=Μηνιαία Αναφορά
 BankAccountDomiciliation=Διεύθυνση τράπεζας
 BankAccountCountry=Χώρα λογαριασμού
+InstitutionNumber=Αριθμός τραπεζικού ιδρύματος
+TransitNumber=Αριθμός υποκαταστήματος (transit)
+ABARoutingNumber=Αριθμός δρομολόγησης ABA (ABA routing number)
 BankAccountOwner=Ιδιοκτήτης Λογαριασμού
 BankAccountOwnerAddress=Διεύθυνση Ιδιοκτήτη λογαριασμού
 BankAccountOwnerZip=Τ.Κ. κατόχου λογαριασμού
@@ -206,3 +211,7 @@ PendingDirectDebitToComplete=Άμεσες χρεώσεις προς κλείσι
 PendingCreditTransferToCompleteShort=Μεταφορές πίστωσης προς ολοκλήρωση
 PendingCreditTransferToComplete=Μεταφορές πίστωσης προς ολοκλήρωση
 Requests=Αιτήματα
+PaymentReferenceOfAccount=Κωδικός πληρωμής
+PaymentReferenceOfAccountHelp=Κωδικός πληρωμής που δίνεται κατά την πληρωμή σε αυτόν τον λογαριασμό, ίδιος για όλα τα τιμολόγια: ο κωδικός RF (ISO 11649) ή ο εθνικός κωδικός πληρωμής που σας έδωσε ένας προμηθευτής για τη σύμβαση, τον μετρητή ή τον λογαριασμό πελάτη σας. Ο κωδικός RF ελέγχεται.
+ErrorPaymentReferenceOfAccountTooLong=Ο κωδικός πληρωμής είναι πολύ μεγάλος (έως 35 χαρακτήρες)
+ErrorPaymentReferenceOfAccountNotValid=Ο κωδικός πληρωμής RF δεν είναι έγκυρος: τα ψηφία ελέγχου δεν συμφωνούν

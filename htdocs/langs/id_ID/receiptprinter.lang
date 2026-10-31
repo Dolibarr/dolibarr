@@ -69,7 +69,6 @@ DOL_VALUE_DAY=Faktur hari
 DOL_VALUE_DAY_LETTERS=Hari faktur dalam surat
 DOL_LINE_FEED_REVERSE=Umpan garis terbalik
 InvoiceID=ID Faktur
-InvoiceRef=Referensi Faktur
 DOL_PRINT_OBJECT_LINES=Baris faktur
 DOL_VALUE_CUSTOMER_FIRSTNAME=Nama depan pelanggan
 DOL_VALUE_CUSTOMER_LASTNAME=Nama belakang pelanggan

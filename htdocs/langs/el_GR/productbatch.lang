@@ -53,3 +53,7 @@ IlligalQtyForSerialNumbers= Απαιτείται διόρθωση αποθέμα
 ErrorBatchesNeedStockManagement=Σφάλμα. Σε ένα προϊόν με διαχείριση παρτίδας/Σειριακού αριθμού θα πρέπει να γίνεται και διαχείριση αποθέματος.
 ForceBatchesNeedStockManagement=Σε ένα προϊόν με διαχείριση παρτίδας/Σειριακού αριθμού θα πρέπει να γίνεται και διαχείριση αποθέματος (εξαναγκασμός διαχείρισης αποθέματος)
 BatchInformationNotfound=Δεν βρέθηκαν πληροφορίες παρτίδας
+EnterMultipleSerialNumbers=Εισαγωγή πολλαπλών σειριακών αριθμών
+EnterOneSerialNumberPerLine=Πληκτρολογήστε, επικολλήστε ή σαρώστε τους σειριακούς αριθμούς, έναν ανά γραμμή
+NbOfSerialNumbersDetected=Εντοπίστηκε/αν %s σειριακός(-οί) αριθμός(-οί)
+ErrorDuplicateSerialNumberInList=Ο σειριακός αριθμός %s εμφανίζεται περισσότερες από μία φορές στη λίστα

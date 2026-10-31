@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Танзимоти модули PayPal
-PaypalDesc=Ин модул имкон медиҳад, ки муштариён тавассути <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a> пардохт кунанд. Ин метавонад барои пардохти муваққатӣ ё барои пардохти марбут ба объекти Dolibarr (инвойс, фармоиш, ...) истифода шавад.
+PaypalDesc=This module allows payment by customers via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. This can be used for an ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
 PaypalOrCBDoPayment=Бо PayPal пардохт кунед (Card ё PayPal)
 PaypalDoPayment=Бо PayPal пардохт кунед
 PAYPAL_API_SANDBOX=Санҷиши режим/қуттии рег
@@ -19,7 +19,7 @@ NewOnlinePaymentFailed=Пардохти нави онлайн кӯшиш кар�
 ONLINE_PAYMENT_SENDEMAIL=Суроғаи почтаи электронӣ барои огоҳиҳо пас аз ҳар як кӯшиши пардохт (барои муваффақият ва нокомӣ)
 ReturnURLAfterPayment=URL -ро пас аз пардохт баргардонед
 ValidationOfOnlinePaymentFailed=Санҷиши пардохти онлайн ноком шуд
-PaymentSystemConfirmPaymentPageWasCalledButFailed=Саҳифаи тасдиқи пардохт аз ҷониби системаи пардохт даъват карда шуд, ки хато баргардонида шуд
+PaymentSystemConfirmPaymentPageWasCalledButFailed=The payment confirmation page was called by the online payment system and returned an error
 SetExpressCheckoutAPICallFailed=Занги SetExpressCheckout API ноком шуд.
 DoExpressCheckoutPaymentAPICallFailed=Занги DoExpressCheckoutPayment API ноком шуд.
 DetailedErrorMessage=Паёми хатогии муфассал

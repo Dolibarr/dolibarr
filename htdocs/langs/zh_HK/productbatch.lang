@@ -47,9 +47,13 @@ HideLots=隱藏批次
 OutOfOrder=故障
 InWorkingOrder=運作正常
 ToReplace=替換
-CantMoveNonExistantSerial=錯誤。您要求移動一個已不存在的序列號記錄。可能同一序列號在同一倉庫內多次使用於同一貨運中，或者被另一貨運使用。請刪除該貨運並重新準備另一個。
+CantMoveNonExistantSerial=Error: You requested a stock movement on a record for a serial that no longer exists. Maybe you used the same serial in the same warehouse several times in the same shipment or it was used by another shipment. Remove this shipment and prepare another one.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=批次表格不完整，請使用參數 '...repair.php?standard=confirmed' 進行修復操作
 IlligalQtyForSerialNumbers= 由於序號唯一，因此需要進行存貨更正
 ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
 ForceBatchesNeedStockManagement=A product with batch/lot management must be managed in stock (stock management force to yes)
 BatchInformationNotfound=Batch information not found
+EnterMultipleSerialNumbers=Enter multiple serial numbers
+EnterOneSerialNumberPerLine=Type, paste or scan the serial numbers, one per line
+NbOfSerialNumbersDetected=%s serial number(s) detected
+ErrorDuplicateSerialNumberInList=Serial number %s is present several times in the list

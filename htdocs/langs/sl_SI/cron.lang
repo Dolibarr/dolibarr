@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = Preberi načrtovano delo
-Permission23102 = Ustvari/posodobi načrtovano delo
-Permission23103 = Izbriši načrtovano delo
-Permission23104 = Izvedi načrtovano delo
 # Admin
 CronSetup=Načrtovana nastavitev upravljanja opravil
 URLToLaunchCronJobs=URL za preverjanje in zagon kvalificiranih opravil cron iz brskalnika
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=V okolju Unix morate uporabiti naslednji vnos v crontab 
 CronExplainHowToRunWin=V okolju Microsoft(tm) Windows lahko z orodji Scheduled Task zaženete ukazno vrstico vsakih 5 minut
 CronMethodDoesNotExists=Razred %s ne vsebuje nobene metode %s
 CronMethodNotAllowed=Metoda %s razreda %s je na seznamu blokiranih prepovedanih metod
-CronJobDefDesc=Profili opravil Cron so definirani v datoteki deskriptorja modula. Ko je modul aktiviran, so naloženi in na voljo, tako da lahko upravljate opravila iz menija skrbniških orodij %s.
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=Seznam vnaprej določenih profilov opravil cron
 # Menu
 EnabledAndDisabled=Omogočeno in onemogočeno
@@ -27,7 +22,7 @@ CronDelete=Izbrišite načrtovana opravila
 CronConfirmDelete=Ali ste prepričani, da želite izbrisati ta načrtovana opravila?
 CronExecute=Zaženi zdaj
 CronConfirmExecute=Ali ste prepričani, da želite ta načrtovana opravila izvesti zdaj?
-CronInfo=Modul za razporejena opravila omogoča načrtovanje opravil za njihovo samodejno izvedbo. Dela se lahko zaženejo tudi ročno.
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=Naloga
 CronNone=Next run of scheduled task
 CronNotYetRan=Never executed
@@ -79,7 +74,7 @@ CronType_command=Ukaz lupine
 CronCannotLoadClass=Ni mogoče naložiti datoteke razreda %s (za uporabo razreda %s)
 CronModuleNotEnabledInThisEntity=Cron module not enabled in this entity (to use %s method of %s object)
 CronCannotLoadObject=Datoteka razreda %s je bila naložena, vendar v njej ni bilo najdenega predmeta %s
-UseMenuModuleToolsToAddCronJobs=Pojdite v meni " <a href="%s"> Domov - Skrbniška orodja - Načrtovana opravila </a> " za ogled in urejanje načrtovanih opravil.
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=Delo onemogočeno
 MakeLocalDatabaseDumpShort=Varnostno kopiranje lokalne baze podatkov
 MakeLocalDatabaseDump=Ustvarite izpis lokalne baze podatkov. Parametri so: stiskanje ('gz' ali 'bz' ali 'none'), vrsta varnostne kopije ('mysql', 'pgsql', 'auto'), 1, 'auto' ali ime datoteke za izdelavo, število datotek varnostne kopije, ki jih je treba hraniti

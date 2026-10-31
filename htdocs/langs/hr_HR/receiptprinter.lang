@@ -69,7 +69,6 @@ DOL_VALUE_DAY=Dan fakture
 DOL_VALUE_DAY_LETTERS=Dan računa slovima
 DOL_LINE_FEED_REVERSE=Obrnuti pomak linije
 InvoiceID=ID fakture
-InvoiceRef=Broj računa
 DOL_PRINT_OBJECT_LINES=Redovi računa
 DOL_VALUE_CUSTOMER_FIRSTNAME=Ime kupca
 DOL_VALUE_CUSTOMER_LASTNAME=Prezime kupca

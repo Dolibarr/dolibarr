@@ -47,9 +47,13 @@ HideLots=Скрыть партии
 OutOfOrder=Не работает
 InWorkingOrder=Исправен
 ToReplace=Заменять
-CantMoveNonExistantSerial=Ошибка. Вы запрашиваете перемещение записи для серийного номера, которого больше не существует. Возможно, вы берёте один и тот же серийный номер на одном и том же складе несколько раз в одной отгрузке или он уже использован в другой отгрузке. Удалите эту отгрузку и подготовьте другую.
+CantMoveNonExistantSerial=Error: You requested a stock movement on a record for a serial that no longer exists. Maybe you used the same serial in the same warehouse several times in the same shipment or it was used by another shipment. Remove this shipment and prepare another one.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Восстановление неполного прогона таблицы партий с параметром '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= Требуется корректировка запаса, поскольку серийный номер уникален.
 ErrorBatchesNeedStockManagement=Ошибка. Товар с управлением партиями/сериями также должен управляться на складе.
 ForceBatchesNeedStockManagement=Товар с управлением партиями/сериями должен управляться на складе (управление складом принудительно установлено на «да»)
 BatchInformationNotfound=Batch information not found
+EnterMultipleSerialNumbers=Enter multiple serial numbers
+EnterOneSerialNumberPerLine=Type, paste or scan the serial numbers, one per line
+NbOfSerialNumbersDetected=%s serial number(s) detected
+ErrorDuplicateSerialNumberInList=Serial number %s is present several times in the list

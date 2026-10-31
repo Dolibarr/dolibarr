@@ -3,7 +3,6 @@
 #
 # Global
 #
-Subtotal=Ara toplamlar
 SubTotalModuleDesc=Belirli belgeler için ara toplam ve başlık satırları
 #
 # Admin
@@ -12,12 +11,19 @@ SubtotalSetup=Ara toplamlar modül kurulumu
 MaxSubtotalLevel=Maksimum seviye
 SubtotalLineBackColor= %s Seviye çizgilerin arka plan rengi
 NotSupportedByAllPDF=Daha yeni PDF'lerle çalışır ancak eskileriyle çalışmaz %s
+SubtotalsPredefinedTitles=Subtotals predefined titles
+SubtotalsPredefinedTexts=Subtotals predefined texts
+SubtotalTextColumnTitle=Metin
 
 #
 # Card
 #
 AddTitleLine=Başlık satırı ekle
 AddSubtotalLine=Ara toplam satırı ekle
+AddTextLine=Add text line
+PredefinedTitle=Predefined title
+PredefinedText=Predefined text
+SubtotalTextContent=Text content
 TitleNeedDesc=Başlık oluşturmak için geçerli bir açıklama girmelisiniz.
 TitleAddedLevelTooHigh=Başlık seviyesi çok yüksek (bunun yerine%s seviye eklendi).
 TitleEditedLevelTooHigh=Düzenlenen başlık seviyesi çok yüksek (bunun yerine %sseviye ile düzenlendi).

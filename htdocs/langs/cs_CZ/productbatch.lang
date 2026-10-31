@@ -47,9 +47,13 @@ HideLots=Skrýt šarže
 OutOfOrder=Mimo provoz
 InWorkingOrder=V provozuschopném stavu
 ToReplace=Nahradit
-CantMoveNonExistantSerial=Chyba. Žádáte o přesun záznamu pro sériové číslo, které již neexistuje. Možná jste stejné sériové číslo několikrát převzali ve stejném skladu v rámci jedné zásilky, nebo bylo použito jinou zásilkou. Odeberte tuto zásilku a připravte jinou.
+CantMoveNonExistantSerial=Error: You requested a stock movement on a record for a serial that no longer exists. Maybe you used the same serial in the same warehouse several times in the same shipment or it was used by another shipment. Remove this shipment and prepare another one.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Oprava neúplného běhu tabulky šarží s parametrem '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= Nutná korekce zásob z důvodu unikátního sériového čísla.
 ErrorBatchesNeedStockManagement=Chyba. Produkt se správou šarží/sérií musí být také spravován ve skladu.
 ForceBatchesNeedStockManagement=Produkt se správou šarží/sérií musí být spravován ve skladu (správa skladu vynucena na ano)
 BatchInformationNotfound=Batch information not found
+EnterMultipleSerialNumbers=Enter multiple serial numbers
+EnterOneSerialNumberPerLine=Type, paste or scan the serial numbers, one per line
+NbOfSerialNumbersDetected=%s serial number(s) detected
+ErrorDuplicateSerialNumberInList=Serial number %s is present several times in the list

@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=Kinnitatud
 StatusReceptionProcessedShort=Töödeldud
 ReceptionSheet=Vastuvõtuleht
 ValidateReception=Vastuvõtu kinnitamine
+DeleteReception=Delete reception
 ConfirmDeleteReception=Kas olete kindel, et soovite selle vastuvõtu kustutada?
 ConfirmValidateReception=Kas olete kindel, et soovite seda vastuvõttu viitega <b>%s</b> valideerida?
 ConfirmCancelReception=Kas olete kindel, et soovite selle vastuvõtu tühistada?

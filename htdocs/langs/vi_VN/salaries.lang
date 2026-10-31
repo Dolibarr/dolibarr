@@ -27,6 +27,7 @@ Earnings=Earnings
 TotalEarnings=Total earnings
 TotalDeductions=Total deductions
 NetPaid=Thanh toán ròng
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Tài khoản (từ Biểu đồ tài khoản) được sử dụng theo mặc định cho "người dùng" trên bảng lương
@@ -55,8 +56,6 @@ FillFieldFirst=Điền vào trường nhân viên trước
 UpdateAmountWithLastSalary=Đặt số tiền lương cuối cùng
 MakeTransferRequest=Thực hiện yêu cầu chuyển
 VirementOrder=Yêu cầu chuyển tín dụng
-WithdrawalReceipt=Lệnh chuyển tín dụng
-OrderWaiting=Danh sách hàng chờ
 FillEndOfMonth=Cuối tháng
 
 # Shortcuts
