@@ -71,6 +71,21 @@ class PaymentExpenseReport extends CommonObject
 	 * @var float|int
 	 */
 	public $amount; // Total amount of payment
+
+	/**
+	 * @var float	Amount of the payment in the currency of the expense report
+	 */
+	public $multicurrency_amount;
+
+	/**
+	 * @var string	Currency of the expense report
+	 */
+	public $multicurrency_code;
+
+	/**
+	 * @var float	Amount debited from the bank account, in the currency of the account, when it is neither the currency of the expense report nor the company one
+	 */
+	public $bank_amount;
 	/**
 	 * @var array<float|int>
 	 */
@@ -148,6 +163,8 @@ class PaymentExpenseReport extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
+		global $conf;
+
 		$error = 0;
 
 		$now = dol_now();
@@ -206,11 +223,16 @@ class PaymentExpenseReport extends CommonObject
 		$this->db->begin();
 
 		if ($totalamount != 0) {
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_expensereport (fk_expensereport, datec, datep, amount,";
+			if (empty($this->multicurrency_amount)) {
+				$this->multicurrency_amount = $totalamount;
+			}
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_expensereport (fk_expensereport, datec, datep, amount, multicurrency_amount, multicurrency_code,";
 			$sql .= " fk_typepayment, num_payment, note, fk_user_creat, fk_bank)";
 			$sql .= " VALUES (".((int) $this->fk_expensereport).", '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datep)."',";
 			$sql .= " ".price2num($totalamount).",";
+			$sql .= " ".((float) price2num($this->multicurrency_amount, 'MT')).",";
+			$sql .= " '".$this->db->escape(empty($this->multicurrency_code) ? $conf->currency : $this->multicurrency_code)."',";
 			$sql .= " ".((int) $this->fk_typepayment).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_public)."', ".((int) $user->id).",";
 			$sql .= " 0)";	// fk_bank is ID of transaction into ll_bank
 
@@ -258,6 +280,8 @@ class PaymentExpenseReport extends CommonObject
 		$sql .= " t.tms,";
 		$sql .= " t.datep,";
 		$sql .= " t.amount,";
+		$sql .= " t.multicurrency_amount,";
+		$sql .= " t.multicurrency_code,";
 		$sql .= " t.fk_typepayment,";
 		$sql .= " t.num_payment,";
 		$sql .= " t.note as note_public,";
@@ -285,6 +309,8 @@ class PaymentExpenseReport extends CommonObject
 				$this->tms = $this->db->jdate($obj->tms);
 				$this->datep			= $this->db->jdate($obj->datep);
 				$this->amount = $obj->amount;
+				$this->multicurrency_amount = $obj->multicurrency_amount;
+				$this->multicurrency_code = $obj->multicurrency_code;
 				$this->fk_typepayment = $obj->fk_typepayment;
 				$this->num_payment		= $obj->num_payment;
 				$this->note_public		= $obj->note_public;
@@ -586,7 +612,7 @@ class PaymentExpenseReport extends CommonObject
 	 */
 	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
 	{
-		global $langs;
+		global $conf, $langs;
 
 		$error = 0;
 
@@ -596,12 +622,27 @@ class PaymentExpenseReport extends CommonObject
 			$acc = new Account($this->db);
 			$acc->fetch($accountid);
 
-			//Fix me field
-			$total = $this->amount;
 			$amount = 0;
-
+			$amount_main_currency = null;
 			if ($mode == 'payment_expensereport') {
-				$amount = $total;
+				$currency = (empty($this->multicurrency_code) ? $conf->currency : $this->multicurrency_code);
+				if ($acc->currency_code == $currency) {
+					$amount = (empty($this->multicurrency_amount) ? $this->amount : $this->multicurrency_amount);
+					if ($currency != $conf->currency) {
+						$amount_main_currency = -$this->amount;
+					}
+				} elseif ($acc->currency_code == $conf->currency) {
+					$amount = $this->amount;
+				} else {
+					if (empty($this->bank_amount)) {
+						$this->error = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('AmountDebitedFromBankAccount'));
+						return -1;
+					}
+					$amount = $this->bank_amount;
+					include_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+					list(, $rate) = MultiCurrency::getIdAndTxFromCode($this->db, $acc->currency_code, $this->datep);
+					$amount_main_currency = -(float) price2num($this->bank_amount / $rate, 'MT');
+				}
 			}
 
 			// Insert payment into llx_bank
@@ -614,7 +655,11 @@ class PaymentExpenseReport extends CommonObject
 				0,
 				$user,
 				$emetteur_nom,
-				$emetteur_banque
+				$emetteur_banque,
+				'',
+				null,
+				'',
+				$amount_main_currency
 			);
 
 			// Update fk_bank in llx_paiement.
