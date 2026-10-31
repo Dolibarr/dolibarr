@@ -444,7 +444,14 @@ while ($i < $imaxinloop) {
 		// Url
 		print '<td class="tdoverflowmax250">';
 		if (empty($linkintern)) {
-			print img_picto('', 'url', 'class="pictofixedwidth"');
+			// Show the site's own favicon for external http(s) bookmarks; the
+			// request goes to the bookmarked host itself, not to a third party.
+			$bmhost = parse_url($obj->url, PHP_URL_HOST);
+			if ($bmhost) {
+				print '<img src="https://'.dol_escape_htmltag($bmhost).'/favicon.ico" width="16" height="16" class="pictofixedwidth valignmiddle" alt="" onerror="this.hidden=true">';
+			} else {
+				print img_picto('', 'url', 'class="pictofixedwidth"');
+			}
 			print '<a class="" href="'.$obj->url.'"'.($obj->target ? ' target="newlink" rel="noopener"' : '').'>';
 		} else {
 			print '<a class="" href="'.$obj->url.'">';
