@@ -114,6 +114,22 @@ if ($line->fk_product > 0) {
 	print ' - '.$tmpproduct->label;
 }
 
+// Description. The line is created with a description through
+// /core/tpl/objectline_create.tpl.php, so it must be editable here too.
+// Same field name as /core/tpl/objectline_edit.tpl.php: expedition/card.php reads it back.
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+$nbrows = ROWS_2;
+if (getDolGlobalString('MAIN_INPUT_DESC_HEIGHT')) {
+	$nbrows = getDolGlobalString('MAIN_INPUT_DESC_HEIGHT');
+}
+$enable = getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS');
+$toolbarname = 'dolibarr_details';
+if (getDolGlobalString('FCKEDITOR_ENABLE_DETAILS_FULL')) {
+	$toolbarname = 'dolibarr_notes';
+}
+$doleditor = new DolEditor('product_desc', GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description, '', getDolGlobalInt('MAIN_DOLEDITOR_HEIGHT', 164), $toolbarname, '', false, true, $enable, $nbrows, '98%');
+$doleditor->Create();
+
 //Line extrafield
 if (!empty($extrafields)) {
 	$temps = $line->showOptionals($extrafields, 'edit', array('class' => 'tredited'), '', '', '1', 'line');
