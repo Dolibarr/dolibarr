@@ -69,7 +69,6 @@ DOL_VALUE_DAY=Шот -фактура күні
 DOL_VALUE_DAY_LETTERS=Хаттардағы шот-фактура күні
 DOL_LINE_FEED_REVERSE=Жолды беру кері
 InvoiceID=Шот -фактура идентификаторы
-InvoiceRef=Шот -фактура бойынша анықтама
 DOL_PRINT_OBJECT_LINES=Шот -фактура желілері
 DOL_VALUE_CUSTOMER_FIRSTNAME=Тұтынушының аты
 DOL_VALUE_CUSTOMER_LASTNAME=Тұтынушының тегі

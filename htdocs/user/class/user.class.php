@@ -2564,7 +2564,7 @@ class User extends CommonObject
 					$tmpobj = new Contact($this->db);
 					$result = $tmpobj->fetch($this->contact_id);
 
-					if ($result >= 0) {
+					if ($result > 0) {
 						$tmpobj->civility_code = $this->civility_code;
 						$tmpobj->firstname = $this->firstname;
 						$tmpobj->lastname = $this->lastname;

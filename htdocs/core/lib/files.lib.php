@@ -9,6 +9,7 @@
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead		<william@m34d.com>
  * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1927,6 +1928,8 @@ function dol_delete_preview($object)
 		$dir = $conf->expedition->dir_output.'/receipt';
 	} elseif ($object->element == 'fichinter') {
 		$dir = $conf->ficheinter->dir_output;
+	} elseif ($object->element == 'chequereceipt') {
+		$dir = $conf->bank->dir_output.'/checkdeposits';
 	} else {
 		$dir = empty($conf->$element->dir_output) ? '' : $conf->$element->dir_output;
 	}
@@ -3128,6 +3131,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	$accessallowed = 0;
 	$sqlprotectagainstexternals = '';
 	$ret = array();
+	$checksecureaccesshook = false;
 
 	// Find the subdirectory name as the reference. For example original_file='10/myfile.pdf' -> refname='10'
 	if (empty($refname)) {
@@ -3227,7 +3231,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 					global $dolibarr_main_cookie_cryptkey, $dolibarr_main_instance_unique_id;
 					$valuetouse = $dolibarr_main_instance_unique_id ? $dolibarr_main_instance_unique_id : $dolibarr_main_cookie_cryptkey; // Use $dolibarr_main_instance_unique_id first then $dolibarr_main_cookie_cryptkey
 					$encodedsecurekey = dol_hash($valuetouse.'uservirtualcard'.$tmpobject->id.'-'.$tmpobject->login, 'md5');
-					if ($encodedsecurekey == $securekey) {
+					if (hash_equals($encodedsecurekey, (string) $securekey)) {
 						$accessok = true;
 					}
 				}
@@ -3505,6 +3509,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$sqlprotectagainstexternals = "SELECT rowid as fk_soc FROM ".MAIN_DB_PREFIX."societe WHERE rowid = ".((int) $refname)." AND entity IN (".getEntity('societe').")";
 	} elseif (($modulepart == 'contact' || $modulepart == 'socpeople') && !empty($conf->societe->multidir_output[$entity])) {
 		// Wrapping for contact
+		$checksecureaccesshook = true;
 		if (empty($entity) || empty($conf->societe->multidir_output[$entity])) {
 			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
 		}
@@ -3702,6 +3707,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->agenda->dir_temp."/".$original_file;
 	} elseif ($modulepart == 'product' || $modulepart == 'produit' || $modulepart == 'service' || $modulepart == 'produit|service') {
 		// Wrapping for products and services
+		$checksecureaccesshook = true;
 		if (empty($entity) || (empty($conf->product->multidir_output[$entity]) && empty($conf->service->multidir_output[$entity]))) {
 			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
 		}
@@ -3868,6 +3874,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		// If modulepart=module-abc			Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart
 	} else {
 		// GENERIC Wrapping
+		$checksecureaccesshook = true;
 		//var_dump($modulepart);
 		//var_dump($original_file);
 		if (preg_match('/^specimen/i', $original_file)) {
@@ -3970,7 +3977,10 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			// Implement a way for the generic case to set $sqlprotectagainstexternals automatically.
 			// For the moment, external modules can use the following hook checkSecureAccess if they need to protect against external users.
 		}
+	}
 
+	// Keep the session entity; modules must validate any requested shared entity themselves.
+	if ($checksecureaccesshook) {
 		$parameters = array(
 			'modulepart' => $modulepart,
 			'original_file' => $original_file,
@@ -3980,12 +3990,15 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			'mode' => $mode
 		);
 		$reshook = $hookmanager->executeHooks('checkSecureAccess', $parameters, $object);
-		if ($reshook > 0) {
+		if ($reshook < 0) {
+			$accessallowed = 0;
+		} elseif ($reshook > 0) {
 			if (!empty($hookmanager->resArray['original_file'])) {
 				$original_file = $hookmanager->resArray['original_file'];
 			}
-			if (!empty($hookmanager->resArray['accessallowed'])) {
-				$accessallowed = $hookmanager->resArray['accessallowed'];
+			// A hook that replaces the result (return > 0) may also refuse access, by setting accessallowed to 0
+			if (array_key_exists('accessallowed', $hookmanager->resArray)) {
+				$accessallowed = ($hookmanager->resArray['accessallowed'] ? 1 : 0);
 			}
 			if (!empty($hookmanager->resArray['sqlprotectagainstexternals'])) {
 				$sqlprotectagainstexternals = $hookmanager->resArray['sqlprotectagainstexternals'];

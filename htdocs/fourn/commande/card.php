@@ -11,7 +11,7 @@
  * Copyright (C) 2018-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2022       Gauthier VERDOL             <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022-2026  Charlene Benke              <charlene@patas-monkey.com>
- * Copyright (C) 2023       Joachim Kueter              <git-jk@bloxera.com>
+ * Copyright (C) 2023-2026  Joachim Kueter              <git-jk@bloxera.com>
  * Copyright (C) 2024-2026	MDW                         <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Nick Fragoulis
  * Copyright (C) 2025-2026  Alexandre Spangaro          <alexandre@inovea-conseil.com>
@@ -166,6 +166,7 @@ $usercanvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($u
 $usercanapprove			= $user->hasRight("fournisseur", "commande", "approuver");
 $usercanapprovesecond	= $user->hasRight("fournisseur", "commande", "approve2");
 $usercanorder			= $user->hasRight("fournisseur", "commande", "commander");
+$usercanupdateprices	= (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? ($user->hasRight("produit", "creer") || $user->hasRight("service", "creer")) : $user->hasRight("product", "product_advance", "write_supplier_prices"));
 if (!isModEnabled('reception')) {
 	$usercanreceive = $user->hasRight("fournisseur", "commande", "receptionner");
 } else {
@@ -267,7 +268,13 @@ if (empty($reshook)) {
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
 	} elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
 		// Multicurrency rate
-		$result = $object->setMulticurrencyRate(GETPOSTFLOAT('multicurrency_tx'), GETPOSTINT('calculation_mode'));
+		if (!in_array(GETPOSTINT('calculation_mode'), array(1, 2))) {
+			$langs->load("compta");
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CalculationMode")), null, 'errors');
+			$action = 'editmulticurrencyrate';
+		} else {
+			$result = $object->setMulticurrencyRate(GETPOSTFLOAT('multicurrency_tx'), GETPOSTINT('calculation_mode'));
+		}
 	}
 
 	// bank account
@@ -1145,6 +1152,14 @@ if (empty($reshook)) {
 
 		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), 'CU', 2);
 
+		// Only the unit price incl. tax in currency was entered: it becomes the reference price of the line.
+		// updateline() reads the currency price in the price_base_type, so it receives the TTC currency amount.
+		if (GETPOST('price_ht') === '' && GETPOST('price_ttc') === '' && GETPOST('multicurrency_subprice') === '' && GETPOST('multicurrency_price_ttc') !== '') {
+			$ht = 0;
+			$price_base_type = 'TTC';
+			$pu_ht_devise = price2num(GETPOST('multicurrency_price_ttc'), 'CU', 2);
+		}
+
 		// Extrafields Lines
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
 		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
@@ -1422,6 +1437,20 @@ if (empty($reshook)) {
 		$object->context["sendmanualtriggers"] = GETPOST("manual_trigger_send");
 		$result = $object->commande($user, $date_com, GETPOSTINT('methodecommande'), GETPOST('comment'));
 		if ($result > 0) {
+			if (GETPOST('updatebuyingprice') && getDolGlobalString('SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_ON_ORDER') && $usercanupdateprices && $object->updateProductBuyPrices($user) < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+			$elements = array_filter(array('propal' => GETPOST('updatelinked_propal'), 'commande' => GETPOST('updatelinked_commande'), 'facture' => GETPOST('updatelinked_facture')));
+			if ($elements && getDolGlobalString('SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_ON_ORDER')) {
+				foreach ($object->lines as $line) {
+					if ($object->updateLinkedBuyPrice($user, $line->id, $elements) < 0) {
+						$error++;
+						setEventMessages($object->error, $object->errors, 'errors');
+						break;
+					}
+				}
+			}
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
@@ -2392,7 +2421,7 @@ if ($action == 'create') {
 		}
 		*/
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.((int) $object->id), $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', $arrayAjouts, 0, 2, $heightModal, $widthModal);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.((int) $object->id), $langs->trans('DeleteSupplierOrder'), $langs->trans('ConfirmDeleteSupplierOrder'), 'confirm_delete', $arrayAjouts, 0, 2, $heightModal, $widthModal);
 	}
 
 	// Clone confirmation
@@ -2403,7 +2432,7 @@ if ($action == 'create') {
 			array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOSTINT('socid'), 'socid', $filter))
 		);
 		// Payment incomplete. Requesting reason: discount or other?
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneOrder', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneSupplierOrder', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
 	// Confirm validation
@@ -2421,7 +2450,7 @@ if ($action == 'create') {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = '';
 		} else {
-			$text = $langs->trans('ConfirmValidateOrder', $newref);
+			$text = $langs->trans('ConfirmValidateSupplierOrder', $newref);
 			if (isModEnabled('notification')) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 				$notify = new Notify($db);
@@ -2429,7 +2458,7 @@ if ($action == 'create') {
 				$text .= $notify->confirmMessage('ORDER_SUPPLIER_VALIDATE', $object->socid, $object);
 			}
 
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_valid', '', 0, 1);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateSupplierOrder'), $text, 'confirm_valid', '', 0, 1);
 		}
 	}
 
@@ -2514,6 +2543,21 @@ if ($action == 'create') {
 			array('type' => 'other', 'name' => 'methodecommande', 'label' => $langs->trans('OrderMode'), 'value' => $inputmethod, 'tdclass' => getDolGlobalInt('SUPPLIER_ORDER_MODE_OPTIONAL') ? '' : 'fieldrequired'),
 			array('type' => 'text', 'name' => 'comment', 'label' => $langs->trans('Comment'), 'value' => dol_escape_htmltag(GETPOST('comment')), 'morecss' => 'quatrevingtpercent')
 		);
+		if (getDolGlobalString('SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_ON_ORDER') && $usercanupdateprices && $object->hasProductsOrServices(1)) {
+			$formquestion[] = array('type' => 'checkbox', 'name' => 'updatebuyingprice', 'label' => $langs->trans('UpdateBuyingPriceFromOrder'), 'value' => GETPOST('updatebuyingprice'));
+
+			// Linked documents with another cost price for a product of the order
+			$labels = array('propal' => 'Proposal', 'commande' => 'Order', 'facture' => 'Invoice');
+			$linked = array();
+			foreach ($object->lines as $line) {
+				foreach ($object->getLinkedBuyPriceDocuments($user, $line->id) as $element => $document) {
+					$linked[$element] = ($linked[$element] ?? array()) + $document['refs'];
+				}
+			}
+			foreach ($linked as $element => $refs) {
+				$formquestion[] = array('type' => 'checkbox', 'name' => 'updatelinked_'.$element, 'label' => $langs->trans('UpdateLinkedBuyingPrice').': '.$langs->trans($labels[$element]).' '.dol_escape_htmltag(implode(', ', $refs)), 'value' => GETPOST('updatelinked_'.$element));
+			}
+		}
 		if (isModEnabled('notification')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 			$notify = new Notify($db);
@@ -3260,7 +3304,7 @@ if ($action == 'create') {
 				// Cancel
 				if ($object->status == CommandeFournisseur::STATUS_ACCEPTED) {
 					if ($usercanorder) {
-						print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=cancel&amp;token='.newToken().'">'.$langs->trans("CancelOrder").'</a>';
+						print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=cancel&amp;token='.newToken().'">'.$langs->trans("CancelSupplierOrder").'</a>';
 					}
 				}
 
@@ -3357,7 +3401,7 @@ if ($action == 'create') {
 
 		// Presend form
 		$modelmail = 'order_supplier_send';
-		$defaulttopic = 'SendOrderRef';
+		$defaulttopic = 'SendSupplierOrderRef';
 		$diroutput = getMultidirOutput($object);
 		$autocopy = 'MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO';
 		$trackid = 'sord'.$object->id;

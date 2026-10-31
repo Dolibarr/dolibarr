@@ -892,7 +892,9 @@ if ($id && !$user->hasRight('holiday', 'readall') && !in_array($id, $childids)) 
 		$endhalfday = ($obj->halfday == 1 || $obj->halfday == 2) ? 'morning' : 'afternoon';
 
 		$nbopenedday = num_open_day($db->jdate($obj->date_debut, 1), $db->jdate($obj->date_fin, 1), 0, 1, $obj->halfday, $userstatic->country_id, $obj->fk_user);	// user jdate(..., 1) because num_open_day need UTC dates
-		$totalduration += $nbopenedday;
+		if (is_numeric($nbopenedday)) {	// num_open_day() returns a string on error (bad dates)
+			$totalduration += (float) $nbopenedday;
+		}
 
 		if ($mode == 'kanban') {
 			if ($i == 0) {

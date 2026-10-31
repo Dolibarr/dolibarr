@@ -27,6 +27,7 @@ Earnings=Earnings
 TotalEarnings=Total earnings
 TotalDeductions=Total deductions
 NetPaid=Net paid
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=বেতনের "ব্যবহারকারীদের" জন্য ডিফল্টরূপে ব্যবহৃত অ্যাকাউন্ট (অ্যাকাউন্টের চার্ট থেকে)
@@ -55,8 +56,6 @@ FillFieldFirst=প্রথমে কর্মচারী ক্ষেত্র
 UpdateAmountWithLastSalary=শেষ বেতনের পরিমাণ নির্ধারণ করুন
 MakeTransferRequest=স্থানান্তরের অনুরোধ করুন
 VirementOrder=ক্রেডিট ট্রান্সফার অনুরোধ
-WithdrawalReceipt=ক্রেডিট ট্রান্সফার অর্ডার
-OrderWaiting=আদেশ করা
 FillEndOfMonth=মাসের শেষ
 
 # Shortcuts

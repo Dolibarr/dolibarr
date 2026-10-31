@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=Banka
 MenuBankCash=Banky | Hotovost
+BankArea=Banks and cash area
+LatestBankTransactionsModified=Latest %s modified bank transactions
 MenuVariousPayment=Ruční účetní zápisy
 MenuNewVariousPayment=New manual journal entry
 BankName=Název banky
@@ -47,6 +49,9 @@ LastAccountStatements=Poslední výpis z účtu
 IOMonthlyReporting=Měsíční hlášení
 BankAccountDomiciliation=Adresa banky (sídlo)
 BankAccountCountry=Účet země
+InstitutionNumber=Institution number
+TransitNumber=Branch (transit) number
+ABARoutingNumber=ABA routing number
 BankAccountOwner=Název majitele účtu
 BankAccountOwnerAddress=Adresa majitele účtu
 BankAccountOwnerZip=PSČ majitele účtu
@@ -206,3 +211,7 @@ PendingDirectDebitToComplete=Inkaso k dokončení
 PendingCreditTransferToCompleteShort=Převod k dokončení
 PendingCreditTransferToComplete=Převod k dokončení
 Requests=Požadavky
+PaymentReferenceOfAccount=Payment reference
+PaymentReferenceOfAccountHelp=Reference to give when paying to this account, the same for all the invoices: the RF (ISO 11649) or national reference a supplier gave you for your contract, meter or customer account. An RF reference is checked.
+ErrorPaymentReferenceOfAccountTooLong=The payment reference is too long (35 characters at most)
+ErrorPaymentReferenceOfAccountNotValid=The RF payment reference is not valid: check digits do not match
