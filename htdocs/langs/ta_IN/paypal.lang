@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=பேபால் தொகுதி அமைவு
-PaypalDesc=இந்த தொகுதி வாடிக்கையாளர்கள் <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a> வழியாக பணம் செலுத்த அனுமதிக்கிறது. இது தற்காலிக கட்டணத்திற்கு அல்லது டோலிபார் பொருள் தொடர்பான கட்டணத்திற்கு (விலைப்பட்டியல், ஆர்டர், ...) பயன்படுத்தப்படலாம்.
+PaypalDesc=This module allows payment by customers via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. This can be used for an ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
 PaypalOrCBDoPayment=பேபால் (அட்டை அல்லது பேபால்) மூலம் பணம் செலுத்துங்கள்
 PaypalDoPayment=பேபால் மூலம் பணம் செலுத்துங்கள்
 PAYPAL_API_SANDBOX=முறை சோதனை/சாண்ட்பாக்ஸ்
@@ -19,7 +19,7 @@ NewOnlinePaymentFailed=புதிய ஆன்லைன் பேமெண்�
 ONLINE_PAYMENT_SENDEMAIL=ஒவ்வொரு கட்டண முயற்சிக்குப் பிறகும் அறிவிப்புகளுக்கான மின்னஞ்சல் முகவரி (வெற்றி மற்றும் தோல்விக்கு)
 ReturnURLAfterPayment=பணம் செலுத்திய பிறகு URL ஐத் திருப்பி அனுப்பவும்
 ValidationOfOnlinePaymentFailed=ஆன்லைன் கட்டணத்தைச் சரிபார்க்க முடியவில்லை
-PaymentSystemConfirmPaymentPageWasCalledButFailed=கட்டண முறைமையால் பேமெண்ட் உறுதிப்படுத்தல் பக்கம் அழைக்கப்பட்டது பிழை ஏற்பட்டது
+PaymentSystemConfirmPaymentPageWasCalledButFailed=The payment confirmation page was called by the online payment system and returned an error
 SetExpressCheckoutAPICallFailed=SetExpressCheckout API அழைப்பு தோல்வியடைந்தது.
 DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API அழைப்பு தோல்வியடைந்தது.
 DetailedErrorMessage=விரிவான பிழைச் செய்தி

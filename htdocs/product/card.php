@@ -3093,6 +3093,9 @@ if ($action != 'create' && $action != 'edit') {
 		$object_is_used = $object->isObjectUsed($object->id);
 
 		if ($usercandelete) {
+			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
+				print dolGetButtonAction($langs->trans('MergeProducts'), $langs->trans('Merge'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'merge', 'id' => $object->id], true), '', true, array('attr' => array('classOverride' => 'butAction butActionDanger')))."\n";
+			}
 			if (empty($object_is_used)) {
 				if (!isset($hookmanager->resArray['no_button_delete']) || $hookmanager->resArray['no_button_delete'] != 1) {
 					if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
@@ -3103,9 +3106,6 @@ if ($action != 'create' && $action != 'edit') {
 				}
 			} else {
 				print dolGetButtonAction($langs->trans("ProductIsUsed"), $langs->trans('Delete'), 'delete', '#', '', false);
-			}
-			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
-				print dolGetButtonAction($langs->trans('MergeProducts'), $langs->trans('Merge'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'merge', 'id' => $object->id], true), '', true, array('attr' => array('classOverride' => 'butAction butActionDanger')))."\n";
 			}
 		} else {
 			print dolGetButtonAction($langs->trans("NotEnoughPermissions"), $langs->trans('Delete'), 'delete', '#', '', false);

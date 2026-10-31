@@ -68,7 +68,9 @@ aiCheckCsrfToken('ai/assistant/execute_tool.php');
  * View
  */
 
-dol_syslog("execute_tool.php ***** BEGIN", LOG_INFO, 0, '_ai');
+if (getDolGlobalString("AI_DEBUG")) {
+	dol_syslog("execute_tool.php ***** BEGIN", LOG_INFO, 0, '_ai');
+}
 
 top_httphead('application/json');
 
@@ -88,7 +90,9 @@ try {
 
 	$tStart = microtime(true);
 
-	dol_syslog("execute_tool.php tool = ".$input['tool'].", arguments = ".json_encode($input['arguments'] ?? []), LOG_DEBUG, 0, '_ai');
+	if (getDolGlobalString("AI_DEBUG")) {
+		dol_syslog("execute_tool.php tool = ".$input['tool'].", arguments = ".json_encode($input['arguments'] ?? []), LOG_DEBUG, 0, '_ai');
+	}
 
 	$result = $mcp->executeTool($input['tool'], $input['arguments'] ?? []);
 
@@ -123,8 +127,10 @@ try {
 		(string) json_encode($result)
 	);
 
-	dol_syslog("execute_tool.php answer = ".var_export($result, true), LOG_DEBUG, 0, '_ai');
-	dol_syslog("execute_tool.php answer = ".count($result)." lines", LOG_INFO, 0, '_ai');
+	if (getDolGlobalString("AI_DEBUG")) {
+		dol_syslog("execute_tool.php answer = ".var_export($result, true), LOG_DEBUG, 0, '_ai');
+		dol_syslog("execute_tool.php answer = ".count($result)." lines", LOG_INFO, 0, '_ai');
+	}
 
 	echo json_encode($result);
 } catch (Throwable $e) {

@@ -18,7 +18,7 @@ WEBSITE_HTACCESS=Ficheiro .htaccess do sitio web
 WEBSITE_MANIFEST_JSON=Ficheiro manifest.json do sitio web
 WEBSITE_KEYWORDSDesc=Use unha coma para separar os valores
 EnterHereReadmeInformation=Introduza aquí unha descrición do sitio web. Se distribúe o seu sitio web como modelo, o ficheiro incluirase no paquete de probas.
-EnterHereLicenseInformation=Introduza aquí a LICENZA do código da páxina web. Se distribúe o seu sitio web como modelo, o ficheiro incluirase no paquete de probas.
+EnterHereLicenseInformation=Introduza aquí a LICENZA do código do sitio web. Se distribúe o seu sitio web como padrón, o ficheiro incluirase no paquete de padróns
 HtmlHeaderPage=Cabeceira HTML (específica só para esta páxina)
 PageNameAliasHelp=Nome ou alias da páxina. <br> Este alias tamén se usa para forxar un URL de SEO cando o sitio web se executa desde un servidor virtual dun servidor web (como Apacke, Nginx, ...). Use o botón "<strong>%s </strong>" para editar este alias.
 EditTheWebSiteForACommonHeader=Nota: Se desexa definir unha cabeceira personalizada para todas as páxinas, edite a cabeceira a nivel de sitio en lugar de a páxina/contedor.
@@ -51,12 +51,12 @@ ToDeployYourWebsiteOnLiveYouHave3Solutions=Para implementar este sitio web en vi
 SetHereVirtualHost=<u> Usar con Apache/NGinx/... </u> <br> Cree no seu servidor web (Apache, Nginx, ...) un host virtual adicado con PHP habilitado e un directorio raíz en <br > <strong>%s </strong>
 ExampleToUseInApacheVirtualHostConfig=Exemplo para usar na configuración do host virtual Apache:
 YouCanAlsoTestWithPHPS=<u>Utilizar co servidor PHP incorporado</u><br>No entorno de desenvolvemento, pode que prefira probar o sitio co servidor web incorporado executando PHP
-YouCanAlsoDeployToAnotherWHP=<u>Execute o seu sitio web nun fornecedor de hospedaxe web Dolibarr</u><br> Se non ten un servidor web como Apache ou NGinx dispoñible en Internet, pode exportar e importar o seu sitio web noutra instancia de Dolibarr proporcionada por outro provedor de hospedaxe de Dolibarr que permita unha integración total co módulo do sitio web. Pode atopar unha listaxe dalgúns provedores de hospedaxe de Dolibarr en <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
+YouCanAlsoDeployToAnotherWHP=<u>Executa o teu sitio web dentro dun provedor de aloxamento web Dolibarr</u><br>Se non tes un servidor web como Apache ou NGinx dispoñible en Internet, podes exportar e importar o teu sitio web a outra instancia de Dolibarr proporcionada por outro provedor de aloxamento Dolibarr que ofreza integración completa co módulo Sitio web. Podes atopar unha lista dalgúns provedores de aloxamento de Dolibarr en <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
 CheckVirtualHostPerms=Comprobe tamén que o usuario do host virtual (por exemplo, www-data) ten permisos de <strong>%s</strong> nos ficheiros en <br><strong>%s</strong>
 ReadPerm=Ler
 WritePerm=Escribir
 TestDeployOnWeb=Probar/despregar na web
-PreviewSiteServedByWebServer=<u> Previsualizar %s nunha nova pestana. </u> <br> <br> O %s será servido por un servidor web externo (como Apache, Nginx, IIS). Debe instalar e configurar este servidor antes para apuntar ao directorio: <br> <strong>%s </strong> <br> URL ofrecido por un servidor externo: <br> <strong>%s </strong>
+PreviewSiteServedByWebServer=<u>Previsualizar %s nunha nova lapela.</u><br><br>O %s será servido por un servidor web externo (como Apache, Nginx, IIS). Debe instalar e configurar este servidor antes de apuntar ao directorio:<br><strong>%s</strong><br>URL servido por un servidor externo:<br><strong>%s</strong>
 PreviewSiteServedByDolibarr=<u>Vista previa de %s nunha nova lapela.</u><br><br>O %s será servido polo servidor Dolibarr polo que non precisa instalar ningún servidor web adicional (como Apache, Nginx, IIS) .<br>O inconveniente é que os URL das páxinas non son fáciles de usar e comezan polo camiño do seu Dolibarr.<br>URL ofrecido por Dolibarr:<br><strong> %s</strong><br><br>Para implementar ou probar usando o seu propio  servidor web externo (como Apache, Nginx, Lighttp) use a ligazón "%s".
 VirtualHostUrlNotDefined=O URL do host virtual ofrecido por un servidor web externo non está definido
 NoPageYet=Aínda non hai páxinas
@@ -65,12 +65,13 @@ SyntaxHelp=Axuda sobre consellos específicos de sintaxe
 YouCanEditHtmlSourceckeditor=You can edit HTML source code using the "Source" button in editor.
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> Pode incluír código PHP nesta fonte usando as etiquetas <strong>&lt;?php ?&gt</strong> Están dispoñibles as seguintes variables globais: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> Tamén pode incluír contido doutra páxina/contedor coa seguinte sintaxe:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> Pode facer unha redirección a outra páxina/contedor coa seguinte sintaxe (Nota: non saque ningún contido antes dunha redirección):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>Tamén pode facer unha redirección cos parámetros GET:<br><strong>&lt;?php redirectToContainer('alias_to', 'redirect,'_0_to' $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> Para engadir unha ligazón a outra páxina, use a sintaxe:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br>
 YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> Pode configurar dinamicamente o <strong> título SEO e as metaetiquetas </strong> (título, palabras chave, descrición). Simplemente defina as seguintes variables:<br> <code>define('__SEO_PAGE_TITLE__', "Valor do título …");</code><br> <code>define('__SEO_PAGE_KEYWORDS__', 'palabra clave1, palabra clave2, palabra clave3 …');</code><br> <code>,define('_SEO_PAGE_DESC' …");</code><br>
-YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> Para incluír unha <strong>ligazón para descargar</strong> un ficheiro almacenado no <strong>documents</strong>, use o directorio<strong>document.php</strong> wrapper:<br>Exemplo, para in ficheiro dentro de documentos/ecm /precisa estar logueado) a sintaxe é <br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt</strong><br>Para un ficheiro en documentos/medios (o directorio aberto é de acceso público)  a sintaxe é<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;;</strong><br>
+YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> Para incluír unha <strong>ligazón para descargar </strong> un ficheiro almacenado no directorio <strong>documentos</strong>, use o <strong>documento.php</strong> envoltorio:<br>Exemplo, para un ficheiro en documents/ecm (que precisa ser rexistrado), a sintaxe é:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]nome_do_ficheiro.ext"&gt;</strong><br>Para un ficheiro en documentos/medias (directorio aberto para acceso público), a sintaxe é:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]nome_do_ficheiro.ext"&gt;</strong><br>
 YouCanEditHtmlSourced=Para un ficheiro compartido cunha ligazón de uso compartido (acceso aberto usando a chave hash de uso compartido do ficheiro), a sintaxe é:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
 YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> Para incluír unha  <strong>imaxe</strong> almacenada no directorio <strong>medias </strong>(directorio aberto para o acceso público), use a ruta relativa que comeza por <strong>/medias</strong>, exemplo:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=Para unha imaxe compartida cunha ligazón para compartir (acceso aberto usando a chave hash para compartir do ficheiro), use o envoltorio:<br><strong> &lt;img src="/viewimage.php?hashp=12345679012..."&gt; </strong><br>
 YouCanEditHtmlSource3=Para obter o URL da imaxe dun obxecto PHP, use<br><strong>&lt;&lt; span>img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
-YouCanEditHtmlSource4=Para obter o URL dunha imaxe dentro do contido html dun artigo, use<br><strong> &lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt"&gt;</strong><br>
+YouCanEditHtmlSource4=Para obter o URL dunha imaxe dentro do contido HTML dun artigo, use<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource5=<br><span class="fa fa-edit paddingright"></span> To let a part of the page be changed with mode <strong>Edit inline</strong>, add the attributes <strong>contenteditable="true"</strong> and <strong>id</strong> to its tag. It must contain no PHP code, only text with formatting tags (bold, color, font size...), links, paragraphs, titles, lists and div, example:<br><strong>&lt;p id="intro" contenteditable="true"&gt;My &lt;b&gt;text&lt;/b&gt;&lt;/p&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>Máis exemplos de código HTML ou dinámico dispoñibles na <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible"> documentación da wiki</a>.<br>
 ClonePage=Clonar páxina/contedor
 CloneSite=Clonar sitio
@@ -88,6 +89,8 @@ ImportSite=Importar padrón de sitio web
 IDOfPage=Id da páxina
 Banner=Banner
 BlogPost=Entrada no blog
+PageHeader=Cabeceira
+PageFooter=Pé de páxina
 WebsiteAccount=Conta do sitio web
 WebsiteAccounts=Contas do sitio web
 AddWebsiteAccount=Crear unha conta de sitio web
@@ -102,7 +105,7 @@ YouMustDefineTheHomePage=Primeiro debe definir a páxina de inicio predeterminad
 OnlyEditionOfSourceForGrabbedContentFuture=Aviso: A creación dunha páxina web importando unha páxina web externa está reservada para usuarios experimentados e só pode funcionar con páxinas renderizadas só con HTML e CSS. A importación de páxinas renderizadas por frameworks JS NON é compatible. Dependendo da complexidade da páxina de orixe, o resultado da importación probablemente será diferente da páxina orixinal. Ademais, se a páxina de orixe usa estilos CSS comúns ou JavaScript contraditorio, pode romper o aspecto ou as funcións do editor web ao traballar nesta páxina. Este método é unha forma rápida de crear unha páxina para usuarios moi avanzados cando a páxina de orixe o permite, pero recoméndase crear a nova páxina desde cero ou desde un modelo de páxina suxerido.<br>Teña en conta tamén que o editor en liña pode non funcionar correctamente cando se usa nunha páxina que foi capturada.
 OnlyEditionOfSourceForGrabbedContent=Só é posible a edición de orixe HTML cando se capturou contido dun sitio externo
 GrabImagesInto=Toma tamén imaxes atopadas en css e páxina.
-ImagesShouldBeSavedInto=As imaxes deberían gardarse no directorio
+ImagesShouldBeSavedInto=As imaxes deben gardarse no directorio
 WebsiteRootOfImages=Directorio raíz para as imaxes do sitio web
 SubdirOfPage=Subdirectorio adicado á páxina
 AliasPageAlreadyExists=A páxina de alias <strong>%s </strong> xa existe
@@ -119,7 +122,7 @@ NoWebSiteCreateOneFirst=Aínda non se creou ningún sitio web. Cree un primeiro.
 GoTo=Ir a
 DynamicPHPCodeContainsAForbiddenInstruction=Engade un código PHP dinámico que contén a instrución PHP '<strong>%s </strong>' que está prohibida por defecto como contido dinámico (ver as opcións ocultas WEBSITE_PHP_ALLOW_xxx para aumentar a lista de comandos permitidos).
 NotAllowedToAddDynamicContent=Non tes permiso para engadir ou editar contido dinámico de PHP en sitios web. Solicita permiso ou simplemente mantén o código nas etiquetas de PHP sen modificar.
-NotAllowedToAddDynamicContentDisabledGlobaly=Actualmente non pode engadir nin editar contido dinámico de PHP neste sitio web (mesmo se ten permiso para facelo), porque esta funcionalidade debe activarse primeiro globalmente definindo o parámetro %s=1 no ficheiro conf.php.<br>Edita o teu ficheiro conf.php para engadir este parámetro ou pídella ao seu administrador ou ao servizo de asistencia que o fagan por vostede.
+NotAllowedToAddDynamicContentDisabledGlobaly=Actualmente non pode engadir nin editar contido dinámico de PHP neste sitio web (mesmo se ten permiso para facelo), porque esta funcionalidade debe activarse primeiro globalmente definindo o parámetro %s=1 no ficheiro conf.php.<br>Edite o seu ficheiro conf.php para engadir este parámetro ou pídalle ao seu administrador ou ao equipo de soporte que o fagan por vostede.
 ReplaceWebsiteContent=Buscar ou substituír contido do sitio web
 DeleteAlsoJs=Eliminar tamén todos os ficheiros javascript específicos deste sitio web?
 DeleteAlsoMedias=Quere eliminar tamén todos os ficheiros multimedia específicos deste sitio web?
@@ -151,6 +154,7 @@ DefineListOfAltLanguagesInWebsiteProperties=Define a listaxe de todos os idiomas
 GenerateSitemaps=Xera o ficheiro sitemap.xml do sitio web
 ConfirmGenerateSitemaps=Se confirmas, borrará o ficheiro de mapa do sitio existente ...
 ConfirmSitemapsCreation=Confirma a xeración do mapa do sitio
+ConfirmSetAsHomePage=Are you sure you want to set the page <b>%s</b> as the home page of the website?
 SitemapGenerated=Ficheiro co Mapa do Sitio <b>%s</b> xerado
 ImportFavicon=Favicon
 ErrorFaviconType=A favicon debe estar no formato png
@@ -509,3 +513,13 @@ ThisDirectoryIsEmpty=Este directorio está baleiro
 WrittenBy=Escrito por %s
 ImportOfWebsiteTemplateIncludingPHPIsAllowedIf=A importación de modelos de sitios web que usan contido dinámico en PHP só está permitida se $dolibarr_website_allow_custom_php está definido como 2 en conf.php.
 ImportOfWebsiteTemplateIncludingPHPIsDisabled=A importación de modelos de sitios web que usan contido dinámico en PHP debe ter $dolibarr_website_allow_custom_php definido en 1 ou 2 en conf.php para que sexa permitida.
+CurrentPageVersion=Páxina actual
+ListOfPageVersions=Lista de versións arquivadas da páxina (créase un ficheiro de copia de seguridade da páxina cada vez que se garda un cambio, por exemplo na fonte HTML)
+EditInLineAllowedAreas=No modo Editar en liña, as etiquetas con contenteditable="true", un id e sen código PHP no seu interior pódense cambiar e gárdanse ao saír delas. Permítese o formato de texto (negriña, cor, tamaño de letra...), ligazóns, parágrafos, títulos e listas, as imaxes e outro HTML só se poden cambiar na fonte HTML.
+ErrorEditInlineElementNoId=Este elemento ten contenteditable="true" pero non ten identificador, polo que non se pode editar en liña.
+ErrorEditInlineElementNotFound=Non se atopou ningún elemento co ID %s e contenteditable="true" na fonte da páxina.
+ErrorEditInlineElementNotUnique=O id %s é usado por varios elementos con contenteditable="true" na fonte da páxina.
+ErrorEditInlineElementWithPhp=O elemento co id %s contén código PHP no código fonte da páxina, polo que só se pode cambiar no código fonte HTML.
+ErrorEditInlineElementNotAllowedHtml=O elemento co id %s contén HTML que non se pode editar en liña (imaxe, formulario, script, comentario, outras etiquetas ou atributos...), polo que só se pode cambiar na fonte HTML.
+ErrorEditInlineElementNotPlainText=O elemento co ID %s contén HTML na fonte da páxina e só se pode editar en liña como texto sen formato, polo que só se pode cambiar na fonte HTML.
+ErrorEditInlineContentNotAllowed=O novo contido do elemento co ID %s contén etiquetas ou atributos HTML que non están permitidos, polo que non se gardou.

@@ -13,7 +13,7 @@ descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=当销售订单设置为已开票时�
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=When a customer invoice is validated, classify linked source proposals as billed (and if the amount of the invoice is the same as the total amount of the signed linked proposals)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=当客户发票设置为已支付时，将链接的源销售订单归类为已开票（且如果发票 订单的金额与链接的销售订单的总金额相同）。如果您对n个订单设置生成 1 张发票，这也可能将所有订单设置为已开票。
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=当一个客户发票订单被验证后，将所有关联的源销售订单归类为已开票（且如果发票的金额与关联的源销售订单的总金额相同）。如果您为 n 个订单设置生成 1 个共同的发票，这可能会将所有源订单设置为已开票。
-descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=当一个客户发票被验证时，如果关联的销售订单的总金额等于从其发出的所有发票的总金额，将关联的销售订单（如果只有一个）归类为已开票。如果您为 1  个订单生成 n 张发票，则一旦所有发票都已验证，就可以将该订单设置为已开票。
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=When a customer invoice is validated, classify the linked sales order (if there is only one) as billed, if the total amount of the linked sales order is equal to the total amount of all invoices issued from it. If you generate n invoices for 1 order, this allows you to set the order to billed as soon as all invoices are validated.
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=当发货单被验证后，将链接源销售订单归类为已发货（且如果所有货件的发货数量与要更新的订单中的数量相同）
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=当发货单关闭时，将链接源销售订单归类为已发货（且如果所有货件的发货数量与要更新的订单中的数量相同）
 # Autoclassify purchase proposal
@@ -24,7 +24,7 @@ descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=当收货单被验证后，将链
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=当收货单关闭时，将链接源采购订单归类为已收货（且如果从采购订单发出的所有收货单所收到的总数量与要更新的采购订单中的数量相同）
 # Autoclassify shipment
 descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=When a customer invoice is validated, classify the linked source shipment as closed (and if the amount of the invoice is the same as the total amount of the linked shipments)
-descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=When a customer invoice is validated, classify the linked source shipment as billed (and if the amount of the invoice is the same as the total amount of the linked shipments)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=When a customer invoice is validated, classify the linked source shipment as billed (and if the amount of the invoice is the same as the total amount of the linked shipments, except for a shipment without sales order, which has no amount)
 # Autoclassify receptions
 descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=When a purchase invoice is validated, classify linked source receptions as closed (and if the amount of the invoice is the same as the total amount of the linked receptions)
 descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=When a purchase invoice is validated, classify linked source receptions as billed (and if the amount of the invoice is the same as the total amount of the linked receptions)

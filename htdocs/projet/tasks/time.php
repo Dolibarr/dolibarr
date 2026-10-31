@@ -220,6 +220,10 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$action = '';
 }
 
+if ($action == 'addtimespent' && GETPOST('button_search_x', 'alpha')) {	// Test on permission not required
+	$action = '';
+}
+
 if ($action == 'addtimespent' && $user->hasRight('projet', 'time')) {
 	$timespent_durationhour = GETPOSTINT('timespent_durationhour');
 	$timespent_durationmin = GETPOSTINT('timespent_durationmin');
@@ -299,6 +303,7 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			$id_temp = GETPOSTINT('taskid'); 	// should not overwrite $id
 
 			$object->fetchTimeSpent($lineid);
+			$timespentoldowner = $object->timespent_fk_user;	// Owner of the line, before the value of the form is set
 
 			$result = 0;
 
@@ -324,7 +329,7 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			$object->timespent_invoicelineid = GETPOSTINT("invoicelineid");
 
 			$result = 0;
-			if (in_array($object->timespent_fk_user, $childids) || $user->hasRight('projet', 'all', 'creer')) {
+			if ((in_array($timespentoldowner, $childids) || $user->hasRight('projet', 'all', 'creer')) && (in_array($object->timespent_fk_user, $childids) || $user->hasRight('projet', 'all', 'creer'))) {
 				$result = $object->updateTimeSpent($user);
 				if ($result >= 0) {
 					setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
@@ -337,6 +342,7 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			$object->fetch($id, $ref);	// $object is Task
 
 			$object->fetchTimeSpent(GETPOSTINT('lineid'));
+			$timespentoldowner = $object->timespent_fk_user;	// Owner of the line, before the value of the form is set
 
 			$object->timespent_note = GETPOST("timespent_note_line", "alphanohtml");
 			$object->timespent_old_duration = GETPOSTINT("old_duration");
@@ -363,7 +369,7 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 
 			$result = 0;
 
-			if (in_array($object->timespent_fk_user, $childids) || $user->hasRight('projet', 'all', 'creer')) {
+			if ((in_array($timespentoldowner, $childids) || $user->hasRight('projet', 'all', 'creer')) && (in_array($object->timespent_fk_user, $childids) || $user->hasRight('projet', 'all', 'creer'))) {
 				$result = $object->updateTimeSpent($user);
 
 				if ($result >= 0) {
@@ -524,7 +530,7 @@ if ($massaction == 'exportlines' && !empty($toselect)) {
 		header('Content-Disposition: attachment; filename="'.$filename.'"');
 
 		$exportcsv->open_file('php://output', $langs);
-		$exportcsv->write_header($langs);
+		$exportcsv->write_header($langs);  // @phpstan-ignore-line
 		$exportcsv->write_title($array_fields, $array_selected, $langs, array());
 		while ($obj = $db->fetch_object($resql)) {
 			$record = new stdClass();
@@ -543,7 +549,7 @@ if ($massaction == 'exportlines' && !empty($toselect)) {
 			$record->invoice_ref = $obj->invoice_ref;
 			$exportcsv->write_record($array_selected, $record, $langs, array());
 		}
-		$exportcsv->write_footer($langs);
+		$exportcsv->write_footer($langs);  // @phpstan-ignore-line
 		$exportcsv->close_file();
 
 		$db->free($resql);
@@ -2234,6 +2240,15 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			print '</td>';
 		}
 		print '</tr>' . "\n";
+
+		print '<script type="text/javascript">
+			$(document).on("keydown", "tr.liste_titre_filter input", function (e) {
+				if (e.which === 13) {
+					e.preventDefault();
+					$(this).closest("form").find("button[name=\"button_search_x\"]").first().trigger("click");
+				}
+			});
+		</script>';
 
 
 		$totalarray = array();
