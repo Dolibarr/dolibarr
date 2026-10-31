@@ -126,6 +126,13 @@ class modProjet extends DolibarrModules
 				0,
 			],
 			[
+				"PROJECT_LEAD_ADDON",
+				"chaine",
+				"mod_lead_simple",
+				"Addon to manage opportunity (lead) reference numbering",
+				0,
+			],
+			[
 				"PROJECT_TASK_EMAIL_TEMPLATE_REMIND_OVERDUE",
 				"emailtemplate:project_task",
 				"(SendingReminderForOverdueTask)",

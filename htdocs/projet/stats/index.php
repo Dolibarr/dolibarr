@@ -151,6 +151,11 @@ if (!empty($socid) && $socid != -1) {
 if (!empty($year)) {
 	$stats_project->year = $year;
 }
+// Restrict statistics to opportunities or projects only (issue #23821)
+$statsmode = GETPOST('mode', 'aZ09');
+if ($statsmode == 'lead' || $statsmode == 'project') {
+	$stats_project->mode = $statsmode;
+}
 
 if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 	if ($search_opp_status) {
