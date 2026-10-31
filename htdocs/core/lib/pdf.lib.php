@@ -2895,6 +2895,17 @@ function pdf_render_subtotals(
 	} else {
 		$pdf->MultiCell($width, $pdf->getPageHeight() - $pdf->getBreakMargin() - $curY, '', 0, '', true);
 
+		// rollbackTransaction() removed extra pages; recreate them before setPage().
+		while ($pdf->getNumPages() < $pageAfter) {
+			$pdf->AddPage();
+		}
+
+		for ($p = $savePage + 1; $p < $pageAfter; $p++) {
+			$pdf->setPage($p);
+			$pdf->SetXY($generator->marge_gauche, $pdf->getMargins()['top']);
+			$pdf->MultiCell($width, $pdf->getPageHeight() - $pdf->getBreakMargin() - $pdf->getMargins()['top'], '', 0, '', true);
+		}
+
 		$pdf->setPage($pageAfter);
 		$pdf->SetXY($generator->marge_gauche, $pdf->getMargins()['top']);
 		$pdf->MultiCell($width, max(0, $yAfter - $pdf->getMargins()['top']), '', 0, '', true);
