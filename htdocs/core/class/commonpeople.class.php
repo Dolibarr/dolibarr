@@ -53,6 +53,7 @@
  * @property string $user_mobile
  * @property string $country_code
  * @property string $region
+ * @property ?string $typent_code
  */
 trait CommonPeople
 {
