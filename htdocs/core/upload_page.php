@@ -1109,6 +1109,10 @@ if ($action == 'showsummary') {
 		}
 	}
 
+	if (!is_array($json)) {
+		$json = array();
+	}
+
 	if ($modulepart == 'invoice_supplier') {
 		$langs->loadLangs(array("bills", "companies", "products"));
 
@@ -1234,10 +1238,12 @@ if ($action == 'showsummary') {
 		print "\n";
 
 
-		// @phan-suppress-next-line PhanTypeMismatchDimFetch
-		$nameprodindoc = $invoiceindoc['items'][0]['description'];
-		if (empty($nameprodindoc) && !empty($invoiceindoc['items'][0]['service'])) {
-			$nameprodindoc = $invoiceindoc['items'][0]['service'];
+		$nameprodindoc = '';
+		if (!empty($invoiceindoc['lines']) && is_array($invoiceindoc['lines'])) {
+			$firstlineindoc = reset($invoiceindoc['lines']);
+			if (is_array($firstlineindoc)) {
+				$nameprodindoc = $firstlineindoc['desc'] ?? '';
+			}
 		}
 		$nbofitems = 0;
 		if (!empty($invoiceindoc['lines']) && is_array($invoiceindoc['lines'])) {
