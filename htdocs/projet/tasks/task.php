@@ -71,6 +71,7 @@ $projectstatic = new Project($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($projectstatic->table_element);
 
 $parameters = array('id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -82,6 +83,7 @@ if ($id > 0 || $ref) {
 	$ret = $object->fetch($id, $ref);
 	if ($ret > 0) {
 		$projectstatic->fetch((int) $object->fk_project);
+		$projectstatic->fetch_optionals();
 	}
 }
 
@@ -97,6 +99,40 @@ restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
  */
 
 $error = 0;
+
+// Only the edit form of the project block sends withproject=1, so an attribute of the task with the same code is not saved on the project
+$attribute_name = GETPOST('attribute', 'aZ09');
+if ($action == 'update_extras' && $id > 0 && $projectstatic->id > 0 && GETPOSTINT('withproject') && isset($extrafields->attributes[$projectstatic->table_element]['label'][$attribute_name])) {
+	$permissiontoeditprojectextra = $user->hasRight('projet', 'creer');
+	if ($attribute_name && isset($extrafields->attributes[$projectstatic->table_element]['perms'][$attribute_name])) {
+		$savobject = $object;
+		$object = $projectstatic;
+		$permissiontoeditprojectextra = dol_eval((string) $extrafields->attributes[$projectstatic->table_element]['perms'][$attribute_name]);
+		$object = $savobject;
+	}
+
+	if ($permissiontoeditprojectextra) {
+		$projectstatic->oldcopy = dol_clone($projectstatic, 2);
+
+		$ret = $extrafields->setOptionalsFromPost(null, $projectstatic, $attribute_name);
+		if ($ret < 0) {
+			$error++;
+			setEventMessages($extrafields->error, $projectstatic->errors, 'errors');
+		}
+
+		if (!$error) {
+			$result = $projectstatic->updateExtraField($attribute_name, 'PROJECT_MODIFY');
+			if ($result < 0) {
+				setEventMessages($projectstatic->error, $projectstatic->errors, 'errors');
+				$error++;
+			}
+		}
+	}
+
+	if ($error) {
+		$action = 'edit_extras';
+	}
+}
 
 if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('projet', 'creer')) {
 	if (empty($taskref)) {
@@ -440,7 +476,10 @@ if ($id > 0 || !empty($ref)) {
 		$cols = 2;
 		$savobject = $object;
 		$object = $projectstatic;
+		$forceobjectid = $savobject->id;
+		$moreparam = '&withproject=1';
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+		unset($forceobjectid, $moreparam);
 		$object = $savobject;
 
 		print '</table>';
