@@ -5948,6 +5948,45 @@ class Form
 		return $out;
 	}
 
+	/**
+	 * Return a multiselect combo of payment terms, to use into search filters of list pages.
+	 * With $addnotdefined, an entry with the special value -2 is added to allow the search of records with no payment term defined.
+	 * The SQL criteria can then be forged with natural_search_multiselect().
+	 *
+	 * @param 	int[]|string[]	$selected 		Array of ids of payment terms preselected (-2 for "not defined")
+	 * @param 	string 			$htmlname 		Name of the multiselect zone
+	 * @param 	int 			$filtertype 	If > 0, include payment terms with deposit percentage (for objects other than invoices and invoice templates)
+	 * @param 	int<0,1> 		$addnotdefined 	1=Add an entry "Not defined" with the special value -2 (to search records with no value set)
+	 * @param 	string 			$morecss 		Add more CSS on select tag
+	 * @return	string							String for the HTML multiselect component
+	 * @see getSelectConditionsPaiements(), multiselectarray(), natural_search_multiselect()
+	 */
+	public function multiSelectConditionsPaiements($selected = array(), $htmlname = 'search_paymentterms', $filtertype = -1, $addnotdefined = 0, $morecss = '')
+	{
+		global $langs;
+
+		$this->load_cache_conditions_paiements();
+
+		$arrayofpaymentterms = array();
+		if ($addnotdefined) {
+			$arrayofpaymentterms[-2] = '- '.$langs->trans("NotDefined").' -';
+		}
+		foreach ($this->cache_conditions_paiements as $id => $arrayconditions) {
+			if ($filtertype <= 0 && !empty($arrayconditions['deposit_percent'])) {
+				continue;
+			}
+
+			$label = $arrayconditions['label'];
+			if (!empty($arrayconditions['deposit_percent'])) {
+				$label = str_replace('__DEPOSIT_PERCENT__', (string) $arrayconditions['deposit_percent'], $label);
+			}
+			$arrayofpaymentterms[$id] = $label;
+		}
+
+		// The hidden empty entry makes an emptied combo post something, so GETPOST does not fall back on a default filter of Setup - Default values
+		return '<input type="hidden" name="'.$htmlname.'[]" value="">'.$this->multiselectarray($htmlname, $arrayofpaymentterms, $selected, 0, 0, $morecss);
+	}
+
 
 	/**
 	 * Returns select with rule for lines dates
@@ -6097,6 +6136,47 @@ class Form
 		} else {
 			return $out;
 		}
+	}
+
+	/**
+	 * Return a multiselect combo of payment modes, to use into search filters of list pages.
+	 * With $addnotdefined, an entry with the special value -2 is added to allow the search of records with no payment mode defined.
+	 * The SQL criteria can then be forged with natural_search_multiselect().
+	 *
+	 * @param 	int[]|string[]	$selected 		Array of ids of payment modes preselected (-2 for "not defined")
+	 * @param 	string 			$htmlname 		Name of the multiselect zone
+	 * @param 	int<0,1> 		$addnotdefined 	1=Add an entry "Not defined" with the special value -2 (to search records with no value set)
+	 * @param 	string 			$morecss 		Add more CSS on select tag
+	 * @param 	int 			$active 		Keep only active (1) or inactive (0) payment modes, -1 = all
+	 * @return	string							String for the HTML multiselect component
+	 * @see select_types_paiements(), multiselectarray(), natural_search_multiselect()
+	 */
+	public function multiSelectTypesPaiements($selected = array(), $htmlname = 'search_paymentmode', $addnotdefined = 0, $morecss = '', $active = 1)
+	{
+		global $langs;
+
+		$this->load_cache_types_paiements();
+
+		$arrayofpaymentmodes = array();
+		if ($addnotdefined) {
+			$arrayofpaymentmodes[-2] = '- '.$langs->trans("NotDefined").' -';
+		}
+		foreach ($this->cache_types_paiements as $id => $arraytypes) {
+			// If not good status
+			if ($active >= 0 && $arraytypes['active'] != $active) {
+				continue;
+			}
+
+			// We discard empty lines
+			if (empty($arraytypes['code'])) {
+				continue;
+			}
+
+			$arrayofpaymentmodes[$id] = $arraytypes['label'];
+		}
+
+		// The hidden empty entry makes an emptied combo post something, so GETPOST does not fall back on a default filter of Setup - Default values
+		return '<input type="hidden" name="'.$htmlname.'[]" value="">'.$this->multiselectarray($htmlname, $arrayofpaymentmodes, $selected, 0, 0, $morecss);
 	}
 
 
