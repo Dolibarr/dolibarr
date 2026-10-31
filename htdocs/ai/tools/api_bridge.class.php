@@ -197,6 +197,15 @@ class ToolApiBridge extends McpTool
 	private $writeProblems = [];
 
 	/**
+	 * Mandatory fields the last normaliseWriteArgs() call of a create found
+	 * missing (an extra field, the invoice subtype), each with what it takes:
+	 * all of them are asked for at once by writePrecheck().
+	 *
+	 * @var string[]
+	 */
+	private $writeMissing = [];
+
+	/**
 	 * Fields of the last update that may not be changed through the chat.
 	 *
 	 * @var string[]
@@ -1442,6 +1451,7 @@ class ToolApiBridge extends McpTool
 
 		$this->addReadEndpoints();
 		$this->addWritesOnExistingRecords();
+		$this->addCreateFields();
 		// Modules answer last so their enrichment keys can never shadow a core one.
 		$this->loadExternalEnrichments();
 	}
@@ -2426,6 +2436,55 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * What every create may also carry: the extra fields of the record, and on
+	 * an invoice its subtype. The card asks for the mandatory ones before it
+	 * creates anything, so the create tools do the same: a required extra field
+	 * or subtype that is missing is asked for before the confirmation, never
+	 * left empty on a record that the card could not have saved.
+	 *
+	 * @return void
+	 */
+	private function addCreateFields()
+	{
+		$elements = array(
+			'Facture' => 'facture',
+			'FactureFournisseur' => 'facture_fourn',
+			'Commande' => 'commande',
+			'CommandeFournisseur' => 'commande_fournisseur',
+			'Propal' => 'propal',
+			'SupplierProposal' => 'supplier_proposal',
+			'Societe' => 'societe',
+			'Contact' => 'socpeople',
+			'Product' => 'product',
+			'Project' => 'projet',
+			'Task' => 'projet_task',
+			'Ticket' => 'ticket',
+			'Contrat' => 'contrat',
+			'Fichinter' => 'fichinter',
+			'Expedition' => 'expedition',
+			'Reception' => 'reception'
+		);
+		foreach ($this->enrichments as $key => $entry) {
+			foreach ((array) ($entry['methods'] ?? array()) as $method => $meta) {
+				$write = (array) ($meta['write'] ?? array());
+				$class = (string) ($write['object'] ?? '');
+				if (!isset($elements[$class]) || empty($meta['params']) || !empty($write['parent']) || !empty($write['update'])
+					|| in_array((string) ($write['kind'] ?? ''), array('update', 'action', 'delete', 'payment', 'line'), true)) {
+					continue;	// not a create
+				}
+				$write['extrafields'] = $elements[$class];
+				$meta['params']['array_options'] = "Extra fields of the record, by their code or label, e.g. {\"po_number\": \"PO-12\"}. Give only the ones the user named: a mandatory one that is missing is asked for before anything is written.";
+				if ($class === 'Facture' || $class === 'FactureFournisseur') {
+					$write['subtype'] = true;
+					$meta['params']['subtype'] = "Invoice subtype, where the company uses them (Greece): its code, e.g. 1.1, or its label. Omit it when the user did not say: it is asked for when it is mandatory.";
+				}
+				$meta['write'] = $write;
+				$this->enrichments[$key]['methods'][$method] = $meta;
+			}
+		}
+	}
+
+	/**
 	 * A setup constant read while the tools are declared. The tools are also
 	 * declared outside a full Dolibarr environment (unit tests), where no
 	 * setup is loaded: the constant then reads as not set.
@@ -2447,6 +2506,7 @@ class ToolApiBridge extends McpTool
 	private function resetWriteState()
 	{
 		$this->writeProblems = array();
+		$this->writeMissing = array();
 		$this->writeRefusedFields = array();
 		$this->writeTarget = null;
 		$this->writeLine = array('line' => null, 'position' => 0, 'changes' => array());
@@ -3265,6 +3325,11 @@ class ToolApiBridge extends McpTool
 							'properties' => $lineFields
 						]
 					];
+					continue;
+				}
+				if ($pname === 'array_options') {
+					// Code => value: the codes are the instance's own, so none is listed.
+					$properties[$pname] = ['type' => 'object', 'description' => $pdesc];
 					continue;
 				}
 				$properties[$pname] = ['type' => 'string', 'description' => $pdesc];
@@ -4386,13 +4451,14 @@ class ToolApiBridge extends McpTool
 			$declared = (array) ($this->methodMetaFor($toolName)['params'] ?? array());
 			$extra = array();
 			foreach ($args as $argname => $argvalue) {
-				if (in_array($argname, $write['args'], true) || !array_key_exists($argname, $declared) || is_array($argvalue) || (string) $argvalue === '') {
+				// The subtype is named by previewCreateFields(), not by its rowid.
+				if (in_array($argname, $write['args'], true) || !array_key_exists($argname, $declared) || is_array($argvalue) || (string) $argvalue === '' || $argname === 'subtype') {
 					continue;
 				}
 				$extra[] = $argname.'='.dol_trunc($this->previewValue($write, $argname, $argvalue, $args), 40);
 			}
 			$values[] = empty($extra) ? '' : ' ('.implode(', ', $extra).')';
-			return $langs->trans($write['preview'], ...$values);
+			return $langs->trans($write['preview'], ...$values).$this->previewCreateFields($args);
 		}
 
 		$who = '';
@@ -4428,7 +4494,7 @@ class ToolApiBridge extends McpTool
 			$what .= ': '.$this->previewLogisticLines($lines, (string) $write['kind']);
 		}
 
-		return $langs->trans($write['preview'], $who, $what);
+		return $langs->trans($write['preview'], $who, $what).$this->previewCreateFields($args);
 	}
 
 	/**
@@ -4500,11 +4566,31 @@ class ToolApiBridge extends McpTool
 	 * - a line for a record that is missing or no longer a draft, or for an
 	 *   unknown product.
 	 *
+	 * - a create that misses a mandatory extra field or invoice subtype;
+	 * - a write a module refuses (see precheckByModules()).
+	 *
 	 * @param  string             $toolName Tool being called.
 	 * @param  array<string,mixed> $args    Arguments as received.
 	 * @return string                       Error message, or '' to proceed.
 	 */
 	public function writePrecheck(string $toolName, array $args)
+	{
+		$refused = $this->precheckWrite($toolName, $args);
+		if ($refused !== '') {
+			return $refused;
+		}
+
+		return $this->precheckByModules($toolName, $args);
+	}
+
+	/**
+	 * The checks of writePrecheck() core makes itself.
+	 *
+	 * @param  string             $toolName Tool being called.
+	 * @param  array<string,mixed> $args    Arguments as received.
+	 * @return string                       Error message, or '' to proceed.
+	 */
+	private function precheckWrite(string $toolName, array $args)
 	{
 		global $langs, $user;
 
@@ -4596,6 +4682,12 @@ class ToolApiBridge extends McpTool
 			}
 		}
 
+		// Every mandatory field left out, asked for at once.
+		if (!empty($this->writeMissing)) {
+			$langs->load('other');
+			return $langs->transnoentitiesnoconv('AIWriteRequiredFieldsMissing', implode('; ', $this->writeMissing));
+		}
+
 		// A logistic document: nothing is asked of the user when the write would
 		// fail anyway - standalone documents switched off, no line, a line with
 		// no product to move, or no warehouse to receive into.
@@ -4650,6 +4742,115 @@ class ToolApiBridge extends McpTool
 		}
 
 		return '';
+	}
+
+	/**
+	 * Let the modules refuse a write before the user is asked to approve it,
+	 * the way their doActions hook refuses the same record on the card: hook
+	 * 'checkMcpApiBridgeWrite' of the 'aimcp' context. The hook receives the
+	 * record as it will be after the write (a new, unsaved one for a create),
+	 * and in $parameters:
+	 * - 'tool': name of the tool;
+	 * - 'operation': 'create', 'addline', 'update', 'action', 'delete',
+	 *   'payment' or 'line';
+	 * - 'class': business class of the record;
+	 * - 'args': the arguments the write will be made with.
+	 * It returns a negative value, with its message in ->error or ->errors,
+	 * to refuse: the message is what the user reads, and nothing is written.
+	 *
+	 * @param  string             $toolName Tool being called.
+	 * @param  array<string,mixed> $args    Arguments as received.
+	 * @return string                       Message of the module that refuses, or '' to proceed.
+	 */
+	private function precheckByModules(string $toolName, array $args)
+	{
+		global $hookmanager, $langs;
+
+		$write = $this->writeMetaFor($toolName);
+		if (empty($write) || empty($this->db)) {
+			return '';
+		}
+		if (!is_object($hookmanager)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager = new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('aimcp'));
+		if (empty($hookmanager->hooks['aimcp'])) {
+			return '';	// no module listens: the arguments are not prepared twice for nothing
+		}
+		$args = $this->applyFixedParams($toolName, $args);
+		try {
+			$args = $this->normaliseWriteArgs($args, $write);
+		} catch (InvalidArgumentException $e) {
+			return $e->getMessage();
+		}
+		foreach (array_keys($args) as $name) {
+			if ($name === 'requestState' || substr((string) $name, 0, 1) === '_') {
+				unset($args[$name]);
+			}
+		}
+
+		$class = (string) ($write['object'] ?? '');
+		$kind = (string) ($write['kind'] ?? '');
+		$object = null;
+		if (!empty($write['update']) || $kind === 'update') {
+			$operation = 'update';
+			$current = !empty($write['update']) ? $this->fetchWriteParent($write, $args) : $this->writeTarget;
+			if ($current instanceof CommonObject) {
+				// The record as the write leaves it.
+				$object = clone $current;
+				$changes = !empty($write['update']) ? array_intersect_key($args, $write['update']) : array_intersect_key($args, array_flip((array) ($write['fields'] ?? array())));
+				$this->applyWriteFields($object, $changes);
+			}
+		} elseif (in_array($kind, array('action', 'delete', 'payment', 'line'), true)) {
+			$operation = $kind;
+			$object = $this->writeTarget;
+		} elseif (!empty($write['parent'])) {
+			$operation = 'addline';
+			$object = $this->fetchWriteParent($write, $args);
+		} else {
+			$operation = 'create';
+			$object = ($class !== '') ? $this->newWriteObject($class) : null;
+			if ($object instanceof CommonObject) {
+				$this->applyWriteFields($object, $args);
+			}
+		}
+
+		$hookmanager->error = '';
+		$hookmanager->errors = array();
+		$parameters = array('tool' => $toolName, 'operation' => $operation, 'class' => $class, 'args' => $args);
+		$action = $operation;
+		$reshook = $hookmanager->executeHooks('checkMcpApiBridgeWrite', $parameters, $object, $action);
+		if ($reshook >= 0) {
+			return '';
+		}
+		$message = trim($hookmanager->error.' '.implode(' ', array_filter((array) $hookmanager->errors)));
+		dol_syslog(get_class($this).'::precheckByModules '.$toolName.' refused by a module: '.$message, LOG_INFO);
+		if ($message === '') {
+			$langs->load('other');
+			$message = $langs->transnoentitiesnoconv('AIWriteRefusedByModule');
+		}
+
+		return $message;
+	}
+
+	/**
+	 * Copy the fields of a write onto a record, for a module to check it: only
+	 * the properties the class has, the extra fields merged.
+	 *
+	 * @param  CommonObject        $object Record.
+	 * @param  array<string,mixed> $fields Field => value.
+	 * @return void
+	 */
+	private function applyWriteFields($object, array $fields)
+	{
+		foreach ($fields as $field => $value) {
+			if ($field === 'array_options') {
+				$object->array_options = array_merge((array) $object->array_options, (array) $value);
+			} elseif ($field !== 'lines' && property_exists($object, (string) $field)) {
+				$object->$field = $value;
+			}
+		}
 	}
 
 	/**
@@ -4723,18 +4924,13 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
-	 * Record of a write on an existing record, by rowid or by ref: the business
-	 * documents of fetchBusinessObject() and the records only these writes use
-	 * (contacts, projects, tasks, interventions, contracts, tickets).
+	 * Files of the business classes the writes name, by class.
 	 *
-	 * @param  string $class Business class declared by the write.
-	 * @param  int    $id    Rowid of the record, 0 to look it up by ref.
-	 * @param  string $ref   Ref of the record, used when no rowid is given.
-	 * @return CommonObject|null Record, or null when it cannot be read.
+	 * @return array<string,string> Class => path under DOL_DOCUMENT_ROOT.
 	 */
-	private function fetchRecord($class, $id, $ref = '')
+	private function recordClassFiles()
 	{
-		$paths = array(
+		return array(
 			'Facture' => '/compta/facture/class/facture.class.php',
 			'Commande' => '/commande/class/commande.class.php',
 			'Propal' => '/comm/propal/class/propal.class.php',
@@ -4754,6 +4950,40 @@ class ToolApiBridge extends McpTool
 			'WebsitePage' => '/website/class/websitepage.class.php',
 			'Website' => '/website/class/website.class.php'
 		);
+	}
+
+	/**
+	 * A new, unsaved record of one of the classes the writes name.
+	 *
+	 * @param  string $class Business class.
+	 * @return CommonObject|null Record, or null for a class the writes do not name.
+	 */
+	private function newWriteObject($class)
+	{
+		$paths = $this->recordClassFiles();
+		if (empty($paths[$class])) {
+			return null;
+		}
+		require_once DOL_DOCUMENT_ROOT.$paths[$class];
+		$obj = new $class($this->db);
+		'@phan-var-force CommonObject $obj';
+
+		return $obj;
+	}
+
+	/**
+	 * Record of a write on an existing record, by rowid or by ref: the business
+	 * documents of fetchBusinessObject() and the records only these writes use
+	 * (contacts, projects, tasks, interventions, contracts, tickets).
+	 *
+	 * @param  string $class Business class declared by the write.
+	 * @param  int    $id    Rowid of the record, 0 to look it up by ref.
+	 * @param  string $ref   Ref of the record, used when no rowid is given.
+	 * @return CommonObject|null Record, or null when it cannot be read.
+	 */
+	private function fetchRecord($class, $id, $ref = '')
+	{
+		$paths = $this->recordClassFiles();
 		$ref = trim((string) $ref);
 		if (empty($paths[$class]) || ((int) $id <= 0 && $ref === '')) {
 			return null;
@@ -5511,8 +5741,404 @@ class ToolApiBridge extends McpTool
 				$args[$field] = (int) round((float) $args[$field] * 3600);
 			}
 		}
+		if (!empty($write['subtype'])) {
+			$args = $this->normaliseInvoiceSubtype($args, (string) $write['object']);
+		}
+		if (!empty($write['extrafields'])) {
+			$args = $this->normaliseCreateExtrafields($args, (string) $write['extrafields']);
+		}
 
 		return $args;
+	}
+
+	/**
+	 * Subtype of an invoice created where the company uses subtypes (Greece):
+	 * given by its code or label, mandatory as on the card.
+	 *
+	 * @param  array<string,mixed> $args  Arguments of the create.
+	 * @param  string              $class Facture or FactureFournisseur.
+	 * @return array<string,mixed>        Arguments, with the subtype as a rowid and '_subtype' for the confirmation.
+	 */
+	private function normaliseInvoiceSubtype(array $args, $class)
+	{
+		global $langs;
+
+		$given = trim((string) (is_array($args['subtype'] ?? null) ? '' : ($args['subtype'] ?? '')));
+		unset($args['subtype']);
+		// Not used here: nothing is written, as on the card. No database when the
+		// tools are only declared (unit tests).
+		if (!getDolGlobalInt('INVOICE_SUBTYPE_ENABLED') || empty($this->db)) {
+			return $args;
+		}
+		$invoice = $this->newWriteObject($class);
+		if (!$invoice instanceof CommonInvoice) {
+			return $args;
+		}
+		$labels = $invoice->getArrayOfInvoiceSubtypes(0);	// rowid => label
+		$codes = $invoice->getArrayOfInvoiceSubtypes(1);	// code => rowid
+		if (empty($codes)) {
+			return $args;	// no subtype for the country of the company: none to ask for
+		}
+		$choices = array();
+		$found = 0;
+		foreach ($codes as $code => $rowid) {
+			$label = (string) ($labels[$rowid] ?? '');
+			$choices[] = $code.' '.$label;
+			$named = dol_strtolower($given);
+			if ($given !== '' && ((string) $code === $given || dol_strtolower($label) === $named || dol_strtolower($code.' '.$label) === $named || dol_strtolower($code.' - '.$label) === $named)) {
+				$found = (int) $rowid;
+				$args['_subtype'] = $code.' '.$label;
+				break;
+			}
+		}
+		// A rowid, the way the record shows it, when it is not also a code.
+		if (!$found && preg_match('/^\d+$/', $given) && isset($labels[(int) $given])) {
+			$found = (int) $given;
+			$args['_subtype'] = array_search($found, $codes).' '.$labels[$found];
+		}
+		$langs->load('other');
+		if ($found) {
+			$args['subtype'] = $found;
+		} elseif ($given === '') {
+			$this->writeMissing[] = $langs->transnoentitiesnoconv('InvoiceSubtype').' ('.$langs->transnoentitiesnoconv('AIWriteOneOf', implode(', ', $choices)).')';
+		} else {
+			$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteSubtypeUnknown', $given, implode(', ', $choices));
+		}
+
+		return $args;
+	}
+
+	/**
+	 * Extra fields of a record created: given by their code or label, the
+	 * values the way a user says them, and the mandatory ones the create form
+	 * shows checked as the card checks them. A mandatory field with a default
+	 * value gets it, as the form proposes it.
+	 *
+	 * @param  array<string,mixed> $args    Arguments of the create.
+	 * @param  string              $element Element the extra fields belong to (facture, societe...).
+	 * @return array<string,mixed>          Arguments, with array_options under their options_ codes and '_extrafields' for the confirmation.
+	 */
+	private function normaliseCreateExtrafields(array $args, $element)
+	{
+		global $langs;
+
+		$given = $args['array_options'] ?? array();
+		if (is_string($given)) {
+			$decoded = json_decode($given, true);
+			$given = is_array($decoded) ? $decoded : array();
+		}
+		$given = is_array($given) ? $given : array();
+		unset($args['array_options']);
+		// A model may also send them flat, next to the other fields.
+		foreach (array_keys($args) as $name) {
+			if (strpos((string) $name, 'options_') === 0) {
+				$given[$name] = $args[$name];
+				unset($args[$name]);
+			}
+		}
+		if (empty($this->db) || getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
+			return $args;
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		$extrafields = new ExtraFields($this->db);
+		$extrafields->fetch_name_optionals_label($element);
+		$attributes = (array) ($extrafields->attributes[$element] ?? array());
+		$labels = (array) ($attributes['label'] ?? array());
+		$langs->load('other');
+		foreach ((array) ($attributes['langfile'] ?? array()) as $langfile) {
+			if (!empty($langfile)) {
+				$langs->load((string) $langfile);
+			}
+		}
+
+		$options = array();
+		$known = array();
+		foreach ($labels as $code => $label) {
+			if (($attributes['type'][$code] ?? '') !== 'separate' && empty($attributes['computed'][$code])) {
+				$known[] = $code.' ('.$langs->transnoentitiesnoconv((string) $label).')';
+			}
+		}
+		foreach ($given as $name => $value) {
+			$code = $this->extrafieldCode((string) $name, $attributes);
+			if ($code === '') {
+				$this->writeProblems[] = $known ? $langs->transnoentitiesnoconv('AIWriteUnknownExtrafield', (string) $name, implode(', ', $known)) : $langs->transnoentitiesnoconv('AIWriteNoExtrafields', (string) $name);
+				continue;
+			}
+			$converted = $this->extrafieldValue($attributes, $code, $value);
+			if ($converted === null) {
+				$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteBadExtrafieldValue', $langs->transnoentitiesnoconv((string) $labels[$code]), is_array($value) ? implode(',', $value) : (string) $value, $this->extrafieldHint($attributes, $code));
+				continue;
+			}
+			$options['options_'.$code] = $converted;
+		}
+
+		// The mandatory fields of the create form, as setOptionalsFromPost() checks them.
+		foreach ($labels as $code => $label) {
+			$type = (string) ($attributes['type'][$code] ?? '');
+			if (empty($attributes['required'][$code]) || $type === 'separate' || !empty($attributes['computed'][$code]) || !$this->extrafieldOnCreateForm($attributes, $code)) {
+				continue;
+			}
+			$label = $langs->transnoentitiesnoconv((string) $label);
+			if (array_key_exists('options_'.$code, $options)) {
+				if (ExtraFields::isEmptyValue($options['options_'.$code], $type)) {
+					$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteExtrafieldRequiredEmpty', $label);
+				}
+				continue;
+			}
+			$default = (string) ($attributes['default'][$code] ?? '');
+			if ($default !== '' && !ExtraFields::isEmptyValue($default, $type)) {
+				$options['options_'.$code] = $default;
+				continue;
+			}
+			$this->writeMissing[] = $label.' ('.$this->extrafieldHint($attributes, $code).')';
+		}
+
+		if ($options) {
+			$args['array_options'] = $options;
+			$shown = array();
+			foreach ($options as $key => $value) {
+				$code = substr($key, 8);
+				$shown[] = $langs->transnoentitiesnoconv((string) $labels[$code]).': '.$this->extrafieldDisplay($attributes, $code, $value);
+			}
+			$args['_extrafields'] = implode('; ', $shown);
+		}
+
+		return $args;
+	}
+
+	/**
+	 * Code of an extra field named by its code, with or without the options_
+	 * prefix, or by its label, in any case.
+	 *
+	 * @param  string              $name       Name given.
+	 * @param  array<string,mixed> $attributes Extra fields of the element.
+	 * @return string                          Code, or '' when none fits.
+	 */
+	private function extrafieldCode($name, array $attributes)
+	{
+		global $langs;
+
+		$name = trim($name);
+		if (strpos($name, 'options_') === 0) {
+			$name = substr($name, 8);
+		}
+		$wanted = dol_strtolower($name);
+		foreach ((array) ($attributes['label'] ?? array()) as $code => $label) {
+			if (($attributes['type'][$code] ?? '') === 'separate' || !empty($attributes['computed'][$code])) {
+				continue;	// nothing to give
+			}
+			if (dol_strtolower((string) $code) === $wanted || dol_strtolower((string) $label) === $wanted || dol_strtolower($langs->transnoentitiesnoconv((string) $label)) === $wanted) {
+				return (string) $code;
+			}
+		}
+
+		return '';
+	}
+
+	/**
+	 * Whether the create form of the card shows an extra field to this user.
+	 *
+	 * @param  array<string,mixed> $attributes Extra fields of the element.
+	 * @param  string              $code       Code of the field.
+	 * @return bool
+	 */
+	private function extrafieldOnCreateForm(array $attributes, $code)
+	{
+		foreach (array('enabled', 'perms') as $condition) {
+			if (isset($attributes[$condition][$code]) && $attributes[$condition][$code] !== '' && empty(dol_eval((string) $attributes[$condition][$code], 1, 1, '2'))) {
+				return false;
+			}
+		}
+		$visibility = isset($attributes['list'][$code]) ? (int) dol_eval((string) $attributes['list'][$code], 1, 1, '2') : 1;
+
+		return in_array(abs($visibility), array(1, 3), true);
+	}
+
+	/**
+	 * Value of an extra field, from the way a user says it: the key or the label
+	 * of a choice, yes or no, a date as text.
+	 *
+	 * @param  array<string,mixed> $attributes Extra fields of the element.
+	 * @param  string              $code       Code of the field.
+	 * @param  mixed               $value      Value given.
+	 * @return string|int|float|null           Value to store, null when it is not one the field takes.
+	 */
+	private function extrafieldValue(array $attributes, $code, $value)
+	{
+		global $langs;
+
+		$type = (string) ($attributes['type'][$code] ?? '');
+		if (is_array($value)) {
+			if ($type !== 'checkbox' && $type !== 'chkbxlst') {
+				return null;
+			}
+			$value = implode(',', $value);
+		}
+		$text = trim((string) $value);
+		if ($text === '') {
+			return '';
+		}
+		$said = dol_strtolower($text);
+		switch ($type) {
+			case 'boolean':
+				if (in_array($said, array('1', 'yes', 'true', 'on', dol_strtolower($langs->transnoentitiesnoconv('Yes'))), true)) {
+					return 1;
+				}
+				if (in_array($said, array('0', 'no', 'false', 'off', dol_strtolower($langs->transnoentitiesnoconv('No'))), true)) {
+					return 0;
+				}
+				return null;
+			case 'int':
+				return preg_match('/^-?\d+$/', $text) ? (int) $text : null;
+			case 'double':
+			case 'price':
+			case 'pricecy':
+				$number = price2num($text);
+				return is_numeric($number) ? (float) $number : null;
+			case 'date':
+			case 'datetime':
+			case 'datetimegmt':
+				return is_numeric($text) ? (int) $text : $this->writeDate($code, $text, 0);
+			case 'select':
+			case 'radio':
+				return $this->extrafieldChoice($attributes, $code, $text);
+			case 'checkbox':
+				$keys = array();
+				foreach (explode(',', $text) as $one) {
+					$key = $this->extrafieldChoice($attributes, $code, trim($one));
+					if ($key === null) {
+						return null;
+					}
+					$keys[] = $key;
+				}
+				return implode(',', $keys);
+			case 'sellist':
+			case 'chkbxlst':
+			case 'link':
+				// A record of another table: its rowid, which the confirmation shows as given.
+				return preg_match('/^\d+(,\d+)*$/', $text) ? $text : null;
+		}
+
+		return $text;
+	}
+
+	/**
+	 * Key of the choice of a select, radio or checkbox extra field, named by
+	 * its key or its label.
+	 *
+	 * @param  array<string,mixed> $attributes Extra fields of the element.
+	 * @param  string              $code       Code of the field.
+	 * @param  string              $said       Choice given.
+	 * @return string|null                     Key, or null when no choice fits.
+	 */
+	private function extrafieldChoice(array $attributes, $code, $said)
+	{
+		global $langs;
+
+		$choices = (array) ($attributes['param'][$code]['options'] ?? array());
+		foreach ($choices as $key => $label) {
+			if ((string) $key === $said) {
+				return (string) $key;
+			}
+		}
+		foreach ($choices as $key => $label) {
+			if (dol_strtolower((string) $label) === dol_strtolower($said) || dol_strtolower($langs->transnoentitiesnoconv((string) $label)) === dol_strtolower($said)) {
+				return (string) $key;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * What an extra field takes, said to the user who has to give it.
+	 *
+	 * @param  array<string,mixed> $attributes Extra fields of the element.
+	 * @param  string              $code       Code of the field.
+	 * @return string
+	 */
+	private function extrafieldHint(array $attributes, $code)
+	{
+		global $langs;
+
+		$type = (string) ($attributes['type'][$code] ?? '');
+		if (in_array($type, array('select', 'radio', 'checkbox'), true)) {
+			$names = array();
+			foreach ((array) ($attributes['param'][$code]['options'] ?? array()) as $key => $label) {
+				if ((string) $key !== '') {
+					$names[] = $langs->transnoentitiesnoconv((string) $label);
+				}
+			}
+			return $langs->transnoentitiesnoconv($type === 'checkbox' ? 'AIWriteSomeOf' : 'AIWriteOneOf', implode(', ', $names));
+		}
+		$hints = array(
+			'boolean' => 'AIWriteTakesYesNo',
+			'int' => 'AIWriteTakesNumber',
+			'double' => 'AIWriteTakesNumber',
+			'price' => 'AIWriteTakesNumber',
+			'pricecy' => 'AIWriteTakesNumber',
+			'date' => 'AIWriteTakesDate',
+			'datetime' => 'AIWriteTakesDate',
+			'datetimegmt' => 'AIWriteTakesDate',
+			'sellist' => 'AIWriteTakesRowid',
+			'chkbxlst' => 'AIWriteTakesRowid',
+			'link' => 'AIWriteTakesRowid'
+		);
+
+		return $langs->transnoentitiesnoconv($hints[$type] ?? 'AIWriteTakesText');
+	}
+
+	/**
+	 * Value of an extra field the way the confirmation shows it.
+	 *
+	 * @param  array<string,mixed> $attributes Extra fields of the element.
+	 * @param  string              $code       Code of the field.
+	 * @param  mixed               $value      Value to store.
+	 * @return string
+	 */
+	private function extrafieldDisplay(array $attributes, $code, $value)
+	{
+		global $langs;
+
+		$type = (string) ($attributes['type'][$code] ?? '');
+		if ($type === 'boolean') {
+			return $langs->transnoentitiesnoconv(empty($value) ? 'No' : 'Yes');
+		}
+		if (in_array($type, array('date', 'datetime', 'datetimegmt'), true) && is_numeric($value)) {
+			return dol_print_date((int) $value, $type === 'date' ? 'day' : 'dayhour');
+		}
+		if (in_array($type, array('select', 'radio', 'checkbox'), true)) {
+			$names = array();
+			foreach (explode(',', (string) $value) as $key) {
+				$names[] = $langs->transnoentitiesnoconv((string) ($attributes['param'][$code]['options'][$key] ?? $key));
+			}
+			return implode(', ', $names);
+		}
+
+		return (string) $value;
+	}
+
+	/**
+	 * Fields of a create the confirmation sentence does not name itself: the
+	 * invoice subtype and the extra fields.
+	 *
+	 * @param  array<string,mixed> $args Normalised arguments.
+	 * @return string                    Sentence to append, '' when there are none.
+	 */
+	private function previewCreateFields(array $args)
+	{
+		global $langs;
+
+		$parts = array();
+		if (!empty($args['_subtype'])) {
+			$parts[] = $langs->trans('InvoiceSubtype').': '.$args['_subtype'];
+		}
+		if (!empty($args['_extrafields'])) {
+			$parts[] = (string) $args['_extrafields'];
+		}
+
+		return $parts ? ' '.$langs->trans('AIPreviewCreateFields', implode('; ', $parts)) : '';
 	}
 
 	/**
