@@ -356,6 +356,12 @@ create table llx_loan_change
   fk_user_author	integer DEFAULT NULL
 )ENGINE=innodb;
 ALTER TABLE llx_loan_change ADD INDEX idx_loan_change_fk_loan (fk_loan);
+-- VAT on the charge (insurance / fee) of a loan. Interest and capital are not subject to VAT.
+ALTER TABLE llx_loan ADD COLUMN charge_tva_tx double(7,4) DEFAULT 0;
+ALTER TABLE llx_loan ADD COLUMN charge_vat_src_code varchar(10) DEFAULT '';
+ALTER TABLE llx_payment_loan ADD COLUMN vat_src_code varchar(10) DEFAULT '';
+ALTER TABLE llx_payment_loan ADD COLUMN tva_tx double(7,4) DEFAULT 0;
+ALTER TABLE llx_payment_loan ADD COLUMN total_tva double(24,8) DEFAULT 0;
 ALTER TABLE llx_payment_donation ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_payment_expensereport ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_payment_expensereport ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0 AFTER amount;
