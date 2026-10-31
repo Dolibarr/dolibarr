@@ -91,8 +91,12 @@ if (PHP_VERSION_ID >= 80200 && $onNotSuccessfulReturnType === 'never') {
  * @phan-file-suppress PhanUndeclaredClass
  * @phan-file-suppress PhanUndeclaredExtendedClass
  * @phan-file-suppress PhanUndeclaredMethod
+ * @phan-file-suppress PhanParamSignatureRealMismatchParamTypeInternal
+ * @phan-file-suppress PhanAccessSignatureMismatchInternal
+ * @phan-file-suppress PhanParamSignatureMismatchInternal
+ * @phan-file-suppress PhanTypeMismatchArgumentInternal
  */
-/** @phpstan-ignore class.notFound */
+/** @phpstan-ignore-next-line */
 abstract class CommonClassTest extends TestCase
 {
 	use OnNotSuccessfulTestTrait;
