@@ -376,6 +376,17 @@ if (!$error && $massaction == 'confirm_presend') {
 
 				// Test recipient
 				if (empty($sendto)) { 	// For the case, no recipient were set (multi thirdparties send)
+					// Hook to allow an external module to define the recipient of an object (for example a thirdparty in charge instead of the thirdparty of the object)
+					$parameters = array('objectid' => $objectid, 'thirdpartyid' => $thirdpartyid, 'listofobjectcontacts' => $listofobjectcontacts);
+					$reshook = $hookmanager->executeHooks('getMassActionRecipient', $parameters, $objectobj, $action); // Note that $action and $objectobj may have been modified by some hooks
+					if ($reshook < 0) {
+						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+					} elseif ($reshook > 0 && !empty($hookmanager->resArray['sendto'])) {
+						$sendto = $hookmanager->resArray['sendto'];
+						$contactidtosend = (empty($hookmanager->resArray['sendtoid']) ? array() : (array) $hookmanager->resArray['sendtoid']);
+					}
+				}
+				if (empty($sendto)) {
 					if ($objectobj->element == 'societe') {
 						$sendto = $objectobj->email;
 					} elseif ($objectobj->element == 'expensereport') {
