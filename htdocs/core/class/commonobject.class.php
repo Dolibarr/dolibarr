@@ -5168,17 +5168,13 @@ abstract class CommonObject
 		// @phan-suppress-next-line PhanUndeclaredProperty
 		$socid = (int) (isset($this->socid) ? $this->socid : (isset($this->fk_soc) ? $this->fk_soc : 0));
 		$sql = "SELECT fk_source, sourcetype, fk_target, targettype FROM ".$this->db->prefix()."element_element WHERE 1 = 0";
-		$haslinks = false;
+		$direct = array();
 		foreach ($elements as $element) {
-			$linkedids = array_map('intval', $this->linkedObjectsIds[$element] ?? array());
-			if ($linkedids) {
-				$haslinks = true;
-				$sql .= " OR (sourcetype = '".$this->db->escape($element)."' AND fk_source IN (".$this->db->sanitize(implode(',', $linkedids))."))";
-				$sql .= " OR (targettype = '".$this->db->escape($element)."' AND fk_target IN (".$this->db->sanitize(implode(',', $linkedids))."))";
+			$direct[$element] = array_map('intval', $this->linkedObjectsIds[$element] ?? array());
+			if ($direct[$element]) {
+				$sql .= " OR (sourcetype = '".$this->db->escape($element)."' AND fk_source IN (".$this->db->sanitize(implode(',', $direct[$element]))."))";
+				$sql .= " OR (targettype = '".$this->db->escape($element)."' AND fk_target IN (".$this->db->sanitize(implode(',', $direct[$element]))."))";
 			}
-		}
-		if (!$haslinks) {
-			return $documents;
 		}
 
 		$ids = array();
@@ -5188,14 +5184,11 @@ abstract class CommonObject
 			$ids[$obj->targettype][(int) $obj->fk_target] = (int) $obj->fk_target;
 		}
 
-		foreach ($elements as $element) {
-			if ($element == $this->element) {
-				continue;
-			}
+		foreach (array_diff($elements, array($this->element)) as $element) {
 			$properties = getElementProperties($element);
 			dol_include_once('/'.$properties['classpath'].'/'.$properties['classfile'].'.class.php');
 			$classname = $properties['classname'];
-			foreach (array_diff($ids[$element] ?? array(), array_map('intval', $this->linkedObjectsIds[$element] ?? array())) as $id) {
+			foreach (array_diff($ids[$element] ?? array(), $direct[$element]) as $id) {
 				$document = new $classname($this->db);
 				'@phan-var-force Propal|Commande|Facture $document';
 				if (restrictedArea($user, $element, $id, '', '', 'fk_soc', 'rowid', 0, 1) && $document->fetch($id) > 0 && $document->socid == $socid) {
