@@ -389,7 +389,9 @@ class SupplierOrders extends DolibarrApi
 			$request_data->multicurrency_subprice,
 			$request_data->origin,
 			$request_data->origin_id,
-			$request_data->rang,
+			// -1 is the "append at the end" value of addline(). An absent rang is null, which empty() turns into 0,
+			// so without this every line added through the API is stored with rang 0 instead of being appended.
+			isset($request_data->rang) ? $request_data->rang : -1,
 			$request_data->special_code
 		);
 
