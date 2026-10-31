@@ -1591,13 +1591,13 @@ if (empty($reshook)) {
 									0, // date_start
 									0, // date_end
 									0,
-									$lines[$i]->info_bits, // info_bits
+									0, // info_bits (default for deposit line)
 									0,
 									'HT',
 									0,
 									0, // product_type
 									1,
-									$lines[$i]->special_code,
+									0, // special_code (default for deposit line)
 									$object->origin,
 									0,
 									0,

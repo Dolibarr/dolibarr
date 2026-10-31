@@ -1653,6 +1653,55 @@ class Facture extends CommonInvoice
 	}
 
 	/**
+	 * Visible deposit line description. The database value stays "(DEPOSIT) (value) - ref".
+	 *
+	 * @param	CommonObject	$object		Invoice that owns the line
+	 * @param	string			$desc		Stored line description
+	 * @param	Translate		$langs		Language used for the screen or the PDF
+	 * @return	string
+	 */
+	public static function getVisibleDepositDescription($object, $desc, $langs)
+	{
+		if (!is_object($langs) || !is_string($desc) || !preg_match('/^\(DEPOSIT\)/', $desc)) {
+			return $desc;
+		}
+
+		$originElement = '';
+		if (is_object($object)) {
+			if (!empty($object->origin) && in_array($object->origin, array('propal', 'commande'), true)) {
+				$originElement = $object->origin;
+			} elseif (isset($object->deposit_line_origin_element)) {
+				$originElement = $object->deposit_line_origin_element;
+			} else {
+				if (method_exists($object, 'fetchObjectLinked') && empty($object->linkedObjectsIds)) {
+					$object->fetchObjectLinked();
+				}
+				if (!empty($object->linkedObjectsIds['propal'])) {
+					$originElement = 'propal';
+				} elseif (!empty($object->linkedObjectsIds['commande'])) {
+					$originElement = 'commande';
+				}
+				$object->deposit_line_origin_element = $originElement;
+			}
+		}
+
+		if ($originElement !== '' && preg_match('/^\(DEPOSIT\) \(([^)]+)\) - ([^<\r\n]+)(.*)$/s', $desc, $reg)) {
+			$value = $reg[1];
+			$ref = trim($reg[2]);
+			$suffix = $reg[3];
+			if (substr($value, -1) === '%') {
+				$value = substr($value, 0, -1);
+				$key = ($originElement === 'propal') ? 'DepositLineDescriptionPercentProposal' : 'DepositLineDescriptionPercentOrder';
+			} else {
+				$key = ($originElement === 'propal') ? 'DepositLineDescriptionAmountProposal' : 'DepositLineDescriptionAmountOrder';
+			}
+			return $langs->trans($key, $value, $ref).$suffix;
+		}
+
+		return str_replace('(DEPOSIT)', $langs->trans('Deposit'), $desc);
+	}
+
+	/**
 	 * Creates a deposit from a proposal or an order by grouping lines by VAT rates
 	 *
 	 * @param	Propal|Commande		$origin					The original proposal or order
