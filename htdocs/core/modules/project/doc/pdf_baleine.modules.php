@@ -339,6 +339,9 @@ class pdf_baleine extends ModelePDFProjects
 					$pageposafter = $pdf->getPage();
 					if ($pageposafter > $pageposbefore) {	// There is a pagebreak
 						$pdf->rollbackTransaction(true);
+						// Reopen a transaction: the block below may roll back again after a second
+						// attempt, and rolling back twice on the same snapshot destroys the object.
+						$pdf->startTransaction();
 						$pageposafter = $pageposbefore;
 						//print $pageposafter.'-'.$pageposbefore;exit;
 						$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
