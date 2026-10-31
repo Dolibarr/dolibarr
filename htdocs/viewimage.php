@@ -292,6 +292,13 @@ if ($modulepart === 'medias' && $entity != $conf->entity) {
 	$conf->setValues($db);
 }
 
+// NOREQUIRETRAN leaves $langs empty, but the access checks below fetch objects (Contact::fetch(), ...) that need it
+if (!is_object($langs)) {
+	include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
+	$langs = new Translate('', $conf);
+	$langs->setDefaultLang(getDolGlobalString('MAIN_LANG_DEFAULT', 'auto'));
+}
+
 $hookmanager->initHooks(array('viewimage'));
 $check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $user, $refname);
 $accessallowed              = $check_access['accessallowed'];
