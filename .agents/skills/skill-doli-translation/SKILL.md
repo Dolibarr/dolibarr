@@ -69,6 +69,12 @@ Usage (from the repository root):
 After a pull, check that no translated value contains the keyword `notranslate` (it must never be part of a translation):
 
 ```
+grep -rn "notranslate" htdocs/langs/ --include=*.lang | grep -v "/en_US/"
+```
+
+or for an external module
+
+```
 grep -rn "notranslate" htdocs/`projectname`/langs/ --include=*.lang | grep -v "/en_US/"
 ```
 
