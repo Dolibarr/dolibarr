@@ -96,13 +96,13 @@ class RestAPICategoriesTest extends AbstractRestAPITest
 	 * Create a category
 	 *
 	 * @param string	$test	Text to be added to output
-	 * @param string	$type	Type of category ('customer', 'product', ...)
+	 * @param int		$type	Type id of category (see Categorie::$MAP_ID, the API stores it as an integer)
 	 * @return int				Id of the category
 	 */
 	private function createCategory($test, $type)
 	{
 		$data = array(
-			"label" => "API test ".$type." ".mt_rand(0, 99999999),
+			"label" => "API test type ".$type." ".mt_rand(0, 99999999),
 			"type" => $type,
 		);
 		$result = $this->getUrl('categories', $test, 'POST', $data);
@@ -144,7 +144,7 @@ class RestAPICategoriesTest extends AbstractRestAPITest
 	{
 		$test = "Link and unlink a third party to a customer category";
 
-		$category_id = $this->createCategory($test, 'customer');
+		$category_id = $this->createCategory($test, 2);	// customer
 
 		$result = $this->getUrl('categories/'.$category_id.'/objects/customer/1', $test, 'POST', array());
 		$this->assertEquals(200, $result['content']['success']['code'] ?? null, "$test Link must succeed");
@@ -167,7 +167,7 @@ class RestAPICategoriesTest extends AbstractRestAPITest
 	{
 		$test = "Unlink a third party from a product category";
 
-		$category_id = $this->createCategory($test, 'product');
+		$category_id = $this->createCategory($test, 0);	// product
 
 		$this->getUrl('categories/'.$category_id.'/objects/customer/1', $test, 'DELETE', null, 400);
 
