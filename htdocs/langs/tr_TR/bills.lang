@@ -776,6 +776,7 @@ CreditNoteNotCreatedPaymentAlreadyDone=alacak dekontu için <b>%s</b> oluşturul
 CreditNoteNotCreatedCreditNoteAlreadyUsed=alacak dekontu için <b>%s</b> oluşturulmadı: başka bir alacak dekontu zaten kullanılıyor.
 CreditNoteNotCreatedDepositAlreadyUsed=alacak dekontu için <b>%s</b> oluşturulmadı: depozito zaten kullanıldı
 CreditNoteNotCreated=alacak dekontu için <b>%s</b> oluşturulmadı
+CreditNoteCreated=alacak dekontu <b>%s</b>, ve olarak fatura <span> olarak oluşturuldu class='notranslate'><b><span %s</b> iptal edildi
 CreditNoteNotCreatedErrorOnValidation=alacak dekontu için <b>%s</b> oluşturulmadı: doğrulama sırasında hata
 CreditNoteNotCreatedErrorOnDiscountLink=alacak dekontu için <b>%s</b> oluşturulamadı: indirim bağlantısı hatası
 CreditNoteNotCreatedErrorOnSetPaidSourceInvoice=alacak dekontu için <b>%s</b> oluşturulamadı: kaynak fatura olarak Ödendi ayarlanırken hata oluştu.

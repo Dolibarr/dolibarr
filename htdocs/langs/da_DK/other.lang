@@ -495,7 +495,7 @@ AIPreviewUpdateRecord=Update %s for %s: %s. Omitted fields will be preserved.
 AIPreviewUpdateProject=Update project %s - %s: %s. Omitted fields will be preserved.
 AIPreviewCreateSupplierProposal=Opret et udkast til et leverandørforslag%s med %s.
 AIPreviewCreateDocument=Opret et udkast til %s%s med %s.
-AIPreviewAddDocumentLine=Tilføj %s x %s til %s (%s ekskl. moms).
+AIPreviewAddDocumentLine=Tilføj %s x %s til %s (<span> class='notranslate'>%s ekskl.
 AIPreviewDelete=SLET %s med id'et %s. Dette kan ikke fortrydes.
 AIPreviewValidateInvoice=Validate the customer invoice %s. It gets a definitive number and can no longer be edited.
 AIPreviewPayInvoice=Record a payment of %s on invoice %s, %s.
