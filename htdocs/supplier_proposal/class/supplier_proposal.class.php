@@ -1049,6 +1049,12 @@ class SupplierProposal extends CommonObject
 
 		// Set tmp vars
 		$delivery_date = $this->delivery_date;
+		if (empty($this->ref_supplier) && !empty($this->ref_fourn)) {
+			$this->ref_supplier = $this->ref_fourn;
+		}
+		if (!empty($this->ref_supplier)) {
+			$this->ref_fourn = $this->ref_supplier; // Backward compatibility for legacy usages.
+		}
 
 		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if no rate was provided)
 		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) {
@@ -1072,6 +1078,7 @@ class SupplierProposal extends CommonObject
 		$sql .= ", total_ttc";
 		$sql .= ", datec";
 		$sql .= ", ref";
+		$sql .= ", ref_supplier";
 		$sql .= ", fk_user_author";
 		$sql .= ", note_private";
 		$sql .= ", note_public";
@@ -1095,6 +1102,7 @@ class SupplierProposal extends CommonObject
 		$sql .= ", 0";
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", '(PROV)'";
+		$sql .= ", ".(!empty($this->ref_supplier) ? "'".$this->db->escape($this->ref_supplier)."'" : "null");
 		$sql .= ", ".($user->id > 0 ? ((int) $user->id) : "null");
 		$sql .= ", '".$this->db->escape((string) $this->note_private)."'";
 		$sql .= ", '".$this->db->escape((string) $this->note_public)."'";
@@ -1360,7 +1368,7 @@ class SupplierProposal extends CommonObject
 	 */
 	public function fetch($rowid, $ref = '')
 	{
-		$sql = "SELECT p.rowid, p.entity, p.ref, p.fk_soc as socid";
+		$sql = "SELECT p.rowid, p.entity, p.ref, p.ref_supplier, p.fk_soc as socid";
 		$sql .= ", p.total_ttc, p.total_tva, p.localtax1, p.localtax2, p.total_ht";
 		$sql .= ", p.datec, GREATEST(p.tms, COALESCE(pef.tms, p.tms)) as date_modification";
 		$sql .= ", p.date_valid as datev";
@@ -1400,6 +1408,8 @@ class SupplierProposal extends CommonObject
 				$this->entity               = $obj->entity;
 
 				$this->ref                  = $obj->ref;
+				$this->ref_supplier         = $obj->ref_supplier;
+				$this->ref_fourn            = $this->ref_supplier; // Backward compatibility for legacy usages.
 				$this->total_ht             = $obj->total_ht;
 				$this->total_tva            = $obj->total_tva;
 				$this->total_localtax1		= $obj->localtax1;
@@ -2684,8 +2694,8 @@ class SupplierProposal extends CommonObject
 		if (!empty($this->ref)) {
 			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		}
-		if (!empty($this->ref_fourn)) {
-			$datas['ref_supplier'] = '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_fourn;
+		if (!empty($this->ref_supplier)) {
+			$datas['ref_supplier'] = '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
 		}
 		if (empty($params['nofetch'])) {
 			$langs->load('companies');

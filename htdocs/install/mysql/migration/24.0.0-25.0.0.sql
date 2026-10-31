@@ -538,6 +538,9 @@ ALTER TABLE llx_product_attribute ADD UNIQUE INDEX uk_product_attribute_ref (ref
 -- puts them). Those keys never worked: copy them where they are read.
 UPDATE llx_oauth_token SET tokenstring = token WHERE service = 'dolibarr_rest_api' AND tokenstring IS NULL AND token IS NOT NULL;
 
+-- Supplier proposal: add supplier reference on header
+ALTER TABLE llx_supplier_proposal ADD COLUMN ref_supplier varchar(255) DEFAULT NULL AFTER ref_ext;
+
 -- Multicurrency support for contracts. llx_contratdet already had these columns (unused until now);
 -- the header table had none, so a contract could never record the currency it was created in.
 ALTER TABLE llx_contrat ADD COLUMN fk_multicurrency integer;
