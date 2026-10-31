@@ -123,6 +123,11 @@ class WebsitePage extends CommonObject
 	public $allowed_in_frames;
 
 	/**
+	 * @var ?int		Number of versions to keep in history (0 = keep all versions, n = keep only the n last versions)
+	 */
+	public $keep_history;
+
+	/**
 	 * @var int 		Use meta robot tag "index" (else "noindex")
 	 */
 	public $index = 1;
@@ -234,6 +239,7 @@ class WebsitePage extends CommonObject
 		'fk_website'     => array('type' => 'integer', 'label' => 'WebsiteId', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 40, 'searchall' => 0, 'foreignkey' => 'websitepage.rowid'),
 		'fk_page'        => array('type' => 'integer', 'label' => 'ParentPageId', 'enabled' => 1, 'visible' => 1, 'notnull' => -1, 'position' => 45, 'searchall' => 0, 'foreignkey' => 'website.rowid'),
 		'allowed_in_frames'   => array('type' => 'integer', 'label' => 'AllowedInFrames', 'enabled' => 1, 'visible' => -1, 'position' => 48, 'searchall' => 0, 'default' => '0'),
+		'keep_history'   => array('type' => 'integer', 'label' => 'NumberOfVersionsToKeepInHistory', 'enabled' => 1, 'visible' => -1, 'position' => 49, 'default' => '5', 'help' => 'NumberOfVersionsToKeepInHistoryHelp'),
 		'htmlheader'     => array('type' => 'html', 'label' => 'HtmlHeader', 'enabled' => 1, 'visible' => 0, 'position' => 50, 'searchall' => 0),
 		'content'        => array('type' => 'html', 'label' => 'Content', 'enabled' => 1, 'visible' => 0, 'position' => 51, 'searchall' => 0),
 		'grabbed_from'   => array('type' => 'varchar(255)', 'label' => 'GrabbedFrom', 'enabled' => 1, 'visible' => 1, 'index' => 1, 'position' => 400, 'comment' => 'URL page content was grabbed from'),
@@ -354,6 +360,7 @@ class WebsitePage extends CommonObject
 		$sql .= " t.lang,";
 		$sql .= " t.fk_page,";				// Translation parent page (in mani language)
 		$sql .= " t.allowed_in_frames,";
+		$sql .= " t.keep_history,";
 		$sql .= " t.status,";
 		$sql .= " t.grabbed_from,";
 		$sql .= " t.date_creation,";
@@ -425,6 +432,7 @@ class WebsitePage extends CommonObject
 				$this->lang = $obj->lang;
 				$this->fk_page = $obj->fk_page;
 				$this->allowed_in_frames = $obj->allowed_in_frames;
+				$this->keep_history = $obj->keep_history;
 				$this->status = (int) $obj->status;
 				$this->grabbed_from = $obj->grabbed_from;
 				$this->date_creation = $this->db->jdate($obj->date_creation);

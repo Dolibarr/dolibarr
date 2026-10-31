@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=ຢືນຢັນແລ້ວ
 StatusReceptionProcessedShort=ດຳເນີນການແລ້ວ
 ReceptionSheet=ໃບຮັບສິນຄ້າ
 ValidateReception=ຢືນຢັນການຮັບສິນຄ້າ
+DeleteReception=Delete reception
 ConfirmDeleteReception=ທ່ານແນ່ໃຈຫຼືບໍ່ວ່າຕ້ອງການລຶບການຮັບສິນຄ້ານີ້?
 ConfirmValidateReception=ທ່ານແນ່ໃຈຫຼືບໍ່ວ່າຕ້ອງການຢືນຢັນການຮັບສິນຄ້າດ້ວຍເລກອ້າງອີງ <b>%s</b>?
 ConfirmCancelReception=ທ່ານແນ່ໃຈຫຼືບໍ່ວ່າຕ້ອງການຍົກເລີກການຮັບສິນຄ້ານີ້?

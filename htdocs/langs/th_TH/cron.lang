@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = อ่านงานที่กำหนดเวลาไว้
-Permission23102 = สร้าง / การปรับปรุงกำหนดเวลางาน
-Permission23103 = ลบงานที่กำหนด
-Permission23104 = การดำเนินงานที่กำหนด
 # Admin
 CronSetup=กำหนดเวลาการตั้งค่าการจัดการงาน
 URLToLaunchCronJobs=URL เพื่อตรวจสอบและเปิดใช้งานงาน cron ที่ผ่านการรับรองจากเบราว์เซอร์
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=ในสภาพแวดล้อมระบบป�
 CronExplainHowToRunWin=บนสภาพแวดล้อม Microsoft(tm) Windows คุณสามารถใช้เครื่องมือ Scheduled Task เพื่อรันบรรทัดคำสั่งทุกๆ 5 นาที
 CronMethodDoesNotExists=คลาส %s ไม่มีเมธอดใด ๆ %s
 CronMethodNotAllowed=เมธอด %s ของคลาส %s อยู่ในรายการบล็อกของเมธอดที่ไม่ได้รับอนุญาต
-CronJobDefDesc=โปรไฟล์งาน Cron ถูกกำหนดไว้ในไฟล์ตัวอธิบายโมดูล เมื่อเปิดใช้งานโมดูล โมดูลเหล่านั้นจะถูกโหลดและพร้อมใช้งาน เพื่อให้คุณสามารถจัดการงานได้จากเมนูเครื่องมือผู้ดูแลระบบ %s
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=รายการโปรไฟล์งาน cron ที่กำหนดไว้ล่วงหน้า
 # Menu
 EnabledAndDisabled=เปิดใช้งานและปิดใช้งาน
@@ -27,7 +22,7 @@ CronDelete=ลบงานที่กำหนดไว้
 CronConfirmDelete=คุณแน่ใจหรือไม่ว่าต้องการลบงานที่กำหนดเวลาไว้เหล่านี้
 CronExecute=เปิดตัวเลย
 CronConfirmExecute=คุณแน่ใจหรือไม่ว่าต้องการดำเนินการงานที่กำหนดเวลาไว้เหล่านี้ทันที
-CronInfo=โมดูลงานที่กำหนดเวลาไว้ช่วยให้สามารถกำหนดเวลางานเพื่อดำเนินการได้โดยอัตโนมัติ งานสามารถเริ่มต้นได้ด้วยตนเอง
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=งาน
 CronNone=การรันงานตามกำหนดเวลาครั้งต่อไป
 CronNotYetRan=ไม่เคยดำเนินการ
@@ -79,7 +74,7 @@ CronType_command=คำสั่งเชลล์
 CronCannotLoadClass=ไม่สามารถโหลดไฟล์คลาส %s (เพื่อใช้คลาส %s)
 CronModuleNotEnabledInThisEntity=โมดูล Cron ไม่ได้เปิดใช้งานในเอนทิตีนี้ (เพื่อใช้เมธอด %s ของอ็อบเจ็กต์ %s)
 CronCannotLoadObject=โหลดไฟล์คลาส %s แล้ว แต่ไม่พบวัตถุ %s เข้าไป
-UseMenuModuleToolsToAddCronJobs=ไปที่เมนู "<a href="%s">หน้าแรก - เครื่องมือผู้ดูแลระบบ - งานที่กำหนดเวลาไว้</a>" เพื่อดูและแก้ไขงานที่กำหนดเวลาไว้
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=ปิดการใช้งาน
 MakeLocalDatabaseDumpShort=การสำรองฐานข้อมูลท้องถิ่น
 MakeLocalDatabaseDump=สร้างดัมพ์ฐานข้อมูลท้องถิ่น พารามิเตอร์ได้แก่: การบีบอัด ('gz' หรือ 'bz' หรือ 'none'), ประเภทการสำรองข้อมูล ('mysql', 'pgsql', 'auto'), 1, 'auto' หรือชื่อไฟล์ที่จะสร้าง, จำนวนไฟล์สำรองที่จะเก็บไว้

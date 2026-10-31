@@ -44,6 +44,7 @@
  *                                                                                              - Ex: array('show'=> )
  *                                                                                              - Ex: array('update_textarea'=> )
  *                                                                                              - Ex: array('option_disabled'=> id to disable and warning to show if we select a disabled value (this is possible when using autocomplete ajax)
+ *                                                                                              - Ex: array('noresultlabel'=> HTML escaped label of a greyed not selectable line to show when search returns nothing)
  * @param string		$moreparams			More params provided to ajax call
  * @return string   						Script
  */
@@ -127,6 +128,11 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     						$.get("'.$url.($urloption ? '?'.$urloption : '').'", { "'.str_replace('.', '_', $htmlname).'": request.term }, function(data){
 								if (data != null)
 								{
+									/* If nothing found, show a line that can not be selected (if a label was provided in options.noresultlabel) */
+									if (data.length == 0 && options.noresultlabel) {
+										response([{ label: options.noresultlabel, value: "", id: "", noresult: true }]);
+										return;
+									}
 									response($.map( data, function(item) {
 										console.log("Received answer from ajax GET, we populate array to return to the jquery autocomplete");
 										if (autoselect == 1 && data.length == 1) {
@@ -195,7 +201,11 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 						},
 						dataType: "json",
     					minLength: '.((int) $minLength).',
+						focus: function( event, ui ) {
+							if (ui.item.noresult) { return false; }
+						},
     					select: function( event, ui ) {		// Function ran once a new value has been selected into the javascript combo
+							if (ui.item.noresult) { return false; }
     						console.log("We will trigger change on input '.$htmlname.' because of the select definition of autocomplete code for input#search_'.$htmlname.'");
     					    console.log("Selected id = "+ui.item.id+" - If this value is null, it means you select a record with key that is null so selection is not effective");
 
@@ -296,6 +306,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 					if (widgetData) {
 						widgetData._renderItem = function( ul, item ) {
 							return $("<li>")
+							.addClass(item.noresult ? "ui-state-disabled" : "")
 							.data( "'.$dataforitem.'", item ) // jQuery UI > 1.10.0
 							.append( \'<a><span class="tag">\' + item.label + "</span></a>" )
 							.appendTo(ul);

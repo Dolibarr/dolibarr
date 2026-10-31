@@ -1,9 +1,7 @@
 # Dolibarr language file - Source file is en_US - commercial
 Commercial=Commerce
 CommercialArea=Espace commercial
-Customer=Client
 Customers=Clients
-Prospect=Prospect
 Prospects=Prospects
 DeleteAction=Supprimer l'évènement
 NewAction=Créer événement
@@ -16,7 +14,6 @@ ActionOnCompany=Tiers concerné
 ActionOnContact=Contact concerné
 ActionOnUser=Utilisateur concerné
 TaskRDVWith=Rendez-vous avec %s
-ShowTask=Afficher tâche
 ShowAction=Afficher événement
 ActionsReport=Rapport des événements
 ThirdPartiesOfSaleRepresentative=Tiers ayant pour commercial
@@ -37,6 +34,7 @@ DoneActions=Liste des événements réalisés
 ToDoActions=Liste des événements incomplets
 SendPropalRef=Envoi de la proposition commerciale %s
 SendOrderRef=Envoi de la commande %s
+SendSupplierOrderRef=Submission of purchase order %s
 StatusNotApplicable=Non applicable
 StatusActionToDo=À faire
 StatusActionDone=Réalisé

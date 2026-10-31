@@ -345,7 +345,6 @@ NoExample=Ningún ejemplo
 NbOfThirdParties=Número de clientes
 NbOfLines=Número de líneas
 NbOfObjectReferers=Número de artículos relacionados
-Referers=Artículos relacionados
 DateFromTo=De %s para %s
 DateFrom=De %s
 Check=Comprobar

@@ -1853,6 +1853,8 @@ function pdf_pagefoot($pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_b
 
 /**
  *	Show linked objects for PDF generation
+ *	The hook 'pdf_writeLinkedObjects' can replace this block (return > 0). A hook that does it draws the block itself and gives the
+ *	Y position reached in $hookmanager->resArray['posy'] (if not set, the current Y position of the PDF is returned).
  *
  *	@param	TCPDF		$pdf				Object PDF
  *	@param	CommonObject	$object				Object
@@ -1867,6 +1869,17 @@ function pdf_pagefoot($pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_b
  */
 function pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, $w, $h, $align, $default_font_size)
 {
+	global $hookmanager;
+
+	if (is_object($hookmanager)) {
+		$parameters = array('pdf' => $pdf, 'outputlangs' => $outputlangs, 'posx' => $posx, 'posy' => $posy, 'w' => $w, 'h' => $h, 'align' => $align, 'default_font_size' => $default_font_size);
+		$action = '';
+		$reshook = $hookmanager->executeHooks('pdf_writeLinkedObjects', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			return isset($hookmanager->resArray['posy']) ? (float) $hookmanager->resArray['posy'] : $pdf->getY();
+		}
+	}
+
 	$linkedobjects = pdf_getLinkedObjects($object, $outputlangs);	// May update $object->note_public
 
 	if (!empty($linkedobjects)) {

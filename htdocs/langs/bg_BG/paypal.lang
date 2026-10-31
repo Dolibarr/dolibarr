@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Настройка на модул PayPal
-PaypalDesc=Този модул позволява плащане от клиенти чрез <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. Това може да се използва за ad-hoc плащане или за плащане, свързан с обект на Dolibarr (фактура, поръчка, .. .)
+PaypalDesc=Този модул позволява на клиентите да плащат чрез <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. Може да се използва за еднократно плащане или за плащане, свързано с обект в Dolibarr (фактура, поръчка, ...)
 PaypalOrCBDoPayment=Плащане с PayPal (Карта или PayPal)
 PaypalDoPayment=Плащане с PayPal
 PAYPAL_API_SANDBOX=Тестов режим (пясъчник)
@@ -12,14 +12,14 @@ PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Предлага "интегрално" пла
 PaypalModeIntegral=Интегрално
 PaypalModeOnlyPaypal=Само PayPal
 ONLINE_PAYMENT_CSS_URL=Допълнителен URL адрес на таблицата със CSS стилове в страницата за онлайн плащане
-ThisIsTransactionId=This is id of transaction
+ThisIsTransactionId=Това е ID на транзакцията
 PAYPAL_ADD_PAYMENT_URL=Добавяне на URL адрес за PayPal плащане при изпращане на документ по имейл
 NewOnlinePaymentReceived=Получено е ново онлайн плащане
 NewOnlinePaymentFailed=Нов опит за онлайн плащане не бе успешен
 ONLINE_PAYMENT_SENDEMAIL=Имейл адрес за известия след всеки опит за плащане (успешен и неуспешен)
 ReturnURLAfterPayment=URL адрес за пренасочване след плащане
 ValidationOfOnlinePaymentFailed=Проверката на онлайн плащането не е успешна
-PaymentSystemConfirmPaymentPageWasCalledButFailed=Страницата за потвърждение на плащането беше извикана от платежната система, но върна грешка
+PaymentSystemConfirmPaymentPageWasCalledButFailed=The payment confirmation page was called by the online payment system and returned an error
 SetExpressCheckoutAPICallFailed=Извикването на SetExpressCheckout API не е успешно.
 DoExpressCheckoutPaymentAPICallFailed=Извикването на DoExpressCheckoutPayment API не е успешно.
 DetailedErrorMessage=Подробно съобщение за грешка

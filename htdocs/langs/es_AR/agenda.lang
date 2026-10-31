@@ -27,6 +27,5 @@ ShipmentValidatedInDolibarr=Envío %s validado
 ShipmentBackToDraftInDolibarr=Envío %s vuelve al estado borrador
 ShippingSentByEMail=Detalle de entrega %s enviado por correo
 ShippingValidated=Envío %s validado
-InterventionSentByEMail=Intervención %s enviada por correo
 CANCELInDolibarr=Cancelada
 DateActionEnd=Fecha de fin

@@ -69,7 +69,6 @@ DOL_VALUE_DAY=Fakturační den
 DOL_VALUE_DAY_LETTERS=Fakturační den v dopisech
 DOL_LINE_FEED_REVERSE=Řádek zpětného posuvu
 InvoiceID=ID faktury
-InvoiceRef=Faktura ref
 DOL_PRINT_OBJECT_LINES=Fakturační řádky
 DOL_VALUE_CUSTOMER_FIRSTNAME=Jméno zákazníka
 DOL_VALUE_CUSTOMER_LASTNAME=Příjmení zákazníka

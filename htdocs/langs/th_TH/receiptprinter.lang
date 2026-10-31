@@ -69,7 +69,6 @@ DOL_VALUE_DAY=วันวางบิล
 DOL_VALUE_DAY_LETTERS=วันใบแจ้งหนี้เป็นตัวอักษร
 DOL_LINE_FEED_REVERSE=ป้อนบรรทัดย้อนกลับ
 InvoiceID=รหัสใบแจ้งหนี้
-InvoiceRef=อ้างอิงใบแจ้งหนี้
 DOL_PRINT_OBJECT_LINES=รายการใบแจ้งหนี้
 DOL_VALUE_CUSTOMER_FIRSTNAME=ชื่อลูกค้า
 DOL_VALUE_CUSTOMER_LASTNAME=นามสกุลลูกค้า

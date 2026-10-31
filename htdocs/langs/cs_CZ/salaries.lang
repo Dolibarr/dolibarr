@@ -27,6 +27,7 @@ Earnings=Earnings
 TotalEarnings=Total earnings
 TotalDeductions=Total deductions
 NetPaid=Čistá platba
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Účet (z účtového rozvrhu) používaný standardně pro „uživatele“ u platů
@@ -55,8 +56,6 @@ FillFieldFirst=Nejprve vyplňte pole zaměstnanec
 UpdateAmountWithLastSalary=Nastavit výši posledního platu
 MakeTransferRequest=Požádat o převod
 VirementOrder=Žádost o převod kreditu
-WithdrawalReceipt=Příkaz k převodu
-OrderWaiting=Čekající objednávka
 FillEndOfMonth=Konec měsíce
 
 # Shortcuts

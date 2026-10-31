@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - website
 Shortname=الاسم المختصر
 WebsiteName=اسم الموقع الإلكتروني
-WebsiteSetupDesc=أنشئ الموقع الإلكتروني الذي تريد استخدامه، ثم انتقل إلى قائمة المواقع الإلكترونية لتعديله.
+WebsiteSetupDesc=Create here the websites you wish to use. Then go to menu Websites to edit them.
 DeleteWebsite=حذف الموقع الإلكتروني
 ConfirmDeleteWebsite=هل أنت متأكد من رغبتك في حذف هذا الموقع الإلكتروني؟ سيتم أيضًا حذف جميع الصفحات والمحتويات. ستبقى الملفات المحمّلة، مثل الملفات الموجودة في معرض الوسائط ووحدة إدارة المحتوى الإلكتروني، دون حذف.
 WEBSITE_TYPE_CONTAINER=نوع الصفحة/الحاوية
@@ -17,8 +17,8 @@ WEBSITE_ROBOT=محتوى ملف robots.txt
 WEBSITE_HTACCESS=محتوى ملف ‎.htaccess
 WEBSITE_MANIFEST_JSON=ملف بيان الموقع بصيغة JSON
 WEBSITE_KEYWORDSDesc=استخدم الفاصلة لفصل القيم.
-EnterHereReadmeInformation=أدخل هنا وصفًا للموقع. إذا وزّعت موقعك الإلكتروني كقالب، فسيُضمَّن هذا الملف في حزمة القالب.
-EnterHereLicenseInformation=أدخل هنا ترخيص شيفرة الموقع. إذا وزّعت موقعك الإلكتروني كقالب، فسيُضمَّن هذا الملف في حزمة القالب.
+EnterHereReadmeInformation=Enter here a description of the website. If you distribute your website as a template, the file will be included in the template package.
+EnterHereLicenseInformation=Enter here the LICENSE of the code of the website. If you distribute your website as a template, the file will be included in the template package.
 HtmlHeaderPage=رؤوس HTML (لهذه الصفحة فقط)
 PageNameAliasHelp=اسم الصفحة أو اسمها المستعار.<br>يُستخدم أيضًا لإنشاء رابط محسّن لمحركات البحث عند تشغيل الموقع عبر مضيف افتراضي، مثل Apache أو Nginx. استخدم الزر «<strong>%s</strong>» لتعديل هذا الاسم أو الاسم المستعار.
 EditTheWebSiteForACommonHeader=ملاحظة: لتعيين رأس مشترك لجميع الصفحات، استخدم الرؤوس على مستوى الموقع بدلًا من رؤوس الصفحة/الحاوية.
@@ -51,12 +51,12 @@ ToDeployYourWebsiteOnLiveYouHave3Solutions=لنشر موقعك الإلكترو�
 SetHereVirtualHost=<u>بإستخدام اباتشي \\انجنكس\\...</u><br> على خادمك (اباتشي أو انجنكس..) قم بإنشاء خادم افتراضي يدعم البي اتش بي واجعل المسار الجذر له<br><strong>%s</strong>
 ExampleToUseInApacheVirtualHostConfig=مثال لإعداد مضيف افتراضي في Apache
 YouCanAlsoTestWithPHPS=<u>استخدم مع خادم بي إتش بي -PHP- المضمن</u><br> في بيئة التطوير، قد تفضل اختبار الموقع باستخدام خادم بي إتش بي -PHP- المضمن عن طريق تشغيل
-YouCanAlsoDeployToAnotherWHP=<u>قم بإدارة موقع الويب الخاص بك داخل مزود استضافة دوليبار</u><br> إذا لم يكن لديك خادم ويب مثل أباتشي -Apache- أو إنجن إكس -NGinx- متاحًا على الإنترنت، يمكنك تصدير واستيراد موقعك إلى نسخة دوليبار أخرى يوفرها مزود استضافة دوليبار آخر يوفر تكاملاً كاملاً مع موقع إلكتروني. يمكنك العثور على قائمة ببعض مزودي استضافة دوليبار على <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
+YouCanAlsoDeployToAnotherWHP=<u>Run your web site inside a Dolibarr web Hosting provider</u><br>If you don't have a web server like Apache or NGinx available on the internet, you can export and import your web site to another Dolibarr instance provided by another Dolibarr hosting provider that provides full integration with the Website module. You can find a list of some Dolibarr hosting providers on <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
 CheckVirtualHostPerms=أيضًا تأكد من ان مستخدم الخادم (مثلا www-data ) لديه صلاحيات <strong>%s</strong> على الملفات <br><strong>%s</strong>
 ReadPerm=قراءة
 WritePerm=كتابة
 TestDeployOnWeb=اختبار/نشر على الويب
-PreviewSiteServedByWebServer=<u>استعراض %s في علامة تبويب جديدة.</u><br><br> الرابط %s سيتم إنشائه بواسطة خادم خارجي (اباتشي أو انجنكس مثلاً). لابد ان تثبت هذا الخادم بنفسك وتقوم بإعداده ليشير إلى المسار : <br><strong>%s</strong><br>الرابط المخدوم بواسطة خادم خارجي هو : <br><strong>%s</strong>
+PreviewSiteServedByWebServer=<u>Preview %s in a new tab.</u><br><br>The %s will be served by an external web server (like Apache, Nginx, IIS). You must install and setup this server before pointing to the directory:<br><strong>%s</strong><br>URL served by external server:<br><strong>%s</strong>
 PreviewSiteServedByDolibarr=<u>معاينة %s في نافذة جديدة.</u><br><br> سيتم %s تقديمه بواسطة خادم دوليبار لذلك لا يحتاج إلى تثبيت أي خادم ويب إضافي (مثل أباتشي -Apache- أو إنجن إكس -NGinx- و خادمات معلومات الإنترنت -IIS-). <br>المشكلة هي أن روابط الصفحات ليست سهلة الاستخدام وتبدأ بمسار دوليبار الخاص بك. <br>الرابط الذي يقدمه دوليبار: <br><strong>%s</strong><br><br> للنشر أو الاختبار باستخدام خادم ويب خارجي خاص بك (مثل أباتشي -Apache- أو إنجن إكس -NGinx- و لايت باد -Lighttp-) استخدم الرابط "%s".
 VirtualHostUrlNotDefined=لم يتم تعريف رابط المضيف الافتراضي الذي يقدمه خادم خارجي.
 NoPageYet=لا توجد صفحات بعد.
@@ -65,12 +65,13 @@ SyntaxHelp=مساعدة ونصائح حول الصياغة
 YouCanEditHtmlSourceckeditor=يمكن تحرير مصدر HTML باستخدام زر «تحرير المصدر» في المحرر.
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> يمكنك تضمين كود بي إتش بي -PHP- في هذا المصدر باستخدام أوسمة <strong>&lt;?php ?&gt;</strong>. المتغيرات العالمية التالية متاحة: $conf، $db، $mysoc، $user، $website، $websitepage، $weblangs، $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> يمكنك أيضًا تضمين محتوى صفحة/حاوية أخرى باستخدام الصيغة التالية:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> يمكنك إجراء إعادة توجيه إلى صفحة/حاوية أخرى باستخدام الصيغة التالية (ملاحظة: لا تقم بإخراج أي محتوى قبل إعادة التوجيه):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>يمكنك أيضًا إجراء إعادة توجيه باستخدام معلمات GET:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> لإضافة رابط إلى صفحة أخرى، استخدم الصيغة التالية:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br>
 YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> يمكنك تعيين <strong>عنوان تحسين محركات البحث والوسوم الوصفية</strong> ديناميكيًا (العنوان، الكلمات المفتاحية، الوصف). ما عليك سوى تعريف المتغيرات التالية:<br> <code>define('__SEO_PAGE_TITLE__', "قيمة العنوان …");</code><br> <code>define('__SEO_PAGE_KEYWORDS__', 'كلمة1، كلمة2، كلمة3 …');</code><br> <code>define('__SEO_PAGE_DESC__', "الوصف …");</code><br>
-YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> لتضمين <strong>رابط لتنزيل</strong> ملف مخزن في مجلد <strong>المستندات</strong>، استخدم الغلاف <strong>document.php</strong> :<br>على سبيل المثال، لملف في المستندات/إدارة المحتوى الإلكتروني (يحتاج إلى الدخول)، يكون بناء الجملة كما يلي:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>لتحويل ملف إلى مستندات/وسائط (مجلد مفتوح للوصول العام)، يكون بناء الجملة كالتالي:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
+YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored in the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file in documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file in documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSourced=بالنسبة للملف المشترك باستخدام رابط مشاركة (الوصول المفتوح باستخدام مفتاح مشاركة الملف)، يكون بناء الجملة كما يلي:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span>لتضمين <strong>صورة</strong> مخزنة في مجلد <strong>الوسائط</strong> (مجلد مفتوح للوصول العام)، استخدم المسار النسبي الذي يبدأ بـ<strong>/medias</strong> مثال:<br><strong> &lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored in the <strong>medias</strong> directory (directory open for public access), use the relative path starting with <strong>/medias</strong>, example:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=بالنسبة للصورة التي تمت مشاركتها باستخدام رابط مشاركة (الوصول المفتوح باستخدام مفتاح التجزئة للمشاركة في الملف)، استخدم الغلاف:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=للحصول على رابط صورة كائن PHP، استخدم:<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
-YouCanEditHtmlSource4=للحصول على رابط صورة داخل محتوى لغة توصيف النص الفائق -HTML- لمقالة، استخدم<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource4=To get the URL of an image inside a HTML content of an article, use<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource5=<br><span class="fa fa-edit paddingright"></span> To let a part of the page be changed with mode <strong>Edit inline</strong>, add the attributes <strong>contenteditable="true"</strong> and <strong>id</strong> to its tag. It must contain no PHP code, only text with formatting tags (bold, color, font size...), links, paragraphs, titles, lists and div, example:<br><strong>&lt;p id="intro" contenteditable="true"&gt;My &lt;b&gt;text&lt;/b&gt;&lt;/p&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>مزيد من الأمثلة على HTML أو التعليمات البرمجية الديناميكية متاحة على <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">وثائق الويكي</a>.<br>
 ClonePage=نسخ الصفحة/الحاوية
 CloneSite=نسخ الموقع
@@ -88,6 +89,8 @@ ImportSite=استيراد قالب موقع إلكتروني
 IDOfPage=معرف الصفحة
 Banner=لافتة
 BlogPost=تدوينة
+PageHeader=الترويسة
+PageFooter=التذييل
 WebsiteAccount=حساب موقع إلكتروني
 WebsiteAccounts=حسابات الموقع
 AddWebsiteAccount=إنشاء حساب موقع إلكتروني
@@ -102,7 +105,7 @@ YouMustDefineTheHomePage=يجب تعريف الصفحة الرئيسية أول�
 OnlyEditionOfSourceForGrabbedContentFuture=تحذير: إنشاء صفحة ويب عن طريق استيراد صفحة خارجية مخصص للمستخدمين ذوي الخبرة، ولا يعمل إلا مع الصفحات المعروضة باستخدام HTML وCSS فقط. لا يدعم استيراد الصفحات التي تعرضها أُطر JavaScript. قد تختلف نتيجة الاستيراد عن الصفحة الأصلية بحسب تعقيدها. وقد يؤدي استخدام الصفحة المصدر لأنماط CSS عامة أو JavaScript متعارض إلى الإخلال بمظهر محرر المواقع أو وظائفه عند العمل على هذه الصفحة. تتيح هذه الطريقة إنشاء صفحة بسرعة للمستخدمين المتقدمين عندما تسمح الصفحة المصدر بذلك، لكن يُنصح بإنشاء الصفحة من الصفر أو من قالب مقترح.<br>ملاحظة: قد لا يعمل المحرر المضمّن بصورة صحيحة في الصفحة المجلوبة.
 OnlyEditionOfSourceForGrabbedContent=لا يمكن تعديل سوى مصدر HTML للمحتوى المجلوب من موقع خارجي.
 GrabImagesInto=جلب الصور الموجودة في الصفحة وملف CSS أيضًا.
-ImagesShouldBeSavedInto=يجب حفظ الصور في المسار
+ImagesShouldBeSavedInto=Images should be saved in the directory
 WebsiteRootOfImages=المسار الجذر لصور الموقع الإلكتروني
 SubdirOfPage=مجلد فرعي مخصص للصفحة
 AliasPageAlreadyExists=الاسم المستعار للصفحة <strong>%s</strong> موجود مسبقًا.
@@ -119,7 +122,7 @@ NoWebSiteCreateOneFirst=لم يتم إنشاء أي موقع إلكتروني. �
 GoTo=الانتقال إلى
 DynamicPHPCodeContainsAForbiddenInstruction=أضفت شيفرة PHP تحتوي على التعليمة المحظورة «<strong>%s</strong>» داخل المحتوى الديناميكي. راجع الخيار المخفي WEBSITE_PHP_ALLOW_xxx لتوسيع قائمة التعليمات المسموح بها.
 NotAllowedToAddDynamicContent=لا تملك صلاحية إضافة محتوى PHP ديناميكي أو تعديله في المواقع الإلكترونية. اطلب الصلاحية أو اترك الشيفرة داخل وسوم PHP دون تعديل.
-NotAllowedToAddDynamicContentDisabledGlobaly=لا يمكنك حاليًا إضافة محتوى PHP ديناميكي أو تعديله في هذا الموقع، حتى إن كنت تملك الصلاحية، لأن هذه الميزة يجب أن تُفعّل عموميًا أولًا بضبط المعامل %s=1 في ملف conf.php.<br>عدّل ملف conf.php لإضافة هذا المعامل، أو اطلب من المسؤول أو الدعم القيام بذلك.
+NotAllowedToAddDynamicContentDisabledGlobaly=You currently can't add or edit dynamic PHP content in this website (even if you have permission to), because this feature must be first enabled globally by setting the parameter %s=1 into the conf.php file.<br>Edit your conf.php file to add this parameter, or ask your administrator or support team to do it for you.
 ReplaceWebsiteContent=بحث واستبدال في محتوى الموقع
 DeleteAlsoJs=هل تريد أيضًا حذف جميع ملفات JavaScript الخاصة بهذا الموقع؟
 DeleteAlsoMedias=هل تريد أيضًا حذف جميع ملفات الوسائط الخاصة بهذا الموقع؟
@@ -140,10 +143,10 @@ MainLanguage=اللغة الرئيسية
 OtherLanguages=لغات أخرى
 UseManifest=توفير ملف بيان JSON
 PublicAuthorAlias=لقب المحرر العام
-AvailableLanguagesAreDefinedIntoWebsiteProperties=اللغات المتاحة معرفة في خصائص الموقع الإلكتروني
+AvailableLanguagesAreDefinedIntoWebsiteProperties=Available languages are defined in website properties
 ReplacementDoneInXPages=تم الاستبدال في %s صفحة أو حاوية.
 RSSFeed=خلاصات المقالات
-RSSFeedDesc=يمكنك الحصول على خلاصات المقالات من النوع "مدونة" بإستخدام الرابط
+RSSFeedDesc=You can get an RSS feed of latest articles with type 'blogpost' using this URL
 PagesRegenerated=أُعيد توليد %s صفحة/حاوية.
 RegenerateWebsiteContent=إعادة توليد ملفات الموقع المؤقتة
 AllowedInFrames=مسموح بها في الإطارات
@@ -151,6 +154,7 @@ DefineListOfAltLanguagesInWebsiteProperties=حدّد قائمة اللغات ا�
 GenerateSitemaps=إنشاء ملف sitemap.xml لموقع الويب
 ConfirmGenerateSitemaps=سيؤدي التأكيد إلى حذف ملف خريطة الموقع الحالي.
 ConfirmSitemapsCreation=تأكيد إنشاء خريطة الموقع
+ConfirmSetAsHomePage=Are you sure you want to set the page <b>%s</b> as the home page of the website?
 SitemapGenerated=تم توليد ملف خريطة الموقع <b>%s</b>
 ImportFavicon=استيراد الأيقونة المفضلة
 ErrorFaviconType=يجب أن تكون الأيقونة بصيغة PNG.
@@ -509,3 +513,13 @@ ThisDirectoryIsEmpty=هذا المجلد فارغ.
 WrittenBy=كتبه %s
 ImportOfWebsiteTemplateIncludingPHPIsAllowedIf=يُسمح باستيراد قوالب المواقع التي تستخدم محتوى PHP ديناميكيًا فقط إذا كانت قيمة $dolibarr_website_allow_custom_php مضبوطة على 2 في ملف conf.php.
 ImportOfWebsiteTemplateIncludingPHPIsDisabled=لاستيراد قوالب مواقع تستخدم محتوى PHP ديناميكيًا، يجب ضبط $dolibarr_website_allow_custom_php على 1 أو 2 في ملف conf.php.
+CurrentPageVersion=Current page
+ListOfPageVersions=List of archived versions of page (a backup file of page is created each time you save a change, for example on the HTML source)
+EditInLineAllowedAreas=In mode Edit inline, the tags with contenteditable="true", an id and no PHP code inside can be changed and are saved when you leave them. Text formatting (bold, color, font size...), links, paragraphs, titles and lists are allowed, images and other HTML can only be changed in the HTML source.
+ErrorEditInlineElementNoId=This element has contenteditable="true" but no id, so it can not be edited inline.
+ErrorEditInlineElementNotFound=No element with id %s and contenteditable="true" was found in the source of the page.
+ErrorEditInlineElementNotUnique=The id %s is used by several elements with contenteditable="true" in the source of the page.
+ErrorEditInlineElementWithPhp=The element with id %s contains PHP code in the source of the page, so it can only be changed in the HTML source.
+ErrorEditInlineElementNotAllowedHtml=The element with id %s contains HTML that can not be edited inline (image, form, script, comment, other tags or attributes...), so it can only be changed in the HTML source.
+ErrorEditInlineElementNotPlainText=The element with id %s contains HTML in the source of the page and can only be edited inline as plain text, so it can only be changed in the HTML source.
+ErrorEditInlineContentNotAllowed=The new content of the element with id %s contains HTML tags or attributes that are not allowed, so it was not saved.

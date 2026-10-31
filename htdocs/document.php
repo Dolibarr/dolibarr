@@ -264,9 +264,10 @@ if (getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS')) {
 
 // Define mime type
 $type = 'application/octet-stream'; // By default
-if (GETPOST('type', 'alpha')) {
-	$type = GETPOST('type', 'alpha');
-} else {
+$type = GETPOST('type', 'alpha');
+// Security: The type given into the URL must not turn a file (like a .txt or a .png that a user can upload) into a page (html, xhtml, svg, xml)
+// that the browser displays instead of downloading it. For such a file, the type is the one of the file extension.
+if (empty($type) || preg_match('/(html|xml|svg)/i', $type)) {
 	$type = dol_mimetype($original_file);
 }
 // Security: Force to octet-stream if file is a dangerous file. For example when it is a .noexe file
@@ -292,6 +293,8 @@ if ($refname == 'thumbs' || $refname == 'temp') {
 if (empty($modulepart)) {
 	accessforbidden('Bad value for parameter modulepart');
 }
+
+$hookmanager->initHooks(array('document'));
 
 // Check security and set return info with full path of file
 $check_access = dol_check_secure_access_document($modulepart, $original_file, (int) $entity, $user, $refname, 'read');
@@ -363,7 +366,6 @@ if (!file_exists($fullpath_original_file_osencoded)) {
 }
 
 // Hooks
-$hookmanager->initHooks(array('document'));
 $parameters = array('ecmfile' => $ecmfile, 'modulepart' => $modulepart, 'original_file' => $original_file,
 	'entity' => $entity, 'fullpath_original_file' => $fullpath_original_file,
 	'filename' => $filename, 'fullpath_original_file_osencoded' => $fullpath_original_file_osencoded);

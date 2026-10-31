@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=Validated
 StatusReceptionProcessedShort=ដំណើរការ
 ReceptionSheet=សន្លឹកទទួលភ្ញៀវ
 ValidateReception=បញ្ជាក់ការទទួលភ្ញៀវ
+DeleteReception=Delete reception
 ConfirmDeleteReception=តើអ្នកប្រាកដថាចង់លុបការទទួលនេះទេ?
 ConfirmValidateReception=តើ​អ្នក​ប្រាកដ​ជា​ចង់​ធ្វើ​ឱ្យ​ការ​ទទួល​នេះ​មាន​សុពលភាព​ដោយ​មាន​ឯកសារ​យោង <b>%s</b>?
 ConfirmCancelReception=តើអ្នកប្រាកដថាចង់លុបចោលការទទួលនេះទេ?

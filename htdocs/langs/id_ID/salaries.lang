@@ -27,6 +27,7 @@ Earnings=Earnings
 TotalEarnings=Total earnings
 TotalDeductions=Total deductions
 NetPaid=Net paid
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Akun (dari Bagan Akun) digunakan secara default untuk "pengguna" pada gaji
@@ -55,8 +56,6 @@ FillFieldFirst=Isi kolom karyawan terlebih dahulu
 UpdateAmountWithLastSalary=Tetapkan jumlah gaji terakhir
 MakeTransferRequest=Buat permintaan transfer
 VirementOrder=Permintaan transfer kredit
-WithdrawalReceipt=Perintah transfer kredit
-OrderWaiting=Pesanan tertunda
 FillEndOfMonth=Akhir bulan
 
 # Shortcuts

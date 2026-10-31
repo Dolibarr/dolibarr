@@ -25,6 +25,9 @@ TOKEN_EXPIRE_AT=Token läuft ab am
 TOKEN_DELETE=Lösche gespeichertes Token
 OAUTH_GOOGLE_ID=OAuth Google-ID
 OAUTH_GOOGLE_SECRET=OAuth Google Secret
+OAUTH_MICROSOFTAPP_ID=Client-ID für Microsoft Exchange Online (App-only OAuth)
+OAUTH_MICROSOFTAPP_SECRET=Client-Secret für Microsoft Exchange Online (App-only OAuth)
+OAUTH_MICROSOFTAPP_DESC=Anwendungszugangsdaten für Microsoft Exchange Online für SMTP/IMAP mit dem Client-Credentials-Flow
 OAUTH_GITHUB_ID=OAuth GitHub-ID
 OAUTH_GITHUB_SECRET=OAuth GitHub Secret
 OAUTH_URL_FOR_CREDENTIAL=Gehen Sie zu <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">dieser Seite<span class="fas fa-external-link-alt paddingleft"></span></a>, um Ihre OAuth-ID und Ihr Geheimnis zu erstellen oder abzurufen
@@ -51,3 +54,5 @@ RefreshTokenHelp=Verwenden Sie die Token-Aktualisierungsfunktion, um ein neues Z
 OldTokenWasExpiredItHasBeenRefresh=Das alte Token ist abgelaufen und wurde aktualisiert.
 OldTokenWasNotExpiredButItHasBeenRefresh=Das alte Token ist nicht abgelaufen, wurde aber aktualisiert
 OAuthErrorStateDiffers=Der Wert für state=%s weicht vom Wert in der Sitzung ab. Der Code wird abgelehnt.
+OAuthErrorNoScopeInState=Im Parameter 'state' wurde kein Scope empfangen. Dolibarr überträgt mit 'state' die Liste der angeforderten Scopes; das bedeutet, dass die Konstante %s leer ist oder fehlt. Gehen Sie zu Start - Einstellungen - Module - OAuth, aktivieren Sie die Scopes dieses Anbieters und speichern Sie.
+OAuthErrorTokenRequestFailed=Der OAuth-Anbieter hat den Austausch des Autorisierungscodes gegen ein Token abgelehnt. Antwort des Anbieters: %s

@@ -138,7 +138,7 @@ HolidaysCanceled=Stornierter Urlaubsantrag
 HolidaysCanceledBody=Ihr Urlaubsantrag vom %s bis %s wurde storniert.
 FollowedByACounter=0 = Zähler nicht verwenden<br>1 = Zähler verwenden (diese Art von Urlaub wird mit einem Zähler für den mitarbeiterbezogenen Urlaubsanspruch versehen. Der Zähler wird manuell oder automatisch erhöht oder verringert, wenn der Urlaubsantrag genehmigt wurde.)
 NoLeaveWithCounterDefined=Es sind keine Urlaubsarten definiert, die durch einen Zähler überwacht sind.
-GoIntoDictionaryHolidayTypes=Öffnen Sie das Menü <strong>Start - Einstellungen - Stammdaten - Urlaubsarten </strong> um die verschiedenen Urlaubsarten zu konfigurieren.
+GoIntoDictionaryHolidayTypes=Öffnen Sie das Menü <strong>Start - Einstellungen - Stammdaten - Arten von Abwesenheiten</strong>, um die verschiedenen Arten von Abwesenheiten zu konfigurieren.
 HolidaySetup=Konfiguration des Moduls "Urlaubsantrags-Verwaltung"
 HolidaysNumberingModules=Nummerierungsschemata für Urlaubsanträge
 TemplatePDFHolidays=PDF-Vorlage für Urlaubsanträge
@@ -171,4 +171,4 @@ ListeLB=Liste des Urlaubsguthabens
 LeaveType = Art des Urlaubsguthabens
 HolidayHrInformationsPreviousMonth=Zusammenfassung der Abwesenheiten für den Vormonat
 HolidayHrInformationsPreviousMonthTopic=Zusammenfassung der Abwesenheiten für den Monat __PREVIOUS_MONTH_TEXT__
-HolidayHrInformationsPreviousMonthContent=Hier finden Sie die Zusammenfassung von Abwesenheiten für den Monat __PREVIOUS_MONTH_TEXT__ für das Unternehmen __MYCOMPANY_NAME__
+HolidayHrInformationsPreviousMonthContent=Hier finden Sie die Zusammenfassung von Abwesenheiten für den Monat __PREVIOUS_MONTH_TEXT__ für __MYCOMPANY_NAME__

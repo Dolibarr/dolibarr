@@ -69,7 +69,6 @@ DOL_VALUE_DAY=Siku ya ankara
 DOL_VALUE_DAY_LETTERS=Invoice day in letters
 DOL_LINE_FEED_REVERSE=Mlisho wa mstari kinyume
 InvoiceID=Kitambulisho cha ankara
-InvoiceRef=Ref ya ankara
 DOL_PRINT_OBJECT_LINES=Mistari ya ankara
 DOL_VALUE_CUSTOMER_FIRSTNAME=Jina la kwanza Mteja
 DOL_VALUE_CUSTOMER_LASTNAME=Jina la mwisho la mteja

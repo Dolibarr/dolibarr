@@ -3,7 +3,6 @@
 #
 # Global
 #
-Subtotal=Delsummer
 SubTotalModuleDesc=Delsum og tittellinjer for visse dokumenter
 #
 # Admin
@@ -12,12 +11,19 @@ SubtotalSetup=Oppsett av delsummodul
 MaxSubtotalLevel=Maksimalt nivå
 SubtotalLineBackColor=Bakgrunnsfarge for nivå %s linjer
 NotSupportedByAllPDF=Vil fungere med nyere PDF-filer, men ikke med gamle. %s
+SubtotalsPredefinedTitles=Subtotals predefined titles
+SubtotalsPredefinedTexts=Subtotals predefined texts
+SubtotalTextColumnTitle=Tekst
 
 #
 # Card
 #
 AddTitleLine=Legg til tittellinje
 AddSubtotalLine=Legg til delsumlinje
+AddTextLine=Add text line
+PredefinedTitle=Predefined title
+PredefinedText=Predefined text
+SubtotalTextContent=Text content
 TitleNeedDesc=Du må angi en gyldig beskrivelse for å opprette en tittel.
 TitleAddedLevelTooHigh=Tittelnivået er for høyt lagt til (lagt til med nivå %s i stedet).
 TitleEditedLevelTooHigh=Redigert tittelnivå for høyt (redigert med nivå %s i stedet).

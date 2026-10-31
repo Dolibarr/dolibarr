@@ -69,7 +69,6 @@ DOL_VALUE_DAY=Dita e faturës
 DOL_VALUE_DAY_LETTERS=Dita e faturës me shkronja
 DOL_LINE_FEED_REVERSE=Furnizimi i linjës anasjelltas
 InvoiceID=ID e faturës
-InvoiceRef=Faturë ref
 DOL_PRINT_OBJECT_LINES=Linjat e faturave
 DOL_VALUE_CUSTOMER_FIRSTNAME=Emri i klientit
 DOL_VALUE_CUSTOMER_LASTNAME=Mbiemri i klientit

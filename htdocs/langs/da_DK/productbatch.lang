@@ -47,9 +47,13 @@ HideLots=Skjul masser
 OutOfOrder=Virker ikke
 InWorkingOrder=I funktionsdygtig stand
 ToReplace=Erstatte
-CantMoveNonExistantSerial=Fejl. Du beder om et træk på en plade til en serial, der ikke eksisterer længere. Det kan være, du tager den samme serie på samme lager flere gange i samme forsendelse, eller den blev brugt af en anden forsendelse. Fjern denne forsendelse og klargør en anden.
+CantMoveNonExistantSerial=Fejl: Du anmodede om en lagerbevægelse på en post for en serienummer, der ikke længere findes. Måske har du brugt den samme serienummer på samme lager flere gange i den samme forsendelse, eller den blev brugt af en anden forsendelse. Fjern denne forsendelse, og forbered en ny.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Lottabel ufuldstændig kørselsreparation med parameteren '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= Lagerkorrektion påkrævet, fordi unikt serienummer.
 ErrorBatchesNeedStockManagement=Fejl. Et produkt med batch-/lotstyring skal også administreres på lager.
 ForceBatchesNeedStockManagement=Et produkt med batch-/lotstyring skal administreres på lager (lagerstyring tvinges til ja)
 BatchInformationNotfound=Batchoplysninger ikke fundet
+EnterMultipleSerialNumbers=Indtast flere serienumre
+EnterOneSerialNumberPerLine=Skriv, indsæt eller scan serienumrene, ét pr. linje
+NbOfSerialNumbersDetected=Serienummer(e) for %s registreret
+ErrorDuplicateSerialNumberInList=Serienummeret %s findes flere gange på listen

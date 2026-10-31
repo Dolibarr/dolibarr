@@ -69,7 +69,7 @@ print "jQuery(document).ready(function () {\n";
 //print "	console.log('referrer=".dol_escape_js($_SERVER['HTTP_REFERER'])."');\n";
 
 print 'var nowtime = Date.now();'."\n";
-print 'var time_auto_update = '.max(1, getDolGlobalInt('MAIN_BROWSER_NOTIFICATION_FREQUENCY')).';'."\n"; // Always defined
+print 'var time_auto_update = '.max(1, getDolGlobalInt('MAIN_BROWSER_NOTIFICATION_FREQUENCY', 30)).';'."\n";
 print 'var time_js_next_test;'."\n";
 print 'var dolnotif_nb_test_for_page = 0;'."\n";
 print 'var dolnotif_idinterval = null;'."\n";

@@ -45,7 +45,6 @@ OrderRefusedInDolibarr=Orden%s rechazada
 OrderBackToDraftInDolibarr=Orden%s volver al estado de borrador
 ShippingSentByEMail=Detalle de entrega %s enviado por correo
 ShippingValidated=Envío %s validado
-InterventionSentByEMail=Intervención %s enviada por correo electrónico
 ProjectDeletedInDolibarr=Proyecto%s eliminado
 ProposalDeleted=Propuesta eliminada
 PRODUCT_CREATEInDolibarr=Producto%s creado

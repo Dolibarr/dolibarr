@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = Lue Ajastettu työ
-Permission23102 = luo/update Suunniteltu työ
-Permission23103 = Poista Ajastettu työ
-Permission23104 = Suorita Ajastettu työ
 # Admin
 CronSetup=Ajastettujen tehtävien asetusten hallinta
 URLToLaunchCronJobs=URL-osoite tarkistettavaksi ja käynnistä hyväksytyt cron-työt selaimesta
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=Unix-ympäristössä sinun tulee käyttää seuraavaa cr
 CronExplainHowToRunWin=Microsoft(tm) Windows -ympäristössä voit käyttää Scheduled Task -työkaluja komentorivin suorittamiseen 5 minuutin välein
 CronMethodDoesNotExists=Luokka %s ei sisällä menetelmää %s
 CronMethodNotAllowed=Luokan %s menetelmä %s on kiellettyjen menetelmien estoluettelossa
-CronJobDefDesc=Cron-työprofiilit määritetään moduulikuvaajaan tiedosto. Kun moduuli on aktivoitu, ne ladataan ja, jotta voit hallita töitä Pääkäyttäjä-työkaluilla valikko %s.
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=Luettelo ennalta määritetyistä cron-työprofiileista
 # Menu
 EnabledAndDisabled=Käytössä ja poistettu käytöstä
@@ -27,7 +22,7 @@ CronDelete=Poista ajoitetut työt
 CronConfirmDelete=Haluatko varmasti poistaa nämä ajoitetut työt?
 CronExecute=Käynnistä nyt
 CronConfirmExecute=Haluatko varmasti suorittaa nämä ajoitetut työt nyt?
-CronInfo=Ajoitettu työmoduuli mahdollistaa töiden ajoituksen suorittamaan ne automaattisesti. Työt voidaan aloittaa myös manuaalisesti.
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=Job
 CronNone=Ajoitetun tehtävän seuraava suoritus
 CronNotYetRan=Ei koskaan teloitettu
@@ -79,7 +74,7 @@ CronType_command=Shell-komento
 CronCannotLoadClass=Luokkaa tiedosto %s ei voi ladata (käytä luokkaa %s)
 CronModuleNotEnabledInThisEntity=Cron-moduuli ei ole käytössä tässä entiteetissä (käytetään %s-metodia %s-objektissa)
 CronCannotLoadObject=Luokka tiedosto %s ladattiin, mutta objektia %s ei löytynyt siitä
-UseMenuModuleToolsToAddCronJobs=Go into menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=Työ estetty
 MakeLocalDatabaseDumpShort=Paikallinen tietokanta varmuuskopio
 MakeLocalDatabaseDump=luo paikallinen tietokanta kaatopaikka. Parametrit ovat: pakkaus ('gz' tai 'bz' tai 'none'), varmuuskopion tyyppi ('mysql', 'pgsql', 'auto'), 1, 'auto' tai rakennettava tiedostonimi, säilytettävien varmuuskopiotiedostojen määrä

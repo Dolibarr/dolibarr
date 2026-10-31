@@ -69,7 +69,6 @@ DOL_VALUE_DAY=Jour de facturation
 DOL_VALUE_DAY_LETTERS=Jour de la facture en lettres
 DOL_LINE_FEED_REVERSE=Retour à la ligne
 InvoiceID=ID de facture
-InvoiceRef=Réf facture
 DOL_PRINT_OBJECT_LINES=Lignes de facture
 DOL_VALUE_CUSTOMER_FIRSTNAME=Prénom du client
 DOL_VALUE_CUSTOMER_LASTNAME=Nom du client

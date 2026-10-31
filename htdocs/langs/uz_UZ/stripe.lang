@@ -5,7 +5,7 @@ StripeOrCBDoPayment=Kredit karta yoki Stripe orqali to'lash
 FollowingUrlAreAvailableToMakePayments=Dolibarr ob'ektlarida to'lovni amalga oshirish uchun xaridorga sahifani taklif qilish uchun quyidagi URL manzillar mavjud
 PaymentForm=To'lov shakli
 WelcomeOnPaymentPage=Onlayn to'lov xizmatimizga xush kelibsiz
-ThisScreenAllowsYouToPay=Ushbu ekran sizga %s raqamiga onlayn to'lovni amalga oshirishga imkon beradi.
+ThisScreenAllowsYouToPay=This screen allows you to make an online payment to %s.
 ThisIsInformationOnPayment=Bu to'lash to'g'risida ma'lumot
 ToComplete=Tugatish uchun
 YourEMail=To'lovni tasdiqlash uchun elektron pochta xabarini yuboring
@@ -25,7 +25,7 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=Mavjud ob'ekti bo'lmagan har qanday miq
 ToOfferALinkForOnlinePaymentOnMemberSubscription=Ro'yxatdan obuna uchun %s onlayn to'lov sahifasini taqdim etish uchun URL
 ToOfferALinkForOnlinePaymentOnDonation=Xayr-ehson to'lash uchun %s onlayn to'lov sahifasini taqdim etadigan URL
 YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
-YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful or failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Stripe-ni url bilan sozlang <b> %s </b> Stripe tomonidan tasdiqlanganda to'lov avtomatik ravishda yaratiladi.
 AccountParameter=Hisob parametrlari
 UsageParameter=Foydalanish parametrlari
@@ -110,3 +110,4 @@ PAYBOX_PBX_RANG=Value for PBX Rang
 PAYBOX_PBX_IDENTIFIANT=Value for PBX ID
 PAYBOX_HMAC_KEY=HMAC key
 FeatureNotUsedAccordingtoSetup=Feature not used according to your %s setup
+PaymentRecordedButPostPocessingKo=Your payment was recorded by the payment system. However, it appears that our post-payment processing could not be fully completed. We were alerted and will try to solve this soon. We recommend you to not try to pay a second time, and send us a screenshot of this page by email to be sure so we take into account the issue.
