@@ -263,3 +263,182 @@ body[dir="rtl"] .dol-tooltip::after {
 	transform: translateX(0) translateY(-50%);
 	border-color: transparent var(--tooltip-bg-color) transparent transparent;
 }
+
+/* ****************************************************** */
+/* Popover of the ajax edition of a field (field popover) */
+/* ****************************************************** */
+
+/* Dolibarr.tools.card.fields: placed over the value of the field, so the layout of the card does not move */
+.dol-field-popover {
+	position: absolute;
+	z-index: 1000;
+	box-sizing: border-box;
+	padding: 0.375rem 0.5rem;
+	color: var(--tooltip-txt-color);
+	background-color: var(--tooltip-bg-color);
+	border: 1px solid var(--tooltip-border-color);
+	border-radius: 0.375rem;
+	box-shadow: 0 1px 20px rgba(0, 0, 0, 0.12);
+}
+.dol-field-popover.--dark-mode {
+	color: var(--tooltip-txt-color-dark-theme);
+	background-color: var(--tooltip-bg-color-dark-theme);
+	border-color: var(--tooltip-border-color-dark-theme);
+}
+/* Inputs and buttons on one line, buttons below a multiline editor (notes) */
+.dol-field-popover {
+	display: flex;
+	align-items: center;
+	gap: 0.375rem;
+}
+.dol-field-popover.--multiline {
+	flex-direction: column;
+	align-items: stretch;
+}
+.dol-field-popover .dol-field-popover-inputs {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+.dol-field-popover .dol-field-popover-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 0.25rem;
+	flex: 0 0 auto;
+}
+.dol-field-popover .dol-field-popover-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.75rem;
+	height: 1.75rem;
+	padding: 0;
+	border: 1px solid var(--tooltip-border-color);
+	border-radius: 0.375rem;
+	background: transparent;
+	color: inherit;
+	cursor: pointer;
+}
+.dol-field-popover .dol-field-popover-button:hover,
+.dol-field-popover .dol-field-popover-button:focus-visible {
+	background-color: rgba(0, 0, 0, 0.06);
+}
+.dol-field-popover .dol-field-popover-save {
+	color: #fff;
+	background-color: var(--butactionbg, #4a7c9b);
+	border-color: var(--butactionbg, #4a7c9b);
+}
+.dol-field-popover .dol-field-popover-save:hover,
+.dol-field-popover .dol-field-popover-save:focus-visible {
+	background-color: var(--butactionbg, #4a7c9b);
+	filter: brightness(1.1);
+}
+.dol-field-popover .dol-field-popover-button:disabled {
+	opacity: 0.5;
+	cursor: default;
+}
+/* Value under the popover */
+.dol-field-editing {
+	opacity: 0.4;
+}
+/* Values of the lines edited in their cell (Dolibarr.tools.card.lines): the value, in the width of the column, is the zone that opens
+   its edition and gets the look of a field on hover. Its padding is compensated by negative margins so the value does not move. */
+td[data-dol-line-field] .dol-line-value {
+	display: block;
+	min-width: 2.5em;
+	margin: -4px -5px;
+	padding: 3px 4px;
+	border: 1px solid transparent;
+	border-radius: 4px;
+	transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+td[data-dol-line-field] .dol-line-value:hover {
+	cursor: text;
+	background-color: rgba(0, 0, 0, 0.03);
+	border-color: rgba(0, 0, 0, 0.18);
+}
+/* Compact popover (values of the lines): only the input, exactly over the value */
+.dol-field-popover.--compact {
+	padding: 0;
+	border: none;
+	background: transparent;
+	box-shadow: none;
+}
+.dol-field-popover.--compact input:not([type="hidden"]),
+.dol-field-popover.--compact select {
+	box-sizing: border-box;
+	max-width: none;
+	margin: 0;
+	padding: 3px 4px;
+	font: inherit;
+	color: inherit;
+	background-color: var(--colorbackbody, #fff);
+	border: 1px solid var(--colorbackhmenu1, #6c757d);
+	border-radius: 4px;
+	box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
+	outline: none;
+}
+
+/* Dolibarr.tools.card: messages of the card tool (last change with the button to undo it, edition in progress), with buttons.
+   In contrast with the page: dark when Dolibarr is light, light when Dolibarr is dark */
+.dol-card-toast {
+	--card-toast-txt-color: var(--tooltip-txt-color-dark-theme);
+	--card-toast-bg-color: var(--tooltip-bg-color-dark-theme);
+	--card-toast-border-color: var(--tooltip-border-color-dark-theme);
+	--card-toast-link-color: #93c5fd;
+	--card-toast-hover-color: rgba(255, 255, 255, 0.12);
+	position: fixed;
+	z-index: 1001;
+	left: 50%;
+	bottom: 1.5rem;
+	transform: translateX(-50%);
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	max-width: calc(100vw - 2rem);
+	box-sizing: border-box;
+	padding: 0.5rem 0.5rem 0.5rem 0.875rem;
+	color: var(--card-toast-txt-color);
+	background-color: var(--card-toast-bg-color);
+	border: 1px solid var(--card-toast-border-color);
+	border-radius: 0.375rem;
+	box-shadow: 0 1px 20px rgba(0, 0, 0, 0.2);
+}
+<?php
+if (getDolGlobalInt('THEME_DARKMODEENABLED')) {
+	// Same condition as the dark mode of the theme (style.css.php)
+	print getDolGlobalInt('THEME_DARKMODEENABLED') != 2 ? "@media (prefers-color-scheme: dark) {\n" : "@media not print {\n";
+	print ".dol-card-toast {
+	--card-toast-txt-color: #1f2937;
+	--card-toast-bg-color: #ffffff;
+	--card-toast-border-color: #d1d5db;
+	--card-toast-link-color: #1d4ed8;
+	--card-toast-hover-color: rgba(0, 0, 0, 0.06);
+}
+}\n";
+}
+?>
+.dol-card-toast[hidden] {
+	display: none;
+}
+.dol-card-toast .dol-card-toast-text {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.dol-card-toast button {
+	flex: 0 0 auto;
+	padding: 0.25rem 0.5rem;
+	color: inherit;
+	background: transparent;
+	border: 1px solid transparent;
+	border-radius: 0.375rem;
+	cursor: pointer;
+}
+.dol-card-toast .dol-card-toast-button.--primary {
+	font-weight: bold;
+	color: var(--card-toast-link-color);
+}
+.dol-card-toast button:hover,
+.dol-card-toast button:focus-visible {
+	background-color: var(--card-toast-hover-color);
+}
