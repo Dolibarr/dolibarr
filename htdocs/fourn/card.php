@@ -514,6 +514,7 @@ if ($object->id > 0) {
 
 	if (isModEnabled('supplier_proposal')) {
 		// Box proposals
+		$nbProposals = $object->getNbOfCommerce('supplier_proposal');
 		$tmp = $object->getOutstandingProposals('supplier');
 		$outstandingOpened = $tmp['opened'];
 		$outstandingTotal = $tmp['total_ht'];
@@ -525,7 +526,7 @@ if ($object->id > 0) {
 			$boxstat .= '<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 		}
 		$boxstat .= '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
-		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
+		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.' <small>('.$nbProposals.')</small></span></span><br>';
 		$boxstat .= '<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 		$boxstat .= '</div>';
 		if ($link) {
@@ -535,6 +536,7 @@ if ($object->id > 0) {
 
 	if (isModEnabled("supplier_order")) {
 		// Box proposals
+		$nbOrders = $object->getNbOfCommerce('order_supplier');
 		$tmp = $object->getOutstandingOrders('supplier');
 		$outstandingOpened = $tmp['opened'];
 		$outstandingTotal = $tmp['total_ht'];
@@ -546,7 +548,7 @@ if ($object->id > 0) {
 			$boxstat .= '<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 		}
 		$boxstat .= '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
-		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
+		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.' <small>('.$nbOrders.')</small></span></span><br>';
 		$boxstat .= '<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 		$boxstat .= '</div>';
 		if ($link) {
@@ -556,6 +558,7 @@ if ($object->id > 0) {
 
 	if (isModEnabled("supplier_invoice") && ($user->hasRight('fournisseur', 'facture', 'lire') || $user->hasRight('supplier_invoice', 'read'))) {
 		$warn = '';
+		$nbInvoices = $object->getNbOfCommerce('invoice_supplier');
 		$tmp = $object->getOutstandingBills('supplier');
 		$outstandingOpened = $tmp['opened'];
 		$outstandingTotal = $tmp['total_ht'];
@@ -568,7 +571,7 @@ if ($object->id > 0) {
 			$boxstat .= '<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 		}
 		$boxstat .= '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
-		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
+		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.' <small>('.$nbInvoices.')</small></span></span><br>';
 		$boxstat .= '<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 		$boxstat .= '</div>';
 		if ($link) {
