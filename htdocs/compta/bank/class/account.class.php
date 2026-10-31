@@ -175,6 +175,12 @@ class Account extends CommonObject
 	public $pti_in_ctti = 0;
 
 	/**
+	 * Credit transfer file: who pays the fees of the payments outside SEPA (ChrgBr), one of self::SEPA_CHARGE_BEARERS.
+	 * @var string
+	 */
+	public $sepa_charge_bearer = 'SHAR';
+
+	/**
 	 * XML SEPA format: code of the category purpose (PmtTpInf/CtgyPurp/Cd). Some banks require a value other than CORE.
 	 * One of self::SEPA_CATEGORY_PURPOSES.
 	 * @var string
@@ -441,6 +447,11 @@ class Account extends CommonObject
 	const STATUS_CLOSED = 1;
 
 	/**
+	 * Allowed fee payers of a credit transfer outside SEPA (ISO 20022 ChargeBearerType1Code without SLEV, that is for SEPA payments).
+	 */
+	const SEPA_CHARGE_BEARERS = array('SHAR', 'DEBT', 'CRED');
+
+	/**
 	 * Allowed codes for the category purpose of a SEPA payment (ISO 20022, ExternalCategoryPurpose1Code subset).
 	 * Defined by the SEPA scheme, not editable by the end user: no dictionary table.
 	 */
@@ -481,6 +492,16 @@ class Account extends CommonObject
 				self::STATUS_CLOSED => $langs->transnoentitiesnoconv("StatusAccountClosed")
 			);
 		}
+	}
+
+	/**
+	 * Return who pays the fees of the payments outside SEPA in a credit transfer file made from this account (ChrgBr).
+	 *
+	 * @return string	One of self::SEPA_CHARGE_BEARERS
+	 */
+	public function getSepaChargeBearer()
+	{
+		return (in_array($this->sepa_charge_bearer, self::SEPA_CHARGE_BEARERS, true) ? $this->sepa_charge_bearer : 'SHAR');
 	}
 
 	/**
@@ -876,6 +897,7 @@ class Account extends CommonObject
 		$sql .= ", iban_prefix";
 		$sql .= ", domiciliation";
 		$sql .= ", pti_in_ctti";
+		$sql .= ", sepa_charge_bearer";
 		$sql .= ", sepa_category_purpose";
 		$sql .= ", sepa_local_instrument";
 		$sql .= ", proprio";
@@ -908,6 +930,7 @@ class Account extends CommonObject
 		$sql .= ", '".$this->db->escape($this->iban)."'";
 		$sql .= ", '".$this->db->escape($this->address)."'";
 		$sql .= ", ".((int) $this->pti_in_ctti);
+		$sql .= ", '".$this->db->escape($this->getSepaChargeBearer())."'";
 		$sql .= ", '".$this->db->escape($this->getSepaCategoryPurpose())."'";
 		$sql .= ", '".$this->db->escape($this->getSepaLocalInstrument())."'";
 		$sql .= ", '".$this->db->escape($this->owner_name)."'";
@@ -1038,6 +1061,7 @@ class Account extends CommonObject
 		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
 		$sql .= ",domiciliation='".$this->db->escape($this->address)."'";
 		$sql .= ",pti_in_ctti=".((int) $this->pti_in_ctti);
+		$sql .= ",sepa_charge_bearer = '".$this->db->escape($this->getSepaChargeBearer())."'";
 		$sql .= ",sepa_category_purpose = '".$this->db->escape($this->getSepaCategoryPurpose())."'";
 		$sql .= ",sepa_local_instrument = '".$this->db->escape($this->getSepaLocalInstrument())."'";
 		$sql .= ",proprio = '".$this->db->escape($this->owner_name)."'";
@@ -1190,7 +1214,7 @@ class Account extends CommonObject
 		$sql .= " ba.domiciliation as address, ba.pti_in_ctti, ba.sepa_category_purpose, ba.sepa_local_instrument, ba.proprio as owner_name, ba.owner_address, ba.owner_zip, ba.owner_town, ba.owner_country_id, ba.state_id, ba.fk_pays as country_id,";
 		$sql .= " ba.account_number, ba.fk_accountancy_journal, ba.currency_code,";
 		$sql .= " ba.min_allowed, ba.min_desired, ba.comment,";
-		$sql .= " ba.datec as date_creation, ba.tms as date_modification, ba.ics, ba.ics_transfer,";
+		$sql .= " ba.datec as date_creation, ba.tms as date_modification, ba.ics, ba.ics_transfer, ba.sepa_charge_bearer,";
 		$sql .= ' c.code as country_code, c.label as country,';
 		$sql .= ' d.code_departement as state_code, d.nom as state,';
 		$sql .= ' aj.code as accountancy_journal';
@@ -1241,6 +1265,7 @@ class Account extends CommonObject
 				$this->owner_country_id = $obj->owner_country_id;
 
 				$this->pti_in_ctti   = $obj->pti_in_ctti;
+				$this->sepa_charge_bearer = (in_array($obj->sepa_charge_bearer, self::SEPA_CHARGE_BEARERS, true) ? $obj->sepa_charge_bearer : 'SHAR');
 				$this->sepa_category_purpose = (in_array($obj->sepa_category_purpose, self::SEPA_CATEGORY_PURPOSES) ? $obj->sepa_category_purpose : 'CORE');
 				$this->sepa_local_instrument = (in_array($obj->sepa_local_instrument, self::SEPA_LOCAL_INSTRUMENTS) ? $obj->sepa_local_instrument : 'CORE');
 
