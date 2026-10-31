@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Usanidi wa moduli ya PayPal
-PaypalDesc=Sehemu hii inaruhusu malipo kwa wateja kupitia <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a> . Hii inaweza kutumika kwa malipo ya dharula au kwa malipo yanayohusiana na kitu cha Dolibarr (ankara, agizo, ...)
+PaypalDesc=This module allows payment by customers via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. This can be used for an ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
 PaypalOrCBDoPayment=Lipa kwa PayPal (Kadi au PayPal)
 PaypalDoPayment=Lipa kwa PayPal
 PAYPAL_API_SANDBOX=Mtihani wa modi/sanduku la mchanga
@@ -19,7 +19,7 @@ NewOnlinePaymentFailed=Malipo mapya ya mtandaoni yalijaribu lakini yameshindwa
 ONLINE_PAYMENT_SENDEMAIL=Anwani ya barua pepe ya arifa baada ya kila jaribio la malipo (kwa kufaulu na kutofaulu)
 ReturnURLAfterPayment=Rudisha URL baada ya malipo
 ValidationOfOnlinePaymentFailed=Uthibitishaji wa malipo ya mtandaoni haukufaulu
-PaymentSystemConfirmPaymentPageWasCalledButFailed=Ukurasa wa uthibitishaji wa malipo uliitwa na mfumo wa malipo ulileta hitilafu
+PaymentSystemConfirmPaymentPageWasCalledButFailed=The payment confirmation page was called by the online payment system and returned an error
 SetExpressCheckoutAPICallFailed=Simu ya API ya SetExpressCheckout imeshindwa.
 DoExpressCheckoutPaymentAPICallFailed=Simu ya API ya DoExpressCheckoutPayment imeshindwa.
 DetailedErrorMessage=Ujumbe wa Hitilafu wa Kina

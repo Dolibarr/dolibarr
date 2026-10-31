@@ -61,7 +61,6 @@ ORDER_SUPPLIER_DELETEInDolibarr=Pedido de compra %s excluído
 SupplierInvoiceSentByEMail=Fatura %s do fornec. enviada por e-mail
 ShippingSentByEMail=Embarque %s enviado por e-mail
 ShippingValidated=Envio %s validado
-InterventionSentByEMail=Intervenção %s enviada por e-mail
 ProjectDeletedInDolibarr=Projeto %s excluído
 ProposalDeleted=Proposta excluída
 OrderDeleted=Pedido excluído

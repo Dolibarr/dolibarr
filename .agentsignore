@@ -38,3 +38,7 @@ test/sqlmap
 logs
 var/cache
 var/log
+.bash_history
+.zed_server/
+.ssh/
+.local/

@@ -184,7 +184,8 @@ if (empty($reshook)) {
 		// Generate payment array and check if there is payment higher than invoice and payment date before invoice date
 		$tmpinvoice = new FactureFournisseur($db);
 		$i = 0;
-		foreach ($_POST as $key => $value) {
+		// Can be into POST or GET (GET when the payment is confirmed from the ajax dialog box)
+		foreach (array_merge($_GET, $_POST) as $key => $value) {
 			if (substr($key, 0, 7) == 'amount_') {
 				$cursorfacid = (int) substr($key, 7);
 				$amounts[$cursorfacid] = price2num(GETPOST($key));
@@ -409,6 +410,9 @@ $invoicesupplierstatic = new FactureFournisseur($db);
 
 llxHeader('', $langs->trans('ListPayment'), '', '', 0, 0, '', '', '', 'mod-fourn-facture page-paiement');
 
+// Does the confirm use the dialog box mode (must match the conditions into the formconfirm() method)
+$useajaxconfirm = (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) ? 1 : 0;
+
 if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paiement') {
 	$object = new FactureFournisseur($db);
 	$result = $object->fetch($facid);
@@ -524,6 +528,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			print '<input type="hidden" name="socid" value="'.$obj->socid.'">';
 			print '<input type="hidden" name="type" id="invoice_type" value="'.$object->type.'">';
 			print '<input type="hidden" name="societe" value="'.$obj->name.'">';
+			print '<input type="hidden" name="page_y" value="">';
 
 			print dol_get_fiche_head([]);
 
@@ -816,14 +821,14 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 								}
 
 								if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
-									if ($action != 'add_paiement') {
+									if ($action != 'add_paiement' || $useajaxconfirm) {
 										if (!empty($conf->use_javascript_ajax)) {
 											print '<button class="btn-low-emphasis --btn-icon AutoFillAmount" data-rowname="'.$namef.'" data-value="'.($sign * (float) $multicurrency_remaintopay).'">';
 											print img_picto("Auto fill", 'rightarrow.png');
 											print '</button>';
 										}
 										print '<input type=hidden class="multicurrency_remain" name="'.$nameRemain.'" value="'.$multicurrency_remaintopay.'">';
-										print '<input '.$min.' '.$max.' type="text" class="multicurrency_amount width100" name="'.$namef.'" placeholder="'.dol_escape_htmltag($langs->getCurrencySymbol($objp->multicurrency_code)).'" value="'.GETPOST($namef).'">';
+										print '<input '.$min.' '.$max.' type="text" class="multicurrency_amount right width100" name="'.$namef.'" placeholder="'.dol_escape_htmltag($langs->getCurrencySymbol($objp->multicurrency_code)).'" value="'.GETPOST($namef).'">';
 									} else {
 										print '<input type="text" class="width100" name="'.$namef.'_disabled" placeholder="'.dol_escape_htmltag($langs->getCurrencySymbol($objp->multicurrency_code)).'" value="'.GETPOST($namef).'" disabled>';
 										print '<input type="hidden" name="'.$namef.'" value="'.GETPOST($namef).'">';
@@ -884,14 +889,14 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 								}
 							}
 
-							if ($action != 'add_paiement') {
+							if ($action != 'add_paiement' || $useajaxconfirm) {
 								if (!empty($conf->use_javascript_ajax)) {
 									print '<button  class="btn-low-emphasis --btn-icon AutoFillAmount" data-rowname="'.$namef.'" data-value="'.($sign * (float) $remaintopay).'">';
 									print img_picto("Auto fill", 'rightarrow.png');
 									print '</button>';
 								}
 								print '<input type="hidden" class="remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
-								print '<input '.$max.' '.$min.' type="text" class="amount width100" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">'; // class is required to be used by javascript callForResult();
+								print '<input '.$max.' '.$min.' type="text" class="amount right width100" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">'; // class is required to be used by javascript callForResult();
 							} else {
 								print '<input type="text" class="width100" name="'.$namef.'_disabled" value="'.dol_escape_htmltag(GETPOST($namef)).'" disabled>';
 								print '<input type="hidden" class="amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">'; // class is required to be used by javascript callForResult();
@@ -954,11 +959,30 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				}
 			}
 
+			// Fields of the payment form, so the ajax confirm dialog can propagate them to the confirm action
+			if ($action == 'add_paiement') {
+				$i = count($formquestion);
+
+				$formquestion[$i++] = array('type' => 'hidden', 'name' => 'paiementid', 'value' => GETPOSTINT('paiementid'));
+				$formquestion[$i++] = array('type' => 'hidden', 'name' => 'accountid', 'value' => $accountid);
+				$formquestion[$i++] = array('type' => 'hidden', 'name' => 'reday', 'value' => GETPOSTINT('reday'));
+				$formquestion[$i++] = array('type' => 'hidden', 'name' => 'remonth', 'value' => GETPOSTINT('remonth'));
+				$formquestion[$i++] = array('type' => 'hidden', 'name' => 'reyear', 'value' => GETPOSTINT('reyear'));
+				$formquestion[$i++] = array('type' => 'hidden', 'name' => 'num_paiement', 'value' => GETPOST('num_paiement', 'alphanohtml'));
+				$formquestion[$i++] = array('type' => 'hidden', 'name' => 'comment', 'value' => GETPOST('comment', 'restricthtml'));
+				$formquestion[$i++] = array('type' => 'hidden', 'name' => 'closepaidinvoices', 'value' => GETPOST('closepaidinvoices'));
+			}
+
 			// Save + Cancel Buttons
-			if ($action != 'add_paiement') {
+			// When the confirm is a dialog box, the save button is kept so user can close the dialog,
+			// change data and submit the payment form again
+			if ($action != 'add_paiement' || $useajaxconfirm) {
+				// Keep the checkbox state entered by the user when the page is rendered again after a submit
+				$closepaidinvoiceschecked = (($action == 'add_paiement' && !GETPOST('closepaidinvoices')) ? '' : ' checked');
+
 				print '<br><div class="center">';
-				print '<input type="checkbox" checked id="closepaidinvoices" name="closepaidinvoices" class="marginrightonly"><label for="closepaidinvoices" class="opacitymedium">'.$langs->trans("ClosePaidInvoicesAutomatically").'</label><br>';
-				print '<input type="submit" class="button" value="'.$langs->trans('ToMakePayment').'">';
+				print '<input type="checkbox"'.$closepaidinvoiceschecked.' id="closepaidinvoices" name="closepaidinvoices" class="marginrightonly"><label for="closepaidinvoices" class="opacitymedium">'.$langs->trans("ClosePaidInvoicesAutomatically").'</label><br>';
+				print '<input type="submit" class="button reposition" value="'.$langs->trans('ToMakePayment').'">';
 				print ' &nbsp; <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				print '</div>';
 			}
@@ -977,9 +1001,13 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				}
 				if (GETPOST('closepaidinvoices')) {
 					$text .= '<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");
-					print '<input type="hidden" name="closepaidinvoices" value="'.GETPOST('closepaidinvoices').'">';
+					if (empty($useajaxconfirm)) {
+						// In dialog mode, the value is read from the checkbox by the dialog box itself.
+						// In inline mode, we must carry it into the confirm form.
+						print '<input type="hidden" name="closepaidinvoices" value="'.GETPOST('closepaidinvoices').'">';
+					}
 				}
-				print $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$object->id.'&socid='.$object->socid.'&type='.$object->type, $langs->trans('PayedSuppliersPayments'), $text, 'confirm_paiement', $formquestion, $preselectedchoice);
+				print $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$object->id.'&socid='.$object->socid.'&type='.$object->type, $langs->trans('PayedSuppliersPayments'), $text, 'confirm_paiement', $formquestion, $preselectedchoice, $useajaxconfirm);
 			}
 
 			print '</form>';

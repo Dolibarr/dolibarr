@@ -2505,6 +2505,33 @@ class Expedition extends CommonObject
 		}
 	}
 
+	/**
+	 *	Count the standalone shipments (shipments without source object, like a sales order) of the current entity.
+	 *	A shipment is standalone when no object is linked as its source, the same rule as for origin_id into fetch().
+	 *
+	 *	@return	int		Number of standalone shipments, <0 if KO
+	 */
+	public function countStandalone()
+	{
+		global $conf;
+
+		$sql = "SELECT COUNT(e.rowid) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as e";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
+		$sql .= " WHERE e.entity = ".((int) $conf->entity);
+		$sql .= " AND el.rowid IS NULL";
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		$obj = $this->db->fetch_object($resql);
+		$this->db->free($resql);
+
+		return (int) $obj->nb;
+	}
+
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**

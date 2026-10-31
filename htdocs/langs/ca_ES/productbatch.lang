@@ -47,9 +47,13 @@ HideLots=Amaga els lots
 OutOfOrder=No funciona
 InWorkingOrder=En procés
 ToReplace=Substitueix
-CantMoveNonExistantSerial=Error. Demanes un moviment en un registre per a una sèrie que ja no existeix. Pot ser que porteu la mateixa sèrie al mateix magatzem diverses vegades en el mateix enviament o que l'utilitzi un altre enviament. Traieu aquest enviament i prepareu-ne un altre.
+CantMoveNonExistantSerial=Error: You requested a stock movement on a record for a serial that no longer exists. Maybe you used the same serial in the same warehouse several times in the same shipment or it was used by another shipment. Remove this shipment and prepare another one.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Reparació d'execució incompleta de la taula de lots amb el paràmetre '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= estoc cal correcció perquè el número de sèrie és únic.
 ErrorBatchesNeedStockManagement=Error. Un producte amb gestió de lots també s'ha de gestionar a estoc.
 ForceBatchesNeedStockManagement=Un producte amb gestió de lots s'ha de gestionar a estoc (la gestió de estoc s'ha de forçar a sí)
 BatchInformationNotfound=No s'ha trobat la informació del lot
+EnterMultipleSerialNumbers=Enter multiple serial numbers
+EnterOneSerialNumberPerLine=Type, paste or scan the serial numbers, one per line
+NbOfSerialNumbersDetected=%s serial number(s) detected
+ErrorDuplicateSerialNumberInList=Serial number %s is present several times in the list

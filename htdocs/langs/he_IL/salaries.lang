@@ -27,6 +27,7 @@ Earnings=Earnings
 TotalEarnings=Total earnings
 TotalDeductions=Total deductions
 NetPaid=Net paid
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "users" on salaries
@@ -55,8 +56,6 @@ FillFieldFirst=מלא תחילה את שדה העובד
 UpdateAmountWithLastSalary=קבע סכום המשכורת האחרונה
 MakeTransferRequest=הגש בקשת העברה
 VirementOrder=בקשה להעברת אשראי
-WithdrawalReceipt=הזמנת העברה באשראי
-OrderWaiting=הזמנה בהמתנה
 FillEndOfMonth=End of month
 
 # Shortcuts

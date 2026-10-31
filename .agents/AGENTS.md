@@ -68,6 +68,7 @@ Before writing any code, the agent **must**:
 - Write short, readable, and testable functions
 - Avoid side effects
 - Prefer typed properties and return types when PHP version allows
+- Loading and calling functions must be explicit to imported functions: Do not write dynamic closure functions, do not use `call_user_func` and `call_user_func_array` or `spl_autoload_functions`
 
 ---
 

@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = Кори банақшагирифтаро хонед
-Permission23102 = Эҷод/навсозии кори ба нақша гирифташуда
-Permission23103 = Кори банақшагирифтаро нест кунед
-Permission23104 = Кори банақшагирифтаро иҷро кунед
 # Admin
 CronSetup=Танзими идоракунии кор ба нақша гирифта шудааст
 URLToLaunchCronJobs=URL барои тафтиш ва оғози ҷойҳои кории тахассусии cron аз браузер
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=Дар муҳити Unix шумо бояд вуруди 
 CronExplainHowToRunWin=Дар муҳити Windows (tm) Windows шумо метавонед асбобҳои ба нақша гирифташудаи вазифаро барои ҳар 5 дақиқа иҷро кардани сатри фармон истифода баред
 CronMethodDoesNotExists=Синфи %s ягон усулро дар бар намегирад %s
 CronMethodNotAllowed=Усули %s аз синфи %s дар рӯйхати блокҳои усулҳои мамнӯъ ҷойгир аст
-CronJobDefDesc=Профилҳои кори Cron дар файли тавсифкунандаи модул муайян карда шудаанд. Вақте ки модул фаъол карда мешавад, онҳо бор карда мешаванд ва дастрасанд, то шумо метавонед корҳоро аз менюи асбобҳои администратор %s идора кунед.
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=Рӯйхати профилҳои пешакии кор cron
 # Menu
 EnabledAndDisabled=Фаъол ва ғайрифаъол
@@ -27,7 +22,7 @@ CronDelete=Корҳои ба нақша гирифташударо нест ку
 CronConfirmDelete=Шумо мутмаин ҳастед, ки мехоҳед ин корҳои ба нақша гирифташударо нест кунед?
 CronExecute=Ҳоло оғоз кунед
 CronConfirmExecute=Шумо мутмаин ҳастед, ки мехоҳед ин корҳои таъиншударо ҳозир иҷро кунед?
-CronInfo=Модули кории ба нақша гирифташуда имкон медиҳад, ки ҷойҳои корӣ ба таври худкор иҷро карда шаванд. Корҳоро инчунин дастӣ оғоз кардан мумкин аст.
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=Айюб
 CronNone=Давраи навбатии вазифаи ба нақша гирифташуда
 CronNotYetRan=Ҳеҷ гоҳ иҷро нашудааст
@@ -79,7 +74,7 @@ CronType_command=Фармони Shell
 CronCannotLoadClass=Файли синфи %s бор карда намешавад (барои истифодаи синфи %s)
 CronModuleNotEnabledInThisEntity=Модули Cron дар ин объект фаъол нест (барои истифода бурдани усули %s объекти %s)
 CronCannotLoadObject=Файли синфи %s бор карда шуд, аммо объекти %s дар он ёфт нашуд
-UseMenuModuleToolsToAddCronJobs=Ба менюи "<a href="%s"> Home - Воситаҳои маъмурӣ - Ҷойҳои ба нақша гирифташуда </a>" ворид шавед, то ҷойҳои кориро бубинед ва таҳрир кунед.
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=Кор хомӯш карда шудааст
 MakeLocalDatabaseDumpShort=Захираи пойгоҳи додаҳои маҳаллӣ
 MakeLocalDatabaseDump=Як партовгоҳи пойгоҳи додаҳои маҳаллиро эҷод кунед. Параметрҳо инҳоянд: фишурдасозӣ ('gz' ё 'bz' ё 'ҳеҷ'), навъи нусхабардорӣ ('mysql', 'pgsql', 'auto'), 1, 'auto' ё номи файл барои сохтан, шумораи файлҳои захиравӣ барои нигоҳ доштан

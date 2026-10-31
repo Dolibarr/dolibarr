@@ -118,6 +118,11 @@ for VAR in DOL_CTI_ADMIN_LOGIN DOL_CTI_ADMIN_PASSWORD; do
     fi
 done
 
+# DOCKER_ALLOW_SMTP=1 starts the container without the block of the outbound SMTP ports.
+if [ "${DOCKER_ALLOW_SMTP:-}" = "1" ]; then
+    TEST_ARGS+=(-e "DOCKER_ALLOW_SMTP=1")
+fi
+
 # Make the Apache logs of the host readable into the container (read-only mount).
 # The GID owning the directory (adm on Debian/Ubuntu) is passed so the entrypoint
 # can add the user to this group, as the directory is not readable by others.
