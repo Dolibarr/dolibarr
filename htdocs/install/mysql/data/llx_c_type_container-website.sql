@@ -32,9 +32,11 @@
 
 INSERT INTO llx_c_type_container (code, label, module, active, position, entity) values ('page',     'Page',     'system', 1, 10, __ENTITY__);
 INSERT INTO llx_c_type_container (code, label, module, active, position, entity) values ('blogpost', 'BlogPost', 'system', 1, 15, __ENTITY__);
-INSERT INTO llx_c_type_container (code, label, module, active, position, entity) values ('menu',     'Menu',     'system', 1, 30, __ENTITY__);
-INSERT INTO llx_c_type_container (code, label, module, active, position, entity) values ('banner',   'Banner',   'system', 1, 35, __ENTITY__);
-INSERT INTO llx_c_type_container (code, label, module, active, position, entity) values ('other',    'Other',    'system', 1, 40, __ENTITY__);
+INSERT INTO llx_c_type_container (code, label, module, active, position, typecontainer, entity) values ('menu',     'Menu',     'system', 1, 30, 'container', __ENTITY__);
+INSERT INTO llx_c_type_container (code, label, module, active, position, typecontainer, entity) values ('banner',   'Banner',   'system', 0, 35, 'container', __ENTITY__);
+INSERT INTO llx_c_type_container (code, label, module, active, position, typecontainer, entity) values ('other',    'Other',    'system', 1, 40, 'container', __ENTITY__);
+INSERT INTO llx_c_type_container (code, label, module, active, position, typecontainer, entity) values ('header',   'PageHeader',   'system', 1, 32, 'container', __ENTITY__);
+INSERT INTO llx_c_type_container (code, label, module, active, position, typecontainer, entity) values ('footer',   'PageFooter',   'system', 1, 33, 'container', __ENTITY__);
 
 INSERT INTO llx_c_type_container (code, label, active, module, position, typecontainer, entity) VALUES ('service', 'Web Service (for ajax or api call)', 1, 'system', 300, 'library', __ENTITY__);
 INSERT INTO llx_c_type_container (code, label, active, module, position, typecontainer, entity) VALUES ('library', 'Library (functions)',   1, 'system', 400, 'library', __ENTITY__);

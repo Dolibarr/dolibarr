@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = ອ່ານວຽກທີ່ຕັ້ງເວລາໄວ້
-Permission23102 = ສ້າງ/ອັບເດດ ວຽກທີ່ຕັ້ງເວລາໄວ້
-Permission23103 = ລຶບວຽກທີ່ຕັ້ງເວລາໄວ້
-Permission23104 = ປະຕິບັດວຽກທີ່ຕັ້ງເວລາໄວ້
 # Admin
 CronSetup=ການຕັ້ງຄ່າຈັດການວຽກທີ່ຕັ້ງເວລາໄວ້
 URLToLaunchCronJobs=URL ສຳລັບກວດສອບ ແລະ ເລີ່ມວຽກ Cron ຜ່ານບຣາວເຊີ
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=ໃນສະພາບແວດລ້ອມ Unix, ທ່�
 CronExplainHowToRunWin=ໃນສະພາບແວດລ້ອມ Microsoft(tm) Windows, ທ່ານສາມາດໃຊ້ Scheduled Task ເພື່ອໃຫ້ຄຳສັ່ງເຮັດວຽກທຸກໆ 5 ນາທີ
 CronMethodDoesNotExists=ຄລາສ (Class) %s ບໍ່ມີເມທອດ (Method) %s
 CronMethodNotAllowed=ເມທອດ %s ຂອງຄລາສ %s ຢູ່ໃນລາຍຊື່ທີ່ຖືກຫ້າມ
-CronJobDefDesc=ໂປຣໄຟລ໌ວຽກ Cron ຖືກກຳນົດໄວ້ໃນໄຟລ໌ລາຍລະອຽດຂອງໂມດູນ. ເມື່ອໂມດູນຖືກເປີດໃຊ້, ພວກມັນຈະຖືກໂຫຼດ ແລະ ພ້ອມໃຫ້ທ່ານຈັດການໄດ້ທີ່ເມນູເຄື່ອງມືຜູ້ດູແລ %s.
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=ລາຍຊື່ໂປຣໄຟລ໌ວຽກ Cron ທີ່ກຳນົດໄວ້ລ່ວງໜ້າ
 # Menu
 EnabledAndDisabled=ເປີດໃຊ້ ແລະ ປິດໃຊ້
@@ -27,7 +22,7 @@ CronDelete=ລຶບວຽກທີ່ຕັ້ງເວລາໄວ້
 CronConfirmDelete=ເຈົ້າແນ່ໃຈບໍ່ວ່າຕ້ອງການລຶບວຽກທີ່ຕັ້ງເວລາເຫຼົ່ານີ້?
 CronExecute=ເລີ່ມດຽວນີ້
 CronConfirmExecute=ເຈົ້າແນ່ໃຈບໍ່ວ່າຕ້ອງການປະຕິບັດວຽກທີ່ຕັ້ງເວລາເຫຼົ່ານີ້ດຽວນີ້?
-CronInfo=ໂມດູນວຽກທີ່ຕັ້ງເວລາ ຊ່ວຍໃຫ້ສາມາດຕັ້ງເວລາວຽກເພື່ອໃຫ້ເຮັດວຽກໂດຍອັດຕະໂນມັດ. ວຽກຍັງສາມາດເລີ່ມດ້ວຍຕົນເອງໄດ້ເຊັ່ນກັນ.
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=ວຽກ
 CronNone=ການເຮັດວຽກຄັ້ງຕໍ່ໄປຂອງວຽກທີ່ຕັ້ງເວລາ
 CronNotYetRan=ບໍ່ເຄີຍປະຕິບັດມາກ່ອນ
@@ -79,7 +74,7 @@ CronType_command=ຄຳສັ່ງ Shell
 CronCannotLoadClass=ບໍ່ສາມາດໂຫຼດໄຟລ໌ຄລາສ %s (ເພື່ອໃຊ້ຄລາສ %s)
 CronModuleNotEnabledInThisEntity=ໂມດູນ Cron ບໍ່ໄດ້ຖືກເປີດໃຊ້ໃນໜ່ວຍງານນີ້ (ເພື່ອໃຊ້ເມທອດ %s ຂອງອັອບເຈັກ %s)
 CronCannotLoadObject=ໂຫຼດໄຟລ໌ຄລາສ %s ແລ້ວ, ແຕ່ບໍ່ພົບອັອບເຈັກ %s ໃນນັ້ນ
-UseMenuModuleToolsToAddCronJobs=ເຂົ້າໄປທີ່ເມນູ "<a href="%s">ໜ້າຫຼັກ - ເຄື່ອງມືຜູ້ດູແລ - ວຽກທີ່ຕັ້ງເວລາ</a>" ເພື່ອເບິ່ງ ແລະ ແກ້ໄຂວຽກທີ່ຕັ້ງເວລາໄວ້.
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=ວຽກຖືກປິດໃຊ້ງານ
 MakeLocalDatabaseDumpShort=ສຳຮອງຂໍ້ມູນຖານຂໍ້ມູນທ້ອງຖິ່ນ
 MakeLocalDatabaseDump=ສ້າງໄຟລ໌ດັັມພ໌ (Dump) ຂອງຖານຂໍ້ມູນທ້ອງຖິ່ນ. ພາຣາມິເຕີມີ: ການບີບອັດ ('gz', 'bz' ຫຼື 'none'), ປະເພດການສຳຮອງ ('mysql', 'pgsql', 'auto'), 1, 'auto' ຫຼື ຊື່ໄຟລ໌ທີ່ຈະສ້າງ, ຈຳນວນໄຟລ໌ສຳຮອງທີ່ຈະເກັບໄວ້

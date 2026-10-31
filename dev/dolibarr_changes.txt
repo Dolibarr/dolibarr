@@ -474,6 +474,15 @@ NOTES   :
         +           return !($loader instanceof AutoLoader);
         +       });
 
+==> FILE   : AutoLoader.php, function thereCanBeOnlyOne()
+    REASON : Do not unregister the other autoloaders (Composer, the ones of the external modules, PHPUnit...).
+             Once unregistered, the classes they load were not found anymore for the rest of the request
+             (loadLastResort() cannot call the loaders that are an array [object, method]).
+    DIFF   :
+        -   (loop that unregisters all the autoloaders but the one of Restler)
+        +   // @CHANGE DOL The other autoloaders are not unregistered anymore
+        +   return static::$instance;
+
 ==> FILE   : explorer/index.html
     REASON : Use swagger 2 provided into /explorer.
     CHANGE : Content of file changed.

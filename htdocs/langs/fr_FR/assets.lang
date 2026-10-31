@@ -18,10 +18,8 @@ AccountancyCodeDepreciationAsset=Code comptable (compte d'amortissement)
 AccountancyCodeDepreciationExpense=Code comptable (compte de charges d'amortissement)
 AssetsLines=Immobilisations
 ConfirmValidateAsset=Êtes-vous sûr de à valider ce immobilisation avec la référence <b>%s</b> ?
-DeleteType=Supprimer
 DeleteAnAssetType=Supprimer un modèle d'immobilisation
 ConfirmDeleteAssetType=Êtes-vous sûr de vouloir supprimer ce modèle d'immobilisation ?
-ShowTypeCard=Afficher le modèle '%s'
 # Module label 'ModuleAssetsName'
 ModuleAssetsName=Immobilisations
 # Module description 'ModuleAssetsDesc'
@@ -147,5 +145,6 @@ AssetErrorCalculationDepreciationLines=Erreur lors du calcul des lignes d'amorti
 AssetErrorReversalDateNotProvidedForMode=La date de reprise n'est pas fournie pour le modèle d'immobilisation '%s'
 AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=La date de reprise doit être supérieure ou égale au début de l'exercice fiscal en cours pour le modèle d'immobilisation '%s'
 AssetErrorReversalAmountNotProvidedForMode=Le montant de la reprise n'est pas fourni pour le modèle d'immobilisation '%s'.
+AssetErrorDegressiveDailyDurationForMode=Une dépréciation dégressive nécessite une durée en années ou en mois pour le mode de dépréciation '%s'.
 AssetErrorFetchCumulativeDepreciation=Erreur lors de la récupération du montant de l'amortissement cumulé de la ligne d'amortissement
 AssetErrorSetLastCumulativeDepreciation=Erreur lors de l'enregistrement du dernier montant d'amortissement cumulé

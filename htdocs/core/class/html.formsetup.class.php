@@ -3,6 +3,7 @@
  * Copyright (C) 2024-2026	MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2026       Joachim Kueter          <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -838,7 +839,12 @@ class FormSetupItem
 			return call_user_func($this->setValueFromPostCallBack);
 		}
 
-		// Modify constant only if key was posted (avoid resetting key to the null value)
+		// Modify constant only if key was posted (avoid resetting key to the null value).
+		// A multiselect with no option selected posts nothing, so its input adds a hidden marker field.
+		$posted = GETPOSTISSET($this->confKey) || ($this->type == 'multiselect' && GETPOSTISSET($this->confKey.'_multiselect'));
+		if (!$posted) {
+			return 0;
+		}
 		if ($this->type != 'title') {
 			if (preg_match('/category:/', $this->type)) {
 				if (GETPOSTINT($this->confKey) == '-1') {
@@ -1239,7 +1245,11 @@ class FormSetupItem
 			$TSelected = explode(',', $this->fieldValue);
 		}
 
-		return $this->form->multiselectarray($this->confKey, $this->fieldOptions, $TSelected, 0, 0, '', 0, 0, 'style="min-width:100px"');
+		$out = $this->form->multiselectarray($this->confKey, $this->fieldOptions, $TSelected, 0, 0, '', 0, 0, 'style="min-width:100px"');
+		// Marker so that setValueFromPost() also saves an empty selection
+		$out .= '<input type="hidden" name="'.dol_escape_htmltag($this->confKey).'_multiselect" value="1">';
+
+		return $out;
 	}
 
 	/**

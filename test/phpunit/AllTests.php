@@ -175,8 +175,12 @@ class AllTests
 		//$suite->addTestSuite('CoreTest');
 		require_once dirname(__FILE__).'/AdminLibTest.php';
 		$suite->addTestSuite('AdminLibTest');
+		require_once dirname(__FILE__).'/RestlerAutoLoaderTest.php';
+		$suite->addTestSuite('RestlerAutoLoaderTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeTest.php';
 		$suite->addTestSuite('AiMcpApiBridgeTest');
+		require_once dirname(__FILE__).'/AiMcpApiBridgeDocumentsTest.php';
+		$suite->addTestSuite('AiMcpApiBridgeDocumentsTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeProjectsTest.php';
 		$suite->addTestSuite('AiMcpApiBridgeProjectsTest');
 		require_once dirname(__FILE__).'/ApiListStatusFilterTest.php';
@@ -209,6 +213,10 @@ class AllTests
 		$suite->addTestSuite('FilesLibMoveDirTest');
 		require_once dirname(__FILE__).'/FilesLibTest.php';
 		$suite->addTestSuite('FilesLibTest');
+		require_once dirname(__FILE__).'/InstallRepairEcmTest.php';
+		$suite->addTestSuite('InstallRepairEcmTest');
+		require_once dirname(__FILE__).'/InstallRepairImagesTest.php';
+		$suite->addTestSuite('InstallRepairImagesTest');
 		require_once dirname(__FILE__).'/GetUrlLibTest.php';
 		$suite->addTestSuite('GetUrlLibTest');
 		require_once dirname(__FILE__).'/JsonLibTest.php';
@@ -249,6 +257,9 @@ class AllTests
 		$suite->addTestSuite('UserTest');
 		require_once dirname(__FILE__).'/UserGroupTest.php';
 		$suite->addTestSuite('UserGroupTest');
+
+		require_once dirname(__FILE__).'/VCardTest.php';
+		$suite->addTestSuite('VCardTest');
 
 		require_once dirname(__FILE__).'/NumberingModulesTest.php';
 		$suite->addTestSuite('NumberingModulesTest');
@@ -297,8 +308,6 @@ class AllTests
 
 		require_once dirname(__FILE__).'/ProductTest.php';
 		$suite->addTestSuite('ProductTest');
-		require_once dirname(__FILE__).'/SupplierOrdersLineApiTest.php';
-		$suite->addTestSuite('SupplierOrdersLineApiTest');
 		require_once dirname(__FILE__).'/VariantsTest.php';
 		$suite->addTestSuite('VariantsTest');
 
@@ -452,6 +461,8 @@ class AllTests
 			$suite->addTestSuite('RestAPICronJobTest');
 			require_once dirname(__FILE__).'/RestAPIBankAccountsTest.php';
 			$suite->addTestSuite('RestAPIBankAccountsTest');
+			require_once dirname(__FILE__).'/RestAPISupplierOrderTest.php';
+			$suite->addTestSuite('RestAPISupplierOrderTest');
 
 			// Old WS
 			require_once dirname(__FILE__).'/WebservicesProductsTest.php';
