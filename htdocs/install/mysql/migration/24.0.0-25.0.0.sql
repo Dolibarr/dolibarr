@@ -260,6 +260,9 @@ ALTER TABLE llx_user ADD COLUMN state_job_id integer DEFAULT NULL;
 ALTER TABLE llx_bank_account ADD COLUMN sepa_category_purpose varchar(4) DEFAULT 'CORE' AFTER pti_in_ctti;
 ALTER TABLE llx_bank_account ADD COLUMN sepa_local_instrument varchar(4) DEFAULT 'CORE' AFTER sepa_category_purpose;
 
+-- Ticket: per ticket option to record time spent. Existing tickets keep it off.
+ALTER TABLE llx_ticket ADD COLUMN usage_time_spent integer DEFAULT 0 AFTER progress;
+
 -- end of migration - nothing after this line
 
 -- Variants: allow standard import/export of variants (attributes, values, combinations,

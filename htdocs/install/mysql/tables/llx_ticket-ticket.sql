@@ -37,6 +37,7 @@ CREATE TABLE llx_ticket
 	fk_user_modif integer,
 	resolution integer,
 	progress integer DEFAULT 0,				-- progression 0 - 100 or null
+	usage_time_spent integer DEFAULT 0,		-- Set to 1 if time spent is recorded on the ticket
 	timing varchar(20),
 	type_code varchar(32),
 	category_code varchar(32),
