@@ -4816,15 +4816,17 @@ class ToolApiBridge extends McpTool
 			}
 		}
 
-		$hookmanager->error = '';
-		$hookmanager->errors = array();
+		// The hook manager keeps the errors of every hook run before: only the
+		// ones this run adds are the refusal. ->error is set by the run that fails.
+		$knownErrors = count($hookmanager->errors);
 		$parameters = array('tool' => $toolName, 'operation' => $operation, 'class' => $class, 'args' => $args);
 		$action = $operation;
 		$reshook = $hookmanager->executeHooks('checkMcpApiBridgeWrite', $parameters, $object, $action);
 		if ($reshook >= 0) {
 			return '';
 		}
-		$message = trim($hookmanager->error.' '.implode(' ', array_filter((array) $hookmanager->errors)));
+		$newErrors = array_slice($hookmanager->errors, $knownErrors);
+		$message = trim($hookmanager->error.' '.implode(' ', array_filter($newErrors)));
 		dol_syslog(get_class($this).'::precheckByModules '.$toolName.' refused by a module: '.$message, LOG_INFO);
 		if ($message === '') {
 			$langs->load('other');
