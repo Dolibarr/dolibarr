@@ -416,7 +416,11 @@ class Stripe extends CommonObject
 
 		$paymentintent = null;
 
-		if (is_object($object) && getDolGlobalInt('STRIPE_REUSE_EXISTING_INTENT_IF_FOUND') && !getDolGlobalInt('STRIPE_CARD_PRESENT')) {
+		// When the object is a third party (online payment of all the unpaid invoices of a customer), it is only the payer:
+		// there is no single object to pay, so no payment request is searched or recorded into llx_prelevement_demande.
+		$objecttopay = (is_object($object) && $object->element != 'societe') ? $object : null;
+
+		if (is_object($objecttopay) && getDolGlobalInt('STRIPE_REUSE_EXISTING_INTENT_IF_FOUND') && !getDolGlobalInt('STRIPE_CARD_PRESENT')) {
 			// Warning. If a payment was tried and failed, a payment intent was created.
 			// But if we change something on object to pay (amount or other that does not change the idempotency key), reusing same payment intent, is not allowed by Stripe.
 			// Recommended solution is to recreate a new payment intent each time we need one (old one will be automatically closed by Stripe after a delay), Stripe will
@@ -475,7 +479,9 @@ class Stripe extends CommonObject
 			if (is_object($object)) {
 				$metadata['dol_type'] = $object->element;
 				$metadata['dol_id'] = $object->id;
-				if (is_object($object->thirdparty) && $object->thirdparty->id > 0) {
+				if ($object->element == 'societe') {
+					$metadata['dol_thirdparty_id'] = $object->id;
+				} elseif (is_object($object->thirdparty) && $object->thirdparty->id > 0) {
 					$metadata['dol_thirdparty_id'] = $object->thirdparty->id;
 				}
 			}
@@ -615,7 +621,7 @@ class Stripe extends CommonObject
 					dol_syslog(get_class($this)."::getPaymentIntent paymentintent is a defined object");
 
 					// Store the payment intent
-					if (is_object($object)) {
+					if (is_object($objecttopay)) {
 						$paymentintentalreadyexists = 0;
 
 						// Get $customerid and $pkey
