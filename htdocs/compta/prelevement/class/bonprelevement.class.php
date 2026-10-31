@@ -33,6 +33,7 @@
 
 require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/bank.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
@@ -111,7 +112,7 @@ class BonPrelevement extends CommonObject
 	public $emetteur_ics;
 
 	/**
-	 * @var string		SEPA schema version for direct debit files ('2' = pain.008.001.02, '8' = pain.008.001.08)
+	 * @var string		SEPA schema version of the file: for direct debit '2' = pain.008.001.02, '8' = pain.008.001.08, for credit transfer '3' = pain.001.001.03, '9' = pain.001.001.09
 	 */
 	public $sepa_schema_version = '2';
 
@@ -634,6 +635,7 @@ class BonPrelevement extends CommonObject
 
 				$amounts = array();
 				$amountsperthirdparty = array();
+				$multicurrencyamountsperthirdparty = array();
 
 				$facs = $this->getListInvoices(1, $type);
 				if ($this->error) {
@@ -641,7 +643,7 @@ class BonPrelevement extends CommonObject
 				}
 
 				// Loop on each invoice or salary.
-				// $facs should be array(0=>id, 1=>amount requested)
+				// $facs should be array(0=>id, 1=>amount requested, 2=>amount requested in the currency of the document)
 				$num = count($facs);
 				for ($i = 0; $i < $num; $i++) {
 					if ($this->type == 'bank-transfer') {
@@ -657,9 +659,13 @@ class BonPrelevement extends CommonObject
 					$result = $fac->fetch($facs[$i][0]);
 
 					$amounts[$fac->id] = $facs[$i][1];
+					$amountincurrency = null;
 					if ($this->type == 'bank-transfer') {
 						if ($type == 'salary') {
 							$amountsperthirdparty[$fac->fk_user][$fac->id] = $facs[$i][1];
+						} elseif ($facs[$i][2] !== null && !empty($fac->multicurrency_code) && $fac->multicurrency_code != getDolCurrency()) {
+							$amountincurrency = (float) $facs[$i][2];
+							$multicurrencyamountsperthirdparty[$fac->socid.'-'.$fac->multicurrency_code][$fac->id] = $amountincurrency;
 						} else {
 							$amountsperthirdparty[$fac->socid][$fac->id] = $facs[$i][1];
 						}
@@ -684,7 +690,12 @@ class BonPrelevement extends CommonObject
 					if ($type == 'salary') {
 						$amountofdocument = $fac->amount;
 					}
-					if (price2num($alreadypayed + $facs[$i][1], 'MT') == price2num($amountofdocument, 'MT')) {
+					if ($amountincurrency !== null) {
+						$documentpaid = (price2num($fac->getRemainToPay(1) - $amountincurrency, 'MT') == 0);
+					} else {
+						$documentpaid = (price2num($alreadypayed + $facs[$i][1], 'MT') == price2num($amountofdocument, 'MT'));
+					}
+					if ($documentpaid) {
 						$result = $fac->setPaid($user);
 						if ($result < 0) {
 							$this->error = $fac->error;
@@ -693,8 +704,15 @@ class BonPrelevement extends CommonObject
 					}
 				}
 
-				// Make one payment per customer or employee
-				foreach ($amountsperthirdparty as $thirdpartyid => $cursoramounts) {
+				// Make one payment per customer or employee, and per supplier and currency for invoices in another currency than the company one
+				$paymentsamounts = array();
+				foreach ($amountsperthirdparty as $cursoramounts) {
+					$paymentsamounts[] = array('amounts' => $cursoramounts, 'multicurrency_amounts' => array());
+				}
+				foreach ($multicurrencyamountsperthirdparty as $cursoramounts) {
+					$paymentsamounts[] = array('amounts' => array(), 'multicurrency_amounts' => $cursoramounts);
+				}
+				foreach ($paymentsamounts as $paymentamounts) {
 					if ($this->type == 'bank-transfer') {
 						if ($type == 'salary') {
 							$paiement = new PaymentSalary($this->db);
@@ -705,7 +723,10 @@ class BonPrelevement extends CommonObject
 						$paiement = new Paiement($this->db);
 					}
 					$paiement->datepaye = $date;
-					$paiement->amounts = $cursoramounts; // Array with detail of dispatching of payments for each invoice
+					$paiement->amounts = $paymentamounts['amounts']; // Array with detail of dispatching of payments for each invoice
+					if ($paiement instanceof Paiement) {
+						$paiement->multicurrency_amounts = $paymentamounts['multicurrency_amounts'];
+					}
 
 					if ($this->type == 'bank-transfer') {
 						if ($type == 'salary') {
@@ -892,6 +913,7 @@ class BonPrelevement extends CommonObject
 		}
 		if ($amounts) {
 			$sql .= ", SUM(pl.amount)";
+			$sql .= ", SUM((SELECT pd.multicurrency_amount FROM " . MAIN_DB_PREFIX . "prelevement_demande as pd WHERE pd.rowid = pl.fk_prelevement_demande))";
 		}
 		$sql .= " FROM " . MAIN_DB_PREFIX . "prelevement_bons as pb,";
 		$sql .= " " . MAIN_DB_PREFIX . "prelevement_lignes as pl,";
@@ -925,7 +947,8 @@ class BonPrelevement extends CommonObject
 					} else {
 						$arr[$i] = array(
 							$row[0],
-							$row[1]
+							$row[1],
+							$row[2]
 						);
 					}
 					$i++;
@@ -1903,7 +1926,11 @@ class BonPrelevement extends CommonObject
 	{
 		global $conf, $langs, $mysoc;
 
-		$this->sepa_schema_version = (getDolGlobalString('PRELEVEMENT_SEPA_SCHEMA_VERSION') == '8' ? '8' : '2');
+		if ($type == 'bank-transfer') {
+			$this->sepa_schema_version = (getDolGlobalString('PAYMENTBYBANKTRANSFER_SEPA_SCHEMA_VERSION') == '9' ? '9' : '3');
+		} else {
+			$this->sepa_schema_version = (getDolGlobalString('PRELEVEMENT_SEPA_SCHEMA_VERSION') == '8' ? '8' : '2');
+		}
 
 		if ($type !== 'bank-transfer') {
 			$format = strtoupper($format);
@@ -2117,7 +2144,8 @@ class BonPrelevement extends CommonObject
 				$dateTime_YMD = dol_print_date($date_actu, '%Y%m%d');
 				$dateTime_YMDHMS = dol_print_date($date_actu, '%Y%m%d%H%M%S');
 				$fileCrediteurSection = '';
-				$fileEmetteurSection = '';
+				$paymentgroups = array();
+				$controlsum = 0;
 				$i = 0;
 
 				/*
@@ -2146,9 +2174,9 @@ class BonPrelevement extends CommonObject
 					$sql = "SELECT soc.rowid as socid, soc.code_client as code, soc.address, soc.zip, soc.town, c.code as country_code,";
 					//$sql .= " pl.code_banque as cb, pl.code_guichet as cg, pl.number as cc, ";
 					$sql .= " pl.client_nom as nom, pl.amount as somme, pl.fk_prelevement_demande,";
-					$sql .= " f.ref as reffac, f.ref_supplier as fac_ref_supplier,";
+					$sql .= " f.ref as reffac, f.ref_supplier as fac_ref_supplier, f.payment_reference,";
 					$sql .= " p.fk_facture_fourn as idfac,";
-					$sql .= " rib.rowid, rib.datec, rib.iban_prefix as iban, rib.bic as bic, rib.rowid as drum, rib.rum, rib.date_rum";
+					$sql .= " rib.rowid, rib.datec, rib.iban_prefix as iban, rib.bic as bic, rib.rowid as drum, rib.rum, rib.date_rum, rib.payment_reference as rib_payment_reference";
 					$sql .= " FROM";
 					$sql .= " " . MAIN_DB_PREFIX . "prelevement_lignes as pl,";
 					$sql .= " " . MAIN_DB_PREFIX . "facture_fourn as f,";
@@ -2172,6 +2200,13 @@ class BonPrelevement extends CommonObject
 				$nbtotalDrctDbtTxInf = -1;
 
 				require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
+
+				$mycountry = explode(':', getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY'));
+				if ($this->sepa_schema_version == '9' && !$this->isSEPAPostalAddressComplete(getDolGlobalString('MAIN_INFO_SOCIETE_TOWN'), $mycountry[1] ?? '')) {
+					$langs->load('withdrawals');
+					$this->invoice_in_error['mysoc'] = str_replace('{s}', '<a href="'.DOL_URL_ROOT.'/admin/company.php">'.dol_escape_htmltag($mysoc->name).'</a>', $langs->trans('ErrorCreditTransferAddressIncomplete', '{s}'));
+					$result = -2;
+				}
 
 				$resql = $this->db->query($sql);
 				if ($resql) {
@@ -2197,12 +2232,15 @@ class BonPrelevement extends CommonObject
 						$bic = $obj->bic;
 						$drum = $obj->drum;
 						$rum = $obj->rum;
+						$ribpaymentref = (string) ($obj->rib_payment_reference ?? '');
+						$requestcurrency = '';
+						$requestamountincurrency = 0;
 
 						// But if a force bank account is defined, we use it instead
 						if (!empty($obj->fk_prelevement_demande)) {
 							$companybankaccountid = 0;
 
-							$sqltmp = "SELECT fk_societe_rib FROM ".MAIN_DB_PREFIX."prelevement_demande";
+							$sqltmp = "SELECT fk_societe_rib, multicurrency_code, multicurrency_amount FROM ".MAIN_DB_PREFIX."prelevement_demande";
 							$sqltmp .= " WHERE rowid = ".((int) $obj->fk_prelevement_demande);
 
 							$resqltmp = $this->db->query($sqltmp);
@@ -2210,6 +2248,8 @@ class BonPrelevement extends CommonObject
 							$objtmp = $this->db->fetch_object($resqltmp);
 							if ($objtmp) {
 								$companybankaccountid = (int) $objtmp->fk_societe_rib;
+								$requestcurrency = (string) $objtmp->multicurrency_code;
+								$requestamountincurrency = (float) $objtmp->multicurrency_amount;
 							}
 
 							$bankaccount = new CompanyBankAccount($this->db);
@@ -2220,32 +2260,64 @@ class BonPrelevement extends CommonObject
 								$bic = $bankaccount->bic;
 								$drum = $bankaccount->id;
 								$rum = $bankaccount->rum;
+								$ribpaymentref = (string) $bankaccount->payment_reference;
 							}
 						}
+
+						$currency = getDolCurrency();
+						$amountincurrency = (float) $obj->somme;
+						if ($requestcurrency !== '') {
+							$currency = $requestcurrency;
+							$amountincurrency = $requestamountincurrency;
+						}
+						$sepapayment = ($this->sepa_schema_version != '9' || ($currency == 'EUR' && in_array(strtoupper(substr(preg_replace('/\s/', '', $iban), 0, 2)), getCountriesInSEPA())));
+						$paymentgroup = ($sepapayment ? 'SEPA' : $currency);
 
 						$refobj = $obj->reffac;
 						if (empty($refobj) && !empty($forsalary)) {	// If ref of salary not defined, we force a value
 							$refobj = "SAL" . $obj->idfac;
 						}
 
-						$fileCrediteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, '', '', '', $obj->somme, $refobj, $obj->idfac, $iban, $bic, $daterum, (string) $drum, $rum, $type, $obj->fac_ref_supplier);
+						$paymentref = '';
+						if (empty($forsalary)) {
+							$paymentref = (string) (empty($obj->payment_reference) ? $ribpaymentref : $obj->payment_reference);
+						}
+
+						$errorsofline = $this->getCreditTransferLineErrors($obj, $iban, $paymentref, !empty($forsalary), $currency);
+						if (count($errorsofline)) {
+							$this->invoice_in_error = array_merge($this->invoice_in_error, $errorsofline);
+							$result = -2;
+						}
+
+						if (empty($paymentgroups[$paymentgroup])) {
+							$paymentgroups[$paymentgroup] = array('xml' => '', 'nb' => 0, 'total' => 0);
+						}
+						$paymentgroups[$paymentgroup]['xml'] .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, '', '', '', $amountincurrency, $refobj, $obj->idfac, $iban, $bic, $daterum, (string) $drum, $rum, $type, $obj->fac_ref_supplier, $paymentref, $currency, $sepapayment);
+						$paymentgroups[$paymentgroup]['nb']++;
+						$paymentgroups[$paymentgroup]['total'] += $amountincurrency;
 
 						$this->total += $obj->somme;
+						$controlsum += $amountincurrency;
 						$i++;
 					}
-					$nbtotalDrctDbtTxInf = $i;
 				} else {
 					$this->error = $this->db->lasterror();
 					fwrite($this->file, 'ERROR CREDITOR ' . $sql . $CrLf); // CREDITORS = Suppliers
 					$result = -2;
 				}
-				// Define $fileEmetteurSection. Start of block PmtInf. Will contains all $nbtotalDrctDbtTxInf
+				// One block PmtInf per group of payments: the SEPA payments, then one per currency for the others
 				if ($result != -2) {
-					$fileEmetteurSection .= $this->EnregEmetteurSEPA($conf, $date_actu, $nbtotalDrctDbtTxInf, $this->total, $CrLf, $format, $type);
+					foreach ($paymentgroups as $paymentgroup => $paymentsofgroup) {
+						$fileCrediteurSection .= $this->EnregEmetteurSEPA($conf, $date_actu, $paymentsofgroup['nb'], $paymentsofgroup['total'], $CrLf, $format, $type, $fk_bank_account, $paymentgroup);
+						$fileCrediteurSection .= $paymentsofgroup['xml'];
+						$fileCrediteurSection .= '		</PmtInf>' . $CrLf;
+					}
 				}
 
+				$controlsum = price2num($controlsum, 'MT');
 				if (getDolGlobalString('SEPA_FORCE_TWO_DECIMAL')) {
 					$this->total = number_format((float) price2num($this->total, 'MT'), 2, ".", "");
+					$controlsum = number_format((float) $controlsum, 2, ".", "");
 				}
 
 				/**
@@ -2253,35 +2325,36 @@ class BonPrelevement extends CommonObject
 				 */
 				// SEPA File Header
 				fwrite($this->file, '<' . '?xml version="1.0" encoding="UTF-8" standalone="yes"?' . '>' . $CrLf);
-				fwrite($this->file, '<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.03" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' . $CrLf);
+				fwrite($this->file, '<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.0' . $this->sepa_schema_version . '" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' . $CrLf);
 				fwrite($this->file, '	<CstmrCdtTrfInitn>' . $CrLf);
 				// SEPA Group header
 				fwrite($this->file, '		<GrpHdr>' . $CrLf);
 				fwrite($this->file, '			<MsgId>' . ('DOL/' . $dateTime_YMD . '/CT' . $this->id) . '</MsgId>' . $CrLf);
 				fwrite($this->file, '			<CreDtTm>' . $dateTime_ECMA . '</CreDtTm>' . $CrLf);
 				fwrite($this->file, '			<NbOfTxs>' . $i . '</NbOfTxs>' . $CrLf);
-				fwrite($this->file, '			<CtrlSum>' . $this->total . '</CtrlSum>' . $CrLf);
+				fwrite($this->file, '			<CtrlSum>' . $controlsum . '</CtrlSum>' . $CrLf);
 				fwrite($this->file, '			<InitgPty>' . $CrLf);
-				fwrite($this->file, '				<Nm>' . dolEscapeXML(strtoupper(dol_string_nospecial(dol_string_unaccent($this->raison_sociale), ' '))) . '</Nm>' . $CrLf);
-				fwrite($this->file, '				<Id>' . $CrLf);
-				fwrite($this->file, '				    <PrvtId>' . $CrLf);
-				fwrite($this->file, '					<Othr>' . $CrLf);
-				fwrite($this->file, '						<Id>' . $this->emetteur_ics . '</Id>' . $CrLf);
-				fwrite($this->file, '					</Othr>' . $CrLf);
-				fwrite($this->file, '				    </PrvtId>' . $CrLf);
-				fwrite($this->file, '				</Id>' . $CrLf);
+				$initiatingpartyname = strtoupper(dol_string_nospecial(dol_string_unaccent($this->raison_sociale), ' '));
+				if ($this->sepa_schema_version == '9') {
+					$initiatingpartyname = dol_trunc($initiatingpartyname, 70, 'right', 'UTF-8', 1);
+				}
+				fwrite($this->file, '				<Nm>' . dolEscapeXML($initiatingpartyname) . '</Nm>' . $CrLf);
+				if (!empty($this->emetteur_ics)) {
+					fwrite($this->file, '				<Id>' . $CrLf);
+					fwrite($this->file, '				    <PrvtId>' . $CrLf);
+					fwrite($this->file, '					<Othr>' . $CrLf);
+					fwrite($this->file, '						<Id>' . $this->emetteur_ics . '</Id>' . $CrLf);
+					fwrite($this->file, '					</Othr>' . $CrLf);
+					fwrite($this->file, '				    </PrvtId>' . $CrLf);
+					fwrite($this->file, '				</Id>' . $CrLf);
+				}
 				fwrite($this->file, '			</InitgPty>' . $CrLf);
 				fwrite($this->file, '		</GrpHdr>' . $CrLf);
-				// SEPA File Emetteur (mycompany)
-				if ($result != -2) {
-					fwrite($this->file, $fileEmetteurSection);
-				}
-				// SEPA File Creditors
+				// SEPA File Emetteur (mycompany) and Creditors
 				if ($result != -2) {
 					fwrite($this->file, $fileCrediteurSection);
 				}
 				// SEPA FILE FOOTER
-				fwrite($this->file, '		</PmtInf>' . $CrLf);
 				fwrite($this->file, '	</CstmrCdtTrfInitn>' . $CrLf);
 				fwrite($this->file, '</Document>' . $CrLf);
 			}
@@ -2378,8 +2451,9 @@ class BonPrelevement extends CommonObject
 	 * 	Build the SEPA postal address block (<PstlAdr>) in the hybrid format required by
 	 * 	ISO 20022 usage guidelines (EPC153-22 v2.1, mandatory in the EU from November 15, 2026):
 	 * 	structured elements (PstCd, TwnNm, Ctry) combined with a single AdrLine for the street.
-	 * 	Elements are output in the order imposed by the XSD PostalAddress6 (pain.001.001.03 / pain.008.001.02):
-	 * 	PstCd?, TwnNm, Ctry, AdrLine?.
+	 * 	Elements are output in the order imposed by the XSD PostalAddress6 (pain.001.001.03 / pain.008.001.02)
+	 * 	and PostalAddress24 (pain.001.001.09): PstCd?, TwnNm, Ctry, AdrLine?.
+	 * 	For pain.001.001.09, a street longer than 70 chars continues on a second AdrLine.
 	 * 	TwnNm and Ctry are mandatory inside PstlAdr: when the town or the country code is empty,
 	 * 	the whole block is omitted (this method returns an empty string) and a warning is logged.
 	 * 	PstCd is output only when the zip is not empty, and AdrLine only when the address is not empty.
@@ -2419,11 +2493,84 @@ class BonPrelevement extends CommonObject
 		$XML_ADR .= $indent . '	<Ctry>' . dolEscapeXML($country_code) . '</Ctry>' . $CrLf;
 		$addressline1 = strtr((string) $address, array(chr(13) => ", ", chr(10) => ""));
 		if (trim($addressline1)) {
-			$XML_ADR .= $indent . '	<AdrLine>' . dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($addressline1), ' '), 70, 'right', 'UTF-8', 1)) . '</AdrLine>' . $CrLf;
+			$addressline = dol_string_nospecial(dol_string_unaccent($addressline1), ' ');
+			if ($this->sepa_schema_version == '9') {
+				$addresslines = explode("\n", wordwrap($addressline, 70, "\n", true));
+				$XML_ADR .= $indent . '	<AdrLine>' . dolEscapeXML($addresslines[0]) . '</AdrLine>' . $CrLf;
+				if (!empty($addresslines[1])) {
+					$XML_ADR .= $indent . '	<AdrLine>' . dolEscapeXML($addresslines[1]) . '</AdrLine>' . $CrLf;
+				}
+			} else {
+				$XML_ADR .= $indent . '	<AdrLine>' . dolEscapeXML(dol_trunc($addressline, 70, 'right', 'UTF-8', 1)) . '</AdrLine>' . $CrLf;
+			}
 		}
 		$XML_ADR .= $indent . '</PstlAdr>' . $CrLf;
 
 		return $XML_ADR;
+	}
+
+	/**
+	 *	Return if an address has the town and the country that a SEPA postal address block requires.
+	 *
+	 *	@param	string	$town				Town name
+	 *	@param	string	$country_code		Country code ISO 3166-1 alpha 2
+	 *	@return	bool
+	 */
+	public function isSEPAPostalAddressComplete($town, $country_code)
+	{
+		return trim(dol_string_nospecial(dol_string_unaccent((string) $town), ' ')) != '' && trim((string) $country_code) != '';
+	}
+
+	/**
+	 *	Return what prevents a line from being sent in the credit transfer file, keyed by the third party, employee or invoice to fix.
+	 *
+	 *	@param	stdClass	$obj			Line read by generate()
+	 *	@param	string		$iban			IBAN of the beneficiary
+	 *	@param	string		$paymentref		Payment reference given by the beneficiary
+	 *	@param	bool		$forsalary		True when the line pays a salary
+	 *	@param	string		$currency		Currency of the line
+	 *	@return	array<string,string>		Error messages with a link to the record to fix
+	 */
+	private function getCreditTransferLineErrors($obj, $iban, $paymentref, $forsalary, $currency)
+	{
+		global $langs;
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_ch.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_creditorref.lib.php';
+
+		$langs->load('withdrawals');
+
+		$errors = array();
+
+		if ($this->sepa_schema_version == '9' && !$this->isSEPAPostalAddressComplete($obj->town, $obj->country_code)) {
+			if ($forsalary) {
+				$link = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.((int) $obj->userId).'&action=edit">'.dol_escape_htmltag($obj->nom).'</a>';
+				$errors['user'.$obj->userId] = str_replace('{s}', $link, $langs->trans('ErrorCreditTransferAddressIncomplete', '{s}'));
+			} else {
+				$link = '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.((int) $obj->socid).'&action=edit">'.dol_escape_htmltag($obj->nom).'</a>';
+				$errors['soc'.$obj->socid] = str_replace('{s}', $link, $langs->trans('ErrorCreditTransferAddressIncomplete', '{s}'));
+			}
+		}
+
+		if ($this->sepa_schema_version != '9' && $currency != 'EUR') {
+			if ($forsalary) {
+				$link = '<a href="'.DOL_URL_ROOT.'/salaries/card.php?id='.((int) $obj->idfac).'">'.dol_escape_htmltag($obj->reffac).'</a>';
+			} else {
+				$link = '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.((int) $obj->idfac).'">'.dol_escape_htmltag($obj->reffac).'</a>';
+			}
+			$errors['currency'.$obj->idfac] = str_replace('{s}', $link, $langs->trans('ErrorCreditTransferCurrencyNeedsVersion9', '{s}', $currency));
+		}
+
+		if (!$forsalary) {
+			$link = '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.((int) $obj->idfac).'">'.dol_escape_htmltag($obj->reffac).'</a>';
+			if (dolCHIsQRIBAN($iban) && !dolCHQRReferenceIsValid($paymentref)) {
+				$errors['invoice'.$obj->idfac] = str_replace('{s}', $link, $langs->trans('ErrorCreditTransferQRIBANNeedsQRReference', '{s}'));
+			} elseif (!dolCHIsQRIBAN($iban) && dolPayRefDetectScheme($paymentref) == 'QRR') {
+				$errors['invoice'.$obj->idfac] = str_replace('{s}', $link, $langs->trans('ErrorCreditTransferQRReferenceNeedsQRIBAN', '{s}'));
+			}
+		}
+
+		return $errors;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2524,10 +2671,13 @@ class BonPrelevement extends CommonObject
 	 * 	@param	string		$row_rum			rib.rum Rum defined on company bank account
 	 *  @param	string		$type				'direct-debit' or 'bank-transfer'
 	 *  @param  string      $row_comment		A free text string for the Unstructured data field
+	 *  @param  string      $row_paymentref		Structured reference (QRR or RF) given by the beneficiary of a credit transfer
+	 *  @param  string      $row_currency		Currency of the amount of a credit transfer
+	 *  @param  bool        $row_sepa			False when the credit transfer is not a SEPA payment (not EUR or to an IBAN outside SEPA)
 	 *	@return	string							Return string with SEPA part DrctDbtTxInf
 	 *  @see EnregDestinataire()
 	 */
-	public function EnregDestinataireSEPA($row_code_client, $row_nom, $row_address, $row_zip, $row_town, $row_country_code, $row_cb, $row_cg, $row_cc, $row_somme, $row_ref, $row_idfac, $row_iban, $row_bic, $row_datec, $row_drum, $row_rum, $type = 'direct-debit', $row_comment = '')
+	public function EnregDestinataireSEPA($row_code_client, $row_nom, $row_address, $row_zip, $row_town, $row_country_code, $row_cb, $row_cg, $row_cc, $row_somme, $row_ref, $row_idfac, $row_iban, $row_bic, $row_datec, $row_drum, $row_rum, $type = 'direct-debit', $row_comment = '', $row_paymentref = '', $row_currency = 'EUR', $row_sepa = true)
 	{
 		// phpcs:enable
 		global $conf, $mysoc, $hookmanager;
@@ -2665,16 +2815,18 @@ class BonPrelevement extends CommonObject
 					$categoryPurpose = getDolGlobalString('PAYMENTBYBANKTRANSFER_CUSTOM_CATEGORY_PURPOSE', 'CORE');
 
 					$XML_CREDITOR .= '					<InstrPrty>' . $instrprty . '</InstrPrty>' . $CrLf;
-					$XML_CREDITOR .= '					<SvcLvl>' . $CrLf;
-					$XML_CREDITOR .= '						<Cd>SEPA</Cd>' . $CrLf;
-					$XML_CREDITOR .= '					</SvcLvl>' . $CrLf;
+					if ($row_sepa) {
+						$XML_CREDITOR .= '					<SvcLvl>' . $CrLf;
+						$XML_CREDITOR .= '						<Cd>SEPA</Cd>' . $CrLf;
+						$XML_CREDITOR .= '					</SvcLvl>' . $CrLf;
+					}
 					$XML_CREDITOR .= '					<CtgyPurp>' . $CrLf;
 					$XML_CREDITOR .= '						<Cd>' . $categoryPurpose . '</Cd>' . $CrLf;
 					$XML_CREDITOR .= '					</CtgyPurp>' . $CrLf;
 					$XML_CREDITOR .= '				</PmtTpInf>' . $CrLf;
 				}
 				$XML_CREDITOR .= '				<Amt>' . $CrLf;
-				$XML_CREDITOR .= '				<InstdAmt Ccy="EUR">' . round((float) $row_somme, 2) . '</InstdAmt>' . $CrLf;
+				$XML_CREDITOR .= '				<InstdAmt Ccy="' . dolEscapeXML($row_currency) . '">' . round((float) $row_somme, 2) . '</InstdAmt>' . $CrLf;
 				$XML_CREDITOR .= '				</Amt>' . $CrLf;
 				/*
 				 $XML_CREDITOR .= '				<DrctDbtTx>'.$CrLf;
@@ -2686,13 +2838,27 @@ class BonPrelevement extends CommonObject
 				 $XML_CREDITOR .= '				</DrctDbtTx>'.$CrLf;
 				 */
 				//$XML_CREDITOR .= '				<ChrgBr>SLEV</ChrgBr>'.$CrLf;
-				$XML_CREDITOR .= '				<CdtrAgt>' . $CrLf;
-				$XML_CREDITOR .= '					<FinInstnId>' . $CrLf;
-				$XML_CREDITOR .= '						<BIC>' . $row_bic . '</BIC>' . $CrLf;
-				$XML_CREDITOR .= '					</FinInstnId>' . $CrLf;
-				$XML_CREDITOR .= '				</CdtrAgt>' . $CrLf;
+				if ($this->sepa_schema_version == '9') {
+					if (!empty($row_bic)) {
+						$XML_CREDITOR .= '				<CdtrAgt>' . $CrLf;
+						$XML_CREDITOR .= '					<FinInstnId>' . $CrLf;
+						$XML_CREDITOR .= '						<BICFI>' . $row_bic . '</BICFI>' . $CrLf;
+						$XML_CREDITOR .= '					</FinInstnId>' . $CrLf;
+						$XML_CREDITOR .= '				</CdtrAgt>' . $CrLf;
+					}
+				} else {
+					$XML_CREDITOR .= '				<CdtrAgt>' . $CrLf;
+					$XML_CREDITOR .= '					<FinInstnId>' . $CrLf;
+					$XML_CREDITOR .= '						<BIC>' . $row_bic . '</BIC>' . $CrLf;
+					$XML_CREDITOR .= '					</FinInstnId>' . $CrLf;
+					$XML_CREDITOR .= '				</CdtrAgt>' . $CrLf;
+				}
 				$XML_CREDITOR .= '				<Cdtr>' . $CrLf;
-				$XML_CREDITOR .= '					<Nm>' . dolEscapeXML(strtoupper(dol_string_nospecial(dol_string_unaccent($row_nom), ' '))) . '</Nm>' . $CrLf;
+				$creditorname = strtoupper(dol_string_nospecial(dol_string_unaccent($row_nom), ' '));
+				if ($this->sepa_schema_version == '9') {
+					$creditorname = dol_trunc($creditorname, 70, 'right', 'UTF-8', 1);
+				}
+				$XML_CREDITOR .= '					<Nm>' . dolEscapeXML($creditorname) . '</Nm>' . $CrLf;
 				$XML_CREDITOR .= $this->buildSEPAPostalAddressXML($row_address, $row_zip, $row_town, $row_country_code, "\t\t\t\t\t", $CrLf);
 				$XML_CREDITOR .= '				</Cdtr>' . $CrLf;
 				$XML_CREDITOR .= '				<CdtrAcct>' . $CrLf;
@@ -2701,8 +2867,27 @@ class BonPrelevement extends CommonObject
 				$XML_CREDITOR .= '					</Id>' . $CrLf;
 				$XML_CREDITOR .= '				</CdtrAcct>' . $CrLf;
 				$XML_CREDITOR .= '				<RmtInf>' . $CrLf;
-				// A string with some information on payment - 140 max
-				$XML_CREDITOR .= '					<Ustrd>' . getDolGlobalString('CREDITTRANSFER_USTRD', dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($row_ref . ($row_comment ? ' - ' . $row_comment : '')), '', '', '', 1), 135, 'right', 'UTF-8', 1))) . '</Ustrd>' . $CrLf; // Free unstructured data - 140 max
+				include_once DOL_DOCUMENT_ROOT . '/core/lib/functions_creditorref.lib.php';
+				$scheme = dolPayRefDetectScheme($row_paymentref);
+				if ($scheme == 'QRR' || $scheme == 'SCOR') {
+					$XML_CREDITOR .= '					<Strd>' . $CrLf;
+					$XML_CREDITOR .= '						<CdtrRefInf>' . $CrLf;
+					$XML_CREDITOR .= '							<Tp>' . $CrLf;
+					$XML_CREDITOR .= '								<CdOrPrtry>' . $CrLf;
+					if ($scheme == 'QRR') {
+						$XML_CREDITOR .= '									<Prtry>QRR</Prtry>' . $CrLf;
+					} else {
+						$XML_CREDITOR .= '									<Cd>SCOR</Cd>' . $CrLf;
+					}
+					$XML_CREDITOR .= '								</CdOrPrtry>' . $CrLf;
+					$XML_CREDITOR .= '							</Tp>' . $CrLf;
+					$XML_CREDITOR .= '							<Ref>' . dolEscapeXML(dolPayRefStrip($row_paymentref)) . '</Ref>' . $CrLf;
+					$XML_CREDITOR .= '						</CdtrRefInf>' . $CrLf;
+					$XML_CREDITOR .= '					</Strd>' . $CrLf;
+				} else {
+					// A string with some information on payment - 140 max
+					$XML_CREDITOR .= '					<Ustrd>' . getDolGlobalString('CREDITTRANSFER_USTRD', dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($row_ref . ($row_comment ? ' - ' . $row_comment : '')), '', '', '', 1), 135, 'right', 'UTF-8', 1))) . '</Ustrd>' . $CrLf; // Free unstructured data - 140 max
+				}
 				$XML_CREDITOR .= '				</RmtInf>' . $CrLf;
 				$XML_CREDITOR .= '			</CdtTrfTxInf>' . $CrLf;
 
@@ -2801,9 +2986,10 @@ class BonPrelevement extends CommonObject
 	 *  @param	string	$format				FRST, RCUR, OOFF or FNAL
 	 *  @param	string	$type				'direct-debit' or 'bank-transfer'
 	 *  @param	int		$fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
+	 *  @param	string	$paymentgroup		Credit transfer only: 'SEPA' for the SEPA payments, else the currency of the payments of the block
 	 *	@return	string						String with SEPA Sender
 	 */
-	public function EnregEmetteurSEPA($configuration, $ladate, $nombre, $total, $CrLf = '\n', $format = 'FRST', $type = 'direct-debit', $fk_bank_account = 0)
+	public function EnregEmetteurSEPA($configuration, $ladate, $nombre, $total, $CrLf = '\n', $format = 'FRST', $type = 'direct-debit', $fk_bank_account = 0, $paymentgroup = 'SEPA')
 	{
 		// phpcs:enable
 
@@ -2912,12 +3098,12 @@ class BonPrelevement extends CommonObject
 				// SEPA Paiement Information of my company for Credit Transfer
 				$XML_SEPA_INFO = '';
 				$XML_SEPA_INFO .= '		<PmtInf>' . $CrLf;
-				$XML_SEPA_INFO .= '			<PmtInfId>' . ('DOL/' . $dateTime_YMD . '/CT' . $IdBon . '-' . $RefBon) . '</PmtInfId>' . $CrLf;
+				$XML_SEPA_INFO .= '			<PmtInfId>' . ('DOL/' . $dateTime_YMD . '/CT' . $IdBon . '-' . $RefBon . ($paymentgroup == 'SEPA' ? '' : '-' . $paymentgroup)) . '</PmtInfId>' . $CrLf;
 				$XML_SEPA_INFO .= '			<PmtMtd>TRF</PmtMtd>' . $CrLf;
 				//$XML_SEPA_INFO .= '			<BtchBookg>False</BtchBookg>'.$CrLf;
 				$XML_SEPA_INFO .= '			<NbOfTxs>' . $nombre . '</NbOfTxs>' . $CrLf;
 				$XML_SEPA_INFO .= '			<CtrlSum>' . $total . '</CtrlSum>' . $CrLf;
-				if (!empty($this->sepa_xml_pti_in_ctti) && !empty($format)) {	// @TODO Using $format (FRST ou RCUR) in a section for a Credit Transfer looks strange.
+				if (!empty($this->sepa_xml_pti_in_ctti) && !empty($format) && $paymentgroup == 'SEPA') {	// @TODO Using $format (FRST ou RCUR) in a section for a Credit Transfer looks strange.
 					$XML_SEPA_INFO .= '			<PmtTpInf>' . $CrLf;
 					$XML_SEPA_INFO .= '				<SvcLvl>' . $CrLf;
 					$XML_SEPA_INFO .= '					<Cd>SEPA</Cd>' . $CrLf;
@@ -2928,9 +3114,19 @@ class BonPrelevement extends CommonObject
 					$XML_SEPA_INFO .= '				<SeqTp>' . $format . '</SeqTp>' . $CrLf;
 					$XML_SEPA_INFO .= '			</PmtTpInf>' . $CrLf;
 				}
-				$XML_SEPA_INFO .= '			<ReqdExctnDt>' . dol_print_date($dateTime_ETAD, 'dayrfc') . '</ReqdExctnDt>' . $CrLf;
+				if ($this->sepa_schema_version == '9') {
+					$XML_SEPA_INFO .= '			<ReqdExctnDt>' . $CrLf;
+					$XML_SEPA_INFO .= '				<Dt>' . dol_print_date($dateTime_ETAD, 'dayrfc') . '</Dt>' . $CrLf;
+					$XML_SEPA_INFO .= '			</ReqdExctnDt>' . $CrLf;
+				} else {
+					$XML_SEPA_INFO .= '			<ReqdExctnDt>' . dol_print_date($dateTime_ETAD, 'dayrfc') . '</ReqdExctnDt>' . $CrLf;
+				}
 				$XML_SEPA_INFO .= '			<Dbtr>' . $CrLf;
-				$XML_SEPA_INFO .= '				<Nm>' . dolEscapeXML(strtoupper(dol_string_nospecial(dol_string_unaccent($this->raison_sociale), ' '))) . '</Nm>' . $CrLf;
+				$debtorname = strtoupper(dol_string_nospecial(dol_string_unaccent($this->raison_sociale), ' '));
+				if ($this->sepa_schema_version == '9') {
+					$debtorname = dol_trunc($debtorname, 70, 'right', 'UTF-8', 1);
+				}
+				$XML_SEPA_INFO .= '				<Nm>' . dolEscapeXML($debtorname) . '</Nm>' . $CrLf;
 				$sender_address = (string) getDolGlobalString('MAIN_INFO_SOCIETE_ADDRESS');
 				$sender_zip = (string) getDolGlobalString('MAIN_INFO_SOCIETE_ZIP');
 				$sender_town = (string) getDolGlobalString('MAIN_INFO_SOCIETE_TOWN');
@@ -2944,7 +3140,7 @@ class BonPrelevement extends CommonObject
 				$XML_SEPA_INFO .= '			</DbtrAcct>' . $CrLf;
 				$XML_SEPA_INFO .= '			<DbtrAgt>' . $CrLf;
 				$XML_SEPA_INFO .= '				<FinInstnId>' . $CrLf;
-				$XML_SEPA_INFO .= '					<BIC>' . $this->emetteur_bic . '</BIC>' . $CrLf;
+				$XML_SEPA_INFO .= '					' . ($this->sepa_schema_version == '9' ? '<BICFI>' : '<BIC>') . $this->emetteur_bic . ($this->sepa_schema_version == '9' ? '</BICFI>' : '</BIC>') . $CrLf;
 				$XML_SEPA_INFO .= '				</FinInstnId>' . $CrLf;
 				$XML_SEPA_INFO .= '			</DbtrAgt>' . $CrLf;
 				/* $XML_SEPA_INFO .= '			<UltmtCdtr>'.$CrLf;
@@ -2955,7 +3151,7 @@ class BonPrelevement extends CommonObject
 				 $XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent(getDolGlobalString('MAIN_INFO_SOCIETE_ZIP').' '.getDolGlobalString('MAIN_INFO_SOCIETE_TOWN')), ' '), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
 				 $XML_SEPA_INFO .= '				</PstlAdr>'.$CrLf;
 				 $XML_SEPA_INFO .= '			</UltmtCdtr>'.$CrLf;*/
-				$XML_SEPA_INFO .= '			<ChrgBr>SLEV</ChrgBr>' . $CrLf; // Field "Responsible of fees". Must be SLEV
+				$XML_SEPA_INFO .= '			<ChrgBr>' . ($paymentgroup == 'SEPA' ? 'SLEV' : $account->getSepaChargeBearer()) . '</ChrgBr>' . $CrLf; // Field "Responsible of fees". Must be SLEV for SEPA payments
 				/*$XML_SEPA_INFO .= '			<CdtrSchmeId>'.$CrLf;
 				 $XML_SEPA_INFO .= '				<Id>'.$CrLf;
 				 $XML_SEPA_INFO .= '					<PrvtId>'.$CrLf;
