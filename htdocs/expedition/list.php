@@ -214,7 +214,7 @@ if (empty($reshook)) {
 }
 
 // If massaction is close
-if ($massaction == 'classifyclose') {
+if ($massaction == 'classifyclose' && $user->rights->expedition->creer) {
 	$error=0;
 	$selectids = GETPOST('toselect', 'array');
 	foreach ($selectids as $selectid) {
@@ -569,9 +569,11 @@ $param .= $hookmanager->resPrint;
 
 $arrayofmassactions = array(
 	'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
-	'classifyclose' => img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("Close"),
 	'presend'  => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
+if ($user->rights->expedition->creer) {
+	$arrayofmassactions['classifyclose'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("Close");
+}
 if (in_array($massaction, array('presend'))) {
 	$arrayofmassactions = array();
 }
