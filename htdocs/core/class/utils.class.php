@@ -1557,8 +1557,19 @@ class Utils
 				continue;
 			}
 
-			// Calling posix_kill with the 0 kill signal will return true if the process is running, false otherwise.
-			if (! posix_kill($job->pid, 0)) {
+			$is_running = false;
+			if (function_exists('posix_kill')) {
+				// Calling posix_kill with the 0 kill signal will return true if the process is running, false otherwise.
+				$is_running = posix_kill((int) $job->pid, 0);
+			} elseif (stripos(PHP_OS, 'WIN') === 0) {
+				// On Windows, use tasklist to check if the process PID is still running
+				$resultCLI = $this->executeCLI('tasklist /FI "PID eq ' . ((int) $job->pid) . '"', '');
+				if (!empty($resultCLI['output']) && stripos($resultCLI['output'], (string) ((int) $job->pid)) !== false) {
+					$is_running = true;
+				}
+			}
+
+			if (!$is_running) {
 				// Clean processing and pid values
 				$job->processing = 0;
 				$job->pid = null;

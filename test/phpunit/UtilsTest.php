@@ -108,4 +108,22 @@ class UtilsTest extends CommonClassTest
 
 		return $result;
 	}
+
+	/**
+	 * testCleanUnfinishedCronjobDoesNotFatal
+	 *
+	 * @return int
+	 */
+	public function testCleanUnfinishedCronjobDoesNotFatal()
+	{
+		global $conf, $user, $langs, $db;
+
+		$utils = new Utils($db);
+		$result = $utils->cleanUnfinishedCronjob();
+
+		// Should complete without fatal error even if posix_kill is missing
+		$this->assertIsInt($result);
+
+		return $result;
+	}
 }
