@@ -62,7 +62,7 @@ Usage (from the repository root):
 - `txpull.sh fr_FR` (or any `xx_XX`) → `tx pull -l xx_XX`: downloads only that language.
 - A local file is skipped if the local copy is newer than the Transifex one. `-f` forces the local file to be overwritten (does not work with `all`).
 - `-r projectname.<file>` limits the pull to one resource.
-- The script ends by reminding to also run: `dev/fixaltlanguages.sh fix all` (see below).
+- The script ends by reminding to also run: `dev/tools/fixaltlanguages.sh fix all` (see below).
 
 ## Check that translations do not contain the keyword "notranslate"
 
@@ -94,7 +94,7 @@ Example: add the key `DossierMedical=Dossier médical` feature string.
 3. Run `./dev/translation/txpush.sh source -r projectname.modulename` (or without `-r` for all files).
 4. Wait for translators (or the translation memory) to translate it on Transifex.
 5. Run `./dev/translation/txpull.sh fr_FR` (or `all`) to get the translated files.
-6. Run `dev/fixaltlanguages.sh fix all` to deduplicate entries that already exist in the parent language file.
+6. Run `dev/tools/fixaltlanguages.sh fix all` to deduplicate entries that already exist in the parent language file.
 7. Check that no translation contains the keyword `notranslate` (see above) and fix them on Transifex if any.
 
 ## Related tools in dev/translation/
@@ -103,8 +103,8 @@ Example: add the key `DossierMedical=Dossier médical` feature string.
 - `strip_language_file.php <primary_lang_dir> <secondary_lang_dir> [file.lang|all]` — strips from a secondary language file the entries redundant with its primary file (run from `htdocs/langs`).
 - `sanity_check_en_langfiles.php` — HTML report checking the en_US language files.
 - `autotranslator.php` — automatic translation helper.
-- `fixaltlanguages.sh (list|fix) [ll_CC]` — deduplicates alternate language files (xx_YY) with their parent (xx_XX) across all modules; recommended by txpull.sh after each pull. In this repository run `./dev/translation/fixaltlanguages.sh fix` from the root (it calls `strip_language_file.php`, which accepts module-relative lang dir paths).
-- `../fixduplicatelangkey.sh` — removes duplicate keys inside language files.
+- `fixaltlanguages.sh (list|fix) [ll_CC]` — deduplicates alternate language files (xx_YY) with their parent (xx_XX) across all modules; recommended by txpull.sh after each pull. This script is NOT into dev/translation/ but into dev/tools/. In this repository run `./dev/tools/fixaltlanguages.sh fix` from the root (it calls `strip_language_file.php`, which accepts module-relative lang dir paths). Note: the `[ll_CC]` argument is currently ignored, the script always processes all languages.
+- `dev/tools/fixduplicatelangkey.sh` — removes duplicate keys inside language files.
 
 ## Dolibarr i18n reminders (apply when writing keys)
 
