@@ -3,6 +3,7 @@
  * Copyright (C) 2026	Nick Fragoulis
  * Copyright (C) 2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +76,7 @@ header('Content-Type: application/json');
 header('X-Content-Type-Options: nosniff');
 
 // Request headers, used by the transport-header validation further down.
-$headers = function_exists('getallheaders') ? getallheaders() : [];
+$headers = dolGetRequestHeaders();
 $headers = array_change_key_case($headers, CASE_LOWER);
 
 $mcpAuth = new McpAuth($db);
