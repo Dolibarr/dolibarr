@@ -1188,6 +1188,58 @@ class SupplierOrders extends DolibarrApi
 	}
 
 	/**
+	 * Classify an order as unbilled. Could be also called setunbilled
+	 *
+	 * @since	25.0.0	Initial implementation
+	 *
+	 * @param   int		$id			Order ID
+	 *
+	 * @url POST    {id}/setuninvoiced
+	 *
+	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 404 Not found
+	 * @throws RestException 405 Order status does not allow it
+	 * @throws RestException 500 Error
+	 */
+	public function setuninvoiced($id)
+	{
+		// Same right as checked by the supplier order card before calling CommandeFournisseur::classifyUnBilled()
+		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "commande", "creer") && !DolibarrApiAccess::$user->hasRight("supplier_order", "creer")) {
+			throw new RestException(403);
+		}
+		$result = $this->order->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Order not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, 'commande_fournisseur', 'commande')) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// Same statuses as the ones showing the "Classify unbilled" button on the supplier order card
+		if ((int) $this->order->status <= CommandeFournisseur::STATUS_DRAFT) {
+			throw new RestException(405, 'A draft supplier order can not be classified as unbilled');
+		}
+
+		// CommandeFournisseur::classifyUnBilled() returns 0 when the order is not billed
+		$result = $this->order->classifyUnBilled(DolibarrApiAccess::$user);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when classifying Order as unbilled: '.$this->order->errorsToString());
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => ($result == 0 ? 'Order already classified as unbilled' : 'Order classified as unbilled').' (Ref='.$this->order->ref.')'
+			)
+		);
+	}
+
+	/**
 	 * Receives the order, dispatches products.
 	 *
 	 * Example:
