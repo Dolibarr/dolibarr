@@ -27,6 +27,7 @@ global $conf,$user,$langs,$db,$mysoc;
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/loan/class/loan.class.php';
 require_once dirname(__FILE__).'/../../htdocs/loan/class/paymentloan.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/loan.lib.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -93,8 +94,16 @@ class PaymentLoanTest extends CommonClassTest
 
 		$loan = new Loan($db);
 		$loan->initAsSpecimen();
+		$loan->charge_tva_tx = 10;
+		$loan->charge_vat_src_code = 'TEST-VAT';
 		$loanid = $loan->create($user);
 		$this->assertGreaterThan(0, $loanid, $loan->errorsToString());
+
+		// VAT rate of the loan's charge
+		$loan = new Loan($db);
+		$loan->fetch($loanid);
+		$this->assertEqualsWithDelta(10.0, $loan->charge_tva_tx, 0.00001);
+		$this->assertSame('TEST-VAT', $loan->charge_vat_src_code);
 
 		$typepaymentid = dol_getIdFromCode($db, 'VIR', 'c_paiement', 'code', 'id', 1);
 		$this->assertGreaterThan(0, $typepaymentid, 'VIR must be a known active payment type in this environment');
@@ -106,6 +115,9 @@ class PaymentLoanTest extends CommonClassTest
 		$localobject->amount_capital = 100;
 		$localobject->amount_insurance = 5;
 		$localobject->amount_interest = 10;
+		$localobject->tva_tx = 10;
+		$localobject->vat_src_code = 'TEST-VAT';
+		$localobject->total_tva = loanVatIncluded(5, 10);	// 0.45, included in amount_insurance
 		$result = $localobject->create($user);
 
 		$this->assertGreaterThan(0, $result, $localobject->errorsToString());
@@ -143,6 +155,9 @@ class PaymentLoanTest extends CommonClassTest
 		$this->assertEqualsWithDelta(5.0, (float) $localobject->amount_insurance, 0.00001);
 		$this->assertEqualsWithDelta(10.0, (float) $localobject->amount_interest, 0.00001);
 		$this->assertSame('VIR', $localobject->type_code);
+		$this->assertEqualsWithDelta(10.0, $localobject->tva_tx, 0.00001);
+		$this->assertSame('TEST-VAT', $localobject->vat_src_code);
+		$this->assertEqualsWithDelta(0.45, $localobject->total_tva, 0.00001);
 
 		return $localobject;
 	}
@@ -167,6 +182,9 @@ class PaymentLoanTest extends CommonClassTest
 		// update() (unlike create()) does use fk_loan/fk_typepayment, both already set by fetch() above
 		$localobject->amount_capital = 120;
 		$localobject->note_private = 'New note private after update';
+		$localobject->tva_tx = 0;
+		$localobject->vat_src_code = '';
+		$localobject->total_tva = 0;
 		$result = $localobject->update($user);
 
 		$this->assertGreaterThan(0, $result, $localobject->errorsToString());
@@ -175,8 +193,32 @@ class PaymentLoanTest extends CommonClassTest
 		$localobject->fetch($localobject->id);
 		$this->assertEqualsWithDelta(120.0, (float) $localobject->amount_capital, 0.00001);
 		$this->assertSame('New note private after update', $localobject->note_private);
+		$this->assertEqualsWithDelta(0.0, $localobject->tva_tx, 0.00001);
+		$this->assertSame('', $localobject->vat_src_code);
+		$this->assertEqualsWithDelta(0.0, $localobject->total_tva, 0.00001);
 
 		return $localobject;
+	}
+
+	/**
+	 * testLoanVatHelpers: VAT included in the charge, and the "rate (code)" keys of the VAT lists
+	 *
+	 * @return	void
+	 */
+	public function testLoanVatHelpers()
+	{
+		// The VAT is part of the charge amount, not added on top
+		$this->assertEqualsWithDelta(0.17, loanVatIncluded(1.84, 10), 0.00001);
+		$this->assertEqualsWithDelta(10.0, loanVatIncluded(110, 10), 0.00001);
+		$this->assertEqualsWithDelta(0.0, loanVatIncluded(5, 0), 0.00001);
+
+		// Same keys as Form::load_tva() with $mode = 1; no VAT is "0"
+		$this->assertSame('10 (TEST-VAT)', loanVatKey(10, 'TEST-VAT'));
+		$this->assertSame('8.5', loanVatKey(8.5, ''));
+		$this->assertSame('0', loanVatKey(0, ''));
+		$this->assertSame(array(10.0, 'TEST-VAT'), loanParseVatKey(loanVatKey(10, 'TEST-VAT')));
+		$this->assertSame(array(8.5, ''), loanParseVatKey('8.5'));
+		$this->assertSame(array(0.0, ''), loanParseVatKey(''));
 	}
 
 	/**

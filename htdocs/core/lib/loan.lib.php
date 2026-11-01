@@ -332,6 +332,50 @@ function loanChargeLabel($charge_type, $outputlangs)
 }
 
 /**
+ * Key of a VAT rate in the VAT lists of the loan module: "rate (code)", or "rate" if the rate has no code
+ * (same form as Form::load_tva() with $mode = 1). No VAT gives "0".
+ *
+ * @param	float|string	$rate		VAT rate
+ * @param	string			$code		VAT code (llx_c_tva.code)
+ * @return	string
+ */
+function loanVatKey($rate, $code)
+{
+	return price2num($rate).($code !== '' ? ' ('.$code.')' : '');
+}
+
+/**
+ * Rate and code from a key built by loanVatKey().
+ *
+ * @param	string	$key	"rate (code)", "rate" or '' (no VAT)
+ * @return	array{0:float,1:string}		rate, code
+ */
+function loanParseVatKey($key)
+{
+	$code = '';
+	$reg = array();
+	if (preg_match('/\((.*)\)/', $key, $reg)) {
+		$code = $reg[1];
+	}
+	return array((float) price2num(preg_replace('/\s*\(.*\)/', '', $key)), $code);
+}
+
+/**
+ * VAT included in a charge amount (the amount includes the VAT).
+ *
+ * @param	float	$amount		Charge amount, VAT included
+ * @param	float	$rate		VAT rate
+ * @return	float
+ */
+function loanVatIncluded($amount, $rate)
+{
+	if ((float) $rate == 0) {
+		return 0.0;
+	}
+	return (float) price2num((float) $amount * (float) $rate / (100 + (float) $rate), 'MT');
+}
+
+/**
  * Charge of each payment of a loan.
  *
  * @param	float	$amount				insurance_amount of the loan

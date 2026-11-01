@@ -83,6 +83,21 @@ class PaymentLoan extends CommonObject
 	public $amount_interest;
 
 	/**
+	 * @var string VAT code (llx_c_tva.code) of amount_insurance
+	 */
+	public $vat_src_code = '';
+
+	/**
+	 * @var float VAT rate of amount_insurance (0 = no VAT)
+	 */
+	public $tva_tx = 0;
+
+	/**
+	 * @var float VAT included in amount_insurance (part of it, not on top of it)
+	 */
+	public $total_tva = 0;
+
+	/**
 	 * @var ?int Payment mode ID
 	 */
 	public $fk_typepayment;
@@ -222,12 +237,14 @@ class PaymentLoan extends CommonObject
 
 		if ($totalamount != 0) {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_loan (fk_loan, datec, datep, amount_capital, amount_insurance, amount_interest,";
+			$sql .= " vat_src_code, tva_tx, total_tva,";
 			$sql .= " fk_typepayment, num_payment, note_private, note_public, fk_user_creat, fk_bank)";
 			$sql .= " VALUES (".((int) $this->chid).", '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datep)."',";
 			$sql .= " ".price2num($this->amount_capital).",";
 			$sql .= " ".price2num($this->amount_insurance).",";
 			$sql .= " ".price2num($this->amount_interest).",";
+			$sql .= " '".$this->db->escape((string) $this->vat_src_code)."', ".((float) $this->tva_tx).", ".((float) price2num((float) $this->total_tva, 'MT')).",";
 			$sql .= " ".((int) $this->paymenttype).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_private)."', '".$this->db->escape($this->note_public)."', ".((int) $user->id).",";
 			$sql .= " 0)";
 
@@ -278,6 +295,7 @@ class PaymentLoan extends CommonObject
 		$sql .= " t.amount_capital,";
 		$sql .= " t.amount_insurance,";
 		$sql .= " t.amount_interest,";
+		$sql .= " t.vat_src_code, t.tva_tx, t.total_tva,";
 		$sql .= " t.fk_typepayment,";
 		$sql .= " t.num_payment,";
 		$sql .= " t.note_private,";
@@ -308,6 +326,9 @@ class PaymentLoan extends CommonObject
 				$this->amount_capital = $obj->amount_capital;
 				$this->amount_insurance = $obj->amount_insurance;
 				$this->amount_interest = $obj->amount_interest;
+				$this->vat_src_code = (string) $obj->vat_src_code;
+				$this->tva_tx = (float) $obj->tva_tx;
+				$this->total_tva = (float) $obj->total_tva;
 				$this->fk_typepayment = $obj->fk_typepayment;
 				$this->num_payment = $obj->num_payment;
 				$this->note_private = $obj->note_private;
@@ -389,6 +410,9 @@ class PaymentLoan extends CommonObject
 		$sql .= " amount_capital=".(isset($this->amount_capital) ? ((float) $this->amount_capital) : "null").",";
 		$sql .= " amount_insurance=".(isset($this->amount_insurance) ? ((float) $this->amount_insurance) : "null").",";
 		$sql .= " amount_interest=".(isset($this->amount_interest) ? ((float) $this->amount_interest) : "null").",";
+		$sql .= " vat_src_code='".$this->db->escape((string) $this->vat_src_code)."',";
+		$sql .= " tva_tx=".((float) $this->tva_tx).",";
+		$sql .= " total_tva=".((float) price2num((float) $this->total_tva, 'MT')).",";
 		$sql .= " fk_typepayment=".(isset($this->fk_typepayment) ? ((int) $this->fk_typepayment) : "null").",";
 		$sql .= " num_payment=".(isset($this->num_payment) ? "'".$this->db->escape($this->num_payment)."'" : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
