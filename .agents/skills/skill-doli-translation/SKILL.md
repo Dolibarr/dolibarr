@@ -80,7 +80,9 @@ grep -rn "notranslate" htdocs/`projectname`/langs/ --include=*.lang | grep -v "/
 
 - Such translations must not be fixed in the local files (they would be overwritten by the next pull) but on Transifex.
 - For each language `ll_CC` found (e.g. `fr_FR`), the following link opens the Transifex page listing the translations to fix:
-  `https://app.transifex.com/`organizationname`/`projectname`/translate/#ll_CC/$?q=translation_text%3Anotranslate`
+	* Link with the source text: `https://app.transifex.com/`organizationname`/`projectname`/translate/#ll_CC/$?q=text%3ASourceTextToSearch`
+	* Link with the translated text: `https://app.transifex.com/`organizationname`/`projectname`/translate/#ll_CC/$?q=translation_text%3ATranslatedTextToSearch`
+	* Link with the translationkey: `https://app.transifex.com/`organizationname`/`projectname`/translate/#ll_CC/$?q=key%3ATranslationText`
 - Once fixed on Transifex, pull the language again with `txpull.sh ll_CC`.
 
 ## Complete workflow for a new translation key
