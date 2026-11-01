@@ -200,6 +200,20 @@ ALTER TABLE llx_receptiondet_batch ADD COLUMN ref_fourn varchar(128) NULL AFTER 
 -- VPGSQL ALTER TABLE llx_bookcal_availabilities RENAME COLUMN start TO date_start;
 -- VPGSQL ALTER TABLE llx_bookcal_availabilities RENAME COLUMN "end" TO date_end;
 
+-- ExpenseReport: rename date_create into date_creation to align with the Dolibarr naming convention
+ALTER TABLE llx_expensereport CHANGE COLUMN date_create date_creation datetime NOT NULL;
+
+-- ElementContact: rename datecreate into date_creation to align with the Dolibarr naming convention
+ALTER TABLE llx_element_contact CHANGE COLUMN datecreate date_creation datetime NULL;
+
+-- Mailing: rename date_creat into date_creation to align with the Dolibarr naming convention
+ALTER TABLE llx_mailing CHANGE COLUMN date_creat date_creation datetime;
+ALTER TABLE llx_mailing_unsubscribe CHANGE COLUMN date_creat date_creation datetime;
+
+-- ECM: rename date_c into date_creation to align with the Dolibarr naming convention
+ALTER TABLE llx_ecm_directories CHANGE COLUMN date_c date_creation datetime;
+ALTER TABLE llx_ecm_files CHANGE COLUMN date_c date_creation datetime;
+
 -- Inventory: add last_main_doc used to save the relative path of last generated main document
 ALTER TABLE llx_inventory ADD COLUMN last_main_doc varchar(255) DEFAULT NULL AFTER date_validation;
 

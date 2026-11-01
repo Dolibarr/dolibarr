@@ -119,6 +119,27 @@ class ToolApiBridge extends McpTool
 	);
 
 	/**
+	 * Endpoint key -> list methods whose table stores the creation date in a
+	 * 'date_creation' column instead of the usual 'datec': their sortfield doc
+	 * tells to use 't.date_creation' (the common doc says 't.datec').
+	 */
+	const DATE_CREATION_LISTS = array(
+		'categories' => array('index'),
+		'orders' => array('index'),
+		'supplier_orders' => array('index'),
+		'shipments' => array('index'),
+		'receptions' => array('index'),
+		'expensereports' => array('index'),
+		'socialcontributions' => array('index'),
+		'boms' => array('index'),
+		'mos' => array('index'),
+		'workstations' => array('index'),
+		'knowledgemanagement' => array('index'),
+		'partnerships' => array('index'),
+		'websites' => array('index', 'indexPages')
+	);
+
+	/**
 	 * Default and ceiling applied to list 'limit' parameters when called
 	 * through the bridge. API methods default to 100 full objects — too much
 	 * model context for a single call; everything stays reachable via 'page'.
@@ -1744,7 +1765,9 @@ class ToolApiBridge extends McpTool
 					'suffix' => 'pages_list',
 					'description' => "Pages of one website: pageurl (alias), title, type_container ('page', 'blogpost', 'menu', 'other', 'header', 'footer'...), lang, status (0 offline, 1 online). Blog posts are the pages with type_container 'blogpost'. Search with sqlfilters \"(t.type_container:=:'blogpost')\".",
 					'default_properties' => 'id,pageurl,title,description,type_container,lang,status,date_creation,author_alias',
-					'params' => array('id' => "Rowid of the website.")
+					'params' => array(
+						'id' => "Rowid of the website."
+					)
 				),
 				'getPage' => array(
 					'suffix' => 'page_get',
@@ -3197,6 +3220,9 @@ class ToolApiBridge extends McpTool
 			// unsupported IN, the datec/tms column names), so there the common doc
 			// is APPENDED to the docblock description instead of being shadowed.
 			$commondesc = (string) ($this->commonParamDocs[$pname] ?? '');
+			if ($pname === 'sortfield' && in_array($method, self::DATE_CREATION_LISTS[$key] ?? array(), true)) {
+				$commondesc = "Field to sort on, prefixed with 't.' (e.g. 't.rowid', 't.date_creation'). Use the SQL column names: here the creation date is 't.date_creation' (NEVER 't.datec', it does not exist on this table, also in sqlfilters) and last modification 't.tms' (never 'date_modification').";
+			}
 			if (isset($meta['params'][$pname])) {
 				$pdesc = $meta['params'][$pname];
 			} elseif (!empty($paramDocs[$pname]['desc'])) {
