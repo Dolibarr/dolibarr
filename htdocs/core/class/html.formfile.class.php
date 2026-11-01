@@ -861,6 +861,17 @@ class FormFile
 				$out .= '&nbsp;';
 			}
 
+			// Choice to append or not the terms of sale file (option MAIN_PDF_ADD_TERMSOFSALE_xxx)
+			$termsofsaletypes = array('propal' => 'PROPAL', 'commande' => 'ORDER', 'contract' => 'CONTRACT', 'facture' => 'INVOICE');
+			if (!empty($termsofsaletypes[$modulepart]) && getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_'.$termsofsaletypes[$modulepart]) && getDolGlobalString('MAIN_INFO_'.$termsofsaletypes[$modulepart].'_TERMSOFSALE')) {
+				$termsofsalechecked = (getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_'.$termsofsaletypes[$modulepart]) == 1);
+				$out .= '<input type="hidden" name="addtermsofsale_shown" value="1">';
+				$out .= '<span class="nowraponall marginrightonly">';
+				$out .= '<input type="checkbox" id="'.$forname.'_addtermsofsale" name="addtermsofsale" value="1"'.($termsofsalechecked ? ' checked' : '').'>';
+				$out .= '<label for="'.$forname.'_addtermsofsale">'.$langs->trans("AppendTermsOfSaleFile", getDolGlobalString('MAIN_INFO_'.$termsofsaletypes[$modulepart].'_TERMSOFSALE')).'</label>';
+				$out .= '</span>';
+			}
+
 			// Button to generate document
 			$genbutton = '<input class="button buttongen reposition nomargintop nomarginbottom" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
 			$genbutton .= ' type="submit" value="'.$buttonlabel.'"';
