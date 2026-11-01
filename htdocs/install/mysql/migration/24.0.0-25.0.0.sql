@@ -358,6 +358,13 @@ create table llx_loan_change
 ALTER TABLE llx_loan_change ADD INDEX idx_loan_change_fk_loan (fk_loan);
 ALTER TABLE llx_payment_donation ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_payment_expensereport ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_payment_expensereport ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0 AFTER amount;
+UPDATE llx_payment_expensereport SET multicurrency_amount = amount WHERE multicurrency_amount = 0;
+ALTER TABLE llx_payment_expensereport ADD COLUMN multicurrency_code varchar(3) AFTER multicurrency_amount;
+-- The placeholders __DECRYPT()__ and __ENCRYPT()__, replaced at install time, can not be parsed by sqlfluff.
+--noqa:disable=PRS
+UPDATE llx_payment_expensereport SET multicurrency_code = (SELECT __DECRYPT('value')__ FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_MONNAIE' AND entity = (SELECT entity FROM llx_expensereport WHERE rowid = llx_payment_expensereport.fk_expensereport)) WHERE multicurrency_code IS NULL;
+--noqa:enable=PRS
 ALTER TABLE llx_payment_vat ADD COLUMN import_key varchar(14);
 
 -- llx_paiement_facture (the n-n link between a payment and the invoice(s) it pays) is also
@@ -555,6 +562,17 @@ ALTER TABLE llx_user ADD COLUMN passkey_required tinyint DEFAULT NULL AFTER forc
 -- RF or national reference the supplier provides to accept payments
 ALTER TABLE llx_societe_rib ADD COLUMN payment_reference varchar(35) AFTER date_rum;
 
+ALTER TABLE llx_facture_fourn MODIFY COLUMN payment_reference varchar(35);
+
+ALTER TABLE llx_bank_account ADD COLUMN sepa_transfer_schema_version varchar(2) AFTER sepa_local_instrument;
+ALTER TABLE llx_bank_account ADD COLUMN sepa_charge_bearer varchar(4) DEFAULT 'SHAR' AFTER sepa_transfer_schema_version;
+
+ALTER TABLE llx_prelevement_demande ADD COLUMN multicurrency_code varchar(3) AFTER amount;
+ALTER TABLE llx_prelevement_demande ADD COLUMN multicurrency_amount double(24,8) AFTER multicurrency_code;
+
+ALTER TABLE llx_prelevement ADD COLUMN fk_expensereport integer NULL AFTER fk_salary;
+ALTER TABLE llx_prelevement_demande ADD COLUMN fk_expensereport integer NULL AFTER fk_salary;
+
 -- New page/container types for web sites, they can't be disabled from dictionary (can be included into other pages but not accessed directly)
 INSERT INTO llx_c_type_container (code, label, active, module, position, typecontainer, entity) VALUES ('header', 'PageHeader', 1, 'system', 32, 'container', __ENTITY__);
 INSERT INTO llx_c_type_container (code, label, active, module, position, typecontainer, entity) VALUES ('footer', 'PageFooter', 1, 'system', 33, 'container', __ENTITY__);
@@ -566,3 +584,26 @@ ALTER TABLE llx_payment_various ADD INDEX idx_payment_various_fk_bank (fk_bank);
 ALTER TABLE llx_payment_various ADD INDEX idx_payment_various_fk_projet (fk_projet);
 ALTER TABLE llx_payment_various ADD INDEX idx_payment_various_fk_soc (fk_soc);
 ALTER TABLE llx_payment_various ADD CONSTRAINT fk_payment_various_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
+
+-- Add a primary key on the 4 tables that had none (a primary key is required by Galera and by the other multi-master clusters).
+-- llx_category_bankline is a link table of categories, like the llx_categorie_* ones: its primary key is on the existing columns and replaces the unique index.
+--noqa:disable=PRS
+ALTER TABLE llx_category_bankline ADD PRIMARY KEY pk_category_bankline(lineid, fk_categ);
+--noqa:enable=PRS
+-- VMYSQL4.1 DROP INDEX uk_category_bankline_lineid ON llx_category_bankline;
+-- VPGSQL8.2 DROP INDEX uk_category_bankline_lineid;
+-- The 3 other tables get a rowid column as primary key, like the other tables.
+-- VMYSQL4.3 ALTER TABLE llx_holiday_users ADD COLUMN rowid integer AUTO_INCREMENT PRIMARY KEY;
+-- VPGSQL8.2 ALTER TABLE llx_holiday_users ADD COLUMN rowid SERIAL PRIMARY KEY;
+-- VMYSQL4.3 ALTER TABLE llx_user_param ADD COLUMN rowid integer AUTO_INCREMENT PRIMARY KEY;
+-- VPGSQL8.2 ALTER TABLE llx_user_param ADD COLUMN rowid SERIAL PRIMARY KEY;
+-- VMYSQL4.3 ALTER TABLE llx_opensurvey_user_formanswers ADD COLUMN rowid integer AUTO_INCREMENT PRIMARY KEY;
+-- VPGSQL8.2 ALTER TABLE llx_opensurvey_user_formanswers ADD COLUMN rowid SERIAL PRIMARY KEY;
+
+-- Opensurvey: the survey of format 'F' (form): type, position and mandatory flag of a question, and the keys of the 2 tables of the form.
+ALTER TABLE llx_opensurvey_formquestions ADD COLUMN type VARCHAR(16) NOT NULL DEFAULT 'radio';
+ALTER TABLE llx_opensurvey_formquestions ADD COLUMN position INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE llx_opensurvey_formquestions ADD COLUMN mandatory TINYINT NOT NULL DEFAULT 0;
+ALTER TABLE llx_opensurvey_formquestions ADD INDEX idx_opensurvey_formquestions_id_sondage (id_sondage);
+ALTER TABLE llx_opensurvey_user_formanswers ADD UNIQUE INDEX uk_opensurvey_user_formanswers (fk_user_survey, fk_question);
+ALTER TABLE llx_opensurvey_user_formanswers ADD INDEX idx_opensurvey_user_formanswers_fk_question (fk_question);

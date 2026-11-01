@@ -18,10 +18,8 @@ AccountancyCodeDepreciationAsset=Kode akuntansi (akun penyusutan aset)
 AccountancyCodeDepreciationExpense=Kode akuntansi (akun penyusutan pengeluaran)
 AssetsLines=Aset
 ConfirmValidateAsset=Apakah Anda yakin ingin memvalidasi aset ini dengan referensi <b>%s</b>?
-DeleteType=Hapus
 DeleteAnAssetType=Hapus model aset
 ConfirmDeleteAssetType=Anda yakin ingin menghapus aset model ini?
-ShowTypeCard=Tampilkan model '1%s'
 # Module label 'ModuleAssetsName'
 ModuleAssetsName=Aset
 # Module description 'ModuleAssetsDesc'
@@ -29,13 +27,18 @@ ModuleAssetsDesc=Deskripsi Aset
 # Admin page
 AssetSetup=Pengaturan aset
 AssetSetupPage=Halaman pengaturan aset
-ExtraFieldsAssetModel=Atribut pelengkap (model Aset)
+ExtraFieldsAssetModel=Additionnal fields (Asset's model)
 AssetsType=Model aset
 AssetsTypeId=Id model aset
 AssetsTypeLabel=Label model aset
 AssetsTypes=Model aset
 ASSET_ACCOUNTANCY_CATEGORY=Grup akuntansi aset tetap
 ASSET_DEPRECIATION_DURATION_PER_YEAR=Periode proporsional dalam hari untuk menghitung amortisasi selama satu tahun
+ASSET_DEPRECIATION_DAY_COUNT_CONVENTION=Day count convention of the prorata temporis
+ASSET_DEPRECIATION_DAY_COUNT_CONVENTIONTooltip=How the depreciation of a <b>partial</b> period is computed, which means the first and the last year of an asset. A full annuity is always the value divided by the duration and is never impacted by this setting.<br><br>A convention defines <b>both</b> how the days of the period are counted <b>and</b> by how many days a full year is divided. The two must always match: counting real calendar days and dividing them by 360 overestimates every partial period by about 1.39 percent.<br><br><b>30/360</b>: every month counts 30 days and every year 360 days. The convention applied by most accounting firms in France.<br><b>Real days / 365</b>: real calendar days of the period, divided by 365.<br><b>Real days / real year</b>: real calendar days, each year divided by its own real length, 365 or 366. The most accurate on a period covering a leap day.<br><br>Example on an asset of 13000 depreciated over 5 years, put in service on March 10th and sold on February 23rd of the fourth year, fiscal years running from August to July. Cumulated depreciation at the disposal: 7684.44 with 30/360, 7700.27 with real days / 365, 7697.29 with real days / real year.<br><br><b>Warning</b>: changing this setting does not recompute the plans already generated. Save the depreciation options of an asset again to regenerate its plan.
+AssetDayCountConventionThirty360=30/360 - every month counts 30 days, every year 360 days (usual in France)
+AssetDayCountConventionAct365=Real days / 365 - real calendar days divided by 365
+AssetDayCountConventionActAct=Real days / real year - real calendar days, each year divided by its own length (365 or 366)
 # Menu
 MenuAssets=Aset
 MenuNewAsset=Aset baru
@@ -142,5 +145,6 @@ AssetErrorCalculationDepreciationLines=Kesalahan saat menghitung garis penyusuta
 AssetErrorReversalDateNotProvidedForMode=Tanggal pembalikan tidak disediakan untuk metode penyusutan '%s'
 AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=Tanggal pembalikan harus lebih besar atau sama dengan awal tahun fiskal berjalan untuk metode penyusutan '%s'
 AssetErrorReversalAmountNotProvidedForMode=Jumlah pembalikan tidak disediakan untuk mode penyusutan '%s'.
+AssetErrorDegressiveDailyDurationForMode=A degressive depreciation needs a duration in years or in months for the depreciation mode '%s'.
 AssetErrorFetchCumulativeDepreciation=Kesalahan saat mengambil jumlah akumulasi penyusutan dari garis penyusutan
 AssetErrorSetLastCumulativeDepreciation=Kesalahan saat mencatat jumlah akumulasi penyusutan terakhir

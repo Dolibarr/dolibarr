@@ -220,6 +220,10 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$action = '';
 }
 
+if ($action == 'addtimespent' && GETPOST('button_search_x', 'alpha')) {	// Test on permission not required
+	$action = '';
+}
+
 if ($action == 'addtimespent' && $user->hasRight('projet', 'time')) {
 	$timespent_durationhour = GETPOSTINT('timespent_durationhour');
 	$timespent_durationmin = GETPOSTINT('timespent_durationmin');
@@ -2236,6 +2240,15 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			print '</td>';
 		}
 		print '</tr>' . "\n";
+
+		print '<script type="text/javascript">
+			$(document).on("keydown", "tr.liste_titre_filter input", function (e) {
+				if (e.which === 13) {
+					e.preventDefault();
+					$(this).closest("form").find("button[name=\"button_search_x\"]").first().trigger("click");
+				}
+			});
+		</script>';
 
 
 		$totalarray = array();

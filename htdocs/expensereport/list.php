@@ -635,7 +635,7 @@ if (!empty($arrayfields['summary']['checked'])) {
 if (!empty($arrayfields['user']['checked'])) {
 	if ($user->hasRight('expensereport', 'readall') || $user->hasRight('expensereport', 'lire_tous')) {
 		print '<td class="liste_titre maxwidthonsmartphone" align="left">';
-		print $form->select_dolusers($search_user, 'search_user', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth200');
+		print $form->select_dolusers($search_user, 'search_user', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth125');
 		print '</td>';
 	} else {
 		print '<td class="liste_titre">&nbsp;</td>';
@@ -911,14 +911,21 @@ if ($num > 0) {
 			}
 			// Summary
 			if (!empty($arrayfields['summary']['checked'])) {
-				print '<td class="tdoverflowmax300">'.dol_escape_htmltag($expensereportstatic->getSummary()).'</td>';
+				$summary = $expensereportstatic->getSummary();
+				print '<td title="'.dolPrintHTMLForAttribute($summary).'">';
+				print '<div class="twolinesmax-normallineheight minwidth200onall">';
+				print '<span class="spantitle">';
+				print dol_escape_htmltag($summary);
+				print '</span>';
+				print '</div>';
+				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 			}
 			// User
 			if (!empty($arrayfields['user']['checked'])) {
-				print '<td class="left">';
+				print '<td class="left tdoverflowmax125">';
 				print $usertmp->getNomUrl(-1);
 				print '</td>';
 				if (!$i) {

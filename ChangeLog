@@ -19,6 +19,9 @@ The following changes may create regressions for some external modules, but were
 * img_object() does not add the prefix 'object_' to the $picto name anymore. An external module with a picto 'xxx@mymodule' must now provide
   the image file mymodule/img/xxx.png (keep also mymodule/img/object_xxx.png to stay compatible with older versions).
 * Removed library MathPHP. Was introduced in 2023. Never used by Dolibarr after 3 years.
+* The setup of a dedicated menu manager for smartphones has been removed. Constants MAIN_MENU_SMARTPHONE and MAIN_MENUFRONT_SMARTPHONE
+  are no longer used, and the directories 'smartphone' provided by external modules into their menus directory are no longer scanned.
+  Menu managers must be provided into the 'standard' directory.
 
 
 ***** ChangeLog for 24.0.3 compared to 24.0.2 *****

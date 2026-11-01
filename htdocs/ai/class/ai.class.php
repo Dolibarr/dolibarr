@@ -741,8 +741,35 @@ class Ai
 				}
 				if (!empty($arrayforthirdparty['vat_number'])) {
 					$tmparray['vendor_vat_number'] = $arrayforthirdparty['vat_number'];
+				} elseif (!empty($arrayforthirdparty['vatnumber'])) {
+					$tmparray['vendor_vat_number'] = $arrayforthirdparty['vatnumber'];
 				} elseif (!empty($arrayforthirdparty['tva_num'])) {
 					$tmparray['vendor_vat_number'] = $arrayforthirdparty['tva_num'];
+				}
+				if (!empty($arrayforthirdparty['address'])) {
+					if (is_array($arrayforthirdparty['address'])) {
+						// The address may be returned as an array with its parts separated
+						$vendoraddress = $arrayforthirdparty['address'];
+						if (!empty($vendoraddress['street'])) {
+							$tmparray['vendor_address'] = $vendoraddress['street'];
+						}
+						if (!empty($vendoraddress['postal_code'])) {
+							$tmparray['vendor_zip'] = $vendoraddress['postal_code'];
+						}
+						if (!empty($vendoraddress['city'])) {
+							$tmparray['vendor_town'] = $vendoraddress['city'];
+						}
+						if (!empty($vendoraddress['country'])) {
+							$tmparray['vendor_country'] = $vendoraddress['country'];
+						}
+					} else {
+						$tmparray['vendor_address'] = $arrayforthirdparty['address'];
+					}
+				}
+				if (!empty($arrayforthirdparty['phone'])) {
+					$tmparray['vendor_phone'] = $arrayforthirdparty['phone'];
+				} elseif (!empty($arrayforthirdparty['phone_number'])) {
+					$tmparray['vendor_phone'] = $arrayforthirdparty['phone_number'];
 				}
 			}
 

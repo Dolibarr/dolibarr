@@ -388,6 +388,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 			'presend_addmessage',
 			'preview',
 			'reconcile',
+			'showsummary',
 			'specimen',
 			'testsetup',
 			'undeployconfirmed',
@@ -1857,6 +1858,11 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			$titletoshow .= $hookmanager->resPrint; // Concat to Title to show
 		}
 
+		// Add ' + ai' to the title if the AI module is enabled (like multicompany module does with its own hook)
+		if (isModEnabled('ai')) {
+			$titletoshow .= ' + ai';
+		}
+
 		print $titletoshow;
 		print '</title>';
 
@@ -1931,6 +1937,21 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			$jsContextVars['MAIN_LANG_DEFAULT'] = $langs->getDefaultLang();// For langs tool
 			$jsContextVars['DOL_URL_ROOT'] = DOL_URL_ROOT;
 			$jsContextVars['DOL_LANG_INTERFACE_URL'] = dol_buildpath('public/langs/langs-tool-interface.php', 1);// For langs tool
+		}
+
+		// Context vars added by modules : the hook returns them into ->results, ex: $this->results = array('MYMODULE_VAR' => 'value');
+		$parameters = array('jsContextVars' => $jsContextVars);
+		$reshook = $hookmanager->executeHooks('addJsContextVars', $parameters);
+		if ($reshook >= 0 && !empty($hookmanager->resArray)) {
+			foreach ($hookmanager->resArray as $key => $value) {
+				if (array_key_exists($key, $jsContextVars)) {
+					dol_syslog("JS context var '".$key."' added by a module is already defined, it is ignored", LOG_WARNING);
+				} elseif (!is_scalar($value)) {
+					dol_syslog("JS context var '".$key."' added by a module must be a string, a number or a boolean, it is ignored", LOG_WARNING);
+				} else {
+					$jsContextVars[$key] = $value;
+				}
+			}
 		}
 
 		// Load context and all js tools

@@ -644,6 +644,7 @@ script:
     php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_KnowledgeManagement,MAIN_MODULE_EventOrganization,MAIN_MODULE_PARTNERSHIP >> $TRAVIS_BUILD_DIR/enablemodule.log
     php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_EmailCollector >> $TRAVIS_BUILD_DIR/enablemodule.log
     php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_BlockedLog >> $TRAVIS_BUILD_DIR/enablemodule.log
+    php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_MARGIN >> $TRAVIS_BUILD_DIR/enablemodule.log
     echo $?
     cd -
     set +e

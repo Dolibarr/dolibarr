@@ -217,6 +217,8 @@ class AllTests
 		$suite->addTestSuite('FilesLibTest');
 		require_once dirname(__FILE__).'/InstallRepairEcmTest.php';
 		$suite->addTestSuite('InstallRepairEcmTest');
+		require_once dirname(__FILE__).'/InstallRepairImagesTest.php';
+		$suite->addTestSuite('InstallRepairImagesTest');
 		require_once dirname(__FILE__).'/GetUrlLibTest.php';
 		$suite->addTestSuite('GetUrlLibTest');
 		require_once dirname(__FILE__).'/JsonLibTest.php';
@@ -308,8 +310,6 @@ class AllTests
 
 		require_once dirname(__FILE__).'/ProductTest.php';
 		$suite->addTestSuite('ProductTest');
-		require_once dirname(__FILE__).'/SupplierOrdersLineApiTest.php';
-		$suite->addTestSuite('SupplierOrdersLineApiTest');
 		require_once dirname(__FILE__).'/VariantsTest.php';
 		$suite->addTestSuite('VariantsTest');
 
@@ -463,6 +463,8 @@ class AllTests
 			$suite->addTestSuite('RestAPICronJobTest');
 			require_once dirname(__FILE__).'/RestAPIBankAccountsTest.php';
 			$suite->addTestSuite('RestAPIBankAccountsTest');
+			require_once dirname(__FILE__).'/RestAPISupplierOrderTest.php';
+			$suite->addTestSuite('RestAPISupplierOrderTest');
 
 			// Old WS
 			require_once dirname(__FILE__).'/WebservicesProductsTest.php';
