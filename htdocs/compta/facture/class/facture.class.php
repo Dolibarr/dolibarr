@@ -6332,8 +6332,9 @@ class Facture extends CommonInvoice
 						$outputlangs = $langs;
 					}
 
-					// Select email template according to language of recipient
-					$arraymessage = $formmail->getEMailTemplate($this->db, 'facture_send', $user, $outputlangs, (is_numeric($template) ? $template : 0), 1, (is_numeric($template) ? '' : $template));
+					// Select email template according to language of recipient (id -2 returns an error when the label is not found, else a generic text is returned)
+					// EmailTemplateCode is the placeholder of the default parameters of the job: it means no template
+					$arraymessage = $formmail->getEMailTemplate($this->db, 'facture_send', $user, $outputlangs, (is_numeric($template) ? $template : ((empty($template) || $template == 'EmailTemplateCode') ? 0 : -2)), 1, (is_numeric($template) ? '' : $template));
 					if (is_numeric($arraymessage) && $arraymessage <= 0) {
 						$langs->load("errors");
 						if (is_numeric($template)) {
@@ -6354,6 +6355,7 @@ class Facture extends CommonInvoice
 						// Log the error and continue so a single missing translation does
 						// not stop reminders for everyone else (see issue #34656).
 						$errorsMsg[] = $langs->trans('ErrorFailedToFindEmailTemplate', $template).' (invoice '.$tmpinvoice->ref.')';
+						$error++;
 						continue;
 					}
 
