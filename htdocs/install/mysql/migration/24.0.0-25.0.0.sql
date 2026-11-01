@@ -214,6 +214,14 @@ ALTER TABLE llx_mailing_unsubscribe CHANGE COLUMN date_creat date_creation datet
 ALTER TABLE llx_ecm_directories CHANGE COLUMN date_c date_creation datetime;
 ALTER TABLE llx_ecm_files CHANGE COLUMN date_c date_creation datetime;
 
+-- Multicurrency: rename date_create into date_creation to align with the Dolibarr naming convention
+ALTER TABLE llx_multicurrency CHANGE COLUMN date_create date_creation datetime DEFAULT NULL;
+
+-- Holiday: rename date_create into date_creation to align with the Dolibarr naming convention
+ALTER TABLE llx_holiday CHANGE COLUMN date_create date_creation datetime NOT NULL;
+ALTER TABLE llx_holiday DROP INDEX idx_holiday_date_create;
+ALTER TABLE llx_holiday ADD INDEX idx_holiday_date_creation (date_creation);
+
 -- Inventory: add last_main_doc used to save the relative path of last generated main document
 ALTER TABLE llx_inventory ADD COLUMN last_main_doc varchar(255) DEFAULT NULL AFTER date_validation;
 

@@ -130,6 +130,7 @@ class ToolApiBridge extends McpTool
 		'shipments' => array('index'),
 		'receptions' => array('index'),
 		'expensereports' => array('index'),
+		'holidays' => array('index'),
 		'socialcontributions' => array('index'),
 		'boms' => array('index'),
 		'mos' => array('index'),
