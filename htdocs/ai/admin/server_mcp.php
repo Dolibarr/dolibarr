@@ -399,7 +399,7 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 
 	// API Key
 	print '<tr class="oddeven">';
-	print '<td class="fieldrequired">MCP API Key</td>';
+	print '<td class="fieldrequired">'.$form->textwithpicto('MCP API Key', $langs->trans("McpApiKeyHelp")).'</td>';
 	print '<td>';
 	// The key is hidden in a password field, the eye picto shows it
 	print '<input type="password" class="minwidth400 input-icon-password" id="AI_MCP_API_KEY" name="AI_MCP_API_KEY" value="'.dolPrintHTMLForAttribute($apiKey).'" autocomplete="new-password">';

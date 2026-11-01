@@ -2924,6 +2924,7 @@ ConfigureHere=Configure Here
 NoKeyWarning=No API Key generated. External tools cannot access Dolibarr.
 GenerateKey=Generate New Key
 RegenerateKey=Regenerate
+McpApiKeyHelp=This key authenticates the AI tools and clients that call the MCP server. Send it as the value of the HTTP header <b>DOLAPIKEY</b>.
 ConfirmRegenerateMcpApiKey=Are you sure you want to generate a new MCP API key? The current key will stop working immediately: every tool or AI client that uses it will have to be configured again with the new key.
 AiMcpExternalAccess=External Access (AI LLM has access to your data)
 ConnectionSuccessful=Connection Successful! Response:
