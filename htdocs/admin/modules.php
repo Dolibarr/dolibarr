@@ -1515,6 +1515,27 @@ if ($mode == 'marketplace') {
 	print "</table>\n";
 	print '</div>';
 
+	if ($remotestore->numberOfProviders == 0) {
+		// No provider online: explain, just under the providers, why there is no list of modules
+		$unreachablesources = array();
+		if (getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY')) {
+			$unreachablesources[] = 'github.com/Dolibarr/dolibarr-community-modules';
+		}
+		if (getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_DOLISTORE')) {
+			$unreachablesources[] = 'DoliStore';
+		}
+		foreach ($remotestore->custom_sources as $customsource) {
+			if (getDolGlobalInt($customsource['const_enable'])) {
+				$unreachablesources[] = preg_replace('/^https?:\/\//', '', $customsource['url']);
+			}
+		}
+		if (empty($unreachablesources)) {
+			print info_admin($langs->trans("MarketplaceNoProviderEnabled"), 0, 0, '1', '');
+		} else {
+			print info_admin($langs->trans("MarketplaceNoProviderReachable", dol_escape_htmltag(implode(', ', $unreachablesources))), 0, 0, 'warning', '');
+		}
+	}
+
 	print dol_get_fiche_end();
 
 	print '<br>';
