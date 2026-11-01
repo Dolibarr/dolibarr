@@ -75,6 +75,10 @@ if (!empty($id)) {
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
+	// fetch() returns 1 even when no record is found (deleted job)
+	if ($result > 0 && empty($object->id)) {
+		recordNotFound();
+	}
 }
 
 if (!empty($cancel)) {
