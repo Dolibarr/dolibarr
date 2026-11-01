@@ -61,7 +61,7 @@ These principles must be followed even before reviewing specific task details. V
 2.  **Action/View Separation:** Always clearly separate page action logic (executed on POST) from pure rendering (the HTML view).
 3.  **Hooks First:** Before implementing any logic that runs on a core lifecycle event (e.g., form save, object update), check if an existing Dolibarr hook can be used. Use the standard calling pattern: `$hookmanager->executeHooks('actionName', $parameters, $object, $action);`.
 
----
+***
 
 ## Workflow and Tasks Guidance
 
@@ -154,7 +154,7 @@ Before proposing code:
 1.  **Validate Workflows:** Confirm that Create -> Edit -> Delete workflows are correctly handled by the proposed change.
 2.  **Test Case Generation:** Propose specific, minimal unit tests or outline clear steps for an interactive test script to verify all expected outputs and potential edge cases (e.g., null inputs, permissions failure).
 
----
+***
 
 ## Comprehensive Reference Material [Reference]
 
