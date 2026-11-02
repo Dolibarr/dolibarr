@@ -27,6 +27,7 @@ Earnings=Earnings
 TotalEarnings=Total earnings
 TotalDeductions=Total deductions
 NetPaid=Neto samaksāts
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Konts (no konta plāna), ko pēc noklusējuma izmanto "lietotājiem" algām
@@ -55,8 +56,6 @@ FillFieldFirst=Vispirms aizpildiet darbinieka lauku
 UpdateAmountWithLastSalary=Nosakiet pēdējās algas summu
 MakeTransferRequest=Veiciet pārsūtīšanas pieprasījumu
 VirementOrder=Kredīta pārskaitījuma pieprasījums
-WithdrawalReceipt=Kredīta pārveduma rīkojums
-OrderWaiting=Neapstiprināts pasūtījums
 FillEndOfMonth=End of month
 
 # Shortcuts

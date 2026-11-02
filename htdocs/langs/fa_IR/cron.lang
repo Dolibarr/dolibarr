@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = خواندن وظایف زمان‌بندی‌شده
-Permission23102 = ساخت/ویرایش  وظایف زمان‌بندی‌شده
-Permission23103 = حذف  وظایف زمان‌بندی‌شده
-Permission23104 = اجرای  وظایف زمان‌بندی‌شده
 # Admin
 CronSetup=برپاسازی مدیریت وظایف زمان‌بندی‌شده
 URLToLaunchCronJobs=URL to check and launch qualified cron jobs from a browser
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=در فضای لینوکس شما باید ورودی cr
 CronExplainHowToRunWin=در فضای مایکروسافت ویندوز شما می‌توانید از ابزارهای وظایف زمان‌بندی شده استفاده کنید تا در هر 5 دقیقه دستور را اجرا کنید
 CronMethodDoesNotExists=Class %s does not contain any method %s
 CronMethodNotAllowed=Method %s of class %s is in blocklist of forbidden methods
-CronJobDefDesc=نمایه‌های وظایف زمانی‌بندی شده در فایل توضیح واحد مربوطه تعریف می‌شوند. در هنگامی که این واحد فعال شد، این فایل‌ها بارگذاری شده و در دسترس خواهند بود و در نتیجه شما می‌توانید واظیف را از فهرست ابزارهای مدیر %s مدیریت کنید.
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=نمایه‌های از پیش تعیین شدۀ وظایف‌زمان‌بندی‌شده
 # Menu
 EnabledAndDisabled=فعال‌شده و غیرفعال‌شده
@@ -27,7 +22,7 @@ CronDelete=حذف وظایف‌برنامه‌ریزی‌شده
 CronConfirmDelete=آیا مطمئن هستید می‌خواهید این وظایف‌برنامه‌ریزی‌شده را حذف کنید؟
 CronExecute=Launch now
 CronConfirmExecute=آیا مطمئن هستید می‌خواهید اکنون این وظیفۀ برنامه‌ریزی شده را اجرا کنید؟
-CronInfo=واحد وظایف‌برنامه‌ریزی‌شده  به شما امکان اجرای خودکار و زمان‌بندی‌شدۀ وظایف را می‌دهد. این وظایف همچنین امکان اجرای دلخواه دستی نیز دارند.
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=وظیفه
 CronNone=Next run of scheduled task
 CronNotYetRan=Never executed
@@ -79,7 +74,7 @@ CronType_command=فرمان شل
 CronCannotLoadClass=امکان بارگذاری فایل کلاس %s (برای بارگذاری کلاس %s)
 CronModuleNotEnabledInThisEntity=Cron module not enabled in this entity (to use %s method of %s object)
 CronCannotLoadObject=فایل کلاس %s بارگذاری شد، اما شیء %s درون آن پیدا نشد
-UseMenuModuleToolsToAddCronJobs=Go into menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=وظیفه غیرفعال است
 MakeLocalDatabaseDumpShort=پشتیبان‌گیری از پایگاه داده محلی
 MakeLocalDatabaseDump=نسخه‌برداری-dump از پایگاه دادۀ محلی. مؤلفه‌های مربوطه از قرار: فشرده‌سازی ('gz'  یا 'bz' یا 'none')، نوع پشتیبان‌گیری  ('mysql', 'pgsql', 'auto'), 1, 'auto' یا نام فایلی که ساخته می‌شود, تعداد فایل‌هائی که نگه‌داری می‌شود است

@@ -1939,6 +1939,12 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			$jsContextVars['DOL_LANG_INTERFACE_URL'] = dol_buildpath('public/langs/langs-tool-interface.php', 1);// For langs tool
 		}
 
+		// Hook contexts of the page, sent back by the ajax requests printing parts of the page (ex: core/ajax/objectline.php),
+		// so modules hooking them render these parts as in the page. The hook context is the one of the page, not of an object.
+		if (is_object($hookmanager)) {
+			$jsContextVars['HOOK_CONTEXTS'] = implode(',', array_diff($hookmanager->contextarray, array('main', 'login'))); // Context vars are scalar
+		}
+
 		// Context vars added by modules : the hook returns them into ->results, ex: $this->results = array('MYMODULE_VAR' => 'value');
 		$parameters = array('jsContextVars' => $jsContextVars);
 		$reshook = $hookmanager->executeHooks('addJsContextVars', $parameters);
@@ -3101,6 +3107,9 @@ function top_menu_importfile()
 			$urlforuploadpage = getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE');
 		} elseif (!isModEnabled('ai')) {
 			// The native upload page uses the AI module to parse the files, so the button is hidden when the module is not enabled
+			return '';
+		} elseif (!isModEnabled('supplier_invoice') && !isModEnabled('salaries') && !isModEnabled('expensereport') && !isModEnabled('tax')) {
+			// The native upload page can only create supplier invoices, salaries, expense reports or social/fiscal taxes
 			return '';
 		}
 

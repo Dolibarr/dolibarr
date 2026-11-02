@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal module setup
-PaypalDesc=Met deze module kunnen klanten betalen via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a> . Dit kan gebruikt worden voor een ad-hoc betaling of voor een betaling gerelateerd aan een Dolibarr object (factuur, bestelling, ...)
+PaypalDesc=Deze module maakt betalingen door klanten mogelijk via PayPal. Dit kan worden gebruikt voor een ad-hoc betaling of voor een betaling die is gekoppeld aan een Dolibarr-object (<a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">), ...
 PaypalOrCBDoPayment=Betalen met PayPal (Creditcard of PayPal)
 PaypalDoPayment=Betaal met PayPal
 PAYPAL_API_SANDBOX=Mode test / zandbak
@@ -19,7 +19,7 @@ NewOnlinePaymentFailed=Nieuwe online betaling geprobeerd, maar mislukt
 ONLINE_PAYMENT_SENDEMAIL=E-mailadres voor meldingen na elke betalingspoging (voor succes en mislukking)
 ReturnURLAfterPayment=Retourneer URL na betaling
 ValidationOfOnlinePaymentFailed=Validatie van online betaling is mislukt
-PaymentSystemConfirmPaymentPageWasCalledButFailed=De bevestigingspagina werd aangeroepen en gaf een fout terug
+PaymentSystemConfirmPaymentPageWasCalledButFailed=The payment confirmation page was called by the online payment system and returned an error
 SetExpressCheckoutAPICallFailed=SetExpressCheckout API-aanroep mislukt.
 DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API-aanroep mislukt.
 DetailedErrorMessage=Gedetailleerd foutbericht
