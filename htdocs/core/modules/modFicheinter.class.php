@@ -102,6 +102,13 @@ class modFicheinter extends DolibarrModules
 				"",
 				0,
 			],
+			[
+				"FICHEINTER_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/interventions",
+				"",
+				0,
+			],
 		];
 
 		// Boxes
