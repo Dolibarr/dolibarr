@@ -794,8 +794,8 @@ class SupplierOrders extends DolibarrApi
 
 		$result = $this->order->delete_contact($contactToUnlink);
 
-		if (!$result) {
-			throw new RestException(500, 'Error when deleting the contact');
+		if ($result < 0) {
+			throw new RestException(500, 'Error when deleting the contact: '.$this->order->errorsToString());
 		}
 
 		return array(
