@@ -242,7 +242,7 @@ class Ldap
 	public $ldapcharset = 'UTF-8';
 
 	/**
-	 * @var false|resource	The internal LDAP connection handle. Was a resource before PHP 8.1 and is an object of class LDAP\Connection since PHP 8.1
+	 * @var bool|resource|LDAP\Connection The internal LDAP connection handle. Resource was a resource before PHP 8.1 and is an object of class LDAP\Connection since PHP 8.1
 	 * @phpstan-var LDAP\Connection
 	 */
 	public $connection;
@@ -1151,6 +1151,12 @@ class Ldap
 
 		// We need to search for this user in order to get their entry.
 		$this->result = @ldap_search($this->connection, $this->people, $filterrecord, $attributes);
+		if ($this->result === false) {
+			// Invalid filter or search error: do not pass false to ldap_first_entry() (TypeError with PHP 8)
+			$this->ldapErrorCode = ldap_errno($this->connection);
+			$this->ldapErrorText = ldap_error($this->connection);
+			return false;
+		}
 
 		// What is this line for ?
 		//$info = ldap_get_entries($this->connection, $this->result);
@@ -1183,7 +1189,7 @@ class Ldap
 	 *	@param	string			$userDn			 	DN (Ex: ou=adherents,ou=people,dc=parinux,dc=org)
 	 *	@param	string			$useridentifier 	Name of key field (Ex: uid).
 	 *	@param	string[]		$attributeArray 	Array of fields required. Note this array must also contain field $useridentifier (Ex: sn,userPassword)
-	 *	@param	0|1|'1'|'user'|'group'|'member'	$activefilter	'1' or 'user'=use field this->filter as filter instead of parameter $search, 'group'=use field this->filtergroup as filter, 'member'=use field this->filtermember as filter
+	 *	@param	int<0,1>|'1'|'user'|'group'|'member'	$activefilter	'1' or 'user'=use field this->filter as filter instead of parameter $search, 'group'=use field this->filtergroup as filter, 'member'=use field this->filtermember as filter
 	 *	@param	string[]		$attributeAsArray 	Array of fields wanted as an array not a string
 	 *	@return	array<string,array<string,string>>|int<min,-1>				if KO: <0 || if OK: array of [id_record][ldap_field]=value
 	 */
@@ -1298,7 +1304,7 @@ class Ldap
 	 */
 	public function getObjectSid($ldapUser)
 	{
-		$criteria = '('.$this->getUserIdentifier().'='.$ldapUser.')';
+		$criteria = '('.$this->getUserIdentifier().'='.ldap_escape($ldapUser, '', LDAP_ESCAPE_FILTER).')';
 		$justthese = array("objectsid");
 
 		// if the directory is AD, then bind first with the search user first
@@ -1450,15 +1456,15 @@ class Ldap
 			$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
 			return -1;
 		} else {
-			$this->name       = $this->convToOutputCharset($result[0][$this->attr_name][0], $this->ldapcharset);
-			$this->firstname  = $this->convToOutputCharset($result[0][$this->attr_firstname][0], $this->ldapcharset);
-			$this->login      = $this->convToOutputCharset($result[0][$this->attr_login][0], $this->ldapcharset);
-			$this->phone      = $this->convToOutputCharset($result[0][$this->attr_phone][0], $this->ldapcharset);
-			$this->fax        = $this->convToOutputCharset($result[0][$this->attr_fax][0], $this->ldapcharset);
-			$this->mail       = $this->convToOutputCharset($result[0][$this->attr_mail][0], $this->ldapcharset);
-			$this->mobile     = $this->convToOutputCharset($result[0][$this->attr_mobile][0], $this->ldapcharset);
+			$this->name       = $this->convToOutputCharset($result[0][$this->attr_name][0] ?? '', $this->ldapcharset);
+			$this->firstname  = $this->convToOutputCharset($result[0][$this->attr_firstname][0] ?? '', $this->ldapcharset);
+			$this->login      = $this->convToOutputCharset($result[0][$this->attr_login][0] ?? '', $this->ldapcharset);
+			$this->phone      = $this->convToOutputCharset($result[0][$this->attr_phone][0] ?? '', $this->ldapcharset);
+			$this->fax        = $this->convToOutputCharset($result[0][$this->attr_fax][0] ?? '', $this->ldapcharset);
+			$this->mail       = $this->convToOutputCharset($result[0][$this->attr_mail][0] ?? '', $this->ldapcharset);
+			$this->mobile     = $this->convToOutputCharset($result[0][$this->attr_mobile][0] ?? '', $this->ldapcharset);
 
-			$this->uacf       = $this->parseUACF($this->convToOutputCharset($result[0]["useraccountcontrol"][0], $this->ldapcharset));
+			$this->uacf       = $this->parseUACF($this->convToOutputCharset($result[0]["useraccountcontrol"][0] ?? '', $this->ldapcharset));
 			if (isset($result[0]["pwdlastset"][0])) {	// If expiration on password exists
 				$this->pwdlastset = ($result[0]["pwdlastset"][0] != 0) ? $this->convertTime($this->convToOutputCharset($result[0]["pwdlastset"][0], $this->ldapcharset)) : 0;
 			} else {
@@ -1467,7 +1473,7 @@ class Ldap
 			if (!$this->name && !$this->login) {
 				$this->pwdlastset = -1;
 			}
-			$this->badpwdtime = $this->convertTime($this->convToOutputCharset($result[0]["badpasswordtime"][0], $this->ldapcharset));
+			$this->badpwdtime = $this->convertTime($this->convToOutputCharset($result[0]["badpasswordtime"][0] ?? '', $this->ldapcharset));
 
 			// FQDN domain
 			$domain = str_replace('dc=', '', $this->domain);

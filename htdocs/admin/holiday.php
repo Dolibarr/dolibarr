@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "errors", "holiday", "other"));
+$langs->loadLangs(array("admin", "holiday", "other"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -116,6 +116,7 @@ if ($action == 'updateMask') {
 			dol_syslog($module->error, LOG_ERR);
 		}
 	} else {
+		$langs->load('errors');
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}

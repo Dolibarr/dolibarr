@@ -234,7 +234,8 @@ class Salary extends CommonObject
 		global $conf, $langs;
 
 		if (!dol_strlen($model)) {
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Model")), null, 'errors');
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Model"));
+			$this->errors[] = $this->error;
 			return 0;
 		}
 
@@ -253,17 +254,30 @@ class Salary extends CommonObject
 				/** @phan-suppress-next-line PhanPluginUnknownObjectMethodCall */
 				$result = $module->writeFile($this, $outputlangs);
 				if ($result > 0) {
+					// Index file in database, as commonGenerateDocument() does
+					if (!empty($module->result['fullpath'])) {
+						if (dol_is_file($module->result['fullpath'])) {
+							$this->indexFile($module->result['fullpath'], (empty($module->update_main_doc_field) ? 0 : 1));
+						}
+					} else {
+						dol_syslog('Method ->writeFile was called on object '.get_class($module).' and return a success but the return array ->result["fullpath"] was not set.', LOG_WARNING);
+					}
+
 					return 1;
 				} else {
-					setEventMessages($module->error, $module->errors, 'errors');
+					$this->error = $module->error;
+					$this->errors = $module->errors;
 					return 0;
 				}
 			} else {
-				setEventMessages('Failed to load class '.$classname, null, 'errors');
+				$this->error = 'Failed to load class '.$classname;
+				$this->errors[] = $this->error;
 				return 0;
 			}
 		} else {
-			setEventMessages($langs->trans("ErrorModuleNotFound", $model), null, 'errors');
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorModuleNotFound", $model);
+			$this->errors[] = $this->error;
 			return 0;
 		}
 	}

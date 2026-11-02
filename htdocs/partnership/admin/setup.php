@@ -25,10 +25,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
-require_once '../lib/partnership.lib.php';
-//require_once "../class/myclass.class.php";
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -36,6 +32,9 @@ require_once '../lib/partnership.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once '../lib/partnership.lib.php';
+//require_once "../class/myclass.class.php";
 
 // Translations
 $langs->loadLangs(array("admin", "partnership"));
@@ -90,6 +89,7 @@ if ($action) {
 	exit;
 }
 
+
 /*
  * View
  */
@@ -111,6 +111,7 @@ $form = new Form($db);
 $dirpartnership = array('/core/modules/partnership/');
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
+print '<br>';
 
 /*
  * Other conf

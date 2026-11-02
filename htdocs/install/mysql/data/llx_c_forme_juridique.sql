@@ -379,6 +379,11 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1305','S
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1306','Société en commandite par actions (SCA)');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1307','Société en participation');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1308','Groupe de sociétés');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1309','Société par actions simplifiée (SPAS)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1310','Groupement d''intérêt économique (GIE)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1311','Auto-entrepreneur');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1312','Société civile');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1313','Société coopérative');
 
 -- Sweden (id country=20)
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2001', 'Aktiebolag');

@@ -34,6 +34,8 @@ function dolSaveMasterFile($filemaster)
 	// Now generate the master.inc.php page
 	dol_syslog("We regenerate the master.inc.php file");
 
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
 	dol_delete_file($filemaster);
 
 	$mastercontent = '<?php'."\n";
@@ -208,7 +210,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 			$tplcontent .= "<!DOCTYPE html>\n";
 		}
 		// If a language was forced on page, we use it, else we use the lang of visitor else the lang of web site
-		$tplcontent .= '<html'.($objectpage->lang ? ' lang="'.substr($objectpage->lang, 0, 2).'"' : '<?php echo $weblangs->shortlang ? \' lang="\'.$weblangs->shortlang.\'"\' : \'\' ?>').'>'."\n";
+		$tplcontent .= '<html'.($objectpage->lang ? ' lang="'.preg_replace('/[^a-z]/i', '', substr($objectpage->lang, 0, 2)).'"' : '<?php echo $weblangs->shortlang ? \' lang="\'.$weblangs->shortlang.\'"\' : \'\' ?>').'>'."\n";
 		$tplcontent .= '<head>'."\n";
 		$tplcontent .= '<title>'.dol_string_nohtmltag($objectpage->title, 1, 'UTF-8').'</title>'."\n";
 		$tplcontent .= '<meta charset="utf-8">'."\n";
@@ -456,7 +458,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$tplcontent .= '}'."\n";
 
 		$tplcontent .= "// Now output the generated page content\n";
-		$tplcontent .= 'dolWebsiteOutput($tmp, "html", '.((int) $objectpage->id).'); dolWebsiteIncrementCounter('.((int) $object->id).', "'.$objectpage->type_container.'", '.((int) $objectpage->id).');'."\n";
+		$tplcontent .= 'dolWebsiteOutput($tmp, "html", '.((int) $objectpage->id).'); dolWebsiteIncrementCounter('.((int) $object->id).', "'.preg_replace('/[^\w\-]/', '', (string) $objectpage->type_container).'", '.((int) $objectpage->id).');'."\n";
 		$tplcontent .= "// END PHP ?>\n";
 	} else {
 		$tplcontent .= "<?php // BEGIN PHP\n";
@@ -509,6 +511,8 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $object = null)
 {
 	global $db;
+
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$result1 = false;
 	$result2 = false;

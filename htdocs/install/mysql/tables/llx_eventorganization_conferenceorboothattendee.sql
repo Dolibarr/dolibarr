@@ -20,6 +20,7 @@ CREATE TABLE llx_eventorganization_conferenceorboothattendee(
 	ref varchar(128) NOT NULL,
 	fk_soc integer,
 	fk_contact integer,
+	fk_member integer,
 	fk_actioncomm integer,
 	fk_project integer NOT NULL,
 	fk_invoice integer NULL,

@@ -43,6 +43,11 @@ abstract class ModeleGenPassword
 	public $version;
 
 	/**
+	 * @var int Position in list (used to sort list of modules)
+	 */
+	public $position = 50;
+
+	/**
 	 * @var string
 	 */
 	public $picto = 'generic';

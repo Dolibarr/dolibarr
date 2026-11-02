@@ -497,6 +497,15 @@ class Cronjob extends CommonObject
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."cronjob");
 		}
 
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('CRONJOB_CREATE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
 		// Commit or rollback
 		if ($error) {
 			$this->db->rollback();
@@ -948,6 +957,15 @@ class Cronjob extends CommonObject
 			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
+		if (!$error && $user && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('CRONJOB_MODIFY', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
 		// Commit or rollback
 		if ($error) {
 			foreach ($this->errors as $errmsg) {
@@ -984,6 +1002,15 @@ class Cronjob extends CommonObject
 		if (!$resql) {
 			$error++;
 			$this->errors[] = "Error ".$this->db->lasterror();
+		}
+
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('CRONJOB_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
 		}
 
 		// Commit or rollback
@@ -1609,10 +1636,23 @@ class Cronjob extends CommonObject
 
 		if ($error && !empty($this->email_alert)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-			$subject = $langs->transnoentitiesnoconv("ErrorInBatch", $this->label);
-			$msg = $langs->transnoentitiesnoconv("ErrorInBatch", $this->label);
+			// The label of a job is a translation key, with the lang file to load after ':' (as in cron/list.php)
+			$reg = array();
+			if (preg_match('/:(.*)$/', $this->label, $reg)) {
+				$langs->load($reg[1]);
+			}
+			$labeltoshow = $langs->transnoentitiesnoconv(preg_replace('/:.*$/', '', $this->label));
+			$subject = $langs->transnoentitiesnoconv("ErrorInBatch", $labeltoshow);
+			// The body gives what the job returned, so the cause can be read without opening the job
+			$msg = $langs->transnoentitiesnoconv("ErrorInBatch", $labeltoshow)."\n\n";
+			$msg .= $langs->transnoentitiesnoconv("CronDtLastResult").': '.dol_print_date($this->datelastresult, 'dayhourtext')."\n";
+			$msg .= $langs->transnoentitiesnoconv("CronLastResult").': '.$this->lastresult."\n";
+			$msg .= $langs->transnoentitiesnoconv("CronLastOutput").":\n".$this->lastoutput."\n";
+			if (!empty($this->error) && strpos((string) $this->lastoutput, (string) $this->error) === false) {
+				$msg .= "\n".$this->error."\n";
+			}
 			$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
-			$cmailfile = new CMailFile($subject, $this->email_alert, $from, $msg);
+			$cmailfile = new CMailFile($subject, $this->email_alert, $from, $msg);	// Sent as text, the output of a job is not rendered as HTML
 			$result = $cmailfile->sendfile();	// Do not test result
 		}
 

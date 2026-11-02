@@ -47,9 +47,13 @@ HideLots=Slėpti sklypus
 OutOfOrder=Netvarkinga
 InWorkingOrder=Veikiantis
 ToReplace=Pakeisti
-CantMoveNonExistantSerial=Klaida. Prašote perkelti įrašą, kurio serijos numeris nebėra. Galbūt tą patį serijos numerį tame pačiame sandėlyje paėmėte kelis kartus toje pačioje siuntoje arba jis buvo panaudotas kitoje siuntoje. Pašalinkite šią siuntą ir paruoškite kitą.
+CantMoveNonExistantSerial=Error: You requested a stock movement on a record for a serial that no longer exists. Maybe you used the same serial in the same warehouse several times in the same shipment or it was used by another shipment. Remove this shipment and prepare another one.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Loto lentelės nepilnas taisymas su parametru '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= Reikalingas atsargų pataisymas dėl unikalaus serijos numerio.
 ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
 ForceBatchesNeedStockManagement=Produktas su partijų/lotų valdymu turi būti valdomas sandėlyje (atsargų valdymas priverstinai įjungtas į „taip“)
 BatchInformationNotfound=Batch information not found
+EnterMultipleSerialNumbers=Enter multiple serial numbers
+EnterOneSerialNumberPerLine=Type, paste or scan the serial numbers, one per line
+NbOfSerialNumbersDetected=%s serial number(s) detected
+ErrorDuplicateSerialNumberInList=Serial number %s is present several times in the list

@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
 
 // Translations
-$langs->loadLangs(array("admin", "errors", "stocks"));
+$langs->loadLangs(array("admin", "stocks"));
 
 // Access control
 if (!$user->admin) {
@@ -107,6 +107,7 @@ if ($action == 'updateMask') {
 			dol_syslog($module->error, LOG_ERR);
 		}
 	} else {
+		$langs->load('errors');
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
@@ -248,6 +249,7 @@ foreach ($dirmodels as $reldir) {
 						print '<td class="nowrap">';
 						$tmp = $module->getExample();
 						if (preg_match('/^Error/', $tmp)) {
+							$langs->load('errors');
 							print '<div class="error">'.$langs->trans($tmp).'</div>';
 						} elseif ($tmp == 'NotConfigured') {
 							print $langs->trans($tmp);
@@ -278,6 +280,7 @@ foreach ($dirmodels as $reldir) {
 							$htmltooltip .= ''.$langs->trans("NextValue").': ';
 							if ($nextval) {
 								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+									$langs->load('errors');
 									$nextval = $langs->trans($nextval);
 								}
 								$htmltooltip .= $nextval.'<br>';

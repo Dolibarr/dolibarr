@@ -145,7 +145,7 @@ class ExpeditionLigne extends CommonObjectLine
 
 	/**
 	 * Virtual products : array of total of quantities group product id and warehouse id ([id_product][id_warehouse] -> qty (int|float))
-	 * @var array<int, array<int, int|float>>
+	 * @var array<int, array<int, int|float>>|null	Null when PRODUIT_SOUSPRODUITS is off
 	 */
 	public $detail_children;
 
@@ -196,6 +196,11 @@ class ExpeditionLigne extends CommonObjectLine
 	 * @var string product label
 	 */
 	public $product_label;
+
+	/**
+	 * @var string	Custom label of the order line
+	 */
+	public $label;
 
 	/**
 	 * @var string product description
@@ -575,7 +580,8 @@ class ExpeditionLigne extends CommonObjectLine
 		$this->db->begin();
 
 		// virtual products : delete all children and batch
-		if (getDolGlobalInt('PRODUIT_SOUSPRODUITS') && !($this->fk_parent > 0)) {
+		// Standalone dispatch allocations also belong to their source line.
+		if ((getDolGlobalInt('PRODUIT_SOUSPRODUITS') || $this->element_type == 'shipping') && !($this->fk_parent > 0)) {
 			// find all children
 			$line_id_list = array();
 			$result = $this->findAllChild($this->id, $line_id_list);

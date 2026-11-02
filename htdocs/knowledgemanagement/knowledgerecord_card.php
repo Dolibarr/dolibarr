@@ -219,7 +219,7 @@ if ($action == 'create') {
 
 
 	// Add field answer
-	print '<td>';
+	print '<tr><td>';
 	print $langs->trans($object->fields['answer']['label']);
 	print '</td><td>';
 
@@ -242,7 +242,7 @@ if ($action == 'create') {
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
 	print $out;
-	print '</td>';
+	print '</td></tr>';
 
 	print '</table>'."\n";
 
@@ -334,11 +334,10 @@ if (($id || $ref) && $action == 'edit') {
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
-	print '</table>';
-
 	// Add field answer
-	print '<br>';
-	print $langs->trans($object->fields['answer']['label']).'<br>';
+	print '<tr><td>';
+	print $langs->trans($object->fields['answer']['label']);
+	print '</td><td>';
 
 	// Add layout and AI tools for answer
 	$out = '';
@@ -348,7 +347,7 @@ if (($id || $ref) && $action == 'edit') {
 	$formai = new FormAI($db);
 
 	$formmail->withfckeditor = 1;
-	$formmail->withlayout = 'email';
+	//$formmail->withlayout = 'email';
 	$formmail->withaiprompt = (isModEnabled('ai') ? 'html' : '');
 
 	$showlinktolayout = (getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT') ? $formmail->withlayout : '');
@@ -359,7 +358,9 @@ if (($id || $ref) && $action == 'edit') {
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
 	print $out;
-	print '<br>';
+	print '</td></tr>';
+
+	print '</table>'."\n";
 
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, true, true, ROWS_9, '100%');
@@ -565,7 +566,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$out = $doleditor->Create(1);
 	} else {
 		$out = '<div class="content kmcontent">';
-		$out .= $object->answer;
+		$out .= dol_htmlentitiesbr($object->answer);
 		$out .= '</div>';
 	}
 	print $out;
@@ -607,7 +608,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			// Clone
-			print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'&object=scrumsprint', '', $permissiontoadd);
+			print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'&object=scrumsprint', '', $permissiontoadd, array('attr' => array('class' => 'reposition')));
 
 			/*
 			if ($permissiontoadd) {
@@ -627,7 +628,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			// Delete (need delete permission, or if draft, just need create/modify permission)
-			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken(), '', $permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd));
+			print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken(), '', $permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd), array('attr' => array('class' => 'reposition')))."\n";
 		}
 		print '</div>'."\n";
 	}

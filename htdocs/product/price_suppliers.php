@@ -169,11 +169,10 @@ if (empty($reshook)) {
 	if ($action == 'setpmp' && $usercancreate) {
 		if ($id) {
 			$result = $object->fetch($id);
-			$object->pmp = $pmp;
-			$sql = "UPDATE ".MAIN_DB_PREFIX."product SET pmp = ".((float) $object->pmp)." WHERE rowid = ".((int) $id);
-			$resql = $db->query($sql);
-			//$result = $object->update($object->id, $user);
-			if ($resql) {
+			if ($result > 0) {
+				$result = $object->setValueFrom('pmp', price2num($pmp), '', null, 'text', '', $user, 'PRODUCT_MODIFY');
+			}
+			if ($result > 0) {
 				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 				$action = '';
 			} else {

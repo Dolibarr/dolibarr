@@ -400,7 +400,7 @@ if (empty($numref)) {
 				$balancestart[$objp->numr] = $obj->amount;
 				$db->free($resqlstart);
 			}
-			print '<td class="right"><span class="amount">'.price($balancestart[$objp->numr], 0, $langs, 1, -1, -1, empty($object->currency_code) ? $conf->currency : $object->currency_code).'</span></td>';
+			print '<td class="right"><span class="amount">'.price(price2num($balancestart[$objp->numr], 'MT'), 0, $langs, 1, -1, -1, empty($object->currency_code) ? $conf->currency : $object->currency_code).'</span></td>';
 
 			// Calculate end amount
 			$sql = "SELECT sum(b.amount) as amount";
@@ -413,7 +413,7 @@ if (empty($numref)) {
 				$content[$objp->numr] = $obj->amount;
 				$db->free($resqlend);
 			}
-			print '<td class="right"><span class="amount">'.price(($balancestart[$objp->numr] + $content[$objp->numr]), 0, $langs, 1, -1, -1, empty($object->currency_code) ? $conf->currency : $object->currency_code).'</span></td>';
+			print '<td class="right"><span class="amount">'.price(price2num(($balancestart[$objp->numr] + $content[$objp->numr]), 'MT'), 0, $langs, 1, -1, -1, empty($object->currency_code) ? $conf->currency : $object->currency_code).'</span></td>';
 
 			print '<td class="center">';
 			if ($user->hasRight('banque', 'consolidate') && $action != 'editbankreceipt') {
@@ -508,7 +508,7 @@ if (empty($numref)) {
 		// Row with the start balance of the bank statement
 		print '<tr class="oddeven"><td colspan="3"></td>';
 		print '<td colspan="3"><b>'.$langs->trans("InitialBankBalance")." :</b></td>";
-		print '<td class="right"><b>'.price($total).'</b></td><td>&nbsp;</td>';
+		print '<td class="right"><b>'.price(price2num($total, 'MT')).'</b></td><td>&nbsp;</td>';
 		print "</tr>\n";
 
 		while ($i < $num) {

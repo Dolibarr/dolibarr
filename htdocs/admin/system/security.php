@@ -55,7 +55,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("install", "other", "admin", "errors", "website"));
+$langs->loadLangs(array("install", "other", "admin", "website"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -136,6 +136,7 @@ print (ini_get('session.cookie_samesite') ? img_picto('', 'tick', 'class="pictof
 if (!ini_get('session.cookie_samesite') || ini_get('session.cookie_samesite') == 'Lax') {
 	print ' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'Lax').")</span>";
 } elseif (ini_get('session.cookie_samesite') == 'Strict') {
+	$langs->load('errors');
 	print ' &nbsp; '.img_warning().' <span class="opacitymedium">'.$langs->trans("WarningPaypalPaymentNotCompatibleWithStrict")."</span>";
 }
 print "<br>\n";
@@ -348,6 +349,7 @@ if ($test) {
 		print img_picto('', 'tick').' '.$langs->trans("InstallAndUpgradeLockedBy", $installlock);
 	}
 } else {
+	$langs->load('errors');
 	print img_warning().' '.$langs->trans("WarningLockFileDoesNotExists", DOL_DATA_ROOT);
 }
 
@@ -358,6 +360,7 @@ print '<br>';
 if (file_exists($installlock)) {	// If install not locked, no need to show this.
 	if (file_exists($upgradeunlock)) {
 		print '<strong>'.$langs->trans("DolibarrUpgrade").'</strong>: ';
+		$langs->load('errors');
 		print img_warning().' '.$langs->trans("WarningUpgradeHasBeenUnlocked", $upgradeunlock);
 		print '<br>';
 		print '<br>';

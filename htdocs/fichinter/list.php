@@ -88,6 +88,7 @@ if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
 $search_ref = GETPOST('search_ref') ? GETPOST('search_ref', 'alpha') : GETPOST('search_inter', 'alpha');
 $search_ref_client = GETPOST('search_ref_client', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
+$search_alias = GETPOST('search_alias', 'alpha');
 $search_desc = GETPOST('search_desc', 'alpha');
 $search_projet_ref = GETPOST('search_projet_ref', 'alpha');
 $search_contrat_ref = GETPOST('search_contrat_ref', 'alpha');
@@ -167,6 +168,7 @@ $arrayfields = array(
 	'f.ref' => array('label' => 'Ref', 'checked' => '1'),
 	'f.ref_client' => array('label' => 'RefCustomer', 'checked' => '1'),
 	's.nom' => array('label' => 'ThirdParty', 'checked' => '1'),
+	's.name_alias' => array('label' => 'AliasNameShort', 'checked' => '0'),
 	'pr.ref' => array('label' => 'Project', 'checked' => '1', 'enabled' => (!isModEnabled('project') ? '0' : '1')),
 	'c.ref' => array('label' => 'Contract', 'checked' => '1', 'enabled' => (empty($conf->contrat->enabled) ? '0' : '1')),
 	'f.description' => array('label' => 'Description', 'checked' => '1'),
@@ -231,6 +233,7 @@ if (empty($reshook)) {
 		$search_ref_client = "";
 		$searchCategoryFichinterList = array();
 		$search_company = "";
+		$search_alias = "";
 		$search_projet_ref = "";
 		$search_contrat_ref = "";
 		$search_desc = "";
@@ -299,7 +302,7 @@ $sql .= " f.ref, f.ref_client, f.rowid, f.fk_statut as status, f.signed_status a
 if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') && $atleastonefieldinlines) {
 	$sql .= " fd.rowid as lineid, fd.description as descriptiondetail, fd.date as dp, fd.duree,";
 }
-$sql .= " s.nom as name, s.rowid as socid, s.client, s.fournisseur, s.email, s.status as thirdpartystatus";
+$sql .= " s.nom as name, s.name_alias as alias, s.rowid as socid, s.client, s.fournisseur, s.email, s.status as thirdpartystatus";
 if (isModEnabled('project')) {
 	$sql .= ", pr.rowid as projet_id, pr.ref as projet_ref, pr.title as projet_title";
 }
@@ -349,6 +352,9 @@ if ($search_ref_client) {
 }
 if ($search_company) {
 	$sql .= natural_search('s.nom', $search_company);
+}
+if ($search_alias) {
+	$sql .= natural_search('s.name_alias', $search_alias);
 }
 if ($search_projet_ref) {
 	$sql .= natural_search('pr.ref', $search_projet_ref);
@@ -536,8 +542,17 @@ if ($search_ref_client) {
 if ($search_company) {
 	$param .= "&search_company=".urlencode($search_company);
 }
+if ($search_alias) {
+	$param .= "&search_alias=".urlencode($search_alias);
+}
 if ($search_desc) {
 	$param .= "&search_desc=".urlencode($search_desc);
+}
+if ($search_projet_ref) {
+	$param .= "&search_projet_ref=".urlencode($search_projet_ref);
+}
+if ($search_contrat_ref) {
+	$param .= "&search_contrat_ref=".urlencode($search_contrat_ref);
 }
 if ($search_status != '' && $search_status > -1) {
 	$param .= "&search_status=".urlencode($search_status);
@@ -699,6 +714,11 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 	print '<input type="text" class="flat" name="search_company" value="'.$search_company.'" size="10">';
 	print '</td>';
 }
+if (!empty($arrayfields['s.name_alias']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat maxwidth75" name="search_alias" value="'.dolPrintHTMLForAttribute($search_alias).'">';
+	print '</td>';
+}
 if (!empty($arrayfields['pr.ref']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_projet_ref" value="'.$search_projet_ref.'" size="8">';
@@ -809,6 +829,10 @@ if (!empty($arrayfields['f.ref_client']['checked'])) {
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['s.name_alias']['checked'])) {
+	print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"], "s.name_alias", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['pr.ref']['checked'])) {
@@ -1000,6 +1024,15 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['s.nom']['checked'])) {
 			print '<td class="tdoverflowmax125">';
 			print $companystatic->getNomUrl(1, '', 44);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Alias name
+		if (!empty($arrayfields['s.name_alias']['checked'])) {
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->alias).'">';
+			print '<span class="spantitle">'.dolPrintHTML($obj->alias).'</span>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

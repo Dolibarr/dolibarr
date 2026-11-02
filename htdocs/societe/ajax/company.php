@@ -60,7 +60,7 @@ $action = GETPOST('action', 'aZ09');
 $id = GETPOSTINT('id');
 $excludeids = GETPOST('excludeids', 'intcomma');
 $showtype = GETPOSTINT('showtype');
-$showcode = GETPOSTINT('showcode');
+$showcode = GETPOST('showcode', 'aZ09');
 
 $object = new Societe($db);
 if ($id > 0) {

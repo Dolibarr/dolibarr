@@ -20,6 +20,7 @@
 
 create table llx_user_param
 (
+  rowid         integer      AUTO_INCREMENT PRIMARY KEY,
   fk_user       integer      NOT NULL,
   entity        integer DEFAULT 1 NOT NULL,	-- multi company id
   param         varchar(180)  NOT NULL,

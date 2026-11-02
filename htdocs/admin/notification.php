@@ -5,7 +5,7 @@
  * Copyright (C) 2015      Bahfir Abbes         <contact@dolibarrpar.org>
  * Copyright (C) 2020      Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2022      Anthony Berton     	<anthony.berton@bb2a.fr>
- * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2026  	   Pierre Ardoin     	<developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Notification.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'other', 'orders', 'propal', 'bills', 'errors', 'mails', 'contracts'));
+$langs->loadLangs(array('admin', 'other', 'orders', 'propal', 'bills', 'mails', 'contracts'));
 
 // Security check
 if (!$user->admin) { // after this test, $user->admin is always true
@@ -211,6 +211,7 @@ print '<td>';
 print img_picto('', 'email', 'class="pictofixedwidth"');
 print '<input class="width150 quatrevingtpercentminusx" type="email" name="email_from" value="'.getDolGlobalString('NOTIFICATION_EMAIL_FROM').'">';
 if (getDolGlobalString('NOTIFICATION_EMAIL_FROM') && !isValidEmail(getDolGlobalString('NOTIFICATION_EMAIL_FROM'))) {
+	$langs->load('errors');
 	print ' '.img_warning($langs->trans("ErrorBadEMail"));
 }
 print '</td>';
@@ -328,7 +329,15 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 	} elseif ($notifiedevent['elementtype'] == 'member') {
 		$model = 'member';
 	} elseif ($notifiedevent['elementtype'] == 'contrat') {
-		$model = 'contract_send';
+		$model = 'contract';
+	} elseif ($notifiedevent['elementtype'] == 'stocktransfer') {
+		$model = 'stocktransfer_send';
+	} elseif ($notifiedevent['elementtype'] == 'agenda') {
+		$model = 'actioncomm_send';
+	}
+	// The events of leaves can be recorded with the elementtype 'expensereport' in a database migrated from an old version
+	if (strpos($notifiedevent['code'], 'HOLIDAY_') === 0) {
+		$model = 'holiday';
 	}
 
 	$constantes[$notifiedevent['code'].'_TEMPLATE'] = array('type'=>'emailtemplate:'.$model, 'label'=>$label);
@@ -492,6 +501,7 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 			}
 		}
 		if (getDolGlobalString($param) && $showwarning) {
+			$langs->load('errors');
 			$s .= ' '.img_warning($langs->trans("ErrorBadEMail"));
 		}
 		print $form->textwithpicto($s, $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients").'<br>'.$langs->trans("YouCanAlsoUseSupervisorKeyword").'<br>'.$langs->trans("YouCanAlsoUseAuthorKeyword"), 1, 'help', '', 0, 2);

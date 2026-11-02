@@ -29,6 +29,74 @@ require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';
 
 
 /**
+ * Resolve a standalone dispatch group from the loaded shipment lines.
+ * The caller must separately check shipment access and write permissions.
+ *
+ * @param Expedition $object       Shipment with its lines loaded
+ * @param int        $sourceLineId Root shipment line identifying the dispatch group
+ * @param int        $lineId       Existing allocation id, or <= 0 for a new allocation
+ * @param int        $productId    Product submitted for the allocation
+ * @return ExpeditionLigne|null    Stored source line, or null for an invalid dispatch
+ */
+function shippingGetStandaloneDispatchSourceLine($object, $sourceLineId, $lineId, $productId)
+{
+	if (!getDolGlobalString('SHIPMENT_STANDALONE') || $object->id <= 0 || $object->origin_id > 0 || $object->status != Expedition::STATUS_DRAFT || $productId <= 0) {
+		return null;
+	}
+
+	$sourceLine = null;
+	$dispatchLine = null;
+	foreach ($object->lines as $line) {
+		if ((int) $line->fk_expedition !== (int) $object->id) {
+			continue;
+		}
+		if ((int) $line->id === $sourceLineId) {
+			$sourceLine = $line;
+		}
+		if ((int) $line->id === $lineId) {
+			$dispatchLine = $line;
+		}
+	}
+
+	if ($sourceLine === null || $sourceLine->fk_parent > 0 || (int) $sourceLine->fk_product !== $productId) {
+		return null;
+	}
+	if ($lineId > 0 && ($dispatchLine === null || (int) $dispatchLine->fk_product !== $productId
+		|| ($lineId !== $sourceLineId && (int) $dispatchLine->fk_parent !== $sourceLineId))) {
+		return null;
+	}
+
+	return $sourceLine;
+}
+
+/**
+ * Complete a line of a standalone shipment (SHIPMENT_STANDALONE, no source order) before it is copied into an invoice.
+ * Such a line has no price nor VAT: use the selling price and the default VAT rate of the product for the customer.
+ *
+ * @param CommonObjectLine $line  Shipment line, completed in place
+ * @param Societe          $buyer Customer of the invoice
+ * @return void
+ */
+function shippingSetStandaloneLineSellPrice($line, $buyer)
+{
+	global $db, $mysoc;
+
+	if ($line->fk_product > 0) {
+		$tmpprod = new Product($db);
+		if ($tmpprod->fetch($line->fk_product) > 0) {
+			$datapriceofproduct = $tmpprod->getSellPrice($mysoc, $buyer);
+			$line->subprice = $datapriceofproduct['pu_ht'];
+			$line->tva_tx = $datapriceofproduct['tva_tx'];
+			$line->product_type = $tmpprod->type;
+		}
+	}
+	if (empty($line->desc)) {
+		$line->desc = $line->description;
+	}
+}
+
+
+/**
  * Prepare array with list of tabs
  *
  * @param   Expedition	$object		Object related to tabs

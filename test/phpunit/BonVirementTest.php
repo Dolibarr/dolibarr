@@ -23,15 +23,14 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+global $conf,$user,$langs,$db,$mysoc;
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/admin.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/prelevement/class/bonprelevement.class.php';
 require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.facture.class.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/companybankaccount.class.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/bank/class/account.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";

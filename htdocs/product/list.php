@@ -500,6 +500,24 @@ if (empty($reshook)) {
 			}
 		}
 	}
+	if ($massaction == 'switchonstockstatus' && $permissiontoadd && isModEnabled('stock')) {
+		$product = new Product($db);
+		foreach ($toselect as $toselectid) {
+			$result = $product->fetch($toselectid);
+			if ($result > 0 && $product->id > 0) {
+				$newstockable = $product->stockable_product ? 0 : 1;
+				// A product tracked by batch or lot cannot leave stock management, same rule as the product card.
+				if ($newstockable === 0 && $product->hasbatch() && isModEnabled('productbatch')) {
+					$langs->load('productbatch');
+					setEventMessages($langs->trans('ForceBatchesNeedStockManagement').' ('.$product->ref.')', null, 'warnings');
+					continue;
+				}
+				if ($product->setStatut($newstockable, null, 'product', 'PRODUCT_MODIFY', 'stockable_product') < 0) {
+					setEventMessages($product->error, $product->errors, 'errors');
+				}
+			}
+		}
+	}
 }
 
 
@@ -523,6 +541,9 @@ if ($search_type != '' && $search_type != '-1') {
 		$title = $langs->trans("Products");
 	}
 }
+
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 
 // Build and execute select
 // --------------------------------------------------------------------
@@ -1015,6 +1036,9 @@ if ($user->hasRight($rightskey, 'creer')) {
 
 	$arrayofmassactions['switchonsalestatus'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("SwitchOnSaleStatus");
 	$arrayofmassactions['switchonpurchasestatus'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("SwitchOnPurchaseStatus");
+	if (isModEnabled('stock')) {
+		$arrayofmassactions['switchonstockstatus'] = img_picto('', 'stock', 'class="pictofixedwidth"').$langs->trans("SwitchOnStockStatus");
+	}
 }
 if (isModEnabled('category') && $user->hasRight($rightskey, 'creer')) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
@@ -1142,8 +1166,6 @@ if (!empty($moreforfilter)) {
 	print '</div>';
 }
 
-$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -1403,7 +1425,7 @@ if (!empty($arrayfields['p.fk_country']['checked'])) {
 // State
 if (!empty($arrayfields['p.fk_state']['checked'])) {
 	print '<td class="liste_titre center">';
-	print $formcompany->select_state((int) $search_state, $search_country);
+	print $formcompany->select_state((int) $search_state, $search_country, 'state_id', 'maxwidth200onsmartphone  minwidth300', 1);
 	print '</td>';
 }
 // Accountancy code sell
@@ -1878,7 +1900,7 @@ while ($i < $imaxinloop) {
 		// Ref
 		if (!empty($arrayfields['p.ref']['checked'])) {
 			print '<td class="tdlineheightsmall" data-key="ref">';
-			print '<div class="tdoverflowmax200 inline-block lineheightsmall">';
+			print '<div class="tdoverflowmax250 inline-block lineheightsmall">';
 			print $product_static->getNomUrl(1, '', 0, -1, 0, '', 0, ' - ', 1);
 			if (empty($arrayfields['p.label']['checked'])) {
 				print '<br><span class="spantitle">'.dolPrintHTML($product_static->label).'</span>';
@@ -1928,7 +1950,7 @@ while ($i < $imaxinloop) {
 
 		// Label
 		if (!empty($arrayfields['p.label']['checked'])) {
-			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($product_static->label).'">';
+			print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttribute($product_static->label).'">';
 			print '<span class="spantitle">';
 			print dolPrintHTML($product_static->label);
 			print '</span>';

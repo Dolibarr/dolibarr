@@ -195,7 +195,7 @@ $arrayfields = array(
 	'rowid' => array('label' => 'LineID', 'checked' => '-1', 'position' => 1, 'enabled' => '1'),
 	'c.ref' => array('label' => "RefOrder", 'checked' => '1', 'position' => 5),
 	'pr.ref' => array('label' => 'ProductRef', 'checked' => '1', 'position' => 6),
-	'pr.label' => array('label' => 'ProductDescription', 'checked' => '-1', 'position' => 7),
+	'pr.label' => array('label' => 'ProductLabel', 'checked' => '-1', 'position' => 7),
 	'cdet.qty' => array('label' => 'QtyOrdered', 'checked' => '1', 'position' => 8),
 	'c.ref_client' => array('label' => "RefCustomerOrder", 'checked' => '-1', 'position' => 10),
 	'p.ref' => array('label' => "ProjectRef", 'checked' => '-1', 'enabled' => (string) (int) isModEnabled('project'), 'position' => 20),

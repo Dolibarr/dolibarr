@@ -96,7 +96,7 @@ function contact_prepare_head(Contact $object)
 	// Related items
 	if (isModEnabled('order') || isModEnabled("propal") || isModEnabled('invoice') || isModEnabled('intervention') || isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 		$head[$tab][0] = dolBuildUrl(DOL_URL_ROOT.'/contact/consumption.php', ['id' => $object->id]);
-		$head[$tab][1] = $langs->trans("Referers");
+		$head[$tab][1] = $langs->trans("ReferringItems");
 		$head[$tab][2] = 'consumption';
 		$tab++;
 	}
@@ -293,7 +293,7 @@ function show_contacts_projects($conf, $langs, $db, $object, $backtopage = '', $
 					$i++;
 				}
 			} else {
-				print '<tr class="oddeven"><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+				print '<tr class="oddeven"><td colspan="9"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 			}
 			$db->free($result);
 		} else {

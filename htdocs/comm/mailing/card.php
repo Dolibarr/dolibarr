@@ -256,16 +256,16 @@ if (empty($reshook)) {
 						$sendto = str_replace(',', ' ', dolGetFirstLastname($obj->firstname, $obj->lastname))." <".$obj->email.">";
 
 						// Make substitutions on topic and body. From (AA=YY;BB=CC;...) we keep YY, CC, ...
-						$other = explode(';', $obj->other);
-						$tmpfield = explode('=', $other[0], 2);
+						$other = explode(';', (string) $obj->other);
+						$tmpfield = explode('=', ($other[0] ?? ''), 2);
 						$other1 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
-						$tmpfield = explode('=', $other[1], 2);
+						$tmpfield = explode('=', ($other[1] ?? ''), 2);
 						$other2 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
-						$tmpfield = explode('=', $other[2], 2);
+						$tmpfield = explode('=', ($other[2] ?? ''), 2);
 						$other3 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
-						$tmpfield = explode('=', $other[3], 2);
+						$tmpfield = explode('=', ($other[3] ?? ''), 2);
 						$other4 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
-						$tmpfield = explode('=', $other[4], 2);
+						$tmpfield = explode('=', ($other[4] ?? ''), 2);
 						$other5 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
 
 						$signature = ((!empty($user->signature) && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? $user->signature : '');
@@ -770,10 +770,13 @@ if (empty($reshook)) {
 
 	// Action of delete confirmation
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
-		if ($object->delete($user)) {
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+		if ($object->delete($user) > 0) {
 			$url = (!empty($urlfrom) ? $urlfrom : 'list.php');
 			header("Location: ".$url);
 			exit;
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
@@ -1327,7 +1330,7 @@ if ($action == 'create') {	// aaa
 				}
 
 				if ($user->hasRight('mailing', 'creer')) {
-					print '<a class="butAction butActionClone" href="'.$_SERVER['PHP_SELF'].'?action=clone&amp;token='.newToken().'&amp;object=emailing&amp;id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
+					print dolGetButtonAction($langs->trans("ToClone"), $langs->trans("ToClone"), 'clone', $_SERVER['PHP_SELF'].'?action=clone&token='.newToken().'&object=emailing&id='.$object->id, '', true, array('attr' => array('class' => 'reposition')));
 				}
 
 				if (($object->status == 2 || $object->status == 3) && $user->hasRight('mailing', 'valider')) {
@@ -1342,7 +1345,7 @@ if ($action == 'create') {	// aaa
 					if ($object->status > 0 && (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('mailing', 'mailing_advance', 'delete'))) {
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("Delete").'</a>';
 					} else {
-						print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$object->id.(!empty($urlfrom) ? '&urlfrom='.$urlfrom : '').'">'.$langs->trans("Delete").'</a>';
+						print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$object->id.(!empty($urlfrom) ? '&urlfrom='.$urlfrom : ''), '', true, array('attr' => array('class' => 'reposition')))."\n";
 					}
 				}
 

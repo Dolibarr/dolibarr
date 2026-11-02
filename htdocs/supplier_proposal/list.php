@@ -460,10 +460,10 @@ if ($search_date_valid_start) {
 	$sql .= " AND sp.date_valid >= '".$db->idate($search_date_valid_start)."'";
 }
 if ($search_note_public) {
-	$sql .= " AND p.note_public LIKE '%".$db->escape($db->escapeforlike($search_note_public))."%'";
+	$sql .= " AND sp.note_public LIKE '%".$db->escape($db->escapeforlike($search_note_public))."%'";
 }
 if ($search_note_private) {
-	$sql .= " AND p.note_private LIKE '%".$db->escape($db->escapeforlike($search_note_private))."%'";
+	$sql .= " AND sp.note_private LIKE '%".$db->escape($db->escapeforlike($search_note_private))."%'";
 }
 if ($search_date_valid_end) {
 	$sql .= " AND sp.date_valid <= '".$db->idate($search_date_valid_end)."'";
@@ -830,35 +830,35 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['sp.ref']['checked'])) {
 		print '<td class="liste_titre">';
-		print '<input class="flat" size="6" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
+		print '<input class="flat width75" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 		print '</td>';
 	}
 	// Project ref
 	if (!empty($arrayfields['sp.fk_projet']['checked'])) {
 		print '<td class="liste_titre">';
-		print '<input type="text" class="flat" name="search_project_ref" value="'.$search_project_ref.'">';
+		print '<input type="text" class="flat width100" name="search_project_ref" value="'.$search_project_ref.'">';
 		print '</td>';
 	}
 	if (!empty($arrayfields['s.nom']['checked'])) {
 		print '<td class="liste_titre left">';
-		print '<input class="flat" type="text" size="12" name="search_company" value="'.dol_escape_htmltag((string) $search_company).'">';
+		print '<input class="flat width100" type="text" name="search_company" value="'.dol_escape_htmltag((string) $search_company).'">';
 		print '</td>';
 	}
 	if (!empty($arrayfields['s.name_alias']['checked'])) {
 		print '<td class="liste_titre left">';
-		print '<input class="flat" type="text" size="12" name="search_company_alias" value="'.dol_escape_htmltag($search_company_alias).'">';
+		print '<input class="flat width100" type="text" name="search_company_alias" value="'.dol_escape_htmltag($search_company_alias).'">';
 		print '</td>';
 	}
 	if (!empty($arrayfields['s.town']['checked'])) {
-		print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_town" value="'.$search_town.'"></td>';
+		print '<td class="liste_titre"><input class="flat width75" type="text" name="search_town" value="'.$search_town.'"></td>';
 	}
 	if (!empty($arrayfields['s.zip']['checked'])) {
-		print '<td class="liste_titre"><input class="flat" type="text" size="4" name="search_zip" value="'.$search_zip.'"></td>';
+		print '<td class="liste_titre"><input class="flat width75" type="text" name="search_zip" value="'.$search_zip.'"></td>';
 	}
 	// State
 	if (!empty($arrayfields['state.nom']['checked'])) {
 		print '<td class="liste_titre">';
-		print '<input class="flat" size="4" type="text" name="search_state" value="'.dol_escape_htmltag($search_state).'">';
+		print '<input class="flat width75" type="text" name="search_state" value="'.dol_escape_htmltag($search_state).'">';
 		print '</td>';
 	}
 	// Country
@@ -1236,8 +1236,10 @@ if ($resql) {
 
 			// Alias
 			if (!empty($arrayfields['s.name_alias']['checked'])) {
-				print '<td class="tdoverflowmax200">';
-				print $companystatic->name_alias;
+				print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($companystatic->name_alias).'">';
+				print '<span class="spantitle">';
+				print dolPrintHTML($companystatic->name_alias);
+				print '</span>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1433,7 +1435,7 @@ if ($resql) {
 				}
 			}
 			// Note public
-			if (!empty($arrayfields['f.note_public']['checked'])) {
+			if (!empty($arrayfields['sp.note_public']['checked'])) {
 				print '<td class="sensiblehtmlcontent center">';
 				print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
 				print '</td>';
@@ -1442,7 +1444,7 @@ if ($resql) {
 				}
 			}
 			// Note private
-			if (!empty($arrayfields['f.note_private']['checked'])) {
+			if (!empty($arrayfields['sp.note_private']['checked'])) {
 				print '<td class="sensiblehtmlcontent center">';
 				print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 				print '</td>';

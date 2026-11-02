@@ -2,6 +2,45 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.44.0](https://github.com/ajaxorg/ace/compare/v1.43.6...v1.44.0) (2026-05-11)
+
+
+### Features
+
+* Extension to show whitespaces in selection ([#5844](https://github.com/ajaxorg/ace/issues/5844)) ([9498a7f](https://github.com/ajaxorg/ace/commit/9498a7fc409d18003060dea8f3d2293c1182706c))
+* **mode:** Add Cedar and CedarSchema language modes for Ace Editor ([#5944](https://github.com/ajaxorg/ace/issues/5944)) ([c5c19dc](https://github.com/ajaxorg/ace/commit/c5c19dc4c0c87b0f1e727def6b69f00943c1f5a3))
+* **rust:** Include `raw` borrow operator in keyword list ([#5942](https://github.com/ajaxorg/ace/issues/5942)) ([93581d6](https://github.com/ajaxorg/ace/commit/93581d66f5eaaa7d9cd0bb3afea818fa884745cb))
+* update Flix keywords ([#5931](https://github.com/ajaxorg/ace/issues/5931)) ([f45eb67](https://github.com/ajaxorg/ace/commit/f45eb675b1ba9e56fe5b8cabe6d098e7a8d16f48))
+
+
+### Bug Fixes
+
+* `mode` type to accept both `SyntaxMode` and `string` across definitions and implementations ([#5925](https://github.com/ajaxorg/ace/issues/5925)) ([a6b1cb1](https://github.com/ajaxorg/ace/commit/a6b1cb176af46b84ef62605815f9c98ca3d9a794))
+* row calculation for fractional coords in virtual_renderer ([#5914](https://github.com/ajaxorg/ace/issues/5914)) ([a6724b7](https://github.com/ajaxorg/ace/commit/a6724b73c2806d1aceb3e3624fabe1a53ce332b7))
+
+### [1.43.6](https://github.com/ajaxorg/ace/compare/v1.43.5...v1.43.6) (2026-01-23)
+
+
+### Bug Fixes
+
+* the text completer didn't export its id ([#5847](https://github.com/ajaxorg/ace/issues/5847)) ([b256c10](https://github.com/ajaxorg/ace/commit/b256c10691e6ba9296d18dcdea15441189971d1e))
+
+### [1.43.5](https://github.com/ajaxorg/ace/compare/v1.43.4...v1.43.5) (2025-12-02)
+
+### [1.43.4](https://github.com/ajaxorg/ace/compare/v1.43.3...v1.43.4) (2025-10-17)
+
+
+### Bug Fixes
+
+* Update for compliance with typescript 5.9.2 ([#5855](https://github.com/ajaxorg/ace/issues/5855)) ([6e110b0](https://github.com/ajaxorg/ace/commit/6e110b0061b56b72db7478762036a1ba39251102))
+
+### [1.43.3](https://github.com/ajaxorg/ace/compare/v1.43.2...v1.43.3) (2025-09-02)
+
+
+### Bug Fixes
+
+* firefox textarea autocomplete corruption ([#5860](https://github.com/ajaxorg/ace/issues/5860)) ([23ac02f](https://github.com/ajaxorg/ace/commit/23ac02f7602b84cc4ea30f6ed4f889d3802affde))
+
 ### [1.43.2](https://github.com/ajaxorg/ace/compare/v1.43.1...v1.43.2) (2025-07-15)
 
 

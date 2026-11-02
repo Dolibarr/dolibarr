@@ -57,6 +57,11 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 	public $nom = 'Marbre';
 
 	/**
+	 * @var int		Position
+	 */
+	public $position = 50;
+
+	/**
 	 * @var string model name
 	 */
 	public $name = 'Marbre';

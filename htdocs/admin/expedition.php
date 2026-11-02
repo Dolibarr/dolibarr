@@ -32,11 +32,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/expedition.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -45,6 +40,10 @@ require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/expedition.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "sendings", "other"));
@@ -181,7 +180,7 @@ llxHeader("", $langs->trans("SendingsSetup"), '', '', 0, 0, '', '', '', 'mod-adm
 $linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans("SendingsSetup"), $linkback, 'title_setup');
-print '<br>';
+
 $head = expedition_admin_prepare_head();
 
 print dol_get_fiche_head($head, 'shipment', $langs->trans("Sendings"), -1, 'shipment');
@@ -237,6 +236,29 @@ print '</td>';
 print '<td>';
 print ajax_constantonoff('SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST');
 print '</td></tr>';
+
+// Allow shipments without sales order. It can't be disabled while such shipments exist, otherwise their lines could no longer be shown nor edited.
+// The feature is not stable yet: the option only shows up on experimental installs (MAIN_FEATURES_LEVEL >= 2)
+// or when the constant is already set (via Home - Setup - Other), so it can be inspected and cleared.
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || getDolGlobalString('SHIPMENT_STANDALONE')) {
+	$nbstandalone = 0;
+	if (getDolGlobalString('SHIPMENT_STANDALONE')) {
+		$staticshipment = new Expedition($db);
+		$nbstandalone = $staticshipment->countStandalone();
+		if ($nbstandalone < 0) {
+			setEventMessages($staticshipment->error, $staticshipment->errors, 'errors');
+		}
+	}
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans('SHIPMENT_STANDALONE').' <span class="opacitymedium">('.$langs->trans("VersionExperimental").')</span>';
+	if ($nbstandalone > 0) {
+		print '<br><span class="opacitymedium">'.$langs->trans("ShipmentStandaloneCantBeDisabled", $nbstandalone).'</span>';
+	}
+	print '</td>';
+	print '<td>';
+	print ajax_constantonoff('SHIPMENT_STANDALONE', array(), null, 0, 0, 0, 2, 0, 0, '', '', 'inline-block', 0, '', ($nbstandalone != 0 ? 1 : 0));
+	print '</td></tr>';
+}
 
 $substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");

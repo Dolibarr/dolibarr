@@ -133,7 +133,7 @@ class WhereQuery extends Query {
      * $query->where(["FROM" => "someone@email.tld", "SEEN"]);
      * $query->where("FROM", "someone@email.tld")->where("SEEN");
      */
-    public function where($criteria, $value = null): WhereQuery {
+    public function where($criteria, $value = null): WhereQuery {	// @CHANGE DOL Backport of where() + push_search_criteria() from php-imap 3.0.0-alpha
         if (is_array($criteria)) {
             foreach ($criteria as $key => $value) {
                 if (is_numeric($key)) {

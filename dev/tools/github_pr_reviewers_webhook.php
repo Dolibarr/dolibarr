@@ -124,10 +124,9 @@ if (empty($signature)) {
 
 $expectedSignature = 'sha256=' . hash_hmac('sha256', file_get_contents('php://input'), $secret);
 
-_debug('expectedSignature = ' . var_export($expectedSignature, true));
 _debug('signature = ' . var_export($signature, true));
 
-// Use `hash_equals()` instead of direct comparison to avoir timing attacks (@see https://www.php.net/manual/en/function.hash-equals.php)
+// Use `hash_equals()` instead of direct comparison to avoid timing attacks (@see https://www.php.net/manual/en/function.hash-equals.php)
 if (! hash_equals($signature, $expectedSignature)) {
 	_error('Invalid webhook signature', 401);
 }
@@ -239,6 +238,10 @@ $pullRequestUrl = $payload['pull_request']['url'] ?? null;
 
 if (null === $pullRequestUrl) {
 	_error('Pull request API URL not in payload');
+}
+
+if (0 !== strpos($pullRequestUrl, 'https://api.github.com/')) {
+	_error('Pull request API URL is not a GitHub API URL');
 }
 
 $c = curl_init($pullRequestUrl . '/requested_reviewers');

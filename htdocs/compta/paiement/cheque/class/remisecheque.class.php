@@ -170,13 +170,14 @@ class RemiseCheque extends CommonObject
 	/**
 	 *	Create a receipt to send cheques
 	 *
-	 *	@param	User	$user 			User making creation
-	 *	@param  int		$account_id 	Bank account for cheque receipt
-	 *  @param  int		$limit          Limit ref of cheque to this
-	 *  @param	int[]	$toRemise		array with cheques to remise
+	 *	@param	User		$user 			User making creation
+	 *	@param  int			$account_id 	Bank account for cheque receipt
+	 *  @param  int			$limit          Limit ref of cheque to this
+	 *  @param	int[]		$toRemise		array with cheques to remise
+	 *  @param	int<0,1>	$notrigger		1=Disable triggers
 	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
-	public function create($user, $account_id, $limit, $toRemise)
+	public function create($user, $account_id, $limit, $toRemise, $notrigger = 0)
 	{
 		global $conf;
 
@@ -306,6 +307,15 @@ class RemiseCheque extends CommonObject
 			//if ($res < 0) $error++;
 		}
 
+		if (!$this->errno && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('REMISECHEQUE_CREATE', $user);
+			if ($result < 0) {
+				$this->errno = -1029;
+			}
+			// End call triggers
+		}
+
 		if (!$this->errno) {
 			$this->db->commit();
 			dol_syslog("RemiseCheque::Create end", LOG_DEBUG);
@@ -320,10 +330,11 @@ class RemiseCheque extends CommonObject
 	/**
 	 *	Delete deposit from database
 	 *
-	 *	@param  User	$user 		User that delete
+	 *	@param  User		$user 		User that delete
+	 *	@param	int<0,1>	$notrigger	1=Disable triggers
 	 *	@return	int
 	 */
-	public function delete($user)
+	public function delete($user, $notrigger = 0)
 	{
 		global $conf;
 
@@ -355,6 +366,15 @@ class RemiseCheque extends CommonObject
 					dol_syslog("RemiseCheque::Delete ERREUR UPDATE ($this->errno)");
 				}
 			}
+		}
+
+		if ($this->errno === 0 && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('REMISECHEQUE_DELETE', $user);
+			if ($result < 0) {
+				$this->errno = -1029;
+			}
+			// End call triggers
 		}
 
 		if ($this->errno === 0) {
@@ -522,7 +542,12 @@ class RemiseCheque extends CommonObject
 			return -1; // Protection to prevent calls by external users
 		}
 
-		$sql = "SELECT b.rowid, b.datev as datefin";
+		$now = dol_now();
+
+		// The count and the number of late cheques are computed by the database instead of reading every cheque. A cheque is late
+		// when its value date is before now minus the warning delay (a cheque without value date was counted as late, this is kept).
+		$sql = "SELECT COUNT(b.rowid) as nb,";
+		$sql .= " SUM(CASE WHEN b.datev IS NULL OR b.datev < '".$this->db->idate($now - $conf->bank->cheque->warning_delay)."' THEN 1 ELSE 0 END) as nblate";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
@@ -534,7 +559,6 @@ class RemiseCheque extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$langs->load("banks");
-			$now = dol_now();
 
 			$response = new WorkboardResponse();
 			$response->warning_delay = $conf->bank->cheque->warning_delay / 60 / 60 / 24;
@@ -543,12 +567,10 @@ class RemiseCheque extends CommonObject
 			$response->url = DOL_URL_ROOT.'/compta/paiement/cheque/index.php?leftmenu=checks&amp;mainmenu=bank';
 			$response->img = img_object('', "payment");
 
-			while ($obj = $this->db->fetch_object($resql)) {
-				$response->nbtodo++;
-
-				if ($this->db->jdate($obj->datefin) < ($now - $conf->bank->cheque->warning_delay)) {
-					$response->nbtodolate++;
-				}
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$response->nbtodo = (int) $obj->nb;
+				$response->nbtodolate = (int) $obj->nblate;
 			}
 
 			return $response;
@@ -600,83 +622,40 @@ class RemiseCheque extends CommonObject
 	/**
 	 *	Build document
 	 *
+	 *	@param	string				$modele			Model name ('' to use CHEQUERECEIPT_ADDON_PDF or default)
+	 *	@param 	Translate			$outputlangs	Object langs
+	 *	@param	int<0,1>			$hidedetails	Not used
+	 *	@param	int<0,1>			$hidedesc		Not used
+	 *	@param	int<0,1>			$hideref		Not used
+	 *	@param	?array<string,mixed>	$moreparams	Array to provide more information
+	 *	@return	int								Return integer <0 if KO, >0 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
+	{
+		if (!dol_strlen($modele)) {
+			$modele = getDolGlobalString('CHEQUERECEIPT_ADDON_PDF', 'blochet');
+		}
+
+		dol_syslog("RemiseCheque::generateDocument modele=".$modele." id=".$this->id, LOG_DEBUG);
+
+		$modelpath = "core/modules/cheque/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+	}
+
+	/**
+	 *	Build document (kept for backward compatibility)
+	 *
 	 *	@param	string		$model 			Model name
 	 *	@param 	Translate	$outputlangs	Object langs
-	 * 	@return int        					Return integer <0 if KO, >0 if OK
+	 *	@return int        					Return integer <0 if KO, >0 if OK
+	 *	@deprecated	Use RemiseCheque::generateDocument() instead
 	 */
 	public function generatePdf($model, $outputlangs)
 	{
-		global $langs, $conf;
+		dol_syslog("RemiseCheque::generatePdf is deprecated, use RemiseCheque::generateDocument() instead", LOG_NOTICE);
 
-		if (empty($model)) {
-			$model = 'blochet';
-		}
-
-		dol_syslog("RemiseCheque::generatePdf model=".$model." id=".$this->id, LOG_DEBUG);
-
-		$dir = DOL_DOCUMENT_ROOT."/core/modules/cheque/doc/";
-
-		// Charge le modele
-		$file = "pdf_".$model.".class.php";
-		if (file_exists($dir.$file)) {
-			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-			include_once $dir.$file;
-
-			$classname = 'BordereauCheque'.ucfirst($model);
-			$docmodel = new $classname($this->db);
-			'@phan-var-force ModeleChequeReceipts $docmodel';
-
-			$sql = "SELECT b.banque, b.emetteur, b.amount, b.num_chq";
-			$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
-			$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
-			$sql .= ", ".MAIN_DB_PREFIX."bordereau_cheque as bc";
-			$sql .= " WHERE b.fk_account = ba.rowid";
-			$sql .= " AND b.fk_bordereau = bc.rowid";
-			$sql .= " AND bc.rowid = ".((int) $this->id);
-			$sql .= " AND bc.entity = ".((int) $conf->entity);
-			$sql .= " ORDER BY b.dateo ASC, b.rowid ASC";
-
-			dol_syslog("RemiseCheque::generatePdf", LOG_DEBUG);
-			$result = $this->db->query($sql);
-			if ($result) {
-				$i = 0;
-				while ($objp = $this->db->fetch_object($result)) {
-					$docmodel->lines[$i] = new stdClass();
-					$docmodel->lines[$i]->bank_chq = $objp->banque;
-					$docmodel->lines[$i]->emetteur_chq = $objp->emetteur;
-					$docmodel->lines[$i]->amount_chq = $objp->amount;
-					$docmodel->lines[$i]->num_chq = $objp->num_chq;
-					$i++;
-				}
-			}
-			$docmodel->nbcheque = $this->nbcheque;
-			$docmodel->ref = $this->ref;
-			$docmodel->amount = $this->amount;
-			$docmodel->date   = $this->date_bordereau;
-
-			$account = new Account($this->db);
-			$account->fetch($this->account_id);
-
-			$docmodel->account = &$account;
-
-			// We save charset_output to restore it because write_file can change it if needed for
-			// output format that does not support UTF8.
-			$sav_charset_output = $outputlangs->charset_output;
-
-			$result = $docmodel->write_file($this, $outputlangs, $conf->bank->dir_output.'/checkdeposits', $this->ref);
-			if ($result > 0) {
-				//$outputlangs->charset_output=$sav_charset_output;
-				return 1;
-			} else {
-				//$outputlangs->charset_output=$sav_charset_output;
-				dol_syslog("Error");
-				dol_print_error($this->db, $docmodel->error);
-				return 0;
-			}
-		} else {
-			$this->error = $langs->trans("ErrorFileDoesNotExists", $dir.$file);
-			return -1;
-		}
+		return $this->generateDocument($model, $outputlangs);
 	}
 
 	/**

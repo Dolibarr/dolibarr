@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "errors"));
+$langs->loadLangs(array("admin"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -278,6 +278,7 @@ if (function_exists("ldap_connect")) {
 				print '<span class="error">'.$langs->trans("LDAPSynchroKOMayBePermissions");
 				print ': '.$ldap->error;
 				print '</span><br>';
+				$langs->load('errors');
 				print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
 			}
 
@@ -290,6 +291,7 @@ if (function_exists("ldap_connect")) {
 			print '<span class="error">'.$langs->trans("LDAPSynchroKO");
 			print ': '.$ldap->error;
 			print '</span><br>';
+			$langs->load('errors');
 			print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
 		}
 	}
@@ -346,6 +348,7 @@ if (function_exists("ldap_connect")) {
 			print '<span class="error">'.$langs->trans("LDAPSynchroKO");
 			print ': '.$ldap->error;
 			print '</span><br>';
+			$langs->load('errors');
 			print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
 		}
 	}
