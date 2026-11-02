@@ -225,7 +225,7 @@ if ($massaction == 'classdebited' && $type == 'bank-transfer' && $permissiontocr
 		foreach ($arrayofobjectids as $toselectid) {
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
-				$result = $objecttmp->set_infocredit($user, $objecttmp->date_trans, ($objecttmp->checkIfSalaryBonPrelevement() ? 'salary' : ''));
+				$result = $objecttmp->set_infocredit($user, $objecttmp->date_trans, ($objecttmp->checkIfExpenseReportBonPrelevement() ? 'expensereport' : ($objecttmp->checkIfSalaryBonPrelevement() ? 'salary' : '')));
 				if ($result < 0) {
 					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 					$error++;

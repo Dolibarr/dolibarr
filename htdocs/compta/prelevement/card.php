@@ -170,7 +170,7 @@ if (empty($reshook)) {
 			$error = 1;
 			setEventMessages('WithdrawalCantBeCreditedTwice', array(), 'errors');
 		} else {
-			$error = $object->set_infocredit($user, $dt, ($salaryBonPl ? 'salary' : ''));
+			$error = $object->set_infocredit($user, $dt, ($object->checkIfExpenseReportBonPrelevement() ? 'expensereport' : ($salaryBonPl ? 'salary' : '')));
 		}
 
 		if ($error) {

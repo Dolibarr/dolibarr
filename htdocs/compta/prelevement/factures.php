@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
 /**
  * @var Conf $conf
@@ -89,6 +90,7 @@ if ($user->socid > 0) {
 
 $type = $object->type;
 $salaryBonPl = $object->checkIfSalaryBonPrelevement();
+$expensereportBonPl = $object->checkIfExpenseReportBonPrelevement();
 if ($type == 'bank-transfer') {
 	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
 } else {
@@ -219,17 +221,26 @@ if ($id > 0 || $ref) {
 }
 
 
-// List of invoices or salaries
+// List of invoices, salaries or expense reports
 if ($salaryBonPl) {
+	if ($expensereportBonPl) {
+		$documenttable = 'expensereport';
+		$documentuserfield = 'fk_user_author';
+		$documentamountfield = 'total_ttc';
+	} else {
+		$documenttable = 'salary';
+		$documentuserfield = 'fk_user';
+		$documentamountfield = 'amount';
+	}
 	$sql = "SELECT pf.rowid, p.type,";
-	$sql .= " f.rowid as salaryid, f.ref as ref, f.amount,";
+	$sql .= " f.rowid as salaryid, f.ref as ref, f.".$db->sanitize($documentamountfield)." as amount,";
 	$sql .= " u.rowid as userid, u.firstname, u.lastname,";
 	$sql .= " pl.statut as status, pl.amount as amount_requested";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."prelevement_lignes as pl ON pl.fk_prelevement_bons = p.rowid";
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."prelevement as pf ON pf.fk_prelevement_lignes = pl.rowid";
-	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."salary as f ON f.rowid = pf.fk_salary AND f.entity IN (".getEntity('salary').")";
-	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON f.fk_user = u.rowid";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$db->sanitize($documenttable)." as f ON f.rowid = pf.fk_".$db->sanitize($documenttable)." AND f.entity IN (".getEntity($documenttable).")";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON f.".$db->sanitize($documentuserfield)." = u.rowid";
 	$sql .= " WHERE 1 = 1";
 	if ($object->id > 0) {
 		$sql .= " AND p.rowid = ".((int) $object->id);
@@ -312,7 +323,7 @@ if ($resql) {
 	print '<input type="hidden" name="id" value="'.$id.'">';
 
 	$massactionbutton = '';
-	$title = ($salaryBonPl ? $langs->trans("Salaries") : ($object->type == 'bank-transfer' ? $langs->trans("SupplierInvoices") : $langs->trans("Invoices")));
+	$title = ($expensereportBonPl ? $langs->trans("ExpenseReports") : ($salaryBonPl ? $langs->trans("Salaries") : ($object->type == 'bank-transfer' ? $langs->trans("SupplierInvoices") : $langs->trans("Invoices"))));
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
@@ -320,12 +331,12 @@ if ($resql) {
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="liste centpercent">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre(($salaryBonPl ? "Salary" : "Bill"), $_SERVER["PHP_SELF"], "p.ref", '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre(($expensereportBonPl ? "ExpenseReport" : ($salaryBonPl ? "Salary" : "Bill")), $_SERVER["PHP_SELF"], "p.ref", '', $param, '', $sortfield, $sortorder);
 	if ($object->type == 'bank-transfer' && !$salaryBonPl) {
 		print_liste_field_titre("RefSupplierShort", $_SERVER["PHP_SELF"], "f.ref_supplier", '', $param, '', $sortfield, $sortorder);
 	}
 	print_liste_field_titre(($salaryBonPl ? "Employee" : "ThirdParty"), $_SERVER["PHP_SELF"], "s.nom", '', $param, '', $sortfield, $sortorder);
-	print_liste_field_titre(($salaryBonPl ? "AmountSalary" : "AmountInvoice"), $_SERVER["PHP_SELF"], "f.total_ttc", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre(($expensereportBonPl ? "AmountTTC" : ($salaryBonPl ? "AmountSalary" : "AmountInvoice")), $_SERVER["PHP_SELF"], "f.total_ttc", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("AmountRequested", $_SERVER["PHP_SELF"], "pl.amount", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", $param, '"', $sortfield, $sortorder, 'center ');
 	print "</tr>\n";
@@ -337,7 +348,10 @@ if ($resql) {
 	$invoicetmpcustomer = null;
 	$invoicetmpsupplier = null;
 
-	if ($salaryBonPl) {
+	if ($expensereportBonPl) {
+		$salarytmp = new ExpenseReport($db);
+		$usertmp = new User($db);
+	} elseif ($salaryBonPl) {
 		$salarytmp = new Salary($db);
 		$usertmp = new User($db);
 	} else {
@@ -351,7 +365,7 @@ if ($resql) {
 
 		$itemurl = '';
 		$partyurl = '';
-		if ($salaryBonPl && ($salarytmp instanceof Salary) && ($usertmp instanceof User)) {
+		if ($salaryBonPl && ($salarytmp instanceof Salary || $salarytmp instanceof ExpenseReport) && ($usertmp instanceof User)) {
 			$salarytmp->fetch($obj->salaryid);
 			$usertmp->fetch($obj->userid);
 			$itemurl = $salarytmp->getNomUrl(1);
