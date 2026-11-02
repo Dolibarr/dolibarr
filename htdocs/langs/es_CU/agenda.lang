@@ -44,7 +44,6 @@ ORDER_SUPPLIER_DELETEInDolibarr=Orden de compra %s eliminada
 SupplierInvoiceSentByEMail=Factura del proveedor %s enviada por correo electrónico
 ShippingSentByEMail=Envío %s enviado por correo electrónico
 ShippingValidated=Envío %s validado
-InterventionSentByEMail=Intervención %s enviada por correo electrónico
 ProposalDeleted=Propuesta eliminada
 HOLIDAY_CREATEInDolibarr=Solicitud de baja %s creada
 HOLIDAY_MODIFYInDolibarr=Solicitud de baja %s modificada

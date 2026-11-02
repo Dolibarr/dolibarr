@@ -889,6 +889,71 @@ class SupplierOrders extends DolibarrApi
 	}
 
 	/**
+	 * Set a validated or approved order back to draft
+	 *
+	 * @since	25.0.0	Initial implementation
+	 *
+	 * @param   int		$id			Order ID
+	 *
+	 * @url POST    {id}/settodraft
+	 *
+	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 404 Not found
+	 * @throws RestException 405 Order is not validated or approved
+	 * @throws RestException 500 Error
+	 */
+	public function settodraft($id)
+	{
+		// Same right as checked by the supplier order card before calling CommandeFournisseur::setReopen()
+		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "commande", "creer") && !DolibarrApiAccess::$user->hasRight("supplier_order", "creer")) {
+			throw new RestException(403);
+		}
+		$result = $this->order->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Order not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, 'commande_fournisseur', 'commande')) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// Other statuses are reopened one step back by CommandeFournisseur::setReopen(), not set to draft
+		$status = (int) $this->order->status;
+		if ($status !== CommandeFournisseur::STATUS_VALIDATED && $status !== CommandeFournisseur::STATUS_ACCEPTED) {
+			throw new RestException(405, 'Only validated or approved supplier orders can be set back to draft');
+		}
+
+		// Same rights as the ones showing the "Modify" (validated) and "Disapprove" (approved) buttons on the supplier order card
+		if ($status === CommandeFournisseur::STATUS_VALIDATED) {
+			$allowed = DolibarrApiAccess::$user->hasRight("fournisseur", "commande", "commander");
+		} else {
+			$allowed = (DolibarrApiAccess::$user->hasRight("fournisseur", "commande", "approuver")
+					&& (!getDolGlobalString('SUPPLIER_ORDER_REOPEN_BY_APPROVER_ONLY') || DolibarrApiAccess::$user->id == $this->order->user_approve_id))
+				|| (DolibarrApiAccess::$user->hasRight("fournisseur", "commande", "approve2") && getDolGlobalString('SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED')
+					&& (!getDolGlobalString('SUPPLIER_ORDER_REOPEN_BY_APPROVER2_ONLY') || DolibarrApiAccess::$user->id == $this->order->user_approve_id2));
+		}
+		if (!$allowed) {
+			throw new RestException(403, 'Not allowed to set this supplier order back to draft');
+		}
+
+		$result = $this->order->setReopen(DolibarrApiAccess::$user);
+		if ($result <= 0) {
+			throw new RestException(500, 'Error when setting Order to draft: '.$this->order->errorsToString());
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Order set to draft (Ref='.$this->order->ref.')'
+			)
+		);
+	}
+
+	/**
 	 * Approve an order
 	 *
 	 * @since	15.0.0	Initial implementation

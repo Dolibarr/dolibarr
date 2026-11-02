@@ -42,11 +42,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 $langs->loadLangs(array("other", "admin"));
 
 $dirstandard = array();
-$dirsmartphone = array();
 $dirmenus = array_merge(array("/core/menus/"), (array) $conf->modules_parts['menus']);
 foreach ($dirmenus as $dirmenu) {
 	$dirstandard[] = $dirmenu.'standard';
-	$dirsmartphone[] = $dirmenu.'smartphone';
 }
 
 $action = GETPOST('action', 'aZ09');
@@ -376,7 +374,7 @@ if ($user->admin) {
 print '<form name="newmenu" class="nocellnopadd" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 print '<input type="hidden" action="change_menu_handler">';
 print $langs->trans("MenuHandler").': ';
-$formadmin->select_menu_families($menu_handler.(preg_match('/_menu/', $menu_handler) ? '' : '_menu'), 'menu_handler', array_merge($dirstandard, $dirsmartphone));
+$formadmin->select_menu_families($menu_handler.(preg_match('/_menu/', $menu_handler) ? '' : '_menu'), 'menu_handler', $dirstandard);
 print ' &nbsp; <input type="submit" class="button small" value="'.$langs->trans("Refresh").'">';
 
 print '<div class="floatright">';

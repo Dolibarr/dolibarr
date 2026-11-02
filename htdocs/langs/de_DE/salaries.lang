@@ -27,9 +27,10 @@ Earnings=Einnahmen
 TotalEarnings=Gesamteinnahmen
 TotalDeductions=Gesamtabzüge
 NetPaid=Ausgaben (netto)
+GrossSalary=Bruttogehalt
 
 # Accounting
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Buchungskonto (aus dem Kontenplan), das standardmäßig für „Benutzer“ für Gehälter verwendet wird
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Buchungskonto, das standardmäßig für „Benutzer“ für Gehälter verwendet wird
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Das auf der Benutzerkarte definierte dedizierte Buchungskonto wird nur für Nebenbuch-Buchhaltung verwendet. Dieser Wert wird für das Hauptbuch verwendet, aber auch als Standardwert von Nebenbuch-Buchungen, wenn für den Benutzer kein dediziertes Buchungskonto definiert ist.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Standard-Buchungskonto für Gehaltszahlungen
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Lassen Sie beim Erstellen eines Gehalts standardmäßig die Option "Gesamtzahlung automatisch erstellen" leer
@@ -55,8 +56,6 @@ FillFieldFirst=Zuerst das Mitarbeiterfeld ausfüllen
 UpdateAmountWithLastSalary=Als Betrag letztes Gehalt vorbelegen
 MakeTransferRequest=Überweisungsanforderung erstellen
 VirementOrder=Überweisungsauftrag
-WithdrawalReceipt=Überweisungsauftrag
-OrderWaiting=Ausstehender Auftrag
 FillEndOfMonth=Ende des Monats
 
 # Shortcuts

@@ -266,6 +266,11 @@ if ($action == 'addobject') {	// Test on permission done later
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("RefSupplier")), null, 'errors');
 			$mandatoryfieldsareko = 1;
 		}
+		// Invoice subtype is mandatory when used (same rule than fourn/facture/card.php)
+		if (getDolGlobalInt('INVOICE_SUBTYPE_ENABLED') && GETPOSTINT('subtype') <= 0) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("InvoiceSubtype")), null, 'errors');
+			$mandatoryfieldsareko = 1;
+		}
 		if (GETPOST('supplierref', 'alphanohtml') && GETPOSTINT('socid') > 0) {
 			// Check the supplier ref entered by user is not already used by another invoice of the same supplier
 			$sql = "SELECT rowid FROM ".$db->prefix()."facture_fourn";
@@ -439,6 +444,9 @@ if ($action == 'addobject' && $modulepart == 'invoice_supplier' && GETPOSTINT('i
 	$createdobject->socid = $tmpthirdparty->id;
 	$createdobject->type = FactureFournisseur::TYPE_STANDARD;
 	$createdobject->ref_supplier = GETPOST('supplierref', 'alphanohtml');
+	if (getDolGlobalInt('INVOICE_SUBTYPE_ENABLED')) {
+		$createdobject->subtype = GETPOSTINT('subtype');
+	}
 	// Dates found in document are timestamps of the day in user timezone. Invoice dates are "date only" fields, so we convert them into the same day in server timezone (as in fourn/facture/card.php).
 	$dateinvoice = dol_now();
 	$datedue = 0;
@@ -1393,6 +1401,12 @@ if ($action == 'showsummary') {
 
 			print '<br>'.$langs->trans("RefSupplier").' ';
 			print '<input type="text" class="minwidth150" name="supplierref" id="supplierref" value="'.dolPrintHTMLForAttribute($supplierref).'">';
+
+			// Invoice subtype, mandatory when used (as on fourn/facture/card.php)
+			if (getDolGlobalInt('INVOICE_SUBTYPE_ENABLED')) {
+				print '<br><span class="fieldrequired">'.$langs->trans("InvoiceSubtype").'</span> ';
+				print $form->getSelectInvoiceSubtype(GETPOSTINT('subtype'), 'subtype', 1, 0, 'minwidth200');
+			}
 
 			print '<input type="hidden" name="due_date" value="'.$invoiceindoc['due_date'].'">';
 			print '<input type="hidden" name="issue_date" value="'.$invoiceindoc['issue_date'].'">';

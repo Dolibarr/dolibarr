@@ -27,6 +27,7 @@ Earnings=Earnings
 TotalEarnings=Total earnings
 TotalDeductions=Total deductions
 NetPaid=Net paid
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Жалақы бойынша «пайдаланушылар» үшін әдепкі бойынша пайдаланылатын шот (Шот жоспарынан).
@@ -55,8 +56,6 @@ FillFieldFirst=Алдымен қызметкер өрісін толтырыңы
 UpdateAmountWithLastSalary=Соңғы жалақы мөлшерін белгілеңіз
 MakeTransferRequest=Тасымалдау сұрауын жасаңыз
 VirementOrder=Несиені аудару туралы өтініш
-WithdrawalReceipt=Несиені аудару тәртібі
-OrderWaiting=Күтудегі тапсырыс
 FillEndOfMonth=End of month
 
 # Shortcuts

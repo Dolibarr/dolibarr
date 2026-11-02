@@ -217,4 +217,66 @@ class RestAPISupplierOrderTest extends AbstractRestAPITest
 
 		$this->getUrl('supplierorders/999999999/cancel', $test, 'POST', array("comment" => ""), 404);
 	}
+
+	/**
+	 * testRestSupplierOrderSetToDraftValidated
+	 *
+	 * @return void
+	 */
+	public function testRestSupplierOrderSetToDraftValidated()
+	{
+		$test = "Set a validated supplier order back to draft";
+
+		$order_id = $this->createOrder($test);
+
+		// A draft order can not be set to draft
+		$this->getUrl('supplierorders/'.$order_id.'/settodraft', "$test (draft)", 'POST', array(), 405);
+
+		$this->getUrl('supplierorders/'.$order_id.'/validate', $test, 'POST', array("idwarehouse" => 0, "notrigger" => 0));
+
+		$result = $this->getUrl('supplierorders/'.$order_id.'/settodraft', $test, 'POST', array());
+		$this->assertEquals(200, $result['content']['success']['code'] ?? null, "$test Set to draft must succeed");
+
+		$result = $this->getUrl('supplierorders/'.$order_id, $test, 'GET');
+		$this->assertEquals(CommandeFournisseur::STATUS_DRAFT, $result['content']['status'] ?? null, "$test Order must be draft");
+	}
+
+	/**
+	 * testRestSupplierOrderSetToDraftApproved
+	 *
+	 * @return void
+	 */
+	public function testRestSupplierOrderSetToDraftApproved()
+	{
+		$test = "Set an approved supplier order back to draft";
+
+		$order_id = $this->createOrder($test);
+
+		$this->getUrl('supplierorders/'.$order_id.'/validate', $test, 'POST', array("idwarehouse" => 0, "notrigger" => 0));
+		$this->getUrl('supplierorders/'.$order_id.'/approve', $test, 'POST', array("idwarehouse" => 0, "secondlevel" => 0));
+
+		$result = $this->getUrl('supplierorders/'.$order_id, $test, 'GET');
+		$this->assertEquals(CommandeFournisseur::STATUS_ACCEPTED, $result['content']['status'] ?? null, "$test Order must be approved");
+		$this->assertNotEmpty($result['content']['user_approve_id'] ?? null, "$test Order must have an approver");
+
+		$result = $this->getUrl('supplierorders/'.$order_id.'/settodraft', $test, 'POST', array());
+		$this->assertEquals(200, $result['content']['success']['code'] ?? null, "$test Set to draft must succeed");
+
+		$result = $this->getUrl('supplierorders/'.$order_id, $test, 'GET');
+		$this->assertEquals(CommandeFournisseur::STATUS_DRAFT, $result['content']['status'] ?? null, "$test Order must be draft");
+		$this->assertEmpty($result['content']['user_approve_id'] ?? null, "$test Approver must be cleared");
+		$this->assertEmpty($result['content']['date_approve'] ?? null, "$test Approval date must be cleared");
+	}
+
+	/**
+	 * testRestSupplierOrderSetToDraftNotFound
+	 *
+	 * @return void
+	 */
+	public function testRestSupplierOrderSetToDraftNotFound()
+	{
+		$test = "Set to draft a supplier order that does not exist";
+
+		$this->getUrl('supplierorders/999999999/settodraft', $test, 'POST', array(), 404);
+	}
 }
