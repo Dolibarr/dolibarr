@@ -215,9 +215,13 @@ if (empty($reshook)) {
 
 		$npr = preg_match('/\*/', GETPOST('tva_tx', 'alpha')) ? 1 : 0;
 		$tva_tx = str_replace('*', '', GETPOST('tva_tx', 'alpha'));
-		if (!preg_match('/\((.*)\)/', $tva_tx)) {
-			$tva_tx = price2num($tva_tx);
+		$vat_src_code = '';	// The VAT code of the rate chosen in the list, e.g. '10 (CODE)'
+		$reg = array();
+		if (preg_match('/\((.*)\)/', $tva_tx, $reg)) {
+			$vat_src_code = $reg[1];
+			$tva_tx = preg_replace('/\s*\(.*\)/', '', $tva_tx);
 		}
+		$tva_tx = price2num($tva_tx);
 
 		$price_expression = GETPOSTINT('eid') ? GETPOSTINT('eid') : ''; // Discard expression if not in expression mode
 		$delivery_time_days = GETPOSTINT('delivery_time_days') ? GETPOSTINT('delivery_time_days') : '';
@@ -325,9 +329,9 @@ if (empty($reshook)) {
 					$multicurrency_price = GETPOSTFLOAT("multicurrency_price");
 					$multicurrency_code = GETPOST("multicurrency_code", 'alpha');
 
-					$ret = $object->update_buyprice((float) $quantity, $newprice, $user, GETPOST("price_base_type"), $supplier, GETPOSTINT("oselDispo"), $ref_fourn, (float) $tva_tx, GETPOST("charges"), (float) $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', $multicurrency_price, GETPOST("multicurrency_price_base_type"), $multicurrency_tx, $multicurrency_code, $supplier_description, $barcode, $fk_barcode_type, $extrafield_values);
+					$ret = $object->update_buyprice((float) $quantity, $newprice, $user, GETPOST("price_base_type"), $supplier, GETPOSTINT("oselDispo"), $ref_fourn, (float) $tva_tx, GETPOST("charges"), (float) $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), $vat_src_code, $multicurrency_price, GETPOST("multicurrency_price_base_type"), $multicurrency_tx, $multicurrency_code, $supplier_description, $barcode, $fk_barcode_type, $extrafield_values);
 				} else {
-					$ret = $object->update_buyprice((float) $quantity, $newprice, $user, GETPOST("price_base_type"), $supplier, GETPOSTINT("oselDispo"), $ref_fourn, (float) $tva_tx, GETPOST("charges"), (float) $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', 0, 'HT', 1, '', $supplier_description, $barcode, $fk_barcode_type, $extrafield_values);
+					$ret = $object->update_buyprice((float) $quantity, $newprice, $user, GETPOST("price_base_type"), $supplier, GETPOSTINT("oselDispo"), $ref_fourn, (float) $tva_tx, GETPOST("charges"), (float) $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), $vat_src_code, 0, 'HT', 1, '', $supplier_description, $barcode, $fk_barcode_type, $extrafield_values);
 				}
 				if ($ret < 0) {
 					$error++;
@@ -514,8 +518,7 @@ if ($id > 0 || $ref) {
 				print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 				print '<input type="hidden" name="socid" value="'.$socid.'">';
 			} else {
-				$events = array();
-				$events[] = array('method' => 'getVatRates', 'url' => dol_buildpath('/core/ajax/vatrates.php', 1), 'htmlname' => 'tva_tx', 'params' => array());
+				$events = array();	// The VAT rates of the supplier are loaded by load_vat() below
 				$filter = '(fournisseur:=:1) AND (status:=:1)';
 				print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company(GETPOST("id_fourn", 'alpha'), 'id_fourn', $filter, $langs->transnoentitiesnoconv('SelectThirdParty'), 0, 0, $events);
 
@@ -531,7 +534,7 @@ if ($id > 0 || $ref) {
 				print '<script type="text/javascript">
 				$(document).ready(function () {
 					console.log("Requesting default VAT rate for the supplier...")
-					$("#search_id_fourn").change(load_vat)
+					$("#id_fourn, #search_id_fourn").change(load_vat)
 				});
 				function load_vat() {
 					// get soc id
@@ -545,25 +548,20 @@ if ($id > 0 || $ref) {
 					options += "&htmlname=tva_tx"
 					options += "&token='.currentToken().'"
 					options += "&action=getBuyerVATRates" // not defined in vatrates.php, default behavior.
+					options += "&productid='.((int) $object->id).'"
+					options += "&mode=1"		// keep the VAT code in the values
+					options += "&type_vat=2"	// purchase VAT rates
 
 					var get = $.getJSON(
 						vat_url,
 						options,
 						(data) => {
-							rate_options = $.parseHTML(data.value)
-							rate_options.forEach(opt => {
-								if (opt.selected) {
-									replaceVATWithSupplierValue(opt.value);
-									return;
-								}
-							})
+							// The purchase VAT rates of the supplier\'s country, its default one selected
+							console.log("VAT rates for the supplier loaded");
+							$("#tva_tx").html(data.value);
 						}
 					);
 
-				}
-				function replaceVATWithSupplierValue(vat_rate) {
-					console.log("Default VAT rate for the supplier: " + vat_rate + "%")
-					$("[name=\'tva_tx\']")[0].value = vat_rate;
 				}
 			</script>';
 			}
@@ -626,35 +624,37 @@ if ($id > 0 || $ref) {
 				}
 			}
 			// Vat rate
-			$default_vat = '';
 
 			// We don't have supplier, so we try to guess.
 			// For this we build a fictive supplier with same properties than user but using vat)
 			$mysoc2 = clone $mysoc;
 			$mysoc2->name = 'Fictive seller with same country';
 			$mysoc2->tva_assuj = 1;
-			$default_vat = get_default_tva($mysoc2, $mysoc, $object->id, 0);
-			$default_npr = get_default_npr($mysoc2, $mysoc, $object->id, 0);
-			if (empty($default_vat)) {
-				$default_npr = $default_vat;
-			}
 
 			print '<tr><td class="fieldrequired">'.$langs->trans("VATRateForSupplierProduct").'</td>';
 			print '<td>';
-			//print $form->load_tva('tva_tx',$object->tva_tx,$supplier,$mysoc);    // Do not use list here as it may be any vat rates for any country
-			if (!empty($rowid)) {	// If we have a supplier, it is an update, we must show the vat of current supplier price
-				$tmpproductsupplier = new ProductFournisseur($db);
-				$tmpproductsupplier->fetch_product_fournisseur_price($rowid, 1);
-				$default_vat = $tmpproductsupplier->fourn_tva_tx;
-				$default_npr = $tmpproductsupplier->fourn_tva_npr;
-			} else {
-				if (empty($default_vat)) {
-					$default_vat = $object->tva_tx;
+			// List of the purchase VAT rates of the seller's country, as on the lines of purchase orders and supplier
+			// invoices that this price pre-fills. The value keeps the VAT code ('10 (CODE)'), saved as default_vat_code,
+			// so that those lines get the same rate and code (and so the same accounting account and tax return box).
+			$vatseller = $mysoc2;	// No supplier chosen yet: rates of the company's country, the list is reloaded when a supplier is chosen
+			if (!empty($rowid) && !empty($supplier) && $supplier->id > 0) {
+				$vatseller = $supplier;
+			} elseif (GETPOSTINT('id_fourn') > 0) {
+				$tmpseller = new Fournisseur($db);
+				if ($tmpseller->fetch(GETPOSTINT('id_fourn')) > 0) {
+					$vatseller = $tmpseller;
 				}
 			}
-			$vattosuggest = (GETPOSTISSET("tva_tx") ? vatrate(GETPOST("tva_tx")) : ($default_vat != '' ? vatrate($default_vat) : ''));
-			$vattosuggest = preg_replace('/\s*\(.*\)$/', '', $vattosuggest);
-			print '<input type="text" class="flat" size="5" name="tva_tx" value="'.$vattosuggest.'">';
+			if (GETPOSTISSET("tva_tx")) {
+				$vattoselect = GETPOST("tva_tx", 'alpha');
+			} elseif (!empty($rowid)) {	// If we have a supplier, it is an update, we must show the vat of current supplier price
+				$tmpproductsupplier = new ProductFournisseur($db);
+				$tmpproductsupplier->fetch_product_fournisseur_price($rowid, 1);
+				$vattoselect = $tmpproductsupplier->fourn_tva_tx.($tmpproductsupplier->default_vat_code ? ' ('.$tmpproductsupplier->default_vat_code.')' : '').($tmpproductsupplier->fourn_tva_npr ? '*' : '');
+			} else {
+				$vattoselect = -1;	// Default rate for this product, seller and buyer (the default purchase rate when there are several)
+			}
+			print $form->load_tva('tva_tx', $vattoselect, $vatseller, $mysoc, $object->id, 0, $object->type, false, 1, 2);
 			print '</td></tr>';
 
 			if (isModEnabled('dynamicprices')) { //Only show price mode and expression selector if module is enabled
