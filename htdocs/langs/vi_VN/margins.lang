@@ -31,9 +31,9 @@ UseDiscountOnTotal=Trên tổng phụ
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Xác định nếu giảm giá toàn cục được coi là một sản phẩm, dịch vụ hoặc chỉ trên tổng phụ để tính toán biên lợi nhuận.
 MARGIN_TYPE=Mua/Giá thành được đề xuất theo mặc định để tính toán biên lợi nhuận
 MargeType1=Biên lợi nhuận trên giá nhà cung cấp tốt nhất
-MargeType2=Biên lợi nhuân trên giá bình quân gia quyền (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=Biên lợi nhuận trên Giá thành
-MarginTypeDesc=* Biên lợi nhuận trên giá mua tốt nhất = Giá bán - Giá nhà cung cấp tốt nhất được xác định trên thẻ sản phẩm <br> * Lợi nhuận trên giá bình quân gia quyền (WAP) = Giá bán - Giá bình quân gia quyền sản phẩm (Wap) hoặc giá nhà cung cấp tốt nhất nếu chưa xác định được Wap <br> * Lợi nhuận trên giá vốn = Giá bán - Giá thành được xác định trên thẻ sản phẩm hoặc Wap nếu giá chưa xác định hoặc giá nhà cung cấp tốt nhất nếu chưa xác định được Wap
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=Giá thành
 UnitCharges=Phí đơn vị
 Charges=Phí
@@ -43,4 +43,7 @@ rateMustBeNumeric=Tỷ giá phải là một giá trị số
 markRateShouldBeLesserThan100=Đánh dấu suất phải thấp hơn 100
 ShowMarginInfos=Hiển thị thông tin lợi nhuận
 CheckMargins=Chi tiết lợi nhuận
-MarginPerSaleRepresentativeWarning=Báo cáo tỷ lệ lợi nhuận trên mỗi người dùng sử dụng liên kết giữa các bên thứ ba và đại diện bán hàng để tính toán mức lợi nhuận của mỗi đại diện bán hàng. Bởi vì một số bên thứ ba có thể không có bất kỳ đại diện bán hàng chuyên dụng nào và một số bên thứ ba có thể được liên kết với một số, một vài số tiền có thể không được đưa vào báo cáo này (nếu không có đại diện bán hàng) và một số có thể xuất hiện trên các dòng khác nhau (cho mỗi đại diện bán hàng) .
+MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any dedicated sale representative and some third parties may be linked to several, some amounts may not be included in this report (if there is no sale representative) and some may appear on different lines (for each sale representative).
+MarginUpdateLinkedBuyingPrice=Suggest to propagate the cost price modified on a line to all the lines of the linked proposals, orders and invoices that has the same product (users will decide yes or no at eachmodification)
+UpdateLinkedBuyingPrice=Update the cost price on all lines (with the same product) of the linked documents
+UpdateLinkedBuyingPriceQuestion=The cost price of this line has changed. Apply it to the lines of the linked documents that has the same product ?

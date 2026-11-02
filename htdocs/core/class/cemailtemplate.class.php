@@ -272,7 +272,7 @@ class CEmailTemplate extends CommonObject
 		if (is_null($this->fk_user)) {
 			$sql .= " NULL,";
 		} else {
-			$sql .= " '".((int) $this->fk_user)."',";
+			$sql .= " ".((int) $this->fk_user).",";
 		}
 		if (is_null($this->datec)) {
 			$sql .= " '".$this->db->idate($now)."',";
@@ -284,12 +284,12 @@ class CEmailTemplate extends CommonObject
 		if (is_null($this->enabled)) {
 			$sql .= " 1,";
 		} else {
-			$sql .= " '".((int) $this->enabled)."',";
+			$sql .= " ".((int) $this->enabled).",";
 		}
 		if (is_null($this->active)) {
 			$sql .= " 1,";
 		} else {
-			$sql .= " '".((int) $this->active)."',";
+			$sql .= " ".((int) $this->active).",";
 		}
 		if (is_null($this->email_from)) {
 			$sql .= " NULL,";
@@ -488,15 +488,18 @@ class CEmailTemplate extends CommonObject
 	/**
 	 *	Get email template from database.
 	 *
-	 *	@param      int			$id       	row Id of email template
-	 *	@param      string		$label    	label of email template
-	 *	@return     int         			>0 if OK, <0 if KO, 0 if not found
+	 *	@param      int			$id       		row Id of email template
+	 *	@param      string		$label    		label of email template
+	 * 	@param		User		$userrequest	User request
+	 *	@return     int         				Return >0 if OK, <0 if KO, 0 if not found
 	 */
-	public function apifetch($id, $label = '')
+	public function apiFetch($id, $label = '', $userrequest = null)
 	{
+		global $langs;
+
 		// Check parameters
 		if (($id == 0 || empty($id)) && empty($label)) {
-			dol_syslog(get_class($this)."::apifetch id and label are empty", LOG_DEBUG);
+			dol_syslog(get_class($this)."::apiFetch id and label are empty", LOG_DEBUG);
 			$this->error = 'id='.$id.' and label are empty';
 			return -1;
 		}
@@ -506,16 +509,20 @@ class CEmailTemplate extends CommonObject
 		$sql .= " e.defaultfortype, e.enabled, e.active, e.email_from, e.email_to,";
 		$sql .= " e.email_tocc, e.email_tobcc, e.topic, e.joinfiles, e.content,";
 		$sql .= " e.content_lines FROM ".$this->db->prefix().$this->table_element." as e";
+		$sql .= " WHERE entity IN (".getEntity($this->element).")";
 		if ($id) {
-			$sql .= " WHERE e.rowid = ".((int) $id);
-		} else {
-			$sql .= " WHERE e.entity IN (".getEntity($this->table_element).")";
-			if ($label) {
-				$sql .= " AND e.label = '".$this->db->escape($label)."'";
-			}
+			$sql .= " AND e.rowid = ".((int) $id);
+		} elseif ($label) {
+			$sql .= " AND e.label = '".$this->db->escape($label)."'";
+		}
+		if (!$userrequest->admin) {
+			$sql .= " AND (private = 0 OR (private = 1 AND fk_user = ".((int) $userrequest->id)."))"; // Show only public and private to me
+			$sql .= " AND (active = 1 OR fk_user = ".((int) $userrequest->id).")"; // Show only active or owned by me
+		}
+		if (!getDolGlobalInt('MAIN_MULTILANGS')) {
+			$sql .= " AND (lang = '".$this->db->escape($langs->defaultlang)."' OR lang IS NULL OR lang = '')";
 		}
 
-		dol_syslog(get_class($this)."::apifetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);

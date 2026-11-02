@@ -2,7 +2,7 @@
 /* Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2023		Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,14 +26,16 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/geturl.lib.php';
+if (!defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/geturl.lib.php';
 
-if (empty($user->id)) {
+if (empty($user->id) && is_object($db)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->loadRights();
@@ -269,5 +271,245 @@ class GetUrlLibTest extends CommonClassTest
 		$this->assertEquals('abcbbdef', $result, 'Test 1');
 
 		return 1;
+	}
+
+
+	/**
+	 * testGetURLContentHostParsing
+	 *
+	 * How getURLContent() reads the host of the URL before the anti SSRF check: numeric forms, host names that look numeric,
+	 * malformed URLs, IPv6.
+	 *
+	 * @return void
+	 */
+	public function testGetURLContentHostParsing()
+	{
+		$url = 'https://0X7F000001';	// Upper case hex integer
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+		print __METHOD__." url=".$url."\n";
+		$this->assertEquals("Host is a numeric address that is not allowed", $tmp['curl_error_msg'], 'An upper case hex integer is a numeric address too');
+
+		// A single label host name made of hex letters is a host name, not a numeric address (it may or may not resolve here)
+		$url = 'http://db/';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 2, -1, 2, 3);
+		print __METHOD__." url=".$url." curl_error_msg=".$tmp['curl_error_msg']."\n";
+		$this->assertStringNotContainsString('numeric address', $tmp['curl_error_msg'], 'db is a host name, not a numeric address');
+
+		// A malformed URL (parse_url() returns false) must be refused without any PHP warning
+		$url = 'http:///foo';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 2);
+		print __METHOD__." url=".$url." curl_error_msg=".$tmp['curl_error_msg']."\n";
+		$this->assertEquals(400, $tmp['http_code']);
+		$this->assertStringStartsWith('Bad URL', $tmp['curl_error_msg']);
+
+		// An IPv6 target must reach curl with a valid CURLOPT_CONNECT_TO (error 49 was "No valid port number in connect to host string")
+		$url = 'http://[::1]:8/';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 1, -1, 2, 3);		// Only local URL
+		print __METHOD__." url=".$url." curl_error_no=".$tmp['curl_error_no']." curl_error_msg=".$tmp['curl_error_msg']."\n";
+		$this->assertNotEquals(400, $tmp['http_code'], 'A local IPv6 URL must pass the anti SSRF check when local URLs are allowed');
+		$this->assertNotEquals(49, $tmp['curl_error_no'], 'CURLOPT_CONNECT_TO must be valid for an IPv6: '.$tmp['curl_error_msg']);
+	}
+
+
+	/**
+	 * An IPv6 address that carries a private IPv4 address (IPv4-mapped, NAT64, 6to4...) must be refused like this IPv4.
+	 *
+	 * @return void
+	 */
+	public function testIsIPAllowedEmbeddedIPv4()
+	{
+		$this->assertEquals('127.0.0.1', getIPv4EmbeddedInIPv6('::ffff:127.0.0.1'));
+		$this->assertEquals('127.0.0.1', getIPv4EmbeddedInIPv6('::ffff:7f00:1'));
+		$this->assertEquals('127.0.0.1', getIPv4EmbeddedInIPv6('::127.0.0.1'));
+		$this->assertEquals('127.0.0.1', getIPv4EmbeddedInIPv6('64:ff9b::7f00:1'));
+		$this->assertEquals('127.0.0.1', getIPv4EmbeddedInIPv6('2002:7f00:1::'));
+		$this->assertEquals('', getIPv4EmbeddedInIPv6('127.0.0.1'));
+		$this->assertEquals('', getIPv4EmbeddedInIPv6('::1'));
+		$this->assertEquals('', getIPv4EmbeddedInIPv6('::'));
+		$this->assertEquals('', getIPv4EmbeddedInIPv6('2606:4700:4700::1111'));
+		$this->assertEquals('', getIPv4EmbeddedInIPv6('not an ip'));
+
+		// External URL only: refused
+		$refused = array(
+			'127.0.0.1', '10.1.2.3', '169.254.169.254', '::1', 'fe80::1',
+			'::ffff:127.0.0.1', '::ffff:7f00:1', '::ffff:10.0.0.1', '::ffff:192.168.1.1', '::ffff:169.254.169.254',
+			'::127.0.0.1', '64:ff9b::7f00:1', '64:ff9b::a00:1', '2002:7f00:1::', '2002:a00:1::',
+			'100.64.0.1', '100.127.255.254', '198.18.0.1', '198.19.255.254', '::ffff:100.64.0.1',
+		);
+		foreach ($refused as $ip) {
+			$this->assertNotEmpty(isIPAllowed($ip, 0), $ip.' must be refused when only external URLs are allowed');
+		}
+
+		// External URL only: accepted
+		$accepted = array('8.8.8.8', '100.63.255.255', '100.128.0.1', '198.17.255.255', '198.20.0.1', '2606:4700:4700::1111', '::ffff:8.8.8.8', '64:ff9b::808:808', '2002:808:808::');
+		foreach ($accepted as $ip) {
+			$this->assertEmpty(isIPAllowed($ip, 0), $ip.' must be accepted when only external URLs are allowed');
+		}
+
+		// Local URL only: a mapped private IPv4 is local, a mapped public IPv4 is not
+		$this->assertEmpty(isIPAllowed('::ffff:127.0.0.1', 1));
+		$this->assertEmpty(isIPAllowed('::1', 1));
+		$this->assertNotEmpty(isIPAllowed('::ffff:8.8.8.8', 1));
+		$this->assertNotEmpty(isIPAllowed('::ffff:169.254.169.254', 1), 'A metadata server is refused even when local URLs are allowed');
+	}
+
+
+	/**
+	 * testGetURLContent
+	 *
+	 * @return int
+	 */
+	public function testGetURLContent()
+	{
+		global $conf;
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+
+		$url = 'ftp://dolibarr.org';
+		$tmp = getURLContent($url);
+		print __METHOD__." url=".$url." ".$tmp['curl_error_msg']."\n";
+
+		$tmpvar = preg_match('/not supported|disabled/', $tmp['curl_error_msg']);
+		$this->assertEquals(1, $tmpvar, "Did not find the /not supported|disabled/ in getURLContent error message. We should.");
+
+		$DISABLEREMOTEACCESSTODOLIBARRFR = 1;
+
+		if (empty($DISABLEREMOTEACCESSTODOLIBARRFR)) {
+			$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
+			$tmp = getURLContent($url, 'GET', '', 0);	// We do NOT follow
+			print __METHOD__." url=".$url."\n";
+			$this->assertEquals(301, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Test getURLContent '.$url.' - Should GET url 301 response');
+
+			$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
+			$tmp = getURLContent($url);		// We DO follow a page with return 300 so result should be 200
+			print __METHOD__." url=".$url."\n";
+			$this->assertEquals(200, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url 301 with a follow -> 200 but we get '.(empty($tmp['http_code']) ? 0 : $tmp['http_code']));
+		}
+
+		$url = 'http://localhost';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+		print __METHOD__." url=".$url."\n";
+		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that resolves to a local URL');	// Test we receive an error because localtest.me is not an external URL
+
+		$url = 'http://127.0.0.1';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+		print __METHOD__." url=".$url."\n";
+		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because 127.0.0.1 is not an external URL
+
+		$url = 'http://127.0.2.1';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+		print __METHOD__." url=".$url."\n";
+		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because 127.0.2.1 is not an external URL
+
+		$url = 'https://169.254.0.1';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+		print __METHOD__." url=".$url."\n";
+		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because 169.254.0.1 is not an external URL
+
+		$url = 'http://[::1]';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+		print __METHOD__." url=".$url."\n";
+		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because [::1] is not an external URL
+
+		/*$url = 'localtest.me';
+		 $tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+		 print __METHOD__." url=".$url."\n";
+		 $this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that resolves to a local URL');	// Test we receive an error because localtest.me is not an external URL
+		 */
+
+		$url = 'http://192.0.0.192';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL but on an IP in blacklist
+		print __METHOD__." url=".$url." tmp['http_code'] = ".(empty($tmp['http_code']) ? 0 : $tmp['http_code'])."\n";
+		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Access should be refused and was not');	// Test we receive an error because ip is in blacklist
+
+		$url = 'https://2130706433';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+		print __METHOD__." url=".$url."\n";
+		$this->assertEquals("Host is a numeric address that is not allowed", (empty($tmp['curl_error_msg']) ? "" : $tmp['curl_error_msg']), 'Should GET error Not a valid ip address');	// Test we receive an error because 169.254.0.1 is not an external URL
+
+		$url = 'https://0x7f000001';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+		print __METHOD__." url=".$url."\n";
+		$this->assertEquals("Host is a numeric address that is not allowed", (empty($tmp['curl_error_msg']) ? "" : $tmp['curl_error_msg']), 'Should GET error Not a valid ip address');	// Test we receive an error because 169.254.0.1 is not an external URL
+
+		$url = 'https://017700000001';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+		print __METHOD__." url=".$url."\n";
+		$this->assertEquals("Host is a numeric address that is not allowed", (empty($tmp['curl_error_msg']) ? "" : $tmp['curl_error_msg']), 'Should GET error Not a valid ip address');	// Test we receive an error because 169.254.0.1 is not an external URL
+
+		// Cloud metadata servers must be refused even when local URLs are allowed (the reserved range check does not apply then)
+		$url = 'http://169.254.169.254/latest/meta-data/';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 2);		// Local and external URL allowed
+		print __METHOD__." url=".$url." curl_error_msg=".$tmp['curl_error_msg']."\n";
+		$this->assertEquals(400, $tmp['http_code'], 'Access to the AWS/GCP/Azure metadata IP should be refused when local URLs are allowed');
+		$this->assertStringContainsString('metadata server', $tmp['curl_error_msg']);
+
+		// 168.63.129.16 (Azure) is in the public address space, so only the metadata list can catch it
+		$url = 'http://168.63.129.16/';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+		print __METHOD__." url=".$url." curl_error_msg=".$tmp['curl_error_msg']."\n";
+		$this->assertEquals(400, $tmp['http_code'], 'Access to the Azure metadata IP should be refused');
+		$this->assertStringContainsString('metadata server', $tmp['curl_error_msg']);
+
+		// The reserved host name check must not depend on the case
+		$url = 'http://METADATA.GOOGLE.INTERNAL/computeMetadata/v1/';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 2);
+		print __METHOD__." url=".$url." curl_error_msg=".$tmp['curl_error_msg']."\n";
+		$this->assertEquals(400, $tmp['http_code'], 'Access to metadata.google.internal should be refused whatever the case of the host name');
+		$this->assertStringContainsString('Google metadata', $tmp['curl_error_msg']);
+
+		return 0;
+	}
+
+	/**
+	 * testRemoveCredentialHeaders
+	 *
+	 * @return	void
+	 */
+	public function testRemoveCredentialHeaders()
+	{
+		$headers = [
+			'Accept: application/json',
+			'Authorization: Bearer secret',
+			'authorization: Basic c2VjcmV0',
+			'Proxy-Authorization: Basic c2VjcmV0',
+			'Cookie: DOLSESSID_xxx=secret',
+			'X-Api-Key: secret',
+			'api-key: secret',
+			'DOLAPIKEY: secret',
+			'x-goog-api-key: secret',
+			'Client-Secret: secret',
+			'Client-Id: kept',
+			'X-Custom: kept',
+			'Content-Type: application/json',
+			'malformed header without colon',
+		];
+
+		$result = removeCredentialHeaders($headers);
+
+		$this->assertSame(['Accept: application/json', 'Client-Id: kept', 'X-Custom: kept', 'Content-Type: application/json', 'malformed header without colon'], $result, 'Every credential header must be removed, whatever its case, and the other ones kept in order');
+
+		$this->assertSame([], removeCredentialHeaders([]));
+		$this->assertSame([], removeCredentialHeaders('not an array'));	// @phpstan-ignore-line
+	}
+
+	/**
+	 * testMaskSecretsForLog
+	 *
+	 * @return	void
+	 */
+	public function testMaskSecretsForLog()
+	{
+		$result = maskSecretsForLog('https://maps.googleapis.com/maps/api/geocode/json?address=Paris&key=AIzaSyABCDEF');
+		$this->assertSame('https://maps.googleapis.com/maps/api/geocode/json?address=Paris&key=AIz...', $result, 'The API key in the query string must be masked');
+
+		$result = maskSecretsForLog('https://example.com/api?api_key=abcdef&page=2&access_token=tok123#anchor');
+		$this->assertSame('https://example.com/api?api_key=abc...&page=2&access_token=tok...#anchor', $result, 'Each secret parameter must be masked, the other ones kept');
+
+		$result = maskSecretsForLog('https://example.com/page?address=keyboard&id=4');
+		$this->assertSame('https://example.com/page?address=keyboard&id=4', $result, 'An URL without secret must not be modified');
+
+		$request = "GET /api?key=AIzaSy123 HTTP/1.1\r\nHost: example.com\r\nAuthorization: Bearer eyJhbGciOi\r\nAccept: */*\r\nCookie: DOLSESSID_xxx=secret\r\n\r\n";
+		$result = maskSecretsForLog($request);
+		$this->assertSame("GET /api?key=AIz... HTTP/1.1\r\nHost: example.com\r\nAuthorization: Bea...\r\nAccept: */*\r\nCookie: DOL...\r\n\r\n", $result, 'Secrets in the request line and in the credential headers must be masked');
 	}
 }

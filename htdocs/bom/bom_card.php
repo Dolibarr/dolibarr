@@ -780,7 +780,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction($langs->trans("ToClone"), '', 'clone', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'clone', 'object' => 'bom'], true), 'clone', $permissiontoadd);
+				print dolGetButtonAction($langs->trans("ToClone"), $langs->trans("ToClone"), 'clone', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'clone', 'object' => 'bom'], true), 'clone', $permissiontoadd, array('attr' => array('class' => 'reposition')))."\n";
 			}
 
 			// Close / Cancel
@@ -799,7 +799,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			*/
 
 			// Delete
-			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delete'], true), 'delete', $permissiontodelete);
+			print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delete'], true), 'delete', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 		}
 		print '</div>'."\n";
 	}

@@ -164,6 +164,12 @@ function getAllOauth2Array()
 			'OAUTH_MICROSOFT3_DESC',
 		),
 		array(
+			'OAUTH_MICROSOFTAPP_NAME',
+			'OAUTH_MICROSOFTAPP_ID',
+			'OAUTH_MICROSOFTAPP_SECRET',
+			'OAUTH_MICROSOFTAPP_DESC',
+		),
+		array(
 			'OAUTH_NEST_NAME',
 			'OAUTH_NEST_ID',
 			'OAUTH_NEST_SECRET',
@@ -357,9 +363,26 @@ function getSupportedOauth2Array()
 		// CRITICAL: Use ONLY outlook.office.com scopes here, do NOT mix with Graph scopes (openid/profile/email).
 		// Mixing two resource namespaces in one token request causes AADSTS28000 error.
 		// offline_access is a neutral scope (no resource prefix) and is allowed alongside any resource.
-		// Azure permissions required: Microsoft Graph > Delegated > SMTP.Send and IMAP.AccessAsUser.All
+		// Azure delegated permissions must be declared on the 'Office 365 Exchange Online' API (service principal 00000002-0000-0ff1-ce00-000000000000), NOT on Microsoft Graph.
+		// Both APIs expose permissions named SMTP.Send and IMAP.AccessAsUser.All: granting the Graph ones leaves the token request for outlook.office.com without any matching consent.
 		'availablescopes' => 'offline_access,https://outlook.office.com/SMTP.Send,https://outlook.office.com/IMAP.AccessAsUser.All',
 		'returnurl' => '/core/modules/oauth/microsoft3_oauthcallback.php'
+	);
+	$supportedoauth2array['OAUTH_MICROSOFTAPP_NAME'] = array(
+		'callbackfile' => 'microsoftapp',
+		'picto' => 'microsoft',
+		'urlforapp' => 'OAUTH_MICROSOFTAPP_DESC',
+		'name' => 'Microsoft Exchange Online App-only [SMTP/IMAP, client credentials]',
+		'urlforcredentials' => 'https://portal.azure.com/',
+		// App-only mode (client credentials grant flow): the token is requested with the application
+		// credentials only, without any user login/consent dance and without refresh token.
+		// The scope must be the ".default" scope of the Exchange Online resource.
+		// Azure permissions required: Office 365 Exchange Online > Application > IMAP.AccessAsApp (and/or
+		// POP.AccessAsApp, SMTP.SendAsApp) with admin consent, and the application service principal
+		// registered into Exchange Online with access granted on the mailboxes to poll
+		// (New-ServicePrincipal + Add-MailboxPermission).
+		'availablescopes' => 'https://outlook.office365.com/.default',
+		'returnurl' => '/core/modules/oauth/microsoftapp_oauthcallback.php'
 	);
 
 	// Add a generic Oauth token handler. Tested with Mastodon.
@@ -376,6 +399,41 @@ function getSupportedOauth2Array()
 	return $supportedoauth2array;
 }
 
+
+/**
+ * Return a human readable diagnostic of the setup of an OAuth2 provider entry, to append to an
+ * error message or a log line. Only tells whether each constant is filled, never their value.
+ *
+ * @param	string	$genericstring		Provider key in uppercase used to build the constants (example: 'MICROSOFT3')
+ * @param	string	$keyforprovider		Label of the provider entry, empty for the unnamed one
+ * @return	string						Example: "service=Microsoft3-mylabel, entity=1, OAUTH_MICROSOFT3-mylabel_ID=set, OAUTH_MICROSOFT3-mylabel_SCOPE=MISSING"
+ */
+function getOauthSetupDiagnostic($genericstring, $keyforprovider = '')
+{
+	global $conf;
+
+	$prefix = 'OAUTH_'.$genericstring.($keyforprovider ? '-'.$keyforprovider : '');
+
+	$found = array();
+	foreach ($conf->global as $constname => $constvalue) {
+		if (strpos($constname, $prefix.'_') === 0) {
+			$found[$constname] = empty($constvalue) ? 'EMPTY' : 'set';
+		}
+	}
+	// _SCOPE feeds the 'state' parameter, so a provider entry never saved with scopes has no such constant at all.
+	if (!isset($found[$prefix.'_SCOPE'])) {
+		$found[$prefix.'_SCOPE'] = 'MISSING';
+	}
+	ksort($found);
+
+	$out = 'service='.ucfirst(strtolower($genericstring)).($keyforprovider ? '-'.$keyforprovider : '');
+	$out .= ', entity='.$conf->entity;
+	foreach ($found as $constname => $status) {
+		$out .= ', '.$constname.'='.$status;
+	}
+
+	return $out;
+}
 
 /**
  * Return array of tabs to used on pages to setup cron module.

@@ -208,7 +208,7 @@ if (empty($reshook)) {
 			$searched_companies = $object->searchSocidByEmail($origin_email, 0);
 
 			// Look for an existing contact with this email address
-			// The first contact found is used to dtermine the tracking contact
+			// The first contact found is used to determine the tracking contact
 			$contacts = $object->searchContactByEmail($origin_email);
 			if (!is_array($contacts)) {
 				$contacts = array();

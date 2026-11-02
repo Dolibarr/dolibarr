@@ -27,12 +27,11 @@
  *		\remarks	To run this script as CLI:  phpunit test/phpunit/FilesLibRenameTest.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -61,7 +60,7 @@ class FilesLibMoveDirTest extends CommonClassTest
 	 */
 	protected function setUp(): void
 	{
-		parent::setup();
+		parent::setUp();
 
 		global $conf;
 		$this->sourceDir = $conf->admin->dir_temp."/source Dir";

@@ -134,7 +134,7 @@ class mod_asset_advanced extends ModeleNumRefAsset
 			return 0;
 		}
 
-		$date = $object->date;
+		$date = $object->date_creation;
 
 		$numFinal = get_next_value($db, $mask, 'asset', 'ref', '', '', $date);
 

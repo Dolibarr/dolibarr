@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2016 Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2019 		Nicolas ZABOURI	<info@inovea-conseil.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -153,7 +153,7 @@ if ($resql) {
 			$id = $emailing->id;
 			$subject = $emailing->sujet;
 			$message = $emailing->body;
-			$from = $emailing->email_from;
+			$email_from = $emailing->email_from;
 			$replyto = $emailing->email_replyto;
 			$errorsto = $emailing->email_errorsto;
 			// Le message est-il en html
@@ -173,7 +173,7 @@ if ($resql) {
 			if (getDolGlobalInt('MAILING_LIMIT_SENDBYCLI') > 0 && empty($max)) {
 				$sql2 .= " LIMIT " . getDolGlobalInt('MAILING_LIMIT_SENDBYCLI');
 			} elseif (getDolGlobalInt('MAILING_LIMIT_SENDBYCLI') > 0 && $max > 0) {
-				$sql2 .= " LIMIT ".min(getDolGlobalInt('MAILING_LIMIT_SENDBYCLI'), $max);
+				$sql2 .= " LIMIT ".min(getDolGlobalInt('MAILING_LIMIT_SENDBYCLI'), ((int) $max));
 			} elseif ($max > 0) {
 				$sql2 .= " LIMIT ".((int) $max);
 			}
@@ -211,16 +211,16 @@ if ($resql) {
 						$sendto = str_replace(',', ' ', dolGetFirstLastname($obj->firstname, $obj->lastname)." <".$obj->email.">");
 
 						// Make subtsitutions on topic and body
-						$other = explode(';', $obj->other);
-						$tmpfield = explode('=', $other[0], 2);
+						$other = explode(';', (string) $obj->other);
+						$tmpfield = explode('=', ($other[0] ?? ''), 2);
 						$other1 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
-						$tmpfield = explode('=', $other[1], 2);
+						$tmpfield = explode('=', ($other[1] ?? ''), 2);
 						$other2 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
-						$tmpfield = explode('=', $other[2], 2);
+						$tmpfield = explode('=', ($other[2] ?? ''), 2);
 						$other3 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
-						$tmpfield = explode('=', $other[3], 2);
+						$tmpfield = explode('=', ($other[3] ?? ''), 2);
 						$other4 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
-						$tmpfield = explode('=', $other[4], 2);
+						$tmpfield = explode('=', ($other[4] ?? ''), 2);
 						$other5 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
 						$signature = ((!empty($user->signature) && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? $user->signature : '');
 
@@ -336,7 +336,7 @@ if ($resql) {
 						// Fabrication du mail
 						$trackid = 'emailing-'.$obj->fk_mailing.'-'.$obj->rowid;
 						$upload_dir_tmp = $upload_dir;
-						$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid, $moreinheader, 'emailing', '', $upload_dir_tmp);
+						$mail = new CMailFile($newsubject, $sendto, $email_from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid, $moreinheader, 'emailing', '', $upload_dir_tmp);
 
 						if ($mail->error) {
 							$res = 0;
@@ -424,6 +424,25 @@ if ($resql) {
 						}
 
 						$i++;
+					}
+
+					// Loop finished, set global status of emailing to 'sent completely' if there is no more recipient to send to.
+					// Note: $obj now contains the last recipient, so we must use $id for the emailing.
+					$sqlleft = "SELECT COUNT(mc.rowid) as nb FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
+					$sqlleft .= " WHERE mc.statut < 1 AND mc.fk_mailing = ".((int) $id);
+					$resqlleft = $db->query($sqlleft);
+					if ($resqlleft) {
+						$objleft = $db->fetch_object($resqlleft);
+						if ($objleft && (int) $objleft->nb == 0) {
+							$sql = "UPDATE ".MAIN_DB_PREFIX."mailing SET statut = 3 WHERE rowid = ".((int) $id);
+							$result_sql = $db->query($sql);
+
+							dol_syslog("update global status", LOG_DEBUG);
+							print "Update status of emailing id ".$id." to 3\n";
+						}
+					} else {
+						dol_print_error($db);
+						$error++;
 					}
 				} else {
 					$mesg = "Emailing id ".$id." has no or no more recipient to target";

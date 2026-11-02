@@ -5,7 +5,7 @@
  * Copyright (C) 2012-2018	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,10 +29,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/api.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -44,6 +40,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/api.lib.php';
  * @var string 	$dolibarr_main_url_root
  * @var	string	$dolibarr_api_count_always_enabled
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/api.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -71,7 +70,7 @@ if ($action == 'setproductionmode') {
 			}
 		} else {
 			// Delete the cache file otherwise it does not update
-			$result = dol_delete_file($conf->api->dir_temp.'/routes.php');
+			$result = dol_delete_file($conf->api->dir_temp.'/routes.php', 1);
 			if ($result < 0) {
 				setEventMessages($langs->trans("ErrorFailedToDeleteFile", $conf->api->dir_temp.'/routes.php'), null, 'errors');
 				$error++;
@@ -94,8 +93,8 @@ if ($action == 'setdisablecompression') {
 	}
 }
 
-// Disable compression mode
-if ($action == 'setenablecount' && !empty($dolibarr_api_count_always_enabled)) {
+// Enable/disable the counting of API calls (only when not forced from conf.php)
+if ($action == 'setenablecount' && empty($dolibarr_api_count_always_enabled)) {
 	if (dolibarr_set_const($db, 'API_ENABLE_COUNT_CALLS', GETPOSTINT('status'), 'chaine', 0, '', 0) <= 0) {
 		dol_print_error($db);
 	}
@@ -136,7 +135,7 @@ print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameter")."</td>";
-print '<td>'.$langs->trans("Value")."</td>";
+print '<td></td>';
 print "<td>&nbsp;</td>";
 print "</tr>";
 

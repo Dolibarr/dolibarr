@@ -46,6 +46,10 @@ IPP_Color=রঙ
 IPP_Device=যন্ত্র
 IPP_Media=প্রিন্টার মিডিয়া
 IPP_Supported=মিডিয়ার ধরন
+STATE_IPP_idle=Idle printer
+STATE_IPP_none=None
+IPP_COLOR_print-black=Black and White
+IPP_COLOR_print-color=Color
 DirectPrintingJobsDesc=এই পৃষ্ঠাটি উপলব্ধ প্রিন্টারগুলির জন্য পাওয়া মুদ্রণ কাজের তালিকা দেয়।
 GoogleAuthNotConfigured=Google OAuth সেটআপ করা হয়নি। মডিউল OAuth সক্ষম করুন এবং একটি Google আইডি/সিক্রেট সেট করুন৷
 GoogleAuthConfigured=Google OAuth শংসাপত্রগুলি OAuth মডিউল সেটআপে পাওয়া গেছে।
@@ -53,4 +57,4 @@ PrintingDriverDescprintgcp=প্রিন্টিং ড্রাইভার 
 PrintingDriverDescprintipp=ড্রাইভার কাপ মুদ্রণের জন্য কনফিগারেশন ভেরিয়েবল।
 PrintTestDescprintgcp=Google ক্লাউড প্রিন্টের জন্য প্রিন্টারের তালিকা।
 PrintTestDescprintipp=কাপের জন্য প্রিন্টারের তালিকা।
-Testbbbb
+PrinterLocation=Printer location

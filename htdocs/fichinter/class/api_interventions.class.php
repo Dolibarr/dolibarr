@@ -28,6 +28,7 @@ use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 include_once DOL_DOCUMENT_ROOT."/fichinter/class/fichinterligne.class.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
 
@@ -173,9 +174,9 @@ class Interventions extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 
@@ -342,7 +343,7 @@ class Interventions extends DolibarrApi
 		if ($this->fichinter->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->fichinter->error);
+			throw new RestException(500, $this->fichinter->errorsToString());
 		}
 	}
 
@@ -353,31 +354,35 @@ class Interventions extends DolibarrApi
 	 *
 	 * @url	GET {id}/lines
 	 *
-	 * @return int
+	 * @return array
+	 * @phan-return FichinterLigne[]
+	 * @phpstan-return FichinterLigne[]
+	 *
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		Intervention not found
 	 */
-	/* TODO
 	public function getLines($id)
 	{
-		if(! DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
+		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
 			throw new RestException(403);
 		}
 
 		$result = $this->fichinter->fetch($id);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'Intervention not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('fichinter',$this->fichinter->id)) {
+		if (!DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-		$this->fichinter->getLinesArray();
+
+		$this->fichinter->fetch_lines();
 		$result = array();
 		foreach ($this->fichinter->lines as $line) {
-			array_push($result,$this->_cleanObjectDatas($line));
+			$result[] = $this->_cleanObjectDatas($line);
 		}
 		return $result;
 	}
-	*/
 
 	/**
 	 * Add a line to an intervention
@@ -432,7 +437,7 @@ class Interventions extends DolibarrApi
 		if ($updateRes > 0) {
 			return $updateRes;
 		} else {
-			throw new RestException(400, $this->fichinter->error);
+			throw new RestException(400, $this->fichinter->errorsToString());
 		}
 	}
 
@@ -463,7 +468,7 @@ class Interventions extends DolibarrApi
 		}
 
 		if (!$this->fichinter->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete intervention : '.$this->fichinter->error);
+			throw new RestException(500, 'Error when delete intervention : '.$this->fichinter->errorsToString());
 		}
 
 		return array(
@@ -512,7 +517,7 @@ class Interventions extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating Intervention: '.$this->fichinter->error);
+			throw new RestException(500, 'Error when validating Intervention: '.$this->fichinter->errorsToString());
 		}
 
 		$this->fichinter->fetchObjectLinked();
@@ -560,7 +565,7 @@ class Interventions extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already closed');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when closing Intervention: '.$this->fichinter->error);
+			throw new RestException(500, 'Error when closing Intervention: '.$this->fichinter->errorsToString());
 		}
 
 		$this->fichinter->fetchObjectLinked();
@@ -607,13 +612,16 @@ class Interventions extends DolibarrApi
 		if ($objectline->fetch($lineid) <= 0) {
 			throw new RestException(404, 'Intervention line not found');
 		}
+		if ($objectline->fk_fichinter != $this->fichinter->id) {
+			throw new RestException(403, 'Line does not belong to this intervention');
+		}
 
 		$updateRes = $objectline->deleteLine(DolibarrApiAccess::$user);
 
 		if ($updateRes >= 0) {
 			return $this->_cleanObjectDatas($this->fichinter);
 		} else {
-			throw new RestException(405, $this->fichinter->error);
+			throw new RestException(405, $this->fichinter->errorsToString());
 		}
 	}
 
@@ -652,7 +660,7 @@ class Interventions extends DolibarrApi
 			throw new RestException(304, 'Nothing done. . May be object is already set as draft.');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when closing intervention: '.$this->fichinter->error);
+			throw new RestException(500, 'Error when closing intervention: '.$this->fichinter->errorsToString());
 		}
 
 		$this->fichinter->fetchObjectLinked();
@@ -693,7 +701,7 @@ class Interventions extends DolibarrApi
 
 		$result = $this->fichinter->add_contact($fk_socpeople, $type_contact, $source, $notrigger);
 		if ($result < 0) {
-			throw new RestException(500, 'Error : '.$this->fichinter->error);
+			throw new RestException(500, 'Error : '.$this->fichinter->errorsToString());
 		}
 
 		$result = $this->fichinter->fetch($id);
@@ -829,6 +837,9 @@ class Interventions extends DolibarrApi
 		if ($objectline->fetch($lineid) <= 0) {
 			throw new RestException(404, 'Intervention line not found');
 		}
+		if ($objectline->fk_fichinter != $this->fichinter->id) {
+			throw new RestException(403, 'Line does not belong to this intervention');
+		}
 		$request_data = (object) $request_data;
 
 		if (isset($request_data->desc) || isset($request_data->description)) {
@@ -851,10 +862,10 @@ class Interventions extends DolibarrApi
 			if ($result > 0) {
 				return $this->_cleanObjectDatas($this->fichinter);
 			} else {
-				throw new RestException(500, $this->fichinter->error);
+				throw new RestException(500, $this->fichinter->errorsToString());
 			}
 		} else {
-			throw new RestException(500, $objectline->error);
+			throw new RestException(500, $objectline->errorsToString());
 		}
 	}
 

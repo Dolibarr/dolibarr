@@ -55,5 +55,5 @@ create table llx_don
   model_pdf       varchar(255),
   import_key      varchar(14),
   extraparams	    varchar(255),							-- for other parameters with json format
-  ip              varchar(250)              --ip used to create record (for public submission page)
+  ip              varchar(250)              -- ip used to create record (for public submission page)
 )ENGINE=innodb;

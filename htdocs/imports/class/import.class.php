@@ -117,7 +117,7 @@ class Import
 	public $array_import_updatekeys;
 
 	/**
-	 * @var array<''|array<string,string>>
+	 * @var array<int,string[]>	Update keys preselected on the screen, as field aliases
 	 */
 	public $array_import_preselected_updatekeys;
 
@@ -286,8 +286,7 @@ class Import
 						// Array of columns allowed as UPDATE options
 						$this->array_import_updatekeys[$i] = (isset($module->import_updatekeys_array[$r]) ? $module->import_updatekeys_array[$r] : '');
 						// Array of columns preselected as UPDATE options
-						// import_preselected_updatekeys_array does not exist - backward compatibility ?  @phan-suppress-next-line PhanUndeclaredProperty
-						$this->array_import_preselected_updatekeys[$i] = (isset($module->import_preselected_updatekeys_array[$r]) ? $module->import_preselected_updatekeys_array[$r] : '');
+						$this->array_import_preselected_updatekeys[$i] = (isset($module->import_preselected_updatekeys_array[$r]) ? $module->import_preselected_updatekeys_array[$r] : array());
 						// Array of examples
 						$this->array_import_examplevalues[$i] = (isset($module->import_examplevalues_array[$r]) ? $module->import_examplevalues_array[$r] : '');
 						// Table of conversion rules for a value from another source (key=field, value=array of rules)

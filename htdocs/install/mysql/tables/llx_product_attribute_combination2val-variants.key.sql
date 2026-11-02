@@ -19,3 +19,8 @@
 ALTER TABLE llx_product_attribute_combination2val ADD INDEX idx_product_att_com2v_prod_combination (fk_prod_combination);
 ALTER TABLE llx_product_attribute_combination2val ADD INDEX idx_product_att_com2v_prod_attr (fk_prod_attr);
 ALTER TABLE llx_product_attribute_combination2val ADD INDEX idx_product_att_com2v_prod_attr_val (fk_prod_attr_val);
+ALTER TABLE llx_product_attribute_combination2val ADD UNIQUE INDEX uk_product_att_com2v (fk_prod_combination, fk_prod_attr);
+
+ALTER TABLE llx_product_attribute_combination2val ADD CONSTRAINT fk_product_att_com2v_prod_combination FOREIGN KEY (fk_prod_combination) REFERENCES llx_product_attribute_combination (rowid);
+ALTER TABLE llx_product_attribute_combination2val ADD CONSTRAINT fk_product_att_com2v_prod_attr FOREIGN KEY (fk_prod_attr) REFERENCES llx_product_attribute (rowid);
+ALTER TABLE llx_product_attribute_combination2val ADD CONSTRAINT fk_product_att_com2v_prod_attr_val FOREIGN KEY (fk_prod_attr_val) REFERENCES llx_product_attribute_value (rowid);

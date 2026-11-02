@@ -64,7 +64,7 @@ if (!isModEnabled('incoterm')) {
  * View
  */
 
-// Ajout directives pour resoudre bug IE
+// Add directives to fix IE bug
 //header('Cache-Control: Public, must-revalidate');
 //header('Pragma: public');
 

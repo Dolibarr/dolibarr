@@ -23,14 +23,11 @@
 
 /**
  *      \file       htdocs/admin/system/phpinfo.php
- *		\brief      Page des infos systeme de php
+ *		\brief      Page of PHP system information
  */
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,8 +35,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-$langs->loadLangs(array("admin", "install", "errors"));
+$langs->loadLangs(array("admin", "install"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -98,8 +97,11 @@ if ($maxphp > 0 && $maxphp2 > 0 && $maxphp > $maxphp2) {
 }
 
 
+// Get php_info array
+$phparray = phpinfo_array();
+
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td></td></tr>';
+print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Summary").'</td><td></td></tr>';
 
 print '<tr><td>'.$langs->trans("Version").'</td><td>';
 
@@ -133,13 +135,11 @@ if (!function_exists("session_id")) {
 }
 print '</td></tr>';
 
-print '<tr><td>UTF-8 support</td><td>';
-if (!function_exists("utf8_encode")) {
-	print img_picto('Warning', 'warning').' '.$langs->trans("ErrorPHPDoesNotSupport", "UTF8");
-} else {
-	print img_picto('Ok', 'tick').' '.$langs->trans("PHPSupport", "UTF8");
+foreach (array('Loaded Configuration File', 'Scan this dir for additional .ini files') as $keyparam) {
+	print '<tr><td>'.dolPrintLabel($keyparam).'</td><td>';
+	print dolPrintLabel(empty($phparray['General'][$keyparam]) ? '' : $phparray['General'][$keyparam]);
+	print '</td></tr>';
 }
-print '</td></tr>';
 
 print '</table>';
 
@@ -153,6 +153,16 @@ print '<tr class="liste_titre">';
 print '<td class="titlefield">'.$langs->trans("Extension").'</td>';
 print '<td>'.$langs->trans("Test").'</td>';
 print '</tr>';
+
+if ($db->type == 'mysqli') {
+	$functions = ["mysqli_connect"];
+	$name      = "MySQLi";
+
+	print "<tr>";
+	print "<td>".$name."</td>";
+	print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
+	print "</tr>";
+}
 
 $functions = ["mb_check_encoding"];
 $name      = "MBString";
@@ -256,8 +266,7 @@ print '</table>';
 
 print '<br>';
 
-// Get php_info array
-$phparray = phpinfo_array();
+// Show php_info array
 foreach ($phparray as $key => $value) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder">';
@@ -387,6 +396,7 @@ function getResultColumn($name, array $activated, array $loaded, array $function
 		} else {
 			//$html .= ' '.$langs->trans("NotLoaded").' - ';
 		}
+		$langs->load('errors');
 		$html .= ' '.$langs->trans("ErrorPHPDoesNotSupport", $name);
 		if ($optional) {
 			$html .= ' <span class="opacitymedium">'.$optional.'</span>';

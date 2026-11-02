@@ -88,11 +88,11 @@ class ProductFournisseurPrice extends CommonObject
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => '1', 'position' => 15, 'notnull' => 1, 'visible' => -2, 'default' => '1', 'index' => 1,),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => '1', 'position' => 20, 'notnull' => 0, 'visible' => -1,),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => '1', 'position' => 25, 'notnull' => 1, 'visible' => -1,),
-		'fk_product' => array('type' => 'integer:Product:product/class/product.class.php:1', 'label' => 'Fkproduct', 'enabled' => '1', 'position' => 30, 'notnull' => 0, 'visible' => -1,),
+		'fk_product' => array('type' => 'integer:Product:product/class/product.class.php:1', 'label' => 'Product', 'enabled' => '1', 'position' => 30, 'notnull' => 0, 'visible' => -1,),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => '1', 'position' => 35, 'notnull' => 0, 'visible' => -1,),
 		'ref_fourn' => array('type' => 'varchar(255)', 'label' => 'Reffourn', 'enabled' => '1', 'position' => 40, 'notnull' => 0, 'visible' => -1,),
 		'desc_fourn' => array('type' => 'text', 'label' => 'Descfourn', 'enabled' => '1', 'position' => 45, 'notnull' => 0, 'visible' => -1,),
-		'fk_availability' => array('type' => 'integer', 'label' => 'Fkavailability', 'enabled' => '1', 'position' => 50, 'notnull' => 0, 'visible' => -1,),
+		'fk_availability' => array('type' => 'integer', 'label' => 'Availability', 'enabled' => '1', 'position' => 50, 'notnull' => 0, 'visible' => -1,),
 		'price' => array('type' => 'double(24,8)', 'label' => 'Price', 'enabled' => '1', 'position' => 55, 'notnull' => 0, 'visible' => -1,),
 		'quantity' => array('type' => 'double', 'label' => 'Quantity', 'enabled' => '1', 'position' => 60, 'notnull' => 0, 'visible' => -1,),
 		'remise_percent' => array('type' => 'double', 'label' => 'Remisepercent', 'enabled' => '1', 'position' => 65, 'notnull' => 1, 'visible' => -1,),
@@ -102,12 +102,12 @@ class ProductFournisseurPrice extends CommonObject
 		'default_vat_code' => array('type' => 'varchar(10)', 'label' => 'Defaultvatcode', 'enabled' => '1', 'position' => 85, 'notnull' => 0, 'visible' => -1,),
 		'tva_tx' => array('type' => 'double(6,3)', 'label' => 'Tvatx', 'enabled' => '1', 'position' => 90, 'notnull' => 1, 'visible' => -1,),
 		'info_bits' => array('type' => 'integer', 'label' => 'Infobits', 'enabled' => '1', 'position' => 95, 'notnull' => 1, 'visible' => -1,),
-		'fk_user' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fkuser', 'enabled' => '1', 'position' => 100, 'notnull' => 0, 'visible' => -1,),
-		'fk_supplier_price_expression' => array('type' => 'integer', 'label' => 'Fksupplierpriceexpression', 'enabled' => '1', 'position' => 105, 'notnull' => 0, 'visible' => -1,),
+		'fk_user' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => '1', 'position' => 100, 'notnull' => 0, 'visible' => -1,),
+		'fk_supplier_price_expression' => array('type' => 'integer', 'label' => 'PriceExpression', 'enabled' => '1', 'position' => 105, 'notnull' => 0, 'visible' => -1,),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => '1', 'position' => 900, 'notnull' => 0, 'visible' => -2,),
 		'delivery_time_days' => array('type' => 'integer', 'label' => 'Deliverytimedays', 'enabled' => '1', 'position' => 115, 'notnull' => 0, 'visible' => -1,),
 		'supplier_reputation' => array('type' => 'varchar(10)', 'label' => 'Supplierreputation', 'enabled' => '1', 'position' => 120, 'notnull' => 0, 'visible' => -1,),
-		'fk_multicurrency' => array('type' => 'integer', 'label' => 'Fkmulticurrency', 'enabled' => '1', 'position' => 125, 'notnull' => 0, 'visible' => -1,),
+		'fk_multicurrency' => array('type' => 'integer', 'label' => 'Currency', 'enabled' => '1', 'position' => 125, 'notnull' => 0, 'visible' => -1,),
 		'multicurrency_code' => array('type' => 'varchar(255)', 'label' => 'Multicurrencycode', 'enabled' => '1', 'position' => 130, 'notnull' => 0, 'visible' => -1,),
 		'multicurrency_tx' => array('type' => 'double(24,8)', 'label' => 'Multicurrencytx', 'enabled' => '1', 'position' => 135, 'notnull' => 0, 'visible' => -1,),
 		'multicurrency_price' => array('type' => 'double(24,8)', 'label' => 'Multicurrencyprice', 'enabled' => '1', 'position' => 140, 'notnull' => 0, 'visible' => -1,),
@@ -117,7 +117,7 @@ class ProductFournisseurPrice extends CommonObject
 		'localtax2_tx' => array('type' => 'double(6,3)', 'label' => 'Localtax2tx', 'enabled' => '1', 'position' => 160, 'notnull' => 0, 'visible' => -1,),
 		'localtax2_type' => array('type' => 'varchar(10)', 'label' => 'Localtax2type', 'enabled' => '1', 'position' => 165, 'notnull' => 1, 'visible' => -1,),
 		'barcode' => array('type' => 'varchar(180)', 'label' => 'Barcode', 'enabled' => '1', 'position' => 170, 'notnull' => 0, 'visible' => -1,),
-		'fk_barcode_type' => array('type' => 'integer', 'label' => 'Fkbarcodetype', 'enabled' => '1', 'position' => 175, 'notnull' => 0, 'visible' => -1,),
+		'fk_barcode_type' => array('type' => 'integer', 'label' => 'BarcodeType', 'enabled' => '1', 'position' => 175, 'notnull' => 0, 'visible' => -1,),
 		'packaging' => array('type' => 'varchar(64)', 'label' => 'Packaging', 'enabled' => '1', 'position' => 180, 'notnull' => 0, 'visible' => -1,),
 	);
 	/**
@@ -374,15 +374,6 @@ class ProductFournisseurPrice extends CommonObject
 			}
 		}
 
-		if (!$error) {
-			// copy external contacts if same company
-			if (property_exists($this, 'socid') && $this->socid == $object->socid) {
-				if ($this->copy_linked_contact($object, 'external') < 0) {
-					$error++;
-				}
-			}
-		}
-
 		unset($object->context['createfromclone']);
 
 		// End
@@ -449,7 +440,7 @@ class ProductFournisseurPrice extends CommonObject
 				}
 			}
 			if (count($sqlwhere) > 0) {
-				$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+				$sql .= ' AND ('.implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere).')';
 			}
 
 			$filter = '';
@@ -540,130 +531,6 @@ class ProductFournisseurPrice extends CommonObject
 
 		$this->db->commit();
 		return $result;
-	}
-
-	/**
-	 *	Validate object
-	 *
-	 *	@param		User	$user     		User making status change
-	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return  	int						Return integer <=0 if OK, 0=Nothing done, >0 if KO
-	 */
-	public function validate($user, $notrigger = 0)
-	{
-		global $conf;
-
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-		$error = 0;
-
-		// Protection
-		if ($this->status == self::STATUS_VALIDATED) {
-			dol_syslog(get_class($this)."::validate action abandoned: already validated", LOG_WARNING);
-			return 0;
-		}
-
-		$now = dol_now();
-
-		$this->db->begin();
-
-		// Define new ref
-		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
-			$num = $this->getNextNumRef();
-		} else {
-			$num = (string) $this->ref;
-		}
-		$this->newref = $num;
-
-		if (!empty($num)) {
-			// Validate
-			$sql = "UPDATE ".$this->db->prefix().$this->table_element;
-			$sql .= " SET ref = '".$this->db->escape($num)."',";
-			$sql .= " status = ".self::STATUS_VALIDATED;
-			if (!empty($this->fields['date_validation'])) {
-				$sql .= ", date_validation = '".$this->db->idate($now)."'";
-			}
-			if (!empty($this->fields['fk_user_valid'])) {
-				$sql .= ", fk_user_valid = ".((int) $user->id);
-			}
-			$sql .= " WHERE rowid = ".((int) $this->id);
-
-			dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				dol_print_error($this->db);
-				$this->error = $this->db->lasterror();
-				$error++;
-			}
-
-			if (!$error && !$notrigger) {
-				// Call trigger
-				$result = $this->call_trigger('PRODUCTFOURNISSEURPRICE_VALIDATE', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
-			}
-		}
-
-		if (!$error) {
-			$this->oldref = $this->ref;
-
-			// Rename directory if dir was a temporary ref
-			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
-				// Now we rename also files into index
-				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'productfournisseurprice/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'productfournisseurprice/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
-				$resql = $this->db->query($sql);
-				if (!$resql) {
-					$error++;
-					$this->error = $this->db->lasterror();
-				}
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'productfournisseurprice/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filepath = 'productfournisseurprice/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
-				$resql = $this->db->query($sql);
-				if (!$resql) {
-					$error++;
-					$this->error = $this->db->lasterror();
-				}
-
-				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
-				$oldref = dol_sanitizeFileName($this->ref);
-				$newref = dol_sanitizeFileName($num);
-				$dirsource = $conf->buypricehistory->dir_output.'/productfournisseurprice/'.$oldref;
-				$dirdest = $conf->buypricehistory->dir_output.'/productfournisseurprice/'.$newref;
-				if (!$error && file_exists($dirsource)) {
-					dol_syslog(get_class($this)."::validate() rename dir ".$dirsource." into ".$dirdest);
-
-					if (@rename($dirsource, $dirdest)) {
-						dol_syslog("Rename ok");
-						// Rename docs starting with $oldref with $newref
-						$listoffiles = dol_dir_list($conf->buypricehistory->dir_output.'/productfournisseurprice/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
-						foreach ($listoffiles as $fileentry) {
-							$dirsource = $fileentry['name'];
-							$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
-							$dirsource = $fileentry['path'].'/'.$dirsource;
-							$dirdest = $fileentry['path'].'/'.$dirdest;
-							@rename($dirsource, $dirdest);
-						}
-					}
-				}
-			}
-		}
-
-		// Set new ref and current status
-		if (!$error) {
-			$this->ref = $num;
-			$this->status = self::STATUS_VALIDATED;
-		}
-
-		if (!$error) {
-			$this->db->commit();
-			return 1;
-		} else {
-			$this->db->rollback();
-			return -1;
-		}
 	}
 
 
@@ -791,7 +658,7 @@ class ProductFournisseurPrice extends CommonObject
 				if (!empty($filename)) {
 					$pospoint = strpos($filearray[0]['name'], '.');
 
-					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
+					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.dol_substr($filename, 0, $pospoint).'_mini'.dol_substr($filename, $pospoint);
 					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
@@ -908,62 +775,6 @@ class ProductFournisseurPrice extends CommonObject
 	public function initAsSpecimen()
 	{
 		return $this->initAsSpecimenCommon();
-	}
-
-	/**
-	 *  Returns the reference to the following non used object depending on the active numbering module.
-	 *
-	 *  @return string      		Object free reference
-	 */
-	public function getNextNumRef()
-	{
-		global $langs, $conf;
-		$langs->load("buypricehistory@buypricehistory");
-
-		if (!getDolGlobalString('BUYPRICEHISTORY_PRODUCTFOURNISSEURPRICE_ADDON')) {
-			$conf->global->BUYPRICEHISTORY_PRODUCTFOURNISSEURPRICE_ADDON = 'mod_productfournisseurprice_standard';
-		}
-
-		if (getDolGlobalString('BUYPRICEHISTORY_PRODUCTFOURNISSEURPRICE_ADDON')) {
-			$mybool = false;
-
-			$file = getDolGlobalString('BUYPRICEHISTORY_PRODUCTFOURNISSEURPRICE_ADDON') . ".php";
-			$classname = getDolGlobalString('BUYPRICEHISTORY_PRODUCTFOURNISSEURPRICE_ADDON');
-
-			// Include file with class
-			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-			foreach ($dirmodels as $reldir) {
-				$dir = dol_buildpath($reldir."core/modules/buypricehistory/");
-
-				// Load file with numbering class (if found)
-				$mybool = ((bool) @include_once $dir.$file) || $mybool;
-			}
-
-			if (!$mybool) {
-				dol_print_error(null, "Failed to include file ".$file);
-				return '';
-			}
-
-			if (class_exists($classname)) {
-				$obj = new $classname();
-				'@phan-var-force CommonNumRefGenerator $obj';
-				$numref = $obj->getNextValue($this);
-
-				if ($numref != '' && $numref != '-1') {
-					return $numref;
-				} else {
-					$this->error = $obj->error;
-					//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
-					return "";
-				}
-			} else {
-				print $langs->trans("Error")." ".$langs->trans("ClassNotFound").' '.$classname;
-				return "";
-			}
-		} else {
-			print $langs->trans("ErrorNumberingModuleNotSetup", $this->element);
-			return "";
-		}
 	}
 
 	/**

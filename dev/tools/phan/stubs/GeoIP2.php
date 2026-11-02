@@ -299,7 +299,7 @@ namespace GeoIp2\Exception {
 		/**
 		 * The URI queried.
 		 */
-		public string $uri;
+		public $uri;
 		public function __construct(string $message, int $httpStatus, string $uri, \Exception $previous = null)
 		{
 		}
@@ -313,7 +313,7 @@ namespace GeoIp2\Exception {
 		/**
 		 * The code returned by the MaxMind web service.
 		 */
-		public string $error;
+		public $error;
 		public function __construct(string $message, string $error, int $httpStatus, string $uri, \Exception $previous = null)
 		{
 		}
@@ -337,45 +337,45 @@ namespace GeoIp2\Model {
 		 * @var bool this is true if the IP address belongs to
 		 *           any sort of anonymous network
 		 */
-		public readonly bool $isAnonymous;
+		public $isAnonymous;
 		/**
 		 * @var bool This is true if the IP address is
 		 *           registered to an anonymous VPN provider. If a VPN provider does not
 		 *           register subnets under names associated with them, we will likely only
 		 *           flag their IP ranges using the isHostingProvider property.
 		 */
-		public readonly bool $isAnonymousVpn;
+		public $isAnonymousVpn;
 		/**
 		 * @var bool this is true if the IP address belongs
 		 *           to a hosting or VPN provider (see description of isAnonymousVpn property)
 		 */
-		public readonly bool $isHostingProvider;
+		public $isHostingProvider;
 		/**
 		 * @var bool this is true if the IP address belongs to
 		 *           a public proxy
 		 */
-		public readonly bool $isPublicProxy;
+		public $isPublicProxy;
 		/**
 		 * @var bool this is true if the IP address is
 		 *           on a suspected anonymizing network and belongs to a residential ISP
 		 */
-		public readonly bool $isResidentialProxy;
+		public $isResidentialProxy;
 		/**
 		 * @var bool this is true if the IP address is a Tor
 		 *           exit node
 		 */
-		public readonly bool $isTorExitNode;
+		public $isTorExitNode;
 		/**
 		 * @var string the IP address that the data in the model is
 		 *             for
 		 */
-		public readonly string $ipAddress;
+		public $ipAddress;
 		/**
 		 * @var string The network in CIDR notation associated with
 		 *             the record. In particular, this is the largest network where all of the
 		 *             fields besides $ipAddress have the same value.
 		 */
-		public readonly string $network;
+		public $network;
 		/**
 		 * @ignore
 		 */
@@ -395,24 +395,24 @@ namespace GeoIp2\Model {
 		 * @var int|null the autonomous system number
 		 *               associated with the IP address
 		 */
-		public readonly ?int $autonomousSystemNumber;
+		public $autonomousSystemNumber;
 		/**
 		 * @var string|null the organization
 		 *                  associated with the registered autonomous system number for the IP
 		 *                  address
 		 */
-		public readonly ?string $autonomousSystemOrganization;
+		public $autonomousSystemOrganization;
 		/**
 		 * @var string the IP address that the data in the model is
 		 *             for
 		 */
-		public readonly string $ipAddress;
+		public $ipAddress;
 		/**
 		 * @var string The network in CIDR notation associated with
 		 *             the record. In particular, this is the largest network where all of the
 		 *             fields besides $ipAddress have the same value.
 		 */
-		public readonly string $network;
+		public $network;
 		/**
 		 * @ignore
 		 */
@@ -434,36 +434,36 @@ namespace GeoIp2\Model {
 		 * @var \GeoIp2\Record\Continent continent data for the
 		 *                               requested IP address
 		 */
-		public readonly \GeoIp2\Record\Continent $continent;
+		public $continent;
 		/**
 		 * @var \GeoIp2\Record\Country Country data for the requested
 		 *                             IP address. This object represents the country where MaxMind believes the
 		 *                             end user is located.
 		 */
-		public readonly \GeoIp2\Record\Country $country;
+		public $country;
 		/**
 		 * @var \GeoIp2\Record\MaxMind data related to your MaxMind
 		 *                             account
 		 */
-		public readonly \GeoIp2\Record\MaxMind $maxmind;
+		public $maxmind;
 		/**
 		 * @var \GeoIp2\Record\Country Registered country
 		 *                             data for the requested IP address. This record represents the country
 		 *                             where the ISP has registered a given IP block and may differ from the
 		 *                             user's country.
 		 */
-		public readonly \GeoIp2\Record\Country $registeredCountry;
+		public $registeredCountry;
 		/**
 		 * @var \GeoIp2\Record\RepresentedCountry * Represented country data for the requested IP address. The represented
 		 *                                        country is used for things like military bases. It is only present when
 		 *                                        the represented country differs from the country.
 		 */
-		public readonly \GeoIp2\Record\RepresentedCountry $representedCountry;
+		public $representedCountry;
 		/**
 		 * @var \GeoIp2\Record\Traits data for the traits of the
 		 *                            requested IP address
 		 */
-		public readonly \GeoIp2\Record\Traits $traits;
+		public $traits;
 		/**
 		 * @ignore
 		 */
@@ -487,24 +487,24 @@ namespace GeoIp2\Model {
 		 * @var \GeoIp2\Record\City city data for the requested IP
 		 *                          address
 		 */
-		public readonly \GeoIp2\Record\City $city;
+		public $city;
 		/**
 		 * @var \GeoIp2\Record\Location location data for the
 		 *                              requested IP address
 		 */
-		public readonly \GeoIp2\Record\Location $location;
+		public $location;
 		/**
 		 * @var \GeoIp2\Record\Subdivision An object
 		 *                                 representing the most specific subdivision returned. If the response
 		 *                                 did not contain any subdivisions, this method returns an empty
 		 *                                 \GeoIp2\Record\Subdivision object.
 		 */
-		public readonly \GeoIp2\Record\Subdivision $mostSpecificSubdivision;
+		public $mostSpecificSubdivision;
 		/**
 		 * @var \GeoIp2\Record\Postal postal data for the
 		 *                            requested IP address
 		 */
-		public readonly \GeoIp2\Record\Postal $postal;
+		public $postal;
 		/**
 		 * @var array<\GeoIp2\Record\Subdivision> An array of \GeoIp2\Record\Subdivision
 		 *                                        objects representing the country subdivisions for the requested IP
@@ -514,7 +514,7 @@ namespace GeoIp2\Model {
 		 *                                        If the response did not contain any subdivisions, this method returns
 		 *                                        an empty array.
 		 */
-		public readonly array $subdivisions;
+		public $subdivisions;
 		/**
 		 * @ignore
 		 */
@@ -535,18 +535,18 @@ namespace GeoIp2\Model {
 		 *                  following values: "Dialup", "Cable/DSL", "Corporate", "Cellular", and
 		 *                  "Satellite". Additional values may be added in the future.
 		 */
-		public readonly ?string $connectionType;
+		public $connectionType;
 		/**
 		 * @var string the IP address that the data in the model is
 		 *             for
 		 */
-		public readonly string $ipAddress;
+		public $ipAddress;
 		/**
 		 * @var string The network in CIDR notation associated with
 		 *             the record. In particular, this is the largest network where all of the
 		 *             fields besides $ipAddress have the same value.
 		 */
-		public readonly string $network;
+		public $network;
 		/**
 		 * @ignore
 		 */
@@ -567,18 +567,18 @@ namespace GeoIp2\Model {
 		 *                  IP address. This will be something like "example.com" or
 		 *                  "example.co.uk", not "foo.example.com".
 		 */
-		public readonly ?string $domain;
+		public $domain;
 		/**
 		 * @var string the IP address that the data in the model is
 		 *             for
 		 */
-		public readonly string $ipAddress;
+		public $ipAddress;
 		/**
 		 * @var string The network in CIDR notation associated with
 		 *             the record. In particular, this is the largest network where all of the
 		 *             fields besides $ipAddress have the same value.
 		 */
-		public readonly string $network;
+		public $network;
 		/**
 		 * @ignore
 		 */
@@ -618,46 +618,46 @@ namespace GeoIp2\Model {
 		 * @var int|null the autonomous system number
 		 *               associated with the IP address
 		 */
-		public readonly ?int $autonomousSystemNumber;
+		public $autonomousSystemNumber;
 		/**
 		 * @var string|null the organization
 		 *                  associated with the registered autonomous system number for the IP
 		 *                  address
 		 */
-		public readonly ?string $autonomousSystemOrganization;
+		public $autonomousSystemOrganization;
 		/**
 		 * @var string|null the name of the ISP associated with the IP
 		 *                  address
 		 */
-		public readonly ?string $isp;
+		public $isp;
 		/**
 		 * @var string|null The [mobile country code
 		 *                  (MCC)](https://en.wikipedia.org/wiki/Mobile_country_code) associated with
 		 *                  the IP address and ISP.
 		 */
-		public readonly ?string $mobileCountryCode;
+		public $mobileCountryCode;
 		/**
 		 * @var string|null The [mobile network code
 		 *                  (MNC)](https://en.wikipedia.org/wiki/Mobile_country_code) associated with
 		 *                  the IP address and ISP.
 		 */
-		public readonly ?string $mobileNetworkCode;
+		public $mobileNetworkCode;
 		/**
 		 * @var string|null the name of the organization associated
 		 *                  with the IP address
 		 */
-		public readonly ?string $organization;
+		public $organization;
 		/**
 		 * @var string the IP address that the data in the model is
 		 *             for
 		 */
-		public readonly string $ipAddress;
+		public $ipAddress;
 		/**
 		 * @var string The network in CIDR notation associated with
 		 *             the record. In particular, this is the largest network where all of the
 		 *             fields besides $ipAddress have the same value.
 		 */
-		public readonly string $network;
+		public $network;
 		/**
 		 * @ignore
 		 */
@@ -678,13 +678,13 @@ namespace GeoIp2\Record {
 		 *                  passed to the constructor. This attribute is returned by all location
 		 *                  services and databases.
 		 */
-		public readonly ?string $name;
+		public $name;
 		/**
 		 * @var array An array map where the keys are locale codes
 		 *            and the values are names. This attribute is returned by all location
 		 *            services and databases.
 		 */
-		public readonly array $names;
+		public $names;
 		/**
 		 * @ignore
 		 */
@@ -702,12 +702,12 @@ namespace GeoIp2\Record {
 		 *               confidence that the location level is correct. This attribute is only available
 		 *               from the Insights service and the GeoIP2 Enterprise database.
 		 */
-		public readonly ?int $confidence;
+		public $confidence;
 		/**
 		 * @var int|null The GeoName ID for the location level. This attribute
 		 *               is returned by all location services and databases.
 		 */
-		public readonly ?int $geonameId;
+		public $geonameId;
 		/**
 		 * @ignore
 		 */
@@ -740,12 +740,12 @@ namespace GeoIp2\Record {
 		 *                  America) or "OC" (Oceania). This attribute is returned by all location
 		 *                  services and databases.
 		 */
-		public readonly ?string $code;
+		public $code;
 		/**
 		 * @var int|null The GeoName ID for the continent. This
 		 *               attribute is returned by all location services and databases.
 		 */
-		public readonly ?int $geonameId;
+		public $geonameId;
 		/**
 		 * @ignore
 		 */
@@ -768,13 +768,13 @@ namespace GeoIp2\Record {
 		 *           member state of the European Union. This attribute is returned by all
 		 *           location services and databases.
 		 */
-		public readonly bool $isInEuropeanUnion;
+		public $isInEuropeanUnion;
 		/**
 		 * @var string|null The two-character ISO 3166-1 alpha code
 		 *                  for the country. See https://en.wikipedia.org/wiki/ISO_3166-1. This
 		 *                  attribute is returned by all location services and databases.
 		 */
-		public readonly ?string $isoCode;
+		public $isoCode;
 		/**
 		 * @ignore
 		 */
@@ -798,7 +798,7 @@ namespace GeoIp2\Record {
 		 *               associated with the requested IP address. This attribute is only available
 		 *               from the Insights service.
 		 */
-		public readonly ?int $averageIncome;
+		public $averageIncome;
 		/**
 		 * @var int|null The approximate accuracy radius in
 		 *               kilometers around the latitude and longitude for the IP address. This is
@@ -806,38 +806,38 @@ namespace GeoIp2\Record {
 		 *               address resides within the circle centered at the latitude and longitude
 		 *               with the provided radius.
 		 */
-		public readonly ?int $accuracyRadius;
+		public $accuracyRadius;
 		/**
 		 * @var float|null The approximate latitude of the location
 		 *                 associated with the IP address. This value is not precise and should not be
 		 *                 used to identify a particular address or household.
 		 */
-		public readonly ?float $latitude;
+		public $latitude;
 		/**
 		 * @var float|null The approximate longitude of the location
 		 *                 associated with the IP address. This value is not precise and should not be
 		 *                 used to identify a particular address or household.
 		 */
-		public readonly ?float $longitude;
+		public $longitude;
 		/**
 		 * @var int|null The metro code of the location if the location
 		 *               is in the US. MaxMind returns the same metro codes as the
 		 *               Google AdWords API. See
 		 *               https://developers.google.com/adwords/api/docs/appendix/cities-DMAregions.
 		 */
-		public readonly ?int $metroCode;
+		public $metroCode;
 		/**
 		 * @var int|null The estimated population per square
 		 *               kilometer associated with the IP address. This attribute is only available
 		 *               from the Insights service.
 		 */
-		public readonly ?int $populationDensity;
+		public $populationDensity;
 		/**
 		 * @var string|null The time zone associated with location, as
 		 *                  specified by the IANA Time Zone Database, e.g., "America/New_York". See
 		 *                  https://www.iana.org/time-zones.
 		 */
-		public readonly ?string $timeZone;
+		public $timeZone;
 		public function __construct(array $record)
 		{
 		}
@@ -856,7 +856,7 @@ namespace GeoIp2\Record {
 		 * @var int|null the number of remaining queries you
 		 *               have for the service you are calling
 		 */
-		public readonly ?int $queriesRemaining;
+		public $queriesRemaining;
 		public function __construct(array $record)
 		{
 		}
@@ -878,14 +878,14 @@ namespace GeoIp2\Record {
 		 *                  contain part of the postal code. This attribute is returned by all location
 		 *                  databases and services besides Country.
 		 */
-		public readonly ?string $code;
+		public $code;
 		/**
 		 * @var int|null A value from 0-100 indicating MaxMind's
 		 *               confidence that the postal code is correct. This attribute is only
 		 *               available from the Insights service and the GeoIP2 Enterprise
 		 *               database.
 		 */
-		public readonly ?int $confidence;
+		public $confidence;
 		/**
 		 * @ignore
 		 */
@@ -910,7 +910,7 @@ namespace GeoIp2\Record {
 		 *                  representing the country. Currently we only return <code>military</code>
 		 *                  but this could expand to include other types in the future.
 		 */
-		public readonly ?string $type;
+		public $type;
 		/**
 		 * @ignore
 		 */
@@ -935,7 +935,7 @@ namespace GeoIp2\Record {
 		 *                  https://en.wikipedia.org/wiki/ISO_3166-2. This attribute is returned by all
 		 *                  location databases and services except Country.
 		 */
-		public readonly ?string $isoCode;
+		public $isoCode;
 		/**
 		 * @ignore
 		 */
@@ -960,7 +960,7 @@ namespace GeoIp2\Record {
 		 *               is only available from the City Plus and Insights web services and the
 		 *               GeoIP2 Enterprise database.
 		 */
-		public readonly ?int $autonomousSystemNumber;
+		public $autonomousSystemNumber;
 		/**
 		 * @var string|null The organization
 		 *                  associated with the registered autonomous system number for the IP address.
@@ -968,7 +968,7 @@ namespace GeoIp2\Record {
 		 *                  attribute is only available from the City Plus and Insights web services and
 		 *                  the GeoIP2 Enterprise database.
 		 */
-		public readonly ?string $autonomousSystemOrganization;
+		public $autonomousSystemOrganization;
 		/**
 		 * @var string|null The connection type may take the
 		 *                  following  values: "Dialup", "Cable/DSL", "Corporate", "Cellular", and
@@ -976,7 +976,7 @@ namespace GeoIp2\Record {
 		 *                  only available from the City Plus and Insights web services and the GeoIP2
 		 *                  Enterprise database.
 		 */
-		public readonly ?string $connectionType;
+		public $connectionType;
 		/**
 		 * @var string|null The second level domain associated with the
 		 *                  IP address. This will be something like "example.com" or "example.co.uk",
@@ -984,7 +984,7 @@ namespace GeoIp2\Record {
 		 *                  City Plus and Insights web services and the GeoIP2 Enterprise
 		 *                  database.
 		 */
-		public readonly ?string $domain;
+		public $domain;
 		/**
 		 * @var string|null The IP address that the data in the model
 		 *                  is for. If you performed a "me" lookup against the web service, this
@@ -993,13 +993,13 @@ namespace GeoIp2\Record {
 		 *                  address locally assigned to it. This attribute is returned by all end
 		 *                  points.
 		 */
-		public readonly ?string $ipAddress;
+		public $ipAddress;
 		/**
 		 * @var bool This is true if the IP address belongs to
 		 *           any sort of anonymous network. This property is only available from GeoIP2
 		 *           Insights.
 		 */
-		public readonly bool $isAnonymous;
+		public $isAnonymous;
 		/**
 		 * @var bool This is true if the IP address is
 		 *           registered to an anonymous VPN provider. If a VPN provider does not register
@@ -1007,87 +1007,87 @@ namespace GeoIp2\Record {
 		 *           ranges using the isHostingProvider property. This property is only available
 		 *           from GeoIP2 Insights.
 		 */
-		public readonly bool $isAnonymousVpn;
+		public $isAnonymousVpn;
 		/**
 		 * @var bool This is true if the IP address belongs to an [anycast
 		 *           network](https://en.wikipedia.org/wiki/Anycast). This property is not
 		 *           available from GeoLite databases or web services.
 		 */
-		public readonly bool $isAnycast;
+		public $isAnycast;
 		/**
 		 * @var bool This is true if the IP address belongs
 		 *           to a hosting or VPN provider (see description of isAnonymousVpn property).
 		 *           This property is only available from GeoIP2 Insights.
 		 */
-		public readonly bool $isHostingProvider;
+		public $isHostingProvider;
 		/**
 		 * @var bool This attribute is true if MaxMind
 		 *           believes this IP address to be a legitimate proxy, such as an internal
 		 *           VPN used by a corporation. This attribute is only available in the GeoIP2
 		 *           Enterprise database.
 		 */
-		public readonly bool $isLegitimateProxy;
+		public $isLegitimateProxy;
 		/**
 		 * @var bool This is true if the IP address belongs to
 		 *           a public proxy. This property is only available from GeoIP2 Insights.
 		 */
-		public readonly bool $isPublicProxy;
+		public $isPublicProxy;
 		/**
 		 * @var bool This is true if the IP address is
 		 *           on a suspected anonymizing network and belongs to a residential ISP. This
 		 *           property is only available from GeoIP2 Insights.
 		 */
-		public readonly bool $isResidentialProxy;
+		public $isResidentialProxy;
 		/**
 		 * @var bool This is true if the IP address is a Tor
 		 *           exit node. This property is only available from GeoIP2 Insights.
 		 */
-		public readonly bool $isTorExitNode;
+		public $isTorExitNode;
 		/**
 		 * @var string|null The name of the ISP associated with the IP
 		 *                  address. This attribute is only available from the City Plus and Insights
 		 *                  web services and the GeoIP2 Enterprise database.
 		 */
-		public readonly ?string $isp;
+		public $isp;
 		/**
 		 * @var string|null The [mobile country code
 		 *                  (MCC)](https://en.wikipedia.org/wiki/Mobile_country_code) associated with
 		 *                  the IP address and ISP. This property is available from the City Plus and
 		 *                  Insights web services and the GeoIP2 Enterprise database.
 		 */
-		public readonly ?string $mobileCountryCode;
+		public $mobileCountryCode;
 		/**
 		 * @var string|null The [mobile network code
 		 *                  (MNC)](https://en.wikipedia.org/wiki/Mobile_country_code) associated with
 		 *                  the IP address and ISP. This property is available from the City Plus and
 		 *                  Insights web services and the GeoIP2 Enterprise database.
 		 */
-		public readonly ?string $mobileNetworkCode;
+		public $mobileNetworkCode;
 		/**
 		 * @var string|null The network in CIDR notation associated with
 		 *                  the record. In particular, this is the largest network where all of the
 		 *                  fields besides $ipAddress have the same value.
 		 */
-		public readonly ?string $network;
+		public $network;
 		/**
 		 * @var string|null The name of the organization
 		 *                  associated with the IP address. This attribute is only available from the
 		 *                  City Plus and Insights web services and the GeoIP2 Enterprise database.
 		 */
-		public readonly ?string $organization;
+		public $organization;
 		/**
 		 * @var float|null An indicator of how static or
 		 *                 dynamic an IP address is. This property is only available from GeoIP2
 		 *                 Insights.
 		 */
-		public readonly ?float $staticIpScore;
+		public $staticIpScore;
 		/**
 		 * @var int|null The estimated number of users sharing
 		 *               the IP/network during the past 24 hours. For IPv4, the count is for the
 		 *               individual IP. For IPv6, the count is for the /64 network. This property is
 		 *               only available from GeoIP2 Insights.
 		 */
-		public readonly ?int $userCount;
+		public $userCount;
 		/**
 		 * @var string|null <p>The user type associated with the IP
 		 *  address. This can be one of the following values:</p>
@@ -1114,7 +1114,7 @@ namespace GeoIp2\Record {
 		 *   GeoIP2 Enterprise database.
 		 * </p>
 		 */
-		public readonly ?string $userType;
+		public $userType;
 		public function __construct(array $record)
 		{
 		}

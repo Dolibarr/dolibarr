@@ -5,7 +5,6 @@ SupplierInvoices=Τιμολόγια προμηθευτή
 ShowSupplierInvoice=Εμφάνιση τιμολογίου προμηθευτή
 NewSupplier=Νέος προμηθευτής
 NewSupplierInvoice = Νέο τιμολόγιο προμηθευτή
-History=Ιστορικό
 ListOfSuppliers=Λίστα προμηθευτών
 ShowSupplier=Εμφάνιση προμηθευτή
 BuyingPriceMin=Καλύτερη τιμή αγοράς

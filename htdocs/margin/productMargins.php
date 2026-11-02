@@ -3,7 +3,7 @@
  * Copyright (C) 2014		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2020		Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -196,13 +196,13 @@ if ($id > 0) {
 }
 // Special case for old situation mode: total_ht is stored cumulatively, use delta percent to avoid cumulating margins
 if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
-	$delta_pct = 'CASE WHEN f.type = '.Facture::TYPE_SITUATION.' AND d.situation_percent > 0 THEN (d.situation_percent - COALESCE(prev_d.situation_percent, 0)) ELSE d.situation_percent END';
-	$delta_ht = 'CASE WHEN f.type = '.Facture::TYPE_SITUATION.' AND d.situation_percent > 0 THEN d.total_ht * ((d.situation_percent - COALESCE(prev_d.situation_percent, 0)) / d.situation_percent) ELSE d.total_ht END';
-	$sql .= " SUM($delta_ht) as selling_price,";
+	$sql_delta_pct = 'CASE WHEN f.type = '.Facture::TYPE_SITUATION.' AND d.situation_percent > 0 THEN (d.situation_percent - COALESCE(prev_d.situation_percent, 0)) ELSE d.situation_percent END';
+	$sql_delta_ht = 'CASE WHEN f.type = '.Facture::TYPE_SITUATION.' AND d.situation_percent > 0 THEN d.total_ht * ((d.situation_percent - COALESCE(prev_d.situation_percent, 0)) / d.situation_percent) ELSE d.total_ht END';
+	$sql .= " SUM($sql_delta_ht) as selling_price,";
 	$sql .= " SUM(d.qty) as product_qty,";
 	// Note: qty and buy_price_ht is always positive (if not your database may be corrupted, you can update this)
-	$sql .= " SUM(".$db->ifsql('(d.total_ht < 0 OR (d.total_ht = 0 AND f.type = 2))', "-1 * d.qty * d.buy_price_ht * ($delta_pct / 100)", "d.qty * d.buy_price_ht * ($delta_pct / 100)").") as buying_price,";
-	$sql .= " SUM(".$db->ifsql('(d.total_ht < 0 OR (d.total_ht = 0 AND f.type = 2))', "-1 * (abs($delta_ht) - (d.buy_price_ht * d.qty * ($delta_pct / 100)))", "$delta_ht - (d.buy_price_ht * d.qty * ($delta_pct / 100))").") as marge";
+	$sql .= " SUM(".$db->ifsql('(d.total_ht < 0 OR (d.total_ht = 0 AND f.type = 2))', "-1 * d.qty * d.buy_price_ht * ($sql_delta_pct / 100)", "d.qty * d.buy_price_ht * ($sql_delta_pct / 100)").") as buying_price,";
+	$sql .= " SUM(".$db->ifsql('(d.total_ht < 0 OR (d.total_ht = 0 AND f.type = 2))', "-1 * (abs($sql_delta_ht) - (d.buy_price_ht * d.qty * ($sql_delta_pct / 100)))", "$sql_delta_ht - (d.buy_price_ht * d.qty * ($sql_delta_pct / 100))").") as marge";
 } else {
 	$sql .= " SUM(d.total_ht) as selling_price,";
 	$sql .= " SUM(d.qty) as product_qty,";

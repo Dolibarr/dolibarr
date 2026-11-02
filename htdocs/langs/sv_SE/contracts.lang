@@ -31,6 +31,10 @@ MenuClosedServices=Stängda tjänster
 NewContract=Nytt kontrakt
 NewContractSubscription=Nytt avtal eller prenumeration
 AddContract=Skapa kontrakt
+ContractType=Contract type
+CustomerContract=Customer contract
+SupplierContract=Supplier contract
+LastSupplierContracts=Latest %s supplier contracts
 DeleteAContract=Ta bort kontrakt
 ActivateAllOnContract=Aktivera alla tjänster
 CloseAContract=Stäng ett kontrakt
@@ -103,7 +107,13 @@ ConfirmCloneContract=Är du säker på att du vill klona kontraktet <b>%s</b>?
 LowerDateEndPlannedShort=Lägre planerat slutdatum för aktiva tjänster
 SendContractRef=Upphandlingsinformation __REF__
 OtherContracts=Övriga kontrakt
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Contract's statistics
+NbOfContracts=Nb of contracts
+NumberOfContractsByMonth=Number of contracts by month
+AmountOfServices=Number of services
+AmountOfServicesByMonthHT=Number of services (excl. tax) by month
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Säljare som tecknar avtal
 TypeContact_contrat_internal_SALESREPFOLL=Säljare som följer upp avtal
 TypeContact_contrat_external_BILLING=Fakturering kundkontakt
@@ -114,3 +124,7 @@ ShowClosedServices=Visa avslutade tjänster
 HideClosedServices=Dölj avslutade tjänster
 UserStartingService=Användarstarttjänst
 UserClosingService=Användarstängningstjänst
+SendReminderForExpiredServicesTitle=Send reminder by email for expiring contract services
+SendReminderForExpiredServices=Send reminder by email to the customer when a running contract service is about to expire (parameter is number of days before end of service to send the reminder. It can be a list of days separated by a semicolon, for example '10;5;0;-5'). The template of email to send is defined in setup of contract module.
+DescCONTRACT_EMAIL_TEMPLATE_REMIND_EXPIRATION=Email template to use to send email reminder when a contract service is about to expire
+ContractID=Contract ID

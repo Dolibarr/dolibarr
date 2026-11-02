@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2012-2013	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2019		Christophe Battarel <christophe@altairis.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doleditor.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'fckeditor', 'errors', 'website'));
+$langs->loadLangs(array('admin', 'fckeditor', 'website'));
 
 $action = GETPOST('action', 'aZ09');
 // Possible modes are:
@@ -73,7 +73,6 @@ $conditions = array(
 	'NOTE_PUBLIC' => 1,
 	'NOTE_PRIVATE' => 1,
 	'SOCIETE' => 1,
-	'PRODUCTDESC' => (isModEnabled("product") || isModEnabled("service")),
 	'DETAILS' => (isModEnabled('invoice') || isModEnabled("propal") || isModEnabled('order') || isModEnabled('supplier_proposal') || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")),
 	'USERSIGN' => 1,
 	'MAILING' => isModEnabled('mailing'),
@@ -86,7 +85,6 @@ $picto = array(
 	'NOTE_PUBLIC' => 'generic',
 	'NOTE_PRIVATE' => 'generic',
 	'SOCIETE' => 'generic',
-	'PRODUCTDESC' => 'product',
 	'DETAILS' => 'product',
 	'USERSIGN' => 'user',
 	'MAILING' => 'email',
@@ -104,11 +102,6 @@ $picto = array(
 foreach ($modules as $const => $desc) {
 	if ($action == 'enable_'.strtolower($const)) {
 		dolibarr_set_const($db, "FCKEDITOR_ENABLE_".$const, "1", 'chaine', 0, '', $conf->entity);
-
-		// If fckeditor is active in the product/service description, it is activated in the forms
-		if ($const == 'PRODUCTDESC' && getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
-			dolibarr_set_const($db, "FCKEDITOR_ENABLE_DETAILS", "1", 'chaine', 0, '', $conf->entity);
-		}
 	}
 	if ($action == 'disable_'.strtolower($const)) {
 		dolibarr_set_const($db, "FCKEDITOR_ENABLE_".$const, "0", 'chaine', 0, '', $conf->entity);
@@ -154,6 +147,7 @@ if (GETPOST('save', 'alpha')) {
 	if ($error == 0) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} elseif ($error == -1) {
+		$langs->load('errors');
 		setEventMessages($langs->trans("EmptyMessageNotAllowedError"), null, 'warnings');
 	} else {
 		setEventMessages($langs->trans("Error").' '.$db->lasterror(), null, 'errors');
@@ -227,7 +221,7 @@ if (empty($conf->use_javascript_ajax)) {
 
 	// Other options
 
-	print '<form name="formeditorbackend" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+	print '<form name="formeditorbackend" method="POST" action="'.$_SERVER["PHP_SELF"].'" spellcheck="false">'."\n";
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="setbackend">';
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
@@ -281,7 +275,7 @@ if (empty($conf->use_javascript_ajax)) {
 	print '<br><br><br>'."\n";
 
 
-	print '<form name="formtest" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+	print '<form name="formtest" method="POST" action="'.$_SERVER["PHP_SELF"].'" spellcheck="false">'."\n";
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="page_y" value="">';
 

@@ -186,7 +186,7 @@ ALTER TABLE llx_webhook_history ADD COLUMN error_message text;
 ALTER TABLE llx_extrafields ADD COLUMN emptyonclone integer DEFAULT 0 AFTER alwayseditable;
 
 ALTER TABLE llx_blockedlog ADD COLUMN object_format varchar(16) DEFAULT 'V1' AFTER object_version;
-UPDATE llx_blockedlog SET object_format = '' WHERE object_version = '18' OR object_version = ''  OR object_version IS NULL;
+UPDATE llx_blockedlog SET object_format = '' WHERE object_version = ''  OR object_version IS NULL;
 
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite, numeric_code) VALUES (248, 'BQ', 'BES', 'Bonaire, Sint Eustatius and Saba', 1, 0, 535);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite, numeric_code) VALUES (249, 'GP', 'GLP', 'Guadeloupe', 0, 0, 312);
@@ -419,6 +419,13 @@ ALTER TABLE llx_pos_cash_fence ADD COLUMN sec_close INTEGER DEFAULT null after m
 ALTER TABLE llx_pos_cash_fence ADD COLUMN cash_declared double(24,8) DEFAULT null;
 ALTER TABLE llx_pos_cash_fence ADD COLUMN card_declared double(24,8) DEFAULT null;
 ALTER TABLE llx_pos_cash_fence ADD COLUMN cheque_declared double(24,8) DEFAULT null;
+
+-- The declared amounts were stored in cash, card and cheque before this version, and the cash fence
+-- card now reads the _declared columns to show the final balance. Without this, every record closed
+-- before the upgrade shows 0. Rows already carrying a declared value are left untouched.
+UPDATE llx_pos_cash_fence SET cash_declared = cash WHERE cash_declared IS NULL;
+UPDATE llx_pos_cash_fence SET card_declared = card WHERE card_declared IS NULL;
+UPDATE llx_pos_cash_fence SET cheque_declared = cheque WHERE cheque_declared IS NULL;
 
 ALTER TABLE llx_pos_cash_fence ADD COLUMN cash_lifetime double(24,8) DEFAULT null;
 ALTER TABLE llx_pos_cash_fence ADD COLUMN card_lifetime double(24,8) DEFAULT null;

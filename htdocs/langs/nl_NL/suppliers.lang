@@ -5,7 +5,6 @@ SupplierInvoices=Inkoopfacturen
 ShowSupplierInvoice=Toon factuur van leverancier
 NewSupplier=Nieuwe leverancier
 NewSupplierInvoice = Nieuwe leveranciersfactuur
-History=Geschiedenis
 ListOfSuppliers=Leveranciersoverzicht
 ShowSupplier=Toon leverancier
 BuyingPriceMin=Voorkeur inkoopprijs

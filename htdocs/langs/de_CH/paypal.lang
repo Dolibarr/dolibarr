@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - paypal
-PaypalDesc=Dieses Modul erlaubt die Annahme von Zahlungen über <a href="http://www.paypal.com" target="_blank">PayPal</a>. Sie können damit Zahlungen in Dolibarr tätigen und empfangen.
 PaypalOrCBDoPayment=Mit Paypal bezahlen (Guthaben oder Kreditkarte)
 PaypalDoPayment=Mit PayPal bezahlen
 PAYPAL_API_SANDBOX=Testmoduds/Sandbox

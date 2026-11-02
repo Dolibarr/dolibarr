@@ -162,8 +162,8 @@ if ($result < 0) {
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.datev >= '".$db->escape($year)."-".$db->escape($month)."-01 00:00:00'";
-		$sql .= " AND b.datev < '".$db->escape($yearnext)."-".$db->escape($monthnext)."-01 00:00:00'";
+		$sql .= " AND b.datev >= '".$db->escape($year."-".$month."-01 00:00:00")."'";
+		$sql .= " AND b.datev < '".$db->escape($yearnext."-".$monthnext."-01 00:00:00")."'";
 		if ($account && GETPOST("option") != 'all') {
 			$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";
 		}
@@ -191,7 +191,7 @@ if ($result < 0) {
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.datev < '".$db->escape($year)."-".sprintf("%02s", $month)."-01'";
+		$sql .= " AND b.datev < '".$db->escape($year)."-".sprintf("%02u", ((int) $month))."-01'";
 		if ($account && GETPOST("option") != 'all') {
 			$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";
 		}
@@ -249,7 +249,7 @@ if ($result < 0) {
 		//var_dump($datas);
 		//exit;
 
-		// Fabrication tableau 1
+		// Build array 1
 		$file = $conf->bank->dir_temp."/balance".$account."-".$year.$month.".png";
 		$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/balance".$account."-".$year.$month.".png";
 		$title = $langs->transnoentities("Balance").' - '.$langs->transnoentities("Month").': '.$month.' '.$langs->transnoentities("Year").': '.$year;
@@ -580,8 +580,8 @@ if ($result < 0) {
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.datev >= '".$db->escape($year)."-".$db->escape($month)."-01 00:00:00'";
-		$sql .= " AND b.datev < '".$db->escape($yearnext)."-".$db->escape($monthnext)."-01 00:00:00'";
+		$sql .= " AND b.datev >= '".$db->escape($year."-".$month."-01 00:00:00")."'";
+		$sql .= " AND b.datev < '".$db->escape($yearnext."-".$monthnext."-01 00:00:00")."'";
 		$sql .= " AND b.amount > 0";
 		if ($account && GETPOST("option") != 'all') {
 			$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";
@@ -617,8 +617,8 @@ if ($result < 0) {
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.datev >= '".$db->escape($year)."-".$db->escape($month)."-01 00:00:00'";
-		$sql .= " AND b.datev < '".$db->escape($yearnext)."-".$db->escape($monthnext)."-01 00:00:00'";
+		$sql .= " AND b.datev >= '".$db->escape($year."-".$month."-01 00:00:00")."'";
+		$sql .= " AND b.datev < '".$db->escape($yearnext."-".$monthnext."-01 00:00:00")."'";
 		$sql .= " AND b.amount < 0";
 		if ($account && GETPOST("option") != 'all') {
 			$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";
@@ -647,7 +647,7 @@ if ($result < 0) {
 			$datamin[$i] = $object->min_desired;
 		}
 
-		// Fabrication tableau 4a
+		// Build array 4a
 		$file = $conf->bank->dir_temp."/movement".$account."-".$year.$month.".png";
 		$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/movement".$account."-".$year.$month.".png";
 		$title = $langs->transnoentities("BankMovements").' - '.$langs->transnoentities("Month").': '.$month.' '.$langs->transnoentities("Year").': '.$year;
@@ -748,7 +748,7 @@ if ($result < 0) {
 			$datamin[$i] = $object->min_desired;
 		}
 
-		// Fabrication tableau 4b
+		// Build array 4b
 		$file = $conf->bank->dir_temp."/movement".$account."-".$year.".png";
 		$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/movement".$account."-".$year.".png";
 		$title = $langs->transnoentities("BankMovements").' - '.$langs->transnoentities("Year").': '.$year;

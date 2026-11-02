@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2023	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010	Regis Houssin				<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2025		Jon Bendtsen                <jon.bendtsen.github@jonb.dk>
@@ -95,12 +95,37 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
+
+// Definition of array of fields for columns
+$arrayfields = array();
+/*
+foreach ($object->fields as $key => $val) {
+	// If $val['visible']==0, then we never show the field
+	if (!empty($val['visible'])) {
+		$visible = (int) dol_eval((string) $val['visible'], 1);
+		$arrayfields['m.'.$key] = array(
+			'label' => $val['label'],
+			'checked' => (($visible < 0) ? '0' : '1'),
+			'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
+			'position' => $val['position'],
+			'help' => isset($val['help']) ? $val['help'] : ''
+		);
+	}
+}
+*/
+// Extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
+
 // Default sort order (if not yet defined by previous GETPOST)
 if (!$sortorder) {
 	$sortorder = "DESC";
 }
 if (!$sortfield) {
-	$sortfield = "m.date_creat";
+	$sortfield = "m.date_creation";
 }
 
 // List of fields to search into when doing a "search in all"
@@ -189,7 +214,7 @@ $morecss = array();
 // Build and execute select
 // --------------------------------------------------------------------
 if ($filteremail) {
-	$sql = "SELECT m.rowid, m.messtype, m.titre as title, m.sujet as subject, m.nbemail, m.statut as status, m.date_creat as datec, m.date_envoi as date_envoi,";
+	$sql = "SELECT m.rowid, m.messtype, m.titre as title, m.sujet as subject, m.nbemail, m.statut as status, m.date_creation as datec, m.date_envoi as date_envoi,";
 	$sql .= " mc.statut as sendstatut,";
 	$sql .= " pr.rowid as project_id, pr.ref as project_ref, pr.title as project_label";
 
@@ -197,7 +222,7 @@ if ($filteremail) {
 
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing as m, ".MAIN_DB_PREFIX."mailing_cibles as mc";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr ON pr.rowid = m.fk_project";
-	$sql .= " WHERE m.rowid = mc.fk_mailing AND m.entity = ".$conf->entity;
+	$sql .= " WHERE m.rowid = mc.fk_mailing AND m.entity = ".((int) $conf->entity);
 	$sql .= " AND mc.email = '".$db->escape($filteremail)."'";
 	if ($search_ref) {
 		$sql .= natural_search("m.rowid", $search_ref, 1);
@@ -230,7 +255,7 @@ if ($filteremail) {
 		$sortfield = "m.rowid";
 	}
 } else {
-	$sql = "SELECT m.rowid, m.messtype, m.titre as title, m.sujet as subject, m.nbemail, m.statut as status, m.date_creat as datec, m.date_envoi as date_envoi,";
+	$sql = "SELECT m.rowid, m.messtype, m.titre as title, m.sujet as subject, m.nbemail, m.statut as status, m.date_creation as datec, m.date_envoi as date_envoi,";
 	$sql .= " pr.rowid as project_id, pr.ref as project_ref, pr.title as project_label";
 
 	$sqlfields = $sql; // $sql fields to remove for count total
@@ -604,7 +629,7 @@ print_liste_field_titre("Title", $_SERVER["PHP_SELF"], "m.titre", "", $param, ""
 $totalarray['nbfield']++;
 print_liste_field_titre("Subject", $_SERVER["PHP_SELF"], "m.sujet", "", $param, "", $sortfield, $sortorder);
 $totalarray['nbfield']++;
-print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "m.date_creat", "", $param, '', $sortfield, $sortorder, 'center ');
+print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "m.date_creation", "", $param, '', $sortfield, $sortorder, 'center ');
 $totalarray['nbfield']++;
 
 // Project

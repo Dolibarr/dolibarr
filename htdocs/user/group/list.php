@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2024	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Herve Prot				<herve.prot@symeos.com>
  * Copyright (C) 2019-2026  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,6 +90,9 @@ if (!$sortorder) {
 }
 
 $arrayfields = array();
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
@@ -111,10 +114,11 @@ if (!$user->hasRight("user", "user", "read") && !$user->admin) {
 
 // Define if user can modify other users and permissions
 $caneditperms = (isModEnabled('multicompany') && !empty($user->entity) && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') ? false : (!empty($user->admin) || $user->hasRight("user", "user", "write")));
-$permissiontodelete = $caneditperms;
+$permissiontodelete = (isModEnabled('multicompany') && !empty($user->entity) && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') ? false : (!empty($user->admin) || $user->hasRight("user", "user", "delete")));
 // Advanced permissions
 if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$caneditperms = (isModEnabled('multicompany') && !empty($user->entity) && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') ? false : ($user->admin || $user->hasRight("user", "group_advance", "write")));
+	$permissiontodelete = (isModEnabled('multicompany') && !empty($user->entity) && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') ? false : ($user->admin || $user->hasRight("user", "group_advance", "delete")));
 }
 
 
@@ -191,7 +195,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_rights as ugr ON ugr.fk_usergrou
 if (isModEnabled('multicompany') && $conf->entity == 1 && (getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE') || ($user->admin && !$user->entity))) {
 	$sql .= " WHERE g.entity IS NOT NULL";
 } else {
-	$sql .= " WHERE g.entity IN (0,".$conf->entity.")";
+	$sql .= " WHERE g.entity IN (0,".((int) $conf->entity).")";
 }
 if (!empty($search_group)) {
 	natural_search(array("g.nom", "g.note"), $search_group);

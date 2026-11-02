@@ -349,7 +349,7 @@ if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.account_number = p." . $db->sanitize($accountancy_field_name) . " AND aa.fk_pcg_version = '" . $db->escape($pcgvercode) . "'";
 }
 if (!empty($searchCategoryProductList)) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product"; // We'll need this table joined to the select in order to filter by categ
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product"; // We'll need this table joined to the select in order to filter by categ
 }
 $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 if (strlen(trim($search_current_account))) {

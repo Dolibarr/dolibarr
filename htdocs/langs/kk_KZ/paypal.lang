@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal модулін орнату
-PaypalDesc=Бұл модуль тұтынушыларға <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a> арқылы төлеуге мүмкіндік береді. Бұл арнайы төлем үшін немесе Dolibarr нысанына қатысты төлем үшін (шот-фактура, тапсырыс, ...)
+PaypalDesc=This module allows payment by customers via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. This can be used for an ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
 PaypalOrCBDoPayment=PayPal арқылы төлеу (карта немесе PayPal)
 PaypalDoPayment=PayPal арқылы төлеу
 PAYPAL_API_SANDBOX=Режимді тексеру/құм жәшігі
@@ -12,14 +12,14 @@ PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Тек «интегралды» төлемді
 PaypalModeIntegral=Ажырамас
 PaypalModeOnlyPaypal=Тек PayPal
 ONLINE_PAYMENT_CSS_URL=Онлайн төлем бетіндегі CSS стиль кестесінің қосымша URL мекенжайы
-ThisIsTransactionId=Бұл транзакция идентификаторы: <b> %s </b>
+ThisIsTransactionId=This is id of transaction
 PAYPAL_ADD_PAYMENT_URL=Құжатты электрондық пошта арқылы жіберген кезде PayPal төлем URL мекенжайын қосыңыз
 NewOnlinePaymentReceived=Жаңа онлайн төлем алынды
 NewOnlinePaymentFailed=Жаңа онлайн төлем жүргізілді, бірақ сәтсіз болды
 ONLINE_PAYMENT_SENDEMAIL=Әр төлем әрекетінен кейін хабарландыру үшін электрондық пошта мекенжайы (сәттілік пен сәтсіздік үшін)
 ReturnURLAfterPayment=Төлемнен кейін URL мекенжайын қайтарыңыз
 ValidationOfOnlinePaymentFailed=Онлайн төлемді растау сәтсіз аяқталды
-PaymentSystemConfirmPaymentPageWasCalledButFailed=Төлем жүйесі төлемді растау бетіне қоңырау шалды, қате жіберілді
+PaymentSystemConfirmPaymentPageWasCalledButFailed=The payment confirmation page was called by the online payment system and returned an error
 SetExpressCheckoutAPICallFailed=SetExpressCheckout API қоңырауы сәтсіз аяқталды.
 DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API қоңырауы сәтсіз аяқталды.
 DetailedErrorMessage=Толық қате туралы хабар

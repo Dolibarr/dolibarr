@@ -4,8 +4,8 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,6 +63,9 @@ $modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'evaluation';
 
+/**
+ * @var array<string,array{type:string,enabled:int,css?:string}> $arrayofparameters
+ */
 $arrayofparameters = array(
 	'HRM_MAXRANK' => array('type' => 'integer','enabled' => 1, 'css' => ''),
 	'HRM_DEFAULT_SKILL_DESCRIPTION' => array('type' => 'varchar','enabled' => 1, 'css' => ''),
@@ -260,8 +263,8 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 				$handle = opendir($dir);
 				if (is_resource($handle)) {
 					while (($file = readdir($handle)) !== false) {
-						if (strpos($file, 'mod_'.strtolower($myTmpObjectKey).'_') === 0 && substr($file, dol_strlen($file) - 3, 3) == 'php') {
-							$file = substr($file, 0, dol_strlen($file) - 4);
+						if (strpos($file, 'mod_'.strtolower($myTmpObjectKey).'_') === 0 && dol_substr($file, dol_strlen($file) - 3, 3) == 'php') {
+							$file = dol_substr($file, 0, dol_strlen($file) - 4);
 
 							require_once $dir.'/'.$file.'.php';
 
@@ -407,8 +410,8 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 						foreach ($filelist as $file) {
 							if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
 								if (file_exists($dir.'/'.$file)) {
-									$name = substr($file, 4, dol_strlen($file) - 16);
-									$classname = substr($file, 0, dol_strlen($file) - 12);
+									$name = dol_substr($file, 4, dol_strlen($file) - 16);
+									$classname = dol_substr($file, 0, dol_strlen($file) - 12);
 
 									require_once $dir.'/'.$file;
 									$module = new $classname($db);
@@ -506,7 +509,7 @@ if (!getDolGlobalString('HRM_MAXRANK')) {
 }
 
 if ($action != 'editxxx') {
-	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 

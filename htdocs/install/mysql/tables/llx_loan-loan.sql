@@ -29,11 +29,16 @@ create table llx_loan
 
   capital						double(24,8) DEFAULT 0 NOT NULL,
   insurance_amount				double(24,8) DEFAULT 0,
+  charge_type					smallint DEFAULT 0 NOT NULL,	-- what insurance_amount is: 0 = insurance, 1 = account-keeping fee, 2 = other fee
+  charge_per_payment			smallint DEFAULT 0 NOT NULL,	-- 0 = insurance_amount is a total spread over the payments, 1 = it is due with every payment
+  balloon_amount				double(24,8) DEFAULT 0 NOT NULL,	-- balloon / residual: lump sum paid with the last payment
 
   datestart						date,
   dateend						date,
   nbterm						real,
   rate							double  NOT NULL,
+  frequency						integer DEFAULT 12 NOT NULL,	-- number of payments per year: 52, 26, 12, 4, 2 or 1
+  interest_basis				smallint DEFAULT 0 NOT NULL,	-- 0 = rate / payments per year, 1 = daily (rate x days in the period / 365)
 
   note_private					text,
   note_public					text,

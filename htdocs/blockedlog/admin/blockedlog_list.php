@@ -1022,7 +1022,7 @@ if (is_array($blocks)) {
 					if ($includebeforev2) {
 						print ' <span class="small"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?includebeforev2=0&'.($page ? 'page='.$page.'&' : '').$param.'">'.$form->textwithpicto($langs->trans("OnlyFromV2"), $langs->trans("OnlyFromV2Help")).'</a></span>';
 					} else {
-						print ' <span class="small"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?includebeforev2=1&'.($page ? 'page='.$page.'&' : '').$param.'">'.$form->textwithpicto($langs->trans("IncludesAll"), $langs->trans("IncludesAllHelp")).'</a></span>';
+						print ' <span class="small"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?includebeforev2=1&'.($page ? 'page='.$page.'&' : '').$param.'">'.$form->textwithpicto($langs->trans("IncludeAll"), $langs->trans("IncludeAllHelp")).'</a></span>';
 					}
 				}
 				print '</td>';

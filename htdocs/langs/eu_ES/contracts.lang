@@ -31,6 +31,10 @@ MenuClosedServices=Zerbitzu itxiak
 NewContract=Kontratu berria
 NewContractSubscription=Kontratu edo harpidetza berria
 AddContract=Sortu kontratua
+ContractType=Contract type
+CustomerContract=Customer contract
+SupplierContract=Supplier contract
+LastSupplierContracts=Latest %s supplier contracts
 DeleteAContract=Kontratu bat ezabatu
 ActivateAllOnContract=Aktibatu zerbitzu guztiak
 CloseAContract=Kontratu bat itxi
@@ -103,7 +107,13 @@ ConfirmCloneContract=Ziur zaude <b>%s</b> kontratua klonatu nahi duzula?
 LowerDateEndPlannedShort=Zerbitzu aktiboen amaiera-data aurreikusita txikiagoa
 SendContractRef=Kontratuaren informazioa __REF__
 OtherContracts=Beste kontratu batzuk
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Contract's statistics
+NbOfContracts=Nb of contracts
+NumberOfContractsByMonth=Number of contracts by month
+AmountOfServices=Number of services
+AmountOfServicesByMonthHT=Number of services (excl. tax) by month
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Salmenta-ordezkaria kontratua sinatzen
 TypeContact_contrat_internal_SALESREPFOLL=Salmenta-ordezkari baten kontratuaren jarraipena
 TypeContact_contrat_external_BILLING=Fakturazio bezeroaren kontaktua
@@ -114,3 +124,7 @@ ShowClosedServices=Erakutsi itxitako zerbitzuak
 HideClosedServices=Ezkutatu itxitako zerbitzuak
 UserStartingService=Erabiltzailea zerbitzua abiarazten
 UserClosingService=Erabiltzaileen itxiera zerbitzua
+SendReminderForExpiredServicesTitle=Send reminder by email for expiring contract services
+SendReminderForExpiredServices=Send reminder by email to the customer when a running contract service is about to expire (parameter is number of days before end of service to send the reminder. It can be a list of days separated by a semicolon, for example '10;5;0;-5'). The template of email to send is defined in setup of contract module.
+DescCONTRACT_EMAIL_TEMPLATE_REMIND_EXPIRATION=Email template to use to send email reminder when a contract service is about to expire
+ContractID=Contract ID

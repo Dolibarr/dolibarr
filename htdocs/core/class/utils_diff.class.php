@@ -154,7 +154,7 @@ class Diff
 	 * Returns the partial diff for the specified sequences, in reverse order.
 	 * The parameters are:
 	 *
-	 * @param	array<array{0:string,1:int<0,2>}>	$table     	the table returned by the computeTable function
+	 * @param	array<array<int>>	$table     	the table returned by the computeTable function
 	 * @param	string	$sequence1 	the first sequence
 	 * @param	string	$sequence2 	the second sequence
 	 * @param	int		$start     	the starting index

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,8 +52,6 @@ $confirm = GETPOST('confirm', 'alpha');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-// TODO Add rule to restrict access payment
-//restrictedArea($user, 'facture', $id,'');
 
 $object = new PaymentDonation($db);
 if ($id > 0) {
@@ -62,6 +60,8 @@ if ($id > 0) {
 		dol_print_error($db, 'Failed to get payment id '.$id);
 	}
 }
+
+restrictedArea($user, 'payment_donation', $object, '');
 
 $permissiontoread = $user->hasRight('don', 'lire');
 $permissiontoadd = $user->hasRight('don', 'creer');
@@ -76,6 +76,7 @@ $permissiontodelete = $user->hasRight('don', 'supprimer');
 if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
 	$db->begin();
 
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 	$result = $object->delete($user);
 	if ($result > 0) {
 		$db->commit();
@@ -110,7 +111,7 @@ if (empty($object->id)) {
 $h = 0;
 
 $head = [];
-$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/don/payment/card.php', ['id'=> $id]);
+$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/don/payment/card.php', ['id' => $id]);
 $head[$h][1] = $langs->trans("DonationPayment");
 $hselected = (string) $h;
 $h++;
@@ -172,7 +173,7 @@ $disable_delete = 0;
 $sql = 'SELECT d.rowid as did, d.paid, d.amount as d_amount, pd.amount';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'payment_donation as pd,'.MAIN_DB_PREFIX.'don as d';
 $sql .= ' WHERE pd.fk_donation = d.rowid';
-$sql .= ' AND d.entity = '.$conf->entity;
+$sql .= ' AND d.entity = '.((int) $conf->entity);
 $sql .= ' AND pd.rowid = '.((int) $id);
 
 dol_syslog("don/payment/card.php", LOG_DEBUG);
@@ -236,7 +237,7 @@ print '<div class="tabsAction">';
 if (empty($action)) {
 	if ($user->hasRight('don', 'supprimer')) {
 		if (!$disable_delete) {
-			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delete'], true), '', 1);
+			print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delete'], true), '', 1, array('attr' => array('class' => 'reposition')))."\n";
 		} else {
 			print dolGetButtonAction($langs->trans("CantRemovePaymentWithOneInvoicePaid"), $langs->trans('Delete'), '', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id], false, '#'), '', 1, ['attr' => ['classOverride' => 'butActionRefused']]);
 		}

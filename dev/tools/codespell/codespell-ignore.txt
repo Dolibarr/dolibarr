@@ -64,6 +64,9 @@ tempdate
 sav
 files'
 
+# moral (var name)
+mor
+
 # Used as array key
 seeked
 tweek
@@ -71,14 +74,11 @@ tweek
 # Used as key
 marge
 
-# moral (var name)
-mor
-
 # Strings used as keys for translation
 uptodate
 reenable
 
-# Function - rename to devalidate ?
+# Function - rename to invalidate ?
 unvalidate
 
 # Some french strings
@@ -96,6 +96,9 @@ espace
 methode
 datee
 
+# For USF syntax
+notin
+
 # Some string found because it is part of text that is html entities escaped into files
 tre
 activ
@@ -110,3 +113,5 @@ Referers
 blacklists
 confirmactionxxx
 udate
+checkES
+lets

@@ -9,33 +9,31 @@ ActionsOnResource=Matukio kuhusu rasilimali hii
 ResourcePageIndex=Orodha ya rasilimali
 ResourceSingular=Rasilimali
 ResourceCard=Kadi ya rasilimali
+NewResource=New resource
 AddResource=Unda rasilimali
 ResourceFormLabel_ref=Jina la rasilimali
-ResourceType=Aina ya rasilimali
 ResourceFormLabel_description=Maelezo ya rasilimali
-
+ResourceType=Aina ya rasilimali
+ResourceTypeID=Resource type ID
+ResourceTypeLabel=Resource type label
 ResourcesLinkedToElement=Rasilimali zilizounganishwa na kipengele
 
 ShowResource=Onyesha rasilimali
-
 ResourceElementPage=Rasilimali za kipengele
 ResourceCreatedWithSuccess=Rasilimali imeundwa
 RessourceLineSuccessfullyDeleted=Mstari wa rasilimali umefutwa
 RessourceLineSuccessfullyUpdated=Mstari wa nyenzo umesasishwa
 ResourceLinkedWithSuccess=Nyenzo iliyounganishwa na mafanikio
-
 ConfirmDeleteResource=Thibitisha ili kufuta rasilimali hii
 RessourceSuccessfullyDeleted=Rasilimali imefutwa
 DictionaryResourceType=Aina ya rasilimali
-
 SelectResource=Chagua rasilimali
-
 IdResource=Nyenzo ya kitambulisho
 AssetNumber=Nambari ya serial
 ResourceTypeCode=Msimbo wa aina ya rasilimali
 ImportDataset_resource_1=Rasilimali
-
 ErrorResourcesAlreadyInUse=Baadhi ya rasilimali zinatumika
 ErrorResourceUseInEvent=%s imetumika katika %s tukio
-
-MaxUsers=Maximum users (places, seats, etc.)
+MaxUsers=Maximum number of users
+MaxUsersResourceDesc=If the resource can be used by several people at once (car, room, ...), you can enter here the maximum number of users allowed to use the resource at the same time (number of seats, places, ...).
+MaxUsersLabel=Maximum users

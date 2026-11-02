@@ -3,6 +3,7 @@
 /* Copyright (C) 2018		ATM Consulting		<support@atm-consulting.fr>
  * Copyright (C) 2021-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2025-2026	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		José MARTINEZ		<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,8 +119,9 @@ if ($absolute_discount > 0) {
 		// Discount available of type fixed amount (not credit note)
 		$more = $addabsolutediscount;
 		$filter = $filterabsolutediscount;  // Fix PhanPluginSuspiciousParamPosition as filterabsolutescount is other argument name in form_remise_dispo
-		// TODO: Check $resteapayer - is '$maxvalue' in form_remise_dispo()
-		$form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, GETPOSTINT('discountid'), 'remise_id', $thirdparty->id, $absolute_discount, $filter, $resteapayer, $more, 0, $discount_type, 1);
+		// No max value: a credit larger than the remaining amount is now split automatically when it is applied,
+		// only the required part being used. This mirrors what is already done for the credit notes below.
+		$form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, GETPOSTINT('discountid'), 'remise_id', $thirdparty->id, $absolute_discount, $filter, 0, $more, 0, $discount_type, 1);
 	}
 }
 

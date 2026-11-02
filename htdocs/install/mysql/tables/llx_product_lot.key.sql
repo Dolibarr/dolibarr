@@ -17,3 +17,7 @@
 -- ============================================================================
 
 ALTER TABLE llx_product_lot ADD UNIQUE INDEX uk_product_lot(fk_product, batch);
+
+ALTER TABLE llx_product_lot ADD INDEX idx_product_lot_barcode (barcode);
+ALTER TABLE llx_product_lot ADD INDEX idx_product_lot_fk_barcode_type (fk_barcode_type);
+ALTER TABLE llx_product_lot ADD UNIQUE INDEX uk_product_lot_barcode (barcode, fk_barcode_type, entity);

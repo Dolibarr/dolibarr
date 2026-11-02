@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -264,7 +265,7 @@ if ($socid > 0) {
 	$sql .= " AND f.fk_statut > 0";
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
 	$sql .= " AND d.fk_facture = f.rowid";
-	$sql .= " AND f.fk_soc = $socid";
+	$sql .= " AND f.fk_soc = ".((int) $socid);
 	$sql .= " AND d.buy_price_ht IS NOT NULL";
 	// We should not use this here. Option ForceBuyingPriceIfNull should have effect only when inserting data. Once data is recorded, it must be used as it is for report.
 	// We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredictable.

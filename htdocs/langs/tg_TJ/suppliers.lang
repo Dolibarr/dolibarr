@@ -5,7 +5,6 @@ SupplierInvoices=Ҳисобнома -фактураҳои фурӯшанда
 ShowSupplierInvoice=Ҳисобнома -фактураи фурӯшандаро нишон диҳед
 NewSupplier=Фурӯшандаи нав
 NewSupplierInvoice = Ҳисобнома-фактураи нави фурӯшанда
-History=Таърих
 ListOfSuppliers=Рӯйхати фурӯшандагон
 ShowSupplier=Фурӯшандаро нишон диҳед
 BuyingPriceMin=Беҳтарин нархи харид

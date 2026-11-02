@@ -31,13 +31,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT . '/compta/tva/class/tva.class.php';
-require_once DOL_DOCUMENT_ROOT . '/compta/tva/class/tva.class.php';
-require_once DOL_DOCUMENT_ROOT . '/compta/tva/class/paymentvat.class.php';
-require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
-require_once DOL_DOCUMENT_ROOT . '/salaries/class/paymentsalary.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -45,6 +38,12 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT . '/compta/tva/class/tva.class.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/tva/class/tva.class.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/tva/class/paymentvat.class.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT . '/salaries/class/paymentsalary.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills'));
@@ -54,7 +53,7 @@ $year = GETPOSTINT("year");
 $filtre = GETPOST("filtre", 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 if (!$year && $mode != 'tvaonly') {
-	$year = date("Y", time());
+	$year = (int) dol_print_date(dol_now(), "%Y");
 }
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -129,7 +128,7 @@ $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "bank as b ON (b.rowid = ptva.fk_bank)
 $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "bank_account as bank ON (bank.rowid = b.fk_account)";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_paiement as pct ON ptva.fk_typepaiement = pct.id";
 $sql .= " WHERE ptva.fk_tva = tva.rowid";
-$sql .= " AND tva.entity = " . $conf->entity;
+$sql .= " AND tva.entity = " . ((int) $conf->entity);
 if ($year > 0) {
 	$sql .= " AND (";
 	// If the date range is provided, use it as a lookup condition.  Otherwise we use the due date.
@@ -203,7 +202,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "bank_account as bank ON (bank.rowid = b.fk_account)";
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_paiement as pct ON ptva.fk_typepaiement = pct.id";
 	$sql .= " WHERE ptva.fk_tva = tva.rowid";
-	$sql .= " AND tva.entity = " . $conf->entity;
+	$sql .= " AND tva.entity = " . ((int) $conf->entity);
 	if ($year > 0) {
 		$sql .= " AND (";
 		// We'll use the specified period as the date filter, unless it's missing, in which case we'll use the due date.

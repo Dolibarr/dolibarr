@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal moduuli setup
-PaypalDesc=Tämä moduuli sallii maksu:n asiakkaat kautta <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPalin</a>. Tätä voidaan käyttää ad hoc maksu tai maksu, joka liittyy Dolibarr-objektiin (lasku, tilaus, .. .)
+PaypalDesc=This module allows payment by customers via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. This can be used for an ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
 PaypalOrCBDoPayment=Maksa PayPalilla (kortti tai PayPal)
 PaypalDoPayment=Maksa PayPalilla
 PAYPAL_API_SANDBOX=Tila testi / hiekkalaatikko
@@ -12,14 +12,14 @@ PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Tarjoa vain "integraali" maksu (luottokortti+P
 PaypalModeIntegral=Integraali
 PaypalModeOnlyPaypal=Vain PayPal
 ONLINE_PAYMENT_CSS_URL=CSS-tyylitaulukon valinnainen URL-osoite online-sivulla maksu
-ThisIsTransactionId=Tämä on id liiketoimen: <b>%s</b>
+ThisIsTransactionId=This is id of transaction
 PAYPAL_ADD_PAYMENT_URL=Sisällytä PayPalin maksu URL-osoite, kun lähetät asiakirjan sähköpostitse
 NewOnlinePaymentReceived=Uusi verkossa maksu vastaanotettu
 NewOnlinePaymentFailed=Uusi verkossa maksu yritti, mutta epäonnistui
 ONLINE_PAYMENT_SENDEMAIL=Email address for notifications after each payment attempt (for success and fail)
 ReturnURLAfterPayment=Palauta URL-osoite maksu jälkeen
 ValidationOfOnlinePaymentFailed=Verkkotunnuksen maksu vahvistus epäonnistui
-PaymentSystemConfirmPaymentPageWasCalledButFailed=maksu vahvistussivun kutsui maksu järjestelmä palautti virheen
+PaymentSystemConfirmPaymentPageWasCalledButFailed=The payment confirmation page was called by the online payment system and returned an error
 SetExpressCheckoutAPICallFailed=SetExpressCheckout API -kutsu epäonnistui.
 DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API -kutsu epäonnistui.
 DetailedErrorMessage=Yksityiskohtainen virheilmoitus

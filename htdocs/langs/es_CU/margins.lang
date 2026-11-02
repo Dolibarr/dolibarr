@@ -22,14 +22,11 @@ UseDiscountOnTotal=en subtotal
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Define si un descuento global se trata como un producto, un servicio o solo como subtotal para el cálculo del margen.
 MARGIN_TYPE=Precio de compra/costo sugerido por defecto para el cálculo del margen
 MargeType1=Margen sobre el precio del mejor proveedor
-MargeType2=Margen sobre Precio Promedio Ponderado (WAP)
 MargeType3=Margen sobre precio de coste
-MarginTypeDesc=* Margen sobre el mejor precio de compra = Precio de venta - Mejor precio de proveedor definido en la tarjeta de producto <br> * Margen sobre el precio promedio ponderado (WAP) = Precio de venta - Precio promedio ponderado del producto (WAP) o mejor precio de proveedor si WAP aún no se ha definido <br> * Margen en Precio de costo = Precio de venta - Precio de costo definido en la ficha del producto o WAP si el precio de costo no está definido, o mejor precio de proveedor si WAP aún no está definido
 CostPrice=Precio de coste
 UnitCharges=Cargos unitarios
 Charges=Cargos
 AgentContactType=Tipo de contacto del agente comercial
-AgentContactTypeDetails=Defina qué tipo de contacto (vinculado en las facturas) se utilizará para el informe de margen por contacto/dirección. Tenga en cuenta que la lectura de estadísticas sobre un contacto no es confiable ya que, en la mayoría de los casos, es posible que el contacto no esté definido explícitamente en las facturas.
 rateMustBeNumeric=La tarifa debe ser un valor numérico
 markRateShouldBeLesserThan100=La tasa de marca debe ser inferior a 100
 ShowMarginInfos=Mostrar información de margen

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2025 	Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2023 		Alexandre Janniaux   	<alexandre.janniaux@gmail.com>
- * Copyright (C) 2024 		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ class RestAPIUserTest extends AbstractRestAPITest
 		$this->assertEquals(0, $result['curl_error_no'], "$test should have no error");
 		$object = json_decode($result['content'], true);
 		$this->assertNotNull($object, "$test Parsing of JSON result must not be null");
-		$this->assertEquals(1, $object['statut']);
+		$this->assertEquals(1, $object['status']);
 
 		return $object['id'];
 	}

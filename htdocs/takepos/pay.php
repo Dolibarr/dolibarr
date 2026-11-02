@@ -2,7 +2,7 @@
 /* Copyright (C) 2018		Andreu Bisquerra	<jove@bisquerra.com>
  * Copyright (C) 2021-2022	Thibault FOUCART	<support@ptibogxiv.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +51,7 @@ require '../main.inc.php'; // Load $user and permissions
  */
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
 // Load translation files required by the page
@@ -138,7 +139,7 @@ function unexpectedDisconnect() {
 
 function fetchConnectionToken() {
 		<?php
-		$urlconnexiontoken = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=getConnexionToken&token='.newToken().'&servicestatus='.urlencode((string) ($servicestatus));
+		$urlconnexiontoken = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=getConnexionToken&token='.currentToken().'&servicestatus='.urlencode((string) ($servicestatus));
 		if (getDolGlobalString('STRIPE_LOCATION')) {
 			$urlconnexiontoken .= '&location='.urlencode(getDolGlobalString('STRIPE_LOCATION'));
 		}
@@ -160,7 +161,7 @@ function fetchConnectionToken() {
 	}
 }
 
-if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && (!getDolGlobalString('STRIPE_LIVE')/* || GETPOST('forcesandbox', 'alpha') */)) {
+if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE')/* || GETPOST('forcesandbox', 'alpha') */)) {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), [], 'warning', 1);
 }
 
@@ -190,7 +191,7 @@ if ($usestripeterminals && $invoice->type != $invoice::TYPE_CREDIT_NOTE) {
 	if (!getDolGlobalString((string) $keyforstripeterminalbank) || $stripeacc === null) { ?>
 		const config = {
 			simulated: <?php if (empty($servicestatus) && getDolGlobalString('STRIPE_TERMINAL_SIMULATED')) { ?> true <?php } else { ?> false <?php } ?>
-			<?php if (getDolGlobalString('STRIPE_LOCATION')) { ?>, location: '<?php echo dol_escape_js(getDolGlobalString('STRIPE_LOCATION')); ?>'<?php } ?>
+			<?php if (getDolGlobalString('STRIPE_LOCATION')) { ?>, location: <?php echo "'".dol_escape_js(getDolGlobalString('STRIPE_LOCATION'))."'"; ?><?php } ?>
 		}
 		terminal.discoverReaders(config).then(function(discoverResult) {
 		if (discoverResult.error) {
@@ -287,6 +288,10 @@ if ($invoice->id > 0) {
 }
 $alreadypayed = (is_object($invoice) ? ($invoice->total_ttc - $remaintopay) : 0);
 
+$parameters = array();
+$reshook = $hookmanager->executeHooks('takeposPayActions', $parameters, $invoice, $action);
+
+
 if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 	print "var received='';";
 } else {
@@ -374,7 +379,7 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 			amountpayed = <?php echo (float) $invoice->total_ttc; ?>;
 		}
 		console.log("We click on the payment mode to pay amount = "+amountpayed);
-		parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&token=<?php echo newToken(); ?>&pay="+payment+"&amount="+amountpayed+"&excess="+excess+"&invoiceid="+invoiceid+"&accountid="+accountid, function() {
+		parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&token=<?php echo currentToken(); ?>&pay="+payment+"&amount="+amountpayed+"&excess="+excess+"&invoiceid="+invoiceid+"&accountid="+accountid, function() {
 			if (amountpayed > <?php echo (float) $remaintopay; ?> || amountpayed == <?php echo (float) $remaintopay; ?> || amountpayed == 0 ) {
 				console.log("Close popup");
 				parent.$('#invoiceid').val("");
@@ -388,10 +393,22 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 		return true;
 	}
 
+	// Open the credit apply page in a colorbox (parent window's colorbox)
+	function OpenCreditApply() {
+		parent.$.colorbox({
+			href: "creditnote_apply.php?invoiceid=<?php echo $invoiceid; ?>&place=" + <?php echo "'".dol_escape_js($place)."'"; ?> + "&token=<?php echo currentToken(); ?>",
+			width: "70%",
+			height: "80%",
+			transition: "none",
+			iframe: "true",
+			title: <?php echo "'".dol_escape_js($langs->trans('TakeposApplyAvailableCredit'))."'"; ?>
+		});
+	}
+
 	function fetchPaymentIntentClientSecret(amount, invoiceid) {
 	  const bodyContent = JSON.stringify({ amount : amount, invoiceid : invoiceid });
   <?php
-	$urlpaymentintent = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=createPaymentIntent&token='.newToken().'&servicestatus='.urlencode((string) $servicestatus);
+	$urlpaymentintent = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=createPaymentIntent&token='.currentToken().'&servicestatus='.urlencode((string) $servicestatus);
 	if (!empty($stripeacc)) {
 		$urlpaymentintent .= '&stripeacc='.$stripeacc;
 	}
@@ -415,7 +432,7 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 	function capturePaymentIntent(paymentIntentId) {
 	const bodyContent = JSON.stringify({"id": paymentIntentId})
   <?php
-	$urlpaymentintent = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=capturePaymentIntent&token='.newToken().'&servicestatus='.urlencode((string) ($servicestatus));
+	$urlpaymentintent = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=capturePaymentIntent&token='.currentToken().'&servicestatus='.urlencode((string) ($servicestatus));
 	if (!empty($stripeacc)) {
 		$urlpaymentintent .= '&stripeacc='.urlencode($stripeacc);
 	}
@@ -453,7 +470,7 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 
 		fetchPaymentIntentClientSecret(amountpayed, invoiceid).then(function(client_secret) {
 			<?php if (empty($servicestatus) && getDolGlobalString('STRIPE_TERMINAL_SIMULATED')) { ?>
-	  terminal.setSimulatorConfiguration({testCardNumber: '<?php echo dol_escape_js(getDolGlobalString('STRIPE_TERMINAL_SIMULATED')); ?>'});
+	  terminal.setSimulatorConfiguration({testCardNumber: <?php echo "'".dol_escape_js(getDolGlobalString('STRIPE_TERMINAL_SIMULATED'))."'" ; ?>});
 			<?php } ?>
 		document.getElementById("card-present-alert").innerHTML = '<div class="warning clearboth"><?php echo $langs->trans('PaymentSendToStripeTerminal'); ?></div>';
 	  terminal.collectPaymentMethod(client_secret).then(function(result) {
@@ -634,7 +651,7 @@ array(
 ),
 );
 $numpad = getDolGlobalInt('TAKEPOS_NUMPAD');
-if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && getDolGlobalString('STRIPE_CARD_PRESENT')) {
+if (isModEnabled('stripe') && getDolGlobalString('STRIPE_CARD_PRESENT')) {
 	print '<span id="card-present-alert">';
 	dol_htmloutput_mesg($langs->trans('ConnectingToStripeTerminal', 'Stripe'), [], 'warning', 1);
 	print '</span>';
@@ -745,7 +762,23 @@ while ($i < count($arrayOfValidPaymentModes)) {
 	$i += 1;
 }
 
-if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && getDolGlobalString('STRIPE_CARD_PRESENT')) {
+// Show "Available credit" button when the customer has credits and this is not a credit note
+if ($invoice->socid > 0 && $invoice->type != Facture::TYPE_CREDIT_NOTE) {
+	$invoice->fetch_thirdparty();
+	if (is_object($invoice->thirdparty)) {
+		$discountCheck = new DiscountAbsolute($db);
+		$availableCredit = $discountCheck->getAvailableDiscounts($invoice->thirdparty, null, '', 0, 0, 0);
+		if ($availableCredit > 0) {
+			print '<button type="button" class="calcbutton2" onclick="OpenCreditApply()">';
+			print '<span class="fa fa-2x fa-wallet iconwithlabel"></span><br>';
+			print $langs->trans('TakeposAvailableCredit').'<br>';
+			print '<span style="font-size:0.85em;">'.price($availableCredit, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
+			print '</button>';
+		}
+	}
+}
+
+if (isModEnabled('stripe') && getDolGlobalString('STRIPE_CARD_PRESENT')) {
 	$keyforstripeterminalbank = "CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL".$_SESSION["takeposterminal"];
 	print '<span id="StripeTerminal"></span>';
 	if (getDolGlobalString((string) $keyforstripeterminalbank)) {

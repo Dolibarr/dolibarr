@@ -94,7 +94,7 @@ class box_customers_outstanding_bill_reached extends ModeleBoxes
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
-				$sql .= " AND s.rowid = $user->socid";
+				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
 			$sql .= " AND s.outstanding_limit > 0";
 			$sql .= " AND s.rowid IN (SELECT fk_soc from ".MAIN_DB_PREFIX."facture as f WHERE f.fk_statut = 1 and f.fk_soc = s.rowid)";

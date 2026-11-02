@@ -226,7 +226,7 @@ class FormAdvTargetEmailing extends Form
 		$sql_usr = '';
 		$sql_usr .= "SELECT DISTINCT u2.rowid, u2.lastname as name, u2.firstname, u2.login";
 		$sql_usr .= " FROM ".MAIN_DB_PREFIX."user as u2, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql_usr .= " WHERE u2.entity IN (0,".$conf->entity.")";
+		$sql_usr .= " WHERE u2.entity IN (0,".((int) $conf->entity).")";
 		$sql_usr .= " AND u2.rowid = sc.fk_user";
 		if (getDolGlobalString('USER_HIDE_INACTIVE_IN_COMBOBOX')) {
 			$sql_usr .= " AND u2.statut <> 0";
@@ -325,7 +325,7 @@ class FormAdvTargetEmailing extends Form
 			if (!empty($InfoFieldList[1])) {
 				$sql .= $this->db->order($InfoFieldList[1]);
 			}
-			// $sql.= ' WHERE entity = '.$conf->entity;
+			// $sql.= ' WHERE entity = '.((int) $conf->entity);
 
 			$resql = $this->db->query($sql);
 			if ($resql) {

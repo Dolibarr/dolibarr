@@ -375,7 +375,7 @@ class Mailings extends DolibarrApi
 		if ($cloningResult > 0) {
 			return $this->get($cloningResult);
 		} else {
-			throw new RestException(500, $this->mailing->error);
+			throw new RestException(500, $this->mailing->errorsToString());
 		}
 	}
 
@@ -477,7 +477,7 @@ class Mailings extends DolibarrApi
 		if ($this->mailing->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->mailing->error);
+			throw new RestException(500, $this->mailing->errorsToString());
 		}
 	}
 
@@ -514,7 +514,7 @@ class Mailings extends DolibarrApi
 		}
 
 		if (!$this->mailing->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete Mass mailing : '.$this->mailing->error);
+			throw new RestException(500, 'Error when delete Mass mailing : '.$this->mailing->errorsToString());
 		}
 
 		return array(
@@ -587,7 +587,7 @@ class Mailings extends DolibarrApi
 		if ($this->mailing_target->update(DolibarrApiAccess::$user) > 0) {
 			return $this->getTarget($id, $targetid);
 		} else {
-			throw new RestException(500, $this->mailing_target->error);
+			throw new RestException(500, $this->mailing_target->errorsToString());
 		}
 	}
 
@@ -762,7 +762,7 @@ class Mailings extends DolibarrApi
 		}
 
 		if (!$this->mailing_target->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete Mass mailing target: '.$this->mailing->error);
+			throw new RestException(500, 'Error when delete Mass mailing target: '.$this->mailing->errorsToString());
 		}
 
 		return array(
@@ -809,7 +809,7 @@ class Mailings extends DolibarrApi
 
 		$count = $this->mailing->countNbOfTargets('all');
 		if (!$this->mailing->delete_targets()) {
-			throw new RestException(500, 'Error when delete targets of Mass mailing : '.$this->mailing->error);
+			throw new RestException(500, 'Error when delete targets of Mass mailing : '.$this->mailing->errorsToString());
 		}
 
 		return array(
@@ -856,7 +856,7 @@ class Mailings extends DolibarrApi
 
 		$count = $this->mailing->countNbOfTargets('all');
 		if (!$this->mailing->reset_targets_status(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when reset targets status of Mass mailing : '.$this->mailing->error);
+			throw new RestException(500, 'Error when reset targets status of Mass mailing : '.$this->mailing->errorsToString());
 		}
 
 		return array(
@@ -905,7 +905,7 @@ class Mailings extends DolibarrApi
 			throw new RestException(304, 'Nothing done. May be object is already draft');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error : '.$this->mailing->error);
+			throw new RestException(500, 'Error : '.$this->mailing->errorsToString());
 		}
 
 		$this->mailing->fetchObjectLinked();
@@ -957,7 +957,7 @@ class Mailings extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating Mass mailing: '.$this->mailing->error);
+			throw new RestException(500, 'Error when validating Mass mailing: '.$this->mailing->errorsToString());
 		}
 
 		$this->mailing->fetchObjectLinked();

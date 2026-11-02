@@ -2,7 +2,6 @@
 PaymentByBankTransfer=الدفع عن طريق التحويل البنكي
 StatusAccountOpened=افتح
 StatusAccountClosed=مقفول
-AccountIdShort=الرقم
-SupplierInvoicePayment=دفعة مورد
 TransferFrom=من موقع
 BankMovements=الحركات
+VariousPayments=مدفوعات متنوعة

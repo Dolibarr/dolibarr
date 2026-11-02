@@ -4,4 +4,4 @@ HTTP 200
 [Asserts]
 jsonpath "$.id" == 0     # Check the value of the id
 jsonpath "$.status" == 1
-jsonpath "$.module" == "societe"
+jsonpath "$.currency_code" == "EUR"

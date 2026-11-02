@@ -2,7 +2,7 @@
 /* Copyright (C) 2004       Rodolphe Quiedeville   <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012  Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin          <regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025	MDW					   <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					   <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France        <frederic.france@free.fr>
  * Copyright (C) 2024	    Nick Fragoulis
  *
@@ -154,7 +154,7 @@ class pdf_standard_actions
 
 		$this->db = $db;
 		$this->description = "";
-		$this->date_edition = time();
+		$this->date_edition = dol_now();
 		$this->month = $month;
 		$this->year = $year;
 		$this->corner_radius = getDolGlobalInt('MAIN_PDF_FRAME_CORNER_RADIUS', 0);
@@ -310,7 +310,7 @@ class pdf_standard_actions
 		$sql .= " WHERE c.id=a.fk_action AND a.fk_user_author = u.rowid";
 		$sql .= " AND a.datep BETWEEN '".$this->db->idate(dol_get_first_day($this->year, $this->month, false))."'";
 		$sql .= " AND '".$this->db->idate(dol_get_last_day($this->year, $this->month, false))."'";
-		$sql .= " AND a.entity = ".$conf->entity;
+		$sql .= " AND a.entity = ".((int) $conf->entity);
 		$sql .= " ORDER BY a.datep DESC";
 
 		$eventstatic = new ActionComm($this->db);
@@ -379,7 +379,7 @@ class pdf_standard_actions
 
 				// Third party
 				$pdf->SetXY(45, $y);
-				$pdf->MultiCell(28, $height, dol_trunc($outputlangs->convToOutputCharset($obj->thirdparty), 28), 0, 'L', false);
+				$pdf->MultiCell(28, $height, pdf_truncate_text($pdf, $outputlangs->convToOutputCharset($obj->thirdparty), 28), 0, 'L', false);
 				$y1 = $pdf->GetY();
 
 				// Action code
@@ -395,12 +395,12 @@ class pdf_standard_actions
 				$pdf->SetXY(73, $y);
 				$labelactiontype = $outputlangs->transnoentitiesnoconv("Action".$code);
 				$labelactiontypeshort = $outputlangs->transnoentitiesnoconv("Action".$code.'Short');
-				$pdf->MultiCell(32, $height, dol_trunc($outputlangs->convToOutputCharset($labelactiontypeshort == "Action".$code.'Short' ? $labelactiontype : $labelactiontypeshort), 32), 0, 'L', false);
+				$pdf->MultiCell(32, $height, pdf_truncate_text($pdf, $outputlangs->convToOutputCharset($labelactiontypeshort == "Action".$code.'Short' ? $labelactiontype : $labelactiontypeshort), 32), 0, 'L', false);
 				$y2 = $pdf->GetY();
 
 				// Description of event
 				$pdf->SetXY(106, $y);
-				$pdf->MultiCell(94, $height, $outputlangs->convToOutputCharset(dol_trunc(dol_string_nohtmltag($text, 0), 250, 'right', 'UTF-8', 0)), 0, 'L', false);
+				$pdf->MultiCell(94, $height, $outputlangs->convToOutputCharset(pdf_truncate_text($pdf, dol_string_nohtmltag($text, 0), 250, 'right')), 0, 'L', false);
 				$y3 = $pdf->GetY();
 
 				$i++;

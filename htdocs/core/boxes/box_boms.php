@@ -91,7 +91,7 @@ class box_boms extends ModeleBoxes
 			$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 			$sql .= ", ".MAIN_DB_PREFIX."bom_bom as c";
 			$sql .= " WHERE c.fk_product = p.rowid";
-			$sql .= " AND c.entity = ".$conf->entity;
+			$sql .= " AND c.entity = ".((int) $conf->entity);
 			$sql .= " ORDER BY c.tms DESC, c.ref DESC";
 			$sql .= $this->db->plimit($max, 0);
 

@@ -124,7 +124,7 @@ class RecruitmentCandidature extends CommonObject
 		'fk_user' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Employee', 'picto' => 'user', 'help' => 'LinkToUserCreated', 'enabled' => 1, 'position' => 600, 'notnull' => 0, 'visible' => -1, 'css' => 'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist' => 'tdoverflowmax100'),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'position' => 1010, 'notnull' => -1, 'visible' => 0,),
-		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'visible' => 2, 'index' => 1, 'default' => '0', 'arrayofkeyval' => array(0 => 'Draft', 1 => 'Received', 3 => 'ContractProposed', 5 => 'ContractSigned', 8 => 'Refused', 9 => 'Canceled')),
+		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'visible' => 2, 'index' => 1, 'default' => '0', 'arrayofkeyval' => array(0 => 'Draft', 1 => 'Received', 3 => 'ContractProposed', 5 => 'RecruitmentContractSigned', 8 => 'Refused', 9 => 'Canceled')),
 		"ip" => array("type" => "varchar(250)", "label" => "Ip", "enabled" => 1, 'position' => 700, 'notnull' => 0, "visible" => 0, "comment" => "ip used to create record (for public submission page)"),
 	);
 
@@ -339,15 +339,6 @@ class RecruitmentCandidature extends CommonObject
 			// copy internal contacts
 			if ($this->copy_linked_contact($object, 'internal') < 0) {
 				$error++;
-			}
-		}
-
-		if (!$error) {
-			// copy external contacts if same company
-			if (property_exists($this, 'socid') && $this->socid == $object->socid) {
-				if ($this->copy_linked_contact($object, 'external') < 0) {
-					$error++;
-				}
 			}
 		}
 
@@ -589,14 +580,14 @@ class RecruitmentCandidature extends CommonObject
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'recruitmentcandidature/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'recruitmentcandidature/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'recruitmentcandidature/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'recruitmentcandidature/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filepath = 'recruitmentcandidature/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filepath = 'recruitmentcandidature/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
@@ -728,9 +719,6 @@ class RecruitmentCandidature extends CommonObject
 	{
 		$lastname = $this->lastname;
 		$firstname = $this->firstname;
-		if (empty($lastname)) {
-			$lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (isset($this->nom) ? $this->nom : (isset($this->societe) ? $this->societe : (isset($this->company) ? $this->company : '')))));
-		}
 
 		$ret = '';
 
@@ -853,7 +841,7 @@ class RecruitmentCandidature extends CommonObject
 				if (!empty($filename)) {
 					$pospoint = strpos($filearray[0]['name'], '.');
 
-					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
+					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.dol_substr($filename, 0, $pospoint).'_mini'.dol_substr($filename, $pospoint);
 					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
@@ -915,14 +903,14 @@ class RecruitmentCandidature extends CommonObject
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Received').' ('.$langs->transnoentitiesnoconv("InterviewToDo").')';
 			$this->labelStatus[self::STATUS_CONTRACT_PROPOSED] = $langs->transnoentitiesnoconv('ContractProposed');
-			$this->labelStatus[self::STATUS_CONTRACT_SIGNED] = $langs->transnoentitiesnoconv('ContractSigned');
+			$this->labelStatus[self::STATUS_CONTRACT_SIGNED] = $langs->transnoentitiesnoconv('RecruitmentContractSigned');
 			$this->labelStatus[self::STATUS_CONTRACT_REFUSED] = $langs->transnoentitiesnoconv('ContractRefused');
 			$this->labelStatus[self::STATUS_REFUSED] = $langs->transnoentitiesnoconv('Refused');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
 			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Received');
 			$this->labelStatusShort[self::STATUS_CONTRACT_PROPOSED] = $langs->transnoentitiesnoconv('ContractProposed');
-			$this->labelStatusShort[self::STATUS_CONTRACT_SIGNED] = $langs->transnoentitiesnoconv('ContractSigned');
+			$this->labelStatusShort[self::STATUS_CONTRACT_SIGNED] = $langs->transnoentitiesnoconv('RecruitmentContractSigned');
 			$this->labelStatusShort[self::STATUS_CONTRACT_REFUSED] = $langs->transnoentitiesnoconv('ContractRefused');
 			$this->labelStatusShort[self::STATUS_REFUSED] = $langs->transnoentitiesnoconv('Refused');
 			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');

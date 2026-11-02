@@ -31,9 +31,9 @@ UseDiscountOnTotal=Ara cəmi üzrə
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Qlobal endirimin məhsul, xidmət kimi və ya marja hesablanması üçün yalnız ara cəmi kimi qəbul edildiyini müəyyən edir.
 MARGIN_TYPE=Marjanın hesablanması üçün defolt olaraq təklif olunan alış/qiymət qiyməti
 MargeType1=Ən yaxşı satıcı qiymətində marja
-MargeType2=Çəkili Orta Qiymət üzrə Marja (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=Xərc qiymətində marja
-MarginTypeDesc=* Ən yaxşı alış qiyməti üzrə marja = Satış qiyməti - Məhsul kartında müəyyən edilmiş ən yaxşı satıcı qiyməti<br>* Çəkili Orta Qiymət üzrə Marja (WAP) = Satış qiyməti - Məhsulun Çəkili Orta Qiyməti (WAP) və ya WAP hələ müəyyən edilməyibsə ən yaxşı satıcı qiyməti<br>* Xərc qiyməti üzrə marja = Satış qiyməti - Məhsul kartında və ya maya dəyəri müəyyən edilmədikdə WAP-da müəyyən edilmiş maya dəyəri və ya ən yaxşı satıcı qiyməti WAP hələ müəyyən edilməmişdir
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=Xərc qiyməti
 UnitCharges=Vahid ödənişləri
 Charges=Ödənişlər
@@ -43,4 +43,7 @@ rateMustBeNumeric=Dərəcə rəqəmsal dəyər olmalıdır
 markRateShouldBeLesserThan100=Mark dərəcəsi 100-dən aşağı olmalıdır
 ShowMarginInfos=Haşiyə məlumatlarını göstərin
 CheckMargins=Kenar detalları
-MarginPerSaleRepresentativeWarning=İstifadəçiyə düşən marja hesabatı hər bir satış nümayəndəsinin marjasını hesablamaq üçün üçüncü tərəflər və satış nümayəndələri arasındakı əlaqədən istifadə edir. Bəzi üçüncü tərəflərin xüsusi satış nümayəndəsi olmaya və bəzi üçüncü tərəflər bir neçə şəxslə əlaqələndirilə bildiyinə görə, bəzi məbləğlər bu hesabata daxil edilməyə bilər (satış nümayəndəsi yoxdursa) və bəziləri müxtəlif sətirlərdə görünə bilər (hər satış nümayəndəsi üçün) .
+MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any dedicated sale representative and some third parties may be linked to several, some amounts may not be included in this report (if there is no sale representative) and some may appear on different lines (for each sale representative).
+MarginUpdateLinkedBuyingPrice=Suggest to propagate the cost price modified on a line to all the lines of the linked proposals, orders and invoices that has the same product (users will decide yes or no at eachmodification)
+UpdateLinkedBuyingPrice=Update the cost price on all lines (with the same product) of the linked documents
+UpdateLinkedBuyingPriceQuestion=The cost price of this line has changed. Apply it to the lines of the linked documents that has the same product ?

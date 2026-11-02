@@ -10,6 +10,7 @@ DATAPOLICY_CONTACT_PROSPECT =Prospecto de cliente
 DATAPOLICY_CONTACT_PROSPECT_CLIENT =Prospecto/Cliente
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT =Nem prospecto/Nem cliente
 DATAPOLICY_ADHERENT =Associado
+DATAPOLICY_RECRUITMENT_CANDIDATURE =Aplicação
 SendAgreementText =Você pode enviar um e-mail de LGPD para todos os seus contatos relevantes (que ainda não receberam um e-mail e para os quais você não registrou nada sobre o acordo GDPR deles). Para fazer isso, use o botão a seguir.
 SendAgreement =Enviar e-mails
 TXTLINKDATAPOLICYACCEPT =Texto para o link "acordo"

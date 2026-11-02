@@ -340,15 +340,6 @@ class KnowledgeRecord extends CommonObject
 			}
 		}
 
-		if (!$error) {
-			// copy external contacts if same company
-			if (property_exists($this, 'fk_soc') && $this->fk_soc == $object->socid) {
-				if ($this->copy_linked_contact($object, 'external') < 0) {
-					$error++;
-				}
-			}
-		}
-
 		unset($object->context['createfromclone']);
 
 		// End
@@ -434,7 +425,7 @@ class KnowledgeRecord extends CommonObject
 				}
 			}
 			if (count($sqlwhere) > 0) {
-				$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+				$sql .= ' AND ('.implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere).')';
 			}
 
 			$filter = '';
@@ -645,14 +636,14 @@ class KnowledgeRecord extends CommonObject
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'knowledgerecord/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'knowledgerecord/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'knowledgerecord/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'knowledgerecord/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filepath = 'knowledgerecord/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filepath = 'knowledgerecord/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
@@ -894,7 +885,7 @@ class KnowledgeRecord extends CommonObject
 				if (!empty($filename)) {
 					$pospoint = strpos($filearray[0]['name'], '.');
 
-					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
+					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.dol_substr($filename, 0, $pospoint).'_mini'.dol_substr($filename, $pospoint);
 					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
@@ -980,7 +971,7 @@ class KnowledgeRecord extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT t.rowid, t.date_creation as datec, GREATEST(t.tms, kef.tms) as datem,';
+		$sql = 'SELECT t.rowid, t.date_creation as datec, GREATEST(t.tms, COALESCE(kef.tms, t.tms)) as datem,';
 		$sql .= ' t.fk_user_creat, t.fk_user_modif';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$this->table_element."_extrafields as kef ON kef.fk_object = t.rowid";

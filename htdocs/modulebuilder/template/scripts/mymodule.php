@@ -52,7 +52,7 @@ $script_file = basename(__FILE__);
 $path = __DIR__.'/';
 
 // Test if batch mode
-if (substr($sapi_type, 0, 3) == 'cgi') {
+if (substr($sapi_type, 0, 3) == 'cgi') {  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
 	exit(1);
 }
@@ -71,17 +71,17 @@ $res = 0;
 // Try master.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
 $tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME'];
 $tmp2 = realpath(__FILE__);
-$i = strlen($tmp) - 1;
-$j = strlen($tmp2) - 1;
+$i = strlen($tmp) - 1;  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
+$j = strlen($tmp2) - 1;  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
 	$i--;
 	$j--;
 }
 if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/master.inc.php")) {
-	$res = @include substr($tmp, 0, ($i + 1))."/master.inc.php";
+	$res = @include substr($tmp, 0, ($i + 1))."/master.inc.php";  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 }
-if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1)))."/master.inc.php")) {
-	$res = @include dirname(substr($tmp, 0, ($i + 1)))."/master.inc.php";
+if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1)))."/master.inc.php")) {  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
+	$res = @include dirname(substr($tmp, 0, ($i + 1)))."/master.inc.php";  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 }
 // Try master.inc.php using relative path
 if (!$res && file_exists("../master.inc.php")) {
@@ -108,6 +108,7 @@ if (!$res) {
  * @var User $user
  */
 
+require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 //$langs->setDefaultLang('en_US'); 	// To change default language of $langs
 $langs->load("main"); // To load language file for default language
 

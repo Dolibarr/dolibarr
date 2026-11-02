@@ -35,13 +35,9 @@ function subtotals_completesubstitutionarray_lines(&$substitutionarray, $langs, 
 		$substitutionarray['is_not_subtotals_line'] = !$substitutionarray['is_subtotals_line'];
 		$substitutionarray['is_subtotals_title'] = (($line->special_code == constant('SUBTOTALS_SPECIAL_CODE')) && $line->qty > 0);
 		$substitutionarray['is_subtotals_subtotal'] = (($line->special_code == constant('SUBTOTALS_SPECIAL_CODE')) && $line->qty < 0);
-		$subtotal_total = 0;
-		if (isModEnabled('multicurrency') && $object->multicurrency_code != getDolCurrency()) {
-			$subtotal_total = $object->getSubtotalLineMulticurrencyAmount($line); // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
-		} else {
-			$subtotal_total = $object->getSubtotalLineAmount($line); // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
-		}
-		$substitutionarray['subtotals_total'] = ($subtotal_total == 0) ? "" : $subtotal_total;
+		$usemulticurrency = (isModEnabled('multicurrency') && $object->multicurrency_code != getDolCurrency());
+		$subtotal_total_value = $object->getSubtotalLineAmountValue($line, $usemulticurrency); // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
+		$substitutionarray['subtotals_total'] = ($subtotal_total_value == 0) ? "" : price($subtotal_total_value);
 		$substitutionarray['subtotals_level'] = abs($line->qty);
 	} else {
 		$substitutionarray['is_subtotals_line'] = false;

@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyreport.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("errors", "admin", "companies"));
+$langs->loadLangs(array("admin", "companies"));
 
 $action = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view';
 $confirm = GETPOST('confirm', 'alpha');
@@ -212,7 +212,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 
 		// List of values
 		if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldinsert)) {
-			$sql .= $newid.",";
+			$sql .= ((int) $newid).",";
 		}
 		$i = 0;
 		foreach ($listfieldinsert as $f => $value) {
@@ -238,6 +238,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			$_POST = array('id' => $id); // Clean $_POST array, we keep only
 		} else {
 			if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$langs->load('errors');
 				setEventMessages($langs->transnoentities("ErrorRecordAlreadyExists"), null, 'errors');
 			} else {
 				dol_print_error($db);

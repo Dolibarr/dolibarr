@@ -21,6 +21,7 @@
  * \ingroup modulebuilder
  * \brief   Immutable value object for module/object name substitutions.
  */
+require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 
 /**
  * Immutable value object holding all case variants of a module/object pair.
@@ -54,15 +55,15 @@ final class NamingContract
 	public $objectNameUpper;
 
 	/**
-	 * @param string $moduleName Raw module name — accepts any casing, ucfirst() is applied
+	 * @param string $moduleName Raw module name — accepts any casing, dol_ucfirst() is applied
 	 * @param string $objectName Raw object name — empty string creates a module-only contract
 	 * @throws \InvalidArgumentException If module and object names are identical (case-insensitive)
 	 */
 	public function __construct(string $moduleName, string $objectName = '')
 	{
-		$this->moduleNameCase  = ucfirst($moduleName);
-		$this->moduleNameLower = strtolower($moduleName);
-		$this->moduleNameUpper = strtoupper($moduleName);
+		$this->moduleNameCase  = dol_ucfirst($moduleName);
+		$this->moduleNameLower = dol_strtolower($moduleName);
+		$this->moduleNameUpper = dol_strtoupper($moduleName);
 
 		if ($objectName === '') {
 			$this->objectNameCase  = '';
@@ -71,16 +72,16 @@ final class NamingContract
 			return;
 		}
 
-		if (strtolower($moduleName) === strtolower($objectName)) {
+		if (dol_strtolower($moduleName) === dol_strtolower($objectName)) {
 			throw new \InvalidArgumentException(
 				'Module and object names cannot be identical (case-insensitive match): "'
 				. $moduleName . '" vs "' . $objectName . '"'
 			);
 		}
 
-		$this->objectNameCase  = ucfirst($objectName);
-		$this->objectNameLower = strtolower($objectName);
-		$this->objectNameUpper = strtoupper($objectName);
+		$this->objectNameCase  = dol_ucfirst($objectName);
+		$this->objectNameLower = dol_strtolower($objectName);
+		$this->objectNameUpper = dol_strtoupper($objectName);
 	}
 
 	/**

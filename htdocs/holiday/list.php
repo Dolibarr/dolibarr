@@ -97,6 +97,8 @@ $search_ref          = GETPOST('search_ref', 'alphanohtml');
 $search_day_create   = GETPOST('search_day_create', 'int');
 $search_month_create = GETPOST('search_month_create', 'int');
 $search_year_create  = GETPOST('search_year_create', 'int');
+$search_month_update = GETPOST('search_month_update', 'int');
+$search_year_update  = GETPOST('search_year_update', 'int');
 $search_day_start    = GETPOST('search_day_start', 'int');
 $search_month_start  = GETPOST('search_month_start', 'int');
 $search_year_start   = GETPOST('search_year_start', 'int');
@@ -137,12 +139,15 @@ $arrayfields = array(
 	'cp.date_fin' => array('label' => $langs->trans("DateEnd"), 'checked' => '1', 'position' => 42),
 	'cp.date_valid' => array('label' => $langs->trans("DateValidation"), 'checked' => '1', 'position' => 60),
 	'cp.date_approval' => array('label' => $langs->trans("DateApprove"), 'checked' => '1', 'position' => 70),
-	'cp.date_create' => array('label' => $langs->trans("DateCreation"), 'checked' => '0', 'position' => 500),
+	'cp.date_creation' => array('label' => $langs->trans("DateCreation"), 'checked' => '0', 'position' => 500),
 	'cp.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => '0', 'position' => 501),
 	'cp.statut' => array('label' => $langs->trans("Status"), 'checked' => '1', 'position' => 1000),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 
 // Security check
@@ -207,6 +212,8 @@ if (empty($reshook)) {
 		$search_ref = "";
 		$search_month_create = "";
 		$search_year_create = "";
+		$search_month_update = "";
+		$search_year_update = "";
 		$search_month_start = "";
 		$search_year_start = "";
 		$search_month_end = "";
@@ -274,7 +281,7 @@ $sql .= " cp.ref,";
 
 $sql .= " cp.fk_user,";
 $sql .= " cp.fk_type,";
-$sql .= " cp.date_create,";
+$sql .= " cp.date_creation,";
 $sql .= " cp.tms as date_modification,";
 $sql .= " cp.description,";
 $sql .= " cp.date_debut,";
@@ -342,7 +349,9 @@ $sql .= dolSqlDateFilter("cp.date_debut", $search_day_start, $search_month_start
 // End date
 $sql .= dolSqlDateFilter("cp.date_fin", $search_day_end, $search_month_end, $search_year_end);
 // Create date
-$sql .= dolSqlDateFilter("cp.date_create", $search_day_create, $search_month_create, $search_year_create);
+$sql .= dolSqlDateFilter("cp.date_creation", $search_day_create, $search_month_create, $search_year_create);
+// Update date
+$sql .= dolSqlDateFilter("cp.tms", 0, $search_month_update, $search_year_update);
 // Employee
 if (!empty($search_employee) && $search_employee != -1) {
 	$sql .= " AND cp.fk_user = '".$db->escape($search_employee)."'\n";
@@ -436,6 +445,12 @@ if ($search_month_create) {
 }
 if ($search_year_create) {
 	$param .= '&search_year_create='.urlencode($search_year_create);
+}
+if ($search_month_update) {
+	$param .= '&search_month_update='.urlencode($search_month_update);
+}
+if ($search_year_update) {
+	$param .= '&search_year_update='.urlencode($search_year_update);
 }
 if ($search_day_start) {
 	$param .= '&search_day_start='.urlencode($search_day_start);
@@ -709,7 +724,7 @@ $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $obje
 print $hookmanager->resPrint;
 
 // Create date
-if (!empty($arrayfields['cp.date_create']['checked'])) {
+if (!empty($arrayfields['cp.date_creation']['checked'])) {
 	print '<td class="liste_titre center width200">';
 	print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month_create" value="'.dol_escape_htmltag($search_month_create).'">';
 	print $formother->selectyear($search_year_create, 'search_year_create', 1, $min_year, 0);
@@ -793,8 +808,8 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-if (!empty($arrayfields['cp.date_create']['checked'])) {
-	print_liste_field_titre($arrayfields['cp.date_create']['label'], $_SERVER["PHP_SELF"], "cp.date_create", "", $param, '', $sortfield, $sortorder, 'center ');
+if (!empty($arrayfields['cp.date_creation']['checked'])) {
+	print_liste_field_titre($arrayfields['cp.date_creation']['label'], $_SERVER["PHP_SELF"], "cp.date_creation", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['cp.tms']['checked'])) {
@@ -870,14 +885,16 @@ if ($id && !$user->hasRight('holiday', 'readall') && !in_array($id, $childids)) 
 		$approbatorstatic->status = $obj->validator_status;
 		$approbatorstatic->photo = $obj->validator_photo;
 
-		$date = $obj->date_create;
+		$date = $obj->date_creation;
 		$date_modif = $obj->date_modification;
 
 		$starthalfday = ($obj->halfday == -1 || $obj->halfday == 2) ? 'afternoon' : 'morning';
 		$endhalfday = ($obj->halfday == 1 || $obj->halfday == 2) ? 'morning' : 'afternoon';
 
 		$nbopenedday = num_open_day($db->jdate($obj->date_debut, 1), $db->jdate($obj->date_fin, 1), 0, 1, $obj->halfday, $userstatic->country_id, $obj->fk_user);	// user jdate(..., 1) because num_open_day need UTC dates
-		$totalduration += $nbopenedday;
+		if (is_numeric($nbopenedday)) {	// num_open_day() returns a string on error (bad dates)
+			$totalduration += (float) $nbopenedday;
+		}
 
 		if ($mode == 'kanban') {
 			if ($i == 0) {
@@ -1014,7 +1031,7 @@ if ($id && !$user->hasRight('holiday', 'readall') && !in_array($id, $childids)) 
 			print $hookmanager->resPrint;
 
 			// Date creation
-			if (!empty($arrayfields['cp.date_create']['checked'])) {
+			if (!empty($arrayfields['cp.date_creation']['checked'])) {
 				print '<td style="text-align: center;">'.dol_print_date($date, 'dayhour').'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

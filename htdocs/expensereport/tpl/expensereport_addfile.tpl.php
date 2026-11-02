@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,6 +27,8 @@
  */
 '
 @phan-var-force int $colspan
+@phan-var-force FormFile $formfile
+@phan-var-force User $user
 ';
 
 // Add line to upload new file

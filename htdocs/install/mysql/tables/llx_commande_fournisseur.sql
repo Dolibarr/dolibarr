@@ -3,6 +3,7 @@
 -- Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
 -- Copyright (C) 2007-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
 -- Copyright (C) 2010		Juanjo Menent			<jmenent@2byte.es>
+-- Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -61,6 +62,7 @@ create table llx_commande_fournisseur
 
   date_livraison			datetime default NULL,			-- date planned of delivery (expected shipment date)
   date_reception        	datetime default NULL,			-- date of real final reception (when everything is received)
+  fk_warehouse				integer DEFAULT NULL,			-- default destination warehouse for the goods to receive
   fk_account				integer,                        -- bank account
   fk_cond_reglement			integer,                        -- condition de reglement
   deposit_percent			varchar(63) DEFAULT NULL,		-- default deposit % if payment term needs it

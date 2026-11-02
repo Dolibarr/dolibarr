@@ -113,7 +113,6 @@ if (empty($reshook)) {
 			$qty = price2num(GETPOST("prod_qty_" . $i, 'alpha'), 'MS');
 			if ($qty > 0) {
 				if ($object->add_sousproduit($id, GETPOSTINT("prod_id_" . $i), (float) $qty, GETPOSTINT("prod_incdec_" . $i)) > 0) {
-					//var_dump($i.' '.GETPOST("prod_id_".$i, 'int'), $qty, GETPOST("prod_incdec_".$i, 'int'));
 					$action = 'edit';
 				} else {
 					$error++;
@@ -184,7 +183,7 @@ if ($action == 'search') {
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON p.rowid = cp.fk_product';
 	if (getDolGlobalInt('MAIN_MULTILANGS')) {
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND lang='".($current_lang)."'";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND lang='".$db->escape($current_lang)."'";
 	}
 	$sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 

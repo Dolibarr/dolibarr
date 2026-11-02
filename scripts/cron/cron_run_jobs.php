@@ -1,11 +1,11 @@
 #!/usr/bin/env php
 <?php
 /*
- * Copyright (C) 2012 Nicolas Villa aka Boyquotes http://informetic.fr
- * Copyright (C) 2013 Florian Henry <forian.henry@open-concept.pro
- * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2012       Nicolas Villa aka Boyquotes http://informetic.fr
+ * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro
+ * Copyright (C) 2013-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,14 +104,14 @@ $hookmanager->initHooks(array('cli'));
 $now = dol_now();
 
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." - userlogin=".$userlogin." - ".dol_print_date($now, 'dayhourrfc', 'gmt')." - ".gethostname()." *****\n";
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." - userlogin=".substr($userlogin, 0, 3)."... - ".$userlogin." - ".dol_print_date($now, 'dayhourrfc', 'gmt')." - ".gethostname()." *****\n";
 
 // Show TZ of the serveur when ran from command line.
 $ini_path = php_ini_loaded_file();
 print 'TZ server = '.getServerTimeZoneString()." - set in PHP ini ".$ini_path."\n";
 
 // Check security key
-if ($key != getDolGlobalString('CRON_KEY')) {
+if (!hash_equals(getDolGlobalString('CRON_KEY'), (string) $key)) {
 	print "Error: securitykey provided ".substr($key, 0, 5)."... does not match securitykey in setup.\n";
 	exit(1);
 }
@@ -157,8 +157,8 @@ if (getDolUserString('MAIN_LANG_DEFAULT')) {
 	$langcode = getDolUserString('MAIN_LANG_DEFAULT');
 }
 if ($langs->getDefaultLang() != $langcode) {
+	$langs = new Translate('', $conf);
 	$langs->setDefaultLang($langcode);
-	$langs->tab_translate = array();
 }
 // Language Management
 $langs->loadLangs(array('main', 'admin', 'cron', 'dict'));
@@ -219,7 +219,7 @@ if (function_exists('posix_kill') && function_exists('posix_get_last_error')) {
 
 					$sqlu = "UPDATE ".MAIN_DB_PREFIX."cronjob";
 					$sqlu .= " SET processing = 0, pid = NULL, datelastresult = '".$db->idate($nowcleanup)."', lastresult = '-1', lastoutput = '".$db->escape($msg)."'";
-					$sqlu .= " WHERE rowid = ".((int) $obj->rowid)." AND processing = 1 AND pid = ".$pid." AND datelastresult IS NULL";
+					$sqlu .= " WHERE rowid = ".((int) $obj->rowid)." AND processing = 1 AND pid = ".((int) $pid)." AND datelastresult IS NULL";
 					$db->query($sqlu);
 
 					dol_syslog("cron_run_jobs.php unlocked stuck job id=".$obj->rowid." (stale pid ".$pid.")", LOG_WARNING);
@@ -248,7 +248,7 @@ $nbofjobslaunchedok = 0;
 $nbofjobslaunchedko = 0;
 
 if (is_array($object->lines) && (count($object->lines) > 0)) {
-	$savconf = dol_clone($conf);
+	$savconf = dol_clone($conf, 1); // Native mode 2 (default) drops object properties like $conf->db, so restoring $conf from it later would leave those undefined
 
 	// Loop over job
 	foreach ($object->lines as $line) {
@@ -302,13 +302,14 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 				$langcode = $user->conf->MAIN_LANG_DEFAULT;
 			}
 			if ($langs->getDefaultLang() != $langcode) {
+				$langs = new Translate('', $conf);
 				$langs->setDefaultLang($langcode);
-				$langs->tab_translate = array();
 				$langs->loadLangs(array('main', 'admin', 'cron', 'dict'));
 			}
 		}
 
 		if (!verifCond($line->test)) {
+			echo " - not qualified (testok=0)\n";
 			continue;
 		}
 

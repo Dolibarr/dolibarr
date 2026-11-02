@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Jean-François Ferry	    <jfefe@aternatik.fr>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Joachim Kueter          <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,7 @@ require '../main.inc.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'companies'));
+$langs->loadLangs(array('admin', 'bills', 'companies'));
 
 $action = '';
 
@@ -165,30 +166,57 @@ print '<br>';
 
 // Show info setup modules
 
+// A country has one entry, or one entry per direction ('issue', 'receive'). A module is found if it is in the 'module'
+// list of the entry, or if its descriptor declares the country (and direction):
+// $this->module_parts = array('einvoice' => array('DE' => array('issue', 'receive')));
 $arrayofeinvoiceneed = array(
 	'FR' => array('module' => array('einvoice', 'pdpconnectfr'), 'search' => 'e-invoice'),
-	'ES' => array('search' => 'veri factu'),
+	'ES' => array('search' => 'verifactu'),
 	'BE' => array('search' => 'peppol'),
-	'PL' => array('module' => array('ksef'), 'search' => 'ksef')
+	'PL' => array('module' => array('ksef'), 'search' => 'ksef'),
+	'DE' => array(
+		'issue' => array('label' => 'EInvoiceIssueCustomerInvoices', 'search' => 'einvoice-issue-de'),
+		'receive' => array('label' => 'EInvoiceReceiveSupplierInvoices', 'search' => 'einvoice-receive-de')
+	)
 );
 
 $urleinvoice = '';
 
 if ($mysoc->country_code && in_array($mysoc->country_code, array_keys($arrayofeinvoiceneed))) {
-	$einvoiceneed = $arrayofeinvoiceneed[$mysoc->country_code];
-	$modulefound = '';
-	if (!empty($einvoiceneed['module'])) {
-		foreach ($einvoiceneed['module'] as $module) {
+	$einvoiceneeds = $arrayofeinvoiceneed[$mysoc->country_code];
+	if (isset($einvoiceneeds['search'])) {
+		$einvoiceneeds = array($einvoiceneeds);
+	}
+	$einvoicetext = '';
+	foreach ($einvoiceneeds as $direction => $einvoiceneed) {
+		$modules = empty($einvoiceneed['module']) ? array() : $einvoiceneed['module'];
+		foreach (empty($conf->modules_parts['einvoice']) ? array() : $conf->modules_parts['einvoice'] as $module => $declared) {
+			'@phan-var-force array<string,string[]>|string $declared';
+			if (is_array($declared) && !empty($declared[$mysoc->country_code]) && (is_int($direction) || in_array($direction, (array) $declared[$mysoc->country_code]))) {
+				$modules[] = $module;
+			}
+		}
+		$modulefound = '';
+		foreach ($modules as $module) {
 			if (isModEnabled($module)) {
 				$modulefound = $module;
 				break;
 			}
 		}
-	}
-	if (!$modulefound) {
-		$urleinvoice = DOL_URL_ROOT.'/admin/modules.php?mode=marketplace&search_keyword='.urlencode($einvoiceneed['search']);
-	} else {
-		$urleinvoice = DOL_URL_ROOT.'/admin/modules.php?search_keyword='.urlencode($modulefound);
+		if (!$modulefound) {
+			$url = DOL_URL_ROOT.'/admin/modules.php?mode=marketplace&search_keyword='.urlencode($einvoiceneed['search']);
+		} else {
+			$url = DOL_URL_ROOT.'/admin/modules.php?search_keyword='.urlencode($modulefound);
+		}
+		if (!$modulefound || !$urleinvoice) {	// The section leads to an entry without module
+			$urleinvoice = $url;
+		}
+		$einvoicetext .= '<br><br>'.(empty($einvoiceneed['label']) ? '' : $langs->trans($einvoiceneed['label']).': ');
+		if ($modulefound || getDolGlobalString('MAIN_FAKE_EINVOICE_MODULE_FOUND')) {
+			$einvoicetext .= $langs->trans("AnEInvoiceModuleHasBeenEnabled", $mysoc->country_code);
+		} else {
+			$einvoicetext .= $langs->trans("SetupDescriptionEInvoice", $mysoc->country_code);
+		}
 	}
 
 	print '<section class="setupsection setupeinvoice cursorpointer">';
@@ -196,11 +224,7 @@ if ($mysoc->country_code && in_array($mysoc->country_code, array_keys($arrayofei
 	print img_picto('', 'bill', 'class="paddingright valignmiddle double"');
 	print ' ';
 	print '<a class="nounderlineimp fontsize-1-1" href="'.$urleinvoice.'">'.$langs->transnoentities("EInvoice").'</a>';
-	if ($modulefound) {
-		print '<br><br>'.$langs->trans("AnEInvoiceModuleHasBeenEnabled", $mysoc->country_code);
-	} else {
-		print '<br><br>'.$langs->trans("SetupDescriptionEInvoice", $mysoc->country_code);
-	}
+	print $einvoicetext;
 	print '</section>';
 }
 

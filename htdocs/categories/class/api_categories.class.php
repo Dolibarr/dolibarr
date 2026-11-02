@@ -5,6 +5,7 @@
  * Copyright (C) 2025       MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2026       William Mead            <william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +36,8 @@ require_once DOL_DOCUMENT_ROOT.'/ticket/class/api_tickets.class.php';
 
 /**
  * API class for categories
+ *
+ * @since	5.0.0	Initial implementation
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
@@ -69,6 +72,9 @@ class Categories extends DolibarrApi
 	 * Get properties of a category object
 	 *
 	 * Return an array with category information
+	 *
+	 * @since	5.0.0	Initial implementation
+	 * @since	11.0.0	Added include_childs parameter
 	 *
 	 * @param	int		$id ID of category
 	 * @param	bool	$include_childs Include child categories list (true or false)
@@ -111,6 +117,9 @@ class Categories extends DolibarrApi
 	 * List categories
 	 *
 	 * Get a list of categories according to filters
+	 *
+	 * @since	5.0.0	Initial implementation
+	 * @since	19.0.0	Added properties parameter
 	 *
 	 * @param string	$sortfield	Sort field
 	 * @param string	$sortorder	Sort order
@@ -189,6 +198,8 @@ class Categories extends DolibarrApi
 	 *
 	 * Get a list of type of categories according to filters
 	 *
+	 * @since	24.0.0	Initial implementation
+	 *
 	 * @return array<string, string> Array of category types
 	 * @url GET /types
 	 *
@@ -206,6 +217,8 @@ class Categories extends DolibarrApi
 
 	/**
 	 * Create category object
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param array $request_data   Request data
 	 * @phan-param ?array<string,string> $request_data
@@ -238,6 +251,8 @@ class Categories extends DolibarrApi
 
 	/**
 	 * Update category
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param 	int   		$id             Id of category to update
 	 * @param 	array 		$request_data   Data
@@ -285,12 +300,14 @@ class Categories extends DolibarrApi
 		if ($this->category->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->category->error);
+			throw new RestException(500, $this->category->errorsToString());
 		}
 	}
 
 	/**
 	 * Delete category
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param 	int 	$id   Category ID
 	 * @return 	array
@@ -313,7 +330,7 @@ class Categories extends DolibarrApi
 		}
 
 		if ($this->category->delete(DolibarrApiAccess::$user) <= 0) {
-			throw new RestException(500, 'Error when delete category : ' . $this->category->error);
+			throw new RestException(500, 'Error when delete category : ' . $this->category->errorsToString());
 		}
 
 		return array(
@@ -328,6 +345,8 @@ class Categories extends DolibarrApi
 	 * List categories of an object
 	 *
 	 * Get the list of categories linked to an object
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param int       $id         Object ID
 	 * @param string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact', 'project', 'actioncomm')
@@ -399,6 +418,8 @@ class Categories extends DolibarrApi
 	/**
 	 * Link an object to a category by id
 	 *
+	 * @since	11.0.0	Initial implementation
+	 *
 	 * @param int $id  ID of category
 	 * @param string   $type Type of category ('member', 'customer', 'supplier', 'product', 'contact', 'actioncomm')
 	 * @param int      $object_id ID of object
@@ -423,6 +444,21 @@ class Categories extends DolibarrApi
 		$result = $this->category->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'category not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('categorie', $this->category->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		// An object can only be linked to a category of its own type
+		$typeid = -1;
+		foreach ($this->category->getMapList() as $map) {
+			if ($map['code'] === $type) {
+				$typeid = (int) $map['id'];
+				break;
+			}
+		}
+		if ($typeid < 0 || $typeid !== (int) $this->category->type) {
+			throw new RestException(400, 'The category '.((int) $this->category->id).' is not a category of type '.$type);
 		}
 
 		if ($type === Categorie::TYPE_PRODUCT) {
@@ -466,6 +502,7 @@ class Categories extends DolibarrApi
 
 		$result = $object->fetch($object_id);
 		if ($result > 0) {
+			$this->_checkAccessToLinkedObject($type, $object);
 			$result = $this->category->add_type($object, $type);
 			if ($result < 0) {
 				if ($this->category->error != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
@@ -486,6 +523,8 @@ class Categories extends DolibarrApi
 
 	/**
 	 * Link an object to a category by ref
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param int 		$id  		ID of category
 	 * @param string   	$type 		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
@@ -511,6 +550,21 @@ class Categories extends DolibarrApi
 		$result = $this->category->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'category not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('categorie', $this->category->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		// An object can only be linked to a category of its own type
+		$typeid = -1;
+		foreach ($this->category->getMapList() as $map) {
+			if ($map['code'] === $type) {
+				$typeid = (int) $map['id'];
+				break;
+			}
+		}
+		if ($typeid < 0 || $typeid !== (int) $this->category->type) {
+			throw new RestException(400, 'The category '.((int) $this->category->id).' is not a category of type '.$type);
 		}
 
 		if ($type === Categorie::TYPE_PRODUCT) {
@@ -549,6 +603,7 @@ class Categories extends DolibarrApi
 
 		$result = $object->fetch(0, $object_ref);
 		if ($result > 0) {
+			$this->_checkAccessToLinkedObject($type, $object);
 			$result = $this->category->add_type($object, $type);
 			if ($result < 0) {
 				if ($this->category->error != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
@@ -569,6 +624,8 @@ class Categories extends DolibarrApi
 
 	/**
 	 * Unlink an object from a category by id
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param int      $id        ID of category
 	 * @param string   $type      Type of category ('member', 'customer', 'supplier', 'product', 'contact', 'actioncomm')
@@ -594,6 +651,10 @@ class Categories extends DolibarrApi
 		$result = $this->category->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'category not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('categorie', $this->category->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if ($type === Categorie::TYPE_PRODUCT) {
@@ -632,6 +693,7 @@ class Categories extends DolibarrApi
 
 		$result = $object->fetch((int) $object_id);
 		if ($result > 0) {
+			$this->_checkAccessToLinkedObject($type, $object);
 			$result = $this->category->del_type($object, $type);
 			if ($result < 0) {
 				throw new RestException(500, 'Error when unlinking object', array_merge(array($this->category->error), $this->category->errors));
@@ -650,6 +712,8 @@ class Categories extends DolibarrApi
 
 	/**
 	 * Unlink an object from a category by ref
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param int      $id         	ID of category
 	 * @param string   $type 		Type  of category ('member', 'customer', 'supplier', 'product', 'contact', 'actioncomm')
@@ -675,6 +739,10 @@ class Categories extends DolibarrApi
 		$result = $this->category->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'category not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('categorie', $this->category->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if ($type === Categorie::TYPE_PRODUCT) {
@@ -713,6 +781,7 @@ class Categories extends DolibarrApi
 
 		$result = $object->fetch(0, (string) $object_ref);
 		if ($result > 0) {
+			$this->_checkAccessToLinkedObject($type, $object);
 			$result = $this->category->del_type($object, $type);
 			if ($result < 0) {
 				throw new RestException(500, 'Error when unlinking object', array_merge(array($this->category->error), $this->category->errors));
@@ -754,7 +823,6 @@ class Categories extends DolibarrApi
 		unset($object->country);
 		unset($object->country_id);
 		unset($object->country_code);
-		unset($object->total_ht);
 		unset($object->total_ht);
 		unset($object->total_localtax1);
 		unset($object->total_localtax2);
@@ -837,6 +905,8 @@ class Categories extends DolibarrApi
 	/**
 	 * Get the list of objects in a category.
 	 *
+	 * @since	10.0.0	Initial implementation
+	 *
 	 * @param int        $id         ID of category
 	 * @param string     $type       Type of category ('member', 'customer', 'supplier', 'product', 'contact', 'project')
 	 * @param int        $onlyids    Return only ids of objects (consume less memory)
@@ -866,10 +936,25 @@ class Categories extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		// The objects are returned only to a user who can read them: the permission of their module, and for each
+		// object the same restrictions as on its own API (sales representative, external user, entity).
+		$readaccess = array(
+			'member' => array(DolibarrApiAccess::$user->hasRight('adherent', 'lire'), 'adherent', ''),
+			'customer' => array(DolibarrApiAccess::$user->hasRight('societe', 'lire'), 'societe', ''),
+			'supplier' => array(DolibarrApiAccess::$user->hasRight('societe', 'lire'), 'societe', ''),
+			'product' => array(DolibarrApiAccess::$user->hasRight('produit', 'lire') || DolibarrApiAccess::$user->hasRight('service', 'lire'), 'product', ''),
+			'contact' => array(DolibarrApiAccess::$user->hasRight('societe', 'contact', 'lire'), 'contact', 'socpeople&societe'),
+			'project' => array(DolibarrApiAccess::$user->hasRight('projet', 'lire'), 'project', ''),
+			'ticket' => array(DolibarrApiAccess::$user->hasRight('ticket', 'read'), 'ticket', ''),
+		);
+		if (isset($readaccess[$type]) && !$readaccess[$type][0]) {
+			throw new RestException(403, 'Access to the objects of type '.$type.' not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$result = $this->category->getObjectsInCateg($type, $onlyids);
 
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieving objects list : '.$this->category->error);
+			throw new RestException(503, 'Error when retrieving objects list : '.$this->category->errorsToString());
 		}
 
 		$objects = $result;
@@ -891,10 +976,48 @@ class Categories extends DolibarrApi
 
 		if (is_object($objects_api)) {
 			foreach ($objects as $obj) {
+				$objid = is_object($obj) ? (int) $obj->id : (int) $obj;
+				if (isset($readaccess[$type]) && !DolibarrApi::_checkAccessToResource($readaccess[$type][1], $objid, $readaccess[$type][2])) {
+					continue;
+				}
 				$cleaned_objects[] = $objects_api->_cleanObjectDatas($obj);
 			}
 		}
 
 		return $cleaned_objects;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Check the user can access the object a category is linked to / unlinked from.
+	 * Linking is a write on the target object, so the same restrictions as on its own API apply
+	 * (sales representative and external user scoping, entity), not only the module permission.
+	 *
+	 * @param	string			$type		Category type (Categorie::TYPE_*)
+	 * @param	CommonObject	$object		Fetched target object
+	 * @return	void
+	 * @throws	RestException	403
+	 */
+	private function _checkAccessToLinkedObject($type, $object)
+	{
+		// phpcs:enable
+		if ($type === Categorie::TYPE_PRODUCT) {
+			$allowed = DolibarrApi::_checkAccessToResource('product', $object->id);
+		} elseif ($type === Categorie::TYPE_CUSTOMER || $type === Categorie::TYPE_SUPPLIER) {
+			$allowed = DolibarrApi::_checkAccessToResource('societe', $object->id);
+		} elseif ($type === Categorie::TYPE_CONTACT) {
+			$allowed = DolibarrApi::_checkAccessToResource('contact', $object->id, 'socpeople&societe');
+		} elseif ($type === Categorie::TYPE_MEMBER) {
+			$allowed = DolibarrApi::_checkAccessToResource('adherent', $object->id);
+		} elseif ($type === Categorie::TYPE_ACTIONCOMM) {
+			$allowed = DolibarrApi::_checkAccessToResource('agenda', $object->id, 'actioncomm', '', 'fk_soc', 'id');
+		} elseif ($type === Categorie::TYPE_PROJECT) {
+			$allowed = DolibarrApi::_checkAccessToResource('project', $object->id);
+		} else {
+			$allowed = false;
+		}
+		if (!$allowed) {
+			throw new RestException(403, 'Access to '.$type.' '.$object->id.' not allowed for login '.DolibarrApiAccess::$user->login);
+		}
 	}
 }

@@ -8,6 +8,7 @@
  * Copyright (C) 2017		    Juanjo Menent		        <jmenent@2byte.es>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		    Nick Fragoulis
+ * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,12 +75,18 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 print '<th class="linecoldescription">'.$langs->trans('Description');
 
 // Qty
+print '<th class="linecolrefsupplier">'.$langs->trans('RefSupplier').'</th>';
+print '<th class="linecolcostprice right">'.$langs->trans('BuyingPrice').'</th>';
 print '<th class="linecolqty right">'.$langs->trans('Qty').'</th>';
 
 
 // Unit
 if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	print '<th class="linecoluseunit left">'.$langs->trans('Unit').'</th>';
+}
+print '<th class="linecolwarehouse right">'.$langs->trans('Warehouse').'</th>';
+if (isModEnabled('productbatch')) {
+	print '<th class="linecolbatch">'.$langs->trans('Batch').'</th>';
 }
 
 print '<td class="linecoledit" style="width: 10px"></td>'; // No width to allow autodim

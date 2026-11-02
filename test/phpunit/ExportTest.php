@@ -24,14 +24,13 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/exports/class/export.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/functions2.lib.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (! defined('NOREQUIREUSER')) {
 	define('NOREQUIREUSER', '1');
@@ -372,9 +371,18 @@ class ExportTest extends CommonClassTest
 	 */
 	public function testExportModulesDatasets()
 	{
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		$model = 'csviso';
+
+		print "ccccccccccccccccc\n";
+		print var_export($db, true);
+		print var_export($mysoc->db, true);
 
 		$filterdatatoexport = '';
 		//$filterdatatoexport='';
@@ -408,5 +416,180 @@ class ExportTest extends CommonClassTest
 		}
 
 		return true;
+	}
+
+	/**
+	 * Test export datasets SQL is restricted in the same way than the UI for a restricted user
+	 *
+	 * @return void
+	 */
+	public function testExportDatasetSqlScopingForRestrictedUser()
+	{
+		global $conf, $user, $langs, $db;
+
+		$savuser = $user;
+
+		// Build a restricted internal user (no thirdparty advanced visibility, no hierarchy-wide read rights)
+		$restricteduser = new User($db);
+		$restricteduser->id = 999999901;
+		$restricteduser->rights = new stdClass();
+
+		// Build a user with all the rights that remove the export scope restrictions
+		$fulluser = new User($db);
+		$fulluser->id = 999999902;
+		$fulluser->rights = new stdClass();
+		$fulluser->rights->societe = new stdClass();
+		$fulluser->rights->societe->client = new stdClass();
+		$fulluser->rights->societe->client->voir = 1;
+		$fulluser->rights->projet = new stdClass();
+		$fulluser->rights->projet->all = new stdClass();
+		$fulluser->rights->projet->all->lire = 1;
+		$fulluser->rights->expensereport = new stdClass();
+		$fulluser->rights->expensereport->readall = 1;
+		$fulluser->rights->salaries = new stdClass();
+		$fulluser->rights->salaries->readall = 1;
+		$fulluser->rights->salaries->readchild = 1;
+
+		$datasets = array(
+			'modContrat' => array('contrat_1', 'contrat', 'AND (co.fk_soc IS NULL OR sc.fk_user = ID)', 'societe_commerciaux'),
+			'modFicheinter' => array('ficheinter_1', 'ficheinter', 'AND (f.fk_soc IS NULL OR sc.fk_user = ID)', 'societe_commerciaux'),
+			'modTicket' => array('ticket_1', 'ticket', 'AND (t.fk_soc IS NULL OR EXISTS (SELECT sc.fk_soc FROM '.MAIN_DB_PREFIX.'societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ID))', 'societe_commerciaux'),
+			'modProjet' => array('projet_1', 'projet', 'AND p.rowid IN (', 'projet'),
+			'modExpenseReport' => array('expensereport_1', 'expensereport', 'AND d.fk_user_author IN (', 'expensereport'),
+			'modSalaries' => array('salaries_1', 'salaries', 'AND s.fk_user = ID', 'salary')
+		);
+
+		// Phase 1: with a restricted user, every dataset must include a scope restriction
+		$user = $restricteduser;
+
+		foreach ($datasets as $modulefile => $datasetdef) {
+			list($exportcode, $modulename, $expectedclause, $expectedtable) = $datasetdef;
+			$expectedclause = str_replace('ID', (string) $restricteduser->id, $expectedclause);
+
+			require_once DOL_DOCUMENT_ROOT.'/core/modules/'.$modulefile.'.class.php';
+			$mod = new $modulefile($db);
+
+			$found = 0;
+			$sql = '';
+			foreach ($mod->export_code as $key => $code) {
+				if ($code != $exportcode) {
+					continue;
+				}
+				$found++;
+				$sql = $mod->export_sql_start[$key].$mod->export_sql_end[$key];
+			}
+
+			$this->assertEquals(1, $found, 'Dataset '.$exportcode.' not found into '.$modulefile);
+
+			print __METHOD__." dataset=".$exportcode." sql=".$sql."\n";
+
+			$regex = '/'.preg_quote(MAIN_DB_PREFIX.$expectedtable, '/').'/';
+			$result = (bool) preg_match($regex, $sql);
+			$this->assertTrue($result, 'Dataset '.$exportcode.' does not join expected table '.$expectedtable);
+			$this->assertStringContainsString($expectedclause, $sql, 'Dataset '.$exportcode.' is not restricted for a user without permission to see all records');
+		}
+
+		// Phase 2: with a user that has all visibility rights, no dataset must be restricted
+		$user = $fulluser;
+
+		foreach ($datasets as $modulefile => $datasetdef) {
+			list($exportcode, $modulename, $expectedclause, $expectedtable) = $datasetdef;
+			$expectedclause = str_replace('ID', (string) $fulluser->id, $expectedclause);
+
+			if (!isModEnabled($modulename) || !isModEnabled('societe')) {
+				print __METHOD__." dataset=".$exportcode." skipped (module not enabled)\n";
+				continue;
+			}
+
+			$mod = new $modulefile($db);
+
+			$found = 0;
+			$sql = '';
+			foreach ($mod->export_code as $key => $code) {
+				if ($code != $exportcode) {
+					continue;
+				}
+				$found++;
+				$sql = $mod->export_sql_start[$key].$mod->export_sql_end[$key];
+			}
+
+			$this->assertEquals(1, $found, 'Dataset '.$exportcode.' not found into '.$modulefile);
+			$this->assertStringNotContainsString($expectedclause, $sql, 'Dataset '.$exportcode.' is wrongly restricted for a user with all visibility rights');
+		}
+
+		$user = $savuser;
+
+		return true;
+	}
+
+	/**
+	 * testCsvCleanQuotes: only the values that need quotes are quoted
+	 *
+	 * @return void
+	 */
+	public function testCsvCleanQuotes()
+	{
+		global $conf, $langs;
+
+		unset($conf->global->USE_STRICT_CSV_RULES);
+
+		// A number, a date, a label that starts with a digit or a symbol are not quoted
+		foreach (array('123', '3M', '-5', '+33612345678', '.5', '12.50', '2026-10-24', '/path', ':x', '<b', 'a=b') as $valtotest) {
+			$this->assertEquals($valtotest, csvClean($valtotest, 'UTF-8', ','), 'Value '.$valtotest.' must not be quoted');
+		}
+
+		// A text that a spreadsheet may take for a formula is quoted
+		foreach (array('=1+1', '+cmd|x', '-cmd|x', '@SUM(1)', ' =1+1') as $valtotest) {
+			$this->assertEquals('"'.$valtotest.'"', csvClean($valtotest, 'UTF-8', ','), 'Value '.$valtotest.' must be quoted');
+		}
+
+		// The separator is a text, not a regular expression
+		$this->assertEquals('abc', csvClean('abc', 'UTF-8', '|'));
+		$this->assertEquals('"a|b"', csvClean('a|b', 'UTF-8', '|'));
+		$this->assertEquals('"a+b"', csvClean('a+b', 'UTF-8', '+'));
+		$this->assertEquals('ab', csvClean('ab', 'UTF-8', '('));
+		$this->assertEquals('"a(b"', csvClean('a(b', 'UTF-8', '('));
+		$this->assertEquals('a;b', csvClean('a;b', 'UTF-8', ','));
+		$this->assertEquals('"a;b"', csvClean('a;b', 'UTF-8', ';'));
+	}
+
+	/**
+	 * testExportCsvSelectLabel: the column _label of a field of type list contains the label of the option
+	 *
+	 * @return void
+	 */
+	public function testExportCsvSelectLabel()
+	{
+		global $conf, $langs, $db;
+
+		$conf->global->EXPORT_CSV_SEPARATOR_TO_USE = ',';
+		unset($conf->global->USE_STRICT_CSV_RULES);
+
+		require_once DOL_DOCUMENT_ROOT.'/core/modules/export/export_csvutf8.modules.php';
+		$objmodel = new ExportCsvUtf8($db);
+
+		$file = tempnam(sys_get_temp_dir(), 'csv');
+		$this->assertGreaterThanOrEqual(0, $objmodel->open_file($file, $langs));
+
+		$fields = array('s.status as status' => 'Status', 's.name as name' => 'Name');
+		$types = array('s.status as status' => 'Select:'.json_encode(array('options' => array('1' => 'Open, now', '2' => 'Say "closed"', 'a' => 'Alpha'))));
+		$objmodel->write_title($fields, $fields, $langs, $types);
+		foreach (array('1', '2', 'a', '9', null) as $status) {
+			$record = new stdClass();
+			$record->status = $status;
+			$record->name = '(NotATranslation)';
+			$objmodel->write_record($fields, $record, $langs, $types);
+		}
+		$objmodel->close_file();
+
+		$lines = explode("\n", trim((string) file_get_contents($file)));
+		unlink($file);
+
+		$this->assertEquals('Status,Name,Status_label,', $lines[0]);
+		$this->assertEquals('1,NotATranslation,"Open, now",', $lines[1]);
+		$this->assertEquals('2,NotATranslation,"Say ""closed""",', $lines[2]);
+		$this->assertEquals('a,NotATranslation,Alpha,', $lines[3]);
+		$this->assertEquals('9,NotATranslation,,', $lines[4]);
+		$this->assertEquals(',NotATranslation,,', $lines[5]);
 	}
 }

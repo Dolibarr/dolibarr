@@ -18,3 +18,5 @@
 
 
 ALTER TABLE llx_product_attribute_combination_price_level ADD UNIQUE INDEX uk_prod_att_comb_price_level(fk_product_attribute_combination, fk_price_level);
+
+ALTER TABLE llx_product_attribute_combination_price_level ADD CONSTRAINT fk_prod_att_comb_price_level_combination FOREIGN KEY (fk_product_attribute_combination) REFERENCES llx_product_attribute_combination (rowid);

@@ -397,7 +397,7 @@ if (($id || $code) && $action == 'edit') {
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	$head = accountingTransactionTemplatePrepareHead($object);
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("BookkeepingTemplate"), -1, $object->picto, 0, '', '', 0, '', 1);
+	print dol_get_fiche_head($head, 'card', $langs->trans("BookkeepingTemplate"), -1, $object->picto);
 
 	$formconfirm = '';
 
@@ -475,11 +475,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction($langs->trans('ToClone'), '', 'clone', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=clone&token=' . newToken(), '', $permissiontoadd);
+				print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=clone&token=' . newToken(), '', $permissiontoadd, array('attr' => array('class' => 'reposition')));
 			}
 
 			// Delete
-			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=delete&token=' . newToken(), '', $permissiontodelete);
+			print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=delete&token=' . newToken(), '', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 		}
 		print '</div>' . "\n";
 	}

@@ -36,5 +36,8 @@ create table llx_ai_request_log
   output_hash				varchar(80),							-- Hash of response payload
   security_hash				varchar(80),							-- Hash linking entity/event/input/output metadata
   raw_request_payload		MEDIUMTEXT,								-- Request payload
-  raw_response_payload		MEDIUMTEXT								-- Response payload
+  raw_response_payload		MEDIUMTEXT,								-- Response payload
+  tokens_input				integer,								-- Prompt tokens reported by the provider
+  tokens_output				integer,								-- Completion tokens reported by the provider (thinking included where billed as output)
+  model						varchar(255)							-- Exact model id that served the request
 )ENGINE=innodb;

@@ -14,6 +14,7 @@
 #------------------------------------------------------
 # Usage: initdemo.sh confirm|confirmcleanblockedlog
 # usage: initdemo.sh confirm|confirmcleanblockedlog mysqldump_dolibarr_x.x.x.sql database port login pass
+# Note: If the Mysql port is empty, mysql is called without port, user and password (so with the default local connection)
 #------------------------------------------------------
 
 
@@ -112,7 +113,7 @@ then
 	fichtemp=$(mktemp 2>/dev/null) || fichtemp=/tmp/test$$
 	# shellcheck disable=2064,2172
 	trap "rm -f '$fichtemp'" 0 1 2 5 15
-	$DIALOG --title "Init Dolibarr with demo values" --clear --inputbox "Mysql port (ex: 3306):" 16 55 "$port" 2> "$fichtemp"
+	$DIALOG --title "Init Dolibarr with demo values" --clear --inputbox "Mysql port (ex: 3306, keep empty to use the default local connection, so no login and password):" 16 55 "$port" 2> "$fichtemp"
 	valret=$?
 
 	case $valret in
@@ -125,39 +126,47 @@ then
 	esac
 	rm "$fichtemp"
 
-	# ---------------------------- compte admin mysql
-	fichtemp=$(mktemp 2>/dev/null) || fichtemp=/tmp/test$$
-	# shellcheck disable=2064,2172
-	trap "rm -f '$fichtemp'" 0 1 2 5 15
-	$DIALOG	 --title "Init Dolibarr with demo values" --clear --inputbox "Mysql user login (ex: root):" 16 55 root 2> "$fichtemp"
-	valret=$?
+	# If the Mysql port is empty, mysql will be called without port, user and password (so with the default local connection),
+	# so we do not ask for the login and password.
+	if [ "$port" != "" ]
+	then
+		# ---------------------------- compte admin mysql
+		fichtemp=$(mktemp 2>/dev/null) || fichtemp=/tmp/test$$
+		# shellcheck disable=2064,2172
+		trap "rm -f '$fichtemp'" 0 1 2 5 15
+		$DIALOG	 --title "Init Dolibarr with demo values" --clear --inputbox "Mysql user login (ex: root):" 16 55 root 2> "$fichtemp"
+		valret=$?
 
-	case $valret in
-		0)
-			admin=$(cat "$fichtemp") ;;
-		1)
-			exit ;;
-		255)
-			exit ;;
-	esac
-	rm "$fichtemp"
+		case $valret in
+			0)
+				admin=$(cat "$fichtemp") ;;
+			1)
+				exit ;;
+			255)
+				exit ;;
+		esac
+		rm "$fichtemp"
 
-	# ---------------------------- password admin mysql (root)
-	fichtemp=$(mktemp 2>/dev/null) || fichtemp=/tmp/test$$
-	# shellcheck disable=2064,2172
-	trap "rm -f '$fichtemp'" 0 1 2 5 15
-	$DIALOG --title "Init Dolibarr with demo values" --clear --passwordbox "Password for Mysql user login :" 16 55 2> "$fichtemp"
-	valret=$?
+		# ---------------------------- password admin mysql (root)
+		fichtemp=$(mktemp 2>/dev/null) || fichtemp=/tmp/test$$
+		# shellcheck disable=2064,2172
+		trap "rm -f '$fichtemp'" 0 1 2 5 15
+		$DIALOG --title "Init Dolibarr with demo values" --clear --passwordbox "Password for Mysql user login :" 16 55 2> "$fichtemp"
+		valret=$?
 
-	case $valret in
-		0)
-			passwd=$(cat "$fichtemp") ;;
-		1)
-			exit ;;
-		255)
-			exit ;;
-	esac
-	rm "$fichtemp"
+		case $valret in
+			0)
+				passwd=$(cat "$fichtemp") ;;
+			1)
+				exit ;;
+			255)
+				exit ;;
+		esac
+		rm "$fichtemp"
+	else
+		admin=""
+		passwd=""
+	fi
 
 
 	export documentdir
@@ -166,7 +175,14 @@ then
 
 
 	# ---------------------------- confirmation
-	$DIALOG --title "Erase Dolibarr with demo values" --clear --yesno "Do you confirm ? \n Dump file : '$dumpfile' \n Dump dir : '$mydir' \n Document dir : '$documentdir' \n Mysql database : '$base' \n Mysql port : '$port' \n Mysql login: '$admin' \n Mysql password : --hidden--" 15 55
+	confirmationtext="Do you confirm ? \n Dump file : '$dumpfile' \n Dump dir : '$mydir' \n Document dir : '$documentdir' \n Mysql database : '$base' \n Mysql port : "
+	if [ "$port" != "" ]
+	then
+		confirmationtext="$confirmationtext'$port' \n Mysql login: '$admin' \n Mysql password : --hidden--"
+	else
+		confirmationtext="$confirmationtext(default local connection) \n Mysql login: (current user) \n Mysql password : (none)"
+	fi
+	$DIALOG --title "Erase Dolibarr with demo values" --clear --yesno "$confirmationtext" 15 55
 
 	case $? in
 		0)      echo "Ok, start process..." ;;
@@ -178,25 +194,39 @@ fi
 
 
 # ---------------------------- Run sql file
+# Build the mysql parameters: a parameter is added only if it is not empty, so if the port is empty,
+# mysql is called without port, user and password (so with the default local connection).
+mysqloptions=()
+mysqloptionsshown=""
+if [ "$port" != "" ]
+then
+	mysqloptions+=("-P$port")
+	mysqloptionsshown="$mysqloptionsshown -P$port"
+fi
+if [ "$admin" != "" ]
+then
+	mysqloptions+=("-u$admin")
+	mysqloptionsshown="$mysqloptionsshown -u$admin"
+fi
 if [ "$passwd" != "" ]
 then
-	export passwd="-p$passwd"
-	export passwdshown="-p*****"
+	mysqloptions+=("-p$passwd")
+	mysqloptionsshown="$mysqloptionsshown -p*****"
 fi
-#echo "mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile"
-#mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile
+#echo "mysql$mysqloptionsshown $base < $mydir/$dumpfile"
+#mysql "${mysqloptions[@]}" "$base" < "$mydir/$dumpfile"
 #echo "drop old table"
 echo "drop table if exists llx_accounting_account;"
-echo "drop table if exists llx_accounting_account;" | mysql "-P$port" "-u$admin" "$passwd" "$base"
+echo "drop table if exists llx_accounting_account;" | mysql "${mysqloptions[@]}" "$base"
 echo "drop table if exists llx_accounting_system;"
-echo "drop table if exists llx_accounting_system;" | mysql "-P$port" "-u$admin" "$passwd" "$base"
+echo "drop table if exists llx_accounting_system;" | mysql "${mysqloptions[@]}" "$base"
 
-echo "mysql -P$port -u$admin $passwdshown $base < '$mydir/$dumpfile'"
-mysql "-P$port" "-u$admin" "$passwd" "$base" < "$mydir/$dumpfile"
+echo "mysql$mysqloptionsshown $base < '$mydir/$dumpfile'"
+mysql "${mysqloptions[@]}" "$base" < "$mydir/$dumpfile"
 export res=$?
 
 if [ $res -ne 0 ]; then
-	echo "Error to load database dump with: mysql -P$port -u$admin $passwdshown $base < '$mydir/$dumpfile'"
+	echo "Error to load database dump with: mysql$mysqloptionsshown $base < '$mydir/$dumpfile'"
 	exit
 fi
 
@@ -262,7 +292,7 @@ fi
 
 
 if [ -s "$mydir/initdemopostsql.sql" ]; then
-	mysql "-P$port" "$base" < "$mydir/initdemopostsql.sql"
+	mysql "${mysqloptions[@]}" "$base" < "$mydir/initdemopostsql.sql"
 fi
 
 

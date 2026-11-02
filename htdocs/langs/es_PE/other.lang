@@ -5,7 +5,6 @@ ExampleMyMenuEntry=Mi entrada al menú
 BehaviourOnClick =Comportamiento al hacer clic en la URL
 BookmarksManagement =Administrar marcadores
 ListOfBookmarks =Lista de marcadores
-NoBookmarkFound =Marcador no encontrado
 NoBookmarks =Marcador no definido
 OpenANewWindow =Abrir en una pestaña nueva
 ReplaceWindow =Reemplazar pestaña actual

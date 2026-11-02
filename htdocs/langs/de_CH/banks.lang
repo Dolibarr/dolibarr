@@ -49,7 +49,6 @@ ReConciliedBy=Ausgeglichen durch
 BankLineConciliated=Transaktion mit Bankbeleg ausgeglichen
 BankLineReconciled=Ausgeglichen
 BankLineNotReconciled=Nicht ausgeglichen
-SupplierInvoicePayment=Lieferantenzahlung
 SubscriptionPayment=Zahlung des Mitgliedsbeitrags
 SocialContributionPayment=Zahlung von Sozialabgaben/Steuern
 MenuBankInternalTransfer=Kontoübertrag

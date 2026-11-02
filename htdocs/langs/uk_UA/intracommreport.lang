@@ -4,11 +4,11 @@ IntraCommReports=Звіти Intracom
 Module68000Name = Intracomm звіт
 Module68000Desc = Керування звітами Intracomm (підтримка французького формату DEB/DES)
 IntracommReportSetup = Налаштування модуля Intracommreport
-IntracommReportAbout = Про внутрішньокоммерційний звіт
+IntracommReportAbout = Про внутрішньокомерційний звіт
 
 # Setup
 INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
-INTRACOMMREPORT_TYPE_ACTEUR=Тип актера
+INTRACOMMREPORT_TYPE_ACTEUR=Тип актора
 INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
 INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
 INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
@@ -34,5 +34,5 @@ IntracommReportPeriod=Період аналізу
 IntracommReportTypeDeclaration=Тип декларації
 IntracommReportDownload=завантажити файл XML
 # Invoice
-IntracommReportTransportMode=Транспортний режим
+IntracommReportTransportMode=Спосіб транспортування
 DeleteIntraCommReport=Видалити звіт IntraComm

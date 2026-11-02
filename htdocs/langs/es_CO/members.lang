@@ -133,7 +133,6 @@ MembersStatisticsDesc=Elija las estadísticas que desea leer ...
 Public=%s puede publicar mi membresía en <a target="_blank" href="%s">el registro público</a>
 NewMemberbyWeb=Nuevo miembro agregado. Esperando aprobacion
 NewMemberForm=Formulario de nuevo miembro
-TurnoverOrBudget=Facturación (para una empresa) o Presupuesto (para una fundación)
 CanEditAmountDetail=El visitante puede elegir/editar el monto de su contribución independientemente del tipo de miembro
 MEMBER_NEWFORM_PAYONLINE=Después del registro en línea, cambia automáticamente a la página de pago en línea
 NoVatOnSubscription=Sin IVA para el pago de la membresía

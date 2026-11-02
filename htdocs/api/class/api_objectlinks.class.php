@@ -20,7 +20,6 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/objectlink.class.php';
 
 
@@ -167,11 +166,18 @@ class ObjectLinks extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight((string) $tgttype, 'creer') && !DolibarrApiAccess::$user->hasRight((string) $tgttype, 'write')) {
 			throw new RestException(403, 'denied access to create the objectlinks targettype='.$this->objectlink->targettype);
 		}
+		if (!checkUserAccessToObject(DolibarrApiAccess::$user, array($srctype), $this->objectlink->fk_source)) {
+			throw new RestException(403, 'denied access to create the objectlinks sourcetype='.$this->objectlink->sourcetype);
+		}
+		if (!checkUserAccessToObject(DolibarrApiAccess::$user, array($tgttype), $this->objectlink->fk_target)) {
+			throw new RestException(403, 'denied access to create the objectlinks targettype='.$this->objectlink->targettype);
+		}
 
+		// Create object link (in database)
 		$result = $this->objectlink->create(DolibarrApiAccess::$user, $this->objectlink->fk_source, $this->objectlink->sourcetype, $this->objectlink->fk_target, $this->objectlink->targettype, $this->objectlink->relationtype, $this->notrigger);
 
 		if ($result < 0) {
-			throw new RestException(500, 'when create objectlink : '.$this->objectlink->error);
+			throw new RestException(500, 'when create objectlink : '.$this->objectlink->errorsToString());
 		}
 
 		if ($result == 0) {
@@ -225,12 +231,18 @@ class ObjectLinks extends DolibarrApi
 			if (!DolibarrApiAccess::$user->hasRight(((string) $tgttype), 'creer') && !DolibarrApiAccess::$user->hasRight(((string) $tgttype), 'write')) {
 				throw new RestException(403, 'denied access to the objectlinks targettype');
 			}
+			if (!checkUserAccessToObject(DolibarrApiAccess::$user, array($srctype), $this->objectlink->fk_source)) {
+				throw new RestException(403, 'denied access to the objectlinks sourcetype');
+			}
+			if (!checkUserAccessToObject(DolibarrApiAccess::$user, array($tgttype), $this->objectlink->fk_target)) {
+				throw new RestException(403, 'denied access to the objectlinks targettype');
+			}
 		} else {
 			throw new RestException(404, 'Object Link not found');
 		}
 
 		if (!$this->objectlink->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete objectlink : '.$this->objectlink->error);
+			throw new RestException(500, 'Error when delete objectlink : '.$this->objectlink->errorsToString());
 		}
 
 		return array(
@@ -297,11 +309,17 @@ class ObjectLinks extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight((string) $tgttype, 'creer') && !DolibarrApiAccess::$user->hasRight((string) $tgttype, 'write')) {
 			throw new RestException(403, 'denied access to get the objectlinks targettype='.$this->objectlink->targettype);
 		}
+		if (!checkUserAccessToObject(DolibarrApiAccess::$user, array($srctype), $this->objectlink->fk_source)) {
+			throw new RestException(403, 'denied access to the objectlinks sourcetype');
+		}
+		if (!checkUserAccessToObject(DolibarrApiAccess::$user, array($tgttype), $this->objectlink->fk_target)) {
+			throw new RestException(403, 'denied access to the objectlinks targettype');
+		}
 
 		$findresult = $this->objectlink->fetchByValues($this->objectlink->fk_source, $this->objectlink->sourcetype, $this->objectlink->fk_target, $this->objectlink->targettype, $this->objectlink->relationtype);
 
 		if ($findresult < 0) {
-			throw new RestException(500, 'Error when finding objectlink : '.$this->objectlink->error);
+			throw new RestException(500, 'Error when finding objectlink : '.$this->objectlink->errorsToString());
 		} elseif ($findresult > 0) {
 			return $this->_cleanObjectDatas($this->objectlink);
 		} else {
@@ -367,16 +385,22 @@ class ObjectLinks extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight((string) $tgttype, 'creer') && !DolibarrApiAccess::$user->hasRight((string) $tgttype, 'write')) {
 			throw new RestException(403, 'denied access to delete the objectlinks targettype='.$this->objectlink->targettype);
 		}
+		if (!checkUserAccessToObject(DolibarrApiAccess::$user, array($srctype), $this->objectlink->fk_source)) {
+			throw new RestException(403, 'denied access to the objectlinks sourcetype');
+		}
+		if (!checkUserAccessToObject(DolibarrApiAccess::$user, array($tgttype), $this->objectlink->fk_target)) {
+			throw new RestException(403, 'denied access to the objectlinks targettype');
+		}
 
 		$findresult = $this->objectlink->fetchByValues($this->objectlink->fk_source, $this->objectlink->sourcetype, $this->objectlink->fk_target, $this->objectlink->targettype, $this->objectlink->relationtype);
 
 		if ($findresult < 0) {
-			throw new RestException(500, 'Error when finding objectlink : '.$this->objectlink->error);
+			throw new RestException(500, 'Error when finding objectlink : '.$this->objectlink->errorsToString());
 		} elseif ($findresult > 0) {
 			$result = $this->objectlink->delete(DolibarrApiAccess::$user, $notrigger);
 
 			if ($result < 0) {
-				throw new RestException(500, 'Error when delete objectlink : '.$this->objectlink->error);
+				throw new RestException(500, 'Error when delete objectlink : '.$this->objectlink->errorsToString());
 			}
 
 			return array(
@@ -425,6 +449,12 @@ class ObjectLinks extends DolibarrApi
 				throw new RestException(403, 'denied access to the objectlinks sourcetype');
 			}
 			if (!DolibarrApiAccess::$user->hasRight(((string) $tgttype), 'lire') && !DolibarrApiAccess::$user->hasRight(((string) $tgttype), 'read')) {
+				throw new RestException(403, 'denied access to the objectlinks targettype');
+			}
+			if (!checkUserAccessToObject(DolibarrApiAccess::$user, array($srctype), $this->objectlink->fk_source)) {
+				throw new RestException(403, 'denied access to the objectlinks sourcetype');
+			}
+			if (!checkUserAccessToObject(DolibarrApiAccess::$user, array($tgttype), $this->objectlink->fk_target)) {
 				throw new RestException(403, 'denied access to the objectlinks targettype');
 			}
 		} else {

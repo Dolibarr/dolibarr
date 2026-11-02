@@ -199,49 +199,6 @@ print $langs->trans("CompanyInitialKey").'</td><td title="Parameter BLOCKEDLOG_E
 print $block_static->getOrInitFirstSignature();
 print '</td></tr>';
 
-/* Deprecated
-if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
-	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("BlockedLogAuthorityUrl").img_info($langs->trans('BlockedLogAuthorityNeededToStoreYouFingerprintsInNonAlterableRemote')).'</td>';
-	print '<td class="right" width="300">';
-
-	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="set_BLOCKEDLOG_AUTHORITY_URL">';
-	print '<input type="hidden" name="withtab" value="'.$withtab.'">';
-	print '<input type="text" name="BLOCKEDLOG_AUTHORITY_URL" value="' . getDolGlobalString('BLOCKEDLOG_AUTHORITY_URL').'" size="40" />';
-	print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
-	print '</form>';
-
-	print '</td></tr>';
-}
-
-print '<tr class="oddeven">';
-print '<td class="titlefieldmiddle" title="Debug obfuscation key">';
-print "Debug obfuscation key".'</td><td title="Debug obfuscation key" class="small">';
-try {
-	$a = $block_static->getObfuscationKey();
-	print 'block_static->getObfuscationKey(): '.$a;
-	print '<br>';
-	print '$_SESSION[obfuscationkey_'.((int) $conf->entity).']: '.$_SESSION['obfuscationkey_'.((int) $conf->entity)];
-	print '<br>';
-	$b = $block_static->getEncodedHMACSecretKey();
-	print $b;
-	print '<br>';
-	if (preg_match('/dolcrypt/', $b)) {
-		print dolDecrypt($b, '');
-	} elseif (preg_match('/dolobfuscationv1/', $b)) {
-		print dolDecrypt($b, $a);
-	}
-	print '<br>';
-	print '$conf->cache[obfuscationkey_'.((int) $conf->entity).']: '.$conf->cache['obfuscationkey_'.((int) $conf->entity)];
-} catch (Exception $e) {
-	print $e->getMessage();
-}
-print '</td></tr>';
-*/
-
-
 // Show the input of countries not allowed for disabling
 if ($mysoc->country_code != 'FR' || !isALNERunningVersion() || constant('CERTIF_LNE') != '1') {
 	print '<tr class="oddeven">';
@@ -330,7 +287,7 @@ print $langs->trans("URLToGetObfuscationkey").'<br>';
 print '<div class="urllink"><input type="text" id="forcegetkeyobfuscation" spellcheck="false" class="quatrevingtpercentminusx" value="'.$urltogetkeyobfuscation.'"><a class="reposition" href="'.$urltogetkeyobfuscation.'" target="_blank" rel="noopener noreferrer"><span class="fas fa-external-link-alt paddingleft" style=""></span></a></div>';
 print ajax_autoselect('forcegetkeyobfuscation');
 
-if (GETPOST('forcegetkeyobfuscation')) {
+if (GETPOST('forcegetkeyobfuscation')) {		// Mode to force the retrieval and recording of HMAC with obfuscation.
 	unset($_SESSION['hmac_secret_key']);
 	unset($conf->cache['hmac_secret_key']);
 

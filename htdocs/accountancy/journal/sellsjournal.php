@@ -11,6 +11,7 @@
  * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Vincent de Grandporé        <vincent@de-grandpre.quebec>
+ * Copyright (C) 2026		Joachim Kueter				<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,9 +51,10 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("commercial", "compta", "bills", "other", "accountancy", "errors"));
+$langs->loadLangs(array("commercial", "compta", "bills", "other", "accountancy"));
 
 $id_journal = GETPOSTINT('id_journal');
 $action = GETPOST('action', 'aZ09');
@@ -64,7 +66,7 @@ $date_endmonth = GETPOSTINT('date_endmonth');
 $date_endday = GETPOSTINT('date_endday');
 $date_endyear = GETPOSTINT('date_endyear');
 $in_bookkeeping = GETPOST('in_bookkeeping');
-if ($in_bookkeeping == '') {
+if ($in_bookkeeping == '' || $action == 'writebookkeeping') {	// Never transfer again documents already in bookkeeping
 	$in_bookkeeping = 'notyet';
 }
 
@@ -93,8 +95,17 @@ $tabwarranty = array();
 $tabttc = array();
 $tablocaltax1 = array();
 $tablocaltax2 = array();
+$tabCustomerDiscountHT = array();
+$tabCustomerDiscountVAT = array();
+$tabCustomerDiscountTTC = array();
+
+// When down payments are just payments, they are not journalized, so there is nothing to reverse from the down payment accounts
+$manageCustomerDepositInInvoice = (getDolGlobalInt('ACCOUNTING_MANAGE_CUSTOMER_DEPOSIT_IN_INVOICE') && !getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS'));
+$labelCustomerDiscountExtension = ' (AC)';
 
 $cptcli = 'NotDefined';
+$accountCustomerDeposit = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT', 'NotDefined');
+$accountCustomerDepositVAT = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT', 'NotDefined');
 
 /*
  * Actions
@@ -204,6 +215,13 @@ if ($in_bookkeeping == 'notyet') {
 	$sql .= " AND f.rowid NOT IN (SELECT fk_doc FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";
 	// $sql .= " AND fd.rowid NOT IN (SELECT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";		// Useless, we save one line for all products with same account
 }
+if ($manageCustomerDepositInInvoice) {
+	// Exclude the lines that consume a down payment, they are replaced by the reversal of the down payment (see $sql2).
+	// Same condition as $sql2: only discounts coming from a down payment invoice.
+	$sql .= " AND COALESCE(fd.fk_remise_except, 0) NOT IN (SELECT re.rowid FROM ".$db->prefix()."societe_remise_except as re";
+	$sql .= " INNER JOIN ".$db->prefix()."facture as fs ON fs.rowid = re.fk_facture_source";
+	$sql .= " WHERE fs.type = ".Facture::TYPE_DEPOSIT." AND re.description LIKE '(DEPOSIT)%')";
+}
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
@@ -222,6 +240,9 @@ $tablocaltax1 = array();
 $tablocaltax2 = array();
 $tabcompany = array();
 $vatdata_cache = array();
+$tabCustomerDiscountHT = array();
+$tabCustomerDiscountVAT = array();
+$tabCustomerDiscountTTC = array();
 
 // Variables
 $cptcli = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER', 'NotDefined');
@@ -239,7 +260,7 @@ if ($result) {
 
 		// Controls
 		$accountancy_code_customer_general = (!empty($obj->accountancy_code_customer_general) && $obj->accountancy_code_customer_general != '-1') ? $obj->accountancy_code_customer_general : $cptcli;
-		$compta_soc = (!empty($obj->code_compta_client)) ? $obj->code_compta_client : $cptcli;
+		$compta_soc = getSubledgerAccountWithDefault($obj->code_compta_client, 'customer');
 
 		$compta_prod = $obj->compte;
 		if (empty($compta_prod)) {
@@ -273,7 +294,12 @@ if ($result) {
 			$vatdata = getTaxesFromId($tax_id, $buyer, $seller, 0);
 			$vatdata_cache[$vatdata_cache_key] = $vatdata;
 		}
-		$compta_tva = (!empty($vatdata['accountancy_code_sell']) ? $vatdata['accountancy_code_sell'] : $cpttva);
+		if (!empty(length_accountg($accountCustomerDepositVAT)) && $accountCustomerDepositVAT != 'NotDefined' && $obj->type == Facture::TYPE_DEPOSIT) {
+			// customer deposit account for VAT
+			$compta_tva = $accountCustomerDepositVAT;
+		} else {
+			$compta_tva = (!empty($vatdata['accountancy_code_sell']) ? $vatdata['accountancy_code_sell'] : $cpttva);
+		}
 		$compta_localtax1 = (!empty($vatdata['accountancy_code_sell']) ? $vatdata['accountancy_code_sell'] : $cptlocaltax1);
 		$compta_localtax2 = (!empty($vatdata['accountancy_code_sell']) ? $vatdata['accountancy_code_sell'] : $cptlocaltax2);
 
@@ -309,6 +335,46 @@ if ($result) {
 
 		$revenuestamp = (float) price2num($obj->revenuestamp, 'MT');
 
+		if ($manageCustomerDepositInInvoice && $obj->type == Facture::TYPE_STANDARD && !isset($tabfac[$obj->rowid])) {
+			// Get all linked invoice deposit consumed by this invoice. Other discounts (credit note, excess received,
+			// fixed amount) are already in the journal with their own line or document, so they must not be reversed.
+			$sql2 = "SELECT re.rowid";
+			$sql2 .= " FROM " . $db->prefix() . "societe_remise_except as re";
+			$sql2 .= " INNER JOIN " . $db->prefix() . "facture as fs ON fs.rowid = re.fk_facture_source";
+			$sql2 .= " WHERE fs.type = " . Facture::TYPE_DEPOSIT . " AND re.description LIKE '(DEPOSIT)%'";
+			$sql2 .= " AND (re.fk_facture = " . ((int) $obj->rowid);
+			$sql2 .= "  OR re.fk_facture_line IN (SELECT rowid FROM " . $db->prefix() . "facturedet WHERE fk_facture = " . ((int) $obj->rowid) . ")";
+			$sql2 .= ")";
+
+			$resql2 = $db->query($sql2);
+			if ($resql2) {
+				if ($db->num_rows($resql2) > 0) {
+					if (!isset($tabCustomerDiscountHT[$obj->rowid][$accountCustomerDeposit])) {
+						$tabCustomerDiscountHT[$obj->rowid][$accountCustomerDeposit] = 0;
+					}
+					if (!isset($tabCustomerDiscountVAT[$obj->rowid][$accountCustomerDepositVAT])) {
+						$tabCustomerDiscountVAT[$obj->rowid][$accountCustomerDepositVAT] = 0;
+					}
+					if (!isset($tabCustomerDiscountTTC[$obj->rowid][$compta_soc])) {
+						$tabCustomerDiscountTTC[$obj->rowid][$compta_soc] = 0;
+					}
+
+					while ($obj2 = $db->fetch_object($resql2)) {
+						$customerDiscount = new DiscountAbsolute($db);
+						$customerDiscount->fetch($obj2->rowid);
+						// Accumulate: an invoice can consume several deposits, and the (DEPOSIT) lines are
+						// excluded from the main query, so this reversal is their only trace in the journal.
+						$tabCustomerDiscountHT[$obj->rowid][$accountCustomerDeposit] -= $customerDiscount->total_ht;
+						$tabCustomerDiscountVAT[$obj->rowid][$accountCustomerDepositVAT] -= $customerDiscount->total_tva;
+						$tabCustomerDiscountTTC[$obj->rowid][$compta_soc] -= $customerDiscount->total_ttc;
+					}
+				}
+				$db->free($resql2);
+			} else {
+				dol_print_error($db);
+			}
+		}
+
 		// Invoice lines
 		$tabfac[$obj->rowid]["date"] = $db->jdate($obj->df);
 		$tabfac[$obj->rowid]["datereg"] = $db->jdate($obj->dlr);
@@ -343,8 +409,10 @@ if ($result) {
 		// For credit notes, we hope to have situation_ratio = 1 so the compensation has no effect to avoid introducing troubles with credit notes.
 		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
 			$total_ttc = $obj->total_ttc * $situation_ratio;
+			$total_ht = $obj->total_ht * $situation_ratio;
 		} else {
 			$total_ttc = $obj->total_ttc;
+			$total_ht = $obj->total_ht;
 		}
 
 		// Move a part of the retained warrenty into the account of warranty
@@ -355,17 +423,17 @@ if ($result) {
 		}
 
 		$tabttc[$obj->rowid][$compta_soc] += $total_ttc;
-		$tabht[$obj->rowid][$compta_prod] += $obj->total_ht * $situation_ratio;
+		$tabht[$obj->rowid][$compta_prod] += $total_ht;
 		$tva_npr = ((($obj->info_bits & 1) == 1) ? 1 : 0);
 		if (!$tva_npr) { // We ignore line if VAT is a NPR
-			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
-				$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
-				$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1;
-				$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2;
-			} else {
+			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
 				$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva * $situation_ratio;
 				$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1 * $situation_ratio;
 				$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2 * $situation_ratio;
+			} else {
+				$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
+				$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1;
+				$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2;
 			}
 		}
 
@@ -535,8 +603,8 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 
 		$invoicestatic->id = (int) $key;
 		$invoicestatic->ref = (string) $val["ref"];
-		$invoicestatic->type = $val["type"];
-		$invoicestatic->close_code = $val["close_code"];
+		$invoicestatic->type = (int) ($val["type"] ?? 0);
+		$invoicestatic->close_code = (string) ($val["close_code"] ?? '');
 
 		$date = dol_print_date($val["date"], 'day');
 
@@ -560,7 +628,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 		if (isset($errorforinvoice[$key]) && $errorforinvoice[$key] == 'somelinesarenotbound') {
 			$error++;
 			$errorforline++;
-			setEventMessages($langs->trans('ErrorInvoiceContainsLinesNotYetBounded', $val['ref']), null, 'errors');
+			setEventMessages($langs->trans('ErrorInvoiceContainsLinesNotYetBounded', (string) ($val['ref'] ?? '')), null, 'errors');
 		}
 
 		// Warranty
@@ -882,6 +950,196 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 			}
 		}
 
+		if ($manageCustomerDepositInInvoice) {
+			// customer discount consumed TTC amount (like Third-party section)
+			if (!$errorforline && isset($tabCustomerDiscountTTC[$key])) {
+				foreach ($tabCustomerDiscountTTC[$key] as $k => $mt) {
+					$bookkeeping = new BookKeeping($db);
+					$bookkeeping->doc_date = $val["date"];
+					$bookkeeping->date_lim_reglement = $val["datereg"];
+					$bookkeeping->doc_ref = $val["ref"];
+					$bookkeeping->date_creation = $now;
+					$bookkeeping->doc_type = 'customer_invoice';
+					$bookkeeping->fk_doc = $key;
+					$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
+					$bookkeeping->thirdparty_code = $companystatic->code_client;
+
+					$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
+					$bookkeeping->subledger_label = $tabcompany[$key]['name'];
+
+					$bookkeeping->numero_compte = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER');
+
+					$bookkeeping->label_compte = $accountingaccountcustomer->label;
+
+					$bookkeeping->label_operation = $bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref, $langs->trans("SubledgerAccount") . $labelCustomerDiscountExtension);
+					$bookkeeping->montant = $mt;
+					$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
+					$bookkeeping->debit = ($mt >= 0) ? $mt : 0;
+					$bookkeeping->credit = ($mt < 0) ? -$mt : 0;
+					$bookkeeping->code_journal = $journal;
+					$bookkeeping->journal_label = $langs->transnoentities($journal_label);
+					$bookkeeping->fk_user_author = $user->id;
+					$bookkeeping->entity = $conf->entity;
+
+					$totaldebit += $bookkeeping->debit;
+					$totalcredit += $bookkeeping->credit;
+
+					$result = $bookkeeping->create($user);
+					if ($result < 0) {
+						if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists') {    // Already exists
+							$error++;
+							$errorforline++;
+							$errorforinvoice[$key] = 'alreadyjournalized';
+						} else {
+							$error++;
+							$errorforline++;
+							$errorforinvoice[$key] = 'other';
+							setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+						}
+					} else {
+						if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && getDolGlobalInt('ACCOUNTING_ENABLE_AUTOLETTERING')) {
+							require_once DOL_DOCUMENT_ROOT . '/accountancy/class/lettering.class.php';
+							$lettering_static = new Lettering($db);
+
+							$nb_lettering = $lettering_static->bookkeepingLettering(array($bookkeeping->id));
+						}
+					}
+				}
+			}
+
+			// customer discount consumed HT (like Product / Service section)
+			if (!$errorforline && isset($tabCustomerDiscountHT[$key])) {
+				foreach ($tabCustomerDiscountHT[$key] as $k => $mt) {
+					if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
+						$accountingaccount = new AccountingAccount($db);
+						$accountingaccount->fetch(0, $k, true);
+						$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
+					} else {
+						$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
+					}
+
+					$label_account = $accountingaccount->label;
+
+					// get compte id and label
+					if ($accountingaccount->id > 0) {
+						$bookkeeping = new BookKeeping($db);
+						$bookkeeping->doc_date = $val["date"];
+						$bookkeeping->date_lim_reglement = $val["datereg"];
+						$bookkeeping->doc_ref = $val["ref"];
+						$bookkeeping->date_creation = $now;
+						$bookkeeping->doc_type = 'customer_invoice';
+						$bookkeeping->fk_doc = $key;
+						$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
+						$bookkeeping->thirdparty_code = $companystatic->code_client;
+
+						if (getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT')) {
+							if ($k == getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT')) {
+								$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
+								$bookkeeping->subledger_label = $tabcompany[$key]['name'];
+							} else {
+								$bookkeeping->subledger_account = '';
+								$bookkeeping->subledger_label = '';
+							}
+						} else {
+							$bookkeeping->subledger_account = '';
+							$bookkeeping->subledger_label = '';
+						}
+
+						$bookkeeping->numero_compte = $k;
+						$bookkeeping->label_compte = $label_account;
+
+						$bookkeeping->label_operation = $bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref, $label_account) . $labelCustomerDiscountExtension;
+						$bookkeeping->montant = $mt;
+						$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
+						$bookkeeping->debit = ($mt < 0) ? -$mt : 0;
+						$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
+						$bookkeeping->code_journal = $journal;
+						$bookkeeping->journal_label = $langs->transnoentities($journal_label);
+						$bookkeeping->fk_user_author = $user->id;
+						$bookkeeping->entity = $conf->entity;
+
+						$totaldebit += $bookkeeping->debit;
+						$totalcredit += $bookkeeping->credit;
+
+						$result = $bookkeeping->create($user);
+						if ($result < 0) {
+							if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists') {    // Already exists
+								$error++;
+								$errorforline++;
+								$errorforinvoice[$key] = 'alreadyjournalized';
+							} else {
+								$error++;
+								$errorforline++;
+								$errorforinvoice[$key] = 'other';
+								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+							}
+						}
+					}
+				}
+			}
+
+			// customer discount consumed VAT amount (like VAT section)
+			if (!$errorforline && isset($tabCustomerDiscountVAT[$key])) {
+				foreach ($tabCustomerDiscountVAT[$key] as $k => $mt) {
+					if (empty($conf->cache['accountingaccountincurrententity_vat'][$k])) {
+						$accountingaccount = new AccountingAccount($db);
+						$accountingaccount->fetch(0, $k, true);
+						$conf->cache['accountingaccountincurrententity_vat'][$k] = $accountingaccount;
+					} else {
+						$accountingaccount = $conf->cache['accountingaccountincurrententity_vat'][$k];
+					}
+
+					$label_account = $accountingaccount->label;
+
+					$bookkeeping = new BookKeeping($db);
+					$bookkeeping->doc_date = $val["date"];
+					$bookkeeping->date_lim_reglement = $val["datereg"];
+					$bookkeeping->doc_ref = $val["ref"];
+					$bookkeeping->date_creation = $now;
+					$bookkeeping->doc_type = 'customer_invoice';
+					$bookkeeping->fk_doc = $key;
+					$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
+					$bookkeeping->thirdparty_code = $companystatic->code_client;
+
+					$bookkeeping->subledger_account = '';
+					$bookkeeping->subledger_label = '';
+
+					$bookkeeping->numero_compte = $k;
+					$bookkeeping->label_compte = $label_account;
+
+					$tmpvatrate = (empty($def_tva[$key][$k]) ? (empty($arrayofvat[$key][$k]) ? '' : $arrayofvat[$key][$k]) : implode(', ', $def_tva[$key][$k]));
+					$labelvataccount = $langs->trans("Taxes") . ' ' . $tmpvatrate . ' %';
+					$bookkeeping->label_operation = $bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref, $labelvataccount) . $labelCustomerDiscountExtension;
+
+					$bookkeeping->montant = $mt;
+					$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
+					$bookkeeping->debit = ($mt < 0) ? -$mt : 0;
+					$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
+					$bookkeeping->code_journal = $journal;
+					$bookkeeping->journal_label = $langs->transnoentities($journal_label);
+					$bookkeeping->fk_user_author = $user->id;
+					$bookkeeping->entity = $conf->entity;
+
+					$totaldebit += $bookkeeping->debit;
+					$totalcredit += $bookkeeping->credit;
+
+					$result = $bookkeeping->create($user);
+					if ($result < 0) {
+						if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists') {    // Already exists
+							$error++;
+							$errorforline++;
+							$errorforinvoice[$key] = 'alreadyjournalized';
+						} else {
+							$error++;
+							$errorforline++;
+							$errorforinvoice[$key] = 'other';
+							setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+						}
+					}
+				}
+			}
+		}
+
 		// Protection against a bug on lines before
 		if (!$errorforline && (price2num($totaldebit, 'MT') != price2num($totalcredit, 'MT'))) {
 			$error++;
@@ -896,6 +1154,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 			$db->rollback();
 
 			if ($error >= 10) {
+				$langs->load('errors');
 				setEventMessages($langs->trans("ErrorTooManyErrorsProcessStopped"), null, 'errors');
 				break; // Break in the foreach
 			}
@@ -961,8 +1220,8 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 
 		$invoicestatic->id = (int) $key;
 		$invoicestatic->ref = (string) $val["ref"];
-		$invoicestatic->type = $val["type"];
-		$invoicestatic->close_code = $val["close_code"];
+		$invoicestatic->type = (int) ($val["type"] ?? 0);
+		$invoicestatic->close_code = (string) ($val["close_code"] ?? '');
 
 		$date = dol_print_date($val["date"], 'day');
 
@@ -987,7 +1246,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 				//if ($mt) {
 				print '"'.$key.'"'.$sep;
 				print '"'.$date.'"'.$sep;
-				print '"'.$val["ref"].'"'.$sep;
+				print '"'.((string) ($val["ref"] ?? '')).'"'.$sep;
 				print '"'.csvClean(dol_trunc($companystatic->name, 32)).'"'.$sep;
 				print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
 				print '"'.length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY')).'"'.$sep;
@@ -1007,7 +1266,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 			//if ($mt) {
 			print '"'.$key.'"'.$sep;
 			print '"'.$date.'"'.$sep;
-			print '"'.$val["ref"].'"'.$sep;
+			print '"'.((string) ($val["ref"] ?? '')).'"'.$sep;
 			print '"'.csvClean(dol_trunc($companystatic->name, 32)).'"'.$sep;
 			print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
 			print '"'.length_accountg($companystatic->accountancy_code_customer_general).'"'.$sep;
@@ -1028,7 +1287,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 			//if ($mt) {
 			print '"'.$key.'"'.$sep;
 			print '"'.$date.'"'.$sep;
-			print '"'.$val["ref"].'"'.$sep;
+			print '"'.((string) ($val["ref"] ?? '')).'"'.$sep;
 			print '"'.csvClean(dol_trunc($companystatic->name, 32)).'"'.$sep;
 			print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 			print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
@@ -1057,7 +1316,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 				if ($mt) {
 					print '"'.$key.'"'.$sep;
 					print '"'.$date.'"'.$sep;
-					print '"'.$val["ref"].'"'.$sep;
+					print '"'.((string) ($val["ref"] ?? '')).'"'.$sep;
 					print '"'.csvClean(dol_trunc($companystatic->name, 32)).'"'.$sep;
 					print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 					print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
@@ -1078,7 +1337,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 				//if ($mt) {
 				print '"'.$key.'"'.$sep;
 				print '"'.$date.'"'.$sep;
-				print '"'.$val["ref"].'"'.$sep;
+				print '"'.((string) ($val["ref"] ?? '')).'"'.$sep;
 				print '"'.csvClean(dol_trunc($companystatic->name, 32)).'"'.$sep;
 				print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 				print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
@@ -1090,6 +1349,73 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 				print '"'.$journal.'"';
 				print "\n";
 				//}
+			}
+		}
+
+		if ($manageCustomerDepositInInvoice) {
+			// customer discount consumed TTC amount (like Third-party section)
+			if (isset($tabCustomerDiscountTTC[$key])) {
+				foreach ($tabCustomerDiscountTTC[$key] as $k => $mt) {
+					//if ($mt) {
+					print '"' . $key . '"' . $sep;
+					print '"' . $date . '"' . $sep;
+					print '"' . ((string) ($val["ref"] ?? '')) . '"' . $sep;
+					print '"' . csvClean(dol_trunc($companystatic->name, 32)) . '"' . $sep;
+					print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
+					print '"' . length_accountg($companystatic->accountancy_code_customer_general) . '"' . $sep;
+					print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
+					print '"' . $langs->trans("ThirdParty") . '"' . $sep;
+					print '"' . csvClean($bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref, $langs->trans("ThirdParty")) . $labelCustomerDiscountExtension) . '"' . $sep;
+					print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
+					print '"' . ($mt < 0 ? price(-$mt) : '') . '"' . $sep;
+					print '"' . $journal . '"';
+					print "\n";
+					//}
+				}
+			}
+
+			// customer discount consumed HT (like Product / Service section)
+			if (isset($tabCustomerDiscountHT[$key])) {
+				foreach ($tabCustomerDiscountHT[$key] as $k => $mt) {
+					$accountingaccount = new AccountingAccount($db);
+					$accountingaccount->fetch(0, $k, true);
+					//if ($mt) {
+					print '"' . $key . '"' . $sep;
+					print '"' . $date . '"' . $sep;
+					print '"' . ((string) ($val["ref"] ?? '')) . '"' . $sep;
+					print '"' . csvClean(dol_trunc($companystatic->name, 32)) . '"' . $sep;
+					print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
+					print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
+					print '""' . $sep;
+					print '"' . csvClean(dol_trunc($accountingaccount->label, 32)) . '"' . $sep;
+					print '"' . csvClean($bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref, $accountingaccount->label) . $labelCustomerDiscountExtension) . '"' . $sep;
+					print '"' . ($mt < 0 ? price(-$mt) : '') . '"' . $sep;
+					print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
+					print '"' . $journal . '"';
+					print "\n";
+					//}
+				}
+			}
+
+			// customer discount consumed VAT amount (like VAT section)
+			if (isset($tabCustomerDiscountVAT[$key])) {
+				foreach ($tabCustomerDiscountVAT[$key] as $k => $mt) {
+					if ($mt) {
+						print '"' . $key . '"' . $sep;
+						print '"' . $date . '"' . $sep;
+						print '"' . ((string) ($val["ref"] ?? '')) . '"' . $sep;
+						print '"' . csvClean(dol_trunc($companystatic->name, 32)) . '"' . $sep;
+						print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
+						print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
+						print '""' . $sep;
+						print '"' . $langs->trans("VAT") . ' - ' . implode(', ', $def_tva[$key][$k]) . ' %"' . $sep;
+						print '"' . csvClean($bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref, $langs->trans("VAT") . implode($def_tva[$key][$k]) . ' %') . $labelCustomerDiscountExtension) . '"' . $sep;
+						print '"' . ($mt < 0 ? price(-$mt) : '') . '"' . $sep;
+						print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
+						print '"' . $journal . '"';
+						print "\n";
+					}
+				}
 			}
 		}
 	}
@@ -1215,8 +1541,8 @@ if (empty($action) || $action == 'view') {
 
 		$invoicestatic->id = (int) $key;
 		$invoicestatic->ref = (string) $val["ref"];
-		$invoicestatic->type = $val["type"];
-		$invoicestatic->close_code = $val["close_code"];
+		$invoicestatic->type = (int) ($val["type"] ?? 0);
+		$invoicestatic->close_code = (string) ($val["close_code"] ?? '');
 
 		$date = dol_print_date($val["date"], 'day');
 
@@ -1259,7 +1585,7 @@ if (empty($action) || $action == 'view') {
 			print "<td>".$invoicestatic->getNomUrl(1)."</td>";
 			// Account
 			print "<td>";
-			print '<span class="error">'.$langs->trans('ErrorInvoiceContainsLinesNotYetBoundedShort', $val['ref']).'</span>';
+			print '<span class="error">'.$langs->trans('ErrorInvoiceContainsLinesNotYetBoundedShort', $invoicestatic->ref).'</span>';
 			print '</td>';
 			// Subledger account
 			print "<td>";
@@ -1448,6 +1774,117 @@ if (empty($action) || $action == 'view') {
 				print '<td class="right nowraponall amount">' . ($mt < 0 ? price(-$mt) : '') . "</td>";
 				print '<td class="right nowraponall amount">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 				print "</tr>";
+			}
+		}
+
+		if ($manageCustomerDepositInInvoice) {
+			// customer discount consumed TTC amount (like Third-party section)
+			if (isset($tabCustomerDiscountTTC[$key])) {
+				foreach ($tabCustomerDiscountTTC[$key] as $k => $mt) {
+					print '<tr class="oddeven">';
+					print "<!-- Discount TTC -->";
+					print "<td>" . $date . "</td>";
+					print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
+					// Account
+					print "<td>";
+					$accountoshow = length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER'));
+					if (($accountoshow == "") || $accountoshow == 'NotDefined') {
+						print '<span class="error">' . $langs->trans("MainAccountForCustomersNotDefined") . '</span>';
+					} else {
+						print $accountoshow;
+					}
+					print '</td>';
+					// Subledger account
+					print "<td>";
+					$accountoshow = length_accounta($k);
+					if (($accountoshow == "") || $accountoshow == 'NotDefined') {
+						print '<span class="error">' . $langs->trans("ThirdpartyAccountNotDefined") . '</span>';
+					} else {
+						print $accountoshow;
+					}
+					print '</td>';
+					print "<td>" . $bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0, 'customer'), $invoicestatic->ref, $langs->trans("SubledgerAccount") . $labelCustomerDiscountExtension, 1) . "</td>";
+					print '<td class="right nowraponall amount">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+					print '<td class="right nowraponall amount">' . ($mt < 0 ? price(-$mt) : '') . "</td>";
+					print "</tr>";
+
+					$i++;
+				}
+			}
+
+			// customer discount consumed HT (like Product / Service section)
+			if (isset($tabCustomerDiscountHT[$key])) {
+				foreach ($tabCustomerDiscountHT[$key] as $k => $mt) {
+					if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
+						$accountingaccount = new AccountingAccount($db);
+						$accountingaccount->fetch(0, $k, true);
+						$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
+					} else {
+						$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
+					}
+
+					print '<tr class="oddeven">';
+					print "<!-- Discount HT -->";
+					print "<td>" . $date . "</td>";
+					print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
+					// Account
+					print "<td>";
+					$accountoshow = length_accountg($k);
+					if (($accountoshow == "") || $accountoshow == 'NotDefined') {
+						print '<span class="error">' . $langs->trans("ProductNotDefined") . '</span>';
+					} else {
+						print $accountoshow;
+					}
+					print "</td>";
+					// Subledger account
+					print "<td>";
+					if (getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT')) {
+						if ($k == getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT')) {
+							print length_accounta($tabcompany[$key]['code_compta']);
+						}
+					} elseif (($accountoshow == "") || $accountoshow == 'NotDefined') {
+						print '<span class="error">' . $langs->trans("ThirdpartyAccountNotDefined") . '</span>';
+					}
+					print '</td>';
+					$companystatic->id = $tabcompany[$key]['id'];
+					$companystatic->name = $tabcompany[$key]['name'];
+					print "<td>" . $bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0, 'customer'), $invoicestatic->ref, $accountingaccount->label, 1) . $labelCustomerDiscountExtension . "</td>";
+					print '<td class="right nowraponall amount">' . ($mt < 0 ? price(-$mt) : '') . "</td>";
+					print '<td class="right nowraponall amount">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+					print "</tr>";
+
+					$i++;
+				}
+			}
+
+			// customer discount consumed VAT amount (like VAT section)
+			if (isset($tabCustomerDiscountVAT[$key])) {
+				foreach ($tabCustomerDiscountVAT[$key] as $k => $mt) {
+					print '<tr class="oddeven">';
+					print "<!-- Discount VAT -->";
+					print "<td>" . $date . "</td>";
+					print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
+					// Account
+					print "<td>";
+					$accountoshow = length_accountg($k);
+					if (($accountoshow == "") || $accountoshow == 'NotDefined') {
+						print '<span class="error">' . $langs->trans("VATAccountNotDefined") . ' (' . $langs->trans("AccountingJournalType2") . ')</span>';
+					} else {
+						print $accountoshow;
+					}
+					print "</td>";
+					// Subledger account
+					print "<td>";
+					print '</td>';
+					$tmpvatrate = (empty($def_tva[$key][$k]) ? '' : implode(', ', $def_tva[$key][$k]));
+					$labelvatrate = $langs->trans("Taxes") . ' ' . $tmpvatrate . ' %';
+					print "<td>" . $bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0, 'customer'), $invoicestatic->ref, $labelvatrate, 1) . $labelCustomerDiscountExtension . "</td>";
+					print '<td class="right nowraponall amount">' . ($mt < 0 ? price(-$mt) : '') . "</td>";
+					print '<td class="right nowraponall amount">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+					print "</tr>";
+
+					$i++;
+				}
 			}
 		}
 	}

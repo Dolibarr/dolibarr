@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2001-2003  Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013  Laurent Destailleur  	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009  Regis Houssin        	<regis.houssin@inodbox.com>
- * Copyright (C) 2015       Alexandre Spangaro   	<aspangaro@open-dsi.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2001-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2026  Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2025  MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -76,11 +76,34 @@ $result = restrictedArea($user, 'don');
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 
-llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-don page-stats_index');
-
+$picto = 'donation';
+$title = $langs->trans("Donations");
 $dir = $conf->don->dir_temp;
 
-print load_fiche_titre($langs->trans("DonationsStatistics"), '', 'donation');
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-don page-stats');
+
+$page = 0;
+$param = '';
+$sortfield = '';
+$sortorder = '';
+$massactionbutton = '';
+$num = 0;
+$nbtotalofrecords = $langs->trans("Statistics");
+$limit = 0;
+
+$urlnew = DOL_URL_ROOT.'/don/card.php?action=create';
+if (!empty($socid)) {
+	$urlnew .= '&socid='.$socid;
+}
+
+$newcardbutton = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/don/list.php?mode=common', '', 1, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', DOL_URL_ROOT.'/don/list.php?mode=kanban', '', 1, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/don/stats/index.php', '', 2, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitleSeparator();
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewDonation'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/don/card.php?action=create', '', $user->hasRight('don', 'write'));
+
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 dol_mkdir($dir);
 
