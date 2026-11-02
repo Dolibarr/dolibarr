@@ -493,4 +493,38 @@ class PropalTest extends CommonClassTest
 
 		print __METHOD__." total_ht=".$propal->total_ht."\n";
 	}
+
+	/**
+	 * A currency rate change rewrites every line: it must not turn option lines into firm lines.
+	 *
+	 * @return void
+	 */
+	public function testPropalSetMulticurrencyRateKeepsIsOption()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$propal = new Propal($db);
+		$propal->initAsSpecimen(array('tosell' => 1));
+		$propal->lines = array();
+		$propal->create($user);
+
+		$propal->addline('Normal', 100, 1, 20, 0, 0, 0, 0, 'HT', 0, 0, 0, -1, 0, 0, 0, 0, '', '', '', array(), null, '', 0, 0, 0, 0, 0);
+		$optionlineid = $propal->addline('Option', 500, 1, 20, 0, 0, 0, 0, 'HT', 0, 0, 0, -1, 0, 0, 0, 0, '', '', '', array(), null, '', 0, 0, 0, 0, 1);
+		$this->assertGreaterThan(0, $optionlineid, 'addline of the option line must succeed');
+
+		$propal->fetch($propal->id);
+		$result = $propal->setMulticurrencyRate(2, 2);
+		$this->assertGreaterThan(0, $result, 'setMulticurrencyRate must succeed');
+
+		$line = new PropaleLigne($db);
+		$line->fetch($optionlineid);
+		$this->assertEquals(1, (int) $line->is_option, 'is_option must survive a currency rate change');
+
+		$propal->fetch($propal->id);
+		$this->assertEquals(100, (float) $propal->total_ht, 'The option line must stay excluded from total_ht');
+	}
 }

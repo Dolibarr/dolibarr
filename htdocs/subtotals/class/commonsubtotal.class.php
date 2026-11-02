@@ -747,7 +747,10 @@ trait CommonSubtotal
 						$this->lines[$i]->date_end,
 						$this->lines[$i]->array_options,
 						$this->lines[$i]->fk_unit,
-						$this->lines[$i]->multicurrency_subprice
+						$this->lines[$i]->multicurrency_subprice,
+						0,
+						0,
+						$this->lines[$i]->is_option
 					);
 				} elseif ($current_module == 'supplier_proposal' && $this instanceof SupplierProposal) {
 					// Preserve the original entry mode of the line so the total is not drifted by rounding.

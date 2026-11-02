@@ -3372,7 +3372,10 @@ abstract class CommonObject
 										$line->date_end,
 										$line->array_options,
 										$line->fk_unit,
-										$line->multicurrency_subprice
+										$line->multicurrency_subprice,
+										0,
+										0,
+										$line->is_option
 									);
 								}
 								break;
