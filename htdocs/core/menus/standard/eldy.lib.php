@@ -1985,8 +1985,8 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 				$newmenu->add("/accountancy/bookkeeping/balance.php?mainmenu=accountancy&leftmenu=accountancy_accountancy", $langs->trans("AccountBalance"), 1, $user->hasRight('accounting', 'mouvements', 'lire'));
 
 				// Adjustments
-				$newmenu->add('/accountancy/deferredrevenue.php?mainmenu=accountancy&leftmenu=accountancy_accountancy_deferredrevenue', $langs->trans('MenuAccountancyAdjustments'), 1, $user->hasRight('accounting', 'comptarapport', 'lire'));
-				$newmenu->add('/accountancy/deferredrevenue.php?mainmenu=accountancy&leftmenu=accountancy_accountancy_deferredrevenue', $langs->trans('DeferredRevenue'), 2, $user->hasRight('accounting', 'comptarapport', 'lire'));
+				$newmenu->add('/accountancy/customerdeposits.php?mainmenu=accountancy&leftmenu=accountancy_accountancy_customerdeposits', $langs->trans('MenuAccountancyAdjustments'), 1, $user->hasRight('accounting', 'comptarapport', 'lire'));
+				$newmenu->add('/accountancy/customerdeposits.php?mainmenu=accountancy&leftmenu=accountancy_accountancy_customerdeposits', $langs->trans('CustomerDepositControl'), 2, $user->hasRight('accounting', 'comptarapport', 'lire'));
 
 				// Export accountancy
 				$newmenu->add("/accountancy/bookkeeping/export.php?mainmenu=accountancy&leftmenu=accountancy_accountancy", $langs->trans("MenuExportAccountancy"), 1, $user->hasRight('accounting', 'mouvements', 'lire'));
