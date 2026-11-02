@@ -333,7 +333,7 @@ function repairUserPicture($id, $photo, $directory, $documentroot, $confirmed = 
 		$report['error'] = 'ErrorWrongParameters';
 		return $report;
 	}
-	if (!repairImagePathIsSafe($directory, $directory, $documentroot)) {
+	if (!repairImagePathIsSafe($directory.'/'.$id, $directory, $documentroot)) {
 		$report['error'] = 'RepairImagesDirectoryUnavailable';
 		return $report;
 	}

@@ -885,7 +885,7 @@ if ($ok && GETPOST('restore_thirdparties_logos')) {
 if ($ok && GETPOST('restore_user_pictures', 'alpha')) {
 	print '<tr><td colspan="2"><br>*** Restore user pictures (all entities)<br>';
 	$savedconf = clone $conf;
-	$savedmc = $mc;
+	$savedmc = $mc ?? null;
 	$sql = "SELECT rowid, entity, photo FROM ".MAIN_DB_PREFIX."user WHERE photo IS NOT NULL AND photo <> '' ORDER BY entity, rowid";
 	$resql = $db->query($sql);
 	if ($resql) {
