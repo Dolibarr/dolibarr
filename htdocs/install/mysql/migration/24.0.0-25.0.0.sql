@@ -635,3 +635,5 @@ ALTER TABLE llx_inventory ADD COLUMN model_pdf varchar(255) AFTER date_validatio
 
 -- Add the document template of a leave request, so that a generated document can be rebuilt with the same one
 ALTER TABLE llx_holiday ADD COLUMN model_pdf varchar(255) AFTER import_key;
+-- Add the document template of a loan, so that a generated document can be rebuilt with the same one
+ALTER TABLE llx_loan ADD COLUMN model_pdf varchar(255) AFTER fk_user_modif;

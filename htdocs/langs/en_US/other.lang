@@ -637,6 +637,7 @@ AIWriteStandaloneOff=Creating a %s without a source order is not enabled on this
 AIWriteNoLines=Give at least one line: a product and a quantity.
 AIWriteReceptionLineNeedsProduct=A reception line must name a catalogue product (line "%s"): search it with api_products_list, or create it with api_products_create first.
 AIWriteNoWarehouse=Which warehouse receives the goods? Name it on the line, or set a default warehouse on the user.
+AIWriteRefusedByModule=A module refused this write. Nothing was written.
 AIPreviewCreateReception=Create a draft supplier reception%s with %s.
 AIPreviewCreateShipment=Create a draft shipment%s with %s.
 AIPreviewIntoWarehouse=into %s
