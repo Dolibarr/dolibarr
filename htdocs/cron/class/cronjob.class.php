@@ -1584,15 +1584,15 @@ class Cronjob extends CommonObject
 		if (empty($this->datenextrun)) {
 			if (empty($this->datestart)) {
 				if (!is_numeric($this->frequency) || (int) $this->unitfrequency == 2678400) {
-					$this->datenextrun = dol_time_plus_duree($now, $this->frequency, 'm');
+					$this->datenextrun = dol_time_plus_duree($now, $this->frequency, 'm', 0, 'tzserver');
 				} else {
-					$this->datenextrun = $now + ($this->frequency * (int) $this->unitfrequency);
+					$this->datenextrun = $this->addFrequency($now);
 				}
 			} else {
 				if (!is_numeric($this->frequency) || (int) $this->unitfrequency == 2678400) {
-					$this->datenextrun = dol_time_plus_duree($this->datestart, $this->frequency, 'm');
+					$this->datenextrun = dol_time_plus_duree($this->datestart, $this->frequency, 'm', 0, 'tzserver');
 				} else {
-					$this->datenextrun = $this->datestart + ($this->frequency * (int) $this->unitfrequency);
+					$this->datenextrun = $this->addFrequency($this->datestart);
 				}
 			}
 		}
@@ -1601,9 +1601,9 @@ class Cronjob extends CommonObject
 			// Loop until date is after future
 			while ($this->datenextrun < $now) {
 				if (!is_numeric($this->unitfrequency) || (int) $this->unitfrequency == 2678400 || (int) $this->unitfrequency <= 0) {
-					$this->datenextrun = dol_time_plus_duree($this->datenextrun, $this->frequency, 'm');
+					$this->datenextrun = dol_time_plus_duree($this->datenextrun, $this->frequency, 'm', 0, 'tzserver');
 				} else {
-					$this->datenextrun += ($this->frequency * (int) $this->unitfrequency);
+					$this->datenextrun = $this->addFrequency($this->datenextrun);
 				}
 			}
 		} else {
@@ -1627,6 +1627,23 @@ class Cronjob extends CommonObject
 		}
 
 		return 1;
+	}
+
+	/**
+	 * Add the frequency of the job to a date. A frequency in days or weeks is added in the server timezone, so the job
+	 * keeps its time of day when daylight saving time starts or ends.
+	 *
+	 * @param	int|string	$time		Date to add the frequency to
+	 * @return	int						Date plus the frequency
+	 */
+	private function addFrequency($time)
+	{
+		$unitfrequency = (int) $this->unitfrequency;
+		if ($unitfrequency > 0 && $unitfrequency % 86400 == 0) {
+			return dol_time_plus_duree((int) $time, (int) $this->frequency * intdiv($unitfrequency, 86400), 'd', 0, 'tzserver');
+		}
+
+		return (int) $time + ((int) $this->frequency * $unitfrequency);
 	}
 
 	/**
