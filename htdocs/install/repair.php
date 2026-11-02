@@ -2,11 +2,11 @@
 /* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2021-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2015       RaphaÃ«l Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2021-2026  FrÃ©dÃ©ric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2026  MDW                     <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Vincent de Grandpré     <vincent@de-grandpre.quebec>
+ * Copyright (C) 2024       Vincent de GrandprÃ©     <vincent@de-grandpre.quebec>
  * Copyright (C) 2025       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2026       Solution Libre SAS      <contact@solution-libre.fr>
  *
@@ -121,9 +121,11 @@ $imagerepairentity = $imagerepairaction !== '' && GETPOSTISSET($imagerepairactio
 $imagerepairmode = $imagerepairaction !== '' ? GETPOST($imagerepairaction, 'aZ09') : '';
 $imagerepairtoken = GETPOST('token', 'alphanohtml');
 $imagerepairpost = $imagerepairmode === 'confirmed' && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST';
+$userpicturerepairmode = GETPOST('restore_user_pictures', 'aZ09');
+$userpicturerepairpost = $userpicturerepairmode === 'confirmed' && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST';
 $ecmrepairbufferlevel = ob_get_level();
 $ecmrepairpost = GETPOST('clean_ecm_files_table', 'aZ09') === 'confirmed' && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST';
-if ($ecmrepairpost || $imagerepairpost) {
+if ($ecmrepairpost || $imagerepairpost || $userpicturerepairpost) {
 	ob_start(); // Allow a redirect after the installer has rendered its progress output.
 }
 
@@ -274,7 +276,7 @@ $sections = [
 		],
 		[
 			'name' => 'restore_user_pictures',
-			'info' => 'Restore user pictures'
+			'info' => 'Restore user pictures (all entities)'
 		],
 		[
 			'name' => 'rebuild_product_thumbs',
@@ -347,6 +349,21 @@ if ($db->type == 'pgsql') {
 	];
 }
 
+if (GETPOSTISSET('restore_user_pictures')) {
+	$userpicturevalid = in_array($userpicturerepairmode, array('test', 'confirmed'), true);
+	foreach ($sections as $options) {
+		foreach ($options as $opt) {
+			if ($opt['name'] !== 'restore_user_pictures' && GETPOSTISSET($opt['name'])) {
+				$userpicturevalid = false;
+			}
+		}
+	}
+	if (!$userpicturevalid || ($userpicturerepairmode === 'confirmed' && (!$userpicturerepairpost || !is_string($imagerepairtoken) || !hash_equals(newToken(), $imagerepairtoken)))) {
+		$ok = 0;
+		print '<tr><td colspan="4" class="error">'.$langs->trans('ErrorWrongParameters').'</td></tr>';
+	}
+}
+
 if ($imagerepairaction !== '') {
 	$imagevalid = in_array($imagerepairmode, array('test', 'confirmed'), true) && $imagerepairentity > 0 && isset($ecmrepairentities[$imagerepairentity]);
 	foreach ($sections as $options) {
@@ -410,7 +427,7 @@ foreach ($sections as $section => $options) {
 			print $form->selectarray($option.'_entity', $ecmrepairentities, $imageentity, 0, 0, 0, 'style="width: 220px"', 0, 0, 0, '', 'minwidth150');
 		}
 		print '</td>';
-		if ($option == 'clean_ecm_files_table' || in_array($option, $imagerepairactions, true)) {
+		if ($option == 'restore_user_pictures' || $option == 'clean_ecm_files_table' || in_array($option, $imagerepairactions, true)) {
 			print '<td class="center"><button class="button" type="submit" name="'.$option.'" value="test">'.$langs->trans('Test').'</button></td>';
 			print '<td class="center"><button class="button" type="submit" name="'.$option.'" value="confirmed">'.$langs->trans('Repair').'</button></td>';
 		} else {
@@ -430,7 +447,7 @@ print '<br>';
 
 /* Start action here */
 $oneoptionset = 0;
-$oneoptionset = (GETPOST('standard', 'alpha') || GETPOST('restore_thirdparties_logos', 'alpha') || GETPOST('clean_linked_elements', 'alpha') || GETPOST('clean_menus', 'alpha')
+$oneoptionset = (GETPOST('restore_user_pictures', 'alpha') || GETPOST('standard', 'alpha') || GETPOST('restore_thirdparties_logos', 'alpha') || GETPOST('clean_linked_elements', 'alpha') || GETPOST('clean_menus', 'alpha')
 	|| GETPOST('clean_orphelin_dir', 'alpha') || GETPOST('clean_product_stock_batch', 'alpha') || GETPOST('set_empty_time_spent_amount', 'alpha') || GETPOST('rebuild_product_thumbs', 'alpha')
 	|| GETPOST('clean_perm_table', 'alpha') || GETPOST('clean_ecm_files_table', 'alpha')
 	|| GETPOST('force_disable_of_modules_not_found', 'alpha')
@@ -444,7 +461,7 @@ if ($ok && $oneoptionset) {
 
 	// Flush (some browser need a certain amount of data)
 	print str_repeat(' ', 1024);
-	if (!$ecmrepairpost && !$imagerepairpost) {
+	if (!$ecmrepairpost && !$imagerepairpost && !$userpicturerepairpost) {
 		if (ob_get_level() > 0) {
 			ob_flush();
 		}
@@ -782,7 +799,7 @@ if ($ok && GETPOST('restore_thirdparties_logos')) {
 			$obj = $db->fetch_object($resql);
 
 			/*
-			$name=preg_replace('/é/','',$obj->name);
+			$name=preg_replace('/Ã©/','',$obj->name);
 			$name=preg_replace('/ /','_',$name);
 			$name=preg_replace('/\'/','',$name);
 			*/
@@ -864,91 +881,46 @@ if ($ok && GETPOST('restore_thirdparties_logos')) {
 
 
 
-// restore_user_pictures: Move pictures to correct new directory.
+// restore_user_pictures: Restore missing photos for every user in its owner's directory.
 if ($ok && GETPOST('restore_user_pictures', 'alpha')) {
-	//$exts=array('gif','png','jpg');
-
-	$ext = '';
-
-	print '<tr><td colspan="2"><br>*** Restore user pictures<br>';
-
-	$sql = "SELECT s.rowid, s.firstname, s.lastname, s.login, s.photo FROM ".MAIN_DB_PREFIX."user as s ORDER BY s.rowid";
+	print '<tr><td colspan="2"><br>*** Restore user pictures (all entities)<br>';
+	$savedconf = clone $conf;
+	$savedmc = $mc;
+	$sql = "SELECT rowid, entity, photo FROM ".MAIN_DB_PREFIX."user WHERE photo IS NOT NULL AND photo <> '' ORDER BY entity, rowid";
 	$resql = $db->query($sql);
 	if ($resql) {
-		$num = $db->num_rows($resql);
-		$i = 0;
-
-		while ($i < $num) {
-			$obj = $db->fetch_object($resql);
-
-			/*
-			 $name=preg_replace('/é/','',$obj->name);
-			 $name=preg_replace('/ /','_',$name);
-			 $name=preg_replace('/\'/','',$name);
-			 */
-
-			$tmp = explode('.', (string) $obj->photo);
-			$name = $tmp[0];
-			if (isset($tmp[1])) {
-				$ext = '.'.$tmp[1];
+		while (is_object($obj = $db->fetch_object($resql))) {
+			// Super-administrators (entity 0) and transverse users use the master entity's photos.
+			$pictureentity = (int) $obj->entity === 0 ? 1 : (int) $obj->entity;
+			if ($pictureentity < 1 || !isset($ecmrepairentities[$pictureentity]) || $conf->setEntityValues($db, $pictureentity) < 0) {
+				$error++;
+				print '<span class="error">'.$langs->trans('RepairImagesDirectoryUnavailable').'</span><br>';
+				continue;
 			}
-
-			if (!empty($name)) {
-				$filetotest = $dolibarr_main_data_root.'/users/'.substr(sprintf('%08d', $obj->rowid), -1, 1).'/'.substr(sprintf('%08d', $obj->rowid), -2, 1).'/'.$name.$ext;
-				$filetotestsmall = $dolibarr_main_data_root.'/users/'.substr(sprintf('%08d', $obj->rowid), -1, 1).'/'.substr(sprintf('%08d', $obj->rowid), -2, 1).'/thumbs/'.$name.'_small'.$ext;
-				$filetotestmini = $dolibarr_main_data_root.'/users/'.substr(sprintf('%08d', $obj->rowid), -1, 1).'/'.substr(sprintf('%08d', $obj->rowid), -2, 1).'/thumbs/'.$name.'_mini'.$ext;
-				$exists = (int) dol_is_file($filetotest);
-				print 'Check user '.$obj->rowid.' lastname='.$obj->lastname.' firstname='.$obj->firstname.' photo='.$obj->photo.' file '.$filetotest." exists=".$exists."<br>\n";
-				if ($exists) {
-					$filetarget = $dolibarr_main_data_root.'/users/'.$obj->rowid.'/'.$name.$ext;
-					$filetargetsmall = $dolibarr_main_data_root.'/users/'.$obj->rowid.'/thumbs/'.$name.'_small'.$ext;
-					$filetargetmini = $dolibarr_main_data_root.'/users/'.$obj->rowid.'/thumbs/'.$name.'_mini'.$ext;
-
-					$existt = dol_is_file($filetarget);
-					if (!$existt) {
-						if (GETPOST('restore_user_pictures', 'alpha') == 'confirmed') {
-							dol_mkdir($dolibarr_main_data_root.'/users/'.$obj->rowid);
-						}
-
-						print "  &nbsp; &nbsp; &nbsp; -> Copy file ".$filetotest." -> ".$filetarget."<br>\n";
-						if (GETPOST('restore_user_pictures', 'alpha') == 'confirmed') {
-							dol_copy($filetotest, $filetarget, '', 0);
-						}
-					}
-
-					$existtt = dol_is_file($filetargetsmall);
-					if (!$existtt) {
-						if (GETPOST('restore_user_pictures', 'alpha') == 'confirmed') {
-							dol_mkdir($dolibarr_main_data_root.'/users/'.$obj->rowid.'/thumbs');
-						}
-
-						print "  &nbsp; &nbsp; &nbsp; -> Copy file ".$filetotestsmall." -> ".$filetargetsmall."<br>\n";
-						if (GETPOST('restore_user_pictures', 'alpha') == 'confirmed') {
-							dol_copy($filetotestsmall, $filetargetsmall, '', 0);
-						}
-					}
-
-					$existtt = dol_is_file($filetargetmini);
-					if (!$existtt) {
-						if (GETPOST('restore_user_pictures', 'alpha') == 'confirmed') {
-							dol_mkdir($dolibarr_main_data_root.'/users/'.$obj->rowid.'/thumbs');
-						}
-
-						print "  &nbsp; &nbsp; &nbsp; -> Copy file ".$filetotestmini." -> ".$filetargetmini."<br>\n";
-						if (GETPOST('restore_user_pictures', 'alpha') == 'confirmed') {
-							dol_copy($filetotestmini, $filetargetmini, '', 0);
-						}
-					}
-				}
+			$picturedirectory = '';
+			if (isset($conf->user->multidir_output[$pictureentity]) && is_string($conf->user->multidir_output[$pictureentity])) {
+				$picturedirectory = $conf->user->multidir_output[$pictureentity];
 			}
-
-			$i++;
+			$report = repairUserPicture((int) $obj->rowid, (string) $obj->photo, $picturedirectory, $dolibarr_main_data_root, $userpicturerepairmode === 'confirmed');
+			print 'Check user '.((int) $obj->rowid).' entity='.$pictureentity.'<br>';
+			foreach ($report['files'] as $picturefile) {
+				print 'Copy '.dol_escape_htmltag($picturefile['source']).' -&gt; '.dol_escape_htmltag($picturefile['target']).'<br>';
+			}
+			if ($report['error'] !== '') {
+				$error++;
+				print '<span class="error">'.$langs->trans($report['error']).'</span><br>';
+			}
 		}
+		$db->free($resql);
 	} else {
-		$ok = 0;
+		$error++;
 		dol_print_error($db);
 	}
-
+	$conf = $savedconf;
+	$mc = $savedmc;
+	if ($error) {
+		$ok = 0;
+	}
 	print '</td></tr>';
 }
 
@@ -2029,7 +2001,7 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 	 * thus making the order look like it was never dispatched at all.
 	 *
 	 * This scripts sets this foreign key to the first matching supplier order line whose
-	 * product (and supplier order of course) are the same as the dispatch’s.
+	 * product (and supplier order of course) are the same as the dispatchâ€™s.
 	 *
 	 * If the dispatched quantity is more than indicated on the order line (this happens if
 	 * there are several order lines for the same product), it creates new dispatch lines
@@ -2128,7 +2100,7 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 
 			// report progress every 256th row
 			if (!($n_processed_rows & 0xff)) {
-				echo '<tr><td>Processed '.$n_processed_rows.' rows with '.count($errors).' errors…'."</td></tr>\n";
+				echo '<tr><td>Processed '.$n_processed_rows.' rows with '.count($errors).' errorsâ€¦'."</td></tr>\n";
 				flush();
 				if (ob_get_level() > 0) {
 					ob_flush();
@@ -2139,7 +2111,7 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 		echo '<tr><td>Unable to find any dispatch without an fk_commandefourndet.'."</td></tr>\n";
 		echo $sql_dispatch."\n";
 	}
-	echo '<tr><td>Fixed '.$n_processed_rows.' rows with '.count($errors).' errors…'."</td></tr>\n";
+	echo '<tr><td>Fixed '.$n_processed_rows.' rows with '.count($errors).' errorsâ€¦'."</td></tr>\n";
 	echo '<tr><td>DONE.'."</td></tr>\n";
 
 	if (count($errors)) {
@@ -2271,7 +2243,7 @@ if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
 				$i++;
 			}
 		} else {
-			print "Pas de factures à traiter\n";
+			print "Pas de factures Ã  traiter\n";
 		}
 	} else {
 		dol_print_error($db);
@@ -2362,6 +2334,16 @@ if ($ok && GETPOST('repair_mailing_path')) {
 	$user = $sav_user;
 
 	print '</td></tr>';
+}
+
+if ($ok && $userpicturerepairpost && !$error) {
+	setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+	while (ob_get_level() > $ecmrepairbufferlevel) {
+		ob_end_clean();
+	}
+	$db->close();
+	header('Location: '.$_SERVER['PHP_SELF'].'?restore_user_pictures=test&selectlang='.urlencode($setuplang), true, 303);
+	exit;
 }
 
 if ($imagerepairaction !== '' && $error) {
