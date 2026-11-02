@@ -559,7 +559,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 	$imgHeight = $infoImg[1]; 	// Height of image
 
 	$ort = false;
-	if (function_exists('exif_read_data')) {
+	if (function_exists('exif_read_data') && in_array($infoImg[2], array(IMAGETYPE_JPEG, IMAGETYPE_TIFF_II, IMAGETYPE_TIFF_MM))) {
 		$exif = @exif_read_data($filetoread);
 		if ($exif && !empty($exif['Orientation'])) {
 			$ort = $exif['Orientation'];
