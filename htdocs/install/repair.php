@@ -2,11 +2,11 @@
 /* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2015       RaphaÃ«l Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2021-2026  FrÃ©dÃ©ric France         <frederic.france@free.fr>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2021-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2026  MDW                     <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Vincent de GrandprÃ©     <vincent@de-grandpre.quebec>
+ * Copyright (C) 2024       Vincent de Grandpré     <vincent@de-grandpre.quebec>
  * Copyright (C) 2025       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2026       Solution Libre SAS      <contact@solution-libre.fr>
  *
@@ -799,7 +799,7 @@ if ($ok && GETPOST('restore_thirdparties_logos')) {
 			$obj = $db->fetch_object($resql);
 
 			/*
-			$name=preg_replace('/Ã©/','',$obj->name);
+			$name=preg_replace('/é/','',$obj->name);
 			$name=preg_replace('/ /','_',$name);
 			$name=preg_replace('/\'/','',$name);
 			*/
@@ -2001,7 +2001,7 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 	 * thus making the order look like it was never dispatched at all.
 	 *
 	 * This scripts sets this foreign key to the first matching supplier order line whose
-	 * product (and supplier order of course) are the same as the dispatchâ€™s.
+	 * product (and supplier order of course) are the same as the dispatch’s.
 	 *
 	 * If the dispatched quantity is more than indicated on the order line (this happens if
 	 * there are several order lines for the same product), it creates new dispatch lines
@@ -2100,7 +2100,7 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 
 			// report progress every 256th row
 			if (!($n_processed_rows & 0xff)) {
-				echo '<tr><td>Processed '.$n_processed_rows.' rows with '.count($errors).' errorsâ€¦'."</td></tr>\n";
+				echo '<tr><td>Processed '.$n_processed_rows.' rows with '.count($errors).' errors…'."</td></tr>\n";
 				flush();
 				if (ob_get_level() > 0) {
 					ob_flush();
@@ -2111,7 +2111,7 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 		echo '<tr><td>Unable to find any dispatch without an fk_commandefourndet.'."</td></tr>\n";
 		echo $sql_dispatch."\n";
 	}
-	echo '<tr><td>Fixed '.$n_processed_rows.' rows with '.count($errors).' errorsâ€¦'."</td></tr>\n";
+	echo '<tr><td>Fixed '.$n_processed_rows.' rows with '.count($errors).' errors…'."</td></tr>\n";
 	echo '<tr><td>DONE.'."</td></tr>\n";
 
 	if (count($errors)) {
@@ -2243,7 +2243,7 @@ if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
 				$i++;
 			}
 		} else {
-			print "Pas de factures Ã  traiter\n";
+			print "Pas de factures à traiter\n";
 		}
 	} else {
 		dol_print_error($db);
