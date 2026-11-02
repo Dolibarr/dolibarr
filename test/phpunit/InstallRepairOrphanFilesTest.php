@@ -67,7 +67,7 @@ class InstallRepairOrphanFilesTest extends PHPUnit\Framework\TestCase
 		}
 		$this->assertTrue($this->database->connected);
 		foreach (array('facture', 'facture_fourn', 'societe', 'chargesociales') as $table) {
-			$this->assertNotFalse($this->database->query('CREATE TABLE llx_'.$table.' (rowid INTEGER PRIMARY KEY, entity INTEGER, ref TEXT)'));
+			$this->assertNotFalse($this->database->query('CREATE TABLE '.$this->database->prefix().$table.' (rowid INTEGER PRIMARY KEY, entity INTEGER, ref TEXT)'));
 		}
 	}
 
@@ -88,7 +88,7 @@ class InstallRepairOrphanFilesTest extends PHPUnit\Framework\TestCase
 	/** @return void */
 	public function testPreviewPreservesExistingObjectsAcrossEntitiesAndExcludedFiles()
 	{
-		$this->database->query("INSERT INTO llx_facture VALUES (1,1,'SAME'),(2,2,'SAME'),(3,1,'FOREIGN/REF'),(4,3,'DISABLED')");
+		$this->database->query("INSERT INTO ".$this->database->prefix()."facture VALUES (1,1,'SAME'),(2,2,'SAME'),(3,1,'FOREIGN/REF'),(4,3,'DISABLED')");
 		$directory = $this->documentroot.'/2/invoice';
 		foreach (array('same/keep.pdf', 'FOREIGN_REF/keep.pdf', 'DISABLED/keep.pdf', 'GONE/remove.pdf', 'GONE/sub/remove.pdf', 'GONE/SPECIMEN.pdf', 'GONE/.private', 'GONE/photo_preview.png', 'GONE/x.meta', 'temp/keep.pdf', 'GONE/thumbs/keep.png', 'root-file.pdf') as $file) {
 			dol_mkdir(dirname($directory.'/'.$file));
@@ -108,7 +108,7 @@ class InstallRepairOrphanFilesTest extends PHPUnit\Framework\TestCase
 	/** @return void */
 	public function testSupplierAndNumericObjectLayoutsKeepTheirNativeOwners()
 	{
-		$this->database->query("INSERT INTO llx_facture_fourn VALUES (212,1,'SAME')");
+		$this->database->query("INSERT INTO ".$this->database->prefix()."facture_fourn VALUES (212,1,'SAME')");
 		$directory = $this->documentroot.'/2/supplier';
 		foreach (array('2/1/SAME/keep.pdf', '2/1/212/keep.pdf', '2/1/GONE/remove.pdf', 'unrecognized/path/keep.pdf') as $file) {
 			dol_mkdir(dirname($directory.'/'.$file));
@@ -117,7 +117,7 @@ class InstallRepairOrphanFilesTest extends PHPUnit\Framework\TestCase
 		$report = repairOrphanFiles($this->database, 'invoice_supplier', $directory, $this->documentroot);
 		$this->assertSame('', $report['error']);
 		$this->assertSame(array($directory.'/2/1/GONE/remove.pdf'), $report['files']);
-		$this->database->query('INSERT INTO llx_societe VALUES (212,1,NULL)');
+		$this->database->query('INSERT INTO '.$this->database->prefix().'societe VALUES (212,1,NULL)');
 		$report = repairOrphanFiles($this->database, 'company', $directory, $this->documentroot);
 		$this->assertSame(array(), $report['files']); // Numeric legacy hierarchies are not flat company directories.
 	}
@@ -128,7 +128,7 @@ class InstallRepairOrphanFilesTest extends PHPUnit\Framework\TestCase
 		$directory = $this->documentroot.'/2/invoice';
 		dol_mkdir($directory.'/GONE');
 		file_put_contents($directory.'/GONE/keep.pdf', 'fixture');
-		$this->database->query('DROP TABLE llx_facture');
+		$this->database->query('DROP TABLE '.$this->database->prefix().'facture');
 		$report = repairOrphanFiles($this->database, 'invoice', $directory, $this->documentroot, true);
 		$this->assertSame('RepairOrphanFilesFailed', $report['error']);
 		$this->assertSame(0, $report['deleted']);
