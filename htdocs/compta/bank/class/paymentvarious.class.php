@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017-2021  Alexandre Spangaro          <alexandre@inovea-conseil.com>
+/* Copyright (C) 2017-2026  Alexandre Spangaro          <alexandre@inovea-conseil.com>
  * Copyright (C) 2018-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026  MDW                         <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026       Solution Libre SAS          <contact@solution-libre.fr>
@@ -123,6 +123,11 @@ class PaymentVarious extends CommonObject
 	 * @var int ID
 	 */
 	public $fk_project;
+
+	/**
+	 * @var int|string|null Third party ID (optional, see BANK_VARIOUS_PAYMENT_USE_THIRDPARTY)
+	 */
+	public $fk_soc;
 
 	/**
 	 * @var ?int Bank account ID
@@ -266,6 +271,7 @@ class PaymentVarious extends CommonObject
 		$sql .= " accountancy_code='".$this->db->escape($this->accountancy_code)."',";
 		$sql .= " subledger_account='".$this->db->escape($this->subledger_account)."',";
 		$sql .= " fk_projet='".$this->db->escape((string) $this->fk_project)."',";
+		$sql .= " fk_soc=".($this->fk_soc > 0 ? ((int) $this->fk_soc) : "null").",";
 		$sql .= " fk_bank=".($this->fk_bank > 0 ? ((int) $this->fk_bank) : "null").",";
 		$sql .= " fk_user_author=".(int) $this->fk_user_author.",";
 		$sql .= " fk_user_modif=".(int) $this->fk_user_modif;
@@ -326,6 +332,7 @@ class PaymentVarious extends CommonObject
 		$sql .= " v.accountancy_code,";
 		$sql .= " v.subledger_account,";
 		$sql .= " v.fk_projet as fk_project,";
+		$sql .= " v.fk_soc,";
 		$sql .= " v.fk_bank,";
 		$sql .= " v.fk_user_author,";
 		$sql .= " v.fk_user_modif,";
@@ -358,6 +365,8 @@ class PaymentVarious extends CommonObject
 				$this->subledger_account    = $obj->subledger_account;
 				$this->accountancy_code     = $obj->accountancy_code;
 				$this->fk_project           = $obj->fk_project;
+				$this->fk_soc               = $obj->fk_soc;
+				$this->socid                = $obj->fk_soc;
 				$this->fk_bank              = $obj->fk_bank;
 				$this->fk_user_author       = $obj->fk_user_author;
 				$this->fk_user_modif        = $obj->fk_user_modif;
@@ -524,6 +533,7 @@ class PaymentVarious extends CommonObject
 		$sql .= ", accountancy_code";
 		$sql .= ", subledger_account";
 		$sql .= ", fk_projet";
+		$sql .= ", fk_soc";
 		$sql .= ", fk_user_author";
 		$sql .= ", datec";
 		$sql .= ", fk_bank";
@@ -543,6 +553,7 @@ class PaymentVarious extends CommonObject
 		$sql .= ", '".$this->db->escape($this->accountancy_code)."'";
 		$sql .= ", '".$this->db->escape($this->subledger_account)."'";
 		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : 0);
+		$sql .= ", ".($this->fk_soc > 0 ? ((int) $this->fk_soc) : "NULL");
 		$sql .= ", ".((int) $user->id);
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", NULL";	// Filled later
@@ -609,6 +620,23 @@ class PaymentVarious extends CommonObject
 						$result = $acc->add_url_line($bank_line_id, $this->id, $url, "(VariousPayment)", "payment_various");
 						if ($result <= 0) {
 							$this->error = $acc->error;
+							$error++;
+						}
+					}
+
+					// Add link 'company' in bank_url between thirdparty and bank transaction
+					if (!$error && getDolGlobalString('BANK_VARIOUS_PAYMENT_USE_THIRDPARTY') && $this->fk_soc > 0) {
+						require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
+						$thirdparty = new Societe($this->db);
+						if ($thirdparty->fetch($this->fk_soc) > 0) {
+							$result = $acc->add_url_line($bank_line_id, $thirdparty->id, DOL_URL_ROOT.'/societe/card.php?socid=', $thirdparty->name, 'company');
+							if ($result <= 0) {
+								$this->error = $acc->error;
+								$error++;
+							}
+						} else {
+							$this->error = $thirdparty->error;
 							$error++;
 						}
 					}

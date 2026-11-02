@@ -121,7 +121,7 @@ $familyinfo = array(
 );
 
 $param = '';
-if (!GETPOST('buttonreset', 'alpha')) {
+if (!GETPOST('buttonreset', 'alpha') && !GETPOST('button_removefilter', 'alpha')) {
 	if ($search_keyword) {
 		$param .= '&search_keyword='.urlencode($search_keyword);
 	}
@@ -207,7 +207,7 @@ if (GETPOSTISSET('mode')) {
 	$mode = getDolGlobalString('MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT', 'commonkanban');
 }
 
-if (GETPOST('buttonreset', 'alpha')) {
+if (GETPOST('buttonreset', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	$search_keyword = '';
 	$search_status = '';
 	$search_nature = '';
@@ -855,7 +855,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$moreforfilter .= '<input type="submit" name="buttonsubmit" class="button small nomarginleft" value="'.dolPrintHTMLForAttribute($langs->trans("Refresh")).'">';
 	if ($search_keyword || ($search_nature && $search_nature != '-1') || ($search_version && $search_version != '-1') || ($search_status && $search_status != '-1')) {
 		$moreforfilter .= ' ';
-		$moreforfilter .= '<input type="submit" name="buttonreset" class="buttonreset noborderall nomargintop nomarginbottom" value="'.dolPrintHTMLForAttribute($langs->trans("Reset")).'">';
+		$moreforfilter .= '<input type="submit" name="button_removefilter" class="buttonreset noborderall nomargintop nomarginbottom" value="'.dolPrintHTMLForAttribute($langs->trans("Reset")).'">';
 	}
 	$moreforfilter .= '</div>';
 	$moreforfilter .= '</div>';

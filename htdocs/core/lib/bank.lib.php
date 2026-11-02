@@ -478,6 +478,52 @@ function checkBanForAccount($account)
 	}
 	*/
 
+	if ($country_code == 'DZ') { // Algerian rules (Instruction n° 06-2004 Bank of Algeria)
+		$code_banque = trim((string) $account->code_banque);
+		$code_guichet = trim((string) $account->code_guichet);
+		$number = trim((string) $account->number);
+		$cle = trim((string) $account->cle);
+
+		// Backward compatibility if full 20-digit RIB was entered into a single field
+		if (empty($code_banque) && empty($code_guichet) && empty($cle) && preg_match('/^[0-9]{20}$/', $number)) {
+			$code_banque = substr($number, 0, 3);
+			$code_guichet = substr($number, 3, 5);
+			$cle = substr($number, 18, 2);
+			$number = substr($number, 8, 10);
+		}
+
+		// Ensure proper zero-padding
+		if (is_numeric($code_banque) && strlen($code_banque) < 3) {
+			$code_banque = sprintf('%03s', $code_banque);
+		}
+		if (is_numeric($code_guichet) && strlen($code_guichet) < 5) {
+			$code_guichet = sprintf('%05s', $code_guichet);
+		}
+		if (is_numeric($number) && strlen($number) < 10) {
+			$number = sprintf('%010s', $number);
+		}
+		if (is_numeric($cle) && strlen($cle) < 2) {
+			$cle = sprintf('%02s', $cle);
+		}
+
+		$rib18 = $code_banque.$code_guichet.$number;
+
+		if (!preg_match('/^[0-9]{18}$/', $rib18) || !preg_match('/^[0-9]{2}$/', $cle)) {
+			return false;
+		}
+
+		// Calculate modulo 97 of ($rib18 * 100)
+		$remainder = 0;
+		$rib20 = $rib18.'00';
+		$len = strlen($rib20);
+		for ($i = 0; $i < $len; $i++) {
+			$remainder = ($remainder * 10 + (int) $rib20[$i]) % 97;
+		}
+		$calculated_key = sprintf('%02d', 97 - $remainder);
+
+		return ($calculated_key === $cle);
+	}
+
 	if ($country_code == 'ES') { // Spanish rules
 		$CCC = strtolower(trim($account->number));
 		$rib = strtolower(trim($account->code_banque).trim($account->code_guichet));
