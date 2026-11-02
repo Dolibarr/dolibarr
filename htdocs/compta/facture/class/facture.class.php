@@ -4738,8 +4738,8 @@ class Facture extends CommonInvoice
 			$this->line->desc = $desc;
 			$this->line->ref_ext = $ref_ext;
 
-			$this->line->qty = (($this->type == self::TYPE_CREDIT_NOTE && !$keep_line_signs) ? abs((float) $qty) : (float) $qty); // For credit note, quantity is always positive and unit price negative
-			$this->line->subprice = ($apply_abs_price_on_credit_note ? -abs((float) $pu_ht) : (float) $pu_ht); // For credit note, unit price always negative, always positive otherwise
+			$this->line->qty = (($this->type == self::TYPE_CREDIT_NOTE && !$keep_line_signs) ? abs((float) $qty) : (float) $qty); // For credit note, quantity is always positive and unit price negative, unless INVOICE_KEEP_LINE_SIGNS is on (signs given by caller are kept)
+			$this->line->subprice = ($apply_abs_price_on_credit_note ? -abs((float) $pu_ht) : (float) $pu_ht); // For credit note, unit price always negative, always positive otherwise, unless INVOICE_KEEP_LINE_SIGNS is on
 			// Persist the original entry mode of the line so updateline() can preserve it later.
 			$this->line->subprice_ttc = ($price_base_type === 'TTC') ? ($apply_abs_price_on_credit_note ? -abs((float) $pu_ttc) : (float) $pu_ttc) : 0;
 
@@ -4750,7 +4750,7 @@ class Facture extends CommonInvoice
 			$this->line->localtax1_type = empty($localtaxes_type[0]) ? 0 : $localtaxes_type[0];
 			$this->line->localtax2_type = empty($localtaxes_type[2]) ? 0 : $localtaxes_type[2];
 
-			$force_negative_total = ($apply_abs_price_on_credit_note || ($qty < 0 && !$keep_line_signs)); // For credit note and if qty is negative, total is negative
+			$force_negative_total = ($apply_abs_price_on_credit_note || ($qty < 0 && !$keep_line_signs)); // For credit note and if qty is negative, total is negative, unless INVOICE_KEEP_LINE_SIGNS is on (total keeps the sign of qty x unit price)
 			$this->line->total_ht = ($force_negative_total ? -abs((float) $total_ht) : (float) $total_ht);
 			$this->line->total_ttc = ($force_negative_total ? -abs((float) $total_ttc) : (float) $total_ttc);
 			$this->line->total_tva = ($force_negative_total ? -abs((float) $total_tva) : (float) $total_tva);
@@ -4784,7 +4784,7 @@ class Facture extends CommonInvoice
 			// Multicurrency
 			$this->line->fk_multicurrency = $this->fk_multicurrency;
 			$this->line->multicurrency_code = $this->multicurrency_code;
-			$this->line->multicurrency_subprice	= ($apply_abs_price_on_credit_note ? -abs((float) $pu_ht_devise) : (float) $pu_ht_devise); // For credit note, unit price always negative, always positive otherwise
+			$this->line->multicurrency_subprice	= ($apply_abs_price_on_credit_note ? -abs((float) $pu_ht_devise) : (float) $pu_ht_devise); // For credit note, unit price always negative, always positive otherwise, unless INVOICE_KEEP_LINE_SIGNS is on
 
 			$this->line->multicurrency_total_ht = ($force_negative_total ? -abs((float) $multicurrency_total_ht) : (float) $multicurrency_total_ht);
 			$this->line->multicurrency_total_tva = ($force_negative_total ? -abs((float) $multicurrency_total_tva) : (float) $multicurrency_total_tva);
@@ -5078,7 +5078,7 @@ class Facture extends CommonInvoice
 			$this->line->label = $label;
 			$this->line->desc = $desc;
 			$this->line->ref_ext = $ref_ext;
-			$this->line->qty = (($this->type == self::TYPE_CREDIT_NOTE && !$keep_line_signs) ? abs((float) $qty) : $qty); // For credit note, quantity is always positive and unit price negative
+			$this->line->qty = (($this->type == self::TYPE_CREDIT_NOTE && !$keep_line_signs) ? abs((float) $qty) : $qty); // For credit note, quantity is always positive and unit price negative, unless INVOICE_KEEP_LINE_SIGNS is on (signs given by caller are kept)
 
 			$this->line->vat_src_code = $vat_src_code;
 			$this->line->tva_tx = $txtva;
@@ -5088,12 +5088,12 @@ class Facture extends CommonInvoice
 			$this->line->localtax2_type		= empty($localtaxes_type[2]) ? 0 : $localtaxes_type[2];
 
 			$this->line->remise_percent		= $remise_percent;
-			$this->line->subprice			= ($apply_abs_price_on_credit_note ? -abs((float) $pu_ht) : (float) $pu_ht); // For credit note, unit price always negative, always positive otherwise
+			$this->line->subprice			= ($apply_abs_price_on_credit_note ? -abs((float) $pu_ht) : (float) $pu_ht); // For credit note, unit price always negative, always positive otherwise, unless INVOICE_KEEP_LINE_SIGNS is on
 			// Persist the original entry mode of the line so a no-op edit can preserve it later.
 			$this->line->subprice_ttc		= ($price_base_type === 'TTC') ? ($apply_abs_price_on_credit_note ? -abs((float) $pu_ttc) : (float) $pu_ttc) : 0;
 			$this->line->date_start = $date_start;
 			$this->line->date_end			= $date_end;
-			$force_negative_total = ($apply_abs_price_on_credit_note || ($qty < 0 && !$keep_line_signs)); // For credit note and if qty is negative, total is negative
+			$force_negative_total = ($apply_abs_price_on_credit_note || ($qty < 0 && !$keep_line_signs)); // For credit note and if qty is negative, total is negative, unless INVOICE_KEEP_LINE_SIGNS is on (total keeps the sign of qty x unit price)
 			$this->line->total_ht			= ($force_negative_total ? -abs((float) $total_ht) : (float) $total_ht);
 			$this->line->total_tva			= ($force_negative_total ? -abs((float) $total_tva) : (float) $total_tva);
 			$this->line->total_localtax1	= (float) $total_localtax1;
@@ -5111,7 +5111,7 @@ class Facture extends CommonInvoice
 			$this->line->pa_ht = $pa_ht;
 
 			// Multicurrency
-			$this->line->multicurrency_subprice		= ($apply_abs_price_on_credit_note ? -abs((float) $pu_ht_devise) : (float) $pu_ht_devise); // For credit note, unit price always negative, always positive otherwise
+			$this->line->multicurrency_subprice		= ($apply_abs_price_on_credit_note ? -abs((float) $pu_ht_devise) : (float) $pu_ht_devise); // For credit note, unit price always negative, always positive otherwise, unless INVOICE_KEEP_LINE_SIGNS is on
 			$this->line->multicurrency_total_ht 	= ($force_negative_total ? -abs((float) $multicurrency_total_ht) : (float) $multicurrency_total_ht);
 			$this->line->multicurrency_total_tva 	= ($force_negative_total ? -abs((float) $multicurrency_total_tva) : (float) $multicurrency_total_tva);
 			$this->line->multicurrency_total_ttc 	= ($force_negative_total ? -abs((float) $multicurrency_total_ttc) : (float) $multicurrency_total_ttc);
