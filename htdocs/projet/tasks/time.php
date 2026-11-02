@@ -486,6 +486,7 @@ if (!empty($toselect)) {
 		setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
 		$toselect = array();
 		$action = '';
+		$massaction = '';
 	} else {
 		$toselect = $toselectoftask;
 	}
