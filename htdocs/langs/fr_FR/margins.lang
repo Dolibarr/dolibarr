@@ -44,3 +44,6 @@ markRateShouldBeLesserThan100=Le taux de marque doit être inférieur à 100
 ShowMarginInfos=Afficher les infos de marges
 CheckMargins=Détails des marges
 MarginPerSaleRepresentativeWarning=Le rapport de marge par représentant commercial utilise le lien entre les représentants commerciaux tiers pour calculer la marge de chaque représentant. Étant donné que certains représentants commerciaux tiers n'ont pas de représentant dédié, tandis que d'autres peuvent être liés à plusieurs, certains montants peuvent ne pas figurer dans ce rapport (en l'absence de représentant). Certains montants peuvent également apparaître sur des lignes différentes (pour chaque représentant commercial).
+MarginUpdateLinkedBuyingPrice=Il est suggéré de propager le prix de revient modifié sur une ligne à toutes les lignes des commandes liées devis, et et factures qui ont la même produit (les utilisateurs décideront d'accepter ou de refuser chaque modification).
+UpdateLinkedBuyingPrice=Mettez à jour le prix de revient sur toutes les lignes (avec le même produit) des documents liés
+UpdateLinkedBuyingPriceQuestion=Le prix de revient de cette ligne a changé. Appliquez-le aux lignes des documents liés qui ont le même produit ?

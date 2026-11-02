@@ -91,8 +91,10 @@ if ($action == 'setcoder') {
 		dol_print_error($db);
 	}
 } elseif ($action == 'update') {
-	$location = GETPOST('GENBARCODE_LOCATION', 'alpha');
-	$res = dolibarr_set_const($db, "GENBARCODE_LOCATION", $location, 'chaine', 0, '', $conf->entity);
+	if (GETPOSTISSET('GENBARCODE_LOCATION')) {
+		$location = GETPOST('GENBARCODE_LOCATION', 'alpha');
+		$res = dolibarr_set_const($db, "GENBARCODE_LOCATION", $location, 'chaine', 0, '', $conf->entity);
+	}
 	$coder_id = GETPOST('PRODUIT_DEFAULT_BARCODE_TYPE', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_DEFAULT_BARCODE_TYPE", $coder_id, 'chaine', 0, '', $conf->entity);
 	$coder_id = GETPOST('GENBARCODE_BARCODETYPE_THIRDPARTY', 'alpha');
@@ -394,7 +396,7 @@ if (getDolGlobalString('BARCODE_USE_ON_THIRDPARTY') && isModEnabled('societe')) 
  *  CHOOSE ENCODING
  */
 if (getDolGlobalString('BARCODE_USE_ON_PRODUCT') || getDolGlobalString('BARCODE_USE_ON_THIRDPARTY')) {
-	print load_fiche_titre($langs->trans("BarcodeEncodeModule"), '', '');
+	print load_fiche_titre($langs->trans("BarcodeEncodeModule"), '', 'barcode');
 
 	if (empty($conf->use_javascript_ajax)) {
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" id="form_engine" spellcheck="false">';
@@ -514,8 +516,8 @@ if (getDolGlobalString('BARCODE_USE_ON_PRODUCT') || getDolGlobalString('BARCODE_
 	print '<td>&nbsp;</td>';
 	print '</tr>';
 
-	// Chemin du binaire genbarcode sous linux
-	if (!isset($_SERVER['WINDIR'])) {
+	// Path to binary genbarcode (linux only)
+	if (getDolGlobalString("BARCODE_ALLOW_CLI_BARCODE_GENERATOR") && !isset($_SERVER['WINDIR'])) {
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans("GenbarcodeLocation").'</td>';
 		print '<td width="60" class="center">';

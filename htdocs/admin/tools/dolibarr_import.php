@@ -101,9 +101,9 @@ print '<br>';
 <fieldset>
 <legend style="font-size: 3em">1</legend>
 <?php
-print '<span class="opacitymedium">';
-print $langs->trans("RestoreDesc2", DOL_DATA_ROOT).'<br><br>';
-print '</span>';
+print '<div class="info">';
+print $langs->trans("RestoreDesc2", DOL_DATA_ROOT);
+print '</div>';
 ?>
 </fieldset>
 
@@ -112,9 +112,9 @@ print '</span>';
 <fieldset>
 <legend style="font-size: 3em">2</legend>
 <?php
-print '<span class="opacitymedium">';
-print $langs->trans("RestoreDesc3", $dolibarr_main_db_name).'<br><br>';
-print '</span>';
+print '<div class="info">';
+print $langs->trans("RestoreDesc3", $dolibarr_main_db_name);
+print '</div>';
 ?>
 
 <?php print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b>'; ?><br><br>
@@ -244,11 +244,10 @@ print "<!-- Save setup conf -->\n";
 
 print '<fieldset><legend class="legendforfieldsetstep" style="font-size: 3em">3</legend>';
 
-print '<br>';
 
-print '<span class="opacitymedium">';
-print $langs->trans("RestoreDesc4", 'dolibarr_main_instance_unique_id '.$langs->transnoentitiesnoconv("or").' dolibarr_main_dolcrypt_key').'<br>';
-print '</span>';
+print '<div class="info">';
+print $langs->trans("RestoreDesc4", 'dolibarr_main_instance_unique_id '.$langs->transnoentitiesnoconv("or").' dolibarr_main_dolcrypt_key');
+print '</div>';
 
 print '<br>';
 

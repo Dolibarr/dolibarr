@@ -330,6 +330,11 @@ class EmailTemplates extends DolibarrApi
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
 
+		// Same rule than into admin/mails_templates.php: a non admin user creates only his own templates
+		if (!DolibarrApiAccess::$user->admin) {
+			$request_data['fk_user'] = (int) DolibarrApiAccess::$user->id;
+		}
+
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
@@ -344,7 +349,7 @@ class EmailTemplates extends DolibarrApi
 			}
 			if ($field == 'fk_user') {
 				if (!DolibarrApiAccess::$user->admin) {
-					$request_data[$field] = (int) DolibarrApiAccess::$user->id;		// Same rule than into admin/mails_templates.php
+					$value = (int) DolibarrApiAccess::$user->id;		// Same rule than into admin/mails_templates.php
 				}
 			}
 
@@ -386,8 +391,12 @@ class EmailTemplates extends DolibarrApi
 		}
 
 		$result = $this->email_template->apiFetch($id, '', DolibarrApiAccess::$user);
-		if (!$result || $id == 0) {
+		if ($result <= 0 || $id == 0) {
 			throw new RestException(404, 'email template with id='.$id.' not found');
+		}
+		// Same rule than for delete and into admin/mails_templates.php: a non admin user can modify only his own templates
+		if (!DolibarrApiAccess::$user->admin && (int) DolibarrApiAccess::$user->id != $this->email_template->fk_user) {
+			throw new RestException(403, 'denied update access to email templates');
 		}
 
 		foreach ($request_data as $field => $value) {
@@ -446,8 +455,12 @@ class EmailTemplates extends DolibarrApi
 		}
 
 		$result = $this->email_template->apiFetch(0, $label, DolibarrApiAccess::$user);
-		if (!$result) {
+		if ($result <= 0) {
 			throw new RestException(404, 'email template not found');
+		}
+		// Same rule than for delete and into admin/mails_templates.php: a non admin user can modify only his own templates
+		if (!DolibarrApiAccess::$user->admin && (int) DolibarrApiAccess::$user->id != $this->email_template->fk_user) {
+			throw new RestException(403, 'denied update access to email templates');
 		}
 
 		$newlabel = $label;

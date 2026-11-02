@@ -622,7 +622,9 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 							foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
 								$key = 'contact_options_'.$key;
 								$key = substr($key, 8); // Remove 'contact_' prefix
-								$contact->array_options[$key] = $thirdpartywithuser[$key];
+								if (isset($thirdpartywithuser[$key])) {
+									$contact->array_options[$key] = $thirdpartywithuser[$key];
+								}
 							}
 						}
 

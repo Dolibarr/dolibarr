@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=Санҷида шуд
 StatusReceptionProcessedShort=Коркард
 ReceptionSheet=Варақаи қабул
 ValidateReception=Қабули қабулро тасдиқ кунед
+DeleteReception=Delete reception
 ConfirmDeleteReception=Шумо мутмаин ҳастед, ки ин қабулро нест кардан мехоҳед?
 ConfirmValidateReception=Are you sure you want to validate this reception with the reference <b>%s</b>?
 ConfirmCancelReception=Шумо мутмаин ҳастед, ки ин қабулро бекор кардан мехоҳед?

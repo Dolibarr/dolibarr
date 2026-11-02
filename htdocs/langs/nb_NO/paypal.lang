@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal moduloppsett
-PaypalDesc=Denne modulen tillater betaling fra kunder via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a> . Dette kan brukes for en ad-hoc betaling eller for en betaling knyttet til et Dolibarr-objekt (faktura, ordre, ...)
+PaypalDesc=This module allows payment by customers via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. This can be used for an ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
 PaypalOrCBDoPayment=Betal med PayPal (kort eller PayPal)
 PaypalDoPayment=Betal med PayPal
 PAYPAL_API_SANDBOX=Test-/sandkasse-modus
@@ -19,7 +19,7 @@ NewOnlinePaymentFailed=Ny online betaling forsøkt, men mislyktes
 ONLINE_PAYMENT_SENDEMAIL=E-postadresse for varsler etter hvert betalingsforsøk (vellykket og mislykket)
 ReturnURLAfterPayment=Retur-URL etter betaling
 ValidationOfOnlinePaymentFailed=Validering av online betaling mislyktes
-PaymentSystemConfirmPaymentPageWasCalledButFailed=Bekreftelsesside for betaling ble kalt etter at betalingssystemet returnerte en feil
+PaymentSystemConfirmPaymentPageWasCalledButFailed=The payment confirmation page was called by the online payment system and returned an error
 SetExpressCheckoutAPICallFailed=SetExpressCheckout API oppkall feilet.
 DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API oppkall feilet.
 DetailedErrorMessage=Detaljert feilmelding

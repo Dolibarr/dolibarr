@@ -958,7 +958,7 @@ class Adherent extends CommonObject
 					$luser = new User($this->db);
 					$result = $luser->fetch($this->user_id);
 
-					if ($result >= 0) {
+					if ($result > 0) {
 						// If option ADHERENT_LOGIN_NOT_REQUIRED is on, there is no login of member, so we do not overwrite user login to keep existing one.
 						if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 							$luser->login = $this->login;
@@ -1428,7 +1428,7 @@ class Adherent extends CommonObject
 					$luser = new User($this->db);
 					$result = $luser->fetch($this->user_id);
 
-					if ($result >= 0) {
+					if ($result > 0) {
 						$result = $luser->setPassword($user, $this->pass, 0, 0, 1);
 						if (is_int($result) && $result < 0) {
 							$this->error = $luser->error;

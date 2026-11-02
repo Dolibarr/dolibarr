@@ -695,7 +695,9 @@ while ($i < $imaxinloop) {
 			if (in_array($val['type'], array('timestamp'))) {
 				$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
 			} elseif ($key == 'ref') {
-				$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
+				$cssforfield .= ($cssforfield ? ' ' : '').'nowraponall';
+			} elseif ($key == 'label') {
+				$cssforfield = '';
 			}
 
 			if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('rowid', 'status')) && empty($val['arrayofkeyval'])) {
@@ -705,12 +707,18 @@ while ($i < $imaxinloop) {
 
 			if (!empty($arrayfields['t.'.$key]['checked'])) {
 				print '<td'.($cssforfield ? ' class="'.$cssforfield.(preg_match('/tdoverflow/', $cssforfield) ? ' classfortooltip' : '').'"' : '');
-				if (preg_match('/tdoverflow/', $cssforfield) && !is_numeric($object->$key)) {
+				if ((preg_match('/tdoverflow/', $cssforfield) || $key == 'label') && !is_numeric($object->$key)) {
 					print ' title="'.dol_escape_htmltag((string) $object->$key).'"';
 				}
 				print '>';
 				if ($key == 'status') {
 					print $object->getLibStatut(5);
+				} elseif ($key == 'label') {
+					print '<div class="twolinesmax-normallineheight minwidth200onall">';
+					print '<span class="spantitle">';
+					print dolPrintHTML($object->label);
+					print '</span>';
+					print '</div>';
 				} elseif ($key == 'rowid') {
 					print $object->showOutputField($val, $key, (string) $object->id, '');
 				} else {
