@@ -3369,7 +3369,7 @@ function top_menu_search()
                 if (inputs[inputs.index(this) + 1] != null) {
                     inputs[inputs.index(this) + 1].focus();
 					 if (e.keyCode == 13){
-						 inputs[inputs.index(this) + 1].trigger("click");
+						 inputs.eq(inputs.index(this) + 1).trigger("click");
 					 }
 
                 }
