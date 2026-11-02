@@ -667,6 +667,7 @@ class Documents extends DolibarrApi
 								// The property was renamed into date_creation; the key of the answer keeps its name,
 								// so that the clients already reading date_c are not broken a second time.
 								$fileitem['date_c'] = $line->date_creation;
+								$fileitem['date_creation'] = $line->date_creation;
 								$fileitem['agenda_id'] = $line->agenda_id;
 								$fileitem['fk_user_c'] = $line->fk_user_c;
 								$fileitem['fk_user_m'] = $line->fk_user_m;
