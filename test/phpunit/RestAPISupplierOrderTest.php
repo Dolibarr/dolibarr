@@ -310,7 +310,7 @@ class RestAPISupplierOrderTest extends AbstractRestAPITest
 
 		$order_id = $this->createOrder($test);
 
-		$ref_supplier = "TRU".mt_rand(0, 99999999);
+		$ref_supplier = "TR".mt_rand(0, 99999999);
 		$result = $this->getUrl('supplierorders/'.$order_id, $test, 'PUT', array("ref_supplier" => $ref_supplier, "note_private" => "Updated via the REST API"));
 		$this->assertEquals($order_id, $result['content']['id'] ?? null, "$test The updated order must be returned");
 		$this->assertEquals($ref_supplier, $result['content']['ref_supplier'] ?? null, "$test ref_supplier must be updated");
