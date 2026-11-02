@@ -335,7 +335,7 @@ function repairOrphanFiles($db, $modulepart, $directory, $documentroot, $confirm
 		return $report;
 	}
 	// This maintenance inventory is deliberately global: an inaccessible or shared object is not an orphan.
-	$sql = "SELECT rowid".($modulepart === 'company' ? '' : ', ref')." FROM ".$db->prefix().$tables[$modulepart];
+	$sql = "SELECT rowid".($modulepart === 'company' ? '' : ', ref')." FROM ".$db->prefix().$db->sanitize($tables[$modulepart]);
 	$resql = $db->query($sql);
 	if (!$resql) {
 		$report['error'] = 'RepairOrphanFilesFailed';
