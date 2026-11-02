@@ -323,6 +323,14 @@ class AllTests
 
 		require_once dirname(__FILE__).'/MultiCurrencyTest.php';
 		$suite->addTestSuite('MultiCurrencyTest');
+		require_once dirname(__FILE__).'/MultiCurrencyRateDirectTest.php';
+		$suite->addTestSuite('MultiCurrencyRateDirectTest');
+		require_once dirname(__FILE__).'/ProductPriceCurrencyTest.php';
+		$suite->addTestSuite('ProductPriceCurrencyTest');
+		require_once dirname(__FILE__).'/PropalCurrencyPriceTest.php';
+		$suite->addTestSuite('PropalCurrencyPriceTest');
+		require_once dirname(__FILE__).'/DocumentCurrencyPriceFlagTest.php';
+		$suite->addTestSuite('DocumentCurrencyPriceFlagTest');
 
 		require_once dirname(__FILE__).'/BOMTest.php';
 		$suite->addTestSuite('BOMTest');
