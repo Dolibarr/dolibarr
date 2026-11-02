@@ -311,7 +311,11 @@ class SupplierOrders extends DolibarrApi
 	 * @param 	array 	$request_data   	Data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
-	 * @return 	Object|false				Updated object
+	 * @return 	Object						Updated object
+	 *
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 500 System error
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -326,6 +330,10 @@ class SupplierOrders extends DolibarrApi
 
 		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, 'commande_fournisseur', 'commande')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		if (!is_array($request_data)) {
+			$request_data = array();
 		}
 
 		foreach ($request_data as $field => $value) {
@@ -347,11 +355,11 @@ class SupplierOrders extends DolibarrApi
 			$this->order->$field = $this->_checkValForAPI($field, $value, $this->order);
 		}
 
-		if ($this->order->update(DolibarrApiAccess::$user)) {
+		if ($this->order->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
+		} else {
+			throw new RestException(500, $this->order->errorsToString());
 		}
-
-		return false;
 	}
 
 	/**
