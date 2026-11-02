@@ -817,7 +817,10 @@ class FactureFournisseur extends CommonInvoice
 
 
 			// Update total price
-			$result = $this->update_price(1);
+			if (empty($this->thirdparty)) {
+				$this->fetch_thirdparty();
+			}
+			$result = $this->update_price(1, 'auto', 0, $this->thirdparty);
 			if ($result > 0) {
 				// Actions on extra fields
 				if (!$error) {
@@ -1420,7 +1423,7 @@ class FactureFournisseur extends CommonInvoice
 
 			$lineid = $facligne->insert();
 			if ($lineid > 0) {
-				$result = $this->update_price(1);
+				$result = $this->update_price(1, 'auto', 0, $this->thirdparty);
 				if ($result > 0) {
 					// Create link between discount and invoice line
 					$result = $remise->link_to_invoice($lineid, 0);
@@ -2590,7 +2593,7 @@ class FactureFournisseur extends CommonInvoice
 			$this->db->rollback();
 			return -3;
 		} else {
-			$res = $this->update_price(1);
+			$res = $this->update_price(1, 'auto', 0, $this->thirdparty);
 
 			if ($res > 0) {
 				$this->db->commit();
