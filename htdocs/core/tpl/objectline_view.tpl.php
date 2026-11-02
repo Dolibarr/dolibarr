@@ -656,7 +656,7 @@ if ($lineisoptionlegacy) {
 
 // Price inc tax
 if ($outputalsopricetotalwithtax) {
-	print '<td class="linecolttc nowrap right">'.price($sign * $line->total_ttc).'</td>';
+	print '<td class="linecolttc nowrap right'.$optioncellmutecss.'">'.price($sign * $line->total_ttc).'</td>';
 	$coldisplay++;
 }
 
