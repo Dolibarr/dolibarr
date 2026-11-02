@@ -6317,6 +6317,11 @@ class Facture extends CommonInvoice
 				// Load event
 				$res = $tmpinvoice->fetch($obj->id);
 				if ($res > 0) {
+					// No reminder for an invoice with nothing left to pay (an overpaid invoice is not classified paid) or with a dispute open
+					if ($tmpinvoice->getRemainToPay() <= 0 || $tmpinvoice->dispute_status == 1) {
+						continue;
+					}
+
 					$tmpinvoice->fetch_thirdparty();
 
 					$outputlangs = new Translate('', $conf);
