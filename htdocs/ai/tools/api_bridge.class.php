@@ -4489,6 +4489,24 @@ class ToolApiBridge extends McpTool
 	 */
 	public function writePrecheck(string $toolName, array $args)
 	{
+		// The checks of core first, then the ones of the modules.
+		$refused = $this->precheckWrite($toolName, $args);
+		if ($refused !== '') {
+			return $refused;
+		}
+
+		return $this->precheckByModules($toolName, $args);
+	}
+
+	/**
+	 * The checks of writePrecheck() core makes itself.
+	 *
+	 * @param  string             $toolName Tool being called.
+	 * @param  array<string,mixed> $args    Arguments as received.
+	 * @return string                       Error message, or '' to proceed.
+	 */
+	private function precheckWrite(string $toolName, array $args)
+	{
 		global $langs, $user;
 
 		$write = $this->writeMetaFor($toolName);
@@ -4636,6 +4654,117 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Let the modules refuse a write before the user is asked to approve it,
+	 * the way their doActions hook refuses the same record on the card: hook
+	 * 'checkMcpApiBridgeWrite' of the 'aimcp' context. The hook receives the
+	 * record as it will be after the write (a new, unsaved one for a create),
+	 * and in $parameters:
+	 * - 'tool': name of the tool;
+	 * - 'operation': 'create', 'addline', 'update', 'action', 'delete',
+	 *   'payment' or 'line';
+	 * - 'class': business class of the record;
+	 * - 'args': the arguments the write will be made with.
+	 * It returns a negative value, with its message in ->error or ->errors,
+	 * to refuse: the message is what the user reads, and nothing is written.
+	 *
+	 * @param  string             $toolName Tool being called.
+	 * @param  array<string,mixed> $args    Arguments as received.
+	 * @return string                       Message of the module that refuses, or '' to proceed.
+	 */
+	private function precheckByModules(string $toolName, array $args)
+	{
+		global $hookmanager, $langs;
+
+		$write = $this->writeMetaFor($toolName);
+		if (empty($write) || empty($this->db)) {
+			return '';
+		}
+		if (!is_object($hookmanager)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager = new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('aimcp'));
+		if (empty($hookmanager->hooks['aimcp'])) {
+			return '';	// no module listens: the arguments are not prepared twice for nothing
+		}
+		$args = $this->applyFixedParams($toolName, $args);
+		try {
+			$args = $this->normaliseWriteArgs($args, $write);
+		} catch (InvalidArgumentException $e) {
+			return $e->getMessage();
+		}
+		foreach (array_keys($args) as $name) {
+			if ($name === 'requestState' || substr((string) $name, 0, 1) === '_') {
+				unset($args[$name]);
+			}
+		}
+
+		$class = (string) ($write['object'] ?? '');
+		$kind = (string) ($write['kind'] ?? '');
+		$object = null;
+		if (!empty($write['update']) || $kind === 'update') {
+			$operation = 'update';
+			$current = !empty($write['update']) ? $this->fetchWriteParent($write, $args) : $this->writeTarget;
+			if ($current instanceof CommonObject) {
+				// The record as the write leaves it.
+				$object = clone $current;
+				$changes = !empty($write['update']) ? array_intersect_key($args, $write['update']) : array_intersect_key($args, array_flip((array) ($write['fields'] ?? array())));
+				$this->applyWriteFields($object, $changes);
+			}
+		} elseif (in_array($kind, array('action', 'delete', 'payment', 'line'), true)) {
+			$operation = $kind;
+			$object = $this->writeTarget;
+		} elseif (!empty($write['parent'])) {
+			$operation = 'addline';
+			$object = $this->fetchWriteParent($write, $args);
+		} else {
+			$operation = 'create';
+			$object = ($class !== '') ? $this->newWriteObject($class) : null;
+			if ($object instanceof CommonObject) {
+				$this->applyWriteFields($object, $args);
+			}
+		}
+
+		// The hook manager keeps the errors of every hook run before: only the
+		// ones this run adds are the refusal. ->error is set by the run that fails.
+		$knownErrors = count($hookmanager->errors);
+		$parameters = array('tool' => $toolName, 'operation' => $operation, 'class' => $class, 'args' => $args);
+		$action = $operation;
+		$reshook = $hookmanager->executeHooks('checkMcpApiBridgeWrite', $parameters, $object, $action);
+		if ($reshook >= 0) {
+			return '';
+		}
+		$newErrors = array_slice($hookmanager->errors, $knownErrors);
+		$message = trim($hookmanager->error.' '.implode(' ', array_filter($newErrors)));
+		dol_syslog(get_class($this).'::precheckByModules '.$toolName.' refused by a module: '.$message, LOG_INFO);
+		if ($message === '') {
+			$langs->load('other');
+			$message = $langs->transnoentitiesnoconv('AIWriteRefusedByModule');
+		}
+
+		return $message;
+	}
+
+	/**
+	 * Copy the fields of a write onto a record, for a module to check it: only
+	 * the properties the class has, the extra fields merged.
+	 *
+	 * @param  CommonObject        $object Record.
+	 * @param  array<string,mixed> $fields Field => value.
+	 * @return void
+	 */
+	private function applyWriteFields($object, array $fields)
+	{
+		foreach ($fields as $field => $value) {
+			if ($field === 'array_options') {
+				$object->array_options = array_merge((array) $object->array_options, (array) $value);
+			} elseif ($field !== 'lines' && property_exists($object, (string) $field)) {
+				$object->$field = $value;
+			}
+		}
+	}
+
+	/**
 	 * References close to one that matched no product, for the user to pick from:
 	 * the supplier's references when the document is a supplier one (the note
 	 * says "33303", the catalogue has "33303-6"), else our own references.
@@ -4706,18 +4835,13 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
-	 * Record of a write on an existing record, by rowid or by ref: the business
-	 * documents of fetchBusinessObject() and the records only these writes use
-	 * (contacts, projects, tasks, interventions, contracts, tickets).
+	 * Files of the business classes the writes name, by class.
 	 *
-	 * @param  string $class Business class declared by the write.
-	 * @param  int    $id    Rowid of the record, 0 to look it up by ref.
-	 * @param  string $ref   Ref of the record, used when no rowid is given.
-	 * @return CommonObject|null Record, or null when it cannot be read.
+	 * @return array<string,string> Class => path under DOL_DOCUMENT_ROOT.
 	 */
-	private function fetchRecord($class, $id, $ref = '')
+	private function recordClassFiles()
 	{
-		$paths = array(
+		return array(
 			'Facture' => '/compta/facture/class/facture.class.php',
 			'Commande' => '/commande/class/commande.class.php',
 			'Propal' => '/comm/propal/class/propal.class.php',
@@ -4737,6 +4861,40 @@ class ToolApiBridge extends McpTool
 			'WebsitePage' => '/website/class/websitepage.class.php',
 			'Website' => '/website/class/website.class.php'
 		);
+	}
+
+	/**
+	 * A new, unsaved record of one of the classes the writes name.
+	 *
+	 * @param  string $class Business class.
+	 * @return CommonObject|null Record, or null for a class the writes do not name.
+	 */
+	private function newWriteObject($class)
+	{
+		$paths = $this->recordClassFiles();
+		if (empty($paths[$class])) {
+			return null;
+		}
+		require_once DOL_DOCUMENT_ROOT.$paths[$class];
+		$obj = new $class($this->db);
+		'@phan-var-force CommonObject $obj';
+
+		return $obj;
+	}
+
+	/**
+	 * Record of a write on an existing record, by rowid or by ref: the business
+	 * documents of fetchBusinessObject() and the records only these writes use
+	 * (contacts, projects, tasks, interventions, contracts, tickets).
+	 *
+	 * @param  string $class Business class declared by the write.
+	 * @param  int    $id    Rowid of the record, 0 to look it up by ref.
+	 * @param  string $ref   Ref of the record, used when no rowid is given.
+	 * @return CommonObject|null Record, or null when it cannot be read.
+	 */
+	private function fetchRecord($class, $id, $ref = '')
+	{
+		$paths = $this->recordClassFiles();
 		$ref = trim((string) $ref);
 		if (empty($paths[$class]) || ((int) $id <= 0 && $ref === '')) {
 			return null;

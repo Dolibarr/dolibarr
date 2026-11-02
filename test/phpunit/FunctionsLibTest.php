@@ -317,6 +317,36 @@ class FunctionsLibTest extends CommonClassTest
 	}
 
 	/**
+	 * The request headers are rebuilt from $_SERVER when the SAPI does not provide getallheaders().
+	 *
+	 * @return	void
+	 */
+	public function testDolGetRequestHeaders()
+	{
+		$savserver = $_SERVER;
+
+		$_SERVER['HTTP_AUTHORIZATION'] = 'Bearer abc123';
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$_SERVER['CONTENT_TYPE'] = 'application/json';
+		$_SERVER['REQUEST_METHOD'] = 'POST';		// not a header, must not come out
+
+		$headers = dolGetRequestHeaders();
+
+		$_SERVER = $savserver;
+
+		$this->assertIsArray($headers, 'The request headers must always be an array');
+
+		// Under the CLI of the test runner getallheaders() does not exist, so the rebuilt array is
+		// what is checked. Under a SAPI that provides it, only the type above can be asserted.
+		if (!function_exists('getallheaders')) {
+			$this->assertSame('Bearer abc123', $headers['Authorization'], 'HTTP_AUTHORIZATION must come out as Authorization');
+			$this->assertSame('XMLHttpRequest', $headers['X-Requested-With'], 'The name must be capitalised word by word and keep its dashes');
+			$this->assertSame('application/json', $headers['Content-Type'], 'Content-Type is not prefixed with HTTP_ in $_SERVER and must be picked up anyway');
+			$this->assertArrayNotHasKey('Request-Method', $headers, 'What is not a header must not be returned as one');
+		}
+	}
+
+	/**
 	 * testDolCheckFilters
 	 *
 	 * @return boolean

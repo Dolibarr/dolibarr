@@ -47,6 +47,7 @@ note_private   text,
 note_public    text,
 tms            timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 import_key			varchar(14),
+model_pdf			varchar(255),				-- name of the document template used to generate the document of the leave request
 extraparams			varchar(255)				-- for other parameters with json format
 )
 ENGINE=innodb;

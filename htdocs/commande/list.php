@@ -577,6 +577,7 @@ if (empty($reshook)) {
 							$desc = dol_concatdesc($desc, $langs->trans("Order").' '.$cmd->ref.' - '.dol_print_date($cmd->date, 'day'));
 						}
 
+						// If order line has a negative unit price, we will include it as a discount for the generated invoice
 						if ($lines[$i]->subprice < 0 && !getDolGlobalString('INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN')) {
 							// Negative line, we create a discount line
 							$discount = new DiscountAbsolute($db);
@@ -597,7 +598,7 @@ if (empty($reshook)) {
 								$error++;
 								break;
 							}
-						} else {
+						} else {	// We are here if INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN (a hidden option not supported and deprecated that should not be used)
 							// Positive line
 							$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
 							// Date start

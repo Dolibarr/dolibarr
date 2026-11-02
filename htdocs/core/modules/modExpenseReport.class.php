@@ -85,6 +85,13 @@ class modExpenseReport extends DolibarrModules
 				0,
 			],
 			[
+				"EXPENSEREPORT_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/expensereports",
+				"",
+				0,
+			],
+			[
 				"MAIN_DELAY_EXPENSEREPORTS",
 				"chaine",
 				"15",

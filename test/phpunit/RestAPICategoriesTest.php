@@ -112,6 +112,38 @@ class RestAPICategoriesTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * testRestCategoryListPagination
+	 *
+	 * @return void
+	 */
+	public function testRestCategoryListPagination()
+	{
+		$test = "List categories with and without pagination data";
+
+		$category_id1 = $this->createCategory($test, 2);	// customer
+		$category_id2 = $this->createCategory($test, 2);	// customer
+
+		$result = $this->getUrl('categories', $test, 'GET', array('type' => 2, 'limit' => 1));
+		$this->assertArrayNotHasKey('pagination', $result['content'], "$test Without pagination_data the result must not have a pagination key");
+		$this->assertArrayHasKey(0, $result['content'], "$test Without pagination_data the result must be a plain list");
+		$this->assertCount(1, $result['content'], "$test Limit must be applied");
+
+		$result = $this->getUrl('categories', $test, 'GET', array('type' => 2, 'limit' => 1, 'page' => 0, 'pagination_data' => 'true'));
+		$this->assertArrayHasKey('data', $result['content'], "$test With pagination_data the result must have a data key");
+		$this->assertArrayHasKey('pagination', $result['content'], "$test With pagination_data the result must have a pagination key");
+		$this->assertCount(1, $result['content']['data'], "$test Limit must be applied to data");
+
+		$pagination = $result['content']['pagination'];
+		$this->assertGreaterThanOrEqual(2, $pagination['total'], "$test Total must count at least the created categories");
+		$this->assertEquals(0, $pagination['page'], "$test Page must be the requested one");
+		$this->assertEquals(1, $pagination['limit'], "$test Limit must be the requested one");
+		$this->assertEquals($pagination['total'], $pagination['page_count'], "$test Page count must be total divided by limit");
+
+		$this->getUrl('categories/'.$category_id1, $test, 'DELETE');
+		$this->getUrl('categories/'.$category_id2, $test, 'DELETE');
+	}
+
+	/**
 	 * testRestCategoryGetNotFound
 	 *
 	 * @return void
