@@ -26,7 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
  * @var User $user
  */
 
-$langs->loadLangs(array('accountancy', 'bills', 'companies', 'orders'));
+$langs->loadLangs(array('accountancy', 'bills', 'companies', 'orders', 'sendings'));
 
 if (!isModEnabled('accounting') || $user->socid > 0 || !$user->hasRight('accounting', 'comptarapport', 'lire')) {
 	accessforbidden();
@@ -257,7 +257,7 @@ foreach ($report->lines as $line) {
 					$orderobject->ref = $order->ref;
 					$orderobject->status = (int) $order->fk_statut;
 					$orderobject->statut = (int) $order->fk_statut;
-					print '<div class="nowraponall">'.$orderobject->getNomUrl(1, '', 0, 1).' '.$orderobject->getLibStatut(5).'</div>';
+					print '<div class="nowraponall">'.$orderobject->getNomUrl(1, '', 0, 0, 1).' '.$orderobject->getLibStatut(5).'</div>';
 					if ($order->date_livraison) {
 						print '<div>'.$langs->trans('DateDeliveryPlanned').': '.dol_print_date($order->date_livraison, 'day', 'tzserver').'</div>';
 					}
