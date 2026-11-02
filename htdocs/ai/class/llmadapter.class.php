@@ -432,6 +432,16 @@ class UniversalLLMAdapter
 
 		$localurl = empty($dolibarr_ai_allow_local_endpoints) ? 0 : 2;
 
+		// Hooks 'ai': a module can refuse the request (quota...) then read the answer (token usage...)
+		global $hookmanager;
+		$hookparameters = array('service' => $this->type, 'model' => $this->model, 'function' => 'assistant');
+		if (is_object($hookmanager)) {
+			$hookmanager->initHooks(array('ai'));
+			if ($hookmanager->executeHooks('beforeAIRequest', $hookparameters) < 0) {
+				return "Error: " . $hookmanager->error;
+			}
+		}
+
 		// Pass $this->timeout as the response timeout so the LLM-specific value configured
 		// at construction time is honored (getURLContent's $timeoutresponse is the 10th arg;
 		// preceding args $ssl_verifypeer=-1 and $timeoutconnect=0 keep their defaults).
@@ -496,6 +506,10 @@ class UniversalLLMAdapter
 				dol_syslog("Error: API " . $msg, LOG_DEBUG, 0, '_ai');
 			}
 			return "Error: API " . $msg;
+		}
+
+		if (is_object($hookmanager) && is_array($json)) {
+			$hookmanager->executeHooks('afterAIRequest', $hookparameters + array('response' => $json));
 		}
 
 		// Token usage as reported by the provider, for the cost columns of the
