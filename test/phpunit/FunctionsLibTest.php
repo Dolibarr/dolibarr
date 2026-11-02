@@ -3112,8 +3112,7 @@ class FunctionsLibTest extends CommonClassTest
 
 		// Before the fix, this resolved to the native PHP 8 'Attribute' class and raised
 		// TypeError: Attribute::__construct(): Argument #1 ($flags) must be of type int.
-		$object = fetchObjectByElement(0, 'product_attribute_combination');
-		$this->assertInstanceOf('ProductCombination', $object, 'fetchObjectByElement product_attribute_combination');
+		$this->assertEquals(-1, fetchObjectByElement(0, 'product_attribute_combination'), 'ProductCombination is not a CommonObject, so it is refused');
 
 		$object = fetchObjectByElement(0, 'product_attribute');
 		$this->assertInstanceOf('ProductAttribute', $object, 'fetchObjectByElement product_attribute');
