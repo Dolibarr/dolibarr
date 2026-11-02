@@ -870,6 +870,14 @@ function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file
 		$refname = basename(dirname(dirname($original_file))."/");
 	}
 
+	// Pages like viewimage.php define NOREQUIRETRAN, but the fetch() of some objects (Contact, Societe, Ticket...) uses $langs
+	global $conf, $langs;
+	if (!is_object($langs)) {
+		include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
+		$langs = new Translate('', $conf);
+		$langs->setDefaultLang(getDolGlobalString('MAIN_LANG_DEFAULT', 'auto'));
+	}
+
 	if (empty($modulepartlinkedtothirdparty[$modulepart])) {
 		$object = fetchObjectByElement(0, $modulepart, $refname);
 		if (is_object($object)) {
