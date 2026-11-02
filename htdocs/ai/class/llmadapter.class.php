@@ -432,11 +432,10 @@ class UniversalLLMAdapter
 
 		$localurl = empty($dolibarr_ai_allow_local_endpoints) ? 0 : 2;
 
-		// Hooks 'ai': a module can refuse the request (quota...) then read the answer (token usage...)
+		// Hooks of the calling page context (for example 'main'): a module can refuse the request (quota...) then read the answer (token usage...)
 		global $hookmanager;
 		$hookparameters = array('service' => $this->type, 'model' => $this->model, 'function' => 'assistant');
 		if (is_object($hookmanager)) {
-			$hookmanager->initHooks(array('ai'));
 			if ($hookmanager->executeHooks('beforeAIRequest', $hookparameters) < 0) {
 				return "Error: " . $hookmanager->error;
 			}

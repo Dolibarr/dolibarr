@@ -398,11 +398,10 @@ class Ai
 				$timeoutresponse = max(90, getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
 			}
 
-			// Hooks 'ai': a module can refuse the request (quota...) then read the answer (token usage...)
+			// Hooks of the calling page context (for example 'main'): a module can refuse the request (quota...) then read the answer (token usage...)
 			global $hookmanager;
 			$hookparameters = array('service' => $this->apiService, 'model' => $model, 'function' => $function);
 			if (is_object($hookmanager)) {
-				$hookmanager->initHooks(array('ai'));
 				if ($hookmanager->executeHooks('beforeAIRequest', $hookparameters) < 0) {
 					return array(
 						'error' => true,
