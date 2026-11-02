@@ -376,7 +376,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-$sql .= " GROUP BY p.rowid, p.ref, p.datep, p.fk_bank, p.statut, p.num_paiement, p.amount, p.note, p.ext_payment_id, p.ext_payment_site";
+$sql .= " GROUP BY p.rowid, p.ref, p.datep, p.fk_bank, p.statut, p.num_paiement, p.amount, p.note, p.ext_payment_id, p.ext_payment_site, p.tms";
 $sql .= ", c.code";
 $sql .= ", ba.rowid, ba.ref, ba.label, ba.number, ba.account_number, ba.fk_accountancy_journal";
 $sql .= ", s.rowid, s.nom, s.email";
