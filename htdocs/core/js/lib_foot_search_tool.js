@@ -27,7 +27,8 @@
  * This code allow quick filtering on user key press
  * */
 $(function() {
-	$("[data-search-tool-target]").on("keyup", function () {
+	// "input" is also triggered when the field is cleared with the cross of a search input or by a paste with the mouse
+	$("[data-search-tool-target]").on("input", function () {
 		let search = $(this).val();
 		let target = $(this).attr('data-search-tool-target');
 		let targetCounter = $(this).attr('data-counter-target');

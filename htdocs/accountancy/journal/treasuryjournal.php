@@ -31,6 +31,8 @@
  *  \ingroup    Advanced accountancy
  *  \brief      Page with bank journal
  */
+
+// Load Dolibarr environment
 require '../../main.inc.php';
 /**
  * @var Conf $conf
@@ -73,7 +75,7 @@ $now = dol_now();
 
 $action = GETPOST('action', 'aZ09');
 
-if ($in_bookkeeping == '') {
+if ($in_bookkeeping == '' || $action == 'writebookkeeping') {	// Never transfer again documents already in bookkeeping
 	$in_bookkeeping = 'notyet';
 }
 
@@ -201,6 +203,7 @@ if ($resql) {
 	}
 	$db->free($resql);
 
+	// Loop on each bank_url record that is already or not yet transferred.
 	foreach ($payment_ids as $type => $ids) {
 		switch ($type) {
 			case 'payment':
@@ -209,7 +212,7 @@ if ($resql) {
 				// Customer invoices
 				//------------------------------------------
 				$sql = "SELECT f.rowid, f.ref AS ref, f.total_ht AS invoice_total_ht, f.total_ttc AS invoice_total_ttc,";
-				$sql .= " pf.amount AS amount_payment,";
+				$sql .= " pf.amount AS amount_payment, pf.fk_paiement AS payment_id,";
 				$sql .= " fd.rowid AS row_id, fd.total_ht, fd.total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.vat_src_code,";
 				$sql .= " aa.account_number as accountancy_code, aa.label as accountancy_code_label,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
@@ -219,16 +222,14 @@ if ($resql) {
 				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.url_id = pf.fk_paiement AND bu.type = '".$db->escape($type)."'";
 				$sql .= " LEFT JOIN ".$db->prefix()."product as p ON p.rowid = fd.fk_product";
 				$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa ON aa.rowid = fd.fk_code_ventilation";
-				// Already in bookkeeping or not
-				if ($in_bookkeeping == 'already') {
-					$sql .= " INNER JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=f.rowid";
-				} else {
-					$sql .= " LEFT JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=f.rowid";
-				}
+				// bu.fk_bank = b.rowid = ab.fk_doc = ID in llx_bank and bu_type = 'payment'
 				$sql .= " WHERE f.entity IN (".getEntity('facture', 0).')'; // We don't share object for accountancy, we use source object sharing
-				// Not already in bookkeeping
+				// Already in bookkeeping or not. Records are saved with doc_type = 'bank' and fk_doc = ID in llx_bank (fk_docdet is 0)
+				if ($in_bookkeeping == 'already') {
+					$sql .= " AND EXISTS (SELECT ab.rowid FROM ".$db->prefix()."accounting_bookkeeping as ab WHERE ab.doc_type = 'bank' AND ab.fk_doc = bu.fk_bank)";
+				}
 				if ($in_bookkeeping == 'notyet') {
-					$sql .= " AND ab.rowid IS NULL";
+					$sql .= " AND NOT EXISTS (SELECT ab.rowid FROM ".$db->prefix()."accounting_bookkeeping as ab WHERE ab.doc_type = 'bank' AND ab.fk_doc = bu.fk_bank)";
 				}
 				$sql .= " AND fd.fk_code_ventilation > 0";
 				$sql .= " AND f.fk_statut > 0";
@@ -246,13 +247,13 @@ if ($resql) {
 					$account_vat_sold = getDolGlobalString('ACCOUNTING_VAT_SOLD_ACCOUNT', 'NotDefined'); // NotDefined is a reserved word
 
 					while ($obj = $db->fetch_object($resql)) {
-						$object_key = $obj->bu_type.'_'.$obj->rowid;
+						$object_key = $obj->bu_type.'_'.$obj->rowid;	// ->bu_type is "payment", ->rowid is invoice ID
 
-						// To check...
-						// If 1 invoice has 2 payments at 2 different date, seems ok, we have 2 record $tabpay because $obj->fk_bank is different (obj->fk_bank is ID of payment in bank record table).
-						// If 2 invoices are paid in the same payment, we have 2 $tabobject but also 2 $tabpay (because $object_key has 2 different values) when we should have 1.
+						// If 1 invoice has 2 payments at 2 different date, we have 2 record $tabpay because $obj->fk_bank is different (obj->fk_bank is ID of payment in bank record table).
+						// If 2 invoices are paid in the same payment, we have 1 $tabpay with 2 objects. Lines are written per object, with the ref of the object in the label (see $label_suffix).
 
-						// Add object in payment
+						// Add object in $tabpay payment table
+						// bu.fk_bank = b.rowid = ab.fk_doc = ID in llx_bank
 						if (!isset($tabpay[$obj->fk_bank]['objects'][$object_key])) {
 							$tabpay[$obj->fk_bank]['objects'][$object_key] = array(
 								'amount' => $obj->amount_payment,
@@ -326,7 +327,7 @@ if ($resql) {
 				// Supplier invoices
 				//------------------------------------------
 				$sql = "SELECT ff.rowid, ff.ref, ff.total_ht AS supplier_invoice_total_ht, ff.total_ttc AS supplier_invoice_total_ttc,";
-				$sql .= " pff.amount AS amount_payment,";
+				$sql .= " pff.amount AS amount_payment, pff.fk_paiementfourn AS payment_id,";
 				$sql .= " ffd.rowid AS row_id, ffd.total_ht, ffd.tva AS total_tva, ffd.total_localtax1, ffd.total_localtax2, ffd.tva_tx, ffd.total_ttc, ffd.vat_src_code,";
 				$sql .= " aa.account_number as accountancy_code, aa.label as accountancy_code_label,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
@@ -336,16 +337,13 @@ if ($resql) {
 				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.url_id = pff.fk_paiementfourn AND bu.type = '".$db->escape($type)."'";
 				$sql .= " LEFT JOIN ".$db->prefix()."product as p ON p.rowid = ffd.fk_product";
 				$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa ON aa.rowid = ffd.fk_code_ventilation";
-				// Already in bookkeeping or not
-				if ($in_bookkeeping == 'already') {
-					$sql .= " INNER JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=ff.rowid";
-				} else {
-					$sql .= " LEFT JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=ff.rowid";
-				}
 				$sql .= " WHERE ff.entity IN (".getEntity('facture_fourn', 0).')'; // We don't share object for accountancy, we use source object sharing
-				// Not already in bookkeeping
+				// Already in bookkeeping or not. Records are saved with doc_type = 'bank' and fk_doc = ID in llx_bank (fk_docdet is 0)
+				if ($in_bookkeeping == 'already') {
+					$sql .= " AND EXISTS (SELECT ab.rowid FROM ".$db->prefix()."accounting_bookkeeping as ab WHERE ab.doc_type = 'bank' AND ab.fk_doc = bu.fk_bank)";
+				}
 				if ($in_bookkeeping == 'notyet') {
-					$sql .= " AND ab.rowid IS NULL";
+					$sql .= " AND NOT EXISTS (SELECT ab.rowid FROM ".$db->prefix()."accounting_bookkeeping as ab WHERE ab.doc_type = 'bank' AND ab.fk_doc = bu.fk_bank)";
 				}
 				$sql .= " AND ffd.fk_code_ventilation > 0";
 				$sql .= " AND ff.fk_statut > 0";
@@ -439,7 +437,7 @@ if ($resql) {
 				// Expense reports
 				//------------------------------------------
 				$sql = "SELECT er.rowid, er.ref, er.total_ht AS expense_report_total_ht, er.total_ttc AS expense_report_total_ttc,";
-				$sql .= " per.amount AS amount_payment,";
+				$sql .= " per.amount AS amount_payment, per.rowid AS payment_id,";
 				$sql .= " erf.rowid AS row_id, erf.total_ht, erf.total_tva, erf.total_localtax1, erf.total_localtax2, erf.tva_tx, erf.total_ttc, erf.vat_src_code,";
 				$sql .= " ctf.accountancy_code,";
 				$sql .= " aa.label as accountancy_code_label,";
@@ -450,16 +448,13 @@ if ($resql) {
 				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.url_id = per.rowid AND bu.type = '".$db->escape($type)."'";
 				$sql .= " LEFT JOIN ".$db->prefix()."c_type_fees as ctf ON ctf.id = erf.fk_c_type_fees";
 				$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa ON aa.account_number = ctf.accountancy_code";
-				// Already in bookkeeping or not
-				if ($in_bookkeeping == 'already') {
-					$sql .= " INNER JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=er.rowid";
-				} else {
-					$sql .= " LEFT JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=er.rowid";
-				}
 				$sql .= " WHERE er.entity IN (".getEntity('expensereport', 0).')'; // We don't share object for accountancy, we use source object sharing
-				// Not already in bookkeeping
+				// Already in bookkeeping or not. Records are saved with doc_type = 'bank' and fk_doc = ID in llx_bank (fk_docdet is 0)
+				if ($in_bookkeeping == 'already') {
+					$sql .= " AND EXISTS (SELECT ab.rowid FROM ".$db->prefix()."accounting_bookkeeping as ab WHERE ab.doc_type = 'bank' AND ab.fk_doc = bu.fk_bank)";
+				}
 				if ($in_bookkeeping == 'notyet') {
-					$sql .= " AND ab.rowid IS NULL";
+					$sql .= " AND NOT EXISTS (SELECT ab.rowid FROM ".$db->prefix()."accounting_bookkeeping as ab WHERE ab.doc_type = 'bank' AND ab.fk_doc = bu.fk_bank)";
 				}
 				$sql .= " AND er.fk_statut >= ".ExpenseReport::STATUS_APPROVED;
 				$sql .= " AND bu.fk_bank IN (".$db->sanitize(implode(',', $ids)).")";
@@ -549,20 +544,17 @@ if ($resql) {
 				// Payment salaries
 				//------------------------------------------
 				$sql = "SELECT ps.rowid,";
-				$sql .= " ps.amount AS amount_payment, ps.label AS label,";
+				$sql .= " ps.amount AS amount_payment, ps.rowid as payment_id, ps.label AS label,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
 				$sql .= " FROM ".$db->prefix()."payment_salary as ps";
 				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.url_id = ps.rowid AND bu.type = '".$db->escape($type)."'";
-				// Already in bookkeeping or not
-				if ($in_bookkeeping == 'already') {
-					$sql .= " INNER JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=ps.rowid";
-				} else {
-					$sql .= " LEFT JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=ps.rowid";
-				}
 				$sql .= " WHERE ps.entity IN (".getEntity('user', 0).')'; // We don't share object for accountancy, we use source object sharing
-				// Not already in bookkeeping
+				// Already in bookkeeping or not. Records are saved with doc_type = 'bank' and fk_doc = ID in llx_bank (fk_docdet is 0)
+				if ($in_bookkeeping == 'already') {
+					$sql .= " AND EXISTS (SELECT ab.rowid FROM ".$db->prefix()."accounting_bookkeeping as ab WHERE ab.doc_type = 'bank' AND ab.fk_doc = bu.fk_bank)";
+				}
 				if ($in_bookkeeping == 'notyet') {
-					$sql .= " AND ab.rowid IS NULL";
+					$sql .= " AND NOT EXISTS (SELECT ab.rowid FROM ".$db->prefix()."accounting_bookkeeping as ab WHERE ab.doc_type = 'bank' AND ab.fk_doc = bu.fk_bank)";
 				}
 				$sql .= " AND bu.fk_bank IN (".$db->sanitize(implode(',', $ids)).")";
 
@@ -614,23 +606,20 @@ if ($resql) {
 				// Socials contributions
 				//------------------------------------------
 				$sql = "SELECT cs.rowid, cs.ref, cs.libelle AS label, cs.amount AS sociales_contributions_amount,";
-				$sql .= " pc.amount AS amount_payment,";
+				$sql .= " pc.amount AS amount_payment, pc.rowid as payement_id,";
 				$sql .= " ccs.accountancy_code,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
 				$sql .= " FROM ".$db->prefix()."paiementcharge as pc";
 				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.url_id = pc.rowid AND bu.type = '".$db->escape($type)."'";
 				$sql .= " INNER JOIN ".$db->prefix()."chargesociales AS cs ON cs.rowid = pc.fk_charge";
 				$sql .= " LEFT JOIN ".$db->prefix()."c_chargesociales as ccs ON ccs.id = cs.fk_type";
-				// Already in bookkeeping or not
-				if ($in_bookkeeping == 'already') {
-					$sql .= " INNER JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=cs.rowid";
-				} else {
-					$sql .= " LEFT JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=cs.rowid";
-				}
 				$sql .= " WHERE cs.entity = ".((int) $conf->entity); // We don't share object for accountancy, we use source object sharing
-				// Not already in bookkeeping
+				// Already in bookkeeping or not. Records are saved with doc_type = 'bank' and fk_doc = ID in llx_bank (fk_docdet is 0)
+				if ($in_bookkeeping == 'already') {
+					$sql .= " AND EXISTS (SELECT ab.rowid FROM ".$db->prefix()."accounting_bookkeeping as ab WHERE ab.doc_type = 'bank' AND ab.fk_doc = bu.fk_bank)";
+				}
 				if ($in_bookkeeping == 'notyet') {
-					$sql .= " AND ab.rowid IS NULL";
+					$sql .= " AND NOT EXISTS (SELECT ab.rowid FROM ".$db->prefix()."accounting_bookkeeping as ab WHERE ab.doc_type = 'bank' AND ab.fk_doc = bu.fk_bank)";
 				}
 				$sql .= " AND bu.fk_bank IN (".$db->sanitize(implode(',', $ids)).")";
 
@@ -683,22 +672,21 @@ if ($resql) {
 			case 'payment_vat':
 				// Payment VAT
 				//------------------------------------------
-				$sql = "SELECT t.rowid,";
-				$sql .= " t.amount AS amount_payment, t.label AS label,";
+				// The bank link of type 'payment_vat' is on the payment (llx_payment_vat), not on the VAT declaration (llx_tva)
+				$sql = "SELECT pv.rowid, t.rowid AS tva_id,";
+				$sql .= " pv.amount AS amount_payment, t.label AS label,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
-				$sql .= " FROM ".$db->prefix()."tva as t";
-				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.url_id = t.rowid AND bu.type = '".$db->escape($type)."'";
-				// Already in bookkeeping or not
-				if ($in_bookkeeping == 'already') {
-					$sql .= " INNER JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=t.rowid";
-				} else {
-					$sql .= " LEFT JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=t.rowid";
-				}
+				$sql .= " FROM ".$db->prefix()."payment_vat as pv";
+				$sql .= " INNER JOIN ".$db->prefix()."tva as t ON t.rowid = pv.fk_tva";
+				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.url_id = pv.rowid AND bu.type = '".$db->escape($type)."'";
 				$sql .= " WHERE bu.fk_bank IN (".$db->sanitize(implode(',', $ids)).")";
 				// $sql .= " AND t.entity = " . ((int) $conf->entity); // TODO when entity is managed in tva
-				// Not already in bookkeeping
+				// Already in bookkeeping or not. Records are saved with doc_type = 'bank' and fk_doc = ID in llx_bank (fk_docdet is 0)
+				if ($in_bookkeeping == 'already') {
+					$sql .= " AND EXISTS (SELECT ab.rowid FROM ".$db->prefix()."accounting_bookkeeping as ab WHERE ab.doc_type = 'bank' AND ab.fk_doc = bu.fk_bank)";
+				}
 				if ($in_bookkeeping == 'notyet') {
-					$sql .= " AND ab.rowid IS NULL";
+					$sql .= " AND NOT EXISTS (SELECT ab.rowid FROM ".$db->prefix()."accounting_bookkeeping as ab WHERE ab.doc_type = 'bank' AND ab.fk_doc = bu.fk_bank)";
 				}
 
 				$resql = $db->query($sql);
@@ -721,13 +709,13 @@ if ($resql) {
 							);
 						}
 
-						// Set object infos
+						// Set object infos (the object is the VAT declaration paid by this payment)
 						if (!isset($tabobject[$object_key])) {
-							$static_tva->id = $obj->rowid;
-							$static_tva->ref = $prefix_ref.$obj->rowid;
+							$static_tva->id = $obj->tva_id;
+							$static_tva->ref = $prefix_ref.$obj->tva_id;
 							$tabobject[$object_key] = array(
-								'id' => $obj->rowid,
-								'ref' => $prefix_ref.$obj->rowid,
+								'id' => $obj->tva_id,
+								'ref' => $prefix_ref.$obj->tva_id,
 								'total_ht' => -$obj->amount_payment,
 								'total_ttc' => -$obj->amount_payment,
 								'url' => $static_tva->getNomUrl(1),
@@ -750,21 +738,18 @@ if ($resql) {
 				// Payment donation
 				//------------------------------------------
 				$sql = "SELECT d.rowid, d.amount AS don_amount,";
-				$sql .= " pd.amount AS amount_payment,";
+				$sql .= " pd.amount AS amount_payment, pd.rowid as payment_id,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
 				$sql .= " FROM ".$db->prefix()."payment_donation as pd";
 				$sql .= " INNER JOIN ".$db->prefix()."don as d ON pd.fk_donation = d.rowid";
 				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.url_id = pd.rowid AND bu.type = '".$db->escape($type)."'";
-				// Already in bookkeeping or not
-				if ($in_bookkeeping == 'already') {
-					$sql .= " INNER JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=d.rowid";
-				} else {
-					$sql .= " LEFT JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=d.rowid";
-				}
 				$sql .= " WHERE d.entity IN (".getEntity('donation', 0).')'; // We don't share object for accountancy, we use source object sharing
-				// Not already in bookkeeping
+				// Already in bookkeeping or not. Records are saved with doc_type = 'bank' and fk_doc = ID in llx_bank (fk_docdet is 0)
+				if ($in_bookkeeping == 'already') {
+					$sql .= " AND EXISTS (SELECT ab.rowid FROM ".$db->prefix()."accounting_bookkeeping as ab WHERE ab.doc_type = 'bank' AND ab.fk_doc = bu.fk_bank)";
+				}
 				if ($in_bookkeeping == 'notyet') {
-					$sql .= " AND ab.rowid IS NULL";
+					$sql .= " AND NOT EXISTS (SELECT ab.rowid FROM ".$db->prefix()."accounting_bookkeeping as ab WHERE ab.doc_type = 'bank' AND ab.fk_doc = bu.fk_bank)";
 				}
 				$sql .= " AND bu.fk_bank IN (".$db->sanitize(implode(',', $ids)).")";
 
@@ -817,21 +802,18 @@ if ($resql) {
 				// Payment loan
 				//------------------------------------------
 				$sql = "SELECT l.rowid, l.capital AS loan_capital, l.accountancy_account_capital, l.accountancy_account_interest, l.accountancy_account_insurance, l.label, l.charge_type,";
-				$sql .= " pl.amount_capital, pl.amount_interest, pl.amount_insurance,";
+				$sql .= " pl.amount_capital, pl.rowid as payment_id, pl.amount_interest, pl.amount_insurance,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
 				$sql .= " FROM ".$db->prefix()."payment_loan as pl";
 				$sql .= " INNER JOIN ".$db->prefix()."loan as l ON pl.fk_loan = l.rowid";
 				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.url_id = pl.rowid AND bu.type = '".$db->escape($type)."'";
-				// Already in bookkeeping or not
-				if ($in_bookkeeping == 'already') {
-					$sql .= " INNER JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=l.rowid";
-				} else {
-					$sql .= " LEFT JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=l.rowid";
-				}
 				$sql .= " WHERE l.entity = ".((int) $conf->entity); // We don't share object for accountancy, we use source object sharing
-				// Not already in bookkeeping
+				// Already in bookkeeping or not. Records are saved with doc_type = 'bank' and fk_doc = ID in llx_bank (fk_docdet is 0)
+				if ($in_bookkeeping == 'already') {
+					$sql .= " AND EXISTS (SELECT ab.rowid FROM ".$db->prefix()."accounting_bookkeeping as ab WHERE ab.doc_type = 'bank' AND ab.fk_doc = bu.fk_bank)";
+				}
 				if ($in_bookkeeping == 'notyet') {
-					$sql .= " AND ab.rowid IS NULL";
+					$sql .= " AND NOT EXISTS (SELECT ab.rowid FROM ".$db->prefix()."accounting_bookkeeping as ab WHERE ab.doc_type = 'bank' AND ab.fk_doc = bu.fk_bank)";
 				}
 				$sql .= " AND bu.fk_bank IN (".$db->sanitize(implode(',', $ids)).")";
 
@@ -907,21 +889,18 @@ if ($resql) {
 				// Payment various
 				//------------------------------------------
 				$sql = "SELECT pv.rowid,";
-				$sql .= " pv.sens AS sens_payment, pv.amount AS amount_payment, pv.label, pv.accountancy_code,";
+				$sql .= " pv.sens AS sens_payment, pv.amount AS amount_payment, pv.rowid as payment_id, pv.label, pv.accountancy_code,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
 				$sql .= " FROM ".$db->prefix()."payment_various as pv";
 				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.url_id = pv.rowid AND bu.type = '".$db->escape($type)."'";
-				// Already in bookkeeping or not
-				if ($in_bookkeeping == 'already') {
-					$sql .= " INNER JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=pv.rowid";
-				} else {
-					$sql .= " LEFT JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=pv.rowid";
-				}
 				$sql .= " WHERE pv.entity IN (".getEntity('payment_various', 0).')';    // We don't share object for accountancy, we use source object sharing
 				$sql .= " AND bu.fk_bank IN (".$db->sanitize(implode(',', $ids)).")";
-				// Not already in bookkeeping
+				// Already in bookkeeping or not. Records are saved with doc_type = 'bank' and fk_doc = ID in llx_bank (fk_docdet is 0)
+				if ($in_bookkeeping == 'already') {
+					$sql .= " AND EXISTS (SELECT ab.rowid FROM ".$db->prefix()."accounting_bookkeeping as ab WHERE ab.doc_type = 'bank' AND ab.fk_doc = bu.fk_bank)";
+				}
 				if ($in_bookkeeping == 'notyet') {
-					$sql .= " AND ab.rowid IS NULL";
+					$sql .= " AND NOT EXISTS (SELECT ab.rowid FROM ".$db->prefix()."accounting_bookkeeping as ab WHERE ab.doc_type = 'bank' AND ab.fk_doc = bu.fk_bank)";
 				}
 
 				$resql = $db->query($sql);
@@ -973,22 +952,19 @@ if ($resql) {
 				// Subscription member
 				//------------------------------------------
 				$sql = "SELECT su.rowid,";
-				$sql .= " su.subscription AS amount_payment, su.note AS label,";
+				$sql .= " su.subscription AS amount_payment, su.rowid as payment_id, su.note AS label,";
 				$sql .= " adh.lastname, adh.firstname,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
 				$sql .= " FROM ".$db->prefix()."subscription as su";
 				$sql .= " INNER JOIN ".$db->prefix()."adherent as adh ON adh.rowid = su.fk_adherent";
 				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.fk_bank = su.fk_bank AND bu.type = '".$db->escape($type)."'";
-				// Already in bookkeeping or not
-				if ($in_bookkeeping == 'already') {
-					$sql .= " INNER JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=su.rowid";
-				} else {
-					$sql .= " LEFT JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=su.rowid";
-				}
 				$sql .= " WHERE bu.fk_bank IN (".$db->sanitize(implode(',', $ids)).")";
-				// Not already in bookkeeping
+				// Already in bookkeeping or not. Records are saved with doc_type = 'bank' and fk_doc = ID in llx_bank (fk_docdet is 0)
+				if ($in_bookkeeping == 'already') {
+					$sql .= " AND EXISTS (SELECT ab.rowid FROM ".$db->prefix()."accounting_bookkeeping as ab WHERE ab.doc_type = 'bank' AND ab.fk_doc = bu.fk_bank)";
+				}
 				if ($in_bookkeeping == 'notyet') {
-					$sql .= " AND ab.rowid IS NULL";
+					$sql .= " AND NOT EXISTS (SELECT ab.rowid FROM ".$db->prefix()."accounting_bookkeeping as ab WHERE ab.doc_type = 'bank' AND ab.fk_doc = bu.fk_bank)";
 				}
 
 				$resql = $db->query($sql);
@@ -1044,18 +1020,15 @@ if ($resql) {
 				$sql .= " FROM ".$db->prefix()."bank_url as bu";
 				$sql .= " INNER JOIN ".$db->prefix()."bank as b ON bu.url_id = b.rowid";
 				$sql .= " LEFT JOIN ".$db->prefix()."bank_account as ba ON ba.rowid = b.fk_account";
-				// Already in bookkeeping or not
-				if ($in_bookkeeping == 'already') {
-					$sql .= " INNER JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=b.rowid";
-				} else {
-					$sql .= " LEFT JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=b.rowid";
-				}
 				$sql .= " WHERE ba.entity IN (".getEntity('bank_account', 0).')'; // We don't share object for accountancy, we use source object sharing
 				$sql .= " AND bu.fk_bank IN (".$db->sanitize(implode(',', $ids)).")";
 				$sql .= " AND bu.type = '".$db->escape($type)."'";
-				// Not already in bookkeeping
+				// Already in bookkeeping or not. Records are saved with doc_type = 'bank' and fk_doc = ID in llx_bank (fk_docdet is 0)
+				if ($in_bookkeeping == 'already') {
+					$sql .= " AND EXISTS (SELECT ab.rowid FROM ".$db->prefix()."accounting_bookkeeping as ab WHERE ab.doc_type = 'bank' AND ab.fk_doc = bu.fk_bank)";
+				}
 				if ($in_bookkeeping == 'notyet') {
-					$sql .= " AND ab.rowid IS NULL";
+					$sql .= " AND NOT EXISTS (SELECT ab.rowid FROM ".$db->prefix()."accounting_bookkeeping as ab WHERE ab.doc_type = 'bank' AND ab.fk_doc = bu.fk_bank)";
 				}
 
 				$resql = $db->query($sql);
@@ -1133,7 +1106,7 @@ $MAXNBERRORS = 5;
 
 // Write bookkeeping
 if ($action == 'writebookkeeping' /* && $user->hasRight('accounting', 'bind', 'write') */) { // Test on permission already done
-	foreach ($tabpay as $payment_id => $payment) {
+	foreach ($tabpay as $bid => $payment) {		// $bid is bu.fk_bank = b.rowid = ab.fk_doc = ID in llx_bank
 		$accountInfos = $tabaccount[$payment["fk_bank_account"]];
 
 		// Set accounting account infos
@@ -1151,10 +1124,13 @@ if ($action == 'writebookkeeping' /* && $user->hasRight('accounting', 'bind', 'w
 
 
 		$errorforline = 0;
+
 		$db->begin();
 
-		foreach ($payment['objects'] as $object_key => $object_data) {
+		foreach ($payment['objects'] as $object_key => $object_data) {	// 1 customer payment on 2 invoices has 2 objects with dispatched amount
 			$objectInfos = $tabobject[$object_key];
+			// When one bank line pays several objects, add the ref of the object to the labels, so the lines of each object are not seen as duplicates by BookKeeping::create()
+			$label_suffix = (count($payment['objects']) > 1 ? ' - '.$objectInfos['ref'] : '');
 
 			$total_check = 0;
 
@@ -1165,10 +1141,10 @@ if ($action == 'writebookkeeping' /* && $user->hasRight('accounting', 'bind', 'w
 
 				$bookkeepingToCreate = new BookKeeping($db);
 
-				// Unique key is on couple: $payment_id, $objectInfos['id']
-				// For record in llx_accountaing_bookkeeping, for record with doc_type = 'bank', the value of fk_doc is ID in llx_bank and fk_docdet too. Wetry a fix this way;
-				//$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, $objectInfos['id'], $accountInfos['account_number'], $tabaccountingaccount[$accountInfos['account_number']]['label'], $accountInfos['account_ref'], $amount, $journal, $journal_label, '');
-				$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, 0, $accountInfos['account_number'], $tabaccountingaccount[$accountInfos['account_number']]['label'], $accountInfos['account_ref'], $amount, $journal, $journal_label, '');
+				// Unique key is on couple: $bid, $objectInfos['id']
+				// For record in llx_accounting_bookkeeping, for record with doc_type = 'bank', the value of fk_doc is ID in llx_bank and fk_docdet too. We try a fix this way;
+				//$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $bid, $objectInfos['id'], $accountInfos['account_number'], $tabaccountingaccount[$accountInfos['account_number']]['label'], $accountInfos['account_ref'], $amount, $journal, $journal_label, '');
+				$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $bid, 0, $accountInfos['account_number'], $tabaccountingaccount[$accountInfos['account_number']]['label'], $accountInfos['account_ref'].$label_suffix, $amount, $journal, $journal_label, '');
 
 				if ($result < 0) {
 					$errorforline++;
@@ -1214,8 +1190,8 @@ if ($action == 'writebookkeeping' /* && $user->hasRight('accounting', 'bind', 'w
 					$total_check -= (float) $amount;
 
 					$bookkeepingToCreate = new BookKeeping($db);
-					//$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, $objectInfos['id'], $accountancy_code, $accountingAccountInfos['label'], (!empty($operation['label']) ? $operation['label'] : $accountingAccountInfos['label']), -$amount, $journal, $journal_label, '');
-					$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, 0, $accountancy_code, $accountingAccountInfos['label'], (!empty($operation['label']) ? $operation['label'] : $accountingAccountInfos['label']), - (float) $amount, $journal, $journal_label, '');
+					//$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $bid, $objectInfos['id'], $accountancy_code, $accountingAccountInfos['label'], (!empty($operation['label']) ? $operation['label'] : $accountingAccountInfos['label']), -$amount, $journal, $journal_label, '');
+					$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $bid, 0, $accountancy_code, $accountingAccountInfos['label'], (!empty($operation['label']) ? $operation['label'] : $accountingAccountInfos['label']).$label_suffix, - (float) $amount, $journal, $journal_label, '');
 					if ($result < 0) {
 						$errorforline++;
 
@@ -1263,8 +1239,8 @@ if ($action == 'writebookkeeping' /* && $user->hasRight('accounting', 'bind', 'w
 						$total_check -= $amount;
 
 						$bookkeepingToCreate = new BookKeeping($db);
-						//$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, $objectInfos['id'], $accountancy_code, $accountingAccountInfos['label'], $langs->trans('VAT').' '.price($vat_infos['tva_tx']).'%', -$amount, $journal, $journal_label, '');
-						$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, 0, $accountancy_code, $accountingAccountInfos['label'], $langs->trans('VAT').' '.price($vat_infos['tva_tx']).'%', -$amount, $journal, $journal_label, '');
+						//$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $bid, $objectInfos['id'], $accountancy_code, $accountingAccountInfos['label'], $langs->trans('VAT').' '.price($vat_infos['tva_tx']).'%', -$amount, $journal, $journal_label, '');
+						$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $bid, 0, $accountancy_code, $accountingAccountInfos['label'], $langs->trans('VAT').' '.price($vat_infos['tva_tx']).'%'.$label_suffix, -$amount, $journal, $journal_label, '');
 						if ($result < 0) {
 							$errorforline++;
 
@@ -1286,8 +1262,8 @@ if ($action == 'writebookkeeping' /* && $user->hasRight('accounting', 'bind', 'w
 				$total_check += $amount;
 
 				$bookkeepingToCreate = new BookKeeping($db);
-				//$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, $objectInfos['id'], $accountInfos['account_number'], $tabaccountingaccount[$accountInfos['account_number']]['label'], $accountInfos['account_ref'], $amount, $journal, $journal_label, '');
-				$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, 0, $accountInfos['account_number'], $tabaccountingaccount[$accountInfos['account_number']]['label'], $accountInfos['account_ref'], $amount, $journal, $journal_label, '');
+				//$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $bid, $objectInfos['id'], $accountInfos['account_number'], $tabaccountingaccount[$accountInfos['account_number']]['label'], $accountInfos['account_ref'], $amount, $journal, $journal_label, '');
+				$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $bid, 0, $accountInfos['account_number'], $tabaccountingaccount[$accountInfos['account_number']]['label'], $accountInfos['account_ref'].$label_suffix, $amount, $journal, $journal_label, '');
 				if ($result < 0) {
 					$errorforline++;
 
@@ -1452,17 +1428,19 @@ if (empty($action) || $action == 'view') {
 	print '<td class="right">'.$langs->trans("AccountingCredit")."</td>";
 	print "</tr>\n";
 
-	foreach ($tabpay as $payment_id => $payment) {
+	foreach ($tabpay as $bid => $payment) {
 		$accountInfos = $tabaccount[$payment["fk_bank_account"]];
 		$date = dol_print_date($payment["date"], 'day');
 		$i++;
 
 		foreach ($payment['objects'] as $object_key => $object_data) {
 			$objectInfos = $tabobject[$object_key];
+			// When one bank line pays several objects, add the ref of the object to the labels, so the lines of each object are not seen as duplicates by BookKeeping::create()
+			$label_suffix = (count($payment['objects']) > 1 ? ' - '.$objectInfos['ref'] : '');
 
 			// Show bank line
 			if ($object_data['amount'] >= 0) {
-				FormAccounting::printJournalLine($langs, $date, $objectInfos['url'], $accountInfos['account_number'], $accountInfos['account_ref'], $payment['type_payment'], $object_data['amount']);
+				FormAccounting::printJournalLine($langs, $date, $objectInfos['url'], $accountInfos['account_number'], $accountInfos['account_ref'].$label_suffix, $payment['type_payment'], $object_data['amount']);
 			}
 
 			// Operations
@@ -1487,7 +1465,7 @@ if (empty($action) || $action == 'view') {
 					} else {
 						$value = $payment_total_ht - $total_operation;
 					}
-					FormAccounting::printJournalLine($langs, $date, $objectInfos['url'], (string) $accountancy_code, (!empty($operation['label']) ? $operation['label'] : $accountingAccountInfos['label']), $payment['type_payment'], - (float) $value);
+					FormAccounting::printJournalLine($langs, $date, $objectInfos['url'], (string) $accountancy_code, (!empty($operation['label']) ? $operation['label'] : $accountingAccountInfos['label']).$label_suffix, $payment['type_payment'], - (float) $value);
 				}
 				$idx++;
 			}
@@ -1507,7 +1485,7 @@ if (empty($action) || $action == 'view') {
 					if (!empty($amount_vat)) {
 						$amount_vat = (float) price2num($payment_total_vat * $amount_vat / ($objectInfos['total_ttc'] - $objectInfos['total_ht']), 'MT');
 						$total_vat += $amount_vat;
-						FormAccounting::printJournalLine($langs, $date, $objectInfos['url'], $accountancy_code, $langs->trans('VAT').' '.price($vat_infos['tva_tx']).'%', $payment['type_payment'], -$amount_vat);
+						FormAccounting::printJournalLine($langs, $date, $objectInfos['url'], $accountancy_code, $langs->trans('VAT').' '.price($vat_infos['tva_tx']).'%'.$label_suffix, $payment['type_payment'], -$amount_vat);
 					}
 					$idx++;
 				}
@@ -1515,7 +1493,7 @@ if (empty($action) || $action == 'view') {
 
 			// Show bank line
 			if ($object_data['amount'] < 0) {
-				FormAccounting::printJournalLine($langs, $date, $objectInfos['url'], $accountInfos['account_number'], $accountInfos['account_ref'], $payment['type_payment'], $object_data['amount']);
+				FormAccounting::printJournalLine($langs, $date, $objectInfos['url'], $accountInfos['account_number'], $accountInfos['account_ref'].$label_suffix, $payment['type_payment'], $object_data['amount']);
 			}
 		}
 	}

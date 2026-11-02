@@ -100,7 +100,6 @@ ContactEvents=Ereignisse/Termine
 ContactId=Kontakt ID
 NoContactDefined=Kein Kontakt vorhanden
 ContactByDefaultFor=Standardkontakt für
-AccountancyCode=Buchhaltungskonto
 CustomerCodeShort=Kundennummer
 CustomerCodeDesc=Kundennummer, eindeutig für jeden Kunden
 SupplierCodeDesc=Lieferantennummer, eindeutig für jeden Lieferanten

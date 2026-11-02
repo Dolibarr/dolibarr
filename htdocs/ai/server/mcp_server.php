@@ -196,6 +196,18 @@ function mcp_log_request(array $req, $resp, float $tStart, string $rawInput): vo
 	);
 }
 
+// Only POST is supported (no SSE stream on GET): MCP Streamable HTTP spec requires a 405 for other methods.
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+	http_response_code(405);
+	header('Allow: POST');
+	echo json_encode([
+		"jsonrpc" => "2.0",
+		"id" => null,
+		"error" => ["code" => -32000, "message" => "Method Not Allowed: MCP requests must be sent with HTTP POST"]
+	]);
+	exit;
+}
+
 // Request handling
 try {
 	$tStart = microtime(true);
@@ -203,13 +215,13 @@ try {
 	// Basic payload size limit
 	$rawInput = file_get_contents('php://input');
 	if ($rawInput === false || strlen($rawInput) > 1024 * 1024) {
-		throw new Exception("Invalid or too large request");
+		throw new Exception("Invalid or too large request", -32600);
 	}
 
 	$request = json_decode($rawInput, true);
 
 	if (json_last_error() !== JSON_ERROR_NONE) {
-		throw new Exception("Parse Error");
+		throw new Exception("Parse Error", -32700);
 	}
 
 	$server = new MCPServer($db, $conf, $serviceUser);
@@ -273,7 +285,7 @@ try {
 	} else {
 		// Single request
 		if (!is_array($request)) {
-			throw new Exception("Invalid request format");
+			throw new Exception("Invalid request format", -32600);
 		}
 
 		$response = $server->validateTransportHeaders($headers, $request);
@@ -305,12 +317,16 @@ try {
 		LOG_ERR
 	);
 
+	// Map the exception code to a JSON-RPC error; any other exception is an internal error.
+	$errorMessages = [-32700 => "Parse error", -32600 => "Invalid Request"];
+	$errorCode = isset($errorMessages[$e->getCode()]) ? $e->getCode() : -32603;
+
 	echo json_encode([
 		"jsonrpc" => "2.0",
 		"id" => null,
 		"error" => [
-			"code" => -32700,
-			"message" => "Parse error"
+			"code" => $errorCode,
+			"message" => isset($errorMessages[$errorCode]) ? $errorMessages[$errorCode] : "Internal error"
 		]
 	]);
 }

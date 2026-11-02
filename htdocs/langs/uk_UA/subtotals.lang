@@ -3,7 +3,6 @@
 #
 # Global
 #
-Subtotal=Проміжні підсумки
 SubTotalModuleDesc=Рядки проміжних підсумків та заголовків для певних документів
 #
 # Admin
@@ -12,12 +11,19 @@ SubtotalSetup=Налаштування модуля проміжних підс�
 MaxSubtotalLevel=Максимальний рівень
 SubtotalLineBackColor=Колір фону рядків рівня %s
 NotSupportedByAllPDF=Працюватиме з новими PDF, але не зі старими %s
+SubtotalsPredefinedTitles=Subtotals predefined titles
+SubtotalsPredefinedTexts=Subtotals predefined texts
+SubtotalTextColumnTitle=Text
 
 #
 # Card
 #
 AddTitleLine=Додати рядок заголовка
 AddSubtotalLine=Додати рядок проміжного підсумку
+AddTextLine=Add text line
+PredefinedTitle=Predefined title
+PredefinedText=Predefined text
+SubtotalTextContent=Text content
 TitleNeedDesc=Ви повинні ввести коректний опис, щоб створити заголовок.
 TitleAddedLevelTooHigh=Рівень доданого заголовка завеликий (натомість додано з рівнем %s).
 TitleEditedLevelTooHigh=Рівень відредагованого заголовка завеликий (натомість відредаговано з рівнем %s).

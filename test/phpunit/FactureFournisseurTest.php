@@ -3,6 +3,7 @@
  * Copyright (C) 2017 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Joachim Kueter          <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,10 +30,10 @@
 global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.facture.class.php';
 require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.facture-rec.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -200,6 +201,66 @@ class FactureFournisseurTest extends CommonClassTest
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0, $localobject->errorsToString());
 		return $result;
+	}
+
+	/**
+	 * testFactureFournisseurPointOfTaxLockedAfterValidation
+	 *
+	 * The point of tax date of a validated supplier invoice can't be changed by update(), other updates still work,
+	 * and it can be changed again once the invoice is back to draft.
+	 *
+	 * @return void
+	 */
+	public function testFactureFournisseurPointOfTaxLockedAfterValidation()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$langs->loadLangs(array("main", "bills"));
+
+		// Own supplier and free text line, so the test doesn't depend on demo data
+		$soc = new Societe($db);
+		$soc->name = 'Test supplier point of tax lock '.dol_print_date(dol_now(), 'dayhourlog');
+		$soc->fournisseur = 1;
+		$soc->code_fournisseur = -1;
+		$this->assertGreaterThan(0, $soc->create($user), $soc->errorsToString());
+
+		$localobject = new FactureFournisseur($db);
+		$localobject->socid = $soc->id;
+		$localobject->ref_supplier = 'SUPPLIER-POINTOFTAX-'.dol_print_date(dol_now(), 'dayhourlog');
+		$localobject->type = FactureFournisseur::TYPE_STANDARD;
+		$localobject->date = dol_mktime(0, 0, 0, 10, 15, 2026);
+		$localobject->date_pointoftax = dol_mktime(0, 0, 0, 9, 30, 2026);
+		$this->assertGreaterThan(0, $localobject->create($user), $localobject->errorsToString());
+		$this->assertGreaterThan(0, $localobject->addline('Service', 100, 19, 0, 0, 1), $localobject->errorsToString());
+		$this->assertGreaterThan(0, $localobject->validate($user), $localobject->errorsToString());
+
+		// Validated: the date can't be changed, other fields can
+		$localobject->fetch($localobject->id);
+		$localobject->date_pointoftax = dol_mktime(0, 0, 0, 10, 31, 2026);
+		$result = $localobject->update($user);
+		print __METHOD__." result=".$result." error=".$localobject->error."\n";
+		$this->assertLessThan(0, $result);
+		$this->assertEquals($langs->trans("ErrorPointOfTaxOfValidatedInvoiceCantBeChanged", $localobject->ref), $localobject->error);
+
+		// Status set to draft only on the object (as a PUT on the API can do): still refused
+		$localobject->fetch($localobject->id);
+		$localobject->status = FactureFournisseur::STATUS_DRAFT;
+		$localobject->date_pointoftax = dol_mktime(0, 0, 0, 10, 31, 2026);
+		$this->assertLessThan(0, $localobject->update($user));
+
+		$localobject->fetch($localobject->id);
+		$this->assertEquals('2026-09-30', dol_print_date($localobject->date_pointoftax, '%Y-%m-%d'));
+		$localobject->label = 'Point of tax lock';
+		$this->assertGreaterThan(0, $localobject->update($user), $localobject->errorsToString());
+
+		// Back to draft: the date can be changed again
+		$this->assertGreaterThan(0, $localobject->setDraft($user), $localobject->errorsToString());
+		$localobject->date_pointoftax = dol_mktime(0, 0, 0, 10, 31, 2026);
+		$this->assertGreaterThan(0, $localobject->update($user), $localobject->errorsToString());
 	}
 
 	/**

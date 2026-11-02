@@ -59,7 +59,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	line-height: 20px;
 	color: #fff;
 	text-align: center;
-	background-color: #337ab7;
+	background-color: #3f8c93;
 	box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
 	-webkit-transition: width .6s ease;
 	-o-transition: width .6s ease;

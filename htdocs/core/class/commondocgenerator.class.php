@@ -891,8 +891,9 @@ abstract class CommonDocGenerator
 			'line_up_locale' => price($line->subprice, 0, $outputlangs),
 			'line_total_up' => price2num($line->subprice * (float) $line->qty),
 			'line_total_up_locale' => price($line->subprice * (float) $line->qty, 0, $outputlangs),
-			'line_qty' => $line->qty,
-			'line_qty_locale' => price($line->qty),
+			// A title or subtotal line of the Subtotals module (special_code 3) carries the level in qty, not a quantity. The PDF hides it, see pdf_getlineqty().
+			'line_qty' => (empty($line->special_code) || $line->special_code != 3) ? $line->qty : '',
+			'line_qty_locale' => (empty($line->special_code) || $line->special_code != 3) ? price($line->qty) : '',
 			'line_discount_percent' => ($line->remise_percent ? $line->remise_percent.'%' : ''),
 			'line_price_ht' => price2num($line->total_ht),
 			'line_price_ttc' => price2num($line->total_ttc),
@@ -2194,5 +2195,26 @@ abstract class CommonDocGenerator
 			),
 		);
 		*/
+	}
+
+	/**
+	 * Return if the terms of sale file must be concatenated to the generated document.
+	 * Option MAIN_PDF_ADD_TERMSOFSALE_xxx: 0 = never, 1 = added by default, 2 = not added by default.
+	 * The choice made on the document generation form (moreparams 'addtermsofsale') overrides the default.
+	 *
+	 * @param	CommonObject	$object		Object the document is generated for
+	 * @param	string			$type		Type of document: 'PROPAL', 'ORDER', 'CONTRACT' or 'INVOICE'
+	 * @return	bool						True if the terms of sale file must be added
+	 */
+	public function mustAddTermsOfSale($object, $type)
+	{
+		$option = getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_'.$type);
+		if (empty($option)) {
+			return false;
+		}
+		if (isset($object->context['moreparams']['addtermsofsale'])) {
+			return !empty($object->context['moreparams']['addtermsofsale']);
+		}
+		return ($option == 1);
 	}
 }

@@ -50,7 +50,6 @@ StarAreMandatory=En el archivo de plantilla, todos los campos con un " son campo
 ChooseFormatOfFileToImport=Elija el formato de archivo para usar como formato de archivo de importación haciendo clic en el icono %s para seleccionarlo ...
 FieldsInSourceFile=Campos del archivo de origen
 NoFields=Sin campos
-MoveField=Mover número de columna de campo%s
 ErrorImportDuplicateProfil=Error al guardar este perfil de importación con este nombre. Ya existe un perfil existente con este nombre.
 TablesTarget=Tablas específicas
 FieldsTarget=Campos específicos

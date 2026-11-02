@@ -41,7 +41,7 @@ require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 @unlink(DOL_DATA_ROOT.'/dolibarr.log');
 
 
-if (empty($user->id)) {
+if (empty($user->id) && is_object($db)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->loadRights();
@@ -137,7 +137,9 @@ abstract class CommonClassTest extends TestCase
 	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
-		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
+		if (is_object($db)) {	// $db is null when test is run with NOREQUIREDB
+			$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
+		}
 
 		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
 			print get_called_class()."::".__FUNCTION__.PHP_EOL;
@@ -201,7 +203,9 @@ abstract class CommonClassTest extends TestCase
 	public static function tearDownAfterClass(): void
 	{
 		global $db;
-		$db->rollback();
+		if (is_object($db)) {
+			$db->rollback();
+		}
 		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
 			print get_called_class()."::".__FUNCTION__.PHP_EOL;
 		}

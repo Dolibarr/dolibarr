@@ -1171,7 +1171,7 @@ class pdf_espadon extends ModelePdfExpedition
 			$linkedobject = new $classname($this->db);
 			'@phan-var-force Commande|Facture $linkedobject';
 			$result = $linkedobject->fetch($origin_id);
-			if ($result >= 0) {
+			if ($result > 0) {
 				//$linkedobject->fetchObjectLinked()   Get all linked object to the $linkedobject (commonly order) into $linkedobject->linkedObjects
 
 				$pdf->SetFont('', '', $default_font_size - 2);
@@ -1202,11 +1202,8 @@ class pdf_espadon extends ModelePdfExpedition
 			// Sender properties
 			$carac_emetteur = '';
 			// Add internal contact of origin element if defined
-			$arrayidcontact = array();
-			if (!empty($origin) && is_object($object->origin_object)) {
-				$arrayidcontact = $object->origin_object->getIdContact('internal', 'SALESREPFOLL');
-			}
-			if (is_array($arrayidcontact) && count($arrayidcontact) > 0) {
+			$arrayidcontact = $this->getIdContactOfShipment($object, 'internal', 'SALESREPFOLL');
+			if (count($arrayidcontact) > 0) {
 				$object->fetch_user(reset($arrayidcontact));
 				$labelbeforecontactname = ($outputlangs->transnoentities("FromContactName") != 'FromContactName' ? $outputlangs->transnoentities("FromContactName") : $outputlangs->transnoentities("Name"));
 				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$labelbeforecontactname.": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs));
@@ -1259,7 +1256,7 @@ class pdf_espadon extends ModelePdfExpedition
 
 			// If SHIPPING contact defined, we use it
 			$usecontact = false;
-			$arrayidcontact = $object->origin_object->getIdContact('external', 'SHIPPING');
+			$arrayidcontact = $this->getIdContactOfShipment($object, 'external', 'SHIPPING');
 			if (count($arrayidcontact) > 0) {
 				$usecontact = true;
 				$result = $object->fetch_contact($arrayidcontact[0]);
@@ -1470,7 +1467,8 @@ class pdf_espadon extends ModelePdfExpedition
 		$this->cols['qty_asked'] = array(
 			'rank' => $rank,
 			'width' => 30.0, // in mm
-			'status' => !getDolGlobalString('SHIPPING_PDF_HIDE_ORDERED') ? 1 : 0,
+			// A shipment without source object (SHIPMENT_STANDALONE) has no ordered quantity
+			'status' => (!getDolGlobalString('SHIPPING_PDF_HIDE_ORDERED') && !empty($object->origin_id)) ? 1 : 0,
 			'title' => array(
 				'textkey' => 'QtyOrdered'
 			),

@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = Planlı işleri oku
-Permission23102 = Planlı iş oluştur/güncelle
-Permission23103 = Planlı iş sil
-Permission23104 = Planlı iş yürüt
 # Admin
 CronSetup=Planlı iş yönetimi ayarları
 URLToLaunchCronJobs=Nitelikli cron işlerini bir tarayıcıdan kontrol etmek ve başlatmak için URL
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=Unix ortamında komut satırını her 5 dakikada bir ça
 CronExplainHowToRunWin=Microsoft(tm) Windows ortamında, komut satırını her 5 dakikada bir çalıştırmak için Zamanlanmış Görev araçlarını kullanabilirsiniz.
 CronMethodDoesNotExists=%s sınıfı herhangi bir %s yöntemini içermiyor
 CronMethodNotAllowed=%s sınıfının %s yöntemi, yasaklanmış yöntemler listesinde yer alıyor
-CronJobDefDesc=Cron iş profilleri modül tanımlayıcı dosyasında tanımlanır. Modül etkinleştirildiğinde yüklenir ve kullanılabilir hale gelir; böylece işleri yönetici araçları menüsünden %s yönetebilirsiniz.
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=Önceden tanımlanmış cron görevi profillerinin listesi
 # Menu
 EnabledAndDisabled=Etkin ve engelli
@@ -27,7 +22,7 @@ CronDelete=Planlı işleri sil
 CronConfirmDelete=Bu zamanlanmış işleri silmek istediğinizden emin misiniz?
 CronExecute=Şimdi başlat
 CronConfirmExecute=Bu zamanlanmış işleri şimdi yürütmek istediğinizden emin misiniz?
-CronInfo=Zamanlanmış iş modülü, işlerin otomatik olarak yürütülmesi için planlanmasına izin verir. İşler manuel olarak da başlatılabilir.
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=İş
 CronNone=Zamanlanmış görevin sonraki yürütülmesi
 CronNotYetRan=Asla yürütülmedi
@@ -79,7 +74,7 @@ CronType_command=Kabuk komutu
 CronCannotLoadClass=%s sınıf dosyası yüklenemiyor (%s sınıfını kullanmak için)
 CronModuleNotEnabledInThisEntity=kron modülü bu varlıkta etkinleştirilmedi (%s nesnesinin %s yöntemini kullanmak için)
 CronCannotLoadObject=%s sınıf dosyası yüklendi, ancak içinde %s nesnesi bulunamadı
-UseMenuModuleToolsToAddCronJobs=Zamanlanmış işleri görmek ve düzenlemek için "<a href="%s">Ana Sayfa - Yönetici araçları - Zamanlanmış işler</a>" menüsüne gidin.
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=İş engellendi
 MakeLocalDatabaseDumpShort=Yerel veritabanı yedeklemesi
 MakeLocalDatabaseDump=Yerel bir veritabanı dökümü oluşturun. Parametreler şunlardır: sıkıştırma ('gz' veya 'bz' veya 'none'), yedekleme türü ('mysql', 'pgsql', 'auto'), 1, oluşturulacak 'otomatik' veya dosya adı, saklanacak yedek dosya sayısı

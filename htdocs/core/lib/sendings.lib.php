@@ -69,6 +69,32 @@ function shippingGetStandaloneDispatchSourceLine($object, $sourceLineId, $lineId
 	return $sourceLine;
 }
 
+/**
+ * Complete a line of a standalone shipment (SHIPMENT_STANDALONE, no source order) before it is copied into an invoice.
+ * Such a line has no price nor VAT: use the selling price and the default VAT rate of the product for the customer.
+ *
+ * @param CommonObjectLine $line  Shipment line, completed in place
+ * @param Societe          $buyer Customer of the invoice
+ * @return void
+ */
+function shippingSetStandaloneLineSellPrice($line, $buyer)
+{
+	global $db, $mysoc;
+
+	if ($line->fk_product > 0) {
+		$tmpprod = new Product($db);
+		if ($tmpprod->fetch($line->fk_product) > 0) {
+			$datapriceofproduct = $tmpprod->getSellPrice($mysoc, $buyer);
+			$line->subprice = $datapriceofproduct['pu_ht'];
+			$line->tva_tx = $datapriceofproduct['tva_tx'];
+			$line->product_type = $tmpprod->type;
+		}
+	}
+	if (empty($line->desc)) {
+		$line->desc = $line->description;
+	}
+}
+
 
 /**
  * Prepare array with list of tabs
