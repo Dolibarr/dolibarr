@@ -471,6 +471,8 @@ class AllTests
 			$suite->addTestSuite('RestAPISupplierOrderTest');
 			require_once dirname(__FILE__).'/RestAPICategoriesTest.php';
 			$suite->addTestSuite('RestAPICategoriesTest');
+			require_once dirname(__FILE__).'/RestAPIInterventionTest.php';
+			$suite->addTestSuite('RestAPIInterventionTest');
 
 			// Old WS
 			require_once dirname(__FILE__).'/WebservicesProductsTest.php';
