@@ -229,6 +229,14 @@ class McpHandler
 						&& !$this->isSystemTool($toolInstance)) {
 						continue;
 					}
+					// Easter egg tool family is loaded only when its hidden option is set
+					if ($basename == 'coffeemaker' && !getDolGlobalInt('AI_COFFEE_EASTER_EGG')) {
+						continue;
+					}
+					// The predefined report tools are loaded only when their option is set
+					if ($basename == 'reports' && !getDolGlobalBool('AI_ENABLE_PREDEFINED_REPORTS')) {
+						continue;
+					}
 					$this->registerTool($basename, $toolInstance);
 				} else {
 					dol_syslog("[McpHandler] Tool class '{$className}' does not extend McpTool.", LOG_ERR);

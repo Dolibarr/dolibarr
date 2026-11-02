@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=Validert
 StatusReceptionProcessedShort=Behandlet
 ReceptionSheet=Mottaksskjema
 ValidateReception=Valider mottak
+DeleteReception=Delete reception
 ConfirmDeleteReception=Er du sikker på at du vil slette dette mottaket?
 ConfirmValidateReception=Er du sikker på at du vil validere dette mottaket med referansen <b>%s</b>?
 ConfirmCancelReception=Er du sikker på at du vil avbryte dette mottaket?

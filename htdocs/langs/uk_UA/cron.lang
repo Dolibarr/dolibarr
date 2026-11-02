@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = Читати заплановану роботу
-Permission23102 = Створити/оновити заплановану роботу
-Permission23103 = Видалити заплановану роботу
-Permission23104 = Виконати заплановану роботу
 # Admin
 CronSetup=Налаштування планового керування завданнями
 URLToLaunchCronJobs=URL для перевірки та запуску кваліфікованих завдань cron з браузера
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=У середовищі Unix ви повинні вик�
 CronExplainHowToRunWin=У середовищі Microsoft(tm) Windows ви можете використовувати інструменти запланованих завдань, щоб запускати командний рядок кожні 5 хвилин
 CronMethodDoesNotExists=Клас %s не містить жодного методу %s
 CronMethodNotAllowed=Метод %s класу %s знаходиться в чорному списку заборонених методів
-CronJobDefDesc=Профілі завдань Cron визначаються у файлі дескриптора модуля. Коли модуль активовано, вони завантажуються та доступні, тому ви можете адмініструвати завдання з меню інструментів адміністратора %s.
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=Список попередньо визначених профілів завдань cron
 # Menu
 EnabledAndDisabled=Увімкнено та вимкнено
@@ -27,7 +22,7 @@ CronDelete=Видалити заплановані завдання
 CronConfirmDelete=Ви впевнені, що хочете видалити ці заплановані завдання?
 CronExecute=Запустити
 CronConfirmExecute=Ви впевнені, що хочете виконати ці заплановані завдання зараз?
-CronInfo=Модуль запланованих завдань дозволяє планувати завдання для їх автоматичного виконання. Роботи також можна запускати вручну.
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=Робота
 CronNone=Наступний запуск запланованого завдання
 CronNotYetRan=Ніколи не виконувалось
@@ -79,7 +74,7 @@ CronType_command=Команда оболонки
 CronCannotLoadClass=Не вдається завантажити файл класу %s (щоб використовувати клас %s)
 CronModuleNotEnabledInThisEntity=Модуль Cron не ввімкнено в цій сутності (використовувати метод %s об'єкта %s)
 CronCannotLoadObject=Файл класу %s завантажено, але об’єкт %s в ньому не знайдено
-UseMenuModuleToolsToAddCronJobs=Перейдіть до меню " <a href="%s"> Головна - Інструменти адміністратора - Заплановані завдання </a> ", щоб переглянути та відредагувати заплановані завдання.
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=Робота відключена
 MakeLocalDatabaseDumpShort=Резервне копіювання локальної бази даних
 MakeLocalDatabaseDump=Створіть локальний дамп бази даних. Параметри: стиснення ('gz' або 'bz' або 'none'), тип резервної копії ('mysql', 'pgsql', 'auto'), 1, 'auto' або ім'я файлу для створення, кількість файлів резервної копії для збереження

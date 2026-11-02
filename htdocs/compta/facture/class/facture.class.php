@@ -1911,11 +1911,15 @@ class Facture extends CommonInvoice
 
 			foreach ($TTotalByTva as $tva => &$total) {
 				$tva_rate_only = preg_replace('/\s*\(.*\)/', '', (string) $tva);
-				$coef = $total / $origin->total_ttc; // Calc coef
+				$coef = ($origin->total_ttc != 0 ? $total / $origin->total_ttc : 0); // Calc coef (0 if the total of the origin is 0, there is nothing to split)
 				$am = $amount * $coef;
 				$amount_ttc_diff += $am;
+				if (!isset($amountdeposit[$tva])) {
+					$amountdeposit[$tva] = 0;
+				}
 				$amountdeposit[$tva] += $am / (1 + ((float) $tva_rate_only) / 100); // Convert into HT for the addline
 			}
+			unset($line, $total);	// Break the references, they must not alter $origin->lines or $TTotalByTva later
 		} else {
 			$totalamount = 0;
 			$lines = $origin->lines;
@@ -1997,7 +2001,7 @@ class Facture extends CommonInvoice
 
 		$diff = $deposit->total_ttc - $amount_ttc_diff;
 
-		if (getDolGlobalString('MAIN_DEPOSIT_MULTI_TVA') && $diff != 0) {
+		if (getDolGlobalString('MAIN_DEPOSIT_MULTI_TVA') && (float) price2num($diff, 'MT') != 0) {
 			$deposit->fetch_lines();
 			$subprice_diff = $deposit->lines[0]->subprice - $diff / (1 + $deposit->lines[0]->tva_tx / 100);
 
@@ -2080,6 +2084,7 @@ class Facture extends CommonInvoice
 		$langs->load('bills');
 
 		$datas = [];
+		$nofetch = !empty($params['nofetch']);
 		$moretitle = $params['moretitle'] ?? '';
 
 		$picto = $this->picto;
@@ -2117,8 +2122,22 @@ class Facture extends CommonInvoice
 			if (!empty($this->ref)) {
 				$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 			}
-			if (!empty($this->ref_customer)) {
-				$datas['refcustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '.$this->ref_customer;
+			if (!$nofetch) {
+				$langs->load('companies');
+				if (empty($this->thirdparty)) {
+					$this->fetch_thirdparty();
+				}
+				$datas['customer'] = '<br><b>'.$langs->trans('Customer').':</b> '.$this->thirdparty->getNomUrl(1, '', 0, 1);
+			}
+			$datas['RefCustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '.(empty($this->ref_customer) ? (empty($this->ref_client) ? '' : $this->ref_client) : $this->ref_customer);
+			if (!$nofetch) {
+				$langs->load('project');
+				if (is_null($this->project) || (is_object($this->project) && $this->project->isEmpty())) {
+					$res = $this->fetchProject();
+					if ($res > 0 && $this->project instanceof Project) {
+						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, '1');
+					}
+				}
 			}
 			if (!empty($this->date)) {
 				$datas['date'] = '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->date, 'day');
@@ -2215,6 +2234,7 @@ class Facture extends CommonInvoice
 			'objecttype' => $this->element,
 			'moretitle' => $moretitle,
 			'option' => $option,
+			'nofetch' => 1,
 		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
@@ -6019,6 +6039,19 @@ class Facture extends CommonInvoice
 			$this->error = $this->db->error();
 			return -1;
 		}
+	}
+
+	/**
+	 *	Return the display context of the lines, as defined by the card before printObjectLines() and formAddObjectLine()
+	 *
+	 *	@return	array{seller:Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	See CommonObject::getObjectLinesDisplayContext()
+	 */
+	public function getObjectLinesDisplayContext()
+	{
+		$context = parent::getObjectLinesDisplayContext();
+		$context['inputalsopricewithtax'] = 1;
+
+		return $context;
 	}
 
 	/**

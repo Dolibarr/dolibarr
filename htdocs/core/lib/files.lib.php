@@ -329,7 +329,7 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
  * @param	string		$sqlfilters		Filter as an Universal Search string.
  * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
  * @param	?Object		$object			Object used
- * @return	array<array{rowid:string,label:string,name:string,path:string,level1name:string,fullname:string,fullpath_orig:string,date_c:string,date_m:string,type:string,keywords:string,cover:string,position:int,acl:string,share:string,description:string}> Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)
+ * @return	array<array{rowid:string,label:string,name:string,path:string,level1name:string,fullname:string,fullpath_orig:string,date_creation:string,date_m:string,type:string,keywords:string,cover:string,position:int,acl:string,share:string,description:string}> Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)
  * @see dol_dir_list()
  */
 function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $sortcriteria = "name", $sortorder = SORT_ASC, $mode = 0, $sqlfilters = "", $object = null)
@@ -341,7 +341,7 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
 	}
 
 	$sql = "SELECT rowid, label, entity, filename, filepath, fullpath_orig, keywords, cover, gen_or_uploaded, extraparams,";
-	$sql .= " date_c, tms as date_m, fk_user_c, fk_user_m, acl, position, share";
+	$sql .= " date_creation, tms as date_m, fk_user_c, fk_user_m, acl, position, share";
 	if ($mode) {
 		$sql .= ", description";
 	}
@@ -384,7 +384,7 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
 					"level1name" => $level1name,
 					"fullname" => DOL_DATA_ROOT.'/'.$obj->filepath.'/'.$obj->filename,
 					"fullpath_orig" => $obj->fullpath_orig,
-					"date_c" => $db->jdate($obj->date_c),
+					"date_creation" => $db->jdate($obj->date_creation),
 					"date_m" => $db->jdate($obj->date_m),
 					"type" => 'file',
 					"keywords" => $obj->keywords,
@@ -3131,6 +3131,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	$accessallowed = 0;
 	$sqlprotectagainstexternals = '';
 	$ret = array();
+	$checksecureaccesshook = false;
 
 	// Find the subdirectory name as the reference. For example original_file='10/myfile.pdf' -> refname='10'
 	if (empty($refname)) {
@@ -3508,6 +3509,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$sqlprotectagainstexternals = "SELECT rowid as fk_soc FROM ".MAIN_DB_PREFIX."societe WHERE rowid = ".((int) $refname)." AND entity IN (".getEntity('societe').")";
 	} elseif (($modulepart == 'contact' || $modulepart == 'socpeople') && !empty($conf->societe->multidir_output[$entity])) {
 		// Wrapping for contact
+		$checksecureaccesshook = true;
 		if (empty($entity) || empty($conf->societe->multidir_output[$entity])) {
 			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
 		}
@@ -3705,6 +3707,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->agenda->dir_temp."/".$original_file;
 	} elseif ($modulepart == 'product' || $modulepart == 'produit' || $modulepart == 'service' || $modulepart == 'produit|service') {
 		// Wrapping for products and services
+		$checksecureaccesshook = true;
 		if (empty($entity) || (empty($conf->product->multidir_output[$entity]) && empty($conf->service->multidir_output[$entity]))) {
 			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
 		}
@@ -3871,6 +3874,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		// If modulepart=module-abc			Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart
 	} else {
 		// GENERIC Wrapping
+		$checksecureaccesshook = true;
 		//var_dump($modulepart);
 		//var_dump($original_file);
 		if (preg_match('/^specimen/i', $original_file)) {
@@ -3973,7 +3977,10 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			// Implement a way for the generic case to set $sqlprotectagainstexternals automatically.
 			// For the moment, external modules can use the following hook checkSecureAccess if they need to protect against external users.
 		}
+	}
 
+	// Keep the session entity; modules must validate any requested shared entity themselves.
+	if ($checksecureaccesshook) {
 		$parameters = array(
 			'modulepart' => $modulepart,
 			'original_file' => $original_file,
@@ -3983,12 +3990,14 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			'mode' => $mode
 		);
 		$reshook = $hookmanager->executeHooks('checkSecureAccess', $parameters, $object);
-		if ($reshook > 0) {
+		if ($reshook < 0) {
+			$accessallowed = 0;
+		} elseif ($reshook > 0) {
 			if (!empty($hookmanager->resArray['original_file'])) {
 				$original_file = $hookmanager->resArray['original_file'];
 			}
 			// A hook that replaces the result (return > 0) may also refuse access, by setting accessallowed to 0
-			if (isset($hookmanager->resArray['accessallowed'])) {
+			if (array_key_exists('accessallowed', $hookmanager->resArray)) {
 				$accessallowed = ($hookmanager->resArray['accessallowed'] ? 1 : 0);
 			}
 			if (!empty($hookmanager->resArray['sqlprotectagainstexternals'])) {

@@ -296,7 +296,7 @@ if (!getDolGlobalString('AGENDA_DISABLE_EXT')) {
 				'cachedelay' => getDolGlobalInt('AGENDA_EXT_CACHE'.$i, 0),
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				'default' => dol_string_nohtmltag(getDolGlobalString($default)),
-				'buggedfile' => dol_string_nohtmltag(getDolGlobalString($buggedfile, ''))
+				'buggedfile' => dol_string_nohtmltag(getDolGlobalString($buggedfile))
 			);
 		}
 	}
@@ -326,7 +326,7 @@ if (!getDolGlobalString('AGENDA_DISABLE_EXT')) {
 				'cachedelay' => getDolUserInt('AGENDA_EXT_CACHE_'.$user->id.'_'.$i, 0),
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				'default' => dol_string_nohtmltag(getDolUserString($default)),
-				'buggedfile' => dol_string_nohtmltag($buggedfile)
+				'buggedfile' => dol_string_nohtmltag(getDolUserString($buggedfile))
 			);
 		}
 	}

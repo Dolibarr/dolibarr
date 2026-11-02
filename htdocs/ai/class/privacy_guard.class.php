@@ -60,6 +60,20 @@ class PrivacyGuard
 	{
 		$this->startSession();
 
+		// Emails, before the references: a local part with digits (jean2024@...) would
+		// otherwise be taken as a reference and the domain sent unmasked.
+		$text = preg_replace_callback(
+			'/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/',
+			/**
+			 * @param array<int, string> $m
+			 * @return string
+			 */
+			function (array $m) {
+				return $this->createToken($m[0], 'EMAIL');
+			},
+			$text
+		);
+
 		// References / IDs (e.g. FA24-001, CUS-999)
 		// Must contain letters and numbers and separators. A house number with one
 		// letter (221B, 5a) is left to the address patterns below.
@@ -109,19 +123,6 @@ class PrivacyGuard
 			 */
 			function (array $m) {
 				return $this->createToken($m[0], 'BANKACCT');
-			},
-			$text
-		);
-
-		// Emails
-		$text = preg_replace_callback(
-			'/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/',
-			/**
-			 * @param array<int, string> $m
-			 * @return string
-			 */
-			function (array $m) {
-				return $this->createToken($m[0], 'EMAIL');
 			},
 			$text
 		);

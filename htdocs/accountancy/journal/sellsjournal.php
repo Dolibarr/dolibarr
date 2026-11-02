@@ -11,6 +11,7 @@
  * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Vincent de Grandporé        <vincent@de-grandpre.quebec>
+ * Copyright (C) 2026		Joachim Kueter				<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +66,7 @@ $date_endmonth = GETPOSTINT('date_endmonth');
 $date_endday = GETPOSTINT('date_endday');
 $date_endyear = GETPOSTINT('date_endyear');
 $in_bookkeeping = GETPOST('in_bookkeeping');
-if ($in_bookkeeping == '') {
+if ($in_bookkeeping == '' || $action == 'writebookkeeping') {	// Never transfer again documents already in bookkeeping
 	$in_bookkeeping = 'notyet';
 }
 
@@ -98,7 +99,8 @@ $tabCustomerDiscountHT = array();
 $tabCustomerDiscountVAT = array();
 $tabCustomerDiscountTTC = array();
 
-$manageCustomerDepositInInvoice = getDolGlobalInt('ACCOUNTING_MANAGE_CUSTOMER_DEPOSIT_IN_INVOICE');
+// When down payments are just payments, they are not journalized, so there is nothing to reverse from the down payment accounts
+$manageCustomerDepositInInvoice = (getDolGlobalInt('ACCOUNTING_MANAGE_CUSTOMER_DEPOSIT_IN_INVOICE') && !getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS'));
 $labelCustomerDiscountExtension = ' (AC)';
 
 $cptcli = 'NotDefined';
@@ -214,7 +216,11 @@ if ($in_bookkeeping == 'notyet') {
 	// $sql .= " AND fd.rowid NOT IN (SELECT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";		// Useless, we save one line for all products with same account
 }
 if ($manageCustomerDepositInInvoice) {
-	$sql .= " AND (fd.description != '(DEPOSIT)' OR COALESCE(fd.fk_remise_except, 0) = 0)";
+	// Exclude the lines that consume a down payment, they are replaced by the reversal of the down payment (see $sql2).
+	// Same condition as $sql2: only discounts coming from a down payment invoice.
+	$sql .= " AND COALESCE(fd.fk_remise_except, 0) NOT IN (SELECT re.rowid FROM ".$db->prefix()."societe_remise_except as re";
+	$sql .= " INNER JOIN ".$db->prefix()."facture as fs ON fs.rowid = re.fk_facture_source";
+	$sql .= " WHERE fs.type = ".Facture::TYPE_DEPOSIT." AND re.description LIKE '(DEPOSIT)%')";
 }
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
@@ -330,10 +336,13 @@ if ($result) {
 		$revenuestamp = (float) price2num($obj->revenuestamp, 'MT');
 
 		if ($manageCustomerDepositInInvoice && $obj->type == Facture::TYPE_STANDARD && !isset($tabfac[$obj->rowid])) {
-			// Get all linked invoice deposit consumed by this invoice
+			// Get all linked invoice deposit consumed by this invoice. Other discounts (credit note, excess received,
+			// fixed amount) are already in the journal with their own line or document, so they must not be reversed.
 			$sql2 = "SELECT re.rowid";
 			$sql2 .= " FROM " . $db->prefix() . "societe_remise_except as re";
-			$sql2 .= " WHERE (re.fk_facture = " . ((int) $obj->rowid);
+			$sql2 .= " INNER JOIN " . $db->prefix() . "facture as fs ON fs.rowid = re.fk_facture_source";
+			$sql2 .= " WHERE fs.type = " . Facture::TYPE_DEPOSIT . " AND re.description LIKE '(DEPOSIT)%'";
+			$sql2 .= " AND (re.fk_facture = " . ((int) $obj->rowid);
 			$sql2 .= "  OR re.fk_facture_line IN (SELECT rowid FROM " . $db->prefix() . "facturedet WHERE fk_facture = " . ((int) $obj->rowid) . ")";
 			$sql2 .= ")";
 

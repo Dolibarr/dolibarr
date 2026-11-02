@@ -108,7 +108,7 @@ function getListOfAIServices()
 			'videogeneration' => array('default' => 'na'),
 			'transcription' => array('default' => 'na'),
 			'translation' => array('default' => 'na'),
-			'docparsing' => array('default' => 'ministral-14b-latest'),         // Mistral's native vision/doc model
+			'docparsing' => array('default' => 'mistral-ocr-latest'),         // Model of the Mistral OCR endpoint, used to parse documents (PDF, images, ...)
 			'adapter_type' => 'openai'
 		),
 		'deepseek' => array(
@@ -917,6 +917,10 @@ function getAiChatAssistantConfig()
 		'AIHelpHelp',
 		'AIHelpClear',
 		'AIHelpStatus',
+		'AIHelpTools',
+		'AIHelpReload',
+		'AIReloadDone',
+		'AIReloadNothing',
 		'AIHelpMentions',
 		'AIHelpMentionThirdparty',
 		'AIHelpMentionProduct',
@@ -958,6 +962,7 @@ function getAiChatAssistantConfig()
 	$ai_translations['AIAttachmentTooMany'] = $langs->transnoentitiesnoconv('AIAttachmentTooMany', '%s');
 	$ai_translations['ErrorFieldRequired'] = $langs->transnoentitiesnoconv('ErrorFieldRequired', '%s');
 	$ai_translations['AIPaletteBadJson'] = $langs->transnoentitiesnoconv('AIPaletteBadJson', '%s');
+	$ai_translations['AIReloadDone'] = $langs->transnoentitiesnoconv('AIReloadDone', '%s');
 	$ai_translations['AIPaletteTypeToSearch'] = $langs->transnoentitiesnoconv('AIPaletteTypeToSearch', '%s');
 	$ai_translations['DownloadPdf'] = $langs->transnoentitiesnoconv("Download").' PDF';
 	$ai_translations['CloudVoiceRequiresSecureContext'] = $langs->trans(
@@ -975,9 +980,18 @@ function getAiChatAssistantConfig()
 	}
 
 	$defaultmode = getDolGlobalString('AI_DEFAULT_INPUT_MODE');
+	if ($defaultmode === 'native') {	// Old value saved by the setup page, now 'cloud'
+		$defaultmode = 'cloud';
+	}
 	// The whisper option is not rendered without the experimental features: fall back
 	// to the default text mode so the JS never selects a value missing from the combo.
 	if ($defaultmode === 'whisper' && getDolGlobalString("MAIN_FEATURES_LEVEL") < 1) {
+		$defaultmode = '';
+	}
+	// The Google cloud voice option is not rendered in the webview of a smartphone
+	// webapp (dol_use_jmobile): same fallback so the JS never selects a value
+	// missing from the combo.
+	if ($defaultmode === 'cloud' && !empty($conf->dol_use_jmobile)) {
 		$defaultmode = '';
 	}
 
@@ -1099,7 +1113,12 @@ function getAiChatAssistantHtml($mode = 'page', $openconversation = 0)
 	$out .= '<select id="engine-select" class="engine-select">';
 	// data-picto is the css class of the picto shown before the label when the select is rendered with select2
 	$out .= '<option value="text" data-picto="fa fa-keyboard">'.$langs->transnoentitiesnoconv("OptionTextOnly").'</option>';
-	$out .= '<option value="cloud" data-picto="fa fa-cloud">'.$langs->transnoentitiesnoconv("OptionCloudFast").'</option>';
+	// The Google cloud voice mode uses the browser SpeechRecognition API, which
+	// the webview of a smartphone webapp (dol_use_jmobile) does not provide:
+	// the option is not offered in that mode.
+	if (empty($conf->dol_use_jmobile)) {
+		$out .= '<option value="cloud" data-picto="fa fa-cloud">'.$langs->transnoentitiesnoconv("OptionCloudFast").'</option>';
+	}
 	// The local whisper mode is experimental: only offered with the experimental features enabled
 	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 1) {
 		$out .= '<option value="whisper" data-picto="fa fa-microphone" data-experimental="1">'.$langs->transnoentitiesnoconv("OptionWhisperLocal").'</option>';
@@ -1514,11 +1533,11 @@ function aiFindThirdpartiesInText($db, $user, $text, $nature = '', $stopwords = 
 			$forms[] = dol_substr($norm, 0, dol_strlen($norm) - 2);
 		}
 		foreach (array_unique($forms) as $w) {
-			$sql .= " OR s.nom LIKE '%".$db->escape($db->escapeforlike($w))."%' OR s.name_alias LIKE '%".$db->escape($db->escapeforlike($w))."%'";
+			$sql .= " OR s.nom LIKE '".$db->escape($db->escapeforlike($w))."%' OR s.name_alias LIKE '".$db->escape($db->escapeforlike($w))."%'";
 		}
 	}
 	$sql .= ")";
-	$sql .= " LIMIT 2000";
+	$sql .= " LIMIT 1000";
 	$resql = $db->query($sql);
 	if (!$resql) {
 		dol_syslog(__FUNCTION__." ".$db->lasterror(), LOG_ERR);

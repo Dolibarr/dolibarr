@@ -803,6 +803,7 @@ function customReportsSelectFieldCombo($htmlname, $arrayoffields, $selected, $pl
 
 	$selectedkey = (is_array($selected) && count($selected)) ? (string) reset($selected) : '';
 	$selectedlabel = '';
+	$variantlabels = array('year' => $langs->trans("Year"), 'month' => $langs->trans("Year").' - '.$langs->trans("Month"), 'day' => $langs->trans("Year").' - '.$langs->trans("Month").' - '.$langs->trans("Day"));
 	$selectedtitle = '';	// Full label of the selected field, shown as a tooltip because the label may be truncated
 
 	// Group fields by element. The element is the part of the key before the last dot ('t.ref' -> 't'), extrafields 'te...' are mapped onto 't...'.
@@ -823,9 +824,16 @@ function customReportsSelectFieldCombo($htmlname, $arrayoffields, $selected, $pl
 			$fieldlabel = trim(dol_string_nohtmltag(substr($val['label'], $pos + ($elementlabel != $elementkey ? strlen($elementlabel) + 2 : 0))));
 		}
 		if (!isset($elements[$elementkey])) {
-			$elements[$elementkey] = array('picto' => $picto, 'label' => $elementlabel, 'fields' => array());
+			$elements[$elementkey] = array('picto' => $picto, 'label' => $elementlabel, 'fields' => array(), 'datefields' => array());
 		}
 		$elements[$elementkey]['fields'][$key] = $fieldlabel;
+		// Variants of a date field ('alias.field-year', '-month', '-day') are grouped under one row of the date field
+		if (preg_match('/^(.+)-(year|month|day)$/', $key, $reg)) {
+			$regformat = array();
+			$format = (preg_match('/(\([^()]*\))\s*<\/span>\s*$/', $val['label'], $regformat) ? ' '.$regformat[1] : '');
+			$elements[$elementkey]['datefields'][$reg[1]]['label'] = ($elementlabel != $elementkey ? substr($val['labelnohtml'], strlen($elementlabel) + 2) : $val['labelnohtml']);
+			$elements[$elementkey]['datefields'][$reg[1]]['variants'][$key] = $variantlabels[$reg[2]].$format;
+		}
 		if ($key === $selectedkey) {
 			$selectedlabel = $picto.' '.dol_escape_htmltag($elementlabel.': '.$fieldlabel);
 			$selectedtitle = $elementlabel.': '.$fieldlabel;
@@ -856,6 +864,23 @@ function customReportsSelectFieldCombo($htmlname, $arrayoffields, $selected, $pl
 		$out .= '<div class="customreportscombo-elementheader" tabindex="0"><span class="customreportscombo-elementlabel">'.$element['picto'].' '.dol_escape_htmltag($element['label']).'</span><span class="fas fa-caret-right customreportscombo-elementcaret"></span></div>';
 		$out .= '<div class="customreportscombo-fields" style="display:none">';
 		foreach ($element['fields'] as $fieldkey => $fieldlabel) {
+			$reg = array();
+			if (preg_match('/^(.+)-(year|month|day)$/', $fieldkey, $reg) && isset($element['datefields'][$reg[1]])) {
+				// A date field is shown once, with a caret to expand its variants (by year, by month, by day)
+				if (empty($element['datefields'][$reg[1]]['variants'])) {
+					continue;	// Already rendered with the first variant
+				}
+				$out .= '<div class="customreportscombo-datefield">';
+				$out .= '<div class="customreportscombo-datefieldheader" tabindex="0"><span>'.dol_escape_htmltag($element['datefields'][$reg[1]]['label']).'</span><span class="fas fa-caret-right customreportscombo-datefieldcaret"></span></div>';
+				$out .= '<div class="customreportscombo-variants" style="display:none">';
+				foreach ($element['datefields'][$reg[1]]['variants'] as $variantkey => $variantlabel) {
+					$out .= '<div class="customreportscombo-field'.($variantkey === $selectedkey ? ' selected' : '').'" tabindex="0" data-field="'.dol_escape_htmltag($variantkey).'" data-label="'.dol_escape_htmltag($element['fields'][$variantkey]).'">'.dol_escape_htmltag($variantlabel).'</div>';
+				}
+				$out .= '</div>';
+				$out .= '</div>';
+				$element['datefields'][$reg[1]]['variants'] = array();
+				continue;
+			}
 			$out .= '<div class="customreportscombo-field'.($fieldkey === $selectedkey ? ' selected' : '').'" tabindex="0" data-field="'.dol_escape_htmltag($fieldkey).'">'.dol_escape_htmltag($fieldlabel).'</div>';
 		}
 		$out .= '</div>';
