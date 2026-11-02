@@ -463,6 +463,8 @@ class AllTests
 			$suite->addTestSuite('RestAPIBankAccountsTest');
 			require_once dirname(__FILE__).'/RestAPISupplierOrderTest.php';
 			$suite->addTestSuite('RestAPISupplierOrderTest');
+			require_once dirname(__FILE__).'/RestAPICategoriesTest.php';
+			$suite->addTestSuite('RestAPICategoriesTest');
 
 			// Old WS
 			require_once dirname(__FILE__).'/WebservicesProductsTest.php';
