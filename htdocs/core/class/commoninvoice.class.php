@@ -790,8 +790,8 @@ abstract class CommonInvoice extends CommonObject
 	 *  If invoice is transferred in bookkeeping -> no (-1)
 	 *  If invoice has a definitive ref, is not last in a situation cycle -> no (-3)
 	 *  If there is one payment -> no (-4)
-	 *  If already sent by email -> no (-5)
-	 *  If already printed -> no (-6)
+	 *  If already sent by email and hidden option INVOICE_CAN_BE_EDITED_OR_REMOVED_EVEN_IF_SENT_OR_PRINTED is not set -> no (-5)
+	 *  If already printed and hidden option INVOICE_CAN_BE_EDITED_OR_REMOVED_EVEN_IF_SENT_OR_PRINTED is not set -> no (-6)
 	 *  If running a LNE version and customer invoice was validated -> no (-7)
 	 *  Otherwise -> yes (2)
 	 *
@@ -820,12 +820,12 @@ abstract class CommonInvoice extends CommonObject
 			if ($this instanceof Facture) {
 				/* @var Facture $this */
 				// If sent by email, we refuse
-				if ((int) $this->email_sent_counter > 0) {
+				if ((int) $this->email_sent_counter > 0 && !getDolGlobalInt('INVOICE_CAN_BE_EDITED_OR_REMOVED_EVEN_IF_SENT_OR_PRINTED')) {
 					return -5;
 				}
 
 				// If printed, we refuse
-				if ((int) $this->pos_print_counter > 0) {
+				if ((int) $this->pos_print_counter > 0 && !getDolGlobalInt('INVOICE_CAN_BE_EDITED_OR_REMOVED_EVEN_IF_SENT_OR_PRINTED')) {
 					return -6;
 				}
 
@@ -964,8 +964,8 @@ abstract class CommonInvoice extends CommonObject
 	 *  If invoice has a definitive ref, is not last in ref -> no (-2)
 	 *  If invoice has a definitive ref, is not last in a situation cycle -> no (-3)
 	 *  If there is one payment -> no (-4)
-	 *  If already sent by email -> no (-5)
-	 *  If already printed -> no (-6)
+	 *  If already sent by email and hidden option INVOICE_CAN_BE_EDITED_OR_REMOVED_EVEN_IF_SENT_OR_PRINTED is not set -> no (-5)
+	 *  If already printed and hidden option INVOICE_CAN_BE_EDITED_OR_REMOVED_EVEN_IF_SENT_OR_PRINTED is not set -> no (-6)
 	 *  If running a LNE version and customer invoice was validated -> no (-7)
 	 *  Other value (may be returned by a hook -10, -11, ...)
 	 *  Otherwise -> yes (2)
@@ -993,12 +993,12 @@ abstract class CommonInvoice extends CommonObject
 			if ($this instanceof Facture) {
 				/* @var Facture $this */
 				// If sent by email, we refuse
-				if ((int) $this->email_sent_counter > 0) {
+				if ((int) $this->email_sent_counter > 0 && !getDolGlobalInt('INVOICE_CAN_BE_EDITED_OR_REMOVED_EVEN_IF_SENT_OR_PRINTED')) {
 					return -5;
 				}
 
 				// If printed, we refuse
-				if ((int) $this->pos_print_counter > 0) {
+				if ((int) $this->pos_print_counter > 0 && !getDolGlobalInt('INVOICE_CAN_BE_EDITED_OR_REMOVED_EVEN_IF_SENT_OR_PRINTED')) {
 					return -6;
 				}
 
