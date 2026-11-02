@@ -74,7 +74,7 @@ class MultiCurrency extends CommonObject
 	public $name;
 
 	/**
-	 * @var mixed Sample property 2
+	 * @var int|''|null Creation date
 	 */
 	public $date_creation;
 
