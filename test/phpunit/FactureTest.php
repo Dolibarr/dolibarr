@@ -38,6 +38,7 @@ require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.facture.cl
 require_once dirname(__FILE__).'/../../htdocs/core/class/workboardresponse.class.php';
 require_once dirname(__FILE__).'/../../htdocs/comm/action/class/actioncomm.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/modBlockedLog.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/modFacture.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -884,6 +885,83 @@ class FactureTest extends CommonClassTest
 			$db->query("DELETE FROM ".$db->prefix()."societe WHERE rowid = ".((int) $item['socid']));
 		}
 		$db->query("DELETE FROM ".$db->prefix()."c_email_templates WHERE label IN ('TestLevelA', 'TestLevelB')");
+	}
+
+	/**
+	 * testSendEmailsRemindersDefaultTemplates
+	 *
+	 * The ready to use templates are installed (the data of the installation, or the migration of the version for an existing database)
+	 *
+	 * @return  void
+	 */
+	public function testSendEmailsRemindersDefaultTemplates()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$langs->load('bills');
+		$labels = array('(InvoiceReminder1)', '(InvoiceReminder2)', '(InvoiceReminder3)');
+
+		// They are templates of the module of the invoices, with the invoice attached and translated texts
+		foreach ($labels as $key => $label) {
+			$resql = $db->query("SELECT module, type_template, joinfiles, topic, content FROM ".$db->prefix()."c_email_templates WHERE label = '".$db->escape($label)."'");
+			$this->assertEquals(1, $db->num_rows($resql), 'The template '.$label.' is not installed');
+			$obj = $db->fetch_object($resql);
+			$this->assertEquals('facture', $obj->module);
+			$this->assertEquals('facture_send', $obj->type_template);
+			$this->assertEquals(1, $obj->joinfiles);
+			foreach (array('InvoiceReminder', 'InvoiceReminderTopic', 'InvoiceReminderContent') as $prefix) {
+				$this->assertNotEquals($prefix.($key + 1), $langs->transnoentitiesnoconv($prefix.($key + 1)), 'The key '.$prefix.($key + 1).' is not translated');
+			}
+			$this->assertStringContainsString('InvoiceReminderTopic'.($key + 1), $obj->topic);
+			$this->assertStringContainsString('InvoiceReminderContent'.($key + 1), $obj->content);
+		}
+
+		// The default parameters of the job use them, one per level. The label of the event of the reminders is truncated at 128 characters when saved: it must not be with them.
+		$module = new modFacture($db);
+		$params = explode(',', $module->cronjobs[1]['parameters']);
+		$this->assertEquals(implode(';', $labels), $params[2]);
+		$this->assertEquals(3, count(explode(';', $params[0])));
+		$this->assertLessThanOrEqual(128, dol_strlen('sendEmailsRemindersOnInvoiceDueDateOK (nbdays=-30 paymentmode=all datetouse=duedate forcerecipient= template='.$labels[2].')'));
+
+		// An invoice 7, 15 and 30 days late, for third parties with an email: each level sends its template.
+		// Mails are disabled here, so each reminder is recorded as a failed sending, with the subject of its template.
+		$conf->global->MAIN_MAIL_EMAIL_FROM = 'test@example.com';
+		$items = array();
+		foreach (array(-7, -15, -30) as $shift) {
+			$soc = new Societe($db);
+			$soc->name = 'TESTDEFAULT '.$shift.' '.dol_now();
+			$soc->email = 'customer@example.com';
+			$soc->client = 1;
+			$soc->code_client = -1;
+			$socid = $soc->create($user);
+			$invoice = new Facture($db);
+			$invoice->socid = $socid;
+			$invoice->date = dol_now();
+			$invoice->cond_reglement_id = 1;
+			$id = $invoice->create($user);
+			$invoice->addline('Test', 100, 1, 20);
+			$duedate = dol_get_first_hour(dol_time_plus_duree(dol_now(), $shift, 'd'), 'gmt');
+			$db->query("UPDATE ".$db->prefix()."facture SET fk_statut = 1, paye = 0, date_lim_reglement = '".$db->idate($duedate, 'gmt')."' WHERE rowid = ".((int) $id));
+			$items[] = array('socid' => $socid, 'id' => $id);
+		}
+		$localobject = new Facture($db);
+		$localobject->sendEmailsRemindersOnInvoiceDueDate($params[0], $params[1], $params[2], $params[3]);
+		foreach (array('Payment reminder', 'Overdue invoice', 'Urgent') as $key => $topic) {
+			$resql = $db->query("SELECT email_subject FROM ".$db->prefix()."actioncomm WHERE elementtype = 'invoice' AND fk_element = ".((int) $items[$key]['id'])." AND label = 'sendEmailsRemindersOnInvoiceDueDateKO'");
+			$this->assertEquals(1, $db->num_rows($resql), 'Reminders of the invoice of level '.($key + 1));
+			$this->assertStringContainsString($topic, $db->fetch_object($resql)->email_subject);
+		}
+
+		foreach ($items as $item) {
+			$db->query("DELETE FROM ".$db->prefix()."actioncomm WHERE fk_soc = ".((int) $item['socid']));
+			$db->query("DELETE FROM ".$db->prefix()."facturedet WHERE fk_facture = ".((int) $item['id']));
+			$db->query("DELETE FROM ".$db->prefix()."facture WHERE rowid = ".((int) $item['id']));
+			$db->query("DELETE FROM ".$db->prefix()."societe WHERE rowid = ".((int) $item['socid']));
+		}
 	}
 
 	/**
