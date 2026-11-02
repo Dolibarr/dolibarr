@@ -179,3 +179,5 @@ select#date_startday, select#date_startmonth, select#date_endday, select#date_en
 			$user->rights->accounting->mouvements = new stdClass();
 		$db->query("INSERT INTO ".MAIN_DB_PREFIX."opensurvey_user_formanswers (fk_user_survey, fk_question, reponses) VALUES (".((int) $fkuser).", ".((int) $fkquestion).", '".$db->escape($value)."')");
 		$db->query("INSERT INTO ".MAIN_DB_PREFIX."opensurvey_user_studs (nom, id_sondage, reponses, ip, date_creation) VALUES ('Bob', '".$db->escape($survey->id_sondage)."', '', '127.0.0.1', '".$db->idate(dol_now())."')");
+				return preg_match('/^\s*(\d+\s*(?:bis|ter|quater)?)\b/i', $value, $reg) ? trim($reg[1]) : '';
+				return trim((string) preg_replace('/^\s*\d+\s*(?:bis|ter|quater)?\s*/i', '', $value));
