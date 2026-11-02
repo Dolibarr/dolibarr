@@ -985,7 +985,7 @@ class Evaluation extends CommonObject
 				$dir = dol_buildpath($reldir."core/modules/hrm/");
 
 				// Load file with numbering class (if found)
-				$mybool = ((bool) @include_once $dir.$file) || $mybool;
+				$mybool = (file_exists($dir.$file) && include_once $dir.$file) || $mybool;
 			}
 
 			if (!$mybool) {
