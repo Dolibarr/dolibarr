@@ -527,4 +527,42 @@ class PropalTest extends CommonClassTest
 		$propal->fetch($propal->id);
 		$this->assertEquals(100, (float) $propal->total_ht, 'The option line must stay excluded from total_ht');
 	}
+
+	/**
+	 * ODT substitutions flag option lines and keep them out of the VAT by rate, as the PDF does.
+	 *
+	 * @return void
+	 */
+	public function testPropalOdtSubstitutionsOptionLine()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/modules/propale/doc/doc_generic_proposal_odt.modules.php';
+
+		$propal = new Propal($db);
+		$propal->initAsSpecimen(array('tosell' => 1));
+		$propal->lines = array();
+		$propal->create($user);
+
+		$propal->addline('Normal', 100, 2, 20, 0, 0, 0, 0, 'HT', 0, 0, 0, -1, 0, 0, 0, 0, '', '', '', array(), null, '', 0, 0, 0, 0, 0);
+		$propal->addline('Option', 500, 1, 20, 0, 0, 0, 0, 'HT', 0, 0, 0, -1, 0, 0, 0, 0, '', '', '', array(), null, '', 0, 0, 0, 0, 1);
+		$propal->fetch($propal->id);
+
+		$odt = new doc_generic_proposal_odt($db);
+		$flags = array();
+		foreach ($propal->lines as $line) {
+			$sub = $odt->get_substitutionarray_lines($line, $langs);
+			$flags[$line->desc] = $sub['line_is_option'];
+		}
+		$this->assertSame(0, $flags['Normal'], 'Normal line must not be flagged as option');
+		$this->assertSame(1, $flags['Option'], 'Option line must be flagged as option');
+
+		$subobject = $odt->get_substitutionarray_object($propal, $langs);
+		$this->assertEquals(40, (float) $subobject['object_total_vat'], 'Document VAT excludes the option line');
+		$this->assertEquals(40, (float) $subobject['object_total_vat_20'], 'VAT by rate must match the document VAT');
+	}
 }

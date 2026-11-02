@@ -817,6 +817,13 @@ abstract class CommonDocGenerator
 			$totalUp = 0;
 			// Set substitution keys for different VAT rates
 			foreach ($object->lines as $line) {
+				$totalUp += $line->subprice * $line->qty;
+
+				// Option lines are excluded from the document totals, so from the VAT by rate too.
+				if ($line instanceof PropaleLigne && $line->isOptionLine()) {
+					continue;
+				}
+
 				// $line->tva_tx format depends on database field accuracy, no reliable. This is kept for backward compatibility
 				if (empty($resarray[$array_key.'_total_vat_'.$line->tva_tx])) {
 					$resarray[$array_key.'_total_vat_'.$line->tva_tx] = 0;
@@ -830,8 +837,6 @@ abstract class CommonDocGenerator
 				}
 				$resarray[$array_key.'_total_vat_'.$vatformated] += $line->total_tva;
 				$resarray[$array_key.'_total_vat_locale_'.$vatformated] = price($resarray[$array_key.'_total_vat_'.$vatformated]);
-
-				$totalUp += $line->subprice * $line->qty;
 			}
 
 			// Calculate total up and total discount percentage
@@ -894,6 +899,7 @@ abstract class CommonDocGenerator
 			// A title or subtotal line of the Subtotals module (special_code 3) carries the level in qty, not a quantity. The PDF hides it, see pdf_getlineqty().
 			'line_qty' => (empty($line->special_code) || $line->special_code != 3) ? $line->qty : '',
 			'line_qty_locale' => (empty($line->special_code) || $line->special_code != 3) ? price($line->qty) : '',
+			'line_is_option' => (($line instanceof PropaleLigne && $line->isOptionLine()) ? 1 : 0),
 			'line_discount_percent' => ($line->remise_percent ? $line->remise_percent.'%' : ''),
 			'line_price_ht' => price2num($line->total_ht),
 			'line_price_ttc' => price2num($line->total_ttc),
