@@ -274,7 +274,7 @@ if ($object->id) {
 
 	print '<tr>';
 	print '<td>'.$langs->trans('DateCreation').'</td>';
-	print '<td>'.dol_print_date($object->date_create,'dayhour').'</td>';
+	print '<td>'.dol_print_date($object->date_creation,'dayhour').'</td>';
 	print '</tr>';
 	if ($object->status == 3) {
 		print '<tr>';

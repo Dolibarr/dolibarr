@@ -2911,7 +2911,8 @@ export function initAiAssistant(container) {
         }
 
         if (!isResend) {
-            appendMsg('user', displayHtml, null, query || t('AIContextAttachmentOnly'));
+            // Internal "/tools" debug command: no raw text, so it is never saved in the history nor sent as context
+            appendMsg('user', displayHtml, null, (query === '/tools' && !readyDocs.length) ? null : (query || t('AIContextAttachmentOnly')));
             clearChip();
         }
         lastSent = { sentQuery: sentQuery, query: query };
