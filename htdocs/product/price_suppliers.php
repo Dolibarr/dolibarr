@@ -637,11 +637,10 @@ if ($id > 0 || $ref) {
 			// invoices that this price pre-fills. The value keeps the VAT code ('10 (CODE)'), saved as default_vat_code,
 			// so that those lines get the same rate and code (and so the same accounting account and tax return box).
 			$vatseller = $mysoc2;	// No supplier chosen yet: rates of the company's country, the list is reloaded when a supplier is chosen
-			if (!empty($rowid) && !empty($supplier) && $supplier->id > 0) {
-				$vatseller = $supplier;
-			} elseif (GETPOSTINT('id_fourn') > 0) {
+			$vatsellerid = (!empty($rowid) ? $socid : GETPOSTINT('id_fourn'));	// The supplier of the price being edited, or the one chosen
+			if ($vatsellerid > 0) {
 				$tmpseller = new Fournisseur($db);
-				if ($tmpseller->fetch(GETPOSTINT('id_fourn')) > 0) {
+				if ($tmpseller->fetch($vatsellerid) > 0) {
 					$vatseller = $tmpseller;
 				}
 			}
