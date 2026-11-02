@@ -472,8 +472,8 @@ class BankAccounts extends DolibarrApi
 			throw new RestException(404, 'account not found');
 		}
 
-		$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "bank ";
-		$sql .= " WHERE fk_account = " . ((int) $id);
+		$sql = "SELECT t.rowid FROM " . MAIN_DB_PREFIX . "bank AS t";
+		$sql .= " WHERE t.fk_account = " . ((int) $id);
 
 		// Add sql filters
 		if ($sqlfilters) {
@@ -484,7 +484,7 @@ class BankAccounts extends DolibarrApi
 			}
 		}
 
-		$sql .= " ORDER BY rowid";
+		$sql .= " ORDER BY t.rowid";
 
 		$result = $this->db->query($sql);
 
