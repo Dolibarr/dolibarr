@@ -98,7 +98,6 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 	if (empty($obj)) {
 		// For compatibility with 15.0 -> 19.0
 		global $object;
-		/** @var CommonObject|null $object */
 		if (empty($object)) {
 			$obj = new stdClass();
 		} else {
@@ -107,6 +106,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 		}
 	}
 
+	/** @var CommonObject|stdClass $obj */
 	$out = '';
 
 	// Define $urlwithroot
