@@ -1473,6 +1473,19 @@ if ($action == 'confirm_deletesite' && $confirm == 'yes' && $permissiontodelete)
 	}
 }
 
+// Delete an archived version of a page (only the backup file page<pageid>.tpl.php.v<timestamp> is removed)
+if ($action == 'deletepageversion' && $permissiontodelete && !empty($filetplversion)) {
+	$result = dol_delete_file($filetplversion, 0, 0, 0, null, false, 0);
+	if ($result) {
+		setEventMessages($langs->trans("FileWasRemoved", dol_basename($filetplversion)), null, 'mesgs');
+		header("Location: ".$_SERVER["PHP_SELF"].'?website='.urlencode($websitekey).'&pageid='.((int) $pageid));
+		exit;
+	} else {
+		setEventMessages($langs->trans("ErrorFailToDeleteFile", dol_basename($filetplversion)), null, 'errors');
+	}
+	$action = 'preview';
+}
+
 // Delete page (from website page menu)
 if (GETPOSTISSET('pageid') && $action == 'delete' && $permissiontodelete && !GETPOST('file_manager')) {
 	$error = 0;
@@ -3969,6 +3982,11 @@ if (!GETPOST('hide_websitemenu')) {
 					$disabled = ' disabled="disabled"';
 					$title = $langs->trans("NotEnoughPermissions");
 					$url = '#';
+				} elseif (!empty($filetplversion)) {
+					// An archived version is selected: delete only this version, whatever the status of the page
+					$disabled = '';
+					$title = $langs->trans("Delete");
+					$url = $_SERVER["PHP_SELF"].'?action=deletepageversion&token='.newToken().'&pageid='.((int) $websitepage->id).'&pageversion='.((int) $pageversion).'&website='.urlencode($website->ref);
 				} elseif ($websitepage->status != $websitepage::STATUS_DRAFT) {
 					$disabled = ' disabled="disabled"';
 					$title = $langs->trans("WebpageMustBeDisabled", $langs->transnoentitiesnoconv($websitepage->LibStatut(0, 0)));
@@ -4864,6 +4882,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		$pageusermodifid = 0;
 		$pageauthoralias = '';
 		$pagestatus = 1;
+		$pagekeephistory = 5;
 	}
 	if (GETPOST('WEBSITE_TITLE', 'alpha')) {
 		$pagetitle = str_replace(array('<', '>'), '', GETPOST('WEBSITE_TITLE', 'alphanohtml'));

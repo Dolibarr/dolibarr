@@ -273,7 +273,7 @@ while ($i < $MAXAGENDA) {
 			'cachedelay' => getDolGlobalInt('AGENDA_EXT_CACHE'.$i, 0),
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			'default' => dol_string_nohtmltag(getDolGlobalString($default)),
-			'buggedfile' => dol_string_nohtmltag(getDolGlobalString('buggedfile', ''))
+			'buggedfile' => dol_string_nohtmltag(getDolGlobalString($buggedfile))
 		);
 	}
 }
@@ -301,7 +301,7 @@ while ($i < $MAXAGENDA) {
 			'cachedelay' => getDolUserInt('AGENDA_EXT_CACHE_'.$user->id.'_'.$i, 0),
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			'default' => dol_string_nohtmltag(getDolUserString($default)),
-			'buggedfile' => dol_string_nohtmltag(isset($user->conf->buggedfile) ? $user->conf->buggedfile : '')
+			'buggedfile' => dol_string_nohtmltag(getDolUserString($buggedfile))
 		);
 	}
 }

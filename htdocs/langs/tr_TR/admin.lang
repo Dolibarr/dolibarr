@@ -2962,7 +2962,7 @@ ViewOnly=Yalnızca görüntüle
 ToolActionType=Eylem Türü
 InitEndFlagFile=Engellenen günlük zincirinin sonunu korumak için .end dosya işlemini başlatın.
 extModuleConfirmInstallTitle = onayla modül kurulumu
-extModuleConfirmInstallText=izleyen modül:<br><br>%s<br></span class='notranslate'><br><b>Sürüm:</b> %s<br><b>Referans:</b> %s<br><b>Son güncelleme:</b> %s<br>
+extModuleConfirmInstallText=izleyen modül:<br><br>%s<br><br><b>Sürüm:</b> %s<br><b>Referans:</b> %s<br><b>Son güncelleme:</b> %s<br>
 Install=Kurulum
 ReInstall=Re-install
 YouAlsoNeedToBeAdminForThisPermission=You also need to have the status flag "admin"to be allowed to use this permission

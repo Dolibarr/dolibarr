@@ -329,7 +329,7 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
  * @param	string		$sqlfilters		Filter as an Universal Search string.
  * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
  * @param	?Object		$object			Object used
- * @return	array<array{rowid:string,label:string,name:string,path:string,level1name:string,fullname:string,fullpath_orig:string,date_c:string,date_m:string,type:string,keywords:string,cover:string,position:int,acl:string,share:string,description:string}> Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)
+ * @return	array<array{rowid:string,label:string,name:string,path:string,level1name:string,fullname:string,fullpath_orig:string,date_creation:string,date_m:string,type:string,keywords:string,cover:string,position:int,acl:string,share:string,description:string}> Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)
  * @see dol_dir_list()
  */
 function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $sortcriteria = "name", $sortorder = SORT_ASC, $mode = 0, $sqlfilters = "", $object = null)
@@ -341,7 +341,7 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
 	}
 
 	$sql = "SELECT rowid, label, entity, filename, filepath, fullpath_orig, keywords, cover, gen_or_uploaded, extraparams,";
-	$sql .= " date_c, tms as date_m, fk_user_c, fk_user_m, acl, position, share";
+	$sql .= " date_creation, tms as date_m, fk_user_c, fk_user_m, acl, position, share";
 	if ($mode) {
 		$sql .= ", description";
 	}
@@ -384,7 +384,7 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
 					"level1name" => $level1name,
 					"fullname" => DOL_DATA_ROOT.'/'.$obj->filepath.'/'.$obj->filename,
 					"fullpath_orig" => $obj->fullpath_orig,
-					"date_c" => $db->jdate($obj->date_c),
+					"date_creation" => $db->jdate($obj->date_creation),
 					"date_m" => $db->jdate($obj->date_m),
 					"type" => 'file',
 					"keywords" => $obj->keywords,

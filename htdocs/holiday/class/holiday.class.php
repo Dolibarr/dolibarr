@@ -69,7 +69,7 @@ class Holiday extends CommonObject
 	/**
 	 * @var int|string
 	 */
-	public $date_create = '';
+	public $date_creation = '';
 
 	/**
 	 * @var string description
@@ -173,7 +173,7 @@ class Holiday extends CommonObject
 	public $fk_type;
 
 	/**
-	 * @var array<int,array{id:int,rowid:int,ref:string,fk_user:int,fk_type:int,date_create:int|'',date_modification:int|'',description:string,date_debut:string,date_fin:string,date_debut_gmt:string,date_fin_gmt:string,halfday:int,statut:int,status:int,fk_validator:int,date_valid:mixed,fk_user_valid:mixed,date_approval:int|'',fk_user_approve:int,date_refuse:int|'',fk_user_refuse:int,date_cancel:int|'',fk_user_cancel:int,detail_refuse:string,user_firstname:string,user_lastname:string,user_login:string,user_statut:int,user_status:int,user_photo:string,validator_firstname:string,validator_lastname:string,validator_login:string,validator_statut:int,validator_status:int,validator_photo:string}>
+	 * @var array<int,array{id:int,rowid:int,ref:string,fk_user:int,fk_type:int,date_creation:int|'',date_modification:int|'',description:string,date_debut:string,date_fin:string,date_debut_gmt:string,date_fin_gmt:string,halfday:int,statut:int,status:int,fk_validator:int,date_valid:mixed,fk_user_valid:mixed,date_approval:int|'',fk_user_approve:int,date_refuse:int|'',fk_user_refuse:int,date_cancel:int|'',fk_user_cancel:int,detail_refuse:string,user_firstname:string,user_lastname:string,user_login:string,user_statut:int,user_status:int,user_photo:string,validator_firstname:string,validator_lastname:string,validator_login:string,validator_statut:int,validator_status:int,validator_photo:string}>
 	 */
 	public $holiday = array();
 
@@ -333,7 +333,7 @@ class Holiday extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday(";
 		$sql .= "ref,";
 		$sql .= "fk_user,";
-		$sql .= "date_create,";
+		$sql .= "date_creation,";
 		$sql .= "description,";
 		$sql .= "date_debut,";
 		$sql .= "date_fin,";
@@ -425,7 +425,7 @@ class Holiday extends CommonObject
 		$sql .= " cp.rowid,";
 		$sql .= " cp.ref,";
 		$sql .= " cp.fk_user,";
-		$sql .= " cp.date_create,";
+		$sql .= " cp.date_creation,";
 		$sql .= " cp.description,";
 		$sql .= " cp.date_debut,";
 		$sql .= " cp.date_fin,";
@@ -462,7 +462,7 @@ class Holiday extends CommonObject
 				$this->id    = (int) $obj->rowid;
 				$this->ref   = (string) ($obj->ref ? $obj->ref : $obj->rowid);
 				$this->fk_user = (int) $obj->fk_user;
-				$this->date_create = $this->db->jdate($obj->date_create);
+				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->description = $obj->description;
 
 				$this->date_debut = $this->db->jdate($obj->date_debut);
@@ -522,7 +522,7 @@ class Holiday extends CommonObject
 
 		$sql .= " cp.fk_user,";
 		$sql .= " cp.fk_type,";
-		$sql .= " cp.date_create,";
+		$sql .= " cp.date_creation,";
 		$sql .= " cp.tms as date_modification,";
 		$sql .= " cp.description,";
 		$sql .= " cp.date_debut,";
@@ -592,7 +592,7 @@ class Holiday extends CommonObject
 
 				$tab_result[$i]['fk_user'] = (int) $obj->fk_user;
 				$tab_result[$i]['fk_type'] = (int) $obj->fk_type;
-				$tab_result[$i]['date_create'] = $this->db->jdate($obj->date_create);
+				$tab_result[$i]['date_creation'] = $this->db->jdate($obj->date_creation);
 				$tab_result[$i]['date_modification'] = $this->db->jdate($obj->date_modification);
 				$tab_result[$i]['description'] = (string) $obj->description;
 				$tab_result[$i]['date_debut'] = $this->db->jdate($obj->date_debut);
@@ -656,7 +656,7 @@ class Holiday extends CommonObject
 		$sql .= " cp.ref,";
 		$sql .= " cp.fk_user,";
 		$sql .= " cp.fk_type,";
-		$sql .= " cp.date_create,";
+		$sql .= " cp.date_creation,";
 		$sql .= " cp.tms as date_modification,";
 		$sql .= " cp.description,";
 		$sql .= " cp.date_debut,";
@@ -724,7 +724,7 @@ class Holiday extends CommonObject
 
 				$tab_result[$i]['fk_user'] = (int) $obj->fk_user;
 				$tab_result[$i]['fk_type'] = (int) $obj->fk_type;
-				$tab_result[$i]['date_create'] = $this->db->jdate($obj->date_create);
+				$tab_result[$i]['date_creation'] = $this->db->jdate($obj->date_creation);
 				$tab_result[$i]['date_modification'] = $this->db->jdate($obj->date_modification);
 				$tab_result[$i]['description'] = (string) $obj->description;
 				$tab_result[$i]['date_debut'] = $this->db->jdate($obj->date_debut);
@@ -1131,8 +1131,8 @@ class Holiday extends CommonObject
 
 		$sql .= " description= '".$this->db->escape($this->description)."',";
 
-		if (!empty($this->date_create)) {
-			$sql .= " date_create = '".$this->db->idate($this->date_create)."',";
+		if (!empty($this->date_creation)) {
+			$sql .= " date_creation = '".$this->db->idate($this->date_creation)."',";
 		} else {
 			$error++;
 		}
@@ -2501,7 +2501,7 @@ class Holiday extends CommonObject
 		global $conf;
 
 		$sql = "SELECT f.rowid, f.statut as status,";
-		$sql .= " f.date_create as datec,";
+		$sql .= " f.date_creation as datec,";
 		$sql .= " f.tms as date_modification,";
 		$sql .= " f.date_valid as datev,";
 		$sql .= " f.date_approval as datea,";
