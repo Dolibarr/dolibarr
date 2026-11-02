@@ -237,6 +237,13 @@ if ($user->hasRight('banque', 'modifier') && $action == "update") {
 		}
 
 		if (!$error) {
+			$result = $object->call_trigger('BANKACCOUNTLINE_MODIFY', $user);
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
+		if (!$error) {
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			$db->commit();
 		} else {

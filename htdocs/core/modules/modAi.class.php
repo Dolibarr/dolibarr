@@ -149,6 +149,7 @@ class modAi extends DolibarrModules
 			3 => array('AI_EMAILCLEANER_MIN_CONFIDENCE', 'chaine', '0.60', 'Minimum confidence to trust AI cleaned text', 0, 'current'),
 			4 => array('AI_EMAILCLEANER_EXPOSE_OPERATION', 'yesno', '0', 'Expose AI Email Cleaner operation in EmailCollector card', 0, 'current'),
 			5 => array('AI_EMAILCLEANER_ISOLATED_MODE', 'yesno', '1', 'Force isolated cleaner runtime (no business decision / no cross-module side effects)', 0, 'current'),
+			6 => array('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 'integer', '2', 'Number of recent exchanges of the AI chat sent back as context by default', 0, 'current'),
 		);
 
 		// Some keys to add into the overwriting translation tables

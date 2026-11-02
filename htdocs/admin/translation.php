@@ -703,7 +703,7 @@ if ($mode == 'searchkey') {
 				}
 			} elseif (getDolGlobalString('MAIN_ENABLE_OVERWRITE_TRANSLATION')) {
 				//print $key.'-'.$val;
-				print '<a class="reposition paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=overwrite&langcode='.urlencode($langcode).'&transkey='.urlencode($key).'">'.img_edit_add($langs->trans("TranslationOverwriteKey")).'</a>';
+				print '<a class="editfielda reposition paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=overwrite&langcode='.urlencode($langcode).'&transkey='.urlencode($key).'">'.img_edit($langs->trans("TranslationOverwriteKey")).'</a>';
 			}
 
 			if (getDolGlobalInt('MAIN_FEATURES_LEVEL')) {

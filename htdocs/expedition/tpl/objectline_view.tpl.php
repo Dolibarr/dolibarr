@@ -38,6 +38,7 @@
 
 /**
  * @var Conf $conf
+ * @var Form $form
  * @var CommonObject $this
  * @var CommonObject $object
  * @var CommonObjectLine $line
@@ -106,10 +107,16 @@ $tmpproduct = new Product($object->db);
 $tmpproduct->fetch($line->fk_product);
 $tmpexpe = new Expedition($object->db);
 if ($line->fk_product > 0) {
-	print $tmpproduct->getNomUrl(1);
-	print ' - '.$tmpproduct->label;
+	// Show the line description like the lines of a shipment created from an order
+	$text = $tmpproduct->getNomUrl(1);
+	$text .= ' - '.$tmpproduct->label;
+	$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($line->desc));
+	print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i);
+	if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
+		print (!empty($line->desc) && $line->desc != $tmpproduct->label) ? '<br>'.dol_htmlentitiesbr($line->desc) : '';
+	}
 } else {
-	print ' - '.$line->description;
+	print ' - '.dol_htmlentitiesbr($line->desc);
 }
 
 // Line extrafield

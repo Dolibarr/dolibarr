@@ -11,6 +11,7 @@
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2026		Nick Fragoulis
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -576,14 +577,14 @@ if ($object->id > 0) {
 
 		// Box outstanding bill
 		$text = $langs->trans("CurrentOutstandingBill");
-		$link = DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$object->id;
+		$link = DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$object->id.'&search_status=unpaid';
 		$icon = 'bill';
 		$boxstattmp = '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
 		$boxstattmp .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
 		$boxstattmp .= '<span class="boxstatsindicator'.($outstandingOpened > 0 ? ' amountremaintopay' : '').'">'.price($outstandingOpened, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
 		$boxstattmp .= '</div>';
 		if ($link) {
-			$boxstat .= dolButtonToOpenUrlInDialogPopup('popupoutstanding', $langs->transnoentitiesnoconv("CurrentOutstandingBill"), $boxstattmp, '/fourn/recap-fourn.php?socid='.$object->id, '', '');
+			$boxstat .= dolButtonToOpenUrlInDialogPopup('popupoutstanding', $langs->transnoentitiesnoconv("CurrentOutstandingBill"), $boxstattmp, '/fourn/recap-fourn.php?socid='.$object->id.'&search_status=unpaid', '', '');
 		} else {
 			$boxstat .= $boxstattmp;
 		}
@@ -592,14 +593,14 @@ if ($object->id > 0) {
 		$outstandingOpenedLate = $tmp['opened'];
 		if ($outstandingOpened != $outstandingOpenedLate && !empty($outstandingOpenedLate)) {
 			$text = $langs->trans("CurrentOutstandingBillLate");
-			$link = DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$object->id;
+			$link = DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$object->id.'&search_status=unpaid&search_late=late';
 			$icon = 'bill';
 			$boxstattmp = '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
 			$boxstattmp .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
 			$boxstattmp .= '<span class="boxstatsindicator'.($outstandingOpenedLate > 0 ? ' amountremaintopay' : '').'">'.price($outstandingOpenedLate, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
 			$boxstattmp .= '</div>';
 			if ($link) {
-				$boxstat .= dolButtonToOpenUrlInDialogPopup('popupoutstandinglate', $langs->transnoentitiesnoconv("CurrentOutstandingBillLate"), $boxstattmp, '/fourn/recap-fourn.php?socid='.$object->id, '', '');
+				$boxstat .= dolButtonToOpenUrlInDialogPopup('popupoutstandinglate', $langs->transnoentitiesnoconv("CurrentOutstandingBillLate"), $boxstattmp, '/fourn/recap-fourn.php?socid='.$object->id.'&search_status=unpaid&search_late=late', '', '');
 			} else {
 				$boxstat .= $boxstattmp;
 			}
@@ -829,7 +830,7 @@ if ($object->id > 0) {
 				print '<tr class="liste_titre">';
 				print '<td colspan="4">';
 				print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans("LastSupplierOrders", ($num < $MAXLIST ? "" : $MAXLIST)).'</td>';
-				print '<td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->id.'"><span class="hideonsmartphone">'.$langs->trans("AllOrders").'</span><span class="badge marginleftonlyshort">'.$num.'</span></td>';
+				print '<td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->id.'"><span class="hideonsmartphone">'.$langs->trans("AllSupplierOrders").'</span><span class="badge marginleftonlyshort">'.$num.'</span></td>';
 				print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/commande/stats/index.php?mode=supplier&socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
 				print '</tr></table>';
 				print '</td></tr>';
@@ -1231,7 +1232,7 @@ if ($object->id > 0) {
 				}
 			} else {
 				if ($object->status == 1) {
-					print dolGetButtonAction($langs->trans("NoOrdersToInvoice").' ('.$langs->trans("WithReceptionFinished").')', $langs->trans('CreateInvoiceForThisCustomer'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
+					print dolGetButtonAction($langs->trans("NoSupplierOrdersToInvoice").' ('.$langs->trans("WithReceptionFinished").')', $langs->trans('CreateInvoiceForThisCustomer'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
 				} else {
 					print dolGetButtonAction($langs->trans('ThirdPartyIsClosed'), $langs->trans('CreateInvoiceForThisCustomer'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
 				}

@@ -102,7 +102,7 @@ abstract class ModeleNumRefFicheinter extends CommonNumRefGenerator
  *  Create an intervention document on disk using template defined into FICHEINTER_ADDON_PDF
  *
  *  @param	DoliDB		$db  			object base de donnee
- *  @param	Object		$object			Object fichinter
+ *  @param	Fichinter	$object			Object fichinter
  *  @param	string		$modele			force le modele a utiliser ('' par default)
  *  @param	Translate	$outputlangs	object lang a utiliser pour traduction
  *  @param  int			$hidedetails    Hide details of lines
@@ -173,6 +173,16 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 			// We delete old preview
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_delete_preview($object);
+
+			// Index file in database, as commonGenerateDocument() does
+			if (!empty($obj->result['fullpath'])) {
+				// Check that the file exists, before indexing it (it does not exist if we create a PDF and auto delete the ODT file)
+				if (dol_is_file($obj->result['fullpath'])) {
+					$object->indexFile($obj->result['fullpath'], (empty($obj->update_main_doc_field) ? 0 : 1));
+				}
+			} else {
+				dol_syslog('Method ->write_file was called on object '.get_class($obj).' and return a success but the return array ->result["fullpath"] was not set.', LOG_WARNING);
+			}
 
 			return 1;
 		} else {

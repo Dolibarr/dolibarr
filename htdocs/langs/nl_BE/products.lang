@@ -16,7 +16,6 @@ SellingPriceTTC=Verkoopprijs (incl. BTW)
 ManufacturingPrice=Productie prijs
 MinPriceHT=Min. verkoopprijs (excl. BTW)
 MinPriceTTC=Min. verkoopprijs (incl. BTW)
-Suppliers=Verkoper
 SupplierRef=Leverancier ref
 BarCode=Streepjescode
 BarcodeType=Type streepjescode

@@ -300,6 +300,11 @@ class FieldInfos
 	public $optionsSqlDependencyValue = null;
 
 	/**
+	 * @var string|null		Text searched (used for filter list from ajax)
+	 */
+	public $optionsSqlSearch = null;
+
+	/**
 	 * @var int|null		Current page when get sql result for options on 'sellist' and 'chkbxlst' field type
 	 */
 	public $optionsSqlPage = null;

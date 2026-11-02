@@ -1740,7 +1740,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		if ($action != 'edit') {
 			print dol_get_fiche_head($head, 'user', $title, -1, 'user', 0, '', '', 0, '', 1);
 
-			$morehtmlref = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/user/vcard.php', ['id' => $object->id, 'output' => 'file', 'file' => dol_sanitizeFileName($object->getFullName($langs).'.vcf')]).'" class="refid valignmiddle" rel="noopener">';
+			$morehtmlref = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/user/vcard.php', ['id' => $object->id, 'output' => 'file', 'file' => dol_sanitizeFileName($object->getFullName($langs).'.vcf')]).'" class="refid valignmiddle" tabindex="-1" rel="noopener">';
 			$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard").' ('.$langs->trans("AddToContacts").')', 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 			$morehtmlref .= '</a>';
 
@@ -2157,15 +2157,24 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// Token for 2FA
-			if (getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') && $permissiontoeditpasswordandsee) {
+			// Shown also when MAIN_SECURITY_ALLOW_TOTP has been turned off, so an enrollment made before can still be removed
+			$totpenrollment = dolTotpGetEnrollment($db, $object->id);
+			if ((getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') || $totpenrollment !== null) && $permissiontoeditpasswordandsee) {
 				print '<tr class="nooddeven"><td>'.$langs->trans("2FA").'</td>';
 				print '<td>';
 				print '<div class="centpercent display-flex">';
-				print '<span class="badge badge-info">999</span>';
+				if ($totpenrollment !== null) {
+					print '<span class="badge badge-status4 badge-status">'.$langs->trans("Enabled").'</span>';
+					if (!is_array($totpenrollment)) {
+						print ' '.img_warning($langs->trans("TOTPUnreadableEnrollment"));
+					}
+				} else {
+					print '<span class="opacitymedium">'.$langs->trans("Disabled").'</span>';
+				}
 				print '<div class="left inline-block">';
 				$s = '<!-- MAIN_SECURITY_ALLOW_TOTP --><span class="fa fa-pen valignmiddle btnTitle-icon"></span>';
-				print dolButtonToOpenUrlInDialogPopup('openpopuptoaddcredential', $langs->transnoentitiesnoconv("Edit"), $s, '/user/credentials.php?userid='.$object->id.'&token='.newToken());
-				print '</span></span>';
+				print dolButtonToOpenUrlInDialogPopup('openpopuptoaddcredential', $langs->transnoentitiesnoconv("Edit"), $s, '/user/credentials.php?id='.$object->id.'&token='.newToken());
+				print '</div></div>';
 				print '</td></tr>';
 			}
 
@@ -2320,10 +2329,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 				// a simple user can not clone an admin or superadmin and a simple admin can not clone a superadmin
 				if ((empty($object->entity) && $permissiontoclonesuperadmin) || (!empty($object->admin) && !empty($object->entity) && $permissiontocloneadmin) || ($permissiontocloneuser && empty($object->admin) && !empty($object->entity))) {
 					$cloneButtonId = '';
-					$cloneUserUrl = '';
+					$cloneUserUrl = $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=clone&token='.newToken();
 
 					if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
-						$cloneUserUrl = '';
 						$cloneButtonId = 'action-clone';
 					}
 					print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $cloneUserUrl, $cloneButtonId, $user->hasRight('user', 'user', 'write'), array('attr' => array('class' => 'reposition')));

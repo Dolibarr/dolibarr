@@ -29,10 +29,9 @@
 global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security2.lib.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (! defined('NOREQUIREUSER')) {
 	define('NOREQUIREUSER', '1');
@@ -404,6 +403,27 @@ class CodingPhpTest extends CommonClassTest
 			}
 			$this->assertTrue($ok, 'Found a forged SQL string that mix on same line the use of \' for PHP string and PHP variables in file '.$file['relativename'].' Use " to forge PHP string like this: $sql = "SELECT ".$myvar...'.implode(',', $lines));
 
+			// Check there is no SQL keyword in a wrong place (WHERE AND, AND AND, WHERE WHERE...) and no 2 forged strings glued without space
+			$ok = true;
+			$matches = array();
+			$lines = array();
+			preg_match_all('/^[ \t]*\$sql\s*\.?=\s*"([^"\n]*(?:\b(?:WHERE|AND|OR|ON|HAVING|NOT)\s+(?:AND|OR)\b|\b(?:AND|OR|WHERE|ON)\s+(?:FROM|WHERE|GROUP\s+BY|ORDER\s+BY|HAVING|LIMIT|UNION)\b|\b(FROM|WHERE|SELECT|ORDER\s+BY|GROUP\s+BY|LIMIT|HAVING|JOIN|ON)\s+\2\b)[^"\n]*)"/im', $filecontent, $matches, PREG_SET_ORDER);
+			foreach ($matches as $key => $val) {
+				$ok = false;
+				$lines[] = self::reportAndGetLine($val[0], $filecontent, $report_filepath, "SQL keyword in a wrong place in `{$val[1]}`");
+			}
+			preg_match_all('/^([ \t]*\$sql\s*\.?=\s*"[^"\n]*\bWHERE\b[^"\n()]*";)[ \t]*(?:\/\/[^\n]*)?\n[ \t]*\$sql\s*\.=\s*"\s*WHERE\b/im', $filecontent, $matches, PREG_SET_ORDER);
+			foreach ($matches as $key => $val) {
+				$ok = false;
+				$lines[] = self::reportAndGetLine($val[1], $filecontent, $report_filepath, "Second WHERE after `{$val[1]}`");
+			}
+			preg_match_all('/^([ \t]*\$sql\s*\.?=\s*[^\n]*?(?:[a-z0-9_]"|\.\s*\$[a-z_][a-z0-9_]*(?:->[a-z_][a-z0-9_]*)*|\.\s*\(\((?:int|float)\)\s*[^;\n]*\))\s*;)[ \t]*(?:\/\/[^\n]*)?\n[ \t]*\$sql\s*\.=\s*"[a-z]/im', $filecontent, $matches, PREG_SET_ORDER);
+			foreach ($matches as $key => $val) {
+				$ok = false;
+				$lines[] = self::reportAndGetLine($val[1], $filecontent, $report_filepath, "Missing space between `{$val[1]}` and the next forged string");
+			}
+			$this->assertTrue($ok, 'Found a broken forged SQL string in file '.$file['relativename'].' Lines: '.implode(',', $lines));
+
 			// Check there is no missing comma between 2 fields of a SELECT forged on 2 lines (see #39572)
 			$ok = true;
 			$matches = array();
@@ -418,6 +438,24 @@ class CodingPhpTest extends CommonClassTest
 				$lines[] = self::reportAndGetLine($val[1], $filecontent, $report_filepath, "Missing comma at end of `{$val[1]}`, the next line adds another field");
 			}
 			$this->assertTrue($ok, 'Found a forged SQL string with a missing comma between 2 selected fields in file '.$file['relativename'].' Lines: '.implode(',', $lines));
+
+			// Check there is no double comma, nor comma just after SELECT or just before FROM, WHERE... in a forged SQL string
+			$ok = true;
+			$matches = array();
+			$lines = array();
+			$sqlkeywords = 'FROM|WHERE|GROUP\s+BY|ORDER\s+BY|HAVING|LIMIT|UNION';
+			preg_match_all('/\$sql\s*\.?=\s*"([^"\n]*(?:,\s*,|,\s*(?:'.$sqlkeywords.')\b|\bSELECT\s*,)[^"\n]*)"/i', $filecontent, $matches, PREG_SET_ORDER);
+			foreach ($matches as $key => $val) {
+				$ok = false;
+				$lines[] = self::reportAndGetLine($val[0], $filecontent, $report_filepath, "Misplaced comma in `{$val[1]}`");
+			}
+			// Same when the comma that ends a string is followed by the one that starts the next string, maybe in an if or foreach block (see #39609)
+			preg_match_all('/(\$sql\s*\.?=\s*"[^"\n]*,\s*";)[ \t]*(?:\/\/[^\n]*)?\n(?:[ \t]*(?:(?:if|foreach|for|while|elseif)\s*\(.*\)\s*\{|\}|\} else \{|\{|\/\/[^\n]*|)[ \t]*\n){0,6}[ \t]*\$sql\s*\.=\s*(?:\([^"\n]*\?\s*)?"\s*(?:,|(?:'.$sqlkeywords.')\b)/i', $filecontent, $matches, PREG_SET_ORDER);
+			foreach ($matches as $key => $val) {
+				$ok = false;
+				$lines[] = self::reportAndGetLine($val[1], $filecontent, $report_filepath, "Comma at end of `{$val[1]}`, the next string starts with a comma or a SQL keyword");
+			}
+			$this->assertTrue($ok, 'Found a forged SQL string with a misplaced comma in file '.$file['relativename'].' Lines: '.implode(',', $lines));
 
 			// Check bad casting on forge sql
 			// with $sql = "..." . $...
@@ -962,6 +1000,37 @@ class CodingPhpTest extends CommonClassTest
 	}
 
 	/**
+	 * Check that test files do not use assertions only available since PHPUnit 9.1 (CI also runs older PHPUnit versions).
+	 * Use instead $this->assertSame(1, preg_match(...)) or $this->assertSame(0, preg_match(...)).
+	 *
+	 * @return void
+	 */
+	public function testNoAssertionOnlyAvailableSincePhpUnit91()
+	{
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+		$forbiddenassertions = array('assertMatchesRegularExpression', 'assertDoesNotMatchRegularExpression');
+
+		$filesarray = dol_dir_list(dirname(__FILE__, 2), 'files', 1, '\.php$', null, 'fullname', SORT_ASC, 0, 1, '', 1);
+		foreach ($filesarray as $file) {
+			if (realpath($file['fullname']) == realpath(__FILE__)) {
+				continue;	// Myself contains the forbidden strings
+			}
+
+			// We are not interested in the comments
+			$filecontent = $this->removePhpComments(file_get_contents($file['fullname']));
+
+			foreach ($forbiddenassertions as $assertion) {
+				$ok = (strpos($filecontent, $assertion.'(') === false);
+				if (!$ok) {
+					self::reportAndGetLine($assertion.'(', $filecontent, 'test/'.$file['relativename'], "Use assertSame(1|0, preg_match(...)) instead of $assertion(), only available since PHPUnit 9.1");
+				}
+				$this->assertTrue($ok, "Found $assertion(), only available since PHPUnit 9.1, in file test/".$file['relativename']);
+			}
+		}
+	}
+
+	/**
 	 * Verify that only known modules are used
 	 *
 	 * @param string $filecontent Contents to check for php code that uses a module name
@@ -1091,8 +1160,8 @@ class CodingPhpTest extends CommonClassTest
 		static $already_reported = array();
 		$linenbr = 0;
 		$linematches = array();
-		if (preg_match("/^(?<lines>.*)\\Q$needle\\E/s", $subject, $linematches)) {
-			$linenbr = substr_count($linematches['lines'], "\n");
+		if (preg_match("/^(?<lines>.*?)\\Q$needle\\E/s", $subject, $linematches)) {	// Ungreedy to get the first occurrence
+			$linenbr = substr_count($linematches['lines'], "\n") + 1;	// Line numbers start at 1
 		}
 
 		$msg = PHP_EOL."$filename:$linenbr: $errMessage".PHP_EOL;

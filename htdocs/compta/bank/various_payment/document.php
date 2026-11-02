@@ -79,7 +79,8 @@ if (!$sortfield) {
 $object = new PaymentVarious($db);
 $object->fetch($id);
 
-$upload_dir = $conf->bank->dir_output.'/'.dol_sanitizeFileName((string) $object->id);
+$upload_dir = $conf->bank->dir_output.'/various_payment/'.dol_sanitizeFileName((string) $object->id);
+$upload_dirold = $conf->bank->dir_output.'/'.dol_sanitizeFileName((string) $object->id);
 $modulepart = 'banque';
 
 $permissiontoadd = $user->hasRight('banque', 'modifier');	// Used by the include of actions_dellink.inc.php
@@ -149,6 +150,22 @@ if ($object->id) {
 
 	// Build file list
 	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
+	if (is_array($filearray)) {
+		foreach ($filearray as $key => $file) {
+			$filearray[$key]['relativepath'] = 'various_payment/'.dol_sanitizeFileName((string) $object->id).'/';
+		}
+	} else {
+		$filearray = array();
+	}
+	if (!empty($upload_dirold) && dol_is_dir($upload_dirold)) {
+		$filearrayold = dol_dir_list($upload_dirold, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
+		if (is_array($filearrayold) && !empty($filearrayold)) {
+			foreach ($filearrayold as $key => $file) {
+				$filearrayold[$key]['relativepath'] = dol_sanitizeFileName((string) $object->id).'/';
+			}
+			$filearray = array_merge($filearray, $filearrayold);
+		}
+	}
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];
@@ -169,6 +186,7 @@ if ($object->id) {
 	$modulepart = 'banque';
 	$permissiontoadd = $user->hasRight('banque', 'modifier');
 	$param = '&id='.$object->id;
+	$relativepathwithnofile = 'various_payment/'.dol_sanitizeFileName((string) $object->id).'/';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	print $langs->trans("ErrorUnknown");

@@ -1045,7 +1045,10 @@ class Contact extends CommonObject
 			return -1;
 		}
 
-		$langs->loadLangs(array("dict", "companies"));
+		// $langs may be null when called from a page with NOREQUIRETRAN (like viewimage.php)
+		if (is_object($langs)) {
+			$langs->loadLangs(array("dict", "companies"));
+		}
 
 		$sql = "SELECT c.rowid, c.entity, c.fk_soc, c.ref_ext, c.civility as civility_code, c.name_alias, c.lastname, c.firstname,";
 		$sql .= " c.address, c.statut as status, c.zip, c.town,";
@@ -1133,7 +1136,7 @@ class Contact extends CommonObject
 
 				$this->fk_prospectlevel = $obj->fk_prospectlevel;
 
-				$transcode = $langs->trans('StatusProspect'.$obj->fk_stcommcontact);
+				$transcode = (is_object($langs) ? $langs->trans('StatusProspect'.$obj->fk_stcommcontact) : 'StatusProspect'.$obj->fk_stcommcontact);
 				$label_sale_status = ($transcode != 'StatusProspect'.$obj->fk_stcommcontact ? $transcode : $obj->stcomm);
 				$this->stcomm_id = $obj->fk_stcommcontact; // id statut commercial
 				$this->statut_commercial = $label_sale_status; // libelle statut commercial
@@ -2945,7 +2948,7 @@ class Contact extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 					$noemail = $obj->nb;
 					if (empty($noemail)) {
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe(email, entity, date_creat) VALUES ('".$this->db->escape($this->email)."', ".getEntity('mailing', 0).", '".$this->db->idate(dol_now())."')";
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe(email, entity, date_creation) VALUES ('".$this->db->escape($this->email)."', ".getEntity('mailing', 0).", '".$this->db->idate(dol_now())."')";
 						$resql = $this->db->query($sql);
 						if (!$resql) {
 							$error++;

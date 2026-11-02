@@ -300,9 +300,11 @@ class PaymentSalary extends CommonObject
 			}
 		}
 
-		$result = $this->call_trigger('PAYMENTSALARY_CREATE', $user);
-		if ($result < 0) {
-			$error++;
+		if (!$error) {
+			$result = $this->call_trigger('PAYMENTSALARY_CREATE', $user);
+			if ($result < 0) {
+				$error++;
+			}
 		}
 
 		if ($totalamount != 0 && !$error) {

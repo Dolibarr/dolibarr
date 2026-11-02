@@ -25,13 +25,12 @@
 
 global $conf,$user,$langs,$db,$mysoc;
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
 require_once dirname(__FILE__).'/../../htdocs/variants/class/ProductAttribute.class.php';
 require_once dirname(__FILE__).'/../../htdocs/variants/class/ProductAttributeValue.class.php';
 require_once dirname(__FILE__).'/../../htdocs/variants/class/ProductCombination.class.php';
 require_once dirname(__FILE__).'/../../htdocs/variants/class/ProductCombination2ValuePair.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";

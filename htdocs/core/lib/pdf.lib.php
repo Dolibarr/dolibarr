@@ -1271,6 +1271,8 @@ function pdfCertifMention($pdf, $outputlangs, $seller, $default_font_size, &$pos
 
 /**
  *  Show bank information for PDF generation
+ *  The hook 'pdf_bank' can replace this block (return > 0). A hook that does it draws the block itself and gives the Y position
+ *  reached in $hookmanager->resArray['posy'] (if not set, the Y position received is returned).
  *
  *  @param	TCPDF		$pdf            		Object PDF
  *  @param  Translate	$outputlangs     		Object lang
@@ -1283,7 +1285,18 @@ function pdfCertifMention($pdf, $outputlangs, $seller, $default_font_size, &$pos
  */
 function pdf_bank($pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, $default_font_size = 10)
 {
+	global $hookmanager;
+
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbank.class.php';
+
+	if (is_object($hookmanager)) {
+		$parameters = array('pdf' => $pdf, 'outputlangs' => $outputlangs, 'curx' => $curx, 'cury' => $cury, 'onlynumber' => $onlynumber, 'default_font_size' => $default_font_size);
+		$action = '';
+		$reshook = $hookmanager->executeHooks('pdf_bank', $parameters, $account, $action); // Note that $action and $account may have been modified by some hooks
+		if ($reshook > 0) {
+			return isset($hookmanager->resArray['posy']) ? (float) $hookmanager->resArray['posy'] : $cury;
+		}
+	}
 
 	$diffsizetitle = getDolGlobalInt('PDF_DIFFSIZE_TITLE', 3);
 	$diffsizecontent = getDolGlobalInt('PDF_DIFFSIZE_CONTENT', 4);
@@ -1365,7 +1378,7 @@ function pdf_bank($pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, $
 				$pdf->SetXY($curx, $cury + 1);
 				$curx += $tmplength;
 				$pdf->SetFont('', 'B', $default_font_size - $diffsizecontent);
-				$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities($val), 0, 'C', false);
+				$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities($account->getBankFieldLabel($val)), 0, 'C', false);
 				if (empty($onlynumber)) {
 					$pdf->line($curx, $cury + 1, $curx, $cury + 7);
 				}
@@ -1680,10 +1693,12 @@ function pdf_pagefoot($pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_b
 	$posy = 0;
 	// For customized footer
 	if (is_object($hookmanager)) {
-		$parameters = array('line1' => $line1, 'line2' => $line2, 'line3' => $line3, 'line4' => $line4, 'outputlangs' => $outputlangs);
+		$parameters = array('line1' => $line1, 'line2' => $line2, 'line3' => $line3, 'line4' => $line4, 'outputlangs' => $outputlangs, 'hidefreetext' => $hidefreetext, 'pdf' => $pdf, 'pagenb' => $pdf->PageNo());
 		$action = '';
 		$hookmanager->executeHooks('pdf_pagefoot', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-		if (!empty($hookmanager->resPrint) && $hidefreetext == 0) {
+		// The footer returned by a hook replaces the default footer on the last page only (the one that shows the free text), unless
+		// the hook also returns $this->results['footeronallpages'] = 1 to replace it on all pages.
+		if (!empty($hookmanager->resPrint) && ($hidefreetext == 0 || !empty($hookmanager->resArray['footeronallpages']))) {
 			$mycustomfooter = $hookmanager->resPrint;
 			$mycustomfooterheight = pdfGetHeightForHtmlContent($pdf, dol_htmlentitiesbr($mycustomfooter, 1, 'UTF-8', 0));
 
@@ -1838,6 +1853,8 @@ function pdf_pagefoot($pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_b
 
 /**
  *	Show linked objects for PDF generation
+ *	The hook 'pdf_writeLinkedObjects' can replace this block (return > 0). A hook that does it draws the block itself and gives the
+ *	Y position reached in $hookmanager->resArray['posy'] (if not set, the current Y position of the PDF is returned).
  *
  *	@param	TCPDF		$pdf				Object PDF
  *	@param	CommonObject	$object				Object
@@ -1852,6 +1869,17 @@ function pdf_pagefoot($pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_b
  */
 function pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, $w, $h, $align, $default_font_size)
 {
+	global $hookmanager;
+
+	if (is_object($hookmanager)) {
+		$parameters = array('pdf' => $pdf, 'outputlangs' => $outputlangs, 'posx' => $posx, 'posy' => $posy, 'w' => $w, 'h' => $h, 'align' => $align, 'default_font_size' => $default_font_size);
+		$action = '';
+		$reshook = $hookmanager->executeHooks('pdf_writeLinkedObjects', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			return isset($hookmanager->resArray['posy']) ? (float) $hookmanager->resArray['posy'] : $pdf->getY();
+		}
+	}
+
 	$linkedobjects = pdf_getLinkedObjects($object, $outputlangs);	// May update $object->note_public
 
 	if (!empty($linkedobjects)) {
@@ -3347,6 +3375,8 @@ function pdfExtractMetadata($file, $field = 'Keywords')
 
 /**
  * Render subtotals line with a colored background and adapted text color .
+ * The hook 'pdf_render_subtotals' can replace this rendering (return > 0). A hook that does it must write the description
+ * of the line and call $generator->setAfterColsLinePositionsData('desc', ...) itself, and must not open/close a PDF transaction.
  *
  * @param  TCPDF              $pdf                PDF instance
  * @param  CommonDocGenerator $generator          Generator object
@@ -3375,9 +3405,21 @@ function pdf_render_subtotals(
 	bool               $isSubtotal = false,
 	bool               $applySubtotalLogic = true
 ) {
+	global $hookmanager;
+
+	if (is_object($hookmanager)) {
+		$parameters = array('pdf' => $pdf, 'generator' => $generator, 'curY' => $curY, 'i' => $i, 'outputlangs' => $outputlangs, 'hideref' => $hideref, 'hidedesc' => $hidedesc, 'bgColor' => $bgColor, 'isSubtotal' => $isSubtotal, 'applySubtotalLogic' => $applySubtotalLogic);
+		$action = '';
+		$reshook = $hookmanager->executeHooks('pdf_render_subtotals', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			return;
+		}
+	}
+
 	$savePage = $pdf->getPage();
 	$saveX = $pdf->GetX();
 	$prevAlign = $generator->cols['desc']['content']['align'];
+	$prevDesc = $object->lines[$i]->desc;
 
 	if ($isSubtotal && $applySubtotalLogic && $object->lines[$i]->qty < 0) {
 		$outputlangs->load("subtotals");
@@ -3415,12 +3457,16 @@ function pdf_render_subtotals(
 		$pdf->setPage($savePage);
 	}
 
-	$pdf->SetTextColor(colorIsLight(implode(',', $bgColor)));
+	// Dark text on a light background, white text on a dark one (a single argument of SetTextColor() is a gray level 0-255)
+	$textGray = (colorIsLight(implode(',', $bgColor)) === 0) ? 255 : 0;
+	$pdf->SetTextColor($textGray);
 	$pdf->SetXY($saveX, $curY);
 	$generator->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
 	$generator->setAfterColsLinePositionsData('desc', $pdf->GetY(), $pdf->getPage());
 
 	$generator->cols['desc']['content']['align'] = $prevAlign;
+	// The text "Subtotal of ..." must not stay in the line: a second generation of the document would prefix it again
+	$object->lines[$i]->desc = $prevDesc;
 }
 
 
