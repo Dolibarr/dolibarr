@@ -410,8 +410,8 @@ if ($source == 'proposal') {
 			if (preg_match('/_signed-(\d+)/', $last_main_doc_file)) {	// If the last main doc has been signed
 				$last_main_doc_file_not_signed = preg_replace('/_signed-(\d+)/', '', $last_main_doc_file);
 
-				$datefilesigned = dol_filemtime($last_main_doc_file);
-				$datefilenotsigned = dol_filemtime($last_main_doc_file_not_signed);
+				$datefilesigned = dol_filemtime(DOL_DATA_ROOT.'/'.$last_main_doc_file);
+				$datefilenotsigned = dol_filemtime(DOL_DATA_ROOT.'/'.$last_main_doc_file_not_signed);
 
 				if (empty($datefilenotsigned) || $datefilesigned > $datefilenotsigned) {
 					$directdownloadlink = $object->getLastMainDocLink('proposal');
