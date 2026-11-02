@@ -42,6 +42,8 @@ class modDon extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
+		global $conf;
+
 		$this->db = $db;
 		$this->numero = 700;
 
@@ -57,7 +59,10 @@ class modDon extends DolibarrModules
 		$this->picto = 'donation';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array("/don/temp");
+		$this->dirs = array(
+			"/don/temp",
+			"/doctemplates/dons",
+		);
 
 		// Dependencies
 		$this->depends = array();
@@ -73,6 +78,13 @@ class modDon extends DolibarrModules
 				"chaine",
 				"html_cerfafr",
 				'Nom du gestionnaire de generation de recu de dons',
+				0,
+			],
+			[
+				"DON_ADDON_PDF_ACROFORM_PATH",
+				"chaine",
+				'DOL_DATA_ROOT'.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/dons',
+				'Directory of the PDF forms to fill to make a donation receipt',
 				0,
 			],
 			[
