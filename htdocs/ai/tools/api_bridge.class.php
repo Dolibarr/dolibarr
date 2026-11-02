@@ -119,6 +119,28 @@ class ToolApiBridge extends McpTool
 	);
 
 	/**
+	 * Endpoint key -> list methods whose table stores the creation date in a
+	 * 'date_creation' column instead of the usual 'datec': their sortfield doc
+	 * tells to use 't.date_creation' (the common doc says 't.datec').
+	 */
+	const DATE_CREATION_LISTS = array(
+		'categories' => array('index'),
+		'orders' => array('index'),
+		'supplier_orders' => array('index'),
+		'shipments' => array('index'),
+		'receptions' => array('index'),
+		'expensereports' => array('index'),
+		'holidays' => array('index'),
+		'socialcontributions' => array('index'),
+		'boms' => array('index'),
+		'mos' => array('index'),
+		'workstations' => array('index'),
+		'knowledgemanagement' => array('index'),
+		'partnerships' => array('index'),
+		'websites' => array('index', 'indexPages')
+	);
+
+	/**
 	 * Default and ceiling applied to list 'limit' parameters when called
 	 * through the bridge. API methods default to 100 full objects — too much
 	 * model context for a single call; everything stays reachable via 'page'.
@@ -156,6 +178,7 @@ class ToolApiBridge extends McpTool
 	 * 'description' (appended to the derived tool description), 'params'
 	 * (per-parameter doc overriding what the docblock parser guessed),
 	 * 'fixed_params' (arguments forced on the call and hidden from the schema).
+	 * 'get_by' (argument => API method: a get by rowid also reachable by ref, email...).
 	 * An entry may set 'endpoint' to call the REST class of another key, so
 	 * several groups of tools can share one REST class (documents_*).
 	 * TODO Replace path/class discovery with the dynamic scan of api_*.class.php
@@ -167,7 +190,7 @@ class ToolApiBridge extends McpTool
 	 * endpoint absent from this map is still exposed, with the description and
 	 * parameter docs reflection gives — that is the whole point of scanning.
 	 *
-	 * @var array<string, array{endpoint?:string, label?:string, methods?:array<string, array{suffix?:string, description?:string, params?:array<string,string>, fixed_params?:array<string,string>}>}>
+	 * @var array<string, array{endpoint?:string, label?:string, methods?:array<string, array{suffix?:string, description?:string, params?:array<string,string>, fixed_params?:array<string,string>, get_by?:array<string,string>}>}>
 	 */
 	private $enrichments = [];
 
@@ -265,7 +288,7 @@ class ToolApiBridge extends McpTool
 		$descriptionlist .= "- t.status : integer enum (status ID) among 1=open, 0=closed.";
 		$descriptionlist .= "\n";
 
-		$descriptionfetch = "Fetch the full record of a given thirdparty with main properties (name, name_alias, email, address, status, contact channels, customer/supplier codes, VAT number, default payment terms/modes, outstanding limit).";
+		$descriptionfetch = "Fetch the full record of a given thirdparty with main properties (name, name_alias, email, address, status, contact channels, customer/supplier codes, VAT number, default payment terms/modes, outstanding limit), by its rowid (id), by its exact company email address (email, not contact emails) or by its barcode (barcode).";
 		$descriptionfetch .= "Fetch is done from ID.\n";
 		$descriptionfetch .= "In the result 'client' is 1=customer, 2=prospect, 3=both; 'fournisseur' is 1 when supplier.";
 
@@ -298,12 +321,13 @@ class ToolApiBridge extends McpTool
 					]
 				],
 				'get' => [
-					'description' => $descriptionfetch
-				],
-				'getByEmail' => [
-					'suffix' => 'get_by_email',
-					'description' => "Find one third party by its exact company email address (not contact emails).",
-					'params' => ['email' => "Exact email address of the company."]
+					'description' => $descriptionfetch,
+					'get_by' => ['email' => 'getByEmail', 'barcode' => 'getByBarcode'],
+					'params' => [
+						'id' => "Rowid of the third party (use 0 when identifying by email or barcode).",
+						'email' => "Exact email address of the company (not contact emails), alternative to id.",
+						'barcode' => "Barcode value of the third party, alternative to id."
+					]
 				],
 				'getOutStandingInvoices' => [
 					'suffix' => 'outstanding_invoices',
@@ -517,23 +541,21 @@ class ToolApiBridge extends McpTool
 					]
 				],
 				'get' => [
-					'description' => "One invoice with its lines (product, qty, unit price, VAT rate, line totals), status, remaining amount to pay and linked contacts. Look the rowid up with api_invoices_list (sqlfilters on t.ref) when only the reference is known.",
+					'description' => "One invoice with its lines (product, qty, unit price, VAT rate, line totals), status, remaining amount to pay and linked contacts, by its rowid (id) or by its exact reference (ref, e.g. 'FA2401-0001').",
+					'get_by' => ['ref' => 'getByRef'],
 					'params' => [
+						'id' => "Rowid of the invoice (use 0 when identifying by ref).",
+						'ref' => "Exact invoice reference, alternative to id.",
 						'contact_list' => "0 = no contacts, 1 (default) = contact rowids, 2 = full contact records.",
-						'withLines' => "false to omit the lines."
+						'withLines' => "false to omit the lines (only with id)."
 					]
-				],
-				'getByRef' => [
-					'suffix' => 'get_by_ref',
-					'description' => "One invoice by its exact reference (e.g. 'FA2401-0001').",
-					'params' => ['ref' => "Exact invoice reference.", 'contact_list' => "0 = no contacts, 1 (default) = contact rowids, 2 = full contact records."]
 				],
 				'getPayments' => [
 					'suffix' => 'payments_list',
 					'description' => "Payments already recorded on one invoice: amount, date, payment mode, bank reference.",
 					'params' => ['id' => "Rowid of the invoice."]
 				],
-				'postLine' => $this->addLineMethod('customer invoice', 'api_invoices_get_by_ref', 'Facture', ['facture', 'creer'])
+				'postLine' => $this->addLineMethod('customer invoice', 'api_invoices_get', 'Facture', ['facture', 'creer'])
 			]
 		];
 
@@ -548,9 +570,7 @@ class ToolApiBridge extends McpTool
 		$descriptionlist .= "- t.total_ht : float, t.total_ttc : float,\n";
 		$descriptionlist .= "- t.fk_statut : integer enum (status ID) among -1=cancelled, 0=draft, 1=validated (open), 2=shipment in progress, 3=closed (delivered / billed).";
 
-		$descriptionfetch = "Fetch one order with its lines (product, qty, unit price, discount, line totals), status and dates. Fetch is done from ID.";
-
-		$descriptionfetchref = "Fetch one order with its lines (product, qty, unit price, discount, line totals), status and dates. Fetch is done from exact REF (e.g. 'CO2401-0001').";
+		$descriptionfetch = "Fetch one order with its lines (product, qty, unit price, discount, line totals), status and dates. Fetch is done from its rowid (id) or from its exact reference (ref, e.g. 'CO2401-0001').";
 
 		$this->enrichments['orders'] = [
 			'label' => 'sale orders',
@@ -585,14 +605,14 @@ class ToolApiBridge extends McpTool
 				],
 				'get' => [
 					'description' => $descriptionfetch,
-					'params' => ['contact_list' => "0 = no need of contacts, 1 (default) = need contact rowids, 2 = need full contact records."]
+					'get_by' => ['ref' => 'getByRef'],
+					'params' => [
+						'id' => "Rowid of the order (use 0 when identifying by ref).",
+						'ref' => "Exact order reference, alternative to id.",
+						'contact_list' => "0 = no need of contacts, 1 (default) = need contact rowids, 2 = need full contact records."
+					]
 				],
-				'getByRef' => [
-					'suffix' => 'get_by_ref',
-					'description' => $descriptionfetchref,
-					'params' => ['ref' => "Exact order reference.", 'contact_list' => "0 = no need of contacts, 1 (default) = need contact rowids, 2 = need full contact records."]
-				],
-				'postLine' => $this->addLineMethod('sale order', 'api_orders_get_by_ref', 'Commande', ['commande', 'creer'])
+				'postLine' => $this->addLineMethod('sale order', 'api_orders_get', 'Commande', ['commande', 'creer'])
 			]
 		];
 
@@ -626,15 +646,15 @@ class ToolApiBridge extends McpTool
 					]
 				],
 				'get' => [
-					'description' => "One proposal with its lines (product, qty, unit price, discount, line totals), status and validity date.",
-					'params' => ['contact_list' => "0 = no contacts, 1 (default) = contact rowids, 2 = full contact records."]
+					'description' => "One proposal with its lines (product, qty, unit price, discount, line totals), status and validity date, by its rowid (id) or by its exact reference (ref, e.g. 'PR2401-0001').",
+					'get_by' => ['ref' => 'getByRef'],
+					'params' => [
+						'id' => "Rowid of the proposal (use 0 when identifying by ref).",
+						'ref' => "Exact proposal reference, alternative to id.",
+						'contact_list' => "0 = no contacts, 1 (default) = contact rowids, 2 = full contact records."
+					]
 				],
-				'getByRef' => [
-					'suffix' => 'get_by_ref',
-					'description' => "One proposal by its exact reference (e.g. 'PR2401-0001').",
-					'params' => ['ref' => "Exact proposal reference.", 'contact_list' => "0 = no contacts, 1 (default) = contact rowids, 2 = full contact records."]
-				],
-				'postLine' => $this->addLineMethod('commercial proposal', 'api_proposals_get_by_ref', 'Propal', ['propal', 'creer'])
+				'postLine' => $this->addLineMethod('commercial proposal', 'api_proposals_get', 'Propal', ['propal', 'creer'])
 			]
 		];
 
@@ -831,17 +851,13 @@ class ToolApiBridge extends McpTool
 					]
 				],
 				'get' => [
-					'description' => "One ticket with its subject, full message, status, severity, assigned user and linked third party. The public tracking id is in track_id."
-				],
-				'getByTrackId' => [
-					'suffix' => 'get_by_track_id',
-					'description' => "One ticket by its public tracking id (the hash customers receive by email).",
-					'params' => ['track_id' => "Public tracking id of the ticket."]
-				],
-				'getByRef' => [
-					'suffix' => 'get_by_ref',
-					'description' => "One ticket by its exact internal reference (e.g. 'TS2401-0001').",
-					'params' => ['ref' => "Exact ticket reference."]
+					'description' => "One ticket with its subject, full message, status, severity, assigned user and linked third party, by its rowid (id), by its exact internal reference (ref, e.g. 'TS2401-0001') or by its public tracking id (track_id). The public tracking id is in track_id.",
+					'get_by' => ['ref' => 'getByRef', 'track_id' => 'getByTrackId'],
+					'params' => [
+						'id' => "Rowid of the ticket (use 0 when identifying by ref or track_id).",
+						'ref' => "Exact ticket reference, alternative to id.",
+						'track_id' => "Public tracking id of the ticket (the hash customers receive by email), alternative to id."
+					]
 				]
 			]
 		];
@@ -859,14 +875,14 @@ class ToolApiBridge extends McpTool
 					]
 				],
 				'get' => [
-					'description' => "One project with its dates, status, budget, opportunity data and linked third party."
+					'description' => "One project with its dates, status, budget, opportunity data and linked third party, by its rowid (id) or by its exact reference (ref, e.g. 'PJ2401-0001').",
+					'get_by' => ['ref' => 'getByRef'],
+					'params' => [
+						'id' => "Rowid of the project (use 0 when identifying by ref).",
+						'ref' => "Exact project reference, alternative to id."
+					]
 				],
-				'put' => $this->projectUpdateMethod(),
-				'getByRef' => [
-					'suffix' => 'get_by_ref',
-					'description' => "One project by its exact reference (e.g. 'PJ2401-0001').",
-					'params' => ['ref' => "Exact project reference."]
-				]
+				'put' => $this->projectUpdateMethod()
 			]
 		];
 
@@ -1017,7 +1033,12 @@ class ToolApiBridge extends McpTool
 					]
 				],
 				'get' => [
-					'description' => "One member with identity, member type, status, linked third party and paid-up end date (datefin)."
+					'description' => "One member with identity, member type, status, linked third party and paid-up end date (datefin), by its rowid (id) or by the rowid of its linked third party (thirdparty).",
+					'get_by' => ['thirdparty' => 'getByThirdparty'],
+					'params' => [
+						'id' => "Rowid of the member (use 0 when identifying by third party).",
+						'thirdparty' => "Rowid of the third party linked to the member, alternative to id."
+					]
 				],
 				'getSubscriptions' => [
 					'suffix' => 'subscriptions_list',
@@ -1203,7 +1224,7 @@ class ToolApiBridge extends McpTool
 		$descriptionlist .= "- t.status_buy : integer (status For purchase) among 0=not for purchase, 1=for purchase\n";
 		$descriptionlist .= "- t.stock_reel : float (qty in stock, output only when param includestockdata=1)\n";
 
-		$descriptionfetch = "Fetch full product record (description, prices, VAT, barcode, weight/dimensions, accounting codes, optional stock and sub-products), status and dates. Fetch is done from ID.";
+		$descriptionfetch = "Fetch full product record (description, prices, VAT, barcode, weight/dimensions, accounting codes, optional stock and sub-products), status and dates. Fetch is done from its rowid (id), its exact reference (ref, e.g. 'PROD-001') or its barcode (barcode, EAN/UPC).";
 
 		$this->enrichments['products'] = [
 			'label' => 'products and services catalog',
@@ -1236,22 +1257,16 @@ class ToolApiBridge extends McpTool
 				],
 				'get' => [
 					'description' => $descriptionfetch,
+					'get_by' => ['ref' => 'getByRef', 'barcode' => 'getByBarcode'],
 					'params' => [
+						'id' => "Rowid of the product (use 0 when identifying by ref or barcode).",
+						'ref' => "Exact product reference, alternative to id.",
+						'barcode' => "Barcode value as printed, alternative to id.",
 						'includestockdata' => "1 to load stock_reel, stock_theorique and per-warehouse stock (requires the Stock module).",
 						'includesubproducts' => "true to load the kit/BOM components (sub-products).",
 						'includeparentid' => "true to add fk_product_parent for a variant.",
 						'includetrans' => "true to load multilingual labels/descriptions."
 					]
-				],
-				'getByRef' => [
-					'suffix' => 'get_by_ref',
-					'description' => "One product by its exact reference (e.g. 'PROD-001'); same options as get.",
-					'params' => ['ref' => "Exact product reference."]
-				],
-				'getByBarcode' => [
-					'suffix' => 'get_by_barcode',
-					'description' => "One product by its barcode (EAN/UPC); same options as get.",
-					'params' => ['barcode' => "Barcode value as printed."]
 				],
 				'getPurchasePrices' => [
 					'suffix' => 'purchase_prices_list',
@@ -1666,11 +1681,10 @@ class ToolApiBridge extends McpTool
 			'label' => 'workstations (manufacturing)',
 			'methods' => array(
 				'index' => array('description' => "Workstations used in manufacturing: ref, label, type, hourly costs."),
-				'get' => array('description' => "One workstation."),
-				'getByRef' => array(
-					'suffix' => 'get_by_ref',
-					'description' => "One workstation by its exact reference.",
-					'params' => array('ref' => "Exact workstation reference.")
+				'get' => array(
+					'description' => "One workstation, by its rowid (id) or by its exact reference (ref).",
+					'get_by' => array('ref' => 'getByRef'),
+					'params' => array('id' => "Rowid of the workstation (use 0 when identifying by ref).", 'ref' => "Exact workstation reference, alternative to id.")
 				)
 			)
 		);
@@ -1709,11 +1723,10 @@ class ToolApiBridge extends McpTool
 			'label' => 'currencies and exchange rates',
 			'methods' => array(
 				'index' => array('description' => "Currencies in use, with their code and current rate."),
-				'get' => array('description' => "One currency."),
-				'getByCode' => array(
-					'suffix' => 'get_by_code',
-					'description' => "One currency by its ISO code (e.g. 'USD').",
-					'params' => array('code' => "ISO code of the currency.")
+				'get' => array(
+					'description' => "One currency, by its rowid (id) or by its ISO code (code, e.g. 'USD').",
+					'get_by' => array('code' => 'getByCode'),
+					'params' => array('id' => "Rowid of the currency (use 0 when identifying by code).", 'code' => "ISO code of the currency, alternative to id.")
 				),
 				'getRates' => array(
 					'suffix' => 'rates',
@@ -1726,7 +1739,7 @@ class ToolApiBridge extends McpTool
 		);
 
 		// Websites of the website module, with their pages and blog posts. The page content is
-		// left out of the lists (it can be large): read one page with api_websites_page_get.
+		// left out of the lists (it can be large): read one page with api_websites_pages_get.
 		$this->enrichments['websites'] = array(
 			'label' => 'websites (website module)',
 			'methods' => array(
@@ -1734,25 +1747,26 @@ class ToolApiBridge extends McpTool
 					'description' => "Websites built with the website module: ref, description, main language, virtual host, home page (fk_default_home). Statuses (t.status): 0 offline, 1 online.",
 					'default_properties' => 'id,ref,description,lang,otherlang,status,virtualhost'
 				),
-				'get' => array('description' => "One website."),
-				'getByRef' => array(
-					'suffix' => 'get_by_ref',
-					'description' => "One website by its exact reference.",
-					'params' => array('ref' => "Exact website reference.")
+				'get' => array(
+					'description' => "One website, by its rowid (id) or by its exact reference (ref).",
+					'get_by' => array('ref' => 'getByRef'),
+					'params' => array('id' => "Rowid of the website (use 0 when identifying by ref).", 'ref' => "Exact website reference, alternative to id.")
 				),
 				'indexPages' => array(
 					'suffix' => 'pages_list',
 					'description' => "Pages of one website: pageurl (alias), title, type_container ('page', 'blogpost', 'menu', 'other', 'header', 'footer'...), lang, status (0 offline, 1 online). Blog posts are the pages with type_container 'blogpost'. Search with sqlfilters \"(t.type_container:=:'blogpost')\".",
 					'default_properties' => 'id,pageurl,title,description,type_container,lang,status,date_creation,author_alias',
-					'params' => array('id' => "Rowid of the website.")
+					'params' => array(
+						'id' => "Rowid of the website."
+					)
 				),
 				'getPage' => array(
-					'suffix' => 'page_get',
+					'suffix' => 'pages_get',
 					'description' => "One page of a website, with its HTML content.",
 					'params' => array('id' => "Rowid of the website.", 'pageid' => "Rowid of the page.")
 				),
 				'postPage' => array(
-					'suffix' => 'page_create',
+					'suffix' => 'pages_create',
 					'description' => "Create a page (type_container 'page') or a blog post (type_container 'blogpost') in a website. Give id (rowid of the website), pageurl (alias, only a-z, 0-9, - and _), title and content (HTML, put inside a <section> tag, no PHP code). It is created offline (status 0) unless status 1 is given. The user confirms before anything is written.",
 					'write' => array(
 						'preview' => 'AIPreviewCreateWebsitePage',
@@ -1790,12 +1804,11 @@ class ToolApiBridge extends McpTool
 						'pagination_data' => $pagination
 					)
 				),
-				'get' => array('description' => "One contact with name, job title, phones, email and third party."),
-				'getByEmail' => array(
-					'suffix' => 'get_by_email',
-					'description' => "One contact by its exact email address.",
-					'params' => array('email' => "Exact email address of the contact."),
-					// The REST method returns an empty contact when several share the address.
+				'get' => array(
+					'description' => "One contact with name, job title, phones, email and third party, by its rowid (id) or by its exact email address (email).",
+					'get_by' => array('email' => 'getByEmail'),
+					'params' => array('id' => "Rowid of the contact (use 0 when identifying by email).", 'email' => "Exact email address of the contact, alternative to id."),
+					// The REST method by email returns an empty contact when several share the address.
 					'needs_id' => "No single contact has this email (none, or several): search with api_contacts_list and sqlfilters on t.email."
 				),
 				'getCategories' => array(
@@ -1816,13 +1829,10 @@ class ToolApiBridge extends McpTool
 			'methods' => array(
 				'getById' => array(
 					'suffix' => 'get',
-					'description' => "One object link by its rowid: the pair it joins, (fk_source, sourcetype) to (fk_target, targettype).",
-					'params' => array('id' => "Rowid of the object link.")
-				),
-				'getByValues' => array(
-					'suffix' => 'get_by_values',
-					'description' => "Whether two records are linked: give the rowid and element type of each side. Answers 'is invoice X linked to proposal Y'. Element types are names like 'propal' (proposal), 'commande' (customer order), 'facture' (customer invoice), 'contrat', 'project', 'task', 'ticket', 'actioncomm' (agenda event), 'subscription' (membership), 'shipping', 'reception'.",
+					'description' => "One object link: the pair it joins, (fk_source, sourcetype) to (fk_target, targettype). Give its rowid (id), or, to know whether two records are linked, the rowid and element type of each side (fk_source, sourcetype, fk_target, targettype). Answers 'is invoice X linked to proposal Y'. Element types are names like 'propal' (proposal), 'commande' (customer order), 'facture' (customer invoice), 'contrat', 'project', 'task', 'ticket', 'actioncomm' (agenda event), 'subscription' (membership), 'shipping', 'reception'.",
+					'get_by' => array('fk_source' => 'getByValues'),
 					'params' => array(
+						'id' => "Rowid of the object link (use 0 when identifying by the two linked records).",
 						'fk_source' => "Rowid of the record the link starts from.",
 						'sourcetype' => "Element type of the source record (e.g. 'propal', 'facture', 'project').",
 						'fk_target' => "Rowid of the record the link points to.",
@@ -1850,18 +1860,14 @@ class ToolApiBridge extends McpTool
 					'right' => array('user', 'user', 'lire')
 				),
 				'get' => array(
-					'description' => "One user with login, name, email, phones, job and status.",
-					'params' => array('id' => "Rowid of the user.", 'includepermissions' => "1 to also load his permission set (heavy, default 0).")
-				),
-				'getByLogin' => array(
-					'suffix' => 'get_by_login',
-					'description' => "One user by its exact login.",
-					'params' => array('login' => "Exact login of the user.", 'includepermissions' => "1 to also load his permission set (heavy, default 0).")
-				),
-				'getByEmail' => array(
-					'suffix' => 'get_by_email',
-					'description' => "One user by its exact email address.",
-					'params' => array('email' => "Exact email address of the user.", 'includepermissions' => "1 to also load his permission set (heavy, default 0).")
+					'description' => "One user with login, name, email, phones, job and status, by its rowid (id), by its exact login (login) or by its exact email address (email).",
+					'get_by' => array('login' => 'getByLogin', 'email' => 'getByEmail'),
+					'params' => array(
+						'id' => "Rowid of the user (use 0 when identifying by login or email).",
+						'login' => "Exact login of the user, alternative to id.",
+						'email' => "Exact email address of the user, alternative to id.",
+						'includepermissions' => "1 to also load his permission set (heavy, default 0)."
+					)
 				),
 				'getInfo' => array(
 					'suffix' => 'me',
@@ -2015,11 +2021,6 @@ class ToolApiBridge extends McpTool
 				)
 			),
 			'thirdparties' => array(
-				'getByBarcode' => array(
-					'suffix' => 'get_by_barcode',
-					'description' => "One third party by its barcode.",
-					'params' => array('barcode' => "Barcode value.")
-				),
 				'getFixedAmountDiscounts' => array(
 					'suffix' => 'discounts_list',
 					'description' => "Fixed-amount discounts and credits of one third party: available, or already used on an invoice.",
@@ -2049,11 +2050,6 @@ class ToolApiBridge extends McpTool
 				)
 			),
 			'members' => array(
-				'getByThirdparty' => array(
-					'suffix' => 'get_by_thirdparty',
-					'description' => "The member linked to one third party.",
-					'params' => array('thirdparty' => "Rowid of the third party.")
-				),
 				'getNbByYear' => array(
 					'suffix' => 'count_by_year',
 					'description' => "Number of new members per year."
@@ -2095,7 +2091,13 @@ class ToolApiBridge extends McpTool
 	 */
 	private function addLineMethod($label, $lookupTool, $class, array $right, $buy = false, array $rename = array(), array $defaults = array())
 	{
-		$lookup = (substr($lookupTool, -7) === '_by_ref') ? $lookupTool : $lookupTool." with sqlfilters (t.ref:=:'THEREF')";
+		if (substr($lookupTool, -7) === '_by_ref') {
+			$lookup = $lookupTool;
+		} elseif (substr($lookupTool, -4) === '_get') {
+			$lookup = $lookupTool." with ref";	// a get that also accepts a ref ('get_by')
+		} else {
+			$lookup = $lookupTool." with sqlfilters (t.ref:=:'THEREF')";
+		}
 
 		$description = "Add ONE line to an existing ".$label.". Only a DRAFT ".$label." (status 0) accepts new lines. ";
 		$description .= "Give 'id' (".$label." rowid; when only the ref is known, look it up with ".$lookup.") and the line fields: product_ref (product ref or exact label) and qty, ";
@@ -2714,93 +2716,50 @@ class ToolApiBridge extends McpTool
 	/**
 	 * Discover the REST API endpoints of every enabled module.
 	 *
-	 * Mirrors the scan htdocs/api/index.php performs to register endpoints with
-	 * Restler, so the bridge exposes exactly the API surface the REST layer
-	 * exposes — external modules included — instead of a list maintained by hand.
+	 * The walk itself lives in dolGetApiEndpoints(), shared with
+	 * htdocs/api/index.php, so the bridge exposes exactly the API surface the REST
+	 * layer exposes - external modules included - instead of a copy of that scan
+	 * kept in step by hand.
 	 *
-	 * The walk is the same in both places: dolGetModulesDirs() gives the module
-	 * directories, each mod*.class.php names a module, getModuleDirForApiClass()
-	 * maps it to the directory holding its API classes, and every
-	 * api_<key>.class.php there is one endpoint. A few modules are named
-	 * differently in their descriptor and in isModEnabled(); those exceptions are
-	 * copied from api/index.php rather than reinvented, so the two stay in step.
-	 *
-	 * Note the class name is resolved through class_exists(), which is
-	 * case-insensitive in PHP: api_agendaevents.class.php yields the candidate
-	 * "Agendaevents" and still matches the declared AgendaEvents. Reflection is
-	 * then used to recover the real spelling for display.
+	 * What stays here is what is the bridge's own: the key is the file suffix and
+	 * not the class name, because it is the tool name the model sees; the framework
+	 * endpoints are left out; and the class is still resolved lazily by
+	 * resolveEndpointClass(), which is also where the label is taken from the class
+	 * docblock.
 	 *
 	 * @return array<string, array{module:string, path:string, candidate:string, class:string, label:string}> Endpoints keyed by name
 	 */
 	private function discoverEndpoints(): array
 	{
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/api.lib.php';
+
 		$endpoints = [];
 
-		foreach (dolGetModulesDirs() as $dir) {
-			$handle = @opendir(dol_osencode($dir));
-			if (!is_resource($handle)) {
+		foreach (dolGetApiEndpoints(true, true) as $endpoint) {
+			$regapi = [];
+			$file = basename($endpoint['path']);
+			if (in_array($file, ['api_setup.class.php', 'api_login.class.php', 'api_status.class.php'], true)) {
+				continue;	// Framework plumbing, not business endpoints. api_access is left out by the shared scan.
+			}
+			if (!preg_match("/^api_(.*)\\.class\\.php$/i", $file, $regapi)) {
 				continue;
 			}
 
-			while (($file = readdir($handle)) !== false) {
-				$regmod = [];
-				if (!is_readable($dir.$file) || !preg_match("/^mod(.*)\\.class\\.php$/i", $file, $regmod)) {
-					continue;
-				}
-
-				$module = strtolower($regmod[1]);
-				$moduledirforclass = getModuleDirForApiClass($module);
-
-				// Same descriptor-name to module-name exceptions as api/index.php.
-				$modulenameforenabled = $module;
-				if ($module == 'propale') {
-					$modulenameforenabled = 'propal';
-				} elseif ($module == 'supplierproposal') {
-					$modulenameforenabled = 'supplier_proposal';
-				} elseif ($module == 'ficheinter') {
-					$modulenameforenabled = 'intervention';
-				} elseif ($module == 'product' && !isModEnabled('product') && isModEnabled('service')) {
-					$modulenameforenabled = 'service';
-				}
-
-				if (!isModEnabled($modulenameforenabled)) {
-					continue;	// A disabled module exposes no tools.
-				}
-
-				$dir_part = dol_buildpath('/'.$moduledirforclass.'/class/');
-				$handle_part = @opendir(dol_osencode($dir_part));
-				if (!is_resource($handle_part)) {
-					continue;
-				}
-
-				while (($file_searched = readdir($handle_part)) !== false) {
-					if (in_array($file_searched, ['api_access.class.php', 'api_setup.class.php', 'api_login.class.php', 'api_status.class.php'], true)) {
-						continue;	// Framework plumbing, not business endpoints.
-					}
-					$regapi = [];
-					if (!is_readable($dir_part.$file_searched) || !preg_match("/^api_(.*)\\.class\\.php$/i", $file_searched, $regapi)) {
-						continue;
-					}
-
-					$key = strtolower($regapi[1]);
-					if (isset($endpoints[$key])) {
-						continue;	// First module wins, as in the REST layer.
-					}
-
-					$endpoints[$key] = [
-						'module' => $modulenameforenabled,
-						'path' => $dir_part.$file_searched,
-						'candidate' => str_replace('_', '', ucwords($regapi[1])),
-						'class' => '',	// resolved lazily by resolveEndpointClass()
-						'label' => $this->enrichments[$key]['label'] ?? $key,
-					];
-				}
-				closedir($handle_part);
+			$key = strtolower($regapi[1]);
+			if (isset($endpoints[$key])) {
+				continue;	// First module wins, as in the REST layer.
 			}
-			closedir($handle);
-		}
 
-		ksort($endpoints);
+			$endpoints[$key] = [
+				// The name isModEnabled() answers to, which is not always the name of the
+				// module directory: see dolGetModuleNameForEnabled().
+				'module' => dolGetModuleNameForEnabled($endpoint['module']),
+				'path' => $endpoint['path'],
+				'candidate' => str_replace('_', '', ucwords($regapi[1])),
+				'class' => '',	// resolved lazily by resolveEndpointClass()
+				'label' => $this->enrichments[$key]['label'] ?? $key,
+			];
+		}
 
 		return $endpoints;
 	}
@@ -3197,6 +3156,9 @@ class ToolApiBridge extends McpTool
 			// unsupported IN, the datec/tms column names), so there the common doc
 			// is APPENDED to the docblock description instead of being shadowed.
 			$commondesc = (string) ($this->commonParamDocs[$pname] ?? '');
+			if ($pname === 'sortfield' && in_array($method, self::DATE_CREATION_LISTS[$key] ?? array(), true)) {
+				$commondesc = "Field to sort on, prefixed with 't.' (e.g. 't.rowid', 't.date_creation'). Use the SQL column names: here the creation date is 't.date_creation' (NEVER 't.datec', it does not exist on this table, also in sqlfilters) and last modification 't.tms' (never 'date_modification').";
+			}
 			if (isset($meta['params'][$pname])) {
 				$pdesc = $meta['params'][$pname];
 			} elseif (!empty($paramDocs[$pname]['desc'])) {
@@ -3271,6 +3233,27 @@ class ToolApiBridge extends McpTool
 			}
 			foreach ((array) ($meta['write']['required'] ?? array()) as $pname) {
 				$required[] = $pname;
+			}
+		}
+
+		// One tool for a get by rowid or by another key ('get_by' maps an argument
+		// such as ref or email to the API method used when no id is given): id
+		// becomes optional and the parameters of that method are added (all
+		// optional, the API method checks them).
+		foreach ((array) ($meta['get_by'] ?? array()) as $byarg => $bymethod) {
+			if (isset($properties['id']) && method_exists($ep['class'], (string) $bymethod)) {
+				$properties['id']['default'] = 0;
+				$required = array_values(array_diff($required, array('id')));
+				$byrm = new ReflectionMethod($ep['class'], (string) $bymethod);
+				$bydoc = (string) $byrm->getDocComment();
+				foreach ($byrm->getParameters() as $byp) {
+					$bypname = $byp->getName();
+					if (isset($properties[$bypname])) {
+						continue;
+					}
+					$bytype = preg_match('/@param\s+(\S+)\s+\$'.$bypname.'\b/', $bydoc, $bym) ? $this->docTypeToJson($bym[1]) : 'string';
+					$properties[$bypname] = ['type' => $bytype, 'description' => (string) ($meta['params'][$bypname] ?? "Exact ".$bypname.", alternative to id.")];
+				}
 			}
 		}
 
@@ -6100,6 +6083,14 @@ class ToolApiBridge extends McpTool
 		// caller did not choose, the default applies; an explicit 'properties'
 		// from the model always wins.
 		$methodmeta = isset($this->enrichments[$key]['methods'][$method]) ? $this->enrichments[$key]['methods'][$method] : array();
+		// A get by rowid or by another key: no id but a ref (or email...) calls the matching method of the API.
+		foreach ((array) ($methodmeta['get_by'] ?? array()) as $byarg => $bymethod) {
+			if (empty($args['id']) && (string) ($args[$byarg] ?? '') !== '') {
+				$method = (string) $bymethod;
+				unset($args['id']);
+				break;
+			}
+		}
 		if (!empty($methodmeta['default_properties']) && !array_key_exists('properties', $args)) {
 			$args['properties'] = $methodmeta['default_properties'];
 		}
@@ -6289,6 +6280,13 @@ class ToolApiBridge extends McpTool
 					dol_syslog(get_class($this).'::execute '.$name.' '.$message, LOG_WARNING);
 					$langs->load('other');
 					$message = $langs->transnoentitiesnoconv('AIBadSearchFilter');
+				} elseif (in_array($code, array(401, 403, 404), true)) {
+					// The API answers in English ("Workstation not found"): show the
+					// user a message in their language, the API wording goes to the log.
+					global $langs;
+					dol_syslog(get_class($this).'::execute '.$name.' '.$message, LOG_DEBUG);
+					$langs->loadLangs(array('main', 'errors'));
+					$message = $langs->transnoentitiesnoconv($code == 404 ? 'ErrorRecordNotFound' : 'NotEnoughPermissions');
 				}
 				$output = [
 					"error" => $message,

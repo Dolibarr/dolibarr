@@ -3102,6 +3102,9 @@ function top_menu_importfile()
 		} elseif (!isModEnabled('ai')) {
 			// The native upload page uses the AI module to parse the files, so the button is hidden when the module is not enabled
 			return '';
+		} elseif (!isModEnabled('supplier_invoice') && !isModEnabled('salaries') && !isModEnabled('expensereport') && !isModEnabled('tax')) {
+			// The native upload page can only create supplier invoices, salaries, expense reports or social/fiscal taxes
+			return '';
 		}
 
 		$html .= '<!-- div for link to upload file -->

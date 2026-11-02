@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,7 +113,6 @@ if (empty($reshook)) {
 			if ($color == '-1') {
 				$color = '';
 			}
-			$enabled = trim(GETPOST('AGENDA_EXT_ENABLED_'.$id.'_'.$i, 'alpha'));
 			$cachedelay = (GETPOSTINT('AGENDA_EXT_CACHE_'.$id.'_'.$i) > 0 ? (string) GETPOSTINT('AGENDA_EXT_CACHE_'.$id.'_'.$i) : '');
 
 			if (!empty($src) && !dol_is_url($src)) {
@@ -127,7 +126,10 @@ if (empty($reshook)) {
 			$tabparam['AGENDA_EXT_SRC_'.$id.'_'.$i] = $src;
 			$tabparam['AGENDA_EXT_OFFSETTZ_'.$id.'_'.$i] = $offsettz;
 			$tabparam['AGENDA_EXT_COLOR_'.$id.'_'.$i] = $color;
-			$tabparam['AGENDA_EXT_ENABLED_'.$id.'_'.$i] = $enabled;
+			// Note: this form has no "enabled" switch, so AGENDA_EXT_ENABLED_x_y is not listed here.
+			// Listing it would hand dol_set_user_param() an empty value, and that function deletes
+			// every key it is given before reinserting the non-empty ones: saving the form would
+			// silently drop the parameter.
 			$tabparam['AGENDA_EXT_CACHE_'.$id.'_'.$i] = $cachedelay;
 
 			$i++;
