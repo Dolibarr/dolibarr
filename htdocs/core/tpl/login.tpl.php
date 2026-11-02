@@ -589,8 +589,6 @@ if (getDolGlobalString('MAIN_EASTER_EGG_COMMITSTRIP')) {
 }
 ?>
 
-<!-- cookie name used for this session = <?php echo $session_name ?> - can be found also be reading its cookies -->
-	
 <!-- Common footer is not used for login page, this is same than footer but inside login tpl -->
 
 <?php
