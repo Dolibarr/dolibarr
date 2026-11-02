@@ -551,6 +551,41 @@ class SecurityTest extends CommonClassTest
 	}
 
 	/**
+	 * testGeneratedPasswordsFollowTheRules
+	 *
+	 * The 'standard' and 'Perso' generators must give a password that follows their rules, with the random_int() based picking
+	 *
+	 * @return void
+	 */
+	public function testGeneratedPasswordsFollowTheRules()
+	{
+		global $conf, $db, $langs, $user;
+
+		$savPasswordPattern = getDolGlobalString('USER_PASSWORD_PATTERN');
+
+		require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modGeneratePassStandard.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modGeneratePassPerso.class.php';
+
+		$modstandard = new modGeneratePassStandard($db, $conf, $langs, $user);
+		$conf->global->USER_PASSWORD_PATTERN = '14;2;3;2;3;0';
+		$modperso = new modGeneratePassPerso($db, $conf, $langs, $user);
+
+		for ($i = 0; $i < 30; $i++) {
+			$pass = $modstandard->getNewGeneratedPassword();
+			$this->assertEquals(12, strlen($pass), 'standard generator must give 12 chars');
+			$this->assertEquals(1, preg_match('/^[0-9a-zA-Z]{12}$/', $pass), 'standard generator must give only letters and digits: '.$pass);
+
+			$pass = $modperso->getNewGeneratedPassword();
+			$this->assertEquals(14, strlen($pass), 'Perso generator must give 14 chars');
+			$this->assertGreaterThanOrEqual(2, preg_match_all('/[A-Z]/', $pass), 'Perso generator must give at least 2 uppercase: '.$pass);
+			$this->assertGreaterThanOrEqual(3, preg_match_all('/[0-9]/', $pass), 'Perso generator must give at least 3 digits: '.$pass);
+			$this->assertGreaterThanOrEqual(2, preg_match_all('/[^0-9a-zA-Z]/', $pass), 'Perso generator must give at least 2 special chars: '.$pass);
+		}
+
+		$conf->global->USER_PASSWORD_PATTERN = $savPasswordPattern;
+	}
+
+	/**
 	 * testRestrictedArea
 	 *
 	 * @return void

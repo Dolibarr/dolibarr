@@ -19,9 +19,10 @@
  * \file    htdocs/ai/assistant/list_tools.php
  * \ingroup ai
  * \brief   Tools the current user may run, with their input schema, for the
- *          chat's "/" palette. Same filter as the model gets: a tool absent
- *          here is one the model would not be offered either. No AI provider
- *          is involved.
+ *          chat's "/" palette, and the purge of their definitions cache
+ *          (the "/reload" command with action=purge). Same filter as the
+ *          model gets: a tool absent here is one the model would not be
+ *          offered either. No AI provider is involved.
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -60,13 +61,25 @@ if (!isModEnabled('ai') || !getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 if (!$user->hasRight('ai', 'assistant', 'use')) {
 	accessforbidden();
 }
-// The palette can be switched off in the setup of the assistant.
-if (getDolGlobalString('AI_PALETTE_DISABLED')) {
-	accessforbidden('The palette of the chat is disabled');
-}
 aiCheckCsrfToken('ai/assistant/list_tools.php');
 
 top_httphead('application/json');
+
+// The "/reload" command of the chat: purge the cache of the AI tool
+// definitions, so the next request rebuilds it from the current state.
+if (GETPOST('action', 'aZ09') == 'purge') {
+	try {
+		$bridge = new ToolApiBridge($db, $user, $conf);
+		$nbpurged = $bridge->purgeDefsCache();
+		dol_syslog('AI assistant /reload: '.$nbpurged.' tool definitions cache file(s) purged', LOG_INFO, 0, '_ai');
+		print json_encode(array('status' => 'ok', 'purged' => $nbpurged));
+	} catch (Throwable $e) {
+		dol_syslog('AI assistant /reload error: '.$e->getMessage().' in '.$e->getFile().' on line '.$e->getLine(), LOG_ERR, 0, '_ai');
+		print json_encode(array('error' => $e->getMessage()));
+	}
+	$db->close();
+	exit;
+}
 
 $mcp = new McpHandler($db, $user, $conf, McpHandler::CTX_ASSISTANT);
 $mcp->loadTools();

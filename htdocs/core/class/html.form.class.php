@@ -1889,7 +1889,7 @@ class Form
 	 * @param array<string,string|string[]>	$ajaxoptions 		Options for ajax_autocompleter
 	 * @param bool 			$multiple 				add [] in the name of element and add 'multiple' attribute (not working with ajax_autocompleter)
 	 * @param string[] 		$excludeids 			Exclude IDs from the select combo
-	 * @param int<0,1>		$showcode 				Show code
+	 * @param int<0,1>|'supplier'|'customer'	$showcode		Show code (1=code_client and code_fournisseur, 'supplier'=only code_fournisseur, 'customer'=only code_client)
 	 * @return string  		 	            		HTML string with select box for thirdparty.
 	 */
 	public function select_company($selected = '', $htmlname = 'socid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $limit = 0, $morecss = 'minwidth100', $moreparam = '', $selected_input_value = '', $hidelabel = 1, $ajaxoptions = array(), $multiple = false, $excludeids = array(), $showcode = 0)
@@ -1936,6 +1936,12 @@ class Form
 			}
 
 			$out .= ajax_event($htmlname, $events);
+
+			// Label of the greyed line shown when the search returns nothing
+			if (!isset($ajaxoptions['noresultlabel'])) {
+				$langs->load("companies");
+				$ajaxoptions['noresultlabel'] = dol_escape_htmltag($langs->transnoentitiesnoconv("NoThirdPartyFound"));
+			}
 
 			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, getDolGlobalInt('COMPANY_USE_SEARCH_TO_SELECT'), 0, $ajaxoptions);
 		} else {
@@ -2111,7 +2117,7 @@ class Form
 	 * @param string 			$moreparam 		Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
 	 * @param bool 				$multiple 		add [] in the name of element and add 'multiple' attribute
 	 * @param string[] 			$excludeids 	Exclude IDs from the select combo
-	 * @param int<0,1>			$showcode 		Show code in list
+	 * @param int<0,1>|'supplier'|'customer'	$showcode		Show code (1=code_client and code_fournisseur, 'supplier'=only code_fournisseur, 'customer'=only code_client)
 	 * @return array<int,array{key:int,value:string,label:string,labelhtml:string}>|string            	HTML string with
 	 * @see select_company()
 	 * @phpstan-return ($outputmode is 1 ? array<int,array{key:int,value:string,label:string,labelhtml:string}> : string)
@@ -2250,10 +2256,10 @@ class Form
 					$obj = $this->db->fetch_object($resql);
 					$label = '';
 					if ($showcode || getDolGlobalString('SOCIETE_ADD_REF_IN_LIST')) {
-						if (($obj->client) && (!empty($obj->code_client))) {
+						if (($obj->client) && (!empty($obj->code_client)) && $showcode != 'supplier') {
 							$label = $obj->code_client . ' - ';
 						}
-						if (($obj->fournisseur) && (!empty($obj->code_fournisseur))) {
+						if (($obj->fournisseur) && (!empty($obj->code_fournisseur)) && $showcode != 'customer') {
 							$label .= $obj->code_fournisseur . ' - ';
 						}
 						$label .= ' ' . $obj->name;
@@ -2639,9 +2645,10 @@ class Form
 	 * @param	string	$filter		Optional filter criteria. Must be a sanitized string.
 	 * @param	int		$socid		Id of thirdparty
 	 * @param	int		$maxvalue	Max value for lines that can be selected
+	 * @param	int		$projectid	Current project id. Discounts from source invoices in this project are shown first
 	 * @return	int					Return number of qualifed lines in list
 	 */
-	public function select_remises($selected, $htmlname, $filter, $socid, $maxvalue = 0)
+	public function select_remises($selected, $htmlname, $filter, $socid, $maxvalue = 0, $projectid = 0)
 	{
 		// phpcs:enable
 		global $langs, $conf;
@@ -2651,31 +2658,40 @@ class Form
 		// Search for the discounts
 		$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
 		$sql .= " re.description, re.fk_facture_source, re.fk_invoice_supplier_source";
+		if ($projectid > 0) {
+			$sql .= ", f.fk_projet as source_project_id, f.ref as source_invoice_ref";
+		}
 		if ($showsourceinvoice) {
 			// Resolve the source invoice (customer or supplier) in the main query instead of one fetch per line
 			$sql .= ", f.ref as src_cust_ref, f.datef as src_cust_date";
 			$sql .= ", ff.ref as src_supp_ref, ff.datef as src_supp_date";
 		}
 		$sql .= " FROM " . $this->db->prefix() . "societe_remise_except as re";
-		if ($showsourceinvoice) {
+		if ($showsourceinvoice || $projectid > 0) {
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "facture as f ON f.rowid = re.fk_facture_source";
+		}
+		if ($showsourceinvoice) {
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "facture_fourn as ff ON ff.rowid = re.fk_invoice_supplier_source";
 		}
 		$sql .= " WHERE re.fk_soc = " . (int) $socid;
 		$sql .= " AND re.entity = " . ((int) $conf->entity);
 		if ($filter) {
 			$sanitizedfilter = $filter;  // @phan-suppress-current-line SqlInjection
-			if ($showsourceinvoice) {
+			if ($showsourceinvoice || $projectid > 0) {
 				// The joined tables also carry a fk_facture_source column: qualify unprefixed references of the caller filter
 				$sanitizedfilter = preg_replace('/(?<![a-zA-Z0-9_.])fk_facture_source\b/', 're.fk_facture_source', $sanitizedfilter);
 			}
 			$sql .= " AND " . $sanitizedfilter;
 		}
+		$sql .= " ORDER BY";
+		if ($projectid > 0) {
+			$sql .= " " . $this->db->ifsql("f.fk_projet = " . ((int) $projectid), "0", "1") . ",";
+		}
 		if ($showsourceinvoice) {
 			// When the source invoices are shown, their date is the natural order (oldest deposit first)
-			$sql .= " ORDER BY COALESCE(ff.datef, f.datef, re.datec) ASC, re.rowid ASC";
+			$sql .= " COALESCE(ff.datef, f.datef, re.datec) ASC, re.rowid ASC";
 		} else {
-			$sql .= " ORDER BY re.description ASC";
+			$sql .= " re.description ASC, re.rowid ASC";
 		}
 
 		dol_syslog(get_class($this) . "::select_remises", LOG_DEBUG);
@@ -2703,6 +2719,12 @@ class Form
 					}
 					if (preg_match('/\(EXCESS PAID\)/', $desc)) {
 						$desc = preg_replace('/\(EXCESS PAID\)/', $langs->trans("ExcessPaid"), $desc);
+					}
+					if ($projectid > 0 && (int) $obj->source_project_id === (int) $projectid) {
+						$desc = '[' . $langs->trans('Project') . '] ' . $desc;
+						if (!$showsourceinvoice && !empty($obj->source_invoice_ref)) {
+							$desc .= ' - ' . $obj->source_invoice_ref;
+						}
 					}
 
 					$selectstring = '';
@@ -8000,10 +8022,21 @@ class Form
 			print '<form method="POST" action="' . $page . '">';
 			print '<input type="hidden" name="action" value="setmulticurrencyrate">';
 			print '<input type="hidden" name="token" value="' . newToken() . '">';
-			print '<input type="text" class="maxwidth75" name="' . $htmlname . '" value="' . (!empty($rate) ? price(price2num($rate, 'CR')) : 1) . '" spellcheck="false" /> ';
+			// Keep the value entered by the user when the page is submitted again (for example after an error)
+			$ratetoshow = (GETPOSTISSET($htmlname) ? GETPOST($htmlname, 'alpha') : (!empty($rate) ? price(price2num($rate, 'CR')) : 1));
+			print '<input type="text" class="maxwidth75 valignmiddle" name="' . $htmlname . '" value="' . dolPrintHTMLForAttribute((string) $ratetoshow) . '" spellcheck="false" /> ';
+			$arraycalculationmode = array(
+				1 => 'Change ' . $langs->trans("PriceUHT") . ' of lines',
+				2 => 'Change ' . $langs->trans("PriceUHTCurrency") . ' of lines'
+			);
 			print '<select name="calculation_mode" id="calculation_mode">';
-			print '<option value="1">Change ' . $langs->trans("PriceUHT") . ' of lines</option>';
-			print '<option value="2">Change ' . $langs->trans("PriceUHTCurrency") . ' of lines</option>';
+			// With several choices, no choice is preselected so the user must select one, with no risk of a wrong default
+			if (count($arraycalculationmode) > 1) {
+				print '<option value="-1">&nbsp;</option>';
+			}
+			foreach ($arraycalculationmode as $key => $val) {
+				print '<option value="' . $key . '">' . $val . '</option>';
+			}
 			print '</select> ';
 			print ajax_combobox("calculation_mode");
 			print '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans("Modify") . '">';
@@ -8046,9 +8079,10 @@ class Form
 	 * @param int 		$discount_type 	0 => customer discount, 1 => supplier discount
 	 * @param int		$filterabsolutediscount		Filter absolute discount
 	 * @param int		$filtercreditnote			Filter credit note
+	 * @param int 		$projectid 		Current project id used to prioritize related customer discounts
 	 * @return    void
 	 */
-	public function form_remise_dispo($page, $selected, $htmlname, $socid, $amount, $filter = '', $maxvalue = 0, $more = '', $hidelist = 0, $discount_type = 0, $filterabsolutediscount = 0, $filtercreditnote = 0)
+	public function form_remise_dispo($page, $selected, $htmlname, $socid, $amount, $filter = '', $maxvalue = 0, $more = '', $hidelist = 0, $discount_type = 0, $filterabsolutediscount = 0, $filtercreditnote = 0, $projectid = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -8105,7 +8139,7 @@ class Form
 					$newfilter .= ' AND (' . $sanitizedfilter . ')';
 				}
 				// output the combo of discounts
-				$nbqualifiedlines = $this->select_remises((string) $selected, $htmlname, $newfilter, $socid, $maxvalue);
+				$nbqualifiedlines = $this->select_remises((string) $selected, $htmlname, $newfilter, $socid, $maxvalue, $projectid);
 				if ($nbqualifiedlines > 0) {
 					print ' &nbsp; <input type="submit" class="button smallpaddingimp" value="' . dol_escape_htmltag($langs->trans("UseLine")) . '"';
 					if (!empty($discount_type) && $filter && $filter != "fk_invoice_supplier_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')") {
@@ -12782,7 +12816,7 @@ class Form
 
 		$out = '';
 		$sql = "SELECT rowid, label FROM " . $this->db->prefix() . "c_exp_tax_cat WHERE active = 1";
-		$sql .= " AND entity IN (0," . getEntity('exp_tax_cat') . ")";
+		$sql .= " AND entity IN (0," . getEntity('c_exp_tax_cat') . ")";
 		if (!empty($excludeid)) {
 			$sql .= " AND rowid NOT IN (" . $this->db->sanitize(implode(',', $excludeid)) . ")";
 		}
@@ -12868,11 +12902,11 @@ class Form
 	 */
 	public function selectExpenseRanges($selected = '', $htmlname = 'fk_range', $useempty = 0)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$out = '';
 		$sql = "SELECT rowid, range_ik FROM " . $this->db->prefix() . "c_exp_tax_range";
-		$sql .= " WHERE entity = " . ((int) $conf->entity) . " AND active = 1";
+		$sql .= " WHERE entity IN (0," . getEntity('c_exp_tax_range') . ") AND active = 1";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

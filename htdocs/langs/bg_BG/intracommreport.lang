@@ -7,13 +7,13 @@ IntracommReportSetup = Настройка на модул Intracommreport
 IntracommReportAbout = Относно intracommreport
 
 # Setup
-INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
+INTRACOMMREPORT_NUM_AGREMENT=Номер на одобрение (издаден от съответния CISD)
 INTRACOMMREPORT_TYPE_ACTEUR=Тип на актьора
-INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
+INTRACOMMREPORT_ROLE_ACTEUR=Роля на участника
 INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les uvods
-INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
-INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
-INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Ниво на задължение за изпращанията
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Категория услуги от вида „Разходи за доставка“
+INTRACOMMREPORT_NUM_DECLARATION=Номер на декларатора
 # Menu
 MenuIntracommReport=Intracomm доклад
 MenuIntracommReportNew=Нова декларация

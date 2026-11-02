@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=Érvényesítve
 StatusReceptionProcessedShort=Feldolgozva
 ReceptionSheet=Átvételi lap
 ValidateReception=Érvényesítse a vételt
+DeleteReception=Delete reception
 ConfirmDeleteReception=Biztosan törölni szeretné ezt az átvételt?
 ConfirmValidateReception=Biztosan érvényesíteni kívánja ezt a fogadást a következő hivatkozással: <b>%s</b>?
 ConfirmCancelReception=Biztosan meg akarja szakítani ezt az átvételt?

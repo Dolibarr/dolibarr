@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=पेपैल मॉड्यूल सेटअप
-PaypalDesc=यह मॉड्यूल ग्राहकों को <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a> के माध्यम से भुगतान करने की अनुमति देता है। इसका उपयोग एड-हॉक भुगतान या डॉलीबार ऑब्जेक्ट (इनवॉइस, ऑर्डर, ...) से संबंधित भुगतान के लिए किया जा सकता है।
+PaypalDesc=This module allows payment by customers via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. This can be used for an ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
 PaypalOrCBDoPayment=पेपैल (कार्ड या पेपैल) के साथ भुगतान करें
 PaypalDoPayment=पेपैल से भुगतान करें
 PAYPAL_API_SANDBOX=मोड परीक्षण/सैंडबॉक्स
@@ -19,7 +19,7 @@ NewOnlinePaymentFailed=नया ऑनलाइन भुगतान प्र
 ONLINE_PAYMENT_SENDEMAIL=प्रत्येक भुगतान प्रयास के बाद सूचना हेतु ईमेल पता (सफलता और असफलता के लिए)
 ReturnURLAfterPayment=भुगतान के बाद वापसी URL
 ValidationOfOnlinePaymentFailed=ऑनलाइन भुगतान का सत्यापन विफल हुआ
-PaymentSystemConfirmPaymentPageWasCalledButFailed=भुगतान प्रणाली द्वारा भुगतान पुष्टिकरण पृष्ठ पर कॉल करने पर त्रुटि लौटी
+PaymentSystemConfirmPaymentPageWasCalledButFailed=The payment confirmation page was called by the online payment system and returned an error
 SetExpressCheckoutAPICallFailed=SetExpressCheckout API कॉल विफल.
 DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API कॉल विफल.
 DetailedErrorMessage=विस्तृत त्रुटि संदेश

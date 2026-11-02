@@ -10,23 +10,24 @@ SalariesPaymentsOf=%s'nin maaş ödemeleri
 ShowSalaryPayment=Maaş ödemesi göster
 SalaryID=Maaş Kimliği
 SalaryAmount=Maaş tutarı
-SalaryDate=Salary date
+SalaryDate=Maaş tarihi
 SalaryPaid=Ödenen ücret
-SalaryNotPaid=Salary not paid
+SalaryNotPaid=Maaş ödenmedi.
 
-SalarySlip=Salary slip
-StandardSalaryDocModel=Standard salary slip document
+SalarySlip=Maaş bordrosu
+StandardSalaryDocModel=Standart maaş bordrosu belgesi
 
-BasicSalary=Basic salary
+BasicSalary=Temel ücret
 Bonus=Bonus
-Allowance=Allowance
-Overtime=Overtime
-Deduction=Deduction
-Deductions=Deductions
-Earnings=Earnings
-TotalEarnings=Total earnings
-TotalDeductions=Total deductions
+Allowance=Ödenek
+Overtime=Mesai
+Deduction=Düşüş
+Deductions=Düşüşler
+Earnings=Kazançlar
+TotalEarnings=Toplam kazançlar
+TotalDeductions=Toplam kesintiler
 NetPaid=Net ödenen
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Maaşlarda "kullanıcılar" için varsayılan olarak kullanılan hesap (Hesap Planı'ndan)
@@ -41,7 +42,7 @@ AllSalaries=Tüm maaşlar
 SalariesStatistics=Maaş istatistikleri
 SalariesAndPayments=Maaşlar ve ödemeler
 UserPaySlip=Maaş Bordrosu
-PayPeriod=Pay period
+PayPeriod=Ödeme dönemi
 
 # THM / TJM
 THM=Ortalama saat ücreti
@@ -55,8 +56,6 @@ FillFieldFirst=Önce çalışan alanını doldurun
 UpdateAmountWithLastSalary=Son maaş tutarını belirleyin
 MakeTransferRequest=Aktarım talebinde bulunun
 VirementOrder=Kredi transferi talebi
-WithdrawalReceipt=Kredi transferi talimatı
-OrderWaiting=Bekleyen sipariş
 FillEndOfMonth=Ay sonu
 
 # Shortcuts

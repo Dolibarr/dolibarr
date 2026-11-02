@@ -75,6 +75,12 @@ fi
 # their files into it (rtk: ~/.config/rtk, git: ~/.config/git, ...).
 chown "$USER_NAME:$GROUP_NAME" "/home/$USER_NAME"
 
+# The state file of Claude Code ~/.claude.json can not be bind mounted (it is replaced at
+# each write): it is a link to ~/.claude/.claude.json, into the mounted directory ~/.claude.
+if [ ! -e "/home/$USER_NAME/.claude.json" ]; then
+    runuser -u "$USER_NAME" -- ln -s .claude/.claude.json "/home/$USER_NAME/.claude.json"
+fi
+
 # Add the user to the group owning the Apache logs of the host (mounted by claudes.sh),
 # so they can be read. The group is created when the GID does not exist into the image.
 if [ -n "${HOST_APACHE_LOG_GID:-}" ] && [ "$HOST_APACHE_LOG_GID" != "0" ]; then

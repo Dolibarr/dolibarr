@@ -5,7 +5,7 @@ StripeOrCBDoPayment=Pay with credit card or Stripe
 FollowingUrlAreAvailableToMakePayments=Following URLs are available to offer a page to a customer to make a payment on Dolibarr objects
 PaymentForm=Payment form
 WelcomeOnPaymentPage=Welcome to our online payment service
-ThisScreenAllowsYouToPay=This screen allow you to make an online payment to %s.
+ThisScreenAllowsYouToPay=This screen allows you to make an online payment to %s.
 ThisIsInformationOnPayment=This is information on payment to do
 ToComplete=To complete
 YourEMail=Email to receive payment confirmation
@@ -25,7 +25,7 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL to offer a %s online payment page o
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL to offer a %s online payment page for a member subscription
 ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment page for payment of a donation
 YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
-YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful or failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Setup your Stripe with url <b>%s</b> to have payment created automatically when validated by Stripe.
 AccountParameter=Account parameters
 UsageParameter=Usage parameters
@@ -110,3 +110,4 @@ PAYBOX_PBX_RANG=Value for PBX Rang
 PAYBOX_PBX_IDENTIFIANT=Value for PBX ID
 PAYBOX_HMAC_KEY=HMAC key
 FeatureNotUsedAccordingtoSetup=Feature not used according to your %s setup
+PaymentRecordedButPostPocessingKo=Your payment was recorded by the payment system. However, it appears that our post-payment processing could not be fully completed. We were alerted and will try to solve this soon. We recommend you to not try to pay a second time, and send us a screenshot of this page by email to be sure so we take into account the issue.

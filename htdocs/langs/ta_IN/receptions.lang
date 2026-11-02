@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=சரிபார்க்கப்பட்ட�
 StatusReceptionProcessedShort=செயலாக்கப்பட்டது
 ReceptionSheet=வரவேற்பு தாள்
 ValidateReception=Validate reception
+DeleteReception=Delete reception
 ConfirmDeleteReception=இந்த வரவேற்பை நிச்சயமாக நீக்க விரும்புகிறீர்களா?
 ConfirmValidateReception=Are you sure you want to validate this reception with the reference <b>%s</b>?
 ConfirmCancelReception=இந்த வரவேற்பை நிச்சயமாக ரத்துசெய்ய விரும்புகிறீர்களா?

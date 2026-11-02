@@ -154,16 +154,24 @@ fi
 
 # Share the Claude Code configuration of the host (credentials, settings, plugins,
 # memory and sessions of the projects) with the container. It is mounted at the
-# same path, so the absolute paths it contains stay valid. CLAUDE_CONFIG_DIR
-# makes Claude Code keep its state file into this directory (~/.claude/.claude.json)
-# instead of ~/.claude.json, a single file that can not be bind mounted safely
-# (it is replaced at each write).
+# same path, so the absolute paths it contains stay valid. The state file
+# ~/.claude.json (MCP servers, projects...) is replaced at each write, so it can
+# not be bind mounted safely: into the container, ~/.claude.json is a link to
+# ~/.claude/.claude.json (see docker-entrypoint.sh). The state file of the host is
+# copied there at each launch, so the container gets the MCP servers of the host
+# (the changes made into the container are lost at the next launch).
 mkdir -p "$HOME/.claude"
-CLAUDE_ENV_ARGS=(-e "CLAUDE_CONFIG_DIR=$HOME/.claude")
+if [ -f "$HOME/.claude.json" ] && [ ! -L "$HOME/.claude.json" ]; then
+    echo "Copy $HOME/.claude.json into $HOME/.claude/.claude.json"
+    cp -p "$HOME/.claude.json" "$HOME/.claude/.claude.json"
+fi
+CLAUDE_ENV_ARGS=()
 # Pass the API key or the OAuth token of the host when one is set (otherwise the
 # credentials of ~/.claude/.credentials.json are used).
 # DOCKER_ALLOW_SMTP=1 starts the container without the block of the outbound SMTP ports.
-for VAR in ANTHROPIC_API_KEY CLAUDE_CODE_OAUTH_TOKEN DOCKER_ALLOW_SMTP; do
+# TERM and COLORTERM give the color support of the host terminal (docker sets TERM=xterm by default,
+# so Claude Code would fall back to 16 colors and display, for example, its orange logo in red).
+for VAR in ANTHROPIC_API_KEY CLAUDE_CODE_OAUTH_TOKEN DOCKER_ALLOW_SMTP TERM COLORTERM; do
     VAR_VALUE=$(printenv "$VAR" || true)
     if [ -n "$VAR_VALUE" ]; then
         CLAUDE_ENV_ARGS+=(-e "$VAR=$VAR_VALUE")

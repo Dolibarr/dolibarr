@@ -61,11 +61,6 @@ if (!isModEnabled('ai') || !getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 if (!$user->hasRight('ai', 'assistant', 'use')) {
 	accessforbidden();
 }
-// The palette can be switched off in the setup of the assistant: the commands
-// then stop, the "@" / "#" suggestions of the chat input stay.
-if (getDolGlobalString('AI_PALETTE_DISABLED') && GETPOST('action', 'aZ09') !== 'suggest') {
-	accessforbidden('The palette of the chat is disabled');
-}
 aiCheckCsrfToken('ai/assistant/command.php');
 
 top_httphead('application/json');

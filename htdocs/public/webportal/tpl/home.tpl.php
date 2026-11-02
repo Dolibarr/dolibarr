@@ -15,9 +15,12 @@ global $hookmanager, $langs;
 /**
  * @var Context $context
  * @var Translate $langs
+ * @var HookManager $hookmanager
  */
 
-$navMenu = $navUserMenu = array();
+/** @var array<string,array<string,mixed>> $navMenu */
+$navMenu = array();
+/** @var array<string,array<string,mixed>> $navGroupMenu */
 $navGroupMenu = array(
 	'administrative' => array(
 		'id' => 'administrative',
@@ -27,6 +30,10 @@ $navGroupMenu = array(
 		'children' => array()
 	),
 );
+'@phan-var-force array<string,array<string,mixed>> $navGroupMenu';
+/** @var array<string,array<string,mixed>> $navUserMenu */
+$navUserMenu = array();
+/** @var int $maxTopMenu */
 $maxTopMenu = 0;
 
 if ($context->userIsLog()) {
