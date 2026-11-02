@@ -284,7 +284,7 @@ class SupplierOrders extends DolibarrApi
 
 			$this->order->$field = $this->_checkValForAPI($field, $value, $this->order);
 		}
-		if (!array_keys($request_data, 'date')) {
+		if (!array_key_exists('date', $request_data)) {
 			$this->order->date = dol_now();
 		}
 		/* We keep lines as an array
