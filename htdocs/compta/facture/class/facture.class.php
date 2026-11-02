@@ -4719,8 +4719,15 @@ class Facture extends CommonInvoice
 				$ranktouse = $rangmax + 1;
 			}
 
-			// Same gate as in updateline(): the -abs() forcing on credit note lines is relaxed only when
-			// both FACTURE_ENABLE_NEGATIVE_LINES and INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN are enabled.
+			// Same gate as in updateline():
+			// On standard/deposit invoices:
+			// - common lines: unit price, qty and total prices are positive
+			// - discount lines: unit price is negative, qty is 1 and total prices are negative
+			// For credit notes invoices (TYPE_CREDIT_NOTE):
+			// - common lines: unit_price is forced as negative and qty as positive
+			// - discount lines: not applicable
+			//
+			// Note: the -abs() forcing on credit note lines is relaxed only when both FACTURE_ENABLE_NEGATIVE_LINES and INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN are enabled.
 			$apply_abs_price_on_credit_note = false;
 			if ($this->type == self::TYPE_CREDIT_NOTE && !(getDolGlobalInt('FACTURE_ENABLE_NEGATIVE_LINES') && getDolGlobalInt('INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN'))) {
 				$apply_abs_price_on_credit_note = true;
@@ -5062,12 +5069,19 @@ class Facture extends CommonInvoice
 				$rangmax = $this->line_max($fk_parent_line);
 				$this->line->rang = $rangmax + 1;
 			}
+
+			// On standard/deposit invoices:
+			// - common lines: unit price, qty and total prices are positive
+			// - discount lines: unit price is negative, qty is 1 and total prices are negative
+			// For credit notes invoices (TYPE_CREDIT_NOTE):
+			// - common lines: unit_price is forced as negative and qty as positive
+			// - discount lines: not applicable
+			//
+			// Note: the -abs() forcing on credit note lines is relaxed only when both FACTURE_ENABLE_NEGATIVE_LINES and INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN are enabled.
 			$apply_abs_price_on_credit_note = false;
 			if ($this->type == self::TYPE_CREDIT_NOTE && !(getDolGlobalInt('FACTURE_ENABLE_NEGATIVE_LINES') && getDolGlobalInt('INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN'))) {
 				$apply_abs_price_on_credit_note = true;
 			}
-
-
 
 			$this->line->id = $rowid;
 			$this->line->rowid = $rowid;
