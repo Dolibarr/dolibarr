@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT."/ticket/class/ticket.class.php";
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "ticket"));
+$langs->loadLangs(array("admin", "other", "ticket"));
 
 // Access control
 if (!$user->admin) {

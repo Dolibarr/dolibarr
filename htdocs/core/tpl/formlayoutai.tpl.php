@@ -146,7 +146,7 @@ if (!empty($showlinktolayout)) {
 	if (!empty($formwebsite) && is_object($formwebsite)) {
 		$out .= $formwebsite->getContentPageTemplate($htmlname);
 	} else {
-		if (!is_object($formmail)) {
+		if (empty($formmail) || !is_object($formmail)) {
 			// Create form object
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 			$formmail = new FormMail($db);
@@ -174,7 +174,7 @@ if (!empty($showlinktoai)) {
 		$aiprompt = make_substitutions($aiprompt, $formai->substit);
 	}
 	$format = '';
-	if (is_object($formmail) && !empty($formmail->withaiprompt)) {
+	if (!empty($formmail) && is_object($formmail) && !empty($formmail->withaiprompt)) {
 		$format = $formmail->withaiprompt;
 	}
 	$out .= $formai->getSectionForAIEnhancement($showlinktoai, $format, $htmlname, $onlyenhancements, $aiprompt);

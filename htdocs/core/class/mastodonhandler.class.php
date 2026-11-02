@@ -34,7 +34,7 @@ class MastodonHandler
 	/**
 	 * @var array<array{id:string,content:string,created_at:string,url:string,media_url:string}|array{}>    Posts of social network (Mastodon)
 	 */
-	private $posts;
+	private $posts = [];
 
 	/**
 	 * @var String Error code (or message)

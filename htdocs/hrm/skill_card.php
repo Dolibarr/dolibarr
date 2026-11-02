@@ -228,6 +228,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd && is_object($result)) {
+		'@phan-var-force Skill $result';
 		// createFromClone() names the copy "Copy of ...": apply the label typed in the clone dialog
 		$clonelabel = GETPOST('clone_label', 'alphanohtml');
 		if ($clonelabel !== '' && $clonelabel !== $result->label) {

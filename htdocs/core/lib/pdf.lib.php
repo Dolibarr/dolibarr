@@ -1322,7 +1322,7 @@ function pdf_bank($pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, $
 				$pdf->SetXY($curx, $cury + 1);
 				$curx += $tmplength;
 				$pdf->SetFont('', 'B', $default_font_size - $diffsizecontent);
-				$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities($val), 0, 'C', false);
+				$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities($account->getBankFieldLabel($val)), 0, 'C', false);
 				if (empty($onlynumber)) {
 					$pdf->line($curx, $cury + 1, $curx, $cury + 7);
 				}
@@ -3372,7 +3372,9 @@ function pdf_render_subtotals(
 		$pdf->setPage($savePage);
 	}
 
-	$pdf->SetTextColor(colorIsLight(implode(',', $bgColor)));
+	// Dark text on a light background, white text on a dark one (a single argument of SetTextColor() is a gray level 0-255)
+	$textGray = (colorIsLight(implode(',', $bgColor)) === 0) ? 255 : 0;
+	$pdf->SetTextColor($textGray);
 	$pdf->SetXY($saveX, $curY);
 	$generator->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
 	$generator->setAfterColsLinePositionsData('desc', $pdf->GetY(), $pdf->getPage());

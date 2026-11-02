@@ -292,6 +292,7 @@ if ($modulepart === 'medias' && $entity != $conf->entity) {
 	$conf->setValues($db);
 }
 
+$hookmanager->initHooks(array('viewimage'));
 $check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $user, $refname);
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];

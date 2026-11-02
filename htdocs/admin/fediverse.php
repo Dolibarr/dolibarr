@@ -120,8 +120,8 @@ if ($action == 'add') {
 
 		$boxlabel = '(SocialNetwoksInformations)';
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file, note)";
-		$sql .= " VALUES ('box_fediverse.php', '".$db->escape($socialNetworkName)."')";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file, note, entity)";
+		$sql .= " VALUES ('box_fediverse.php', '".$db->escape($socialNetworkName)."', ".((int) $conf->entity).")";
 
 		if (!$db->query($sql)) {
 			dol_print_error($db);
@@ -149,7 +149,7 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes') {
 	$error = 0;
 	$key = GETPOST('key', 'alpha');
 	$name = '';
-	$sqlgetName = "SELECT note FROM ".MAIN_DB_PREFIX."boxes_def WHERE rowid=".((int) $key);
+	$sqlgetName = "SELECT note FROM ".MAIN_DB_PREFIX."boxes_def WHERE rowid = ".((int) $key)." AND file = 'box_fediverse.php' AND entity = ".((int) $conf->entity);
 
 	$resqName = $db->query($sqlgetName);
 	if ($resqName) {
@@ -166,6 +166,7 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes') {
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def";
 	$sql .= " WHERE rowid = ".((int) $key);
+	$sql .= " AND file = 'box_fediverse.php' AND entity = ".((int) $conf->entity);	// Only a social network box of this entity
 	$resql2 = $db->query($sql);
 
 	if (!$resql1 || !$resql2) {
@@ -188,8 +189,13 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes') {
 if ($action == 'updatesocialnetwork') {
 	$error = 0;
 	$id = GETPOST('key', 'alpha');
-	$name = GETPOST('socialnetwork_name');
-	$url = GETPOST('socialnetwork_url');
+	$url = GETPOST('socialnetwork_url', 'alpha');
+	// The name is the key of the setup and of the widget, and the type of network: it is not changed, it is read from the widget
+	$name = '';
+	$resqName = $db->query("SELECT note FROM ".MAIN_DB_PREFIX."boxes_def WHERE rowid = ".((int) $id)." AND file = 'box_fediverse.php' AND entity = ".((int) $conf->entity));
+	if ($resqName && ($objName = $db->fetch_object($resqName))) {
+		$name = $objName->note;
+	}
 	$paramsKey = GETPOST('paramsKey', 'array');
 	$paramsVal = GETPOST('paramsVal', 'array');
 
@@ -222,6 +228,11 @@ if ($action == 'updatesocialnetwork') {
 		if (!isset($socialNetworkData[$newKey]) || $socialNetworkData[$newKey] !== $newValue) {
 			$socialNetworkData[$newKey] = $newValue;
 		}
+	}
+	if (empty($name) || !is_array($socialNetworkData)) {
+		$error++;
+	} elseif (!empty($url)) {
+		$socialNetworkData['url'] = $url;
 	}
 	if (!$error) {
 		$newData = json_encode($socialNetworkData);
@@ -459,6 +470,7 @@ if ($action == 'editsocialnetwork' && GETPOST('paramkey', 'alpha')) {
 }
 $sql = "SELECT rowid, file, note FROM ".MAIN_DB_PREFIX."boxes_def";
 $sql .= " WHERE file = 'box_fediverse.php'";
+$sql .= " AND entity = ".((int) $conf->entity);
 $sql .= " ORDER BY note";
 
 dol_syslog("select socialnetworks boxes", LOG_DEBUG);
@@ -508,7 +520,7 @@ if ($resql) {
 
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans("Title")."</td>";
-		print '<td><input type="text" class="flat minwidth300" name="socialnetwork_name" value="'.dol_escape_htmltag($socialNetworkTitle).'" '.($action != "editsocialnetwork" ? 'disabled' : '').'></td>';
+		print '<td><input type="text" class="flat minwidth300" name="socialnetwork_name" value="'.dol_escape_htmltag($socialNetworkTitle).'" disabled></td>';
 		print '</tr>'."\n";
 
 		print '<tr class="oddeven">';
@@ -603,7 +615,7 @@ $db->close();
 function _isInBoxListFediverse(int $id, array $boxlist)
 {
 	foreach ($boxlist as $box) {
-		if ($box->boxcode === "lastfediverseinfos") {
+		if ($box->boxcode === "lastfediverseinfos" && (int) $box->box_id === $id) {
 			return true;
 		}
 	}

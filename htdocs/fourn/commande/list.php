@@ -399,7 +399,7 @@ if (empty($reshook)) {
 	}
 
 	// Mass action to generate vendor bills
-	if (!$error && $massaction == 'confirm_createsupplierbills') {
+	if (!$error && $massaction == 'confirm_createsupplierbills' && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))) {
 		$orders = $toselect;	// Ids already checked for access by the mass actions include
 		$createbills_onebythird = GETPOSTINT('createbills_onebythird');
 		$validate_invoices = GETPOSTINT('validate_invoices');

@@ -256,16 +256,16 @@ if (empty($reshook)) {
 						$sendto = str_replace(',', ' ', dolGetFirstLastname($obj->firstname, $obj->lastname))." <".$obj->email.">";
 
 						// Make substitutions on topic and body. From (AA=YY;BB=CC;...) we keep YY, CC, ...
-						$other = explode(';', $obj->other);
-						$tmpfield = explode('=', $other[0], 2);
+						$other = explode(';', (string) $obj->other);
+						$tmpfield = explode('=', ($other[0] ?? ''), 2);
 						$other1 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
-						$tmpfield = explode('=', $other[1], 2);
+						$tmpfield = explode('=', ($other[1] ?? ''), 2);
 						$other2 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
-						$tmpfield = explode('=', $other[2], 2);
+						$tmpfield = explode('=', ($other[2] ?? ''), 2);
 						$other3 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
-						$tmpfield = explode('=', $other[3], 2);
+						$tmpfield = explode('=', ($other[3] ?? ''), 2);
 						$other4 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
-						$tmpfield = explode('=', $other[4], 2);
+						$tmpfield = explode('=', ($other[4] ?? ''), 2);
 						$other5 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
 
 						$signature = ((!empty($user->signature) && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? $user->signature : '');

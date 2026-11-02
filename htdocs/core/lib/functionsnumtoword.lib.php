@@ -113,7 +113,8 @@ function dol_convertToWord($num, $langs, $currency = '', $centimes = false)
 		for ($i = 0; $i < $nboflevels; $i++) {
 			$levels--;
 			$hundreds = (int) ((int) $num_levels[$i] / 100);
-			$hundreds = ($hundreds ? ' '.$list1[$hundreds].' '.$langs->transnoentities('hundred').($hundreds == 1 ? '' : 's').' ' : '');
+			// No plural 's': "seven hundred", "siebenhundert", "settecento"... (French has its own converter)
+			$hundreds = ($hundreds ? ' '.$list1[$hundreds].' '.$langs->transnoentities('hundred').' ' : '');
 			$tens = (int) ((int) $num_levels[$i] % 100);
 			$singles = '';
 			if ($tens < 20) {

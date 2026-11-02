@@ -619,12 +619,16 @@ function ajax_event($htmlname, $events)
 				var htmlname = obj.htmlname;
 				var showempty = obj.showempty;
 			    console.log("Run runJsCodeForEvent-'.$htmlname.' from ajax_combobox id="+id+" method="+method+" showempty="+showempty+" url="+url+" htmlname="+htmlname);
+				// The token is required because the request carries an "action" parameter: with
+				// MAIN_SECURITY_CSRF_WITH_TOKEN >= 3 (the default), such a GET is refused without it.
+				// currentToken() is used and not newToken() because the called pages set NOTOKENRENEWAL.
 				$.getJSON(url,
 						{
 							action: method,
 							id: id,
 							htmlname: htmlname,
-							showempty: showempty
+							showempty: showempty,
+							token: \''.currentToken().'\'
 						},
 						function(response) {
 							$.each(obj.params, function(key,action) {

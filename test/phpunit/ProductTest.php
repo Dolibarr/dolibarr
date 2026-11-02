@@ -25,12 +25,13 @@
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.product.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -230,5 +231,43 @@ class ProductTest extends CommonClassTest
 		$this->assertLessThan($result, 0);
 
 		return $result;
+	}
+
+	/**
+	 * testUpdateBuyPriceKeepsPriceLine
+	 *
+	 * Setting a supplier price again, without the id of its line, must update the line and keep its history.
+	 *
+	 * @return	void
+	 */
+	public function testUpdateBuyPriceKeepsPriceLine()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$societe = new Societe($db);
+		$societe->fetch(1);
+
+		$product = new ProductFournisseur($db);
+		$product->initAsSpecimen();
+		$product->ref = 'PHPUNIT_KEEP_PRICELINE_'.dol_now();
+		$productid = $product->create($user);
+		$this->assertGreaterThan(0, $productid, $product->errorsToString());
+
+		$ref_fourn = 'SUPPLIER_REF_PHPUNIT_KEEP_'.dol_now();
+		$ids = array();
+		foreach (array(10, 12) as $price) {
+			$productsupplier = new ProductFournisseur($db);
+			$productsupplier->id = $productid;
+			$ids[] = $productsupplier->update_buyprice(1, $price, $user, 'HT', $societe, 0, $ref_fourn, 0, 0, 0, 0, 0, 0, '', array(), '', $price, 'HT', 1, $conf->currency);
+		}
+		$this->assertGreaterThan(0, $ids[0], 'The price line must be created');
+		$this->assertEquals($ids[0], $ids[1], 'The price line must be kept');
+		$this->assertCount(2, $productsupplier->listProductFournisseurPriceLog($ids[0]), 'The history must contain the 2 prices');
+
+		$product->delete($user);
 	}
 }

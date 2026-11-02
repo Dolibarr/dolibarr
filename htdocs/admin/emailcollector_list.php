@@ -850,7 +850,7 @@ if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords 
 }
 
 
-dol_get_fiche_end();
+print dol_get_fiche_end();
 
 
 // End of page

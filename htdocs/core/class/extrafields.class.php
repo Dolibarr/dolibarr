@@ -3307,6 +3307,9 @@ class ExtraFields
 		if ($type == 'sellist') {
 			return ($v == '0');
 		}
+		if (in_array($type, array('int', 'double', 'price'))) {
+			return false;
+		}
 		return empty($v);  // Note empty('0') is also true, tested 7.0 up to 8.3.12
 	}
 }
