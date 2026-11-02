@@ -177,6 +177,10 @@ class AllTests
 		$suite->addTestSuite('AdminLibTest');
 		require_once dirname(__FILE__).'/RestlerAutoLoaderTest.php';
 		$suite->addTestSuite('RestlerAutoLoaderTest');
+		require_once dirname(__FILE__).'/ApiEndpointDiscoveryTest.php';
+		$suite->addTestSuite('ApiEndpointDiscoveryTest');
+		require_once dirname(__FILE__).'/ApiEndpointDiscoveryEquivalenceTest.php';
+		$suite->addTestSuite('ApiEndpointDiscoveryEquivalenceTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeTest.php';
 		$suite->addTestSuite('AiMcpApiBridgeTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeDocumentsTest.php';
@@ -465,6 +469,8 @@ class AllTests
 			$suite->addTestSuite('RestAPIBankAccountsTest');
 			require_once dirname(__FILE__).'/RestAPISupplierOrderTest.php';
 			$suite->addTestSuite('RestAPISupplierOrderTest');
+			require_once dirname(__FILE__).'/RestAPICategoriesTest.php';
+			$suite->addTestSuite('RestAPICategoriesTest');
 
 			// Old WS
 			require_once dirname(__FILE__).'/WebservicesProductsTest.php';
