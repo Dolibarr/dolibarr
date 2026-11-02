@@ -2716,93 +2716,50 @@ class ToolApiBridge extends McpTool
 	/**
 	 * Discover the REST API endpoints of every enabled module.
 	 *
-	 * Mirrors the scan htdocs/api/index.php performs to register endpoints with
-	 * Restler, so the bridge exposes exactly the API surface the REST layer
-	 * exposes — external modules included — instead of a list maintained by hand.
+	 * The walk itself lives in dolGetApiEndpoints(), shared with
+	 * htdocs/api/index.php, so the bridge exposes exactly the API surface the REST
+	 * layer exposes - external modules included - instead of a copy of that scan
+	 * kept in step by hand.
 	 *
-	 * The walk is the same in both places: dolGetModulesDirs() gives the module
-	 * directories, each mod*.class.php names a module, getModuleDirForApiClass()
-	 * maps it to the directory holding its API classes, and every
-	 * api_<key>.class.php there is one endpoint. A few modules are named
-	 * differently in their descriptor and in isModEnabled(); those exceptions are
-	 * copied from api/index.php rather than reinvented, so the two stay in step.
-	 *
-	 * Note the class name is resolved through class_exists(), which is
-	 * case-insensitive in PHP: api_agendaevents.class.php yields the candidate
-	 * "Agendaevents" and still matches the declared AgendaEvents. Reflection is
-	 * then used to recover the real spelling for display.
+	 * What stays here is what is the bridge's own: the key is the file suffix and
+	 * not the class name, because it is the tool name the model sees; the framework
+	 * endpoints are left out; and the class is still resolved lazily by
+	 * resolveEndpointClass(), which is also where the label is taken from the class
+	 * docblock.
 	 *
 	 * @return array<string, array{module:string, path:string, candidate:string, class:string, label:string}> Endpoints keyed by name
 	 */
 	private function discoverEndpoints(): array
 	{
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/api.lib.php';
+
 		$endpoints = [];
 
-		foreach (dolGetModulesDirs() as $dir) {
-			$handle = @opendir(dol_osencode($dir));
-			if (!is_resource($handle)) {
+		foreach (dolGetApiEndpoints(true, true) as $endpoint) {
+			$regapi = [];
+			$file = basename($endpoint['path']);
+			if (in_array($file, ['api_setup.class.php', 'api_login.class.php', 'api_status.class.php'], true)) {
+				continue;	// Framework plumbing, not business endpoints. api_access is left out by the shared scan.
+			}
+			if (!preg_match("/^api_(.*)\\.class\\.php$/i", $file, $regapi)) {
 				continue;
 			}
 
-			while (($file = readdir($handle)) !== false) {
-				$regmod = [];
-				if (!is_readable($dir.$file) || !preg_match("/^mod(.*)\\.class\\.php$/i", $file, $regmod)) {
-					continue;
-				}
-
-				$module = strtolower($regmod[1]);
-				$moduledirforclass = getModuleDirForApiClass($module);
-
-				// Same descriptor-name to module-name exceptions as api/index.php.
-				$modulenameforenabled = $module;
-				if ($module == 'propale') {
-					$modulenameforenabled = 'propal';
-				} elseif ($module == 'supplierproposal') {
-					$modulenameforenabled = 'supplier_proposal';
-				} elseif ($module == 'ficheinter') {
-					$modulenameforenabled = 'intervention';
-				} elseif ($module == 'product' && !isModEnabled('product') && isModEnabled('service')) {
-					$modulenameforenabled = 'service';
-				}
-
-				if (!isModEnabled($modulenameforenabled)) {
-					continue;	// A disabled module exposes no tools.
-				}
-
-				$dir_part = dol_buildpath('/'.$moduledirforclass.'/class/');
-				$handle_part = @opendir(dol_osencode($dir_part));
-				if (!is_resource($handle_part)) {
-					continue;
-				}
-
-				while (($file_searched = readdir($handle_part)) !== false) {
-					if (in_array($file_searched, ['api_access.class.php', 'api_setup.class.php', 'api_login.class.php', 'api_status.class.php'], true)) {
-						continue;	// Framework plumbing, not business endpoints.
-					}
-					$regapi = [];
-					if (!is_readable($dir_part.$file_searched) || !preg_match("/^api_(.*)\\.class\\.php$/i", $file_searched, $regapi)) {
-						continue;
-					}
-
-					$key = strtolower($regapi[1]);
-					if (isset($endpoints[$key])) {
-						continue;	// First module wins, as in the REST layer.
-					}
-
-					$endpoints[$key] = [
-						'module' => $modulenameforenabled,
-						'path' => $dir_part.$file_searched,
-						'candidate' => str_replace('_', '', ucwords($regapi[1])),
-						'class' => '',	// resolved lazily by resolveEndpointClass()
-						'label' => $this->enrichments[$key]['label'] ?? $key,
-					];
-				}
-				closedir($handle_part);
+			$key = strtolower($regapi[1]);
+			if (isset($endpoints[$key])) {
+				continue;	// First module wins, as in the REST layer.
 			}
-			closedir($handle);
-		}
 
-		ksort($endpoints);
+			$endpoints[$key] = [
+				// The name isModEnabled() answers to, which is not always the name of the
+				// module directory: see dolGetModuleNameForEnabled().
+				'module' => dolGetModuleNameForEnabled($endpoint['module']),
+				'path' => $endpoint['path'],
+				'candidate' => str_replace('_', '', ucwords($regapi[1])),
+				'class' => '',	// resolved lazily by resolveEndpointClass()
+				'label' => $this->enrichments[$key]['label'] ?? $key,
+			];
+		}
 
 		return $endpoints;
 	}
