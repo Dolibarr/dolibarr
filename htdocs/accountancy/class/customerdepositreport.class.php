@@ -90,13 +90,13 @@ class CustomerDepositReport
 		$this->num_total = 0;
 		$this->totals = array('received' => 0, 'applied' => 0, 'remaining' => 0);
 		$this->error = '';
-		$cutoff = $this->db->escape($this->db->idate(dol_get_last_hour($date_cutoff)));
-		$entities = $this->db->sanitize(getEntity('invoice', 0));
+		$cutoff = $this->db->idate(dol_get_last_hour($date_cutoff));
+		$entities = getEntity('invoice', 0);
 		$sqlpayments = 'SELECT pf.fk_facture, SUM(CASE WHEN pf.amount > 0 THEN pf.amount ELSE 0 END) AS receipts,';
 		$sqlpayments .= ' SUM(CASE WHEN pf.amount < 0 THEN -pf.amount ELSE 0 END) AS refunds, MAX(p.datep) AS last_payment';
 		$sqlpayments .= ' FROM '.$this->db->prefix().'paiement_facture AS pf';
 		$sqlpayments .= ' INNER JOIN '.$this->db->prefix().'paiement AS p ON p.rowid = pf.fk_paiement';
-		$sqlpayments .= " WHERE p.datep <= '".$cutoff."' AND p.entity IN (".$entities.') GROUP BY pf.fk_facture';
+		$sqlpayments .= " WHERE p.datep <= '".$this->db->escape($cutoff)."' AND p.entity IN (".$this->db->sanitize($entities).') GROUP BY pf.fk_facture';
 
 		$sqlapplications = 'SELECT re.fk_facture_source, SUM(re.amount_ttc) AS applied';
 		$sqlapplications .= ' FROM '.$this->db->prefix().'societe_remise_except AS re';
@@ -104,19 +104,19 @@ class CustomerDepositReport
 		$sqlapplications .= ' INNER JOIN '.$this->db->prefix().'facture AS usedinvoice ON usedinvoice.rowid = COALESCE(usedline.fk_facture, re.fk_facture)';
 		$sqlapplications .= ' INNER JOIN '.$this->db->prefix().'facture AS source ON source.rowid = re.fk_facture_source';
 		$sqlapplications .= ' WHERE re.discount_type = 0 AND re.entity = source.entity AND usedinvoice.entity = source.entity';
-		$sqlapplications .= ' AND usedinvoice.fk_soc = source.fk_soc AND usedinvoice.entity IN ('.$entities.')';
+		$sqlapplications .= ' AND usedinvoice.fk_soc = source.fk_soc AND usedinvoice.entity IN ('.$this->db->sanitize($entities).')';
 		$sqlapplications .= ' AND usedinvoice.fk_statut IN ('.Facture::STATUS_VALIDATED.','.Facture::STATUS_CLOSED.')';
-		$sqlapplications .= " AND usedinvoice.datef <= '".$cutoff."'";
-		$sqlapplications .= " AND (usedinvoice.date_valid IS NULL OR usedinvoice.date_valid <= '".$cutoff."')";
+		$sqlapplications .= " AND usedinvoice.datef <= '".$this->db->escape($cutoff)."'";
+		$sqlapplications .= " AND (usedinvoice.date_valid IS NULL OR usedinvoice.date_valid <= '".$this->db->escape($cutoff)."')";
 		$sqlapplications .= ' GROUP BY re.fk_facture_source';
 
 		$sqlcredits = 'SELECT cn.fk_facture_source, SUM(ABS(cn.total_ttc)) AS credited';
 		$sqlcredits .= ' FROM '.$this->db->prefix().'facture AS cn';
 		$sqlcredits .= ' INNER JOIN '.$this->db->prefix().'facture AS source ON source.rowid = cn.fk_facture_source';
-		$sqlcredits .= ' WHERE cn.type = '.Facture::TYPE_CREDIT_NOTE.' AND cn.entity IN ('.$entities.')';
+		$sqlcredits .= ' WHERE cn.type = '.Facture::TYPE_CREDIT_NOTE.' AND cn.entity IN ('.$this->db->sanitize($entities).')';
 		$sqlcredits .= ' AND cn.entity = source.entity AND cn.fk_soc = source.fk_soc';
 		$sqlcredits .= ' AND cn.fk_statut IN ('.Facture::STATUS_VALIDATED.','.Facture::STATUS_CLOSED.')';
-		$sqlcredits .= " AND cn.datef <= '".$cutoff."' AND (cn.date_valid IS NULL OR cn.date_valid <= '".$cutoff."')";
+		$sqlcredits .= " AND cn.datef <= '".$this->db->escape($cutoff)."' AND (cn.date_valid IS NULL OR cn.date_valid <= '".$this->db->escape($cutoff)."')";
 		$sqlcredits .= ' GROUP BY cn.fk_facture_source';
 
 		$sqlremaining = 'GREATEST(0, LEAST(GREATEST(0, pay.receipts - pay.refunds), GREATEST(0, f.total_ttc - COALESCE(credit.credited, 0))) - GREATEST(0, COALESCE(used.applied, 0)))';
@@ -125,10 +125,10 @@ class CustomerDepositReport
 		$sqlfrom .= ' INNER JOIN ('.$sqlpayments.') AS pay ON pay.fk_facture = f.rowid';
 		$sqlfrom .= ' LEFT JOIN ('.$sqlapplications.') AS used ON used.fk_facture_source = f.rowid';
 		$sqlfrom .= ' LEFT JOIN ('.$sqlcredits.') AS credit ON credit.fk_facture_source = f.rowid';
-		$sqlfrom .= ' WHERE f.entity IN ('.$entities.') AND f.type = '.Facture::TYPE_DEPOSIT;
+		$sqlfrom .= ' WHERE f.entity IN ('.$this->db->sanitize($entities).') AND f.type = '.Facture::TYPE_DEPOSIT;
 		// Keep abandoned deposits for review instead of silently losing an outstanding receipt.
-		$sqlfrom .= " AND f.fk_statut > 0 AND f.datef <= '".$cutoff."' AND pay.receipts > 0";
-		$sqlfrom .= " AND (f.date_valid IS NULL OR f.date_valid <= '".$cutoff."')";
+		$sqlfrom .= " AND f.fk_statut > 0 AND f.datef <= '".$this->db->escape($cutoff)."' AND pay.receipts > 0";
+		$sqlfrom .= " AND (f.date_valid IS NULL OR f.date_valid <= '".$this->db->escape($cutoff)."')";
 		if (!empty($filter['ref'])) {
 			$sqlfrom .= natural_search('f.ref', $filter['ref']);
 		}
@@ -204,13 +204,13 @@ class CustomerDepositReport
 	 */
 	private function fetchEvidence($date_cutoff, $withorders)
 	{
-		$ids = $this->db->sanitize(implode(',', array_keys($this->lines)));
+		$ids = implode(',', array_keys($this->lines));
 		$sql = 'SELECT re.fk_facture_source, target.rowid, target.ref, target.type, target.datef, target.date_valid, target.fk_statut, SUM(re.amount_ttc) AS amount';
 		$sql .= ' FROM '.$this->db->prefix().'societe_remise_except AS re';
 		$sql .= ' LEFT JOIN '.$this->db->prefix().'facturedet AS usedline ON usedline.rowid = re.fk_facture_line';
 		$sql .= ' INNER JOIN '.$this->db->prefix().'facture AS target ON target.rowid = COALESCE(usedline.fk_facture, re.fk_facture)';
 		$sql .= ' INNER JOIN '.$this->db->prefix().'facture AS source ON source.rowid = re.fk_facture_source';
-		$sql .= ' WHERE re.fk_facture_source IN ('.$ids.') AND re.discount_type = 0';
+		$sql .= ' WHERE re.fk_facture_source IN ('.$this->db->sanitize($ids).') AND re.discount_type = 0';
 		$sql .= ' AND re.entity = source.entity AND target.entity = source.entity AND target.fk_soc = source.fk_soc';
 		$sql .= ' GROUP BY re.fk_facture_source, target.rowid, target.ref, target.type, target.datef, target.date_valid, target.fk_statut';
 		$sql .= $this->db->order('target.datef, target.rowid', 'ASC');
@@ -237,7 +237,7 @@ class CustomerDepositReport
 		$sql .= ' FROM '.$this->db->prefix().'element_element AS ee';
 		$sql .= ' INNER JOIN '.$this->db->prefix().'commande AS c ON c.rowid = ee.fk_source';
 		$sql .= ' INNER JOIN '.$this->db->prefix().'facture AS f ON f.rowid = ee.fk_target';
-		$sql .= " WHERE ee.sourcetype = 'commande' AND ee.targettype = 'facture' AND ee.fk_target IN (".$ids.')';
+		$sql .= " WHERE ee.sourcetype = 'commande' AND ee.targettype = 'facture' AND ee.fk_target IN (".$this->db->sanitize($ids).')';
 		$sql .= ' AND c.entity IN ('.$this->db->sanitize(getEntity('commande')).') AND c.fk_soc = f.fk_soc';
 		$sql .= " AND c.date_commande <= '".$this->db->escape($this->db->idate(dol_get_last_hour($date_cutoff)))."'";
 		$sql .= $this->db->order('c.ref', 'ASC');
