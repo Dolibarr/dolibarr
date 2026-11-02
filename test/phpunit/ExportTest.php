@@ -27,11 +27,10 @@
 global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/exports/class/export.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/functions2.lib.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (! defined('NOREQUIREUSER')) {
 	define('NOREQUIREUSER', '1');
@@ -521,5 +520,76 @@ class ExportTest extends CommonClassTest
 		$user = $savuser;
 
 		return true;
+	}
+
+	/**
+	 * testCsvCleanQuotes: only the values that need quotes are quoted
+	 *
+	 * @return void
+	 */
+	public function testCsvCleanQuotes()
+	{
+		global $conf, $langs;
+
+		unset($conf->global->USE_STRICT_CSV_RULES);
+
+		// A number, a date, a label that starts with a digit or a symbol are not quoted
+		foreach (array('123', '3M', '-5', '+33612345678', '.5', '12.50', '2026-10-24', '/path', ':x', '<b', 'a=b') as $valtotest) {
+			$this->assertEquals($valtotest, csvClean($valtotest, 'UTF-8', ','), 'Value '.$valtotest.' must not be quoted');
+		}
+
+		// A text that a spreadsheet may take for a formula is quoted
+		foreach (array('=1+1', '+cmd|x', '-cmd|x', '@SUM(1)', ' =1+1') as $valtotest) {
+			$this->assertEquals('"'.$valtotest.'"', csvClean($valtotest, 'UTF-8', ','), 'Value '.$valtotest.' must be quoted');
+		}
+
+		// The separator is a text, not a regular expression
+		$this->assertEquals('abc', csvClean('abc', 'UTF-8', '|'));
+		$this->assertEquals('"a|b"', csvClean('a|b', 'UTF-8', '|'));
+		$this->assertEquals('"a+b"', csvClean('a+b', 'UTF-8', '+'));
+		$this->assertEquals('ab', csvClean('ab', 'UTF-8', '('));
+		$this->assertEquals('"a(b"', csvClean('a(b', 'UTF-8', '('));
+		$this->assertEquals('a;b', csvClean('a;b', 'UTF-8', ','));
+		$this->assertEquals('"a;b"', csvClean('a;b', 'UTF-8', ';'));
+	}
+
+	/**
+	 * testExportCsvSelectLabel: the column _label of a field of type list contains the label of the option
+	 *
+	 * @return void
+	 */
+	public function testExportCsvSelectLabel()
+	{
+		global $conf, $langs, $db;
+
+		$conf->global->EXPORT_CSV_SEPARATOR_TO_USE = ',';
+		unset($conf->global->USE_STRICT_CSV_RULES);
+
+		require_once DOL_DOCUMENT_ROOT.'/core/modules/export/export_csvutf8.modules.php';
+		$objmodel = new ExportCsvUtf8($db);
+
+		$file = tempnam(sys_get_temp_dir(), 'csv');
+		$this->assertGreaterThanOrEqual(0, $objmodel->open_file($file, $langs));
+
+		$fields = array('s.status as status' => 'Status', 's.name as name' => 'Name');
+		$types = array('s.status as status' => 'Select:'.json_encode(array('options' => array('1' => 'Open, now', '2' => 'Say "closed"', 'a' => 'Alpha'))));
+		$objmodel->write_title($fields, $fields, $langs, $types);
+		foreach (array('1', '2', 'a', '9', null) as $status) {
+			$record = new stdClass();
+			$record->status = $status;
+			$record->name = '(NotATranslation)';
+			$objmodel->write_record($fields, $record, $langs, $types);
+		}
+		$objmodel->close_file();
+
+		$lines = explode("\n", trim((string) file_get_contents($file)));
+		unlink($file);
+
+		$this->assertEquals('Status,Name,Status_label,', $lines[0]);
+		$this->assertEquals('1,NotATranslation,"Open, now",', $lines[1]);
+		$this->assertEquals('2,NotATranslation,"Say ""closed""",', $lines[2]);
+		$this->assertEquals('a,NotATranslation,Alpha,', $lines[3]);
+		$this->assertEquals('9,NotATranslation,,', $lines[4]);
+		$this->assertEquals(',NotATranslation,,', $lines[5]);
 	}
 }

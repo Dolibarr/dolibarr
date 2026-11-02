@@ -399,6 +399,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 
 .spannature {
+	line-height: 30px;
 /*
 	padding-top: 6px !important;
 	padding-bottom: 6px !important;

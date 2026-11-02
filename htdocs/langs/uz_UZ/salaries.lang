@@ -27,6 +27,7 @@ Earnings=Earnings
 TotalEarnings=Total earnings
 TotalDeductions=Total deductions
 NetPaid=Net paid
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Ish haqi bo'yicha "foydalanuvchilar" uchun sukut bo'yicha foydalaniladigan hisob (Hisob jadvalidan).
@@ -55,8 +56,6 @@ FillFieldFirst=Avval xodimlar maydonini to'ldiring
 UpdateAmountWithLastSalary=Oxirgi ish haqi miqdorini belgilang
 MakeTransferRequest=Transfer so'rovini yuboring
 VirementOrder=Kredit o'tkazish talabi
-WithdrawalReceipt=Kreditni o'tkazish tartibi
-OrderWaiting=Buyurtma kutilmoqda
 FillEndOfMonth=Oyning oxiri
 
 # Shortcuts

@@ -97,8 +97,11 @@ if ($maxphp > 0 && $maxphp2 > 0 && $maxphp > $maxphp2) {
 }
 
 
+// Get php_info array
+$phparray = phpinfo_array();
+
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td></td></tr>';
+print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Summary").'</td><td></td></tr>';
 
 print '<tr><td>'.$langs->trans("Version").'</td><td>';
 
@@ -132,14 +135,11 @@ if (!function_exists("session_id")) {
 }
 print '</td></tr>';
 
-print '<tr><td>UTF-8 support</td><td>';
-if (!function_exists("utf8_encode")) {
-	$langs->load('errors');
-	print img_picto('Warning', 'warning').' '.$langs->trans("ErrorPHPDoesNotSupport", "UTF8");
-} else {
-	print img_picto('Ok', 'tick').' '.$langs->trans("PHPSupport", "UTF8");
+foreach (array('Loaded Configuration File', 'Scan this dir for additional .ini files') as $keyparam) {
+	print '<tr><td>'.dolPrintLabel($keyparam).'</td><td>';
+	print dolPrintLabel(empty($phparray['General'][$keyparam]) ? '' : $phparray['General'][$keyparam]);
+	print '</td></tr>';
 }
-print '</td></tr>';
 
 print '</table>';
 
@@ -266,8 +266,7 @@ print '</table>';
 
 print '<br>';
 
-// Get php_info array
-$phparray = phpinfo_array();
+// Show php_info array
 foreach ($phparray as $key => $value) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder">';

@@ -76,11 +76,13 @@ class UniversalLLMAdapter
 	 * (with thinking models, the reasoning tokens count inside this limit)
 	 *
 	 * @param int $maxTokens Maximum number of tokens, 0 = default of each provider
-	 * @return void
+	 * @return bool Always true
 	 */
-	public function setMaxTokens(int $maxTokens): void
+	public function setMaxTokens(int $maxTokens): bool
 	{
 		$this->maxTokens = max(0, $maxTokens);
+
+		return true;
 	}
 
 	/**
@@ -179,7 +181,9 @@ class UniversalLLMAdapter
 
 		$this->lastRequest = $this->encodeRequestForLog($data);
 
-		dol_syslog('callOpenAI url='.$url, LOG_DEBUG, 0, '_ai');
+		if (getDolGlobalString("AI_DEBUG")) {
+			dol_syslog('callOpenAI url='.$url, LOG_DEBUG, 0, '_ai');
+		}
 
 		$answer = $this->curl($url, $data, array("Content-Type: application/json", "Authorization: Bearer " . $this->key));
 
@@ -447,24 +451,32 @@ class UniversalLLMAdapter
 		// a bare "Invalid JSON response from API." with an empty body.
 		$this->lastResponse = "HTTP " . $httpCode . " from " . $effectiveUrl . "\n--- body (" . strlen($body) . " bytes) ---\n"	. $body;
 
-		dol_syslog('curl answer received, HTTP = '.$httpCode.', size of response string = '.strlen($body), LOG_DEBUG, 0, '_ai');
+		if (getDolGlobalString("AI_DEBUG")) {
+			dol_syslog('curl answer received, HTTP = '.$httpCode.', size of response string = '.strlen($body), LOG_DEBUG, 0, '_ai');
+		}
 
 		if (!empty($result['curl_error_no'])) {
-			dol_syslog("Error: cURL #" . $result['curl_error_no'] . " " . $result['curl_error_msg'] . " (url=" . $effectiveUrl . ")", LOG_DEBUG, 0, '_ai');
+			if (getDolGlobalString("AI_DEBUG")) {
+				dol_syslog("Error: cURL #" . $result['curl_error_no'] . " " . $result['curl_error_msg'] . " (url=" . $effectiveUrl . ")", LOG_DEBUG, 0, '_ai');
+			}
 			return "Error: cURL #" . $result['curl_error_no'] . " " . $result['curl_error_msg'] . " (url=" . $effectiveUrl . ")";
 		}
 
 		$json = json_decode($body, true);
 
-		dol_syslog("curl answer body=" . var_export($body, true), LOG_DEBUG, 0, '_ai');
-		dol_syslog("curl answer json_decoded=" . var_export($json, true), LOG_DEBUG, 0, '_ai');
+		if (getDolGlobalString("AI_DEBUG")) {
+			dol_syslog("curl answer body=" . var_export($body, true), LOG_DEBUG, 0, '_ai');
+			dol_syslog("curl answer json_decoded=" . var_export($json, true), LOG_DEBUG, 0, '_ai');
+		}
 
 		if ($json === null && json_last_error() !== JSON_ERROR_NONE) {
 			// Common real-world causes: HTTP 4xx/5xx with empty body, HTML error page
 			// from a proxy, gateway timeout, etc. Surface the HTTP code and a short
 			// body snippet so the admin can diagnose without re-running with curl.
 			$snippet = substr($body, 0, 500);
-			dol_syslog("Error: Invalid JSON response from API (HTTP " . $httpCode . ", " . strlen($body) . " bytes). Body snippet: " . ($snippet !== '' ? $snippet : '<empty>'), LOG_DEBUG, 0, '_ai');
+			if (getDolGlobalString("AI_DEBUG")) {
+				dol_syslog("Error: Invalid JSON response from API (HTTP " . $httpCode . ", " . strlen($body) . " bytes). Body snippet: " . ($snippet !== '' ? $snippet : '<empty>'), LOG_DEBUG, 0, '_ai');
+			}
 			return "Error: Invalid JSON response from API (HTTP " . $httpCode . ", " . strlen($body) . " bytes). Body snippet: " . ($snippet !== '' ? $snippet : '<empty>');
 		}
 
@@ -480,7 +492,9 @@ class UniversalLLMAdapter
 				$msg = json_encode($msg);
 			}
 			$this->recordModelFailure($httpCode, (string) $msg);
-			dol_syslog("Error: API " . $msg, LOG_DEBUG, 0, '_ai');
+			if (getDolGlobalString("AI_DEBUG")) {
+				dol_syslog("Error: API " . $msg, LOG_DEBUG, 0, '_ai');
+			}
 			return "Error: API " . $msg;
 		}
 

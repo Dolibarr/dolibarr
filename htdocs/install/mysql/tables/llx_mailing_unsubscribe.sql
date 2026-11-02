@@ -25,6 +25,6 @@ create table llx_mailing_unsubscribe
   email				varchar(255),
   unsubscribegroup	varchar(128) DEFAULT '',
   ip				varchar(128),
-  date_creat		datetime,                            -- creation date
+  date_creation		datetime,                            -- creation date
   tms               timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )ENGINE=innodb;

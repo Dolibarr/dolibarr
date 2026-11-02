@@ -661,8 +661,10 @@ while ($i < $imaxinloop) {
 	$chargesociale_static->type_label = $obj->type_label;
 	$chargesociale_static->amount = $obj->amount;
 	$chargesociale_static->paye = $obj->paye;
-	$chargesociale_static->date_ech = $db->idate($obj->date_ech);		// Date of contribution
-	$chargesociale_static->period = $db->idate($obj->period, 'gmt');	// End date of period
+	// Values read from the database are strings, so they are converted with jdate() and not idate(), the same way
+	// ChargeSociales::fetch() does it. The properties are timestamps, used as such by getNomUrl() and getKanbanView().
+	$chargesociale_static->date_ech = $db->jdate($obj->date_ech);		// Date of contribution
+	$chargesociale_static->period = $db->jdate($obj->period);			// End date of period
 	$chargesociale_static->type_accountancy_code = $obj->type_accountancy_code;
 	$chargesociale_static->note_private = $obj->note_private;
 	$chargesociale_static->note_public = $obj->note_public;

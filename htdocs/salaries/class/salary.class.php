@@ -254,6 +254,15 @@ class Salary extends CommonObject
 				/** @phan-suppress-next-line PhanPluginUnknownObjectMethodCall */
 				$result = $module->writeFile($this, $outputlangs);
 				if ($result > 0) {
+					// Index file in database, as commonGenerateDocument() does
+					if (!empty($module->result['fullpath'])) {
+						if (dol_is_file($module->result['fullpath'])) {
+							$this->indexFile($module->result['fullpath'], (empty($module->update_main_doc_field) ? 0 : 1));
+						}
+					} else {
+						dol_syslog('Method ->writeFile was called on object '.get_class($module).' and return a success but the return array ->result["fullpath"] was not set.', LOG_WARNING);
+					}
+
 					return 1;
 				} else {
 					$this->error = $module->error;

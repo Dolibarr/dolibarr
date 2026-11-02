@@ -271,7 +271,7 @@ function isProfIdWithoutSpace($idprof, $country_code)
 		'FR' => array(1, 2),
 		'ES' => array(1),
 		'PT' => array(1),
-		'DZ' => array(1),
+		'DZ' => array(3),
 		'BE' => array(1),
 	);
 
@@ -344,7 +344,7 @@ function isValidProfIds($idprof, $thirdparty, $lenghtonly = 0)
 	}
 
 	// Verify NIF if country is DZ
-	if ($idprof == 1 && $thirdparty->country_code == 'DZ' && !isValidTinForDZ($thirdparty->idprof1)) {
+	if ($idprof == 3 && $thirdparty->country_code == 'DZ' && !isValidTinForDZ($thirdparty->idprof3)) {
 		return -1;
 	}
 

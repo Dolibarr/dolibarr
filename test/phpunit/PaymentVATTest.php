@@ -24,10 +24,9 @@
  */
 
 global $conf,$user,$langs,$db,$mysoc;
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/tva/class/tva.class.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/tva/class/paymentvat.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";

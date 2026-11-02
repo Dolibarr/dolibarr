@@ -38,6 +38,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ecm/class/htmlecm.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -144,7 +145,7 @@ if ($cancel) {
 	}
 }
 
-// Rename file
+// Rename and/or move file
 if ($action == 'update' && $permissiontoadd) {
 	$error = 0;
 
@@ -152,13 +153,26 @@ if ($action == 'update' && $permissiontoadd) {
 	$newlabel = dol_sanitizeFileName(GETPOST('label', 'alpha'), '_', 0);
 	$shareenabled = GETPOST('shareenabled', 'alpha');
 
+	// Target directory, the current one if not changed
+	$newecmdir = $ecmdir;
+	$newsection = GETPOSTINT('newsection');
+	if ($newsection > 0 && $newsection != $ecmdir->id) {
+		$newecmdir = new EcmDirectory($db);
+		$result = $newecmdir->fetch($newsection);
+		if (!($result > 0)) {
+			dol_print_error($db, $newecmdir->error);
+			exit;
+		}
+	}
+
 	//$db->begin();
 
 	$olddir = $ecmdir->getRelativePath(0); // Relative to ecm
+	$newdir = $newecmdir->getRelativePath(0); // Relative to ecm
 	$olddirrelativetodocument = 'ecm/'.$olddir; // Relative to document
-	$newdirrelativetodocument = 'ecm/'.$olddir;
+	$newdirrelativetodocument = 'ecm/'.$newdir;
 	$olddir = $conf->ecm->dir_output.'/'.$olddir;
-	$newdir = $olddir;
+	$newdir = $conf->ecm->dir_output.'/'.$newdir;
 
 	$oldfile = $olddir.$oldlabel;
 	$newfile = $newdir.$newlabel;
@@ -172,13 +186,19 @@ if ($action == 'update' && $permissiontoadd) {
 	// Now we update index of file
 	$db->begin();
 	//print $oldfile.' - '.$newfile;
-	if ($newlabel != $oldlabel && dol_is_file($newfileformove)) {
-		// Do not overwrite another file of the directory
+	// Compare full paths, so a move into another directory is detected even if the name is unchanged
+	if ($newfileformove != $oldfile && dol_is_file($newfileformove)) {
+		// Do not overwrite another file of the target directory
 		$langs->load('errors');
 		setEventMessages($langs->trans('ErrorDestinationAlreadyExists', $newlabel), null, 'errors');
 		$error++;
 	}
-	if (!$error && $newlabel != $oldlabel) {
+	if (!$error && $newdir != $olddir && dol_mkdir($newdir) < 0) {
+		$langs->load('errors');
+		setEventMessages($langs->trans('ErrorFailToCreateDir', $newdir), null, 'errors');
+		$error++;
+	}
+	if (!$error && $newfileformove != $oldfile) {
 		$result = dol_move($oldfile, $newfileformove); // This include update of database
 		if (!$result) {
 			$langs->load('errors');
@@ -186,8 +206,14 @@ if ($action == 'update' && $permissiontoadd) {
 			$error++;
 		}
 
+		// Update cached number of files of both directories
+		if (!$error && $newecmdir->id != $ecmdir->id) {
+			$ecmdir->changeNbOfFiles('-');
+			$newecmdir->changeNbOfFiles('+');
+		}
+
 		// Reload object after the move
-		$result = $object->fetch(0, '', $newdirrelativetodocument.$newlabel);
+		$result = $object->fetch(0, '', $newdirrelativetodocument.basename($newfileformove));
 		if ($result < 0) {
 			dol_print_error($db, $object->error, $object->errors);
 			exit;
@@ -249,7 +275,7 @@ if ($action == 'update' && $permissiontoadd) {
 			$urlfile .= '.noexe';
 		}
 
-		header('Location: '.dolBuildUrl($_SERVER["PHP_SELF"], array('urlfile' => $urlfile, 'section' => $section)));
+		header('Location: '.dolBuildUrl($_SERVER["PHP_SELF"], array('urlfile' => $urlfile, 'section' => $newecmdir->id)));
 		exit;
 	} else {
 		$db->rollback();
@@ -324,6 +350,14 @@ print '<table class="border centpercent tableforfield">';
 print '<tr><td class="titlefieldcreate">'.$langs->trans("ECMCreationDate").'</td><td>';
 print dol_print_date(dol_filemtime($fullpath), 'dayhour');
 print '</td></tr>';
+
+// Directory, to move the file into another one
+if ($action == 'edit') {
+	$formecm = new FormEcm($db);
+	print '<tr><td>'.$langs->trans("ECMSection").'</td><td>';
+	print img_picto('', 'object_dir', 'class="pictofixedwidth"').$formecm->selectAllSections($ecmdir->id, 'newsection', 'ecm');
+	print '</td></tr>';
+}
 /*print '<tr><td>'.$langs->trans("ECMDirectoryForFiles").'</td><td>';
 print '/ecm/'.$relativepath;
 print '</td></tr>';
