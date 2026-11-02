@@ -69,7 +69,6 @@ DOL_VALUE_DAY=চালান দিন
 DOL_VALUE_DAY_LETTERS=চিঠিতে চালানের দিন
 DOL_LINE_FEED_REVERSE=লাইন ফিড বিপরীত
 InvoiceID=চালান আইডি
-InvoiceRef=Invoice ref
 DOL_PRINT_OBJECT_LINES=চালান লাইন
 DOL_VALUE_CUSTOMER_FIRSTNAME=গ্রাহকের প্রথম নাম
 DOL_VALUE_CUSTOMER_LASTNAME=গ্রাহক পদবি

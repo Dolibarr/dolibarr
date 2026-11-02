@@ -27,6 +27,7 @@ Earnings=Earnings
 TotalEarnings=Total earnings
 TotalDeductions=Total deductions
 NetPaid=Neto plaćeno
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Račun (iz Kontnog plana) koji se standardno koristi za "korisnike" na plaćama
@@ -55,8 +56,6 @@ FillFieldFirst=Prvo ispunite polje zaposlenika
 UpdateAmountWithLastSalary=Postavite iznos zadnje plaće
 MakeTransferRequest=Podnesite zahtjev za prijenos
 VirementOrder=Zahtjev za prijenos kredita
-WithdrawalReceipt=Nalog za prijenos kredita
-OrderWaiting=Narudžba na čekanju
 FillEndOfMonth=Kraj mjeseca
 
 # Shortcuts

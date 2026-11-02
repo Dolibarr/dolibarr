@@ -56,6 +56,10 @@ button.dropdown-item.global-search-item {
 	border-bottom-right-radius: 6px;
 }
 
+#top-bookmark-search-nothing-found {
+	color: #444;
+}
+
 
 .dropdown-search {
 	border-color: #eee;

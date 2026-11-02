@@ -22,5 +22,6 @@ create table llx_prelevement
   fk_facture             integer NULL,
   fk_facture_fourn       integer NULL,
   fk_salary              integer NULL,
+  fk_expensereport       integer NULL,
   fk_prelevement_lignes  integer NOT NULL
 )ENGINE=innodb;

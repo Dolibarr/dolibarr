@@ -252,4 +252,65 @@ class ActionCommTest extends CommonClassTest
 		$this->assertLessThan($result, 0);
 		return $result;
 	}
+
+	/**
+	 * testActionCommUid
+	 *
+	 * Checks that an event gets a uid when it is created, that fetch() reads it back, and that an
+	 * event predating the uid column (uid left NULL by the migration) has one written on the first
+	 * fetch, without its modification date being touched.
+	 *
+	 * @return	void
+	 */
+	public function testActionCommUid()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$now = dol_now();
+
+		$localobject = new ActionComm($db);
+		$localobject->type_code = 'AC_OTH';
+		$localobject->label = 'Event used to check the uid';
+		$localobject->datep = $now;
+		$localobject->datef = $now;
+		$localobject->percentage = -1;
+		$localobject->authorid = $user->id;
+		$localobject->userownerid = $user->id;
+
+		$id = $localobject->create($user);
+		$this->assertLessThan($id, 0, 'the event could not be created');
+		$uuidv4 = '/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/';
+		$this->assertSame(1, preg_match($uuidv4, (string) $localobject->uid), 'create() did not set a v4 uid');
+
+		// The uid is in the row, and the same one comes back
+		$fetched = new ActionComm($db);
+		$fetched->fetch($id);
+		$this->assertSame($localobject->uid, $fetched->uid, 'fetch() did not read back the uid of create()');
+
+		// An event of before the uid column: it gets one on the first fetch, and its tms stays put
+		$sql = "SELECT tms FROM ".MAIN_DB_PREFIX."actioncomm WHERE id = ".((int) $id);
+		$resql = $db->query($sql);
+		$tmsbefore = $db->fetch_object($resql)->tms;
+
+		$db->query("UPDATE ".MAIN_DB_PREFIX."actioncomm SET uid = NULL, tms = '".$db->escape($tmsbefore)."' WHERE id = ".((int) $id));
+
+		$backfilled = new ActionComm($db);
+		$backfilled->fetch($id);
+		$this->assertSame(1, preg_match($uuidv4, (string) $backfilled->uid), 'fetch() did not backfill the uid of an old event');
+
+		$sql = "SELECT uid, tms FROM ".MAIN_DB_PREFIX."actioncomm WHERE id = ".((int) $id);
+		$resql = $db->query($sql);
+		$obj = $db->fetch_object($resql);
+		$this->assertSame($backfilled->uid, $obj->uid, 'the backfilled uid was not written to the database');
+		$this->assertSame($tmsbefore, $obj->tms, 'the backfill changed the modification date of the event');
+
+		$localobject->fetch($id);
+		$localobject->delete($user);
+
+		print __METHOD__." id=".$id."\n";
+	}
 }

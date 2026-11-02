@@ -228,10 +228,6 @@ class ImportCsv extends ModeleImports
 				rewind($handle);
 			}
 			$this->handle = $handle;
-			// Skip the UTF-8 BOM that Excel adds at the beginning of a file, or it would be part of the first value
-			if (fread($this->handle, 3) !== "\xEF\xBB\xBF") {
-				rewind($this->handle);
-			}
 			$this->file = $file;
 		}
 

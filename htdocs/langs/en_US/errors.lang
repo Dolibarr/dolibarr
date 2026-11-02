@@ -400,6 +400,7 @@ ErrorDeletingAClosedCashControlIsNotPossible=Deleting a closed cash control is n
 ErrorFailedToConvertFileInText=Failed to convert file in text.
 ErrorAIServiceTimeout=The AI service (%s) did not answer in time. The document may be too large or the service may be overloaded. Please try again later (an administrator can also increase the timeout with the constant MAIN_USE_RESPONSE_TIMEOUT).
 ErrorAIAnswerIsNotValidJSON=The answer of the AI service is not a valid JSON (%s). Please try again or use another model.
+ErrorAIModuleNotActive=This feature requires the AI module (Artificial Intelligence module) to be enabled. Ask the administrator of your instance to enable it...
 ErrorCantSignDocument=Error, can't sign the document. May be the link has expired or the document was modified since the link was sent.
 ErrorProposalValidityDatePassed=Error, this proposal can no longer be signed: its validity date was %s. Please ask for an up to date proposal.
 
