@@ -11390,6 +11390,12 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 				dol_syslog('fetchObjectByElement: refuse to instantiate PHP internal class ' . $className . ' for element ' . $element_type, LOG_ERR);
 				return -1;
 			}
+			// The class found may be a helper class of a module that is not a business object (for example EInvoicing of module einvoicing).
+			// Classes not extending CommonObject but having a fetch() method (for example ProductCombination used by import) are accepted.
+			if (!is_subclass_of($className, 'CommonObject') && !method_exists($className, 'fetch')) {
+				dol_syslog('fetchObjectByElement: class ' . $className . ' for element ' . $element_type . ' is not a CommonObject and has no fetch method', LOG_WARNING);
+				return -1;
+			}
 			$objecttmp = new $className($db);
 			'@phan-var-force CommonObject $objecttmp';
 			/** @var CommonObject $objecttmp */

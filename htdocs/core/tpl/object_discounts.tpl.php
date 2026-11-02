@@ -121,7 +121,7 @@ if ($absolute_discount > 0) {
 		$filter = $filterabsolutediscount;  // Fix PhanPluginSuspiciousParamPosition as filterabsolutescount is other argument name in form_remise_dispo
 		// No max value: a credit larger than the remaining amount is now split automatically when it is applied,
 		// only the required part being used. This mirrors what is already done for the credit notes below.
-		$form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, GETPOSTINT('discountid'), 'remise_id', $thirdparty->id, $absolute_discount, $filter, 0, $more, 0, $discount_type, 1);
+		$form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, GETPOSTINT('discountid'), 'remise_id', $thirdparty->id, $absolute_discount, $filter, 0, $more, 0, $discount_type, 1, 0, (int) ($object->fk_project ?? 0));
 	}
 }
 
@@ -151,7 +151,7 @@ if ($absolute_creditnote > 0) {
 		// There is credit notes discounts available
 		$more = $isInvoice && !$isNewObject ? ' ('.$viewabsolutediscount.')' : '';
 		$filter = $filtercreditnote;  // Avoid phan suspiscious order as $filtercreditnote is name of last argument for form_remise_dispo
-		$form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $thirdparty->id, $absolute_creditnote, $filter, 0, $more, 0, $discount_type, 0, 1); // We allow credit note even if amount is higher
+		$form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $thirdparty->id, $absolute_creditnote, $filter, 0, $more, 0, $discount_type, 0, 1, (int) ($object->fk_project ?? 0)); // We allow credit note even if amount is higher
 	}
 }
 

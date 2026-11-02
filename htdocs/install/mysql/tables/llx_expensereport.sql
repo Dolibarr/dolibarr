@@ -29,7 +29,7 @@ CREATE TABLE llx_expensereport (
   total_ttc 		double(24,8) DEFAULT 0,
   date_debut 		date NOT NULL,
   date_fin 			date NOT NULL,
-  date_create 		datetime NOT NULL,
+  date_creation 	datetime NOT NULL,
   date_valid 		datetime,
   date_approve		datetime,
   date_refuse 		datetime,

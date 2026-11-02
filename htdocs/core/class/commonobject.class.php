@@ -1429,7 +1429,7 @@ abstract class CommonObject
 
 			// Insert into database
 			$sql = "INSERT INTO ".$this->db->prefix()."element_contact";
-			$sql .= " (element_id, fk_socpeople, datecreate, statut, fk_c_type_contact) ";
+			$sql .= " (element_id, fk_socpeople, date_creation, statut, fk_c_type_contact) ";
 			$sql .= " VALUES (".((int) $this->id).", ".((int) $fk_socpeople)." , ";
 			$sql .= "'".$this->db->idate($datecreate)."'";
 			$sql .= ", 4, ".((int) $id_type_contact);
@@ -1749,7 +1749,7 @@ abstract class CommonObject
 	 */
 	public function swapContactStatus($rowid)
 	{
-		$sql = "SELECT ec.datecreate, ec.statut, ec.fk_socpeople, ec.fk_c_type_contact,";
+		$sql = "SELECT ec.date_creation, ec.statut, ec.fk_socpeople, ec.fk_c_type_contact,";
 		$sql .= " tc.code, tc.libelle as type_label";
 		$sql .= " FROM (".$this->db->prefix()."element_contact as ec, ".$this->db->prefix()."c_type_contact as tc)";
 		$sql .= " WHERE ec.rowid =".((int) $rowid);
