@@ -12,30 +12,35 @@ Prerequisites to build the tgz, debian and rpm packages:
 
 `apt-get install perl tar dpkg dpatch p7zip-full rpm zip php-cli`
 
-Prerequisites to build autoexe DoliWamp package from Linux (solution seems broken since Ubuntu 20.04+):
+Prerequisites to build autoexe DoliWamp package from Linux (works also on recent Ubuntu using the Wine wow64 mode):
 
-`apt-get install wine q4wine`
+`apt-get install wine`
 
-- Launch "wine cmd" to check a drive Z: pointing to / exists.
+- Launch "wine cmd" to check a drive Z: pointing to / exists (it is created by default, see ~/.wine/dosdevices/). The makepack script calls ISCC.exe with Windows paths using the Z: drive.
 
-- Install InnoSetup (For example by running isetup-5.5.8.exe from https://www.jrsoftware.org or https://files.jrsoftware.org/is/5/)
+- Install Inno Setup 5.6.1 ANSI (file innosetup-5.6.1.exe, and NOT the file innosetup-5.6.1-unicode.exe: the [Code] section of doliwamp.iss is not compatible with the Unicode compiler) from https://www.jrsoftware.org or https://files.jrsoftware.org/is/5/
+  For example by running `wine innosetup-5.6.1.exe /VERYSILENT`.
+  The compiler ISCC.exe will be installed into "C:\Program Files (x86)\Inno Setup 5".
 
-- Install WampServer into "C:\wamp64" to have Apache, PHP and MariaDB (For example by running wampserver3.2.6_x64.exe from https://www.wampserver.com, see file dev/build/exe/doliwamp.iss to know the version of Wampserver to install).
+- Install WampServer into "C:\wamp64" to have Apache, PHP and MariaDB (For example by running `wine wampserver3.2.6_x64.exe` from https://www.wampserver.com or https://wampserver.aviatechno.net, see file dev/build/exe/doliwamp.iss to know the version of Wampserver to install. The versions and directory names of Apache/PHP/MariaDB must match the values found into doliwamp.iss).
+  Alternative if the WampServer installer does not run correctly with Wine: download the WampServer installer, extract only the required directories with "innoextract", and copy them into ~/.wine/drive_c/wamp64/bin/ (bin/apache/apache2.4.65, bin/php/php8.4.27 and bin/mariadb/mariadb11.4.9 for the example above). Note that with recent WampServer installers (Inno Setup 6.4+), "innoextract" may not support them, so you can also install WampServer with Wine after installing the required Visual C++ redistributables, or use the official zips of Apache/PHP/MariaDB for Windows.
 
-- Add path to ISCC.exe into the PATH windows var (You can do this by launching wine cmd, then regedit and add entry int `HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment\PATH`)
+- Create a script called ISCC.exe into your Linux PATH (for example /usr/local/bin/ISCC.exe) so that the makepack script can find and run it. Example of content:
 
-- To manually build the .exe from Windows (Note: running from makepack-dolibarr.pl script is however recommended):
+```
+#!/bin/sh
+exec wine "C:\\Program Files (x86)\\Inno Setup 5\\ISCC.exe" "$@"
+```
 
-  Open the file dev/build/exe/doliwamp.iss and click on button "Compile".
-  The .exe file will be build into directory build.
+Do not forget to make it executable: `chmod +x /usr/local/bin/ISCC.exe`.
+
 
 
 ### On Windows
 
 Prerequisites to build autoexe DoliWamp package from Windows:
 
-- Install Perl for Windows (https://strawberryperl.com/)
-- Install isetup-5.5.8.exe (https://www.jrsoftware.org)
+- Install Inno Setup 5.6.1 ANSI (file innosetup-5.6.1.exe, and NOT the file innosetup-5.6.1-unicode.exe: the [Code] section of doliwamp.iss is not compatible with the Unicode compiler) (https://www.jrsoftware.org)
 - Install Microsoft Visual C++ Redistributable 2017 (https://learn.microsoft.com/en-US/cpp/windows/latest-supported-vc-redist?view=msvc-170)
 - Install WampServer-3.2.6-64.exe (Apache 2.4.51, PHP 7.4.26, MariaDB 10.6.5 for example. Version must match the values found into doliwamp.iss)
 - Install GIT for Windows (https://git-scm.com/ => You must choose option "Add Git bash profile", "Git commit as-is")
@@ -52,6 +57,11 @@ Prerequisites to build autoexe DoliWamp package from Windows:
   $dolibarr_main_url_root='http://localhost';
 ```
 
+- To manually build the .exe from Windows (Note: running from makepack-dolibarr.php script is however recommended):
+
+  Open the file dev/build/exe/doliwamp.iss and click on button "Compile".
+  The .exe file will be build into directory build.
+  
 
 ## Actions to do a FREEZE / BETA
 
@@ -154,6 +164,6 @@ git log x.y.(z-1)..   | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u
 
 ### On Windows
 
-Windows must be used to build the DoliWamp package. And only when the build of packages on Linux has been generated.
+The DoliWamp package can be built from Linux (see the prerequisites on Linux above, the makepack script calls ISCC.exe through Wine) or from Windows. And only when the build of the other packages has been generated.
 
 Once prerequisites are solved, just run the script *makepack-dolibarr.pl* with option to build the .EXE. You should get the Dolibarr.exe DoliWamp package.

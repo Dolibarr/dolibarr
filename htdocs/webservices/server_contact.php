@@ -456,7 +456,9 @@ function createContact($authentication, $contact)
 		if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
 			foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
 				$key = 'options_'.$key;
-				$newobject->array_options[$key] = $contact[$key];
+				if (isset($contact[$key])) {
+					$newobject->array_options[$key] = $contact[$key];
+				}
 			}
 		}
 
@@ -702,7 +704,9 @@ function updateContact($authentication, $contact)
 			if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
 				foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
 					$key = 'options_'.$key;
-					$object->array_options[$key] = $contact[$key];
+					if (isset($contact[$key])) {
+						$object->array_options[$key] = $contact[$key];
+					}
 				}
 			}
 

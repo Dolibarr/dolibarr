@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Pengaturan modul PayPal
-PaypalDesc=Modul ini memungkinkan pembayaran oleh pelanggan melalui <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. Ini dapat digunakan untuk pembayaran ad-hoc atau untuk pembayaran yang terkait dengan objek Dolibarr (faktur, pesanan, ...)
+PaypalDesc=This module allows payment by customers via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. This can be used for an ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
 PaypalOrCBDoPayment=Bayar dengan PayPal (Kartu atau PayPal)
 PaypalDoPayment=Bayar dengan PayPal
 PAYPAL_API_SANDBOX=Tes mode / kotak pasir
@@ -19,7 +19,7 @@ NewOnlinePaymentFailed=Pembayaran daring baru dicoba tetapi gagal
 ONLINE_PAYMENT_SENDEMAIL=Alamat email untuk pemberitahuan setelah setiap upaya pembayaran (untuk berhasil dan gagal)
 ReturnURLAfterPayment=Kembalikan URL setelah pembayaran
 ValidationOfOnlinePaymentFailed=Validasi pembayaran online gagal
-PaymentSystemConfirmPaymentPageWasCalledButFailed=Halaman konfirmasi pembayaran dipanggil oleh sistem pembayaran menghasilkan kesalahan
+PaymentSystemConfirmPaymentPageWasCalledButFailed=The payment confirmation page was called by the online payment system and returned an error
 SetExpressCheckoutAPICallFailed=Panggilan API SetExpressCheckout gagal.
 DoExpressCheckoutPaymentAPICallFailed=Panggilan API DoExpressCheckoutPayment gagal.
 DetailedErrorMessage=Pesan Kesalahan Detail

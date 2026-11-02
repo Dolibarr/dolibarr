@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Joachim Kueter          <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
  * @var Translate $langs
  * @var User $user
  */
+
+$langs->loadLangs(array('receptions', 'orders'));
 
 $year = GETPOSTINT("year");
 $socid = GETPOSTINT("socid");
@@ -75,7 +78,7 @@ if (!$mesg) {
 	$px->SetMaxValue($px->GetCeilMaxValue());
 	$px->SetWidth($WIDTH);
 	$px->SetHeight($HEIGHT);
-	$px->SetYLabel($langs->trans("NbOfOrders"));
+	$px->SetYLabel($langs->trans("NbOfReceptions"));
 	$px->SetShading(3);
 	$px->SetHorizTickIncrement(1);
 	$px->draw($filename, $fileurl);

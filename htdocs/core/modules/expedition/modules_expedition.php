@@ -75,6 +75,21 @@ abstract class ModelePdfExpedition extends CommonDocGenerator
 	 */
 	abstract public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0);
 	// phpcs:enable
+
+	/**
+	 *  Return the ids of contacts of a shipment, read on its origin object when it has one
+	 *
+	 *  @param	Expedition	$object		Shipment, with origin_object loaded by fetch_origin()
+	 *  @param	string		$source		'external' or 'internal'
+	 *  @param	string		$code		Code of contact type ('SHIPPING', 'SALESREPFOLL', ...)
+	 *  @return	int[]					List of contact ids
+	 */
+	protected function getIdContactOfShipment($object, $source, $code)
+	{
+		$contactholder = (is_object($object->origin_object) && $object->origin_object->id > 0) ? $object->origin_object : $object;
+
+		return (array) $contactholder->getIdContact($source, $code);
+	}
 }
 
 

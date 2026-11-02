@@ -162,8 +162,8 @@ class ActionsTicket extends CommonHookActions
 		$this->getInstanceDao();
 		$this->dao->fetch($id);
 
-		$this->label = $this->dao->label;
-		$this->description = $this->dao->description;
+		$this->label = $this->dao->subject;
+		$this->description = $this->dao->message;
 	}
 
 	/**

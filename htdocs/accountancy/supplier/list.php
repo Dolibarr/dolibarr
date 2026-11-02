@@ -931,7 +931,7 @@ if ($result) {
 			$totalarray['nbfield']++;
 		}
 		// VAT Num
-		if (!empty($arrayfields['co.label']['checked'])) {
+		if (!empty($arrayfields['s.tva_intra']['checked'])) {
 			print '<td class="tdoverflowmax80" title="'.dol_escape_htmltag($objp->tva_intra).'">'.dol_escape_htmltag($objp->tva_intra).'</td>';
 			$totalarray['nbfield']++;
 		}

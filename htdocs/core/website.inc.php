@@ -108,7 +108,7 @@ if (!empty($pageid) && $pageid > 0) {
 
 	$pagelangs->setDefaultLang($websitepage->lang ? $websitepage->lang : $weblangs->shortlang);
 
-	if (!defined('USEDOLIBARREDITOR') && (in_array($websitepage->type_container, array('menu', 'setup', 'other')) || empty($websitepage->status) && !defined('USEDOLIBARRSERVER'))) {
+	if (!defined('USEDOLIBARREDITOR') && (in_array($websitepage->type_container, array('menu', 'setup', 'other', 'header', 'footer')) || empty($websitepage->status) && !defined('USEDOLIBARRSERVER'))) {
 		$weblangs->load("website");
 
 		// Security options
@@ -322,8 +322,8 @@ foreach ($systemfunctions as $systemfunction) {
 }
 
 if (empty($dolibarr_website_allow_custom_php) || ($dolibarr_website_allow_custom_php == 1 && $notdisabledsystemfunction)) {
-	print '<center><br><br>';
-	print 'Website features are DISABLED if the PHP system functions ('.implode(',', $systemfunctions).') are NOT disabled for the website context.<br>';
+	print '<div style="padding-left: 100px; padding-right: 100px"><div class="justify"><br><br>';
+	print 'Website features are DISABLED by default because the PHP system functions ('.implode(',', $systemfunctions).') are NOT disabled for the website context.<br>';
 	print 'The value "'.$notdisabledsystemfunction.'" has NOT been found into the php parameter <b>current disable_functions</b> ';
 	//print '<textarea cols="100" rows="5">';
 	if (!class_exists('Form')) {
@@ -338,16 +338,20 @@ if (empty($dolibarr_website_allow_custom_php) || ($dolibarr_website_allow_custom
 	//print (implode(', ', explode(',', (string) ini_get('disable_functions'))));
 	//print '</textarea>';
 
-	print '<br><br>';
-	print 'You can fix this by changing setup of your PHP ini (changing this in a virtual host with php_admin_value is not effective):<br>';
-	print 'disable_functions="exec,passthru,shell_exec,system,popen,proc_open,..."<br>';
-	print 'but WARNING, this will break this 3 features for:<br>';
+	print '<br>';
+	print 'You have 2 solutions to fix this: <br><br>';
+	print '<b>A)</b> Change setup of your PHP ini (changing this in a virtual host with php_admin_value is not effective):<br>';
+	print '<pre>disable_functions="exec,passthru,shell_exec,system,popen,proc_open,..."</pre>';
+	print 'but WARNING, this will break the following features:<br>';
 	print '- 1) Cron tasks calling command line tools.<br>';
 	print '- 2) Internal backup feature running the database dump tool.<br>';
 	print '- 3) Command line antivirus check ran when uploading a file.<br>';
 	print '<br>';
-	print 'If you don\'t use this 3 feature, you can change your php.ini to exclude the exec functions.<br>If you need at least one, you can bypass this protection by setting $dolibarr_website_allow_custom_php to 2 in your dolibarr config file (Add RCE protection like AppArmor or SELinux in this case).';
-	print '</center>';
+	print 'If you don\'t use these 3 features, you can change your php.ini to exclude the exec functions... or...<br>';
+	print '<br>';
+	print '<b>B)</b> If you need at least one of this feature, you can bypass this protection by setting ';
+	print '$dolibarr_website_allow_custom_php to 2 in your dolibarr conf.php file (In this case, we recommend to add a RCE protection like AppArmor or SELinux in this case).';
+	print '</div></div>';
 	exit;		// Stop here to PHP later won't be executed
 }
 

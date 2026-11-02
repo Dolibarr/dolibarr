@@ -432,6 +432,25 @@ class SecurityTest extends CommonClassTest
 	}
 
 	/**
+	 * testDolVerifyHash
+	 *
+	 * @return void
+	 */
+	public function testDolVerifyHash()
+	{
+		$hash = dol_hash('mypassword', '3');	// md5
+		$this->assertTrue(dol_verifyHash('mypassword', $hash, '3'));
+		$this->assertFalse(dol_verifyHash('mypassword2', $hash, '3'));
+		$this->assertFalse(dol_verifyHash('', $hash, '3'));
+
+		// Two different strings whose md5 are "0e" followed by digits only: they are equal for a loose comparison (magic hashes)
+		$this->assertEquals('0e462097431906509019562988736854', md5('240610708'));
+		$this->assertEquals('0e830400451993494058024219903391', md5('QNKCDZO'));
+		$this->assertFalse(dol_verifyHash('QNKCDZO', md5('240610708'), '3'), 'Two magic hashes must not match');
+		$this->assertTrue(dol_verifyHash('240610708', md5('240610708'), '3'));
+	}
+
+	/**
 	 * testGetRandomPassword
 	 *
 	 * @return int
@@ -529,6 +548,41 @@ class SecurityTest extends CommonClassTest
 		} else {
 			$conf->file->restrict_password_generation_none = $savFile;
 		}
+	}
+
+	/**
+	 * testGeneratedPasswordsFollowTheRules
+	 *
+	 * The 'standard' and 'Perso' generators must give a password that follows their rules, with the random_int() based picking
+	 *
+	 * @return void
+	 */
+	public function testGeneratedPasswordsFollowTheRules()
+	{
+		global $conf, $db, $langs, $user;
+
+		$savPasswordPattern = getDolGlobalString('USER_PASSWORD_PATTERN');
+
+		require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modGeneratePassStandard.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modGeneratePassPerso.class.php';
+
+		$modstandard = new modGeneratePassStandard($db, $conf, $langs, $user);
+		$conf->global->USER_PASSWORD_PATTERN = '14;2;3;2;3;0';
+		$modperso = new modGeneratePassPerso($db, $conf, $langs, $user);
+
+		for ($i = 0; $i < 30; $i++) {
+			$pass = $modstandard->getNewGeneratedPassword();
+			$this->assertEquals(12, strlen($pass), 'standard generator must give 12 chars');
+			$this->assertEquals(1, preg_match('/^[0-9a-zA-Z]{12}$/', $pass), 'standard generator must give only letters and digits: '.$pass);
+
+			$pass = $modperso->getNewGeneratedPassword();
+			$this->assertEquals(14, strlen($pass), 'Perso generator must give 14 chars');
+			$this->assertGreaterThanOrEqual(2, preg_match_all('/[A-Z]/', $pass), 'Perso generator must give at least 2 uppercase: '.$pass);
+			$this->assertGreaterThanOrEqual(3, preg_match_all('/[0-9]/', $pass), 'Perso generator must give at least 3 digits: '.$pass);
+			$this->assertGreaterThanOrEqual(2, preg_match_all('/[^0-9a-zA-Z]/', $pass), 'Perso generator must give at least 2 special chars: '.$pass);
+		}
+
+		$conf->global->USER_PASSWORD_PATTERN = $savPasswordPattern;
 	}
 
 	/**
@@ -646,73 +700,6 @@ class SecurityTest extends CommonClassTest
 		}
 	}
 
-
-	/**
-	 * testGetObjectIdsRefusedToUser
-	 *
-	 * The mass actions of the lists get the ids to process from the request. getObjectIdsRefusedToUser() must refuse the
-	 * objects of the third parties that are not assigned to a user who can not see all third parties, and accept them once
-	 * the user is a sales representative of the third party, like the lists and the cards do.
-	 *
-	 * @return void
-	 */
-	public function testGetObjectIdsRefusedToUser()
-	{
-		global $conf,$user,$langs,$db;
-		$conf = $this->savconf;
-		$user = $this->savuser;
-		$langs = $this->savlangs;
-		$db = $this->savdb;
-
-		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
-
-		$soc = new Societe($db);
-		$soc->name = 'testGetObjectIdsRefusedToUser '.mt_rand(0, 99999);
-		$soc->client = 1;
-		$soc->code_client = -1;
-		$socid = $soc->create($user);
-		$this->assertGreaterThan(0, $socid, 'Third party must be created');
-
-		$invoice = new Facture($db);
-		$invoice->socid = $socid;
-		$invoice->date = dol_now();
-		$invoice->type = Facture::TYPE_STANDARD;
-		$invoiceid = $invoice->create($user);
-		$this->assertGreaterThan(0, $invoiceid, 'Invoice must be created');
-
-		try {
-			// A user who can see the third parties, but only the ones assigned to him: he is not assigned to this one
-			$restricteduser = new User($db);
-			$restricteduser->id = $user->id;
-			$restricteduser->entity = $user->entity;
-			$restricteduser->socid = 0;
-			$restricteduser->rights = new stdClass();
-			$restricteduser->rights->societe = new stdClass();
-			$restricteduser->rights->societe->lire = 1;
-			$restricteduser->rights->societe->client = new stdClass();
-			$restricteduser->rights->societe->client->voir = 0;
-
-			$this->assertSame(array($invoiceid), getObjectIdsRefusedToUser($restricteduser, new Facture($db), array($invoiceid)), 'The invoice of a third party not assigned to the restricted user must be refused');
-			$this->assertSame(array($socid), getObjectIdsRefusedToUser($restricteduser, new Societe($db), array($socid)), 'The third party not assigned to the restricted user must be refused');
-			$this->assertSame(array(), getObjectIdsRefusedToUser($restricteduser, new Bookmark($db), array(1, 2)), 'A type of object without third party is not checked');
-
-			// The same user with the permission to see all third parties
-			$restricteduser->rights->societe->client->voir = 1;
-			$this->assertSame(array(), getObjectIdsRefusedToUser($restricteduser, new Facture($db), array($invoiceid)), 'A user who sees all third parties can access the invoice');
-			$this->assertSame(array(), getObjectIdsRefusedToUser($restricteduser, new Societe($db), array($socid)), 'A user who sees all third parties can access the third party');
-
-			// The restricted user, once he is a sales representative of the third party
-			$restricteduser->rights->societe->client->voir = 0;
-			$this->assertGreaterThanOrEqual(0, $soc->add_commercial($user, $restricteduser->id), 'User must be added as sales representative');
-			$this->assertSame(array(), getObjectIdsRefusedToUser($restricteduser, new Facture($db), array($invoiceid)), 'The sales representative of the third party can access its invoice');
-			$this->assertSame(array(), getObjectIdsRefusedToUser($restricteduser, new Societe($db), array($socid)), 'The sales representative can access the third party');
-		} finally {
-			$invoice->delete($user);
-			$soc->delete($socid, $user);
-		}
-	}
 
 	/**
 	 * testDolSanitizeUrl

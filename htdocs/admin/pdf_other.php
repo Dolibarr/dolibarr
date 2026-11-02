@@ -318,12 +318,8 @@ if (isModEnabled('propal')) {
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_PDF_ADD_TERMSOFSALE_PROPAL"), $tooltipconcatpdf);
 	print '</td><td>';
-	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('MAIN_PDF_ADD_TERMSOFSALE_PROPAL', array(), null, 0, 0, 1);
-	} else {
-		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("MAIN_PDF_ADD_TERMSOFSALE_PROPAL", $arrval, getDolGlobalString('MAIN_PDF_ADD_TERMSOFSALE_PROPAL'));
-	}
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("YesAddedByDefault"), '2' => $langs->trans("YesNotAddedByDefault"));
+	print $form->selectarray("MAIN_PDF_ADD_TERMSOFSALE_PROPAL", $arrval, getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_PROPAL'));
 
 	if (getDolGlobalString("MAIN_PDF_ADD_TERMSOFSALE_PROPAL")) {
 		$modulepart = 'propal';
@@ -397,12 +393,8 @@ if (isModEnabled('order')) {
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_PDF_ADD_TERMSOFSALE_ORDER"), '');
 	print '</td><td>';
-	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('MAIN_PDF_ADD_TERMSOFSALE_ORDER', array(), null, 0, 0, 1);
-	} else {
-		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("MAIN_PDF_ADD_TERMSOFSALE_ORDER", $arrval, getDolGlobalString('MAIN_PDF_ADD_TERMSOFSALE_ORDER'));
-	}
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("YesAddedByDefault"), '2' => $langs->trans("YesNotAddedByDefault"));
+	print $form->selectarray("MAIN_PDF_ADD_TERMSOFSALE_ORDER", $arrval, getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_ORDER'));
 
 	if (getDolGlobalString("MAIN_PDF_ADD_TERMSOFSALE_ORDER")) {
 		$modulepart = 'order';
@@ -441,12 +433,8 @@ if (isModEnabled('contract')) {
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_PDF_ADD_TERMSOFSALE_CONTRACT"), $tooltipconcatpdf);
 	print '</td><td>';
-	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('MAIN_PDF_ADD_TERMSOFSALE_CONTRACT', array(), null, 0, 0, 1);
-	} else {
-		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("MAIN_PDF_ADD_TERMSOFSALE_CONTRACT", $arrval, getDolGlobalString('MAIN_PDF_ADD_TERMSOFSALE_CONTRACT'));
-	}
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("YesAddedByDefault"), '2' => $langs->trans("YesNotAddedByDefault"));
+	print $form->selectarray("MAIN_PDF_ADD_TERMSOFSALE_CONTRACT", $arrval, getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_CONTRACT'));
 
 	if (getDolGlobalString("MAIN_PDF_ADD_TERMSOFSALE_CONTRACT")) {
 		$modulepart = 'contrat';
@@ -519,12 +507,8 @@ if (isModEnabled('invoice')) {
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_PDF_ADD_TERMSOFSALE_INVOICE"), '');
 	print '</td><td>';
-	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('MAIN_PDF_ADD_TERMSOFSALE_INVOICE', array(), null, 0, 0, 1);
-	} else {
-		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("MAIN_PDF_ADD_TERMSOFSALE_INVOICE", $arrval, getDolGlobalString('MAIN_PDF_ADD_TERMSOFSALE_INVOICE'));
-	}
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("YesAddedByDefault"), '2' => $langs->trans("YesNotAddedByDefault"));
+	print $form->selectarray("MAIN_PDF_ADD_TERMSOFSALE_INVOICE", $arrval, getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE'));
 
 	if (getDolGlobalString("MAIN_PDF_ADD_TERMSOFSALE_INVOICE")) {
 		$modulepart = 'invoice';
