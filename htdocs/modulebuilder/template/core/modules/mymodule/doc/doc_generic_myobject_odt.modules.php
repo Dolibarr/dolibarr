@@ -172,15 +172,15 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 		// Scan directories
 		$nbofiles = count($listoffiles);
 		if ($odtPath) {
-			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>';
+			$texte .= '<span class="opacitylow">'.$langs->trans("NumberOfModelFilesFound").': <b>';
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
 			$texte .= count($listoffiles);
 			//$texte.=$nbofiles?'</a>':'';
-			$texte .= '</b>';
+			$texte .= '</b></span>';
 		}
 
 		if ($nbofiles) {
-			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
+			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx opacitylow">';
 			// Show list of found files
 			foreach ($listoffiles as $file) {
 				$texte .= '- '.$file['name'].' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=mymodule_myobject/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a>';

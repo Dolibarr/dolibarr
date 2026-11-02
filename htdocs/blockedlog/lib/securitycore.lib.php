@@ -344,5 +344,5 @@ function dol_verifyHash($chain, $hash, $type = '0')
 		return false;
 	}
 
-	return dol_hash($chain, $type) == $hash;
+	return hash_equals((string) dol_hash($chain, $type), (string) $hash);
 }

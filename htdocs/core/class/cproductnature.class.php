@@ -82,7 +82,7 @@ class CProductNature extends CommonDict
 		$sql .= (int) $this->id . ",";
 		$sql .= " ".(!isset($this->code) ? 'NULL' : ((int) $this->code)).",";
 		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape(trim($this->label))."'").",";
-		$sql .= " ".(!isset($this->active) ? 'NULL' : ((int) $this->active)).",";
+		$sql .= " ".(!isset($this->active) ? 'NULL' : ((int) $this->active));
 		$sql .= ")";
 
 		$this->db->begin();

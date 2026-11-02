@@ -118,6 +118,11 @@ for VAR in DOL_CTI_ADMIN_LOGIN DOL_CTI_ADMIN_PASSWORD; do
     fi
 done
 
+# DOCKER_ALLOW_SMTP=1 starts the container without the block of the outbound SMTP ports.
+if [ "${DOCKER_ALLOW_SMTP:-}" = "1" ]; then
+    TEST_ARGS+=(-e "DOCKER_ALLOW_SMTP=1")
+fi
+
 # Make the Apache logs of the host readable into the container (read-only mount).
 # The GID owning the directory (adm on Debian/Ubuntu) is passed so the entrypoint
 # can add the user to this group, as the directory is not readable by others.
@@ -132,6 +137,17 @@ if [ -f "$HOME/.transifexrc" ]; then
     TX_ARGS+=(--mount "type=bind,src=$HOME/.transifexrc,dst=$HOME/.transifexrc,readonly")
 fi
 
+# The AppArmor mediation of the dbus-daemon of the host refuses the connections
+# coming from the default docker profile (docker-default declares no dbus rule),
+# so the clicks on the chat links (open-on-host, see README.md) are ignored
+# without it. Run the container unconfined so its processes may talk to the
+# D-Bus session bus of the host. Only added when AppArmor is enabled on the
+# host (the option makes docker fail on the hosts without AppArmor).
+SECURITY_ARGS=()
+if [ "$(cat /sys/module/apparmor/parameters/enabled 2>/dev/null)" = "Y" ]; then
+    SECURITY_ARGS+=(--security-opt apparmor=unconfined)
+fi
+
 sudo docker run --rm -it \
   -e HOST_UID="$(id -u)" \
   -e HOST_GID="$(id -g)" \
@@ -142,6 +158,7 @@ sudo docker run --rm -it \
   "${TEST_ARGS[@]}" \
   "${LOG_ARGS[@]}" \
   "${TX_ARGS[@]}" \
+  "${SECURITY_ARGS[@]}" \
   --network=host \
   --cap-add=NET_ADMIN \
   --mount "type=bind,src=/var/run/mysqld/mysqld.sock,dst=/var/run/mysqld/mysqld.sock" \

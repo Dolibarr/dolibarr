@@ -31,9 +31,9 @@ UseDiscountOnTotal=Като междинна сума
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Определя дали глобалната отстъпка се третира като продукт, услуга или само като междинна сума за изчисление на маржа.
 MARGIN_TYPE=Покупна цена / себестойност предложена по подразбиране за изчисление на маржа
 MargeType1=Марж по най-добра покупна цена
-MargeType2=Margin on Weighted Average Cost (WAC)
+MargeType2=Марж по средна претеглена цена (СПЦ)
 MargeType3=Марж по себестойност
-MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
+MarginTypeDesc=* Марж по най-добра покупна цена = Продажна цена - Най-добрата цена от доставчик, зададена в картата на продукта<br>* Марж по средна претеглена цена (СПЦ) = Продажна цена - Средна претеглена цена на продукта (СПЦ) или най-добрата цена от доставчик, ако СПЦ все още не е зададена<br>* Марж по себестойност = Продажна цена - Себестойност, зададена в картата на продукта, или СПЦ, ако себестойността не е зададена, или най-добрата цена от доставчик, ако СПЦ все още не е зададена
 CostPrice=Себестойност
 UnitCharges=Единични такси
 Charges=Такси
@@ -43,4 +43,7 @@ rateMustBeNumeric=Процента трябва да е числова стой�
 markRateShouldBeLesserThan100=Нетния марж трябва да бъде по-малък от 100
 ShowMarginInfos=Показване на информация за марж
 CheckMargins=Маржови подробности
-MarginPerSaleRepresentativeWarning=Справката за изчисляване на маржа от всеки потребител, използва връзката между контрагентите и търговските представители. Тъй като някои контрагенти нямат само по един търговски представител, а някои контрагенти може да бъде свързани с няколко представители, то някои стойности не могат да бъдат включени в тази справка (ако няма търговски представител) и някои може да се появят на различни редове (за всеки търговски представител).
+MarginPerSaleRepresentativeWarning=Справката за маржа по потребител използва връзката между контрагентите и търговските представители, за да изчисли маржа на всеки търговски представител. Тъй като някои контрагенти може да нямат определен търговски представител, а други може да са свързани с няколко, някои суми може да не са включени в тази справка (ако няма търговски представител), а други може да се появят на различни редове (за всеки търговски представител).
+MarginUpdateLinkedBuyingPrice=Suggest to propagate the cost price modified on a line to all the lines of the linked proposals, orders and invoices that has the same product (users will decide yes or no at eachmodification)
+UpdateLinkedBuyingPrice=Update the cost price on all lines (with the same product) of the linked documents
+UpdateLinkedBuyingPriceQuestion=The cost price of this line has changed. Apply it to the lines of the linked documents that has the same product ?

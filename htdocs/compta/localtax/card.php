@@ -62,7 +62,7 @@ if ($user->socid) {
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('localtaxvatcard', 'globalcard'));
 
-$result = restrictedArea($user, 'tax', '', '', 'charges');
+$result = restrictedArea($user, 'tax', $id, 'localtax', 'charges');
 
 $object = new Localtax($db);
 

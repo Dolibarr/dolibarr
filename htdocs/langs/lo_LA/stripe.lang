@@ -5,7 +5,7 @@ StripeOrCBDoPayment=ຊຳລະດ້ວຍບັດເຄຣດິດ ຫຼ�
 FollowingUrlAreAvailableToMakePayments=URL ລຸ່ມນີ້ສາມາດໃຊ້ເພື່ອໃຫ້ລູກຄ້າຊຳລະເງິນຜ່ານເອກະສານ Dolibarr
 PaymentForm=ແບບຟອມການຊຳລະເງິນ
 WelcomeOnPaymentPage=ຍິນດີຕ້ອນຮັບເຂົ້າສູ່ບໍລິການຊຳລະເງິນອອນລາຍຂອງພວກເຮົາ
-ThisScreenAllowsYouToPay=ໜ້ານີ້ຊ່ວຍໃຫ້ທ່ານສາມາດຊຳລະເງິນອອນລາຍໃຫ້ກັບ %s.
+ThisScreenAllowsYouToPay=This screen allows you to make an online payment to %s.
 ThisIsInformationOnPayment=ນີ້ແມ່ນຂໍ້ມູນການຊຳລະເງິນທີ່ຕ້ອງປະຕິບັດ
 ToComplete=ເພື່ອເຮັດໃຫ້ສຳເລັດ
 YourEMail=ອີເມລເພື່ອຮັບການຢືນຢັນການຊຳລະເງິນ
@@ -25,7 +25,7 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL ສຳລັບໜ້າຊຳລ�
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL ສຳລັບໜ້າຊຳລະເງິນອອນລາຍ %s ຂອງການສະໝັກສະມາຊິກ
 ToOfferALinkForOnlinePaymentOnDonation=URL ສຳລັບໜ້າຊຳລະເງິນອອນລາຍ %s ຂອງການບໍລິຈາກ
 YouCanAddTagOnUrl=ທ່ານສາມາດເພີ່ມພາຣາມິເຕີ <b>&tag=value</b> ໃນ URL ເຫຼົ່ານັ້ນ (ຈຳເປັນສະເພາະການຊຳລະເງິນທີ່ບໍ່ໄດ້ເຊື່ອມໂຍງກັບເອກະສານ) ເພື່ອເພີ່ມແທັກຄຳອະທິບາຍການຊຳລະເງິນຂອງທ່ານເອງ.<br>ສຳລັບ URL ທີ່ບໍ່ມີເອກະສານຜູກມັດ, ທ່ານຍັງສາມາດເພີ່ມພາຣາມິເຕີ <strong>&noidempotency=1</strong> ເພື່ອໃຫ້ລິງກ໌ທີ່ມີແທັກດຽວກັນສາມາດໃຊ້ໄດ້ຫຼາຍຄັ້ງ (ບາງຮູບແບບການຊຳລະເງິນອາດຈຳກັດການຊຳລະພຽງ 1 ຄັ້ງຕໍ່ 1 ລິງກ໌ຫາກບໍ່ມີພາຣາມິເຕີນີ)
-YouCanEmbedOnWebsite=ຫາກທ່ານຕ້ອງການລວມໜ້າຊຳລະເງິນເຂົ້າໃນເວັບໄຊ Dolibarr, ທ່ານສາມາດໃສ່ພາຣາມິເຕີ: <b>&ws=website_ref</b>.<br>ນອກຈາກນັ້ນ, ຕ້ອງສ້າງສອງໜ້າທີ່ມີຊື່ວ່າ <b>paymentok</b> ແລະ <b>paymentko</b> ໃນເວັບໄຊເພື່ອຮັບການສົ່ງຕໍ່ຫຼັງຈາກການຊຳລະເງິນອອນລາຍສຳເລັດ ຫຼື ລົ້ມເຫຼວ.
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful or failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=ຕັ້ງຄ່າ Stripe ຂອງທ່ານດ້ວຍ URL <b>%s</b> ເພື່ອໃຫ້ມີການສ້າງການຊຳລະເງິນໂດຍອັດຕະໂນມັດເມື່ອໄດ້ຮັບການຢືນຢັນຈາກ Stripe.
 AccountParameter=ພາຣາມິເຕີບັນຊີ
 UsageParameter=ພາຣາມິເຕີການນຳໃຊ້
@@ -110,3 +110,4 @@ PAYBOX_PBX_RANG=ຄ່າສຳລັບ PBX Rang
 PAYBOX_PBX_IDENTIFIANT=ຄ່າສຳລັບ PBX ID
 PAYBOX_HMAC_KEY=ລະຫັດ HMAC key
 FeatureNotUsedAccordingtoSetup=ຄຸນສົມບັດນີ້ບໍ່ໄດ້ຖືກໃຊ້ຕາມການຕັ້ງຄ່າ %s ຂອງທ່ານ
+PaymentRecordedButPostPocessingKo=Your payment was recorded by the payment system. However, it appears that our post-payment processing could not be fully completed. We were alerted and will try to solve this soon. We recommend you to not try to pay a second time, and send us a screenshot of this page by email to be sure so we take into account the issue.

@@ -55,7 +55,6 @@ ToAndDate=Para___________________________________ en ____ / _____ / __________
 GoodStatusDeclaration=Se recibido los productos arriba descritos en buenas condiciones,
 Sender=Remitente
 ShowReceiving=Mostrar recibo de entrega
-DocumentModelTyphon=Modelo de documento más completo para recibos de entrega (logo ...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constante EXPEDITION_ADDON_NUMBER no definido
 SumOfProductVolumes=Suma de volúmenes de producto
 SumOfProductWeights=Suma de los pesos del producto

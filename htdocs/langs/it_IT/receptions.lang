@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=Convalidato
 StatusReceptionProcessedShort=Elaborato
 ReceptionSheet=Foglio ricezione
 ValidateReception=Convalida ricezione
+DeleteReception=Delete reception
 ConfirmDeleteReception=Confermi elminazione ricezione?
 ConfirmValidateReception=Sei sicuro che vuoi per convalidare questo ricezione con il riferimento <b>%s</b>?
 ConfirmCancelReception=Confermi annullamento ricezione?

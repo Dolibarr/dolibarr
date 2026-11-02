@@ -391,7 +391,6 @@ ReadPermissionNotAllowed=صلاحية القراءة غير مسموحة
 FindBug=الإبلاغ عن خلل
 NbOfThirdParties=عدد الجهات الخارجية
 NbOfLines=عدد الأسطر
-Referers=عناصر مرتبطة
 TotalQuantity=إجمالي الكمية
 BuildDoc=إنشاء مستند
 Entity=البيئة
