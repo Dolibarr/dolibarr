@@ -1240,7 +1240,8 @@ class ToolApiBridge extends McpTool
 						'right' => ['produit', 'creer']
 					],
 					'params' => [
-						"ref" => "Internal reference.", "label" => "Product label.", "price" => "Selling price excl. tax.", "type" => "0 product, 1 service."
+						"ref" => "Internal reference.", "label" => "Product label.", "price" => "Selling price excl. tax.", "type" => "0 product, 1 service.",
+						"tva_tx" => "VAT rate in percent (e.g. 20). Omit it to use the default VAT rate of the company."
 					]
 				],
 				'index' => [
