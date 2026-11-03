@@ -353,7 +353,7 @@ class Tickets extends DolibarrApi
 		$this->_validate($request_data);
 
 		// Check thirdparty validity
-		$socid = (int) $request_data['socid'];
+		$socid = (int) ($request_data['socid'] ?? 0);
 		if ($socid > 0) {
 			$thirdpartytmp = new Societe($this->db);
 			$thirdparty_result = $thirdpartytmp->fetch($socid);
@@ -456,7 +456,7 @@ class Tickets extends DolibarrApi
 		}
 
 		// Check thirdparty validity
-		$socid = (int) $request_data['socid'];
+		$socid = (int) ($request_data['socid'] ?? 0);
 		if ($socid > 0) {
 			$thirdpartytmp = new Societe($this->db);
 			$thirdparty_result = $thirdpartytmp->fetch($socid);
