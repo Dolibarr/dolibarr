@@ -87,7 +87,7 @@ class AiProjectUpdateTest extends CommonClassTest
 		foreach (['api_projects_update' => 7] as $tool => $id) {
 			$args = ['id' => $id, 'description' => '  Updated description  ', 'note_public' => "\n Public note \n", 'note_private' => '   '];
 			$this->assertSame('', $this->bridge->writePrecheck($tool, $args));
-			$preview = $this->bridge->writeConfirmationPreview($tool, $args);
+			$preview = html_entity_decode($this->bridge->writeConfirmationPreview($tool, $args), ENT_QUOTES | ENT_HTML5, 'UTF-8');
 			$this->assertStringContainsString('"Updated description"', $preview);
 			$this->assertStringNotContainsString('  Updated description  ', $preview);
 			$this->bridge->execute($tool, $args);
@@ -271,7 +271,7 @@ class AiProjectUpdateTest extends CommonClassTest
 	/** @return void */
 	public function testPreviewNamesProjectAndChangesWithoutLoadingSupplier()
 	{
-		$project = $this->bridge->writeConfirmationPreview('api_projects_update', ['ref' => 'PJ-7', 'title' => 'Revised project', 'date_end' => 1735862400]);
+		$project = html_entity_decode($this->bridge->writeConfirmationPreview('api_projects_update', ['ref' => 'PJ-7', 'title' => 'Revised project', 'date_end' => 1735862400]), ENT_QUOTES | ENT_HTML5, 'UTF-8');
 		foreach (['PJ-7', 'Example project', 'Revised project', '2025-01-02', '2025-01-03', '→'] as $expected) {
 			$this->assertStringContainsString($expected, $project);
 		}
@@ -319,7 +319,7 @@ class AiProjectUpdateTest extends CommonClassTest
 	public function testProjectDatePreviewUsesServerDayPrecision()
 	{
 		date_default_timezone_set('America/Los_Angeles');
-		$preview = $this->bridge->writeConfirmationPreview('api_projects_update', ['id' => 7, 'date_end' => 1735862400]);
+		$preview = html_entity_decode($this->bridge->writeConfirmationPreview('api_projects_update', ['id' => 7, 'date_end' => 1735862400]), ENT_QUOTES | ENT_HTML5, 'UTF-8');
 		$this->assertStringContainsString('2025-01-01 → 2025-01-02', $preview);
 		$this->assertStringNotContainsString('UTC', $preview);
 	}
@@ -401,6 +401,15 @@ class AiProjectUpdateLanguageFixture
 	public function trans($key, ...$values)
 	{
 		return $key.($values ? ' '.implode(' ', $values) : '');
+	}
+
+	/** @param string $key Translation key
+	 * @param mixed ...$values Substitution values
+	 * @return string Preview text
+	 */
+	public function transnoentitiesnoconv($key, ...$values)
+	{
+		return $this->trans($key, ...$values);
 	}
 }
 
