@@ -3,7 +3,6 @@
 #
 # Global
 #
-Subtotal=Részösszegek
 SubTotalModuleDesc=Részösszeg és felirat sorok bizonyos dokumentumokhoz
 #
 # Admin
@@ -12,12 +11,19 @@ SubtotalSetup=Részösszegek modul beállítása
 MaxSubtotalLevel=Maximális szint
 SubtotalLineBackColor=%s szintű sorok háttérszíne
 NotSupportedByAllPDF=Újabb PDF fájlokkal működni fog, de régebbiekkel nem %s
+SubtotalsPredefinedTitles=Subtotals predefined titles
+SubtotalsPredefinedTexts=Subtotals predefined texts
+SubtotalTextColumnTitle=Szöveg
 
 #
 # Card
 #
 AddTitleLine=Felirat sor hozzáadása
 AddSubtotalLine=Részösszeg sor hozzáadása
+AddTextLine=Add text line
+PredefinedTitle=Predefined title
+PredefinedText=Predefined text
+SubtotalTextContent=Text content
 TitleNeedDesc=Érvényes leírást kell megadni felirat sor létrehozásához.
 TitleAddedLevelTooHigh=Hozzáadott felirat sor szintje túl magas (helyette %s szinttel lett hozzáadva).
 TitleEditedLevelTooHigh=Módosított felriat sor szintje túl magas (helyette %s szinttel lett módosítva).

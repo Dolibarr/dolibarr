@@ -200,6 +200,28 @@ ALTER TABLE llx_receptiondet_batch ADD COLUMN ref_fourn varchar(128) NULL AFTER 
 -- VPGSQL ALTER TABLE llx_bookcal_availabilities RENAME COLUMN start TO date_start;
 -- VPGSQL ALTER TABLE llx_bookcal_availabilities RENAME COLUMN "end" TO date_end;
 
+-- ExpenseReport: rename date_create into date_creation to align with the Dolibarr naming convention
+ALTER TABLE llx_expensereport CHANGE COLUMN date_create date_creation datetime NOT NULL;
+
+-- ElementContact: rename datecreate into date_creation to align with the Dolibarr naming convention
+ALTER TABLE llx_element_contact CHANGE COLUMN datecreate date_creation datetime NULL;
+
+-- Mailing: rename date_creat into date_creation to align with the Dolibarr naming convention
+ALTER TABLE llx_mailing CHANGE COLUMN date_creat date_creation datetime;
+ALTER TABLE llx_mailing_unsubscribe CHANGE COLUMN date_creat date_creation datetime;
+
+-- ECM: rename date_c into date_creation to align with the Dolibarr naming convention
+ALTER TABLE llx_ecm_directories CHANGE COLUMN date_c date_creation datetime;
+ALTER TABLE llx_ecm_files CHANGE COLUMN date_c date_creation datetime;
+
+-- Multicurrency: rename date_create into date_creation to align with the Dolibarr naming convention
+ALTER TABLE llx_multicurrency CHANGE COLUMN date_create date_creation datetime DEFAULT NULL;
+
+-- Holiday: rename date_create into date_creation to align with the Dolibarr naming convention
+ALTER TABLE llx_holiday CHANGE COLUMN date_create date_creation datetime NOT NULL;
+ALTER TABLE llx_holiday DROP INDEX idx_holiday_date_create;
+ALTER TABLE llx_holiday ADD INDEX idx_holiday_date_creation (date_creation);
+
 -- Inventory: add last_main_doc used to save the relative path of last generated main document
 ALTER TABLE llx_inventory ADD COLUMN last_main_doc varchar(255) DEFAULT NULL AFTER date_validation;
 
@@ -599,3 +621,19 @@ ALTER TABLE llx_category_bankline ADD PRIMARY KEY pk_category_bankline(lineid, f
 -- VPGSQL8.2 ALTER TABLE llx_user_param ADD COLUMN rowid SERIAL PRIMARY KEY;
 -- VMYSQL4.3 ALTER TABLE llx_opensurvey_user_formanswers ADD COLUMN rowid integer AUTO_INCREMENT PRIMARY KEY;
 -- VPGSQL8.2 ALTER TABLE llx_opensurvey_user_formanswers ADD COLUMN rowid SERIAL PRIMARY KEY;
+
+-- Opensurvey: the survey of format 'F' (form): type, position and mandatory flag of a question, and the keys of the 2 tables of the form.
+ALTER TABLE llx_opensurvey_formquestions ADD COLUMN type VARCHAR(16) NOT NULL DEFAULT 'radio';
+ALTER TABLE llx_opensurvey_formquestions ADD COLUMN position INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE llx_opensurvey_formquestions ADD COLUMN mandatory TINYINT NOT NULL DEFAULT 0;
+ALTER TABLE llx_opensurvey_formquestions ADD INDEX idx_opensurvey_formquestions_id_sondage (id_sondage);
+ALTER TABLE llx_opensurvey_user_formanswers ADD UNIQUE INDEX uk_opensurvey_user_formanswers (fk_user_survey, fk_question);
+ALTER TABLE llx_opensurvey_user_formanswers ADD INDEX idx_opensurvey_user_formanswers_fk_question (fk_question);
+
+-- Add the document template of an inventory, so that a generated document can be rebuilt with the same one
+ALTER TABLE llx_inventory ADD COLUMN model_pdf varchar(255) AFTER date_validation;
+
+-- Add the document template of a leave request, so that a generated document can be rebuilt with the same one
+ALTER TABLE llx_holiday ADD COLUMN model_pdf varchar(255) AFTER import_key;
+-- Add the document template of a loan, so that a generated document can be rebuilt with the same one
+ALTER TABLE llx_loan ADD COLUMN model_pdf varchar(255) AFTER fk_user_modif;

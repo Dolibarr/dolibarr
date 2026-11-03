@@ -5057,6 +5057,7 @@ table.listwithfilterbefore {
 .confirmquestions .tagtr .tagtd:not(:first-child)  { padding-left: 10px; }
 .confirmquestions { margin-top: 5px; }
 .confirmquestions .tagtr .tagtd { height: 2em; vertical-align: middle; }
+.confirmquestions .tagtd { padding-top: 5px; padding-bottom: 5px; }	/* same spacing than eldy (where it is set on all .tagtd) */
 
 
 /* Pagination */
@@ -6436,7 +6437,8 @@ div#card-errors {
 
 button.ui-button-icon-only.ui-dialog-titlebar-close {
 	padding: 12px;
-	margin-top: -15px;
+	margin-top: 0;
+	transform: translateY(-50%);	/* center vertically whatever the real height of the button (padding + border) */
 	margin-right: 15px;
 }
 .ui-dialog-content {
@@ -6444,10 +6446,10 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize; ?> !important;
 }
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable {
-	z-index: 1005 !important;		/* Default 101 with ui-jquery, top menu have a z-index of 1000 */
+	z-index: 1007 !important;		/* Default 101 with ui-jquery. jquery-ui sets the modal overlay to this value - 1, which must be over the top menu (1005) */
 }
 .ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front {
-	z-index:1006 !important; 		/* To always be over the dialog box */
+	z-index: 1008 !important; 		/* To always be over the dialog box */
 }
 
 .ui-dialog.ui-widget.ui-widget-content {
@@ -6469,6 +6471,11 @@ div#dialogforpopup {
 
 .ui-dialog .ui-dialog-buttonpane {
 	padding: .5em 1em .3em .4em;
+}
+.ui-dialog .ui-dialog-buttonpane .ui-button:active, .ui-dialog .ui-dialog-buttonpane .ui-button.ui-state-active, .ui-dialog .ui-dialog-buttonpane .ui-button.ui-state-active:hover {
+	background: var(--butactionbg) !important;	/* same than .butAction instead of the default blue of .ui-state-active */
+	color: var(--textbutaction) !important;
+	border-color: var(--butactionbg) !important;	/* keep border width so button does not move, but remove the blue color */
 }
 .ui-dialog .ui-dialog-content, .ui-dialog .ui-dialog-titlebar.ui-widget-header {
 	padding-left: 1em !important;

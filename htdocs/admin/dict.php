@@ -2247,6 +2247,7 @@ if ($id > 0) {
 				$iserasable = 1;
 				$canbedisabled = 1;
 				$canbemodified = 1;
+				$isotherentity = 0;
 				if (isset($obj->code) && !in_array($id, array(DICT_TVA, DICT_PRODUCT_NATURE))) {
 					if (($obj->code == '0' || $obj->code == '' || preg_match('/unknown/i', $obj->code))) {
 						$iserasable = 0;
@@ -2298,6 +2299,7 @@ if ($id > 0) {
 					$iserasable = 0;
 					$canbedisabled = 0;
 					$canbemodified = 0;
+					$isotherentity = 1;
 				}
 				// Build Url. The table is id=, the id of line is rowid=
 				$rowidcol = empty($tabrowid[$id]) ? 'rowid' : $tabrowid[$id];
@@ -2347,12 +2349,41 @@ if ($id > 0) {
 					$error = $hookmanager->error;
 					$errors = $hookmanager->errors;
 
+					// Show only fields of visible columns, so edit line stays aligned with titles. Values of hidden columns are kept into hidden inputs.
+					$fieldlistedit = array();
+					$hiddenfieldsedit = array();
+					foreach ($fieldlist as $field => $value) {
+						if (isset($arrayfields[$value]) && empty($arrayfields[$value]['checked'])) {
+							$hiddenfieldsedit[] = $value;
+						} else {
+							$fieldlistedit[$field] = $value;
+						}
+					}
+					if (in_array('department_buyer', $hiddenfieldsedit)) {
+						$fieldlistedit = array_diff($fieldlistedit, array('department_buyer_id'));
+					}
+
 					// Show fields
 					if (empty($reshook)) {
-						$withentity = dictFieldList($fieldlist, $obj, $tabname[$id], 'edit');
+						$withentity = dictFieldList($fieldlistedit, $obj, $tabname[$id], 'edit');
 					}
 
 					print '<td colspan="3" class="center">';
+					foreach ($hiddenfieldsedit as $value) {
+						$hiddenname = $value;
+						$hiddenvalue = (isset($obj->$value) ? $obj->$value : '');
+						if ($value == 'country') {
+							$hiddenvalue = (isset($obj->country_id) ? $obj->country_id : '');
+						} elseif ($value == 'region') {
+							$hiddenvalue = (isset($obj->region_id) ? $obj->region_id : '');
+						} elseif ($value == 'department_buyer') {
+							$hiddenname = 'department_buyer_id';
+							$hiddenvalue = (isset($obj->department_buyer_id) ? $obj->department_buyer_id : '');
+						} elseif ($value == 'sortorder') {
+							$hiddenname = 'position';
+						}
+						print '<input type="hidden" name="'.dolPrintHTMLForAttribute($hiddenname).'" value="'.dolPrintHTMLForAttribute((string) $hiddenvalue).'">';
+					}
 					print '<div name="'.(isset($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
 					print '<input type="hidden" name="page" value="'.((int) $page).'">';
 					print '<input type="hidden" name="rowid" value="'.dol_escape_htmltag($rowid).'">';
@@ -2655,7 +2686,9 @@ if ($id > 0) {
 					if ($canbedisabled) {
 						print '<a class="reposition" href="'.$url.'action='.$acts[$obj->active].'&token='.newToken().'">'.$actl[$obj->active].'</a>';
 					} else {
-						if (in_array($obj->code, array('AC_OTH', 'AC_OTH_AUTO'))) {
+						if ($isotherentity && isModEnabled('multicompany')) {
+							print '<span class="opacitymedium">'.$langs->trans("OtherEntity").'</span>';
+						} elseif (in_array($obj->code, array('AC_OTH', 'AC_OTH_AUTO'))) {
 							print $langs->trans("AlwaysActive");
 						} elseif (isset($obj->type) && in_array($obj->type, array('systemauto')) && empty($obj->active)) {
 							print $langs->trans("Deprecated");

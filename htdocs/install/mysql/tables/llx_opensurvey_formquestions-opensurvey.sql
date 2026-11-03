@@ -19,5 +19,8 @@ CREATE TABLE llx_opensurvey_formquestions (
 	rowid INTEGER AUTO_INCREMENT NOT NULL PRIMARY KEY,
 	id_sondage VARCHAR(16),
 	question TEXT,
-    available_answers TEXT								-- List of available answers
+	type VARCHAR(16) NOT NULL DEFAULT 'radio',			-- Type of answer: text, textarea, radio (one answer among the available answers), checkbox (several answers among the available answers)
+	position INTEGER NOT NULL DEFAULT 0,				-- Order of the question into the survey
+	mandatory TINYINT NOT NULL DEFAULT 0,				-- 1 = the respondent must answer
+    available_answers TEXT								-- List of available answers (one per line). Not used for type text and textarea
 ) ENGINE=innodb;
