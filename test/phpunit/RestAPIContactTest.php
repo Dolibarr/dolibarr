@@ -128,6 +128,86 @@ class RestAPIContactTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * testRestListContacts
+	 *
+	 * @return void
+	 */
+	public function testRestListContacts()
+	{
+		$addheaders = array('Content-Type: application/json');
+
+		// Create 2 contacts with a unique lastname so we can filter the list on them
+		$lastname = 'testRestListContacts'.mt_rand();
+		$ids = array();
+		for ($i = 0; $i < 2; $i++) {
+			$body = json_encode(array("firstname" => "firstname".$i, "lastname" => $lastname));
+			$result = getURLContent($this->api_url.'/contacts?api_key='.$this->api_key, 'POST', $body, 1, $addheaders, array('http', 'https'), 2);
+			$this->assertEquals(0, $result['curl_error_no']);
+			$object = json_decode($result['content'], true);
+			$this->assertGreaterThan(0, (int) $object, 'Creation of contact failed: '.$result['content']);
+			$ids[] = (int) $object;
+		}
+
+		try {
+			$urlbase = $this->api_url.'/contacts?api_key='.$this->api_key.'&sqlfilters='.urlencode("(t.lastname:=:'".$lastname."')");
+
+			// limit=0 means no limit: must not fail with a division by zero, everything is on 1 page
+			$url = $urlbase.'&limit=0&pagination_data=true';
+			print __METHOD__." Request GET url=".$url."\n";
+			$result = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
+			$this->assertEquals(0, $result['curl_error_no']);
+			$this->assertEquals(200, $result['http_code'], 'Return code must be 200: '.$result['content']);
+			$object = json_decode($result['content'], true);
+			$this->assertNotNull($object, "Parsing of json result must not be null");
+			$this->assertCount(2, $object['data']);
+			$this->assertEquals(2, $object['pagination']['total']);
+			$this->assertEquals(1, $object['pagination']['page_count']);
+
+			// limit=1: 2 contacts on 2 pages
+			$url = $urlbase.'&limit=1&pagination_data=true';
+			print __METHOD__." Request GET url=".$url."\n";
+			$result = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
+			$this->assertEquals(0, $result['curl_error_no']);
+			$this->assertEquals(200, $result['http_code'], 'Return code must be 200: '.$result['content']);
+			$object = json_decode($result['content'], true);
+			$this->assertNotNull($object, "Parsing of json result must not be null");
+			$this->assertCount(1, $object['data']);
+			$this->assertEquals(2, $object['pagination']['total']);
+			$this->assertEquals(2, $object['pagination']['page_count']);
+
+			// Roles are loaded only if includeroles is set (fetchRoles() sets roles to an array, even if empty)
+			$url = $urlbase.'&includeroles=0';
+			print __METHOD__." Request GET url=".$url."\n";
+			$result = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
+			$this->assertEquals(0, $result['curl_error_no']);
+			$this->assertEquals(200, $result['http_code'], 'Return code must be 200: '.$result['content']);
+			$object = json_decode($result['content'], true);
+			$this->assertNotNull($object, "Parsing of json result must not be null");
+			$this->assertCount(2, $object);
+			foreach ($object as $contact) {
+				$this->assertFalse(isset($contact['roles']), 'Roles must not be loaded when includeroles=0');
+			}
+
+			$url = $urlbase.'&includeroles=1';
+			print __METHOD__." Request GET url=".$url."\n";
+			$result = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
+			$this->assertEquals(0, $result['curl_error_no']);
+			$this->assertEquals(200, $result['http_code'], 'Return code must be 200: '.$result['content']);
+			$object = json_decode($result['content'], true);
+			$this->assertNotNull($object, "Parsing of json result must not be null");
+			$this->assertCount(2, $object);
+			foreach ($object as $contact) {
+				$this->assertTrue(isset($contact['roles']) && is_array($contact['roles']), 'Roles must be loaded when includeroles=1');
+			}
+		} finally {
+			// Delete the contacts, even if an assertion failed
+			foreach ($ids as $id) {
+				getURLContent($this->api_url.'/contacts/'.$id.'?api_key='.$this->api_key, 'DELETE', '', 1, $addheaders, array('http', 'https'), 2);
+			}
+		}
+	}
+
+	/**
 	 * testRestUpdateContact
 	 *
 	 * @param	int		$objid		Id of object created at previous test
