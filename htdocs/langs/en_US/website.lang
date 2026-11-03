@@ -150,6 +150,8 @@ RSSFeedDesc=You can get an RSS feed of latest articles with type 'blogpost' usin
 PagesRegenerated=%s page(s)/container(s) regenerated
 RegenerateWebsiteContent=Regenerate web site cache files
 AllowedInFrames=Allowed in Frames
+NumberOfVersionsToKeepInHistory=Number of versions to keep in history
+NumberOfVersionsToKeepInHistoryHelp=0 = keep all versions of the page, n = keep only the n last versions of the page into the history
 DefineListOfAltLanguagesInWebsiteProperties=Define list of all available languages into web site properties.
 GenerateSitemaps=Generate website sitemap.xml file
 ConfirmGenerateSitemaps=If you confirm, you will erase the existing sitemap file...

@@ -125,7 +125,7 @@ class AiMcpApiBridgeTicketsTest extends CommonClassTest
 
 		$this->assertArrayHasKey('tickets', $endpoints);
 		$this->assertSame(
-			array('post', 'postNewMessage', 'put', 'postContact', 'deleteContact', 'index', 'get', 'getByTrackId', 'getByRef'),
+			array('post', 'postNewMessage', 'put', 'postContact', 'deleteContact', 'close', 'assign', 'index', 'get'),
 			array_keys($endpoints['tickets']['methods'])
 		);
 	}

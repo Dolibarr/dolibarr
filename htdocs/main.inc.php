@@ -1651,7 +1651,9 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 		}
 
 		// Add Dolibarr to Content-Security-Policy
-		$contentsecuritypolicy = preg_replace('/default-src \'self\'/', 'default-src \'self\' *.dolibarr.org', $contentsecuritypolicy);
+		if (!preg_match('/dolibarr\.org/', $contentsecuritypolicy)) {
+			$contentsecuritypolicy = preg_replace('/default-src \'self\'/', 'default-src \'self\' *.dolibarr.org', $contentsecuritypolicy);
+		}
 
 		if (!empty($contentsecuritypolicy)) {
 			header("Content-Security-Policy-Report-Only: ".$contentsecuritypolicy);
@@ -1691,7 +1693,9 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 		}
 
 		// Add Dolibarr to Content-Security-Policy
-		$contentsecuritypolicy = preg_replace('/default-src \'self\'/', 'default-src \'self\' ping.dolibarr.org', $contentsecuritypolicy);
+		if (!preg_match('/dolibarr\.org/', $contentsecuritypolicy)) {
+			$contentsecuritypolicy = preg_replace('/default-src \'self\'/', 'default-src \'self\' *.dolibarr.org', $contentsecuritypolicy);
+		}
 
 		if (!empty($contentsecuritypolicy)) {
 			header("Content-Security-Policy: ".$contentsecuritypolicy);
@@ -3112,6 +3116,9 @@ function top_menu_importfile()
 			$urlforuploadpage = getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE');
 		} elseif (!isModEnabled('ai')) {
 			// The native upload page uses the AI module to parse the files, so the button is hidden when the module is not enabled
+			return '';
+		} elseif (!isModEnabled('supplier_invoice') && !isModEnabled('salaries') && !isModEnabled('expensereport') && !isModEnabled('tax')) {
+			// The native upload page can only create supplier invoices, salaries, expense reports or social/fiscal taxes
 			return '';
 		}
 

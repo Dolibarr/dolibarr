@@ -4,7 +4,7 @@
  * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2016   	Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2023   	Romain Neil             <contact@romain-neil.fr>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  * Copyright (C) 2025-2026	Charlene Benke			<charlene@patas-monkey.com>
@@ -664,7 +664,10 @@ class Documents extends DolibarrApi
 								$fileitem['keywords'] = $line->keywords;
 								$fileitem['cover'] = $line->cover;
 								$fileitem['share'] = $line->share;
-								$fileitem['date_c'] = $line->date_c;
+								// The property was renamed into date_creation; the key of the answer keeps its name,
+								// so that the clients already reading date_c are not broken a second time.
+								$fileitem['date_c'] = $line->date_creation;
+								$fileitem['date_creation'] = $line->date_creation;
 								$fileitem['agenda_id'] = $line->agenda_id;
 								$fileitem['fk_user_c'] = $line->fk_user_c;
 								$fileitem['fk_user_m'] = $line->fk_user_m;

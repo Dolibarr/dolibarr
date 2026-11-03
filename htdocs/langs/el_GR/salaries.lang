@@ -11,7 +11,7 @@ ShowSalaryPayment=Εμφάνιση μισθοδοσίας
 SalaryID=ID μισθού
 SalaryAmount=Ποσό μισθού
 SalaryDate=Ημερομηνία μισθού
-SalaryPaid=Μισθός που καταβάλλεται
+SalaryPaid=Μισθός που καταβλήθηκε
 SalaryNotPaid=Δεν καταβλήθηκε μισθός
 
 SalarySlip=Απόδειξη μισθοδοσίας
@@ -26,7 +26,8 @@ Deductions=Κρατήσεις
 Earnings=Αμοιβές
 TotalEarnings=Σύνολο αμοιβών
 TotalDeductions=Σύνολο κρατήσεων
-NetPaid=Σύνολο καθαρών πληρωμένων
+NetPaid=Καθαρές αποδοχές που καταβλήθηκαν
+GrossSalary=Μικτές αποδοχές
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Λογαριασμός (από το λογιστικό σχέδιο) που χρησιμοποιείται από προεπιλογή για "χρήστες" στους μισθούς
@@ -55,8 +56,6 @@ FillFieldFirst=Συμπληρώστε το πεδίο υπαλλήλου πρώ�
 UpdateAmountWithLastSalary=Καθορίστε το ποσό βάσει του τελευταίου μισθού
 MakeTransferRequest=Αίτημα μεταφοράς
 VirementOrder=Αίτημα μεταφοράς πίστωσης
-WithdrawalReceipt=Εντολή μεταφοράς πίστωσης
-OrderWaiting=Εκκρεμής εντολή
 FillEndOfMonth=Τέλος μήνα
 
 # Shortcuts
