@@ -4093,6 +4093,68 @@ function dol_print_ip($ip, $mode = 0, $showname = 0)
 }
 
 /**
+ * Return the HTTP headers of the current request, whatever the SAPI.
+ *
+ * getallheaders() is only defined by some SAPI (Apache module, and FPM since PHP 7.3): it does
+ * not exist under CLI, nor under every FPM build, and calling it there is a fatal error. This
+ * rebuilds the same array from $_SERVER when it is missing, so callers can read a header without
+ * guarding every call, and so that reading one keeps working from a command line script.
+ *
+ * The keys are the header names as the client sent them, capitalised the way getallheaders()
+ * returns them: Authorization, Content-Type, X-Requested-With... Compare them without case
+ * (array_change_key_case) if the exact case matters to you.
+ *
+ * @return	array<string,string>	Header name => value
+ */
+function dolGetRequestHeaders()
+{
+	if (function_exists('getallheaders')) {
+		$headers = getallheaders();
+		return is_array($headers) ? $headers : array();
+	}
+
+	$headers = array();
+	foreach ($_SERVER as $key => $value) {
+		if (!is_string($value) || strncmp($key, 'HTTP_', 5) !== 0) {
+			continue;
+		}
+		// HTTP_X_REQUESTED_WITH becomes X-Requested-With
+		$name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($key, 5)))));
+		$headers[$name] = $value;
+	}
+	// Those two are the only request headers $_SERVER does not prefix with HTTP_
+	foreach (array('CONTENT_TYPE' => 'Content-Type', 'CONTENT_LENGTH' => 'Content-Length') as $key => $name) {
+		if (isset($_SERVER[$key]) && is_string($_SERVER[$key])) {
+			$headers[$name] = $_SERVER[$key];
+		}
+	}
+
+	return $headers;
+}
+
+/**
+ * Return the url of the server, without the directory Dolibarr is installed in.
+ *
+ * $dolibarr_main_url_root holds the url of the application, DOL_URL_ROOT included, so
+ * https://example.org/dolibarr for an installation in a subdirectory. What a link to a public
+ * page, a QR code or an OAuth callback needs is the part before it, https://example.org, and
+ * every caller was rebuilding it with the same expression:
+ *
+ *   $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+ *
+ * An installation at the root of its host has an empty DOL_URL_ROOT, and then there is nothing to
+ * remove: the url is returned trimmed, as the expression above already did.
+ *
+ * @return	string	Url of the server, with no trailing DOL_URL_ROOT
+ */
+function dolGetUrlWithoutUrlRoot()
+{
+	global $dolibarr_main_url_root;
+
+	return preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim((string) $dolibarr_main_url_root));
+}
+
+/**
  * Return the real IP of remote user.
  * Take HTTP_X_FORWARDED_FOR (defined when using proxy)
  * Then HTTP_CLIENT_IP if defined (rare)
@@ -11388,6 +11450,12 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 			}
 			if ($isinternalclass) {
 				dol_syslog('fetchObjectByElement: refuse to instantiate PHP internal class ' . $className . ' for element ' . $element_type, LOG_ERR);
+				return -1;
+			}
+			// The class found may be a helper class of a module that is not a business object (for example EInvoicing of module einvoicing).
+			// Classes not extending CommonObject but having a fetch() method (for example ProductCombination used by import) are accepted.
+			if (!is_subclass_of($className, 'CommonObject') && !method_exists($className, 'fetch')) {
+				dol_syslog('fetchObjectByElement: class ' . $className . ' for element ' . $element_type . ' is not a CommonObject and has no fetch method', LOG_WARNING);
 				return -1;
 			}
 			$objecttmp = new $className($db);

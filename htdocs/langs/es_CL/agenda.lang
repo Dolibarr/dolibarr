@@ -50,7 +50,6 @@ ORDER_SUPPLIER_DELETEInDolibarr=Orden de Compra %s borrada
 SupplierInvoiceSentByEMail=Factura del proveedor %s enviada por correo electrónico
 ShippingSentByEMail=Envío %s enviado por correo electrónico
 ShippingValidated=Envío %s validado
-InterventionSentByEMail=Intervención %s enviada por correo electrónico
 ProposalDeleted=Propuesta eliminada
 OrderDeleted=Orden eliminada
 InvoiceDeleted=Factura borrada

@@ -794,7 +794,7 @@ function aiSuggestClosestModel($missing, array $models)
  */
 function getAiChatAssistantConfig()
 {
-	global $conf, $langs, $user;
+	global $conf, $langs, $mysoc, $user;
 
 	$langs->loadLangs(array('main', 'admin', 'bills', 'companies', 'products', 'other'));
 
@@ -849,6 +849,7 @@ function getAiChatAssistantConfig()
 
 		// Errors
 		'MicError',
+		'MicNotAllowedHelp',
 		'MicTooQuiet',
 		'ConnectionBlocked',
 		'ConnectionBlockedHelp',
@@ -1019,6 +1020,9 @@ function getAiChatAssistantConfig()
 		// Gemini is the only wired provider taking HEIC natively; the chat JS
 		// falls back to it when the browser cannot transcode HEIC to JPEG.
 		'providerAcceptsHeic' => ((getListOfAIServices()[getDolGlobalString('AI_API_SERVICE')]['adapter_type'] ?? '') === 'google' ? 1 : 0),
+		// Local taxes used by the country of the company: their fields are hidden in the chat otherwise.
+		'useLocalTax1' => ($mysoc->useLocalTax(1, 1, $mysoc) ? 1 : 0),
+		'useLocalTax2' => ($mysoc->useLocalTax(2, 1, $mysoc) ? 1 : 0),
 		'currency' => $conf->currency,
 		'locale' => str_replace('_', '-', $langs->getDefaultLang()),
 		'urlRoot' => DOL_URL_ROOT,

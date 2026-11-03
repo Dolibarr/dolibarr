@@ -40,7 +40,6 @@ ProductQtyInShipmentAlreadySent=Cantidad de producto del pedido de venta abierto
 ProductQtyInSuppliersShipmentAlreadyRecevied=Cantidad de producto de órdenes de compra abiertas ya recibidas
 NoProductToShipFoundIntoStock=No se encontró ningún producto para enviar en el almacén <b> %s </b> . Corregir stock o volver a elegir otro almacén.
 ValidateOrderFirstBeforeShipment=Primero debe validar el pedido antes de poder realizar envíos.
-DocumentModelTyphon=Modelo de documento más completo para recibos de entrega (logo...)
 DocumentModelStorm=Modelo de documento más completo para recibos de entrega y compatibilidad con campos extra (logo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER constante no definido
 SumOfProductVolumes=Suma de volúmenes de productos

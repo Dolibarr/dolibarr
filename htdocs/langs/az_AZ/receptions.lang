@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=Təsdiqlənmişdir
 StatusReceptionProcessedShort=Emal edilib
 ReceptionSheet=Qəbul vərəqi
 ValidateReception=Qəbulu təsdiqləyin
+DeleteReception=Delete reception
 ConfirmDeleteReception=Bu qəbulu silmək istədiyinizə əminsiniz?
 ConfirmValidateReception=Are you sure you want to validate this reception with the reference <b>%s</b>?
 ConfirmCancelReception=Bu qəbulu ləğv etmək istədiyinizə əminsiniz?

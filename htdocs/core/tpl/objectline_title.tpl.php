@@ -195,7 +195,7 @@ if (property_exists($this, 'situation_cycle_ref') && isset($this->situation_cycl
 		}
 	}
 	print '</th>';
-	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+	if (getDolGlobalInt('INVOICE_USE_SITUATION') > 1) {
 		print '<th class="linecolcycleref2 right">' . $langs->trans('SituationInvoiceProgressCurrent') . '</th>';
 	}
 	print '<th class="linecolcycleref2 right">'.$form->textwithpicto($langs->trans('TotalHT100Short'), $langs->trans('UnitPriceXQtyLessDiscount')).'</th>';

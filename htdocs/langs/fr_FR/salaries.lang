@@ -27,6 +27,7 @@ Earnings=Gains
 TotalEarnings=Revenus totaux
 TotalDeductions=Déductions totales
 NetPaid=HT payé
+GrossSalary=Brut salaire
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Compte comptable général par défaut pour les salaires "utilisateurs"
@@ -55,8 +56,6 @@ FillFieldFirst=Remplissez d'abord le champ de l'employé
 UpdateAmountWithLastSalary=Définir sur le montant du dernier salaire
 MakeTransferRequest=Faire une demande de virement
 VirementOrder=Demande de virement
-WithdrawalReceipt=Ordres de virement
-OrderWaiting=En attente
 FillEndOfMonth=Fin du mois
 
 # Shortcuts
