@@ -4346,7 +4346,7 @@ class Facture extends CommonInvoice
 					$qty = (float) $tmpproduct->packaging;
 					setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
 				} else {
-					if (!empty($tmpproduct->packaging) && $qty > $tmpproduct->packaging) {
+					if (!empty($tmpproduct->packaging) && (float) price2num(abs((float) $qty) - round(abs((float) $qty) / (float) $tmpproduct->packaging) * (float) $tmpproduct->packaging, 'MS') != 0) {	// Not a multiple of the packaging
 						$coeff = intval(abs($qty) / $tmpproduct->packaging) + 1;
 						$qty = price2num((float) $tmpproduct->packaging * $coeff, 'MS');
 						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
