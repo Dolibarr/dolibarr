@@ -1367,9 +1367,11 @@ if (empty($reshook)) {
 					}
 					$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
-			} else {
-				header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // To redisplay the form being edited
+
+				header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // To redisplay the card with an empty form
 				exit();
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 	} elseif ($action == 'confirm_sign' && $confirm == 'yes' && $permissiontoadd) {
