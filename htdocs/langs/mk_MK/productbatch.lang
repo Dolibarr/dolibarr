@@ -47,9 +47,13 @@ HideLots=Скриј многу
 OutOfOrder=Вон ред
 InWorkingOrder=Во работна состојба
 ToReplace=Заменете
-CantMoveNonExistantSerial=Грешка. Барате потег на плоча за серијал што веќе не постои. Можеби сте ја земале истата серија на истиот магацин неколку пати во истата пратка или ја користела друга пратка. Отстранете ја оваа пратка и подгответе друга.
+CantMoveNonExistantSerial=Error: You requested a stock movement on a record for a serial that no longer exists. Maybe you used the same serial in the same warehouse several times in the same shipment or it was used by another shipment. Remove this shipment and prepare another one.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Поправка на нецелосно извршена табела со параметар „...repair.php?standard=confirmed“
 IlligalQtyForSerialNumbers= Потребна е корекција на акции бидејќи единствениот сериски број.
 ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
 ForceBatchesNeedStockManagement=A product with batch/lot management must be managed in stock (stock management force to yes)
 BatchInformationNotfound=Batch information not found
+EnterMultipleSerialNumbers=Enter multiple serial numbers
+EnterOneSerialNumberPerLine=Type, paste or scan the serial numbers, one per line
+NbOfSerialNumbersDetected=%s serial number(s) detected
+ErrorDuplicateSerialNumberInList=Serial number %s is present several times in the list

@@ -855,6 +855,16 @@ print ajax_constantonoff('INVOICE_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0,
 print '</td></tr>';
 
 
+// Reminder by email of unpaid invoices
+if (isModEnabled('cron')) {
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("SendEmailsRemindersOnInvoiceDueDate").'</td>';
+	print '<td colspan="2">';
+	print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.DOL_URL_ROOT.'/cron/list.php?search_label=SendEmailsRemindersOnInvoiceDueDate">'.$langs->trans("ConfigureContractReminderCronjobToSetFrequency").'</a>';
+	print '</td>';
+	print '</tr>';
+}
+
 // Notifications
 print '<tr class="oddeven">';
 print '<td>'.img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("Notifications").'</td>';

@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=معتمدة
 StatusReceptionProcessedShort=مُعالَجة
 ReceptionSheet=ورقة الاستلام
 ValidateReception=اعتماد عملية الاستلام
+DeleteReception=Delete reception
 ConfirmDeleteReception=هل أنت متأكد من حذف عملية الاستلام هذه؟
 ConfirmValidateReception=هل أنت متأكد من اعتماد عملية الاستلام ذات المرجع <b>%s</b>؟
 ConfirmCancelReception=هل أنت متأكد من إلغاء عملية الاستلام هذه؟

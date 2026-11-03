@@ -25,6 +25,9 @@ TOKEN_EXPIRE_AT=Token expire le
 TOKEN_DELETE=Supprimer jeton enregistré
 OAUTH_GOOGLE_ID=Oauth Google Id
 OAUTH_GOOGLE_SECRET=Oauth Google secret
+OAUTH_MICROSOFTAPP_ID=ID client OAuth pour application Microsoft Exchange Online
+OAUTH_MICROSOFTAPP_SECRET=Secret OAuth réservé aux applications Microsoft Exchange Online
+OAUTH_MICROSOFTAPP_DESC=Informations d'identification d'application Microsoft Exchange Online pour SMTP/IMAP avec flux d'octroi d'informations d'identification client
 OAUTH_GITHUB_ID=Oauth GitHub Id
 OAUTH_GITHUB_SECRET=Secret Oauth GitHub
 OAUTH_URL_FOR_CREDENTIAL=Accédez à <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external"> cette page <span class="fas fa-external-link-alt paddingleft"> </span> </a> pour créer ou obtenir votre identifiant OAuth et votre secret

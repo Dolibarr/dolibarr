@@ -177,12 +177,18 @@ class AllTests
 		$suite->addTestSuite('AdminLibTest');
 		require_once dirname(__FILE__).'/RestlerAutoLoaderTest.php';
 		$suite->addTestSuite('RestlerAutoLoaderTest');
+		require_once dirname(__FILE__).'/ApiEndpointDiscoveryTest.php';
+		$suite->addTestSuite('ApiEndpointDiscoveryTest');
+		require_once dirname(__FILE__).'/ApiEndpointDiscoveryEquivalenceTest.php';
+		$suite->addTestSuite('ApiEndpointDiscoveryEquivalenceTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeTest.php';
 		$suite->addTestSuite('AiMcpApiBridgeTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeDocumentsTest.php';
 		$suite->addTestSuite('AiMcpApiBridgeDocumentsTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeProjectsTest.php';
 		$suite->addTestSuite('AiMcpApiBridgeProjectsTest');
+		require_once dirname(__FILE__).'/ApiExplorerAccessControlTest.php';
+		$suite->addTestSuite('ApiExplorerAccessControlTest');
 		require_once dirname(__FILE__).'/ApiListStatusFilterTest.php';
 		$suite->addTestSuite('ApiListStatusFilterTest');
 		require_once dirname(__FILE__).'/ApiSupplierOrderHeaderUpdateTest.php';
@@ -215,6 +221,8 @@ class AllTests
 		$suite->addTestSuite('FilesLibTest');
 		require_once dirname(__FILE__).'/InstallRepairEcmTest.php';
 		$suite->addTestSuite('InstallRepairEcmTest');
+		require_once dirname(__FILE__).'/InstallRepairImagesTest.php';
+		$suite->addTestSuite('InstallRepairImagesTest');
 		require_once dirname(__FILE__).'/GetUrlLibTest.php';
 		$suite->addTestSuite('GetUrlLibTest');
 		require_once dirname(__FILE__).'/JsonLibTest.php';
@@ -461,6 +469,10 @@ class AllTests
 			$suite->addTestSuite('RestAPIBankAccountsTest');
 			require_once dirname(__FILE__).'/RestAPISupplierOrderTest.php';
 			$suite->addTestSuite('RestAPISupplierOrderTest');
+			require_once dirname(__FILE__).'/RestAPISupplierInvoiceTest.php';
+			$suite->addTestSuite('RestAPISupplierInvoiceTest');
+			require_once dirname(__FILE__).'/RestAPICategoriesTest.php';
+			$suite->addTestSuite('RestAPICategoriesTest');
 
 			// Old WS
 			require_once dirname(__FILE__).'/WebservicesProductsTest.php';

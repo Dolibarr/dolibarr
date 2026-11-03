@@ -111,6 +111,7 @@ if (!empty($catid) && empty($searchCategoryProductList)) {
 }
 $search_tosell = GETPOST("search_tosell");
 $search_tobuy = GETPOST("search_tobuy");
+$search_customscode = GETPOST("search_customscode");
 $search_country = GETPOST("search_country", 'aZ09');
 $search_state = GETPOST("state_id", 'intcomma');
 $search_tobatch = GETPOST("search_tobatch");
@@ -333,6 +334,10 @@ if (! empty($conf->stock->enabled)) {
 		$arrayfields['p.stockable_product'] = array('label' => $langs->trans('StockableProduct'), 'checked' => '0', 'position' => 1001);
 	}
 }
+if (!getDolGlobalString('PRODUCT_DISABLE_CUSTOMS_INFO') && empty($type)) {
+	$arrayfields['p.customcode'] = array('label' => "CustomsCode", 'checked' => '0', 'position' => 90);
+}
+
 /*foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
@@ -426,6 +431,7 @@ if (empty($reshook)) {
 		$search_tosell = "";
 		$search_tobuy = "";
 		$search_tobatch = '';
+		$search_customscode = '';
 		$search_country = "";
 		$search_state = "";
 		$search_vatrate = "";
@@ -560,7 +566,7 @@ if (!getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 }
 $sql .= ' p.datec as date_creation, p.tms as date_modification, p.pmp, p.stock, p.cost_price,';
 $sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units,';
-$sql .= ' p.fk_country, p.fk_state, p.stockable_product,';
+$sql .= ' p.customcode, p.fk_country, p.fk_state, p.stockable_product,';
 $sql .= ' p.note_public, p.note as note_private,';
 $sql .= ' p.import_key,';
 if (getDolGlobalString('PRODUCT_USE_UNITS')) {
@@ -749,6 +755,9 @@ if (!empty($searchCategoryProductList)) {
 if ($fourn_id > 0) {
 	$sql .= " AND pfp.fk_soc = ".((int) $fourn_id);
 }
+if ($search_customscode !== '') {
+	$sql .= natural_search('p.customcode', $search_customscode);
+}
 if ($search_country) {
 	$sql .= " AND p.fk_country = ".((int) $search_country);
 }
@@ -920,6 +929,9 @@ if ($search_tobuy != '') {
 }
 if ($search_tobatch) {
 	$param .= "&search_tobatch=".urlencode($search_tobatch);
+}
+if ($search_customscode != '') {
+	$param .= "&search_customscode=".urlencode((string) ($search_customscode));
 }
 if ($search_country != '') {
 	$param .= "&search_country=".urlencode((string) ($search_country));
@@ -1416,6 +1428,10 @@ if (!empty($arrayfields['p.tobatch']['checked'])) {
 	print $form->selectarray('search_tobatch', $statutarray, $search_tobatch);
 	print '</td>';
 }
+// Customs code
+if (!empty($arrayfields['p.customcode']['checked'])) {
+	print '<td class="liste_titre"><input class="flat maxwidth75" type="text" name="search_customscode" value="'.dol_escape_htmltag($search_customscode).'"></td>';
+}
 // Country
 if (!empty($arrayfields['p.fk_country']['checked'])) {
 	print '<td class="liste_titre center">';
@@ -1680,6 +1696,10 @@ if (!empty($arrayfields['stock_virtual']['checked'])) {
 }
 if (!empty($arrayfields['p.tobatch']['checked'])) {
 	print_liste_field_titre($arrayfields['p.tobatch']['label'], $_SERVER["PHP_SELF"], "p.tobatch", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['p.customcode']['checked'])) {
+	print_liste_field_titre($arrayfields['p.customcode']['label'], $_SERVER["PHP_SELF"], "p.customcode", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.fk_country']['checked'])) {
@@ -2432,6 +2452,13 @@ while ($i < $imaxinloop) {
 			print '<td class="center">';
 			print $product_static->getLibStatut(1, 2);
 			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Custom's code
+		if (!empty($arrayfields['p.customcode']['checked'])) {
+			print '<td>'.dol_escape_htmltag($obj->customcode).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

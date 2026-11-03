@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = Read Scheduled job
-Permission23102 = Create/update Scheduled job
-Permission23103 = Delete Scheduled job
-Permission23104 = Execute Scheduled job
 # Admin
 CronSetup=Scheduled job management setup
 URLToLaunchCronJobs=URL za provjeru i pokrenite kvalifikovane cron poslove iz preglednika
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=On Unix environment you should use the following crontab
 CronExplainHowToRunWin=U Microsoft(tm) Windows okruženju možete koristiti alate za planirani zadatak za pokretanje komandne linije svakih 5 minuta
 CronMethodDoesNotExists=Klasa %s ne sadrži nijednu metodu %s
 CronMethodNotAllowed=Metoda %s klase %s je na listi zabranjenih metoda
-CronJobDefDesc=Cron profili poslova definirani su u datoteci deskriptora modula. Kada je modul aktiviran, oni su učitani i dostupni tako da možete administrirati poslove iz menija administratorskih alata %s.
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=Lista unaprijed definiranih cron profila poslova
 # Menu
 EnabledAndDisabled=Enabled and disabled
@@ -27,7 +22,7 @@ CronDelete=Delete scheduled jobs
 CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
 CronExecute=Pokreni sada
 CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
-CronInfo=Scheduled job module allows to schedule jobs to execute them automatically. Jobs can also be started manually.
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=Job
 CronNone=Sljedeće pokretanje planiranog zadatka
 CronNotYetRan=Nikada pogubljen
@@ -79,7 +74,7 @@ CronType_command=Shell komanda
 CronCannotLoadClass=Nije moguće učitati datoteku klase %s (za korištenje klase %s)
 CronModuleNotEnabledInThisEntity=Cron modul nije omogućen u ovom entitetu (koristiti metodu %s objekta %s)
 CronCannotLoadObject=Datoteka klase %s je učitana, ali objekat %s nije pronađen u njoj
-UseMenuModuleToolsToAddCronJobs=Go into menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=Job disabled
 MakeLocalDatabaseDumpShort=Local database backup
 MakeLocalDatabaseDump=Kreirajte lokalni dump baze podataka. Parametri su: kompresija ('gz' ili 'bz' ili 'none'), vrsta sigurnosne kopije ('mysql', 'pgsql', 'auto'), 1, 'auto' ili naziv datoteke za izradu, broj rezervnih datoteka koje treba zadržati
