@@ -397,6 +397,8 @@ class Contacts extends DolibarrApi
 	/**
 	 * Update a contact
 	 *
+	 * To detach the contact from its third party, send socid=-1. An empty or 0 socid is ignored.
+	 *
 	 * @since	3.8.0	Initial implementation
 	 *
 	 * @param			int		$id				ID of contact to update
@@ -406,6 +408,7 @@ class Contacts extends DolibarrApi
 	 * @return			Object|false			Updated object, false when error updating contact
 	 *
 	 * @throws RestException 401
+	 * @throws RestException 403
 	 * @throws RestException 404
 	 * @throws RestException 500
 	 */
@@ -416,7 +419,10 @@ class Contacts extends DolibarrApi
 		}
 
 		$result = $this->contact->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching contact: '.$this->contact->errorsToString());
+		}
+		if ($result == 0) {
 			throw new RestException(404, 'Contact not found');
 		}
 
@@ -441,6 +447,18 @@ class Contacts extends DolibarrApi
 			}
 			if ($field == 'socid') {
 				$new_socid = (int) $value;
+				if ($new_socid == 0) {
+					// Empty socid is ignored, so a missing value does not detach the contact from its thirdparty
+					continue;
+				}
+				if (DolibarrApiAccess::$user->socid > 0 && $new_socid != DolibarrApiAccess::$user->socid) {
+					throw new RestException(403, 'An external user can not detach or move a contact away from its own thirdparty');
+				}
+				if ($new_socid == -1) {
+					// Detach the contact from its thirdparty (Contact::update() sets fk_soc to NULL when socid is -1)
+					$this->contact->socid = -1;
+					continue;
+				}
 				$loopthirdpartytmp = new Societe($this->db);
 				$new_thirdparty_result = $loopthirdpartytmp->fetch($new_socid);
 				if ($new_thirdparty_result < 1) {
@@ -454,15 +472,15 @@ class Contacts extends DolibarrApi
 			$this->contact->$field = $this->_checkValForAPI($field, $value, $this->contact);
 		}
 
+		if ($this->contact->update($id, DolibarrApiAccess::$user, 0, 'update') <= 0) {
+			throw new RestException(500, $this->contact->errorsToString());
+		}
+
 		if (isModEnabled('mailing') && !empty($this->contact->email) && isset($this->contact->no_email)) {
 			$this->contact->setNoEmail($this->contact->no_email);
 		}
 
-		if ($this->contact->update($id, DolibarrApiAccess::$user, 0, 'update') > 0) {
-			return $this->get($id);
-		} else {
-			throw new RestException(500, $this->contact->errorsToString());
-		}
+		return $this->get($id);
 	}
 
 	/**
