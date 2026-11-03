@@ -2633,14 +2633,14 @@ function GetContentPolicySources()
 		),
 		// Document directives
 		"document" => array(
-			"none" => array("label" => "self", "data-sourcetype" => "quoted"),
+			"none" => array("label" => "none", "data-sourcetype" => "quoted"),
 			"host-source" => array("label" => "host-source (*.mydomain.com)", "data-sourcetype" => "input"),
 			"self" => array("label" => "self", "data-sourcetype" => "quoted"),
 			"scheme-source" => array("label" => "scheme-source (*.mydomain.com)", "data-sourcetype" => "input"),
 		),
 		// Navigation directives
 		"navigation" => array(
-			"none" => array("label" => "self", "data-sourcetype" => "quoted"),
+			"none" => array("label" => "none", "data-sourcetype" => "quoted"),
 			"host-source" => array("label" => "host-source (*.mydomain.com)", "data-sourcetype" => "input"),
 			"self" => array("label" => "self", "data-sourcetype" => "quoted"),
 			"scheme-source" => array("label" => "scheme-source", "data-sourcetype" => "input"),

@@ -27,6 +27,7 @@ Earnings=Earnings
 TotalEarnings=Total earnings
 TotalDeductions=Total deductions
 NetPaid=Net paid
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=conto (dalla tabella di conto) utilizzato da default per "utenti " su stipendi
@@ -55,8 +56,6 @@ FillFieldFirst=Compila prima il campo dipendente
 UpdateAmountWithLastSalary=Imposta l'importo dell'ultimo stipendio
 MakeTransferRequest=Effettua il trasferimento Richiesta
 VirementOrder=Bonifico Richiesta
-WithdrawalReceipt=Ordine di trasferimento del credito
-OrderWaiting=In attesa ordine
 FillEndOfMonth=Fine del mese
 
 # Shortcuts

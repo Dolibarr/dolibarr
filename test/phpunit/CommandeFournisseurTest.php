@@ -459,7 +459,7 @@ class CommandeFournisseurTest extends CommonClassTest
 		$this->assertEquals(0, $order->updateProductBuyPrices(new User($db)), 'A user without rights must not update any price');
 
 		$result = $order->updateProductBuyPrices($user);
-		$this->assertEquals(3, $result, 'Supplier price and cost price of product 1, cost price of product 2');
+		$this->assertEquals(4, $result, 'Supplier price and cost price of product 1, supplier price created and cost price of product 2');
 
 		// Supplier price of product 1 is the price of the line, and the previous price is kept in the history
 		$productsupplier = new ProductFournisseur($db);
@@ -468,12 +468,12 @@ class CommandeFournisseurTest extends CommonClassTest
 		$this->assertEquals(10, (float) $productsupplier->fourn_remise_percent, 'Supplier discount must be the discount of the line');
 		$this->assertCount(2, $productsupplier->listProductFournisseurPriceLog($pricerowid), 'History must contain the old and the new price');
 
-		// Cost price is the net unit price of the line, and no supplier price is created for product 2
+		// Cost price is the net unit price of the line
 		$product1->fetch($productid1);
 		$this->assertEquals(27, (float) $product1->cost_price, 'Cost price must be the net unit price of the line');
 		$product2->fetch($productid2);
 		$this->assertEquals(50, (float) $product2->cost_price, 'Cost price must be the net unit price of the line');
-		$this->assertCount(0, $productsupplier->list_product_fournisseur_price($productid2), 'No supplier price must be created');
+		$this->assertCount(1, $productsupplier->list_product_fournisseur_price($productid2), 'The supplier price of product 2 must be created');
 
 		// Prices are already the ones of the order
 		$this->assertEquals(0, $order->updateProductBuyPrices($user), 'Nothing must be updated a second time');
@@ -483,6 +483,105 @@ class CommandeFournisseurTest extends CommonClassTest
 		$order->delete($user);
 		$product1->delete($user);
 		$product2->delete($user);
+	}
+
+	/**
+	 * testCreateMissingSupplierPrice
+	 *
+	 * The supplier price of a product is created when the supplier has none, and never replaces the price of another product.
+	 *
+	 * @return	void
+	 */
+	public function testCreateMissingSupplierPrice()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$advancedperms = getDolGlobalString('MAIN_USE_ADVANCED_PERMS');
+		$conf->global->MAIN_USE_ADVANCED_PERMS = 0;	// Test the default rights, create on products and services
+
+		$societe = new Societe($db);
+		$societe->fetch(1);
+
+		// Products 1 and 2 have no supplier price, product 3 has one with a supplier ref, product 4 has none and uses the supplier ref of product 3, product 5 has one of another supplier, product 6 has one of this supplier in another entity
+		$products = array();
+		foreach (array(1, 2, 3, 4, 5, 6) as $i) {
+			$products[$i] = new ProductFournisseur($db);
+			$products[$i]->initAsSpecimen();
+			$products[$i]->ref = 'PHPUNIT_CREATEPRICE_'.$i.'_'.dol_now();
+			$this->assertGreaterThan(0, $products[$i]->create($user), 'Failed to create product '.$i.': '.$products[$i]->errorsToString());
+		}
+		$ref_fourn = 'SUPPLIER_REF_PHPUNIT_CREATEPRICE_'.dol_now();
+		$this->assertGreaterThan(0, $products[3]->add_fournisseur($user, $societe->id, $ref_fourn, 1), 'Failed to create the supplier price line of product 3');
+		$this->assertGreaterThan(0, $products[3]->update_buyprice(1, 40, $user, 'HT', $societe, 0, $ref_fourn, 0, 0, 0, 0, 0, 0, '', array(), '', 40, 'HT', 1, $conf->currency), 'Failed to set the supplier price of product 3');
+		$societe2 = new Societe($db);
+		$societe2->name = 'CommandeFournisseurTest other supplier Unittest';
+		$societe2->fournisseur = 1;
+		$societe2->code_fournisseur = -1;
+		$this->assertGreaterThan(0, $societe2->create($user), 'Failed to create the other supplier: '.$societe2->errorsToString());
+		$ref_fourn2 = 'SUPPLIER_REF_PHPUNIT_CREATEPRICE_OTHER_'.dol_now();
+		$this->assertGreaterThan(0, $products[5]->add_fournisseur($user, $societe2->id, $ref_fourn2, 1), 'Failed to create the supplier price line of product 5');
+		$this->assertGreaterThan(0, $products[5]->update_buyprice(1, 30, $user, 'HT', $societe2, 0, $ref_fourn2, 0, 0, 0, 0, 0, 0, '', array(), '', 30, 'HT', 1, $conf->currency), 'Failed to set the supplier price of product 5');
+		$ref_fourn3 = 'SUPPLIER_REF_PHPUNIT_CREATEPRICE_ENTITY_'.dol_now();
+		$this->assertGreaterThan(0, $products[6]->add_fournisseur($user, $societe->id, $ref_fourn3, 1), 'Failed to create the supplier price line of product 6');
+		$this->assertGreaterThan(0, $products[6]->update_buyprice(1, 20, $user, 'HT', $societe, 0, $ref_fourn3, 0, 0, 0, 0, 0, 0, '', array(), '', 20, 'HT', 1, $conf->currency), 'Failed to set the supplier price of product 6');
+		$db->query("UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price SET entity = 2 WHERE fk_product = ".((int) $products[6]->id));
+
+		$order = new CommandeFournisseur($db);
+		$order->initAsSpecimen();
+		$order->socid = $societe->id;
+		$order->lines = array();
+		foreach (array(array(1, 2, 50, ''), array(2, 1, 70, ''), array(3, 1, 45, ''), array(4, 1, 60, $ref_fourn), array(5, 1, 80, ''), array(6, 1, 90, '')) as $data) {
+			$line = new CommandeFournisseurLigne($db);
+			$line->desc = 'phpunit line of product '.$data[0];
+			$line->qty = $data[1];
+			$line->subprice = $data[2];
+			$line->fk_product = $products[$data[0]]->id;
+			$line->ref_supplier = $data[3];
+			$order->lines[] = $line;
+		}
+		$orderid = $order->create($user);
+		$this->assertGreaterThan(0, $orderid, 'Failed to create supplier order: '.$order->errorsToString());
+		$order->fetch($orderid);
+
+		$this->assertEquals(10, $order->updateProductBuyPrices($user), 'Supplier price created and cost price of products 1, 2, 5 and 6, cost price of products 3 and 4');
+
+		// The supplier prices of the products 1 and 2 are created for the quantity 1, with the ref of the product as supplier ref, and none replaces the other
+		foreach (array(1 => 50, 2 => 70) as $i => $unitprice) {
+			$prices = $products[$i]->list_product_fournisseur_price($products[$i]->id);
+			$this->assertCount(1, $prices, 'The supplier price of product '.$i.' must be created');
+			$this->assertEquals(array(1, $unitprice, $products[$i]->ref), array((float) $prices[0]->fourn_qty, (float) $prices[0]->fourn_unitprice, $prices[0]->ref_supplier), 'Quantity, price and supplier ref of the price of product '.$i);
+			$this->assertCount(1, $products[$i]->listProductFournisseurPriceLog($prices[0]->product_fourn_price_id), 'The created price of product '.$i.' is in the history');
+		}
+
+		// Nothing is created for a product that already has a price of this supplier, nor when the supplier ref is used by another product
+		$prices = $products[3]->list_product_fournisseur_price($products[3]->id);
+		$this->assertCount(1, $prices, 'The supplier price of product 3 must not be duplicated');
+		$this->assertEquals(40, (float) $prices[0]->fourn_unitprice, 'The supplier price of product 3 must not change');
+		$this->assertCount(0, $products[4]->list_product_fournisseur_price($products[4]->id), 'No supplier price when the supplier ref is used by another product');
+
+		// The price of another supplier does not prevent to create the one of this supplier
+		$unitprices = array();
+		foreach ($products[5]->list_product_fournisseur_price($products[5]->id) as $price) {
+			$unitprices[] = (float) $price->fourn_unitprice;
+		}
+		$this->assertEqualsCanonicalizing(array(30, 80), $unitprices, 'The supplier price of product 5 is created next to the one of the other supplier');
+
+		// The price of this supplier in another entity does not prevent to create the one of this entity
+		$prices = $products[6]->list_product_fournisseur_price($products[6]->id);
+		$this->assertCount(1, $prices, 'The supplier price of product 6 is created in this entity');
+		$this->assertEquals(90, (float) $prices[0]->fourn_unitprice, 'Price created for product 6');
+
+		$conf->global->MAIN_USE_ADVANCED_PERMS = $advancedperms;
+
+		$order->delete($user);
+		foreach ($products as $product) {
+			$product->delete($user);
+		}
+		$societe2->delete($societe2->id, $user);
 	}
 
 	/**
@@ -551,6 +650,92 @@ class CommandeFournisseurTest extends CommonClassTest
 		$conf->global->MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS = $optionbefore;
 
 		$order->delete($user);
+		$commande->delete($user);
+		$product->delete($user);
+	}
+
+	/**
+	 * testUpdateLinkedBuyPriceSeveralPurchaseOrders
+	 *
+	 * The cost price proposed on a customer order is the average net unit price of the ordered purchase orders linked to it, weighted by the quantities.
+	 *
+	 * @return	void
+	 */
+	public function testUpdateLinkedBuyPriceSeveralPurchaseOrders()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$optionbefore = getDolGlobalString('MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS');
+		$conf->global->MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS = 1;
+
+		$societe = new Societe($db);
+		$societe->fetch(1);
+
+		$product = new Product($db);
+		$product->initAsSpecimen();
+		$product->ref = 'PHPUNIT_SEVERAL_PO_'.dol_now();
+		$productid = $product->create($user);
+		$this->assertGreaterThan(0, $productid, 'Failed to create product: '.$product->errorsToString());
+
+		// A customer order with a cost price of 10 on the product
+		$commande = new Commande($db);
+		$commande->initAsSpecimen();
+		$commande->lines = array();
+		$commande->socid = $societe->id;
+		$this->assertGreaterThan(0, $commande->create($user), 'Failed to create customer order: '.$commande->errorsToString());
+		$commandelineid = $commande->addline('Line', 100, 4, 0, 0, 0, $productid);
+		$this->assertGreaterThan(0, $commandelineid, $commande->errorsToString());
+		$db->query("UPDATE ".MAIN_DB_PREFIX."commandedet SET buy_price_ht = 10 WHERE rowid = ".((int) $commandelineid));
+
+		// Purchase orders linked to it: 1 unit at 12 with 10% discount (net 10.8), 3 units at 12 and, linked the other way round, 4 units at 12
+		$orders = array();
+		foreach (array(array(1, 10), array(3, 0), array(4, 0)) as $data) {
+			$order = new CommandeFournisseur($db);
+			$order->initAsSpecimen();
+			$order->ref = '';
+			$order->socid = $societe->id;
+			$order->lines = array();
+			$line = new CommandeFournisseurLigne($db);
+			$line->desc = 'phpunit line';
+			$line->qty = $data[0];
+			$line->subprice = 12;
+			$line->remise_percent = $data[1];
+			$line->fk_product = $productid;
+			$order->lines[] = $line;
+			$orderid = $order->create($user);
+			$this->assertGreaterThan(0, $orderid, 'Failed to create supplier order: '.$order->errorsToString());
+			$order->fetch($orderid);
+			if (count($orders) < 2) {
+				$order->add_object_linked('commande', $commande->id);
+			} else {
+				$commande->add_object_linked('order_supplier', $order->id);
+			}
+			$orders[] = $order;
+		}
+		$lineid = $orders[1]->lines[0]->id;
+
+		// The other purchase order counts when it is ordered or received (average of 1 at 10.8 and 3 at 12), not before nor when canceled
+		foreach (array(CommandeFournisseur::STATUS_DRAFT => 12, CommandeFournisseur::STATUS_ACCEPTED => 12, CommandeFournisseur::STATUS_ORDERSENT => 11.7, CommandeFournisseur::STATUS_RECEIVED_COMPLETELY => 11.7, CommandeFournisseur::STATUS_CANCELED => 12) as $status => $expected) {
+			$db->query("UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".((int) $status)." WHERE rowid = ".((int) $orders[0]->id));
+			$documents = $orders[1]->getLinkedBuyPriceDocuments($user, $lineid);
+			$this->assertEquals($expected, price2num($documents['commande']['buyprice'], 'MU'), 'Cost with the other purchase order at the status '.$status);
+		}
+
+		// The purchase order linked the other way round counts too
+		$db->query("UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".((int) CommandeFournisseur::STATUS_ORDERSENT)." WHERE rowid IN (".((int) $orders[0]->id).", ".((int) $orders[2]->id).")");
+		$documents = $orders[1]->getLinkedBuyPriceDocuments($user, $lineid);
+		$this->assertEquals(11.85, price2num($documents['commande']['buyprice'], 'MU'), 'Average of 1 at 10.8, 3 at 12 and 4 at 12');
+
+		$conf->global->MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS = $optionbefore;
+
+		$db->query("UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".((int) CommandeFournisseur::STATUS_DRAFT)." WHERE rowid IN (".((int) $orders[0]->id).", ".((int) $orders[2]->id).")");
+		foreach ($orders as $order) {
+			$order->delete($user);
+		}
 		$commande->delete($user);
 		$product->delete($user);
 	}

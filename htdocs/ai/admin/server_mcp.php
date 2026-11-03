@@ -41,6 +41,7 @@ require_once DOL_DOCUMENT_ROOT . "/core/class/doleditor.class.php";
 require_once DOL_DOCUMENT_ROOT . "/ai/lib/ai.lib.php";
 require_once DOL_DOCUMENT_ROOT . "/core/lib/functions2.lib.php";
 require_once DOL_DOCUMENT_ROOT . "/core/lib/security.lib.php";
+require_once DOL_DOCUMENT_ROOT . "/core/lib/security2.lib.php";
 
 
 $langs->loadLangs(array("admin", "website", "other"));
@@ -145,6 +146,18 @@ if ($action == 'update_external') {
 		}
 	}
 
+	if (GETPOSTISSET('AI_MCP_API_KEY')) {
+		$mcpapikey = trim(GETPOST('AI_MCP_API_KEY', 'alphanohtml'));
+		if ($mcpapikey !== '') {
+			$res = dolibarr_set_const($db, "AI_MCP_API_KEY", $mcpapikey, 'chaine', 0, '', $conf->entity);
+		} else {
+			$res = dolibarr_del_const($db, "AI_MCP_API_KEY", $conf->entity);
+		}
+		if ($res < 0) {
+			$error++;
+		}
+	}
+
 	// Checkbox has its own form, flagged by a hidden field because an unchecked checkbox is not posted
 	if (GETPOSTISSET('AI_MCP_BEHIND_BASIC_AUTH_FORM')) {
 		$res = dolibarr_set_const($db, "AI_MCP_BEHIND_BASIC_AUTH", GETPOSTINT("AI_MCP_BEHIND_BASIC_AUTH"), 'int', 0, '', $conf->entity);
@@ -164,7 +177,7 @@ if ($action == 'update_external') {
 }
 
 // Generate New API Key
-if ($action == 'generate_key') {
+if ($action == 'confirm_generate_key' && GETPOST('confirm', 'alpha') == 'yes') {
 	$newKey = dolGetRandomBytes(64);
 
 	if (empty($newKey)) {
@@ -176,6 +189,10 @@ if ($action == 'generate_key') {
 			setEventMessages($langs->trans("KeySaveFailed"), null, 'errors');
 		}
 	}
+
+	// Redirect, so a reload of the page does not generate another key
+	header("Location: ".$_SERVER["PHP_SELF"]);
+	exit;
 }
 
 
@@ -355,6 +372,11 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	// External Access Configuration
 	print load_fiche_titre($langs->trans("AiMcpExternalAccess"), '', 'fas fa-lock-open');
 
+	// A new key makes the current one useless for the tools already using it: ask first
+	if ($action == 'ask_generate_key') {
+		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans('RegenerateKey'), $langs->trans('ConfirmRegenerateMcpApiKey'), 'confirm_generate_key', '', 0, 1);
+	}
+
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update_external">';
@@ -369,22 +391,29 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	print '<div style="display: flex; align-items: center;">';
 	// Use -1 when not set, so select_dolusers() does not preselect the current user
 	print $form->select_dolusers(getDolGlobalInt('AI_MCP_USER_ID', -1), 'AI_MCP_USER_ID', 1);
-	print ' <input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Save").'" style="margin-left: 20px;">';
 	print '</div>';
 	print '<span class="opacitymedium small">' . $langs->trans("DedicatedUserRecommendation") . '</span>';
 	print '</td>';
+	print '<td></td>';
 	print '</tr>';
 
 	// API Key
 	print '<tr class="oddeven">';
-	print '<td class="fieldrequired">MCP API Key</td>';
+	print '<td class="fieldrequired">'.$form->textwithpicto('MCP API Key', $langs->trans("McpApiKeyHelp")).'</td>';
 	print '<td>';
+	// The key is hidden in a password field, the eye picto shows it
+	print '<input type="password" class="minwidth400 input-icon-password" id="AI_MCP_API_KEY" name="AI_MCP_API_KEY" value="'.dolPrintHTMLForAttribute($apiKey).'" autocomplete="new-password">';
+	print showEyeForField('eyeAI_MCP_API_KEY', 'AI_MCP_API_KEY');
+	if (!$apiKey) {
+		print ' <span class="opacitymedium">' . $langs->trans("NoKeyWarning") . '</span>';
+	}
+	print '</td>';
+	print '<td class="right nowraponall">';
 	if ($apiKey) {
-		print '<input type="text" id="apikey" value="'.$apiKey.'" readonly style="width:400px; padding:6px; background:#f4f4f4; border:1px solid #ccc; color:#555;">';
-		print ' <a href="'.$_SERVER["PHP_SELF"].'?action=generate_key&token='.newToken().'" title="'.dol_escape_htmltag($langs->trans("Generate")).'">'.img_picto($langs->transnoentities("Generate"), 'refresh', 'class="linkobject paddingleft"').'</a>';
+		// Replacing an existing key is confirmed first
+		print '<a class="button smallpaddingimp reposition" href="'.$_SERVER["PHP_SELF"].'?action=ask_generate_key&token='.newToken().'">'.img_picto('', 'refresh', 'class="pictofixedwidth"').$langs->trans("RegenerateKey").'</a>';
 	} else {
-		print '<span class="opacitymedium">' . $langs->trans("NoKeyWarning") . '</span>';
-		print ' <a href="' . $_SERVER["PHP_SELF"] . '?action=generate_key&token=' . newToken() . '" title="' . dol_escape_htmltag($langs->trans("Generate")) . '">' . img_picto($langs->transnoentities("Generate"), 'refresh', 'class="linkobject paddingleft"') . '</a>';
+		print '<a class="button smallpaddingimp reposition" href="'.$_SERVER["PHP_SELF"].'?action=confirm_generate_key&confirm=yes&token='.newToken().'">'.img_picto('', 'refresh', 'class="pictofixedwidth"').$langs->trans("GenerateKey").'</a>';
 	}
 	print '</td>';
 	print '</tr>';
@@ -400,12 +429,17 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	print '<td>';
 	print '<input type="text" id="endpoint" value="'.$endpoint.'" readonly style="width:600px; border:none; background:transparent;">';
 	print '</td>';
+	print '<td></td>';
 	print '</tr>';
 
 	print '</table>';
 	print '</div>';
 
+	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
+
 	print '</form>';
+
+	print '<br>';
 
 	// Configuration Examples
 	print '<br>';

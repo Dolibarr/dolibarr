@@ -33,12 +33,16 @@
  * @property int 	$contact_id
  * @property int 	$fk_soc
  * @property string $civility_code
+ * @property string $civilite
+ * @property string $civility
+ * @property string $civility_id
  * @property DoliDB	$db
  * @property string $element
  * @property string $name
  * @property string $name_alias
  * @property string $nom
  * @property string $company
+ * @property string $societe
  * @property string $firstname
  * @property string $lastname
  * @property string $personal_email
