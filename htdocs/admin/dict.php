@@ -2247,6 +2247,7 @@ if ($id > 0) {
 				$iserasable = 1;
 				$canbedisabled = 1;
 				$canbemodified = 1;
+				$isotherentity = 0;
 				if (isset($obj->code) && !in_array($id, array(DICT_TVA, DICT_PRODUCT_NATURE))) {
 					if (($obj->code == '0' || $obj->code == '' || preg_match('/unknown/i', $obj->code))) {
 						$iserasable = 0;
@@ -2298,6 +2299,7 @@ if ($id > 0) {
 					$iserasable = 0;
 					$canbedisabled = 0;
 					$canbemodified = 0;
+					$isotherentity = 1;
 				}
 				// Build Url. The table is id=, the id of line is rowid=
 				$rowidcol = empty($tabrowid[$id]) ? 'rowid' : $tabrowid[$id];
@@ -2380,7 +2382,7 @@ if ($id > 0) {
 						} elseif ($value == 'sortorder') {
 							$hiddenname = 'position';
 						}
-						print '<input type="hidden" name="'.dol_escape_htmltag($hiddenname).'" value="'.dol_escape_htmltag((string) $hiddenvalue, 0, 1).'">';
+						print '<input type="hidden" name="'.dolPrintHTMLForAttribute($hiddenname).'" value="'.dolPrintHTMLForAttribute((string) $hiddenvalue).'">';
 					}
 					print '<div name="'.(isset($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
 					print '<input type="hidden" name="page" value="'.((int) $page).'">';
@@ -2684,7 +2686,9 @@ if ($id > 0) {
 					if ($canbedisabled) {
 						print '<a class="reposition" href="'.$url.'action='.$acts[$obj->active].'&token='.newToken().'">'.$actl[$obj->active].'</a>';
 					} else {
-						if (in_array($obj->code, array('AC_OTH', 'AC_OTH_AUTO'))) {
+						if ($isotherentity && isModEnabled('multicompany')) {
+							print '<span class="opacitymedium">'.$langs->trans("OtherEntity").'</span>';
+						} elseif (in_array($obj->code, array('AC_OTH', 'AC_OTH_AUTO'))) {
 							print $langs->trans("AlwaysActive");
 						} elseif (isset($obj->type) && in_array($obj->type, array('systemauto')) && empty($obj->active)) {
 							print $langs->trans("Deprecated");
