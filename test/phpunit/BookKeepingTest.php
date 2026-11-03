@@ -2,6 +2,7 @@
 /*
  * Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2026 Joachim Kueter        <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,11 +25,11 @@
  */
 
 global $conf,$user,$langs,$db,$mysoc;
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/accountancy/class/bookkeeping.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/class/fiscalyear.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/triggers/interface_99_all_PhpunitBookKeeping.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -148,6 +149,133 @@ class BookKeepingTest extends CommonClassTest
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 		return $result;
+	}
+
+	/**
+	 * Changes of a whole transaction call the bookkeeping triggers for each line, and a trigger can refuse them,
+	 * for example a module that locks closed periods: date, journal or reference changed, transaction validated
+	 * from draft.
+	 * The test runs inside one transaction, so a refused change is not rolled back here: the test checks the error.
+	 *
+	 * @return	void
+	 */
+	public function testBookKeepingTriggersOnTransactionChanges()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$fiscalperiod = $this->createFiscalPeriod('2094', '2094-01-01', '2094-12-31');
+		$bookkeeping = new BookKeeping($db);
+		$bookkeeping->getCanModifyBookkeepingSQL('', true);	// Reload the active fiscal periods
+
+		$savtriggerdirs = $conf->modules_parts['triggers'];
+		$conf->modules_parts['triggers'][] = '/../test/phpunit/triggers';
+		InterfacePhpunitBookKeeping::$refuse = '';
+
+		try {
+			$olddate = dol_mktime(0, 0, 0, 3, 15, 2094);
+			$newdate = dol_mktime(0, 0, 0, 4, 20, 2094);
+			$piecenum = $this->createTransaction($olddate, '');
+
+			// Change of the date: one BOOKKEEPING_MODIFY per line, with the old date in oldcopy
+			InterfacePhpunitBookKeeping::$calls = array();
+			$result = $bookkeeping->updateByMvt((string) $piecenum, 'doc_date', $db->idate($newdate));
+			$this->assertGreaterThan(0, $result, $bookkeeping->errorsToString());
+			$this->assertCount(2, InterfacePhpunitBookKeeping::$calls);
+			foreach (InterfacePhpunitBookKeeping::$calls as $call) {
+				$this->assertEquals('BOOKKEEPING_MODIFY', $call['action']);
+				$this->assertGreaterThan(0, $call['id']);
+				$this->assertEquals($newdate, $call['doc_date']);
+				$this->assertEquals($olddate, $call['old_doc_date']);
+			}
+
+			// A trigger that refuses the change: error
+			InterfacePhpunitBookKeeping::$refuse = 'BOOKKEEPING_MODIFY';
+			$result = $bookkeeping->updateByMvt((string) $piecenum, 'doc_date', $db->idate($olddate));
+			$this->assertLessThan(0, $result, 'A refused change of the date must return an error');
+			$this->assertStringContainsString('Refused by test trigger', $bookkeeping->errorsToString());
+			InterfacePhpunitBookKeeping::$refuse = '';
+
+			// Validation of a draft transaction: one BOOKKEEPING_CREATE per line in the ledger, refused validation keeps the draft
+			$draftpiecenum = $this->createTransaction($olddate, '_tmp');
+			InterfacePhpunitBookKeeping::$refuse = 'BOOKKEEPING_CREATE';
+			$result = $bookkeeping->transformTransaction(0, (string) $draftpiecenum);
+			$this->assertLessThan(0, $result, 'A refused validation must return an error');
+			$this->assertEquals(2, $this->countLines($draftpiecenum, '_tmp'), 'A refused validation must keep the draft');
+			InterfacePhpunitBookKeeping::$refuse = '';
+
+			InterfacePhpunitBookKeeping::$calls = array();
+			$result = $bookkeeping->transformTransaction(0, (string) $draftpiecenum);
+			$this->assertGreaterThan(0, $result, $bookkeeping->errorsToString());
+			$this->assertCount(2, InterfacePhpunitBookKeeping::$calls);
+			$this->assertEquals('BOOKKEEPING_CREATE', InterfacePhpunitBookKeeping::$calls[0]['action']);
+			$this->assertEquals($olddate, InterfacePhpunitBookKeeping::$calls[0]['doc_date']);
+			$this->assertEquals(2, $this->countLines($bookkeeping->piece_num, ''));
+			$this->assertEquals(0, $this->countLines($draftpiecenum, '_tmp'));
+
+			// notrigger: no trigger called
+			InterfacePhpunitBookKeeping::$calls = array();
+			$result = $bookkeeping->updateByMvt((string) $piecenum, 'doc_ref', 'PHPUNIT-NOTRIGGER', '', 1);
+			$this->assertGreaterThan(0, $result, $bookkeeping->errorsToString());
+			$this->assertCount(0, InterfacePhpunitBookKeeping::$calls);
+		} finally {
+			$conf->modules_parts['triggers'] = $savtriggerdirs;
+			InterfacePhpunitBookKeeping::$refuse = '';
+			$fiscalperiod->delete($user);
+		}
+	}
+
+	/**
+	 * Create a transaction with two lines in the ledger or in the draft table, with triggers off.
+	 *
+	 * @param	int		$docdate	Date of the transaction
+	 * @param	string	$mode		'' for the ledger, '_tmp' for a draft
+	 * @return	int					Piece num
+	 */
+	private function createTransaction($docdate, $mode)
+	{
+		global $db, $user;
+
+		$piecenum = (new BookKeeping($db))->getNextNumMvt($mode);
+		foreach (array('D' => 100, 'C' => -100) as $sens => $amount) {
+			$line = new BookKeeping($db);
+			$line->doc_date = $docdate;
+			$line->doc_type = '';
+			$line->doc_ref = 'PHPUNIT-TRIGGERS';
+			$line->numero_compte = ($sens == 'D' ? '6000' : '4000');
+			$line->label_compte = 'Test';
+			$line->label_operation = 'Test triggers';
+			$line->debit = ($sens == 'D' ? $amount : 0);
+			$line->credit = ($sens == 'C' ? -$amount : 0);
+			$line->montant = abs($amount);
+			$line->sens = $sens;
+			$line->code_journal = 'OD';
+			$line->journal_label = 'Miscellaneous';
+			$line->piece_num = $piecenum;
+			$this->assertGreaterThan(0, $line->createStd($user, 1, $mode), $line->errorsToString());
+		}
+
+		return $piecenum;
+	}
+
+	/**
+	 * Count the lines of a transaction
+	 *
+	 * @param	int		$piecenum	Piece num
+	 * @param	string	$mode		'' for the ledger, '_tmp' for a draft
+	 * @return	int
+	 */
+	private function countLines($piecenum, $mode)
+	{
+		global $db;
+
+		$resql = $db->query("SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping".$mode." WHERE piece_num = ".((int) $piecenum));
+		$obj = $db->fetch_object($resql);
+
+		return (int) $obj->nb;
 	}
 
 	/**

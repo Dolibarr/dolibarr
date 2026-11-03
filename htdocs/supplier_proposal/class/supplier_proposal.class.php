@@ -634,7 +634,8 @@ class SupplierProposal extends CommonObject
 				$localtaxes_type,
 				100,
 				(float) $this->multicurrency_tx,
-				$pu_ht_devise
+				$pu_ht_devise,
+				$this->multicurrency_code
 			);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -864,7 +865,8 @@ class SupplierProposal extends CommonObject
 				$localtaxes_type,
 				100,
 				(float) $this->multicurrency_tx,
-				$pu_ht_devise
+				$pu_ht_devise,
+				$this->multicurrency_code
 			);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -1048,9 +1050,11 @@ class SupplierProposal extends CommonObject
 		// Set tmp vars
 		$delivery_date = $this->delivery_date;
 
-		// Multicurrency
-		if (!empty($this->multicurrency_code)) {
+		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if no rate was provided)
+		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) {
 			list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $now);
+		} elseif (!empty($this->multicurrency_code)) {
+			$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
 		}
 		if (empty($this->fk_multicurrency)) {
 			$this->multicurrency_code = getDolCurrency();
@@ -2805,6 +2809,30 @@ class SupplierProposal extends CommonObject
 			$result .= $hookmanager->resPrint;
 		}
 		return $result;
+	}
+
+	/**
+	 *	Return the display context of the lines, as defined by the card before printObjectLines() and formAddObjectLine()
+	 *	On supplier documents, the supplier is the seller.
+	 *
+	 *	@return	array{seller:Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	See CommonObject::getObjectLinesDisplayContext()
+	 */
+	public function getObjectLinesDisplayContext()
+	{
+		global $mysoc;
+
+		$context = parent::getObjectLinesDisplayContext();
+		// The supplier is the seller, an empty third party is used if it is not loaded (same as a failed fetch in the card)
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		$context['seller'] = (is_object($this->thirdparty) ? $this->thirdparty : new Societe($this->db));
+		$context['buyer'] = $mysoc;
+		$context['dateSelector'] = 0;
+		$context['forceall'] = 1;
+		$context['inputalsopricewithtax'] = 1;
+		// 2 is same than 1 but disable test on minimum qty
+		$context['senderissupplier'] = (getDolGlobalInt('SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY') ? getDolGlobalInt('SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY') : 2);
+
+		return $context;
 	}
 
 	/**

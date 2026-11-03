@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - website
 Shortname=代碼
 WebsiteName=網站名稱
-WebsiteSetupDesc=於此建立你要使用的網站，然後可進入網站選單進行編輯。
+WebsiteSetupDesc=Create here the websites you wish to use. Then go to menu Websites to edit them.
 DeleteWebsite=刪除網站
 ConfirmDeleteWebsite=確定要刪除此網站嗎？所有頁面與內容將被移除，上傳的檔案(如媒體資料夾、ECM 模組…)將保留。
 WEBSITE_TYPE_CONTAINER=頁面/容器類型
@@ -17,8 +17,8 @@ WEBSITE_ROBOT=Robot 檔 (robots.txt)
 WEBSITE_HTACCESS=網站 .htaccess 檔
 WEBSITE_MANIFEST_JSON=網站 manifest.json 檔
 WEBSITE_KEYWORDSDesc=使用逗號分隔多個值
-EnterHereReadmeInformation=在此輸入網站描述，若將網站作為範本發佈，該檔案將包含於範本套件中。
-EnterHereLicenseInformation=在此輸入網站程式碼 LICENSE，若將網站作為範本發佈，該檔案將包含於範本套件中。
+EnterHereReadmeInformation=Enter here a description of the website. If you distribute your website as a template, the file will be included in the template package.
+EnterHereLicenseInformation=Enter here the LICENSE of the code of the website. If you distribute your website as a template, the file will be included in the template package.
 HtmlHeaderPage=HTML 標頭(僅此頁)
 PageNameAliasHelp=頁面名稱或別名。<br>此別名也用於 SEO URL(當網站運行於 Apache、Nginx… 虛擬主機)。使用「<strong>%s</strong>」按鈕可編輯此別名。
 EditTheWebSiteForACommonHeader=注意：若要設定所有頁面共用的標頭，請於網站層級編輯，不要於單一頁面設定。
@@ -51,12 +51,12 @@ ToDeployYourWebsiteOnLiveYouHave3Solutions=部署網站上線有三種方式...
 SetHereVirtualHost=<u>使用 Apache/Nginx/…</u><br>在你的網頁伺服器 (Apache, Nginx, ...) 建立虛擬主機，PHP 啟用並將 Root 目錄指向<br><strong>%s</strong>
 ExampleToUseInApacheVirtualHostConfig=Apache 虛擬主機範例設定：
 YouCanAlsoTestWithPHPS=<u>使用 PHP 內建伺服器</u><br>於開發環境，可使用 PHP 內建伺服器測試網站
-YouCanAlsoDeployToAnotherWHP=<u>部署至 Dolibarr 網站代管服務</u><br>若無 Apache/Nginx，可將網站匯出後，於其他提供完整 Website 模組支援的 Dolibarr 代管服務導入。可於 <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a> 查看部分服務商。
+YouCanAlsoDeployToAnotherWHP=<u>Run your web site inside a Dolibarr web Hosting provider</u><br>If you don't have a web server like Apache or NGinx available on the internet, you can export and import your web site to another Dolibarr instance provided by another Dolibarr hosting provider that provides full integration with the Website module. You can find a list of some Dolibarr hosting providers on <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
 CheckVirtualHostPerms=請確認虛擬主機使用者(例如 www-data)對<br><strong>%s</strong> 擁有 <strong>%s</strong> 權限
 ReadPerm=讀取
 WritePerm=寫入
 TestDeployOnWeb=網頁測試/部署
-PreviewSiteServedByWebServer=<u>於新分頁預覽 %s。</u><br><br>%s 將由外部網頁伺服器(如 Apache, Nginx, IIS)提供服務。請先安裝並設定伺服器至目錄：<br><strong>%s</strong><br>外部伺服器 URL：<br><strong>%s</strong>
+PreviewSiteServedByWebServer=<u>Preview %s in a new tab.</u><br><br>The %s will be served by an external web server (like Apache, Nginx, IIS). You must install and setup this server before pointing to the directory:<br><strong>%s</strong><br>URL served by external server:<br><strong>%s</strong>
 PreviewSiteServedByDolibarr=<u>於新分頁預覽 %s。</u><br><br>%s 將由 Dolibarr 伺服器提供，不需安裝其他伺服器。但 URL 將包含 Dolibarr 路徑，非 SEO 友善。<br>Dolibarr 提供的 URL：<br><strong>%s</strong><br><br>若需以外部伺服器部署，請使用「%s」連結。
 VirtualHostUrlNotDefined=未定義外部伺服器虛擬主機 URL
 NoPageYet=尚無頁面
@@ -65,12 +65,13 @@ SyntaxHelp=語法使用說明
 YouCanEditHtmlSourceckeditor=可使用編輯器「Source」按鈕編輯 HTML 原始碼。
 YouCanEditHtmlSource=...
 YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> You can dynamically set <strong>SEO title and meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>define('__SEO_PAGE_TITLE__', "Title value …");</code><br> <code>define('__SEO_PAGE_KEYWORDS__', 'keyword1, keyword2, keyword3 …');</code><br> <code>define('__SEO_PAGE_DESC__', "Description …");</code><br>
-YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> 要包含儲存在 <strong>documents</strong> 目錄中的檔案<strong>下載連結</strong>，請使用 <strong>document.php</strong> 包裝器：<br>範例：對於 documents/ecm 中的檔案(需登入)，語法為：<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>對於 documents/medias 中的檔案(公開存取目錄)，語法為：<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
+YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored in the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file in documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file in documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSourced=對於以分享連結共享的檔案(使用檔案的分享 hash 金鑰公開存取)，語法為：<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> 要包含儲存在 <strong>medias</strong> 目錄中的 <strong>圖片</strong>(公開存取目錄)，請使用以 <strong>/medias</strong> 開頭的相對路徑，例如：<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored in the <strong>medias</strong> directory (directory open for public access), use the relative path starting with <strong>/medias</strong>, example:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=對於以分享連結共享的圖片(使用檔案的分享 hash 金鑰公開存取)，請使用包裝器：<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=要取得 PHP 物件圖片的 URL，請使用<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
-YouCanEditHtmlSource4=要取得文章 HTML 內容中圖片的 URL，請使用<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource4=To get the URL of an image inside a HTML content of an article, use<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource5=<br><span class="fa fa-edit paddingright"></span> To let a part of the page be changed with mode <strong>Edit inline</strong>, add the attributes <strong>contenteditable="true"</strong> and <strong>id</strong> to its tag. It must contain no PHP code, only text with formatting tags (bold, color, font size...), links, paragraphs, titles, lists and div, example:<br><strong>&lt;p id="intro" contenteditable="true"&gt;My &lt;b&gt;text&lt;/b&gt;&lt;/p&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>更多 HTML 或動態程式碼範例請見 <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">維基文件</a>。<br>
 ClonePage=複製頁面/容器
 CloneSite=複製網站
@@ -88,6 +89,8 @@ ImportSite=匯入網站範本
 IDOfPage=頁面 ID
 Banner=橫幅
 BlogPost=部落格文章
+PageHeader=表頭
+PageFooter=表尾
 WebsiteAccount=網站帳號
 WebsiteAccounts=網站帳號
 AddWebsiteAccount=建立網站帳號
@@ -102,7 +105,7 @@ YouMustDefineTheHomePage=請先設定預設首頁
 OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users and can work only pages rendered with HTML and CSS only. Importing pages rendered by JS frameworks are NOT supported. Depending on the complexity of the source page, the result of importation will probably differ from the original page. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quick way to create a page for very advanced users when source page allows it, but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor might not work correctly when used on a page that was grabbed.
 OnlyEditionOfSourceForGrabbedContent=從外部擷取的頁面僅可編輯 HTML 原始碼
 GrabImagesInto=同時擷取 CSS 與頁面內圖檔
-ImagesShouldBeSavedInto=圖檔將儲存至
+ImagesShouldBeSavedInto=Images should be saved in the directory
 WebsiteRootOfImages=網站圖檔根目錄
 SubdirOfPage=頁面專屬子目錄
 AliasPageAlreadyExists=別名頁面 <strong>%s</strong> 已存在
@@ -119,7 +122,7 @@ NoWebSiteCreateOneFirst=尚未建立任何網站，請先建立。
 GoTo=前往
 DynamicPHPCodeContainsAForbiddenInstruction=你的 PHP 動態代碼包含禁止指令「<strong>%s</strong>」，可透過 WEBSITE_PHP_ALLOW_xxx 選項允許。
 NotAllowedToAddDynamicContent=You don't have permission to add or edit dynamic PHP content in websites. Ask permission or just keep code into php tags unmodified.
-NotAllowedToAddDynamicContentDisabledGlobaly=You currently can't add or edit dynamic PHP content in this website (even if you have permission to), because this feature must be first enabled globally by setting the parameter %s=1 int the conf.php file.<br>Edit your conf.php file to add this parameter, or ask your administrator or support to do it for you.
+NotAllowedToAddDynamicContentDisabledGlobaly=You currently can't add or edit dynamic PHP content in this website (even if you have permission to), because this feature must be first enabled globally by setting the parameter %s=1 into the conf.php file.<br>Edit your conf.php file to add this parameter, or ask your administrator or support team to do it for you.
 ReplaceWebsiteContent=搜尋或取代網站內容
 DeleteAlsoJs=同時刪除此網站所有 JavaScript 檔？
 DeleteAlsoMedias=同時刪除此網站所有媒體檔？
@@ -140,10 +143,10 @@ MainLanguage=主要語言
 OtherLanguages=其他語言
 UseManifest=提供 manifest.json 檔
 PublicAuthorAlias=公開作者別名
-AvailableLanguagesAreDefinedIntoWebsiteProperties=可用語言於網站屬性中定義
+AvailableLanguagesAreDefinedIntoWebsiteProperties=Available languages are defined in website properties
 ReplacementDoneInXPages=%s 個頁面或容器已完成取代
 RSSFeed=RSS Feed
-RSSFeedDesc=可使用此 URL 取得最新 'blogpost' 文章 RSS Feed
+RSSFeedDesc=You can get an RSS feed of latest articles with type 'blogpost' using this URL
 PagesRegenerated=已重新生成 %s 個頁面/容器
 RegenerateWebsiteContent=重新生成網站快取
 AllowedInFrames=允許在 Frames 中
@@ -151,6 +154,7 @@ DefineListOfAltLanguagesInWebsiteProperties=於網站屬性中定義所有可用
 GenerateSitemaps=產生網站 sitemap.xml 檔案
 ConfirmGenerateSitemaps=確認後，將會覆寫現有的 sitemap 檔案…
 ConfirmSitemapsCreation=確認產生 sitemap
+ConfirmSetAsHomePage=Are you sure you want to set the page <b>%s</b> as the home page of the website?
 SitemapGenerated=sitemap 檔案 <b>%s</b> 已產生
 ImportFavicon=網站小圖示 (Favicon)
 ErrorFaviconType=Favicon 必須為 PNG 格式
@@ -509,3 +513,13 @@ ThisDirectoryIsEmpty=This directory is empty
 WrittenBy=Written by %s
 ImportOfWebsiteTemplateIncludingPHPIsAllowedIf=Import of website templates using dynamic content in PHP is allowed only if $dolibarr_website_allow_custom_php is set to 2 in conf.php.
 ImportOfWebsiteTemplateIncludingPHPIsDisabled=Import of website templates using dynamic content in PHP need to have $dolibarr_website_allow_custom_php set to 1 or 2 in conf.php to be allowed.
+CurrentPageVersion=Current page
+ListOfPageVersions=List of archived versions of page (a backup file of page is created each time you save a change, for example on the HTML source)
+EditInLineAllowedAreas=In mode Edit inline, the tags with contenteditable="true", an id and no PHP code inside can be changed and are saved when you leave them. Text formatting (bold, color, font size...), links, paragraphs, titles and lists are allowed, images and other HTML can only be changed in the HTML source.
+ErrorEditInlineElementNoId=This element has contenteditable="true" but no id, so it can not be edited inline.
+ErrorEditInlineElementNotFound=No element with id %s and contenteditable="true" was found in the source of the page.
+ErrorEditInlineElementNotUnique=The id %s is used by several elements with contenteditable="true" in the source of the page.
+ErrorEditInlineElementWithPhp=The element with id %s contains PHP code in the source of the page, so it can only be changed in the HTML source.
+ErrorEditInlineElementNotAllowedHtml=The element with id %s contains HTML that can not be edited inline (image, form, script, comment, other tags or attributes...), so it can only be changed in the HTML source.
+ErrorEditInlineElementNotPlainText=The element with id %s contains HTML in the source of the page and can only be edited inline as plain text, so it can only be changed in the HTML source.
+ErrorEditInlineContentNotAllowed=The new content of the element with id %s contains HTML tags or attributes that are not allowed, so it was not saved.

@@ -47,9 +47,13 @@ HideLots=Ko'p narsalarni yashirish
 OutOfOrder=Ishdan chiqdi
 InWorkingOrder=Ish tartibida
 ToReplace=O'zgartiring
-CantMoveNonExistantSerial=Xato. Siz endi mavjud bo'lmagan serial uchun rekordni ko'chirishni so'raysiz. Balki siz bir xil seriyani bitta omborda bir necha marta bir jo'natishda olgansiz yoki u boshqa jo'natmada ishlatilgan. Ushbu yukni olib tashlang va boshqasini tayyorlang.
+CantMoveNonExistantSerial=Error: You requested a stock movement on a record for a serial that no longer exists. Maybe you used the same serial in the same warehouse several times in the same shipment or it was used by another shipment. Remove this shipment and prepare another one.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=“...repair.php?standard=confirmed” parametri bilan lot jadvali toʻliq bajarilmagan taʼmirlash
 IlligalQtyForSerialNumbers= Aktsiyalarni tuzatish talab qilinadi, chunki noyob seriya raqami.
 ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
 ForceBatchesNeedStockManagement=A product with batch/lot management must be managed in stock (stock management force to yes)
 BatchInformationNotfound=Batch information not found
+EnterMultipleSerialNumbers=Enter multiple serial numbers
+EnterOneSerialNumberPerLine=Type, paste or scan the serial numbers, one per line
+NbOfSerialNumbersDetected=%s serial number(s) detected
+ErrorDuplicateSerialNumberInList=Serial number %s is present several times in the list

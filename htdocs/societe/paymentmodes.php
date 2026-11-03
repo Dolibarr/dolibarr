@@ -195,26 +195,27 @@ if (empty($reshook)) {
 		if (!$error) {
 			$companybankaccount->oldcopy = dol_clone($companybankaccount, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
-			$companybankaccount->socid           = $object->id;
+			$companybankaccount->socid             = $object->id;
 
-			$companybankaccount->bank            = GETPOST('bank', 'alpha');
-			$companybankaccount->label           = GETPOST('label', 'alpha');
-			$companybankaccount->code_banque     = GETPOST('code_banque', 'alpha');
-			$companybankaccount->code_guichet    = GETPOST('code_guichet', 'alpha');
-			$companybankaccount->number          = GETPOST('number', 'alpha');
-			$companybankaccount->cle_rib         = GETPOST('cle_rib', 'alpha');
-			$companybankaccount->bic             = GETPOST('bic', 'alpha');
-			$companybankaccount->iban            = GETPOST('iban', 'alpha');
+			$companybankaccount->bank              = GETPOST('bank', 'alpha');
+			$companybankaccount->label             = GETPOST('label', 'alpha');
+			$companybankaccount->code_banque       = GETPOST('code_banque', 'alpha');
+			$companybankaccount->code_guichet      = GETPOST('code_guichet', 'alpha');
+			$companybankaccount->number            = GETPOST('number', 'alpha');
+			$companybankaccount->cle_rib           = GETPOST('cle_rib', 'alpha');
+			$companybankaccount->bic               = GETPOST('bic', 'alpha');
+			$companybankaccount->iban              = GETPOST('iban', 'alpha');
+			$companybankaccount->payment_reference = GETPOST('payment_reference', 'alphanohtml');
 
-			$companybankaccount->currency_code   = GETPOST('account_currency_code', 'alpha');
-			$companybankaccount->state_id        = GETPOSTINT('account_state_id');
-			$companybankaccount->address         = GETPOST('address', 'alpha');
+			$companybankaccount->currency_code     = GETPOST('account_currency_code', 'alpha');
+			$companybankaccount->state_id          = GETPOSTINT('account_state_id');
+			$companybankaccount->address           = GETPOST('address', 'alpha');
 
-			$companybankaccount->owner_name      = GETPOST('proprio', 'alpha');
-			$companybankaccount->proprio         = $companybankaccount->owner_name;
-			$companybankaccount->owner_address   = GETPOST('owner_address', 'alpha');
-			$companybankaccount->frstrecur       = GETPOST('frstrecur', 'alpha');
-			$companybankaccount->rum             = GETPOST('rum', 'alpha');
+			$companybankaccount->owner_name        = GETPOST('proprio', 'alpha');
+			$companybankaccount->proprio           = $companybankaccount->owner_name;
+			$companybankaccount->owner_address     = GETPOST('owner_address', 'alpha');
+			$companybankaccount->frstrecur         = GETPOST('frstrecur', 'alpha');
+			$companybankaccount->rum               = GETPOST('rum', 'alpha');
 			$companybankaccount->date_rum = GETPOSTDATE('date_rum', '00:00:00');
 			if (empty($companybankaccount->rum)) {
 				$companybankaccount->rum = $prelevement->buildRumNumber($object->code_client, $companybankaccount->datec, (string) $companybankaccount->id);
@@ -333,30 +334,31 @@ if (empty($reshook)) {
 
 			$companybankaccount->fetch_thirdparty();
 
-			$companybankaccount->bank            = GETPOST('bank', 'alpha');
-			$companybankaccount->label           = GETPOST('label', 'alpha');
-			$companybankaccount->code_banque     = GETPOST('code_banque', 'alpha');
-			$companybankaccount->code_guichet    = GETPOST('code_guichet', 'alpha');
-			$companybankaccount->number          = GETPOST('number', 'alpha');
-			$companybankaccount->cle_rib         = GETPOST('cle_rib', 'alpha');
-			$companybankaccount->bic             = GETPOST('bic', 'alpha');
-			$companybankaccount->iban            = GETPOST('iban', 'alpha');
+			$companybankaccount->bank              = GETPOST('bank', 'alpha');
+			$companybankaccount->label             = GETPOST('label', 'alpha');
+			$companybankaccount->code_banque       = GETPOST('code_banque', 'alpha');
+			$companybankaccount->code_guichet      = GETPOST('code_guichet', 'alpha');
+			$companybankaccount->number            = GETPOST('number', 'alpha');
+			$companybankaccount->cle_rib           = GETPOST('cle_rib', 'alpha');
+			$companybankaccount->bic               = GETPOST('bic', 'alpha');
+			$companybankaccount->iban              = GETPOST('iban', 'alpha');
+			$companybankaccount->payment_reference = GETPOST('payment_reference', 'alphanohtml');
 
-			$companybankaccount->currency_code   = GETPOST('account_currency_code', 'alpha');
-			$companybankaccount->fk_country      = GETPOSTINT('account_country_id');
-			$companybankaccount->country_code    = getCountry($companybankaccount->fk_country, '2');
-			$companybankaccount->state_id        = GETPOSTINT('account_state_id');
-			$companybankaccount->address         = GETPOST('address', 'alpha');
+			$companybankaccount->currency_code     = GETPOST('account_currency_code', 'alpha');
+			$companybankaccount->fk_country        = GETPOSTINT('account_country_id');
+			$companybankaccount->country_code      = getCountry($companybankaccount->fk_country, '2');
+			$companybankaccount->state_id          = GETPOSTINT('account_state_id');
+			$companybankaccount->address           = GETPOST('address', 'alpha');
 
-			$companybankaccount->owner_name      = GETPOST('proprio', 'alpha');
-			$companybankaccount->proprio         = $companybankaccount->owner_name;
-			$companybankaccount->owner_address   = GETPOST('owner_address', 'alpha');
-			$companybankaccount->frstrecur       = GETPOST('frstrecur', 'alpha');
-			$companybankaccount->rum             = GETPOST('rum', 'alpha');
-			$companybankaccount->date_rum        = GETPOSTDATE('date_rum', '00:00:00');
-			$companybankaccount->datec           = dol_now();
+			$companybankaccount->owner_name        = GETPOST('proprio', 'alpha');
+			$companybankaccount->proprio           = $companybankaccount->owner_name;
+			$companybankaccount->owner_address     = GETPOST('owner_address', 'alpha');
+			$companybankaccount->frstrecur         = GETPOST('frstrecur', 'alpha');
+			$companybankaccount->rum               = GETPOST('rum', 'alpha');
+			$companybankaccount->date_rum          = GETPOSTDATE('date_rum', '00:00:00');
+			$companybankaccount->datec             = dol_now();
 
-			$companybankaccount->status          = GETPOSTINT('clos');
+			$companybankaccount->status            = GETPOSTINT('clos');
 
 			$companybankaccount->bank = trim($companybankaccount->bank);
 			if (empty($companybankaccount->bank) && !empty($companybankaccount->thirdparty)) {
@@ -1625,6 +1627,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print_liste_field_titre("RIB");
 		print_liste_field_titre("IBAN");
 		print_liste_field_titre("BIC");
+		print_liste_field_titre($form->textwithpicto($langs->trans('PaymentReferenceOfAccount'), $langs->trans('PaymentReferenceOfAccountHelp')));
 		if (isModEnabled('prelevement')) {
 			print_liste_field_titre("RUM");
 			print_liste_field_titre("DateRUM");
@@ -1723,6 +1726,9 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			}
 			print dol_escape_htmltag($rib->bic);
 			print '</td>';
+
+			// Reference to give when paying to this account
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute((string) $rib->payment_reference).'">'.dolPrintHTML((string) $rib->payment_reference).'</td>';
 
 			if (isModEnabled('prelevement')) {
 				// RUM
@@ -1947,7 +1953,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		}
 
 		if ($nbremote == 0 && $nblocal == 0) {
-			$colspan = 10;
+			$colspan = 11;
 			if (isModEnabled('prelevement')) {
 				$colspan += 2;
 			}
@@ -2120,6 +2126,10 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 		print '</tr>';
 	}
 
+	// Reference to give when paying to this account (the RF a supplier gave us)
+	print '<tr><td>'.$form->textwithpicto($langs->trans('PaymentReferenceOfAccount'), $langs->trans('PaymentReferenceOfAccountHelp')).'</td>';
+	print '<td><input class="minwidth200" type="text" name="payment_reference" maxlength="40" value="'.dol_escape_htmltag(GETPOSTISSET('payment_reference') ? GETPOST('payment_reference', 'alphanohtml') : (string) $bankaccount->payment_reference).'" spellcheck="false"></td></tr>';
+
 	// Currency
 	print '<tr><td class="fieldrequired">'.$langs->trans("Currency").'</td>';
 	print '<td>';
@@ -2162,7 +2172,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td>';
 	print '<textarea name="address" rows="'.ROWS_4.'" cols="40" maxlength="255" spellcheck="false">';
-	print dolPrintText(GETPOSTISSET('address') ? GETPOST('address', 'alpha') : $companybankaccount->address);
+	print dolPrintHTMLForTextArea(GETPOSTISSET('address') ? GETPOST('address', 'alpha') : $companybankaccount->address);
 	print "</textarea></td></tr>";
 
 	print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
@@ -2171,7 +2181,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
 	print '<textarea name="owner_address" rows="'.ROWS_4.'" cols="40" maxlength="255" spellcheck="false">';
-	print dolPrintText(GETPOSTISSET('owner_address') ? GETPOST('owner_address', 'alpha') : $companybankaccount->owner_address);
+	print dolPrintHTMLForTextArea(GETPOSTISSET('owner_address') ? GETPOST('owner_address', 'alpha') : $companybankaccount->owner_address);
 	print "</textarea></td></tr>";
 
 	print '</table>';
@@ -2351,6 +2361,10 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 		print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" id="'.$name.'" value="'.dol_escape_htmltag($content).'" spellcheck="false"></td>';
 		print '</tr>';
 	}
+
+	// Reference to give when paying to this account (the RF a supplier gave us)
+	print '<tr><td>'.$form->textwithpicto($langs->trans('PaymentReferenceOfAccount'), $langs->trans('PaymentReferenceOfAccountHelp')).'</td>';
+	print '<td><input class="minwidth200" type="text" name="payment_reference" maxlength="40" value="'.dol_escape_htmltag(GETPOSTISSET('payment_reference') ? GETPOST('payment_reference', 'alphanohtml') : '').'" spellcheck="false"></td></tr>';
 
 	// Currency
 	print '<tr><td class="fieldrequired">'.$langs->trans("Currency").'</td>';

@@ -172,7 +172,7 @@ if ($action == 'create' && GETPOSTINT("accountid") > 0 && $user->hasRight('banqu
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				$result = $object->generatePdf(GETPOST("model"), $outputlangs);
+				$result = $object->generateDocument(GETPOST("model"), $outputlangs);
 			}
 
 			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
@@ -224,7 +224,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->hasRight('banqu
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		$result = $object->generatePdf(GETPOST('model'), $outputlangs);
+		$result = $object->generateDocument(GETPOST('model'), $outputlangs);
 
 		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
 		exit;
@@ -266,7 +266,7 @@ if ($action == 'builddoc' && $user->hasRight('banque', 'cheque')) {
 		$outputlangs = new Translate("", $conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	$result = $object->generatePdf(GETPOST("model"), $outputlangs);
+	$result = $object->generateDocument(GETPOST("model"), $outputlangs);
 	if ($result <= 0) {
 		dol_print_error($db, $object->error);
 		exit;

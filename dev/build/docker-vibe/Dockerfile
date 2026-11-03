@@ -7,6 +7,7 @@ RUN apt-get update \
 		bash \
 		bash-completion \
 		ca-certificates \
+		cmake \
 		composer \
         vim \
 		wget \
@@ -22,7 +23,10 @@ RUN apt-get update \
 		iptables \
 		jq \
 		libglib2.0-bin \
-        memcached \
+		liblzma-dev \
+		libboost-iostreams-dev libboost-filesystem-dev libboost-date-time-dev \
+		libboost-program-options-dev libboost-system-dev \
+		memcached \
 		mariadb-client \
 		mariadb-server \
 		openssh-client \
@@ -206,8 +210,13 @@ WORKDIR /workspace
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 # Add the URL opener used by the BROWSER environment variable (see above)
 COPY open-on-host /usr/local/bin/open-on-host
+# Add the xdg-open shim: the Rust TUI of Vibe (vibe-rs) opens the links of the
+# chat with xdg-open, ignoring the BROWSER variable (only the Python parts of
+# Vibe honor it), and xdg-utils is not installed into the image. The shim
+# forwards to open-on-host, so a click on a link opens it on the host.
+COPY xdg-open-shim /usr/local/bin/xdg-open
 # Add the tool used by the launcher to block the outbound SMTP ports on the network stack
 # shared with the VM (see docker-entrypoint.sh and README.md)
 COPY smtpblock.sh /usr/local/bin/smtpblock.sh
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh /usr/local/bin/open-on-host /usr/local/bin/smtpblock.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh /usr/local/bin/open-on-host /usr/local/bin/xdg-open /usr/local/bin/smtpblock.sh
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

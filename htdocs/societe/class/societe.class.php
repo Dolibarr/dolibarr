@@ -1770,6 +1770,12 @@ class Societe extends CommonObject
 			$sql .= ", fk_multicurrency = ".(int) $this->fk_multicurrency;
 			$sql .= ", multicurrency_code = '".$this->db->escape($this->multicurrency_code)."'";
 			$sql .= ", model_pdf = '".$this->db->escape((string) $this->model_pdf)."'";
+			// Default warehouse of the thirdparty. Updated only when it can be edited from the GUI (stock module and
+			// SOCIETE_ASK_FOR_WAREHOUSE on, see comm/card.php) and when the property is set, so a caller that did not
+			// load it does not erase it. A value <= 0 removes the link.
+			if (isModEnabled('stock') && getDolGlobalString('SOCIETE_ASK_FOR_WAREHOUSE') && isset($this->fk_warehouse) && $this->fk_warehouse !== '') {
+				$sql .= ", fk_warehouse = ".((int) $this->fk_warehouse > 0 ? (int) $this->fk_warehouse : "null");
+			}
 			$sql .= " WHERE rowid = ".(int) $id;
 
 			$resql = $this->db->query($sql);
@@ -4802,7 +4808,7 @@ class Societe extends CommonObject
 					$noemail = $obj->nb;
 					if (empty($noemail)) {
 						// TODO Add $unsubscribegroup
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe(email, entity, date_creat) VALUES ('".$this->db->escape($this->email)."', ".getEntity('mailing', 0).", '".$this->db->idate(dol_now())."')";
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe(email, entity, date_creation) VALUES ('".$this->db->escape($this->email)."', ".getEntity('mailing', 0).", '".$this->db->idate(dol_now())."')";
 						$resql = $this->db->query($sql);
 						if (!$resql) {
 							$error++;

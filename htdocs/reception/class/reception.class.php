@@ -576,8 +576,8 @@ class Reception extends CommonObject
 				$this->model_pdf            = $obj->model_pdf;
 				$this->shipping_method_id   = $obj->fk_shipping_method;
 				$this->tracking_number      = $obj->tracking_number;
-				$this->origin               = ($obj->origin ? $obj->origin : 'commande'); // For compatibility
-				$this->origin_type          = ($obj->origin ? $obj->origin : 'commande'); // For compatibility
+				$this->origin               = ($obj->origin ? $obj->origin : ($obj->origin_id > 0 ? 'commande' : '')); // For compatibility. A standalone reception has no origin.
+				$this->origin_type          = ($obj->origin ? $obj->origin : ($obj->origin_id > 0 ? 'commande' : '')); // For compatibility. A standalone reception has no origin.
 				$this->origin_id            = $obj->origin_id;
 
 				$this->trueWeight           = $obj->weight;
@@ -1129,7 +1129,7 @@ class Reception extends CommonObject
 			// Rank to use
 			$ranktouse = $rang;
 			if ($ranktouse == -1) {
-				$rangmax = $this->line_max($this->fk_reception);
+				$rangmax = $this->line_max();
 				$ranktouse = $rangmax + 1;
 			}
 
@@ -1159,9 +1159,7 @@ class Reception extends CommonObject
 			$result = $this->line->insert($user);
 			if ($result > 0) {
 				if (!isset($this->context['createfromclone'])) {
-					if ($this->fk_reception) {
-						$this->line_order(true, 'DESC');
-					} elseif ($ranktouse > 0 && $ranktouse <= count($this->lines)) {
+					if ($ranktouse > 0 && $ranktouse <= count($this->lines)) {
 						$linecount = count($this->lines);
 						for ($ii = $ranktouse; $ii <= $linecount; $ii++) {
 							$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
@@ -2685,7 +2683,9 @@ class Reception extends CommonObject
 
 		$modelpath = "core/modules/reception/doc/";
 
-		$this->fetch_origin();
+		if (!empty($this->origin) && $this->origin_id > 0) {
+			$this->fetch_origin();
+		}
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}

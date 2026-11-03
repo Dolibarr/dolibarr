@@ -175,10 +175,20 @@ class AllTests
 		//$suite->addTestSuite('CoreTest');
 		require_once dirname(__FILE__).'/AdminLibTest.php';
 		$suite->addTestSuite('AdminLibTest');
+		require_once dirname(__FILE__).'/RestlerAutoLoaderTest.php';
+		$suite->addTestSuite('RestlerAutoLoaderTest');
+		require_once dirname(__FILE__).'/ApiEndpointDiscoveryTest.php';
+		$suite->addTestSuite('ApiEndpointDiscoveryTest');
+		require_once dirname(__FILE__).'/ApiEndpointDiscoveryEquivalenceTest.php';
+		$suite->addTestSuite('ApiEndpointDiscoveryEquivalenceTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeTest.php';
 		$suite->addTestSuite('AiMcpApiBridgeTest');
+		require_once dirname(__FILE__).'/AiMcpApiBridgeDocumentsTest.php';
+		$suite->addTestSuite('AiMcpApiBridgeDocumentsTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeProjectsTest.php';
 		$suite->addTestSuite('AiMcpApiBridgeProjectsTest');
+		require_once dirname(__FILE__).'/ApiExplorerAccessControlTest.php';
+		$suite->addTestSuite('ApiExplorerAccessControlTest');
 		require_once dirname(__FILE__).'/ApiListStatusFilterTest.php';
 		$suite->addTestSuite('ApiListStatusFilterTest');
 		require_once dirname(__FILE__).'/ApiSupplierOrderHeaderUpdateTest.php';
@@ -211,6 +221,10 @@ class AllTests
 		$suite->addTestSuite('FilesLibTest');
 		require_once dirname(__FILE__).'/DocumentTransferTest.php';
 		$suite->addTestSuite('DocumentTransferTest');
+		require_once dirname(__FILE__).'/InstallRepairEcmTest.php';
+		$suite->addTestSuite('InstallRepairEcmTest');
+		require_once dirname(__FILE__).'/InstallRepairImagesTest.php';
+		$suite->addTestSuite('InstallRepairImagesTest');
 		require_once dirname(__FILE__).'/GetUrlLibTest.php';
 		$suite->addTestSuite('GetUrlLibTest');
 		require_once dirname(__FILE__).'/JsonLibTest.php';
@@ -231,6 +245,8 @@ class AllTests
 		$suite->addTestSuite('EmailSignatureLibTest');
 		require_once dirname(__FILE__).'/XCalLibTest.php';
 		$suite->addTestSuite('XCalLibTest');
+		require_once dirname(__FILE__).'/ModuleBuilderTemplateConventionsTest.php';
+		$suite->addTestSuite('ModuleBuilderTemplateConventionsTest');
 		// Test disabled because it uses include of phpsessionindb.lib.php that run session_set_save_handler() but this function
 		// fails when output was already done (here by output log of unit tests)
 		//require_once dirname(__FILE__).'/PhpSessionInDbTest.php';
@@ -249,6 +265,9 @@ class AllTests
 		$suite->addTestSuite('UserTest');
 		require_once dirname(__FILE__).'/UserGroupTest.php';
 		$suite->addTestSuite('UserGroupTest');
+
+		require_once dirname(__FILE__).'/VCardTest.php';
+		$suite->addTestSuite('VCardTest');
 
 		require_once dirname(__FILE__).'/NumberingModulesTest.php';
 		$suite->addTestSuite('NumberingModulesTest');
@@ -297,8 +316,6 @@ class AllTests
 
 		require_once dirname(__FILE__).'/ProductTest.php';
 		$suite->addTestSuite('ProductTest');
-		require_once dirname(__FILE__).'/SupplierOrdersLineApiTest.php';
-		$suite->addTestSuite('SupplierOrdersLineApiTest');
 		require_once dirname(__FILE__).'/VariantsTest.php';
 		$suite->addTestSuite('VariantsTest');
 
@@ -452,6 +469,12 @@ class AllTests
 			$suite->addTestSuite('RestAPICronJobTest');
 			require_once dirname(__FILE__).'/RestAPIBankAccountsTest.php';
 			$suite->addTestSuite('RestAPIBankAccountsTest');
+			require_once dirname(__FILE__).'/RestAPISupplierOrderTest.php';
+			$suite->addTestSuite('RestAPISupplierOrderTest');
+			require_once dirname(__FILE__).'/RestAPISupplierInvoiceTest.php';
+			$suite->addTestSuite('RestAPISupplierInvoiceTest');
+			require_once dirname(__FILE__).'/RestAPICategoriesTest.php';
+			$suite->addTestSuite('RestAPICategoriesTest');
 
 			// Old WS
 			require_once dirname(__FILE__).'/WebservicesProductsTest.php';

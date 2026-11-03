@@ -57,6 +57,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	vertical-align: middle;
 	white-space: nowrap;
 	display: inline-block;
+	line-height: 30px;
 }
 
 .nonature-back {

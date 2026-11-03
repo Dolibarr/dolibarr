@@ -13,9 +13,11 @@
  * \brief Partial header updates through the AI bridge, without database writes.
  */
 
-if (!defined('DOL_DOCUMENT_ROOT')) {
-	define('DOL_DOCUMENT_ROOT', __DIR__.'/../../htdocs');
+global $conf,$user,$langs,$db,$mysoc;
+if (!defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
 }
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/ai/class/mcptool.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ai/tools/api_bridge.class.php';
@@ -23,7 +25,7 @@ require_once DOL_DOCUMENT_ROOT.'/ai/tools/api_bridge.class.php';
 /**
  * Exercise metadata, confirmation, precheck and dispatch with local fixtures.
  */
-class ApiSupplierOrderHeaderUpdateTest extends PHPUnit\Framework\TestCase
+class ApiSupplierOrderHeaderUpdateTest extends CommonClassTest
 {
 	/** @var ApiSupplierOrderHeaderBridgeFixture Bridge fixture */
 	private $bridge;
@@ -35,6 +37,8 @@ class ApiSupplierOrderHeaderUpdateTest extends PHPUnit\Framework\TestCase
 	/** @return void */
 	protected function setUp(): void
 	{
+		parent::setUp();
+
 		global $langs, $user;
 		$this->previousLangs = $langs;
 		$this->previousUser = $user;
@@ -51,6 +55,8 @@ class ApiSupplierOrderHeaderUpdateTest extends PHPUnit\Framework\TestCase
 		$langs = $this->previousLangs;
 		$user = $this->previousUser;
 		ApiSupplierOrderHeaderEndpointFixture::$fail = false;
+
+		parent::tearDown();
 	}
 
 	/** @return void */
@@ -94,9 +100,9 @@ class ApiSupplierOrderHeaderUpdateTest extends PHPUnit\Framework\TestCase
 			$this->bridge->execute('api_supplier_orders_update', $args);
 			$this->assertSame($changes, ApiSupplierOrderHeaderEndpointFixture::$received['body']);
 			$preview = $this->bridge->writeConfirmationPreview('api_supplier_orders_update', $args);
-			$this->assertStringContainsString('array_options.options_reference: "old" → "new"', $preview);
-			$this->assertStringNotContainsString('options_other', $preview);
-			$this->assertStringNotContainsString('{', $preview);
+			$this->assertStringContainsString(dol_escape_htmltag('array_options.options_reference: "old" → "new"'), $preview);
+			$this->assertStringNotContainsString(dol_escape_htmltag('options_other'), $preview);
+			$this->assertStringNotContainsString(dol_escape_htmltag('{'), $preview);
 		}
 	}
 
@@ -110,7 +116,7 @@ class ApiSupplierOrderHeaderUpdateTest extends PHPUnit\Framework\TestCase
 		$this->assertSame($changes, ApiSupplierOrderHeaderEndpointFixture::$received['body']);
 		$preview = $this->bridge->writeConfirmationPreview('api_supplier_orders_update', $args);
 		foreach (['1970-01-01 00:00:00 UTC', 'Project: null → null', 'NotePrivate: null → ""', 'options_zero: null → 0', 'options_null: null → null', 'options_empty: null → ""'] as $expected) {
-			$this->assertStringContainsString($expected, $preview);
+			$this->assertStringContainsString(dol_escape_htmltag($expected), $preview);
 		}
 	}
 
@@ -186,7 +192,7 @@ class ApiSupplierOrderHeaderUpdateTest extends PHPUnit\Framework\TestCase
 	{
 		$preview = $this->bridge->writeConfirmationPreview('api_supplier_orders_update', ['ref' => 'PO-42', 'ref_supplier' => 'NEW']);
 		foreach (['PO-42', 'Example supplier', 'OLD', 'NEW', '→'] as $expected) {
-			$this->assertStringContainsString($expected, $preview);
+			$this->assertStringContainsString(dol_escape_htmltag($expected), $preview);
 		}
 	}
 
@@ -194,10 +200,10 @@ class ApiSupplierOrderHeaderUpdateTest extends PHPUnit\Framework\TestCase
 	public function testPreviewShowsReadableDeliveryDatesAndFieldLabels()
 	{
 		$preview = $this->bridge->writeConfirmationPreview('api_supplier_orders_update', ['id' => 42, 'delivery_date' => 1735776000, 'note_public' => 'Visible note']);
-		$this->assertStringContainsString('DeliveryDate: 2024-01-01 00:00:00 UTC → 2025-01-02 00:00:00 UTC', $preview);
-		$this->assertStringContainsString('NotePublic: null → "Visible note"', $preview);
-		$this->assertStringNotContainsString('1704067200', $preview);
-		$this->assertStringNotContainsString('1735776000', $preview);
+		$this->assertStringContainsString(dol_escape_htmltag('DeliveryDate: 2024-01-01 00:00:00 UTC → 2025-01-02 00:00:00 UTC'), $preview);
+		$this->assertStringContainsString(dol_escape_htmltag('NotePublic: null → "Visible note"'), $preview);
+		$this->assertStringNotContainsString(dol_escape_htmltag('1704067200'), $preview);
+		$this->assertStringNotContainsString(dol_escape_htmltag('1735776000'), $preview);
 	}
 
 	/** @return void */
@@ -274,6 +280,16 @@ class ApiSupplierOrderHeaderLanguageFixture
 	public function trans($key, ...$values)
 	{
 		return $key.($values ? ' '.implode(' ', $values) : '');
+	}
+
+	/**
+	 * @param string $key Translation key
+	 * @param mixed ...$values Substitution values
+	 * @return string Unescaped preview text
+	 */
+	public function transnoentitiesnoconv($key, ...$values)
+	{
+		return $this->trans($key, ...$values);
 	}
 }
 
