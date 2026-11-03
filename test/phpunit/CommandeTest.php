@@ -365,4 +365,37 @@ class CommandeTest extends CommonClassTest
 		print __METHOD__." result=".json_encode($result)."\n";
 		$this->assertEquals(array('add -4' => -6, 'add -7' => -12, 'add -12' => -12, 'update -7' => -12), $result, 'Negative quantities rounded to the packaging of 6');
 	}
+
+	/**
+	 * testCommandeDecimalPackaging
+	 *
+	 * With PRODUCT_USE_CUSTOMER_PACKAGING, a quantity multiple of a decimal packaging must not be rounded
+	 * to the next multiple (fmod(1, 0.1) is 0.0999..., not 0).
+	 *
+	 * @return  void
+	 */
+	public function testCommandeDecimalPackaging()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		list($localobject, $productid, $savconst) = $this->initPackagingOrder(0.1);
+
+		$lineid = $localobject->addline('Line', 10, 0.1, 20, 0, 0, $productid);
+		$this->assertGreaterThan(0, $lineid, (string) $localobject->error);
+		$result = array();
+		foreach (array(0.5, 1, 2.2, 0.25) as $qty) {
+			$localobject->updateline($lineid, 'Line', 10, $qty, 0, 20);
+			$line = new OrderLine($db);
+			$line->fetch($lineid);
+			$result['update '.$qty] = (float) $line->qty;
+		}
+		$conf->global->PRODUCT_USE_CUSTOMER_PACKAGING = $savconst;
+
+		print __METHOD__." result=".json_encode($result)."\n";
+		$this->assertEquals(array('update 0.5' => 0.5, 'update 1' => 1, 'update 2.2' => 2.2, 'update 0.25' => 0.3), $result, 'Quantities with a packaging of 0.1');
+	}
 }

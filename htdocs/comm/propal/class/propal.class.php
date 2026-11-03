@@ -1007,9 +1007,9 @@ class Propal extends CommonObject
 						if (!empty($tmpline->packaging)
 							&& is_numeric($tmpline->packaging)
 							&& (float) $tmpline->packaging > 0
-							&& fmod(abs((float) $qty), (float) $tmpline->packaging) > 0) {
+							&& (float) price2num(abs((float) $qty) - round(abs((float) $qty) / (float) $tmpline->packaging) * (float) $tmpline->packaging, 'MS') != 0) {
 							$coeff = intval(abs((float) $qty) / $tmpline->packaging) + 1;
-							$qty = $qtysign * $tmpline->packaging * $coeff;
+							$qty = price2num($qtysign * (float) $tmpline->packaging * $coeff, 'MS');
 							setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
 						}
 					}

@@ -2143,9 +2143,9 @@ class CommandeFournisseur extends CommonOrder
 					if (abs((float) $qty) < (float) $prod->packaging) {
 						$qty = $qtysign * (float) $prod->packaging;
 					} else {
-						if (!empty($prod->packaging) && (fmod(abs((float) $qty), (float) $prod->packaging)  > 0.000001)) {
+						if (!empty($prod->packaging) && (float) price2num(abs((float) $qty) - round(abs((float) $qty) / (float) $prod->packaging) * (float) $prod->packaging, 'MS') != 0) {
 							$coeff = intval(abs((float) $qty) / $prod->packaging) + 1;
-							$qty = $qtysign * (float) $prod->packaging * $coeff;
+							$qty = price2num($qtysign * (float) $prod->packaging * $coeff, 'MS');
 							setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
 						}
 					}
@@ -3168,9 +3168,9 @@ class CommandeFournisseur extends CommonOrder
 					if (abs((float) $qty) < (float) $tmpline->packaging) {
 						$qty = $qtysign * (float) $tmpline->packaging;
 					} else {
-						if (!empty($tmpline->packaging) && is_numeric($tmpline->packaging) && (float) $tmpline->packaging > 0 && (fmod(abs((float) $qty), (float) $tmpline->packaging) > 0)) {
+						if (!empty($tmpline->packaging) && is_numeric($tmpline->packaging) && (float) $tmpline->packaging > 0 && (float) price2num(abs((float) $qty) - round(abs((float) $qty) / (float) $tmpline->packaging) * (float) $tmpline->packaging, 'MS') != 0) {
 							$coeff = intval(abs((float) $qty) / $tmpline->packaging) + 1;
-							$qty = $qtysign * $tmpline->packaging * $coeff;
+							$qty = price2num($qtysign * (float) $tmpline->packaging * $coeff, 'MS');
 							setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
 						}
 					}
