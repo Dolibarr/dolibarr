@@ -199,17 +199,16 @@ class CGenericDic extends CommonDict
 		$sql .= " ".$this->db->sanitize("t.".$fieldlabel)." as label,";
 		$sql .= " t.active";
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
-		// The same code or label may exist in several entities: search only in the allowed ones
-		$entityfilter = '';
-		if ($this->tableHasEntityColumn()) {
-			$entityfilter = " AND t.entity IN (".getEntity($this->table_element).")";
-		}
 		if ($id) {
 			$sql .= " WHERE ".$this->db->sanitize("t.".$fieldrowid)." = ".((int) $id);
 		} elseif ($code) {
-			$sql .= " WHERE t.code = '".$this->db->escape($code)."'".$entityfilter;
+			$sql .= " WHERE t.code = '".$this->db->escape($code)."'";
 		} elseif ($label) {
-			$sql .= " WHERE t.label = '".$this->db->escape($label)."'".$entityfilter;
+			$sql .= " WHERE t.label = '".$this->db->escape($label)."'";
+		}
+		// The same code or label may exist in several entities: search only in the allowed ones
+		if (!$id && ($code || $label) && $this->tableHasEntityColumn()) {
+			$sql .= " AND t.entity IN (".getEntity($this->table_element).")";
 		}
 
 		$resql = $this->db->query($sql);
