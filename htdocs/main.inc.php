@@ -244,6 +244,14 @@ if (GETPOST('theme', 'aZ09')) {
 // Set global MAIN_OPTIMIZEFORTEXTBROWSER (must be before login part)
 if (GETPOSTINT('textbrowser') || (!empty($conf->browser->name) && $conf->browser->name == 'textbrowser')) {   // If we must enable text browser
 	$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = 2;
+	// A detected text browser (w3m, lynx...) has no javascript engine, so we disable javascript and ajax features
+	if (!empty($conf->browser->name) && $conf->browser->name == 'textbrowser') {
+		$conf->use_javascript_ajax = 0;
+		unset($conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
+		unset($conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+		unset($conf->global->CONTACT_USE_SEARCH_TO_SELECT);
+		unset($conf->global->PROJECT_USE_SEARCH_TO_SELECT);
+	}
 }
 
 // Force HTTPS if required ($conf->file->main_force_https is 0/1 or 'https dolibarr root url')
@@ -1651,7 +1659,9 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 		}
 
 		// Add Dolibarr to Content-Security-Policy
-		$contentsecuritypolicy = preg_replace('/default-src \'self\'/', 'default-src \'self\' *.dolibarr.org', $contentsecuritypolicy);
+		if (!preg_match('/dolibarr\.org/', $contentsecuritypolicy)) {
+			$contentsecuritypolicy = preg_replace('/default-src \'self\'/', 'default-src \'self\' *.dolibarr.org', $contentsecuritypolicy);
+		}
 
 		if (!empty($contentsecuritypolicy)) {
 			header("Content-Security-Policy-Report-Only: ".$contentsecuritypolicy);
@@ -1691,7 +1701,9 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 		}
 
 		// Add Dolibarr to Content-Security-Policy
-		$contentsecuritypolicy = preg_replace('/default-src \'self\'/', 'default-src \'self\' ping.dolibarr.org', $contentsecuritypolicy);
+		if (!preg_match('/dolibarr\.org/', $contentsecuritypolicy)) {
+			$contentsecuritypolicy = preg_replace('/default-src \'self\'/', 'default-src \'self\' *.dolibarr.org', $contentsecuritypolicy);
+		}
 
 		if (!empty($contentsecuritypolicy)) {
 			header("Content-Security-Policy: ".$contentsecuritypolicy);

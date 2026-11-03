@@ -4587,8 +4587,7 @@ class Facture extends CommonInvoice
 			}
 
 			if (!isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '') {
-				// INVOICE_USE_SITUATION = 2 - Lines situation percent on new lines must be 0 (No cumulative). They will be added by changing the percent that is initialized to 0.
-				if ($this->isSituationInvoice() && getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+				if ($this->isSituationInvoice() && getDolGlobalInt('INVOICE_USE_SITUATION') != 1 && (int) $situation_percent < 100) {
 					$situation_percent = 0;
 				} else {
 					$situation_percent = 100;
@@ -4929,13 +4928,13 @@ class Facture extends CommonInvoice
 				$special_code = 0;
 			}
 			if (!isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '' || $situation_percent == null) {
-				// INVOICE_USE_SITUATION = 2 - If there is no progress on a line, percent must not be 100% (No cumulative)
-				if ($this->isSituationInvoice() && getDolGlobalInt('INVOICE_USE_SITUATION') == 2 && (int) $situation_percent < 100) {
+				if ($this->isSituationInvoice() && getDolGlobalInt('INVOICE_USE_SITUATION') != 1 && (int) $situation_percent < 100) {
 					$situation_percent = 0;
 				} else {
 					$situation_percent = 100;
 				}
 			}
+
 			if (empty($ref_ext)) {
 				$ref_ext = '';
 			}

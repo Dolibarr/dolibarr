@@ -882,7 +882,7 @@ if ($action == 'uploadfile') {
 					if (jqXHR.status === 200) {
 						// The conversion of the file into text is complete, we can ask the AI to analyze it
 						console.log("Conversion of the file into text complete, call the analysis");
-						$("#ajax-progress-message").text(\''.dol_escape_js($langs->trans("AIProcessingDocumentAskingAnalyze", $modelforanalysis)).'\');
+						$("#ajax-progress-message").text(\''.dol_escape_js($langs->transnoentitiesnoconv("AIProcessingDocumentAskingAnalyze", $modelforanalysis)).'\');
 						$(".progress-bar").css("width", "60%");
 						$.ajax({
 							url: ajaxUrlBase.concat("&step=analyze"),
@@ -899,8 +899,8 @@ if ($action == 'uploadfile') {
 
 									$("span.blink").remove();
 									var durationofprocessing = ((Date.now() - timestartprocessing) / 1000).toFixed(1);
-									// The translation is made with "%s" as parameter, so the %s of the template survives the sprintf() done by trans()
-									$("#ajax-progress-message").text(\''.dol_escape_js($langs->trans("AIProcessingDocumentAnalyzingComplete", '%s')).'\'.replace("%s", durationofprocessing));
+									// The translation is made with "%s" as parameter, so the %s of the template survives the sprintf() done by transnoentitiesnoconv(). Not encoded because .text() is used
+									$("#ajax-progress-message").text(\''.dol_escape_js($langs->transnoentitiesnoconv("AIProcessingDocumentAnalyzingComplete", '%s')).'\'.replace("%s", durationofprocessing));
 									$("#processing-duration").val(durationofprocessing);
 
 									// Submit the form directly to show the summary of the analysis (instead of showing the button Next)
@@ -1445,6 +1445,38 @@ if ($action == 'showsummary') {
 		$amount = GETPOSTISSET('amount') ? GETPOST('amount', 'alpha') : (is_numeric($salaryindoc['net_to_pay'] ?? null) ? price((float) $salaryindoc['net_to_pay']) : '');
 		$label = GETPOSTISSET('label') ? GETPOST('label', 'alphanohtml') : $langs->transnoentitiesnoconv("Salary").($datesp ? ' '.dol_print_date($datesp, '%m/%Y') : '');
 
+		// Search the user matching the employee name found in document, without the civility at the beginning of the name
+		$usersalaryidfound = 0;
+		$employeename = trim((string) ($salaryindoc['employee_name'] ?? ''));
+		do {
+			$employeenamebefore = $employeename;
+			$employeename = trim((string) preg_replace('/^(monsieur|madame|mademoiselle|messieurs|mesdames|mister|mistress|miss|mrs|mr|ms|mme|mlle|mmes|mm|m|sir|herr|frau|señor|señora|señorita|sr|sra|srta|signora|signor|sig\.ra|sig|dott|dr|doctor|docteur|pr|prof|professeur|professor)(\.|\s|$)+/iu', '', $employeename));
+		} while ($employeename != $employeenamebefore && $employeename != '');
+		$employeename = (string) preg_replace('/\s+/u', ' ', $employeename);
+		if ($employeename != '') {
+			// Search first on "Lastname Firstname", then on "Firstname Lastname"
+			foreach (array("CONCAT(CONCAT(u.lastname, ' '), u.firstname)", "CONCAT(CONCAT(u.firstname, ' '), u.lastname)") as $sanitizedSqlfullname) {
+				$sql = "SELECT u.rowid FROM ".MAIN_DB_PREFIX."user as u";
+				$sql .= " WHERE ".$sanitizedSqlfullname." = '".$db->escape($employeename)."'";
+				$sql .= " AND u.entity IN (".getEntity('user').")";
+				$sql .= $db->plimit(2);
+				$resql = $db->query($sql);
+				if (!$resql) {
+					dol_syslog("SQL Error ".$db->lasterror(), LOG_ERR);
+					break;
+				}
+				// Use the user only if there is no ambiguity
+				if ($db->num_rows($resql) == 1) {
+					$obj = $db->fetch_object($resql);
+					$usersalaryidfound = (int) $obj->rowid;
+				}
+				$db->free($resql);
+				if ($usersalaryidfound > 0) {
+					break;
+				}
+			}
+		}
+
 		print "\n\n";
 		print '<div id="userpayroll" class="">';
 
@@ -1458,7 +1490,7 @@ if ($action == 'showsummary') {
 		}
 		print '<br><br>';
 		print $langs->trans("WillUse").' ';
-		print $form->select_dolusers(GETPOSTINT('usersalaryid') > 0 ? GETPOSTINT('usersalaryid') : -1, 'usersalaryid', $langs->transnoentitiesnoconv("Employee"), null, 0, 'hierarchyme', '', '', 0, 0, '', 0, '', 'maxwidth200 disableautoopen', 1);
+		print $form->select_dolusers(GETPOSTINT('usersalaryid') > 0 ? GETPOSTINT('usersalaryid') : ($usersalaryidfound > 0 ? $usersalaryidfound : -1), 'usersalaryid', $langs->transnoentitiesnoconv("Employee"), null, 0, 'hierarchyme', '', '', 0, 0, '', 0, '', 'maxwidth200 disableautoopen', 1);
 
 		print "\n";
 		print '<br><br><hr style="margin: 0px"><br>';

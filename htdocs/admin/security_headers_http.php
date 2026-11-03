@@ -293,23 +293,58 @@ function cleanSecurityCSP($securitycsp)
 			}
 		}
 		// We check if style-src contains self and unsafe-inline (if not the app will not work correctly)
-		if (!preg_match('/style-src[^;]*self/', $securitycsp) || !preg_match('/style-src[^;]*unsafe-inline/', $securitycsp)) {
-			if (!preg_match('/style-src/', $securitycsp)) {
-				$securitycsp .= (preg_match('/;\s*$/', $securitycsp) ? '' : '; ').' style-src \'self\' \'unsafe-inline\';';
-			} else {
-				if (!preg_match('/style-src[^;]*self/', $securitycsp)) {
-					$securitycsp = preg_replace('/style-src\s+/', 'style-src \'self\' ', $securitycsp);
-				}
-				if (!preg_match('/style-src[^;]*unsafe-inline/', $securitycsp)) {
-					$securitycsp = preg_replace('/style-src\s+/', 'style-src \'unsafe-inline\' ', $securitycsp);
-				}
+		if (!preg_match('/style-src/', $securitycsp)) {
+			$securitycsp .= (preg_match('/;\s*$/', $securitycsp) ? '' : '; ').' style-src \'self\' \'unsafe-inline\'';
+			if (isModEnabled('paypal')) {
+				$securitycsp .= ' *.paypal.com';
+			}
+			if (isModEnabled('stripe')) {
+				$securitycsp .= ' *.stripe.com';		// Must be added as they may be used by the core modules
+			}
+			$securitycsp .= ';';
+		} else {
+			if (!preg_match('/style-src[^;]*self/', $securitycsp)) {
+				$securitycsp = preg_replace('/style-src\s+/', 'style-src \'self\' ', $securitycsp);
+			}
+			if (!preg_match('/style-src[^;]*unsafe-inline/', $securitycsp)) {
+				$securitycsp = preg_replace('/style-src\s+/', 'style-src \'unsafe-inline\' ', $securitycsp);
+			}
+			// We check if entry for paypal or stripe are present
+			if (isModEnabled('paypal') && !preg_match('/style-src[^;]*paypal/', $securitycsp)) {
+				$securitycsp = preg_replace('/style-src\s+/', 'style-src *.paypal.com ', $securitycsp);
+			}
+			if (isModEnabled('stripe') && !preg_match('/style-src[^;]*stripe/', $securitycsp)) {
+				$securitycsp = preg_replace('/style-src\s+/', 'style-src *.stripe.com ', $securitycsp);
 			}
 		}
-		if (!preg_match('/dolibarr\.org/', $securitycsp)) {
-			if (!preg_match('/default-src/', $securitycsp)) {
-				$securitycsp .= (preg_match('/;\s*$/', $securitycsp) ? '' : '; ').' default-src *.dolibarr.org;';
-			} else {
+		// We check if default-src contains self, unsafe-inline, unsafe-eval, *.dolibarr.org, and paypal or stripe if enabled (if not the app will not work correctly)
+		if (!preg_match('/default-src/', $securitycsp)) {
+			$securitycsp .= (preg_match('/;\s*$/', $securitycsp) ? '' : '; ').' default-src \'self\' \'unsafe-inline\' \'unsafe-eval\' *.dolibarr.org';
+			if (isModEnabled('paypal')) {
+				$securitycsp .= ' *.paypal.com';
+			}
+			if (isModEnabled('stripe')) {
+				$securitycsp .= ' *.stripe.com';
+			}
+			$securitycsp .= ';';
+		} else {
+			if (isModEnabled('paypal') && !preg_match('/default-src[^;]*paypal/', $securitycsp)) {
+				$securitycsp = preg_replace('/default-src\s+/', 'default-src *.paypal.com ', $securitycsp);
+			}
+			if (isModEnabled('stripe') && !preg_match('/default-src[^;]*stripe/', $securitycsp)) {
+				$securitycsp = preg_replace('/default-src\s+/', 'default-src *.stripe.com ', $securitycsp);
+			}
+			if (!preg_match('/default-src[^;]*dolibarr\.org/', $securitycsp)) {
 				$securitycsp = preg_replace('/default-src\s+/', 'default-src *.dolibarr.org ', $securitycsp);
+			}
+			if (!preg_match('/default-src[^;]*unsafe-eval/', $securitycsp)) {
+				$securitycsp = preg_replace('/default-src\s+/', 'default-src \'unsafe-eval\' ', $securitycsp);
+			}
+			if (!preg_match('/default-src[^;]*unsafe-inline/', $securitycsp)) {
+				$securitycsp = preg_replace('/default-src\s+/', 'default-src \'unsafe-inline\' ', $securitycsp);
+			}
+			if (!preg_match('/default-src[^;]*self/', $securitycsp)) {
+				$securitycsp = preg_replace('/default-src\s+/', 'default-src \'self\' ', $securitycsp);
 			}
 		}
 	}
@@ -362,7 +397,7 @@ print '<td><input class="minwidth500" name="MAIN_SECURITY_FORCESTS" id="MAIN_SEC
 print '</tr>';
 // Force PP
 print '<tr class="oddeven">';
-print '<td>'.$form->textwithpicto($langs->trans('MainSecurityForcePP'), 'HTTP Header Permissions-Policy<br><br>'.$langs->trans("Example").':<br>camera=*, microphone=(), geolocation=*', 1, 'help', 'valignmiddle', 0, 3, 'MAIN_SECURITY_FORCEPP').'</td>';
+print '<td>'.$form->textwithpicto($langs->trans('MainSecurityForcePP'), 'HTTP Header Permissions-Policy<br><br>'.$langs->trans("Example").':<br>camera=*, microphone=(self), geolocation=*', 1, 'help', 'valignmiddle', 0, 3, 'MAIN_SECURITY_FORCEPP').'</td>';
 print '<td><input class="minwidth500" name="MAIN_SECURITY_FORCEPP" id="MAIN_SECURITY_FORCEPP" value="'.getDolGlobalString("MAIN_SECURITY_FORCEPP").'" spellcheck="false"></td>';
 print '</tr>';
 

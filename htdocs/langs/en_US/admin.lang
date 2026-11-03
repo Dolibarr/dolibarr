@@ -1253,6 +1253,7 @@ AtEndOfMonth=At end of month
 CurrentNext=A given day in month
 Offset=Offset
 AlwaysActive=Always active
+OtherEntity=Other entity
 Upgrade=Upgrade
 MenuUpgrade=Upgrade / Extend
 AddExtensionThemeModuleOrOther=Deploy/install external app/module

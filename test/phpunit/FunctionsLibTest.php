@@ -347,6 +347,39 @@ class FunctionsLibTest extends CommonClassTest
 	}
 
 	/**
+	 * The url of the server is the configured one with DOL_URL_ROOT removed from its end.
+	 *
+	 * @return	void
+	 */
+	public function testDolGetUrlWithoutUrlRoot()
+	{
+		global $dolibarr_main_url_root;
+
+		$savurlroot = $dolibarr_main_url_root;
+
+		// What the 73 copies of the expression this replaces used to compute
+		$dolibarr_main_url_root = 'https://example.org'.DOL_URL_ROOT;
+		$this->assertSame(
+			preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root)),
+			dolGetUrlWithoutUrlRoot(),
+			'The helper must return exactly what the expression it replaces returned'
+		);
+		$this->assertSame('https://example.org', dolGetUrlWithoutUrlRoot(), 'DOL_URL_ROOT must be removed from the end');
+
+		// Surrounding spaces are trimmed, as the expression did
+		$dolibarr_main_url_root = '  https://example.org'.DOL_URL_ROOT.'  ';
+		$this->assertSame('https://example.org', dolGetUrlWithoutUrlRoot(), 'The configured url must be trimmed');
+
+		// Only the end is removed, never an occurrence in the middle of the host
+		if (DOL_URL_ROOT !== '') {
+			$dolibarr_main_url_root = 'https://example.org'.DOL_URL_ROOT.'/other';
+			$this->assertSame('https://example.org'.DOL_URL_ROOT.'/other', dolGetUrlWithoutUrlRoot(), 'Only a trailing DOL_URL_ROOT is removed');
+		}
+
+		$dolibarr_main_url_root = $savurlroot;
+	}
+
+	/**
 	 * testDolCheckFilters
 	 *
 	 * @return boolean
