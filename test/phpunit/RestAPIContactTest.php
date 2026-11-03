@@ -36,6 +36,90 @@ require_once __DIR__."/AbstractRestAPITest.php";
  */
 class RestAPIContactTest extends AbstractRestAPITest
 {
+	/**
+	 * testRestContactCategories
+	 *
+	 * Link a contact category to a contact, link it again, unlink it, then check the errors
+	 * for an unknown category, an unknown contact and a category that is not of type contact.
+	 *
+	 * @return void
+	 */
+	public function testRestContactCategories()
+	{
+		$addheaders = array('Content-Type: application/json', 'Accept: application/json', 'DOLAPIKEY: '.$this->api_key);
+		$api_url = $this->api_url;
+		$call = function ($method, $endpoint, $body = '') use ($api_url, $addheaders) {
+			$result = getURLContent($api_url.$endpoint, $method, $body, 1, $addheaders, array('http', 'https'), 2);
+			$this->assertEquals(0, $result['curl_error_no'], $method.' '.$endpoint.' must not have a curl error');
+			$object = json_decode($result['content'], true);
+			$this->assertNotNull($object, $method.' '.$endpoint.' - Parsing of json result must not be null: '.$result['content']);
+			return $object;
+		};
+
+		$contactid = 0;
+		$categoryid = 0;
+		$customercategoryid = 0;
+		try {
+			$contactid = (int) $call('POST', '/contacts', json_encode(array('lastname' => 'testRestContactCategories'.mt_rand())));
+			$this->assertGreaterThan(0, $contactid, 'Contact must be created');
+
+			$categoryid = (int) $call('POST', '/categories', json_encode(array('label' => 'testRestContactCategories '.mt_rand(), 'type' => 4)));	// 4 = contact
+			$this->assertGreaterThan(0, $categoryid, 'Contact category must be created');
+			$customercategoryid = (int) $call('POST', '/categories', json_encode(array('label' => 'testRestContactCategories customer '.mt_rand(), 'type' => 2)));	// 2 = customer
+			$this->assertGreaterThan(0, $customercategoryid, 'Customer category must be created');
+
+			// Link the category, then find it in the contact's categories
+			$object = $call('PUTALREADYFORMATED', '/contacts/'.$contactid.'/categories/'.$categoryid);
+			$this->assertArrayNotHasKey('error', $object, 'Linking the category must succeed');
+			$this->assertEquals($contactid, $object['id']);
+			$object = $call('GET', '/contacts/'.$contactid.'/categories');
+			$this->assertEquals(array($categoryid), array_map('intval', array_column($object, 'id')), 'The linked category must be returned');
+
+			// Linking it again is not an error and keeps a single link
+			$object = $call('PUTALREADYFORMATED', '/contacts/'.$contactid.'/categories/'.$categoryid);
+			$this->assertArrayNotHasKey('error', $object, 'Linking an already linked category must succeed');
+			$object = $call('GET', '/contacts/'.$contactid.'/categories');
+			$this->assertCount(1, $object, 'The category must be linked only once');
+
+			// A category of another type can't be linked
+			$object = $call('PUTALREADYFORMATED', '/contacts/'.$contactid.'/categories/'.$customercategoryid);
+			$this->assertEquals(400, $object['error']['code'] ?? 0, 'Linking a customer category must return 400');
+			$object = $call('DELETE', '/contacts/'.$contactid.'/categories/'.$customercategoryid);
+			$this->assertEquals(400, $object['error']['code'] ?? 0, 'Unlinking a customer category must return 400');
+
+			// Unlink the category, then check it is gone
+			$object = $call('DELETE', '/contacts/'.$contactid.'/categories/'.$categoryid);
+			$this->assertArrayNotHasKey('error', $object, 'Unlinking the category must succeed');
+			$object = $call('GET', '/contacts/'.$contactid.'/categories');
+			$this->assertSame(array(), $object, 'The contact must have no category left');
+
+			// Unknown category
+			$object = $call('PUTALREADYFORMATED', '/contacts/'.$contactid.'/categories/999999999');
+			$this->assertEquals(404, $object['error']['code'] ?? 0, 'Linking an unknown category must return 404');
+			$object = $call('DELETE', '/contacts/'.$contactid.'/categories/999999999');
+			$this->assertEquals(404, $object['error']['code'] ?? 0, 'Unlinking an unknown category must return 404');
+
+			// Unknown contact
+			$object = $call('GET', '/contacts/999999999/categories');
+			$this->assertEquals(404, $object['error']['code'] ?? 0, 'Categories of an unknown contact must return 404');
+			$object = $call('PUTALREADYFORMATED', '/contacts/999999999/categories/'.$categoryid);
+			$this->assertEquals(404, $object['error']['code'] ?? 0, 'Linking to an unknown contact must return 404');
+			$object = $call('DELETE', '/contacts/999999999/categories/'.$categoryid);
+			$this->assertEquals(404, $object['error']['code'] ?? 0, 'Unlinking from an unknown contact must return 404');
+		} finally {
+			// Clean up
+			if ($contactid > 0) {
+				getURLContent($api_url.'/contacts/'.$contactid, 'DELETE', '', 1, $addheaders, array('http', 'https'), 2);
+			}
+			if ($categoryid > 0) {
+				getURLContent($api_url.'/categories/'.$categoryid, 'DELETE', '', 1, $addheaders, array('http', 'https'), 2);
+			}
+			if ($customercategoryid > 0) {
+				getURLContent($api_url.'/categories/'.$customercategoryid, 'DELETE', '', 1, $addheaders, array('http', 'https'), 2);
+			}
+		}
+	}
+
 	protected $api_url;
 	protected $api_key;
 
