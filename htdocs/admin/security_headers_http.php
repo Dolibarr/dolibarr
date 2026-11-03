@@ -293,16 +293,28 @@ function cleanSecurityCSP($securitycsp)
 			}
 		}
 		// We check if style-src contains self and unsafe-inline (if not the app will not work correctly)
-		if (!preg_match('/style-src[^;]*self/', $securitycsp) || !preg_match('/style-src[^;]*unsafe-inline/', $securitycsp)) {
-			if (!preg_match('/style-src/', $securitycsp)) {
-				$securitycsp .= (preg_match('/;\s*$/', $securitycsp) ? '' : '; ').' style-src \'self\' \'unsafe-inline\';';
-			} else {
-				if (!preg_match('/style-src[^;]*self/', $securitycsp)) {
-					$securitycsp = preg_replace('/style-src\s+/', 'style-src \'self\' ', $securitycsp);
-				}
-				if (!preg_match('/style-src[^;]*unsafe-inline/', $securitycsp)) {
-					$securitycsp = preg_replace('/style-src\s+/', 'style-src \'unsafe-inline\' ', $securitycsp);
-				}
+		if (!preg_match('/style-src/', $securitycsp)) {
+			$securitycsp .= (preg_match('/;\s*$/', $securitycsp) ? '' : '; ').' style-src \'self\' \'unsafe-inline\'';
+			if (isModEnabled('paypal')) {
+				$securitycsp .= ' *.paypal.com';
+			}
+			if (isModEnabled('stripe')) {
+				$securitycsp .= ' *.stripe.com';		// Must be added as they may be used by the core modules
+			}
+			$securitycsp .= ';';
+		} else {
+			if (!preg_match('/style-src[^;]*self/', $securitycsp)) {
+				$securitycsp = preg_replace('/style-src\s+/', 'style-src \'self\' ', $securitycsp);
+			}
+			if (!preg_match('/style-src[^;]*unsafe-inline/', $securitycsp)) {
+				$securitycsp = preg_replace('/style-src\s+/', 'style-src \'unsafe-inline\' ', $securitycsp);
+			}
+			// We check if entry for paypal or stripe are present
+			if (isModEnabled('paypal') && !preg_match('/style-src[^;]*paypal/', $securitycsp)) {
+				$securitycsp = preg_replace('/style-src\s+/', 'style-src *.paypal.com ', $securitycsp);
+			}
+			if (isModEnabled('stripe') && !preg_match('/style-src[^;]*stripe/', $securitycsp)) {
+				$securitycsp = preg_replace('/style-src\s+/', 'style-src *.stripe.com ', $securitycsp);
 			}
 		}
 		// We check if default-src contains self, unsafe-inline, unsafe-eval and *.dolibarr.org (if not the app will not work correctly)
