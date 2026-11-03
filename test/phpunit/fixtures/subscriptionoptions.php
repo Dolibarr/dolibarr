@@ -19,7 +19,10 @@ class SubscriptionOptionsTestUser
 	public $socid = 0;
 	/** @var string[] Denied permissions */
 	public $denied = array();
-	/** @param string ...$parts Permission path @return bool */
+	/**
+	 * @param string ...$parts Permission path
+	 * @return bool
+	 */
 	public function hasRight(...$parts)
 	{
 		return !in_array(implode('.', $parts), $this->denied, true);
@@ -47,7 +50,10 @@ class SubscriptionOptionsTestDatabase
 	public $records = array();
 	/** @var string[] Transaction snapshot */
 	private $before = array();
-	/** @param int $timestamp Timestamp @return string SQL date */
+	/**
+	 * @param int $timestamp Timestamp
+	 * @return string SQL date
+	 */
 	public function idate($timestamp)
 	{
 		return dol_print_date($timestamp, '%Y-%m-%d %H:%M:%S');
@@ -57,7 +63,10 @@ class SubscriptionOptionsTestDatabase
 	{
 		return 'test_';
 	}
-	/** @param int $limit Limit @return string */
+	/**
+	 * @param int $limit Limit
+	 * @return string
+	 */
 	public function plimit($limit)
 	{
 		return ' LIMIT '.((int) $limit);
@@ -91,7 +100,10 @@ class SubscriptionOptionsTestDatabase
 		$this->calls[] = 'rollback';
 		return 1;
 	}
-	/** @param string $sql Query @return object|false */
+	/**
+	 * @param string $sql Query
+	 * @return object|false
+	 */
 	public function query($sql)
 	{
 		$this->queries[] = $sql;
@@ -127,15 +139,21 @@ class SubscriptionOptionsTestDatabase
 		}
 		throw new LogicException('Unexpected query in isolated test');
 	}
-	/** @param object $res Result @return object|null */
-	public function fetch_object($res)
+	/**
+	 * @param object $res Result
+	 * @return object|null
+	 */
+	public function fetch_object($res) // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps -- Required by the Dolibarr core API.
 	{
 		if (isset($res->rows)) {
 			return array_shift($res->rows);
 		}
 		return $res->row;
 	}
-	/** @param object $res Result @return void */
+	/**
+	 * @param object $res Result
+	 * @return void
+	 */
 	public function free($res)
 	{
 	}
@@ -144,6 +162,9 @@ class SubscriptionOptionsTestDatabase
 /** Member type without a database connection. */
 class SubscriptionOptionsTestType extends AdherentType
 {
+	/**
+	 * Initialize the synthetic test double without opening a database connection.
+	 */
 	public function __construct()
 	{
 	}
@@ -174,7 +195,7 @@ class SubscriptionOptionsTestMember extends Adherent
 	 * @param int $force_thirdparty_id ID
 	 * @return int
 	 */
-	public function fetch_thirdparty($force_thirdparty_id = 0)
+	public function fetch_thirdparty($force_thirdparty_id = 0) // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps -- Required by the Dolibarr core API.
 	{
 		$this->thirdparty = (object) array('id' => 42, 'entity' => $this->failure === 'thirdparty_entity' ? 2 : 1, 'element' => 'societe', 'name' => 'Synthetic third party');
 		return $this->failure === 'thirdparty' ? -1 : 1;
@@ -280,6 +301,10 @@ function subscriptionOptionsTestEnvironment()
 	global $conf, $langs, $hookmanager, $mc;
 	$mc = null;
 	$hookmanager = new class {
+		/**
+		 * @param mixed ...$args Hook arguments
+		 * @return int Synthetic hook result
+		 */
 		public function executeHooks(...$args)
 		{
 			return 0;
@@ -308,8 +333,27 @@ function subscriptionOptionsStatusTestContext()
 		public $calls = array();
 		public $records = array();
 		private $synthetic;
-		public function __construct() { $this->synthetic = new SubscriptionOptionsTestDatabase(); }
-		public function prefix() { return 'test_'; }
+		/**
+		 * Initialize the synthetic test double without opening a database connection.
+		 */
+		public function __construct()
+		{
+			$this->synthetic = new SubscriptionOptionsTestDatabase();
+		}
+		/**
+		 * @return string Synthetic table prefix
+		 */
+		public function prefix()
+		{
+			return 'test_';
+		}
+		/**
+		 * @param string $sql Query
+		 * @param int $usesavepoint Savepoint option
+		 * @param string $type Query type
+		 * @param int $result_mode Result mode
+		 * @return object|bool Synthetic query result
+		 */
 		public function query($sql, $usesavepoint = 0, $type = 'auto', $result_mode = 0)
 		{
 			if (in_array($sql, array('BEGIN', 'COMMIT', 'ROLLBACK'), true)) {
@@ -323,12 +367,48 @@ function subscriptionOptionsStatusTestContext()
 			}
 			return $this->synthetic->query(trim($sql));
 		}
-		public function fetch_object($result) { return $this->synthetic->fetch_object($result); }
-		public function num_rows($result) { return isset($result->row) ? 1 : 0; }
-		public function free($result = null) {}
+		/**
+		 * @param object $result Synthetic result
+		 * @return object|null Synthetic row
+		 */
+		public function fetch_object($result) // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps -- Required by the Dolibarr core API.
+		{
+			return $this->synthetic->fetch_object($result);
+		}
+		/**
+		 * @param object $result Synthetic result
+		 * @return int Synthetic row count
+		 */
+		public function num_rows($result) // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps -- Required by the Dolibarr core API.
+		{
+			return isset($result->row) ? 1 : 0;
+		}
+		/**
+		 * @param object|null $result Synthetic result
+		 * @return void
+		 */
+		public function free($result = null)
+		{
+		}
 	};
 	$member = new class($db) extends SubscriptionOptionsTestMember {
-		public function fetch($rowid, $ref = '', $socid = 0, $ref_ext = '', $fetch_optionals = true, $fetch_subscriptions = true) { return 1; }
+		/**
+		 * @param int $rowid Member ID
+		 * @param string $ref Member reference
+		 * @param int $socid Third-party ID
+		 * @param string $ref_ext External reference
+		 * @param bool $fetch_optionals Fetch extra fields
+		 * @param bool $fetch_subscriptions Fetch subscriptions
+		 * @return int Synthetic success
+		 */
+		public function fetch($rowid, $ref = '', $socid = 0, $ref_ext = '', $fetch_optionals = true, $fetch_subscriptions = true)
+		{
+			return 1;
+		}
+		/**
+		 * @param User $user User
+		 * @return AdherentType Authorized member type
+		 */
 		protected function subscriptionTypeForBatch($user)
 		{
 			$method = new ReflectionMethod(Adherent::class, 'subscriptionTypeForBatch');
@@ -343,7 +423,16 @@ function subscriptionOptionsStatusTestContext()
 	$member->firstname = 'Synthetic';
 	$member->lastname = 'Member';
 	$user = new class($db) extends User {
-		public function hasRight($module, $permlevel1, $permlevel2 = '') { return true; }
+		/**
+		 * @param string $module Module
+		 * @param string $permlevel1 Permission
+		 * @param string $permlevel2 Subpermission
+		 * @return bool Synthetic authorization
+		 */
+		public function hasRight($module, $permlevel1, $permlevel2 = '')
+		{
+			return true;
+		}
 	};
 	return array($db, $member, $user);
 }
@@ -372,7 +461,14 @@ function subscriptionOptionsScenarios()
 				}
 				// Isolate access hooks and empty extra fields, not the actual member/type validation.
 				$hookmanager = new class {
-					public function executeHooks(...$args) { return $args[0] === 'restrictedArea' ? 1 : 0; }
+					/**
+					 * @param mixed ...$args Hook arguments
+					 * @return int Synthetic hook result
+					 */
+					public function executeHooks(...$args)
+					{
+						return $args[0] === 'restrictedArea' ? 1 : 0;
+					}
 				};
 				$extrafields = (object) array('attributes' => array('adherent_type' => array('loaded' => true)));
 				list($db, $member, $user) = subscriptionOptionsStatusTestContext();
@@ -615,7 +711,10 @@ function subscriptionOptionsScenarios()
 	$scenarios['real_authorization_rejects_member_in_other_entity'] = static function () use ($date) {
 		list($db, $unused, $user) = subscriptionOptionsTestContext();
 		$member = new class($db) extends Adherent {
-			/** @param mixed ...$args Fetch arguments @return int */
+			/**
+			 * @param mixed ...$args Fetch arguments
+			 * @return int
+			 */
 			public function fetch(...$args)
 			{
 				$this->entity = 2;
@@ -813,7 +912,12 @@ function subscriptionOptionsScenarios()
 		$member->firstname = '<script>alert(1)</script>';
 		$row = $member->previewSubscriptionWithOptions($user, $date, false, false);
 		$form = new class {
-			/** @param int $timestamp Date @param string $prefix Prefix @param mixed ...$args Options @return string */
+			/**
+			 * @param int $timestamp Date
+			 * @param string $prefix Prefix
+			 * @param mixed ...$args Options
+			 * @return string
+			 */
 			public function selectDate($timestamp, $prefix, ...$args)
 			{
 				return '<input name="'.$prefix.'" value="'.$timestamp.'">';
@@ -928,8 +1032,14 @@ function subscriptionOptionsScenarios()
 			$conf->global->MEMBER_SUBSCRIPTION_SUGGEST_END_OF_YEAR = $flags[1];
 			$langs->load('members');
 			$form = new class {
-				/** @param mixed ...$args Selector arguments @return string */
-				public function selectDate(...$args) { return '<input>'; }
+				/**
+				 * @param mixed ...$args Selector arguments
+				 * @return string
+				 */
+				public function selectDate(...$args)
+				{
+					return '<input>';
+				}
 			};
 			$rows = array();
 			foreach (array(array(2, 2028, 29, 'm'), array(10, 2026, 31, 'y')) as $case) {
@@ -967,7 +1077,10 @@ function subscriptionOptionsScenarios()
 	$scenarios['calendar_controls_and_compact_messages'] = static function () use ($date) {
 		global $conf;
 		$form = new class {
-			/** @param mixed ...$args Selector arguments @return string */
+			/**
+			 * @param mixed ...$args Selector arguments
+			 * @return string
+			 */
 			public function selectDate(...$args)
 			{
 				return '<input>';
@@ -1121,8 +1234,14 @@ function subscriptionOptionsScenarios()
 		list($db, $member, $user) = subscriptionOptionsTestContext();
 		$row = $member->previewSubscriptionWithOptions($user, $date, false, false, null, false, '<script>alert(1)</script> & {Member type}');
 		$form = new class {
-			/** @param mixed ...$args Selector arguments @return string */
-			public function selectDate(...$args) { return '<input>'; }
+			/**
+			 * @param mixed ...$args Selector arguments
+			 * @return string
+			 */
+			public function selectDate(...$args)
+			{
+				return '<input>';
+			}
 		};
 		$html = subscriptionOptionsRenderPreview($form, array(1 => $row));
 		return substr_count($html, '<th>') === 7 && strpos($html, '<script>') === false
@@ -1248,12 +1367,12 @@ function subscriptionOptionsScenarios()
 		$member->testType->duration_unit = 'm';
 		$db->periods[] = array('rowid' => 50, 'member' => 1, 'dateadh' => '2026-10-25 14:00:00', 'datef' => '2026-10-31 00:00:00');
 		$start = dol_mktime(0, 0, 0, 10, 1, 2026);
-		$shortend = dol_mktime(0, 0, 0, 10, 24, 2026);
-		$row = $member->previewSubscriptionWithOptions($user, $start, false, false, $shortend);
+		$manualEndDate = dol_mktime(0, 0, 0, 10, 24, 2026);
+		$row = $member->previewSubscriptionWithOptions($user, $start, false, false, $manualEndDate);
 		$conf->global->MEMBER_SUBSCRIPTION_SUGGEST_END_OF_MONTH = 1;
-		$input = subscriptionOptionsPeriodInput($row, $start, $shortend, false, null, true);
+		$input = subscriptionOptionsPeriodInput($row, $start, $manualEndDate, false, null, true);
 		$calendar = $member->previewSubscriptionWithOptions($user, $start, false, false, $input['end']);
-		$input = subscriptionOptionsPeriodInput($row, $start, $shortend, true);
+		$input = subscriptionOptionsPeriodInput($row, $start, $manualEndDate, true);
 		$reset = $member->previewSubscriptionWithOptions($user, $start, false, false, $input['end']);
 		$duplicate = $member->previewSubscriptionWithOptions($user, dol_mktime(0, 0, 0, 10, 25, 2026), false, false);
 		return $row['status'] === 'ready' && $calendar['status'] === 'warning' && $reset['status'] === 'warning' && $duplicate['status'] === 'error';
@@ -1315,8 +1434,14 @@ function subscriptionOptionsScenarios()
 			$member->email = '';
 			$row = $member->previewSubscriptionWithOptions($user, $date, false, true);
 			$form = new class {
-				/** @param mixed ...$args Selector arguments @return string */
-				public function selectDate(...$args) { return '<input>'; }
+				/**
+				 * @param mixed ...$args Selector arguments
+				 * @return string
+				 */
+				public function selectDate(...$args)
+				{
+					return '<input>';
+				}
 			};
 			$html = subscriptionOptionsRenderPreview($form, array(1 => $row));
 			return strpos($html, dol_escape_htmltag($langs->trans('SubscriptionBulkOverlapWarning'))) !== false
@@ -1400,8 +1525,14 @@ function subscriptionOptionsScenarios()
 		$other = $row;
 		$other['amount'] = 24.0;
 		$form = new class {
-			/** @param mixed ...$args Selector arguments @return string */
-			public function selectDate(...$args) { return '<input>'; }
+			/**
+			 * @param mixed ...$args Selector arguments
+			 * @return string
+			 */
+			public function selectDate(...$args)
+			{
+				return '<input>';
+			}
 		};
 		$html = subscriptionOptionsRenderPreview($form, array(1 => $row));
 		return strpos($html, dol_escape_htmltag(price(0).' EUR')) !== false
@@ -1423,8 +1554,15 @@ function subscriptionOptionsScenarios()
 					public $mode;
 					public $calls = 0;
 					public $parameters;
-					/** @param array $parameters Parameters @param Adherent $object Member @param string $action Action @param HookManager $manager Manager @return int */
-					public function sendMail($parameters, &$object, &$action, $manager) {
+					/**
+					 * @param array $parameters Parameters
+					 * @param Adherent $object Member
+					 * @param string $action Action
+					 * @param HookManager $manager Manager
+					 * @return int
+					 */
+					public function sendMail($parameters, &$object, &$action, $manager)
+					{
 						$this->calls++;
 						$this->parameters = $parameters;
 						if ($action !== 'subscription' || $parameters['currentcontext'] !== 'subscription') { throw new LogicException('Wrong context'); }
@@ -1461,8 +1599,15 @@ function subscriptionOptionsScenarios()
 			$observer = new class extends CommonHookActions {
 				public $calls = 0;
 				public $hookreturn;
-				/** @param array $parameters Parameters @param Adherent $object Member @param string $action Action @param HookManager $manager Manager @return int */
-				public function sendMail($parameters, &$object, &$action, $manager) {
+				/**
+				 * @param array $parameters Parameters
+				 * @param Adherent $object Member
+				 * @param string $action Action
+				 * @param HookManager $manager Manager
+				 * @return int
+				 */
+				public function sendMail($parameters, &$object, &$action, $manager)
+				{
 					$this->calls++;
 					$object->email = 'single@example.invalid';
 					$action = 'changed';
