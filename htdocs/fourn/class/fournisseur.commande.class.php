@@ -3158,6 +3158,23 @@ class CommandeFournisseur extends CommonOrder
 				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 			}
 
+			// Round the quantity to the packaging before computing the amounts of the line (and checking the stock),
+			// else the line is saved with the rounded quantity but with the amounts of the quantity before rounding
+			if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
+				$tmpline = new CommandeFournisseurLigne($this->db);
+				if ($tmpline->fetch($rowid) > 0) {
+					if ($qty < $tmpline->packaging) {
+						$qty = $tmpline->packaging;
+					} else {
+						if (!empty($tmpline->packaging) && is_numeric($tmpline->packaging) && (float) $tmpline->packaging > 0 && (fmod((float) $qty, (float) $tmpline->packaging) > 0)) {
+							$coeff = intval($qty / $tmpline->packaging) + 1;
+							$qty = $tmpline->packaging * $coeff;
+							setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
+						}
+					}
+				}
+			}
+
 			$tabprice = calcul_price_total($qty, (float) $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -3189,19 +3206,6 @@ class CommandeFournisseur extends CommonOrder
 			$this->line->fk_commande = $this->id;
 			//$this->line->label=$label;
 			$this->line->desc = $desc;
-
-			// redefine quantity according to packaging
-			if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
-				if ($qty < $this->line->packaging) {
-					$qty = $this->line->packaging;
-				} else {
-					if (!empty($this->line->packaging) && is_numeric($this->line->packaging) && (float) $this->line->packaging > 0 && (fmod((float) $qty, (float) $this->line->packaging) > 0)) {
-						$coeff = intval($qty / $this->line->packaging) + 1;
-						$qty = $this->line->packaging * $coeff;
-						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
-					}
-				}
-			}
 
 			$this->line->qty = $qty;
 			$this->line->ref_supplier = $ref_supplier;
