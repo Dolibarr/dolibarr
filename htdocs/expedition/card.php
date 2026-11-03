@@ -3207,7 +3207,7 @@ if ($action == 'create' && $usercancreate) {
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 					}
 					if (empty($reshook)) {
-						$object->formAddObjectLine(1, $mysoc, $soc);
+						$object->formAddObjectLine(1, $mysoc, $soc, '/expedition/tpl');
 					}
 				}
 			}
