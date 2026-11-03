@@ -112,7 +112,7 @@ if ($id) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
-	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid valignmiddle" rel="noopener">';
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid valignmiddle" tabindex="-1" rel="noopener">';
 	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 	$morehtmlref .= '</a>';
 
@@ -131,7 +131,7 @@ if ($id) {
 
 	// Login
 	print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
-	if (!empty($object->ldap_sid) && $object->statut == 0) {
+	if (!empty($object->ldap_sid) && $object->status == 0) {
 		print '<td class="error">';
 		print $langs->trans("LoginAccountDisableInDolibarr");
 		print '</td>';

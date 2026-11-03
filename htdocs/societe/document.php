@@ -130,7 +130,7 @@ llxHeader('', $title, $help_url);
 // Show tabs
 $head = societe_prepare_head($object);
 
-print dol_get_fiche_head($head, 'document', $langs->trans("ThirdParty"), -1, 'company');
+print dol_get_fiche_head($head, 'document', $langs->trans("ThirdParty"), -1, 'company', 0, '', '', 0, '', 1);
 
 
 // Build file list

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  */
 // Copyright (C) 2014 Cedric GROSS		<c.gross@kreiz-it.fr>
 // Copyright (C) 2017 Francis Appels	<francis.appels@z-application.com>
@@ -166,12 +167,12 @@ function addDispatchLine(index, type, mode)
  * @param $row          object
  */
 function addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qty, mode, $row) {
-	if (qtyOrdered <= 1) {
-		let errormsg = '<?php echo dol_escape_js($langs->trans('QtyCantBeSplit')); ?>';
+	if (qtyOrdered <= 0) {
+		let errormsg = <?php echo "'".dol_escape_js($langs->trans('QtyCantBeSplit'))."'" ; ?>;
 		$.jnotify(errormsg, 'error', true);
 		return -1;
 	} else if (qtyDispatched >= qtyOrdered) {
-		let errormsg = '<?php echo dol_escape_js($langs->trans('NoRemainQtyToDispatch')); ?>';
+		let errormsg = <?php echo "'".dol_escape_js($langs->trans('NoRemainQtyToDispatch'))."'" ; ?>;
 		$.jnotify(errormsg, 'error', true);
 		return -1;
 	} else if (qtyDispatched < qtyOrdered) {

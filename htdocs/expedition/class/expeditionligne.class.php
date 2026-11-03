@@ -145,7 +145,7 @@ class ExpeditionLigne extends CommonObjectLine
 
 	/**
 	 * Virtual products : array of total of quantities group product id and warehouse id ([id_product][id_warehouse] -> qty (int|float))
-	 * @var array<int, array<int, int|float>>
+	 * @var array<int, array<int, int|float>>|null	Null when PRODUIT_SOUSPRODUITS is off
 	 */
 	public $detail_children;
 
@@ -160,6 +160,12 @@ class ExpeditionLigne extends CommonObjectLine
 	 * @var int Id of warehouse
 	 */
 	public $entrepot_id;
+
+	/**
+	 * @var int|null Id of warehouse, also exposed as entrepot_id
+	 * @deprecated Use $entrepot_id
+	 */
+	public $fk_entrepot;
 
 
 	/**
@@ -190,6 +196,11 @@ class ExpeditionLigne extends CommonObjectLine
 	 * @var string product label
 	 */
 	public $product_label;
+
+	/**
+	 * @var string	Custom label of the order line
+	 */
+	public $label;
 
 	/**
 	 * @var string product description
@@ -335,7 +346,7 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public function fetch($rowid)
 	{
-		$sql = 'SELECT ed.rowid, ed.fk_expedition, ed.fk_entrepot, ed.description, ed.fk_unit, ed.fk_elementdet, ed.element_type, ed.qty, ed.rang, ed.extraparams';
+		$sql = 'SELECT ed.rowid, ed.fk_expedition, ed.fk_entrepot, ed.fk_product, ed.fk_parent, ed.description, ed.fk_unit, ed.fk_elementdet, ed.element_type, ed.qty, ed.rang, ed.extraparams';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as ed';
 		$sql .= ' WHERE ed.rowid = '.((int) $rowid);
 		$result = $this->db->query($sql);
@@ -344,6 +355,9 @@ class ExpeditionLigne extends CommonObjectLine
 			$this->id = $objp->rowid;
 			$this->fk_expedition = $objp->fk_expedition;
 			$this->entrepot_id = $objp->fk_entrepot;
+			$this->fk_entrepot = $objp->fk_entrepot;
+			$this->fk_product = $objp->fk_product;
+			$this->fk_parent = $objp->fk_parent;
 			$this->description = $objp->description;
 			$this->fk_unit = $objp->fk_unit;
 			$this->fk_elementdet = $objp->fk_elementdet;
@@ -566,7 +580,8 @@ class ExpeditionLigne extends CommonObjectLine
 		$this->db->begin();
 
 		// virtual products : delete all children and batch
-		if (getDolGlobalInt('PRODUIT_SOUSPRODUITS') && !($this->fk_parent > 0)) {
+		// Standalone dispatch allocations also belong to their source line.
+		if ((getDolGlobalInt('PRODUIT_SOUSPRODUITS') || $this->element_type == 'shipping') && !($this->fk_parent > 0)) {
 			// find all children
 			$line_id_list = array();
 			$result = $this->findAllChild($this->id, $line_id_list);
@@ -903,7 +918,8 @@ class ExpeditionLigne extends CommonObjectLine
 
 		if ($qty > $qty_remaining) {
 			$langs->load('errors');
-			$this->error = $langs->trans('ErrorExpeditionQtyTooHigh', $qty, max(0, $qty_remaining));
+			$product_ref = !empty($orderline->product_ref) ? $orderline->product_ref : $orderline->desc;
+			$this->error = $langs->trans('ErrorExpeditionQtyTooHigh', $qty, max(0, $qty_remaining), $product_ref);
 			return false;
 		}
 

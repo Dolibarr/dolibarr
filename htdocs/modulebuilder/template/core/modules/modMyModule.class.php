@@ -27,6 +27,7 @@
  *  \brief      Description and activation file for module MyModule
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 
 
 /**
@@ -85,7 +86,7 @@ class modMyModule extends DolibarrModules
 		//$this->url_last_version = 'http://www.example.com/versionmodule.txt';
 
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
-		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
+		$this->const_name = 'MAIN_MODULE_'.dol_strtoupper($this->name);
 
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
@@ -206,9 +207,9 @@ class modMyModule extends DolibarrModules
 		/* END MODULEBUILDER TABS */
 		// Example:
 		// To add a new tab identified by code tabname1
-		// $this->tabs[] = array('data' => 'objecttype:+tabname1:Title1:mylangfile@mymodule:$user->hasRight('mymodule', 'myobject', 'read'):/mymodule/mynewtab1.php?id=__ID__');
+		// $this->tabs[] = array('data' => 'objecttype:+tabname1:Title1:mylangfile@mymodule:$user->hasRight("mymodule", "myobject", "read"):/mymodule/mynewtab1.php?id=__ID__');
 		// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
-		// $this->tabs[] = array('data' => 'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@mymodule:$user->hasRight('othermodule', 'otherobject', 'read'):/mymodule/mynewtab2.php?id=__ID__',
+		// $this->tabs[] = array('data' => 'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@mymodule:$user->hasRight("othermodule", "otherobject", "read"):/mymodule/mynewtab2.php?id=__ID__',
 		// To remove an existing tab identified by code tabname
 		// $this->tabs[] = array('data' => 'objecttype:-tabname:NU:conditiontoremove');
 		//
@@ -528,10 +529,10 @@ class modMyModule extends DolibarrModules
 				}
 
 				$sql = array_merge($sql, array(
-					"DELETE FROM ".$this->db->prefix()."document_model WHERE nom = 'standard_".strtolower($myTmpObjectKey)."' AND type = '".$this->db->escape(strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
-					"INSERT INTO ".$this->db->prefix()."document_model (nom, type, entity) VALUES('standard_".strtolower($myTmpObjectKey)."', '".$this->db->escape(strtolower($myTmpObjectKey))."', ".((int) $conf->entity).")",
-					"DELETE FROM ".$this->db->prefix()."document_model WHERE nom = 'generic_".strtolower($myTmpObjectKey)."_odt' AND type = '".$this->db->escape(strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
-					"INSERT INTO ".$this->db->prefix()."document_model (nom, type, entity) VALUES('generic_".strtolower($myTmpObjectKey)."_odt', '".$this->db->escape(strtolower($myTmpObjectKey))."', ".((int) $conf->entity).")"
+					"DELETE FROM ".$this->db->prefix()."document_model WHERE nom = 'standard_".$this->db->escape(dol_strtolower($myTmpObjectKey))."' AND type = '".$this->db->escape(dol_strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
+					"INSERT INTO ".$this->db->prefix()."document_model (nom, type, entity) VALUES('standard_".$this->db->escape(dol_strtolower($myTmpObjectKey))."', '".$this->db->escape(dol_strtolower($myTmpObjectKey))."', ".((int) $conf->entity).")",
+					"DELETE FROM ".$this->db->prefix()."document_model WHERE nom = 'generic_".$this->db->escape(dol_strtolower($myTmpObjectKey))."_odt' AND type = '".$this->db->escape(dol_strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
+					"INSERT INTO ".$this->db->prefix()."document_model (nom, type, entity) VALUES('generic_".$this->db->escape(dol_strtolower($myTmpObjectKey))."_odt', '".$this->db->escape(dol_strtolower($myTmpObjectKey))."', ".((int) $conf->entity).")"
 				));
 			}
 		}

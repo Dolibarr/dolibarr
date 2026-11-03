@@ -73,7 +73,7 @@ class FormAccounting extends Form
 	/**
 	 * Return list of journals with label by nature
 	 *
-	 * @param	string		$selectid	Preselected journal code
+	 * @param	int|string	$selectid	Preselected journal rowid or code (depends on $select_in)
 	 * @param	string		$htmlname	Name of field in html form
 	 * @param	int<0,9>	$nature		Limit the list to a particular type of journals (1:various operations / 2:sale / 3:purchase / 4:bank / 9: has-new)
 	 * @param	int<0,1>	$showempty	Add an empty field
@@ -631,9 +631,9 @@ class FormAccounting extends Form
 		if (!empty($conf->use_javascript_ajax) && !empty($labelhtmlname)) {
 			$out .= '<script nonce="'.getNonce().'">
 		        jQuery(document).ready(() => {
-		            $("#'.dol_escape_js($htmlname).'").on("select2:select", function(e) {
+		            $(\'#'.dol_escape_js($htmlname).'\').on("select2:select", function(e) {
 		                var match = /\(([^)]+)\)/.exec(e.params.data.text);
-		                if (match) { $("input[name=\"'.dol_escape_js($labelhtmlname).'\"]").val(match[1]); }
+		                if (match) { $(\'input[name="'.dol_escape_js($labelhtmlname).'"]\').val(match[1]); }
 		            });
 		        });
         	</script>';

@@ -351,7 +351,7 @@ for ($i = 1; $i <= 12; $i++) {
 print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
 $sql = "SELECT ".$db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account_number')." AS codecomptable,";
-$sql .= "  ".$db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label')." AS intitule,";
+$sql .= " ".$db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label')." AS intitule,";
 for ($i = 1; $i <= 12; $i++) {
 	$j = $i + getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1) - 1;
 	if ($j > 12) {
@@ -483,7 +483,7 @@ for ($i = 1; $i <= 12; $i++) {
 print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
 $sql = "SELECT ".$db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account_number')." AS codecomptable,";
-$sql .= "  ".$db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label')." AS intitule,";
+$sql .= " ".$db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label')." AS intitule,";
 for ($i = 1; $i <= 12; $i++) {
 	$j = $i + getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1) - 1;
 	if ($j > 12) {

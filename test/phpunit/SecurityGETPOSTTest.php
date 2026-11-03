@@ -25,7 +25,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 
@@ -87,6 +87,7 @@ class SecurityGETPOSTTest extends CommonClassTest
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		// Force default mode
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;

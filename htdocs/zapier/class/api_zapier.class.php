@@ -275,7 +275,7 @@ class Zapier extends DolibarrApi
 		}
 
 		if (!$this->hook->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when deleting Hook : '.$this->hook->error);
+			throw new RestException(500, 'Error when deleting Hook : '.$this->hook->errorsToString());
 		}
 
 		return array(

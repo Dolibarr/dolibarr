@@ -83,6 +83,12 @@ class pdf_strato extends ModelePDFContract
 	public $version = 'dolibarr';
 
 	/**
+	 * @var int		Position
+	 */
+	public $position = 50;
+
+
+	/**
 	 * @var Societe|Contact|null 	Recipient company object
 	 */
 	public $recipient;
@@ -491,7 +497,7 @@ class pdf_strato extends ModelePDFContract
 				}
 
 				// Add terms of sale
-				if (getDolGlobalString('MAIN_INFO_CONTRACT_TERMSOFSALE') && getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_CONTRACT')) {
+				if (getDolGlobalString('MAIN_INFO_CONTRACT_TERMSOFSALE') && $this->mustAddTermsOfSale($object, 'CONTRACT')) {
 					$termsofsalefilename = getDolGlobalString('MAIN_INFO_CONTRACT_TERMSOFSALE');
 					$termsofsale = $conf->contract->dir_output.'/'.$termsofsalefilename;
 					if (!empty($conf->contract->multidir_output[$object->entity ?? $conf->entity])) {
@@ -674,31 +680,12 @@ class pdf_strato extends ModelePDFContract
 		$pdf->SetXY($this->marge_gauche, $posy);
 
 		// Logo
-		if (!getDolGlobalString('PDF_DISABLE_MYCOMPANY_LOGO')) {
-			if ($this->emetteur->logo) {
-				$logodir = $conf->mycompany->dir_output;
-				if (getMultidirOutput($object, 'mycompany')) {
-					$logodir = getMultidirOutput($object, 'mycompany');
-				}
-				if (!getDolGlobalString('MAIN_PDF_USE_LARGE_LOGO')) {
-					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
-				} else {
-					$logo = $logodir.'/logos/'.$this->emetteur->logo;
-				}
-				if (is_readable($logo)) {
-					$height = pdf_getHeightForLogo($logo);
-					$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
-				} else {
-					$pdf->SetTextColor(200, 0, 0);
-					$pdf->SetFont('', 'B', $default_font_size - 2);
-					$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
-					$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
-				}
-			} else {
-				$text = $this->emetteur->name;
-				$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, $ltrdirection);
-			}
+		$logodir = $conf->mycompany->dir_output;
+		$multidiroutput = getMultidirOutput($object, 'mycompany');
+		if (!empty($multidiroutput)) {
+			$logodir = $multidiroutput;
 		}
+		pdf_writeLogoOrCompanyName($pdf, $outputlangs, $this->emetteur, $logodir, $this->marge_gauche, $posy, $w, $default_font_size, $ltrdirection);
 
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx, $posy);

@@ -43,7 +43,7 @@ require_once '../lib/zapier.lib.php';
  */
 
 // Translations
-$langs->loadLangs(array('admin', 'errors', 'zapier'));
+$langs->loadLangs(array('admin', 'zapier'));
 
 // Access control
 if (!$user->admin) {

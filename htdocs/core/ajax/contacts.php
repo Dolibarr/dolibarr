@@ -20,7 +20,7 @@
 
 /**
  *       \file       htdocs/core/ajax/contacts.php
- *       \brief      File to load contacts combobox
+ *       \brief      File to load the combobox of contacts
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -35,7 +35,6 @@ if (!defined('NOREQUIREAJAX')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db

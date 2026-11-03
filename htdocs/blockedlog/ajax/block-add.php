@@ -45,6 +45,8 @@ require '../../main.inc.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $id = GETPOSTINT('id');
 $element = GETPOST('element', 'alpha');
@@ -62,29 +64,30 @@ if ($element === 'facture') {
 
 
 /*
+ * Actions
+ */
+
+$facture = new Facture($db);
+if ($facture->fetch($id) > 0) {
+	//print 'Object '.$element.' logged with action code = '.$action." pos_print_counter is currently ".$facture->pos_print_counter;
+
+	// Increase of counter is managed by the file that generate the ticket, so "receipt.php"
+
+	// Call trigger to log the $action 'DOC_PREVIEW' or 'DOC_DOWNLOAD'
+	$facture->call_trigger($action, $user);
+}
+
+
+/*
  * View
  */
 
 top_httphead();
 
-if ($element === 'facture') {	// Test on permission done in top of page
-	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-	$facture = new Facture($db);
-	if ($facture->fetch($id) > 0) {
-		//print 'Object '.$element.' logged with action code = '.$action." pos_print_counter is currently ".$facture->pos_print_counter;
-
-		// Increase of counter is managed by the file that generate the ticket, so "receipt.php"
-
-		// Call trigger to log the $action 'DOC_PREVIEW' or 'DOC_DOWNLOAD'
-		$facture->call_trigger($action, $user);
-	}
-
-	if ($facture->errors) {
-		http_response_code(500);
-		print implode("\n", $facture->errors);
-	} else {
-		print 'Object '.$element.' logged with action code = '.$action." pos_print_counter is now ".$facture->pos_print_counter;
-	}
+if ($facture->errors) {
+	http_response_code(500);
+	print implode("\n", $facture->errors);
+} else {
+	print 'Object '.$element.' logged with action code = '.$action." pos_print_counter is now ".$facture->pos_print_counter;
 }

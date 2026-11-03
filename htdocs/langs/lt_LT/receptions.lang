@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=Galiojantis
 StatusReceptionProcessedShort=Apdorotas
 ReceptionSheet=Priėmimo lapas
 ValidateReception=Patvirtinti priėmimą
+DeleteReception=Delete reception
 ConfirmDeleteReception=Ar tikrai norite ištrinti šį priėmimą?
 ConfirmValidateReception=Ar tikrai norite patvirtinti šį priėmimą su nuoroda <b>%s</b>?
 ConfirmCancelReception=Ar tikrai norite atšaukti šį priėmimą?

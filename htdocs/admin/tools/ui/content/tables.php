@@ -242,7 +242,7 @@ $documentation->showSidebar(); ?>
 				</div>
 				<?php
 				$lines = array(
-					'<form method="POST" id="FORMID" action="ACTION_URL">',
+					'<form method="POST" id="FORMID" action="ACTION_URL" spellcheck="false">',
 					'',
 					'	<input type="hidden" name="token" value="TOKEN_VALUE">',
 					'	<input type="hidden" name="action" value="ACTION_VALUE">',

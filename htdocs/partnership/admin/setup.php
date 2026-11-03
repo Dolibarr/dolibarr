@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2021 Dorian Laurent <i.merraha@sofimedmaroc.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,10 +25,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
-require_once '../lib/partnership.lib.php';
-//require_once "../class/myclass.class.php";
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -36,6 +32,9 @@ require_once '../lib/partnership.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once '../lib/partnership.lib.php';
+//require_once "../class/myclass.class.php";
 
 // Translations
 $langs->loadLangs(array("admin", "partnership"));
@@ -90,6 +89,7 @@ if ($action) {
 	exit;
 }
 
+
 /*
  * View
  */
@@ -111,6 +111,7 @@ $form = new Form($db);
 $dirpartnership = array('/core/modules/partnership/');
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
+print '<br>';
 
 /*
  * Other conf
@@ -146,7 +147,7 @@ print '</tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL").'</td>';
 print '<td>';
 $dnbdays = '30';
-$backlinks = (getDolGlobalString('PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL')) ? $conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL : $dnbdays;
+$backlinks = getDolGlobalString('PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL', $dnbdays);
 print '<input class="maxwidth50" type="text" name="PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL" value="'.$backlinks.'">';
 print '</td>';
 print '<td><span class="opacitymedium">'.$dnbdays.'</span></td>';

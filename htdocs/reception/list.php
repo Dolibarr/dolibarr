@@ -87,6 +87,7 @@ $search_date_create_endyear = GETPOSTINT('search_date_create_endyear');
 $search_date_create_start = dol_mktime(0, 0, 0, $search_date_create_startmonth, $search_date_create_startday, $search_date_create_startyear);	// Use tzserver
 $search_date_create_end = dol_mktime(23, 59, 59, $search_date_create_endmonth, $search_date_create_endday, $search_date_create_endyear);
 $search_billed = GETPOST("search_billed", 'intcomma');
+$search_fk_user_author = GETPOST('search_fk_user_author', 'int');
 $search_status = GETPOST('search_status', 'intcomma');
 $search_all = GETPOST('search_all', 'alphanohtml');
 $search_note_private = GETPOST('search_note_private', 'alpha');
@@ -148,11 +149,16 @@ $arrayfields = array(
 	'e.note_public' => array('label' => 'NotePublic', 'checked' => '0', 'position' => 520, 'enabled' => (getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES') ? '0' : '1')),
 	'e.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'position' => 521, 'enabled' => (getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES') ? '0' : '1')),
 	'e.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => '1', 'position' => 1000),
-	'e.billed' => array('label' => $langs->trans("Billed"), 'checked' => '1', 'position' => 1000, 'enabled' => 'getDolGlobalString("WORKFLOW_BILL_ON_RECEPTION") !== "0"')
+	'e.billed' => array('label' => $langs->trans("Billed"), 'checked' => '1', 'position' => 1000, 'enabled' => 'getDolGlobalString("WORKFLOW_BILL_ON_RECEPTION") !== "0"'),
+	'e.fk_user_author' => array('label' => $langs->trans("Author"), 'checked' => '0', 'position' => 510),
 );
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
+// Add hook to complete $arrayfields
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -215,6 +221,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_date_create_start = '';
 	$search_date_create_end = '';
 	$search_billed = '';
+	$search_fk_user_author = '';
 	$search_status = '';
 	$toselect = array();
 	$search_array_options = array();
@@ -230,8 +237,8 @@ if (empty($reshook)) {
 	$uploaddir = $conf->reception->multidir_output[$conf->entity];
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-	if ($massaction == 'confirm_createbills' && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))) {
-		$receptions = GETPOST('toselect', 'array:int');
+	if (!$error && $massaction == 'confirm_createbills' && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))) {
+		$receptions = $toselect;	// Ids already checked for access by the mass actions include
 		$createbills_onebythird = GETPOSTINT('createbills_onebythird');
 		$validate_invoices = GETPOSTINT('validate_invoices');
 
@@ -641,7 +648,8 @@ $sql = "SELECT e.rowid, e.ref, e.ref_supplier, e.date_reception as date_receptio
 $sql .= " s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client,";
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
-$sql .= " e.date_creation as date_creation, e.tms as date_modification";
+$sql .= " e.date_creation as date_creation, e.tms as date_modification, e.fk_user_author,";
+$sql .= " u.login";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -665,6 +673,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_ty
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as ee ON e.rowid = ee.fk_source AND ee.sourcetype = 'reception' AND ee.targettype = 'delivery'";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.rowid = ee.fk_target";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON e.fk_user_author = u.rowid";
 // Add table from hooks
 $parameters = array();
 // @phan-suppress-next-line PhanTypeMismatchArgumentNullable
@@ -679,6 +688,9 @@ if ($search_status != '' && $search_status >= 0) {
 }
 if ($search_billed != '' && $search_billed >= 0) {
 	$sql .= ' AND e.billed = '.((int) $search_billed);
+}
+if ($search_fk_user_author > 0) {
+	$sql .= ' AND e.fk_user_author = '.((int) $search_fk_user_author);
 }
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);
@@ -822,6 +834,9 @@ if ($optioncss != '') {
 if ($search_billed != '' && $search_billed >= 0) {
 	$param .= "&search_billed=".urlencode((string) ($search_billed));
 }
+if ($search_fk_user_author > 0) {
+	$param .= '&search_fk_user_author='.urlencode((string) $search_fk_user_author);
+}
 if ($search_town) {
 	$param .= "&search_town=".urlencode($search_town);
 }
@@ -906,6 +921,10 @@ if ($search_array_options) {
 	}
 }
 
+// Add $param from hooks
+$parameters = array('param' => &$param);
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
 
 $arrayofmassactions = array(
 	'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
@@ -1115,6 +1134,12 @@ if (!empty($arrayfields['e.tms']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
+// Author
+if (!empty($arrayfields['e.fk_user_author']['checked'])) {
+	print '<td class="liste_titre maxwidthonsmartphone center">';
+	print $form->select_dolusers($search_fk_user_author, 'search_fk_user_author', 1);
+	print '</td>';
+}
 if (!empty($arrayfields['e.note_public']['checked'])) {
 	// Note public
 	print '<td class="liste_titre">';
@@ -1216,6 +1241,10 @@ if (!empty($arrayfields['e.datec']['checked'])) {
 }
 if (!empty($arrayfields['e.tms']['checked'])) {
 	print_liste_field_titre($arrayfields['e.tms']['label'], $_SERVER["PHP_SELF"], "e.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['e.fk_user_author']['checked'])) {
+	print_liste_field_titre($arrayfields['e.fk_user_author']['label'], $_SERVER["PHP_SELF"], "e.fk_user_author", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['e.note_public']['checked'])) {
@@ -1454,8 +1483,21 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Author
+		if (!empty($arrayfields['e.fk_user_author']['checked'])) {
+			$userstatic = new User($db);
+			print '<td class="center">';
+			if ($obj->fk_user_author > 0) {
+				$userstatic->fetch($obj->fk_user_author);
+				print $userstatic->getNomUrl(1);
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		// Note public
-		if (!empty($arrayfields['f.note_public']['checked'])) {
+		if (!empty($arrayfields['e.note_public']['checked'])) {
 			print '<td class="sensiblehtmlcontent center">';
 			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
 			print '</td>';
@@ -1464,7 +1506,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		// Note private
-		if (!empty($arrayfields['f.note_private']['checked'])) {
+		if (!empty($arrayfields['e.note_private']['checked'])) {
 			print '<td class="sensiblehtmlcontent center">';
 			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 			print '</td>';

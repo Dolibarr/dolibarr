@@ -542,6 +542,14 @@ class FormWebPortal extends Form
 				$out = $this->inputType('tel', $htmlName, dol_escape_htmltag($value), $htmlId, $morecss, $moreparam);
 				break;
 
+			case 'phone':
+				if (preg_match('/^search_/', $keyprefix)) {
+					$out = $this->inputType('text', $htmlName, dol_escape_htmltag($value), $htmlId, $morecss, $moreparam);
+				} else {
+					$out = $this->showPhoneInput($value, $htmlName, !empty($object->country_id) ? $object->country_id : 0);
+				}
+				break;
+
 			case 'url':
 				$out = $this->inputType('url', $htmlName, dol_escape_htmltag($value), $htmlId, $morecss, $moreparam);
 				break;
@@ -653,8 +661,10 @@ class FormWebPortal extends Form
 						//We have to join on extrafield table
 						if (strpos($InfoFieldList[4], 'extra') !== false) {
 							$sql .= " as main, " . $this->db->prefix() . $this->db->sanitize($InfoFieldList[0]) . "_extrafields as extra";
+							// We trust this argument `$InfoFieldList[4]` @phan-suppress-next-line SqlInjection
 							$sqlwhere .= " WHERE extra.fk_object=main." . $this->db->sanitize($InfoFieldList[2]) . " AND " . $InfoFieldList[4];
 						} else {
+							// We trust this argument `$InfoFieldList[4]` @phan-suppress-next-line SqlInjection
 							$sqlwhere .= " WHERE " . $InfoFieldList[4];
 						}
 					} else {
@@ -1673,9 +1683,9 @@ class FormWebPortal extends Form
 		$context = Context::getInstance();
 
 		$html = str_replace(DOL_URL_ROOT . '/viewimage.php?', $context->getControllerUrl('viewimage') . $additionalViewImageParams . '&', $html);
-		$html = str_replace(urlencode(dol_escape_js(DOL_URL_ROOT . '/viewimage.php?')), urlencode(dol_escape_js($context->getControllerUrl('viewimage') . $additionalViewImageParams . '&')), $html);
+		$html = str_replace(urlencode(DOL_URL_ROOT . '/viewimage.php?'), urlencode($context->getControllerUrl('viewimage') . $additionalViewImageParams . '&'), $html);
 		$html = str_replace(DOL_URL_ROOT . '/document.php?', $context->getControllerUrl('document') . $additionalDocumentParams . '&', $html);
-		$html = str_replace(urlencode(dol_escape_js(DOL_URL_ROOT . '/document.php?')), urlencode(dol_escape_js($context->getControllerUrl('document') . $additionalDocumentParams . '&')), $html);
+		$html = str_replace(urlencode(DOL_URL_ROOT . '/document.php?'), urlencode($context->getControllerUrl('document') . $additionalDocumentParams . '&'), $html);
 
 		return $html;
 	}

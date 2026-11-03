@@ -126,6 +126,9 @@ foreach ($object->fields as $key => $val) {
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
@@ -401,7 +404,7 @@ if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predel
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+print '<form method="POST" id="searchFormList" spellcheck="false" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -650,6 +653,8 @@ while ($i < $imaxinloop) {
 				$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
 			} elseif ($key == 'ref') {
 				$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
+			} elseif ($key == 'label') {
+				$cssforfield = '';
 			}
 
 			if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('rowid', 'status')) && empty($val['arrayofkeyval'])) {
@@ -658,9 +663,15 @@ while ($i < $imaxinloop) {
 			//if (in_array($key, array('fk_soc', 'fk_user', 'fk_warehouse'))) $cssforfield = 'tdoverflowmax100';
 
 			if (!empty($arrayfields['t.'.$key]['checked'])) {
-				print '<td'.($cssforfield ? ' class="'.$cssforfield.'"' : '').'>';
+				print '<td'.($cssforfield ? ' class="'.$cssforfield.'"' : '').(($key == 'label' || preg_match('/tdoverflow/', $cssforfield)) && !is_numeric($object->$key) ? ' title="'.dolPrintHTMLForAttribute((string) $object->$key).'"' : '').'>';
 				if ($key == 'status') {
 					print $object->getLibStatut(5);
+				} elseif ($key == 'label') {
+					print '<div class="twolinesmax-normallineheight minwidth200onall">';
+					print '<span class="spantitle">';
+					print dolPrintHTML($object->label);
+					print '</span>';
+					print '</div>';
 				} elseif ($key == 'rowid') {
 					print $object->showOutputField($val, $key, (string) $object->id, '');
 				} else {

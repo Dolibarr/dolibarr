@@ -162,8 +162,8 @@ class ActionsTicket extends CommonHookActions
 		$this->getInstanceDao();
 		$this->dao->fetch($id);
 
-		$this->label = $this->dao->label;
-		$this->description = $this->dao->description;
+		$this->label = $this->dao->subject;
+		$this->description = $this->dao->message;
 	}
 
 	/**
@@ -201,7 +201,7 @@ class ActionsTicket extends CommonHookActions
 	public function viewTicketOriginalMessage($user, $action, $object)
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
-		global $langs;
+		global $langs, $db, $conf;
 
 		$closeStatuses = [Ticket::STATUS_CLOSED, Ticket::STATUS_CANCELED];
 
@@ -244,6 +244,28 @@ class ActionsTicket extends CommonHookActions
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 			$uselocalbrowser = -1;
 			$ckeditorenabledforticket = (getDolGlobalString('FCKEDITOR_ENABLE_TICKET') >= 1);		// 0=no, 1=from backoffice only, 2=from backoffice+public (very dangerous)
+
+			// Add layout and AI tools for message
+			$out = '';
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+			$formmail = new FormMail($db);
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formai.class.php';
+			$formai = new FormAI($db);
+
+			$formmail->withfckeditor = $ckeditorenabledforticket ? 1 : 0;
+			$formmail->withlayout = ($ckeditorenabledforticket) ? 'email' : '';
+			$formmail->withaiprompt = (isModEnabled('ai')) ? 'text' : '';
+
+			$showlinktolayout = ($formmail->withfckeditor && getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT')) ? $formmail->withlayout : '';
+			$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
+			$showlinktoai = ($formmail->withaiprompt ? 'textgenerationemail' : '');
+			$showlinktoailabel = $langs->trans("AIEnhancements");
+			$htmlname = 'message_initial';
+
+			include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+			print $out;
+			print '<br>';
+
 			if (!$ckeditorenabledforticket) {
 				$msg = dol_string_nohtmltag($msg, 2);
 			}
@@ -405,7 +427,7 @@ class ActionsTicket extends CommonHookActions
 								if (!empty($doc->share)) {
 									$doclink = DOL_URL_ROOT.'/document.php?hashp='.urlencode($doc->share);
 								} elseif ($doc->src_object_type == 'ticket') {
-									$downloadwrapper = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') ? getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') . '/document.php' : dol_buildpath('/public/ticket/document.php', 2);
+									$downloadwrapper = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') ? getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') . 'document.php' : dol_buildpath('/public/ticket/document.php', 2);
 
 									global $dolibarr_main_instance_unique_id;
 									$securekey = dol_hash('dolibarr-'.$file_relative_path.'-'.$dolibarr_main_instance_unique_id, 'sha256');

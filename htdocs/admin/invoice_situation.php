@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'errors', 'other', 'bills'));
+$langs->loadLangs(array('admin', 'other', 'bills'));
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('situationinvoicesetup', 'globalsetup'));
@@ -69,7 +69,7 @@ $form = new Form($db);
 $formSetup = new FormSetup($db);
 
 
-// INVOICE_USE_SITUATION is a 3-state flag (0=off, 1=cumulative/legacy, 2=progressive), see admin/invoice.php.
+// INVOICE_USE_SITUATION is a 3-state flag (0=off, 1=cumulative/legacy, 2=progressive like common invoices), see admin/invoice.php.
 // A yes/no toggle can only write 0 or 1 and deletes the const when turned off (ajax_constantonoff calls
 // dolibarr_del_const): mode 2 could not be selected and was silently dropped. Use a 3-value select, which
 // writes the literal value via dolibarr_set_const and never deletes the const.
@@ -128,6 +128,16 @@ if (getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID') &&
 }
 $item->fieldInputOverride = $form->getSelectConditionsPaiements(getDolGlobalInt("INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID"), 'INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID', -1, 1);
 
+// decimals for situation invoice progress
+$item = $formSetup->newItem('INVOICE_SITUATION_PROGRESS_DECIMALS');
+$item->nameText = $langs->trans('SituationInvoiceProgressDecimals');
+$item->fieldAttr = array(
+	'type' => 'number',
+	'step' => '1',
+	'min' => 0,
+	'max' => 5
+);
+$item->defaultFieldValue = '2';
 
 /*
  * Actions

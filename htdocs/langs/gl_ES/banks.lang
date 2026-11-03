@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=Banco
 MenuBankCash=Bancos | Caixa
+BankArea=Bancos e area de caixa
+LatestBankTransactionsModified=Últimas transaccións bancarias modificadas con %s
 MenuVariousPayment=Asentos manuais do diario
 MenuNewVariousPayment=Nova entrada manual no diario
 BankName=Nome do banco
@@ -47,6 +49,9 @@ LastAccountStatements=Últimos extractos bancarios
 IOMonthlyReporting=Informe mensual
 BankAccountDomiciliation=Enderezo do Banco
 BankAccountCountry=País do Banco
+InstitutionNumber=Número de institución
+TransitNumber=Número de sucursal (tránsito)
+ABARoutingNumber=Número de enrutamento da ABA
 BankAccountOwner=Nome do titular da conta
 BankAccountOwnerAddress=Enderezo do titular da conta
 BankAccountOwnerZip=Código postal do propietario da conta
@@ -206,3 +211,7 @@ PendingDirectDebitToComplete=Débitos directos para pechar
 PendingCreditTransferToCompleteShort=Transferencias bancarias para pechar
 PendingCreditTransferToComplete=Transferencias bancarias para pechar
 Requests=Solicitudes
+PaymentReferenceOfAccount=Referencia de pagamento
+PaymentReferenceOfAccountHelp=Referencia que se debe indicar ao pagar nesta conta, a mesma para todas as facturas: a RF (ISO 11649) ou a referencia nacional que che proporcionou un provedor para o teu contrato, contador ou conta de cliente. Compróbase unha referencia RF.
+ErrorPaymentReferenceOfAccountTooLong=A referencia de pagamento é demasiado longa (35 caracteres como máximo)
+ErrorPaymentReferenceOfAccountNotValid=A referencia de pagamento RF non é válida: os díxitos de verificación non coinciden

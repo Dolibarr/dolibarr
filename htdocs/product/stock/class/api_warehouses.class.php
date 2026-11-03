@@ -311,7 +311,7 @@ class Warehouses extends DolibarrApi
 		if ($updateresult > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->warehouse->error);
+			throw new RestException(500, $this->warehouse->errorsToString());
 		}
 	}
 

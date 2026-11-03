@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,7 +113,9 @@ if (empty($reshook)) {
 			if ($color == '-1') {
 				$color = '';
 			}
-			$enabled = trim(GETPOST('AGENDA_EXT_ENABLED_'.$id.'_'.$i, 'alpha'));
+			// An unticked checkbox is not posted at all, so its absence is what says "switched off".
+			$enabled = (GETPOSTISSET('AGENDA_EXT_ENABLED_'.$id.'_'.$i) ? '1' : '0');
+			$cachedelay = (GETPOSTINT('AGENDA_EXT_CACHE_'.$id.'_'.$i) > 0 ? (string) GETPOSTINT('AGENDA_EXT_CACHE_'.$id.'_'.$i) : '');
 
 			if (!empty($src) && !dol_is_url($src)) {
 				setEventMessages($langs->trans("ErrorParamMustBeAnUrl"), null, 'errors');
@@ -126,7 +128,17 @@ if (empty($reshook)) {
 			$tabparam['AGENDA_EXT_SRC_'.$id.'_'.$i] = $src;
 			$tabparam['AGENDA_EXT_OFFSETTZ_'.$id.'_'.$i] = $offsettz;
 			$tabparam['AGENDA_EXT_COLOR_'.$id.'_'.$i] = $color;
-			$tabparam['AGENDA_EXT_ENABLED_'.$id.'_'.$i] = $enabled;
+			// '0' has to be forced in. dol_set_user_param() deletes every key it is given and then
+			// reinserts only the ones holding a non-empty value, and a missing parameter is read as
+			// a calendar set up before this switch existed, which stays visible. A calendar the user
+			// switched off must therefore keep a value that says so. A line with nothing on it keeps
+			// nothing.
+			if ($name === '' && $src === '') {
+				$tabparam['AGENDA_EXT_ENABLED_'.$id.'_'.$i] = '';
+			} else {
+				$tabparam['AGENDA_EXT_ENABLED_'.$id.'_'.$i] = array('value' => $enabled, 'forcevalue' => 1);
+			}
+			$tabparam['AGENDA_EXT_CACHE_'.$id.'_'.$i] = $cachedelay;
 
 			$i++;
 		}
@@ -182,7 +194,7 @@ if ($user->hasRight('user', 'user', 'lire') || $user->admin) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
-$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid valignmiddle" rel="noopener">';
+$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid valignmiddle" tabindex="-1" rel="noopener">';
 $morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 $morehtmlref .= '</a>';
 
@@ -234,7 +246,9 @@ print '<td class="center">'.$langs->trans("AgendaExtNb", "")."</td>";
 print "<td>".$langs->trans("Name")."</td>";
 print "<td>".$langs->trans("ExtSiteUrlAgenda").'<div class="hideonsmartphone opacitymedium">'." (".$langs->trans("Example").': https://externalcalendar/agenda/agenda.ics)</div></td>';
 print "<td>".$form->textwithpicto($langs->trans("FixTZ"), $langs->trans("FillFixTZOnlyIfRequired"), 1).'</td>';
+print '<td class="nowrap">'.$form->textwithpicto($langs->trans("AgendaExtCacheDelay"), $langs->trans("AgendaExtCacheDelayDesc", 300), 1).'</td>';
 print '<td class="right">'.$langs->trans("Color").'</td>';
+print '<td class="center">'.$langs->trans("Enabled").'</td>';
 print "</tr>";
 
 $i = 1;
@@ -244,6 +258,8 @@ while ($i <= $MAXAGENDA) {
 	$src = 'AGENDA_EXT_SRC_'.$id.'_'.$key;
 	$offsettz = 'AGENDA_EXT_OFFSETTZ_'.$id.'_'.$key;
 	$color = 'AGENDA_EXT_COLOR_'.$id.'_'.$key;
+	$cachedelay = 'AGENDA_EXT_CACHE_'.$id.'_'.$key;
+	$enabled = 'AGENDA_EXT_ENABLED_'.$id.'_'.$key;
 
 	print '<tr class="oddeven">';
 	// Nb @phan-suppress-next-line PhanPluginSuspiciousParamPosition
@@ -260,10 +276,19 @@ while ($i <= $MAXAGENDA) {
 	// Offset TZ
 	$offsettz_value = (GETPOST('AGENDA_EXT_OFFSETTZ_'.$id.'_'.$key) ? GETPOST('AGENDA_EXT_OFFSETTZ_'.$id.'_'.$key) : (empty($object->conf->$offsettz) ? '' : $object->conf->$offsettz));
 	print '<td><input type="text" class="flat hideifnotset" name="AGENDA_EXT_OFFSETTZ_'.$id.'_'.$key.'" value="'.$offsettz_value.'" size="1"></td>';
+	// Cache duration
+	$cachedelay_value = (GETPOSTISSET('AGENDA_EXT_CACHE_'.$id.'_'.$key) ? GETPOSTINT('AGENDA_EXT_CACHE_'.$id.'_'.$key) : (empty($object->conf->$cachedelay) ? '' : (int) $object->conf->$cachedelay));
+	print '<td><input type="number" min="0" class="flat hideifnotset width75" name="AGENDA_EXT_CACHE_'.$id.'_'.$key.'" value="'.$cachedelay_value.'" placeholder="300"></td>';
 	// Color (Possible colors are limited by Google)
 	print '<td class="nowraponall right">';
 	$color_value = (GETPOST("AGENDA_EXT_COLOR_".$id.'_'.$key) ? GETPOST("AGENDA_EXT_COLOR_".$id.'_'.$key) : (empty($object->conf->$color) ? 'ffffff' : $object->conf->$color));
 	print $formother->selectColor($color_value, "AGENDA_EXT_COLOR_".$id.'_'.$key, '', 1, array(), 'hideifnotset');
+	print '</td>';
+	// Calendar enabled. A calendar set up before this switch existed carries no parameter, and the
+	// default below is what keeps it ticked instead of making it disappear from the agenda.
+	print '<td class="center">';
+	$enabled_value = ($actionsave ? GETPOSTISSET('AGENDA_EXT_ENABLED_'.$id.'_'.$key) : (bool) getDolUserString($enabled, '1', $object));
+	print '<input type="checkbox" class="flat hideifnotset" name="AGENDA_EXT_ENABLED_'.$id.'_'.$key.'" value="1"'.($enabled_value ? ' checked' : '').'>';
 	print '</td>';
 	print "</tr>";
 	$i++;

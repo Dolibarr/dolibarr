@@ -158,7 +158,7 @@ if ($id > 0 || !empty($ref)) {
 
 		// Onglets
 		$head = account_statement_prepare_head($object, $numref);
-		print dol_get_fiche_head($head, 'document', $langs->trans("AccountStatement"), -1, 'account');
+		print dol_get_fiche_head($head, 'document', $langs->trans("AccountStatement"), -1, 'account', 0, '', '', 0, '', 1);
 
 
 		// Build file list

@@ -141,6 +141,9 @@ foreach ($object->fields as $key => $val) {
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 // Complete arrayfields with special fields
 /*$arrayfields = array_merge($arrayfields, array(
@@ -217,19 +220,35 @@ if (empty($reshook)) {
 	$objectlabel = 'Memo';
 	$uploaddir = $conf->quickmemo->dir_output;
 
+	// The generic mass delete does not know private memos: remove from selection those the user is not allowed to delete
+	if (($massaction == 'delete' || ($action == 'delete' && $confirm == 'yes')) && $permissiontodelete && !empty($toselect)) {
+		foreach ($toselect as $key => $idMemo) {
+			$tmpMemo = new Memo($db);
+			if ($tmpMemo->fetch($idMemo) <= 0) {
+				unset($toselect[$key]);
+				continue;
+			}
+			$isPrivate = ($tmpMemo->status == Memo::STATUS_TPL ? $tmpMemo->private_tpl : $tmpMemo->private);
+			if ($isPrivate && $user->id != $tmpMemo->fk_user_creat) {
+				setEventMessage($langs->trans($tmpMemo->status == Memo::STATUS_TPL ? 'QuickMemoCantDeleteThisPrivateModel' : 'QuickMemoCantDeleteThisPrivateNote').' : '.((int) $idMemo), 'errors');
+				unset($toselect[$key]);
+			}
+		}
+	}
+
 	global $error;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// You can add more action here
 	// if ($action == 'xxx' && $permissiontoxxx) ...
 
-	if ($massaction === 'unarchive') {
+	if ($massaction === 'unarchive' && $permissiontoadd) {
 		if (!empty($toselect)) {
 			$countUnarchived = 0;
 			foreach ($toselect as $idMemo) {
 				// TODO Recover the memo - be careful to not recover a model - models can not be recovered.
 				$selectdModel = new Memo($db);
-				if ($selectdModel->fetch($idMemo) <= 0) {
+				if ($selectdModel->fetch($idMemo) <= 0 || !$selectdModel->isInCurrentEntity()) {
 					$idMemo = (int) $idMemo; // sanitize
 					setEventMessage($langs->trans('QuickMemoLoadMemosError').' : '. (int) $idMemo, 'errors');
 					continue;
@@ -240,7 +259,7 @@ if (empty($reshook)) {
 					continue;
 				}
 
-				if ($user->id != $selectdModel->fk_user_creat && $selectdModel->private_tpl) {
+				if ($user->id != $selectdModel->fk_user_creat && $selectdModel->private) {
 					setEventMessage($langs->trans('QuickMemoCantChangeThisPrivateNote').' : '. (int) $idMemo, 'errors');
 					continue;
 				}
@@ -310,7 +329,9 @@ $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object
 $sql .= $hookmanager->resPrint;
 
 if (!empty($object->ismultientitymanaged) && (int) $object->ismultientitymanaged == 1) {
-	$sql .= " WHERE t.entity IN (".getEntity($object->element, (GETPOSTINT('search_current_entity') ? 0 : 1)).")";
+	// Memos linked to an object follow the sharing of the object type (archives of an object card)
+	$entityElementKey = (!empty($search['element_type']) ? Memo::getEntityElementKey($search['element_type']) : $object->element);
+	$sql .= " WHERE t.entity IN (".getEntity($entityElementKey, (GETPOSTINT('search_current_entity') ? 0 : 1)).")";
 } elseif (preg_match('/^\w+@\w+$/', (string) $object->ismultientitymanaged)) {
 	$tmparray = explode('@', (string) $object->ismultientitymanaged);
 	$sql .= " LEFT JOIN ".$object->db->prefix().$db->sanitize($tmparray[1])." as pt ON t.".$db->sanitize($tmparray[0])." = pt.rowid";
@@ -545,7 +566,7 @@ if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predel
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+print '<form method="POST" id="searchFormList" spellcheck="false" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }

@@ -4,7 +4,7 @@
  * Copyright (C) 2012       Charles-Fr BENKE    <charles.fr@benke.fr>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -242,9 +242,9 @@ class Export
 											$perm = $val;
 											//print_r("$perm[0]-$perm[1]-$perm[2]<br>");
 											if (!empty($perm[2])) {
-												$bool = isset($user->rights->{$perm[0]}->{$perm[1]}->{$perm[2]}) ? $user->rights->{$perm[0]}->{$perm[1]}->{$perm[2]} : false;
+												$bool = $user->hasRight($perm[0], $perm[1], $perm[2]);
 											} elseif (!empty($perm[1])) {
-												$bool = isset($user->rights->{$perm[0]}->{$perm[1]}) ? $user->rights->{$perm[0]}->{$perm[1]} : false;
+												$bool = $user->hasRight($perm[0], $perm[1]);
 											} else {
 												$bool = false;
 											}
@@ -288,7 +288,7 @@ class Export
 									$this->array_export_TypeFields[$i] = (isset($module->export_TypeFields_array[$r]) ? $module->export_TypeFields_array[$r] : '');
 									// Table of entities to export (key=field, value=entity)
 									$this->array_export_entities[$i] = (isset($module->export_entities_array[$r]) ? $module->export_entities_array[$r] : '');
-									// Table of entities requiring to abandon DISTINCT (key=entity, valeur=field id child records)
+									// Table of entities requiring to abandon DISTINCT (key=entity, value=field id child records)
 									$this->array_export_dependencies[$i] = (!empty($module->export_dependencies_array[$r]) ? $module->export_dependencies_array[$r] : '');
 									// Table of special field operations
 									$this->array_export_special[$i] = (!empty($module->export_special_array[$r]) ? $module->export_special_array[$r] : '');
@@ -1033,7 +1033,7 @@ class Export
 				$obj = $this->db->fetch_object($result);
 				$keyModel = array_search($obj->type, $this->array_export_code);
 				print "<tr>";
-				print '<td><a href=export.php?step=2&action=select_model&exportmodelid='.$obj->rowid.'&datatoexport='.$obj->type.'>'.$obj->label.'</a></td>';
+				print '<td><a href=export.php?step=2&action=select_model&token='.newToken().'&exportmodelid='.$obj->rowid.'&datatoexport='.$obj->type.'>'.$obj->label.'</a></td>';
 				print '<td>';
 				print img_object($this->array_export_module[$keyModel]->getName(), $this->array_export_icon[$keyModel]).' ';
 				print $this->array_export_module[$keyModel]->getName().' - ';

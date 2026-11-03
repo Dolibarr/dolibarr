@@ -2,6 +2,7 @@
 /* Copyright (C) 2017-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Jose Martinez           <jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,12 +46,13 @@
 ';
 /**
  * @var Conf $conf
- * @var CommonObject $object
- * @var CommonObject $this
  * @var DoliDB $db
  * @var ExtraFields $extrafields
  * @var Translate $langs
  * @var User $user
+ *
+ * @var CommonObject $object
+ * @var CommonObject $this
  *
  * @var ?string $action
  * @var ?string $cancel
@@ -59,6 +61,7 @@
  * @var string $permissiontodelete
  * @var string $backurlforlist
  * @var ?string $backtopage
+ * @var ?string $backtopageforcancel
  * @var ?string $noback
  * @var ?string $triggermodname
  * @var string $hidedetails
@@ -68,14 +71,6 @@
  * @var ?int $lineid
  * @var ?int $id
  */
-// $action or $cancel must be defined
-// $object must be defined
-// $permissiontoadd must be defined
-// $permissiontodelete must be defined
-// $backurlforlist must be defined
-// $backtopage may be defined
-// $noback may be defined
-// $triggermodname may be defined
 
 $hidedetails = isset($hidedetails) ? $hidedetails : '';
 $hidedesc = isset($hidedesc) ? $hidedesc : '';
@@ -127,9 +122,19 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 		if (preg_match('/^text/', $object->fields[$key]['type'])) {
 			$tmparray = explode(':', $object->fields[$key]['type']);
 			if (!empty($tmparray[1])) {
-				$value = GETPOST($key, $tmparray[1]);
+				$check = $tmparray[1];
 			} else {
-				$value = GETPOST($key, 'nohtml');
+				$check = 'nohtml';
+			}
+			if (getDolGlobalString('MAIN_SECURITY_DISALLOW_UNSECURED_TEXT')) {
+				$security_check = 'alphanohtml';
+			} else {
+				$security_check = $check;
+			}
+			if (!empty($tmparray[1])) {
+				$value = GETPOST($key, $security_check);
+			} else {
+				$value = GETPOST($key, $security_check);
 				if (!empty($object->fields[$key]['arrayofkeyval']) && !empty($object->fields[$key]['multiinput'])) {
 					$tmparraymultiselect = GETPOST($key.'_multiselect', 'array');
 					foreach ($tmparraymultiselect as $tmpvalue) {
@@ -163,6 +168,8 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			if (!empty($values_arr)) {
 				$value = implode(',', $values_arr);
 			}
+		} elseif (isset($object->fields[$key]['type']) && $object->fields[$key]['type'] == 'password') {
+			$value = GETPOST($key, 'password');
 		} else {
 			if ($key == 'lang') {
 				$value = GETPOST($key, 'aZ09') ? GETPOST($key, 'aZ09') : "";
@@ -170,6 +177,8 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 				$value = GETPOST($key, 'alphanohtml');
 			}
 		}
+
+		// Foreign keys case
 		if (preg_match('/^integer:/i', $object->fields[$key]['type']) && $value == '-1') {
 			$value = ''; // This is an implicit foreign key field
 		}
@@ -289,9 +298,19 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		if (preg_match('/^text/', $object->fields[$key]['type'])) {
 			$tmparray = explode(':', $object->fields[$key]['type']);
 			if (!empty($tmparray[1])) {
-				$value = GETPOST($key, $tmparray[1]);
+				$check = $tmparray[1];
 			} else {
-				$value = GETPOST($key, 'nohtml');
+				$check = 'nohtml';
+			}
+			if (getDolGlobalString('MAIN_SECURITY_DISALLOW_UNSECURED_TEXT')) {
+				$security_check = 'alphanohtml';
+			} else {
+				$security_check = $check;
+			}
+			if (!empty($tmparray[1])) {
+				$value = GETPOST($key, $security_check);
+			} else {
+				$value = GETPOST($key, $security_check);
 				if (!empty($object->fields[$key]['arrayofkeyval']) && !empty($object->fields[$key]['multiinput'])) {
 					$tmparraymultiselect = GETPOST($key.'_multiselect', 'array');
 					foreach ($tmparraymultiselect as $keytmp => $tmpvalue) {
@@ -328,6 +347,8 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 			if (!empty($values_arr)) {
 				$value = implode(',', $values_arr);
 			}
+		} elseif (isset($object->fields[$key]['type']) && $object->fields[$key]['type'] == 'password') {
+			$value = GETPOST($key, 'password');
 		} else {
 			if ($key == 'lang') {
 				$value = GETPOST($key, 'aZ09');
@@ -335,6 +356,8 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 				$value = GETPOST($key, 'alphanohtml');
 			}
 		}
+
+		// Foreign keys case
 		if (preg_match('/^integer:/i', $object->fields[$key]['type']) && $value == '-1') {
 			$value = ''; // This is an implicit foreign key field
 		}
@@ -551,9 +574,10 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissionto
 
 // Action validate object
 if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd) {
-	if ($object->element == 'inventory' && !empty($include_sub_warehouse)) {
-		// Can happen when the conf INVENTORY_INCLUDE_SUB_WAREHOUSE is set
-		$result = $object->validate($user, false, $include_sub_warehouse);
+	if ($object->element == 'inventory') {
+		// $include_sub_warehouse can be set when the conf INVENTORY_INCLUDE_SUB_WAREHOUSE is set,
+		// $startmode says how the lines are initialized (empty = use the setup default)
+		$result = $object->validate($user, false, (empty($include_sub_warehouse) ? 0 : $include_sub_warehouse), (empty($startmode) ? '' : $startmode));
 	} else {
 		$result = $object->validate($user);
 	}

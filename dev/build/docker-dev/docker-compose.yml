@@ -9,7 +9,7 @@ services:
     mariadb:
         image: mariadb:latest
         environment:
-            MYSQL_ROOT_PASSWORD: rootpassfordev
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassfordev}
             MYSQL_DATABASE: dolibarr
         ports:
             - "3306:3306"
@@ -19,14 +19,19 @@ services:
     web:
         build: .
         environment:
-            HOST_USER_ID: $HOST_USER_ID
-            PHP_INI_DATE_TIMEZONE: $PHP_INI_DATE_TIMEZONE
-            PHP_INI_MEMORY_LIMIT: $PHP_INI_MEMORY_LIMIT
+            HOST_USER_ID: ${HOST_USER_ID:-1000}
+            HOST_GROUP_ID: ${HOST_GROUP_ID:-1000}
+            PHP_INI_DATE_TIMEZONE: ${PHP_INI_DATE_TIMEZONE:-'UTC'}
+            PHP_INI_MEMORY_LIMIT: ${PHP_INI_MEMORY_LIMIT:-128M}
+            DOLI_DB_SERVER: mariadb
+            DOLI_DATABASE: dolibarr
+            DOLI_DB_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassfordev}
+            DOLI_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassfordev}
         volumes:
             - ../../../htdocs:/var/www/html/
             - ../../../documents:/var/www/documents
         ports:
-            - "80:80"
+            - "${HTTP_PORT:-8082}:80"
             - "9000:9000"
         depends_on:
             - mail

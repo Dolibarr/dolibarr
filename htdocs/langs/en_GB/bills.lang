@@ -4,6 +4,7 @@ PaymentHigherThanReminderToPay=Payment higher than balance outstanding
 ConfirmValidatePayment=Are you sure you want to validate this payment? No changes can be made once payment is validated.
 AlreadyPaidNoCreditNotesNoDeposits=Already paid (without credit notes and deposits)
 EscompteOffered=Disc. offered (early pmt)
+RecurringInvoiceSource=Source recurring invoice
 PaymentTypeCHQ=Cheque
 PaymentTypeShortCHQ=Cheque
 ChequeNumber=Cheque N°

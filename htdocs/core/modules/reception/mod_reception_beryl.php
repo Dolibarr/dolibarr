@@ -41,6 +41,11 @@ class mod_reception_beryl extends ModelNumRefReception
 	 */
 	public $nom = 'Beryl';
 
+	/**
+	 * @var int		Position
+	 */
+	public $position = 10;
+
 
 	/**
 	 *	Return default description of numbering model
@@ -132,7 +137,7 @@ class mod_reception_beryl extends ModelNumRefReception
 			return -1;
 		}
 
-		$date = time();
+		$date = dol_now();
 		$yymm = dol_print_date($date, "%y%m");
 
 		if ($max >= (pow(10, 4) - 1)) {

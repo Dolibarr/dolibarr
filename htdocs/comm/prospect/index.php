@@ -28,6 +28,7 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 /**
  * @var Conf $conf
@@ -100,9 +101,9 @@ if (!$user->hasRight('societe', 'client', 'voir')) {
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
-		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid)";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('s.rowid', 0, 1);
 	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid AND sc.fk_user = ".((int) $search_sale).")";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('s.rowid', (int) $search_sale);
 	}
 }
 // Search on socid
@@ -153,9 +154,9 @@ if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 	// Search on sale representative
 	if ($search_sale && $search_sale != '-1') {
 		if ($search_sale == -2) {
-			$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid)";
+			$sql .= " AND ".getSalesRepresentativeSqlFilter('s.rowid', 0, 1);
 		} elseif ($search_sale > 0) {
-			$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid AND sc.fk_user = ".((int) $search_sale).")";
+			$sql .= " AND ".getSalesRepresentativeSqlFilter('s.rowid', (int) $search_sale);
 		}
 	}
 	// Search on socid
@@ -225,9 +226,9 @@ if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 	// Search on sale representative
 	if ($search_sale && $search_sale != '-1') {
 		if ($search_sale == -2) {
-			$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc)";
+			$sql .= " AND ".getSalesRepresentativeSqlFilter('p.fk_soc', 0, 1);
 		} elseif ($search_sale > 0) {
-			$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+			$sql .= " AND ".getSalesRepresentativeSqlFilter('p.fk_soc', (int) $search_sale);
 		}
 	}
 	// Search on socid
@@ -291,9 +292,9 @@ if (!$user->hasRight('societe', 'client', 'voir')) {
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
-		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid)";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('s.rowid', 0, 1);
 	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid AND sc.fk_user = ".((int) $search_sale).")";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('s.rowid', (int) $search_sale);
 	}
 }
 // Search on socid

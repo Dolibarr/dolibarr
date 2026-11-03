@@ -108,7 +108,7 @@ if ($id > 0) {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'" class="refid">';
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'" class="refid" tabindex="-1">';
 	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 	$morehtmlref .= '</a>';
 
@@ -137,9 +137,11 @@ if ($id > 0) {
 	print '<table class="border centpercent tableforfield">';
 
 	// Civility
-	print '<tr><td class="'.$cssclass.'">'.$langs->trans("UserTitle").'</td><td>';
-	print $object->getCivilityLabel();
-	print '</td></tr>';
+	if (getDolGlobalString('MAIN_USE_TITLE_FOR_CONTACT')) {
+		print '<tr><td class="'.$cssclass.'">'.$langs->trans("UserTitle").'</td><td>';
+		print $object->getCivilityLabel();
+		print '</td></tr>';
+	}
 
 	print "</table>";
 

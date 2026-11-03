@@ -34,6 +34,7 @@
 '
 @phan-var-force ?Form $form
 @phan-var-force HookManager $hookmanager
+@phan-var-force array<string,mixed> $parameters
 @phan-var-force AssetDepreciationOptions $assetdepreciationoptions
 ';
 
@@ -97,6 +98,11 @@ if (empty($reshook)) {
 			if (array_key_exists('enabled', $field_info) && isset($field_info['enabled']) && !verifCond($field_info['enabled'])) {
 				continue; // We don't want this field
 			}
+			// This loop walks the raw definition of the fields, not the one filtered by
+			// setInfosForMode(), so the fields reserved to an asset must be discarded here too
+			if (!empty($field_info['only_on_asset']) && !empty($class_type)) {
+				continue;
+			}
 			$key = $mode_key . '_' . $field_key;
 			$value = $assetdepreciationoptions->deprecation_options[$mode_key][$field_key] ?? null;
 
@@ -127,7 +133,13 @@ if (empty($reshook)) {
 			if (in_array($field_info['type'], array('text', 'html'))) {
 				print '<div class="longmessagecut">';
 			}
-			if ($field_key == 'lang') {
+			if ($field_key == 'rate') {
+				// The rate is provided by the core, by getRate(), and has no column in the table. It is
+				// declared with a 'computed' expression, which routes showOutputField() to dol_eval().
+				// dol_eval() then refuses getRate(), absent from $dolibarr_main_restrict_eval_methods,
+				// and every asset shows "Bad string syntax to evaluate ..." instead of its rate.
+				print $assetdepreciationoptions->getRate($mode_key);
+			} elseif ($field_key == 'lang') {
 				$langs->load("languages");
 				$labellang = ($value ? $langs->trans('Language_' . $value) : '');
 				print picto_from_langcode($value, 'class="paddingrightonly saturatemedium opacitylow"');

@@ -34,7 +34,7 @@ class QuickMemo {
 			sharedFontAIcon: 'far fa-copy',
 			notSharedFontAIcon: 'far fa-file',
 			modelFontAIcon: 'far fa-share-square',
-			menuDropDownId: 'quickmemo-create-dropdown',
+			menuDropDownId: 'topmenu-quickmemo-dropdown',
 			menuDropDownModelListContainerId: 'quickmemo-model-list',
 			menuDropDownPresetListContainerId: 'quickmemo-preset-list'
 		};
@@ -91,6 +91,12 @@ class QuickMemo {
 
 		// Ensure notes stay within viewport on window resize
 		window.addEventListener('resize', () => this.ensureAllVisible());
+
+		// Do not lose the text typed just before leaving the page
+		window.addEventListener('pagehide', () => this.flushAllNotesOnPageHide());
+		document.addEventListener('visibilitychange', () => {
+			if (document.visibilityState === 'hidden') this.flushAllNotesOnPageHide();
+		});
 
 		// Initialize top-bar menu if user has write permissions
 		if (this.param.userWriteRight) {
@@ -194,8 +200,7 @@ class QuickMemo {
 			this.setArchivesNb(json.data.nbArchives);
 
 		} catch (err) {
-			Dolibarr.tools.setEventMessage(Dolibarr.tools.langs.trans('QuickMemoLoadMemosError') + ' : ' + err, 'errors');
-			console.error('QuickMemo load error', err);
+			console.error(Dolibarr.tools.langs.trans('QuickMemoLoadMemosError'), err);
 		}
 	}
 
@@ -290,7 +295,7 @@ class QuickMemo {
 		// note.style.background = memo.color || '#fff8a6';
 		// note.style.setProperty('--memo-color', memo.color || '#fff8a6');
 		this.setMemoColor(note, memo.color);
-		if (parseInt(memo.id) === 0) { // Uniquement pour les nouvelles notes en cours de création
+		if (parseInt(memo.id) === 0) { // Only for new notes being created
 			const maxZ = this.memos.length > 0 ? Math.max(...this.memos.map(x => parseInt(x.memo.pos_z) || 0)) : 0;
 			memo.pos_z = maxZ + 1;
 		}
@@ -317,23 +322,24 @@ class QuickMemo {
 			<span class="quickmemo-info__date_update">
 				${hasDateChange ? `
 					<span class="quickmemo-info__date_update">
-						${await Dolibarr.tools.langs.trans('QuickMemoModified')} : ${memo.date_change}
+						${await Dolibarr.tools.langs.trans('QuickMemoModified')} : ${this.escapeHTML(String(memo.date_change))}
 					</span>
 				` : ''}
 				${hasUserChange ? `
 					<span class="quickmemo-info__user-change-name">
-						${await Dolibarr.tools.langs.trans('QuickMemoBy')} ${memo.user_change_name}
+						${await Dolibarr.tools.langs.trans('QuickMemoBy')} ${this.escapeHTML(String(memo.user_change_name))}
 					</span>
 				` : ''}
 			</span>
 		`;
 
 
+		// User names and dates come from server data: always escaped
 		meta.innerHTML = `
 			<div class="quickmemo-info">
 				<span class="quickmemo-info__create">
-					<span class="quickmemo-info__user-create-name">${memo.user_name || ''}</span>
-					<span class="quickmemo-info__date_create">${memo.date_creation || ''}</span>
+					<span class="quickmemo-info__user-create-name">${this.escapeHTML(String(memo.user_name || ''))}</span>
+					<span class="quickmemo-info__date_create">${this.escapeHTML(String(memo.date_creation || ''))}</span>
 				</span>
 				${updateBlock}
 			</div>
@@ -466,19 +472,17 @@ class QuickMemo {
 		btnShare.addEventListener('click', async (e) => {
 			e.stopPropagation();
 
+			const previous = memo.shared_on_element;
 			memo.shared_on_element = memo.shared_on_element == 1 ? 0 : 1;
 
 			updateShareIcon();
 
-			await fetch(this.param.interfaceUrl + '?action=update-shared-on-element', {
-				method: 'POST',
-				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-				body: new URLSearchParams({
-					id: note.dataset.id,
-					shared_on_element: memo.shared_on_element,
-					token: this.param.token
-				})
-			});
+			const saved = await this.postMemoAction('update-shared-on-element', note, {shared_on_element: memo.shared_on_element});
+			if (!saved) {
+				// Restore the real status, else the user would think the memo is shared (or not) while it is not
+				memo.shared_on_element = previous;
+				updateShareIcon();
+			}
 		});
 
 
@@ -516,19 +520,17 @@ class QuickMemo {
 		btnPrivate.addEventListener('click', async (e) => {
 			e.stopPropagation();
 
+			const previous = memo.private;
 			memo.private = parseInt(memo.private) === 1 ? 0 : 1; // Toggle private status
 
 			updatePrivateIcon();
 
-			await fetch(this.param.interfaceUrl + '?action=update-private', {
-				method: 'POST',
-				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-				body: new URLSearchParams({
-					id: note.dataset.id,
-					private: memo.private,
-					token: this.param.token
-				})
-			});
+			const saved = await this.postMemoAction('update-private', note, {private: memo.private});
+			if (!saved) {
+				// Restore the real status, else the user would think the memo is private while it is visible by others
+				memo.private = previous;
+				updatePrivateIcon();
+			}
 		});
 
 		/* ===== COLOR PICKER ===== */
@@ -561,24 +563,27 @@ class QuickMemo {
 			e.stopPropagation(); // prevent triggering drag
 		});
 
-		colorInput.addEventListener('input', async (e) => {
+		// Live preview while the user moves in the color picker
+		colorInput.addEventListener('input', (e) => {
+			e.stopPropagation();
+			this.setMemoColor(note, e.target.value);
+		});
+
+		// Save only the final color ('input' is fired many times while moving in the picker)
+		colorInput.addEventListener('change', async (e) => {
 			e.stopPropagation();
 
+			const previous = memo.color;
 			const newColor = e.target.value;
-			// note.style.background = newColor;
-			// note.style.setProperty('--memo-color', newColor);
 			this.setMemoColor(note, newColor);
 			memo.color = newColor;
 
-			await fetch(this.param.interfaceUrl + '?action=update-color', {
-				method: 'POST',
-				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-				body: new URLSearchParams({
-					id: note.dataset.id,
-					color: memo.color,
-					token: this.param.token
-				})
-			});
+			const saved = await this.postMemoAction('update-color', note, {color: newColor});
+			if (!saved && memo.color === newColor) {
+				memo.color = previous;
+				colorInput.value = previous || '#fff8a6';
+				this.setMemoColor(note, colorInput.value);
+			}
 		});
 
 		// Append buttons based on permissions
@@ -777,10 +782,10 @@ class QuickMemo {
 		btn.innerHTML = `<i class="fa ${iconClass}" style="pointer-events: none;"></i>${sub}`;
 		btn.title = title;
 
-		// On empêche le bouton de voler le focus définitivement,
-		// mais on le laisse être le "relatedTarget"
+		// We prevent the button from permanently stealing focus,
+		// but we let it be the "relatedTarget"
 		btn.addEventListener('mousedown', (e) => {
-			e.preventDefault(); // Empêche le curseur de quitter le textarea
+			e.preventDefault(); // Prevent the cursor from leaving the textarea
 			this.applyMarkdown(textarea, type, toolbar);
 		});
 
@@ -975,7 +980,7 @@ class QuickMemo {
 		// Check that it is a 6-character hex
 		let c = color.startsWith('#') ? color.substring(1) : color;
 		if (c.length !== 6 || !/^[0-9a-fA-F]{6}$/.test(c)) {
-			// invalide → considère clair par défaut
+			// invalid -> treat as light by default
 			note.classList.remove('--memo-is-dark');
 			return;
 		}
@@ -1071,8 +1076,8 @@ class QuickMemo {
 
 		let startX, startY;
 		let dragTimeout = null;
-		const startDragDelay = 300; // ms : temps d'attente au click avant de passer en mode drag
-		const selectionThreshold = 5; // px : distance en pixels qui désactive le drag pour passer en mode selection
+		const startDragDelay = 300; // ms: wait time on click before switching to drag mode
+		const selectionThreshold = 5; // px: distance in pixels that disables drag to switch to selection mode
 		const textarea = el.querySelector('textarea');
 
 		// Auto-scroll configuration
@@ -1383,6 +1388,40 @@ class QuickMemo {
 	================================= */
 
 	/**
+	 * Posts a change of a memo property to the interface and checks the response.
+	 * Waits for the memo creation if it is in progress.
+	 * @async
+	 * @param {string} action - Interface action (update-private, update-color...)
+	 * @param {HTMLElement} noteEl
+	 * @param {Object} params - Posted values, id and token are added
+	 * @returns {Promise<boolean>} True if saved, false if not (error message already displayed)
+	 */
+	async postMemoAction(action, noteEl, params) {
+		const id = await this.getMemoId(noteEl);
+		if (!id) return false;
+
+		try {
+			const res = await fetch(this.param.interfaceUrl + '?action=' + encodeURIComponent(action), {
+				method: 'POST',
+				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+				body: new URLSearchParams(Object.assign({}, params, {id: id, token: this.param.token}))
+			});
+			const json = await res.json();
+			if (!json.result) {
+				throw new Error(json.msg);
+			}
+			if (json.data && json.data.memo) {
+				await this.updateMemoTxt(json.data.memo, noteEl);
+			}
+			return true;
+		} catch (err) {
+			console.error('QuickMemo ' + action + ' error', err);
+			Dolibarr.tools.setEventMessage(Dolibarr.tools.langs.trans('QuickMemoSaveError') + ' : ' + err, 'errors');
+			return false;
+		}
+	}
+
+	/**
 	 * Binds auto-save with debounce logic on textarea input.
 	 * @param {HTMLTextAreaElement} textarea
 	 * @param {HTMLElement} noteEl
@@ -1393,18 +1432,64 @@ class QuickMemo {
 
 		let m = this.getMemoFromElement(noteEl);
 
-		textarea.addEventListener('input', () => {
-
+		// Save the text if it changed since last save. m.memo.note is the last text sent to server.
+		const flush = async () => {
 			clearTimeout(timeout);
+			if (textarea.readOnly || textarea.value === (m.memo.note || '')) return;
 
-			timeout = setTimeout(() => {
-				const id = noteEl.dataset.id;
+			// Text typed while the memo is being created is saved once the creation is done
+			const id = await this.getMemoId(noteEl);
+			if (!id) return; // Creation failed, error already displayed
 
-				if (!id || id == 0) return; // Note not yet created in DB
+			const previousNote = m.memo.note;
+			const note = textarea.value;
+			m.memo.note = note;
+			const saved = await this.saveNote(id, note, noteEl);
+			if (!saved && m.memo.note === note) {
+				m.memo.note = previousNote; // Keep the text as not saved, so next flush retries
+			}
+		};
+		noteEl.quickmemoFlush = flush;
+
+		textarea.addEventListener('input', () => {
+			clearTimeout(timeout);
+			timeout = setTimeout(flush, 600);
+		});
+
+		// Do not wait the debounce delay when user leaves the memo
+		textarea.addEventListener('blur', flush);
+	}
+
+	/**
+	 * Returns the id of the memo, waiting for its creation in database if it is in progress.
+	 * @async
+	 * @param {HTMLElement} noteEl
+	 * @returns {Promise<number>} The memo id, 0 if the memo could not be created
+	 */
+	async getMemoId(noteEl) {
+		if (noteEl.quickmemoCreated) {
+			await noteEl.quickmemoCreated;
+		}
+		return parseInt(noteEl.dataset.id) || 0;
+	}
+
+	/**
+	 * Sends the unsaved texts when the page is hidden or closed (debounced save would be lost).
+	 * Uses sendBeacon because a fetch may be cancelled when the page is unloaded.
+	 */
+	flushAllNotesOnPageHide() {
+		this.memos.forEach(m => {
+			const textarea = m.el.querySelector('textarea');
+			const id = parseInt(m.el.dataset.id) || 0;
+			if (!textarea || textarea.readOnly || id <= 0 || textarea.value === (m.memo.note || '')) return;
+
+			const data = new FormData();
+			data.append('id', id);
+			data.append('note', textarea.value);
+			data.append('token', this.param.token);
+			if (navigator.sendBeacon(this.param.interfaceUrl + '?action=update_note', data)) {
 				m.memo.note = textarea.value;
-				this.saveNote(id, m.memo.note, noteEl);
-
-			}, 600);
+			}
 		});
 	}
 
@@ -1484,12 +1569,13 @@ class QuickMemo {
 	 * @param {number|string} id
 	 * @param {string} note
 	 * @param {HTMLElement} noteEl
+	 * @returns {Promise<boolean>} True if saved
 	 */
 	async saveNote(id, note, noteEl) {
 
 		let hookRes = await Dolibarr.executeHookAwait('QuickMemo:saveNote', {id, note});
 		if (hookRes > 0) {
-			return;
+			return true;
 		}
 
 		try {
@@ -1511,13 +1597,44 @@ class QuickMemo {
 
 			if (json.data && json.data.memo) {
 				await this.updateMemoTxt(json.data.memo, noteEl);
+				await this.syncNoteFromServer(noteEl, note, json.data.memo.note);
 			}
 
 			Dolibarr.executeHook('QuickMemo:saveNote:saved', {id, note, json});
+			return true;
 
 		} catch (err) {
 			console.error('QuickMemo save note error', err);
 			Dolibarr.tools.setEventMessage(Dolibarr.tools.langs.trans('QuickMemoSaveError') + ' : ' + err, 'errors');
+			return false;
+		}
+	}
+
+	/**
+	 * The server filters the note (for example text looking like html tags is removed).
+	 * Show the note as it was really saved, so the user does not discover the difference after a reload.
+	 * @async
+	 * @param {HTMLElement} noteEl
+	 * @param {string} sentNote - The note sent to the server
+	 * @param {string} savedNote - The note returned by the server
+	 */
+	async syncNoteFromServer(noteEl, sentNote, savedNote) {
+		if (typeof savedNote !== 'string' || savedNote === sentNote) return;
+
+		const textarea = noteEl.querySelector('textarea');
+		// Do not overwrite what the user typed after this save, next save will handle it
+		if (!textarea || textarea.value !== sentNote) return;
+
+		const caret = Math.min(textarea.selectionStart, savedNote.length);
+		textarea.value = savedNote;
+		textarea.setSelectionRange(caret, caret);
+
+		const m = this.getMemoFromElement(noteEl);
+		if (m) m.memo.note = savedNote;
+
+		const preview = noteEl.querySelector('.quickmemo-markdown-preview');
+		if (preview && savedNote) {
+			await this.renderPreview(preview, savedNote);
 		}
 	}
 
@@ -1571,21 +1688,21 @@ class QuickMemo {
 	 * @param {HTMLElement} note
 	 */
 	async updateMemoTxt(memo, note) {
-		// Sélectionne les éléments existants
+		// Select the existing elements
 		const userCreateEl = note.querySelector('.quickmemo-info__user-create-name');
 		const dateCreateEl = note.querySelector('.quickmemo-info__date_create');
 		const dateUpdateEl = note.querySelector('.quickmemo-info__date_update');
 		const userChangeEl = note.querySelector('.quickmemo-info__user-change-name');
 
-		// Mets à jour la création
+		// Update the creation info
 		if (userCreateEl) userCreateEl.textContent = memo.user_name || '';
 		if (dateCreateEl) dateCreateEl.textContent = memo.date_creation || '';
 
-		// Détermine si des changements existent
+		// Determine whether any changes exist
 		const hasDateChange = memo.date_change && memo.date_change.trim() !== '' && memo.date_creation !== memo.date_change;
 		const hasUserChange = memo.user_change_name && memo.user_change_name.trim() !== '' && memo.user_name !== memo.user_change_name;
 
-		// Mets à jour ou vide les infos de mise à jour
+		// Update or clear the update info
 		if (dateUpdateEl) {
 			dateUpdateEl.textContent = hasDateChange ? `${await Dolibarr.tools.langs.transNoEntities('QuickMemoModified')} : ${memo.date_change}` : '';
 		}
@@ -1635,7 +1752,7 @@ class QuickMemo {
 		// 	this.initTooltips(btn);
 		// }
 
-		// ===== création du bouton delete =====
+		// ===== create the delete button =====
 		const deleteBtn = document.createElement('span');
 		deleteBtn.className = 'quickmemo-model-delete';
 		deleteBtn.title = Dolibarr.tools.langs.transNoEntities('QuickMemoDeleteModel')
@@ -1737,7 +1854,7 @@ class QuickMemo {
 			root.removeAttribute('title');
 		}
 
-		// Mise à jour à chaque survol (si le title a été modifié dynamiquement)
+		// Update on every hover (in case the title was changed dynamically)
 		const syncTitle = () => {
 			const currentTitle = root.getAttribute('title');
 			if (currentTitle) {
@@ -1750,7 +1867,7 @@ class QuickMemo {
 		root.addEventListener('mouseenter', syncTitle);
 		root.addEventListener('focus', syncTitle);
 
-		// Stocker les handlers pour pouvoir les retirer proprement
+		// Store the handlers so they can be removed cleanly
 		root._quickmemoTooltipSync = syncTitle;
 
 		// JQUERY STYLE
@@ -1815,7 +1932,7 @@ class QuickMemo {
 
 		this._modelReorderContainer = container;
 
-		// Placeholder unique pour tout le container
+		// Single placeholder for the whole container
 		if (!this._modelReorderPlaceholder) {
 			this._modelReorderPlaceholder = document.createElement('div');
 			this._modelReorderPlaceholder.className = 'quickmemo-model-placeholder';
@@ -1831,11 +1948,11 @@ class QuickMemo {
 	 */
 	attachDragEventsForModelReorder(btn) {
 
-		if (btn.dataset.reorderInit) return; // évite double bind
+		if (btn.dataset.reorderInit) return; // avoid double bind
 		btn.dataset.reorderInit = '1';
 
 		const container = this._modelReorderContainer;
-		const placeholder = this._modelReorderPlaceholder; // utiliser le placeholder unique
+		const placeholder = this._modelReorderPlaceholder; // use the single placeholder
 
 		btn.setAttribute('draggable', true);
 
@@ -1884,12 +2001,12 @@ class QuickMemo {
 		const container = document.getElementById(this.param.menuDropDownModelListContainerId);
 		const buttons = [...container.querySelectorAll('.quickmemo-model-btn')];
 
-		// recalcul complet des positions à partir du DOM
+		// full recalculation of positions from the DOM
 		const orderData = buttons.map((btn, index) => {
 
-			const newRank = buttons.length - index; // cohérent avec ton ORDER BY rank DESC
+			const newRank = buttons.length - index; // consistent with your ORDER BY rank DESC
 
-			// on met à jour le dataset pour rester cohérent en mémoire
+			// update the dataset to stay consistent in memory
 			btn.dataset.rank = newRank;
 
 			return {
@@ -1900,7 +2017,7 @@ class QuickMemo {
 
 		const payload = {order: orderData};
 
-		// si on veut envoyer moved, on calcule sa vraie position
+		// if we want to send moved, calculate its real position
 		if (movedId !== null) {
 
 			const newIndex = buttons.findIndex(
@@ -1950,8 +2067,8 @@ class QuickMemo {
 		if (!menuContainer) return;
 
 		const dropdown = document.createElement('div');
-		dropdown.className = 'dropdown inline-block mod-quick-memo-menu';
-		dropdown.id = 'quickmemo-create-dropdown'
+		dropdown.className = 'atoplogin dropdown inline-block mod-quick-memo-menu';
+		dropdown.id = this.param.menuDropDownId;
 
 		let textLoading = await Dolibarr.tools.langs.trans('Loading');
 		let textNewNote = await Dolibarr.tools.langs.trans('NewNote');
@@ -1991,7 +2108,7 @@ class QuickMemo {
 		</div>
 	`;
 
-		menuContainer.prepend(dropdown);
+		menuContainer.append(dropdown);
 
 		const dropDownMenuToggleBtn = dropdown.querySelector('.dropdown-toggle');
 		const presetListDiv = document.getElementById(this.param.menuDropDownPresetListContainerId);
@@ -2050,6 +2167,25 @@ class QuickMemo {
 	 * @param {boolean} force - Force refresh even if already loaded.
 	 */
 	async fetchMenuDropDown(force = false) {
+		// A load is already running (double click on menu...): wait for it instead of loading twice
+		if (this.menuDropDownLoading) {
+			return this.menuDropDownLoading;
+		}
+
+		this.menuDropDownLoading = this.loadMenuDropDown(force);
+		try {
+			return await this.menuDropDownLoading;
+		} finally {
+			this.menuDropDownLoading = null;
+		}
+	}
+
+	/**
+	 * Loads templates and color presets into the dropdown menu. Use fetchMenuDropDown() to call it.
+	 * @async
+	 * @param {boolean} force - Reload even if already loaded
+	 */
+	async loadMenuDropDown(force = false) {
 
 		const dropDown = document.getElementById(this.param.menuDropDownId);
 		const dropDownMenuToggleBtn = dropDown.querySelector('.dropdown-toggle');
@@ -2086,6 +2222,9 @@ class QuickMemo {
 			let models = json.data.modelTemplate.length ? json.data.modelTemplate : [];
 			let presets = json.data.presetTemplate.length ? json.data.presetTemplate : [];
 
+			modelListDiv.innerHTML = '';
+			presetListDiv.innerHTML = '';
+
 			// CREATE BTN TEMPLATE LIST
 			if (!models.length) {
 				modelListDiv.innerHTML = '<div class="no-models">' + await Dolibarr.tools.langs.trans('NoTemplatesFound') + '</div>';
@@ -2100,7 +2239,7 @@ class QuickMemo {
 
 			// CREATE BTN FOR COLOR PRESETS LIST
 			if (!presets.length) {
-				modelListDiv.innerHTML = '<div class="no-models">' + await Dolibarr.tools.langs.trans('NoPresetsFound') + '</div>';
+				presetListDiv.innerHTML = '<div class="no-models">' + await Dolibarr.tools.langs.trans('NoPresetsFound') + '</div>';
 			} else {
 
 				presets.forEach(preset => {
@@ -2108,12 +2247,16 @@ class QuickMemo {
 					presetListDiv.appendChild(btn);
 				});
 
-				// Quick add default note on double click
-				dropDownMenuToggleBtn.addEventListener('dblclick', e => {
-					e.preventDefault();
-					this.createMemoFromModel(presets[0]);
-					dropdown.classList.remove('open');
-				});
+				// Quick add default note on double click (bind only once, else each reload creates one more memo)
+				this.menuDefaultPreset = presets[0];
+				if (!dropDownMenuToggleBtn.dataset.quickmemoDblclick) {
+					dropDownMenuToggleBtn.dataset.quickmemoDblclick = '1';
+					dropDownMenuToggleBtn.addEventListener('dblclick', e => {
+						e.preventDefault();
+						this.createMemoFromModel(this.menuDefaultPreset);
+						dropDown.classList.remove('open');
+					});
+				}
 			}
 
 			// Set loaded data flag
@@ -2133,25 +2276,25 @@ class QuickMemo {
 	 * @param {Object} model - The template data.
 	 */
 	async createMemoFromModel(model) {
-		// 1. Trouver le z-index maximum actuel parmi les notes affichées
-		const allMemos = this.container.querySelectorAll('.quick-memo-note'); // Adaptez le sélecteur si besoin
+		// 1. Find the current maximum z-index among the displayed notes
+		const allMemos = this.container.querySelectorAll('.quick-memo-note'); // Adjust the selector if needed
 		let maxZ = 0;
 		allMemos.forEach(el => {
 			const z = parseInt(el.style.zIndex) || 0;
 			if (z > maxZ) maxZ = z;
 		});
 
-		// La nouvelle note doit être au-dessus de tout le monde
+		// The new note must be on top of everything else
 		const newZ = maxZ + 1;
 
 
-		// Crée un objet memo minimal à partir du modèle
+		// Create a minimal memo object from the model
 		const memo = {
-			id: 0, // rowid temporaire avant sauvegarde
+			id: 0, // temporary rowid before save
 			deleteBtn: false,
 			note: model.note || '',
-			pos_w: model.pos_w || 250,   // largeur par défaut
-			pos_h: model.pos_h || 250,  // hauteur par défaut
+			pos_w: model.pos_w || 250,   // default width
+			pos_h: model.pos_h || 250,  // default height
 			pos_x: model.pos_x || 0,
 			pos_y: model.pos_y || 0,
 			pos_z: newZ || 0,
@@ -2169,11 +2312,17 @@ class QuickMemo {
 		memo.pos_x = Math.max(32, (containerWidth - memo.pos_w) / 2);
 		memo.pos_y = scrollY + Math.max(32, (viewportHeight - memo.pos_h) / 2);
 
-		// Render le memo
+		// Render the memo
 		const noteEl = await this.renderMemo(memo);
 		this.bringToTop(noteEl);
 
-		// Focus sur le textarea
+		// Saves and toggles done before the end of creation wait for it (see getMemoId())
+		let resolveCreated;
+		noteEl.quickmemoCreated = new Promise(resolve => {
+			resolveCreated = resolve;
+		});
+
+		// Focus on the textarea
 		const textarea = noteEl.querySelector('textarea');
 		if (textarea) {
 			textarea.focus();
@@ -2222,6 +2371,9 @@ class QuickMemo {
 		} catch (err) {
 			Dolibarr.tools.setEventMessage(Dolibarr.tools.langs.trans('QuickMemoCreateError') + ' : ' + err, 'errors');
 			console.error('QuickMemo create error', err);
+		} finally {
+			delete noteEl.quickmemoCreated;
+			resolveCreated(parseInt(noteEl.dataset.id) || 0);
 		}
 	}
 
@@ -2335,13 +2487,15 @@ class QuickMemo {
 	 * Toggles inline markdown with support for overlapping styles (***bold italic***)
 	 */
 	toggleInlineMarkdown(text, type) {
-		const patterns = {
-			bold: { tag: '**', regex: /^\*\*(.*)\*\*$/ },
-			italic: { tag: '*', regex: /^(\*\*\*|(?<!\*)\*(?!\*))(.*)(\*\*\*|(?<!\*)\*(?!\*))$/ },
-			underline: { tag: '__', regex: /^__(.*)__$/ }
+		// Toggle is done with startsWith/endsWith below. Do not add a regex with lookbehind (?<!...) in this file:
+		// it is a syntax error on Safari < 16.4 that prevents the whole QuickMemo.js from loading.
+		const tags = {
+			bold: '**',
+			italic: '*',
+			underline: '__'
 		};
 
-		const { tag, regex } = patterns[type];
+		const tag = tags[type];
 
 		// Special case for Italic to not conflict with Bold
 		if (type === 'italic') {
@@ -2683,14 +2837,14 @@ class QuickMemo {
 
 		document.body.appendChild(dialog);
 
-		// Quand le dialog se ferme (Esc, cancel, close()), on le détruit
+		// When the dialog closes (Esc, cancel, close()), destroy it
 		dialog.addEventListener('close', () => {
 			dialog.remove();
 		});
 
-		// Empêche le close automatique
+		// Prevent the automatic close
 		dialog.addEventListener('cancel', (e) => {
-			e.preventDefault(); // optionnel
+			e.preventDefault(); // optional
 			dialog.close();
 		});
 
@@ -2726,12 +2880,22 @@ class QuickMemo {
 					return;
 				}
 
+				let modelCreated = false;
 				try {
+					// The template is made from the memo saved in database: save the text typed just before
+					if (note.quickmemoFlush) {
+						await note.quickmemoFlush();
+					}
+					const memoId = await this.getMemoId(note);
+					if (!memoId) {
+						throw new Error(Dolibarr.tools.langs.trans('ErrorMemoNotFound'));
+					}
+
 					const res = await fetch(this.param.interfaceUrl + '?action=create_model', {
 						method: 'POST',
 						headers: {'Content-Type': 'application/x-www-form-urlencoded'},
 						body: new URLSearchParams({
-							id: memo.id,
+							id: memoId,
 							element_type: elementType,
 							token: this.param.token,
 							tpl_private: TplPrivate,
@@ -2744,6 +2908,8 @@ class QuickMemo {
 					if (!json.result) {
 						throw new Error(json.msg);
 					}
+
+					modelCreated = true;
 
 					Dolibarr.executeHook('QuickMemo:openCreateModelDialog:ModelCreated', {
 						dialog,
@@ -2762,11 +2928,16 @@ class QuickMemo {
 						'errors'
 					);
 
-					console.error('Erreur fetch création modèle', err);
+					console.error('Error fetching model creation', err);
 
 				} finally {
 					dialog.close();
-					this.convertToModelWithAnimation(memo, note);
+					// Only when the server converted the memo, else the memo would disappear while it still exists
+					if (modelCreated) {
+						// The memo is now a template: no more a memo of the page (position save...)
+						this.memos = this.memos.filter(m => m.el !== note);
+						this.convertToModelWithAnimation(memo, note);
+					}
 				}
 			});
 
@@ -2820,7 +2991,7 @@ class QuickMemo {
 				close: true,
 				confirm: true,
 				cancel: false,
-				...(options.btn || {}) // Merge seulement les boutons précisés dans options
+				...(options.btn || {}) // Only merge the buttons specified in options
 			}
 		};
 

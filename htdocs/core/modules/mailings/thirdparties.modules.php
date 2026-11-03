@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2010 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This file is an example to follow to add your own email selector inside
  * the Dolibarr email tool.
@@ -81,7 +81,7 @@ class mailing_thirdparties extends MailingTargets
 	public function add_to_target($mailing_id)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $langs;
 
 		$cibles = array();
 
@@ -126,19 +126,6 @@ class mailing_thirdparties extends MailingTargets
 				$addDescription .= $langs->trans("Disabled");
 			}
 		}
-		if (GETPOSTISSET("filter_status")) {
-			if (strlen($addDescription) > 0) {
-				$addDescription .= ";";
-			}
-			$addDescription .= $langs->trans("Status")."=";
-			if (GETPOST("filter_status") == '1') {
-				$addFilter .= " AND s.status=1";
-				$addDescription .= $langs->trans("Enabled");
-			} elseif (GETPOST("filter_status") == '0') {
-				$addFilter .= " AND s.status=0";
-				$addDescription .= $langs->trans("Disabled");
-			}
-		}
 		if (GETPOST('default_lang', 'alpha') && GETPOST('default_lang', 'alpha') != '-1') {
 			$addFilter .= " AND s.default_lang LIKE '".$this->db->escape(GETPOST('default_lang', 'alpha'))."%'";
 			$addDescription = $langs->trans('DefaultLang')."=";
@@ -155,9 +142,7 @@ class mailing_thirdparties extends MailingTargets
 			$sql .= " WHERE s.email <> ''";
 			$sql .= " AND s.entity IN (".getEntity('societe').")";
 			$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
-			if (empty($this->evenunsubscribe)) {
-				$sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = s.email) = 0";
-			}
+			$sql .= $this->getSqlToExcludeUnsubscribed('s.email');
 			$sql .= $addFilter;
 		} else {
 			$sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname, c.label as label";
@@ -170,9 +155,7 @@ class mailing_thirdparties extends MailingTargets
 			if (GETPOSTINT('filter_thirdparties') > 0) {
 				$sql .= " AND c.rowid=".(GETPOSTINT('filter_thirdparties'));
 			}
-			if (empty($this->evenunsubscribe)) {
-				$sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = s.email) = 0";
-			}
+			$sql .= $this->getSqlToExcludeUnsubscribed('s.email');
 			$sql .= $addFilter;
 			$sql .= " UNION ";
 			$sql .= "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname, c.label as label";
@@ -185,9 +168,7 @@ class mailing_thirdparties extends MailingTargets
 			if (GETPOSTINT('filter_thirdparties') > 0) {
 				$sql .= " AND c.rowid=".(GETPOSTINT('filter_thirdparties'));
 			}
-			if (empty($this->evenunsubscribe)) {
-				$sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = s.email) = 0";
-			}
+			$sql .= $this->getSqlToExcludeUnsubscribed('s.email');
 			$sql .= $addFilter;
 		}
 		$sql .= " ORDER BY email";
@@ -266,17 +247,13 @@ class mailing_thirdparties extends MailingTargets
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
-		global $conf;
-
 		$sql = "SELECT count(distinct(s.email)) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql .= " WHERE s.email <> ''";
 		$sql .= " AND s.entity IN (".getEntity('societe').")";
-		if (empty($this->evenunsubscribe)) {
-			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
-		}
+		$sql .= $this->getSqlToExcludeUnsubscribed('s.email');
 
-		// La requete doit retourner un champ "nb" pour etre comprise par parent::getNbOfRecipients
+		// The query must return a field "nb" to be understood by parent::getNbOfRecipients
 		return parent::getNbOfRecipients($sql);
 	}
 

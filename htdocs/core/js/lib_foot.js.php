@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -245,8 +246,41 @@ print '
     });
 ' . "\n";
 
+// Code to disable submit buttons once form is submitted
+print "\n/* JS CODE TO DISABLE buttons with class disableonsubmit once form is submitted, to avoid duplicate submissions */\n";
+print '
+    jQuery(document).ready(function() {
+        jQuery(document).on("submit", "form", function(event) {
+            if (event.isDefaultPrevented() || (this.target && this.target != "_self")) {
+                return;
+            }
+            var $buttons = jQuery(this).find(".disableonsubmit");
+            if ($buttons.length == 0) {
+                return;
+            }
+            /* Flag is set synchronously, so a second very fast click is blocked even before buttons are disabled */
+            if (jQuery(this).data("dolsubmitted")) {
+                console.log("Form already submitted, we discard this new submission");
+                event.preventDefault();
+                return;
+            }
+            jQuery(this).data("dolsubmitted", true);
+            /* Disable after a timeout so the clicked button is still included into the submitted data */
+            setTimeout(function() { $buttons.prop("disabled", true); }, 0);
+        });
+        /* Enable buttons again if page is restored from browser cache (back button) */
+        jQuery(window).on("pageshow", function(event) {
+            if (event.originalEvent && event.originalEvent.persisted) {
+                jQuery("form").removeData("dolsubmitted");
+                jQuery(".disableonsubmit").prop("disabled", false);
+            }
+        });
+    });
+' . "\n";
+
 // Code to manage Copy To Clipboard click
 print "\n/* JS CODE TO ENABLE ClipBoard copy paste */\n";
+// Suppress because dol_escape_js is wrapped in '' @phan-suppress-next-line FunctionMissingSingleQuoteWrapping
 print '
 	jQuery(document).ready(function() {
 				jQuery(\'.clipboardCPShowOnHover\').hover(
@@ -301,9 +335,9 @@ print '
 					if (succeed) {
 						$(this).parent().children(".clipboardCPButton").hide();
 						$(this).parent().children(".clipboardCPTick").css("display", "inline-block");	/* better than .show() because the show set the display to "inline" */
-						//lastchild.innerHTML = \'<div class="clipboardCPTextDivInside opacitymedium">'.dol_escape_js($langs->trans('CopiedToClipboard')).'</div>\';
+						//lastchild.innerHTML = \'<div class="clipboardCPTextDivInside opacitymedium">'.dolPrintHTML($langs->trans('CopiedToClipboard')).'</div>\';
 					} else {
-						lastchild.innerHTML = \'<div class="clipboardCPTextDivInside opacitymedium">'.dol_escape_js($langs->trans('Error')).'</div>\';
+						lastchild.innerHTML = \'<div class="clipboardCPTextDivInside opacitymedium">'.dolPrintHTML($langs->trans('Error')).'</div>\';
 					}
 					setTimeout(() => { lastchild.innerHTML = tmp; lastparent.children(".clipboardCPTick").hide(); }, 2000);
 				});
