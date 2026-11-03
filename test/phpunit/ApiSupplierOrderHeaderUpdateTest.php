@@ -99,7 +99,7 @@ class ApiSupplierOrderHeaderUpdateTest extends CommonClassTest
 			$this->assertSame('', $this->bridge->writePrecheck('api_supplier_orders_update', $args));
 			$this->bridge->execute('api_supplier_orders_update', $args);
 			$this->assertSame($changes, ApiSupplierOrderHeaderEndpointFixture::$received['body']);
-			$preview = $this->bridge->writeConfirmationPreview('api_supplier_orders_update', $args);
+			$preview = $this->previewText('api_supplier_orders_update', $args);
 			$this->assertStringContainsString('array_options.options_reference: "old" → "new"', $preview);
 			$this->assertStringNotContainsString('options_other', $preview);
 			$this->assertStringNotContainsString('{', $preview);
@@ -114,7 +114,7 @@ class ApiSupplierOrderHeaderUpdateTest extends CommonClassTest
 		$this->assertSame('', $this->bridge->writePrecheck('api_supplier_orders_update', $args));
 		$this->bridge->execute('api_supplier_orders_update', $args);
 		$this->assertSame($changes, ApiSupplierOrderHeaderEndpointFixture::$received['body']);
-		$preview = $this->bridge->writeConfirmationPreview('api_supplier_orders_update', $args);
+		$preview = $this->previewText('api_supplier_orders_update', $args);
 		foreach (['1970-01-01 00:00:00 UTC', 'Project: null → null', 'NotePrivate: null → ""', 'options_zero: null → 0', 'options_null: null → null', 'options_empty: null → ""'] as $expected) {
 			$this->assertStringContainsString($expected, $preview);
 		}
@@ -190,7 +190,7 @@ class ApiSupplierOrderHeaderUpdateTest extends CommonClassTest
 	/** @return void */
 	public function testPreviewNamesTheOrderSupplierAndOldAndNewValues()
 	{
-		$preview = $this->bridge->writeConfirmationPreview('api_supplier_orders_update', ['ref' => 'PO-42', 'ref_supplier' => 'NEW']);
+		$preview = $this->previewText('api_supplier_orders_update', ['ref' => 'PO-42', 'ref_supplier' => 'NEW']);
 		foreach (['PO-42', 'Example supplier', 'OLD', 'NEW', '→'] as $expected) {
 			$this->assertStringContainsString($expected, $preview);
 		}
@@ -199,7 +199,7 @@ class ApiSupplierOrderHeaderUpdateTest extends CommonClassTest
 	/** @return void */
 	public function testPreviewShowsReadableDeliveryDatesAndFieldLabels()
 	{
-		$preview = $this->bridge->writeConfirmationPreview('api_supplier_orders_update', ['id' => 42, 'delivery_date' => 1735776000, 'note_public' => 'Visible note']);
+		$preview = $this->previewText('api_supplier_orders_update', ['id' => 42, 'delivery_date' => 1735776000, 'note_public' => 'Visible note']);
 		$this->assertStringContainsString('DeliveryDate: 2024-01-01 00:00:00 UTC → 2025-01-02 00:00:00 UTC', $preview);
 		$this->assertStringContainsString('NotePublic: null → "Visible note"', $preview);
 		$this->assertStringNotContainsString('1704067200', $preview);
@@ -210,7 +210,7 @@ class ApiSupplierOrderHeaderUpdateTest extends CommonClassTest
 	public function testPreviewHandlesAnOrderThatDisappearsAfterValidation()
 	{
 		$this->bridge->failParentAfter = 1;
-		$this->assertSame('Record not found', $this->bridge->writeConfirmationPreview('api_supplier_orders_update', ['id' => 42, 'note_private' => 'new']));
+		$this->assertSame('Record not found', $this->previewText('api_supplier_orders_update', ['id' => 42, 'note_private' => 'new']));
 		$this->assertSame([], ApiSupplierOrderHeaderEndpointFixture::$received);
 	}
 
@@ -246,6 +246,18 @@ class ApiSupplierOrderHeaderUpdateTest extends CommonClassTest
 		}
 		$this->assertSame([['fournisseur', 'commande', 'creer'], ['fournisseur', 'commande', 'lire']], $this->bridge->getRequiredRights('api_supplier_orders_update'));
 	}
+
+	/**
+	 * The bridge escapes its preview for HTML, the tests read the text it carries.
+	 *
+	 * @param string $tool Tool name
+	 * @param array<string,mixed> $args Tool arguments
+	 * @return string Preview text
+	 */
+	private function previewText($tool, $args)
+	{
+		return html_entity_decode($this->bridge->writeConfirmationPreview($tool, $args), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+	}
 }
 
 /** Fixture for deterministic user permissions. */
@@ -278,6 +290,15 @@ class ApiSupplierOrderHeaderLanguageFixture
 	 * @return string Preview text
 	 */
 	public function trans($key, ...$values)
+	{
+		return $key.($values ? ' '.implode(' ', $values) : '');
+	}
+
+	/** @param string $key Translation key
+	 * @param mixed ...$values Substitution values
+	 * @return string Preview text
+	 */
+	public function transnoentitiesnoconv($key, ...$values)
 	{
 		return $key.($values ? ' '.implode(' ', $values) : '');
 	}
