@@ -1240,7 +1240,8 @@ class ToolApiBridge extends McpTool
 						'right' => ['produit', 'creer']
 					],
 					'params' => [
-						"ref" => "Internal reference.", "label" => "Product label.", "price" => "Selling price excl. tax.", "type" => "0 product, 1 service."
+						"ref" => "Internal reference.", "label" => "Product label.", "price" => "Selling price excl. tax.", "type" => "0 product, 1 service.",
+						"tva_tx" => "VAT rate in percent (e.g. 20). Omit it to use the default VAT rate of the company."
 					]
 				],
 				'index' => [
@@ -4224,11 +4225,11 @@ class ToolApiBridge extends McpTool
 					$warehouses[$wid] = ($warehouse->fetch($wid) > 0) ? $warehouse->ref : '#'.$wid;
 				}
 				if ($wid > 0) {
-					$text .= ' '.$langs->trans('AIPreviewIntoWarehouse', $warehouses[$wid]);
+					$text .= ' '.$langs->transnoentitiesnoconv('AIPreviewIntoWarehouse', $warehouses[$wid]);
 				}
-				$text .= (isset($line['cost_price']) && (float) $line['cost_price'] > 0) ? ' @ '.price($line['cost_price']) : ' ('.$langs->trans('AIPreviewNoCostPrice').')';
+				$text .= (isset($line['cost_price']) && (float) $line['cost_price'] > 0) ? ' @ '.price($line['cost_price']) : ' ('.$langs->transnoentitiesnoconv('AIPreviewNoCostPrice').')';
 				if (!empty($line['batch'])) {
-					$text .= ', '.$langs->trans('Batch').' '.$line['batch'];
+					$text .= ', '.$langs->transnoentitiesnoconv('Batch').' '.$line['batch'];
 				}
 			}
 			$out[] = $text;
@@ -4291,7 +4292,7 @@ class ToolApiBridge extends McpTool
 			try {
 				$args = $this->normaliseWriteArgs($args, $write);
 			} catch (InvalidArgumentException $e) {
-				return $e->getMessage();
+				return dol_escape_htmltag($e->getMessage());
 			}
 			$parent = $this->fetchWriteParent($write, $args);
 			if (!$parent) {
@@ -4309,7 +4310,7 @@ class ToolApiBridge extends McpTool
 			foreach ($write['update'] as $field => $definition) {
 				if (array_key_exists($field, $args)) {
 					$old = $parent->$field ?? null;
-					$label = isset($write['preview_labels'][$field]) ? $langs->trans($write['preview_labels'][$field]) : $field;
+					$label = isset($write['preview_labels'][$field]) ? $langs->transnoentitiesnoconv($write['preview_labels'][$field]) : $field;
 					if (is_array($args[$field])) {
 						foreach ($args[$field] as $key => $value) {
 							$changes[] = $label.'.'.$key.': '.json_encode($old[$key] ?? null, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES).' → '.json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -4329,7 +4330,7 @@ class ToolApiBridge extends McpTool
 					}
 				}
 			}
-			return $langs->trans($write['preview'], $parent->ref, (string) $context, implode('; ', $changes));
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $parent->ref, (string) $context, implode('; ', $changes)));
 		}
 
 		$args = $this->normaliseWriteArgs($args, $write);
@@ -4351,7 +4352,7 @@ class ToolApiBridge extends McpTool
 			$qty = (float) ($args['qty'] ?? 1);
 			$total = $qty * (float) ($args['subprice'] ?? 0) * (1 - (float) ($args['remise_percent'] ?? 0) / 100);
 
-			return $langs->trans($write['preview'], (string) $qty, dol_trunc($what, 60), ($parent ? $parent->ref : ''), price(price2num($total, 'MT')));
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], (string) $qty, dol_trunc($what, 60), ($parent ? $parent->ref : ''), price(price2num($total, 'MT'))));
 		}
 
 		// A single record (third party, product, category, ticket) has no lines:
@@ -4375,7 +4376,7 @@ class ToolApiBridge extends McpTool
 				$extra[] = $argname.'='.dol_trunc($this->previewValue($write, $argname, $argvalue, $args), 40);
 			}
 			$values[] = empty($extra) ? '' : ' ('.implode(', ', $extra).')';
-			return $langs->trans($write['preview'], ...$values);
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], ...$values));
 		}
 
 		$who = '';
@@ -4384,7 +4385,7 @@ class ToolApiBridge extends McpTool
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 			$soc = new Societe($this->db);
 			if ($soc->fetch($socid) > 0) {
-				$who = ' '.$langs->trans("AIPreviewForThirdparty", $soc->name);
+				$who = ' '.$langs->transnoentitiesnoconv("AIPreviewForThirdparty", $soc->name);
 			}
 		}
 
@@ -4400,18 +4401,18 @@ class ToolApiBridge extends McpTool
 			$priced = true;
 			$total += ((float) ($line['qty'] ?? 1)) * ((float) $unitprice);
 		}
-		$what = $langs->trans(count($lines) === 1 ? "AIPreviewLine" : "AIPreviewLines", (string) count($lines));
+		$what = $langs->transnoentitiesnoconv(count($lines) === 1 ? "AIPreviewLine" : "AIPreviewLines", (string) count($lines));
 		if ($priced) {
 			$what .= ', '.price($total);
 		} elseif (($write['kind'] ?? '') !== 'shipment') {
-			$what .= ', '.$langs->trans("AIPreviewFromCatalogue");	// a shipment line carries no price at all
+			$what .= ', '.$langs->transnoentitiesnoconv("AIPreviewFromCatalogue");	// a shipment line carries no price at all
 		}
 		if (($write['kind'] ?? '') !== '' && $lines) {
 			// Goods are confirmed line by line: what, how many, and where they go.
 			$what .= ': '.$this->previewLogisticLines($lines, (string) $write['kind']);
 		}
 
-		return $langs->trans($write['preview'], $who, $what);
+		return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $who, $what));
 	}
 
 	/**
@@ -4488,6 +4489,24 @@ class ToolApiBridge extends McpTool
 	 * @return string                       Error message, or '' to proceed.
 	 */
 	public function writePrecheck(string $toolName, array $args)
+	{
+		// The checks of core first, then the ones of the modules.
+		$refused = $this->precheckWrite($toolName, $args);
+		if ($refused !== '') {
+			return $refused;
+		}
+
+		return $this->precheckByModules($toolName, $args);
+	}
+
+	/**
+	 * The checks of writePrecheck() core makes itself.
+	 *
+	 * @param  string             $toolName Tool being called.
+	 * @param  array<string,mixed> $args    Arguments as received.
+	 * @return string                       Error message, or '' to proceed.
+	 */
+	private function precheckWrite(string $toolName, array $args)
 	{
 		global $langs, $user;
 
@@ -4636,6 +4655,117 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Let the modules refuse a write before the user is asked to approve it,
+	 * the way their doActions hook refuses the same record on the card: hook
+	 * 'checkMcpApiBridgeWrite' of the 'aimcp' context. The hook receives the
+	 * record as it will be after the write (a new, unsaved one for a create),
+	 * and in $parameters:
+	 * - 'tool': name of the tool;
+	 * - 'operation': 'create', 'addline', 'update', 'action', 'delete',
+	 *   'payment' or 'line';
+	 * - 'class': business class of the record;
+	 * - 'args': the arguments the write will be made with.
+	 * It returns a negative value, with its message in ->error or ->errors,
+	 * to refuse: the message is what the user reads, and nothing is written.
+	 *
+	 * @param  string             $toolName Tool being called.
+	 * @param  array<string,mixed> $args    Arguments as received.
+	 * @return string                       Message of the module that refuses, or '' to proceed.
+	 */
+	private function precheckByModules(string $toolName, array $args)
+	{
+		global $hookmanager, $langs;
+
+		$write = $this->writeMetaFor($toolName);
+		if (empty($write) || empty($this->db)) {
+			return '';
+		}
+		if (!is_object($hookmanager)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager = new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('aimcp'));
+		if (empty($hookmanager->hooks['aimcp'])) {
+			return '';	// no module listens: the arguments are not prepared twice for nothing
+		}
+		$args = $this->applyFixedParams($toolName, $args);
+		try {
+			$args = $this->normaliseWriteArgs($args, $write);
+		} catch (InvalidArgumentException $e) {
+			return $e->getMessage();
+		}
+		foreach (array_keys($args) as $name) {
+			if ($name === 'requestState' || substr((string) $name, 0, 1) === '_') {
+				unset($args[$name]);
+			}
+		}
+
+		$class = (string) ($write['object'] ?? '');
+		$kind = (string) ($write['kind'] ?? '');
+		$object = null;
+		if (!empty($write['update']) || $kind === 'update') {
+			$operation = 'update';
+			$current = !empty($write['update']) ? $this->fetchWriteParent($write, $args) : $this->writeTarget;
+			if ($current instanceof CommonObject) {
+				// The record as the write leaves it.
+				$object = clone $current;
+				$changes = !empty($write['update']) ? array_intersect_key($args, $write['update']) : array_intersect_key($args, array_flip((array) ($write['fields'] ?? array())));
+				$this->applyWriteFields($object, $changes);
+			}
+		} elseif (in_array($kind, array('action', 'delete', 'payment', 'line'), true)) {
+			$operation = $kind;
+			$object = $this->writeTarget;
+		} elseif (!empty($write['parent'])) {
+			$operation = 'addline';
+			$object = $this->fetchWriteParent($write, $args);
+		} else {
+			$operation = 'create';
+			$object = ($class !== '') ? $this->newWriteObject($class) : null;
+			if ($object instanceof CommonObject) {
+				$this->applyWriteFields($object, $args);
+			}
+		}
+
+		// The hook manager keeps the errors of every hook run before: only the
+		// ones this run adds are the refusal. ->error is set by the run that fails.
+		$knownErrors = count($hookmanager->errors);
+		$parameters = array('tool' => $toolName, 'operation' => $operation, 'class' => $class, 'args' => $args);
+		$action = $operation;
+		$reshook = $hookmanager->executeHooks('checkMcpApiBridgeWrite', $parameters, $object, $action);
+		if ($reshook >= 0) {
+			return '';
+		}
+		$newErrors = array_slice($hookmanager->errors, $knownErrors);
+		$message = trim($hookmanager->error.' '.implode(' ', array_filter($newErrors)));
+		dol_syslog(get_class($this).'::precheckByModules '.$toolName.' refused by a module: '.$message, LOG_INFO);
+		if ($message === '') {
+			$langs->load('other');
+			$message = $langs->transnoentitiesnoconv('AIWriteRefusedByModule');
+		}
+
+		return $message;
+	}
+
+	/**
+	 * Copy the fields of a write onto a record, for a module to check it: only
+	 * the properties the class has, the extra fields merged.
+	 *
+	 * @param  CommonObject        $object Record.
+	 * @param  array<string,mixed> $fields Field => value.
+	 * @return void
+	 */
+	private function applyWriteFields($object, array $fields)
+	{
+		foreach ($fields as $field => $value) {
+			if ($field === 'array_options') {
+				$object->array_options = array_merge((array) $object->array_options, (array) $value);
+			} elseif ($field !== 'lines' && property_exists($object, (string) $field)) {
+				$object->$field = $value;
+			}
+		}
+	}
+
+	/**
 	 * References close to one that matched no product, for the user to pick from:
 	 * the supplier's references when the document is a supplier one (the note
 	 * says "33303", the catalogue has "33303-6"), else our own references.
@@ -4706,18 +4836,13 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
-	 * Record of a write on an existing record, by rowid or by ref: the business
-	 * documents of fetchBusinessObject() and the records only these writes use
-	 * (contacts, projects, tasks, interventions, contracts, tickets).
+	 * Files of the business classes the writes name, by class.
 	 *
-	 * @param  string $class Business class declared by the write.
-	 * @param  int    $id    Rowid of the record, 0 to look it up by ref.
-	 * @param  string $ref   Ref of the record, used when no rowid is given.
-	 * @return CommonObject|null Record, or null when it cannot be read.
+	 * @return array<string,string> Class => path under DOL_DOCUMENT_ROOT.
 	 */
-	private function fetchRecord($class, $id, $ref = '')
+	private function recordClassFiles()
 	{
-		$paths = array(
+		return array(
 			'Facture' => '/compta/facture/class/facture.class.php',
 			'Commande' => '/commande/class/commande.class.php',
 			'Propal' => '/comm/propal/class/propal.class.php',
@@ -4737,6 +4862,40 @@ class ToolApiBridge extends McpTool
 			'WebsitePage' => '/website/class/websitepage.class.php',
 			'Website' => '/website/class/website.class.php'
 		);
+	}
+
+	/**
+	 * A new, unsaved record of one of the classes the writes name.
+	 *
+	 * @param  string $class Business class.
+	 * @return CommonObject|null Record, or null for a class the writes do not name.
+	 */
+	private function newWriteObject($class)
+	{
+		$paths = $this->recordClassFiles();
+		if (empty($paths[$class])) {
+			return null;
+		}
+		require_once DOL_DOCUMENT_ROOT.$paths[$class];
+		$obj = new $class($this->db);
+		'@phan-var-force CommonObject $obj';
+
+		return $obj;
+	}
+
+	/**
+	 * Record of a write on an existing record, by rowid or by ref: the business
+	 * documents of fetchBusinessObject() and the records only these writes use
+	 * (contacts, projects, tasks, interventions, contracts, tickets).
+	 *
+	 * @param  string $class Business class declared by the write.
+	 * @param  int    $id    Rowid of the record, 0 to look it up by ref.
+	 * @param  string $ref   Ref of the record, used when no rowid is given.
+	 * @return CommonObject|null Record, or null when it cannot be read.
+	 */
+	private function fetchRecord($class, $id, $ref = '')
+	{
+		$paths = $this->recordClassFiles();
 		$ref = trim((string) $ref);
 		if (empty($paths[$class]) || ((int) $id <= 0 && $ref === '')) {
 			return null;
@@ -5523,10 +5682,10 @@ class ToolApiBridge extends McpTool
 				$changes[] = $name.' "'.dol_trunc($old, 40).'" → "'.dol_trunc((string) $args[$name], 40).'"';
 			}
 
-			return $langs->trans($write['preview'], $write['label'], $what, implode(', ', $changes));
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $write['label'], $what, implode(', ', $changes)));
 		}
 		if ($kind === 'delete') {
-			return $langs->trans($write['preview'], $write['label'], $what);
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $write['label'], $what));
 		}
 		if ($kind === 'line') {
 			return $this->previewLineWrite($write, $what);
@@ -5545,21 +5704,21 @@ class ToolApiBridge extends McpTool
 
 			$how = $langs->transnoentitiesnoconv('AIPreviewPaymentHow', ($code !== '' ? $langs->transnoentitiesnoconv('PaymentType'.$code) : ''), $account, dol_print_date(dol_stringtotime((string) $args['datepaye']), 'day'));
 
-			return $langs->trans($write['preview'], price((float) ($args['_amount'] ?? 0)), $what, $how);
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], price((float) ($args['_amount'] ?? 0)), $what, $how));
 		}
 
 		// Other actions: who the record goes to, or the other way to end it.
 		if (array_key_exists('fk_user_assign', $args) && !empty($write['preview_unassign'])) {
 			if ((int) $args['fk_user_assign'] <= 0) {
-				return $langs->trans($write['preview_unassign'], $what);
+				return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview_unassign'], $what));
 			}
 			$assignee = new User($this->db);
 			$name = ($assignee->fetch((int) $args['fk_user_assign']) > 0) ? $assignee->getFullName($langs) : (string) $args['fk_user_assign'];
 
-			return $langs->trans($write['preview'], $what, $name);
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $what, $name));
 		}
 		if (!empty($args['cancel']) && !empty($write['preview_cancel'])) {
-			return $langs->trans($write['preview_cancel'], $what);
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview_cancel'], $what));
 		}
 
 		// Validation: the warehouse is said when the stock moves.
@@ -5567,11 +5726,11 @@ class ToolApiBridge extends McpTool
 			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 			$wh = new Entrepot($this->db);
 			if ($wh->fetch((int) $args['idwarehouse']) > 0) {
-				$what .= ', '.$langs->trans('AIPreviewStockFrom', (string) $wh->ref);
+				$what .= ', '.$langs->transnoentitiesnoconv('AIPreviewStockFrom', (string) $wh->ref);
 			}
 		}
 
-		return $langs->trans($write['preview'], $what);
+		return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $what));
 	}
 
 	/**
@@ -5622,12 +5781,12 @@ class ToolApiBridge extends McpTool
 		}
 
 		if ($write['line_action'] === 'add') {
-			return $langs->trans($write['preview'], $what, implode(', ', $text));
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $what, implode(', ', $text)));
 		}
 		$name = $line ? dol_trunc($this->lineName($line), 60) : '';
 		if ($write['line_action'] === 'delete') {
 			$amount = ($line && isset($line->total_ht)) ? ', '.price((float) $line->total_ht) : '';
-			return $langs->trans($write['preview'], $position, $what, $name.(isset($line->qty) ? ' x '.((float) $line->qty) : '').$amount);
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $position, $what, $name.(isset($line->qty) ? ' x '.((float) $line->qty) : '').$amount));
 		}
 		// The new total of the line, as core will compute it before taxes.
 		if ($line && (array_key_exists('qty', $changes) || array_key_exists('subprice', $changes) || array_key_exists('remise_percent', $changes))) {
@@ -5637,7 +5796,7 @@ class ToolApiBridge extends McpTool
 			$text[] = $langs->transnoentitiesnoconv('TotalHT').' '.price((float) ($line->total_ht ?? 0)).' → '.price(price2num($qty * $pu * (1 - $rem / 100), 'MT'));
 		}
 
-		return $langs->trans($write['preview'], $position, $what, $name, implode(', ', $text));
+		return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $position, $what, $name, implode(', ', $text)));
 	}
 
 	/**

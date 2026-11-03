@@ -3,6 +3,7 @@
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,6 +78,16 @@ class DolibarrApiAccess implements iAuthenticate
 	{
 		global $db;
 		$this->db = $db;
+
+		// Tell the engine which function says whether the authenticated caller may use a route, so that
+		// the published documentation lists only the routes they can call.
+		// Routes::verifyAccess(), the one the API explorer goes through, reads
+		// Defaults::$accessControlFunction. Resources::$accessControlFunction belongs to the Swagger 1.x
+		// listing, which is not registered here, so setting that one alone filtered nothing and the
+		// documentation showed every route to every authenticated caller.
+		// verifyAccess() reads static::$role when it is called, that is after __isAllowed() has set it.
+		Defaults::$accessControlFunction = 'DolibarrApiAccess::verifyAccess';
+		Resources::$accessControlFunction = 'DolibarrApiAccess::verifyAccess';
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName
@@ -127,7 +138,7 @@ class DolibarrApiAccess implements iAuthenticate
 		if (isset($_SERVER['HTTP_DOLAPIKEY'])) {        // HTTP Header entry "DOLAPIKEY: ..." can be read with $_SERVER["HTTP_DOLAPIKEY"]
 			$api_key = $_SERVER['HTTP_DOLAPIKEY']; 		// With header method (recommended)
 		} elseif (empty($api_key)) {
-			$headers = getallheaders();					// HTTP Header entry "Authorization: Bearer ..." can be read with getallheaders
+			$headers = dolGetRequestHeaders();			// HTTP Header entry "Authorization: Bearer ..." is read from the request headers
 			$api_key = preg_replace('/^Bearer\s+/i', '', empty($headers['Authorization']) ? '' : $headers['Authorization']);
 		};
 
@@ -348,7 +359,6 @@ class DolibarrApiAccess implements iAuthenticate
 
 		$userClass::setCacheIdentifier(static::$role);
 
-		Resources::$accessControlFunction = 'DolibarrApiAccess::verifyAccess';
 		$requirefortest = static::$requires;
 		if (!is_array($requirefortest)) {
 			$requirefortest = explode(',', $requirefortest);
@@ -369,7 +379,7 @@ class DolibarrApiAccess implements iAuthenticate
 	/**
 	 * Check that the role of user is among a the given list defined into static::$requires
 	 *
-	 * @param   array{class:array{DolibarrApiAccess:array{properties:array{requires?:bool}}}} $m Properties of method
+	 * @param   array{class?:array{DolibarrApiAccess?:array{properties?:array{requires?:string|string[]}}}} $m Properties of method
 	 *
 	 * @access private
 	 * @return bool
@@ -380,9 +390,18 @@ class DolibarrApiAccess implements iAuthenticate
 				? $m['class']['DolibarrApiAccess']['properties']['requires']
 				: false;
 
+		if (empty($requires)) {
+			return true;
+		}
 
-		return $requires
-			? static::$role == 'admin' || in_array(static::$role, (array) $requires)
-			: true;
+		// The comment parser hands the roles over as they were written, so "{@requires user,external}"
+		// arrives as the single string 'user,external'. Comparing a role to it as it stands matches
+		// nobody. __isAllowed() splits it the same way before comparing.
+		if (!is_array($requires)) {
+			$requires = explode(',', $requires);
+		}
+		$requires = array_map('trim', $requires);
+
+		return static::$role == 'admin' || in_array(static::$role, $requires);
 	}
 }

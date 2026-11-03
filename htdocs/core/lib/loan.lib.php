@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2015-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2020       Maxime DEMAREST     <maxime@indelog.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
@@ -315,6 +315,19 @@ function loanChargeTypes()
 		0 => 'Insurance',
 		1 => 'LoanChargeAccountFee',
 		2 => 'LoanChargeOtherFee',
+	);
+}
+
+/**
+ * Interest bases of a loan.
+ *
+ * @return array<int,string>	interest_basis => translation key
+ */
+function loanInterestBases()
+{
+	return array(
+		0 => 'LoanInterestBasisPeriod',
+		1 => 'LoanInterestBasisDaily',
 	);
 }
 

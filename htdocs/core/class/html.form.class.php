@@ -93,7 +93,7 @@ class Form
 	public $cache_demand_reason = array();
 	/** @var array<string,string> */
 	public $cache_types_fees = array();
-	/** @var array<int,array{rowid:int,type_vat:int,code:string,txtva:string,nprtva:int,localtax1:string|float|null,localtax1_type:string,localtax2:string|float|null,localtax2_type:string,label:string,labelallrates:string,labelpositiverates:string}> */
+	/** @var array<int,array{rowid:int,type_vat:int,code:string,use_default:int,txtva:string,nprtva:int,localtax1:string|float|null,localtax1_type:string,localtax2:string|float|null,localtax2_type:string,label:string,labelallrates:string,labelpositiverates:string}> */
 	public $cache_vatrates = array();
 	/** @var array<int,array{rowid:int,code:string,label:string}> */
 	public $cache_invoice_subtype = array();
@@ -8424,7 +8424,7 @@ class Form
 
 		// entity and fk_pays are returned so a hook on loadDictionaryCache can tell two rows apart
 		// when the dictionary is read across entities (most rows carry an empty code)
-		$sql = "SELECT t.rowid, t.entity, t.fk_pays, t.type_vat, t.code, t.taux, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.recuperableonly, t.einvoice_vatex";
+		$sql = "SELECT t.rowid, t.entity, t.fk_pays, t.type_vat, t.code, t.use_default, t.taux, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.recuperableonly, t.einvoice_vatex";
 		$sql .= " FROM ".$this->db->prefix()."c_tva as t, ".$this->db->prefix()."c_country as c";
 		$sql .= " WHERE t.fk_pays = c.rowid";
 		$sql .= " AND t.active > 0";
@@ -8445,6 +8445,7 @@ class Form
 					$tmparray['fk_pays']		= (int) $obj->fk_pays;
 					$tmparray['type_vat']		= ($obj->type_vat <= 0 ? 0 : $obj->type_vat);	// Some version have type_vat corrupted with value -1
 					$tmparray['code']			= $obj->code;
+					$tmparray['use_default']	= (int) $obj->use_default;
 					$tmparray['txtva']			= $obj->taux;
 					$tmparray['nprtva']			= $obj->recuperableonly;
 					$tmparray['localtax1']	    = $obj->localtax1;
@@ -8703,6 +8704,18 @@ class Form
 
 			if (!$options_only) {
 				$return .= '<select class="flat valignmiddle minwidth75imp maxwidth100 right" id="' . $htmlname . '" name="' . $htmlname . '"' . ($disabled ? ' disabled' : '') . $title . '>';
+			}
+
+			// When the rate to preselect has no VAT code and several rows have this rate, preselect the default one
+			// (use_default) and not the first one of the list: the VAT code decides the accounting account and the tax
+			// return box of the line, so the default one must be proposed.
+			if (!$defaultcode) {
+				foreach ($arrayofvatrates as $rate) {
+					if ($rate['code'] && !empty($rate['use_default']) && $rate['txtva'] == $defaulttx && $rate['nprtva'] == $defaultnpr) {
+						$defaultcode = $rate['code'];
+						break;
+					}
+				}
 			}
 
 			$selectedfound = false;
