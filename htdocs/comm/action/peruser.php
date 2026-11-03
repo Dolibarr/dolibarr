@@ -273,7 +273,7 @@ while ($i < $MAXAGENDA) {
 			'cachedelay' => getDolGlobalInt('AGENDA_EXT_CACHE'.$i, 0),
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			'default' => dol_string_nohtmltag(getDolGlobalString($default)),
-			'buggedfile' => dol_string_nohtmltag(getDolGlobalString('buggedfile', ''))
+			'buggedfile' => dol_string_nohtmltag(getDolGlobalString($buggedfile))
 		);
 	}
 }
@@ -290,7 +290,10 @@ while ($i < $MAXAGENDA) {
 	$default = 'AGENDA_EXT_ACTIVEBYDEFAULT_'.$user->id.'_'.$i;
 	$buggedfile = 'AGENDA_EXT_BUGGEDFILE_'.$user->id.'_'.$i;
 
-	if (getDolUserString($source) && getDolUserString($name)) {
+	// A calendar set up before the switch of the user setup page existed holds no AGENDA_EXT_ENABLED_x_y
+	// at all, so the default here keeps it in the list instead of hiding it on upgrade. This is
+	// why it differs from the global calendars above, where a missing constant means disabled.
+	if (getDolUserString($source) && getDolUserString($name) && getDolUserString($enabled, '1')) {
 		// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
 		$listofextcals[] = array(
 			'type' => 'usersetup',
@@ -301,7 +304,7 @@ while ($i < $MAXAGENDA) {
 			'cachedelay' => getDolUserInt('AGENDA_EXT_CACHE_'.$user->id.'_'.$i, 0),
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			'default' => dol_string_nohtmltag(getDolUserString($default)),
-			'buggedfile' => dol_string_nohtmltag(isset($user->conf->buggedfile) ? $user->conf->buggedfile : '')
+			'buggedfile' => dol_string_nohtmltag(getDolUserString($buggedfile))
 		);
 	}
 }

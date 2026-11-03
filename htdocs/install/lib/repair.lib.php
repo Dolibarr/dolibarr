@@ -263,3 +263,55 @@ function repairEcmFiles($db, $entity, $documentroot, $confirmed = false, $maxdel
 	}
 	return $report;
 }
+
+/**
+ * Check an image repair path, including a missing destination, against its owner's directory.
+ *
+ * @param string $path File or directory to read or write
+ * @param string $directory Owner's module directory
+ * @param string $documentroot Installation's documents directory
+ * @return bool True when no path component redirects the operation outside its expected location
+ */
+function repairImagePathIsSafe($path, $directory, $documentroot)
+{
+	$path = rtrim(str_replace('\\', '/', $path), '/');
+	$directory = rtrim(str_replace('\\', '/', $directory), '/');
+	$documentroot = rtrim(str_replace('\\', '/', $documentroot), '/');
+	$windows = stripos(PHP_OS, 'WIN') === 0;
+	$documentrootlength = dol_strlen($documentroot, 'UTF-8', 1);
+	$directorylength = dol_strlen($directory, 'UTF-8', 1);
+	if ($path === '' || $directory === '' || $documentroot === '' || preg_match('~(?:^|/)\.\.?(?:/|$)~', $path)) {
+		return false;
+	}
+	if (($windows ? strncasecmp($directory.'/', $documentroot.'/', $documentrootlength + 1) : strncmp($directory.'/', $documentroot.'/', $documentrootlength + 1)) !== 0
+		|| ($windows ? strncasecmp($path.'/', $directory.'/', $directorylength + 1) : strncmp($path.'/', $directory.'/', $directorylength + 1)) !== 0) {
+		return false;
+	}
+	$realroot = realpath(dol_osencode($documentroot));
+	$realdirectory = realpath(dol_osencode($directory));
+	if ($realroot === false || $realdirectory === false || !dol_is_dir($directory)) {
+		return false;
+	}
+	$realroot = rtrim(str_replace('\\', '/', $realroot), '/');
+	$expected = $realroot.dol_substr($directory, $documentrootlength, null, 'UTF-8', 1);
+	$realdirectory = str_replace('\\', '/', $realdirectory);
+	if (($windows ? strcasecmp($realdirectory, $expected) : strcmp($realdirectory, $expected)) !== 0) {
+		return false;
+	}
+	$parent = $path;
+	// lstat also detects broken links and Windows junctions that is_link() may miss.
+	while (@lstat(dol_osencode($parent)) === false) {
+		$nextparent = dirname($parent);
+		if ($nextparent === $parent) {
+			return false;
+		}
+		$parent = $nextparent;
+	}
+	$realparent = realpath(dol_osencode($parent));
+	if ($realparent === false) {
+		return false;
+	}
+	$expected = $realroot.dol_substr($parent, $documentrootlength, null, 'UTF-8', 1);
+	$realparent = str_replace('\\', '/', $realparent);
+	return ($windows ? strcasecmp($realparent, $expected) : strcmp($realparent, $expected)) === 0;
+}

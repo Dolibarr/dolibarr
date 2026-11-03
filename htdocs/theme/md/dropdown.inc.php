@@ -320,6 +320,7 @@ a.top-menu-dropdown-link {
 #top-bookmark-search-nothing-found {
 	padding: 15px;
 	display: block;
+	color: #444;
 }
 
 .dropdown-menu > .bookmark-body, .dropdown-body{

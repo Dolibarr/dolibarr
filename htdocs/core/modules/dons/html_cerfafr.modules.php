@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2020  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015  		Benoit Bruchard			<benoitb21@gmail.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,10 +86,13 @@ class html_cerfafr extends ModeleDon
 	 *
 	 *	@param	Don			$don			Donation object
 	 *  @param  Translate	$outputlangs	Lang object for output language
-	 *  @param	string		$currency		Currency code
+	 *  @param	string		$srctemplatepath	Full path of source filename for generator using a template file
+	 *  @param	int<0,1>	$hidedetails		Do not show line details
+	 *  @param	int<0,1>	$hidedesc			Do not show desc
+	 *  @param	int<0,1>	$hideref			Do not show ref
 	 *	@return	int<-1,1>					>0 if OK, <0 if KO
 	 */
-	public function write_file($don, $outputlangs, $currency = '')
+	public function write_file($don, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
 		global $user, $conf, $langs, $mysoc;
@@ -104,7 +107,8 @@ class html_cerfafr extends ModeleDon
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "donations"));
 
-		$currency = !empty($currency) ? $currency : $conf->currency;
+		// No caller ever passed a currency: it was always the one of the company
+		$currency = $conf->currency;
 
 		if (!empty($conf->don->dir_output)) {
 			// Definition of the object don (for upward compatibility)

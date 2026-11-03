@@ -93,7 +93,7 @@ class Form
 	public $cache_demand_reason = array();
 	/** @var array<string,string> */
 	public $cache_types_fees = array();
-	/** @var array<int,array{rowid:int,type_vat:int,code:string,txtva:string,nprtva:int,localtax1:string|float|null,localtax1_type:string,localtax2:string|float|null,localtax2_type:string,label:string,labelallrates:string,labelpositiverates:string}> */
+	/** @var array<int,array{rowid:int,type_vat:int,code:string,use_default:int,txtva:string,nprtva:int,localtax1:string|float|null,localtax1_type:string,localtax2:string|float|null,localtax2_type:string,label:string,labelallrates:string,labelpositiverates:string}> */
 	public $cache_vatrates = array();
 	/** @var array<int,array{rowid:int,code:string,label:string}> */
 	public $cache_invoice_subtype = array();
@@ -2645,9 +2645,10 @@ class Form
 	 * @param	string	$filter		Optional filter criteria. Must be a sanitized string.
 	 * @param	int		$socid		Id of thirdparty
 	 * @param	int		$maxvalue	Max value for lines that can be selected
+	 * @param	int		$projectid	Current project id. Discounts from source invoices in this project are shown first
 	 * @return	int					Return number of qualifed lines in list
 	 */
-	public function select_remises($selected, $htmlname, $filter, $socid, $maxvalue = 0)
+	public function select_remises($selected, $htmlname, $filter, $socid, $maxvalue = 0, $projectid = 0)
 	{
 		// phpcs:enable
 		global $langs, $conf;
@@ -2657,31 +2658,40 @@ class Form
 		// Search for the discounts
 		$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
 		$sql .= " re.description, re.fk_facture_source, re.fk_invoice_supplier_source";
+		if ($projectid > 0) {
+			$sql .= ", f.fk_projet as source_project_id, f.ref as source_invoice_ref";
+		}
 		if ($showsourceinvoice) {
 			// Resolve the source invoice (customer or supplier) in the main query instead of one fetch per line
 			$sql .= ", f.ref as src_cust_ref, f.datef as src_cust_date";
 			$sql .= ", ff.ref as src_supp_ref, ff.datef as src_supp_date";
 		}
 		$sql .= " FROM " . $this->db->prefix() . "societe_remise_except as re";
-		if ($showsourceinvoice) {
+		if ($showsourceinvoice || $projectid > 0) {
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "facture as f ON f.rowid = re.fk_facture_source";
+		}
+		if ($showsourceinvoice) {
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "facture_fourn as ff ON ff.rowid = re.fk_invoice_supplier_source";
 		}
 		$sql .= " WHERE re.fk_soc = " . (int) $socid;
 		$sql .= " AND re.entity = " . ((int) $conf->entity);
 		if ($filter) {
 			$sanitizedfilter = $filter;  // @phan-suppress-current-line SqlInjection
-			if ($showsourceinvoice) {
+			if ($showsourceinvoice || $projectid > 0) {
 				// The joined tables also carry a fk_facture_source column: qualify unprefixed references of the caller filter
 				$sanitizedfilter = preg_replace('/(?<![a-zA-Z0-9_.])fk_facture_source\b/', 're.fk_facture_source', $sanitizedfilter);
 			}
 			$sql .= " AND " . $sanitizedfilter;
 		}
+		$sql .= " ORDER BY";
+		if ($projectid > 0) {
+			$sql .= " " . $this->db->ifsql("f.fk_projet = " . ((int) $projectid), "0", "1") . ",";
+		}
 		if ($showsourceinvoice) {
 			// When the source invoices are shown, their date is the natural order (oldest deposit first)
-			$sql .= " ORDER BY COALESCE(ff.datef, f.datef, re.datec) ASC, re.rowid ASC";
+			$sql .= " COALESCE(ff.datef, f.datef, re.datec) ASC, re.rowid ASC";
 		} else {
-			$sql .= " ORDER BY re.description ASC";
+			$sql .= " re.description ASC, re.rowid ASC";
 		}
 
 		dol_syslog(get_class($this) . "::select_remises", LOG_DEBUG);
@@ -2709,6 +2719,12 @@ class Form
 					}
 					if (preg_match('/\(EXCESS PAID\)/', $desc)) {
 						$desc = preg_replace('/\(EXCESS PAID\)/', $langs->trans("ExcessPaid"), $desc);
+					}
+					if ($projectid > 0 && (int) $obj->source_project_id === (int) $projectid) {
+						$desc = '[' . $langs->trans('Project') . '] ' . $desc;
+						if (!$showsourceinvoice && !empty($obj->source_invoice_ref)) {
+							$desc .= ' - ' . $obj->source_invoice_ref;
+						}
 					}
 
 					$selectstring = '';
@@ -8063,9 +8079,10 @@ class Form
 	 * @param int 		$discount_type 	0 => customer discount, 1 => supplier discount
 	 * @param int		$filterabsolutediscount		Filter absolute discount
 	 * @param int		$filtercreditnote			Filter credit note
+	 * @param int 		$projectid 		Current project id used to prioritize related customer discounts
 	 * @return    void
 	 */
-	public function form_remise_dispo($page, $selected, $htmlname, $socid, $amount, $filter = '', $maxvalue = 0, $more = '', $hidelist = 0, $discount_type = 0, $filterabsolutediscount = 0, $filtercreditnote = 0)
+	public function form_remise_dispo($page, $selected, $htmlname, $socid, $amount, $filter = '', $maxvalue = 0, $more = '', $hidelist = 0, $discount_type = 0, $filterabsolutediscount = 0, $filtercreditnote = 0, $projectid = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -8122,7 +8139,7 @@ class Form
 					$newfilter .= ' AND (' . $sanitizedfilter . ')';
 				}
 				// output the combo of discounts
-				$nbqualifiedlines = $this->select_remises((string) $selected, $htmlname, $newfilter, $socid, $maxvalue);
+				$nbqualifiedlines = $this->select_remises((string) $selected, $htmlname, $newfilter, $socid, $maxvalue, $projectid);
 				if ($nbqualifiedlines > 0) {
 					print ' &nbsp; <input type="submit" class="button smallpaddingimp" value="' . dol_escape_htmltag($langs->trans("UseLine")) . '"';
 					if (!empty($discount_type) && $filter && $filter != "fk_invoice_supplier_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')") {
@@ -8407,7 +8424,7 @@ class Form
 
 		// entity and fk_pays are returned so a hook on loadDictionaryCache can tell two rows apart
 		// when the dictionary is read across entities (most rows carry an empty code)
-		$sql = "SELECT t.rowid, t.entity, t.fk_pays, t.type_vat, t.code, t.taux, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.recuperableonly, t.einvoice_vatex";
+		$sql = "SELECT t.rowid, t.entity, t.fk_pays, t.type_vat, t.code, t.use_default, t.taux, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.recuperableonly, t.einvoice_vatex";
 		$sql .= " FROM ".$this->db->prefix()."c_tva as t, ".$this->db->prefix()."c_country as c";
 		$sql .= " WHERE t.fk_pays = c.rowid";
 		$sql .= " AND t.active > 0";
@@ -8428,6 +8445,7 @@ class Form
 					$tmparray['fk_pays']		= (int) $obj->fk_pays;
 					$tmparray['type_vat']		= ($obj->type_vat <= 0 ? 0 : $obj->type_vat);	// Some version have type_vat corrupted with value -1
 					$tmparray['code']			= $obj->code;
+					$tmparray['use_default']	= (int) $obj->use_default;
 					$tmparray['txtva']			= $obj->taux;
 					$tmparray['nprtva']			= $obj->recuperableonly;
 					$tmparray['localtax1']	    = $obj->localtax1;
@@ -8686,6 +8704,18 @@ class Form
 
 			if (!$options_only) {
 				$return .= '<select class="flat valignmiddle minwidth75imp maxwidth100 right" id="' . $htmlname . '" name="' . $htmlname . '"' . ($disabled ? ' disabled' : '') . $title . '>';
+			}
+
+			// When the rate to preselect has no VAT code and several rows have this rate, preselect the default one
+			// (use_default) and not the first one of the list: the VAT code decides the accounting account and the tax
+			// return box of the line, so the default one must be proposed.
+			if (!$defaultcode) {
+				foreach ($arrayofvatrates as $rate) {
+					if ($rate['code'] && !empty($rate['use_default']) && $rate['txtva'] == $defaulttx && $rate['nprtva'] == $defaultnpr) {
+						$defaultcode = $rate['code'];
+						break;
+					}
+				}
 			}
 
 			$selectedfound = false;
