@@ -4345,12 +4345,12 @@ class Facture extends CommonInvoice
 				$qtysign = ((float) $qty < 0 ? -1 : 1);	// The rounding is done on the absolute value, the sign of the quantity is kept
 				if (abs((float) $qty) < (float) $tmpproduct->packaging) {
 					$qty = $qtysign * (float) $tmpproduct->packaging;
-					setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
+					setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'warnings');
 				} else {
 					if (!empty($tmpproduct->packaging) && (float) price2num(abs((float) $qty) - round(abs((float) $qty) / (float) $tmpproduct->packaging) * (float) $tmpproduct->packaging, 'MS') != 0) {	// Not a multiple of the packaging
 						$coeff = intval(abs($qty) / $tmpproduct->packaging) + 1;
 						$qty = price2num($qtysign * (float) $tmpproduct->packaging * $coeff, 'MS');
-						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
+						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'warnings');
 					}
 				}
 			}
@@ -4630,6 +4630,7 @@ class Facture extends CommonInvoice
 					$qtysign = ((float) $qty < 0 ? -1 : 1);	// The rounding is done on the absolute value, the sign of the quantity is kept
 					if (abs((float) $qty) < (float) $tmpline->packaging) {
 						$qty = $qtysign * (float) $tmpline->packaging;
+						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'warnings');
 					} else {
 						if (!empty($tmpline->packaging)
 							&& is_numeric($tmpline->packaging)
@@ -4637,7 +4638,7 @@ class Facture extends CommonInvoice
 							&& (float) price2num(abs((float) $qty) - round(abs((float) $qty) / (float) $tmpline->packaging) * (float) $tmpline->packaging, 'MS') != 0) {
 							$coeff = intval(abs((float) $qty) / $tmpline->packaging) + 1;
 							$qty = price2num($qtysign * (float) $tmpline->packaging * $coeff, 'MS');
-							setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
+							setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'warnings');
 						}
 					}
 				}

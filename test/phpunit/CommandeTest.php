@@ -398,4 +398,49 @@ class CommandeTest extends CommonClassTest
 		print __METHOD__." result=".json_encode($result)."\n";
 		$this->assertEquals(array('update 0.5' => 0.5, 'update 1' => 1, 'update 2.2' => 2.2, 'update 0.25' => 0.3), $result, 'Quantities with a packaging of 0.1');
 	}
+
+	/**
+	 * testCommandePackagingWarning
+	 *
+	 * With PRODUCT_USE_CUSTOMER_PACKAGING, the user must be warned (warning, not information) each time
+	 * the quantity is recalculated to the packaging.
+	 *
+	 * @return  void
+	 */
+	public function testCommandePackagingWarning()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$langs->load('products');
+		$label = $langs->trans('QtyRecalculatedWithPackaging');
+		list($localobject, $productid, $savconst) = $this->initPackagingOrder(6);
+
+		$result = array();
+		$actions = array('add 1' => 1, 'add 7' => 7, 'add 12' => 12, 'update 1' => 1, 'update 7' => 7, 'update 12' => 12);
+		foreach ($actions as $action => $qty) {
+			$_SESSION['dol_events'] = array();
+			if (strpos($action, 'add') === 0) {
+				$lineid = $localobject->addline('Line', 10, $qty, 20, 0, 0, $productid);
+				$this->assertGreaterThan(0, $lineid, (string) $localobject->error);
+			} else {
+				$localobject->updateline($lineid, 'Line', 10, $qty, 0, 20);
+			}
+			$result[$action] = array(
+				'warnings' => count(array_keys(empty($_SESSION['dol_events']['warnings']) ? array() : $_SESSION['dol_events']['warnings'], $label)),
+				'mesgs' => count(array_keys(empty($_SESSION['dol_events']['mesgs']) ? array() : $_SESSION['dol_events']['mesgs'], $label)),
+			);
+		}
+		$_SESSION['dol_events'] = array();
+		$conf->global->PRODUCT_USE_CUSTOMER_PACKAGING = $savconst;
+
+		print __METHOD__." result=".json_encode($result)."\n";
+		$warning = array('warnings' => 1, 'mesgs' => 0);
+		$nomessage = array('warnings' => 0, 'mesgs' => 0);
+		$expected = array('add 1' => $warning, 'add 7' => $warning, 'add 12' => $nomessage, 'update 1' => $warning, 'update 7' => $warning, 'update 12' => $nomessage);
+		$this->assertEquals($expected, $result, 'One warning each time the quantity is recalculated');
+	}
 }
