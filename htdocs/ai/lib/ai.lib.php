@@ -849,6 +849,7 @@ function getAiChatAssistantConfig()
 
 		// Errors
 		'MicError',
+		'MicNotAllowedHelp',
 		'MicTooQuiet',
 		'ConnectionBlocked',
 		'ConnectionBlockedHelp',

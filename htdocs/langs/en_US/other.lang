@@ -675,6 +675,7 @@ ReadingWord=Reading Word file
 ReadingExcel=Reading Excel file
 ReadingOdf=Reading Odf file
 MicError=Microphone Error
+MicNotAllowedHelp=Access to the microphone was denied. Check that the browser permission for the microphone is allowed for this site, and that the HTTP header Permissions-Policy (parameter MAIN_SECURITY_FORCEPP) does not contain microphone=() (use microphone=(self) instead).
 Listening=Listening
 TypeResponse=Type your response...
 ConnectionBlocked=Google Speech Network Error: Are you using HTTPS?

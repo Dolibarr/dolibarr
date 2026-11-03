@@ -1151,6 +1151,10 @@ export function initAiAssistant(container) {
                 if (event.error === 'network') {
                     errorMsg = t('ConnectionBlocked');
                     appendMsg('system', `<strong>${t('ConnectionBlocked')}:</strong> ${t('CloudVoiceRequiresSecureContext')}`);
+                } else if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+                    // Denied by the browser permission or by the HTTP header Permissions-Policy (microphone=())
+                    errorMsg = t('MicError') + ": " + event.error;
+                    appendMsg('system', `<strong>${t('MicError')}:</strong> ${t('MicNotAllowedHelp')}`);
                 }
                 statusBar.innerText = errorMsg;
                 setMicState('idle');
@@ -1303,6 +1307,9 @@ export function initAiAssistant(container) {
         } catch (err) {
             console.error('Microphone error:', err);
             statusBar.innerText = t('MicError') + ": " + err.message;
+            if (err && err.name === 'NotAllowedError') {
+                appendMsg('system', `<strong>${t('MicError')}:</strong> ${t('MicNotAllowedHelp')}`);
+            }
             isRecording = false;
             setMicState('idle');
         }

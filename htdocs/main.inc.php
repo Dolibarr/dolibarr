@@ -1651,7 +1651,9 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 		}
 
 		// Add Dolibarr to Content-Security-Policy
-		$contentsecuritypolicy = preg_replace('/default-src \'self\'/', 'default-src \'self\' *.dolibarr.org', $contentsecuritypolicy);
+		if (!preg_match('/dolibarr\.org/', $contentsecuritypolicy)) {
+			$contentsecuritypolicy = preg_replace('/default-src \'self\'/', 'default-src \'self\' *.dolibarr.org', $contentsecuritypolicy);
+		}
 
 		if (!empty($contentsecuritypolicy)) {
 			header("Content-Security-Policy-Report-Only: ".$contentsecuritypolicy);
@@ -1691,7 +1693,9 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 		}
 
 		// Add Dolibarr to Content-Security-Policy
-		$contentsecuritypolicy = preg_replace('/default-src \'self\'/', 'default-src \'self\' ping.dolibarr.org', $contentsecuritypolicy);
+		if (!preg_match('/dolibarr\.org/', $contentsecuritypolicy)) {
+			$contentsecuritypolicy = preg_replace('/default-src \'self\'/', 'default-src \'self\' *.dolibarr.org', $contentsecuritypolicy);
+		}
 
 		if (!empty($contentsecuritypolicy)) {
 			header("Content-Security-Policy: ".$contentsecuritypolicy);
