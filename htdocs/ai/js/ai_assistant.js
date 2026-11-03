@@ -2306,7 +2306,12 @@ export function initAiAssistant(container) {
         confirmationRecognition = new SR();
         confirmationRecognition.lang = 'en-US';
         confirmationRecognition.onresult = (e) => { processConfirmationCommand(e.results[0][0].transcript); };
-        confirmationRecognition.onerror = (e) => { if (e.error !== 'no-speech') showVoiceFeedback(t('Error')); isConfirmationListening = false; };
+        // Voice error only, the action is not affected: say it, and ignore 'aborted' (raised by our own abort/stop).
+        confirmationRecognition.onerror = (e) => {
+            console.error('Confirmation speech recognition error:', e.error);
+            if (e.error !== 'no-speech' && e.error !== 'aborted') showVoiceFeedback(`${t('Listening')} (${t('VoiceYesNo')}): ${t('Error')} ${escapeHtml(e.error || '')}`);
+            isConfirmationListening = false;
+        };
         try { confirmationRecognition.start(); showVoiceFeedback(`<span class="fa fa-microphone"></span> ${t('Listening')} (${t('VoiceYesNo')})`); } catch (e) { console.error(e); }
     }
 
@@ -2925,13 +2930,13 @@ export function initAiAssistant(container) {
             const chosenModel = resolveModel();
             // Pinned exchanges only: context is opt-in, its cost visible in the bar.
             const pinned = pinnedContextPayload();
-            // Result of the read flagged needs_followup, sent back on the second round.
-            let followupSnippet = null;
+            // Results of the reads flagged needs_followup, sent back on the next rounds.
+            let followupSnippets = [];
             let followupResult = null;
             // The third parties the user picked, for every round of this request.
             const sentChoices = Object.assign({}, thirdpartyChoices);
-            // Two rounds at most: the server never flags a followup round itself.
-            for (let round = 0; round < 2; round++) {
+            // Three rounds at most: the server never flags the last followup round itself.
+            for (let round = 0; round < 3; round++) {
                 if (round > 0) { appendTyping(); loadingMsg = chat.lastElementChild; }
                 const intentRes = await fetch(epUrl('parse_intent.php'), {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -2943,7 +2948,8 @@ export function initAiAssistant(container) {
                         Object.keys(sentChoices).length ? { thirdparty_choices: sentChoices } : {},
                         (function () {
                             // followup_result: only to name the object in the confirmation, never sent to the model.
-                            if (followupSnippet) return { history: pinned.concat([{ role: 'assistant', text: followupSnippet }]), followup: 1, followup_result: followupResult };
+                            // All the search results in one assistant turn, followup is the number of the round.
+                            if (followupSnippets.length) return { history: pinned.concat([{ role: 'assistant', text: followupSnippets.join('\n') }]), followup: round, followup_result: followupResult };
                             return pinned.length ? { history: pinned } : {};
                         })(),
                         (function () {
@@ -3005,9 +3011,9 @@ export function initAiAssistant(container) {
                 loadingData.remove();
                 // The read only fetched the ids the asked action needs: hand its result
                 // back to the model instead of showing it, and let it perform the action.
-                if (!round && intent.needs_followup && result && !result.error && result.success !== false && result.resultType !== 'input_required') {
+                if (round < 2 && intent.needs_followup && result && !result.error && result.success !== false && result.resultType !== 'input_required') {
                     appendMsg('system', t('AISearchDoneNowPreparingAction') + ' (' + escapeHtml(intent.tool || '') + ')...');
-                    followupSnippet = contextSnippetOf(result, intent.tool);
+                    followupSnippets.push(contextSnippetOf(result, intent.tool));
                     followupResult = result;
                     continue;
                 }
