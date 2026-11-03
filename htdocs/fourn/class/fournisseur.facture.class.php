@@ -1874,6 +1874,7 @@ class FactureFournisseur extends CommonInvoice
 		if (count($this->lines) <= 0) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorObjectMustHaveLinesToBeValidated", $this->ref);
+			dol_syslog(__METHOD__.' '.$this->error, LOG_WARNING);
 			return -1;
 		}
 
