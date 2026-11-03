@@ -4133,6 +4133,28 @@ function dolGetRequestHeaders()
 }
 
 /**
+ * Return the url of the server, without the directory Dolibarr is installed in.
+ *
+ * $dolibarr_main_url_root holds the url of the application, DOL_URL_ROOT included, so
+ * https://example.org/dolibarr for an installation in a subdirectory. What a link to a public
+ * page, a QR code or an OAuth callback needs is the part before it, https://example.org, and
+ * every caller was rebuilding it with the same expression:
+ *
+ *   $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+ *
+ * An installation at the root of its host has an empty DOL_URL_ROOT, and then there is nothing to
+ * remove: the url is returned trimmed, as the expression above already did.
+ *
+ * @return	string	Url of the server, with no trailing DOL_URL_ROOT
+ */
+function dolGetUrlWithoutUrlRoot()
+{
+	global $dolibarr_main_url_root;
+
+	return preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim((string) $dolibarr_main_url_root));
+}
+
+/**
  * Return the real IP of remote user.
  * Take HTTP_X_FORWARDED_FOR (defined when using proxy)
  * Then HTTP_CLIENT_IP if defined (rare)
