@@ -297,4 +297,72 @@ class CommandeTest extends CommonClassTest
 		$this->assertEquals(12, $line->qty, 'Quantity 7 rounded to the packaging of 6');
 		$this->assertEquals(120, $line->total_ht, 'Total of the rounded quantity 12, not of 7');
 	}
+
+	/**
+	 * Create a product with a packaging of quantities and a draft order, with PRODUCT_USE_CUSTOMER_PACKAGING enabled.
+	 * The caller must restore PRODUCT_USE_CUSTOMER_PACKAGING with the returned value.
+	 *
+	 * @param	float	$packaging	Packaging of quantities of the product
+	 * @return	array{0:Commande,1:int,2:string}	Draft order, id of product, previous value of PRODUCT_USE_CUSTOMER_PACKAGING
+	 */
+	private function initPackagingOrder($packaging)
+	{
+		global $conf, $user, $db;
+
+		$savconst = getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING');
+		$conf->global->PRODUCT_USE_CUSTOMER_PACKAGING = 1;
+
+		$product = new Product($db);
+		$product->ref = 'PHPUNIT-PACKAGING-'.dol_print_date(dol_now(), 'dayhourlog').'-'.mt_rand(100, 999);
+		$product->label = 'Product sold by packaging of '.$packaging;
+		$product->type = Product::TYPE_PRODUCT;
+		$product->price = 10;
+		$product->tva_tx = 20;
+		$product->packaging = $packaging;
+		$productid = $product->create($user);
+		$this->assertGreaterThan(0, $productid, (string) $product->error);
+
+		$order = new Commande($db);
+		$order->socid = 1;
+		$order->date = dol_now();
+		$this->assertGreaterThan(0, $order->create($user), (string) $order->error);
+		$order->fetch_thirdparty();
+
+		return array($order, $productid, $savconst);
+	}
+
+	/**
+	 * testCommandeNegativeQtyPackaging
+	 *
+	 * With PRODUCT_USE_CUSTOMER_PACKAGING, the rounding of a negative quantity must keep the sign.
+	 *
+	 * @return  void
+	 */
+	public function testCommandeNegativeQtyPackaging()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		list($localobject, $productid, $savconst) = $this->initPackagingOrder(6);
+
+		$result = array();
+		foreach (array(-4, -7, -12) as $qty) {
+			$lineid = $localobject->addline('Line', 10, $qty, 20, 0, 0, $productid);
+			$this->assertGreaterThan(0, $lineid, (string) $localobject->error);
+			$line = new OrderLine($db);
+			$line->fetch($lineid);
+			$result['add '.$qty] = (float) $line->qty;
+		}
+		$localobject->updateline($lineid, 'Line', 10, -7, 0, 20);
+		$line = new OrderLine($db);
+		$line->fetch($lineid);
+		$result['update -7'] = (float) $line->qty;
+		$conf->global->PRODUCT_USE_CUSTOMER_PACKAGING = $savconst;
+
+		print __METHOD__." result=".json_encode($result)."\n";
+		$this->assertEquals(array('add -4' => -6, 'add -7' => -12, 'add -12' => -12, 'update -7' => -12), $result, 'Negative quantities rounded to the packaging of 6');
+	}
 }

@@ -1706,13 +1706,14 @@ class Commande extends CommonOrder
 			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
 				$tmpproduct = new Product($this->db);
 				$result = $tmpproduct->fetch($fk_product);
-				if (abs($qty) < $tmpproduct->packaging) {
-					$qty = (float) $tmpproduct->packaging;
+				$qtysign = ((float) $qty < 0 ? -1 : 1);	// The rounding is done on the absolute value, the sign of the quantity is kept
+				if (abs((float) $qty) < (float) $tmpproduct->packaging) {
+					$qty = $qtysign * (float) $tmpproduct->packaging;
 					setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
 				} else {
 					if (!empty($tmpproduct->packaging) && (float) price2num(abs((float) $qty) - round(abs((float) $qty) / (float) $tmpproduct->packaging) * (float) $tmpproduct->packaging, 'MS') != 0) {	// Not a multiple of the packaging
 						$coeff = intval(abs($qty) / $tmpproduct->packaging) + 1;
-						$qty = price2num((float) $tmpproduct->packaging * $coeff, 'MS');
+						$qty = price2num($qtysign * (float) $tmpproduct->packaging * $coeff, 'MS');
 						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
 					}
 				}
@@ -3214,15 +3215,16 @@ class Commande extends CommonOrder
 			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
 				$tmpline = new OrderLine($this->db);
 				if ($tmpline->fetch($rowid) > 0) {
-					if ($qty < $tmpline->packaging) {
-						$qty = $tmpline->packaging;
+					$qtysign = ((float) $qty < 0 ? -1 : 1);	// The rounding is done on the absolute value, the sign of the quantity is kept
+					if (abs((float) $qty) < (float) $tmpline->packaging) {
+						$qty = $qtysign * (float) $tmpline->packaging;
 					} else {
 						if (!empty($tmpline->packaging)
 							&& is_numeric($tmpline->packaging)
 							&& (float) $tmpline->packaging > 0
-							&& fmod((float) $qty, (float) $tmpline->packaging) > 0) {
-							$coeff = intval($qty / $tmpline->packaging) + 1;
-							$qty = $tmpline->packaging * $coeff;
+							&& fmod(abs((float) $qty), (float) $tmpline->packaging) > 0) {
+							$coeff = intval(abs((float) $qty) / $tmpline->packaging) + 1;
+							$qty = $qtysign * $tmpline->packaging * $coeff;
 							setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
 						}
 					}

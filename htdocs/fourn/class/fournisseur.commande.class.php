@@ -716,8 +716,8 @@ class CommandeFournisseur extends CommonOrder
 					$sqlsearchpackage .= ' WHERE entity IN ('.getEntity('product_fournisseur_price').")";
 					$sqlsearchpackage .= " AND fk_product = ".((int) $objp->fk_product);
 					$sqlsearchpackage .= " AND ref_fourn = '".$this->db->escape($objp->ref_supplier)."'";
-					$sqlsearchpackage .= " AND quantity <= ".((float) $objp->qty);	// required to be qualified
-					$sqlsearchpackage .= " AND (packaging IS NULL OR packaging = 0 OR packaging <= ".((float) $objp->qty).")";	// required to be qualified
+					$sqlsearchpackage .= " AND quantity <= ".abs((float) $objp->qty);	// required to be qualified
+					$sqlsearchpackage .= " AND (packaging IS NULL OR packaging = 0 OR packaging <= ".abs((float) $objp->qty).")";	// required to be qualified
 					$sqlsearchpackage .= " AND fk_soc = ".((int) $this->socid);
 					$sqlsearchpackage .= " ORDER BY packaging ASC";		// Take the smaller package first
 					$sqlsearchpackage .= " LIMIT 1";
@@ -2139,12 +2139,13 @@ class CommandeFournisseur extends CommonOrder
 					$prod = new Product($this->db);
 					$prod->get_buyprice($fk_prod_fourn_price, (float) $qty, $fk_product, 'none', (empty($this->fk_soc) ? $this->socid : $this->fk_soc));
 
-					if ($qty < $prod->packaging) {
-						$qty = (float) $prod->packaging;
+					$qtysign = ((float) $qty < 0 ? -1 : 1);	// The rounding is done on the absolute value, the sign of the quantity is kept
+					if (abs((float) $qty) < (float) $prod->packaging) {
+						$qty = $qtysign * (float) $prod->packaging;
 					} else {
-						if (!empty($prod->packaging) && (fmod((float) $qty, (float) $prod->packaging)  > 0.000001)) {
-							$coeff = intval((float) $qty / $prod->packaging) + 1;
-							$qty = (float) $prod->packaging * $coeff;
+						if (!empty($prod->packaging) && (fmod(abs((float) $qty), (float) $prod->packaging)  > 0.000001)) {
+							$coeff = intval(abs((float) $qty) / $prod->packaging) + 1;
+							$qty = $qtysign * (float) $prod->packaging * $coeff;
 							setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
 						}
 					}
@@ -3163,12 +3164,13 @@ class CommandeFournisseur extends CommonOrder
 			if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
 				$tmpline = new CommandeFournisseurLigne($this->db);
 				if ($tmpline->fetch($rowid) > 0) {
-					if ($qty < $tmpline->packaging) {
-						$qty = $tmpline->packaging;
+					$qtysign = ((float) $qty < 0 ? -1 : 1);	// The rounding is done on the absolute value, the sign of the quantity is kept
+					if (abs((float) $qty) < (float) $tmpline->packaging) {
+						$qty = $qtysign * (float) $tmpline->packaging;
 					} else {
-						if (!empty($tmpline->packaging) && is_numeric($tmpline->packaging) && (float) $tmpline->packaging > 0 && (fmod((float) $qty, (float) $tmpline->packaging) > 0)) {
-							$coeff = intval($qty / $tmpline->packaging) + 1;
-							$qty = $tmpline->packaging * $coeff;
+						if (!empty($tmpline->packaging) && is_numeric($tmpline->packaging) && (float) $tmpline->packaging > 0 && (fmod(abs((float) $qty), (float) $tmpline->packaging) > 0)) {
+							$coeff = intval(abs((float) $qty) / $tmpline->packaging) + 1;
+							$qty = $qtysign * $tmpline->packaging * $coeff;
 							setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
 						}
 					}
