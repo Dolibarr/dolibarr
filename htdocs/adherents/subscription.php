@@ -527,66 +527,13 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 					'emetteur_banque' => $emetteur_banque,
 					'datesubend' => $datesubend
 				);
-				$reshook = $hookmanager->executeHooks('sendMail', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-				if ($reshook < 0) {
-					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-				}
-
-				if (empty($reshook)) {
-					$subject = '';
-					$msg = '';
-
-					// Send subscription email
-					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-					$formmail = new FormMail($db);
-					// Set output language
-					$outputlangs = new Translate('', $conf);
-					$outputlangs->setDefaultLang(!empty($object->default_lang) ? $object->default_lang : (empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang));
-					// Load traductions files required by page
-					$outputlangs->loadLangs(array("main", "members"));
-
-					// Get email content from template
-					$arraydefaultmessage = null;
-					$labeltouse = getDolGlobalString('ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION');
-
-					if (!empty($labeltouse)) {
-						$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
-					}
-
-					if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-						$subject = (string) $arraydefaultmessage->topic;
-						$msg     = (string) $arraydefaultmessage->content;
-					}
-
-					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
-					complete_substitutions_array($substitutionarray, $outputlangs, $object);
-					$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
-					$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnSubscription()), $substitutionarray, $outputlangs);
-
-					// Attach a file ?
-					$file = '';
-					$listofpaths = array();
-					$listofnames = array();
-					$listofmimes = array();
-					if (is_object($object->invoice) && (!is_object($arraydefaultmessage) || intval($arraydefaultmessage->joinfiles))) {
-						$invoicediroutput = $conf->facture->dir_output;
-						$fileparams = dol_most_recent_file($invoicediroutput.'/'.$object->invoice->ref, preg_quote($object->invoice->ref, '/').'[^\-]+');
-						$file = $fileparams['fullname'];
-
-						$listofpaths = array($file);
-						$listofnames = array(basename($file));
-						$listofmimes = array(dol_mimetype($file));
-					}
-
-					$moreinheader = 'X-Dolibarr-Info: send_an_email by adherents/subscription.php'."\r\n";
-
-					$result = $object->sendEmail($texttosend, $subjecttosend, $listofpaths, $listofmimes, $listofnames, "", "", 0, -1, '', $moreinheader);
-					if ($result < 0) {
-						$errmsg = $object->error;
-						setEventMessages($object->error, $object->errors, 'errors');
-					} else {
-						setEventMessages($langs->trans("EmailSentToMember", $object->email), null, 'mesgs');
-					}
+				$mailobject = $object;
+				$result = $mailobject->sendSubscriptionConfirmationWithHooks($adht, $parameters, $object, $action, false, $hookmanager);
+				if ($result < 0) {
+					$errmsg = $mailobject->error;
+					setEventMessages($langs->trans($mailobject->error), $mailobject->errors, 'errors');
+				} elseif ($result > 0) {
+					setEventMessages($langs->trans("EmailSentToMember", $object->email), null, 'mesgs');
 				}
 			} else {
 				setEventMessages($langs->trans("NoEmailSentToMember"), null, 'mesgs');

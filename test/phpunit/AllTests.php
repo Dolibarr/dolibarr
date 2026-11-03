@@ -311,6 +311,8 @@ class AllTests
 		$suite->addTestSuite('ContactTest');
 		require_once dirname(__FILE__).'/AdherentTest.php';
 		$suite->addTestSuite('AdherentTest');
+		require_once dirname(__FILE__).'/AdherentSubscriptionOptionsTest.php';
+		$suite->addTestSuite('AdherentSubscriptionOptionsTest');
 
 		require_once dirname(__FILE__).'/ProductTest.php';
 		$suite->addTestSuite('ProductTest');

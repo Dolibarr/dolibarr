@@ -43,6 +43,7 @@ require '../main.inc.php';
  */
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/lib/subscription_options.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/phone.lib.php';
@@ -270,6 +271,111 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
+	if ($massaction == 'CreateSubscriptionWithOptions' || $action == 'confirm_subscription_options') {
+		if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !Adherent::canCreateSubscriptionWithOptions($user) || GETPOSTISSET('other_linked_objects')) {
+			accessforbidden();
+		}
+		$createinvoice = true;
+		$sendmail = (bool) getDolGlobalInt('ADHERENT_DEFAULT_SENDINFOBYMAIL');
+		$autocreatethirdparty = false;
+		$subscriptioncommon = dol_now();
+		$subscriptiondescription = $langs->transnoentities('Subscription').', {Member type}, {Start date} - {End date}';
+		$subscriptioninputs = array();
+		$previousrows = array();
+		$needsreview = true;
+		$cancelpreview = false;
+		if ($action == 'confirm_subscription_options') {
+			$subscriptionOptionsToken = GETPOST('subscriptionoptionstoken', 'aZ09', 2);
+			if (!is_string($subscriptionOptionsToken) || !preg_match('/^[a-f0-9]{32}$/D', $subscriptionOptionsToken)) {
+				accessforbidden($langs->trans('SubscriptionBulkExpired'));
+			}
+			$batch = isset($_SESSION['subscription_options'][$subscriptionOptionsToken]) ? $_SESSION['subscription_options'][$subscriptionOptionsToken] : null;
+			if (!$batch || (int) $batch['owner'] !== (int) $user->id || (int) $batch['entity'] !== (int) $conf->entity || $batch['created'] < dol_now() - 3600 || !isset($batch['rows'])) {
+				accessforbidden($langs->trans('SubscriptionBulkExpired'));
+			}
+			$toselect = $batch['ids'];
+			$previousrows = $batch['rows'];
+			$subscriptiondescription = GETPOSTISSET('subscriptiondescription') ? GETPOST('subscriptiondescription', 'none') : (isset($batch['descriptiontemplate']) ? $batch['descriptiontemplate'] : $subscriptiondescription);
+			if (!is_string($subscriptiondescription)) {
+				accessforbidden();
+			}
+			$createinvoice = GETPOST('subscriptioninvoice', 'alpha') === 'on';
+			$sendmail = GETPOST('subscriptionmail', 'alpha') === 'on';
+			$autocreatethirdparty = $createinvoice && GETPOST('subscriptionautothirdparty', 'alpha') === 'on';
+			$subscriptioncommon = subscriptionOptionsReadDate('subcommon');
+			$recalculate = GETPOSTINT('recalculatesubscription');
+			$applycommon = GETPOSTISSET('applysubscriptiondate');
+			$applycalendar = GETPOSTISSET('applysubscriptioncalendar');
+			$refresh = GETPOSTISSET('refreshsubscriptions');
+			$cancelpreview = $confirm !== 'yes' && !$applycommon && !$applycalendar && !$refresh && !$recalculate;
+			$needsreview = !isset($batch['descriptiontemplate']) || $batch['descriptiontemplate'] !== $subscriptiondescription || $applycommon || $applycalendar || $refresh || $recalculate || $batch['options'] !== array($createinvoice, $sendmail, $autocreatethirdparty);
+			foreach ($toselect as $memberid) {
+				$subscriptioninputs[$memberid] = subscriptionOptionsPeriodInput($previousrows[$memberid], subscriptionOptionsReadDate('substart'.$memberid), subscriptionOptionsReadDate('subend'.$memberid), $recalculate === (int) $memberid, $applycommon ? $subscriptioncommon : null, $applycalendar);
+			}
+			unset($_SESSION['subscription_options'][$subscriptionOptionsToken]); // Each form can be consumed once.
+		}
+		if ($cancelpreview) {
+			$massaction = '';
+			$action = '';
+		} elseif (!$toselect || count($toselect) > getDolGlobalInt('MAIN_LIMIT_FOR_MASS_ACTIONS', 1000) || min($toselect) <= 0) {
+			setEventMessages($langs->trans('SubscriptionBulkSelectionInvalid'), null, 'errors');
+			$massaction = '';
+			$action = '';
+		} else {
+			$toselect = array_values(array_unique($toselect));
+			$subscriptionrows = array();
+			foreach ($toselect as $memberid) {
+				$member = new Adherent($db);
+				$member->id = (int) $memberid;
+				$input = isset($subscriptioninputs[$memberid]) ? $subscriptioninputs[$memberid] : array('start' => null, 'end' => null, 'manualend' => false);
+				$row = $member->previewSubscriptionWithOptions($user, $input['start'], $createinvoice, $sendmail, $input['end'], $autocreatethirdparty, $subscriptiondescription);
+				$row['manualend'] = $input['manualend'];
+				$subscriptionrows[$memberid] = $row;
+				if (!isset($previousrows[$memberid]) || $previousrows[$memberid]['fingerprint'] !== $row['fingerprint'] || $previousrows[$memberid]['start'] !== $row['start'] || $previousrows[$memberid]['end'] !== $row['end']) {
+					$needsreview = true;
+				}
+			}
+			if ($action == 'confirm_subscription_options' && $confirm == 'yes' && !$needsreview) {
+				$counts = array('subscription' => 0, 'invoice' => 0, 'sent' => 0);
+				foreach ($subscriptionrows as $memberid => $row) {
+					if ($row['errors']) {
+						foreach ($row['errors'] as $message) {
+							setEventMessages($langs->trans('SubscriptionBulkMemberMessage', (int) $memberid, $langs->trans($message)), null, 'errors');
+						}
+						continue;
+					}
+					$member = new Adherent($db);
+					$member->id = (int) $memberid;
+					$outcome = $member->createSubscriptionWithOptions($user, $row['start'], $createinvoice, $sendmail, $row['end'], $autocreatethirdparty, $row['fingerprint'], $subscriptiondescription, $row['overlaps']);
+					foreach ($counts as $key => $count) {
+						$counts[$key] += $outcome[$key] ? 1 : 0;
+					}
+					foreach (array('error' => 'errors', 'warning' => 'warnings') as $key => $severity) {
+						if ($outcome[$key]) {
+							setEventMessages($langs->trans('SubscriptionBulkMemberMessage', (int) $memberid, $langs->trans($outcome[$key])), null, $severity);
+						}
+					}
+				}
+				$resultnotice = subscriptionOptionsStoreResultNotice($counts, $user->id, $conf->entity);
+				header('Location: '.DOL_URL_ROOT.'/adherents/list.php?subscriptionresult='.$resultnotice);
+				exit;
+			}
+			if ($previousrows) {
+				setEventMessages($langs->trans('SubscriptionBulkPreviewUpdated'), null, 'warnings');
+			}
+			$subscriptionOptionsToken = bin2hex(random_bytes(16));
+			if (!isset($_SESSION['subscription_options'])) {
+				$_SESSION['subscription_options'] = array();
+			}
+			if (count($_SESSION['subscription_options']) >= 5) {
+				array_shift($_SESSION['subscription_options']);
+			}
+			$_SESSION['subscription_options'][$subscriptionOptionsToken] = array('ids' => $toselect, 'owner' => $user->id, 'entity' => $conf->entity, 'created' => dol_now(), 'options' => array($createinvoice, $sendmail, $autocreatethirdparty), 'rows' => $subscriptionrows, 'descriptiontemplate' => $subscriptiondescription);
+			$massaction = 'CreateSubscriptionWithOptions';
+			$action = '';
+		}
+	}
+
 	// Selection of new fields
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
@@ -714,6 +820,11 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-member page-list bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
 
+$subscriptionresult = subscriptionOptionsTakeResultNotice(GETPOST('subscriptionresult', 'alphanohtml'), $user->id, $conf->entity);
+if ($subscriptionresult !== null) {
+	print subscriptionOptionsRenderResultNotice($subscriptionresult);
+}
+
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 
@@ -878,6 +989,9 @@ if ($user->hasRight('adherent', 'creer') && $user->hasRight('user', 'user', 'cre
 if ($user->hasRight('adherent', 'cotisation', 'creer')) {
 	$arrayofmassactions['createsubscription'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("CreateSubscription");
 }
+if (Adherent::canCreateSubscriptionWithOptions($user)) {
+	$arrayofmassactions['CreateSubscriptionWithOptions'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans('CreateSubscriptionWithOptions');
+}
 if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
 	$arrayofmassactions = array();
 }
@@ -914,6 +1028,56 @@ $topicmail = "Information";
 $modelmail = "member";
 $objecttmp = new Adherent($db);
 $trackid = 'mem'.$object->id;
+if ($massaction == 'CreateSubscriptionWithOptions' && !empty($subscriptionOptionsToken)) {
+	$formquestion = array(
+		array('type' => 'hidden', 'name' => 'subscriptionoptionstoken', 'value' => $subscriptionOptionsToken),
+		array('type' => 'other', 'label' => $langs->trans('SubscriptionBulkCommonStart'), 'value' => $form->selectDate($subscriptioncommon ?: -1, 'subcommon', 0, 0, 1, '', 1, 1).'<button type="submit" class="button" name="applysubscriptiondate" value="1">'.dol_escape_htmltag($langs->trans('SubscriptionBulkApplyCommon')).'</button>'),
+		array('type' => 'checkbox', 'name' => 'subscriptioninvoice', 'label' => $langs->trans('SubscriptionBulkInvoice'), 'value' => $createinvoice),
+		array('type' => 'checkbox', 'name' => 'subscriptionmail', 'label' => $langs->trans('SendAcknowledgementByMail'), 'value' => $sendmail),
+	);
+	$thirdpartyoption = array('type' => 'checkbox', 'name' => 'subscriptionautothirdparty', 'label' => $langs->trans('SubscriptionBulkAutoThirdParty'), 'value' => $autocreatethirdparty);
+	if (!$createinvoice) {
+		$thirdpartyoption['disabled'] = true;
+	}
+	$formquestion[] = $thirdpartyoption;
+	$formquestion[] = array('type' => 'other', 'label' => '<label for="subscriptiondescription">'.$langs->trans('SubscriptionBulkDescriptionLabel').'</label>', 'value' => '<input type="text" class="flat" style="width:100%;max-width:100%;box-sizing:border-box" id="subscriptiondescription" name="subscriptiondescription" maxlength="1024" value="'.dol_escape_htmltag($subscriptiondescription).'"><br><span class="opacitymedium">'.dol_escape_htmltag($langs->transnoentities('SubscriptionBulkDescriptionHelp')).'</span>');
+	$formquestion[] = array('type' => 'other', 'value' => '<button type="submit" class="button" name="refreshsubscriptions" value="1">'.dol_escape_htmltag($langs->trans('SubscriptionBulkRefresh')).'</button>');
+	$formquestion[] = array('type' => 'onecolumn', 'value' => subscriptionOptionsRenderPreview($form, $subscriptionrows));
+	print $form->formconfirm($_SERVER['PHP_SELF'], $langs->trans('CreateSubscriptionWithOptions'), $langs->trans('SubscriptionBulkConfirm', count($toselect)), 'confirm_subscription_options', $formquestion, '', 0, 250, 600, 1);
+	print '<script nonce="'.getNonce().'">
+		(function () {
+			const invoice = document.getElementById("subscriptioninvoice");
+			const thirdparty = document.getElementById("subscriptionautothirdparty");
+			invoice.addEventListener("change", function () {
+				thirdparty.disabled = !invoice.checked;
+				if (!invoice.checked) thirdparty.checked = false;
+			});
+			if (typeof jQuery === "undefined") return;
+			const form = invoice.form;
+			let loading = false;
+			jQuery(form).on("submit.subscriptionBulk", function (event) {
+				const submitter = event.originalEvent ? event.originalEvent.submitter : event.submitter;
+				// formconfirm() triggers jQuery form.submit() after setting
+				// formconfirm-submitting; this synthetic event has no native submitter.
+				if (submitter ? !submitter.classList.contains("confirmvalidatebutton") : !jQuery(form).data("formconfirm-submitting")) return;
+				if (!form.querySelector("input[name=action][value=confirm_subscription_options]") || form.elements.namedItem("confirm").value !== "yes") return;
+				if (!form.checkValidity() || typeof dolBlockUI !== "function") return;
+				// Let other submit handlers cancel before displaying the existing core overlay.
+				setTimeout(function () {
+					if (event.isDefaultPrevented()) return;
+					loading = true;
+					dolBlockUI(\''.dol_escape_js($langs->transnoentities("InProgress")).'\');
+				}, 0);
+			});
+			window.addEventListener("pageshow", function (event) {
+				if (event.persisted && loading && typeof dolUnblockUI === "function") {
+					dolUnblockUI();
+					loading = false;
+				}
+			});
+		})();
+	</script>';
+}
 if ($massaction == 'createsubscription') {
 	$tmpmember = new Adherent($db);
 	$adht = new AdherentType($db);

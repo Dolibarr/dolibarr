@@ -522,6 +522,129 @@ class Adherent extends CommonObject
 
 
 	/**
+	 * Apply the subscription sendMail hook before the standard confirmation delivery.
+	 * @param AdherentType $type Member type
+	 * @param array<string,mixed> $parameters Legacy subscription hook parameters
+	 * @param Adherent $member Member reference, replaceable by hooks
+	 * @param string $action Action reference, modifiable by hooks
+	 * @param bool $requireInvoicePdf Require invoice PDF for standard batch delivery
+	 * @param HookManager|null $mailhooks Existing single-page manager, null for a scoped batch manager
+	 * @return int Positive for standard delivery, zero for replacement, negative for failure
+	 */
+	public function sendSubscriptionConfirmationWithHooks(AdherentType $type, $parameters, &$member, &$action, $requireInvoicePdf = false, $mailhooks = null)
+	{
+		global $hookmanager;
+		require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+		$previoushooks = $hookmanager;
+		try {
+			if ($mailhooks === null) {
+				$mailhooks = new HookManager($this->db);
+				$hookmanager = $mailhooks;
+				$mailhooks->initHooks(array('subscription'));
+			}
+			$reshook = $mailhooks->executeHooks('sendMail', $parameters, $member, $action);
+			if ($reshook < 0) {
+				$this->error = 'SubscriptionBulkMailHookFailed';
+				$this->errors = array_merge(array($mailhooks->error), $mailhooks->errors);
+				return -1;
+			}
+			if ($reshook > 0) {
+				$this->error = 'SubscriptionBulkMailHandled';
+				return 0; // A replacement does not prove that any email was delivered.
+			}
+			$result = $member->sendSubscriptionConfirmation($type, $requireInvoicePdf);
+			if ($result <= 0) {
+				$this->error = $member->error;
+				$this->errors = $member->errors;
+			}
+			return $result;
+		} finally {
+			$hookmanager = $previoushooks;
+		}
+	}
+
+
+	/**
+	 * Send the configured subscription confirmation, using the member type text.
+	 *
+	 * @param AdherentType $type Member type
+	 * @param bool $requireInvoicePdf Require the current invoice PDF for a batch delivery
+	 * @return int Positive on success, negative on failure
+	 */
+	public function sendSubscriptionConfirmation(AdherentType $type, $requireInvoicePdf = false)
+	{
+		global $conf, $user, $mysoc;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		$requiredfile = '';
+		if ($requireInvoicePdf) {
+			if (!is_object($this->invoice) || empty($this->invoice->ref) || empty($conf->facture->multidir_output[$this->invoice->entity])) {
+				$this->error = 'SubscriptionBulkPdfMissing';
+				return -1;
+			}
+			$root = $conf->facture->multidir_output[$this->invoice->entity];
+			$directory = $root.'/'.dol_sanitizeFileName($this->invoice->ref);
+			$requiredfile = $directory.'/'.dol_sanitizeFileName($this->invoice->ref).'.pdf';
+			if (!dol_is_file($requiredfile) || !is_readable($requiredfile) || dirname((string) realpath($requiredfile)) !== realpath($directory) || dirname((string) realpath($directory)) !== realpath($root)) {
+				$this->error = 'SubscriptionBulkPdfMissing';
+				return -1;
+			}
+		}
+		$subject = '';
+		$msg = '';
+
+		// Send subscription email
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+		$formmail = new FormMail($this->db);
+		// Set output language
+		$outputlangs = new Translate('', $conf);
+		$outputlangs->setDefaultLang(!empty($this->default_lang) ? $this->default_lang : (empty($this->thirdparty->default_lang) ? $mysoc->default_lang : $this->thirdparty->default_lang));
+		// Load traductions files required by page
+		$outputlangs->loadLangs(array("main", "members"));
+
+		// Get email content from template
+		$arraydefaultmessage = null;
+		$labeltouse = getDolGlobalString('ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION');
+
+		if (!empty($labeltouse)) {
+			$arraydefaultmessage = $formmail->getEMailTemplate($this->db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+		}
+
+		if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+			$subject = (string) $arraydefaultmessage->topic;
+			$msg     = (string) $arraydefaultmessage->content;
+		}
+
+		$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $this);
+		complete_substitutions_array($substitutionarray, $outputlangs, $this);
+		$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+		$texttosend = make_substitutions(dol_concatdesc($msg, $type->getMailOnSubscription()), $substitutionarray, $outputlangs);
+
+		// Attach a file ?
+		$file = '';
+		$listofpaths = array();
+		$listofnames = array();
+		$listofmimes = array();
+		if (is_object($this->invoice) && ($requireInvoicePdf || !is_object($arraydefaultmessage) || intval($arraydefaultmessage->joinfiles))) {
+			$invoicediroutput = $conf->facture->dir_output;
+			if ($requireInvoicePdf) {
+				$file = $requiredfile;
+			} else {
+				$fileparams = dol_most_recent_file($invoicediroutput.'/'.$this->invoice->ref, preg_quote($this->invoice->ref, '/').'[^\-]+');
+				$file = $fileparams['fullname'];
+			}
+
+			$listofpaths = array($file);
+			$listofnames = array(dol_basename($file));
+			$listofmimes = array(dol_mimetype($file));
+		}
+
+		$moreinheader = 'X-Dolibarr-Info: send_an_email by adherents/subscription.php'."\r\n";
+
+		return $this->sendEmail($texttosend, $subjecttosend, $listofpaths, $listofmimes, $listofnames, "", "", 0, -1, '', $moreinheader);
+	}
+
+
+	/**
 	 * Make substitution of tags into text with value of current object.
 	 *
 	 * @param	string	$text       Text to make substitution to
@@ -1918,6 +2041,430 @@ class Adherent extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
+	}
+
+
+	/**
+	 * Check permissions for the subscription batch and its optional actions.
+	 * @param User $user User
+	 * @param bool $invoice Create and validate an invoice
+	 * @param bool $sendmail Send a confirmation
+	 * @return bool
+	 */
+	public static function canCreateSubscriptionWithOptions($user, $invoice = false, $sendmail = false)
+	{
+		if (!empty($user->socid) || !isModEnabled('member') || !$user->hasRight('adherent', 'lire') || !$user->hasRight('adherent', 'cotisation', 'creer')) {
+			return false;
+		}
+		if ($invoice && (!isModEnabled('invoice') || !isModEnabled('societe') || !$user->hasRight('facture', 'lire') || !$user->hasRight('facture', 'creer'))) {
+			return false;
+		}
+		if ($invoice && getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && (!$user->hasRight('facture', 'invoice_advance', 'validate') || ($sendmail && !$user->hasRight('facture', 'invoice_advance', 'send')))) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Resolve an individual amount; an explicit zero type amount is valid and never missing.
+	 * @param int|float|string|null $configured Type amount
+	 * @return float Non-negative gross amount
+	 */
+	public function getSubscriptionAmountForBatch($configured)
+	{
+		$amount = $configured;
+		if ($amount === null || $amount === '') {
+			$sql = 'SELECT subscription FROM '.$this->db->prefix().'subscription WHERE fk_adherent = '.((int) $this->id);
+			$sql .= ' ORDER BY datec DESC, rowid DESC'.$this->db->plimit(1);
+			$res = $this->db->query($sql);
+			if (!$res) {
+				throw new RuntimeException('SubscriptionBulkDatabaseError');
+			}
+			$row = $this->db->fetch_object($res);
+			$amount = $row ? $row->subscription : null;
+			$this->db->free($res);
+		}
+		if (!is_numeric($amount) || !is_finite((float) $amount) || (float) $amount < 0) {
+			throw new RuntimeException('SubscriptionBulkAmountMissing');
+		}
+		return (float) $amount;
+	}
+
+	/**
+	 * Shift calendar components in UTC, then return midnight in the form's timezone.
+	 * @param int $date Date in the same timezone convention as GETPOSTDATE/selectDate
+	 * @param int $quantity Calendar duration
+	 * @param string $unit Duration unit
+	 * @return int Shifted date
+	 */
+	public static function subscriptionCalendarShift($date, $quantity, $unit)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+		$calendar = dol_mktime(0, 0, 0, (int) dol_print_date($date, '%m'), (int) dol_print_date($date, '%d'), (int) dol_print_date($date, '%Y'), 'gmt');
+		$shifted = dol_time_plus_duree($calendar, $quantity, $unit, 0, 'gmt');
+		return dol_mktime(0, 0, 0, (int) dol_print_date($shifted, '%m', 'gmt'), (int) dol_print_date($shifted, '%d', 'gmt'), (int) dol_print_date($shifted, '%Y', 'gmt'));
+	}
+
+	/**
+	 * Explicit calendar alignment; month takes precedence as in subscription.php.
+	 * @param int $start Individual start date
+	 * @return int|null Calendar end, null for invalid start or no configured rule
+	 */
+	public static function subscriptionCalendarEndForBatch($start)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+		if ($start <= 0 || (!getDolGlobalInt('MEMBER_SUBSCRIPTION_SUGGEST_END_OF_MONTH') && !getDolGlobalInt('MEMBER_SUBSCRIPTION_SUGGEST_END_OF_YEAR'))) {
+			return null;
+		}
+		$year = (int) dol_print_date($start, '%Y');
+		$month = getDolGlobalInt('MEMBER_SUBSCRIPTION_SUGGEST_END_OF_MONTH') ? (int) dol_print_date($start, '%m') : 12;
+		$last = dol_get_last_day($year, $month, 'gmt');
+		return dol_mktime(0, 0, 0, $month, (int) dol_print_date($last, '%d', 'gmt'), $year);
+	}
+
+	/**
+	 * Use the member type duration without truncating it to calendar suggestions.
+	 * @param int $date Start date
+	 * @param AdherentType $type Member type
+	 * @return int End date
+	 */
+	public static function subscriptionEndDateForBatch($date, $type)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+		if ($date <= 0) {
+			throw new RuntimeException('SubscriptionBulkInvalidDate');
+		}
+		$delay = !empty($type->duration_value) ? $type->duration_value : 1;
+		$unit = !empty($type->duration_unit) ? $type->duration_unit : 'y';
+		if ($delay <= 0 || !in_array($unit, array('s', 'mn', 'i', 'h', 'd', 'w', 'm', 'y'), true)) {
+			throw new RuntimeException('SubscriptionBulkInvalidDate');
+		}
+		// Explicit business exception for 1d; other units keep their duration rule.
+		$end = ($unit === 'd' && (float) $delay === 1.0) ? self::subscriptionCalendarShift($date, 1, 'd') : self::subscriptionCalendarShift(self::subscriptionCalendarShift($date, $delay, $unit), -1, 'd');
+		if ($end <= self::subscriptionCalendarShift($date, 0, 'd')) {
+			throw new RuntimeException('SubscriptionBulkEndNotAfterStart');
+		}
+		return $end;
+	}
+
+	/**
+	 * Suggest a start from configuration, previous membership, validation, or today.
+	 * @param int $now Reference date for configured offsets
+	 * @return int Suggested start at midnight
+	 */
+	public function subscriptionStartDateForBatch($now)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+		$date = $this->datefin > 0 ? self::subscriptionCalendarShift($this->datefin, 1, 'd') : ($this->datevalid > 0 ? $this->datevalid : $now);
+		$offset = getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER');
+		if ($offset) {
+			if (!preg_match('/^([+-]?\d+)([dwmyY])$/D', $offset, $parts)) {
+				throw new RuntimeException('SubscriptionBulkInvalidDate');
+			}
+			$date = self::subscriptionCalendarShift($now, (int) $parts[1], dol_strtolower($parts[2]));
+		}
+		$correction = getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF');
+		if ($correction === 'm') {
+			$date = dol_get_first_day((int) dol_print_date($date, '%Y'), (int) dol_print_date($date, '%m'), 'auto');
+		} elseif ($correction === 'Y') {
+			$date = dol_get_first_day((int) dol_print_date($date, '%Y'), 1, 'auto');
+		} elseif ($correction === '3m') {
+			// Match the existing subscription form for members with a previous end.
+			$date = self::subscriptionCalendarShift($this->datefin > 0 ? $this->datefin : $date, -3, 'm');
+			$date = dol_get_first_day((int) dol_print_date($date, '%Y'), (int) dol_print_date($date, '%m'), 'auto');
+		}
+		return dol_mktime(0, 0, 0, (int) dol_print_date($date, '%m'), (int) dol_print_date($date, '%d'), (int) dol_print_date($date, '%Y'));
+	}
+
+	/**
+	 * Load and authorize the member/type before processing one batch entry.
+	 * @param User $user User
+	 * @return AdherentType
+	 */
+	protected function subscriptionTypeForBatch($user)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+		if ($this->fetch($this->id) <= 0 || !in_array((int) $this->entity, array_map('intval', explode(',', getEntity('adherent'))), true)
+			|| restrictedArea($user, 'adherent', $this->id, '', '', 'socid', 'rowid', 0, 1) <= 0) {
+			throw new RuntimeException('NotEnoughPermissions');
+		}
+		$res = $this->db->query('SELECT rowid FROM '.$this->db->prefix().'adherent_type WHERE rowid = '.((int) $this->typeid).' AND entity IN ('.getEntity('adherent_type').')');
+		if (!$res || !$this->db->fetch_object($res)) {
+			throw new RuntimeException('NotEnoughPermissions');
+		}
+		$type = new AdherentType($this->db);
+		if ($type->fetch($this->typeid) <= 0
+			|| $this->status != self::STATUS_VALIDATED || $type->status != 1 || !$type->subscription) {
+			throw new RuntimeException('SubscriptionBulkIneligible');
+		}
+		$allowedstatuses = getDolGlobalString('MEMBER_SUBSCRIPTION_ALLOWED_FOR_STATUS');
+		// The core default includes validated members; an explicit list may exclude them.
+		if ($allowedstatuses !== '' && !in_array((int) $this->status, array_map('intval', explode(',', $allowedstatuses)), true)) {
+			throw new RuntimeException('SubscriptionBulkIneligible');
+		}
+		if (getDolGlobalString('MEMBER_NEWFORM_DOLIBARRTURNOVER') && $this->morphy === 'mor') {
+			throw new RuntimeException('SubscriptionBulkSpecialAmount');
+		}
+		return $type;
+	}
+
+	/**
+	 * Reject duplicate start days and return existing inclusive overlaps for review.
+	 * @param int $start Start date
+	 * @param int $end End date
+	 * @param bool $lock Use current locking reads during creation
+	 * @return array<int,array{id:int,start:?string,end:?string}> Overlap snapshot, empty if none
+	 */
+	public function checkSubscriptionPeriodForBatch($start, $end, $lock = false)
+	{
+		if (!is_numeric($start) || !is_numeric($end) || $start <= 0 || $end <= 0) {
+			throw new RuntimeException('SubscriptionBulkInvalidDate');
+		}
+		$daystart = self::subscriptionCalendarShift($start, 0, 'd');
+		if (self::subscriptionCalendarShift($end, 0, 'd') <= $daystart) {
+			throw new RuntimeException('SubscriptionBulkEndNotAfterStart');
+		}
+		$nextstart = self::subscriptionCalendarShift($start, 1, 'd');
+		$nextend = self::subscriptionCalendarShift($end, 1, 'd');
+		$sql = 'SELECT rowid FROM '.$this->db->prefix().'subscription WHERE fk_adherent = '.((int) $this->id);
+		$sql .= " AND dateadh >= '".$this->db->idate($daystart)."' AND dateadh < '".$this->db->idate($nextstart)."'";
+		$sql .= $lock ? ' FOR UPDATE' : $this->db->plimit(1);
+		$res = $this->db->query($sql);
+		if (!$res) {
+			throw new RuntimeException('SubscriptionBulkDatabaseError');
+		}
+		$duplicate = $this->db->fetch_object($res);
+		$this->db->free($res);
+		if ($duplicate) {
+			throw new RuntimeException('SubscriptionBulkDuplicateStart');
+		}
+		$sql = 'SELECT rowid, dateadh, datef FROM '.$this->db->prefix().'subscription WHERE fk_adherent = '.((int) $this->id);
+		$sql .= " AND (dateadh IS NULL OR dateadh < '".$this->db->idate($nextend)."')";
+		$sql .= " AND (datef IS NULL OR datef >= '".$this->db->idate($daystart)."') ORDER BY rowid";
+		$sql .= $lock ? ' FOR UPDATE' : '';
+		$res = $this->db->query($sql);
+		if (!$res) {
+			throw new RuntimeException('SubscriptionBulkDatabaseError');
+		}
+		$overlaps = array();
+		while ($existing = $this->db->fetch_object($res)) {
+			$overlaps[] = array('id' => (int) $existing->rowid, 'start' => $existing->dateadh, 'end' => $existing->datef);
+		}
+		$this->db->free($res);
+		return $overlaps;
+	}
+
+	/**
+	 * Resolve the linked third party; return true only for a permitted planned creation.
+	 * @param User $user User
+	 * @param bool $invoice Invoice option
+	 * @param bool $autocreate Explicit creation option
+	 * @return bool True if a third party must be created by the core complementary action
+	 */
+	protected function subscriptionThirdPartyForBatch($user, $invoice, $autocreate)
+	{
+		global $conf;
+		$this->thirdparty = null;
+		if ($this->socid > 0) {
+			if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && $this->fetch_thirdparty() > 0
+				&& in_array((int) $this->thirdparty->entity, array_map('intval', explode(',', getEntity('societe'))), true)
+				&& checkUserAccessToObject($user, array('societe'), $this->thirdparty)) {
+				return false;
+			}
+			$this->thirdparty = null;
+			if ($invoice) {
+				throw new RuntimeException('SubscriptionBulkThirdPartyMissing');
+			}
+		} elseif ($invoice) {
+			if (!$autocreate) {
+				throw new RuntimeException('SubscriptionBulkThirdPartyMissing');
+			}
+			if (!isModEnabled('societe') || !$user->hasRight('societe', 'creer') || (int) $this->entity !== (int) $conf->entity) {
+				throw new RuntimeException('NotEnoughPermissions');
+			}
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Read and validate planned values without creating records or sending mail.
+	 * @param User $user User
+	 * @param int|null $date Start date, null for an individual suggestion
+	 * @param bool $invoice Invoice option
+	 * @param bool $sendmail Mail option
+	 * @param int|null $end Confirmed end, null for a duration-based suggestion
+	 * @param bool $autocreate Explicit third-party creation option
+	 * @param string|null $descriptiontemplate Plain text template, null for the legacy label
+	 * @param bool $lockperiod Lock existing periods inside the creation transaction
+	 * @return array<string,mixed> Display values, errors, warnings and server-side snapshot
+	 */
+	public function previewSubscriptionWithOptions($user, $date, $invoice, $sendmail, $end = null, $autocreate = false, $descriptiontemplate = null, $lockperiod = false)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/adherents/lib/subscription_options.lib.php';
+		global $langs;
+		$row = array('member' => '', 'type' => '', 'quantity' => 0, 'unit' => '', 'amount' => null, 'start' => $date, 'end' => $end, 'thirdparty' => '', 'description' => '', 'overlaps' => array(), 'notices' => array(), 'errors' => array(), 'warnings' => array(), 'status' => 'error', 'autocreate' => false, 'fingerprint' => '');
+		if (!self::canCreateSubscriptionWithOptions($user)) {
+			$row['errors'][] = 'NotEnoughPermissions';
+			$row['notices'] = $row['errors'];
+			return $row;
+		}
+		try {
+			$type = $this->subscriptionTypeForBatch($user);
+			$row['member'] = $this->getFullName($langs);
+			$row['type'] = $type->label;
+			$row['quantity'] = !empty($type->duration_value) ? $type->duration_value : 1;
+			$row['unit'] = !empty($type->duration_unit) ? $type->duration_unit : 'y';
+		} catch (Throwable $e) {
+			$row['errors'][] = in_array($e->getMessage(), array('NotEnoughPermissions', 'SubscriptionBulkIneligible', 'SubscriptionBulkSpecialAmount'), true) ? $e->getMessage() : 'SubscriptionBulkDatabaseError';
+			$row['notices'] = $row['errors'];
+			return $row;
+		}
+		try {
+			$row['amount'] = $this->getSubscriptionAmountForBatch($type->amount);
+		} catch (Throwable $e) {
+			$row['errors'][] = $e->getMessage() === 'SubscriptionBulkAmountMissing' ? $e->getMessage() : 'SubscriptionBulkDatabaseError';
+		}
+		try {
+			$row['start'] = $date === null ? $this->subscriptionStartDateForBatch(dol_now()) : $date;
+			$row['end'] = $end === null ? self::subscriptionEndDateForBatch($row['start'], $type) : $end;
+			$row['overlaps'] = $this->checkSubscriptionPeriodForBatch($row['start'], $row['end'], $lockperiod);
+			if ($row['overlaps']) {
+				$row['warnings'][] = 'SubscriptionBulkOverlapWarning';
+			}
+		} catch (Throwable $e) {
+			$row['errors'][] = in_array($e->getMessage(), array('SubscriptionBulkDuplicateStart', 'SubscriptionBulkDatabaseError', 'SubscriptionBulkEndNotAfterStart'), true) ? $e->getMessage() : 'SubscriptionBulkInvalidDate';
+		}
+		try {
+			$row['description'] = subscriptionOptionsDescription($descriptiontemplate === null ? $langs->transnoentities('Subscription') : $descriptiontemplate, $row['type'], $row['start'], $row['end']);
+		} catch (InvalidArgumentException $e) {
+			$row['errors'][] = 'SubscriptionBulkDescriptionInvalid';
+		}
+		try {
+			$row['autocreate'] = $this->subscriptionThirdPartyForBatch($user, $invoice, $autocreate);
+			if ($row['autocreate']) {
+				$row['thirdparty'] = $this->morphy === 'mor' ? $this->company : $row['member'];
+				$row['warnings'][] = 'SubscriptionBulkThirdPartyPlanned';
+			} elseif (is_object($this->thirdparty)) {
+				$row['thirdparty'] = $this->thirdparty->name;
+			}
+		} catch (Throwable $e) {
+			$row['errors'][] = in_array($e->getMessage(), array('NotEnoughPermissions', 'SubscriptionBulkThirdPartyMissing'), true) ? $e->getMessage() : 'SubscriptionBulkDatabaseError';
+		}
+		if (!self::canCreateSubscriptionWithOptions($user, $invoice, $sendmail)) {
+			$row['errors'][] = 'NotEnoughPermissions';
+		}
+		if ($invoice && isModEnabled('stock') && getDolGlobalInt('STOCK_CALCULATE_ON_BILL')) {
+			$row['errors'][] = 'ErrorMassValidationNotAllowedWhenStockIncreaseOnAction';
+		}
+		if ($sendmail && !isValidEmail($this->email)) {
+			$row['warnings'][] = 'SubscriptionBulkEmailMissing';
+		}
+		if ($sendmail && getDolGlobalInt('MAIN_DISABLE_ALL_MAILS')) {
+			$row['warnings'][] = 'SubscriptionBulkEmailDisabled';
+		}
+		$row['notices'] = array_merge($row['errors'], $row['warnings']);
+		$row['status'] = $row['errors'] ? 'error' : ($row['warnings'] ? 'warning' : 'ready');
+		// Kept in the session only; detects changed amounts, recipients, links and settings.
+		$source = array($this->typeid, $this->socid, $this->entity, $this->email, $this->default_lang, $this->morphy, $this->company, $this->address, $this->zip, $this->town, $this->country_id, $this->phone);
+		foreach (array('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', 'ADHERENT_VAT_FOR_SUBSCRIPTIONS', 'ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION', 'FACTURE_ADDON_PDF') as $setting) {
+			$source[] = getDolGlobalString($setting);
+		}
+		$row['fingerprint'] = hash('sha256', json_encode(array($row, $source, $invoice, $sendmail, $autocreate, $descriptiontemplate)));
+		return $row;
+	}
+
+	/**
+	 * Run core subscription/invoice operations atomically for one member, then mail.
+	 * @param User $user User
+	 * @param int $date Subscription start
+	 * @param bool $invoice Create an invoice
+	 * @param bool $sendmail Send the subscription confirmation
+	 * @param int|null $end Confirmed end date; null only for callers without a preview
+	 * @param bool $autocreate Explicitly permit missing third-party creation
+	 * @param string|null $expected Server-side preview fingerprint
+	 * @param string|null $descriptiontemplate Confirmed plain text template
+	 * @param array<int,array{id:int,start:?string,end:?string}>|null $expectedoverlaps Confirmed overlap snapshot
+	 * @return array{subscription:int,invoice:int,sent:int,error:string,warning:string}
+	 */
+	public function createSubscriptionWithOptions($user, $date, $invoice, $sendmail, $end = null, $autocreate = false, $expected = null, $descriptiontemplate = null, $expectedoverlaps = null)
+	{
+		global $langs;
+		$result = array('subscription' => 0, 'invoice' => 0, 'sent' => 0, 'error' => '', 'warning' => '');
+		if (!self::canCreateSubscriptionWithOptions($user, $invoice, $sendmail)) {
+			$result['error'] = 'NotEnoughPermissions';
+			return $result;
+		}
+		if (!empty($this->db->transaction_opened) || !$this->db->begin()) {
+			$result['error'] = 'SubscriptionBulkDatabaseError';
+			return $result;
+		}
+		try {
+			$res = $this->db->query('SELECT rowid FROM '.$this->db->prefix().'adherent WHERE rowid = '.((int) $this->id).' FOR UPDATE');
+			if (!$res || !$this->db->fetch_object($res)) {
+				throw new RuntimeException('SubscriptionBulkDatabaseError');
+			}
+			$type = $this->subscriptionTypeForBatch($user);
+			$row = $this->previewSubscriptionWithOptions($user, $date, $invoice, $sendmail, $end, $autocreate, $descriptiontemplate, true);
+			if ($row['errors']) {
+				throw new RuntimeException($row['errors'][0]);
+			}
+			if (($row['overlaps'] && $expected === null) || ($expectedoverlaps !== null && $expectedoverlaps !== $row['overlaps'])) {
+				throw new RuntimeException('SubscriptionBulkOverlapChanged');
+			}
+			if ($expected !== null && !hash_equals($expected, $row['fingerprint'])) {
+				throw new RuntimeException('SubscriptionBulkDataChanged');
+			}
+			$amount = $row['amount'];
+			$end = $row['end'];
+			// Existing periods were revalidated with locking reads above.
+			// Core notes and invoice descriptions are HTML-capable fields.
+			$label = dol_escape_htmltag($row['description']);
+			$subscriptionid = $this->subscription($date, $amount, 0, '', $label, '', '', '', $end);
+			if ($subscriptionid <= 0) {
+				throw new RuntimeException('SubscriptionBulkCreateFailed');
+			}
+			if ($this->subscriptionComplementaryActions($subscriptionid, $invoice ? 'invoiceonly' : 'none', 0, $date, 0, '', $label, $amount, '', '', '', $row['autocreate'] ? 1 : 0) < 0) {
+				throw new RuntimeException('SubscriptionBulkInvoiceFailed');
+			}
+			if ($invoice && (!is_object($this->invoice) || $this->invoice->id <= 0)) {
+				throw new RuntimeException('SubscriptionBulkInvoiceFailed');
+			}
+			if (!$this->db->commit()) {
+				throw new RuntimeException('SubscriptionBulkDatabaseError');
+			}
+			$result['subscription'] = $subscriptionid;
+			$result['invoice'] = $invoice ? (int) $this->invoice->id : 0;
+		} catch (Throwable $e) {
+			// A trigger exception may leave nested core transaction levels open.
+			do {
+				$this->db->rollback();
+			} while ($this->db->transaction_opened > 0);
+			$knownerrors = array('NotEnoughPermissions', 'SubscriptionBulkDatabaseError', 'SubscriptionBulkAmountMissing', 'SubscriptionBulkInvalidDate', 'SubscriptionBulkEndNotAfterStart', 'SubscriptionBulkIneligible', 'SubscriptionBulkSpecialAmount', 'SubscriptionBulkThirdPartyMissing', 'ErrorMassValidationNotAllowedWhenStockIncreaseOnAction', 'SubscriptionBulkCreateFailed', 'SubscriptionBulkInvoiceFailed', 'SubscriptionBulkDuplicateStart', 'SubscriptionBulkOverlapChanged', 'SubscriptionBulkDataChanged', 'SubscriptionBulkDescriptionInvalid');
+			$result['error'] = in_array($e->getMessage(), $knownerrors, true) ? $e->getMessage() : 'SubscriptionBulkCreateFailed';
+			return $result;
+		}
+		if ($sendmail) {
+			try {
+				if (!isValidEmail($this->email)) {
+					$result['warning'] = 'SubscriptionBulkEmailMissing';
+				} elseif (getDolGlobalInt('MAIN_DISABLE_ALL_MAILS')) {
+					$result['warning'] = 'SubscriptionBulkEmailDisabled';
+				} else {
+					$parameters = array('datesubscription' => $date, 'amount' => $amount, 'accountid' => 0, 'operation' => '', 'label' => $label, 'num_chq' => '', 'emetteur_nom' => '', 'emetteur_banque' => '', 'datesubend' => $end);
+					$member = $this;
+					$mailaction = 'subscription';
+					if ($this->sendSubscriptionConfirmationWithHooks($type, $parameters, $member, $mailaction, $invoice) > 0) {
+						$result['sent'] = 1;
+					} else {
+						$result['warning'] = in_array($this->error, array('SubscriptionBulkPdfMissing', 'SubscriptionBulkMailHookFailed', 'SubscriptionBulkMailHandled'), true) ? $this->error : 'SubscriptionBulkEmailFailed';
+					}
+				}
+			} catch (Throwable $e) {
+				$result['warning'] = 'SubscriptionBulkEmailFailed';
+			}
+		}
+		return $result;
 	}
 
 
