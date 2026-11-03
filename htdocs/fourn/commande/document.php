@@ -106,6 +106,8 @@ $caneditproject = false;
  */
 
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+$documentTransferSourceType = 'supplier_order';
+include DOL_DOCUMENT_ROOT.'/core/actions_documenttransfer.inc.php';
 
 
 /*
@@ -190,6 +192,7 @@ if ($object->id > 0) {
 	$permtoedit = ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer"));
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_transfer.tpl.php';
 } else {
 	header('Location: index.php');
 	exit;
