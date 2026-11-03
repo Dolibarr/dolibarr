@@ -361,25 +361,25 @@ class AgendaEvents extends DolibarrApi
 		}
 
 		$result = $this->actioncomm->fetch($id);
-		if ($result) {
-			$this->actioncomm->fetch_optionals();
-			$this->actioncomm->fetch_userassigned();
-			$this->actioncomm->oldcopy = clone $this->actioncomm;  // @phan-suppress-current-line PhanTypeMismatchProperty
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching Agenda Event : '.$this->actioncomm->errorsToString());
 		}
+		if (!$result) {
+			throw new RestException(404, 'Agenda Event not found');
+		}
+		$this->actioncomm->fetch_optionals();
+		$this->actioncomm->fetch_userassigned();
+		$this->actioncomm->oldcopy = clone $this->actioncomm;  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'delete') && DolibarrApiAccess::$user->id != $this->actioncomm->userownerid) {
 			throw new RestException(403, "Insufficient rights to delete an Agenda Event of owner id ".$this->actioncomm->userownerid.' Your id is '.DolibarrApiAccess::$user->id);
 		}
 
-		if (!$result) {
-			throw new RestException(404, 'Agenda Event not found');
-		}
-
-		if (!DolibarrApi::_checkAccessToResource('actioncomm', $this->actioncomm->id, 'actioncomm', '', 'fk_soc', 'id')) {
+		if (!DolibarrApi::_checkAccessToResource('agenda', $this->actioncomm->id, 'actioncomm', '', 'fk_soc', 'id')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (!$this->actioncomm->delete(DolibarrApiAccess::$user)) {
+		if ($this->actioncomm->delete(DolibarrApiAccess::$user) <= 0) {
 			throw new RestException(500, 'Error when delete Agenda Event : '.$this->actioncomm->errorsToString());
 		}
 
