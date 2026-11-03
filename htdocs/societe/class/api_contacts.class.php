@@ -337,6 +337,10 @@ class Contacts extends DolibarrApi
 	 * @phpstan-param	?array<string,string>	$request_data
 	 * @return			int						ID of contact
 	 *
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 500
+	 *
 	 * @suppress PhanPluginUnknownArrayMethodParamType  Luracast limitation
 	 */
 	public function post($request_data = null)
@@ -351,10 +355,18 @@ class Contacts extends DolibarrApi
 		if (!isset($request_data['country_id']) && isset($request_data['country_code'])) {
 			$field = strlen($request_data['country_code']) > 2 ? 'code_iso' : 'code';
 			$id = dol_getIdFromCode($this->db, $request_data['country_code'], "c_country", $field, "rowid");
-			if ($id < 0) {
-				throw new RestException(404, 'Country code not found in database: ' . $this->db->lasterror());
+			if (is_numeric($id) && $id < 0) {
+				throw new RestException(500, 'Error when searching country code: ' . $this->db->lasterror());
+			}
+			if (empty($id)) {
+				throw new RestException(404, 'Country code not found in database: ' . $request_data['country_code']);
 			}
 			$request_data['country_id'] = $id;
+		}
+
+		// External user can only create contacts of its own thirdparty, so link the contact to it when socid is not provided
+		if (DolibarrApiAccess::$user->socid > 0 && empty($request_data['socid'])) {
+			$request_data['socid'] = DolibarrApiAccess::$user->socid;
 		}
 
 		foreach ($request_data as $field => $value) {
@@ -385,12 +397,23 @@ class Contacts extends DolibarrApi
 
 			$this->contact->$field = $this->_checkValForAPI($field, $value, $this->contact);
 		}
+
+		$this->db->begin();
+
 		if ($this->contact->create(DolibarrApiAccess::$user) < 0) {
+			$this->db->rollback();
 			throw new RestException(500, "Error creating contact", array_merge(array($this->contact->error), $this->contact->errors));
 		}
 		if (isModEnabled('mailing') && !empty($this->contact->email) && isset($this->contact->no_email)) {
-			$this->contact->setNoEmail($this->contact->no_email);
+			// Add mass emailing flag into table mailing_unsubscribe, contact is not created if this fails
+			if ($this->contact->setNoEmail($this->contact->no_email) < 0) {
+				$this->db->rollback();
+				throw new RestException(500, 'Error when setting no_email of contact: '.$this->contact->errorsToString());
+			}
 		}
+
+		$this->db->commit();
+
 		return $this->contact->id;
 	}
 
