@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2026	Morgan Demoulin			<morgan.demoulin@gmail.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,8 +140,10 @@ class McpAuth
 				$authheader = $server['HTTP_AUTHORIZATION'];
 			} elseif (!empty($server['REDIRECT_HTTP_AUTHORIZATION'])) {
 				$authheader = $server['REDIRECT_HTTP_AUTHORIZATION'];
-			} elseif (function_exists('getallheaders')) {
-				$headers = array_change_key_case(getallheaders(), CASE_LOWER);
+			} else {
+				// Read from the request headers whatever the SAPI: this used to be skipped
+				// entirely when getallheaders() was not defined, leaving the token unread.
+				$headers = array_change_key_case(dolGetRequestHeaders(), CASE_LOWER);
 				$authheader = isset($headers['authorization']) ? $headers['authorization'] : '';
 			}
 			$reg = array();

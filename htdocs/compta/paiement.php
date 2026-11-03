@@ -366,7 +366,7 @@ $useajaxconfirm = (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jm
 $facture = new Facture($db);
 $result = $facture->fetch($facid);
 
-if ($result >= 0) {
+if ($result > 0) {
 	$facture->fetch_thirdparty();
 
 	$title = '';
@@ -1114,6 +1114,8 @@ if ($result >= 0) {
 	print $formconfirm;
 
 	print "</form>\n";
+} else {
+	print '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
 }
 
 

@@ -336,15 +336,20 @@ class BookKeeping extends CommonObject
 		// First check if line not yet already in bookkeeping.
 		// Note that we must include 'doc_type - fk_doc - numero_compte - label - subledger_account (if not empty)' to be sure to have unicity of line (because we may have several lines
 		// with same doc_type, fk_doc, numero_compte for 1 invoice line when using localtaxes with same account)
-		// WARNING: This is not reliable, label may have been modified. This is just a small protection.
-		// The page that make transfer make the test on couple (doc_type - fk_doc) only.
+		// WARNING: This is not reliable: label may have been modified so we can think this is not a duplicate on (bank.rowid=fk_doc)/type
+		// when it is.
+		// Note also that for some cases, we accept voluntarly duplicates, for example treasury transfer on one payment done on 2 invoices, we record 2 parts with same (bank.rowid=fk_doc)/type.
+		//
+		// The pages that make transfer (for debit/credit accounting) make the test on couple (doc_type - fk_doc) by doing:
+		// "WHERE b.rowid IN (SELECT fk_doc FROM ".$db->prefix()."accounting_bookkeeping as ab  WHERE ab.doc_type='customer_invoice|supplier_invoice|bank')"
+
 		$sql = "SELECT count(*) as nb";
 		$sql .= " FROM ".$this->db->prefix().$this->table_element;
 		$sql .= " WHERE doc_type = '".$this->db->escape($this->doc_type)."'";
 		$sql .= " AND fk_doc = ".((int) $this->fk_doc);
 		if (getDolGlobalString('ACCOUNTANCY_ENABLE_FKDOCDET')) {
-			// DO NOT USE THIS IN PRODUCTION. This will generate a lot of trouble into reports and will corrupt database (by generating duplicate entries.
-			$sql .= " AND fk_docdet = ".((int) $this->fk_docdet); // This field can be 0 if record is for several lines
+			// DO NOT USE THIS IN PRODUCTION. This will generate a lot of trouble into reports and will corrupt database (by generating duplicate entries).
+			$sql .= " AND fk_docdet = ".((int) $this->fk_docdet); // This field can be 0 if record is for several lines and can't be always defined.
 		}
 		$sql .= " AND numero_compte = '".$this->db->escape($this->numero_compte)."'";
 		$sql .= " AND label_operation = '".$this->db->escape($this->label_operation)."'";

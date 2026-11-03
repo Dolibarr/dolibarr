@@ -115,7 +115,7 @@ class AiMcpApiBridgeExternalEnrichmentsTest extends CommonClassTest
 
 		$this->assertSame('support tickets', $enrichments['tickets']['label']);
 		// A method the module never declared but core has proves the merge kept core's.
-		$this->assertArrayHasKey('getByTrackId', $enrichments['tickets']['methods']);
+		$this->assertArrayHasKey('postNewMessage', $enrichments['tickets']['methods']);
 	}
 
 	/**

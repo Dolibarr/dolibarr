@@ -556,7 +556,13 @@ if (empty($reshook)) {
 	} elseif ($action == 'setmulticurrencycode' && $usercancreate) {	 // Multicurrency Code
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
 	} elseif ($action == 'setmulticurrencyrate' && $usercancreate) {	// Multicurrency rate
-		$result = $object->setMulticurrencyRate(GETPOSTFLOAT('multicurrency_tx'), GETPOSTINT('calculation_mode'));
+		if (!in_array(GETPOSTINT('calculation_mode'), array(1, 2))) {
+			$langs->load("compta");
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CalculationMode")), null, 'errors');
+			$action = 'editmulticurrencyrate';
+		} else {
+			$result = $object->setMulticurrencyRate(GETPOSTFLOAT('multicurrency_tx'), GETPOSTINT('calculation_mode'));
+		}
 	} elseif ($action == 'setinvoicedate' && $usercancreate) {
 		$object->fetch($id);
 		$old_date_lim_reglement = $object->date_lim_reglement;
@@ -652,6 +658,7 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
+			$object->fetch_thirdparty();
 			// Define output language
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
@@ -704,6 +711,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'setabsolutediscount' && $usercancreate) {
 		// We have POST[remise_id] (common case) xor POST[remise_id_for_payment] (with unstable oldoption)
+		$splitconfirm = array();	// Filled when the credit must be split: the split is done only once the user has confirmed it
 		$db->begin();
 
 		// We use the credit note to reduce amount of invoice
@@ -724,7 +732,12 @@ if (empty($reshook)) {
 						&& $discount->multicurrency_code == $object->multicurrency_code && $object->multicurrency_code != $conf->currency);
 					$maxtoabsorb = (float) price2num($usemccompare ? $object->getRemainToPay(1) : $object->getRemainToPay(0), 'MT');
 					$discountamountforcompare = (float) price2num($usemccompare ? $discount->multicurrency_amount_ttc : $discount->amount_ttc, 'MT');
-					if ($discountamountforcompare > $maxtoabsorb) {
+					if ($discountamountforcompare > $maxtoabsorb && $maxtoabsorb > 0 && GETPOST('confirm', 'alpha') != 'yes') {
+						// Ask for confirmation before splitting the credit
+						$splitcurrency = ($usemccompare ? $object->multicurrency_code : $conf->currency);
+						$splitconfirm = array('field' => 'remise_id', 'id' => $idremise, 'total' => price($discountamountforcompare, 0, $langs, 1, -1, -1, $splitcurrency),
+							'apply' => price($maxtoabsorb, 0, $langs, 1, -1, -1, $splitcurrency), 'remain' => price((float) price2num($discountamountforcompare - $maxtoabsorb, 'MT'), 0, $langs, 1, -1, -1, $splitcurrency));
+					} elseif ($discountamountforcompare > $maxtoabsorb) {
 						if ($maxtoabsorb <= 0) {
 							// Nothing left to absorb: the credit cannot be used on this invoice at all
 							$error++;
@@ -769,13 +782,6 @@ if (empty($reshook)) {
 							$newidremain = $remainpart->create($user);
 							if ($resdelete > 0 && $newidapply > 0 && $newidremain > 0) {
 								$idremise = $newidapply;
-								$splitappliedmsg = price($applyeur, 0, $langs, 1, -1, -1, $conf->currency);
-								$splitremainmsg = price((float) price2num($depositeur - $applyeur, 'MT'), 0, $langs, 1, -1, -1, $conf->currency);
-								if (!empty($discount->multicurrency_code) && $depositdev != 0) {
-									$splitappliedmsg .= ' / '.price($applydev, 0, $langs, 1, -1, -1, $discount->multicurrency_code);
-									$splitremainmsg .= ' / '.price($remaindev, 0, $langs, 1, -1, -1, $discount->multicurrency_code);
-								}
-								setEventMessages($langs->trans('DepositSplitAutomaticallyApplied', $splitappliedmsg, $splitremainmsg), null, 'warnings');
 							} else {
 								$error++;
 								setEventMessages($langs->trans("Error"), null, 'errors');
@@ -784,7 +790,7 @@ if (empty($reshook)) {
 					}
 				}
 
-				if (!$error) {
+				if (!$error && empty($splitconfirm)) {
 					$result = $object->insert_discount($idremise);
 					if ($result < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
@@ -851,10 +857,12 @@ if (empty($reshook)) {
 			$remaintopay = $usemccompare ? $object->getRemainToPay(1) : $object->getRemainToPay(0);
 			$discountamountforcompare = $usemccompare ? $discount->multicurrency_amount_ttc : $discount->amount_ttc;
 			$discounttolink = $discount;
-			$depositwassplit = false;
-			$splitappliedmsg = '';
-			$splitremainmsg = '';
-			if (price2num($discountamountforcompare, 'MT') > price2num($remaintopay, 'MT')) {
+			if (price2num($discountamountforcompare, 'MT') > price2num($remaintopay, 'MT') && (float) $remaintopay > 0 && GETPOST('confirm', 'alpha') != 'yes') {
+				// Ask for confirmation before splitting the credit
+				$splitcurrency = ($usemccompare ? $object->multicurrency_code : $conf->currency);
+				$splitconfirm = array('field' => 'remise_id_for_payment', 'id' => $discount->id, 'total' => price((float) $discountamountforcompare, 0, $langs, 1, -1, -1, $splitcurrency),
+					'apply' => price((float) $remaintopay, 0, $langs, 1, -1, -1, $splitcurrency), 'remain' => price((float) price2num($discountamountforcompare - $remaintopay, 'MT'), 0, $langs, 1, -1, -1, $splitcurrency));
+			} elseif (price2num($discountamountforcompare, 'MT') > price2num($remaintopay, 'MT')) {
 				if ((float) $remaintopay <= 0) {
 					$error++;
 					setEventMessages($langs->trans("ErrorDiscountLargerThanRemainToPaySplitItBefore"), null, 'errors');
@@ -898,14 +906,6 @@ if (empty($reshook)) {
 					if ($resdelete > 0 && $newidapply > 0 && $newidremain > 0) {
 						$discounttolink = new DiscountAbsolute($db);
 						$discounttolink->fetch($newidapply);
-						// Build a positive feedback message about the automatic split (amount applied / amount kept available)
-						$depositwassplit = true;
-						$splitappliedmsg = price($applyeur, 0, $langs, 1, -1, -1, $conf->currency);
-						$splitremainmsg = price((float) price2num($depositeur - $applyeur, 'MT'), 0, $langs, 1, -1, -1, $conf->currency);
-						if (!empty($discount->multicurrency_code) && $depositdev != 0) {
-							$splitappliedmsg .= ' / '.price($applydev, 0, $langs, 1, -1, -1, $discount->multicurrency_code);
-							$splitremainmsg .= ' / '.price($remaindev, 0, $langs, 1, -1, -1, $discount->multicurrency_code);
-						}
 					} else {
 						$error++;
 						setEventMessages($langs->trans("Error"), null, 'errors');
@@ -913,7 +913,7 @@ if (empty($reshook)) {
 				}
 			}
 
-			if (!$error) {
+			if (!$error && empty($splitconfirm)) {
 				$result = $discounttolink->link_to_invoice(0, $id);
 				if ($result < 0) {
 					$error++;
@@ -932,9 +932,6 @@ if (empty($reshook)) {
 						$object->setPaid($user);
 					}
 				}
-				if ($depositwassplit) {
-					setEventMessages($langs->trans('DepositSplitAutomaticallyApplied', $splitappliedmsg, $splitremainmsg), null, 'warnings');
-				}
 			}
 		}
 
@@ -944,7 +941,11 @@ if (empty($reshook)) {
 			$db->rollback();
 		}
 
-		if (empty($error) && !getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+		if (!empty($splitconfirm)) {
+			$action = 'asksplitdiscount';	// Nothing was applied yet, the view shows the confirmation popup of the split
+		}
+
+		if (empty($error) && empty($splitconfirm) && !getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 			$outputlangs = $langs;
 			$newlang = '';
 			if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
@@ -1209,12 +1210,21 @@ if (empty($reshook)) {
 		$discountcheck = new DiscountAbsolute($db);
 		$result = $discountcheck->fetch(0, $object->id);
 
+		// The conditions are the same than the ones used to show the button converttoreduc (the button is not a protection)
 		$canconvert = 0;
-		if ($object->type == Facture::TYPE_DEPOSIT && empty($discountcheck->id)) {
-			$canconvert = 1; // we can convert deposit into discount if deposit is paid (completely, partially or not at all) and not already converted (see real condition into condition used to show button converttoreduc)
+		$sumofpaymentforconvert = (float) $object->getSommePaiement();
+		if ($object->type == Facture::TYPE_DEPOSIT && empty($discountcheck->id) && $object->status > Facture::STATUS_DRAFT) {
+			// We can convert a deposit into discount if it is paid (the amount paid, with credit notes and deposits used, must match the amount of the deposit, unless the hidden option is set) and not already converted
+			$sumofpaymentallforconvert = $sumofpaymentforconvert + (float) $object->getSumCreditNotesUsed() + (float) $object->getSumDepositsUsed();
+			if (price2num($object->total_ttc, 'MT') <= price2num($sumofpaymentallforconvert, 'MT') || getDolGlobalInt('DEPOSIT_CAN_BE_CONVERTED_AS_AVAILABLE_CREDIT_EVEN_IF_NOT_YET_PAID')) {
+				$canconvert = 1;
+			}
 		}
-		if (($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_SITUATION) && $object->paye == 0 && empty($discountcheck->id)) {
-			$canconvert = 1; // we can convert credit note into discount if credit note is not paid back and not already converted and amount of payment is 0 (see real condition into condition used to show button converttoreduc)
+		if (($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_SITUATION) && $object->status == Facture::STATUS_VALIDATED && $object->paye == 0 && empty($discountcheck->id)) {
+			$canconvert = 1; // we can convert a validated credit note into discount if it is not paid back and not already converted
+			if ($object->type == Facture::TYPE_CREDIT_NOTE && price2num($sumofpaymentforconvert, 'MT') != 0 && !getDolGlobalString('INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED')) {
+				$canconvert = 0; // A credit note already partially refunded can be converted only if INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED is set (the remaining amount only is converted)
+			}
 		}
 
 		if ($canconvert) {
@@ -1461,6 +1471,8 @@ if (empty($reshook)) {
 				setEventMessages($discount->error, $discount->errors, 'errors');
 				$db->rollback();
 			}
+		} elseif (empty($discountcheck->id)) {
+			setEventMessages($langs->trans('ErrorInvoiceCantBeConvertedToDiscountInThisState'), null, 'errors');
 		}
 	} elseif ($action == 'confirm_delete_paiement' && $confirm == 'yes' && $usercanissuepayment) {
 		// Delete payment
@@ -1900,12 +1912,12 @@ if (empty($reshook)) {
 						$error++;
 						$action = 'create';
 					}
-					if ($typeamount == 'variable' && $valuedeposit <= 0) {
+					if ($typeamount == 'variable' && ($valuedeposit <= 0 || $valuedeposit > 100)) {
 						setEventMessages($langs->trans("ErrorAPercentIsRequired"), null, 'errors');
 						$error++;
 						$action = 'create';
 					}
-					if ($typeamount == 'variablealllines' && $valuedeposit <= 0) {
+					if ($typeamount == 'variablealllines' && ($valuedeposit <= 0 || $valuedeposit > 100)) {
 						setEventMessages($langs->trans("ErrorAPercentIsRequired"), null, 'errors');
 						$error++;
 						$action = 'create';
@@ -2048,8 +2060,14 @@ if (empty($reshook)) {
 									if (!empty($line->special_code)) {
 										continue;
 									}
-									$TTotalByTva[$line->tva_tx] += $line->total_ttc;
+									// Group by vat rate and vat code, so addline() receives the rate in the "rate (CODE)" format and the code is kept on the deposit lines
+									$vatkey = $line->tva_tx.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : '');
+									if (!isset($TTotalByTva[$vatkey])) {
+										$TTotalByTva[$vatkey] = 0;
+									}
+									$TTotalByTva[$vatkey] += $line->total_ttc;
 								}
+								unset($line);	// Break the reference, so the loops on $line later do not overwrite the last line of $srcobject
 								'@phan-var-force array<string,float> $TTotalByTva';
 
 								$amount_ttc_diff = 0.;
@@ -2057,11 +2075,12 @@ if (empty($reshook)) {
 									if (empty($amountdeposit[$tva])) {
 										$amountdeposit[$tva] = 0;
 									}
-									$coef = $total / $srcobject->total_ttc; // Calc coef
+									$coef = ($srcobject->total_ttc != 0 ? $total / $srcobject->total_ttc : 0); // Calc coef (0 if the total of the source is 0, there is nothing to split)
 									$am = $amount * $coef;
 									$amount_ttc_diff += $am;
-									$amountdeposit[$tva] += $am / (1 + (float) $tva / 100); // Convert into HT for the addline
+									$amountdeposit[$tva] += $am / (1 + (float) preg_replace('/\s*\(.*\)/', '', (string) $tva) / 100); // Convert into HT for the addline
 								}
+								unset($total);
 							} else {
 								if ($typeamount == 'amount') {
 									$amountdeposit[0] = $valuedeposit;
@@ -2163,7 +2182,7 @@ if (empty($reshook)) {
 
 							$diff = $object->total_ttc - $amount_ttc_diff;
 
-							if ($diff != 0) {
+							if ((float) price2num($diff, 'MT') != 0) {
 								$object->fetch_lines();
 								// Apply rounding diff to the first real line, ignoring special lines
 								$targetLine = null;
@@ -2175,7 +2194,9 @@ if (empty($reshook)) {
 								}
 								if ($targetLine !== null) {
 									$subprice_diff = $targetLine->subprice - $diff / (1 + $targetLine->tva_tx / 100);
-									$object->updateline($targetLine->id, $targetLine->desc, $subprice_diff, $targetLine->qty, $targetLine->remise_percent, $targetLine->date_start, $targetLine->date_end, $targetLine->tva_tx, 0, 0, 'HT', $targetLine->info_bits, $targetLine->product_type, 0, 0, 0, $targetLine->pa_ht, $targetLine->label, 0, array(), 100);
+									// Pass the rate in the "rate (CODE)" format so updateline() keeps the vat code
+									$tva_tx_with_code = $targetLine->tva_tx.($targetLine->vat_src_code ? ' ('.$targetLine->vat_src_code.')' : '');
+									$object->updateline($targetLine->id, $targetLine->desc, $subprice_diff, $targetLine->qty, $targetLine->remise_percent, $targetLine->date_start, $targetLine->date_end, $tva_tx_with_code, 0, 0, 'HT', $targetLine->info_bits, $targetLine->product_type, 0, 0, 0, $targetLine->pa_ht, $targetLine->label, 0, array(), 100);
 								}
 							}
 						}
@@ -3238,6 +3259,7 @@ if (empty($reshook)) {
 
 				if ($result > 0) {
 					$ret = $object->fetch($id); // Reload to get new records
+					$object->fetch_thirdparty();
 					// Define output language and generate document
 					if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 						$outputlangs = $langs;
@@ -3706,6 +3728,8 @@ if (empty($reshook)) {
 
 		// Update line
 		if (!$error) {
+			$oldbuyingprice = array_column($object->lines, 'pa_ht', 'id')[$lineid] ?? null;
+
 			if (empty($usercancreatemargin)) {
 				foreach ($object->lines as &$line) {
 					if ($line->id == GETPOSTINT('lineid')) {
@@ -3744,6 +3768,7 @@ if (empty($reshook)) {
 
 			if ($result >= 0) {
 				$ret = $object->fetch($id); // Reload to get new records
+				$object->fetch_thirdparty();
 				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 					// Define output language
 					$outputlangs = $langs;
@@ -3794,6 +3819,10 @@ if (empty($reshook)) {
 				unset($_POST['date_endyear']);
 				unset($_POST['situations']);
 				unset($_POST['progress']);
+
+				if ($object->getLinkedBuyPriceDocuments($user, $lineid, $oldbuyingprice)) {
+					$action = 'ask_updatelinkedbuyingprice';
+				}
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
@@ -3801,6 +3830,9 @@ if (empty($reshook)) {
 	} elseif ($action == 'updateline' && $usercancreate && !$cancel) {
 		header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id); // To show again edited page
 		exit();
+	} elseif ($action == 'confirm_updatelinkedbuyingprice' && $confirm == 'yes' && $usercancreate) {
+		$result = $object->updateLinkedBuyPrice($user, $lineid, array('propal' => GETPOST('updatelinked_propal'), 'commande' => GETPOST('updatelinked_commande'), 'facture' => GETPOST('updatelinked_facture')));
+		setEventMessages(($result < 0 ? $object->error : $langs->trans('RecordsModified', $result)), null, ($result < 0 ? 'errors' : 'mesgs'));
 	} elseif ($action == 'confirm_situationout' && $confirm == 'yes' && $usercancreate) {
 		// Outing situation invoice from cycle
 		$object->fetch($id, '', '', 0, true);
@@ -5335,6 +5367,13 @@ if ($action == 'create') {
 		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$object->id, $langs->trans('ConvertToReduc'), $text, 'confirm_converttoreduc', '', "yes", 2);
 	}
 
+	// Confirmation of the split of a credit larger than the remaining amount, before applying it
+	if ($action == 'asksplitdiscount' && !empty($splitconfirm)) {
+		$formquestion = array(array('type' => 'hidden', 'name' => $splitconfirm['field'], 'value' => (int) $splitconfirm['id']));
+		$text = $langs->trans('ConfirmSplitDiscountBeforeApply', $splitconfirm['total'], $splitconfirm['apply'], $splitconfirm['remain']);
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$object->id, $langs->trans('SplitDiscount'), $text, 'setabsolutediscount', $formquestion, 'yes', 1, 0, 500);
+	}
+
 	// Confirmation to delete invoice
 	if ($action == 'delete') {
 		$text = $langs->trans('ConfirmDeleteBill', $object->ref);
@@ -5665,6 +5704,17 @@ if ($action == 'create') {
 	// Confirm deletion of product line
 	if ($action == 'ask_deleteline') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 'no', 1);
+	}
+
+	// Confirmation to apply the cost price of the line to the linked documents
+	if ($action == 'ask_updatelinkedbuyingprice') {
+		$langs->loadLangs(array('orders', 'propal'));
+		$labels = array('propal' => 'Proposal', 'commande' => 'Order', 'facture' => 'Invoice');
+		$formquestion = array(array('type' => 'hidden', 'name' => 'lineid', 'value' => $lineid));
+		foreach ($object->getLinkedBuyPriceDocuments($user, $lineid) as $element => $document) {
+			$formquestion[] = array('type' => 'checkbox', 'name' => 'updatelinked_'.$element, 'label' => $langs->trans($labels[$element]).' '.dol_escape_htmltag(implode(', ', $document['refs'])), 'value' => ($element != 'facture'));
+		}
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id, $langs->trans('UpdateLinkedBuyingPrice'), $langs->trans('UpdateLinkedBuyingPriceQuestion'), 'confirm_updatelinkedbuyingprice', $formquestion, 'yes', 1);
 	}
 
 	// Confirm deletion of subtotal line
@@ -6957,10 +7007,8 @@ if ($action == 'create') {
 		// Get object lines
 		$result = $object->getLinesArray();
 
-		// Add products/services form
-		//$forceall = 1;
-		global $inputalsopricewithtax;
-		$inputalsopricewithtax = 1;
+		// Display context of lines, also sets the global variables used by the line templates
+		$linesContext = $object->initObjectLinesDisplay();
 
 		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">
 		<input type="hidden" name="token" value="' . newToken().'">
@@ -6983,8 +7031,9 @@ if ($action == 'create') {
 		print '<table id="tablelines" class="noborder noshadow centpercent nomarginbottom">';
 
 		// Show object lines
-		if (!empty($object->lines)) {
-			$object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
+		// With nolines=1, the card is loaded without its lines, to refresh the other parts of the page in ajax
+		if (!empty($object->lines) && !GETPOSTINT('nolines')) {
+			$object->printObjectLines($action, $linesContext['seller'], $linesContext['buyer'], $lineid, $linesContext['dateSelector']);
 		}
 
 		// Form to add new line
@@ -6998,7 +7047,7 @@ if ($action == 'create') {
 					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 				}
 				if (empty($reshook)) {
-					$object->formAddObjectLine(1, $mysoc, $soc);
+					$object->formAddObjectLine($linesContext['dateSelector'], $linesContext['seller'], $linesContext['buyer']);
 				}
 			} else {
 				$parameters = array();
