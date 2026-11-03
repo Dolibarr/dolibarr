@@ -1869,10 +1869,10 @@ class CommonObjectTest extends CommonClassTest
 		$this->assertSame($localobject->availability_id, $localobject->getFieldUiValue('fk_availability'), 'Deprecated property fk_availability is not used');
 
 		// Inputs named ajaxfield_<field>, with the selectors of the card
-		$this->assertMatchesRegularExpression('/<select[^>]*name="ajaxfield_fk_cond_reglement"/', $localobject->ajaxInputField('fk_cond_reglement'));
+		$this->assertSame(1, preg_match('/<select[^>]*name="ajaxfield_fk_cond_reglement"/', $localobject->ajaxInputField('fk_cond_reglement')), 'Select of fk_cond_reglement');
 		$this->assertStringContainsString('name="ajaxfield_fk_cond_reglement_deposit_percent"', $localobject->ajaxInputField('fk_cond_reglement'), 'Deposit percent of proposals');
-		$this->assertMatchesRegularExpression('/<select[^>]*name="ajaxfield_fk_mode_reglement"/', $localobject->ajaxInputField('fk_mode_reglement'));
-		$this->assertMatchesRegularExpression('/<select[^>]*name="ajaxfield_fk_availability"/', $localobject->ajaxInputField('fk_availability'));
+		$this->assertSame(1, preg_match('/<select[^>]*name="ajaxfield_fk_mode_reglement"/', $localobject->ajaxInputField('fk_mode_reglement')), 'Select of fk_mode_reglement');
+		$this->assertSame(1, preg_match('/<select[^>]*name="ajaxfield_fk_availability"/', $localobject->ajaxInputField('fk_availability')), 'Select of fk_availability');
 		$this->assertStringContainsString('name="ajaxfield_fin_validiteday"', $localobject->ajaxInputField('fin_validite'));
 		$this->assertStringNotContainsString('name="ajaxfield_fin_validitehour"', $localobject->ajaxInputField('fin_validite'), 'End of validity is a day');
 
