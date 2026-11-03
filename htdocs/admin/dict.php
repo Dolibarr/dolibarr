@@ -2347,12 +2347,41 @@ if ($id > 0) {
 					$error = $hookmanager->error;
 					$errors = $hookmanager->errors;
 
+					// Show only fields of visible columns, so edit line stays aligned with titles. Values of hidden columns are kept into hidden inputs.
+					$fieldlistedit = array();
+					$hiddenfieldsedit = array();
+					foreach ($fieldlist as $field => $value) {
+						if (isset($arrayfields[$value]) && empty($arrayfields[$value]['checked'])) {
+							$hiddenfieldsedit[] = $value;
+						} else {
+							$fieldlistedit[$field] = $value;
+						}
+					}
+					if (in_array('department_buyer', $hiddenfieldsedit)) {
+						$fieldlistedit = array_diff($fieldlistedit, array('department_buyer_id'));
+					}
+
 					// Show fields
 					if (empty($reshook)) {
-						$withentity = dictFieldList($fieldlist, $obj, $tabname[$id], 'edit');
+						$withentity = dictFieldList($fieldlistedit, $obj, $tabname[$id], 'edit');
 					}
 
 					print '<td colspan="3" class="center">';
+					foreach ($hiddenfieldsedit as $value) {
+						$hiddenname = $value;
+						$hiddenvalue = (isset($obj->$value) ? $obj->$value : '');
+						if ($value == 'country') {
+							$hiddenvalue = (isset($obj->country_id) ? $obj->country_id : '');
+						} elseif ($value == 'region') {
+							$hiddenvalue = (isset($obj->region_id) ? $obj->region_id : '');
+						} elseif ($value == 'department_buyer') {
+							$hiddenname = 'department_buyer_id';
+							$hiddenvalue = (isset($obj->department_buyer_id) ? $obj->department_buyer_id : '');
+						} elseif ($value == 'sortorder') {
+							$hiddenname = 'position';
+						}
+						print '<input type="hidden" name="'.dol_escape_htmltag($hiddenname).'" value="'.dol_escape_htmltag((string) $hiddenvalue, 0, 1).'">';
+					}
 					print '<div name="'.(isset($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
 					print '<input type="hidden" name="page" value="'.((int) $page).'">';
 					print '<input type="hidden" name="rowid" value="'.dol_escape_htmltag($rowid).'">';
