@@ -1094,7 +1094,9 @@ while ($i < $imaxinloop) {
 			}
 		}
 		if (!empty($arrayfields['f.description']['checked'])) {
-			print '<td>'.dol_trunc(dolGetFirstLineOfText(dol_string_nohtmltag($obj->description, 1)), 48).'</td>';
+			print '<td>';
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintLabel(dol_trunc(dolGetFirstLineOfText(dol_string_nohtmltag($obj->description, 1)), 48)).'</div>';
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
