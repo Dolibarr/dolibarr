@@ -1288,6 +1288,13 @@ try {
 		}
 	}
 
+	// The confirmation state of a write is issued by the tool and sent back by the chat
+	// only once the user confirmed: one invented by the model is always refused as forged.
+	if (is_array($intentJSON) && isset($intentJSON['arguments']) && is_array($intentJSON['arguments']) && array_key_exists('requestState', $intentJSON['arguments'])) {
+		dol_syslog("parse_intent.php model sent a requestState inside the tool arguments for ".$toolName.", removed", LOG_WARNING);
+		unset($intentJSON['arguments']['requestState']);
+	}
+
 	// Ask_for_confirmation is ours, built below around a real tool call; a model
 	// that emits it by itself (it does, on a follow-up question: "do you really
 	// want to update the phone of X?") sends the client a confirmation with
@@ -1949,6 +1956,8 @@ function cleanToolSchemaForLLM(array $tools, bool $isLargeSchema = false)
 
 		// Get parameters
 		$toolParams = $tool['parameters'] ?? $tool['inputSchema'] ?? [];
+		// requestState is set by the chat after the user confirmed a write, never by the model.
+		unset($toolParams['properties']['requestState']);
 
 		if ($isLargeSchema && isset($toolParams['properties']) && is_array($toolParams['properties'])) {
 			$requiredList = $toolParams['required'] ?? [];
