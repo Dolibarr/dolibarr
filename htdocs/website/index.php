@@ -3321,7 +3321,7 @@ if (!GETPOST('hide_websitemenu')) {
 
 		print '<span class="websiteselection">';
 
-		if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite')) {
+		if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite' || $action == 'importsite')) {
 			// Edit website properties
 			print '<a href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($object->ref).'&pageid='.((int) $pageid).'&action=editcss&token='.newToken().'" class="button bordertransp valignmiddle" title="'.dol_escape_htmltag($langs->trans("EditCss")).'"'.$disabled.'>';
 			print img_picto('', 'setup');
@@ -3337,14 +3337,20 @@ if (!GETPOST('hide_websitemenu')) {
 			}
 
 			if ($atleastonepage) {
-				print '<input type="submit" class="button bordertransp" disabled="disabled" value="'.dol_escape_htmltag($importlabel).'" name="importsite">';
+				print '<button type="submit" class="button bordertransp valignmiddle" disabled="disabled" value="1" name="importsite" title="'.dol_escape_htmltag($importlabel).'">';
 			} else {
-				print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($importlabel).'" name="importsite">';
+				print '<button type="submit" class="button bordertransp valignmiddle"'.$disabled.' value="1" name="importsite" title="'.dol_escape_htmltag($importlabel).'">';
 			}
+			print img_picto('', 'upload');
+			print '<span class="hideonsmartphone paddingleft">'.dol_escape_htmltag($importlabel).'</span>';
+			print '</button>';
 
 			// // Export web site
 			$extraCssClass = getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE') ? 'hideobject' : '';
-			print '<input type="submit" class="button bordertransp ' . $extraCssClass . '" ' . $disabledexport . ' value="' . dol_escape_htmltag($exportlabel) . '" name="exportsite">';
+			print '<button type="submit" class="button bordertransp valignmiddle ' . $extraCssClass . '" ' . $disabledexport . ' value="1" name="exportsite" title="' . dol_escape_htmltag($exportlabel) . '">';
+			print img_picto('', 'download');
+			print '<span class="hideonsmartphone paddingleft">' . dol_escape_htmltag($exportlabel) . '</span>';
+			print '</button>';
 
 			if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')) {
 				// Overwrite template in sources
@@ -3386,7 +3392,7 @@ if (!GETPOST('hide_websitemenu')) {
 
 		print '</span>';
 
-		if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite')) {
+		if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite' || $action == 'importsite')) {
 			print '<span class="websiteselection">';
 
 			print dolButtonToOpenUrlInDialogPopup('file_manager', $langs->transnoentitiesnoconv("MediaFiles"), '<span class="fa fa-image"></span>', '/website/index.php?action=file_manager&website='.urlencode($website->ref).'&section_dir='.urlencode('image/'.$website->ref.'/'), $disabled, 'classlink button bordertransp buttonpictoonly');
