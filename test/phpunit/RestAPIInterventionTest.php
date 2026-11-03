@@ -42,7 +42,7 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 	 */
 	public static function setUpBeforeClass(): void
 	{
-		self::assertTrue(isModEnabled('ficheinter'), 'module intervention must be enabled');
+		self::assertTrue(isModEnabled('intervention'), 'module intervention must be enabled');
 		parent::setUpBeforeClass();
 	}
 
