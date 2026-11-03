@@ -3085,6 +3085,19 @@ export function initAiAssistant(container) {
         'multicurrency_total_ht', 'multicurrency_total_ttc', 'multicurrency_total_tva',
 		'opp_amount', 'price_booth', 'price_registration'
 		]);
+    // Technical fields of API objects not shown in the chat (display only: the LLM still receives them).
+    const HIDDEN_FIELDS = new Set(['entity', 'specimen', 'model_pdf', 'last_main_doc', 'import_key', 'array_options',
+        'user_creation_id', 'user_modification_id', 'fk_incoterms', 'location_incoterms', 'label_incoterms',
+        'no_email', 'typent_id', 'stcomm_id', 'fk_prospectlevel', 'country_id', 'fk_multicurrency', 'multicurrency_tx',
+        'remise_supplier_percent'
+        ]);
+    // Local tax fields are shown only when the country of the company uses this local tax.
+    [1, 2].forEach((x) => {
+        if (!parseInt(config['useLocalTax' + x] || 0, 10)) {
+            HIDDEN_FIELDS.add('localtax' + x + '_assuj');
+            HIDDEN_FIELDS.add('localtax' + x + '_value');
+        }
+    });
     const isDateField = (k) => k === 'date' || k === 'datef' || k === 'tms' || /(^|_)date($|_)|_date$|^date_/.test(k);
 
     function fieldLabel(k) {
@@ -3202,7 +3215,7 @@ export function initAiAssistant(container) {
         if (Array.isArray(data)) {
             if (data.length === 0) return t('NoRecordFound');
             isArray = true;
-            let keys = Object.keys(data[0]).filter(k => k !== 'url' && k !== 'rowid');
+            let keys = Object.keys(data[0]).filter(k => k !== 'url' && k !== 'rowid' && !HIDDEN_FIELDS.has(k));
             content += '<div class="chat-table-wrap"><table class="chat-table"><thead><tr>';
             // Rows that are files (their url is a document.php download): the
             // "name" column is the file, not a third party, and the file gets a
@@ -3240,7 +3253,7 @@ export function initAiAssistant(container) {
             content += '<div class="chat-object"><ul>';
             let nested = '';
             for (const [key, value] of Object.entries(data)) {
-                if (key === 'url' || key === 'chart') continue;
+                if (key === 'url' || key === 'chart' || HIDDEN_FIELDS.has(key)) continue;
                 if (typeof value !== 'object') { content += `<li><strong>${fieldLabel(key)}:</strong> ${formatCell(key, value)}</li>`; }
                 // A list inside the answer is the answer: a tool that wraps its rows
                 // in {count, offset, limit, results} would otherwise show only the
