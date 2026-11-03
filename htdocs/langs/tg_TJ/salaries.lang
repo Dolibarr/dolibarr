@@ -27,6 +27,7 @@ Earnings=Earnings
 TotalEarnings=Total earnings
 TotalDeductions=Total deductions
 NetPaid=Net paid
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Ҳисоб (аз Нақшаи ҳисоб), ки ба таври нобаёнӣ барои "истифодабарандагон" оид ба маош истифода мешавад
@@ -55,8 +56,6 @@ FillFieldFirst=Аввал майдони кормандро пур кунед
 UpdateAmountWithLastSalary=Маблағи музди охиринро муқаррар кунед
 MakeTransferRequest=Дархости интиқол
 VirementOrder=Дархост барои интиқоли қарз
-WithdrawalReceipt=Тартиби интиқоли кредит
-OrderWaiting=Фармоиш интизор аст
 FillEndOfMonth=Охири моҳ
 
 # Shortcuts

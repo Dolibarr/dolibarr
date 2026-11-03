@@ -22,18 +22,18 @@ jobs:
         uses: actions/checkout@v7
       - name: Cleanup
         run: |
-          gh extension install actions/gh-actions-cache
           REPO="${{ github.repository }}"
           BRANCH="refs/pull/${{ github.event.pull_request.number }}/merge"
-          echo "Fetching list of cache key"
-          cacheKeysForPR=$(gh actions-cache list -R "$REPO" -B "$BRANCH" | cut -f 1 )
+          echo "Fetching list of cache id"
+          # Delete by id (not by key) so caches with the same key on other refs (develop...) are kept
+          cacheIdsForPR=$(gh cache list -R "$REPO" --ref "$BRANCH" --limit 100 --json id --jq '.[].id')
 
           ## Setting this to not fail the workflow while deleting cache keys.
           set +e
           echo "Deleting caches..."
-          for cacheKey in $cacheKeysForPR
+          for cacheId in $cacheIdsForPR
           do
-              gh actions-cache delete "$cacheKey" -R "$REPO" -B "$BRANCH" --confirm
+              gh cache delete "$cacheId" -R "$REPO"
           done
           echo "Done"
         env:

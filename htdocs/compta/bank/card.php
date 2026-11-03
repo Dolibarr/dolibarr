@@ -59,7 +59,7 @@ if (isModEnabled('accounting')) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("banks", "bills", "categories", "companies", "compta", "withdrawals"));
+$langs->loadLangs(array("accountancy", "banks", "bills", "categories", "companies", "compta", "withdrawals"));
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
@@ -428,6 +428,7 @@ if ($action == 'create') {
 	print '<form action="'.$_SERVER["PHP_SELF"].'" name="formsoc" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="page_y" value="">';
 	print '<input type="hidden" name="clos" value="0">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
@@ -437,7 +438,8 @@ if ($action == 'create') {
 
 	// Ref
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Ref").'</td>';
-	print '<td><input type="text" class="flat width100" name="ref" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST("ref", 'alpha') : $object->ref).'" maxlength="12" autofocus></td></tr>';
+	$tmpref = (GETPOSTISSET('ref') ? GETPOST("ref", 'alpha') : $object->ref);
+	print '<td><input type="text" class="flat width100" name="ref" value="'.dol_escape_htmltag($tmpref).'" maxlength="12"'.(empty($tmpref) ? ' autofocus' : '').'></td></tr>';
 
 	// Label
 	print '<tr><td class="fieldrequired">'.$langs->trans("LabelBankCashAccount").'</td>';
@@ -664,7 +666,12 @@ if ($action == 'create') {
 		print '<tr><td class="'.$fieldrequired.'titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
 		print img_picto('', 'accounting_account', 'class="pictofixedwidth"');
-		print $formaccounting->select_account($object->account_number, 'account_number', 1, array(), 1, 1);
+		print $formaccounting->select_account(GETPOSTISSET('account_number') ? GETPOST('account_number', 'alphanohtml') : $object->account_number, 'account_number', 1, array(), 1, 1);
+		if ($user->hasRight('accounting', 'chartofaccount')) {
+			// On popup close, submit the form with action=create to reload the list of accounting accounts
+			$jsonclose = 'document.formsoc.action.value=\'create\'; document.formsoc.page_y.value=jQuery(document).scrollTop(); document.formsoc.submit()';
+			print dolButtonToOpenUrlInDialogPopup('addaccountingaccount', $langs->transnoentitiesnoconv('Chartofaccounts'), '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.dolPrintHTMLForAttribute($langs->trans("Chartofaccounts")).'"></span>', '/accountancy/admin/account.php', '', '', '', $jsonclose);
+		}
 		if ($formaccounting->nbaccounts == 0) {
 			$langs->load("errors");
 			$htmltext = $langs->transnoentitiesnoconv("WarningGoOnAccountancySetupToAddAccounts", $langs->transnoentitiesnoconv("MenuAccountancy"), $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Chartofaccounts"));
@@ -681,7 +688,7 @@ if ($action == 'create') {
 		/** @var FormAccounting $formaccounting */
 		print '<tr><td class="'.$fieldrequired.'titlefieldcreate">'.$langs->trans("AccountancyJournal").'</td>';
 		print '<td>';
-		print $formaccounting->select_journal((string) $object->fk_accountancy_journal, 'fk_accountancy_journal', 4, 1, 0, 0);
+		print $formaccounting->select_journal(GETPOSTISSET('fk_accountancy_journal') ? GETPOSTINT('fk_accountancy_journal') : (string) $object->fk_accountancy_journal, 'fk_accountancy_journal', 4, 1, 0, 0);
 		print '</td></tr>';
 	}
 
@@ -689,7 +696,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print $form->buttonsSaveCancel("CreateAccount");
+	print $form->buttonsSaveCancel("CreateAccount", 'Cancel', array(), false, 'reposition');
 
 	print '</form>';
 } else {
@@ -979,6 +986,7 @@ if ($action == 'create') {
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post" name="formsoc">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="update">';
+		print '<input type="hidden" name="page_y" value="">';
 		print '<input type="hidden" name="id" value="'.GETPOSTINT("id").'">'."\n\n";
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
@@ -990,7 +998,8 @@ if ($action == 'create') {
 
 		// Ref
 		print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Ref").'</td>';
-		print '<td><input type="text" class="flat maxwidth200" name="ref" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alpha') : $object->ref).'" maxlength="12" autofocus></td></tr>';
+		$tmpref = (GETPOSTISSET('ref') ? GETPOST('ref', 'alpha') : $object->ref);
+		print '<td><input type="text" class="flat maxwidth200" name="ref" value="'.dol_escape_htmltag($tmpref).'" maxlength="12"'.(empty($tmpref) ? ' autofocus' : '').'></td></tr>';
 
 		// Label
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
@@ -1131,7 +1140,12 @@ if ($action == 'create') {
 		if (isModEnabled('accounting')) {
 			/** @var FormAccounting $formaccounting */
 			print img_picto('', 'accounting_account', 'class="pictofixedwidth"');
-			print $formaccounting->select_account($object->account_number, 'account_number', 1, array(), 1, 1);
+			print $formaccounting->select_account(GETPOSTISSET('account_number') ? GETPOST('account_number', 'alphanohtml') : $object->account_number, 'account_number', 1, array(), 1, 1);
+			if ($user->hasRight('accounting', 'chartofaccount')) {
+				// On popup close, submit the form with action=edit to reload the list of accounting accounts
+				$jsonclose = 'document.formsoc.action.value=\'edit\'; document.formsoc.page_y.value=jQuery(document).scrollTop(); document.formsoc.submit()';
+				print dolButtonToOpenUrlInDialogPopup('addaccountingaccount', $langs->transnoentitiesnoconv('Chartofaccounts'), '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.dolPrintHTMLForAttribute($langs->trans("Chartofaccounts")).'"></span>', '/accountancy/admin/account.php', '', '', '', $jsonclose);
+			}
 			if ($formaccounting->nbaccounts == 0) {
 				$langs->load("errors");
 				$htmltext = $langs->transnoentitiesnoconv("WarningGoOnAccountancySetupToAddAccounts", $langs->transnoentitiesnoconv("MenuAccountancy"), $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Chartofaccounts"));
@@ -1147,7 +1161,7 @@ if ($action == 'create') {
 			/** @var FormAccounting $formaccounting */
 			print '<tr><td class="fieldrequired">'.$langs->trans("AccountancyJournal").'</td>';
 			print '<td>';
-			print $formaccounting->select_journal((string) $object->fk_accountancy_journal, 'fk_accountancy_journal', 4, 1, 0, 0);
+			print $formaccounting->select_journal(GETPOSTISSET('fk_accountancy_journal') ? GETPOSTINT('fk_accountancy_journal') : (string) $object->fk_accountancy_journal, 'fk_accountancy_journal', 4, 1, 0, 0);
 			print '</td></tr>';
 		}
 
@@ -1161,7 +1175,7 @@ if ($action == 'create') {
 
 			// If bank account
 			print '<tr class="liste_titre_add"><td class="titlefieldcreate">'.$langs->trans("BankName").'</td>';
-			print '<td><input type="text" class="flat width300" name="bank" value="'.$object->bank.'"></td>';
+			print '<td><input type="text" class="flat width300" name="bank" value="'.dol_escape_htmltag(GETPOSTISSET('bank') ? GETPOST('bank', 'alpha') : $object->bank).'"></td>';
 			print '</tr>';
 
 			$ibankey = FormBank::getIBANLabel($object);
@@ -1210,7 +1224,7 @@ if ($action == 'create') {
 				}
 
 				print '<tr><td>'.$langs->trans($object->getBankFieldLabel($val)).'</td>';
-				print '<td><input type="text" class="flat '.$css.'" name="'.$name.'" value="'.dol_escape_htmltag($content).'"></td>';
+				print '<td><input type="text" class="flat '.$css.'" name="'.$name.'" value="'.dol_escape_htmltag(GETPOSTISSET($name) ? GETPOST($name, 'alpha') : $content).'"></td>';
 				print '</tr>';
 			}
 

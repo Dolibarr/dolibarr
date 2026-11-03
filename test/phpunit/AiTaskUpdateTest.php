@@ -17,6 +17,7 @@ if (!defined('DOL_DOCUMENT_ROOT')) {
 	define('DOL_DOCUMENT_ROOT', __DIR__.'/../../htdocs');
 }
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/html.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/ai/class/mcptool.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ai/tools/api_bridge.class.php';
 
@@ -82,8 +83,8 @@ class AiTaskUpdateTest extends PHPUnit\Framework\TestCase
 			$args = ['id' => $id, 'description' => '  Updated description  ', 'note_public' => "\n Public note \n", 'note_private' => '   '];
 			$this->assertSame('', $this->bridge->writePrecheck($tool, $args));
 			$preview = $this->bridge->writeConfirmationPreview($tool, $args);
-			$this->assertStringContainsString('"Updated description"', $preview);
-			$this->assertStringNotContainsString('  Updated description  ', $preview);
+			$this->assertStringContainsString(dol_escape_htmltag('"Updated description"'), $preview);
+			$this->assertStringNotContainsString(dol_escape_htmltag('  Updated description  '), $preview);
 			$this->bridge->execute($tool, $args);
 			$this->assertSame(['description' => 'Updated description', 'note_public' => 'Public note', 'note_private' => ''], AiTaskUpdateEndpointFixture::$received['body']);
 		}
@@ -267,7 +268,7 @@ class AiTaskUpdateTest extends PHPUnit\Framework\TestCase
 	{
 		$project = $this->bridge->writeConfirmationPreview('api_tasks_update', ['ref' => 'TK-42', 'label' => 'Revised task', 'date_end' => 1735862400]);
 		foreach (['TK-42', 'Example task', 'PJ-7', 'Example project', 'Revised task', '2025-01-02', '2025-01-03', '→'] as $expected) {
-			$this->assertStringContainsString($expected, $project);
+			$this->assertStringContainsString(dol_escape_htmltag($expected), $project);
 		}
 		$this->assertStringContainsString('00:00:00 UTC', $project);
 		$this->assertNotContains('Societe', $this->bridge->fetchedClasses);
@@ -314,7 +315,7 @@ class AiTaskUpdateTest extends PHPUnit\Framework\TestCase
 	{
 		date_default_timezone_set('America/Los_Angeles');
 		$preview = $this->bridge->writeConfirmationPreview('api_tasks_update', ['id' => 42, 'date_end' => 1735866000]);
-		$this->assertStringContainsString('2025-01-02 00:00:00 UTC → 2025-01-03 01:00:00 UTC', $preview);
+		$this->assertStringContainsString(dol_escape_htmltag('2025-01-02 00:00:00 UTC → 2025-01-03 01:00:00 UTC'), $preview);
 	}
 
 	/** @return void */
@@ -338,7 +339,7 @@ class AiTaskUpdateTest extends PHPUnit\Framework\TestCase
 			$args = ['ref' => 'TK-42', 'request_data' => ['planned_workload' => $workload]];
 			$this->assertSame('', $this->bridge->writePrecheck('api_tasks_update', $args));
 			$preview = $this->bridge->writeConfirmationPreview('api_tasks_update', $args);
-			$this->assertStringContainsString('AIPlannedWorkloadSeconds: 3600 → '.json_encode($workload), $preview);
+			$this->assertStringContainsString(dol_escape_htmltag('AIPlannedWorkloadSeconds: 3600 → '.json_encode($workload)), $preview);
 			$this->assertSame(['success' => true, 'id' => 42, 'ref' => 'TK-42'], $this->bridge->execute('api_tasks_update', $args));
 			$this->assertSame(['id' => 42, 'body' => ['planned_workload' => $workload]], AiTaskUpdateEndpointFixture::$received);
 		}
@@ -453,6 +454,16 @@ class AiTaskUpdateLanguageFixture
 	public function trans($key, ...$values)
 	{
 		return $key.($values ? ' '.implode(' ', $values) : '');
+	}
+
+	/**
+	 * @param string $key Translation key
+	 * @param mixed ...$values Substitution values
+	 * @return string Unescaped preview text
+	 */
+	public function transnoentitiesnoconv($key, ...$values)
+	{
+		return $this->trans($key, ...$values);
 	}
 }
 

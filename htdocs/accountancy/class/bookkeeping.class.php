@@ -6,6 +6,7 @@
  * Copyright (C) 2024-2026	MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Jose MARTINEZ			<jose.martinez@pichinov.com>
  * Copyright (C) 2025		Nicolas Barrouillet		<nicolas@pragma-tech.fr>
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -335,15 +336,20 @@ class BookKeeping extends CommonObject
 		// First check if line not yet already in bookkeeping.
 		// Note that we must include 'doc_type - fk_doc - numero_compte - label - subledger_account (if not empty)' to be sure to have unicity of line (because we may have several lines
 		// with same doc_type, fk_doc, numero_compte for 1 invoice line when using localtaxes with same account)
-		// WARNING: This is not reliable, label may have been modified. This is just a small protection.
-		// The page that make transfer make the test on couple (doc_type - fk_doc) only.
+		// WARNING: This is not reliable: label may have been modified so we can think this is not a duplicate on (bank.rowid=fk_doc)/type
+		// when it is.
+		// Note also that for some cases, we accept voluntarly duplicates, for example treasury transfer on one payment done on 2 invoices, we record 2 parts with same (bank.rowid=fk_doc)/type.
+		//
+		// The pages that make transfer (for debit/credit accounting) make the test on couple (doc_type - fk_doc) by doing:
+		// "WHERE b.rowid IN (SELECT fk_doc FROM ".$db->prefix()."accounting_bookkeeping as ab  WHERE ab.doc_type='customer_invoice|supplier_invoice|bank')"
+
 		$sql = "SELECT count(*) as nb";
 		$sql .= " FROM ".$this->db->prefix().$this->table_element;
 		$sql .= " WHERE doc_type = '".$this->db->escape($this->doc_type)."'";
 		$sql .= " AND fk_doc = ".((int) $this->fk_doc);
 		if (getDolGlobalString('ACCOUNTANCY_ENABLE_FKDOCDET')) {
-			// DO NOT USE THIS IN PRODUCTION. This will generate a lot of trouble into reports and will corrupt database (by generating duplicate entries.
-			$sql .= " AND fk_docdet = ".((int) $this->fk_docdet); // This field can be 0 if record is for several lines
+			// DO NOT USE THIS IN PRODUCTION. This will generate a lot of trouble into reports and will corrupt database (by generating duplicate entries).
+			$sql .= " AND fk_docdet = ".((int) $this->fk_docdet); // This field can be 0 if record is for several lines and can't be always defined.
 		}
 		$sql .= " AND numero_compte = '".$this->db->escape($this->numero_compte)."'";
 		$sql .= " AND label_operation = '".$this->db->escape($this->label_operation)."'";
@@ -1620,11 +1626,12 @@ class BookKeeping extends CommonObject
 	 * @param  string  $field          Field
 	 * @param  string  $value          Value
 	 * @param  string  $mode           Mode ('' or _tmp')
+	 * @param  int     $notrigger      0=launch triggers after, 1=disable triggers
 	 * @return int                     Return integer <0 if KO, >0 if OK
 	 */
-	public function updateByMvt($piece_num = '', $field = '', $value = '', $mode = '')
+	public function updateByMvt($piece_num = '', $field = '', $value = '', $mode = '', $notrigger = 0)
 	{
-		global $conf;
+		global $conf, $user;
 		$error = 0;
 
 		$sql_filter = $this->getCanModifyBookkeepingSQL();
@@ -1634,19 +1641,38 @@ class BookKeeping extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "UPDATE ".$this->db->prefix().$this->table_element.$mode;
-		$sql .= " SET ".$this->db->sanitize($field)." = ".(is_numeric($value) ? ((float) $value) : "'".$this->db->escape($value)."'");
-		$sql .= " WHERE piece_num = ".((int) $piece_num);
-		$sql .= " AND entity = " . ((int) $conf->entity);
-		$sql .= $sql_filter;
+		$sqlwhere = " WHERE piece_num = ".((int) $piece_num);
+		$sqlwhere .= " AND entity = " . ((int) $conf->entity);
+		$sqlwhere .= $sql_filter;
 
-		$resql = $this->db->query($sql);
-
-		if (!$resql) {
-			$error++;
-			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+		// Keep the lines before the change, so triggers get them as oldcopy
+		$oldlines = array();
+		if (!$notrigger) {
+			$oldlines = $this->fetchLinesForTrigger("SELECT rowid FROM ".$this->db->prefix().$this->table_element.$mode.$sqlwhere, $mode);
+			if (!is_array($oldlines)) {
+				$error++;
+			}
 		}
+
+		if (!$error) {
+			$sql = "UPDATE ".$this->db->prefix().$this->table_element.$mode;
+			$sql .= " SET ".$this->db->sanitize($field)." = ".(is_numeric($value) ? ((float) $value) : "'".$this->db->escape($value)."'");
+			$sql .= $sqlwhere;
+
+			$resql = $this->db->query($sql);
+
+			if (!$resql) {
+				$error++;
+				$this->errors[] = 'Error '.$this->db->lasterror();
+				dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			}
+		}
+
+		// Call triggers, once per line as update() does
+		if (!$error && !$notrigger && $this->callTriggerPerLine('BOOKKEEPING_MODIFY', array_keys($oldlines), $user, $mode, $oldlines) < 0) {
+			$error++;
+		}
+
 		if ($error) {
 			$this->db->rollback();
 
@@ -1656,6 +1682,68 @@ class BookKeeping extends CommonObject
 
 			return 1;
 		}
+	}
+
+	/**
+	 * Load the lines found by a SQL request on rowid, to give them to triggers
+	 *
+	 * @param  string  $sql      SQL request that returns the rowid of the lines
+	 * @param  string  $mode     Mode ('' or '_tmp')
+	 * @return array<int,BookKeeping>|int<-1,-1>   Lines by id, or -1 if KO
+	 */
+	private function fetchLinesForTrigger($sql, $mode = '')
+	{
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
+		}
+
+		$lines = array();
+		while ($obj = $this->db->fetch_object($resql)) {
+			$line = new BookKeeping($this->db);
+			if ($line->fetch((int) $obj->rowid, null, $mode) <= 0) {
+				$this->errors[] = $line->error;
+				return -1;
+			}
+			$lines[(int) $obj->rowid] = $line;
+		}
+		$this->db->free($resql);
+
+		return $lines;
+	}
+
+	/**
+	 * Call a trigger for each line of a transaction changed or created with SQL requests, so modules get
+	 * the same object as with create() or update(), for example to refuse a change in a closed period.
+	 *
+	 * @param  string                  $triggername  Trigger code, like 'BOOKKEEPING_CREATE' or 'BOOKKEEPING_MODIFY'
+	 * @param  int[]                   $lineids      Ids of the lines
+	 * @param  User                    $user         User that makes the change
+	 * @param  string                  $mode         Mode ('' or '_tmp')
+	 * @param  array<int,BookKeeping>  $oldlines     Lines before the change by id, given as oldcopy
+	 * @return int                                   Return integer <0 if KO, >0 if OK
+	 */
+	private function callTriggerPerLine($triggername, $lineids, User $user, $mode = '', $oldlines = array())
+	{
+		foreach ($lineids as $lineid) {
+			$line = new BookKeeping($this->db);
+			if ($line->fetch((int) $lineid, null, $mode) <= 0) {
+				$this->errors[] = $line->error;
+				return -1;
+			}
+			if (isset($oldlines[$lineid])) {
+				$line->oldcopy = $oldlines[$lineid];
+			}
+			if ($line->call_trigger($triggername, $user) < 0) {
+				$this->error = $line->error;
+				$this->errors = array_merge($this->errors, $line->errors);
+				return -1;
+			}
+		}
+
+		return 1;
 	}
 
 	/**
@@ -2241,11 +2329,12 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param  int      $direction      If 0: tmp => real, if 1: real => tmp
 	 * @param  string   $piece_num      Piece num = Transaction ref
+	 * @param  int      $notrigger      0=launch triggers after, 1=disable triggers
 	 * @return int                      int Return integer <0 if KO, >0 if OK
 	 */
-	public function transformTransaction($direction = 0, $piece_num = '')
+	public function transformTransaction($direction = 0, $piece_num = '', $notrigger = 0)
 	{
-		global $conf;
+		global $conf, $user;
 
 		$error = 0;
 
@@ -2302,6 +2391,14 @@ class BookKeeping extends CommonObject
 					$error++;
 					$this->errors[] = 'Error '.$this->db->lasterror();
 					dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+				}
+			}
+
+			// Call triggers for the lines now in the ledger, as create() does
+			if (!$error && !$notrigger) {
+				$newlines = $this->fetchLinesForTrigger('SELECT rowid FROM '.$this->db->prefix().$this->table_element.' WHERE piece_num = '.((int) $next_piecenum).' AND entity = '.((int) $conf->entity));
+				if (!is_array($newlines) || $this->callTriggerPerLine('BOOKKEEPING_CREATE', array_keys($newlines), $user) < 0) {
+					$error++;
 				}
 			}
 

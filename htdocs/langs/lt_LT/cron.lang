@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = Skaityti planinį darbą
-Permission23102 = sukurti / atnaujinti planinį darbą
-Permission23103 = Panaikinti planinį darbą
-Permission23104 = Vykdyti planinį darbą
 # Admin
 CronSetup=Numatytos užduoties valdymo nustatymas
 URLToLaunchCronJobs=URL, skirtas naršyklėje patikrinti ir paleisti kvalifikuotas „cron“ užduotis
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=Unix aplinkoje turėtumėte naudoti šį crontab įraš�
 CronExplainHowToRunWin=„Microsoft(tm) Windows“ aplinkoje galite naudoti suplanuotų užduočių įrankius, kad komandinė eilutė būtų paleista kas 5 minutes.
 CronMethodDoesNotExists=Klasėje %s nėra jokio metodo %s
 CronMethodNotAllowed=Klasės %s metodas %s yra draudžiamų metodų blokavimo sąraše.
-CronJobDefDesc=„Cron“ užduočių profiliai yra apibrėžti modulio deskriptoriaus faile. Kai modulis aktyvuojamas, jie įkeliami ir tampa prieinami, kad galėtumėte administruoti užduotis iš administratoriaus įrankių meniu %s.
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=Iš anksto apibrėžtų „cron“ užduočių profilių sąrašas
 # Menu
 EnabledAndDisabled=Įjungta ir išjungta
@@ -27,7 +22,7 @@ CronDelete=Ištrinti suplanuotas užduotis
 CronConfirmDelete=Ar tikrai norite ištrinti šias suplanuotas užduotis?
 CronExecute=Paleisti dabar
 CronConfirmExecute=Ar tikrai norite vykdyti šias suplanuotas užduotis dabar?
-CronInfo=Suplanuotų užduočių modulis leidžia suplanuoti užduotis, kad jos būtų vykdomos automatiškai. Užduotis taip pat galima paleisti rankiniu būdu.
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=Darbas
 CronNone=Kitas suplanuotos užduoties vykdymas
 CronNotYetRan=Niekada nebuvo įvykdyta mirties bausmė
@@ -79,7 +74,7 @@ CronType_command=Apvalkalo komanda
 CronCannotLoadClass=Nepavyksta įkelti klasės failo %s (norint naudoti klasę %s)
 CronModuleNotEnabledInThisEntity=Šiame objekte neįgalintas „Cron“ modulis (norint naudoti objekto %s metodą)
 CronCannotLoadObject=Klasės failas %s buvo įkeltas, bet jame nerastas objektas %s.
-UseMenuModuleToolsToAddCronJobs=Norėdami peržiūrėti ir redaguoti suplanuotas užduotis, eikite į meniu „<a href="%s">Pagrindinis puslapis – Administratoriaus įrankiai – Suplanuotos užduotys</a>“.
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=Užduotis išjungta
 MakeLocalDatabaseDumpShort=Vietinės duomenų bazės atsarginė kopija
 MakeLocalDatabaseDump=Sukurkite vietinės duomenų bazės išklotinę. Parametrai: glaudinimas („gz“, „bz“ arba „none“), atsarginės kopijos tipas („mysql“, „pgsql“, „auto“), 1, „auto“ arba kuriamo failo pavadinimas, saugomų atsarginių kopijų failų skaičius.

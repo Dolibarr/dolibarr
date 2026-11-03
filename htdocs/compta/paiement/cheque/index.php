@@ -128,7 +128,7 @@ print "</table></div>\n";
 
 print '</div><div class="fichetwothirdright">';
 
-$max = 10;
+$max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
 
 foreach ($arrayofpaymentmodetomanage as $val) {
 	$sql = "SELECT bc.rowid, bc.date_bordereau as db, bc.amount, bc.ref as ref,";
@@ -148,16 +148,17 @@ foreach ($arrayofpaymentmodetomanage as $val) {
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th>';
+		print '<th colspan="3">';
 		if ($val == 'CHQ') {
 			print $langs->trans("LastCheckReceiptShort", $max);
 		} else {
 			$labelpaymentmode = ($langs->trans("PaymentType".$val) != "PaymentType".$val ? $langs->trans("PaymentType".$val) : $val);
 			print $langs->trans("LastPaymentForDepositShort", $max, $labelpaymentmode);
 		}
+		print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/list.php" title="'.$langs->trans("FullList").'">';
+		print '<span class="badge marginleftonlyshort">...</span>';
+		print '</a>';
 		print '</th>';
-		print '<th>'.$langs->trans("Date")."</th>";
-		print '<th>'.$langs->trans("BankAccount").'</th>';
 		print '<th class="right">'.$langs->trans("NbOfCheques").'</th>';
 		print '<th class="right">'.$langs->trans("Amount").'</th>';
 		print '<th class="right">'.$langs->trans("Status").'</th>';

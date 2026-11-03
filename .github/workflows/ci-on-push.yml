@@ -7,11 +7,66 @@ on:
     branches:
       - develop
       - master
-      - '=.0'
+      - '*.0'
     paths-ignore:
       - '.agents/**'
 
 jobs:
+  # Check that the user that pushes/merges into the current branch is a maintainer (github id
+  # found on a "M:" line of the MAINTAINERS/MAINTENERS file, or "eldy" if the file does not exist).
+  check-merger:
+    if: github.repository == 'Dolibarr/dolibarr'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v7
+      - name: Check that the merger is a maintainer
+        env:
+          MERGER: ${{ github.actor }}
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          MAINTFILE=""
+          for f in MAINTAINERS MAINTENERS; do
+            if [ -f "$f" ]; then MAINTFILE="$f"; break; fi
+          done
+          if [ -n "${MAINTFILE}" ]; then
+            # Extract github ids from lines "M:	Name <email> / githubid"
+            ALLOWED=$(grep -E '^M:' "${MAINTFILE}" | sed -n 's|.*/[[:space:]]*\(.*[^[:space:]]\)[[:space:]]*$|\1|p' | tr '[:upper:]' '[:lower:]' | sort -u)
+          else
+            ALLOWED="eldy"
+          fi
+          echo "Branch: ${BRANCH}"
+          echo "Merger: ${MERGER}"
+          echo "Maintainers file: ${MAINTFILE:-none}"
+          echo "Allowed users:"
+          echo "${ALLOWED}"
+          if echo "${ALLOWED}" | grep -qxF "$(echo "${MERGER}" | tr '[:upper:]' '[:lower:]')"; then
+            echo "OK, ${MERGER} is allowed to merge into ${BRANCH}."
+          else
+            echo "::error::User ${MERGER} is not declared as a maintainer (M: entry in ${MAINTFILE:-MAINTAINERS}) and is not allowed to merge into ${BRANCH}."
+            exit 1
+          fi
+      - name: Add a warning comment on the merged PR
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+          MERGER: ${{ github.actor }}
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          # Find the merged PR(s) associated to the pushed commit
+          PRS=$(gh api "repos/${REPO}/commits/${SHA}/pulls" --jq ".[] | select(.merged_at != null and .base.ref == \"${BRANCH}\") | .number")
+          if [ -z "${PRS}" ]; then
+            echo "No merged PR found for commit ${SHA} (direct push ?)"
+            exit 0
+          fi
+          for pr in ${PRS}; do
+            echo "Add warning comment on PR #${pr}"
+            gh pr comment "${pr}" --repo "${REPO}" --body "Warning: The PR was not merged by the allowed official merger for this repository and branch (merged by @${MERGER} into ${BRANCH})."
+          done
   pre-commit:
     uses: ./.github/workflows/pre-commit.yml
     secrets: inherit

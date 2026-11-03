@@ -39,6 +39,7 @@ ValueOfMeansLossForProductProduced=Une valeur de 0,95 signifie une moyenne de 5%
 DeleteBillOfMaterials=Supprimer la nomenclature
 CancelMo=Annuler Ordre de Fabrication
 MoCancelConsumedAndProducedLines=Annule également toutes les lignes consommées et produites (supprime les lignes et annule les mouvements de stocks)
+ErrorMoConsumptionOrProductionStarted=La consommation ou la production a déjà commencé sur cette fabrication commande. annuler avec ses lignes de production consommées et en premier.
 ConfirmCancelMo=Êtes-vous sûr de vouloir annuler cet ordre de fabrication ?
 DeleteMo=Supprimer l'ordre de fabrication
 ConfirmDeleteBillOfMaterials=Êtes-vous sûr de vouloir supprimer cette nomenclature?

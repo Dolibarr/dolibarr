@@ -651,11 +651,11 @@ extension=curl
 ;extension=enchant
 ;extension=fileinfo
 ;extension=ftp
-extension=gd2
+extension=gd
 ;extension=gettext
 ;extension=gmp
 extension=intl
-extension=imap
+;extension=imap  ; IMAP is no more distributed with PHP since 8.0 (PECL only)
 ;extension=interbase
 extension=ldap
 extension=mbstring
@@ -674,6 +674,7 @@ extension=pdo_mysql
 ;extension=shmop
 extension=soap
 extension=sockets
+extension=zip
 
 
 ;;;;;;;;;;;;;;;;;;;
