@@ -815,7 +815,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
  */
 function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file, $mode = 'read')
 {
-	// Moduleparts of documents linked to a thirdparty: modulepart => array(element used to fetch the object, feature for restrictedArea())
+	// Moduleparts of documents linked to a thirdparty: modulepart => array(element used to fetch the object, feature for restrictedArea(), [table for restrictedArea(), [feature2 for restrictedArea()]])
 	$modulepartlinkedtothirdparty = array(
 		'societe' => array('societe', 'societe'),
 		'company' => array('societe', 'societe'),
@@ -829,12 +829,12 @@ function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file
 		'proposal' => array('propal', 'propal'),
 		'commande' => array('commande', 'commande'),
 		'order' => array('commande', 'commande'),
-		'commande_fournisseur' => array('order_supplier', 'order_supplier'),
-		'order_supplier' => array('order_supplier', 'order_supplier'),
-		'supplier_order' => array('order_supplier', 'order_supplier'),
-		'facture_fournisseur' => array('invoice_supplier', 'invoice_supplier'),
-		'invoice_supplier' => array('invoice_supplier', 'invoice_supplier'),
-		'supplier_invoice' => array('invoice_supplier', 'invoice_supplier'),
+		'commande_fournisseur' => array('order_supplier', 'fournisseur', 'commande_fournisseur', 'commande'),
+		'order_supplier' => array('order_supplier', 'fournisseur', 'commande_fournisseur', 'commande'),
+		'supplier_order' => array('order_supplier', 'fournisseur', 'commande_fournisseur', 'commande'),
+		'facture_fournisseur' => array('invoice_supplier', 'fournisseur', 'facture_fourn', 'facture'),
+		'invoice_supplier' => array('invoice_supplier', 'fournisseur', 'facture_fourn', 'facture'),
+		'supplier_invoice' => array('invoice_supplier', 'fournisseur', 'facture_fourn', 'facture'),
 		'contract' => array('contrat', 'contrat'),
 		'contrat' => array('contrat', 'contrat'),
 		'fichinter' => array('fichinter', 'ficheinter'),
@@ -890,7 +890,9 @@ function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file
 	}
 
 	if (is_object($object) && $object->id > 0) {
-		return restrictedArea($user, $modulepartlinkedtothirdparty[$modulepart][1], $object, '', '', 'fk_soc', 'rowid', 0, 1, $mode);
+		$tableandshare = (empty($modulepartlinkedtothirdparty[$modulepart][2]) ? '' : $modulepartlinkedtothirdparty[$modulepart][2]);
+		$feature2 = (empty($modulepartlinkedtothirdparty[$modulepart][3]) ? '' : $modulepartlinkedtothirdparty[$modulepart][3]);
+		return restrictedArea($user, $modulepartlinkedtothirdparty[$modulepart][1], $object, $tableandshare, $feature2, 'fk_soc', 'rowid', 0, 1, $mode);
 	}
 
 	// Object not found (file outside the directory of an object or faked path like 'REF/./file'): refused to users restricted to some thirdparties
