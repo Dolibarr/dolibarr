@@ -585,12 +585,21 @@ try {
 			$s .= '<div class="ai-tools-debug">';
 			$s .= '<strong>Tool families loaded ('.count($mcp->loadedTools).')</strong>';
 			$s .= '<ul class="small">';
+			// Tools allowed by the setup of the assistant (system tools are always allowed)
+			$allowedToolNames = McpHandler::resolveAllowList(getDolGlobalString('AI_ASSISTANT_ALLOWED_TOOLS'), array_keys($mcp->toolsByName));
 			foreach ($mcp->loadedTools as $familyKey => $familyInstance) {
 				/** @param object $instance */
-				$nbInFamily = count(array_filter($mcp->toolsByName, function ($instance) use ($familyInstance): bool {
+				$toolNamesInFamily = array_keys(array_filter($mcp->toolsByName, function ($instance) use ($familyInstance): bool {
 					return $instance === $familyInstance;
 				}));
-				$s .= '<li><strong>'.dol_escape_htmltag((string) $familyKey).'</strong> <span class="opacitymedium">'.dol_escape_htmltag(get_class($familyInstance)).' - '.$nbInFamily.' tool(s)</span></li>';
+				$isSystemFamily = (method_exists($familyInstance, 'isSystem') && $familyInstance->isSystem());
+				$nbDisabled = $isSystemFamily ? 0 : count(array_diff($toolNamesInFamily, $allowedToolNames));
+				$nbInFamily = count($toolNamesInFamily) - $nbDisabled;
+				$s .= '<li><strong>'.dol_escape_htmltag((string) $familyKey).'</strong> <span class="opacitymedium">'.dol_escape_htmltag(get_class($familyInstance)).' - '.$nbInFamily.' tool(s)</span>';
+				if ($nbDisabled > 0) {
+					$s .= '<br><span class="opacitymedium">... '.$nbDisabled.' other tool(s) are disabled in the AI assistant setup</span>';
+				}
+				$s .= '</li>';
 			}
 			$s .= '</ul>';
 		}
