@@ -1896,6 +1896,27 @@ class ToolApiBridge extends McpTool
 			)
 		);
 
+		// Local tax payments (llx_localtax): country-specific extra taxes
+		// recorded by the company (RE/IRPF in Spain, empty elsewhere). The
+		// records are entity-scoped, not country-scoped, so no country
+		// filter applies. Write side is left out on purpose.
+		$this->enrichments['localtaxes'] = array(
+			'label' => 'local tax payments (second/third country taxes)',
+			'methods' => array(
+				'index' => array(
+					'default_properties' => 'id,ltt,label,amount,datep,datev,paymenttype,rappro',
+					'description' => "Local tax payments recorded by the company (country-specific extra taxes, e.g. RE and IRPF in Spain). ltt: 1 = localtax1, 2 = localtax2. datep = payment date, datev = value date, rappro = 1 when bank-reconciled. Search with sqlfilters on t.label or t.amount (e.g. \"(t.datep:>=:'20250101')\").",
+					'params' => array('pagination_data' => $pagination),
+					'right' => array('tax', 'charges', 'lire')
+				),
+				'get' => array(
+					'description' => "One local tax payment by its rowid: type (ltt), label, amount, dates and bank reconciliation state.",
+					'params' => array('id' => "Rowid of the local tax payment."),
+					'right' => array('tax', 'charges', 'lire')
+				)
+			)
+		);
+
 		// Read methods of endpoints already exposed.
 		$more = array(
 			'warehouses' => array(
