@@ -19,6 +19,7 @@ if (!defined('NOREQUIREDB')) {
 }
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/html.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/ai/class/mcptool.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ai/tools/api_bridge.class.php';
 
@@ -88,8 +89,8 @@ class AiProjectUpdateTest extends CommonClassTest
 			$args = ['id' => $id, 'description' => '  Updated description  ', 'note_public' => "\n Public note \n", 'note_private' => '   '];
 			$this->assertSame('', $this->bridge->writePrecheck($tool, $args));
 			$preview = $this->bridge->writeConfirmationPreview($tool, $args);
-			$this->assertStringContainsString('"Updated description"', $preview);
-			$this->assertStringNotContainsString('  Updated description  ', $preview);
+			$this->assertStringContainsString(dol_escape_htmltag('"Updated description"'), $preview);
+			$this->assertStringNotContainsString(dol_escape_htmltag('  Updated description  '), $preview);
 			$this->bridge->execute($tool, $args);
 			$this->assertSame(['description' => 'Updated description', 'note_public' => 'Public note', 'note_private' => ''], AiProjectUpdateEndpointFixture::$received['body']);
 		}
@@ -273,7 +274,7 @@ class AiProjectUpdateTest extends CommonClassTest
 	{
 		$project = $this->bridge->writeConfirmationPreview('api_projects_update', ['ref' => 'PJ-7', 'title' => 'Revised project', 'date_end' => 1735862400]);
 		foreach (['PJ-7', 'Example project', 'Revised project', '2025-01-02', '2025-01-03', '→'] as $expected) {
-			$this->assertStringContainsString($expected, $project);
+			$this->assertStringContainsString(dol_escape_htmltag($expected), $project);
 		}
 		$this->assertStringNotContainsString('00:00:00 UTC', $project);
 		$this->assertNotContains('Societe', $this->bridge->fetchedClasses);
@@ -320,8 +321,8 @@ class AiProjectUpdateTest extends CommonClassTest
 	{
 		date_default_timezone_set('America/Los_Angeles');
 		$preview = $this->bridge->writeConfirmationPreview('api_projects_update', ['id' => 7, 'date_end' => 1735862400]);
-		$this->assertStringContainsString('2025-01-01 → 2025-01-02', $preview);
-		$this->assertStringNotContainsString('UTC', $preview);
+		$this->assertStringContainsString(dol_escape_htmltag('2025-01-01 → 2025-01-02'), $preview);
+		$this->assertStringNotContainsString(dol_escape_htmltag('UTC'), $preview);
 	}
 
 	/** @return void */
@@ -401,6 +402,16 @@ class AiProjectUpdateLanguageFixture
 	public function trans($key, ...$values)
 	{
 		return $key.($values ? ' '.implode(' ', $values) : '');
+	}
+
+	/**
+	 * @param string $key Translation key
+	 * @param mixed ...$values Substitution values
+	 * @return string Unescaped preview text
+	 */
+	public function transnoentitiesnoconv($key, ...$values)
+	{
+		return $this->trans($key, ...$values);
 	}
 }
 

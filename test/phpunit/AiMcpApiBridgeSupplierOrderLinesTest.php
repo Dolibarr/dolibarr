@@ -205,7 +205,12 @@ class AiSupplierOrderLineUserFixture
 	public $id = 1;
 	public $denied = '';
 
-	/** @return bool */
+	/**
+	 * @param string $module Module name.
+	 * @param string $object Permission group.
+	 * @param string $right Permission name.
+	 * @return bool
+	 */
 	public function hasRight($module, $object, $right)
 	{
 		return $right !== $this->denied;
@@ -228,7 +233,12 @@ class AiSupplierOrderLineBridgeFixture extends ToolApiBridge
 		)));
 	}
 
-	/** @return object|null */
+	/**
+	 * @param string $class Business class.
+	 * @param int $id Order ID.
+	 * @param string $ref Order reference.
+	 * @return object|null
+	 */
 	protected function fetchRecord($class, $id, $ref = '')
 	{
 		if ($this->order === false || ($id != 42 && $ref !== 'PO-42')) {
@@ -237,7 +247,11 @@ class AiSupplierOrderLineBridgeFixture extends ToolApiBridge
 		return $this->order ?? $this->sampleOrder();
 	}
 
-	/** @return bool */
+	/**
+	 * @param array $access Access configuration.
+	 * @param int $id Order ID.
+	 * @return bool
+	 */
 	protected function canAccessWriteObject(array $access, $id)
 	{
 		return $this->allowAccess;
@@ -281,19 +295,28 @@ class AiSupplierOrderConfirmationDbFixture
 {
 	public $sql = '';
 
-	/** @return string */
+	/**
+	 * @param string $value Value to escape.
+	 * @return string
+	 */
 	public function escape($value)
 	{
 		return addslashes($value);
 	}
 
-	/** @return string */
+	/**
+	 * @param int $timestamp UTC timestamp.
+	 * @return string
+	 */
 	public function idate($timestamp)
 	{
 		return dol_print_date($timestamp, '%Y-%m-%d %H:%M:%S', 'gmt');
 	}
 
-	/** @return bool */
+	/**
+	 * @param string $sql Statement to capture.
+	 * @return bool
+	 */
 	public function query($sql)
 	{
 		$this->sql = $sql;

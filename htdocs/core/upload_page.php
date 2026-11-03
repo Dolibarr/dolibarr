@@ -882,7 +882,7 @@ if ($action == 'uploadfile') {
 					if (jqXHR.status === 200) {
 						// The conversion of the file into text is complete, we can ask the AI to analyze it
 						console.log("Conversion of the file into text complete, call the analysis");
-						$("#ajax-progress-message").text(\''.dol_escape_js($langs->trans("AIProcessingDocumentAskingAnalyze", $modelforanalysis)).'\');
+						$("#ajax-progress-message").text(\''.dol_escape_js($langs->transnoentitiesnoconv("AIProcessingDocumentAskingAnalyze", $modelforanalysis)).'\');
 						$(".progress-bar").css("width", "60%");
 						$.ajax({
 							url: ajaxUrlBase.concat("&step=analyze"),
@@ -899,8 +899,8 @@ if ($action == 'uploadfile') {
 
 									$("span.blink").remove();
 									var durationofprocessing = ((Date.now() - timestartprocessing) / 1000).toFixed(1);
-									// The translation is made with "%s" as parameter, so the %s of the template survives the sprintf() done by trans()
-									$("#ajax-progress-message").text(\''.dol_escape_js($langs->trans("AIProcessingDocumentAnalyzingComplete", '%s')).'\'.replace("%s", durationofprocessing));
+									// The translation is made with "%s" as parameter, so the %s of the template survives the sprintf() done by transnoentitiesnoconv(). Not encoded because .text() is used
+									$("#ajax-progress-message").text(\''.dol_escape_js($langs->transnoentitiesnoconv("AIProcessingDocumentAnalyzingComplete", '%s')).'\'.replace("%s", durationofprocessing));
 									$("#processing-duration").val(durationofprocessing);
 
 									// Submit the form directly to show the summary of the analysis (instead of showing the button Next)
