@@ -313,7 +313,7 @@ class modHoliday extends DolibarrModules
 		$this->import_fields_array[$r] = array(
 			'd.ref' => 'Ref*', 'd.fk_user' => 'UserID*', 'd.fk_type' => 'TypeOfLeaveId*','d.fk_validator' => 'ApprovedBy*',
 			'd.date_debut' => 'DateStart*', 'd.date_fin' => 'DateEnd*', 'd.halfday' => 'HalfDay', 'd.description' => 'Description*',
-			'd.date_create' => 'DateCreation*'
+			'd.date_creation' => 'DateCreation*'
 		);
 
 		// Import of leave balance

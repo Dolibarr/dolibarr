@@ -5,7 +5,7 @@ StripeOrCBDoPayment=クレジットカードまたはStripeで支払う
 FollowingUrlAreAvailableToMakePayments=以下のURLはDolibarrオブジェクト上で支払をするために顧客にページを提供するために利用可能
 PaymentForm=支払形態
 WelcomeOnPaymentPage=オンライン決済サービスへようこそ
-ThisScreenAllowsYouToPay=この画面では、%sにオンライン決済を行うことができる。
+ThisScreenAllowsYouToPay=この画面では、%sへのオンライン支払いを行うことができます。
 ThisIsInformationOnPayment=これは、実行する支払に関する情報。
 ToComplete=完了する
 YourEMail=入金確定を受信する電子メール
@@ -25,7 +25,7 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=既存のオブジェクトのない任
 ToOfferALinkForOnlinePaymentOnMemberSubscription=構成員サブスクリプションの%sオンライン支払ページを提供するURL
 ToOfferALinkForOnlinePaymentOnDonation=寄付の支払のために%sオンライン支払ページを提供するURL
 YouCanAddTagOnUrl=また、URL パラメータ <b>&タグ=value</b> をこれらの URL のいずれかに追加して (オブジェクトにリンクされていない支払いの場合のみ必須)、独自の支払いコメント タグ を追加することもできる。<br> 既存のオブジェクトがない支払いの URL の場合は、パラメータ <strong>&noidempotency=1</strong> なので、同じ タグ を持つ同じリンクを複数回使用できる (一部の支払いモードでは、このパラメータがないと、異なるリンクごとに支払いが 1 回に制限される場合がある)
-YouCanEmbedOnWebsite=支払いページを Dolibarr ウェブサイト に統合する場合は、次のパラメータを含めることができる: <b>&ws=website_ref</b>.<br>さらに、オンライン支払いが成功または失敗した後にリダイレクトを受信するためには、名前が<b>paymentok</b> と <b>paymentko</b>の2ページをウェブサイトに作成することが必須。
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful or failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Stripeによって検証済なら支払が自動的に作成されるように、URL <b> %s</b>を使用してStripeを設定する。
 AccountParameter=アカウントのパラメータ
 UsageParameter=使用パラメータ
@@ -110,3 +110,4 @@ PAYBOX_PBX_RANG=PBX Rangの値
 PAYBOX_PBX_IDENTIFIANT=PBX IDの値
 PAYBOX_HMAC_KEY=HMACキー
 FeatureNotUsedAccordingtoSetup=お使いの%s設定に従って、この機能は使用されていません。
+PaymentRecordedButPostPocessingKo=Your payment was recorded by the payment system. However, it appears that our post-payment processing could not be fully completed. We were alerted and will try to solve this soon. We recommend you to not try to pay a second time, and send us a screenshot of this page by email to be sure so we take into account the issue.

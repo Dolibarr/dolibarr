@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=Επικυρώθηκε
 StatusReceptionProcessedShort=Διενεργήθηκε
 ReceptionSheet=Δελτίο παραλαβής
 ValidateReception=Επικύρωση παραλαβής
+DeleteReception=Διαγραφή παραλαβής
 ConfirmDeleteReception=Είστε σίγουροι ότι θέλετε να διαγράψετε αυτή την παραλαβή;
 ConfirmValidateReception=Είστε σίγουροι ότι θέλετε να επικυρώσετε αυτή την παραλαβή με αναφορά <b>%s</b> ;
 ConfirmCancelReception=Είστε σίγουροι ότι θέλετε να ακυρώσετε αυτή την παραλαβή;

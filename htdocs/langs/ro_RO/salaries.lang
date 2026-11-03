@@ -10,23 +10,24 @@ SalariesPaymentsOf=Plăţi salarii pentru %s
 ShowSalaryPayment=Arată plată salariu
 SalaryID=ID salariu
 SalaryAmount=Valoare salariu
-SalaryDate=Salary date
-SalaryPaid=Plata salariu
-SalaryNotPaid=Salary not paid
+SalaryDate=Dată salariu
+SalaryPaid=Plată salariu
+SalaryNotPaid=Salariu neplătit
 
-SalarySlip=Salary slip
-StandardSalaryDocModel=Standard salary slip document
+SalarySlip=Fluturaș de salariu
+StandardSalaryDocModel=Document standard Fluturaș de salariu
 
-BasicSalary=Basic salary
+BasicSalary=Salariu de bază
 Bonus=Bonus
-Allowance=Allowance
-Overtime=Overtime
-Deduction=Deduction
-Deductions=Deductions
-Earnings=Earnings
-TotalEarnings=Total earnings
-TotalDeductions=Total deductions
-NetPaid=TVA plătit
+Allowance=Toleranță
+Overtime=Ore suplimentare
+Deduction=Deducere
+Deductions=Deduceri
+Earnings=Câștiguri
+TotalEarnings=Total câștiguri
+TotalDeductions=Total deduceri
+NetPaid=Net plătit
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT= Cont contabil (din Planul de Conturi) folosit implicit pentru "utilizatori" la salarii 
@@ -41,7 +42,7 @@ AllSalaries=Toate salariile
 SalariesStatistics=Statistici salariale
 SalariesAndPayments=Salarii și plăți
 UserPaySlip=Fișă de plată
-PayPeriod=Pay period
+PayPeriod=Perioada de plată
 
 # THM / TJM
 THM=Tarif orar mediu
@@ -55,8 +56,6 @@ FillFieldFirst=Completați mai întâi câmpul angajat
 UpdateAmountWithLastSalary=Setare valoare a ultimului salariu
 MakeTransferRequest=Fă o cerere de transfer
 VirementOrder=Cerere tranfer credit
-WithdrawalReceipt=Ordin de transfer de credit
-OrderWaiting=Comandă în așteptare
 FillEndOfMonth=Sfârșit de lună
 
 # Shortcuts

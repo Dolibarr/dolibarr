@@ -419,7 +419,7 @@ if ($module == 'ecm') {
 }
 print '<tr><td class="titlefield">'.$langs->trans("ECMCreationDate").'</td><td>';
 if ($module == 'ecm') {
-	print dol_print_date($ecmdir->date_c, 'dayhour');
+	print dol_print_date($ecmdir->date_creation, 'dayhour');
 } else {
 	//var_dump($upload_dir);
 	print dol_print_date(dol_filemtime($upload_dir), 'dayhour');

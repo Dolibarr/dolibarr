@@ -3,6 +3,7 @@
 # and that the description of the PR does not contain a mention of a maintainer (defined into MAINTENERS file).
 # If this is not the case, the CI fails, so the PR is refused. If the description contains the mention, the PR is also closed.
 # If the PR targets a branch other than develop, the keyword must also be restricted to (Fix|Sec|Doc).
+# If the repository variable DEVELOP_FEATURE_FREEZE is set to 1, PR of type (New|Qual) on develop are also refused.
 # Note: the keyword can be in upper or lower case (use upper case to see the PR into the ChangeLog)
 # and must be followed by a space, a '#' or a ':' (for example: "Fix #456 Short description", "Fix: Short description", "New Short description").
 # Draft PRs are skipped (they are not analyzed until they are ready for review).
@@ -23,7 +24,7 @@ permissions: {}
 
 jobs:
   check-pr:
-    name: Check PR title and description syntax
+    name: Check PR title, description and branch
     if: github.event.pull_request.draft != true
     runs-on: ubuntu-latest
     permissions:
@@ -59,6 +60,23 @@ jobs:
 
           echo "::error::The PR targets the branch '$PR_TARGET_BRANCH' which is not the branch develop, so only bugfix or security PR are allowed. Quality, log, perf or refactoring must be done in develop branch."
           exit 1
+
+      - name: Check PR type is allowed on develop during feature freeze
+        if: vars.DEVELOP_FEATURE_FREEZE == '1'
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
+        run: |
+          if [ "$PR_TARGET_BRANCH" != "develop" ]; then
+            exit 0
+          fi
+
+          if echo "$PR_TITLE" | grep -Eiq '^(New|Qual)[ #:]'; then
+            echo "::error::The branch develop is in feature freeze. PR of type NEW or QUAL are not accepted for the moment. Please submit it again after the release."
+            exit 1
+          fi
+
+          echo "Type of PR is allowed on develop during the feature freeze: '$PR_TITLE'"
 
       - name: Check PR description mentions
         env:

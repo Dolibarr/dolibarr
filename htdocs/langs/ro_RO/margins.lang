@@ -31,9 +31,9 @@ UseDiscountOnTotal=Pe subtotal
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definiţi dacă discount-ul global e tratat ca un produs, serviciu, sau numai pe total la calcularea marjei.
 MARGIN_TYPE=Prețul de achiziţie/cost sugerat implicit pentru calcularea marjei
 MargeType1=Marja la prețul cel mai bun al furnizororului
-MargeType2=Margin on Weighted Average Cost (WAC)
+MargeType2=Marjă pe Cost mediu Ponderat (CMP)
 MargeType3=Marja pe prețul de cost
-MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
+MarginTypeDesc=* Marja pe cel mai bun preț de cumpărare = Preț de vânzare - Cel mai bun preț de achiziție furnizor definit pe cardul Produs<br>* Marja pe costul mediu ponderat (CMP) = Preț de vânzare - Preț mediu ponderat produs (PMP) sau cel mai bun preț de achiziție furnizor dacă PMP nu este încă definit<br>* Marja pe preț de cost = Preț de vânzare - Preț de cost definit pe cardul Produs sau CMP dacă prețul de cost nu este definit, sau cel mai bun preț de achiziție furnizor nu este încă definit dacă CMP nu a fost definit încă
 CostPrice=Preţ de cost
 UnitCharges=Cheltuieli unitare
 Charges=Cheltuieli
@@ -43,4 +43,7 @@ rateMustBeNumeric=Cota trebuie să fie numerică
 markRateShouldBeLesserThan100=Cota mărcii trebuie să fie mai mică de 100
 ShowMarginInfos=Arată informaţii marjă
 CheckMargins=Detaliu marjă
-MarginPerSaleRepresentativeWarning=Raportul privind marja per utilizator utilizează legătura dintre terți și reprezentanții de vânzare pentru a calcula marja fiecărui reprezentant de vânzare. Deoarece unii terți nu pot avea un reprezentant dedicat vânzării și unii terți pot fi legate de mai mulți, este posibil ca anumite sume să nu fie incluse în acest raport (dacă nu există reprezentant de vânzare) și unele pot apărea pe diferite linii (pentru fiecare reprezentant de vânzare) .
+MarginPerSaleRepresentativeWarning=Raportul privind marja per utilizator utilizează legătura dintre terți și reprezentanții de vânzări pentru a calcula marja fiecărui reprezentant de vânzări. Deoarece este posibil ca unii terți să nu aibă un reprezentant de vânzări dedicat, iar alții să fie legați de mai mulți, este posibil ca unele sume să nu fie incluse în acest raport (dacă nu există un reprezentant de vânzări), iar altele să apară pe linii diferite (pentru fiecare reprezentant de vânzări).
+MarginUpdateLinkedBuyingPrice=Suggest to propagate the cost price modified on a line to all the lines of the linked proposals, orders and invoices that has the same product (users will decide yes or no at eachmodification)
+UpdateLinkedBuyingPrice=Update the cost price on all lines (with the same product) of the linked documents
+UpdateLinkedBuyingPriceQuestion=The cost price of this line has changed. Apply it to the lines of the linked documents that has the same product ?

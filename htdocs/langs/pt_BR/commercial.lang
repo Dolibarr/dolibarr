@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - commercial
 Commercial=Comercial
 CommercialArea=Área comercial
-Prospect=Cliente em Potencial
 Prospects=Clientes em Potencial
 DeleteAction=Excluir um evento
 AddAction=Adicionar evento
@@ -10,7 +9,6 @@ AddActionRendezVous=Criar um evento de reunião
 ConfirmDeleteAction=Tem certeza que quer deleitaar este evento?
 ActionOnContact=Contato relacionado
 ActionOnUser=Usuário relacionado
-ShowTask=Mostrar tarefa
 ShowAction=Mostrar evento
 ActionsReport=Relatório de eventos
 ThirdPartiesOfSaleRepresentative=Terceiros com representante comercial

@@ -1005,7 +1005,7 @@ class FactureLigne extends CommonInvoiceLine
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Returns situation_percent of all the previous line. Used when INVOICE_USE_SITUATION = 2.
+	 * Returns situation_percent of all the previous line. Used when INVOICE_USE_SITUATION != 1.
 	 * Warning: If invoice is a replacement invoice, this->fk_prev_id is id of the replaced line.
 	 *
 	 * @param  int     $invoiceid      Invoice id
@@ -1104,7 +1104,7 @@ class FactureLigne extends CommonInvoiceLine
 
 			return ($this->situation_percent - $prevProgress) / $this->situation_percent;
 		}
-		// new mode (INVOICE_USE_SITUATION == 2):
+		// new mode (INVOICE_USE_SITUATION != 1):
 		// no ratio needed (data stored on line is already a delta)
 		// or not a situation invoice: no ratio needed either
 		return 1;

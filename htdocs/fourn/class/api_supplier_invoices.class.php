@@ -397,6 +397,7 @@ class SupplierInvoices extends DolibarrApi
 	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @throws RestException 304
+	 * @throws RestException 400
 	 * @throws RestException 403
 	 * @throws RestException 404
 	 * @throws RestException 405
@@ -404,6 +405,8 @@ class SupplierInvoices extends DolibarrApi
 	 */
 	public function validate($id, $idwarehouse = 0, $notrigger = 0)
 	{
+		global $langs;
+
 		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "facture", "creer")) {
 			throw new RestException(403);
 		}
@@ -415,6 +418,15 @@ class SupplierInvoices extends DolibarrApi
 		$result = $this->invoice->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Invoice not found');
+		}
+
+		if ($this->invoice->status <= FactureFournisseur::STATUS_DRAFT
+			&& !preg_match('/^'.preg_quote($langs->trans("CopyOf").' ', '/').'/', $this->invoice->ref_supplier)
+			&& count($this->invoice->lines) <= 0) {
+			$langs->load("errors");
+			$errorMessage = $langs->trans("ErrorObjectMustHaveLinesToBeValidated", $this->invoice->ref);
+			dol_syslog(__METHOD__.' '.$errorMessage, LOG_WARNING);
+			throw new RestException(400, $errorMessage);
 		}
 
 		$result = $this->invoice->validate(DolibarrApiAccess::$user, '', $idwarehouse, $notrigger);
@@ -986,7 +998,7 @@ class SupplierInvoices extends DolibarrApi
 	 */
 	public function getLines($id)
 	{
-		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "facture", "creer")) {
+		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "facture", "lire")) {
 			throw new RestException(403);
 		}
 		if (!DolibarrApi::_checkAccessToResource('fournisseur', $id, 'facture_fourn', 'facture')) {
