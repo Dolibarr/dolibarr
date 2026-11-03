@@ -248,4 +248,53 @@ class CommandeTest extends CommonClassTest
 		$this->assertLessThan($result, 0);
 		return $result;
 	}
+
+	/**
+	 * testCommandeUpdatelinePackaging
+	 *
+	 * With PRODUCT_USE_CUSTOMER_PACKAGING, when a line is updated, the amounts must be computed
+	 * on the quantity rounded to the packaging, not on the quantity typed.
+	 *
+	 * @return  void
+	 */
+	public function testCommandeUpdatelinePackaging()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$savconst = getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING');
+		$conf->global->PRODUCT_USE_CUSTOMER_PACKAGING = 1;
+
+		$product = new Product($db);
+		$product->ref = 'PHPUNIT-PACKAGING-'.dol_print_date(dol_now(), 'dayhourlog').'-'.mt_rand(100, 999);
+		$product->label = 'Product sold by packaging of 6';
+		$product->type = Product::TYPE_PRODUCT;
+		$product->price = 10;
+		$product->tva_tx = 20;
+		$product->packaging = 6;
+		$productid = $product->create($user);
+		$this->assertGreaterThan(0, $productid, (string) $product->error);
+
+		$localobject = new Commande($db);
+		$localobject->socid = 1;
+		$localobject->date = dol_now();
+		$this->assertGreaterThan(0, $localobject->create($user), (string) $localobject->error);
+		$localobject->fetch_thirdparty();
+
+		$lineid = $localobject->addline('Line', 10, 6, 20, 0, 0, $productid);
+		$this->assertGreaterThan(0, $lineid, (string) $localobject->error);
+		$result = $localobject->updateline($lineid, 'Line', 10, 7, 0, 20);
+		$this->assertGreaterThan(0, $result, (string) $localobject->error);
+
+		$line = new OrderLine($db);
+		$line->fetch($lineid);
+		$conf->global->PRODUCT_USE_CUSTOMER_PACKAGING = $savconst;
+
+		print __METHOD__." qty=".$line->qty." total_ht=".$line->total_ht."\n";
+		$this->assertEquals(12, $line->qty, 'Quantity 7 rounded to the packaging of 6');
+		$this->assertEquals(120, $line->total_ht, 'Total of the rounded quantity 12, not of 7');
+	}
 }
