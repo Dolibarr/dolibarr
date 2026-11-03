@@ -149,6 +149,29 @@ class CGenericDic extends CommonDict
 	}
 
 	/**
+	 * Return if the dictionary table has a column 'entity' (cached per table)
+	 *
+	 * @return bool
+	 */
+	private function tableHasEntityColumn()
+	{
+		static $cache = array();
+
+		$table = $this->table_element;
+		if (!isset($cache[$table])) {
+			$cache[$table] = false;
+			foreach ($this->db->DDLInfoTable($this->db->prefix().$table) as $column) {
+				if (reset($column) == 'entity') {
+					$cache[$table] = true;
+					break;
+				}
+			}
+		}
+
+		return $cache[$table];
+	}
+
+	/**
 	 * Load object in memory from the database
 	 *
 	 * @param int    $id  Id object
@@ -176,12 +199,17 @@ class CGenericDic extends CommonDict
 		$sql .= " ".$this->db->sanitize("t.".$fieldlabel)." as label,";
 		$sql .= " t.active";
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
+		// The same code or label may exist in several entities: search only in the allowed ones
+		$entityfilter = '';
+		if ($this->tableHasEntityColumn()) {
+			$entityfilter = " AND t.entity IN (".getEntity($this->table_element).")";
+		}
 		if ($id) {
 			$sql .= " WHERE ".$this->db->sanitize("t.".$fieldrowid)." = ".((int) $id);
 		} elseif ($code) {
-			$sql .= " WHERE t.code = '".$this->db->escape($code)."'";
+			$sql .= " WHERE t.code = '".$this->db->escape($code)."'".$entityfilter;
 		} elseif ($label) {
-			$sql .= " WHERE t.label = '".$this->db->escape($label)."'";
+			$sql .= " WHERE t.label = '".$this->db->escape($label)."'".$entityfilter;
 		}
 
 		$resql = $this->db->query($sql);
