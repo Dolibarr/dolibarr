@@ -669,11 +669,20 @@ if ($id > 0 || $ref) {
 				$vatfree = GETPOST("tva_tx_free", 'alpha');
 			} elseif ($vattoselect != -1 && strpos($vatoptions, ' selected') === false) {
 				$vatfree = preg_replace('/\s*\(.*\)/', '', (string) $vattoselect);
+				$vatfree = vatrate(str_replace('*', '', $vatfree)).(strpos($vatfree, '*') !== false ? '*' : '');	// '5.0000*' shown as '5*'
 			}
 			print '<select class="flat valignmiddle minwidth75imp maxwidth100 right" id="tva_tx" name="tva_tx"'.($vatinlist ? '' : ' style="display: none"').'>'.($vatinlist ? $vatoptions : '').'</select>';
 			print '<span class="tva_tx_or opacitymedium"'.($vatinlist ? '' : ' style="display: none"').'> ... '.$langs->trans("or").' ... </span>';
 			print '<input type="text" class="flat right width50" id="tva_tx_free" name="tva_tx_free" value="'.dol_escape_htmltag($vatfree).'" placeholder="%">';
 			print $form->textwithpicto('', $langs->trans("VATRateForSupplierProductFreeHelp"), 1, 'info');
+			// The list is greyed while a rate is typed in the free field, as the typed rate is the one saved
+			print '<script>
+			$(document).ready(function () {
+				function tva_tx_free_toggle() { $("#tva_tx").css("opacity", $("#tva_tx_free").val().trim() !== "" ? 0.4 : 1); }
+				$("#tva_tx_free").on("input", tva_tx_free_toggle);
+				tva_tx_free_toggle();
+			});
+			</script>';
 			print '</td></tr>';
 
 			if (isModEnabled('dynamicprices')) { //Only show price mode and expression selector if module is enabled
