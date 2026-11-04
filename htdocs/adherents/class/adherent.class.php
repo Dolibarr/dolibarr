@@ -16,6 +16,7 @@
  * Copyright (C) 2021		Waël Almoman            	<info@almoman.com>
  * Copyright (C) 2021		Philippe Grand          	<philippe.grand@atoo-net.com>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026 iLLixM <iLLixM@proton.me>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

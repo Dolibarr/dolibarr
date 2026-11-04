@@ -1,6 +1,4 @@
-/* Copyright (C) 2026 Marcel
- * SPDX-License-Identifier: GPL-3.0-or-later
- */
+/* SPDX-License-Identifier: GPL-3.0-or-later */
 
 // Run with node. Exercise the controller's actual inline script without a browser or application data.
 const assert = require('node:assert/strict');

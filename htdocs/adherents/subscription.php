@@ -9,6 +9,7 @@
  * Copyright (C) 2023		Waël Almoman				<info@almoman.com>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Jon Bendtsen				<jon.bendtsen.github@jonb.dk>
+ * Copyright (C) 2026 iLLixM <iLLixM@proton.me>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
