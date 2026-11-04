@@ -1601,7 +1601,7 @@ class ToolApiBridge extends McpTool
 					'right' => array('tax', 'charges', 'lire')
 				),
 				'getPayment' => array(
-					'suffix' => 'payment',
+					'suffix' => 'payment_get',
 					'description' => "One payment of a social or fiscal charge, by its payment rowid.",
 					'params' => array('pid' => "Rowid of the payment."),
 					'right' => array('tax', 'charges', 'lire')
@@ -1633,7 +1633,7 @@ class ToolApiBridge extends McpTool
 					'right' => array('tax', 'charges', 'lire')
 				),
 				'getPayment' => array(
-					'suffix' => 'payment',
+					'suffix' => 'payment_get',
 					'description' => "One payment of a VAT declaration, by its payment rowid.",
 					'params' => array('pid' => "Rowid of the payment."),
 					'right' => array('tax', 'charges', 'lire')
