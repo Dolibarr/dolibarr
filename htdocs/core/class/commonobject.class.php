@@ -3885,7 +3885,7 @@ abstract class CommonObject
 		if ($absqty < (float) $packaging) {
 			return $sign * (float) $packaging;
 		}
-		if ((float) price2num(fmod($absqty, (float) $packaging), 'MS')) {
+		if ((float) price2num($absqty - round($absqty / (float) $packaging) * (float) $packaging, 'MS') != 0) {	// Not a multiple of the packaging (do not use fmod, it fails with decimal packaging)
 			$coeff = intval($absqty / (float) $packaging) + 1;
 			return $sign * (float) price2num((float) $packaging * $coeff, 'MS');
 		}

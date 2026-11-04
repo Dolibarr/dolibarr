@@ -359,7 +359,7 @@ class Tickets extends DolibarrApi
 		$this->_validate($request_data);
 
 		// Check thirdparty validity
-		$socid = (int) $request_data['socid'];
+		$socid = (int) ($request_data['socid'] ?? 0);
 		if ($socid > 0) {
 			$thirdpartytmp = new Societe($this->db);
 			$thirdparty_result = $thirdpartytmp->fetch($socid);
@@ -436,7 +436,9 @@ class Tickets extends DolibarrApi
 		}
 		$ticketMessageText = $this->ticket->message;
 		$result = $this->ticket->fetch(0, '', $this->ticket->track_id);
-		if (!$result) {
+		// fetch() returns -1 on an error and 0 when nothing matches, and !(-1) is false, so an error went past
+		// this 404 and was reported later as a 400 or a 500 instead of a missing ticket.
+		if ($result <= 0) {
 			throw new RestException(404, 'Ticket not found');
 		}
 
@@ -551,7 +553,7 @@ class Tickets extends DolibarrApi
 		}
 
 		// Check thirdparty validity
-		$socid = (int) $request_data['socid'];
+		$socid = (int) ($request_data['socid'] ?? 0);
 		if ($socid > 0) {
 			$thirdpartytmp = new Societe($this->db);
 			$thirdparty_result = $thirdpartytmp->fetch($socid);
