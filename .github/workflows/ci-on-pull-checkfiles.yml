@@ -61,6 +61,31 @@ jobs:
           #    || echo "::warning::Failed to remove the label \"PR not qualified\" on the PR."
           #fi
 
+      - name: Check that no files into htdocs/includes are modified, except for PR on develop
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+        run: |
+          # External libraries into htdocs/includes can be modified (upgraded) only into the develop branch.
+          if [ "${BASE_REF}" = "develop" ]; then
+            echo "The PR targets the develop branch, so files into htdocs/includes can be modified."
+            exit 0
+          fi
+
+          # Get the list of files changed (whatever is the status) by the pull request,
+          # using the GitHub API so no git history is needed (no checkout).
+          CHANGED_FILES=$(gh api --paginate "repos/${{ github.repository }}/pulls/${{ github.event.number }}/files?per_page=100" \
+            --jq '.[] | .filename, (.previous_filename // empty)' \
+            | grep -E '^htdocs/includes/' | sort -u || true)
+
+          if [ -n "$CHANGED_FILES" ]; then
+            echo "::error::Files into htdocs/includes (external libraries) must not be modified into a PR on a stable branch (here '${BASE_REF}'). Such changes must be done into a PR on the develop branch only. The following files were modified:"
+            echo "$CHANGED_FILES" | sed 's/^/ - /'
+            exit 1
+          fi
+
+          echo "No files into htdocs/includes were modified. OK."
+
       - name: Check the number of modified files is not higher than 10, except for QUAL PR
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
