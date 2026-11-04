@@ -995,7 +995,7 @@ class FactureLigne extends CommonInvoiceLine
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Returns situation_percent of all the previous line. Used when INVOICE_USE_SITUATION = 2.
+	 * Returns cumulated situation_percent of all the previous lines. Used when INVOICE_USE_SITUATION = 2.
 	 * Warning: If invoice is a replacement invoice, this->fk_prev_id is id of the replaced line.
 	 *
 	 * @param  int     $invoiceid      Invoice id
