@@ -124,8 +124,10 @@ class Contacts extends DolibarrApi
 	 *
 	 * @url GET email/{email}
 	 *
-	 * @throws	RestException	401 Insufficient rights
-	 * @throws	RestException	404 User or group not found
+	 * @throws	RestException	403 Insufficient rights
+	 * @throws	RestException	404 Contact not found
+	 * @throws	RestException	409 Several contacts found with this email
+	 * @throws	RestException	500 Error when fetching contact
 	 */
 	public function getByEmail($email, $includecount = 0, $includeroles = 0)
 	{
@@ -139,8 +141,15 @@ class Contacts extends DolibarrApi
 			$result = $this->contact->fetch(0, null, '', $email);
 		}
 
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching contact: '.$this->contact->errorsToString());
+		}
+		if ($result == 0) {
 			throw new RestException(404, 'Contact not found');
+		}
+		// fetch() returns 2 without loading the contact when several contacts match
+		if ($result == 2) {
+			throw new RestException(409, 'Several contacts found with this email, use GET /contacts with sqlfilters instead');
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id, 'socpeople&societe')) {

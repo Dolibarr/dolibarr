@@ -210,6 +210,73 @@ class RestAPIContactTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * testRestGetContactByEmail
+	 *
+	 * Get a contact by a unique email, an unknown email, then an email shared by two contacts.
+	 *
+	 * @return	void
+	 *
+	 * @depends testRestGetContact
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testRestGetContactByEmail()
+	{
+		$addheaders = array('Content-Type: application/json');
+		$email = 'testrestcontactbyemail'.mt_rand().'@example.com';
+		$emailurl = $this->api_url.'/contacts/email/'.rawurlencode($email).'?api_key='.$this->api_key;
+		$contactids = array();
+
+		try {
+			// Create a contact with a unique email
+			$body = json_encode(array("firstname" => "testRestContactByEmail1", "lastname" => "testRestContact", "email" => $email));
+			$result = getURLContent($this->api_url.'/contacts?api_key='.$this->api_key, 'POST', $body, 1, $addheaders, array('http', 'https'), 2);
+			$this->assertEquals(0, $result['curl_error_no']);
+			$contactid = json_decode($result['content'], true);
+			$this->assertIsInt($contactid, 'Contact creation failed: '.$result['content']);
+			$contactids[] = $contactid;
+
+			// Get the contact by its unique email
+			print __METHOD__." Request GET url=".$emailurl."\n";
+			$result = getURLContent($emailurl, 'GET', '', 1, array(), array('http', 'https'), 2);
+			$this->assertEquals(0, $result['curl_error_no']);
+			$object = json_decode($result['content'], true);
+			$this->assertNotNull($object, "Parsing of json result must not be null");
+			$this->assertEquals($contactid, $object['id'] ?? null, 'Get by unique email failed: '.$result['content']);
+			$this->assertEquals($email, $object['email'] ?? null);
+
+			// Get a contact by an unknown email
+			$url = $this->api_url.'/contacts/email/'.rawurlencode('unknown'.$email).'?api_key='.$this->api_key;
+			print __METHOD__." Request GET url=".$url."\n";
+			$result = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
+			$this->assertEquals(0, $result['curl_error_no']);
+			$object = json_decode($result['content'], true);
+			$this->assertNotNull($object, "Parsing of json result must not be null");
+			$this->assertEquals(404, $object['error']['code'] ?? null, 'Get by unknown email must return 404: '.$result['content']);
+
+			// Create a second contact with the same email
+			$body = json_encode(array("firstname" => "testRestContactByEmail2", "lastname" => "testRestContact", "email" => $email));
+			$result = getURLContent($this->api_url.'/contacts?api_key='.$this->api_key, 'POST', $body, 1, $addheaders, array('http', 'https'), 2);
+			$this->assertEquals(0, $result['curl_error_no']);
+			$contactid = json_decode($result['content'], true);
+			$this->assertIsInt($contactid, 'Contact creation failed: '.$result['content']);
+			$contactids[] = $contactid;
+
+			// Get by an email shared by two contacts must not return an empty contact
+			print __METHOD__." Request GET url=".$emailurl."\n";
+			$result = getURLContent($emailurl, 'GET', '', 1, array(), array('http', 'https'), 2);
+			$this->assertEquals(0, $result['curl_error_no']);
+			$object = json_decode($result['content'], true);
+			$this->assertNotNull($object, "Parsing of json result must not be null");
+			$this->assertEquals(409, $object['error']['code'] ?? null, 'Get by duplicate email must return 409: '.$result['content']);
+		} finally {
+			// Clean up
+			foreach ($contactids as $contactid) {
+				getURLContent($this->api_url.'/contacts/'.$contactid.'?api_key='.$this->api_key, 'DELETE', '', 1, $addheaders, array('http', 'https'), 2);
+			}
+		}
+	}
+
+	/**
 	 * testRestCreateContact
 	 *
 	 * @return int
