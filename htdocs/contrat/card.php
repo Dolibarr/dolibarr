@@ -2378,10 +2378,10 @@ if ($action == 'create') {
 				if ($object->status == $object::STATUS_VALIDATED) {
 					if ($user->hasRight('contrat', 'creer')) {
 						unset($params['attr']['title']);
-						print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken(), '', true, $params);
+						print dolGetButtonAction($langs->trans('Modify'), '', 'edit', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken(), '', true, $params);
 					} else {
 						$params['attr']['title'] = $langs->trans("NotEnoughPermissions");
-						print dolGetButtonAction($langs->trans('Modify'), '', 'default', '#', '', false, $params);
+						print dolGetButtonAction($langs->trans('Modify'), '', 'edit', '#', '', false, $params);
 					}
 				}
 

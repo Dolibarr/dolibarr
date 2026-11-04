@@ -3577,7 +3577,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print dolGetButtonAction($title, $langs->trans('SendMail'), 'email', $_SERVER['PHP_SELF'].'?socid='.$object->id.'&action=presend&mode=init#formmailbeforetitle', 'btn-send-mail', (!empty($object->email) || $at_least_one_email_contact) ? 1 : -1);
 				}
 
-				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
+				print dolGetButtonAction('', $langs->trans('Modify'), 'edit', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
 
 				$cloneSocietetUrl = $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=clone&token='.newToken();
 				if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {

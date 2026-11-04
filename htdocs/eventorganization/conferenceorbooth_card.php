@@ -612,7 +612,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER["PHP_SELF"].'?id='.$object->id.$withProjectUrl.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle');
 			}
 
-			print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.$withProjectUrl.'&action=edit&token='.newToken(), '', $permissiontoadd);
+			print dolGetButtonAction('', $langs->trans('Modify'), 'edit', $_SERVER["PHP_SELF"].'?id='.$object->id.$withProjectUrl.'&action=edit&token='.newToken(), '', $permissiontoadd);
 
 			// Clone
 			print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.$withProjectUrl.'&socid='.$object->socid.'&action=clone&token='.newToken().'&object=scrumsprint', '', $permissiontoadd, array('attr' => array('class' => 'reposition')));
