@@ -2079,7 +2079,7 @@ class Adherent extends CommonObject
 	{
 		$amount = $configured;
 		if ($amount === null || $amount === '') {
-			$sql = 'SELECT subscription FROM '.$this->db->prefix().'subscription WHERE fk_adherent = '.((int) $this->id);
+			$sql = "SELECT subscription FROM ".$this->db->prefix()."subscription WHERE fk_adherent = ".((int) $this->id);
 			$sql .= ' ORDER BY datec DESC, rowid DESC'.$this->db->plimit(1);
 			$res = $this->db->query($sql);
 			if (!$res) {
@@ -2232,7 +2232,7 @@ class Adherent extends CommonObject
 		}
 		$nextstart = self::subscriptionCalendarShift($start, 1, 'd');
 		$nextend = self::subscriptionCalendarShift($end, 1, 'd');
-		$sql = 'SELECT rowid FROM '.$this->db->prefix().'subscription WHERE fk_adherent = '.((int) $this->id);
+		$sql = "SELECT rowid FROM ".$this->db->prefix()."subscription WHERE fk_adherent = ".((int) $this->id);
 		$sql .= " AND dateadh >= '".$this->db->idate($daystart)."' AND dateadh < '".$this->db->idate($nextstart)."'";
 		$sql .= $lock ? ' FOR UPDATE' : $this->db->plimit(1);
 		$res = $this->db->query($sql);
@@ -2244,7 +2244,7 @@ class Adherent extends CommonObject
 		if ($duplicate) {
 			throw new RuntimeException('SubscriptionBulkDuplicateStart');
 		}
-		$sql = 'SELECT rowid, dateadh, datef FROM '.$this->db->prefix().'subscription WHERE fk_adherent = '.((int) $this->id);
+		$sql = "SELECT rowid, dateadh, datef FROM ".$this->db->prefix()."subscription WHERE fk_adherent = ".((int) $this->id);
 		$sql .= " AND (dateadh IS NULL OR dateadh < '".$this->db->idate($nextend)."')";
 		$sql .= " AND (datef IS NULL OR datef >= '".$this->db->idate($daystart)."') ORDER BY rowid";
 		$sql .= $lock ? ' FOR UPDATE' : '';
