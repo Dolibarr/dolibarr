@@ -1901,5 +1901,21 @@ function subscriptionOptionsScenarios()
 		}
 	}
 
+	foreach (array('Contribution, {Member type}, {Start date} - {End date}', '<b>Fee</b> & "€"', '', '<script>alert(1)</script>Fee') as $template) {
+		$scenarios['description_input_filter_'.md5($template)] = static function () use ($template) {
+			$saved = array($_GET, $_POST);
+			try {
+				$_GET = array();
+				$_POST = array('subscriptiondescription' => $template);
+				$source = file_get_contents(DOL_DOCUMENT_ROOT.'/adherents/list.php');
+				preg_match("/GETPOST\\('subscriptiondescription', '([^']+)'\\)/", $source, $matches);
+				$filtered = GETPOST('subscriptiondescription', $matches[1]);
+				return strpos($template, '<script>') === false ? $filtered === $template : stripos($filtered, '<script') === false;
+			} finally {
+				list($_GET, $_POST) = $saved;
+			}
+		};
+	}
+
 	return $scenarios;
 }

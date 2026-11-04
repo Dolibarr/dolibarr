@@ -297,7 +297,7 @@ if (empty($reshook)) {
 			}
 			$toselect = $batch['ids'];
 			$previousrows = $batch['rows'];
-			$subscriptiondescription = GETPOSTISSET('subscriptiondescription') ? GETPOST('subscriptiondescription', 'none') : (isset($batch['descriptiontemplate']) ? $batch['descriptiontemplate'] : $subscriptiondescription);
+			$subscriptiondescription = GETPOSTISSET('subscriptiondescription') ? GETPOST('subscriptiondescription', 'restricthtml') : (isset($batch['descriptiontemplate']) ? $batch['descriptiontemplate'] : $subscriptiondescription);
 			if (!is_string($subscriptiondescription)) {
 				accessforbidden();
 			}
