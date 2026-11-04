@@ -192,8 +192,8 @@ trait CommonPeople
 			$thirdpartyid = $this->id;
 		}
 		if ($this->element === 'contact' && $this instanceof Contact) {
+			// @phan-var-force Contact $this
 			$contactid = $this->id;
-			// @phan-suppress-next-line PhanUndeclaredProperty
 			$thirdpartyid = empty($this->fk_soc) ? 0 : $this->fk_soc;
 		}
 		if ($this->element == 'member' && $this instanceof Adherent) {
