@@ -706,7 +706,8 @@ class Entrepot extends CommonObject
 		$sql .= ", ".$this->db->prefix()."product as p";
 		$sql .= " WHERE ps.fk_entrepot = ".((int) $this->id);
 		$sql .= " AND ps.fk_product = p.rowid";
-		$sql .= self::getSqlFilterExcludingVariantParents($this->db, 'p.rowid');
+		$excludefilter = self::getSqlFilterExcludingVariantParents($this->db, 'p.rowid');
+		$sql .= $excludefilter;
 
 		//print $sql;
 		$result = $this->db->query($sql);
@@ -757,7 +758,8 @@ class Entrepot extends CommonObject
 		}
 		$sql .= " WHERE ps.fk_entrepot = ".((int) $this->id);
 		$sql .= " AND ps.fk_product = p.rowid";
-		$sql .= self::getSqlFilterExcludingVariantParents($this->db, 'p.rowid');
+		$excludefilter = self::getSqlFilterExcludingVariantParents($this->db, 'p.rowid');
+		$sql .= $excludefilter;
 		//print $sql;
 		$result = $this->db->query($sql);
 		if ($result) {

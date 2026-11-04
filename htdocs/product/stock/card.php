@@ -762,7 +762,8 @@ if ($action == 'create') {
 			$sql .= " WHERE ps.fk_product = p.rowid";
 			$sql .= " AND ps.reel <> 0"; // We do not show if stock is 0 (no product in this warehouse)
 			$sql .= " AND ps.fk_entrepot = ".((int) $object->id);
-			$sql .= Entrepot::getSqlFilterExcludingVariantParents($db, 'p.rowid');
+			$excludefilter = Entrepot::getSqlFilterExcludingVariantParents($db, 'p.rowid');
+			$sql .= $excludefilter;
 
 			$parameters = array('context' => 'warehousecard');
 			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
