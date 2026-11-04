@@ -7455,7 +7455,7 @@ abstract class CommonObject
 							if (empty($conf->disable_compute)) {
 								// We set a global variable to $objectoffield so we can use it inside computed formula (must be before the assignment)
 								global $objectoffield;
-								$objectoffield = dol_clone($this, 2);
+								$objectoffield = dol_clone($this, 2);	// Using method 2 as we want to restrict access to scalar properties only
 								$this->array_options['options_' . $key] = dol_eval((string) $extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '2');
 							}
 						}
