@@ -869,7 +869,7 @@ class Expedition extends CommonObject
 		$sql .= ', s.libelle as shipping_method';
 		$sql .= ", el.fk_source as origin_id, el.sourcetype as origin_type";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."' AND el.sourcetype = 'commande'";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON e.fk_incoterms = i.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_shipment_mode as s ON e.fk_shipping_method = s.rowid';
 		$sql .= " WHERE e.entity IN (".getEntity('expedition').")";
@@ -2517,7 +2517,7 @@ class Expedition extends CommonObject
 
 		$sql = "SELECT COUNT(e.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as e";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."' AND el.sourcetype = 'commande'";
 		$sql .= " WHERE e.entity = ".((int) $conf->entity);
 		$sql .= " AND el.rowid IS NULL";
 
