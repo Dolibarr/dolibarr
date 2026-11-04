@@ -181,11 +181,13 @@ done
 
 # The remote-control subcommand has no --dangerously-skip-permissions option:
 # the yolo mode is given to the spawned sessions with --permission-mode.
+# Without --yolo, the spawned sessions use the mode auto: safe actions are approved
+# automatically, the risky or outward-facing ones (push, pull request...) are still asked.
 if [ "$REMOTE_CONTROL" = "1" ]; then
     if [ -n "$CLAUDE_OPTIONS" ]; then
         CLAUDE_OPTIONS="remote-control --permission-mode bypassPermissions"
     else
-        CLAUDE_OPTIONS="remote-control"
+        CLAUDE_OPTIONS="remote-control --permission-mode auto"
     fi
 fi
 
