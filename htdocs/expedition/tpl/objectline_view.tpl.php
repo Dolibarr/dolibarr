@@ -116,7 +116,7 @@ if ($line->fk_product > 0) {
 		print (!empty($line->desc) && $line->desc != $tmpproduct->label) ? '<br>'.dol_htmlentitiesbr($line->desc) : '';
 	}
 } else {
-	print ' - '.dol_htmlentitiesbr($line->desc);
+	print dol_htmlentitiesbr($line->desc);
 }
 
 // Line extrafield

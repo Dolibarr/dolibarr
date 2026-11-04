@@ -26,7 +26,7 @@ fk_user        integer NOT NULL,
 fk_user_create integer,
 fk_user_modif  integer,
 fk_type        integer NOT NULL,
-date_create    DATETIME NOT NULL,
+date_creation   DATETIME NOT NULL,
 description    VARCHAR( 255 ) NOT NULL,
 date_debut     DATE NOT NULL,
 date_fin       DATE NOT NULL,
@@ -47,6 +47,7 @@ note_private   text,
 note_public    text,
 tms            timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 import_key			varchar(14),
+model_pdf			varchar(255),				-- name of the document template used to generate the document of the leave request
 extraparams			varchar(255)				-- for other parameters with json format
 )
 ENGINE=innodb;
