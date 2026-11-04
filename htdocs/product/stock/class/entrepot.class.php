@@ -683,7 +683,7 @@ class Entrepot extends CommonObject
 	public static function getSqlFilterExcludingVariantParents($fieldproductid)
 	{
 		global $db;
-		
+
 		if (!isModEnabled('variants') || getDolGlobalInt('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT') != 2) {
 			return '';
 		}
