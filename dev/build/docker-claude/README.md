@@ -50,11 +50,13 @@ claudes --no-exit
 ````
 
 If you want to run claude in Remote Control mode (`claude remote-control`, to drive the session from claude.ai/code
-or the Claude mobile app), you can run (add `--yolo` to have the permissions automatically accepted
-with `--permission-mode bypassPermissions`)
+or the Claude mobile app), you can run
 ````
 claudes --rc
 ````
+The sessions are then started with `--permission-mode auto`: the safe actions are approved automatically, the risky or
+outward-facing ones (push, pull request, ...) are still asked. Add `--yolo` to have all the permissions automatically
+accepted with `--permission-mode bypassPermissions`.
 
 The other arguments are passed to claude, for example to resume the last conversation:
 ````
