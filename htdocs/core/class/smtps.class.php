@@ -546,9 +546,10 @@ class SMTPs
 	/**
 	 * Attempt mail server authentication for a secure connection
 	 *
+	 * @param	bool	$withauth	False to only send EHLO and switch to TLS (STARTTLS) without login
 	 * @return boolean|null  $_retVal   Boolean indicating success or failure of authentication
 	 */
-	private function _server_authenticate()
+	private function _server_authenticate($withauth = true)
 	{
 		// phpcs:enable
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
@@ -660,7 +661,7 @@ class SMTPs
 
 				if (!stream_socket_enable_crypto($this->socket, true, $crypto_method)) {
 					$this->_setErr(132, 'STARTTLS connection failed.');
-					return $_retVal;
+					return false;
 				}
 				// Most servers expect a 2nd pass of EHLO after TLS is established to get another time
 				// the answer with list of supported AUTH methods. They may differs between non STARTTLS and with STARTTLS.
@@ -668,6 +669,11 @@ class SMTPs
 					$this->_setErr(126, '"'.$hosth.'" does not support authenticated connections or temporary error. Error after 2nd sending EHLO '.$hosth.' : '.$this->lastretval);
 					return $_retVal;
 				}
+			}
+
+			if (!$withauth) {
+				// No login, only EHLO and STARTTLS were needed
+				return $_retVal;
 			}
 
 			// Default authentication method is LOGIN
@@ -743,6 +749,9 @@ class SMTPs
 			if (!empty($this->_smtpsID) && (!empty($this->_smtpsPW) || !empty($this->_smtpsToken))) {
 				// Send the RFC2554 specified EHLO.
 				$_retVal = $this->_server_authenticate();
+			} elseif (preg_match('@tls://@i', $this->getHost())) {
+				// No login but STARTTLS is on: the switch to TLS is needed before sending the message, or it is sent in clear text
+				$_retVal = $this->_server_authenticate(false);
 			} else {
 				// This is a "normal" SMTP Server "handshack"
 				// Send the RFC821 specified HELO.
