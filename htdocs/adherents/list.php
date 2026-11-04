@@ -9,7 +9,7 @@
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  * Copyright (C) 2026		Mélina Joum					<melina.joum@altairis.fr>
- * Copyright (C) 2026 iLLixM <iLLixM@proton.me>
+ * Copyright (C) 2026		iLLixM						<iLLixM@proton.me>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
