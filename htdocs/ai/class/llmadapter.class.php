@@ -430,7 +430,8 @@ class UniversalLLMAdapter
 		// To allow local endpoints, we must set $dolibarr_ai_allow_local_endpoints to 1 or 2 in conf.php.
 		global $dolibarr_ai_allow_local_endpoints;
 
-		$localurl = empty($dolibarr_ai_allow_local_endpoints) ? 0 : 2;
+		// 0 or empty = external only, 1 = local only, 2 = both (same rule as Ai::generateContent())
+		$localurl = empty($dolibarr_ai_allow_local_endpoints) ? 0 : (int) $dolibarr_ai_allow_local_endpoints;
 
 		// Pass $this->timeout as the response timeout so the LLM-specific value configured
 		// at construction time is honored (getURLContent's $timeoutresponse is the 10th arg;

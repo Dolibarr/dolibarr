@@ -392,7 +392,8 @@ class Ai
 			// By default, we accept only external endpoints ($dolibarr_ai_allow_local_endpoints is not set).
 			// To allow local endpoints, we must set $dolibarr_ai_allow_local_endpoints to 1 or 2 in conf.php.
 			global $dolibarr_ai_allow_local_endpoints;
-			$localurl = $dolibarr_ai_allow_local_endpoints ?? 0;
+			// An empty value ('', '0', null) must mean external endpoints only (with PHP 8, '' == 0 is false)
+			$localurl = empty($dolibarr_ai_allow_local_endpoints) ? 0 : (int) $dolibarr_ai_allow_local_endpoints;
 
 			// Parsing a document is long, so we use a response timeout of at least 90 seconds for this case
 			$timeoutresponse = 0;
