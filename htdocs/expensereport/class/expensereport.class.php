@@ -159,7 +159,7 @@ class ExpenseReport extends CommonObject
 
 	// Create
 	/**
-	 * @var int|string
+	 * @var int|''|null		Object creation date
 	 */
 	public $date_creation;
 
