@@ -274,6 +274,10 @@ class doc_generic_workstation_odt extends ModelePDFWorkstation
 			// output directory of the module with no sub-directory for the element, so the
 			// document is written where that tab looks for it.
 			$dir = getMultidirOutput($object);
+			if (empty($dir)) {
+				$this->error = $langs->transnoentities("ErrorCanNotCreateDir", (string) $dir);
+				return -1;
+			}
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
