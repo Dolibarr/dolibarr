@@ -149,6 +149,42 @@ class ToolApiBridge extends McpTool
 	const BRIDGE_MAX_LIMIT = 100;
 
 	/**
+	 * Generic tools replacing all the api_<endpoint>_<suffix> tools of a suffix: one
+	 * tool with an 'object' argument naming the endpoint, instead of one per object.
+	 * 'params' gives a description valid for any object to some arguments.
+	 */
+	const MERGED_TOOLS = array(
+		'api_objects_contacts_list' => array(
+			'suffix' => 'contacts_list',
+			'method' => 'getContacts',
+			'description' => "Contacts of one object with their role. Set 'object' to the type of the object and 'id' to its rowid.",
+			'object' => 'Type of the object whose contacts are listed.',
+			'params' => array(
+				'id' => 'Rowid of the object.',
+				'type' => "Role code to restrict to, e.g. BILLING, SHIPPING, CUSTOMER. For a project: 'internal' or 'external', empty for both."
+			)
+		),
+		'api_objects_contacts_link' => array(
+			'suffix' => 'add_contact',
+			'method' => 'postContact',
+			'description' => "Link a contact (person of a third party) or a user to one object, with a role. Set 'object' to the type of the object. The user confirms before anything is written.",
+			'object' => 'Type of the object to link the contact to.',
+			'params' => array(
+				'id' => 'The object: rowid, or its ref (required).'
+			)
+		),
+		'api_objects_contacts_unlink' => array(
+			'suffix' => 'remove_contact',
+			'method' => 'deleteContact',
+			'description' => "Unlink a contact (person of a third party) or a user from one object, for a role. Set 'object' to the type of the object. The user confirms before anything is written.",
+			'object' => 'Type of the object to unlink the contact from.',
+			'params' => array(
+				'id' => 'The object: rowid, or its ref (required).'
+			)
+		)
+	);
+
+	/**
 	 * Generated tool definitions cache (per request).
 	 *
 	 * @var null|list<array<string, mixed>>
@@ -1249,7 +1285,8 @@ class ToolApiBridge extends McpTool
 						'right' => ['produit', 'creer']
 					],
 					'params' => [
-						"ref" => "Internal reference.", "label" => "Product label.", "price" => "Selling price excl. tax.", "type" => "0 product, 1 service."
+						"ref" => "Internal reference.", "label" => "Product label.", "price" => "Selling price excl. tax.", "type" => "0 product, 1 service.",
+						"tva_tx" => "VAT rate in percent (e.g. 20). Omit it to use the default VAT rate of the company."
 					]
 				],
 				'index' => [
@@ -1834,7 +1871,8 @@ class ToolApiBridge extends McpTool
 		// EACH side of the link - so everything is enforced downstream. The
 		// write side (create/delete links) needs rights on both element types
 		// too and is left for a follow-up.
-		$this->enrichments['objectlinks'] = array(
+		$this->enrichments['objects_links'] = array(
+			'endpoint' => 'objectlinks',
 			'label' => 'links between records',
 			'methods' => array(
 				'getById' => array(
@@ -1901,6 +1939,45 @@ class ToolApiBridge extends McpTool
 					'suffix' => 'group_info',
 					'description' => "One user group: name, note; set load_members=1 to include its members.",
 					'params' => array('group' => "Rowid of the user group.", 'load_members' => "1 to include the members of the group (default 0).", 'includepermissions' => "1 to also load its permission set (heavy, default 0).")
+				)
+			)
+		);
+
+		// Cron jobs (llx_cronjob): read side, plus run which launches a job
+		// already defined by an admin. post/put stay out on purpose: they can
+		// edit command, classesname, methodename and params, which is arbitrary
+		// code execution as the web user — not a power the bridge should hand
+		// to a model, even behind a confirmation. delete stays out too.
+		$this->enrichments['cronjobs'] = array(
+			'label' => 'scheduled cron jobs',
+			'methods' => array(
+				'index' => array(
+					'default_properties' => 'id,label,jobtype,module_name,command,classesname,methodename,frequency,unitfrequency,status,datelastrun,datenextrun,lastresult,nbrun',
+					'description' => "Scheduled cron jobs: label, what they run (jobtype 'method' = a PHP method on a class, 'command' = a CLI command), schedule as frequency + unitfrequency (unit in seconds or 'd'/'m'), status (0 disabled, 1 enabled, 2 archived), last/next run dates and last result. Filter by status with the status parameter (1 = enabled only). Search with sqlfilters on t.label or t.module_name.",
+					'params' => array(
+						'status' => "Filter on status: 0 disabled, 1 enabled, 2 archived, -1 (default) all.",
+						'pagination_data' => $pagination
+					),
+					'right' => array('cron', 'read')
+				),
+				'get' => array(
+					'description' => "One cron job with its full definition, schedule, last output and result.",
+					'params' => array('id' => "Rowid of the cron job."),
+					'right' => array('cron', 'read')
+				),
+				'run' => array(
+					'suffix' => 'run',
+					'description' => "Run a cron job now, as the Run button of the cron list does. The job was defined by an administrator; only admin users may launch it. The user confirms before anything is executed.",
+					'write' => array(
+						'kind' => 'action',
+						'preview' => 'AIPreviewRunCronjob',
+						'object' => 'Cronjob',
+						'label' => 'cron job',
+						'target' => 'id',
+						'args' => array('id'),
+						'right' => array('cron', 'write')
+					),
+					'params' => array('id' => "Rowid of the cron job to run.")
 				)
 			)
 		);
@@ -3024,11 +3101,142 @@ class ToolApiBridge extends McpTool
 			}
 		}
 
+		foreach (array_keys(self::MERGED_TOOLS) as $mergedName) {
+			$this->mergeTools($mergedName);
+		}
+
 		if ($cachefile !== '') {
 			$this->writeDefsCache($cachefile);
 		}
 
 		return $this->defs;
+	}
+
+	/**
+	 * Replace every api_<endpoint>_<suffix> definition of a MERGED_TOOLS entry by the
+	 * single generic tool. The routes of the original tools are kept: execute() and
+	 * the write gate dispatch the generic tool to them according to its 'object' argument.
+	 *
+	 * @param  string $mergedName Name of the generic tool, key of MERGED_TOOLS.
+	 * @return void
+	 */
+	private function mergeTools($mergedName)
+	{
+		$mconf = self::MERGED_TOOLS[$mergedName];
+		$merged = array();
+		$kept = array();
+		foreach ((array) $this->defs as $def) {
+			$name = (string) ($def['name'] ?? '');
+			if (isset($this->routes[$name]) && $name === 'api_'.$this->routes[$name][0].'_'.$mconf['suffix']) {
+				$merged[$this->routes[$name][0]] = $def;
+			} else {
+				$kept[] = $def;
+			}
+		}
+		if (empty($merged)) {
+			return;
+		}
+
+		// Arguments: the union of those of the merged tools, required when required by all.
+		$properties = array('object' => array('type' => 'string', 'enum' => array_keys($merged), 'description' => $mconf['object']));
+		$required = null;
+		$objectsOf = array();
+		$categories = array();
+		$descriptions = array();
+		foreach ($merged as $key => $def) {
+			foreach ((array) ($def['inputSchema']['properties'] ?? array()) as $pname => $pdef) {
+				$objectsOf[$pname][] = $key;
+				if (!isset($properties[$pname])) {
+					$properties[$pname] = $pdef;
+				}
+			}
+			$required = ($required === null) ? (array) ($def['inputSchema']['required'] ?? array()) : array_intersect($required, (array) ($def['inputSchema']['required'] ?? array()));
+			$categories = array_merge($categories, (array) ($def['categories'] ?? array()));
+			$descriptions[] = $key.': '.(string) ($def['description'] ?? '');
+		}
+		foreach ($mconf['params'] as $pname => $pdesc) {
+			$properties[$pname] = array_merge(array('type' => 'string'), $properties[$pname] ?? array(), array('description' => $pdesc));
+		}
+		// An argument only some objects take says which.
+		foreach ($objectsOf as $pname => $keys) {
+			if (!isset($mconf['params'][$pname]) && count($keys) < count($merged)) {
+				$properties[$pname]['description'] = trim((string) ($properties[$pname]['description'] ?? '').'. Only for: '.implode(', ', $keys).'.');
+			}
+		}
+
+		$kept[] = array(
+			'name' => $mergedName,
+			'description' => $mconf['description'].' '.implode(' ', $descriptions),
+			'inputSchema' => array('type' => 'object', 'properties' => $properties, 'required' => array_values(array_unique(array_merge(array('object'), (array) $required)))),
+			'categories' => array_values(array_unique($categories))
+		);
+		$this->defs = $kept;
+	}
+
+	/**
+	 * Original tool a generic tool of MERGED_TOOLS runs, from its 'object' argument.
+	 *
+	 * @param  string              $name Tool name.
+	 * @param  array<string,mixed> $args Tool arguments.
+	 * @return string|null                Original tool name, '' when 'object' names none, null when not a generic tool.
+	 */
+	private function mergedToolTarget($name, array $args)
+	{
+		if (!isset(self::MERGED_TOOLS[$name])) {
+			return null;
+		}
+		$this->getDefinitions();	// ensure routes are built
+		$object = (string) ($args['object'] ?? '');
+		$target = 'api_'.$object.'_'.self::MERGED_TOOLS[$name]['suffix'];
+		if (!preg_match('/^[a-z0-9_]+$/', $object) || empty($this->routes[$target])) {
+			return '';
+		}
+
+		return $target;
+	}
+
+	/**
+	 * Whether a generic tool of MERGED_TOOLS writes: its original tools do.
+	 *
+	 * @param  string $name Generic tool name.
+	 * @return bool
+	 */
+	private function mergedToolWrites($name)
+	{
+		foreach (array_keys($this->routes) as $toolName) {
+			if ($toolName === 'api_'.$this->routes[$toolName][0].'_'.self::MERGED_TOOLS[$name]['suffix']) {
+				return !empty($this->writeMetaFor($toolName));
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * The rights an original tool declares, checked when a generic tool runs it:
+	 * the generic tool itself declares none since they depend on the object.
+	 *
+	 * @param  string $target Original tool name.
+	 * @return string         Error message, or '' when the user holds the rights.
+	 */
+	private function mergedToolRightsRefusal($target)
+	{
+		global $langs;
+
+		$declared = $this->getRequiredRights($target);
+		if (!is_array($declared)) {
+			return '';
+		}
+		foreach ($declared as $right) {
+			$right = array_values((array) $right);
+			if (empty($right[0]) || !$this->user->hasRight($right[0], $right[1] ?? '', $right[2] ?? '')) {
+				$langs->load('errors');
+
+				return $langs->transnoentitiesnoconv('NotEnoughPermissions');
+			}
+		}
+
+		return '';
 	}
 
 	/**
@@ -3517,6 +3725,11 @@ class ToolApiBridge extends McpTool
 	 */
 	public function getRequiredRights(string $toolName)
 	{
+		// A generic tool: the rights of the original tool it runs are checked then.
+		if (isset(self::MERGED_TOOLS[$toolName])) {
+			return self::RIGHTS_ENFORCED_DOWNSTREAM;
+		}
+
 		// A write declares its right here as well as relying on the REST class,
 		// so the call is refused before the gate issues a confirmation: no
 		// preview for a write the user could never perform.
@@ -4289,11 +4502,11 @@ class ToolApiBridge extends McpTool
 					$warehouses[$wid] = ($warehouse->fetch($wid) > 0) ? $warehouse->ref : '#'.$wid;
 				}
 				if ($wid > 0) {
-					$text .= ' '.$langs->trans('AIPreviewIntoWarehouse', $warehouses[$wid]);
+					$text .= ' '.$langs->transnoentitiesnoconv('AIPreviewIntoWarehouse', $warehouses[$wid]);
 				}
-				$text .= (isset($line['cost_price']) && (float) $line['cost_price'] > 0) ? ' @ '.price($line['cost_price']) : ' ('.$langs->trans('AIPreviewNoCostPrice').')';
+				$text .= (isset($line['cost_price']) && (float) $line['cost_price'] > 0) ? ' @ '.price($line['cost_price']) : ' ('.$langs->transnoentitiesnoconv('AIPreviewNoCostPrice').')';
 				if (!empty($line['batch'])) {
-					$text .= ', '.$langs->trans('Batch').' '.$line['batch'];
+					$text .= ', '.$langs->transnoentitiesnoconv('Batch').' '.$line['batch'];
 				}
 			}
 			$out[] = $text;
@@ -4347,6 +4560,17 @@ class ToolApiBridge extends McpTool
 
 		$langs->load("other");
 
+		// A generic tool: the preview of the original tool it runs.
+		$target = $this->mergedToolTarget($toolName, $args);
+		if ($target !== null) {
+			if ($target === '') {
+				return $this->mergedToolWrites($toolName) ? "Unknown or missing value for 'object'." : McpTool::NO_WRITE;
+			}
+			unset($args['object']);
+
+			return $this->writeConfirmationPreview($target, $args);
+		}
+
 		$write = $this->writeMetaFor($toolName);
 		if (empty($write)) {
 			return McpTool::NO_WRITE;
@@ -4356,7 +4580,7 @@ class ToolApiBridge extends McpTool
 			try {
 				$args = $this->normaliseWriteArgs($args, $write);
 			} catch (InvalidArgumentException $e) {
-				return $e->getMessage();
+				return dol_escape_htmltag($e->getMessage());
 			}
 			$parent = $this->fetchWriteParent($write, $args);
 			if (!$parent) {
@@ -4374,7 +4598,7 @@ class ToolApiBridge extends McpTool
 			foreach ($write['update'] as $field => $definition) {
 				if (array_key_exists($field, $args)) {
 					$old = $parent->$field ?? null;
-					$label = isset($write['preview_labels'][$field]) ? $langs->trans($write['preview_labels'][$field]) : $field;
+					$label = isset($write['preview_labels'][$field]) ? $langs->transnoentitiesnoconv($write['preview_labels'][$field]) : $field;
 					if (is_array($args[$field])) {
 						foreach ($args[$field] as $key => $value) {
 							$changes[] = $label.'.'.$key.': '.json_encode($old[$key] ?? null, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES).' → '.json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -4394,7 +4618,7 @@ class ToolApiBridge extends McpTool
 					}
 				}
 			}
-			return $langs->trans($write['preview'], $parent->ref, (string) $context, implode('; ', $changes));
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $parent->ref, (string) $context, implode('; ', $changes)));
 		}
 
 		$args = $this->normaliseWriteArgs($args, $write);
@@ -4416,7 +4640,7 @@ class ToolApiBridge extends McpTool
 			$qty = (float) ($args['qty'] ?? 1);
 			$total = $qty * (float) ($args['subprice'] ?? 0) * (1 - (float) ($args['remise_percent'] ?? 0) / 100);
 
-			return $langs->trans($write['preview'], (string) $qty, dol_trunc($what, 60), ($parent ? $parent->ref : ''), price(price2num($total, 'MT')));
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], (string) $qty, dol_trunc($what, 60), ($parent ? $parent->ref : ''), price(price2num($total, 'MT'))));
 		}
 
 		// A single record (third party, product, category, ticket) has no lines:
@@ -4441,7 +4665,7 @@ class ToolApiBridge extends McpTool
 				$extra[] = $argname.'='.dol_trunc($this->previewValue($write, $argname, $argvalue, $args), 40);
 			}
 			$values[] = empty($extra) ? '' : ' ('.implode(', ', $extra).')';
-			return $langs->trans($write['preview'], ...$values).$this->previewCreateFields($args);
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], ...$values).$this->previewCreateFields($args));
 		}
 
 		$who = '';
@@ -4450,7 +4674,7 @@ class ToolApiBridge extends McpTool
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 			$soc = new Societe($this->db);
 			if ($soc->fetch($socid) > 0) {
-				$who = ' '.$langs->trans("AIPreviewForThirdparty", $soc->name);
+				$who = ' '.$langs->transnoentitiesnoconv("AIPreviewForThirdparty", $soc->name);
 			}
 		}
 
@@ -4466,18 +4690,18 @@ class ToolApiBridge extends McpTool
 			$priced = true;
 			$total += ((float) ($line['qty'] ?? 1)) * ((float) $unitprice);
 		}
-		$what = $langs->trans(count($lines) === 1 ? "AIPreviewLine" : "AIPreviewLines", (string) count($lines));
+		$what = $langs->transnoentitiesnoconv(count($lines) === 1 ? "AIPreviewLine" : "AIPreviewLines", (string) count($lines));
 		if ($priced) {
 			$what .= ', '.price($total);
 		} elseif (($write['kind'] ?? '') !== 'shipment') {
-			$what .= ', '.$langs->trans("AIPreviewFromCatalogue");	// a shipment line carries no price at all
+			$what .= ', '.$langs->transnoentitiesnoconv("AIPreviewFromCatalogue");	// a shipment line carries no price at all
 		}
 		if (($write['kind'] ?? '') !== '' && $lines) {
 			// Goods are confirmed line by line: what, how many, and where they go.
 			$what .= ': '.$this->previewLogisticLines($lines, (string) $write['kind']);
 		}
 
-		return $langs->trans($write['preview'], $who, $what).$this->previewCreateFields($args);
+		return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $who, $what).$this->previewCreateFields($args));
 	}
 
 	/**
@@ -4555,6 +4779,39 @@ class ToolApiBridge extends McpTool
 	 * @return string                       Error message, or '' to proceed.
 	 */
 	public function writePrecheck(string $toolName, array $args)
+	{
+		// A generic tool: the checks of the original tool it runs, and its rights.
+		$target = $this->mergedToolTarget($toolName, $args);
+		if ($target !== null) {
+			if ($target === '') {
+				return $this->mergedToolWrites($toolName) ? "Unknown or missing value for 'object'." : '';
+			}
+			$refused = $this->mergedToolRightsRefusal($target);
+			if ($refused !== '') {
+				return $refused;
+			}
+			unset($args['object']);
+
+			return $this->writePrecheck($target, $args);
+		}
+
+		// The checks of core first, then the ones of the modules.
+		$refused = $this->precheckWrite($toolName, $args);
+		if ($refused !== '') {
+			return $refused;
+		}
+
+		return $this->precheckByModules($toolName, $args);
+	}
+
+	/**
+	 * The checks of writePrecheck() core makes itself.
+	 *
+	 * @param  string             $toolName Tool being called.
+	 * @param  array<string,mixed> $args    Arguments as received.
+	 * @return string                       Error message, or '' to proceed.
+	 */
+	private function precheckWrite(string $toolName, array $args)
 	{
 		global $langs, $user;
 
@@ -4709,6 +4966,117 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Let the modules refuse a write before the user is asked to approve it,
+	 * the way their doActions hook refuses the same record on the card: hook
+	 * 'checkMcpApiBridgeWrite' of the 'aimcp' context. The hook receives the
+	 * record as it will be after the write (a new, unsaved one for a create),
+	 * and in $parameters:
+	 * - 'tool': name of the tool;
+	 * - 'operation': 'create', 'addline', 'update', 'action', 'delete',
+	 *   'payment' or 'line';
+	 * - 'class': business class of the record;
+	 * - 'args': the arguments the write will be made with.
+	 * It returns a negative value, with its message in ->error or ->errors,
+	 * to refuse: the message is what the user reads, and nothing is written.
+	 *
+	 * @param  string             $toolName Tool being called.
+	 * @param  array<string,mixed> $args    Arguments as received.
+	 * @return string                       Message of the module that refuses, or '' to proceed.
+	 */
+	private function precheckByModules(string $toolName, array $args)
+	{
+		global $hookmanager, $langs;
+
+		$write = $this->writeMetaFor($toolName);
+		if (empty($write) || empty($this->db)) {
+			return '';
+		}
+		if (!is_object($hookmanager)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager = new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('aimcp'));
+		if (empty($hookmanager->hooks['aimcp'])) {
+			return '';	// no module listens: the arguments are not prepared twice for nothing
+		}
+		$args = $this->applyFixedParams($toolName, $args);
+		try {
+			$args = $this->normaliseWriteArgs($args, $write);
+		} catch (InvalidArgumentException $e) {
+			return $e->getMessage();
+		}
+		foreach (array_keys($args) as $name) {
+			if ($name === 'requestState' || substr((string) $name, 0, 1) === '_') {
+				unset($args[$name]);
+			}
+		}
+
+		$class = (string) ($write['object'] ?? '');
+		$kind = (string) ($write['kind'] ?? '');
+		$object = null;
+		if (!empty($write['update']) || $kind === 'update') {
+			$operation = 'update';
+			$current = !empty($write['update']) ? $this->fetchWriteParent($write, $args) : $this->writeTarget;
+			if ($current instanceof CommonObject) {
+				// The record as the write leaves it.
+				$object = clone $current;
+				$changes = !empty($write['update']) ? array_intersect_key($args, $write['update']) : array_intersect_key($args, array_flip((array) ($write['fields'] ?? array())));
+				$this->applyWriteFields($object, $changes);
+			}
+		} elseif (in_array($kind, array('action', 'delete', 'payment', 'line'), true)) {
+			$operation = $kind;
+			$object = $this->writeTarget;
+		} elseif (!empty($write['parent'])) {
+			$operation = 'addline';
+			$object = $this->fetchWriteParent($write, $args);
+		} else {
+			$operation = 'create';
+			$object = ($class !== '') ? $this->newWriteObject($class) : null;
+			if ($object instanceof CommonObject) {
+				$this->applyWriteFields($object, $args);
+			}
+		}
+
+		// The hook manager keeps the errors of every hook run before: only the
+		// ones this run adds are the refusal. ->error is set by the run that fails.
+		$knownErrors = count($hookmanager->errors);
+		$parameters = array('tool' => $toolName, 'operation' => $operation, 'class' => $class, 'args' => $args);
+		$action = $operation;
+		$reshook = $hookmanager->executeHooks('checkMcpApiBridgeWrite', $parameters, $object, $action);
+		if ($reshook >= 0) {
+			return '';
+		}
+		$newErrors = array_slice($hookmanager->errors, $knownErrors);
+		$message = trim($hookmanager->error.' '.implode(' ', array_filter($newErrors)));
+		dol_syslog(get_class($this).'::precheckByModules '.$toolName.' refused by a module: '.$message, LOG_INFO);
+		if ($message === '') {
+			$langs->load('other');
+			$message = $langs->transnoentitiesnoconv('AIWriteRefusedByModule');
+		}
+
+		return $message;
+	}
+
+	/**
+	 * Copy the fields of a write onto a record, for a module to check it: only
+	 * the properties the class has, the extra fields merged.
+	 *
+	 * @param  CommonObject        $object Record.
+	 * @param  array<string,mixed> $fields Field => value.
+	 * @return void
+	 */
+	private function applyWriteFields($object, array $fields)
+	{
+		foreach ($fields as $field => $value) {
+			if ($field === 'array_options') {
+				$object->array_options = array_merge((array) $object->array_options, (array) $value);
+			} elseif ($field !== 'lines' && property_exists($object, (string) $field)) {
+				$object->$field = $value;
+			}
+		}
+	}
+
+	/**
 	 * References close to one that matched no product, for the user to pick from:
 	 * the supplier's references when the document is a supplier one (the note
 	 * says "33303", the catalogue has "33303-6"), else our own references.
@@ -4803,7 +5171,8 @@ class ToolApiBridge extends McpTool
 			'Reception' => '/reception/class/reception.class.php',
 			'Expedition' => '/expedition/class/expedition.class.php',
 			'WebsitePage' => '/website/class/websitepage.class.php',
-			'Website' => '/website/class/website.class.php'
+			'Website' => '/website/class/website.class.php',
+			'Cronjob' => '/cron/class/cronjob.class.php'
 		);
 	}
 
@@ -4845,7 +5214,7 @@ class ToolApiBridge extends McpTool
 		}
 		require_once DOL_DOCUMENT_ROOT.$paths[$class];
 		$obj = new $class($this->db);
-		'@phan-var-force Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Contact|Project|Task|Ticket|Fichinter|Contrat|Reception|Expedition|WebsitePage|Website $obj';
+		'@phan-var-force Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Contact|Project|Task|Ticket|Fichinter|Contrat|Reception|Expedition|WebsitePage|Website|Cronjob $obj';
 		if ((int) $id > 0) {
 			$found = ($obj->fetch((int) $id) > 0);
 		} elseif ($obj instanceof Contact || $obj instanceof Societe) {
@@ -5976,7 +6345,8 @@ class ToolApiBridge extends McpTool
 
 	/**
 	 * Fields of a create the confirmation sentence does not name itself: the
-	 * invoice subtype and the extra fields.
+	 * invoice subtype and the extra fields. Raw text: the caller escapes it
+	 * with the rest of the sentence.
 	 *
 	 * @param  array<string,mixed> $args Normalised arguments.
 	 * @return string                    Sentence to append, '' when there are none.
@@ -5987,13 +6357,13 @@ class ToolApiBridge extends McpTool
 
 		$parts = array();
 		if (!empty($args['_subtype'])) {
-			$parts[] = $langs->trans('InvoiceSubtype').': '.$args['_subtype'];
+			$parts[] = $langs->transnoentitiesnoconv('InvoiceSubtype').': '.$args['_subtype'];
 		}
 		if (!empty($args['_extrafields'])) {
 			$parts[] = (string) $args['_extrafields'];
 		}
 
-		return $parts ? ' '.$langs->trans('AIPreviewCreateFields', implode('; ', $parts)) : '';
+		return $parts ? ' '.$langs->transnoentitiesnoconv('AIPreviewCreateFields', implode('; ', $parts)) : '';
 	}
 
 	/**
@@ -6021,10 +6391,10 @@ class ToolApiBridge extends McpTool
 				$changes[] = $name.' "'.dol_trunc($old, 40).'" → "'.dol_trunc((string) $args[$name], 40).'"';
 			}
 
-			return $langs->trans($write['preview'], $write['label'], $what, implode(', ', $changes));
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $write['label'], $what, implode(', ', $changes)));
 		}
 		if ($kind === 'delete') {
-			return $langs->trans($write['preview'], $write['label'], $what);
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $write['label'], $what));
 		}
 		if ($kind === 'line') {
 			return $this->previewLineWrite($write, $what);
@@ -6043,21 +6413,21 @@ class ToolApiBridge extends McpTool
 
 			$how = $langs->transnoentitiesnoconv('AIPreviewPaymentHow', ($code !== '' ? $langs->transnoentitiesnoconv('PaymentType'.$code) : ''), $account, dol_print_date(dol_stringtotime((string) $args['datepaye']), 'day'));
 
-			return $langs->trans($write['preview'], price((float) ($args['_amount'] ?? 0)), $what, $how);
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], price((float) ($args['_amount'] ?? 0)), $what, $how));
 		}
 
 		// Other actions: who the record goes to, or the other way to end it.
 		if (array_key_exists('fk_user_assign', $args) && !empty($write['preview_unassign'])) {
 			if ((int) $args['fk_user_assign'] <= 0) {
-				return $langs->trans($write['preview_unassign'], $what);
+				return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview_unassign'], $what));
 			}
 			$assignee = new User($this->db);
 			$name = ($assignee->fetch((int) $args['fk_user_assign']) > 0) ? $assignee->getFullName($langs) : (string) $args['fk_user_assign'];
 
-			return $langs->trans($write['preview'], $what, $name);
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $what, $name));
 		}
 		if (!empty($args['cancel']) && !empty($write['preview_cancel'])) {
-			return $langs->trans($write['preview_cancel'], $what);
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview_cancel'], $what));
 		}
 
 		// Validation: the warehouse is said when the stock moves.
@@ -6065,11 +6435,11 @@ class ToolApiBridge extends McpTool
 			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 			$wh = new Entrepot($this->db);
 			if ($wh->fetch((int) $args['idwarehouse']) > 0) {
-				$what .= ', '.$langs->trans('AIPreviewStockFrom', (string) $wh->ref);
+				$what .= ', '.$langs->transnoentitiesnoconv('AIPreviewStockFrom', (string) $wh->ref);
 			}
 		}
 
-		return $langs->trans($write['preview'], $what);
+		return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $what));
 	}
 
 	/**
@@ -6120,12 +6490,12 @@ class ToolApiBridge extends McpTool
 		}
 
 		if ($write['line_action'] === 'add') {
-			return $langs->trans($write['preview'], $what, implode(', ', $text));
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $what, implode(', ', $text)));
 		}
 		$name = $line ? dol_trunc($this->lineName($line), 60) : '';
 		if ($write['line_action'] === 'delete') {
 			$amount = ($line && isset($line->total_ht)) ? ', '.price((float) $line->total_ht) : '';
-			return $langs->trans($write['preview'], $position, $what, $name.(isset($line->qty) ? ' x '.((float) $line->qty) : '').$amount);
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $position, $what, $name.(isset($line->qty) ? ' x '.((float) $line->qty) : '').$amount));
 		}
 		// The new total of the line, as core will compute it before taxes.
 		if ($line && (array_key_exists('qty', $changes) || array_key_exists('subprice', $changes) || array_key_exists('remise_percent', $changes))) {
@@ -6135,7 +6505,7 @@ class ToolApiBridge extends McpTool
 			$text[] = $langs->transnoentitiesnoconv('TotalHT').' '.price((float) ($line->total_ht ?? 0)).' → '.price(price2num($qty * $pu * (1 - $rem / 100), 'MT'));
 		}
 
-		return $langs->trans($write['preview'], $position, $what, $name, implode(', ', $text));
+		return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $position, $what, $name, implode(', ', $text)));
 	}
 
 	/**
@@ -6535,6 +6905,21 @@ class ToolApiBridge extends McpTool
 	 */
 	public function execute(string $name, array $args)
 	{
+		// A generic tool runs the original tool of the object it names.
+		$target = $this->mergedToolTarget($name, $args);
+		if ($target !== null) {
+			if ($target === '') {
+				return ['error' => "Unknown or missing value for 'object'."];
+			}
+			$refused = $this->mergedToolRightsRefusal($target);
+			if ($refused !== '') {
+				return ['error' => $refused, 'http_status' => 403];
+			}
+			unset($args['object']);
+
+			return $this->execute($target, $args);
+		}
+
 		$args = $this->applyFixedParams($name, $args);
 
 		// A model may send the record as a request_data body, or name line fields
@@ -6839,6 +7224,9 @@ class ToolApiBridge extends McpTool
 	public function toolRoute(string $name)
 	{
 		$this->getDefinitions();
+		if (isset(self::MERGED_TOOLS[$name])) {
+			return array('endpoint' => 'objects', 'method' => self::MERGED_TOOLS[$name]['method'], 'suffix' => self::MERGED_TOOLS[$name]['suffix'], 'label' => 'objects');
+		}
 		if (empty($this->routes[$name])) {
 			return null;
 		}
