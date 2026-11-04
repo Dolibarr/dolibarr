@@ -659,7 +659,6 @@ AIWriteUnknownExtrafield=This record has no extra field "%s". Its extra fields: 
 AIWriteNoExtrafields=This record has no extra field "%s": it has no extra fields at all.
 AIWriteBadExtrafieldValue=%s cannot be "%s": it takes %s.
 AIWriteExtrafieldRequiredEmpty=%s is mandatory: it cannot be left empty or set to no.
-AIWriteRefusedByModule=A module refused this write. Nothing was written.
 AIPreviewCreateFields=With %s.
 AIBadSearchFilter=This search could not be run: it was written in a form the API refuses (a filter through another table). Name the third party by its name or trade name, or open its card and ask from there.
 MissingInformation=Missing information
