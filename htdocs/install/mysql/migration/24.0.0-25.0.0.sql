@@ -637,3 +637,7 @@ ALTER TABLE llx_inventory ADD COLUMN model_pdf varchar(255) AFTER date_validatio
 ALTER TABLE llx_holiday ADD COLUMN model_pdf varchar(255) AFTER import_key;
 -- Add the document template of a loan, so that a generated document can be rebuilt with the same one
 ALTER TABLE llx_loan ADD COLUMN model_pdf varchar(255) AFTER fk_user_modif;
+
+-- Add parentid for threaded comments (self-reference to llx_comment.rowid, NULL = top-level comment)
+ALTER TABLE llx_comment ADD COLUMN parentid integer DEFAULT NULL AFTER element_type;
+ALTER TABLE llx_comment ADD INDEX idx_llx_comment_parentid (parentid);
