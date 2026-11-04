@@ -311,13 +311,15 @@ class Ai
 					}
 				} else {
 					// OpenAI-compatible payload format (chatgpt, mistral, groq, anthropic-compat, custom, ...)
+					// The system message must come before the user message (expected order of OpenAI-compatible APIs)
 					$arrayforpayload = array(
-						'messages' => array(array('role' => 'user', 'content' => $fullInstructions)),
+						'messages' => array(),
 						'model' => $model,
 					);
 					if ($prePrompt) {
 						$arrayforpayload['messages'][] = array('role' => 'system', 'content' => $prePrompt);
 					}
+					$arrayforpayload['messages'][] = array('role' => 'user', 'content' => $fullInstructions);
 				}
 			}
 
