@@ -498,3 +498,4 @@ FieldNotAllowedForEdit = Field not allowed for edit
 FieldNotFoundInObject = Field not found in object
 ErrorRecordModifiedSinceDisplay=This record was modified since it was displayed. Reload the page to get the last version.
 ErrorExpeditionQtyTooHigh=Shipped quantity (%s) exceeds the remaining quantity to deliver (%s) for product %s.
+ErrorPHPNotAllowedInManifest=The manifest.json file must contain only JSON content. PHP code is not allowed.

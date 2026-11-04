@@ -448,6 +448,13 @@ class SecurityTest extends CommonClassTest
 		$this->assertEquals('0e830400451993494058024219903391', md5('QNKCDZO'));
 		$this->assertFalse(dol_verifyHash('QNKCDZO', md5('240610708'), '3'), 'Two magic hashes must not match');
 		$this->assertTrue(dol_verifyHash('240610708', md5('240610708'), '3'));
+
+		// password_hash is salted: a check must not be done by comparing with a new hash
+		$hash = dol_hash('mypassword', 'password_hash');
+		$this->assertTrue(dol_verifyHash('mypassword', $hash, 'password_hash'));
+		$this->assertTrue(dol_verifyHash('mypassword', $hash, '6'));
+		$this->assertFalse(dol_verifyHash('mypassword2', $hash, 'password_hash'));
+		$this->assertFalse(dol_verifyHash('', $hash, 'password_hash'));
 	}
 
 	/**

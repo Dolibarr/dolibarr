@@ -36,6 +36,7 @@ require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
 require_once dirname(__FILE__).'/../../htdocs/commande/class/commande.class.php';
 require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.facture.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/class/workboardresponse.class.php';
+require_once dirname(__FILE__).'/../../htdocs/comm/action/class/actioncomm.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/modBlockedLog.class.php';
 
 if (empty($user->id)) {
@@ -680,6 +681,72 @@ class FactureTest extends CommonClassTest
 
 		$conf->global->MAIN_DEPOSIT_MULTI_TVA = $savmulti;
 		$db->rollback();
+	}
+
+	/**
+	 * testSendEmailsRemindersOncePerDay
+	 *
+	 * @return  void
+	 */
+	public function testSendEmailsRemindersOncePerDay()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$savmailfrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+		$conf->global->MAIN_MAIL_EMAIL_FROM = 'noreply@example.com';
+		$thirdparty = new Societe($db);
+		$thirdparty->name = 'Thirdparty of the reminders test';
+		$thirdparty->email = 'customer@example.com';
+		$thirdparty->client = 1;
+		$thirdparty->code_client = -1;
+		$this->assertGreaterThan(0, $thirdparty->create($user), (string) $thirdparty->error);
+
+		// Validated and unpaid invoice, due 7 days ago
+		$invoice = new Facture($db);
+		$invoice->socid = $thirdparty->id;
+		$invoice->date = dol_now();
+		$invoice->cond_reglement_id = 1;
+		$this->assertGreaterThan(0, $invoice->create($user), (string) $invoice->error);
+		$this->assertGreaterThan(0, $invoice->addline('Line', 100, 1, 20));
+		$duedate = dol_get_first_hour(dol_time_plus_duree(dol_now(), -7, 'd'), 'gmt');
+		$db->query("UPDATE ".MAIN_DB_PREFIX."facture SET fk_statut = ".Facture::STATUS_VALIDATED.", paye = 0, date_lim_reglement = '".$db->idate($duedate, 'gmt')."' WHERE rowid = ".((int) $invoice->id));
+
+		// The reminder was already sent today: its event has a label longer than 128 characters, so it is truncated when saved, and with a quote, so it is sanitized
+		$template = 'Reminder "template" with a very long name to check that the event of a reminder already sent is still found';
+		$db->query("INSERT INTO ".MAIN_DB_PREFIX."c_email_templates (entity, type_template, private, datec, label, position, enabled, active, topic, joinfiles, content) VALUES (1, 'facture_send', 0, '".$db->idate(dol_now())."', '".$db->escape($template)."', 990, '1', 1, 'Topic', 0, 'Content')");
+		$event = new ActionComm($db);
+		$event->type_code = 'AC_OTH_AUTO';
+		$event->code = 'AC_EMAIL';
+		$event->label = 'sendEmailsRemindersOnInvoiceDueDateOK (nbdays=-7 paymentmode=all datetouse=duedate forcerecipient= template='.$template.')';
+		$event->socid = $thirdparty->id;
+		$event->elementtype = 'invoice';
+		$event->elementid = $invoice->id;
+		$event->datep = dol_now();
+		$event->datef = $event->datep;
+		$event->percentage = -1;
+		$event->authorid = $user->id;
+		$event->userownerid = $user->id;
+		$this->assertGreaterThan(128, dol_strlen($event->label));
+		$this->assertGreaterThan(0, $event->create($user), (string) $event->error);
+
+		// Mails are disabled here: a reminder sent again would be recorded as a failed sending of the same invoice
+		$localobject = new Facture($db);
+		$localobject->sendEmailsRemindersOnInvoiceDueDate(-7, 'all', $template);
+		$resql = $db->query("SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."actioncomm WHERE elementtype = 'invoice' AND fk_element = ".((int) $invoice->id)." AND code = 'AC_EMAIL'");
+		$obj = $db->fetch_object($resql);
+		$this->assertEquals(1, $obj->nb, 'The reminder was sent again');
+
+		// Another job that differs only by the recipient has its own memory, even if the label is truncated: its reminder is sent
+		$localobject->sendEmailsRemindersOnInvoiceDueDate(-7, 'all', $template, 'duedate', 'other@example.com');
+		$resql = $db->query("SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."actioncomm WHERE elementtype = 'invoice' AND fk_element = ".((int) $invoice->id)." AND code = 'AC_EMAIL'");
+		$obj = $db->fetch_object($resql);
+		$this->assertEquals(2, $obj->nb, 'The reminder of a job with another recipient was not sent');
+		$db->query("DELETE FROM ".MAIN_DB_PREFIX."c_email_templates WHERE label = '".$db->escape($template)."'");
+		$conf->global->MAIN_MAIL_EMAIL_FROM = $savmailfrom;
 	}
 
 	/**
