@@ -1392,8 +1392,10 @@ class Facture extends CommonInvoice
 		$object->date_creation      = '';
 		$object->date_modification = '';
 		$object->date_validation    = '';
-		$object->ref_client         = '';
-		$object->ref_customer         = '';
+		if (!getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING')) {
+			$object->ref_client         = '';
+			$object->ref_customer         = '';
+		}
 		$object->close_code         = '';
 		$object->close_note         = '';
 		if (getDolGlobalInt('MAIN_DONT_KEEP_NOTE_ON_CLONING') == 1) {
@@ -6573,7 +6575,8 @@ class Facture extends CommonInvoice
 		dol_syslog(__METHOD__." start", LOG_INFO);
 
 		// Label of the agenda event recorded for each reminder sent. It also allows to know that a reminder was already sent for an invoice.
-		$labelreminderok = 'sendEmailsRemindersOnInvoiceDueDateOK (nbdays='.$nbdays.' paymentmode='.$paymentmode.' template='.$template.' datetouse='.$datetouse.' forcerecipient='.$forcerecipient.')';
+		// The template is the last parameter: the label is truncated to 128 characters when saved and the template is the longest value.
+		$labelreminderok = 'sendEmailsRemindersOnInvoiceDueDateOK (nbdays='.$nbdays.' paymentmode='.$paymentmode.' datetouse='.$datetouse.' forcerecipient='.$forcerecipient.' template='.$template.')';
 
 		// Select all action comm reminder
 		$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."facture as f";
@@ -6597,7 +6600,8 @@ class Facture extends CommonInvoice
 		// Do not send the same reminder twice if the batch is run again the same day (an event is recorded when a reminder is sent)
 		$sql .= " AND NOT EXISTS (SELECT a.id FROM ".MAIN_DB_PREFIX."actioncomm as a";
 		$sql .= " WHERE a.elementtype = 'invoice' AND a.fk_element = f.rowid AND a.code = 'AC_EMAIL'";
-		$sql .= " AND a.label = '".$this->db->escape($labelreminderok)."'";
+		// The label of an event is sanitized and truncated to 128 characters when saved (ActionComm::create), so search it the same way
+		$sql .= " AND a.label = '".$this->db->escape(dol_trunc(sanitizeVal($labelreminderok, 'alphawithlgt'), 128))."'";
 		$sql .= " AND a.datep >= '".$this->db->idate(dol_get_first_hour($now))."')";
 		if ($datetouse == 'invoicedate') {
 			$sql .= $this->db->order("datef", "ASC");
@@ -6626,6 +6630,11 @@ class Facture extends CommonInvoice
 				// Load event
 				$res = $tmpinvoice->fetch($obj->id);
 				if ($res > 0) {
+					// No reminder for an invoice with nothing left to pay (an overpaid invoice is not classified paid) or with a dispute open
+					if ($tmpinvoice->getRemainToPay() <= 0 || $tmpinvoice->dispute_status == 1) {
+						continue;
+					}
+
 					$tmpinvoice->fetch_thirdparty();
 					// Load paid amounts so that __AMOUNT_REMAIN__ is the real remaining amount
 					$tmpinvoice->getSommePaiement();
@@ -6640,8 +6649,9 @@ class Facture extends CommonInvoice
 						$outputlangs = $langs;
 					}
 
-					// Select email template according to language of recipient
-					$arraymessage = $formmail->getEMailTemplate($this->db, 'facture_send', $user, $outputlangs, (is_numeric($template) ? $template : 0), 1, (is_numeric($template) ? '' : $template));
+					// Select email template according to language of recipient (id -2 returns an error when the label is not found, else a generic text is returned)
+					// EmailTemplateCode is the placeholder of the default parameters of the job: it means no template
+					$arraymessage = $formmail->getEMailTemplate($this->db, 'facture_send', $user, $outputlangs, (is_numeric($template) ? $template : ((empty($template) || $template == 'EmailTemplateCode') ? 0 : -2)), 1, (is_numeric($template) ? '' : $template));
 					if (is_numeric($arraymessage) && $arraymessage <= 0) {
 						$langs->load("errors");
 						if (is_numeric($template)) {
@@ -6662,6 +6672,7 @@ class Facture extends CommonInvoice
 						// Log the error and continue so a single missing translation does
 						// not stop reminders for everyone else (see issue #34656).
 						$errorsMsg[] = $langs->trans('ErrorFailedToFindEmailTemplate', $template).' (invoice '.$tmpinvoice->ref.')';
+						$error++;
 						continue;
 					}
 

@@ -340,6 +340,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		} elseif ($object->fields[$key]['type'] == 'boolean') {
 			$value = ((GETPOST($key, 'aZ09') == 'on' || GETPOST($key, 'aZ09') == '1') ? 1 : 0);
 		} elseif ($object->fields[$key]['type'] == 'reference') {
+			// @phan-suppress-next-line PhanUndeclaredProperty
 			$value = array_keys($object->param_list)[(int) GETPOST($key)].','.GETPOST($key.'2');
 		} elseif (preg_match('/^chkbxlst:/', $object->fields[$key]['type']) || $object->fields[$key]['type'] == 'checkbox') {
 			$value = '';

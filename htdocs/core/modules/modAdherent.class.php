@@ -451,27 +451,26 @@ class modAdherent extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf;
+		global $conf, $langs;
 
 		// Permissions
 		$this->remove($options);
 
 		// ODT template
-		/*
-		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/members/template_member.odt';
-		$dirodt=DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/members';
-		$dest=$dirodt.'/template_order.odt';
+		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/members/template_member.odt';
+		$dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/members';
+		$dest = $dirodt.'/template_member.odt';
 
-		if (file_exists($src) && ! file_exists($dest)) {
+		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result=dol_copy($src,$dest,0,0);
+			$result = dol_copy($src, $dest, '0', 0);
 			if ($result < 0) {
 				$langs->load("errors");
-				$this->error=$langs->trans('ErrorFailToCopyFile',$src,$dest);
+				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;
 			}
-		}*/
+		}
 
 		$sql = array(
 			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type='member' AND entity = ".((int) $conf->entity),
