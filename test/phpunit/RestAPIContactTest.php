@@ -40,6 +40,59 @@ class RestAPIContactTest extends AbstractRestAPITest
 	protected $api_key;
 
 	/**
+	 * testRestCreateContactWithCountryCode
+	 *
+	 * Create contacts with a 2 or 3 letters country code, then with an unknown country code.
+	 *
+	 * @return void
+	 */
+	public function testRestCreateContactWithCountryCode()
+	{
+		$addheaders = array('Content-Type: application/json');
+		$lastname = 'testRestContactCountry'.mt_rand();
+		$contactids = array();
+
+		try {
+			foreach (array('FR', 'FRA') as $country_code) {
+				$body = json_encode(array('lastname' => $lastname, 'country_code' => $country_code));
+				$result = getURLContent($this->api_url.'/contacts?api_key='.$this->api_key, 'POST', $body, 1, $addheaders, array('http', 'https'), 2);
+				$this->assertEquals(0, $result['curl_error_no']);
+				$object = json_decode($result['content'], true);	// If success content is just an id, if not an array
+				$this->assertIsNumeric($object, 'Creating contact with country_code '.$country_code.' failed: '.$result['content']);
+				$contactids[] = (int) $object;
+
+				$result = getURLContent($this->api_url.'/contacts/'.((int) $object).'?api_key='.$this->api_key, 'GET', '', 1, array(), array('http', 'https'), 2);
+				$this->assertEquals(0, $result['curl_error_no']);
+				$object = json_decode($result['content'], true);
+				$this->assertNotNull($object, "Parsing of json result must not be null");
+				$this->assertEquals('FR', $object['country_code'], 'Bad country for country_code '.$country_code);
+				$this->assertGreaterThan(0, (int) $object['country_id'], 'Bad country_id for country_code '.$country_code);
+			}
+
+			// Unknown country code must be rejected and the contact not created
+			$body = json_encode(array('lastname' => $lastname.'ZZ', 'country_code' => 'ZZ'));
+			$result = getURLContent($this->api_url.'/contacts?api_key='.$this->api_key, 'POST', $body, 1, $addheaders, array('http', 'https'), 2);
+			$this->assertEquals(0, $result['curl_error_no']);
+			$object = json_decode($result['content'], true);
+			$this->assertNotNull($object, "Parsing of json result must not be null");
+			if (is_numeric($object)) {
+				$contactids[] = (int) $object;
+			}
+			$this->assertEquals(404, (empty($object['error']['code']) ? 0 : $object['error']['code']), 'Unknown country_code must return 404: '.$result['content']);
+
+			$sqlfilters = "(t.lastname:=:'".$lastname."ZZ')";
+			$result = getURLContent($this->api_url.'/contacts?sqlfilters='.urlencode($sqlfilters).'&api_key='.$this->api_key, 'GET', '', 1, array(), array('http', 'https'), 2);
+			$this->assertEquals(0, $result['curl_error_no']);
+			$object = json_decode($result['content'], true);
+			$this->assertSame(array(), $object, 'No contact must be created with an unknown country_code: '.$result['content']);
+		} finally {
+			foreach ($contactids as $contactid) {
+				getURLContent($this->api_url.'/contacts/'.$contactid.'?api_key='.$this->api_key, 'DELETE', '', 1, array(), array('http', 'https'), 2);
+			}
+		}
+	}
+
+	/**
 	 * testRestGetContact
 	 *
 	 * @return int
@@ -101,8 +154,6 @@ class RestAPIContactTest extends AbstractRestAPITest
 		$this->assertNotNull($object, "Parsing of json result must no be null");
 		$this->assertEquals(400, (empty($object['error']['code']) ? 0 : $object['error']['code']), 'Error'.(empty($object['error']['message']) ? '' : ' '.$object['error']['message']));
 
-		$idofcontactcreated = (int) $object;
-
 		// create regular contact
 		unset($result);
 		// Creating a Contact
@@ -123,6 +174,7 @@ class RestAPIContactTest extends AbstractRestAPITest
 		$this->assertNotNull($object, "Parsing of json result must not be null");
 		$this->assertNotEquals(500, (empty($object['error']['code']) ? 0 : $object['error']['code']), 'Error'.(empty($object['error']['message']) ? '' : ' '.$object['error']['message']));
 		$this->assertGreaterThan(0, $object, 'ID return is no > 0');
+		$idofcontactcreated = (int) $object;
 
 		return $idofcontactcreated;
 	}
