@@ -1795,5 +1795,111 @@ function subscriptionOptionsScenarios()
 		};
 	}
 
+	foreach (array(null, false, 'invalid') as $index => $thirdparty) {
+		foreach (array(false, true) as $invoice) {
+			$scenarios['thirdparty_fetch_without_object_'.$index.'_'.(int) $invoice] = static function () use ($date, $thirdparty, $invoice) {
+				list($db, $original, $user) = subscriptionOptionsTestContext();
+				$member = new class($db) extends SubscriptionOptionsTestMember {
+					/** @var mixed Invalid fetch result */
+					public $invalidThirdParty;
+					/**
+					 * @param int $force_thirdparty_id Third-party ID
+					 * @return int Simulated successful fetch without a valid object
+					 */
+					public function fetch_thirdparty($force_thirdparty_id = 0) // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps -- Required by the Dolibarr core API.
+					{
+						$this->thirdparty = $this->invalidThirdParty;
+						return 1;
+					}
+				};
+				$member->id = 1;
+				$member->entity = 1;
+				$member->socid = 42;
+				$member->testType = $original->testType;
+				$member->invalidThirdParty = $thirdparty;
+				$row = $member->previewSubscriptionWithOptions($user, $date, $invoice, false);
+				$result = $member->createSubscriptionWithOptions($user, $date, $invoice, false);
+				return $invoice ? in_array('SubscriptionBulkThirdPartyMissing', $row['errors'], true) && !$db->records && !$result['invoice']
+					: !$row['errors'] && $result['subscription'] === 10 && !$result['invoice'];
+			};
+		}
+	}
+	$scenarios['null_email_is_missing_before_and_after_commit'] = static function () use ($date) {
+		list($db, $member, $user) = subscriptionOptionsTestContext();
+		$member->email = null;
+		$row = $member->previewSubscriptionWithOptions($user, $date, false, true);
+		$result = $member->createSubscriptionWithOptions($user, $date, false, true);
+		return in_array('SubscriptionBulkEmailMissing', $row['notices'], true) && $result['warning'] === 'SubscriptionBulkEmailMissing'
+			&& $result['subscription'] === 10 && !$result['sent'] && !in_array('mail', $db->calls, true);
+	};
+	foreach (array(array('UTC', 'gmt'), array('Europe/Berlin', 'tzserver'), array('Europe/Berlin', 'gmt')) as $zone) {
+		foreach (array('m', 'Y', '3m') as $correction) {
+			foreach (array('2026-01-01', '2026-01-31', '2026-03-29', '2026-10-25', '2026-12-31') as $calendarDate) {
+				foreach (array(false, true) as $history) {
+					$scenarios['start_timezone_contract_'.implode('_', $zone).'_'.$correction.'_'.$calendarDate.'_'.(int) $history] = static function () use ($zone, $correction, $calendarDate, $history) {
+						global $conf;
+						$savedzone = date_default_timezone_get();
+						try {
+							date_default_timezone_set($zone[0]);
+							$conf->tzuserinputkey = $conf->tzuserdisplaykey = $zone[1];
+							$conf->global->MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF = $correction;
+							list($db, $member) = subscriptionOptionsTestContext();
+							$parts = array_map('intval', explode('-', $calendarDate));
+							$reference = dol_mktime(0, 0, 0, $parts[1], $parts[2], $parts[0]);
+							$member->datevalid = null;
+							$member->datefin = $history ? $reference : null;
+							$proposed = $history ? Adherent::subscriptionCalendarShift($reference, 1, 'd') : $reference;
+							if ($correction === '3m') {
+								$proposed = Adherent::subscriptionCalendarShift($history ? $reference : $proposed, -3, 'm');
+							}
+							// Compare the previous runtime semantics, including input versus server timezone.
+							$expected = dol_get_first_day((int) dol_print_date($proposed, '%Y'), $correction === 'Y' ? 1 : (int) dol_print_date($proposed, '%m'), 'auto');
+							$expected = Adherent::subscriptionCalendarShift($expected, 0, 'd');
+							return $member->subscriptionStartDateForBatch($reference) === $expected;
+						} finally {
+							date_default_timezone_set($savedzone);
+						}
+					};
+				}
+			}
+		}
+	}
+	foreach (array(false, true) as $required) {
+		foreach (array('valid', 'missing', 'null', 'directory') as $pathcase) {
+			$scenarios['mail_attachment_path_'.(int) $required.'_'.$pathcase] = static function () use ($required, $pathcase) {
+				global $conf;
+				$temporary = tmpfile();
+				$path = stream_get_meta_data($temporary)['uri'];
+				try {
+					fwrite($temporary, '%PDF-1.4 synthetic fixture');
+					$conf->facture = (object) array('dir_output' => sys_get_temp_dir());
+					list($db, $member) = subscriptionOptionsTestContext();
+					$member->invoice = (object) array('ref' => 'nonexistent-fixture-invoice');
+					$selected = $pathcase === 'valid' ? $path : ($pathcase === 'null' ? null : ($pathcase === 'directory' ? sys_get_temp_dir() : $path.'.missing'));
+					$source = file_get_contents(DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php');
+					$start = strpos($source, '// Attach a file ?', strpos($source, 'public function sendSubscriptionConfirmation('));
+					$end = strpos($source, '$moreinheader =', $start);
+					$code = substr($source, $start, $end - $start);
+					// Isolate file discovery; execute the real attachment validation and list construction.
+					$code = preg_replace('/\$fileparams = dol_most_recent_file\([^\n]+;/', '$fileparams = array("fullname" => $selected);', $code);
+					$run = function () use ($code, $selected, $required, $conf) {
+						$requireInvoicePdf = $required;
+						$requiredfile = $selected;
+						$arraydefaultmessage = null;
+						eval($code);
+						return array($listofpaths, $listofnames, $listofmimes);
+					};
+					$result = $run->call($member);
+					if ($pathcase !== 'valid') {
+						return $required ? $member->error === 'SubscriptionBulkPdfMissing' : $result === array(array(), array(), array());
+					}
+					return $result[0] === array($path) && count($result[1]) === 1 && count($result[2]) === 1;
+				} finally {
+					fclose($temporary);
+				}
+			};
+		}
+	}
+
 	return $scenarios;
 }

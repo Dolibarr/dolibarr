@@ -633,9 +633,14 @@ class Adherent extends CommonObject
 				$file = $fileparams['fullname'];
 			}
 
-			$listofpaths = array($file);
-			$listofnames = array(dol_basename($file));
-			$listofmimes = array(dol_mimetype($file));
+			if (is_string($file) && $file !== '' && dol_is_file($file) && is_readable($file)) {
+				$listofpaths = array($file);
+				$listofnames = array(dol_basename($file));
+				$listofmimes = array(dol_mimetype($file));
+			} elseif ($requireInvoicePdf) {
+				$this->error = 'SubscriptionBulkPdfMissing';
+				return -1;
+			}
 		}
 
 		$moreinheader = 'X-Dolibarr-Info: send_an_email by adherents/subscription.php'."\r\n";
@@ -2156,22 +2161,23 @@ class Adherent extends CommonObject
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		$date = $this->datefin > 0 ? self::subscriptionCalendarShift($this->datefin, 1, 'd') : ($this->datevalid > 0 ? $this->datevalid : $now);
-		$offset = getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER');
-		if ($offset) {
-			if (!preg_match('/^([+-]?\d+)([dwmyY])$/D', $offset, $parts)) {
+		$startOffsetSpec = getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER');
+		if ($startOffsetSpec) {
+			if (!preg_match('/^([+-]?\d+)([dwmyY])$/D', $startOffsetSpec, $parts)) {
 				throw new RuntimeException('SubscriptionBulkInvalidDate');
 			}
 			$date = self::subscriptionCalendarShift($now, (int) $parts[1], dol_strtolower($parts[2]));
 		}
+		// Keep the configured input timezone, as with the other batch date selectors.
 		$correction = getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF');
 		if ($correction === 'm') {
-			$date = dol_get_first_day((int) dol_print_date($date, '%Y'), (int) dol_print_date($date, '%m'), 'auto');
+			$date = dol_mktime(0, 0, 0, (int) dol_print_date($date, '%m'), 1, (int) dol_print_date($date, '%Y'));
 		} elseif ($correction === 'Y') {
-			$date = dol_get_first_day((int) dol_print_date($date, '%Y'), 1, 'auto');
+			$date = dol_mktime(0, 0, 0, 1, 1, (int) dol_print_date($date, '%Y'));
 		} elseif ($correction === '3m') {
 			// Match the existing subscription form for members with a previous end.
 			$date = self::subscriptionCalendarShift($this->datefin > 0 ? $this->datefin : $date, -3, 'm');
-			$date = dol_get_first_day((int) dol_print_date($date, '%Y'), (int) dol_print_date($date, '%m'), 'auto');
+			$date = dol_mktime(0, 0, 0, (int) dol_print_date($date, '%m'), 1, (int) dol_print_date($date, '%Y'));
 		}
 		return dol_mktime(0, 0, 0, (int) dol_print_date($date, '%m'), (int) dol_print_date($date, '%d'), (int) dol_print_date($date, '%Y'));
 	}
@@ -2267,6 +2273,7 @@ class Adherent extends CommonObject
 		$this->thirdparty = null;
 		if ($this->socid > 0) {
 			if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && $this->fetch_thirdparty() > 0
+				&& is_object($this->thirdparty)
 				&& in_array((int) $this->thirdparty->entity, array_map('intval', explode(',', getEntity('societe'))), true)
 				&& checkUserAccessToObject($user, array('societe'), $this->thirdparty)) {
 				return false;
@@ -2357,7 +2364,7 @@ class Adherent extends CommonObject
 		if ($invoice && isModEnabled('stock') && getDolGlobalInt('STOCK_CALCULATE_ON_BILL')) {
 			$row['errors'][] = 'ErrorMassValidationNotAllowedWhenStockIncreaseOnAction';
 		}
-		if ($sendmail && !isValidEmail($this->email)) {
+		if ($sendmail && !isValidEmail((string) $this->email)) {
 			$row['warnings'][] = 'SubscriptionBulkEmailMissing';
 		}
 		if ($sendmail && getDolGlobalInt('MAIN_DISABLE_ALL_MAILS')) {
@@ -2446,7 +2453,7 @@ class Adherent extends CommonObject
 		}
 		if ($sendmail) {
 			try {
-				if (!isValidEmail($this->email)) {
+				if (!isValidEmail((string) $this->email)) {
 					$result['warning'] = 'SubscriptionBulkEmailMissing';
 				} elseif (getDolGlobalInt('MAIN_DISABLE_ALL_MAILS')) {
 					$result['warning'] = 'SubscriptionBulkEmailDisabled';

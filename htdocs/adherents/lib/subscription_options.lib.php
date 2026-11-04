@@ -57,7 +57,7 @@ function subscriptionOptionsRenderResultNotice($counts)
 {
 	global $langs, $conf;
 
-	$message = dol_escape_htmltag($langs->transnoentities('SubscriptionBulkSummary', $counts['subscription'], $counts['invoice'], $counts['sent']));
+	$message = dol_escape_htmltag($langs->transnoentities('SubscriptionBulkSummary', (string) $counts['subscription'], (string) $counts['invoice'], (string) $counts['sent']));
 	$close = dol_escape_htmltag($langs->transnoentities('Close'));
 	$usejnotify = !empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') && !defined('DISABLE_JQUERY_JNOTIFY');
 	$html = '<div id="subscription-options-result" class="ok clearboth" role="status">';
@@ -244,7 +244,7 @@ function subscriptionOptionsRenderPreview($form, $rows)
 	}
 	$html .= '<div class="info" style="'.$noticestyle.'">'.dol_escape_htmltag($langs->trans('SubscriptionBulkDateHelp')).'</div></div>';
 	$counts = subscriptionOptionsPreviewCounts($rows);
-	$html .= '<div class="small marginbottomonly">'.dol_escape_htmltag($langs->transnoentities('SubscriptionBulkPreviewCounts', $counts['selected'], $counts['ready'], $counts['skipped'])).'</div>';
+	$html .= '<div class="small marginbottomonly">'.dol_escape_htmltag($langs->transnoentities('SubscriptionBulkPreviewCounts', (string) $counts['selected'], (string) $counts['ready'], (string) $counts['skipped'])).'</div>';
 	$html .= '<div class="div-table-responsive"><table class="noborder centpercent"><thead><tr class="liste_titre">';
 	foreach (array('Member', 'Type', 'Amount', 'DateSubscription', 'DateEndSubscription', 'ThirdParty', 'Status') as $column) {
 		$html .= '<th>'.dol_escape_htmltag($langs->trans($column)).'</th>';

@@ -270,16 +270,18 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
+$createinvoice = true;
+$sendmail = (bool) getDolGlobalInt('ADHERENT_DEFAULT_SENDINFOBYMAIL');
+$autocreatethirdparty = false;
+$subscriptioncommon = dol_now();
+$subscriptiondescription = $langs->transnoentities('Subscription').', {Member type}, {Start date} - {End date}';
+$subscriptionrows = array();
+
 if (empty($reshook)) {
 	if ($massaction == 'CreateSubscriptionWithOptions' || $action == 'confirm_subscription_options') {
 		if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !Adherent::canCreateSubscriptionWithOptions($user) || GETPOSTISSET('other_linked_objects')) {
 			accessforbidden();
 		}
-		$createinvoice = true;
-		$sendmail = (bool) getDolGlobalInt('ADHERENT_DEFAULT_SENDINFOBYMAIL');
-		$autocreatethirdparty = false;
-		$subscriptioncommon = dol_now();
-		$subscriptiondescription = $langs->transnoentities('Subscription').', {Member type}, {Start date} - {End date}';
 		$subscriptioninputs = array();
 		$previousrows = array();
 		$needsreview = true;
