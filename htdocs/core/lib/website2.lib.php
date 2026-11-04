@@ -320,7 +320,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		}
 
 		// Add manifest.json. Do we have to add it only on home page ?
-		$tplcontent .= '<?php if ($website->use_manifest) { print \'<link rel="manifest" href="/manifest.json.php" />\'."\n"; } ?>'."\n";
+		$tplcontent .= '<?php if ($website->use_manifest) { print \'<link rel="manifest" href="/manifest.json" />\'."\n"; } ?>'."\n";
 
 		// Add HTML headers (must be before the Add of the common CSS and js). The common js may content javascript using jquery or a framework loaded by the HTML header.
 		$tplcontent .= '<!-- Include HTML header from common file -->'."\n";
@@ -703,7 +703,7 @@ function dolSaveManifestJson($file, $content)
 {
 	global $pathofwebsite;
 
-	dol_syslog("Save manifest.js.php file into ".$file);
+	dol_syslog("Save manifest.json file into ".$file);
 
 	dol_mkdir($pathofwebsite);
 	$result = file_put_contents($file, $content);
