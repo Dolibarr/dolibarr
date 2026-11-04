@@ -58,6 +58,10 @@ $error = 0;
  * Actions
  */
 
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+
 if ($action == 'updateMask') {
 	$maskconstinventory = GETPOST('maskconstinventory', 'aZ09');
 	$maskinventory = GETPOST('maskInventory', 'alpha');

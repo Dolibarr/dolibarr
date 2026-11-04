@@ -495,7 +495,7 @@ AIPreviewUpdateRecord=Actualice %s para %s: %s. Os campos omitidos manteranse.
 AIPreviewUpdateProject=Actualizar o proxecto %s - %s: %s. Os campos omitidos conservaranse.
 AIPreviewCreateSupplierProposal=Crear un borrador de orzamento de provedor%s con %s.
 AIPreviewCreateDocument=Crea un borrador %s%s con %s.
-AIPreviewAddDocumentLine=Engada %s x %s a %s (%s class='notranslate'>%s excl.
+AIPreviewAddDocumentLine=Engada %s x %s a %s (%s excl).
 AIPreviewDelete=ELIMINA o %s co ID %s. Isto non se pode desfacer.
 AIPreviewValidateInvoice=Valide a factura a cliente %s. Obteña un número definitivo e xa non se pode editar.
 AIPreviewPayInvoice=Rexistrar un pagamento de %s na factura %s, %s.
