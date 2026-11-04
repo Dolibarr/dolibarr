@@ -697,7 +697,13 @@ if (empty($reshook)) {
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
 	} elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
 		// Multicurrency rate
-		$result = $object->setMulticurrencyRate(GETPOSTFLOAT('multicurrency_tx'), GETPOSTINT('calculation_mode'));
+		if (!in_array(GETPOSTINT('calculation_mode'), array(1, 2))) {
+			$langs->load("compta");
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CalculationMode")), null, 'errors');
+			$action = 'editmulticurrencyrate';
+		} else {
+			$result = $object->setMulticurrencyRate(GETPOSTFLOAT('multicurrency_tx'), GETPOSTINT('calculation_mode'));
+		}
 	} elseif ($action == 'setavailability' && $usercancreate) {
 		$result = $object->availability(GETPOSTINT('availability_id'));
 		if ($result < 0) {
@@ -1194,7 +1200,9 @@ if (empty($reshook)) {
 						$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
 						$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
 						$price_min_ttc = $prod->multiprices_min_ttc[$object->thirdparty->price_level];
-						$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
+						// A price level with no price row leaves multiprices_base_type empty (null or ''), and an empty
+						// value is not 'HT' for addline(), which then takes the price as TTC and stores it with the VAT added.
+						$price_base_type = (empty($prod->multiprices_base_type[$object->thirdparty->price_level]) ? 'HT' : $prod->multiprices_base_type[$object->thirdparty->price_level]);
 						if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {  // using this option is a bug. kept for backward compatibility
 							if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) {
 								$tva_tx = $prod->multiprices_tva_tx[$object->thirdparty->price_level];
@@ -1209,7 +1217,9 @@ if (empty($reshook)) {
 					$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
 					$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
 					$price_min_ttc = $prod->multiprices_min_ttc[$object->thirdparty->price_level];
-					$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
+					// A price level with no price row leaves multiprices_base_type empty (null or ''), and an empty
+					// value is not 'HT' for addline(), which then takes the price as TTC and stores it with the VAT added.
+					$price_base_type = (empty($prod->multiprices_base_type[$object->thirdparty->price_level]) ? 'HT' : $prod->multiprices_base_type[$object->thirdparty->price_level]);
 					if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {  // using this option is a bug. kept for backward compatibility
 						if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) {
 							$tva_tx = $prod->multiprices_tva_tx[$object->thirdparty->price_level];
@@ -3573,10 +3583,8 @@ if ($action == 'create' && $usercancreate) {
 			// Get object lines
 			$result = $object->getLinesArray();
 
-			// Add products/services form
-			//$forceall = 1;
-			global $inputalsopricewithtax;
-			$inputalsopricewithtax = 1;
+			// Display context of lines, also sets the global variables used by the line templates
+			$linesContext = $object->initObjectLinesDisplay();
 
 			print '<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">
 			<input type="hidden" name="token" value="' . newToken() . '">
@@ -3599,8 +3607,9 @@ if ($action == 'create' && $usercancreate) {
 			print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 			// Show object lines
-			if (!empty($object->lines)) {
-				$object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
+			// With nolines=1, the card is loaded without its lines, to refresh the other parts of the page in ajax
+			if (!empty($object->lines) && !GETPOSTINT('nolines')) {
+				$object->printObjectLines($action, $linesContext['seller'], $linesContext['buyer'], $lineid, $linesContext['dateSelector']);
 			}
 
 			/*
@@ -3617,7 +3626,7 @@ if ($action == 'create' && $usercancreate) {
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 					}
 					if (empty($reshook)) {
-						$object->formAddObjectLine(1, $mysoc, $soc);
+						$object->formAddObjectLine($linesContext['dateSelector'], $linesContext['seller'], $linesContext['buyer']);
 					}
 				} else {
 					$parameters = array();

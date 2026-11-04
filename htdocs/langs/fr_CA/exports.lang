@@ -50,7 +50,6 @@ ChooseFormatOfFileToImport=Choisissez le format de fichier à utiliser comme for
 ChooseFileToImport=Téléchargez le fichier puis cliquez sur l'icône %s pour sélectionner le fichier comme fichier d'importation source...
 SourceFileFormat=Format de fichier source
 NoFields=Pas de champs
-MoveField=Déplacer le numéro de colonne du champ %s
 SaveImportProfile=Enregistrer ce profil d'importation
 ErrorImportDuplicateProfil=Impossible d'enregistrer ce profil d'importation avec ce nom. Un profil existant existe déjà avec ce nom.
 TablesTarget=Tableaux ciblés

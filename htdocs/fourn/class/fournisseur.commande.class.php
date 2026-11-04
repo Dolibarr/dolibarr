@@ -1069,6 +1069,29 @@ class CommandeFournisseur extends CommonOrder
 	}
 
 	/**
+	 *	Return the display context of the lines, as defined by the card before printObjectLines() and formAddObjectLine()
+	 *	On supplier documents, the supplier is the seller.
+	 *
+	 *	@return	array{seller:Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	See CommonObject::getObjectLinesDisplayContext()
+	 */
+	public function getObjectLinesDisplayContext()
+	{
+		global $mysoc;
+
+		$context = parent::getObjectLinesDisplayContext();
+		// The supplier is the seller, an empty third party is used if it is not loaded (same as a failed fetch in the card)
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		$context['seller'] = (is_object($this->thirdparty) ? $this->thirdparty : new Societe($this->db));
+		$context['buyer'] = $mysoc;
+		$context['forceall'] = 1;
+		$context['inputalsopricewithtax'] = 1;
+		// 2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum
+		$context['senderissupplier'] = (getDolGlobalInt('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY') ? getDolGlobalInt('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY') : 2);
+
+		return $context;
+	}
+
+	/**
 	 *	Return clickable name (with picto eventually)
 	 *
 	 *	@param		int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
@@ -1601,7 +1624,7 @@ class CommandeFournisseur extends CommonOrder
 	}
 
 	/**
-	 * 	Save the price of the predefined product lines as supplier price (with its history) and as cost price of the products
+	 * 	Save the price of the predefined product lines as supplier price (with its history, created if the supplier has none for the product) and as cost price of the products
 	 *
 	 * 	@param		User	$user		User making change
 	 * 	@return		int					Return integer <0 if KO, number of prices updated if OK
@@ -1618,6 +1641,19 @@ class CommandeFournisseur extends CommonOrder
 		} else {
 			$canproduct = $user->hasRight('produit', 'creer');
 			$canservice = $user->hasRight('service', 'creer');
+		}
+
+		// Products for which the supplier already has a price, whatever its ref
+		$withprice = array();
+		$productids = array(0);
+		foreach ($this->lines as $line) {
+			$productids[] = (int) $line->fk_product;
+		}
+		$sql = "SELECT DISTINCT fk_product FROM ".$this->db->prefix()."product_fournisseur_price";
+		$sql .= " WHERE fk_soc = ".((int) $this->socid)." AND entity IN (".getEntity('productsupplierprice').") AND fk_product IN (".$this->db->sanitize(implode(',', $productids)).")";
+		$resql = $this->db->query($sql);
+		while ($resql && $obj = $this->db->fetch_object($resql)) {
+			$withprice[(int) $obj->fk_product] = 1;
 		}
 
 		$nbupdated = 0;
@@ -1640,6 +1676,23 @@ class CommandeFournisseur extends CommonOrder
 					return -1;
 				}
 				$nbupdated++;
+			}
+
+			// The supplier has no price for this product: create it for the quantity 1, like the buying prices tab of the product does.
+			// The supplier ref is the one of the line or else the ref of the product, as it must be unique for a supplier and a quantity.
+			$newprice = new ProductFournisseur($this->db);
+			if (empty($productsupplier->product_fourn_price_id) && empty($withprice[$line->fk_product]) && $newprice->fetch($line->fk_product) > 0) {
+				$ref = ($line->ref_supplier ? (string) $line->ref_supplier : $newprice->ref);
+				$result = $newprice->add_fournisseur($user, (int) $this->socid, $ref, 1);	// -3 if this supplier ref is used by another product
+				if ($result > 0) {
+					$withprice[$line->fk_product] = 1;
+					$result = $newprice->update_buyprice(1, (float) $line->subprice, $user, 'HT', $this->thirdparty, 0, $ref, (float) $line->tva_tx, 0, $line->remise_percent, 0, 0, 0, '', array(), (string) $line->vat_src_code, (float) ($line->multicurrency_subprice ?: $line->subprice), 'HT', (float) $this->multicurrency_tx, $this->multicurrency_code);
+					$nbupdated++;
+				}
+				if ($result < 0 && $result != -3) {
+					$this->setErrorsFromObject($newprice);
+					return -1;
+				}
 			}
 
 			// Cost price (net unit price of the line)

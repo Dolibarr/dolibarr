@@ -394,7 +394,13 @@ if (empty($reshook)) {
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
 	} elseif ($action == 'setmulticurrencyrate' && $permissiontoadd) {
 		// Multicurrency rate
-		$result = $object->setMulticurrencyRate((float) price2num(GETPOST('multicurrency_tx')), GETPOSTINT('calculation_mode'));
+		if (!in_array(GETPOSTINT('calculation_mode'), array(1, 2))) {
+			$langs->load("compta");
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CalculationMode")), null, 'errors');
+			$action = 'editmulticurrencyrate';
+		} else {
+			$result = $object->setMulticurrencyRate((float) price2num(GETPOST('multicurrency_tx')), GETPOSTINT('calculation_mode'));
+		}
 	} elseif ($action == 'setlabel' && $permissiontoadd) {
 		// Set bank account
 		$result = $object->setValueFrom('libelle', $label, '', null, 'text', '', $user);

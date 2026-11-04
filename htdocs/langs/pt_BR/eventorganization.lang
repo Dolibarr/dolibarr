@@ -49,7 +49,6 @@ BoothLocationFee =Localização do estande para o evento: '%s' ocorrendo de %s a
 LabelOfconference=Etiqueta da conferência
 ConferenceIsNotConfirmed=Inscrição não disponível, conferência ainda não confirmada
 DateMustBeAfterThan=%s deve estar depois de %s
-NewSubscription=Inscrição
 OrganizationEventLinkToThirdParty=Link para terceiros (cliente, fornecedor ou parceiro)
 NewSuggestionOfBooth=Pedido de um estande
 NewSuggestionOfConference=Pedido de realização de conferência

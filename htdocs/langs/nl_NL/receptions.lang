@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=Gevalideerd
 StatusReceptionProcessedShort=Verwerkt
 ReceptionSheet=Afleverbon
 ValidateReception=Valideer ontvangst
+DeleteReception=Verwijder de receptie
 ConfirmDeleteReception=Weet u zeker dat u deze ontvangst wilt verwijderen?
 ConfirmValidateReception=Weet u zeker dat u deze ontvangst wilt valideren met de referentie <b>%s</b>?
 ConfirmCancelReception=Weet u zeker dat u deze ontvangst wilt annuleren?

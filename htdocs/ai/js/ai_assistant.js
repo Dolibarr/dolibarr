@@ -1151,6 +1151,10 @@ export function initAiAssistant(container) {
                 if (event.error === 'network') {
                     errorMsg = t('ConnectionBlocked');
                     appendMsg('system', `<strong>${t('ConnectionBlocked')}:</strong> ${t('CloudVoiceRequiresSecureContext')}`);
+                } else if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+                    // Denied by the browser permission or by the HTTP header Permissions-Policy (microphone=())
+                    errorMsg = t('MicError') + ": " + event.error;
+                    appendMsg('system', `<strong>${t('MicError')}:</strong> ${t('MicNotAllowedHelp')}`);
                 }
                 statusBar.innerText = errorMsg;
                 setMicState('idle');
@@ -1303,6 +1307,9 @@ export function initAiAssistant(container) {
         } catch (err) {
             console.error('Microphone error:', err);
             statusBar.innerText = t('MicError') + ": " + err.message;
+            if (err && err.name === 'NotAllowedError') {
+                appendMsg('system', `<strong>${t('MicError')}:</strong> ${t('MicNotAllowedHelp')}`);
+            }
             isRecording = false;
             setMicState('idle');
         }
@@ -2306,7 +2313,12 @@ export function initAiAssistant(container) {
         confirmationRecognition = new SR();
         confirmationRecognition.lang = 'en-US';
         confirmationRecognition.onresult = (e) => { processConfirmationCommand(e.results[0][0].transcript); };
-        confirmationRecognition.onerror = (e) => { if (e.error !== 'no-speech') showVoiceFeedback(t('Error')); isConfirmationListening = false; };
+        // Voice error only, the action is not affected: say it, and ignore 'aborted' (raised by our own abort/stop).
+        confirmationRecognition.onerror = (e) => {
+            console.error('Confirmation speech recognition error:', e.error);
+            if (e.error !== 'no-speech' && e.error !== 'aborted') showVoiceFeedback(`${t('Listening')} (${t('VoiceYesNo')}): ${t('Error')} ${escapeHtml(e.error || '')}`);
+            isConfirmationListening = false;
+        };
         try { confirmationRecognition.start(); showVoiceFeedback(`<span class="fa fa-microphone"></span> ${t('Listening')} (${t('VoiceYesNo')})`); } catch (e) { console.error(e); }
     }
 
@@ -2911,7 +2923,8 @@ export function initAiAssistant(container) {
         }
 
         if (!isResend) {
-            appendMsg('user', displayHtml, null, query || t('AIContextAttachmentOnly'));
+            // Internal "/tools" debug command: no raw text, so it is never saved in the history nor sent as context
+            appendMsg('user', displayHtml, null, (query === '/tools' && !readyDocs.length) ? null : (query || t('AIContextAttachmentOnly')));
             clearChip();
         }
         lastSent = { sentQuery: sentQuery, query: query };
@@ -2924,13 +2937,13 @@ export function initAiAssistant(container) {
             const chosenModel = resolveModel();
             // Pinned exchanges only: context is opt-in, its cost visible in the bar.
             const pinned = pinnedContextPayload();
-            // Result of the read flagged needs_followup, sent back on the second round.
-            let followupSnippet = null;
+            // Results of the reads flagged needs_followup, sent back on the next rounds.
+            let followupSnippets = [];
             let followupResult = null;
             // The third parties the user picked, for every round of this request.
             const sentChoices = Object.assign({}, thirdpartyChoices);
-            // Two rounds at most: the server never flags a followup round itself.
-            for (let round = 0; round < 2; round++) {
+            // Three rounds at most: the server never flags the last followup round itself.
+            for (let round = 0; round < 3; round++) {
                 if (round > 0) { appendTyping(); loadingMsg = chat.lastElementChild; }
                 const intentRes = await fetch(epUrl('parse_intent.php'), {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -2942,7 +2955,8 @@ export function initAiAssistant(container) {
                         Object.keys(sentChoices).length ? { thirdparty_choices: sentChoices } : {},
                         (function () {
                             // followup_result: only to name the object in the confirmation, never sent to the model.
-                            if (followupSnippet) return { history: pinned.concat([{ role: 'assistant', text: followupSnippet }]), followup: 1, followup_result: followupResult };
+                            // All the search results in one assistant turn, followup is the number of the round.
+                            if (followupSnippets.length) return { history: pinned.concat([{ role: 'assistant', text: followupSnippets.join('\n') }]), followup: round, followup_result: followupResult };
                             return pinned.length ? { history: pinned } : {};
                         })(),
                         (function () {
@@ -3004,9 +3018,9 @@ export function initAiAssistant(container) {
                 loadingData.remove();
                 // The read only fetched the ids the asked action needs: hand its result
                 // back to the model instead of showing it, and let it perform the action.
-                if (!round && intent.needs_followup && result && !result.error && result.success !== false && result.resultType !== 'input_required') {
+                if (round < 2 && intent.needs_followup && result && !result.error && result.success !== false && result.resultType !== 'input_required') {
                     appendMsg('system', t('AISearchDoneNowPreparingAction') + ' (' + escapeHtml(intent.tool || '') + ')...');
-                    followupSnippet = contextSnippetOf(result, intent.tool);
+                    followupSnippets.push(contextSnippetOf(result, intent.tool));
                     followupResult = result;
                     continue;
                 }
@@ -3078,6 +3092,19 @@ export function initAiAssistant(container) {
         'multicurrency_total_ht', 'multicurrency_total_ttc', 'multicurrency_total_tva',
 		'opp_amount', 'price_booth', 'price_registration'
 		]);
+    // Technical fields of API objects not shown in the chat (display only: the LLM still receives them).
+    const HIDDEN_FIELDS = new Set(['entity', 'specimen', 'model_pdf', 'last_main_doc', 'import_key', 'array_options',
+        'user_creation_id', 'user_modification_id', 'fk_incoterms', 'location_incoterms', 'label_incoterms',
+        'no_email', 'typent_id', 'stcomm_id', 'fk_prospectlevel', 'country_id', 'fk_multicurrency', 'multicurrency_tx',
+        'remise_supplier_percent'
+        ]);
+    // Local tax fields are shown only when the country of the company uses this local tax.
+    [1, 2].forEach((x) => {
+        if (!parseInt(config['useLocalTax' + x] || 0, 10)) {
+            HIDDEN_FIELDS.add('localtax' + x + '_assuj');
+            HIDDEN_FIELDS.add('localtax' + x + '_value');
+        }
+    });
     const isDateField = (k) => k === 'date' || k === 'datef' || k === 'tms' || /(^|_)date($|_)|_date$|^date_/.test(k);
 
     function fieldLabel(k) {
@@ -3195,7 +3222,7 @@ export function initAiAssistant(container) {
         if (Array.isArray(data)) {
             if (data.length === 0) return t('NoRecordFound');
             isArray = true;
-            let keys = Object.keys(data[0]).filter(k => k !== 'url' && k !== 'rowid');
+            let keys = Object.keys(data[0]).filter(k => k !== 'url' && k !== 'rowid' && !HIDDEN_FIELDS.has(k));
             content += '<div class="chat-table-wrap"><table class="chat-table"><thead><tr>';
             // Rows that are files (their url is a document.php download): the
             // "name" column is the file, not a third party, and the file gets a
@@ -3233,7 +3260,7 @@ export function initAiAssistant(container) {
             content += '<div class="chat-object"><ul>';
             let nested = '';
             for (const [key, value] of Object.entries(data)) {
-                if (key === 'url' || key === 'chart') continue;
+                if (key === 'url' || key === 'chart' || HIDDEN_FIELDS.has(key)) continue;
                 if (typeof value !== 'object') { content += `<li><strong>${fieldLabel(key)}:</strong> ${formatCell(key, value)}</li>`; }
                 // A list inside the answer is the answer: a tool that wraps its rows
                 // in {count, offset, limit, results} would otherwise show only the

@@ -2774,7 +2774,7 @@ function convertBackOfficeMediasLinksToPublicLinks($notetoshow)
 {
 	global $dolibarr_main_url_root;
 	// Define $urlwithroot
-	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	$urlwithouturlroot = dolGetUrlWithoutUrlRoot();
 	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 	$notetoshow = preg_replace('/src="[a-zA-Z0-9_\/\-\.]*(viewimage\.php\?modulepart=medias[^"]*)"/', 'src="'.$urlwithroot.'/\1"', $notetoshow);
@@ -2919,7 +2919,7 @@ function acceptLocalLinktoMedia()
 
 	// If $acceptlocallinktomedia is true, we can add link media files int email templates (we already can do this into HTML editor of an email).
 	// Note that local link to a file into medias are replaced with a real link by email in CMailFile.class.php with value $urlwithroot defined like this:
-	// $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	// $urlwithouturlroot = dolGetUrlWithoutUrlRoot();
 	// $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 
 	$acceptlocallinktomedia = getDolGlobalInt('MAIN_DISALLOW_MEDIAS_IN_EMAIL_TEMPLATES') ? 0 : 1;
@@ -2930,7 +2930,7 @@ function acceptLocalLinktoMedia()
 
 	if ($acceptlocallinktomedia) {
 		global $dolibarr_main_url_root;
-		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+		$urlwithouturlroot = dolGetUrlWithoutUrlRoot();
 
 		// Parse $newUrl to get the IP of the server
 		$newUrlArray = parse_url($urlwithouturlroot);

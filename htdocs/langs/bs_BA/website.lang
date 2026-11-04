@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - website
 Shortname=Kod
 WebsiteName=Naziv web stranice
-WebsiteSetupDesc=Kreirajte ovdje web stranice koje želite koristiti. Zatim idite u meni Websites da ih uredite.
+WebsiteSetupDesc=Create here the websites you wish to use. Then go to menu Websites to edit them.
 DeleteWebsite=Izbriši web stranicu
 ConfirmDeleteWebsite=Jeste li sigurni da želite izbrisati ovu web stranicu? Sav sadržaj njegovih stranica i također će biti uklonjen. Učitane datoteke (kao u direktorij medija, ECM modul, ...) će ostati.
 WEBSITE_TYPE_CONTAINER=Vrsta stranice/kontejnera
@@ -17,8 +17,8 @@ WEBSITE_ROBOT=Datoteka robota (robots.txt)
 WEBSITE_HTACCESS=Datoteka web stranice .htaccess
 WEBSITE_MANIFEST_JSON=Datoteka manifest.json web stranice
 WEBSITE_KEYWORDSDesc=Koristite zarez za odvajanje vrijednosti
-EnterHereReadmeInformation=Ovdje unesite opis web stranice. Ako distribuirate svoju web stranicu kao predložak, datoteka će biti uključena u temptate paket.
-EnterHereLicenseInformation=Ovdje unesite LICENCU koda web stranice. Ako distribuirate svoju web stranicu kao predložak, datoteka će biti uključena u temptate paket.
+EnterHereReadmeInformation=Enter here a description of the website. If you distribute your website as a template, the file will be included in the template package.
+EnterHereLicenseInformation=Enter here the LICENSE of the code of the website. If you distribute your website as a template, the file will be included in the template package.
 HtmlHeaderPage=HTML zaglavlje (specifično samo za ovu stranicu)
 PageNameAliasHelp=Naziv ili pseudonim stranice.<br>Ovaj pseudonim se takođe koristi za falsifikovanje SEO URL-a kada se veb lokacija pokreće sa virtuelnog hosta veb servera (kao što je Apacke, Nginx, .. .). Koristite dugme "<strong>%s</strong>" da uredite ovaj pseudonim.
 EditTheWebSiteForACommonHeader=Napomena: Ako želite definirati personalizirano zaglavlje za sve stranice, uredite zaglavlje na razini stranice umjesto na stranici/kontejneru.
@@ -51,12 +51,12 @@ ToDeployYourWebsiteOnLiveYouHave3Solutions=Za objavljivanje ove web stranice ima
 SetHereVirtualHost=<u>Koristite sa Apache/NGinx/...</u><br>Kreirajte na vaš web server (Apache, Nginx, ...) namjenski virtuelni host sa omogućenim PHP i korijenski direktorij na<br><strong>%s</strong>
 ExampleToUseInApacheVirtualHostConfig=Primjer za korištenje u Apache postavci virtualnog hosta:
 YouCanAlsoTestWithPHPS=<u>Koristite sa ugrađenim PHP serverom</u><br>U razvojnom okruženju, možda biste željeli testirati stranicu sa ugrađenim PHP web serverom pokretanjem
-YouCanAlsoDeployToAnotherWHP=<u>Pokrenite svoju web stranicu unutar Dolibarr web hosting provajdera</u><br>Ako nemate web server poput Apachea ili NGinxa dostupan na internetu, možete izvesti i ili uvesti svoju web stranicu na drugu Dolibarr instancu koju pruža drugi Dolibarr hosting provajder koji pruža potpunu integraciju s modulom za web stranicu. Spisak nekih Dolibarr provajdera hostinga možete pronaći na <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
+YouCanAlsoDeployToAnotherWHP=<u>Run your web site inside a Dolibarr web Hosting provider</u><br>If you don't have a web server like Apache or NGinx available on the internet, you can export and import your web site to another Dolibarr instance provided by another Dolibarr hosting provider that provides full integration with the Website module. You can find a list of some Dolibarr hosting providers on <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
 CheckVirtualHostPerms=Check also that the virtual host user (for example www-data) has <strong>%s</strong> permissions on files into<br><strong>%s</strong>
 ReadPerm=Pročitaj
 WritePerm=Pisati
 TestDeployOnWeb=Testirajte / implementirajte na webu
-PreviewSiteServedByWebServer=<u>Preview %s in a new tab.</u><br><br>The %s will be served by an external web server (like Apache, Nginx, IIS). You must install and setup this server before to point to directory:<br><strong>%s</strong><br>URL served by external server:<br><strong>%s</strong>
+PreviewSiteServedByWebServer=<u>Preview %s in a new tab.</u><br><br>The %s will be served by an external web server (like Apache, Nginx, IIS). You must install and setup this server before pointing to the directory:<br><strong>%s</strong><br>URL served by external server:<br><strong>%s</strong>
 PreviewSiteServedByDolibarr=<u>Pregledajte %s u novoj kartici.</u><br><br>%s će biti opslužen od strane Dolibarr servera tako da nije potrebna instalacija dodatnog web servera (kao što su Apache, Nginx, IIS).<br>Nezgodno je što URL-ovi stranica nisu jednostavni za korištenje i počinju putanjom vašeg Dolibarra.<br>URL koji pruža Dolibarr:<br><strong>%s</strong><br><br>Za implementaciju ili testiranje pomoću vlastitog eksternog web servera (kao što su Apache, Nginx, Lighttp) koristite link "%s".
 VirtualHostUrlNotDefined=URL virtuelnog hosta kojeg opslužuje vanjski web server nije definiran
 NoPageYet=Još nema stranica
@@ -65,12 +65,13 @@ SyntaxHelp=Pomoć za specifične savjete o sintaksi
 YouCanEditHtmlSourceckeditor=Možete uređivati HTML izvorni kod koristeći dugme "Izvor" u uređivaču.
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> PHP kod možete uključiti u ovaj izvorni kod koristeći oznake <strong>&lt;?php ?&gt;</strong>. Dostupne su sljedeće globalne varijable: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> Također možete uključiti sadržaj druge stranice/kontejnera pomoću sljedeće sintakse:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> Možete napraviti preusmjeravanje na drugu stranicu/kontejner pomoću sljedeće sintakse (Napomena: nemojte ispisivati nikakav sadržaj prije preusmjeravanja):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>Preusmjeravanje možete izvršiti i pomoću GET parametara:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> Da biste dodali link na drugu stranicu, koristite sintaksu:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;moja veza&lt;a&gt;</strong><br><br>
 YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> You can dynamically set <strong>SEO title and meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>define('__SEO_PAGE_TITLE__', "Title value …");</code><br> <code>define('__SEO_PAGE_KEYWORDS__', 'keyword1, keyword2, keyword3 …');</code><br> <code>define('__SEO_PAGE_DESC__', "Description …");</code><br>
-YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> Da biste uključili <strong>link za preuzimanje</strong> datoteke pohranjene u direktoriju <strong>dokumenti</strong>, koristite <strong>document.php</strong> omotač:<br>Primjer, za datoteku u documents/ecm (potrebno je evidentirati), sintaksa je:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>Za datoteku u dokumente/medije (otvoreni direktorij za javni pristup), sintaksa je:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relativni_dir/]naziv_datoteke.ext"&gt;</strong><br>
+YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored in the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file in documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file in documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSourced=Za datoteku dijeljenu putem linka za dijeljenje (otvoreni pristup korištenjem hash ključa datoteke za dijeljenje), sintaksa je:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> Da biste uključili <strong>sliku</strong> pohranjenu u direktorij <strong>medija</strong> (direktorij otvoren za javni pristup), koristite relativnu putanju koja počinje sa <strong>/medias</strong>, primjer:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored in the <strong>medias</strong> directory (directory open for public access), use the relative path starting with <strong>/medias</strong>, example:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=Za sliku dijeljenu putem linka za dijeljenje (otvoreni pristup korištenjem hash ključa za dijeljenje datoteke), koristite omotač:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=To get the URL of the image of a PHP object, use<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
-YouCanEditHtmlSource4=Da biste dobili URL slike unutar html sadržaja članka, koristite `<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource4=To get the URL of an image inside a HTML content of an article, use<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource5=<br><span class="fa fa-edit paddingright"></span> To let a part of the page be changed with mode <strong>Edit inline</strong>, add the attributes <strong>contenteditable="true"</strong> and <strong>id</strong> to its tag. It must contain no PHP code, only text with formatting tags (bold, color, font size...), links, paragraphs, titles, lists and div, example:<br><strong>&lt;p id="intro" contenteditable="true"&gt;My &lt;b&gt;text&lt;/b&gt;&lt;/p&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>Više primjera HTML ili dinamičkog koda dostupno je na <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">wiki dokumentacijib0e40dc6087 >.<br>
 ClonePage=Kloniraj stranicu/kontejner
 CloneSite=Clone site
@@ -88,6 +89,8 @@ ImportSite=Uvezite predložak web stranice
 IDOfPage=Id stranice
 Banner=Baner
 BlogPost=Blog post
+PageHeader=Header
+PageFooter=Footer
 WebsiteAccount=Račun web stranice
 WebsiteAccounts=Nalozi za web stranicu
 AddWebsiteAccount=Kreirajte račun web stranice
@@ -102,7 +105,7 @@ YouMustDefineTheHomePage=Prvo morate definirati zadanu početnu stranicu
 OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users and can work only pages rendered with HTML and CSS only. Importing pages rendered by JS frameworks are NOT supported. Depending on the complexity of the source page, the result of importation will probably differ from the original page. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quick way to create a page for very advanced users when source page allows it, but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor might not work correctly when used on a page that was grabbed.
 OnlyEditionOfSourceForGrabbedContent=Samo modifikacija HTML izvornog koda je moguća kada se sadržaj preuzima sa eksterne stranice.
 GrabImagesInto=Uzmite i slike pronađene na css i stranici.
-ImagesShouldBeSavedInto=Slike treba pohraniti u direktorij
+ImagesShouldBeSavedInto=Images should be saved in the directory
 WebsiteRootOfImages=Korijenski direktorij za slike web stranice
 SubdirOfPage=Poddirektorij posvećen stranici
 AliasPageAlreadyExists=Stranica s pseudonimom <strong>%s</strong> već postoji
@@ -119,7 +122,7 @@ NoWebSiteCreateOneFirst=Još nije kreirana nijedna web stranica. Prvo napravite 
 GoTo=Idi
 DynamicPHPCodeContainsAForbiddenInstruction=Dodajte dinamički PHP kod koji sadrži PHP instrukciju '<strong>%s</strong> ' koji je po defaultu zabranjen kao dinamički sadržaj (pogledajte skrivene opcije WEBSITE_PHP_ALLOW_xxx da povećate listu dozvoljenih komandi).
 NotAllowedToAddDynamicContent=You don't have permission to add or edit dynamic PHP content in websites. Ask permission or just keep code into php tags unmodified.
-NotAllowedToAddDynamicContentDisabledGlobaly=You currently can't add or edit dynamic PHP content in this website (even if you have permission to), because this feature must be first enabled globally by setting the parameter %s=1 int the conf.php file.<br>Edit your conf.php file to add this parameter, or ask your administrator or support to do it for you.
+NotAllowedToAddDynamicContentDisabledGlobaly=You currently can't add or edit dynamic PHP content in this website (even if you have permission to), because this feature must be first enabled globally by setting the parameter %s=1 into the conf.php file.<br>Edit your conf.php file to add this parameter, or ask your administrator or support team to do it for you.
 ReplaceWebsiteContent=Pretražite ili zamijenite sadržaj web stranice
 DeleteAlsoJs=Izbrisati i sve JavaScript datoteke specifične za ovu web stranicu?
 DeleteAlsoMedias=Izbrisati i sve medijske datoteke specifične za ovu web stranicu?
@@ -140,10 +143,10 @@ MainLanguage=Glavni jezik
 OtherLanguages=Drugi jezici
 UseManifest=Navedite manifest.json datoteku
 PublicAuthorAlias=Javno ime autora
-AvailableLanguagesAreDefinedIntoWebsiteProperties=Dostupni jezici su definirani u svojstvima web stranice
+AvailableLanguagesAreDefinedIntoWebsiteProperties=Available languages are defined in website properties
 ReplacementDoneInXPages=Zamjena obavljena u %s stranicama ili kontejnerima
 RSSFeed=RSS Feed
-RSSFeedDesc=Možete dobiti RSS feed najnovijih članaka sa tipom 'blogpost' koristeći ovaj URL
+RSSFeedDesc=You can get an RSS feed of latest articles with type 'blogpost' using this URL
 PagesRegenerated=%s stranica(e)/kontejner(i) regenerirani
 RegenerateWebsiteContent=Regenerirajte keš datoteke web stranice
 AllowedInFrames=Dozvoljeno u okvirima
@@ -151,6 +154,7 @@ DefineListOfAltLanguagesInWebsiteProperties=Definirajte listu svih dostupnih jez
 GenerateSitemaps=Generirajte web sitemap.xml datoteku
 ConfirmGenerateSitemaps=Ako potvrdite, izbrisat ćete postojeću datoteku mape stranice...
 ConfirmSitemapsCreation=Potvrdite generisanje mape sajta
+ConfirmSetAsHomePage=Are you sure you want to set the page <b>%s</b> as the home page of the website?
 SitemapGenerated=Sitemap datoteka <b>%s</b> je generirana
 ImportFavicon=Favicon
 ErrorFaviconType=Favicon mora biti png
@@ -509,3 +513,13 @@ ThisDirectoryIsEmpty=This directory is empty
 WrittenBy=Written by %s
 ImportOfWebsiteTemplateIncludingPHPIsAllowedIf=Import of website templates using dynamic content in PHP is allowed only if $dolibarr_website_allow_custom_php is set to 2 in conf.php.
 ImportOfWebsiteTemplateIncludingPHPIsDisabled=Import of website templates using dynamic content in PHP need to have $dolibarr_website_allow_custom_php set to 1 or 2 in conf.php to be allowed.
+CurrentPageVersion=Current page
+ListOfPageVersions=List of archived versions of page (a backup file of page is created each time you save a change, for example on the HTML source)
+EditInLineAllowedAreas=In mode Edit inline, the tags with contenteditable="true", an id and no PHP code inside can be changed and are saved when you leave them. Text formatting (bold, color, font size...), links, paragraphs, titles and lists are allowed, images and other HTML can only be changed in the HTML source.
+ErrorEditInlineElementNoId=This element has contenteditable="true" but no id, so it can not be edited inline.
+ErrorEditInlineElementNotFound=No element with id %s and contenteditable="true" was found in the source of the page.
+ErrorEditInlineElementNotUnique=The id %s is used by several elements with contenteditable="true" in the source of the page.
+ErrorEditInlineElementWithPhp=The element with id %s contains PHP code in the source of the page, so it can only be changed in the HTML source.
+ErrorEditInlineElementNotAllowedHtml=The element with id %s contains HTML that can not be edited inline (image, form, script, comment, other tags or attributes...), so it can only be changed in the HTML source.
+ErrorEditInlineElementNotPlainText=The element with id %s contains HTML in the source of the page and can only be edited inline as plain text, so it can only be changed in the HTML source.
+ErrorEditInlineContentNotAllowed=The new content of the element with id %s contains HTML tags or attributes that are not allowed, so it was not saved.

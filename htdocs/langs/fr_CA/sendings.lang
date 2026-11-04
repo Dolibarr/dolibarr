@@ -80,7 +80,6 @@ Recipient=destinataire de la livraison
 ErrorStockIsNotEnough=Il n'y a pas assez de stock
 ShowShippableStatus=Afficher le statut expédiable
 ShowReceiving=Afficher le reçu de livraison
-DocumentModelTyphon=Modèle de document plus complet pour les reçus de livraison (logo ...)
 DocumentModelStorm=Modèle de document plus complet pour les reçus de livraison et compatibilité des champs supplémentaires (logo...)
 SumOfProductVolumes=Somme des volumes de produits
 DetailWarehouseNumber=Détails de l'entrepôt
