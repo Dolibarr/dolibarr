@@ -1539,6 +1539,8 @@ class ToolApiBridge extends McpTool
 	 */
 	private function addReadEndpoints()
 	{
+		global $mysoc;
+
 		$pagination = "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many records match.";
 
 		$this->enrichments['bankaccounts'] = array(
@@ -1899,23 +1901,27 @@ class ToolApiBridge extends McpTool
 		// Local tax payments (llx_localtax): country-specific extra taxes
 		// recorded by the company (RE/IRPF in Spain, empty elsewhere). The
 		// records are entity-scoped, not country-scoped, so no country
-		// filter applies. Write side is left out on purpose.
-		$this->enrichments['localtaxes'] = array(
-			'label' => 'local tax payments (second/third country taxes)',
-			'methods' => array(
-				'index' => array(
-					'default_properties' => 'id,ltt,label,amount,datep,datev,paymenttype,rappro',
-					'description' => "Local tax payments recorded by the company (country-specific extra taxes, e.g. RE and IRPF in Spain). ltt: 1 = localtax1, 2 = localtax2. datep = payment date, datev = value date, rappro = 1 when bank-reconciled. Search with sqlfilters on t.label or t.amount (e.g. \"(t.datep:>=:'20250101')\").",
-					'params' => array('pagination_data' => $pagination),
-					'right' => array('tax', 'charges', 'lire')
-				),
-				'get' => array(
-					'description' => "One local tax payment by its rowid: type (ltt), label, amount, dates and bank reconciliation state.",
-					'params' => array('id' => "Rowid of the local tax payment."),
-					'right' => array('tax', 'charges', 'lire')
+		// filter applies; the tools are registered only when the company
+		// country actually uses local taxes, the table is empty otherwise.
+		// Write side is left out on purpose.
+		if ($mysoc->useLocalTax(0)) {
+			$this->enrichments['localtaxes'] = array(
+				'label' => 'local tax payments (second/third country taxes)',
+				'methods' => array(
+					'index' => array(
+						'default_properties' => 'id,ltt,label,amount,datep,datev,paymenttype,rappro',
+						'description' => "Local tax payments recorded by the company (country-specific extra taxes, e.g. RE and IRPF in Spain). ltt: 1 = localtax1, 2 = localtax2. datep = payment date, datev = value date, rappro = 1 when bank-reconciled. Search with sqlfilters on t.label or t.amount (e.g. \"(t.datep:>=:'20250101')\").",
+						'params' => array('pagination_data' => $pagination),
+						'right' => array('tax', 'charges', 'lire')
+					),
+					'get' => array(
+						'description' => "One local tax payment by its rowid: type (ltt), label, amount, dates and bank reconciliation state.",
+						'params' => array('id' => "Rowid of the local tax payment."),
+						'right' => array('tax', 'charges', 'lire')
+					)
 				)
-			)
-		);
+			);
+		}
 
 		// Cron jobs (llx_cronjob): read side, plus run which launches a job
 		// already defined by an admin. post/put stay out on purpose: they can
