@@ -1306,7 +1306,7 @@ class Mo extends CommonObject
 	 *      @param	string	$fieldstatus	Name of status field in this->table_element
 	 *      @return int						Return integer <0 if KO, >0 if OK
 	 */
-	public function setStatut($status, $elementId = null, $elementType = '', $trigkey = '', $fieldstatus = 'fk_statut')
+	public function setStatut($status, $elementId = null, $elementType = '', $trigkey = '', $fieldstatus = '')
 	{
 		global $user;
 
