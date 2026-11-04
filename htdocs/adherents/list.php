@@ -278,7 +278,7 @@ $subscriptiondescription = $langs->transnoentities('Subscription').', {Member ty
 $subscriptionrows = array();
 
 if (empty($reshook)) {
-	if ($massaction == 'CreateSubscriptionWithOptions' || $action == 'confirm_subscription_options') {
+	if ($massaction == 'CreateSubscriptionWithOptions' || $action == 'confirm_subscription_options') { // Test on permission done later, immediately inside this block.
 		if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !Adherent::canCreateSubscriptionWithOptions($user) || GETPOSTISSET('other_linked_objects')) {
 			accessforbidden();
 		}
@@ -286,7 +286,7 @@ if (empty($reshook)) {
 		$previousrows = array();
 		$needsreview = true;
 		$cancelpreview = false;
-		if ($action == 'confirm_subscription_options') {
+		if ($action == 'confirm_subscription_options') { // Test on permission already done above.
 			$subscriptionOptionsToken = GETPOST('subscriptionoptionstoken', 'aZ09', 2);
 			if (!is_string($subscriptionOptionsToken) || !preg_match('/^[a-f0-9]{32}$/D', $subscriptionOptionsToken)) {
 				accessforbidden($langs->trans('SubscriptionBulkExpired'));
@@ -337,7 +337,7 @@ if (empty($reshook)) {
 					$needsreview = true;
 				}
 			}
-			if ($action == 'confirm_subscription_options' && $confirm == 'yes' && !$needsreview) {
+			if ($action == 'confirm_subscription_options' && $confirm == 'yes' && !$needsreview) { // Test on permission already done above.
 				$counts = array('subscription' => 0, 'invoice' => 0, 'sent' => 0);
 				foreach ($subscriptionrows as $memberid => $row) {
 					if ($row['errors']) {
