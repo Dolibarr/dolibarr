@@ -1541,7 +1541,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 		$filejs = $pathofwebsite.'/javascript.js.php';
 		$filerobot = $pathofwebsite.'/robots.txt';
 		$filehtaccess = $pathofwebsite.'/.htaccess';
-		$filemanifestjson = $pathofwebsite.'/manifest.json.php';
+		$filemanifestjson = $pathofwebsite.'/manifest.json';
 		$filereadme = $pathofwebsite.'/README.md';
 
 		$filecontent = file_get_contents($filehtmlheader);
