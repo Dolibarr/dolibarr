@@ -286,8 +286,7 @@ class Contacts extends DolibarrApi
 			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$contact_static = new Contact($this->db);
-				if ($contact_static->fetch($obj->rowid)) {
-					$contact_static->fetchRoles();
+				if ($contact_static->fetch($obj->rowid) > 0) {
 					if ($includecount) {
 						$contact_static->load_ref_elements();
 					}
@@ -310,6 +309,9 @@ class Contacts extends DolibarrApi
 		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
 		if ($pagination_data) {
 			$totalsResult = $this->db->query($sqlTotals);
+			if (!$totalsResult) {
+				throw new RestException(503, 'Error when retrieve contact list total : '.$this->db->lasterror());
+			}
 			$total = $this->db->fetch_object($totalsResult)->total;
 
 			$tmp = $obj_ret;
@@ -319,7 +321,7 @@ class Contacts extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
