@@ -453,7 +453,7 @@ $leftmenuwidth = 254;
 	--amountremaintopaycolor:#880000;
 	--amountpaymentcomplete:#008855;
 	--amountremaintopaybackcolor:none;
-	--productlinestockod: #002200;
+	--productlinestockok: #002200;
 	--productlinestocktoolow: #884400;
 	--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #fff, #fff, #fff, #e4efe8);
 	--tablevalidbgcolor: rgb(252, 248, 227);
