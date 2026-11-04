@@ -25,6 +25,7 @@ CREATE TABLE llx_comment (
     fk_user_modif integer DEFAULT NULL,
     fk_element integer DEFAULT NULL,
     element_type varchar(50) DEFAULT NULL,
+    parentid integer DEFAULT NULL,
     entity integer DEFAULT 1,
     import_key varchar(125) DEFAULT NULL
 )ENGINE=innodb;
