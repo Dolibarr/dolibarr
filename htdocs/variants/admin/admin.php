@@ -65,7 +65,7 @@ if ($action) {
 	$parentstockmode = GETPOSTINT('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT');
 	if ($parentstockmode == 2 && getDolGlobalInt('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT') != 2) {
 		$movement = new MouvementStock($db);
-		if ($movement->recalculateVariantParentStocks($user) < 0) {
+		if ($movement->recalculateVariantParentStocks() < 0) {
 			setEventMessages($movement->error, $movement->errors, 'errors');
 			$error++;
 		}

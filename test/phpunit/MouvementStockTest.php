@@ -334,7 +334,7 @@ class MouvementStockTest extends CommonClassTest
 			$warehouseid = $warehouse->create($user);
 			$this->assertGreaterThan(0, $warehouseid, 'Failed to create warehouse');
 
-			// Stock of parent is the sum of its variants: each movement of a variant is copied on its parent
+			// Stock of parent is the sum of its variants: after each movement of a variant, its parent is recalculated
 			$conf->global->VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT = '2';
 			$movement = new MouvementStock($db);
 			$this->assertGreaterThan(0, $movement->reception($user, $variantids['red'], $warehouseid, 50, 0, 'phpunit variant', '', '', 'phpunit-lot'));
@@ -342,6 +342,7 @@ class MouvementStockTest extends CommonClassTest
 			$this->assertGreaterThan(0, $movement->livraison($user, $variantids['red'], $warehouseid, 10, 0, 'phpunit variant', '', '', '', 'phpunit-lot'));
 			$this->assertEquals(90, $this->getStockInWarehouse($parentid, $warehouseid), 'Stock of the parent must be the sum of its variants');
 			$this->assertEmpty($this->getBatchesInWarehouse($parentid, $warehouseid), 'The parent must receive quantities only, without batch number');
+			$this->assertEquals(0, $this->getNbMovements($parentid), 'The parent is recalculated, no movement is recorded on it');
 
 			// The parent is not counted twice in the warehouse total
 			$calcproducts = $warehouse->nb_products();
@@ -352,20 +353,29 @@ class MouvementStockTest extends CommonClassTest
 			// The parent can't move by itself
 			$this->assertLessThan(0, $movement->livraison($user, $parentid, $warehouseid, 1, 0, 'phpunit variant'), 'A movement on the parent itself must be refused');
 
-			// Stock managed manually: movements of variants are not copied
+			// A difference on the parent, whatever its cause, is corrected at the next movement of a variant: 40 red + 60 blue
+			$resql = $db->query("UPDATE ".$db->prefix()."product_stock SET reel = 999 WHERE fk_product = ".((int) $parentid)." AND fk_entrepot = ".((int) $warehouseid));
+			$this->assertNotFalse($resql, 'Failed to put a difference on the parent');
+			$this->assertGreaterThan(0, $movement->reception($user, $variantids['blue'], $warehouseid, 10, 0, 'phpunit variant'));
+			$this->assertEquals(100, $this->getStockInWarehouse($parentid, $warehouseid), 'A difference on the parent must be corrected at the next movement of a variant');
+
+			// Stock managed manually: the parent is not recalculated, and may move by itself
 			$conf->global->VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT = '1';
 			$this->assertGreaterThan(0, $movement->reception($user, $variantids['blue'], $warehouseid, 100, 0, 'phpunit variant'));
-			$this->assertEquals(90, $this->getStockInWarehouse($parentid, $warehouseid), 'Movements of variants must not be copied when stock of parent is managed manually');
+			$this->assertEquals(100, $this->getStockInWarehouse($parentid, $warehouseid), 'The parent must not be recalculated when its stock is managed manually');
 
-			// A parent with less stock never blocks a variant, even when negative stock is not allowed
+			// A parent with less stock never blocks a variant, even when negative stock is not allowed: 40 red + 40 blue
 			$conf->global->VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT = '2';
 			$conf->global->STOCK_DISALLOW_NEGATIVE_TRANSFER = '1';
 			$this->assertGreaterThan(0, $movement->livraison($user, $variantids['blue'], $warehouseid, 120, 0, 'phpunit variant'), 'A parent with less stock must not block its variant');
-			$this->assertEquals(-30, $this->getStockInWarehouse($parentid, $warehouseid));
+			$this->assertEquals(80, $this->getStockInWarehouse($parentid, $warehouseid));
 
-			// Recalculation sets the parent back to the sum of its variants: 40 red + 30 blue
-			$this->assertGreaterThan(0, $movement->recalculateVariantParentStocks($user), 'Failed to recalculate stock of parents');
-			$this->assertEquals(70, $this->getStockInWarehouse($parentid, $warehouseid), 'Recalculation must set the parent to the sum of its variants');
+			// Choosing the sum of variants recalculates every parent, here corrected by hand while its stock was managed manually
+			$resql = $db->query("UPDATE ".$db->prefix()."product_stock SET reel = 75 WHERE fk_product = ".((int) $parentid)." AND fk_entrepot = ".((int) $warehouseid));
+			$this->assertNotFalse($resql, 'Failed to put a difference on the parent');
+			$this->assertEquals(75, $this->getStockInWarehouse($parentid, $warehouseid));
+			$this->assertGreaterThan(0, $movement->recalculateVariantParentStocks(), 'Failed to recalculate stock of parents');
+			$this->assertEquals(80, $this->getStockInWarehouse($parentid, $warehouseid), 'Recalculation must set the parent to the sum of its variants');
 		} finally {
 			$conf->modules = $savmodules;
 			$conf->global->VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT = $savparentstock;
@@ -387,6 +397,20 @@ class MouvementStockTest extends CommonClassTest
 		$product->load_stock('novirtual');
 
 		return isset($product->stock_warehouse[$warehouseid]) ? (float) $product->stock_warehouse[$warehouseid]->real : 0;
+	}
+
+	/**
+	 * Return the number of stock movements recorded for a product
+	 *
+	 * @param	int		$productid		Id of product
+	 * @return	int						Number of stock movements
+	 */
+	private function getNbMovements($productid)
+	{
+		$resql = $this->savdb->query("SELECT COUNT(rowid) as nb FROM ".$this->savdb->prefix()."stock_mouvement WHERE fk_product = ".((int) $productid));
+		$obj = $resql ? $this->savdb->fetch_object($resql) : null;
+
+		return $obj ? (int) $obj->nb : -1;
 	}
 
 	/**

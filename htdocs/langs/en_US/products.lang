@@ -496,7 +496,6 @@ VariantParentStockNone=No stock
 VariantParentStockManual=Updated manually
 VariantParentStockSumOfVariants=Sum of its variants
 VariantParentStockIsSumOfVariants=The stock of the parent is the sum of its variants: correct the stock of each variant.
-VariantParentStockRecalculated=Stock recalculated from its variants
 ErrorStockMovementOnVariantParent=%s is not a real item: choose one of its variants.
 ConfirmSetToDraftInventory=Are you sure you want to go back to Draft status?<br>The quantities currently set in the inventory will be reset.
 WarningLineProductNotToSell=Product or service "%s" is not to sell and was cloned
