@@ -932,6 +932,14 @@ if (empty($reshook)) {
 			$ok = 0;
 			setEventMessages($langs->transnoentities("ErrorFieldMustHaveLessThanXChar", $langs->transnoentities("Code"), '6'), null, 'errors');
 		}
+		if ($id == DICT_TVA && dol_strlen(GETPOST("code")) > 10) {  // 10 char max on code for VAT dictionary
+			$ok = 0;
+			setEventMessages($langs->transnoentities("ErrorFieldMustHaveLessThanXChar", $langs->transnoentities("Code"), '10'), null, 'errors');
+		}
+		if ($id == DICT_TVA && dol_strlen(GETPOST("note")) > 128) {  // 128 char max on note for VAT dictionary
+			$ok = 0;
+			setEventMessages($langs->transnoentities("ErrorFieldMustHaveLessThanXChar", $langs->transnoentities("Note"), '128'), null, 'errors');
+		}
 
 		// Clean some parameters
 		if ((GETPOST("localtax1_type") || (GETPOST('localtax1_type') == '0')) && !GETPOST("localtax1")) {
