@@ -54,10 +54,11 @@ echo $this->control->tpl['ajax_selectcountry'];
 <input type="hidden" name="id" value="<?php echo GETPOST('id', 'int'); ?>">
 <input type="hidden" name="action" value="update">
 <input type="hidden" name="contactid" value="<?php echo $this->control->tpl['id']; ?>">
-<input type="hidden" name="old_name" value="<?php echo $this->control->tpl['name']; ?>">
+<input type="hidden" name="use_thirdparty_address" id="use_thirdparty_address" value="<?php echo (int) $this->control->tpl['use_thirdparty_address']; ?>">
+<input type="hidden" name="old_name" value="<?php echo $this->control->tpl['lastname']; ?>">
 <input type="hidden" name="old_firstname" value="<?php echo $this->control->tpl['firstname']; ?>">
 <?php if (!empty($this->control->tpl['company_id'])) { ?>
-<input type="hidden" name="socid" value="<?php echo $this->control->tpl['company_id']; ?>">
+<input type="hidden" name="socid" id="socid" value="<?php echo $this->control->tpl['company_id']; ?>">
 <?php } ?>
 
 <table class="border allwidth">
@@ -69,7 +70,7 @@ echo $this->control->tpl['ajax_selectcountry'];
 
 <tr>
 	<td width="15%" class="fieldrequired"><?php echo $langs->trans("Lastname").' / '.$langs->trans("Label"); ?></td>
-	<td><input name="lastname" type="text" size="30" maxlength="80" value="<?php echo $this->control->tpl['name']; ?>"></td>
+	<td><input name="lastname" type="text" size="30" maxlength="80" value="<?php echo $this->control->tpl['lastname']; ?>"></td>
 	<td width="20%"><?php echo $langs->trans("Firstname"); ?></td>
 	<td width="25%"><input name="firstname" type="text" size="30" maxlength="80" value="<?php echo $this->control->tpl['firstname']; ?>"></td>
 </tr>
@@ -90,21 +91,29 @@ echo $this->control->tpl['ajax_selectcountry'];
 </tr>
 
 <tr>
-	<td><?php echo $langs->trans("Address"); ?></td>
-	<td colspan="3"><textarea class="flat" name="address" cols="70"><?php echo $this->control->tpl['address']; ?></textarea></td>
+	<td><?php echo $langs->trans("ContactAddress_UseDifferentAddressThanThirdparty"); ?></td>
+	<td colspan="3">
+		<input type="checkbox" name="use_different_address_than_thirdparty" id="use_different_address_than_thirdparty" value="1"<?php echo !empty($this->control->tpl['show_custom_address_block']) ? ' checked' : ''; ?>>
+		<?php echo $langs->trans("ContactAddress_UseDifferentAddressThanThirdpartyHelp"); ?>
+	</td>
 </tr>
 
-<tr>
+<tr class="contact-address-fields">
+	<td><?php echo $langs->trans("Address"); ?></td>
+	<td colspan="3"><textarea class="flat" name="address" cols="70"><?php echo dol_escape_htmltag($this->control->tpl['address']); ?></textarea></td>
+</tr>
+
+<tr class="contact-address-fields">
 	<td><?php echo $langs->trans("Zip").' / '.$langs->trans("Town"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['select_zip'].'&nbsp;'.$this->control->tpl['select_town']; ?></td>
 </tr>
 
-<tr>
+<tr class="contact-address-fields">
 	<td><?php echo $langs->trans("Country"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['select_country'].$this->control->tpl['info_admin']; ?></td>
 </tr>
 
-<tr>
+<tr class="contact-address-fields">
 	<td><?php echo $langs->trans('State'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['select_state']; ?></td>
 </tr>

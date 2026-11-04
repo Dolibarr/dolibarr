@@ -120,11 +120,23 @@ abstract class ActionsContactCardCommon
 		foreach ($this->object as $key => $value) {
 			$this->tpl[$key] = $value;
 		}
+		$this->tpl['name'] = $this->object->lastname;
 
 		$this->tpl['error'] = $this->error;
 		$this->tpl['errors'] = $this->errors;
 
 		if ($action == 'create' || $action == 'edit') {
+			if (is_object($objsoc) && $objsoc->id > 0) {
+				$this->object->socid = (int) $objsoc->id;
+			}
+			if (GETPOSTISSET('use_different_address_than_thirdparty')) {
+				$this->object->use_thirdparty_address = $this->resolveUseThirdpartyAddressFromRequest((int) $this->object->socid);
+			} elseif ($action == 'create' && !isset($this->object->use_thirdparty_address)) {
+				$this->object->use_thirdparty_address = ($this->object->socid > 0 ? Contact::USE_THIRDPARTY_ADDRESS_YES : Contact::USE_THIRDPARTY_ADDRESS_NO);
+			}
+			$this->tpl['show_custom_address_block'] = ($this->object->socid <= 0 || !$this->object->mustUseThirdpartyAddress());
+			$this->tpl['use_thirdparty_address'] = ($this->object->mustUseThirdpartyAddress() ? Contact::USE_THIRDPARTY_ADDRESS_YES : Contact::USE_THIRDPARTY_ADDRESS_NO);
+
 			if ($conf->use_javascript_ajax) {
 				$this->tpl['ajax_selectcountry'] = "\n".'<script type="text/javascript">
 				jQuery(document).ready(function () {
@@ -133,6 +145,32 @@ abstract class ActionsContactCardCommon
 							document.formsoc.canvas.value="'.$canvas.'";
 							document.formsoc.submit();
 						});
+
+						function contactHasOwnPostalValues() {
+							return jQuery.trim(jQuery("#address").val()).length > 0
+								|| jQuery.trim(jQuery("#zipcode").val()).length > 0
+								|| jQuery.trim(jQuery("#town").val()).length > 0
+								|| parseInt(jQuery("#state_id").val(), 10) > 0
+								|| parseInt(jQuery("#selectcountry_id").val(), 10) > 0;
+						}
+
+						function updateContactAddressMode(fromSocChange) {
+							var currentSocId = parseInt(jQuery("#socid").val(), 10) || 0;
+							// If postal fields were already typed before selecting a thirdparty,
+							// keep that intent instead of silently switching to the thirdparty address.
+							if (fromSocChange && currentSocId > 0 && contactHasOwnPostalValues()) {
+								jQuery("#use_different_address_than_thirdparty").prop("checked", true);
+							}
+
+							var useDifferent = jQuery("#use_different_address_than_thirdparty").is(":checked");
+							var useThirdpartyAddress = (currentSocId > 0 && !useDifferent);
+							jQuery("#use_thirdparty_address").val(useThirdpartyAddress ? "1" : "0");
+							jQuery(".contact-address-fields").toggle(!useThirdpartyAddress);
+						}
+
+						jQuery("#use_different_address_than_thirdparty").change(function() { updateContactAddressMode(false); });
+						jQuery("#socid").change(function() { updateContactAddressMode(true); });
+						updateContactAddressMode(false);
 					})
 				</script>'."\n";
 			}
@@ -147,33 +185,27 @@ abstract class ActionsContactCardCommon
 			// Civility
 			$this->tpl['select_civility'] = $formcompany->select_civility($this->object->civility_id);
 
-			// Predefined with third party
+			// Keep legacy thirdparty defaults for non-postal contact fields only.
 			if ((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || getDolGlobalString('CONTACT_USE_COMPANY_ADDRESS')) {
-				if (dol_strlen(trim($this->object->address)) == 0) {
-					$this->tpl['address'] = $objsoc->address;
-				}
-				if (dol_strlen(trim($this->object->zip)) == 0) {
-					$this->object->zip = $objsoc->zip;
-				}
-				if (dol_strlen(trim($this->object->town)) == 0) {
-					$this->object->town = $objsoc->town;
-				}
 				if (dol_strlen(trim($this->object->phone_pro)) == 0) {
-					$this->object->phone_pro = $objsoc->phone;
+					$this->object->phone_pro = (string) $objsoc->phone;
 				}
 				if (dol_strlen(trim($this->object->fax)) == 0) {
-					$this->object->fax = $objsoc->fax;
+					$this->object->fax = (string) $objsoc->fax;
 				}
-				if (dol_strlen(trim($this->object->email)) == 0) {
-					$this->object->email = $objsoc->email;
+				if (dol_strlen(trim((string) $this->object->email)) == 0) {
+					$this->object->email = (string) $objsoc->email;
 				}
+				$this->tpl['phone_pro'] = $this->object->phone_pro;
+				$this->tpl['fax'] = $this->object->fax;
+				$this->tpl['email'] = $this->object->email;
 			}
 
 			// Zip
-			$this->tpl['select_zip'] = $formcompany->select_ziptown($this->object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
+			$this->tpl['select_zip'] = $formcompany->select_ziptown((string) $this->object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
 
 			// Town
-			$this->tpl['select_town'] = $formcompany->select_ziptown($this->object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
+			$this->tpl['select_town'] = $formcompany->select_ziptown((string) $this->object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
 
 			if (dol_strlen(trim((string) $this->object->country_id)) == 0) {
 				$this->object->country_id = $objsoc->country_id;
@@ -256,19 +288,22 @@ abstract class ActionsContactCardCommon
 			}
 
 			$this->tpl['civility'] = $this->object->getCivilityLabel();
+			$effectiveaddressfields = $this->object->getEffectiveAddressFields();
 
-			$this->tpl['address'] = dol_nl2br($this->object->address);
+			$this->tpl['address'] = dol_nl2br(dol_escape_htmltag($effectiveaddressfields['address'], 0, 1));
 
-			$this->tpl['zip'] = ($this->object->zip ? $this->object->zip.'&nbsp;' : '');
+			$this->tpl['zip'] = (!empty($effectiveaddressfields['zip']) ? dol_escape_htmltag($effectiveaddressfields['zip']).'&nbsp;' : '');
+			$this->tpl['town'] = dol_escape_htmltag($effectiveaddressfields['town']);
+			$this->tpl['departement'] = dol_escape_htmltag($effectiveaddressfields['state']);
 
-			$img = picto_from_langcode($this->object->country_code);
-			$this->tpl['country'] = ($img ? $img.' ' : '').$this->object->country;
+			$img = picto_from_langcode($effectiveaddressfields['country_code']);
+			$this->tpl['country'] = ($img ? $img.' ' : '').dol_escape_htmltag($effectiveaddressfields['country']);
 
 			$this->tpl['phone_pro'] = dol_print_phone($this->object->phone_pro, $this->object->country_code, 0, $this->object->id, 'AC_TEL');
 			$this->tpl['phone_perso'] = dol_print_phone($this->object->phone_perso, $this->object->country_code, 0, $this->object->id, 'AC_TEL');
 			$this->tpl['phone_mobile'] = dol_print_phone($this->object->phone_mobile, $this->object->country_code, 0, $this->object->id, 'AC_TEL');
 			$this->tpl['fax'] = dol_print_phone($this->object->fax, $this->object->country_code, 0, $this->object->id, 'AC_FAX');
-			$this->tpl['email'] = dol_print_email($this->object->email, 0, $this->object->id, 1);
+			$this->tpl['email'] = dol_print_email((string) $this->object->email, 0, $this->object->id, 1);
 
 			$this->tpl['visibility'] = $this->object->LibPubPriv($this->object->priv);
 
@@ -305,23 +340,24 @@ abstract class ActionsContactCardCommon
 		global $langs, $mysoc;
 
 		$this->object->socid = GETPOSTINT("socid");
-		$this->object->lastname			= GETPOST("name");
-		$this->object->firstname		= GETPOST("firstname");
-		$this->object->civility_id = GETPOST("civility_id");
-		$this->object->poste			= GETPOST("poste");
-		$this->object->address = GETPOST("address");
-		$this->object->zip = GETPOST("zipcode");
-		$this->object->town				= GETPOST("town");
-		$this->object->country_id = GETPOST("country_id") ? GETPOST("country_id") : $mysoc->country_id;
+		$this->object->lastname			= (GETPOSTISSET('lastname') ? GETPOST("lastname", 'alphanohtml') : GETPOST("name", 'alphanohtml'));
+		$this->object->firstname		= GETPOST("firstname", 'alphanohtml');
+		$this->object->civility_id = GETPOST("civility_id", 'aZ09');
+		$this->object->poste			= GETPOST("poste", 'alphanohtml');
+		$this->object->address = GETPOST("address", 'alphanohtml');
+		$this->object->zip = GETPOST("zipcode", 'alphanohtml');
+		$this->object->town				= GETPOST("town", 'alphanohtml');
+		$this->object->country_id = GETPOST('country_id', 'int') ? GETPOSTINT('country_id') : $mysoc->country_id;
 		$this->object->state_id = GETPOSTINT("state_id");
-		$this->object->phone_pro = GETPOST("phone_pro");
-		$this->object->phone_perso = GETPOST("phone_perso");
-		$this->object->phone_mobile = GETPOST("phone_mobile");
-		$this->object->fax = GETPOST("fax");
-		$this->object->email			= GETPOST("email");
+		$this->object->use_thirdparty_address = $this->resolveUseThirdpartyAddressFromRequest((int) $this->object->socid);
+		$this->object->phone_pro = GETPOST("phone_pro", 'alphanohtml');
+		$this->object->phone_perso = GETPOST("phone_perso", 'alphanohtml');
+		$this->object->phone_mobile = GETPOST("phone_mobile", 'alphanohtml');
+		$this->object->fax = GETPOST("fax", 'alphanohtml');
+		$this->object->email			= GETPOST("email", 'email');
 		$this->object->priv				= GETPOSTINT("priv");
 		$this->object->note				= GETPOST("note", "restricthtml");
-		$this->object->canvas = GETPOST("canvas");
+		$this->object->canvas = GETPOST("canvas", 'alphanohtml');
 
 		// We set country_id, and country_code label of the chosen country
 		if ($this->object->country_id) {
@@ -330,14 +366,48 @@ abstract class ActionsContactCardCommon
 			$obj = null;
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
+				$this->db->free($resql);
 			} else {
 				dol_print_error($this->db);
 			}
 			if ($obj !== null) {
-				$this->object->country_id = $langs->trans("Country".$obj->code) ? $langs->trans("Country".$obj->code) : $obj->label;
+				$this->object->country_id = (int) GETPOSTINT('country_id');
 				$this->object->country_code = $obj->code;
 				$this->object->country = $langs->trans("Country".$obj->code) ? $langs->trans("Country".$obj->code) : $obj->label;
 			}
 		}
+	}
+
+	/**
+	 * Resolve the persisted address mode from current contact card payload.
+	 *
+	 * @param   int $socid Linked thirdparty id
+	 * @return  int
+	 */
+	private function resolveUseThirdpartyAddressFromRequest(int $socid): int
+	{
+		if ($socid <= 0) {
+			return Contact::USE_THIRDPARTY_ADDRESS_NO;
+		}
+
+		// Keep explicit user intent first, then preserve manually entered postal fields,
+		// and only fallback to the thirdparty address when nothing else was requested.
+		if (GETPOST('use_different_address_than_thirdparty', 'int')) {
+			return Contact::USE_THIRDPARTY_ADDRESS_NO;
+		}
+
+		if (GETPOSTINT('use_thirdparty_address') === Contact::USE_THIRDPARTY_ADDRESS_YES) {
+			return Contact::USE_THIRDPARTY_ADDRESS_YES;
+		}
+
+		if (dol_strlen(trim((string) GETPOST('address', 'alphanohtml'))) > 0
+			|| dol_strlen(trim((string) GETPOST('zipcode', 'alphanohtml'))) > 0
+			|| dol_strlen(trim((string) GETPOST('town', 'alphanohtml'))) > 0
+			|| GETPOSTINT('state_id') > 0
+			|| GETPOSTINT('country_id') > 0) {
+			return Contact::USE_THIRDPARTY_ADDRESS_NO;
+		}
+
+		return Contact::USE_THIRDPARTY_ADDRESS_YES;
 	}
 }
