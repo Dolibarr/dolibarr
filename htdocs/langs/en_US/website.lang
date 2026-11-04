@@ -276,6 +276,7 @@ WebPortalErrorNoFetchMethod=Error no fetch method found for authentication
 WebPortalErrorNoThirdPartyScope=No third-party associated with the logged account: access denied
 DownloadZip=Download the zip
 ExportIntoGIT=Export into server directory
+ExportIntoThisDirectory=Export into this directory
 WebPortalMember=Membership
 WebPortalOrder=Sale Order
 WebPortalPartnership=Partnership
