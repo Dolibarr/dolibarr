@@ -492,8 +492,8 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 		$vibeweburl = preg_replace('/^(https?:\/\/)/i', '${1}'.$credentials.'@', $endpoint);
 	}
 	print '<br><strong>' . $langs->trans("MistralVibeWebConnector") . '</strong><br>';
-	print '<span class="opacitymedium">' . $langs->trans("MistralVibeWebConnectorUrl") . '</span>';
 	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto; margin-top:10px; white-space: break-spaces;">';
+	echo htmlspecialchars($langs->transnoentitiesnoconv("MistralVibeWebConnectorUrl")."\n");
 	echo htmlspecialchars($vibeweburl."\n\n");
 	echo htmlspecialchars($langs->transnoentitiesnoconv("MistralVibeWebConnectorAuth", 'DOLAPIKEY')."\n");
 	echo htmlspecialchars($apiKey ? $apiKey : "YOUR_KEY_HERE");
