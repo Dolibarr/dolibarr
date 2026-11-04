@@ -115,7 +115,8 @@ trait CommonPeople
 		$lastname = $this->lastname;
 		$firstname = $this->firstname;
 		if (empty($lastname)) {
-			// societe is deprecated - @suppress-next-line PhanUndeclaredProperty
+			// societe is deprecated
+			// @phan-suppress-next-line PhanUndeclaredProperty
 			$lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (property_exists($this, 'nom') && isset($this->nom) ? $this->nom : (property_exists($this, 'societe') && isset($this->societe) ? $this->societe : (property_exists($this, 'company') && isset($this->company) ? $this->company : ''))))); // @phpstan-ignore-line
 		}
 
