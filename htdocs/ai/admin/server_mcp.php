@@ -457,6 +457,10 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	} elseif (!empty($_SERVER['PHP_AUTH_USER'])) {
 		$basicauthvalue = base64_encode($_SERVER['PHP_AUTH_USER'].':'.(empty($_SERVER['PHP_AUTH_PW']) ? '' : $_SERVER['PHP_AUTH_PW']));
 	}
+	// If option was never set, enable it by default when a Basic authentication is detected
+	if (getDolGlobalString('AI_MCP_BEHIND_BASIC_AUTH') === '' && $basicauthvalue != $basicauthplaceholder) {
+		$behindbasicauth = 1;
+	}
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update_external">';
