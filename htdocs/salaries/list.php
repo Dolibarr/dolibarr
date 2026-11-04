@@ -374,8 +374,8 @@ if (!$user->hasRight('salaries', 'readall')) {
 //print $sql;
 
 // Search criteria
-if ($search_ref) {
-	$sql .= " AND s.rowid=".((int) $search_ref);
+if ($search_ref != '') {
+	$sql .= natural_search('s.rowid', $search_ref, 1);
 }
 if ($search_user) {
 	$sql .= natural_search(array('u.login', 'u.lastname', 'u.firstname', 'u.email'), $search_user);
@@ -614,7 +614,7 @@ if ($conf->main_checkbox_left_column) {
 // Ref
 if (!empty($arrayfields['s.ref']['checked'])) {
 	print '<td class="liste_titre left">';
-	print '<input class="flat width50" type="text" name="search_ref" value="'.$db->escape($search_ref).'">';
+	print '<input class="flat width50" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 	print '</td>';
 }
 
