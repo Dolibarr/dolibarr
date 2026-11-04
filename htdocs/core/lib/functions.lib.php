@@ -10502,16 +10502,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				}
 				$extrafields->fetch_name_optionals_label($object->table_element, true);
 
-				// Use the extrafields already loaded into the object and fetch them only when none are loaded yet.
-				// The caller may hold values that are set but not saved yet: an object validated by an API or a
-				// connector inside the same write fires the notification triggers before its extrafields are stored,
-				// and fetching them unconditionally here silently discarded those values.
+				// Use the extrafields already loaded into the object by the caller: no SQL access here, this function
+				// can be called thousands of times. Fetching them here also discarded values set by the caller but not
+				// saved yet (an object validated by an API or a connector inside the same write fires the notification
+				// triggers before its extrafields are stored).
 				if (!empty($object->array_options) && is_array($object->array_options)) {
-					$resfetchoptionals = 1;
-				} else {
-					$resfetchoptionals = $object->fetch_optionals();
-				}
-				if ($resfetchoptionals > 0) {
 					if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0) {
 						foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label) {
 							$optionvalue = $object->array_options['options_' . $key] ?? null;	// Extrafields set by the caller may be partial
