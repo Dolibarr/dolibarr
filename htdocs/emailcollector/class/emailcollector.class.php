@@ -3613,7 +3613,7 @@ class EmailCollector extends CommonObject
 													$skippedatt = 0;
 													foreach ($attachments as $attachment) {
 														// $attachment->save($destdir.'/');
-														$filename = $attachment->getFilename();
+														$filename = $attachment->getName();
 														if (!$this->isAllowedAttachmentFilename((string) $filename)) {
 															$skippedatt++;
 															continue;

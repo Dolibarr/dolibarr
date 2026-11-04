@@ -673,8 +673,6 @@ if (empty($reshook)) {
 	$sql = $hookmanager->resPrint;
 }
 
-$sql .= $db->order($sortfield, $sortorder);
-
 // Count total nb of records
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
@@ -692,6 +690,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	}
 }
 
+$sql .= $db->order($sortfield, $sortorder);
 $sql .= $db->plimit($limit + 1, $offset);
 //print $sql;
 $resql = $db->query($sqlSelect . $sql);

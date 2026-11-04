@@ -2959,6 +2959,7 @@ PresetsForMcpServer=MCP Server quick setup
 AllTools=All Tools
 Tool=Tool
 ToolDescription=Tool Description
+ToolDefinitionSentToLLM=Technical definition of the tool, as sent to the LLM
 ChatAssistant=Chat Assistant
 McpServer=MCP Server
 NoMcpToolsDiscovered=No MCP tools discovered. Please ensure the AI module is correctly configured.
