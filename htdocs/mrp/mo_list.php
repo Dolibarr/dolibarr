@@ -174,6 +174,9 @@ foreach ($object->fields as $key => $val) {
 		);
 	}
 }
+if (isset($object->fields['rowid']) && !isset($arrayfields['t.rowid'])) {	// Technical ID is hidden by the object when MAIN_SHOW_TECHNICAL_ID is off, but must remain selectable
+	$arrayfields['t.rowid'] = array('label' => 'TechnicalID', 'checked' => '-1', 'enabled' => '1', 'position' => $object->fields['rowid']['position']);
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 // Add hook to complete $arrayfield
