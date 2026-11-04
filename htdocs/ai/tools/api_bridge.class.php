@@ -1933,6 +1933,45 @@ class ToolApiBridge extends McpTool
 			)
 		);
 
+		// Cron jobs (llx_cronjob): read side, plus run which launches a job
+		// already defined by an admin. post/put stay out on purpose: they can
+		// edit command, classesname, methodename and params, which is arbitrary
+		// code execution as the web user — not a power the bridge should hand
+		// to a model, even behind a confirmation. delete stays out too.
+		$this->enrichments['cronjobs'] = array(
+			'label' => 'scheduled cron jobs',
+			'methods' => array(
+				'index' => array(
+					'default_properties' => 'id,label,jobtype,module_name,command,classesname,methodename,frequency,unitfrequency,status,datelastrun,datenextrun,lastresult,nbrun',
+					'description' => "Scheduled cron jobs: label, what they run (jobtype 'method' = a PHP method on a class, 'command' = a CLI command), schedule as frequency + unitfrequency (unit in seconds or 'd'/'m'), status (0 disabled, 1 enabled, 2 archived), last/next run dates and last result. Filter by status with the status parameter (1 = enabled only). Search with sqlfilters on t.label or t.module_name.",
+					'params' => array(
+						'status' => "Filter on status: 0 disabled, 1 enabled, 2 archived, -1 (default) all.",
+						'pagination_data' => $pagination
+					),
+					'right' => array('cron', 'read')
+				),
+				'get' => array(
+					'description' => "One cron job with its full definition, schedule, last output and result.",
+					'params' => array('id' => "Rowid of the cron job."),
+					'right' => array('cron', 'read')
+				),
+				'run' => array(
+					'suffix' => 'run',
+					'description' => "Run a cron job now, as the Run button of the cron list does. The job was defined by an administrator; only admin users may launch it. The user confirms before anything is executed.",
+					'write' => array(
+						'kind' => 'action',
+						'preview' => 'AIPreviewRunCronjob',
+						'object' => 'Cronjob',
+						'label' => 'cron job',
+						'target' => 'id',
+						'args' => array('id'),
+						'right' => array('cron', 'write')
+					),
+					'params' => array('id' => "Rowid of the cron job to run.")
+				)
+			)
+		);
+
 		// Read methods of endpoints already exposed.
 		$more = array(
 			'warehouses' => array(
@@ -5059,7 +5098,8 @@ class ToolApiBridge extends McpTool
 			'Reception' => '/reception/class/reception.class.php',
 			'Expedition' => '/expedition/class/expedition.class.php',
 			'WebsitePage' => '/website/class/websitepage.class.php',
-			'Website' => '/website/class/website.class.php'
+			'Website' => '/website/class/website.class.php',
+			'Cronjob' => '/cron/class/cronjob.class.php'
 		);
 	}
 
@@ -5101,7 +5141,7 @@ class ToolApiBridge extends McpTool
 		}
 		require_once DOL_DOCUMENT_ROOT.$paths[$class];
 		$obj = new $class($this->db);
-		'@phan-var-force Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Contact|Project|Task|Ticket|Fichinter|Contrat|Reception|Expedition|WebsitePage|Website $obj';
+		'@phan-var-force Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Contact|Project|Task|Ticket|Fichinter|Contrat|Reception|Expedition|WebsitePage|Website|Cronjob $obj';
 		if ((int) $id > 0) {
 			$found = ($obj->fetch((int) $id) > 0);
 		} elseif ($obj instanceof Contact || $obj instanceof Societe) {
