@@ -682,11 +682,13 @@ class Entrepot extends CommonObject
 	 */
 	public static function getSqlFilterExcludingVariantParents($fieldproductid)
 	{
+		global $db;
+		
 		if (!isModEnabled('variants') || getDolGlobalInt('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT') != 2) {
 			return '';
 		}
 
-		return " AND ".$fieldproductid." NOT IN (SELECT pac.fk_product_parent FROM ".MAIN_DB_PREFIX."product_attribute_combination as pac WHERE pac.entity IN (".getEntity('product')."))";
+		return " AND ".$db->sanitize($fieldproductid)." NOT IN (SELECT pac.fk_product_parent FROM ".MAIN_DB_PREFIX."product_attribute_combination as pac WHERE pac.entity IN (".getEntity('product')."))";
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
