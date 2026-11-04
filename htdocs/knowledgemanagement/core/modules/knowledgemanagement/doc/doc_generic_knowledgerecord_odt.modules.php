@@ -525,7 +525,7 @@ class doc_generic_knowledgerecord_odt extends ModelePDFKnowledgeRecord
 		if ($object->fk_c_ticket_category > 0) {
 			require_once DOL_DOCUMENT_ROOT.'/ticket/class/cticketcategory.class.php';
 			$tmpcategory = new CTicketCategory($this->db);
-			if ($tmpcategory->fetch($object->fk_c_ticket_category) > 0) {
+			if ($tmpcategory->fetch((int) $object->fk_c_ticket_category) > 0) {
 				$category = (string) $tmpcategory->label;
 			}
 		}
