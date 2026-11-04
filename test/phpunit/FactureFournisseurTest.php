@@ -34,6 +34,7 @@ require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.facture.class.php';
 require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.facture-rec.class.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
+require_once dirname(__FILE__).'/../../htdocs/comm/action/class/actioncomm.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -261,6 +262,74 @@ class FactureFournisseurTest extends CommonClassTest
 		$this->assertGreaterThan(0, $localobject->setDraft($user), $localobject->errorsToString());
 		$localobject->date_pointoftax = dol_mktime(0, 0, 0, 10, 31, 2026);
 		$this->assertGreaterThan(0, $localobject->update($user), $localobject->errorsToString());
+	}
+
+	/**
+	 * testSendEmailsRemindersOncePerDay
+	 *
+	 * The reminder of a supplier invoice already sent today is not sent again, even if the label of its event is longer than 128 characters
+	 * (it is truncated when saved). A job that differs only by the recipient has its own memory.
+	 *
+	 * @return void
+	 */
+	public function testSendEmailsRemindersOncePerDay()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$savmailfrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+		$conf->global->MAIN_MAIL_EMAIL_FROM = 'noreply@example.com';
+
+		$soc = new Societe($db);
+		$soc->name = 'Test supplier reminder '.dol_print_date(dol_now(), 'dayhourlog');
+		$soc->fournisseur = 1;
+		$soc->code_fournisseur = -1;
+		$this->assertGreaterThan(0, $soc->create($user), $soc->errorsToString());
+
+		// Validated and unpaid invoice, due 7 days ago
+		$invoice = new FactureFournisseur($db);
+		$invoice->socid = $soc->id;
+		$invoice->ref_supplier = 'SUPPLIER-REMINDER-'.dol_print_date(dol_now(), 'dayhourlog');
+		$invoice->type = FactureFournisseur::TYPE_STANDARD;
+		$invoice->date = dol_now();
+		$this->assertGreaterThan(0, $invoice->create($user), $invoice->errorsToString());
+		$this->assertGreaterThan(0, $invoice->addline('Service', 100, 19, 0, 0, 1), $invoice->errorsToString());
+		$this->assertGreaterThan(0, $invoice->validate($user), $invoice->errorsToString());
+		$duedate = dol_get_first_hour(dol_time_plus_duree(dol_now(), -7, 'd'), 'gmt');
+		$db->query("UPDATE ".MAIN_DB_PREFIX."facture_fourn SET paye = 0, date_lim_reglement = '".$db->idate($duedate, 'gmt')."' WHERE rowid = ".((int) $invoice->id));
+
+		// The reminder was already sent today: its event has a label longer than 128 characters, so it is truncated when saved, and with a quote, so it is sanitized
+		$template = '"Reminder" template with a very long name to check that the event of a reminder already sent is still found';
+		$db->query("INSERT INTO ".MAIN_DB_PREFIX."c_email_templates (entity, type_template, private, datec, label, position, enabled, active, topic, joinfiles, content) VALUES (1, 'invoice_supplier_send', 0, '".$db->idate(dol_now())."', '".$db->escape($template)."', 990, '1', 1, 'Topic', 0, 'Content')");
+		$event = new ActionComm($db);
+		$event->type_code = 'AC_OTH_AUTO';
+		$event->code = 'AC_EMAIL';
+		$event->label = 'sendEmailsRemindersOnInvoiceDueDateOK (nbdays=-7 paymentmode=all datetouse=duedate forcerecipient=a@b.co template='.$template.')';
+		$event->socid = $soc->id;
+		$event->elementtype = 'invoice_supplier';
+		$event->elementid = $invoice->id;
+		$event->datep = dol_now();
+		$event->datef = $event->datep;
+		$event->percentage = -1;
+		$event->authorid = $user->id;
+		$event->userownerid = $user->id;
+		$this->assertGreaterThan(128, dol_strlen($event->label));
+		$this->assertGreaterThan(0, $event->create($user), (string) $event->error);
+
+		// Mails are disabled here: a reminder sent again fails to be sent and the job returns the error
+		$localobject = new FactureFournisseur($db);
+		$localobject->sendEmailsRemindersOnSupplierInvoiceDueDate(-7, 'all', $template, 'duedate', 'a@b.co');
+		$this->assertEquals('', $localobject->error, 'The reminder was sent again');
+
+		// Another job that differs only by the recipient has its own memory, even if the label is truncated: its reminder is sent
+		$localobject->sendEmailsRemindersOnSupplierInvoiceDueDate(-7, 'all', $template, 'duedate', 'c@b.co');
+		$this->assertNotEquals('', $localobject->error, 'The reminder of a job with another recipient was not sent');
+
+		$db->query("DELETE FROM ".MAIN_DB_PREFIX."c_email_templates WHERE label = '".$db->escape($template)."'");
+		$conf->global->MAIN_MAIL_EMAIL_FROM = $savmailfrom;
 	}
 
 	/**
