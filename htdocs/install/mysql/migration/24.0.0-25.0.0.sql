@@ -638,6 +638,16 @@ ALTER TABLE llx_holiday ADD COLUMN model_pdf varchar(255) AFTER import_key;
 -- Add the document template of a loan, so that a generated document can be rebuilt with the same one
 ALTER TABLE llx_loan ADD COLUMN model_pdf varchar(255) AFTER fk_user_modif;
 
+-- Reference the customer gives to a line of invoice (the line of its purchase order, sent as BT-132 in an e-invoice)
+ALTER TABLE llx_facturedet ADD COLUMN ref_customer varchar(128) DEFAULT NULL AFTER ref_ext;
+-- Reference the customer gives to a line of order (the line of its purchase order, sent as BT-132 in an e-invoice)
+ALTER TABLE llx_commandedet ADD COLUMN ref_customer varchar(128) DEFAULT NULL AFTER ref_ext;
+
+-- TakePOS: store the order printer of an invoice line into a dedicated field instead of special_code
+ALTER TABLE llx_facturedet ADD COLUMN pos_printer_id integer NULL AFTER fk_warehouse;
+UPDATE llx_facturedet SET pos_printer_id = 1, special_code = 0 WHERE special_code = 4 AND fk_facture IN (SELECT rowid FROM llx_facture WHERE module_source = 'takepos' AND fk_statut = 0);
+UPDATE llx_facturedet SET special_code = 0 WHERE special_code IN (1, 2, 3) AND fk_facture IN (SELECT rowid FROM llx_facture WHERE module_source = 'takepos' AND fk_statut = 0);
+
 -- Ready to use email templates for the reminders of unpaid invoices
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, enabled, active, topic, content, content_lines, joinfiles) VALUES (0, 'facture','facture_send','',0,null,null,'(InvoiceReminder1)',100, 'isModEnabled("invoice")',1,'[__[MAIN_INFO_SOCIETE_NOM]__] - __(InvoiceReminderTopic1)__ __REF__','__(Hello)__,<br /><br />__(InvoiceReminderContent1)__<br /><br />__(Ref)__ : __REF__<br />__(DateDue)__ : __DATE_DUE_YMD__<br />__(RemainderToPay)__ : __AMOUNT_REMAIN_FORMATTED__<br /><br />__(Sincerely)__<br />__SENDEREMAIL_SIGNATURE__',null, 1);
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, enabled, active, topic, content, content_lines, joinfiles) VALUES (0, 'facture','facture_send','',0,null,null,'(InvoiceReminder2)',100, 'isModEnabled("invoice")',1,'[__[MAIN_INFO_SOCIETE_NOM]__] - __(InvoiceReminderTopic2)__ __REF__','__(Hello)__,<br /><br />__(InvoiceReminderContent2)__<br /><br />__(Ref)__ : __REF__<br />__(DateDue)__ : __DATE_DUE_YMD__<br />__(RemainderToPay)__ : __AMOUNT_REMAIN_FORMATTED__<br /><br />__(Sincerely)__<br />__SENDEREMAIL_SIGNATURE__',null, 1);
