@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2010	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +42,8 @@ class modDon extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
+		global $conf; // Required by the default value of DON_ADDON_PDF_ODT_PATH
+
 		$this->db = $db;
 		$this->numero = 700;
 
@@ -73,6 +75,13 @@ class modDon extends DolibarrModules
 				"chaine",
 				"html_cerfafr",
 				'Nom du gestionnaire de generation de recu de dons',
+				0,
+			],
+			[
+				"DON_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/donations",
+				"",
 				0,
 			],
 			[

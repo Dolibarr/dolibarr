@@ -283,6 +283,50 @@ class RestAPISupplierOrderTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * testRestSupplierOrderSetInvoiced
+	 *
+	 * @return void
+	 */
+	public function testRestSupplierOrderSetInvoiced()
+	{
+		$test = "Classify a supplier order as billed";
+
+		$order_id = $this->createOrder($test);
+
+		// Only approved orders, or later statuses, can be classified as billed
+		$this->getUrl('supplierorders/'.$order_id.'/setinvoiced', "$test (draft)", 'POST', array(), 405);
+
+		$this->getUrl('supplierorders/'.$order_id.'/validate', $test, 'POST', array("idwarehouse" => 0, "notrigger" => 0));
+
+		$this->getUrl('supplierorders/'.$order_id.'/setinvoiced', "$test (validated)", 'POST', array(), 405);
+
+		$this->getUrl('supplierorders/'.$order_id.'/approve', $test, 'POST', array("idwarehouse" => 0, "secondlevel" => 0));
+
+		$result = $this->getUrl('supplierorders/'.$order_id.'/setinvoiced', $test, 'POST', array());
+		$this->assertEquals(200, $result['content']['success']['code'] ?? null, "$test Classify billed must succeed");
+
+		$result = $this->getUrl('supplierorders/'.$order_id, $test, 'GET');
+		$this->assertEquals(1, $result['content']['billed'] ?? null, "$test Order must be billed");
+		$this->assertEquals(CommandeFournisseur::STATUS_ACCEPTED, $result['content']['status'] ?? null, "$test Order status must not change");
+
+		// Classifying an already billed order again does nothing and succeeds
+		$result = $this->getUrl('supplierorders/'.$order_id.'/setinvoiced', "$test (already billed)", 'POST', array());
+		$this->assertEquals(200, $result['content']['success']['code'] ?? null, "$test Classify billed again must succeed");
+	}
+
+	/**
+	 * testRestSupplierOrderSetInvoicedNotFound
+	 *
+	 * @return void
+	 */
+	public function testRestSupplierOrderSetInvoicedNotFound()
+	{
+		$test = "Classify as billed a supplier order that does not exist";
+
+		$this->getUrl('supplierorders/999999999/setinvoiced', $test, 'POST', array(), 404);
+	}
+
+	/**
 	 * testRestSupplierOrderCreateKeepsDate
 	 *
 	 * @return void
@@ -356,5 +400,47 @@ class RestAPISupplierOrderTest extends AbstractRestAPITest
 
 		// The contact is no longer linked
 		$this->getUrl('supplierorders/'.$order_id.'/contact/1/SALESREPFOLL/internal', "$test (again)", 'DELETE', null, 404);
+	}
+
+	/**
+	 * testRestSupplierOrderSetUninvoiced
+	 *
+	 * @return void
+	 */
+	public function testRestSupplierOrderSetUninvoiced()
+	{
+		$test = "Classify a supplier order as unbilled";
+
+		$order_id = $this->createOrder($test);
+
+		// A draft order can not be classified as unbilled
+		$this->getUrl('supplierorders/'.$order_id.'/setuninvoiced', "$test (draft)", 'POST', array(), 405);
+
+		$this->getUrl('supplierorders/'.$order_id.'/validate', $test, 'POST', array("idwarehouse" => 0, "notrigger" => 0));
+
+		// Classifying an order that is not billed does nothing and succeeds
+		$result = $this->getUrl('supplierorders/'.$order_id.'/setuninvoiced', "$test (validated)", 'POST', array());
+		$this->assertEquals(200, $result['content']['success']['code'] ?? null, "$test Classify unbilled must succeed");
+
+		$this->getUrl('supplierorders/'.$order_id.'/approve', $test, 'POST', array("idwarehouse" => 0, "secondlevel" => 0));
+
+		$result = $this->getUrl('supplierorders/'.$order_id.'/setuninvoiced', "$test (approved)", 'POST', array());
+		$this->assertEquals(200, $result['content']['success']['code'] ?? null, "$test Classify unbilled must succeed");
+
+		$result = $this->getUrl('supplierorders/'.$order_id, $test, 'GET');
+		$this->assertEquals(0, $result['content']['billed'] ?? null, "$test Order must not be billed");
+		$this->assertEquals(CommandeFournisseur::STATUS_ACCEPTED, $result['content']['status'] ?? null, "$test Order status must not change");
+	}
+
+	/**
+	 * testRestSupplierOrderSetUninvoicedNotFound
+	 *
+	 * @return void
+	 */
+	public function testRestSupplierOrderSetUninvoicedNotFound()
+	{
+		$test = "Classify as unbilled a supplier order that does not exist";
+
+		$this->getUrl('supplierorders/999999999/setuninvoiced', $test, 'POST', array(), 404);
 	}
 }

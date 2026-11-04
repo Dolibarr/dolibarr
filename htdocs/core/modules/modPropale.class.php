@@ -370,6 +370,7 @@ class modPropale extends DolibarrModules
 			'c.ref' => 'Ref*',
 			'c.ref_client' => 'RefCustomer',
 			'c.fk_soc' => 'ThirdPartyName*',
+			'c.fk_projet' => 'ProjectRef',
 			'c.datec' => 'DateCreation',
 			'c.datep' => 'DatePropal',
 			'c.fin_validite' => 'DateEndPropal',
@@ -400,6 +401,7 @@ class modPropale extends DolibarrModules
 			'c.ref' => 'PROV0077',
 			'c.ref_client' => 'Client1',
 			'c.fk_soc' => 'MyBigCompany',
+			'c.fk_projet' => 'PJ2601-0001',
 			'c.datec' => '2020-01-01',
 			'c.datep' => '2020-01-01',
 			'c.fin_validite' => '2020-01-01',
@@ -432,6 +434,13 @@ class modPropale extends DolibarrModules
 				'class' => 'Societe',
 				'method' => 'fetch',
 				'element' => 'ThirdParty'
+			),
+			'c.fk_projet' => array(
+				'rule' => 'fetchidfromref',
+				'file' => '/projet/class/project.class.php',
+				'class' => 'Project',
+				'method' => 'fetch',
+				'element' => 'Project'
 			)
 		);
 
