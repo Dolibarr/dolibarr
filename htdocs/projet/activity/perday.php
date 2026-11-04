@@ -199,7 +199,7 @@ if (GETPOST('submitdateselect')) {
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Entering time or assigning a task requires permission to enter time, and the user to process must be me or one of my subordinates
-if ($action == 'addtime' && GETPOST('formfilteraction') != 'listafterchangingselectedfields') {
+if ($action == 'addtime' && GETPOST('formfilteraction') != 'listafterchangingselectedfields') {	// Test on permission done later
 	$childids = $user->getAllChildIds(1);
 	if (!$user->hasRight('projet', 'time') || (!in_array($usertoprocess->id, $childids) && !$user->hasRight('projet', 'all', 'creer'))) {
 		accessforbidden();
