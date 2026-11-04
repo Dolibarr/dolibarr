@@ -527,33 +527,29 @@ if (!$error && $db !== null && $db->connected && $action == "set") {	// Test on 
 				print "</td></tr>";
 				print '<tr><td colspan="2"><br>'.$langs->trans("CorrectProblemAndReloadPage", $_SERVER['PHP_SELF'].'?testget=ok').'</td></tr>';
 			} else {
-				//ODT templates
+				// ODT templates. Every directory of install/doctemplates holding a
+				// template_*.odt or template_*.ods is copied, so a template added there
+				// is installed without this list having to be edited.
 				$srcroot = $main_dir.'/install/doctemplates';
 				$destroot = $main_data_dir.'/doctemplates';
-				$docs = array(
-					'contracts' => 'contract',
-					'invoices' => 'invoice',
-					'orders' => 'order',
-					'products' => 'product',
-					'projects' => 'project',
-					'proposals' => 'proposal',
-					'shipments' => 'shipment',
-					'supplier_proposals' => 'supplier_proposal',
-					'tasks' => 'task_summary',
-					'thirdparties' => 'thirdparty',
-					'usergroups' => 'usergroups',
-					'users' => 'user',
-				);
-				foreach ($docs as $cursordir => $cursorfile) {
-					$src = $srcroot.'/'.$cursordir.'/template_'.$cursorfile.'.odt';
-					$dirodt = $destroot.'/'.$cursordir;
-					$dest = $dirodt.'/template_'.$cursorfile.'.odt';
+				$docs = dol_dir_list($srcroot, 'directories', 0);
+				foreach ($docs as $cursordir) {
+					$templates = dol_dir_list($cursordir['fullname'], 'files', 0, '^template_.+\.(odt|ods)$');
+					if (empty($templates)) {
+						continue;
+					}
 
+					$dirodt = $destroot.'/'.$cursordir['name'];
 					dol_mkdir($dirodt);
-					$result = dol_copy($src, $dest, '0', 0);
-					if ($result < 0) {
-						$langs->load('errors');
-						print '<tr><td colspan="2"><br>'.$langs->trans('ErrorFailToCopyFile', $src, $dest).'</td></tr>';
+					foreach ($templates as $cursorfile) {
+						$src = $cursorfile['fullname'];
+						$dest = $dirodt.'/'.$cursorfile['name'];
+
+						$result = dol_copy($src, $dest, '0', 0);
+						if ($result < 0) {
+							$langs->load('errors');
+							print '<tr><td colspan="2"><br>'.$langs->trans('ErrorFailToCopyFile', $src, $dest).'</td></tr>';
+						}
 					}
 				}
 			}
