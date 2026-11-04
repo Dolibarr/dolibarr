@@ -6573,7 +6573,8 @@ class Facture extends CommonInvoice
 		dol_syslog(__METHOD__." start", LOG_INFO);
 
 		// Label of the agenda event recorded for each reminder sent. It also allows to know that a reminder was already sent for an invoice.
-		$labelreminderok = 'sendEmailsRemindersOnInvoiceDueDateOK (nbdays='.$nbdays.' paymentmode='.$paymentmode.' template='.$template.' datetouse='.$datetouse.' forcerecipient='.$forcerecipient.')';
+		// The template is the last parameter: the label is truncated to 128 characters when saved and the template is the longest value.
+		$labelreminderok = 'sendEmailsRemindersOnInvoiceDueDateOK (nbdays='.$nbdays.' paymentmode='.$paymentmode.' datetouse='.$datetouse.' forcerecipient='.$forcerecipient.' template='.$template.')';
 
 		// Select all action comm reminder
 		$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."facture as f";
@@ -6597,7 +6598,8 @@ class Facture extends CommonInvoice
 		// Do not send the same reminder twice if the batch is run again the same day (an event is recorded when a reminder is sent)
 		$sql .= " AND NOT EXISTS (SELECT a.id FROM ".MAIN_DB_PREFIX."actioncomm as a";
 		$sql .= " WHERE a.elementtype = 'invoice' AND a.fk_element = f.rowid AND a.code = 'AC_EMAIL'";
-		$sql .= " AND a.label = '".$this->db->escape($labelreminderok)."'";
+		// The label of an event is sanitized and truncated to 128 characters when saved (ActionComm::create), so search it the same way
+		$sql .= " AND a.label = '".$this->db->escape(dol_trunc(sanitizeVal($labelreminderok, 'alphawithlgt'), 128))."'";
 		$sql .= " AND a.datep >= '".$this->db->idate(dol_get_first_hour($now))."')";
 		if ($datetouse == 'invoicedate') {
 			$sql .= $this->db->order("datef", "ASC");
