@@ -260,7 +260,7 @@ if (empty($groupedNormalTools) && empty($groupedSystemTools)) {
 
 		print '<tr class="trgroup trforbreaknobg" data-group="group-' . $groupId . '">';
 		print '<td colspan="6" class="mcp-trigger-collapse" style="cursor:pointer;">';
-		print '<span class="toggle-icon">▼</span> ' . dol_escape_htmltag($categoryName);
+		print '<span class="toggle-icon">▼</span> ' . dol_escape_htmltag($categoryName) . ' <span class="opacitymedium">(' . count($definitions) . ')</span>';
 		print '</td>';
 		print '</tr>';
 
