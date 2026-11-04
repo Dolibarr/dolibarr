@@ -988,9 +988,9 @@ class pdf_sponge extends ModelePDFFactures
 					}
 
 					// Collect total by value of vat rate into $this->tva_array
-					// Lines are already stored as delta (not cumulative) once INVOICE_USE_SITUATION=2, so no ratio must be reapplied here (same guard as CommonObject::update_price())
+					// Lines are already stored as delta (not cumulative) once INVOICE_USE_SITUATION != 1, so no ratio must be reapplied here (same guard as CommonObject::update_price())
 					if ($object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE && $object->lines[$i]->product_type != 9) {
-						$prev_progress = getDolGlobalInt('INVOICE_USE_SITUATION') == 2 ? 0 : $object->lines[$i]->get_prev_progress($object->id);
+						$prev_progress = (!$object->isSituationInvoice() || getDolGlobalInt('INVOICE_USE_SITUATION') != 1) ? 0 : $object->lines[$i]->get_prev_progress($object->id);
 
 						if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation
 							if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {

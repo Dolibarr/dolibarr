@@ -170,5 +170,5 @@ LeaveBalance=残高を残す
 ListeLB=休暇残高一覧
 LeaveType = 休暇残高の種類
 HolidayHrInformationsPreviousMonth=過去1ヶ月間の休暇の概要
-HolidayHrInformationsPreviousMonthTopic=前月の葉の葉の概要
+HolidayHrInformationsPreviousMonthTopic=Summary of leaves for the month of __PREVIOUS_MONTH_TEXT__
 HolidayHrInformationsPreviousMonthContent=__MYCOMPANY_NAME__の__PREVIOUS_MONTH_TEXT__月の休暇取得状況の概要を以下にご案内します。

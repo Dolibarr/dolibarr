@@ -261,7 +261,8 @@ $filehtaccess = $pathofwebsite.'/.htaccess';
 $filetpl = $pathofwebsite.'/page'.$pageid.'.tpl.php';
 $fileindex = $pathofwebsite.'/index.php';
 $filewrapper = $pathofwebsite.'/wrapper.php';
-$filemanifestjson = $pathofwebsite.'/manifest.json.php';
+$filemanifestjson = $pathofwebsite.'/manifest.json';
+$filemanifestjsonold = $pathofwebsite.'/manifest.json.php';	// Old name of manifest file when it was containing PHP code
 $filereadme = $pathofwebsite.'/README.md';
 $filelicense = $pathofwebsite.'/LICENSE';
 $filemaster = $pathofwebsite.'/master.inc.php';
@@ -1473,6 +1474,19 @@ if ($action == 'confirm_deletesite' && $confirm == 'yes' && $permissiontodelete)
 	}
 }
 
+// Delete an archived version of a page (only the backup file page<pageid>.tpl.php.v<timestamp> is removed)
+if ($action == 'deletepageversion' && $permissiontodelete && !empty($filetplversion)) {
+	$result = dol_delete_file($filetplversion, 0, 0, 0, null, false, 0);
+	if ($result) {
+		setEventMessages($langs->trans("FileWasRemoved", dol_basename($filetplversion)), null, 'mesgs');
+		header("Location: ".$_SERVER["PHP_SELF"].'?website='.urlencode($websitekey).'&pageid='.((int) $pageid));
+		exit;
+	} else {
+		setEventMessages($langs->trans("ErrorFailToDeleteFile", dol_basename($filetplversion)), null, 'errors');
+	}
+	$action = 'preview';
+}
+
 // Delete page (from website page menu)
 if (GETPOSTISSET('pageid') && $action == 'delete' && $permissiontodelete && !GETPOST('file_manager')) {
 	$error = 0;
@@ -1841,39 +1855,21 @@ if ($action == 'updatecss' && $usercanedit) {
 			$dataposted = trim(GETPOST('WEBSITE_MANIFEST_JSON', 'restricthtmlallowunvalid'));
 			$dataposted = str_replace('<?=', '<?php', $dataposted);
 
-			// Manifest.json file
-			$phpfullcodestringold = '';
+			// Manifest.json file. It is a static JSON file, so PHP code is not allowed into it.
 			$phpfullcodestring = dolKeepOnlyPhpCode($dataposted);
 
-			// Security analysis
-			$errorphpcheck = checkPHPCode($phpfullcodestringold, $phpfullcodestring);	// Contains the setEventMessages
-
-			if (!$errorphpcheck) {
-				$manifestjsoncontent = '';
-
-				$manifestjsoncontent .= "<?php // BEGIN PHP\n";
-				$manifestjsoncontent .= '$websitekey=basename(__DIR__);'."\n";
-				$manifestjsoncontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded\n"; // For the css, we need to set path of master using the dirname of css file.
-				$manifestjsoncontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
-				$manifestjsoncontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
-				$manifestjsoncontent .= "ob_start();\n";
-				$manifestjsoncontent .= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
-				$manifestjsoncontent .= "header('Content-type: application/manifest+json');\n";
-				$manifestjsoncontent .= "// END PHP ?>\n";
-
-				$manifestjsoncontent .= $dataposted."\n";
-
-				$manifestjsoncontent .= '<?php // BEGIN PHP'."\n";
-				$manifestjsoncontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "manifest");'."\n";
-				$manifestjsoncontent .= "// END PHP\n";
+			if ($phpfullcodestring) {
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorPHPNotAllowedInManifest"), null, 'errors');
+				$error++;
+			} else {
+				$manifestjsoncontent = ($dataposted ? $dataposted."\n" : '');
 
 				$result = dolSaveManifestJson($filemanifestjson, $manifestjsoncontent);
-				if (!$result) {
+				if ($result === false) {	// Result can be 0 when manifest is empty
 					$error++;
 					setEventMessages('Failed to write file '.$filemanifestjson, null, 'errors');
 				}
-			} else {
-				$error++;
 			}
 
 
@@ -2645,6 +2641,10 @@ if ($action == 'overwritesite' && $user->hasRight('website', 'export')) {
 		$fileofzip = $object->exportWebSite();
 		$pathToExport = GETPOST('export_path');
 		if ($fileofzip) {
+			// Save the export path entered by user to prefill it next time (must be done before overwriteTemplate() that redirects on success)
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			dol_set_user_param($db, $conf, $user, array('WEBSITE_EXPORT_PATH_'.$object->id => $pathToExport));
+
 			// Uncompress the exported web site into a destination directory
 			$result = $object->overwriteTemplate($fileofzip, $pathToExport);
 			if ($result < 0) {
@@ -3308,7 +3308,7 @@ if (!GETPOST('hide_websitemenu')) {
 
 		print '<span class="websiteselection">';
 
-		if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite')) {
+		if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite' || $action == 'importsite')) {
 			// Edit website properties
 			print '<a href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($object->ref).'&pageid='.((int) $pageid).'&action=editcss&token='.newToken().'" class="button bordertransp valignmiddle" title="'.dol_escape_htmltag($langs->trans("EditCss")).'"'.$disabled.'>';
 			print img_picto('', 'setup');
@@ -3324,14 +3324,22 @@ if (!GETPOST('hide_websitemenu')) {
 			}
 
 			if ($atleastonepage) {
-				print '<input type="submit" class="button bordertransp" disabled="disabled" value="'.dol_escape_htmltag($importlabel).'" name="importsite">';
+				print '<button type="submit" class="button bordertransp valignmiddle" disabled="disabled" value="1" name="importsite" title="'.dol_escape_htmltag($importlabel).'">';
 			} else {
-				print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($importlabel).'" name="importsite">';
+				print '<button type="submit" class="button bordertransp valignmiddle"'.$disabled.' value="1" name="importsite" title="'.dol_escape_htmltag($importlabel).'">';
 			}
+			print img_picto('', 'upload');
+			print '<span class="hideonsmartphone paddingleft">'.dol_escape_htmltag($importlabel).'</span>';
+			print '</button>';
 
 			// // Export web site
 			$extraCssClass = getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE') ? 'hideobject' : '';
-			print '<input type="submit" class="button bordertransp ' . $extraCssClass . '" ' . $disabledexport . ' value="' . dol_escape_htmltag($exportlabel) . '" name="exportsite">';
+			// Class hideobject is overwritten by the display of class button, so we also hide the button with an inline style
+			$extraCssStyle = getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE') ? ' style="display: none;"' : '';
+			print '<button type="submit" class="button bordertransp valignmiddle ' . $extraCssClass . '"' . $extraCssStyle . ' ' . $disabledexport . ' value="1" name="exportsite" title="' . dol_escape_htmltag($exportlabel) . '">';
+			print img_picto('', 'download');
+			print '<span class="hideonsmartphone paddingleft">' . dol_escape_htmltag($exportlabel) . '</span>';
+			print '</button>';
 
 			if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')) {
 				// Overwrite template in sources
@@ -3373,7 +3381,7 @@ if (!GETPOST('hide_websitemenu')) {
 
 		print '</span>';
 
-		if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite')) {
+		if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite' || $action == 'importsite')) {
 			print '<span class="websiteselection">';
 
 			print dolButtonToOpenUrlInDialogPopup('file_manager', $langs->transnoentitiesnoconv("MediaFiles"), '<span class="fa fa-image"></span>', '/website/index.php?action=file_manager&website='.urlencode($website->ref).'&section_dir='.urlencode('image/'.$website->ref.'/'), $disabled, 'classlink button bordertransp buttonpictoonly');
@@ -3969,6 +3977,11 @@ if (!GETPOST('hide_websitemenu')) {
 					$disabled = ' disabled="disabled"';
 					$title = $langs->trans("NotEnoughPermissions");
 					$url = '#';
+				} elseif (!empty($filetplversion)) {
+					// An archived version is selected: delete only this version, whatever the status of the page
+					$disabled = '';
+					$title = $langs->trans("Delete");
+					$url = $_SERVER["PHP_SELF"].'?action=deletepageversion&token='.newToken().'&pageid='.((int) $websitepage->id).'&pageversion='.((int) $pageversion).'&website='.urlencode($website->ref);
 				} elseif ($websitepage->status != $websitepage::STATUS_DRAFT) {
 					$disabled = ' disabled="disabled"';
 					$title = $langs->trans("WebpageMustBeDisabled", $langs->transnoentitiesnoconv($websitepage->LibStatut(0, 0)));
@@ -4198,7 +4211,8 @@ if ($action == 'editcss') {
 	}
 
 	if (!GETPOSTISSET('WEBSITE_MANIFEST_JSON')) {
-		$manifestjsoncontent = @file_get_contents($filemanifestjson);
+		// Read the manifest.json file, or the old manifest.json.php file if the website was not yet migrated
+		$manifestjsoncontent = @file_get_contents(dol_is_file($filemanifestjson) ? $filemanifestjson : $filemanifestjsonold);
 		// Clean the manifestjson file to remove php code and get only html part
 		$manifestjsoncontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP( \?>)?\n*/ims', '', $manifestjsoncontent);
 	} else {

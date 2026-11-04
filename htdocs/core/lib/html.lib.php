@@ -350,9 +350,14 @@ function dolButtonToOpenExportDialog($name, $label, $buttonstring, $exportSiteNa
 	if (empty($templatenameforexport)) {
 		$templatenameforexport = 'website_' . $website->ref;
 	}
+	// Use the last export path entered by the user for this website, if any
+	$templatenameforexport = getDolUserString('WEBSITE_EXPORT_PATH_' . $website->id, $templatenameforexport);
 
 	$out = '';
-	$out .= '<input type="button" class="cursorpointer button bordertransp" id="open-dialog-' . $name . '"  value="' . dol_escape_htmltag($buttonstring) . '"/>';
+	$out .= '<button type="button" class="cursorpointer button bordertransp valignmiddle" id="open-dialog-' . $name . '" title="' . dol_escape_htmltag($buttonstring) . '">';
+	$out .= img_picto('', 'download');
+	$out .= '<span class="hideonsmartphone paddingleft">' . dol_escape_htmltag($buttonstring) . '</span>';
+	$out .= '</button>';
 
 	// for generate popup
 	$out .= '<script nonce="' . getNonce() . '" type="text/javascript">';
@@ -362,8 +367,8 @@ function dolButtonToOpenExportDialog($name, $label, $buttonstring, $exportSiteNa
 
 	$dialogcontent = '      <div id="custom-dialog-' . $name . '">';
 	$dialogcontent .= '        <div style="margin-top: 20px;">';
-	$dialogcontent .= '          <label for="export-site-' . $name . '"><strong>' . $langs->trans("ExportSiteLabel") . '...</label><br>';
-	$dialogcontent .= '          <button class="button smallpaddingimp" id="export-site-' . $name . '">' . dol_escape_htmltag($langs->trans("DownloadZip")) . '</button>';
+	$dialogcontent .= '          <label for="export-site-' . $name . '"><strong>' . $langs->trans("ExportSiteLabel") . '...</strong></label><br>';
+	$dialogcontent .= '          <button class="button smallpaddingimp nomarginleft margintoponly" id="export-site-' . $name . '">' . dol_escape_htmltag($langs->trans("DownloadZip")) . '</button>';
 	$dialogcontent .= '        </div>';
 	$dialogcontent .= '        <br>';
 	$dialogcontent .= '        <div style="margin-top: 20px;">';
@@ -371,8 +376,8 @@ function dolButtonToOpenExportDialog($name, $label, $buttonstring, $exportSiteNa
 	$dialogcontent .= '     		<form action="' . dol_escape_htmltag($overwriteGitUrl) . '" method="POST">';
 	$dialogcontent .= '        		<input type="hidden" name="action" value="overwritesite">';
 	$dialogcontent .= '        		<input type="hidden" name="token" value="' . newToken() . '">';
-	$dialogcontent .= '          		<input type="text" autofocus name="export_path" id="export-path-' . $name . '" placeholder="' . $langs->trans('ExportPath') . '" style="width:400px " value="' . dol_escape_htmltag($templatenameforexport) . '"/><br>';
-	$dialogcontent .= '          		<button type="submit" class="button smallpaddingimp" id="overwrite-git-' . $name . '">' . dol_escape_htmltag($langs->trans("ExportIntoGIT")) . '</button>';
+	$dialogcontent .= '          		<input type="text" autofocus class="margintoponly quatrevingtpercent" name="export_path" id="export-path-' . $name . '" placeholder="' . $langs->trans('ExportPath') . '" value="' . dol_escape_htmltag($templatenameforexport) . '"/><br>';
+	$dialogcontent .= '          		<button type="submit" class="button smallpaddingimp nomarginleft margintoponly" id="overwrite-git-' . $name . '">' . dol_escape_htmltag($langs->trans("ExportIntoThisDirectory")) . '</button>';
 	$dialogcontent .= '      		</form>';
 	$dialogcontent .= '        </div>';
 	$dialogcontent .= '      </div>';
@@ -393,7 +398,7 @@ function dolButtonToOpenExportDialog($name, $label, $buttonstring, $exportSiteNa
 	$out .= '    jQuery("#custom-dialog-' . $name . '").dialog({';
 	$out .= '      autoOpen: false,';
 	$out .= '      modal: true,';
-	$out .= '      height: 290,';
+	$out .= '      height: 310,';
 	$out .= '      width: "40%",';
 	$out .= '      title: \'' . dol_escape_js($label) . '\',';
 	$out .= '    });';
@@ -401,7 +406,7 @@ function dolButtonToOpenExportDialog($name, $label, $buttonstring, $exportSiteNa
 	// Simulate a click on the original "submit" input to export the site.
 	$out .= '    jQuery("#export-site-' . $name . '").click(function () {';
 	$out .= '      console.log("Click on exportsite.");';
-	$out .= '      var target = jQuery("input[name=\'' . dol_escape_js($exportSiteName) . '\']");';
+	$out .= '      var target = jQuery("[name=\'' . dol_escape_js($exportSiteName) . '\']");';
 	$out .= '      console.log("element founded:", target.length > 0);';
 	$out .= '      if (target.length > 0) { target.click(); }';
 	$out .= '      jQuery("#custom-dialog-' . $name . '").dialog("close");';
