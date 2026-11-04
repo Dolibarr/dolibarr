@@ -401,6 +401,23 @@ class Ai
 				$timeoutresponse = max(90, getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
 			}
 
+			// Hooks of the calling page context (for example 'main'): a module can refuse the request (quota...) then read the answer (token usage...)
+			global $hookmanager;
+			$hookparameters = array('service' => $this->apiService, 'model' => $model, 'function' => $function);
+			if (is_object($hookmanager)) {
+				if ($hookmanager->executeHooks('beforeAIRequest', $hookparameters) < 0) {
+					return array(
+						'error' => true,
+						'message' => $hookmanager->error,
+						'code' => 403,
+						'format' => $format,
+						'service' => $this->apiService,
+						'model' => $model,
+						'function' => $function
+					);
+				}
+			}
+
 			$response = getURLContent($this->apiEndpoint, 'POST', $payload, 1, $headers, array('http', 'https'), $localurl, -1, 0, $timeoutresponse);
 
 			if (empty($response['http_code'])) {
@@ -443,6 +460,10 @@ class Ai
 
 			// Decode JSON response
 			$decodedResponse = json_decode($response['content'], true);
+
+			if (is_object($hookmanager) && is_array($decodedResponse) && empty($decodedResponse['error'])) {
+				$hookmanager->executeHooks('afterAIRequest', $hookparameters + array('response' => $decodedResponse));
+			}
 
 			// Extraction content
 			if (!empty($decodedResponse['error'])) {
