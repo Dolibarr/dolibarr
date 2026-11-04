@@ -478,6 +478,27 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	}
 	print '</pre>';
 
+	// Custom connector of Mistral Vibe web: the Basic authentication credentials, if any, are put into the URL
+	$vibeweburl = $endpoint;
+	if ($behindbasicauth) {
+		$credentials = 'LOGIN:PASSWORD';
+		$decoded = ($basicauthvalue != $basicauthplaceholder) ? base64_decode($basicauthvalue, true) : false;
+		if (!empty($_SERVER['PHP_AUTH_USER'])) {
+			$credentials = rawurlencode($_SERVER['PHP_AUTH_USER']).':'.rawurlencode(empty($_SERVER['PHP_AUTH_PW']) ? '' : $_SERVER['PHP_AUTH_PW']);
+		} elseif ($decoded !== false && strpos($decoded, ':') !== false) {
+			list($basiclogin, $basicpass) = explode(':', $decoded, 2);
+			$credentials = rawurlencode($basiclogin).':'.rawurlencode($basicpass);
+		}
+		$vibeweburl = preg_replace('/^(https?:\/\/)/i', '${1}'.$credentials.'@', $endpoint);
+	}
+	print '<br><strong>' . $langs->trans("MistralVibeWebConnector") . '</strong><br>';
+	print '<span class="opacitymedium">' . $langs->trans("MistralVibeWebConnectorUrl") . '</span>';
+	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto; margin-top:10px; white-space: break-spaces;">';
+	echo htmlspecialchars($vibeweburl."\n\n");
+	echo htmlspecialchars($langs->transnoentitiesnoconv("MistralVibeWebConnectorAuth", 'DOLAPIKEY')."\n");
+	echo htmlspecialchars($apiKey ? $apiKey : "YOUR_KEY_HERE");
+	print '</pre>';
+
 	// Command line to declare the MCP server into Claude Code
 	print '<br><strong>' . $langs->trans("ClaudeCodeConfig") . '</strong><br>';
 	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto; margin-top:10px; white-space: break-spaces;">';
