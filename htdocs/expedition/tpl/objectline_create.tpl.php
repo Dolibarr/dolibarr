@@ -61,7 +61,7 @@ if (empty($forceall)) {
 }
 
 if (empty($filtertype)) {
-	$filtertype = 0;
+	$filtertype = '';	// Products and services, as before with the generic line form
 }
 
 $formproduct = new FormProduct($object->db);
@@ -93,6 +93,7 @@ if ($nolinesbefore) {
 		print $langs->trans('Unit');
 		print '</span></td>';
 	}
+	print '<td colspan="'.$colspan.'"></td>';
 
 	print '</tr>';
 }
@@ -110,20 +111,46 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 $coldisplay++;
 print '<td class="bordertop nobottom linecoldescription line minwidth500imp">';
 
-// Predefined product/service
-if (isModEnabled("product")) {
-	if ($filtertype == 1) {
-		print $langs->trans("Service");
+// Free line
+$freelines = !getDolGlobalString('MAIN_DISABLE_FREE_LINES');
+if ($freelines) {
+	print '<span class="prod_entry_mode_free nowraponall">';
+	if (isModEnabled("product") || isModEnabled("service")) {
+		print '<input type="radio" class="prod_entry_mode_free" name="prod_entry_mode" id="prod_entry_mode_free" value="free"'.((GETPOST('prod_entry_mode', 'alpha') == 'free' || getDolGlobalString('MAIN_FREE_PRODUCT_CHECKED_BY_DEFAULT')) ? ' checked' : '').'> ';
 	} else {
-		print $langs->trans("Product");
+		print '<input type="hidden" id="prod_entry_mode_free" name="prod_entry_mode" value="free">';
+	}
+	$form->select_type_of_lines(GETPOSTISSET("type") ? GETPOST("type", 'alpha', 2) : -1, 'type', $langs->trans("FreeLineOfType").'...', 1, 1, 'minwidth200', 0);
+	print '</span>';
+}
+
+// Predefined product/service
+if (isModEnabled("product") || isModEnabled("service")) {
+	print '<span class="prod_entry_mode_predef nowraponall">';
+	if ($freelines) {
+		print '<br><input type="radio" class="prod_entry_mode_predef" name="prod_entry_mode" id="prod_entry_mode_predef" value="predef"'.(GETPOST('prod_entry_mode', 'alpha') == 'predef' ? ' checked' : '').'> ';
 	}
 
-	echo '<span class="prod_entry_mode_predef nowraponall">';
+	if (isModEnabled("product") && !isModEnabled("service")) {
+		$labelforradio = $langs->trans('PredefinedProducts');
+	} elseif (!isModEnabled("product") && isModEnabled("service")) {
+		$labelforradio = $langs->trans('PredefinedServices');
+	} else {
+		$labelforradio = $langs->trans('PredefinedProductsAndServices');
+	}
 
 	$statustoshow = -1;
+	$form->select_produits(GETPOSTINT('idprod'), 'idprod', $filtertype, getDolGlobalInt('PRODUIT_LIMIT_SIZE'), 0, $statustoshow, 2, '', 1, array(), 0, $labelforradio, 0, 'maxwidth500 widthcentpercentminusx', 1);
 
-	echo '</span>';
+	print '</span>';
 }
+
+// Description
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+$nbrows = getDolGlobalInt('MAIN_INPUT_DESC_HEIGHT', ROWS_2);
+$toolbarname = getDolGlobalString('FCKEDITOR_ENABLE_DETAILS_FULL') ? 'dolibarr_notes' : 'dolibarr_details';
+$doleditor = new DolEditor('dp_desc', GETPOST('dp_desc', 'restricthtml'), '', getDolGlobalInt('MAIN_DOLEDITOR_HEIGHT', 100), $toolbarname, '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), $nbrows, '98%');
+$doleditor->Create();
 
 
 if (!empty($extrafields)) {
@@ -169,6 +196,7 @@ jQuery(document).ready(function() {
 		  /* To set focus */
 		  if (jQuery('#idprod').val() > 0)
 			{
+			jQuery('#prod_entry_mode_predef').prop('checked', true);
 			/* focus work on a standard textarea but not if field was replaced with CKEDITOR */
 			jQuery('#dp_desc').focus();
 			/* focus if CKEDITOR */
@@ -178,6 +206,13 @@ jQuery(document).ready(function() {
 				   if (editor) { editor.focus(); }
 			}
 			}
+	});
+	/* When choosing a type of free line, we select the free line mode */
+	$("#select_type").change(function()
+	{
+		if (jQuery('#select_type').val() >= 0) {
+			jQuery('#prod_entry_mode_free').prop('checked', true);
+		}
 	});
 });
 
