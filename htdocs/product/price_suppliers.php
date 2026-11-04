@@ -213,8 +213,10 @@ if (empty($reshook)) {
 		$quantity = price2num(GETPOST("qty", 'alphanohtml'), 'MS');
 		$remise_percent = price2num(GETPOST('remise_percent', 'alpha'));
 
-		$npr = preg_match('/\*/', GETPOST('tva_tx', 'alpha')) ? 1 : 0;
-		$tva_tx = str_replace('*', '', GETPOST('tva_tx', 'alpha'));
+		// A rate typed in the free field (when the list has not the wanted rate) is used instead of the one of the list
+		$vatposted = (trim(GETPOST('tva_tx_free', 'alpha')) !== '' ? trim(GETPOST('tva_tx_free', 'alpha')) : GETPOST('tva_tx', 'alpha'));
+		$npr = preg_match('/\*/', $vatposted) ? 1 : 0;
+		$tva_tx = str_replace('*', '', $vatposted);
 		$vat_src_code = '';	// The VAT code of the rate chosen in the list, e.g. '10 (CODE)'
 		$reg = array();
 		if (preg_match('/\((.*)\)/', $tva_tx, $reg)) {
@@ -557,8 +559,14 @@ if ($id > 0 || $ref) {
 						options,
 						(data) => {
 							// The purchase VAT rates of the supplier\'s country, its default one selected
-							console.log("VAT rates for the supplier loaded");
-							$("#tva_tx").html(data.value);
+							console.log("VAT rates for the supplier loaded: " + data.num);
+							if (data.num > 0) {
+								$("#tva_tx").html(data.value).show();
+								$(".tva_tx_or").show();
+							} else {	// No VAT rate for the country of the supplier, only the free field can be used
+								$("#tva_tx").html("").hide();
+								$(".tva_tx_or").hide();
+							}
 						}
 					);
 
@@ -653,7 +661,19 @@ if ($id > 0 || $ref) {
 			} else {
 				$vattoselect = -1;	// Default rate for this product, seller and buyer (the default purchase rate when there are several)
 			}
-			print $form->load_tva('tva_tx', $vattoselect, $vatseller, $mysoc, $object->id, 0, $object->type, false, 1, 2);
+			$vatoptions = $form->load_tva('tva_tx', $vattoselect, $vatseller, $mysoc, $object->id, 0, $object->type, true, 1, 2);
+			$vatinlist = ($form->num > 0);
+			// When the rate to show is not in the list (rate of a country without VAT rates, or typed in the free field), show it in the free field
+			$vatfree = '';
+			if (GETPOSTISSET("tva_tx_free")) {
+				$vatfree = GETPOST("tva_tx_free", 'alpha');
+			} elseif ($vattoselect != -1 && strpos($vatoptions, ' selected') === false) {
+				$vatfree = preg_replace('/\s*\(.*\)/', '', (string) $vattoselect);
+			}
+			print '<select class="flat valignmiddle minwidth75imp maxwidth100 right" id="tva_tx" name="tva_tx"'.($vatinlist ? '' : ' style="display: none"').'>'.($vatinlist ? $vatoptions : '').'</select>';
+			print '<span class="tva_tx_or opacitymedium"'.($vatinlist ? '' : ' style="display: none"').'> ... '.$langs->trans("or").' ... </span>';
+			print '<input type="text" class="flat right width50" id="tva_tx_free" name="tva_tx_free" value="'.dol_escape_htmltag($vatfree).'" placeholder="%">';
+			print $form->textwithpicto('', $langs->trans("VATRateForSupplierProductFreeHelp"), 1, 'info');
 			print '</td></tr>';
 
 			if (isModEnabled('dynamicprices')) { //Only show price mode and expression selector if module is enabled
