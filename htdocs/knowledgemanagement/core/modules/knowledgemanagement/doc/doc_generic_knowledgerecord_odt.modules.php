@@ -264,6 +264,10 @@ class doc_generic_knowledgerecord_odt extends ModelePDFKnowledgeRecord
 			// sub-directory of the element, which is where the card reads the documents of a
 			// knowledge record.
 			$dir = getMultidirOutput($object);
+			if (empty($dir)) {
+				$this->error = $langs->transnoentities("ErrorCanNotCreateDir", (string) $dir);
+				return -1;
+			}
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
