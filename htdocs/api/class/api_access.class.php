@@ -2,6 +2,7 @@
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023	Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2026	Thomas Negre			<tnegre@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,6 +82,7 @@ class DolibarrApiAccess implements iAuthenticate
 	public function __isAllowed()
 	{
 		// phpcs:enable
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		global $conf, $db, $user;
 
 		$login = '';
@@ -152,6 +154,16 @@ class DolibarrApiAccess implements iAuthenticate
 			}
 			if ($fuser->statut == 0) {
 				throw new RestException(503, 'Error when fetching user. This user has been locked or disabled');
+			}
+
+			// Check validity dates of user login (same control as the one done on web login, see core/login/functions_dolibarr.php)
+			// Note: $fuser->datestartvalidity and $fuser->dateendvalidity are already GMT timestamps (converted by User::fetch())
+			$now = dol_now();
+			if ($fuser->datestartvalidity && $fuser->datestartvalidity > $now) {
+				throw new RestException(503, 'Error when fetching user. The validity of this user login has not started yet or has expired');
+			}
+			if ($fuser->dateendvalidity && $fuser->dateendvalidity < dol_get_first_hour($now)) {
+				throw new RestException(503, 'Error when fetching user. The validity of this user login has not started yet or has expired');
 			}
 
 			$fuser->getrights();
