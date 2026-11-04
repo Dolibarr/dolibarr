@@ -32,6 +32,7 @@
  * @property int 	$id
  * @property int 	$contact_id
  * @property int 	$fk_soc
+ * @property string $typent_code
  * @property string $civility_code
  * @property string $civilite
  * @property string $civility
@@ -192,6 +193,7 @@ trait CommonPeople
 		}
 		if ($this->element === 'contact' && $this instanceof Contact) {
 			$contactid = $this->id;
+			// @phan-suppress-next-line PhanUndeclaredProperty
 			$thirdpartyid = empty($this->fk_soc) ? 0 : $this->fk_soc;
 		}
 		if ($this->element == 'member' && $this instanceof Adherent) {
