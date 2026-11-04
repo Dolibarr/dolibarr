@@ -319,7 +319,7 @@ if ($productid > 0) {
 if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 	$sql .= " AND p.fk_product_type = 0";
 }
-$sql .= Entrepot::getSqlFilterExcludingVariantParents('p.rowid');
+$sql .= Entrepot::getSqlFilterExcludingVariantParents($db, 'p.rowid');
 if ($search_ref) {
 	$sql .= natural_search('p.ref', $search_ref);
 }
