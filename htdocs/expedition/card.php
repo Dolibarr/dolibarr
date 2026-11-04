@@ -1236,7 +1236,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		if ($qty == '') {
+		if (GETPOST('qty'.$predef, 'alpha') === '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
 		}
