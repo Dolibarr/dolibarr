@@ -91,6 +91,67 @@ class FactureTest extends CommonClassTest
 	}
 
 	/**
+	 * testSendEmailsRemindersTemplateNotFound
+	 *
+	 * @return  void
+	 */
+	public function testSendEmailsRemindersTemplateNotFound()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$conf->global->MAIN_MAIL_EMAIL_FROM = 'test@example.com';
+		$db->query("INSERT INTO ".$db->prefix()."c_email_templates (entity, type_template, private, datec, label, position, enabled, active, topic, joinfiles, content) VALUES (1, 'facture_send', 0, '".$db->idate(dol_now())."', 'TestRemindFound', 990, '1', 1, 'Topic', 0, 'Content')");
+
+		// An invoice due today, for a third party with an email
+		$soc = new Societe($db);
+		$soc->name = 'TESTREMIND template '.dol_now();
+		$soc->email = 'customer@example.com';
+		$soc->client = 1;
+		$soc->code_client = -1;
+		$socid = $soc->create($user);
+		$invoice = new Facture($db);
+		$invoice->socid = $socid;
+		$invoice->date = dol_now();
+		$invoice->cond_reglement_id = 1;
+		$id = $invoice->create($user);
+		$invoice->addline('Test', 100, 1, 20);
+		$duedate = dol_get_first_hour(dol_now(), 'gmt');
+		$db->query("UPDATE ".$db->prefix()."facture SET fk_statut = 1, paye = 0, date_lim_reglement = '".$db->idate($duedate, 'gmt')."' WHERE rowid = ".((int) $id));
+
+		// Mails are disabled here, so an email that is prepared fails to be sent and the failure is recorded as an event of the invoice
+		$sql = "SELECT count(*) as nb FROM ".$db->prefix()."actioncomm WHERE elementtype = 'invoice' AND fk_element = ".((int) $id)." AND label = 'sendEmailsRemindersOnInvoiceDueDateKO'";
+
+		// The template does not exist: no email is prepared (it was the generic text of an invoice that was sent), and the error is reported
+		$localobject = new Facture($db);
+		$result = $localobject->sendEmailsRemindersOnInvoiceDueDate(0, 'all', 'TestRemindMissing');
+		$this->assertGreaterThan(0, $result);
+		$this->assertStringContainsString('TestRemindMissing', $localobject->error);
+		$this->assertEquals(0, $db->fetch_object($db->query($sql))->nb, 'An email was prepared with a template that does not exist');
+
+		// The template exists: the email is prepared
+		$localobject->sendEmailsRemindersOnInvoiceDueDate(0, 'all', 'TestRemindFound');
+		$this->assertEquals(1, $db->fetch_object($db->query($sql))->nb, 'No email was prepared with a template that exists');
+
+		// No template set: the generic text is still used, as before
+		$localobject->sendEmailsRemindersOnInvoiceDueDate(0, 'all', '');
+		$this->assertEquals(2, $db->fetch_object($db->query($sql))->nb, 'No email was prepared without a template');
+
+		// The placeholder of the default parameters means no template too
+		$localobject->sendEmailsRemindersOnInvoiceDueDate(0, 'all', 'EmailTemplateCode');
+		$this->assertEquals(3, $db->fetch_object($db->query($sql))->nb, 'No email was prepared with the placeholder of the default parameters');
+
+		$db->query("DELETE FROM ".$db->prefix()."actioncomm WHERE fk_soc = ".((int) $socid));
+		$db->query("DELETE FROM ".$db->prefix()."facturedet WHERE fk_facture = ".((int) $id));
+		$db->query("DELETE FROM ".$db->prefix()."facture WHERE rowid = ".((int) $id));
+		$db->query("DELETE FROM ".$db->prefix()."societe WHERE rowid = ".((int) $socid));
+		$db->query("DELETE FROM ".$db->prefix()."c_email_templates WHERE label = 'TestRemindFound'");
+	}
+
+	/**
 	 * testFactureFetch
 	 *
 	 * @param   int $id     Id invoice
