@@ -626,7 +626,7 @@ if ($id > 0) {
 		}
 		print '<input type="hidden" name="sortfield" value="'.dol_escape_htmltag($sortfield).'">';
 		print '<input type="hidden" name="sortorder" value="'.dol_escape_htmltag($sortorder).'">';
-		print '<div class="div-table-responsive-no-min">';
+		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print '<div class="inline-block valignmiddle nowrapfordate">';
 		print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div> ';
@@ -641,9 +641,8 @@ if ($id > 0) {
 		print '</div> ';
 		print '<div class="inline-block valignmiddle">'.$form->showFilterButtons().'</div>';
 		print '</div>';
-		print '</form>';
 
-		print '<table class="noborder tagtable liste centpercent">';
+		print '<table class="tagtable nobottomiftotal noborder liste listwithfilterbefore">';
 		print '<tr class="liste_titre">';
 		if (!empty($arrayfields['f.datef']['checked'])) {
 			print_liste_field_titre($arrayfields['f.datef']['label'], $_SERVER["PHP_SELF"], "f.datef", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
@@ -730,6 +729,7 @@ if ($id > 0) {
 		}
 
 		print "</table>";
+		print '</form>';
 	}
 } else {
 	dol_print_error($db);
