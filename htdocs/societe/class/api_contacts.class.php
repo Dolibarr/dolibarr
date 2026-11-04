@@ -615,22 +615,38 @@ class Contacts extends DolibarrApi
 	 * @return	mixed
 	 *
 	 * @url GET {id}/categories
+	 *
+	 * @throws	RestException	403 Insufficient rights
+	 * @throws	RestException	404 Contact not found
+	 * @throws	RestException	500 Error when fetching contact
+	 * @throws	RestException	503 Error when retrieving category list
 	 */
 	public function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('categorie', 'lire')) {
 			throw new RestException(403);
 		}
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'lire')) {
+			throw new RestException(403, 'No permission to read contacts');
+		}
 
-		if (!DolibarrApi::_checkAccessToResource('contact', $id, 'socpeople&societe')) {
+		$result = $this->contact->fetch($id);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching contact: '.$this->contact->errorsToString());
+		}
+		if ($result == 0) {
+			throw new RestException(404, 'Contact not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id, 'socpeople&societe')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$categories = new Categorie($this->db);
 
-		$result = $categories->getListForItem($id, 'contact', $sortfield, $sortorder, $limit, $page);
+		$result = $categories->getListForItem($this->contact->id, Categorie::TYPE_CONTACT, $sortfield, $sortorder, $limit, $page);
 
-		if ($result < 0) {
+		if (is_numeric($result) && $result < 0) {
 			throw new RestException(503, 'Error when retrieve category list : '.$categories->errorsToString());
 		}
 
@@ -639,6 +655,8 @@ class Contacts extends DolibarrApi
 
 	/**
 	 * Add a category to a contact
+	 *
+	 * Linking a category that is already linked to the contact is not an error.
 	 *
 	 * @since	11.0.0	Initial implementation
 	 *
@@ -649,8 +667,10 @@ class Contacts extends DolibarrApi
 	 *
 	 * @url PUT {id}/categories/{category_id}
 	 *
-	 * @throws	RestException	401 Insufficient rights
+	 * @throws	RestException	400 Category is not a contact category
+	 * @throws	RestException	403 Insufficient rights
 	 * @throws	RestException	404 Category or contact not found
+	 * @throws	RestException	500 Error when fetching contact or category, or when linking the category
 	 */
 	public function addCategory($id, $category_id)
 	{
@@ -659,12 +679,18 @@ class Contacts extends DolibarrApi
 		}
 
 		$result = $this->contact->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching contact: '.$this->contact->errorsToString());
+		}
+		if ($result == 0) {
 			throw new RestException(404, 'Contact not found');
 		}
 		$category = new Categorie($this->db);
 		$result = $category->fetch($category_id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching category: '.$category->errorsToString());
+		}
+		if ($result == 0) {
 			throw new RestException(404, 'category not found');
 		}
 
@@ -674,14 +700,24 @@ class Contacts extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('category', $category->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+		// A contact can only be linked to a category of type contact
+		if ((int) $category->type !== (int) $category->MAP_ID[Categorie::TYPE_CONTACT]) {
+			throw new RestException(400, 'The category '.((int) $category->id).' is not a category of type '.Categorie::TYPE_CONTACT);
+		}
 
-		$category->add_type($this->contact, 'contact');
+		$result = $category->add_type($this->contact, Categorie::TYPE_CONTACT);
+		// -3 means the category is already linked to the contact: nothing to do
+		if ($result < 0 && $result != -3) {
+			throw new RestException(500, 'Error when linking category: '.$category->errorsToString());
+		}
 
 		return $this->_cleanObjectDatas($this->contact);
 	}
 
 	/**
 	 * Remove the link between a category and a contact
+	 *
+	 * Removing a category that is not linked to the contact is not an error.
 	 *
 	 * @since	11.0.0	Initial implementation
 	 *
@@ -691,8 +727,10 @@ class Contacts extends DolibarrApi
 	 *
 	 * @url DELETE {id}/categories/{category_id}
 	 *
-	 * @throws	RestException	401 Insufficient rights
+	 * @throws	RestException	400 Category is not a contact category
+	 * @throws	RestException	403 Insufficient rights
 	 * @throws	RestException	404 Category or contact not found
+	 * @throws	RestException	500 Error when fetching contact or category, or when unlinking the category
 	 */
 	public function deleteCategory($id, $category_id)
 	{
@@ -701,12 +739,18 @@ class Contacts extends DolibarrApi
 		}
 
 		$result = $this->contact->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching contact: '.$this->contact->errorsToString());
+		}
+		if ($result == 0) {
 			throw new RestException(404, 'Contact not found');
 		}
 		$category = new Categorie($this->db);
 		$result = $category->fetch($category_id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching category: '.$category->errorsToString());
+		}
+		if ($result == 0) {
 			throw new RestException(404, 'category not found');
 		}
 
@@ -716,8 +760,15 @@ class Contacts extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('category', $category->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+		// A contact can only be unlinked from a category of type contact
+		if ((int) $category->type !== (int) $category->MAP_ID[Categorie::TYPE_CONTACT]) {
+			throw new RestException(400, 'The category '.((int) $category->id).' is not a category of type '.Categorie::TYPE_CONTACT);
+		}
 
-		$category->del_type($this->contact, 'contact');
+		$result = $category->del_type($this->contact, Categorie::TYPE_CONTACT);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when unlinking category: '.$category->errorsToString());
+		}
 
 		return $this->_cleanObjectDatas($this->contact);
 	}
