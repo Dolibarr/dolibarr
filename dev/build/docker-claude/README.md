@@ -6,7 +6,7 @@ and the same protections (no email can be sent from the container). See `dev/bui
 of the common parts. The scripts `open-on-host`, `xdg-open-shim` and `smtpblock.sh` are shared with docker-vibe: they are
 taken from the directory `dev/build/docker-vibe` when the image is built.
 
-## Credentials
+## Prepare AI api key
 
 The configuration directory `~/.claude` of the host is mounted at the same path into the container, so the container uses
 the same credentials (`~/.claude/.credentials.json`, created by a `claude` login on the host), settings, plugins, memory and
@@ -28,6 +28,14 @@ container gets the MCP servers, the trusted directories and the theme of the hos
 ````
 alias claudes='dev/build/docker-claude/claudes.sh'
 ````
+
+## Prepare GitHub token key
+
+````
+gh auth login -h github.com -p https -w -s workflow
+gh auth status
+````
+
 
 ## Run Claude Code into a container
 Run from the root of your repository:
