@@ -169,4 +169,82 @@ class PdfDocTest extends CommonClassTest
 			}
 		}
 	}
+
+	/**
+	 * Build a minimal one page PDF document holding the given objects.
+	 *
+	 * @param	array<int,string>	$objects	Content of each object, the key is the object number
+	 * @return	string							Content of the PDF document
+	 */
+	private function buildPdf($objects)
+	{
+		$out = "%PDF-1.4\n";
+		$offsets = array();
+		ksort($objects);
+		foreach ($objects as $num => $content) {
+			$offsets[$num] = strlen($out);
+			$out .= $num." 0 obj\n".$content."\nendobj\n";
+		}
+		$size = max(array_keys($objects)) + 1;
+		$startxref = strlen($out);
+		$out .= "xref\n0 ".$size."\n0000000000 65535 f \n";
+		for ($num = 1; $num < $size; $num++) {
+			$out .= isset($offsets[$num]) ? sprintf("%010d 00000 n \n", $offsets[$num]) : "0000000000 65535 f \n";
+		}
+		$out .= "trailer\n<< /Size ".$size." /Root 1 0 R >>\nstartxref\n".$startxref."\n%%EOF\n";
+
+		return $out;
+	}
+
+	/**
+	 * Import a page of documents whose dictionaries hold what used to stop the parser: a hexadecimal string
+	 * closed right before the end of its dictionary, an empty one, one written on two lines, and a comment.
+	 * Each of these used to loop forever while writing warnings, so the test would not end at all.
+	 *
+	 * @return void
+	 */
+	public function testPdfImportPageWithADictionaryTheParserUsedToLoopOn()
+	{
+		pdf_getInstance();	// Load the TCPDF and TCPDI classes and define their constants
+
+		$content = "BT /F1 24 Tf 72 700 Td (Hello TCPDI) Tj ET";
+		$styles = array(
+			'spaced' => "<< /Panose <0105020102010507> >>",				// what the parser already read
+			'glued' => "<< /Panose <0105020102010507>>>",				// written by FPDI and by xdvipdfmx
+			'empty' => "<< /Panose <> >>",
+			'online2' => "<< /Panose <01050201\n02010507> >>",
+			'comment' => "<< % the style of the font\n/Panose <0105020102010507> >>",
+		);
+
+		$sizes = array();
+		foreach ($styles as $case => $style) {
+			$pdf = $this->buildPdf(array(
+				1 => "<< /Type /Catalog /Pages 2 0 R >>",
+				2 => "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+				3 => "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>",
+				4 => "<< /Length ".strlen($content)." >>\nstream\n".$content."\nendstream",
+				5 => "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /FontDescriptor 6 0 R >>",
+				6 => "<< /Type /FontDescriptor /FontName /Helvetica /Flags 32 /Style ".$style." /ItalicAngle 0 >>",
+			));
+
+			$file = tempnam(sys_get_temp_dir(), 'tcpdi').'.pdf';
+			file_put_contents($file, $pdf);
+
+			$tcpdi = new TCPDI();
+			$nbpages = $tcpdi->setSourceFile($file);
+			$this->assertSame(1, $nbpages, 'Case '.$case.': the document should hold one page');
+			$tpl = $tcpdi->importPage(1);
+			$tcpdi->AddPage();
+			$tcpdi->useTemplate($tpl);
+			$sizes[$case] = strlen($tcpdi->Output('', 'S'));
+			unlink($file);
+		}
+
+		// The four other ways of writing the same style give the same page as the one the parser already read,
+		// except the empty string, which holds 16 characters less
+		$this->assertSame($sizes['spaced'], $sizes['glued']);
+		$this->assertSame($sizes['spaced'], $sizes['online2'] - 1);
+		$this->assertSame($sizes['spaced'], $sizes['comment']);
+		$this->assertSame($sizes['spaced'] - 16, $sizes['empty']);
+	}
 }

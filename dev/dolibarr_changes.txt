@@ -400,6 +400,21 @@ NOTES   :
                 die("<strong>TCPDI_PARSER ERROR [{$this->uniqueid}]: </strong>".$msg);
             }
 
+==> FILE   : tcpdi_parser.php, functions getRawObject() and getDictValue()
+    REASON : The reader of a dictionary could never end. The text of the dictionary was first cut out by counting
+             the "<<" and the ">>" without looking at what they belong to, so a hexadecimal string closed just
+             before the end of the dictionary ("/Panose <0105>>>", as written by FPDI and by xdvipdfmx) ended it
+             one character too early and the parsing of what was cut out never ended, writing warnings until the
+             process was killed. getRawObject() also left the offset where it was on a token it did not know, and
+             read nothing at all for an empty hexadecimal string or for one written on several lines.
+    DIFF   :
+            getDictValue() now reads the entries one after the other up to the closing ">>", with no cutting out,
+            and getRawObject():
+        +       returns the type 'eof' when the offset reaches the end of the data, so the callers stop
+        +       reads a hexadecimal string up to its closing ">" whatever it holds
+        +       moves the offset past a token it does not know
+        +       returns the pair (object, offset) for a comment, as it does everywhere else
+
 
 
 ####################################################################################################
