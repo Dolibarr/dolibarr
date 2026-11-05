@@ -1724,7 +1724,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		if (isModEnabled('multicompany') && getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE')) {
 			$sql .= " WHERE u.rowid IN (";
 			$sql .= " SELECT ug.fk_user FROM ".$db->prefix()."usergroup_user as ug";
-			$sql .= " WHERE ug.entity IN (".getEntity('usergroup').")";
+			$sql .= " WHERE ug.entity IN (".getEntity('usergroup_user').")";
 			if ($usergroup > 0) {
 				$sql .= " AND ug.fk_usergroup = ".((int) $usergroup);
 			}

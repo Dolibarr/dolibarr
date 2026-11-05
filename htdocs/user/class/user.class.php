@@ -4258,7 +4258,7 @@ class User extends CommonObject
 		$sql .= " FROM ".$this->db->prefix()."user as u";
 		if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 			$sql .= ", ".$this->db->prefix()."usergroup_user as ug";
-			$sql .= " WHERE ug.entity IN (".getEntity('usergroup').")";
+			$sql .= " WHERE ug.entity IN (".getEntity('usergroup_user').")";
 			$sql .= " AND ug.fk_user = u.rowid";
 		} else {
 			$sql .= " WHERE u.entity IN (".getEntity('user').")";
@@ -4413,7 +4413,7 @@ class User extends CommonObject
 				} else {
 					$sql .= " WHERE t.entity = 0 OR EXISTS (";
 					$sql .= " SELECT ug.rowid FROM " . $this->db->prefix() . "usergroup_user as ug";
-					$sql .= " WHERE ug.fk_user = t.rowid AND ug.entity IN (" . getEntity('usergroup') . "))";
+					$sql .= " WHERE ug.fk_user = t.rowid AND ug.entity IN (" . getEntity('usergroup_user') . "))";
 				}
 			} else {
 				$sql .= " WHERE t.entity IN (".getEntity('user').")";
