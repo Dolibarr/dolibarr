@@ -242,12 +242,13 @@ class AgendaEvents extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('agenda', 'myactions', 'create')) {
 			throw new RestException(403, "Insufficient rights to create your Agenda Event");
 		}
+
+		// Check mandatory fields
+		$this->_validate($request_data);
+
 		if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'create') && DolibarrApiAccess::$user->id != $request_data['userownerid']) {
 			throw new RestException(403, "Insufficient rights to create an Agenda Event for owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
 		}
-
-		// Check mandatory fields
-		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
@@ -256,8 +257,26 @@ class AgendaEvents extends DolibarrApi
 				continue;
 			}
 
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->actioncomm->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->actioncomm);
+				}
+				continue;
+			}
 			$this->actioncomm->$field = $this->_checkValForAPI($field, $value, $this->actioncomm);
 		}
+
+		// Check on the sanitized value, because it is the one that create() stores into fk_soc
+		$socid = (int) $this->actioncomm->socid;
+		// External user can only create events of its own thirdparty, so link the event to it when socid is not provided
+		if (DolibarrApiAccess::$user->socid > 0 && $socid <= 0) {
+			$socid = (int) DolibarrApiAccess::$user->socid;
+			$this->actioncomm->socid = $socid;
+		}
+		if ($socid > 0 && !DolibarrApi::_checkAccessToResource('societe', $socid)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		/*if (isset($request_data["lines"])) {
 		  $lines = array();
 		  foreach ($request_data["lines"] as $line) {

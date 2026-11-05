@@ -113,6 +113,133 @@ class RestAPIAgendaEventsTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * testRestAgendaEventPost
+	 *
+	 * @return void
+	 */
+	public function testRestAgendaEventPost()
+	{
+		$test = "Create agenda event";
+
+		$label = "Created event ".mt_rand(0, 99999999);
+		$data = array(
+			"userownerid" => 1,
+			"type_code" => "AC_OTH",
+			"label" => $label,
+			"datep" => dol_now(),
+		);
+		$result = $this->getUrl('agendaevents', $test, 'POST', $data);
+		$event_id = (int) $result['content'];
+		$this->assertGreaterThan(0, $event_id, "$test Id of event is not > 0");
+
+		$result = $this->getUrl('agendaevents/'.$event_id, "$test (read after create)", 'GET');
+		$this->assertEquals($label, $result['content']['label'] ?? null, "$test Label must be stored");
+		$this->assertEquals(1, (int) ($result['content']['userownerid'] ?? 0), "$test Owner must be stored");
+
+		$this->getUrl('agendaevents/'.$event_id, "$test (cleanup)", 'DELETE');
+	}
+
+	/**
+	 * testRestAgendaEventPostMissingFields
+	 *
+	 * @return void
+	 */
+	public function testRestAgendaEventPostMissingFields()
+	{
+		$test = "Create agenda event with missing mandatory fields";
+
+		$this->getUrl('agendaevents', "$test (empty body)", 'POST', array(), 400);
+		$this->getUrl('agendaevents', "$test (no userownerid)", 'POST', array("type_code" => "AC_OTH", "label" => "No owner"), 400);
+		$this->getUrl('agendaevents', "$test (no type_code)", 'POST', array("userownerid" => 1, "label" => "No type"), 400);
+	}
+
+	/**
+	 * testRestAgendaEventPostThirdparty
+	 *
+	 * @return void
+	 */
+	public function testRestAgendaEventPostThirdparty()
+	{
+		$test = "Create agenda event linked to a third party";
+
+		$result = $this->getUrl('thirdparties', "$test (create third party)", 'POST', array("name" => "testRestAgendaThirdparty".mt_rand()));
+		$socid = (int) $result['content'];
+		$this->assertGreaterThan(0, $socid, "$test Id of third party is not > 0");
+
+		$data = array(
+			"userownerid" => 1,
+			"type_code" => "AC_OTH",
+			"label" => "Event of third party ".mt_rand(0, 99999999),
+			"datep" => dol_now(),
+			"socid" => $socid,
+		);
+		$result = $this->getUrl('agendaevents', $test, 'POST', $data);
+		$event_id = (int) $result['content'];
+		$this->assertGreaterThan(0, $event_id, "$test Id of event is not > 0");
+
+		$result = $this->getUrl('agendaevents/'.$event_id, "$test (read after create)", 'GET');
+		$this->assertEquals($socid, (int) ($result['content']['socid'] ?? 0), "$test Third party must be stored");
+
+		$this->getUrl('agendaevents/'.$event_id, "$test (cleanup event)", 'DELETE');
+		$this->getUrl('thirdparties/'.$socid, "$test (cleanup third party)", 'DELETE');
+	}
+
+	/**
+	 * testRestAgendaEventPostExtrafields
+	 *
+	 * @return void
+	 */
+	public function testRestAgendaEventPostExtrafields()
+	{
+		$test = "Create agenda event with extrafields";
+
+		$attrname = "testrestpost".mt_rand(0, 99999999);
+		$extrafield = array(
+			"label" => "Test REST post",
+			"type" => "varchar",
+			"size" => "255",
+			"pos" => 100,
+			"alwayseditable" => 1,
+			"default" => "",
+			"totalizable" => 0,
+			"printable" => 0,
+			"showintooltip" => 0,
+			"required" => 0,
+			"langfile" => "",
+			"computed" => "",
+			"unique" => 0,
+			"param" => "",
+			"perms" => "",
+			"list" => "1",
+			"help" => "",
+		);
+		$this->getUrl('setup/extrafields/actioncomm/'.$attrname, "$test (create extrafield)", 'POST', $extrafield);
+
+		try {
+			$data = array(
+				"userownerid" => 1,
+				"type_code" => "AC_OTH",
+				"label" => "Event with extrafield ".mt_rand(0, 99999999),
+				"datep" => dol_now(),
+				"array_options" => array("options_".$attrname => "<b>Extra value</b>"),
+			);
+			$result = $this->getUrl('agendaevents', $test, 'POST', $data);
+			$event_id = (int) $result['content'];
+			$this->assertGreaterThan(0, $event_id, "$test Id of event is not > 0");
+
+			$result = $this->getUrl('agendaevents/'.$event_id, "$test (read after create)", 'GET');
+			$this->assertEquals("Extra value", $result['content']['array_options']['options_'.$attrname] ?? null, "$test Extrafield must be sanitized and stored");
+
+			$this->getUrl('agendaevents/'.$event_id, "$test (cleanup event)", 'DELETE');
+
+			$data["array_options"] = array("options_bad key" => "Value");
+			$this->getUrl('agendaevents', "$test (bad extrafield name)", 'POST', $data, 400);
+		} finally {
+			$this->getUrl('setup/extrafields/actioncomm/'.$attrname, "$test (cleanup extrafield)", 'DELETE');
+		}
+	}
+
+	/**
 	 * testRestAgendaEventDelete
 	 *
 	 * @return int	Id of the deleted agenda event
