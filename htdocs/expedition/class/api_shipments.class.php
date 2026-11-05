@@ -315,8 +315,8 @@ class Shipments extends DolibarrApi
 				$error = 'Field qty is mandatory';
 			} elseif ($qty < 0) {
 				$error = 'Field qty cannot be negative';
-			} elseif ($fk_product <= 0 && getDolGlobalString('MAIN_DISABLE_FREE_LINES')) {
-				$error = 'Field fk_product is mandatory (MAIN_DISABLE_FREE_LINES is on)';
+			} elseif ($fk_product <= 0 && (!getDolGlobalInt('SHIPMENTS_ALLOW_FREE_LINES') || getDolGlobalString('MAIN_DISABLE_FREE_LINES'))) {
+				$error = 'Field fk_product is mandatory (free shipment lines are disabled)';
 			} elseif ($fk_product <= 0 && $description === '') {
 				$error = 'A line needs a fk_product or a description';
 			} elseif ($fk_product > 0) {

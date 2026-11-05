@@ -131,7 +131,7 @@ $coldisplay++;
 print '<td class="nobottom linecolqty right">';
 
 if (((int) $line->info_bits & 2) != 2) {
-	print '<input size="3" type="text" class="flat right" name="qty" id="qty" value="'.$line->qty.'">';
+	print '<input size="3" type="text" class="flat right" name="qty" id="qty" value="'.(GETPOSTISSET('qty') ? dol_escape_htmltag(GETPOST('qty', 'alpha')) : $line->qty).'">';
 }
 print '</td>';
 
@@ -151,6 +151,13 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	$coldisplay++;
 	print '<td class="left">';
 	print $form->selectUnits(GETPOSTISSET('units') ? GETPOST('units') : $line->fk_unit, "units", 0, $unit_type);
+	print '</td>';
+}
+
+if (isModEnabled('stock')) {
+	$coldisplay++;
+	print '<td class="nobottom linecolwarehouse">';
+	print $formproduct->selectWarehouses(GETPOSTISSET('entrepot_id') ? GETPOSTINT('entrepot_id') : $line->entrepot_id, 'entrepot_id', 'warehouseopen', 1);
 	print '</td>';
 }
 
