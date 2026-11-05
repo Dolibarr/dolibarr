@@ -2654,6 +2654,26 @@ class FunctionsLibTest extends CommonClassTest
 
 		$s = natural_search("t.field", "KØB", 3);						// mode 3 is to provide a list of string separated with coma
 		$this->assertEquals(" AND (t.field IN ('KØB'))", $s);
+
+		// A criteria with only '!' is searched as a string, a leading '!' followed by a text is an exclusion
+		$s = natural_search("t.field", "Bonjour !");
+		$this->assertEquals(" AND (t.field LIKE '%Bonjour%' AND t.field LIKE '%!%')", $s);
+
+		$s = natural_search("t.field", "!!!");
+		$this->assertEquals(" AND (t.field LIKE '%!!!%')", $s);
+
+		$s = natural_search("t.field", "!abc");
+		$this->assertEquals(" AND ((t.field NOT LIKE '%abc%' OR t.field IS NULL))", $s);
+
+		// mode 1 is a numeric test, '!' or '!=' means "different of"
+		$s = natural_search("t.field", "!34", 1);
+		$this->assertEquals(" AND (t.field <> 34)", $s);
+
+		$s = natural_search("t.field", "!= 34", 1);
+		$this->assertEquals(" AND (t.field <> 34)", $s);
+
+		$s = natural_search("t.field", ">=10 <20", 1);
+		$this->assertEquals(" AND (t.field >= 10 AND t.field < 20)", $s);
 	}
 
 	/**
