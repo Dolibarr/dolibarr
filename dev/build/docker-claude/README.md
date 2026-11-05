@@ -32,7 +32,8 @@ alias claudes='dev/build/docker-claude/claudes.sh'
 ## Prepare GitHub token key
 
 ````
-gh auth login -h github.com -p https -w -s workflow
+gh auth login -h github.com -p https -w 
+(or for a branch maintener: gh auth login -h github.com -p https -w -s workflow)
 gh auth status
 ````
 
