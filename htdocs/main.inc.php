@@ -3708,7 +3708,7 @@ if (!function_exists("llxFooter")) {
 		// This is done on customer invoices only.
 		// This add a log and increase the pos_print_counter too (done by block-add.php).
 		if (isModEnabled('blockedlog') && is_object($object) && !empty($object->id) && $object->id > 0) {
-			if (in_array($object->element, array('facture')) && $object->statut > 0) {       // Restrict for the moment to element 'facture'
+			if (!empty($object->element) && in_array($object->element, array('facture')) && $object->statut > 0) {       // Restrict for the moment to element 'facture'
 				print "\n<!-- JS CODE TO ENABLE log when making a download or a preview of a document -->\n";
 				?>
 				<script>

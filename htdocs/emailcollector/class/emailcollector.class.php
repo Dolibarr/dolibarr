@@ -789,7 +789,7 @@ class EmailCollector extends CommonObject
 	{
 		$this->actions = array();
 
-		$sql = 'SELECT rowid, type, actionparam, status';
+		$sql = 'SELECT rowid, type, actionparam, status, position';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'emailcollector_emailcollectoraction';
 		$sql .= ' WHERE fk_emailcollector = '.((int) $this->id);
 		$sql .= ' ORDER BY position';
@@ -800,7 +800,7 @@ class EmailCollector extends CommonObject
 			$i = 0;
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
-				$this->actions[$obj->rowid] = array('id' => $obj->rowid, 'type' => $obj->type, 'actionparam' => $obj->actionparam, 'status' => $obj->status);
+				$this->actions[$obj->rowid] = array('id' => $obj->rowid, 'type' => $obj->type, 'actionparam' => $obj->actionparam, 'status' => $obj->status, 'position' => $obj->position);
 				$i++;
 			}
 			$this->db->free($resql);

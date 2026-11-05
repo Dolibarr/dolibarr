@@ -956,6 +956,12 @@ if (empty($reshook)) {
 		if ($id == DICT_TVA && GETPOSTISSET("code")) {  // Spaces are not allowed into code for tax dictionary
 			$_POST["code"] = preg_replace('/[^a-zA-Z0-9_\-\+]/', '', GETPOST("code"));
 		}
+		// Checked after the cleaning above, so that a code shortened by it is not refused. The column c_tva.code
+		// is a varchar(10) and a longer value ended in a fatal SQL error instead of a message on the form.
+		if ($id == DICT_TVA && strlen(GETPOST("code")) > 10) {
+			$ok = 0;
+			setEventMessages($langs->transnoentities("ErrorFieldMustHaveLessThanXChar", $langs->transnoentities("Code"), '10'), null, 'errors');
+		}
 
 		$tablename = $tabname[$id];
 		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
