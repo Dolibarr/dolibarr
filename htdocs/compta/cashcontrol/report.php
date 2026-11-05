@@ -401,8 +401,8 @@ if ($resql) {
 		usort(
 			$rowstoprint,
 			/**
-			 * @param array{html:string|false,pos:int,'f.ref':string,'p.datep':int,'ba.ref':string,'cp.code':string,amount:float} $a First display row
-			 * @param array{html:string|false,pos:int,'f.ref':string,'p.datep':int,'ba.ref':string,'cp.code':string,amount:float} $b Second display row
+			 * @param array<string, string|int|float|false> $a First display row
+			 * @param array<string, string|int|float|false> $b Second display row
 			 * @return int
 			 */
 			function (array $a, array $b) use ($sortfield, $sortorder): int {
