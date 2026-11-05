@@ -266,6 +266,8 @@ if (empty($doactionsthenredirect)) {
 }
 
 
+$service = $paymentmethod;	// to have a default value. We may change it later for 'StripeLive' or 'StripeTest'...
+
 // Validate the payment (for payment mode that need another step after the callback return for this).
 if (isModEnabled('paypal')) {
 	if ($paymentmethod === 'paypal') {							// We call this page only if payment is ok on payment system
@@ -354,10 +356,92 @@ if (isModEnabled('paybox')) {
 	}
 }
 
-if (isModEnabled('stripe')) {
-	if ($paymentmethod === 'stripe') {
-		// TODO Add a check to validate that payment is ok. We can request Stripe with payment_intent and payment_intent_client_secret
-		$ispaymentok = true; // We call this page only if payment is ok on payment system
+// For Stripe
+if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
+	// TODO: Move this block to the top to ensure all session variables (e.g., TRANSACTIONID, FinalPaymentAmt, currencyCodeType, etc.) are loaded before executing checks for any payment module.
+	if (empty($TRANSACTIONID)) {
+		$TRANSACTIONID = empty($_SESSION['TRANSACTIONID']) ? '' : $_SESSION['TRANSACTIONID'];	// pi_... or ch_...
+		if (empty($TRANSACTIONID) && GETPOST('payment_intent', 'alphanohtml')) {
+			// For the case we use STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 2
+			$TRANSACTIONID = GETPOST('payment_intent', 'alphanohtml');
+		}
+	}
+	$FinalPaymentAmt = empty($_SESSION["FinalPaymentAmt"]) ? '' : $_SESSION["FinalPaymentAmt"];
+	$currencyCodeType = empty($_SESSION['currencyCodeType']) ? '' : $_SESSION['currencyCodeType'];
+
+	$service = 'StripeTest';
+	$servicestatus = 0;
+	if (getDolGlobalString('STRIPE_LIVE')/* && !GETPOSTINT('forcesandbox') */) {
+		$service = 'StripeLive';
+		$servicestatus = 1;
+	}
+
+	// Check on payment platform that the payment has been really validated
+	if (!$error && $TRANSACTIONID) {
+		// Stripe payment verification via Stripe API
+		try {
+			include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+			$stripe = new Stripe($db);
+			$stripeacc = $stripe->getStripeAccount($service);
+
+			// Use the correct Stripe API key
+			global $stripearrayofkeysbyenv;
+			\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$servicestatus]['secret_key']);
+
+			try {
+				if (empty($stripeacc)) {
+					$paymentIntent = \Stripe\PaymentIntent::retrieve($TRANSACTIONID);
+				} else {
+					$paymentIntent = \Stripe\PaymentIntent::retrieve($TRANSACTIONID, array("stripe_account" => $stripeacc));
+				}
+
+				// Check amount and currency
+				// Handle zero-decimal currencies that don't use cents/subunits
+				$zeroDecimalCurrencies = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+				if (in_array(strtoupper($currencyCodeType), $zeroDecimalCurrencies)) {
+					$expectedAmount = (int) round($FinalPaymentAmt); // No cents for these currencies
+				} else {
+					$expectedAmount = (int) round($FinalPaymentAmt * 100); // Stripe uses cents for most currencies
+				}
+				$expectedCurrency = strtolower($currencyCodeType);
+
+				if ((int) $paymentIntent->amount !== $expectedAmount || strtolower($paymentIntent->currency) !== $expectedCurrency) {
+					$error++;
+					$errmsg = 'Stripe payment information mismatch: expected amount ' . $expectedAmount . ' and currency ' . $expectedCurrency . ', got amount ' . $paymentIntent->amount . ' and currency ' . $paymentIntent->currency;
+					dol_syslog($errmsg, LOG_ERR, 0, '_payment');
+				}
+				if ($paymentIntent->status !== 'succeeded') {
+					$error++;
+					$errmsg = 'Stripe payment not succeeded. Status: ' . $paymentIntent->status;
+					dol_syslog($errmsg, LOG_ERR, 0, '_payment');
+				}
+			} catch (\Stripe\Exception\ApiErrorException $e) {
+				$error++;
+				$errormessage = "Stripe API error: ".$e->getMessage();
+				dol_syslog($errormessage, LOG_ERR, 0, '_payment');
+				setEventMessages($e->getMessage(), null, 'errors');
+			} catch (Exception $e) {
+				$error++;
+				$errormessage = "CantRetrievePaymentIntent: ".$e->getMessage();
+				dol_syslog($errormessage, LOG_ERR, 0, '_payment');
+				setEventMessages($e->getMessage(), null, 'errors');
+			}
+		} catch (Exception $e) {
+			$error++;
+			$errmsg = 'Stripe API error: ' . $e->getMessage();
+			dol_syslog($errmsg, LOG_ERR, 0, '_payment');
+		}
+	} else {
+		$error++;
+		$errmsg = 'Stripe payment verification failed: TRANSACTIONID is not set.';
+		dol_syslog($errmsg, LOG_ERR, 0, '_payment');
+		setEventMessages($errmsg, null, 'errors');
+	}
+
+	if (!$error) {
+		$ispaymentok = true; // We will do the rest of code
+	} else {
+		$ispaymentok = false; // We won't do the rest of code
 	}
 }
 
