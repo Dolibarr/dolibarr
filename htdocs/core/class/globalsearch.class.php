@@ -56,7 +56,7 @@ class GlobalSearch
 	 *	The fields searched are the main identifying fields of the list page of the section (line descriptions
 	 *	and notes are not searched to keep the answer fast), the list page found with "See all" searches more.
 	 *
-	 *	@return	array<string,array{table:string,alias:string,element:string,class?:string,classfile?:string,ref:string,label:string,sub?:string,amount?:string,date:string,fields:string[],status?:array<string,string>,thirdparty?:string,nothirdpartyfilter?:int,url:string,picto:string,where?:string}>	Definitions
+	 *	@return	array<string,array{table:string,alias:string,element:string,class?:string,classfile?:string,ref:string,label:string,sub?:string,amount?:string,date:string,fields:string[],status?:array<string,string>,thirdparty?:string,nothirdpartyfilter?:int,firstname?:string,private?:int,producttype?:int,url:string,picto:string}>	Definitions
 	 */
 	public function getDefinitions()
 	{
@@ -73,10 +73,9 @@ class GlobalSearch
 		);
 		$definitions['searchintocontact'] = array(
 			'table' => 'socpeople', 'alias' => 'c', 'element' => 'contact',
-			'ref' => "TRIM(CONCAT(COALESCE(c.firstname, ''), ' ', COALESCE(c.lastname, '')))", 'label' => 's.nom', 'sub' => 'c.email', 'date' => 'c.tms',
+			'ref' => 'c.lastname', 'firstname' => 'c.firstname', 'label' => 's.nom', 'sub' => 'c.email', 'date' => 'c.tms',
 			'fields' => array('c.lastname', 'c.firstname', 'c.email', 'c.phone', 'c.phone_mobile', 's.nom'),
-			'thirdparty' => 'c.fk_soc',
-			'where' => " AND (c.priv = 0 OR (c.priv = 1 AND c.fk_user_creat = ".((int) $user->id)."))",
+			'thirdparty' => 'c.fk_soc', 'private' => 1,
 			'url' => '/contact/card.php?id=', 'picto' => 'contact',
 		);
 		$definitions['searchintoproduct'] = array(
@@ -86,13 +85,13 @@ class GlobalSearch
 			'url' => '/product/card.php?id=', 'picto' => 'product',
 		);
 		if (!(isModEnabled('product') && $user->hasRight('produit', 'lire'))) {
-			$definitions['searchintoproduct']['where'] = " AND p.fk_product_type = 1";
+			$definitions['searchintoproduct']['producttype'] = 1;	// Services only
 		} elseif (!(isModEnabled('service') && $user->hasRight('service', 'lire'))) {
-			$definitions['searchintoproduct']['where'] = " AND p.fk_product_type = 0";
+			$definitions['searchintoproduct']['producttype'] = 0;	// Products only
 		}
 		$definitions['searchintomember'] = array(
 			'table' => 'adherent', 'alias' => 'd', 'element' => 'adherent',
-			'ref' => "TRIM(CONCAT(COALESCE(d.firstname, ''), ' ', COALESCE(d.lastname, '')))", 'label' => 'd.societe', 'sub' => 'd.ref', 'date' => 'd.tms',
+			'ref' => 'd.lastname', 'firstname' => 'd.firstname', 'label' => 'd.societe', 'sub' => 'd.ref', 'date' => 'd.tms',
 			'fields' => array('d.ref', 'd.login', 'd.lastname', 'd.firstname', 'd.societe', 'd.email'),
 			'class' => 'Adherent', 'classfile' => '/adherents/class/adherent.class.php', 'status' => array('d.statut' => 'status'),
 			'url' => '/adherents/card.php?rowid=', 'picto' => 'member',
@@ -241,7 +240,7 @@ class GlobalSearch
 	/**
 	 *	Search records of one section
 	 *
-	 *	@param	array{table:string,alias:string,element:string,class?:string,classfile?:string,ref:string,label:string,sub?:string,amount?:string,date:string,fields:string[],status?:array<string,string>,thirdparty?:string,nothirdpartyfilter?:int,url:string,picto:string,where?:string}	$def	Definition of section
+	 *	@param	array{table:string,alias:string,element:string,class?:string,classfile?:string,ref:string,label:string,sub?:string,amount?:string,date:string,fields:string[],status?:array<string,string>,thirdparty?:string,nothirdpartyfilter?:int,firstname?:string,private?:int,producttype?:int,url:string,picto:string}	$def	Definition of section
 	 *	@param	string		$search		String to search
 	 *	@param	int			$limit		Max number of records to return
 	 *	@param	array<int,array{url:string,picto:string,ref:string,label:string,sub:string,amount:string,status:string}>	$found	Records found
@@ -251,47 +250,61 @@ class GlobalSearch
 	{
 		global $conf, $langs, $user;
 
-		$alias = $def['alias'];
+		// Names of table and fields of the definition (that may come from a module) are sanitized: only "alias.field" is allowed
+		$table = $this->db->sanitize($def['table']);
+		$alias = $this->db->sanitize($def['alias']);
+		$fieldref = $this->db->sanitize($def['ref']);
+		$fieldlabel = $this->db->sanitize($def['label']);
+		$fieldsub = (empty($def['sub']) ? '' : $this->db->sanitize($def['sub']));
+		$fieldfirstname = (empty($def['firstname']) ? '' : $this->db->sanitize($def['firstname']));
+		$fieldamount = (empty($def['amount']) ? '' : $this->db->sanitize($def['amount']));
+		$fielddate = $this->db->sanitize($def['date']);
+		$fieldthirdparty = (empty($def['thirdparty']) ? '' : $this->db->sanitize($def['thirdparty']));
 
-		$from = " FROM ".$this->db->prefix().$def['table']." as ".$alias;
-		if (!empty($def['thirdparty']) && $def['thirdparty'] != 's.rowid') {
-			$from .= " LEFT JOIN ".$this->db->prefix()."societe as s ON s.rowid = ".$def['thirdparty'];
+		$from = " FROM ".$this->db->prefix().$table." as ".$alias;
+		if ($fieldthirdparty && $fieldthirdparty != 's.rowid') {
+			$from .= " LEFT JOIN ".$this->db->prefix()."societe as s ON s.rowid = ".$fieldthirdparty;
 		}
 
 		$where = " WHERE ".$alias.".entity IN (".getEntity($def['element']).")";
 		$where .= natural_search($def['fields'], $search);
-		if (!empty($def['where'])) {
-			$where .= $def['where'];
-		}
 		// Same restrictions than on the list pages
-		if (!empty($def['thirdparty']) && empty($def['nothirdpartyfilter'])) {
+		if (!empty($def['private'])) {
+			$where .= " AND (".$alias.".priv = 0 OR (".$alias.".priv = 1 AND ".$alias.".fk_user_creat = ".((int) $user->id)."))";
+		}
+		if (isset($def['producttype'])) {
+			$where .= " AND ".$alias.".fk_product_type = ".((int) $def['producttype']);
+		}
+		if ($fieldthirdparty && empty($def['nothirdpartyfilter'])) {
 			if (!empty($user->socid)) {
-				$where .= " AND ".$def['thirdparty']." = ".((int) $user->socid);
+				$where .= " AND ".$fieldthirdparty." = ".((int) $user->socid);
 			} elseif (!$user->hasRight('societe', 'client', 'voir')) {
-				$where .= " AND EXISTS (SELECT sc.rowid FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = ".$def['thirdparty']." AND sc.fk_user = ".((int) $user->id).")";
+				$where .= " AND EXISTS (SELECT sc.rowid FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = ".$fieldthirdparty." AND sc.fk_user = ".((int) $user->id).")";
 			}
 		}
 		if ($def['element'] == 'project' && !$user->hasRight('projet', 'all', 'lire')) {
 			require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 			$projectstatic = new Project($this->db);
 			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, (int) $user->socid);
-			$where .= " AND p.rowid IN (".$this->db->sanitize($projectsListId ? $projectsListId : '0').")";
+			$where .= " AND ".$alias.".rowid IN (".$this->db->sanitize($projectsListId ? $projectsListId : '0').")";
 		}
 
-		$sql = "SELECT ".$alias.".rowid as id, ".$def['ref']." as ref, ".$def['label']." as label";
-		$sql .= ", ".(empty($def['sub']) ? "''" : $def['sub'])." as sub";
-		if (!empty($def['amount'])) {
-			$sql .= ", ".$def['amount']." as amount";
+		$sql = "SELECT ".$alias.".rowid as id, ".$fieldref." as ref, ".$fieldlabel." as label";
+		$sql .= ", ".($fieldsub ? $fieldsub : "''")." as sub";
+		if ($fieldfirstname) {
+			$sql .= ", ".$fieldfirstname." as firstname";
+		}
+		if ($fieldamount) {
+			$sql .= ", ".$fieldamount." as amount";
 		}
 		if (!empty($def['status'])) {
 			foreach ($def['status'] as $field => $property) {
-				$sql .= ", ".$field." as status_".$property;
+				$sql .= ", ".$this->db->sanitize($field)." as status_".$this->db->sanitize($property);
 			}
 		}
 		$sql .= $from.$where;
 		// Exact ref first, then refs starting with the string, then most recent
-		$refsearch = $this->db->escape($search);
-		$sql .= " ORDER BY CASE WHEN ".$def['ref']." = '".$refsearch."' THEN 0 WHEN ".$def['ref']." LIKE '".$this->db->escape($this->db->escapeforlike($search))."%' THEN 1 ELSE 2 END, ".$def['date']." DESC";
+		$sql .= " ORDER BY CASE WHEN ".$fieldref." = '".$this->db->escape($search)."' THEN 0 WHEN ".$fieldref." LIKE '".$this->db->escape($this->db->escapeforlike($search))."%' THEN 1 ELSE 2 END, ".$fielddate." DESC";
 		$sql .= $this->db->plimit($limit + 1);
 
 		$resql = $this->db->query($sql);
@@ -316,7 +329,7 @@ class GlobalSearch
 			$status = '';
 			if (is_object($staticobject) && method_exists($staticobject, 'getLibStatut')) {
 				foreach ($def['status'] as $field => $property) {
-					$staticobject->$property = $obj->{'status_'.$property};
+					$staticobject->$property = $obj->{'status_'.$this->db->sanitize($property)};
 					if ($property == 'status') {
 						$staticobject->statut = $obj->status_status;	// For classes still using the old property
 					}
@@ -327,7 +340,7 @@ class GlobalSearch
 			$found[] = array(
 				'url' => DOL_URL_ROOT.$def['url'].((int) $obj->id),
 				'picto' => img_picto('', $def['picto'], 'class="pictofixedwidth"'),
-				'ref' => (string) $obj->ref,
+				'ref' => trim((isset($obj->firstname) ? $obj->firstname.' ' : '').$obj->ref),
 				'label' => (string) $obj->label,
 				'sub' => (string) $obj->sub,
 				'amount' => (isset($obj->amount) ? price($obj->amount, 0, $langs, 1, -1, -1, $conf->currency) : ''),
