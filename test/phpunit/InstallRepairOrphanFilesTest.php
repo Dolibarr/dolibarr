@@ -19,46 +19,41 @@
  * \file test/phpunit/InstallRepairOrphanFilesTest.php
  * \brief Conservative orphan detection with native SQLite and real files.
  */
-if (!defined('DOL_DOCUMENT_ROOT')) {
-	define('DOL_DOCUMENT_ROOT', dirname(__FILE__).'/../../htdocs');
-	define('DOL_DATA_ROOT', sys_get_temp_dir());
-	define('DOL_INC_FOR_VERSION_ERROR', 1);
-	require_once DOL_DOCUMENT_ROOT.'/filefunc.inc.php';
-}
-if (!defined('MAIN_DB_PREFIX')) {
-	define('MAIN_DB_PREFIX', 'llx_');
-}
-require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
+global $conf,$user,$langs,$db,$mysoc;
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/db/sqlite3.class.php';
 require_once DOL_DOCUMENT_ROOT.'/install/lib/repair.lib.php';
 
-/** @backupGlobals disabled */
-class InstallRepairOrphanFilesTest extends PHPUnit\Framework\TestCase
+/**
+ * Class for PHPUnit tests
+ *
+ * @backupGlobals disabled
+ * @backupStaticAttributes enabled
+ */
+class InstallRepairOrphanFilesTest extends CommonClassTest
 {
 	/** @var DoliDBSqlite3|null */
 	private $database;
 	/** @var string */
 	private $documentroot = '';
-	/** @var Conf|null */
-	private $previousconf;
 
 	/** @return void */
 	protected function setUp(): void
 	{
+		parent::setUp();
 		if (!extension_loaded('sqlite3')) {
 			$this->markTestSkipped('The native SQLite driver is required.');
 		}
 		global $conf, $main_data_dir;
-		$this->previousconf = $conf ?? null;
-		$conf = new Conf();
+		$conf = clone $this->savconf;
 		$this->documentroot = sys_get_temp_dir().'/dolibarr-orphan-repair-'.bin2hex(random_bytes(8));
 		dol_mkdir($this->documentroot.'/2/invoice');
 		$previousdatadir = $main_data_dir ?? null;
 		$main_data_dir = $this->documentroot;
 		try {
-			$this->database = (new ReflectionClass(DoliDBSqlite3::class))->newInstanceWithoutConstructor();
+			// Keep real SQL methods, without the constructor's unrelated custom SQL callbacks.
+			$this->database = $this->getMockBuilder(DoliDBSqlite3::class)->disableOriginalConstructor()->onlyMethods(array())->getMock();
 			$this->database->db = $this->database->connect('', '', '', 'repair');
 			$this->database->connected = (bool) $this->database->db;
 			$this->database->transaction_opened = 0;
@@ -81,8 +76,9 @@ class InstallRepairOrphanFilesTest extends PHPUnit\Framework\TestCase
 		if ($this->documentroot !== '') {
 			$countdeleted = 0;
 			dol_delete_dir_recursive($this->documentroot, 0, 1, 0, $countdeleted, 0, 1);
-			$conf = $this->previousconf;
 		}
+		$conf = $this->savconf;
+		parent::tearDown();
 	}
 
 	/** @return void */

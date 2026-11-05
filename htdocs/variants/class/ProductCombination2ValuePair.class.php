@@ -156,6 +156,9 @@ class ProductCombination2ValuePair
 	/**
 	 * Retrieves a ProductCombination2ValuePair by its rowid
 	 *
+	 * Required by fetchObjectByElement(), which calls fetch() on the class resolved for the
+	 * element 'product_attribute_combination2val' without testing that the method exists.
+	 *
 	 * @param	int		$id		Rowid of the pair
 	 * @return	int<-1,1>		-1 if KO, 0 if not found, 1 if OK
 	 */

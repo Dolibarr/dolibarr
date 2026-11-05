@@ -1,0 +1,48 @@
+# Add the label "Bug" or "Feature request" on issues created without the web form (gh CLI, API, mobile app...),
+# because labels declared into .github/ISSUE_TEMPLATE/*.yml are applied only when the web form is used.
+name: "Add label Bug or Feature request on new issues"
+
+on:
+  issues:
+    types: [opened, typed]
+
+permissions: {} # none
+
+jobs:
+  autolabel:
+    permissions:
+      issues: write
+    runs-on: ubuntu-latest
+    steps:
+    - name: Add the label according to the issue type or the first heading of the body
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_REPO: ${{ github.repository }}
+        ISSUE_NUMBER: ${{ github.event.issue.number }}
+        ISSUE_TYPE: ${{ github.event.issue.type.name }}
+        ISSUE_BODY: ${{ github.event.issue.body }}
+        ISSUE_LABELS: ${{ join(github.event.issue.labels.*.name, ',') }}
+      run: |
+        # Data of the issue are read from env vars only, never injected into the script, to avoid shell injection.
+        if [[ ",$ISSUE_LABELS," == *",Bug,"* || ",$ISSUE_LABELS," == *",Feature request,"* ]]; then
+          echo "Issue #$ISSUE_NUMBER already has the label Bug or Feature request. Nothing to do."
+          exit 0
+        fi
+
+        # First non empty line of the body (the template of the web form starts with "### Bug" or "### Feature Request")
+        firstline=$(printf '%s\n' "$ISSUE_BODY" | tr -d '\r' | grep -m 1 -v '^[[:space:]]*$' || true)
+
+        label=""
+        if [[ "$ISSUE_TYPE" == "Bug" ]] || printf '%s' "$firstline" | grep -qiE '^#{1,4}[[:space:]]*Bug\b'; then
+          label="Bug"
+        elif [[ "$ISSUE_TYPE" == "Feature" ]] || printf '%s' "$firstline" | grep -qiE '^#{1,4}[[:space:]]*Feature[[:space:]]+Request\b'; then
+          label="Feature request"
+        fi
+
+        if [[ -z "$label" ]]; then
+          echo "Issue #$ISSUE_NUMBER: no type and no known heading found (type='$ISSUE_TYPE'). Nothing to do."
+          exit 0
+        fi
+
+        echo "Add label '$label' on issue #$ISSUE_NUMBER (type='$ISSUE_TYPE')"
+        gh issue edit "$ISSUE_NUMBER" --add-label "$label"
