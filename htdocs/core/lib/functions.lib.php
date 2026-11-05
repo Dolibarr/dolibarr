@@ -1826,11 +1826,11 @@ function dol_getThemeFilePath($file, $theme = '')
 /**
  * Return path of url.
  *
- * @param	string							$url				Relative path to file
- * @param	array<string,int|float|string>	$params     		params for the http query
- * @param	bool							$addtoken			does we need to add token
+ * @param	string							$url				Relative path to file (Ex: DOL_URL_ROOT.'/mydir/mypage.php')
+ * @param	array<string,int|float|string>	$params     		Params for the http query
+ * @param	bool							$addtoken			Does we need to add token
  * @param	string							$anchor				Add an anchor #xxx at end of URL
- * @return string												path
+ * @return string												Url
  */
 function dolBuildUrl($url, $params = [], $addtoken = false, $anchor = '')
 {
@@ -1845,6 +1845,10 @@ function dolBuildUrl($url, $params = [], $addtoken = false, $anchor = '')
 	}
 	if ((!isset($params['leftmenu'])/*  || empty($params['leftmenu']) */) && GETPOSTISSET('leftmenu')) { // do not fill leftmenu if we have leftmenu=
 		$params = array_merge($params, ['leftmenu' => (GETPOST('leftmenu', 'restricthtml'))]);
+	}
+	// Keep the popup context (page shown inside a dialog popup iframe) when navigating to another page
+	if (!isset($params['dol_openinpopup']) && GETPOST('dol_openinpopup', 'aZ09')) {
+		$params = array_merge($params, ['dol_openinpopup' => GETPOST('dol_openinpopup', 'aZ09')]);
 	}
 	$parameters = [
 		'path' => &$url,

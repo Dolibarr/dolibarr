@@ -429,9 +429,7 @@ if ($result) {
 			print '<tr><td class="tdtop">'.$langs->trans("Links").'</td>';
 			print '<td>';
 			foreach ($links as $key => $val) {
-				if ($key) {
-					print '<br>';
-				}
+				print '<div class="paddingbottom">';
 				if ($links[$key]['type'] == 'payment') {
 					require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 					$paymenttmp = new Paiement($db);
@@ -535,6 +533,7 @@ if ($result) {
 					print $links[$key]['label'];
 					print '</a>';
 				}
+				print '</div>';
 			}
 			print '</td></tr>';
 		}
