@@ -334,7 +334,7 @@ class GlobalSearch
 						$staticobject->statut = $obj->status_status;	// For classes still using the old property
 					}
 				}
-				$status = $staticobject->getLibStatut(5);
+				$status = (string) call_user_func(array($staticobject, 'getLibStatut'), 5);	// The class comes from the definition, method_exists() checked above
 			}
 
 			$found[] = array(
