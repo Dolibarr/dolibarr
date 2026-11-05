@@ -122,6 +122,7 @@ class Categories extends DolibarrApi
 	 *
 	 * @since	5.0.0	Initial implementation
 	 * @since	19.0.0	Added properties parameter
+	 * @since	25.0.0	Added pagination_data parameter
 	 *
 	 * @param string	$sortfield	Sort field
 	 * @param string	$sortorder	Sort order
@@ -130,13 +131,14 @@ class Categories extends DolibarrApi
 	 * @param string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact', 'actioncomm')
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool		$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0
 	 * @return array                Array of category objects
-	 * @phan-return Categorie[]
-	 * @phpstan-return Categorie[]
+	 * @phan-return Categorie[]|array{data:Categorie[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return Categorie[]|array{data:Categorie[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
 		$obj_ret = array();
 
@@ -165,6 +167,9 @@ class Categories extends DolibarrApi
 			}
 		}
 
+		//this query will return total categories with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0) {
@@ -190,6 +195,26 @@ class Categories extends DolibarrApi
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieve category list : '.$this->db->lasterror());
+		}
+
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			if (!$totalsResult) {
+				throw new RestException(503, 'Error when retrieve category list total : '.$this->db->lasterror());
+			}
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
+				'limit' => $limit
+			];
 		}
 
 		return $obj_ret;

@@ -187,6 +187,8 @@ class AllTests
 		$suite->addTestSuite('AiMcpApiBridgeDocumentsTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeProjectsTest.php';
 		$suite->addTestSuite('AiMcpApiBridgeProjectsTest');
+		require_once dirname(__FILE__).'/ApiExplorerAccessControlTest.php';
+		$suite->addTestSuite('ApiExplorerAccessControlTest');
 		require_once dirname(__FILE__).'/ApiListStatusFilterTest.php';
 		$suite->addTestSuite('ApiListStatusFilterTest');
 		require_once dirname(__FILE__).'/ApiSupplierOrderHeaderUpdateTest.php';
@@ -457,6 +459,8 @@ class AllTests
 			// Rest
 			require_once dirname(__FILE__).'/RestAPIUserTest.php';
 			$suite->addTestSuite('RestAPIUserTest');
+			require_once dirname(__FILE__).'/RestAPIAgendaEventsPutTest.php';
+			$suite->addTestSuite('RestAPIAgendaEventsPutTest');
 			require_once dirname(__FILE__).'/RestAPIContactTest.php';
 			$suite->addTestSuite('RestAPIContactTest');
 			require_once dirname(__FILE__).'/RestAPIDocumentTest.php';
@@ -469,8 +473,12 @@ class AllTests
 			$suite->addTestSuite('RestAPIBankAccountsTest');
 			require_once dirname(__FILE__).'/RestAPISupplierOrderTest.php';
 			$suite->addTestSuite('RestAPISupplierOrderTest');
+			require_once dirname(__FILE__).'/RestAPISupplierInvoiceTest.php';
+			$suite->addTestSuite('RestAPISupplierInvoiceTest');
 			require_once dirname(__FILE__).'/RestAPICategoriesTest.php';
 			$suite->addTestSuite('RestAPICategoriesTest');
+			require_once dirname(__FILE__).'/RestAPIAgendaEventsTest.php';
+			$suite->addTestSuite('RestAPIAgendaEventsTest');
 
 			// Old WS
 			require_once dirname(__FILE__).'/WebservicesProductsTest.php';

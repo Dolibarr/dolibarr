@@ -51,6 +51,15 @@ $driver = GETPOST('driver', 'alpha');
 
 if (!empty($driver)) {
 	$langs->load($driver);
+	// A driver provided by an external module has its translations in the langs/ directory of this module
+	if (!empty($conf->modules_parts['printing'])) {
+		foreach ($conf->modules_parts['printing'] as $modulename => $dir) {
+			if (file_exists(dol_buildpath($dir, 0).$driver.'.modules.php')) {
+				$langs->load($driver.'@'.$modulename, 0, 0, '', 0, 1);
+				break;
+			}
+		}
+	}
 }
 
 if (!$mode) {
