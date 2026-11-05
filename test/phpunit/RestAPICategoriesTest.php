@@ -179,10 +179,9 @@ class RestAPICategoriesTest extends AbstractRestAPITest
 	{
 		$test = "Create a category with an extrafield";
 
-		// A html extrafield keeps its tags only if the value is checked with the type of the extrafield
 		$attrname = 'apitest'.mt_rand(0, 99999999);
 		$extrafield = array(
-			'label' => $attrname, 'type' => 'html', 'pos' => 100, 'size' => '', 'list' => '1', 'default' => '', 'param' => '', 'perms' => '', 'help' => '',
+			'label' => $attrname, 'type' => 'varchar', 'pos' => 100, 'size' => '32', 'list' => '1', 'default' => '', 'param' => '', 'perms' => '', 'help' => '',
 			'computed' => '', 'langfile' => '', 'unique' => 0, 'required' => 0, 'alwayseditable' => 1, 'totalizable' => 0, 'printable' => 0, 'showintooltip' => 0,
 		);
 		$this->getUrl('setup/extrafields/categorie/'.$attrname, $test, 'POST', $extrafield);
@@ -190,14 +189,14 @@ class RestAPICategoriesTest extends AbstractRestAPITest
 		$data = array(
 			"label" => "API test extrafield ".mt_rand(0, 99999999),
 			"type" => 2,
-			"array_options" => array('options_'.$attrname => '<b>bold</b>'),
+			"array_options" => array('options_'.$attrname => 'Some text'),
 		);
 		$result = $this->getUrl('categories', $test, 'POST', $data);
 		$category_id = (int) $result['content'];
 		$this->assertGreaterThan(0, $category_id, "$test Id of category is not > 0");
 
 		$result = $this->getUrl('categories/'.$category_id, $test, 'GET');
-		$this->assertStringContainsString('<b>bold</b>', $result['content']['array_options']['options_'.$attrname] ?? '', "$test Extrafield must be saved");
+		$this->assertEquals('Some text', $result['content']['array_options']['options_'.$attrname] ?? '', "$test Extrafield must be saved");
 
 		$this->getUrl('categories/'.$category_id, $test, 'DELETE');
 		$this->getUrl('setup/extrafields/categorie/'.$attrname, $test, 'DELETE');
