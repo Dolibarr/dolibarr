@@ -10015,6 +10015,14 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 					if (!empty($reg[1])) {
 						$operator = $reg[1];
 					}
+					// Normalize operator to a valid SQL operator ('!' or '!=' means "different of")
+					$operatormap = array('!' => '<>', '!=' => '<>', '=!' => '<>', '==' => '=', '=<' => '<=', '=>' => '>=');
+					if (isset($operatormap[$operator])) {
+						$operator = $operatormap[$operator];
+					}
+					if (!in_array($operator, array('=', '<', '>', '<=', '>=', '<>'))) {
+						$operator = '=';
+					}
 					if ($newcrit != '') {
 						$numnewcrit = price2num($newcrit);
 						if (is_numeric($numnewcrit)) {
@@ -10097,7 +10105,10 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 					}
 					$tmpcrit = trim($tmpcrit);
 
-					if ($tmpcrit == '^$' || strpos($crit, '!') === 0) {	// If we search empty, we must combined different OR fields with AND
+					// A leading '!' is an exclude character, except if criteria contains only '!' (we search the '!' string itself)
+					$isexclude = (preg_match('/^!/', $tmpcrit) && !preg_match('/^!+$/', $tmpcrit));
+
+					if ($tmpcrit == '^$' || (strpos($crit, '!') === 0 && !preg_match('/^!+$/', $crit))) {	// If we search empty, we must combined different OR fields with AND
 						$newres .= (($i2 > 0 || $i3 > 0) ? ' AND ' : '');
 					} else {
 						$newres .= (($i2 > 0 || $i3 > 0) ? ' OR ' : '');
@@ -10130,7 +10141,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 						if ($isSellist && $key && $table && $label) {
 							$newres .= $field . " IN (SELECT t." . $db->sanitize((string) $key) . " FROM " . $db->prefix() . $db->sanitize((string) $table) . " AS t WHERE t." . $db->sanitize((string) $label) . " LIKE '%" . $db->escape($tmpcrit2) . "%')";
 						} else {
-							if (preg_match('/^!/', $tmpcrit)) {
+							if ($isexclude) {
 								$tmps .= $db->sanitize($field) . " NOT LIKE "; // ! as exclude character
 								$tmpcrit2 = preg_replace('/^!/', '', $tmpcrit2);
 							} else {
@@ -10147,7 +10158,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 								$tmpcrit2 = preg_replace('/[\^\$]$/', '', $tmpcrit2);
 							}
 
-							if ($tmpcrit2 == '' || preg_match('/^!/', $tmpcrit)) {
+							if ($tmpcrit2 == '' || $isexclude) {
 								$tmps = "(" . $tmps;
 							}
 							$newres .= $tmps;
@@ -10155,7 +10166,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 							$newres .= $db->escape($tmpcrit2);
 							$newres .= $tmpafter;
 							$newres .= "'";
-							if ($tmpcrit2 == '' || preg_match('/^!/', $tmpcrit)) {
+							if ($tmpcrit2 == '' || $isexclude) {
 								$newres .= " OR " . $db->sanitize($field) . " IS NULL)";
 							}
 						}
