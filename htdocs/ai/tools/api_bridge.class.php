@@ -1618,13 +1618,29 @@ class ToolApiBridge extends McpTool
 			'methods' => array(
 				'index' => array(
 					'description' => "Social and fiscal charges to pay: label, type, period, amount, paye (1 paid). Unpaid ones: sqlfilters \"(t.paye:=:0)\".",
-					'params' => array('pagination_data' => $pagination)
+					'params' => array('pagination_data' => $pagination),
+					'right' => array('tax', 'charges', 'lire')
 				),
-				'get' => array('description' => "One social or fiscal charge."),
+				'get' => array(
+					'description' => "One social or fiscal charge.",
+					'right' => array('tax', 'charges', 'lire')
+				),
 				'getPayments' => array(
 					'suffix' => 'payments_list',
 					'description' => "Payments made on one social or fiscal charge.",
-					'params' => array('id' => "Rowid of the charge.")
+					'params' => array('id' => "Rowid of the charge."),
+					'right' => array('tax', 'charges', 'lire')
+				),
+				'getAllPayments' => array(
+					'suffix' => 'all_payments',
+					'description' => "All payments made on social or fiscal charges, across every charge: payment date, amount, payment reference and the charge each settles.",
+					'right' => array('tax', 'charges', 'lire')
+				),
+				'getPayment' => array(
+					'suffix' => 'payment_get',
+					'description' => "One payment of a social or fiscal charge, by its payment rowid.",
+					'params' => array('pid' => "Rowid of the payment."),
+					'right' => array('tax', 'charges', 'lire')
 				)
 			)
 		);
@@ -1634,13 +1650,29 @@ class ToolApiBridge extends McpTool
 			'methods' => array(
 				'index' => array(
 					'description' => "VAT to pay or refund per period: label, period end (datev), amount, paye (1 paid).",
-					'params' => array('pagination_data' => $pagination)
+					'params' => array('pagination_data' => $pagination),
+					'right' => array('tax', 'charges', 'lire')
 				),
-				'get' => array('description' => "One VAT declaration."),
+				'get' => array(
+					'description' => "One VAT declaration.",
+					'right' => array('tax', 'charges', 'lire')
+				),
 				'getPayments' => array(
 					'suffix' => 'payments_list',
 					'description' => "Payments made on one VAT declaration.",
-					'params' => array('id' => "Rowid of the VAT declaration.")
+					'params' => array('id' => "Rowid of the VAT declaration."),
+					'right' => array('tax', 'charges', 'lire')
+				),
+				'getAllPayments' => array(
+					'suffix' => 'all_payments',
+					'description' => "All payments made on VAT declarations, across every declaration: payment date, amount, payment reference and the declaration each settles.",
+					'right' => array('tax', 'charges', 'lire')
+				),
+				'getPayment' => array(
+					'suffix' => 'payment_get',
+					'description' => "One payment of a VAT declaration, by its payment rowid.",
+					'params' => array('pid' => "Rowid of the payment."),
+					'right' => array('tax', 'charges', 'lire')
 				)
 			)
 		);
