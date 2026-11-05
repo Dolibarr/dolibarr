@@ -81,7 +81,7 @@ $mode = GETPOST("mode", 'alpha');
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_cti = preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml'))); // Phone number without any special chars
 
-$search_id = GETPOST("search_id", 'int');
+$search_id = trim(GETPOST("search_id", 'alpha'));	// Can contains a numeric test like ">10" or "!= 34"
 $search_nom = trim(GETPOST("search_nom", 'restricthtml'));
 $search_alias = trim(GETPOST("search_alias", 'restricthtml'));
 $search_nom_only = trim(GETPOST("search_nom_only", 'restricthtml'));
@@ -726,7 +726,7 @@ if ($search_all) {
 if (strlen($search_cti)) {
 	$sql .= natural_search('s.phone', $search_cti);
 }
-if ($search_id > 0) {
+if ($search_id != '') {
 	$sql .= natural_search("s.rowid", $search_id, 1);
 }
 if (empty($arrayfields['s.name_alias']['checked']) && $search_nom) {
@@ -1009,8 +1009,8 @@ if (is_array($search_sale)) {
 		$param .= '&search_sale[]=' . urlencode($sale_id);
 	}
 }
-if ($search_id > 0) {
-	$param .= "&search_id=".((int) $search_id);
+if ($search_id != '') {
+	$param .= "&search_id=".urlencode($search_id);
 }
 if ($search_nom != '') {
 	$param .= "&search_nom=".urlencode($search_nom);
@@ -1385,8 +1385,8 @@ if ($conf->main_checkbox_left_column) {
 	print '</td>';
 }
 if (!empty($arrayfields['s.rowid']['checked'])) {
-	print '<td class="liste_titre" data-key="id">';
-	print '<input class="flat searchstring" type="text" name="search_id" size="1" value="'.dol_escape_htmltag($search_id).'">';
+	print '<td class="liste_titre center" data-key="id">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
@@ -1695,7 +1695,7 @@ if ($conf->main_checkbox_left_column) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.rowid']['checked'])) {
-	print_liste_field_titre($arrayfields['s.rowid']['label'], $_SERVER["PHP_SELF"], "s.rowid", "", $param, ' data-key="id"', $sortfield, $sortorder, '');
+	print_liste_field_titre($arrayfields['s.rowid']['label'], $_SERVER["PHP_SELF"], "s.rowid", "", $param, ' data-key="id"', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
@@ -1978,7 +1978,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		if (!empty($arrayfields['s.rowid']['checked'])) {
-			print '<td class="tdoverflowmax50" data-key="id">';
+			print '<td class="center tdoverflowmax50" data-key="id">';
 			print dol_escape_htmltag($obj->rowid);
 			print "</td>\n";
 			if (!$i) {

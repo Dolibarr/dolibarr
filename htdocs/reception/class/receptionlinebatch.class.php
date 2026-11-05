@@ -490,7 +490,8 @@ class ReceptionLineBatch extends CommonObjectLine
 		$sql .= " t.fk_unit,";
 		$sql .= " t.description,";
 		$sql .= " t.rang,";
-		$sql .= " t.fk_reception";
+		$sql .= " t.fk_reception,";
+		$sql .= " t.extraparams";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		if ($ref) {
 			$sql .= " WHERE t.ref = '".$this->db->escape($ref)."'";
@@ -529,6 +530,7 @@ class ReceptionLineBatch extends CommonObjectLine
 				$this->fk_unit = $obj->fk_unit;
 				$this->rang = $obj->rang;
 				$this->fk_reception = $obj->fk_reception;
+				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				$this->fetch_optionals();
 			}
