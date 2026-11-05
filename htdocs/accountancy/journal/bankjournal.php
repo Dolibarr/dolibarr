@@ -577,6 +577,22 @@ if ($result) {
 					$tabpay[$obj->rowid]["lib"] .= ' '.$paymentdonstatic->getNomUrl(2);
 					$tabpay[$obj->rowid]["paymentdonationid"] = $paymentdonstatic->id;
 					$tabtp[$obj->rowid][$account_pay_donation] = isset($tabtp[$obj->rowid][$account_pay_donation]) ? $tabtp[$obj->rowid][$account_pay_donation] + $amounttouse : $amounttouse;
+
+					// Retrieve the donor of the donation of the payment, as in the list of bank entries
+					$tmppaymentdonation = new PaymentDonation($db);
+					if ($tmppaymentdonation->fetch($paymentdonstatic->id) > 0) {
+						$tmpdonation = new Don($db);
+						if ($tmpdonation->fetch($tmppaymentdonation->fk_donation) > 0) {
+							if ($tmpdonation->socid > 0 && $tmpdonation->fetch_thirdparty() > 0) {
+								$tabpay[$obj->rowid]["soclib"] = $tmpdonation->thirdparty->getNomUrl(1, '', 30);
+							} else {
+								$donorname = (!empty($tmpdonation->societe) ? $tmpdonation->societe : $tmpdonation->getFullName($langs));
+								if ($donorname) {
+									$tabpay[$obj->rowid]["soclib"] = dolPrintLabel($donorname);
+								}
+							}
+						}
+					}
 				} elseif ($links[$key]['type'] == 'member') {
 					$paymentsubscriptionstatic->id = $links[$key]['url_id'];
 					$paymentsubscriptionstatic->ref = (string) $links[$key]['url_id'];
