@@ -1143,7 +1143,7 @@ class Contrat extends CommonObject
 
 			// Insert business contacts ('SALESREPSIGN','contrat')
 			if (!$error && $this->commercial_signature_id > 0) {
-				$result = $this->add_contact($this->commercial_signature_id, 'SALESREPSIGN', 'internal');
+				$result = $this->add_contact((int) $this->commercial_signature_id, 'SALESREPSIGN', 'internal');
 				if ($result < 0) {
 					$error++;
 				}
@@ -1151,7 +1151,7 @@ class Contrat extends CommonObject
 
 			// Insert business contacts ('SALESREPFOLL','contrat')
 			if (!$error && $this->commercial_suivi_id > 0) {
-				$result = $this->add_contact($this->commercial_suivi_id, 'SALESREPFOLL', 'internal');
+				$result = $this->add_contact((int) $this->commercial_suivi_id, 'SALESREPFOLL', 'internal');
 				if ($result < 0) {
 					$error++;
 				}
