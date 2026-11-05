@@ -1489,7 +1489,7 @@ if ($resql) {
 	}
 	// Technical ID
 	if (!empty($arrayfields['cf.rowid']['checked'])) {
-		print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_id" value="'.dol_escape_htmltag($search_id).'"></td>';
+		print '<td class="liste_titre center"><input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'"></td>';
 	}
 	// Ref
 	if (!empty($arrayfields['cf.ref']['checked'])) {

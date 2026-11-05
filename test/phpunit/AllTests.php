@@ -278,6 +278,8 @@ class AllTests
 		$suite->addTestSuite('PgsqlTest');
 		require_once dirname(__FILE__).'/PdfDocTest.php';
 		$suite->addTestSuite('PdfDocTest');
+		require_once dirname(__FILE__).'/PdfFiltersTest.php';
+		$suite->addTestSuite('PdfFiltersTest');
 		require_once dirname(__FILE__).'/BuildDocTest.php';
 		$suite->addTestSuite('BuildDocTest');
 		require_once dirname(__FILE__).'/CDavLibTest.php';
