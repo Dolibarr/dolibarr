@@ -196,14 +196,15 @@ if ($resql) {
 		print '<div class="div-table-responsive">';
 		print '<table class="tagtable liste">'."\n";
 
-		// Fields title
+		// Fields title. Not sortable: the lines must stay in the order of the SQL request (by date, then rowid), which
+		// checkSignature() needs for the previous hash of each line, and a sort link lost the id of the cash control.
 		print '<tr class="liste_titre">';
-		print_liste_field_titre($arrayfields['b.rowid']['label'], $_SERVER['PHP_SELF'], 'b.rowid', '', $param, '', $sortfield, $sortorder);
-		print_liste_field_titre($arrayfields['b.dateo']['label'], $_SERVER['PHP_SELF'], 'b.dateo', '', $param, '"', $sortfield, $sortorder, 'center ');
-		print_liste_field_titre($arrayfields['ba.ref']['label'], $_SERVER['PHP_SELF'], 'ba.ref', '', $param, '', $sortfield, $sortorder, '');
-		print_liste_field_titre($arrayfields['cp.code']['label'], $_SERVER['PHP_SELF'], 'cp.code', '', $param, '', $sortfield, $sortorder, 'right ');
-		print_liste_field_titre($arrayfields['b.debit']['label'], $_SERVER['PHP_SELF'], 'b.amount', '', $param, '', $sortfield, $sortorder, 'right ');
-		print_liste_field_titre($arrayfields['b.credit']['label'], $_SERVER['PHP_SELF'], 'b.amount', '', $param, '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre($arrayfields['b.rowid']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['b.dateo']['label'], $_SERVER['PHP_SELF'], '', '', $param, '"', $sortfield, $sortorder, 'center ');
+		print_liste_field_titre($arrayfields['ba.ref']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, '');
+		print_liste_field_titre($arrayfields['cp.code']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre($arrayfields['b.debit']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre($arrayfields['b.credit']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'right ');
 		print "</tr>\n";
 	}
 
