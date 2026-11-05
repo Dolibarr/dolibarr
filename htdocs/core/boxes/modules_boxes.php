@@ -246,6 +246,24 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	}
 
 	/**
+	 * Return the HTML of the message shown in the title line of a box that has no line to show
+	 *
+	 * @return	string		HTML with the msgNoRecords label and the link to urltoaddentry if defined
+	 */
+	public function getEmptyBoxMessage()
+	{
+		global $langs;
+
+		$out = '<div class="boxemptymsg"><span class="opacitymedium">'.$langs->trans($this->msgNoRecords).'</span>';
+		if (!empty($this->urltoaddentry)) {
+			$out .= '<a href="'.$this->urltoaddentry.'">'.img_picto($langs->trans("New"), 'add', 'class="marginleftonly"').'</a>';
+		}
+		$out .= '</div>';
+
+		return $out;
+	}
+
+	/**
 	 * Standard method to show a box (usage by boxes not mandatory, a box can still use its own showBox function)
 	 *
 	 * @param   ?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
@@ -288,7 +306,9 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 
 			$out .= "\n<!-- Box ".get_class($this)." start -->\n";
 
-			$out .= '<div class="box divboxtable boxdraggable" id="boxto_'.$this->box_id.'">'."\n";
+			$hashead = (!empty($head['text']) || !empty($head['sublink']) || !empty($head['subpicto']));
+
+			$out .= '<div class="box divboxtable boxdraggable'.(($hashead && !$nblines) ? ' boxempty' : '').'" id="boxto_'.$this->box_id.'">'."\n";
 			if (!empty($head['text']) || !empty($head['sublink']) || !empty($head['subpicto']) || $nblines) {
 				$out .= '<table summary="boxtable'.$this->box_id.'" class="noborder boxtable centpercent">'."\n";
 			}
@@ -343,6 +363,10 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 					}
 					$out .= '<input type="hidden" id="boxlabelentry'.$this->box_id.'" value="'.dolPrintHTMLForAttribute($label).'">';
 					$out .= '</div>';
+				}
+
+				if (!$nblines) {
+					$out .= $this->getEmptyBoxMessage();
 				}
 
 				$out .= "</th>";
@@ -436,17 +460,6 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 
 						$out .= "</tr>\n";
 					}
-				}
-			} else {
-				if (!empty($head['text']) || !empty($head['sublink']) || !empty($head['subpicto']) || $nblines) {
-					$out .= '<tr><td colspan="2" class="center"><span class="opacitymedium">'.$langs->trans($this->msgNoRecords).' </span>';
-
-					// Check if $urltoaddentry is defined for the widget
-					if (!empty($this->urltoaddentry)) {
-						$out .= '<a href="'.$this->urltoaddentry.'">'.img_picto($langs->trans("New"), 'add', 'pictofixedwidth').'</a>';
-					}
-
-					$out .= '</td></tr>';
 				}
 			}
 
