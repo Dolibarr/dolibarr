@@ -2394,7 +2394,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		}
 
 		// ID
-		$out .= '<td class="liste_titre"><input type="text" class="width50" name="search_rowid" value="' . (isset($filters['search_rowid']) ? $filters['search_rowid'] : '') . '"></td>';
+		$out .= '<td class="liste_titre"><input class="searchstring width50" type="text" name="search_rowid" value="' . (isset($filters['search_rowid']) ? dolPrintLabelForAttribute($filters['search_rowid']) : '') . '"></td>';
 		// Date
 		$out .= '<td class="liste_titre center">';
 		$out .= $form->selectDateToDate($tms_start, $tms_end, 'dateevent', 1);
