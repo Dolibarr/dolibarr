@@ -79,7 +79,7 @@ $num = 0;
 $error = 0;
 
 // Load translation files
-$langs->loadLangs(array("main", "members", "companies", "install", "other", "errors"));
+$langs->loadLangs(array("main", "members", "companies", "install", "other"));
 
 // Security check
 if (!isModEnabled('societe')) {
@@ -186,9 +186,11 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 	// Check Captcha code if is enabled
 	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_THIRDPARTY')) {
 		$sessionkey = 'dol_antispam_value';
-		$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
+		$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) === strtolower(GETPOST('code'))));
+		unset($_SESSION[$sessionkey]);	// A code can be used only once. The page shows a new image, so a new code is set.
 		if (!$ok) {
 			$error++;
+			$langs->load('errors');
 			$errmsg .= $langs->trans("ErrorBadValueForCode") . "<br>\n";
 			$action = '';
 		}

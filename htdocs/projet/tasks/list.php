@@ -62,6 +62,7 @@ $search_categ = GETPOST("search_categ", 'intcomma');
 $search_projectstatus = GETPOST('search_projectstatus', 'intcomma');
 $search_project_ref = GETPOST('search_project_ref');
 $search_project_title = GETPOST('search_project_title');
+$search_id = GETPOST('search_id', 'alpha');
 $search_task_ref = GETPOST('search_task_ref');
 $search_task_label = GETPOST('search_task_label');
 $search_task_description = GETPOST('search_task_description');
@@ -165,6 +166,7 @@ if (empty($user->socid)) {
 }
 
 $arrayfields = array(
+	't.rowid' => array('label' => "TechnicalID", 'checked' => (getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? '1' : '-1'), 'enabled' => '1', 'position' => 1),
 	't.ref' => array('label' => "RefTask", 'checked' => '1', 'position' => 50),
 	't.fk_task_parent' => array('label' => "RefTaskParent", 'checked' => '0', 'position' => 70),
 	't.label' => array('label' => "LabelTask", 'checked' => '1', 'position' => 75),
@@ -238,6 +240,7 @@ if (empty($reshook)) {
 		$search_societe = "";
 		$search_societe_alias = "";
 		$search_project_title = "";
+		$search_id = '';
 		$search_task_ref = "";
 		$search_task_label = "";
 		$search_task_description = "";
@@ -413,6 +416,9 @@ if ($search_project_ref) {
 }
 if ($search_project_title) {
 	$sql .= natural_search('p.title', $search_project_title);
+}
+if ($search_id != '') {
+	$sql .= natural_search('t.rowid', $search_id, 1);
 }
 if ($search_task_ref) {
 	$sql .= natural_search('t.ref', $search_task_ref);
@@ -679,6 +685,9 @@ if ($search_project_ref != '') {
 if ($search_project_title != '') {
 	$param .= '&search_project_title='.urlencode($search_project_title);
 }
+if ($search_id != '') {
+	$param .= '&search_id='.urlencode($search_id);
+}
 if ($search_task_ref != '') {
 	$param .= '&search_task_ref='.urlencode($search_task_ref);
 }
@@ -863,6 +872,11 @@ if ($conf->main_checkbox_left_column) {
 	print $searchpicto;
 	print '</td>';
 }
+if (!empty($arrayfields['t.rowid']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat maxwidth50" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
+	print '</td>';
+}
 if (!empty($arrayfields['t.ref']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'" class="width75">';
@@ -1033,6 +1047,10 @@ if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['t.rowid']['checked'])) {
+	print_liste_field_titre($arrayfields['t.rowid']['label'], $_SERVER["PHP_SELF"], 't.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['t.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['t.ref']['label'], $_SERVER["PHP_SELF"], "t.ref", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
@@ -1182,6 +1200,7 @@ while ($i < $imaxinloop) {
 	$projectstatic->title = $obj->projecttitle;
 	$projectstatic->public = $obj->public;
 	$projectstatic->statut = $obj->projectstatus;
+	$projectstatic->status = $obj->projectstatus;
 	$projectstatic->datee = $db->jdate($obj->projectdatee);
 
 	if ($obj->socid) {
@@ -1233,6 +1252,13 @@ while ($i < $imaxinloop) {
 					$totalarray['nbfield']++;
 				}
 			}
+			// Technical ID
+			if (!empty($arrayfields['t.rowid']['checked'])) {
+				print '<td class="center" data-key="id">'.((int) $object->id).'</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
 			// Ref
 			if (!empty($arrayfields['t.ref']['checked'])) {
 				print '<td class="nowraponall">';
@@ -1268,7 +1294,7 @@ while ($i < $imaxinloop) {
 			// Label
 			if (!empty($arrayfields['t.label']['checked'])) {
 				print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($object->label).'">';
-				print dol_escape_htmltag($object->label);
+				print '<span class="spantitle">'.dol_escape_htmltag($object->label).'</span>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1352,7 +1378,7 @@ while ($i < $imaxinloop) {
 			// Project status
 			if (!empty($arrayfields['p.fk_statut']['checked'])) {
 				print '<td class="center">';
-				print $projectstatic->getLibStatut(1);
+				print $projectstatic->getLibStatut(5);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

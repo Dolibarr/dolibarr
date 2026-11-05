@@ -133,7 +133,7 @@ class mod_recruitmentjobposition_advanced extends ModeleNumRefRecruitmentJobPosi
 			return 0;
 		}
 
-		$date = $object->date ?? '';
+		$date = $object->date_creation;
 
 		$numFinal = get_next_value($db, $mask, 'recruitment_recruitmentjobposition', 'ref', '', '', $date);
 

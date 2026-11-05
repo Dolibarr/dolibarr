@@ -37,6 +37,12 @@ class mod_contract_magre extends ModelNumRefContracts
 	public $error = '';
 
 	/**
+	 * @var int		Position
+	 */
+	public $position = 30;
+
+
+	/**
 	 *	Constructor
 	 */
 	public function __construct()

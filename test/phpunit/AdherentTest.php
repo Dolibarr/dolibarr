@@ -29,10 +29,9 @@
 global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/adherents/class/adherent.class.php';
 require_once dirname(__FILE__).'/../../htdocs/adherents/class/adherent_type.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -155,6 +154,9 @@ class AdherentTest extends CommonClassTest
 		$localobject = new Adherent($db);
 		$result = $localobject->fetch($id);
 		print __METHOD__." id=".$id." result=".$result."\n";
+		if ($result < 0) {
+			print $localobject->error."\n";
+		}
 		$this->assertLessThan($result, 0);
 		$this->assertEquals('MR', $localobject->civility_code);		// Value set by initAsSpecimen() and stored by create()
 		return $localobject;

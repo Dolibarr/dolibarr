@@ -69,23 +69,14 @@ class box_fediverse extends ModeleBoxes
 
 		$this->max = $max;
 
-		// Get Fediverse feed URL
-		$sql = '';
-		if (!empty($this->paramdef)) {
-			$sql = "SELECT value FROM ".MAIN_DB_PREFIX."const";
-			$sql .= " WHERE name LIKE '%SOCIAL_NETWORKS_DATA_".$this->db->escape($this->paramdef)."%'";
-		}
-		$resql = $this->db->query($sql);
-		$num = $this->db->num_rows($resql);
-
+		// Get Fediverse feed URL: setup SOCIAL_NETWORKS_DATA_<name of the network of this box> of the current entity
 		$socialNetworkTitle = '';
 		$socialNetworkUrl = '';
 		$authParams = [];
-		if ($num > 0) {
-			$obj = $this->db->fetch_row($resql);
-			$socialNetworkData = json_decode($obj[0], true);
-			$socialNetworkTitle = $socialNetworkData['title'];
-			$socialNetworkUrl = $socialNetworkData['url'];
+		$socialNetworkData = empty($this->paramdef) ? null : json_decode(getDolGlobalString('SOCIAL_NETWORKS_DATA_'.$this->paramdef), true);
+		if (is_array($socialNetworkData)) {
+			$socialNetworkTitle = $socialNetworkData['title'] ?? '';
+			$socialNetworkUrl = $socialNetworkData['url'] ?? '';
 
 			foreach ($socialNetworkData as $key => $value) {
 				if ($key !== 'title' && $key !== 'url') {
@@ -94,10 +85,10 @@ class box_fediverse extends ModeleBoxes
 			}
 		}
 
-		$fediverseParser = new SocialNetworkManager($socialNetworkTitle);
+		$fediverseParser = new SocialNetworkManager($socialNetworkTitle, $authParams);
 		$path_fediverse = DOL_DATA_ROOT.'/fediverse/temp/'.$socialNetworkTitle;
 
-		$result = $fediverseParser->fetchPosts($socialNetworkUrl, $this->max, $cachedelay, $path_fediverse);
+		$result = $fediverseParser->fetchPosts($socialNetworkUrl, $this->max, $cachedelay, $path_fediverse, $authParams);
 
 		$title = $langs->trans("BoxTitleLastFediverseInfos", $max, dol_escape_htmltag($socialNetworkTitle));
 		if ($result < 0 || !empty($fediverseParser->error)) {

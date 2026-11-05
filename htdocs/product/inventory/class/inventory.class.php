@@ -116,6 +116,7 @@ class Inventory extends CommonObject
 		'fk_user_modif'      => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 511, 'csslist' => 'tdoverflowmax150'),
 		'fk_user_valid'      => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'visible' => -2, 'enabled' => 1, 'position' => 512, 'csslist' => 'tdoverflowmax150'),
 		'import_key'         => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'index' => 0, 'position' => 1000),
+		'model_pdf'          => array('type' => 'varchar(255)', 'label' => 'PDFTemplate', 'enabled' => 1, 'visible' => 0, 'position' => 510),
 		'status'             => array('type' => 'integer', 'label' => 'Status', 'visible' => 4, 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'default' => '0', 'index' => 1, 'arrayofkeyval' => array(0 => 'Draft', 1 => 'Validated', 2 => 'Closed', 9 => 'Canceled'))
 	);
 
@@ -176,6 +177,11 @@ class Inventory extends CommonObject
 	 * @var string import key
 	 */
 	public $import_key;
+
+	/**
+	 * @var string	Name of the document template used to build the document of the inventory
+	 */
+	public $model_pdf;
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -307,6 +313,7 @@ class Inventory extends CommonObject
 			}
 			$sql .= ", ".$this->db->prefix()."product as p, ".$this->db->prefix()."entrepot as e";
 			$sql .= " WHERE p.entity IN (".getEntity('product').")";
+			$sql .= " AND e.entity IN (".getEntity('stock').")";
 			$sql .= " AND ps.fk_product = p.rowid AND ps.fk_entrepot = e.rowid";
 			if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 				$sql .= " AND p.fk_product_type = 0";
@@ -719,8 +726,6 @@ class Inventory extends CommonObject
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
-		global $conf, $langs;
-
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
@@ -732,13 +737,6 @@ class Inventory extends CommonObject
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-		}
-		if (property_exists($this, 'label')) {
-			$return .= ' <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">'.$this->label.'</div>';
-		}
-		if (property_exists($this, 'amount')) {
-			$return .= '<br>';
-			$return .= '<span class="info-box-label amount">'.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
 			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';

@@ -114,6 +114,7 @@ $MaxNumberSkill = getDolGlobalInt('HRM_MAXRANK', Skill::DEFAULT_MAX_RANK_PER_SKI
  */
 
 $parameters = array();
+/** @var int|Skill $result Set to the cloned object by actions_addupdatedelete.inc.php */
 $result = -1;
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -206,8 +207,8 @@ if (empty($reshook)) {
 	// Action to build doc
 	include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
 
-	/** @var int $result May be set by the includes above */
-	'@phan-var-force int $result';
+	/** @var int|Skill $result May be set by the includes above */
+	'@phan-var-force int|Skill $result';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
 		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', null, 'date', '', $user, $triggermodname);
@@ -226,9 +227,16 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
-		$id = $result->id;
-		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+	if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd && is_object($result)) {
+		'@phan-var-force Skill $result';
+		// createFromClone() names the copy "Copy of ...": apply the label typed in the clone dialog
+		$clonelabel = GETPOST('clone_label', 'alphanohtml');
+		if ($clonelabel !== '' && $clonelabel !== $result->label) {
+			if ($result->setValueFrom('label', $clonelabel, '', null, 'text', '', $user) < 0) {
+				setEventMessages($result->error, $result->errors, 'errors');
+			}
+		}
+		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$result->id);
 		exit;
 	}
 }
@@ -517,10 +525,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', $_SERVER["PHP_SELF"].'?action=clone&token='.newToken().'&id='.$object->id, '');
+				print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $_SERVER["PHP_SELF"].'?action=clone&token='.newToken().'&id='.$object->id, '', true, array('attr' => array('class' => 'reposition')));
 			}
 			// Delete (need delete permission, or if draft, just need create/modify permission)
-			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=delete&token=' . newToken(), '', $permissiontodelete);
+			print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=delete&token=' . newToken(), '', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 		}
 		print '</div>' . "\n";
 	}
@@ -664,7 +672,7 @@ if ($action != "create" && $action != "edit") {
 		print '<input type="hidden" name="id" value="' . $id . '">';
 	}
 
-	$param_fk = "&fk_skill=" . $id . "&fk_user_creat=" . (!empty($user->rowid) ? $user->rowid : 0);
+	$param_fk = "&fk_skill=" . $id . "&fk_user_creat=" . $user->id;
 	$backtopage = dol_buildpath('/hrm/skill_card.php', 1) . '?id=' . $id;
 	$param = "";
 	$massactionbutton = "";

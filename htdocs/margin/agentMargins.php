@@ -223,8 +223,7 @@ $sql .= $db->order($sortfield, $sortorder);
 //$sql.= $db->plimit($conf->liste_limit +1, $offset);
 
 
-print '<br>';
-print '<span class="opacitymedium">'.$langs->trans("MarginPerSaleRepresentativeWarning").'</span><br>';
+print '<div class="info">'.$langs->trans("MarginPerSaleRepresentativeWarning").'</div>';
 
 $param = '';
 if (!empty($agentid)) {

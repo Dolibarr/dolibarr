@@ -242,6 +242,14 @@ if (empty($reshook)) {
 	// Actions to build doc
 	include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
 
+	// The lines of a shipment can be modified or deleted only when it is a draft
+	if (in_array($action, array('editline', 'updateline', 'deleteline')) && (!$permissiontoadd || $object->status != Expedition::STATUS_DRAFT)) {
+		if ($object->status != Expedition::STATUS_DRAFT) {
+			setEventMessages($langs->trans("StatusOfRefMustBe", $object->ref, $langs->transnoentitiesnoconv("StatusSendingDraftShort")), null, 'errors');
+		}
+		$action = '';
+	}
+
 	// Back to draft
 	if ($action == 'setdraft' && $permissiontoadd) {
 		$object->fetch($id);
@@ -464,7 +472,7 @@ if (empty($reshook)) {
 
 							if ($is_batch_or_serial == 2 && $sub_qty[$j]['q'] > 0) {
 								// we stock the batch id to test later if the same serial is shipped on another line for the same product
-								$product_batch_used[$j] = $sub_qty[$j]['id_batch'];
+								$product_batch_used[] = $sub_qty[$j]['id_batch'];
 							}
 
 							$j++;
@@ -687,6 +695,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('expedition', 'supprimer')) {
 		$also_update_stock = (GETPOST('alsoUpdateStock', 'alpha') ? 1 : 0);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user, 0, (bool) $also_update_stock);
 		if ($result > 0) {
 			header("Location: " . DOL_URL_ROOT . '/expedition/index.php');
@@ -1218,13 +1227,14 @@ if (empty($reshook)) {
 		$fk_product = 0;
 		$fk_entrepot = isModEnabled('stock') ? max(0, GETPOSTINT('entrepot_id')) : 0;
 		$rang = '';
+		$freelines = getDolGlobalInt('SHIPMENTS_ALLOW_FREE_LINES') && !getDolGlobalString('MAIN_DISABLE_FREE_LINES');
 		$prod_entry_mode = GETPOST('prod_entry_mode', 'aZ09');
 		if ($prod_entry_mode == 'free') {
 			$idprod = 0;
 		} else {
 			$idprod = GETPOSTINT('idprod');
 		}
-		if ($idprod <= 0) {
+		if ($idprod <= 0 && (!$freelines || $prod_entry_mode != 'free')) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProductOrService")), null, 'errors');
 			$error++;
 		}
@@ -1240,7 +1250,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		if (GETPOST('qty', 'alpha') == '') {
+		if (GETPOST('qty'.$predef, 'alpha') === '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
 		}
@@ -1268,7 +1278,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!$error && $idprod > 0) {
+		if (!$error && ($idprod > 0 || ($freelines && $prod_entry_mode == 'free' && !empty($line_desc)))) {
 			// Clean parameters
 			if (!empty($idprod) && $idprod > 0) {
 				$prod = new Product($db);
@@ -1382,7 +1392,7 @@ if (empty($reshook)) {
 						unset($_POST["options_".$key]);
 					}
 				}
-				header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // To redisplay the form being edited
+				header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // To redisplay the card with an empty form
 				exit();
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -1551,6 +1561,12 @@ if ($action == 'create' && $usercancreate) {
 		}
 		print '</tr>'."\n";
 
+		// Ref customer
+		print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
+		print '<td colspan="3">';
+		print '<input type="text" name="ref_customer" value="'.dol_escape_htmltag(GETPOST('ref_customer', 'alpha')).'">';
+		print '</td></tr>'."\n";
+
 		// Project
 		if (isModEnabled('project') && is_object($formproject)) {
 			$projectid = GETPOSTINT('projectid');
@@ -1581,7 +1597,7 @@ if ($action == 'create' && $usercancreate) {
 		print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
 		print '<td colspan="3">';
 		print img_picto('', 'action', 'class="pictofixedwidth"');
-		$date_delivery = ($date_delivery ? $date_delivery : $object->delivery_date); // $date_delivery comes from GETPOST
+		$date_delivery = ($date_delivery ? $date_delivery : $object->date_delivery); // $date_delivery comes from GETPOST
 		print $form->selectDate($date_delivery ? $date_delivery : -1, 'date_delivery', 1, 1, 1);
 		print "</td>\n";
 		print '</tr>';
@@ -2728,13 +2744,21 @@ if ($action == 'create' && $usercancreate) {
 	// Confirm deletion
 	if ($action == 'delete') {
 		$formquestion = array();
-		if ($object->status == Expedition::STATUS_CLOSED && getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) {
+
+		$needquestiononstock = ((getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT') && $object->status == $object::STATUS_VALIDATED) ||
+			((getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT') || getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) && $object->status == $object::STATUS_CLOSED));
+
+		if ($needquestiononstock) {
 			$formquestion = array(
+				array(
+					'type' => 'onecolumn',
+					'value' => img_warning().' <strong>'.$langs->trans('WarningShipmentDeleteStockMovement').'</strong>',
+				),
 				array(
 					'label' => $langs->trans('ShipmentIncrementStockOnDelete'),
 					'name' => 'alsoUpdateStock',
 					'type' => 'checkbox',
-					'value' => 0
+					'value' => getDolGlobalInt('SHIPMENT_AUTO_CHECK_TO_INCREASE_STOCK_ON_SHIPMENT_DELETION')
 				),
 			);
 		}
@@ -2745,7 +2769,8 @@ if ($action == 'create' && $usercancreate) {
 			'confirm_delete',
 			$formquestion,
 			0,
-			1
+			1,
+			'auto'
 		);
 	}
 
@@ -2877,7 +2902,7 @@ if ($action == 'create' && $usercancreate) {
 			} else {
 				if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
 					$proj = new Project($db);
-					$proj->fetch($objectsrc->fk_project);
+					$proj->fetch((int) $objectsrc->fk_project);
 					$morehtmlref .= $proj->getNomUrl(1);
 					if ($proj->title) {
 						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
@@ -3176,9 +3201,10 @@ if ($action == 'create' && $usercancreate) {
 			// Show object lines
 			$result = $object->getLinesArray();
 
-			print '	<form name="updateline" id="updateline" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '' : '#line_'.GETPOSTINT('lineid')).'" method="POST">
+			$lineform = ($action == 'editline') ? 'updateline' : 'addproduct';
+			print '	<form name="'.$lineform.'" id="'.$lineform.'" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '' : '#line_'.GETPOSTINT('lineid')).'" method="POST">
 			<input type="hidden" name="token" value="' . newToken().'">
-			<input type="hidden" name="action" value="updateline">
+			<input type="hidden" name="action" value="'.(($action == 'editline') ? 'updateline' : 'addline').'">
 			<input type="hidden" name="mode" value="">
 			<input type="hidden" name="page_y" value="">
 			<input type="hidden" name="id" value="' . $object->id.'">
@@ -3189,45 +3215,29 @@ if ($action == 'create' && $usercancreate) {
 			}
 
 			print '<div class="div-table-responsive-no-min">';
-			if (!empty($object->lines)) {
-				print '<table id="tablelines" class="noborder noshadow" width="100%">';
-			}
+			print '<table id="tablelines" class="noborder noshadow centpercent">';
 
 			if (!empty($object->lines)) {
-				$object->printObjectLines($action, $mysoc, null, GETPOSTINT('lineid'), 1, '/expedition/tpl');
+				$object->printObjectLines($action, $mysoc, null, GETPOSTINT('lineid'), 0, '/expedition/tpl');
 			}
-
-			if (!empty($object->lines)) {
-				print '</table>';
-			}
-			print '</div>';
-
-			print "</form>\n";
 
 			// Form to add new line
 			if ($object->status == 0 && $permissiontoadd && $action != 'selectlines') {
 				if ($action != 'editline') {
 					// Add products/services form
-					print '<form name="addproduct" id="addproduct" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">';
-					print '<input type="hidden" name="token" value="'.newToken().'">';
-					print '<input type="hidden" name="action" value="addline">';
-					print '<input type="hidden" name="id" value="'.$object->id.'">';
-					print '<div class="div-table-responsive-no-min">';
-					print '<table id="tablelines_add" class="noborder noshadow centpercent">';
-
 					$parameters = array();
 					$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 					if ($reshook < 0) {
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 					}
 					if (empty($reshook)) {
-						$forcetoshowtitlelines = true;
-						$object->formAddObjectLine(1, $mysoc, null, '/expedition/tpl');
+						$forcetoshowtitlelines = empty($object->lines);
+						$object->formAddObjectLine(0, $mysoc, null, '/expedition/tpl');
 						$forcetoshowtitlelines = false;
 					}
-					print '</table></div></form>';
 				}
 			}
+			print "</table></div></form>\n";
 		}
 	}
 
@@ -3664,7 +3674,7 @@ if ($action == 'create' && $usercancreate) {
 								}
 							}
 							print $form->textwithtooltip(img_picto('', 'object_stock') . ' ' . $langs->trans("DetailWarehouseNumber"), $detail);
-						} elseif (count($lines[$i]->detail_children ?? []) > 1) {
+						} elseif (is_array($lines[$i]->detail_children) && count($lines[$i]->detail_children) > 1) {
 							$detail = '';
 							foreach ($lines[$i]->detail_children as $child_product_id => $child_stock_list) {
 								foreach ($child_stock_list as $warehouse_id => $total_qty) {
@@ -3902,13 +3912,13 @@ if ($action == 'create' && $usercancreate) {
 			// Cancel
 			if ($object->status == Expedition::STATUS_VALIDATED) {
 				if ($user->hasRight('expedition', 'creer')) {
-					print dolGetButtonAction('', $langs->trans('Cancel'), 'danger', $_SERVER["PHP_SELF"] . '?action=cancel&token=' . newToken() . '&id=' . $object->id . '&mode=init#formmailbeforetitle', '');
+					print dolGetButtonAction('', $langs->trans('Cancel'), 'default', $_SERVER["PHP_SELF"] . '?action=cancel&token=' . newToken() . '&id=' . $object->id . '&mode=init#formmailbeforetitle', '', true, array('attr' => array('classOverride' => 'butAction butActionDanger')))."\n";
 				}
 			}
 
 			// Delete
 			if ($user->hasRight('expedition', 'supprimer')) {
-				print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"] . '?action=delete&token=' . newToken() . '&id=' . $object->id, '');
+				print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"] . '?action=delete&token=' . newToken() . '&id=' . $object->id, '', true, array('attr' => array('class' => 'reposition')))."\n";
 			}
 		}
 

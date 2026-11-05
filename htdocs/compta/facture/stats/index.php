@@ -452,12 +452,15 @@ foreach ($data as $val) {
 
 		print '<tr class="oddeven" height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$oldyear.'</a></td>';
+		// Empty year just after a year with records: delta is -100% (a decrease is green for suppliers)
+		$isyearbeforeval = ($oldyear == $year + 1);
+		$stylenegative = ($mode == 'supplier' ? 'color: green;' : 'color: red;');
 		print '<td class="right">0</td>';
-		print '<td class="right"></td>';
+		print '<td class="right opacitylow" style="'.$stylenegative.'">'.(($isyearbeforeval && $val['nb'] > 0) ? '-100%' : '').'</td>';
 		print '<td class="right amount">0</td>';
-		print '<td class="right"></td>';
+		print '<td class="right opacitylow" style="'.$stylenegative.'">'.(($isyearbeforeval && $val['total'] > 0) ? '-100%' : '').'</td>';
 		print '<td class="right amount">0</td>';
-		print '<td class="right"></td>';
+		print '<td class="right opacitylow" style="'.$stylenegative.'">'.(($isyearbeforeval && $val['avg'] > 0) ? '-100%' : '').'</td>';
 		print '</tr>';
 	}
 
@@ -474,11 +477,11 @@ foreach ($data as $val) {
 	print '<tr class="oddeven" height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
-	print '<td class="right opacitylow" style="'.($greennb ? 'color: green;' : 'color: red;').'">'.(!empty($val['nb_diff']) && $val['nb_diff'] < 0 ? '' : '+').round(!empty($val['nb_diff']) ? $val['nb_diff'] : 0).'%</td>';
+	print '<td class="right opacitylow" style="'.($greennb ? 'color: green;' : 'color: red;').'">'.(isset($val['nb_diff']) ? ($val['nb_diff'] < 0 ? '' : '+').round($val['nb_diff']).'%' : '').'</td>';
 	print '<td class="right"><span class="amount">'.price(price2num($val['total'], 'MT'), 1).'</span></td>';
-	print '<td class="right opacitylow" style="'.($greentotal ? 'color: green;' : 'color: red;').'">'.(!empty($val['total_diff']) && $val['total_diff'] < 0 ? '' : '+').round(!empty($val['total_diff']) ? $val['total_diff'] : 0).'%</td>';
+	print '<td class="right opacitylow" style="'.($greentotal ? 'color: green;' : 'color: red;').'">'.(isset($val['total_diff']) ? ($val['total_diff'] < 0 ? '' : '+').round($val['total_diff']).'%' : '').'</td>';
 	print '<td class="right"><span class="amount">'.price(price2num($val['avg'], 'MT'), 1).'</span></td>';
-	print '<td class="right opacitylow" style="'.($greenavg ? 'color: green;' : 'color: red;').'">'.(!empty($val['avg_diff']) && $val['avg_diff'] < 0 ? '' : '+').round(!empty($val['avg_diff']) ? $val['avg_diff'] : 0).'%</td>';
+	print '<td class="right opacitylow" style="'.($greenavg ? 'color: green;' : 'color: red;').'">'.(isset($val['avg_diff']) ? ($val['avg_diff'] < 0 ? '' : '+').round($val['avg_diff']).'%' : '').'</td>';
 	print '</tr>';
 	$oldyear = $year;
 }

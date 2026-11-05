@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "other", "errors", "bills"));
+$langs->loadLangs(array("admin", "other", "bills"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -237,10 +237,12 @@ foreach ($arrayofmodules as $module) {
 			$htmltooltip .= $langs->trans("NextValue").': ';
 			if ($nextval) {
 				if (preg_match('/^Error/', $nextval)) {
+					$langs->load('errors');
 					$nextval = $langs->trans($nextval);
 				}
 				$htmltooltip .= $nextval.'<br>';
 			} else {
+				$langs->load('errors');
 				$htmltooltip .= $langs->trans($module->error).'<br>';
 			}
 		}

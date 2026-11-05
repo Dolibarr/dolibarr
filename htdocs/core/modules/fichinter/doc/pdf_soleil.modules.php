@@ -74,6 +74,11 @@ class pdf_soleil extends ModelePDFFicheinter
 	 */
 	public $version = 'dolibarr';
 
+	/**
+	 * @var int		Position
+	 */
+	public $position = 50;
+
 
 	/**
 	 *	Constructor

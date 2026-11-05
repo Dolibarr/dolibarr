@@ -16,9 +16,10 @@ jQuery(function ($) {
 
 	function clearPreview() {
 		$form.find('.shipment-stock-available, .shipment-stock-after').text('').removeClass('error');
+		$form.find('.shipment-stock-suggestion').text('');
 	}
 
-	function refresh(keepWarehouse) {
+	function refresh() {
 		window.clearTimeout(timer);
 		version++;
 		var currentVersion = version;
@@ -26,8 +27,10 @@ jQuery(function ($) {
 			request.abort();
 		}
 		clearPreview();
+		var keepWarehouse = parseInt($warehouse.val(), 10) > 0;
+		$form.find('.shipment-stock-no-warehouse').toggleClass('hideobject', keepWarehouse);
 		timer = window.setTimeout(function () {
-			if (!(parseInt($form.find('[name="idprod"]').val(), 10) > 0)) {
+			if ($form.find('[name="prod_entry_mode"]:checked').val() === 'free' || !(parseInt($form.find('[name="idprod"]').val(), 10) > 0)) {
 				return;
 			}
 			var data = $form.serializeArray().filter(function (field) {
@@ -38,10 +41,8 @@ jQuery(function ($) {
 				if (currentVersion !== version) {
 					return;
 				}
-				if (!keepWarehouse && result.selected > 0 && $warehouse.find('option[value="' + result.selected + '"]').length) {
-					$warehouse.val(result.selected).trigger('change.select2');
-				} else if (!keepWarehouse && result.selected === 0) {
-					$warehouse.val('-1').trigger('change.select2');
+				if (!keepWarehouse && result.selected > 0) {
+					$form.find('.shipment-stock-suggestion').text($preview.attr('data-suggestion-label') + ': ' + $warehouse.find('option[value="' + result.selected + '"]').text());
 				}
 				$form.find('.shipment-stock-available').text(result.stock_available_formatted);
 				$form.find('.shipment-stock-after').text(result.stock_after_formatted).toggleClass('error', result.insufficient);
@@ -53,8 +54,8 @@ jQuery(function ($) {
 		}, 250);
 	}
 
-	$form.on('change', '[name="idprod"], select[name^="combinations["]', function () { refresh(false); });
-	$form.on('input change', '[name="qty"]', function () { refresh(false); });
-	$warehouse.on('change', function () { refresh(true); });
-	refresh($preview.attr('data-keep-warehouse') === '1');
+	$form.on('change', '[name="idprod"], [name="prod_entry_mode"], select[name^="combinations["]', refresh);
+	$form.on('input change', '[name="qty"]', refresh);
+	$warehouse.on('change', refresh);
+	refresh();
 });

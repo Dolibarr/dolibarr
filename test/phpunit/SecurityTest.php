@@ -432,6 +432,32 @@ class SecurityTest extends CommonClassTest
 	}
 
 	/**
+	 * testDolVerifyHash
+	 *
+	 * @return void
+	 */
+	public function testDolVerifyHash()
+	{
+		$hash = dol_hash('mypassword', '3');	// md5
+		$this->assertTrue(dol_verifyHash('mypassword', $hash, '3'));
+		$this->assertFalse(dol_verifyHash('mypassword2', $hash, '3'));
+		$this->assertFalse(dol_verifyHash('', $hash, '3'));
+
+		// Two different strings whose md5 are "0e" followed by digits only: they are equal for a loose comparison (magic hashes)
+		$this->assertEquals('0e462097431906509019562988736854', md5('240610708'));
+		$this->assertEquals('0e830400451993494058024219903391', md5('QNKCDZO'));
+		$this->assertFalse(dol_verifyHash('QNKCDZO', md5('240610708'), '3'), 'Two magic hashes must not match');
+		$this->assertTrue(dol_verifyHash('240610708', md5('240610708'), '3'));
+
+		// password_hash is salted: a check must not be done by comparing with a new hash
+		$hash = dol_hash('mypassword', 'password_hash');
+		$this->assertTrue(dol_verifyHash('mypassword', $hash, 'password_hash'));
+		$this->assertTrue(dol_verifyHash('mypassword', $hash, '6'));
+		$this->assertFalse(dol_verifyHash('mypassword2', $hash, 'password_hash'));
+		$this->assertFalse(dol_verifyHash('', $hash, 'password_hash'));
+	}
+
+	/**
 	 * testGetRandomPassword
 	 *
 	 * @return int
@@ -532,6 +558,41 @@ class SecurityTest extends CommonClassTest
 	}
 
 	/**
+	 * testGeneratedPasswordsFollowTheRules
+	 *
+	 * The 'standard' and 'Perso' generators must give a password that follows their rules, with the random_int() based picking
+	 *
+	 * @return void
+	 */
+	public function testGeneratedPasswordsFollowTheRules()
+	{
+		global $conf, $db, $langs, $user;
+
+		$savPasswordPattern = getDolGlobalString('USER_PASSWORD_PATTERN');
+
+		require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modGeneratePassStandard.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modGeneratePassPerso.class.php';
+
+		$modstandard = new modGeneratePassStandard($db, $conf, $langs, $user);
+		$conf->global->USER_PASSWORD_PATTERN = '14;2;3;2;3;0';
+		$modperso = new modGeneratePassPerso($db, $conf, $langs, $user);
+
+		for ($i = 0; $i < 30; $i++) {
+			$pass = $modstandard->getNewGeneratedPassword();
+			$this->assertEquals(12, strlen($pass), 'standard generator must give 12 chars');
+			$this->assertEquals(1, preg_match('/^[0-9a-zA-Z]{12}$/', $pass), 'standard generator must give only letters and digits: '.$pass);
+
+			$pass = $modperso->getNewGeneratedPassword();
+			$this->assertEquals(14, strlen($pass), 'Perso generator must give 14 chars');
+			$this->assertGreaterThanOrEqual(2, preg_match_all('/[A-Z]/', $pass), 'Perso generator must give at least 2 uppercase: '.$pass);
+			$this->assertGreaterThanOrEqual(3, preg_match_all('/[0-9]/', $pass), 'Perso generator must give at least 3 digits: '.$pass);
+			$this->assertGreaterThanOrEqual(2, preg_match_all('/[^0-9a-zA-Z]/', $pass), 'Perso generator must give at least 2 special chars: '.$pass);
+		}
+
+		$conf->global->USER_PASSWORD_PATTERN = $savPasswordPattern;
+	}
+
+	/**
 	 * testRestrictedArea
 	 *
 	 * @return void
@@ -549,6 +610,17 @@ class SecurityTest extends CommonClassTest
 
 		$result = restrictedArea($user, 'societe', 0, '', '', 'fk_soc', 'rowid', 0, 1);
 		$this->assertEquals(1, $result);
+
+		// A call with an empty features parameter must refuse the access, even for a user with
+		// all the permissions: no permission can be checked, so nothing may be allowed.
+		$result = restrictedArea($user, '', 0, '', '', 'fk_soc', 'rowid', 0, 1);
+		$this->assertEquals(0, $result, 'restrictedArea() with an empty features parameter must return 0 (access refused)');
+
+		$result = restrictedArea($user, '   ', 0, '', '', 'fk_soc', 'rowid', 0, 1);
+		$this->assertEquals(0, $result, 'restrictedArea() with a features parameter of spaces must return 0 (access refused)');
+
+		$result = restrictedArea($user, null, 0, '', '', 'fk_soc', 'rowid', 0, 1);
+		$this->assertEquals(0, $result, 'restrictedArea() with a null features parameter must return 0 (access refused)');
 	}
 
 	/**
@@ -586,17 +658,15 @@ class SecurityTest extends CommonClassTest
 		$this->assertTrue($result, 'Access to bank account with feature bank, the english name of the module');
 	}
 
-
 	/**
-	 * testGetObjectIdsRefusedToUser
+	 * testRestrictedAreaBank
 	 *
-	 * The mass actions of the lists get the ids to process from the request. getObjectIdsRefusedToUser() must refuse the
-	 * objects of the third parties that are not assigned to a user who can not see all third parties, and accept them once
-	 * the user is a sales representative of the third party, like the lists and the cards do.
+	 * restrictedArea() accepts 'bank' (the module name given by fetchObjectByElement() for a bank account, used by the
+	 * ajax pages like ajaxtooltip.php) as an alias of 'banque': the right to check is banque->lire, nothing else.
 	 *
 	 * @return void
 	 */
-	public function testGetObjectIdsRefusedToUser()
+	public function testRestrictedAreaBank()
 	{
 		global $conf,$user,$langs,$db;
 		$conf = $this->savconf;
@@ -604,55 +674,39 @@ class SecurityTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-		$soc = new Societe($db);
-		$soc->name = 'testGetObjectIdsRefusedToUser '.mt_rand(0, 99999);
-		$soc->client = 1;
-		$soc->code_client = -1;
-		$socid = $soc->create($user);
-		$this->assertGreaterThan(0, $socid, 'Third party must be created');
-
-		$invoice = new Facture($db);
-		$invoice->socid = $socid;
-		$invoice->date = dol_now();
-		$invoice->type = Facture::TYPE_STANDARD;
-		$invoiceid = $invoice->create($user);
-		$this->assertGreaterThan(0, $invoiceid, 'Invoice must be created');
+		$account = new Account($db);
+		$account->ref = 'TSEC'.mt_rand(0, 99999);
+		$account->label = 'testRestrictedAreaBank '.$account->ref;
+		$account->type = Account::TYPE_CURRENT;
+		$account->currency_code = 'EUR';
+		$account->country_id = 1;
+		$account->date_solde = dol_now();
+		$accountid = $account->create($user);
+		$this->assertGreaterThan(0, $accountid, 'Bank account must be created');
 
 		try {
-			// A user who can see the third parties, but only the ones assigned to him: he is not assigned to this one
-			$restricteduser = new User($db);
-			$restricteduser->id = $user->id;
-			$restricteduser->entity = $user->entity;
-			$restricteduser->socid = 0;
-			$restricteduser->rights = new stdClass();
-			$restricteduser->rights->societe = new stdClass();
-			$restricteduser->rights->societe->lire = 1;
-			$restricteduser->rights->societe->client = new stdClass();
-			$restricteduser->rights->societe->client->voir = 0;
+			// The right to read bank accounts is enough (whatever the other rights of the module)
+			$reader = new User($db);
+			$reader->id = $user->id;
+			$reader->entity = $user->entity;
+			$reader->rights = new stdClass();
+			$reader->rights->banque = new stdClass();
+			$reader->rights->banque->lire = 1;
+			$reader->rights->banque->cheque = 0;
+			$this->assertEquals(1, restrictedArea($reader, 'bank', $account, 'bank_account', '', 'fk_soc', 'rowid', 0, 1), 'A user with banque->lire must be allowed with the feature bank');
+			$this->assertEquals(1, restrictedArea($reader, 'banque', $account, 'bank_account', '', 'fk_soc', 'rowid', 0, 1), 'A user with banque->lire must be allowed with the feature banque');
 
-			$this->assertSame(array($invoiceid), getObjectIdsRefusedToUser($restricteduser, new Facture($db), array($invoiceid)), 'The invoice of a third party not assigned to the restricted user must be refused');
-			$this->assertSame(array($socid), getObjectIdsRefusedToUser($restricteduser, new Societe($db), array($socid)), 'The third party not assigned to the restricted user must be refused');
-			$this->assertSame(array(), getObjectIdsRefusedToUser($restricteduser, new Bookmark($db), array(1, 2)), 'A type of object without third party is not checked');
-
-			// The same user with the permission to see all third parties
-			$restricteduser->rights->societe->client->voir = 1;
-			$this->assertSame(array(), getObjectIdsRefusedToUser($restricteduser, new Facture($db), array($invoiceid)), 'A user who sees all third parties can access the invoice');
-			$this->assertSame(array(), getObjectIdsRefusedToUser($restricteduser, new Societe($db), array($socid)), 'A user who sees all third parties can access the third party');
-
-			// The restricted user, once he is a sales representative of the third party
-			$restricteduser->rights->societe->client->voir = 0;
-			$this->assertGreaterThanOrEqual(0, $soc->add_commercial($user, $restricteduser->id), 'User must be added as sales representative');
-			$this->assertSame(array(), getObjectIdsRefusedToUser($restricteduser, new Facture($db), array($invoiceid)), 'The sales representative of the third party can access its invoice');
-			$this->assertSame(array(), getObjectIdsRefusedToUser($restricteduser, new Societe($db), array($socid)), 'The sales representative can access the third party');
+			// Without the right to read bank accounts, the access is refused even with the right on cheque receipts
+			$reader->rights->banque->lire = 0;
+			$reader->rights->banque->cheque = 1;
+			$this->assertEquals(0, restrictedArea($reader, 'bank', $account, 'bank_account', '', 'fk_soc', 'rowid', 0, 1), 'A user without banque->lire must be refused with the feature bank');
 		} finally {
-			$invoice->delete($user);
-			$soc->delete($socid, $user);
+			$account->delete($user);
 		}
 	}
+
 
 	/**
 	 * testDolSanitizeUrl
@@ -1736,6 +1790,51 @@ class SecurityTest extends CommonClassTest
 		$result = dol_htmlwithnojs($s);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($s, $result, 'Test for default, on a string with a LF inside');
+
+		return 0;
+	}
+
+	/**
+	 * testDolTotp
+	 *
+	 * @return	int
+	 */
+	public function testDolTotp()
+	{
+		// Test vectors of the appendix B of the RFC 6238, with the seed '12345678901234567890' and SHA-1
+		$secret = dolTotpBase32Encode('12345678901234567890');
+		$this->assertEquals('GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ', $secret, 'Base32 encoding of the seed of the RFC 6238');
+
+		$vectors = array(59 => '94287082', 1111111109 => '07081804', 1111111111 => '14050471', 1234567890 => '89005924', 2000000000 => '69279037', 20000000000 => '65353130');
+		foreach ($vectors as $timestamp => $expectedcode) {
+			$result = dolTotpGetCode($secret, (int) floor($timestamp / 30), 8);
+			print __METHOD__." timestamp=".$timestamp." result=".$result."\n";
+			$this->assertEquals($expectedcode, $result, 'Test vector of the RFC 6238 at timestamp '.$timestamp);
+		}
+
+		// A generated secret must be a 160 bits value, as recommended by the RFC 4226
+		$secret = dolTotpNewSecret();
+		$this->assertEquals(32, strlen($secret), 'A generated secret must be 32 base32 chars');
+		$this->assertEquals(20, strlen(dolTotpBase32Decode($secret)), 'A generated secret must decode to 20 bytes');
+
+		// The spaces of a key typed by hand must be ignored
+		$this->assertEquals(dolTotpBase32Decode($secret), dolTotpBase32Decode(chunk_split($secret, 4, ' ')), 'Spaces in a base32 key must be ignored');
+
+		// A code is accepted on its own period and on the neighbouring ones, to tolerate a clock offset
+		$now = dol_now();
+		$step = (int) floor($now / 30);
+		$this->assertEquals($step, dolTotpCheckCode($secret, dolTotpGetCode($secret, $step), $now), 'The code of the current period must be accepted');
+		$this->assertEquals($step - 1, dolTotpCheckCode($secret, dolTotpGetCode($secret, $step - 1), $now), 'The code of the previous period must be accepted');
+		$this->assertEquals($step + 1, dolTotpCheckCode($secret, dolTotpGetCode($secret, $step + 1), $now), 'The code of the next period must be accepted');
+		$this->assertEquals(0, dolTotpCheckCode($secret, dolTotpGetCode($secret, $step - 2), $now), 'The code of a period too far must be refused');
+		$this->assertEquals(0, dolTotpCheckCode($secret, '123', $now), 'A code of a wrong length must be refused');
+		$this->assertEquals(0, dolTotpCheckCode($secret, 'abcdef', $now), 'A code with no digit must be refused');
+		$this->assertEquals(0, dolTotpCheckCode('', dolTotpGetCode($secret, $step), $now), 'A check with no secret must be refused');
+
+		// The URI shown as a QR code must carry the parameters expected by the authenticator applications
+		$result = dolTotpGetUri('mylogin', $secret, 'MyCompany');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('otpauth://totp/MyCompany:mylogin?secret='.$secret.'&issuer=MyCompany&algorithm=SHA1&digits=6&period=30', $result, 'Test of the otpauth URI');
 
 		return 0;
 	}

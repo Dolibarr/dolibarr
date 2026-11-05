@@ -27,6 +27,7 @@ Earnings=Earnings
 TotalEarnings=Total earnings
 TotalDeductions=Total deductions
 NetPaid=Net paid
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Maaşlar üzrə "istifadəçilər" üçün standart olaraq istifadə edilən hesab (Hesab Planından).
@@ -55,8 +56,6 @@ FillFieldFirst=Əvvəlcə işçi sahəsini doldurun
 UpdateAmountWithLastSalary=Son əmək haqqının məbləğini təyin edin
 MakeTransferRequest=Transfer sorğusu edin
 VirementOrder=Kredit köçürmə sorğusu
-WithdrawalReceipt=Kredit köçürmə sifarişi
-OrderWaiting=Gözləyən sifariş
 FillEndOfMonth=Ayın sonu
 
 # Shortcuts

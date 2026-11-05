@@ -1,8 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-Permission23101 =Leia trabalho Programado
-Permission23102 =Criar / atualização de tarefa agendada
-Permission23103 =Excluir trabalho agendado
-Permission23104 =Executar trabalho agendado
 CronSetup=Configuração do gerenciamento de trabalho agendado
 URLToLaunchCronJobs=URL para verificar e iniciar tarefas cron qualificadas a partir de um navegador
 OrToLaunchASpecificJob=Ou para verificar e iniciar um trabalho específico a partir de um navegador

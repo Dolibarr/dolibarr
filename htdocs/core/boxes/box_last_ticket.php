@@ -73,10 +73,6 @@ class box_last_ticket extends ModeleBoxes
 			'limit' => dol_strlen($text),
 		);
 
-		$this->info_box_contents[0][0] = array(
-			'td' => 'class="left"',
-			'text' => $langs->trans("BoxLastTicketContent"),
-		);
 
 		if ($user->hasRight('ticket', 'read')) {
 			$sql = "SELECT t.rowid as id, t.ref, t.track_id, t.fk_soc, t.fk_user_create, t.fk_user_assign, t.subject, t.message, t.fk_statut as status, t.type_code, t.category_code, t.severity_code, t.datec, t.date_read, t.date_close, t.origin_email,";

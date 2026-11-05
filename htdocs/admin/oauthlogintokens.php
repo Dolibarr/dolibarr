@@ -129,6 +129,7 @@ if ($action == 'refreshtoken' && $user->admin) {
 
 	// Show value of token
 	$tokenobj = null;
+	$outputofrefresh = '';
 	// Load OAUth libraries
 	require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 
@@ -147,7 +148,7 @@ if ($action == 'refreshtoken' && $user->admin) {
 	$storage = new DoliStorage($db, $conf, $keyforprovider, getDolGlobalString($keyforparamtenant));
 	try {
 		// $OAUTH_SERVICENAME is for example 'Google-keyforprovider'
-		print '<!-- '.$OAUTH_SERVICENAME.' -->'."\n";
+		//print '<!-- '.$OAUTH_SERVICENAME.' -->'."\n";	// No output in actions, it is before the HTML header
 
 		dol_syslog("oauthlogintokens.php: Read token for service ".$OAUTH_SERVICENAME);
 		$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
@@ -156,7 +157,7 @@ if ($action == 'refreshtoken' && $user->admin) {
 		$expire = ($tokenobj->getEndOfLife() !== -9002 && $tokenobj->getEndOfLife() !== -9001 && time() > ($tokenobj->getEndOfLife() - 30));
 		// We have to save the refresh token in a memory variable because Google give it only once
 		$refreshtoken = $tokenobj->getRefreshToken();
-		print '<!-- data stored into field token: '.$storage->token.' - expire '.((string) $expire).' -->';
+		//print '<!-- data stored into field token: '.$storage->token.' - expire '.((string) $expire).' -->';
 
 		//print $tokenobj->getExtraParams()['id_token'].'<br>';
 		//print $tokenobj->getAccessToken().'<br>';
@@ -193,7 +194,13 @@ if ($action == 'refreshtoken' && $user->admin) {
 		if ($apiService instanceof OAuth\OAuth2\Service\AbstractService || $apiService instanceof OAuth\OAuth1\Service\AbstractService) {
 			// ServiceInterface does not provide refreshAccessToekn, AbstractService does
 			dol_syslog("oauthlogintokens.php: call refreshAccessToken to get the new access token");
-			$tokenobj = $apiService->refreshAccessToken($tokenobj);		// This call refresh and store the new token (but does not include the refresh token)
+			// The OAuth library may print the error_description received, so we capture it to avoid output before the HTML header
+			ob_start();
+			try {
+				$tokenobj = $apiService->refreshAccessToken($tokenobj);		// This call refresh and store the new token (but does not include the refresh token)
+			} finally {
+				$outputofrefresh = trim((string) ob_get_clean());
+			}
 
 			dol_syslog("oauthlogintokens.php: call setRefreshToken");
 			$tokenobj->setRefreshToken($refreshtoken);	// Restore the refresh token
@@ -213,8 +220,10 @@ if ($action == 'refreshtoken' && $user->admin) {
 		dol_syslog("oauthlogintokens.php: Read token again for service ".$OAUTH_SERVICENAME);
 		$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
 	} catch (Exception $e) {
-		// Return an error if token not found
-		print $e->getMessage();
+		// Return an error if token not found or if refresh failed
+		$errormessage = $e->getMessage().(empty($outputofrefresh) ? '' : ' - '.$outputofrefresh);
+		dol_syslog("oauthlogintokens.php: Error on refreshtoken for service ".$OAUTH_SERVICENAME.": ".$errormessage, LOG_WARNING);
+		setEventMessages($errormessage, null, 'errors');
 	}
 }
 

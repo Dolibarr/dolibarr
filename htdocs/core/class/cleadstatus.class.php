@@ -103,7 +103,7 @@ class CLeadStatus extends CommonDict
 		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape(trim($this->label))."'").",";
 		$sql .= " ".(!isset($this->position) ? 'NULL' : (int) $this->position).",";
 		$sql .= " ".(!isset($this->percent) ? 'NULL' : (float) $this->percent).",";
-		$sql .= " ".(!isset($this->active) ? 'NULL' : ((int) $this->active)).",";
+		$sql .= " ".(!isset($this->active) ? 'NULL' : ((int) $this->active));
 		$sql .= ")";
 
 		$this->db->begin();
@@ -278,10 +278,10 @@ class CLeadStatus extends CommonDict
 	{
 		// Update request
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET";
-		$sql .= " code=".(isset($this->code) ? ((int) $this->code) : "null").",";
+		$sql .= " code=".(isset($this->code) ? "'".$this->db->escape(trim($this->code))."'" : "null").",";
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape(trim($this->label))."'" : "null").",";
 		$sql .= " position=".(isset($this->position) ? (int) $this->position : "null").",";
-		$sql .= " percent=".(isset($this->label) ? (float) $this->percent : "null").",";
+		$sql .= " percent=".(isset($this->percent) ? (float) $this->percent : "null").",";
 		$sql .= " active=".(isset($this->active) ? ((int) $this->active) : "null");
 		$sql .= " WHERE rowid=".(int) $this->id;
 

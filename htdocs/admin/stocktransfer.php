@@ -201,6 +201,8 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 	clearstatcache();
 
+	$arrayofmodules = array();
+
 	foreach ($dirmodels as $reldir) {
 		$dir = dol_buildpath($reldir."core/modules/".$moduledir);
 
@@ -217,75 +219,85 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 						'@phan-var-force ModeleNumRefStockTransfer $module';
 
-						// Show modules according to features level
-						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-							continue;
-						}
-						if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-							continue;
-						}
-
-						if ($module->isEnabled()) {
-							dol_include_once('/'.$moduledir.'/class/'.strtolower($myTmpObjectKey).'.class.php');
-
-							print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-							print $module->info($langs);
-							print '</td>';
-
-							// Show example of numbering model
-							print '<td class="nowrap">';
-							$tmp = $module->getExample();
-							if (preg_match('/^Error/', $tmp)) {
-								print '<div class="error">'.$langs->trans($tmp).'</div>';
-							} elseif ($tmp == 'NotConfigured') {
-								print $langs->trans($tmp);
-							} else {
-								print $tmp;
-							}
-							print '</td>'."\n";
-
-							print '<td class="center">';
-							$constforvar = 'STOCKTRANSFER_'.strtoupper($myTmpObjectKey).'_ADDON';
-							if (getDolGlobalString($constforvar) == $file) {
-								print img_picto($langs->trans("Activated"), 'switch_on');
-							} else {
-								print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&object='.strtolower($myTmpObjectKey).'&value='.$file.'">';
-								print img_picto($langs->trans("Disabled"), 'switch_off');
-								print '</a>';
-							}
-							print '</td>';
-
-							$nameofclass = $myTmpObjectArray['class'];
-							$mytmpinstance = new $nameofclass($db);
-							$mytmpinstance->initAsSpecimen();
-
-							// Info
-							$htmltooltip = '';
-							$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-
-							$nextval = $module->getNextValue($mytmpinstance);
-							if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
-								$htmltooltip .= ''.$langs->trans("NextValue").': ';
-								if ($nextval) {
-									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
-										$nextval = $langs->trans($nextval);
-									}
-									$htmltooltip .= $nextval.'<br>';
-								} else {
-									$htmltooltip .= $langs->trans($module->error).'<br>';
-								}
-							}
-
-							print '<td class="center">';
-							print $form->textwithpicto('', $htmltooltip, 1, 'info');
-							print '</td>';
-
-							print "</tr>\n";
-						}
+						$arrayofmodules[] = $module;
 					}
 				}
 				closedir($handle);
 			}
+		}
+	}
+
+	$arrayofmodules = dol_sort_array($arrayofmodules, 'position');
+	/** @var ModeleNumRefStockTransfer[] $arrayofmodules */
+	'@phan-var-force ModeleNumRefStockTransfer[] $arrayofmodules';
+
+	foreach ($arrayofmodules as $module) {
+		$file = get_class($module);
+
+		// Show modules according to features level
+		if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
+			continue;
+		}
+		if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
+			continue;
+		}
+
+		if ($module->isEnabled()) {
+			dol_include_once('/'.$moduledir.'/class/'.strtolower($myTmpObjectKey).'.class.php');
+
+			print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
+			print $module->info($langs);
+			print '</td>';
+
+			// Show example of numbering model
+			print '<td class="nowrap">';
+			$tmp = $module->getExample();
+			if (preg_match('/^Error/', $tmp)) {
+				print '<div class="error">'.$langs->trans($tmp).'</div>';
+			} elseif ($tmp == 'NotConfigured') {
+				print $langs->trans($tmp);
+			} else {
+				print $tmp;
+			}
+			print '</td>'."\n";
+
+			print '<td class="center">';
+			$constforvar = 'STOCKTRANSFER_'.strtoupper($myTmpObjectKey).'_ADDON';
+			if (getDolGlobalString($constforvar) == $file) {
+				print img_picto($langs->trans("Activated"), 'switch_on');
+			} else {
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&object='.strtolower($myTmpObjectKey).'&value='.$file.'">';
+				print img_picto($langs->trans("Disabled"), 'switch_off');
+				print '</a>';
+			}
+			print '</td>';
+
+			$nameofclass = $myTmpObjectArray['class'];
+			$mytmpinstance = new $nameofclass($db);
+			$mytmpinstance->initAsSpecimen();
+
+			// Info
+			$htmltooltip = '';
+			$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+
+			$nextval = $module->getNextValue($mytmpinstance);
+			if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+				$htmltooltip .= ''.$langs->trans("NextValue").': ';
+				if ($nextval) {
+					if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+						$nextval = $langs->trans($nextval);
+					}
+					$htmltooltip .= $nextval.'<br>';
+				} else {
+					$htmltooltip .= $langs->trans($module->error).'<br>';
+				}
+			}
+
+			print '<td class="center">';
+			print $form->textwithpicto('', $htmltooltip, 1, 'info');
+			print '</td>';
+
+			print "</tr>\n";
 		}
 	}
 	print "</table></div><br>\n";

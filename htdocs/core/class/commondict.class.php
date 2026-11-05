@@ -70,6 +70,11 @@ abstract class CommonDict
 	public $active;
 
 	/**
+	 * @var array<string,mixed>	Context of the call, like 'createfromclone'
+	 */
+	public $context = array();
+
+	/**
 	 * Method to output saved errors
 	 *
 	 * @return	string		String with errors
