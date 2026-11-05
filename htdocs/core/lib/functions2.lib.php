@@ -2554,6 +2554,73 @@ function colorHexToRgb($hex, $alpha = false, $returnArray = false)
 }
 
 /**
+ * Return the WCAG 2.x contrast ratio between two colors.
+ *
+ * @param	string	$color1		Color in hex ('#AA1122', 'AA1122', '#a12') or comma RGB ('170,17,34')
+ * @param	string	$color2		Color in hex ('#AA1122', 'AA1122', '#a12') or comma RGB ('170,17,34')
+ * @return	float				Contrast ratio from 1 to 21, or 0 if one of the colors is not valid
+ * @see colorGetBestTextColor()
+ */
+function colorGetContrastRatio(string $color1, string $color2): float
+{
+	$luminance1 = colorGetRelativeLuminance($color1);
+	$luminance2 = colorGetRelativeLuminance($color2);
+	if ($luminance1 < 0 || $luminance2 < 0) {
+		return 0.0;
+	}
+
+	return (max($luminance1, $luminance2) + 0.05) / (min($luminance1, $luminance2) + 0.05);
+}
+
+/**
+ * Return the text color, among a dark and a light one, that has the highest WCAG 2.x contrast on a background color.
+ *
+ * @param	string	$backgroundcolor	Background color in hex ('#AA1122', 'AA1122', '#a12') or comma RGB ('170,17,34')
+ * @param	string	$darkcolor			Dark text color, same formats
+ * @param	string	$lightcolor			Light text color, same formats. Returned on a tie or if $backgroundcolor is not valid.
+ * @return	string						$darkcolor or $lightcolor, unchanged
+ * @see colorGetContrastRatio()
+ */
+function colorGetBestTextColor(string $backgroundcolor, string $darkcolor = '000000', string $lightcolor = 'FFFFFF'): string
+{
+	if (colorGetContrastRatio($backgroundcolor, $darkcolor) > colorGetContrastRatio($backgroundcolor, $lightcolor)) {
+		return $darkcolor;
+	}
+
+	return $lightcolor;
+}
+
+/**
+ * Return the WCAG 2.x relative luminance of a color.
+ *
+ * @param	string	$color		Color in hex ('#AA1122', 'AA1122', '#a12') or comma RGB ('170,17,34')
+ * @return	float				Relative luminance from 0 (black) to 1 (white), or -1 if the color is not valid
+ * @see colorGetContrastRatio()
+ */
+function colorGetRelativeLuminance(string $color): float
+{
+	$color = trim($color);
+	$reg = array();
+	if (preg_match('/^#?([0-9a-f])([0-9a-f])([0-9a-f])$/i', $color, $reg)) {
+		$channels = array(hexdec($reg[1].$reg[1]), hexdec($reg[2].$reg[2]), hexdec($reg[3].$reg[3]));
+	} elseif (preg_match('/^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i', $color, $reg)) {
+		$channels = array(hexdec($reg[1]), hexdec($reg[2]), hexdec($reg[3]));
+	} elseif (preg_match('/^\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*$/', $color, $reg)) {
+		$channels = array((int) $reg[1], (int) $reg[2], (int) $reg[3]);
+	} else {
+		return -1.0;
+	}
+
+	$linear = array();
+	foreach ($channels as $channel) {
+		$value = min(255, (int) $channel) / 255;
+		$linear[] = ($value <= 0.04045 ? $value / 12.92 : pow(($value + 0.055) / 1.055, 2.4));
+	}
+
+	return 0.2126 * $linear[0] + 0.7152 * $linear[1] + 0.0722 * $linear[2];
+}
+
+/**
  * Color Hex to Hsl (used for style)
  *
  * @param	string 			$hex 			Color in hex
