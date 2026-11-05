@@ -1515,9 +1515,10 @@ class Propal extends CommonObject
 	 *		@param		int		$forceentity	Entity id to force
 	 *		@param		bool	$update_prices	[=false] Update prices if true
 	 *		@param		bool	$update_desc	[=false] Update description if true
+	 *		@param		?bool	$keep_ref_customer	Keep the customer reference. If null, MAIN_KEEP_REF_CUSTOMER_ON_CLONING decides.
 	 * 	 	@return		int						New id of clone
 	 */
-	public function createFromClone(User $user, $socid = 0, $forceentity = null, $update_prices = false, $update_desc = false)
+	public function createFromClone(User $user, $socid = 0, $forceentity = null, $update_prices = false, $update_desc = false, $keep_ref_customer = null)
 	{
 		global $conf, $hookmanager, $mysoc;
 
@@ -1560,7 +1561,7 @@ class Propal extends CommonObject
 			}
 
 			// reset ref_client
-			if (!getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING')) {
+			if (!($keep_ref_customer ?? getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING'))) {
 				$object->ref_client = '';
 				$object->ref_customer = '';
 			}
@@ -1652,7 +1653,7 @@ class Propal extends CommonObject
 		$object->date = $now;
 		$object->datep = $now; // deprecated
 		$object->fin_validite = $object->date + (int) ($object->duree_validite * 24 * 3600);
-		if (!getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING')) {
+		if (!($keep_ref_customer ?? getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING'))) {
 			$object->ref_client = '';
 			$object->ref_customer = '';
 		}
@@ -4076,7 +4077,7 @@ class Propal extends CommonObject
 
 			if ($txttoshow) {
 				$result .= ' <span class="note inline-block">';
-				$result .= '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/comm/propal/note.php', ['id' => $this->id]).'" class="classfortooltip" title="'.dol_escape_htmltag($txttoshow).'">';
+				$result .= '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/core/note.php', ['element' => 'comm_propal', 'id' => $this->id]).'" class="classfortooltip" title="'.dol_escape_htmltag($txttoshow).'">';
 				$result .= img_picto('', 'note');
 				$result .= '</a>';
 				$result .= '</span>';

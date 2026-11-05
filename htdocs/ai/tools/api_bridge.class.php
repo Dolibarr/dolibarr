@@ -149,6 +149,42 @@ class ToolApiBridge extends McpTool
 	const BRIDGE_MAX_LIMIT = 100;
 
 	/**
+	 * Generic tools replacing all the api_<endpoint>_<suffix> tools of a suffix: one
+	 * tool with an 'object' argument naming the endpoint, instead of one per object.
+	 * 'params' gives a description valid for any object to some arguments.
+	 */
+	const MERGED_TOOLS = array(
+		'api_objects_contacts_list' => array(
+			'suffix' => 'contacts_list',
+			'method' => 'getContacts',
+			'description' => "Contacts of one object with their role. Set 'object' to the type of the object and 'id' to its rowid.",
+			'object' => 'Type of the object whose contacts are listed.',
+			'params' => array(
+				'id' => 'Rowid of the object.',
+				'type' => "Role code to restrict to, e.g. BILLING, SHIPPING, CUSTOMER. For a project: 'internal' or 'external', empty for both."
+			)
+		),
+		'api_objects_contacts_link' => array(
+			'suffix' => 'add_contact',
+			'method' => 'postContact',
+			'description' => "Link a contact (person of a third party) or a user to one object, with a role. Set 'object' to the type of the object. The user confirms before anything is written.",
+			'object' => 'Type of the object to link the contact to.',
+			'params' => array(
+				'id' => 'The object: rowid, or its ref (required).'
+			)
+		),
+		'api_objects_contacts_unlink' => array(
+			'suffix' => 'remove_contact',
+			'method' => 'deleteContact',
+			'description' => "Unlink a contact (person of a third party) or a user from one object, for a role. Set 'object' to the type of the object. The user confirms before anything is written.",
+			'object' => 'Type of the object to unlink the contact from.',
+			'params' => array(
+				'id' => 'The object: rowid, or its ref (required).'
+			)
+		)
+	);
+
+	/**
 	 * Generated tool definitions cache (per request).
 	 *
 	 * @var null|list<array<string, mixed>>
@@ -1857,7 +1893,8 @@ class ToolApiBridge extends McpTool
 		// EACH side of the link - so everything is enforced downstream. The
 		// write side (create/delete links) needs rights on both element types
 		// too and is left for a follow-up.
-		$this->enrichments['objectlinks'] = array(
+		$this->enrichments['objects_links'] = array(
+			'endpoint' => 'objectlinks',
 			'label' => 'links between records',
 			'methods' => array(
 				'getById' => array(
@@ -3036,11 +3073,142 @@ class ToolApiBridge extends McpTool
 			}
 		}
 
+		foreach (array_keys(self::MERGED_TOOLS) as $mergedName) {
+			$this->mergeTools($mergedName);
+		}
+
 		if ($cachefile !== '') {
 			$this->writeDefsCache($cachefile);
 		}
 
 		return $this->defs;
+	}
+
+	/**
+	 * Replace every api_<endpoint>_<suffix> definition of a MERGED_TOOLS entry by the
+	 * single generic tool. The routes of the original tools are kept: execute() and
+	 * the write gate dispatch the generic tool to them according to its 'object' argument.
+	 *
+	 * @param  string $mergedName Name of the generic tool, key of MERGED_TOOLS.
+	 * @return void
+	 */
+	private function mergeTools($mergedName)
+	{
+		$mconf = self::MERGED_TOOLS[$mergedName];
+		$merged = array();
+		$kept = array();
+		foreach ((array) $this->defs as $def) {
+			$name = (string) ($def['name'] ?? '');
+			if (isset($this->routes[$name]) && $name === 'api_'.$this->routes[$name][0].'_'.$mconf['suffix']) {
+				$merged[$this->routes[$name][0]] = $def;
+			} else {
+				$kept[] = $def;
+			}
+		}
+		if (empty($merged)) {
+			return;
+		}
+
+		// Arguments: the union of those of the merged tools, required when required by all.
+		$properties = array('object' => array('type' => 'string', 'enum' => array_keys($merged), 'description' => $mconf['object']));
+		$required = null;
+		$objectsOf = array();
+		$categories = array();
+		$descriptions = array();
+		foreach ($merged as $key => $def) {
+			foreach ((array) ($def['inputSchema']['properties'] ?? array()) as $pname => $pdef) {
+				$objectsOf[$pname][] = $key;
+				if (!isset($properties[$pname])) {
+					$properties[$pname] = $pdef;
+				}
+			}
+			$required = ($required === null) ? (array) ($def['inputSchema']['required'] ?? array()) : array_intersect($required, (array) ($def['inputSchema']['required'] ?? array()));
+			$categories = array_merge($categories, (array) ($def['categories'] ?? array()));
+			$descriptions[] = $key.': '.(string) ($def['description'] ?? '');
+		}
+		foreach ($mconf['params'] as $pname => $pdesc) {
+			$properties[$pname] = array_merge(array('type' => 'string'), $properties[$pname] ?? array(), array('description' => $pdesc));
+		}
+		// An argument only some objects take says which.
+		foreach ($objectsOf as $pname => $keys) {
+			if (!isset($mconf['params'][$pname]) && count($keys) < count($merged)) {
+				$properties[$pname]['description'] = trim((string) ($properties[$pname]['description'] ?? '').'. Only for: '.implode(', ', $keys).'.');
+			}
+		}
+
+		$kept[] = array(
+			'name' => $mergedName,
+			'description' => $mconf['description'].' '.implode(' ', $descriptions),
+			'inputSchema' => array('type' => 'object', 'properties' => $properties, 'required' => array_values(array_unique(array_merge(array('object'), (array) $required)))),
+			'categories' => array_values(array_unique($categories))
+		);
+		$this->defs = $kept;
+	}
+
+	/**
+	 * Original tool a generic tool of MERGED_TOOLS runs, from its 'object' argument.
+	 *
+	 * @param  string              $name Tool name.
+	 * @param  array<string,mixed> $args Tool arguments.
+	 * @return string|null                Original tool name, '' when 'object' names none, null when not a generic tool.
+	 */
+	private function mergedToolTarget($name, array $args)
+	{
+		if (!isset(self::MERGED_TOOLS[$name])) {
+			return null;
+		}
+		$this->getDefinitions();	// ensure routes are built
+		$object = (string) ($args['object'] ?? '');
+		$target = 'api_'.$object.'_'.self::MERGED_TOOLS[$name]['suffix'];
+		if (!preg_match('/^[a-z0-9_]+$/', $object) || empty($this->routes[$target])) {
+			return '';
+		}
+
+		return $target;
+	}
+
+	/**
+	 * Whether a generic tool of MERGED_TOOLS writes: its original tools do.
+	 *
+	 * @param  string $name Generic tool name.
+	 * @return bool
+	 */
+	private function mergedToolWrites($name)
+	{
+		foreach (array_keys($this->routes) as $toolName) {
+			if ($toolName === 'api_'.$this->routes[$toolName][0].'_'.self::MERGED_TOOLS[$name]['suffix']) {
+				return !empty($this->writeMetaFor($toolName));
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * The rights an original tool declares, checked when a generic tool runs it:
+	 * the generic tool itself declares none since they depend on the object.
+	 *
+	 * @param  string $target Original tool name.
+	 * @return string         Error message, or '' when the user holds the rights.
+	 */
+	private function mergedToolRightsRefusal($target)
+	{
+		global $langs;
+
+		$declared = $this->getRequiredRights($target);
+		if (!is_array($declared)) {
+			return '';
+		}
+		foreach ($declared as $right) {
+			$right = array_values((array) $right);
+			if (empty($right[0]) || !$this->user->hasRight($right[0], $right[1] ?? '', $right[2] ?? '')) {
+				$langs->load('errors');
+
+				return $langs->transnoentitiesnoconv('NotEnoughPermissions');
+			}
+		}
+
+		return '';
 	}
 
 	/**
@@ -3524,6 +3692,11 @@ class ToolApiBridge extends McpTool
 	 */
 	public function getRequiredRights(string $toolName)
 	{
+		// A generic tool: the rights of the original tool it runs are checked then.
+		if (isset(self::MERGED_TOOLS[$toolName])) {
+			return self::RIGHTS_ENFORCED_DOWNSTREAM;
+		}
+
 		// A write declares its right here as well as relying on the REST class,
 		// so the call is refused before the gate issues a confirmation: no
 		// preview for a write the user could never perform.
@@ -4354,6 +4527,17 @@ class ToolApiBridge extends McpTool
 
 		$langs->load("other");
 
+		// A generic tool: the preview of the original tool it runs.
+		$target = $this->mergedToolTarget($toolName, $args);
+		if ($target !== null) {
+			if ($target === '') {
+				return $this->mergedToolWrites($toolName) ? "Unknown or missing value for 'object'." : McpTool::NO_WRITE;
+			}
+			unset($args['object']);
+
+			return $this->writeConfirmationPreview($target, $args);
+		}
+
 		$write = $this->writeMetaFor($toolName);
 		if (empty($write)) {
 			return McpTool::NO_WRITE;
@@ -4561,6 +4745,21 @@ class ToolApiBridge extends McpTool
 	 */
 	public function writePrecheck(string $toolName, array $args)
 	{
+		// A generic tool: the checks of the original tool it runs, and its rights.
+		$target = $this->mergedToolTarget($toolName, $args);
+		if ($target !== null) {
+			if ($target === '') {
+				return $this->mergedToolWrites($toolName) ? "Unknown or missing value for 'object'." : '';
+			}
+			$refused = $this->mergedToolRightsRefusal($target);
+			if ($refused !== '') {
+				return $refused;
+			}
+			unset($args['object']);
+
+			return $this->writePrecheck($target, $args);
+		}
+
 		// The checks of core first, then the ones of the modules.
 		$refused = $this->precheckWrite($toolName, $args);
 		if ($refused !== '') {
@@ -6268,6 +6467,21 @@ class ToolApiBridge extends McpTool
 	 */
 	public function execute(string $name, array $args)
 	{
+		// A generic tool runs the original tool of the object it names.
+		$target = $this->mergedToolTarget($name, $args);
+		if ($target !== null) {
+			if ($target === '') {
+				return ['error' => "Unknown or missing value for 'object'."];
+			}
+			$refused = $this->mergedToolRightsRefusal($target);
+			if ($refused !== '') {
+				return ['error' => $refused, 'http_status' => 403];
+			}
+			unset($args['object']);
+
+			return $this->execute($target, $args);
+		}
+
 		$args = $this->applyFixedParams($name, $args);
 
 		// A model may send the record as a request_data body, or name line fields
@@ -6572,6 +6786,9 @@ class ToolApiBridge extends McpTool
 	public function toolRoute(string $name)
 	{
 		$this->getDefinitions();
+		if (isset(self::MERGED_TOOLS[$name])) {
+			return array('endpoint' => 'objects', 'method' => self::MERGED_TOOLS[$name]['method'], 'suffix' => self::MERGED_TOOLS[$name]['suffix'], 'label' => 'objects');
+		}
 		if (empty($this->routes[$name])) {
 			return null;
 		}

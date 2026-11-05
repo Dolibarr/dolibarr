@@ -32,6 +32,7 @@
  * @property int 	$id
  * @property int 	$contact_id
  * @property int 	$fk_soc
+ * @property string $typent_code
  * @property string $civility_code
  * @property string $civilite
  * @property string $civility
@@ -191,6 +192,7 @@ trait CommonPeople
 			$thirdpartyid = $this->id;
 		}
 		if ($this->element === 'contact' && $this instanceof Contact) {
+			// @phan-var-force Contact $this
 			$contactid = $this->id;
 			$thirdpartyid = empty($this->fk_soc) ? 0 : $this->fk_soc;
 		}
