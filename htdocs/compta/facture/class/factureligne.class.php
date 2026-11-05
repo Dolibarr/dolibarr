@@ -1010,7 +1010,7 @@ class FactureLigne extends CommonInvoiceLine
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Returns situation_percent of all the previous line. Used when INVOICE_USE_SITUATION != 1.
+	 * Returns cumulated situation_percent of all the previous lines. Used when INVOICE_USE_SITUATION != 1.
 	 * Warning: If invoice is a replacement invoice, this->fk_prev_id is id of the replaced line.
 	 *
 	 * @param  int     $invoiceid      Invoice id
@@ -1092,15 +1092,16 @@ class FactureLigne extends CommonInvoiceLine
 	 * New mode = the values on the line already represent the delta between the previous
 	 * state and the current state, so we don't need a conversion (we return 1).
 	 *
+	 * @param float|null $previousProgress Previous progress already loaded by the caller, null to fetch it
 	 * @return float
 	 */
-	public function getSituationRatio()
+	public function getSituationRatio($previousProgress = null)
 	{
 		if (getDolGlobalInt('INVOICE_USE_SITUATION') === 1) {
 			// in legacy mode, the situation invoice line stores the (cumulative) state of the
 			// cycle at the current situation. To get the delta, we need to subtract the
 			// state at the previous situation (if applicable).
-			$prevProgress = $this->get_prev_progress($this->fk_facture);
+			$prevProgress = $previousProgress === null ? $this->get_prev_progress($this->fk_facture) : $previousProgress;
 
 			if ($this->situation_percent == 0) {
 				// should not happen

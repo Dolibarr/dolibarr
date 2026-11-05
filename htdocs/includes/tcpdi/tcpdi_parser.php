@@ -704,28 +704,30 @@ class tcpdi_parser {
      * @since 1.0.000 (2011-06-20)
      */
     protected function getRawObject($offset=0, $data=null) {
-        if ($data == null) {
+        if ($data === null) {
             $data =& $this->pdfdata;
         }
         $objtype = ''; // object type to be returned
         $objval = ''; // object value to be returned
+        $datalen = strlen($data);
         // skip initial white space chars: \x00 null (NUL), \x09 horizontal tab (HT), \x0A line feed (LF), \x0C form feed (FF), \x0D carriage return (CR), \x20 space (SP)
-		while (strspn($data[$offset], "\x00\x09\x0a\x0c\x0d\x20") == 1) {
-            $offset++;
+        if ($offset < $datalen) {
+            $offset += strspn($data, "\x00\x09\x0a\x0c\x0d\x20", $offset);
+        }
+        if ($offset >= $datalen) {
+            // @CHANGE DOL End of the data: tell it to the callers so that they stop, they were looping forever
+            return array(array('eof', ''), $datalen);
         }
         // get first char
-		$char = $data[$offset];
+        $char = $data[$offset];
         // get object type
         switch ($char) {
             case '%': { // \x25 PERCENT SIGN
                 // skip comment and search for next token
-                $next = strcspn($data, "\r\n", $offset);
-                if ($next > 0) {
-                    $offset += $next;
-                    list($obj, $unused) = $this->getRawObject($offset, $data);
-                    return $obj;
-                }
-                break;
+                // @CHANGE DOL Return the object AND the offset, as everywhere else: only the object was returned, so
+                // a comment inside an object ended in a TypeError in the caller.
+                $offset += strcspn($data, "\r\n", $offset);
+                return $this->getRawObject($offset, $data);
             }
             case '/': { // \x2F SOLIDUS
                 // name object
@@ -783,7 +785,7 @@ class tcpdi_parser {
                         // get element
                         list($element, $offset) = $this->getRawObject($offset, $data);
                         $objval[] = $element;
-                    } while ($element[0] !== ']');
+                    } while (($element[0] !== ']') AND ($element[0] !== 'eof'));
                     // remove closing delimiter
                     array_pop($objval);
                 } else {
@@ -806,17 +808,22 @@ class tcpdi_parser {
                     // hexadecimal string object
                     $objtype = PDF_TYPE_HEX;
                     ++$offset;
-                    // The "Panose" entry in the FontDescriptor Style dict seems to have hex bytes separated by spaces.
-                    if (($char == '<') AND (preg_match('/^([0-9A-Fa-f ]+)[>]/iU', substr($data, $offset), $matches) == 1)) {
-                        $objval = $matches[1];
-                        $offset += strlen($matches[0]);
-                        unset($matches);
+                    if ($char == '<') {
+                        // @CHANGE DOL Read up to the closing ">" whatever the string holds. Only hexadecimal digits and
+                        // spaces were accepted: an empty string "<>" or a string written on several lines was not
+                        // read at all, and the rest of the object was then parsed from the wrong place.
+                        $end = strpos($data, '>', $offset);
+                        if ($end === false) {
+                            $end = $datalen;
+                        }
+                        $objval = (string) substr($data, $offset, ($end - $offset));
+                        $offset = min(($end + 1), $datalen);
                     }
                 }
                 break;
             }
             default: {
-				$frag = $data[$offset] . @$data[$offset+1] . @$data[$offset+2] . @$data[$offset+3];
+                $frag = substr($data, $offset, 4);
                 switch ($frag) {
                     case 'endo':
                         // indirect object
@@ -862,13 +869,19 @@ class tcpdi_parser {
                                 $objval = intval($matches[1]).'_'.intval($matches[2]);
                                 $offset += strlen ($matches[0]);
                             }
-                        } elseif (($numlen = strspn($data, '+-.0123456789', $offset)) > 0) {
+                        }
+                        if (($objtype === '') AND (($numlen = strspn($data, '+-.0123456789', $offset)) > 0)) {
                             // numeric object
                             $objval = substr($data, $offset, $numlen);
                             $objtype = (intval($objval) != $objval) ? PDF_TYPE_REAL : PDF_TYPE_NUMERIC;
                             $offset += $numlen;
                         }
                         unset($matches);
+                        if ($objtype === '') {
+                            // @CHANGE DOL Not something we know: step over it. The offset was not moved, so the
+                            // callers were reading the same bytes again and again until the memory was exhausted.
+                            $offset += max(1, strcspn($data, "\x00\x09\x0a\x0c\x0d\x20\x28\x29\x3c\x3e\x5b\x5d\x7b\x7d\x2f\x25", $offset));
+                        }
                         break;
                 }
                 break;
@@ -876,7 +889,7 @@ class tcpdi_parser {
         }
         $obj = array();
         $obj[] = $objtype;
-        if ($objtype == PDF_TYPE_OBJREF && is_array($objval)) {
+        if ($objtype === PDF_TYPE_OBJREF && is_array($objval)) {
             foreach ($objval as $val) {
                 $obj[] = $val;
             }
@@ -885,41 +898,38 @@ class tcpdi_parser {
         }
         return array($obj, $offset);
     }
+    /**
+     * Get the content of a dictionary
+     * @CHANGE DOL Rewritten. The text of the dictionary was first cut out by counting the "<<" and ">>", without looking
+     * at what they belong to: a hexadecimal string closed just before the end of the dictionary ("/Panose <0105>>>", as
+     * written by FPDI or xdvipdfmx) ended the dictionary one character too early, and the parsing of what was cut out
+     * then never ended. The entries are now read one after the other up to the closing ">>".
+     *
+     * @param $offset (int) Offset of the "<<" opening the dictionary.
+     * @param $data (string) Data to read.
+     * @return array containing the entries of the dictionary and the offset to the next object
+     */
     private function getDictValue($offset, &$data) {
         $objval = array();
-
-        // Extract dict from data.
-        $i=1;
-        $dict = '';
-        $offset += 2;
-        do {
-			if ($data[$offset] == '>' && $data[$offset+1] == '>') {
-                $i--;
-                $dict .= '>>';
-                $offset += 2;
-			} else if ($data[$offset] == '<' && $data[$offset+1] == '<') {
-                $i++;
-                $dict .= '<<';
-                $offset += 2;
-            } else {
-				$dict .= $data[$offset];
-                $offset++;
-            }
-        } while ($i>0);
-
-        // Now that we have just the dict, parse it.
-        $dictoffset = 0;
-        do {
-            // Get dict element.
-            list($key, $eloffset) = $this->getRawObject($dictoffset, $dict);
-            if ($key[0] == '>>') {
+        $offset += 2; // "<<"
+        // getRawObject() always moves forward or says 'eof', so this loop ends
+        while (true) {
+            list($key, $offset) = $this->getRawObject($offset, $data);
+            if (($key[0] === '>>') OR ($key[0] === 'eof')) {
                 break;
             }
-            list($element, $dictoffset) = $this->getRawObject($eloffset, $dict);
+            if ($key[0] !== PDF_TYPE_TOKEN) {
+                // a key is a name: ignore anything else
+                continue;
+            }
+            list($element, $offset) = $this->getRawObject($offset, $data);
+            if (($element[0] === '>>') OR ($element[0] === 'eof')) {
+                // key without value
+                $objval['/'.$key[1]] = array(PDF_TYPE_NULL, 'null');
+                break;
+            }
             $objval['/'.$key[1]] = $element;
-            unset($key);
-            unset($element);
-        } while (true);
+        }
 
         return array($objval, $offset);
     }

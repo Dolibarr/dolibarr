@@ -330,6 +330,30 @@ NOTES   :
         -   protected $default_monospaced_font = 'courier';
         +   protected $default_monospaced_font = 'freemono';
 
+==> FILE   : include/tcpdf_filters.php, function decodeFilterLZWDecode()
+    REASON : Used by TCPDI to import the pages of documents compressed with LZW. The previous code was not
+             updated when the code read is not yet in the dictionary, so everything decoded after such a code
+             was wrong, and the bits read were removed from the start of the string for each code (the whole
+             remaining string was copied each time, so the time was quadratic).
+    DIFF   :
+        -   while (($data_length > 0) AND (($index = bindec(substr($bitstring, 0, $bitlen))) != 257)) {
+        -       // remove read bits from string
+        -       $bitstring = substr($bitstring, $bitlen);
+        +   $bitpos = 0;
+        +   while (($data_length > 0) AND (($index = bindec(substr($bitstring, $bitpos, $bitlen))) != 257)) {
+        +       // move after the read bits
+        +       $bitpos += $bitlen;
+            and, after
+                $dic_val = $dictionary[$prev_index].$dictionary[$prev_index][0];
+                $decoded .= $dic_val;
+        +       $prev_index = $index;
+
+==> FILE   : include/tcpdf_filters.php, function decodeFilterASCII85Decode()
+    REASON : Deprecation of PHP 8.5 (chr() of a value over 255).
+    DIFF   :
+        -   chr($tuple >> NN)
+        +   chr(($tuple >> NN) & 0xff)
+
 
 
 ####################################################################################################
@@ -375,6 +399,21 @@ NOTES   :
         +       // Default: exit program and print error
                 die("<strong>TCPDI_PARSER ERROR [{$this->uniqueid}]: </strong>".$msg);
             }
+
+==> FILE   : tcpdi_parser.php, functions getRawObject() and getDictValue()
+    REASON : The reader of a dictionary could never end. The text of the dictionary was first cut out by counting
+             the "<<" and the ">>" without looking at what they belong to, so a hexadecimal string closed just
+             before the end of the dictionary ("/Panose <0105>>>", as written by FPDI and by xdvipdfmx) ended it
+             one character too early and the parsing of what was cut out never ended, writing warnings until the
+             process was killed. getRawObject() also left the offset where it was on a token it did not know, and
+             read nothing at all for an empty hexadecimal string or for one written on several lines.
+    DIFF   :
+            getDictValue() now reads the entries one after the other up to the closing ">>", with no cutting out,
+            and getRawObject():
+        +       returns the type 'eof' when the offset reaches the end of the data, so the callers stop
+        +       reads a hexadecimal string up to its closing ">" whatever it holds
+        +       moves the offset past a token it does not know
+        +       returns the pair (object, offset) for a comment, as it does everywhere else
 
 
 

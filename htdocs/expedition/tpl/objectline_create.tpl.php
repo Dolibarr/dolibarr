@@ -61,7 +61,7 @@ if (empty($forceall)) {
 }
 
 if (empty($filtertype)) {
-	$filtertype = '';	// Products and services, as before with the generic line form
+	$filtertype = 0;
 }
 
 $formproduct = new FormProduct($object->db);
@@ -93,6 +93,9 @@ if ($nolinesbefore) {
 		print $langs->trans('Unit');
 		print '</span></td>';
 	}
+	if (isModEnabled('stock')) {
+		print '<td class="linecolwarehouse">'.$langs->trans('Warehouse').'</td>';
+	}
 	print '<td colspan="'.$colspan.'"></td>';
 
 	print '</tr>';
@@ -111,46 +114,49 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 $coldisplay++;
 print '<td class="bordertop nobottom linecoldescription line minwidth500imp">';
 
-// Free line
-$freelines = !getDolGlobalString('MAIN_DISABLE_FREE_LINES');
+$freelines = getDolGlobalInt('SHIPMENTS_ALLOW_FREE_LINES') && !getDolGlobalString('MAIN_DISABLE_FREE_LINES');
 if ($freelines) {
 	print '<span class="prod_entry_mode_free nowraponall">';
-	if (isModEnabled("product") || isModEnabled("service")) {
-		print '<input type="radio" class="prod_entry_mode_free" name="prod_entry_mode" id="prod_entry_mode_free" value="free"'.((GETPOST('prod_entry_mode', 'alpha') == 'free' || getDolGlobalString('MAIN_FREE_PRODUCT_CHECKED_BY_DEFAULT')) ? ' checked' : '').'> ';
-	} else {
-		print '<input type="hidden" id="prod_entry_mode_free" name="prod_entry_mode" value="free">';
-	}
-	$form->select_type_of_lines(GETPOSTISSET("type") ? GETPOST("type", 'alpha', 2) : -1, 'type', $langs->trans("FreeLineOfType").'...', 1, 1, 'minwidth200', 0);
-	print '</span>';
+	print '<input type="radio" name="prod_entry_mode" id="prod_entry_mode_free" value="free"'.((GETPOST('prod_entry_mode', 'aZ09') == 'free' || (!GETPOSTISSET('prod_entry_mode') && getDolGlobalString('MAIN_FREE_PRODUCT_CHECKED_BY_DEFAULT'))) ? ' checked' : '').'>';
+	print '<label for="prod_entry_mode_free">'.$langs->trans('FreeLineOfType').'</label> ';
+	$form->select_type_of_lines((string) (GETPOSTISSET('type') ? GETPOSTINT('type') : -1), 'type', 1, 1, 1, 'minwidth200');
+	print '</span><br>';
 }
 
 // Predefined product/service
-if (isModEnabled("product") || isModEnabled("service")) {
-	print '<span class="prod_entry_mode_predef nowraponall">';
-	if ($freelines) {
-		print '<br><input type="radio" class="prod_entry_mode_predef" name="prod_entry_mode" id="prod_entry_mode_predef" value="predef"'.(GETPOST('prod_entry_mode', 'alpha') == 'predef' ? ' checked' : '').'> ';
+if (isModEnabled('product') || (isModEnabled('service') && (getDolGlobalInt('STOCK_SUPPORTS_SERVICES') || getDolGlobalInt('SHIPMENT_SUPPORTS_SERVICES')))) {
+	$filtertype = 0;
+	if (isModEnabled('service') && (getDolGlobalInt('STOCK_SUPPORTS_SERVICES') || getDolGlobalInt('SHIPMENT_SUPPORTS_SERVICES'))) {
+		$filtertype = isModEnabled('product') ? '' : 1;
+	}
+	if ($filtertype === '') {
+		print $langs->trans('ProductOrService').' ';
+	} elseif ($filtertype == 1) {
+		print $langs->trans("Service").' ';
+	} else {
+		print $langs->trans("Product").' ';
 	}
 
-	if (isModEnabled("product") && !isModEnabled("service")) {
-		$labelforradio = $langs->trans('PredefinedProducts');
-	} elseif (!isModEnabled("product") && isModEnabled("service")) {
-		$labelforradio = $langs->trans('PredefinedServices');
-	} else {
-		$labelforradio = $langs->trans('PredefinedProductsAndServices');
-	}
+	echo '<span class="prod_entry_mode_predef nowraponall">';
 
 	$statustoshow = -1;
-	$form->select_produits(GETPOSTINT('idprod'), 'idprod', $filtertype, getDolGlobalInt('PRODUIT_LIMIT_SIZE'), 0, $statustoshow, 2, '', 1, array(), 0, $labelforradio, 0, 'maxwidth500 widthcentpercentminusx', 1);
+	if ($freelines) {
+		print '<input type="radio" name="prod_entry_mode" id="prod_entry_mode_predef" value="predef"'.((GETPOST('prod_entry_mode', 'aZ09') != 'free' && (GETPOSTISSET('prod_entry_mode') || !getDolGlobalString('MAIN_FREE_PRODUCT_CHECKED_BY_DEFAULT'))) ? ' checked' : '').'>';
+		print '<label for="prod_entry_mode_predef">'.$langs->trans('PredefinedItem').'</label> ';
+	} else {
+		print '<input type="hidden" name="prod_entry_mode" value="predef">';
+	}
+	$form->select_produits(GETPOSTINT('idprod'), 'idprod', $filtertype, getDolGlobalInt('PRODUIT_LIMIT_SIZE'), 0, $statustoshow, 2, '', 1, array(), 0, '1', 0, 'maxwidth500 widthcentpercentminusx', 1, '', GETPOST('combinations', 'array:alphanohtml'));
 
-	print '</span>';
+	echo '</span>';
 }
 
-// Description
-require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-$nbrows = getDolGlobalInt('MAIN_INPUT_DESC_HEIGHT', ROWS_2);
-$toolbarname = getDolGlobalString('FCKEDITOR_ENABLE_DETAILS_FULL') ? 'dolibarr_notes' : 'dolibarr_details';
-$doleditor = new DolEditor('dp_desc', GETPOST('dp_desc', 'restricthtml'), '', getDolGlobalInt('MAIN_DOLEDITOR_HEIGHT', 100), $toolbarname, '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), $nbrows, '98%');
-$doleditor->Create();
+if ($freelines) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	print '<br>';
+	$doleditor = new DolEditor('dp_desc', GETPOST('dp_desc', 'restricthtml'), '', getDolGlobalInt('MAIN_DOLEDITOR_HEIGHT', 100), getDolGlobalString('FCKEDITOR_ENABLE_DETAILS_FULL') ? 'dolibarr_notes' : 'dolibarr_details', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), getDolGlobalInt('MAIN_INPUT_DESC_HEIGHT', 2), '98%');
+	$doleditor->Create();
+}
 
 
 if (!empty($extrafields)) {
@@ -166,13 +172,21 @@ print '</td>';
 
 // Qty
 $coldisplay++;
-print '<td class="bordertop nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="'.(GETPOSTISSET("qty") ? GETPOST("qty", 'alpha', 2) : 1).'">';
+print '<td class="bordertop nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="'.(GETPOSTISSET("qty") ? dol_escape_htmltag(GETPOST("qty", 'alpha')) : 1).'">';
 print '</td>';
 
 // Unit
 if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 	$coldisplay++;
-	print '<td class="nobottom linecoluseunit">';
+	print '<td class="bordertop nobottom linecoluseunit left">';
+	print $form->selectUnits(GETPOSTISSET('units') ? GETPOSTINT('units') : '', 'units', 1);
+	print '</td>';
+}
+
+if (isModEnabled('stock')) {
+	$coldisplay++;
+	print '<td class="bordertop nobottom linecolwarehouse">';
+	print $formproduct->selectWarehouses(GETPOSTISSET('entrepot_id') ? GETPOSTINT('entrepot_id') : -1, 'entrepot_id', 'warehouseopen', 1);
 	print '</td>';
 }
 
@@ -206,13 +220,6 @@ jQuery(document).ready(function() {
 				   if (editor) { editor.focus(); }
 			}
 			}
-	});
-	/* When choosing a type of free line, we select the free line mode */
-	$("#select_type").change(function()
-	{
-		if (jQuery('#select_type').val() >= 0) {
-			jQuery('#prod_entry_mode_free').prop('checked', true);
-		}
 	});
 });
 
