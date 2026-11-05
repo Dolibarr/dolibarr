@@ -3364,7 +3364,8 @@ class Product extends CommonObject
 			$sql .= " AND cf.fk_statut IN (".$this->db->sanitize($filtrestatut).")";
 		}
 		if (!empty($dateofvirtualstock)) {
-			$sql .= " AND fd.datec <= '".$this->db->idate($dateofvirtualstock)."'";
+			// Same filter as load_stats_commande_fournisseur(): received and ordered qty must cover the same orders
+			$sql .= " AND cf.date_livraison <= '".$this->db->idate($dateofvirtualstock)."'";
 		}
 
 		$result = $this->db->query($sql);
@@ -3424,7 +3425,11 @@ class Product extends CommonObject
 			$sql .= " AND m.status IN (".$this->db->sanitize($filtrestatut).")";
 		}
 		if (!empty($dateofvirtualstock)) {
-			$sql .= " AND m.date_valid <= '".$this->db->idate($dateofvirtualstock)."'"; // better date to code ? end of production ?
+			// Components leave stock when production starts, products enter stock when it ends
+			$sql .= " AND (";
+			$sql .= "(mp.role IN ('toconsume', 'consumed') AND COALESCE(m.date_start_planned, m.date_valid) <= '".$this->db->idate($dateofvirtualstock)."')";
+			$sql .= " OR (mp.role IN ('toproduce', 'produced') AND COALESCE(m.date_end_planned, m.date_valid) <= '".$this->db->idate($dateofvirtualstock)."')";
+			$sql .= ")";
 		}
 		$sql .= " GROUP BY role";
 
