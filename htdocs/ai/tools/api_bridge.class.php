@@ -4666,7 +4666,6 @@ class ToolApiBridge extends McpTool
 			}
 			$values[] = empty($extra) ? '' : ' ('.implode(', ', $extra).')';
 			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], ...$values).$this->previewCreateFields($args));
-
 		}
 
 		$who = '';
