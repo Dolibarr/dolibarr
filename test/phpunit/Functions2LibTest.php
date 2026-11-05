@@ -375,22 +375,22 @@ class Functions2LibTest extends CommonClassTest
 	}
 
 	/**
-	 * Test colorGetBestTextColor()
+	 * Test colorGetReadableTextColor()
 	 *
 	 * @return void
 	 */
-	public function testColorGetBestTextColor()
+	public function testColorGetReadableTextColor()
 	{
 		print __METHOD__."\n";
 
-		$this->assertSame('000000', colorGetBestTextColor('#e6be00'), 'yellow');
-		$this->assertSame('000000', colorGetBestTextColor('255,140,0'), 'orange');
-		$this->assertSame('FFFFFF', colorGetBestTextColor('38,60,92'), 'default eldy top menu');
-		$this->assertSame('FFFFFF', colorGetBestTextColor('90,50,120'), 'default md top menu');
-		$this->assertSame('FFFFFF', colorGetBestTextColor('#007f7f'), 'teal');
-		$this->assertSame('FFFFFF', colorGetBestTextColor('#000000'), 'black');
-		$this->assertSame('000000', colorGetBestTextColor('#ffffff'), 'white');
-		$this->assertSame('222222', colorGetBestTextColor('248,248,248', '222222', 'FFFFFF'), 'custom dark color is returned as is');
-		$this->assertSame('FFFFFF', colorGetBestTextColor('notacolor'), 'invalid background returns the light color');
+		$this->assertSame('000000', colorGetReadableTextColor('#e6be00', 'FFFFFF', '000000'), 'white on yellow is below 3:1');
+		$this->assertSame('000000', colorGetReadableTextColor('255,140,0', 'FFFFFF', '000000'), 'white on orange is below 3:1');
+		$this->assertSame('FFFFFF', colorGetReadableTextColor('#4a90e2', 'FFFFFF', '000000'), 'white on mid blue is kept although black contrasts more');
+		$this->assertSame('FFFFFF', colorGetReadableTextColor('38,60,92', 'FFFFFF', '000000'), 'default eldy top menu');
+		$this->assertSame('222222', colorGetReadableTextColor('248,248,248', '222222', 'FFFFFF'), 'dark on light is kept');
+		$this->assertSame('FFFFFF', colorGetReadableTextColor('#1e1e1e', '222222', 'FFFFFF'), 'dark on dark switches to light');
+		$this->assertSame('777777', colorGetReadableTextColor('#808080', '777777', '888888'), 'other color is not better');
+		$this->assertSame('FFFFFF', colorGetReadableTextColor('notacolor', 'FFFFFF', '000000'), 'invalid background keeps the text color');
+		$this->assertSame('FFFFFF', colorGetReadableTextColor('#e6be00', 'FFFFFF', '000000', 1.5), 'white on yellow is kept with a 1.5 minimum');
 	}
 }

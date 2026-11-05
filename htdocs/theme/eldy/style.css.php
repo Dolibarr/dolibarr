@@ -293,23 +293,53 @@ if (!empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)) {
 
 // Set text color to black or white
 $colorbackhmenu1 = implode(',', colorStringToArray($colorbackhmenu1)); // Normalize value to 'x,y,z'
-$colortextbackhmenu = colorGetBestTextColor($colorbackhmenu1, '000000', 'FFFFFF');
+$tmppart = explode(',', $colorbackhmenu1);
+$tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmppart[1] : 0) + (!empty($tmppart[2]) ? $tmppart[2] : 0);
+if ($tmpval <= 460) {
+	$colortextbackhmenu = 'FFFFFF';
+} else {
+	$colortextbackhmenu = '000000';
+}
+$colortextbackhmenu = colorGetReadableTextColor($colorbackhmenu1, $colortextbackhmenu, ($colortextbackhmenu == 'FFFFFF' ? '000000' : 'FFFFFF'));
 
 $colorbackvmenu1 = implode(',', colorStringToArray($colorbackvmenu1)); // Normalize value to 'x,y,z'
-$colortextbackvmenu = colorGetBestTextColor($colorbackvmenu1, '222222', 'FFFFFF');
+$tmppart = explode(',', $colorbackvmenu1);
+$tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmppart[1] : 0) + (!empty($tmppart[2]) ? $tmppart[2] : 0);
+if ($tmpval <= 460) {
+	$colortextbackvmenu = 'FFFFFF';
+} else {
+	$colortextbackvmenu = '222222';
+}
+$colortextbackvmenu = colorGetReadableTextColor($colorbackvmenu1, $colortextbackvmenu, ($colortextbackvmenu == 'FFFFFF' ? '222222' : 'FFFFFF'));
 
 $colortopbordertitle1 = implode(',', colorStringToArray($colortopbordertitle1)); // Normalize value to 'x,y,z'
 
 $colorbacktitle1 = implode(',', colorStringToArray($colorbacktitle1)); // Normalize value to 'x,y,z'
+$tmppart = explode(',', $colorbacktitle1);
 if ($colortexttitle == '') {
-	$colortexttitle = colorGetBestTextColor($colorbacktitle1, '000000', 'FFFFFF');
+	$tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmppart[1] : 0) + (!empty($tmppart[2]) ? $tmppart[2] : 0);
+	if ($tmpval <= 460) {
+		$colortexttitle = 'FFFFFF';
+		$colorshadowtitle = '888888';
+	} else {
+		$colortexttitle = '000000';
+		$colorshadowtitle = 'FFFFFF';
+	}
+	$colortexttitle = colorGetReadableTextColor($colorbacktitle1, $colortexttitle, ($colortexttitle == 'FFFFFF' ? '000000' : 'FFFFFF'));
 	$colorshadowtitle = ($colortexttitle == 'FFFFFF' ? '888888' : 'FFFFFF');
 } else {
 	$colorshadowtitle = '888888';
 }
 
 $colorbacktabcard1 = implode(',', colorStringToArray($colorbacktabcard1)); // Normalize value to 'x,y,z'
-$colortextbacktab = colorGetBestTextColor($colorbacktabcard1, '000000', 'FFFFFF');
+$tmppart = explode(',', $colorbacktabcard1);
+$tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmppart[1] : 0) + (!empty($tmppart[2]) ? $tmppart[2] : 0);
+if ($tmpval <= 460) {
+	$colortextbacktab = 'FFFFFF';
+} else {
+	$colortextbacktab = '000000';
+}
+$colortextbacktab = colorGetReadableTextColor($colorbacktabcard1, $colortextbacktab, ($colortextbacktab == 'FFFFFF' ? '000000' : 'FFFFFF'));
 
 
 // Format color value to match expected format (may be 'FFFFFF' or '255,255,255')

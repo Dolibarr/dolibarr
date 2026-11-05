@@ -2559,7 +2559,7 @@ function colorHexToRgb($hex, $alpha = false, $returnArray = false)
  * @param	string	$color1		Color in hex ('#AA1122', 'AA1122', '#a12') or comma RGB ('170,17,34')
  * @param	string	$color2		Color in hex ('#AA1122', 'AA1122', '#a12') or comma RGB ('170,17,34')
  * @return	float				Contrast ratio from 1 to 21, or 0 if one of the colors is not valid
- * @see colorGetBestTextColor()
+ * @see colorGetReadableTextColor()
  */
 function colorGetContrastRatio(string $color1, string $color2): float
 {
@@ -2573,21 +2573,26 @@ function colorGetContrastRatio(string $color1, string $color2): float
 }
 
 /**
- * Return the text color, among a dark and a light one, that has the highest WCAG 2.x contrast on a background color.
+ * Return a text color readable on a background: the given one, unless its WCAG 2.x contrast is below a minimum and the other one does better.
  *
  * @param	string	$backgroundcolor	Background color in hex ('#AA1122', 'AA1122', '#a12') or comma RGB ('170,17,34')
- * @param	string	$darkcolor			Dark text color, same formats
- * @param	string	$lightcolor			Light text color, same formats. Returned on a tie or if $backgroundcolor is not valid.
- * @return	string						$darkcolor or $lightcolor, unchanged
+ * @param	string	$textcolor			Text color, same formats
+ * @param	string	$othercolor			Other text color, same formats
+ * @param	float	$minratio			Minimum contrast ratio to keep $textcolor
+ * @return	string						$textcolor or $othercolor, unchanged. $textcolor if a color is not valid.
  * @see colorGetContrastRatio()
  */
-function colorGetBestTextColor(string $backgroundcolor, string $darkcolor = '000000', string $lightcolor = 'FFFFFF'): string
+function colorGetReadableTextColor(string $backgroundcolor, string $textcolor, string $othercolor, float $minratio = 3.0): string
 {
-	if (colorGetContrastRatio($backgroundcolor, $darkcolor) > colorGetContrastRatio($backgroundcolor, $lightcolor)) {
-		return $darkcolor;
+	$ratio = colorGetContrastRatio($backgroundcolor, $textcolor);
+	if ($ratio <= 0 || $ratio >= $minratio) {
+		return $textcolor;
+	}
+	if (colorGetContrastRatio($backgroundcolor, $othercolor) > $ratio) {
+		return $othercolor;
 	}
 
-	return $lightcolor;
+	return $textcolor;
 }
 
 /**
