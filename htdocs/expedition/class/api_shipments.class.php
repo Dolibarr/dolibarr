@@ -5,6 +5,7 @@
  * Copyright (C) 2025		Charlene Benke  		<charlene@patas-monkey.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025       Nick Fragoulis
+ * Copyright (C) 2026       Marukome0743
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -245,6 +246,8 @@ class Shipments extends DolibarrApi
 		}
 
 		if (isset($request_data["lines"])) {
+			require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+
 			$lines = array();
 			foreach ($request_data["lines"] as $line) {
 				$shipmentline = new ExpeditionLigne($this->db);
@@ -265,6 +268,14 @@ class Shipments extends DolibarrApi
 				if (is_array($detail_batch) || is_object($detail_batch)) {
 					$shipmentline->detail_batch = $detail_batch;
 				}
+
+				// Expedition::create() expands a kit into its components only when the line carries its product.
+				// Without this, the kit is stored as a parent line with a warehouse and no child lines.
+				$orderline = new OrderLine($this->db);
+				if ($orderline->fetch($shipmentline->fk_elementdet) > 0 && (empty($orderline->product_type) || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES'))) {
+					$shipmentline->fk_product = (int) $orderline->fk_product;
+				}
+
 				$lines[] = $shipmentline;
 			}
 			$this->shipment->lines = $lines;
@@ -315,8 +326,8 @@ class Shipments extends DolibarrApi
 				$error = 'Field qty is mandatory';
 			} elseif ($qty < 0) {
 				$error = 'Field qty cannot be negative';
-			} elseif ($fk_product <= 0 && getDolGlobalString('MAIN_DISABLE_FREE_LINES')) {
-				$error = 'Field fk_product is mandatory (MAIN_DISABLE_FREE_LINES is on)';
+			} elseif ($fk_product <= 0 && (!getDolGlobalInt('SHIPMENTS_ALLOW_FREE_LINES') || getDolGlobalString('MAIN_DISABLE_FREE_LINES'))) {
+				$error = 'Field fk_product is mandatory (free shipment lines are disabled)';
 			} elseif ($fk_product <= 0 && $description === '') {
 				$error = 'A line needs a fk_product or a description';
 			} elseif ($fk_product > 0) {

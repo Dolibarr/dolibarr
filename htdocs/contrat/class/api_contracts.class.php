@@ -3,6 +3,7 @@
  * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 /**
  * API class for contracts
+ *
+ * @since	7.0.0	Initial implementation
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
@@ -59,6 +62,9 @@ class Contracts extends DolibarrApi
 	 * Get properties of a contract object
 	 *
 	 * Return an array with contract information
+	 *
+	 * @since	7.0.0	Initial implementation
+	 * @since	23.0.0	Added properties and withLines parameters
 	 *
 	 * @param   int         $id         ID of contract
 	 * @param 	string 		$properties Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
@@ -99,6 +105,11 @@ class Contracts extends DolibarrApi
 	 * List contracts
 	 *
 	 * Get a list of contracts
+	 *
+	 * @since	7.0.0	Initial implementation
+	 * @since	19.0.0	Added properties parameter
+	 * @since	21.0.0	Added pagination_data parameter
+	 * @since	23.0.0	Added withLines parameter
 	 *
 	 * @param string		   $sortfield			Sort field
 	 * @param string		   $sortorder			Sort order
@@ -218,6 +229,8 @@ class Contracts extends DolibarrApi
 	/**
 	 * Create contract object
 	 *
+	 * @since	7.0.0	Initial implementation
+	 *
 	 * @param   array   $request_data   Request data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
@@ -288,6 +301,9 @@ class Contracts extends DolibarrApi
 
 	/**
 	 * Get lines of a contract
+	 *
+	 * @since	7.0.0	Initial implementation
+	 * @since	22.0.0	Added sortfield, sortorder, limit, page, sqlfilters, properties and pagination_data parameters
 	 *
 	 * @param int   	$id             	Id of contract
 	 * @param string 	$sortfield			Sort field
@@ -388,6 +404,8 @@ class Contracts extends DolibarrApi
 	/**
 	 * Add a line to given contract
 	 *
+	 * @since	7.0.0	Initial implementation
+	 *
 	 * @param int   $id             Id of contrat to update
 	 * @param array $request_data   Contractline data
 	 * @phan-param ?array<string,string> $request_data
@@ -446,6 +464,8 @@ class Contracts extends DolibarrApi
 
 	/**
 	 * Update a line to given contract
+	 *
+	 * @since	7.0.0	Initial implementation
 	 *
 	 * @param int   $id             Id of contrat to update
 	 * @param int   $lineid         Id of line to update
@@ -603,6 +623,8 @@ class Contracts extends DolibarrApi
 	/**
 	 * Activate a service line of a given contract
 	 *
+	 * @since	7.0.0	Initial implementation
+	 *
 	 * @param int		$id             Id of contract to activate
 	 * @param int		$lineid         Id of line to activate
 	 * @param string	$datestart		{@from body}  Date start        {@type timestamp}
@@ -645,6 +667,8 @@ class Contracts extends DolibarrApi
 	/**
 	 * Unactivate a service line of a given contract
 	 *
+	 * @since	7.0.0	Initial implementation
+	 *
 	 * @param int		$id             Id of contract to activate
 	 * @param int		$lineid         Id of line to activate
 	 * @param string	$datestart		{@from body}  Date start        {@type timestamp}
@@ -686,6 +710,7 @@ class Contracts extends DolibarrApi
 	/**
 	 * Delete a line to given contract
 	 *
+	 * @since	7.0.0	Initial implementation
 	 *
 	 * @param int   $id             Id of contract to update
 	 * @param int   $lineid         Id of line to delete
@@ -730,6 +755,8 @@ class Contracts extends DolibarrApi
 
 	/**
 	 * Update contract general fields (won't touch lines of contract)
+	 *
+	 * @since	7.0.0	Initial implementation
 	 *
 	 * @param 	int   	$id             	Id of contract to update
 	 * @param 	array 	$request_data   	Data
@@ -822,6 +849,8 @@ class Contracts extends DolibarrApi
 	/**
 	 * Delete contract
 	 *
+	 * @since	7.0.0	Initial implementation
+	 *
 	 * @param   int     $id         Contract ID
 	 *
 	 * @return  array
@@ -850,7 +879,7 @@ class Contracts extends DolibarrApi
 			throw new RestException(403, 'Access to this contract is not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (!$this->contract->delete(DolibarrApiAccess::$user)) {
+		if ($this->contract->delete(DolibarrApiAccess::$user) <= 0) {
 			throw new RestException(500, 'Error when delete contract : '.$this->contract->errorsToString());
 		}
 
@@ -864,6 +893,8 @@ class Contracts extends DolibarrApi
 
 	/**
 	 * Validate a contract
+	 *
+	 * @since	7.0.0	Initial implementation
 	 *
 	 * @param   int $id             Contract ID
 	 * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
@@ -921,6 +952,8 @@ class Contracts extends DolibarrApi
 
 	/**
 	 * Close all services of a contract
+	 *
+	 * @since	7.0.0	Initial implementation
 	 *
 	 * @param   int $id             Contract ID
 	 * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers

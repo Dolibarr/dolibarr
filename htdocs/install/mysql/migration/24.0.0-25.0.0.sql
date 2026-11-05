@@ -555,6 +555,9 @@ ALTER TABLE llx_bank ADD INDEX idx_bank_fk_account_amount(fk_account, amount);
 -- VPGSQL8.2 DROP INDEX uk_product_attribute_ref;
 ALTER TABLE llx_product_attribute ADD UNIQUE INDEX uk_product_attribute_ref (ref, entity);
 
+-- Index on the date of modification of thirdparties: the thirdparty area shows the last modified ones
+ALTER TABLE llx_societe ADD INDEX idx_societe_tms(tms);
+
 -- API keys created from the user's token tab were written to the deprecated column token, while
 -- the API authenticates against tokenstring (where the upgrade that moves user api_key values
 -- puts them). Those keys never worked: copy them where they are read.
