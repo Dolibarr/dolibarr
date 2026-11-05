@@ -2,7 +2,7 @@
 /* Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -529,13 +529,14 @@ if ($object->format == 'F') {
 		print '<input type="hidden" name="sondage" value="'.dol_escape_htmltag($numsondage).'">';
 
 		print '<div class="div-table-responsive-no-min"><table class="border centpercent">'."\n";
-		print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Name").'</td><td>';
+		// The whole public page is centered, so the cells of the form are aligned to the left explicitly
+		print '<tr><td class="titlefield left fieldrequired">'.$langs->trans("Name").'</td><td class="left">';
 		print '<input type="text" name="nom" class="minwidth300" maxlength="64" value="'.dol_escape_htmltag(GETPOST('nom', 'alphanohtml')).'">';
 		print '</td></tr>'."\n";
 
 		foreach ($formquestions as $question) {
 			$fieldname = 'answer'.$question->id;
-			print '<tr><td class="tdtop'.($question->mandatory ? ' fieldrequired' : '').'">'.dol_escape_htmltag($question->question).'</td><td>';
+			print '<tr><td class="tdtop left'.($question->mandatory ? ' fieldrequired' : '').'">'.dol_escape_htmltag($question->question).'</td><td class="left">';
 			if ($question->type == Opensurveyquestion::TYPE_TEXT) {
 				print '<input type="text" name="'.$fieldname.'" class="minwidth300" maxlength="'.Opensurveyquestion::MAXLENGTH_TEXT.'" value="'.dol_escape_htmltag(GETPOST($fieldname, 'alphanohtml')).'">';
 			} elseif ($question->type == Opensurveyquestion::TYPE_TEXTAREA) {
