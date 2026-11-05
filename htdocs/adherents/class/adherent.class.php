@@ -1142,18 +1142,6 @@ class Adherent extends CommonObject
 			}
 		}
 
-		// Remove the links of the bank transactions to this member (the bank transactions themselves are kept)
-		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url WHERE type = 'member' AND url_id = ".((int) $rowid);
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$error++;
-				$this->error .= $this->db->lasterror();
-				$errorflag = -6;
-			}
-		}
-
 		// Remove the links with other objects
 		if (!$error) {
 			$ret = $this->deleteObjectLinked();
