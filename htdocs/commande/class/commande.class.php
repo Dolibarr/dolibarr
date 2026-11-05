@@ -1332,9 +1332,10 @@ class Commande extends CommonOrder
 	 *  @param	    User	$user		    User making the clone
 	 *	@param		int		$socid		    Id of thirdparty
 	 *	@param		int		$forceentity	Entity id to force (used by multicompany to clone into another entity)
+	 *	@param		?bool	$keep_ref_customer	Keep the customer reference. If null, MAIN_KEEP_REF_CUSTOMER_ON_CLONING decides.
 	 *	@return		int					    New id of clone
 	 */
-	public function createFromClone(User $user, $socid = 0, $forceentity = null)
+	public function createFromClone(User $user, $socid = 0, $forceentity = null, $keep_ref_customer = null)
 	{
 		global $hookmanager;
 
@@ -1379,7 +1380,7 @@ class Commande extends CommonOrder
 		$object->date_commande = dol_now();
 		$object->date_creation = '';
 		$object->date_validation = '';
-		if (!getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING')) {
+		if (!($keep_ref_customer ?? getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING'))) {
 			$object->ref_client = '';
 			$object->ref_customer = '';
 		}
@@ -1800,7 +1801,7 @@ class Commande extends CommonOrder
 				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 			}
 
-			$tabprice = calcul_price_total($qty, (float) $pu, $remise_percent, $txtva, (float) $txlocaltax1, (float) $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise);
+			$tabprice = calcul_price_total($qty, (float) $pu, $remise_percent, $txtva, (float) $txlocaltax1, (float) $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise, $this->multicurrency_code);
 
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -3359,7 +3360,7 @@ class Commande extends CommonOrder
 				}
 			}
 
-			$tabprice = calcul_price_total($qty, (float) $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise);
+			$tabprice = calcul_price_total($qty, (float) $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise, $this->multicurrency_code);
 
 			$total_ht = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -4360,6 +4361,19 @@ class Commande extends CommonOrder
 			$this->error = $this->db->error();
 			return -1;
 		}
+	}
+
+	/**
+	 *	Return the display context of the lines, as defined by the card before printObjectLines() and formAddObjectLine()
+	 *
+	 *	@return	array{seller:Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	See CommonObject::getObjectLinesDisplayContext()
+	 */
+	public function getObjectLinesDisplayContext()
+	{
+		$context = parent::getObjectLinesDisplayContext();
+		$context['inputalsopricewithtax'] = 1;
+
+		return $context;
 	}
 
 	/**

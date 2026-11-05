@@ -29,6 +29,7 @@ The other worklows are:
 - ci-on-pull-checkprquota			to check the number of PR created by a user per day does not exceed the quota (20).
 - ci-on-comment-moderation			to experiment automatic moderation of comments (bot).
 - ci-on-comment-unstale 			to remove the stale label of an issue when a comment is added.
+- ci-on-issue-autolabel 			to add the label Bug or Feature request on new issues created without the web form (gh CLI, API, ...).
 - ci-on-pull-v18-autoassign 		to set the reviewers and add the label on PRs targeting the branch 18.0.
 - ci-on-release 					to trigger the build of the docker image when a release is published.
 - ci-on-cron-windows.yml

@@ -18,6 +18,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -185,11 +186,6 @@ class FactureFournisseur extends CommonInvoice
 	 * @var integer
 	 */
 	public $date_echeance;
-
-	/**
-	 * @var ?int
-	 */
-	public $date_pointoftax;
 
 	/**
 	 * @var float
@@ -1286,6 +1282,12 @@ class FactureFournisseur extends CommonInvoice
 			$this->tms = dol_now();
 		}
 
+		// The point of tax date of a validated invoice can't be changed
+		if ($this->checkPointOfTaxNotChanged() < 0) {
+			dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
+			return -1;
+		}
+
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn SET";
 		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
@@ -1872,6 +1874,7 @@ class FactureFournisseur extends CommonInvoice
 		if (count($this->lines) <= 0) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorObjectMustHaveLinesToBeValidated", $this->ref);
+			dol_syslog(__METHOD__.' '.$this->error, LOG_WARNING);
 			return -1;
 		}
 
@@ -2288,7 +2291,7 @@ class FactureFournisseur extends CommonInvoice
 			// VERY IMPORTANT: It's at the time of line insertion that we must store the net, VAT, and gross amounts,
 			// and this is done at the line level, which has its own VAT rate
 
-			$tabprice = calcul_price_total((float) $qty, $pu, (float) $remise_percent, $txtva, (float) $txlocaltax1, (float) $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_devise);
+			$tabprice = calcul_price_total((float) $qty, $pu, (float) $remise_percent, $txtva, (float) $txlocaltax1, (float) $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_devise, $this->multicurrency_code);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
@@ -2501,7 +2504,7 @@ class FactureFournisseur extends CommonInvoice
 			$vatrate = preg_replace('/\s*\(.*\)/', '', (string) $vatrate); // Remove code into vatrate.
 		}
 
-		$tabprice = calcul_price_total((float) $qty, (float) $pu, $remise_percent, $vatrate, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_devise);
+		$tabprice = calcul_price_total((float) $qty, (float) $pu, $remise_percent, $vatrate, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_devise, $this->multicurrency_code);
 		$total_ht = $tabprice[0];
 		$total_tva = $tabprice[1];
 		$total_ttc = $tabprice[2];
@@ -2548,7 +2551,7 @@ class FactureFournisseur extends CommonInvoice
 		}
 
 		$line->desc = $desc;
-
+		$line->description = $desc;
 		$line->qty = ($this->type == self::TYPE_CREDIT_NOTE ? abs((float) $qty) : (float) $qty); // For credit note, quantity is always positive and unit price negative
 
 		$line->subprice = ($apply_abs_price_on_credit_note ? -abs((float) $pu_ht) : (float) $pu_ht); // For credit note, unit price always negative, always positive otherwise
@@ -2950,6 +2953,29 @@ class FactureFournisseur extends CommonInvoice
 			$datas['totalttc'] = '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
 		}
 		return $datas;
+	}
+
+	/**
+	 *	Return the display context of the lines, as defined by the card before printObjectLines() and formAddObjectLine()
+	 *	On supplier documents, the supplier is the seller.
+	 *
+	 *	@return	array{seller:Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	See CommonObject::getObjectLinesDisplayContext()
+	 */
+	public function getObjectLinesDisplayContext()
+	{
+		global $mysoc;
+
+		$context = parent::getObjectLinesDisplayContext();
+		// The supplier is the seller, an empty third party is used if it is not loaded (same as a failed fetch in the card)
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		$context['seller'] = (is_object($this->thirdparty) ? $this->thirdparty : new Societe($this->db));
+		$context['buyer'] = $mysoc;
+		$context['forceall'] = 1;
+		$context['inputalsopricewithtax'] = 1;
+		// 2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum
+		$context['senderissupplier'] = (getDolGlobalInt('SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY') ? getDolGlobalInt('SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY') : 2);
+
+		return $context;
 	}
 
 	/**
@@ -3644,7 +3670,8 @@ class FactureFournisseur extends CommonInvoice
 		$tmpinvoice = new FactureFournisseur($this->db);
 
 		// Label of the event recorded once a reminder is sent. It is also used to not send the same reminder twice the same day.
-		$labelreminderok = 'sendEmailsRemindersOnInvoiceDueDateOK (nbdays='.$nbdays.' paymentmode='.$paymentmode.' template='.$template.' datetouse='.$datetouse.' forcerecipient='.$forcerecipient.')';
+		// The template is the last parameter: the label is truncated to 128 characters when saved and the template is the longest value.
+		$labelreminderok = 'sendEmailsRemindersOnInvoiceDueDateOK (nbdays='.$nbdays.' paymentmode='.$paymentmode.' datetouse='.$datetouse.' forcerecipient='.$forcerecipient.' template='.$template.')';
 
 		dol_syslog(__METHOD__." start", LOG_INFO);
 
@@ -3669,7 +3696,8 @@ class FactureFournisseur extends CommonInvoice
 		// Exclude invoices for which the same reminder was already sent today
 		$sql .= " AND NOT EXISTS (SELECT a.id FROM ".MAIN_DB_PREFIX."actioncomm as a";
 		$sql .= " WHERE a.elementtype = 'invoice_supplier' AND a.fk_element = f.rowid AND a.code = 'AC_EMAIL'";
-		$sql .= " AND a.label = '".$this->db->escape($labelreminderok)."'";
+		// The label of an event is sanitized and truncated to 128 characters when saved (ActionComm::create), so search it the same way
+		$sql .= " AND a.label = '".$this->db->escape(dol_trunc(sanitizeVal($labelreminderok, 'alphawithlgt'), 128))."'";
 		$sql .= " AND a.datep >= '".$this->db->idate(dol_get_first_hour($now))."')";
 		if ($datetouse == 'invoicedate') {
 			$sql .= $this->db->order("datef", "ASC");

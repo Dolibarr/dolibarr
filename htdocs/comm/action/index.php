@@ -296,7 +296,7 @@ if (!getDolGlobalString('AGENDA_DISABLE_EXT')) {
 				'cachedelay' => getDolGlobalInt('AGENDA_EXT_CACHE'.$i, 0),
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				'default' => dol_string_nohtmltag(getDolGlobalString($default)),
-				'buggedfile' => dol_string_nohtmltag(getDolGlobalString($buggedfile, ''))
+				'buggedfile' => dol_string_nohtmltag(getDolGlobalString($buggedfile))
 			);
 		}
 	}
@@ -315,7 +315,10 @@ if (!getDolGlobalString('AGENDA_DISABLE_EXT')) {
 		$default = 'AGENDA_EXT_ACTIVEBYDEFAULT_'.$user->id.'_'.$i;
 		$buggedfile = 'AGENDA_EXT_BUGGEDFILE_'.$user->id.'_'.$i;
 
-		if (getDolUserString($source) && getDolUserString($name)) {
+		// A calendar set up before the switch of the user setup page existed holds no AGENDA_EXT_ENABLED_x_y
+		// at all, so the default here keeps it in the list instead of hiding it on upgrade. This is
+		// why it differs from the global calendars above, where a missing constant means disabled.
+		if (getDolUserString($source) && getDolUserString($name) && getDolUserString($enabled, '1')) {
 			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
 			$listofextcals[] = array(
 				'type' => 'usersetup',
@@ -326,7 +329,7 @@ if (!getDolGlobalString('AGENDA_DISABLE_EXT')) {
 				'cachedelay' => getDolUserInt('AGENDA_EXT_CACHE_'.$user->id.'_'.$i, 0),
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				'default' => dol_string_nohtmltag(getDolUserString($default)),
-				'buggedfile' => dol_string_nohtmltag($buggedfile)
+				'buggedfile' => dol_string_nohtmltag(getDolUserString($buggedfile))
 			);
 		}
 	}
@@ -938,6 +941,9 @@ if (count($listofextcals)) {
 		if (is_array($tmparray)) {
 			$icalevents = array_merge($icalevents, $tmparray); // Add $ical->cal['VFREEBUSY']
 		}
+		if (getDolGlobalString('AGENDA_EXT_SHOW_TODO')) {
+			$icalevents = array_merge($icalevents, $ical->getTodoAndJournalAsEvents()); // Add $ical->cal['VTODO'] and $ical->cal['VJOURNAL']
+		}
 
 		$nbevents += count($icalevents);
 
@@ -945,20 +951,29 @@ if (count($listofextcals)) {
 			// Duplicate all repeatable events into new entries
 			$moreicalevents = array();
 			foreach ($icalevents as $icalkey => $icalevent) {
+				if (!$ical->hasStartDate($icalevent)) {
+					dol_syslog("Skip external calendar component without a valid DTSTART", LOG_WARNING);
+					continue;
+				}
+
 				$hasrrule = (isset($icalevent['RRULE']) && is_array($icalevent['RRULE']));
+				$tzidwall = false;	// True if the dates are local dates of a time zone known by PHP: we compute the occurrences with these local dates, then we convert each one to a real time
+				$tzidname = '';
 				if ($hasrrule || !empty($icalevent['RDATE'])) { //repeatable event
 					//if ($event->date_start_in_calendar < $firstdaytoshow) $event->date_start_in_calendar=$firstdaytoshow;
 					//if ($event->date_end_in_calendar > $lastdaytoshow) $event->date_end_in_calendar=($lastdaytoshow-1);
-					if (!empty($icalevent['DTSTART;VALUE=DATE'])) { //fullday event
+					if (isset($icalevent['DTSTART;VALUE=DATE'])) { //fullday event
 						$datecurstart = dol_stringtotime($icalevent['DTSTART;VALUE=DATE'], 1);
 						$datecurend = (empty($icalevent['DTEND;VALUE=DATE']) ? $datecurstart + 86400 : dol_stringtotime($icalevent['DTEND;VALUE=DATE'], 1)) - 1; // We remove one second to get last second of day
-					} elseif (!empty($icalevent['DTSTART']) && !is_array($icalevent['DTSTART'])) {	// Date in GMT (like 19970714T173000Z)
+					} elseif (isset($icalevent['DTSTART']) && !is_array($icalevent['DTSTART'])) {	// Date in GMT (like 19970714T173000Z)
 						$datecurstart = $icalevent['DTSTART'];
 						$datecurend = empty($icalevent['DTEND']) ? $datecurstart : $icalevent['DTEND'];
-					} elseif (is_array($icalevent['DTSTART']) && !empty($icalevent['DTSTART']['unixtime'])) {
+					} elseif (is_array($icalevent['DTSTART']) && isset($icalevent['DTSTART']['unixtime']) && $icalevent['DTSTART']['unixtime'] !== '') {
 						$datecurstart = $icalevent['DTSTART']['unixtime'];
 						$datecurend = empty($icalevent['DTEND']['unixtime']) ? $datecurstart : $icalevent['DTEND']['unixtime'];
-						if (!empty($ical->cal['DAYLIGHT']['DTSTART']) && $datecurstart) {
+						$tzidname = (string) ($icalevent['DTSTART']['TZID'] ?? '');
+						$tzidwall = (empty($buggedfile) && $ical->isTzidKnown($tzidname));
+						if (!$tzidwall && !empty($ical->cal['DAYLIGHT']['DTSTART']) && $datecurstart) {
 							//var_dump($ical->cal);
 							$tmpcurstart = $datecurstart;
 							$tmpcurend = $datecurend;
@@ -997,13 +1012,8 @@ if (count($listofextcals)) {
 					$maxrepeat = 0;
 
 					if ($hasrrule) {
-						// We can expand only simple rules. For the others (BYMONTHDAY, BYSETPOS, BYDAY with several days...), we keep the first occurrence only.
-						$unsupportedrule = !in_array($icalevent['RRULE']['FREQ'] ?? '', ['DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY']);
-						foreach ($icalevent['RRULE'] as $rulekey => $rulevalue) {
-							if (strpos($rulekey, 'BY') === 0 && !($rulekey == 'BYDAY' && $icalevent['RRULE']['FREQ'] == 'WEEKLY' && $rulevalue === strtoupper(substr(gmdate('D', $datecurstart), 0, 2)))) {
-								$unsupportedrule = true;
-							}
-						}
+						// We can expand a rule with FREQ and, as BYxxx parts, only BYDAY, BYMONTHDAY, BYMONTH. For the others (BYSETPOS...), we keep the first occurrence only.
+						$unsupportedrule = !$ical->isRRuleSupported($icalevent['RRULE']);
 						if ($unsupportedrule) {
 							dol_syslog("Found a repeatable record with a rule not managed by dolibarr code (".json_encode($icalevent['RRULE'])."). Only first occurrence is shown.", LOG_WARNING);
 							unset($icalevents[$icalkey]['RRULE']);
@@ -1018,12 +1028,39 @@ if (count($listofextcals)) {
 						if ($until && ($until + ($datecurend - $datecurstart)) < $firstdaytoshow) {
 							$hasrrule = false; // We discard repeatable event that end before start date to show
 						}
-						if ($datecurstart >= $lastdaytoshow) {
+						if ($datecurstart >= $lastdaytoshow + ($tzidwall ? 86400 : 0)) {
 							$hasrrule = false; // We discard repeatable event that start after end date to show
 						}
 					}
 
-					if ($hasrrule) {
+					if ($hasrrule && ($tzidwall || in_array($icalevent['RRULE']['FREQ'] ?? '', ['MINUTELY', 'HOURLY']) || count(array_filter(array_keys($icalevent['RRULE']), function (string $rulekey): bool {
+						return strpos($rulekey, 'BY') === 0;
+					})) > 0)) {
+						// Rule with a BYxxx part, or hourly or by minute: we compute the occurrences from the dates as written in the file
+						foreach ($ical->expandRRule($icalevent['RRULE'], (int) $datecurstart + $exdateshift, (int) $lastdaytoshow + $exdateshift, ($until ? (int) $until + $exdateshift : 0), (int) $firstdaytoshow + $exdateshift - $occurrenceduration - 86400) as $occurrencewall) {
+							if ($tzidwall) {
+								// The occurrence is a local date of the time zone of the event: real time of its start and end (daylight saving time of this date)
+								$occurrencestart = (int) $ical->tzidToTimestamp($occurrencewall, $tzidname);
+								$occurrenceend = (int) $ical->tzidToTimestamp($occurrencewall + $occurrenceduration, $tzidname);
+							} else {
+								$occurrencestart = $occurrencewall - $exdateshift;
+								$occurrenceend = $occurrencestart + $occurrenceduration;
+							}
+							if ($occurrenceend < $firstdaytoshow || in_array(gmdate('Ymd', $occurrencewall), $exdates)) {
+								continue;
+							}
+							$newevent = $icalevent;
+							unset($newevent['RRULE']);
+							if (!empty($icalevent['DTSTART;VALUE=DATE'])) {
+								$newevent['DTSTART;VALUE=DATE'] = dol_print_date($occurrencestart, '%Y%m%d');
+								$newevent['DTEND;VALUE=DATE'] = dol_print_date($occurrenceend + 1, '%Y%m%d');
+							} else {
+								$newevent['DTSTART'] = $occurrencestart;
+								$newevent['DTEND'] = $occurrenceend;
+							}
+							$moreicalevents[] = $newevent;
+						}
+					} elseif ($hasrrule) {
 						$numofevent = 0;
 						while (($datecurstart < $lastdaytoshow) && (empty($maxrepeat) || ($numofevent < $maxrepeat)) && (empty($until) || $datecurstart <= $until)) {
 							if ($datecurend >= $firstdaytoshow && !in_array(gmdate('Ymd', (int) $datecurstart + $exdateshift), $exdates)) {    // We add event (if not excluded)
@@ -1066,14 +1103,16 @@ if (count($listofextcals)) {
 
 					// Dates added to the recurrence (RDATE), with the duration of the first occurrence
 					if (!empty($icalevent['RDATE']) && is_array($icalevent['RDATE'])) {
+						$rdatewall = 0;
 						foreach ($icalevent['RDATE'] as $rdate) {
 							if (!empty($icalevent['DTSTART;VALUE=DATE'])) {
 								$rdatestart = dol_stringtotime(substr($rdate, 0, 8), 1);
 							} else {
-								$rdatestart = $ical->ical_date_to_unix($rdate) - $exdateshift;
+								$rdatewall = $ical->ical_date_to_unix($rdate);
+								$rdatestart = ($tzidwall ? (int) $ical->tzidToTimestamp($rdatewall, $tzidname) : $rdatewall - $exdateshift);
 							}
 							$rdateend = $rdatestart + $occurrenceduration;
-							if ($rdatestart == $firstdatecurstart || $rdateend < $firstdaytoshow || $rdatestart >= $lastdaytoshow || in_array(gmdate('Ymd', $rdatestart + $exdateshift), $exdates)) {
+							if (($tzidwall ? $rdatewall : $rdatestart) == $firstdatecurstart || $rdateend < $firstdaytoshow || $rdatestart >= $lastdaytoshow || in_array(gmdate('Ymd', ($tzidwall ? $rdatewall : $rdatestart + $exdateshift)), $exdates)) {
 								continue;
 							}
 							$newevent = $icalevent;
@@ -1095,6 +1134,10 @@ if (count($listofextcals)) {
 			// Loop on each entry into cal file to know if entry is qualified and add an ActionComm into $eventarray
 			foreach ($icalevents as $icalevent) {
 				//var_dump($icalevent);
+
+				if (!$ical->hasStartDate($icalevent)) {
+					continue;
+				}
 
 				//print $icalevent['SUMMARY'].'->';
 				//var_dump($icalevent);exit;
@@ -1131,15 +1174,27 @@ if (count($listofextcals)) {
 					$datestart = $icalevent['DTSTART']['unixtime'];
 					$dateend = $icalevent['DTEND']['unixtime'];
 
+					// Local date of a time zone known by PHP: we convert it to a real time (daylight saving time of this date)
+					$tzidconverted = false;
+					if (empty($buggedfile)) {
+						$tzidstart = $ical->tzidToTimestamp((int) $datestart, (string) ($icalevent['DTSTART']['TZID'] ?? ''));
+						if ($tzidstart !== null) {
+							$tzidend = $ical->tzidToTimestamp((int) $dateend, (string) ($icalevent['DTEND']['TZID'] ?? ($icalevent['DTSTART']['TZID'] ?? '')));
+							$datestart = $tzidstart;
+							$dateend = ($tzidend !== null ? $tzidend : $tzidstart + ((int) $dateend - (int) $icalevent['DTSTART']['unixtime']));
+							$tzidconverted = true;
+						}
+					}
+
 					$datestart += +($offsettz * 3600);
 					$dateend += +($offsettz * 3600);
 
 					// $buggedfile is set to uselocalandtznodaylight if conf->global->AGENDA_EXT_BUGGEDFILEx = 'uselocalandtznodaylight'
-					if ($buggedfile === 'uselocalandtznodaylight') {	// unixtime is a local date that does not take daylight into account, TZID is +1 for example for 'Europe/Paris' in summer instead of 2
+					if (!$tzidconverted && $buggedfile === 'uselocalandtznodaylight') {	// unixtime is a local date that does not take daylight into account, TZID is +1 for example for 'Europe/Paris' in summer instead of 2
 						// TODO
 					}
 					// $buggedfile is set to uselocalandtzdaylight if conf->global->AGENDA_EXT_BUGGEDFILEx = 'uselocalandtzdaylight' (for example with bluemind)
-					if ($buggedfile === 'uselocalandtzdaylight') {	// unixtime is a local date that does take daylight into account, TZID is +2 for example for 'Europe/Paris' in summer
+					if (!$tzidconverted && $buggedfile === 'uselocalandtzdaylight') {	// unixtime is a local date that does take daylight into account, TZID is +2 for example for 'Europe/Paris' in summer
 						$localtzs = new DateTimeZone((string) preg_replace('/"/', '', $icalevent['DTSTART']['TZID']));
 						$localtze = new DateTimeZone((string) preg_replace('/"/', '', $icalevent['DTEND']['TZID']));
 						$localdts = new DateTime(dol_print_date($datestart, 'dayrfc', 'gmt'), $localtzs);
@@ -1174,7 +1229,12 @@ if (count($listofextcals)) {
 					$event->datep = (int) ($datestart + $usertime);
 					$event->datef = (int) ($dateend + $usertime);
 
-					if (isset($icalevent['SUMMARY']) && $icalevent['SUMMARY']) {
+					// Event of class PRIVATE or CONFIDENTIAL: the details are hidden, only the time is shown (unless AGENDA_EXT_SHOW_PRIVATE is set)
+					$isprivate = (isset($icalevent['CLASS']) && is_string($icalevent['CLASS']) && in_array(strtoupper(trim($icalevent['CLASS'])), ['PRIVATE', 'CONFIDENTIAL']) && !getDolGlobalString('AGENDA_EXT_SHOW_PRIVATE'));
+
+					if ($isprivate) {
+						$event->label = $langs->trans("Private");
+					} elseif (isset($icalevent['SUMMARY']) && $icalevent['SUMMARY']) {
 						$event->label = dol_string_nohtmltag($icalevent['SUMMARY']);
 					} elseif (isset($icalevent['DESCRIPTION']) && $icalevent['DESCRIPTION']) {
 						$event->label = dol_nl2br(dol_string_nohtmltag($icalevent['DESCRIPTION']), 1);
@@ -1207,8 +1267,21 @@ if (count($listofextcals)) {
 						// X-MICROSOFT-CDO-BUSYSTATUS:OOF       + TRANSP:OPAQUE      => Away from the office / off-site
 					}
 
-					if (!empty($icalevent['LOCATION'])) {
+					if (!empty($icalevent['LOCATION']) && !$isprivate) {
 						$event->location = $icalevent['LOCATION'];
+					}
+
+					// More details, shown into the tooltip of the event (not for a private event)
+					$event->icaldetails = array();
+					if (!$isprivate) {
+						foreach (array('DESCRIPTION' => 'description', 'ORGANIZER' => 'organizer', 'URL' => 'url', 'CATEGORIES' => 'categories', 'GEO' => 'geo') as $icalproperty => $detailkey) {
+							if (!empty($icalevent[$icalproperty]) && is_string($icalevent[$icalproperty])) {
+								$event->icaldetails[$detailkey] = $icalevent[$icalproperty];
+							}
+						}
+						if (!empty($icalevent['ATTENDEE']) && is_array($icalevent['ATTENDEE'])) {
+							$event->icaldetails['attendees'] = $icalevent['ATTENDEE'];
+						}
 					}
 
 					$event->date_start_in_calendar = $event->datep;

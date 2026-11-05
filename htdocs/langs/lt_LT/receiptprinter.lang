@@ -69,7 +69,6 @@ DOL_VALUE_DAY=Sąskaitos faktūros diena
 DOL_VALUE_DAY_LETTERS=Sąskaitos faktūros diena raidėmis
 DOL_LINE_FEED_REVERSE=Linijos tiekimas atgal
 InvoiceID=Sąskaitos faktūros ID
-InvoiceRef=Sąskaitos-faktūros nuoroda
 DOL_PRINT_OBJECT_LINES=Sąskaitos faktūros eilutės
 DOL_VALUE_CUSTOMER_FIRSTNAME=Kliento vardas
 DOL_VALUE_CUSTOMER_LASTNAME=Kliento pavardė

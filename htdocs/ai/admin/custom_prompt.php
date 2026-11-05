@@ -36,7 +36,9 @@ require '../../main.inc.php';
  * @var User $user
  */
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 require_once DOL_DOCUMENT_ROOT."/ai/lib/ai.lib.php";
+require_once DOL_DOCUMENT_ROOT."/ai/class/ai.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/html.formai.class.php";
 
 $langs->loadLangs(array("admin", "website", "other"));
@@ -83,6 +85,12 @@ $form = new Form($db);
 $formSetup = new FormSetup($db);
 $aiservice = getDolGlobalString('AI_API_SERVICE', 'chatgpt');
 
+// Model used for the OCR (AI_API_<SERVICE>_MODEL_DOCPARSING) and its hardcoded fallback default.
+// The "Test OCR" button is grayed when the field is empty and no default model exists for the service.
+$ocrmodelfieldname = 'AI_API_'.strtoupper($aiservice).'_MODEL_DOCPARSING';
+$ocrmodeldefault = (!empty($arrayofai[$aiservice]['docparsing']['default']) && $arrayofai[$aiservice]['docparsing']['default'] != 'na') ? $arrayofai[$aiservice]['docparsing']['default'] : '';
+$modelforocr = getDolGlobalString($ocrmodelfieldname, $ocrmodeldefault);
+
 // Setup conf for AI model
 $formSetup->formHiddenInputs['action'] = "updatefeaturemodel";
 foreach ($arrayofaifeatures as $featurekey => $feature) {
@@ -91,7 +99,10 @@ foreach ($arrayofaifeatures as $featurekey => $feature) {
 		$newfeaturekey = 'textgeneration';
 	}
 	$item = $formSetup->newItem('AI_API_'.strtoupper($aiservice).'_MODEL_'.$feature["function"]);	// Name of constant must end with _KEY so it is encrypted when saved into database.
-	if (!empty($arrayofai[$aiservice][$newfeaturekey]['default']) && $arrayofai[$aiservice][$newfeaturekey]['default'] != 'na') {
+	// No default value for models when the service is 'custom': the hardcoded default has no meaning for an unknown provider.
+	if ($aiservice == 'custom') {
+		$item->nameText = $langs->trans("AI_API_MODEL_".$feature["function"]);
+	} elseif (!empty($arrayofai[$aiservice][$newfeaturekey]['default']) && $arrayofai[$aiservice][$newfeaturekey]['default'] != 'na') {
 		$item->nameText = '<span class="valignmiddle">'.$langs->trans("AI_API_MODEL_".$feature["function"]).' </span><span class="opacitymedium valignmiddle">('.$langs->trans("Default").' = '.$arrayofai[$aiservice][$newfeaturekey]['default'].')</span>';
 		if (!empty($arrayofai[$aiservice][$newfeaturekey]['examples'])) {
 			$htmltooltip = $langs->trans("Example").': '.$arrayofai[$aiservice][$newfeaturekey]['examples'];
@@ -99,6 +110,10 @@ foreach ($arrayofaifeatures as $featurekey => $feature) {
 		}
 	} else {
 		$item->nameText = $langs->trans("AI_API_MODEL_".$feature["function"]).' <span class="opacitymedium">('.$langs->trans("None").')</span>';
+	}
+	// When the raw file is sent to the AI service, the docparsing model is also used by the "Import direct" screen to convert files into text
+	if ($feature["function"] == 'DOCPARSING' && getDolGlobalString('AI_USED_FOR_FILE_TO_TEXT_CONVERTION')) {
+		$item->nameText .= ' '.$form->textwithpicto('', $langs->trans("AIUsedForFileToTextConvertionModelHelp"), 1, 'info');
 	}
 	$item->cssClass = 'minwidth500 input';
 }
@@ -207,6 +222,53 @@ if ($action == 'confirm_deleteproperty' && GETPOST('confirm') == 'yes') {
 			setEventMessages($langs->trans("NoRecordDeleted"), null, 'errors');
 		}
 	}
+}
+
+
+// Test the OCR function (the test form is shown by clicking on the "Test OCR" button placed after the input field
+// of the model for the OCR, and this button is grayed when the field is empty and no default model exists)
+$ocrtestresult = '';
+$ocrtestfilename = '';
+$ocrtestservice = '';
+$ocrtestmodel = '';
+$ocrtestduration = 0;
+$ocrtstformvisible = 0;
+if ($action == 'testocr') {
+	// The test was just submitted, so we keep the form visible to show the result
+	$ocrtstformvisible = 1;
+	$upload_dir = $conf->ai->dir_temp;
+	dol_mkdir($upload_dir);
+
+	if (empty($_FILES['ocrtstfile']['name']) || !empty($_FILES['ocrtstfile']['error'])) {
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
+	} else {
+		$ocrtestfilename = (string) $_FILES['ocrtstfile']['name'];
+		$filetotest = $upload_dir.'/ocrtst-uid'.$user->id.'-'.dol_sanitizeFileName($ocrtestfilename);
+		$resupload = dol_move_uploaded_file($_FILES['ocrtstfile']['tmp_name'], $filetotest, 1, 0, (int) $_FILES['ocrtstfile']['error'], 0, 'ocrtstfile', $upload_dir);
+		if ($resupload > 0) {
+			$ai = new Ai($db);
+			$ocrtestservice = $ai->getApiService();
+			$rawfile = $ai->getPayloadToConvertRawFileIntoText($filetotest);
+			if (!empty($rawfile['error'])) {
+				setEventMessages($rawfile['message'], null, 'errors');
+			} else {
+				// The model is into the payload built by getPayloadToConvertRawFileIntoText()
+				$ocrtestmodel = (isset($rawfile['payload']['model']) && is_scalar($rawfile['payload']['model'])) ? (string) $rawfile['payload']['model'] : '';
+				$microtimestart = microtime(true);
+				$result = $ai->generateContent($rawfile['payload'], 'auto', $rawfile['function'], '');
+				$ocrtestduration = microtime(true) - $microtimestart;
+				if (is_array($result)) {	// If array, there is an error
+					setEventMessages(getAIErrorMessage($result), null, 'errors');
+				} else {
+					$ocrtestresult = (string) $result;
+				}
+			}
+			dol_delete_file($filetotest);
+		} else {
+			setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
+		}
+	}
+	$action = 'edit';
 }
 
 
@@ -481,6 +543,72 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 	print load_fiche_titre($langs->trans("AIModelForFeature", $arrayofai[$aiservice]['label']), '', '');
 
 	print $formSetup->generateOutput(true);
+}
+
+// Test form of the OCR function, hidden by default and shown by clicking on the "Test OCR" button placed after
+// the input field of the model for the OCR. The button is grayed and not clickable when the field is empty
+// and no default model exists for the service.
+if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
+	print '<div id="ocrtstformdiv"'.(empty($ocrtstformvisible) ? ' style="display: none"' : '').'>';
+	print '<br><br>';
+	print load_fiche_titre($langs->trans("AITestOCRFunction"), '', '');
+
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="testocr">';
+	print '<input type="hidden" name="page_y" value="">';
+	print '<table class="noborder centpercent">';
+	print '<thead>';
+	print '<tr class="liste_titre">';
+	print '<td class="titlefield" colspan="2">'.$langs->trans("AI_API_MODEL_DOCPARSING").' : '.dolPrintLabel($modelforocr !== '' ? $modelforocr : $langs->trans("None")).'</td>';
+	print '</tr>';
+	print '</thead>';
+	print '<tbody>';
+	print '<tr class="oddeven">';
+	print '<td class="col-setup-title">'.$langs->trans("File").'</td>';
+	print '<td><input type="file" class="flat minwidth500" name="ocrtstfile" accept="application/pdf,image/png,image/jpeg,image/gif,image/bmp,image/tiff,image/webp"></td>';
+	print '</tr>';
+	print '</tbody>';
+	print '</table>';
+	print '<center><input type="submit" class="button small reposition" name="testocr" value="'.dol_escape_htmltag($langs->trans("Test")).'"></center>';
+	print '</form>';
+
+	if ($ocrtestresult !== '') {
+		print '<br><br>';
+		// Reminder of the context of the test: file name, service, model used and duration of the AI call
+		$ocrtestservicelabel = (isset($arrayofai[$ocrtestservice]['label']) && is_string($arrayofai[$ocrtestservice]['label'])) ? $arrayofai[$ocrtestservice]['label'] : $ocrtestservice;
+		print '<div class="opacitymedium">';
+		print $langs->trans("File").' : '.dolPrintLabel($ocrtestfilename).' &nbsp;-&nbsp; '.dolPrintLabel($ocrtestservicelabel);
+		print ' &nbsp;-&nbsp; '.$langs->trans("AI_API_MODEL_DOCPARSING").' : '.dolPrintLabel($ocrtestmodel);
+		print ' &nbsp;-&nbsp; '.$langs->trans("Duration").' : '.sprintf('%.1f', $ocrtestduration).' s';
+		print '</div>';
+		print '<div class="ocrtstresult"><div style="white-space: pre-wrap; line-height: 1em;" class="neutral">'.dolPrintText($ocrtestresult).'</div></div>';
+	}
+	print '</div>';
+
+	// Button "Test OCR" placed at the end of the input field of the model for the OCR, to show or hide the test form.
+	// The button is grayed and not clickable when the field is empty and no default model exists for the service.
+	print '<script nonce="'.getNonce().'">
+var ocrmodeldefaultisset = '.($ocrmodeldefault !== '' ? 'true' : 'false').';
+document.querySelectorAll("input[name=\''.dol_escape_js($ocrmodelfieldname).'\']").forEach(function (i) {
+	var b = document.createElement("a");
+	b.href = "#";
+	b.textContent = \''.dol_escape_js($langs->trans("TestOCR")).'\';
+	var refreshbuttonstate = function () {
+		b.disabled = (!i.value && !ocrmodeldefaultisset);
+		b.className = "button smallpaddingimp".concat(b.disabled ? " disabled" : "");
+	};
+	b.onclick = function () {
+		if (b.disabled) { return false; }
+		var d = document.getElementById("ocrtstformdiv");
+		if (d) { d.style.display = (d.style.display === "none" ? "" : "none"); }
+		return false;
+	};
+	i.insertAdjacentElement("afterend", b);
+	i.addEventListener("input", refreshbuttonstate);
+	refreshbuttonstate();
+});
+</script>'."\n";
 }
 
 
