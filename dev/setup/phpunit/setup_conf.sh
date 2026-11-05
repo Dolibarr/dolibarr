@@ -50,8 +50,7 @@ function save_db_cache() (
 	target_version=${target_version:=23.0.0}
 
 	# Sequence of versions for upgrade process (to be completed)
-	VERSIONS=("3.5.0" "3.6.0" "3.7.0" "3.8.0" "3.9.0")
-	VERSIONS+=("4.0.0")
+	VERSIONS=("4.0.0")
 	# Next versions are automatic
 
 	# Append versions up to the current dolibarr version
@@ -182,9 +181,9 @@ if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ] || [ "$DB" = 'postgresql' ]; the
 
 
 	# Compute md5 based on install file contents, and on db prefix
-	# filefunc.inc.php holds the version, so include it"
+	# version.inc.php holds the version, so include it"
 	# shellcheck disable=2046
-	sum=$(md5sum "$ME" $(find "${TRAVIS_BUILD_DIR}/htdocs/install" -type f -not -path "${TRAVIS_BUILD_DIR}/htdocs/install/doctemplates/*" ; echo "${TRAVIS_BUILD_DIR}/filefunc.inc.php" ) | md5sum)
+	sum=$(md5sum "$ME" $(find "${TRAVIS_BUILD_DIR}/htdocs/install" -type f -not -path "${TRAVIS_BUILD_DIR}/htdocs/install/doctemplates/*" ; echo "${TRAVIS_BUILD_DIR}/htdocs/version.inc.php" ) | md5sum)
 	# shellcheck disable=2046
 	cnt=$(md5sum "$ME" $(find "${TRAVIS_BUILD_DIR}/htdocs/install" -type f -not -path "${TRAVIS_BUILD_DIR}/htdocs/install/doctemplates/*") | wc)
 	echo "MD5SUM $sum COUNT:$cnt"
@@ -199,7 +198,7 @@ if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ] || [ "$DB" = 'postgresql' ]; the
 		eval ${SUDO} "${MYSQL}" --force ${USERPASS_OPT} -h 127.0.0.1 -D travis < ${DB_CACHE_FILE} | tee $TRAVIS_BUILD_DIR/db_from_cacheinit.log
 	else
 		echo "MySQL load initial sql"
-		sed 's/\([ `]\)llx_/\1'"${DB_PREFIX}/g" < "${TRAVIS_BUILD_DIR}/dev/initdemo/mysqldump_dolibarr_3.5.0.sql" | eval ${SUDO} "${MYSQL}" --force ${USERPASS_OPT} -h 127.0.0.1 -D travis | tee $TRAVIS_BUILD_DIR/initial_350.log
+		sed 's/\([ `]\)llx_/\1'"${DB_PREFIX}/g" < "${TRAVIS_BUILD_DIR}/dev/initdemo/mysqldump_dolibarr_4.0.0.sql" | eval ${SUDO} "${MYSQL}" --force ${USERPASS_OPT} -h 127.0.0.1 -D travis | tee $TRAVIS_BUILD_DIR/initial_400.log
 	fi
 elif [ "$DB" = 'postgresql' ]; then
 	echo Install pgsql if run is for pgsql
