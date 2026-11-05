@@ -26,7 +26,7 @@ if ($scenario['selection'] !== null) {
 }
 $_SERVER['REQUEST_METHOD'] = isset($scenario['method']) ? $scenario['method'] : 'POST';
 $_SERVER['HTTP_USER_AGENT'] = 'DocumentDownloadTest';
-$state = array('hooks' => array(), 'triggers' => array(), 'regenerations' => 0, 'counterupdates' => 0);
+$state = array('contexts' => array(), 'objectchecks' => array(), 'hooks' => array(), 'triggers' => array(), 'regenerations' => 0, 'counterupdates' => 0);
 register_shutdown_function(static function () use ($directory, &$state) {
 	$state['status'] = http_response_code() ?: 200;
 	$state['nologin'] = defined('NOLOGIN');
@@ -34,7 +34,9 @@ register_shutdown_function(static function () use ($directory, &$state) {
 	file_put_contents($directory.'/state.json', json_encode($state));
 });
 $conf = (object) array('entity' => 2);
-$user = (object) array('id' => empty($scenario['anonymous']) ? 7 : 0, 'socid' => 0, 'admin' => !empty($scenario['admin']));
+$user = new User();
+$user->id = empty($scenario['anonymous']) ? 7 : 0;
+$user->admin = !empty($scenario['admin']);
 $langs = new Translate();
 $db = new class {
 	/**
@@ -70,6 +72,8 @@ $hookmanager = new class {
 	 */
 	public function initHooks($contexts)
 	{
+		global $state;
+		$state['contexts'][] = $contexts;
 	}
 
 	/**
@@ -88,6 +92,25 @@ $hookmanager = new class {
 		return empty($scenario['denyhook']) ? 0 : -1;
 	}
 };
+/** User double for the native document-object resolver. */
+class User
+{
+	public $id = 7;
+	public $socid = 0;
+	public $admin = false;
+
+	/**
+	 * @param string $module Permission module
+	 * @param string $permission Permission name
+	 * @param string $action Permission action
+	 * @return bool
+	 */
+	public function hasRight($module, $permission, $action = '')
+	{
+		return false;
+	}
+}
+
 /** Minimal translations for endpoint errors. */
 class Translate
 {
@@ -254,9 +277,12 @@ function dol_sanitizeFileName($file)
  */
 function dol_check_secure_access_document($modulepart, $file, $entity, $user, $ref, $mode)
 {
-	global $scenario;
+	global $scenario, $state;
+	if (!empty($scenario['requirecontext']) && $state['contexts'] !== array(array('document'))) {
+		accessforbidden();
+	}
 	$allowedentity = isset($scenario['allowedentity']) ? $scenario['allowedentity'] : 2;
-	return array('accessallowed' => empty($scenario['denymodule']) && $entity === $allowedentity, 'sqlprotectagainstexternals' => '', 'original_file' => DOL_DATA_ROOT.'/'.$file);
+	return array('accessallowed' => empty($scenario['denymodule']) && $entity === $allowedentity && ($modulepart !== 'systemtools' || $user->admin), 'sqlprotectagainstexternals' => '', 'original_file' => DOL_DATA_ROOT.'/'.$file);
 }
 
 /**
@@ -267,15 +293,35 @@ function dol_check_secure_access_document($modulepart, $file, $entity, $user, $r
  * @param string|int $ref Fixture ref
  * @return Facture|stdClass|false
  */
-function fetchObjectByElement($id, $modulepart, $ref)
+function fetchObjectByElement($id, $modulepart, $ref = '')
 {
 	global $scenario;
 	if (isset($scenario['missingref']) && $scenario['missingref'] === $ref) {
 		return false;
 	}
 	$object = $modulepart === 'facture' ? new Facture() : new stdClass();
+	$object->id = $id ?: 1;
 	$object->ref = $ref;
 	return $object;
+}
+
+/**
+ * Service double for the object access service called by the native document resolver.
+ *
+ * @param User $user Fixture user
+ * @param string[] $features Fixture features
+ * @param object $object Fixture object
+ * @param string $table Fixture table
+ * @param string $feature2 Fixture sub-permission
+ * @param string $key Fixture thirdparty key
+ * @param string $select Fixture select
+ * @return bool
+ */
+function checkUserAccessToObject($user, array $features, $object, $table = '', $feature2 = '', $key = '', $select = 'rowid')
+{
+	global $scenario, $state;
+	$state['objectchecks'][] = array('features' => $features, 'ref' => $object->ref, 'table' => $table, 'feature2' => $feature2);
+	return !isset($scenario['denyref']) || $scenario['denyref'] !== $object->ref;
 }
 
 /**
@@ -445,6 +491,8 @@ function dol_print_date($timestamp, $format)
  */
 function top_httphead($type = '')
 {
+	global $state;
+	$state['type'] = $type;
 }
 
 /**
@@ -468,4 +516,5 @@ function readfileLowMemory($path)
 {
 	return readfile($path);
 }
+require $directory.'/documentaccess.php';
 require DOL_DOCUMENT_ROOT.'/document.php';

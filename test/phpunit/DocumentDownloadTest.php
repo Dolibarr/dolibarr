@@ -28,6 +28,10 @@ class DocumentDownloadTest extends \PHPUnit\Framework\TestCase
 		$endpoint = file_get_contents(__DIR__.'/../../htdocs/document.php');
 		$endpoint = preg_replace('/^<\?php/', '<?php namespace DolibarrTests\\DocumentDownloadFixture; use ZipArchive; use stdClass;', $endpoint, 1);
 		file_put_contents($this->directory.'/htdocs/document.php', $endpoint);
+		// Exercise the native document-object resolver with only its user/object services doubled.
+		$security = file_get_contents(__DIR__.'/../../htdocs/core/lib/security.lib.php');
+		$this->assertSame(1, preg_match('/^function checkUserAccessToDocumentObject\([\s\S]*?^\}/m', $security, $matches));
+		file_put_contents($this->directory.'/documentaccess.php', '<?php namespace DolibarrTests\\DocumentDownloadFixture; '.$matches[0]);
 		foreach (array('main.inc.php', 'core/lib/files.lib.php', 'core/lib/images.lib.php') as $file) {
 			file_put_contents($this->directory.'/htdocs/'.$file, '<?php');
 		}
@@ -235,6 +239,75 @@ class DocumentDownloadTest extends \PHPUnit\Framework\TestCase
 					} else {
 						$this->assertSame($allowed ? 'First document' : 'Forbidden', $state['body']);
 					}
+				}
+			}
+		}
+	}
+
+
+	/** @return void */
+	public function testSingleDownloadRejectsExecutableMimeOverrides()
+	{
+		foreach (array('text/html', 'application/xhtml+xml', 'image/svg+xml', 'text/xml', 'TEXT/HTML', 'text/plain') as $type) {
+			$state = $this->runDownload(array('post' => array('modulepart' => 'propal', 'file' => 'A/report.pdf', 'type' => $type)));
+			$this->assertSame('First document', $state['body']);
+			$this->assertSame($type === 'text/plain' ? $type : 'application/pdf', $state['type']);
+		}
+	}
+
+	/** @return void */
+	public function testDocumentHooksAreInitializedBeforeAccessChecks()
+	{
+		foreach (array(false, true) as $batch) {
+			$state = $this->runDownload(array(
+				'selection' => $batch ? array(array('modulepart' => 'propal', 'file' => 'A/report.pdf', 'entity' => 2), array('modulepart' => 'propal', 'file' => 'B/report.pdf', 'entity' => 2)) : null,
+				'post' => array('action' => $batch ? 'downloadselected' : '', 'modulepart' => 'propal', 'file' => 'A/report.pdf'),
+				'requirecontext' => true,
+			));
+			$this->assertSame(200, $state['status']);
+			$this->assertSame(array(array('document')), $state['contexts']);
+			$this->assertCount($batch ? 2 : 1, $state['hooks']);
+		}
+	}
+
+	/** @return void */
+	public function testNonObjectDocumentKeepsNativeModulePermission()
+	{
+		foreach (array(false, true) as $batch) {
+			foreach (array(false, true) as $denymodule) {
+				$state = $this->runDownload(array(
+					'selection' => $batch ? array(array('modulepart' => 'userphoto', 'file' => 'A/report.pdf', 'entity' => 2)) : null,
+					'post' => array('action' => $batch ? 'downloadselected' : '', 'modulepart' => 'userphoto', 'file' => 'A/report.pdf'),
+					'missingref' => 'A',
+					'denymodule' => $denymodule,
+				));
+				$this->assertSame($denymodule ? 403 : 200, $state['status']);
+				$this->assertCount($denymodule ? 0 : 1, $state['hooks']);
+			}
+		}
+	}
+
+	/** @return void */
+	public function testNativeDocumentAccessUsesAliasesAndProjectDirectories()
+	{
+		mkdir($this->directory.'/documents/A/tasks');
+		file_put_contents($this->directory.'/documents/A/tasks/report.pdf', 'Task document');
+		foreach (array('supplier_invoice' => 'A/report.pdf', 'project_task' => 'A/tasks/report.pdf') as $modulepart => $file) {
+			foreach (array(false, true) as $batch) {
+				foreach (array('', 'A') as $denyref) {
+					$state = $this->runDownload(array(
+						'selection' => $batch ? array(array('modulepart' => $modulepart, 'file' => $file, 'entity' => 2)) : null,
+						'post' => array('action' => $batch ? 'downloadselected' : '', 'modulepart' => $modulepart, 'file' => $file),
+						'denyref' => $denyref,
+					));
+					$this->assertSame($denyref ? 403 : 200, $state['status']);
+					$this->assertCount($denyref ? 0 : 1, $state['hooks']);
+					$this->assertSame(array(array(
+						'features' => array($modulepart === 'supplier_invoice' ? 'fournisseur' : 'project'),
+						'ref' => 'A',
+						'table' => $modulepart === 'supplier_invoice' ? 'facture_fourn' : '',
+						'feature2' => $modulepart === 'supplier_invoice' ? 'facture' : '',
+					)), $state['objectchecks']);
 				}
 			}
 		}

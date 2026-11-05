@@ -106,10 +106,14 @@ if (empty($instructions)) {
 		print "Error : " . $generatedContent['message'];
 		print '<br><a href="'.DOL_MAIN_URL_ROOT.'/ai/admin/setup.php">'.$langs->trans('ErrorGoToModuleSetup').'</a>';
 	} elseif (!empty($generatedContent['message'])) {
-		http_response_code($generatedContent['code']);
+		if (!empty($generatedContent['code'])) {
+			http_response_code($generatedContent['code']);
+		}
 		print "Error returned by API call: " . $generatedContent['message'];
 	} else {
-		http_response_code($generatedContent['code']);
+		if (!empty($generatedContent['code'])) {
+			http_response_code($generatedContent['code']);
+		}
 		print "Error API returned no answer";
 	}
 } else {

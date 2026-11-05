@@ -51,6 +51,7 @@ require '../main.inc.php'; // Load $user and permissions
  */
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
 // Load translation files required by the page
@@ -160,7 +161,7 @@ function fetchConnectionToken() {
 	}
 }
 
-if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && (!getDolGlobalString('STRIPE_LIVE')/* || GETPOST('forcesandbox', 'alpha') */)) {
+if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE')/* || GETPOST('forcesandbox', 'alpha') */)) {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), [], 'warning', 1);
 }
 
@@ -390,6 +391,18 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 		});
 
 		return true;
+	}
+
+	// Open the credit apply page in a colorbox (parent window's colorbox)
+	function OpenCreditApply() {
+		parent.$.colorbox({
+			href: "creditnote_apply.php?invoiceid=<?php echo $invoiceid; ?>&place=" + <?php echo "'".dol_escape_js($place)."'"; ?> + "&token=<?php echo currentToken(); ?>",
+			width: "70%",
+			height: "80%",
+			transition: "none",
+			iframe: "true",
+			title: <?php echo "'".dol_escape_js($langs->trans('TakeposApplyAvailableCredit'))."'"; ?>
+		});
 	}
 
 	function fetchPaymentIntentClientSecret(amount, invoiceid) {
@@ -638,7 +651,7 @@ array(
 ),
 );
 $numpad = getDolGlobalInt('TAKEPOS_NUMPAD');
-if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && getDolGlobalString('STRIPE_CARD_PRESENT')) {
+if (isModEnabled('stripe') && getDolGlobalString('STRIPE_CARD_PRESENT')) {
 	print '<span id="card-present-alert">';
 	dol_htmloutput_mesg($langs->trans('ConnectingToStripeTerminal', 'Stripe'), [], 'warning', 1);
 	print '</span>';
@@ -749,7 +762,23 @@ while ($i < count($arrayOfValidPaymentModes)) {
 	$i += 1;
 }
 
-if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && getDolGlobalString('STRIPE_CARD_PRESENT')) {
+// Show "Available credit" button when the customer has credits and this is not a credit note
+if ($invoice->socid > 0 && $invoice->type != Facture::TYPE_CREDIT_NOTE) {
+	$invoice->fetch_thirdparty();
+	if (is_object($invoice->thirdparty)) {
+		$discountCheck = new DiscountAbsolute($db);
+		$availableCredit = $discountCheck->getAvailableDiscounts($invoice->thirdparty, null, '', 0, 0, 0);
+		if ($availableCredit > 0) {
+			print '<button type="button" class="calcbutton2" onclick="OpenCreditApply()">';
+			print '<span class="fa fa-2x fa-wallet iconwithlabel"></span><br>';
+			print $langs->trans('TakeposAvailableCredit').'<br>';
+			print '<span style="font-size:0.85em;">'.price($availableCredit, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
+			print '</button>';
+		}
+	}
+}
+
+if (isModEnabled('stripe') && getDolGlobalString('STRIPE_CARD_PRESENT')) {
 	$keyforstripeterminalbank = "CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL".$_SESSION["takeposterminal"];
 	print '<span id="StripeTerminal"></span>';
 	if (getDolGlobalString((string) $keyforstripeterminalbank)) {

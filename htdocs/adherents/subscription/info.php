@@ -42,11 +42,14 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "members", "bills", "users"));
 
-if (!$user->hasRight('adherent', 'lire')) {
+if (!$user->hasRight('adherent', 'cotisation', 'lire')) {
 	accessforbidden();
 }
 
 $rowid = GETPOSTINT("rowid");
+
+// Security check (the subscription must be the one of a member of an entity of the user)
+$result = restrictedArea($user, 'subscription', $rowid);
 
 
 

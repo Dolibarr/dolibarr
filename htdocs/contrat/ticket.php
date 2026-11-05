@@ -64,6 +64,12 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
+$object = new Contrat($db);
+$result = $object->fetch($id, $ref);
+if ($object->id > 0) {
+	$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+}
+
 $result = restrictedArea($user, 'contrat', $id);
 
 
@@ -78,8 +84,6 @@ llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-contrat page-card_ti
 $form = new Form($db);
 $userstatic = new User($db);
 
-$object = new Contrat($db);
-$result = $object->fetch($id, $ref);
 $ret = $object->fetch_thirdparty();
 $head = contract_prepare_head($object);
 

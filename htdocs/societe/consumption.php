@@ -128,7 +128,7 @@ $formother = new FormOther($db);
 $formorder = new FormOrder($db);
 $productstatic = new Product($db);
 
-$title = $langs->trans("Referers", $object->name);
+$title = $langs->trans("ReferringItems", $object->name);
 if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 	$title = $object->name." - ".$title;
 }

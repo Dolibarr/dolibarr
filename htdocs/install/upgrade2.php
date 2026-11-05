@@ -206,6 +206,11 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	// Load global conf
 	$conf->setValues($db);
 
+	// Init $mysoc, needed by the init() of some modules (e.g. BlockedLog)
+	require_once $dolibarr_main_document_root.'/societe/class/societe.class.php';
+	$mysoc = new Societe($db);
+	$mysoc->setMysoc($conf);
+
 
 	// Reforce log activation (samecode than into the inc.php)
 	$conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
@@ -2839,7 +2844,7 @@ function migrate_project_user_resp($db, $langs, $conf)
 					$obj = $db->fetch_object($resql);
 
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."element_contact (";
-					$sql2 .= "datecreate";
+					$sql2 .= "date_creation";
 					$sql2 .= ", statut";
 					$sql2 .= ", element_id";
 					$sql2 .= ", fk_c_type_contact";
@@ -2918,7 +2923,7 @@ function migrate_project_task_actors($db, $langs, $conf)
 					$obj = $db->fetch_object($resql);
 
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."element_contact (";
-					$sql2 .= "datecreate";
+					$sql2 .= "date_creation";
 					$sql2 .= ", statut";
 					$sql2 .= ", element_id";
 					$sql2 .= ", fk_c_type_contact";
@@ -4391,7 +4396,13 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/modules/export/exportcsv.modules.php',
 		'/core/modules/export/export_excel2007new.modules.php',
 		'/core/modules/facture/pdf_crabe.modules.php',
+		'/core/modules/commande/doc/pdf_einstein.modules.php',
+		'/core/modules/expedition/doc/pdf_rouget.modules.php',
+		'/core/modules/propale/doc/pdf_azur.modules.php',
+		'/core/modules/supplier_order/doc/pdf_muscadet.modules.php',
+		'/core/modules/supplier_proposal/doc/pdf_aurore.modules.php',
 		'/core/modules/facture/pdf_oursin.modules.php',
+		'/core/modules/cheque/doc/pdf_blochet.class.php',		// renamed into pdf_blochet.modules.php
 		'/core/modules/mailings/contacts2.modules.php',
 		'/core/modules/mailings/contacts3.modules.php',
 		'/core/modules/mailings/contacts4.modules.php',
@@ -4659,8 +4670,7 @@ function migrate_reload_menu($db, $langs, $conf)
 
 	// Define list of menu handlers to initialize
 	$listofmenuhandler = array();
-	if (getDolGlobalString('MAIN_MENU_STANDARD') == 'auguria_menu' || getDolGlobalString('MAIN_MENU_SMARTPHONE') == 'auguria_menu'
-		|| getDolGlobalString('MAIN_MENUFRONT_STANDARD') == 'auguria_menu' || getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE') == 'auguria_menu') {
+	if (getDolGlobalString('MAIN_MENU_STANDARD') == 'auguria_menu' || getDolGlobalString('MAIN_MENUFRONT_STANDARD') == 'auguria_menu') {
 		$listofmenuhandler['auguria'] = 1; // We set here only dynamic menu handlers
 	}
 
@@ -5717,7 +5727,7 @@ function migrate_apiresttokens()
 					$tmpuser->fetch((int) $obj->fk_user, '', '', 1, ($obj->entity ? $obj->entity : $conf->entity));
 
 					$sqlforinsert = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, tokenstring, fk_user, datec, entity, apicount_total)";
-					$sqlforinsert .= " VALUES ('".$db->escape($obj->service)."', '".$db->escape(dolEncrypt(dolDecrypt($obj->tokenstring)))."', ";
+					$sqlforinsert .= " VALUES ('".$db->escape($obj->service)."', '".$db->escape(dolEncrypt(dolDecrypt($obj->tokenstring), '', '', 'dolibarr'))."', ";
 					$sqlforinsert .= ((int) $obj->fk_user).", '".$db->idate(dol_now())."', ".((int) $obj->entity).", ";
 					$sqlforinsert .= getDolUserInt('API_COUNT_CALL', 0, $tmpuser);
 					$sqlforinsert .= ")";

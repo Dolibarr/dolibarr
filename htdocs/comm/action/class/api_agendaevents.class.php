@@ -123,8 +123,6 @@ class AgendaEvents extends DolibarrApi
 	 */
 	public function index($sortfield = "t.id", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
-		global $db, $conf;
-
 		$obj_ret = array();
 
 		if (!DolibarrApiAccess::$user->hasRight('agenda', 'myactions', 'read')) {
@@ -149,6 +147,12 @@ class AgendaEvents extends DolibarrApi
 		$sql .= ' WHERE t.entity IN ('.getEntity('agenda').')';
 		if ($user_ids) {
 			$sql .= " AND t.fk_user_action IN (".$this->db->sanitize($user_ids).")";
+		}
+		// $user_ids is provided by the caller, so it can not be the only owner filter. A user without the
+		// "read all actions" right must never see the events of somebody else, whatever it asks for.
+		if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'read')) {
+			$childids = DolibarrApiAccess::$user->getAllChildIds(1);
+			$sql .= " AND t.fk_user_action IN (".$this->db->sanitize(implode(',', $childids)).")";
 		}
 		if ($socid > 0) {
 			$sql .= " AND t.fk_soc = ".((int) $socid);
@@ -279,7 +283,7 @@ class AgendaEvents extends DolibarrApi
 	 * @param	array		$request_data	Data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
-	 * @return	Object|false				Object with cleaned properties
+	 * @return	Object						Object with cleaned properties
 	 *
 	 * @throws RestException
 	 */
@@ -288,23 +292,32 @@ class AgendaEvents extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('agenda', 'myactions', 'create')) {
 			throw new RestException(403, "Insufficient rights to create your Agenda Event");
 		}
-		if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'create') && DolibarrApiAccess::$user->id != $request_data['userownerid']) {
-			throw new RestException(403, "Insufficient rights to create an Agenda Event for owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
-		}
 
 		$result = $this->actioncomm->fetch($id);
-		if ($result) {
-			$this->actioncomm->fetch_optionals();
-			$this->actioncomm->fetch_userassigned();
-			$this->actioncomm->oldcopy = clone $this->actioncomm;  // @phan-suppress-current-line PhanTypeMismatchProperty
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching Agenda Event : '.$this->actioncomm->errorsToString());
 		}
 		if (!$result) {
-			throw new RestException(404, 'actioncomm not found');
+			throw new RestException(404, 'Agenda Event not found');
+		}
+		$this->actioncomm->fetch_optionals();
+		$this->actioncomm->fetch_userassigned();
+		$this->actioncomm->oldcopy = clone $this->actioncomm;  // @phan-suppress-current-line PhanTypeMismatchProperty
+
+		if (!is_array($request_data)) {
+			$request_data = array();
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('actioncomm', $this->actioncomm->id, 'actioncomm', '', 'fk_soc', 'id')) {
+		// Without allactions->create, both the current owner and the new owner (if one is sent) must be the API user
+		$newuserownerid = isset($request_data['userownerid']) ? (int) $request_data['userownerid'] : (int) $this->actioncomm->userownerid;
+		if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'create') && (DolibarrApiAccess::$user->id != $this->actioncomm->userownerid || DolibarrApiAccess::$user->id != $newuserownerid)) {
+			throw new RestException(403, "Insufficient rights to update an Agenda Event of owner id ".$this->actioncomm->userownerid.' for owner id '.$newuserownerid.' Your id is '.DolibarrApiAccess::$user->id);
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('agenda', $this->actioncomm->id, 'actioncomm', '', 'fk_soc', 'id')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
 				continue;
@@ -324,11 +337,11 @@ class AgendaEvents extends DolibarrApi
 			$this->actioncomm->$field = $this->_checkValForAPI($field, $value, $this->actioncomm);
 		}
 
-		if ($this->actioncomm->update(DolibarrApiAccess::$user, 1) > 0) {
-			return $this->get($id);
+		if ($this->actioncomm->update(DolibarrApiAccess::$user, 1) <= 0) {
+			throw new RestException(500, 'Error when updating Agenda Event : '.$this->actioncomm->errorsToString());
 		}
 
-		return false;
+		return $this->get($id);
 	}
 
 	/**
@@ -351,25 +364,25 @@ class AgendaEvents extends DolibarrApi
 		}
 
 		$result = $this->actioncomm->fetch($id);
-		if ($result) {
-			$this->actioncomm->fetch_optionals();
-			$this->actioncomm->fetch_userassigned();
-			$this->actioncomm->oldcopy = clone $this->actioncomm;  // @phan-suppress-current-line PhanTypeMismatchProperty
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching Agenda Event : '.$this->actioncomm->errorsToString());
 		}
+		if (!$result) {
+			throw new RestException(404, 'Agenda Event not found');
+		}
+		$this->actioncomm->fetch_optionals();
+		$this->actioncomm->fetch_userassigned();
+		$this->actioncomm->oldcopy = clone $this->actioncomm;  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'delete') && DolibarrApiAccess::$user->id != $this->actioncomm->userownerid) {
 			throw new RestException(403, "Insufficient rights to delete an Agenda Event of owner id ".$this->actioncomm->userownerid.' Your id is '.DolibarrApiAccess::$user->id);
 		}
 
-		if (!$result) {
-			throw new RestException(404, 'Agenda Event not found');
-		}
-
-		if (!DolibarrApi::_checkAccessToResource('actioncomm', $this->actioncomm->id, 'actioncomm', '', 'fk_soc', 'id')) {
+		if (!DolibarrApi::_checkAccessToResource('agenda', $this->actioncomm->id, 'actioncomm', '', 'fk_soc', 'id')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (!$this->actioncomm->delete(DolibarrApiAccess::$user)) {
+		if ($this->actioncomm->delete(DolibarrApiAccess::$user) <= 0) {
 			throw new RestException(500, 'Error when delete Agenda Event : '.$this->actioncomm->errorsToString());
 		}
 

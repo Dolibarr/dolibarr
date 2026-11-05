@@ -95,6 +95,10 @@ phpstan_custom.neon
 .htaccess
 /.run-phpstan
 
+# IA setup
+/AGENTS.md
+/CLAUDE.md
+
 # Mistral Vibe
 .vibe
 /.vibeignore
@@ -113,3 +117,9 @@ docs/superpowers/
 .worktrees/
 /cookies.txt
 /post_login.html
+/AGENTS.md
+
+.bash_history
+.zed_server/
+.ssh/
+.local/

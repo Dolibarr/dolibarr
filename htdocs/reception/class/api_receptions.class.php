@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2022       Quatadah Nasdami     <quatadah.nasdami@gmail.com>
+/* Copyright (C) 2022       Quatadah Nasdami     	<quatadah.nasdami@gmail.com>
  * Copyright (C) 2022       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -180,7 +181,7 @@ class Receptions extends DolibarrApi
 				$i++;
 			}
 		} else {
-			throw new RestException(503, 'Error when retrieve commande list : '.$this->db->lasterror());
+			throw new RestException(503, 'Error when retrieving reception list : '.$this->db->lasterror());
 		}
 
 		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
@@ -233,21 +234,21 @@ class Receptions extends DolibarrApi
 			foreach ($request_data["lines"] as $line) {
 				$receptionline = new ReceptionLineBatch($this->db);
 
-				$receptionline->fk_product = $line['fk_product'];
-				$receptionline->fk_entrepot = $line['fk_entrepot'];
-				$receptionline->fk_element = $line['fk_element'] ?? $line['origin_id'];				// example: purchase order id.  this->origin is 'supplier_order'
-				$receptionline->origin_line_id = $line['fk_elementdet'] ?? $line['origin_line_id'];	// example: purchase order id
-				$receptionline->fk_elementdet = $line['fk_elementdet'] ?? $line['origin_line_id'];	// example: purchase order line id
-				$receptionline->origin_type = $line['element_type'] ?? $line['origin_type'];		// example 'supplier_order'
-				$receptionline->element_type = $line['element_type'] ?? $line['origin_type'];		// example 'supplier_order'
-				$receptionline->qty = $line['qty'];
+				$receptionline->fk_product = $line['fk_product'] ?? null;
+				$receptionline->fk_entrepot = $line['fk_entrepot'] ?? null;
+				$receptionline->fk_element = $line['fk_element'] ?? ($line['origin_id'] ?? null);				// example: purchase order id.  this->origin is 'supplier_order'
+				$receptionline->origin_line_id = $line['fk_elementdet'] ?? ($line['origin_line_id'] ?? null);	// example: purchase order id
+				$receptionline->fk_elementdet = $line['fk_elementdet'] ?? ($line['origin_line_id'] ?? null);	// example: purchase order line id
+				$receptionline->origin_type = $line['element_type'] ?? ($line['origin_type'] ?? null);		// example 'supplier_order'
+				$receptionline->element_type = $line['element_type'] ?? ($line['origin_type'] ?? null);		// example 'supplier_order'
+				$receptionline->qty = $line['qty'] ?? null;
 				//$receptionline->rang = $line['rang'];
-				$receptionline->array_options = $line['array_options'];
-				$receptionline->batch = $line['batch'];
-				$receptionline->eatby = $line['eatby'];
-				$receptionline->sellby = $line['sellby'];
-				$receptionline->cost_price = $line['cost_price'];
-				$receptionline->status = $line['status'];
+				$receptionline->array_options = $line['array_options'] ?? array();
+				$receptionline->batch = $line['batch'] ?? null;
+				$receptionline->eatby = $line['eatby'] ?? null;
+				$receptionline->sellby = $line['sellby'] ?? null;
+				$receptionline->cost_price = $line['cost_price'] ?? null;
+				$receptionline->status = $line['status'] ?? null;
 
 				$lines[] = $receptionline;
 			}
@@ -887,7 +888,14 @@ class Receptions extends DolibarrApi
 			$data = array();
 		}
 		$reception = array();
-		foreach (Receptions::$FIELDS as $field) {
+		// A standalone reception carries no source document, exactly as the card
+		// allows when RECEPTION_STANDALONE is enabled: do not demand an origin the
+		// user is entitled to omit.
+		$mandatory = Receptions::$FIELDS;
+		if (getDolGlobalString('RECEPTION_STANDALONE') && !isset($data['origin_id']) && !isset($data['origin_type'])) {
+			$mandatory = array_values(array_diff($mandatory, array('origin_id', 'origin_type')));
+		}
+		foreach ($mandatory as $field) {
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
 			}

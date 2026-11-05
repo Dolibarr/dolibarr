@@ -240,14 +240,8 @@ function dol_document_resolve_secure_file($modulepart, $original_file, $entity, 
 
 	// Keep develop's per-object restrictions for individual files and every ZIP entry.
 	if ($accessallowed && (empty($hashp) || $hashp == 'shared') && $needlogin) {
-		$object = fetchObjectByElement(0, $modulepart, $refname);
-		if (is_object($object)) {
-			$accessallowed = restrictedArea($fuser, $modulepart, $object);
-		} elseif ($modulepart == 'systemtools' && $fuser->admin) {
-			$accessallowed = 1;
-		} else {
-			$accessallowed = 0;
-		}
+		// The native resolver handles aliases, object paths and moduleparts without a business object.
+		$accessallowed = checkUserAccessToDocumentObject($fuser, $modulepart, $original_file, 'read');
 	}
 
 	// Security: Limit access if permissions are wrong.
@@ -277,9 +271,9 @@ function dol_document_resolve_secure_file($modulepart, $original_file, $entity, 
 
 	// Define mime type after access validation so rejected files do not leak filesystem details.
 	$type = 'application/octet-stream'; // By default
-	if (GETPOST('type', 'alpha')) {
-		$type = GETPOST('type', 'alpha');
-	} else {
+	$type = GETPOST('type', 'alpha');
+	// Security: Do not let a MIME override turn an uploaded file into an executable browser page.
+	if (empty($type) || preg_match('/(html|xml|svg)/i', $type)) {
 		$type = dol_mimetype($original_file);
 	}
 	// Security: Force to octet-stream if file is a dangerous file. For example when it is a .noexe file
@@ -322,7 +316,6 @@ function dol_document_prepare_download($resolvedfile, $modulepart, $entity, &$ac
 	$filename = $resolvedfile['filename'];
 
 	// Hooks
-	$hookmanager->initHooks(array('document'));
 	$parameters = array('ecmfile' => $ecmfile, 'modulepart' => $modulepart, 'original_file' => $original_file,
 		'entity' => $entity, 'fullpath_original_file' => $fullpath_original_file,
 		'filename' => $filename, 'fullpath_original_file_osencoded' => $fullpath_original_file_osencoded);
@@ -422,6 +415,8 @@ $socid = 0;
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
+
+$hookmanager->initHooks(array('document'));
 
 /*
  * Actions

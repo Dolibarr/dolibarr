@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Notification.class.php';
 
-$langs->loadLangs(array("companies", "mails", "admin", "other", "errors"));
+$langs->loadLangs(array("companies", "mails", "admin", "other"));
 
 $socid     = GETPOSTINT("socid");
 $action    = GETPOST('action', 'aZ09');
@@ -145,7 +145,9 @@ if (empty($reshook)) {
 
 	// Remove a notification
 	if ($action == 'delete' && $permissiontoadd) {
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid = ".GETPOSTINT('actid');
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
+		$sql .= " WHERE rowid = ".GETPOSTINT('actid');
+		$sql .= " AND fk_soc = ".((int) $socid);
 		$db->query($sql);
 	}
 }

@@ -31,6 +31,7 @@ if (empty($conf) || !is_object($conf)) {
 echo "<!-- BEGIN PHP TEMPLATE adherents/tpl/linkedobjectblock.tpl.php -->\n";
 
 global $user;
+global $db;
 
 $langs = $GLOBALS['langs'];
 '@phan-var-force Translate $langs';
@@ -43,12 +44,20 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 /** @var Subscription[] $linkedObjectBlock */
 $langs->load("members");
 
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+
+$memberstatic = new Adherent($db);
+
 $total = 0;
 foreach ($linkedObjectBlock as $key => $objectlink) {
 	echo '<tr class="oddeven">';
 	echo '<td>'.$langs->trans("Subscription").'</td>';
 	echo '<td class="nowraponall">'.$objectlink->getNomUrl(1).'</td>';
-	echo '<td class="center"></td>';
+	$memberstatic->id = $objectlink->fk_adherent;
+	$memberstatic->firstname = $objectlink->member_firstname;
+	$memberstatic->lastname = $objectlink->member_lastname;
+	$memberstatic->company = $objectlink->member_company;
+	echo '<td class="center">'.$memberstatic->getNomUrl(1).'</td>';
 	echo '<td class="center">'.dol_print_date($objectlink->dateh, 'day').'</td>';
 	echo '<td class="right">';
 	if ($user->hasRight('adherent', 'lire')) {

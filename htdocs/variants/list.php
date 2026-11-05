@@ -368,8 +368,13 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$nbtotalofrecords++;
 	}*/
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
-	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
-	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	if ($hasgroupby) {
+		// The GROUP BY and the HAVING must be kept, so the grouped query is counted as a subquery
+		$sqlforcount = "SELECT COUNT(*) as nbtotalofrecords FROM (".$sql.") as tmpcount";
+	} else {
+		$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+		$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	}
 
 	$resql = $db->query($sqlforcount);
 	if ($resql) {

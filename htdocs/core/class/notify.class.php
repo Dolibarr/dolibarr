@@ -8,7 +8,7 @@
  * Copyright (C) 2023      William Mead         <william.mead@manchenumerique.fr>
  * Copyright (C) 2024      Jon Bendtsen         <jon.bendtsen.github@jonb.dk>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2026      Pierre Ardoin        <developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -946,7 +946,7 @@ class Notify
 							case 'CONTRACT_MODIFY':
 								$link = '<a href="'.$urlwithroot.'/contrat/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
-								$dir_output = $conf->contract->multidir_output;
+								$dir_output = rtrim(getMultidirOutput($object, '', 1), '/');
 								$object_type = 'contract';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextContractModified", $link, $context_info);
 								break;
@@ -974,6 +974,12 @@ class Notify
 							$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
 							complete_substitutions_array($substitutionarray, $outputlangs, $object);
 							// Note the substitution array should contains __REF__, __NEWREF__ ....
+							// On a first validation the object still carries its provisional ref while
+							// newref already holds the final one. Use the final ref for __REF__ so the
+							// notification never shows a (PROVxxx) reference to the recipient.
+							if (!empty($object->newref)) {
+								$substitutionarray['__REF__'] = $object->newref;
+							}
 							$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
 							$message = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
 						} else {
@@ -1215,13 +1221,13 @@ class Notify
 						$link = '<a href="'.$urlwithroot.'/expedition/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
 						$dir_output = $conf->expedition->dir_output."/sending/".get_exdir(0, 0, 0, 1, $object, 'shipment');
-						$object_type = 'order_supplier';
+						$object_type = 'shipping';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextExpeditionModified", $link, $context_info);
 						break;
 					case 'SHIPPING_VALIDATE':
 						$link = '<a href="'.$urlwithroot.'/expedition/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$dir_output = $conf->expedition->dir_output."/sending/".get_exdir(0, 0, 0, 1, $object, 'shipment');
-						$object_type = 'order_supplier';
+						$object_type = 'shipping';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextExpeditionValidated", $link);
 						break;
 					case 'EXPENSE_REPORT_VALIDATE':
@@ -1257,8 +1263,8 @@ class Notify
 					case 'CONTRACT_MODIFY':
 						$link = '<a href="'.$urlwithroot.'/contrat/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
-						$dir_output = $conf->contract->multidir_output;
-						$object_type = 'contrat';
+						$dir_output = rtrim(getMultidirOutput($object, '', 1), '/');
+						$object_type = 'contract';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextContractModified", $link, $context_info);
 						break;
 					default:
@@ -1306,6 +1312,12 @@ class Notify
 
 					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
+					// On a first validation the object still carries its provisional ref while newref
+					// already holds the final one. Use the final ref for __REF__ so the notification
+					// never shows a (PROVxxx) reference to the recipient.
+					if (!empty($object->newref)) {
+						$substitutionarray['__REF__'] = $object->newref;
+					}
 					$subject = make_substitutions($emailTemplate->topic, $substitutionarray, $outputlangs);
 					$message = make_substitutions($emailTemplate->content, $substitutionarray, $outputlangs);
 				} else {

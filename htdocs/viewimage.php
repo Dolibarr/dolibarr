@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -258,6 +258,10 @@ if (GETPOST('type', 'alpha')) {
 if (preg_match('/html/i', $type)) {
 	httponly_accessforbidden('Error: Using the image wrapper to output a file with a mime type HTML is not possible.');
 }
+// Security: The type given into the URL must not be a type of page (xml, xhtml, svg) for a file of another extension
+if (GETPOST('type', 'alpha') && preg_match('/(xml|svg)/i', $type) && !preg_match('/(xml|svg)/i', dol_mimetype($original_file))) {
+	httponly_accessforbidden('Error: Using the image wrapper to output a file with a mime type XML is not possible.');
+}
 // Security: This wrapper is for images. We do not allow files ending with .noexe
 if (preg_match('/\.noexe$/i', $original_file)) {
 	httponly_accessforbidden('Error: Using the image wrapper to output a file ending with .noexe is not allowed.');
@@ -291,6 +295,8 @@ if ($modulepart === 'medias' && $entity != $conf->entity) {
 	$conf->entity = $entity;
 	$conf->setValues($db);
 }
+
+$hookmanager->initHooks(array('viewimage'));
 
 $check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $user, $refname, 'read');
 $accessallowed              = $check_access['accessallowed'];
@@ -329,17 +335,9 @@ if (!empty($hashp) && $hashp != 'shared') {
 
 // Check permission on per object basis
 if ($accessallowed && (empty($hashp) || $hashp == 'shared') && $needlogin && !$imagepublicfortakepos) {
-	$object = fetchObjectByElement(0, $modulepart, $refname);		// This init and load the object
-	//var_dump($object);
-	if (is_object($object)) {
-		$accessallowed = restrictedArea($user, $modulepart, $object);
-	} else {
-		if ($modulepart == 'systemtools' && $user->admin) {
-			$accessallowed = 1;
-		} else {
-			$accessallowed = 0;
-		}
-	}
+	// If $modulepart is not an object type (userphoto, companylogo, memberphoto, apercuxxx, systemtools...), there is no object to check
+	// a permission on: we keep the result of dol_check_secure_access_document(), that has checked the permission for this modulepart.
+	$accessallowed = checkUserAccessToDocumentObject($user, $modulepart, $original_file, 'read');
 }
 
 // Security:
@@ -390,7 +388,7 @@ if ($modulepart == 'barcode') {
 			// we must check the securekey that protet against forging url
 			if ($reg[1] == 'user' && (int) $reg[2] > 0) {
 				$encodedsecurekey = dol_hash($conf->file->instance_unique_id.'uservirtualcard'.$id.'-'.$login, 'md5');
-				if ($encodedsecurekey != GETPOST('securekey')) {
+				if (!hash_equals($encodedsecurekey, (string) GETPOST('securekey'))) {
 					$code = 'badvalueforsecurekey';
 				}
 			}

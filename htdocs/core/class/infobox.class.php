@@ -53,7 +53,8 @@ class InfoBox
 				11 => 'TicketsHome',
 				20 => 'interventionindex',
 				27 => 'AccountancyHome',
-				28 => 'toolsindex'
+				28 => 'toolsindex',
+				29 => 'bankindex'
 			);
 		} else {
 			return array(
@@ -85,7 +86,8 @@ class InfoBox
 				25 => 'mailingindex',
 				26 => 'opensurveyindex',
 				27 => 'AccountancyHome',
-				28 => 'toolsindex'
+				28 => 'toolsindex',
+				29 => 'bankindex'
 			);
 		}
 	}

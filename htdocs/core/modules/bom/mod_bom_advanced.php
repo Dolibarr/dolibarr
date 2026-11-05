@@ -143,7 +143,7 @@ class mod_bom_advanced extends ModeleNumRefBoms
 			return 0;
 		}
 
-		$date = ($object->date_bom ? $object->date_bom : $object->date);
+		$date = $object->date_creation;
 
 		$numFinal = get_next_value($db, $mask, 'bom_bom', 'ref', '', '', $date);
 

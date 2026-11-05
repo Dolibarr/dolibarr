@@ -169,6 +169,7 @@ ALTER TABLE llx_prelevement_demande ADD COLUMN fk_societe_rib integer DEFAULT NU
 
 -- Rename of bank table
 ALTER TABLE llx_bank_categ RENAME TO llx_category_bank;		-- TODO Move content into llx_categorie instead of renaming it
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_bank_categ_rowid_seq RENAME TO llx_category_bank_rowid_seq;
 ALTER TABLE llx_bank_class RENAME TO llx_category_bankline;
 
 

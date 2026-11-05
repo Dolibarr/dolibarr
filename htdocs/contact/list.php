@@ -535,7 +535,7 @@ if ($resql) {
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias as alias,";
-$sql .= " p.rowid, p.ref_ext, p.lastname as lastname, p.statut, p.firstname, p.address, p.zip, p.town, p.poste, p.email, p.birthday,";
+$sql .= " p.rowid, p.ref_ext, p.lastname as lastname, p.statut, p.firstname, p.name_alias, p.address, p.zip, p.town, p.poste, p.email, p.birthday,";
 $sql .= " p.socialnetworks, p.photo,";
 $sql .= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.ip, p.datec as date_creation, p.tms as date_modification,";
 $sql .= " p.import_key, p.fk_stcommcontact as stcomm_id, p.fk_prospectlevel, p.note_public, p.note_private,";
@@ -722,7 +722,12 @@ if ($search_ref_ext) {
 	$sql .= natural_search('p.ref_ext', $search_ref_ext);
 }
 if ($search_lastname) {
-	$sql .= natural_search('p.lastname', $search_lastname);
+	if (empty($arrayfields['p.firstname']['checked'])) {
+		// Firstname is shown into the lastname column, so search on both
+		$sql .= natural_search(array('p.lastname', 'p.firstname'), $search_lastname);
+	} else {
+		$sql .= natural_search('p.lastname', $search_lastname);
+	}
 }
 if ($search_firstname) {
 	$sql .= natural_search('p.firstname', $search_firstname);
@@ -1683,12 +1688,22 @@ while ($i < $imaxinloop) {
 
 		// (Last) Name
 		if (!empty($arrayfields['p.lastname']['checked'])) {
-			print '<td class="middle tdoverflowmax150" title="'.dolPrintHTMLForAttribute($contactstatic->lastname).'">';
+			print '<td class="middle tdlineheightsmall" title="'.dolPrintHTMLForAttribute($contactstatic->lastname).'">';
+			print '<div class="tdoverflowmax150 inline-block lineheightsmall">';
 			if ($contextpage == 'poslist') {
 				print $contactstatic->lastname;
+			} elseif (empty($arrayfields['p.firstname']['checked'])) {
+				// Show only lastname in link and firstname under it when firstname column is not enabled
+				$contactstatic->firstname = '';
+				print $contactstatic->getNomUrl(1);
+				$contactstatic->firstname = $obj->firstname;
+				if (!empty($obj->firstname)) {
+					print '<br><span class="spantitle">'.dolPrintHTML($obj->firstname).'</span>';
+				}
 			} else {
 				print $contactstatic->getNomUrl(1);
 			}
+			print '</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1846,7 +1861,8 @@ while ($i < $imaxinloop) {
 
 		// Company / Third Party
 		if (!empty($arrayfields['p.fk_soc']['checked']) || !empty($arrayfields['s.nom']['checked'])) {
-			print '<td class="tdoverflowmax125">';
+			print '<td class="tdlineheightsmall">';
+			print '<div class="tdoverflowmax150 inline-block lineheightsmall">';
 			if ($obj->socid) {
 				$objsoc = new Societe($db);
 				$objsoc->fetch($obj->socid);
@@ -1859,11 +1875,16 @@ while ($i < $imaxinloop) {
 				if ($contextpage == 'poslist') {
 					print $objsoc->name;
 				} else {
-					print $objsoc->getNomUrl(1, $option_link, 100, 0, 1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
+					print $objsoc->getNomUrl(1, $option_link, 100, 0, 1, 1);
+					// Show alias name under the third party name when alias column is not enabled
+					if (empty($arrayfields['s.name_alias']['checked']) && !empty($obj->alias)) {
+						print '<br><span class="spantitle">'.dolPrintHTML($obj->alias).'</span>';
+					}
 				}
 			} else {
 				print '&nbsp;';
 			}
+			print '</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

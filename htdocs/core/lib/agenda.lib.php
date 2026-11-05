@@ -790,17 +790,11 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						$cssclass .= " unmovable";
 					} elseif ($event->type_code == 'ICALEVENT') {
 						$cssclass .= " unmovable";
-					} elseif ($event->date_start_in_calendar && $event->date_end_in_calendar && date('Ymd', $event->date_start_in_calendar) != date('Ymd', $event->date_end_in_calendar)) {
-						// If the event is on several days
-						$tmpyearend = dol_print_date($event->date_start_in_calendar, '%Y', 'tzuserrel');
-						$tmpmonthend = dol_print_date($event->date_start_in_calendar, '%m', 'tzuserrel');
-						$tmpdayend = dol_print_date($event->date_start_in_calendar, '%d', 'tzuserrel');
-						//var_dump($tmpyearend.' '.$tmpmonthend.' '.$tmpdayend);
-						if ($tmpyearend != $annee || $tmpmonthend != $mois || $tmpdayend != $jour) {
-							$cssclass .= " unmovable unmovable-mustusefirstdaytodrag";
-						} else {
-							$cssclass .= ' movable cursormove';
-						}
+					} elseif (dol_print_date($event->datep, '%Y%m%d', 'tzuserrel') != sprintf("%04d%02d%02d", $annee, $mois, $jour)) {
+						// The event is shown on a day that is not its real start day (it is on several days, maybe
+						// starting before the displayed range). A drop sets the start to the drop day, so only its
+						// real start day can be dragged.
+						$cssclass .= " unmovable unmovable-mustusefirstdaytodrag";
 					} else {
 						if ($user->hasRight('agenda', 'allactions', 'create') ||
 							(($event->authorid == $user->id || $event->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'))) {
@@ -959,6 +953,32 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 								$titletoshow = (($event->type_picto || $event->type_code) ? $event->getTypePicto() : '');
 								$titletoshow .= $event->getNomUrl(0, $maxnbofchar, 'cal_event cal_event_title valignmiddle', '', 0, 0);	// do not add 'inline-block' in css here: it makes the title transformed completely into '...'
 								$event->label = $savlabel;
+							}
+
+							// Details of an event of an external calendar, into a tooltip
+							if ($event->type_code == 'ICALEVENT' && !empty($event->icaldetails)) {
+								$tooltip = '';
+								if (!empty($event->icaldetails['description'])) {
+									$tooltip .= '<b>'.$langs->trans("Description").'</b>: '.implode('<br>', array_map('dol_escape_htmltag', (array) preg_split('/\r\n|\n|\r/', dol_trunc($event->icaldetails['description'], 500)))).'<br>';
+								}
+								if (!empty($event->icaldetails['organizer'])) {
+									$tooltip .= '<b>'.$langs->trans("ExtEventOrganizer").'</b>: '.dol_escape_htmltag($event->icaldetails['organizer']).'<br>';
+								}
+								if (!empty($event->icaldetails['attendees']) && is_array($event->icaldetails['attendees'])) {
+									$tooltip .= '<b>'.$langs->trans("ExtEventAttendees").'</b>: '.dol_escape_htmltag(dol_trunc(implode(', ', $event->icaldetails['attendees']), 300)).'<br>';
+								}
+								if (!empty($event->icaldetails['categories'])) {
+									$tooltip .= '<b>'.$langs->trans("Categories").'</b>: '.dol_escape_htmltag($event->icaldetails['categories']).'<br>';
+								}
+								if (!empty($event->icaldetails['url']) && preg_match('/^https?:\/\//i', $event->icaldetails['url'])) {
+									$tooltip .= '<b>'.$langs->trans("Link").'</b>: '.dol_escape_htmltag(dol_trunc($event->icaldetails['url'], 100)).'<br>';
+								}
+								if (!empty($event->icaldetails['geo']) && preg_match('/^(-?[0-9.]+);(-?[0-9.]+)$/', $event->icaldetails['geo'])) {
+									$tooltip .= '<b>'.$langs->trans("Position").'</b>: '.dol_escape_htmltag(str_replace(';', ', ', $event->icaldetails['geo'])).'<br>';
+								}
+								if ($tooltip) {
+									$titletoshow = '<span class="classfortooltip" title="'.dol_escape_htmltag($tooltip, 1, 1).'">'.$titletoshow.'</span>';
+								}
 							}
 
 							// Loop on each assigned user

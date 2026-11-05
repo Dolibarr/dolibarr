@@ -228,6 +228,14 @@ if (empty($reshook)) {
 	// Actions to build doc
 	include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
 
+	// The lines of a shipment can be modified or deleted only when it is a draft
+	if (in_array($action, array('editline', 'updateline', 'deleteline')) && (!$permissiontoadd || $object->status != Expedition::STATUS_DRAFT)) {
+		if ($object->status != Expedition::STATUS_DRAFT) {
+			setEventMessages($langs->trans("StatusOfRefMustBe", $object->ref, $langs->transnoentitiesnoconv("StatusSendingDraftShort")), null, 'errors');
+		}
+		$action = '';
+	}
+
 	// Back to draft
 	if ($action == 'setdraft' && $permissiontoadd) {
 		$object->fetch($id);
@@ -450,7 +458,7 @@ if (empty($reshook)) {
 
 							if ($is_batch_or_serial == 2 && $sub_qty[$j]['q'] > 0) {
 								// we stock the batch id to test later if the same serial is shipped on another line for the same product
-								$product_batch_used[$j] = $sub_qty[$j]['id_batch'];
+								$product_batch_used[] = $sub_qty[$j]['id_batch'];
 							}
 
 							$j++;
@@ -673,6 +681,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('expedition', 'supprimer')) {
 		$also_update_stock = (GETPOST('alsoUpdateStock', 'alpha') ? 1 : 0);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user, 0, (bool) $also_update_stock);
 		if ($result > 0) {
 			header("Location: " . DOL_URL_ROOT . '/expedition/index.php');
@@ -1227,7 +1236,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		if ($qty == '') {
+		if (GETPOST('qty'.$predef, 'alpha') === '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
 		}
@@ -1358,9 +1367,11 @@ if (empty($reshook)) {
 					}
 					$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
-			} else {
-				header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // To redisplay the form being edited
+
+				header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // To redisplay the card with an empty form
 				exit();
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 	} elseif ($action == 'confirm_sign' && $confirm == 'yes' && $permissiontoadd) {
@@ -1526,6 +1537,12 @@ if ($action == 'create' && $usercancreate) {
 		}
 		print '</tr>'."\n";
 
+		// Ref customer
+		print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
+		print '<td colspan="3">';
+		print '<input type="text" name="ref_customer" value="'.dol_escape_htmltag(GETPOST('ref_customer', 'alpha')).'">';
+		print '</td></tr>'."\n";
+
 		// Project
 		if (isModEnabled('project') && is_object($formproject)) {
 			$projectid = GETPOSTINT('projectid');
@@ -1556,7 +1573,7 @@ if ($action == 'create' && $usercancreate) {
 		print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
 		print '<td colspan="3">';
 		print img_picto('', 'action', 'class="pictofixedwidth"');
-		$date_delivery = ($date_delivery ? $date_delivery : $object->delivery_date); // $date_delivery comes from GETPOST
+		$date_delivery = ($date_delivery ? $date_delivery : $object->date_delivery); // $date_delivery comes from GETPOST
 		print $form->selectDate($date_delivery ? $date_delivery : -1, 'date_delivery', 1, 1, 1);
 		print "</td>\n";
 		print '</tr>';
@@ -2703,13 +2720,21 @@ if ($action == 'create' && $usercancreate) {
 	// Confirm deletion
 	if ($action == 'delete') {
 		$formquestion = array();
-		if ($object->status == Expedition::STATUS_CLOSED && getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) {
+
+		$needquestiononstock = ((getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT') && $object->status == $object::STATUS_VALIDATED) ||
+			((getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT') || getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) && $object->status == $object::STATUS_CLOSED));
+
+		if ($needquestiononstock) {
 			$formquestion = array(
+				array(
+					'type' => 'onecolumn',
+					'value' => img_warning().' <strong>'.$langs->trans('WarningShipmentDeleteStockMovement').'</strong>',
+				),
 				array(
 					'label' => $langs->trans('ShipmentIncrementStockOnDelete'),
 					'name' => 'alsoUpdateStock',
 					'type' => 'checkbox',
-					'value' => 0
+					'value' => getDolGlobalInt('SHIPMENT_AUTO_CHECK_TO_INCREASE_STOCK_ON_SHIPMENT_DELETION')
 				),
 			);
 		}
@@ -2720,7 +2745,8 @@ if ($action == 'create' && $usercancreate) {
 			'confirm_delete',
 			$formquestion,
 			0,
-			1
+			1,
+			'auto'
 		);
 	}
 
@@ -2852,7 +2878,7 @@ if ($action == 'create' && $usercancreate) {
 			} else {
 				if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
 					$proj = new Project($db);
-					$proj->fetch($objectsrc->fk_project);
+					$proj->fetch((int) $objectsrc->fk_project);
 					$morehtmlref .= $proj->getNomUrl(1);
 					if ($proj->title) {
 						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
@@ -3183,7 +3209,7 @@ if ($action == 'create' && $usercancreate) {
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 					}
 					if (empty($reshook)) {
-						$object->formAddObjectLine(1, $mysoc, $soc);
+						$object->formAddObjectLine(1, $mysoc, $soc, '/expedition/tpl');
 					}
 				}
 			}
@@ -3628,7 +3654,7 @@ if ($action == 'create' && $usercancreate) {
 								}
 							}
 							print $form->textwithtooltip(img_picto('', 'object_stock') . ' ' . $langs->trans("DetailWarehouseNumber"), $detail);
-						} elseif (count($lines[$i]->detail_children ?? []) > 1) {
+						} elseif (is_array($lines[$i]->detail_children) && count($lines[$i]->detail_children) > 1) {
 							$detail = '';
 							foreach ($lines[$i]->detail_children as $child_product_id => $child_stock_list) {
 								foreach ($child_stock_list as $warehouse_id => $total_qty) {
@@ -3866,13 +3892,13 @@ if ($action == 'create' && $usercancreate) {
 			// Cancel
 			if ($object->status == Expedition::STATUS_VALIDATED) {
 				if ($user->hasRight('expedition', 'creer')) {
-					print dolGetButtonAction('', $langs->trans('Cancel'), 'danger', $_SERVER["PHP_SELF"] . '?action=cancel&token=' . newToken() . '&id=' . $object->id . '&mode=init#formmailbeforetitle', '');
+					print dolGetButtonAction('', $langs->trans('Cancel'), 'default', $_SERVER["PHP_SELF"] . '?action=cancel&token=' . newToken() . '&id=' . $object->id . '&mode=init#formmailbeforetitle', '', true, array('attr' => array('classOverride' => 'butAction butActionDanger')))."\n";
 				}
 			}
 
 			// Delete
 			if ($user->hasRight('expedition', 'supprimer')) {
-				print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"] . '?action=delete&token=' . newToken() . '&id=' . $object->id, '');
+				print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"] . '?action=delete&token=' . newToken() . '&id=' . $object->id, '', true, array('attr' => array('class' => 'reposition')))."\n";
 			}
 		}
 
