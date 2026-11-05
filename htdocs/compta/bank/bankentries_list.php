@@ -1122,7 +1122,7 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['b.rowid']['checked'])) {
 		print '<td class="liste_titre">';
-		print '<input type="text" class="flat" name="search_ref" size="2" value="'.dol_escape_htmltag($search_ref).'">';
+		print '<input type="text" class="flat" name="search_ref" size="2" value="'.dolPrintLabelForAttribute($search_ref).'">';
 		print '</td>';
 	}
 	if (!empty($arrayfields['b.label']['checked'])) {
