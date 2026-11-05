@@ -1409,7 +1409,7 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 		$listofmods .= ($listofmods ? ',' : '')."'".$db->escape($val)."'";
 	}
 
-	$sql = "SELECT id, libelle as label, module from ".MAIN_DB_PREFIX."rights_def WHERE module NOT IN (".$db->sanitize($listofmods, 1).") AND id > 100000";
+	$sql = "SELECT id, entity, libelle as label, module from ".MAIN_DB_PREFIX."rights_def WHERE module NOT IN (".$db->sanitize($listofmods, 1).") AND id > 100000";
 
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -1419,9 +1419,12 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
 				if ($obj->id > 0) {
-					print '<tr><td>Found line with id '.$obj->id.', label "'.$obj->label.'" of module "'.$obj->module.'" to delete';
+					print '<tr><td>Found line with id '.$obj->id.', entity '.$obj->entity.', label "'.$obj->label.'" of module "'.$obj->module.'" to delete';
 					if (GETPOST('clean_perm_table', 'alpha') == 'confirmed') {
+						// The primary key of rights_def is (id, entity), so the entity of the found line must be part of the
+						// delete. Without it, cleaning a permission of one entity removes the same id in all the other ones.
 						$sqldelete = "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE id = ".((int) $obj->id);
+						$sqldelete .= " AND entity = ".((int) $obj->entity);
 						$resqldelete = $db->query($sqldelete);
 						if (!$resqldelete) {
 							dol_print_error($db);

@@ -85,7 +85,11 @@ if (GETPOST('action', 'alpha') == 'set') {
 
 	$res = dolibarr_set_const($db, "TAKEPOS_TERMINAL_NAME_".$terminaltouse, (!empty(GETPOST('terminalname'.$terminaltouse, 'restricthtml')) ? GETPOST('terminalname'.$terminaltouse, 'restricthtml') : $langs->trans("TerminalName", $terminaltouse)), 'chaine', 0, '', $conf->entity);
 
-	$res = dolibarr_set_const($db, "CASHDESK_ID_THIRDPARTY".$terminaltouse, (GETPOSTINT('socid') > 0 ? GETPOSTINT('socid') : ''), 'chaine', 0, '', $conf->entity);
+	// The default customer is still needed when TAKEPOS_FORBID_SALES_TO_DEFAULT_CUSTOMER is on: TakePOS creates the
+	// draft invoice on it, and refuses the payment as long as it is the customer of the sale.
+	if (GETPOSTISSET('socid')) {
+		$res = dolibarr_set_const($db, "CASHDESK_ID_THIRDPARTY".$terminaltouse, (GETPOSTINT('socid') > 0 ? GETPOSTINT('socid') : ''), 'chaine', 0, '', $conf->entity);
+	}
 
 	if (GETPOSTISSET('projectid')) {
 		$res = dolibarr_set_const($db, "CASHDESK_ID_PROJECT".$terminaltouse, (GETPOSTINT('projectid') > 0 ? GETPOSTINT('projectid') : ''), 'chaine', 0, '', $conf->entity);
@@ -209,14 +213,12 @@ print '<td>';
 print ajax_constantonoff("TAKEPOS_FORBID_SALES_TO_DEFAULT_CUSTOMER", array(), $conf->entity, 0, 0, 1, 0);
 print '</td></tr>';
 
-if (!getDolGlobalString('TAKEPOS_FORBID_SALES_TO_DEFAULT_CUSTOMER')) {
-	print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
-	print '<td>';
-	print img_picto('', 'company', 'class="pictofixedwidth"');
-	$filter = '((s.client:IN:1,2,3) AND (s.status:=:1))';
-	print $form->select_company(getDolGlobalInt('CASHDESK_ID_THIRDPARTY'.$terminaltouse), 'socid', $filter, 1, 0, 0, array(), 0, 'maxwidth500 widthcentpercentminusx');
-	print '</td></tr>';
-}
+print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
+print '<td>';
+print img_picto('', 'company', 'class="pictofixedwidth"');
+$filter = '((s.client:IN:1,2,3) AND (s.status:=:1))';
+print $form->select_company(getDolGlobalInt('CASHDESK_ID_THIRDPARTY'.$terminaltouse), 'socid', $filter, 1, 0, 0, array(), 0, 'maxwidth500 widthcentpercentminusx');
+print '</td></tr>';
 
 $atleastonefound = 0;
 if (isModEnabled("bank")) {
