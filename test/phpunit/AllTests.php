@@ -483,6 +483,8 @@ class AllTests
 			$suite->addTestSuite('RestAPIInterventionTest');
 			require_once dirname(__FILE__).'/RestAPIAgendaEventsTest.php';
 			$suite->addTestSuite('RestAPIAgendaEventsTest');
+			require_once dirname(__FILE__).'/RestAPIContractTest.php';
+			$suite->addTestSuite('RestAPIContractTest');
 
 			// Old WS
 			require_once dirname(__FILE__).'/WebservicesProductsTest.php';
