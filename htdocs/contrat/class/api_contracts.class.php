@@ -879,7 +879,7 @@ class Contracts extends DolibarrApi
 			throw new RestException(403, 'Access to this contract is not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (!$this->contract->delete(DolibarrApiAccess::$user)) {
+		if ($this->contract->delete(DolibarrApiAccess::$user) <= 0) {
 			throw new RestException(500, 'Error when delete contract : '.$this->contract->errorsToString());
 		}
 
