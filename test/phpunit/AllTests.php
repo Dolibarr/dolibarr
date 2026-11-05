@@ -461,6 +461,8 @@ class AllTests
 			$suite->addTestSuite('RestAPIAgendaEventsPutTest');
 			require_once dirname(__FILE__).'/RestAPIContactTest.php';
 			$suite->addTestSuite('RestAPIContactTest');
+			require_once dirname(__FILE__).'/RestAPIContractTest.php';
+			$suite->addTestSuite('RestAPIContractTest');
 			require_once dirname(__FILE__).'/RestAPIDocumentTest.php';
 			$suite->addTestSuite('RestAPIDocumentTest');
 			require_once dirname(__FILE__).'/RestAPIMoTest.php';

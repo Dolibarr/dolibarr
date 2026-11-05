@@ -3,6 +3,7 @@
  * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +38,9 @@ class Contracts extends DolibarrApi
 	 */
 	public static $FIELDS = array(
 		'socid',
-		'date_contrat'
+		'date_contrat',
+		'commercial_signature_id',
+		'commercial_suivi_id'
 	);
 
 	/**
@@ -268,6 +271,15 @@ class Contracts extends DolibarrApi
 				if ($result < 1) {
 					throw new RestException(404, 'Thirdparty with id='.((int) $value).' not found');
 				}
+			}
+
+			if ($field == 'array_options' && is_array($value)) {
+				$this->contract->fetch_optionals();	// To force the load of the extrafields definition by fetch_name_optionals_label()
+
+				foreach ($value as $index => $val) {
+					$this->contract->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->contract);
+				}
+				continue;
 			}
 
 			$this->contract->$field = $this->_checkValForAPI($field, $value, $this->contract);
