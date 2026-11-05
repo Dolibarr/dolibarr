@@ -283,6 +283,15 @@ class Contracts extends DolibarrApi
 				}
 			}
 
+			if ($field == 'array_options' && is_array($value)) {
+				$this->contract->fetch_optionals();	// To force the load of the extrafields definition by fetch_name_optionals_label()
+
+				foreach ($value as $index => $val) {
+					$this->contract->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->contract);
+				}
+				continue;
+			}
+
 			$this->contract->$field = $this->_checkValForAPI($field, $value, $this->contract);
 		}
 		/*if (isset($request_data["lines"])) {
