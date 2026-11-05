@@ -120,7 +120,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][self::KEY_ID] = 255;
-		$this->rights[$r][self::KEY_LABEL] = 'Modify the password of other users';
+		$this->rights[$r][self::KEY_LABEL] = 'Modify the password or API access key of other users';
 		$this->rights[$r][self::KEY_DEFAULT] = 0;
 		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'user';
 		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'password';
@@ -148,7 +148,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][self::KEY_ID] = 343;
-		$this->rights[$r][self::KEY_LABEL] = 'Modify its own password';
+		$this->rights[$r][self::KEY_LABEL] = 'Modify its own password or API access key';
 		$this->rights[$r][self::KEY_DEFAULT] = 0;
 		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'self';
 		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'password';
