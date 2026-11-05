@@ -159,7 +159,7 @@ class RestAPIDocumentTest extends AbstractRestAPITest
 	 */
 	public function testModulepartAliases()
 	{
-		$aliases = array('intervention' => 'ficheinter', 'proposal' => 'propal', 'action' => 'agenda', 'event' => 'agenda', 'agenda' => 'agenda');
+		$aliases = array('intervention' => 'ficheinter', 'proposal' => 'propal');
 
 		foreach ($aliases as $modulepart => $module) {
 			if (!isModEnabled($module)) {

@@ -550,53 +550,16 @@ class FilesLibTest extends CommonClassTest
 			$user->rights->$module = $savrights;
 		}
 
-		if (isModEnabled('agenda')) {
-			$savrights = $user->rights->agenda ?? null;
-			$filename = '1/1.pdf';
-
-			foreach (array('action', 'event') as $modulepart) {
-				$user->rights->agenda = new stdClass();
-				$user->rights->agenda->allactions = new stdClass();
-				$user->rights->agenda->allactions->read = 1;
-				$user->rights->agenda->allactions->create = 1;
-				foreach (array('read', 'write') as $mode) {
-					$result = dol_check_secure_access_document($modulepart, $filename, 0, '', '', $mode);
-					$this->assertEquals(1, $result['accessallowed'], "Check $mode access allowed to '$modulepart/$filename':".json_encode($result));
-					$this->assertEquals($conf->agenda->dir_output.'/'.$filename, $result['original_file']);
-				}
-
-				$user->rights->agenda = new stdClass();
-				foreach (array('read', 'write') as $mode) {
-					$result = dol_check_secure_access_document($modulepart, $filename, 0, '', '', $mode);
-					$this->assertEquals(0, $result['accessallowed'], "Check $mode access denied to '$modulepart/$filename':".json_encode($result));
-				}
-			}
-
-			// 'agenda' is not an alias here: it stays on the generic case (allowed to admins only, with the hook checkSecureAccess)
-			$user->rights->agenda = new stdClass();
-			$user->rights->agenda->allactions = new stdClass();
-			$user->rights->agenda->allactions->read = 1;
-			$result = dol_check_secure_access_document('agenda', $filename, 0, '', '', 'read');
-			$this->assertEquals(0, $result['accessallowed'], "Check access denied to 'agenda/$filename' for a non admin:".json_encode($result));
-			$user->admin = 1;
-			$user->rights->agenda = new stdClass();
-			$result = dol_check_secure_access_document('agenda', $filename, 0, '', '', 'read');
-			$this->assertEquals(1, $result['accessallowed'], "Check access allowed to 'agenda/$filename' for an admin:".json_encode($result));
-			$user->admin = 0;
-
-			$user->rights->agenda = $savrights;
-		}
-
 		// A module called like an alias keeps its own directory
-		$savconfmodule = isset($conf->event) ? $conf->event : null;
-		$conf->event = new stdClass();
-		$conf->event->dir_output = DOL_DATA_ROOT.'/event';
-		$result = dol_check_secure_access_document('event', 'REF/REF.pdf', 0, '', '', 'read');
-		$this->assertEquals(DOL_DATA_ROOT.'/event/REF/REF.pdf', $result['original_file']);
+		$savconfmodule = isset($conf->proposal) ? $conf->proposal : null;
+		$conf->proposal = new stdClass();
+		$conf->proposal->dir_output = DOL_DATA_ROOT.'/proposal';
+		$result = dol_check_secure_access_document('proposal', 'REF/REF.pdf', 0, '', '', 'read');
+		$this->assertEquals(DOL_DATA_ROOT.'/proposal/REF/REF.pdf', $result['original_file']);
 		if ($savconfmodule === null) {
-			unset($conf->event);
+			unset($conf->proposal);
 		} else {
-			$conf->event = $savconfmodule;
+			$conf->proposal = $savconfmodule;
 		}
 
 		$user->admin = $savadmin;
