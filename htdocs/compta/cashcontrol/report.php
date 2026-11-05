@@ -398,7 +398,7 @@ if ($resql) {
 
 	if (!$summaryonly) {
 		// Lines sorted for the display only. Equal values keep the order of the request (chronological).
-		usort($rowstoprint, function ($a, $b) use ($sortfield, $sortorder) {
+		usort($rowstoprint, function (array $a, array $b) use ($sortfield, $sortorder): int {
 			$cmp = is_string($a[$sortfield]) ? strnatcasecmp($a[$sortfield], $b[$sortfield]) : ($a[$sortfield] <=> $b[$sortfield]);
 			if ($sortorder == 'DESC') {
 				$cmp = -$cmp;
