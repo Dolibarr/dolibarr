@@ -445,6 +445,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 	if (in_array($modulepart, array('produit', 'product')) && getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 		// TODO Remove this when PRODUCT_USE_OLD_PATH_FOR_PHOTO will be removed
 		global $object;
+		'@phan-var-force CommonObject $object';
 		if (!empty($object->id)) {
 			if (isModEnabled("product")) {
 				$upload_dirold = $conf->product->multidir_output[$object->entity ?? $conf->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
@@ -4159,6 +4160,7 @@ function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathre
 function dragAndDropFileUpload($htmlname)
 {
 	global $object, $langs;
+	'@phan-var-force CommonObject $object';
 
 	// Every generated javascript string that carries an interpolated value is delimited by a single quote, so
 	// dol_escape_js() is called with the mode 1 everywhere below: it escapes a single quote and leaves a double
