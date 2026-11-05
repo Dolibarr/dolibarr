@@ -174,16 +174,17 @@ class PdfDocTest extends CommonClassTest
 	 * Build a minimal one page PDF document holding the given objects.
 	 *
 	 * @param	array<int,string>	$objects	Content of each object, the key is the object number
+	 * @param	string				$sep		What separates the numbers and the keyword into the header of each object
 	 * @return	string							Content of the PDF document
 	 */
-	private function buildPdf($objects)
+	private function buildPdf($objects, $sep = ' ')
 	{
 		$out = "%PDF-1.4\n";
 		$offsets = array();
 		ksort($objects);
 		foreach ($objects as $num => $content) {
 			$offsets[$num] = strlen($out);
-			$out .= $num." 0 obj\n".$content."\nendobj\n";
+			$out .= $num.$sep."0".$sep."obj\n".$content."\nendobj\n";
 		}
 		$size = max(array_keys($objects)) + 1;
 		$startxref = strlen($out);
@@ -329,5 +330,44 @@ class PdfDocTest extends CommonClassTest
 
 		// Both ways of writing the filter give the same page
 		$this->assertSame($sizes['name'], $sizes['array']);
+	}
+	/**
+	 * Import a page of a document whose object headers do not separate the numbers and the keyword with one single
+	 * space: some writers align them on a column with several spaces, others put a line break. The header was
+	 * compared to the string "num gen obj", so none of these objects was ever found.
+	 *
+	 * @return void
+	 */
+	public function testPdfImportPageWithObjectHeadersWithSeveralSpaces()
+	{
+		pdf_getInstance();	// Load the TCPDF and TCPDI classes and define their constants
+
+		$content = "BT /F1 24 Tf 72 700 Td (Hello TCPDI) Tj ET";
+		$objects = array(
+			1 => "<< /Type /Catalog /Pages 2 0 R >>",
+			2 => "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+			3 => "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>",
+			4 => "<< /Length ".strlen($content)." >>\nstream\n".$content."\nendstream",
+			5 => "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+		);
+
+		$sizes = array();
+		foreach (array('space' => ' ', 'spaces' => '    ', 'newline' => "\n", 'tab' => "\t") as $case => $sep) {
+			$file = tempnam(sys_get_temp_dir(), 'tcpdi').'.pdf';
+			file_put_contents($file, $this->buildPdf($objects, $sep));
+
+			$tcpdi = new TCPDI();
+			$this->assertSame(1, $tcpdi->setSourceFile($file), 'Case '.$case.': the document should hold one page');
+			$tpl = $tcpdi->importPage(1);
+			$tcpdi->AddPage();
+			$tcpdi->useTemplate($tpl);
+			$sizes[$case] = strlen($tcpdi->Output('', 'S'));
+			unlink($file);
+		}
+
+		// Whatever separates them, the same page is imported
+		$this->assertSame($sizes['space'], $sizes['spaces']);
+		$this->assertSame($sizes['space'], $sizes['newline']);
+		$this->assertSame($sizes['space'], $sizes['tab']);
 	}
 }

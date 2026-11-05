@@ -431,6 +431,20 @@ NOTES   :
         +   every subsection of /Index is read
         +   the filters of a stream are read from $sdic['/Filter'], whether it is a name or an array
 
+==> FILE   : tcpdi_parser.php, functions getIndirectObject(), findObjectOffset() and findObjectOffsets()
+    REASON : The header of an object was compared to the string "num gen obj", so an object of a document that
+             does not separate the two numbers and the keyword with one single space was never found. A reference
+             to such an object is then read as a reference to the null object, and all it holds is silently lost:
+             the page imported from a document whose numbers are aligned on a column with several
+             spaces, or from one that writes a line break between them, came out empty.
+             findObjectOffset() also gave strpos() an offset read from the cross-reference table, which may be
+             beyond the end of the data: with PHP 8 that throws a ValueError instead of returning false.
+    DIFF   :
+        +   new function matchObjectHeader(), which accepts any white space between the numbers and the keyword
+            and returns the length of the header it matched, or false when the object does not start there
+        +   getIndirectObject() and findObjectOffset() look for the header with it
+        +   the key of the table of the offsets is always "num gen obj", whatever separates them in the file
+
 
 
 ####################################################################################################
