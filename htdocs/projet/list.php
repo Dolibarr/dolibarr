@@ -278,6 +278,9 @@ foreach ($object->fields as $key => $val) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 // Add non object fields to fields for list
+if (!isset($arrayfields[$tableprefix.'.rowid'])) {	// Technical ID is hidden by the object when MAIN_SHOW_TECHNICAL_ID is off, but must remain selectable
+	$arrayfields[$tableprefix.'.rowid'] = array('label' => "TechnicalID", 'checked' => '-1', 'enabled' => '1', 'position' => 10);
+}
 $arrayfields['s.nom'] = array('label' => "ThirdParty", 'checked' => '1', 'position' => 21, 'enabled' => (!isModEnabled('societe') ? '0' : '1'));
 $arrayfields['s.name_alias'] = array('label' => "AliasNameShort", 'checked' => '0', 'position' => 22);
 $arrayfields['s.code_client'] = array('label' => "RefCustomer", 'checked' => '0', 'position' => 23);
@@ -362,12 +365,14 @@ if ($mode == 'kanbangroupby' && $groupby) {
 				$i = 1;
 				while ($i < ($num + 1)) {	// $num + 1 because we added the undefined entry so we start with $i=1;
 					$objp = $db->fetch_object($resql);
-					$groupbyvalues[$i] = array('id' => (string) $objp->rowid, 'label' => $objp->label);
+					// Same label as in the lead status selector: translation of OppStatus<code>, else label of dictionary
+					$labeloppstatus = ($langs->transnoentitiesnoconv("OppStatus".$objp->code) != "OppStatus".$objp->code ? $langs->transnoentitiesnoconv("OppStatus".$objp->code) : $objp->label);
+					$groupbyvalues[$i] = array('id' => (string) $objp->rowid, 'label' => $labeloppstatus);
 					// If this is a group code that need to be collapsed
 					if ($objp->code == 'WON') {
-						$groupofcollpasedvalues[$i] = array('id' => (string) $objp->rowid, 'label' => $objp->label);
+						$groupofcollpasedvalues[$i] = array('id' => (string) $objp->rowid, 'label' => $labeloppstatus);
 					} elseif ($objp->code == 'LOST') {
-						$groupofcollpasedvalues[$i] = array('id' => (string) $objp->rowid, 'label' => $objp->label);
+						$groupofcollpasedvalues[$i] = array('id' => (string) $objp->rowid, 'label' => $labeloppstatus);
 					}
 
 					$i++;
@@ -1010,8 +1015,6 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-project page-list bodyforlist');
-
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 $param = '';
@@ -1162,11 +1165,17 @@ if ($search_date_modif_end) {
 	$param .= '&search_date_modif_end=' . urlencode((string) $search_date_modif_end);
 }
 if (!empty($search_category_user_array)) {
+	if ($searchCategoryUserOperator) {
+		$param .= '&search_category_user_operator='.((int) $searchCategoryUserOperator);
+	}
 	foreach ($search_category_user_array as $tmpval) {
 		$param .= '&search_category_user_list[]='.urlencode($tmpval);
 	}
 }
 if (!empty($search_category_array)) {
+	if ($searchCategoryProjectOperator) {
+		$param .= '&search_category_project_operator='.((int) $searchCategoryProjectOperator);
+	}
 	foreach ($search_category_array as $tmpval) {
 		$param .= '&search_category_project_list[]='.urlencode($tmpval);
 	}
@@ -1266,6 +1275,9 @@ if ($search_login) {
 if ($search_import_key) {
 	$param .= '&search_import_key='.urlencode($search_import_key);
 }
+if ($search_omitChildren) {
+	$param .= '&search_omitChildren=on';
+}
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -1273,6 +1285,26 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 $parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
+
+// Use Post/Redirect/Get for filter submissions so browser history contains a
+// reconstructible GET request instead of a POST that requires confirmation.
+$filterSearchSubmitted = GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha');
+$filterResetSubmitted = GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha');
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($filterSearchSubmitted || $filterResetSubmitted)) {
+	$redirectUrl = dolBuildUrl($_SERVER['PHP_SELF'], array(
+		'formfilteraction' => 'list',
+		'sortfield' => $sortfield,
+		'sortorder' => $sortorder,
+	));
+	$redirectUrl .= $param;
+	if ($filterResetSubmitted && $search_status == -1) {
+		$redirectUrl .= '&search_status=-1';
+	}
+	header('Location: '.$redirectUrl, true, 303);
+	exit;
+}
+
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-project page-list bodyforlist');
 
 // List of mass actions available
 $arrayofmassactions = array(
@@ -2358,9 +2390,11 @@ while ($i < $imaxinloop) {
 				}
 			}
 			print '<td class="center tdoverflowmax150" title="'.dolPrintHTMLForAttribute($s).'">';
-			print '<span class="badge badge-oppstatus">';
-			print dolPrintHTML($s);
-			print '</span>';
+			if ($s) {
+				print '<span class="badge badge-oppstatus">';
+				print dolPrintHTML($s);
+				print '</span>';
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

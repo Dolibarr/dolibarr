@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=ការដំឡើងម៉ូឌុល PayPal
-PaypalDesc=ម៉ូឌុលនេះអនុញ្ញាតឱ្យមានការទូទាត់ដោយអតិថិជនតាមរយៈ <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>។ នេះអាចត្រូវបានប្រើសម្រាប់ការទូទាត់តាមផ្នែក ឬសម្រាប់ការទូទាត់ទាក់ទងនឹងវត្ថុ Dolibarr (វិក្កយបត្រ ការបញ្ជាទិញ ...)
+PaypalDesc=This module allows payment by customers via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. This can be used for an ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
 PaypalOrCBDoPayment=បង់ជាមួយ PayPal (កាត ឬ PayPal)
 PaypalDoPayment=បង់ជាមួយ PayPal
 PAYPAL_API_SANDBOX=របៀបសាកល្បង/ប្រអប់ខ្សាច់
@@ -19,7 +19,7 @@ NewOnlinePaymentFailed=ការទូទាត់តាមអ៊ីនធឺណ
 ONLINE_PAYMENT_SENDEMAIL=អាសយដ្ឋានអ៊ីមែលសម្រាប់ការជូនដំណឹងបន្ទាប់ពីការព្យាយាមបង់ប្រាក់នីមួយៗ (សម្រាប់ជោគជ័យ និងបរាជ័យ)
 ReturnURLAfterPayment=ត្រឡប់ URL បន្ទាប់ពីការទូទាត់
 ValidationOfOnlinePaymentFailed=ការធ្វើឱ្យមានសុពលភាពនៃការទូទាត់តាមអ៊ីនធឺណិតបានបរាជ័យ
-PaymentSystemConfirmPaymentPageWasCalledButFailed=ទំព័របញ្ជាក់ការទូទាត់ត្រូវបានហៅដោយប្រព័ន្ធទូទាត់សងវិញនូវកំហុស
+PaymentSystemConfirmPaymentPageWasCalledButFailed=The payment confirmation page was called by the online payment system and returned an error
 SetExpressCheckoutAPICallFailed=ការហៅ SetExpressCheckout API បានបរាជ័យ។
 DoExpressCheckoutPaymentAPICallFailed=ការហៅ DoExpressCheckoutPayment API បានបរាជ័យ។
 DetailedErrorMessage=សារកំហុសលម្អិត

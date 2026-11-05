@@ -47,9 +47,13 @@ HideLots=ເຊື່ອງຊຸດສິນຄ້າ
 OutOfOrder=ໃຊ້ການບໍ່ໄດ້
 InWorkingOrder=ໃຊ້ການໄດ້ປົກກະຕິ
 ToReplace=ປ່ຽນໃໝ່
-CantMoveNonExistantSerial=ຂໍ້ຜິດພາດ. ທ່ານຮ້ອງຂໍການຍ້າຍລາຍການສຳລັບເລກລໍາດັບທີ່ບໍ່ມີຢູ່ແລ້ວ. ອາດເປັນຍ້ອນທ່ານເລືອກເລກລໍາດັບດຽວກັນໃນສາງດຽວກັນຫຼາຍຄັ້ງໃນການຂົນສົ່ງດຽວກັນ ຫຼື ຖືກໃຊ້ໄປແລ້ວໂດຍການຂົນສົ່ງອື່ນ. ກະລຸນາລຶບການຂົນສົ່ງນີ້ອອກແລ້ວຈັດຕຽມໃໝ່.
+CantMoveNonExistantSerial=Error: You requested a stock movement on a record for a serial that no longer exists. Maybe you used the same serial in the same warehouse several times in the same shipment or it was used by another shipment. Remove this shipment and prepare another one.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=ຕາຕະລາງຊຸດສິນຄ້າບໍ່ສົມບູນ ກະລຸນາແລ່ນການສ້ອມແປງດ້ວຍພາຣາມີເຕີ '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= ຈຳເປັນຕ້ອງມີການແກ້ໄຂສະຕັອກ ເພາະເປັນເລກລໍາດັບທີ່ບໍ່ຊໍ້າກັນ.
 ErrorBatchesNeedStockManagement=ຂໍ້ຜິດພາດ. ສິນຄ້າທີ່ມີການຈັດການແບບຊຸດ/ລັອດ ຕ້ອງໄດ້ຮັບການຈັດການໃນສະຕັອກນຳ.
 ForceBatchesNeedStockManagement=ສິນຄ້າທີ່ມີການຈັດການແບບຊຸດ/ລັອດ ຕ້ອງໄດ້ຮັບການຈັດການໃນສະຕັອກ (ບັງຄັບໃຫ້ການຈັດການສະຕັອກເປັນ ແມ່ນ)
 BatchInformationNotfound=ບໍ່ພົບຂໍ້ມູນຊຸດສິນຄ້າ
+EnterMultipleSerialNumbers=Enter multiple serial numbers
+EnterOneSerialNumberPerLine=Type, paste or scan the serial numbers, one per line
+NbOfSerialNumbersDetected=%s serial number(s) detected
+ErrorDuplicateSerialNumberInList=Serial number %s is present several times in the list

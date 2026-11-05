@@ -212,8 +212,8 @@ class FichinterRec extends Fichinter
 			$sql .= ", '".$this->db->idate($now)."'";
 			$sql .= ", ".(!empty($fichintsrc->duration) ? ((int) $fichintsrc->duration) : '0');
 			$sql .= ", ".(!empty($this->description) ? ("'".$this->db->escape($this->description)."'") : "null");
-			$sql .= ", ".(!empty($fichintsrc->note_private) ? ("'".$this->db->escape($fichintsrc->note_private)."'") : "null");
-			$sql .= ", ".(!empty($fichintsrc->note_public) ? ("'".$this->db->escape($fichintsrc->note_public)."'") : "null");
+			$sql .= ", ".(!empty($fichintsrc->note_private) ? ("'".$this->db->escape((string) $fichintsrc->note_private)."'") : "null");
+			$sql .= ", ".(!empty($fichintsrc->note_public) ? ("'".$this->db->escape((string) $fichintsrc->note_public)."'") : "null");
 			$sql .= ", ".((int) $user->id);
 			// If the company is the same, keep the links to the project and the contract
 			if ($this->socid == $fichintsrc->socid) {
@@ -259,7 +259,7 @@ class FichinterRec extends Fichinter
 						0,
 						$fichintsrc->lines[$i]->product_type,
 						$fichintsrc->lines[$i]->special_code,
-						!empty($fichintsrc->lines[$i]->label) ? $fichintsrc->lines[$i]->label : "",
+						"",
 						(string) $fichintsrc->lines[$i]->fk_unit
 					);
 

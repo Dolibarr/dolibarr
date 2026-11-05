@@ -185,3 +185,5 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (165, 'PCG99-ABREGE-NC', 'The simple accountancy plan for New Caledonia (PCG 1999)', 1);
 -- Description of chart of account NC PCG99-BASE-NC
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (165, 'PCG99-BASE-NC', 'The base accountancy plan for New Caledonia (PCG 1999)', 1);
+-- Description of chart of account AU AU-BASE
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (28, 'AU-BASE', 'Australian basic chart of accounts', 1);

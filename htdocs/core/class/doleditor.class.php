@@ -247,6 +247,9 @@ class DolEditor
 				$out   .= ' cols="'.$this->cols.'"';
 			}
 			$out .= ' '.($moreparam ? $moreparam : '');
+			if (!preg_match('/spellcheck=/i', (string) $moreparam)) {
+				$out .= ' spellcheck="true"';	// Free text: enable back the spell checker disabled on the body of the page
+			}
 			$out .= ' class="flat '.dol_string_nohtmltag($this->toolbarname).' '.$morecss.'">';
 			$out .= htmlspecialchars($this->content);
 			$out .= '</textarea>';
@@ -436,8 +439,9 @@ class DolEditor
 			$out .= "\n".'<!-- Output Ace editor '.dol_string_nohtmltag($this->htmlname).' -->'."\n";
 
 			if ($titlecontent) {
-				$out .= '<div class="aceeditorstatusbar" id="statusBar'.$this->htmlname.'">'.$titlecontent;
-				$out .= ' &nbsp; - &nbsp; <span id="morelines" class="right classlink cursorpointer morelines'.$this->htmlname.'">'.dol_escape_htmltag($langs->trans("ShowMoreLines")).'</span> &nbsp; &nbsp; ';
+				$out .= '<div class="aceeditorstatusbar" id="statusBar'.$this->htmlname.'">';
+				$out .= '<span class="paddingright">'.$titlecontent.' &nbsp;</span>';
+				$out .= '<span class="morelinescontainer'.$this->htmlname.'" style="display: none"><span id="morelines" class="right classlink cursorpointer morelines'.$this->htmlname.'" title="'.dol_escape_htmltag($langs->trans("ShowMoreLines")).'">'.img_picto('', 'fa-arrows-alt-v', 'class="fa-fw"').'</span> &nbsp; &nbsp; </span>';
 				$out .= '</div>';
 				$out .= '<script nonce="'.getNonce().'" type="text/javascript">'."\n";
 				$out .= 'jQuery(document).ready(function() {'."\n";
@@ -448,6 +452,15 @@ class DolEditor
 	        			   	var statusBar = new StatusBar(aceEditor, document.getElementById("statusBar'.dol_escape_all($this->htmlname).'"));	// Init status bar. Need lib ext-statusbar
 
 							var oldNbOfLines = 0;
+
+							// Show the link "Show more/less lines" only if content has more lines than the initial max number of visible lines
+							function updateMoreLinesVisibility() {
+								var initialMaxLines = (oldNbOfLines > 0 ? oldNbOfLines : aceEditor.getOption("maxLines"));
+								jQuery(".morelinescontainer'.dol_escape_all($this->htmlname).'").toggle(aceEditor.session.getLength() > initialMaxLines);
+							}
+							updateMoreLinesVisibility();
+							aceEditor.session.on("change", updateMoreLinesVisibility);
+
 							jQuery(".morelines'.dol_escape_all($this->htmlname).'").click(function() {
 	        	    				var aceEditorClicked = window.ace.edit("'.$this->htmlname.'aceeditorid");
 									currentline = aceEditorClicked.getOption("maxLines");

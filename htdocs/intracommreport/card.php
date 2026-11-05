@@ -474,7 +474,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken(), '', $permissiontoadd);
+				print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken(), '', $permissiontoadd, array('attr' => array('class' => 'reposition')));
 			}
 
 			/*
@@ -499,11 +499,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$deleteUrl = $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken();
 			$buttonId = 'action-delete-no-ajax';
 			if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)) {	// We can use preloaded confirm if not jmobile
-				$deleteUrl = '';
 				$buttonId = 'action-delete';
 			}
 			$params = array();
-			print dolGetButtonAction('', $langs->trans("Delete"), 'delete', $deleteUrl, $buttonId, $permissiontodelete, $params);
+			print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $deleteUrl, $buttonId, $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 		}
 		print '</div>'."\n";
 	}

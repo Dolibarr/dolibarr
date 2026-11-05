@@ -101,7 +101,7 @@ if (!$action) {
 }
 
 $permissiontoadd = $user->hasRight('ticket', 'write');	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
-$permissiontomanage = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'ticket', 'manage_advance')));	// What is this permission for ?
+$permissiontomanage = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'manage_advance')));
 
 // Security check
 $id = GETPOSTINT("id");
@@ -236,7 +236,7 @@ if (isModEnabled('project')) {
 		if (!empty($object->fk_project)) {
 			$morehtmlref .= '<br>';
 			$proj = new Project($db);
-			$proj->fetch($object->fk_project);
+			$proj->fetch((int) $object->fk_project);
 			$morehtmlref .= $proj->getNomUrl(1);
 			if ($proj->title) {
 				$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';

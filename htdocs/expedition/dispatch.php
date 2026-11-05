@@ -243,6 +243,11 @@ if (empty($reshook)) {
 
 						if ($idline > 0) {
 							$result = $expeditiondispatch->fetch($idline);	// get line from llx_expeditiondet
+							if ($result > 0 && (int) $expeditiondispatch->fk_expedition !== (int) $object->id) {
+								// The line must be a line of the shipment of the page
+								$expeditiondispatch->error = $langs->trans('ErrorRecordNotFound');
+								$result = -1;
+							}
 							if ($result < 0) {
 								setEventMessages($expeditiondispatch->error, $expeditiondispatch->errors, 'errors');
 								$error++;
@@ -509,7 +514,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 		} else {
 			if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
 				$proj = new Project($db);
-				$proj->fetch($objectsrc->fk_project);
+				$proj->fetch((int) $objectsrc->fk_project);
 				$morehtmlref .= $proj->getNomUrl(1);
 				if ($proj->title) {
 					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';

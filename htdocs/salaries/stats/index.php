@@ -118,11 +118,15 @@ dol_mkdir($dir);
 
 $useridtofilter = $userid; // Filter from parameters
 
-if (!$user->hasRight('salaries', 'readchild') && empty($useridtofilter)) {
-	$useridtofilter = $user->id;
-}
-if (!$user->hasRight('salaries', 'readall') && empty($useridtofilter)) {
-	$useridtofilter = $user->getAllChildIds(1);
+if (!$user->hasRight('salaries', 'readall')) {
+	if (!$user->hasRight('salaries', 'readchild')) {
+		$useridtofilter = $user->id;	// Only his own salaries, whatever is the user in parameter
+	} else {
+		$childids = $user->getAllChildIds(1);
+		if (empty($useridtofilter) || !in_array($useridtofilter, $childids)) {
+			$useridtofilter = $childids;
+		}
+	}
 }
 
 $stats = new SalariesStats($db, $socid, $useridtofilter);
@@ -257,7 +261,7 @@ print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->tra
 
 // User
 print '<tr><td>'.$langs->trans("Employee").'</td><td>';
-if (!$user->hasRight('salaries', 'readchild') && empty($useridtofilter)) {
+if ($user->hasRight('salaries', 'readall') || $user->hasRight('salaries', 'readchild')) {
 	print img_picto('', 'user', 'class="pictofixedwidth"');
 	print $form->select_dolusers(($userid ? $userid : -1), 'userid', 1, null, 0, !$user->hasRight('salaries', 'readall') ? 'hierarchyme' : '', '', '0', 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 } else {

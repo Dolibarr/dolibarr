@@ -79,7 +79,10 @@ class box_bookmarks extends ModeleBoxes
 		if ($user->hasRight('bookmark', 'lire')) {
 			$sql = "SELECT b.title, b.url, b.target, b.favicon";
 			$sql .= " FROM ".MAIN_DB_PREFIX."bookmark as b";
-			$sql .= " WHERE fk_user = ".((int) $user->id);
+			// The widget shows the caller's own bookmarks plus the global ones
+			// (fk_user NULL or 0), the same filter the bookmarks list applies to
+			// a non-admin user — not the bookmarks of other users.
+			$sql .= " WHERE (fk_user = ".((int) $user->id)." OR fk_user IS NULL OR fk_user = 0)";
 			$sql .= " AND b.entity = ".((int) $conf->entity);
 			$sql .= $this->db->order("position", "ASC");
 			$sql .= $this->db->plimit($max, 0);

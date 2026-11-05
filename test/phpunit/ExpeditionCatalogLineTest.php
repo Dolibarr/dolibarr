@@ -207,6 +207,50 @@ class ExpeditionCatalogLineTest extends \PHPUnit\Framework\TestCase
 		$this->assertEquals(5.5, $totals['volume']);
 	}
 
+	/**
+	 * Both loading modes retain the native quantities and product data used by PDFs.
+	 * The standalone mode also keeps allocations needed by the dispatch page.
+	 *
+	 * @return void
+	 */
+	public function testStandaloneAndAdditionalSharePdfData()
+	{
+		global $db, $extrafields, $mysoc, $langs;
+		foreach (array(false, true) as $onlyadditional) {
+			$row = $this->row();
+			$db = $this->createMock(Database::class);
+			$db->expects($this->once())->method('query')->willReturnCallback(function ($sql) use ($onlyadditional) {
+				$this->assertStringContainsString('p.weight', $sql);
+				$this->assertStringContainsString('p.volume', $sql);
+				$this->assertStringContainsString('p.fk_product_type', $sql);
+				$this->assertStringContainsString('ed.fk_expedition = 12', $sql);
+				if ($onlyadditional) {
+					$this->assertStringContainsString('ed.fk_parent IS NULL OR ed.fk_parent = 0', $sql);
+				} else {
+					$this->assertStringNotContainsString('ed.fk_parent IS NULL OR ed.fk_parent = 0', $sql);
+				}
+				return true;
+			});
+			$db->method('num_rows')->willReturn(1);
+			$db->method('fetch_object')->willReturn($row);
+			$extrafields = new ExtraFields($db);
+			$extrafields->attributes['expeditiondet'] = array('loaded' => 1, 'label' => array());
+			$mysoc = new Societe($db);
+			$shipment = new Expedition($db);
+			$shipment->id = 12;
+			$this->assertSame(1, $shipment->fetch_lines_free($onlyadditional));
+			$line = $shipment->lines[0];
+			$this->assertSame(2.5, $line->qty_shipped);
+			$this->assertSame('EXTRA-7', $line->ref);
+			$this->assertSame('Extra product', $line->libelle);
+			$this->assertSame('Stored shipment description', $line->desc);
+			$this->assertSame('2.5', pdf_getlineqty_shipped($shipment, 0, $langs));
+			$totals = $shipment->getTotalWeightVolume();
+			$this->assertEquals(5, $totals['weight']);
+			$this->assertEquals(2.5, $totals['volume']);
+		}
+	}
+
 	/** @return void */
 	public function testCatalogReadFailureIsNotReportedAsCompleteShipment()
 	{

@@ -36,12 +36,7 @@ function getBlockedLogVersionToShow()
 {
 	$versionbadge = constant('DOLCERT_VERSION');
 
-	// Protection if we used a past old version not yet certified, we change version shown.
-	if (!constant('CERTIF_LNE')) {	// Hard coded in version
-		// $versionbadge = preg_replace('/^(\d)\./', '\1b.', $versionbadge);	// Not yet required.
-	}
-
-	if (constant('DOLCERT_NAME') != 'BlockedLog') {		// Can add a prefix namevefore version text for clarity.
+	if (constant('DOLCERT_NAME') != 'BlockedLog') {		// Can add a prefix name before version text for clarity.
 		$versionbadge = constant('DOLCERT_NAME').'-'.$versionbadge;
 	}
 
@@ -219,7 +214,7 @@ function isALNEQualifiedVersion($ignoredev = 0, $ignoremodule = 0)
 	if (!$ignoredev && preg_match('/\-/', DOL_VERSION)) {	// This is not a stable version (dev version), it can't be the certified versions.
 		return '';
 	}
-	if ($mysoc->country_code != 'FR') {
+	if (empty($mysoc) || $mysoc->country_code != 'FR') {
 		return '';
 	}
 	if (!defined('CERTIF_LNE') || (int) constant('CERTIF_LNE') === 0) {

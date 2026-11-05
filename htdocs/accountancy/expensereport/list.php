@@ -217,6 +217,7 @@ if ($massaction == 'ventil' && $user->hasRight('accounting', 'bind', 'write')) {
 				$sql = " UPDATE ".MAIN_DB_PREFIX."expensereport_det";
 				$sql .= " SET fk_code_ventilation = ".((int) $monCompte);
 				$sql .= " WHERE rowid = ".((int) $monId);
+				$sql .= " AND fk_expensereport IN (SELECT rowid FROM ".MAIN_DB_PREFIX."expensereport WHERE entity IN (".getEntity('expensereport', 0)."))";	// Line must belong to an object of an allowed entity
 
 				$accountventilated = new AccountingAccount($db);
 				$accountventilated->fetch($monCompte, '', 1);

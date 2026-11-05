@@ -149,6 +149,19 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Security: any action that references a bank account / payment mode by a posted id or ribid must
+	// only act on a record of the thirdparty of the page. Without this, the id of a societe_rib row of
+	// another company (or another entity) could be forged to read (IBAN...), update or delete it.
+	if (in_array($action, ['update', 'updatecard', 'edit', 'editcard', 'setasbankdefault', 'confirm_deletecard', 'confirm_deletebank', 'synccardtostripe', 'syncsepatostripe'])) {
+		$idtocheckowner = ($ribid > 0 ? $ribid : $id);
+		if ($idtocheckowner > 0) {
+			$tmppaymentinfo = new CompanyBankAccount($db);
+			if ($tmppaymentinfo->fetch($idtocheckowner) <= 0 || $tmppaymentinfo->socid != $object->id) {
+				accessforbidden($langs->trans('ErrorRecordNotFound'));
+			}
+		}
+	}
+
 	if ($action == 'update' && $permissiontoaddupdatepaymentinformation) {
 		// Update the bank account
 		if (!GETPOST('label', 'alpha') || !(GETPOST('bank', 'alpha') || (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC') != 0))) {
@@ -162,6 +175,8 @@ if (empty($reshook)) {
 			$error++;
 		}
 		$companybankaccount->fetch($id);
+		$companybankaccount->fk_country = GETPOSTINT('account_country_id');
+		$companybankaccount->country_code = getCountry($companybankaccount->fk_country, '2');
 		if ($companybankaccount->needIBAN() == 1) {
 			if (!GETPOST('iban')) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("IBAN")), null, 'errors');
@@ -180,27 +195,27 @@ if (empty($reshook)) {
 		if (!$error) {
 			$companybankaccount->oldcopy = dol_clone($companybankaccount, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
-			$companybankaccount->socid           = $object->id;
+			$companybankaccount->socid             = $object->id;
 
-			$companybankaccount->bank            = GETPOST('bank', 'alpha');
-			$companybankaccount->label           = GETPOST('label', 'alpha');
-			$companybankaccount->code_banque     = GETPOST('code_banque', 'alpha');
-			$companybankaccount->code_guichet    = GETPOST('code_guichet', 'alpha');
-			$companybankaccount->number          = GETPOST('number', 'alpha');
-			$companybankaccount->cle_rib         = GETPOST('cle_rib', 'alpha');
-			$companybankaccount->bic             = GETPOST('bic', 'alpha');
-			$companybankaccount->iban            = GETPOST('iban', 'alpha');
+			$companybankaccount->bank              = GETPOST('bank', 'alpha');
+			$companybankaccount->label             = GETPOST('label', 'alpha');
+			$companybankaccount->code_banque       = GETPOST('code_banque', 'alpha');
+			$companybankaccount->code_guichet      = GETPOST('code_guichet', 'alpha');
+			$companybankaccount->number            = GETPOST('number', 'alpha');
+			$companybankaccount->cle_rib           = GETPOST('cle_rib', 'alpha');
+			$companybankaccount->bic               = GETPOST('bic', 'alpha');
+			$companybankaccount->iban              = GETPOST('iban', 'alpha');
+			$companybankaccount->payment_reference = GETPOST('payment_reference', 'alphanohtml');
 
-			$companybankaccount->currency_code   = GETPOST('account_currency_code', 'alpha');
-			$companybankaccount->fk_country      = GETPOSTINT('account_country_id');
-			$companybankaccount->state_id        = GETPOSTINT('account_state_id');
-			$companybankaccount->address         = GETPOST('address', 'alpha');
+			$companybankaccount->currency_code     = GETPOST('account_currency_code', 'alpha');
+			$companybankaccount->state_id          = GETPOSTINT('account_state_id');
+			$companybankaccount->address           = GETPOST('address', 'alpha');
 
-			$companybankaccount->owner_name      = GETPOST('proprio', 'alpha');
-			$companybankaccount->proprio         = $companybankaccount->owner_name;
-			$companybankaccount->owner_address   = GETPOST('owner_address', 'alpha');
-			$companybankaccount->frstrecur       = GETPOST('frstrecur', 'alpha');
-			$companybankaccount->rum             = GETPOST('rum', 'alpha');
+			$companybankaccount->owner_name        = GETPOST('proprio', 'alpha');
+			$companybankaccount->proprio           = $companybankaccount->owner_name;
+			$companybankaccount->owner_address     = GETPOST('owner_address', 'alpha');
+			$companybankaccount->frstrecur         = GETPOST('frstrecur', 'alpha');
+			$companybankaccount->rum               = GETPOST('rum', 'alpha');
 			$companybankaccount->date_rum = GETPOSTDATE('date_rum', '00:00:00');
 			if (empty($companybankaccount->rum)) {
 				$companybankaccount->rum = $prelevement->buildRumNumber($object->code_client, $companybankaccount->datec, (string) $companybankaccount->id);
@@ -319,29 +334,31 @@ if (empty($reshook)) {
 
 			$companybankaccount->fetch_thirdparty();
 
-			$companybankaccount->bank            = GETPOST('bank', 'alpha');
-			$companybankaccount->label           = GETPOST('label', 'alpha');
-			$companybankaccount->code_banque     = GETPOST('code_banque', 'alpha');
-			$companybankaccount->code_guichet    = GETPOST('code_guichet', 'alpha');
-			$companybankaccount->number          = GETPOST('number', 'alpha');
-			$companybankaccount->cle_rib         = GETPOST('cle_rib', 'alpha');
-			$companybankaccount->bic             = GETPOST('bic', 'alpha');
-			$companybankaccount->iban            = GETPOST('iban', 'alpha');
+			$companybankaccount->bank              = GETPOST('bank', 'alpha');
+			$companybankaccount->label             = GETPOST('label', 'alpha');
+			$companybankaccount->code_banque       = GETPOST('code_banque', 'alpha');
+			$companybankaccount->code_guichet      = GETPOST('code_guichet', 'alpha');
+			$companybankaccount->number            = GETPOST('number', 'alpha');
+			$companybankaccount->cle_rib           = GETPOST('cle_rib', 'alpha');
+			$companybankaccount->bic               = GETPOST('bic', 'alpha');
+			$companybankaccount->iban              = GETPOST('iban', 'alpha');
+			$companybankaccount->payment_reference = GETPOST('payment_reference', 'alphanohtml');
 
-			$companybankaccount->currency_code   = GETPOST('account_currency_code', 'alpha');
-			$companybankaccount->fk_country      = GETPOSTINT('account_country_id');
-			$companybankaccount->state_id        = GETPOSTINT('account_state_id');
-			$companybankaccount->address         = GETPOST('address', 'alpha');
+			$companybankaccount->currency_code     = GETPOST('account_currency_code', 'alpha');
+			$companybankaccount->fk_country        = GETPOSTINT('account_country_id');
+			$companybankaccount->country_code      = getCountry($companybankaccount->fk_country, '2');
+			$companybankaccount->state_id          = GETPOSTINT('account_state_id');
+			$companybankaccount->address           = GETPOST('address', 'alpha');
 
-			$companybankaccount->owner_name      = GETPOST('proprio', 'alpha');
-			$companybankaccount->proprio         = $companybankaccount->owner_name;
-			$companybankaccount->owner_address   = GETPOST('owner_address', 'alpha');
-			$companybankaccount->frstrecur       = GETPOST('frstrecur', 'alpha');
-			$companybankaccount->rum             = GETPOST('rum', 'alpha');
-			$companybankaccount->date_rum        = GETPOSTDATE('date_rum', '00:00:00');
-			$companybankaccount->datec           = dol_now();
+			$companybankaccount->owner_name        = GETPOST('proprio', 'alpha');
+			$companybankaccount->proprio           = $companybankaccount->owner_name;
+			$companybankaccount->owner_address     = GETPOST('owner_address', 'alpha');
+			$companybankaccount->frstrecur         = GETPOST('frstrecur', 'alpha');
+			$companybankaccount->rum               = GETPOST('rum', 'alpha');
+			$companybankaccount->date_rum          = GETPOSTDATE('date_rum', '00:00:00');
+			$companybankaccount->datec             = dol_now();
 
-			$companybankaccount->status          = GETPOSTINT('clos');
+			$companybankaccount->status            = GETPOSTINT('clos');
 
 			$companybankaccount->bank = trim($companybankaccount->bank);
 			if (empty($companybankaccount->bank) && !empty($companybankaccount->thirdparty)) {
@@ -839,7 +856,7 @@ if (empty($reshook)) {
 
 							$resql = $db->query($sql);
 						} else {
-							$card->delete($user);
+							$card->delete();
 						}
 					}
 				}
@@ -872,7 +889,7 @@ if (empty($reshook)) {
 
 							$resql = $db->query($sql);
 						} else {
-							$card->delete($user);
+							$card->delete();
 						}
 					}
 				}
@@ -924,21 +941,32 @@ if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE')/* || GETPOST('
 }
 
 // Load Bank account
-if (!$id) {
+if ($id) {
+	$companybankaccount->fetch($id);
+	$companypaymentmode->fetch($id);
+} elseif (!in_array($action, array('create', 'createcard'))) {
 	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	$companybankaccount->fetch(0, '', $object->id);
 	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	$companypaymentmode->fetch(0, '', $object->id, 'card');
-} else {
-	$companybankaccount->fetch($id);
-	$companypaymentmode->fetch($id);
 }
 if (empty($companybankaccount->socid)) {
 	$companybankaccount->socid = $object->id;
 }
 
 if ($socid && ($action == 'edit' || $action == 'editcard') && $permissiontoaddupdatepaymentinformation) {
-	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post" spellcheck="false">';
+	if ($action == 'edit' && $conf->use_javascript_ajax) {
+		// Reload the form when the account country changes, so the bank fields match the country rules
+		print "\n".'<script type="text/javascript">';
+		print 'jQuery(document).ready(function () {
+			jQuery("#selectaccount_country_id").change(function() {
+				document.formbank.action.value="edit";
+				document.formbank.submit();
+			});
+		})';
+		print '</script>'."\n";
+	}
+	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post" name="formbank" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	$actionforadd = 'update';
 	if ($action == 'editcard') {		// Test on permission not required
@@ -948,7 +976,18 @@ if ($socid && ($action == 'edit' || $action == 'editcard') && $permissiontoaddup
 	print '<input type="hidden" name="id" value="'.GETPOSTINT("id").'">';
 }
 if ($socid && ($action == 'create' || $action == 'createcard') && $permissiontoaddupdatepaymentinformation) {
-	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post" spellcheck="false">';
+	if ($action == 'create' && $conf->use_javascript_ajax) {
+		// Reload the form when the account country changes, so the bank fields match the country rules
+		print "\n".'<script type="text/javascript">';
+		print 'jQuery(document).ready(function () {
+			jQuery("#selectaccount_country_id").change(function() {
+				document.formbank.action.value="create";
+				document.formbank.submit();
+			});
+		})';
+		print '</script>'."\n";
+	}
+	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post" name="formbank" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	$actionforadd = 'add';
 	if ($action == 'createcard') {		// Test on permission not required
@@ -1345,7 +1384,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							print '<td class="right minwidth50 nowraponall">';
 							if ($permissiontoaddupdatepaymentinformation) {
 								if ($stripecu && empty($companypaymentmodetemp->stripe_card_ref)) {
-									print '<a href="'.$_SERVER['PHP_SELF'].'?action=synccardtostripe&socid='.$object->id.'&id='.$companypaymentmodetemp->id.'" class="paddingrightonly marginrightonly">'.$langs->trans("CreateCardOnStripe").'</a>';
+									print '<a href="'.$_SERVER['PHP_SELF'].'?action=synccardtostripe&token='.newToken().'&socid='.$object->id.'&id='.$companypaymentmodetemp->id.'" class="paddingrightonly marginrightonly">'.$langs->trans("CreateCardOnStripe").'</a>';
 								}
 
 								print '<a class="editfielda marginleftonly marginrightonly" href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=editcard&token='.newToken().'">';
@@ -1588,6 +1627,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print_liste_field_titre("RIB");
 		print_liste_field_titre("IBAN");
 		print_liste_field_titre("BIC");
+		print_liste_field_titre($form->textwithpicto($langs->trans('PaymentReferenceOfAccount'), $langs->trans('PaymentReferenceOfAccountHelp')));
 		if (isModEnabled('prelevement')) {
 			print_liste_field_titre("RUM");
 			print_liste_field_titre("DateRUM");
@@ -1657,14 +1697,13 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				// } elseif ($val == 'IBAN') {
 				//     $string .= $rib->iban.' ';*/
 				//}
-				if (!empty($rib->label) && $rib->number) {
-					if (!checkBanForAccount($rib)) {
-						$string .= img_picto($langs->trans("ValueIsNotValid"), 'warning', 'class="pictofixedwidth"').$string;
-					} else {
-						$string .= img_picto($langs->trans("ValueIsValid"), 'info', 'class="pictofixedwidth"').$string;
-					}
-				}
-			}  // EndFor $rib_list as $rib
+			}
+			if (!empty($rib->label) && $rib->number) {
+				$isValid = checkBanForAccount($rib);
+				$label = $isValid ? "ValueIsValid" : "ValueIsNotValid";
+				$picto = $isValid ? 'info' : 'warning';
+				$string = img_picto($langs->trans($label), $picto, 'class="pictofixedwidth"').$string;
+			}
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($string).'">';
 			print $string;
 			print '</td>';
@@ -1687,6 +1726,9 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			}
 			print dol_escape_htmltag($rib->bic);
 			print '</td>';
+
+			// Reference to give when paying to this account
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute((string) $rib->payment_reference).'">'.dolPrintHTML((string) $rib->payment_reference).'</td>';
 
 			if (isModEnabled('prelevement')) {
 				// RUM
@@ -1911,7 +1953,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		}
 
 		if ($nbremote == 0 && $nblocal == 0) {
-			$colspan = 10;
+			$colspan = 11;
 			if (isModEnabled('prelevement')) {
 				$colspan += 2;
 			}
@@ -2008,14 +2050,25 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 	print '<table class="border tableforfield centpercent">';
 
 	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Label").'</td>';
-	print '<td><input class="minwidth300" type="text" name="label" value="'.$companybankaccount->label.'" spellcheck="false"></td></tr>';
+	print '<td><input class="minwidth300" type="text" name="label" value="'.dol_escape_htmltag(GETPOSTISSET('label') ? GETPOST('label', 'alpha') : $companybankaccount->label).'" spellcheck="false"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("BankName").'</td>';
-	print '<td><input class="minwidth200" type="text" name="bank" value="'.$companybankaccount->bank.'" spellcheck="false"></td></tr>';
+	print '<td><input class="minwidth200" type="text" name="bank" value="'.dol_escape_htmltag(GETPOSTISSET('bank') ? GETPOST('bank', 'alpha') : $companybankaccount->bank).'" spellcheck="false"></td></tr>';
 
 	// Show fields of bank account
 	$companybankaccount->fetch($id);
 	$bankaccount = $companybankaccount;
+	$country_codeid = GETPOSTINT("account_country_id");
+	if (empty($country_codeid)) {
+		$country_codeid = $bankaccount->fk_country;
+	}
+	if (empty($country_codeid)) {
+		$default_country_code = $bankaccount->country_code ? $bankaccount->country_code : ($object->country_code ? $object->country_code : $mysoc->country_code);
+		$country_codeid = getCountry($default_country_code, '3');
+	}
+	$country_codeid = (int) $country_codeid;
+	$bankaccount->fk_country = $country_codeid;
+	$bankaccount->country_code = getCountry($country_codeid, '2');
 	// Code here is similar as in bank.php for users
 	foreach ($bankaccount->getFieldsToShow(1) as $val) {
 		$require = false;
@@ -2056,19 +2109,26 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 			}
 			$tooltip = $langs->trans("Example").': LIABLT2XXXX';
 		}
+		if (GETPOSTISSET($name)) {
+			$content = GETPOST($name, 'alpha');
+		}
 
 		print '<tr>';
 		print '<td'.($require ? ' class="fieldrequired" ' : '').'>';
 		if ($tooltip) {
 			// $tooltip looks like $tooltiptrigger so: @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-			print $form->textwithpicto($langs->trans($val), $tooltip, 4, 'help', '', 0, 3, $name);
+			print $form->textwithpicto($langs->trans($bankaccount->getBankFieldLabel($val)), $tooltip, 4, 'help', '', 0, 3, $name);
 		} else {
-			print $langs->trans($val);
+			print $langs->trans($bankaccount->getBankFieldLabel($val));
 		}
 		print '</td>';
-		print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" value="'.$content.'"></td>';
+		print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" value="'.dol_escape_htmltag($content).'"></td>';
 		print '</tr>';
 	}
+
+	// Reference to give when paying to this account (the RF a supplier gave us)
+	print '<tr><td>'.$form->textwithpicto($langs->trans('PaymentReferenceOfAccount'), $langs->trans('PaymentReferenceOfAccountHelp')).'</td>';
+	print '<td><input class="minwidth200" type="text" name="payment_reference" maxlength="40" value="'.dol_escape_htmltag(GETPOSTISSET('payment_reference') ? GETPOST('payment_reference', 'alphanohtml') : (string) $bankaccount->payment_reference).'" spellcheck="false"></td></tr>';
 
 	// Currency
 	print '<tr><td class="fieldrequired">'.$langs->trans("Currency").'</td>';
@@ -2083,19 +2143,13 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 	print '</td></tr>';
 
 	// Status
-	$account_status = $bankaccount->status;
+	$account_status = GETPOSTISSET('clos') ? GETPOSTINT('clos') : $bankaccount->status;
 	print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td>';
 	print '<td>';
 	print $form->selectarray("clos", $bankaccount->labelStatus, $account_status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth150onsmartphone');
 	print '</td></tr>';
 
 	// Bank country
-	$country_codeid = GETPOST("account_country_id") ? GETPOST("account_country_id") : $bankaccount->fk_country;
-	if (empty($country_codeid)) {
-		$country_codeid = $mysoc->country_code;
-	}
-	$bankaccount->country_code = getCountry($country_codeid, '2'); // Force country code on account to have following field on bank fields matching country rules
-
 	print '<tr><td class="fieldrequired">'.$langs->trans("BankAccountCountry").'</td>';
 	print '<td>';
 	print img_picto('', 'country', 'class="pictofixedwidth"');
@@ -2106,7 +2160,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 	print '</td></tr>';
 
 	// Bank state
-	$selected_state_id = $bankaccount->state_id;
+	$selected_state_id = GETPOSTISSET("account_state_id") ? GETPOSTINT("account_state_id") : $bankaccount->state_id;
 	print '<tr><td>'.$langs->trans('State').'</td><td>';
 	if ($country_codeid) {
 		print img_picto('', 'state', 'class="pictofixedwidth"');
@@ -2118,16 +2172,16 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td>';
 	print '<textarea name="address" rows="'.ROWS_4.'" cols="40" maxlength="255" spellcheck="false">';
-	print dolPrintHTMLForTextArea($companybankaccount->address);
+	print dolPrintHTMLForTextArea(GETPOSTISSET('address') ? GETPOST('address', 'alpha') : $companybankaccount->address);
 	print "</textarea></td></tr>";
 
 	print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
-	print '<td><input class="minwidth300" type="text" name="proprio" value="'.$companybankaccount->owner_name.'" spellcheck="false"></td></tr>';
+	print '<td><input class="minwidth300" type="text" name="proprio" value="'.dol_escape_htmltag(GETPOSTISSET('proprio') ? GETPOST('proprio', 'alpha') : $companybankaccount->owner_name).'" spellcheck="false"></td></tr>';
 	print "</td></tr>\n";
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
 	print '<textarea name="owner_address" rows="'.ROWS_4.'" cols="40" maxlength="255" spellcheck="false">';
-	print dolPrintHTMLForTextArea($companybankaccount->owner_address);
+	print dolPrintHTMLForTextArea(GETPOSTISSET('owner_address') ? GETPOST('owner_address', 'alpha') : $companybankaccount->owner_address);
 	print "</textarea></td></tr>";
 
 	print '</table>';
@@ -2148,7 +2202,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 
 		// RUM
 		print '<tr><td class="titlefield">'.$langs->trans("RUM").'</td>';
-		print '<td><input class="minwidth300" type="text" name="rum" value="'.dol_escape_htmltag($companybankaccount->rum).'" spellcheck="false"></td></tr>';
+		print '<td><input class="minwidth300" type="text" name="rum" value="'.dol_escape_htmltag(GETPOSTISSET('rum') ? GETPOST('rum', 'alpha') : $companybankaccount->rum).'" spellcheck="false"></td></tr>';
 
 		$date_rum = GETPOSTDATE('date_rum', '00:00:00');
 
@@ -2161,7 +2215,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("ExternalSystemID")." ('pm_...' or 'src_...')</td>";
-		print '<td><input class="minwidth300" type="text" name="stripe_card_ref" value="'.$companypaymentmode->stripe_card_ref.'" spellcheck="false"></td></tr>';
+		print '<td><input class="minwidth300" type="text" name="stripe_card_ref" value="'.dol_escape_htmltag(GETPOSTISSET('stripe_card_ref') ? GETPOST('stripe_card_ref', 'alpha') : $companypaymentmode->stripe_card_ref).'" spellcheck="false"></td></tr>';
 
 		print '</table>';
 		print '</div>';
@@ -2239,12 +2293,19 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 	print '<table class="border tableforfield centpercent">';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td>';
-	print '<td><input class="minwidth250" type="text" id="label" name="label" value="'.(GETPOSTISSET('label') ? GETPOST('label') : $langs->trans("Bank").' '.$object->name).'" spellcheck="false"></td></tr>';
+	print '<td><input class="minwidth250" type="text" id="label" name="label" value="'.dol_escape_htmltag(GETPOSTISSET('label') ? GETPOST('label', 'alpha') : $langs->trans("Bank").' '.$object->name).'" spellcheck="false"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("Bank").'</td>';
-	print '<td><input class="minwidth250" type="text" id="bank" name="bank" value="'.GETPOST('bank').'" spellcheck="false"></td></tr>';
+	print '<td><input class="minwidth250" type="text" id="bank" name="bank" value="'.dol_escape_htmltag(GETPOST('bank', 'alpha')).'" spellcheck="false"></td></tr>';
 
 	// Show fields of bank account
+	$selected_country_id = GETPOSTINT('account_country_id');
+	if (empty($selected_country_id)) {
+		$selected_country_id = getCountry($object->country_code ? $object->country_code : $mysoc->country_code, '3');
+	}
+	$selected_country_id = (int) $selected_country_id;
+	$companybankaccount->fk_country = $selected_country_id;
+	$companybankaccount->country_code = getCountry($selected_country_id, '2');
 	foreach ($companybankaccount->getFieldsToShow(1) as $val) {
 		$require = false;
 		$tooltip = '';
@@ -2285,18 +2346,25 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 			}
 			$tooltip = $langs->trans("Example").': LIABLT2XXXX';
 		}
+		if (GETPOSTISSET($name)) {
+			$content = GETPOST($name, 'alpha');
+		}
 
 		print '<tr><td'.($require ? ' class="fieldrequired" ' : '').'>';
 		if ($tooltip) {
 			// tooltip lookslike tooltip trigger so @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-			print $form->textwithpicto($langs->trans($val), $tooltip, 4, 'help', '', 0, 3, $name);
+			print $form->textwithpicto($langs->trans($companybankaccount->getBankFieldLabel($val)), $tooltip, 4, 'help', '', 0, 3, $name);
 		} else {
-			print $langs->trans($val);
+			print $langs->trans($companybankaccount->getBankFieldLabel($val));
 		}
 		print '</td>';
-		print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" id="'.$name.'" value="'.GETPOST($name).'" spellcheck="false"></td>';
+		print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" id="'.$name.'" value="'.dol_escape_htmltag($content).'" spellcheck="false"></td>';
 		print '</tr>';
 	}
+
+	// Reference to give when paying to this account (the RF a supplier gave us)
+	print '<tr><td>'.$form->textwithpicto($langs->trans('PaymentReferenceOfAccount'), $langs->trans('PaymentReferenceOfAccountHelp')).'</td>';
+	print '<td><input class="minwidth200" type="text" name="payment_reference" maxlength="40" value="'.dol_escape_htmltag(GETPOSTISSET('payment_reference') ? GETPOST('payment_reference', 'alphanohtml') : '').'" spellcheck="false"></td></tr>';
 
 	// Currency
 	print '<tr><td class="fieldrequired">'.$langs->trans("Currency").'</td>';
@@ -2317,18 +2385,10 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 	print '</td></tr>';
 
 	// Bank country
-	$selectedcode = '';
-	if (GETPOSTISSET("account_country_id")) {
-		$selectedcode = GETPOST("account_country_id") ? GETPOST("account_country_id") : $object->country_code;
-	} elseif (empty($selectedcode)) {
-		$selectedcode = $mysoc->country_code;
-	}
-	$object->country_code = getCountry($selectedcode, '2'); // Force country code on account to have following field on bank fields matching country rules
-
 	print '<tr><td class="fieldrequired">'.$langs->trans("BankAccountCountry").'</td>';
 	print '<td>';
 	print img_picto('', 'country', 'class="pictofixedwidth"');
-	print $form->select_country($selectedcode, 'account_country_id');
+	print $form->select_country($selected_country_id, 'account_country_id');
 	if ($user->admin) {
 		print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 	}
@@ -2336,9 +2396,9 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 
 	// Bank state
 	print '<tr><td>'.$langs->trans('State').'</td><td>';
-	if ($selectedcode) {
+	if ($selected_country_id) {
 		print img_picto('', 'state', 'class="pictofixedwidth"');
-		print $formcompany->select_state(GETPOSTISSET("account_state_id") ? GETPOSTINT("account_state_id") : 0, $selectedcode, 'account_state_id');
+		print $formcompany->select_state(GETPOSTISSET("account_state_id") ? GETPOSTINT("account_state_id") : 0, $selected_country_id, 'account_state_id');
 	} else {
 		print $countrynotdefined;
 	}
@@ -2350,7 +2410,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 	print "</textarea></td></tr>";
 
 	print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
-	print '<td><input class="minwidth200" type="text" name="proprio" value="'.GETPOST('proprio').'" spellcheck="false"></td></tr>';
+	print '<td><input class="minwidth200" type="text" name="proprio" value="'.dol_escape_htmltag(GETPOST('proprio', 'alpha')).'" spellcheck="false"></td></tr>';
 	print "</td></tr>\n";
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td>';

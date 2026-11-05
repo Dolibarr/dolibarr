@@ -47,6 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
@@ -68,6 +69,7 @@ $sens = GETPOSTINT("sens");
 $amount = GETPOST("amount");
 $paymenttype = GETPOST("paymenttype", "aZ09");
 $accountancy_code = GETPOST("accountancy_code", "alpha");
+$fk_soc = GETPOSTINT('fk_soc');
 $projectid = GETPOSTINT('projectid') ? GETPOSTINT('projectid') : GETPOSTINT('fk_project');
 if (isModEnabled('accounting') && getDolGlobalString('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT') > 0) {
 	$subledger_account = GETPOST("subledger_account", "alpha") > 0 ? GETPOST("subledger_account", "alpha") : '';
@@ -85,8 +87,19 @@ if ($user->socid) {
 $hookmanager->initHooks(array('variouscard', 'globalcard'));
 
 $result = restrictedArea($user, 'banque', '', '', '');
+// PaymentVarious::fetch() returns a record regardless of entity (low-level primitive), so the entity
+// restriction is enforced here in the caller: the various payment must belong to the current entity.
+if ($id > 0) {
+	$resqlent = $db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."payment_various WHERE rowid = ".((int) $id)." AND entity IN (".getEntity('payment_various').")");
+	if (!$resqlent || !$db->num_rows($resqlent)) {
+		accessforbidden();
+	}
+}
 
 $object = new PaymentVarious($db);
+
+// Load object
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 $extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -111,15 +124,11 @@ if (empty($reshook)) {
 			header("Location: ".$urltogo);
 			exit;
 		}
-		if ($id > 0) {
-			$ret = $object->fetch($id);
-		}
 		$action = '';
 	}
 
 	// Link to a project
 	if ($action == 'classin' && $permissiontoadd) {
-		$object->fetch($id);
 		$object->setProject(GETPOSTINT('projectid'));
 	}
 
@@ -153,6 +162,11 @@ if (empty($reshook)) {
 
 		$object->sens = GETPOSTINT('sens');
 		$object->fk_project = GETPOSTINT('fk_project');
+
+		if (getDolGlobalString('BANK_VARIOUS_PAYMENT_USE_THIRDPARTY')) {
+			$object->fk_soc = ($fk_soc > 0 ? $fk_soc : 0);
+			$object->socid = $object->fk_soc;
+		}
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -230,11 +244,10 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
-		$result = $object->fetch($id);
-
 		if ($object->rappro == 0) {
 			$db->begin();
 
+			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 			$ret = $object->delete($user);
 			if ($ret > 0) {
 				$accountline = null;
@@ -267,8 +280,6 @@ if (empty($reshook)) {
 	if ($action == 'setaccountancy_code' && $permissiontodelete) {
 		$db->begin();
 
-		$result = $object->fetch($id);
-
 		$object->accountancy_code = GETPOST('accountancy_code', 'alphanohtml');
 
 		$res = $object->update($user);
@@ -282,8 +293,6 @@ if (empty($reshook)) {
 
 	if ($action == 'setsubledger_account' && $permissiontodelete) {
 		$db->begin();
-
-		$result = $object->fetch($id);
 
 		$object->subledger_account = $subledger_account;
 
@@ -306,8 +315,6 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 	$db->begin();
 
 	$originalId = $id;
-
-	$object->fetch($id);
 
 	if ($object->id > 0) {
 		unset($object->id);
@@ -388,12 +395,8 @@ if (isModEnabled('project')) {
 	$formproject = null;
 }
 
-if ($id) {
-	$object = new PaymentVarious($db);
-	$result = $object->fetch($id);
-	if ($result <= 0) {
-		recordNotFound();
-	}
+if ($action != 'create' && ! $object->id) {
+	recordNotFound();
 }
 
 $title = $object->ref." - ".$langs->trans('Card');
@@ -533,6 +536,14 @@ if ($action == 'create') {
 		print '<td><input id="chqbank" name="chqbank" size="30" type="text" value="'.GETPOST('chqbank', 'alphanohtml').'"></td></tr>';
 	}
 
+	// Third party
+	if (getDolGlobalString('BANK_VARIOUS_PAYMENT_USE_THIRDPARTY')) {
+		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
+		print img_picto('', 'company', 'class="pictofixedwidth"');
+		print $form->select_company($fk_soc, 'fk_soc', '', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300 widthcentpercentminusx maxwidth500');
+		print '</td></tr>';
+	}
+
 	// Project
 	if (isModEnabled('project')) {
 		$formproject = new FormProjets($db);
@@ -616,7 +627,7 @@ if ($action == 'create') {
 }
 
 // View in read or edit mode
-if ($id) {
+if ($object->id > 0) {
 	$alreadyaccounted = $object->getVentilExportCompta();
 
 	$head = various_payment_prepare_head($object);
@@ -693,6 +704,18 @@ if ($id) {
 
 	// Label
 	print '<tr><td class="titlefield">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
+
+	// Thirdparty - optional
+	if (getDolGlobalString('BANK_VARIOUS_PAYMENT_USE_THIRDPARTY')) {
+		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
+		if ($object->fk_soc > 0) {
+			$thirdparty = new Societe($db);
+			if ($thirdparty->fetch($object->fk_soc) > 0) {
+				print $thirdparty->getNomUrl(1);
+			}
+		}
+		print '</td></tr>';
+	}
 
 	// Payment date
 	print "<tr>";
@@ -803,7 +826,7 @@ if ($id) {
 
 	// Clone
 	if ($permissiontoadd) {
-		print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="' . dolBuildUrl(DOL_URL_ROOT."/compta/bank/various_payment/card.php", ['id' => $object->id, 'action' => 'clone'], true).'">'.$langs->trans("ToClone") . "</a></div>";
+		print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("ToClone"), $langs->trans("ToClone"), 'clone', dolBuildUrl(DOL_URL_ROOT."/compta/bank/various_payment/card.php", ['id' => $object->id, 'action' => 'clone'], true), '', true, array('attr' => array('class' => 'reposition'))).'</div>';
 	}
 
 	// Delete
@@ -812,7 +835,7 @@ if ($id) {
 			if ($alreadyaccounted) {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("Accounted").'">'.$langs->trans("Delete").'</a></div>';
 			} else {
-				print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete&token=' . newToken().'">'.$langs->trans("Delete").'</a></div>';
+				print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', 'card.php?id='.$object->id.'&action=delete&token=' . newToken(), '', true, array('attr' => array('class' => 'reposition'))).'</div>'."\n";
 			}
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a></div>';

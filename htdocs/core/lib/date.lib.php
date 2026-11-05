@@ -116,14 +116,15 @@ function getServerTimeZoneInt($refgmtdate = 'now')
 /**
  *  Add a delay to a date
  *
- *  @param      int			$time               Date timestamp (Must be a UTC timestamp)
+ *  @param      int			$time               Date timestamp (Must be a UTC timestamp, unless $tz is set)
  *  @param      float		$duration_value     Value of delay to add
  *  @param      string		$duration_unit      Unit of added delay (d, m, y, w, h, mn|i)
  *  @param      int<0,1>    $ruleforendofmonth  Change the behavior when $duration_unit = 'm' and new date reaches a non existing date. Use 0 (PHP behaviour) or 1
+ *  @param      string      $tz                 Timezone in which days, months and years are added: ''='gmt' or 'tzserver'
  *  @return     int      			        	New timestamp
  *  @see convertSecondToTime(), convertTimeToSeconds()
  */
-function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforendofmonth = 0)
+function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforendofmonth = 0, $tz = '')
 {
 	if (empty($duration_value)) {
 		return $time;
@@ -169,10 +170,11 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 	}
 
 	$date = new DateTime();
-	if (!function_exists('getDolGlobalString') || !getDolGlobalString('MAIN_DATE_IN_MEMORY_ARE_NOT_GMT')) {	// Add function_exists to allow usage of this function with minimal context
-		$date->setTimezone(new DateTimeZone('UTC'));
+	if (empty($tz) || $tz == 'gmt') {
+		$date->setTimezone(new DateTimeZone('UTC'));	// The default, try to always use this case
+	} else {
+		$date->setTimezone(new DateTimeZone($tz == 'tzserver' ? date_default_timezone_get() : $tz));
 	}
-
 
 	$date->setTimestamp((int) $time);
 	$interval = new DateInterval($deltastring);
@@ -184,7 +186,15 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 	}
 
 	// Change the behavior of PHP over data-interval when the result of this function is Feb 29 (non-leap years), 30 or Feb 31 (so php returns March 1, 2 or 3 respectively)
-	if ($ruleforendofmonth == 1 && $duration_unit == 'm') {
+	if ($ruleforendofmonth == 1 && $duration_unit == 'm' && $tz !== '') {
+		// Months are compared in the same timezone than the one used to add the delay
+		$origin = new DateTime('@'.((int) $time));
+		$origin->setTimezone($date->getTimezone());
+		$monthsexpected = ((int) $origin->format('Y') * 12) + (int) $origin->format('n') + (int) $duration_value;
+		if (((int) $date->format('Y') * 12) + (int) $date->format('n') != $monthsexpected) {
+			$date->modify('last day of previous month');	// Keep the time of the day
+		}
+	} elseif ($ruleforendofmonth == 1 && $duration_unit == 'm') {
 		$timeyear = (int) dol_print_date($time, '%Y');
 		$timemonth = (int) dol_print_date($time, '%m');
 		$timetotalmonths = (($timeyear * 12) + $timemonth);
@@ -576,7 +586,7 @@ function dol_get_prev_week($day, $week, $month, $year)
 {
 	$tmparray = dol_get_first_day_week($day, $month, $year);
 
-	$time = dol_mktime(12, 0, 0, $month, $tmparray['first_day'], $year, 1, 0);
+	$time = dol_mktime(12, 0, 0, $tmparray['first_month'], $tmparray['first_day'], $tmparray['first_year'], 1, 0);
 	$time -= 24 * 60 * 60 * 7;
 	$tmparray = dol_getdate($time, true);
 	return array('year' => $tmparray['year'], 'month' => $tmparray['mon'], 'day' => $tmparray['mday']);
@@ -818,7 +828,9 @@ function num_public_holiday($timestampStart, $timestampEnd, $countryCodeOrId = '
 		$tmpArrayOfPublicHolidays = array();
 		$sql = "SELECT id, code, entity, fk_country, dayrule, year, month, day, active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_hrm_public_holiday";
-		$sql .= " WHERE active = 1 and fk_country IN (0".($country_id > 0 ? ", ".((int) $country_id) : 0).")";
+		// A public holiday created without a country has fk_country NULL, and NULL never matches an IN list,
+		// so such a holiday was ignored and the day was counted as a working day.
+		$sql .= " WHERE active = 1 and (fk_country IS NULL OR fk_country IN (0".($country_id > 0 ? ", ".((int) $country_id) : 0)."))";
 		$sql .= " AND entity IN (0," .getEntity('holiday') .")";
 
 		$resql = $db->query($sql);
@@ -1084,7 +1096,9 @@ function listPublicHoliday($timestampStart, $timestampEnd, $countryCodeOrId = ''
 		$tmpArrayOfPublicHolidays = array();
 		$sql = "SELECT id, code, entity, fk_country, dayrule, year, month, day, active";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "c_hrm_public_holiday";
-		$sql .= " WHERE active = 1 and fk_country IN (0" . ($country_id > 0 ? ", " . ((int) $country_id) : 0) . ")";
+		// A public holiday created without a country has fk_country NULL, and NULL never matches an IN list,
+		// so such a holiday was missing from the list.
+		$sql .= " WHERE active = 1 and (fk_country IS NULL OR fk_country IN (0" . ($country_id > 0 ? ", " . ((int) $country_id) : 0) . "))";
 		$sql .= " AND entity IN (0," . getEntity('holiday') . ")";
 
 		$resql = $db->query($sql);

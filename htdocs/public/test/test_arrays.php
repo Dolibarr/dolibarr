@@ -194,6 +194,17 @@ if (!empty($conf->use_javascript_ajax)) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 }
 
+// Filters of the agenda page this navigation bar was copied from, empty on this test page
+$param = '';
+$actioncode = '';
+$status = '';
+$filter = '';
+$filtert = '';
+$socid = 0;
+$type = '';
+$usergroup = 0;
+$showbirthday = 0;
+
 $nav = '';
 $nav .= '<form name="dateselect" action="'.$_SERVER["PHP_SELF"].'?mode=show_peruser'.$param.'">';
 if ($actioncode || GETPOSTISSET('actioncode')) {
@@ -211,7 +222,7 @@ if ($filtert) {
 if ($socid) {
 	$nav .= '<input type="hidden" name="socid" value="'.$socid.'">';
 }
-if (isset($showbirthday) && $showbirthday) {
+if ($showbirthday) {
 	$nav .= '<input type="hidden" name="showbirthday" value="1">';
 }
 if (isset($pid) && $pid) { // @phan-suppress-current-line PhanPluginUndeclaredVariableIsset

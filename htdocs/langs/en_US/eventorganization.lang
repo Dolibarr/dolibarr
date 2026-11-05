@@ -119,7 +119,6 @@ EventRegistrationAreClosed=Event registrations are closed
 DateMustBeBeforeThan=%s must be before %s
 DateMustBeAfterThan=%s must be after %s
 MaxNbOfAttendeesReached=The maximum number of participants has been reached
-NewSubscription=Registration
 OrganizationEventConfRequestWasReceived=Your suggestion for a conference has been received
 OrganizationEventBoothRequestWasReceived=Your request for a booth has been received
 OrganizationEventPaymentOfBoothWasReceived=Your payment for your booth has been recorded

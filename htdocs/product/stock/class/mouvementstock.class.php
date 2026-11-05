@@ -176,7 +176,7 @@ class MouvementStock extends CommonObject
 		'type_mouvement' => array('type' => 'smallint(6)', 'label' => 'Type mouvement', 'enabled' => 1, 'visible' => -1, 'position' => 45),
 		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'position' => 50),
 		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'visible' => -1, 'position' => 55),
-		'fk_origin' => array('type' => 'integer', 'label' => 'Fk origin', 'enabled' => 1, 'visible' => -1, 'position' => 60),
+		'fk_origin' => array('type' => 'integer', 'label' => 'Origin', 'enabled' => 1, 'visible' => -1, 'position' => 60),
 		'origintype' => array('type' => 'varchar(32)', 'label' => 'Origintype', 'enabled' => 1, 'visible' => -1, 'position' => 65),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 70),
 		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => 'isModEnabled("project")', 'visible' => -1, 'notnull' => 1, 'position' => 75),
@@ -184,7 +184,7 @@ class MouvementStock extends CommonObject
 		'batch' => array('type' => 'varchar(30)', 'label' => 'Batch', 'enabled' => 1, 'visible' => -1, 'position' => 85),
 		'eatby' => array('type' => 'date', 'label' => 'Eatby', 'enabled' => 1, 'visible' => -1, 'position' => 90),
 		'sellby' => array('type' => 'date', 'label' => 'Sellby', 'enabled' => 1, 'visible' => -1, 'position' => 95),
-		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Fk project', 'enabled' => 1, 'visible' => -1, 'position' => 100),
+		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => 1, 'visible' => -1, 'position' => 100),
 	);
 
 
@@ -357,6 +357,14 @@ class MouvementStock extends CommonObject
 				return -2;
 			}
 
+			// An outgoing movement (qty < 0) takes the eat-by/sell-by dates of the lot as they are now: the dates given by
+			// the caller (often a copy kept on the line of a reception or shipment, so maybe outdated since the dates were
+			// corrected on the lot) must not block the movement nor be saved into the lot.
+			if ($qty < 0) {
+				$eatby = '';
+				$sellby = '';
+			}
+
 			// Check table llx_product_lot from batchnumber for same product
 			// If found and eatby/sellby defined into table and provided and differs, return error
 			// If found and eatby/sellby defined into table and not provided, we take value from table
@@ -515,6 +523,9 @@ class MouvementStock extends CommonObject
 				$origin_type = '';
 				$origin_id = 0;
 			}
+
+			// llx_stock_mouvement.label is VARCHAR(255)
+			$label = dol_trunc((string) $label, 255, 'right', 'UTF-8', 1);
 
 			$sql = "INSERT INTO ".$this->db->prefix()."stock_mouvement(";
 			$sql .= " datem, fk_product, batch, eatby, sellby,";

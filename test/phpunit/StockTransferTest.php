@@ -24,10 +24,9 @@
  */
 
 global $conf,$user,$langs,$db;
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/product/stock/stocktransfer/class/stocktransfer.class.php';
 require_once dirname(__FILE__).'/../../htdocs/product/stock/class/entrepot.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -193,7 +192,7 @@ class StockTransferTest extends CommonClassTest
 
 		$this->assertEquals(StockTransfer::STATUS_VALIDATED, $localobject->status);
 		$this->assertNotEquals($oldref, $localobject->ref, 'validate() must replace the provisional ref with a definitive one');
-		$this->assertNotRegExp('/^\(?PROV/i', $localobject->ref);
+		$this->assertSame(0, preg_match('/^\(?PROV/i', (string) $localobject->ref), 'A validated stock transfer must not keep a provisional ref');
 
 		return $localobject;
 	}

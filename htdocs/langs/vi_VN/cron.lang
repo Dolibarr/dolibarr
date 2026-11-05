@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = Xem công việc theo lịch trình
-Permission23102 = Tạo/cập nhật công việc theo lịch trình
-Permission23103 = Xóa công việc theo lịch trình
-Permission23104 = Thực hiện công việc theo lịch trình
 # Admin
 CronSetup=Thiết lập quản lý công việc theo lịch trình
 URLToLaunchCronJobs=URL để kiểm tra và khởi chạy các công việc định kỳ đủ điều kiện từ trình duyệt
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=Trên môi trường Unix, bạn nên sử dụng mục 
 CronExplainHowToRunWin=Trên môi trường Microsoft (tm) Windows, bạn có thể sử dụng các công cụ Tác vụ theo lịch để chạy dòng lệnh mỗi 5 phút
 CronMethodDoesNotExists=Lớp %s không chứa bất kỳ phương thức nào %s
 CronMethodNotAllowed=Phương thức %s của lớp %s nằm trong danh sách chặn các phương thức bị cấm
-CronJobDefDesc=Hồ sơ công việc theo định kỳ được xác định vào tập tin mô tả mô-đun. Khi mô-đun được kích hoạt, chúng được tải và có sẵn để bạn có thể quản lý các công việc từ menu công cụ quản trị %s.
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=Danh sách hồ sơ công việc định kỳ được xác định trước
 # Menu
 EnabledAndDisabled=Kích hoạt và vô hiệu hóa
@@ -27,7 +22,7 @@ CronDelete=Xóa công việc theo lịch trình
 CronConfirmDelete=Bạn có chắc chắn muốn xóa các công việc theo lịch trình này?
 CronExecute=Khởi chạy ngay bây giờ
 CronConfirmExecute=Bạn có chắc chắn muốn thực hiện các công việc theo lịch trình này ngay bây giờ?
-CronInfo=Mô-đun công việc được lên lịch cho phép lên lịch các công việc để thực hiện chúng tự động. Công việc cũng có thể được bắt đầu bằng tay.
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=Công việc
 CronNone=Chạy tiếp theo của tác vụ theo lịch trình
 CronNotYetRan=Không bao giờ thực hiện
@@ -79,7 +74,7 @@ CronType_command=Lệnh Shell
 CronCannotLoadClass=Không thể tải tệp lớp %s (để sử dụng lớp %s)
 CronModuleNotEnabledInThisEntity=Mô-đun Cron không được bật trong thực thể này (để sử dụng phương thức %s của đối tượng %s)
 CronCannotLoadObject=Tệp lớp %s đã được tải, nhưng đối tượng %s không được tìm thấy trong đó
-UseMenuModuleToolsToAddCronJobs=Đi vào menu " <a href="%s">Trang chủ - Công cụ quản trị - Công việc được lên lịch</a> " để xem và chỉnh sửa các công việc được lên lịch.
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=Công việc bị vô hiệu hóa
 MakeLocalDatabaseDumpShort=Sao lưu cơ sở dữ liệu cục bộ
 MakeLocalDatabaseDump=Tạo một kết xuất cơ sở dữ liệu cục bộ. Các tham số là:  nén('gz' hoặc 'bz' hoặc 'none'), loại sao lưu ('mysql', 'pssql', 'auto'), 1, 'auto' hoặc tên tệp để tạo, số lượng tệp sao lưu cần giữ

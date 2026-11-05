@@ -47,7 +47,7 @@ if (isModEnabled('ldap')) {
  */
 
 // Load translation files required by page
-$langs->loadLangs(array('errors', 'users', 'companies', 'ldap', 'other'));
+$langs->loadLangs(array('users', 'companies', 'ldap', 'other'));
 
 // Security check
 if (getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
@@ -131,12 +131,14 @@ if (empty($reshook)) {
 	// Action to set a temporary password and send email for reset
 	if ($action == 'buildnewpassword' && $username) {	// Test on permission not required here. This action is done anonymously.
 		$sessionkey = 'dol_antispam_value';
-		$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
+		$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) === strtolower(GETPOST('code'))));
+		unset($_SESSION[$sessionkey]);	// A code can be used only once. The page shows a new image, so a new code is set.
 
 		// Verify code
 		if (!$ok) {
 			dol_syslog('Bad value for code, password reset refused', LOG_NOTICE);
 
+			$langs->load('errors');
 			$message = '<div class="error">'.$langs->trans("ErrorBadValueForCode").'</div>';
 		} else {
 			$isanemail = preg_match('/@/', $username);
@@ -177,6 +179,7 @@ if (empty($reshook)) {
 					$newpassword = $edituser->setPassword($user, '', 1);
 					if (is_int($newpassword) && $newpassword < 0) {
 						// Technical failure
+						$langs->load('errors');
 						$message = '<div class="error">'.$langs->trans("ErrorFailedToChangePassword").'</div>';
 					} else {
 						// Success to set temporary password, send email

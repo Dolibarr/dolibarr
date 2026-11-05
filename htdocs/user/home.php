@@ -70,18 +70,8 @@ if (!isset($form) || !is_object($form)) {
 // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
 $resultboxes = FormOther::getBoxesArea($user, "1");
 
-if (GETPOST('addbox')) {
-	// Add box (when submit is done from a form when ajax disabled)
-	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone = GETPOSTINT('areacode');
-	$userid = GETPOSTINT('userid');
-	$boxorder = GETPOST('boxorder', 'aZ09');
-	$boxorder .= GETPOST('boxcombo', 'aZ09');
-	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
-	if ($result > 0) {
-		setEventMessages($langs->trans("BoxAdded"), null);
-	}
-}
+// Add box (when submit is done from a form when ajax disabled)
+include DOL_DOCUMENT_ROOT.'/core/actions_addbox.inc.php';
 
 $max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
 
@@ -261,15 +251,12 @@ if ($permissiontoreadgroup) {
 
 		$lastgroupbox .= '<div class="div-table-responsive-no-min">';
 		$lastgroupbox .= '<table class="noborder centpercent">';
-		$lastgroupbox .= '<tr class="liste_titre"><td colspan="'.$colspan.'">';
+		$lastgroupbox .= '<tr class="liste_titre"><td colspan="'.($colspan + 1).'">';
 		$lastgroupbox .= '<span class="valignmiddle">'.$langs->trans("LastGroupsCreated", ($num ? $num : $max)).'</span>';
 		$lastgroupbox .= '<a class="valignmiddle marginleftonlyshort" href="'.DOL_URL_ROOT.'/user/group/list.php?sortfield=g.datec&sortorder=DESC" title="'.$langs->trans("FullList").'">';
 		$lastgroupbox .= '<span class="badge marginleftonlyshort valignmiddle">...</span>';
 		$lastgroupbox .= '</a>';
 
-		$lastgroupbox .= '</td>';
-		$lastgroupbox .= '<td class="right">';
-		//$lastgroupbox .= '<a class="commonlink" href="'.DOL_URL_ROOT.'/user/group/list.php?sortfield=g.datec&sortorder=DESC">'.$langs->trans("FullList");
 		$lastgroupbox .= '</td>';
 		$lastgroupbox .= '</tr>';
 		$i = 0;
@@ -284,7 +271,7 @@ if ($permissiontoreadgroup) {
 			$grouptemp->note = $obj->note;
 
 			$lastgroupbox .= '<tr class="oddeven">';
-			$lastgroupbox .= '<td>';
+			$lastgroupbox .= '<td class="tdoverflowmax300">';
 			$lastgroupbox .= $grouptemp->getNomUrl(1);
 			if (!$obj->entity) {
 				$lastgroupbox .= img_picto($langs->trans("GlobalGroup"), 'superadmin');

@@ -682,7 +682,7 @@ class Users extends DolibarrApi
 			$entity = (((int) DolibarrApiAccess::$user->entity) > 0 ? (int) DolibarrApiAccess::$user->entity : $conf->entity);
 		}
 
-		$result = $this->useraccount->SetInGroup($group, $entity);
+		$result = $this->useraccount->setInGroup($group, $entity);
 		if (!($result > 0)) {
 			throw new RestException(500, $this->useraccount->errorsToString());
 		}
@@ -760,6 +760,10 @@ class Users extends DolibarrApi
 			throw new RestException(404, 'Usergroup not found');
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('user', $usergroup->id, 'usergroup&usergroup')) {
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
 				throw new RestException(400, 'Updating with id field is forbidden');
@@ -803,18 +807,28 @@ class Users extends DolibarrApi
 	 */
 	public function removeUserFromGroup($id, $group)
 	{
+		global $conf;
+
 		if (!DolibarrApiAccess::$user->admin) {
 			throw new RestException(403, 'Only admin can remove users from groups');
 		}
 
-		$sql = "DELETE FROM " . MAIN_DB_PREFIX . "usergroup_user";
-		$sql .= " WHERE fk_user = " . ((int) $id);
-		$sql .= " AND fk_usergroup = " . ((int) $group);
+		$result = $this->useraccount->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'User not found');
+		}
 
-		$resql = $this->db->query($sql);
+		// Same entity resolution as setGroup(): the action is done on the entity of the logged user, so an
+		// admin of one entity can not remove the group link of a user in another entity.
+		if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && empty(DolibarrApiAccess::$user->entity)) {
+			$entity = $conf->entity;
+		} else {
+			$entity = (((int) DolibarrApiAccess::$user->entity) > 0 ? (int) DolibarrApiAccess::$user->entity : $conf->entity);
+		}
 
-		if (!$resql) {
-			throw new RestException(503, 'DB error: ' . $this->db->lasterror());
+		$result = $this->useraccount->removeFromGroup($group, $entity);
+		if (!($result > 0)) {
+			throw new RestException(500, $this->useraccount->error);
 		}
 
 		return [
@@ -941,6 +955,10 @@ class Users extends DolibarrApi
 			throw new RestException(404, 'Usergroup not found');
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('user', $group_static->id, 'usergroup&usergroup')) {
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		if ($includepermissions) {
 			$group_static->loadRights();
 		}
@@ -1028,6 +1046,10 @@ class Users extends DolibarrApi
 		$result = $usergroup->fetch($group);
 		if ($result < 0) {
 			throw new RestException(404, 'Usergroup not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('user', $usergroup->id, 'usergroup&usergroup')) {
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$usergroup->delete(DolibarrApiAccess::$user)) {

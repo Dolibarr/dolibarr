@@ -139,6 +139,12 @@ if ($action == 'setTICKET_ENABLE_PUBLIC_INTERFACE') {
 
 	$url_interface = GETPOST('TICKET_URL_PUBLIC_INTERFACE', 'alpha');
 	if (!empty($url_interface)) {
+		// Most of the code concatenates the file name directly to this value (for example
+		// .'view.php' or .'css/styles.css.php'), so the stored value must end with a single
+		// slash. Without this, a value typed without the trailing slash builds ".../tldview.php"
+		// and a value typed with several builds ".../tld//view.php", which some reverse proxies
+		// and web application firewalls reject.
+		$url_interface = rtrim($url_interface, '/').'/';
 		$res = dolibarr_set_const($db, 'TICKET_URL_PUBLIC_INTERFACE', $url_interface, 'chaine', 0, '', $conf->entity);
 	} else {
 		$res = dolibarr_set_const($db, 'TICKET_URL_PUBLIC_INTERFACE', '', 'chaine', 0, '', $conf->entity);
@@ -277,6 +283,9 @@ if (getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 	print '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/ticket/index.php?entity='.$conf->entity.'">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
 	print '</div>';
 	print ajax_autoselect('publicurlmember');
+
+	// The tracking ID of a ticket created from the public interface is sent only by email
+	print '<br><div class="warning">'.$langs->trans("TicketPublicInterfaceRequireEmailSending", '<a href="'.DOL_URL_ROOT.'/admin/mails_ticket.php">'.$langs->transnoentitiesnoconv("EMailsSetup").' - '.$langs->transnoentitiesnoconv("Tickets").'</a>').'</div>';
 
 
 	print '<br><br>';
