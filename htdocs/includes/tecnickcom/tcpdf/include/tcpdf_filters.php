@@ -231,7 +231,7 @@ class TCPDF_FILTERS {
 				// the value represented by a group of 5 characters should never be greater than 2^32 - 1
 				$tuple += (($char - 33) * $pow85[$group_pos]);
 				if ($group_pos == 4) {
-					$decoded .= chr($tuple >> 24).chr($tuple >> 16).chr($tuple >> 8).chr($tuple);
+					$decoded .= chr(($tuple >> 24) & 0xff).chr(($tuple >> 16) & 0xff).chr(($tuple >> 8) & 0xff).chr($tuple & 0xff);	// @CHANGE DOL chr() of a value over 255 is deprecated since PHP 8.5
 					$tuple = 0;
 					$group_pos = 0;
 				} else {
@@ -245,15 +245,15 @@ class TCPDF_FILTERS {
 		// last tuple (if any)
 		switch ($group_pos) {
 			case 4: {
-				$decoded .= chr($tuple >> 24).chr($tuple >> 16).chr($tuple >> 8);
+				$decoded .= chr(($tuple >> 24) & 0xff).chr(($tuple >> 16) & 0xff).chr(($tuple >> 8) & 0xff);	// @CHANGE DOL
 				break;
 			}
 			case 3: {
-				$decoded .= chr($tuple >> 24).chr($tuple >> 16);
+				$decoded .= chr(($tuple >> 24) & 0xff).chr(($tuple >> 16) & 0xff);	// @CHANGE DOL
 				break;
 			}
 			case 2: {
-				$decoded .= chr($tuple >> 24);
+				$decoded .= chr(($tuple >> 24) & 0xff);	// @CHANGE DOL
 				break;
 			}
 			case 1: {
@@ -295,10 +295,13 @@ class TCPDF_FILTERS {
 		}
 		// previous val
 		$prev_index = 0;
+		// @CHANGE DOL Read with a position instead of removing the bits read from the start of the string: the whole
+		// remaining string was copied for each code, so the time was quadratic (minutes for a stream of 100 KB).
+		$bitpos = 0;
 		// while we encounter EOD marker (257), read code_length bits
-		while (($data_length > 0) AND (($index = bindec(substr($bitstring, 0, $bitlen))) != 257)) {
-			// remove read bits from string
-			$bitstring = substr($bitstring, $bitlen);
+		while (($data_length > 0) AND (($index = bindec(substr($bitstring, $bitpos, $bitlen))) != 257)) {
+			// move after the read bits
+			$bitpos += $bitlen;
 			// update number of bits
 			$data_length -= $bitlen;
 			if ($index == 256) { // clear-table marker
@@ -328,6 +331,9 @@ class TCPDF_FILTERS {
 					// index do not exist on dictionary
 					$dic_val = $dictionary[$prev_index].$dictionary[$prev_index][0];
 					$decoded .= $dic_val;
+					// @CHANGE DOL the code just read is the previous one for the next code, in this case too: it
+					// was left unchanged, so everything decoded after such a code was wrong.
+					$prev_index = $index;
 				}
 				// update dictionary
 				$dictionary[$dix] = $dic_val;
