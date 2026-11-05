@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal moduluaren konfigurazioa
-PaypalDesc=Modulu honek bezeroek <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a> bidez ordaintzea ahalbidetzen du. Hau ordainketa berezi baterako edo Dolibarr objektu bati lotutako ordainketa baterako erabil daiteke (faktura, eskaera, ...).
+PaypalDesc=This module allows payment by customers via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. This can be used for an ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
 PaypalOrCBDoPayment=Ordaindu PayPal-ekin (Txartela edo PayPal)
 PaypalDoPayment=Ordaindu PayPal-ekin
 PAYPAL_API_SANDBOX=Modu proba/sandbox
@@ -19,7 +19,7 @@ NewOnlinePaymentFailed=Ordainketa berri bat online saiatu naiz, baina huts egin 
 ONLINE_PAYMENT_SENDEMAIL=Ordainketa-saiakera bakoitzaren ondoren jakinarazpenak jasotzeko helbide elektronikoa (arrakasta eta porrotaren kasuan)
 ReturnURLAfterPayment=Ordainketaren ondoren itzuli URLa
 ValidationOfOnlinePaymentFailed=Lineako ordainketaren baliozkotzea huts egin du
-PaymentSystemConfirmPaymentPageWasCalledButFailed=Ordainketa-sistemak ordainketaren baieztapen-orria deitu du eta errore bat itzuli du.
+PaymentSystemConfirmPaymentPageWasCalledButFailed=The payment confirmation page was called by the online payment system and returned an error
 SetExpressCheckoutAPICallFailed=SetExpressCheckout API deiak huts egin du.
 DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API deiak huts egin du.
 DetailedErrorMessage=Errore-mezu zehatza

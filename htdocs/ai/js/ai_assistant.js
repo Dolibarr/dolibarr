@@ -230,7 +230,7 @@ export function initAiAssistant(container) {
             const mention = mentionTarget();
             if (mention) {
                 mentionSuggest(mention);    // "@" or "#" being typed, in a command or a question
-            } else if (paletteWanted(v)) {
+            } else if (paletteWanted(v) || paletteLocalTyped(v)) {
                 paletteOpen(v.slice(1));
             } else if (container.querySelector('.ai-palette-list')) {
                 paletteClose();
@@ -284,7 +284,7 @@ export function initAiAssistant(container) {
         }
     }
 
-    // Start a new conversation: used by the Clear button and the "/new" command
+    // Reset the chat display and state: used by startNewConversation() (Clear button, "/new" and "/clear" commands)
     function clearConversation(fromOtherInstance = false) {
         // Remove conversation messages; keep the welcome element so it can be
         // shown again on the full page (the popover has no welcome screen).
@@ -1151,6 +1151,10 @@ export function initAiAssistant(container) {
                 if (event.error === 'network') {
                     errorMsg = t('ConnectionBlocked');
                     appendMsg('system', `<strong>${t('ConnectionBlocked')}:</strong> ${t('CloudVoiceRequiresSecureContext')}`);
+                } else if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+                    // Denied by the browser permission or by the HTTP header Permissions-Policy (microphone=())
+                    errorMsg = t('MicError') + ": " + event.error;
+                    appendMsg('system', `<strong>${t('MicError')}:</strong> ${t('MicNotAllowedHelp')}`);
                 }
                 statusBar.innerText = errorMsg;
                 setMicState('idle');
@@ -1303,6 +1307,9 @@ export function initAiAssistant(container) {
         } catch (err) {
             console.error('Microphone error:', err);
             statusBar.innerText = t('MicError') + ": " + err.message;
+            if (err && err.name === 'NotAllowedError') {
+                appendMsg('system', `<strong>${t('MicError')}:</strong> ${t('MicNotAllowedHelp')}`);
+            }
             isRecording = false;
             setMicState('idle');
         }
@@ -1611,7 +1618,14 @@ export function initAiAssistant(container) {
 
     // "/tools" stays the debug command of the chat; any other "/..." line is the palette.
     // Commands the chat answers by itself (sendMessage): never caught by the palette.
-    const CHAT_LOCAL_COMMANDS = ['/tools', '/new', '/status'];
+    const CHAT_LOCAL_COMMANDS = ['/tools', '/new', '/clear', '/status', '/help', '/reload'];
+
+    // Commands of the chat shown in the palette (run by handleQuery()), with their label key.
+    const PALETTE_LOCALS = [['help', 'AIHelpHelp'], ['new', 'AIHelpClear'], ['status', 'AIHelpStatus'], ['tools', 'AIHelpTools'], ['reload', 'AIHelpReload']];
+    // The whole name of one of them typed: the palette stays open on it until Enter.
+    function paletteLocalTyped(v) {
+        return typeof v === 'string' && PALETTE_LOCALS.some((l) => v.trim().toLowerCase() === '/' + l[0]);
+    }
 
     function paletteWanted(v) {
         if (!config.palette) return false;   // switched off in the setup: everything goes to the AI
@@ -1647,7 +1661,7 @@ export function initAiAssistant(container) {
     function paletteRank(tool, ctx) {
         if (!ctx) return 3;
         if (ctx.families.some((f) => tool.name.indexOf('api_' + f + '_') === 0)) return 0;
-        if (tool.name === 'api_documents_list' && ctx.id && PALETTE_MODULEPART[ctx.element]) return 1;
+        if (tool.name === 'api_documents_objects_list' && ctx.id && PALETTE_MODULEPART[ctx.element]) return 1;
         const p = tool.properties || {};
         if (ctx.socid && (p.socid || p.thirdparty_ids)) return 2;
         return 3;
@@ -1814,7 +1828,7 @@ export function initAiAssistant(container) {
 
     async function paletteOpen(filter) {
         const tools = await paletteLoad();
-        if (!paletteWanted(input.value) && input.value !== '') return;   // the user moved on meanwhile
+        if (!paletteWanted(input.value) && !paletteLocalTyped(input.value) && input.value !== '') return;   // the user moved on meanwhile
         const typed = paletteParseCommand(input.value);
         if (typed && typed.typedSpace) {
             // A command and its words: how to write it, and what fits the word
@@ -1824,11 +1838,13 @@ export function initAiAssistant(container) {
         }
         const ctx = paletteContext();
         const f = (filter || '').toLowerCase().trim();
-        const cmds = (paletteCommands || []).filter((c) => !f || c.name.indexOf(f) === 0 || c.label.toLowerCase().indexOf(f) !== -1);
-        // Nothing typed: only the tools of the page being viewed, never the first
-        // ones of the alphabet. Typed: the best matches first.
+        // Commands of the chat itself, run by handleQuery(). Nothing typed: only them,
+        // plus a line pointing to /help for the commands and tools that need no AI.
+        const locals = PALETTE_LOCALS.filter((l) => !f || l[0].indexOf(f) === 0);
+        const cmds = f ? (paletteCommands || []).filter((c) => c.name.indexOf(f) === 0) : [];
+        // Typed: only the tools whose name starts with what is typed.
         const list = tools
-            .filter((tl) => (f ? paletteMatch(tl, f) < 3 : paletteRank(tl, ctx) < 3))
+            .filter((tl) => f && paletteMatch(tl, f) === 0)
             .sort((a, b) => {
                 const ra = paletteRank(a, ctx);
                 const rb = paletteRank(b, ctx);
@@ -1836,14 +1852,14 @@ export function initAiAssistant(container) {
                 return (ra - rb) || (f ? paletteMatch(a, f) - paletteMatch(b, f) : 0) || (ra <= 1 ? paletteKind(a, ctx) - paletteKind(b, ctx) : 0) || a.name.localeCompare(b.name);
             })
             .slice(0, 12);
-        const hidden = f ? 0 : tools.length - list.length;
         const box = document.createElement('div');
         box.className = 'ai-palette ai-palette-list';
         let html = `<div class="ai-palette-hint opacitymedium">${escapeHtml(t('AIPaletteHint'))}</div>`;
-        if (hidden > 0) html += `<div class="ai-palette-hint opacitymedium">${escapeHtml(t('AIPaletteTypeToSearch').replace('%s', String(hidden)))}</div>`;
-        const items = cmds.map((c) => `<div class="ai-palette-item" data-cmd="${escapeHtml(c.name)}"><strong>/${escapeHtml(c.name)}</strong> <span class="opacitymedium">${escapeHtml(c.label)}</span></div>`)
-            .concat(list.map((tl) => `<div class="ai-palette-item ai-palette-api" data-tool="${escapeHtml(tl.name)}"><strong>${escapeHtml(tl.title || tl.name)}</strong> <span class="ai-palette-apiname">${escapeHtml(tl.name)}</span> <span class="opacitymedium">${escapeHtml(tl.description || '')}</span></div>`));
+        const items = locals.map((l) => `<div class="ai-palette-item" data-local="/${escapeHtml(l[0])}"><strong>/${escapeHtml(l[0])}</strong> <span class="opacitymedium">${escapeHtml(t(l[1]))}</span></div>`)
+            .concat(cmds.map((c) => `<div class="ai-palette-item" data-cmd="${escapeHtml(c.name)}"><strong>/${escapeHtml(c.name)}</strong> <span class="opacitymedium">${escapeHtml(c.label)}</span></div>`)
+            .concat(list.map((tl) => `<div class="ai-palette-item ai-palette-api" data-tool="${escapeHtml(tl.name)}"><strong>${escapeHtml(tl.title || tl.name)}</strong> <span class="ai-palette-apiname">${escapeHtml(tl.name)}</span> <span class="opacitymedium">${escapeHtml(tl.description || '')}</span></div>`)));
         html += items.length ? items.join('').replace('class="ai-palette-item', 'class="ai-palette-item selected') : `<div class="ai-palette-empty opacitymedium">${escapeHtml(t('NoResults'))}</div>`;
+        if (!f) html += `<div class="ai-palette-hint opacitymedium">${escapeHtml(t('AIPaletteMore'))}</div>`;
         box.innerHTML = html;
         paletteMount(box);
         // mousedown, not click: the input keeps its focus.
@@ -1853,6 +1869,12 @@ export function initAiAssistant(container) {
     // A command: write its name in the input (and run it when it needs no words);
     // an API tool: its form.
     function palettePick(el) {
+        if (el.dataset.local) {
+            paletteClose();
+            input.value = el.dataset.local;
+            handleQuery();
+            return;
+        }
         if (el.dataset.cmd) {
             if (el.dataset.cmd === 'total') {
                 runCommand('total', '');
@@ -2117,7 +2139,7 @@ export function initAiAssistant(container) {
         const own = paletteRank(tool, ctx) <= 1;   // the card's own tools and its files
         if (pname === 'id' && own && ctx.id) return String(ctx.id);
         if (pname === 'ref' && own && ctx.ref) return ctx.ref;
-        if (pname === 'modulepart' && tool.name === 'api_documents_list' && ctx.id) return PALETTE_MODULEPART[ctx.element] || '';
+        if (pname === 'modulepart' && tool.name === 'api_documents_objects_list' && ctx.id) return PALETTE_MODULEPART[ctx.element] || '';
         if ((pname === 'socid' || pname === 'thirdparty_ids') && ctx.socid) return String(ctx.socid);
         return '';
     }
@@ -2270,6 +2292,13 @@ export function initAiAssistant(container) {
     // =========================================================================
 
     function initConfirmationVoiceRecognition() {
+        // The Google voice input is not offered in the webview of a smartphone
+        // webapp (the cloud option is not rendered server side): no cloud
+        // recognition here either, only the buttons answer.
+        if (engineSelect.value !== 'whisper' && !engineSelect.querySelector('option[value="cloud"]')) {
+            isConfirmationListening = false;
+            return;
+        }
         isConfirmationListening = true;
         if (engineSelect.value === 'whisper') {
             if (!whisperReady) { showVoiceFeedback(t('ModelLoading')); return; }
@@ -2284,7 +2313,12 @@ export function initAiAssistant(container) {
         confirmationRecognition = new SR();
         confirmationRecognition.lang = 'en-US';
         confirmationRecognition.onresult = (e) => { processConfirmationCommand(e.results[0][0].transcript); };
-        confirmationRecognition.onerror = (e) => { if (e.error !== 'no-speech') showVoiceFeedback(t('Error')); isConfirmationListening = false; };
+        // Voice error only, the action is not affected: say it, and ignore 'aborted' (raised by our own abort/stop).
+        confirmationRecognition.onerror = (e) => {
+            console.error('Confirmation speech recognition error:', e.error);
+            if (e.error !== 'no-speech' && e.error !== 'aborted') showVoiceFeedback(`${t('Listening')} (${t('VoiceYesNo')}): ${t('Error')} ${escapeHtml(e.error || '')}`);
+            isConfirmationListening = false;
+        };
         try { confirmationRecognition.start(); showVoiceFeedback(`<span class="fa fa-microphone"></span> ${t('Listening')} (${t('VoiceYesNo')})`); } catch (e) { console.error(e); }
     }
 
@@ -2799,11 +2833,36 @@ export function initAiAssistant(container) {
         if (!query && !readyDocs.length && !isResend) return;
         if (welcome) welcome.style.display = 'none'; // leave the empty-state once a message is sent
 
-        // "/new" is handled locally (no AI call): same as the Clear button, without confirmation.
-        if (query.toLowerCase() === '/new' && !readyDocs.length) {
+        // "/new" and "/clear" are handled locally (no AI call): same as the Clear button.
+        if ((query.toLowerCase() === '/new' || query.toLowerCase() === '/clear') && !readyDocs.length) {
             input.value = '';
             input.style.height = '44px';
-            clearConversation();
+            startNewConversation();
+            return;
+        }
+
+        // "/help" is answered locally (no AI call): the commands this user may run,
+        // the internal ones and the "@" / "#" suggestions. No raw text: never sent as context.
+        if (query.toLowerCase() === '/help' && !readyDocs.length) {
+            input.value = '';
+            input.style.height = '44px';
+            appendMsg('user', escapeHtml(query));
+            await paletteLoad();
+            const line = (syntax, label, inline) => '<li><strong><code>' + escapeHtml(syntax) + '</code></strong>' + (inline ? ' : ' : '<br>') + escapeHtml(label) + '</li>';
+            let html = '<div class="small"><b>' + escapeHtml(t('AIHelpInternal')) + '</b><ul>';
+            html += line('/help', t('AIHelpHelp'), true);
+            html += line('/new, /clear', t('AIHelpClear'), true);
+            html += line('/status', t('AIHelpStatus'), true);
+            html += line('/reload', t('AIHelpReload'), true);
+            html += '</ul><b>' + escapeHtml(t('AIHelpMentions')) + '</b><ul>';
+            html += line('@', t('AIHelpMentionThirdparty'), true);
+            html += line('#', t('AIHelpMentionProduct'), true);
+            html += '</ul><b>' + escapeHtml(t('AIHelpCommands')) + '</b><ul>';
+            (paletteCommands || []).forEach((c) => { html += line(c.syntax || ('/' + c.name), c.label || ''); });
+            html += line('/...', t('AIHelpPalette'));
+            html += '</ul>' + escapeHtml(t('AIHelpFreeText')) + '</div>';
+            appendMsg('bot', html);
+            input.focus();
             return;
         }
 
@@ -2818,6 +2877,31 @@ export function initAiAssistant(container) {
                 .replace('%s', String(Math.round(whole.reduce((n, p) => n + p.text.length, 0) / 4)));
             appendMsg('user', escapeHtml(query));
             appendMsg('bot', escapeHtml(stats));
+            input.value = '';
+            input.style.height = '44px';
+            input.focus();
+            return;
+        }
+
+        // "/reload" is answered locally (no AI call): the tools endpoint with
+        // action=purge clears the cache of the AI tool definitions, so the next
+        // request rebuilds it from the current state. Both bubbles have no raw
+        // text so they never travel as context.
+        if (query.toLowerCase() === '/reload' && !readyDocs.length) {
+            appendMsg('user', escapeHtml(query));
+            appendTyping();
+            const loadingReload = chat.lastElementChild;
+            try {
+                const res = await fetch(epUrl('list_tools.php') + '&action=purge', { method: 'POST', credentials: 'same-origin' });
+                const reload = await aiJson(res);
+                loadingReload.remove();
+                const msg = (reload && reload.error) ? t('AIError') + ': ' + reload.error
+                    : ((reload && reload.purged) ? t('AIReloadDone').replace('%s', String(reload.purged)) : t('AIReloadNothing'));
+                appendMsg('bot', escapeHtml(msg));
+            } catch (e) {
+                loadingReload.remove();
+                appendMsg('error', t('AIError') + ': ' + e.message);
+            }
             input.value = '';
             input.style.height = '44px';
             input.focus();
@@ -2839,7 +2923,8 @@ export function initAiAssistant(container) {
         }
 
         if (!isResend) {
-            appendMsg('user', displayHtml, null, query || t('AIContextAttachmentOnly'));
+            // Internal "/tools" debug command: no raw text, so it is never saved in the history nor sent as context
+            appendMsg('user', displayHtml, null, (query === '/tools' && !readyDocs.length) ? null : (query || t('AIContextAttachmentOnly')));
             clearChip();
         }
         lastSent = { sentQuery: sentQuery, query: query };
@@ -2852,13 +2937,13 @@ export function initAiAssistant(container) {
             const chosenModel = resolveModel();
             // Pinned exchanges only: context is opt-in, its cost visible in the bar.
             const pinned = pinnedContextPayload();
-            // Result of the read flagged needs_followup, sent back on the second round.
-            let followupSnippet = null;
+            // Results of the reads flagged needs_followup, sent back on the next rounds.
+            let followupSnippets = [];
             let followupResult = null;
             // The third parties the user picked, for every round of this request.
             const sentChoices = Object.assign({}, thirdpartyChoices);
-            // Two rounds at most: the server never flags a followup round itself.
-            for (let round = 0; round < 2; round++) {
+            // Three rounds at most: the server never flags the last followup round itself.
+            for (let round = 0; round < 3; round++) {
                 if (round > 0) { appendTyping(); loadingMsg = chat.lastElementChild; }
                 const intentRes = await fetch(epUrl('parse_intent.php'), {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -2870,7 +2955,8 @@ export function initAiAssistant(container) {
                         Object.keys(sentChoices).length ? { thirdparty_choices: sentChoices } : {},
                         (function () {
                             // followup_result: only to name the object in the confirmation, never sent to the model.
-                            if (followupSnippet) return { history: pinned.concat([{ role: 'assistant', text: followupSnippet }]), followup: 1, followup_result: followupResult };
+                            // All the search results in one assistant turn, followup is the number of the round.
+                            if (followupSnippets.length) return { history: pinned.concat([{ role: 'assistant', text: followupSnippets.join('\n') }]), followup: round, followup_result: followupResult };
                             return pinned.length ? { history: pinned } : {};
                         })(),
                         (function () {
@@ -2932,9 +3018,9 @@ export function initAiAssistant(container) {
                 loadingData.remove();
                 // The read only fetched the ids the asked action needs: hand its result
                 // back to the model instead of showing it, and let it perform the action.
-                if (!round && intent.needs_followup && result && !result.error && result.success !== false && result.resultType !== 'input_required') {
+                if (round < 2 && intent.needs_followup && result && !result.error && result.success !== false && result.resultType !== 'input_required') {
                     appendMsg('system', t('AISearchDoneNowPreparingAction') + ' (' + escapeHtml(intent.tool || '') + ')...');
-                    followupSnippet = contextSnippetOf(result, intent.tool);
+                    followupSnippets.push(contextSnippetOf(result, intent.tool));
                     followupResult = result;
                     continue;
                 }
@@ -3006,6 +3092,19 @@ export function initAiAssistant(container) {
         'multicurrency_total_ht', 'multicurrency_total_ttc', 'multicurrency_total_tva',
 		'opp_amount', 'price_booth', 'price_registration'
 		]);
+    // Technical fields of API objects not shown in the chat (display only: the LLM still receives them).
+    const HIDDEN_FIELDS = new Set(['entity', 'specimen', 'model_pdf', 'last_main_doc', 'import_key', 'array_options',
+        'user_creation_id', 'user_modification_id', 'fk_incoterms', 'location_incoterms', 'label_incoterms',
+        'no_email', 'typent_id', 'stcomm_id', 'fk_prospectlevel', 'country_id', 'fk_multicurrency', 'multicurrency_tx',
+        'remise_supplier_percent'
+        ]);
+    // Local tax fields are shown only when the country of the company uses this local tax.
+    [1, 2].forEach((x) => {
+        if (!parseInt(config['useLocalTax' + x] || 0, 10)) {
+            HIDDEN_FIELDS.add('localtax' + x + '_assuj');
+            HIDDEN_FIELDS.add('localtax' + x + '_value');
+        }
+    });
     const isDateField = (k) => k === 'date' || k === 'datef' || k === 'tms' || /(^|_)date($|_)|_date$|^date_/.test(k);
 
     function fieldLabel(k) {
@@ -3123,7 +3222,7 @@ export function initAiAssistant(container) {
         if (Array.isArray(data)) {
             if (data.length === 0) return t('NoRecordFound');
             isArray = true;
-            let keys = Object.keys(data[0]).filter(k => k !== 'url' && k !== 'rowid');
+            let keys = Object.keys(data[0]).filter(k => k !== 'url' && k !== 'rowid' && !HIDDEN_FIELDS.has(k));
             content += '<div class="chat-table-wrap"><table class="chat-table"><thead><tr>';
             // Rows that are files (their url is a document.php download): the
             // "name" column is the file, not a third party, and the file gets a
@@ -3161,7 +3260,7 @@ export function initAiAssistant(container) {
             content += '<div class="chat-object"><ul>';
             let nested = '';
             for (const [key, value] of Object.entries(data)) {
-                if (key === 'url' || key === 'chart') continue;
+                if (key === 'url' || key === 'chart' || HIDDEN_FIELDS.has(key)) continue;
                 if (typeof value !== 'object') { content += `<li><strong>${fieldLabel(key)}:</strong> ${formatCell(key, value)}</li>`; }
                 // A list inside the answer is the answer: a tool that wraps its rows
                 // in {count, offset, limit, results} would otherwise show only the

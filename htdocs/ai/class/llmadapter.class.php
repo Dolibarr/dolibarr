@@ -430,7 +430,17 @@ class UniversalLLMAdapter
 		// To allow local endpoints, we must set $dolibarr_ai_allow_local_endpoints to 1 or 2 in conf.php.
 		global $dolibarr_ai_allow_local_endpoints;
 
-		$localurl = empty($dolibarr_ai_allow_local_endpoints) ? 0 : 2;
+		// 0 or empty = external only, 1 = local only, 2 = both (same rule as Ai::generateContent())
+		$localurl = empty($dolibarr_ai_allow_local_endpoints) ? 0 : (int) $dolibarr_ai_allow_local_endpoints;
+
+		// Hooks of the calling page context (for example 'main'): a module can refuse the request (quota...) then read the answer (token usage...)
+		global $hookmanager;
+		$hookparameters = array('service' => $this->type, 'model' => $this->model, 'function' => 'assistant');
+		if (is_object($hookmanager)) {
+			if ($hookmanager->executeHooks('beforeAIRequest', $hookparameters) < 0) {
+				return "Error: " . $hookmanager->error;
+			}
+		}
 
 		// Pass $this->timeout as the response timeout so the LLM-specific value configured
 		// at construction time is honored (getURLContent's $timeoutresponse is the 10th arg;
@@ -496,6 +506,10 @@ class UniversalLLMAdapter
 				dol_syslog("Error: API " . $msg, LOG_DEBUG, 0, '_ai');
 			}
 			return "Error: API " . $msg;
+		}
+
+		if (is_object($hookmanager) && is_array($json)) {
+			$hookmanager->executeHooks('afterAIRequest', $hookparameters + array('response' => $json));
 		}
 
 		// Token usage as reported by the provider, for the cost columns of the

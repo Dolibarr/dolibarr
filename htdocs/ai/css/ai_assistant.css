@@ -276,6 +276,16 @@ body.ai-fullpage {
     background: var(--ai-surface-2);
 }
 
+/* Smartphones: keep only the picto on the Clear button, the label stays in the title tooltip */
+@media (max-width: 768px) {
+    #clear-btn {
+        padding: 6px 10px;
+    }
+    #clear-btn .ai-btn-label {
+        display: none;
+    }
+}
+
 /* Chat History */
 .chat-history {
     flex-grow: 1;

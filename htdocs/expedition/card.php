@@ -1250,7 +1250,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		if (GETPOST('qty', 'alpha') == '') {
+		if (GETPOST('qty'.$predef, 'alpha') === '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
 		}
@@ -1392,7 +1392,7 @@ if (empty($reshook)) {
 						unset($_POST["options_".$key]);
 					}
 				}
-				header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // To redisplay the form being edited
+				header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // To redisplay the card with an empty form
 				exit();
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');

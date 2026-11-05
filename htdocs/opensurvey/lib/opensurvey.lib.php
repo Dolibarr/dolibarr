@@ -197,13 +197,15 @@ function dol_survey_random($car)
 /**
  * Add a poll
  *
+ * @param	Opensurveyquestion[]	$questions	Questions of a poll of format 'F' (form), saved with the poll
  * @return	void
  */
-function ajouter_sondage()
+function ajouter_sondage($questions = array())
 {
 	global $db, $user;
 
 	require_once DOL_DOCUMENT_ROOT.'/opensurvey/class/opensurveysondage.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/opensurvey/class/opensurveyquestion.class.php';
 
 	$sondage = dol_survey_random(16);
 
@@ -214,8 +216,8 @@ function ajouter_sondage()
 	$opensurveysondage = new Opensurveysondage($db);
 	$opensurveysondage->id_sondage = $sondage;
 	$opensurveysondage->description = $_SESSION['description'];
-	$opensurveysondage->mail_admin = $_SESSION['adresse'];
-	$opensurveysondage->nom_admin = $_SESSION['nom'];
+	$opensurveysondage->mail_admin = isset($_SESSION['adresse']) ? $_SESSION['adresse'] : '';
+	$opensurveysondage->nom_admin = isset($_SESSION['nom']) ? $_SESSION['nom'] : '';
 	$opensurveysondage->title = $_SESSION['title'];
 	$opensurveysondage->date_fin = $_SESSION['champdatefin'];
 	$opensurveysondage->format = $_SESSION['formatsondage'];
@@ -224,11 +226,26 @@ function ajouter_sondage()
 	$opensurveysondage->allow_spy = $allow_spy;
 	$opensurveysondage->sujet = $_SESSION['toutchoix'];
 
+	$db->begin();
+
 	$res = $opensurveysondage->create($user);
 
 	if ($res < 0) {
+		$db->rollback();
 		dol_print_error($db);
+		return;
 	}
+
+	foreach ($questions as $question) {
+		$question->id_sondage = $sondage;
+		if ($question->create() < 0) {
+			$db->rollback();
+			dol_print_error($db, $question->error);
+			return;
+		}
+	}
+
+	$db->commit();
 
 	unset($_SESSION["title"]);
 	unset($_SESSION["nom"]);

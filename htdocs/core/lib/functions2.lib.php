@@ -331,7 +331,7 @@ function dol_print_object_info($object, $usetable = 0)
 			print '<div class="valignmiddle inline-block">';
 			print dol_print_date($object->date_approve ? $object->date_approve : $object->date_approval, 'dayhour', 'tzserver');
 			if ($deltadateforuser) {
-				print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_approve, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
+				print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_approve ? $object->date_approve : $object->date_approval, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
 			}
 			print '</div>';
 		}
@@ -2774,7 +2774,7 @@ function convertBackOfficeMediasLinksToPublicLinks($notetoshow)
 {
 	global $dolibarr_main_url_root;
 	// Define $urlwithroot
-	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	$urlwithouturlroot = dolGetUrlWithoutUrlRoot();
 	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 	$notetoshow = preg_replace('/src="[a-zA-Z0-9_\/\-\.]*(viewimage\.php\?modulepart=medias[^"]*)"/', 'src="'.$urlwithroot.'/\1"', $notetoshow);
@@ -2919,7 +2919,7 @@ function acceptLocalLinktoMedia()
 
 	// If $acceptlocallinktomedia is true, we can add link media files int email templates (we already can do this into HTML editor of an email).
 	// Note that local link to a file into medias are replaced with a real link by email in CMailFile.class.php with value $urlwithroot defined like this:
-	// $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	// $urlwithouturlroot = dolGetUrlWithoutUrlRoot();
 	// $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 
 	$acceptlocallinktomedia = getDolGlobalInt('MAIN_DISALLOW_MEDIAS_IN_EMAIL_TEMPLATES') ? 0 : 1;
@@ -2930,7 +2930,7 @@ function acceptLocalLinktoMedia()
 
 	if ($acceptlocallinktomedia) {
 		global $dolibarr_main_url_root;
-		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+		$urlwithouturlroot = dolGetUrlWithoutUrlRoot();
 
 		// Parse $newUrl to get the IP of the server
 		$newUrlArray = parse_url($urlwithouturlroot);
@@ -3119,12 +3119,16 @@ function csvClean($newvalue, $charset = '', $separator = '')
 	}
 
 	// Rule 3 CSV: If value contains separator, we must add "
-	if (preg_match('/'.$separator.'/', $newvalue)) {
+	if ($separator === '\\t') {
+		$separator = "\t";
+	}
+	if ($separator !== '' && strpos($newvalue, $separator) !== false) {
 		$addquote = 1;
 	}
 
-	// Rule 4 CSV: If value is a string started with char that trigger formula in calc software, we must add "
-	if (preg_match('/^\s*[=+-@]/', $newvalue)) {
+	// Rule 4 CSV: If value is a string started with char that trigger formula in calc software (= + - @), we must add "
+	// Note: in a character class, + - @ would be a range, so - is escaped. A number (like -5) is not a formula.
+	if (preg_match('/^\s*[=+\-@]/', $newvalue) && !is_numeric(trim($newvalue))) {
 		$addquote = 1;
 	}
 

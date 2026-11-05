@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2010	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015-2016	Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2015-2017	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2016		Ferran Marcet   		<fmarcet@2byte.es>
  * Copyright (C) 2019		JC Prieto				<jcprieto@virtual20.com><prietojc@gmail.com>
  * Copyright (C) 2022-2026  Frédéric France         <frederic.france@free.fr>
@@ -1191,6 +1191,7 @@ class Account extends CommonObject
 		$sql .= " ba.account_number, ba.fk_accountancy_journal, ba.currency_code,";
 		$sql .= " ba.min_allowed, ba.min_desired, ba.comment,";
 		$sql .= " ba.datec as date_creation, ba.tms as date_modification, ba.ics, ba.ics_transfer,";
+		$sql .= " ba.extraparams,";
 		$sql .= ' c.code as country_code, c.label as country,';
 		$sql .= ' d.code_departement as state_code, d.nom as state,';
 		$sql .= ' aj.code as accountancy_journal';
@@ -1267,6 +1268,8 @@ class Account extends CommonObject
 
 				$this->ics           = $obj->ics;
 				$this->ics_transfer  = $obj->ics_transfer;
+
+				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels

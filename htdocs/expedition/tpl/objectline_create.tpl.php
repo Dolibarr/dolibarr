@@ -130,11 +130,11 @@ if (isModEnabled('product') || (isModEnabled('service') && (getDolGlobalInt('STO
 		$filtertype = isModEnabled('product') ? '' : 1;
 	}
 	if ($filtertype === '') {
-		print $langs->trans('ProductOrService');
+		print $langs->trans('ProductOrService').' ';
 	} elseif ($filtertype == 1) {
-		print $langs->trans("Service");
+		print $langs->trans("Service").' ';
 	} else {
-		print $langs->trans("Product");
+		print $langs->trans("Product").' ';
 	}
 
 	echo '<span class="prod_entry_mode_predef nowraponall">';

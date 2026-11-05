@@ -6,7 +6,7 @@ and the same protections (no email can be sent from the container). See `dev/bui
 of the common parts. The scripts `open-on-host`, `xdg-open-shim` and `smtpblock.sh` are shared with docker-vibe: they are
 taken from the directory `dev/build/docker-vibe` when the image is built.
 
-## Credentials
+## Prepare AI api key
 
 The configuration directory `~/.claude` of the host is mounted at the same path into the container, so the container uses
 the same credentials (`~/.claude/.credentials.json`, created by a `claude` login on the host), settings, plugins, memory and
@@ -18,14 +18,24 @@ URL is opened in the browser of the host, see "Clipboard and links" into `dev/bu
 You can also use an API key or a long lived token: when the environment variable `ANTHROPIC_API_KEY` or `CLAUDE_CODE_OAUTH_TOKEN`
 (created with `claude setup-token`) is set on the host, it is passed to the container.
 
-The state file of Claude Code (onboarding, trusted directories, ...) is a single file `~/.claude.json` that is replaced at each write,
-so it can not be bind mounted. The container is run with `CLAUDE_CONFIG_DIR=~/.claude`, so its state file is `~/.claude/.claude.json`,
-separated from the one of the host: the first run into the container may ask again for the theme and for the trust of the directory.
+The state file of Claude Code (onboarding, trusted directories, MCP servers, ...) is a single file `~/.claude.json` that is replaced
+at each write, so it can not be bind mounted. Into the container, `~/.claude.json` is a link to `~/.claude/.claude.json` (into the
+mounted directory), and `claudes.sh` copies the `~/.claude.json` of the host into `~/.claude/.claude.json` at each launch: the
+container gets the MCP servers, the trusted directories and the theme of the host, but the changes made into the container
+(for example a MCP server added with `claude mcp add`) are lost at the next launch. Add them on the host instead.
 
 ## You can add an alias into your /etc/bash.bashrc or ~/.bashrc the line
 ````
 alias claudes='dev/build/docker-claude/claudes.sh'
 ````
+
+## Prepare GitHub token key
+
+````
+gh auth login -h github.com -p https -w -s workflow
+gh auth status
+````
+
 
 ## Run Claude Code into a container
 Run from the root of your repository:
@@ -48,11 +58,13 @@ claudes --no-exit
 ````
 
 If you want to run claude in Remote Control mode (`claude remote-control`, to drive the session from claude.ai/code
-or the Claude mobile app), you can run (add `--yolo` to have the permissions automatically accepted
-with `--permission-mode bypassPermissions`)
+or the Claude mobile app), you can run
 ````
 claudes --rc
 ````
+The sessions are then started with `--permission-mode auto`: the safe actions are approved automatically, the risky or
+outward-facing ones (push, pull request, ...) are still asked. Add `--yolo` to have all the permissions automatically
+accepted with `--permission-mode bypassPermissions`.
 
 The other arguments are passed to claude, for example to resume the last conversation:
 ````
