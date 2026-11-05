@@ -1357,8 +1357,8 @@ class ExpeditionTest extends CommonClassTest
 				'origin_id' => $orderId,
 				'origin_type' => 'commande',
 				'lines' => array(
-					array('fk_element' => $orderId, 'fk_elementdet' => $kitLineId, 'element_type' => 'commande', 'entrepot_id' => $warehouseId, 'qty' => 2, 'rang' => 1, 'array_options' => null, 'detail_batch' => null),
-					array('fk_element' => $orderId, 'fk_elementdet' => $serviceLineId, 'element_type' => 'commande', 'entrepot_id' => $warehouseId, 'qty' => 1, 'rang' => 2, 'array_options' => null, 'detail_batch' => null),
+					array('origin_id' => $orderId, 'fk_elementdet' => $kitLineId, 'element_type' => 'commande', 'entrepot_id' => $warehouseId, 'qty' => 2, 'rang' => 1, 'array_options' => null, 'detail_batch' => null),
+					array('origin_id' => $orderId, 'fk_elementdet' => $serviceLineId, 'element_type' => 'commande', 'entrepot_id' => $warehouseId, 'qty' => 1, 'rang' => 2, 'array_options' => null, 'detail_batch' => null),
 				),
 			));
 			$this->assertGreaterThan(0, $shipmentId);
@@ -1388,7 +1388,7 @@ class ExpeditionTest extends CommonClassTest
 			$this->assertGreaterThan(0, $shipment->valid($user), $shipment->errorsToString());
 			$this->assertEquals(4.0, $this->getRealStock($productIds['component'], $warehouseId));
 
-			$this->assertGreaterThan(0, $shipment->delete($user), $shipment->errorsToString());
+			$this->assertGreaterThan(0, $shipment->delete($user, 0, true), $shipment->errorsToString());
 			$this->assertEquals(10.0, $this->getRealStock($productIds['component'], $warehouseId));
 		} finally {
 			foreach ($saved as $key => $value) {
