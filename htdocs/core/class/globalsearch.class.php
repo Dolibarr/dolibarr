@@ -251,51 +251,51 @@ class GlobalSearch
 		global $conf, $langs, $user;
 
 		// Names of table and fields of the definition (that may come from a module) are sanitized: only "alias.field" is allowed
-		$sqltable = $this->db->sanitize($def['table']);
-		$sqlalias = $this->db->sanitize($def['alias']);
-		$sqlref = $this->db->sanitize($def['ref']);
-		$sqllabel = $this->db->sanitize($def['label']);
-		$sqlsub = (empty($def['sub']) ? '' : $this->db->sanitize($def['sub']));
-		$sqlfirstname = (empty($def['firstname']) ? '' : $this->db->sanitize($def['firstname']));
-		$sqlamount = (empty($def['amount']) ? '' : $this->db->sanitize($def['amount']));
-		$sqldate = $this->db->sanitize($def['date']);
-		$sqlthirdparty = (empty($def['thirdparty']) ? '' : $this->db->sanitize($def['thirdparty']));
+		$sanitizedtable = $this->db->sanitize($def['table']);
+		$sanitizedalias = $this->db->sanitize($def['alias']);
+		$sanitizedref = $this->db->sanitize($def['ref']);
+		$sanitizedlabel = $this->db->sanitize($def['label']);
+		$sanitizedsub = (empty($def['sub']) ? '' : $this->db->sanitize($def['sub']));
+		$sanitizedfirstname = (empty($def['firstname']) ? '' : $this->db->sanitize($def['firstname']));
+		$sanitizedamount = (empty($def['amount']) ? '' : $this->db->sanitize($def['amount']));
+		$sanitizeddate = $this->db->sanitize($def['date']);
+		$sanitizedthirdparty = (empty($def['thirdparty']) ? '' : $this->db->sanitize($def['thirdparty']));
 
-		$from = " FROM ".$this->db->prefix().$sqltable." as ".$sqlalias;
-		if ($sqlthirdparty && $sqlthirdparty != 's.rowid') {
-			$from .= " LEFT JOIN ".$this->db->prefix()."societe as s ON s.rowid = ".$sqlthirdparty;
+		$from = " FROM ".$this->db->prefix().$sanitizedtable." as ".$sanitizedalias;
+		if ($sanitizedthirdparty && $sanitizedthirdparty != 's.rowid') {
+			$from .= " LEFT JOIN ".$this->db->prefix()."societe as s ON ".$sanitizedthirdparty." = s.rowid";
 		}
 
-		$where = " WHERE ".$sqlalias.".entity IN (".getEntity($def['element']).")";
+		$where = " WHERE ".$sanitizedalias.".entity IN (".getEntity($def['element']).")";
 		$where .= natural_search($def['fields'], $search);
 		// Same restrictions than on the list pages
 		if (!empty($def['private'])) {
-			$where .= " AND (".$sqlalias.".priv = 0 OR (".$sqlalias.".priv = 1 AND ".$sqlalias.".fk_user_creat = ".((int) $user->id)."))";
+			$where .= " AND (".$sanitizedalias.".priv = 0 OR (".$sanitizedalias.".priv = 1 AND ".$sanitizedalias.".fk_user_creat = ".((int) $user->id)."))";
 		}
 		if (isset($def['producttype'])) {
-			$where .= " AND ".$sqlalias.".fk_product_type = ".((int) $def['producttype']);
+			$where .= " AND ".$sanitizedalias.".fk_product_type = ".((int) $def['producttype']);
 		}
-		if ($sqlthirdparty && empty($def['nothirdpartyfilter'])) {
+		if ($sanitizedthirdparty && empty($def['nothirdpartyfilter'])) {
 			if (!empty($user->socid)) {
-				$where .= " AND ".$sqlthirdparty." = ".((int) $user->socid);
+				$where .= " AND ".$sanitizedthirdparty." = ".((int) $user->socid);
 			} elseif (!$user->hasRight('societe', 'client', 'voir')) {
-				$where .= " AND EXISTS (SELECT sc.rowid FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = ".$sqlthirdparty." AND sc.fk_user = ".((int) $user->id).")";
+				$where .= " AND EXISTS (SELECT sc.rowid FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE ".$sanitizedthirdparty." = sc.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 			}
 		}
 		if ($def['element'] == 'project' && !$user->hasRight('projet', 'all', 'lire')) {
 			require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 			$projectstatic = new Project($this->db);
 			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, (int) $user->socid);
-			$where .= " AND ".$sqlalias.".rowid IN (".$this->db->sanitize($projectsListId ? $projectsListId : '0').")";
+			$where .= " AND ".$sanitizedalias.".rowid IN (".$this->db->sanitize($projectsListId ? $projectsListId : '0').")";
 		}
 
-		$sql = "SELECT ".$sqlalias.".rowid as id, ".$sqlref." as ref, ".$sqllabel." as label";
-		$sql .= ", ".($sqlsub ? $sqlsub : "''")." as sub";
-		if ($sqlfirstname) {
-			$sql .= ", ".$sqlfirstname." as firstname";
+		$sql = "SELECT ".$sanitizedalias.".rowid as id, ".$sanitizedref." as ref, ".$sanitizedlabel." as label";
+		$sql .= ", ".($sanitizedsub ? $sanitizedsub : "''")." as sub";
+		if ($sanitizedfirstname) {
+			$sql .= ", ".$sanitizedfirstname." as firstname";
 		}
-		if ($sqlamount) {
-			$sql .= ", ".$sqlamount." as amount";
+		if ($sanitizedamount) {
+			$sql .= ", ".$sanitizedamount." as amount";
 		}
 		if (!empty($def['status'])) {
 			foreach ($def['status'] as $field => $property) {
@@ -304,7 +304,7 @@ class GlobalSearch
 		}
 		$sql .= $from.$where;
 		// Exact ref first, then refs starting with the string, then most recent
-		$sql .= " ORDER BY CASE WHEN ".$sqlref." = '".$this->db->escape($search)."' THEN 0 WHEN ".$sqlref." LIKE '".$this->db->escape($this->db->escapeforlike($search))."%' THEN 1 ELSE 2 END, ".$sqldate." DESC";
+		$sql .= " ORDER BY CASE WHEN ".$sanitizedref." = '".$this->db->escape($search)."' THEN 0 WHEN ".$sanitizedref." LIKE '".$this->db->escape($this->db->escapeforlike($search))."%' THEN 1 ELSE 2 END, ".$sanitizeddate." DESC";
 		$sql .= $this->db->plimit($limit + 1);
 
 		$resql = $this->db->query($sql);
@@ -352,7 +352,7 @@ class GlobalSearch
 
 		$total = $num;
 		if ($num > $limit) {
-			$sql = "SELECT COUNT(".$sqlalias.".rowid) as nb".$from.$where;
+			$sql = "SELECT COUNT(".$sanitizedalias.".rowid) as nb".$from.$where;
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
