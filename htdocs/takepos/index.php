@@ -787,8 +787,8 @@ function CloseBill() {
 	$reshook = $hookmanager->executeHooks('paramsForCloseBill', $parameters, $obj, $action);
 	if (getDolGlobalString('TAKEPOS_FORBID_SALES_TO_DEFAULT_CUSTOMER')) {
 		echo "customerAnchorTag = document.querySelector('a[id=\"customer\"]'); ";
-		echo "if (customerAnchorTag && customerAnchorTag.innerText.trim() === '".$langs->trans("Customer")."') { ";
-		echo "alert('".dol_escape_js($langs->trans("NoClientErrorMessage"))."'); ";
+		echo "if (customerAnchorTag && customerAnchorTag.innerText.trim() === '".dol_escape_js($langs->transnoentitiesnoconv("Customer"))."') { ";
+		echo "alert('".dol_escape_js($langs->transnoentitiesnoconv("NoClientErrorMessage"))."'); ";
 		echo "return; } \n";
 	}
 	?>
@@ -796,7 +796,7 @@ function CloseBill() {
 	console.log("Open popup to enter payment on invoiceid="+invoiceid);
 	<?php if (getDolGlobalInt("TAKEPOS_NO_GENERIC_THIRDPARTY")) { ?>
 		if ($("#idcustomer").val() == "") {
-			alert("<?php echo $langs->trans('TakePosCustomerMandatory'); ?>");
+			alert("<?php echo dol_escape_js($langs->transnoentitiesnoconv('TakePosCustomerMandatory'), 2); ?>");
 			<?php if (getDolGlobalString('TAKEPOS_CHOOSE_CONTACT')) { ?>
 				Contact();
 			<?php } else { ?>
