@@ -3114,8 +3114,13 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	} elseif ($modulepart == 'expedition' && strpos($original_file, 'receipt/') === 0) {
 		// Fix modulepart delivery
 		$modulepart = 'delivery';
-	} elseif ($modulepart == 'propale') {
+	} elseif ($modulepart == 'propale' || ($modulepart == 'proposal' && empty($conf->$modulepart->dir_output))) {
 		$modulepart = 'propal';
+	} elseif ($modulepart == 'intervention' && empty($conf->$modulepart->dir_output)) {
+		// Aliases of the REST API are not used if a module with this name has its own directory
+		$modulepart = 'fichinter';
+	} elseif (($modulepart == 'action' || $modulepart == 'event') && empty($conf->$modulepart->dir_output)) {
+		$modulepart = 'actions';
 	}
 
 	// If modulepart is composed of an objectpart@modulepart, we keep modulepart.
