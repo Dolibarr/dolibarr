@@ -978,8 +978,8 @@ if ($conf->main_checkbox_left_column) {
 	print '</td>';
 }
 if (!empty($arrayfields['c.rowid']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat maxwidth50" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['c.ref']['checked'])) {
@@ -1363,7 +1363,7 @@ while ($i < $imaxinloop) {
 			}
 			if (!empty($obj->note_private) || !empty($obj->note_public)) {
 				print ' <span class="note">';
-				print '<a href="'.DOL_URL_ROOT.'/contrat/note.php?id='.$obj->rowid.'&save_lastsearch_values=1">'.img_picto($langs->trans("ViewPrivateNote"), 'note').'</a>';
+				print '<a href="'.DOL_URL_ROOT.'/core/note.php?element=contrat&id='.$obj->rowid.'&save_lastsearch_values=1">'.img_picto($langs->trans("ViewPrivateNote"), 'note').'</a>';
 				print '</span>';
 			}
 
