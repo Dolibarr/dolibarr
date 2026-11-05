@@ -588,7 +588,7 @@ if ($result) {
 							} else {
 								$donorname = (!empty($tmpdonation->societe) ? $tmpdonation->societe : $tmpdonation->getFullName($langs));
 								if ($donorname) {
-									$tabpay[$obj->rowid]["soclib"] = dol_escape_htmltag($donorname);
+									$tabpay[$obj->rowid]["soclib"] = dolPrintLabel($donorname);
 								}
 							}
 						}
