@@ -594,8 +594,8 @@ class VariantsTest extends CommonClassTest
 	}
 
 	/**
-	 * ProductCombination2ValuePair is not a CommonObject: fetchObjectByElement() refuses it, and
-	 * the pair stays readable through its own fetch().
+	 * ProductCombination2ValuePair::fetch() is required by fetchObjectByElement(), which the
+	 * import engine calls on the element of the attribute/value links.
 	 *
 	 * @return void
 	 */
@@ -619,10 +619,8 @@ class VariantsTest extends CommonClassTest
 		$this->assertNotFalse($this->savdb->query($sql), 'insert combination2val');
 		$pairid = $this->savdb->last_insert_id(MAIN_DB_PREFIX.'product_attribute_combination2val');
 
-		$this->assertEquals(-1, fetchObjectByElement($pairid, 'product_attribute_combination2val'), 'ProductCombination2ValuePair is not a CommonObject, so it is refused');
-
-		$object = new ProductCombination2ValuePair($this->savdb);
-		$this->assertEquals(1, $object->fetch($pairid), 'the value pair is fetched');
+		$object = fetchObjectByElement($pairid, 'product_attribute_combination2val');
+		$this->assertInstanceOf('ProductCombination2ValuePair', $object, 'the value pair is resolved and fetched');
 		$this->assertEquals($combinationid, $object->fk_prod_combination, 'the fetched pair carries its combination');
 		$this->assertEquals($red->id, $object->fk_prod_attr_val, 'the fetched pair carries its value');
 	}
