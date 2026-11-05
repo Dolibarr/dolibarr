@@ -407,7 +407,7 @@ if ($result) {
 		print '<div class="fichecenter2">';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border centpercent tableforfield">';
+		print '<table class="border centpercent tableforfield margintoponly">';
 
 		$i++;
 
@@ -784,6 +784,8 @@ if ($result) {
 			print '</table>';
 
 			print '</div>';
+
+			print '<hr>';
 
 			print '<div class="center">';
 
