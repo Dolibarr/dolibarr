@@ -243,6 +243,12 @@ class ActionComm extends CommonObject
 	public $userownerid;
 
 	/**
+	 * @var ?string	Stable unique identifier (UUID) of the event, generated on create() and kept in the row
+	 *              until it is deleted. Not to be confused with $ref_ext, an id from an external system.
+	 */
+	public $uid;
+
+	/**
 	 * @var array<int,array{id:int,mandatory:int<0,1>,answer_status:int,transparency:int<0,1>}|int> Array of contact ids
 	 */
 	public $socpeopleassigned = array();
@@ -317,6 +323,11 @@ class ActionComm extends CommonObject
 	 * @var string Ical color  (Hex value for color on 6 nibles)
 	 */
 	public $icalcolor;
+
+	/**
+	 * @var array<string,string|array<int,string>> Details of an event coming from an external ical file (description, organizer, attendees, url, categories, geo)
+	 */
+	public $icaldetails = array();
 
 	/**
 	 * @var array<string,string>|string 	Extra parameters. Try to store here the array of parameters. Old code is sometimes storing a string.
@@ -431,6 +442,7 @@ class ActionComm extends CommonObject
 		"id" => array("type" => "integer", "label" => "Ref", "enabled" => "1", 'position' => 10, 'notnull' => 1, "visible" => "1",),
 		"ref" => array("type" => "varchar(30)", "label" => "Ref", "enabled" => "1", 'position' => 15, 'notnull' => 1, "visible" => "0", "csslist" => "tdoverflowmax150", "showoncombobox" => "1",),
 		"ref_ext" => array("type" => "varchar(255)", "label" => "Refext", "enabled" => "1", 'position' => 20, 'notnull' => 0, "visible" => "0",),
+		"uid" => array("type" => "varchar(36)", "label" => "Uid", "enabled" => "1", 'position' => 21, 'notnull' => 0, "visible" => "0",),
 		"datep" => array("type" => "datetime", "label" => "DateStart", "enabled" => "1", 'position' => 25, 'notnull' => 0, "visible" => "1",),
 		"datep2" => array("type" => "datetime", "label" => "DateEnd", "enabled" => "1", 'position' => 26, 'notnull' => 0, "visible" => "-1",),
 		"fk_action" => array("type" => "integer", "label" => "Fkaction", "enabled" => "1", 'position' => 40, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
@@ -493,6 +505,52 @@ class ActionComm extends CommonObject
 		$this->db = $db;
 
 		$this->ismultientitymanaged = 1;
+	}
+
+	/**
+	 *    Build a new random UUID (v4, RFC 4122) for $this->uid.
+	 *
+	 *    @return   string    36 char UUID (8-4-4-4-12 hex groups)
+	 */
+	protected static function generateUid()
+	{
+		$hex = dolGetRandomBytes(32); // 16 random bytes as 32 hex chars
+		$hex[12] = '4'; // version 4
+		$hex[16] = dechex((hexdec($hex[16]) & 0x3) | 0x8); // variant 10xx
+
+		return substr($hex, 0, 8).'-'.substr($hex, 8, 4).'-'.substr($hex, 12, 4).'-'.substr($hex, 16, 4).'-'.substr($hex, 20, 12);
+	}
+
+	/**
+	 *    Backfill $this->uid for an event created before the uid column existed (left NULL by
+	 *    the migration). Writes it to the database so it stays stable across further fetches,
+	 *    without bumping tms: MariaDB/MySQL only auto-update an ON UPDATE CURRENT_TIMESTAMP
+	 *    column when it is not itself explicitly assigned in the UPDATE, so "tms = tms" keeps
+	 *    it untouched even though the row is otherwise modified.
+	 *
+	 *    @return   string    The uid now in place (freshly generated, or one set concurrently
+	 *                        by another request)
+	 */
+	protected function backfillUid()
+	{
+		$newuid = self::generateUid();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm SET uid = '".$this->db->escape($newuid)."', tms = tms";
+		$sql .= " WHERE id = ".((int) $this->id)." AND uid IS NULL";
+		$resql = $this->db->query($sql);
+		if ($resql && $this->db->affected_rows($resql) > 0) {
+			return $newuid;
+		}
+
+		// Another request backfilled it concurrently: read back whatever it set instead of
+		// leaving two different uids in play for the same event.
+		$sql = "SELECT uid FROM ".MAIN_DB_PREFIX."actioncomm WHERE id = ".((int) $this->id);
+		$resql = $this->db->query($sql);
+		if ($resql && ($obj = $this->db->fetch_object($resql)) && !empty($obj->uid)) {
+			return $obj->uid;
+		}
+
+		return $newuid;
 	}
 
 	/**
@@ -610,6 +668,10 @@ class ActionComm extends CommonObject
 		$extraparams = (!empty($this->extraparams) ? json_encode($this->extraparams) : null);
 		$extraparams = dol_trunc($extraparams, 250);
 
+		if (empty($this->uid)) {
+			$this->uid = self::generateUid();
+		}
+
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm";
@@ -621,6 +683,7 @@ class ActionComm extends CommonObject
 		$sql .= "fk_action,";
 		$sql .= "code,";
 		$sql .= "ref_ext,";
+		$sql .= "uid,";
 		$sql .= "fk_soc,";
 		$sql .= "fk_project,";
 		$sql .= "note,";
@@ -660,6 +723,7 @@ class ActionComm extends CommonObject
 		$sql .= (isset($this->type_id) ? ((int) $this->type_id) : "null").",";
 		$sql .= ($code ? ("'".$this->db->escape($code)."'") : "null").", ";
 		$sql .= (!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").", ";
+		$sql .= "'".$this->db->escape($this->uid)."', ";
 		$sql .= ((isset($this->socid) && $this->socid > 0) ? ((int) $this->socid) : "null").", ";
 		$sql .= ((isset($this->fk_project) && $this->fk_project > 0) ? ((int) $this->fk_project) : "null").", ";
 		$sql .= " '".$this->db->escape($this->note_private)."', ";
@@ -890,6 +954,7 @@ class ActionComm extends CommonObject
 		$sql .= " a.ref as ref,";
 		$sql .= " a.entity,";
 		$sql .= " a.ref_ext,";
+		$sql .= " a.uid,";
 		$sql .= " a.datep,";
 		$sql .= " a.datep2,";
 		$sql .= " a.durationp,"; // deprecated
@@ -909,7 +974,7 @@ class ActionComm extends CommonObject
 		$sql .= " c.id as type_id, c.type as type_type, c.code as type_code, c.libelle as type_label, c.color as type_color, c.picto as type_picto,";
 		$sql .= " s.nom as socname,";
 		$sql .= " u.firstname, u.lastname as lastname,";
-		$sql .= " num_vote, event_paid, a.status";
+		$sql .= " num_vote, event_paid, a.status, a.extraparams";
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a ";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action=c.id ";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author";
@@ -936,6 +1001,10 @@ class ActionComm extends CommonObject
 				$this->entity = $obj->entity;
 				$this->ref        = $obj->ref;
 				$this->ref_ext    = $obj->ref_ext;
+				$this->uid        = $obj->uid;
+				if (empty($this->uid)) {
+					$this->uid = $this->backfillUid();
+				}
 
 				// Properties of parent table llx_c_actioncomm
 				$this->type_id    = $obj->type_id;
@@ -1003,6 +1072,10 @@ class ActionComm extends CommonObject
 				$this->num_vote = $obj->num_vote;
 				$this->event_paid = $obj->event_paid;
 				$this->status = $obj->status;
+				$this->extraparams = !empty($obj->extraparams) ? json_decode($obj->extraparams, true) : array();
+				if (is_null($this->extraparams)) {
+					$this->extraparams = array();	// Invalid json (for example truncated)
+				}
 
 				//email information
 				$this->email_msgid = $obj->email_msgid;
@@ -1119,6 +1192,44 @@ class ActionComm extends CommonObject
 			dol_print_error($this->db);
 			return -1;
 		}
+	}
+
+	/**
+	 *    Return the ids of all the events of the recurring series the current event belongs to.
+	 *    A recurring event is not a master event with occurrences: it is N independent records of
+	 *    llx_actioncomm sharing the same recurid. So an action that must apply to the whole series
+	 *    has to load the ids of the other events first.
+	 *
+	 *    @return   int[]|int<-1,-1>			Ids of the events sorted by date, empty array if the
+	 *    									event is not part of a series, -1 if KO
+	 */
+	public function getIdsOfRecurringSerie()
+	{
+		if (empty($this->recurid)) {
+			return array();
+		}
+
+		$sql = "SELECT a.id";
+		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+		$sql .= " WHERE a.recurid = '".$this->db->escape($this->recurid)."'";
+		$sql .= " AND a.entity IN (".getEntity('agenda').")";
+		$sql .= " ORDER BY a.datep ASC, a.id ASC";
+
+		dol_syslog(get_class($this)."::getIdsOfRecurringSerie", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+			return -1;
+		}
+
+		$ids = array();
+		while ($obj = $this->db->fetch_object($resql)) {
+			$ids[] = (int) $obj->id;
+		}
+		$this->db->free($resql);
+
+		return $ids;
 	}
 
 	/**
@@ -2812,7 +2923,7 @@ class ActionComm extends CommonObject
 	 */
 	public static function replaceProduct(DoliDB $dbs, $origin_id, $dest_id)
 	{
-		$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'actioncomm SET fk_element = ' . ((int) $dest_id) . ' WHERE elementtype="product" AND fk_element = '.((int) $origin_id);
+		$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'actioncomm SET fk_element = ' . ((int) $dest_id) . " WHERE elementtype = 'product' AND fk_element = ".((int) $origin_id);
 		// using $dbs, not $this->db because function is static
 		if (!$dbs->query($sql)) {
 			//$this->errors = $dbs->lasterror();

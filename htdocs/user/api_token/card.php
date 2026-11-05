@@ -65,7 +65,7 @@ $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 // SQL query to retrieve the selected token
-$sql = "SELECT oat.rowid as token_id, oat.token, oat.entity, oat.state as rights, oat.datec as date_creation, oat.tms as date_modification";
+$sql = "SELECT oat.rowid as token_id, oat.tokenstring as token, oat.entity, oat.state as rights, oat.datec as date_creation, oat.tms as date_modification";
 if (isModEnabled('multicompany')) {
 	$sql .= ", e.label";
 }
@@ -152,7 +152,7 @@ if (empty($reshook)) {
 		$nbtotalofrecords = '';
 		$sqlforcount = 'SELECT COUNT(*) as nbtotalofrecords';
 		$sqlforcount .= " FROM ".MAIN_DB_PREFIX."oauth_token as oat";
-		$sqlforcount .= " WHERE token = '".$db->escape(dolEncrypt($tokenstring, '', '', 'dolibarr'))."'";
+		$sqlforcount .= " WHERE tokenstring = '".$db->escape(dolEncrypt($tokenstring, '', '', 'dolibarr'))."'";
 		$sqlforcount .= " AND service = 'dolibarr_rest_api'";
 		$resql = $db->query($sqlforcount);
 		if ($resql) {
@@ -173,7 +173,7 @@ if (empty($reshook)) {
 		$db->begin();
 
 		if (!$error) {
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, token, state, fk_user, entity, datec)";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, tokenstring, state, fk_user, entity, datec)";
 			$sql .= " VALUES ('dolibarr_rest_api', '".$db->escape(dolEncrypt($tokenstring, '', '', 'dolibarr'))."', 0, ".((int) $useridtoadd).", ".((int) $entity).", '".$db->idate(dol_now())."')";
 			$resql = $db->query($sql);
 			if (!$resql) {
@@ -288,7 +288,7 @@ if ($action == 'create') {
 	$linkback  = '<a href="'.DOL_URL_ROOT.'/user/api_token/list.php?id='.$id.'">'.$langs->trans("BackToTokenList").'</a>';
 	$linkback .= '<a href="'.DOL_URL_ROOT.'/user/list.php">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" tabindex="-1" rel="noopener">';
 	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
 	$morehtmlref .= '</a>';
 

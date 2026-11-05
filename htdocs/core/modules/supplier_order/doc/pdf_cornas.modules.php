@@ -924,7 +924,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		$posxval = 52;
 
 		// Show payments conditions
-		if (!empty($object->cond_reglement_code) || $object->cond_reglement) {
+		if (!empty($object->cond_reglement_code)) {
 			$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$titre = $outputlangs->transnoentities("PaymentConditions").':';
@@ -1002,7 +1002,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 
 		$total_ht = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ht : $object->total_ht);
 		$pdf->SetXY($col2x, $tab2_top);
-		$pdf->MultiCell($largcol2, $tab2_hl, price($total_ht + (!empty($object->remise) ? $object->remise : 0)), 0, 'R', true);
+		$pdf->MultiCell($largcol2, $tab2_hl, price($total_ht), 0, 'R', true);
 
 		// Show VAT by rates and total
 		$pdf->SetFillColor(248, 248, 248);

@@ -6,6 +6,7 @@
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2025		Noé Cendrier			<noe.cendrier@altairis.fr>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -335,6 +336,8 @@ class Products extends DolibarrApi
 	/**
 	 * Create a product
 	 *
+	 * If no VAT rate (tva_tx) is provided, the default VAT rate of the company is used.
+	 *
 	 * @since	4.0.0	Initial implementation
 	 *
 	 * @param  array $request_data Request data
@@ -360,6 +363,16 @@ class Products extends DolibarrApi
 			}
 
 			$this->product->$field = $this->_checkValForAPI($field, $value, $this->product);
+		}
+		// No VAT rate provided: use the default one, as preselected on the product creation page
+		if (!isset($request_data['tva_tx']) || $request_data['tva_tx'] === '') {
+			global $mysoc;
+			$defaultvat = (string) get_default_tva($mysoc, $mysoc);
+			if (preg_match('/\((.*)\)/', $defaultvat, $reg) && empty($this->product->default_vat_code)) {
+				$this->product->default_vat_code = $reg[1];
+			}
+			$defaultvat = (float) price2num(preg_replace('/\s*\(.*\)/', '', $defaultvat));
+			$this->product->tva_tx = ($defaultvat > 0 ? $defaultvat : 0);
 		}
 		if ($this->product->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating product", array_merge(array($this->product->error), $this->product->errors));
@@ -898,8 +911,8 @@ class Products extends DolibarrApi
 		}
 
 		return array(
-			'prices_by_qty' => $this->product->prices_by_qty[0], // 1 if price by quantity was activated for the product
-			'prices_by_qty_list' => $this->product->prices_by_qty_list[0]
+			'prices_by_qty' => $this->product->prices_by_qty[0] ?? null, // 1 if price by quantity was activated for the product
+			'prices_by_qty_list' => $this->product->prices_by_qty_list[0] ?? null
 		);
 	}
 
@@ -2144,6 +2157,7 @@ class Products extends DolibarrApi
 	 *
 	 * @throws RestException 500	System error
 	 * @throws RestException 401
+	 * @throws RestException 404
 	 *
 	 * @url PUT variants/{id}
 	 */
@@ -2154,7 +2168,9 @@ class Products extends DolibarrApi
 		}
 
 		$prodcomb = new ProductCombination($this->db);
-		$prodcomb->fetch((int) $id);
+		if ($prodcomb->fetch((int) $id) <= 0) {
+			throw new RestException(404, "Variant not found");
+		}
 
 		foreach ($request_data as $field => $value) {
 			if ($field == 'rowid') {
@@ -2186,6 +2202,7 @@ class Products extends DolibarrApi
 	 *
 	 * @throws RestException 500	System error
 	 * @throws RestException 401
+	 * @throws RestException 404
 	 *
 	 * @url DELETE variants/{id}
 	 */
@@ -2196,7 +2213,9 @@ class Products extends DolibarrApi
 		}
 
 		$prodcomb = new ProductCombination($this->db);
-		$prodcomb->id = (int) $id;
+		if ($prodcomb->fetch((int) $id) <= 0) {
+			throw new RestException(404, "Variant not found");
+		}
 		$result = $prodcomb->delete(DolibarrApiAccess::$user);
 		if ($result <= 0) {
 			throw new RestException(500, "Error deleting variant");

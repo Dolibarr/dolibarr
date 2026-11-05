@@ -315,6 +315,7 @@ if (empty($errormsg) && preg_match('/\.(jpg|jpeg|png|gif|ico|svg|eot|woff|woff2|
 if (!empty($errormsg)) {
 	print '<div class="warning">'.$errormsg.'</div>';
 	llxFooterFragment();
+	exit;
 }
 
 // Build the URL of the original file for the running version.
@@ -334,6 +335,7 @@ if (!empty($res['curl_error_no']) || (isset($res['http_code']) && !in_array((int
 	print '<div class="warning">'.$langs->trans("CouldNotFetchOriginalFile").': '.dol_escape_htmltag($originurl);
 	print ' ('.dol_escape_htmltag((string) (empty($res['http_code']) ? $res['curl_error_msg'] : $res['http_code'])).')</div>';
 	llxFooterFragment();
+	exit;
 }
 
 $origincontent = (string) $res['content'];
@@ -351,6 +353,7 @@ if (!$verified) {
 if ($origincontent === $localcontent) {
 	print '<div class="opacitymedium">'.$langs->trans("NoDifferenceFound").'</div>';
 	llxFooterFragment();
+	exit;
 }
 
 $diff = filecheckLineDiff(explode("\n", $origincontent), explode("\n", $localcontent));
@@ -388,7 +391,7 @@ llxFooterFragment();
 /**
  * Close the fragment output and stop the script.
  *
- * @return never
+ * @return void
  */
 function llxFooterFragment()
 {
@@ -396,5 +399,4 @@ function llxFooterFragment()
 	if (is_object($db)) {
 		$db->close();
 	}
-	exit;
 }

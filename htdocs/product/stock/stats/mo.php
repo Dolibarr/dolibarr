@@ -118,7 +118,7 @@ if ($id > 0 || !empty($ref)) {
 
 	$helpurl = '';
 	$shortlabel = dol_trunc($object->batch, 16);
-	$title = $langs->trans('Batch')." ".$shortlabel." - ".$langs->trans('Referers');
+	$title = $langs->trans('Batch')." ".$shortlabel." - ".$langs->trans('ReferringItems');
 	$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 
 	llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-stock-stats_mo');

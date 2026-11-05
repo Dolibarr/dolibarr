@@ -30,12 +30,11 @@
 global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
 require_once dirname(__FILE__).'/../../htdocs/contact/class/contact.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (! defined('NOREQUIREUSER')) {
 	define('NOREQUIREUSER', '1');
@@ -318,6 +317,69 @@ class FunctionsLibTest extends CommonClassTest
 	}
 
 	/**
+	 * The request headers are rebuilt from $_SERVER when the SAPI does not provide getallheaders().
+	 *
+	 * @return	void
+	 */
+	public function testDolGetRequestHeaders()
+	{
+		$savserver = $_SERVER;
+
+		$_SERVER['HTTP_AUTHORIZATION'] = 'Bearer abc123';
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$_SERVER['CONTENT_TYPE'] = 'application/json';
+		$_SERVER['REQUEST_METHOD'] = 'POST';		// not a header, must not come out
+
+		$headers = dolGetRequestHeaders();
+
+		$_SERVER = $savserver;
+
+		$this->assertIsArray($headers, 'The request headers must always be an array');
+
+		// Under the CLI of the test runner getallheaders() does not exist, so the rebuilt array is
+		// what is checked. Under a SAPI that provides it, only the type above can be asserted.
+		if (!function_exists('getallheaders')) {
+			$this->assertSame('Bearer abc123', $headers['Authorization'], 'HTTP_AUTHORIZATION must come out as Authorization');
+			$this->assertSame('XMLHttpRequest', $headers['X-Requested-With'], 'The name must be capitalised word by word and keep its dashes');
+			$this->assertSame('application/json', $headers['Content-Type'], 'Content-Type is not prefixed with HTTP_ in $_SERVER and must be picked up anyway');
+			$this->assertArrayNotHasKey('Request-Method', $headers, 'What is not a header must not be returned as one');
+		}
+	}
+
+	/**
+	 * The url of the server is the configured one with DOL_URL_ROOT removed from its end.
+	 *
+	 * @return	void
+	 */
+	public function testDolGetUrlWithoutUrlRoot()
+	{
+		global $dolibarr_main_url_root;
+
+		$savurlroot = $dolibarr_main_url_root;
+
+		// What the 73 copies of the expression this replaces used to compute
+		$dolibarr_main_url_root = 'https://example.org'.DOL_URL_ROOT;
+		$this->assertSame(
+			preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root)),
+			dolGetUrlWithoutUrlRoot(),
+			'The helper must return exactly what the expression it replaces returned'
+		);
+		$this->assertSame('https://example.org', dolGetUrlWithoutUrlRoot(), 'DOL_URL_ROOT must be removed from the end');
+
+		// Surrounding spaces are trimmed, as the expression did
+		$dolibarr_main_url_root = '  https://example.org'.DOL_URL_ROOT.'  ';
+		$this->assertSame('https://example.org', dolGetUrlWithoutUrlRoot(), 'The configured url must be trimmed');
+
+		// Only the end is removed, never an occurrence in the middle of the host
+		if (DOL_URL_ROOT !== '') {
+			$dolibarr_main_url_root = 'https://example.org'.DOL_URL_ROOT.'/other';
+			$this->assertSame('https://example.org'.DOL_URL_ROOT.'/other', dolGetUrlWithoutUrlRoot(), 'Only a trailing DOL_URL_ROOT is removed');
+		}
+
+		$dolibarr_main_url_root = $savurlroot;
+	}
+
+	/**
 	 * testDolCheckFilters
 	 *
 	 * @return boolean
@@ -492,6 +554,42 @@ class FunctionsLibTest extends CommonClassTest
 		$filter = "(t.fk_soc:IN:'1','2=b')";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr, 0, 0, 0, array('fk_soc'));
 		$this->assertEquals(" AND (1=1)", $sql);
+
+		// Test that a forbidden field with 2 levels of prefix (dbprefix.table.field) is also forbidden (protection against CVE-2026-89012 bypass)
+		$filter = "(dolibarr.u.pass_crypted:like:'ZZZZ%')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		$filter = "(DOLIBARR.U.API_KEY:like:'ZZZZ%')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		$filter = "(mydb.t.pass_temp:like:'ZZZZ%')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		$filter = "(u.pass_temp:like:'ZZZZ%')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		// Test that any other field with 2 levels of prefix is neutralized too (no db prefix existence oracle, no SQL error)
+		$filter = "(dolibarr.t.ref:like:'SO-%')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		// Test that a field forbidden by the caller is also forbidden with 2 levels of prefix
+		$filter = "(dolibarr.u.salary:like:'1%')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr, 0, 0, 0, array('salary'));
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		// Test that valid filters with a single level of prefix still work
+		$filter = "(u.api_key:like:'ZZZZ%')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr, 0, 0, 0, array('ref'));
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		$filter = "(t.ref:like:'SO-%')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr, 0, 0, 0, array('salary'));
+		$this->assertEquals(" AND ((t.ref LIKE 'SO-%'))", $sql);
 
 
 		global $dolibarr_allow_unsecured_select_in_extrafields_filter;
@@ -1457,6 +1555,11 @@ class FunctionsLibTest extends CommonClassTest
 		$result = dol_escape_js($input, 2);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("x&<b>#</b>,\\\"'", $result, "Test mode=2");
+
+		$input = "a</script><script>alert(1)</SCRIPT >";
+		$result = dol_escape_js($input);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals("a<\\/script><script>alert(1)<\\/SCRIPT >", $result, "Test closing script tag");
 	}
 
 

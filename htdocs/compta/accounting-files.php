@@ -780,7 +780,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 	print $langs->trans("Download");
 	print '</a><br>';
 
-	$param .= '&action=searchfiles';
+	$param .= '&action=searchfiles&token='.newToken();
 
 	/*
 	print '<input type="hidden" name="token" value="'.currentToken().'">';

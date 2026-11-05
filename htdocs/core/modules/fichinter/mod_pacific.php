@@ -56,6 +56,11 @@ class mod_pacific extends ModeleNumRefFicheinter
 	public $nom = 'pacific';
 
 	/**
+	 * @var int		Position
+	 */
+	public $position = 50;
+
+	/**
 	 * @var string model name
 	 */
 	public $name = 'pacific';

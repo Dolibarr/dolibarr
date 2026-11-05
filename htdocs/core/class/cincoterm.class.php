@@ -77,7 +77,8 @@ class Cincoterm extends CommonDict
 		$sql .= " i.rowid,";
 		$sql .= " i.code,";
 		$sql .= " i.label,";
-		$sql .= " i.libelle as description";
+		$sql .= " i.libelle as description,";
+		$sql .= " i.active";
 		$sql .= " FROM ".$this->db->prefix()."c_incoterms as i";
 		if ($id) {
 			$sql .= " WHERE i.rowid = ".((int) $id);

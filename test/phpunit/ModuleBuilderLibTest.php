@@ -23,9 +23,11 @@
  */
 
 global $conf,$user,$langs,$db,$mysoc;
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/modulebuilder.lib.php';
+if (!defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/modulebuilder.lib.php';
 
 /**
  * Class for PHPUnit tests
@@ -96,7 +98,7 @@ class ModuleBuilderLibTest extends CommonClassTest
 				$this->assertArrayHasKey($index, $meta, 'Missing index '.$index.' for card action '.$actionkey);
 			}
 			// The marker is injected into a regular expression built in modulebuilder/index.php
-			$this->assertMatchesRegularExpression('/^[A-Z]+$/', $meta['marker'], 'Invalid marker for card action '.$actionkey);
+			$this->assertSame(1, preg_match('/^[A-Z]+$/', $meta['marker']), 'Invalid marker for card action '.$actionkey);	// Not assertMatchesRegularExpression(), only available since PHPUnit 9.1
 			$this->assertContains($meta['mode'], array('remove', 'activate'), 'Invalid mode for card action '.$actionkey);
 			$markers[] = $meta['marker'];
 		}

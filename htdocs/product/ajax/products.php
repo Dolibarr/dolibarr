@@ -91,12 +91,27 @@ if ($action == 'fetch' && !empty($id)) {
 	// action='fetch' is used to get product information on a product. So when action='fetch', id must be the product id.
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+	if (isModEnabled('variants')) {
+		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
+	}
 
 	top_httphead('application/json');
 
 	$outjson = array();
 
 	$object = new Product($db);
+	if (isModEnabled('variants')) {
+		$combinations = GETPOST('combinations', 'array:alphanohtml');
+		if (!empty($combinations)) {
+			$prodcomb = new ProductCombination($db);
+			$combination = $prodcomb->fetchByProductCombination2ValuePairs($id, $combinations);
+			if ($combination) {
+				// Fetch the concrete variant product so returned prices include the configured price impact.
+				$id = (int) $combination->fk_product_child;
+			}
+		}
+	}
+
 	$ret = $object->fetch($id);
 	if ($ret > 0) {
 		$outref = $object->ref;

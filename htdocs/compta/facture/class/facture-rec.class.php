@@ -1048,7 +1048,7 @@ class FactureRec extends CommonInvoice
 		// VERY IMPORTANT: It's at the time of line insertion that we must store the net, VAT, and gross amounts,
 		// and this is done at the line level, which has its own VAT rate
 
-		$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
+		$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise, $this->multicurrency_code);
 		$total_ht  = $tabprice[0];
 		$total_tva = $tabprice[1];
 		$total_ttc = $tabprice[2];
@@ -1283,7 +1283,7 @@ class FactureRec extends CommonInvoice
 			$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 		}
 
-		$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
+		$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise, $this->multicurrency_code);
 
 		$total_ht  = $tabprice[0];
 		$total_tva = $tabprice[1];
@@ -2533,6 +2533,25 @@ class FactureRec extends CommonInvoice
 			dol_print_error($this->db);
 			return -1;
 		}
+	}
+
+	/**
+	 * Check if user has a permission on template customer invoices
+	 *
+	 * @param User   $user User to check rights
+	 * @param string $mode Permission to check: 'read', 'write' or 'delete'
+	 * @return bool True if user has the permission, false otherwise
+	 */
+	public function hasUserPermission(User $user, $mode = 'write')
+	{
+		if ($mode == 'create') {
+			$mode = 'write';
+		}
+		if (!in_array($mode, array('read', 'write', 'delete'))) {
+			return false;
+		}
+
+		return (bool) $user->hasRight("facture", $mode);
 	}
 }
 

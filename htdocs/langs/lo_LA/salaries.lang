@@ -27,6 +27,7 @@ Earnings=ລາຍຮັບ
 TotalEarnings=ລາຍຮັບທັງໝົດ
 TotalDeductions=ລາຍການຫັກທັງໝົດ
 NetPaid=ເງິນຮັບສຸດທິ
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=ຜັງບັນຊີທີ່ໃຊ້ເປັນຄ່າເລີ່ມຕົ້ນສຳລັບ "ຜູ້ໃຊ້" ໃນການຈ່າຍເງິນເດືອນ
@@ -55,8 +56,6 @@ FillFieldFirst=ກະລຸນາປ້ອນຂໍ້ມູນພະນັກ�
 UpdateAmountWithLastSalary=ຕັ້ງຄ່າຈຳນວນເງິນຕາມເງິນເດືອນຫຼ້າສຸດ
 MakeTransferRequest=ສ້າງຄຳຮ້ອງຂໍໂອນເງິນ
 VirementOrder=ຄຳສັ່ງໂອນເງິນ
-WithdrawalReceipt=ໃບຢັ້ງຢືນການໂອນເງິນ
-OrderWaiting=ລາຍການທີ່ກຳລັງລໍຖ້າ
 FillEndOfMonth=ທ້າຍເດືອນ
 
 # Shortcuts

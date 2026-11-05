@@ -121,7 +121,7 @@ $familyinfo = array(
 );
 
 $param = '';
-if (!GETPOST('buttonreset', 'alpha')) {
+if (!GETPOST('buttonreset', 'alpha') && !GETPOST('button_removefilter', 'alpha')) {
 	if ($search_keyword) {
 		$param .= '&search_keyword='.urlencode($search_keyword);
 	}
@@ -173,6 +173,9 @@ if ($mode == 'marketplace') {
 	// Make remote calls
 	if (GETPOSTINT('dol_resetcache')) {
 		dol_delete_file($remotestore->cache_file);
+		foreach ($remotestore->custom_sources as $customsource) {
+			dol_delete_file($customsource['cache_file']);
+		}
 	}
 	$remotestore->loadRemoteSources(false);
 }
@@ -204,7 +207,7 @@ if (GETPOSTISSET('mode')) {
 	$mode = getDolGlobalString('MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT', 'commonkanban');
 }
 
-if (GETPOST('buttonreset', 'alpha')) {
+if (GETPOST('buttonreset', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	$search_keyword = '';
 	$search_status = '';
 	$search_nature = '';
@@ -852,7 +855,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$moreforfilter .= '<input type="submit" name="buttonsubmit" class="button small nomarginleft" value="'.dolPrintHTMLForAttribute($langs->trans("Refresh")).'">';
 	if ($search_keyword || ($search_nature && $search_nature != '-1') || ($search_version && $search_version != '-1') || ($search_status && $search_status != '-1')) {
 		$moreforfilter .= ' ';
-		$moreforfilter .= '<input type="submit" name="buttonreset" class="buttonreset noborderall nomargintop nomarginbottom" value="'.dolPrintHTMLForAttribute($langs->trans("Reset")).'">';
+		$moreforfilter .= '<input type="submit" name="button_removefilter" class="buttonreset noborderall nomargintop nomarginbottom" value="'.dolPrintHTMLForAttribute($langs->trans("Reset")).'">';
 	}
 	$moreforfilter .= '</div>';
 	$moreforfilter .= '</div>';
@@ -1442,6 +1445,38 @@ if ($mode == 'marketplace') {
 	}
 	print '</td>';
 	print '</tr>';
+
+
+	// Sources additional github repositories (defined by MAIN_ADD_EXTERNAL_MODULES_SOURCE)
+	foreach ($remotestore->custom_sources as $customsource) {
+		$url = $customsource['url'];
+
+		print '<tr class="oddeven nohover" height="100">'."\n";
+		print '<td class="hideonsmartphone center width150 nopaddingleftimp nopaddingrightimp"><a href="'.dol_escape_htmltag($url).'" target="_blank" rel="noopener noreferrer external">'.img_picto('', 'fa-code-branch', 'class="size2x"').'</a></td>';
+		print '<td class="minwidth500imp smallonsmartphone"><span class="opacitymedium">'.$langs->trans("AdditionalModulesSourceDesc").'</span><br>';
+		print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.dol_escape_htmltag($url).'" target="_blank" rel="noopener noreferrer external">'.dol_escape_htmltag($url).'</a>';
+		if ($customsource['branch']) {
+			print '<!-- &nbsp; '.img_picto($langs->trans("Branch"), 'fa-code-branch', 'class="pictofixedwidth"').dol_escape_htmltag($customsource['branch']).' -->';
+		}
+		print '</td>';
+		print '<td>';
+		print ajax_constantonoff($customsource['const_enable'], array(), null, 0, 0, 1);
+		print '</td>';
+		print '<td class="center">';
+		if (getDolGlobalInt($customsource['const_enable'])) {
+			$messagetoadd = '';
+			if ($customsource['file_source_url']) {
+				$messagetoadd = '<br><br><span class="small">Content of the repository index file '.dol_escape_htmltag($customsource['file_source_url']).' should be in the local cache file '.$customsource['cache_file'];
+				$messagetoadd .= ' (Date: '.dol_print_date(dol_filemtime($customsource['cache_file']), 'dayhour', 'tzuserrel').')</span>';
+			}
+			if ($customsource['error']) {
+				$messagetoadd .= '<br><span class="error small">'.dol_escape_htmltag($customsource['error']).'</span>';
+			}
+			print $remotestore->libStatus($customsource['status'], 2, $messagetoadd);
+		}
+		print '</td>';
+		print '</tr>';
+	}
 
 
 	// Source Marketplace DoliStore

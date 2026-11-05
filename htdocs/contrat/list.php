@@ -70,6 +70,7 @@ $mode = GETPOST('mode', 'alpha');
 $socid = GETPOSTINT('socid');
 
 $search_name = GETPOST('search_name', 'alpha');
+$search_alias = GETPOST('search_alias', 'alpha');
 $search_phone = GETPOST('search_phone', 'alpha');
 $search_phone_mobile = GETPOST('search_phone_mobile', 'alpha');
 $search_email = GETPOST('search_email', 'alpha');
@@ -78,6 +79,7 @@ $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state", 'alpha');
 $search_country = GETPOST("search_country", 'aZ09');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'intcomma');
+$search_id = GETPOST('search_id', 'alpha');
 $search_contract = GETPOST('search_contract', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
 $search_ref_supplier = GETPOST('search_ref_supplier', 'alpha');
@@ -193,11 +195,13 @@ if ($reshook > 0) {
 }
 
 $arrayfields = array(
+	'c.rowid' => array('label' => $langs->trans("TechnicalID"), 'checked' => (getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? '1' : '-1'), 'enabled' => '1', 'position' => 1),
 	'c.ref' => array('label' => $langs->trans("Ref"), 'checked' => '1', 'position' => 10),
 	'c.ref_customer' => array('label' => $langs->trans("RefCustomer"), 'checked' => '1', 'position' => 12),
 	'c.ref_supplier' => array('label' => $langs->trans("RefSupplier"), 'checked' => '1', 'position' => 14),
 	'c.fk_contract_type' => array('label' => $langs->trans("ContractType"), 'checked' => '1', 'position' => 16),
 	's.nom' => array('label' => $langs->trans("ThirdParty"), 'checked' => '1', 'position' => 30),
+	's.name_alias' => array('label' => $langs->trans("AliasNameShort"), 'checked' => '0', 'position' => 30),
 	's.town' => array('label' => $langs->trans("Town"), 'checked' => '0', 'position' => 31),
 	's.zip' => array('label' => $langs->trans("Zip"), 'checked' => '1', 'position' => 32),
 	'state.nom' => array('label' => $langs->trans("StateShort"), 'checked' => '0', 'position' => 33),
@@ -261,6 +265,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_dfyear = '';
 	$search_op2df = '';
 	$search_name = "";
+	$search_alias = "";
 	$search_town = '';
 	$search_zip = "";
 	$search_state = "";
@@ -269,6 +274,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_phone_mobile = "";
 	$search_email = "";
 	$search_type_thirdparty = '';
+	$search_id = '';
 	$search_contract = "";
 	$search_ref_customer = "";
 	$search_ref_supplier = "";
@@ -393,6 +399,9 @@ if ($search_date_end) {
 if ($search_name) {
 	$sql .= natural_search('s.nom', $search_name);
 }
+if ($search_alias) {
+	$sql .= natural_search('s.name_alias', $search_alias);
+}
 if ($search_email) {
 	$sql .= natural_search('s.email', $search_email);
 }
@@ -401,6 +410,9 @@ if ($search_phone) {
 }
 if ($search_phone_mobile) {
 	$sql .= dol_natural_search_phone($db, array('s.phone', 's.phone_mobile'), $search_phone_mobile);
+}
+if ($search_id != '') {
+	$sql .= natural_search('c.rowid', $search_id, 1);
 }
 if ($search_contract) {
 	$sql .= natural_search(array('c.rowid', 'c.ref'), $search_contract);
@@ -675,14 +687,23 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
+if ($socid > 0) {
+	$param .= '&socid='.((int) $socid);
+}
 if ($search_all != '') {
 	$param .= '&search_all='.urlencode($search_all);
+}
+if ($search_id != '') {
+	$param .= '&search_id='.urlencode($search_id);
 }
 if ($search_contract != '') {
 	$param .= '&search_contract='.urlencode($search_contract);
 }
 if ($search_name != '') {
 	$param .= '&search_name='.urlencode($search_name);
+}
+if ($search_alias != '') {
+	$param .= '&search_alias='.urlencode($search_alias);
 }
 if ($search_phone != '') {
 	$param .= '&search_phone='.urlencode($search_phone);
@@ -821,6 +842,10 @@ foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+// Add $param from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
 
 // List of mass actions available
 $arrayofmassactions = array(
@@ -952,6 +977,11 @@ if ($conf->main_checkbox_left_column) {
 	print $searchpicto;
 	print '</td>';
 }
+if (!empty($arrayfields['c.rowid']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat maxwidth50" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
+	print '</td>';
+}
 if (!empty($arrayfields['c.ref']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" size="3" name="search_contract" value="'.dol_escape_htmltag($search_contract).'">';
@@ -975,6 +1005,12 @@ if (!empty($arrayfields['c.fk_contract_type']['checked'])) {
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" size="8" name="search_name" value="'.dol_escape_htmltag($search_name).'"'.($user->socid > 0 ? " disabled" : "").'>';
+	print '</td>';
+}
+// Alias name
+if (!empty($arrayfields['s.name_alias']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat maxwidth75" name="search_alias" value="'.dolPrintHTMLForAttribute($search_alias).'">';
 	print '</td>';
 }
 // Town
@@ -1117,6 +1153,10 @@ if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	$totalarray['nbfield']++;	// For the column action
 }
+if (!empty($arrayfields['c.rowid']['checked'])) {
+	print_liste_field_titre($arrayfields['c.rowid']['label'], $_SERVER["PHP_SELF"], 'c.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['c.ref']['checked'])) {
 	// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['c.ref']['label'], $_SERVER["PHP_SELF"], "c.ref", "", $param, '', $sortfield, $sortorder);
@@ -1137,6 +1177,10 @@ if (!empty($arrayfields['c.fk_contract_type']['checked'])) {
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;	// For the column action
+}
+if (!empty($arrayfields['s.name_alias']['checked'])) {
+	print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"], "s.name_alias", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.town']['checked'])) {
 	print_liste_field_titre($arrayfields['s.town']['label'], $_SERVER["PHP_SELF"], 's.town', '', $param, '', $sortfield, $sortorder);
@@ -1303,6 +1347,13 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Technical ID
+		if (!empty($arrayfields['c.rowid']['checked'])) {
+			print '<td class="center" data-key="id">'.((int) $obj->rowid).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		// Ref
 		if (!empty($arrayfields['c.ref']['checked'])) {
 			print '<td class="nowraponall">';
@@ -1351,6 +1402,12 @@ while ($i < $imaxinloop) {
 				// TODO Use a cache for this string
 				print $socstatic->getNomUrl(1, '');
 			}
+			print '</td>';
+		}
+		// Alias name
+		if (!empty($arrayfields['s.name_alias']['checked'])) {
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->name_alias).'">';
+			print '<span class="spantitle">'.dolPrintHTML($obj->name_alias).'</span>';
 			print '</td>';
 		}
 		// Town

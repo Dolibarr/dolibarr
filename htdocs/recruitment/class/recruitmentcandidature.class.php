@@ -342,15 +342,6 @@ class RecruitmentCandidature extends CommonObject
 			}
 		}
 
-		if (!$error) {
-			// copy external contacts if same company
-			if (property_exists($this, 'socid') && $this->socid == $object->socid) {
-				if ($this->copy_linked_contact($object, 'external') < 0) {
-					$error++;
-				}
-			}
-		}
-
 		unset($object->context['createfromclone']);
 
 		// End
@@ -728,9 +719,6 @@ class RecruitmentCandidature extends CommonObject
 	{
 		$lastname = $this->lastname;
 		$firstname = $this->firstname;
-		if (empty($lastname)) {
-			$lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (isset($this->nom) ? $this->nom : (isset($this->societe) ? $this->societe : (isset($this->company) ? $this->company : '')))));
-		}
 
 		$ret = '';
 

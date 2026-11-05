@@ -87,8 +87,6 @@ $hookmanager->initHooks(array('shippingagenda', 'globalcard'));
 $id = GETPOSTINT("id");
 $socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;
-$result = restrictedArea($user, 'expedition', $id, 'expedition&shipping');
-
 if (!$user->hasRight('expedition', 'lire')) {
 	accessforbidden();
 }
@@ -105,6 +103,10 @@ if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();
 	// $object->info($object->id);
 }
+if ($object->id > 0) {
+	$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+}
+$result = restrictedArea($user, 'expedition', $id, 'expedition&shipping');
 
 $parameters = array('id' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks

@@ -1205,7 +1205,7 @@ if ($id > 0) {
 			if (empty($user->socid)) {
 				$canSendMail = true;
 
-				print dolGetButtonAction($langs->trans('SendMail'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init'], true).'#formmailbeforetitle', '', $canSendMail);
+				print dolGetButtonAction('', $langs->trans('SendMail'), 'email', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init'], true).'#formmailbeforetitle', '', $canSendMail);
 			}
 		}
 

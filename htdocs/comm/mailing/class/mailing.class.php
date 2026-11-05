@@ -256,7 +256,7 @@ class Mailing extends CommonObject
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing";
-		$sql .= " (messtype, date_creat, fk_user_creat, entity)";
+		$sql .= " (messtype, date_creation, fk_user_creat, entity)";
 		$sql .= " VALUES ('".$this->db->escape($this->messtype)."', '".$this->db->idate($now)."', ".((int) $user->id).", ".((int) $conf->entity).")";
 
 		if (!$this->title) {
@@ -385,7 +385,7 @@ class Mailing extends CommonObject
 		$sql .= ", m.statut as status, m.nbemail";
 		$sql .= ", m.fk_user_creat, m.fk_user_valid";
 		$sql .= ", m.tms as date_modification";
-		$sql .= ", m.date_creat";
+		$sql .= ", m.date_creation";
 		$sql .= ", m.date_valid";
 		$sql .= ", m.date_envoi";
 		$sql .= ", m.extraparams";
@@ -445,12 +445,12 @@ class Mailing extends CommonObject
 				$this->user_creation_id = $obj->fk_user_creat;
 				$this->user_validation_id = $obj->fk_user_valid;
 
-				$this->date_creation = $this->db->jdate($obj->date_creat);
+				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_validation = $this->db->jdate($obj->date_valid);
 				$this->date_envoi = $this->db->jdate($obj->date_envoi);
 				$this->date_modification = $this->db->jdate($obj->date_modification); // tms
 
-				$this->extraparams = (array) json_decode($obj->extraparams, true);
+				$this->extraparams = (array) json_decode((string) $obj->extraparams, true);
 
 				$this->tag = $obj->tag;
 				$this->name_from = $obj->name_from;

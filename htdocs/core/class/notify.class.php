@@ -974,6 +974,12 @@ class Notify
 							$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
 							complete_substitutions_array($substitutionarray, $outputlangs, $object);
 							// Note the substitution array should contains __REF__, __NEWREF__ ....
+							// On a first validation the object still carries its provisional ref while
+							// newref already holds the final one. Use the final ref for __REF__ so the
+							// notification never shows a (PROVxxx) reference to the recipient.
+							if (!empty($object->newref)) {
+								$substitutionarray['__REF__'] = $object->newref;
+							}
 							$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
 							$message = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
 						} else {
@@ -1306,6 +1312,12 @@ class Notify
 
 					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
+					// On a first validation the object still carries its provisional ref while newref
+					// already holds the final one. Use the final ref for __REF__ so the notification
+					// never shows a (PROVxxx) reference to the recipient.
+					if (!empty($object->newref)) {
+						$substitutionarray['__REF__'] = $object->newref;
+					}
 					$subject = make_substitutions($emailTemplate->topic, $substitutionarray, $outputlangs);
 					$message = make_substitutions($emailTemplate->content, $substitutionarray, $outputlangs);
 				} else {

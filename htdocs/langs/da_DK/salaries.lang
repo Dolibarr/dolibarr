@@ -27,6 +27,7 @@ Earnings=Indtjening
 TotalEarnings=Samlet indtjening
 TotalDeductions=Samlede fradrag
 NetPaid=Netto udbetalt
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Konto (fra kontoplanen) bruges som standard til "brugere" på lønninger
@@ -55,8 +56,6 @@ FillFieldFirst=Udfyld medarbejderfeltet først
 UpdateAmountWithLastSalary=Sæt beløb for sidste løn
 MakeTransferRequest=Foretag overførselsanmodning
 VirementOrder=Kreditoverførselsanmodning
-WithdrawalReceipt=Kredit overførsels ordre
-OrderWaiting=Afventende ordre
 FillEndOfMonth=Slutningen af måneden
 
 # Shortcuts

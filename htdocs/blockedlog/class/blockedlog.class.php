@@ -1244,7 +1244,16 @@ class BlockedLog
 	{
 		$aaa = null;
 		try {
-			$aaa = (object) jsonOrUnserialize($data, false);
+			$aaa = json_decode($data);
+			if ($aaa === null) {
+				// Records signed before v19 hold serialized stdClass objects, and their signature was computed on the
+				// print_r() of the decoded data. jsonOrUnserialize() forbids every class, so those sub-objects would come
+				// back as __PHP_Incomplete_Class, print_r() would render them differently and the signature would not
+				// match any more. stdClass is allowed here, and only stdClass: it declares no method at all, so it
+				// carries no __wakeup() or __destruct() to abuse, and any other class is still refused.
+				$aaa = unserialize($data, array('allowed_classes' => array('stdClass')));
+			}
+			$aaa = (object) $aaa;
 		} catch (Exception $e) {
 			// print $e->getErrs);
 		}
@@ -1454,14 +1463,16 @@ class BlockedLog
 						if (!file_exists($lockfile)) {
 							//throw new Exception("The head file ".$lockfile." was not found or is not writable.");
 
-							$this->note = 'EndOfChainDeletionDetected [after '.dol_print_date($previousdatecreation, 'dayhourrfc', 'gmt').']';
+							if ($previousid > 0) {	// If $previousid is 0, the chain is empty: having no flag yet is the normal state of a new chain, not a deletion
+								$this->note = 'EndOfChainDeletionDetected [after '.dol_print_date($previousdatecreation, 'dayhourrfc', 'gmt').']';
 
-							// The string of line to sign
-							$concatenateddata = $this->buildKeyForSignature();	// All the information for the hash (meta data + data saved)
+								// The string of line to sign
+								$concatenateddata = $this->buildKeyForSignature();	// All the information for the hash (meta data + data saved)
 
-							// The new hash, including previous hash
-							$finalsignature = $this->buildFinalSignatureHash($previoushash.$concatenateddata);	// Build the hmac signature
-							$finalnote = $this->note;
+								// The new hash, including previous hash
+								$finalsignature = $this->buildFinalSignatureHash($previoushash.$concatenateddata);	// Build the hmac signature
+								$finalnote = $this->note;
+							}
 
 							$line = '';
 						} elseif (is_writable($lockfile)) {
@@ -1481,14 +1492,16 @@ class BlockedLog
 							} else {
 								//throw new Exception("The head file ".$lockfile." was not found or is not writable.");
 
-								$this->note = 'EndOfChainDeletionDetected [after '.dol_print_date($previousdatecreation, 'dayhourrfc', 'gmt').']';
+								if ($previousid > 0) {	// If $previousid is 0, the chain is empty: having no flag yet is the normal state of a new chain, not a deletion
+									$this->note = 'EndOfChainDeletionDetected [after '.dol_print_date($previousdatecreation, 'dayhourrfc', 'gmt').']';
 
-								// The string of line to sign
-								$concatenateddata = $this->buildKeyForSignature();	// All the information for the hash (meta data + data saved)
+									// The string of line to sign
+									$concatenateddata = $this->buildKeyForSignature();	// All the information for the hash (meta data + data saved)
 
-								// The new hash, including previous hash
-								$finalsignature = $this->buildFinalSignatureHash($previoushash.$concatenateddata);	// Build the hmac signature
-								$finalnote = $this->note;
+									// The new hash, including previous hash
+									$finalsignature = $this->buildFinalSignatureHash($previoushash.$concatenateddata);	// Build the hmac signature
+									$finalnote = $this->note;
+								}
 
 								$line = '';
 							}

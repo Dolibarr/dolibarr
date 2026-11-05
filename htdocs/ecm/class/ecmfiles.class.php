@@ -120,7 +120,7 @@ class EcmFiles extends CommonObject
 	/**
 	 * @var null|int|'' date create
 	 */
-	public $date_c = '';
+	public $date_creation = '';
 
 	/**
 	 * @var null|int|'' date modify
@@ -180,7 +180,7 @@ class EcmFiles extends CommonObject
 		'position' => array('type' => 'integer', 'label' => 'Position', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 140, 'index' => 1, 'comment' => "position of file among others"),
 		'gen_or_uploaded' => array('type' => 'varchar(12)', 'label' => 'GenOrUpload', 'enabled' => 1, 'position' => 150, 'notnull' => 0, 'visible' => -1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1,'comment' => "'generated' or 'uploaded'"),
 		'extraparams' => array('type' => 'varchar(255)', 'label' => 'ExtraParams', 'enabled' => 1, 'position' => 160, 'notnull' => 0, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1, 'comment' => "for stocking other parameters with json format"),
-		'date_c' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 170),
+		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 170),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 175),
 		'fk_user_c' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => 'user.rowid',),
 		'fk_user_m' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'position' => 511, 'notnull' => -1, 'visible' => -2,),
@@ -263,8 +263,8 @@ class EcmFiles extends CommonObject
 		if (isset($this->src_object_type)) {
 			$this->src_object_type = trim($this->src_object_type);
 		}
-		if (empty($this->date_c)) {
-			$this->date_c = dol_now();
+		if (empty($this->date_creation)) {
+			$this->date_creation = dol_now();
 		}
 		if (empty($this->date_m)) {
 			$this->date_m = dol_now();
@@ -330,7 +330,7 @@ class EcmFiles extends CommonObject
 		$sql .= 'position,';
 		$sql .= 'gen_or_uploaded,';
 		$sql .= 'extraparams,';
-		$sql .= 'date_c,';
+		$sql .= 'date_creation,';
 		$sql .= 'tms,';
 		$sql .= 'fk_user_c,';
 		$sql .= 'fk_user_m,';
@@ -355,7 +355,7 @@ class EcmFiles extends CommonObject
 		$sql .= ' '.((int) $maxposition).',';
 		$sql .= ' '.(!isset($this->gen_or_uploaded) ? 'NULL' : "'".$this->db->escape($this->gen_or_uploaded)."'").',';
 		$sql .= ' '.(!isset($extraparams) ? 'NULL' : "'".$this->db->escape($extraparams)."'").',';
-		$sql .= " '".$this->db->idate($this->date_c)."',";
+		$sql .= " '".$this->db->idate($this->date_creation)."',";
 		$sql .= ' '.(!isset($this->date_m) || dol_strlen((string) $this->date_m) == 0 ? 'NULL' : "'".$this->db->idate($this->date_m)."'").',';
 		$sql .= ' '.(!isset($this->fk_user_c) ? ((int) $user->id) : ((int) $this->fk_user_c)).',';
 		$sql .= ' '.(!isset($this->fk_user_m) ? 'NULL' : ((int) $this->fk_user_m)).',';
@@ -442,7 +442,7 @@ class EcmFiles extends CommonObject
 		$sql .= " t.position,";
 		$sql .= " t.gen_or_uploaded,";
 		$sql .= " t.extraparams,";
-		$sql .= " t.date_c,";
+		$sql .= " t.date_creation,";
 		$sql .= " t.tms as date_m,";
 		$sql .= " t.fk_user_c,";
 		$sql .= " t.fk_user_m,";
@@ -539,7 +539,7 @@ class EcmFiles extends CommonObject
 				$this->cover = $obj->cover;
 				$this->position = $obj->position;
 				$this->gen_or_uploaded = $obj->gen_or_uploaded;
-				$this->date_c = $this->db->jdate($obj->date_c);
+				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_m = $this->db->jdate($obj->date_m);
 				$this->fk_user_c = $obj->fk_user_c;
 				$this->fk_user_m = $obj->fk_user_m;
@@ -605,7 +605,7 @@ class EcmFiles extends CommonObject
 		$sql .= " t.position,";
 		$sql .= " t.gen_or_uploaded,";
 		$sql .= " t.extraparams,";
-		$sql .= " t.date_c,";
+		$sql .= " t.date_creation,";
 		$sql .= " t.tms as date_m,";
 		$sql .= " t.fk_user_c,";
 		$sql .= " t.fk_user_m,";
@@ -681,7 +681,7 @@ class EcmFiles extends CommonObject
 				$line->position = $obj->position;
 				$line->gen_or_uploaded = $obj->gen_or_uploaded;
 				$line->extraparams = $obj->extraparams;
-				$line->date_c = $this->db->jdate($obj->date_c);
+				$line->date_creation = $this->db->jdate($obj->date_creation);
 				$line->date_m = $this->db->jdate($obj->date_m);
 				$line->fk_user_c = $obj->fk_user_c;
 				$line->fk_user_m = $obj->fk_user_m;
@@ -789,7 +789,7 @@ class EcmFiles extends CommonObject
 		$sql .= ' position = '.(isset($this->position) ? $this->db->escape((string) $this->position) : "0").',';
 		$sql .= ' gen_or_uploaded = '.(isset($this->gen_or_uploaded) ? "'".$this->db->escape($this->gen_or_uploaded)."'" : "null").',';
 		$sql .= ' extraparams = '.(isset($extraparams) ? "'".$this->db->escape($extraparams)."'" : "null").',';
-		$sql .= ' date_c = '.(!isset($this->date_c) || dol_strlen($this->date_c) != 0 ? "'".$this->db->idate($this->date_c)."'" : 'null').',';
+		$sql .= ' date_creation = '.(!isset($this->date_creation) || dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null').',';
 		//$sql .= ' tms = '.(! isset($this->date_m) || dol_strlen((string) $this->date_m) != 0 ? "'".$this->db->idate($this->date_m)."'" : 'null').','; // Field automatically updated
 		$sql .= ' fk_user_m = '.($this->fk_user_m > 0 ? ((int) $this->fk_user_m) : ((int) $user->id)).',';
 		$sql .= ' acl = '.(isset($this->acl) ? "'".$this->db->escape($this->acl)."'" : "null").',';
@@ -1078,12 +1078,14 @@ class EcmFiles extends CommonObject
 		}
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
+		// The picto link is a duplicate of the filename link, so we exclude it from keyboard navigation
+		$linkstartpicto = preg_replace('/^<a /', '<a tabindex="-1" ', $linkstart);
 
 		if ($withpicto) {
 			if (empty($this->filename)) {
-				$result .= ($linkstart.img_object(($notooltip ? '' : $label), 'label', ($notooltip ? '' : 'class="paddingright"')).$linkend);
+				$result .= ($linkstartpicto.img_object(($notooltip ? '' : $label), 'label', ($notooltip ? '' : 'class="paddingright"')).$linkend);
 			} else {
-				$result .= ($linkstart.img_mime($this->filename, ($notooltip ? '' : dol_escape_htmltag($label, 1)), ($notooltip ? '' : ' paddingright')).$linkend);
+				$result .= ($linkstartpicto.img_mime($this->filename, ($notooltip ? '' : dol_escape_htmltag($label, 1)), ($notooltip ? '' : ' paddingright')).$linkend);
 			}
 		}
 		$result .= $linkstart.$this->filename.$linkend;
@@ -1152,7 +1154,7 @@ class EcmFiles extends CommonObject
 		$this->position = 5;
 		$this->gen_or_uploaded = 'uploaded';
 		$this->extraparams = '';
-		$this->date_c = (dol_now() - 3600 * 24 * 10);
+		$this->date_creation = (dol_now() - 3600 * 24 * 10);
 		$this->date_m = '';
 		$this->fk_user_c = $user->id;
 		$this->fk_user_m = $user->id;
@@ -1232,7 +1234,7 @@ class EcmFilesLine extends CommonObjectLine
 	/**
 	 * @var int|''
 	 */
-	public $date_c = '';
+	public $date_creation = '';
 	/**
 	 * @var int|''
 	 */

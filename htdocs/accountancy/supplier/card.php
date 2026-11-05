@@ -75,6 +75,7 @@ if ($action == 'ventil' && $user->hasRight('accounting', 'bind', 'write')) {
 		$sql = " UPDATE ".MAIN_DB_PREFIX."facture_fourn_det";
 		$sql .= " SET fk_code_ventilation = ".((int) $codeventil);
 		$sql .= " WHERE rowid = ".((int) $id);
+		$sql .= " AND fk_facture_fourn IN (SELECT rowid FROM ".MAIN_DB_PREFIX."facture_fourn WHERE entity IN (".getEntity('facture_fourn', 0)."))";	// Line must belong to an object of an allowed entity
 
 		$resql = $db->query($sql);
 		if (!$resql) {

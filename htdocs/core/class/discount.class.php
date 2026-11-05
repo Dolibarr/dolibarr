@@ -420,10 +420,11 @@ class DiscountAbsolute extends CommonObject
 	/**
 	 *  Delete object in database. If fk_facture_source is defined, we delete all family with same fk_facture_source. If not, only with id is removed
 	 *
-	 *  @param	User	$user		Object of user asking to delete
-	 *  @return	int<-2,1>			Return integer <0 if KO, >0 if OK
+	 *  @param	User	$user				Object of user asking to delete
+	 *  @param	bool	$noresetinvoice		true = skip the UPDATE that resets the source deposit/credit-note invoice status to unpaid
+	 *  @return	int<-2,1>	    			Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($user)
+	public function delete($user, $noresetinvoice = false)
 	{
 		// Check if we can remove the discount
 		if ($this->fk_facture_source) {
@@ -493,7 +494,7 @@ class DiscountAbsolute extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			// If source of discount was a credit note or deposit, we change source statut.
-			if ($this->fk_facture_source) {
+			if (!$noresetinvoice && $this->fk_facture_source) {
 				$sql = "UPDATE ".$this->db->prefix()."facture";
 				$sql .= " set paye=0, fk_statut=1";
 				$sql .= " WHERE type IN (".$this->db->sanitize(CommonInvoice::TYPE_CREDIT_NOTE.", ".CommonInvoice::TYPE_DEPOSIT).") AND rowid = ".((int) $this->fk_facture_source);
@@ -508,7 +509,7 @@ class DiscountAbsolute extends CommonObject
 					$this->db->rollback();
 					return -1;
 				}
-			} elseif ($this->fk_invoice_supplier_source) {
+			} elseif (!$noresetinvoice && $this->fk_invoice_supplier_source) {
 				$sql = "UPDATE ".$this->db->prefix()."facture_fourn";
 				$sql .= " set paye=0, fk_statut=1";
 				$sql .= " WHERE type IN (".$this->db->sanitize(CommonInvoice::TYPE_CREDIT_NOTE.", ".CommonInvoice::TYPE_DEPOSIT).") AND rowid = ".((int) $this->fk_invoice_supplier_source);

@@ -97,7 +97,7 @@ if ($resultproject < 0) {
 $securekeyreceived = GETPOST('securekey', 'alpha');
 $securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.((int) $id), 'md5');
 
-if ($securekeytocompare != $securekeyreceived) {
+if (!hash_equals($securekeytocompare, (string) $securekeyreceived)) {
 	print $langs->trans('MissingOrBadSecureKey');
 	exit;
 }
@@ -529,7 +529,7 @@ print '<br>';
 print '<span class="opacitymedium">'.$langs->trans("EvntOrgRegistrationWelcomeMessage").'</span>';
 print '<br>';
 // Title
-print '<span class="eventlabel large">'.dol_escape_htmltag($project->title . ' '. $project->label).'</span><br>';
+print '<span class="eventlabel large">'.dol_escape_htmltag($project->title).'</span><br>';
 print '</div>';
 
 // Help text

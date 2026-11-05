@@ -1050,7 +1050,7 @@ while ($i < $imaxinloop) {
 								print " ".img_warning($langs->trans("SubscriptionLate").$textlate);
 							}
 						} else {
-							if ($adherent->subscription == 'yes') {
+							if (!empty($adherent->need_subscription)) {
 								print $langs->trans("SubscriptionNotReceived");
 								if ($adherent->status > 0) {
 									print " ".img_warning();
@@ -1080,32 +1080,6 @@ while ($i < $imaxinloop) {
 					$totalarray['val']['t.'.$key] += $object->$key;
 				}
 			}
-		}
-
-		// End of subscription date
-		if ($managedfor == 'member') {
-			print '<td class="nowrap center endofsubscriptiondate">';
-			$result = $adherent->fetch($object->fk_member);
-			if ($result) {
-				$datefin = $adherent->datefin;
-				if ($datefin) {
-					print dol_print_date($datefin, 'day');
-					if ($adherent->hasDelay()) {
-						$textlate .= ' ('.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($conf->adherent->subscription->warning_delay / 60 / 60 / 24) >= 0 ? '+' : '').ceil($conf->adherent->subscription->warning_delay / 60 / 60 / 24).' '.$langs->trans("days").')';
-						print " ".img_warning($langs->trans("SubscriptionLate").$textlate);
-					}
-				} else {
-					if (!empty($adherent->need_subscription)) {
-						print $langs->trans("SubscriptionNotReceived");
-						if ($adherent->status > 0) {
-							print " ".img_warning();
-						}
-					} else {
-						print '&nbsp;';
-					}
-				}
-			}
-			print '</td>';
 		}
 
 		// Extra fields

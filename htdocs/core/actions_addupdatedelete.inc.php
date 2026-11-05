@@ -122,9 +122,19 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 		if (preg_match('/^text/', $object->fields[$key]['type'])) {
 			$tmparray = explode(':', $object->fields[$key]['type']);
 			if (!empty($tmparray[1])) {
-				$value = GETPOST($key, $tmparray[1]);
+				$check = $tmparray[1];
 			} else {
-				$value = GETPOST($key, 'nohtml');
+				$check = 'nohtml';
+			}
+			if (getDolGlobalString('MAIN_SECURITY_DISALLOW_UNSECURED_TEXT')) {
+				$security_check = 'alphanohtml';
+			} else {
+				$security_check = $check;
+			}
+			if (!empty($tmparray[1])) {
+				$value = GETPOST($key, $security_check);
+			} else {
+				$value = GETPOST($key, $security_check);
 				if (!empty($object->fields[$key]['arrayofkeyval']) && !empty($object->fields[$key]['multiinput'])) {
 					$tmparraymultiselect = GETPOST($key.'_multiselect', 'array');
 					foreach ($tmparraymultiselect as $tmpvalue) {
@@ -288,9 +298,19 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		if (preg_match('/^text/', $object->fields[$key]['type'])) {
 			$tmparray = explode(':', $object->fields[$key]['type']);
 			if (!empty($tmparray[1])) {
-				$value = GETPOST($key, $tmparray[1]);
+				$check = $tmparray[1];
 			} else {
-				$value = GETPOST($key, 'nohtml');
+				$check = 'nohtml';
+			}
+			if (getDolGlobalString('MAIN_SECURITY_DISALLOW_UNSECURED_TEXT')) {
+				$security_check = 'alphanohtml';
+			} else {
+				$security_check = $check;
+			}
+			if (!empty($tmparray[1])) {
+				$value = GETPOST($key, $security_check);
+			} else {
+				$value = GETPOST($key, $security_check);
 				if (!empty($object->fields[$key]['arrayofkeyval']) && !empty($object->fields[$key]['multiinput'])) {
 					$tmparraymultiselect = GETPOST($key.'_multiselect', 'array');
 					foreach ($tmparraymultiselect as $keytmp => $tmpvalue) {
@@ -320,6 +340,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		} elseif ($object->fields[$key]['type'] == 'boolean') {
 			$value = ((GETPOST($key, 'aZ09') == 'on' || GETPOST($key, 'aZ09') == '1') ? 1 : 0);
 		} elseif ($object->fields[$key]['type'] == 'reference') {
+			// @phan-suppress-next-line PhanUndeclaredProperty
 			$value = array_keys($object->param_list)[(int) GETPOST($key)].','.GETPOST($key.'2');
 		} elseif (preg_match('/^chkbxlst:/', $object->fields[$key]['type']) || $object->fields[$key]['type'] == 'checkbox') {
 			$value = '';

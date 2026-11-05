@@ -269,7 +269,7 @@ $sql .= $db->plimit($max, 0);
 
 $resql = $db->query($sql);
 if ($resql) {
-	startSimpleTable($langs->trans("LatestModifiedProjects", $max), "projet/list.php", "sortfield=p.tms&sortorder=DESC", 3, -1, 'project');
+	startSimpleTable($langs->trans("LatestModifiedProjects", $max), "projet/list.php", "sortfield=p.tms&sortorder=DESC", 2, -1, 'project');
 
 	$num = $db->num_rows($resql);
 
@@ -279,7 +279,7 @@ if ($resql) {
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
-			print '<td class="nowrap">';
+			print '<td class="minwidth100onall">';
 
 			$projectstatic->id = $obj->rowid;
 			$projectstatic->ref = $obj->ref;
@@ -321,13 +321,11 @@ if ($resql) {
 			print $formfile->getDocumentsLink($projectstatic->element, $filename, $filedir);
 			print '</td></tr></table>';
 
-			print '</td>';
-
 			// Label
-			print '<td class="" title="'.dolPrintHTMLForAttribute($obj->title).'">';
-			print '<div class="twolinesmax-normallineheight minwidth100onall">';
-			print dolPrintHTML($projectstatic->title);
+			print '<div class="twolinesmax-normallineheight minwidth100onall" title="'.dolPrintHTMLForAttribute($obj->title).'">';
+			print '<span class="spantitle">'.dolPrintHTML($projectstatic->title).'</span>';
 			print '</div>';
+
 			print '</td>';
 
 			// Thirdparty
@@ -358,122 +356,127 @@ if ($resql) {
 }
 
 
-$companystatic = new Societe($db); // We need a clean new object for next loop because current one has some properties set.
+if (getDolGlobalString('PROJECT_SHOW_OPEN_PROJECTS_PER_THIRDPARTY_ON_PROJECT_AREA')) {
+	$companystatic = new Societe($db); // We need a clean new object for next loop because current one has some properties set.
 
-if (empty($sortfield)) {
-	$sortfield = 'nb';
-	$sortorder = 'desc';
-}
-
-// List of open projects per thirdparty
-$sql = "SELECT COUNT(p.rowid) as nb, SUM(p.opp_amount)";
-$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
-$sql .= ", s.code_client, s.code_compta, s.client";
-$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
-$sql .= ", s.logo, s.email, s.entity";
-$sql .= ", s.canvas, s.status";
-$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-$sql .= " WHERE p.entity IN (".getEntity('project').")";
-$sql .= " AND p.fk_statut = 1";
-if ($mine || !$user->hasRight('projet', 'all', 'lire')) {
-	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // If we have this test true, it also means projectset is not 2
-}
-if ($socid > 0) {
-	$sql .= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
-}
-$sql .= " GROUP BY s.rowid, s.nom, s.name_alias, s.code_client, s.code_compta, s.client, s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur, s.logo, s.email, s.entity, s.canvas, s.status";
-$sql .= $db->order($sortfield, $sortorder);
-//$sql .= $db->plimit($max + 1, 0);
-
-$resql = $db->query($sql);
-if ($resql) {
-	$num = $db->num_rows($resql);
-	$i = 0;
-	$othernb = 0;
-
-	if ($num) {
-		// Open project per thirdparty
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre">';
-		print_liste_field_titre("OpenedProjectsByThirdparties", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder);
-		print_liste_field_titre("Number", $_SERVER["PHP_SELF"], "nb", "", "", '', $sortfield, $sortorder, 'right ');
-		print "</tr>\n";
+	if (empty($sortfield)) {
+		$sortfield = 'nb';
+		$sortorder = 'desc';
 	}
 
-	while ($i < $num) {
-		$obj = $db->fetch_object($resql);
+	// List of open projects per thirdparty
+	$sql = "SELECT COUNT(p.rowid) as nb, SUM(p.opp_amount)";
+	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+	$sql .= ", s.code_client, s.code_compta, s.client";
+	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
+	$sql .= ", s.logo, s.email, s.entity";
+	$sql .= ", s.canvas, s.status";
+	$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
+	$sql .= " WHERE p.entity IN (".getEntity('project').")";
+	$sql .= " AND p.fk_statut = 1";
+	if ($mine || !$user->hasRight('projet', 'all', 'lire')) {
+		$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // If we have this test true, it also means projectset is not 2
+	}
+	if ($socid > 0) {
+		$sql .= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
+	}
+	$sql .= " GROUP BY s.rowid, s.nom, s.name_alias, s.code_client, s.code_compta, s.client, s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur, s.logo, s.email, s.entity, s.canvas, s.status";
+	$sql .= $db->order($sortfield, $sortorder);
+	//$sql .= $db->plimit($max + 1, 0);
 
-		if ($i >= $max) {
-			$othernb += $obj->nb;
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		$i = 0;
+		$othernb = 0;
+
+		// Load all records first to get the total number of open projects for the title badge
+		$arrayofrecords = array();
+		$totalnb = 0;
+		while ($obj = $db->fetch_object($resql)) {
+			$arrayofrecords[] = $obj;
+			$totalnb += $obj->nb;
+		}
+
+		if ($num) {
+			// Open project per thirdparty
+			print '<div class="div-table-responsive-no-min">';
+			print '<table class="noborder centpercent">';
+			print '<tr class="liste_titre">';
+			$titletoshow = $langs->trans("OpenedProjectsByThirdparties").'<a href="'.DOL_URL_ROOT.'/projet/list.php?search_status=1"><span class="badge marginleftonlyshort">'.$totalnb.'</span></a>';
+			print_liste_field_titre($titletoshow, $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder);
+			print_liste_field_titre("Number", $_SERVER["PHP_SELF"], "nb", "", "", '', $sortfield, $sortorder, 'right ');
+			print "</tr>\n";
+		}
+
+		while ($i < $num) {
+			$obj = $arrayofrecords[$i];
+
+			if ($i >= $max) {
+				$othernb += $obj->nb;
+				$i++;
+				continue;
+			}
+
+			print '<tr class="oddeven">';
+			print '<td class="nowraponall tdoverflowmax100">';
+			if ($obj->socid > 0) {
+				$companystatic->id = $obj->socid;
+				$companystatic->name = $obj->name;
+				$companystatic->name_alias = $obj->name_alias;
+				$companystatic->code_client = $obj->code_client;
+				$companystatic->code_compta = $obj->code_compta;
+				$companystatic->code_compta_client = $obj->code_compta;
+				$companystatic->client = $obj->client;
+				$companystatic->code_fournisseur = $obj->code_fournisseur;
+				$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
+				$companystatic->fournisseur = $obj->fournisseur;
+				$companystatic->logo = $obj->logo;
+				$companystatic->email = $obj->email;
+				$companystatic->entity = $obj->entity;
+				$companystatic->canvas = $obj->canvas;
+				$companystatic->status = $obj->status;
+
+				print $companystatic->getNomUrl(1);
+			} else {
+				print $langs->trans("OthersNotLinkedToThirdParty");
+			}
+			print '</td>';
+			print '<td class="right">';
+			if ($obj->socid) {
+				print '<a href="'.DOL_URL_ROOT.'/projet/list.php?socid='.$obj->socid.'&search_status=1">'.$obj->nb.'</a>';
+			} else {
+				print '<a href="'.DOL_URL_ROOT.'/projet/list.php?search_societe='.urlencode('^$').'&search_status=1">'.$obj->nb.'</a>';
+			}
+			print '</td>';
+			print "</tr>\n";
+
 			$i++;
-			continue;
+		}
+		if ($othernb) {
+			print '<tr class="oddeven">';
+			print '<td class="nowrap" colspan="2">';
+			print '<span class="opacitymedium">'.$langs->trans("More").'... ('.$othernb.')</span>';
+			print '</td>';
+			print "</tr>\n";
 		}
 
-		print '<tr class="oddeven">';
-		print '<td class="nowraponall tdoverflowmax100">';
-		if ($obj->socid > 0) {
-			$companystatic->id = $obj->socid;
-			$companystatic->name = $obj->name;
-			$companystatic->name_alias = $obj->name_alias;
-			$companystatic->code_client = $obj->code_client;
-			$companystatic->code_compta = $obj->code_compta;
-			$companystatic->code_compta_client = $obj->code_compta;
-			$companystatic->client = $obj->client;
-			$companystatic->code_fournisseur = $obj->code_fournisseur;
-			$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
-			$companystatic->fournisseur = $obj->fournisseur;
-			$companystatic->logo = $obj->logo;
-			$companystatic->email = $obj->email;
-			$companystatic->entity = $obj->entity;
-			$companystatic->canvas = $obj->canvas;
-			$companystatic->status = $obj->status;
-
-			print $companystatic->getNomUrl(1);
-		} else {
-			print $langs->trans("OthersNotLinkedToThirdParty");
+		if ($num) {
+			print "</table>";
+			print '</div>';
 		}
-		print '</td>';
-		print '<td class="right">';
-		if ($obj->socid) {
-			print '<a href="'.DOL_URL_ROOT.'/projet/list.php?socid='.$obj->socid.'&search_status=1">'.$obj->nb.'</a>';
-		} else {
-			print '<a href="'.DOL_URL_ROOT.'/projet/list.php?search_societe='.urlencode('^$').'&search_status=1">'.$obj->nb.'</a>';
-		}
-		print '</td>';
-		print "</tr>\n";
 
-		$i++;
-	}
-	if ($othernb) {
-		print '<tr class="oddeven">';
-		print '<td class="nowrap">';
-		print '<span class="opacitymedium">'.$langs->trans("More").'...</span>';
-		print '</td>';
-		print '<td class="nowrap right">';
-		print $othernb;
-		print '</td>';
-		print "</tr>\n";
+		$db->free($resql);
+	} else {
+		dol_print_error($db);
 	}
 
-	if ($num) {
-		print "</table>";
-		print '</div>';
-	}
-
-	$db->free($resql);
-} else {
-	dol_print_error($db);
-}
-
-if ((!getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') || getDolGlobalInt('PROJECT_SHOW_OPEN_PROJECTS_LIST_ON_PROJECT_AREA')) && !getDolGlobalInt('PROJECT_HIDE_OPEN_PROJECTS_LIST_ON_PROJECT_AREA')) {
-	// This list is surely very long and useless when we are using opportunities, so we hide it for this use case, but we allow to show it if
-	// we really want it and to allow interface backward compatibility.
 	print '<br>';
-
-	print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 1, $listofoppstatus, array());
 }
+
+
+print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 1, $listofoppstatus, array(), $max);
 
 print $resultboxes['boxlistb'];
 
