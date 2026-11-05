@@ -205,6 +205,8 @@ class AllTests
 		$suite->addTestSuite('CreditorRefLibTest');
 		require_once dirname(__FILE__).'/DateLibTest.php';
 		$suite->addTestSuite('DateLibTest');
+		require_once dirname(__FILE__).'/AgendaLibTest.php';
+		$suite->addTestSuite('AgendaLibTest');
 		require_once dirname(__FILE__).'/UtilsTest.php';
 		$suite->addTestSuite('UtilsTest');
 
@@ -276,6 +278,8 @@ class AllTests
 		$suite->addTestSuite('PgsqlTest');
 		require_once dirname(__FILE__).'/PdfDocTest.php';
 		$suite->addTestSuite('PdfDocTest');
+		require_once dirname(__FILE__).'/PdfFiltersTest.php';
+		$suite->addTestSuite('PdfFiltersTest');
 		require_once dirname(__FILE__).'/BuildDocTest.php';
 		$suite->addTestSuite('BuildDocTest');
 		require_once dirname(__FILE__).'/CDavLibTest.php';
@@ -303,6 +307,8 @@ class AllTests
 		$suite->addTestSuite('ExpeditionLineFetchTest');
 		require_once dirname(__FILE__).'/ExpeditionDispatchTest.php';
 		$suite->addTestSuite('ExpeditionDispatchTest');
+		require_once dirname(__FILE__).'/ExpeditionLineFormTest.php';
+		$suite->addTestSuite('ExpeditionLineFormTest');
 		require_once dirname(__FILE__).'/WorkflowManagerTest.php';
 		$suite->addTestSuite('WorkflowManagerTest');
 		require_once dirname(__FILE__).'/ReceptionTest.php';
@@ -457,6 +463,8 @@ class AllTests
 			// Rest
 			require_once dirname(__FILE__).'/RestAPIUserTest.php';
 			$suite->addTestSuite('RestAPIUserTest');
+			require_once dirname(__FILE__).'/RestAPIAgendaEventsPutTest.php';
+			$suite->addTestSuite('RestAPIAgendaEventsPutTest');
 			require_once dirname(__FILE__).'/RestAPIContactTest.php';
 			$suite->addTestSuite('RestAPIContactTest');
 			require_once dirname(__FILE__).'/RestAPIDocumentTest.php';
@@ -473,6 +481,10 @@ class AllTests
 			$suite->addTestSuite('RestAPISupplierInvoiceTest');
 			require_once dirname(__FILE__).'/RestAPICategoriesTest.php';
 			$suite->addTestSuite('RestAPICategoriesTest');
+			require_once dirname(__FILE__).'/RestAPIInterventionTest.php';
+			$suite->addTestSuite('RestAPIInterventionTest');
+			require_once dirname(__FILE__).'/RestAPIAgendaEventsTest.php';
+			$suite->addTestSuite('RestAPIAgendaEventsTest');
 
 			// Old WS
 			require_once dirname(__FILE__).'/WebservicesProductsTest.php';

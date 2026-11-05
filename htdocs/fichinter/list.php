@@ -709,8 +709,8 @@ if ($conf->main_checkbox_left_column) {
 	print '</td>';
 }
 if (!empty($arrayfields['f.rowid']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat maxwidth50" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['f.ref']['checked'])) {
@@ -1014,7 +1014,7 @@ while ($i < $imaxinloop) {
 			if (!empty($obj->note_private)) {
 				$warnornote .= ($warnornote ? ' ' : '');
 				$warnornote .= '<span class="note">';
-				$warnornote .= '<a href="note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"), 'object_generic').'</a>';
+				$warnornote .= '<a href="'.DOL_URL_ROOT.'/core/note.php?element=fichinter&id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"), 'object_generic').'</a>';
 				$warnornote .= '</span>';
 			}
 			if ($warnornote) {

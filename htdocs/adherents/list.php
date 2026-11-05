@@ -65,7 +65,7 @@ $groupby = GETPOST('groupby', 'aZ09');	// Example: $groupby = 'p.fk_opp_status' 
 
 // Search fields
 $search = GETPOST("search", 'alpha');
-$search_id = GETPOST('search_id', 'int');
+$search_id = trim(GETPOST('search_id', 'alpha'));	// Can contains a numeric test like ">10" or "!= 34"
 $search_ref = GETPOST("search_ref", 'alpha');
 $search_lastname = GETPOST("search_lastname", 'alpha');
 $search_firstname = GETPOST("search_firstname", 'alpha');
@@ -574,8 +574,8 @@ if ($search_status != '') {
 if ($search_morphy != '' && $search_morphy != '-1') {
 	$sql .= natural_search("d.morphy", $search_morphy);
 }
-if ($search_id) {
-	$sql .= natural_search("d.rowid", $search_id);
+if ($search_id != '') {
+	$sql .= natural_search("d.rowid", $search_id, 1);
 }
 if ($search_ref) {
 	$sql .= natural_search("d.ref", $search_ref);
@@ -742,6 +742,9 @@ if ($groupby != '') {
 }
 if ($search_all != "") {
 	$query += ['search_all' => $search_all];
+}
+if ($search_id != '') {
+	$query += ['search_id' => $search_id];
 }
 if ($search_ref) {
 	$query += ['search_ref' => $search_ref];
@@ -999,7 +1002,7 @@ if ($conf->main_checkbox_left_column) {
 // Line numbering
 if (!empty($arrayfields['d.rowid']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<input class="width50" type="text" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 

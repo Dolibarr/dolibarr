@@ -330,6 +330,30 @@ NOTES   :
         -   protected $default_monospaced_font = 'courier';
         +   protected $default_monospaced_font = 'freemono';
 
+==> FILE   : include/tcpdf_filters.php, function decodeFilterLZWDecode()
+    REASON : Used by TCPDI to import the pages of documents compressed with LZW. The previous code was not
+             updated when the code read is not yet in the dictionary, so everything decoded after such a code
+             was wrong, and the bits read were removed from the start of the string for each code (the whole
+             remaining string was copied each time, so the time was quadratic).
+    DIFF   :
+        -   while (($data_length > 0) AND (($index = bindec(substr($bitstring, 0, $bitlen))) != 257)) {
+        -       // remove read bits from string
+        -       $bitstring = substr($bitstring, $bitlen);
+        +   $bitpos = 0;
+        +   while (($data_length > 0) AND (($index = bindec(substr($bitstring, $bitpos, $bitlen))) != 257)) {
+        +       // move after the read bits
+        +       $bitpos += $bitlen;
+            and, after
+                $dic_val = $dictionary[$prev_index].$dictionary[$prev_index][0];
+                $decoded .= $dic_val;
+        +       $prev_index = $index;
+
+==> FILE   : include/tcpdf_filters.php, function decodeFilterASCII85Decode()
+    REASON : Deprecation of PHP 8.5 (chr() of a value over 255).
+    DIFF   :
+        -   chr($tuple >> NN)
+        +   chr(($tuple >> NN) & 0xff)
+
 
 
 ####################################################################################################

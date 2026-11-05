@@ -476,7 +476,7 @@ function societe_prepare_head(Societe $object, $subtabs = '')
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/note.php', ['id' => $object->id]);
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/core/note.php', ['element' => 'societe', 'id' => $object->id]);
 		$head[$h][1] = $langs->trans("Notes");
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbNote . '</span>';
@@ -2394,7 +2394,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		}
 
 		// ID
-		$out .= '<td class="liste_titre"><input type="text" class="width50" name="search_rowid" value="' . (isset($filters['search_rowid']) ? $filters['search_rowid'] : '') . '"></td>';
+		$out .= '<td class="liste_titre"><input class="searchstring width50" type="text" name="search_rowid" value="' . (isset($filters['search_rowid']) ? dolPrintLabelForAttribute($filters['search_rowid']) : '') . '"></td>';
 		// Date
 		$out .= '<td class="liste_titre center">';
 		$out .= $form->selectDateToDate($tms_start, $tms_end, 'dateevent', 1);

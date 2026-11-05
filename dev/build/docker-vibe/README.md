@@ -1,6 +1,6 @@
 # How to run an IA Agent into a container.
 
-## Prepare api key
+## Prepare AI api key
 With the payment mode of Mistral, the credential is stored into the OS system and not into the .vibe/.env directory so is not available into another docker container.
 So you must first get it from your OS system keystore with:
 ````
@@ -16,14 +16,20 @@ and/or for Eurouter
 EUROUTER_API_KEY='<your_api_key>'
 ````
 
-
-So now when running the container, the .vibe/.env file has your paid key that will be used to set the environment variable MISTRAL_API_KEY.
+So now when running the container, the .vibe/.env file has your paid key that will be used to set the local variable MISTRAL_API_KEY.
 
 ## You can add an alias into your /etc/bash.bashrc or ~/.bashrc the line
 ````
 alias vibes='dev/build/docker-vibe/vibes.sh'
 ````
  
+## Prepare GitHub token key
+
+````
+gh auth login -h github.com -p https -w 
+(or for a branch maintener: gh auth login -h github.com -p https -w -s workflow)
+gh auth status
+````
 
 ## Run vibe into a container
 ````
