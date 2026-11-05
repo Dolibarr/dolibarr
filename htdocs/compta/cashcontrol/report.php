@@ -398,13 +398,23 @@ if ($resql) {
 
 	if (!$summaryonly) {
 		// Lines sorted for the display only. Equal values keep the order of the request (chronological).
-		usort($rowstoprint, function ($a, $b) use ($sortfield, $sortorder) {
-			$cmp = is_string($a[$sortfield]) ? strnatcasecmp($a[$sortfield], $b[$sortfield]) : ($a[$sortfield] <=> $b[$sortfield]);
-			if ($sortorder == 'DESC') {
-				$cmp = -$cmp;
+		usort(
+			$rowstoprint,
+			/**
+			 * Compare two lines to print
+			 *
+			 * @param	array<string,mixed>	$a	First line
+			 * @param	array<string,mixed>	$b	Second line
+			 * @return	int						Result of the comparison
+			 */
+			function (array $a, array $b) use ($sortfield, $sortorder): int {
+				$cmp = is_string($a[$sortfield]) ? strnatcasecmp($a[$sortfield], $b[$sortfield]) : ($a[$sortfield] <=> $b[$sortfield]);
+				if ($sortorder == 'DESC') {
+					$cmp = -$cmp;
+				}
+				return $cmp ? $cmp : ($a['pos'] <=> $b['pos']);
 			}
-			return $cmp ? $cmp : ($a['pos'] <=> $b['pos']);
-		});
+		);
 		foreach ($rowstoprint as $rowtoprint) {
 			print $rowtoprint['html'];
 		}
