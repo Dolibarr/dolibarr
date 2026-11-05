@@ -52,13 +52,9 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		<td class="center"><?php echo dol_print_date($objectlink->date, 'day'); ?></td>
 		<td class="right"><?php
 		if ($user->hasRight('fournisseur', 'facture', 'lire')) {
-			$sign = 1;
-			if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
-				$sign = -1;
-			}
 			if ($objectlink->statut != 3) {
 				// If not abandonned
-				$total = $total + $sign * $objectlink->total_ht;
+				$total = $total + $objectlink->total_ht;
 				echo price($objectlink->total_ht);
 			} else {
 				echo '<strike>'.price($objectlink->total_ht).'</strike>';
