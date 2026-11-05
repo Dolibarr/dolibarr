@@ -519,7 +519,8 @@ class FormMail extends Form
 			if (!empty($newlang)) {
 				$outputlangs = new Translate("", $conf);
 				$outputlangs->setDefaultLang($newlang);
-				$outputlangs->load('other');
+				// Same files as the language of the recipient in card_presend.tpl.php, so that the __(Key)__ of the templates are translated
+				$outputlangs->loadLangs(array('other', 'commercial', 'bills', 'orders', 'contracts', 'main', 'members', 'propal', 'products', 'supplier_proposal', 'interventions', 'receptions', 'sendings'));
 			}
 
 			// Get message template for $this->param["models"] into c_email_templates
@@ -1521,7 +1522,7 @@ class FormMail extends Form
 		if (is_object($arraydefaultmessage) && !empty($arraydefaultmessage->lang)) {
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($arraydefaultmessage->lang);
-			$outputlangs->load('other');
+			$outputlangs->loadLangs(array('other', 'commercial', 'bills', 'orders', 'contracts', 'main', 'members', 'propal', 'products', 'supplier_proposal', 'interventions', 'receptions', 'sendings'));
 		}
 
 		$defaulttopic = make_substitutions($defaulttopic, $this->substit, $outputlangs);
