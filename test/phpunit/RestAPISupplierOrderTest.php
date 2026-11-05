@@ -165,6 +165,66 @@ class RestAPISupplierOrderTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * testRestSupplierOrderMakeOrder
+	 *
+	 * @return int	Id of the ordered supplier order
+	 */
+	public function testRestSupplierOrderMakeOrder()
+	{
+		$test = "Make a supplier order";
+
+		$order_id = $this->createOrder($test);
+		$data = array("date" => dol_now(), "method" => 1, "comment" => "");
+
+		// Only approved orders can be sent to the vendor
+		$this->getUrl('supplierorders/'.$order_id.'/makeorder', "$test (draft)", 'POST', $data, 405);
+
+		$result = $this->getUrl('supplierorders/'.$order_id, $test, 'GET');
+		$this->assertEquals(CommandeFournisseur::STATUS_DRAFT, $result['content']['status'] ?? null, "$test Order status must not change");
+
+		$this->getUrl('supplierorders/'.$order_id.'/validate', $test, 'POST', array("idwarehouse" => 0, "notrigger" => 0));
+
+		$this->getUrl('supplierorders/'.$order_id.'/makeorder', "$test (validated)", 'POST', $data, 405);
+
+		$this->getUrl('supplierorders/'.$order_id.'/approve', $test, 'POST', array("idwarehouse" => 0, "secondlevel" => 0));
+
+		$result = $this->getUrl('supplierorders/'.$order_id.'/makeorder', $test, 'POST', $data);
+		$this->assertEquals(200, $result['content']['success']['code'] ?? null, "$test Make order must succeed");
+
+		$result = $this->getUrl('supplierorders/'.$order_id, $test, 'GET');
+		$this->assertEquals(CommandeFournisseur::STATUS_ORDERSENT, $result['content']['status'] ?? null, "$test Order must be sent");
+
+		return $order_id;
+	}
+
+	/**
+	 * testRestSupplierOrderMakeOrderAgain
+	 *
+	 * @depends testRestSupplierOrderMakeOrder
+	 *
+	 * @param int $order_id	Id of the ordered supplier order
+	 * @return void
+	 */
+	public function testRestSupplierOrderMakeOrderAgain($order_id)
+	{
+		$test = "Make an already ordered supplier order";
+
+		$this->getUrl('supplierorders/'.$order_id.'/makeorder', $test, 'POST', array("date" => dol_now(), "method" => 1, "comment" => ""), 405);
+	}
+
+	/**
+	 * testRestSupplierOrderMakeOrderNotFound
+	 *
+	 * @return void
+	 */
+	public function testRestSupplierOrderMakeOrderNotFound()
+	{
+		$test = "Make a supplier order that does not exist";
+
+		$this->getUrl('supplierorders/999999999/makeorder', $test, 'POST', array("date" => dol_now(), "method" => 1, "comment" => ""), 404);
+	}
+
+	/**
 	 * testRestSupplierOrderCancel
 	 *
 	 * @return int	Id of the canceled supplier order
