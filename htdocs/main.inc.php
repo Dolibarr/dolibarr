@@ -3446,7 +3446,7 @@ function globalSearchInput($htmlid, $morecss = '', $arraysections = array(), $co
 	$html .= ' data-text-typemore="'.dol_escape_htmltag($langs->trans('SearchBoxTypeMore', $minchars)).'"';
 	$html .= ' data-text-noresult="'.dol_escape_htmltag($langs->trans('NoRecordFound')).'"';
 	$html .= ' data-text-seeall="'.dol_escape_htmltag($langs->trans('SeeAll')).'"';
-	$html .= ' data-text-others="'.dol_escape_htmltag($langs->trans('SearchBoxSearchIntoList')).'"';
+	$html .= ' data-text-searchinlist="'.dol_escape_htmltag($langs->trans('SearchBoxSearchIntoList')).'"';
 	$html .= ($moreattr ? ' '.$moreattr : '').'>';
 	$html .= '<div id="'.dol_escape_htmltag($htmlid).'-results" class="globalsearch-results" role="listbox" aria-label="'.dol_escape_htmltag($langs->trans('Search')).'" hidden></div>';
 	$html .= '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/globalsearch.js?v='.urlencode(DOL_VERSION).'"></script>';

@@ -177,11 +177,18 @@ function initGlobalSearch(input)
 		itemcount = 0;
 		var words = searchWords(q);
 		var html = '';
+		var nbrecords = 0;
 		(data.sections || []).forEach(function (s) {
-			html += '<div class="globalsearch-group" role="group" aria-label="' + escapeHtml(s.label) + '">';
+			nbrecords += s.records.length;
+			/* Sections without record keep their place, with only a link to search into their list */
+			html += '<div class="globalsearch-group' + (s.records.length ? '' : ' globalsearch-empty') + '" role="group" aria-label="' + escapeHtml(s.label) + '">';
 			html += '<div class="globalsearch-grouptitle">' + s.picto + '<span class="globalsearch-grouplabel">' + escapeHtml(s.label) + '</span>';
-			html += ' <span class="badge badge-secondary">' + s.total + '</span>';
-			html += item(s.url, escapeHtml(input.dataset.textSeeall) + ' <span class="fa fa-arrow-right"></span>', 'globalsearch-seeall');
+			if (s.records.length) {
+				html += ' <span class="badge badge-secondary">' + s.total + '</span>';
+				html += item(s.url, escapeHtml(input.dataset.textSeeall) + ' <span class="fa fa-arrow-right"></span>', 'globalsearch-seeall');
+			} else {
+				html += item(s.url, escapeHtml(input.dataset.textSearchinlist) + ' <span class="fa fa-arrow-right"></span>', 'globalsearch-seeall');
+			}
 			html += '</div>';
 			s.records.forEach(function (r) {
 				var line = r.picto + '<span class="globalsearch-text"><span class="globalsearch-ref">' + highlight(r.ref, words) + '</span>';
@@ -197,16 +204,8 @@ function initGlobalSearch(input)
 			});
 			html += '</div>';
 		});
-		if (html === '') {
-			html = '<div class="globalsearch-hint opacitymedium">' + escapeHtml(input.dataset.textNoresult) + '</div>';
-		}
-		if ((data.others || []).length) {
-			html += '<div class="globalsearch-group globalsearch-others" role="group" aria-label="' + escapeHtml(input.dataset.textOthers) + '">';
-			html += '<div class="globalsearch-grouptitle opacitymedium">' + escapeHtml(input.dataset.textOthers) + '</div>';
-			data.others.forEach(function (o) {
-				html += item(o.url, o.text, 'globalsearch-section');
-			});
-			html += '</div>';
+		if (!nbrecords) {
+			html = '<div class="globalsearch-hint opacitymedium">' + escapeHtml(input.dataset.textNoresult) + '</div>' + html;
 		}
 		show(html);
 		/* Preselect the first record so Enter opens it */

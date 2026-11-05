@@ -189,12 +189,12 @@ class GlobalSearch
 	}
 
 	/**
-	 *	Search records matching a string into each section of the search box
+	 *	Search records matching a string into each section of the search box. All sections are returned, with 0 records if none match.
 	 *
 	 *	@param	string		$search			String to search
 	 *	@param	array<string,array{position?:int,img?:string,label:string,text:string,url:string}>	$arraysections	Sections of the search box (as returned by core/ajax/selectsearchbox.php)
 	 *	@param	int			$limit			Max number of records returned for each section
-	 *	@return	array{sections:array<int,array{key:string,label:string,picto:string,url:string,total:int,records:array<int,array{url:string,picto:string,ref:string,label:string,sub:string,amount:string,status:string}>}>,others:array<int,array{key:string,text:string,url:string}>}
+	 *	@return	array{sections:array<int,array{key:string,label:string,picto:string,url:string,total:int,records:array<int,array{url:string,picto:string,ref:string,label:string,sub:string,amount:string,status:string}>}>}
 	 */
 	public function search($search, $arraysections, $limit = 5)
 	{
@@ -211,7 +211,7 @@ class GlobalSearch
 			$definitions = $hookmanager->resArray;
 		}
 
-		$result = array('sections' => array(), 'others' => array());
+		$result = array('sections' => array());
 
 		foreach ($arraysections as $key => $section) {
 			$found = array();
@@ -224,22 +224,15 @@ class GlobalSearch
 					$total = 0;
 				}
 			}
-			if ($total > 0) {
-				$result['sections'][] = array(
-					'key' => $key,
-					'label' => $section['label'],
-					'picto' => img_picto('', empty($section['img']) ? 'generic' : $section['img'], 'class="pictofixedwidth"'),
-					'url' => $section['url'],
-					'total' => $total,
-					'records' => $found,
-				);
-			} else {
-				$result['others'][] = array(
-					'key' => $key,
-					'text' => $section['text'],
-					'url' => $section['url'],
-				);
-			}
+			// Sections without record are also returned, so the box shows them in the same order with a link to their list
+			$result['sections'][] = array(
+				'key' => $key,
+				'label' => $section['label'],
+				'picto' => img_picto('', empty($section['img']) ? 'generic' : $section['img'], 'class="pictofixedwidth"'),
+				'url' => $section['url'],
+				'total' => $total,
+				'records' => $found,
+			);
 		}
 
 		return $result;

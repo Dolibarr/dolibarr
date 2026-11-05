@@ -707,7 +707,7 @@ input.globalsearch-input.vmenusearchselectcombo {
 	max-width: calc(100vw - 20px);
 	max-height: 75vh;
 	overflow-y: auto;
-	padding: 4px 0;
+	padding: 0;
 	text-align: left;
 	background: var(--colorbackbody, #fff);
 	color: var(--colortext, #222);
@@ -722,6 +722,7 @@ input.globalsearch-input.vmenusearchselectcombo {
 }
 #topmenu-global-search-dropdown .globalsearch-results {
 	position: static;
+	border-top: 1px solid var(--inputbordercolor, rgba(0,0,0,.1)) !important;
 	width: auto;
 	max-width: none;
 	max-height: 70vh;
@@ -746,14 +747,13 @@ input.globalsearch-input.vmenusearchselectcombo {
 }
 .globalsearch-group + .globalsearch-group {
 	border-top: 1px solid var(--inputbordercolor, rgba(0,0,0,.1));
-	margin-top: 4px;
-	padding-top: 4px;
 }
 .globalsearch-grouptitle {
 	display: flex;
 	align-items: center;
 	gap: 6px;
-	padding: 6px 12px 2px 12px;
+	padding: 4px 4px 4px 12px;
+	background: var(--colorbacktitle1, #f0f0f0);
 	font-size: 0.9em;
 	font-weight: bold;
 	text-transform: uppercase;
@@ -817,9 +817,8 @@ input.globalsearch-input.vmenusearchselectcombo {
 	padding: 0;
 	border-radius: 2px;
 }
-.globalsearch-others a.globalsearch-item {
-	padding-top: 4px;
-	padding-bottom: 4px;
+.globalsearch-empty .globalsearch-grouptitle > .pictofixedwidth, .globalsearch-empty .globalsearch-grouplabel {
+	opacity: 0.6;
 }
 
 /* smartphone */

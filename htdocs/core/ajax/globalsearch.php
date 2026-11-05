@@ -63,7 +63,7 @@ $search = trim(GETPOST('q', 'restricthtml'));
 $minchars = max(1, getDolGlobalInt('MAIN_SEARCHBOX_MIN_CHARS', 3));
 $limit = max(1, getDolGlobalInt('MAIN_SEARCHBOX_NB_RECORDS', 5));
 
-$result = array('sections' => array(), 'others' => array());
+$result = array('sections' => array());
 
 if (dol_strlen($search) >= $minchars) {
 	// Get the sections of the search box, with the permissions, hidden sections and hooks already applied
