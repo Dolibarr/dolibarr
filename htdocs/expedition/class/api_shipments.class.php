@@ -334,8 +334,11 @@ class Shipments extends DolibarrApi
 
 			$array_options = (isset($line['array_options']) && is_array($line['array_options'])) ? $line['array_options'] : array();
 			$rang = (int) ($line['rang'] ?? 0);
+			$entrepot_id = (int) ($line['entrepot_id'] ?? 0);
 
-			if ($this->shipment->addlinefree($qty, 'shipping', $fk_product, $fk_unit, $rang > 0 ? $rang : -1, $description, 0, $array_options) <= 0) {
+			// The warehouse of the line is passed to addlinefree(), as postLine() does: without it the line is
+			// stored with fk_entrepot NULL and moves no stock when the shipment is validated or closed.
+			if ($this->shipment->addlinefree($qty, 'shipping', $fk_product, $fk_unit, $rang > 0 ? $rang : -1, $description, 0, $array_options, $entrepot_id) <= 0) {
 				$this->db->rollback();
 				throw new RestException(500, "Error creating shipment line", array_merge(array($this->shipment->error), $this->shipment->errors));
 			}
