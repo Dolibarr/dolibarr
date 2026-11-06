@@ -31,6 +31,11 @@ global $conf,$user,$langs,$db,$mysoc;
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/bank/class/account.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/bank.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.facture.class.php';
+require_once dirname(__FILE__).'/../../htdocs/fourn/class/paiementfourn.class.php';
+require_once dirname(__FILE__).'/../../htdocs/expensereport/class/expensereport.class.php';
+require_once dirname(__FILE__).'/../../htdocs/expensereport/class/paymentexpensereport.class.php';
+require_once dirname(__FILE__).'/../../htdocs/multicurrency/class/multicurrency.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -228,5 +233,80 @@ class BankAccountTest extends CommonClassTest
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 		return $result;
+	}
+
+	/**
+	 * testBankLineExchangeDifference
+	 *
+	 * An invoice of 700 in its currency booked 610 is paid by a bank line worth 600 in main currency: the exchange gain is 10.
+	 * An expense report payment of 610 debited 620 is a loss of 10, and a bank line that pays no document has no difference.
+	 *
+	 * @return void
+	 */
+	public function testBankLineExchangeDifference()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$account = new Account($db);
+		$account->initAsSpecimen();
+		$account->ref = 'XDIFF'.substr(uniqid(), -6);
+		$account->date_solde = dol_now();
+		$this->assertGreaterThan(0, $account->create($user), $account->errorsToString());
+
+		$currency = new MultiCurrency($db);
+		$currency->code = 'XBB';
+		$currency->name = 'BankLineExchangeDifferenceTest';
+		$this->assertGreaterThan(0, $currency->create($user), $currency->errorsToString());
+
+		$invoice = new FactureFournisseur($db);
+		$invoice->initAsSpecimen();
+		$invoice->lines = array();
+		$invoice->ref_supplier = 'XDIFF'.uniqid();
+		$invoice->multicurrency_code = 'XBB';
+		$invoice->multicurrency_tx = 700 / 610;
+		$this->assertGreaterThan(0, $invoice->create($user), (string) $invoice->error);
+		$this->assertGreaterThan(0, $invoice->addline('Line in invoice currency', 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 'HT', 0, -1, 0, array(), null, 0, 700), (string) $invoice->error);
+		$this->assertGreaterThan(0, $invoice->validate($user), (string) $invoice->error);
+
+		$payment = new PaiementFourn($db);
+		$payment->datepaye = dol_now();
+		$payment->multicurrency_amounts = array($invoice->id => 700);
+		$payment->paiementid = dol_getIdFromCode($db, 'VIR', 'c_paiement', 'code', 'id', 1);
+		$this->assertGreaterThan(0, $payment->create($user, 1), (string) $payment->error);
+		$this->assertEquals(610, (float) $payment->amount);
+
+		$banklineid = $account->addline(dol_now(), 'VIR', '(SupplierInvoicePayment)', -650, '', 0, $user, '', '', '', null, '', -600);
+		$this->assertGreaterThan(0, $banklineid, (string) $account->error);
+		$this->assertGreaterThan(0, $payment->update_fk_bank($banklineid));
+
+		$bankline = new AccountLine($db);
+		$bankline->id = $banklineid;
+		$this->assertEquals(10, $bankline->getExchangeDifference(), 'The supplier account is settled at 610 and the bank gives 600, so 10 of gain');
+
+		$expensereport = new ExpenseReport($db);
+		$expensereport->initAsSpecimen();
+		$expensereport->lines = array();
+		$expensereport->status = 0;
+		$expensereport->fk_statut = 0;
+		$this->assertGreaterThan(0, $expensereport->create($user), (string) $expensereport->error);
+
+		$paymentexpensereport = new PaymentExpenseReport($db);
+		$paymentexpensereport->fk_expensereport = $expensereport->id;
+		$paymentexpensereport->datep = dol_now();
+		$paymentexpensereport->amounts = array($user->id => 610);
+		$paymentexpensereport->fk_typepayment = 2;
+		$this->assertGreaterThan(0, $paymentexpensereport->create($user), (string) $paymentexpensereport->error);
+
+		$banklineid = $account->addline(dol_now(), 'VIR', '(ExpenseReportPayment)', -620, '', 0, $user);
+		$this->assertGreaterThan(0, $paymentexpensereport->update_fk_bank($banklineid));
+		$bankline->id = $banklineid;
+		$this->assertEquals(-10, $bankline->getExchangeDifference(), 'The expense report is settled at 610 and the bank gives 620, so 10 of loss');
+
+		$bankline->id = $account->addline(dol_now(), 'VIR', 'Not a payment', -620, '', 0, $user);
+		$this->assertEquals(0, $bankline->getExchangeDifference());
 	}
 }

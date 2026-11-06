@@ -143,6 +143,11 @@ if (isModEnabled('loan')) {
 	$list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_INSURANCE';
 }
 $list_account[] = 'ACCOUNTING_ACCOUNT_SUSPENSE';
+if (getDolGlobalInt('ACCOUNTING_BOOK_EXCHANGE_DIFFERENCE')) {
+	$list_account[] = '---ExchangeDifference---';
+	$list_account[] = 'ACCOUNTING_ACCOUNT_EXCHANGE_GAIN';
+	$list_account[] = 'ACCOUNTING_ACCOUNT_EXCHANGE_LOSS';
+}
 if (isModEnabled('invoice') || isModEnabled('supplier_invoice')) {
 	$list_account[] = '---Discounts---';
 	$list_account[] = 'ACCOUNTING_ACCOUNT_DISCOUNT_GRANTED';
