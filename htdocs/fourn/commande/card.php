@@ -1193,10 +1193,13 @@ if (empty($reshook)) {
 		unset($_POST['qty']);
 		unset($_POST['type']);
 		unset($_POST['idprodfournprice']);
-		unset($_POST['remmise_percent']);
+		unset($_POST['remise_percent']);
 		unset($_POST['dp_desc']);
 		unset($_POST['np_desc']);
 		unset($_POST['pu']);
+		unset($_POST['price_ht']);
+		unset($_POST['price_ttc']);
+		unset($_POST['buying_price']);
 		unset($_POST['fourn_ref']);
 		unset($_POST['tva_tx']);
 		unset($_POST['date_start']);
@@ -1761,8 +1764,11 @@ if (empty($reshook)) {
 							$num = count($lines);
 
 							for ($i = 0; $i < $num; $i++) {
+								// The empty subprice test comes from the creation from a price request, where a line without a
+								// price must be skipped. From a customer order the sale price is not used at all: it is reset to 0
+								// below and replaced by the supplier price, so a line sold at 0 must still be ordered.
 								if (
-									empty($lines[$i]->subprice)
+									(empty($lines[$i]->subprice) && $origin != 'commande' && $origin != 'order')
 									|| $lines[$i]->qty < 0
 									|| !in_array($lines[$i]->id, $selectedLines)
 									|| $lines[$i]->special_code == SUBTOTALS_SPECIAL_CODE
@@ -3029,19 +3035,13 @@ if ($action == 'create') {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table id="tablelines" class="noborder noshadow centpercent">';
 
-		// Add free products/services form
-		global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
-		$forceall = 1;
-		$dateSelector = 0;
-		$inputalsopricewithtax = 1;
-		$senderissupplier = 2; // $senderissupplier=2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum.
-		if (getDolGlobalInt('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY')) {
-			$senderissupplier = getDolGlobalInt('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY');
-		}
+		// Display context of lines, also sets the global variables used by the line templates
+		$linesContext = $object->initObjectLinesDisplay();
 
 		// Show object lines
-		if (!empty($object->lines)) {
-			$object->printObjectLines($action, $object->thirdparty, $mysoc, $lineid, 1);
+		// With nolines=1, the card is loaded without its lines, to refresh the other parts of the page in ajax
+		if (!empty($object->lines) && !GETPOSTINT('nolines')) {
+			$object->printObjectLines($action, $linesContext['seller'], $linesContext['buyer'], $lineid, $linesContext['dateSelector']);
 		}
 
 		$num = count($object->lines);
@@ -3057,7 +3057,7 @@ if ($action == 'create') {
 					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 				}
 				if (empty($reshook)) {
-					$object->formAddObjectLine(1, $societe, $mysoc);
+					$object->formAddObjectLine($linesContext['dateSelector'], $linesContext['seller'], $linesContext['buyer']);
 				}
 			}
 		}

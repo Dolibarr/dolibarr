@@ -12,16 +12,16 @@
 /**
  * Handle UI interactions for the MCP tools configuration interface.
  * configure_tools.php
- * Provides responsive controls, grouping, collapse/expand states, 
+ * Provides responsive controls, grouping, collapse/expand states,
  * and dynamic class toggles for elements within configure_tools.php.
  */
 jQuery(document).ready(function($) {
 	/**
 	 * Collapse or expand tool group rows when clicking on their group header.
-	 * 
-	 * Expects a '.trgroup' container with a 'data-group' attribute matching 
+	 *
+	 * Expects a '.trgroup' container with a 'data-group' attribute matching
 	 * the class name of the target rows to toggle.
-	 * 
+	 *
 	 * @listens click
 	 * @return {void}
 	 */
@@ -34,6 +34,22 @@ jQuery(document).ready(function($) {
 			$headerRow.toggleClass("collapsed");
 		}
 	});
+
+	/**
+	 * Open a popup with the technical definition of a tool, as sent to the LLM.
+	 *
+	 * Expects a 'data-target' attribute with the id of the hidden block to show.
+	 *
+	 * @listens click
+	 * @return {void}
+	 */
+	$(".ai-tool-definition").on("click", function(event) {
+		event.preventDefault();
+		$("#" + $(this).attr("data-target")).dialog({
+			title: $(this).attr("data-title"),
+			width: Math.min(800, $(window).width() - 20),
+			maxHeight: $(window).height() - 40,
+			modal: true
+		});
+	});
 });
-
-

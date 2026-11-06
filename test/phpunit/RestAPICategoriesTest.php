@@ -51,7 +51,7 @@ class RestAPICategoriesTest extends AbstractRestAPITest
 	 *
 	 * @param string					$endpoint 	Endpoint - "categories/id"
 	 * @param string					$test_title	Text to be added to output
-	 * @param 'POST'|'GET'|'DELETE'	$method		Call Method
+	 * @param 'POST'|'GET'|'PUT'|'DELETE'	$method		Call Method
 	 * @param mixed						$data		Data that will be JSON encoded
 	 * @param int						$expected_error	Expected error code
 	 *
@@ -61,7 +61,7 @@ class RestAPICategoriesTest extends AbstractRestAPITest
 	{
 		$params = '';
 		$body = null;
-		if ($method === 'POST') {
+		if ($method === 'POST' || $method === 'PUT') {
 			$body = json_encode($data);
 		} elseif (!empty($data)) {
 			$params = '?'.http_build_query($data);
@@ -73,7 +73,9 @@ class RestAPICategoriesTest extends AbstractRestAPITest
 
 		$url = $this->api_url.'/'.$endpoint.$params;
 
-		$result = getURLContent($url, $method, $body, 1, $addheaders, array('http', 'https'), 2);
+		$httpmethod = ($method === 'PUT') ? 'PUTALREADYFORMATED' : $method;
+
+		$result = getURLContent($url, $httpmethod, $body, 1, $addheaders, array('http', 'https'), 2);
 
 		$this->assertEquals(0, $result['curl_error_no'], $test_title." Should not have a curl error");
 
@@ -96,7 +98,7 @@ class RestAPICategoriesTest extends AbstractRestAPITest
 	 * Create a category
 	 *
 	 * @param string	$test	Text to be added to output
-	 * @param int		$type	Type id of category (see Categorie::$MAP_ID, the API stores it as an integer)
+	 * @param int|string	$type	Type id or type code of category (see Categorie::$MAP_ID)
 	 * @return int				Id of the category
 	 */
 	private function createCategory($test, $type)
@@ -109,6 +111,127 @@ class RestAPICategoriesTest extends AbstractRestAPITest
 		$this->assertGreaterThan(0, (int) $result['content'], "$test Id of category is not > 0");
 
 		return (int) $result['content'];
+	}
+
+	/**
+	 * testRestCategoryPostTypeCode
+	 *
+	 * @return void
+	 */
+	public function testRestCategoryPostTypeCode()
+	{
+		$test = "Create a category with a type code";
+
+		$category_id = $this->createCategory($test, 'customer');
+
+		$result = $this->getUrl('categories/'.$category_id, $test, 'GET');
+		$this->assertEquals(2, $result['content']['type'], "$test Type code must be stored as its type id");
+
+		$this->getUrl('categories/'.$category_id, $test, 'DELETE');
+	}
+
+	/**
+	 * testRestCategoryPostUnknownType
+	 *
+	 * @return void
+	 */
+	public function testRestCategoryPostUnknownType()
+	{
+		$test = "Create a category with an unknown type";
+
+		$label = "API test unknown type ".mt_rand(0, 99999999);
+
+		$this->getUrl('categories', $test, 'POST', array("label" => $label, "type" => "notatype"), 400);
+		$this->getUrl('categories', $test, 'POST', array("label" => $label, "type" => 999999), 400);
+	}
+
+	/**
+	 * testRestCategoryPutType
+	 *
+	 * @return void
+	 */
+	public function testRestCategoryPutType()
+	{
+		$test = "Update a category with a type code";
+
+		// Same label on a product category: if the type code is lost, the update finds it as a duplicate
+		$label = "API test put type ".mt_rand(0, 99999999);
+		$result = $this->getUrl('categories', $test, 'POST', array("label" => $label, "type" => 0));
+		$category_id_product = (int) $result['content'];
+		$result = $this->getUrl('categories', $test, 'POST', array("label" => $label, "type" => 2));
+		$category_id_customer = (int) $result['content'];
+
+		$result = $this->getUrl('categories/'.$category_id_customer, $test, 'PUT', array("type" => "customer"));
+		$this->assertEquals(2, $result['content']['type'], "$test Type must stay the customer type");
+
+		$this->getUrl('categories/'.$category_id_customer, $test, 'PUT', array("type" => "notatype"), 400);
+
+		$this->getUrl('categories/'.$category_id_customer, $test, 'DELETE');
+		$this->getUrl('categories/'.$category_id_product, $test, 'DELETE');
+	}
+
+	/**
+	 * testRestCategoryPostExtrafields
+	 *
+	 * @return void
+	 */
+	public function testRestCategoryPostExtrafields()
+	{
+		$test = "Create a category with an extrafield";
+
+		$attrname = 'apitest'.mt_rand(0, 99999999);
+		$extrafield = array(
+			'label' => $attrname, 'type' => 'varchar', 'pos' => 100, 'size' => '32', 'list' => '1', 'default' => '', 'param' => '', 'perms' => '', 'help' => '',
+			'computed' => '', 'langfile' => '', 'unique' => 0, 'required' => 0, 'alwayseditable' => 1, 'totalizable' => 0, 'printable' => 0, 'showintooltip' => 0,
+		);
+		$this->getUrl('setup/extrafields/categorie/'.$attrname, $test, 'POST', $extrafield);
+
+		$data = array(
+			"label" => "API test extrafield ".mt_rand(0, 99999999),
+			"type" => 2,
+			"array_options" => array('options_'.$attrname => 'Some text'),
+		);
+		$result = $this->getUrl('categories', $test, 'POST', $data);
+		$category_id = (int) $result['content'];
+		$this->assertGreaterThan(0, $category_id, "$test Id of category is not > 0");
+
+		$result = $this->getUrl('categories/'.$category_id, $test, 'GET');
+		$this->assertEquals('Some text', $result['content']['array_options']['options_'.$attrname] ?? '', "$test Extrafield must be saved");
+
+		$this->getUrl('categories/'.$category_id, $test, 'DELETE');
+		$this->getUrl('setup/extrafields/categorie/'.$attrname, $test, 'DELETE');
+	}
+
+	/**
+	 * testRestCategoryListPagination
+	 *
+	 * @return void
+	 */
+	public function testRestCategoryListPagination()
+	{
+		$test = "List categories with and without pagination data";
+
+		$category_id1 = $this->createCategory($test, 2);	// customer
+		$category_id2 = $this->createCategory($test, 2);	// customer
+
+		$result = $this->getUrl('categories', $test, 'GET', array('type' => 2, 'limit' => 1));
+		$this->assertArrayNotHasKey('pagination', $result['content'], "$test Without pagination_data the result must not have a pagination key");
+		$this->assertArrayHasKey(0, $result['content'], "$test Without pagination_data the result must be a plain list");
+		$this->assertCount(1, $result['content'], "$test Limit must be applied");
+
+		$result = $this->getUrl('categories', $test, 'GET', array('type' => 2, 'limit' => 1, 'page' => 0, 'pagination_data' => 'true'));
+		$this->assertArrayHasKey('data', $result['content'], "$test With pagination_data the result must have a data key");
+		$this->assertArrayHasKey('pagination', $result['content'], "$test With pagination_data the result must have a pagination key");
+		$this->assertCount(1, $result['content']['data'], "$test Limit must be applied to data");
+
+		$pagination = $result['content']['pagination'];
+		$this->assertGreaterThanOrEqual(2, $pagination['total'], "$test Total must count at least the created categories");
+		$this->assertEquals(0, $pagination['page'], "$test Page must be the requested one");
+		$this->assertEquals(1, $pagination['limit'], "$test Limit must be the requested one");
+		$this->assertEquals($pagination['total'], $pagination['page_count'], "$test Page count must be total divided by limit");
+
+		$this->getUrl('categories/'.$category_id1, $test, 'DELETE');
+		$this->getUrl('categories/'.$category_id2, $test, 'DELETE');
 	}
 
 	/**
