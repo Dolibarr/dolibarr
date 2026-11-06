@@ -181,6 +181,42 @@ class ToolApiBridge extends McpTool
 			'params' => array(
 				'id' => 'The object: rowid, or its ref (required).'
 			)
+		),
+		'api_objects_add_line' => array(
+			'suffix' => 'add_line',
+			'method' => 'postLine',
+			'description' => "Add ONE line to a DRAFT document. Set 'object' to the type of the document and 'id' to the document. The user confirms before anything is written.",
+			'object' => 'Type of the draft document to add the line to.',
+			'params' => array(
+				'id' => 'The draft document: rowid (required). For an intervention, its ref is accepted too.'
+			)
+		),
+		'api_objects_update_line' => array(
+			'suffix' => 'update_line',
+			'method' => 'putLine',
+			'description' => "Change ONE line of a DRAFT document. Set 'object' to the type of the document. The user confirms before anything is written.",
+			'object' => 'Type of the draft document whose line is changed.',
+			'params' => array(
+				'id' => 'The draft document: rowid, or its ref (required).'
+			)
+		),
+		'api_objects_delete_line' => array(
+			'suffix' => 'delete_line',
+			'method' => 'deleteLine',
+			'description' => "Delete ONE line of a DRAFT document. Set 'object' to the type of the document. The user confirms before anything is written.",
+			'object' => 'Type of the draft document whose line is deleted.',
+			'params' => array(
+				'id' => 'The draft document: rowid, or its ref (required).'
+			)
+		),
+		'api_objects_categories_list' => array(
+			'suffix' => 'categories_list',
+			'method' => 'getCategories',
+			'description' => "Tags (categories) of one object. Set 'object' to the type of the object and 'id' to its rowid. To list or search the tags themselves, use api_categories_list.",
+			'object' => 'Type of the object whose tags are listed.',
+			'params' => array(
+				'id' => 'Rowid of the object.'
+			)
 		)
 	);
 
@@ -1575,6 +1611,8 @@ class ToolApiBridge extends McpTool
 	 */
 	private function addReadEndpoints()
 	{
+		global $mysoc;
+
 		$pagination = "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many records match.";
 
 		$this->enrichments['bankaccounts'] = array(
@@ -1582,22 +1620,23 @@ class ToolApiBridge extends McpTool
 			'methods' => array(
 				'index' => array(
 					'default_properties' => 'id,ref,label,bank,currency_code,clos,courant',
-					'description' => "Bank and cash accounts: ref, label, bank, currency. clos: 0 open, 1 closed. courant: 0 savings, 1 current, 2 cash. The balance is in api_bankaccounts_balance, the transactions in api_bankaccounts_lines."
+					'description' => "Bank and cash accounts: ref, label, bank, currency. clos: 0 open, 1 closed. courant: 0 savings, 1 current, 2 cash. The current balance of one account is given by api_bankaccounts_get with includebalance=1, the transactions by api_bankaccounts_lines_list."
 				),
-				'get' => array('description' => "One bank account with its bank details and currency."),
+				'get' => array(
+					'description' => "One bank account with its bank details and currency. Set includebalance to 1 to also get its current balance (operations dated in the future excluded) in the field 'balance'.",
+					'params' => array(
+						'id' => "Rowid of the bank account.",
+						'includebalance' => "1 to also return the current balance of the account in the field 'balance', 0 (default) otherwise."
+					)
+				),
 				'getLines' => array(
-					'suffix' => 'lines',
+					'suffix' => 'lines_list',
 					'description' => "Transactions of one bank account: date (dateo), value date (datev), amount (signed: positive is money in), label, payment type, reconciliation (rappro 1 when reconciled). Only the most recent 50 are returned: restrict the period with sqlfilters. Here the field names have NO 't.' prefix, e.g. \"(dateo:>=:'2026-01-01')\" or \"(label:like:'%rent%')\".",
 					'params' => array('id' => "Rowid of the bank account."),
 					// The REST method has no limit: a real account would send its whole history.
 					// Oldest first there, so the end is the most recent.
 					'max_items' => 50,
 					'keep' => 'last'
-				),
-				'getBalance' => array(
-					'suffix' => 'balance',
-					'description' => "Current balance of one bank account.",
-					'params' => array('id' => "Rowid of the bank account.")
 				)
 			)
 		);
@@ -1618,13 +1657,29 @@ class ToolApiBridge extends McpTool
 			'methods' => array(
 				'index' => array(
 					'description' => "Social and fiscal charges to pay: label, type, period, amount, paye (1 paid). Unpaid ones: sqlfilters \"(t.paye:=:0)\".",
-					'params' => array('pagination_data' => $pagination)
+					'params' => array('pagination_data' => $pagination),
+					'right' => array('tax', 'charges', 'lire')
 				),
-				'get' => array('description' => "One social or fiscal charge."),
+				'get' => array(
+					'description' => "One social or fiscal charge.",
+					'right' => array('tax', 'charges', 'lire')
+				),
 				'getPayments' => array(
 					'suffix' => 'payments_list',
 					'description' => "Payments made on one social or fiscal charge.",
-					'params' => array('id' => "Rowid of the charge.")
+					'params' => array('id' => "Rowid of the charge."),
+					'right' => array('tax', 'charges', 'lire')
+				),
+				'getAllPayments' => array(
+					'suffix' => 'all_payments',
+					'description' => "All payments made on social or fiscal charges, across every charge: payment date, amount, payment reference and the charge each settles.",
+					'right' => array('tax', 'charges', 'lire')
+				),
+				'getPayment' => array(
+					'suffix' => 'payment_get',
+					'description' => "One payment of a social or fiscal charge, by its payment rowid.",
+					'params' => array('pid' => "Rowid of the payment."),
+					'right' => array('tax', 'charges', 'lire')
 				)
 			)
 		);
@@ -1634,13 +1689,29 @@ class ToolApiBridge extends McpTool
 			'methods' => array(
 				'index' => array(
 					'description' => "VAT to pay or refund per period: label, period end (datev), amount, paye (1 paid).",
-					'params' => array('pagination_data' => $pagination)
+					'params' => array('pagination_data' => $pagination),
+					'right' => array('tax', 'charges', 'lire')
 				),
-				'get' => array('description' => "One VAT declaration."),
+				'get' => array(
+					'description' => "One VAT declaration.",
+					'right' => array('tax', 'charges', 'lire')
+				),
 				'getPayments' => array(
 					'suffix' => 'payments_list',
 					'description' => "Payments made on one VAT declaration.",
-					'params' => array('id' => "Rowid of the VAT declaration.")
+					'params' => array('id' => "Rowid of the VAT declaration."),
+					'right' => array('tax', 'charges', 'lire')
+				),
+				'getAllPayments' => array(
+					'suffix' => 'all_payments',
+					'description' => "All payments made on VAT declarations, across every declaration: payment date, amount, payment reference and the declaration each settles.",
+					'right' => array('tax', 'charges', 'lire')
+				),
+				'getPayment' => array(
+					'suffix' => 'payment_get',
+					'description' => "One payment of a VAT declaration, by its payment rowid.",
+					'params' => array('pid' => "Rowid of the payment."),
+					'right' => array('tax', 'charges', 'lire')
 				)
 			)
 		);
@@ -1682,11 +1753,11 @@ class ToolApiBridge extends McpTool
 			'label' => 'bills of materials (BOM)',
 			'methods' => array(
 				'index' => array(
-					'description' => "Bills of materials: ref, label, the product it makes (fk_product), quantity made. Statuses (t.status): 0 draft, 1 validated, 9 canceled. The components are in api_boms_lines."
+					'description' => "Bills of materials: ref, label, the product it makes (fk_product), quantity made. Statuses (t.status): 0 draft, 1 validated, 9 canceled. The components are in api_boms_lines_list."
 				),
 				'get' => array('description' => "One bill of materials."),
 				'getLines' => array(
-					'suffix' => 'lines',
+					'suffix' => 'lines_list',
 					'description' => "Components of one bill of materials: product, quantity, efficiency.",
 					'params' => array('id' => "Rowid of the bill of materials.")
 				)
@@ -1825,6 +1896,34 @@ class ToolApiBridge extends McpTool
 						'author_alias' => "Name of the author to show.",
 						'status' => "0 offline (default), 1 online."
 					)
+				),
+				'putPage' => array(
+					'suffix' => 'pages_update',
+					'description' => "Change fields of an existing page or blog post of a website. Give 'pageid' (rowid of the page, from api_websites_pages_list) and ONLY the fields to change, with their new value: title, description, keywords, content, lang, author_alias, status. To change a part of the content, read the page first with api_websites_pages_get and send the whole new content (HTML, inside a <section> tag, no PHP code). The alias (pageurl) cannot be changed here. The user confirms before anything is written.",
+					'write' => array(
+						'kind' => 'update',
+						'preview' => 'AIPreviewChangeRecord',
+						'object' => 'WebsitePage',
+						'label' => 'website page',
+						'target' => 'pageid',
+						'lookup' => '',
+						// The website of the page is read from the page itself
+						'target_parent' => array('id' => 'fk_website'),
+						'fields' => array('title', 'description', 'keywords', 'content', 'lang', 'author_alias', 'status'),
+						'required' => array('pageid'),
+						'right' => array('website', 'write')
+					),
+					'params' => array(
+						'pageid' => "Rowid of the page to change.",
+						'id' => "Rowid of the website of the page. Optional: it is found from the page.",
+						'title' => "New title of the page.",
+						'description' => "New short description (meta description), 255 characters max.",
+						'keywords' => "New keywords, separated by commas.",
+						'content' => "New full HTML content of the page, inside a <section> tag. No PHP code.",
+						'lang' => "New language code of the page, e.g. 'en' or 'fr'.",
+						'author_alias' => "New name of the author to show.",
+						'status' => "0 offline, 1 online."
+					)
 				)
 			)
 		);
@@ -1932,6 +2031,31 @@ class ToolApiBridge extends McpTool
 				)
 			)
 		);
+
+		// Local tax payments (llx_localtax): country-specific extra taxes
+		// recorded by the company (RE/IRPF in Spain, empty elsewhere). The
+		// records are entity-scoped, not country-scoped, so no country
+		// filter applies; the tools are registered only when the company
+		// country actually uses local taxes, the table is empty otherwise.
+		// Write side is left out on purpose.
+		if ($mysoc->useLocalTax(0)) {
+			$this->enrichments['localtaxes'] = array(
+				'label' => 'local tax payments (second/third country taxes)',
+				'methods' => array(
+					'index' => array(
+						'default_properties' => 'id,ltt,label,amount,datep,datev,paymenttype,rappro',
+						'description' => "Local tax payments recorded by the company (country-specific extra taxes, e.g. RE and IRPF in Spain). ltt: 1 = localtax1, 2 = localtax2. datep = payment date, datev = value date, rappro = 1 when bank-reconciled. Search with sqlfilters on t.label or t.amount (e.g. \"(t.datep:>=:'20250101')\").",
+						'params' => array('pagination_data' => $pagination),
+						'right' => array('tax', 'charges', 'lire')
+					),
+					'get' => array(
+						'description' => "One local tax payment by its rowid: type (ltt), label, amount, dates and bank reconciliation state.",
+						'params' => array('id' => "Rowid of the local tax payment."),
+						'right' => array('tax', 'charges', 'lire')
+					)
+				)
+			);
+		}
 
 		// Cron jobs (llx_cronjob): read side, plus run which launches a job
 		// already defined by an admin. post/put stay out on purpose: they can
@@ -2081,7 +2205,7 @@ class ToolApiBridge extends McpTool
 			),
 			'expensereports' => array(
 				'getLines' => array(
-					'suffix' => 'lines',
+					'suffix' => 'lines_list',
 					'description' => "Lines of one expense report: date, expense type, amounts, VAT.",
 					'params' => array('id' => "Rowid of the expense report.")
 				),
@@ -3088,6 +3212,9 @@ class ToolApiBridge extends McpTool
 				$objectsOf[$pname][] = $key;
 				if (!isset($properties[$pname])) {
 					$properties[$pname] = $pdef;
+				} elseif (isset($pdef['type']) && isset($properties[$pname]['type']) && $pdef['type'] !== $properties[$pname]['type']) {
+					// Typed differently by the merged tools (a rowid, or a rowid or ref): a string carries both.
+					$properties[$pname]['type'] = 'string';
 				}
 			}
 			$required = ($required === null) ? (array) ($def['inputSchema']['required'] ?? array()) : array_intersect($required, (array) ($def['inputSchema']['required'] ?? array()));
@@ -3100,7 +3227,7 @@ class ToolApiBridge extends McpTool
 		// An argument only some objects take says which.
 		foreach ($objectsOf as $pname => $keys) {
 			if (!isset($mconf['params'][$pname]) && count($keys) < count($merged)) {
-				$properties[$pname]['description'] = trim((string) ($properties[$pname]['description'] ?? '').'. Only for: '.implode(', ', $keys).'.');
+				$properties[$pname]['description'] = trim(rtrim((string) ($properties[$pname]['description'] ?? ''), '. ').'. Only for: '.implode(', ', $keys).'.');
 			}
 		}
 
@@ -5548,11 +5675,24 @@ class ToolApiBridge extends McpTool
 		$this->writeTarget = $this->resolveWriteTarget($write, $given);
 		$out = array($field => ($this->writeTarget ? (int) $this->writeTarget->id : $given));
 
+		// Arguments read from the target record (the website of a page): a different value given is refused.
+		$targetparent = (array) ($write['target_parent'] ?? array());
+		foreach ($targetparent as $name => $property) {
+			if (!$this->writeTarget) {
+				continue;
+			}
+			$out[$name] = (int) $this->writeTarget->$property;
+			if (isset($args[$name]) && $args[$name] !== '' && (int) $args[$name] !== $out[$name]) {
+				$langs->load('other');
+				$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteRecordNotFound', (string) ($write['label'] ?? $write['object']), (string) $given.' ('.$name.' '.$args[$name].')');
+			}
+		}
+
 		if ($kind === 'update') {
 			$aliases = array('nom' => 'name', 'company' => 'name', 'mail' => 'email', 'tel' => 'phone', 'telephone' => 'phone', 'mobile' => 'phone_mobile', 'job' => 'poste', 'libelle' => 'label', 'title' => 'label');
 			$this->writeRefusedFields = array();
 			foreach ($args as $name => $value) {
-				if (in_array($name, array($field, 'ref', 'requestState'), true) || substr((string) $name, 0, 1) === '_') {
+				if (in_array($name, array($field, 'ref', 'requestState'), true) || isset($targetparent[$name]) || substr((string) $name, 0, 1) === '_') {
 					continue;
 				}
 				if (isset($aliases[$name]) && in_array($aliases[$name], $write['fields'], true) && !isset($args[$aliases[$name]])) {
@@ -6084,7 +6224,7 @@ class ToolApiBridge extends McpTool
 			if (!empty($this->writeRefusedFields)) {
 				return $langs->transnoentitiesnoconv('AIWriteFieldsNotAllowed', implode(', ', $this->writeRefusedFields), implode(', ', (array) $write['fields']));
 			}
-			if (count($args) < 2) {
+			if (!array_intersect_key($args, array_flip((array) $write['fields']))) {
 				return $langs->transnoentitiesnoconv('AIWriteNothingToChange');
 			}
 

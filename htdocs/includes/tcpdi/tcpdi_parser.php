@@ -458,7 +458,13 @@ class tcpdi_parser {
     protected function decodeXrefStream($startxref, $xref=array()) {
         // try to read Cross-Reference Stream
         list($xrefobj, $unused) = $this->getRawObject($startxref);
+        if ($xrefobj[0] !== PDF_TYPE_OBJECT) {
+            $this->Error('Unable to find xref');
+        }
         $xrefcrs = $this->getIndirectObject($xrefobj[1], $startxref, true);
+        if (!isset($xrefcrs[0][0]) || $xrefcrs[0][0] !== PDF_TYPE_DICTIONARY) {
+            $this->Error('Unable to find xref');
+        }
         if (!isset($xref['xref_location'])) {
             $xref['xref_location'] = $startxref;
             $xref['max_object'] = 0;
@@ -480,19 +486,20 @@ class tcpdi_parser {
         $keys = array_keys($sarr);
         $columns = 1; // Default as per PDF 32000-1:2008.
         $predictor = 1; // Default as per PDF 32000-1:2008.
+        $index = array(); // @CHANGE DOL list of (first object number, number of entries), /Index may hold several subsections
         foreach ($keys as $k=>$key) {
             $v = $sarr[$key];
             if (($key == '/Type') AND ($v[0] == PDF_TYPE_TOKEN AND ($v[1] == 'XRef'))) {
                 $valid_crs = true;
             } elseif (($key == '/Index') AND ($v[0] == PDF_TYPE_ARRAY AND count($v[1]) >= 2)) {
-                // first object number in the subsection
-                $index_first = intval($v[1][0][1]);
-                // number of entries in the subsection
-                $index_entries = intval($v[1][1][1]);
+                for ($i = 0; ($i + 1) < count($v[1]); $i += 2) {
+                    // first object number in the subsection, number of entries in the subsection
+                    $index[] = array(intval($v[1][$i][1]), intval($v[1][($i + 1)][1]));
+                }
             } elseif (($key == '/Prev') AND ($v[0] == PDF_TYPE_NUMERIC)) {
                 // get previous xref offset
                 $prevxref = intval($v[1]);
-            } elseif (($key == '/W') AND ($v[0] == PDF_TYPE_ARRAY)) {
+            } elseif (($key == '/W') AND ($v[0] == PDF_TYPE_ARRAY) AND (count($v[1]) >= 3)) {
                 // number of bytes (in the decoded stream) of the corresponding field
                 $wb = array();
                 $wb[0] = intval($v[1][0][1]);
@@ -522,92 +529,100 @@ class tcpdi_parser {
         }
         // decode data
         $obj_num = 0;
-        if ($valid_crs AND isset($xrefcrs[1][3][0])) {
-            // number of bytes in a row
-            $rowlen = ($columns + 1);
+        if ($valid_crs AND isset($xrefcrs[1][3][0]) AND isset($wb)) {
             // convert the stream into an array of integers
             $sdata = unpack('C*', $xrefcrs[1][3][0]);
-            // split the rows
-            $sdata = array_chunk($sdata, $rowlen);
             // initialize decoded array
             $ddata = array();
-            // initialize first row with zeros
-            $prev_row = array_fill (0, $rowlen, 0);
-            // for each row apply PNG unpredictor
-            foreach ($sdata as $k => $row) {
-                // initialize new row
-                $ddata[$k] = array();
-                // get PNG predictor value
-                if (empty($predictor)) {
-                    $predictor = (10 + $row[0]);
-                }
-                // for each byte on the row
-                for ($i=1; $i<=$columns; ++$i) {
-                    if (!isset($row[$i])) {
-                        // No more data in this row - we're done here.
-                        break;
-                    }
-                    // new index
-                    $j = ($i - 1);
-                    $row_up = $prev_row[$j];
-                    if ($i == 1) {
-                        $row_left = 0;
-                        $row_upleft = 0;
-                    } else {
-                        $row_left = $row[($i - 1)];
-                        $row_upleft = $prev_row[($j - 1)];
-                    }
-                    switch ($predictor) {
-                        case 1: // No prediction (equivalent to PNG None)
-                        case 10: { // PNG prediction (on encoding, PNG None on all rows)
-                            $ddata[$k][$j] = $row[$i];
+            if ($predictor >= 10) {
+                // PNG prediction: each row starts with a tag byte giving the PNG filter used by this row
+                // number of bytes in a row
+                $rowlen = ($columns + 1);
+                // split the rows
+                $sdata = array_chunk($sdata, $rowlen);
+                // initialize first row with zeros
+                $prev_row = array_fill (0, $rowlen, 0);
+                // for each row apply PNG unpredictor
+                foreach ($sdata as $k => $row) {
+                    // initialize new row
+                    $ddata[$k] = array();
+                    // @CHANGE DOL the filter is the one of the row, not the /Predictor value of the stream
+                    $rowpredictor = (10 + $row[0]);
+                    // for each byte on the row
+                    for ($i=1; $i<=$columns; ++$i) {
+                        if (!isset($row[$i])) {
+                            // No more data in this row - we're done here.
                             break;
                         }
-                        case 11: { // PNG prediction (on encoding, PNG Sub on all rows)
-                            $ddata[$k][$j] = (($row[$i] + $row_left) & 0xff);
-                            break;
+                        // new index
+                        $j = ($i - 1);
+                        $row_up = isset($prev_row[$j]) ? $prev_row[$j] : 0;
+                        if ($i == 1) {
+                            $row_left = 0;
+                            $row_upleft = 0;
+                        } else {
+                            // @CHANGE DOL the byte on the left is the decoded one
+                            $row_left = $ddata[$k][($j - 1)];
+                            $row_upleft = isset($prev_row[($j - 1)]) ? $prev_row[($j - 1)] : 0;
                         }
-                        case 12: { // PNG prediction (on encoding, PNG Up on all rows)
-                            $ddata[$k][$j] = (($row[$i] + $row_up) & 0xff);
-                            break;
-                        }
-                        case 13: { // PNG prediction (on encoding, PNG Average on all rows)
-                            $ddata[$k][$j] = (($row[$i] + (($row_left + $row_up) / 2)) & 0xff);
-                            break;
-                        }
-                        case 14: { // PNG prediction (on encoding, PNG Paeth on all rows)
-                            // initial estimate
-                            $p = ($row_left + $row_up - $row_upleft);
-                            // distances
-                            $pa = abs($p - $row_left);
-                            $pb = abs($p - $row_up);
-                            $pc = abs($p - $row_upleft);
-                            $pmin = min($pa, $pb, $pc);
-                            // return minumum distance
-                            switch ($pmin) {
-                                case $pa: {
-                                    $ddata[$k][$j] = (($row[$i] + $row_left) & 0xff);
-                                    break;
-                                }
-                                case $pb: {
-                                    $ddata[$k][$j] = (($row[$i] + $row_up) & 0xff);
-                                    break;
-                                }
-                                case $pc: {
-                                    $ddata[$k][$j] = (($row[$i] + $row_upleft) & 0xff);
-                                    break;
-                                }
+                        switch ($rowpredictor) {
+                            case 10: { // PNG None
+                                $ddata[$k][$j] = $row[$i];
+                                break;
                             }
-                            break;
-                        }
-                        default: { // PNG prediction (on encoding, PNG optimum)
-                            $this->Error("Unknown PNG predictor $predictor");
-                            break;
+                            case 11: { // PNG Sub
+                                $ddata[$k][$j] = (($row[$i] + $row_left) & 0xff);
+                                break;
+                            }
+                            case 12: { // PNG Up
+                                $ddata[$k][$j] = (($row[$i] + $row_up) & 0xff);
+                                break;
+                            }
+                            case 13: { // PNG Average
+                                $ddata[$k][$j] = (($row[$i] + (int) floor(($row_left + $row_up) / 2)) & 0xff);
+                                break;
+                            }
+                            case 14: { // PNG Paeth
+                                // initial estimate
+                                $p = ($row_left + $row_up - $row_upleft);
+                                // distances
+                                $pa = abs($p - $row_left);
+                                $pb = abs($p - $row_up);
+                                $pc = abs($p - $row_upleft);
+                                $pmin = min($pa, $pb, $pc);
+                                // return minumum distance
+                                switch ($pmin) {
+                                    case $pa: {
+                                        $ddata[$k][$j] = (($row[$i] + $row_left) & 0xff);
+                                        break;
+                                    }
+                                    case $pb: {
+                                        $ddata[$k][$j] = (($row[$i] + $row_up) & 0xff);
+                                        break;
+                                    }
+                                    case $pc: {
+                                        $ddata[$k][$j] = (($row[$i] + $row_upleft) & 0xff);
+                                        break;
+                                    }
+                                }
+                                break;
+                            }
+                            default: {
+                                $this->Error("Unknown PNG predictor $rowpredictor");
+                                break;
+                            }
                         }
                     }
+                    $prev_row = $ddata[$k];
+                } // end for each row
+            } else {
+                // @CHANGE DOL No predictor (cairo, PDFlib, pdfTeX...): the stream is the plain list of the entries,
+                // sum(W) bytes each, without any tag byte. It was read as if a PNG predictor was always used.
+                $rowlen = array_sum($wb);
+                if ($rowlen > 0) {
+                    $ddata = array_chunk($sdata, $rowlen);
                 }
-                $prev_row = $ddata[$k];
-            } // end for each row
+            }
             // complete decoding
             unset($sdata);
             $sdata = array();
@@ -633,39 +648,27 @@ class tcpdi_parser {
             }
             unset($ddata);
             // fill xref
-            if (isset($index_first)) {
-                $obj_num = $index_first;
-            } else {
-                $obj_num = 0;
+            if (empty($index)) {
+                $index[] = array(0, count($sdata));
             }
-            foreach ($sdata as $k => $row) {
-                switch ($row[0]) {
-                    case 0: { // (f) linked list of free objects
-                        ++$obj_num;
-                        break;
-                    }
-                    case 1: { // (n) objects that are in use but are not compressed
-                        // create unique object index: [object number]_[generation number]
-                        $index = $obj_num.'_'.$row[2];
+            $k = 0;
+            foreach ($index as $subsection) {
+                $obj_num = $subsection[0];
+                for ($n = 0; ($n < $subsection[1]) AND isset($sdata[$k]); ++$n, ++$k) {
+                    $row = $sdata[$k];
+                    // (0) free object, (2) object stored in an object stream: nothing to store for them
+                    if ($row[0] == 1) { // (n) objects that are in use but are not compressed
                         // check if object already exist
                         if (!isset($xref['xref'][$obj_num][$row[2]])) {
                             // store object offset position
                             $xref['xref'][$obj_num][$row[2]] = $row[1];
                         }
-                        ++$obj_num;
-                        break;
                     }
-                    case 2: { // compressed objects
-                        // $row[1] = object number of the object stream in which this object is stored
-                        // $row[2] = index of this object within the object stream
-                        /*$index = $row[1].'_0_'.$row[2];
-                        $xref['xref'][$row[1]][0][$row[2]] = -1;*/
-                        break;
-                    }
-                    default: { // null objects
-                        break;
-                    }
+                    // @CHANGE DOL every entry stands for one object number, whatever its type. The number was
+                    // not incremented on the entries of compressed objects, shifting all the following ones.
+                    ++$obj_num;
                 }
+                $xref['max_object'] = max($xref['max_object'], $obj_num);
             }
         } // end decoding data
         $xref['max_object'] = max($xref['max_object'], $obj_num);
@@ -1138,27 +1141,20 @@ class tcpdi_parser {
         if ($slength <= 0) {
             return array('', array());
         }
+        // @CHANGE DOL The filters were looked for inside a test that is only true for a name, so a stream whose
+        // filter is written as an array ("/Filter [/FlateDecode]") was never decoded. The /Length branch of that
+        // loop could never be reached either, as it asked the same value to be a name and a number at once.
         $filters = array();
-        foreach ($sdic as $k => $v) {
+        if (isset($sdic['/Filter'])) {
+            $v = $sdic['/Filter'];
             if ($v[0] == PDF_TYPE_TOKEN) {
-                if (($k == '/Length') AND ($v[0] == PDF_TYPE_NUMERIC)) {
-                    // get declared stream lenght
-                    $declength = intval($v[1]);
-                    if ($declength < $slength) {
-                        $stream = substr($stream, 0, $declength);
-                        $slength = $declength;
-                    }
-                } elseif ($k == '/Filter') {
-                    if ($v[0] == PDF_TYPE_TOKEN) {
-                        // single filter
-                        $filters[] = $v[1];
-                    } elseif ($v[0] == PDF_TYPE_ARRAY) {
-                        // array of filters
-                        foreach ($v[1] as $flt) {
-                            if ($flt[0] == PDF_TYPE_TOKEN) {
-                                $filters[] = $flt[1];
-                            }
-                        }
+                // single filter
+                $filters[] = $v[1];
+            } elseif ($v[0] == PDF_TYPE_ARRAY) {
+                // array of filters
+                foreach ($v[1] as $flt) {
+                    if ($flt[0] == PDF_TYPE_TOKEN) {
+                        $filters[] = $flt[1];
                     }
                 }
             }

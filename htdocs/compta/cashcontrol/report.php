@@ -401,9 +401,11 @@ if ($resql) {
 		usort(
 			$rowstoprint,
 			/**
-			 * @param array<string, string|int|float|false> $a First display row
-			 * @param array<string, string|int|float|false> $b Second display row
-			 * @return int
+			 * Compare two lines to print
+			 *
+			 * @param	array<string,mixed>	$a	First line
+			 * @param	array<string,mixed>	$b	Second line
+			 * @return	int						Result of the comparison
 			 */
 			function (array $a, array $b) use ($sortfield, $sortorder): int {
 				$cmp = is_string($a[$sortfield]) ? strnatcasecmp($a[$sortfield], $b[$sortfield]) : ($a[$sortfield] <=> $b[$sortfield]);
