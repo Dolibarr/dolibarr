@@ -79,7 +79,7 @@ $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_cti = preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml'))); // Phone number without any special chars
 $search_phone = GETPOST("search_phone", 'alpha');
 
-$search_id = GETPOST("search_id", "intcomma");
+$search_id = trim(GETPOST("search_id", 'alpha'));	// Can contains a numeric test like ">10" or "!= 34"
 $search_ref_ext = GETPOST("search_ref_ext", "alpha");
 $search_firstlast_only = GETPOST("search_firstlast_only", 'alpha');
 $search_lastname = GETPOST("search_lastname", 'alpha');
@@ -715,7 +715,7 @@ if (strlen($search_firstlast_only)) {
 	$sql .= natural_search(array('p.lastname', 'p.firstname'), $search_firstlast_only);
 }
 
-if ($search_id > 0) {
+if ($search_id != '') {
 	$sql .= natural_search('p.rowid', $search_id, 1);
 }
 if ($search_ref_ext) {
@@ -948,8 +948,8 @@ if (!empty($search_categ_supplier) && $search_categ_supplier != '-1') {
 if ($search_all != '') {
 	$param .= '&search_all='.urlencode($search_all);
 }
-if ($search_id > 0) {
-	$param .= "&search_id=".((int) $search_id);
+if ($search_id != '') {
+	$param .= "&search_id=".urlencode($search_id);
 }
 if ($search_ref_ext) {
 	$param .= "&search_ref_ext=".urlencode($search_ref_ext);
@@ -1238,8 +1238,8 @@ if ($conf->main_checkbox_left_column) {
 	print '</td>';
 }
 if (!empty($arrayfields['p.rowid']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input class="flat searchstring" type="text" name="search_id" size="1" value="'.dolPrintHTMLForAttribute($search_id).'">';
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['p.lastname']['checked'])) {
@@ -1445,7 +1445,7 @@ if ($conf->main_checkbox_left_column) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.rowid']['checked'])) {
-	print_liste_field_titre($arrayfields['p.rowid']['label'], $_SERVER["PHP_SELF"], "p.rowid", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['p.rowid']['label'], $_SERVER["PHP_SELF"], "p.rowid", "", $param, "", $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.lastname']['checked'])) {
@@ -1678,7 +1678,7 @@ while ($i < $imaxinloop) {
 
 		// ID
 		if (!empty($arrayfields['p.rowid']['checked'])) {
-			print '<td class="tdoverflowmax50">';
+			print '<td class="center tdoverflowmax50">';
 			print dolPrintHTML($obj->rowid);
 			print "</td>\n";
 			if (!$i) {
