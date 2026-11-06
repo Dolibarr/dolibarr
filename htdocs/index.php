@@ -653,12 +653,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 
 					$textLateTitle = $langs->trans("NActionsLate", $board->nbtodolate);
 
-					$dateOrder = '';
-					if ($board->id == 'mo') {
-						$dateOrder = $langs->trans("DateToday") . " > " . $langs->trans("DateReference");
-					} else {
-						$dateOrder = $langs->trans("DateReference") . " > " . $langs->trans("DateToday");
-					}
+					$dateOrder = $langs->trans("DateToday") . " > " . $langs->trans("DateReference");
 					$warningDelay = ceil(empty($board->warning_delay) ? 0 : $board->warning_delay);
 					$sign = '';
 					if ($warningDelay >= 0) {
@@ -806,7 +801,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 
 
 			$textlate = $langs->trans("NActionsLate", $board->nbtodolate);
-			$textlate .= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($board->warning_delay) >= 0 ? '+' : '').ceil($board->warning_delay).' '.$langs->trans("days").')';
+			$textlate .= ' ('.$langs->trans("Late").' = '.$langs->trans("DateToday").' > '.$langs->trans("DateReference").' '.(ceil($board->warning_delay) >= 0 ? '+' : '').ceil($board->warning_delay).' '.$langs->trans("days").')';
 
 
 			$boxwork .= '<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats130 boxstatsborder">';
