@@ -2798,7 +2798,7 @@ function getSalesRepresentativeSqlFilter($socidfield, $userids = 0, $not = 0, $a
 
 	$sql = "";
 	if ($allownull) {
-		$sql .= "(t.fk_soc IS NULL OR ";
+		$sql .= "(".$db->sanitize($socidfield)." IS NULL OR ";
 	}
 	$sql .= ($not ? 'NOT EXISTS' : 'EXISTS');
 	// $socidfield is a column expression of the outer query (e.g. 's.rowid'); it is compared to sc.fk_soc
@@ -2806,6 +2806,7 @@ function getSalesRepresentativeSqlFilter($socidfield, $userids = 0, $not = 0, $a
 	if (!empty($userids)) {
 		$sql .= ' AND sc.fk_user IN ('.$db->sanitize(implode(',', $userids)).')';
 	}
+	$sql .= ')';
 	if ($allownull) {
 		$sql .= ')';
 	}
