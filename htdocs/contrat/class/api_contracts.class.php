@@ -664,7 +664,8 @@ class Contracts extends DolibarrApi
 		}
 
 		$contractline = new ContratLigne($this->db);
-		if ($contractline->fetch($lineid) <= 0) {
+		// ContratLigne::fetch() also returns 1 when no line is found, so the id must be checked too
+		if ($contractline->fetch($lineid) <= 0 || empty($contractline->id)) {
 			throw new RestException(404, 'Contract line not found');
 		}
 		if ($contractline->fk_contrat != $this->contract->id) {
