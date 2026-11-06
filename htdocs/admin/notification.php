@@ -354,11 +354,10 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 		$model = 'holiday';
 	}
 
-	if (!empty($notificationEventOptions[$notifiedevent['code']]['picto'])) {
-		$label = img_picto('', $notificationEventOptions[$notifiedevent['code']]['picto'], 'class="pictofixedwidth"').$label;
-	}
-
 	$constantes[$notifiedevent['code'].'_TEMPLATE'] = array('type'=>'emailtemplate:'.$model, 'label'=>$label);
+	if (!empty($notificationEventOptions[$notifiedevent['code']]['picto'])) {
+		$constantes[$notifiedevent['code'].'_TEMPLATE']['picto'] = $notificationEventOptions[$notifiedevent['code']]['picto'];
+	}
 }
 
 $helptext = $langs->trans("EmailTemplateHelp", $langs->transnoentitiesnoconv("Tools"), $langs->transnoentitiesnoconv("EMailTemplates"));
