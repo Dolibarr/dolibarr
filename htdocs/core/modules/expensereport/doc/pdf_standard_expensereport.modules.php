@@ -452,9 +452,9 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 						if ($pagenb == 1) {
-							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
+							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
 						} else {
-							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
+							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
 						}
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						$pagenb++;
@@ -469,9 +469,9 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 					}
 					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {  // @phan-suppress-current-line PhanUndeclaredProperty
 						if ($pagenb == 1) {
-							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
+							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
 						} else {
-							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
+							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
 						}
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						// New page
@@ -488,10 +488,10 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 
 				// Show square
 				if ($pagenb == 1) {
-					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0);
+					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0, $object->multicurrency_code);
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				} else {
-					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0);
+					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0, $object->multicurrency_code);
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
 
@@ -503,7 +503,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 				$pdf->SetXY(120, $posy);
 				$pdf->MultiCell(40, 5, $outputlangs->transnoentities("TotalHT"), 1, 'L');
 				$pdf->SetXY(160, $posy);
-				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - 160, 5, price($object->total_ht), 1, 'C');
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - 160, 5, price($object->isInForeignCurrency() ? $object->multicurrency_total_ht : $object->total_ht), 1, 'C');
 				$pdf->SetFillColor(248, 248, 248);
 
 				if (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) {
@@ -513,7 +513,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 					$pdf->SetTextColor(0, 0, 60);
 					$pdf->MultiCell(40, 5, $outputlangs->transnoentities("TotalVAT"), 1, 'L');
 					$pdf->SetXY(160, $posy);
-					$pdf->MultiCell($this->page_largeur - $this->marge_gauche - 160, 5, price($object->total_tva), 1, 'C');
+					$pdf->MultiCell($this->page_largeur - $this->marge_gauche - 160, 5, price($object->isInForeignCurrency() ? $object->multicurrency_total_tva : $object->total_tva), 1, 'C');
 				}
 
 				$posy += 5;
@@ -522,7 +522,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 				$pdf->SetTextColor(0, 0, 60);
 				$pdf->MultiCell(40, 5, $outputlangs->transnoentities("TotalTTC"), 1, 'L');
 				$pdf->SetXY(160, $posy);
-				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - 160, 5, price($object->total_ttc), 1, 'C');
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - 160, 5, price($object->isInForeignCurrency() ? $object->multicurrency_total_ttc : $object->total_ttc), 1, 'C');
 
 				// show payments zone
 				$sumPayments = $object->getSumPayments();
@@ -630,7 +630,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 
 		// Unit price
 		$pdf->SetXY($this->posxup, $curY);
-		$pdf->MultiCell($this->posxqty - $this->posxup - 0.8, 4, price($object->lines[$linenumber]->value_unit), 0, 'C');
+		$pdf->MultiCell($this->posxqty - $this->posxup - 0.8, 4, price($object->isInForeignCurrency() ? $object->lines[$linenumber]->multicurrency_subprice_ttc : $object->lines[$linenumber]->value_unit), 0, 'C');
 
 		// Quantity
 		$pdf->SetXY($this->posxqty, $curY);
@@ -638,11 +638,11 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 
 		// Total without taxes
 		$pdf->SetXY($this->postotalht, $curY);
-		$pdf->MultiCell($this->postotalttc - $this->postotalht - 0.8, 4, price($object->lines[$linenumber]->total_ht), 0, 'C');
+		$pdf->MultiCell($this->postotalttc - $this->postotalht - 0.8, 4, price($object->isInForeignCurrency() ? $object->lines[$linenumber]->multicurrency_total_ht : $object->lines[$linenumber]->total_ht), 0, 'C');
 
 		// Total with all taxes
 		$pdf->SetXY($this->postotalttc - 1, $curY);
-		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalttc + 1, 4, price($object->lines[$linenumber]->total_ttc), 0, 'C');
+		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalttc + 1, 4, price($object->isInForeignCurrency() ? $object->lines[$linenumber]->multicurrency_total_ttc : $object->lines[$linenumber]->total_ttc), 0, 'C');
 
 		// Comments
 		$pdf->SetXY($this->posxcomment, $curY);
