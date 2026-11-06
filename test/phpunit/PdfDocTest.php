@@ -32,6 +32,8 @@ global $conf,$user,$langs,$db,$mysoc;
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
+require_once dirname(__FILE__).'/../../htdocs/comm/propal/class/propal.class.php';
+require_once dirname(__FILE__).'/../../htdocs/supplier_proposal/class/supplier_proposal.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/pdf.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/doc.lib.php';
 
@@ -112,6 +114,63 @@ class PdfDocTest extends CommonClassTest
 	}
 
 	/**
+	 * testPdfGetLinkedObjectsHidesSupplierProposalOfOtherThirdparty
+	 *
+	 * @return void
+	 */
+	public function testPdfGetLinkedObjectsHidesSupplierProposalOfOtherThirdparty()
+	{
+		global $conf, $db, $langs;
+
+		$hasAllowOtherSoc = isset($conf->global->PDF_ALLOW_DISPLAY_LINKED_OBJECT_FOR_OTHER_SOC);
+		$savedAllowOtherSoc = $hasAllowOtherSoc ? $conf->global->PDF_ALLOW_DISPLAY_LINKED_OBJECT_FOR_OTHER_SOC : null;
+		$conf->global->PDF_ALLOW_DISPLAY_LINKED_OBJECT_FOR_OTHER_SOC = 0;
+
+		$supplierProposal = new SupplierProposal($db);
+		$supplierProposal->ref = 'RQ0000-0001';
+		$supplierProposal->socid = 2;
+
+		$proposal = new class ($db) extends Propal {
+			/** @var array<string,array<int,CommonObject>> */
+			public $fakeLinkedObjects = array();
+
+			/**
+			 * @param ?int		$sourceid			Unused
+			 * @param string	$sourcetype			Unused
+			 * @param ?int		$targetid			Unused
+			 * @param string	$targettype			Unused
+			 * @param string	$clause				Unused
+			 * @param int		$alsosametype		Unused
+			 * @param string	$orderby			Unused
+			 * @param int		$loadalsoobjects	Unused
+			 * @return int
+			 */
+			public function fetchObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $clause = 'OR', $alsosametype = 1, $orderby = 'sourcetype', $loadalsoobjects = 1)
+			{
+				$this->linkedObjects = $this->fakeLinkedObjects;
+				return 1;
+			}
+		};
+		$proposal->socid = 1;
+		$proposal->fakeLinkedObjects = array('supplier_proposal' => array(1 => $supplierProposal));
+
+		try {
+			$result = pdf_getLinkedObjects($proposal, $langs);
+			$this->assertArrayNotHasKey('supplier_proposal', $result);
+
+			$supplierProposal->socid = 1;
+			$result = pdf_getLinkedObjects($proposal, $langs);
+			$this->assertSame('RQ0000-0001', $result['supplier_proposal']['ref_value']);
+		} finally {
+			if ($hasAllowOtherSoc) {
+				$conf->global->PDF_ALLOW_DISPLAY_LINKED_OBJECT_FOR_OTHER_SOC = $savedAllowOtherSoc;
+			} else {
+				unset($conf->global->PDF_ALLOW_DISPLAY_LINKED_OBJECT_FOR_OTHER_SOC);
+			}
+		}
+	}
+
+	/**
 	 * Build a minimal one page PDF document holding the given objects.
 	 *
 	 * @param	array<int,string>	$objects	Content of each object, the key is the object number
@@ -133,6 +192,52 @@ class PdfDocTest extends CommonClassTest
 			$out .= isset($offsets[$num]) ? sprintf("%010d 00000 n \n", $offsets[$num]) : "0000000000 65535 f \n";
 		}
 		$out .= "trailer\n<< /Size ".$size." /Root 1 0 R >>\nstartxref\n".$startxref."\n%%EOF\n";
+
+		return $out;
+	}
+
+	/**
+	 * Build a minimal PDF document the way cairo does: the objects are in an object stream whose length is an indirect
+	 * object declared after it, and the xref is a stream that does not use any predictor.
+	 *
+	 * @param	array<int,string>	$objects	Content of each object stored into the object stream, the key is the object number
+	 * @param	string				$content	Content stream of the page (object 4)
+	 * @param	string				$sep		What separates the numbers into the header of the object stream
+	 * @param	string				$filter		Value of the /Filter entry of the object stream
+	 * @return	string							Content of the PDF document
+	 */
+	private function buildPdfWithObjectStream($objects, $content, $sep = ' ', $filter = '/FlateDecode')
+	{
+		$out = "%PDF-1.5\n";
+		$entries = [];	// object number => type, field 2, field 3
+
+		$entries[4] = [1, strlen($out), 0];
+		$out .= "4 0 obj\n<< /Length ".strlen($content)." >>\nstream\n".$content."\nendstream\nendobj\n";
+
+		$header = '';
+		$body = '';
+		$index = 0;
+		foreach ($objects as $num => $object) {
+			$header .= $num.$sep.strlen($body).$sep;
+			$body .= $object."\n";
+			$entries[$num] = [2, 6, $index++];
+		}
+		$data = gzcompress($header.$body);
+		$entries[6] = [1, strlen($out), 0];
+		$out .= "6 0 obj\n<< /Type /ObjStm /N ".count($objects)." /First ".strlen($header)." /Filter ".$filter." /Length 8 0 R >>\nstream\n".$data."\nendstream\nendobj\n";
+		$entries[8] = [1, strlen($out), 0];
+		$out .= "8 0 obj\n".strlen($data)."\nendobj\n";
+
+		$startxref = strlen($out);
+		$entries[7] = [1, $startxref, 0];
+		$rows = '';
+		for ($num = 0; $num < 9; $num++) {
+			$entry = isset($entries[$num]) ? $entries[$num] : [0, 0, 255];
+			$rows .= pack('Cnn', $entry[0], $entry[1], $entry[2]);
+		}
+		$data = gzcompress($rows);
+		$out .= "7 0 obj\n<< /Type /XRef /Size 9 /W [1 2 2] /Root 1 0 R /Filter /FlateDecode /Length ".strlen($data)." >>\nstream\n".$data."\nendstream\nendobj\n";
+		$out .= "startxref\n".$startxref."\n%%EOF\n";
 
 		return $out;
 	}
@@ -187,5 +292,42 @@ class PdfDocTest extends CommonClassTest
 		$this->assertSame($sizes['spaced'], $sizes['online2'] - 1);
 		$this->assertSame($sizes['spaced'], $sizes['comment']);
 		$this->assertSame($sizes['spaced'] - 16, $sizes['empty']);
+	}
+
+	/**
+	 * Import a page of a document written the way cairo and PDFlib write them: the objects are in an object
+	 * stream and the cross-reference is a stream that uses no predictor. The same document is also built with
+	 * its filter written as an array, which was never decoded.
+	 *
+	 * @return void
+	 */
+	public function testPdfImportPageWithAnXrefStreamWithoutPredictor()
+	{
+		pdf_getInstance();	// Load the TCPDF and TCPDI classes and define their constants
+
+		$content = "BT /F1 24 Tf 72 700 Td (Hello TCPDI) Tj ET";
+		$objects = array(
+			1 => "<< /Type /Catalog /Pages 2 0 R >>",
+			2 => "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+			3 => "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>",
+			5 => "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+		);
+
+		$sizes = array();
+		foreach (array('name' => '/FlateDecode', 'array' => '[/FlateDecode]') as $case => $filter) {
+			$file = tempnam(sys_get_temp_dir(), 'tcpdi').'.pdf';
+			file_put_contents($file, $this->buildPdfWithObjectStream($objects, $content, ' ', $filter));
+
+			$tcpdi = new TCPDI();
+			$this->assertSame(1, $tcpdi->setSourceFile($file), 'Case '.$case.': the document should hold one page');
+			$tpl = $tcpdi->importPage(1);
+			$tcpdi->AddPage();
+			$tcpdi->useTemplate($tpl);
+			$sizes[$case] = strlen($tcpdi->Output('', 'S'));
+			unlink($file);
+		}
+
+		// Both ways of writing the filter give the same page
+		$this->assertSame($sizes['name'], $sizes['array']);
 	}
 }

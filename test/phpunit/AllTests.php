@@ -193,8 +193,6 @@ class AllTests
 		$suite->addTestSuite('ApiListStatusFilterTest');
 		require_once dirname(__FILE__).'/ApiSupplierOrderHeaderUpdateTest.php';
 		$suite->addTestSuite('ApiSupplierOrderHeaderUpdateTest');
-		require_once dirname(__FILE__).'/AiProjectUpdateTest.php';
-		$suite->addTestSuite('AiProjectUpdateTest');
 		//require_once dirname(__FILE__).'/AiMcpWireTest.php';
 		//$suite->addTestSuite('AiMcpWireTest');
 		//require_once dirname(__FILE__).'/AiWriteConfirmationTest.php';
@@ -235,6 +233,8 @@ class AllTests
 		$suite->addTestSuite('ImagesLibTest');
 		require_once dirname(__FILE__).'/FunctionsLibTest.php';
 		$suite->addTestSuite('FunctionsLibTest');
+		require_once dirname(__FILE__).'/TaxLibTest.php';
+		$suite->addTestSuite('TaxLibTest');
 		require_once dirname(__FILE__).'/Functions2LibTest.php';
 		$suite->addTestSuite('Functions2LibTest');
 		require_once dirname(__FILE__).'/FunctionsBELibTest.php';
@@ -485,6 +485,8 @@ class AllTests
 			$suite->addTestSuite('RestAPIInterventionTest');
 			require_once dirname(__FILE__).'/RestAPIAgendaEventsTest.php';
 			$suite->addTestSuite('RestAPIAgendaEventsTest');
+			require_once dirname(__FILE__).'/RestAPIContractTest.php';
+			$suite->addTestSuite('RestAPIContractTest');
 
 			// Old WS
 			require_once dirname(__FILE__).'/WebservicesProductsTest.php';

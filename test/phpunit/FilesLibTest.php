@@ -642,6 +642,7 @@ class FilesLibTest extends CommonClassTest
 		$savconfmodule = isset($conf->event) ? $conf->event : null;
 		$conf->event = new stdClass();
 		$conf->event->dir_output = DOL_DATA_ROOT.'/event';
+		$conf->event->multidir_output = array(1 => DOL_DATA_ROOT.'/event');
 		$result = dol_check_secure_access_document('event', 'REF/REF.pdf', 0, '', '', 'read');
 		$this->assertEquals(DOL_DATA_ROOT.'/event/REF/REF.pdf', $result['original_file']);
 		if ($savconfmodule === null) {
