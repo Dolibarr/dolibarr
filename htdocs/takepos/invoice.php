@@ -670,6 +670,14 @@ if (empty($reshook)) {
 
 		$invoice = new Facture($db);
 		$invoice->fetch($placeid);
+
+		// The header (and what follows) must show the customer of this sale, not the one of the current cart
+		$soc = new Societe($db);
+		if ($invoice->socid > 0) {
+			$soc->fetch($invoice->socid);
+		} else {
+			$soc->fetch(getDolGlobalInt($constforcompanyid));
+		}
 	}
 
 	// If we add a line and no invoice yet, we create the invoice
