@@ -59,6 +59,8 @@ class MyObject extends CommonObject
 	 * @var string 		If permission must be checked with hasRight('mymodule', 'read') and not hasright('mymodule', 'myobject', 'read'), you can uncomment this line
 	 */
 	//public $element_for_permission = 'mymodule';
+	// BEGIN MODULEBUILDER RIGHTSCONFIG
+	// END MODULEBUILDER RIGHTSCONFIG
 
 	/**
 	 * @var string 		String with name of icon for myobject. Must be a 'fa-xxx' fontawesome code (or 'fa-xxx_fa_color_size') or 'myobject@mymodule' if picto is file 'img/object_myobject.png'.
