@@ -181,6 +181,42 @@ class ToolApiBridge extends McpTool
 			'params' => array(
 				'id' => 'The object: rowid, or its ref (required).'
 			)
+		),
+		'api_objects_add_line' => array(
+			'suffix' => 'add_line',
+			'method' => 'postLine',
+			'description' => "Add ONE line to a DRAFT document. Set 'object' to the type of the document and 'id' to the document. The user confirms before anything is written.",
+			'object' => 'Type of the draft document to add the line to.',
+			'params' => array(
+				'id' => 'The draft document: rowid (required). For an intervention, its ref is accepted too.'
+			)
+		),
+		'api_objects_update_line' => array(
+			'suffix' => 'update_line',
+			'method' => 'putLine',
+			'description' => "Change ONE line of a DRAFT document. Set 'object' to the type of the document. The user confirms before anything is written.",
+			'object' => 'Type of the draft document whose line is changed.',
+			'params' => array(
+				'id' => 'The draft document: rowid, or its ref (required).'
+			)
+		),
+		'api_objects_delete_line' => array(
+			'suffix' => 'delete_line',
+			'method' => 'deleteLine',
+			'description' => "Delete ONE line of a DRAFT document. Set 'object' to the type of the document. The user confirms before anything is written.",
+			'object' => 'Type of the draft document whose line is deleted.',
+			'params' => array(
+				'id' => 'The draft document: rowid, or its ref (required).'
+			)
+		),
+		'api_objects_categories_list' => array(
+			'suffix' => 'categories_list',
+			'method' => 'getCategories',
+			'description' => "Tags (categories) of one object. Set 'object' to the type of the object and 'id' to its rowid. To list or search the tags themselves, use api_categories_list.",
+			'object' => 'Type of the object whose tags are listed.',
+			'params' => array(
+				'id' => 'Rowid of the object.'
+			)
 		)
 	);
 
@@ -1584,22 +1620,23 @@ class ToolApiBridge extends McpTool
 			'methods' => array(
 				'index' => array(
 					'default_properties' => 'id,ref,label,bank,currency_code,clos,courant',
-					'description' => "Bank and cash accounts: ref, label, bank, currency. clos: 0 open, 1 closed. courant: 0 savings, 1 current, 2 cash. The balance is in api_bankaccounts_balance, the transactions in api_bankaccounts_lines."
+					'description' => "Bank and cash accounts: ref, label, bank, currency. clos: 0 open, 1 closed. courant: 0 savings, 1 current, 2 cash. The current balance of one account is given by api_bankaccounts_get with includebalance=1, the transactions by api_bankaccounts_lines_list."
 				),
-				'get' => array('description' => "One bank account with its bank details and currency."),
+				'get' => array(
+					'description' => "One bank account with its bank details and currency. Set includebalance to 1 to also get its current balance (operations dated in the future excluded) in the field 'balance'.",
+					'params' => array(
+						'id' => "Rowid of the bank account.",
+						'includebalance' => "1 to also return the current balance of the account in the field 'balance', 0 (default) otherwise."
+					)
+				),
 				'getLines' => array(
-					'suffix' => 'lines',
+					'suffix' => 'lines_list',
 					'description' => "Transactions of one bank account: date (dateo), value date (datev), amount (signed: positive is money in), label, payment type, reconciliation (rappro 1 when reconciled). Only the most recent 50 are returned: restrict the period with sqlfilters. Here the field names have NO 't.' prefix, e.g. \"(dateo:>=:'2026-01-01')\" or \"(label:like:'%rent%')\".",
 					'params' => array('id' => "Rowid of the bank account."),
 					// The REST method has no limit: a real account would send its whole history.
 					// Oldest first there, so the end is the most recent.
 					'max_items' => 50,
 					'keep' => 'last'
-				),
-				'getBalance' => array(
-					'suffix' => 'balance',
-					'description' => "Current balance of one bank account.",
-					'params' => array('id' => "Rowid of the bank account.")
 				)
 			)
 		);
@@ -1716,11 +1753,11 @@ class ToolApiBridge extends McpTool
 			'label' => 'bills of materials (BOM)',
 			'methods' => array(
 				'index' => array(
-					'description' => "Bills of materials: ref, label, the product it makes (fk_product), quantity made. Statuses (t.status): 0 draft, 1 validated, 9 canceled. The components are in api_boms_lines."
+					'description' => "Bills of materials: ref, label, the product it makes (fk_product), quantity made. Statuses (t.status): 0 draft, 1 validated, 9 canceled. The components are in api_boms_lines_list."
 				),
 				'get' => array('description' => "One bill of materials."),
 				'getLines' => array(
-					'suffix' => 'lines',
+					'suffix' => 'lines_list',
 					'description' => "Components of one bill of materials: product, quantity, efficiency.",
 					'params' => array('id' => "Rowid of the bill of materials.")
 				)
@@ -1858,6 +1895,34 @@ class ToolApiBridge extends McpTool
 						'lang' => "Language code of the page, e.g. 'en' or 'fr'. Omit for the website language.",
 						'author_alias' => "Name of the author to show.",
 						'status' => "0 offline (default), 1 online."
+					)
+				),
+				'putPage' => array(
+					'suffix' => 'pages_update',
+					'description' => "Change fields of an existing page or blog post of a website. Give 'pageid' (rowid of the page, from api_websites_pages_list) and ONLY the fields to change, with their new value: title, description, keywords, content, lang, author_alias, status. To change a part of the content, read the page first with api_websites_pages_get and send the whole new content (HTML, inside a <section> tag, no PHP code). The alias (pageurl) cannot be changed here. The user confirms before anything is written.",
+					'write' => array(
+						'kind' => 'update',
+						'preview' => 'AIPreviewChangeRecord',
+						'object' => 'WebsitePage',
+						'label' => 'website page',
+						'target' => 'pageid',
+						'lookup' => '',
+						// The website of the page is read from the page itself
+						'target_parent' => array('id' => 'fk_website'),
+						'fields' => array('title', 'description', 'keywords', 'content', 'lang', 'author_alias', 'status'),
+						'required' => array('pageid'),
+						'right' => array('website', 'write')
+					),
+					'params' => array(
+						'pageid' => "Rowid of the page to change.",
+						'id' => "Rowid of the website of the page. Optional: it is found from the page.",
+						'title' => "New title of the page.",
+						'description' => "New short description (meta description), 255 characters max.",
+						'keywords' => "New keywords, separated by commas.",
+						'content' => "New full HTML content of the page, inside a <section> tag. No PHP code.",
+						'lang' => "New language code of the page, e.g. 'en' or 'fr'.",
+						'author_alias' => "New name of the author to show.",
+						'status' => "0 offline, 1 online."
 					)
 				)
 			)
@@ -2140,7 +2205,7 @@ class ToolApiBridge extends McpTool
 			),
 			'expensereports' => array(
 				'getLines' => array(
-					'suffix' => 'lines',
+					'suffix' => 'lines_list',
 					'description' => "Lines of one expense report: date, expense type, amounts, VAT.",
 					'params' => array('id' => "Rowid of the expense report.")
 				),
@@ -3147,6 +3212,9 @@ class ToolApiBridge extends McpTool
 				$objectsOf[$pname][] = $key;
 				if (!isset($properties[$pname])) {
 					$properties[$pname] = $pdef;
+				} elseif (isset($pdef['type']) && isset($properties[$pname]['type']) && $pdef['type'] !== $properties[$pname]['type']) {
+					// Typed differently by the merged tools (a rowid, or a rowid or ref): a string carries both.
+					$properties[$pname]['type'] = 'string';
 				}
 			}
 			$required = ($required === null) ? (array) ($def['inputSchema']['required'] ?? array()) : array_intersect($required, (array) ($def['inputSchema']['required'] ?? array()));
@@ -3159,7 +3227,7 @@ class ToolApiBridge extends McpTool
 		// An argument only some objects take says which.
 		foreach ($objectsOf as $pname => $keys) {
 			if (!isset($mconf['params'][$pname]) && count($keys) < count($merged)) {
-				$properties[$pname]['description'] = trim((string) ($properties[$pname]['description'] ?? '').'. Only for: '.implode(', ', $keys).'.');
+				$properties[$pname]['description'] = trim(rtrim((string) ($properties[$pname]['description'] ?? ''), '. ').'. Only for: '.implode(', ', $keys).'.');
 			}
 		}
 
@@ -5607,11 +5675,24 @@ class ToolApiBridge extends McpTool
 		$this->writeTarget = $this->resolveWriteTarget($write, $given);
 		$out = array($field => ($this->writeTarget ? (int) $this->writeTarget->id : $given));
 
+		// Arguments read from the target record (the website of a page): a different value given is refused.
+		$targetparent = (array) ($write['target_parent'] ?? array());
+		foreach ($targetparent as $name => $property) {
+			if (!$this->writeTarget) {
+				continue;
+			}
+			$out[$name] = (int) $this->writeTarget->$property;
+			if (isset($args[$name]) && $args[$name] !== '' && (int) $args[$name] !== $out[$name]) {
+				$langs->load('other');
+				$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteRecordNotFound', (string) ($write['label'] ?? $write['object']), (string) $given.' ('.$name.' '.$args[$name].')');
+			}
+		}
+
 		if ($kind === 'update') {
 			$aliases = array('nom' => 'name', 'company' => 'name', 'mail' => 'email', 'tel' => 'phone', 'telephone' => 'phone', 'mobile' => 'phone_mobile', 'job' => 'poste', 'libelle' => 'label', 'title' => 'label');
 			$this->writeRefusedFields = array();
 			foreach ($args as $name => $value) {
-				if (in_array($name, array($field, 'ref', 'requestState'), true) || substr((string) $name, 0, 1) === '_') {
+				if (in_array($name, array($field, 'ref', 'requestState'), true) || isset($targetparent[$name]) || substr((string) $name, 0, 1) === '_') {
 					continue;
 				}
 				if (isset($aliases[$name]) && in_array($aliases[$name], $write['fields'], true) && !isset($args[$aliases[$name]])) {
@@ -6143,7 +6224,7 @@ class ToolApiBridge extends McpTool
 			if (!empty($this->writeRefusedFields)) {
 				return $langs->transnoentitiesnoconv('AIWriteFieldsNotAllowed', implode(', ', $this->writeRefusedFields), implode(', ', (array) $write['fields']));
 			}
-			if (count($args) < 2) {
+			if (!array_intersect_key($args, array_flip((array) $write['fields']))) {
 				return $langs->transnoentitiesnoconv('AIWriteNothingToChange');
 			}
 
