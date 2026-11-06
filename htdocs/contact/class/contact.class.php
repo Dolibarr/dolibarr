@@ -240,7 +240,7 @@ class Contact extends CommonObject
 	 */
 	public $socid;		// both socid and fk_soc are used
 	/**
-	 * @var int
+	 * @var int Thirdparty ID
 	 */
 	public $fk_soc;		// both socid and fk_soc are used
 
