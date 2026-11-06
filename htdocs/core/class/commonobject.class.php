@@ -2514,7 +2514,7 @@ abstract class CommonObject
 	/**
 	 * Return the name of the property of the object holding the value of a field of $fields.
 	 * Some classes keep a field in a property with another name than the field (ex: the field fk_opp_status
-	 * of a project is in the property opp_status).
+	 * of a project is in the property opp_status, the field fk_cond_reglement of business documents is in the property cond_reglement_id).
 	 * Override in child classes for their own fields, and return the result of the parent for the others.
 	 *
 	 * @param	string	$field	Field name
@@ -2522,6 +2522,20 @@ abstract class CommonObject
 	 */
 	protected function getFieldPropertyName($field)
 	{
+		// Only for objects having the property (properties named like these fields are deprecated, ex: Propal::$fk_availability)
+		$properties = array(
+			'fk_cond_reglement' => 'cond_reglement_id',
+			'fk_mode_reglement' => 'mode_reglement_id',
+			'fk_availability' => 'availability_id',
+			'fk_input_reason' => 'demand_reason_id',
+			'fk_shipping_method' => 'shipping_method_id',
+			'fk_projet' => 'fk_project',
+			'date_livraison' => 'delivery_date',
+		);
+		if (isset($properties[$field]) && property_exists($this, $properties[$field])) {
+			return $properties[$field];
+		}
+
 		return $field;
 	}
 
@@ -2540,6 +2554,16 @@ abstract class CommonObject
 	}
 
 	/**
+	 * Return if the object saves a deposit percent with its payment term (see setPaymentTerms())
+	 *
+	 * @return	bool
+	 */
+	protected function hasPaymentTermDepositPercent()
+	{
+		return in_array($this->table_element, array('propal', 'commande', 'supplier_proposal', 'commande_fournisseur', 'societe'));
+	}
+
+	/**
 	 * Save into database the current value of one field, called by updateFieldFromUi().
 	 * By default, notes are saved with update_note() and other fields with setValueFrom(), with the trigger XXX_MODIFY.
 	 * Override in child classes to use a dedicated method holding business rules (ex: set_ref_client()).
@@ -2554,6 +2578,22 @@ abstract class CommonObject
 			return $this->update_note((string) $this->$field, $field == 'note_public' ? '_public' : '_private');
 		}
 
+		// Fields of business documents saved by the same setters as their cards
+		$value = $this->getFieldUiValue($field);
+		switch ($field) {
+			case 'fk_cond_reglement':
+				return $this->setPaymentTerms((int) $value, $this->hasPaymentTermDepositPercent() ? $this->deposit_percent : null);
+			case 'fk_mode_reglement':
+				return $this->setPaymentMethods((int) $value);
+			case 'fk_shipping_method':
+				return $this->setShippingMethod((int) $value, 0, $user);
+			case 'fk_account':
+				return $this->setBankAccount((int) $value, 0, $user);
+			case 'fk_projet':
+			case 'fk_project':
+				return $this->setProject((int) $value);
+		}
+
 		$type = $this->fields[$field]['type'];
 		if (preg_match('/^(int|integer)\b/', $type)) {
 			$format = 'int';
@@ -2564,7 +2604,7 @@ abstract class CommonObject
 		}
 		$trigkey = (property_exists($this, 'TRIGGER_PREFIX') && !empty($this->TRIGGER_PREFIX) ? $this->TRIGGER_PREFIX : strtoupper($this->element)).'_MODIFY';
 
-		return $this->setValueFrom($field, $this->getFieldUiValue($field), '', null, $format, '', $user, $trigkey);
+		return $this->setValueFrom($field, $value, '', null, $format, '', $user, $trigkey);
 	}
 
 	/**
@@ -2637,6 +2677,10 @@ abstract class CommonObject
 		} elseif (preg_match('/^(varchar|text)\b/', $type)) {
 			return GETPOST($key, 'alphanohtml');
 		} elseif (preg_match('/^(int|integer)\b/', $type)) {
+			// The deposit percent of a payment term is posted with it, by the input of Form::getSelectConditionsPaiements()
+			if ($field == 'fk_cond_reglement' && $this->hasPaymentTermDepositPercent() && GETPOSTISSET($key.'_deposit_percent')) {
+				$this->deposit_percent = GETPOSTFLOAT($key.'_deposit_percent');
+			}
 			return GETPOSTINT($key);
 		} elseif ($type == 'date') {
 			// At noon like the cards, so the day does not change with the time zone
@@ -2663,9 +2707,10 @@ abstract class CommonObject
 	{
 		global $conf, $langs;
 
+		$value = $this->getFieldUiValue($field);
+
 		// Totals are declared as double in $fields, showOutputField() would show them without currency
 		if (preg_match('/^(multicurrency_)?total_(ht|tva|localtax1|localtax2|ttc)$/', $field)) {
-			$value = $this->getFieldUiValue($field);
 			if (is_null($value) || $value === '') {
 				return '';
 			}
@@ -2674,12 +2719,80 @@ abstract class CommonObject
 			return price((float) $value, 0, $langs, 1, -1, -1, $currency);
 		}
 
+		// Fields of business documents shown like on their cards, with the label of the dictionary
+		$html = $this->ajaxOutputDictionaryField($field, $value);
+		if (!is_null($html)) {
+			return $html;
+		}
+
 		// Fields like notes are hidden from generic forms and lists (visible = 0) but shown by their own block of the card,
 		// so the output is forced visible: the field is already allowed by isFieldReadableFromUi().
 		$fielddef = $this->fields[$field];
 		$fielddef['visible'] = 1;
 
-		return $this->showOutputField($fielddef, $field, $this->getFieldUiValue($field));
+		return $this->showOutputField($fielddef, $field, $value);
+	}
+
+	/**
+	 * Load the translations of the labels of the dictionaries of business documents (payment terms and modes, availability,
+	 * input reasons, shipping methods), loaded by the cards but not by core/ajax/objectfield.php
+	 *
+	 * @return void
+	 */
+	protected function loadAjaxDictionaryLangs()
+	{
+		global $langs;
+
+		$langs->loadLangs(array('bills', 'dict', 'propal', 'sendings'));
+	}
+
+	/**
+	 * Return the output html of the fields of business documents chosen in a dictionary (payment term, payment mode...)
+	 * or linked to another object (project), like the cards show them (Form::form_conditions_reglement()... with htmlname 'none').
+	 *
+	 * @param	string	$field	Field name
+	 * @param	mixed	$value	Value of the field
+	 * @return	?string			Output html, null if the field is not one of them
+	 */
+	protected function ajaxOutputDictionaryField($field, $value)
+	{
+		$this->loadAjaxDictionaryLangs();
+
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+		$form = new Form($this->db);
+
+		switch ($field) {
+			case 'fk_cond_reglement':
+				return $form->form_conditions_reglement('', (string) $value, 'none', 0, '', -1, $this->hasPaymentTermDepositPercent() ? (float) $this->deposit_percent : -1, 1);
+			case 'fk_mode_reglement':
+				return $form->form_modes_reglement('', (string) $value, 'none', '', 1, 0, '', 1);
+			case 'fk_projet':
+			case 'fk_project':
+				// @phan-suppress-next-line PhanUndeclaredProperty
+				return $form->form_project('', property_exists($this, 'socid') ? (int) $this->socid : -1, empty($value) ? '' : (string) $value, 'none', 0, 0, 0, 1, '', 'maxwidth300');
+		}
+
+		// Methods printing their output
+		ob_start();
+		switch ($field) {
+			case 'fk_availability':
+				$form->form_availability('', (string) $value, 'none', 1);
+				break;
+			case 'fk_input_reason':
+				$form->formInputReason('', (string) $value, 'none');
+				break;
+			case 'fk_shipping_method':
+				$form->formSelectShippingMethod('', (string) $value, 'none');
+				break;
+			case 'fk_account':
+				$form->formSelectAccount('', (string) $value, 'none');
+				break;
+			default:
+				ob_end_clean();
+				return null;
+		}
+
+		return (string) ob_get_clean();
 	}
 
 	/**
@@ -2703,6 +2816,40 @@ abstract class CommonObject
 			$doleditor = new DolEditor($htmlname, (string) $value, '100%', 200, 'dolibarr_notes', 'In', true, false, $withckeditor, 12, '95%');
 
 			return (string) $doleditor->Create(1);
+		}
+
+		// Fields of business documents chosen in a dictionary, with the same selectors as their cards (with ajax_combobox())
+		$this->loadAjaxDictionaryLangs();
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+		$form = new Form($this->db);
+		switch ($field) {
+			case 'fk_cond_reglement':
+				$withdeposit = $this->hasPaymentTermDepositPercent();
+				return $form->getSelectConditionsPaiements((int) $value, $htmlname, $withdeposit ? 1 : -1, 0, 0, '', $withdeposit ? (float) $this->deposit_percent : -1);
+			case 'fk_mode_reglement':
+				return $form->select_types_paiements((string) $value, $htmlname, 'CRDT', 0, 1, 0, 0, 1, '', 1);
+			case 'fk_availability':
+				return $form->selectAvailabilityDelay((string) $value, $htmlname, '', 1, '', 1);
+			case 'fk_account':
+				return (string) $form->select_comptes((string) $value, $htmlname, 0, '', 1, '', 0, '', 1);
+			case 'fk_projet':
+			case 'fk_project':
+				// Projects of the thirdparty, like Form::form_project() on the cards
+				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+				$formproject = new FormProjets($this->db);
+				// @phan-suppress-next-line PhanUndeclaredProperty
+				return $formproject->select_projects(property_exists($this, 'socid') ? (int) $this->socid : -1, empty($value) ? '' : (string) $value, $htmlname, 0, 0, 1, 0, 0, 0, 0, '', 1, 0, 'maxwidth300');
+			case 'fk_input_reason':
+			case 'fk_shipping_method':
+				// Methods printing their output
+				ob_start();
+				if ($field == 'fk_input_reason') {
+					$form->selectInputReason((string) $value, $htmlname, '-1', 1);
+				} else {
+					$form->selectShippingMethod((string) $value, $htmlname, '', 1);
+				}
+				return (string) ob_get_clean();
 		}
 
 		// Fields like notes are hidden from generic forms (visible = 0), the field is already allowed by isFieldEditableFromUi()
