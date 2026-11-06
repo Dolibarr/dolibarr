@@ -141,7 +141,9 @@ if (empty($reshook)) {
 
 	// Remove a notification
 	if ($action == 'delete' && $permissiontoadd) {
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid = ".GETPOSTINT('actid');
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
+		$sql .= " WHERE rowid = ".GETPOSTINT('actid');
+		$sql .= " AND fk_soc = ".((int) $socid);
 		$db->query($sql);
 	}
 }
