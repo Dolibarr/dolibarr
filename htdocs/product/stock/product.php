@@ -983,8 +983,10 @@ if (empty($reshook)) {
 			print '<div class="tabsAction">'."\n";
 
 			if ($user->hasRight('stock', 'mouvement', 'creer')) {
-				if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT')) {
+				if (!$variants || getDolGlobalInt('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT') == 1) {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=transfer&token='.newToken().'">'.$langs->trans("TransferStock").'</a>';
+				} elseif (getDolGlobalInt('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT') == 2) {
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.dolPrintHTMLForAttribute($langs->trans("VariantParentStockIsSumOfVariants")).'">'.$langs->trans("TransferStock").'</a>';
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ActionAvailableOnVariantProductOnly").'">'.$langs->trans("TransferStock").'</a>';
 				}
@@ -993,8 +995,10 @@ if (empty($reshook)) {
 			}
 
 			if ($user->hasRight('stock', 'mouvement', 'creer')) {
-				if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT')) {
+				if (!$variants || getDolGlobalInt('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT') == 1) {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=correction&token='.newToken().'">'.$langs->trans("CorrectStock").'</a>';
+				} elseif (getDolGlobalInt('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT') == 2) {
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.dolPrintHTMLForAttribute($langs->trans("VariantParentStockIsSumOfVariants")).'">'.$langs->trans("CorrectStock").'</a>';
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ActionAvailableOnVariantProductOnly").'">'.$langs->trans("CorrectStock").'</a>';
 				}

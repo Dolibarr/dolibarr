@@ -21,6 +21,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/variants/lib/variants.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
 /**
  * @var Conf $conf
@@ -60,7 +61,16 @@ if ($action) {
 		$error++;
 	}
 
-	if (!dolibarr_set_const($db, 'VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT', GETPOST('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT'), 'chaine', 0, '', $conf->entity)) {
+	// 0 = no stock on variant parents, 1 = stock of parents managed manually, 2 = stock of parents is the sum of their variants
+	$parentstockmode = GETPOSTINT('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT');
+	if ($parentstockmode == 2 && getDolGlobalInt('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT') != 2) {
+		$movement = new MouvementStock($db);
+		if ($movement->recalculateVariantParentStocks() < 0) {
+			setEventMessages($movement->error, $movement->errors, 'errors');
+			$error++;
+		}
+	}
+	if (!$error && !dolibarr_set_const($db, 'VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT', $parentstockmode, 'chaine', 0, '', $conf->entity)) {
 		setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
 		$error++;
 	}
@@ -100,8 +110,13 @@ $separator = getDolGlobalString('PRODUIT_ATTRIBUTES_SEPARATOR', '_');
 
 print '<td class="right"><input size="3" type="text" class="flat center" name="PRODUIT_ATTRIBUTES_SEPARATOR" value="'.$separator.'"></td></tr>';
 
-print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans('AllowStockMovementVariantParent'), $langs->trans('AllowStockMovementVariantParentHelp')).'</td><td>';
-print $form->selectyesno("VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT", getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT'), 1).'</td></tr>';
+$parentstockmodes = array(
+	0 => $langs->trans('VariantParentStockNone'),
+	1 => $langs->trans('VariantParentStockManual'),
+	2 => $langs->trans('VariantParentStockSumOfVariants'),
+);
+print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans('VariantParentStock'), $langs->trans('VariantParentStockHelp')).'</td><td class="right">';
+print $form->selectarray("VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT", $parentstockmodes, getDolGlobalInt('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT')).'</td></tr>';
 
 print '</table>';
 
