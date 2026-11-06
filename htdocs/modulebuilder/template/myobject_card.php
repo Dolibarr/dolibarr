@@ -150,7 +150,7 @@ $enablepermissioncheck = getDolGlobalInt('MYMODULE_ENABLE_PERMISSION_CHECK');
 if ($enablepermissioncheck) {
 	$permissiontoread = $user->hasRight('mymodule', 'myobject', 'read');
 	$permissiontoadd = $user->hasRight('mymodule', 'myobject', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-	$permissiontodelete = $user->hasRight('mymodule', 'myobject', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+	$permissiontodelete = $user->hasRight('mymodule', 'myobject', 'delete') /* BEGIN MODULEBUILDER STATUS */ || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT) /* END MODULEBUILDER STATUS */;
 	$permissionnote = $user->hasRight('mymodule', 'myobject', 'write'); // Used by the include of actions_setnotes.inc.php
 	$permissiondellink = $user->hasRight('mymodule', 'myobject', 'write'); // Used by the include of actions_dellink.inc.php
 } else {
@@ -167,7 +167,9 @@ $upload_dir = $conf->mymodule->multidir_output[isset($object->entity) ? $object-
 // BEGIN MODULEBUILDER ACCESSPOLICY
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
+/* BEGIN MODULEBUILDER STATUS */
 //$isdraft = (isset($object->status) && ($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+/* END MODULEBUILDER STATUS */
 //restrictedArea($user, $object->module, $object, $object->table_element, $object->element, 'fk_soc', 'rowid', $isdraft);
 // END MODULEBUILDER ACCESSPOLICY
 if (!isModEnabled($object->module)) {
@@ -504,12 +506,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		<input type="hidden" name="id" value="' . $object->id.'">
 		';
 
-		if (!empty($conf->use_javascript_ajax) && $object->status == 0) {
+		if (!empty($conf->use_javascript_ajax)/* BEGIN MODULEBUILDER STATUS */ && $object->status == 0/* END MODULEBUILDER STATUS */) {
 			include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 		}
 
 		print '<div class="div-table-responsive-no-min">';
-		if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
+		if (!empty($object->lines) || (/* BEGIN MODULEBUILDER STATUS */$object->status == $object::STATUS_DRAFT && /* END MODULEBUILDER STATUS */$permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
 			print '<table id="tablelines" class="noborder noshadow" width="100%">';
 		}
 
@@ -518,7 +520,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		// Form to add new line
-		if ($object->status == 0 && $permissiontoadd && $action != 'selectlines') {
+		if (/* BEGIN MODULEBUILDER STATUS */$object->status == 0 && /* END MODULEBUILDER STATUS */$permissiontoadd && $action != 'selectlines') {
 			if ($action != 'editline') {
 				// Add products/services form
 
@@ -533,7 +535,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 		}
 
-		if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
+		if (!empty($object->lines) || (/* BEGIN MODULEBUILDER STATUS */$object->status == $object::STATUS_DRAFT && /* END MODULEBUILDER STATUS */$permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
 			print '</table>';
 		}
 		print '</div>';
@@ -560,16 +562,19 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// END MODULEBUILDER ACTION SENDMAIL
 
 			// BEGIN MODULEBUILDER ACTION SETDRAFT
+			/* BEGIN MODULEBUILDER STATUS */
 			// Back to draft
 			if ($object->status == $object::STATUS_VALIDATED) {
 				print dolGetButtonAction('', $langs->trans('SetToDraft'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes&token='.newToken(), '', $permissiontoadd);
 			}
+			/* END MODULEBUILDER STATUS */
 			// END MODULEBUILDER ACTION SETDRAFT
 
 			// Modify
 			print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
 
 			// BEGIN MODULEBUILDER ACTION VALIDATE
+			/* BEGIN MODULEBUILDER STATUS */
 			// Validate
 			if ($object->status == $object::STATUS_DRAFT) {
 				if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0)) {
@@ -579,6 +584,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print dolGetButtonAction($langs->trans("ErrorAddAtLeastOneLineFirst"), $langs->trans("Validate"), 'default', '#', '', 0);
 				}
 			}
+			/* END MODULEBUILDER STATUS */
 			// END MODULEBUILDER ACTION VALIDATE
 
 			// BEGIN MODULEBUILDER ACTION CLONE
@@ -588,6 +594,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 			// END MODULEBUILDER ACTION CLONE
 
+			/* BEGIN MODULEBUILDER STATUS */
 			/*
 			// Disable / Enable
 			if ($permissiontoadd) {
@@ -611,6 +618,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 			END COMMENTED STATUSCHANGE */
 			// END MODULEBUILDER ACTION STATUSCHANGE
+			/* END MODULEBUILDER STATUS */
 
 			// BEGIN MODULEBUILDER ACTION DELETE
 			// Delete (with preloaded confirm popup)
