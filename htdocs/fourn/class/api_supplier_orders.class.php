@@ -1095,6 +1095,8 @@ class SupplierOrders extends DolibarrApi
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
+	 * @throws RestException 405 Order is not approved
+	 *
 	 * FIXME An error 403 is returned if the request has an empty body.
 	 * Error message: "Forbidden: Content type `text/plain` is not supported."
 	 * Workaround: send this in the body
@@ -1116,6 +1118,11 @@ class SupplierOrders extends DolibarrApi
 
 		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, 'commande_fournisseur', 'commande')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// Same status as the one allowing the make order button on the supplier order card
+		if ((int) $this->order->status !== CommandeFournisseur::STATUS_ACCEPTED) {
+			throw new RestException(405, 'Only approved supplier orders can be sent to the vendor');
 		}
 
 		$result = $this->order->commande(DolibarrApiAccess::$user, $date, $method, $comment);

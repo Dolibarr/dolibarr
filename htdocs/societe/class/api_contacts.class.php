@@ -567,13 +567,15 @@ class Contacts extends DolibarrApi
 	 *
 	 * @url	POST {id}/createUser
 	 * @suppress PhanPluginUnknownArrayMethodParamType  Luracast limitation
+	 *
+	 * @throws	RestException	400 Login or password missing
+	 * @throws	RestException	403 Insufficient rights
+	 * @throws	RestException	404 Contact not found
+	 * @throws	RestException	409 Contact already has a user, or login or email already used by another user
+	 * @throws	RestException	500 System error, or password rejected by the password policy
 	 */
 	public function createUser($id, $request_data = null)
 	{
-		//if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer')) {
-		//throw new RestException(403);
-		//}
-
 		if (!isset($request_data["login"])) {
 			throw new RestException(400, "login field missing");
 		}
@@ -589,8 +591,11 @@ class Contacts extends DolibarrApi
 		}
 
 		$contact = new Contact($this->db);
-		$contact->fetch($id);
-		if ($contact->id <= 0) {
+		$result = $contact->fetch($id);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching contact: '.$contact->errorsToString());
+		}
+		if ($result == 0) {
 			throw new RestException(404, 'Contact not found');
 		}
 
@@ -598,16 +603,31 @@ class Contacts extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		if ($contact->user_id > 0) {
+			throw new RestException(409, 'Contact already has a user');
+		}
+
 		// Check mandatory fields
 		$login = $request_data["login"];
 		$password = $request_data["password"];
+
+		$this->db->begin();
+
 		$useraccount = new User($this->db);
 		$result = $useraccount->create_from_contact($contact, $login, $password);
 		if ($result <= 0) {
-			throw new RestException(500, "User not created");
+			$this->db->rollback();
+			// -6 is returned when login or email is already used by another user
+			throw new RestException($result == -6 ? 409 : 500, 'User not created: '.$useraccount->errorsToString());
 		}
 		// password parameter not used in create_from_contact
-		$useraccount->setPassword($useraccount, $password);
+		$resultpassword = $useraccount->setPassword(DolibarrApiAccess::$user, $password);
+		if (is_int($resultpassword) && $resultpassword <= 0) {
+			$this->db->rollback();
+			throw new RestException(500, 'Error when setting password of user: '.$useraccount->errorsToString());
+		}
+
+		$this->db->commit();
 
 		return $result;
 	}
