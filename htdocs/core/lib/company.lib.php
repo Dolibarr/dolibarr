@@ -2782,7 +2782,7 @@ function show_subsidiaries($conf, $langs, $db, $object)
  *                                          ids. 0 / '' / empty array => only test that the thirdparty is assigned to
  *                                          at least one sales representative.
  * @param	int<0,1>			$not		1 to return "NOT EXISTS(...)" instead of "EXISTS(...)"
- * @param	int<0,1>			$allownull	Allow null value for the sales representative (i.e. contract is not assigned to any third party)
+ * @param	int<0,1>			$allownull	1 to also accept a null $socidfield (i.e. the record is not linked to any thirdparty)
  * @return	string							SQL "EXISTS(...)" / "NOT EXISTS(...)" fragment
  */
 function getSalesRepresentativeSqlFilter($socidfield, $userids = 0, $not = 0, $allownull = 0)
