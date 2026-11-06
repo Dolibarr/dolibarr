@@ -18,6 +18,7 @@
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2026       Francois Brichart		<francois@brichart.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1373,98 +1374,47 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			print '<input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.dolPrintHTMLForAttribute($object->name).'" autofocus="autofocus" spellcheck="false">';
 			print $form->widgetForTranslation("name", $object, $permissiontoadd, 'string', 'alphanohtml', 'minwidth300');	// For some countries that need the company name in 2 languages
-			// This implementation of the feature to search already existing company has been disabled. It must be implemented by keeping the "input text" and we must call the search ajax societe/ajax/ajaxcompanies.php
-			// on a keydown of the input. We should show data about a duplicate found if we found less than 5 answers into a div under the input.
-			/*
-			print '<select class="name" name="name" id="name" style="min-width:500px"></select>';
-			print "\n".'<script type="text/javascript">';
-			print '$(document).ready(function () {
-				$("#name").select2({
-					ajax: {
-					  url: "' . DOL_URL_ROOT . '/core/ajax/ajaxcompanies.php",
-					  dataType: "json",
-					  delay: 250,
-					  data: function (params) {
-							return {
-								newcompany: params.term // search term
-							}
-					  },
-					  processResults: function (data, params) {
-						  return {
-							results: data
-						  }
-					  },
-					  cache: true
-					},
-
-					placeholder: "' . $langs->trans('Name of the new third party. In the meantime we check if it already exists...') . '",
-					allowClear: true,
-					minimumInputLength: 3,
-					language: (typeof select2arrayoflanguage === \'undefined\') ? \'en\' : select2arrayoflanguage,
-					containerCssClass: ":all:",
-					selectionCssClass: ":all:",
-					tags: true,
-					templateResult: formatCustomer,
-					templateSelection: formatCustomerSelection
+			// Warn about possible duplicates while typing the name (hidden option SOCIETE_CHECK_DUPLICATE_NAME_ON_CREATE).
+ 			// We keep the input text and call societe/ajax/ajaxcompanies.php, then show the first answers into a div under the input.
+ 			if ($conf->use_javascript_ajax && getDolGlobalString('SOCIETE_CHECK_DUPLICATE_NAME_ON_CREATE')) {
+				print '<div id="namecheckduplicate" class="warning hideobject" style="margin-top: 5px"></div>';
+				print '<script>
+				$(document).ready(function () {
+					var timerduplicate = null;
+					var xhrduplicate = null;
+					$("#name").on("input", function () {
+						var term = $.trim($(this).val());
+						clearTimeout(timerduplicate);
+						if (xhrduplicate) { xhrduplicate.abort(); }
+						if (term.length < 3) {
+							$("#namecheckduplicate").addClass("hideobject").empty();
+							return;
+						}
+						timerduplicate = setTimeout(function () {
+							xhrduplicate = $.getJSON("'.DOL_URL_ROOT.'/societe/ajax/ajaxcompanies.php", { newcompany: term }, function (data) {
+								var $box = $("#namecheckduplicate").empty();
+								if (!Array.isArray(data) || data.length == 0 || term !== $.trim($("#name").val())) {
+									$box.addClass("hideobject");
+									return;
+								}
+								$box.append($("<div>").text("'.dol_escape_js($langs->transnoentitiesnoconv("ThirdPartyWithSimilarNameExists")).'"));
+								var $ul = $("<ul>").appendTo($box);
+								$.each(data.slice(0, 5), function (i, soc) {
+									var details = [soc.name_alias, [soc.zip, soc.town].join(" ").trim(), soc.code_client, soc.code_fournisseur].filter(function (v) { return v; });
+									$("<li>").append($("<a>", { href: "'.DOL_URL_ROOT.'/societe/card.php?socid=" + encodeURIComponent(soc.key), target: "_blank", rel: "noopener" }).text(soc.value))
+										.append(details.length ? document.createTextNode(" - " + details.join(" - ")) : "")
+										.appendTo($ul);
+								});
+								if (data.length > 5) {
+									$ul.append($("<li>").text("..."));
+								}
+								$box.removeClass("hideobject");
+							});
+						}, 400);
+					});
 				});
-
-				function formatCustomer (Customer) {
-					if(Customer.label === undefined) {
-						return Customer.text;
-					}
-
-					if(Customer.logo !== null ) {
-						logo = \'<img src="\';
-						logo += \'' . DOL_URL_ROOT . '/viewimage.php?modulepart=societe&amp;entity=1&amp;file=\' + Customer.key + "%2Flogos%2Fthumbs%2F" + Customer.logo.replace(".", "_mini.") + "&amp;cache=0";
-						logo += \'" /></div>\';
-					} else {
-						logo = \'<div class="floatleft inline-block valigntop photowithmargin" style="padding:0 10px"><div class="photosociete photoref" alt="No photo"><span class="fas fa-building" style="color: #6c6aa8;"></span></div></div>\';
-					}
-
-					var $container = $("<div class=\'select2-result-repository clearfix\'>" +
-						 "<div class=\'select2-result-repository__avatar floatleft inline-block valigntop\'>" + logo +
-						  "<div class=\'select2-result-repository__meta floatleft inline-block valigntop\'>" +
-							"<div class=\'select2-result-repository__title\'></div>" +
-							"<div class=\'select2-result-repository__name_alias\'></div>" +
-							"<div class=\'select2-result-repository__code_client\'></div>" +
-							"<div class=\'select2-result-repository__code_fournisseur\'></div>" +
-							"<div class=\'select2-result-repository__companies_info\'>" +
-							  "<div class=\'select2-result-repository__email\'><i class=\'fa fa-at\'></i> </div>" +
-							  "<div class=\'select2-result-repository__address\'><i class=\'fa fa-flag\'></i> </div>" +
-							  "<div class=\'select2-result-repository__zip\'><i class=\'fa fa-circle-o\'></i> </div>" +
-							  "<div class=\'select2-result-repository__country\'><i class=\'fa fa-globe-americas\'></i> </div>" +
-							  "<div class=\'select2-result-repository__departement\'><i class=\'fa fa-circle-o\'></i> </div>" +
-							  "<div class=\'select2-result-repository__town\'><i class=\'fa fa-circle-o\'></i> </div>" +
-							  "<div class=\'select2-result-repository__siren\'><i class=\'fa fa-circle-o\'></i> </div>" +
-							  "<div class=\'select2-result-repository__datec\'><i class=\'fa fa-calendar\'></i> </div>" +
-							"</div>" +
-						  "</div>" +
-						"</div>"
-					);
-
-					$container.find(".select2-result-repository__title").text(Customer.label);
-					$container.find(".select2-result-repository__name_alias").text(Customer.name_alias ? Customer.name_alias : "");
-					$container.find(".select2-result-repository__code_client").text(Customer.code_client ? Customer.code_client  : "");
-					$container.find(".select2-result-repository__code_fournisseur").text((Customer.code_fournisseur!==null) ? Customer.code_fournisseur : "");
-					$container.find(".select2-result-repository__email").append("' . $langs->trans('EMail') . ': " + (Customer.email !== null ? Customer.email : ""));
-					$container.find(".select2-result-repository__address").append("' . $langs->trans('Address') . ': " + (Customer.address !== null ? Customer.address : ""));
-					$container.find(".select2-result-repository__country").append("' . $langs->trans('Country') . ': " + (Customer.country !== null ? Customer.country : ""));
-					$container.find(".select2-result-repository__departement").append("' . $langs->trans('Region-State') . ': " + (Customer.departement !== null ? Customer.departement : ""));
-					$container.find(".select2-result-repository__zip").append("' . $langs->trans('Zip') . ': " + (Customer.zip !== null ? Customer.zip : ""));
-					$container.find(".select2-result-repository__town").append("' . $langs->trans('Town') . ': " + (Customer.town !== null ? Customer.town : ""));
-					$container.find(".select2-result-repository__siren").append("' . $langs->trans('Siren') . ': " + (Customer.siren !== null ? Customer.siren : ""));
-					$container.find(".select2-result-repository__datec").append("' . $langs->trans('Created') . ': " + (Customer.datec !== null ? Customer.datec : ""));
-
-					return $container;
-				}
-
-				function formatCustomerSelection (selection) {
-					return selection.label || selection.text;
-				}
-			});
-			</script>
-			';
-			*/
+			</script>';
+			}
 			print '</td>';
 			print '</tr>';
 
