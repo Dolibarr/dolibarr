@@ -34,6 +34,7 @@ parameters:
 			- htdocs/modulebuilder/template/test/*
 			- test/phpunit/*
 		analyse:
+			- htdocs/includes/fpdm/*
 			- htdocs/includes/geoPHP/*
 			- htdocs/includes/markrogoyski/*
 			- htdocs/includes/maximebf/*
