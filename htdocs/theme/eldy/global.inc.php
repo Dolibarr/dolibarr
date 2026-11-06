@@ -2417,6 +2417,7 @@ td.showDragHandle {
 }
 .bodyforlist #id-right {
 	padding-bottom: 4px;
+	width: auto; /* Prevent Chromium from resolving width:100% as 1e6px during max-content calculation */
 }
 .bodyforlist.poslist #id-right {
 	display: block;
@@ -2438,6 +2439,20 @@ td.showDragHandle {
 .classforhorizontalscrolloftabs #id-right {
 	width: calc(100% - <?php echo $leftmenuwidth + 30 ?>px);
 	display: inline-block;
+}
+
+/* Fix horizontal overflow for list pages (bodyforlist).
+ * Body expands to max-content width → html handles the horizontal scroll
+ * → native browser scrollbar at the bottom of the window.
+ * .div-table-responsive must be overflow-x:visible (not auto) so that table content
+ * overflows up to body level. Without this, Chromium computes a circular/broken
+ * max-content because the overflow:auto container is in the chain. */
+.bodyforlist {
+	min-width: max-content;
+}
+.bodyforlist .div-table-responsive,
+.bodyforlist .div-table-responsive-no-min {
+	overflow-x: visible;
 }
 
 /*
