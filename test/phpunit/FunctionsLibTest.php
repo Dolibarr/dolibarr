@@ -3209,4 +3209,29 @@ class FunctionsLibTest extends CommonClassTest
 
 		$conf->modules = $savmodules;
 	}
+	/**
+	 * testDolGetButtonActionKeepsActionType
+	 *
+	 * @return void
+	 */
+	public function testDolGetButtonActionKeepsActionType()
+	{
+		global $conf, $user, $langs, $db, $hookmanager;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+		$hookmanager = new HookManager($db);
+
+		// The action type must survive the refused state, the theme relies on it to group generic buttons
+		$this->assertStringContainsString('data-action-type="edit"', dolGetButtonAction('Modify', '', 'edit', 'card.php?action=edit', '', 1));
+		$this->assertStringContainsString('data-action-type="edit"', dolGetButtonAction('Modify', '', 'edit', 'card.php?action=edit', '', 0));
+		$this->assertStringContainsString('data-action-type="delete"', dolGetButtonAction('', 'Delete', 'danger', 'card.php?action=delete', '', 0));
+		$this->assertStringContainsString('data-action-type="clone"', dolGetButtonAction('', 'Clone', 'clone', 'card.php?action=clone', '', 1));
+		$this->assertStringContainsString('data-action-type="email"', dolGetButtonAction('', 'Send', 'email', 'card.php?action=presend', '', 1));
+		$this->assertStringNotContainsString('data-action-type', dolGetButtonAction('Validate', '', 'default', 'card.php?action=valid', '', 1));
+		$this->assertStringNotContainsString('data-action-type', dolGetButtonAction('Modify', '', 'edit', 'card.php?action=edit', '', 1, array('isDropDown' => true)));
+	}
 }

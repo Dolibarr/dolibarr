@@ -1528,7 +1528,7 @@ if ($action == 'create' || $action == 'presend') {
 
 				// Edit ticket
 				if ($permissiontoedit) {
-					print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoedit);
+					print dolGetButtonAction('', $langs->trans('Modify'), 'edit', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoedit);
 				}
 
 				// Clone
