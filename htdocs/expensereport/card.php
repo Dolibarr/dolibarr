@@ -316,6 +316,9 @@ if (empty($reshook)) {
 
 		$object->date_debut = $date_start;
 		$object->date_fin = $date_end;
+		if (isModEnabled('multicurrency')) {
+			$object->multicurrency_code = GETPOST('multicurrency_code', 'aZ09');
+		}
 
 		$object->fk_user_author = GETPOSTINT('fk_user_author');
 		if (!($object->fk_user_author > 0)) {
@@ -1205,6 +1208,20 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
+	if ($action == 'setmulticurrencycode' && $permissiontoadd) {
+		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'aZ09'));
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
+	if ($action == 'setmulticurrencyrate' && $permissiontoadd) {
+		$result = $object->setMulticurrencyRate((float) price2num(GETPOST('multicurrency_tx', 'alpha')), GETPOSTINT('calculation_mode'));
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
 	if ($action == "addline" && $permissiontoadd) {
 		// First save uploaded file
 		$fk_ecm_files = 0;
@@ -1288,7 +1305,11 @@ if (empty($reshook)) {
 			$type = 0; // TODO What if service ? We should take the type product/service from the type of expense report llx_c_type_fees
 
 			// Insert line
-			$result = $object->addline($qty, $value_unit, $fk_c_type_fees, $vatrate, $date, $comments, $fk_project, $fk_c_exp_tax_cat, $type, $fk_ecm_files);
+			if ($object->isInForeignCurrency()) {
+				$result = $object->addline($qty, 0, $fk_c_type_fees, $vatrate, $date, $comments, $fk_project, $fk_c_exp_tax_cat, $type, $fk_ecm_files, (float) $value_unit);
+			} else {
+				$result = $object->addline($qty, $value_unit, $fk_c_type_fees, $vatrate, $date, $comments, $fk_project, $fk_c_exp_tax_cat, $type, $fk_ecm_files);
+			}
 			if ($result > 0) {
 				$ret = $object->fetch($object->id); // Reload to get new records
 
@@ -1447,7 +1468,11 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			// TODO Use update method of ExpenseReportLine
-			$result = $object->updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, (float) $qty, (float) $value_unit, $date, $id, $fk_c_exp_tax_cat, $fk_ecm_files);
+			if ($object->isInForeignCurrency()) {
+				$result = $object->updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, (float) $qty, 0, $date, $id, $fk_c_exp_tax_cat, $fk_ecm_files, 0, (float) $value_unit);
+			} else {
+				$result = $object->updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, (float) $qty, (float) $value_unit, $date, $id, $fk_c_exp_tax_cat, $fk_ecm_files);
+			}
 			if ($result >= 0) {
 				if ($result > 0) {
 					// Define output language
@@ -1598,6 +1623,16 @@ if ($action == 'create') {
 		print '<td>'.$langs->trans("ModePaiement").'</td>';
 		print '<td>';
 		$form->select_types_paiements('', 'fk_c_paiement');
+		print '</td>';
+		print '</tr>';
+	}
+
+	if (isModEnabled('multicurrency')) {
+		print '<tr>';
+		print '<td>'.$langs->trans("Currency").'</td>';
+		print '<td>';
+		print img_picto('', 'currency', 'class="pictofixedwidth"');
+		print $form->selectMultiCurrency(GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code', 'aZ09') : $conf->currency, 'multicurrency_code');
 		print '</td>';
 		print '</tr>';
 	}
@@ -2000,10 +2035,17 @@ if ($action == 'create') {
 
 			print '<table class="border tableforfield centpercent">';
 
+			$usercancreate = $permissiontoadd;
+			require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+			include DOL_DOCUMENT_ROOT.'/core/tpl/object_currency_amount.tpl.php';
+
 			// Amount
 			print '<tr>';
 			print '<td class="titlefieldmiddle">'.$langs->trans("AmountHT").'</td>';
 			print '<td class="nowrap amountcard">'.price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency).'</td>';
+			if ($object->isInForeignCurrency()) {
+				print '<td class="nowrap amountcard">'.price($object->multicurrency_total_ht, 1, '', 1, -1, -1, $object->multicurrency_code).'</td>';
+			}
 			$rowspan = 5;
 			if ($object->status <= ExpenseReport::STATUS_VALIDATED) {
 				$rowspan++;
@@ -2022,6 +2064,9 @@ if ($action == 'create') {
 			print '<tr>';
 			print '<td>'.$langs->trans("AmountVAT").'</td>';
 			print '<td class="nowrap amountcard">'.price($object->total_tva, 1, '', 1, -1, -1, $conf->currency).'</td>';
+			if ($object->isInForeignCurrency()) {
+				print '<td class="nowrap amountcard">'.price($object->multicurrency_total_tva, 1, '', 1, -1, -1, $object->multicurrency_code).'</td>';
+			}
 			print '</tr>';
 
 			// Amount Local Taxes
@@ -2037,6 +2082,9 @@ if ($action == 'create') {
 			print '<tr>';
 			print '<td>'.$langs->trans("AmountTTC").'</td>';
 			print '<td class="nowrap amountcard">'.price($object->total_ttc, 1, '', 1, -1, -1, $conf->currency).'</td>';
+			if ($object->isInForeignCurrency()) {
+				print '<td class="nowrap amountcard">'.price($object->multicurrency_total_ttc, 1, '', 1, -1, -1, $object->multicurrency_code).'</td>';
+			}
 			print '</tr>';
 
 			// List of payments already done
@@ -2063,7 +2111,7 @@ if ($action == 'create') {
 			print '</tr>';
 
 			// Payments already done (from payment on this expensereport)
-			$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, p.amount, p.fk_bank,";
+			$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, p.amount, p.multicurrency_amount, p.fk_bank,";
 			$sql .= "c.code as payment_code, c.libelle as payment_type,";
 			$sql .= "ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal";
 			$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as e, ".MAIN_DB_PREFIX."payment_expensereport as p";
@@ -2119,14 +2167,15 @@ if ($action == 'create') {
 						print '</td>';
 					}
 					print '<td></td>';
-					print '<td class="right">'.price($objp->amount)."</td>";
+					$paymentamount = ($object->isInForeignCurrency() ? $objp->multicurrency_amount : $objp->amount);
+					print '<td class="right">'.price($paymentamount)."</td>";
 					print "</tr>";
-					$totalpaid += $objp->amount;
+					$totalpaid += $paymentamount;
 					$i++;
 				}
 				$totalpaid = price2num($totalpaid); // Round $totalpaid to fix floating problem after addition into loop
 
-				$remaintopay = price2num($object->total_ttc - (float) $totalpaid);
+				$remaintopay = price2num(($object->isInForeignCurrency() ? $object->multicurrency_total_ttc : $object->total_ttc) - (float) $totalpaid);
 				$resteapayeraffiche = $remaintopay;
 
 				if ($remaintopay > 0) {
@@ -2146,7 +2195,7 @@ if ($action == 'create') {
 
 				print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected").':</td>';
 				print '<td></td>';
-				print '<td class="right">'.price($object->total_ttc).'</td></tr>';
+				print '<td class="right">'.price($object->isInForeignCurrency() ? $object->multicurrency_total_ttc : $object->total_ttc).'</td></tr>';
 
 				print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("RemainderToPay").':</td>';
 				print '<td></td>';
@@ -2200,12 +2249,13 @@ if ($action == 'create') {
 				}
 				print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
 				print '<td class="right linecolvat">'.$langs->trans('VAT').'</td>';
-				print '<td class="right linecolpriceuht">'.$langs->trans('PriceUHT').'</td>';
-				print '<td class="right linecolpriceuttc">'.$langs->trans('PriceUTTC').'</td>';
+				$currencyoflines = ($object->isInForeignCurrency() ? ' ('.$object->multicurrency_code.')' : '');
+				print '<td class="right linecolpriceuht">'.$langs->trans('PriceUHT').$currencyoflines.'</td>';
+				print '<td class="right linecolpriceuttc">'.$langs->trans('PriceUTTC').$currencyoflines.'</td>';
 				print '<td class="right linecolqty">'.$langs->trans('Qty').'</td>';
 				if ($action != 'editline') {
-					print '<td class="right linecolamountht">'.$langs->trans('AmountHT').'</td>';
-					print '<td class="right linecolamountttc">'.$langs->trans('AmountTTC').'</td>';
+					print '<td class="right linecolamountht">'.$langs->trans('AmountHT').$currencyoflines.'</td>';
+					print '<td class="right linecolamountttc">'.$langs->trans('AmountTTC').$currencyoflines.'</td>';
 				}
 				// Picture
 				print '<td>';
@@ -2325,17 +2375,18 @@ if ($action == 'create') {
 						// Unit price HT
 						print '<td class="right linecolunitht">';
 						$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $line->vatrate));
-						$pricenettoshow = price2num((float) $line->value_unit / (1 + (float) $tmpvat / 100), 'MU');
+						$lineunitprice = ($object->isInForeignCurrency() ? $line->multicurrency_subprice_ttc : $line->value_unit);
+						$pricenettoshow = price2num((float) $lineunitprice / (1 + (float) $tmpvat / 100), 'MU');
 						print price($pricenettoshow);
 						print '</td>';
 
-						print '<td class="right linecolunitttc">'.price($line->value_unit).'</td>';
+						print '<td class="right linecolunitttc">'.price($lineunitprice).'</td>';
 
 						print '<td class="right linecolqty">'.dol_escape_htmltag((string) $line->qty).'</td>';
 
 						if ($action != 'editline') {
-							print '<td class="right linecoltotalht">'.price($line->total_ht).'</td>';
-							print '<td class="right linecoltotalttc">'.price($line->total_ttc).'</td>';
+							print '<td class="right linecoltotalht">'.price($object->isInForeignCurrency() ? $line->multicurrency_total_ht : $line->total_ht).'</td>';
+							print '<td class="right linecoltotalttc">'.price($object->isInForeignCurrency() ? $line->multicurrency_total_ttc : $line->total_ttc).'</td>';
 						}
 
 						// Column with preview
@@ -2534,7 +2585,7 @@ if ($action == 'create') {
 
 						// Unit price with tax
 						print '<td class="right">';
-						print '<input type="text" min="0" class="right maxwidth50" id="value_unit" name="value_unit" value="'.dol_escape_htmltag(price2num($line->value_unit)).'" />';
+						print '<input type="text" min="0" class="right maxwidth50" id="value_unit" name="value_unit" value="'.dol_escape_htmltag(price2num($object->isInForeignCurrency() ? $line->multicurrency_subprice_ttc : $line->value_unit)).'" />';
 						print '</td>';
 
 						// Quantity
@@ -2655,8 +2706,8 @@ if ($action == 'create') {
 				}
 				print '<td class="expensereportcreatedescription">'.$langs->trans('Description').'</td>';
 				print '<td class="right expensereportcreatevat">'.$langs->trans('VAT').'</td>';
-				print '<td class="right expensereportcreatepriceuth">'.$langs->trans('PriceUHT').'</td>';
-				print '<td class="right expensereportcreatepricettc">'.$langs->trans('PriceUTTC').'</td>';
+				print '<td class="right expensereportcreatepriceuth">'.$langs->trans('PriceUHT').($object->isInForeignCurrency() ? ' ('.$object->multicurrency_code.')' : '').'</td>';
+				print '<td class="right expensereportcreatepricettc">'.$langs->trans('PriceUTTC').($object->isInForeignCurrency() ? ' ('.$object->multicurrency_code.')' : '').'</td>';
 				print '<td class="right expensereportcreateqty">'.$langs->trans('Qty').'</td>';
 				print '<td></td>';
 				print '<td></td>';

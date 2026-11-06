@@ -452,9 +452,9 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 						if ($pagenb == 1) {
-							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
+							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
 						} else {
-							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
+							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
 						}
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						$pagenb++;
@@ -469,9 +469,9 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 					}
 					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {  // @phan-suppress-current-line PhanUndeclaredProperty
 						if ($pagenb == 1) {
-							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
+							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
 						} else {
-							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
+							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
 						}
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						// New page
@@ -488,10 +488,10 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 
 				// Show square
 				if ($pagenb == 1) {
-					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0);
+					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0, $object->multicurrency_code);
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				} else {
-					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0);
+					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0, $object->multicurrency_code);
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
 
@@ -503,7 +503,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 				$pdf->SetXY(120, $posy);
 				$pdf->MultiCell(40, 5, $outputlangs->transnoentities("TotalHT"), 1, 'L');
 				$pdf->SetXY(160, $posy);
-				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - 160, 5, price($object->total_ht), 1, 'C');
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - 160, 5, price($object->isInForeignCurrency() ? $object->multicurrency_total_ht : $object->total_ht), 1, 'C');
 				$pdf->SetFillColor(248, 248, 248);
 
 				if (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) {
@@ -513,7 +513,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 					$pdf->SetTextColor(0, 0, 60);
 					$pdf->MultiCell(40, 5, $outputlangs->transnoentities("TotalVAT"), 1, 'L');
 					$pdf->SetXY(160, $posy);
-					$pdf->MultiCell($this->page_largeur - $this->marge_gauche - 160, 5, price($object->total_tva), 1, 'C');
+					$pdf->MultiCell($this->page_largeur - $this->marge_gauche - 160, 5, price($object->isInForeignCurrency() ? $object->multicurrency_total_tva : $object->total_tva), 1, 'C');
 				}
 
 				$posy += 5;
@@ -522,7 +522,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 				$pdf->SetTextColor(0, 0, 60);
 				$pdf->MultiCell(40, 5, $outputlangs->transnoentities("TotalTTC"), 1, 'L');
 				$pdf->SetXY(160, $posy);
-				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - 160, 5, price($object->total_ttc), 1, 'C');
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - 160, 5, price($object->isInForeignCurrency() ? $object->multicurrency_total_ttc : $object->total_ttc), 1, 'C');
 
 				// show payments zone
 				$sumPayments = $object->getSumPayments();
@@ -630,7 +630,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 
 		// Unit price
 		$pdf->SetXY($this->posxup, $curY);
-		$pdf->MultiCell($this->posxqty - $this->posxup - 0.8, 4, price($object->lines[$linenumber]->value_unit), 0, 'C');
+		$pdf->MultiCell($this->posxqty - $this->posxup - 0.8, 4, price($object->isInForeignCurrency() ? $object->lines[$linenumber]->multicurrency_subprice_ttc : $object->lines[$linenumber]->value_unit), 0, 'C');
 
 		// Quantity
 		$pdf->SetXY($this->posxqty, $curY);
@@ -638,11 +638,11 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 
 		// Total without taxes
 		$pdf->SetXY($this->postotalht, $curY);
-		$pdf->MultiCell($this->postotalttc - $this->postotalht - 0.8, 4, price($object->lines[$linenumber]->total_ht), 0, 'C');
+		$pdf->MultiCell($this->postotalttc - $this->postotalht - 0.8, 4, price($object->isInForeignCurrency() ? $object->lines[$linenumber]->multicurrency_total_ht : $object->lines[$linenumber]->total_ht), 0, 'C');
 
 		// Total with all taxes
 		$pdf->SetXY($this->postotalttc - 1, $curY);
-		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalttc + 1, 4, price($object->lines[$linenumber]->total_ttc), 0, 'C');
+		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalttc + 1, 4, price($object->isInForeignCurrency() ? $object->lines[$linenumber]->multicurrency_total_ttc : $object->lines[$linenumber]->total_ttc), 0, 'C');
 
 		// Comments
 		$pdf->SetXY($this->posxcomment, $curY);
@@ -1056,7 +1056,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 		// Loop on each payment
 		// TODO create method on expensereport class to get payments
 		// Payments already done (from payment on this expensereport)
-		$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, p.amount, p.fk_bank,";
+		$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, p.amount, p.multicurrency_amount, p.fk_bank,";
 		$sql .= "c.code as p_code, c.libelle as payment_type,";
 		$sql .= "ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as e, ".MAIN_DB_PREFIX."payment_expensereport as p";
@@ -1072,15 +1072,17 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$totalpaid = 0;
+			$total_ttc = ($object->isInForeignCurrency() ? $object->multicurrency_total_ttc : $object->total_ttc);
 			$i = 0;
 			while ($i < $num) {
 				$y += $tab3_height;
 				$row = $this->db->fetch_object($resql);
+				$paymentamount = ($object->isInForeignCurrency() ? $row->multicurrency_amount : $row->amount);
 
 				$pdf->SetXY($tab3_posx, $tab3_top + $y + 1);
 				$pdf->MultiCell(20, 3, dol_print_date($this->db->jdate($row->dp), 'day', false, $outputlangs, true), 0, 'L', false);
 				$pdf->SetXY($tab3_posx + 20, $tab3_top + $y + 1);
-				$pdf->MultiCell(20, 3, price($sign * $row->amount, 0, $outputlangs), 0, 'L', false);
+				$pdf->MultiCell(20, 3, price($sign * $paymentamount, 0, $outputlangs), 0, 'L', false);
 				$pdf->SetXY($tab3_posx + 45, $tab3_top + $y + 1);
 				$oper = $outputlangs->transnoentitiesnoconv("PaymentTypeShort".$row->p_code);
 
@@ -1091,7 +1093,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 				}
 
 				$pdf->line($tab3_posx, $tab3_top + $y + $tab3_height, $tab3_posx + $tab3_width + 2, $tab3_top + $y + $tab3_height); // Bottom line border of table
-				$totalpaid += $row->amount;
+				$totalpaid += $paymentamount;
 				$i++;
 			}
 			if ($num > 0 && $object->paid == 0) {
@@ -1103,11 +1105,11 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 				$pdf->MultiCell(30, 4, $outputlangs->transnoentitiesnoconv("AlreadyPaid"), 0, 'L', false);
 				$y += $tab3_height - 2;
 				$pdf->SetXY($tab3_posx + 17, $tab3_top + $y);
-				$pdf->MultiCell(20, 3, price($object->total_ttc), 0, 'R', false);
+				$pdf->MultiCell(20, 3, price($total_ttc), 0, 'R', false);
 				$pdf->SetXY($tab3_posx + 40, $tab3_top + $y);
 				$pdf->MultiCell(30, 4, $outputlangs->transnoentitiesnoconv("AmountExpected"), 0, 'L', false);
 				$y += $tab3_height - 2;
-				$remaintopay = $object->total_ttc - $totalpaid;
+				$remaintopay = $total_ttc - $totalpaid;
 				$pdf->SetXY($tab3_posx + 17, $tab3_top + $y);
 				$pdf->MultiCell(20, 3, price($remaintopay), 0, 'R', false);
 				$pdf->SetXY($tab3_posx + 40, $tab3_top + $y);
