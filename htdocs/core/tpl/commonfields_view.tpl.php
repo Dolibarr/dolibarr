@@ -45,6 +45,7 @@ if (empty($conf) || !is_object($conf)) {
 
 '
 @phan-var-force ?string $keyforbreak
+@phan-var-force CommonObject $object
 ';
 if (!is_object($form)) {
 	$form = new Form($db);
