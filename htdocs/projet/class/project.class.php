@@ -344,7 +344,7 @@ class Project extends CommonObject
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
 		'ref' => array('type' => 'varchar(50)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'showoncombobox' => 1, 'position' => 15, 'searchall' => 1),
-		'title' => array('type' => 'varchar(255)', 'label' => 'ProjectLabel', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 17, 'showoncombobox' => 2, 'searchall' => 1, 'csslist' => 'tdoverflowmax250'),
+		'title' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 17, 'showoncombobox' => 2, 'searchall' => 1, 'csslist' => 'tdoverflowmax250'),
 		'fk_project' => array('type' => 'integer', 'label' => 'Parent', 'enabled' => 1, 'visible' => -1, 'notnull' => 0, 'position' => 18),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => 3, 'notnull' => 1, 'position' => 19),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 1, 'visible' => 0, 'position' => 20),
@@ -1278,26 +1278,48 @@ class Project extends CommonObject
 	/**
 	 * 		Close a project
 	 *
-	 * 		@param		User	$user		User that close project
-	 * 		@return		int					Return integer <0 if KO, 0 if already closed, >0 if OK
+	 * 		@param		User	$user			User that close project
+	 * 		@param		int		$opp_status		Target opportunity status rowid (c_lead_status) to set on close,
+	 * 											0 to keep the current one. When opportunities are used, an opportunity
+	 * 											can only be closed once its status is WON or LOST.
+	 * 		@return		int						Return integer <0 if KO, 0 if already closed, >0 if OK
 	 */
-	public function setClose($user)
+	public function setClose($user, $opp_status = 0)
 	{
 		$now = dol_now();
 
 		$error = 0;
 
 		if ($this->status != self::STATUS_CLOSED) {
+			$setoppstatussql = '';
+			$targetoppstatus = 0;
+
+			// When opportunities are enabled, an opportunity must be won or lost before being closed.
+			if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && !empty($this->usage_opportunity)) {
+				$idoppstatuswon = (int) dol_getIdFromCode($this->db, 'WON', 'c_lead_status', 'code', 'rowid');
+				$idoppstatuslost = (int) dol_getIdFromCode($this->db, 'LOST', 'c_lead_status', 'code', 'rowid');
+				// fetch() stores the fk_opp_status column into the $opp_status property, so read that one
+				// to recognise an opportunity already marked Won/Lost when no explicit status is passed.
+				$targetoppstatus = ($opp_status > 0) ? (int) $opp_status : (int) $this->opp_status;
+
+				if (!in_array($targetoppstatus, array($idoppstatuswon, $idoppstatuslost), true)) {
+					$this->error = 'ErrorCloseRequiresWonLost';
+					dol_syslog(get_class($this)."::setClose ".$this->error, LOG_WARNING);
+					return -1;
+				}
+
+				if ($opp_status > 0) {
+					$setoppstatussql = ", fk_opp_status = ".((int) $targetoppstatus).", opp_percent = ".(($targetoppstatus == $idoppstatuswon) ? 100 : 0);
+				}
+			}
+
 			$this->db->begin();
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."projet";
+			$sql = "UPDATE ".$this->db->prefix()."projet";
 			$sql .= " SET fk_statut = ".self::STATUS_CLOSED.", fk_user_close = ".((int) $user->id).", date_close = '".$this->db->idate($now)."'";
+			$sql .= $setoppstatussql;
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			$sql .= " AND fk_statut = ".self::STATUS_VALIDATED;
-
-			if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
-				// TODO What to do if fk_opp_status is not code 'WON' or 'LOST'
-			}
 
 			dol_syslog(get_class($this)."::setClose", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1310,7 +1332,11 @@ class Project extends CommonObject
 				// End call triggers
 
 				if (!$error) {
-					$this->status = 2;
+					$this->status = self::STATUS_CLOSED;
+					if ($setoppstatussql !== '') {
+						$this->fk_opp_status = (int) $targetoppstatus;
+						$this->opp_status = (int) $targetoppstatus;
+					}
 					$this->db->commit();
 					return 1;
 				} else {
