@@ -6857,6 +6857,9 @@ function dol_htmlentitiesbr($stringtoencode, $nl2brmode = 0, $pagecodefrom = 'UT
 		$newstring = strtr($newstring, array('&' => '__PROTECTand__', '<' => '__PROTECTlt__', '>' => '__PROTECTgt__', '"' => '__PROTECTdquot__'));
 		$newstring = dol_htmlentities($newstring, ENT_COMPAT, $pagecodefrom); // Make entity encoding
 		$newstring = strtr($newstring, array('__PROTECTand__' => '&', '__PROTECTlt__' => '<', '__PROTECTgt__' => '>', '__PROTECTdquot__' => '"'));
+		if (strlen($newstring) > 1000000) {// limit, to avoid memory problem
+			return substr($newstring, 0, 1000000) . '...';
+		}
 	} else {
 		// Text is not HTML but will become HTML because we may add <br> by dol_nl2br in front of \n, so &, < and > should become &amp;, &lt;, &gt
 		if ($removelasteolbr) {
