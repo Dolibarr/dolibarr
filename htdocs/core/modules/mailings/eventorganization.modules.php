@@ -69,7 +69,7 @@ class mailing_eventorganization extends MailingTargets
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    This is the main function that returns the array of emails
+	 *    This is the main function that returns the array of emails to add
 	 *
 	 *    @param	int		$mailing_id    	Id of mailing. No need to use it.
 	 *    @return   int 					Return integer <0 if error, number of emails added if ok
@@ -139,6 +139,68 @@ class mailing_eventorganization extends MailingTargets
 		return parent::addTargetsToDatabase($mailing_id, $cibles);
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *    This is the main function that returns the array of emails to delete
+	 *
+	 *    @param	int		$mailing_id    	Id of mailing. No need to use it.
+	 *    @return   int 					Return integer <0 if error, number of emails added if ok
+	 */
+	public function delete_from_target($mailing_id)
+	{
+		// phpcs:enable
+		global $conf, $langs;
+
+		$cibles = array();
+		$addDescription = '';
+
+		$sql = "SELECT p.ref, p.entity, e.rowid as id, e.fk_project, e.email as email, e.email_company as company_name, e.firstname as firstname, e.lastname as lastname,";
+		$sql .= " 'eventorganizationattendee' as source_type";
+		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p,";
+		$sql .= " ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee as e";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."mailing_cibles as mc ON e.email = mc.email";
+		$sql .= " WHERE e.email <> ''";
+		$sql .= " AND e.fk_project = p.rowid";
+		$sql .= " AND p.entity IN (".getEntity('project').")";
+		$sql .= " AND fk_mailing=".((int) $mailing_id);
+		if (GETPOSTINT('filter_eventorganization') > 0) {
+			$sql .= " AND e.fk_project = ".(GETPOSTINT('filter_eventorganization'));
+		}
+		$sql .= " ORDER BY e.email";
+
+		// Stock recipients emails into targets table
+		$result = $this->db->query($sql);
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			$i = 0;
+			$j = 0;
+
+			dol_syslog(get_class($this)."::delete_from_target mailing ".$num." targets found");
+
+			$old = '';
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($result);
+				if ($old != $obj->email) {
+					$cibles[$j] = array(
+								'email' => $obj->email,
+								'lastname' => $obj->lastname,
+								'firstname' => $obj->firstname,
+								'source_type' => $obj->source_type
+					);
+					$old = $obj->email;
+					$j++;
+				}
+
+				$i++;
+			}
+		} else {
+			dol_syslog($this->db->error());
+			$this->error = $this->db->error();
+			return -1;
+		}
+
+		return parent::deleteTargetsFromDatabase($mailing_id, $cibles);
+	}
 
 	/**
 	 *	On the main mailing area, there is a box with statistics.
