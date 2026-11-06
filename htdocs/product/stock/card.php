@@ -620,15 +620,15 @@ if ($action == 'create') {
 			if (empty($reshook)) {
 				if (empty($action) || $action == 'classin') {
 					if ($user->hasRight('stock', 'creer')) {
-						print '<a class="butAction" href="card.php?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a>';
+						print dolGetButtonAction($langs->trans("Modify"), '', 'edit', 'card.php?action=edit&token='.newToken().'&id='.$object->id);
 					} else {
-						print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Modify").'</a>';
+						print dolGetButtonAction('', $langs->trans("Modify"), 'edit', '', '', 0);
 					}
 
 					if ($user->hasRight('stock', 'supprimer')) {
 						print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', true, array('attr' => array('class' => 'reposition')))."\n";
 					} else {
-						print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Delete").'</a>';
+						print dolGetButtonAction('', $langs->trans("Delete"), 'delete', '', '', 0);
 					}
 				}
 			}

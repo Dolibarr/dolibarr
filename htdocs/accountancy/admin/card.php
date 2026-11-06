@@ -422,7 +422,7 @@ if ($action == 'create') {
 			print '<div class="tabsAction">';
 
 			// if ($user->hasRight('accounting', 'chartofaccount')) { // already checked
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=update&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Modify').'</a>';
+			print dolGetButtonAction($langs->trans('Modify'), '', 'edit', $_SERVER["PHP_SELF"].'?action=update&token='.newToken().'&id='.$object->id);
 			// } else {
 			// 	print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Modify').'</a>';
 			// }

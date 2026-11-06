@@ -413,7 +413,7 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	if ($user->hasRight('categorie', 'creer')) {
 		$socid = ($object->socid ? $object->socid : "");
-		print '<a class="butAction" href="'.dolBuildUrl(DOL_URL_ROOT.'/categories/edit.php', ['id' => $object->id, 'socid' => $socid, 'type' => $type]).'">'.$langs->trans("Modify").'</a>';
+		print dolGetButtonAction($langs->trans("Modify"), '', 'edit', dolBuildUrl(DOL_URL_ROOT.'/categories/edit.php', ['id' => $object->id, 'socid' => $socid, 'type' => $type]));
 	}
 
 	if ($user->hasRight('categorie', 'supprimer')) {

@@ -3049,9 +3049,9 @@ if ($action == 'create' && $permissiontoadd) {
 			if (empty($user->socid)) {
 				if ($object->statut > 0) {
 					if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->hasRight('reception', 'reception_advance', 'send')) {
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendByMail').'</a>';
+						print dolGetButtonAction('', $langs->trans('SendByMail'), 'email', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle');
 					} else {
-						print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
+						print dolGetButtonAction('', $langs->trans('SendByMail'), 'email', '', '', 0);
 					}
 				}
 			}

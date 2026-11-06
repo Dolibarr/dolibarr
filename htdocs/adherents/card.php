@@ -2124,9 +2124,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 				// Modify
 				if ($user->hasRight('adherent', 'creer')) {
-					print '<a class="butAction" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'edit'], true).'">'.$langs->trans("Modify").'</a>'."\n";
+					print dolGetButtonAction($langs->trans("Modify"), '', 'edit', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'edit'], true));
 				} else {
-					print '<span class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Modify").'</span>'."\n";
+					print dolGetButtonAction('', $langs->trans("Modify"), 'edit', '', '', 0);
 				}
 
 				// Validate
@@ -2210,7 +2210,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				if ($user->hasRight('adherent', 'supprimer')) {
 					print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delete'], true), '', true, array('attr' => array('class' => 'reposition')))."\n";
 				} else {
-					print '<span class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Delete").'</span>'."\n";
+					print dolGetButtonAction('', $langs->trans("Delete"), 'delete', '', '', 0);
 				}
 			}
 		}

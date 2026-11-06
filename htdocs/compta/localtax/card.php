@@ -297,7 +297,7 @@ if ($id) {
 	if ($object->rappro == 0) {
 		print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', 'card.php?id='.$object->id.'&action=delete&token='.newToken(), '', true, array('attr' => array('class' => 'reposition')))."\n";
 	} else {
-		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("LinkedToAConcialitedTransaction").'">'.$langs->trans("Delete").'</a>';
+		print dolGetButtonAction($langs->trans("LinkedToAConcialitedTransaction"), $langs->trans("Delete"), 'delete', '', '', -1);
 	}
 	print "</div>";
 }

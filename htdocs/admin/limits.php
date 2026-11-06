@@ -269,7 +269,7 @@ if ($action == 'edit') {
 	print '</div>';
 
 	print '<div class="tabsAction">';
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().(!empty($currencycode) ? '&currencycode='.$currencycode : '').'">'.$langs->trans("Modify").'</a>';
+	print dolGetButtonAction($langs->trans("Modify"), '', 'edit', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().(!empty($currencycode) ? '&currencycode='.$currencycode : ''));
 	print '</div>';
 }
 

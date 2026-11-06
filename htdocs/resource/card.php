@@ -464,7 +464,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 			// Edit resource
 			if ($user->hasRight('resource', 'write')) {
 				print '<div class="inline-block divButAction">';
-				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&action=edit&token='.newToken().'" class="butAction">'.$langs->trans('Modify').'</a>';
+				print dolGetButtonAction($langs->trans('Modify'), '', 'edit', $_SERVER['PHP_SELF'].'?id='.$id.'&action=edit&token='.newToken());
 				print '</div>';
 			}
 		}

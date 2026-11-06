@@ -469,7 +469,7 @@ if ($action != 'edit') {
 	print '<div class="tabsAction">';
 
 	if ($user->hasRight('ecm', 'setup')) {
-		print '<a class="butAction" href="'.dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'edit', 'section' => $section, 'urlfile' => $urlfile)).'">'.$langs->trans('Edit').'</a>';
+		print dolGetButtonAction($langs->trans('Edit'), '', 'edit', dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'edit', 'section' => $section, 'urlfile' => $urlfile)));
 	}
 
 	print '</div>';
