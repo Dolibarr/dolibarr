@@ -5934,6 +5934,50 @@ class Societe extends CommonObject
 			$dbs->query('DELETE FROM '.MAIN_DB_PREFIX.'societe_commerciaux WHERE rowid = '.((int) $obj->rowid));
 		}
 
+		// Bank accounts have a unique key (entity, label, fk_soc): process duplicates before moving lines
+		$sql = 'SELECT o.rowid as origin_rowid, o.label, o.type as o_type, d.type as d_type,';
+		$sql .= ' o.iban_prefix as o_iban, d.iban_prefix as d_iban';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_rib as o';
+		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'societe_rib as d ON d.label = o.label AND d.fk_soc = '.(int) $dest_id;
+		$sql .= ' WHERE o.fk_soc = '.(int) $origin_id;
+
+		$resql = $dbs->query($sql);
+		if (!$resql) {
+			return false;
+		}
+		while ($obj = $dbs->fetch_object($resql)) {
+			if ($obj->o_type == 'ban' && $obj->d_type == 'ban' && !empty($obj->o_iban) && $obj->o_iban === $obj->d_iban) {
+				// Real duplicate (same IBAN): delete the one of the old thirdparty
+				$res = $dbs->query('DELETE FROM '.MAIN_DB_PREFIX.'societe_rib WHERE rowid = '.(int) $obj->origin_rowid);
+			} else {
+				// Same label but different account or card: rename to keep both (label is varchar(180), part of unique key)
+				$suffix = ' (fusion '.(int) $origin_id.')';
+				$newlabel = dol_trunc($obj->label, 180 - dol_strlen($suffix), 'right', 'UTF-8', 1).$suffix;
+				// Make sure the new label is not already used by one of the two thirdparties
+				$i = 2;
+				while ($dbs->fetch_object($dbs->query("SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib WHERE label = '".$dbs->escape($newlabel)."' AND fk_soc IN (".(int) $origin_id.", ".(int) $dest_id.")"))) {
+					$newlabel = dol_trunc($obj->label, 180 - dol_strlen($suffix.' '.$i), 'right', 'UTF-8', 1).$suffix.' '.$i;
+					$i++;
+				}
+				$res = $dbs->query("UPDATE ".MAIN_DB_PREFIX."societe_rib SET label = '".$dbs->escape($newlabel)."' WHERE rowid = ".(int) $obj->origin_rowid);
+			}
+			if (!$res) {
+				return false;
+			}
+		}
+
+		// Only one default account per type: the one of the kept thirdparty wins, those of the old thirdparty are set to 0
+		$resql = $dbs->query("SELECT DISTINCT type FROM ".MAIN_DB_PREFIX."societe_rib WHERE fk_soc = ".(int) $dest_id." AND default_rib = 1");
+		if (!$resql) {
+			return false;
+		}
+		while ($obj = $dbs->fetch_object($resql)) {
+			$res = $dbs->query("UPDATE ".MAIN_DB_PREFIX."societe_rib SET default_rib = 0 WHERE fk_soc = ".(int) $origin_id." AND type = '".$dbs->escape($obj->type)."'");
+			if (!$res) {
+				return false;
+			}
+		}
+
 		// The table llx_societe_extrafields must NOT be in this list because we don't care about the old thirdparty extrafields that are managed directly into mergeCompany.
 		// Do not include llx_societe because it will be replaced later.
 		$tables = array(
