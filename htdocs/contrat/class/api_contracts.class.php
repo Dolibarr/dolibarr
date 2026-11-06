@@ -283,6 +283,15 @@ class Contracts extends DolibarrApi
 				}
 			}
 
+			if ($field == 'array_options' && is_array($value)) {
+				$this->contract->fetch_optionals();	// To force the load of the extrafields definition by fetch_name_optionals_label()
+
+				foreach ($value as $index => $val) {
+					$this->contract->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->contract);
+				}
+				continue;
+			}
+
 			$this->contract->$field = $this->_checkValForAPI($field, $value, $this->contract);
 		}
 		/*if (isset($request_data["lines"])) {
@@ -971,14 +980,14 @@ class Contracts extends DolibarrApi
 	 *   "notrigger": 0
 	 * }
 	 *
-	 * @throws RestException 304 Not Modified
+	 * @throws RestException 304 Not Modified if the contract is not a draft and has no service left to close
 	 * @throws RestException 403 Access denied
 	 * @throws RestException 404 Not found
 	 * @throws RestException 500 Error
 	 */
 	public function close($id, $notrigger = 0)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('contrat', 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight('contrat', 'desactiver')) {
 			throw new RestException(403);
 		}
 		if ($id == 0) {
@@ -993,10 +1002,21 @@ class Contracts extends DolibarrApi
 			throw new RestException(403, 'Access to this contract is not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->contract->closeAll(DolibarrApiAccess::$user, $notrigger);
-		if ($result == 0) {
-			throw new RestException(304, 'Error nothing done. May be object is already close');
+		// closeAll() succeeds even when nothing is left to close, and it also validates draft contracts
+		if ($this->contract->status != Contrat::STATUS_DRAFT) {
+			$nothingToClose = true;
+			foreach ($this->contract->lines as $line) {
+				if ($line->status != ContratLigne::STATUS_CLOSED) {
+					$nothingToClose = false;
+					break;
+				}
+			}
+			if ($nothingToClose) {
+				throw new RestException(304, 'Error nothing done. Contract has no service left to close');
+			}
 		}
+
+		$result = $this->contract->closeAll(DolibarrApiAccess::$user, $notrigger);
 		if ($result < 0) {
 			throw new RestException(500, 'Error when closing Contract: '.$this->contract->errorsToString());
 		}

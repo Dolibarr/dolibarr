@@ -2582,7 +2582,7 @@ function colorGetContrastRatio(string $color1, string $color2): float
  * @return	string						$textcolor or $othercolor, unchanged. $textcolor if a color is not valid.
  * @see colorGetContrastRatio()
  */
-function colorGetReadableTextColor(string $backgroundcolor, string $textcolor, string $othercolor, float $minratio = 3.0): string
+function colorGetReadableTextColor(string $backgroundcolor, string $textcolor, string $othercolor, float $minratio = 2.6): string
 {
 	$ratio = colorGetContrastRatio($backgroundcolor, $textcolor);
 	if ($ratio <= 0 || $ratio >= $minratio) {

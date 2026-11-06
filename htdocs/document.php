@@ -324,8 +324,7 @@ function dol_document_prepare_download($resolvedfile, $modulepart, $entity, &$ac
 	if ($reshook < 0) {
 		$errors = $hookmanager->error.(is_array($hookmanager->errors) ? (!empty($hookmanager->error) ? ', ' : '').implode(', ', $hookmanager->errors) : '');
 		dol_syslog("document.php - Errors when executing the hook 'downloadDocument' : ".$errors);
-		print "ErrorDownloadDocumentHooks: ".$errors;
-		exit;
+		httponly_accessforbidden("ErrorDownloadDocumentHooks: ".$errors, 403);
 	}
 
 	// Set this for test

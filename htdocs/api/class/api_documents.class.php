@@ -444,7 +444,7 @@ class Documents extends DolibarrApi
 	 * List all documents of an element
 	 *
 	 * Use element ID or Ref.
-	 * Supported modules: thirdparty, user, member, proposal, order, supplier_order, shipment, invoice, supplier_invoice, product, event, expensereport, knowledgemanagement, category, contract, project, project_task
+	 * Supported modules: thirdparty, user, member, proposal, order, supplier_order, shipment, invoice, supplier_invoice, product, event, expensereport, knowledgemanagement, category, contract, project, project_task, intervention, stock
 	 *
 	 * @since	7.0.0	Initial implementation
 	 *
@@ -481,9 +481,26 @@ class Documents extends DolibarrApi
 
 		$id = (empty($id) ? 0 : $id);
 
-		if ($modulepart == 'facture_fournisseur') {
-			$modulepart = 'supplier_invoice';	// Alias unknown by fetchObjectByElement()
-		}
+		// Aliases unknown by fetchObjectByElement() or by the check of permission on module below
+		$modulepartaliases = array(
+			'agenda' => 'action',
+			'event' => 'action',
+			'company' => 'societe',
+			'thirdparty' => 'societe',
+			'entrepot' => 'stock',
+			'facture_fournisseur' => 'supplier_invoice',
+			'invoice_supplier' => 'supplier_invoice',
+			'fichinter' => 'ficheinter',
+			'intervention' => 'ficheinter',
+			'order_supplier' => 'supplier_order',
+			'produit' => 'product',
+			'propale' => 'propal',
+			'proposal' => 'propal',
+			'shipping' => 'shipment',
+			'socpeople' => 'contact',
+			'task' => 'project_task',
+		);
+		$modulepart = $modulepartaliases[$modulepart] ?? $modulepart;
 
 		// Define $object
 		$object = fetchObjectByElement($id, $modulepart, $ref);		// Note that we don't mind id and ref, we want to get a valid instantiated $object but not necessarily initialized
@@ -500,7 +517,14 @@ class Documents extends DolibarrApi
 		}
 
 		// Check object-level permissions
-		$ok = checkUserAccessToObject(DolibarrApiAccess::$user, array($object->element), $object, $object->table_element, '');
+		$feature = $object->element;
+		$dbt_select = 'rowid';
+		if ($object->element == 'action') {
+			// The check on owner and attendees of an event is done on feature 'agenda' only, and the primary key of its table is id
+			$feature = 'agenda';
+			$dbt_select = 'id';
+		}
+		$ok = checkUserAccessToObject(DolibarrApiAccess::$user, array($feature), $object, $object->table_element, '', 'fk_soc', $dbt_select);
 		if (empty($ok)) {
 			throw new RestException(403, 'Access not allowed to this object (refused by checkUserAccessToObject)');
 		}
@@ -512,7 +536,7 @@ class Documents extends DolibarrApi
 			}
 		} elseif ($modulepart == 'user') {
 			// Can get doc if has permission to read all user or if it is user itself
-			if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && DolibarrApiAccess::$user->id != $id) {
+			if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && DolibarrApiAccess::$user->id != $object->id) {
 				throw new RestException(403);
 			}
 		} elseif ($modulepart == 'adherent' || $modulepart == 'member') {

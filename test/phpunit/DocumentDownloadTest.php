@@ -118,11 +118,18 @@ class DocumentDownloadTest extends \PHPUnit\Framework\TestCase
 	}
 
 	/** @return void */
-	public function testHookCanRefuseBatchDownload()
+	public function testHookCanRefuseSingleAndBatchDownload()
 	{
-		$state = $this->runDownload(array('denyhook' => true));
-		$this->assertStringContainsString('ErrorDownloadDocumentHooks', $state['body']);
-		$this->assertCount(1, $state['hooks']);
+		foreach (array(false, true) as $batch) {
+			$state = $this->runDownload(array(
+				'denyhook' => true,
+				'post' => array('action' => $batch ? 'downloadselected' : '', 'modulepart' => 'propal', 'file' => 'A/report.pdf'),
+			));
+			$this->assertSame(403, $state['status']);
+			$this->assertStringContainsString('ErrorDownloadDocumentHooks', $state['body']);
+			$this->assertCount(1, $state['hooks']);
+			$this->assertSame(array(), $state['triggers']);
+		}
 	}
 
 	/** @return void */
