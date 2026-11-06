@@ -79,6 +79,7 @@ $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state", 'alpha');
 $search_country = GETPOST("search_country", 'aZ09');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'intcomma');
+$search_id = GETPOST('search_id', 'alpha');
 $search_contract = GETPOST('search_contract', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
 $search_ref_supplier = GETPOST('search_ref_supplier', 'alpha');
@@ -194,6 +195,7 @@ if ($reshook > 0) {
 }
 
 $arrayfields = array(
+	'c.rowid' => array('label' => $langs->trans("TechnicalID"), 'checked' => (getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? '1' : '-1'), 'enabled' => '1', 'position' => 1),
 	'c.ref' => array('label' => $langs->trans("Ref"), 'checked' => '1', 'position' => 10),
 	'c.ref_customer' => array('label' => $langs->trans("RefCustomer"), 'checked' => '1', 'position' => 12),
 	'c.ref_supplier' => array('label' => $langs->trans("RefSupplier"), 'checked' => '1', 'position' => 14),
@@ -272,6 +274,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_phone_mobile = "";
 	$search_email = "";
 	$search_type_thirdparty = '';
+	$search_id = '';
 	$search_contract = "";
 	$search_ref_customer = "";
 	$search_ref_supplier = "";
@@ -407,6 +410,9 @@ if ($search_phone) {
 }
 if ($search_phone_mobile) {
 	$sql .= dol_natural_search_phone($db, array('s.phone', 's.phone_mobile'), $search_phone_mobile);
+}
+if ($search_id != '') {
+	$sql .= natural_search('c.rowid', $search_id, 1);
 }
 if ($search_contract) {
 	$sql .= natural_search(array('c.rowid', 'c.ref'), $search_contract);
@@ -686,6 +692,9 @@ if ($socid > 0) {
 }
 if ($search_all != '') {
 	$param .= '&search_all='.urlencode($search_all);
+}
+if ($search_id != '') {
+	$param .= '&search_id='.urlencode($search_id);
 }
 if ($search_contract != '') {
 	$param .= '&search_contract='.urlencode($search_contract);
@@ -968,6 +977,11 @@ if ($conf->main_checkbox_left_column) {
 	print $searchpicto;
 	print '</td>';
 }
+if (!empty($arrayfields['c.rowid']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
+	print '</td>';
+}
 if (!empty($arrayfields['c.ref']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" size="3" name="search_contract" value="'.dol_escape_htmltag($search_contract).'">';
@@ -1138,6 +1152,10 @@ print '<tr class="liste_titre">';
 if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	$totalarray['nbfield']++;	// For the column action
+}
+if (!empty($arrayfields['c.rowid']['checked'])) {
+	print_liste_field_titre($arrayfields['c.rowid']['label'], $_SERVER["PHP_SELF"], 'c.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['c.ref']['checked'])) {
 	// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
@@ -1329,6 +1347,13 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Technical ID
+		if (!empty($arrayfields['c.rowid']['checked'])) {
+			print '<td class="center" data-key="id">'.((int) $obj->rowid).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		// Ref
 		if (!empty($arrayfields['c.ref']['checked'])) {
 			print '<td class="nowraponall">';
@@ -1338,7 +1363,7 @@ while ($i < $imaxinloop) {
 			}
 			if (!empty($obj->note_private) || !empty($obj->note_public)) {
 				print ' <span class="note">';
-				print '<a href="'.DOL_URL_ROOT.'/contrat/note.php?id='.$obj->rowid.'&save_lastsearch_values=1">'.img_picto($langs->trans("ViewPrivateNote"), 'note').'</a>';
+				print '<a href="'.DOL_URL_ROOT.'/core/note.php?element=contrat&id='.$obj->rowid.'&save_lastsearch_values=1">'.img_picto($langs->trans("ViewPrivateNote"), 'note').'</a>';
 				print '</span>';
 			}
 

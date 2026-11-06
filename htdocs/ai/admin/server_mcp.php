@@ -457,6 +457,10 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	} elseif (!empty($_SERVER['PHP_AUTH_USER'])) {
 		$basicauthvalue = base64_encode($_SERVER['PHP_AUTH_USER'].':'.(empty($_SERVER['PHP_AUTH_PW']) ? '' : $_SERVER['PHP_AUTH_PW']));
 	}
+	// If option was never set, enable it by default when a Basic authentication is detected
+	if (getDolGlobalString('AI_MCP_BEHIND_BASIC_AUTH') === '' && $basicauthvalue != $basicauthplaceholder) {
+		$behindbasicauth = 1;
+	}
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update_external">';
@@ -476,6 +480,27 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 		echo htmlspecialchars($langs->transnoentitiesnoconv("MistralVibeConfigEnv", '~/.vibe/.env')."\n");
 		echo htmlspecialchars($mcpapikeyenvname.'="'.($apiKey ? $apiKey : "YOUR_KEY_HERE").'"');
 	}
+	print '</pre>';
+
+	// Custom connector of Mistral Vibe web: the Basic authentication credentials, if any, are put into the URL
+	$vibeweburl = $endpoint;
+	if ($behindbasicauth) {
+		$credentials = 'LOGIN:PASSWORD';
+		$decoded = ($basicauthvalue != $basicauthplaceholder) ? base64_decode($basicauthvalue, true) : false;
+		if (!empty($_SERVER['PHP_AUTH_USER'])) {
+			$credentials = rawurlencode($_SERVER['PHP_AUTH_USER']).':'.rawurlencode(empty($_SERVER['PHP_AUTH_PW']) ? '' : $_SERVER['PHP_AUTH_PW']);
+		} elseif ($decoded !== false && strpos($decoded, ':') !== false) {
+			list($basiclogin, $basicpass) = explode(':', $decoded, 2);
+			$credentials = rawurlencode($basiclogin).':'.rawurlencode($basicpass);
+		}
+		$vibeweburl = preg_replace('/^(https?:\/\/)/i', '${1}'.$credentials.'@', $endpoint);
+	}
+	print '<br><strong>' . $langs->trans("MistralVibeWebConnector") . '</strong><br>';
+	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto; margin-top:10px; white-space: break-spaces;">';
+	echo htmlspecialchars($langs->transnoentitiesnoconv("MistralVibeWebConnectorUrl")."\n");
+	echo htmlspecialchars($vibeweburl."\n\n");
+	echo htmlspecialchars($langs->transnoentitiesnoconv("MistralVibeWebConnectorAuth", 'DOLAPIKEY')."\n");
+	echo htmlspecialchars($apiKey ? $apiKey : "YOUR_KEY_HERE");
 	print '</pre>';
 
 	// Command line to declare the MCP server into Claude Code

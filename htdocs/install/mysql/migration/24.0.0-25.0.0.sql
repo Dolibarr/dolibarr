@@ -559,6 +559,9 @@ ALTER TABLE llx_bank ADD INDEX idx_bank_fk_account_amount(fk_account, amount);
 -- VPGSQL8.2 DROP INDEX uk_product_attribute_ref;
 ALTER TABLE llx_product_attribute ADD UNIQUE INDEX uk_product_attribute_ref (ref, entity);
 
+-- Index on the date of modification of thirdparties: the thirdparty area shows the last modified ones
+ALTER TABLE llx_societe ADD INDEX idx_societe_tms(tms);
+
 -- API keys created from the user's token tab were written to the deprecated column token, while
 -- the API authenticates against tokenstring (where the upgrade that moves user api_key values
 -- puts them). Those keys never worked: copy them where they are read.
@@ -636,3 +639,18 @@ ALTER TABLE llx_opensurvey_user_formanswers ADD INDEX idx_opensurvey_user_forman
 
 -- Add the document template of an inventory, so that a generated document can be rebuilt with the same one
 ALTER TABLE llx_inventory ADD COLUMN model_pdf varchar(255) AFTER date_validation;
+
+-- Add the document template of a leave request, so that a generated document can be rebuilt with the same one
+ALTER TABLE llx_holiday ADD COLUMN model_pdf varchar(255) AFTER import_key;
+-- Add the document template of a loan, so that a generated document can be rebuilt with the same one
+ALTER TABLE llx_loan ADD COLUMN model_pdf varchar(255) AFTER fk_user_modif;
+
+-- Reference the customer gives to a line of invoice (the line of its purchase order, sent as BT-132 in an e-invoice)
+ALTER TABLE llx_facturedet ADD COLUMN ref_customer varchar(128) DEFAULT NULL AFTER ref_ext;
+-- Reference the customer gives to a line of order (the line of its purchase order, sent as BT-132 in an e-invoice)
+ALTER TABLE llx_commandedet ADD COLUMN ref_customer varchar(128) DEFAULT NULL AFTER ref_ext;
+
+-- TakePOS: store the order printer of an invoice line into a dedicated field instead of special_code
+ALTER TABLE llx_facturedet ADD COLUMN pos_printer_id integer NULL AFTER fk_warehouse;
+UPDATE llx_facturedet SET pos_printer_id = 1, special_code = 0 WHERE special_code = 4 AND fk_facture IN (SELECT rowid FROM llx_facture WHERE module_source = 'takepos' AND fk_statut = 0);
+UPDATE llx_facturedet SET special_code = 0 WHERE special_code IN (1, 2, 3) AND fk_facture IN (SELECT rowid FROM llx_facture WHERE module_source = 'takepos' AND fk_statut = 0);
