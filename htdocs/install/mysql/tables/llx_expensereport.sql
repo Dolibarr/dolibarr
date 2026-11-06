@@ -32,6 +32,9 @@ CREATE TABLE llx_expensereport (
   date_creation 	datetime NOT NULL,
   date_valid 		datetime,
   date_approve		datetime,
+  fk_user_validator_secondary integer DEFAULT NULL,		-- expected second approver
+  fk_user_approve_secondary integer DEFAULT NULL,	-- actual second approver
+  date_approve_secondary datetime DEFAULT NULL,	-- second approval date
   date_refuse 		datetime,
   date_cancel 		datetime,
   tms 		 		timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
