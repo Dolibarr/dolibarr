@@ -231,6 +231,8 @@ class AllTests
 		$suite->addTestSuite('LoadBoardTest');
 		require_once dirname(__FILE__).'/ImagesLibTest.php';
 		$suite->addTestSuite('ImagesLibTest');
+		require_once dirname(__FILE__).'/ModulesBoxesTest.php';
+		$suite->addTestSuite('ModulesBoxesTest');
 		require_once dirname(__FILE__).'/FunctionsLibTest.php';
 		$suite->addTestSuite('FunctionsLibTest');
 		require_once dirname(__FILE__).'/TaxLibTest.php';

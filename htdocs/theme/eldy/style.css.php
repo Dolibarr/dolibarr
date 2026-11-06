@@ -6103,6 +6103,13 @@ tr.box_titre td.boxclose {
 img.boxhandle, img.boxclose {
 	padding-left: 5px;
 }
+.boxempty .boxemptymsg {
+	font-weight: normal;
+	padding-<?php echo $left; ?>: 10px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
 
 .formboxfilter {
 	vertical-align: middle;
