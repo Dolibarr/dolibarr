@@ -149,6 +149,29 @@ class CGenericDic extends CommonDict
 	}
 
 	/**
+	 * Return if the dictionary table has a column 'entity' (cached per table)
+	 *
+	 * @return bool
+	 */
+	private function tableHasEntityColumn()
+	{
+		static $cache = array();
+
+		$table = $this->table_element;
+		if (!isset($cache[$table])) {
+			$cache[$table] = false;
+			foreach ($this->db->DDLInfoTable($this->db->prefix().$table) as $column) {
+				if (reset($column) == 'entity') {
+					$cache[$table] = true;
+					break;
+				}
+			}
+		}
+
+		return $cache[$table];
+	}
+
+	/**
 	 * Load object in memory from the database
 	 *
 	 * @param int    $id  Id object
@@ -182,6 +205,10 @@ class CGenericDic extends CommonDict
 			$sql .= " WHERE t.code = '".$this->db->escape($code)."'";
 		} elseif ($label) {
 			$sql .= " WHERE t.label = '".$this->db->escape($label)."'";
+		}
+		// The same code or label may exist in several entities: search only in the allowed ones
+		if (!$id && ($code || $label) && $this->tableHasEntityColumn()) {
+			$sql .= " AND t.entity IN (".getEntity($this->table_element).")";
 		}
 
 		$resql = $this->db->query($sql);
