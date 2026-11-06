@@ -1828,6 +1828,48 @@ class CommonObjectTest extends CommonClassTest
 	}
 
 	/**
+	 * Fields of the header of business documents are read in the properties used by the cards
+	 * (ex: fk_cond_reglement in cond_reglement_id) and shown like on the cards, with the label of the dictionary
+	 *
+	 * @return void
+	 */
+	public function testHeaderFieldsOfBusinessDocumentsFromUi()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+
+		$resql = $db->query("SELECT MIN(id) as id FROM ".MAIN_DB_PREFIX."c_paiement WHERE active = 1");
+		$obj = $resql ? $db->fetch_object($resql) : null;
+		$modeid = $obj ? (int) $obj->id : 0;
+		$this->assertGreaterThan(0, $modeid, 'A payment mode exists in the test database');
+
+		$localobject = new Propal($db);
+		$localobject->cond_reglement_id = 2;
+		$localobject->mode_reglement_id = $modeid;
+		$localobject->fk_project = 3;
+
+		// Read in the properties of the cards
+		$this->assertSame(2, $localobject->getFieldUiValue('fk_cond_reglement'));
+		$this->assertSame($modeid, $localobject->getFieldUiValue('fk_mode_reglement'));
+		$this->assertSame(3, $localobject->getFieldUiValue('fk_projet'));
+		$this->assertSame($localobject->ref_client, $localobject->getFieldUiValue('ref_client'), 'Other fields are read in their own property');
+
+		// Shown with the label of the dictionary, like Form::form_modes_reglement() on the cards
+		$html = $localobject->ajaxOutputField('fk_mode_reglement');
+		$form = new Form($db);
+		$form->load_cache_types_paiements();
+		$this->assertNotEmpty($form->cache_types_paiements[$modeid]['label'] ?? '', 'Label of the payment mode');
+		$this->assertStringContainsString(dol_escape_htmltag($form->cache_types_paiements[$modeid]['label']), $html);
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
 	 * Fields of the header of a proposal (dates, dictionaries) are read in their properties, edited with the selectors
 	 * of the card and saved with the setters of the card, with the end of validity following the date
 	 *
