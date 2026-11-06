@@ -2671,7 +2671,32 @@ if ($action == 'create') {
 
 				// Select date
 				print '<td class="center inputdate">';
-				print $form->selectDate(!empty($date) ? $date : -1, 'date', 0, 0, 0, '', 1, 1);
+				$datefornewline = !empty($date) ? $date : -1;
+				if (!GETPOSTISSET('dateday') && !GETPOSTISSET('datemonth') && !GETPOSTISSET('dateyear') && !empty($object->date_debut) && isDolTms($object->date_debut)) {
+					$defaultlinedate = $object->date_debut;
+					$lastcreatedlineid = 0;
+					$lastcreatedlinedate = 0;
+					foreach ($object->lines as $existingline) {
+						if ((int) $existingline->id > $lastcreatedlineid) {
+							$lastcreatedlineid = (int) $existingline->id;
+							$lastcreatedlinedate = $existingline->dates;
+						}
+					}
+
+					// Compare calendar dates, independently of display order and daylight saving changes.
+					if ($lastcreatedlineid > 0 && !empty($lastcreatedlinedate) && isDolTms($lastcreatedlinedate) && !empty($object->date_fin) && isDolTms($object->date_fin)) {
+						$lastlineday = dol_print_date($lastcreatedlinedate, '%Y%m%d', 'tzserver');
+						if ($lastlineday >= dol_print_date($object->date_debut, '%Y%m%d', 'tzserver')
+							&& $lastlineday <= dol_print_date($object->date_fin, '%Y%m%d', 'tzserver')) {
+							$defaultlinedate = $lastcreatedlinedate;
+						}
+					}
+
+					// Rebuild the stored calendar date in the same timezone used to read form input.
+					$defaultlinedateparts = dol_getdate($defaultlinedate, false, 'tzserver');
+					$datefornewline = dol_mktime(0, 0, 0, $defaultlinedateparts['mon'], $defaultlinedateparts['mday'], $defaultlinedateparts['year']);
+				}
+				print $form->selectDate($datefornewline, 'date', 0, 0, 0, '', 1, 1);
 				print '</td>';
 
 				// Select project
