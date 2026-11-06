@@ -979,7 +979,10 @@ foreach ($listofreferent as $key => $value) {
 			// Calculate margin
 			if ($margin) {
 				if ($margin === 'add') {
-					$total_revenue_ht += $total_ht;
+					if ($tablename != 'commande_fournisseur' && $tablename != 'supplier_proposal') {
+						// Exclude these objects from total revenue calculation because of sign change above
+						$total_revenue_ht += $total_ht;
+					}
 				}
 
 				if ($margin === "minus") {	// Revert sign
