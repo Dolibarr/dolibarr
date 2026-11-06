@@ -68,7 +68,7 @@ if ($documentation === null || !($documentation instanceof Documentation)) { ret
 	</p>
 	<ul>
 		<li><code>setField(field, value, options)</code> saves one field with <code>core/ajax/objectfield.php</code>. Only fields editable from the UI can be saved: <code>'uieditable' => 1</code> in <code>$fields</code>, see <code>CommonObject::isFieldEditableFromUi()</code>. Returns the data of the response <code>{element, id, field, value, html, fields, tms}</code>, where <code>html</code> is the new value formatted for display and <code>fields</code> the updated field and the other fields changed by the update. For a field with several inputs, like a date, <code>value</code> is an object with the suffixes of the inputs of <code>showInputField()</code>: <code>{day: 15, month: 10, year: 2026}</code>.</li>
-		<li><code>fetchFields(fields, options)</code> reads the values of fields with <code>core/ajax/objectfield.php</code>: <code>{field: {value, html}}</code>, the html being output by <code>CommonObject::ajaxOutputField()</code>. Only fields readable from the UI are returned, see <code>CommonObject::isFieldReadableFromUi()</code>. With the option <code>input: true</code>, the input of the fields editable from the UI is returned too (<code>CommonObject::ajaxInputField()</code>).</li>
+		<li><code>fetchFields(fields, options)</code> reads the values of fields with <code>core/ajax/objectfield.php</code>: <code>{field: {value, html}}</code>, the html being output by <code>CommonObject::ajaxOutputField()</code> (the totals with their currency). Only fields readable from the UI are returned, see <code>CommonObject::isFieldReadableFromUi()</code>. With the option <code>input: true</code>, the input of the fields editable from the UI is returned too (<code>CommonObject::ajaxInputField()</code>).</li>
 		<li><code>fetchLines(lineIds, options)</code> reads the html of document lines with <code>core/ajax/objectline.php</code>, as printed in the card, and the ids of all the lines in the order of the card. The event messages waiting in session are returned in <code>eventMessages</code> and displayed.</li>
 		<li><code>on(eventName, callback)</code> listens to the <code>object:*</code> hooks of this object only, and returns a function to remove the listener.</li>
 	</ul>
@@ -176,5 +176,8 @@ if ($documentation === null || !($documentation instanceof Documentation)) { ret
 	</p>
 	<p>
 		<b>Note:</b> a page loaded with the parameter <code>noflusheventmessages=1</code> does not display the event messages, they are kept in session for the next <code>JsonResponse</code> (<code>JsonResponse::addSessionEventMessages()</code>).
+	</p>
+	<p>
+		The edition of the cards in place is done by the parts <code>Dolibarr.tools.card.fields</code> and <code>Dolibarr.tools.card.lines</code> of this tool (experimental, see <a href="<?php echo dol_buildpath($documentation->baseUrl.'/experimental/ajax-card-edition/index.php', 1); ?>">Experimental UX - Ajax edition of cards</a>).
 	</p>
 </div>
