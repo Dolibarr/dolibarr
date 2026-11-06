@@ -12188,6 +12188,11 @@ class Form
 
 			$navurl = $_SERVER["PHP_SELF"];
 
+			// Keep the popup context (page shown inside a dialog popup iframe) on previous/next links
+			if (GETPOST('dol_openinpopup', 'aZ09') && !preg_match('/[&?]dol_openinpopup=/', $moreparam)) {
+				$moreparam .= '&dol_openinpopup='.urlencode(GETPOST('dol_openinpopup', 'aZ09'));
+			}
+
 			// Special case for token card
 			if ($paramid == 'api_token_card') {
 				if (preg_match('/\/user\/api_token/', $navurl)) {

@@ -1350,8 +1350,8 @@ if ($conf->main_checkbox_left_column) {
 }
 
 if (!empty($arrayfields['p.rowid']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input class="flat maxwidth50" type="text" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['p.ref']['checked'])) {

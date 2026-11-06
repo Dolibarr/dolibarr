@@ -2137,7 +2137,7 @@ function aiPaletteToolTitle($langs, $name, $route)
 		'thirdparties' => array('companies', 'ThirdParty', 'ThirdParties'),
 		'products' => array('products', 'Product', 'Products'),
 		'projects' => array('main', 'Project', 'Projects'),
-		'tasks' => array('projects', 'Task', 'Tasks'),
+		'project_tasks' => array('projects', 'Task', 'Tasks'),
 		'tickets' => array('ticket', 'Ticket', 'Tickets'),
 		'warehouses' => array('stocks', 'Warehouse', 'Warehouses'),
 		'stockmovements' => array('stocks', 'StockMovement', 'StockMovements'),

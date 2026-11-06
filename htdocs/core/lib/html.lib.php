@@ -35,7 +35,7 @@
 
 /**
  * Return a string label (so on 1 line only and that should not contains any HTML) ready to be output on HTML page.
- * To use text that is not HTML content inside an attribute, you can simply use only dol_escape_htmltag(). In doubt, use dolPrintHTMLForAttribute().
+ * To use text that is not HTML content inside an attribute, you can simply use only dolPrintLabelForAttribute(). In doubt, use dolPrintHTMLForAttribute().
  *
  * @param	string	$s						String to print
  * @param	int		$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
@@ -44,6 +44,20 @@
  * @example <span><?php echo dolPrintLabel($object->name); ?></span>
  */
 function dolPrintLabel($s, $escapeonlyhtmltags = 0)
+{
+	return dol_escape_htmltag(dol_string_nohtmltag($s, 1, 'UTF-8', 0, 0), 0, 0, '', $escapeonlyhtmltags, 1);
+}
+
+/**
+ * Return a string label (so on 1 line only and that should not contains any HTML) ready to be output on HTML attribute.
+ *
+ * @param	string	$s						String to print
+ * @param	int		$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
+ * @return	string							String ready for HTML attribute output
+ * @see dolPrintText()
+ * @example <input type="texte" value="<?php echo dolPrintLabelForAttribute($object->description); ?>">
+ */
+function dolPrintLabelForAttribute($s, $escapeonlyhtmltags = 0)
 {
 	return dol_escape_htmltag(dol_string_nohtmltag($s, 1, 'UTF-8', 0, 0), 0, 0, '', $escapeonlyhtmltags, 1);
 }
@@ -92,7 +106,7 @@ function dolPrintHTML($s, $allowiframe = 0, $moreallowedtags = array())
 
 /**
  * Return a string ready to be output into an HTML attribute (alt, title, data-html, ...)
- * With dolPrintHTMLForAttribute(), the content is HTML encode, even if it is already HTML content.
+ * With dolPrintHTMLForAttribute(), the content is HTML encoded, even if it is already HTML content.
  *
  * @param	string		$s						String to print
  * @param	int			$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
@@ -112,13 +126,17 @@ function dolPrintHTMLForAttribute($s, $escapeonlyhtmltags = 0, $allowothertags =
 	if ($escapeonlyhtmltags) {
 		return dol_escape_htmltag(dol_string_onlythesehtmltags($s, 1, 0, 0, 0, $allowedtags), 1, -1, '', 1, 1);
 	} else {
+		/*print "aaa ".$s."\n";
+		print "xxx ".dol_htmlentitiesbr($s)."\n"; // this is html
+		print "yyy ".dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 0, 0, 0, $allowedtags)."\n";
+		print "zzz ".dol_escape_htmltag(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 0, 0, 0, $allowedtags), 1, -1, '', 0, 1)."\n";*/
 		return dol_escape_htmltag(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 0, 0, 0, $allowedtags), 1, -1, '', 0, 1);
 	}
 }
 
 /**
  * Return a string ready to be output on a href attribute (this one need a special because we need content is HTML with no way to detect it is HTML).
- * With dolPrintHTMLForAttribute(), the content is HTML encode, even if it is already HTML content.
+ * With dolPrintHTMLForAttribute(), the content is HTML encoded, even if it is already HTML content.
  *
  * @param	string	$s		String to print
  * @return	string			String ready for HTML output

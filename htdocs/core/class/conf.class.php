@@ -604,6 +604,7 @@ class Conf extends stdClass
 								$modulename = strtolower($reg[1]);
 								$partname = strtolower($reg[2]);
 								if (!array_key_exists($partname, $this->modules_parts) || !is_array($this->modules_parts[$partname])) {
+									// @phan-suppress-next-line PhanTypeMismatchProperty
 									$this->modules_parts[$partname] = array();
 								}
 
