@@ -1245,6 +1245,12 @@ class ActionComm extends CommonObject
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 
+		// Make sure the list of assigned users is loaded before actioncomm_resources rows are
+		// removed below, so the deletion log can still snapshot who was assigned once they're gone.
+		if (empty($this->userassigned)) {
+			$this->fetchResources();
+		}
+
 		$this->db->begin();
 
 		// remove categorie association
@@ -1304,6 +1310,15 @@ class ActionComm extends CommonObject
 		}
 
 		if (!$error) {
+			// Record the deletion into llx_deletion_log so a page holding a partial view of the
+			// agenda (e.g. an ajax-refreshed calendar) can learn about it without reloading
+			// everything. Best effort: a logging failure must never roll back a legitimate deletion.
+			require_once DOL_DOCUMENT_ROOT.'/core/class/deletionlog.class.php';
+			$deletionlog = new DeletionLog($this->db);
+			if ($deletionlog->add($this, $user) < 0) {
+				dol_syslog(get_class($this)."::delete failed to record deletion into llx_deletion_log", LOG_ERR);
+			}
+
 			if (!$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('ACTION_DELETE', $user);
