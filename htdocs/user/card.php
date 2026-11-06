@@ -2320,15 +2320,15 @@ if ($action == 'create' || $action == 'adduserldap') {
 				if ($permissiontoedit && (!isModEnabled('multicompany') || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 					if (getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')) {
 						$params['attr']['title'] = $langs->trans('DisabledInMonoUserMode');
-						print dolGetButtonAction($langs->trans('Modify'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF']).'#', '', false, $params);
+						print dolGetButtonAction($langs->trans('Modify'), '', 'edit', dolBuildUrl($_SERVER['PHP_SELF']).'#', '', false, $params);
 					} else {
 						unset($params['attr']['title']);
-						print dolGetButtonAction($langs->trans('Modify'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'edit'], true), '', true, $params);
+						print dolGetButtonAction($langs->trans('Modify'), '', 'edit', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'edit'], true), '', true, $params);
 					}
 				} elseif ($permissiontoeditpasswordandsee && !$object->ldap_sid &&
 				(!isModEnabled('multicompany') || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 					unset($params['attr']['title']);
-					print dolGetButtonAction($langs->trans('Modify'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'edit'], true), '', true, $params);
+					print dolGetButtonAction($langs->trans('Modify'), '', 'edit', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'edit'], true), '', true, $params);
 				}
 
 				// If we have a password generator engine enabled

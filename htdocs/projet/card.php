@@ -1709,9 +1709,9 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			// Modify
 			if ($object->status != Project::STATUS_CLOSED && $user->hasRight('projet', 'creer')) {
 				if ($userWrite > 0) {
-					print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id, '');
+					print dolGetButtonAction('', $langs->trans('Modify'), 'edit', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id, '');
 				} else {
-					print dolGetButtonAction($langs->trans('NotOwnerOfProject'), $langs->trans('Modify'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
+					print dolGetButtonAction($langs->trans('NotOwnerOfProject'), $langs->trans('Modify'), 'edit', $_SERVER['PHP_SELF']. '#', '', false);
 				}
 			}
 

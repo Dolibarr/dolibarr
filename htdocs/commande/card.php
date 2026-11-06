@@ -3695,7 +3695,7 @@ if ($action == 'create' && $usercancreate) {
 				}
 				// Edit
 				if (($object->status == Commande::STATUS_VALIDATED || ($object->status == Commande::STATUS_SHIPMENTONPROCESS && getDolGlobalString('EDIT_ORDER_SHIPMENT_ON_PROCESS'))) && $usercancreate) {
-					print dolGetButtonAction('', $langs->trans('Modify'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'modif', 'id' => $object->id], true), 'action-modif');
+					print dolGetButtonAction('', $langs->trans('Modify'), 'edit', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'modif', 'id' => $object->id], true), 'action-modif');
 				}
 
 				// Create a purchase order
@@ -3834,7 +3834,7 @@ if ($action == 'create' && $usercancreate) {
 					if ($numshipping == 0 && !$stocksent) {
 						print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'delete', 'id' => $object->id], true), '', true, array('attr' => array('class' => 'reposition')))."\n";
 					} else {
-						print dolGetButtonAction($langs->trans('ShippingExist'), $langs->trans('Delete'), 'default', $_SERVER['PHP_SELF'] . '#', '', false);
+						print dolGetButtonAction($langs->trans('ShippingExist'), $langs->trans('Delete'), 'delete', $_SERVER['PHP_SELF'] . '#', '', false);
 					}
 				}
 			}

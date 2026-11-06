@@ -317,7 +317,7 @@ if ($action == 'create') {
 
 		if (empty($reshook)) {
 			// Modify
-			print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=edit', '', $permissiontoedit);
+			print dolGetButtonAction($langs->trans('Modify'), '', 'edit', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=edit', '', $permissiontoedit);
 
 			// Delete (need delete permission, or if draft, just need create/modify permission)
 			print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=delete', '', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";

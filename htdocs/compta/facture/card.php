@@ -7106,22 +7106,22 @@ if ($action == 'create') {
 						if (!$objectidnext && $object->is_last_in_cycle()) {
 							if ($usercanunvalidate) {
 								unset($params['attr']['title']);
-								print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&action=modif&token=' . newToken(), '', true, $params);
+								print dolGetButtonAction($langs->trans('Modify'), '', 'edit', $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&action=modif&token=' . newToken(), '', true, $params);
 							} else {
 								$params['attr']['title'] = $langs->trans('NotEnoughPermissions');
-								print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&action=modif&token=' . newToken(), '', false, $params);
+								print dolGetButtonAction($langs->trans('Modify'), '', 'edit', $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&action=modif&token=' . newToken(), '', false, $params);
 							}
 						} elseif (!$object->is_last_in_cycle()) {
 							$params['attr']['title'] = $langs->trans('NotLastInCycle');
-							print dolGetButtonAction($langs->trans('Modify'), '', 'default', '#', '', false, $params);
+							print dolGetButtonAction($langs->trans('Modify'), '', 'edit', '#', '', false, $params);
 						} else {
 							$params['attr']['title'] = $langs->trans('DisabledBecauseReplacedInvoice');
-							print dolGetButtonAction($langs->trans('Modify'), '', 'default', '#', '', false, $params);
+							print dolGetButtonAction($langs->trans('Modify'), '', 'edit', '#', '', false, $params);
 						}
 					}
 				} else {
 					$params['attr']['title'] = $langs->trans('DisabledBecauseDispatchedInBookkeeping');
-					print dolGetButtonAction($langs->trans('Modify'), '', 'default', '#', '', false, $params);
+					print dolGetButtonAction($langs->trans('Modify'), '', 'edit', '#', '', false, $params);
 				}
 			}
 
