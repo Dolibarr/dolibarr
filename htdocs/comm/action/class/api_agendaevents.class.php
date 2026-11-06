@@ -208,6 +208,9 @@ class AgendaEvents extends DolibarrApi
 		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
 		if ($pagination_data) {
 			$totalsResult = $this->db->query($sqlTotals);
+			if (!$totalsResult) {
+				throw new RestException(503, 'Error when retrieve Agenda Event list : '.$this->db->lasterror());
+			}
 			$total = $this->db->fetch_object($totalsResult)->total;
 
 			$tmp = $obj_ret;
@@ -217,7 +220,7 @@ class AgendaEvents extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => (int) ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
