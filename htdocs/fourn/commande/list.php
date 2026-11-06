@@ -118,6 +118,7 @@ if (GETPOSTISSET('formfilteraction')) {
 	$searchCategorySupplierOrderOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 }
 $search_product_category = GETPOSTINT('search_product_category');
+$search_id = GETPOST('search_id', 'alpha');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_refsupp = GETPOST('search_refsupp', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
@@ -211,6 +212,7 @@ $enabledtypetiers = 0;
 
 // Definition of array of fields for columns
 $arrayfields = array(
+	'cf.rowid' => array('label' => "TechnicalID", 'checked' => (getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? '1' : '-1'), 'enabled' => '1', 'position' => 1),
 	'u.login' => array('label' => "AuthorRequest", 'enabled' => '1', 'position' => 41),
 	's.name_alias' => array('label' => "AliasNameShort", 'position' => 51, 'checked' => '0'),
 	's.town' => array('label' => "Town", 'enabled' => '1', 'position' => 55, 'checked' => '0'),
@@ -295,6 +297,7 @@ if (empty($reshook)) {
 		$search_sale = '';
 		$search_product_category = '';
 		$searchCategorySupplierOrderList = array();
+		$search_id = '';
 		$search_ref = '';
 		$search_refsupp = '';
 		$search_company = '';
@@ -753,6 +756,9 @@ if (empty($reshook)) {
 			if ($search_date_approve_endyear) {
 				$param .= '&search_date_approve_endyear='.urlencode((string) ($search_date_approve_endyear));
 			}
+			if ($search_id != '') {
+				$param .= '&search_id='.urlencode($search_id);
+			}
 			if ($search_ref) {
 				$param .= '&search_ref='.urlencode($search_ref);
 			}
@@ -889,6 +895,9 @@ $sql .= ' WHERE cf.fk_soc = s.rowid';
 $sql .= ' AND cf.entity IN ('.getEntity('supplier_order').')';
 if ($socid > 0) {
 	$sql .= " AND s.rowid = ".((int) $socid);
+}
+if ($search_id != '') {
+	$sql .= natural_search('cf.rowid', $search_id, 1);
 }
 if ($search_ref) {
 	$sql .= natural_search('cf.ref', $search_ref);
@@ -1219,6 +1228,9 @@ if ($resql) {
 	if ($search_date_approve_endyear) {
 		$param .= '&search_date_approve_endyear='.urlencode((string) ($search_date_approve_endyear));
 	}
+	if ($search_id != '') {
+		$param .= '&search_id='.urlencode($search_id);
+	}
 	if ($search_ref) {
 		$param .= '&search_ref='.urlencode($search_ref);
 	}
@@ -1475,6 +1487,10 @@ if ($resql) {
 		print $searchpicto;
 		print '</td>';
 	}
+	// Technical ID
+	if (!empty($arrayfields['cf.rowid']['checked'])) {
+		print '<td class="liste_titre center"><input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'"></td>';
+	}
 	// Ref
 	if (!empty($arrayfields['cf.ref']['checked'])) {
 		print '<td class="liste_titre"><input size="8" type="text" class="flat maxwidth75" name="search_ref" value="'.$search_ref.'"></td>';
@@ -1677,6 +1693,10 @@ if ($resql) {
 	print '<tr class="liste_titre">';
 	if ($conf->main_checkbox_left_column) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+		$totalarray['nbfield']++;
+	}
+	if (!empty($arrayfields['cf.rowid']['checked'])) {
+		print_liste_field_titre($arrayfields['cf.rowid']['label'], $_SERVER["PHP_SELF"], 'cf.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['cf.ref']['checked'])) {
@@ -1884,6 +1904,13 @@ if ($resql) {
 					print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 				}
 				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+			// Technical ID
+			if (!empty($arrayfields['cf.rowid']['checked'])) {
+				print '<td class="center" data-key="id">'.((int) $obj->rowid).'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}

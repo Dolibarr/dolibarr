@@ -1331,7 +1331,7 @@ class Form
 		}
 
 		// Split into code + number
-		$parsed = dol_parse_phone($fullPhone);
+		$parsed = dol_parse_phone($fullPhone, $this->db);
 
 		// Resolve default phone code: parsed code if set, else from country hint
 		$phonecode = !empty($parsed['code']) ? $parsed['code'] : dol_get_phone_code_from_country($this->db, $country_id_hint);
@@ -1345,12 +1345,16 @@ class Form
 		}
 
 		// Add back trunk prefix for display (e.g. "644986885" → "0644986885" for France)
-		if ($numberValue !== '' && $selectedCode !== '') {
+		// A number still starting with "+" has an unknown country code: never prefix it
+		if ($numberValue !== '' && $selectedCode !== '' && strpos($numberValue, '+') !== 0) {
 			$trunkPrefix = dol_get_trunk_prefix($this->db, $selectedCode);
 			if ($trunkPrefix !== '' && strpos($numberValue, $trunkPrefix) !== 0) {
 				$numberValue = $trunkPrefix.$numberValue;
 			}
 		}
+
+		// Keep digits only, as the visible field only accepts digits (pattern) and the JS keeps only digits on save
+		$numberValue = preg_replace('/[^0-9]/', '', $numberValue);
 
 		// Build output: hidden field (POSTed value)
 		$out = '<input type="hidden" name="'.dol_escape_htmltag($htmlname).'" id="'.dol_escape_htmltag($htmlname).'" value="'.dol_escape_htmltag($fullPhone).'">';
@@ -12227,6 +12231,11 @@ class Form
 			$object->load_previous_next_ref((isset($object->next_prev_filter) ? $object->next_prev_filter : ''), $fieldid, $nodbprefix);
 
 			$navurl = $_SERVER["PHP_SELF"];
+
+			// Keep the popup context (page shown inside a dialog popup iframe) on previous/next links
+			if (GETPOST('dol_openinpopup', 'aZ09') && !preg_match('/[&?]dol_openinpopup=/', $moreparam)) {
+				$moreparam .= '&dol_openinpopup='.urlencode(GETPOST('dol_openinpopup', 'aZ09'));
+			}
 
 			// Special case for token card
 			if ($paramid == 'api_token_card') {

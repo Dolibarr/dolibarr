@@ -4,7 +4,7 @@
 # --yolo:    run claude with the option --dangerously-skip-permissions
 # --no-yolo: run claude without the option --dangerously-skip-permissions (it is the default)
 # --rc:      run claude in Remote Control mode (claude remote-control), with the permission
-#            mode bypassPermissions for the spawned sessions (only if --yolo is provided)
+#            mode auto for the spawned sessions (bypassPermissions if --yolo is provided)
 #            (rc, without the dashes, is still accepted as an alias)
 # --no-exit: stay into the container with a bash shell after claude has ended
 #            (by default, when claude is terminated, the container is terminated too)

@@ -887,7 +887,8 @@ class BookKeeping extends CommonObject
 		if (!$mode) {
 			$sql .= " t.date_export,";
 		}
-		$sql .= " t.date_validated as date_validation";
+		$sql .= " t.date_validated as date_validation,";
+		$sql .= " t.extraparams";
 		$sql .= ' FROM '.$this->db->prefix().$this->table_element.$mode.' as t';
 		$sql .= ' WHERE 1 = 1';
 		$sql .= " AND entity = " . ((int) $conf->entity); // Do not use getEntity for accounting features
@@ -933,6 +934,7 @@ class BookKeeping extends CommonObject
 				}
 				$this->ref = $obj->ref;
 				$this->date_validation = isset($obj->date_validation) ? $this->db->jdate($obj->date_validation) : '';
+				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 			}
 			$this->db->free($resql);
 

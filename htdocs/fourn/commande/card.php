@@ -1193,10 +1193,13 @@ if (empty($reshook)) {
 		unset($_POST['qty']);
 		unset($_POST['type']);
 		unset($_POST['idprodfournprice']);
-		unset($_POST['remmise_percent']);
+		unset($_POST['remise_percent']);
 		unset($_POST['dp_desc']);
 		unset($_POST['np_desc']);
 		unset($_POST['pu']);
+		unset($_POST['price_ht']);
+		unset($_POST['price_ttc']);
+		unset($_POST['buying_price']);
 		unset($_POST['fourn_ref']);
 		unset($_POST['tva_tx']);
 		unset($_POST['date_start']);
@@ -1761,8 +1764,11 @@ if (empty($reshook)) {
 							$num = count($lines);
 
 							for ($i = 0; $i < $num; $i++) {
+								// The empty subprice test comes from the creation from a price request, where a line without a
+								// price must be skipped. From a customer order the sale price is not used at all: it is reset to 0
+								// below and replaced by the supplier price, so a line sold at 0 must still be ordered.
 								if (
-									empty($lines[$i]->subprice)
+									(empty($lines[$i]->subprice) && $origin != 'commande' && $origin != 'order')
 									|| $lines[$i]->qty < 0
 									|| !in_array($lines[$i]->id, $selectedLines)
 									|| $lines[$i]->special_code == SUBTOTALS_SPECIAL_CODE

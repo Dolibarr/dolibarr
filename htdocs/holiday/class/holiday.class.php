@@ -451,6 +451,7 @@ class Holiday extends CommonObject
 		$sql .= " cp.fk_user_create,";
 		$sql .= " cp.fk_type,";
 		$sql .= " cp.model_pdf,";
+		$sql .= " cp.extraparams,";
 		$sql .= " cp.entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as cp";
 		if ($id > 0) {
@@ -496,6 +497,7 @@ class Holiday extends CommonObject
 				$this->fk_type = $obj->fk_type;
 				$this->model_pdf = $obj->model_pdf;
 				$this->entity = $obj->entity;
+				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				$this->fetch_optionals();
 
