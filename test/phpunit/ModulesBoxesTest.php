@@ -76,7 +76,7 @@ class ModulesBoxesTest extends CommonClassTest
 		$out = $box->showBox(array('text' => 'My box'), array(), 1);
 
 		$this->assertStringContainsString('class="box divboxtable boxdraggable boxempty"', $out);
-		$this->assertMatchesRegularExpression('/<th[^>]*>.*class="boxemptymsg".*<\/th>/s', $out);
+		$this->assertSame(1, preg_match('/<th[^>]*>.*class="boxemptymsg".*<\/th>/s', $out));
 		$this->assertStringContainsString('href="/societe/card.php?action=create"', $out);
 		$this->assertStringNotContainsString('<td', $out);
 	}
