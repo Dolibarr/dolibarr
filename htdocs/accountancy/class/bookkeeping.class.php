@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2017  Olivier Geffroy     <jeff@jeffinfo.com>
- * Copyright (C) 2015-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2026  Alexandre Spangaro  <alexandre@inovea-conseil.com>
  * Copyright (C) 2015-2020  Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2018-2020  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2024		Jose MARTINEZ	    <jose.martinez@pichinov.com>
@@ -2297,7 +2297,11 @@ class BookKeeping extends CommonObject
 			$sql_list = array();
 			if (!empty($conf->cache['active_fiscal_period_cached']) && is_array($conf->cache['active_fiscal_period_cached'])) {
 				foreach ($conf->cache['active_fiscal_period_cached'] as $fiscal_period) {
-					$sql_list[] = "('" . $this->db->idate($fiscal_period['date_start']) . "' <= {$alias}doc_date AND {$alias}doc_date <= '" . $this->db->idate($fiscal_period['date_end']) . "')";
+					// We only keep the date portion (Y-m-d), without converting the time zone, because doc_date is an SQL field of type DATE (not DATETIME)
+					$date_start_day = dol_print_date($fiscal_period['date_start'], '%Y-%m-%d', 'gmt');
+					$date_end_day   = dol_print_date($fiscal_period['date_end'], '%Y-%m-%d', 'gmt');
+
+					$sql_list[] = "('" . $this->db->escape($date_start_day) . "' <= {$alias}doc_date AND {$alias}doc_date <= '" . $this->db->escape($date_end_day) . "')";
 				}
 			}
 			self::$can_modify_bookkeeping_sql_cached[$alias] = !empty($sql_list) ? ' AND (' . implode(' OR ', $sql_list) . ')' : '';
@@ -2518,14 +2522,18 @@ class BookKeeping extends CommonObject
 		$total = 0;
 		$list = array();
 
+		// We only keep the date portion (Y-m-d), without converting the time zone, because doc_date is an SQL field of type DATE (not DATETIME)
+		$date_start_day = dol_print_date($date_start, '%Y-%m-%d', 'gmt');
+		$date_end_day   = dol_print_date($date_end, '%Y-%m-%d', 'gmt');
+
 		$sql = "SELECT YEAR(b.doc_date) as year";
 		for ($i = 1; $i <= 12; $i++) {
 			$sql .= ", SUM(" . $this->db->ifsql("MONTH(b.doc_date)=" . $i, "1", "0") . ") AS month" . $i;
 		}
 		$sql .= ", COUNT(b.rowid) as total";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as b";
-		$sql .= " WHERE b.doc_date >= '" . $this->db->idate($date_start) . "'";
-		$sql .= " AND b.doc_date <= '" . $this->db->idate($date_end) . "'";
+		$sql .= " WHERE b.doc_date >= '" . $this->db->escape($date_start_day) . "'";
+		$sql .= " AND b.doc_date <= '" . $this->db->escape($date_end_day) . "'";
 		$sql .= " AND b.entity IN (" . getEntity('bookkeeping', 0) . ")"; // We don't share object for accountancy
 
 		// Get count for each month into the fiscal period
@@ -2583,12 +2591,16 @@ class BookKeeping extends CommonObject
 
 		$now = dol_now();
 
+		// We only keep the date portion (Y-m-d), without converting the time zone, because doc_date is an SQL field of type DATE (not DATETIME)
+		$date_start_day = dol_print_date($date_start, '%Y-%m-%d', 'gmt');
+		$date_end_day   = dol_print_date($date_end, '%Y-%m-%d', 'gmt');
+
 		// Specify as export : update field date_validated on selected month/year
 		$sql = " UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping";
 		$sql .= " SET date_validated = '" . $this->db->idate($now) . "'";
 		$sql .= " WHERE entity = " . ((int) $conf->entity);
-		$sql .= " AND DATE(doc_date) >= '" . $this->db->idate($date_start) . "'";
-		$sql .= " AND DATE(doc_date) <= '" . $this->db->idate($date_end) . "'";
+		$sql .= " AND doc_date >= '" . $this->db->escape($date_start_day) . "'";
+		$sql .= " AND doc_date <= '" . $this->db->escape($date_end_day) . "'";
 		$sql .= " AND date_validated IS NULL";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -2697,6 +2709,10 @@ class BookKeeping extends CommonObject
 					$pcg_type_filter[] = "'" . $this->db->escape($item) . "'";
 				}
 
+				// We only keep the date portion (Y-m-d), without converting the time zone, because doc_date is an SQL field of type DATE (not DATETIME)
+				$date_start_day = dol_print_date($fiscal_period->date_start, '%Y-%m-%d', 'gmt');
+				$date_end_day   = dol_print_date($fiscal_period->date_end, '%Y-%m-%d', 'gmt');
+
 				$sql = 'SELECT';
 				$sql .= " t.numero_compte,";
 				if ($separate_auxiliary_account) {
@@ -2710,8 +2726,8 @@ class BookKeeping extends CommonObject
 				$sql .= " AND aa.entity = ". ((int) $conf->entity);
 				$sql .= ' AND aa.fk_pcg_version IN (SELECT pcg_version FROM '.MAIN_DB_PREFIX.'accounting_system WHERE rowid = '.((int) getDolGlobalInt('CHARTOFACCOUNTS')).')';
 				$sql .= ' AND aa.pcg_type IN (' . $this->db->sanitize(implode(',', $pcg_type_filter), 1) . ')';
-				$sql .= " AND DATE(t.doc_date) >= '" . $this->db->idate($fiscal_period->date_start) . "'";
-				$sql .= " AND DATE(t.doc_date) <= '" . $this->db->idate($fiscal_period->date_end) . "'";
+				$sql .= " AND t.doc_date >= '" . $this->db->escape($date_start_day) . "'";
+				$sql .= " AND t.doc_date <= '" . $this->db->escape($date_end_day) . "'";
 				$sql .= ' GROUP BY t.numero_compte, aa.pcg_type';
 				if ($separate_auxiliary_account) {
 					$sql .= " , NULLIF(t.subledger_account, '')";
@@ -2934,6 +2950,12 @@ class BookKeeping extends CommonObject
 			return -1;
 		}
 
+		// We only keep the date portion (Y-m-d), without converting the time zone, because doc_date is an SQL field of type DATE (not DATETIME)
+		$date_start_day = dol_print_date($date_start, '%Y-%m-%d', 'gmt');
+		$date_end_day   = dol_print_date($date_end, '%Y-%m-%d', 'gmt');
+		$fp_date_start_day = dol_print_date($fiscal_period->date_start, '%Y-%m-%d', 'gmt');
+		$fp_date_end_day   = dol_print_date($fiscal_period->date_end, '%Y-%m-%d', 'gmt');
+
 		$error = 0;
 		$this->db->begin();
 
@@ -2941,10 +2963,10 @@ class BookKeeping extends CommonObject
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		$sql .= ' WHERE t.entity = ' . ((int) $conf->entity); // Do not use getEntity for accounting features
 		$sql .= " AND code_journal = '" . $this->db->escape($inventory_journal->code) . "'";
-		$sql .= " AND DATE(t.doc_date) >= '" . $this->db->idate($date_start) . "'";
-		$sql .= " AND DATE(t.doc_date) <= '" . $this->db->idate($date_end) . "'";
-		$sql .= " AND DATE(t.doc_date) >= '" . $this->db->idate($fiscal_period->date_start) . "'";
-		$sql .= " AND DATE(t.doc_date) <= '" . $this->db->idate($fiscal_period->date_end) . "'";
+		$sql .= " AND t.doc_date >= '" . $this->db->escape($date_start_day) . "'";
+		$sql .= " AND t.doc_date <= '" . $this->db->escape($date_end_day) . "'";
+		$sql .= " AND t.doc_date >= '" . $this->db->escape($fp_date_start_day) . "'";
+		$sql .= " AND t.doc_date <= '" . $this->db->escape($fp_date_end_day) . "'";
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {
