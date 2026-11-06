@@ -1140,6 +1140,141 @@ class ExpeditionTest extends CommonClassTest
 	}
 
 	/**
+	 * POST /shipments/{id}/lines cannot expand a kit into its components, so it must refuse a kit.
+	 * Otherwise the kit is stored with a warehouse and no child lines, and deleting the validated
+	 * shipment does not give back the stock of its components.
+	 *
+	 * @return void
+	 */
+	public function testApiPostLineRefusesKit()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		// Loading the Restler autoloader unregisters all the other ones, including the one PHPUnit needs: restore them.
+		$autoloaders = spl_autoload_functions();
+		require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
+		spl_autoload_unregister(Luracast\Restler\AutoLoader::instance());
+		foreach ($autoloaders as $autoloader) {
+			spl_autoload_register($autoloader);
+		}
+		require_once DOL_DOCUMENT_ROOT.'/expedition/class/api_shipments.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+
+		$saved = array();
+		foreach (array('PRODUIT_SOUSPRODUITS' => 1, 'PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE' => 0, 'STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT' => 0) as $key => $value) {
+			$saved[$key] = getDolGlobalString($key);
+			$conf->global->$key = $value;
+		}
+
+		try {
+			$suffix = 'ApiLineKit'.mt_rand(100000, 999999);
+
+			$soc = new Societe($db);
+			$soc->name = 'ExpeditionTest '.$suffix;
+			$socId = $soc->create($user);
+			$this->assertGreaterThan(0, $socId, $soc->errorsToString());
+
+			$warehouse = new Entrepot($db);
+			$warehouse->ref = 'WH'.$suffix;
+			$warehouse->label = 'WH'.$suffix;
+			$warehouse->statut = 1;
+			$warehouseId = $warehouse->create($user);
+			$this->assertGreaterThan(0, $warehouseId, $warehouse->errorsToString());
+
+			$productIds = array();
+			foreach (array('kit', 'component', 'plain') as $code) {
+				$product = new Product($db);
+				$product->ref = $code.$suffix;
+				$product->label = $code.$suffix;
+				$product->type = Product::TYPE_PRODUCT;
+				$productIds[$code] = $product->create($user);
+				$this->assertGreaterThan(0, $productIds[$code], $product->errorsToString());
+			}
+
+			$kit = new Product($db);
+			$this->assertGreaterThan(0, $kit->add_sousproduit($productIds['kit'], $productIds['component'], 3, 1));
+
+			$order = new Commande($db);
+			$order->socid = $socId;
+			$order->date = dol_now();
+			$orderId = $order->create($user);
+			$this->assertGreaterThan(0, $orderId, $order->errorsToString());
+			$kitLineId = $order->addline('Kit', 0, 2, 0, 0, 0, $productIds['kit']);
+			$this->assertGreaterThan(0, $kitLineId, $order->errorsToString());
+			$plainLineId = $order->addline('Plain', 0, 1, 0, 0, 0, $productIds['plain']);
+			$this->assertGreaterThan(0, $plainLineId, $order->errorsToString());
+
+			$shipment = new Expedition($db);
+			$shipment->socid = $socId;
+			$shipment->origin_id = $orderId;
+			$shipment->origin = 'commande';
+			$shipmentId = $shipment->create($user);
+			$this->assertGreaterThan(0, $shipmentId, $shipment->errorsToString());
+
+			DolibarrApiAccess::$user = $user;
+
+			$code = 0;
+			try {
+				$api = new Shipments();
+				$api->postLine($shipmentId, $kitLineId, 2, $warehouseId);
+			} catch (Luracast\Restler\RestException $e) {
+				$code = $e->getCode();
+			}
+			$this->assertEquals(405, $code);
+			$this->assertEquals(0, $this->countShipmentLines($shipmentId));
+
+			// The product of the line can be given by the caller: a kit is also refused this way
+			$code = 0;
+			try {
+				$api = new Shipments();
+				$api->postLine($shipmentId, $plainLineId, 1, $warehouseId, $productIds['kit']);
+			} catch (Luracast\Restler\RestException $e) {
+				$code = $e->getCode();
+			}
+			$this->assertEquals(405, $code);
+			$this->assertEquals(0, $this->countShipmentLines($shipmentId));
+
+			// A line that is not a kit is still added
+			$api = new Shipments();
+			$this->assertGreaterThan(0, $api->postLine($shipmentId, $plainLineId, 1, $warehouseId));
+			$this->assertEquals(1, $this->countShipmentLines($shipmentId));
+
+			// With this option, a kit moves its own stock and create() stores it with its warehouse: the line is allowed
+			$conf->global->PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE = 1;
+			$api = new Shipments();
+			$this->assertGreaterThan(0, $api->postLine($shipmentId, $kitLineId, 2, $warehouseId));
+			$this->assertEquals(2, $this->countShipmentLines($shipmentId));
+		} finally {
+			foreach ($saved as $key => $value) {
+				$conf->global->$key = $value;
+			}
+		}
+	}
+
+	/**
+	 * Return the number of lines of a shipment
+	 *
+	 * @param	int		$shipmentId		Id of shipment
+	 * @return	int						Number of lines
+	 */
+	private function countShipmentLines($shipmentId)
+	{
+		global $db;
+
+		$resql = $db->query("SELECT COUNT(*) as nb FROM ".$db->prefix()."expeditiondet WHERE fk_expedition = ".((int) $shipmentId));
+		$this->assertNotFalse($resql, (string) $db->lasterror());
+
+		return (int) $db->fetch_object($resql)->nb;
+	}
+
+	/**
 	 * A shipment created by the REST API must expand a kit into its components, like the shipment card does,
 	 * so that the stock consumed on validation is restored on deletion.
 	 *
