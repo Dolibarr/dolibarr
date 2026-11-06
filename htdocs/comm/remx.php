@@ -381,7 +381,7 @@ if ($socid > 0) {
 
 			// Show the new global discount input form into a popup dialog
 			$formquestion = array(
-				0 => array('type' => 'text', 'name' => 'amount', 'tdclass' => 'fieldrequired', 'label' => $langs->trans("Amount").' ('.$langs->transnoentitiesnoconv("Currency".$conf->currency).')', 'value' => price2num(GETPOST("amount")), 'morecss' => 'minwidth100'),
+				0 => array('type' => 'other', 'name' => 'amount', 'tdclass' => 'fieldrequired', 'label' => $langs->trans("Amount"), 'value' => '<input type="text" class="flat minwidth50 maxwidth125" id="amount" name="amount" value="'.dolPrintHTMLForAttribute((string) price2num(GETPOST("amount"))).'" spellcheck="false"> '.$langs->getCurrencySymbol($conf->currency)),
 				1 => array('type' => 'other', 'name' => 'price_base_type', 'label' => $langs->trans("PriceBase"), 'value' => $form->selectPriceBaseType(GETPOST("price_base_type"), "price_base_type")),
 				2 => array('type' => 'other', 'name' => 'tva_tx', 'label' => $langs->trans("VAT"), 'value' => $form->load_tva('tva_tx', (GETPOSTISSET('tva_tx') ? GETPOST('tva_tx', 'alpha') : getDolGlobalString('MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS', 0)), $mysoc, $object, 0, 0, '', false, 1)),
 				3 => array('type' => 'text', 'name' => 'desc', 'tdclass' => 'fieldrequired', 'label' => $langs->trans("NoteReason"), 'value' => GETPOST('desc', 'alphanohtml'), 'morecss' => 'minwidth300'),

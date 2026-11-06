@@ -121,10 +121,13 @@ try {
 	$query = isset($data['query']) ? trim($data['query']) : '';
 	// Set by the chat when it calls back after running the read tool this
 	// endpoint flagged with needs_followup: the result is the last history turn.
-	$isFollowup = !empty($data['followup']);
+	// Value is the number of the followup round (1 or 2), 2 being the last one.
+	$followupRound = isset($data['followup']) ? min(2, max(0, (int) $data['followup'])) : 0;
+	$isFollowup = ($followupRound > 0);
+	$isLastFollowup = ($followupRound >= 2);
 
 	if (getDolGlobalString("AI_DEBUG")) {
-		dol_syslog("parse_intent.php isFollowup=".($isFollowup ? 1 : 0), LOG_DEBUG, 0, '_ai');
+		dol_syslog("parse_intent.php isFollowup=".($isFollowup ? 1 : 0)." followupRound=".$followupRound, LOG_DEBUG, 0, '_ai');
 	}
 
 	// --- Page context (optional): posted by the chat JS from the value the
@@ -582,12 +585,21 @@ try {
 			$s .= '<div class="ai-tools-debug">';
 			$s .= '<strong>Tool families loaded ('.count($mcp->loadedTools).')</strong>';
 			$s .= '<ul class="small">';
+			// Tools allowed by the setup of the assistant (system tools are always allowed)
+			$allowedToolNames = McpHandler::resolveAllowList(getDolGlobalString('AI_ASSISTANT_ALLOWED_TOOLS'), array_keys($mcp->toolsByName));
 			foreach ($mcp->loadedTools as $familyKey => $familyInstance) {
 				/** @param object $instance */
-				$nbInFamily = count(array_filter($mcp->toolsByName, function ($instance) use ($familyInstance): bool {
+				$toolNamesInFamily = array_keys(array_filter($mcp->toolsByName, function ($instance) use ($familyInstance): bool {
 					return $instance === $familyInstance;
 				}));
-				$s .= '<li><strong>'.dol_escape_htmltag((string) $familyKey).'</strong> <span class="opacitymedium">'.dol_escape_htmltag(get_class($familyInstance)).' - '.$nbInFamily.' tool(s)</span></li>';
+				$isSystemFamily = (method_exists($familyInstance, 'isSystem') && $familyInstance->isSystem());
+				$nbDisabled = $isSystemFamily ? 0 : count(array_diff($toolNamesInFamily, $allowedToolNames));
+				$nbInFamily = count($toolNamesInFamily) - $nbDisabled;
+				$s .= '<li><strong>'.dol_escape_htmltag((string) $familyKey).'</strong> <span class="opacitymedium">'.dol_escape_htmltag(get_class($familyInstance)).' - '.$nbInFamily.' tool(s)</span>';
+				if ($nbDisabled > 0) {
+					$s .= '<br><span class="opacitymedium">... '.$nbDisabled.' other tool(s) are disabled in the AI assistant setup</span>';
+				}
+				$s .= '</li>';
 			}
 			$s .= '</ul>';
 		}
@@ -692,7 +704,7 @@ try {
 		$systemRules .= "* When a tool matches the user request, use it to fulfill the user's request - never explain limitations, and never claim a capability is missing while a matching tool is listed.\n";
 		if (!$isFollowup) {
 			// The chat runs the search, then calls back with its result so the action can follow.
-			$systemRules .= "* If you need to do a search before performing the action the user asked, answer with a search tool `api_theobjecttosearch_list` and add \"needs_followup\": true at the top level of the JSON, next to \"tool\", the result of the search is then sent back to you to perform the action. Do not add it the requested search is itself the FINAL answer.";
+			$systemRules .= "* If you need to do a search before performing the action the user asked, answer with a search tool `api_theobjecttosearch_list` and add \"needs_followup\": true at the top level of the JSON, next to \"tool\", the result of the search is then sent back to you to perform the action. Do not add it if the requested search is itself the FINAL answer.\n";
 		}
 		$systemRules .= "* Only when genuinely NO tool can fulfill the request, use `respond_to_user` to say so plainly instead of guessing a business reason.\n";
 		$systemRules .= "\n";
@@ -955,8 +967,14 @@ try {
 			if (!empty($history)) {
 				$systemPrompt .= "\n\nCONVERSATION CONTEXT: the earlier turns are context only, to resolve references needed for final action. The ONLY request to act on is the LAST user message. Never resume, redo or complete an earlier request, even one that looks unanswered or unfinished.";
 			}
-			if ($isFollowup) {
-				$systemPrompt .= "\n\nSTEP 2: the tool you chose for the last user message was already executed; its result is the last assistant turn. Now perform the action the user asked for in the last user message, with the ids found in that result. If the result does not identify one object with certainty, or the action cannot be done, answer with respond_to_user and say why. Do not run the same search again and do not add needs_followup.";
+			if ($isFollowup && !$isLastFollowup) {
+				$systemPrompt .= "\n\nSTEP 2: the tool you chose for the last user message was already executed; its result is the last assistant turn. Now perform the action the user asked for in the last user message, with the ids found in that result.";
+				$systemPrompt .= " Run another search only in these 2 cases: to find a DIFFERENT kind of object still needed for the action, or to retry ONE time a search that returned nothing, with less restrictive criteria. A search for the same objects must never be run more than 2 times in total, even with other or less restrictive criteria.";
+				$systemPrompt .= " Add \"needs_followup\": true to such a search only if it is a step toward the action asked, not if it is itself the FINAL answer.";
+				$systemPrompt .= " If the result does not identify one object with certainty, or the action cannot be done, answer with respond_to_user and say why.";
+			} elseif ($isLastFollowup) {
+				$systemPrompt .= "\n\nSTEP 3 (LAST STEP): the searches you chose for the last user message were already executed; their results are the last assistant turn. Now perform the action the user asked for in the last user message, with the ids found in these results, or give your final answer with respond_to_user.";
+				$systemPrompt .= " Do NOT run any search again, even with other or less restrictive criteria, and do not add needs_followup. If the results do not identify one object with certainty, are empty, or the action cannot be done, answer with respond_to_user and say why.";
 			}
 
 			// The rules come before the long tools list. Small models weigh what is
@@ -976,7 +994,7 @@ try {
 
 			// Call LLM and get answer string
 			if (getDolGlobalString("AI_DEBUG")) {
-				dol_syslog("parse_intent.php call LLM - ".($isFollowup ? "step ".(count($history) + 1).": followup with the result of the search sent back by the chat" : "step 1: initial request")." (history turns: ".count($history).")", LOG_INFO, 0, '_ai');
+				dol_syslog("parse_intent.php call LLM - ".($isFollowup ? "step ".($followupRound + 1).": followup with the result of the search sent back by the chat" : "step 1: initial request")." (history turns: ".count($history).")", LOG_INFO, 0, '_ai');
 			}
 			$rawResponse = $adapter->generate($systemPrompt, $query, 'text', $attachments, $history);
 
@@ -1279,6 +1297,13 @@ try {
 		}
 	}
 
+	// The confirmation state of a write is issued by the tool and sent back by the chat
+	// only once the user confirmed: one invented by the model is always refused as forged.
+	if (is_array($intentJSON) && isset($intentJSON['arguments']) && is_array($intentJSON['arguments']) && array_key_exists('requestState', $intentJSON['arguments'])) {
+		dol_syslog("parse_intent.php model sent a requestState inside the tool arguments for ".$toolName.", removed", LOG_WARNING);
+		unset($intentJSON['arguments']['requestState']);
+	}
+
 	// Ask_for_confirmation is ours, built below around a real tool call; a model
 	// that emits it by itself (it does, on a follow-up question: "do you really
 	// want to update the phone of X?") sends the client a confirmation with
@@ -1417,11 +1442,11 @@ try {
 	// asked: either it says so itself (needs_followup in its JSON), or a write
 	// was asked and it answered with a read (a search for the id of the object
 	// to change). Tell the chat to send the result of that read back here, with
-	// followup=1, so the model can perform the action.
-	// Never on a followup call itself: one extra round at most, no loop.
+	// followup=1 (then 2), so the model can perform the action.
+	// Never on the last followup call: two extra rounds at most, no loop.
 	$llmAsksFollowup = !empty($intentJSON['needs_followup']);
 	unset($intentJSON['needs_followup']);
-	if (!$isFollowup && isset($mcp) && is_object($mcp)
+	if (!$isLastFollowup && isset($mcp) && is_object($mcp)
 		&& !in_array($toolName, $systemTools, true)
 		&& !aiIsWriteTool($mcp, $toolName, (isset($intentJSON['arguments']) && is_array($intentJSON['arguments'])) ? $intentJSON['arguments'] : array())
 		&& ($llmAsksFollowup || aiQueryAsksForWrite($query, $langs))) {
@@ -1913,96 +1938,6 @@ function filterToolsProfessional(array $allTools, array $activeCategories)
 	}
 
 	return $filtered;
-}
-
-/**
- * Compresses tool schema by removing optional parameters with defaults
- * and stripping descriptions, relying on LLM inference of variable names.
- *
- * @param array<int, array<string, mixed>> $tools Array of tool definitions.
- * @param bool $isLargeSchema True if compression is needed.
- * @return array<int, array<string, mixed>>
- */
-function cleanToolSchemaForLLM(array $tools, bool $isLargeSchema = false)
-{
-	$cleaned = [];
-
-	foreach ($tools as $tool) {
-		// Tool descriptions are how the LLM selects the right tool -- never truncate
-		// them, even when the schema is large. Truncating to 3 words ("Create documents
-		// other", "Add a single") breaks tool selection. If the schema really is too
-		// big for the chosen model, the right answer is to filter the toolset before
-		// it reaches the LLM (which is what filterToolsProfessional() already does
-		// upstream of this function), not to mutilate each tool's description.
-		// Parameter-level compression (stripping defaults, descriptions of optional
-		// fields, etc.) remains gated on $isLargeSchema below.
-		$desc = $tool['description'];
-
-		// Get parameters
-		$toolParams = $tool['parameters'] ?? $tool['inputSchema'] ?? [];
-
-		if ($isLargeSchema && isset($toolParams['properties']) && is_array($toolParams['properties'])) {
-			$requiredList = $toolParams['required'] ?? [];
-			$newProperties = [];
-
-			foreach ($toolParams['properties'] as $propKey => $propData) {
-				$isRequired = in_array($propKey, $requiredList);
-
-				// -----------------------------------------------------------
-				// Remove Optional Parameters with Defaults
-				// -----------------------------------------------------------
-				// If a parameter is optional and has a default value defined in
-				// the schema, we assume the backend will handle it. We remove it
-				// from the prompt entirely. This saves massive amounts of tokens
-				// on list/search functions (limit, sortorder, sqlfilters, etc).
-				// -----------------------------------------------------------
-				if (!$isRequired && isset($propData['default'])) {
-					continue;
-				}
-
-				// Remove 'type' for string (LLM default), Keep others (int/bool/arr)
-				if (isset($propData['type']) && $propData['type'] === 'string') {
-					unset($propData['type']);
-				}
-
-				// Handle Descriptions
-				// Remove descriptions entirely. Rely on the key name (e.g. 'email', 'qty').
-				// Exception: Keep 1 word if it's a required parameter with a confusing name.
-				if (isset($propData['description'])) {
-					unset($propData['description']);
-					// If we want to keep a tiny hint for required params, uncomment below:
-					// if ($isRequired) {
-					//     $propData['description'] = explode(' ', trim($propData['description']))[0];
-					// }
-				}
-
-				// Collapse Complex Objects
-				// If a parameter is a deep object (like a complex filter), replace the
-				// recursive properties definition with a generic string to save tokens.
-				if (isset($propData['type']) && $propData['type'] === 'object' && isset($propData['properties'])) {
-					unset($propData['properties']);
-					unset($propData['required']);
-					$propData['description'] = "JSON object"; // Minimal hint
-				}
-
-				$newProperties[$propKey] = $propData;
-			}
-
-			$toolParams['properties'] = $newProperties;
-
-			// Clean up root metadata
-			unset($toolParams['type']);
-			unset($toolParams['additionalProperties']);
-		}
-
-		$cleaned[] = [
-			'name' => $tool['name'],
-			'description' => $desc,
-			'parameters' => $toolParams
-		];
-	}
-
-	return $cleaned;
 }
 
 /**
