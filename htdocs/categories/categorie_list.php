@@ -427,7 +427,7 @@ if ($mode == 'hierarchy') {
 		}
 
 		$color = $object->color ? ' style="background: #'.sprintf("%06s", $object->color).';"' : ' style="background: #bbb"';
-		$li = $object->getNomUrl(1, '', 60, '&backtolist='.urlencode($_SERVER["PHP_SELF"].'?'.$param));
+		$li = $object->getNomUrl(1, '', 60, (GETPOST('dol_openinpopup', 'aZ') ? '&dol_openinpopup='.urlencode(GETPOST('dol_openinpopup', 'aZ')) : '').'&backtolist='.urlencode($_SERVER["PHP_SELF"].'?'.$param));
 
 		$entry = '<table class="nobordernopadding centpercent">';
 		$entry .= '<tr>';
@@ -881,7 +881,7 @@ if ($mode == 'hierarchy') {
 					if ($key == 'label') {
 						$color = $object->color ? ' style="background: #'.sprintf("%06s", $object->color).';"' : ' style="background: #bbb"';
 						$object->ref = $object->label;
-						$li = $object->getNomUrl(1, '', 60, '&backtolist='.urlencode($_SERVER["PHP_SELF"].'?type='.$type.$param));
+						$li = $object->getNomUrl(1, '', 60, (GETPOST('dol_openinpopup', 'aZ') ? '&dol_openinpopup='.urlencode(GETPOST('dol_openinpopup', 'aZ')) : '').'&backtolist='.urlencode($_SERVER["PHP_SELF"].'?type='.$type.$param));
 
 						print '<span class="noborderoncategories" '.$color.'>'.$li.'</span>';
 					} elseif ($key == 'status') {

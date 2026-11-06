@@ -165,9 +165,10 @@ class Opensurveyquestion extends CommonObject
 	/**
 	 * Check the properties of the question and clean the list of available answers.
 	 *
-	 * @return	int		Return integer <0 if KO (the reason is into $this->error), >0 if OK
+	 * @param	int<0,1>	$needsurvey		1 (default) = the question must be linked to a survey, 0 = the survey is not known yet
+	 * @return	int			Return integer <0 if KO (the reason is into $this->error), >0 if OK
 	 */
-	public function check()
+	public function check($needsurvey = 1)
 	{
 		$this->question = trim($this->question);
 		if ($this->question === '') {
@@ -178,7 +179,7 @@ class Opensurveyquestion extends CommonObject
 			$this->error = 'ErrorOpenSurveyQuestionBadType';
 			return -1;
 		}
-		if (empty($this->id_sondage)) {
+		if ($needsurvey && empty($this->id_sondage)) {
 			$this->error = 'ErrorOpenSurveyQuestionNoSurvey';
 			return -1;
 		}
@@ -267,6 +268,41 @@ class Opensurveyquestion extends CommonObject
 
 		$this->error = 'ErrorOpenSurveyAnswerNotValid';
 		return false;
+	}
+
+	/**
+	 * Build the questions of a survey from the rows of a form. A row without text of question is ignored.
+	 * The questions are not saved, call create() on each of them.
+	 *
+	 * @param	DoliDB								$db			Database handler
+	 * @param	string								$idsondage	Id of the survey (id_sondage), can be empty if the survey is not created yet
+	 * @param	array<array{question?:string,type?:string,available_answers?:string,mandatory?:int|string}>	$rows	Rows of the form
+	 * @param	string[]							$errors		List of errors (key of translation), filled by the method
+	 * @return	Opensurveyquestion[]							Questions in the order of the rows, with the position set
+	 */
+	public static function buildList($db, $idsondage, $rows, &$errors = array())
+	{
+		$list = array();
+		foreach ($rows as $row) {
+			$text = trim(isset($row['question']) ? (string) $row['question'] : '');
+			if ($text === '') {
+				continue;
+			}
+			$question = new Opensurveyquestion($db);
+			$question->id_sondage = $idsondage;
+			$question->question = $text;
+			$question->type = isset($row['type']) ? (string) $row['type'] : self::TYPE_RADIO;
+			$question->available_answers = isset($row['available_answers']) ? (string) $row['available_answers'] : '';
+			$question->mandatory = empty($row['mandatory']) ? 0 : 1;
+			$question->position = count($list) + 1;
+			if ($question->check(0) < 0) {
+				$errors[] = $question->error;
+				continue;
+			}
+			$list[] = $question;
+		}
+
+		return $list;
 	}
 
 	/**
