@@ -1805,6 +1805,26 @@ class ToolApiBridge extends McpTool
 					'params' => array('id' => "Rowid of the currency."),
 					'max_items' => 30,
 					'keep' => 'first'
+				),
+				'updateRate' => array(
+					'suffix' => 'update_rate',
+					'description' => "Set a new exchange rate for a currency: a rate record is added effective now, the older ones are kept. Give the currency by rowid or ISO code and the new rate vs the company currency. The user confirms before anything is written.",
+					'write' => array(
+						'kind' => 'update',
+						'preview' => 'AIPreviewChangeRecord',
+						'required' => array('id', 'rate'),
+						'object' => 'MultiCurrency',
+						'label' => 'currency',
+						'target' => 'id',
+						'lookup' => 'ref',
+						'fields' => array('rate'),
+						'args' => array('id'),
+						'right' => array('multicurrency', 'currency', 'write')
+					),
+					'params' => array(
+						'id' => "The currency: rowid, or its ISO code (e.g. 'USD').",
+						'rate' => "New exchange rate vs the company currency, e.g. 1.08 (required)."
+					)
 				)
 			)
 		);
@@ -5158,6 +5178,7 @@ class ToolApiBridge extends McpTool
 			'Expedition' => '/expedition/class/expedition.class.php',
 			'WebsitePage' => '/website/class/websitepage.class.php',
 			'Website' => '/website/class/website.class.php',
+			'MultiCurrency' => '/multicurrency/class/multicurrency.class.php',
 			'Cronjob' => '/cron/class/cronjob.class.php'
 		);
 	}
@@ -5200,7 +5221,7 @@ class ToolApiBridge extends McpTool
 		}
 		require_once DOL_DOCUMENT_ROOT.$paths[$class];
 		$obj = new $class($this->db);
-		'@phan-var-force Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Contact|Project|Task|Ticket|Fichinter|Contrat|Reception|Expedition|WebsitePage|Website|Cronjob $obj';
+		'@phan-var-force Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Contact|Project|Task|Ticket|Fichinter|Contrat|Reception|Expedition|WebsitePage|Website|MultiCurrency|Cronjob $obj';
 		if ((int) $id > 0) {
 			$found = ($obj->fetch((int) $id) > 0);
 		} elseif ($obj instanceof Contact || $obj instanceof Societe) {
