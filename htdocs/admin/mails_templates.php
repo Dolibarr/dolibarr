@@ -993,7 +993,7 @@ if ($action == 'create') {
 		if ($tmpfieldlist == 'topic') {
 			print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'" value="'.(!empty($obj->$tmpfieldlist) ? $obj->$tmpfieldlist : '').'">';
 		} elseif ($tmpfieldlist == 'email_from') {
-			print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'" value="'.(!empty($obj->$tmpfieldlist) ? $obj->$tmpfieldlist : '').'" spellcheck="false">';
+			print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'" value="'.dol_escape_htmltag(!empty($obj->$tmpfieldlist) ? $obj->$tmpfieldlist : '').'" spellcheck="false">';
 		} elseif ($tmpfieldlist == 'joinfiles') {
 			print $form->selectyesno($tmpfieldlist, (isset($obj->$tmpfieldlist) ? $obj->$tmpfieldlist : '0'), 1, false, 0, 1);
 		} else {
@@ -1268,7 +1268,7 @@ if ($action != 'create') {
 							}
 							if ($tmpfieldlist == 'email_from') {
 								print '<div class="minwidth150 inline-block">'.$form->textwithpicto($langs->trans("MailFrom"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</div> ';
-								print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'-'.$rowid.'" value="'.(!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '').'"'.($action != 'edit' ? ' disabled' : '').' spellcheck="false">';
+								print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'-'.$rowid.'" value="'.dol_escape_htmltag(!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '').'"'.($action != 'edit' ? ' disabled' : '').' spellcheck="false">';
 								print '<br>'."\n";
 							}
 							if ($tmpfieldlist == 'joinfiles') {
