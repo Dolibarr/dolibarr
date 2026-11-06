@@ -8,6 +8,7 @@
  * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2026		Anthony Berton				<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -491,6 +492,28 @@ $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object
 $sql .= $hookmanager->resPrint;
 
 $sql .= " WHERE a.entity IN (".getEntity('agenda').")";	// bookcal is a "virtual view" of agenda
+
+	// Hide auto events if AGENDA_HIDE_AUTO_EVENTS is on
+	// But keep if user explicitly selected auto events in filter
+	$HIDE = getDolGlobalString("AGENDA_HIDE_AUTO_EVENTS");
+	$showAutoSelected = false;
+if ($HIDE && !empty($actioncode)) {
+	if (is_array($actioncode)) {
+		foreach ($actioncode as $code) {
+			if ($code === 'AC_ALL_AUTO' || $code === 'AC_OTH_AUTO' || $code === 'systemauto') {
+				$showAutoSelected = true;
+				break;
+			}
+		}
+	} elseif (is_string($actioncode)) {
+		if ($actioncode === 'AC_ALL_AUTO' || $actioncode === 'AC_OTH_AUTO' || $actioncode === 'systemauto') {
+			$showAutoSelected = true;
+		}
+	}
+}
+if ($HIDE && !$showAutoSelected) {
+	$sql .= " AND c.type != 'systemauto'";
+}
 // Condition on actioncode
 if (!empty($actioncode)) {
 	if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
