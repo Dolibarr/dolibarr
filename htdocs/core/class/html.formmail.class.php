@@ -162,6 +162,11 @@ class FormMail extends Form
 	public $witherrorsto;
 
 	/**
+	 * @var string					Email used for the errors-to field (default value of the errorstomail input)
+	 */
+	public $errorstomail;
+
+	/**
 	 * @var int<0,2>|string 		0=No attaches files, 1=Show attached files, 2=Can add new attached files, 'text'=Show attached files and the text
 	 */
 	public $withfile;
