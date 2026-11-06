@@ -1298,11 +1298,11 @@ class FunctionsLibTest extends CommonClassTest
 	 */
 	public function testDolHtmlEntitiesBr()
 	{
-		// Text not already HTML
+		// Text NOT already HTML
 
-		$input = "A string\nwith a é, &, < and >.";
-		$after = dol_htmlentitiesbr($input, 0);    // Add <br> before \n
-		$this->assertEquals("A string<br>\nwith a &eacute;, &amp;, &lt; and &gt;.", $after);
+		$input = "A string\nwith a é, &, < and > and \".";
+		$after = dol_htmlentitiesbr($input, 0);    // Add <br> before \n, so must also encode in html entities special char because result move from text to HTML.
+		$this->assertEquals("A string<br>\nwith a &eacute;, &amp;, &lt; and &gt; and &quot;.", $after);
 
 		$input = "A string\nwith a é, &, < and >.";
 		$after = dol_htmlentitiesbr($input, 1);    // Replace \n with <br>
@@ -1318,9 +1318,9 @@ class FunctionsLibTest extends CommonClassTest
 
 		// Text already HTML, so &,<,> should not be converted
 
-		$input = "A string<br>\nwith a é, &, < and >.";
+		$input = "A string<br>\nwith a é, &, < and > and \".";
 		$after = dol_htmlentitiesbr($input);
-		$this->assertEquals("A string<br>\nwith a &eacute;, &, < and >.", $after);
+		$this->assertEquals("A string<br>\nwith a &eacute;, &, < and > and \".", $after);
 
 		$input = "<li>\nA string with a é, &, < and >.</li>\nAnother string";
 		$after = dol_htmlentitiesbr($input);
