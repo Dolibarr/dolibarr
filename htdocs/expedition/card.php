@@ -917,6 +917,10 @@ if (empty($reshook)) {
 				accessforbidden();
 			}
 
+			// Description of a free line is editable from the line edit form, keep the current
+			// value when the field is not posted. The rank must not be reset either.
+			$description = GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $shipline->description;
+			$rang = (int) $shipline->rang;
 
 			if (!$error) {
 				$fk_unit = GETPOSTISSET('units') ? GETPOSTINT('units') : $shipline->fk_unit;
