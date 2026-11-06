@@ -171,7 +171,8 @@ foreach ($dirsrootforscan as $tmpdirread) {
 	if (is_array($dirsincustom) && count($dirsincustom) > 0) {
 		foreach ($dirsincustom as $dircustomcursor) {
 			$fullname = $dircustomcursor['fullname'];
-			if (dol_is_file($fullname.'/'.$FILEFLAG)) {
+			// A module is editable if it has the flag file, or a module descriptor in core/modules/
+			if (dol_is_file($fullname.'/'.$FILEFLAG) || !empty(dol_dir_list($fullname.'/core/modules/', 'files', 0, '^mod.*\.class\.php$'))) {
 				// Get real name of module (MyModule instead of mymodule)
 				$dirtoscanrel = basename($fullname).'/core/modules/';
 
