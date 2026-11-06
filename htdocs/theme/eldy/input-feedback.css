@@ -46,3 +46,53 @@
 		outline: 3px solid rgba(255, 255, 255, 0);
 	}
 }
+
+
+/*
+ * Value updated (a displayed value, not an input): a reflection of white light sweeping the value from left to right, once.
+ * .updated-feedback on the value changed by the user, with the modifier --soft on the other values changed by the update (computed fields).
+ * The reflection is over the value (::after), so it lights the text up. The layout does not change.
+ * --updated-feedback-left and --updated-feedback-width limit it to the text, so it crosses the text at the same speed in a large cell
+ * (set by Dolibarr.tools.card.showUpdatedFeedback()), the whole element by default.
+ */
+.updated-feedback {
+	position: relative;
+}
+
+.updated-feedback::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: var(--updated-feedback-left, 0);
+	width: var(--updated-feedback-width, 100%);
+	pointer-events: none;
+	background-image: linear-gradient(105deg, transparent 45%, rgba(255, 255, 255, 0.9) 50%, transparent 55%);
+	background-repeat: no-repeat;
+	background-size: 250% 100%;
+	background-position: 100% 0;
+	animation: updated-feedback-animation 0.22s ease-out both;
+}
+
+.updated-feedback.--soft::after {
+	background-image: linear-gradient(105deg, transparent 46%, rgba(255, 255, 255, 0.5) 50%, transparent 54%);
+	animation-duration: 0.28s;
+	animation-delay: 0.06s;
+}
+
+/* The reflection, larger than the value, goes from outside on the left to outside on the right */
+@keyframes updated-feedback-animation {
+	from {
+		background-position: 100% 0;
+	}
+	to {
+		background-position: 0 0;
+	}
+}
+
+/* Without motion: no reflection */
+@media (prefers-reduced-motion: reduce) {
+	.updated-feedback::after {
+		display: none;
+	}
+}

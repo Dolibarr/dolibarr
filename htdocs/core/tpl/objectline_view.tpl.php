@@ -421,8 +421,19 @@ if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 	$tooltiponpriceendmultiprice = '</span>';
 }
 
+// Values edited in their cell in ajax (Dolibarr.tools.card.lines): same conditions as the edit link of the line,
+// not for credit lines and lines of situation invoices (edited with the edit form of the line).
+// The cell gives the field of the edit form of the line (data-dol-line-field). A value entered in one input is saved when changed,
+// a value entered in several parts (date, text on several lines...) keeps the buttons save and cancel: the mode is deduced from
+// the input, a cell can force it with data-dol-edit-mode="instant" or data-dol-edit-mode="confirm".
+$ajaxlinefields = ($this->isAjaxLineEdit() && $this->hasUserPermission($user, 'write') && $action != 'selectlines' && ($line->info_bits & 2) != 2 && empty($disableedit)
+	&& empty($line->fk_remise_except) && $line->special_code != 3 && empty($this->situation_cycle_ref));
+// The value is in a span: it gets the look of a field on hover, its input is placed over it
+$ajaxlinevalue = ($ajaxlinefields ? '<span class="dol-line-value">' : '');
+$ajaxlinevalueend = ($ajaxlinefields ? '</span>' : '');
+
 // VAT Rate
-print '<td class="linecolvat nowrap right">';
+print '<td class="linecolvat nowrap right"'.($ajaxlinefields ? ' data-dol-line-field="tva_tx"' : '').'>';
 $coldisplay++;
 $positiverates = '';
 if (price2num($line->tva_tx)) {
@@ -437,17 +448,17 @@ if (price2num($line->localtax2_tx)) {
 if (empty($positiverates)) {
 	$positiverates = '0';
 }
-print $tooltiponprice;
+print $ajaxlinevalue.$tooltiponprice;
 print vatrate($positiverates.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), true, $line->info_bits);
-print $tooltiponpriceend;
+print $tooltiponpriceend.$ajaxlinevalueend;
 print '</td>';
 ?>
 
-<td class="linecoluht nowraponall right">
+<td class="linecoluht nowraponall right"<?php print $ajaxlinefields ? ' data-dol-line-field="price_ht"' : ''; ?>>
 	<?php
 	$coldisplay++;
 	if (empty($line->fk_remise_except)) {
-		print price($sign * $line->subprice);
+		print $ajaxlinevalue.price($sign * $line->subprice).$ajaxlinevalueend;
 	} else {
 		print '<!-- '.price($sign * $line->subprice).' -->';
 	}
@@ -456,7 +467,7 @@ print '</td>';
 
 <?php
 if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) { ?>
-	<td class="linecoluttc nowraponall right"><?php $coldisplay++; ?><?php
+	<td class="linecoluttc nowraponall right"<?php print $ajaxlinefields ? ' data-dol-line-field="price_ttc"' : ''; ?>><?php $coldisplay++; ?><?php
 	$upinctax = isset($line->subprice_ttc) ? $line->subprice_ttc : null;
 	if (!$upinctax && $line->total_ttc && $line->qty) {		// The unit price including tax was not saved, so we try to guess it
 		// Note that unit price is always for 100% of line, it is not prorata of situation percent, when total_ttc is.
@@ -466,7 +477,7 @@ if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH
 		$upinctax = price2num($line->subprice * (1 + ((($line->info_bits & 1) ? 0 : (float) $line->tva_tx) / 100)), 'MU'); // one tax
 	}
 	if (empty($line->fk_remise_except)) {
-		print(isset($upinctax) ? price($sign * $upinctax) : price($sign * $line->subprice));
+		print $ajaxlinevalue.(isset($upinctax) ? price($sign * $upinctax) : price($sign * $line->subprice)).$ajaxlinevalueend;
 	}	// if upinctax can't be known, we show subprice excl ta
 	?>
 	</td>
@@ -517,14 +528,14 @@ if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicu
 	}
 	?></td>
 <?php } ?>
-	<td class="linecolqty nowraponall right"><?php $coldisplay++; ?>
+	<td class="linecolqty nowraponall right"<?php print $ajaxlinefields ? ' data-dol-line-field="qty"' : ''; ?>><?php $coldisplay++; ?>
 <?php
 if ((($line->info_bits & 2) != 2) && $line->special_code != 3) {
 	// I comment this because it shows info even when not required
 	// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
 	// must also not be output for most entities (proposal, intervention, ...)
 	//if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." ";
-	print price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formatting role of function price
+	print $ajaxlinevalue.price($line->qty, 0, '', 0, 0).$ajaxlinevalueend; // Yes, it is a quantity, not a price, but we just want the formatting role of function price
 } else {
 	print '&nbsp;';
 	print '<!-- '.price($line->qty, 0, '', 0, 0).' -->';	// discount may be aggregation of several lines, so showing qty may lead to misunderstanding, but we put it in comment for information
@@ -565,19 +576,19 @@ if ($object->element == 'commande' && isModEnabled('stock') && isModEnabled('shi
 	print '</td>';
 }
 if (getDolGlobalString('PRODUCT_USE_UNITS')) {
-	print '<td class="linecoluseunit nowrap left">';
+	print '<td class="linecoluseunit nowrap left"'.($ajaxlinefields ? ' data-dol-line-field="units"' : '').'>';
 	$label = $line->getLabelOfUnit('short', $langs);
-	print $label;
+	print $ajaxlinevalue.$label.$ajaxlinevalueend;
 	print '</td>';
 }
 if (!empty($line->remise_percent) && $line->special_code != 3) {
-	print '<td class="linecoldiscount right">';
+	print '<td class="linecoldiscount right"'.($ajaxlinefields ? ' data-dol-line-field="remise_percent"' : '').'>';
 	$coldisplay++;
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-	print dol_print_reduction((float) $line->remise_percent, $langs);
+	print $ajaxlinevalue.dol_print_reduction((float) $line->remise_percent, $langs).$ajaxlinevalueend;
 	print '</td>';
 } else {
-	print '<td class="linecoldiscount">&nbsp;</td>';
+	print '<td class="linecoldiscount"'.($ajaxlinefields ? ' data-dol-line-field="remise_percent"' : '').'>'.$ajaxlinevalue.'&nbsp;'.$ajaxlinevalueend.'</td>';
 	$coldisplay++;
 }
 
@@ -606,7 +617,7 @@ if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 
 if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 	if ($user->hasRight('margins', 'creer')) { ?>
-		<td class="linecolmargin1 nowrap margininfos right"><?php $coldisplay++; ?><?php print price($line->pa_ht); ?></td>
+		<td class="linecolmargin1 nowrap margininfos right"<?php print $ajaxlinefields ? ' data-dol-line-field="buying_price"' : ''; ?>><?php $coldisplay++; ?><?php print $ajaxlinevalue.price($line->pa_ht).$ajaxlinevalueend; ?></td>
 	<?php }
 	if (getDolGlobalString('DISPLAY_MARGIN_RATES') && $user->hasRight('margins', 'liretous')) { ?>
 		<td class="linecolmargin2 nowrap margininfos right"><?php $coldisplay++; ?><?php print(($line->pa_ht == 0) ? 'n/a' : price(price2num($line->marge_tx, 'MT')).'%'); ?></td>
@@ -697,7 +708,11 @@ if ($this->status == 0 && $tmppermtoedit && $action != 'selectlines') {
 	$coldisplay++;
 	if (($line->info_bits & 2) == 2 || !empty($disableedit)) {
 	} else { ?>
-		<a class="editfielda reposition" data-dol-action="editline" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&action=editline&token='.newToken().'&lineid='.$line->id; ?>">
+		<a class="editfielda reposition" data-dol-action="editline"<?php
+		if ($this->isAjaxLineEdit()) {
+			// Edited in ajax by Dolibarr.tools.card.lines, the url is used without javascript
+			print ' data-dol-edit-line="'.((int) $line->id).'" data-dol-element="'.dolPrintHTMLForAttribute($this->element).'" data-dol-id="'.((int) $this->id).'"';
+		} ?> href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&action=editline&token='.newToken().'&lineid='.$line->id; ?>">
 		<?php print img_edit().'</a>';
 	}
 	print '</td>';
@@ -706,7 +721,12 @@ if ($this->status == 0 && $tmppermtoedit && $action != 'selectlines') {
 	print '<td class="linecoldelete center">';
 	$coldisplay++;
 	if (!$situationinvoicelinewithchild && empty($disableremove)) { // For situation invoice, deletion is not possible if there is a child line.
-		print '<a class="reposition" data-dol-action="deleteline" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=ask_deleteline&token='.newToken().'&lineid='.$line->id.'">';
+		print '<a class="reposition" data-dol-action="deleteline"';
+		if ($this->isAjaxLineEdit()) {
+			// Deleted in ajax by Dolibarr.tools.card.lines, the url is used without javascript
+			print ' data-dol-delete-line="'.((int) $line->id).'" data-dol-element="'.dolPrintHTMLForAttribute($this->element).'" data-dol-id="'.((int) $this->id).'"';
+		}
+		print ' href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=ask_deleteline&token='.newToken().'&lineid='.$line->id.'">';
 		print img_delete();
 		print '</a>';
 	}
