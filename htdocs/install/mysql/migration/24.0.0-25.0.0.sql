@@ -650,3 +650,7 @@ ALTER TABLE llx_commandedet ADD COLUMN ref_customer varchar(128) DEFAULT NULL AF
 ALTER TABLE llx_facturedet ADD COLUMN pos_printer_id integer NULL AFTER fk_warehouse;
 UPDATE llx_facturedet SET pos_printer_id = 1, special_code = 0 WHERE special_code = 4 AND fk_facture IN (SELECT rowid FROM llx_facture WHERE module_source = 'takepos' AND fk_statut = 0);
 UPDATE llx_facturedet SET special_code = 0 WHERE special_code IN (1, 2, 3) AND fk_facture IN (SELECT rowid FROM llx_facture WHERE module_source = 'takepos' AND fk_statut = 0);
+
+-- Bank accounts of users: an empty currency is the company currency, and each user has one default bank account per currency
+UPDATE llx_user_rib SET currency_code = (SELECT __DECRYPT('value')__ FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_MONNAIE' AND entity = llx_user_rib.entity) WHERE currency_code IS NULL OR currency_code = '';
+UPDATE llx_user_rib SET default_rib = 1 WHERE rowid IN (SELECT rowid FROM (SELECT MIN(rowid) as rowid FROM llx_user_rib GROUP BY fk_user, currency_code HAVING MAX(default_rib) = 0) as tmp);
