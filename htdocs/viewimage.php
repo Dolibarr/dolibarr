@@ -441,6 +441,19 @@ if ($modulepart == 'barcode') {
 
 	$filename = basename($fullpath_original_file);
 
+	// Hooks (same hook as document.php, so a module can control the output of a file by both pages)
+	$parameters = array('ecmfile' => null, 'modulepart' => $modulepart, 'original_file' => $original_file,
+		'entity' => $entity, 'fullpath_original_file' => $fullpath_original_file,
+		'filename' => $filename, 'fullpath_original_file_osencoded' => dol_osencode($fullpath_original_file));
+	$object = new stdClass();
+	$action = 'view';
+	$reshook = $hookmanager->executeHooks('downloadDocument', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if ($reshook < 0) {
+		$errors = $hookmanager->error.(is_array($hookmanager->errors) ? (!empty($hookmanager->error) ? ', ' : '').implode(', ', $hookmanager->errors) : '');
+		dol_syslog("viewimage.php - Errors when executing the hook 'downloadDocument' : ".$errors);
+		httponly_accessforbidden("ErrorDownloadDocumentHooks: ".$errors, 403);
+	}
+
 	// Output files on browser
 	dol_syslog("viewimage.php return file $fullpath_original_file filename=$filename content-type=$type");
 
