@@ -1,0 +1,39 @@
+---
+# Pull production in cPanel, then select Deploy HEAD Commit.
+# Installatron provides database/document backups; take one before every release.
+# Major/minor upgrades require a separate database migration and rollback plan.
+deployment:
+  tasks:
+    - |
+      set -euo pipefail
+      umask 077
+      REPO="$(pwd -P)"
+      TARGET="$HOME/public_html/erp.csenterprises25.com"
+      STATE="$HOME/erp-deployment"
+      test "$(git symbolic-ref --short HEAD)" = production
+      test -f "$REPO/htdocs/index.php"
+      test -f "$TARGET/conf/conf.php"
+      command -v rsync >/dev/null
+      command -v flock >/dev/null
+      mkdir -p "$STATE"
+      chmod 700 "$STATE"
+      exec 9>"$STATE/deploy.lock"
+      flock -n 9
+      # This deployment path is restricted to stable 24.0 patch releases.
+      grep -Eq "DOL_MAJOR_VERSION', '24'" "$REPO/htdocs/version.inc.php"
+      grep -Eq "DOL_MINOR_VERSION', '0\.[0-9]+'" "$REPO/htdocs/version.inc.php"
+      RELEASE="$(date -u +%Y%m%dT%H%M%SZ)-$(git rev-parse --short HEAD)-$$"
+      BACKUP="$STATE/$RELEASE"
+      mkdir -m 700 "$BACKUP"
+      tar -czf "$BACKUP/files.tar.gz" -C "$TARGET" .
+      git rev-parse HEAD > "$BACKUP/commit.txt"
+      # Exclusions preserve configuration, uploads, modules and hosting rules.
+      # Backups and the repository remain outside the public document root.
+      rsync -rlt --checksum --omit-dir-times --delete-delay --chmod=D755,F644 \
+        --exclude=/conf/ --exclude=/documents/ --exclude=/custom/ \
+        --exclude=/.htaccess --exclude=/.user.ini --exclude=/.well-known/ \
+        --exclude=/install.lock --exclude=/.git/ \
+        "$REPO/htdocs/" "$TARGET/"
+      chmod 600 "$TARGET/conf/conf.php"
+      printf '%s\n' "$RELEASE" > "$STATE/current-release"
+      printf 'Deployed %s to erp.csenterprises25.com\n' "$RELEASE"
