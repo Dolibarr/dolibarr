@@ -255,6 +255,10 @@ if (empty($reshook)) {
 		$invoice = new Facture($db);
 		$invoice->fetch($placeid);
 
+		// Stock of products with lot/serial is moved below only when this call validates the draft sale.
+		// A later payment on an already validated sale must not move it a second time.
+		$invoicewasdraft = ($invoice->status == Facture::STATUS_DRAFT);
+
 		$invoice->oldcopy = dol_clone($invoice, 2);
 
 		$db->begin();
@@ -400,7 +404,7 @@ if (empty($reshook)) {
 		$warehouseid = 0;
 		// Update stock for batch products
 		if (!$error && $res >= 0) {
-			if (isModEnabled('stock') && isModEnabled('productbatch') && $allowstockchange) {
+			if (isModEnabled('stock') && isModEnabled('productbatch') && $allowstockchange && $invoicewasdraft) {
 				// Update stocks
 				dol_syslog("Now we record the stock movement for each qualified line");
 
