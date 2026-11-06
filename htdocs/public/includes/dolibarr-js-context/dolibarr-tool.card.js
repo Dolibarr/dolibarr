@@ -9,6 +9,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	 * - reload() reloads sections and document lines of the card, the elements are replaced by their new version with Dolibarr.tools.replaceContent():
 	 *   lines are loaded alone with core/ajax/objectline.php, sections with the card loaded without its lines (nolines=1).
 	 *   When lines are reloaded, the fields displayed are refreshed too, so the totals follow the changes of the lines.
+	 * - postCard() posts data to the card like a form of the card (ex: action=updateline)
 	 *
 	 * There is one controller by card (element and id), shared by all the scripts of the page: same date of modification, same state.
 	 * Features using it are added as parts of this tool, see definePart().
@@ -84,7 +85,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		 * @param {number} id Id of the object
 		 * @param {Object} [options]
 		 * @param {number} [options.tms=0] Date of modification of the object displayed (timestamp), to refuse an update if the object was modified since
-		 * @param {string} [options.url] Url of the card used to reload lines and sections, default is the current page without action parameters
+		 * @param {string} [options.url] Url of the card used to reload sections and post actions, default is the current page without action parameters
 		 */
 		constructor(element, id, options = {}) {
 			/** Controller of the data of the object, see Dolibarr.tools.object */
@@ -151,8 +152,9 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		 * @param {Object} [options]
 		 * @param {boolean} [options.showErrors=true] Display errors with Dolibarr.tools.setEventMessage()
 		 * @param {AbortSignal} [options.signal]
-		 * @returns {Promise<{sections: Object<string, HTMLElement|null>, lines: Object<number, HTMLElement|null>, fields: Object, lineids: number[]|null, tms: number|null, document: Document|null}>}
-		 *          New elements (null if not found, or line deleted), fields refreshed {field: {value, html}}, ids of all the lines of the object
+		 * @returns {Promise<{sections: Object<string, HTMLElement|null>, lines: Object<number, HTMLElement|null>, fields: Object, eventMessages: Object, lineids: number[]|null, tms: number|null, document: Document|null}>}
+		 *          New elements (null if not found, or line deleted), fields refreshed {field: {value, html}},
+		 *          event messages kept in session by postCard() {mesgs, warnings, errors} (when lines are asked), ids of all the lines of the object
 		 *          in the order of the card and date of modification of the object (null if no line nor field asked),
 		 *          and the card loaded to use other parts of it (null if no section asked)
 		 */
@@ -174,6 +176,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 				sections: {},
 				lines: {},
 				fields: fieldsData ? fieldsData.fields : {},
+				eventMessages: linesData ? linesData.eventMessages : {},
 				lineids: linesData ? linesData.lineids.map(lineId => parseInt(lineId, 10)) : null,
 				tms: tms ? parseInt(tms, 10) : null,
 				document: doc,
@@ -284,10 +287,11 @@ document.addEventListener('Dolibarr:Init', function(e) {
 
 		/**
 		 * Load the html of document lines with core/ajax/objectline.php, with the links and the hook contexts of the card
-		 * (Dolibarr.tools.object fetchLines())
+		 * (Dolibarr.tools.object fetchLines()).
+		 * The event messages kept in session by postCard() are returned and displayed (unless option showEventMessages is false).
 		 * @param {number[]} lineIds
 		 * @param {Object} [options] See Dolibarr.tools.object fetchLines()
-		 * @returns {Promise<{lines: Object<number, string|null>, lineids: number[], tms: number|null}>}
+		 * @returns {Promise<{lines: Object<number, string|null>, lineids: number[], tms: number|null, eventMessages: Object}>}
 		 */
 		fetchLines(lineIds, options = {}) {
 			return this.object.fetchLines(lineIds, {
@@ -358,9 +362,30 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		}
 
 		/**
+		 * Post data to the card, like a form of the card submitted (ex: action=updateline), without reloading the page.
+		 * The card answers without its lines (nolines=1), and keeps the event messages of the action in session
+		 * (noflusheventmessages=1): they are returned by the next call of fetchLines() or reload() with lines.
+		 * The anti CSRF tokens of the page are updated with the ones of the card.
+		 *
+		 * @param {FormData|Object} data Data posted, the anti CSRF token is added if missing
+		 * @param {Object} [options] See reload()
+		 * @returns {Promise<Document>} Card loaded after the action
+		 */
+		async postCard(data, options = {}) {
+			const url = new URL(this.url, window.location.href);
+			url.searchParams.set('nolines', '1');
+			url.searchParams.set('noflusheventmessages', '1');
+
+			const html = await Dolibarr.tools.fetch.post(url.toString(), data, { responseType: 'text', ...options });
+			const doc = new DOMParser().parseFromString(html, 'text/html');
+			syncCsrfToken(doc);
+
+			return doc;
+		}
+
+		/**
 		 * Load the card without its lines, faster than the whole card on documents with many lines.
-		 * The event messages waiting in session are not displayed by the card loaded in background, they stay in session for the next page
-		 * (noflusheventmessages=1).
+		 * The event messages waiting in session are not displayed by the card loaded in background, they stay in session (noflusheventmessages=1).
 		 * @param {Object} [options] See reload()
 		 * @returns {Promise<Document>}
 		 */
