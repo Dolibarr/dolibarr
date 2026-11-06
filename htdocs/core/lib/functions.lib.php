@@ -1826,11 +1826,11 @@ function dol_getThemeFilePath($file, $theme = '')
 /**
  * Return path of url.
  *
- * @param	string							$url				Relative path to file
- * @param	array<string,int|float|string>	$params     		params for the http query
- * @param	bool							$addtoken			does we need to add token
+ * @param	string							$url				Relative path to file (Ex: DOL_URL_ROOT.'/mydir/mypage.php')
+ * @param	array<string,int|float|string>	$params     		Params for the http query
+ * @param	bool							$addtoken			Does we need to add token
  * @param	string							$anchor				Add an anchor #xxx at end of URL
- * @return string												path
+ * @return string												Url
  */
 function dolBuildUrl($url, $params = [], $addtoken = false, $anchor = '')
 {
@@ -1845,6 +1845,10 @@ function dolBuildUrl($url, $params = [], $addtoken = false, $anchor = '')
 	}
 	if ((!isset($params['leftmenu'])/*  || empty($params['leftmenu']) */) && GETPOSTISSET('leftmenu')) { // do not fill leftmenu if we have leftmenu=
 		$params = array_merge($params, ['leftmenu' => (GETPOST('leftmenu', 'restricthtml'))]);
+	}
+	// Keep the popup context (page shown inside a dialog popup iframe) when navigating to another page
+	if (!isset($params['dol_openinpopup']) && GETPOST('dol_openinpopup', 'aZ09')) {
+		$params = array_merge($params, ['dol_openinpopup' => GETPOST('dol_openinpopup', 'aZ09')]);
 	}
 	$parameters = [
 		'path' => &$url,
@@ -3928,7 +3932,10 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 	$newphoneastart = $newphoneaend = '';
 	if (!empty($addlink)) {	// Link on phone number (+ link to add action if conf->global->AGENDA_ADDACTIONFORPHONE set)
 		if ($addlink == 'tel' || $conf->browser->layout == 'phone' || (isModEnabled('clicktodial') && getDolGlobalString('CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS'))) {	// If phone or option for, we use link of phone
-			$newphoneastart = '<a href="tel:' . urlencode($phone) . '">';
+			// Keep the leading '+' of international numbers: it is allowed in a tel: URI (RFC 3966) and many
+			// softphones/CTI handlers do not decode '%2B', so they drop the '%' and dial a wrong leading '2'.
+			// Spaces were removed above, so a '+' produced here can only come from a real '+'.
+			$newphoneastart = '<a href="tel:' . str_replace('%2B', '+', urlencode($phone)) . '">';
 			$newphoneaend .= '</a>';
 		} elseif (isModEnabled('clicktodial') && $addlink == 'AC_TEL') {		// If click to dial, we use click to dial url
 			if (empty($user->clicktodial_loaded)) {
@@ -5593,12 +5600,12 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 			// Special case for india.
 			//print 'VATRULE 3b';
 			$reg = array();
-			if (preg_match('/C+S-(\d+)/', $tmpvat, $reg) && $thirdparty_seller->state_id != $thirdparty_buyer->state_id) {
-				// we must revert the C+S into I
-				$tmpvat = str_replace("C+S", "I", $tmpvat);
-			} elseif (preg_match('/I-(\d+)/', $tmpvat, $reg) && $thirdparty_seller->state_id == $thirdparty_buyer->state_id) {
-				// we must revert the I into C+S
-				$tmpvat = str_replace("I", "C+S", $tmpvat);
+			if (preg_match('/\(C\+S-(\d+(?:\.\d+)?)\)/', $tmpvat, $reg) && $thirdparty_seller->state_id != $thirdparty_buyer->state_id) {
+				// we must revert the C+S into I (rate of I-xx is xx)
+				$tmpvat = $reg[1].' (I-'.$reg[1].')';
+			} elseif (preg_match('/\(I-(\d+(?:\.\d+)?)\)/', $tmpvat, $reg) && $thirdparty_seller->state_id == $thirdparty_buyer->state_id) {
+				// we must revert the I into C+S (rate of C+S-xx is 0, xx is shared between localtax1 and localtax2)
+				$tmpvat = '0 (C+S-'.$reg[1].')';
 			}
 		}
 
@@ -6078,6 +6085,9 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 			"strong",
 			"title",
 			"table",
+			"tbody",
+			"thead",
+			"tfoot",
 			"tr",
 			"th",
 			"td",
@@ -6814,6 +6824,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
  *	This function is called to encode a string into a HTML string but differs from htmlentities because a detection is
  *  done before to see if text is already HTML or not. Also, all entities but &,<,>," (because protected by code) and ' (because not included by the ENT_COMPAT mode) are converted.
  *  This permits to encode special chars to entities with no double encoding for already encoded HTML strings.
+ *  Important: This function can add <br> before \n so will convert a non HTML into a HTML string, in this case, &,<,>," must become html encoded.
  * 	This function also remove last EOL or BR if $removelasteolbr=1 (default).
  *  For PDF usage, you can show text by 2 ways:
  *        - writeHTMLCell -> param must be encoded into HTML.
@@ -6847,13 +6858,14 @@ function dol_htmlentitiesbr($stringtoencode, $nl2brmode = 0, $pagecodefrom = 'UT
 		$newstring = dol_htmlentities($newstring, ENT_COMPAT, $pagecodefrom); // Make entity encoding
 		$newstring = strtr($newstring, array('__PROTECTand__' => '&', '__PROTECTlt__' => '<', '__PROTECTgt__' => '>', '__PROTECTdquot__' => '"'));
 	} else {
+		// Text is not HTML but will become HTML because we may add <br> by dol_nl2br in front of \n, so &, < and > should become &amp;, &lt;, &gt
 		if ($removelasteolbr) {
 			$newstring = preg_replace('/(\r\n|\r|\n)$/i', '', $newstring); // Remove last \n (may remove several)
 		}
+		$newstring = preg_replace('/[\x{200B}-\x{200D}\x{FEFF}]/u', ' ', $newstring);
 		$newstring = dol_nl2br(dol_htmlentities($newstring, ENT_COMPAT, $pagecodefrom), $nl2brmode);
 	}
-	// Other substitutions that htmlentities does not do
-	//$newstring=str_replace(chr(128),'&euro;',$newstring);	// 128 = 0x80. Not in html entity table.     // Seems useles with TCPDF. Make bug with UTF8 languages
+
 	return $newstring;
 }
 
@@ -10008,6 +10020,14 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 					if (!empty($reg[1])) {
 						$operator = $reg[1];
 					}
+					// Normalize operator to a valid SQL operator ('!' or '!=' means "different of")
+					$operatormap = array('!' => '<>', '!=' => '<>', '=!' => '<>', '==' => '=', '=<' => '<=', '=>' => '>=');
+					if (isset($operatormap[$operator])) {
+						$operator = $operatormap[$operator];
+					}
+					if (!in_array($operator, array('=', '<', '>', '<=', '>=', '<>'))) {
+						$operator = '=';
+					}
 					if ($newcrit != '') {
 						$numnewcrit = price2num($newcrit);
 						if (is_numeric($numnewcrit)) {
@@ -10090,7 +10110,10 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 					}
 					$tmpcrit = trim($tmpcrit);
 
-					if ($tmpcrit == '^$' || strpos($crit, '!') === 0) {	// If we search empty, we must combined different OR fields with AND
+					// A leading '!' is an exclude character, except if criteria contains only '!' (we search the '!' string itself)
+					$isexclude = (preg_match('/^!/', $tmpcrit) && !preg_match('/^!+$/', $tmpcrit));
+
+					if ($tmpcrit == '^$' || (strpos($crit, '!') === 0 && !preg_match('/^!+$/', $crit))) {	// If we search empty, we must combined different OR fields with AND
 						$newres .= (($i2 > 0 || $i3 > 0) ? ' AND ' : '');
 					} else {
 						$newres .= (($i2 > 0 || $i3 > 0) ? ' OR ' : '');
@@ -10123,7 +10146,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 						if ($isSellist && $key && $table && $label) {
 							$newres .= $field . " IN (SELECT t." . $db->sanitize((string) $key) . " FROM " . $db->prefix() . $db->sanitize((string) $table) . " AS t WHERE t." . $db->sanitize((string) $label) . " LIKE '%" . $db->escape($tmpcrit2) . "%')";
 						} else {
-							if (preg_match('/^!/', $tmpcrit)) {
+							if ($isexclude) {
 								$tmps .= $db->sanitize($field) . " NOT LIKE "; // ! as exclude character
 								$tmpcrit2 = preg_replace('/^!/', '', $tmpcrit2);
 							} else {
@@ -10140,7 +10163,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 								$tmpcrit2 = preg_replace('/[\^\$]$/', '', $tmpcrit2);
 							}
 
-							if ($tmpcrit2 == '' || preg_match('/^!/', $tmpcrit)) {
+							if ($tmpcrit2 == '' || $isexclude) {
 								$tmps = "(" . $tmps;
 							}
 							$newres .= $tmps;
@@ -10148,7 +10171,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 							$newres .= $db->escape($tmpcrit2);
 							$newres .= $tmpafter;
 							$newres .= "'";
-							if ($tmpcrit2 == '' || preg_match('/^!/', $tmpcrit)) {
+							if ($tmpcrit2 == '' || $isexclude) {
 								$newres .= " OR " . $db->sanitize($field) . " IS NULL)";
 							}
 						}
