@@ -89,7 +89,8 @@ class ToolApiBridge extends McpTool
 		'stockmovements' => array('stock'),
 		'warehouses' => array('stock'),
 		'projects' => array('project'),
-		'tasks' => array('project'),
+		'project_tasks' => array('project'),
+		'project' => array('project'),
 		'agendaevents' => array('thirdparty', 'project'),
 		'interventions' => array('project', 'commercial'),
 		'contracts' => array('commercial', 'billing'),
@@ -182,7 +183,7 @@ class ToolApiBridge extends McpTool
 				'id' => 'The object: rowid, or its ref (required).'
 			)
 		),
-		'api_objects_add_line' => array(
+		'api_objects_line_create' => array(
 			'suffix' => 'add_line',
 			'method' => 'postLine',
 			'description' => "Add ONE line to a DRAFT document. Set 'object' to the type of the document and 'id' to the document. The user confirms before anything is written.",
@@ -191,7 +192,7 @@ class ToolApiBridge extends McpTool
 				'id' => 'The draft document: rowid (required). For an intervention, its ref is accepted too.'
 			)
 		),
-		'api_objects_update_line' => array(
+		'api_objects_line_update' => array(
 			'suffix' => 'update_line',
 			'method' => 'putLine',
 			'description' => "Change ONE line of a DRAFT document. Set 'object' to the type of the document. The user confirms before anything is written.",
@@ -200,7 +201,7 @@ class ToolApiBridge extends McpTool
 				'id' => 'The draft document: rowid, or its ref (required).'
 			)
 		),
-		'api_objects_delete_line' => array(
+		'api_objects_line_delete' => array(
 			'suffix' => 'delete_line',
 			'method' => 'deleteLine',
 			'description' => "Delete ONE line of a DRAFT document. Set 'object' to the type of the document. The user confirms before anything is written.",
@@ -251,6 +252,7 @@ class ToolApiBridge extends McpTool
 	 * (per-parameter doc overriding what the docblock parser guessed),
 	 * 'fixed_params' (arguments forced on the call and hidden from the schema).
 	 * 'get_by' (argument => API method: a get by rowid also reachable by ref, email...).
+	 * 'param_defaults' (argument => value used when the caller omits it, instead of the API default).
 	 * An entry may set 'endpoint' to call the REST class of another key, so
 	 * several groups of tools can share one REST class (documents_*).
 	 * TODO Replace path/class discovery with the dynamic scan of api_*.class.php
@@ -262,7 +264,7 @@ class ToolApiBridge extends McpTool
 	 * endpoint absent from this map is still exposed, with the description and
 	 * parameter docs reflection gives — that is the whole point of scanning.
 	 *
-	 * @var array<string, array{endpoint?:string, label?:string, methods?:array<string, array{suffix?:string, description?:string, params?:array<string,string>, fixed_params?:array<string,string>, get_by?:array<string,string>}>}>
+	 * @var array<string, array{endpoint?:string, label?:string, methods?:array<string, array{suffix?:string, description?:string, params?:array<string,string>, fixed_params?:array<string,string>, get_by?:array<string,string>, param_defaults?:array<string,mixed>}>}>
 	 */
 	private $enrichments = [];
 
@@ -939,7 +941,7 @@ class ToolApiBridge extends McpTool
 			'methods' => [
 				'index' => [
 					'default_properties' => 'id,ref,title,fk_soc,public,date_start,date_end,fk_statut,opp_status,opp_amount',
-					'description' => "Statuses (t.fk_statut): 0=draft, 1=open, 2=closed. A project used as a sales opportunity carries opp_status (pipeline step rowid), opp_percent (probability) and opp_amount. Dates are unix timestamps: date_start (dateo), date_end (datee). Useful sqlfilters fields: t.ref, t.title, t.fk_soc, t.fk_statut, t.dateo, t.datee, t.public (1=visible to everyone). Tasks of a project: use api_tasks_list with sqlfilters \"(t.fk_projet:=:'ID')\".",
+					'description' => "Statuses (t.fk_statut): 0=draft, 1=open, 2=closed. A project used as a sales opportunity carries opp_status (pipeline step rowid), opp_percent (probability) and opp_amount. Dates are unix timestamps: date_start (dateo), date_end (datee). Useful sqlfilters fields: t.ref, t.title, t.fk_soc, t.fk_statut, t.dateo, t.datee, t.public (1=visible to everyone). Tasks of a project: use api_project_tasks_list with sqlfilters \"(t.fk_projet:=:'ID')\".",
 					'params' => [
 						'thirdparty_ids' => "Comma-separated third-party rowids to restrict to (e.g. '1,5').",
 						'category' => "Rowid of a project category (tag) to restrict the list to.",
@@ -958,7 +960,9 @@ class ToolApiBridge extends McpTool
 			]
 		];
 
-		$this->enrichments['tasks'] = [
+		// Group calling the REST class of tasks, so the tools are named api_project_tasks_xxx
+		$this->enrichments['project_tasks'] = [
+			'endpoint' => 'tasks',
 			'label' => 'project tasks',
 			'methods' => [
 				'index' => [
@@ -1003,9 +1007,17 @@ class ToolApiBridge extends McpTool
 						'date_start' => "New start date YYYY-MM-DD.",
 						'date_end' => "New end date YYYY-MM-DD."
 					]
-				],
+				]
+			]
+		];
+
+		// Own group calling the REST class of tasks, so the tool is named api_project_tasks_timespent_create
+		$this->enrichments['project'] = [
+			'endpoint' => 'tasks',
+			'label' => 'project tasks',
+			'methods' => [
 				'addTimeSpent' => [
-					'suffix' => 'add_timespent',
+					'suffix' => 'tasks_timespent_create',
 					'description' => "Log a time-spent record on a task: date, duration in hours, optional note and a new progress percent. The user confirms before anything is written.",
 					'write' => [
 						'preview' => 'AIPreviewAddTimespent',
@@ -1202,10 +1214,10 @@ class ToolApiBridge extends McpTool
 					]
 				],
 				'get' => [
-					'description' => "One shipment: customer, source order, dates, status, tracking number; the lines are in api_shipments_get_lines."
+					'description' => "One shipment: customer, source order, dates, status, tracking number; the lines are in api_shipments_lines_get."
 				],
 				'getLines' => [
-					'suffix' => 'get_lines',
+					'suffix' => 'lines_get',
 					'description' => "Lines of a shipment: product, quantity shipped, batch/lot when the product is tracked.",
 					'params' => ['id' => "Rowid of the shipment."]
 				]
@@ -1253,10 +1265,10 @@ class ToolApiBridge extends McpTool
 					]
 				],
 				'get' => [
-					'description' => "One reception: supplier, supplier reference, dates, status; the lines are in api_receptions_get_lines."
+					'description' => "One reception: supplier, supplier reference, dates, status; the lines are in api_receptions_lines_get."
 				],
 				'getLines' => [
-					'suffix' => 'get_lines',
+					'suffix' => 'lines_get',
 					'description' => "Lines of a reception: product, quantity received, batch/lot and warehouse when tracked.",
 					'params' => ['id' => "Rowid of the reception."]
 				]
@@ -1997,13 +2009,14 @@ class ToolApiBridge extends McpTool
 					'right' => array('user', 'user', 'lire')
 				),
 				'get' => array(
-					'description' => "One user with login, name, email, phones, job and status, by its rowid (id), by its exact login (login) or by its exact email address (email).",
+					'description' => "One user with login, name, email, phones, job and status, by its rowid (id), by its exact login (login) or by its exact email address (email). Set includegroups=1 to also get the groups he belongs to.",
 					'get_by' => array('login' => 'getByLogin', 'email' => 'getByEmail'),
 					'params' => array(
 						'id' => "Rowid of the user (use 0 when identifying by login or email).",
 						'login' => "Exact login of the user, alternative to id.",
 						'email' => "Exact email address of the user, alternative to id.",
-						'includepermissions' => "1 to also load his permission set (heavy, default 0)."
+						'includepermissions' => "1 to also load his permission set (heavy, default 0).",
+						'includegroups' => "1 to also load the groups the user belongs to, in user_group_list (default 0)."
 					)
 				),
 				'getInfo' => array(
@@ -2011,21 +2024,15 @@ class ToolApiBridge extends McpTool
 					'description' => "The user currently connected: answers 'who am I', 'my email', 'my permissions'.",
 					'params' => array('includepermissions' => "1 to also load his permission set (heavy, default 0).")
 				),
-				'getGroups' => array(
-					'suffix' => 'groups_of_user',
-					'description' => "Groups a user belongs to.",
-					'params' => array('id' => "Rowid of the user."),
-					'right' => array('user', 'user', 'lire')
-				),
 				'listGroups' => array(
 					'suffix' => 'groups_list',
-					'description' => "All user groups (e.g. administrators, sales): name, note. Members of one group come from api_users_group_info with load_members=1.",
+					'description' => "All user groups (e.g. administrators, sales): name, note. Members of one group come from api_users_group_get with load_members=1.",
 					'params' => array(
 						'group_ids' => "Comma-separated group rowids to restrict to (e.g. '1,5')."
 					)
 				),
 				'infoGroups' => array(
-					'suffix' => 'group_info',
+					'suffix' => 'group_get',
 					'description' => "One user group: name, note; set load_members=1 to include its members.",
 					'params' => array('group' => "Rowid of the user group.", 'load_members' => "1 to include the members of the group (default 0).", 'includepermissions' => "1 to also load its permission set (heavy, default 0).")
 				)
@@ -2149,7 +2156,7 @@ class ToolApiBridge extends McpTool
 				),
 				'getTimespent' => array(
 					'suffix' => 'timespent_list',
-					'description' => "Summary of the time spent on each task of one project (first 100 tasks): total duration in seconds and the users who recorded it. The time records themselves are in api_projects_timespent_all or api_tasks_timespent_list.",
+					'description' => "Summary of the time spent on each task of one project (first 100 tasks): total duration in seconds and the users who recorded it. The time records themselves are in api_projects_timespent_all or api_project_tasks_timespent_list.",
 					'params' => array('id' => "Rowid of the project."),
 					'max_items' => 100,
 					'keep' => 'first'
@@ -2251,19 +2258,29 @@ class ToolApiBridge extends McpTool
 				)
 			),
 			'members' => array(
+				// One tool for both statistics: per year, or per month of the year when one is given
 				'getNbByYear' => array(
-					'suffix' => 'count_by_year',
-					'description' => "Number of new members per year."
+					'suffix' => 'count',
+					'description' => "Number of new members: per year, or per month of one year when 'year' is given.",
+					'get_by' => array('year' => 'getNbByMonth'),
+					'params' => array(
+						'year' => "Year, e.g. 2026, to get the count per month of this year. Omit it to get the count per year.",
+						'format' => "Only with year. Label of each month: 1 (default) month number, 0 translated month name, 2 first letter of the month."
+					),
+					// Month numbers: the translated labels are meant for a graph, not for a model
+					'param_defaults' => array('format' => 1)
 				),
-				'getNbByMonth' => array(
-					'suffix' => 'count_by_month',
-					'description' => "Number of new members per month of one year.",
-					'params' => array('year' => "Year, e.g. 2026.")
-				),
-				'getAmountByMonth' => array(
-					'suffix' => 'subscriptions_amount_by_month',
-					'description' => "Amount of subscriptions per month of one year.",
-					'params' => array('year' => "Year, e.g. 2026.")
+				// One tool for both statistics: per year, or per month of the year when one is given
+				'getAmountByYear' => array(
+					'suffix' => 'subscriptions_amount',
+					'description' => "Amount of the subscriptions of members: per year (with the number of subscriptions, the total, the average and the change in % from the year before), or per month of one year when 'year' is given.",
+					'get_by' => array('year' => 'getAmountByMonth'),
+					'params' => array(
+						'year' => "Year, e.g. 2026, to get the amount per month of this year. Omit it to get the amounts per year.",
+						'format' => "Only with year. Label of each month: 1 (default) month number, 0 translated month name, 2 first letter of the month."
+					),
+					// Month numbers: the translated labels are meant for a graph, not for a model
+					'param_defaults' => array('format' => 1)
 				)
 			)
 		);
@@ -2603,7 +2620,7 @@ class ToolApiBridge extends McpTool
 			)
 		);
 
-		$this->enrichments['tasks']['methods']['post'] = array(
+		$this->enrichments['project_tasks']['methods']['post'] = array(
 			'suffix' => 'create',
 			'description' => "Create a task in a project, with its reference from the numbering. Give label and fk_project (rowid, ref or exact title of the project). The user confirms before anything is written.",
 			'write' => array(
@@ -3169,6 +3186,10 @@ class ToolApiBridge extends McpTool
 			$this->mergeTools($mergedName);
 		}
 
+		// Alphabetical order of the tool names (merged tools are appended at the end by mergeTools()).
+		$toolnames = array_map('strval', array_column($this->defs, 'name'));
+		array_multisort($toolnames, SORT_STRING, $this->defs);
+
 		if ($cachefile !== '') {
 			$this->writeDefsCache($cachefile);
 		}
@@ -3574,11 +3595,13 @@ class ToolApiBridge extends McpTool
 		// One tool for a get by rowid or by another key ('get_by' maps an argument
 		// such as ref or email to the API method used when no id is given): id
 		// becomes optional and the parameters of that method are added (all
-		// optional, the API method checks them).
+		// optional, the API method checks them). A method without id (a statistic) gets the parameters too.
 		foreach ((array) ($meta['get_by'] ?? array()) as $byarg => $bymethod) {
-			if (isset($properties['id']) && method_exists($ep['class'], (string) $bymethod)) {
-				$properties['id']['default'] = 0;
-				$required = array_values(array_diff($required, array('id')));
+			if (method_exists($ep['class'], (string) $bymethod)) {
+				if (isset($properties['id'])) {
+					$properties['id']['default'] = 0;
+					$required = array_values(array_diff($required, array('id')));
+				}
 				$byrm = new ReflectionMethod($ep['class'], (string) $bymethod);
 				$bydoc = (string) $byrm->getDocComment();
 				foreach ($byrm->getParameters() as $byp) {
@@ -3589,6 +3612,13 @@ class ToolApiBridge extends McpTool
 					$bytype = preg_match('/@param\s+(\S+)\s+\$'.$bypname.'\b/', $bydoc, $bym) ? $this->docTypeToJson($bym[1]) : 'string';
 					$properties[$bypname] = ['type' => $bytype, 'description' => (string) ($meta['params'][$bypname] ?? "Exact ".$bypname.", alternative to id.")];
 				}
+			}
+		}
+
+		// Defaults of the bridge replacing the API ones (also for the parameters of a 'get_by' method).
+		foreach ((array) ($meta['param_defaults'] ?? array()) as $pname => $pvalue) {
+			if (isset($properties[$pname])) {
+				$properties[$pname]['default'] = $pvalue;
 			}
 		}
 
@@ -6646,6 +6676,11 @@ class ToolApiBridge extends McpTool
 		}
 		if (!empty($methodmeta['default_properties']) && !array_key_exists('properties', $args)) {
 			$args['properties'] = $methodmeta['default_properties'];
+		}
+		foreach ((array) ($methodmeta['param_defaults'] ?? array()) as $pname => $pvalue) {
+			if (!array_key_exists($pname, $args)) {
+				$args[$pname] = $pvalue;
+			}
 		}
 
 		// --- Authentication bridge (in-process replacement of DolibarrApiAccess::__isAllowed) ---
