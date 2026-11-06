@@ -282,6 +282,20 @@ print load_fiche_titre($title, '', 'email');
 $notificationtrigger = new InterfaceNotification($db);
 $listofnotifiedevents = $notificationtrigger->getListOfManagedEvents();
 
+// Let external modules describe non-financial notification events.
+$hookmanager->initHooks(array('notification'));
+$notificationEventOptions = array();
+foreach ($listofnotifiedevents as $notifiedevent) {
+	$parameters = array('event' => $notifiedevent);
+	$reshook = $hookmanager->executeHooks('notificationEventOptions', $parameters);
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	} else {
+		$notificationEventOptions[$notifiedevent['code']] = $hookmanager->resArray;
+	}
+}
+
+
 // Editing global variables not related to a specific theme
 $constantes = array();
 foreach ($listofnotifiedevents as $notifiedevent) {
@@ -338,6 +352,10 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 	// The events of leaves can be recorded with the elementtype 'expensereport' in a database migrated from an old version
 	if (strpos($notifiedevent['code'], 'HOLIDAY_') === 0) {
 		$model = 'holiday';
+	}
+
+	if (!empty($notificationEventOptions[$notifiedevent['code']]['picto'])) {
+		$label = img_picto('', $notificationEventOptions[$notifiedevent['code']]['picto'], 'class="pictofixedwidth"').$label;
 	}
 
 	$constantes[$notifiedevent['code'].'_TEMPLATE'] = array('type'=>'emailtemplate:'.$model, 'label'=>$label);
@@ -473,6 +491,11 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 		$codehasnotrigger++;
 	}
 
+	if (!empty($notificationEventOptions[$notifiedevent['code']]['picto'])) {
+		$elementPicto = $notificationEventOptions[$notifiedevent['code']]['picto'];
+	}
+	$showAmountThreshold = !$codehasnotrigger && (!isset($notificationEventOptions[$notifiedevent['code']]['amount_threshold']) || $notificationEventOptions[$notifiedevent['code']]['amount_threshold'] !== false);
+
 	print '<tr class="oddeven">';
 	print '<td>';
 	print img_picto('', $elementPicto, 'class="pictofixedwidth"');
@@ -524,7 +547,7 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 			continue;
 		}
 
-		if (!$codehasnotrigger) {
+		if ($showAmountThreshold) {
 			print $langs->trans($labelfortrigger).' >= <input type="text" size="4" name="NOTIF_'.$notifiedevent['code'].'_old_'.$reg[1].'_amount" value="'.dol_escape_htmltag($reg[1]).'">';
 			print '<br>';
 
@@ -532,7 +555,7 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 		}
 	}
 	// New entry input fields
-	if (!$codehasnotrigger) {
+	if ($showAmountThreshold) {
 		print $langs->trans($labelfortrigger).' >= <input type="text" size="4" name="NOTIF_'.$notifiedevent['code'].'_new_amount" value="">';
 	}
 	print '</td>';
