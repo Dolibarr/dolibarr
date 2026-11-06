@@ -555,4 +555,37 @@ class CommandeTest extends CommonClassTest
 		print __METHOD__." result=".json_encode($result)."\n";
 		$this->assertEquals(array('update 0.5' => 0.5, 'update 1' => 1, 'update 2.2' => 2.2, 'update 0.25' => 0.3), $result, 'Quantities with a packaging of 0.1');
 	}
+
+	/**
+	 * testCommandeEmailSentCounter
+	 *
+	 * @return	void
+	 */
+	public function testCommandeEmailSentCounter()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new Commande($db);
+		$localobject->initAsSpecimen();
+		$id = $localobject->create($user);
+		$this->assertGreaterThan(0, $id, (string) $localobject->error);
+
+		$resql = $db->query("UPDATE ".$db->prefix()."commande SET email_sent_counter = 3 WHERE rowid = ".((int) $id));
+		$this->assertNotFalse($resql, $db->lasterror());
+
+		$localobject = new Commande($db);
+		$localobject->fetch($id);
+		$this->assertSame(3, $localobject->email_sent_counter, 'fetch() must load email_sent_counter');
+
+		// A copy has never been sent
+		$cloneid = $localobject->createFromClone($user);
+		$this->assertGreaterThan(0, $cloneid, (string) $localobject->error);
+		$clone = new Commande($db);
+		$clone->fetch($cloneid);
+		$this->assertSame(0, $clone->email_sent_counter, 'A clone must not inherit email_sent_counter');
+	}
 }
