@@ -76,6 +76,105 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	}
 
 	/**
+	 * Layers of inputs displayed outside the popover (dropdown of select2, suggestions of ajax_autocompleter(), date picker,
+	 * dialogs of the rich text editor): a click on them is not a click outside the popover
+	 */
+	const POPOVER_LAYERS = '.select2-container, .select2-dropdown, .ui-autocomplete, .ui-datepicker, .ui-dialog, .ui-widget-overlay, .cke_dialog, .cke_panel, .cke_dialog_background_cover';
+
+	/**
+	 * Button of the popover with an icon, its label as tooltip
+	 * @param {string} className
+	 * @param {string} icon Class of the Font Awesome icon
+	 * @param {string} label
+	 * @returns {HTMLButtonElement}
+	 */
+	function createIconButton(className, icon, label) {
+		const button = document.createElement('button');
+		button.type = 'button';
+		button.className = 'dol-field-popover-button ' + className;
+		button.title = label;
+		button.setAttribute('aria-label', label);
+		const picto = document.createElement('span');
+		picto.className = 'fa ' + icon;
+		picto.setAttribute('aria-hidden', 'true');
+		button.append(picto);
+
+		return button;
+	}
+
+	/**
+	 * Give the focus to the first input of the editor. A list replaced by select2 (ajax_combobox()) gets the focus on its select2 box,
+	 * initialized by the script of the input once it is in the page
+	 * @param {HTMLElement} inputs
+	 */
+	function focusFirstInput(inputs) {
+		const first = inputs.querySelector('input:not([type="hidden"]), textarea, select');
+		if (!first) return;
+		if (first.tagName !== 'SELECT') {
+			first.focus();
+			return;
+		}
+		setTimeout(() => {
+			const select2 = first.nextElementSibling && first.nextElementSibling.matches('.select2-container') ? first.nextElementSibling.querySelector('.select2-selection') : null;
+			(select2 || first).focus();
+		}, 0);
+	}
+
+	/**
+	 * Fields of the editor seen by the user, for the feedback of input-feedback.css (a list replaced by select2 is seen as its select2 box)
+	 * @param {HTMLElement} inputs
+	 * @returns {HTMLElement[]}
+	 */
+	function getVisibleInputs(inputs) {
+		return [...inputs.querySelectorAll('input:not([type="hidden"]), textarea, select, .select2-selection')];
+	}
+
+	/**
+	 * Show a feedback of input-feedback.css on the fields of the editor once (ex: fail-feedback), removed at the end of its animation
+	 * @param {HTMLElement} inputs
+	 * @param {string} className
+	 */
+	function showInputsFeedback(inputs, className) {
+		getVisibleInputs(inputs).forEach(el => {
+			el.classList.remove(className);
+			void el.offsetWidth; // Restarts the animation when it is running
+			el.classList.add(className);
+			el.addEventListener('animationend', () => el.classList.remove(className), { once: true });
+		});
+	}
+
+	/**
+	 * Place the popover over the value of the field, its inputs at the place of the value, in the width of the page
+	 * @param {HTMLElement} popover
+	 * @param {HTMLElement} container Container of the value
+	 */
+	function placePopover(popover, container) {
+		const rect = container.getBoundingClientRect();
+		const style = getComputedStyle(popover);
+		const offsetX = parseFloat(style.paddingLeft) + parseFloat(style.borderLeftWidth);
+		const offsetY = parseFloat(style.paddingTop) + parseFloat(style.borderTopWidth);
+		const pageWidth = document.documentElement.clientWidth;
+		const margin = 8;
+
+		let left = rect.left - offsetX;
+		// A multiline editor (notes) takes at least 600px
+		const width = Math.max(rect.width + 2 * offsetX, popover.classList.contains('--multiline') ? 600 : 0);
+		popover.style.minWidth = Math.min(width, pageWidth - 2 * margin) + 'px';
+		popover.style.maxWidth = (pageWidth - 2 * margin) + 'px';
+		// Kept in the page when the value is near the right edge
+		left = Math.max(margin, Math.min(left, pageWidth - margin - popover.offsetWidth));
+
+		popover.style.left = (left + window.scrollX) + 'px';
+		popover.style.top = (rect.top - offsetY + window.scrollY) + 'px';
+	}
+
+	/**
+	 * Edition opened on the page, only one at a time: opening another field cancels it
+	 * @type {{container: HTMLElement, cancel: function, saving: boolean}|null}
+	 */
+	let current = null;
+
+	/**
 	 * Open the edition of the field of an edit link, in place of its value
 	 * @param {HTMLElement} link Edit link printed by Form::editfieldkey()
 	 * @returns {Promise<boolean>} False if the edition can not be opened here (the url of the link must then be used)
@@ -84,6 +183,9 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		const container = findValueContainer(link);
 		if (!container) return false;
 		if (container.dataset.dolEditing) return true;
+
+		// Cancel the edition of another field, unless it is being saved
+		if (current && current.container !== container && !current.saving) current.cancel();
 
 		const field = link.dataset.dolEditField;
 		const element = link.dataset.dolElement;
@@ -108,48 +210,86 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		const [saveLabel, cancelLabel] = await Promise.all([transMain('Save'), transMain('Cancel')]);
 
 		const valueHtml = container.innerHTML;
-		link.style.display = 'none';
+		// Hidden but keeps its place, so the row does not move
+		link.style.visibility = 'hidden';
 
-		const editor = document.createElement('span');
-		editor.className = 'dol-field-editor';
-		const inputs = document.createElement('span');
-		const saveButton = document.createElement('input');
-		saveButton.type = 'button';
-		saveButton.className = 'button smallpaddingimp nomargingtop nomarginbottom';
-		saveButton.value = saveLabel;
-		const cancelButton = document.createElement('input');
-		cancelButton.type = 'button';
-		cancelButton.className = 'button button-cancel smallpaddingimp nomargingtop nomarginbottom';
-		cancelButton.value = cancelLabel;
-		editor.append(inputs, ' ', saveButton, ' ', cancelButton);
-		container.replaceChildren(editor);
+		// The editor is a popover placed over the value, so the layout of the card does not change
+		const editor = document.createElement('div');
+		editor.className = 'dol-field-popover --light-mode';
+		const inputs = document.createElement('div');
+		inputs.className = 'dol-field-popover-inputs';
+		const actions = document.createElement('div');
+		actions.className = 'dol-field-popover-actions';
+		const saveButton = createIconButton('dol-field-popover-save', 'fa-check', saveLabel);
+		const cancelButton = createIconButton('dol-field-popover-cancel', 'fa-times', cancelLabel);
+		actions.append(saveButton, cancelButton);
+		editor.append(inputs, actions);
+		container.classList.add('dol-field-editing');
+		document.body.append(editor);
 		Dolibarr.tools.replaceContent(inputs, input, { mode: 'inner' });
-		// A multiline editor takes the whole width, its buttons go below it
-		if (inputs.querySelector('textarea')) {
-			editor.style.display = 'block';
-			inputs.style.display = 'block';
-		}
+		// A multiline editor takes more width
+		if (inputs.querySelector('textarea')) editor.classList.add('--multiline');
 
-		const firstInput = inputs.querySelector('input:not([type="hidden"]), textarea, select');
-		if (firstInput) firstInput.focus();
+		const place = () => placePopover(editor, container);
+		place();
+		window.addEventListener('resize', place);
+
+		focusFirstInput(inputs);
+
+		const state = { container, cancel: () => close(valueHtml), saving: false };
+		current = state;
+
+		// Value when opened, a click outside the popover closes it only when nothing was changed
+		const initialValue = JSON.stringify(getEditorValue(editor, field));
+		const onOutsideClick = event => {
+			if (editor.contains(event.target) || event.target.closest(POPOVER_LAYERS) || state.saving) return;
+			if (JSON.stringify(getEditorValue(editor, field)) === initialValue) close(valueHtml);
+		};
+		// Not the click that opened the popover
+		setTimeout(() => document.addEventListener('mousedown', onOutsideClick), 0);
 
 		const close = html => {
+			if (current === state) current = null;
+			document.removeEventListener('mousedown', onOutsideClick);
+			window.removeEventListener('resize', place);
 			destroyEditors(editor);
+			editor.remove();
 			delete container.dataset.dolEditing;
+			container.classList.remove('dol-field-editing');
 			Dolibarr.tools.replaceContent(container, html, { mode: 'inner' });
-			link.style.display = '';
+			link.style.visibility = '';
+		};
+
+		// While saving: the fields can not be changed (inert), they show the processing feedback, the save button turns into a spinner
+		const saveIcon = saveButton.querySelector('.fa');
+		const setSaving = saving => {
+			state.saving = saving;
+			saveButton.disabled = saving;
+			cancelButton.disabled = saving;
+			inputs.inert = saving;
+			editor.setAttribute('aria-busy', saving ? 'true' : 'false');
+			saveIcon.classList.toggle('fa-check', !saving);
+			saveIcon.classList.toggle('fa-circle-notch', saving);
+			saveIcon.classList.toggle('fa-spin', saving);
+			getVisibleInputs(inputs).forEach(el => el.classList.toggle('processing-feedback', saving));
 		};
 
 		const save = async() => {
-			saveButton.disabled = true;
-			cancelButton.disabled = true;
+			const value = getEditorValue(editor, field);
+			// Nothing changed: nothing to save
+			if (JSON.stringify(value) === initialValue) {
+				close(valueHtml);
+				return;
+			}
+			setSaving(true);
 			let result;
 			try {
-				result = await controller.setField(field, getEditorValue(editor, field));
+				result = await controller.setField(field, value);
 			} catch (error) {
 				// Error already displayed, the user can correct the value
-				saveButton.disabled = false;
-				cancelButton.disabled = false;
+				setSaving(false);
+				showInputsFeedback(inputs, 'fail-feedback');
+				focusFirstInput(inputs);
 				return;
 			}
 			if (result === null) {
@@ -158,6 +298,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			}
 
 			close(result.html);
+			Dolibarr.tools.card.showUpdatedFeedback(container);
 			// Status, action buttons and documents may depend on the field, refreshed when visible
 			controller.scheduleSectionsRefresh();
 		};
@@ -165,11 +306,15 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		saveButton.addEventListener('click', save);
 		cancelButton.addEventListener('click', () => close(valueHtml));
 		editor.addEventListener('keydown', event => {
+			// Not the keys used by the suggestions of ajax_autocompleter() (default prevented by the autocomplete)
+			if (event.defaultPrevented) return;
 			if (event.key === 'Escape') {
 				event.preventDefault();
 				close(valueHtml);
 			} else if (event.key === 'Enter' && event.target.tagName === 'INPUT' && event.target.type === 'text') {
 				event.preventDefault();
+				// The value typed is committed first: the change event comes after the keydown, and the date inputs fill their hidden parts on change
+				event.target.dispatchEvent(new Event('change', { bubbles: true }));
 				save();
 			}
 		});

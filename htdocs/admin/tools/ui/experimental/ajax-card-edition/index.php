@@ -142,7 +142,8 @@ $documentation->showSidebar(); ?>
 				Only the fields declared editable from the user interface, with <code>'uieditable' => 1</code> in <code>$fields</code> of the class.
 				In core: customer ref and notes of proposals, orders and invoices, notes of third parties and products.
 				Other fields keep the edition by reloading the page.<br>
-				A click on the edit picto of the field replaces the value by its input, <kbd>Enter</kbd> saves, <kbd>Escape</kbd> cancels.
+				A click on the edit picto of the field opens its input in a popover placed over the value, so the card does not move. <kbd>Enter</kbd> saves, <kbd>Escape</kbd> cancels.
+				Only one field is edited at a time: opening another field cancels the first one. A click outside the popover closes it when the value was not changed.<br>
 				An update is refused if the object was modified by someone else since the page was displayed.
 			</p>
 
@@ -178,7 +179,9 @@ $documentation->showSidebar(); ?>
 				<li>Enabled with <code>MAIN_FEATURES_LEVEL</code> &gt;= 2, or with the hidden option <code>MAIN_USE_AJAX_FIELD_EDIT</code>, see <code>Form::isAjaxFieldEdit()</code>.</li>
 				<li>Only for the fields of a <code>CommonObject</code> editable from the user interface (<code>'uieditable' => 1</code> in <code>$fields</code>, see <code>CommonObject::isFieldEditableFromUi()</code>). Other fields keep the edition by reloading the page.</li>
 				<li>The edit link gets the attributes <code>data-dol-edit-field</code>, <code>data-dol-element</code>, <code>data-dol-id</code> and <code>data-dol-tms</code>, its url is still used without javascript. The value is printed in a container <code>[data-dol-field][data-dol-element][data-dol-id]</code>.</li>
-				<li>A click on the link replaces the value by the input of the field, returned by <code>core/ajax/objectfield.php</code> with <code>input=1</code> (<code>CommonObject::ajaxInputField()</code>). <kbd>Enter</kbd> saves a single line input, <kbd>Escape</kbd> cancels.</li>
+				<li>A click on the link opens the input of the field, returned by <code>core/ajax/objectfield.php</code> with <code>input=1</code> (<code>CommonObject::ajaxInputField()</code>), in a <b>field popover</b> <code>.dol-field-popover</code> placed over the value (light theme of the tooltips, <code>--light-mode</code> or <code>--dark-mode</code>): the layout of the card does not move. <kbd>Enter</kbd> saves a single line input, <kbd>Escape</kbd> cancels.</li>
+				<li>The popover has icon buttons (save, cancel, labels as tooltips). A list replaced by select2 gets the focus on its select2 box.</li>
+				<li>One field at a time: opening another field cancels the edition in progress (unless it is being saved). A click outside the popover closes it only when the value was not changed. Clicks in the layers of the inputs (dropdown of select2, date picker, dialogs of the rich text editor) are not outside.</li>
 				<li>The value is saved with <code>setField()</code> of the controller of the card (<code>Dolibarr.tools.card</code>), refused if the object was modified since the page was displayed. Then the value and the other fields changed by the update (containers <code>[data-dol-field]</code> of the page) are refreshed, and the sections of the card (status, action buttons, documents) when they are visible (<code>scheduleSectionsRefresh()</code>).</li>
 				<li><code>Dolibarr.tools.card.fields.open(link)</code> opens the edition of the field of an edit link.</li>
 			</ul>
