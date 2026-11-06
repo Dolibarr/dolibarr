@@ -67,9 +67,9 @@ class Holiday extends CommonObject
 	public $fk_user;
 
 	/**
-	 * @var int|string
+	 * @var integer|''|null		Object creation date
 	 */
-	public $date_create = '';
+	public $date_creation = '';
 
 	/**
 	 * @var string description
@@ -173,7 +173,12 @@ class Holiday extends CommonObject
 	public $fk_type;
 
 	/**
-	 * @var array<int,array{id:int,rowid:int,ref:string,fk_user:int,fk_type:int,date_create:int|'',date_modification:int|'',description:string,date_debut:string,date_fin:string,date_debut_gmt:string,date_fin_gmt:string,halfday:int,statut:int,status:int,fk_validator:int,date_valid:mixed,fk_user_valid:mixed,date_approval:int|'',fk_user_approve:int,date_refuse:int|'',fk_user_refuse:int,date_cancel:int|'',fk_user_cancel:int,detail_refuse:string,user_firstname:string,user_lastname:string,user_login:string,user_statut:int,user_status:int,user_photo:string,validator_firstname:string,validator_lastname:string,validator_login:string,validator_statut:int,validator_status:int,validator_photo:string}>
+	 * @var string	Name of the document template used to build the document of the leave request
+	 */
+	public $model_pdf;
+
+	/**
+	 * @var array<int,array{id:int,rowid:int,ref:string,fk_user:int,fk_type:int,date_creation:int|'',date_modification:int|'',description:string,date_debut:string,date_fin:string,date_debut_gmt:string,date_fin_gmt:string,halfday:int,statut:int,status:int,fk_validator:int,date_valid:mixed,fk_user_valid:mixed,date_approval:int|'',fk_user_approve:int,date_refuse:int|'',fk_user_refuse:int,date_cancel:int|'',fk_user_cancel:int,detail_refuse:string,user_firstname:string,user_lastname:string,user_login:string,user_statut:int,user_status:int,user_photo:string,validator_firstname:string,validator_lastname:string,validator_login:string,validator_statut:int,validator_status:int,validator_photo:string}>
 	 */
 	public $holiday = array();
 
@@ -333,7 +338,7 @@ class Holiday extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday(";
 		$sql .= "ref,";
 		$sql .= "fk_user,";
-		$sql .= "date_create,";
+		$sql .= "date_creation,";
 		$sql .= "description,";
 		$sql .= "date_debut,";
 		$sql .= "date_fin,";
@@ -425,7 +430,7 @@ class Holiday extends CommonObject
 		$sql .= " cp.rowid,";
 		$sql .= " cp.ref,";
 		$sql .= " cp.fk_user,";
-		$sql .= " cp.date_create,";
+		$sql .= " cp.date_creation,";
 		$sql .= " cp.description,";
 		$sql .= " cp.date_debut,";
 		$sql .= " cp.date_fin,";
@@ -445,6 +450,8 @@ class Holiday extends CommonObject
 		$sql .= " cp.note_public,";
 		$sql .= " cp.fk_user_create,";
 		$sql .= " cp.fk_type,";
+		$sql .= " cp.model_pdf,";
+		$sql .= " cp.extraparams,";
 		$sql .= " cp.entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as cp";
 		if ($id > 0) {
@@ -462,7 +469,7 @@ class Holiday extends CommonObject
 				$this->id    = (int) $obj->rowid;
 				$this->ref   = (string) ($obj->ref ? $obj->ref : $obj->rowid);
 				$this->fk_user = (int) $obj->fk_user;
-				$this->date_create = $this->db->jdate($obj->date_create);
+				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->description = $obj->description;
 
 				$this->date_debut = $this->db->jdate($obj->date_debut);
@@ -488,7 +495,9 @@ class Holiday extends CommonObject
 				$this->note_public = $obj->note_public;
 				$this->fk_user_create = $obj->fk_user_create;
 				$this->fk_type = $obj->fk_type;
+				$this->model_pdf = $obj->model_pdf;
 				$this->entity = $obj->entity;
+				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				$this->fetch_optionals();
 
@@ -522,7 +531,7 @@ class Holiday extends CommonObject
 
 		$sql .= " cp.fk_user,";
 		$sql .= " cp.fk_type,";
-		$sql .= " cp.date_create,";
+		$sql .= " cp.date_creation,";
 		$sql .= " cp.tms as date_modification,";
 		$sql .= " cp.description,";
 		$sql .= " cp.date_debut,";
@@ -592,7 +601,7 @@ class Holiday extends CommonObject
 
 				$tab_result[$i]['fk_user'] = (int) $obj->fk_user;
 				$tab_result[$i]['fk_type'] = (int) $obj->fk_type;
-				$tab_result[$i]['date_create'] = $this->db->jdate($obj->date_create);
+				$tab_result[$i]['date_creation'] = $this->db->jdate($obj->date_creation);
 				$tab_result[$i]['date_modification'] = $this->db->jdate($obj->date_modification);
 				$tab_result[$i]['description'] = (string) $obj->description;
 				$tab_result[$i]['date_debut'] = $this->db->jdate($obj->date_debut);
@@ -656,7 +665,7 @@ class Holiday extends CommonObject
 		$sql .= " cp.ref,";
 		$sql .= " cp.fk_user,";
 		$sql .= " cp.fk_type,";
-		$sql .= " cp.date_create,";
+		$sql .= " cp.date_creation,";
 		$sql .= " cp.tms as date_modification,";
 		$sql .= " cp.description,";
 		$sql .= " cp.date_debut,";
@@ -724,7 +733,7 @@ class Holiday extends CommonObject
 
 				$tab_result[$i]['fk_user'] = (int) $obj->fk_user;
 				$tab_result[$i]['fk_type'] = (int) $obj->fk_type;
-				$tab_result[$i]['date_create'] = $this->db->jdate($obj->date_create);
+				$tab_result[$i]['date_creation'] = $this->db->jdate($obj->date_creation);
 				$tab_result[$i]['date_modification'] = $this->db->jdate($obj->date_modification);
 				$tab_result[$i]['description'] = (string) $obj->description;
 				$tab_result[$i]['date_debut'] = $this->db->jdate($obj->date_debut);
@@ -1131,8 +1140,8 @@ class Holiday extends CommonObject
 
 		$sql .= " description= '".$this->db->escape($this->description)."',";
 
-		if (!empty($this->date_create)) {
-			$sql .= " date_create = '".$this->db->idate($this->date_create)."',";
+		if (!empty($this->date_creation)) {
+			$sql .= " date_creation = '".$this->db->idate($this->date_creation)."',";
 		} else {
 			$error++;
 		}
@@ -2501,7 +2510,7 @@ class Holiday extends CommonObject
 		global $conf;
 
 		$sql = "SELECT f.rowid, f.statut as status,";
-		$sql .= " f.date_create as datec,";
+		$sql .= " f.date_creation as datec,";
 		$sql .= " f.tms as date_modification,";
 		$sql .= " f.date_valid as datev,";
 		$sql .= " f.date_approval as datea,";
@@ -2939,5 +2948,38 @@ class Holiday extends CommonObject
 			// The $this->errors will be concatenated to the output by the function that call this method.
 		}
 		return ($error ? 1 : 0);
+	}
+
+	/**
+	 *  Create a document onto disk according to template module.
+	 *
+	 *  @param	string		$modele			Force template to use ('' to not force)
+	 *  @param	Translate	$outputlangs	Object lang to use for translation
+	 *  @param	int<0,1>	$hidedetails	Hide details of lines
+	 *  @param	int<0,1>	$hidedesc		Hide description
+	 *  @param	int<0,1>	$hideref		Hide ref
+	 *  @param	?array<string,mixed>	$moreparams	Array to provide more information
+	 *  @return	int<-1,1>					0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
+	{
+		global $langs;
+
+		$langs->load("holiday");
+		$outputlangs->load("holiday");
+
+		if (!dol_strlen($modele)) {
+			$modele = 'generic_holiday_odt';
+
+			if (!empty($this->model_pdf)) {
+				$modele = $this->model_pdf;
+			} elseif (getDolGlobalString('HOLIDAY_ADDON_PDF')) {
+				$modele = getDolGlobalString('HOLIDAY_ADDON_PDF');
+			}
+		}
+
+		$modelpath = "core/modules/holiday/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
 }

@@ -34,15 +34,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -51,6 +42,14 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("commercial", "compta", "bills", "other", "accountancy"));
@@ -337,8 +336,12 @@ if ($result) {
 		// For credit notes, we hope to have situation_ratio = 1 so the compensation has no effect to avoid introducing troubles with credit notes.
 		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
 			$total_ttc = $obj->total_ttc * $situation_ratio;
+			$total_tva = $obj->total_tva * $situation_ratio;
+			$total_ht = $obj->total_ht * $situation_ratio;
 		} else {
 			$total_ttc = $obj->total_ttc;
+			$total_tva = $obj->total_tva;
+			$total_ht = $obj->total_ht;
 		}
 
 		// Move a part of the retained warrenty into the account of warranty
@@ -349,17 +352,17 @@ if ($result) {
 		}
 
 		$tabttc[$obj->rowid][$compta_soc] += $total_ttc;
-		$tabht[$obj->rowid][$compta_prod] += $obj->total_ht * $situation_ratio;
+		$tabht[$obj->rowid][$compta_prod] += $total_ht;
 		$tva_npr = ((($obj->info_bits & 1) == 1) ? 1 : 0);
 		if (!$tva_npr) { // We ignore line if VAT is a NPR
-			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
-				$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
-				$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1;
-				$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2;
-			} else {
-				$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva * $situation_ratio;
+			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+				$tabtva[$obj->rowid][$compta_tva] += $total_tva;
 				$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1 * $situation_ratio;
 				$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2 * $situation_ratio;
+			} else {
+				$tabtva[$obj->rowid][$compta_tva] += $total_tva;
+				$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1;
+				$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2;
 			}
 		}
 

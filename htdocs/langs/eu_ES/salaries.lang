@@ -27,6 +27,7 @@ Earnings=Earnings
 TotalEarnings=Total earnings
 TotalDeductions=Total deductions
 NetPaid=Net paid
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Soldatapeko "erabiltzaileentzat" lehenespenez erabiltzen den kontua (Kontuen Planetik)
@@ -55,8 +56,6 @@ FillFieldFirst=Bete lehenik langilearen eremua
 UpdateAmountWithLastSalary=Azken soldataren zenbatekoa ezarri
 MakeTransferRequest=Egin transferentzia eskaera
 VirementOrder=Kreditu transferentzia eskaera
-WithdrawalReceipt=Kreditu-transferentzia agindua
-OrderWaiting=Eskaera zain
 FillEndOfMonth=Hilabete amaiera
 
 # Shortcuts

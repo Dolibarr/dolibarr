@@ -65,7 +65,7 @@ $groupby = GETPOST('groupby', 'aZ09');	// Example: $groupby = 'p.fk_opp_status' 
 
 // Search fields
 $search = GETPOST("search", 'alpha');
-$search_id = GETPOST('search_id', 'int');
+$search_id = trim(GETPOST('search_id', 'alpha'));	// Can contains a numeric test like ">10" or "!= 34"
 $search_ref = GETPOST("search_ref", 'alpha');
 $search_lastname = GETPOST("search_lastname", 'alpha');
 $search_firstname = GETPOST("search_firstname", 'alpha');
@@ -105,6 +105,14 @@ $search_datec_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datec_start_month')
 $search_datec_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datec_end_month'), GETPOSTINT('search_datec_end_day'), GETPOSTINT('search_datec_end_year'));
 $search_datem_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datem_start_month'), GETPOSTINT('search_datem_start_day'), GETPOSTINT('search_datem_start_year'));
 $search_datem_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datem_end_month'), GETPOSTINT('search_datem_end_day'), GETPOSTINT('search_datem_end_year'));
+$search_datefin_start = '';
+if (checkdate(GETPOSTINT('search_datefin_start_month'), GETPOSTINT('search_datefin_start_day'), GETPOSTINT('search_datefin_start_year'))) {
+	$search_datefin_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datefin_start_month'), GETPOSTINT('search_datefin_start_day'), GETPOSTINT('search_datefin_start_year'));
+}
+$search_datefin_end = '';
+if (checkdate(GETPOSTINT('search_datefin_end_month'), GETPOSTINT('search_datefin_end_day'), GETPOSTINT('search_datefin_end_year'))) {
+	$search_datefin_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datefin_end_month'), GETPOSTINT('search_datefin_end_day'), GETPOSTINT('search_datefin_end_year'));
+}
 
 $filter = GETPOST("filter", 'alpha');
 if ($filter) {
@@ -303,6 +311,8 @@ if (empty($reshook)) {
 		$search_datec_end = '';
 		$search_datem_start = '';
 		$search_datem_end = '';
+		$search_datefin_start = '';
+		$search_datefin_end = '';
 		$search_array_options = array();
 	}
 
@@ -564,8 +574,8 @@ if ($search_status != '') {
 if ($search_morphy != '' && $search_morphy != '-1') {
 	$sql .= natural_search("d.morphy", $search_morphy);
 }
-if ($search_id) {
-	$sql .= natural_search("d.rowid", $search_id);
+if ($search_id != '') {
+	$sql .= natural_search("d.rowid", $search_id, 1);
 }
 if ($search_ref) {
 	$sql .= natural_search("d.ref", $search_ref);
@@ -640,6 +650,12 @@ if ($search_datem_start) {
 }
 if ($search_datem_end) {
 	$sql .= " AND d.tms <= '".$db->idate($search_datem_end)."'";
+}
+if ($search_datefin_start) {
+	$sql .= " AND d.datefin >= '".$db->idate($search_datefin_start)."'";
+}
+if ($search_datefin_end) {
+	$sql .= " AND d.datefin <= '".$db->idate($search_datefin_end)."'";
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -726,6 +742,9 @@ if ($groupby != '') {
 }
 if ($search_all != "") {
 	$query += ['search_all' => $search_all];
+}
+if ($search_id != '') {
+	$query += ['search_id' => $search_id];
 }
 if ($search_ref) {
 	$query += ['search_ref' => $search_ref];
@@ -814,6 +833,21 @@ if ($search_datem_end) {
 		'search_datem_end_day' => dol_print_date($search_datem_end, '%d'),
 		'search_datem_end_month' => dol_print_date($search_datem_end, '%m'),
 		'search_datem_end_year' => dol_print_date($search_datem_end, '%Y'),
+	];
+}
+
+if ($search_datefin_start) {
+	$query += [
+		'search_datefin_start_day' => dol_print_date($search_datefin_start, '%d'),
+		'search_datefin_start_month' => dol_print_date($search_datefin_start, '%m'),
+		'search_datefin_start_year' => dol_print_date($search_datefin_start, '%Y'),
+	];
+}
+if ($search_datefin_end) {
+	$query += [
+		'search_datefin_end_day' => dol_print_date($search_datefin_end, '%d'),
+		'search_datefin_end_month' => dol_print_date($search_datefin_end, '%m'),
+		'search_datefin_end_year' => dol_print_date($search_datefin_end, '%Y'),
 	];
 }
 
@@ -968,7 +1002,7 @@ if ($conf->main_checkbox_left_column) {
 // Line numbering
 if (!empty($arrayfields['d.rowid']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<input class="width50" type="text" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 
@@ -1159,9 +1193,18 @@ if (!empty($arrayfields['d.import_key']['checked'])) {
 // End of subscription date
 if (!empty($arrayfields['d.datefin']['checked'])) {
 	print '<td class="liste_titre center">';
-	//$selectarray = array('-1'=>'', 'withoutsubscription'=>$langs->trans("WithoutSubscription"), 'uptodate'=>$langs->trans("UpToDate"), 'outofdate'=>$langs->trans("OutOfDate"));
-	$selectarray = array('-1' => '', 'waitingsubscription' => $langs->trans("WaitingSubscription"), 'uptodate' => $langs->trans("UpToDate"), 'outofdate' => $langs->trans("OutOfDate"));
-	print $form->selectarray('search_filter', $selectarray, $search_filter);
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_datefin_start ? $search_datefin_start : -1, 'search_datefin_start_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_datefin_end ? $search_datefin_end : -1, 'search_datefin_end_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
+	// The combo is also shown when a filter is already set (for example by a link from the menu or the members dashboard)
+	if (getDolGlobalString('MEMBER_SHOW_COMBO_OF_STATUS_FOR_END_DATE_FILTER') || ($search_filter && $search_filter != '-1')) {
+		//$selectarray = array('-1'=>'', 'withoutsubscription'=>$langs->trans("WithoutSubscription"), 'uptodate'=>$langs->trans("UpToDate"), 'outofdate'=>$langs->trans("OutOfDate"));
+		$selectarray = array('-1' => '', 'waitingsubscription' => $langs->trans("WaitingSubscription"), 'uptodate' => $langs->trans("UpToDate"), 'outofdate' => $langs->trans("OutOfDate"));
+		print $form->selectarray('search_filter', $selectarray, $search_filter);
+	}
 	print '</td>';
 }
 

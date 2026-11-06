@@ -76,6 +76,7 @@ $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_label = GETPOST("search_label", "alpha");
 $search_amount_no_tax = GETPOST("search_amount_no_tax", "alpha");
 $search_amount_all_tax = GETPOST("search_amount_all_tax", "alpha");
+$search_id = GETPOST('search_id', 'alpha');
 $search_ref = GETPOST('sf_ref') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
 $search_refsupplier = GETPOST('search_refsupplier', 'alpha');
 $search_type = GETPOST('search_type', 'intcomma');
@@ -143,7 +144,7 @@ $search_fk_fac_rec_source = GETPOST('search_fk_fac_rec_source', 'int');
 
 $option = GETPOST('search_option');
 if ($option == 'late') {
-	$search_status = '1';
+	$search_status = array('1');
 }
 $filter = GETPOST('filtre', 'alpha');
 
@@ -202,6 +203,7 @@ if (empty($user->socid)) {
 
 $checkedtypetiers = '0';
 $arrayfields = array(
+	'f.rowid' => array('label' => "TechnicalID", 'checked' => (getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? '1' : '-1'), 'enabled' => '1', 'position' => 1),
 	'f.ref' => array('label' => "Ref", 'checked' => '1', 'position' => 5),
 	'f.ref_supplier' => array('label' => "RefSupplier", 'checked' => '1', 'position' => 7),
 	'f.type' => array('label' => "Type", 'checked' => '0', 'position' => 15),
@@ -306,6 +308,7 @@ if (empty($reshook)) {
 		$search_sale = '';
 		$search_product_category = '';
 		$searchCategorySupplierInvoiceList = array();
+		$search_id = '';
 		$search_ref = "";
 		$search_refsupplier = "";
 		$search_type = "";
@@ -619,6 +622,9 @@ $sql .= ' WHERE f.fk_soc = s.rowid';
 $sql .= ' AND f.entity IN ('.getEntity('facture_fourn').')';
 if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
+}
+if ($search_id != '') {
+	$sql .= natural_search('f.rowid', $search_id, 1);
 }
 if ($search_ref) {
 	if (is_numeric($search_ref)) {
@@ -1028,6 +1034,9 @@ if ($search_datelimit_endmonth) {
 if ($search_datelimit_endyear) {
 	$param .= '&search_datelimit_endyear='.urlencode((string) ($search_datelimit_endyear));
 }
+if ($search_id != '') {
+	$param .= '&search_id='.urlencode($search_id);
+}
 if ($search_ref) {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
@@ -1097,13 +1106,9 @@ if ($search_amount_no_tax) {
 if ($search_amount_all_tax) {
 	$param .= '&search_amount_all_tax='.urlencode($search_amount_all_tax);
 }
-if ($search_status != '') {
-	if (is_array($search_status)) {
-		foreach ($search_status as $key => $val) {
-			$param .= '&search_status[]='.urlencode($val);
-		}
-	} else {
-		$param .= '&search_status='.urlencode($search_status);
+if (is_array($search_status)) {
+	foreach ($search_status as $key => $val) {
+		$param .= '&search_status[]='.urlencode($val);
 	}
 }
 if ($search_paymentmode) {
@@ -1282,6 +1287,12 @@ if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
+	print '</td>';
+}
+// Technical ID
+if (!empty($arrayfields['f.rowid']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 // Ref
@@ -1558,6 +1569,10 @@ print '<tr class="liste_titre">';
 // Action column
 if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['f.rowid']['checked'])) {
+	print_liste_field_titre($arrayfields['f.rowid']['label'], $_SERVER['PHP_SELF'], 'f.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['f.ref']['checked'])) {
@@ -1901,6 +1916,12 @@ while ($i < $imaxinloop) {
 				print '<input id="cb'.$obj->facid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->facid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
 			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		if (!empty($arrayfields['f.rowid']['checked'])) {
+			print '<td class="center" data-key="id">'.((int) $obj->facid).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

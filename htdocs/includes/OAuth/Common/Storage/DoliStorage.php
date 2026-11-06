@@ -203,7 +203,8 @@ class DoliStorage implements TokenStorageInterface
 
 		if ($result) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
-			$tokenobj = unserialize(dolDecrypt($result['token']));
+			// Restrict allowed classes to the OAuth token classes to prevent PHP object injection
+			$tokenobj = unserialize(dolDecrypt($result['token']), array('allowed_classes' => array('OAuth\OAuth2\Token\StdOAuth2Token', 'OAuth\OAuth1\Token\StdOAuth1Token')));
 			if ($result['token'] && empty($tokenobj)) {
 				dol_syslog("Error: We found a record for the OAuth token of '.$servicepluskeyforprovider.', we we failed to decrypt it. May be the crypt/decrypt key has been modifier ?", LOG_WARNING);
 				//print "Error: We found a record for the OAuth token of ".$servicepluskeyforprovider.", we we failed to decrypt it. May be the crypt/decrypt key has been modifier ?";

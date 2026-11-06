@@ -958,7 +958,7 @@ class Adherent extends CommonObject
 					$luser = new User($this->db);
 					$result = $luser->fetch($this->user_id);
 
-					if ($result >= 0) {
+					if ($result > 0) {
 						// If option ADHERENT_LOGIN_NOT_REQUIRED is on, there is no login of member, so we do not overwrite user login to keep existing one.
 						if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 							$luser->login = $this->login;
@@ -1139,6 +1139,8 @@ class Adherent extends CommonObject
 	 */
 	public function delete($user, $notrigger = 0)
 	{
+		global $conf;
+
 		$result = 0;
 		$error = 0;
 		$errorflag = 0;
@@ -1179,6 +1181,54 @@ class Adherent extends CommonObject
 			}
 		}
 
+		// Remove the partnerships of the member
+		if (!$error && isModEnabled('partnership')) {
+			require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
+
+			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."partnership WHERE fk_member = ".((int) $rowid);
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$partnership = new Partnership($this->db);
+					if ($partnership->fetch($obj->rowid) > 0 && $partnership->delete($user) <= 0) {
+						$error++;
+						$this->error .= $partnership->error;
+						$errorflag = -9;
+						break;
+					}
+				}
+			} else {
+				$error++;
+				$this->error .= $this->db->lasterror();
+				$errorflag = -9;
+			}
+		}
+
+		// Remove the links with other objects
+		if (!$error) {
+			$ret = $this->deleteObjectLinked();
+			if ($ret < 0) {
+				$error++;
+				$errorflag = -7;
+			}
+		}
+
+		// Remove the index of the documents of the member (the files are removed after the commit)
+		$dirofdocuments = '';
+		$subdirofdocuments = get_exdir(0, 0, 0, 1, $this, 'member');
+		if (!empty($conf->adherent->dir_output) && $subdirofdocuments !== '') {	// Never the root directory of the module
+			$dirofdocuments = $conf->adherent->dir_output.'/'.$subdirofdocuments;
+		}
+		if (!$error && $dirofdocuments) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			if (deleteFilesIntoDatabaseIndex($dirofdocuments, '', '') < 0 || !$this->deleteEcmFiles(1)) {
+				$error++;
+				$this->error .= $this->db->lasterror();
+				$errorflag = -8;
+			}
+		}
+
 		// Remove linked user
 		if (!$error) {
 			$ret = $this->setUserId(0);
@@ -1213,6 +1263,15 @@ class Adherent extends CommonObject
 
 		if (!$error) {
 			$this->db->commit();
+
+			// Delete the directory of the documents of the member
+			if ($dirofdocuments) {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+				if (dol_is_dir($dirofdocuments)) {
+					dol_delete_dir_recursive($dirofdocuments);
+				}
+			}
+
 			return 1;
 		} else {
 			$this->db->rollback();
@@ -1428,7 +1487,7 @@ class Adherent extends CommonObject
 					$luser = new User($this->db);
 					$result = $luser->fetch($this->user_id);
 
-					if ($result >= 0) {
+					if ($result > 0) {
 						$result = $luser->setPassword($user, $this->pass, 0, 0, 1);
 						if (is_int($result) && $result < 0) {
 							$this->error = $luser->error;
@@ -2666,7 +2725,7 @@ class Adherent extends CommonObject
 			if ($this->note_private) {
 				$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.dol_string_nohtmltag($this->note_private, 1);
 				$result .= ' <span class="note inline-block">';
-				$result .= '<a href="'.DOL_URL_ROOT.'/adherents/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
+				$result .= '<a href="'.DOL_URL_ROOT.'/core/note.php?element=adherents&id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
 				$result .= img_picto('', 'note');
 				$result .= '</a>';
 				$result .= '</span>';

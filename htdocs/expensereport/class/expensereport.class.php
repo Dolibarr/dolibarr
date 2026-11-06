@@ -159,9 +159,9 @@ class ExpenseReport extends CommonObject
 
 	// Create
 	/**
-	 * @var int|string
+	 * @var int|''|null		Object creation date
 	 */
-	public $date_create;
+	public $date_creation;
 
 	/**
 	 * @var int ID of user creator
@@ -336,7 +336,7 @@ class ExpenseReport extends CommonObject
 		'multicurrency_total_tva' => array('type' => 'double(24,8)', 'label' => 'Multicurrency total tva', 'enabled' => 1, 'visible' => -1, 'position' => 205),
 		'multicurrency_total_ttc' => array('type' => 'double(24,8)', 'label' => 'Multicurrency total ttc', 'enabled' => 1, 'visible' => -1, 'position' => 210),
 		'extraparams' => array('type' => 'varchar(255)', 'label' => 'Extraparams', 'enabled' => 1, 'visible' => -1, 'position' => 220),
-		'date_create' => array('type' => 'datetime', 'label' => 'Date create', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 300),
+		'date_creation' => array('type' => 'datetime', 'label' => 'Date create', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 300),
 		'tms' => array('type' => 'timestamp', 'label' => 'Tms', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 305),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -1, 'position' => 1000),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 1010),
@@ -402,7 +402,7 @@ class ExpenseReport extends CommonObject
 		$sql .= ",total_tva";
 		$sql .= ",date_debut";
 		$sql .= ",date_fin";
-		$sql .= ",date_create";
+		$sql .= ",date_creation";
 		$sql .= ",fk_user_creat";
 		$sql .= ",fk_user_author";
 		$sql .= ",fk_user_validator";
@@ -571,7 +571,6 @@ class ExpenseReport extends CommonObject
 		$this->fk_user_author = $fk_user_author; // Note fk_user_author is not the 'author' but the guy the expense report is for.
 		$this->fk_user_valid = 0;
 		$this->fk_user_approve = 0;
-		$this->date_create = '';
 		$this->date_creation = '';
 		$this->date_validation = '';
 		$this->date_approve = '';
@@ -633,8 +632,8 @@ class ExpenseReport extends CommonObject
 		$sql .= " total_ht = ".((float) $this->total_ht);
 		$sql .= " , total_ttc = ".((float) $this->total_ttc);
 		$sql .= " , total_tva = ".((float) $this->total_tva);
-		if (!empty($this->date_create)) {
-			$sql .= " , date_create = '".$this->db->idate($this->date_create)."'";
+		if (!empty($this->date_creation)) {
+			$sql .= " , date_creation = '".$this->db->idate($this->date_creation)."'";
 		}
 		$sql .= " , date_debut = '".$this->db->idate($this->date_debut)."'";
 		$sql .= " , date_fin = '".$this->db->idate($this->date_fin)."'";
@@ -698,10 +697,10 @@ class ExpenseReport extends CommonObject
 		$sql .= " d.date_refuse, d.date_cancel,"; // ACTIONS
 		$sql .= " d.total_ht, d.total_ttc, d.total_tva,";
 		$sql .= " d.localtax1 as total_localtax1, d.localtax2 as total_localtax2,";
-		$sql .= " d.date_debut, d.date_fin, d.date_create, d.tms as date_modif, d.date_valid, d.date_approve,"; // DATES (datetime)
+		$sql .= " d.date_debut, d.date_fin, d.date_creation, d.tms as date_modif, d.date_valid, d.date_approve,"; // DATES (datetime)
 		$sql .= " d.fk_user_creat, d.fk_user_author, d.fk_user_modif, d.fk_user_validator,";
 		$sql .= " d.fk_user_valid, d.fk_user_approve,";
-		$sql .= " d.fk_statut as status, d.fk_c_paiement, d.paid";
+		$sql .= " d.fk_statut as status, d.fk_c_paiement, d.paid, d.extraparams";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as d";
 		if ($ref) {
 			$sql .= " WHERE d.ref = '".$this->db->escape($ref)."'";
@@ -738,7 +737,7 @@ class ExpenseReport extends CommonObject
 				$this->date_fin         = $this->db->jdate($obj->date_fin);
 				$this->date_valid       = $this->db->jdate($obj->date_valid);
 				$this->date_approve     = $this->db->jdate($obj->date_approve);
-				$this->date_create      = $this->db->jdate($obj->date_create);
+				$this->date_creation      = $this->db->jdate($obj->date_creation);
 				$this->date_modif       = $this->db->jdate($obj->date_modif);
 				$this->date_refuse      = $this->db->jdate($obj->date_refuse);
 				$this->date_cancel      = $this->db->jdate($obj->date_cancel);
@@ -771,6 +770,7 @@ class ExpenseReport extends CommonObject
 				$this->status                   = (int) $obj->status;
 				$this->fk_c_paiement            = $obj->fk_c_paiement;
 				$this->paid                     = $obj->paid;
+				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				if ($this->status == self::STATUS_APPROVED || $this->status == self::STATUS_CLOSED) {
 					$user_valid = new User($this->db);
@@ -923,7 +923,7 @@ class ExpenseReport extends CommonObject
 		global $conf;
 
 		$sql = "SELECT f.rowid,";
-		$sql .= " f.date_create as datec,";
+		$sql .= " f.date_creation as datec,";
 		$sql .= " f.tms as date_modification,";
 		$sql .= " f.date_valid as datev,";
 		$sql .= " f.date_approve as datea,";
@@ -982,7 +982,7 @@ class ExpenseReport extends CommonObject
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
 		$this->entity = 1;
-		$this->date_create = $now;
+		$this->date_creation = $now;
 		$this->date_debut = $now;
 		$this->date_fin = $now;
 		$this->date_valid = $now;

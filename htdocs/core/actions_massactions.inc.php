@@ -62,6 +62,7 @@
  * @var ?string $permissiontoread
  * @var ?string $permissiontodelete
  * @var ?string $permissiontoclose
+ * @var ?string $permissiontocancel
  * @var ?string $permissiontoapprove
  * @var ?string $option
  * @var int $deliveryreceipt
@@ -79,6 +80,7 @@
 @phan-var-force ?string $permissiontoread
 @phan-var-force ?string $permissiontodelete
 @phan-var-force ?string $permissiontoclose
+@phan-var-force ?string $permissiontocancel
 @phan-var-force ?string $permissiontoapprove
 @phan-var-force ?int[] $toselect
 @phan-var-force ?string $diroutputmassaction
@@ -199,6 +201,7 @@ if (!$error && $massaction == 'confirm_presend') {
 				$listofobjectid[$toselectid] = $toselectid;
 
 				// Set $tmpobjectid that is ID of parent object (thirdparty or user in most cases)
+				// fk_soc and socid are declared in child classes: @phan-suppress-next-line PhanUndeclaredProperty
 				$tmpobjectid = ($objecttmp->fk_soc ? $objecttmp->fk_soc : $objecttmp->socid);
 				if ($objecttmp->element == 'societe') {
 					'@phan-var-force Societe $objecttmp';
@@ -308,7 +311,7 @@ if (!$error && $massaction == 'confirm_presend') {
 				foreach ($receiver as $key => $val) {
 					// Recipient was provided from combo list
 					if ($val == 'thirdparty') { // Id of third party or user
-						$tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
+						$tmparray[] = dol_string_nospecial((string) $thirdparty->name, ' ', array(",")).' <'.$thirdparty->email.'>';
 					} elseif ($val && method_exists($thirdparty, 'contact_get_property')) {		// Id of contact
 						$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
 						//$sendtoid[] = $val;
@@ -334,7 +337,7 @@ if (!$error && $massaction == 'confirm_presend') {
 				foreach ($receivercc as $key => $val) {
 					// Recipient was provided from combo list
 					if ($val == 'thirdparty') { // Id of third party
-						$tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
+						$tmparray[] = dol_string_nospecial((string) $thirdparty->name, ' ', array(",")).' <'.$thirdparty->email.'>';
 					} elseif ($val) {	// Id du contact
 						$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
 						//$sendtoid[] = $val;  TODO Add also id of contact in CC ?
@@ -818,7 +821,7 @@ if (!$error && $massaction == 'confirm_presend') {
 }
 
 
-if (!$error && $massaction == 'cancelorders') {
+if (!$error && $massaction == 'cancelorders' && !empty($permissiontocancel)) {
 	$db->begin();
 
 	$nbok = 0;
@@ -828,6 +831,12 @@ if (!$error && $massaction == 'cancelorders') {
 		$cmd = new Commande($db);
 		if ($cmd->fetch($id_order) <= 0) {
 			continue;
+		}
+		// Check the user can access this order (external users, sales representatives restrictions)
+		if (!checkUserAccessToObject($user, array('commande'), $cmd, 'commande', '', 'fk_soc', 'rowid')) {
+			setEventMessages($langs->trans("ErrorForbidden"), null, 'errors');
+			$error++;
+			break;
 		}
 
 		if ($cmd->status != Commande::STATUS_VALIDATED) {

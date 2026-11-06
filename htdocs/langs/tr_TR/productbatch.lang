@@ -47,9 +47,13 @@ HideLots=Partileri gizle
 OutOfOrder=Hizmet dışı
 InWorkingOrder=Çalışma düzeni içinde
 ToReplace=Yer değiştirmek
-CantMoveNonExistantSerial=Hata. Artık var olmayan bir dizi için kayıt değişikliği talep ediyorsunuz. Aynı seriyi aynı depoda, aynı sevkiyatta birkaç kez almış olabilirsiniz veya başka bir sevkiyatta kullanılmış olabilir. Bu gönderiyi kaldırın ve bir tane daha hazırlayın.
+CantMoveNonExistantSerial=Error: You requested a stock movement on a record for a serial that no longer exists. Maybe you used the same serial in the same warehouse several times in the same shipment or it was used by another shipment. Remove this shipment and prepare another one.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed='...repair.php?standard=confirmed' parametresi ile parti tablosu eksik çalıştırma onarımı
 IlligalQtyForSerialNumbers= Benzersiz seri numarası nedeniyle stok düzeltmesi gerekiyor.
 ErrorBatchesNeedStockManagement=Hata. Parti/lot yönetimi olan bir ürünün stokta da yönetilmesi gerekir.
 ForceBatchesNeedStockManagement=Parti/lot yönetimi olan bir ürün stokta yönetilmelidir (stok yönetimi evet'e zorunludur)
 BatchInformationNotfound=Parti bilgisi bulunamadı
+EnterMultipleSerialNumbers=gir birden fazla seri sayılar
+EnterOneSerialNumberPerLine=sayılar seri numarasını yazın, yapıştırın veya tarayın, her satır için bir tane.
+NbOfSerialNumbersDetected=%s seri numarası(lar) tespit edildi
+ErrorDuplicateSerialNumberInList=Seri numarası %s ifadesi, Liste ifadesinde birkaç kez mevcuttur.

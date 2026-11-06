@@ -135,7 +135,15 @@ class modStockTransfer extends DolibarrModules
 		// Example: $this->const=array(1 => array('STOCKTRANSFER_MYNEWCONST1', 'chaine', 'myvalue', 'This is a constant to add', 1),
 		//                             2 => array('STOCKTRANSFER_MYNEWCONST2', 'chaine', 'myvalue', 'This is another constant to add', 0, 'current', 1)
 		// );
-		$this->const = [];
+		$this->const = [
+			[
+				"STOCKTRANSFER_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/stocktransfers",
+				"",
+				0,
+			],
+		];
 
 		if (!isset($conf->stocktransfer) || !isset($conf->stocktransfer->enabled)) {
 			$conf->stocktransfer = new stdClass();

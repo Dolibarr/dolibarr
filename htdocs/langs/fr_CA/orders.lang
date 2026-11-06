@@ -58,7 +58,6 @@ AddPurchaseOrder=Créer un bon de commande
 AddToDraftOrders=Ajouter au projet d'ordre
 ShowOrder=Afficher l'ordre
 NoDraftOrders=Aucun projet de commande
-NoSupplierOrder=Pas de bon de commande
 LastOrders=Dernières commandes de %s
 LastCustomerOrders=Dernières commandes de %s
 LastSupplierOrders=Dernières commandes %s

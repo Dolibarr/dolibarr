@@ -224,8 +224,8 @@ class Societe extends CommonObject
 		'euid' => array('type' => 'varchar(20)', 'label' => 'EUIDShort', 'enabled' => 1, 'visible' => -1, 'position' => 213),
 		'capital' => array('type' => 'double(24,8)', 'label' => 'Capital', 'enabled' => 1, 'visible' => -1, 'position' => 215),
 		'fk_stcomm' => array('type' => 'integer', 'label' => 'CommercialStatus', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 220),
-		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 225),
-		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 230),
+		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 225, 'uieditable' => 1),
+		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 230, 'uieditable' => 1),
 		'client' => array('type' => 'tinyint(4)', 'label' => 'Customer', 'enabled' => 1, 'visible' => -1, 'position' => 240),
 		'fournisseur' => array('type' => 'tinyint(4)', 'label' => 'Supplier', 'enabled' => 1, 'visible' => -1, 'position' => 245),
 		'supplier_account' => array('type' => 'varchar(32)', 'label' => 'Supplier account', 'enabled' => 1, 'visible' => -1, 'position' => 250),
@@ -1770,6 +1770,12 @@ class Societe extends CommonObject
 			$sql .= ", fk_multicurrency = ".(int) $this->fk_multicurrency;
 			$sql .= ", multicurrency_code = '".$this->db->escape($this->multicurrency_code)."'";
 			$sql .= ", model_pdf = '".$this->db->escape((string) $this->model_pdf)."'";
+			// Default warehouse of the thirdparty. Updated only when it can be edited from the GUI (stock module and
+			// SOCIETE_ASK_FOR_WAREHOUSE on, see comm/card.php) and when the property is set, so a caller that did not
+			// load it does not erase it. A value <= 0 removes the link.
+			if (isModEnabled('stock') && getDolGlobalString('SOCIETE_ASK_FOR_WAREHOUSE') && isset($this->fk_warehouse) && $this->fk_warehouse !== '') {
+				$sql .= ", fk_warehouse = ".((int) $this->fk_warehouse > 0 ? (int) $this->fk_warehouse : "null");
+			}
 			$sql .= " WHERE rowid = ".(int) $id;
 
 			$resql = $this->db->query($sql);
@@ -2956,7 +2962,14 @@ class Societe extends CommonObject
 		if ($this->id > 0) {
 			// Separate VAT code from VAT rate string
 			// Discount type determines who is buyer and seller
-			$taxes = getTaxesFromId($vatrate, ($discount_type == 0 ? $this : $mysoc), ($discount_type == 0 ? $mysoc : $this), 0);
+			$buyer = ($discount_type == 0 ? $this : $mysoc);
+			$seller = ($discount_type == 0 ? $mysoc : $this);
+			$taxes = getTaxesFromId($vatrate, $buyer, $seller, 0);
+			// Local tax rates for this buyer/seller pair determined by get_localtax() (0 if not applicable)
+			$localtax1_tx = (float) get_localtax($vatrate, 1, $buyer, $seller);
+			$localtax2_tx = (float) get_localtax($vatrate, 2, $buyer, $seller);
+			$localtax1_type = ($localtax1_tx ? (int) ($taxes['localtax1_type'] ?? 0) : 0);
+			$localtax2_type = ($localtax2_tx ? (int) ($taxes['localtax2_type'] ?? 0) : 0);
 			$reg = array();
 			$vat_src_code = '';
 			if (preg_match('/\((.*)\)/', $vatrate, $reg)) {
@@ -2981,7 +2994,7 @@ class Societe extends CommonObject
 
 			$vat_tx = (float) price2num($vatrate);
 
-			$discount->generateFromAmount($remise, ($price_base_type == 'TTC' ? 1 : 0), $vat_tx, $taxes['localtax1'], $taxes['localtax2'], (int) $taxes['localtax1_type'], (int) $taxes['localtax2_type']);
+			$discount->generateFromAmount($remise, ($price_base_type == 'TTC' ? 1 : 0), $vat_tx, $localtax1_tx, $localtax2_tx, $localtax1_type, $localtax2_type);
 
 			$discount->vat_src_code = $vat_src_code;
 
@@ -4258,6 +4271,10 @@ class Societe extends CommonObject
 
 				// Set code count in $mod->code
 				$result = $mod->get_code($this->db, $this, $type);
+				if ($result < 0) {
+					$this->error = $mod->error;
+					$this->errors = $mod->errors;
+				}
 
 				if ($type == 'customer') {
 					$this->code_compta_client = $mod->code;
@@ -4798,7 +4815,7 @@ class Societe extends CommonObject
 					$noemail = $obj->nb;
 					if (empty($noemail)) {
 						// TODO Add $unsubscribegroup
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe(email, entity, date_creat) VALUES ('".$this->db->escape($this->email)."', ".getEntity('mailing', 0).", '".$this->db->idate(dol_now())."')";
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe(email, entity, date_creation) VALUES ('".$this->db->escape($this->email)."', ".getEntity('mailing', 0).", '".$this->db->idate(dol_now())."')";
 						$resql = $this->db->query($sql);
 						if (!$resql) {
 							$error++;
@@ -5593,6 +5610,14 @@ class Societe extends CommonObject
 			$sql .= " AND entity IN (".getEntity('facture_fourn').")";
 		} else {
 			$sql .= " AND entity IN (".getEntity('invoice').")";
+		}
+		// Invoices before this date (YYYY-MM-DD) are excluded from the outstanding amount (history migrated or settled elsewhere)
+		$reg = array();
+		if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', getDolGlobalString('SOCIETE_OUTSTANDING_BILLS_FROM_DATE'), $reg)) {
+			$fromdate = dol_mktime(0, 0, 0, (int) $reg[2], (int) $reg[3], (int) $reg[1]);
+			if ($fromdate) {
+				$sql .= " AND datef >= '".$this->db->idate($fromdate)."'";
+			}
 		}
 
 		dol_syslog("getOutstandingBills", LOG_DEBUG);

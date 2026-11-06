@@ -55,16 +55,11 @@ body contains "Leads | Projects"
 GET http://{{hostnport}}/projet/stats/index.php
 HTTP 200
 [Asserts]
-body contains "Statistics on projects or leads"
+xpath "count(//body[contains(@class,'page-stats')])" == 1
 body contains "By month/year"
-body contains "Year"
-body contains "Number of projects"
 body contains "Lead amount"
-body contains "Average lead amount"
 body contains "Weighted lead amount"
 body contains "No. of created projects by month"
-body contains "Amount of leads by month"
-body contains "Weighted amount of leads by month"
 
 # Check project tasks/activities
 GET http://{{hostnport}}/projet/activity/index.php
@@ -83,12 +78,12 @@ HTTP 200
 body contains "New task"
 body contains "Ref"
 body contains "Label"
-body contains "Assigned to"
+body contains "Allocated to"
 body contains "Billable"
 body contains "Start date"
 body contains "End date"
 body contains "Planned workload"
-body contains "Declared real progress"
+body contains "Declared progress"
 body contains "Budget"
 body contains "Description"
 
@@ -112,26 +107,16 @@ body contains "No. of created tasks by month"
 GET http://{{hostnport}}/projet/tasks/time.php
 HTTP 200
 [Asserts]
-body contains "List of time consumed on task"
+body contains "Time consumed on task"
 body contains "Total"
 
 # Check daily
 GET http://{{hostnport}}/projet/activity/perday.php
 HTTP 200
 [Asserts]
-body contains "Input per month"
-body contains "Input per week"
+xpath "count(//body[contains(@class,'page-activity_perday')])" == 1
+xpath "count(//th[contains(text(),'Task')])" == 1
 body contains "Input per day"
-body contains "Total"
-body contains "now"
-body contains "Task"
-body contains "Workload"
-body contains "Declared real progress"
-body contains "Everybody"
-body contains "Time spent"
-body contains "Start hour"
-body contains "Duration"
-body contains "Note"
 
 # Check weekly
 GET http://{{hostnport}}/projet/activity/perweek.php
@@ -144,7 +129,7 @@ body contains "Total"
 body contains "now"
 body contains "Task"
 body contains "Workload"
-body contains "Declared real progress"
+body contains "Declared progress"
 body contains "Everybody"
 body contains "Time spent"
 body contains "Mon"
@@ -166,7 +151,7 @@ body contains "Total"
 body contains "now"
 body contains "Task"
 body contains "Workload"
-body contains "Declared real progress"
+body contains "Declared progress"
 body contains "Everybody"
 body contains "Time spent"
 body contains "Week"

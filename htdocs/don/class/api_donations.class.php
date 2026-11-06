@@ -84,6 +84,67 @@ class Donations extends DolibarrApi
 	}
 
 	/**
+	 * Get list of payments of a given donation.
+	 *
+	 * @param int $id Donation ID
+	 * @return array<int,array{rowid:int,datep:int|string,amount:float,fk_bank:int,num_payment:?string}> List of donation payments
+	 *
+	 * @url GET {id}/payments
+	 *
+	 * @throws RestException 400 Donation ID is mandatory
+	 * @throws RestException 403 Access denied
+	 * @throws RestException 404 Donation not found
+	 * @throws RestException 503 Error when retrieving donation payments
+	 */
+	public function getPayments($id)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('don', 'lire')) {
+			throw new RestException(403);
+		}
+		if (empty($id)) {
+			throw new RestException(400, 'Donation ID is mandatory');
+		}
+
+		$result = $this->don->fetch($id);
+		if ($result < 0) {
+			throw new RestException(503, 'Error when retrieving donation: '.$this->don->error);
+		}
+		if (empty($this->don->id)) {
+			throw new RestException(404, 'Donation not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('don', $this->don->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$sql = "SELECT pd.rowid, pd.datep, pd.amount, pd.fk_bank, pd.num_payment";
+		$sql .= " FROM ".MAIN_DB_PREFIX."payment_donation AS pd";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."don AS d ON d.rowid = pd.fk_donation";
+		$sql .= " WHERE pd.fk_donation = ".((int) $id);
+		$sql .= " AND d.entity IN (".getEntity('donation').")";
+		$sql .= " ORDER BY pd.datep ASC, pd.rowid ASC";
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			throw new RestException(503, 'Error when retrieving donation payments: '.$this->db->lasterror());
+		}
+
+		$payments = array();
+		while ($obj = $this->db->fetch_object($resql)) {
+			$payments[] = array(
+				'rowid' => (int) $obj->rowid,
+				'datep' => $this->db->jdate($obj->datep),
+				'amount' => (float) $obj->amount,
+				'fk_bank' => (int) $obj->fk_bank,
+				'num_payment' => $obj->num_payment
+			);
+		}
+		$this->db->free($resql);
+
+		return $payments;
+	}
+
+	/**
 	 * List donations
 	 *
 	 * Get a list of donations

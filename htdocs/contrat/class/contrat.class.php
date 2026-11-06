@@ -1066,23 +1066,7 @@ class Contrat extends CommonObject
 		global $conf, $langs;
 
 		// Check parameters
-		$paramsok = 1;
-		if ($this->commercial_signature_id <= 0) {
-			$langs->load("commercial");
-			$this->error .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("SalesRepresentativeSignature"));
-			$paramsok = 0;
-		}
-		if ($this->commercial_suivi_id <= 0) {
-			$langs->load("commercial");
-			$this->error .= ($this->error ? "<br>" : '');
-			$this->error .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("SalesRepresentativeFollowUp"));
-			$paramsok = 0;
-		}
 		$this->entity = setEntity($this);
-		if (!$paramsok) {
-			return -1;
-		}
-
 
 		$this->db->begin();
 
@@ -1158,16 +1142,16 @@ class Contrat extends CommonObject
 			}
 
 			// Insert business contacts ('SALESREPSIGN','contrat')
-			if (!$error && !empty($this->commercial_signature_id)) {
-				$result = $this->add_contact($this->commercial_signature_id, 'SALESREPSIGN', 'internal');
+			if (!$error && $this->commercial_signature_id > 0) {
+				$result = $this->add_contact((int) $this->commercial_signature_id, 'SALESREPSIGN', 'internal');
 				if ($result < 0) {
 					$error++;
 				}
 			}
 
 			// Insert business contacts ('SALESREPFOLL','contrat')
-			if (!$error && !empty($this->commercial_suivi_id)) {
-				$result = $this->add_contact($this->commercial_suivi_id, 'SALESREPFOLL', 'internal');
+			if (!$error && $this->commercial_suivi_id > 0) {
+				$result = $this->add_contact((int) $this->commercial_suivi_id, 'SALESREPFOLL', 'internal');
 				if ($result < 0) {
 					$error++;
 				}
@@ -1627,7 +1611,7 @@ class Contrat extends CommonObject
 			// VERY IMPORTANT: It's at the time of line insertion that we must store the net, VAT, and gross amounts,
 			// and this is done at the line level, which has its own VAT rate
 
-			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, 1, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise);
+			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, 1, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise, $this->multicurrency_code);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
@@ -1831,7 +1815,7 @@ class Contrat extends CommonObject
 		$localtaxes_type = getLocalTaxesFromRate($tvatx, 0, $this->societe, $mysoc);
 		$tvatx = preg_replace('/\s*\(.*\)/', '', $tvatx); // Remove code into vatrate.
 
-		$tabprice = calcul_price_total((float) $qty, $pu, $remise_percent, (float) price2num($tvatx), (float) $localtax1tx, (float) $localtax2tx, 0, $price_base_type, $info_bits, 1, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise);
+		$tabprice = calcul_price_total((float) $qty, $pu, $remise_percent, (float) price2num($tvatx), (float) $localtax1tx, (float) $localtax2tx, 0, $price_base_type, $info_bits, 1, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise, $this->multicurrency_code);
 		$total_ht  = $tabprice[0];
 		$total_tva = $tabprice[1];
 		$total_ttc = $tabprice[2];

@@ -233,6 +233,17 @@ $(document).ready(function () {
 });
 </script>
 <?php } ?>
+<?php if (isModEnabled('ai')) { ?>
+<script>
+/* Login page reached (logout, session expired...): clear the AI chat conversations kept in sessionStorage */
+try {
+	for (var i = sessionStorage.length - 1; i >= 0; i--) {
+		var key = sessionStorage.key(i);
+		if (key && key.indexOf('aiChatHistory_') === 0) { sessionStorage.removeItem(key); }
+	}
+} catch (e) { /* storage not available */ }
+</script>
+<?php } ?>
 
 <div class="login_center center"<?php
 if (!getDolGlobalString('ADD_UNSPLASH_LOGIN_BACKGROUND')) {
@@ -607,10 +618,6 @@ if (getDolGlobalString('MAIN_EASTER_EGG_COMMITSTRIP')) {
 	<?php
 }
 ?>
-
-<!-- authentication mode = <?php echo $main_authentication ?> -->
-<!-- cookie name used for this session = <?php echo $session_name ?> -->
-<!-- urlfrom in this session = <?php echo isset($_SESSION["urlfrom"]) ? $_SESSION["urlfrom"] : ''; ?> -->
 
 <!-- Common footer is not used for login page, this is same than footer but inside login tpl -->
 

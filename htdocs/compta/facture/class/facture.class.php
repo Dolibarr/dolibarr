@@ -28,6 +28,7 @@
  * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
  * Copyright (C) 2026		José MARTINEZ			<jose.martinez@pichinov.com>
  * Copyright (C) 2026		Nick Fragoulis
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -231,11 +232,6 @@ class Facture extends CommonInvoice
 	 */
 	public $fac_rec;
 
-	/**
-	 * @var ?int
-	 */
-	public $date_pointoftax;
-
 
 	/**
 	 * @var int Situation cycle reference number
@@ -342,7 +338,7 @@ class Facture extends CommonInvoice
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 1),
 		'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'position' => 5),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 20, 'index' => 1),
-		'ref_client' => array('type' => 'varchar(255)', 'label' => 'RefCustomer', 'enabled' => 1, 'visible' => -1, 'position' => 10),
+		'ref_client' => array('type' => 'varchar(255)', 'label' => 'RefCustomer', 'enabled' => 1, 'visible' => -1, 'position' => 10, 'uieditable' => 1, 'alwayseditable' => 1),
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 12),
 		'type' => array('type' => 'smallint(6)', 'label' => 'Type', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 15),
 		'subtype' => array('type' => 'smallint(6)', 'label' => 'InvoiceSubtype', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 15),
@@ -368,8 +364,8 @@ class Facture extends CommonInvoice
 		'fk_currency' => array('type' => 'varchar(3)', 'label' => 'CurrencyCode', 'enabled' => 1, 'visible' => -1, 'position' => 185),
 		'fk_cond_reglement' => array('type' => 'integer', 'label' => 'PaymentTerm', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 190),
 		'fk_mode_reglement' => array('type' => 'integer', 'label' => 'PaymentMode', 'enabled' => 1, 'visible' => -1, 'position' => 195),
-		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 205),
-		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 210),
+		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 205, 'uieditable' => 1, 'alwayseditable' => 1),
+		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 210, 'uieditable' => 1, 'alwayseditable' => 1),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 215),
 		'fk_input_reason' => array('type' => 'integer', 'label' => 'Source', 'enabled' => 1, 'visible' => -1, 'position' => 220),
 		'extraparams' => array('type' => 'varchar(255)', 'label' => 'Extraparams', 'enabled' => 1, 'visible' => -1, 'position' => 225),
@@ -486,6 +482,23 @@ class Facture extends CommonInvoice
 	}
 
 	/**
+	 * Save into database the current value of one field, called by updateFieldFromUi().
+	 * Override of CommonObject::persistFieldValue(): the customer ref of invoices is saved with set_ref_client().
+	 *
+	 * @param User   $user  User making the change
+	 * @param string $field Field name
+	 * @return int          Return integer <0 if KO, >0 if OK
+	 */
+	protected function persistFieldValue(User $user, $field)
+	{
+		if ($field == 'ref_client') {
+			return $this->set_ref_client((string) $this->ref_client);
+		}
+
+		return parent::persistFieldValue($user, $field);
+	}
+
+	/**
 	 *	Create invoice in database.
 	 *  Note: this->ref can be set or empty. If empty, we will use "(PROV999)"
 	 *  Note: this->fac_rec must be set to create invoice from a recurring invoice
@@ -555,6 +568,17 @@ class Facture extends CommonInvoice
 			$this->error = "Failed to fetch company: ".$soc->error;
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -2;
+		}
+
+		// A replacement invoice can't replace an invoice already transferred into accounting (checked again on validation)
+		if ($this->type == self::TYPE_REPLACEMENT && $this->fk_facture_source > 0) {
+			$facreplaced = new Facture($this->db);
+			if ($facreplaced->fetch($this->fk_facture_source) > 0 && $facreplaced->getVentilExportCompta() > 0) {
+				$langs->load('bills');
+				$this->error = $langs->trans("ErrorInvoiceReplacedAlreadyInAccountancy", $facreplaced->ref);
+				dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
+				return -5;
+			}
 		}
 
 		$now = dol_now();
@@ -1312,9 +1336,10 @@ class Facture extends CommonInvoice
 	 *	@param      User	$user        	User that clone
 	 *  @param  	int 	$fromid         Id of object to clone
 	 *  @param		int		$forceentity	Entity id to force (used by multicompany to clone into another entity)
+	 *  @param		?bool	$keep_ref_customer	Keep the customer reference. If null, MAIN_KEEP_REF_CUSTOMER_ON_CLONING decides.
 	 * 	@return		int					    New id of clone
 	 */
-	public function createFromClone(User $user, $fromid = 0, $forceentity = null)
+	public function createFromClone(User $user, $fromid = 0, $forceentity = null, $keep_ref_customer = null)
 	{
 		global $hookmanager;
 
@@ -1368,8 +1393,10 @@ class Facture extends CommonInvoice
 		$object->date_creation      = '';
 		$object->date_modification = '';
 		$object->date_validation    = '';
-		$object->ref_client         = '';
-		$object->ref_customer         = '';
+		if (!($keep_ref_customer ?? getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING'))) {
+			$object->ref_client         = '';
+			$object->ref_customer         = '';
+		}
 		$object->close_code         = '';
 		$object->close_note         = '';
 		if (getDolGlobalInt('MAIN_DONT_KEEP_NOTE_ON_CLONING') == 1) {
@@ -1417,6 +1444,8 @@ class Facture extends CommonInvoice
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
+		$object->context['createfromclone_fromid'] = $objFrom->id;
+		$object->context['createfromclone_fromref'] = $objFrom->ref;
 		$result = $object->create($user);
 
 		if ($result < 0) {
@@ -1450,6 +1479,8 @@ class Facture extends CommonInvoice
 		}
 
 		unset($object->context['createfromclone']);
+		unset($object->context['createfromclone_fromid']);
+		unset($object->context['createfromclone_fromref']);
 
 		// End
 		if (!$error) {
@@ -1883,11 +1914,15 @@ class Facture extends CommonInvoice
 
 			foreach ($TTotalByTva as $tva => &$total) {
 				$tva_rate_only = preg_replace('/\s*\(.*\)/', '', (string) $tva);
-				$coef = $total / $origin->total_ttc; // Calc coef
+				$coef = ($origin->total_ttc != 0 ? $total / $origin->total_ttc : 0); // Calc coef (0 if the total of the origin is 0, there is nothing to split)
 				$am = $amount * $coef;
 				$amount_ttc_diff += $am;
+				if (!isset($amountdeposit[$tva])) {
+					$amountdeposit[$tva] = 0;
+				}
 				$amountdeposit[$tva] += $am / (1 + ((float) $tva_rate_only) / 100); // Convert into HT for the addline
 			}
+			unset($line, $total);	// Break the references, they must not alter $origin->lines or $TTotalByTva later
 		} else {
 			$totalamount = 0;
 			$lines = $origin->lines;
@@ -1969,7 +2004,7 @@ class Facture extends CommonInvoice
 
 		$diff = $deposit->total_ttc - $amount_ttc_diff;
 
-		if (getDolGlobalString('MAIN_DEPOSIT_MULTI_TVA') && $diff != 0) {
+		if (getDolGlobalString('MAIN_DEPOSIT_MULTI_TVA') && (float) price2num($diff, 'MT') != 0) {
 			$deposit->fetch_lines();
 			$subprice_diff = $deposit->lines[0]->subprice - $diff / (1 + $deposit->lines[0]->tva_tx / 100);
 
@@ -2052,6 +2087,7 @@ class Facture extends CommonInvoice
 		$langs->load('bills');
 
 		$datas = [];
+		$nofetch = !empty($params['nofetch']);
 		$moretitle = $params['moretitle'] ?? '';
 
 		$picto = $this->picto;
@@ -2089,8 +2125,22 @@ class Facture extends CommonInvoice
 			if (!empty($this->ref)) {
 				$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 			}
-			if (!empty($this->ref_customer)) {
-				$datas['refcustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '.$this->ref_customer;
+			if (!$nofetch) {
+				$langs->load('companies');
+				if (empty($this->thirdparty)) {
+					$this->fetch_thirdparty();
+				}
+				$datas['customer'] = '<br><b>'.$langs->trans('Customer').':</b> '.$this->thirdparty->getNomUrl(1, '', 0, 1);
+			}
+			$datas['RefCustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '.(empty($this->ref_customer) ? (empty($this->ref_client) ? '' : $this->ref_client) : $this->ref_customer);
+			if (!$nofetch) {
+				$langs->load('project');
+				if (is_null($this->project) || (is_object($this->project) && $this->project->isEmpty())) {
+					$res = $this->fetchProject();
+					if ($res > 0 && $this->project instanceof Project) {
+						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, '1');
+					}
+				}
 			}
 			if (!empty($this->date)) {
 				$datas['date'] = '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->date, 'day');
@@ -2187,6 +2237,7 @@ class Facture extends CommonInvoice
 			'objecttype' => $this->element,
 			'moretitle' => $moretitle,
 			'option' => $option,
+			'nofetch' => 1,
 		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
@@ -2231,7 +2282,7 @@ class Facture extends CommonInvoice
 			if ($txttoshow) {
 				$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.$txttoshow;
 				$result .= ' <span class="note inline-block">';
-				$result .= '<a href="'.DOL_URL_ROOT.'/compta/facture/note.php?id='.$this->id.'" class="classfortooltip" title="'.dolPrintHTMLForAttribute($notetoshow).'">';
+				$result .= '<a href="'.DOL_URL_ROOT.'/core/note.php?element=compta_facture&id='.$this->id.'" class="classfortooltip" title="'.dolPrintHTMLForAttribute($notetoshow).'">';
 				$result .= img_picto('', 'note');
 				$result .= '</a>';
 				$result .= '</span>';
@@ -2564,7 +2615,7 @@ class Facture extends CommonInvoice
 		$sql = 'SELECT l.rowid, l.fk_facture, l.fk_product, l.fk_parent_line, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.vat_src_code, l.tva_tx,';
 		$sql .= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise_percent, l.fk_remise_except, l.subprice, l.subprice_ttc, l.ref_ext,';
 		$sql .= ' l.situation_percent, l.fk_prev_id,';
-		$sql .= ' l.rang, l.special_code, l.batch, l.fk_warehouse,';
+		$sql .= ' l.rang, l.special_code, l.batch, l.fk_warehouse, l.pos_printer_id,';
 		$sql .= ' l.date_start as date_start, l.date_end as date_end,';
 		$sql .= ' l.info_bits, l.total_ht, l.total_tva, l.total_localtax1, l.total_localtax2, l.total_ttc, l.fk_code_ventilation, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht,';
 		$sql .= ' l.fk_unit, l.extraparams,';
@@ -2664,6 +2715,7 @@ class Facture extends CommonInvoice
 
 				$line->batch = $objp->batch;
 				$line->fk_warehouse = $objp->fk_warehouse;
+				$line->pos_printer_id = $objp->pos_printer_id;
 
 				// Accountancy
 				$line->fk_code_ventilation = $objp->fk_code_ventilation;
@@ -2838,6 +2890,12 @@ class Facture extends CommonInvoice
 		}
 		if (!isset($this->user_validation_id) && isset($this->fk_user_valid)) {
 			$this->user_validation_id = $this->fk_user_valid;
+		}
+
+		// The point of tax date of a validated invoice can't be changed
+		if ($this->checkPointOfTaxNotChanged() < 0) {
+			dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
+			return -1;
 		}
 
 		// Update request
@@ -3683,6 +3741,13 @@ class Facture extends CommonInvoice
 				return -1;
 			}
 		}
+		// Point of tax date mandatory (not for a deposit invoice: nothing is supplied yet)
+		if (getDolGlobalString('INVOICE_POINTOFTAX_DATE') && getDolGlobalString('INVOICE_POINTOFTAX_DATE_MANDATORY') && $this->type != self::TYPE_DEPOSIT && empty($this->date_pointoftax)) {
+			$langs->loadLangs(array("errors", "bills"));
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DatePointOfTax")).' ('.$langs->trans("ForbiddenBySetupRules").')';
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+			return -1;
+		}
 
 		// Check for mandatory fields in thirdparty (defined into setup)
 		if (!empty($this->thirdparty) && is_object($this->thirdparty)) {
@@ -3779,6 +3844,19 @@ class Facture extends CommonInvoice
 			}
 		}
 
+		// Hook (context of the calling page or cron) to let modules check or prepare the invoice before it is validated (still a draft: no number, no transaction)
+		global $hookmanager;
+		if (!$error && is_object($hookmanager)) {
+			$hookaction = 'validate';
+			$parameters = array('force_number' => $force_number, 'idwarehouse' => $idwarehouse, 'notrigger' => $notrigger);
+			$reshook = $hookmanager->executeHooks('beforeValidate', $parameters, $this, $hookaction);
+			if ($reshook < 0) {
+				$this->error = $hookmanager->error;
+				$this->errors = $hookmanager->errors;
+				return -1;
+			}
+		}
+
 		$this->db->begin();
 
 		// Check parameters
@@ -3807,6 +3885,14 @@ class Facture extends CommonInvoice
 				$this->error = $langs->trans("ErrorInvoiceAlreadyReplaced", $facreplaced->ref, $facreplacement->ref);
 				$this->db->rollback();
 				return -12;
+			}
+
+			// Check that source invoice is not already transferred into accounting: its entries would remain and the
+			// replacement invoice would be transferred too.
+			if ($facreplaced->getVentilExportCompta() > 0) {
+				$this->error = $langs->trans("ErrorInvoiceReplacedAlreadyInAccountancy", $facreplaced->ref);
+				$this->db->rollback();
+				return -14;
 			}
 
 			$result = $facreplaced->setCanceled($user, self::CLOSECODE_REPLACED, '');
@@ -4068,13 +4154,13 @@ class Facture extends CommonInvoice
 					while (($i < $nboflines) && $final) {
 						$line = $this->lines[$i];
 						'@phan-var-force FactureLigne $line';
-						if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+						if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+							$final = ($line->situation_percent == 100);
+						} else {
 							$previousprogress = $line->getAllPrevProgress($line->fk_facture);
 							$current_progress = (float) $line->situation_percent;
 							$full_progress = $previousprogress + $current_progress;
 							$final = ($full_progress == 100);
-						} else {
-							$final = ($line->situation_percent == 100);
 						}
 						$i++;
 					}
@@ -4518,8 +4604,7 @@ class Facture extends CommonInvoice
 			}
 
 			if (!isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '') {
-				// INVOICE_USE_SITUATION = 2 - Lines situation percent on new lines must be 0 (No cumulative). They will be added by changing the percent that is initialized to 0.
-				if ($this->isSituationInvoice() && getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+				if ($this->isSituationInvoice() && getDolGlobalInt('INVOICE_USE_SITUATION') != 1 && (int) $situation_percent < 100) {
 					$situation_percent = 0;
 				} else {
 					$situation_percent = 100;
@@ -4628,7 +4713,7 @@ class Facture extends CommonInvoice
 			// VERY IMPORTANT: It's at the time of line insertion that we must store the net, VAT, and gross amounts,
 			// and this is done at the line level, which has its own VAT rate
 
-			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type, $situation_percent, $this->multicurrency_tx, $pu_ht_devise);
+			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type, $situation_percent, $this->multicurrency_tx, $pu_ht_devise, $this->multicurrency_code);
 
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -4650,8 +4735,15 @@ class Facture extends CommonInvoice
 				$ranktouse = $rangmax + 1;
 			}
 
-			// Same gate as in updateline(): the -abs() forcing on credit note lines is relaxed only when
-			// both FACTURE_ENABLE_NEGATIVE_LINES and INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN are enabled.
+			// Same gate as in updateline():
+			// On standard/deposit invoices:
+			// - common lines: unit price, qty and total prices are positive
+			// - discount lines: unit price is negative, qty is 1 and total prices are negative
+			// For credit notes invoices (TYPE_CREDIT_NOTE):
+			// - common lines: unit_price is forced as negative and qty as positive
+			// - discount lines: not applicable
+			//
+			// Note: the -abs() forcing on credit note lines is relaxed only when both FACTURE_ENABLE_NEGATIVE_LINES and INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN are enabled.
 			$apply_abs_price_on_credit_note = false;
 			if ($this->type == self::TYPE_CREDIT_NOTE && !(getDolGlobalInt('FACTURE_ENABLE_NEGATIVE_LINES') && getDolGlobalInt('INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN'))) {
 				$apply_abs_price_on_credit_note = true;
@@ -4853,13 +4945,13 @@ class Facture extends CommonInvoice
 				$special_code = 0;
 			}
 			if (!isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '' || $situation_percent == null) {
-				// INVOICE_USE_SITUATION = 2 - If there is no progress on a line, percent must not be 100% (No cumulative)
-				if ($this->type == Facture::TYPE_SITUATION && getDolGlobalInt('INVOICE_USE_SITUATION') == 2 && (int) $situation_percent < 100) {
+				if ($this->isSituationInvoice() && getDolGlobalInt('INVOICE_USE_SITUATION') != 1 && (int) $situation_percent < 100) {
 					$situation_percent = 0;
 				} else {
 					$situation_percent = 100;
 				}
 			}
+
 			if (empty($ref_ext)) {
 				$ref_ext = '';
 			}
@@ -4912,7 +5004,7 @@ class Facture extends CommonInvoice
 				}
 			}
 
-			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, $situation_percent, $this->multicurrency_tx, $pu_ht_devise);
+			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, $situation_percent, $this->multicurrency_tx, $pu_ht_devise, $this->multicurrency_code);
 
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -4993,12 +5085,19 @@ class Facture extends CommonInvoice
 				$rangmax = $this->line_max($fk_parent_line);
 				$this->line->rang = $rangmax + 1;
 			}
+
+			// On standard/deposit invoices:
+			// - common lines: unit price, qty and total prices are positive
+			// - discount lines: unit price is negative, qty is 1 and total prices are negative
+			// For credit notes invoices (TYPE_CREDIT_NOTE):
+			// - common lines: unit_price is forced as negative and qty as positive
+			// - discount lines: not applicable
+			//
+			// Note: the -abs() forcing on credit note lines is relaxed only when both FACTURE_ENABLE_NEGATIVE_LINES and INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN are enabled.
 			$apply_abs_price_on_credit_note = false;
 			if ($this->type == self::TYPE_CREDIT_NOTE && !(getDolGlobalInt('FACTURE_ENABLE_NEGATIVE_LINES') && getDolGlobalInt('INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN'))) {
 				$apply_abs_price_on_credit_note = true;
 			}
-
-
 
 			$this->line->id = $rowid;
 			$this->line->rowid = $rowid;
@@ -5124,14 +5223,14 @@ class Facture extends CommonInvoice
 		if ($percent > 100) {
 			$percent = 100;
 		}
-		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+			$line->situation_percent = $percent;
+			$tabprice = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 0, 'HT', 0, $line->product_type, $mysoc, array(), $percent);
+		} else {
 			$previous_progress = $line->getAllPrevProgress($line->fk_facture);
 			$current_progress = $percent - $previous_progress;
 			$line->situation_percent = $current_progress;
 			$tabprice = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 0, 'HT', 0, $line->product_type, $mysoc, array(), $current_progress);
-		} else {
-			$line->situation_percent = $percent;
-			$tabprice = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 0, 'HT', 0, $line->product_type, $mysoc, array(), $percent);
 		}
 		$line->total_ht = (float) $tabprice[0];
 		$line->total_tva = (float) $tabprice[1];
@@ -5560,6 +5659,7 @@ class Facture extends CommonInvoice
 		$sql .= " AND f.paye = 0"; // Not paid completely
 		$sql .= " AND pf.fk_paiement IS NULL"; // No payment already done
 		$sql .= " AND ff.fk_statut IS NULL"; // Return true if it is not a replacement invoice
+		$sql .= " AND NOT EXISTS (SELECT ab.rowid FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type = 'customer_invoice' AND ab.fk_doc = f.rowid)"; // Not already transferred into accounting
 		if ($socid > 0) {
 			$sql .= " AND f.fk_soc = ".((int) $socid);
 		}
@@ -5969,6 +6069,19 @@ class Facture extends CommonInvoice
 			$this->error = $this->db->error();
 			return -1;
 		}
+	}
+
+	/**
+	 *	Return the display context of the lines, as defined by the card before printObjectLines() and formAddObjectLine()
+	 *
+	 *	@return	array{seller:Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	See CommonObject::getObjectLinesDisplayContext()
+	 */
+	public function getObjectLinesDisplayContext()
+	{
+		$context = parent::getObjectLinesDisplayContext();
+		$context['inputalsopricewithtax'] = 1;
+
+		return $context;
 	}
 
 	/**
@@ -6415,7 +6528,9 @@ class Facture extends CommonInvoice
 	 *  @param	string		$paymentmode		'' or 'all' by default (no filter), or 'LIQ', 'CHQ', CB', ...
 	 *  @param	int|string	$template			Name (or id) of email template (Must be a template of type 'facture_send')
 	 *  @param	string		$datetouse			'duedate' (default) or 'invoicedate'
-	 *  @param	string		$forcerecipient		Force email of recipient (for example to send the email to an accountant supervisor instead of the customer)
+	 *  @param	string		$forcerecipient		Forced recipients. '' (default) to send to the email of thirdparty, or a list of values separated by ';' among: a fixed email,
+	 *  										'thirdpartyemail' (email of thirdparty), 'externalbillingcontacts' (external contacts of invoice of type BILLING),
+	 *  										'salesrepresentative' (emails of sales representatives of thirdparty).
 	 *  @return int         					0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
 	public function sendEmailsRemindersOnInvoiceDueDate($nbdays = 0, $paymentmode = 'all', $template = '', $datetouse = 'duedate', $forcerecipient = '')
@@ -6438,6 +6553,23 @@ class Facture extends CommonInvoice
 			$this->output .= 'Bad value for parameter datetouse. Must be "duedate" or "invoicedate"';
 			return 0;
 		}
+
+		// Build list of forced recipients (separator is ';' because cron splits parameters on ',')
+		$arrayforcerecipient = array();
+		foreach (explode(';', (string) $forcerecipient) as $tmpvalue) {
+			$tmpvalue = trim($tmpvalue);
+			if ($tmpvalue !== '') {
+				if (!in_array($tmpvalue, array('thirdpartyemail', 'externalbillingcontacts', 'salesrepresentative')) && !isValidEmail($tmpvalue)) {
+					$this->output .= 'Bad value "'.$tmpvalue.'" for parameter forcerecipient. Must be an email, "thirdpartyemail", "externalbillingcontacts" or "salesrepresentative"';
+					return 0;
+				}
+				$arrayforcerecipient[] = $tmpvalue;
+			}
+		}
+		$forcerecipient = implode(';', $arrayforcerecipient);
+		if (empty($arrayforcerecipient)) {
+			$arrayforcerecipient = array('thirdpartyemail');
+		}
 		/*if (empty($conf->global->FACTURE_REMINDER_EMAIL)) {
 			$langs->load("bills");
 			$this->output .= $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Invoice"));
@@ -6458,7 +6590,8 @@ class Facture extends CommonInvoice
 		dol_syslog(__METHOD__." start", LOG_INFO);
 
 		// Label of the agenda event recorded for each reminder sent. It also allows to know that a reminder was already sent for an invoice.
-		$labelreminderok = 'sendEmailsRemindersOnInvoiceDueDateOK (nbdays='.$nbdays.' paymentmode='.$paymentmode.' template='.$template.' datetouse='.$datetouse.' forcerecipient='.$forcerecipient.')';
+		// The template is the last parameter: the label is truncated to 128 characters when saved and the template is the longest value.
+		$labelreminderok = 'sendEmailsRemindersOnInvoiceDueDateOK (nbdays='.$nbdays.' paymentmode='.$paymentmode.' datetouse='.$datetouse.' forcerecipient='.$forcerecipient.' template='.$template.')';
 
 		// Select all action comm reminder
 		$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."facture as f";
@@ -6482,7 +6615,8 @@ class Facture extends CommonInvoice
 		// Do not send the same reminder twice if the batch is run again the same day (an event is recorded when a reminder is sent)
 		$sql .= " AND NOT EXISTS (SELECT a.id FROM ".MAIN_DB_PREFIX."actioncomm as a";
 		$sql .= " WHERE a.elementtype = 'invoice' AND a.fk_element = f.rowid AND a.code = 'AC_EMAIL'";
-		$sql .= " AND a.label = '".$this->db->escape($labelreminderok)."'";
+		// The label of an event is sanitized and truncated to 128 characters when saved (ActionComm::create), so search it the same way
+		$sql .= " AND a.label = '".$this->db->escape(dol_trunc(sanitizeVal($labelreminderok, 'alphawithlgt'), 128))."'";
 		$sql .= " AND a.datep >= '".$this->db->idate(dol_get_first_hour($now))."')";
 		if ($datetouse == 'invoicedate') {
 			$sql .= $this->db->order("datef", "ASC");
@@ -6511,6 +6645,11 @@ class Facture extends CommonInvoice
 				// Load event
 				$res = $tmpinvoice->fetch($obj->id);
 				if ($res > 0) {
+					// No reminder for an invoice with nothing left to pay (an overpaid invoice is not classified paid) or with a dispute open
+					if ($tmpinvoice->getRemainToPay() <= 0 || $tmpinvoice->dispute_status == 1) {
+						continue;
+					}
+
 					$tmpinvoice->fetch_thirdparty();
 					// Load paid amounts so that __AMOUNT_REMAIN__ is the real remaining amount
 					$tmpinvoice->getSommePaiement();
@@ -6525,8 +6664,9 @@ class Facture extends CommonInvoice
 						$outputlangs = $langs;
 					}
 
-					// Select email template according to language of recipient
-					$arraymessage = $formmail->getEMailTemplate($this->db, 'facture_send', $user, $outputlangs, (is_numeric($template) ? $template : 0), 1, (is_numeric($template) ? '' : $template));
+					// Select email template according to language of recipient (id -2 returns an error when the label is not found, else a generic text is returned)
+					// EmailTemplateCode is the placeholder of the default parameters of the job: it means no template
+					$arraymessage = $formmail->getEMailTemplate($this->db, 'facture_send', $user, $outputlangs, (is_numeric($template) ? $template : ((empty($template) || $template == 'EmailTemplateCode') ? 0 : -2)), 1, (is_numeric($template) ? '' : $template));
 					if (is_numeric($arraymessage) && $arraymessage <= 0) {
 						$langs->load("errors");
 						if (is_numeric($template)) {
@@ -6547,6 +6687,7 @@ class Facture extends CommonInvoice
 						// Log the error and continue so a single missing translation does
 						// not stop reminders for everyone else (see issue #34656).
 						$errorsMsg[] = $langs->trans('ErrorFailedToFindEmailTemplate', $template).' (invoice '.$tmpinvoice->ref.')';
+						$error++;
 						continue;
 					}
 
@@ -6571,31 +6712,44 @@ class Facture extends CommonInvoice
 
 					// Recipient
 					$to = array();
-					if ($forcerecipient) {	// If a recipient was forced
-						$to = array($forcerecipient);
-					} else {
-						$res = $tmpinvoice->fetch_thirdparty();
-						$recipient = $tmpinvoice->thirdparty;
-						if ($res > 0) {
-							$tmparraycontact = $tmpinvoice->liste_contact(-1, 'external', 0, 'BILLING');
-							if (is_array($tmparraycontact) && count($tmparraycontact) > 0) {
-								foreach ($tmparraycontact as $data_email) {
-									if (!empty($data_email['email'])) {
-										$to[] = $tmpinvoice->thirdparty->contact_get_property($data_email['id'], 'email');
+					$res = $tmpinvoice->fetch_thirdparty();
+					$recipient = $tmpinvoice->thirdparty;
+					if ($res > 0) {
+						foreach ($arrayforcerecipient as $tmpforcerecipient) {
+							if ($tmpforcerecipient == 'thirdpartyemail') {
+								if (!empty($recipient->email)) {
+									$to[] = $recipient->email;
+								}
+							} elseif ($tmpforcerecipient == 'externalbillingcontacts') {
+								$tmparraycontact = $tmpinvoice->liste_contact(-1, 'external', 0, 'BILLING');
+								if (is_array($tmparraycontact) && count($tmparraycontact) > 0) {
+									foreach ($tmparraycontact as $data_email) {
+										if (!empty($data_email['email'])) {
+											$to[] = $tmpinvoice->thirdparty->contact_get_property($data_email['id'], 'email');
+										}
 									}
 								}
+							} elseif ($tmpforcerecipient == 'salesrepresentative') {
+								$tmparraysalesrep = $recipient->getSalesRepresentatives($user);
+								if (is_array($tmparraysalesrep)) {
+									foreach ($tmparraysalesrep as $salesrep) {
+										if (!empty($salesrep['email']) && !empty($salesrep['status'])) {
+											$to[] = $salesrep['email'];
+										}
+									}
+								}
+							} else {	// A fixed email
+								$to[] = $tmpforcerecipient;
 							}
-							if (empty($to) && !empty($recipient->email)) {
-								$to[] = $recipient->email;
-							}
-							if (empty($to)) {
-								$errormesg = "Failed to send remind to thirdparty id=".$tmpinvoice->socid.". No email defined for invoice or customer.";
-								$loopError++;
-							}
-						} else {
-							$errormesg = "Failed to load recipient with thirdparty id=".$tmpinvoice->socid;
+						}
+						$to = array_values(array_unique(array_filter($to)));
+						if (empty($to)) {
+							$errormesg = "Failed to send remind to thirdparty id=".$tmpinvoice->socid.". No email found for recipients ".implode(";", $arrayforcerecipient).".";
 							$loopError++;
 						}
+					} else {
+						$errormesg = "Failed to load recipient with thirdparty id=".$tmpinvoice->socid;
+						$loopError++;
 					}
 
 					// Sender
