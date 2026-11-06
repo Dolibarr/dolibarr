@@ -2962,7 +2962,14 @@ class Societe extends CommonObject
 		if ($this->id > 0) {
 			// Separate VAT code from VAT rate string
 			// Discount type determines who is buyer and seller
-			$taxes = getTaxesFromId($vatrate, ($discount_type == 0 ? $this : $mysoc), ($discount_type == 0 ? $mysoc : $this), 0);
+			$buyer = ($discount_type == 0 ? $this : $mysoc);
+			$seller = ($discount_type == 0 ? $mysoc : $this);
+			$taxes = getTaxesFromId($vatrate, $buyer, $seller, 0);
+			// Local tax rates for this buyer/seller pair determined by get_localtax() (0 if not applicable)
+			$localtax1_tx = (float) get_localtax($vatrate, 1, $buyer, $seller);
+			$localtax2_tx = (float) get_localtax($vatrate, 2, $buyer, $seller);
+			$localtax1_type = ($localtax1_tx ? (int) ($taxes['localtax1_type'] ?? 0) : 0);
+			$localtax2_type = ($localtax2_tx ? (int) ($taxes['localtax2_type'] ?? 0) : 0);
 			$reg = array();
 			$vat_src_code = '';
 			if (preg_match('/\((.*)\)/', $vatrate, $reg)) {
@@ -2987,7 +2994,7 @@ class Societe extends CommonObject
 
 			$vat_tx = (float) price2num($vatrate);
 
-			$discount->generateFromAmount($remise, ($price_base_type == 'TTC' ? 1 : 0), $vat_tx, $taxes['localtax1'], $taxes['localtax2'], (int) $taxes['localtax1_type'], (int) $taxes['localtax2_type']);
+			$discount->generateFromAmount($remise, ($price_base_type == 'TTC' ? 1 : 0), $vat_tx, $localtax1_tx, $localtax2_tx, $localtax1_type, $localtax2_type);
 
 			$discount->vat_src_code = $vat_src_code;
 
@@ -5603,6 +5610,14 @@ class Societe extends CommonObject
 			$sql .= " AND entity IN (".getEntity('facture_fourn').")";
 		} else {
 			$sql .= " AND entity IN (".getEntity('invoice').")";
+		}
+		// Invoices before this date (YYYY-MM-DD) are excluded from the outstanding amount (history migrated or settled elsewhere)
+		$reg = array();
+		if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', getDolGlobalString('SOCIETE_OUTSTANDING_BILLS_FROM_DATE'), $reg)) {
+			$fromdate = dol_mktime(0, 0, 0, (int) $reg[2], (int) $reg[3], (int) $reg[1]);
+			if ($fromdate) {
+				$sql .= " AND datef >= '".$this->db->idate($fromdate)."'";
+			}
 		}
 
 		dol_syslog("getOutstandingBills", LOG_DEBUG);

@@ -2706,7 +2706,7 @@ if ($action == 'create') {
 					$conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS = 'none';
 				}
 				// We must use null, null for seller and buyer as we don't know them for expense report.
-				print $form->load_tva('vatrate', (!empty($vatrate) ? $vatrate : $defaultvat), null, null, 0, 0, '', false, 1);
+				print $form->load_tva('vatrate', ((isset($vatrate) && $vatrate !== '') ? $vatrate : $defaultvat), null, null, 0, 0, '', false, 1);
 				print '</td>';
 
 				// Unit price net
