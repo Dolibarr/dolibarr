@@ -27,6 +27,9 @@ create table llx_payment_loan
   amount_capital	double(24,8) DEFAULT 0,
   amount_insurance	double(24,8) DEFAULT 0,
   amount_interest	double(24,8) DEFAULT 0,
+  vat_src_code		varchar(10) DEFAULT '',		-- VAT code (llx_c_tva.code) of amount_insurance, '' = no VAT
+  tva_tx			double(7,4) DEFAULT 0,		-- VAT rate of amount_insurance
+  total_tva			double(24,8) DEFAULT 0,		-- VAT included in amount_insurance (part of it, not on top of it)
   fk_typepayment	integer NOT NULL,
   num_payment		varchar(50),
   note_private		text,
