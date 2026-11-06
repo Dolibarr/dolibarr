@@ -89,7 +89,17 @@ $modules = array(
 		array(
 			'code' => 'MAIN_DELAY_SUPPLIER_BILLS_TO_PAY',
 			'img' => 'bill'
+		),
+		/** BACKPORT PR #33800 */
+		array(
+			'code' => 'MAIN_DELAY_SUPPLIER_PROPALS_TO_CLOSE',
+			'img' => 'propal'
+		),
+		array(
+			'code' => 'MAIN_DELAY_SUPPLIER_PROPALS_TO_BILL',
+			'img' => 'propal'
 		)
+		/** END BACKPORT PR #33800 */
 	),
 	'service' => array(
 		array(

@@ -50,3 +50,4 @@ RefreshToken=Rafraîchir Jeton
 RefreshTokenHelp=Utilisez le jeton d'actualisation pour obtenir un nouveau jeton d'accès
 OldTokenWasExpiredItHasBeenRefresh=L'ancien jeton avait expiré, il a été actualisé
 OldTokenWasNotExpiredButItHasBeenRefresh=L'ancien jeton n'avait pas expiré mais il a été actualisé
+OAuthErrorStateDiffers=La valeur de state=%s diffère de la valeur en session. Le code est refusé.
