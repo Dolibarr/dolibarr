@@ -268,6 +268,20 @@ class Categories extends DolibarrApi
 				continue;
 			}
 
+			if ($field == 'type') {
+				$this->category->type = $this->_getTypeId($value);
+				continue;
+			}
+
+			if ($field == 'array_options' && is_array($value)) {
+				$this->category->fetch_optionals();	// To force the load of the extrafields definition by fetch_name_optionals_label()
+
+				foreach ($value as $index => $val) {
+					$this->category->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->category);
+				}
+				continue;
+			}
+
 			$this->category->$field = $this->_checkValForAPI($field, $value, $this->category);
 		}
 		if ($this->category->create(DolibarrApiAccess::$user) < 0) {
@@ -313,6 +327,11 @@ class Categories extends DolibarrApi
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->category->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+
+			if ($field == 'type') {
+				$this->category->type = $this->_getTypeId($value);
 				continue;
 			}
 
@@ -995,6 +1014,30 @@ class Categories extends DolibarrApi
 			$category[$field] = $data[$field];
 		}
 		return $category;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Get the id of a category type from a type id or a type code.
+	 * The generic field check can't be used: as the type field is an integer, it empties a type code.
+	 *
+	 * @param	mixed	$type	Type id or type code (see Categorie::$MAP_ID, completed by modules)
+	 * @return	string			Type id
+	 * @throws	RestException	400
+	 */
+	private function _getTypeId($type)
+	{
+		// phpcs:enable
+		$map_id = $this->category->getMapId();
+
+		if (is_numeric($type) && in_array($type, $map_id)) {
+			return (string) (int) $type;
+		}
+		if (is_string($type) && array_key_exists($type, $map_id)) {
+			return (string) $map_id[$type];
+		}
+
+		throw new RestException(400, "this type is not recognized yet.");
 	}
 
 	/**
