@@ -65,7 +65,7 @@ Conventions for the website `mywebsite` (use the `ref` of the website):
   (the `file` parameter is the path relative to the medias directory, so it must match the `subdir` used for the upload).
 
 
-## Regenerating the .tpl.php file
+## Regenerating the page on disk (.tpl.php file)
 
 Each page is rendered from a generated file `documents/website/<site-ref>/page<pageid>.tpl.php` (`documents/<entity>/...` with multi-entity), built by `dolSavePageContent()` (in `htdocs/core/lib/website2.lib.php`), not a raw copy of the `content` column.
 
