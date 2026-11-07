@@ -5441,7 +5441,7 @@ class ToolApiBridge extends McpTool
 		// A website page has no entity: it is reached through its website, as the REST class checks it.
 		if ($class === 'WebsitePage') {
 			$page = $this->fetchRecord('WebsitePage', (int) $id);
-			if (!$page) {
+			if (!($page instanceof WebsitePage)) {
 				return false;
 			}
 			$class = 'Website';
