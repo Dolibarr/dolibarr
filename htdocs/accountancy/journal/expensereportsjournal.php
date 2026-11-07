@@ -213,7 +213,6 @@ if ($result) {
 		}
 		$taber[$obj->rowid]["ref"] = $obj->ref;
 		$taber[$obj->rowid]["comments"] = $obj->comments;
-		$taber[$obj->rowid]["fk_expensereportdet"] = $obj->erdid;
 
 		// Avoid warnings
 		if (!isset($tabttc[$obj->rowid][$compta_user])) {
@@ -314,7 +313,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 					$bookkeeping->date_creation = $now;
 					$bookkeeping->doc_type = 'expense_report';
 					$bookkeeping->fk_doc = (int) $key;
-					$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
+					$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 
 					$bookkeeping->subledger_account = $tabuser[$key]['user_accountancy_code'];
 					$bookkeeping->subledger_label = $tabuser[$key]['name'];
@@ -375,7 +374,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 						$bookkeeping->date_creation = $now;
 						$bookkeeping->doc_type = 'expense_report';
 						$bookkeeping->fk_doc = (int) $key;
-						$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
+						$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->subledger_label = '';
@@ -447,7 +446,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 						$bookkeeping->date_creation = $now;
 						$bookkeeping->doc_type = 'expense_report';
 						$bookkeeping->fk_doc = (int) $key;
-						$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
+						$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->subledger_label = '';
