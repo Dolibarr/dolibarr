@@ -411,10 +411,18 @@ class Export
 		// build the input field on depend of the type of file
 		switch ($InfoFieldList[0]) {
 			case 'Text':
+				// A leading ! excludes the value (empty values are kept)
+				$exclude = (strlen($ValueField) > 1 && $ValueField[0] == '!');
+				if ($exclude) {
+					$ValueField = substr($ValueField, 1);
+				}
 				if (!(strpos($ValueField, '%') === false)) {
-					$szFilterQuery = " ".$this->db->sanitize($NameField)." LIKE '".$this->db->escape($ValueField)."'";
+					$szFilterQuery = " ".$this->db->sanitize($NameField).($exclude ? " NOT" : "")." LIKE '".$this->db->escape($ValueField)."'";
 				} else {
-					$szFilterQuery = " ".$this->db->sanitize($NameField)." = '".$this->db->escape($ValueField)."'";
+					$szFilterQuery = " ".$this->db->sanitize($NameField).($exclude ? " <>" : " =")." '".$this->db->escape($ValueField)."'";
+				}
+				if ($exclude) {
+					$szFilterQuery = " (".$this->db->sanitize($NameField)." IS NULL OR".$szFilterQuery.")";
 				}
 				break;
 			case 'Date':

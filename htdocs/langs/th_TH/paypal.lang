@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal การติดตั้งโมดูล
-PaypalDesc=โมดูลนี้อนุญาตให้ลูกค้าชำระเงินผ่าน <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a> สามารถใช้สำหรับการชำระเงินเฉพาะกิจหรือการชำระเงินที่เกี่ยวข้องกับออบเจ็กต์ Dolibarr (ใบแจ้งหนี้ คำสั่งซื้อ ...)
+PaypalDesc=This module allows payment by customers via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. This can be used for an ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
 PaypalOrCBDoPayment=ชำระเงินด้วย PayPal (บัตรหรือ PayPal)
 PaypalDoPayment=ชำระเงินด้วยเพย์พาล
 PAYPAL_API_SANDBOX=การทดสอบ Mode / ทราย
@@ -19,7 +19,7 @@ NewOnlinePaymentFailed=พยายามชำระเงินออนไล
 ONLINE_PAYMENT_SENDEMAIL=ที่อยู่อีเมลสำหรับการแจ้งเตือนหลังจากพยายามชำระเงินแต่ละครั้ง (เพื่อความสำเร็จและล้มเหลว)
 ReturnURLAfterPayment=URL ที่กลับมาหลังจากการชำระเงิน
 ValidationOfOnlinePaymentFailed=การตรวจสอบการชำระเงินออนไลน์ล้มเหลว
-PaymentSystemConfirmPaymentPageWasCalledButFailed=หน้ายืนยันการชำระเงินถูกเรียกโดยระบบการชำระเงินส่งคืนข้อผิดพลาด
+PaymentSystemConfirmPaymentPageWasCalledButFailed=The payment confirmation page was called by the online payment system and returned an error
 SetExpressCheckoutAPICallFailed=การเรียก SetExpressCheckout API ล้มเหลว
 DoExpressCheckoutPaymentAPICallFailed=การเรียก DoExpressCheckoutPayment API ล้มเหลว
 DetailedErrorMessage=ข้อความแสดงข้อผิดพลาดโดยละเอียด

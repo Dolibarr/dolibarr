@@ -1332,9 +1332,10 @@ class Commande extends CommonOrder
 	 *  @param	    User	$user		    User making the clone
 	 *	@param		int		$socid		    Id of thirdparty
 	 *	@param		int		$forceentity	Entity id to force (used by multicompany to clone into another entity)
+	 *	@param		?bool	$keep_ref_customer	Keep the customer reference. If null, MAIN_KEEP_REF_CUSTOMER_ON_CLONING decides.
 	 *	@return		int					    New id of clone
 	 */
-	public function createFromClone(User $user, $socid = 0, $forceentity = null)
+	public function createFromClone(User $user, $socid = 0, $forceentity = null, $keep_ref_customer = null)
 	{
 		global $hookmanager;
 
@@ -1379,7 +1380,7 @@ class Commande extends CommonOrder
 		$object->date_commande = dol_now();
 		$object->date_creation = '';
 		$object->date_validation = '';
-		if (!getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING')) {
+		if (!($keep_ref_customer ?? getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING'))) {
 			$object->ref_client = '';
 			$object->ref_customer = '';
 		}
@@ -4160,7 +4161,7 @@ class Commande extends CommonOrder
 			if ($txttoshow) {
 				$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.dol_string_nohtmltag($txttoshow, 1);
 				$result .= ' <span class="note inline-block">';
-				$result .= '<a href="'.DOL_URL_ROOT.'/commande/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
+				$result .= '<a href="'.DOL_URL_ROOT.'/core/note.php?element=commande&id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
 				$result .= img_picto('', 'note');
 				$result .= '</a>';
 				//$result.=img_picto($langs->trans("ViewNote"),'object_generic');
@@ -4360,6 +4361,19 @@ class Commande extends CommonOrder
 			$this->error = $this->db->error();
 			return -1;
 		}
+	}
+
+	/**
+	 *	Return the display context of the lines, as defined by the card before printObjectLines() and formAddObjectLine()
+	 *
+	 *	@return	array{seller:Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	See CommonObject::getObjectLinesDisplayContext()
+	 */
+	public function getObjectLinesDisplayContext()
+	{
+		$context = parent::getObjectLinesDisplayContext();
+		$context['inputalsopricewithtax'] = 1;
+
+		return $context;
 	}
 
 	/**

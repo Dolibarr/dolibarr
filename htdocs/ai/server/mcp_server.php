@@ -3,6 +3,7 @@
  * Copyright (C) 2026	Nick Fragoulis
  * Copyright (C) 2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +76,7 @@ header('Content-Type: application/json');
 header('X-Content-Type-Options: nosniff');
 
 // Request headers, used by the transport-header validation further down.
-$headers = function_exists('getallheaders') ? getallheaders() : [];
+$headers = dolGetRequestHeaders();
 $headers = array_change_key_case($headers, CASE_LOWER);
 
 $mcpAuth = new McpAuth($db);
@@ -194,6 +195,19 @@ function mcp_log_request(array $req, $resp, float $tStart, string $rawInput): vo
 		$rawInput,
 		$rawResStr
 	);
+}
+
+// For debug, a plain GET (browser, curl) with debug=1 returns the list of tools. Any other GET gets a 405, as
+// required by the MCP Streamable HTTP spec when no SSE stream is offered.
+$acceptHeader = isset($headers['accept']) ? (string) $headers['accept'] : '';
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && GETPOSTINT('debug') == 1 && strpos($acceptHeader, 'text/event-stream') === false) {
+	$server = new MCPServer($db, $conf, $serviceUser);
+	$response = $server->handleRequest(["jsonrpc" => "2.0", "id" => 1, "method" => "tools/list"]);
+	if ($server->getHttpStatus() !== 200) {
+		http_response_code($server->getHttpStatus());
+	}
+	echo json_encode($response);
+	exit;
 }
 
 // Only POST is supported (no SSE stream on GET): MCP Streamable HTTP spec requires a 405 for other methods.

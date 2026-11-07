@@ -18,7 +18,9 @@ function initTooltips(root) {
 		}
 
 		// Action buttons (butAction, butActionRefused, butActionDelete...) show their tooltip after a longer delay
-		const showDelay = /(^|\s)butAction/.test(this.className) ? 600 : 50;
+		// The show delay can also be set per element with the data-delayfortooltip attribute
+		const customDelay = parseInt($el.attr("data-delayfortooltip"), 10);
+		const showDelay = isNaN(customDelay) ? (/(^|\s)butAction/.test(this.className) ? 600 : 50) : customDelay;
 
 		$el.tooltip({
 			tooltipClass: "mytooltip",
