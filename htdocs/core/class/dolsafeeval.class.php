@@ -306,6 +306,7 @@ class DolSafeEval
 		$tokens = array();
 		$pos = 0;
 		while ($pos < $len) {
+			$m = array();
 			if (preg_match('/\G\s+/', $src, $m, 0, $pos)) {
 				$pos += strlen($m[0]);
 				continue;

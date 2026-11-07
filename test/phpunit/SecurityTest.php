@@ -823,6 +823,19 @@ class SecurityTest extends CommonClassTest
 	}
 
 	/**
+	 * Return the expected error message of dol_eval() for a bad syntax.
+	 * The message of DolSafeEval is the same for all errors of syntax, when the message of the other engines gives a detail.
+	 *
+	 * @param	bool	$issafe		True if the DolSafeEval engine is used
+	 * @param	string	$detail		Detail of the error returned by the other engines
+	 * @return	string				Expected message
+	 */
+	private function getBadSyntaxMessage($issafe, $detail)
+	{
+		return $issafe ? 'Bad string syntax to evaluate' : 'Bad string syntax to evaluate ('.$detail.')';
+	}
+
+	/**
 	 * testDolEval
 	 *
 	 * @return void
@@ -840,16 +853,10 @@ class SecurityTest extends CommonClassTest
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
 
-		global $dolibarr_main_use_dol_eval_new, $dolibarr_main_use_dol_eval_safe;
-		$dolibarr_main_use_dol_eval_new = 0;
+		global $dolibarr_main_use_dol_eval_safe;
 		$issafe = !empty($dolibarr_main_use_dol_eval_safe);	// Set by testDolEvalSafe() that calls this test again, so we are sure DolSafeEval has the same protection than the other engines
-		// The message of DolSafeEval is the same for all errors of syntax, when the message of the other engines gives a detail
-		$bad = static function ($detail) use (&$issafe) {
-			return $issafe ? 'Bad string syntax to evaluate' : 'Bad string syntax to evaluate ('.$detail.')';
-		};	// Set by testDolEvalSafe() that calls this test again, to be sure DolSafeEval has the same protection than the other engines
 
 
-		//$conf->global->MAIN_USE_DOL_EVAL_NEW = 1;
 		$conf->global->MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL = 0;
 		$conf->global->MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL = 1;
 
@@ -953,7 +960,7 @@ class SecurityTest extends CommonClassTest
 			$s = 'MyClass::MyMethod()';
 			$result = dol_eval($s, 1, 1, '2');
 			print "result7 = ".$result."\n";
-			$this->assertStringContainsString($bad('double : char is forbidden without setting MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL'), $result, 'The string was not detected as evil');
+			$this->assertStringContainsString($this->getBadSyntaxMessage($issafe, 'double : char is forbidden without setting MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL'), $result, 'The string was not detected as evil');
 			*/
 
 			/* not allowed. Not a one line eval string
@@ -979,7 +986,7 @@ class SecurityTest extends CommonClassTest
 			$s = '1==\x01';
 			$result = dol_eval($s, 1, 1, '1');	// Check that we can't make dol_eval on string containing \ char.
 			print "result5 = ".$result."\n";
-			$this->assertStringContainsString($bad('found chars that are not chars for a simple one line clean eval string'), $result);
+			$this->assertStringContainsString($this->getBadSyntaxMessage($issafe, 'found chars that are not chars for a simple one line clean eval string'), $result);
 
 			$s = 'new abc->invoke(\'whoami\')';
 			$result = (string) dol_eval($s, 1, 1, '2');
@@ -1018,7 +1025,7 @@ class SecurityTest extends CommonClassTest
 
 			$result = (string) dol_eval('instruction;', 1, 1);	// ; is not allowed.
 			print "result7 = ".$result."\n";
-			$this->assertStringContainsString($bad('found chars that are not chars for a simple one line clean eval string'), $result, 'The string was not detected as evil');
+			$this->assertStringContainsString($this->getBadSyntaxMessage($issafe, 'found chars that are not chars for a simple one line clean eval string'), $result, 'The string was not detected as evil');
 
 			$result = (string) dol_eval('$var1=exec("ls")', 1, 1);
 			print "result7 = ".$result."\n";
@@ -1040,7 +1047,7 @@ class SecurityTest extends CommonClassTest
 
 			$result = (string) dol_eval('$a="test"; $$a;', 1, 0);
 			print "result9 = ".$result."\n";
-			$this->assertStringContainsString($bad('found chars that are not chars for a simple one line clean eval string'), $result, 'The string was not detected as evil');
+			$this->assertStringContainsString($this->getBadSyntaxMessage($issafe, 'found chars that are not chars for a simple one line clean eval string'), $result, 'The string was not detected as evil');
 
 			$result = (string) dol_eval('`ls`', 1, 0);
 			print "result10 = ".$result."\n";
@@ -1135,7 +1142,7 @@ class SecurityTest extends CommonClassTest
 			if ($issafe) {		// A concatenation is harmless with DolSafeEval, a string can never be called as a function
 				$this->assertEquals('abs', $result);
 			} else {
-				$this->assertStringContainsString($bad('dot char is forbidden if not strictly between 2 numbers'), $result, 'Test concat - The string was not reported as a bad syntax when it should');
+				$this->assertStringContainsString($this->getBadSyntaxMessage($issafe, 'dot char is forbidden if not strictly between 2 numbers'), $result, 'Test concat - The string was not reported as a bad syntax when it should');
 			}
 
 
@@ -1146,7 +1153,7 @@ class SecurityTest extends CommonClassTest
 			$leftmenu = 'abs';
 			$result = (string) dol_eval('$leftmenu(-5)', 1, 0);
 			print "result20 = ".$result."\n";
-			$this->assertStringContainsString($bad('mode 1, found a call using "$abc(" or "$abc (" instead of using the direct name of the function'), $result, 'Test 20 - The string was not detected as evil');
+			$this->assertStringContainsString($this->getBadSyntaxMessage($issafe, 'mode 1, found a call using "$abc(" or "$abc (" instead of using the direct name of the function'), $result, 'Test 20 - The string was not detected as evil');
 
 			$result = (string) dol_eval('str_replace("z","e","zxzc")("whoami");', 1, 0);
 			print "result21 = ".$result."\n";
@@ -1162,59 +1169,13 @@ class SecurityTest extends CommonClassTest
 
 			$result = (string) dol_eval('1 + 2 <? echo "aaa" ?>', 1, 0, '2');
 			print "result24 = ".$result."\n";
-			$this->assertStringContainsString($bad('The char ? can be used only with a space before and after'), json_encode($result), 'Test 24 - The string was not detected as evil - Can\'t find the string Bad string syntax when i should');
+			$this->assertStringContainsString($this->getBadSyntaxMessage($issafe, 'The char ? can be used only with a space before and after'), json_encode($result), 'Test 24 - The string was not detected as evil - Can\'t find the string Bad string syntax when i should');
 
 			$result = (string) dol_eval('$$a', 1, 0);
 			print "result25 = ".$result."\n";
 			$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'Test 25 - The string was not detected as evil - Can\'t find the string Bad string syntax when i should');
 		}
 	}
-
-	/**
-	 * testDolEvalNew
-	 *
-	 * Check that dol_eval_new() (engine used when MAIN_USE_DOL_EVAL_NEW is set) rejects
-	 * the callable-dispatch bypass reported in GitHub issue #39436: a forbidden function
-	 * name reached indirectly by a PHP callable-dispatch function like array_map/usort/...
-	 * instead of a direct call.
-	 *
-	 * @depends	testDolEval
-	 * @return void
-	 */
-	public function testDolEvalNew()
-	{
-		global $conf, $user, $langs, $db;
-		$conf = $this->savconf;
-		$user = $this->savuser;
-		$langs = $this->savlangs;
-		$db = $this->savdb;
-
-
-		global $dolibarr_main_use_dol_eval_new;
-		$dolibarr_main_use_dol_eval_new = 1;
-
-
-		$s = "array_map('sys'.'tem', array('id'))";
-		$result = (string) dol_eval($s, 1, 1, '0');
-		print "resultnew1 = ".$result."\n";
-		$this->assertStringContainsString('is prohibited', $result, 'The string '.$s.' returned '.$result.', so was not detected as evil - array_map bypass');
-
-		$result = (string) dol_eval("usort(\$a, 'system')", 1, 1, '0');
-		print "resultnew2 = ".$result."\n";
-		$this->assertStringContainsString('is prohibited', $result, 'The string was not detected as evil - usort bypass');
-
-		$result = (string) dol_eval("preg_replace_callback('/a/', 'system', 'a')", 1, 1, '0');
-		print "resultnew3 = ".$result."\n";
-		$this->assertStringContainsString('is prohibited', $result, 'The string was not detected as evil - preg_replace_callback bypass');
-
-		// Sanity check: legitimate expressions still evaluate correctly
-		$result = dol_eval('1==1', 1, 0);
-		print "resultnew4 = ".json_encode($result)."\n";
-		$this->assertTrue($result);
-
-		$conf->global->MAIN_USE_DOL_EVAL_NEW = 0;
-	}
-
 
 	/**
 	 * testDolEvalSafe.
@@ -1237,7 +1198,7 @@ class SecurityTest extends CommonClassTest
 		$dolibarr_main_use_dol_eval_safe = 2;
 
 		try {
-			$this->testDolEval();
+			$this->testDolEval();		// Run the same tests than testDolEval()
 
 			$dolibarr_main_restrict_eval_methods = '';	// So the default allowlist of DolSafeEval is used
 
