@@ -952,14 +952,14 @@ class tcpdi_parser {
             $this->Error('Invalid object reference: '.$obj);
             return;
         }
-        $objref = $obj[0].' '.$obj[1].' obj';
-
-        if (strpos($this->pdfdata, $objref, $offset) != $offset) {
+        // @CHANGE DOL Accept any white space between the object number, the generation number and the keyword
+        $headerlen = $this->matchObjectHeader($obj[0], $obj[1], $offset);
+        if ($headerlen === false) {
             // an indirect reference to an undefined object shall be considered a reference to the null object
             return array('null', 'null', $offset);
         }
         // starting position of object content
-        $offset += strlen($objref);
+        $offset += $headerlen;
         // get array of object content
         $objdata = array();
         $i = 0; // object main index
@@ -990,6 +990,27 @@ class tcpdi_parser {
         array_pop($objdata);
         // return raw object content
         return $objdata;
+    }
+
+    /**
+     * Check that an object starts at a given offset, and give the length of its header ("12 0 obj").
+     * @CHANGE DOL New method. The header was compared to the string "$num $gen obj": the objects of a file that separates
+     * them with something else than one space ("12         0 obj", or a line break) were never found.
+     *
+     * @param $num (int) Object number
+     * @param $gen (int) Generation number
+     * @param $offset (int) Offset in the document
+     * @return int|false Length of the header, false if this object does not start at this offset
+     */
+    private function matchObjectHeader($num, $gen, $offset) {
+        if (!is_numeric($offset) || $offset < 0 || $offset >= strlen($this->pdfdata)) {
+            // with PHP 8, the string functions throw a ValueError on an offset out of the data
+            return false;
+        }
+        if (preg_match('/\G'.intval($num).'[\s]+'.intval($gen).'[\s]+obj/', $this->pdfdata, $matches, 0, (int) $offset) == 1) {
+            return strlen($matches[0]);
+        }
+        return false;
     }
 
     /**
@@ -1087,7 +1108,8 @@ class tcpdi_parser {
                     // Contained within another stream, skip it.
                     continue;
                 }
-                $this->objoffsets[trim($match[0])] = $offset;
+                // @CHANGE DOL the key is always "num gen obj", whatever separates the numbers in the file
+                $this->objoffsets[intval($matches[1][$i][0]).' '.intval($matches[2][$i][0]).' obj'] = $offset;
                 $dictoffset = $match[1] + strlen($match[0]);
                 $dictfrag = substr($this->pdfdata, $dictoffset, 256);
                 if (preg_match('|^\s+<<[^>]+/Length\s+(\d+)|', $dictfrag, $lengthmatch, PREG_OFFSET_CAPTURE) == 1) {
@@ -1111,13 +1133,13 @@ class tcpdi_parser {
      * @private
      */
     private function findObjectOffset($key) {
-        $objref = $key[0].' '.$key[1].' obj';
+        $objref = intval($key[0]).' '.intval($key[1]).' obj';	// @CHANGE DOL normalized key
         if (isset($this->xref['xref'][$key[0]][$key[1]])) {
             $offset = $this->xref['xref'][$key[0]][$key[1]];
-            if (strpos($this->pdfdata, $objref, $offset) === $offset) {
+            if ($this->matchObjectHeader($key[0], $key[1], $offset) !== false) {	// @CHANGE DOL
                 // Offset is in xref table and matches actual position in file
                 //echo "Offset in XREF is correct, returning<br>";
-                return $this->xref['xref'][$key[0]][$key[1]];
+                return $offset;
             }
         }
         if (array_key_exists($objref, $this->objoffsets)) {
