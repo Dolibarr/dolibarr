@@ -71,6 +71,7 @@ $mode = GETPOST('mode', 'alpha');
 
 $search_user = GETPOST('search_user', 'intcomma');
 $search_sale = GETPOST('search_sale', 'intcomma');
+$search_id = GETPOST('search_id', 'alpha');
 $search_ref = GETPOST('sf_ref') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
 $search_company_alias = GETPOST('search_company_alias', 'alpha');
@@ -191,6 +192,7 @@ if (empty($user->socid)) {
 
 $checkedtypetiers = '0';
 $arrayfields = array(
+	'sp.rowid' => array('label' => $langs->trans("TechnicalID"), 'checked' => (getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? '1' : '-1'), 'enabled' => '1'),
 	'sp.ref' => array('label' => $langs->trans("Ref"), 'checked' => '1'),
 	's.nom' => array('label' => $langs->trans("Supplier"), 'checked' => '1'),
 	's.name_alias' => array('label' => "AliasNameShort", 'checked' => '0'),
@@ -264,6 +266,7 @@ if (empty($reshook)) {
 		$search_categ = '';
 		$search_user = '';
 		$search_sale = '';
+		$search_id = '';
 		$search_ref = '';
 		$search_company = '';
 		$search_company_alias = '';
@@ -398,6 +401,9 @@ if ($search_country) {
 if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 	$sql .= " AND s.fk_typent IN (".$db->sanitize($search_type_thirdparty).')';
 }
+if ($search_id != '') {
+	$sql .= natural_search('sp.rowid', $search_id, 1);
+}
 if ($search_ref) {
 	$sql .= natural_search('sp.ref', $search_ref);
 }
@@ -460,10 +466,10 @@ if ($search_date_valid_start) {
 	$sql .= " AND sp.date_valid >= '".$db->idate($search_date_valid_start)."'";
 }
 if ($search_note_public) {
-	$sql .= " AND p.note_public LIKE '%".$db->escape($db->escapeforlike($search_note_public))."%'";
+	$sql .= " AND sp.note_public LIKE '%".$db->escape($db->escapeforlike($search_note_public))."%'";
 }
 if ($search_note_private) {
-	$sql .= " AND p.note_private LIKE '%".$db->escape($db->escapeforlike($search_note_private))."%'";
+	$sql .= " AND sp.note_private LIKE '%".$db->escape($db->escapeforlike($search_note_private))."%'";
 }
 if ($search_date_valid_end) {
 	$sql .= " AND sp.date_valid <= '".$db->idate($search_date_valid_end)."'";
@@ -643,6 +649,9 @@ if ($resql) {
 	}
 	if ($search_date_valid_endyear) {
 		$param .= '&search_date_valid_endyear='.urlencode((string) ($search_date_valid_endyear));
+	}
+	if ($search_id != '') {
+		$param .= '&search_id='.urlencode($search_id);
 	}
 	if ($search_ref) {
 		$param .= '&search_ref='.urlencode($search_ref);
@@ -828,6 +837,11 @@ if ($resql) {
 		print $searchpicto;
 		print '</td>';
 	}
+	if (!empty($arrayfields['sp.rowid']['checked'])) {
+		print '<td class="liste_titre center">';
+		print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
+		print '</td>';
+	}
 	if (!empty($arrayfields['sp.ref']['checked'])) {
 		print '<td class="liste_titre">';
 		print '<input class="flat width75" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
@@ -1001,6 +1015,10 @@ if ($resql) {
 	print '<tr class="liste_titre">';
 	if ($conf->main_checkbox_left_column) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+		$totalarray['nbfield']++;
+	}
+	if (!empty($arrayfields['sp.rowid']['checked'])) {
+		print_liste_field_titre($arrayfields['sp.rowid']['label'], $_SERVER["PHP_SELF"], 'sp.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['sp.ref']['checked'])) {
@@ -1178,6 +1196,12 @@ if ($resql) {
 					print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 				}
 				print '</td>';
+			}
+			if (!empty($arrayfields['sp.rowid']['checked'])) {
+				print '<td class="center" data-key="id">'.((int) $obj->rowid).'</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
 			}
 			if (!empty($arrayfields['sp.ref']['checked'])) {
 				print '<td class="nowraponall">';
@@ -1435,7 +1459,7 @@ if ($resql) {
 				}
 			}
 			// Note public
-			if (!empty($arrayfields['f.note_public']['checked'])) {
+			if (!empty($arrayfields['sp.note_public']['checked'])) {
 				print '<td class="sensiblehtmlcontent center">';
 				print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
 				print '</td>';
@@ -1444,7 +1468,7 @@ if ($resql) {
 				}
 			}
 			// Note private
-			if (!empty($arrayfields['f.note_private']['checked'])) {
+			if (!empty($arrayfields['sp.note_private']['checked'])) {
 				print '<td class="sensiblehtmlcontent center">';
 				print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 				print '</td>';

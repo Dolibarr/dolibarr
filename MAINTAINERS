@@ -46,14 +46,25 @@ Maintainers List
 ----------------
 
 ACCOUNTING
-M:	Alexandre Spangaro <aspangaro.dolibarr@gmail.com> / Alexandre Spangaro
-M:	Laurent Destailleur <ldestailleur@dolicloud.com> / Eldy
+M:	Alexandre Spangaro <aspangaro.dolibarr@gmail.com> / aspangaro
+M:	Laurent Destailleur <ldestailleur@dolicloud.com> / eldy
 S:	Maintained
 F:	accountancy/
+F:	core/lib/accounting.lib.php
+F:	langs/en_US/accountancy.lang
+T:	https://github.com/Dolibarr/dolibarr.git
+
+ASSET
+M:	Alexandre Spangaro <aspangaro.dolibarr@gmail.com> / aspangaro
+M:	Laurent Destailleur <ldestailleur@dolicloud.com> / eldy
+S:	Maintained
+F:	asset/
+F:	core/lib/asset.lib.php
+F:	langs/en_US/assets.lang
 T:	https://github.com/Dolibarr/dolibarr.git
 
 ALL
-M:	Laurent Destailleur <ldestailleur@dolicloud.com> / Eldy
+M:	Laurent Destailleur <ldestailleur@dolicloud.com> / eldy
 S:	Maintained
 F:	/
 T:	https://github.com/Dolibarr/dolibarr.git

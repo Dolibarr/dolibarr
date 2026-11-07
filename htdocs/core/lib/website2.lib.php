@@ -320,7 +320,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		}
 
 		// Add manifest.json. Do we have to add it only on home page ?
-		$tplcontent .= '<?php if ($website->use_manifest) { print \'<link rel="manifest" href="/manifest.json.php" />\'."\n"; } ?>'."\n";
+		$tplcontent .= '<?php if ($website->use_manifest) { print \'<link rel="manifest" href="/manifest.json" />\'."\n"; } ?>'."\n";
 
 		// Add HTML headers (must be before the Add of the common CSS and js). The common js may content javascript using jquery or a framework loaded by the HTML header.
 		$tplcontent .= '<!-- Include HTML header from common file -->'."\n";
@@ -703,7 +703,7 @@ function dolSaveManifestJson($file, $content)
 {
 	global $pathofwebsite;
 
-	dol_syslog("Save manifest.js.php file into ".$file);
+	dol_syslog("Save manifest.json file into ".$file);
 
 	dol_mkdir($pathofwebsite);
 	$result = file_put_contents($file, $content);
@@ -895,7 +895,7 @@ function showWebsiteTemplates(Website $website, int $refresh)
 
 	print '<tr><td colspan="'.$colspan.'">';
 
-	print '<table class="nobordernopadding centpercent"><tr><td><div class="display-flex">';
+	print '<table class="nobordernopadding centpercent"><tr><td><div class="display-flex" style="row-gap: 20px;">';
 
 	if (count($dirthemes)) {
 		$i = 0;
@@ -921,7 +921,8 @@ function showWebsiteTemplates(Website $website, int $refresh)
 
 							$arrayoftemplatesfound[$subdirwithoutzip] = array('id' => $subdirwithoutzip);
 
-							print '<div class="inline-block center flex-item" style="min-width: 250px; max-width: 400px; margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;">';
+							// Use a flex column so the date and the Load button are aligned at bottom whatever the length of the template name
+							print '<div class="inline-block center flex-item" style="min-width: 250px; max-width: 400px; margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px; display: flex; flex-direction: column; align-items: center;">';
 
 							$templatedir = $dirtheme."/".$subdir;
 							$file = $dirtheme."/".$subdirwithoutzipwithoutver.".jpg";
@@ -948,14 +949,16 @@ function showWebsiteTemplates(Website $website, int $refresh)
 							print '<img class="img-skinthumb shadow" src="'.$url.'" border="0" alt="'.$title.'" title="'.$title.'" style="margin-bottom: 5px;">';
 							print '</a>';
 
-							print '<br>';
-							print $subdir;
-							print '<br>';
+							print '<div class="wordbreak" style="flex-grow: 1;">';
+							print dolPrintLabel($subdir);
+							print '</div>';
+							print '<div>';
 							print '<span class="opacitymedium">'.dol_print_size(dol_filesize($dirtheme."/".$subdir), 1, 1).' - '.dol_print_date(dol_filemtime($templatedir), 'dayhour', 'tzuserrel').'</span>';
 							if ($user->hasRight('website', 'delete')) {
-								print ' <a href="'.$_SERVER["PHP_SELF"].'?action=deletetemplate&token='.newToken().'&website='.urlencode($website->ref).'&templateuserfile='.urlencode($subdir).'">'.img_picto('', 'delete').'</a>';
+								print ' <a href="'.$_SERVER["PHP_SELF"].'?action=deletetemplate&token='.newToken().'&website='.urlencode($website->ref).'&templateuserfile='.urlencode($subdir).'" title="'.dolPrintHTMLForAttribute($langs->transnoentities("DeleteWebsiteTemplate")).'">'.img_picto('', 'delete').'</a>';
 							}
 							print '<br><a href="'.$_SERVER["PHP_SELF"].'?action=importsiteconfirm&token='.newToken().'&website='.urlencode($website->ref).'&templateuserfile='.urlencode($subdir).'" class="button'.($importButtonIsDisabled ? ' disabled' : '').'">'.$langs->trans("Load").'</a>';
+							print '</div>';
 							print '</div>';
 
 							$i++;

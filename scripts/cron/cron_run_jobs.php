@@ -111,7 +111,7 @@ $ini_path = php_ini_loaded_file();
 print 'TZ server = '.getServerTimeZoneString()." - set in PHP ini ".$ini_path."\n";
 
 // Check security key
-if ($key != getDolGlobalString('CRON_KEY')) {
+if (!hash_equals(getDolGlobalString('CRON_KEY'), (string) $key)) {
 	print "Error: securitykey provided ".substr($key, 0, 5)."... does not match securitykey in setup.\n";
 	exit(1);
 }
@@ -157,8 +157,8 @@ if (getDolUserString('MAIN_LANG_DEFAULT')) {
 	$langcode = getDolUserString('MAIN_LANG_DEFAULT');
 }
 if ($langs->getDefaultLang() != $langcode) {
+	$langs = new Translate('', $conf);
 	$langs->setDefaultLang($langcode);
-	$langs->tab_translate = array();
 }
 // Language Management
 $langs->loadLangs(array('main', 'admin', 'cron', 'dict'));
@@ -302,8 +302,8 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 				$langcode = $user->conf->MAIN_LANG_DEFAULT;
 			}
 			if ($langs->getDefaultLang() != $langcode) {
+				$langs = new Translate('', $conf);
 				$langs->setDefaultLang($langcode);
-				$langs->tab_translate = array();
 				$langs->loadLangs(array('main', 'admin', 'cron', 'dict'));
 			}
 		}

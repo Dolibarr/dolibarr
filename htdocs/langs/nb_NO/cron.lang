@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = Les planlagt jobb
-Permission23102 = Opprett/endre planlagt jobb
-Permission23103 = Slett planlagt jobb
-Permission23104 = Utfør planlagt jobb
 # Admin
 CronSetup=Administrasjon av planlagte oppgaver
 URLToLaunchCronJobs=URL for å sjekke og starte kvalifiserte cron-jobber fra en nettleser
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=I Unix-miljøer bør du bruke følgende crontab-oppføri
 CronExplainHowToRunWin=I Microsoft Windows-miljø kan du bruke Planlagt oppgaveverktøy til å kjøre kommandolinjen hvert 5. minutt
 CronMethodDoesNotExists=Klasse %s inneholder ingen metode %s
 CronMethodNotAllowed=Metode %s av klassen %s er i blokkeringslisten over forbudte metoder
-CronJobDefDesc=Cronjobbprofiler er definert i modulbeskrivelsesfilen. Når modulen er aktivert, er de lastet og tilgjengelig slik at du kan administrere jobbene fra administrasjonsmenyen %s.
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=Liste over forhåndsdefinerte cronjobbprofiler
 # Menu
 EnabledAndDisabled=Aktivert og deaktivert
@@ -27,7 +22,7 @@ CronDelete=Slett planlagte jobber
 CronConfirmDelete=Er du sikker på at du vil slette disse planlagte jobbene?
 CronExecute=Start nå
 CronConfirmExecute=Er du sikker på at du vil kjøre disse planlagte jobbene nå?
-CronInfo=Planlagt jobb -modul gjør det mulig å planlegge jobber for å utføre dem automatisk. Jobber kan også startes manuelt.
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=Jobb
 CronNone=Neste kjøring av planlagt oppgave
 CronNotYetRan=Aldri utført
@@ -79,7 +74,7 @@ CronType_command=Shell kommando
 CronCannotLoadClass=Kan ikke laste klassefil %s (for å bruke klasse %s)
 CronModuleNotEnabledInThisEntity=Cron-modulen er ikke aktivert i denne enheten (for å bruke %s-metoden til %s-objektet)
 CronCannotLoadObject=Klassefil %s ble lastet, men objektet %s ble ikke funnet i den
-UseMenuModuleToolsToAddCronJobs=Gå til menyen " <a href="%s">Hjem - Administratorverktøy - Planlagte jobber</a>" for å se og redigere planlagte jobber.
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=Jobb deaktivert
 MakeLocalDatabaseDumpShort=Backup av lokal database
 MakeLocalDatabaseDump=Opprett en lokal database dump. Parametrene er: komprimering ('gz' eller 'bz' eller 'ingen'), backup type ('mysql', 'pgsql', 'auto'), 1, 'auto' eller filnavn for å bygge, antall backupfiler som skal beholdes

@@ -232,6 +232,7 @@ PercentOfInvoice=%%/invoice
 NotUsedForGoods=Not used on goods
 ProposalStats=Statistics on proposals
 OrderStats=Statistics on orders
+SupplierOrderStats=Statistics on purchase orders
 InvoiceStats=Statistics on bills
 Dispatch=Dispatching
 Dispatched=Dispatched

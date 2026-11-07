@@ -2844,7 +2844,7 @@ function migrate_project_user_resp($db, $langs, $conf)
 					$obj = $db->fetch_object($resql);
 
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."element_contact (";
-					$sql2 .= "datecreate";
+					$sql2 .= "date_creation";
 					$sql2 .= ", statut";
 					$sql2 .= ", element_id";
 					$sql2 .= ", fk_c_type_contact";
@@ -2923,7 +2923,7 @@ function migrate_project_task_actors($db, $langs, $conf)
 					$obj = $db->fetch_object($resql);
 
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."element_contact (";
-					$sql2 .= "datecreate";
+					$sql2 .= "date_creation";
 					$sql2 .= ", statut";
 					$sql2 .= ", element_id";
 					$sql2 .= ", fk_c_type_contact";
@@ -4402,6 +4402,7 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/modules/supplier_order/doc/pdf_muscadet.modules.php',
 		'/core/modules/supplier_proposal/doc/pdf_aurore.modules.php',
 		'/core/modules/facture/pdf_oursin.modules.php',
+		'/core/modules/cheque/doc/pdf_blochet.class.php',		// renamed into pdf_blochet.modules.php
 		'/core/modules/mailings/contacts2.modules.php',
 		'/core/modules/mailings/contacts3.modules.php',
 		'/core/modules/mailings/contacts4.modules.php',
@@ -4669,8 +4670,7 @@ function migrate_reload_menu($db, $langs, $conf)
 
 	// Define list of menu handlers to initialize
 	$listofmenuhandler = array();
-	if (getDolGlobalString('MAIN_MENU_STANDARD') == 'auguria_menu' || getDolGlobalString('MAIN_MENU_SMARTPHONE') == 'auguria_menu'
-		|| getDolGlobalString('MAIN_MENUFRONT_STANDARD') == 'auguria_menu' || getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE') == 'auguria_menu') {
+	if (getDolGlobalString('MAIN_MENU_STANDARD') == 'auguria_menu' || getDolGlobalString('MAIN_MENUFRONT_STANDARD') == 'auguria_menu') {
 		$listofmenuhandler['auguria'] = 1; // We set here only dynamic menu handlers
 	}
 

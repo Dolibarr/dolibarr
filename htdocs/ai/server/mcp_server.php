@@ -3,6 +3,7 @@
  * Copyright (C) 2026	Nick Fragoulis
  * Copyright (C) 2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +76,7 @@ header('Content-Type: application/json');
 header('X-Content-Type-Options: nosniff');
 
 // Request headers, used by the transport-header validation further down.
-$headers = function_exists('getallheaders') ? getallheaders() : [];
+$headers = dolGetRequestHeaders();
 $headers = array_change_key_case($headers, CASE_LOWER);
 
 $mcpAuth = new McpAuth($db);
@@ -196,6 +197,31 @@ function mcp_log_request(array $req, $resp, float $tStart, string $rawInput): vo
 	);
 }
 
+// For debug, a plain GET (browser, curl) with debug=1 returns the list of tools. Any other GET gets a 405, as
+// required by the MCP Streamable HTTP spec when no SSE stream is offered.
+$acceptHeader = isset($headers['accept']) ? (string) $headers['accept'] : '';
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && GETPOSTINT('debug') == 1 && strpos($acceptHeader, 'text/event-stream') === false) {
+	$server = new MCPServer($db, $conf, $serviceUser);
+	$response = $server->handleRequest(["jsonrpc" => "2.0", "id" => 1, "method" => "tools/list"]);
+	if ($server->getHttpStatus() !== 200) {
+		http_response_code($server->getHttpStatus());
+	}
+	echo json_encode($response);
+	exit;
+}
+
+// Only POST is supported (no SSE stream on GET): MCP Streamable HTTP spec requires a 405 for other methods.
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+	http_response_code(405);
+	header('Allow: POST');
+	echo json_encode([
+		"jsonrpc" => "2.0",
+		"id" => null,
+		"error" => ["code" => -32000, "message" => "Method Not Allowed: MCP requests must be sent with HTTP POST"]
+	]);
+	exit;
+}
+
 // Request handling
 try {
 	$tStart = microtime(true);
@@ -203,13 +229,13 @@ try {
 	// Basic payload size limit
 	$rawInput = file_get_contents('php://input');
 	if ($rawInput === false || strlen($rawInput) > 1024 * 1024) {
-		throw new Exception("Invalid or too large request");
+		throw new Exception("Invalid or too large request", -32600);
 	}
 
 	$request = json_decode($rawInput, true);
 
 	if (json_last_error() !== JSON_ERROR_NONE) {
-		throw new Exception("Parse Error");
+		throw new Exception("Parse Error", -32700);
 	}
 
 	$server = new MCPServer($db, $conf, $serviceUser);
@@ -273,7 +299,7 @@ try {
 	} else {
 		// Single request
 		if (!is_array($request)) {
-			throw new Exception("Invalid request format");
+			throw new Exception("Invalid request format", -32600);
 		}
 
 		$response = $server->validateTransportHeaders($headers, $request);
@@ -305,12 +331,16 @@ try {
 		LOG_ERR
 	);
 
+	// Map the exception code to a JSON-RPC error; any other exception is an internal error.
+	$errorMessages = [-32700 => "Parse error", -32600 => "Invalid Request"];
+	$errorCode = isset($errorMessages[$e->getCode()]) ? $e->getCode() : -32603;
+
 	echo json_encode([
 		"jsonrpc" => "2.0",
 		"id" => null,
 		"error" => [
-			"code" => -32700,
-			"message" => "Parse error"
+			"code" => $errorCode,
+			"message" => isset($errorMessages[$errorCode]) ? $errorMessages[$errorCode] : "Internal error"
 		]
 	]);
 }

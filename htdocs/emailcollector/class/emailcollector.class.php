@@ -792,7 +792,7 @@ class EmailCollector extends CommonObject
 	{
 		$this->actions = array();
 
-		$sql = 'SELECT rowid, type, actionparam, status';
+		$sql = 'SELECT rowid, type, actionparam, status, position';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'emailcollector_emailcollectoraction';
 		$sql .= ' WHERE fk_emailcollector = '.((int) $this->id);
 		$sql .= ' ORDER BY position';
@@ -803,7 +803,7 @@ class EmailCollector extends CommonObject
 			$i = 0;
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
-				$this->actions[$obj->rowid] = array('id' => $obj->rowid, 'type' => $obj->type, 'actionparam' => $obj->actionparam, 'status' => $obj->status);
+				$this->actions[$obj->rowid] = array('id' => $obj->rowid, 'type' => $obj->type, 'actionparam' => $obj->actionparam, 'status' => $obj->status, 'position' => $obj->position);
 				$i++;
 			}
 			$this->db->free($resql);
@@ -2727,6 +2727,7 @@ class EmailCollector extends CommonObject
 
 				// Now do all operations for the email (extract variables and creating data)
 				if ($mode < 2) {	// 0=Mode production, 1=Mode test (read IMAP and try SQL update then rollback), 2=Mode test with no SQL updates
+					$isnewobject = 0;	// Set to 1 when an action of this email creates the object (ticket...)
 					foreach ($this->actions as $operation) {
 						$errorforthisaction = 0;
 						$ticketalreadyexists = 0;
@@ -3428,7 +3429,7 @@ class EmailCollector extends CommonObject
 									$hookmanager = new HookManager($this->db);
 								}
 								$hookmanager->initHooks(array('emailcolector', 'emailcollector'));
-								$parameters = array('arrayobject' => $arrayobject);
+								$parameters = array('arrayobject' => $arrayobject, 'data' => $data);	// data: attachments content by file name
 								$reshook = $hookmanager->executeHooks('addmoduletoeamailcollectorjoinpiece', $parameters);    // Note that $action and $object may have been modified by some hooks
 								if ($reshook > 0) {
 									$arrayobject = $hookmanager->resArray;
@@ -3612,7 +3613,7 @@ class EmailCollector extends CommonObject
 													$skippedatt = 0;
 													foreach ($attachments as $attachment) {
 														// $attachment->save($destdir.'/');
-														$filename = $attachment->getFilename();
+														$filename = $attachment->getName();
 														if (!$this->isAllowedAttachmentFilename((string) $filename)) {
 															$skippedatt++;
 															continue;
@@ -3772,6 +3773,9 @@ class EmailCollector extends CommonObject
 											$this->error = 'Failed to create ticket: '.$langs->trans($tickettocreate->error);
 											$this->errors = $tickettocreate->errors;
 										} else {
+											// Created ticket is the object of the email for next actions and hooks
+											$objectemail = $tickettocreate;
+											$isnewobject = 1;
 											if ($attachments) {
 												$destdir = $conf->ticket->dir_output.'/'.$tickettocreate->ref;
 												if (!dol_is_dir($destdir)) {
@@ -3936,6 +3940,8 @@ class EmailCollector extends CommonObject
 								'subject' => $subject,
 								'header' => $header,
 								'attachments' => $attachments,
+								'new' => $isnewobject,
+								'cc' => (getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP') && is_object($imapemail) ? $imapemail->get('cc') : null),
 								'savedattachments' => $savedattachments,
 								'savedattachmentsdir' => $savedattachmentsdir,
 							);

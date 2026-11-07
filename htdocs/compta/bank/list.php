@@ -65,6 +65,7 @@ $toselect = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'bankaccountlist'; // To manage different context of search
 $mode = GETPOST('mode', 'aZ');
 
+$search_id = GETPOST('search_id', 'alpha');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
 $search_number = GETPOST('search_number', 'alpha');
@@ -119,6 +120,7 @@ $fieldstosearchall = array(
 
 $checkedtypetiers = 0;
 $arrayfields = array(
+	'b.rowid' => array('label' => $langs->trans("TechnicalID"), 'checked' => (getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? '1' : '-1'), 'enabled' => '1', 'position' => 1),
 	'b.ref' => array('label' => $langs->trans("BankAccounts"), 'checked' => '1', 'position' => 10),
 	'b.label' => array('label' => $langs->trans("Label"), 'checked' => '1', 'position' => 12),
 	'accountype' => array('label' => $langs->trans("Type"), 'checked' => '1', 'position' => 14),
@@ -176,6 +178,7 @@ if (empty($reshook)) {
 
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+		$search_id = '';
 		$search_ref = '';
 		$search_label = '';
 		$search_number = '';
@@ -234,6 +237,9 @@ if ($search_status === 'opened') {
 }
 if ($search_status === 'closed') {
 	$sql .= " AND clos = 1";
+}
+if ($search_id != '') {
+	$sql .= natural_search('b.rowid', $search_id, 1);
 }
 if ($search_ref != '') {
 	if (empty($arrayfields['b.label']['checked'])) {
@@ -348,6 +354,9 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
+if ($search_id != '') {
+	$param .= '&search_id='.urlencode($search_id);
+}
 if ($search_ref != '') {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
@@ -460,6 +469,12 @@ if ($conf->main_checkbox_left_column) {
 	print $searchpicto;
 	print '</td>';
 }
+// Technical ID
+if (!empty($arrayfields['b.rowid']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
+	print '</td>';
+}
 // Ref
 if (!empty($arrayfields['b.ref']['checked'])) {
 	print '<td class="liste_titre">';
@@ -552,6 +567,10 @@ print '<tr class="liste_titre">';
 // Action column
 if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['b.rowid']['checked'])) {
+	print_liste_field_titre($arrayfields['b.rowid']['label'], $_SERVER["PHP_SELF"], 'b.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['b.ref']['checked'])) {
@@ -685,6 +704,13 @@ foreach ($accounts as $key => $type) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Technical ID
+		if (!empty($arrayfields['b.rowid']['checked'])) {
+			print '<td class="center" data-key="id">'.((int) $objecttmp->id).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		// Ref
 		if (!empty($arrayfields['b.ref']['checked'])) {
 			if (empty($arrayfields['b.label']['checked'])) {
@@ -737,7 +763,7 @@ foreach ($accounts as $key => $type) {
 
 		// Account number
 		if (!empty($arrayfields['b.account_number']['checked'])) {
-			print '<td class="tdoverflowmax250">';
+			print '<td class="tdoverflowmax200">';
 			if (isModEnabled('accounting')) {
 				if (empty($objecttmp->account_number)) {
 					print img_warning($langs->trans("Mandatory"));

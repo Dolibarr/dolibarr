@@ -60,10 +60,25 @@ class PrivacyGuard
 	{
 		$this->startSession();
 
-		// References / IDs (e.g. FA24-001, CUS-999)
-		// Must contain letters and numbers and separators
+		// Emails, before the references: a local part with digits (jean2024@...) would
+		// otherwise be taken as a reference and the domain sent unmasked.
 		$text = preg_replace_callback(
-			'/\b(?=[A-Z0-9]*[0-9])(?=[A-Z0-9]*[A-Z])[A-Z0-9-_]{4,}\b/i',
+			'/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/',
+			/**
+			 * @param array<int, string> $m
+			 * @return string
+			 */
+			function (array $m) {
+				return $this->createToken($m[0], 'EMAIL');
+			},
+			$text
+		);
+
+		// References / IDs (e.g. FA24-001, CUS-999)
+		// Must contain letters and numbers and separators. A house number with one
+		// letter (221B, 5a) is left to the address patterns below.
+		$text = preg_replace_callback(
+			'/\b(?!\d{1,5}[A-Za-z]\b)(?=[A-Z0-9]*[0-9])(?=[A-Z0-9]*[A-Z])[A-Z0-9-_]{4,}\b/i',
 			/**
 			 * @param array<int, string> $m
 			 * @return string
@@ -108,19 +123,6 @@ class PrivacyGuard
 			 */
 			function (array $m) {
 				return $this->createToken($m[0], 'BANKACCT');
-			},
-			$text
-		);
-
-		// Emails
-		$text = preg_replace_callback(
-			'/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/',
-			/**
-			 * @param array<int, string> $m
-			 * @return string
-			 */
-			function (array $m) {
-				return $this->createToken($m[0], 'EMAIL');
 			},
 			$text
 		);
@@ -228,177 +230,52 @@ class PrivacyGuard
 		}
 
 		// Address patterns
-		// Initialize translation and exclusions
-		// We need the global $langs object to get dynamic month names.
-		global $langs;
+		// An address is recognised by its shape around a street word (Street, Rue,
+		// Via, Straße, Οδός...) or a street suffix (Musterweg), never by a list of
+		// words that are not streets: such a list never ends ("Customer 4821",
+		// "Order 1007"...). Without a street word, a name and a number are an
+		// address only when a postcode and a town follow (ΦΟΡΜΙΩΝΟΣ 101, 115 28 Athens).
+		// No i flag on the shapes that start with a word: with it, \p{Lu} also
+		// takes lowercase letters and a match grows leftwards over the sentence.
+		$address_keywords = 'Street|Road|Avenue|Lane|Boulevard|Drive|Court|Way|Plaza|Square|Rue|Allée|Impasse|Chemin|Place|Quai|Via|Viale|Piazza|Corso|Avenida|Paseo|Camino|Strasse|Straße|Platz|Gasse|Weg|Οδός|Οδ\.|Λεωφόρος|Λεωφ\.|Πλατεία';
+		$address_abbreviations = 'St|Rd|Ave|Ln|Blvd|Dr|Ct|Sq|Str';
+		// Written in lowercase after the number, as French, Spanish and Italian
+		// addresses do ("12 rue de Rivoli"); English street words are capitalised.
+		$address_keywords_lower = 'rue|avenue|boulevard|chemin|place|allée|impasse|quai|avenida|paseo|camino|via|viale|piazza|corso';
+		$address_suffixes = 'strasse|straße|weg|platz|gasse|allee|ring|damm|ufer|laan|straat|gracht|vej|gatan|gade';
+		$word = '\p{Lu}[\p{L}\p{N}\.\'\-]*';
+		$particle = '\p{Ll}{1,3}\b';	// de, la, du, del, di, von, der
+		// A house number (12, 12B), never part of a larger number: the 3 of 3,374.00.
+		// A comma may follow it, as in "Musterweg 12, 10115 Berlin".
+		$number = '\d{1,5}[A-Za-z]?(?!\d|[.,]\d)\b';
+		// A postcode then a town, not a currency: "4821, 12500 EUR" is no address.
+		$town = '(?=\s*,?\s*(?:\d{3}\s?\d{2}|\d{4,5})(?!\d)(?!\s*(?:[A-Z]{3}\b|[€$£¥₹%]))\s+\p{Lu})';
 
-		// Hardcoded Fallbacks (English, French, Spanish, German, Greek)
-		// We keep these hardcoded because an invoice might be in English even if the ERP is in Greek.
-		$hardcoded_excludes = [
-			// English
-			'January',
-			'February',
-			'March',
-			'April',
-			'May',
-			'June',
-			'July',
-			'August',
-			'September',
-			'October',
-			'November',
-			'December',
-			'Jan',
-			'Feb',
-			'Mar',
-			'Apr',
-			'Jun',
-			'Jul',
-			'Aug',
-			'Sep',
-			'Oct',
-			'Nov',
-			'Dec',
-			// Greek
-			'Ιανουάριος',
-			'Φεβρουάριος',
-			'Μάρτιος',
-			'Απρίλιος',
-			'Μάιος',
-			'Ιούνιος',
-			'Ιούλιος',
-			'Αύγουστος',
-			'Σεπτέμβριος',
-			'Οκτώβριος',
-			'Νοέμβριος',
-			'Δεκέμβριος',
-			'Ιαν',
-			'Φεβ',
-			'Μαρ',
-			'Απρ',
-			'Μαι',
-			'Ιουν',
-			'Ιουλ',
-			'Αυγ',
-			'Σεπ',
-			'Οκτ',
-			'Νοε',
-			'Δεκ',
-			// French
-			'Janvier',
-			'Février',
-			'Mars',
-			'Avril',
-			'Mai',
-			'Juin',
-			'Juillet',
-			'Août',
-			'Septembre',
-			'Octobre',
-			'Novembre',
-			'Décembre',
-			// German
-			'Januar',
-			'Februar',
-			'März',
-			'Juni',
-			'Juli',
-			'Oktober',
-			'Dezember',
-			// Spanish
-			'Enero',
-			'Febrero',
-			'Marzo',
-			'Abril',
-			'Mayo',
-			'Junio',
-			'Julio',
-			'Agosto',
-			'Septiembre',
-			'Octubre',
-			'Noviembre',
-			'Diciembre',
-			// ERP Noise (Common False Positives)
-			'Page',
-			'Pag',
-			'Vol',
-			'Volume',
-			'Inv',
-			'Invoice',
-			'Tel',
-			'Fax',
-			'Mob',
-			'Email',
-			'Vat',
-			'Tax',
-			'Sarl',
-			'Gmbh',
-			'Inc',
-			'Ltd',
-			'Total',
-			'Subtotal'
-		];
-
-		// Dynamic Dolibarr Translations
-		// If $langs is available, we add the months in the current user's language.
-		$dynamic_excludes = [];
-		if (is_object($langs)) {
-			for ($i = 1; $i <= 12; $i++) {
-				$key = sprintf("%02d", $i); // 01, 02...
-				$dynamic_excludes[] = $langs->trans('Month' . $key);       // Full name
-				$dynamic_excludes[] = $langs->trans('MonthShort' . $key);  // Short name
-			}
-		}
-
-		// Merge and Deduplicate
-		// We combine hardcoded list + dynamic list + noise words
-		$all_excludes_array = array_unique(array_merge($hardcoded_excludes, $dynamic_excludes));
-
-		// Remove empty entries just in case
-		$all_excludes_array = array_filter($all_excludes_array);
-
-		// Create the Regex string: "January|Feb|Μάρτιος|Page..."
-		// We use preg_quote to ensure no special characters break the regex (though rare in months).
-		$excluded_words_regex = implode('|', array_map(
-			function (string $word): string {
-				return preg_quote($word, '/');
-			},
-			$all_excludes_array
-		));
-
-
-		// Define address keywords
-		$address_keywords = 'Street|St|Road|Rd|Avenue|Ave|Lane|Ln|Boulevard|Blvd|Rue|Via|Strasse|Platz|Drive|Dr|Court|Ct|Way|Plaza|Square|Sq|Οδός|Λεωφόρος|Διεύθυνση|Piazza|Avenida';
-
-
-		// Define patterns
 		$addressPatterns = [
 			[
-				'name' => 'Number First (e.g., 123 Main St)',
-				// 123 Main St
-				'regex' => '/\b\d{1,5}\s+(?:[\p{L}\p{N}\.\'\-]+\s+){1,6}(?:' . $address_keywords . ')\b/ui',
+				'name' => 'Number First (e.g., 12 rue de Rivoli, 123 Main St, 221B Baker Street)',
+				'regex' => '/\b\d{1,5}[A-Za-z]?,?\s+(?:' . $word . '\s+){0,3}(?:' . $address_keywords . '|' . $address_abbreviations . '|' . $address_keywords_lower . ')\b\.?(?:\s+(?:' . $word . '|' . $particle . ')){0,4}/u',
 				'token' => 'ADDR'
 			],
 			[
-				'name' => 'Keyword First (e.g., Rue de la Paix 12)',
-				// Rue de la Paix 12
-				'regex' => '/\b(?:' . $address_keywords . ')\s+(?:[\p{L}\p{N}\.\'\-]+\s+){1,6}\d{1,5}\b/ui',
+				'name' => 'Name First, Keyword After (e.g., Main Street 42, Main St. 42)',
+				'regex' => '/\b' . $word . '(?:\s+' . $word . '){0,2}\s+(?:' . $address_keywords . '|' . $address_abbreviations . ')\.?\s+' . $number . '/u',
 				'token' => 'ADDR'
 			],
 			[
-				'name' => 'Name First, Keyword Middle (e.g., Main St 12)',
-				// Main St 12
-				'regex' => '/\b(?:[\p{L}\p{N}\.\'\-]+\s+){1,4}(?:' . $address_keywords . ')\s+\d{1,5}\b/ui',
+				'name' => 'Street Suffix (e.g., Musterweg 12, Hauptstraße 5)',
+				'regex' => '/\b\p{Lu}\p{L}*(?:' . $address_suffixes . ')\.?\s+' . $number . '/u',
 				'token' => 'ADDR'
 			],
 			[
-				'name' => 'Name First, No Keyword (Strict)',
-				// Matches: "ΦΟΡΜΙΩΝΟΣ 101" or "Musterway 12"
-				// Ignores: "January 2024", "Page 1", "Invoice 2023"
-				// Logic:
-				// 1. Negative Lookahead (?!(?:...)\b): If next word is in exclusion list, STOP.
-				// 2. \p{Lu}: Must start with Uppercase Letter (Unicode safe).
-				'regex' => '/\b(?!(?:' . $excluded_words_regex . ')\b)\p{Lu}[\p{L}\p{N}\.\'\-]+\s+\d{1,5}\b/u',
+				'name' => 'Keyword First (e.g., Rue Victor Hugo 5, Οδός Ερμού 12)',
+				// At least one name between the street word and the number: "Square 3" is no address.
+				'regex' => '/\b(?:' . $address_keywords . ')(?:\s+(?:' . $word . '|' . $particle . ')){1,4}\s+' . $number . '/u',
+				'token' => 'ADDR'
+			],
+			[
+				'name' => 'No Keyword, Postcode And Town After (e.g., ΦΟΡΜΙΩΝΟΣ 101, 115 28 Athens)',
+				'regex' => '/\b' . $word . '(?:\s+' . $word . '){0,2}\s+' . $number . $town . '/u',
 				'token' => 'ADDR'
 			],
 		];
@@ -437,24 +314,32 @@ class PrivacyGuard
 				// Matches 5-digit French codes. It's more specific than a generic \d{5}
 				// by checking for valid department numbers (01-95) and Corsica (2A, 2B).
 				'regex' => '/\b(0[1-9]\d{3}|[1-8]\d{4}|9[0-5]\d{2}|2[AB]\d{3})\b/',
-				'token' => 'ZIP'
+				'token' => 'ZIP',
+				'amounts_look_alike' => true
 			],
 			[
 				'name' => 'Greek Postal Codes',
 				// Matches 5-digit Greek codes (e.g., 115 28). Note: This is a generic
 				// 5-digit pattern and may have false positives, but is standard for Greece.
 				'regex' => '/\b\d{3}\s?\d{2}\b/',
-				'token' => 'ZIP'
+				'token' => 'ZIP',
+				'amounts_look_alike' => true
 			],
 			[
 				'name' => 'US ZIP Codes',
 				// Matches 5-digit US ZIP codes and ZIP+4 format.
 				'regex' => '/\b\d{5}(?:-\d{4})?\b/',
-				'token' => 'ZIP'
+				'token' => 'ZIP',
+				'amounts_look_alike' => true
 			],
 		];
 
 		foreach ($zipCodePatterns as $pattern) {
+			if (!empty($pattern['amounts_look_alike'])) {
+				// A five-digit postcode looks like an amount: masked only outside of one.
+				$text = $this->maskOutsideAmounts($text, $pattern['regex'], $pattern['token']);
+				continue;
+			}
 			$text = preg_replace_callback(
 				$pattern['regex'],
 				/**
@@ -466,6 +351,50 @@ class PrivacyGuard
 				},
 				$text
 			);
+		}
+
+		return $text;
+	}
+
+	/**
+	 * Mask the matches of a pattern, except those that are an amount: part of a
+	 * larger number (12,500.00), next to a currency (12500 INR, EUR 12500, 12500 €)
+	 * or a percent sign, or right after a word saying it is an amount
+	 * (Total: 12500, Amount 12500).
+	 *
+	 * @param	string	$text	Text to mask
+	 * @param	string	$regex	Pattern of the values to mask
+	 * @param	string	$token	Token type
+	 * @return	string			Masked text
+	 */
+	private function maskOutsideAmounts($text, $regex, $token)
+	{
+		$m = array();
+		if (!preg_match_all($regex, $text, $m, PREG_OFFSET_CAPTURE)) {
+			return $text;
+		}
+		$labels = 'amount|total|subtotal|sum|price|qty|quantity|balance|due|paid|net|gross|montant|prix|somme|betrag|summe|preis|importe|precio|ποσό|σύνολο|τιμή|αξία';
+		$replace = array();
+		foreach ($m[0] as $found) {
+			$value = (string) $found[0];
+			$start = (int) $found[1];
+			$end = $start + strlen($value);
+			$before = substr($text, max(0, $start - 30), $start - max(0, $start - 30));
+			$after = substr($text, $end, 12);
+			if (preg_match('/\d[.,]$/', $before) || preg_match('/^[.,]\d/', $after)) {
+				continue;	// part of a larger number
+			}
+			if (preg_match('/(?:[€$£¥₹]|\b[A-Z]{3})\s*$/u', $before) || preg_match('/^\s*(?:[€$£¥₹%]|[A-Z]{3}\b)/u', $after)) {
+				continue;	// next to a currency or a percent sign
+			}
+			if (preg_match('/(?:'.$labels.')\s*[:=]?\s*$/iu', $before)) {
+				continue;	// said to be an amount
+			}
+			$replace[] = array($start, strlen($value), $this->createToken($value, $token));
+		}
+		// From the end, so the offsets of the earlier matches stay valid.
+		foreach (array_reverse($replace) as $r) {
+			$text = substr($text, 0, $r[0]).$r[2].substr($text, $r[0] + $r[1]);
 		}
 
 		return $text;

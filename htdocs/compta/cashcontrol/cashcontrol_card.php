@@ -152,14 +152,14 @@ if ($object->id > 0) {
 	$datestart += 1;	// Add 1 second
 } else {
 	if ($syear && !$smonth) {
-		$datestart = dol_get_first_day($syear, 1, 'tzuserrel');
-		$dateend = dol_get_last_day($syear, 12, 'tzuserrel');
+		$datestart = dol_get_first_day($syear, 1, 'tzserver');
+		$dateend = dol_get_last_day($syear, 12, 'tzserver');
 	} elseif ($syear && $smonth && !$sday) {
-		$datestart = dol_get_first_day($syear, $smonth, 'tzuserrel');
-		$dateend = dol_get_last_day($syear, $smonth, 'tzuserrel');
+		$datestart = dol_get_first_day($syear, $smonth, 'tzserver');
+		$dateend = dol_get_last_day($syear, $smonth, 'tzserver');
 	} elseif ($syear && $smonth && $sday) {
-		$datestart = dol_mktime($shour, $smin, $ssec, $smonth, $sday, $syear, 'tzuserrel');
-		$dateend = dol_mktime(23, 59, 59, $smonth, $sday, $syear, 'tzuserrel');
+		$datestart = dol_mktime($shour, $smin, $ssec, $smonth, $sday, $syear, 'tzserver');
+		$dateend = dol_mktime(23, 59, 59, $smonth, $sday, $syear, 'tzserver');
 	} else {
 		setEventMessages($langs->trans('YearNotDefined'), null, 'errors');
 	}
@@ -255,9 +255,9 @@ if ($action == "start" && $permissiontoadd) {
 
 	if (!$error) {
 		if (GETPOSTINT('closeday')) {
-			$dateclosegmt = dol_mktime(GETPOSTISSET('closehour') ? GETPOSTINT('closehour') : 23, GETPOSTISSET('closemin') ? GETPOSTINT('closemin') : 59, GETPOSTISSET('closesec') ? GETPOSTINT('closesec') : 59, GETPOSTINT('closemonth') ? GETPOSTINT('closemonth') : 12, GETPOSTINT('closeday'), GETPOSTINT('closeyear'), 'tzuserrel');
+			$dateclosegmt = dol_mktime(GETPOSTISSET('closehour') ? GETPOSTINT('closehour') : 23, GETPOSTISSET('closemin') ? GETPOSTINT('closemin') : 59, GETPOSTISSET('closesec') ? GETPOSTINT('closesec') : 59, GETPOSTINT('closemonth') ? GETPOSTINT('closemonth') : 12, GETPOSTINT('closeday'), GETPOSTINT('closeyear'), 'gmt');
 		} else {
-			$dateclosegmt = dol_mktime(GETPOSTISSET('closehour') ? GETPOSTINT('closehour') : 23, GETPOSTISSET('closemin') ? GETPOSTINT('closemin') : 59, GETPOSTISSET('closesec') ? GETPOSTINT('closesec') : 59, GETPOSTINT('closemonth') ? GETPOSTINT('closemonth') : 12, 15, GETPOSTINT('closeyear'), 'tzuserrel');
+			$dateclosegmt = dol_mktime(GETPOSTISSET('closehour') ? GETPOSTINT('closehour') : 23, GETPOSTISSET('closemin') ? GETPOSTINT('closemin') : 59, GETPOSTISSET('closesec') ? GETPOSTINT('closesec') : 59, GETPOSTINT('closemonth') ? GETPOSTINT('closemonth') : 12, 15, GETPOSTINT('closeyear'), 'gmt');
 		}
 		dol_syslog('The closing date will be '.dol_print_date($dateclosegmt, 'standard', 'gmt').' UTC');
 
@@ -931,7 +931,11 @@ if (empty($action) || $action == "view" || $action == "close") {
 		$htmltooltip = '';
 		$htmltooltip .= dol_print_date($datestart, 'standard', 'tzuserrel').' - ';
 		$htmltooltip .= dol_print_date($dateend, 'standard', 'tzuserrel');
-		$htmltooltip .= '<br><span class="small opacitymedium">UTC : ';
+		$htmltooltip .= '<br><span class="small opacitymedium">';
+		$htmltooltip .= '<div class="width100 inline-block">Server TZ :</div>';
+		$htmltooltip .= dol_print_date($datestart, 'standard', 'tzserver').' - ';
+		$htmltooltip .= dol_print_date($dateend, 'standard', 'tzserver');
+		$htmltooltip .= '<br><div class="width100 inline-block">UTC :</div>';
 		$htmltooltip .= dol_print_date($datestart, 'standard', 'gmt').' - ';
 		$htmltooltip .= dol_print_date($dateend, 'standard', 'gmt');
 		$htmltooltip .= '</span>';
@@ -942,7 +946,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 			$htmltooltip .= $langs->trans("UsedToSeletRecordOn", $langs->transnoentitiesnoconv("Payment"), MAIN_DB_PREFIX."paiement", $langs->transnoentitiesnoconv("DatePayment"), "datep");
 		}
 
-		print $form->textwithpicto('', $htmltooltip);
+		print $form->textwithpicto('', $htmltooltip, 1, 'help', '');
 		print '</td></tr>';
 
 		// Other attributes
