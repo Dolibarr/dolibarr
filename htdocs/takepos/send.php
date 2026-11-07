@@ -64,7 +64,12 @@ if (!$user->hasRight('takepos', 'run')) {
 $langs->loadLangs(array("main", "bills", "cashdesk"));
 
 $invoice = new Facture($db);
-$invoice->fetch($facid);
+$result = $invoice->fetch($facid);
+// Only an invoice of the POS, in an entity of the user, can be sent from the POS
+if ($result <= 0 || $invoice->module_source != 'takepos' || !in_array($invoice->entity, explode(',', getEntity('invoice')))) {
+	accessforbidden();
+}
+
 $customer = new Societe($db);
 $customer->fetch($invoice->socid);
 
@@ -114,7 +119,7 @@ if ($action == "send" && $user->hasRight('takepos', 'run')) {
 
 	// From / To
 	$sendto = $email;
-	$from = $mysoc->email;
+	$email_from = $mysoc->email;
 
 	// Content
 	$msg = "<html>";
@@ -126,7 +131,7 @@ if ($action == "send" && $user->hasRight('takepos', 'run')) {
 	$msg .= "</html>";
 
 	// Send email
-	$mail = new CMailFile($subject, $sendto, $from, $msg, $joinFile, $joinFileMime, $joinFileName, '', '', 0, 1, '', '', '', '', '', '', DOL_DATA_ROOT.'/documents/takepos/temp');
+	$mail = new CMailFile($subject, $sendto, $email_from, $msg, $joinFile, $joinFileMime, $joinFileName, '', '', 0, 1, '', '', '', '', '', '', DOL_DATA_ROOT.'/documents/takepos/temp');
 
 	if ($mail->error || !empty($mail->errors)) {
 		setEventMessages($mail->error, $mail->errors, 'errors');
@@ -139,7 +144,7 @@ if ($action == "send" && $user->hasRight('takepos', 'run')) {
 		if ($result) {
 			$triggersendname = 'BILL_SENTBYMAIL';
 			$object = $invoice;
-			$object->context['email_from'] = $from;
+			$object->context['email_from'] = $email_from;
 			$object->context['email_to'] = $sendto;
 			$object->context['email_msgid'] = $mail->msgid;
 
@@ -198,7 +203,7 @@ function SendMail() {
 	$.ajax({
 		type: "GET",
 		data: { token: '<?php echo currentToken(); ?>' },
-		url: '<?php print DOL_URL_ROOT.'/takepos/send.php?action=send&token='.newToken().'&facid='.((int) $facid).'&email='; ?>' + $("#email").val(),
+		url: '<?php print DOL_URL_ROOT.'/takepos/send.php?action=send&token='.newToken().'&facid='.((int) $facid).'&email='; ?>' + encodeURIComponent($("#email").val()),
 		success: function(response) {
 			console.log("Email sent");
 			alert("Email sent");
@@ -206,9 +211,13 @@ function SendMail() {
 		error: function(xhr, status, error) {
 			console.log("Failed to send email");
 			alert("Failed to send email : " + error);
+		},
+		complete: function() {
+			// Close the popup only once the request is finished. Closing it before destroys the iframe,
+			// which aborts the request client side and triggers the error callback while the email is sent.
+			parent.$.colorbox.close();
 		}
 	});
-	parent.$.colorbox.close();
 }
 
 </script>

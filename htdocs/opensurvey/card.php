@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -96,22 +96,32 @@ if (empty($reshook)) {
 			accessforbidden();
 		}
 
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user, 0, $numsondage);
-
-		header('Location: '.dol_buildpath('/opensurvey/list.php', 1));
-		exit();
+		if ($result > 0) {
+			header('Location: '.dol_buildpath('/opensurvey/list.php', 1));
+			exit();
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// Close
 	if ($action == 'close' && $permissiontoadd) {
 		$object->status = Opensurveysondage::STATUS_CLOSED;
-		$object->update($user);
+		$result = $object->update($user);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// Valid or Reopend
 	if (($action == 'reopen' || $action == 'validate') && $permissiontoadd) {
 		$object->status = Opensurveysondage::STATUS_VALIDATED;
-		$object->update($user);
+		$result = $object->update($user);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// Update
@@ -245,10 +255,10 @@ print '<div class="underbanner clearboth"></div>';
 print '<table class="border tableforfield centpercent">';
 
 // Type
-$type = ($object->format == "A") ? 'classic' : 'date';
+$type = ($object->format == "A") ? 'classic' : (($object->format == "F") ? 'form' : 'date');
 print '<tr><td class="titlefieldmiddle">'.$langs->trans("Type").'</td><td>';
-print img_picto('', dol_buildpath('/opensurvey/img/'.($type == 'classic' ? 'chart-32.png' : 'calendar-32.png'), 1), 'width="16"', 1);
-print ' '.$langs->trans($type == 'classic' ? "TypeClassic" : "TypeDate").'</td></tr>';
+print img_picto('', dol_buildpath('/opensurvey/img/'.($type == 'date' ? 'calendar-32.png' : 'chart-32.png'), 1), 'width="16"', 1);
+print ' '.$langs->trans($type == 'classic' ? "TypeClassic" : ($type == 'form' ? "TypeForm" : "TypeDate")).'</td></tr>';
 
 // Title
 print '<tr><td>';
@@ -367,6 +377,31 @@ print '<div class="clearboth"></div>';
 
 print dol_get_fiche_end();
 
+// Questions of a survey of format 'F' (form)
+if ($object->format == 'F') {
+	require_once DOL_DOCUMENT_ROOT.'/opensurvey/class/opensurveyquestion.class.php';
+	$questionstatic = new Opensurveyquestion($db);
+	$listofquestions = $questionstatic->fetchAllBySurvey($object->id_sondage);
+	$typesofquestion = Opensurveyquestion::getTypes($langs);
+
+	print load_fiche_titre($langs->trans("OpenSurveyQuestions"), '', '');
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre"><td>#</td><td>'.$langs->trans("OpenSurveyQuestion").'</td><td>'.$langs->trans("Type").'</td>';
+	print '<td>'.$langs->trans("OpenSurveyAvailableAnswers").'</td><td class="center">'.$langs->trans("OpenSurveyQuestionMandatory").'</td></tr>';
+	if (is_array($listofquestions)) {
+		foreach ($listofquestions as $question) {
+			print '<tr class="oddeven"><td>'.((int) $question->position).'</td>';
+			print '<td>'.dol_escape_htmltag($question->question).'</td>';
+			print '<td>'.dol_escape_htmltag(isset($typesofquestion[$question->type]) ? $typesofquestion[$question->type] : $question->type).'</td>';
+			print '<td>'.dol_escape_htmltag(implode(', ', $question->getAvailableAnswers())).'</td>';
+			print '<td class="center">'.($question->mandatory ? yn(1) : '').'</td></tr>';
+		}
+	}
+	print '</table>';
+	print '</div>';
+}
+
 if ($action == 'edit') {
 	print $form->buttonsSaveCancel();
 }
@@ -398,13 +433,13 @@ if ($action != 'edit' && $user->hasRight('opensurvey', 'write')) {
 	}
 
 	// Delete
-	print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?suppressionsondage=1&id='.urlencode($numsondage).'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
+	print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?suppressionsondage=1&id='.urlencode($numsondage).'&action=delete&token='.newToken(), 'delete', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 }
 
 print '</div>';
 
 if ($action == 'delete') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?&id='.urlencode($numsondage), $langs->trans("RemovePoll"), $langs->trans("ConfirmRemovalOfPoll", $id), 'delete_confirm', '', '', 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?&id='.urlencode($numsondage), $langs->trans("RemovePoll"), $langs->trans("ConfirmRemovalOfPoll", $numsondage), 'delete_confirm', '', '', 1);
 }
 
 

@@ -56,6 +56,10 @@ button.dropdown-item.global-search-item {
 	border-bottom-right-radius: 6px;
 }
 
+#top-bookmark-search-nothing-found {
+	color: #444;
+}
+
 
 .dropdown-search {
 	border-color: #eee;
@@ -139,7 +143,7 @@ button.dropdown-item.global-search-item {
 	-webkit-background-clip: padding-box;
 	background-clip: padding-box;
 	border: 1px solid rgba(128, 128, 128, .15);
-	border-radius: 4px !important;
+	border-radius: 10px !important;
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 
@@ -154,7 +158,7 @@ button.dropdown-item.global-search-item {
 
 
 /* CSS to hide the arrow to show open/close */
-div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
+div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after, div#topmenu-quickmemo-dropdown a.dropdown-toggle::after {
 	display: none;
 }
 
@@ -332,9 +336,11 @@ a.top-menu-dropdown-link {
 
 #topmenu-tool,
 #topmenu-global-search-dropdown,
+#topmenu-ai-dropdown,
 #topmenu-quickadd-dropdown,
 #topmenu-bookmark-dropdown,
 #topmenu-uploadfile-dropdown,
+#topmenu-quickmemo-dropdown,
 #topmenu-login-dropdown {
 	padding: 0 5px 0 5px;
 }
@@ -453,7 +459,7 @@ a.dropdown-item {
  * SELECT FIELDS
  */
 
-li.liinputsearch {
+li.liinputsearch, div.liinputsearch {
 	position: sticky;
 	display: block;
 	top: 0;
@@ -546,10 +552,11 @@ div.quickaddblock:focus {
 	bottom: 0;
 	transform: translateY(100%);
 
-	background: #fff;
-	border: 1px solid #bbb;
 	text-align: <?php echo $left; ?>;
-	box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+	background: #fff;
+	/* border: 1px solid #bbb; */
+	border-radius: 6px;
+	box-shadow: 0 1px 10px rgb(0, 0, 0, 0.3);
 }
 
 /* dropdown --up variant */
@@ -574,7 +581,8 @@ div.quickaddblock:focus {
 	background: none;
 	color: #333 !important;
 }
-.dropdown-content a:is(.butAction,.butActionDelete,.butActionRefused) {
+.dropdown-content a:is(.butAction,.butActionDelete,.butActionRefused),
+.dropdown-content span:is(.butAction,.butActionDelete,.butActionRefused) {
 	display: flex;
 	border-radius: 0;
 }

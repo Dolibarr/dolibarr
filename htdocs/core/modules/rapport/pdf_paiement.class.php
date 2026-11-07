@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015-2018 Charlene BENKE  	<charlie@patas-monkey.com>
  * Copyright (C) 2020      Maxime DEMAREST <maxime@indelog.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -250,7 +250,7 @@ class pdf_paiement extends CommonDocGenerator
 		} else {
 			$sql .= " WHERE p.datep BETWEEN '".$this->db->idate(dol_get_first_day((int) $year, (int) $month))."' AND '".$this->db->idate(dol_get_last_day((int) $year, (int) $month))."'";
 		}
-		$sql .= " AND p.entity = ".$conf->entity;
+		$sql .= " AND p.entity = ".((int) $conf->entity);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$numpaiement = $this->db->num_rows($result);
@@ -478,7 +478,7 @@ class pdf_paiement extends CommonDocGenerator
 		$pdf->SetFont('', '', $default_font_size);
 
 		$pdf->SetXY($this->posxdate, 16);
-		$pdf->MultiCell(80, 2, $outputlangs->transnoentities("DateBuild")." : ".dol_print_date(time(), "day", false, $outputlangs, true), 0, 'L');
+		$pdf->MultiCell(80, 2, $outputlangs->transnoentities("DateBuild")." : ".dol_print_date(dol_now(), "day", false, $outputlangs, true), 0, 'L');
 
 		$pdf->SetXY($this->posxdate + 100, 16);
 		$pdf->MultiCell(80, 2, $outputlangs->transnoentities("Page")." : ".$page, 0, 'R');

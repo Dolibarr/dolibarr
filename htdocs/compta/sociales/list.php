@@ -114,6 +114,9 @@ $arrayfields = array(
 	'cs.amount'		=> array('label' => "Amount", 'checked' => '1', 'position' => 100),
 	'cs.paye'		=> array('label' => "Status", 'checked' => '1', 'position' => 110),
 );
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 if (isModEnabled("bank")) {
 	$arrayfields['cs.fk_account'] = array('checked' => -1, 'position' => 90, 'label' => "DefaultBankAccount");
@@ -229,8 +232,8 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (cs.fk_user = u.rowid)";
 $sql .= " WHERE cs.fk_type = c.id";
 $sql .= " AND cs.entity = ".((int) $conf->entity);
 // Search criteria
-if ($search_ref) {
-	$sql .= " AND cs.ref = '".$db->escape($search_ref)."'";
+if ($search_ref != '') {
+	$sql .= natural_search('cs.rowid', $search_ref, 1);
 }
 if ($search_label) {
 	$sql .= natural_search("cs.libelle", $search_label);
@@ -658,8 +661,10 @@ while ($i < $imaxinloop) {
 	$chargesociale_static->type_label = $obj->type_label;
 	$chargesociale_static->amount = $obj->amount;
 	$chargesociale_static->paye = $obj->paye;
-	$chargesociale_static->date_ech = $db->idate($obj->date_ech);		// Date of contribution
-	$chargesociale_static->period = $db->idate($obj->period, 'gmt');	// End date of period
+	// Values read from the database are strings, so they are converted with jdate() and not idate(), the same way
+	// ChargeSociales::fetch() does it. The properties are timestamps, used as such by getNomUrl() and getKanbanView().
+	$chargesociale_static->date_ech = $db->jdate($obj->date_ech);		// Date of contribution
+	$chargesociale_static->period = $db->jdate($obj->period);			// End date of period
 	$chargesociale_static->type_accountancy_code = $obj->type_accountancy_code;
 	$chargesociale_static->note_private = $obj->note_private;
 	$chargesociale_static->note_public = $obj->note_public;

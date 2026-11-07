@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2005		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
- * Copyright (C) 2005-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009	Regis Houssin				<regis.houssin@inodbox.com>
- * Copyright (C) 2010-2012	Juanjo Menent				<jmenent@2byte.es>
- * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2005       Rodolphe Quiedeville        <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2017  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin               <regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2012  Juanjo Menent               <jmenent@2byte.es>
+ * Copyright (C) 2024-2026  Alexandre Spangaro          <alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024       MDW                         <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,10 +82,12 @@ $object = new BonPrelevement($db);
 $hookmanager->initHooks(array('withdrawalsreceiptslist'));
 
 $usercancreate = $user->hasRight('prelevement', 'bons', 'creer');
-$permissiontodelete = $user->hasRight('prelevement', 'creer');
+$permissiontodelete = $user->hasRight('prelevement', 'bons', 'creer');
+$permissiontocreditdebit = $user->hasRight('prelevement', 'bons', 'credit');
 if ($type == 'bank-transfer') {
 	$usercancreate = $user->hasRight('paymentbybanktransfer', 'create');
 	$permissiontodelete = $user->hasRight('paymentbybanktransfer', 'create');
+	$permissiontocreditdebit = $user->hasRight('paymentbybanktransfer', 'debit');
 }
 
 // Security check
@@ -98,6 +100,29 @@ if ($type == 'bank-transfer') {
 } else {
 	$result = restrictedArea($user, 'prelevement', '', '', 'bons');
 }
+
+// Definition of array of fields for columns from ->fields
+$tableprefix = 't';
+$arrayfields = array();
+foreach ($object->fields as $key => $val) {
+	// If $val['visible']==0, then we never show the field
+	if (!empty($val['visible'])) {
+		$visible = (int) dol_eval((string) $val['visible'], 1);
+		$arrayfields[$tableprefix.'.'.$key] = array(
+			'label' => $val['label'],
+			'checked' => (($visible < 0) ? '0' : '1'),
+			'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
+			'position' => $val['position'],
+			'help' => isset($val['help']) ? $val['help'] : ''
+		);
+	}
+}
+
+// Extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 
 /*
@@ -165,6 +190,80 @@ if (($massaction == "delete" || ($action == 'delete' && $confirm == 'yes')) && $
 	}
 	$massaction = '';
 }
+
+// Classify debited (at date of transfer) - bank transfer only
+// All or nothing: all selected receipts are checked before processing any of them
+if ($massaction == 'classdebited' && $type == 'bank-transfer' && $permissiontocreditdebit) {
+	$TMsg = array();
+	$objecttmp = new BonPrelevement($db);
+	$nbok = 0;
+
+	// First pass: check all selected receipts can be processed, no record is modified during this pass
+	$arrayofobjectids = array();
+	foreach ($toselect as $toselectid) {
+		$result = $objecttmp->fetch($toselectid);
+		if ($result > 0) {
+			if ($objecttmp->type != 'bank-transfer' || $objecttmp->status != BonPrelevement::STATUS_TRANSFERED || empty($objecttmp->date_trans)) {
+				$langs->load("errors");
+				$error++;
+				$TMsg[] = '<div class="error">'.$langs->trans('ErrorOnlyTransferredStatusCanBeDebitedInMassAction', $objecttmp->ref).'</div><br>';
+				continue;
+			}
+			$arrayofobjectids[] = $objecttmp->id;
+		} else {
+			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+			$error++;
+			break;
+		}
+	}
+
+	// Second pass: process all receipts into a global transaction, all or nothing.
+	// Note: set_infocredit() calls begin()/commit()/rollback() but the database layer
+	// manages nested transactions, so the real COMMIT or ROLLBACK is done only at the end of this loop.
+	if (empty($error)) {
+		$db->begin();
+		foreach ($arrayofobjectids as $toselectid) {
+			$result = $objecttmp->fetch($toselectid);
+			if ($result > 0) {
+				$result = $objecttmp->set_infocredit($user, $objecttmp->date_trans, ($objecttmp->checkIfSalaryBonPrelevement() ? 'salary' : ''));
+				if ($result < 0) {
+					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+					$error++;
+					break;
+				} else {
+					$nbok++;
+				}
+			} else {
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				$error++;
+				break;
+			}
+		}
+		if (empty($error)) {
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
+	}
+
+	if (empty($error)) {
+		// Message for elements well updated
+		if ($nbok > 0) {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+		}
+
+		// Message for elements which can't be updated
+		if (!empty($TMsg)) {
+			sort($TMsg);
+			setEventMessages('', array_unique($TMsg), 'warnings');
+		}
+	} elseif (!empty($TMsg)) {
+		// Validation failed, no record was modified
+		sort($TMsg);
+		setEventMessages('', array_unique($TMsg), 'errors');
+	}
+	$massaction = '';
+}
 $objectclass = 'BonPrelevement';
 $objectlabel = 'BonPrelevement';
 if ($type == 'bank-transfer') {
@@ -191,7 +290,7 @@ if ($type == 'bank-transfer') {
 $help_url = '';
 
 
-$sql = "SELECT p.rowid, p.ref, p.amount, p.statut as status, p.date_trans, p.method_trans, p.date_credit, p.fk_bank_account, p.datec, p.tms as datem";
+$sql = "SELECT p.rowid, p.ref, p.amount, p.statut as status, p.type, p.date_trans, p.method_trans, p.date_credit, p.fk_bank_account, p.datec, p.tms as datem";
 
 $sqlfields = $sql; // $sql fields to remove for count total
 
@@ -257,43 +356,46 @@ $num = $db->num_rows($resql);
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
-$param = '';
+$query = [];
 if ($type == 'bank-transfer') {
-	$param .= '&type=bank-transfer';
+	$query += ['type' => 'bank-transfer'];
 }
 if (!empty($mode)) {
-	$param .= '&mode='.urlencode($mode);
+	$query += ['mode' => $mode];
 }
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-	$param .= '&contextpage='.urlencode($contextpage);
+	$query += ['contextpage' => $contextpage];
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.((int) $limit);
+	$query += ['limit' => (int) $limit];
 }
 if ($optioncss != '') {
-	$param .= '&optioncss='.urlencode($optioncss);
+	$query += ['optioncss' => $optioncss];
 }
 if ($search_amount) {
-	$param .= '&search_amount='.urlencode($search_amount);
+	$query += ['search_amount' => $search_amount];
 }
 if (is_array($search_status)) {
 	if (!empty($search_status)) {
-		$param .= '&search_status='.implode(',', $search_status);
+		$query += ['search_status' => implode(',', $search_status)];
 	}
 } elseif ((string) $search_status != '' && (string) $search_status != '-1') {
-	$param .= '&search_status='.((int) $search_status);
+	$query += ['search_status' => (int) $search_status];
 }
 
 $arrayofmassactions = array(
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
+if ($type == 'bank-transfer' && !empty($permissiontocreditdebit)) {
+	$arrayofmassactions['classdebited'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("ClassifyDebitedAtDateOfTransfer");
+}
 if (!empty($permissiontodelete)) {
 	$arrayofmassactions['predeletedraft'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+print '<form method="POST" id="searchFormList" spellcheck="false" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">';
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -310,10 +412,12 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 if ($type != '') {
 	print '<input type="hidden" name="type" value="'.$type.'">';
 }
+$param = http_build_query($query);
 
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common&'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban&'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', dolBuildUrl(DOL_URL_ROOT.'/compta/prelevement/stats.php', $query), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 if ($usercancreate) {
 	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewStandingOrder'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/prelevement/create.php?type='.urlencode($type));
@@ -436,6 +540,7 @@ while ($i < $imaxinloop) {
 	$directdebitorder->date_credit = $db->jdate($obj->date_credit);
 	$directdebitorder->amount = $obj->amount;
 	$directdebitorder->status = $obj->status;
+	$directdebitorder->type = $obj->type;
 
 	$object = $directdebitorder;
 

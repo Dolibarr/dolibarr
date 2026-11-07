@@ -221,7 +221,7 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 		// Recupere liste des boites d'un user si ce dernier a sa propre liste
 		$sql = "SELECT b.rowid as id, b.box_id, b.position, b.box_order, b.fk_user";
 		$sql .= " FROM ".MAIN_DB_PREFIX."boxes as b";
-		$sql .= " WHERE b.entity = ".$conf->entity;
+		$sql .= " WHERE b.entity = ".((int) $conf->entity);
 		$sql .= " AND b.rowid = ".((int) $rowid);
 
 		dol_syslog(get_class($this)."::fetch rowid=".((int) $rowid));

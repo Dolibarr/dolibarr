@@ -1,0 +1,126 @@
+name: "CI-PULL-REQUEST"
+
+on:
+  pull_request:
+    paths-ignore:
+      - '.agents/**'
+
+jobs:
+  # Wait for the cheap PR checks (Check PR files, Check PR quota per user,
+  # Check PR title and description) to be green. They are standalone workflows
+  # with their own triggers and permissions (so they can write comments or
+  # labels on the PRs, including PRs from forks), so they can not be called
+  # with a "needs" dependency: we poll their runs for the head commit of the PR.
+  wait-for-pr-checks:
+    name: Wait for the cheap PR checks to be green
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    permissions:
+      contents: read
+      actions: read # to read the workflow runs of the PR checks
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      MAX_WAIT_SECONDS: '100'
+    steps:
+      - name: Wait for the check workflows to be green
+        run: |
+          set -euo pipefail
+
+          # The cheap PR check workflows that must be green before pre-commit, phan and phpstan start
+          CHECK_WORKFLOW_NAMES=(
+            'Check PR files'
+            'Check PR quota per user'
+            'Check PR title and description'
+          )
+
+          WAITED=0
+          SLEEP_SECONDS=10
+
+          while true; do
+            ALL_COMPLETED=1
+            FAILED=0
+
+            # Get the workflow runs of the PR checks for the current head commit of the PR
+            RUNS_JSON=$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs?head_sha=${HEAD_SHA}&per_page=100" --jq '.workflow_runs')
+
+            for CHECK_WORKFLOW_NAME in "${CHECK_WORKFLOW_NAMES[@]}"; do
+              # Take the latest run of the check workflow for this head commit
+              RUN=$(echo "$RUNS_JSON" | jq --arg name "${CHECK_WORKFLOW_NAME}" '[.[] | select(.name == $name)] | max_by(.created_at) // empty')
+
+              if [ -z "$RUN" ]; then
+                echo "No run found yet for the workflow '${CHECK_WORKFLOW_NAME}'."
+                ALL_COMPLETED=0
+                continue
+              fi
+
+              STATUS=$(echo "$RUN" | jq -r '.status')
+              CONCLUSION=$(echo "$RUN" | jq -r '.conclusion')
+              echo "Workflow '${CHECK_WORKFLOW_NAME}': status=${STATUS}, conclusion=${CONCLUSION}"
+
+              if [ "${STATUS}" != 'completed' ]; then
+                echo "The workflow '${CHECK_WORKFLOW_NAME}' is still running."
+                ALL_COMPLETED=0
+              elif [ "${CONCLUSION}" != 'success' ] && [ "${CONCLUSION}" != 'skipped' ]; then
+                echo "::error::The workflow '${CHECK_WORKFLOW_NAME}' ended with the conclusion '${CONCLUSION}', so the pre-commit, phan and phpstan jobs are not started."
+                FAILED=1
+              fi
+            done
+
+            if [ "${FAILED}" -eq 1 ]; then
+              exit 1
+            fi
+            if [ "${ALL_COMPLETED}" -eq 1 ]; then
+              echo "All the cheap PR checks are green, so the pre-commit, phan and phpstan jobs can be started."
+              exit 0
+            fi
+
+            if [ "${WAITED}" -ge "${MAX_WAIT_SECONDS}" ]; then
+              echo "::error::Timeout after ${MAX_WAIT_SECONDS} seconds waiting for the cheap PR checks, so the pre-commit, phan and phpstan jobs are not started."
+              exit 1
+            fi
+
+            sleep "${SLEEP_SECONDS}"
+            WAITED=$((WAITED + SLEEP_SECONDS))
+          done
+  # pre-commit is started only when the cheap PR checks are green (see wait-for-pr-checks)
+  pre-commit:
+    needs: [wait-for-pr-checks]
+    uses: ./.github/workflows/pre-commit.yml
+    secrets: inherit
+    with:
+      gh_event: ${{ github.event_name }}
+  # Run the costly phan and phpstan only when pre-commit is green
+  phan:
+    # if: false   # Uncommenting this line disables phan
+    needs: [pre-commit]
+    uses: ./.github/workflows/phan.yml
+    secrets: inherit
+    with:
+      gh_event: ${{ github.event_name }}
+  phpstan:
+    needs: [pre-commit]
+    uses: ./.github/workflows/phpstan.yml
+    secrets: inherit
+    with:
+      gh_event: ${{ github.event_name }}
+  #windows-ci:
+  #  needs: [pre-commit, phan, phpstan]
+  #  secrets: inherit
+  #  uses: ./.github/workflows/windows-ci.yml
+  #  with:
+  #    gh_event: ${{ github.event_name }}
+  # Runs the build of the .travis.yml emulated on a github runner (not on
+  # travis), see travis-emulated.yml. It starts only when the pre-commit CI
+  # has passed. The default is to run it, it is skipped only when
+  # get_changed_php.sh could tell that no relevant file was modified. The
+  # label "ci: full" forces it.
+  #travis-emulated:
+  #  if: >-
+  #    needs.pre-commit.outputs.travis_changed != 'false'
+  #    || contains(github.event.pull_request.labels.*.name, 'ci: full')
+  #  secrets: inherit
+  #  needs: [pre-commit]
+  #  uses: ./.github/workflows/travis-emulated.yml
+  #  with:
+  #    gh_event: ${{ github.event_name }}

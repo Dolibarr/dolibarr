@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 // Load translation files required by page
 $langs->loadLangs(array('companies', 'products', 'admin', 'users', 'languages', 'projects', 'members'));
 
-// Defini si peux lire/modifier permissions
+// Define if can read/modify permissions
 $canreaduser = ($user->admin || $user->hasRight("user", "user", "read"));
 $caneditfield = false;
 
@@ -55,7 +55,7 @@ if (!isset($id) || empty($id)) {
 }
 '@phan-var-force int<1,max> $id';
 
-// $user est le user qui edite, $id est l'id de l'utilisateur edite
+// $user is the user doing the edit, $id is the id of the user being edited
 $caneditfield = ((($user->id == $id) && $user->hasRight("user", "self", "write"))
 || (($user->id != $id) && $user->hasRight("user", "user", "write")));
 
@@ -83,7 +83,7 @@ $object = new User($db);
 $object->fetch($id, '', '', 1);
 $object->loadRights();
 
-// Liste des zone de recherche permanentes supportees
+// List of supported permanent search zones
 /* deprecated
 $searchform=array("main_searchform_societe","main_searchform_contact","main_searchform_produitservice");
 $searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE);
@@ -498,7 +498,7 @@ if ($action == 'edit') {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid valignmiddle" rel="noopener">';
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid valignmiddle" tabindex="-1" rel="noopener">';
 	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 	$morehtmlref .= '</a>';
 

@@ -65,7 +65,7 @@ if (!$sortfield) {
 }
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
 
 // Security check
 $socid = GETPOSTINT('socid');
@@ -202,7 +202,7 @@ print '</div><div class="fichetwothirdright">';
 $langs->load("boxes");
 
 $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.statut as user_status, u.photo, u.email, u.admin,";
-$sql .= " d.rowid, d.ref, d.date_debut as dated, d.date_fin as datef, d.date_create as dm, d.total_ht, d.total_ttc, d.fk_statut as status";
+$sql .= " d.rowid, d.ref, d.date_debut as dated, d.date_fin as datef, d.date_creation as dm, d.total_ht, d.total_ttc, d.fk_statut as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as d, ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE u.rowid = d.fk_user_author";
 // RESTRICT RIGHTS

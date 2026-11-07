@@ -138,7 +138,7 @@ This page is a sample of page using tables. It is designed to make test with<br>
 <br><hr><br>Example 0b: Table with div+form+div containing a select that should be overflowed and truncated => Use this to align text or form<br>
 
 <div class="tagtable centpercent">
-	<form action="xxx" method="POST" class="tagtr">
+	<form action="xxx" method="POST" class="tagtr" spellcheck="false">
 	<div class="tagtd maxwidthonsmartphone" style="overflow: hidden; white-space: nowrap;"> <!-- If you remove max-width, the jmobile overflow does not work -->
 	<select name="hidedetails" class="centpercentonsmartphone"><option>aaaaaaaaaaaaaaafd sf sf gfd gfds fsd  gfd fhfg hf dhfg hg fhfgdhfgdh gh gfdhdgf h gfdh dfhg dfgh dfgh fdgh gfd hfd hfd gs fgdf gaaaa</option><option>gdfs gdf g sdfg dfg fdsg dsfg dfs gdfs gds fgs  gdfdf gd</option></select>
 	</div>
@@ -210,7 +210,7 @@ if (!empty($conf->use_javascript_ajax)) {
 }
 
 $nav = '';
-$nav .= '<form name="dateselect" action="'.$_SERVER["PHP_SELF"].'?mode=show_peruser'.$param.'">';
+$nav .= '<form name="dateselect" action="'.$_SERVER["PHP_SELF"].'?mode=show_peruser'.$param.'" spellcheck="false">';
 if ($actioncode || GETPOSTISSET('actioncode')) {
 	$nav .= '<input type="hidden" name="actioncode" value="'.$actioncode.'">';
 }
@@ -382,13 +382,13 @@ if (!empty($conf->use_javascript_ajax)) {
 		<div class="tagtd tdlineupdown">lll</div>
 	</div>
 <!-- Using form into div make Firefox crazy (page loading does not end) -->
-<!--	<form class="liste_titre" method="POST" action="1.php">
+<!--	<form class="liste_titre" method="POST" action="1.php" spellcheck="false">
 		<div>line1<input type="hidden" name="cartitem" value="1"></div>
 		<div><label><input type="checkbox" name="hidedetails" value="2"> A checkbox inside a cell</label></div>
 		<div><input name="count" value="4"></div>
 		<div><input type="submit" name="count2" class="button noshadow" value="aaa"></div>
 	</form>
-	<form class="impair" method="POST" action="2.php">
+	<form class="impair" method="POST" action="2.php" spellcheck="false">
 		<div>line2<input type="hidden" name="cartitem" value="2"></div>
 		<div><select name="hidedetails"><option>aaaaaaaaaaaaaaafd sf sf gfd gfd gs fgdf gaaaa</option><option>gdfs gdf g sdfg dfg fdsg dsfg dfs gdfs gds fgs  gdfdf gd</option></select></div>
 		<div><input name="countb" value="4"></div>

@@ -2,6 +2,8 @@
 ReadPerm=Leído
 WebsiteAccounts=Cuentas de sitio web
 WebPortalAccessHidden=Escondido
+StatusInterInValidated=Validada
+WebPortalInterDateCreation=Fecha de Creación
 WebPortalOrderListTitle=Ordenes de Venta
 WebPortalMemberCardTitle=Ficha de miembro
 WebPortalPropal=Propuesta

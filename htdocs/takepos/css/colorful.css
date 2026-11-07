@@ -1,3 +1,5 @@
+/* Copyright (C) 2026	Jose Martinez	<jose.martinez@pichinov.com> */
+
 button.calcbutton {
     background-color: #008000 !important;
 }
@@ -15,8 +17,11 @@ button.calcbutton2.poscolordelete {
 	color: #FFFFFF !important;
 }
 
+/* Loaded after pos.css.php, so the cascade is enough to override its color.
+   No !important here: it would also defeat the inline style a module can set
+   on its own button through the ActionButtons hook. */
 button.actionbutton {
-    background: #FFB100 !important;
+    background: #FFB100;
 }
 
 tr.selected, tr.selected td {

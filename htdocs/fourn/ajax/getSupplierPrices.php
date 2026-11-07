@@ -38,7 +38,6 @@ if (!defined('NOREQUIRESOC')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -46,6 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 
 // init getSupplierPrices hook
 $hookmanager->initHooks(array('ajaxGetSupplierPrices'));
@@ -125,7 +125,7 @@ if ($idprod > 0) {
 
 			$prices[] = array(
 				"id" => $productSupplier->product_fourn_price_id,
-				"price" => price2num($price, '', 0),
+				"price" => price2num($price, '', 0),	// For price field, we must use price2num(), for label or title, price()
 				"label" => $label,
 				"title" => $title,
 
@@ -142,8 +142,13 @@ if ($idprod > 0) {
 					'reputation' => $productSupplier->supplier_reputation,
 					'dateCreation' => $productSupplier->fourn_date_creation,
 					'deliveryTimeDays' => $productSupplier->delivery_time_days,
-				]
-			); // For price field, we must use price2num(), for label or title, price()
+					// Carry the product's default unit so the line form can preselect
+					// #units like the customer side already does for idprod (see
+					// issues #34610 for the customer side and #38636 for the
+					// supplier side).
+					"fk_unit" => $productSupplier->fk_unit
+				],
+			);
 		}
 	}
 

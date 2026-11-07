@@ -1,7 +1,7 @@
 <?php
 /* Copyright (c) 2015-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,29 +101,37 @@ class FormMargin
 
 			$pv = (float) $line->total_ht;
 
-			// $line->pa_ht is always positive in database, so we guess the correct sign
+			// $line->pa_ht is always positive in database, so we guess the correct sign for $pa_ht
 
 			'@phan-var-force Facture|FactureFournisseur $object';
 			$pa_ht = (($pv < 0 || ($pv == 0 && in_array($object->element, array('facture', 'facture_fourn')) && $object->type == $object::TYPE_CREDIT_NOTE)) ? -$line->pa_ht : $line->pa_ht);
 			'@phan-var-force CommonObject $object';
 
-			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {	// Special case for old situation mode
+			$pa = $line->qty * $pa_ht;
+
+			if (getDolGlobalInt('INVOICE_USE_SITUATION') && $object->element == 'facture') {
 				'@phan-var-force Facture $object';
 				/** @var Facture $object */
-				if (($object->element == 'facture' && $object->type == $object::TYPE_SITUATION)
-					|| ($object->element == 'facture' && $object->type == $object::TYPE_CREDIT_NOTE && getDolGlobalInt('INVOICE_USE_SITUATION_CREDIT_NOTE') && $object->situation_counter > 0)) {
-					// We need a compensation relative to $line->situation_percent
-					$pa = $line->qty * $pa_ht * ($line->situation_percent / 100);
-				} else {
-					$pa = $line->qty * $pa_ht;
+				if ($object->type == $object::TYPE_SITUATION || ($object->type == $object::TYPE_CREDIT_NOTE && getDolGlobalInt('INVOICE_USE_SITUATION_CREDIT_NOTE') && $object->situation_counter > 0)) {
+					if (getDolGlobalInt('INVOICE_USE_SITUATION_CREDIT_NOTE') == 1) {
+						// We need only the delta between this situation and the previous one to avoid cumulating margins across situation invoices
+						$prevPercent = $line->get_prev_progress($object->id);
+						$deltaPercent = $line->situation_percent - $prevPercent;
+						if ($line->situation_percent > 0) {
+							$pv *= ($deltaPercent / $line->situation_percent);
+						}
+						// the sign is carried by $pa_ht, so never by the ratio
+						$pa *= abs($deltaPercent / 100);
+					} else {
+						// the sign is carried by $pa_ht, so never by the ratio
+						$pa *= abs($line->situation_percent) / 100;
+					}
 				}
-			} else {
-				$pa = $line->qty * $pa_ht;
 			}
 
-			// calcul des marges
+			// margin calculation
 			if (isset($line->fk_remise_except) && isset($conf->global->MARGIN_METHODE_FOR_DISCOUNT)) {    // remise
-				if (getDolGlobalString('MARGIN_METHODE_FOR_DISCOUNT') == '1') { // remise globale considérée comme produit
+				if (getDolGlobalString('MARGIN_METHODE_FOR_DISCOUNT') == '1') { // global discount treated as product
 					$marginInfos['pa_products'] += $pa;
 					$marginInfos['pv_products'] += $pv;
 					$marginInfos['pa_total'] += $pa;
@@ -135,7 +143,7 @@ class FormMargin
 					//}
 					//else
 					$marginInfos['margin_on_products'] += $pv - $pa;
-				} elseif (getDolGlobalString('MARGIN_METHODE_FOR_DISCOUNT') == '2') { // remise globale considérée comme service
+				} elseif (getDolGlobalString('MARGIN_METHODE_FOR_DISCOUNT') == '2') { // global discount treated as service
 					$marginInfos['pa_services'] += $pa;
 					$marginInfos['pv_services'] += $pv;
 					$marginInfos['pa_total'] += $pa;

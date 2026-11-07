@@ -148,7 +148,7 @@ if ($object->id) {
 
 	$head = holiday_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'documents', $langs->trans("CPTitreMenu"), -1, 'holiday');
+	print dol_get_fiche_head($head, 'documents', $langs->trans("CPTitreMenu"), -1, 'holiday', 0, '', '', 0, '', 1);
 
 
 	// Build file list
@@ -274,7 +274,7 @@ if ($object->id) {
 
 	print '<tr>';
 	print '<td>'.$langs->trans('DateCreation').'</td>';
-	print '<td>'.dol_print_date($object->date_create,'dayhour').'</td>';
+	print '<td>'.dol_print_date($object->date_creation,'dayhour').'</td>';
 	print '</tr>';
 	if ($object->status == 3) {
 		print '<tr>';

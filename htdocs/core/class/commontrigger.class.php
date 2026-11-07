@@ -58,7 +58,7 @@ trait CommonTrigger
 	 *
 	 * @param   string    $triggerName  Trigger's name to execute
 	 * @param   ?User     $user         Object user
-	 * @return  int                     Result of run_triggers
+	 * @return  int                     Nb of triggers ran if no error, -Nb of triggers with errors otherwise.
 	 */
 	public function call_trigger($triggerName, $user)
 	{
@@ -91,6 +91,7 @@ trait CommonTrigger
 				$this->errors = $interface->errors;
 			}
 		}
+
 		return $result;
 	}
 }

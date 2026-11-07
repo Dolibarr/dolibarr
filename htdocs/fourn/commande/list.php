@@ -10,8 +10,9 @@
  * Copyright (C) 2018-2022  Charlene Benke              <charlene@patas-monkey.com>
  * Copyright (C) 2019       Nicolas Zabouri             <info@inovea-conseil.com>
  * Copyright (C) 2021-2026  Alexandre Spangaro          <alexandre@inovea-conseil.com>
- * Copyright (C) 2024-2025  MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                         <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       William Mead                <william.mead@manchenumerique.fr>
+ * Copyright (C) 2026       Joachim Kueter              <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -46,7 +46,6 @@ require '../../main.inc.php';
  * @var Translate $langs
  * @var User $user
  */
-
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formorder.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -119,6 +118,7 @@ if (GETPOSTISSET('formfilteraction')) {
 	$searchCategorySupplierOrderOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 }
 $search_product_category = GETPOSTINT('search_product_category');
+$search_id = GETPOST('search_id', 'alpha');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_refsupp = GETPOST('search_refsupp', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
@@ -212,6 +212,7 @@ $enabledtypetiers = 0;
 
 // Definition of array of fields for columns
 $arrayfields = array(
+	'cf.rowid' => array('label' => "TechnicalID", 'checked' => (getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? '1' : '-1'), 'enabled' => '1', 'position' => 1),
 	'u.login' => array('label' => "AuthorRequest", 'enabled' => '1', 'position' => 41),
 	's.name_alias' => array('label' => "AliasNameShort", 'position' => 51, 'checked' => '0'),
 	's.town' => array('label' => "Town", 'enabled' => '1', 'position' => 55, 'checked' => '0'),
@@ -239,6 +240,9 @@ foreach ($object->fields as $key => $val) {
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfields
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -293,6 +297,7 @@ if (empty($reshook)) {
 		$search_sale = '';
 		$search_product_category = '';
 		$searchCategorySupplierOrderList = array();
+		$search_id = '';
 		$search_ref = '';
 		$search_refsupp = '';
 		$search_company = '';
@@ -398,8 +403,8 @@ if (empty($reshook)) {
 	}
 
 	// Mass action to generate vendor bills
-	if ($massaction == 'confirm_createsupplierbills') {
-		$orders = GETPOST('toselect', 'array:int');
+	if (!$error && $massaction == 'confirm_createsupplierbills' && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))) {
+		$orders = $toselect;	// Ids already checked for access by the mass actions include
 		$createbills_onebythird = GETPOSTINT('createbills_onebythird');
 		$validate_invoices = GETPOSTINT('validate_invoices');
 
@@ -474,7 +479,7 @@ if (empty($reshook)) {
 				$sql .= ", fk_target";
 				$sql .= ", targettype";
 				$sql .= ") VALUES (";
-				$sql .= $id_order;
+				$sql .= ((int) $id_order);
 				$sql .= ", '".$db->escape($objecttmp->origin)."'";
 				$sql .= ", ".((int) $objecttmp->id);
 				$sql .= ", '".$db->escape($objecttmp->element)."'";
@@ -603,7 +608,10 @@ if (empty($reshook)) {
 
 			if ($currentIndex <= (getDolGlobalInt("MAXREFONDOC") ? getDolGlobalInt("MAXREFONDOC") : 10)) {
 				$objecttmp->note_public = dol_concatdesc($objecttmp->note_public, $langs->transnoentities($cmd->ref).(empty($cmd->ref_supplier) ? '' : ' ('.$cmd->ref_supplier.')'));
-				$objecttmp->update($user);
+				if ($objecttmp->update($user) < 0) {
+					$error++;
+					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				}
 			}
 
 			$cmd->classifyBilled($user); // TODO Move this in workflow like done for sales orders
@@ -748,6 +756,9 @@ if (empty($reshook)) {
 			if ($search_date_approve_endyear) {
 				$param .= '&search_date_approve_endyear='.urlencode((string) ($search_date_approve_endyear));
 			}
+			if ($search_id != '') {
+				$param .= '&search_id='.urlencode($search_id);
+			}
 			if ($search_ref) {
 				$param .= '&search_ref='.urlencode($search_ref);
 			}
@@ -885,6 +896,9 @@ $sql .= ' AND cf.entity IN ('.getEntity('supplier_order').')';
 if ($socid > 0) {
 	$sql .= " AND s.rowid = ".((int) $socid);
 }
+if ($search_id != '') {
+	$sql .= natural_search('cf.rowid', $search_id, 1);
+}
 if ($search_ref) {
 	$sql .= natural_search('cf.ref', $search_ref);
 }
@@ -919,6 +933,10 @@ if ($search_status != '' && $search_status != '-1') {
 }
 if ($search_option == 'late') {
 	$sql .= " AND cf.date_commande < '".$db->idate(dol_now() - $conf->order->fournisseur->warning_delay)."'";
+}
+if ($search_option == 'recv_late') {
+	// Same rule as FournisseurCommande::hasDelay() for the ordered and partially received status
+	$sql .= " AND cf.date_livraison < '".$db->idate(dol_now() - $conf->order->fournisseur->warning_delay)."'";
 }
 if ($search_date_order_start) {
 	$sql .= " AND cf.date_commande >= '".$db->idate($search_date_order_start)."'";
@@ -1007,9 +1025,9 @@ if ($search_project_ref != '') {
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
-		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = cf.fk_soc)";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('cf.fk_soc', 0, 1);
 	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = cf.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('cf.fk_soc', (int) $search_sale);
 	}
 }
 // Search for tag/category ($searchCategorySupplierOrderList is an array of ID)
@@ -1210,6 +1228,9 @@ if ($resql) {
 	if ($search_date_approve_endyear) {
 		$param .= '&search_date_approve_endyear='.urlencode((string) ($search_date_approve_endyear));
 	}
+	if ($search_id != '') {
+		$param .= '&search_id='.urlencode($search_id);
+	}
 	if ($search_ref) {
 		$param .= '&search_ref='.urlencode($search_ref);
 	}
@@ -1317,6 +1338,7 @@ if ($resql) {
 	$newcardbutton = '';
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/commande/stats/index.php?mode=supplier'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewSupplierOrderShort'), '', 'fa fa-plus-circle', $url, '', (int) $permissiontoadd);
 
@@ -1336,7 +1358,7 @@ if ($resql) {
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'supplier_order', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
-	$topicmail = "SendOrderRef";
+	$topicmail = "SendSupplierOrderRef";
 	$modelmail = "order_supplier_send";
 	$objecttmp = new CommandeFournisseur($db);	// in case $object is not the good object
 	$trackid = 'sord'.$object->id;
@@ -1464,6 +1486,10 @@ if ($resql) {
 		$searchpicto = $form->showFilterButtons('left');
 		print $searchpicto;
 		print '</td>';
+	}
+	// Technical ID
+	if (!empty($arrayfields['cf.rowid']['checked'])) {
+		print '<td class="liste_titre center"><input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'"></td>';
 	}
 	// Ref
 	if (!empty($arrayfields['cf.ref']['checked'])) {
@@ -1667,6 +1693,10 @@ if ($resql) {
 	print '<tr class="liste_titre">';
 	if ($conf->main_checkbox_left_column) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+		$totalarray['nbfield']++;
+	}
+	if (!empty($arrayfields['cf.rowid']['checked'])) {
+		print_liste_field_titre($arrayfields['cf.rowid']['label'], $_SERVER["PHP_SELF"], 'cf.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['cf.ref']['checked'])) {
@@ -1878,6 +1908,13 @@ if ($resql) {
 					$totalarray['nbfield']++;
 				}
 			}
+			// Technical ID
+			if (!empty($arrayfields['cf.rowid']['checked'])) {
+				print '<td class="center" data-key="id">'.((int) $obj->rowid).'</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
 			// Ref
 			if (!empty($arrayfields['cf.ref']['checked'])) {
 				print '<td class="nowraponall">';
@@ -1951,7 +1988,7 @@ if ($resql) {
 			// Alias
 			if (!empty($arrayfields['s.name_alias']['checked'])) {
 				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->alias).'">';
-				print dol_escape_htmltag($obj->alias);
+				print '<span class="spantitle">'.dol_escape_htmltag($obj->alias).'</span>';
 				print '</td>'."\n";
 				if (!$i) {
 					$totalarray['nbfield']++;

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2014-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2014-2026	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -51,6 +51,15 @@ $driver = GETPOST('driver', 'alpha');
 
 if (!empty($driver)) {
 	$langs->load($driver);
+	// A driver provided by an external module has its translations in the langs/ directory of this module
+	if (!empty($conf->modules_parts['printing'])) {
+		foreach ($conf->modules_parts['printing'] as $modulename => $dir) {
+			if (file_exists(dol_buildpath($dir, 0).$driver.'.modules.php')) {
+				$langs->load($driver.'@'.$modulename, 0, 0, '', 0, 1);
+				break;
+			}
+		}
+	}
 }
 
 if (!$mode) {
@@ -174,7 +183,7 @@ if ($mode == 'setup' && $user->admin) {
 				case "text":
 				case "password":
 					print '<tr class="oddeven">';
-					print '<td'.($key['required'] ? ' class=required' : '').'>'.$langs->trans($key['varname']).'</td>';
+					print '<td'.(!empty($key['required']) ? ' class=required' : '').'>'.$langs->trans($key['varname']).'</td>';
 					print '<td><input class="width100" type="'.(empty($key['type']) ? 'text' : $key['type']).'" name="setupdriver['.$i.'][value]" value="'.getDolGlobalString($key['varname']).'"';
 					print isset($key['moreattributes']) ? ' '.$key['moreattributes'] : '';
 					print '><input type="hidden" name="setupdriver['.$i.'][varname]" value="'.$key['varname'].'"></td>';
@@ -183,7 +192,7 @@ if ($mode == 'setup' && $user->admin) {
 					break;
 				case "checkbox":
 					print '<tr class="oddeven">';
-					print '<td'.($key['required'] ? ' class=required' : '').'>'.$langs->trans($key['varname']).'</td>';
+					print '<td'.(!empty($key['required']) ? ' class=required' : '').'>'.$langs->trans($key['varname']).'</td>';
 					print '<td><input class="width100" type="'.(empty($key['type']) ? 'text' : $key['type']).'" name="setupdriver['.$i.'][value]" value="1" '.((getDolGlobalInt($key['varname'])) ? 'checked' : '');
 					print isset($key['moreattributes']) ? ' '.$key['moreattributes'] : '';
 					print '><input type="hidden" name="setupdriver['.$i.'][varname]" value="'.$key['varname'].'"></td>';
@@ -192,7 +201,7 @@ if ($mode == 'setup' && $user->admin) {
 					break;
 				case "info":    // Google Api setup or Google OAuth Token
 					print '<tr class="oddeven">';
-					print '<td'.($key['required'] ? ' class=required' : '').'>';
+					print '<td'.(!empty($key['required']) ? ' class=required' : '').'>';
 					if ($key['varname'] == 'PRINTGCP_TOKEN_ACCESS') {
 						print $langs->trans("IsTokenGenerated");
 					} else {

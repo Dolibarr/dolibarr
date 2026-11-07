@@ -4,7 +4,7 @@
  * Copyright (C) 2015       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,11 +130,11 @@ class Cpaiement extends CommonDict
 		$sql .= 'accountancy_code,';
 		$sql .= 'module';
 		$sql .= ') VALUES (';
-		$sql .= ' '.(!isset($this->entity) ? getEntity('c_paiement') : $this->entity).',';
+		$sql .= ' '.(!isset($this->entity) ? getEntity('c_paiement') : ((int) $this->entity)).',';
 		$sql .= ' '.(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").',';
 		$sql .= ' '.(!isset($this->libelle) ? 'NULL' : "'".$this->db->escape($this->libelle)."'").',';
-		$sql .= ' '.(!isset($this->type) ? 'NULL' : $this->type).',';
-		$sql .= ' '.(!isset($this->active) ? 'NULL' : $this->active).',';
+		$sql .= ' '.(!isset($this->type) ? 'NULL' : "'".$this->db->escape($this->type)."'").',';
+		$sql .= ' '.(!isset($this->active) ? 'NULL' : ((int) $this->active)).',';
 		$sql .= ' '.(!isset($this->accountancy_code) ? 'NULL' : "'".$this->db->escape($this->accountancy_code)."'").',';
 		$sql .= ' '.(!isset($this->module) ? 'NULL' : "'".$this->db->escape($this->module)."'");
 		$sql .= ')';
@@ -277,11 +277,11 @@ class Cpaiement extends CommonDict
 
 		// Update request
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
-		$sql .= ' id = '.(isset($this->id) ? $this->id : "null").',';
+		$sql .= ' id = '.(isset($this->id) ? ((int) $this->id) : "null").',';
 		$sql .= ' code = '.(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").',';
 		$sql .= ' libelle = '.(isset($this->libelle) ? "'".$this->db->escape($this->libelle)."'" : "null").',';
-		$sql .= ' type = '.(isset($this->type) ? $this->type : "null").',';
-		$sql .= ' active = '.(isset($this->active) ? $this->active : "null").',';
+		$sql .= ' type = '.(isset($this->type) ? "'".$this->db->escape($this->type)."'" : "null").',';
+		$sql .= ' active = '.(isset($this->active) ? ((int) $this->active) : "null").',';
 		$sql .= ' accountancy_code = '.(isset($this->accountancy_code) ? "'".$this->db->escape($this->accountancy_code)."'" : "null").',';
 		$sql .= ' module = '.(isset($this->module) ? "'".$this->db->escape($this->module)."'" : "null");
 		$sql .= ' WHERE id = '.((int) $this->id);

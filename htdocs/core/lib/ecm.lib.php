@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2022-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2022-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -177,9 +177,8 @@ function ecm_prepare_head_fm($object)
  */
 function ecm_admin_prepare_head()
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('ecm_files');
 	$extrafields->fetch_name_optionals_label('ecm_directories');
 
@@ -193,7 +192,7 @@ function ecm_admin_prepare_head()
 	$head[$h][2] = 'ecm';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/ecm_files_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'ecm_files'));
 	$head[$h][1] = $langs->trans("ExtraFieldsEcmFiles");
 	$nbExtrafields = $extrafields->attributes['ecm_files']['count'];
 	if ($nbExtrafields > 0) {
@@ -202,7 +201,7 @@ function ecm_admin_prepare_head()
 	$head[$h][2] = 'attributes_ecm_files';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/ecm_directories_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'ecm_directories'));
 	$head[$h][1] = $langs->trans("ExtraFieldsEcmDirectories");
 	$nbExtrafields = $extrafields->attributes['ecm_directories']['count'];
 	if ($nbExtrafields > 0) {

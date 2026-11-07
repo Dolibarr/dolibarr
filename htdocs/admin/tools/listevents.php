@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2012  Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015       Bahfir Abbes		<bafbes@gmail.com>
  * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
-$search_rowid = GETPOST("search_rowid", "intcomma");
+$search_rowid = trim(GETPOST("search_rowid", 'alpha'));	// Can contains a numeric test like ">10" or "!= 34"
 $search_code = GETPOST("search_code", "alpha");
 $search_ip   = GETPOST("search_ip", "alpha");
 $search_user = GETPOST("search_user", "alpha");
@@ -178,7 +178,7 @@ if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin) {
 
 	// Delete events
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."events";
-	$sql .= " WHERE entity = ".$conf->entity;
+	$sql .= " WHERE entity = ".((int) $conf->entity);
 
 	dol_syslog("listevents purge", LOG_DEBUG);
 	$resql = $db->query($sql);
@@ -224,7 +224,7 @@ $sql .= " u.login, u.admin, u.email, u.entity, u.firstname, u.lastname, u.gender
 $sql .= " FROM ".MAIN_DB_PREFIX."events as e";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = e.fk_user";
 if ($search_entity > 0) {
-	$sql .= " WHERE e.entity = ".((int) $search_entity).")";
+	$sql .= " WHERE e.entity = ".((int) $search_entity);
 } else {
 	$sql .= " WHERE e.entity IN (".getEntity('event', (GETPOSTINT('search_current_entity') ? 0 : 1)).")";
 }
@@ -342,7 +342,7 @@ if ($result) {
 		$center = '<a class="butActionDelete small" href="'.$_SERVER["PHP_SELF"].'?action=purge&token='.newToken().'">'.$langs->trans("Purge").'</a>';
 	}
 
-	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
@@ -382,8 +382,8 @@ if ($result) {
 	}
 
 	// ID
-	print '<td class="liste_titre">';
-	print '<input class="flat maxwidth50" type="text" name="search_rowid" value="'.dol_escape_htmltag($search_rowid).'">';
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_rowid" value="'.dolPrintLabelForAttribute($search_rowid).'">';
 	print '</td>';
 
 	// Date
@@ -435,7 +435,7 @@ if ($result) {
 	if ($conf->main_checkbox_left_column) {
 		print_liste_field_titre('');
 	}
-	print_liste_field_titre("ID", $_SERVER["PHP_SELF"], "e.rowid", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("ID", $_SERVER["PHP_SELF"], "e.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "e.dateevent", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Code", $_SERVER["PHP_SELF"], "e.type", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("IP", $_SERVER["PHP_SELF"], "e.ip", "", $param, '', $sortfield, $sortorder);
@@ -466,7 +466,7 @@ if ($result) {
 		}
 
 		// ID
-		print '<td class="nowrap left">'.dol_escape_htmltag($obj->rowid).'</td>';
+		print '<td class="nowrap center">'.dol_escape_htmltag($obj->rowid).'</td>';
 
 		// Date
 		print '<td class="nowrap left">'.dol_print_date($db->jdate($obj->dateevent), '%Y-%m-%d %H:%M:%S', 'tzuserrel').'</td>';

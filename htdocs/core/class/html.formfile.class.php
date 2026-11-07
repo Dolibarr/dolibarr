@@ -8,8 +8,8 @@
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
  * Copyright (C) 2016-2017	Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019-2026  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,7 +82,6 @@ class FormFile
 	{
 		global $langs;
 
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 
@@ -256,7 +255,21 @@ class FormFile
 			$out .= '<label for="overwritefile" class="opacitylow paddingleft paddingright">'.$langs->trans("OverwriteIfExists").'</label>';
 			$out .= '</span>';
 		}
-		$out .= '<input type="submit" class="button smallpaddingimp reposition" name="sendit" value="'.$langs->trans("Upload").'"';
+		// Tooltip with max size limit, shown on the upload button
+		$tooltiptext = '';
+		if (getDolGlobalString('MAIN_UPLOAD_DOC') && $perm && empty($conf->dol_optimize_smallscreen)) {
+			$langs->load('other');
+
+			$menudolibarrsetupmax = $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Security");
+
+			$tooltiptext = $langs->trans("ThisLimitIsDefinedInSetupAt", $menudolibarrsetupmax, $max, $maxphptoshowparam, $maxphptoshow);
+			if (getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT')) {
+				$tooltiptext .= '<br><br>Option to extract the file content in text to save it in database is ON <span class="opacitymedium">('.getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT').')</span>';
+			}
+		}
+
+		$out .= '<input type="submit" class="button smallpaddingimp reposition'.($tooltiptext ? ' classfortooltip' : '').'" name="sendit" value="'.$langs->trans("Upload").'"';
+		$out .= ($tooltiptext ? ' title="'.dolPrintHTMLForAttribute($tooltiptext).'" data-delayfortooltip="1000"' : '');	// tooltip shown after a delay of 1s
 		$out .= (!getDolGlobalString('MAIN_UPLOAD_DOC') || empty($perm) ? ' disabled' : '');
 		$out .= '>';
 
@@ -265,21 +278,7 @@ class FormFile
 			$out .= '<input type="submit" class="button small button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		}
 
-		if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
-			if ($perm && empty($conf->dol_optimize_smallscreen)) {
-				$langs->load('other');
-
-				$menudolibarrsetupmax = $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Security");
-
-				$tooltiptext = $langs->trans("ThisLimitIsDefinedInSetupAt", $menudolibarrsetupmax, $max, $maxphptoshowparam, $maxphptoshow);
-				if (getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT')) {
-					$tooltiptext .= '<br><br>Option to extract the file content in text to save it in database is ON <span class="opacitymedium">('.getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT').')</span>';
-				}
-
-				$out .= ' ';
-				$out .= info_admin($tooltiptext, 1, 0, '1', 'classfortooltip');
-			}
-		} else {
+		if (!getDolGlobalString('MAIN_UPLOAD_DOC')) {
 			$out .= ' ('.$langs->trans("UploadDisabled").')';
 		}
 		$out .= "</td></tr>";
@@ -293,7 +292,7 @@ class FormFile
 				$out .= '<td>'.$options.'</td>';
 			}
 			$out .= '<td valign="middle" class="nowrap">';
-			$out .= '<input type="checkbox" '.$rename.' class="savingdocmask" name="savingdocmask" id="savingdocmask" value="'.dol_escape_js($savingdocmask).'"> ';
+			$out .= '<input type="checkbox" '.$rename.' class="savingdocmask" name="savingdocmask" id="savingdocmask" value="'.dolPrintHTMLForAttribute($savingdocmask).'"> ';
 			$out .= '<label class="opacitymedium small" for="savingdocmask">';
 			$out .= $langs->trans("SaveUploadedFileWithMask", preg_replace('/__file__/', $langs->transnoentitiesnoconv("OriginFileName"), $savingdocmask), $langs->transnoentitiesnoconv("OriginFileName"));
 			$out .= '</label>';
@@ -537,13 +536,13 @@ class FormFile
 						{
 							jQuery(\'#'.$modulepart.'_table\').hide();
 							jQuery(\'#togglemassfilesarea\').attr("ref", "hidden");
-							jQuery(\'#togglemassfilesarea\').text("('.dol_escape_js($langs->trans("Show")).')");
+							jQuery(\'#togglemassfilesarea\').text(\'('.dol_escape_js($langs->trans("Show")).')\');
 						}
 						else
 						{
 							jQuery(\'#'.$modulepart.'_table\').show();
 							jQuery(\'#togglemassfilesarea\').attr("ref","shown");
-							jQuery(\'#togglemassfilesarea\').text("('.dol_escape_js($langs->trans("Hide")).')");
+							jQuery(\'#togglemassfilesarea\').text(\'('.dol_escape_js($langs->trans("Hide")).')\');
 						}
 						return false;
 					});
@@ -839,7 +838,7 @@ class FormFile
 				if ($conf->browser->layout == 'phone') {
 					$morecss = 'maxwidth100';
 				}
-				$out .= $form->selectarray('model', $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1, '', 0, 0);
+				$out .= $form->selectarray('model', $modellist, $modelselected, $showempty, 0, 0, '', 1, 0, 0, '', $morecss, 1, '', 0, 0);
 				if ($conf->use_javascript_ajax) {
 					$out .= ajax_combobox('model');
 				}
@@ -860,6 +859,17 @@ class FormFile
 				$out .= $formadmin->select_language($defaultlang, 'lang_id', 0, array(), 0, 0, 0, $morecss);
 			} else {
 				$out .= '&nbsp;';
+			}
+
+			// Choice to append or not the terms of sale file (option MAIN_PDF_ADD_TERMSOFSALE_xxx)
+			$termsofsaletypes = array('propal' => 'PROPAL', 'commande' => 'ORDER', 'contract' => 'CONTRACT', 'facture' => 'INVOICE');
+			if (!empty($termsofsaletypes[$modulepart]) && getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_'.$termsofsaletypes[$modulepart]) && getDolGlobalString('MAIN_INFO_'.$termsofsaletypes[$modulepart].'_TERMSOFSALE')) {
+				$termsofsalechecked = (getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_'.$termsofsaletypes[$modulepart]) == 1);
+				$out .= '<input type="hidden" name="addtermsofsale_shown" value="1">';
+				$out .= '<span class="nowraponall marginrightonly">';
+				$out .= '<input type="checkbox" id="'.$forname.'_addtermsofsale" name="addtermsofsale" value="1"'.($termsofsalechecked ? ' checked' : '').'>';
+				$out .= '<label for="'.$forname.'_addtermsofsale">'.$langs->trans("AppendTermsOfSaleFile", getDolGlobalString('MAIN_INFO_'.$termsofsaletypes[$modulepart].'_TERMSOFSALE')).'</label>';
+				$out .= '</span>';
 			}
 
 			// Button to generate document
@@ -887,7 +897,7 @@ class FormFile
 
 			if (!empty($hookmanager->hooks['formfile'])) {
 				foreach ($hookmanager->hooks['formfile'] as $module) {
-					if (method_exists($module, 'formBuilddocLineOptions')) {
+					if (is_object($module) && method_exists($module, 'formBuilddocLineOptions')) {
 						$colspanmore++;
 						$out .= '<th></th>';
 					}
@@ -972,62 +982,62 @@ class FormFile
 						$relativepath = (string) $file["name"]; // Other case
 					}
 
-					$out .= '<tr class="oddeven'.((!$genallowed && $i == 1) ? ' trfirstline' : '').'">';
+					$tmpout = '<tr class="oddeven'.((!$genallowed && $i == 1) ? ' trfirstline' : '').'">';
 
 					$documenturl = getDolGlobalString('DOL_URL_ROOT_DOCUMENT_PHP', DOL_URL_ROOT.'/document.php'); // DOL_URL_ROOT_DOCUMENT_PHP can be used to set another wrapper
 
 					// Show file name with link to download
-					$imgpreview = $this->showPreview($file, $modulepart, $relativepath, 0, $param);
-					$out .= '<td class="minwidth200 tdoverflowmax300">';
+					$imgpreview = $this->showPreview($file, $modulepart, $relativepath, 0, $param.'&preview=1');
+					$tmpout .= '<td class="minwidth200 tdoverflowmax300">';
 					if ($imgpreview) {
-						$out .= '<span class="spanoverflow widthcentpercentminusx valignmiddle">';
+						$tmpout .= '<span class="spanoverflow widthcentpercentminusx valignmiddle">';
 					} else {
-						$out .= '<span class="spanoverflow">';
+						$tmpout .= '<span class="spanoverflow">';
 					}
 					if (getDolGlobalInt('PREVIEW_PICTO_ON_LEFT_OF_NAME')) {
-						$out .= $imgpreview;
+						$tmpout .= $imgpreview;
 					}
 
 					if (is_object($ecmfile)) {
-						$out .= $ecmfile->getNomUrl(1, $modulepart, 0, 0, ' documentdownload');				// We show property in ECM
+						$tmpout .= $ecmfile->getNomUrl(1, $modulepart, 0, 0, ' documentdownload');				// We show property in ECM
 						//$out .= $ecmfile->getNomUrl(1, $modulepart, 0, 0, ' documentdownload', $object);	// We show property on object
 					} else {
-						$out .= '<a class="documentdownload paddingright" ';
+						$tmpout .= '<a class="documentdownload paddingright" ';
 						if (getDolGlobalInt('MAIN_DISABLE_FORCE_SAVEAS') == 2) {
-							$out .= 'target="_blank" ';
+							$tmpout .= 'target="_blank" ';
 						}
-						$out .= 'href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
+						$tmpout .= 'href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
 						$mime = dol_mimetype($relativepath, '', 0);
 						if (preg_match('/text/', $mime)) {
-							$out .= ' target="_blank" rel="noopener noreferrer"';
+							$tmpout .= ' target="_blank" rel="noopener noreferrer"';
 						}
-						$out .= ' title="'.dol_escape_htmltag($file["name"]).'"';
-						$out .= '>';
-						$out .= img_mime($file["name"], $langs->trans("File").': '.$file["name"]);
-						$out .= dol_trunc($file["name"], 150);
-						$out .= '</a>';
+						$tmpout .= ' title="'.dol_escape_htmltag($file["name"]).'"';
+						$tmpout .= '>';
+						$tmpout .= img_mime($file["name"], $langs->trans("File").': '.$file["name"]);
+						$tmpout .= dol_trunc($file["name"], 150);
+						$tmpout .= '</a>';
 					}
 
-					$out .= '</span>'."\n";
+					$tmpout .= '</span>'."\n";
 					if (!getDolGlobalInt('PREVIEW_PICTO_ON_LEFT_OF_NAME')) {
-						$out .= $imgpreview;
+						$tmpout .= $imgpreview;
 					}
-					$out .= '</td>';
+					$tmpout .= '</td>';
 
 
 					// Show file size
 					$size = (!empty($file['size']) ? $file['size'] : dol_filesize($filedir."/".$file["name"]));
-					$out .= '<td class="nowraponall right" title="'.dolPrintHTML($size.' '.$langs->trans("Bytes")).'">'.dol_print_size($size, 1, 1).'</td>';
+					$tmpout .= '<td class="nowraponall right" title="'.dolPrintHTML($size.' '.$langs->trans("Bytes")).'">'.dol_print_size($size, 1, 1).'</td>';
 
 					// Show file date
 					$date = (!empty($file['date']) ? $file['date'] : dol_filemtime($filedir."/".$file["name"]));
-					$out .= '<td class="nowrap right">'.dol_print_date($date, 'dayhour', 'tzuser').'</td>';
+					$tmpout .= '<td class="nowrap right">'.dol_print_date($date, 'dayhour', 'tzuser').'</td>';
 
 					// Show share link
-					$out .= '<td class="nowraponall">';
+					$tmpout .= '<td class="nowraponall">';
 					if (!empty($file['share'])) {
 						// Define $urlwithroot
-						$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+						$urlwithouturlroot = dolGetUrlWithoutUrlRoot();
 						$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 						//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
@@ -1043,50 +1053,53 @@ class FormFile
 
 						$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
 
-						$out .= '<a href="'.$fulllink.'" target="_blank" rel="noopener">'.img_picto($langs->trans("FileSharedViaALink"), 'globe').'</a> ';
-						$out .= '<input type="text" class="quatrevingtpercentminusx width75 nopadding small downloadexternallink" id="downloadlink'.$file['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'" spellcheck="false">';
-						$out .= ajax_autoselect('downloadlink'.$file['rowid']);
+						$tmpout .= '<a href="'.$fulllink.'" target="_blank" rel="noopener">'.img_picto($langs->trans("FileSharedViaALink"), 'globe').'</a> ';
+						$tmpout .= '<input type="text" class="quatrevingtpercentminusx width75 nopadding small downloadexternallink" id="downloadlink'.$file['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'" spellcheck="false">';
+						$tmpout .= ajax_autoselect('downloadlink'.$file['rowid']);
 					} else {
 						//print '<span class="opacitymedium">'.$langs->trans("FileNotShared").'</span>';
 					}
-					$out .= '</td>';
+					$tmpout .= '</td>';
 
 					// Show picto delete, print...
 					if ($delallowed || $printer || $morepicto) {
-						$out .= '<td class="right nowraponall">';
+						$tmpout .= '<td class="right nowraponall">';
 						if ($delallowed) {
 							$tmpurlsource = preg_replace('/#[a-zA-Z0-9_]*$/', '', $urlsource);
-							$out .= '<a class="reposition" href="'.$tmpurlsource.((strpos($tmpurlsource, '?') === false) ? '?' : '&').'action='.urlencode($removeaction).'&token='.newToken().'&file='.urlencode($relativepath);
-							$out .= ($param ? '&'.$param : '');
+							$tmpout .= '<a class="maginleftonly marginrightonly reposition" href="'.$tmpurlsource.((strpos($tmpurlsource, '?') === false) ? '?' : '&').'action='.urlencode($removeaction).'&token='.newToken().'&file='.urlencode($relativepath);
+							$tmpout .= ($param ? '&'.$param : '');
 							//$out.= '&modulepart='.$modulepart; // TODO obsolete ?
 							//$out.= '&urlsource='.urlencode($urlsource); // TODO obsolete ?
-							$out .= '">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
+							$tmpout .= '">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
 						}
 						if ($printer) {
-							$out .= '<a class="marginleftonly reposition" href="'.$urlsource.(strpos($urlsource, '?') ? '&' : '?').'action=print_file&token='.newToken().'&printer='.urlencode($modulepart).'&file='.urlencode($relativepath);
-							$out .= ($param ? '&'.$param : '');
-							$out .= '">'.img_picto($langs->trans("PrintFile", $relativepath), 'printer').'</a>';
+							$tmpout .= '<a class="maginleftonly marginleftonly reposition" href="'.$urlsource.(strpos($urlsource, '?') ? '&' : '?').'action=print_file&token='.newToken().'&printer='.urlencode($modulepart).'&file='.urlencode($relativepath);
+							$tmpout .= ($param ? '&'.$param : '');
+							$tmpout .= '">'.img_picto($langs->trans("PrintFile", $relativepath), 'printer').'</a>';
 						}
 						if ($morepicto) {
 							$morepicto = preg_replace('/__FILENAMEURLENCODED__/', urlencode($relativepath), $morepicto);
-							$out .= $morepicto;
+							$tmpout .= $morepicto;
 						}
-						$out .= '</td>';
+						$tmpout .= '</td>';
 					}
 
 					if (is_object($hookmanager)) {
 						$addcolumforpicto = ($delallowed || $printer || $morepicto);
 						$colspan = (4 + ($addcolumforpicto ? 1 : 0));
-						$colspanmore = 0;
-						$parameters = array('colspan' => ($colspan + $colspanmore), 'socid' => (isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id' => (isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'modulepart' => $modulepart, 'relativepath' => $relativepath);
+						$parameters = array('tmpout' => &$tmpout, 'colspan' => ($colspan + $colspanmore), 'socid' => (isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id' => (isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'modulepart' => $modulepart, 'relativepath' => $relativepath);
 						$res = $hookmanager->executeHooks('formBuilddocLineOptions', $parameters, $file);
 						if (empty($res)) {
-							$out .= $hookmanager->resPrint; // Complete line
-							$out .= '</tr>';
+							$tmpout .= $hookmanager->resPrint; 	// Complete line
+							$tmpout .= '</tr>';
 						} else {
-							$out = $hookmanager->resPrint; // Replace all $out
+							$tmpout = $hookmanager->resPrint; 	// Replace all $out
 						}
+					} else {
+						$tmpout .= '</tr>';
 					}
+
+					$out .= $tmpout;
 				}
 
 				$this->numoffiles++;
@@ -1110,18 +1123,23 @@ class FormFile
 					if ($delallowed || $printer || $morepicto) {
 						$out .= '<td></td>';
 					}
+					if ($colspanmore) {
+						$out .= '<td colspan="'.$colspanmore.'"></td>';
+					}
 					$out .= '</tr>'."\n";
 				}
 				$this->numoffiles++;
 			}
 
 			if (count($file_list) == 0 && count($link_list) == 0 && $headershown) {
-				$out .= '<tr><td colspan="'.(3 + ($addcolumforpicto ? 1 : 0)).'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>'."\n";
+				$addcolumforpicto = ($delallowed || $printer || $morepicto);
+				$colspan = (4 + ($addcolumforpicto ? 1 : 0));
+				$out .= '<tr><td colspan="'.($colspan + $colspanmore).'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>'."\n";
 			}
 		}
 
 		if ($headershown) {
-			// Affiche pied du tableau
+			// end of table
 			$out .= "</table>\n";
 			$out .= "</div>\n";
 			if ($genallowed) {
@@ -1403,7 +1421,7 @@ class FormFile
 			// Show title of list of existing files
 			$morehtmlright = '';
 			if (!empty($moreoptions['showhideaddbutton']) && $conf->use_javascript_ajax) {
-				$tmpurlforbutton = 'javascript:console.log("open add file form");jQuery(".divattachnewfile").toggle(); if (!jQuery(".divattachnewfile").is(":hidden")) { jQuery(".divattachnewfile input[type=\'file\']").first().click();} void(0);';	// scope file picker click to the just-shown form to avoid triggering native file dialog twice when other input[type=file] exist on the page
+				$tmpurlforbutton = 'javascript:console.log("open add file form"); if (jQuery(".divattachnewfile").is(":hidden")) { jQuery(".divattachnewfile").removeClass("hidden"); jQuery(".divattachnewfile input[type=\'file\']").first().click(); } else { jQuery(".divattachnewfile").addClass("hidden"); } void(0);';
 				$morehtmlright .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $tmpurlforbutton, '', $permtoeditline);
 			}
 
@@ -1430,18 +1448,26 @@ class FormFile
 
 			if (!empty($addfilterfields)) {
 				print '<tr class="liste_titre nodrag nodrop">';
-				print '<td><input type="search_doc_ref" value="'.dol_escape_htmltag(GETPOST('search_doc_ref', 'alpha')).'"></td>';
-				print '<td></td>';
-				print '<td></td>';
+				print '<td class="liste_titre"><input type="text" class="maxwidth200 search_doc_ref" name="search_doc_ref" value="'.dolPrintHTMLForAttribute(GETPOST('search_doc_ref', 'alpha')).'" placeholder="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("Filter")).'" autocomplete="off"></td>';
+				print '<td class="liste_titre"></td>';
+				print '<td class="liste_titre"></td>';
 				if (empty($useinecm) || $useinecm == 4 || $useinecm == 5 || $useinecm == 6) {
-					print '<td></td>';
+					print '<td class="liste_titre"></td>';
 				}
-				print '<td></td>';
-				print '<td></td>';
+				if (empty($moreoptions['hideshared'])) {
+					print '<td class="liste_titre"></td>';
+				}
+				if (!empty($moreoptions['buttons'])) {
+					print '<td class="liste_titre"></td>';
+				}
+				print '<td class="liste_titre"></td>';
 				if (empty($disablemove) && count($filearray) > 1) {
-					print '<td></td>';
+					print '<td class="liste_titre"></td>';
 				}
 				print "</tr>\n";
+
+				// Filter lines on file name, client side (the list of files is not paginated)
+				$this->printJsToFilterOnFileName(1);
 			}
 
 			// Get list of files stored into database for the same relative directory
@@ -1529,11 +1555,11 @@ class FormFile
 					// Do we have entry into database ?
 
 					print '<!-- In database: position='.(array_key_exists('position', $filearray[$key]) ? $filearray[$key]['position'] : 0).' -->'."\n";
-					print '<tr class="oddeven" id="row-'.((array_key_exists('rowid', $filearray[$key]) && $filearray[$key]['rowid'] > 0) ? $filearray[$key]['rowid'] : 'AFTER'.$lastrowid.'POS'.($i + 1)).'">';
+					print '<tr class="oddeven" id="row-'.((array_key_exists('rowid', $filearray[$key]) && $filearray[$key]['rowid'] > 0) ? $filearray[$key]['rowid'] : 'AFTER'.$lastrowid.'POS'.($i + 1)).'" data-filename="'.dolPrintHTMLForAttribute($file['name']).'">';
 
 
 					// File name
-					print '<td class="minwidth200imp tdoverflowmax500" title="'.dolPrintHTMLForAttribute($file['name']).'">';
+					print '<td class="minwidth200imp tdoverflowmax300" title="'.dolPrintHTMLForAttribute($file['name']).'">';
 
 					// Show file name with link to download
 					//print "XX".$file['name'];	//$file['name'] must be utf8
@@ -1587,7 +1613,7 @@ class FormFile
 					if ($sizetoshow == $sizetoshowbytes) {
 						print $sizetoshow;
 					} else {
-						print $form->textwithpicto($sizetoshow, $sizetoshowbytes, -1);
+						print $form->textwithpicto($sizetoshow, price($file['size'], 0, $langs, 0, 0).' '.$langs->trans("b"), -1);
 					}
 					print '</td>';
 
@@ -1646,7 +1672,7 @@ class FormFile
 							} else {
 								if ($file['share']) {
 									// Define $urlwithroot
-									$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+									$urlwithouturlroot = dolGetUrlWithoutUrlRoot();
 									$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 									//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
@@ -1738,6 +1764,16 @@ class FormFile
 									if ($modulepart == 'medias' && !GETPOST('website')) {
 										$moreparaminurl .= '&backtourl='.urlencode(DOL_URL_ROOT.'/ecm/index_medias.php?file_manager=1&modulepart='.$modulepart.'&section_dir='.$relativepath);
 									}
+									// Keep the popup mode (no menus) when the file manager is open into a dialog popup
+									if (GETPOSTINT('dol_hide_topmenu')) {
+										$moreparaminurl .= '&dol_hide_topmenu='.GETPOSTINT('dol_hide_topmenu');
+									}
+									if (GETPOSTINT('dol_hide_leftmenu')) {
+										$moreparaminurl .= '&dol_hide_leftmenu='.GETPOSTINT('dol_hide_leftmenu');
+									}
+									if (GETPOST('dol_openinpopup', 'aZ09')) {
+										$moreparaminurl .= '&dol_openinpopup='.urlencode(GETPOST('dol_openinpopup', 'aZ09'));
+									}
 									//var_dump($moreparaminurl);
 									print '<a class="editfielda" href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode($newmodulepart).$moreparaminurl.'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension'])).'" title="'.dol_escape_htmltag($langs->trans("ResizeOrCrop")).'">'.img_picto($langs->trans("ResizeOrCrop"), 'resize', 'class="paddingrightonly"').'</a>';
 								}
@@ -1769,10 +1805,10 @@ class FormFile
 							if ($nboffiles > 1 && $conf->browser->layout != 'phone') {
 								print '<td class="linecolmove tdlineupdown center">';
 								if ($i > 0) {
-									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=up&rowid='.$object->id.'">'.img_up('default', 0, 'imgupforline').'</a>';
+									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=up&token='.newToken().'&rowid='.$object->id.'">'.img_up('default', 0, 'imgupforline').'</a>';
 								}
 								if ($i < ($nboffiles - 1)) {
-									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=down&rowid='.$object->id.'">'.img_down('default', 0, 'imgdownforline').'</a>';
+									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=down&token='.newToken().'&rowid='.$object->id.'">'.img_down('default', 0, 'imgdownforline').'</a>';
 								}
 								print '</td>';
 							} else {
@@ -1836,6 +1872,61 @@ class FormFile
 	}
 
 
+	/**
+	 *	Print the JS code to filter, client side, the lines of a list of files (rows tr.oddeven with attribute data-filename)
+	 *	from the value of the input with class search_doc_ref.
+	 *
+	 *	@param	int<0,1>	$disableenter	1=Disable the submit of the parent form when pressing Enter into the filter input
+	 *	@return	void
+	 */
+	private function printJsToFilterOnFileName($disableenter = 0)
+	{
+		global $conf;
+
+		if (empty($conf->use_javascript_ajax)) {
+			return;
+		}
+
+		print '<script nonce="'.getNonce().'">
+		jQuery(document).ready(function() {
+			function dolFilterDocLines(input) {
+				var search = jQuery(input).val().toLowerCase();
+				var lines = jQuery(input).closest("table").find("tr.oddeven[data-filename]");
+				lines.each(function() {
+					var filename = String(jQuery(this).attr("data-filename") || "").toLowerCase();
+					jQuery(this).toggle(search == "" || filename.indexOf(search) >= 0);
+				});
+				/* Keep the bottom border and rounded corners on the last visible line */
+				lines.removeClass("lastvisible");
+				if (search != "") {
+					lines.filter(":visible").last().addClass("lastvisible");
+				}
+			}
+			jQuery("input.search_doc_ref").off(".dolfilterdoc").on("keyup.dolfilterdoc input.dolfilterdoc", function() {
+				dolFilterDocLines(this);
+			})'.($disableenter ? '.on("keydown.dolfilterdoc", function(e) {
+				if (e.key === "Enter") {
+					e.preventDefault();	/* Do not submit the parent form */
+				}
+			})' : '').'.each(function() {
+				var input = this;
+				if (jQuery(input).val() != "") {
+					dolFilterDocLines(input);	/* Filter kept after a reload (edit, rename, cancel) */
+				}
+				/* Keep the filter when a link of a line reloads the page (edit button) */
+				jQuery(input).closest("table").find("a.editfilelink").off(".dolfilterdoc").on("click.dolfilterdoc", function() {
+					var href = jQuery(this).attr("href");
+					var search = jQuery(input).val();
+					if (search != "" && href && href != "#") {
+						href = href.replace(/([?&])search_doc_ref=[^&]*/, "$1").replace(/[?&]$/, "");
+						jQuery(this).attr("href", href + (href.indexOf("?") >= 0 ? "&" : "?") + "search_doc_ref=" + encodeURIComponent(search));
+					}
+				});
+			});
+		});
+		</script>'."\n";
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show list of documents in a directory of ECM module.
@@ -1861,6 +1952,7 @@ class FormFile
 		global $conf, $langs, $hookmanager, $form;
 		global $sortfield, $sortorder;
 		global $search_doc_ref;
+		global $search_doc_date_start, $search_doc_date_end;
 		global $dolibarr_main_url_root;
 
 		dol_syslog(get_class($this).'::list_of_autoecmfiles upload_dir='.$upload_dir.' modulepart='.$modulepart);
@@ -1873,10 +1965,18 @@ class FormFile
 			$url = $_SERVER["PHP_SELF"];
 		}
 
+		$enablebulkdownload = ($modulepart == 'invoice_supplier');
+
 		if (!empty($addfilterfields)) {
-			print '<form action="'.$_SERVER['PHP_SELF'].'">';
+			print '<form action="'.dol_escape_htmltag($url).'" method="'.($enablebulkdownload ? 'POST' : 'GET').'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input type="hidden" name="module" value="'.$modulepart.'">';
+			print '<input type="hidden" name="module" value="'.dol_escape_htmltag($modulepart).'">';
+			if ($sortfield) {
+				print '<input type="hidden" name="sortfield" value="'.dol_escape_htmltag($sortfield).'">';
+			}
+			if ($sortorder) {
+				print '<input type="hidden" name="sortorder" value="'.dol_escape_htmltag($sortorder).'">';
+			}
 		}
 
 		print '<div class="div-table-responsive-no-min">';
@@ -1884,23 +1984,48 @@ class FormFile
 
 		if (!empty($addfilterfields)) {
 			print '<tr class="liste_titre nodrag nodrop">';
+			if ($enablebulkdownload) {
+				print '<td class="liste_titre center">';
+				print $form->showCheckAddButtons('checkforselect', 0);
+				print '</td>';
+			}
 			// Ref
 			print '<td class="liste_titre"></td>';
 			// Name
-			print '<td class="liste_titre"><input type="text" class="maxwidth100onsmartphone" name="search_doc_ref" value="'.dol_escape_htmltag($search_doc_ref).'"></td>';
+			print '<td class="liste_titre"><input type="text" class="maxwidth100onsmartphone search_doc_ref" name="search_doc_ref" value="'.dol_escape_htmltag($search_doc_ref).'" autocomplete="off"></td>';
 			// Size
 			print '<td class="liste_titre"></td>';
 			// Date
-			print '<td class="liste_titre"></td>';
+			print '<td class="liste_titre center">';
+			if ($enablebulkdownload) {
+				print '<div class="nowrap">';
+				print $form->selectDate(!empty($search_doc_date_start) ? $search_doc_date_start : '', 'search_doc_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+				print '</div>';
+				print '<div class="nowrap">';
+				print $form->selectDate(!empty($search_doc_date_end) ? $search_doc_date_end : '', 'search_doc_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+				print '</div>';
+			}
+			print '</td>';
 			// Shared and action column
 			print '<td class="liste_titre right">';
+			if ($enablebulkdownload) {
+				print '<button type="submit" class="button smallpaddingimp marginrightonly" name="action" value="download_selected">';
+				print img_picto('', 'download', 'class="pictofixedwidth"').$langs->trans("Download");
+				print '</button>';
+			}
 			$searchpicto = $form->showFilterButtons();
 			print $searchpicto;
 			print '</td>';
 			print "</tr>\n";
+
+			// Filter lines on file name, client side. Enter still submits the form to filter server side.
+			$this->printJsToFilterOnFileName(0);
 		}
 
 		print '<tr class="liste_titre">';
+		if ($enablebulkdownload) {
+			print '<th class="liste_titre center maxwidthsearch"></th>';
+		}
 		$sortref = "fullname";
 		if ($modulepart == 'invoice_supplier') {
 			$sortref = 'level1name';
@@ -2127,9 +2252,17 @@ class FormFile
 				if ($found <= 0 || !is_object($conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref])) {
 					continue; // We do not show orphelins files
 				}
+				if ($modulepart == 'invoice_supplier' && (int) $conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref]->entity !== (int) $conf->entity) {
+					continue;
+				}
 
 				print '<!-- Line list_of_autoecmfiles key='.$key.' -->'."\n";
-				print '<tr class="oddeven">';
+				print '<tr class="oddeven" data-filename="'.dolPrintHTMLForAttribute($file['name']).'">';
+				if ($enablebulkdownload) {
+					print '<td class="center">';
+					print '<input type="checkbox" class="flat checkforselect" name="selectedfiles[]" value="'.dol_escape_htmltag($relativefile).'">';
+					print '</td>';
+				}
 				// Ref
 				print '<td class="tdoverflowmax150">';
 				if ($found > 0 && is_object($conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref])) {
@@ -2182,7 +2315,7 @@ class FormFile
 				if ($sizetoshow == $sizetoshowbytes) {
 					print $sizetoshow;
 				} else {
-					print $form->textwithpicto($sizetoshow, $sizetoshowbytes, -1);
+					print $form->textwithpicto($sizetoshow, price($file['size'], 0, $langs, 0, 0).' '.$langs->trans("b"), -1);
 				}
 				print '</td>';
 
@@ -2193,7 +2326,7 @@ class FormFile
 				print '<td class="right">';
 				if (!empty($file['share'])) {
 					// Define $urlwithroot
-					$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+					$urlwithouturlroot = dolGetUrlWithoutUrlRoot();
 					$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 					//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
@@ -2217,7 +2350,7 @@ class FormFile
 				//if ($forcedownload) print '&attachment=1';
 				//print '&file='.urlencode($relativefile).'">';
 				//print img_view().'</a> &nbsp; ';
-				//if ($permissiontodelete) print '<a href="'.$url.'?id='.$object->id.'&section='.$_REQUEST["section"].'&action=delete&token='.newToken().'&urlfile='.urlencode($file['name']).'">'.img_delete().'</a>';
+				//if ($permissiontodelete) print '<a href="'.$url.'?id='.$object->id.'&section='.urlencode(GETPOST("section")).'&action=delete&token='.newToken().'&urlfile='.urlencode($file['name']).'">'.img_delete().'</a>';
 				//else print '&nbsp;';
 				print "</td>";
 
@@ -2226,7 +2359,7 @@ class FormFile
 		}
 
 		if (count($filearray) == 0) {
-			print '<tr class="oddeven"><td colspan="5">';
+			print '<tr class="oddeven"><td colspan="'.($enablebulkdownload ? '6' : '5').'">';
 			if (empty($textifempty)) {
 				print '<span class="opacitymedium">'.$langs->trans("NoFileFound").'</span>';
 			} else {
@@ -2282,7 +2415,7 @@ class FormFile
 
 		$morehtmlright = '';
 		if (!empty($moreoptions['showhideaddbutton']) && $conf->use_javascript_ajax) {
-			$morehtmlright .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', 'javascript:console.log("open addlink form"); jQuery(".divlinkfile").toggle(); void(0);', '', $permissiontoedit);
+			$morehtmlright .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', 'javascript:console.log("open addlink form"); if (jQuery(".divlinkfile").is(":hidden")) { jQuery(".divlinkfile").removeClass("hidden"); } else { jQuery(".divlinkfile").addClass("hidden"); } void(0);', '', $permissiontoedit);
 		}
 
 		// Show list of associated links
@@ -2383,7 +2516,7 @@ class FormFile
 				print '<td class="center">';
 				if ($link->share) {
 					global $dolibarr_main_url_root;
-					$urlwithouturlroot = preg_replace('/' . preg_quote(DOL_URL_ROOT, '/') . '$/i', '', trim($dolibarr_main_url_root));
+					$urlwithouturlroot = dolGetUrlWithoutUrlRoot();
 					$urlwithroot = $urlwithouturlroot . DOL_URL_ROOT; // This is to use external domain name found into config file
 					$fulllink = $urlwithroot.'/document.php?type=link&hashp=' . $link->share;
 
