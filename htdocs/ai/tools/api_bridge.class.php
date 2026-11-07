@@ -227,14 +227,14 @@ class ToolApiBridge extends McpTool
 				'description' => "tags of this kind of object (for a third party, suppliers gives its supplier tags and thirdparties its customer tags).",
 				'objects' => array(
 					'suppliers' => array('supplier', 'societe'),
-					'members' => array('member', 'adherent'),
+					'members' => array('member', 'member'),
 					'projects' => array('project', 'project'),
 					'users' => array('user', 'user'),
 					'warehouses' => array('warehouse', 'stock'),
 					'agendaevents' => array('actioncomm', 'agenda'),
 					'tickets' => array('ticket', 'ticket'),
 					'knowledgemanagement' => array('knowledgemanagement', 'knowledgemanagement'),
-					'interventions' => array('fichinter', 'ficheinter')
+					'interventions' => array('fichinter', 'intervention')
 				)
 			)
 		)
