@@ -512,6 +512,12 @@ class Documents extends DolibarrApi
 		if ($object->element == 'invoice_supplier' && $object->id > 0) {
 			// Supplier invoices are stored under a hashed subdir, as in the other methods of this file
 			$upload_dir = getMultidirOutput($object).'/'.get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').dol_sanitizeFileName($object->ref);
+		} elseif ($object->element == 'mo') {
+			// The element of a manufacturing order is 'mo' but its module is 'mrp', as in mrp/mo_document.php
+			$upload_dir = (string) getMultidirOutput($object, 'mrp', 1);
+		} elseif ($object->element == 'contact' && $object->id > 0) {
+			// Contacts are stored into a subdir of the module of third parties, as in contact/document.php
+			$upload_dir = getMultidirOutput($object, 'societe').'/contact/'.dol_sanitizeFileName($object->ref);
 		} else {
 			$upload_dir = (string) getMultidirOutput($object, '', 1);
 		}

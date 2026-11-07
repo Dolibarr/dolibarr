@@ -227,14 +227,14 @@ class ToolApiBridge extends McpTool
 				'description' => "tags of this kind of object (for a third party, suppliers gives its supplier tags and thirdparties its customer tags).",
 				'objects' => array(
 					'suppliers' => array('supplier', 'societe'),
-					'members' => array('member', 'adherent'),
+					'members' => array('member', 'member'),
 					'projects' => array('project', 'project'),
 					'users' => array('user', 'user'),
 					'warehouses' => array('warehouse', 'stock'),
 					'agendaevents' => array('actioncomm', 'agenda'),
 					'tickets' => array('ticket', 'ticket'),
 					'knowledgemanagement' => array('knowledgemanagement', 'knowledgemanagement'),
-					'interventions' => array('fichinter', 'ficheinter')
+					'interventions' => array('fichinter', 'intervention')
 				)
 			)
 		)
@@ -5435,8 +5435,18 @@ class ToolApiBridge extends McpTool
 			'Reception' => array('reception', '', ''),
 			'Expedition' => array('expedition', '', ''),
 			'Contrat' => array('contrat', '', ''),
-			'Fichinter' => array('ficheinter', '', '')
+			'Fichinter' => array('ficheinter', '', ''),
+			'Website' => array('website', '', '')
 		);
+		// A website page has no entity: it is reached through its website, as the REST class checks it.
+		if ($class === 'WebsitePage') {
+			$page = $this->fetchRecord('WebsitePage', (int) $id);
+			if (!$page) {
+				return false;
+			}
+			$class = 'Website';
+			$id = (int) $page->fk_website;
+		}
 		if (!isset($map[$class])) {
 			return true;
 		}
