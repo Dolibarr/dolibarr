@@ -5435,8 +5435,18 @@ class ToolApiBridge extends McpTool
 			'Reception' => array('reception', '', ''),
 			'Expedition' => array('expedition', '', ''),
 			'Contrat' => array('contrat', '', ''),
-			'Fichinter' => array('ficheinter', '', '')
+			'Fichinter' => array('ficheinter', '', ''),
+			'Website' => array('website', '', '')
 		);
+		// A website page has no entity: it is reached through its website, as the REST class checks it.
+		if ($class === 'WebsitePage') {
+			$page = $this->fetchRecord('WebsitePage', (int) $id);
+			if (!$page) {
+				return false;
+			}
+			$class = 'Website';
+			$id = (int) $page->fk_website;
+		}
 		if (!isset($map[$class])) {
 			return true;
 		}
