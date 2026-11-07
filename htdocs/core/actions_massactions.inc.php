@@ -62,6 +62,7 @@
  * @var ?string $permissiontoread
  * @var ?string $permissiontodelete
  * @var ?string $permissiontoclose
+ * @var ?string $permissiontocancel
  * @var ?string $permissiontoapprove
  * @var ?string $option
  * @var int $deliveryreceipt
@@ -79,6 +80,7 @@
 @phan-var-force ?string $permissiontoread
 @phan-var-force ?string $permissiontodelete
 @phan-var-force ?string $permissiontoclose
+@phan-var-force ?string $permissiontocancel
 @phan-var-force ?string $permissiontoapprove
 @phan-var-force ?int[] $toselect
 @phan-var-force ?string $diroutputmassaction
@@ -816,7 +818,7 @@ if (!$error && $massaction == 'confirm_presend') {
 }
 
 
-if (!$error && $massaction == 'cancelorders') {
+if (!$error && $massaction == 'cancelorders' && !empty($permissiontocancel)) {
 	$db->begin();
 
 	$nbok = 0;
@@ -826,6 +828,12 @@ if (!$error && $massaction == 'cancelorders') {
 		$cmd = new Commande($db);
 		if ($cmd->fetch($id_order) <= 0) {
 			continue;
+		}
+		// Check the user can access this order (external users, sales representatives restrictions)
+		if (!checkUserAccessToObject($user, array('commande'), $cmd, 'commande', '', 'fk_soc', 'rowid')) {
+			setEventMessages($langs->trans("ErrorForbidden"), null, 'errors');
+			$error++;
+			break;
 		}
 
 		if ($cmd->status != Commande::STATUS_VALIDATED) {

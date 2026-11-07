@@ -32,6 +32,8 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
+require_once dirname(__FILE__).'/../../htdocs/comm/propal/class/propal.class.php';
+require_once dirname(__FILE__).'/../../htdocs/supplier_proposal/class/supplier_proposal.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/pdf.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/doc.lib.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
@@ -110,5 +112,62 @@ class PdfDocTest extends CommonClassTest
 		$result = pdf_getHeightForLogo($file);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, 10.4);
+	}
+
+	/**
+	 * testPdfGetLinkedObjectsHidesSupplierProposalOfOtherThirdparty
+	 *
+	 * @return void
+	 */
+	public function testPdfGetLinkedObjectsHidesSupplierProposalOfOtherThirdparty()
+	{
+		global $conf, $db, $langs;
+
+		$hasAllowOtherSoc = isset($conf->global->PDF_ALLOW_DISPLAY_LINKED_OBJECT_FOR_OTHER_SOC);
+		$savedAllowOtherSoc = $hasAllowOtherSoc ? $conf->global->PDF_ALLOW_DISPLAY_LINKED_OBJECT_FOR_OTHER_SOC : null;
+		$conf->global->PDF_ALLOW_DISPLAY_LINKED_OBJECT_FOR_OTHER_SOC = 0;
+
+		$supplierProposal = new SupplierProposal($db);
+		$supplierProposal->ref = 'RQ0000-0001';
+		$supplierProposal->socid = 2;
+
+		$proposal = new class ($db) extends Propal {
+			/** @var array<string,array<int,CommonObject>> */
+			public $fakeLinkedObjects = array();
+
+			/**
+			 * @param ?int		$sourceid			Unused
+			 * @param string	$sourcetype			Unused
+			 * @param ?int		$targetid			Unused
+			 * @param string	$targettype			Unused
+			 * @param string	$clause				Unused
+			 * @param int		$alsosametype		Unused
+			 * @param string	$orderby			Unused
+			 * @param int		$loadalsoobjects	Unused
+			 * @return int
+			 */
+			public function fetchObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $clause = 'OR', $alsosametype = 1, $orderby = 'sourcetype', $loadalsoobjects = 1)
+			{
+				$this->linkedObjects = $this->fakeLinkedObjects;
+				return 1;
+			}
+		};
+		$proposal->socid = 1;
+		$proposal->fakeLinkedObjects = array('supplier_proposal' => array(1 => $supplierProposal));
+
+		try {
+			$result = pdf_getLinkedObjects($proposal, $langs);
+			$this->assertArrayNotHasKey('supplier_proposal', $result);
+
+			$supplierProposal->socid = 1;
+			$result = pdf_getLinkedObjects($proposal, $langs);
+			$this->assertSame('RQ0000-0001', $result['supplier_proposal']['ref_value']);
+		} finally {
+			if ($hasAllowOtherSoc) {
+				$conf->global->PDF_ALLOW_DISPLAY_LINKED_OBJECT_FOR_OTHER_SOC = $savedAllowOtherSoc;
+			} else {
+				unset($conf->global->PDF_ALLOW_DISPLAY_LINKED_OBJECT_FOR_OTHER_SOC);
+			}
+		}
 	}
 }

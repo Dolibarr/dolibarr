@@ -932,6 +932,10 @@ if (empty($reshook)) {
 			$ok = 0;
 			setEventMessages($langs->transnoentities("ErrorFieldMustHaveLessThanXChar", $langs->transnoentities("Code"), '6'), null, 'errors');
 		}
+		if ($id == DICT_TVA && dol_strlen(GETPOST("note")) > 128) {  // 128 char max on note for VAT dictionary
+			$ok = 0;
+			setEventMessages($langs->transnoentities("ErrorFieldMustHaveLessThanXChar", $langs->transnoentities("Note"), '128'), null, 'errors');
+		}
 
 		// Clean some parameters
 		if ((GETPOST("localtax1_type") || (GETPOST('localtax1_type') == '0')) && !GETPOST("localtax1")) {
@@ -954,6 +958,12 @@ if (empty($reshook)) {
 		}
 		if ($id == DICT_TVA && GETPOSTISSET("code")) {  // Spaces are not allowed into code for tax dictionary
 			$_POST["code"] = preg_replace('/[^a-zA-Z0-9_\-\+]/', '', GETPOST("code"));
+		}
+		// Checked after the cleaning above, so that a code shortened by it is not refused. The column c_tva.code
+		// is a varchar(10) and a longer value ended in a fatal SQL error instead of a message on the form.
+		if ($id == DICT_TVA && strlen(GETPOST("code")) > 10) {
+			$ok = 0;
+			setEventMessages($langs->transnoentities("ErrorFieldMustHaveLessThanXChar", $langs->transnoentities("Code"), '10'), null, 'errors');
 		}
 
 		$tablename = $tabname[$id];
