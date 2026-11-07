@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Gosodiad modiwl PayPal
-PaypalDesc=Mae'r modiwl hwn yn caniatáu i gwsmeriaid dalu trwy <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a> . Gellir defnyddio hwn ar gyfer taliad ad-hoc neu ar gyfer taliad sy'n ymwneud â gwrthrych Dolibarr (anfoneb, archeb, ...)
+PaypalDesc=This module allows payment by customers via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. This can be used for an ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
 PaypalOrCBDoPayment=Talu gyda PayPal (Cerdyn neu PayPal)
 PaypalDoPayment=Talu gyda PayPal
 PAYPAL_API_SANDBOX=Prawf modd / blwch tywod
@@ -19,7 +19,7 @@ NewOnlinePaymentFailed=Ceisio taliad ar-lein newydd ond methodd
 ONLINE_PAYMENT_SENDEMAIL=Cyfeiriad e-bost ar gyfer hysbysiadau ar ôl pob ymgais i dalu (ar gyfer llwyddiant a methu)
 ReturnURLAfterPayment=Dychwelyd URL ar ôl talu
 ValidationOfOnlinePaymentFailed=Methodd dilysu taliad ar-lein
-PaymentSystemConfirmPaymentPageWasCalledButFailed=Galwyd y dudalen cadarnhau taliad gan y system dalu dychwelyd gwall
+PaymentSystemConfirmPaymentPageWasCalledButFailed=The payment confirmation page was called by the online payment system and returned an error
 SetExpressCheckoutAPICallFailed=Methodd galwad API SetExpressCheckout.
 DoExpressCheckoutPaymentAPICallFailed=Methodd galwad API DoExpressCheckoutPayment.
 DetailedErrorMessage=Neges Gwall Manwl

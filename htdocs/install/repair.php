@@ -110,9 +110,22 @@ if (session_status() === PHP_SESSION_NONE) {
 if (empty($_SESSION['newtoken'])) {
 	$_SESSION['newtoken'] = bin2hex(random_bytes(32));
 }
+$imagerepairactions = array('restore_thirdparties_logos', 'rebuild_product_thumbs');
+$imagerepairaction = '';
+foreach ($imagerepairactions as $imageaction) {
+	if (GETPOSTISSET($imageaction)) {
+		$imagerepairaction = $imageaction;
+	}
+}
+$imagerepairentity = $imagerepairaction !== '' && GETPOSTISSET($imagerepairaction.'_entity') ? GETPOSTINT($imagerepairaction.'_entity') : 1;
+$imagerepairmode = $imagerepairaction !== '' ? GETPOST($imagerepairaction, 'aZ09') : '';
+$imagerepairtoken = GETPOST('token', 'alphanohtml');
+$imagerepairpost = $imagerepairmode === 'confirmed' && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST';
+$orphanrepairmode = GETPOST('clean_orphelin_dir', 'aZ09');
+$orphanrepairpost = $orphanrepairmode === 'confirmed' && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST';
 $ecmrepairbufferlevel = ob_get_level();
 $ecmrepairpost = GETPOST('clean_ecm_files_table', 'aZ09') === 'confirmed' && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST';
-if ($ecmrepairpost) {
+if ($ecmrepairpost || $imagerepairpost || $orphanrepairpost) {
 	ob_start(); // Allow a redirect after the installer has rendered its progress output.
 }
 
@@ -286,7 +299,7 @@ $sections = [
 		],
 		[
 			'name' => 'clean_orphelin_dir',
-			'info' => 'Clean orphan directories'
+			'info' => 'Clean orphan directories (all entities)'
 		],
 		[
 			'name' => 'clean_product_stock_batch',
@@ -336,6 +349,52 @@ if ($db->type == 'pgsql') {
 	];
 }
 
+if (GETPOSTISSET('clean_orphelin_dir')) {
+	$orphanrepairvalid = in_array($orphanrepairmode, array('test', 'confirmed'), true);
+	foreach ($sections as $options) {
+		foreach ($options as $opt) {
+			if ($opt['name'] !== 'clean_orphelin_dir' && GETPOSTISSET($opt['name'])) {
+				$orphanrepairvalid = false;
+			}
+		}
+	}
+	if (!$orphanrepairvalid || ($orphanrepairmode === 'confirmed' && (!$orphanrepairpost || !is_string($imagerepairtoken) || !hash_equals(newToken(), $imagerepairtoken)))) {
+		$ok = 0;
+		print '<tr><td colspan="4" class="error">'.$langs->trans('ErrorWrongParameters').'</td></tr>';
+	}
+}
+
+if ($imagerepairaction !== '') {
+	$imagevalid = in_array($imagerepairmode, array('test', 'confirmed'), true) && $imagerepairentity > 0 && isset($ecmrepairentities[$imagerepairentity]);
+	foreach ($sections as $options) {
+		foreach ($options as $opt) {
+			if ($opt['name'] !== $imagerepairaction && GETPOSTISSET($opt['name'])) {
+				$imagevalid = false; // Do not run another repair under the selected image entity's configuration.
+			}
+		}
+	}
+	if (!$imagevalid) {
+		$ok = 0;
+		print '<tr><td colspan="4" class="error">'.$langs->trans('ErrorWrongParameters').'</td></tr>';
+	} elseif ($imagerepairmode === 'confirmed' && (!$imagerepairpost || !is_string($imagerepairtoken) || !hash_equals(newToken(), $imagerepairtoken))) {
+		$ok = 0;
+		print '<tr><td colspan="4" class="error">'.$langs->trans('RepairImagesInvalidToken').'</td></tr>';
+	} elseif ($ok) {
+		// Image paths and legacy photo settings need the selected entity's native configuration.
+		if ($conf->setEntityValues($db, $imagerepairentity) < 0) {
+			$ok = 0;
+			dol_print_error($db);
+		} elseif ($imagerepairentity > 1 && !isModEnabled('multicompany')) {
+			$ok = 0;
+			print '<tr><td colspan="4" class="error">'.$langs->trans('RepairImagesDirectoryUnavailable').'</td></tr>';
+		}
+		if (defined('SYSLOG_FILE')) {
+			$conf->global->SYSLOG_FILE = constant('SYSLOG_FILE');
+		}
+		$conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
+	}
+}
+
 $conf->use_javascript_ajax = 1;
 
 foreach ($sections as $section => $options) {
@@ -362,10 +421,15 @@ foreach ($sections as $section => $options) {
 			print '<script src="../public/includes/jquery/plugins/select2/dist/js/select2.full.min.js"></script>';
 			print $form->selectarray('ecm_entity', $ecmrepairentities, $ecmrepairentity, 0, 0, 0, 'style="width: 220px"', 0, 0, 0, '', 'minwidth150');
 		}
+		if (in_array($option, $imagerepairactions, true)) {
+			print '<br><label for="'.$option.'_entity">'.$langs->trans('RepairImagesEntity').'</label> ';
+			$imageentity = GETPOSTISSET($option.'_entity') ? GETPOSTINT($option.'_entity') : 1;
+			print $form->selectarray($option.'_entity', $ecmrepairentities, $imageentity, 0, 0, 0, 'style="width: 220px"', 0, 0, 0, '', 'minwidth150');
+		}
 		print '</td>';
-		if ($option == 'clean_ecm_files_table') {
-			print '<td class="center"><button class="button" type="submit" name="clean_ecm_files_table" value="test">'.$langs->trans('Test').'</button></td>';
-			print '<td class="center"><button class="button" type="submit" name="clean_ecm_files_table" value="confirmed">'.$langs->trans('Repair').'</button></td>';
+		if ($option == 'clean_orphelin_dir' || $option == 'clean_ecm_files_table' || in_array($option, $imagerepairactions, true)) {
+			print '<td class="center"><button class="button" type="submit" name="'.$option.'" value="test">'.$langs->trans('Test').'</button></td>';
+			print '<td class="center"><button class="button" type="submit" name="'.$option.'" value="confirmed">'.$langs->trans('Repair').'</button></td>';
 		} else {
 			print '<td class="center"><a href="'.$url_test.'" title="Launch test on option '.$option.'">test</a>'.($value == 'test' ? ' (launched)' : '').'</td>';
 			print '<td class="center"><a href="'.$url_confirmed.'" title="Launch repair on option '.$option.'">repair</a>'.($value == 'confirmed' ? ' (launched)' : '').'</td>';
@@ -397,7 +461,7 @@ if ($ok && $oneoptionset) {
 
 	// Flush (some browser need a certain amount of data)
 	print str_repeat(' ', 1024);
-	if (!$ecmrepairpost) {
+	if (!$ecmrepairpost && !$imagerepairpost && !$orphanrepairpost) {
 		if (ob_get_level() > 0) {
 			ob_flush();
 		}
@@ -713,8 +777,20 @@ if ($ok && GETPOST('restore_thirdparties_logos')) {
 
 	print '<tr><td colspan="2"><br>*** Restore thirdparties logo<br>';
 
-	$sql = "SELECT s.rowid, s.nom as name, s.logo FROM ".MAIN_DB_PREFIX."societe as s ORDER BY s.nom";
-	$resql = $db->query($sql);
+	$imagebasedir = '';
+	if (isset($conf->societe->multidir_output[$conf->entity]) && is_string($conf->societe->multidir_output[$conf->entity]) && trim($conf->societe->multidir_output[$conf->entity]) !== '') {
+		$imagebasedir = (string) getMultidirOutput(null, 'societe');
+	}
+	if ($imagebasedir === '' || strpos($imagebasedir, 'error-') === 0
+		|| !dol_is_dir($imagebasedir) || !is_readable(dol_osencode($imagebasedir))
+		|| !repairImagePathIsSafe($imagebasedir, $imagebasedir, DOL_DATA_ROOT)) {
+		print '<tr><td class="error">'.$langs->trans('RepairImagesDirectoryUnavailable').'</td></tr>';
+		$ok = 0;
+	}
+	$sql = "SELECT s.rowid, s.nom as name, s.logo FROM ".MAIN_DB_PREFIX."societe as s";
+	$sql .= " WHERE s.entity = ".((int) $conf->entity);
+	$sql .= " ORDER BY s.nom";
+	$resql = $ok ? $db->query($sql) : false;
 	if ($resql) {
 		$num = $db->num_rows($resql);
 		$i = 0;
@@ -728,40 +804,64 @@ if ($ok && GETPOST('restore_thirdparties_logos')) {
 			$name=preg_replace('/\'/','',$name);
 			*/
 
-			$tmp = explode('.', (string) $obj->logo);
-			$name = $tmp[0];
-			if (isset($tmp[1])) {
-				$ext = '.'.$tmp[1];
+			if ((string) $obj->logo !== dol_sanitizeFileName((string) $obj->logo)) {
+				$error++;
+				$i++;
+				continue;
 			}
+			$name = pathinfo((string) $obj->logo, PATHINFO_FILENAME);
+			$extension = pathinfo((string) $obj->logo, PATHINFO_EXTENSION);
+			$ext = $extension !== '' ? '.'.$extension : '';
 
 			if (!empty($name)) {
-				$filetotest = $dolibarr_main_data_root.'/societe/logos/'.$name.$ext;
-				$filetotestsmall = $dolibarr_main_data_root.'/societe/logos/thumbs/'.$name.'_small'.$ext;
+				$filetotest = $imagebasedir.'/logos/'.$name.$ext;
+				$filetotestsmall = $imagebasedir.'/logos/thumbs/'.$name.'_small'.$ext;
 				$exists = (int) dol_is_file($filetotest);
-				print 'Check thirdparty '.$obj->rowid.' name='.$obj->name.' logo='.$obj->logo.' file '.$filetotest." exists=".$exists."<br>\n";
+				print 'Check thirdparty '.$obj->rowid.' name='.dol_escape_htmltag($obj->name).' logo='.dol_escape_htmltag($obj->logo).' file '.dol_escape_htmltag($filetotest)." exists=".$exists."<br>\n";
+				$filetarget = $imagebasedir.'/'.$obj->rowid.'/logos/'.$name.$ext;
+				$filetargetsmall = $imagebasedir.'/'.$obj->rowid.'/logos/thumbs/'.$name.'_small'.$ext;
+				$imagesafe = true;
+				foreach (array($filetotest, $filetotestsmall, $filetarget, $filetargetsmall) as $imagepath) {
+					if (!repairImagePathIsSafe($imagepath, $imagebasedir, DOL_DATA_ROOT)) {
+						$imagesafe = false;
+						break;
+					}
+				}
+				if (!$imagesafe) {
+					dol_syslog('Image repair skipped an unsafe thirdparty path, id='.((int) $obj->rowid), LOG_WARNING);
+					$error++;
+					$i++;
+					continue;
+				}
 				if ($exists) {
-					$filetarget = $dolibarr_main_data_root.'/societe/'.$obj->rowid.'/logos/'.$name.$ext;
-					$filetargetsmall = $dolibarr_main_data_root.'/societe/'.$obj->rowid.'/logos/thumbs/'.$name.'_small'.$ext;
 					$existt = dol_is_file($filetarget);
 					if (!$existt) {
 						if (GETPOST('restore_thirdparties_logos', 'alpha') == 'confirmed') {
-							dol_mkdir($dolibarr_main_data_root.'/societe/'.$obj->rowid.'/logos');
+							if (dol_mkdir($imagebasedir.'/'.$obj->rowid.'/logos') < 0) {
+								$error++;
+							}
 						}
 
-						print "  &nbsp; &nbsp; &nbsp; -> Copy file ".$filetotest." -> ".$filetarget."<br>\n";
+						print "  &nbsp; &nbsp; &nbsp; -> Copy file ".dol_escape_htmltag($filetotest)." -> ".dol_escape_htmltag($filetarget)."<br>\n";
 						if (GETPOST('restore_thirdparties_logos', 'alpha') == 'confirmed') {
-							dol_copy($filetotest, $filetarget, '', 0);
+							if (dol_copy($filetotest, $filetarget, '', 0) < 0) {
+								$error++;
+							}
 						}
 					}
 
 					$existtt = dol_is_file($filetargetsmall);
-					if (!$existtt) {
+					if (!$existtt && dol_is_file($filetotestsmall)) {
 						if (GETPOST('restore_thirdparties_logos', 'alpha') == 'confirmed') {
-							dol_mkdir($dolibarr_main_data_root.'/societe/'.$obj->rowid.'/logos/thumbs');
+							if (dol_mkdir($imagebasedir.'/'.$obj->rowid.'/logos/thumbs') < 0) {
+								$error++;
+							}
 						}
-						print "  &nbsp; &nbsp; &nbsp; -> Copy file ".$filetotestsmall." -> ".$filetargetsmall."<br>\n";
+						print "  &nbsp; &nbsp; &nbsp; -> Copy file ".dol_escape_htmltag($filetotestsmall)." -> ".dol_escape_htmltag($filetargetsmall)."<br>\n";
 						if (GETPOST('restore_thirdparties_logos', 'alpha') == 'confirmed') {
-							dol_copy($filetotestsmall, $filetargetsmall, '', 0);
+							if (dol_copy($filetotestsmall, $filetargetsmall, '', 0) < 0) {
+								$error++;
+							}
 						}
 					}
 				}
@@ -770,8 +870,10 @@ if ($ok && GETPOST('restore_thirdparties_logos')) {
 			$i++;
 		}
 	} else {
+		if ($ok) {
+			dol_print_error($db);
+		}
 		$ok = 0;
-		dol_print_error($db);
 	}
 
 	print '</td></tr>';
@@ -875,8 +977,22 @@ if ($ok && GETPOST('rebuild_product_thumbs', 'alpha')) {
 
 	print '<tr><td colspan="2"><br>*** Rebuild product thumbs<br>';
 
-	$sql = "SELECT s.rowid, s.ref FROM ".MAIN_DB_PREFIX."product as s ORDER BY s.ref";
-	$resql = $db->query($sql);
+	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+	$staticproduct = new Product($db);
+	$imagebasedir = '';
+	if (isset($conf->product->multidir_output[$conf->entity]) && is_string($conf->product->multidir_output[$conf->entity]) && trim($conf->product->multidir_output[$conf->entity]) !== '') {
+		$imagebasedir = (string) getMultidirOutput(null, 'product');
+	}
+	if ($imagebasedir === '' || strpos($imagebasedir, 'error-') === 0
+		|| !dol_is_dir($imagebasedir) || !is_readable(dol_osencode($imagebasedir))
+		|| !repairImagePathIsSafe($imagebasedir, $imagebasedir, DOL_DATA_ROOT)) {
+		print '<tr><td class="error">'.$langs->trans('RepairImagesDirectoryUnavailable').'</td></tr>';
+		$ok = 0;
+	}
+	$sql = "SELECT s.rowid, s.ref FROM ".MAIN_DB_PREFIX."product as s";
+	$sql .= " WHERE s.entity = ".((int) $conf->entity);
+	$sql .= " ORDER BY s.ref";
+	$resql = $ok ? $db->query($sql) : false;
 	if ($resql) {
 		$num = $db->num_rows($resql);
 		$i = 0;
@@ -885,23 +1001,59 @@ if ($ok && GETPOST('rebuild_product_thumbs', 'alpha')) {
 			$obj = $db->fetch_object($resql);
 
 			if (!empty($obj->ref)) {
-				$files = dol_dir_list($dolibarr_main_data_root.'/produit/'.$obj->ref, 'files', 0);
+				$staticproduct->id = (int) $obj->rowid;
+				$staticproduct->ref = (string) $obj->ref;
+				$imagedir = $imagebasedir.'/'.get_exdir(0, 0, 0, 1, $staticproduct, 'product');
+				if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
+					$imagedir .= '/'.$staticproduct->id.'/photos';
+				}
+				$realimagedir = realpath(dol_osencode($imagedir));
+				if ($realimagedir === false) {
+					$i++;
+					continue;
+				}
+				$imagesafe = repairImagePathIsSafe($imagedir, $imagebasedir, DOL_DATA_ROOT) && repairImagePathIsSafe($imagedir.'/thumbs', $imagebasedir, DOL_DATA_ROOT);
+				if ($imagesafe) {
+					foreach (dol_dir_list($imagedir.'/thumbs', 'all', 0, '', null, 'name', SORT_ASC, 0, 1) as $thumb) {
+						if (!repairImagePathIsSafe($thumb['fullname'], $imagebasedir, DOL_DATA_ROOT)) {
+							$imagesafe = false;
+							break;
+						}
+					}
+				}
+				if (!$imagesafe) {
+					dol_syslog('Image repair skipped an unsafe product path, id='.((int) $obj->rowid), LOG_WARNING);
+					$error++;
+					$i++;
+					continue;
+				}
+				$files = dol_dir_list($imagedir, 'files', 0, '', null, 'name', SORT_ASC, 0, 1, '', 1);
 				foreach ($files as $file) {
+					if (!repairImagePathIsSafe($file['fullname'], $imagebasedir, DOL_DATA_ROOT)) {
+						$error++;
+						continue;
+					}
 					// Generate thumbs.
 					if (image_format_supported($file['fullname']) == 1) {
 						$imgThumbSmall = 'notbuild';
 						if (GETPOST('rebuild_product_thumbs', 'alpha') == 'confirmed') {
 							// Used on logon for example
 							$imgThumbSmall = vignette($file['fullname'], $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
+							if (!is_string($imgThumbSmall) || !dol_is_file($imgThumbSmall)) {
+								$error++;
+							}
 						}
-						print 'Check product '.$obj->rowid.", file ".$file['fullname']." -> ".$imgThumbSmall." maxwidthsmall=".$maxwidthsmall." maxheightsmall=".$maxheightsmall."<br>\n";
+						print 'Check product '.$obj->rowid.", file ".dol_escape_htmltag($file['fullname'])." -> ".dol_escape_htmltag((string) $imgThumbSmall)." maxwidthsmall=".$maxwidthsmall." maxheightsmall=".$maxheightsmall."<br>\n";
 						$imgThumbMini = 'notbuild';
 						if (GETPOST('rebuild_product_thumbs', 'alpha') == 'confirmed') {
 							// Create mini thumbs for image (Ratio is near 16/9)
 							// Used on menu or for setup page for example
 							$imgThumbMini = vignette($file['fullname'], $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
+							if (!is_string($imgThumbMini) || !dol_is_file($imgThumbMini)) {
+								$error++;
+							}
 						}
-						print 'Check product '.$obj->rowid.", file ".$file['fullname']." -> ".$imgThumbMini." maxwidthmini=".$maxwidthmini." maxheightmini=".$maxheightmini."<br>\n";
+						print 'Check product '.$obj->rowid.", file ".dol_escape_htmltag($file['fullname'])." -> ".dol_escape_htmltag((string) $imgThumbMini)." maxwidthmini=".$maxwidthmini." maxheightmini=".$maxheightmini."<br>\n";
 					}
 				}
 			}
@@ -909,8 +1061,10 @@ if ($ok && GETPOST('rebuild_product_thumbs', 'alpha')) {
 			$i++;
 		}
 	} else {
+		if ($ok) {
+			dol_print_error($db);
+		}
 		$ok = 0;
-		dol_print_error($db);
 	}
 
 	print '</td></tr>';
@@ -946,6 +1100,7 @@ if ($ok && GETPOST('clean_menus', 'alpha')) {
 	$sql = "SELECT rowid, module";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as c";
 	$sql .= " WHERE module IS NOT NULL AND module <> ''";
+	$sql .= " AND c.entity = ".((int) $conf->entity);
 	$sql .= " ORDER BY module";
 
 	$resql = $db->query($sql);
@@ -984,6 +1139,7 @@ if ($ok && GETPOST('clean_menus', 'alpha')) {
 						print ' - Module condition '.$modulecond.' seems ko, we delete menu entry.';
 						if (GETPOST('clean_menus') == 'confirmed') {
 							$sql2 = "DELETE FROM ".MAIN_DB_PREFIX."menu WHERE module = '".$db->escape($modulecond)."'";
+							$sql2 .= " AND entity = ".((int) $conf->entity);
 							$resql2 = $db->query($sql2);
 							if (!$resql2) {
 								$error++;
@@ -1023,133 +1179,46 @@ if ($ok && GETPOST('clean_menus', 'alpha')) {
 
 
 
-// clean_orphelin_dir: Run purge of directory
+// clean_orphelin_dir: Visit every owner's directory, preserving all existing objects.
 if ($ok && GETPOST('clean_orphelin_dir', 'alpha')) {
-	$listmodulepart = array('company', 'invoice', 'invoice_supplier', 'propal', 'order', 'order_supplier', 'contract', 'tax');
-	foreach ($listmodulepart as $modulepart) {
-		$filearray = array();
-		$upload_dir = isset($conf->$modulepart->dir_output) ? $conf->$modulepart->dir_output : '';
-		if ($modulepart == 'company') {
-			$upload_dir = $conf->societe->dir_output; // TODO change for multicompany sharing
-		}
-		if ($modulepart == 'invoice') {
-			$upload_dir = $conf->facture->dir_output;
-		}
-		if ($modulepart == 'invoice_supplier') {
-			$upload_dir = $conf->fournisseur->facture->dir_output;
-		}
-		if ($modulepart == 'order') {
-			$upload_dir = $conf->commande->dir_output;
-		}
-		if ($modulepart == 'order_supplier') {
-			$upload_dir = $conf->fournisseur->commande->dir_output;
-		}
-		if ($modulepart == 'contract') {
-			$upload_dir = $conf->contrat->dir_output;
-		}
-
-		if (empty($upload_dir)) {
+	$savedconf = clone $conf;
+	$savedmc = $mc ?? null;
+	$listmodulepart = array('company' => 'societe', 'invoice' => 'facture', 'invoice_supplier' => 'supplier_invoice', 'propal' => 'propal', 'order' => 'commande', 'order_supplier' => 'supplier_order', 'contract' => 'contrat', 'tax' => 'tax');
+	foreach ($ecmrepairentities as $orphanentity => $orphanlabel) {
+		if ($conf->setEntityValues($db, $orphanentity) < 0) {
+			$error++;
+			dol_print_error($db);
 			continue;
 		}
-
-		print '<tr><td colspan="2"><br>*** Clean orphelins files into files '.$upload_dir.'</td></tr>';
-
-		$filearray = dol_dir_list($upload_dir, "files", 1, '', array('^SPECIMEN\.pdf$', '^\.', '(\.meta|_preview.*\.png)$', '^temp$', '^payments$', '^CVS$', '^thumbs$'), '', SORT_DESC, 1, 1);
-
-		$object_instance = null;
-		// To show ref or specific information according to view to show (defined by $module)
-		if ($modulepart == 'company') {
-			include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-			$object_instance = new Societe($db);
-		}
-		if ($modulepart == 'invoice') {
-			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-			$object_instance = new Facture($db);
-		} elseif ($modulepart == 'invoice_supplier') {
-			include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-			$object_instance = new FactureFournisseur($db);
-		} elseif ($modulepart == 'propal') {
-			include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-			$object_instance = new Propal($db);
-		} elseif ($modulepart == 'order') {
-			include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-			$object_instance = new Commande($db);
-		} elseif ($modulepart == 'order_supplier') {
-			include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-			$object_instance = new CommandeFournisseur($db);
-		} elseif ($modulepart == 'contract') {
-			include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-			$object_instance = new Contrat($db);
-		} elseif ($modulepart == 'tax') {
-			include_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
-			$object_instance = new ChargeSociales($db);
-		}
-
-		foreach ($filearray as $key => $file) {
-			if (!is_dir($file['name'])
-			&& $file['name'] != '.'
-			&& $file['name'] != '..'
-			&& $file['name'] != 'CVS'
-			) {
-				// Define relative path used to store the file
-				$relativefile = preg_replace('/'.preg_quote($upload_dir.'/', '/').'/', '', $file['fullname']);
-
-				//var_dump($file);
-				$id = 0;
-				$ref = '';
-				$object_instance->id = 0;
-				$object_instance->ref = '';
-				$label = '';
-
-				// To show ref or specific information according to view to show (defined by $module)
-				if ($modulepart == 'invoice') {
-					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
-					$ref = empty($reg[1]) ? '' : $reg[1];
-				}
-				if ($modulepart == 'invoice_supplier') {
-					preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg);
-					$id = empty($reg[1]) ? '' : $reg[1];
-				}
-				if ($modulepart == 'propal') {
-					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
-					$ref = empty($reg[1]) ? '' : $reg[1];
-				}
-				if ($modulepart == 'order') {
-					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
-					$ref = empty($reg[1]) ? '' : $reg[1];
-				}
-				if ($modulepart == 'order_supplier') {
-					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
-					$ref = empty($reg[1]) ? '' : $reg[1];
-				}
-				if ($modulepart == 'contract') {
-					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
-					$ref = empty($reg[1]) ? '' : $reg[1];
-				}
-				if ($modulepart == 'tax') {
-					preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg);
-					$id = empty($reg[1]) ? '' : $reg[1];
-				}
-
-				if (($id || $ref) && $object_instance !== null) {
-					//print 'Fetch '.$id.' or '.$ref.'<br>';
-					$result = $object_instance->fetch($id, $ref);
-					//print $result.'<br>';
-					if ($result == 0) {    // Not found but no error
-						// Clean of orphelins directories are done into repair.php
-						print '<tr><td colspan="2">';
-						print 'Delete orphelins file '.$file['fullname'].'<br>';
-						if (GETPOST('clean_orphelin_dir', 'alpha') == 'confirmed') {
-							dol_delete_file($file['fullname'], 1, 1, 1);
-							dol_delete_dir(dirname($file['fullname']), 1);
-						}
-						print "</td></tr>";
-					} elseif ($result < 0) {
-						print 'Error in '.get_class($object_instance).'.fetch of id'.$id.' ref='.$ref.', result='.$result.'<br>';
-					}
-				}
+		foreach ($listmodulepart as $modulepart => $confmodule) {
+			if (!isset($conf->$confmodule->multidir_output[$orphanentity])) {
+				print '<tr><td colspan="2">'.$langs->trans('RepairOrphanDirectoryNotConfigured', (int) $orphanentity, dol_escape_htmltag($modulepart)).'</td></tr>';
+				continue;
 			}
+			$upload_dir = getMultidirOutput(null, $confmodule);
+			if (!is_string($upload_dir) || $upload_dir === '' || strpos($upload_dir, 'error-') === 0) {
+				$error++;
+				continue;
+			}
+			if (!file_exists(dol_osencode($upload_dir))) {
+				continue; // A module with no documents does not need a directory to be created.
+			}
+			$report = repairOrphanFiles($db, $modulepart, $upload_dir, $dolibarr_main_data_root, $orphanrepairmode === 'confirmed');
+			print '<tr><td colspan="2">Check orphan files entity='.((int) $orphanentity).' module='.dol_escape_htmltag($modulepart).' candidates='.count($report['files']).'<br>';
+			foreach ($report['files'] as $orphanfile) {
+				print 'Delete orphan file '.dol_escape_htmltag(substr($orphanfile, strlen($upload_dir) + 1)).'<br>';
+			}
+			if ($report['error'] !== '') {
+				$error++;
+				print '<span class="error">'.$langs->trans($report['error']).'</span><br>';
+			}
+			print '</td></tr>';
 		}
+	}
+	$conf = $savedconf;
+	$mc = $savedmc;
+	if ($error) {
+		$ok = 0;
 	}
 }
 
@@ -1463,7 +1532,8 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 		$listofmods .= ($listofmods ? ',' : '')."'".$db->escape($val)."'";
 	}
 
-	$sql = "SELECT id, libelle as label, module from ".MAIN_DB_PREFIX."rights_def WHERE module NOT IN (".$db->sanitize($listofmods, 1).") AND id > 100000";
+	$sql = "SELECT id, entity, libelle as label, module from ".MAIN_DB_PREFIX."rights_def WHERE module NOT IN (".$db->sanitize($listofmods, 1).") AND id > 100000";
+	$sql .= " AND entity = ".((int) $conf->entity);
 
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -1473,9 +1543,12 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
 				if ($obj->id > 0) {
-					print '<tr><td>Found line with id '.$obj->id.', label "'.$obj->label.'" of module "'.$obj->module.'" to delete';
+					print '<tr><td>Found line with id '.$obj->id.', entity '.$obj->entity.', label "'.$obj->label.'" of module "'.$obj->module.'" to delete';
 					if (GETPOST('clean_perm_table', 'alpha') == 'confirmed') { // If confirmed, proceed with deletion
+						// The primary key of rights_def is (id, entity), so the entity of the found line must be part of the
+						// delete. Without it, cleaning a permission of one entity removes the same id in all the other ones.
 						$sqldelete = "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE id = ".((int) $obj->id);
+						$sqldelete .= " AND entity = ".((int) $obj->entity);
 						$resqldelete = $db->query($sqldelete);
 						if (!$resqldelete) {
 							dol_print_error($db);
@@ -2024,7 +2097,9 @@ if ($ok && GETPOST('repair_supplier_order_duplicate_ref')) {
 
 	// Query to find all duplicate supplier orders
 	$sql = "SELECT * FROM " . MAIN_DB_PREFIX . "commande_fournisseur";
-	$sql .= " WHERE ref IN (SELECT cf.ref FROM " . MAIN_DB_PREFIX . "commande_fournisseur cf GROUP BY cf.ref, cf.entity HAVING COUNT(cf.rowid) > 1)";
+	$sql .= " WHERE entity = ".((int) $conf->entity);
+	$sql .= " AND ref IN (SELECT cf.ref FROM " . MAIN_DB_PREFIX . "commande_fournisseur cf WHERE cf.entity = ".((int) $conf->entity)." GROUP BY cf.ref HAVING COUNT(cf.rowid) > 1)";
+	$sql .= " ORDER BY rowid";
 
 	// Build a list of ref => []CommandeFournisseur
 	$duplicateSupplierOrders = [];
@@ -2051,6 +2126,7 @@ if ($ok && GETPOST('repair_supplier_order_duplicate_ref')) {
 			$newRef = $supplierOrder->getNextNumRef($soc);
 
 			$sql = "UPDATE " . MAIN_DB_PREFIX . "commande_fournisseur cf SET cf.ref = '" . $db->escape($newRef) . "' WHERE cf.rowid = " . (int) $supplierOrder->id;
+			$sql .= " AND cf.entity = ".((int) $conf->entity);
 			if (!$db->query($sql)) {
 				$err++;
 			}
@@ -2218,6 +2294,31 @@ if ($ok && GETPOST('repair_mailing_path')) {
 	$user = $sav_user;
 
 	print '</td></tr>';
+}
+
+if ($ok && $orphanrepairpost && !$error) {
+	setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+	while (ob_get_level() > $ecmrepairbufferlevel) {
+		ob_end_clean();
+	}
+	$db->close();
+	header('Location: '.$_SERVER['PHP_SELF'].'?clean_orphelin_dir=test&selectlang='.urlencode($setuplang), true, 303);
+	exit;
+}
+
+if ($imagerepairaction !== '' && $error) {
+	$ok = 0;
+	print '<tr><td class="error">'.$langs->trans('RepairImagesFailed').'</td></tr>';
+}
+
+if ($ok && $imagerepairpost && !$error) {
+	setEventMessages($langs->trans('RepairImagesCompleted', dol_escape_htmltag($ecmrepairentities[$imagerepairentity])), null, 'mesgs');
+	while (ob_get_level() > $ecmrepairbufferlevel) {
+		ob_end_clean();
+	}
+	$db->close();
+	header('Location: '.$_SERVER['PHP_SELF'].'?'.$imagerepairaction.'=test&'.$imagerepairaction.'_entity='.((int) $imagerepairentity).'&selectlang='.urlencode($setuplang), true, 303);
+	exit;
 }
 
 print '</table>';

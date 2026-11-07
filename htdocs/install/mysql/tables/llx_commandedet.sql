@@ -59,6 +59,7 @@ create table llx_commandedet
   fk_unit						integer      DEFAULT NULL,       -- lien vers table des unités
   import_key					varchar(14),
   ref_ext                       varchar(255) DEFAULT NULL,
+  ref_customer                  varchar(128) DEFAULT NULL,       -- reference the customer gives to this line (line of its purchase order)
 
   fk_commandefourndet			integer DEFAULT NULL,            -- link to detail line of commande fourn (resplenish)
 

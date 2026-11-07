@@ -85,6 +85,13 @@ class modExpenseReport extends DolibarrModules
 				0,
 			],
 			[
+				"EXPENSEREPORT_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/expensereports",
+				"",
+				0,
+			],
+			[
 				"MAIN_DELAY_EXPENSEREPORTS",
 				"chaine",
 				"15",
@@ -182,7 +189,7 @@ class modExpenseReport extends DolibarrModules
 		$this->export_icon[$r] = 'trip';
 		$this->export_permission[$r] = array(array("expensereport", "export"));
 		$this->export_fields_array[$r] = array(
-			'd.rowid' => "TripId", 'd.ref' => 'Ref', 'd.date_debut' => 'DateStart', 'd.date_fin' => 'DateEnd', 'd.date_create' => 'DateCreation', 'd.date_approve' => 'DateApprove',
+			'd.rowid' => "TripId", 'd.ref' => 'Ref', 'd.date_debut' => 'DateStart', 'd.date_fin' => 'DateEnd', 'd.date_creation' => 'DateCreation', 'd.date_approve' => 'DateApprove',
 			'd.total_ht' => "TotalHT", 'd.total_tva' => 'TotalVAT', 'd.total_ttc' => 'TotalTTC',
 			'd.fk_statut' => 'Status', 'd.paid' => 'Paid',
 			'd.note_private' => 'NotePrivate', 'd.note_public' => 'NotePublic', 'd.detail_cancel' => 'MOTIF_CANCEL', 'd.detail_refuse' => 'MOTIF_REFUS',
@@ -194,7 +201,7 @@ class modExpenseReport extends DolibarrModules
 			'user_rib.owner_address' => 'BankAccountOwnerAddress'
 		);
 		$this->export_TypeFields_array[$r] = array(
-			'd.rowid' => 'Numeric', 'd.ref' => 'Text', 'd.date_debut' => 'Date', 'd.date_fin' => 'Date', 'd.date_create' => 'Date', 'd.date_approve' => 'Date',
+			'd.rowid' => 'Numeric', 'd.ref' => 'Text', 'd.date_debut' => 'Date', 'd.date_fin' => 'Date', 'd.date_creation' => 'Date', 'd.date_approve' => 'Date',
 			'd.total_ht' => "Numeric", 'd.total_tva' => 'Numeric', 'd.total_ttc' => 'Numeric',
 			'd.fk_statut' => "Numeric", 'd.paid' => 'Numeric',
 			'd.note_private' => 'Text', 'd.note_public' => 'Text', 'd.detail_cancel' => 'Text', 'd.detail_refuse' => 'Text',

@@ -366,7 +366,7 @@ $coldisplay++;
 	// Progression for situation invoices
 	if ($object->situation_cycle_ref) {
 		$coldisplay++;
-		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') > 1) {
 			$tmp_fieldv = (GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent);
 			$old_fieldv = $line->getAllPrevProgress($line->fk_facture);
 			$fieldv = $tmp_fieldv + $old_fieldv;

@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=வங்கி
 MenuBankCash=வங்கிகள் | பணம்
+BankArea=Banks and cash area
+LatestBankTransactionsModified=Latest %s modified bank transactions
 MenuVariousPayment=Manual Journal Entries
 MenuNewVariousPayment=New manual journal entry
 BankName=வங்கி பெயர்
@@ -47,6 +49,9 @@ LastAccountStatements=கடைசி கணக்கு அறிக்கை�
 IOMonthlyReporting=மாதாந்திர அறிக்கை
 BankAccountDomiciliation=வங்கி முகவரி
 BankAccountCountry=கணக்கு நாடு
+InstitutionNumber=Institution number
+TransitNumber=Branch (transit) number
+ABARoutingNumber=ABA routing number
 BankAccountOwner=கணக்கு உரிமையாளரின் பெயர்
 BankAccountOwnerAddress=கணக்கு உரிமையாளரின் முகவரி
 BankAccountOwnerZip=Account owner zip
@@ -206,3 +211,7 @@ PendingDirectDebitToComplete=Direct debits to close
 PendingCreditTransferToCompleteShort=Credit transfers to close
 PendingCreditTransferToComplete=Credit transfers to close
 Requests=Requests
+PaymentReferenceOfAccount=Payment reference
+PaymentReferenceOfAccountHelp=Reference to give when paying to this account, the same for all the invoices: the RF (ISO 11649) or national reference a supplier gave you for your contract, meter or customer account. An RF reference is checked.
+ErrorPaymentReferenceOfAccountTooLong=The payment reference is too long (35 characters at most)
+ErrorPaymentReferenceOfAccountNotValid=The RF payment reference is not valid: check digits do not match
