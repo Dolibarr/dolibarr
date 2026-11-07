@@ -193,7 +193,7 @@ print $langs->trans("YouMayFindDocumentOn").'<br>';
 print '<br>';
 print img_picto('', 'url').' <a href="https://www.dolibarr.org/certifications-lf" target="_blank">https://www.dolibarr.org/certifications-lf</a>';
 if ($mysoc->country_code == 'FR') {
-	print '<br><br>'.$langs->trans("ApplicationUpdateResponsibilityFR");
+	print '<br><br><span class="opacitymedium">'.$langs->trans("ApplicationUpdateResponsibilityFR").'</span>';
 }
 print '<center>';
 

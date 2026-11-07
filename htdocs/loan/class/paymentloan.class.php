@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2015-2024  Frédéric France      		<frederic.france@free.fr>
+ * Copyright (C) 2015-2026  Frédéric France      		<frederic.france@free.fr>
  * Copyright (C) 2020       Maxime DEMAREST      		<maxime@indelog.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -158,10 +158,11 @@ class PaymentLoan extends CommonObject
 	 *  Create payment of loan into database.
 	 *  Use this->amounts to have list of lines for the payment
 	 *
-	 *  @param      User		$user   User making payment
+	 *  @param      User		$user   	User making payment
+	 *  @param      int<0,1>	$notrigger	1=Disable triggers
 	 *  @return     int     			Return integer <0 if KO, id of payment if OK
 	 */
-	public function create($user)
+	public function create($user, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -238,6 +239,15 @@ class PaymentLoan extends CommonObject
 				$this->error = $this->db->lasterror();
 				$error++;
 			}
+		}
+
+		if ($totalamount != 0 && !$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('PAYMENTLOAN_CREATE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
 		}
 
 		if ($totalamount != 0 && !$error) {
@@ -353,10 +363,10 @@ class PaymentLoan extends CommonObject
 			$this->num_payment = trim($this->num_payment);
 		}
 		if (isset($this->note_private)) {
-			$this->note = trim($this->note_private);
+			$this->note_private = trim($this->note_private);
 		}
 		if (isset($this->note_public)) {
-			$this->note = trim($this->note_public);
+			$this->note_public = trim($this->note_public);
 		}
 		if (isset($this->fk_bank)) {
 			$this->fk_bank = (int) $this->fk_bank;
@@ -397,6 +407,15 @@ class PaymentLoan extends CommonObject
 			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
+		if (!$error && $user && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('PAYMENTLOAN_MODIFY', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
 		// Commit or rollback
 		if ($error) {
 			foreach ($this->errors as $errmsg) {
@@ -425,7 +444,16 @@ class PaymentLoan extends CommonObject
 
 		$this->db->begin();
 
-		if ($this->bank_line > 0) {
+		// Schedule lines paid by this payment are no longer paid
+		if ($this->fk_bank > 0) {
+			$sql = "UPDATE ".MAIN_DB_PREFIX."loan_schedule SET fk_bank = 0 WHERE fk_bank = ".((int) $this->fk_bank);
+			if (!$this->db->query($sql)) {
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
+			}
+		}
+
+		if (!$error && $this->bank_line > 0) {
 			$accline = new AccountLine($this->db);
 			$accline->fetch($this->bank_line);
 			$result = $accline->delete($user);
@@ -462,6 +490,15 @@ class PaymentLoan extends CommonObject
 			}
 		}
 
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('PAYMENTLOAN_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
 		// Commit or rollback
 		if ($error) {
 			foreach ($this->errors as $errmsg) {
@@ -484,7 +521,7 @@ class PaymentLoan extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

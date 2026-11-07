@@ -68,7 +68,7 @@ function member_prepare_head(Adherent $object)
 	if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 		if ($user->hasRight('partnership', 'read')) {
 			$nbPartnership = is_array($object->partnerships) ? count($object->partnerships) : 0;
-			$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/partnership/partnership_list.php', ['id' => $object->id]);
+			$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/partnership/partnership_list.php', ['rowid' => $object->id]);
 			$head[$h][1] = $langs->trans("Partnerships");
 			$nbNote = 0;
 			$sql = "SELECT COUNT(n.rowid) as nb";
@@ -105,7 +105,7 @@ function member_prepare_head(Adherent $object)
 	if (!empty($object->note_public)) {
 		$nbNote++;
 	}
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/note.php', ['id' => $object->id]);
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/core/note.php', ['element' => 'adherents', 'id' => $object->id]);
 	$head[$h][1] = $langs->trans("Note");
 	$head[$h][2] = 'note';
 	if ($nbNote > 0) {

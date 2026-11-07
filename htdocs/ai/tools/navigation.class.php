@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
- * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  */
 /* htdocs/ai/tools/navigation.php */
 
-require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 
 /**
@@ -44,7 +43,7 @@ class ToolNavigation extends McpTool
 					"properties" => [
 						"object_type" => [
 							"type" => "string",
-							"description" => "The object type. Examples: 'invoice', 'thirdparty', 'order', 'proposal', 'project', 'supplier_invoice'.",
+							"description" => "The object type. Examples: 'invoice', 'thirdparty', 'order', 'proposal', 'project', 'supplier_invoice', 'website'.",
 						],
 						"view" => [
 							"type" => "string",
@@ -72,6 +71,17 @@ class ToolNavigation extends McpTool
 				]
 			]
 		];
+	}
+
+	/**
+	 * This class already checks the rights of every page it can navigate to.
+	 *
+	 * @param string $toolName Tool being executed.
+	 * @return string RIGHTS_ENFORCED_DOWNSTREAM
+	 */
+	public function getRequiredRights(string $toolName)
+	{
+		return self::RIGHTS_ENFORCED_DOWNSTREAM;
 	}
 
 	/**
@@ -147,6 +157,19 @@ class ToolNavigation extends McpTool
 		// Set action for create view
 		if ($view === 'create') {
 			$getQueryParams['action'] = 'create';
+		}
+
+		// The website editor uses its own parameter names
+		if ($elementType === 'website') {
+			$getQueryParams = [];
+			if ($id > 0) {
+				$getQueryParams['websiteid'] = $id;
+			} elseif (!empty($ref)) {
+				$getQueryParams['website'] = $ref;
+			}
+			if ($view === 'create') {
+				$getQueryParams['action'] = 'createsite';
+			}
 		}
 
 		// Handle Status Filtering
@@ -322,6 +345,9 @@ class ToolNavigation extends McpTool
 			'membership' => 'adherent',
 			// Categories
 			'category' => 'categories',
+			// Websites
+			'site' => 'website',
+			'web_site' => 'website',
 		];
 
 		$type = $aliases[$input] ?? $input;
@@ -347,6 +373,7 @@ class ToolNavigation extends McpTool
 			'fichinter' => '/fichinter/',
 			'adherent' => '/adherents/',
 			'categories' => '/categories/',
+			'website' => '/website/index.php', // Direct file: the website editor lists the sites in a selector
 		];
 
 		if (!isset($map[$type])) {
@@ -483,6 +510,11 @@ class ToolNavigation extends McpTool
 					($view === 'create' && $this->user->hasRight('categorie', 'creer'));
 				break;
 
+			case 'website':
+				$permitted = isModEnabled('website') && $this->user->hasRight('website', 'read') &&
+					($view !== 'create' || $this->user->hasRight('website', 'write'));
+				break;
+
 			default:
 				// If we don't have specific permission checks, default to read access
 				$permitted = true;
@@ -612,6 +644,9 @@ class ToolNavigation extends McpTool
 				break;
 			case 'categories':
 				$label = $langs->trans("Category");
+				break;
+			case 'website':
+				$label = $langs->trans("WebSite");
 				break;
 			default:
 				$label = ucfirst($type);

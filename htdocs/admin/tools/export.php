@@ -80,7 +80,7 @@ $utils = new Utils($db);
 
 if ($file && !$what) {
 	//print DOL_URL_ROOT.'/dolibarr_export.php';
-	header("Location: ".DOL_URL_ROOT.'/admin/tools/dolibarr_export.php?msg='.urlencode($langs->trans("ErrorFieldRequired", $langs->transnoentities("ExportMethod"))).(GETPOSTINT('page_y') ? '&page_y='.GETPOSTINT('page_y') : ''));
+	header("Location: ".DOL_URL_ROOT.'/admin/tools/dolibarr_export.php?msg='.urlencode($langs->trans("ErrorFieldRequired", $langs->transnoentities("ExportMethod"))).(GETPOSTINT('page_y') ? '&page_y='.GETPOSTINT('page_y') : '').(GETPOSTINT('allow_download_app') ? '&allow_download_app=1' : ''));
 	exit;
 }
 
@@ -232,5 +232,13 @@ top_httphead();
 $db->close();
 
 // Redirect to backup page
-header("Location: dolibarr_export.php".(GETPOSTINT('page_y') ? '?page_y='.GETPOSTINT('page_y') : ''));
+$returnto = 'dolibarr_export.php';
+if (GETPOSTINT('page_y')) {
+	$returnto .= '?page_y='.GETPOSTINT('page_y');
+}
+if (GETPOSTINT('allow_download_app')) {
+	// Keep the parameter to keep the step to export the application files visible
+	$returnto .= (GETPOSTINT('page_y') ? '&' : '?').'allow_download_app=1';
+}
+header("Location: ".$returnto);
 exit();

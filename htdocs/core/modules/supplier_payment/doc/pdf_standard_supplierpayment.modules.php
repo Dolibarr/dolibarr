@@ -5,7 +5,7 @@
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2022       Ferran Marcet               <fmarcet@2byte.es>
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -765,7 +765,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : $object->project->title), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : pdf_truncate_text($pdf, $object->project->title, 50)), '', 'R');
 			}
 		}
 
@@ -883,11 +883,14 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 			$pdf->SetXY($posx + 2, $posy);
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
 
-			// Show default IBAN account (destination account)
+			// Show default IBAN account (destination account).
+			// The address block above has a variable height (address, town, country, VAT number and
+			// professional ids), so the IBAN must start where it actually ends and not at a fixed offset.
+			$posy = $pdf->GetY();
 			$iban = $this->getDefaultThirdpartyIban((int) $object->thirdparty->id);
 			if (!empty($iban)) {
 				$pdf->SetFont('', '', $default_font_size - 1);
-				$pdf->SetXY($posx + 2, $posy + 15);
+				$pdf->SetXY($posx + 2, $posy);
 				$pdf->MultiCell($widthrecbox, 4, $langs->trans("IBAN").': '.$iban, 0, 'L');
 			}
 

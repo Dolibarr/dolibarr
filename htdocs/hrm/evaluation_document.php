@@ -127,7 +127,7 @@ if ($object->id && $upload_dir !== null) {
 	 */
 	$head = evaluationPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'document', $langs->trans("Documents"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'document', $langs->trans("Documents"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 
 	// Build file list
@@ -170,7 +170,7 @@ if ($object->id && $upload_dir !== null) {
 
 	print dol_get_fiche_end();
 
-	$modulepart = 'hrm';
+	$modulepart = 'evaluation@hrm';
 	$permtoedit = $permissiontoadd;
 	$param = '&id='.$object->id;
 

@@ -150,6 +150,7 @@ DiscountReceived=Remise obtenue
 DONATION_ACCOUNTINGACCOUNT=Compte (issu du plan comptable) à utiliser pour enregistrer les dons (module Dons)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Compte (issu du Plan Comptable) à utiliser pour enregistrer les cotisations d'adhésion (module Adhésion - si adhésion enregistrée sans facture)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Compte (issu du plan comptable) à utiliser comme compte par défaut pour enregistrer le dépôt du client
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Compte (du plan comptable) à utiliser comme compte par défaut pour la TVA sur les acomptes clients utilisés dans les contrats de nantissement
 UseAuxiliaryAccountOnCustomerDeposit=Enregistrer le compte client en tant que compte individuel dans le grand livre auxiliaire pour les lignes d'acomptes (si désactivé, le compte individuel pour les lignes d'acompte restera vide)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Compte (du plan comptable) à utiliser comme compte par défaut pour enregistrer le dépôt du fournisseur
 UseAuxiliaryAccountOnSupplierDeposit=Enregistrer le compte fournisseur en tant que compte individuel dans le grand livre auxiliaire pour les lignes d’acomptes (si désactivé, le compte individuel pour les lignes d’acompte restera vide)

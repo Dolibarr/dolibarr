@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - website
 Shortname=ລະຫັດ
 WebsiteName=ຊື່ຂອງເວັບໄຊ
-WebsiteSetupDesc=ສ້າງເວັບໄຊທີ່ທ່ານຕ້ອງການໃຊ້ຢູ່ທີ່ນີ້. ຈາກນັ້ນໄປທີ່ເມນູ ເວັບໄຊ ເພື່ອແກ້ໄຂ.
+WebsiteSetupDesc=Create here the websites you wish to use. Then go to menu Websites to edit them.
 DeleteWebsite=ລຶບເວັບໄຊ
 ConfirmDeleteWebsite=ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລຶບເວັບໄຊນີ້? ທຸກໆໜ້າ ແລະ ເນື້ອຫາຈະຖືກລຶບອອກນຳ. ໄຟລ໌ທີ່ອັບໂຫລດແລ້ວ (ເຊັ່ນ: ໃນໂຟນເດີມີເດຍ, ໂມດູນ ECM, ...) ຈະຍັງຄົງຢູ່.
 WEBSITE_TYPE_CONTAINER=ປະເພດຂອງໜ້າ/ບ່ອນບັນຈຸ
@@ -17,8 +17,8 @@ WEBSITE_ROBOT=ໄຟລ໌ Robot (robots.txt)
 WEBSITE_HTACCESS=ໄຟລ໌ .htaccess ຂອງເວັບໄຊ
 WEBSITE_MANIFEST_JSON=ໄຟລ໌ manifest.json ຂອງເວັບໄຊ
 WEBSITE_KEYWORDSDesc=ໃຊ້ຈຸດ (,) ເພື່ອແຍກຄ່າ
-EnterHereReadmeInformation=ປ້ອນຄຳອະທິບາຍຂອງເວັບໄຊຢູ່ທີ່ນີ້. ຖ້າທ່ານແຈກຢາຍເວັບໄຊຂອງທ່ານເປັນເທັມເພລດ (Template), ໄຟລ໌ນີ້ຈະຖືກລວມເຂົ້າໃນແພັກເກດເທັມເພລດ.
-EnterHereLicenseInformation=ປ້ອນໃບອະນຸຍາດ (LICENSE) ຂອງໂຄ້ດເວັບໄຊຢູ່ທີ່ນີ້. ຖ້າທ່ານແຈກຢາຍເວັບໄຊຂອງທ່ານເປັນເທັມເພລດ, ໄຟລ໌ນີ້ຈະຖືກລວມເຂົ້າໃນແພັກເກດເທັມເພລດ.
+EnterHereReadmeInformation=Enter here a description of the website. If you distribute your website as a template, the file will be included in the template package.
+EnterHereLicenseInformation=Enter here the LICENSE of the code of the website. If you distribute your website as a template, the file will be included in the template package.
 HtmlHeaderPage=HTML header (ສະເພາະໜ້ານີ້ເທົ່ານັ້ນ)
 PageNameAliasHelp=ຊື່ ຫຼື ຊື່ແທນຂອງໜ້າເວັບ.<br>ຊື່ແທນນີ້ຍັງຖືກໃຊ້ເພື່ອສ້າງ SEO URL ເມື່ອເວັບໄຊເຮັດວຽກຈາກ Virtual host ຂອງເວັບເຊີເວີ (ເຊັ່ນ Apache, Nginx, ...). ໃຊ້ປຸ່ມ "<strong>%s</strong>" ເພື່ອແກ້ໄຂຊື່ແທນນີ້.
 EditTheWebSiteForACommonHeader=ໝາຍເຫດ: ຖ້າທ່ານຕ້ອງການກໍານົດ header ສ່ວນຕົວສໍາລັບທຸກໜ້າ, ໃຫ້ແກ້ໄຂ header ໃນລະດັບເວັບໄຊ ແທນທີ່ຈະເປັນໃນລະດັບໜ້າ/ບ່ອນບັນຈຸ.
@@ -51,12 +51,12 @@ ToDeployYourWebsiteOnLiveYouHave3Solutions=ເພື່ອຕິດຕັ້ງ�
 SetHereVirtualHost=<u>ໃຊ້ກັບ Apache/NGinx/...</u><br>ສ້າງ Virtual Host ທີ່ຮອງຮັບ PHP ແລະ ມີ Root directory ຢູ່ທີ່<br><strong>%s</strong> ໃນເວັບເຊີເວີຂອງທ່ານ.
 ExampleToUseInApacheVirtualHostConfig=ຕົວຢ່າງການຕັ້ງຄ່າໃນ Apache virtual host:
 YouCanAlsoTestWithPHPS=<u>ໃຊ້ກັບ PHP embedded server</u><br>ໃນສະພາບແວດລ້ອມການພັດທະນາ, ທ່ານອາດຈະເລືອກທົດສອບເວັບໄຊດ້ວຍ PHP embedded web server ໂດຍການລັນຄຳສັ່ງ:
-YouCanAlsoDeployToAnotherWHP=<u>ລັນເວັບໄຊຂອງທ່ານພາຍໃນຜູ້ໃຫ້ບໍລິການ Dolibarr Web Hosting</u><br>ຖ້າທ່ານບໍ່ມີເວັບເຊີເວີ, ທ່ານສາມາດສົ່ງອອກ ແລະ ນຳເຂົ້າເວັບໄຊຂອງທ່ານໄປຍັງ Dolibarr instance ອື່ນ ທີ່ໃຫ້ບໍລິການໂດຍຜູ້ໃຫ້ບໍລິການ hosting ທີ່ຮອງຮັບໂມດູນ Website ຢ່າງເຕັມຮູບແບບ. ທ່ານສາມາດເບິ່ງລາຍຊື່ຜູ້ໃຫ້ບໍລິການໄດ້ທີ່ <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
+YouCanAlsoDeployToAnotherWHP=<u>Run your web site inside a Dolibarr web Hosting provider</u><br>If you don't have a web server like Apache or NGinx available on the internet, you can export and import your web site to another Dolibarr instance provided by another Dolibarr hosting provider that provides full integration with the Website module. You can find a list of some Dolibarr hosting providers on <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
 CheckVirtualHostPerms=ກວດສອບວ່າຜູ້ໃຊ້ virtual host (ຕົວຢ່າງ www-data) ມີສິດ <strong>%s</strong> ໃນໄຟລ໌ຕ່າງໆໃນ<br><strong>%s</strong>
 ReadPerm=ອ່ານ
 WritePerm=ຂຽນ
 TestDeployOnWeb=ທົດສອບ/ຕິດຕັ້ງເທິງເວັບ
-PreviewSiteServedByWebServer=<u>ເບິ່ງຕົວຢ່າງ %s ໃນແທັບໃໝ່.</u><br><br>%s ຈະຖືກໃຫ້ບໍລິການໂດຍເວັບເຊີເວີພາຍນອກ (ເຊັ່ນ Apache, Nginx, IIS). ທ່ານຕ້ອງຕິດຕັ້ງ ແລະ ຕັ້ງຄ່າເຊີເວີນີ້ກ່ອນຈະຊີ້ໄປທີ່ directory:<br><strong>%s</strong><br>URL ທີ່ໃຫ້ບໍລິການໂດຍເຊີເວີພາຍນອກ:<br><strong>%s</strong>
+PreviewSiteServedByWebServer=<u>Preview %s in a new tab.</u><br><br>The %s will be served by an external web server (like Apache, Nginx, IIS). You must install and setup this server before pointing to the directory:<br><strong>%s</strong><br>URL served by external server:<br><strong>%s</strong>
 PreviewSiteServedByDolibarr=<u>ເບິ່ງຕົວຢ່າງ %s ໃນແທັບໃໝ່.</u><br><br>%s ຈະຖືກໃຫ້ບໍລິການໂດຍເຊີເວີ Dolibarr ດັ່ງນັ້ນມັນຈຶ່ງບໍ່ຈຳເປັນຕ້ອງຕິດຕັ້ງເວັບເຊີເວີພາຍນອກໃດໆ.<br>ຂໍ້ເສຍຄື URL ຂອງໜ້າຕ່າງໆຈະບໍ່ສວຍງາມ ແລະ ເລີ່ມຕົ້ນດ້ວຍ Path ຂອງ Dolibarr ຂອງທ່ານ.<br>URL ທີ່ໃຫ້ບໍລິການໂດຍ Dolibarr:<br><strong>%s</strong><br><br>ເພື່ອຕິດຕັ້ງ ຫຼື ທົດສອບໂດຍໃຊ້ເວັບເຊີເວີພາຍນອກຂອງທ່ານເອງ ໃຫ້ໃຊ້ລິ້ງ "%s".
 VirtualHostUrlNotDefined=ບໍ່ໄດ້ກໍານົດ URL ຂອງ virtual host ທີ່ໃຫ້ບໍລິການໂດຍເວັບເຊີເວີພາຍນອກ
 NoPageYet=ຍັງບໍ່ມີໜ້າເວັບ
@@ -65,12 +65,13 @@ SyntaxHelp=ຊ່ວຍເຫຼືອ ກ່ຽວກັບຮູບແບບ�
 YouCanEditHtmlSourceckeditor=ທ່ານສາມາດແກ້ໄຂ HTML source code ໂດຍໃຊ້ປຸ່ມ "Source" ໃນ editor.
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> ທ່ານສາມາດລວມ PHP code ເຂົ້າໃນ source ນີ້ໄດ້ໂດຍໃຊ້ແທັກ <strong>&lt;?php ?&gt;</strong>. ຕົວປ່ຽນ Global ທີ່ມີໃຫ້ຄື: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> ທ່ານຍັງສາມາດລວມເນື້ອຫາຂອງ ໜ້າ/ບ່ອນບັນຈຸ ອື່ນດ້ວຍຮູບແບບຄຳສັ່ງ:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> ທ່ານສາມາດເຮັດການ Redirect ໄປຍັງ ໜ້າ/ບ່ອນບັນຈຸ ອື່ນດ້ວຍຮູບແບບຄຳສັ່ງ (ໝາຍເຫດ: ຫ້າມສະແດງເນື້ອຫາໃດໆກ່ອນການ redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>ທ່ານຍັງສາມາດເຮັດການ redirection ພ້ອມກັບພາລາມິເຕີ GET:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> ເພື່ອເພີ່ມລິ້ງໄປຫາໜ້າອື່ນ, ໃຫ້ໃຊ້ຮູບແບບຄຳສັ່ງ:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br>
 YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> ທ່ານສາມາດຕັ້ງຄ່າ <strong>SEO title ແລະ meta tags</strong> ແບບໄດນາມິກ (title, keywords, description). ພຽງແຕ່ກໍານົດຕົວປ່ຽນດັ່ງນີ້:<br> <code>define('__SEO_PAGE_TITLE__', "ຄ່າ Title …");</code><br> <code>define('__SEO_PAGE_KEYWORDS__', 'keyword1, keyword2, keyword3 …');</code><br> <code>define('__SEO_PAGE_DESC__', "ຄຳອະທິບາຍ …");</code><br>
-YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> ເພື່ອລວມ <strong>ລິ້ງສຳລັບດາວໂຫລດ</strong> ໄຟລ໌ທີ່ເກັບໄວ້ໃນ directory <strong>documents</strong>, ໃຫ້ໃຊ້ <strong>document.php</strong> wrapper:<br>ຕົວຢ່າງ, ສຳລັບໄຟລ໌ໃນ documents/ecm, ຮູບແບບຄຳສັ່ງແມ່ນ:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>ສຳລັບໄຟລ໌ໃນ documents/medias (ໂຟນເດີເປີດສາທາລະນະ), ຮູບແບບຄຳສັ່ງແມ່ນ:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
+YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored in the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file in documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file in documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSourced=ສຳລັບໄຟລ໌ທີ່ແບ່ງປັນດ້ວຍລິ້ງແບ່ງປັນ (ເຂົ້າເຖິງສາທາລະນະໂດຍໃຊ້ hash key), ຮູບແບບຄຳສັ່ງແມ່ນ:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> ເພື່ອລວມ <strong>ຮູບພາບ</strong> ທີ່ເກັບໄວ້ໃນ directory <strong>medias</strong> (ເປີດສາທາລະນະ), ໃຫ້ໃຊ້ path ເລີ່ມຕົ້ນດ້ວຍ <strong>/medias</strong>, ຕົວຢ່າງ:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored in the <strong>medias</strong> directory (directory open for public access), use the relative path starting with <strong>/medias</strong>, example:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=ສຳລັບຮູບພາບທີ່ແບ່ງປັນດ້ວຍລິ້ງແບ່ງປັນ, ໃຫ້ໃຊ້ wrapper:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=ເພື່ອເອົາ URL ຮູບພາບຂອງ PHP object, ໃຫ້ໃຊ້<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
-YouCanEditHtmlSource4=ເພື່ອເອົາ URL ຂອງຮູບພາບພາຍໃນເນື້ອຫາ html ຂອງບົດຄວາມ, ໃຫ້ໃຊ້<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource4=To get the URL of an image inside a HTML content of an article, use<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource5=<br><span class="fa fa-edit paddingright"></span> To let a part of the page be changed with mode <strong>Edit inline</strong>, add the attributes <strong>contenteditable="true"</strong> and <strong>id</strong> to its tag. It must contain no PHP code, only text with formatting tags (bold, color, font size...), links, paragraphs, titles, lists and div, example:<br><strong>&lt;p id="intro" contenteditable="true"&gt;My &lt;b&gt;text&lt;/b&gt;&lt;/p&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>ເບິ່ງຕົວຢ່າງເພີ່ມເຕີມຂອງ HTML ຫຼື dynamic code ໄດ້ທີ່ <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">wiki documentation</a>.<br>
 ClonePage=ຄັດລອກ (Clone) ໜ້າ/ບ່ອນບັນຈຸ
 CloneSite=ຄັດລອກ (Clone) ເວັບໄຊ
@@ -88,6 +89,8 @@ ImportSite=ນຳເຂົ້າເທັມເພລດເວັບໄຊ
 IDOfPage=Id ຂອງໜ້າ
 Banner=ແບນເນີ (Banner)
 BlogPost=ໂພສບລັອກ (Blog post)
+PageHeader=Header
+PageFooter=ສ່ວນທ້າຍ
 WebsiteAccount=ບັນຊີເວັບໄຊ
 WebsiteAccounts=ບັນຊີເວັບໄຊທັງໝົດ
 AddWebsiteAccount=ສ້າງບັນຊີເວັບໄຊ
@@ -102,7 +105,7 @@ YouMustDefineTheHomePage=ທ່ານຕ້ອງກໍານົດໜ້າຫ�
 OnlyEditionOfSourceForGrabbedContentFuture=ຄຳເຕືອນ: ການສ້າງໜ້າເວັບໂດຍການນຳເຂົ້າໜ້າເວັບພາຍນອກແມ່ນສະຫງວນໄວ້ສຳລັບຜູ້ໃຊ້ທີ່ມີປະສົບການ ແລະ ສາມາດໃຊ້ໄດ້ກັບໜ້າທີ່ສະແດງຜົນດ້ວຍ HTML ແລະ CSS ເທົ່ານັ້ນ. ບໍ່ຮອງຮັບການນຳເຂົ້າໜ້າທີ່ສະແດງຜົນດ້ວຍ JS frameworks. ຜົນຂອງການນຳເຂົ້າອາດຈະແຕກຕ່າງຈາກໜ້າຕົ້ນສະບັບ ຂຶ້ນກັບຄວາມຊັບຊ້ອນ. ແນະນຳໃຫ້ສ້າງໜ້າໃໝ່ຈາກເລີ່ມຕົ້ນ ຫຼື ຈາກເທັມເພລດທີ່ແນະນຳ.<br>ໝາຍເຫດ: inline editor ອາດຈະເຮັດວຽກບໍ່ຖືກຕ້ອງໃນໜ້າທີ່ນຳເຂົ້າມາ.
 OnlyEditionOfSourceForGrabbedContent=ສາມາດແກ້ໄຂໄດ້ສະເພາະ HTML source ເທົ່ານັ້ນ ເມື່ອເນື້ອຫາຖືກດຶງມາຈາກເວັບໄຊພາຍນອກ
 GrabImagesInto=ດຶງຮູບພາບທີ່ພົບໃນ css ແລະ ໜ້າເວັບນຳ.
-ImagesShouldBeSavedInto=ຮູບພາບຄວນຖືກບັນທຶກໄວ້ໃນ directory
+ImagesShouldBeSavedInto=Images should be saved in the directory
 WebsiteRootOfImages=Directory ຫຼັກສຳລັບຮູບພາບເວັບໄຊ
 SubdirOfPage=Directory ຍ່ອຍສະເພາະສຳລັບໜ້າ
 AliasPageAlreadyExists=ຊື່ແທນໜ້າ (Alias) <strong>%s</strong> ມີຢູ່ແລ້ວ
@@ -119,7 +122,7 @@ NoWebSiteCreateOneFirst=ຍັງບໍ່ມີການສ້າງເວັ�
 GoTo=ໄປທີ່
 DynamicPHPCodeContainsAForbiddenInstruction=ທ່ານເພີ່ມ dynamic PHP code ທີ່ມີຄຳສັ່ງ PHP '<strong>%s</strong>' ເຊິ່ງຖືກຫ້າມໂດຍຄ່າເລີ່ມຕົ້ນ (ເບິ່ງຕົວເລືອກທີ່ຊ່ອນຢູ່ WEBSITE_PHP_ALLOW_xxx ເພື່ອເພີ່ມລາຍຊື່ຄຳສັ່ງທີ່ອະນຸຍາດ).
 NotAllowedToAddDynamicContent=ທ່ານບໍ່ມີສິດເພີ່ມ ຫຼື ແກ້ໄຂເນື້ອຫາ dynamic PHP ໃນເວັບໄຊ. ກະລຸນາຂໍສິດ ຫຼື ປ່ອຍໂຄ້ດໃນແທັກ php ໄວ້ຄືເກົ່າ.
-NotAllowedToAddDynamicContentDisabledGlobaly=ທ່ານບໍ່ສາມາດເພີ່ມ ຫຼື ແກ້ໄຂເນື້ອຫາ dynamic PHP ໃນເວັບໄຊນີ້ໄດ້ໃນຂະນະນີ້ (ເຖິງແມ່ນວ່າທ່ານຈະມີສິດກໍຕາມ), ເພາະວ່າຟີເຈີນີ້ຕ້ອງຖືກເປີດໃຊ້ງານໃນລະດັບສາກົນກ່ອນໂດຍການຕັ້ງຄ່າພາລາມິເຕີ %s=1 ໃນໄຟລ໌ conf.php.
+NotAllowedToAddDynamicContentDisabledGlobaly=You currently can't add or edit dynamic PHP content in this website (even if you have permission to), because this feature must be first enabled globally by setting the parameter %s=1 into the conf.php file.<br>Edit your conf.php file to add this parameter, or ask your administrator or support team to do it for you.
 ReplaceWebsiteContent=ຄົ້ນຫາ ຫຼື ແທນທີ່ເນື້ອຫາເວັບໄຊ
 DeleteAlsoJs=ລຶບໄຟລ໌ JavaScript ທັງໝົດທີ່ສະເພາະກັບເວັບໄຊນີ້ໃຫ້ນຳບໍ່?
 DeleteAlsoMedias=ລຶບໄຟລ໌ມີເດຍທັງໝົດທີ່ສະເພາະກັບເວັບໄຊນີ້ໃຫ້ນຳບໍ່?
@@ -140,10 +143,10 @@ MainLanguage=ພາສາຫຼັກ
 OtherLanguages=ພາສາອື່ນໆ
 UseManifest=ສະໜອງໄຟລ໌ manifest.json
 PublicAuthorAlias=ຊື່ແທນຜູ້ຂຽນສາທາລະນະ
-AvailableLanguagesAreDefinedIntoWebsiteProperties=ພາສາທີ່ມີໃຫ້ຖືກກໍານົດໄວ້ໃນຄຸນສົມບັດຂອງເວັບໄຊ
+AvailableLanguagesAreDefinedIntoWebsiteProperties=Available languages are defined in website properties
 ReplacementDoneInXPages=ເຮັດການແທນທີ່ແລ້ວໃນ %s ໜ້າ ຫຼື ບ່ອນບັນຈຸ
 RSSFeed=RSS Feed
-RSSFeedDesc=ທ່ານສາມາດເອົາ RSS feed ຂອງບົດຄວາມຫຼ້າສຸດປະເພດ 'blogpost' ໂດຍໃຊ້ URL ນີ້
+RSSFeedDesc=You can get an RSS feed of latest articles with type 'blogpost' using this URL
 PagesRegenerated=ສ້າງ %s ໜ້າ/ບ່ອນບັນຈຸ ໃໝ່ແລ້ວ
 RegenerateWebsiteContent=ສ້າງໄຟລ໌ cache ຂອງເວັບໄຊໃໝ່
 AllowedInFrames=ອະນຸຍາດໃນ Frames
@@ -151,6 +154,7 @@ DefineListOfAltLanguagesInWebsiteProperties=ກໍານົດລາຍຊື່
 GenerateSitemaps=ສ້າງໄຟລ໌ sitemap.xml ຂອງເວັບໄຊ
 ConfirmGenerateSitemaps=ຖ້າທ່ານຢືນຢັນ, ທ່ານຈະລຶບໄຟລ໌ sitemap ທີ່ມີຢູ່ແລ້ວ...
 ConfirmSitemapsCreation=ຢືນຢັນການສ້າງ sitemap
+ConfirmSetAsHomePage=Are you sure you want to set the page <b>%s</b> as the home page of the website?
 SitemapGenerated=ສ້າງໄຟລ໌ Sitemap <b>%s</b> ແລ້ວ
 ImportFavicon=Favicon
 ErrorFaviconType=Favicon ຕ້ອງເປັນ png
@@ -509,3 +513,13 @@ ThisDirectoryIsEmpty=Directory ນີ້ຫວ່າງເປົ່າ
 WrittenBy=ຂຽນໂດຍ %s
 ImportOfWebsiteTemplateIncludingPHPIsAllowedIf=ການນຳເຂົ້າເທັມເພລດເວັບໄຊທີ່ໃຊ້ dynamic content ໃນ PHP ຈະຖືກອະນຸຍາດກໍຕໍ່ເມື່ອ $dolibarr_website_allow_custom_php ຖືກຕັ້ງເປັນ 2 ໃນ conf.php.
 ImportOfWebsiteTemplateIncludingPHPIsDisabled=ການນຳເຂົ້າເທັມເພລດເວັບໄຊທີ່ໃຊ້ dynamic content ໃນ PHP ຕ້ອງການໃຫ້ຕັ້ງ $dolibarr_website_allow_custom_php ເປັນ 1 ຫຼື 2 ໃນ conf.php ຈຶ່ງຈະໄດ້ຮັບອະນຸຍາດ.
+CurrentPageVersion=Current page
+ListOfPageVersions=List of archived versions of page (a backup file of page is created each time you save a change, for example on the HTML source)
+EditInLineAllowedAreas=In mode Edit inline, the tags with contenteditable="true", an id and no PHP code inside can be changed and are saved when you leave them. Text formatting (bold, color, font size...), links, paragraphs, titles and lists are allowed, images and other HTML can only be changed in the HTML source.
+ErrorEditInlineElementNoId=This element has contenteditable="true" but no id, so it can not be edited inline.
+ErrorEditInlineElementNotFound=No element with id %s and contenteditable="true" was found in the source of the page.
+ErrorEditInlineElementNotUnique=The id %s is used by several elements with contenteditable="true" in the source of the page.
+ErrorEditInlineElementWithPhp=The element with id %s contains PHP code in the source of the page, so it can only be changed in the HTML source.
+ErrorEditInlineElementNotAllowedHtml=The element with id %s contains HTML that can not be edited inline (image, form, script, comment, other tags or attributes...), so it can only be changed in the HTML source.
+ErrorEditInlineElementNotPlainText=The element with id %s contains HTML in the source of the page and can only be edited inline as plain text, so it can only be changed in the HTML source.
+ErrorEditInlineContentNotAllowed=The new content of the element with id %s contains HTML tags or attributes that are not allowed, so it was not saved.

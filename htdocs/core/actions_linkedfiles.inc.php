@@ -37,6 +37,7 @@
  * @var	string $forceFullTextIndexation
  */
 '
+@phan-var-force CommonObject $object
 @phan-var-force string $upload_dir
 @phan-var-force string $upload_dirold
 @phan-var-force string $confirm
@@ -195,6 +196,10 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 		$link = new Link($db);
 		$link->fetch($linkid);
+		// Verify the link belongs to the current object to prevent IDOR
+		if (!is_object($object) || $link->objecttype != $object->element || $link->objectid != $object->id) {
+			accessforbidden();
+		}
 		$res = $link->delete($user);
 
 		$langs->load('link');
@@ -224,7 +229,12 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 
 	$link = new Link($db);
 	$f = $link->fetch(GETPOSTINT('linkid'));
-	if ($f) {
+
+	if ($f > 0) {
+		// Verify the link belongs to the current object to prevent IDOR
+		if (!is_object($object) || $link->objecttype != $object->element || $link->objectid != $object->id) {
+			accessforbidden();
+		}
 		$link->url = GETPOST('link', 'alpha');
 		if (substr($link->url, 0, 7) != 'http://'
 			&& substr($link->url, 0, 8) != 'https://'
@@ -242,8 +252,8 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 			$link->share = '';
 		}
 		$res = $link->update($user);
-		if (!$res) {
-			setEventMessages($langs->trans("ErrorFailedToUpdateLink", $link->label), null, 'mesgs');
+		if ($res <= 0) {
+			setEventMessages($langs->trans("ErrorFailedToUpdateLink", $link->label), $link->errors, 'errors');
 		}
 	} else {
 		//error fetching

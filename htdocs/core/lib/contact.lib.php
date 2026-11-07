@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2010  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2017  Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2015-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
@@ -96,7 +96,7 @@ function contact_prepare_head(Contact $object)
 	// Related items
 	if (isModEnabled('order') || isModEnabled("propal") || isModEnabled('invoice') || isModEnabled('intervention') || isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 		$head[$tab][0] = dolBuildUrl(DOL_URL_ROOT.'/contact/consumption.php', ['id' => $object->id]);
-		$head[$tab][1] = $langs->trans("Referers");
+		$head[$tab][1] = $langs->trans("ReferringItems");
 		$head[$tab][2] = 'consumption';
 		$tab++;
 	}
@@ -110,7 +110,7 @@ function contact_prepare_head(Contact $object)
 	// Notes
 	if (!getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
 		$nbNote = (empty($object->note_private) ? 0 : 1) + (empty($object->note_public) ? 0 : 1);
-		$head[$tab][0] = dolBuildUrl(DOL_URL_ROOT.'/contact/note.php', ['id' => $object->id]);
+		$head[$tab][0] = dolBuildUrl(DOL_URL_ROOT.'/core/note.php', ['element' => 'contact', 'id' => $object->id]);
 		$head[$tab][1] = $langs->trans("Note");
 		if ($nbNote > 0) {
 			$head[$tab][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
@@ -293,7 +293,7 @@ function show_contacts_projects($conf, $langs, $db, $object, $backtopage = '', $
 					$i++;
 				}
 			} else {
-				print '<tr class="oddeven"><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+				print '<tr class="oddeven"><td colspan="9"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 			}
 			$db->free($result);
 		} else {

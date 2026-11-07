@@ -511,6 +511,9 @@ class PropaleLigne extends CommonObjectLine
 		if (empty($this->total_localtax2)) {
 			$this->total_localtax2 = 0;
 		}
+		if (empty($this->subprice_ttc)) {
+			$this->subprice_ttc = 0;
+		}
 		if (empty($this->rang)) {
 			$this->rang = 0;
 		}
@@ -547,7 +550,7 @@ class PropaleLigne extends CommonObjectLine
 
 		// if buy price not defined, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0 && $pa_ht_isemptystring) {
-			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0) {
+			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product, $this->qty)) < 0) {
 				return $result;
 			} else {
 				$this->pa_ht = $result;
@@ -763,13 +766,16 @@ class PropaleLigne extends CommonObjectLine
 		if (empty($this->subprice)) {
 			$this->subprice = 0;
 		}
+		if (empty($this->subprice_ttc)) {
+			$this->subprice_ttc = 0;
+		}
 		if (empty($this->pa_ht)) {
 			$this->pa_ht = 0;
 		}
 
 		// if buy price not defined, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0 && $pa_ht_isemptystring) {
-			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0) {
+			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product, $this->qty)) < 0) {
 				return $result;
 			} else {
 				$this->pa_ht = $result;

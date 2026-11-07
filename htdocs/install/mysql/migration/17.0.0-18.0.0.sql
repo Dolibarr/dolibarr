@@ -726,3 +726,6 @@ ALTER TABLE llx_mailing_advtarget CHANGE COLUMN tms tms timestamp DEFAULT CURREN
 
 -- 3.6 -> 3.7 typo on llx_adherents ('end with s') and varchar is 128
 ALTER TABLE llx_adherent MODIFY COLUMN societe VARCHAR(128);
+
+-- The public holiday of Pentecost in France, Belgium and Austria is the monday, not the sunday
+UPDATE llx_c_hrm_public_holiday SET dayrule = 'pentecotemonday' WHERE code IN ('FR-PENTECOST', 'BE-PENTECOST', 'AT-PENTECOST') AND dayrule = 'pentecost';

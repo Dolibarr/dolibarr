@@ -114,14 +114,14 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$error = 0;
 
-	$backurlforlist = dolBuildUrl('/webhook/target_list.php', ['mode' => 'modulesetup']);
+	$backurlforlist = dolBuildUrl(DOL_URL_ROOT.'/webhook/target_list.php', ['mode' => 'modulesetup']);
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = dolBuildUrl('/webhook/target_card.php', ['id' => ((!empty($id) && $id > 0) ? $id : '__ID__')]);
+				$backtopage = dolBuildUrl(DOL_URL_ROOT.'/webhook/target_card.php', ['id' => ((!empty($id) && $id > 0) ? $id : '__ID__')]);
 			}
 		}
 	}
@@ -185,7 +185,7 @@ if (empty($reshook)) {
 		if (empty($response['curl_error_no']) && $response['http_code'] >= 200 && $response['http_code'] < 300) {
 			setEventMessages($langs->trans("Success"), null);
 		} else {
-			$errormsg = "The WebHook for triggercode: ".$triggercode." failed to do the GET of URL ".$url." with httpcode=".(!empty($response['http_code']) ? $response['http_code'] : "")." curl_error_no=".(!empty($response['curl_error_no']) ? $response['curl_error_no'] : "");
+			$errormsg = "The WebHook for triggercode: ".$triggercode." failed to do the POST to URL ".$url." with httpcode=".(!empty($response['http_code']) ? $response['http_code'] : "")." curl_error_no=".(!empty($response['curl_error_no']) ? $response['curl_error_no'] : "");
 			setEventMessages($langs->trans($errormsg), null, 'errors');
 		}
 	}
@@ -340,7 +340,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="'.dolBuildUrl(DOL_DOCUMENT_ROOT.'/webhook/target_list.php', ['restore_lastsearch_values' => 1]).'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/webhook/target_list.php', ['restore_lastsearch_values' => 1]).'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
 	/*
@@ -480,7 +480,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print dolGetButtonAction('', $langs->trans('Modify'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'edit'], true), '', $permissiontoadd);
 
 			// Clone
-			print dolGetButtonAction($langs->trans('ToClone'), '', 'clone', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'clone'], true), '', $permissiontoadd);
+			print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'clone'], true), '', $permissiontoadd, array('attr' => array('class' => 'reposition')));
 
 			// Webhook send test
 			print dolGetButtonAction($langs->trans('TestWebhookTarget'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'test'], true), '', $permissiontoadd);
@@ -523,11 +523,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Disable
 			if (in_array($object->status, array($object::STATUS_AUTOMATIC_TRIGGER, $object::STATUS_MANUAL_TRIGGER))) {
-				print dolGetButtonAction('', $langs->trans('Disable'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'confirm_setdraft', 'confirm' => 'yes'], true), '', $permissiontoadd);
+				print dolGetButtonAction('', $langs->trans('Disable'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'confirm_setdraft', 'confirm' => 'yes'], true), '', $permissiontoadd, array('attr' => array('classOverride' => 'butAction butActionDanger')))."\n";
 			}
 
 			// Delete (need delete permission, or if draft, just need create/modify permission)
-			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'delete'], true), '', $permissiontodelete);
+			print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'delete'], true), '', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 		}
 		print '</div>'."\n";
 	}

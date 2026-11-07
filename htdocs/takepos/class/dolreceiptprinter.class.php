@@ -976,7 +976,7 @@ class dolReceiptPrinter extends Printer
 						break;
 					case 'DOL_PRINT_ORDER_LINES':
 						foreach ($object->lines as $line) {
-							if ($line->special_code == $this->orderprinter) {
+							if ($line->pos_printer_id == -$this->orderprinter) {
 								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen((string) $line->qty) - 10 - 1;
 								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 								$this->printer->text($line->ref.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
@@ -1091,6 +1091,15 @@ class dolReceiptPrinter extends Printer
 	 */
 	public function initPrinter($printerid)
 	{
+		// The escpos-php library requires the PHP intl extension (IntlBreakIterator). Without it, the first
+		// call to Printer::text() raises a fatal "Class IntlBreakIterator not found" error that the catch
+		// blocks below cannot handle. Report a clear error (return > 0 so callers skip the print) instead of
+		// letting the print crash.
+		if (!extension_loaded('intl')) {
+			$this->errors[] = 'The receipt printer requires the PHP intl extension, which is not loaded on this server.';
+			return 1;
+		}
+
 		if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
 			$this->connector = new DummyPrintConnector();
 			$this->printer = new Printer($this->connector, $this->profile);
