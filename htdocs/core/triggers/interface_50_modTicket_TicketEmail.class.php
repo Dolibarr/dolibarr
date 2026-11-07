@@ -359,21 +359,24 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	}
 
 	/**
-	 * Get the subject and body of the email template set up with TICKET_NOTIFICATION_EMAIL_TEMPLATE.
+	 * Get the subject and body of the email template set up with one of the ticket email
+	 * template settings: TICKET_NOTIFICATION_EMAIL_TEMPLATE (notification address),
+	 * TICKET_CUSTOMER_EMAIL_TEMPLATE (customer) or TICKET_ASSIGNEE_EMAIL_TEMPLATE (assigned user).
 	 *
 	 * Returning null means "no template set up, or none usable": the caller then builds the
 	 * message the way it always did.
 	 *
+	 * @param	string		$constname	Name of the setting that holds the template
 	 * @param	Ticket		$object		The ticket the email refers to
 	 * @param	Translate	$langs		The translation object
 	 * @return	?array{subject:string,body:string}		Substituted subject and body, or null
 	 */
-	private function getTicketNotificationTemplate(Ticket $object, Translate $langs)
+	private function getTicketEmailTemplate($constname, Ticket $object, Translate $langs)
 	{
 		global $user;
 
 		// The setup page stores the value as "label:type_template" (see admin/ticket.php)
-		$labelandtype = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TEMPLATE');
+		$labelandtype = getDolGlobalString($constname);
 		if (empty($labelandtype) || $labelandtype == '-1') {
 			return null;
 		}
@@ -417,7 +420,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 		// A template set up with TICKET_NOTIFICATION_EMAIL_TEMPLATE replaces the subject and
 		// body built below. Without one, the message is built exactly as it always was.
-		$templated = $this->getTicketNotificationTemplate($object, $langs);
+		$templated = $this->getTicketEmailTemplate('TICKET_NOTIFICATION_EMAIL_TEMPLATE', $object, $langs);
 		if (is_array($templated)) {
 			$subject = $templated['subject'];
 			$message_admin = $templated['body'];
@@ -494,59 +497,67 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 		$appli = $mysoc->name;
 
-		$subject = '['.$appli.'] '.$langs->transnoentities($base_subject);
-		$message_customer = $langs->transnoentities($body, (string) $object->track_id).'<br>';
-		$message_customer .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
-		$message_customer .= '<li>'.$langs->trans('Type').' : '.$langs->getLabelFromKey($this->db, 'TicketTypeShort'.$object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code).'</li>';
-		$message_customer .= '<li>'.$langs->trans('TicketCategory').' : '.$langs->getLabelFromKey($this->db, 'TicketCategoryShort'.$object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code).'</li>';
-		$message_customer .= '<li>'.$langs->trans('Severity').' : '.$langs->getLabelFromKey($this->db, 'TicketSeverityShort'.$object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code).'</li>';
+		// A template set up with TICKET_CUSTOMER_EMAIL_TEMPLATE replaces the subject and
+		// body built below. Without one, the message is built exactly as it always was.
+		$templated = $this->getTicketEmailTemplate('TICKET_CUSTOMER_EMAIL_TEMPLATE', $object, $langs);
+		if (is_array($templated)) {
+			$subject = $templated['subject'];
+			$message_customer = $templated['body'];
+		} else {
+			$subject = '['.$appli.'] '.$langs->transnoentities($base_subject);
+			$message_customer = $langs->transnoentities($body, (string) $object->track_id).'<br>';
+			$message_customer .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
+			$message_customer .= '<li>'.$langs->trans('Type').' : '.$langs->getLabelFromKey($this->db, 'TicketTypeShort'.$object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code).'</li>';
+			$message_customer .= '<li>'.$langs->trans('TicketCategory').' : '.$langs->getLabelFromKey($this->db, 'TicketCategoryShort'.$object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code).'</li>';
+			$message_customer .= '<li>'.$langs->trans('Severity').' : '.$langs->getLabelFromKey($this->db, 'TicketSeverityShort'.$object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code).'</li>';
 
-		// Extrafields
-		// master.inc.php creates the global $extrafields object, but its attributes stay empty
-		// until a fetch_name_optionals_label() call, which nothing guarantees for the ticket
-		// table on the paths reaching this trigger.
-		// A table holding no extrafield at all leaves its key unset even after the fetch, so the
-		// test below also has to tolerate a missing entry.
-		$extrafields->fetch_name_optionals_label($object->table_element);
-		if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label'])) {
-			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $value) {
-				$enabled = 1;
-				if ($enabled && isset($extrafields->attributes[$object->table_element]['list'][$key])) {
-					$enabled = (int) dol_eval((string) $extrafields->attributes[$object->table_element]['list'][$key], 1);
-				}
-				$perms = 1;
-				if ($perms && isset($extrafields->attributes[$object->table_element]['perms'][$key])) {
-					$perms = (int) dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][$key], 1);
-				}
+			// Extrafields
+			// master.inc.php creates the global $extrafields object, but its attributes stay empty
+			// until a fetch_name_optionals_label() call, which nothing guarantees for the ticket
+			// table on the paths reaching this trigger.
+			// A table holding no extrafield at all leaves its key unset even after the fetch, so the
+			// test below also has to tolerate a missing entry.
+			$extrafields->fetch_name_optionals_label($object->table_element);
+			if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label'])) {
+				foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $value) {
+					$enabled = 1;
+					if ($enabled && isset($extrafields->attributes[$object->table_element]['list'][$key])) {
+						$enabled = (int) dol_eval((string) $extrafields->attributes[$object->table_element]['list'][$key], 1);
+					}
+					$perms = 1;
+					if ($perms && isset($extrafields->attributes[$object->table_element]['perms'][$key])) {
+						$perms = (int) dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][$key], 1);
+					}
 
-				$qualified = true;
-				if (empty($enabled)) {
-					$qualified = false;
-				}
-				if (empty($perms)) {
-					$qualified = false;
-				}
+					$qualified = true;
+					if (empty($enabled)) {
+						$qualified = false;
+					}
+					if (empty($perms)) {
+						$qualified = false;
+					}
 
-				if ($qualified) {
-					$message_customer .= '<li>' . $langs->trans($key) . ' : ' . $value . '</li>';
+					if ($qualified) {
+						$message_customer .= '<li>' . $langs->trans($key) . ' : ' . $value . '</li>';
+					}
 				}
 			}
-		}
 
-		$message_customer .= '</ul>';
+			$message_customer .= '</ul>';
 
-		$message = $object->message;
-		if (!dol_textishtml($message)) {
-			$message = dol_nl2br($message);
-		}
-		$message_customer .= '<p>'.$langs->trans('Message').' : <br><br>'.$message.'</p><br>';
+			$message = $object->message;
+			if (!dol_textishtml($message)) {
+				$message = dol_nl2br($message);
+			}
+			$message_customer .= '<p>'.$langs->trans('Message').' : <br><br>'.$message.'</p><br>';
 
-		if (getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
-			$url_public_ticket = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/', 2)).'view.php?track_id='.urlencode((string) $object->track_id);
-			$message_customer .= '<p>'.$langs->trans($see_ticket).' : <a href="'.$url_public_ticket.'">'.$url_public_ticket.'</a></p>';
-			$message_customer .= '<p>'.$langs->trans('TicketEmailPleaseDoNotReplyToThisEmail').'</p>';
-		} else {
-			$message_customer .= '<p>'.$langs->trans('TicketEmailPleaseDoNotReplyToThisEmailNoInterface').'</p>';
+			if (getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
+				$url_public_ticket = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/', 2)).'view.php?track_id='.urlencode((string) $object->track_id);
+				$message_customer .= '<p>'.$langs->trans($see_ticket).' : <a href="'.$url_public_ticket.'">'.$url_public_ticket.'</a></p>';
+				$message_customer .= '<p>'.$langs->trans('TicketEmailPleaseDoNotReplyToThisEmail').'</p>';
+			} else {
+				$message_customer .= '<p>'.$langs->trans('TicketEmailPleaseDoNotReplyToThisEmailNoInterface').'</p>';
+			}
 		}
 
 		$email_from = (getDolGlobalString('MAIN_INFO_SOCIETE_NOM') ? getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' ' : '').'<' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
@@ -598,26 +609,34 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		// Send email to assigned user
 		$appli = $mysoc->name;
 
-		$subject = '['.$appli.'] '.$langs->transnoentities($base_subject);
-		$message = '<p>'.$langs->transnoentities($body, (string) $object->track_id, dolGetFirstLastname($user->firstname, $user->lastname))."</p>";
-		$message .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
-		$message .= '<li>'.$langs->trans('Type').' : '.$object->type_label.'</li>';
-		$message .= '<li>'.$langs->trans('Category').' : '.$object->category_label.'</li>';
-		$message .= '<li>'.$langs->trans('Severity').' : '.$object->severity_label.'</li>';
-		// Extrafields
-		if (is_array($object->array_options) && count($object->array_options) > 0) {
-			foreach ($object->array_options as $key => $value) {
-				$message .= '<li>'.$langs->trans($key).' : '.$value.'</li>';
+		// A template set up with TICKET_ASSIGNEE_EMAIL_TEMPLATE replaces the subject and
+		// body built below. Without one, the message is built exactly as it always was.
+		$templated = $this->getTicketEmailTemplate('TICKET_ASSIGNEE_EMAIL_TEMPLATE', $object, $langs);
+		if (is_array($templated)) {
+			$subject = $templated['subject'];
+			$message = $templated['body'];
+		} else {
+			$subject = '['.$appli.'] '.$langs->transnoentities($base_subject);
+			$message = '<p>'.$langs->transnoentities($body, (string) $object->track_id, dolGetFirstLastname($user->firstname, $user->lastname))."</p>";
+			$message .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
+			$message .= '<li>'.$langs->trans('Type').' : '.$object->type_label.'</li>';
+			$message .= '<li>'.$langs->trans('Category').' : '.$object->category_label.'</li>';
+			$message .= '<li>'.$langs->trans('Severity').' : '.$object->severity_label.'</li>';
+			// Extrafields
+			if (is_array($object->array_options) && count($object->array_options) > 0) {
+				foreach ($object->array_options as $key => $value) {
+					$message .= '<li>'.$langs->trans($key).' : '.$value.'</li>';
+				}
 			}
+
+			$message .= '</ul>';
+			$message .= '<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
+			$message .= '<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'">'.$langs->trans($see_ticket).'</a></p>';
+
+			$message = dol_nl2br($message);
 		}
 
-		$message .= '</ul>';
-		$message .= '<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
-		$message .= '<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'">'.$langs->trans($see_ticket).'</a></p>';
-
 		$email_from = dolGetFirstLastname($user->firstname, $user->lastname).'<'.$user->email.'>';
-
-		$message = dol_nl2br($message);
 
 		$old_MAIN_MAIL_AUTOCOPY_TO = null;
 		if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
