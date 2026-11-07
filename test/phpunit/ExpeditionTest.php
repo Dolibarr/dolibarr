@@ -1398,6 +1398,99 @@ class ExpeditionTest extends CommonClassTest
 	}
 
 	/**
+	 * A line of a product with lots posted to POST /shipments must keep its lots, as with the shipment card:
+	 * the lots arrive as plain arrays and were silently dropped with the line.
+	 *
+	 * @return void
+	 */
+	public function testApiPostRecordsBatchLines()
+	{
+		global $user, $db;
+
+		// Loading the Restler autoloader unregisters all the other ones, including the one PHPUnit needs: restore them.
+		$autoloaders = spl_autoload_functions();
+		require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
+		spl_autoload_unregister(Luracast\Restler\AutoLoader::instance());
+		foreach ($autoloaders as $autoloader) {
+			spl_autoload_register($autoloader);
+		}
+		require_once DOL_DOCUMENT_ROOT.'/expedition/class/api_shipments.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+
+		$this->configureStandaloneShipmentStock(true, false, true);
+		$productId = $this->createShipmentStockProduct(__FUNCTION__, 1);
+		$warehouseId = $this->createShipmentStockWarehouse(__FUNCTION__);
+		$batch = 'LOT'.mt_rand(100000, 999999);
+
+		$movement = new MouvementStock($db);
+		$this->assertGreaterThan(0, $movement->reception($user, $productId, $warehouseId, 10, 0, 'ExpeditionTest lot stock', '', '', $batch));
+		$resql = $db->query("SELECT pb.rowid FROM ".$db->prefix()."product_batch as pb INNER JOIN ".$db->prefix()."product_stock as ps ON ps.rowid = pb.fk_product_stock WHERE ps.fk_product = ".((int) $productId)." AND ps.fk_entrepot = ".((int) $warehouseId)." AND pb.batch = '".$db->escape($batch)."'");
+		$this->assertNotFalse($resql, (string) $db->lasterror());
+		$obj = $db->fetch_object($resql);
+		$this->assertNotEmpty($obj, 'The lot must be in stock');
+		$stockBatchId = (int) $obj->rowid;
+
+		$soc = new Societe($db);
+		$soc->name = 'ExpeditionTest '.$batch;
+		$socId = $soc->create($user);
+		$this->assertGreaterThan(0, $socId, $soc->errorsToString());
+		$order = new Commande($db);
+		$order->socid = $socId;
+		$order->date = dol_now();
+		$orderId = $order->create($user);
+		$this->assertGreaterThan(0, $orderId, $order->errorsToString());
+		$lineId = $order->addline('Product with lots', 0, 3, 0, 0, 0, $productId);
+		$this->assertGreaterThan(0, $lineId, $order->errorsToString());
+
+		DolibarrApiAccess::$user = $user;
+		$api = new Shipments();
+		$shipmentId = $api->post(array(
+			'socid' => $socId,
+			'origin_id' => $orderId,
+			'origin_type' => 'commande',
+			'lines' => array(
+				array('origin_id' => $orderId, 'fk_elementdet' => $lineId, 'element_type' => 'commande', 'qty' => 3, 'rang' => 1,
+					'detail_batch' => array(array('fk_origin_stock' => $stockBatchId, 'qty' => 3))),
+			),
+		));
+		$this->assertGreaterThan(0, $shipmentId);
+
+		$resql = $db->query("SELECT ed.fk_entrepot, ed.qty, eb.batch, eb.qty as batch_qty, eb.fk_origin_stock FROM ".$db->prefix()."expeditiondet as ed INNER JOIN ".$db->prefix()."expeditiondet_batch as eb ON eb.fk_expeditiondet = ed.rowid WHERE ed.fk_expedition = ".((int) $shipmentId));
+		$this->assertNotFalse($resql, (string) $db->lasterror());
+		$obj = $db->fetch_object($resql);
+		$this->assertNotEmpty($obj, 'The line and its lot must be recorded');
+		$this->assertEquals($warehouseId, (int) $obj->fk_entrepot, 'The warehouse comes from the lot');
+		$this->assertEquals(3.0, (float) $obj->qty);
+		$this->assertEquals($batch, $obj->batch);
+		$this->assertEquals(3.0, (float) $obj->batch_qty);
+		$this->assertEquals($stockBatchId, (int) $obj->fk_origin_stock);
+
+		$shipment = new Expedition($db);
+		$this->assertGreaterThan(0, $shipment->fetch($shipmentId), $shipment->errorsToString());
+		$this->assertGreaterThan(0, $shipment->valid($user), $shipment->errorsToString());
+		$this->assertEquals(7.0, $this->getRealStock($productId, $warehouseId));
+
+		// An unknown stock record is refused instead of creating a shipment without the line
+		try {
+			$api = new Shipments();
+			$api->post(array(
+				'socid' => $socId,
+				'origin_id' => $orderId,
+				'origin_type' => 'commande',
+				'lines' => array(
+					array('origin_id' => $orderId, 'fk_elementdet' => $lineId, 'element_type' => 'commande', 'qty' => 1, 'rang' => 1,
+						'detail_batch' => array(array('fk_origin_stock' => 999999999, 'qty' => 1))),
+				),
+			));
+			$this->fail('A lot that is not in stock must be refused');
+		} catch (Luracast\Restler\RestException $e) {
+			$this->assertEquals(400, $e->getCode());
+		}
+	}
+
+	/**
 	 * A kit shipped through POST /orders/{id}/shipment/{warehouse_id} must be stored as the shipment card stores it,
 	 * so that validating then deleting the shipment gives back the stock of its components.
 	 *
