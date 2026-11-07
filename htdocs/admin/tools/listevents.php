@@ -65,7 +65,7 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
-$search_rowid = GETPOST("search_rowid", "intcomma");
+$search_rowid = trim(GETPOST("search_rowid", 'alpha'));	// Can contains a numeric test like ">10" or "!= 34"
 $search_code = GETPOST("search_code", "alpha");
 $search_ip   = GETPOST("search_ip", "alpha");
 $search_user = GETPOST("search_user", "alpha");
@@ -382,8 +382,8 @@ if ($result) {
 	}
 
 	// ID
-	print '<td class="liste_titre">';
-	print '<input class="flat maxwidth50" type="text" name="search_rowid" value="'.dol_escape_htmltag($search_rowid).'">';
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_rowid" value="'.dolPrintLabelForAttribute($search_rowid).'">';
 	print '</td>';
 
 	// Date
@@ -435,7 +435,7 @@ if ($result) {
 	if ($conf->main_checkbox_left_column) {
 		print_liste_field_titre('');
 	}
-	print_liste_field_titre("ID", $_SERVER["PHP_SELF"], "e.rowid", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("ID", $_SERVER["PHP_SELF"], "e.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "e.dateevent", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Code", $_SERVER["PHP_SELF"], "e.type", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("IP", $_SERVER["PHP_SELF"], "e.ip", "", $param, '', $sortfield, $sortorder);
@@ -466,7 +466,7 @@ if ($result) {
 		}
 
 		// ID
-		print '<td class="nowrap left">'.dol_escape_htmltag($obj->rowid).'</td>';
+		print '<td class="nowrap center">'.dol_escape_htmltag($obj->rowid).'</td>';
 
 		// Date
 		print '<td class="nowrap left">'.dol_print_date($db->jdate($obj->dateevent), '%Y-%m-%d %H:%M:%S', 'tzuserrel').'</td>';

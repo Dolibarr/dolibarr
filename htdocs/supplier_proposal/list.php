@@ -371,7 +371,7 @@ $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
-$sql .= ', '.MAIN_DB_PREFIX.'supplier_proposal as sp';
+$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'supplier_proposal as sp ON sp.fk_soc = s.rowid';
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (sp.rowid = ef.fk_object)";
 }
@@ -381,11 +381,16 @@ if ($search_all) {
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON sp.fk_user_author = u.rowid';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = sp.fk_projet";
 if ($search_user > 0) {
-	$sql .= ", ".MAIN_DB_PREFIX."element_contact as c";
-	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_contact as c";
+	$sql .= " ON c.element_id = sp.rowid AND c.fk_socpeople = ".((int) $search_user);
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."c_type_contact as tc";
+	$sql .= " ON c.fk_c_type_contact = tc.rowid AND tc.element='supplier_proposal' AND tc.source='internal'";
 }
-$sql .= ' WHERE sp.fk_soc = s.rowid';
-$sql .= ' AND sp.entity IN ('.getEntity('supplier_proposal').')';
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+$sql .= ' WHERE sp.entity IN ('.getEntity('supplier_proposal').')';
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);
 }
@@ -478,9 +483,6 @@ if ($search_date_valid_end) {
 if ($search_sale > 0) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
 }*/
-if ($search_user > 0) {
-	$sql .= " AND c.fk_c_type_contact = tc.rowid AND tc.element='supplier_proposal' AND tc.source='internal' AND c.element_id = sp.rowid AND c.fk_socpeople = ".((int) $search_user);
-}
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
@@ -838,8 +840,8 @@ if ($resql) {
 		print '</td>';
 	}
 	if (!empty($arrayfields['sp.rowid']['checked'])) {
-		print '<td class="liste_titre">';
-		print '<input class="flat width50" type="text" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
+		print '<td class="liste_titre center">';
+		print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 		print '</td>';
 	}
 	if (!empty($arrayfields['sp.ref']['checked'])) {

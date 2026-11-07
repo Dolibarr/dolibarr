@@ -651,7 +651,7 @@ if (isModEnabled('variants') && !$show_childproducts) {
 	$sql .= " AND pac.rowid IS NULL";
 }
 
-if ($search_id) {
+if ($search_id != '') {
 	$sql .= natural_search('p.rowid', $search_id, 1);
 }
 if (empty($arrayfields['p.label']['checked'])) {
@@ -893,6 +893,9 @@ if ($searchCategoryProductOperator == 1) {
 }
 foreach ($searchCategoryProductList as $searchCategoryProduct) {
 	$param .= "&search_category_product_list[]=".urlencode($searchCategoryProduct);
+}
+if ($search_id != '') {
+	$param .= "&search_id=".urlencode($search_id);
 }
 if ($search_ref) {
 	$param .= "&search_ref=".urlencode($search_ref);
@@ -1195,8 +1198,8 @@ if ($conf->main_checkbox_left_column) {
 	print '</td>';
 }
 if (!empty($arrayfields['p.rowid']['checked'])) {
-	print '<td class="liste_titre left">';
-	print '<input class="flat width50" type="text" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['p.ref']['checked'])) {
@@ -1528,7 +1531,7 @@ if ($conf->main_checkbox_left_column) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.rowid']['checked'])) {
-	print_liste_field_titre($arrayfields['p.rowid']['label'], $_SERVER["PHP_SELF"], "p.rowid", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['p.rowid']['label'], $_SERVER["PHP_SELF"], "p.rowid", "", $param, "", $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.ref']['checked'])) {
@@ -1909,7 +1912,7 @@ while ($i < $imaxinloop) {
 		}
 		// Rowid
 		if (!empty($arrayfields['p.rowid']['checked'])) {
-			print '<td class="nowraponall">';
+			print '<td class="center nowraponall">';
 			print $product_static->id;
 			print "</td>\n";
 			if (!$i) {

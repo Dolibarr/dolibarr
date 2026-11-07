@@ -274,7 +274,7 @@ if ($action == 'convert') {
 					$newmulticurrencytx = 1;
 					$newmulticurrencycode = '';
 					if (isModEnabled("multicurrency")) {
-						$newmulticurrencycode = $objectstatic2->fourn_multicurrency_code;
+						$newmulticurrencycode = (string) $objectstatic2->fourn_multicurrency_code;
 						if (!empty($newmulticurrencycode)) {
 							$newmulticurrencyprice = (float) $objectstatic2->fourn_multicurrency_price;
 							$newmulticurrencytx = (float) $objectstatic2->fourn_multicurrency_tx;
