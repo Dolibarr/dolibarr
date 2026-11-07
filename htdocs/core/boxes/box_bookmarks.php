@@ -99,25 +99,35 @@ class box_bookmarks extends ModeleBoxes
 					// External http(s) bookmarks show the site's own favicon
 					// (the request goes to the bookmarked host, no third party)
 					// and get a hover preview card with the icon and the URL.
+					// 'logo' only accepts a picto name and 'tooltip' is filtered
+					// to plain-text tags, so the favicon and the preview card are
+					// rendered as cell content with their own classfortooltip.
 					$bmhost = (preg_match('/^https?:\/\//i', $objp->url) ? parse_url($objp->url, PHP_URL_HOST) : '');
 					$logo = $this->boximg;
+					$icon = '';
+					$text = $objp->title;
 					$tooltip = $objp->title;
 					if ($bmhost) {
 						$fav = 'https://'.dol_escape_htmltag($bmhost).'/favicon.ico';
-						$logo = '<img src="'.$fav.'" width="16" height="16" alt="" onerror="this.remove()">';
-						$tooltip = '<span class="bookmark-hover-preview"><img src="'.$fav.'" width="32" height="32" alt="" onerror="this.hidden=true"><br>'.dol_escape_htmltag($objp->title).'<br><em>'.dol_escape_htmltag($objp->url).'</em></span>';
+						$card = '<span class="bookmark-hover-preview"><img src="'.$fav.'" width="32" height="32" alt="" onerror="this.hidden=true"><br><b>'.dol_escape_htmltag($objp->title).'</b><br><em>'.dol_escape_htmltag($objp->url).'</em></span>';
+						$cardtitle = dol_escape_htmltag($card);
+						$logo = '';
+						$tooltip = '';
+						$icon = '<img src="'.$fav.'" width="16" height="16" class="classfortooltip valignmiddle" title="'.$cardtitle.'" alt="" onerror="this.hidden=true">';
+						$text = '<span class="classfortooltip" title="'.$cardtitle.'">'.dol_escape_htmltag($objp->title).'</span>';
 					}
 
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="left" width="16"',
 						'logo' => $logo,
 						'url' => $objp->url,
+						'text' => $icon,
 						'tooltip' => $tooltip,
 						'target' => $objp->target ? 'newtab' : '',
 					);
 					$this->info_box_contents[$line][1] = array(
 						'td' => '',
-						'text' => $objp->title,
+						'text' => $text,
 						'url' => $objp->url,
 						'tooltip' => $tooltip,
 						'target' => $objp->target ? 'newtab' : '',
