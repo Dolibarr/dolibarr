@@ -203,6 +203,8 @@ class AllTests
 		$suite->addTestSuite('CreditorRefLibTest');
 		require_once dirname(__FILE__).'/DateLibTest.php';
 		$suite->addTestSuite('DateLibTest');
+		require_once dirname(__FILE__).'/DocumentDownloadTest.php';
+		$suite->addTestSuite('DocumentDownloadTest');
 		require_once dirname(__FILE__).'/AgendaLibTest.php';
 		$suite->addTestSuite('AgendaLibTest');
 		require_once dirname(__FILE__).'/UtilsTest.php';
