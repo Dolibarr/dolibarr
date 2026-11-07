@@ -256,7 +256,7 @@ if (GETPOSTISSET("ajoutercolonne") && $object->format == "D") {
 		$dateinsertion = substr("$dateinsertion", 1);
 
 		// update with new topics into database
-		if (isset($erreur_ajout_date) && empty($erreur_ajout_date)) {
+		if (empty($erreur_ajout_date)) {
 			$sql = 'UPDATE '.MAIN_DB_PREFIX."opensurvey_sondage";
 			$sql .= " SET sujet = '".$db->escape($dateinsertion)."'";
 			$sql .= " WHERE id_sondage = '".$db->escape($numsondage)."'";

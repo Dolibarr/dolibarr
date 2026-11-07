@@ -45,6 +45,11 @@ class DiasporaHandler
 	private $params = [];
 
 	/**
+	* @var string URL of the pod (scheme and host of the API URL), to build the links of the posts
+	*/
+	private $podUrl = '';
+
+	/**
 	* Check if the provided cookie in params is valid.
 	* @return bool True if a valid cookie is found in params, false otherwise.
 	*/
@@ -82,6 +87,9 @@ class DiasporaHandler
 
 		// Set authParams to the class attribute
 		$this->params = $authParams;
+
+		$parsedUrl = parse_url($urlAPI);
+		$this->podUrl = empty($parsedUrl['host']) ? '' : ($parsedUrl['scheme'] ?? 'https').'://'.$parsedUrl['host'].(empty($parsedUrl['port']) ? '' : ':'.$parsedUrl['port']);
 
 		if (!$this->isCookieValid()) {
 			$this->error = 'Invalid or missing authentication parameters';
@@ -161,7 +169,8 @@ class DiasporaHandler
 			'id' => $postData['guid'] ?? '',
 			'content' => strip_tags($postData['text'] ?? $postData['title'] ?? ''),
 			'created_at' => $this->formatDate($postData['created_at'] ?? ''),
-			'url' => 'https://diaspora-fr.org/posts/' . ($postData['guid'] ?? ''),            'media_url' => !empty($postData['photos']) && isset($postData['photos'][0]['url']) ? $postData['photos'][0]['url'] : '',
+			'url' => (empty($postData['guid']) ? '' : $this->podUrl.'/posts/'.$postData['guid']),
+			'media_url' => !empty($postData['photos']) && isset($postData['photos'][0]['url']) ? $postData['photos'][0]['url'] : '',
 			'author_name' => $postData['author']['name'] ?? '',
 			'author_avatar' => $postData['author']['avatar']['small'] ?? ''
 		];

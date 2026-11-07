@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2009  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
  * Copyright (C) 2006-2007  Yannick Warnier     <ywarnier@beeznest.org>
  * Copyright (C) 2011	    Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2017  Juanjo Menent       <jmenent@2byte.es>
@@ -7,7 +8,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2021-2022  Open-Dsi            <support@open-dsi.fr>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -79,7 +80,7 @@ function tax_prepare_head(ChargeSociales $object)
 	if (!empty($object->note_public)) {
 		$nbNote++;
 	}
-	$head[$h][0] = DOL_URL_ROOT.'/compta/sociales/note.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/core/note.php?element=compta_sociales&id='.$object->id;
 	$head[$h][1] = $langs->trans('Notes');
 	if ($nbNote > 0) {
 		$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.$nbNote.'</span>' : '');
@@ -101,6 +102,52 @@ function tax_prepare_head(ChargeSociales $object)
 
 
 /**
+ * Get the ratio for a legacy situation line, restricting previous lines and credits to its entity/cycle.
+ * Called only for sales situation invoices with INVOICE_USE_SITUATION = 1.
+ *
+ * @param DoliDB $db Database handle
+ * @param int $lineid Invoice line id
+ * @return float|false Situation ratio, or false on error
+ */
+function tax_get_situation_ratio($db, $lineid)
+{
+	$sql = 'SELECT d.situation_percent, d.fk_prev_id, f.situation_cycle_ref,';
+	$sql .= ' p.situation_percent as previous_progress, pf.rowid as previous_invoice_id,';
+	$sql .= ' (SELECT COALESCE(SUM(cd.situation_percent), 0)';
+	$sql .= ' FROM '.MAIN_DB_PREFIX.'facture as cf INNER JOIN '.MAIN_DB_PREFIX.'facturedet as cd ON cd.fk_facture = cf.rowid';
+	$sql .= ' WHERE cf.type = '.Facture::TYPE_CREDIT_NOTE.' AND cf.entity = f.entity';
+	$sql .= ' AND cf.situation_cycle_ref = f.situation_cycle_ref AND cd.fk_prev_id = d.fk_prev_id) as credit_progress';
+	$sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet as d';
+	$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'facture as f ON f.rowid = d.fk_facture';
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as p ON p.rowid = d.fk_prev_id';
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture as pf ON pf.rowid = p.fk_facture';
+	$sql .= ' AND pf.entity = f.entity AND pf.situation_cycle_ref = f.situation_cycle_ref';
+	$sql .= ' WHERE d.rowid = '.((int) $lineid);
+	$sql .= ' AND f.entity IN ('.$db->sanitize(getEntity('facture')).') AND f.type = '.Facture::TYPE_SITUATION;
+	$result = $db->query($sql);
+	if (!$result) {
+		dol_print_error($db);
+		return false;
+	}
+	$row = $db->fetch_object($result);
+	$db->free($result);
+	if (!$row) {
+		return false;
+	}
+	$previousProgress = 0.0;
+	if (!empty($row->situation_cycle_ref) && !empty($row->fk_prev_id)) {
+		if (empty($row->previous_invoice_id)) {
+			dol_syslog(__FUNCTION__.': Invalid previous situation invoice', LOG_ERR);
+			return false;
+		}
+		$previousProgress = (float) $row->previous_progress + (float) $row->credit_progress;
+	}
+	$line = new FactureLigne($db);
+	$line->situation_percent = (float) $row->situation_percent;
+	return $line->getSituationRatio($previousProgress);
+}
+
+/**
  *  Look for collectable VAT clients in the chosen year (and month)
  *
  *  @param	'vat'|'localtax1'|'localtax2'	$type	Tax type, either 'vat', 'localtax1' or 'localtax2'
@@ -112,11 +159,12 @@ function tax_prepare_head(ChargeSociales $object)
  *  @param  'sell'|'buy' $direction     'sell' or 'buy'
  *  @param  int<0,12>	 $m				Month
  *  @param  int<0,4>	 $q           	Quarter
- *  @return int<-3,-1>|array<int|string,array{totalht:float,vat:float,localtax1:float,localtax2:float,dtotal_ttc:float[],dtype:int[],datef:int[],datep:int[],company_name:string[],company_id:int[],company_alias:string[],company_email:string[],company_tva_intra:string[],company_client:int[],company_fournisseur:int[],company_customer_code:string[],company_supplier_code:string[],company_customer_accounting_code:string[],company_supplier_accounting_code:string[],company_status:int[],user_id:int[],drate:string[],ddate_start:int[],ddate_end:int[],facid:int[],facnum:string[],type:int[],ftotal_ttc:float[],descr:string[],totalht_list:string[],vat_list:float[],localtax1_list:float[],localtax2_list:float[],pid:int[],pref:string[],ptype:int[],payment_id:int[],payment_ref:string[],payment_amount:float[]}>  Array with details of VATs (per third party), -1 if no accountancy module, -2 if not yet developed, -3 if error
+ *  @return int<-3,-1>|array<int|string,array{totalht?:int|float,vat?:int|float,localtax1?:int|float,localtax2?:int|float,dtotal_ttc?:float[],dtype?:(int|string)[],datef?:(''|int)[],datep?:(''|int)[],company_name?:string[],company_id?:int[],company_alias?:string[],company_email?:string[],company_tva_intra?:string[],company_client?:int[],company_fournisseur?:int[],company_customer_code?:string[],company_supplier_code?:string[],company_customer_accounting_code?:string[],company_supplier_accounting_code?:string[],company_status?:int[],user_id?:int[],drate?:string[],ddate_start?:(''|int)[],ddate_end?:(''|int)[],facid?:int[],facnum?:string[],type?:int[],ftotal_ttc?:float[],descr?:string[],totalht_list?:float[],vat_list?:float[],localtax1_list?:float[],localtax2_list?:float[],pid?:int[],pref?:string[],ptype?:(int|string)[],pstatus?:int[],pstatusbuy?:int[],payment_id?:int[],payment_ref?:string[],payment_amount?:float[]}>  Array with details of VATs (per third party), -1 if no accountancy module, -2 if not yet developed, -3 if error
  */
 function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $direction, $m = 0, $q = 0)
 {
-	global $conf;
+	global $conf, $hookmanager;
+	$hookmanager->initHooks(array('taxvatlist'));
 
 	// If we use date_start and date_end, we must not use $y, $m, $q
 	if (($date_start || $date_end) && (!empty($y) || !empty($m) || !empty($q))) {
@@ -217,6 +265,10 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$db->sanitize($f_rate)." <> 0 OR d.".$db->sanitize($total_tva)." <> 0)";
 		}
+		// Add SQL restrictions from hooks (context taxvatlist), e.g. a deposit pivot date restricting deposits by their date
+		$parameters = array('invoicealias' => 'f', 'issupplier' => ($direction == 'buy' ? 1 : 0), 'datefield' => 'datef');
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by some hooks
+		$sql .= $hookmanager->resPrint;
 		$sql .= " ORDER BY d.rowid, d.".$db->sanitize($fk_facture);
 	} else {
 		// Count on payments date
@@ -275,6 +327,10 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$db->sanitize($f_rate)." <> 0 OR d.".$db->sanitize($total_tva)." <> 0)";
 		}
+		// Add SQL restrictions from hooks (context taxvatlist), e.g. a deposit pivot date restricting deposits by their date
+		$parameters = array('invoicealias' => 'f', 'issupplier' => ($direction == 'buy' ? 1 : 0), 'datefield' => 'datef');
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by some hooks
+		$sql .= $hookmanager->resPrint;
 		$sql .= " ORDER BY d.rowid, d.".$db->sanitize($fk_facture).", pf.rowid";
 	}
 
@@ -285,6 +341,18 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$company_id = -1;
 		$oldrowid = '';
 		while ($assoc = $db->fetch_array($resql)) {
+			if ($direction == 'sell' && getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+				require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+				if ((int) $assoc['type'] == Facture::TYPE_SITUATION) {
+					$ratio = tax_get_situation_ratio($db, (int) $assoc['rowid']);
+					if ($ratio === false) {
+						return -3;
+					}
+					foreach (array('total_ht', 'total_vat', 'total_ttc', 'total_localtax1', 'total_localtax2') as $field) {
+						$assoc[$field] = (float) price2num((float) $assoc[$field] * $ratio, 'MT');
+					}
+				}
+			}
 			if (!isset($list[$assoc['company_id']]['totalht'])) {
 				$list[$assoc['company_id']]['totalht'] = 0;
 			}
@@ -324,7 +392,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 			$list[$assoc['company_id']]['company_supplier_accounting_code'][] = (string) $assoc['company_supplier_accounting_code'];
 			$list[$assoc['company_id']]['company_status'][] = (int) $assoc['company_status'];
 
-			$list[$assoc['company_id']]['drate'][] = $assoc['rate'];
+			$list[$assoc['company_id']]['drate'][] = (string) $assoc['rate'];
 			$list[$assoc['company_id']]['ddate_start'][] = $db->jdate($assoc['date_start']);
 			$list[$assoc['company_id']]['ddate_end'][] = $db->jdate($assoc['date_end']);
 
@@ -342,8 +410,11 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 			$list[$assoc['company_id']]['pid'][] = (int) $assoc['pid'];
 			$list[$assoc['company_id']]['pref'][] = (string) $assoc['pref'];
 			$list[$assoc['company_id']]['ptype'][] = (int) $assoc['ptype'];
+			$list[$assoc['company_id']]['pstatus'][] = (int) $assoc['pstatus'];
+			$list[$assoc['company_id']]['pstatusbuy'][] = (int) $assoc['pstatusbuy'];
 
 			$list[$assoc['company_id']]['payment_id'][] = (int) $assoc['payment_id'];
+			$list[$assoc['company_id']]['payment_ref'][] = (string) $assoc['payment_ref'];
 			$list[$assoc['company_id']]['payment_amount'][] = (float) $assoc['payment_amount'];
 
 			$company_id = $assoc['company_id'];
@@ -371,6 +442,9 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
 		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype, p.tosell as pstatus, p.tobuy as pstatusbuy,";
 		$sql .= " 0 as payment_id, '' as payment_ref, 0 as payment_amount";
+		if ($direction == 'sell' && getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+			$sql .= ", '' as datep";
+		}
 		$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($invoicetable)." as f,";
 		$sql .= " ".MAIN_DB_PREFIX."societe as s,";
 		$sql .= " ".MAIN_DB_PREFIX.$db->sanitize($invoicedettable)." as d";
@@ -411,6 +485,10 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$db->sanitize($f_rate)." <> 0 OR d.".$db->sanitize($total_tva)." <> 0)";
 		}
+		// Add SQL restrictions from hooks (context taxvatlist), e.g. a deposit pivot date restricting deposits by their date
+		$parameters = array('invoicealias' => 'f', 'issupplier' => ($direction == 'buy' ? 1 : 0), 'datefield' => 'datef');
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by some hooks
+		$sql .= $hookmanager->resPrint;
 		$sql .= " ORDER BY d.rowid, d.".$db->sanitize($fk_facture);
 	} else {
 		// Count on payments date
@@ -466,6 +544,18 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$company_id = -1;
 		$oldrowid = '';
 		while ($assoc = $db->fetch_array($resql)) {
+			if ($direction == 'sell' && getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+				require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+				if ((int) $assoc['type'] == Facture::TYPE_SITUATION) {
+					$ratio = tax_get_situation_ratio($db, (int) $assoc['rowid']);
+					if ($ratio === false) {
+						return -3;
+					}
+					foreach (array('total_ht', 'total_vat', 'total_ttc', 'total_localtax1', 'total_localtax2') as $field) {
+						$assoc[$field] = (float) price2num((float) $assoc[$field] * $ratio, 'MT');
+					}
+				}
+			}
 			if (!isset($list[$assoc['company_id']]['totalht'])) {
 				$list[$assoc['company_id']]['totalht'] = 0;
 			}
@@ -487,7 +577,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 				$list[$assoc['company_id']]['localtax2'] += (float) $assoc['total_localtax2'];
 			}
 			$list[$assoc['company_id']]['dtotal_ttc'][] = (float) $assoc['total_ttc'];
-			$list[$assoc['company_id']]['dtype'][] = $assoc['dtype'];
+			$list[$assoc['company_id']]['dtype'][] = (int) $assoc['dtype'];
 			$list[$assoc['company_id']]['datef'][] = $db->jdate($assoc['datef']);
 			$list[$assoc['company_id']]['datep'][] = $db->jdate($assoc['datep']);
 
@@ -504,7 +594,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 			$list[$assoc['company_id']]['company_supplier_accounting_code'][] = (string) $assoc['company_supplier_accounting_code'];
 			$list[$assoc['company_id']]['company_status'][] = (int) $assoc['company_status'];
 
-			$list[$assoc['company_id']]['drate'][] = $assoc['rate'];
+			$list[$assoc['company_id']]['drate'][] = (string) $assoc['rate'];
 			$list[$assoc['company_id']]['ddate_start'][] = $db->jdate($assoc['date_start']);
 			$list[$assoc['company_id']]['ddate_end'][] = $db->jdate($assoc['date_end']);
 
@@ -522,6 +612,8 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 			$list[$assoc['company_id']]['pid'][] = (int) $assoc['pid'];
 			$list[$assoc['company_id']]['pref'][] = (string) $assoc['pref'];
 			$list[$assoc['company_id']]['ptype'][] = (int) $assoc['ptype'];
+			$list[$assoc['company_id']]['pstatus'][] = (int) $assoc['pstatus'];
+			$list[$assoc['company_id']]['pstatusbuy'][] = (int) $assoc['pstatusbuy'];
 
 			$list[$assoc['company_id']]['payment_id'][] = (int) $assoc['payment_id'];
 			$list[$assoc['company_id']]['payment_ref'][] = (string) $assoc['payment_ref'];
@@ -545,7 +637,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql = "SELECT d.rowid, d.product_type as dtype, e.rowid as facid, d.".$db->sanitize($f_rate)." as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.total_tva as total_vat, e.note_private as descr,";
 		$sql .= " d.total_localtax1 as total_localtax1, d.total_localtax2 as total_localtax2, ";
 		$sql .= " e.date_debut as date_start, e.date_fin as date_end, e.fk_user_author,";
-		$sql .= " e.ref as facnum, e.total_ttc as ftotal_ttc, e.date_create, d.fk_c_type_fees as type,";
+		$sql .= " e.ref as facnum, e.total_ttc as ftotal_ttc, e.date_creation, d.fk_c_type_fees as type,";
 		$sql .= " p.fk_bank as payment_id, p.amount as payment_amount, p.rowid as pid, e.ref as pref";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as e";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expensereport_det as d ON d.fk_expensereport = e.rowid ";
@@ -618,7 +710,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 				$list[$assoc['company_id']]['company_status'][] = 0;
 
 				$list[$assoc['company_id']]['user_id'][] = (int) $assoc['fk_user_author'];
-				$list[$assoc['company_id']]['drate'][] = $assoc['rate'];
+				$list[$assoc['company_id']]['drate'][] = (string) $assoc['rate'];
 				$list[$assoc['company_id']]['ddate_start'][] = $db->jdate($assoc['date_start']);
 				$list[$assoc['company_id']]['ddate_end'][] = $db->jdate($assoc['date_end']);
 
@@ -667,11 +759,12 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
  *  @param  int			 $modetax     	Not used
  *  @param  'sell'|'buy' $direction   	'sell' (customer invoice) or 'buy' (supplier invoices)
  *  @param  int<0,12>	 $m           	Month
- *  @return int<-3,-1>|array<int|string,array{totalht:float,vat:float,localtax1:float,localtax2:float,dtotal_ttc:float[],dtype:int[],datef:int[],datep:int[],company_name:string[],company_id:int[],company_alias:string[],company_email:string[],company_tva_intra:string[],company_client:int[],company_fournisseur:int[],company_customer_code:string[],company_supplier_code:string[],company_customer_accounting_code:string[],company_supplier_accounting_code:string[],company_status:int[],user_id:int[],drate:string[],ddate_start:int[],ddate_end:int[],facid:int[],facnum:string[],type:int[],ftotal_ttc:float[],descr:string[],totalht_list:string[],vat_list:float[],localtax1_list:float[],localtax2_list:float[],pid:int[],pref:string[],ptype:int[],payment_id:int[],payment_ref:string[],payment_amount:float[]}>  Array with details of VATs (per rate), -1 if no accountancy module, -2 if not yet developed, -3 if error
+ *  @return int<-3,-1>|array<int|string,array{totalht?:int|float,vat?:int|float,localtax1?:int|float,localtax2?:int|float,dtotal_ttc?:float[],dtype?:(int|string)[],datef?:(''|int)[],datep?:(''|int)[],company_name?:string[],company_id?:int[],company_alias?:string[],company_email?:string[],company_tva_intra?:string[],company_client?:int[],company_fournisseur?:int[],company_customer_code?:string[],company_supplier_code?:string[],company_customer_accounting_code?:string[],company_supplier_accounting_code?:string[],company_status?:int[],user_id?:int[],ddate_start?:(''|int)[],ddate_end?:(''|int)[],facid?:int[],facnum?:string[],type?:int[],ftotal_ttc?:float[],descr?:string[],totalht_list?:float[],vat_list?:float[],localtax1_list?:float[],localtax2_list?:float[],pid?:int[],pref?:string[],ptype?:(int|string)[],payment_id?:int[],payment_ref?:string[],payment_amount?:float[]}>  Array with details of VATs (per rate), -1 if no accountancy module, -2 if not yet developed, -3 if error
  */
 function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $direction, $m = 0)
 {
-	global $conf;
+	global $conf, $hookmanager;
+	$hookmanager->initHooks(array('taxvatlist'));
 
 	// If we use date_start and date_end, we must not use $y, $m, $q
 	if (($date_start || $date_end) && (!empty($y) || !empty($m) || !empty($q))) {
@@ -768,6 +861,10 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$db->sanitize($f_rate)." <> 0 OR d.".$db->sanitize($total_tva)." <> 0)";
 		}
+		// Add SQL restrictions from hooks (context taxvatlist), e.g. a deposit pivot date restricting deposits by their date
+		$parameters = array('invoicealias' => 'f', 'issupplier' => ($direction == 'buy' ? 1 : 0), 'datefield' => 'datef');
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by some hooks
+		$sql .= $hookmanager->resPrint;
 		$sql .= " ORDER BY d.rowid, d.".$db->sanitize($fk_facture);
 	} else {
 		// Count on payments date
@@ -820,6 +917,18 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$rate = -1;
 		$oldrowid = '';
 		while ($assoc = $db->fetch_array($resql)) {
+			if ($direction == 'sell' && getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+				require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+				if ((int) $assoc['type'] == Facture::TYPE_SITUATION) {
+					$ratio = tax_get_situation_ratio($db, (int) $assoc['rowid']);
+					if ($ratio === false) {
+						return -3;
+					}
+					foreach (array('total_ht', 'total_vat', 'total_ttc', 'total_localtax1', 'total_localtax2') as $field) {
+						$assoc[$field] = (float) price2num((float) $assoc[$field] * $ratio, 'MT');
+					}
+				}
+			}
 			$rate_key = $assoc['rate'];
 			if ($f_rate == 'tva_tx' && !empty($assoc['vat_src_code']) && !preg_match('/\(/', $rate_key)) {
 				$rate_key .= ' (' . $assoc['vat_src_code'] . ')';
@@ -910,6 +1019,9 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
 		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
 		$sql .= " 0 as payment_id, '' as payment_ref, 0 as payment_amount";
+		if ($direction == 'sell' && getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+			$sql .= ", '' as datep";
+		}
 		$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($invoicetable)." as f";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$db->sanitize($invoicedettable)." as d ON d.".$db->sanitize($fk_facture)." = f.rowid";
@@ -948,6 +1060,10 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$db->sanitize($f_rate)." <> 0 OR d.".$db->sanitize($total_tva)." <> 0)";
 		}
+		// Add SQL restrictions from hooks (context taxvatlist), e.g. a deposit pivot date restricting deposits by their date
+		$parameters = array('invoicealias' => 'f', 'issupplier' => ($direction == 'buy' ? 1 : 0), 'datefield' => 'datef');
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by some hooks
+		$sql .= $hookmanager->resPrint;
 		$sql .= " ORDER BY d.rowid, d.".$db->sanitize($fk_facture);
 	} else {
 		// Count on payments date
@@ -999,6 +1115,18 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$rate = -1;
 		$oldrowid = '';
 		while ($assoc = $db->fetch_array($resql)) {
+			if ($direction == 'sell' && getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+				require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+				if ((int) $assoc['type'] == Facture::TYPE_SITUATION) {
+					$ratio = tax_get_situation_ratio($db, (int) $assoc['rowid']);
+					if ($ratio === false) {
+						return -3;
+					}
+					foreach (array('total_ht', 'total_vat', 'total_ttc', 'total_localtax1', 'total_localtax2') as $field) {
+						$assoc[$field] = (float) price2num((float) $assoc[$field] * $ratio, 'MT');
+					}
+				}
+			}
 			$rate_key = $assoc['rate'];
 			if ($f_rate == 'tva_tx' && !empty($assoc['vat_src_code']) && !preg_match('/\(/', $rate_key)) {
 				$rate_key .= ' (' . $assoc['vat_src_code'] . ')';
@@ -1082,7 +1210,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql = "SELECT d.rowid, d.product_type as dtype, e.rowid as facid, d.".$db->sanitize($f_rate)." as rate, d.vat_src_code as vat_src_code, d.total_ht as total_ht, d.total_ttc as total_ttc, d.total_tva as total_vat, e.note_private as descr,";
 		$sql .= " d.total_localtax1 as total_localtax1, d.total_localtax2 as total_localtax2, ";
 		$sql .= " e.date_debut as date_start, e.date_fin as date_end, e.fk_user_author,";
-		$sql .= " e.ref as facnum, e.ref as pref, e.total_ttc as ftotal_ttc, e.date_create, d.fk_c_type_fees as type,";
+		$sql .= " e.ref as facnum, e.ref as pref, e.total_ttc as ftotal_ttc, e.date_creation, d.fk_c_type_fees as type,";
 		$sql .= " p.fk_bank as payment_id, p.amount as payment_amount, p.rowid as pid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as e";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expensereport_det as d ON d.fk_expensereport = e.rowid";

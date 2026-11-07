@@ -3036,7 +3036,7 @@ class lessc_parser
 
 		while (true) {
 			$whiteBefore = isset($this->buffer[$this->count - 1]) &&
-				ctype_space($this->buffer[$this->count - 1]);
+				preg_match('/^\s$/', $this->buffer[$this->count - 1]);
 
 			// If there is whitespace before the operator, then we require
 			// whitespace after the operator for it to be an expression
@@ -3055,7 +3055,7 @@ class lessc_parser
 
 
 				$whiteAfter = isset($this->buffer[$this->count - 1]) &&
-					ctype_space($this->buffer[$this->count - 1]);
+					preg_match('/^\s$/', $this->buffer[$this->count - 1]);
 
 				if (!$this->value($rhs)) {
 					break;
@@ -3474,7 +3474,7 @@ class lessc_parser
 		// speed shortcut
 		if (isset($this->buffer[$this->count])) {
 			$char = $this->buffer[$this->count];
-			if (!ctype_digit($char) && $char != ".") {
+			if (!preg_match('/^[0-9]+$/', $char) && $char != ".") {
 				return false;
 			}
 		}

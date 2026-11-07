@@ -112,6 +112,7 @@ class ConferenceOrBooth extends ActionComm
 		'fk_action' => array('type' => "sellist:c_actioncomm:libelle:id::(module:LIKE:'%@eventorganization')", 'label' => 'ConferenceOrBoothFormat', 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'visible' => 1, 'css' => 'width200', 'csslist' => 'tdoverflowmax100'),
 		'datep' => array('type' => 'datetime', 'label' => 'DateStart', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => 1, 'showoncombobox' => 2,),
 		'datep2' => array('type' => 'datetime', 'label' => 'DateEnd', 'enabled' => 1, 'position' => 71, 'notnull' => 0, 'visible' => 1, 'showoncombobox' => 3,),
+		'max_participants' => array('type' => 'integer', 'label' => 'MaxNbOfAttendees', 'enabled' => 1, 'position' => 72, 'notnull' => -1, 'visible' => 1),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'position' => 500, 'notnull' => 1, 'visible' => -2, 'csslist' => 'nowraponall'),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'position' => 501, 'notnull' => 0, 'visible' => -2, 'csslist' => 'nowraponall'),
 		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => 'user.rowid', 'csslist' => 'tdoverflowmax100'),
@@ -152,6 +153,11 @@ class ConferenceOrBooth extends ActionComm
 	 * @var int
 	 */
 	public $datec;
+
+	/**
+	 * @var ?int Maximum number of participants allowed for this event
+	 */
+	public $max_participants;
 
 	/**
 	 * @var int
@@ -454,7 +460,7 @@ class ConferenceOrBooth extends ActionComm
 
 		// Validate
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " status = ".self::STATUS_CONFIRMED;
+		$sql .= " SET status = ".self::STATUS_CONFIRMED;
 		$sql .= " WHERE id = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
@@ -638,7 +644,7 @@ class ConferenceOrBooth extends ActionComm
 				if (!empty($filename)) {
 					$pospoint = strpos($filearray[0]['name'], '.');
 
-					$pathtophoto = '/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
+					$pathtophoto = '/'.$this->ref.'/thumbs/'.dol_substr($filename, 0, $pospoint).'_mini'.dol_substr($filename, $pospoint);
 					$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=eventorganisation&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
 
 					$result .= '</div>';

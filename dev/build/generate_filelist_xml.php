@@ -419,12 +419,12 @@ foreach ($arrayofunalterablefiles as $entry) {
 			exit(1);
 		}
 		if ($newdir != $dir) {
-			//if ($needtoclose) {
-			if ($release) {
-				fputs($fp, '  </dir>'."\n");
-			}
+			if ($needtoclose) {
+				if ($release) {
+					fputs($fp, '  </dir>'."\n");
+				}
 				$needtoclose = 0;
-			//}
+			}
 			if ($release) {
 				fputs($fp, '  <dir name="'.$newdir.'">'."\n");
 			}

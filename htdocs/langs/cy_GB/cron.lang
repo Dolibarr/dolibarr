@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = Darllenwch Swydd wedi'i Amserlennu
-Permission23102 = Creu/diweddaru swydd a drefnwyd
-Permission23103 = Dileu swydd a drefnwyd
-Permission23104 = Cyflawni swydd a drefnwyd
 # Admin
 CronSetup=Trefniant rheoli swydd wedi'i drefnu
 URLToLaunchCronJobs=URL i wirio a lansio swyddi cron cymwys o borwr
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=Ar amgylchedd Unix dylech ddefnyddio'r cofnod crontab ca
 CronExplainHowToRunWin=Ar amgylchedd Microsoft(tm) Windows gallwch ddefnyddio offer Tasg wedi'i Drefnu i redeg y llinell orchymyn bob 5 munud
 CronMethodDoesNotExists=Nid yw dosbarth %s yn cynnwys unrhyw ddull %s
 CronMethodNotAllowed=Mae dull %s o'r dosbarth %s yn y rhestr flociau o ddulliau gwaharddedig
-CronJobDefDesc=Mae proffiliau swyddi Cron yn cael eu diffinio yn ffeil disgrifydd y modiwl. Pan fydd modiwl wedi'i actifadu, maen nhw'n cael eu llwytho ac ar gael fel y gallwch chi weinyddu'r swyddi o'r ddewislen offer gweinyddol %s.
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=Rhestr o broffiliau swyddi cron rhagosodedig
 # Menu
 EnabledAndDisabled=Wedi'i alluogi a'i analluogi
@@ -27,7 +22,7 @@ CronDelete=Dileu swyddi a drefnwyd
 CronConfirmDelete=A ydych yn siŵr eich bod am ddileu'r swyddi hyn sydd wedi'u hamserlennu?
 CronExecute=Lansio nawr
 CronConfirmExecute=A ydych yn siŵr eich bod am gyflawni'r swyddi hyn sydd wedi'u hamserlennu nawr?
-CronInfo=Mae modiwl swydd wedi'i amserlennu yn caniatáu amserlennu swyddi i'w gweithredu'n awtomatig. Gellir cychwyn swyddi â llaw hefyd.
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=Job
 CronNone=Next run of scheduled task
 CronNotYetRan=Never executed
@@ -79,7 +74,7 @@ CronType_command=Gorchymyn cregyn
 CronCannotLoadClass=Methu llwytho ffeil dosbarth %s (i ddefnyddio dosbarth %s)
 CronModuleNotEnabledInThisEntity=Cron module not enabled in this entity (to use %s method of %s object)
 CronCannotLoadObject=Cafodd ffeil dosbarth %s ei llwytho, ond ni ddaethpwyd o hyd i wrthrych %s ynddi
-UseMenuModuleToolsToAddCronJobs=Ewch i'r ddewislen " <a href="%s"> Cartref - Offer gweinyddol - Swyddi wedi'u hamserlennu </a> " i weld a golygu swyddi sydd wedi'u hamserlennu.
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=Swydd yn anabl
 MakeLocalDatabaseDumpShort=Cronfa ddata wrth gefn leol
 MakeLocalDatabaseDump=Creu dympio cronfa ddata leol. Paramedrau yw: cywasgu ('gz' neu 'bz' neu 'dim'), math wrth gefn ('mysql', 'pgsql', 'auto'), 1, 'auto' neu enw ffeil i'w hadeiladu, nifer y ffeiliau wrth gefn i'w cadw

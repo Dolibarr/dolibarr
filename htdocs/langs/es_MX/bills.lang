@@ -163,6 +163,7 @@ DateMaxPayment=Pagar a más tardar el
 DateInvoice=Fecha de facturación
 SupplierBillsToPay=Facturas de proveedor no pagadas
 CustomerBillsUnpaid=Facturas de clientes no pagadas
+RecurringInvoiceSource=Source recurring invoice
 AddCreditNote=Generar nota de crédito
 AbsoluteDiscount=Descuento absoluto
 CreditNote=Nota de crédito

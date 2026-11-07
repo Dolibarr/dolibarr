@@ -7,7 +7,7 @@
  * Copyright (C) 2013       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2014-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -350,16 +350,10 @@ class modAdherent extends DolibarrModules
 			$this->import_fields_array[$r]['a.fk_soc'] = "ThirdParty";
 		}
 		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'adherent' AND entity IN (0,".((int) $conf->entity).")";
-		$resql = $this->db->query($sql);
-		if ($resql) {    // This can fail when class is used on old database (during migration for example)
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.'.$obj->name;
-				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-			}
-		}
-		// End add extra fields
+		$keyforselect = 'adherent';
+		$keyforelement = 'member';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 		$this->import_convertvalue_array[$r] = array(
 			'a.ref' => array(
 				'rule' => 'getrefifauto',
@@ -457,27 +451,26 @@ class modAdherent extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf;
+		global $conf, $langs;
 
 		// Permissions
 		$this->remove($options);
 
 		// ODT template
-		/*
-		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/members/template_member.odt';
-		$dirodt=DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/members';
-		$dest=$dirodt.'/template_order.odt';
+		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/members/template_member.odt';
+		$dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/members';
+		$dest = $dirodt.'/template_member.odt';
 
-		if (file_exists($src) && ! file_exists($dest)) {
+		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result=dol_copy($src,$dest,0,0);
+			$result = dol_copy($src, $dest, '0', 0);
 			if ($result < 0) {
 				$langs->load("errors");
-				$this->error=$langs->trans('ErrorFailToCopyFile',$src,$dest);
+				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;
 			}
-		}*/
+		}
 
 		$sql = array(
 			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type='member' AND entity = ".((int) $conf->entity),

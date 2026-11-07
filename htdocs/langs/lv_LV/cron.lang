@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = Lasīt Plānotos darbus
-Permission23102 = Izveidot / atjaunāt plānoto darbu
-Permission23103 = Dzēst plānoto darbu
-Permission23104 = Izpildīt plānoto darbu
 # Admin
 CronSetup=Plānoto darbu iestatīšana
 URLToLaunchCronJobs=URL, lai pārbaudītu un palaistu kvalificētus cron darbus no pārlūkprogrammas
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=On Unix environment you should use the following crontab
 CronExplainHowToRunWin=Microsoft (tm) Windows vidē jūs varat izmantot Scheduled Task rīkus, lai palaistu komandrindu ik pēc 5 minūtēm
 CronMethodDoesNotExists=Klase %s nesatur metodi %s
 CronMethodNotAllowed=Klases %s metode %s ir aizliegto metožu bloķēšanas sarakstā.
-CronJobDefDesc=Cron darba profili ir definēti moduļa deskriptora failā. Kad modulis ir aktivizēts, tie ir ielādēti un pieejami, lai jūs varētu administrēt darbus no admin instrumentu izvēlnes %s.
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=Iepriekš noteiktu cron darba profilu saraksts
 # Menu
 EnabledAndDisabled=Iespējots un atspējots
@@ -27,7 +22,7 @@ CronDelete=Dzēst ieplānotos darbus
 CronConfirmDelete=Vai tiešām vēlaties dzēst šos plānotos darbus?
 CronExecute=Palaist tūlīt
 CronConfirmExecute=Vai tiešām vēlaties veikt šos plānotos darbus tagad?
-CronInfo=Scheduled job module allows to schedule jobs to execute them automatically. Jobs can also be started manually.
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=Darbs
 CronNone=Nākamā ieplānotā uzdevuma izpilde
 CronNotYetRan=Nekad nav izpildīts
@@ -79,7 +74,7 @@ CronType_command=Shell komanda
 CronCannotLoadClass=Nevar ielādēt klases failu %s (izmantot klasi %s)
 CronModuleNotEnabledInThisEntity=Cron module not enabled in this entity (to use %s method of %s object)
 CronCannotLoadObject=Klases fails %s tika ielādēts, bet objekts %s tajā netika atrasts
-UseMenuModuleToolsToAddCronJobs=Lai redzētu un rediģētu ieplānotos darbus, dodieties uz izvēlni <a href="%s">Sākums - Administratora rīki - Plānotie darbi</a>.
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=Darbs ir atspējots
 MakeLocalDatabaseDumpShort=Lokālās datu bāzes dublēšana
 MakeLocalDatabaseDump=Izveidojiet vietējo datubāzes dump. Parametri ir: kompresija ("gz" vai "bz" vai "neviens"), dublēšanas veids ("mysql", "pgsql", "auto"), 1, "auto" vai faila nosaukums,

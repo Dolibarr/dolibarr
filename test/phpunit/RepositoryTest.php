@@ -25,12 +25,11 @@
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
 
 if (! defined('NOREQUIREUSER')) {
 	define('NOREQUIREUSER', '1');
@@ -117,7 +116,9 @@ class RepositoryTest extends CommonClassTest
 		$db = $this->savdb;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		$filesarray = dol_dir_list(DOL_DOCUMENT_ROOT, 'directories', 1, '', array('\/custom\/'), 'fullname', SORT_ASC, 0, 1, '', 1);
+		// custom is excluded, so on dev env with modules, there is no false positive
+		// phpunit is excluded because when in CI context phpunit are installed with dependencies in a vendor dir
+		$filesarray = dol_dir_list(DOL_DOCUMENT_ROOT, 'directories', 1, '', array('\/custom\/', '\/phpunit\/'), 'fullname', SORT_ASC, 0, 1, '', 1);
 		//$filesarray = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, '\.php', null, 'fullname');
 
 		$ok = true;

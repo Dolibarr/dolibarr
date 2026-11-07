@@ -26,14 +26,15 @@
 
 
 /**
- * Encode a string for vCard
+ * Escape a text value for a vCard 4.0 (RFC 6350 section 3.4): backslash, semicolon, comma and line breaks.
+ * The text stays UTF-8, the vCard 4.0 has no quoted-printable encoding.
  *
- * @param	string	$string		String to encode
+ * @param	?string	$string		String to encode
  * @return	string				String encoded
  */
 function encode($string)
 {
-	return str_replace(";", "\;", (dol_quoted_printable_encode($string)));
+	return str_replace(array("\\", ";", ",", "\r\n", "\r", "\n"), array("\\\\", "\\;", "\\,", "\\n", "\\n", "\\n"), (string) $string);
 }
 
 
@@ -48,7 +49,7 @@ function encode($string)
 function dol_quoted_printable_encode($input, $line_max = 76)
 {
 	$hex = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F');
-	$lines = preg_split("/(\?:\r\n|\r|\n)/", $input);
+	$lines = preg_split("/(?:\r\n|\r|\n)/", $input);
 	$eol = "\r\n";
 	$linebreak = "=0D=0A";
 	$escape = "=";
@@ -92,7 +93,7 @@ class vCard
 	/**
 	 * @var array<string,?string> array of properties
 	 */
-	public $properties;
+	public $properties = [];
 
 	/**
 	 * @var string filename
@@ -101,27 +102,72 @@ class vCard
 
 	/**
 	 * @var string encoding
+	 * @deprecated No more used: the vCard 4.0 is UTF-8 and has no quoted-printable encoding
 	 */
 	public $encoding = "CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE";
 
 
 	/**
+	 * Remove the line breaks and control characters of a value written as is, so it can not add a property to the card.
+	 *
+	 * @param	?string	$value		Value
+	 * @return	string				Value on one line
+	 */
+	private function cleanValue($value)
+	{
+		return trim((string) preg_replace('/[\x00-\x1F\x7F]+/', ' ', (string) $value));
+	}
+
+	/**
+	 * Return the parameters of a type in the vCard 4.0 form: "TYPE=WORK;VOICE" (old form, the second value is alone) becomes "TYPE=WORK,VOICE".
+	 *
+	 * @param	string	$type		Parameters, for example "TYPE=WORK;VOICE"
+	 * @return	string				Parameters
+	 */
+	private function normalizeType($type)
+	{
+		$params = array();
+		$types = array();
+		foreach (explode(';', $this->cleanValue($type)) as $param) {
+			$param = trim($param);
+			if ($param === '') {
+				continue;
+			}
+			if (stripos($param, 'TYPE=') === 0) {
+				$types[] = substr($param, 5);
+			} elseif (strpos($param, '=') === false) {
+				$types[] = $param;
+			} else {
+				$params[] = $param;
+			}
+		}
+		if ($types) {
+			array_unshift($params, 'TYPE='.implode(',', $types));
+		}
+		return implode(';', $params);
+	}
+
+	/**
 	 *  Format phone number.
 	 *
-	 *  @param	string	$number		numero de telephone
+	 *  @param	?string	$number		numero de telephone
 	 *  @param	string	$type		Type ('cell')
 	 *  @return	void
 	 */
 	public function setPhoneNumber($number, $type = "")
 	{
 		// type may be PREF | WORK | HOME | VOICE | FAX | MSG | CELL | PAGER | BBS | CAR | MODEM | ISDN | VIDEO or any senseful combination, e.g. "PREF;WORK;VOICE"
+		$number = $this->cleanValue($number);
+		if ($number === '') {
+			return;
+		}
 		$key = "TEL";
 		if ($type != "") {
-			$key .= ";".$type;
+			$key .= ";".$this->normalizeType($type);
 		}
 		$key .= ";VALUE=uri";
-		//$key .= ";".$this->encoding;
-		$this->properties[$key] = 'tel:'.$number;
+		// A tel URI has no space and no separator other than '-'
+		$this->properties[$key] = 'tel:'.preg_replace('/[\s.()\/]+/', '', $number);
 	}
 
 	/**
@@ -129,12 +175,16 @@ class vCard
 	 *  warning NON TESTE !
 	 *
 	 *  @param  string  $type			Type 'image/jpeg' or 'JPEG'
-	 *  @param  string  $photo			Photo
+	 *  @param  ?string  $photo			Photo
 	 *  @return	void
 	 */
 	public function setPhoto($type, $photo)
 	{
 		// $type = "GIF" | "JPEG"
+		$photo = $this->cleanValue($photo);
+		if ($photo === '') {
+			return;
+		}
 		//$this->properties["PHOTO;MEDIATYPE=$type;ENCODING=BASE64"] = base64_encode($photo);
 		$this->properties["PHOTO;MEDIATYPE=$type"] = $photo;		// must be url of photo
 		//$this->properties["PHOTO;TYPE=$type;ENCODING=BASE64"] = base64_encode($photo);   // must be content of image
@@ -143,20 +193,15 @@ class vCard
 	/**
 	 *	Format name.
 	 *
-	 *	@param	string	$name			Name
+	 *	@param	?string	$name			Name
 	 *	@return	void
 	 */
 	public function setFormattedName($name)
 	{
-		$stringencoded = encode($name);
-		$stringnotencoded = $name;
-
-		$key = "FN";
-		if ($stringencoded != $stringnotencoded) {
-			$key .= ";".$this->encoding;
+		if (trim((string) $name) === '') {
+			return;
 		}
-
-		$this->properties[$key] = $stringencoded;
+		$this->properties["FN"] = encode($name);
 	}
 
 	/**
@@ -172,13 +217,12 @@ class vCard
 	 */
 	public function setName($family = "", $first = "", $additional = "", $prefix = "", $suffix = "")
 	{
-		//$this->properties["N;".$this->encoding] = encode($family).";".encode($first).";".encode($additional).";".encode($prefix).";".encode($suffix);
-		$this->properties["N;".$this->encoding] = encode($family).";".encode($first).";".encode($additional).";".encode($prefix).";".encode($suffix);
+		$this->properties["N"] = encode($family).";".encode($first).";".encode($additional).";".encode($prefix).";".encode($suffix);
 
-		$this->filename = "$first%20$family.vcf";
+		$this->filename = trim("$first $family").'.vcf';
 
 		if (empty($this->properties["FN"])) {
-			$this->setFormattedName(trim("$prefix $first $additional $family $suffix"));
+			$this->setFormattedName(trim((string) preg_replace('/\s+/', ' ', "$prefix $first $additional $family $suffix")));
 		}
 	}
 
@@ -198,13 +242,13 @@ class vCard
 	/**
 	 *	Address
 	 *
-	 *	@param	string	$postoffice		Postoffice
-	 *	@param	string	$extended		Extended
-	 *	@param	string	$street			Street
-	 *	@param	string	$city			City
-	 *	@param	string	$region			Region
-	 *	@param	string	$zip			Zip
-	 *	@param	string	$country		Country
+	 *	@param	?string	$postoffice		Postoffice
+	 *	@param	?string	$extended		Extended
+	 *	@param	?string	$street			Street
+	 *	@param	?string	$city			City
+	 *	@param	?string	$region			Region
+	 *	@param	?string	$zip			Zip
+	 *	@param	?string	$country		Country
 	 *	@param	string	$type			Type
 	 *  @param	string	$label			Label
 	 *	@return	void
@@ -212,38 +256,30 @@ class vCard
 	public function setAddress($postoffice = "", $extended = "", $street = "", $city = "", $region = "", $zip = "", $country = "", $type = "", $label = "")
 	{
 		// $type may be DOM | INTL | POSTAL | PARCEL | HOME | WORK or any combination of these: e.g. "WORK;PARCEL;POSTAL"
+		if (trim($postoffice.$extended.$street.$city.$region.$zip.$country) === '') {
+			return;
+		}
 		$key = "ADR";
 		if ($type != "") {
-			$key .= ";".$type;
+			$key .= ";".$this->normalizeType($type);
 		}
 		if ($label != "") {
-			$key .= ';LABEL="'.encode($label).'"';
+			$key .= ';LABEL="'.str_replace('"', "'", $this->cleanValue($label)).'"';	// A parameter has no escape for the quote and the line break
 		}
 
-		$stringencoded = encode($postoffice).";".encode($extended).";".encode($street).";".encode($city).";".encode($region).";".encode($zip).";".encode($country);
-		$stringnotencoded = $postoffice.";".$extended.";".$street.";".$city.";".$region.";".$zip.";".$country;
-
-		if ($stringencoded != $stringnotencoded) {
-			$key .= ";".$this->encoding;
-		}
-
-		$this->properties[$key] = $stringencoded;
-
-		//if ($this->properties["LABEL;".$type.";".$this->encoding] == '') {
-		//$this->setLabel($postoffice, $extended, $street, $city, $region, $zip, $country, $type);
-		//}
+		$this->properties[$key] = encode($postoffice).";".encode($extended).";".encode($street).";".encode($city).";".encode($region).";".encode($zip).";".encode($country);
 	}
 
 	/**
 	 *  Address (old standard)
 	 *
-	 *  @param	string	$postoffice		Postoffice
-	 *  @param	string	$extended		Extended
-	 *  @param	string	$street			Street
-	 *  @param	string	$city			City
-	 *  @param	string	$region			Region
-	 *  @param	string	$zip			Zip
-	 *  @param	string	$country		Country
+	 *  @param	?string	$postoffice		Postoffice
+	 *  @param	?string	$extended		Extended
+	 *  @param	?string	$street			Street
+	 *  @param	?string	$city			City
+	 *  @param	?string	$region			Region
+	 *  @param	?string	$zip			Zip
+	 *  @param	?string	$country		Country
 	 *  @param	string	$type			Type
 	 *  @return	void
 	 *  @deprecated
@@ -270,27 +306,31 @@ class vCard
 			$label .= "$region\r\n";
 		}
 		if ($country != "") {
-			$country .= "$country\r\n";
+			$label .= "$country\r\n";
 		}
 
-		$this->properties["LABEL;$type;".$this->encoding] = encode($label);
+		$this->properties["LABEL;".$this->normalizeType($type)] = encode($label);
 	}
 
 	/**
 	 *	Add a e-mail address to this vCard
 	 *
-	 *	@param	string	$address		E-mail address
+	 *	@param	?string	$address		E-mail address
 	 *	@param	string	$type			(optional) The type of the e-mail (typical "PREF" or "INTERNET")
 	 *	@return	void
 	 */
 	public function setEmail($address, $type = "")
 	{
+		$address = $this->cleanValue($address);
+		if ($address === '') {
+			return;
+		}
 		$key = "EMAIL";
 		if ($type === "PREF") {
 			$key .= ";PREF=1";
 		} elseif (!empty($type)) {
 			if (stripos($type, 'TYPE=') === 0) {
-				$key .= ";".$type;
+				$key .= ";".$this->normalizeType($type);
 			} else {
 				$key .= ";TYPE=".dol_strtolower($type);
 			}
@@ -301,35 +341,44 @@ class vCard
 	/**
 	 *	mise en forme de la note
 	 *
-	 *	@param	string	$note		Note
+	 *	@param	?string	$note		Note
 	 *	@return	void
 	 */
 	public function setNote($note)
 	{
-		$this->properties["NOTE;".$this->encoding] = encode($note);
+		if (trim((string) $note) === '') {
+			return;
+		}
+		$this->properties["NOTE"] = encode($note);
 	}
 
 	/**
 	 * 	mise en forme de la fonction
 	 *
-	 *	@param	string	$title		Title
+	 *	@param	?string	$title		Title
 	 *	@return	void
 	 */
 	public function setTitle($title)
 	{
-		$this->properties["TITLE;".$this->encoding] = encode($title);
+		if (trim((string) $title) === '') {
+			return;
+		}
+		$this->properties["TITLE"] = encode($title);
 	}
 
 
 	/**
 	 *  mise en forme de la societe
 	 *
-	 *  @param	string	$org		Org
+	 *  @param	?string	$org		Org
 	 *  @return	void
 	 */
 	public function setOrg($org)
 	{
-		$this->properties["ORG;".$this->encoding] = encode($org);
+		if (trim((string) $org) === '') {
+			return;
+		}
+		$this->properties["ORG"] = encode($org);
 	}
 
 
@@ -360,16 +409,20 @@ class vCard
 	/**
 	 *  mise en forme de l'url
 	 *
-	 *	@param	string	$url		URL
+	 *	@param	?string	$url		URL
 	 *  @param	string	$type		Type
 	 *	@return	void
 	 */
 	public function setURL($url, $type = "")
 	{
 		// $type may be WORK | HOME
+		$url = $this->cleanValue($url);
+		if ($url === '') {
+			return;
+		}
 		$key = "URL";
 		if ($type != "") {
-			$key .= ";$type";
+			$key .= ";".$this->normalizeType($type);
 		}
 		$this->properties[$key] = $url;
 	}
@@ -385,10 +438,13 @@ class vCard
 		$text .= "VERSION:4.0\r\n";		// With V4, all encoding are UTF-8
 		//$text.= "VERSION:2.1\r\n";
 		foreach ($this->properties as $key => $value) {
-			$newkey = preg_replace('/(?<!QUOTED|UTF)-.*$/', '', $key);	// remove suffix -twitter, -facebook, ...
-			$text .= $newkey.":".$value."\r\n";
+			$newkey = $key;
+			if (strpos($key, 'SOCIALPROFILE;') === 0) {
+				$newkey = preg_replace('/-[A-Za-z0-9_]*$/', '', $key);	// remove suffix -twitter, -facebook, ... (only there to have a different key for each network)
+			}
+			$text .= $this->foldLine($newkey.":".$value);
 		}
-		$text .= "REV:".date("Ymd")."T".date("His")."Z\r\n";
+		$text .= "REV:".dol_print_date(dol_now(), 'dayhourxcard', 'gmt')."\r\n";
 		//$text .= "MAILER: Dolibarr\r\n";
 		$text .= "END:VCARD\r\n";
 
@@ -396,13 +452,39 @@ class vCard
 	}
 
 	/**
-	 *  Return name of a file
+	 * Return a line of the card folded as RFC 6350 section 3.2 asks: no more than 75 octets, the next lines start with a space.
+	 * A character is never cut.
+	 *
+	 * @param	string	$line		Line, without end of line
+	 * @return	string				Line(s) with the end of line
+	 */
+	private function foldLine($line)
+	{
+		$result = '';
+		$max = 75;
+		while (strlen($line) > $max) {
+			$cut = $max;
+			while ($cut > 0 && (ord($line[$cut]) & 0xC0) == 0x80) {	// Do not cut in the middle of a UTF-8 character
+				$cut--;
+			}
+			$result .= substr($line, 0, $cut)."\r\n";
+			$line = ' '.substr($line, $cut);
+		}
+		return $result.$line."\r\n";
+	}
+
+	/**
+	 *  Return name of a file, safe to use in a HTTP header and as a file name (no accent, no quote, no slash)
 	 *
 	 *  @return	string		Filename
 	 */
 	public function getFileName()
 	{
-		return $this->filename;
+		$filename = trim(dol_sanitizeFileName(trim((string) $this->filename)));
+		if ($filename === '' || $filename === '.vcf') {
+			$filename = 'vcard.vcf';
+		}
+		return $filename;
 	}
 
 	/**
@@ -473,7 +555,8 @@ class vCard
 					}
 				}
 				if ($urlsn) {
-					$this->properties["SOCIALPROFILE;TYPE=WORK-".$key] = $key.':'.$urlsn;
+					$urlsn = $this->cleanValue($urlsn);
+					$this->properties["SOCIALPROFILE;TYPE=WORK-".preg_replace('/[^A-Za-z0-9_]/', '', $key)] = $key.':'.$urlsn;
 				}
 			}
 		}

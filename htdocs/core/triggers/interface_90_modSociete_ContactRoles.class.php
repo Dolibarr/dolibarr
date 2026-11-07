@@ -1,12 +1,13 @@
 <?php
 /*
- * Copyright (C) 2005-2017 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2009-2017 Regis Houssin <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2014 Juanjo Menent <jmenent@2byte.es>
- * Copyright (C) 2013 Cedric GROSS <c.gross@kreiz-it.fr>
- * Copyright (C) 2014 Marcos García <marcosgdf@gmail.com>
- * Copyright (C) 2015 Bahfir Abbes <bafbes@gmail.com>
+ * Copyright (C) 2005-2017 	Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2017 	Regis Houssin <regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2014 	Juanjo Menent <jmenent@2byte.es>
+ * Copyright (C) 2013 		Cedric GROSS <c.gross@kreiz-it.fr>
+ * Copyright (C) 2014 		Marcos García <marcosgdf@gmail.com>
+ * Copyright (C) 2015 		Bahfir Abbes <bafbes@gmail.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Thomas Negre					<tnegre@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +74,15 @@ class InterfaceContactRoles extends DolibarrTriggers
 			dol_syslog("Trigger '".$this->name."' for action '".$action."' launched by ".__FILE__.". id=".$object->id);
 
 			'@phan-var-force Propal|Commande|Facture|CommandeFournisseur|FactureFournisseur|SupplierProposal|Contrat|Fichinter|Project|Ticket $object';
-			$socid = (property_exists($object, 'socid') ? $object->socid : $object->fk_soc);
+
+			// Some objects (like Ticket) declare both $socid and $fk_soc but only populate $fk_soc on create().
+			// We must check which property actually holds a value, not just which one is declared (property_exists is true for both).
+			$socid = 0;
+			if (!empty($object->socid)) {
+				$socid = $object->socid;
+			} elseif (!empty($object->fk_soc)) {
+				$socid = $object->fk_soc;
+			}
 
 			if (!empty($socid) && $socid > 0) {
 				require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';

@@ -445,7 +445,7 @@ class modAgenda extends DolibarrModules
 		$this->export_fields_array[$r] = array('ac.id' => "IdAgenda", 'ac.ref_ext' => "ExternalRef",'ac.ref' => "Ref", 'ac.datec' => "DateCreation", 'ac.datep' => "DateActionBegin",
 			'ac.datep2' => "DateActionEnd", 'ac.location' => 'Location', 'ac.label' => "Title", 'ac.note' => "Note", 'ac.percent' => "Percentage", 'ac.durationp' => "Duration",
 			'ac.fk_user_author' => 'CreatedById', 'ac.fk_user_action' => 'ActionsOwnedBy', 'ac.fk_user_mod' => 'ModifiedBy', 'ac.transparency' => "Transparency", 'ac.priority' => "Priority", 'ac.fk_element' => "ElementID", 'ac.elementtype' => "ElementType",
-			'cac.libelle' => "ActionType", 'cac.code' => "Code",
+			'cac.libelle' => "ActionType", 'cac.code' => "Code", 'cac.type' => "Type",
 			's.rowid' => "IdCompany", 's.nom' => 'CompanyName', 's.address' => 'Address', 's.zip' => 'Zip', 's.town' => 'Town',
 			'co.code' => 'CountryCode', 's.phone' => 'Phone', 's.siren' => 'ProfId1', 's.siret' => 'ProfId2', 's.ape' => 'ProfId3', 's.idprof4' => 'ProfId4', 's.idprof5' => 'ProfId5', 's.idprof6' => 'ProfId6',
 			's.code_compta' => 'CustomerAccountancyCode', 's.code_compta_fournisseur' => 'SupplierAccountancyCode', 's.tva_intra' => 'VATIntra',
@@ -461,7 +461,7 @@ class modAgenda extends DolibarrModules
 		$this->export_TypeFields_array[$r] = array('ac.ref_ext' => "Text", 'ac.ref' => "Text", 'ac.datec' => "Date", 'ac.datep' => "Date",
 			'ac.datep2' => "Date", 'ac.location' => 'Text', 'ac.label' => "Text", 'ac.note' => "Text", 'ac.percent' => "Numeric",
 			'ac.durationp' => "Duree",'ac.fk_user_author' => 'Numeric', 'ac.fk_user_action' => 'Numeric', 'ac.fk_user_mod' => 'Numeric', 'ac.transparency' => "Numeric", 'ac.priority' => "Numeric", 'ac.fk_element' => "Numeric", 'ac.elementtype' => "Text",
-			'cac.libelle' => "List:c_actioncomm:libelle:libelle", 'cac.code' => "Text",
+			'cac.libelle' => "List:c_actioncomm:libelle:libelle", 'cac.code' => "Text", 'cac.type' => "Text",
 			's.nom' => 'Text', 's.address' => 'Text', 's.zip' => 'Text', 's.town' => 'Text',
 			'co.code' => 'Text', 's.phone' => 'Text', 's.siren' => 'Text', 's.siret' => 'Text', 's.ape' => 'Text', 's.idprof4' => 'Text', 's.idprof5' => 'Text', 's.idprof6' => 'Text',
 			's.code_compta' => 'Text', 's.code_compta_fournisseur' => 'Text', 's.tva_intra' => 'Text',
@@ -541,17 +541,10 @@ class modAgenda extends DolibarrModules
 
 		// Add extra fields
 		$import_extrafield_sample = array();
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'actioncomm' AND entity IN (0, ".((int) $conf->entity).")";
-		$resql = $this->db->query($sql);
-
-		if ($resql) {
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.'.$obj->name;
-				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-			}
-		}
-		// End add extra fields
+		$keyforselect = 'actioncomm';
+		$keyforelement = 'action';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 
 		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
 		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'actioncomm');

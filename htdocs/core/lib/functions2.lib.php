@@ -101,7 +101,7 @@ function dolGetModulesDirs($subdir = '')
 					continue; // We discard module if it contains disabled into name.
 				}
 
-				if (substr($file, 0, 1) != '.' && is_dir($dirroot.'/'.$file) && strtoupper(substr($file, 0, 3)) != 'CVS' && $file != 'includes') {
+				if (dol_substr($file, 0, 1) != '.' && is_dir($dirroot.'/'.$file) && strtoupper(dol_substr($file, 0, 3)) != 'CVS' && $file != 'includes') {
 					if (is_dir($dirroot.'/'.$file.'/core/modules'.$subdir.'/')) {
 						$modulesdir[$dirroot.'/'.$file.'/core/modules'.$subdir.'/'] = $dirroot.'/'.$file.'/core/modules'.$subdir.'/';
 					}
@@ -331,7 +331,7 @@ function dol_print_object_info($object, $usetable = 0)
 			print '<div class="valignmiddle inline-block">';
 			print dol_print_date($object->date_approve ? $object->date_approve : $object->date_approval, 'dayhour', 'tzserver');
 			if ($deltadateforuser) {
-				print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_approve, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
+				print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_approve ? $object->date_approve : $object->date_approval, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
 			}
 			print '</div>';
 		}
@@ -465,8 +465,8 @@ function dol_print_object_info($object, $usetable = 0)
 	}
 
 	// Reconciliation
-	if (!empty($object->user_rappro) || !empty($object->user_rappro_id) || !empty($object->date_rappro)) {
-		'@phan-var-force Account $object';
+	if (!empty($object->user_rappro) || !empty($object->fk_user_rappro) || !empty($object->date_rappro)) {
+		'@phan-var-force AccountLine $object';
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -486,7 +486,7 @@ function dol_print_object_info($object, $usetable = 0)
 			}
 		} else {
 			$userstatic = new User($db);
-			$userstatic->fetch($object->user_rappro_id ? $object->user_rappro_id : $object->user_rappro);
+			$userstatic->fetch($object->fk_user_rappro ? $object->fk_user_rappro : $object->user_rappro);
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(1, '', 0, 0, 0);
 			} else {
@@ -670,7 +670,7 @@ function clean_url($url, $http = 1)
 		//$url = dol_string_nospecial(trim($url));
 		$url = trim($url);
 
-		// Si http: defini on supprime le http (Si https on ne supprime pas)
+		// If http: is defined, remove the http (If https, do not remove)
 		$newproto = $proto;
 		if ($http == 0) {
 			if (preg_match('/^http:[\\/]+/i', $url)) {
@@ -1585,9 +1585,9 @@ function hexbin($hexa)
 }
 
 /**
- *	Retourne le numero de la semaine par rapport a une date
+ *	Return the week number for a given date
  *
- *	@param	string	$time   	Date au format 'timestamp'
+ *	@param	string	$time   	Date in 'timestamp' format
  *	@return string					Number of week
  */
 function numero_semaine($time)
@@ -1596,7 +1596,7 @@ function numero_semaine($time)
 
 	$reg = array();
 	if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?/i', $stime, $reg)) {
-		// Date est au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
+		// Date is in 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS' format
 		$annee = (int) $reg[1];
 		$mois = (int) $reg[2];
 		$jour = (int) $reg[3];
@@ -1607,35 +1607,35 @@ function numero_semaine($time)
 	}
 
 	/*
-	 * Norme ISO-8601:
+	 * ISO-8601 standard:
 	 * - Week 1 of the year contains Jan 4th, or contains the first Thursday of January.
 	 * - Most years have 52 weeks, but 53 weeks for years starting on a Thursday and bisectile years that start on a Wednesday.
 	 * - The first day of a week is Monday
 	 */
 
-	// Definition du Jeudi de la semaine
-	if ((int) date("w", mktime(12, 0, 0, $mois, $jour, $annee)) == 0) { // Dimanche
+	// Definition of the Thursday of the week
+	if ((int) date("w", mktime(12, 0, 0, $mois, $jour, $annee)) == 0) { // Sunday
 		$jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee) - 3 * 24 * 60 * 60;
-	} elseif (date("w", mktime(12, 0, 0, $mois, $jour, $annee)) < 4) { // du Lundi au Mercredi
+	} elseif (date("w", mktime(12, 0, 0, $mois, $jour, $annee)) < 4) { // Monday to Wednesday
 		$jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee) + (4 - (int) date("w", mktime(12, 0, 0, $mois, $jour, $annee))) * 24 * 60 * 60;
-	} elseif ((int) date("w", mktime(12, 0, 0, $mois, $jour, $annee)) > 4) { // du Vendredi au Samedi
+	} elseif ((int) date("w", mktime(12, 0, 0, $mois, $jour, $annee)) > 4) { // Friday to Saturday
 		$jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee) - ((int) date("w", mktime(12, 0, 0, $mois, $jour, $annee)) - 4) * 24 * 60 * 60;
-	} else { // Jeudi
+	} else { // Thursday
 		$jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee);
 	}
 
-	// Definition du premier Jeudi de l'annee
-	if ((int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine))) == 0) { // Dimanche
+	// Definition of the first Thursday of the year
+	if ((int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine))) == 0) { // Sunday
 		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine)) + 4 * 24 * 60 * 60;
-	} elseif ((int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine))) < 4) { // du Lundi au Mercredi
+	} elseif ((int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine))) < 4) { // Monday to Wednesday
 		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine)) + (4 - (int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine)))) * 24 * 60 * 60;
-	} elseif ((int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine))) > 4) { // du Vendredi au Samedi
+	} elseif ((int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine))) > 4) { // Friday to Saturday
 		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine)) + (7 - ((int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine))) - 4)) * 24 * 60 * 60;
-	} else { // Jeudi
+	} else { // Thursday
 		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine));
 	}
 
-	// Definition du numero de semaine: nb de jours entre "premier Jeudi de l'annee" et "Jeudi de la semaine";
+	// Definition of the week number: nb of days between "first Thursday of the year" and "Thursday of the week"
 	$numeroSemaine = (
 		(
 			(int) date("z", mktime(12, 0, 0, (int) date("m", $jeudiSemaine), (int) date("d", $jeudiSemaine), (int) date("Y", $jeudiSemaine)))
@@ -1644,9 +1644,9 @@ function numero_semaine($time)
 		) / 7
 	) + 1;
 
-	// Cas particulier de la semaine 53
+	// Special case of week 53
 	if ($numeroSemaine == 53) {
-		// Les annees qui commencent un Jeudi et les annees bissextiles commencant un Mercredi en possedent 53
+		// Years starting on a Thursday, and leap years starting on a Wednesday, have 53
 		if (
 			((int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine))) == 4)
 			|| (
@@ -2561,6 +2561,78 @@ function colorHexToRgb($hex, $alpha = false, $returnArray = false)
 }
 
 /**
+ * Return the WCAG 2.x contrast ratio between two colors.
+ *
+ * @param	string	$color1		Color in hex ('#AA1122', 'AA1122', '#a12') or comma RGB ('170,17,34')
+ * @param	string	$color2		Color in hex ('#AA1122', 'AA1122', '#a12') or comma RGB ('170,17,34')
+ * @return	float				Contrast ratio from 1 to 21, or 0 if one of the colors is not valid
+ * @see colorGetReadableTextColor()
+ */
+function colorGetContrastRatio(string $color1, string $color2): float
+{
+	$luminance1 = colorGetRelativeLuminance($color1);
+	$luminance2 = colorGetRelativeLuminance($color2);
+	if ($luminance1 < 0 || $luminance2 < 0) {
+		return 0.0;
+	}
+
+	return (max($luminance1, $luminance2) + 0.05) / (min($luminance1, $luminance2) + 0.05);
+}
+
+/**
+ * Return a text color readable on a background: the given one, unless its WCAG 2.x contrast is below a minimum and the other one does better.
+ *
+ * @param	string	$backgroundcolor	Background color in hex ('#AA1122', 'AA1122', '#a12') or comma RGB ('170,17,34')
+ * @param	string	$textcolor			Text color, same formats
+ * @param	string	$othercolor			Other text color, same formats
+ * @param	float	$minratio			Minimum contrast ratio to keep $textcolor
+ * @return	string						$textcolor or $othercolor, unchanged. $textcolor if a color is not valid.
+ * @see colorGetContrastRatio()
+ */
+function colorGetReadableTextColor(string $backgroundcolor, string $textcolor, string $othercolor, float $minratio = 2.6): string
+{
+	$ratio = colorGetContrastRatio($backgroundcolor, $textcolor);
+	if ($ratio <= 0 || $ratio >= $minratio) {
+		return $textcolor;
+	}
+	if (colorGetContrastRatio($backgroundcolor, $othercolor) > $ratio) {
+		return $othercolor;
+	}
+
+	return $textcolor;
+}
+
+/**
+ * Return the WCAG 2.x relative luminance of a color.
+ *
+ * @param	string	$color		Color in hex ('#AA1122', 'AA1122', '#a12') or comma RGB ('170,17,34')
+ * @return	float				Relative luminance from 0 (black) to 1 (white), or -1 if the color is not valid
+ * @see colorGetContrastRatio()
+ */
+function colorGetRelativeLuminance(string $color): float
+{
+	$color = trim($color);
+	$reg = array();
+	if (preg_match('/^#?([0-9a-f])([0-9a-f])([0-9a-f])$/i', $color, $reg)) {
+		$channels = array(hexdec($reg[1].$reg[1]), hexdec($reg[2].$reg[2]), hexdec($reg[3].$reg[3]));
+	} elseif (preg_match('/^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i', $color, $reg)) {
+		$channels = array(hexdec($reg[1]), hexdec($reg[2]), hexdec($reg[3]));
+	} elseif (preg_match('/^\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*$/', $color, $reg)) {
+		$channels = array((int) $reg[1], (int) $reg[2], (int) $reg[3]);
+	} else {
+		return -1.0;
+	}
+
+	$linear = array();
+	foreach ($channels as $channel) {
+		$value = min(255, (int) $channel) / 255;
+		$linear[] = ($value <= 0.04045 ? $value / 12.92 : pow(($value + 0.055) / 1.055, 2.4));
+	}
+
+	return 0.2126 * $linear[0] + 0.7152 * $linear[1] + 0.0722 * $linear[2];
+}
+
+/**
  * Color Hex to Hsl (used for style)
  *
  * @param	string 			$hex 			Color in hex
@@ -2678,8 +2750,13 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'adherents';
 	} elseif ($moduleobject == 'don' || $moduleobject == 'donations') {
 		$moduledirforclass = 'don';
-	} elseif ($moduleobject == 'banque' || $moduleobject == 'bankaccounts') {
+	} elseif ($moduleobject == 'banque' || $moduleobject == 'bankaccounts' || $moduleobject == 'variouspayments') {
 		$moduledirforclass = 'compta/bank';
+	} elseif (in_array($moduleobject, array('vatpayments', 'localtaxes', 'socialcontributions'))) {
+		// The tax module exposes its API classes from htdocs/tax/class/ (its module dir),
+		// even though the business classes live under compta/tva, compta/localtax and
+		// compta/sociales. The API Explorer discovers them there via the default 'tax' dir.
+		$moduledirforclass = 'tax';
 	} elseif ($moduleobject == 'category' || $moduleobject == 'categorie') {
 		$moduledirforclass = 'categories';
 	} elseif ($moduleobject == 'order' || $moduleobject == 'orders') {
@@ -2700,6 +2777,8 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'fourn';
 	} elseif ($moduleobject == 'ficheinter' || $moduleobject == 'interventions') {
 		$moduledirforclass = 'fichinter';
+	} elseif ($moduleobject == 'cronjobs') {
+		$moduledirforclass = 'cron';
 	} elseif ($moduleobject == 'mos') {
 		$moduledirforclass = 'mrp';
 	} elseif ($moduleobject == 'workstations') {
@@ -2708,7 +2787,7 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'accountancy';
 	} elseif ($moduleobject == 'paiements') {
 		$moduledirforclass = 'compta/facture';
-	} elseif (in_array($moduleobject, array('products', 'expensereports', 'users', 'tickets', 'boms', 'receptions', 'partnerships', 'recruitments'))) {
+	} elseif (in_array($moduleobject, array('products', 'expensereports', 'users', 'tickets', 'boms', 'receptions', 'partnerships', 'recruitments', 'websites'))) {
 		$moduledirforclass = preg_replace('/s$/', '', $moduleobject);
 	} elseif ($moduleobject == 'paymentsalaries') {
 		$moduledirforclass = 'salaries';
@@ -2718,6 +2797,8 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'eventorganization';
 	} elseif ($moduleobject == 'holidays') {
 		$moduledirforclass = 'holiday';
+	} elseif ($moduleobject == 'resources' || $moduleobject == 'dolresources') {
+		$moduledirforclass = 'resource';
 	}
 
 	return $moduledirforclass;
@@ -2772,7 +2853,7 @@ function convertBackOfficeMediasLinksToPublicLinks($notetoshow)
 {
 	global $dolibarr_main_url_root;
 	// Define $urlwithroot
-	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	$urlwithouturlroot = dolGetUrlWithoutUrlRoot();
 	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 	$notetoshow = preg_replace('/src="[a-zA-Z0-9_\/\-\.]*(viewimage\.php\?modulepart=medias[^"]*)"/', 'src="'.$urlwithroot.'/\1"', $notetoshow);
@@ -2917,7 +2998,7 @@ function acceptLocalLinktoMedia()
 
 	// If $acceptlocallinktomedia is true, we can add link media files int email templates (we already can do this into HTML editor of an email).
 	// Note that local link to a file into medias are replaced with a real link by email in CMailFile.class.php with value $urlwithroot defined like this:
-	// $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	// $urlwithouturlroot = dolGetUrlWithoutUrlRoot();
 	// $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 
 	$acceptlocallinktomedia = getDolGlobalInt('MAIN_DISALLOW_MEDIAS_IN_EMAIL_TEMPLATES') ? 0 : 1;
@@ -2928,7 +3009,7 @@ function acceptLocalLinktoMedia()
 
 	if ($acceptlocallinktomedia) {
 		global $dolibarr_main_url_root;
-		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+		$urlwithouturlroot = dolGetUrlWithoutUrlRoot();
 
 		// Parse $newUrl to get the IP of the server
 		$newUrlArray = parse_url($urlwithouturlroot);
@@ -3117,12 +3198,16 @@ function csvClean($newvalue, $charset = '', $separator = '')
 	}
 
 	// Rule 3 CSV: If value contains separator, we must add "
-	if (preg_match('/'.$separator.'/', $newvalue)) {
+	if ($separator === '\\t') {
+		$separator = "\t";
+	}
+	if ($separator !== '' && strpos($newvalue, $separator) !== false) {
 		$addquote = 1;
 	}
 
-	// Rule 4 CSV: If value is a string started with char that trigger formula in calc software, we must add "
-	if (preg_match('/^\s*[=+-@]/', $newvalue)) {
+	// Rule 4 CSV: If value is a string started with char that trigger formula in calc software (= + - @), we must add "
+	// Note: in a character class, + - @ would be a range, so - is escaped. A number (like -5) is not a formula.
+	if (preg_match('/^\s*[=+\-@]/', $newvalue) && !is_numeric(trim($newvalue))) {
 		$addquote = 1;
 	}
 
@@ -3182,17 +3267,17 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 						}
 						?>
 						hash_algo: 'dol_hash-<?php echo $algo; ?>',
-						hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>',
+						hash_unique_id: <?php echo "'".dol_escape_js($hash_unique_id)."'"; ?>,
 						version: '<?php echo (float) DOL_VERSION; ?>',
 						version_full: '<?php echo DOL_VERSION; ?>',
 						versionblockedlog: '<?php echo (float) getBlockedLogVersionToShow(); ?>',
 						versionblockedlog_full: '<?php echo getBlockedLogVersionToShow(); ?>',
-						entity: '<?php echo (int) $conf->entity; ?>',
-						dbtype: '<?php echo dol_escape_js($db->type); ?>',
-						php_version: '<?php echo dol_escape_js(phpversion()); ?>',
-						os_version: '<?php echo dol_escape_js(version_os('smr')); ?>',
-						db_version: '<?php echo dol_escape_js(version_db()); ?>',
-						distrib: '<?php echo dol_escape_js($distrib); ?>',
+						instance_entity: '<?php echo (int) $conf->entity; ?>',
+						dbtype: <?php echo "'".dol_escape_js($db->type)."'"; ?>,
+						php_version: <?php echo "'".dol_escape_js(phpversion())."'"; ?>,
+						os_version: <?php echo "'".dol_escape_js(version_os('smr'))."'"; ?>,
+						db_version: <?php echo "'".dol_escape_js(version_db())."'"; ?>,
+						distrib: <?php echo "'".dol_escape_js($distrib)."'"; ?>,
 						token: 'notrequired'
 					},
 					success: function (data, status, xhr) {   // success callback function (data contains body of response)
@@ -3202,7 +3287,7 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 								url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
 								timeout: 500,     // timeout milliseconds
 								cache: false,
-								data: { hash_algo: 'dol_hash-sha256', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: '<?php echo $constanttosavefirstok ?>', token: '<?php echo currentToken(); ?>' },	// for update
+								data: { action: '<?php echo $constanttosavefirstok ?>', token: <?php echo "'".currentToken()."'"; ?> },	// for update
 							});
 					},
 					error: function (data,status,xhr) {   // error callback function
@@ -3212,7 +3297,7 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 								url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
 								timeout: 500,     // timeout milliseconds
 								cache: false,
-								data: { hash_algo: 'dol_hash-sha256', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: '<?php echo $constanttosavelastko ?>', token: '<?php echo currentToken(); ?>' },
+								data: { action: '<?php echo $constanttosavelastko ?>', token: <?php echo "'".currentToken()."'"; ?> },
 							});
 					}
 				});
@@ -3491,7 +3576,7 @@ function analyzeDirContents($dir, $search = array(), &$results = array(), &$coun
 								foreach ($regs[$id] as $i => $string) {
 									if (!empty($pattern['contain']) && is_array($pattern['contain'])) {
 										foreach ($pattern['contain'] as $contain) {
-											// Mode strict true : doit contenir && ne pas contenir
+											// Strict mode true: must contain && must not contain
 											if (!empty($pattern['notcontain']) && !empty($pattern['strict']) && is_array($pattern['notcontain'])) {
 												foreach ($pattern['notcontain'] as $notcontain) {
 													if (strstr($string, $contain) && strstr($string, $notcontain)) {
@@ -3516,7 +3601,7 @@ function analyzeDirContents($dir, $search = array(), &$results = array(), &$coun
 											}
 										}
 									}
-									// Ou ne doit pas contenir
+									// Or must not contain
 									if (empty($count) && !empty($pattern['notcontain']) && empty($pattern['strict']) && is_array($pattern['notcontain'])) {
 										foreach ($pattern['notcontain'] as $notcontain) {
 											if (strstr($string, $notcontain)) {

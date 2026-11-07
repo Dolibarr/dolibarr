@@ -95,6 +95,7 @@ $server->soap_defencoding = 'UTF-8';
 $server->decode_utf8 = false;
 $ns = 'http://www.dolibarr.org/ns/';
 $server->configureWSDL('WebServicesDolibarrOther', $ns);
+// @phan-suppress-next-line PhanUndeclaredProperty
 $server->wsdl->schemaTargetNamespace = $ns;
 
 // Define WSDL Authentication object
@@ -309,7 +310,9 @@ function createProject($authentication, $project)
 			if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
 				foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
 					$key = 'options_'.$key;
-					$newobject->array_options[$key] = $project[$key];
+					if (isset($project[$key])) {
+						$newobject->array_options[$key] = $project[$key];
+					}
 				}
 			}
 

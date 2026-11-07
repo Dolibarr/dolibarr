@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - website
 Shortname=Kode
 WebsiteName=Navn på nettstedet
-WebsiteSetupDesc=Opprett de nettstedene du ønsker å bruke her. Deretter går du inn i meny Nettsteder for å redigere dem.
+WebsiteSetupDesc=Create here the websites you wish to use. Then go to menu Websites to edit them.
 DeleteWebsite=Slett wedside
 ConfirmDeleteWebsite=Er du sikker på at du vil slette dette nettstedet? Alle sidene og innholdet blir også fjernet. Filene som er lastet opp (som i mediekatalogen, ECM-modulen, ...) vil ikke slettes.
 WEBSITE_TYPE_CONTAINER=Type side/container
@@ -17,8 +17,8 @@ WEBSITE_ROBOT=Robotfil (robots.txt)
 WEBSITE_HTACCESS=Nettstedets .htaccess-fil
 WEBSITE_MANIFEST_JSON=Nettstedets manifest.json-fil
 WEBSITE_KEYWORDSDesc=Bruk et komma for å skille verdier
-EnterHereReadmeInformation=Skriv inn en beskrivelse av nettsiden her. Hvis du distribuerer nettstedet ditt som en mal, vil filen bli inkludert i mal-pakken.
-EnterHereLicenseInformation=Skriv inn LISENSEN til koden til nettstedet her. Hvis du distribuerer nettstedet ditt som en mal, vil filen bli inkludert i mal-pakken.
+EnterHereReadmeInformation=Enter here a description of the website. If you distribute your website as a template, the file will be included in the template package.
+EnterHereLicenseInformation=Enter here the LICENSE of the code of the website. If you distribute your website as a template, the file will be included in the template package.
 HtmlHeaderPage=HTML-header (kun for denne siden)
 PageNameAliasHelp=Navn eller alias på siden. <br> Dette aliaset brukes også til å lage en SEO-URL når nettsiden blir kjørt fra en virtuell vert til en webserver (som Apacke, Nginx, ...). Bruk knappen "<strong>%s</strong>" for å redigere dette aliaset.
 EditTheWebSiteForACommonHeader=Merk: Hvis du vil definere en personlig topptekst for alle sider, redigerer du overskriften på nettstedsnivå i stedet for på siden/containeren.
@@ -51,12 +51,12 @@ ToDeployYourWebsiteOnLiveYouHave3Solutions=For å sette denne nettsiden live, ha
 SetHereVirtualHost=<u>Bruk med Apache/NGinx/...</u><br>Opprett på webserveren din (Apache, Nginx, ...) en dedikert virtuell vert med PHP aktivert og en rotkatalog på <br><strong>%s</strong>
 ExampleToUseInApacheVirtualHostConfig=Eksempel på Apache virtuelt vertsoppsett:
 YouCanAlsoTestWithPHPS=<u>Bruk med PHP innebygd server</u><br>I utviklingsmiljø kan du teste nettstedet med den innebygde PHP-nettserveren ved å kjøre
-YouCanAlsoDeployToAnotherWHP=<u>Kjør nettstedet ditt i en Dolibarr-nettvertsleverandør</u><br>Hvis du ikke har en nettserver som Apache eller NGinx tilgjengelig på internett, kan du eksportere og importere nettstedet ditt til en annen Dolibarr-instans levert av en annen Dolibarr-vertsleverandør som gir full integrasjon med Nettsidemodulen. Du kan finne en liste over noen Dolibarr-vertsleverandører på <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
+YouCanAlsoDeployToAnotherWHP=<u>Run your web site inside a Dolibarr web Hosting provider</u><br>If you don't have a web server like Apache or NGinx available on the internet, you can export and import your web site to another Dolibarr instance provided by another Dolibarr hosting provider that provides full integration with the Website module. You can find a list of some Dolibarr hosting providers on <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
 CheckVirtualHostPerms=Sjekk også at den virtuelle vertsbrukeren (for eksempel www-data) har <strong>%s</strong> tillatelser på filer i<br><strong>%s</strong>
 ReadPerm=Les
 WritePerm=Skriv
 TestDeployOnWeb=Test/distribuer på nett
-PreviewSiteServedByWebServer=<u> Forhåndsvis %s i en ny fane. </u><br><br>%s vil bli servet av en ekstern webserver (som Apache, Nginx, IIS). Du må installere og sette opp denne serveren før du peker på katalogen:<br><strong>%s</strong><br>URL servet av ekstern server:<br><strong>%s</strong>
+PreviewSiteServedByWebServer=<u>Preview %s in a new tab.</u><br><br>The %s will be served by an external web server (like Apache, Nginx, IIS). You must install and setup this server before pointing to the directory:<br><strong>%s</strong><br>URL served by external server:<br><strong>%s</strong>
 PreviewSiteServedByDolibarr=<u>Forhåndsvis  i en ny fane.</u><br><br>%s vil bli servet av Dolibarr-serveren, så den trenger ikke noen ekstra webserver (som Apache, Nginx, IIS) som skal installeres.<br>Det ubeleilige er at nettadressene til sidene ikke er brukervennlige og starter med banen til Dolibarr.<br>URL servet av Dolibarr:<br><strong>%s</strong><br><br>For å distribuere eller teste ved hjelp av din egen eksterne webserver (som Apache, Nginx, Lighttp), bruk linken "%s".
 VirtualHostUrlNotDefined=URL til ekstern webserver ikke definert
 NoPageYet=Ingen sider ennå
@@ -65,12 +65,13 @@ SyntaxHelp=Hjelp med spesifikke syntakstips
 YouCanEditHtmlSourceckeditor=Du kan redigere HTML kildekode ved hjelp av "Kilde" -knappen i redigeringsprogrammet.
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> Du kan inkludere PHP-kode i denne kildekoden ved å bruke tags<strong>&lt;?php ?&gt;</strong>. Følgende globale variabler er tilgjengelige: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> Du kan også inkludere innhold fra en annen side/beholder med følgende syntaks:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> Du kan omdirigere til en annen side/beholder med følgende syntaks (Merk: ikke skriv ut noe innhold før en omdirigering):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>Du kan også gjøre en omdirigering med GET-parametere:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> For å legge til en lenke til en annen side, bruk syntaksen:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;minlenke&lt;a&gt;</strong><br><br>
 YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> Du kan dynamisk angi <strong>SEO-tittel og metatagger</strong> (tittel, nøkkelord, beskrivelse). Definer ganske enkelt følgende variabler:<br> <code>define('__SEO_PAGE_TITLE__', "Tittelverdi …");</code><br> <code>define('__SEO_PAGE_KEYWORDS__', 'nøkkelord1, nøkkelord2, nøkkelord3 …');</code><br> <code>define('__SEO_PAGE_DESC__', "Description …");</code><br>
-YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> For å inkludere en <strong>lenke for å laste ned</strong> en fil som er lagret i katalogen <strong>dokumenter</strong>, bruk <strong>document.php</strong> wrapper:<br>Eksempel, for en fil i dokumenter/ecm (må logges), er syntaksen:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For en fil i dokumenter/medier (åpen katalog for offentlig tilgang), er syntaksen:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
+YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored in the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file in documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file in documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSourced=For en fil som deles med en delingslenke (åpen tilgang ved bruk av delings-hashnøkkelen til filen), er syntaksen:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> For å inkludere et  <strong>bilde</strong> lagret i <strong>medias</strong> katalogen (katalog åpen for offentlig tilgang), bruk den relative banen som starter med <strong>/medias</strong>, eksempel:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt; </strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored in the <strong>medias</strong> directory (directory open for public access), use the relative path starting with <strong>/medias</strong>, example:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=For et bilde som er delt med en delingslenke (åpen tilgang ved å bruke hash-nøkkelen for deling av filen), bruk innpakningen:<br><strong> &lt;img src="/viewimage.php?hashp=12345679012..."&gt; </strong><br>
 YouCanEditHtmlSource3=For å få nettadressen til bildet av et PHP-objekt, bruk<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
-YouCanEditHtmlSource4=For å få nettadressen til et bilde i et html-innhold i en artikkel, bruk<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource4=To get the URL of an image inside a HTML content of an article, use<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource5=<br><span class="fa fa-edit paddingright"></span> To let a part of the page be changed with mode <strong>Edit inline</strong>, add the attributes <strong>contenteditable="true"</strong> and <strong>id</strong> to its tag. It must contain no PHP code, only text with formatting tags (bold, color, font size...), links, paragraphs, titles, lists and div, example:<br><strong>&lt;p id="intro" contenteditable="true"&gt;My &lt;b&gt;text&lt;/b&gt;&lt;/p&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>Flere eksempler på HTML eller dynamisk kode tilgjengelig på <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">wikidokumentasjonen</a> <br>
 ClonePage=Klon side/container
 CloneSite=Klon side
@@ -88,6 +89,8 @@ ImportSite=Importer nettstedsmal
 IDOfPage=Side-ID
 Banner=Banner
 BlogPost=Blogg post
+PageHeader=Overskrift
+PageFooter=Bunntekst
 WebsiteAccount=Nettstedskonto
 WebsiteAccounts=Nettstedskontoer
 AddWebsiteAccount=Opprett nettsidekonto
@@ -102,7 +105,7 @@ YouMustDefineTheHomePage=Du må først definere standard startside
 OnlyEditionOfSourceForGrabbedContentFuture=Advarsel: Oppretting av en nettside ved å importere en ekstern nettside er forbeholdt erfarne brukere og fungerer bare med sider gjengitt med HTML og CSS. Import av sider gjengitt av JS-rammeverk støttes IKKE. Avhengig av kompleksiteten til kildesiden, vil resultatet av importen sannsynligvis avvike fra den opprinnelige siden. Hvis kildesiden bruker vanlige CSS-stiler eller motstridende JavaScript, kan det også ødelegge utseendet eller funksjonene til nettstedredigereren når man arbeider på denne siden. Denne metoden er en rask måte å opprette en side for svært avanserte brukere når kildesiden tillater det, men det anbefales å opprette den nye siden fra bunnen av eller fra en foreslått sidemal. <br>Merk også at den innebygde editoren kanskje ikke fungerer som den skal når den brukes på en side som ble hentet.
 OnlyEditionOfSourceForGrabbedContent=Bare HTML-kildeendring er mulig når innhold hentes fra et eksternt nettsted
 GrabImagesInto=Hent bilder som er funnet i css og side også.
-ImagesShouldBeSavedInto=Bilder bør lagres i katalogen
+ImagesShouldBeSavedInto=Images should be saved in the directory
 WebsiteRootOfImages=Rotkatalog for nettstedbilder
 SubdirOfPage=Underkatalog dedikert til side
 AliasPageAlreadyExists=Alias ​side <strong> %s </strong> eksisterer allerede
@@ -119,7 +122,7 @@ NoWebSiteCreateOneFirst=Ingen nettside er opprettet ennå. Opprett en først.
 GoTo=Gå til
 DynamicPHPCodeContainsAForbiddenInstruction=Du legger til dynamisk PHP-kode som inneholder PHP-instruksjonen '<strong>%s</strong>' som vanligvis er forbudt som dynamisk innhold (se skjulte alternativer WEBSITE_PHP_ALLOW_xxx for å øke listen over tillatte kommandoer).
 NotAllowedToAddDynamicContent=You don't have permission to add or edit dynamic PHP content in websites. Ask permission or just keep code into php tags unmodified.
-NotAllowedToAddDynamicContentDisabledGlobaly=You currently can't add or edit dynamic PHP content in this website (even if you have permission to), because this feature must be first enabled globally by setting the parameter %s=1 int the conf.php file.<br>Edit your conf.php file to add this parameter, or ask your administrator or support to do it for you.
+NotAllowedToAddDynamicContentDisabledGlobaly=You currently can't add or edit dynamic PHP content in this website (even if you have permission to), because this feature must be first enabled globally by setting the parameter %s=1 into the conf.php file.<br>Edit your conf.php file to add this parameter, or ask your administrator or support team to do it for you.
 ReplaceWebsiteContent=Søk eller erstatt nettstedsinnhold
 DeleteAlsoJs=Vil du også slette alle JavaScript-filer som er spesifikke for dette nettstedet?
 DeleteAlsoMedias=Vil du også slette alle mediefiler som er spesifikke for dette nettstedet?
@@ -140,10 +143,10 @@ MainLanguage=Hovedspråk
 OtherLanguages=Andre språk
 UseManifest=Oppgi en manifest.json-fil
 PublicAuthorAlias=Offentlig forfatter alias
-AvailableLanguagesAreDefinedIntoWebsiteProperties=Tilgjengelige språk er definert i nettstedegenskaper
+AvailableLanguagesAreDefinedIntoWebsiteProperties=Available languages are defined in website properties
 ReplacementDoneInXPages=Utskifting utført på %s sider eller containere
 RSSFeed=RSS nyhetsstrøm
-RSSFeedDesc=Du kan få en RSS-feed med de nyeste artiklene med typen 'blogpost' ved hjelp av denne URL-en
+RSSFeedDesc=You can get an RSS feed of latest articles with type 'blogpost' using this URL
 PagesRegenerated=%s side(r)/container(e) regenerert
 RegenerateWebsiteContent=Regenerer cache-filer på nettstedet
 AllowedInFrames=Tillatt i frames
@@ -151,6 +154,7 @@ DefineListOfAltLanguagesInWebsiteProperties=Definer liste over alle tilgjengelig
 GenerateSitemaps=Generer nettstedets sitemap.xml-fil
 ConfirmGenerateSitemaps=Hvis du bekrefter, vil du slette den eksisterende sitemap-filen...
 ConfirmSitemapsCreation=Bekreft generering av sitemap
+ConfirmSetAsHomePage=Are you sure you want to set the page <b>%s</b> as the home page of the website?
 SitemapGenerated=Sitemap-fil <b> %s </b> generert
 ImportFavicon=Favicon
 ErrorFaviconType=Favicon må være png
@@ -509,3 +513,13 @@ ThisDirectoryIsEmpty=Denne katalogen er tom
 WrittenBy=Skrevet av %s
 ImportOfWebsiteTemplateIncludingPHPIsAllowedIf=Import of website templates using dynamic content in PHP is allowed only if $dolibarr_website_allow_custom_php is set to 2 in conf.php.
 ImportOfWebsiteTemplateIncludingPHPIsDisabled=Import of website templates using dynamic content in PHP need to have $dolibarr_website_allow_custom_php set to 1 or 2 in conf.php to be allowed.
+CurrentPageVersion=Current page
+ListOfPageVersions=List of archived versions of page (a backup file of page is created each time you save a change, for example on the HTML source)
+EditInLineAllowedAreas=In mode Edit inline, the tags with contenteditable="true", an id and no PHP code inside can be changed and are saved when you leave them. Text formatting (bold, color, font size...), links, paragraphs, titles and lists are allowed, images and other HTML can only be changed in the HTML source.
+ErrorEditInlineElementNoId=This element has contenteditable="true" but no id, so it can not be edited inline.
+ErrorEditInlineElementNotFound=No element with id %s and contenteditable="true" was found in the source of the page.
+ErrorEditInlineElementNotUnique=The id %s is used by several elements with contenteditable="true" in the source of the page.
+ErrorEditInlineElementWithPhp=The element with id %s contains PHP code in the source of the page, so it can only be changed in the HTML source.
+ErrorEditInlineElementNotAllowedHtml=The element with id %s contains HTML that can not be edited inline (image, form, script, comment, other tags or attributes...), so it can only be changed in the HTML source.
+ErrorEditInlineElementNotPlainText=The element with id %s contains HTML in the source of the page and can only be edited inline as plain text, so it can only be changed in the HTML source.
+ErrorEditInlineContentNotAllowed=The new content of the element with id %s contains HTML tags or attributes that are not allowed, so it was not saved.

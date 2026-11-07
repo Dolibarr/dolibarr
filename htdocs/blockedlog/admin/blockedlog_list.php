@@ -392,7 +392,7 @@ if ($conf->main_checkbox_left_column) {
 	print '</td>';
 }
 
-print '<td class="liste_titre"><input type="text" class="maxwidth50" name="search_id" value="'.dol_escape_htmltag($search_id).'"></td>';
+print '<td class="liste_titre center"><input class="searchstring width50" type="text" name="search_id" value="'.dol_escape_htmltag($search_id).'"></td>';
 
 print '<td class="liste_titre">';
 //print $langs->trans("from").': ';
@@ -486,7 +486,7 @@ print '<tr class="liste_titre">';
 if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList('<span id="blockchainstatus"></span>', 0, $_SERVER["PHP_SELF"], '', '', $param, 'class="center"', $sortfield, $sortorder, '')."\n";
 }
-print getTitleFieldOfList($langs->trans('#'), 0, $_SERVER["PHP_SELF"], 'rowid', '', $param, '', $sortfield, $sortorder, 'minwidth50 ')."\n";
+print getTitleFieldOfList($langs->trans('#'), 0, $_SERVER["PHP_SELF"], 'rowid', '', $param, '', $sortfield, $sortorder, 'center minwidth50 ')."\n";
 print getTitleFieldOfList($langs->trans('Date'), 0, $_SERVER["PHP_SELF"], 'date_creation', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('Author'), 0, $_SERVER["PHP_SELF"], 'user_fullname', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('POS'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
@@ -676,7 +676,7 @@ if (is_array($blocks)) {
 			}
 
 			// ID
-			print '<td>'.dolPrintHTML((string) $block->id).'</td>';
+			print '<td class="center">'.dolPrintHTML((string) $block->id).'</td>';
 
 			// Date
 			print '<td class="nowraponall">'.dol_print_date($block->date_creation, 'dayhour', 'tzuserrel').'</td>';
@@ -1022,7 +1022,7 @@ if (is_array($blocks)) {
 					if ($includebeforev2) {
 						print ' <span class="small"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?includebeforev2=0&'.($page ? 'page='.$page.'&' : '').$param.'">'.$form->textwithpicto($langs->trans("OnlyFromV2"), $langs->trans("OnlyFromV2Help")).'</a></span>';
 					} else {
-						print ' <span class="small"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?includebeforev2=1&'.($page ? 'page='.$page.'&' : '').$param.'">'.$form->textwithpicto($langs->trans("IncludesAll"), $langs->trans("IncludesAllHelp")).'</a></span>';
+						print ' <span class="small"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?includebeforev2=1&'.($page ? 'page='.$page.'&' : '').$param.'">'.$form->textwithpicto($langs->trans("IncludeAll"), $langs->trans("IncludeAllHelp")).'</a></span>';
 					}
 				}
 				print '</td>';

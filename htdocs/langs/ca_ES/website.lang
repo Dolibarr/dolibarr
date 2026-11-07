@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - website
 Shortname=Codi
 WebsiteName=Nom del lloc web
-WebsiteSetupDesc=Creeu aquí els llocs web que voleu utilitzar. A continuació, aneu al menú Llocs web per a editar-los.
+WebsiteSetupDesc=Create here the websites you wish to use. Then go to menu Websites to edit them.
 DeleteWebsite=Elimina la pàgina web
 ConfirmDeleteWebsite=Esteu segur que voleu suprimir aquest lloc web? També se suprimiran totes les seves pàgines i contingut. Els fitxers penjats (com al directori de suports, al mòdul ECM...) es mantindran.
 WEBSITE_TYPE_CONTAINER=Tipus de pàgina/contenidor
@@ -17,8 +17,8 @@ WEBSITE_ROBOT=Fitxer per robots (robots.txt)
 WEBSITE_HTACCESS=Fitxer .htaccess del lloc web
 WEBSITE_MANIFEST_JSON=Arxiu del lloc web manifest.json
 WEBSITE_KEYWORDSDesc=Utilitzeu una coma per a separar els valors
-EnterHereReadmeInformation=Introduïu aquí una descripció del lloc web. Si distribuïu el vostre lloc web com a plantilla, el fitxer s'inclourà al paquet de la plantilla.
-EnterHereLicenseInformation=Introduïu aquí la LLICÈNCIA del codi de la web. Si distribuïu el vostre lloc web com a plantilla, el fitxer s'inclourà a la plantilla del paquet.
+EnterHereReadmeInformation=Enter here a description of the website. If you distribute your website as a template, the file will be included in the template package.
+EnterHereLicenseInformation=Enter here the LICENSE of the code of the website. If you distribute your website as a template, the file will be included in the template package.
 HtmlHeaderPage=Encapçalament HTML (específic sols per aquesta pàgina)
 PageNameAliasHelp=Nom o àlies de la pàgina.<br>Aquest àlies també s'utilitza per a construir un URL de SEO quan el lloc web s'executa des d'un host virtual d'un servidor web (com Apache, Nginx, ...). Utilitzeu el botó «<strong>%s</strong>» per a editar aquest àlies.
 EditTheWebSiteForACommonHeader=Nota: si voleu definir una capçalera personalitzada per a totes les pàgines, editeu la capçalera al nivell del lloc en lloc de la pàgina/contenidor.
@@ -51,12 +51,12 @@ ToDeployYourWebsiteOnLiveYouHave3Solutions=Per implementar aquest lloc web en pr
 SetHereVirtualHost=<u>Utilitzeu-lo amb Apache/NGinx/...</u><br>Creeu al vostre servidor web (Apache, Nginx, ...) un host virtual dedicat amb PHP habilitat i un directori arrel a<br><strong>%s</strong>
 ExampleToUseInApacheVirtualHostConfig=Exemple per a utilitzar a la configuració de l'amfitrió virtual d'Apache:
 YouCanAlsoTestWithPHPS=<u>S'utilitza amb un servidor PHP incrustat</u><br>A l'entorn de desenvolupament, podeu prefereix provar el lloc amb el servidor web incrustat PHP executant-lo
-YouCanAlsoDeployToAnotherWHP=<u>Executeu el vostre lloc web dins d'un proveïdor d'allotjament web Dolibarr</u><br>If no teniu disponible un servidor web com Apache o NGinx Internet, podeu exportar i importar el vostre lloc web a una altra instància de Dolibarr proporcionada per un altre proveïdor d'allotjament de Dolibarr que proporcioni una integració completa amb el mòdul del lloc web. Podeu trobar una llista d'alguns proveïdors d'allotjament de Dolibarr a <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
+YouCanAlsoDeployToAnotherWHP=<u>Run your web site inside a Dolibarr web Hosting provider</u><br>If you don't have a web server like Apache or NGinx available on the internet, you can export and import your web site to another Dolibarr instance provided by another Dolibarr hosting provider that provides full integration with the Website module. You can find a list of some Dolibarr hosting providers on <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
 CheckVirtualHostPerms=Comproveu també que l'usuari del VIRTUAL HOST (per exemple www-data) té permisos <strong>%s</strong> sobre els fitxers a <br><strong>%s</strong>
 ReadPerm=Llegit
 WritePerm=Escriu
 TestDeployOnWeb=Prova / implantació a la web
-PreviewSiteServedByWebServer=<LI>Vista prèvia %s en una nova pestanya.</LI><br><br>El %s serà servit per un servidor web extern (com ara Apache, Nginx, IIS). Heu d'instal·lar i configurar aquest servidor abans d'apuntar al directori:<br><strong>%s</strong><br> URL servit per un servidor extern:<br><strong>%s</strong><br>
+PreviewSiteServedByWebServer=<u>Preview %s in a new tab.</u><br><br>The %s will be served by an external web server (like Apache, Nginx, IIS). You must install and setup this server before pointing to the directory:<br><strong>%s</strong><br>URL served by external server:<br><strong>%s</strong>
 PreviewSiteServedByDolibarr=<u>Previsualitza %s en una pestanya nova.</u><br><br>El %s serà servit pel servidor Dolibarr, de manera que no necessita cap servidor web addicional (com Apache, Nginx, IIS) instal·lat.<br>L'inconvenient és que els URL de les pàgines no són fàcils d'utilitzar i comencen amb el camí del vostre Dolibarr.<br>URL ofert per Dolibarr:<br> <strong>%s</strong><br><br>span>1 Per implementar o provar amb el vostre propi servidor web extern (com ara Apache, Nginx, Lighttp) utilitzeu l'enllaç "%s".
 VirtualHostUrlNotDefined=No s'ha definit l'URL de l'amfitrió virtual servit per un servidor web extern
 NoPageYet=Encara sense pàgines
@@ -65,12 +65,13 @@ SyntaxHelp=Ajuda sobre consells de sintaxi específica
 YouCanEditHtmlSourceckeditor=Podeu editar el codi font HTML usant el botó "Codi font" a l'editor.
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>You can also make a redirection with GET parameters:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br>
 YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> Podeu definir dinàmicament el <strong> títol SEO i les metaetiquetes </strong> (títol, paraules clau, descripció). Simplement definiu les variables següents:<br> <code>define('__SEO_PAGE_TITLE__', "Valor del títol …");</code><br> <code>define('__SEO_PAGE_KEYWORDS__', 'keyword1, keyword2, keyword3 …');</code><br> <code>Definir('_DESCO_P''_DESCO_P' …");</code><br>
-YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
+YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored in the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file in documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file in documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSourced=For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> Per incloure un <strong>imatge</strong> emmagatzemat als <strong>mitjans de comunicació</strong> (directori obert per a l'accés públic), utilitzeu el camí relatiu que comença per <strong>/medias</strong>, exemple:<br><strong>&lt;img src="/medias/image/myimagepath/filename ext"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored in the <strong>medias</strong> directory (directory open for public access), use the relative path starting with <strong>/medias</strong>, example:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=Per a una imatge compartida amb un enllaç per compartir (accés obert mitjançant la clau hash per compartir del fitxer), utilitzeu l'embolcall:<br><strong> &lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=Per a obtenir l'URL de la imatge d'un objecte PHP, utilitzeu<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
-YouCanEditHtmlSource4=Per obtenir l'URL d'una imatge dins del contingut html d'un article, utilitzeu<br><strong> &lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource4=To get the URL of an image inside a HTML content of an article, use<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource5=<br><span class="fa fa-edit paddingright"></span> To let a part of the page be changed with mode <strong>Edit inline</strong>, add the attributes <strong>contenteditable="true"</strong> and <strong>id</strong> to its tag. It must contain no PHP code, only text with formatting tags (bold, color, font size...), links, paragraphs, titles, lists and div, example:<br><strong>&lt;p id="intro" contenteditable="true"&gt;My &lt;b&gt;text&lt;/b&gt;&lt;/p&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">the wiki documentation</a>.<br>
 ClonePage=Clona la pàgina/contenidor
 CloneSite=Clona el lloc
@@ -88,6 +89,8 @@ ImportSite=Importa la plantilla del lloc web
 IDOfPage=Id de la pàgina
 Banner=Bàner
 BlogPost=Entrada al blog
+PageHeader=Capçalera
+PageFooter=Peu de pàgina
 WebsiteAccount=Compte del lloc web
 WebsiteAccounts=Comptes de lloc web
 AddWebsiteAccount=Crear un compte de lloc web
@@ -102,7 +105,7 @@ YouMustDefineTheHomePage=Primer heu de definir la pàgina d'inici predeterminada
 OnlyEditionOfSourceForGrabbedContentFuture=Avís: La creació d'una pàgina web important una pàgina web externa està reservada per a usuaris experimentats i només pot funcionar amb pàgines renderitzades només amb HTML i CSS. La importació de pàgines renderitzades per frameworks JS NO és compatible. Segons la complexitat de la pàgina d'origen, el resultat de la importació probablement serà diferent de la pàgina original. A més, si la pàgina d'origen utilitza estils CSS comuns o JavaScript en conflicte, pot trencar l'aspecte o les funcions de l'editor web quan es treballa en aquesta pàgina. Aquest mètode és una manera ràpida de crear una pàgina per a usuaris molt avançats quan la pàgina d'origen ho permet, però es recomana crear la nova pàgina des de zero o a partir d'una plantilla de pàgina suggerida.<br>Tingueu en compte també que l'editor en línia pot no funcionar correctament quan s'utilitza en una pàgina que s'ha agafat.
 OnlyEditionOfSourceForGrabbedContent=Només és possible la modificació de la font HTML quan el contingut s'agafa d'un lloc extern
 GrabImagesInto=Agafa també imatges trobades dins del css i a la pàgina.
-ImagesShouldBeSavedInto=Les imatges s'han de desar al directori
+ImagesShouldBeSavedInto=Images should be saved in the directory
 WebsiteRootOfImages=Directori arrel d'imatges del lloc web
 SubdirOfPage=Subdirectori dedicat a la pàgina
 AliasPageAlreadyExists=Alias de pàgina <strong>%s</strong> ja existeixen
@@ -119,7 +122,7 @@ NoWebSiteCreateOneFirst=Encara no s'ha creat cap lloc web. Creeu-ne un primer.
 GoTo=Aneu a
 DynamicPHPCodeContainsAForbiddenInstruction=Afegiu codi PHP dinàmic que conté la instrucció PHP ' <strong> %s </strong> ' que està prohibida per defecte com a contingut dinàmic (vegeu les opcions ocultes WEBSITE_PHP_ALLOW_xxx per a augmentar la llista d'ordres permeses).
 NotAllowedToAddDynamicContent=No tens permís per afegir o editar contingut dinàmic de PHP en llocs web. Demana permís o simplement mantén el codi de les etiquetes PHP sense modificar.
-NotAllowedToAddDynamicContentDisabledGlobaly=Actualment no podeu afegir ni editar contingut dinàmic de PHP en aquest lloc web (fins i tot si teniu permís per fer-ho), perquè aquesta funció s'ha d'habilitar primer globalment definint el paràmetre %s=1 al fitxer conf.php.<br>Editeu el fitxer conf.php per afegir aquest paràmetre o demaneu a l'administrador o al suport tècnic que ho facin per vosaltres.
+NotAllowedToAddDynamicContentDisabledGlobaly=You currently can't add or edit dynamic PHP content in this website (even if you have permission to), because this feature must be first enabled globally by setting the parameter %s=1 into the conf.php file.<br>Edit your conf.php file to add this parameter, or ask your administrator or support team to do it for you.
 ReplaceWebsiteContent=Cerqueu o substitueixi el contingut del lloc web
 DeleteAlsoJs=Vols suprimir també tots els fitxers JavaScript específics d'aquest lloc web?
 DeleteAlsoMedias=Vols suprimir també tots els fitxers multimèdia específics d'aquest lloc web?
@@ -140,10 +143,10 @@ MainLanguage=Idioma principal
 OtherLanguages=Altres idiomes
 UseManifest=Proporciona un fitxer manifest.json
 PublicAuthorAlias=Àlies d’autor públic
-AvailableLanguagesAreDefinedIntoWebsiteProperties=Els idiomes disponibles es defineixen a les propietats del lloc web
+AvailableLanguagesAreDefinedIntoWebsiteProperties=Available languages are defined in website properties
 ReplacementDoneInXPages=Substitució realitzada  %s pàgines o contenidors
 RSSFeed=Fils RSS
-RSSFeedDesc=Podeu obtenir un feed RSS dels últims articles amb el tipus «entrada de blog» mitjançant aquest URL
+RSSFeedDesc=You can get an RSS feed of latest articles with type 'blogpost' using this URL
 PagesRegenerated=%s pàgina (es) / contenidor (s) regenerada
 RegenerateWebsiteContent=Regenera els fitxers de memòria cau del lloc web
 AllowedInFrames=Es permet en marcs
@@ -151,6 +154,7 @@ DefineListOfAltLanguagesInWebsiteProperties=Definiu la llista de tots els idiome
 GenerateSitemaps=Genereu el fitxer sitemap.xml del lloc web
 ConfirmGenerateSitemaps=Si ho confirmeu, suprimireu el fitxer de mapa del lloc existent...
 ConfirmSitemapsCreation=Confirmeu la generació del mapa del lloc
+ConfirmSetAsHomePage=Are you sure you want to set the page <b>%s</b> as the home page of the website?
 SitemapGenerated=Fitxer del mapa del lloc <b> %s </b> generat
 ImportFavicon=Favicon
 ErrorFaviconType=Favicon ha de ser png
@@ -509,3 +513,13 @@ ThisDirectoryIsEmpty=Aquest directori està buit
 WrittenBy=Escrit per %s
 ImportOfWebsiteTemplateIncludingPHPIsAllowedIf=La importació de plantilles de llocs web que utilitzen contingut dinàmic en PHP només està permesa si $dolibarr_website_allow_custom_php està definit com a 2 a conf.php.
 ImportOfWebsiteTemplateIncludingPHPIsDisabled=La importació de plantilles de llocs web que utilitzen contingut dinàmic en PHP ha de tenir $dolibarr_website_allow_custom_php definit a 1 o 2 a conf.php per ser permesa.
+CurrentPageVersion=Current page
+ListOfPageVersions=List of archived versions of page (a backup file of page is created each time you save a change, for example on the HTML source)
+EditInLineAllowedAreas=In mode Edit inline, the tags with contenteditable="true", an id and no PHP code inside can be changed and are saved when you leave them. Text formatting (bold, color, font size...), links, paragraphs, titles and lists are allowed, images and other HTML can only be changed in the HTML source.
+ErrorEditInlineElementNoId=This element has contenteditable="true" but no id, so it can not be edited inline.
+ErrorEditInlineElementNotFound=No element with id %s and contenteditable="true" was found in the source of the page.
+ErrorEditInlineElementNotUnique=The id %s is used by several elements with contenteditable="true" in the source of the page.
+ErrorEditInlineElementWithPhp=The element with id %s contains PHP code in the source of the page, so it can only be changed in the HTML source.
+ErrorEditInlineElementNotAllowedHtml=The element with id %s contains HTML that can not be edited inline (image, form, script, comment, other tags or attributes...), so it can only be changed in the HTML source.
+ErrorEditInlineElementNotPlainText=The element with id %s contains HTML in the source of the page and can only be edited inline as plain text, so it can only be changed in the HTML source.
+ErrorEditInlineContentNotAllowed=The new content of the element with id %s contains HTML tags or attributes that are not allowed, so it was not saved.

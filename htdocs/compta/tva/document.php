@@ -88,7 +88,7 @@ $modulepart = 'tax-vat';
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'tax', '', 'tva', 'charges');
+$result = restrictedArea($user, 'tax', $id, 'tva', 'charges');
 
 $permissiontoadd = $user->hasRight('tax', 'charges', 'creer');	// Used by the include of actions_dellink.inc.php
 
@@ -126,7 +126,7 @@ if ($object->id) {
 
 	$head = vat_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'documents', $langs->trans("VATPayment"), -1, 'payment');
+	print dol_get_fiche_head($head, 'documents', $langs->trans("VATPayment"), -1, 'payment', 0, '', '', 0, '', 1);
 
 	$morehtmlref = '<div class="refidno">';
 	// Label of social contribution

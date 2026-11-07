@@ -9,7 +9,7 @@
  * Copyright (C) 2012		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,8 +79,9 @@ class DoliDBPgsql extends DoliDB
 	 *	@param	    string	$pass		Password
 	 *	@param	    string	$name		Database name
 	 *	@param	    int		$port		Port of database server
+	 *	@param	    bool	$forcenew	Force opening of a genuinely new connection instead of reusing one already opened to the same server/database in this process (see connect())
 	 */
-	public function __construct($type, $host, $user, $pass, $name = '', $port = 0)  // @phpstan-ignore constructor.unusedParameter
+	public function __construct($type, $host, $user, $pass, $name = '', $port = 0, $forcenew = false)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $conf, $langs;
 
@@ -118,7 +119,7 @@ class DoliDBPgsql extends DoliDB
 
 		// Try server connection
 		//print "$host, $user, $pass, $name, $port";
-		$this->db = $this->connect($host, $user, $pass, $name, $port);
+		$this->db = $this->connect($host, $user, $pass, $name, $port, $forcenew);
 
 		if ($this->db) {
 			$this->connected = true;
@@ -407,10 +408,16 @@ class DoliDBPgsql extends DoliDB
 	 *	@param	    string		$passwd		Password
 	 *	@param		string		$name		Name of database (not used for mysql, used for pgsql)
 	 *	@param		integer		$port		Port of database server
+	 *	@param		bool		$forcenew	Force opening of a genuinely new connection instead of reusing one already opened to the same connection string in this process.
+	 *										By default, pg_connect() silently returns an existing connection resource when called again with an identical connection string within
+	 *										the same PHP process. This is dangerous whenever code intentionally opens a second, independent DoliDB instance to the same database
+	 *										(for example to run a piece of work on its own transaction) and later closes it: without $forcenew, that close() would actually close
+	 *										the shared underlying connection still in use by the original DoliDB instance, causing later queries on it to fail with
+	 *										"PostgreSQL connection has already been closed". Pass true whenever the caller needs a truly independent connection.
 	 *	@return		false|resource			Database access handler
 	 *	@see		close()
 	 */
-	public function connect($host, $login, $passwd, $name, $port = 0)
+	public function connect($host, $login, $passwd, $name, $port = 0, $forcenew = false)
 	{
 		// use pg_pconnect() instead of pg_connect() if you want to use persistent connection costing 1ms, instead of 30ms for non persistent
 
@@ -427,12 +434,17 @@ class DoliDBPgsql extends DoliDB
 			$name = "postgres"; // When try to connect using admin user
 		}
 
+		$connectflags = $forcenew ? PGSQL_CONNECT_FORCE_NEW : 0;
+
 		// try first Unix domain socket (local)
 		if ((!empty($host) && $host == "socket") && !defined('NOLOCALSOCKETPGCONNECT')) {
 			$con_string = "dbname='".$name."' user='".$login."' password='".$passwd."'"; // $name may be empty
 			try {
-				$this->db = @pg_connect($con_string);
-			} catch (Exception $e) {
+				// PGSQL_CONNECT_FORCE_NEW is required: pg_connect() otherwise returns the connection already
+				// opened for the same connection string, so a second handle would share the main one and
+				// closing it would close the connection still in use by the caller.
+				$this->db = @pg_connect($con_string, $connectflags);
+			} catch (Throwable $e) {
 				// No message
 			}
 		}
@@ -448,8 +460,8 @@ class DoliDBPgsql extends DoliDB
 
 			$con_string = "host='".$host."' port='".$port."' dbname='".$name."' user='".$login."' password='".$passwd."'";
 			try {
-				$this->db = @pg_connect($con_string);
-			} catch (Exception $e) {
+				$this->db = @pg_connect($con_string, $connectflags);
+			} catch (Throwable $e) {
 				print $e->getMessage();
 			}
 		}
@@ -563,7 +575,7 @@ class DoliDBPgsql extends DoliDB
 		$ret = @pg_query($this->db, $query);
 
 		//print $query;
-		if (!preg_match("/^COMMIT/i", $query) && !preg_match("/^ROLLBACK/i", $query)) { // Si requete utilisateur, on la sauvegarde ainsi que son resultset
+		if (!preg_match("/^COMMIT/i", $query) && !preg_match("/^ROLLBACK/i", $query)) { // If it is a user query, save it along with its resultset
 			if (!$ret) {
 				if ($this->errno() != 'DB_ERROR_25P02') {	// Do not overwrite errors if this is a consecutive error
 					$this->lastqueryerror = $query;
@@ -738,7 +750,7 @@ class DoliDBPgsql extends DoliDB
 	 */
 	public function escape($stringtoencode)
 	{
-		return pg_escape_string($this->db, $stringtoencode);
+		return pg_escape_string($this->db, (string) $stringtoencode);
 	}
 
 	/**
@@ -791,7 +803,7 @@ class DoliDBPgsql extends DoliDB
 	public function errno()
 	{
 		if (!$this->connected) {
-			// Si il y a eu echec de connection, $this->db n'est pas valide.
+			// If the connection failed, $this->db is not valid.
 			return 'DB_ERROR_FAILED_TO_CONNECT';
 		} else {
 			// Constants to convert error code to a generic Dolibarr error code
@@ -965,7 +977,7 @@ class DoliDBPgsql extends DoliDB
 		//print $charset.' '.setlocale(LC_CTYPE,'0'); exit;
 
 		// NOTE: Do not use ' around the database name
-		$sql = "CREATE DATABASE ".$this->escape($database)." OWNER '".$this->escape($owner)."' ENCODING '".$this->escape((string) $charset)."'";
+		$sql = "CREATE DATABASE ".$this->sanitize($database)." OWNER '".$this->escape($owner)."' ENCODING '".$this->escape((string) $charset)."'";
 
 		dol_syslog($sql, LOG_DEBUG);
 		$ret = $this->query($sql);
@@ -1215,7 +1227,7 @@ class DoliDBPgsql extends DoliDB
 	public function DDLAddField($table, $field_name, $field_desc, $field_position = "")
 	{
 		// phpcs:enable
-		// cles recherchees dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
+		// keys looked up in the descriptions array (field_desc): type,value,attribute,null,default,extra
 		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
 		$sql = "ALTER TABLE ".$this->sanitize($table)." ADD ".$this->sanitize($field_name)." ";
 
@@ -1287,10 +1299,10 @@ class DoliDBPgsql extends DoliDB
 		if (isset($field_desc['null']) && ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL')) {
 			// We will try to change format of column to NOT NULL. To be sure the ALTER works, we try to update fields that are NULL
 			if ($field_desc['type'] == 'varchar' || $field_desc['type'] == 'text') {
-				$sqlbis = "UPDATE ".$this->sanitize($table)." SET ".$this->escape($field_name)." = '".$this->escape(isset($field_desc['default']) ? $field_desc['default'] : '')."' WHERE ".$this->escape($field_name)." IS NULL";
+				$sqlbis = "UPDATE ".$this->sanitize($table)." SET ".$this->sanitize($field_name)." = '".$this->escape(isset($field_desc['default']) ? $field_desc['default'] : '')."' WHERE ".$this->sanitize($field_name)." IS NULL";
 				$this->query($sqlbis);
 			} elseif (in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'double'))) {
-				$sqlbis = "UPDATE ".$this->sanitize($table)." SET ".$this->escape($field_name)." = ".((float) $this->escape(isset($field_desc['default']) ? $field_desc['default'] : 0))." WHERE ".$this->escape($field_name)." IS NULL";
+				$sqlbis = "UPDATE ".$this->sanitize($table)." SET ".$this->sanitize($field_name)." = ".((float) $this->escape(isset($field_desc['default']) ? $field_desc['default'] : 0))." WHERE ".$this->sanitize($field_name)." IS NULL";
 				$this->query($sqlbis);
 			}
 		}
@@ -1472,7 +1484,7 @@ class DoliDBPgsql extends DoliDB
 		if (file_exists('/usr/bin/'.$tool)) {
 			$fullpathofdump = '/usr/bin/'.$tool;
 		} else {
-			// TODO L'utilisateur de la base doit etre un superadmin pour lancer cette commande
+			// TODO The database user must be a superadmin to run this command
 			$resql = $this->query('SHOW data_directory');
 			if ($resql) {
 				$liste = $this->fetch_array($resql);
@@ -1543,21 +1555,95 @@ class DoliDBPgsql extends DoliDB
 
 
 	/**
-	 * Prepare a SQL statement for execution (PostgreSQL prepared statement)
+	 * Prepare a SQL statement for execution (PostgreSQL prepared statement).
 	 *
-	 * @param string $sql The SQL query to prepare
+	 * The portable '?' placeholders are translated to PostgreSQL's $1, $2, ... form
+	 * (placeholders inside single-quoted string literals are left untouched).
+	 *
+	 * @param string $sql The SQL query with '?' placeholders
 	 * @return string|false The name of the prepared statement on success, or false on failure
+	 * @see execute()
 	 */
 	public function prepare($sql)
 	{
+		dol_syslog(get_class($this)."::prepare sql=".$sql, LOG_DEBUG);
+
+		// Translate '?' -> '$1', '$2', ... while skipping single-quoted string literals
+		$translated = '';
+		$num = 0;
+		$len = strlen($sql);
+		$inquote = false;
+		for ($i = 0; $i < $len; $i++) {
+			$c = $sql[$i];
+			if ($c === "'") {
+				if ($inquote && $i + 1 < $len && $sql[$i + 1] === "'") {
+					// '' is an escaped quote inside a literal
+					$translated .= "''";
+					$i++;
+					continue;
+				}
+				$inquote = !$inquote;
+				$translated .= $c;
+				continue;
+			}
+			if ($c === '?' && !$inquote) {
+				$num++;
+				$translated .= '$'.$num;
+				continue;
+			}
+			$translated .= $c;
+		}
+
 		$stmtname = 'dolipgstmt_' . bin2hex(random_bytes(8));	// Generate a unique identifier for the statement
 
-		$result = pg_prepare($this->db, $stmtname, $sql);
+		$result = @pg_prepare($this->db, $stmtname, $translated);
 		if (!$result) {
 			$this->lasterror = pg_last_error($this->db);
+			$this->lastqueryerror = $sql;
 			return false;
 		}
 
 		return $stmtname; // We just return the name of the prepared statement
+	}
+
+	/**
+	 * Execute a statement previously created with prepare().
+	 *
+	 * @param string           $stmt   Statement name returned by prepare()
+	 * @param array<int,mixed>  $params Ordered list of values for the '?' placeholders
+	 * @return PgSql\Result|resource|bool   A resultset (usable with fetch_object()/num_rows()/free())
+	 *                                  for a SELECT, true for another successful statement,
+	 *                                  false on error
+	 * @see prepare()
+	 */
+	public function execute($stmt, $params = array())
+	{
+		if (!is_string($stmt) || $stmt === '') {
+			$this->lasterror = 'execute() called with an invalid statement';
+			return false;
+		}
+
+		$this->lasterror = '';
+		$this->lastqueryerror = '';
+
+		// pg_execute() wants an ordered array of scalars; map bool -> 't'/'f', keep null as null
+		$values = array();
+		foreach (array_values($params) as $v) {
+			$values[] = is_bool($v) ? ($v ? 't' : 'f') : $v;
+		}
+
+		dol_syslog(get_class($this)."::execute ".$stmt." (".count($values)." bound param(s))", LOG_DEBUG);
+
+		$res = @pg_execute($this->db, $stmt, $values);
+		if ($res === false) {
+			$this->lasterror = pg_last_error($this->db);
+			$this->lastqueryerror = $stmt;
+			return false;
+		}
+
+		$this->_results = $res;
+
+		// A SELECT (or INSERT ... RETURNING) has fields to fetch; a plain DML statement does not.
+		return (pg_num_fields($res) > 0) ? $res : true;
 	}
 }
