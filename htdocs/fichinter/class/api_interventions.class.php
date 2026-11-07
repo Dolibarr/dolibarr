@@ -826,7 +826,9 @@ class Interventions extends DolibarrApi
 	/**
 	 * Update a line of an intervention
 	 *
-	 * @param	int		$id					ID of order to update
+	 * @since	23.0.0	Initial implementation
+	 *
+	 * @param	int		$id					ID of intervention to update
 	 * @param	int		$lineid				ID of line to update
 	 * @param	array	$request_data		Intervention line data
 	 * @phan-param ?array<string,string> $request_data
@@ -841,17 +843,21 @@ class Interventions extends DolibarrApi
 	 */
 	public function putLine($id, $lineid, $request_data)
 	{
+		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'creer')) {
+			throw new RestException(403);
+		}
+
 		$result = $this->fichinter->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Intervention not found');
 		}
 
-		if ($this->fichinter->status != 0) {
-			throw new RestException(403, 'Intervention not in draft status : '.$this->fichinter->getLibStatut(1));
-		}
-
 		if (!DolibarrApi::_checkAccessToResource('ficheinter', $this->fichinter->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		if ($this->fichinter->status != 0) {
+			throw new RestException(403, 'Intervention not in draft status : '.$this->fichinter->getLibStatut(1));
 		}
 
 		$objectline = new FichinterLigne($this->db);
