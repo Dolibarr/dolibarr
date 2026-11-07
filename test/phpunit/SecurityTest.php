@@ -431,7 +431,8 @@ class SecurityTest extends CommonClassTest
 		// Legitimate attributes (id, data-*, aria-*, table attributes) must be kept, bad ones removed
 		$stringtotest = '<div id="a1" data-foo="x" data-bar-baz="y" aria-label="z" role="note" onclick="alert(1)"><table border="1"><tr><td colspan="2" rowspan="1" align="center" onmouseover="b">c</td></tr></table><img src="i.png" srcset="j.png 2x" loading="lazy"></div>';
 		$decodedstring = dol_string_onlythesehtmlattributes($stringtotest);
-		$decodedstring = preg_replace("/\n$/", "", $decodedstring);
+		// With PHP 7, saveHTML() of a node always formats output and adds a newline after block elements
+		$decodedstring = preg_replace("/>\n/", ">", $decodedstring);
 		$this->assertEquals('<div id="a1" data-foo="x" data-bar-baz="y" aria-label="z" role="note"><table border="1"><tr><td colspan="2" rowspan="1" align="center">c</td></tr></table><img src="i.png" loading="lazy"></div>', $decodedstring, 'Function did not sanitize correctly with test 3');
 
 		// With an explicit list, data-* attributes are not added
