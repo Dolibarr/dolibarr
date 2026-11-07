@@ -974,7 +974,7 @@ class ActionComm extends CommonObject
 		$sql .= " c.id as type_id, c.type as type_type, c.code as type_code, c.libelle as type_label, c.color as type_color, c.picto as type_picto,";
 		$sql .= " s.nom as socname,";
 		$sql .= " u.firstname, u.lastname as lastname,";
-		$sql .= " num_vote, event_paid, a.status";
+		$sql .= " num_vote, event_paid, a.status, a.extraparams";
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a ";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action=c.id ";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author";
@@ -1072,6 +1072,10 @@ class ActionComm extends CommonObject
 				$this->num_vote = $obj->num_vote;
 				$this->event_paid = $obj->event_paid;
 				$this->status = $obj->status;
+				$this->extraparams = !empty($obj->extraparams) ? json_decode($obj->extraparams, true) : array();
+				if (is_null($this->extraparams)) {
+					$this->extraparams = array();	// Invalid json (for example truncated)
+				}
 
 				//email information
 				$this->email_msgid = $obj->email_msgid;
