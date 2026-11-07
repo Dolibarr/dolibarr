@@ -1285,15 +1285,15 @@ if ($action == 'create') {
 	}
 
 	// Commercial suivi
-	print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("TypeContact_contrat_internal_SALESREPFOLL").'</span></td><td>';
+	print '<tr><td class="nowrap">'.$langs->trans("TypeContact_contrat_internal_SALESREPFOLL").'</td><td>';
 	print img_picto('', 'user', 'class="pictofixedwidth"');
-	print $form->select_dolusers(GETPOST("commercial_suivi_id") ? GETPOST("commercial_suivi_id") : $user->id, 'commercial_suivi_id', 1, null);
+	print $form->select_dolusers(GETPOSTINT('commercial_suivi_id') > 0 ? GETPOSTINT('commercial_suivi_id') : -1, 'commercial_suivi_id', 1, null);
 	print '</td></tr>';
 
 	// Commercial signature
-	print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("TypeContact_contrat_internal_SALESREPSIGN").'</span></td><td>';
+	print '<tr><td class="nowrap">'.$langs->trans("TypeContact_contrat_internal_SALESREPSIGN").'</td><td>';
 	print img_picto('', 'user', 'class="pictofixedwidth"');
-	print $form->select_dolusers(GETPOST("commercial_signature_id") ? GETPOST("commercial_signature_id") : $user->id, 'commercial_signature_id', 1, null);
+	print $form->select_dolusers(GETPOSTINT('commercial_signature_id') > 0 ? GETPOSTINT('commercial_signature_id') : -1, 'commercial_signature_id', 1, null);
 	print '</td></tr>';
 
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Date").'</span></td><td>';

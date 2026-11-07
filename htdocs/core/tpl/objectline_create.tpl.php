@@ -181,7 +181,7 @@ if ($nolinesbefore) {
 		// Fields for situation invoice
 		if (property_exists($this, 'situation_cycle_ref') && isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 			print '<td class="linecolcycleref right">'.$langs->trans('Progress').'</td>';
-			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+			if (getDolGlobalInt('INVOICE_USE_SITUATION') > 1) {
 				print '<td class="nobottom nowrap right"></td>';
 			}
 			print '<td class="linecolcycleref2 right"></td>';
@@ -433,6 +433,12 @@ if ($nolinesbefore) {
 						event.preventDefault();
 						$("#dropdownAddProductAndService").toggleClass("open");
 					});
+					// Close the dropdown when clicking outside of it
+					$(document).on("click", function(event) {
+						if ($(event.target).closest("#dropdownAddProductAndService").length == 0) {
+							$("#dropdownAddProductAndService").removeClass("open");
+						}
+					});
 				});
 			</script>
 			<?php
@@ -596,7 +602,7 @@ if ($nolinesbefore) {
 	if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 		$coldisplay++;
 		print '<td class="nobottom nowrap right"><input class="flat right" type="text" size="1" value="" name="progress"><span class="opacitymedium hideonsmartphone">%</span></td>';
-		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') > 1) {
 			$coldisplay++;
 			print '<td class="nobottom nowrap right"></td>';
 		}

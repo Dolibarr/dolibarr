@@ -3,7 +3,6 @@
 #
 # Global
 #
-Subtotal=Υποσύνολα
 SubTotalModuleDesc=Υποσύνολα και  γραμμές τίτλου για ορισμένα έγγραφα
 #
 # Admin
@@ -12,12 +11,19 @@ SubtotalSetup=Ρύθμιση ενότητας υποσυνόλων
 MaxSubtotalLevel=Μέγιστο επίπεδο
 SubtotalLineBackColor=Χρώμα φόντου γραμμών επιπέδου %s
 NotSupportedByAllPDF=Λειτουργεί με νεότερα πρότυπα PDF αλλά όχι με παλιά %s
+SubtotalsPredefinedTitles=Προκαθορισμένοι τίτλοι υποσυνόλων
+SubtotalsPredefinedTexts=Προκαθορισμένα κείμενα υποσυνόλων
+SubtotalTextColumnTitle=Κείμενο
 
 #
 # Card
 #
 AddTitleLine=Προσθήκη γραμμής τίτλου
 AddSubtotalLine=Προσθήκη γραμμής υποσυνόλου
+AddTextLine=Προσθήκη γραμμής κειμένου
+PredefinedTitle=Προκαθορισμένος τίτλος
+PredefinedText=Προκαθορισμένο κείμενο
+SubtotalTextContent=Περιεχόμενο κειμένου
 TitleNeedDesc=Πρέπει να εισαγάγετε μια έγκυρη περιγραφή για να δημιουργήσετε έναν τίτλο.
 TitleAddedLevelTooHigh=Προστέθηκε πάρα πολύ υψηλό επίπεδο τίτλου(αντ 'αυτού προστέθηκε με επίπεδο %s).
 TitleEditedLevelTooHigh=Το επίπεδο τίτλου που τροποποιήθηκε είναι πολύ υψηλό (αντ' αυτού, τροποποιήθηκε με επίπεδο %s).

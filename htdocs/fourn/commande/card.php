@@ -166,6 +166,7 @@ $usercanvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($u
 $usercanapprove			= $user->hasRight("fournisseur", "commande", "approuver");
 $usercanapprovesecond	= $user->hasRight("fournisseur", "commande", "approve2");
 $usercanorder			= $user->hasRight("fournisseur", "commande", "commander");
+$usercanupdateprices	= (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? ($user->hasRight("produit", "creer") || $user->hasRight("service", "creer")) : $user->hasRight("product", "product_advance", "write_supplier_prices"));
 if (!isModEnabled('reception')) {
 	$usercanreceive = $user->hasRight("fournisseur", "commande", "receptionner");
 } else {
@@ -267,7 +268,13 @@ if (empty($reshook)) {
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
 	} elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
 		// Multicurrency rate
-		$result = $object->setMulticurrencyRate(GETPOSTFLOAT('multicurrency_tx'), GETPOSTINT('calculation_mode'));
+		if (!in_array(GETPOSTINT('calculation_mode'), array(1, 2))) {
+			$langs->load("compta");
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CalculationMode")), null, 'errors');
+			$action = 'editmulticurrencyrate';
+		} else {
+			$result = $object->setMulticurrencyRate(GETPOSTFLOAT('multicurrency_tx'), GETPOSTINT('calculation_mode'));
+		}
 	}
 
 	// bank account
@@ -1186,10 +1193,13 @@ if (empty($reshook)) {
 		unset($_POST['qty']);
 		unset($_POST['type']);
 		unset($_POST['idprodfournprice']);
-		unset($_POST['remmise_percent']);
+		unset($_POST['remise_percent']);
 		unset($_POST['dp_desc']);
 		unset($_POST['np_desc']);
 		unset($_POST['pu']);
+		unset($_POST['price_ht']);
+		unset($_POST['price_ttc']);
+		unset($_POST['buying_price']);
 		unset($_POST['fourn_ref']);
 		unset($_POST['tva_tx']);
 		unset($_POST['date_start']);
@@ -1430,6 +1440,20 @@ if (empty($reshook)) {
 		$object->context["sendmanualtriggers"] = GETPOST("manual_trigger_send");
 		$result = $object->commande($user, $date_com, GETPOSTINT('methodecommande'), GETPOST('comment'));
 		if ($result > 0) {
+			if (GETPOST('updatebuyingprice') && getDolGlobalString('SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_ON_ORDER') && $usercanupdateprices && $object->updateProductBuyPrices($user) < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+			$elements = array_filter(array('propal' => GETPOST('updatelinked_propal'), 'commande' => GETPOST('updatelinked_commande'), 'facture' => GETPOST('updatelinked_facture')));
+			if ($elements && getDolGlobalString('SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_ON_ORDER')) {
+				foreach ($object->lines as $line) {
+					if ($object->updateLinkedBuyPrice($user, $line->id, $elements) < 0) {
+						$error++;
+						setEventMessages($object->error, $object->errors, 'errors');
+						break;
+					}
+				}
+			}
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
@@ -1740,8 +1764,11 @@ if (empty($reshook)) {
 							$num = count($lines);
 
 							for ($i = 0; $i < $num; $i++) {
+								// The empty subprice test comes from the creation from a price request, where a line without a
+								// price must be skipped. From a customer order the sale price is not used at all: it is reset to 0
+								// below and replaced by the supplier price, so a line sold at 0 must still be ordered.
 								if (
-									empty($lines[$i]->subprice)
+									(empty($lines[$i]->subprice) && $origin != 'commande' && $origin != 'order')
 									|| $lines[$i]->qty < 0
 									|| !in_array($lines[$i]->id, $selectedLines)
 									|| $lines[$i]->special_code == SUBTOTALS_SPECIAL_CODE
@@ -2522,6 +2549,21 @@ if ($action == 'create') {
 			array('type' => 'other', 'name' => 'methodecommande', 'label' => $langs->trans('OrderMode'), 'value' => $inputmethod, 'tdclass' => getDolGlobalInt('SUPPLIER_ORDER_MODE_OPTIONAL') ? '' : 'fieldrequired'),
 			array('type' => 'text', 'name' => 'comment', 'label' => $langs->trans('Comment'), 'value' => dol_escape_htmltag(GETPOST('comment')), 'morecss' => 'quatrevingtpercent')
 		);
+		if (getDolGlobalString('SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_ON_ORDER') && $usercanupdateprices && $object->hasProductsOrServices(1)) {
+			$formquestion[] = array('type' => 'checkbox', 'name' => 'updatebuyingprice', 'label' => $langs->trans('UpdateBuyingPriceFromOrder'), 'value' => GETPOST('updatebuyingprice'));
+
+			// Linked documents with another cost price for a product of the order
+			$labels = array('propal' => 'Proposal', 'commande' => 'Order', 'facture' => 'Invoice');
+			$linked = array();
+			foreach ($object->lines as $line) {
+				foreach ($object->getLinkedBuyPriceDocuments($user, $line->id) as $element => $document) {
+					$linked[$element] = ($linked[$element] ?? array()) + $document['refs'];
+				}
+			}
+			foreach ($linked as $element => $refs) {
+				$formquestion[] = array('type' => 'checkbox', 'name' => 'updatelinked_'.$element, 'label' => $langs->trans('UpdateLinkedBuyingPrice').': '.$langs->trans($labels[$element]).' '.dol_escape_htmltag(implode(', ', $refs)), 'value' => GETPOST('updatelinked_'.$element));
+			}
+		}
 		if (isModEnabled('notification')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 			$notify = new Notify($db);
@@ -2993,19 +3035,13 @@ if ($action == 'create') {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table id="tablelines" class="noborder noshadow centpercent">';
 
-		// Add free products/services form
-		global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
-		$forceall = 1;
-		$dateSelector = 0;
-		$inputalsopricewithtax = 1;
-		$senderissupplier = 2; // $senderissupplier=2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum.
-		if (getDolGlobalInt('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY')) {
-			$senderissupplier = getDolGlobalInt('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY');
-		}
+		// Display context of lines, also sets the global variables used by the line templates
+		$linesContext = $object->initObjectLinesDisplay();
 
 		// Show object lines
-		if (!empty($object->lines)) {
-			$object->printObjectLines($action, $object->thirdparty, $mysoc, $lineid, 1);
+		// With nolines=1, the card is loaded without its lines, to refresh the other parts of the page in ajax
+		if (!empty($object->lines) && !GETPOSTINT('nolines')) {
+			$object->printObjectLines($action, $linesContext['seller'], $linesContext['buyer'], $lineid, $linesContext['dateSelector']);
 		}
 
 		$num = count($object->lines);
@@ -3021,7 +3057,7 @@ if ($action == 'create') {
 					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 				}
 				if (empty($reshook)) {
-					$object->formAddObjectLine(1, $societe, $mysoc);
+					$object->formAddObjectLine($linesContext['dateSelector'], $linesContext['seller'], $linesContext['buyer']);
 				}
 			}
 		}

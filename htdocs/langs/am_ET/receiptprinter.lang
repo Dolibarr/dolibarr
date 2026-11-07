@@ -69,7 +69,6 @@ DOL_VALUE_DAY=የክፍያ መጠየቂያ ቀን
 DOL_VALUE_DAY_LETTERS=የክፍያ መጠየቂያ ቀን በደብዳቤዎች
 DOL_LINE_FEED_REVERSE=የመስመር ምግብ ተቃራኒ
 InvoiceID=የክፍያ መጠየቂያ መታወቂያ
-InvoiceRef=የክፍያ መጠየቂያ ማጣቀሻ
 DOL_PRINT_OBJECT_LINES=የክፍያ መጠየቂያ መስመሮች
 DOL_VALUE_CUSTOMER_FIRSTNAME=የደንበኛ ስም
 DOL_VALUE_CUSTOMER_LASTNAME=የደንበኛ ስም

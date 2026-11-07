@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=मान्य
 StatusReceptionProcessedShort=प्रसंस्कृत
 ReceptionSheet=रिसेप्शन शीट
 ValidateReception=रिसेप्शन को मान्य करें
+DeleteReception=Delete reception
 ConfirmDeleteReception=क्या आप वाकई इस रिसेप्शन को हटाना चाहते हैं?
 ConfirmValidateReception=क्या आप वाकई इस रिसेप्शन को संदर्भ <b>%s</b> के साथ मान्य करना चाहते हैं?
 ConfirmCancelReception=क्या आप वाकई इस रिसेप्शन को रद्द करना चाहते हैं?

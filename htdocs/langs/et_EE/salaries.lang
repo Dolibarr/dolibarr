@@ -27,6 +27,7 @@ Earnings=Earnings
 TotalEarnings=Total earnings
 TotalDeductions=Total deductions
 NetPaid=Makstud neto
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Konto (kontoplaanist), mida vaikimisi kasutatakse palkade "kasutajate" jaoks
@@ -55,8 +56,6 @@ FillFieldFirst=Täida esmalt töötaja väli
 UpdateAmountWithLastSalary=Määrake viimase palga summa
 MakeTransferRequest=Esita ülekandetaotlus
 VirementOrder=Krediidiülekande taotlus
-WithdrawalReceipt=Krediidiülekande korraldus
-OrderWaiting=Ootel olev tellimus
 FillEndOfMonth=Kuu lõpp
 
 # Shortcuts

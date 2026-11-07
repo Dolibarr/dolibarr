@@ -156,7 +156,6 @@ NoContactDefinedForThirdParty=Ningún contacto definido para este cliente/provee
 DefaultContact=Dirección/contacto predeterminado
 ContactByDefaultFor=Contacto / dirección predeterminados para
 AddThirdParty=Crear cliente/proveedor
-AccountancyCode=Cuenta de contabilidad
 CustomerCode=Código de cliente
 SupplierCode=Código de proveedor
 CustomerCodeShort=Código de cliente

@@ -66,11 +66,11 @@ if ($mode == 'supplier' && !$usercanreadsupplierstatistic) {
 	accessforbidden();
 }
 
-if ($mode == 'supplier') {
-	$object_status = GETPOST('object_status', 'array:int');
-	$object_status = implode(',', $object_status);
+$object_status = GETPOST('object_status', 'intcomma');
+if (!empty($object_status)) {
+	$object_status = explode(',', $object_status);
 } else {
-	$object_status = GETPOST('object_status', 'intcomma');
+	$object_status = GETPOST('object_status', 'array:int');
 }
 
 
@@ -158,19 +158,16 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sort
 dol_mkdir($dir);
 
 $stats = new CommandeStats($db, $socid, $mode, ($userid > 0 ? $userid : 0), ($typent_id > 0 ? $typent_id : 0), ($categ_id > 0 ? $categ_id : 0));
+if (!empty($object_status)) {
+	$stats->where .= ' AND c.fk_statut IN ('.$db->sanitize(implode(",", $object_status)).')';
+}
 if ($mode == 'customer') {
-	if ($object_status != '' && $object_status >= -1) {
-		$stats->where .= ' AND c.fk_statut IN ('.$db->sanitize($object_status).')';
-	}
 	if (is_array($select_categ_comande_id) && !empty($select_categ_comande_id)) {
 		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_order as cat ON (c.rowid = cat.fk_order)';
 		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $select_categ_comande_id)).')';
 	}
 }
 if ($mode == 'supplier') {
-	if ($object_status != '' && $object_status >= 0) {
-		$stats->where .= ' AND c.fk_statut IN ('.$db->sanitize($object_status).')';
-	}
 	if (is_array($select_categ_comande_id) && !empty($select_categ_comande_id)) {
 		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_supplier_order as cat ON (c.rowid = cat.fk_supplier_order)';
 		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $select_categ_comande_id)).')';
@@ -434,10 +431,10 @@ if ($mode == 'customer') {
 		Commande::STATUS_CLOSED => $langs->trans("StatusOrderDelivered"),
 		Commande::STATUS_CANCELED => $langs->trans("StatusOrderCanceled")
 	);
-	print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'intcomma'), -4);
+	print $form->multiselectarray('object_status', $liststatus, $object_status, 0, 0, 'minwidth300');
 }
 if ($mode == 'supplier') {
-	$formorder->selectSupplierOrderStatus((strstr($object_status, ',') ? -1 : $object_status), 0, 'object_status');
+	$formorder->selectSupplierOrderStatus($object_status, 0, 'object_status', 'minwidth300', 1);
 }
 print '</td></tr>';
 // Year

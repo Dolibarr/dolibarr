@@ -92,6 +92,7 @@ $search_date_endmonth = GETPOSTINT('search_date_endmonth');
 $search_date_endyear = GETPOSTINT('search_date_endyear');
 $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear); // Use tzserver
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
+$search_id = GETPOST('search_id', 'alpha');
 $search_note = GETPOST('search_note', 'alpha');
 $search_duration = GETPOST('search_duration', 'alpha');
 $search_task_ref = GETPOST('search_task_ref', 'alpha');
@@ -192,6 +193,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_day = '';
 	$search_month = '';
 	$search_year = '';
+	$search_id = '';
 	$search_note = '';
 	$search_duration = '';
 	$search_date_startday = '';
@@ -217,6 +219,10 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_timespent_startmin = '';
 	$search_timespent_endhour = '';
 	$search_timespent_endmin = '';
+	$action = '';
+}
+
+if ($action == 'addtimespent' && GETPOST('button_search_x', 'alpha')) {	// Test on permission not required
 	$action = '';
 }
 
@@ -1463,6 +1469,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 		// Definition of fields for list
 		$arrayfields = array();
+		$arrayfields['t.rowid'] = array('label' => $langs->trans("TechnicalID"), 'checked' => (getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? '1' : '-1'), 'enabled' => '1');
 		$arrayfields['t.element_date'] = array('label' => $langs->trans("Date"), 'checked' => '1');
 		$arrayfields['p.fk_soc'] = array('label' => $langs->trans("ThirdParty"), 'type' => 'integer:Societe:/societe/class/societe.class.php:1','checked' => '1');
 		$arrayfields['s.name_alias'] = array('label' => $langs->trans("AliasNameShort"), 'type' => 'integer:Societe:/societe/class/societe.class.php:1');
@@ -1525,6 +1532,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 		if ($search_task_label != '') {
 			$param .= '&search_task_label=' . urlencode($search_task_label);
+		}
+		if ($search_id != '') {
+			$param .= '&search_id=' . urlencode($search_id);
 		}
 		if ($search_note != '') {
 			$param .= '&search_note=' . urlencode($search_note);
@@ -1830,6 +1840,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			}
 		}
 
+		if ($search_id != '') {
+			$sql .= natural_search('t.rowid', $search_id, 1);
+		}
 		if ($search_note) {
 			$sql .= natural_search('t.note', $search_note);
 		}
@@ -2134,6 +2147,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			print $searchpicto;
 			print '</td>';
 		}
+		// Technical ID
+		if (!empty($arrayfields['t.rowid']['checked'])) {
+			print '<td class="liste_titre center"><input class="searchstring width50" type="text" name="search_id" value="' . dolPrintLabelForAttribute($search_id) . '"></td>';
+		}
 		// Date
 		if (!empty($arrayfields['t.element_date']['checked'])) {
 			print '<td class="liste_titre left">';
@@ -2237,6 +2254,15 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 		print '</tr>' . "\n";
 
+		print '<script type="text/javascript">
+			$(document).on("keydown", "tr.liste_titre_filter input", function (e) {
+				if (e.which === 13) {
+					e.preventDefault();
+					$(this).closest("form").find("button[name=\"button_search_x\"]").first().trigger("click");
+				}
+			});
+		</script>';
+
 
 		$totalarray = array();
 		$totalarray['nbfield'] = 0;
@@ -2246,6 +2272,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		print '<tr class="liste_titre">';
 		if ($conf->main_checkbox_left_column) {
 			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center maxwidthsearch ');
+			$totalarray['nbfield']++;
+		}
+		if (!empty($arrayfields['t.rowid']['checked'])) {
+			print_liste_field_titre($arrayfields['t.rowid']['label'], $_SERVER['PHP_SELF'], 't.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
 			$totalarray['nbfield']++;
 		}
 		if (!empty($arrayfields['t.element_date']['checked'])) {
@@ -2402,6 +2432,14 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					}
 				}
 				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+
+			// Technical ID
+			if (!empty($arrayfields['t.rowid']['checked'])) {
+				print '<td class="center" data-key="id">' . ((int) $task_time->rowid) . '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -2810,6 +2848,11 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					print '<td></td>';
 				}
 
+				// Technical ID
+				if (!empty($arrayfields['t.rowid']['checked'])) {
+					print '<td class="center">' . ((int) $task_time->rowid) . '</td>';
+				}
+
 				// Date
 				if (!empty($arrayfields['t.element_date']['checked'])) {
 					print '<td class="nowrap">';
@@ -2980,6 +3023,11 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				if ($conf->main_checkbox_left_column) {
 					print '<td class="center nowraponall">';
 					print '</td>';
+				}
+
+				// Technical ID
+				if (!empty($arrayfields['t.rowid']['checked'])) {
+					print '<td></td>';
 				}
 
 				// Date

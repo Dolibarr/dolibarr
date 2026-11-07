@@ -311,7 +311,6 @@ NoExample=Ningún ejemplo
 NbOfThirdParties=Cantidad de terceros
 NbOfLines=Número de líneas
 NbOfObjectReferers=Número de artículos relacionados
-Referers=Artículos relacionados
 DateFrom=Desde %s
 Check=Revisar
 Uncheck=Desmarcar
