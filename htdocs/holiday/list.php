@@ -333,9 +333,13 @@ $sql .= " FROM ".MAIN_DB_PREFIX."holiday as cp";
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (cp.rowid = ef.fk_object)";
 }
-$sql .= ", ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as uu ON uu.rowid = cp.fk_user";			// Needed for search on the list
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as ua ON ua.rowid = cp.fk_validator";		// Needed for search on the list
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE cp.entity IN (".getEntity('holiday').")";
-$sql .= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack needed for search on the list
 // Search all
 if (!empty($search_all)) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);

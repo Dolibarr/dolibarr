@@ -174,16 +174,17 @@ class PdfDocTest extends CommonClassTest
 	 * Build a minimal one page PDF document holding the given objects.
 	 *
 	 * @param	array<int,string>	$objects	Content of each object, the key is the object number
+	 * @param	string				$sep		What separates the numbers and the keyword into the header of each object
 	 * @return	string							Content of the PDF document
 	 */
-	private function buildPdf($objects)
+	private function buildPdf($objects, $sep = ' ')
 	{
 		$out = "%PDF-1.4\n";
 		$offsets = array();
 		ksort($objects);
 		foreach ($objects as $num => $content) {
 			$offsets[$num] = strlen($out);
-			$out .= $num." 0 obj\n".$content."\nendobj\n";
+			$out .= $num.$sep."0".$sep."obj\n".$content."\nendobj\n";
 		}
 		$size = max(array_keys($objects)) + 1;
 		$startxref = strlen($out);
@@ -192,6 +193,52 @@ class PdfDocTest extends CommonClassTest
 			$out .= isset($offsets[$num]) ? sprintf("%010d 00000 n \n", $offsets[$num]) : "0000000000 65535 f \n";
 		}
 		$out .= "trailer\n<< /Size ".$size." /Root 1 0 R >>\nstartxref\n".$startxref."\n%%EOF\n";
+
+		return $out;
+	}
+
+	/**
+	 * Build a minimal PDF document the way cairo does: the objects are in an object stream whose length is an indirect
+	 * object declared after it, and the xref is a stream that does not use any predictor.
+	 *
+	 * @param	array<int,string>	$objects	Content of each object stored into the object stream, the key is the object number
+	 * @param	string				$content	Content stream of the page (object 4)
+	 * @param	string				$sep		What separates the numbers into the header of the object stream
+	 * @param	string				$filter		Value of the /Filter entry of the object stream
+	 * @return	string							Content of the PDF document
+	 */
+	private function buildPdfWithObjectStream($objects, $content, $sep = ' ', $filter = '/FlateDecode')
+	{
+		$out = "%PDF-1.5\n";
+		$entries = [];	// object number => type, field 2, field 3
+
+		$entries[4] = [1, strlen($out), 0];
+		$out .= "4 0 obj\n<< /Length ".strlen($content)." >>\nstream\n".$content."\nendstream\nendobj\n";
+
+		$header = '';
+		$body = '';
+		$index = 0;
+		foreach ($objects as $num => $object) {
+			$header .= $num.$sep.strlen($body).$sep;
+			$body .= $object."\n";
+			$entries[$num] = [2, 6, $index++];
+		}
+		$data = gzcompress($header.$body);
+		$entries[6] = [1, strlen($out), 0];
+		$out .= "6 0 obj\n<< /Type /ObjStm /N ".count($objects)." /First ".strlen($header)." /Filter ".$filter." /Length 8 0 R >>\nstream\n".$data."\nendstream\nendobj\n";
+		$entries[8] = [1, strlen($out), 0];
+		$out .= "8 0 obj\n".strlen($data)."\nendobj\n";
+
+		$startxref = strlen($out);
+		$entries[7] = [1, $startxref, 0];
+		$rows = '';
+		for ($num = 0; $num < 9; $num++) {
+			$entry = isset($entries[$num]) ? $entries[$num] : [0, 0, 255];
+			$rows .= pack('Cnn', $entry[0], $entry[1], $entry[2]);
+		}
+		$data = gzcompress($rows);
+		$out .= "7 0 obj\n<< /Type /XRef /Size 9 /W [1 2 2] /Root 1 0 R /Filter /FlateDecode /Length ".strlen($data)." >>\nstream\n".$data."\nendstream\nendobj\n";
+		$out .= "startxref\n".$startxref."\n%%EOF\n";
 
 		return $out;
 	}
@@ -246,5 +293,81 @@ class PdfDocTest extends CommonClassTest
 		$this->assertSame($sizes['spaced'], $sizes['online2'] - 1);
 		$this->assertSame($sizes['spaced'], $sizes['comment']);
 		$this->assertSame($sizes['spaced'] - 16, $sizes['empty']);
+	}
+
+	/**
+	 * Import a page of a document written the way cairo and PDFlib write them: the objects are in an object
+	 * stream and the cross-reference is a stream that uses no predictor. The same document is also built with
+	 * its filter written as an array, which was never decoded.
+	 *
+	 * @return void
+	 */
+	public function testPdfImportPageWithAnXrefStreamWithoutPredictor()
+	{
+		pdf_getInstance();	// Load the TCPDF and TCPDI classes and define their constants
+
+		$content = "BT /F1 24 Tf 72 700 Td (Hello TCPDI) Tj ET";
+		$objects = array(
+			1 => "<< /Type /Catalog /Pages 2 0 R >>",
+			2 => "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+			3 => "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>",
+			5 => "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+		);
+
+		$sizes = array();
+		foreach (array('name' => '/FlateDecode', 'array' => '[/FlateDecode]') as $case => $filter) {
+			$file = tempnam(sys_get_temp_dir(), 'tcpdi').'.pdf';
+			file_put_contents($file, $this->buildPdfWithObjectStream($objects, $content, ' ', $filter));
+
+			$tcpdi = new TCPDI();
+			$this->assertSame(1, $tcpdi->setSourceFile($file), 'Case '.$case.': the document should hold one page');
+			$tpl = $tcpdi->importPage(1);
+			$tcpdi->AddPage();
+			$tcpdi->useTemplate($tpl);
+			$sizes[$case] = strlen($tcpdi->Output('', 'S'));
+			unlink($file);
+		}
+
+		// Both ways of writing the filter give the same page
+		$this->assertSame($sizes['name'], $sizes['array']);
+	}
+	/**
+	 * Import a page of a document whose object headers do not separate the numbers and the keyword with one single
+	 * space: some writers align them on a column with several spaces, others put a line break. The header was
+	 * compared to the string "num gen obj", so none of these objects was ever found.
+	 *
+	 * @return void
+	 */
+	public function testPdfImportPageWithObjectHeadersWithSeveralSpaces()
+	{
+		pdf_getInstance();	// Load the TCPDF and TCPDI classes and define their constants
+
+		$content = "BT /F1 24 Tf 72 700 Td (Hello TCPDI) Tj ET";
+		$objects = array(
+			1 => "<< /Type /Catalog /Pages 2 0 R >>",
+			2 => "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+			3 => "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>",
+			4 => "<< /Length ".strlen($content)." >>\nstream\n".$content."\nendstream",
+			5 => "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+		);
+
+		$sizes = array();
+		foreach (array('space' => ' ', 'spaces' => '    ', 'newline' => "\n", 'tab' => "\t") as $case => $sep) {
+			$file = tempnam(sys_get_temp_dir(), 'tcpdi').'.pdf';
+			file_put_contents($file, $this->buildPdf($objects, $sep));
+
+			$tcpdi = new TCPDI();
+			$this->assertSame(1, $tcpdi->setSourceFile($file), 'Case '.$case.': the document should hold one page');
+			$tpl = $tcpdi->importPage(1);
+			$tcpdi->AddPage();
+			$tcpdi->useTemplate($tpl);
+			$sizes[$case] = strlen($tcpdi->Output('', 'S'));
+			unlink($file);
+		}
+
+		// Whatever separates them, the same page is imported
+		$this->assertSame($sizes['space'], $sizes['spaces']);
+		$this->assertSame($sizes['space'], $sizes['newline']);
+		$this->assertSame($sizes['space'], $sizes['tab']);
 	}
 }
