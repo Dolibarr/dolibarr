@@ -650,3 +650,15 @@ ALTER TABLE llx_commandedet ADD COLUMN ref_customer varchar(128) DEFAULT NULL AF
 ALTER TABLE llx_facturedet ADD COLUMN pos_printer_id integer NULL AFTER fk_warehouse;
 UPDATE llx_facturedet SET pos_printer_id = 1, special_code = 0 WHERE special_code = 4 AND fk_facture IN (SELECT rowid FROM llx_facture WHERE module_source = 'takepos' AND fk_statut = 0);
 UPDATE llx_facturedet SET special_code = 0 WHERE special_code IN (1, 2, 3) AND fk_facture IN (SELECT rowid FROM llx_facture WHERE module_source = 'takepos' AND fk_statut = 0);
+
+-- Optional second approval for leave requests and expense reports
+ALTER TABLE llx_holiday ADD COLUMN fk_validator_secondary integer DEFAULT NULL;
+ALTER TABLE llx_holiday ADD COLUMN fk_user_approve_secondary integer DEFAULT NULL;
+ALTER TABLE llx_holiday ADD COLUMN date_approval_secondary datetime DEFAULT NULL;
+ALTER TABLE llx_holiday ADD INDEX idx_holiday_validator_secondary (fk_validator_secondary);
+ALTER TABLE llx_holiday ADD INDEX idx_holiday_approve_secondary (fk_user_approve_secondary);
+ALTER TABLE llx_expensereport ADD COLUMN fk_user_validator_secondary integer DEFAULT NULL;
+ALTER TABLE llx_expensereport ADD COLUMN fk_user_approve_secondary integer DEFAULT NULL;
+ALTER TABLE llx_expensereport ADD COLUMN date_approve_secondary datetime DEFAULT NULL;
+ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_validator_secondary (fk_user_validator_secondary);
+ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_approve_secondary (fk_user_approve_secondary);

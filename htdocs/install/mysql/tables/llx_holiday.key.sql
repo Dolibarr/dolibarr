@@ -24,3 +24,6 @@ ALTER TABLE llx_holiday ADD INDEX idx_holiday_date_creation (date_creation);
 ALTER TABLE llx_holiday ADD INDEX idx_holiday_date_debut (date_debut);
 ALTER TABLE llx_holiday ADD INDEX idx_holiday_date_fin (date_fin);
 ALTER TABLE llx_holiday ADD INDEX idx_holiday_fk_validator (fk_validator);
+
+ALTER TABLE llx_holiday ADD INDEX idx_holiday_validator_secondary (fk_validator_secondary);
+ALTER TABLE llx_holiday ADD INDEX idx_holiday_approve_secondary (fk_user_approve_secondary);
