@@ -158,6 +158,14 @@ if (empty($reshook)) {
 	$upload_dir = $conf->expedition->dir_output.'/sending';
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
+	// The lines of a shipment can be modified or deleted only when it is a draft
+	if (in_array($action, array('editline', 'updateline', 'deleteline')) && (!$permissiontoadd || $object->status != Expedition::STATUS_DRAFT)) {
+		if ($object->status != Expedition::STATUS_DRAFT) {
+			setEventMessages($langs->trans("StatusOfRefMustBe", $object->ref, $langs->transnoentitiesnoconv("StatusSendingDraftShort")), null, 'errors');
+		}
+		$action = '';
+	}
+
 	// Back to draft
 	if ($action == 'setdraft' && $user->hasRight('expedition', 'creer')) {
 		$object->fetch($id);
@@ -316,7 +324,7 @@ if (empty($reshook)) {
 
 						if ($is_batch_or_serial == 2 && $sub_qty[$j]['q'] > 0) {
 							// we stock the batch id to test later if the same serial is shipped on another line for the same product
-							$product_batch_used[$j] = $sub_qty[$j]['id_batch'];
+							$product_batch_used[] = $sub_qty[$j]['id_batch'];
 						}
 
 						$j++;
@@ -589,7 +597,7 @@ if (empty($reshook)) {
 		}
 
 		$action = "";
-	} elseif ($action == 'classifybilled') {
+	} elseif ($action == 'classifybilled' && $permissiontoadd) {
 		$object->fetch($id);
 		$result = $object->setBilled();
 		if ($result >= 0) {
@@ -597,7 +605,7 @@ if (empty($reshook)) {
 			exit();
 		}
 		setEventMessages($object->error, $object->errors, 'errors');
-	} elseif ($action == 'classifyclosed') {
+	} elseif ($action == 'classifyclosed' && $permissiontoadd) {
 		$object->fetch($id);
 		$result = $object->setClosed();
 		if ($result >= 0) {

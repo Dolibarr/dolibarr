@@ -141,7 +141,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("ChequeDeposits"), '', 0, 0, '', '', '', 'bodyforlist');
+llxHeader('', $langs->trans("ChequeDeposits"), '', '', 0, 0, '', '', '', 'bodyforlist');
 
 $sql = "SELECT bc.rowid, bc.ref, bc.date_bordereau,";
 $sql .= " bc.nbcheque, bc.amount, bc.statut, bc.type,";

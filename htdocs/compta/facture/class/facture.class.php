@@ -1753,11 +1753,15 @@ class Facture extends CommonInvoice
 			}
 
 			foreach ($TTotalByTva as $tva => &$total) {
-				$coef = $total / $origin->total_ttc; // Calc coef
+				$coef = ($origin->total_ttc != 0 ? $total / $origin->total_ttc : 0); // Calc coef (0 if the total of the origin is 0, there is nothing to split)
 				$am = $amount * $coef;
 				$amount_ttc_diff += $am;
+				if (!isset($amountdeposit[$tva])) {
+					$amountdeposit[$tva] = 0;
+				}
 				$amountdeposit[$tva] += $am / (1 + $tva / 100); // Convert into HT for the addline
 			}
+			unset($total);	// Break the reference, it must not alter $TTotalByTva later
 		} else {
 			$totalamount = 0;
 			$lines = $origin->lines;
@@ -2208,6 +2212,7 @@ class Facture extends CommonInvoice
 				$this->cond_reglement_id	= $obj->fk_cond_reglement;
 				$this->cond_reglement_code	= $obj->cond_reglement_code;
 				$this->cond_reglement		= $obj->cond_reglement_libelle;
+				$this->cond_reglement_label = $obj->cond_reglement_libelle;
 				$this->cond_reglement_doc = $obj->cond_reglement_libelle_doc;
 				$this->fk_account = ($obj->fk_account > 0) ? $obj->fk_account : null;
 				$this->fk_facture_source	= $obj->fk_facture_source;

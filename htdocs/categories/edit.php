@@ -147,7 +147,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 $formother = new FormOther($db);
 
-llxHeader("", "", $langs->trans("Categories"));
+llxHeader("", $langs->trans("Categories"));
 
 print load_fiche_titre($langs->trans("ModifCat"));
 

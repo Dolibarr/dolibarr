@@ -1731,7 +1731,7 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 	}
 }
 
-if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday' && $confirm == 'yes')) && $permissiontoapprove) {
+if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday' && $confirm == 'yes')) && $permissiontoapprove && $user->hasRight('holiday', 'define_holiday')) {
 	$db->begin();
 	$objecttmp = new $objectclass($db);
 	$nbok = 0;

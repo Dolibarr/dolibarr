@@ -33,6 +33,7 @@ ValueOfMeansLossForProductProduced=Value of 0.95 means an average of 5%% of loss
 DeleteBillOfMaterials=Delete Bill Of Materials
 CancelMo=Cancel Manufacturing Order
 MoCancelConsumedAndProducedLines=Cancel also all the consumed and produced lines (delete lines and rollback stocks)
+ErrorMoConsumptionOrProductionStarted=Consumption or production has already started on this manufacturing order. Cancel it with its consumed and produced lines first.
 ConfirmCancelMo=Are you sure you want to cancel this Manufacturing Order?
 DeleteMo=Delete Manufacturing Order
 ConfirmDeleteBillOfMaterials=Are you sure you want to delete this Bill Of Materials?

@@ -228,7 +228,7 @@ if (empty($reshook) && $action == 'add') {
 			}
 			$thirdparty->email = GETPOST('email');
 			$thirdparty->address = GETPOST('address');
-			$thirdparty->zip = GETPOST('zip');
+			$thirdparty->zip = GETPOST('zipcode');
 			$thirdparty->town = GETPOST('town');
 			$thirdparty->country_id = GETPOSTINT('country_id');
 			$thirdparty->state_id = GETPOSTINT('state_id');

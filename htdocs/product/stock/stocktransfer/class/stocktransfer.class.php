@@ -521,9 +521,15 @@ class StockTransfer extends CommonObject
 	 */
 	public function deleteLine(User $user, $idline, $notrigger = 0)
 	{
-		if ($this->status < 0) {
+		if ($this->status != self::STATUS_DRAFT) {	// Lines are used for the stock movements once the transfer is validated
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
 			return -2;
+		}
+		require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/class/stocktransferline.class.php';
+		$line = new StockTransferLine($this->db);
+		if ($line->fetch($idline) <= 0 || $line->fk_stocktransfer != $this->id) {
+			$this->error = 'ErrorRecordNotFound';
+			return -1;
 		}
 
 		$res = $this->deleteLineCommon($user, $idline, $notrigger);

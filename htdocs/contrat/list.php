@@ -585,7 +585,7 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $langs->trans("Contracts"), '', 0, 0, '', '', '', 'bodyforlist');
+llxHeader('', $langs->trans("Contracts"), '', '', 0, 0, '', '', '', 'bodyforlist');
 
 $i = 0;
 
@@ -608,6 +608,9 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
+}
+if ($socid > 0) {
+	$param .= '&socid='.((int) $socid);
 }
 if ($search_all != '') {
 	$param .= '&search_all='.urlencode($search_all);

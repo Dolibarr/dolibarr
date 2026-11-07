@@ -170,7 +170,7 @@ $form      = new Form($db);
 $formadmin = new FormAdmin($db);
 $formother = new FormOther($db);
 
-llxHeader("", "", $langs->trans("Translation"));
+llxHeader("", $langs->trans("Translation"));
 
 $title = Categorie::$MAP_TYPE_TITLE_AREA[$type];
 
