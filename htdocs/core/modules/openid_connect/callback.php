@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2023   Maximilien Rozniecki    <mrozniecki@easya.solutions>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,7 +86,7 @@ $_SESSION['oidc_state'] = $oidcState;
 	$(document).ready(function () {
 		// dst.js has already populated the hidden fields above.
 		// Build a GET redirect URL with openid_mode flag + timezone info.
-		var baseUrl = '<?php echo dol_escape_js($callbackUrl); ?>';
+		var baseUrl = <?php echo "'".dol_escape_js($callbackUrl)."'"; ?>;
 		var sep = baseUrl.indexOf('?') === -1 ? '?' : '&';
 
 		var url = baseUrl + sep + 'openid_mode=true';

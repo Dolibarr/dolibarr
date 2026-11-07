@@ -196,13 +196,17 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 				$this->errors[] = 'Modifying the property Ref of a non draft invoice is not allowed';
 				return -2;
 			}
-			if (($object->oldcopy->total_ht != $object->total_ht) || ($object->oldcopy->total_tva != $object->total_tva) || ($object->oldcopy->total_ttc != $object->total_ttc)
-				|| ($object->oldcopy->date != $object->date) || ($object->oldcopy->revenuestamp != $object->revenuestamp)
-				|| ($object->oldcopy->thirdparty->idprof1 != $object->thirdparty->idprof1)	// Siren
-				|| ($object->oldcopy->thirdparty->idprof2 != $object->thirdparty->idprof2)	// Siret
-				|| ($object->oldcopy->thirdparty->tva_intra != $object->thirdparty->tva_intra)
+			if (($object->oldcopy->total_ht != $object->total_ht)
+				|| ($object->oldcopy->total_tva != $object->total_tva)
+				|| ($object->oldcopy->total_ttc != $object->total_ttc)
+				|| ($object->oldcopy->date != $object->date)
+				|| (isset($object->revenuestamp, $object->oldcopy->revenuestamp) && $object->oldcopy->revenuestamp != $object->revenuestamp)
+				// Compare professional IDs only when the third party is loaded on both the object and its oldcopy
+				|| (isset($object->thirdparty, $object->oldcopy->thirdparty) && $object->oldcopy->thirdparty->idprof1 != $object->thirdparty->idprof1)	// Siren
+				|| (isset($object->thirdparty, $object->oldcopy->thirdparty) && $object->oldcopy->thirdparty->idprof2 != $object->thirdparty->idprof2)	// Siret
+				|| (isset($object->thirdparty, $object->oldcopy->thirdparty) && $object->oldcopy->thirdparty->tva_intra != $object->thirdparty->tva_intra)
 			) {
-				$this->errors[] = 'You try to modify a property that is locked once the invoice has been validated (total, revenu stamp, professional id).';
+				$this->errors[] = 'You try to modify a property that is locked once the invoice has been validated (total, revenue stamp, professional id).';
 				return -2;
 			}
 			if ($object->oldcopy->lines != $object->lines) {

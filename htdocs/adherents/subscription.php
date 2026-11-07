@@ -7,7 +7,8 @@
  * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2019		Thibault FOUCART			<support@ptibogxiv.net>
  * Copyright (C) 2023		Waël Almoman				<info@almoman.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jon Bendtsen				<jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,8 +49,10 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
-$langs->loadLangs(array("companies", "bills", "members", "users", "mails", 'other'));
+$langs->loadLangs(array("companies", "bills", "orders", "members", "users", "mails", 'other'));
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -132,6 +135,11 @@ if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->tabl
 // Security check
 $result = restrictedArea($user, 'adherent', $object->id, '', '', 'socid', 'rowid', 0);
 
+// Preserve checkbox selections for linktoobject option
+$invoices_to_link_post = GETPOST('invoices_to_link', 'array:int');
+$orders_to_link_post = GETPOST('orders_to_link', 'array:int');
+$invoicereftolink_post = GETPOST('invoicereftolink', 'alpha');
+$orderreftolink_post = GETPOST('orderreftolink', 'alpha');
 
 /*
  * 	Actions
@@ -306,7 +314,7 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 			$action = 'createsubscription';
 		} else {
 			// If an amount has been provided, we check also fields that becomes mandatory when amount is not null.
-			if (isModEnabled('bank') && GETPOST("paymentsave") != 'none') {
+			if (isModEnabled('bank') && GETPOST("paymentsave") != 'none' && GETPOST("paymentsave") != 'linktoobject') {
 				if (GETPOST("subscription")) {
 					if (!GETPOST("label")) {
 						$errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Label"));
@@ -314,13 +322,13 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 						$error++;
 						$action = 'createsubscription';
 					}
-					if (GETPOST("paymentsave") != 'invoiceonly' && !GETPOST("operation")) {
+					if (GETPOST("paymentsave") != 'invoiceonly' && !GETPOST("operation") && GETPOST("paymentsave") != 'linktoobject') {
 						$errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
 						setEventMessages($errmsg, null, 'errors');
 						$error++;
 						$action = 'createsubscription';
 					}
-					if (GETPOST("paymentsave") != 'invoiceonly' && !(GETPOSTINT("accountid") > 0)) {
+					if (GETPOST("paymentsave") != 'invoiceonly' && !(GETPOSTINT("accountid") > 0) && GETPOST("paymentsave") != 'linktoobject') {
 						$errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("FinancialAccount"));
 						setEventMessages($errmsg, null, 'errors');
 						$error++;
@@ -338,6 +346,36 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 		}
 	}
 
+	// Check if user filled link fields but chose another option than "linktoobject"
+	if ($action == 'subscription' && $option != 'linktoobject' && $user->hasRight('adherent', 'cotisation', 'creer')) {
+		$link_inputs_exist = (!empty($invoices_to_link_post) || !empty($orders_to_link_post) || !empty($invoicereftolink_post) || !empty($orderreftolink_post));
+		if ($link_inputs_exist) {
+			setEventMessages($langs->trans("ErrorLinkFieldsFilledButPaymentSaveNone"), null, 'errors');
+			$error++;
+			$action = 'createsubscription';
+		}
+	}
+	// Validate manual refs before creating subscription (only for linktoobject option)
+	if ($action == 'subscription' && $option == 'linktoobject' && $user->hasRight('adherent', 'cotisation', 'creer')) {
+		if (!empty($invoicereftolink_post)) {
+			$tmpinvoice = new Facture($db);
+			if ($tmpinvoice->fetch(0, $invoicereftolink_post) <= 0) {
+				$error++;
+				setEventMessages($langs->trans("ErrorInvoiceNotFound", $invoicereftolink_post), null, 'errors');
+				$action = 'createsubscription';
+			}
+			unset($tmpinvoice);
+		}
+		if (!empty($orderreftolink_post)) {
+			$tmporder = new Commande($db);
+			if ($tmporder->fetch(0, $orderreftolink_post) <= 0) {
+				$error++;
+				setEventMessages($langs->trans("ErrorOrderNotFound", $orderreftolink_post), null, 'errors');
+				$action = 'createsubscription';
+			}
+			unset($tmporder);
+		}
+	}
 	// Record the subscription then complementary actions
 	if (!$error && $action == 'subscription') {		// Test on permission already done
 		$db->begin();
@@ -360,6 +398,109 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 			}
 		}
 
+		// ===== LINK TO EXISTING OBJECTS =====
+		if ($option == 'linktoobject' && $crowid > 0) {
+			$subscription = new Subscription($db);
+			if ($subscription->fetch($crowid) > 0) {
+				// Get thirdparty of the member for security validation
+				$adhlink = new Adherent($db);
+				$adhlink->fetch($subscription->fk_adherent);
+				$thirdpartyidtolink = $adhlink->fk_soc;
+
+				// Track links created in this request so we skip duplicates
+				// (e.g. object both checked in list and typed as manual ref)
+				$existinglinks = array();
+				$nbcreatedlinks = 0;
+
+				// --- Selected invoices (checkboxes) - must belong to member's thirdparty ---
+				if (!empty($invoices_to_link_post)) {
+					foreach ($invoices_to_link_post as $invoiceid) {
+						$tmpinvoice = new Facture($db);
+						if ($tmpinvoice->fetch($invoiceid) > 0) {
+							if ($tmpinvoice->socid != $thirdpartyidtolink) {
+								setEventMessages($langs->trans("ErrorInvoiceNotLinkedToThirdpartyOfMember", $tmpinvoice->ref), null, 'errors');
+								continue;
+							}
+							if (!empty($existinglinks['facture-'.$tmpinvoice->id])) {
+								continue;	// Already linked, skip silently
+							}
+							if ($subscription->add_object_linked('facture', $tmpinvoice->id) > 0) {
+								$nbcreatedlinks++;
+								$existinglinks['facture-'.$tmpinvoice->id] = 1;
+							} else {
+								setEventMessages($subscription->error, $subscription->errors, 'errors');
+							}
+						}
+						unset($tmpinvoice);
+					}
+				}
+
+				// --- Manual invoice ref - allowed to link to any thirdparty ---
+				if (!empty($invoicereftolink_post)) {
+					$tmpinvoice = new Facture($db);
+					if ($tmpinvoice->fetch(0, $invoicereftolink_post) > 0) {
+						if (!empty($existinglinks['facture-'.$tmpinvoice->id])) {
+							setEventMessages($langs->trans("ErrorObjectAlreadyLinked", $tmpinvoice->ref), null, 'warnings');
+						} elseif ($subscription->add_object_linked('facture', $tmpinvoice->id) > 0) {
+							$nbcreatedlinks++;
+							$existinglinks['facture-'.$tmpinvoice->id] = 1;
+						} else {
+							setEventMessages($subscription->error, $subscription->errors, 'errors');
+						}
+					} else {
+						setEventMessages($langs->trans("ErrorInvoiceNotFound", $invoicereftolink_post), null, 'errors');
+					}
+					unset($tmpinvoice);
+				}
+
+				// --- Selected orders (checkboxes) - must belong to member's thirdparty ---
+				if (!empty($orders_to_link_post)) {
+					foreach ($orders_to_link_post as $orderid) {
+						$tmporder = new Commande($db);
+						if ($tmporder->fetch($orderid) > 0) {
+							if ($tmporder->socid != $thirdpartyidtolink) {
+								setEventMessages($langs->trans("ErrorOrderNotLinkedToThirdpartyOfMember", $tmporder->ref), null, 'errors');
+								continue;
+							}
+							if (!empty($existinglinks['commande-'.$tmporder->id])) {
+								continue;	// Already linked, skip silently
+							}
+							if ($subscription->add_object_linked('commande', $tmporder->id) > 0) {
+								$nbcreatedlinks++;
+								$existinglinks['commande-'.$tmporder->id] = 1;
+							} else {
+								setEventMessages($subscription->error, $subscription->errors, 'errors');
+							}
+						}
+						unset($tmporder);
+					}
+				}
+
+				// --- Manual order ref - allowed to link to any thirdparty ---
+				if (!empty($orderreftolink_post)) {
+					$tmporder = new Commande($db);
+					if ($tmporder->fetch(0, $orderreftolink_post) > 0) {
+						if (!empty($existinglinks['commande-'.$tmporder->id])) {
+							setEventMessages($langs->trans("ErrorObjectAlreadyLinked", $tmporder->ref), null, 'warnings');
+						} elseif ($subscription->add_object_linked('commande', $tmporder->id) > 0) {
+							$nbcreatedlinks++;
+							$existinglinks['commande-'.$tmporder->id] = 1;
+						} else {
+							setEventMessages($subscription->error, $subscription->errors, 'errors');
+						}
+					} else {
+						setEventMessages($langs->trans("ErrorOrderNotFound", $orderreftolink_post), null, 'errors');
+					}
+					unset($tmporder);
+				}
+
+				if ($nbcreatedlinks > 0) {
+					setEventMessages($langs->trans("XLinksCreated", $nbcreatedlinks), null, 'mesgs');
+				}
+			}
+			unset($subscription);
+		}
+
 		if (!$error) {
 			$db->commit();
 		} else {
@@ -378,7 +519,7 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 				$parameters = array(
 					'datesubscription' => $datesubscription,
 					'amount' => $amount,
-					'ccountid' => $accountid,
+					'accountid' => $accountid,
 					'operation' => $operation,
 					'label' => $label,
 					'num_chq' => $num_chq,
@@ -400,7 +541,7 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 					$formmail = new FormMail($db);
 					// Set output language
 					$outputlangs = new Translate('', $conf);
-					$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+					$outputlangs->setDefaultLang(!empty($object->default_lang) ? $object->default_lang : (empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang));
 					// Load traductions files required by page
 					$outputlangs->loadLangs(array("main", "members"));
 
@@ -523,7 +664,7 @@ print dol_get_fiche_head($head, 'subscription', $langs->trans("Member"), -1, 'us
 
 $linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/adherents/list.php', ['restore_lastsearch_values' => 1]).'">'.$langs->trans("BackToList").'</a>';
 
-$morehtmlref = '<a href="'.DOL_URL_ROOT.'/adherents/vcard.php?id='.$object->id.'" class="refid">';
+$morehtmlref = '<a href="'.DOL_URL_ROOT.'/adherents/vcard.php?id='.$object->id.'" class="refid" tabindex="-1">';
 $morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 $morehtmlref .= '</a>';
 
@@ -907,13 +1048,21 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 		print "\n".'<script type="text/javascript">';
 		print '$(document).ready(function () {
 					$(".bankswitchclass, .bankswitchclass2").'.(($bankdirect || $bankviainvoice) ? 'show()' : 'hide()').';
+					$(".linkobjectswitchclass").'.(GETPOST('paymentsave', 'aZ09') == 'linktoobject' ? 'show()' : 'hide()').';
 					$("#none, #invoiceonly").click(function() {
 						$(".bankswitchclass").hide();
 						$(".bankswitchclass2").hide();
+						$(".linkobjectswitchclass").hide();
 					});
 					$("#bankdirect, #bankviainvoice").click(function() {
 						$(".bankswitchclass").show();
 						$(".bankswitchclass2").show();
+						$(".linkobjectswitchclass").hide();
+					});
+					$("#linktoobject").click(function() {
+						$(".bankswitchclass").hide();
+						$(".bankswitchclass2").hide();
+						$(".linkobjectswitchclass").show();
 					});
 					$("#selectoperation").change(function() {
 						var code = $(this).val();
@@ -1058,7 +1207,7 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 		print '<tr><td>'.$langs->trans("Note").'</td>';
 		print '<td><input name="label" type="text" size="32" value="';
 		if (!getDolGlobalString('MEMBER_NO_DEFAULT_LABEL')) {
-			print $langs->trans("Subscription").' '.dol_print_date(($datefrom ? $datefrom : time()), "%Y");
+			print $langs->trans("Subscription").' '.dol_print_date(($datefrom ? $datefrom : dol_now()), "%Y");
 		}
 		print '"></td></tr>';
 
@@ -1141,6 +1290,174 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 				}
 				print '</label><br>';
 			}
+			// ===== START link BLOCK: Link to existing objects =====
+			if ((isModEnabled('invoice') || isModEnabled('order')) && isModEnabled('societe') && $object->socid > 0) {
+				print '<input type="radio" class="moreaction" id="linktoobject" name="paymentsave" value="linktoobject">';
+				print '<label for="linktoobject">  '.$langs->trans("MoreActionLinkToExistingObject").'</label><br>';
+
+				// ===== COMMON SETUP FOR BOTH BLOCKS =====
+				// Show project column only if module enabled and user can read projects
+				$showproject = (isModEnabled('project') && $user->hasRight('projet', 'lire'));
+				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+				$projectstatic = new Project($db);
+
+				print '<div class="linkobjectswitchclass" style="margin-left: 20px; margin-top: 5px; display:none;">';
+				// Invoices of the thirdparty, the 5 newest only
+				// ===== START BLOCK: Invoices =====
+				if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
+					$sql_invoices = "SELECT f.rowid, f.fk_projet";
+					$sql_invoices .= " FROM ".MAIN_DB_PREFIX."facture as f";
+					$sql_invoices .= " WHERE f.fk_soc = ".((int) $object->socid)." AND f.entity IN (".getEntity('invoice').")";
+					$sql_invoices .= $db->order("f.datef", "DESC");
+					// Keep only the 5 latest invoices, the list can be long
+					$sql_invoices .= $db->plimit(5);
+
+					print '<div class="div-table-responsive-no-min">';
+					print '<table class="noborder allwidth">';
+					print '<tr class="liste_titre">';
+					// Block title is placed on the 2 first header cells to save space, so the Ref column has no more title
+					print '<td colspan="2" class="left">'.$langs->trans("LastBills", 5).'</td>';
+					print '<td>'.$langs->trans("RefCustomer").'</td>';
+					if ($showproject) {
+						print '<td>'.$langs->trans("Project").'</td>';
+					}
+					print '<td class="center">'.$langs->trans("Date").'</td>';
+					print '<td class="right">'.$langs->trans("AmountHT").'</td>';
+					print '<td class="right">'.$langs->trans("Status").'</td>';
+					print '</tr>';
+
+					$resql_invoices = $db->query($sql_invoices);
+					if ($resql_invoices) {
+						$num_invoices = $db->num_rows($resql_invoices);
+						$invoicestatic = new Facture($db);
+
+						$j = 0;
+						while ($j < $num_invoices) {
+							$objinv = $db->fetch_object($resql_invoices);
+							$invoicestatic->fetch($objinv->rowid);
+
+							print '<tr class="oddeven">';
+							print '<td class="center" style="padding: 4px;"><input type="checkbox" name="invoices_to_link[]" value="'.$invoicestatic->id.'" style="width: 14px; height: 14px;"'.(is_array($invoices_to_link_post) && in_array($invoicestatic->id, $invoices_to_link_post) ? ' checked' : '').'></td>';
+							print '<td class="linkedcol-name tdoverflowmax150">'.$invoicestatic->getNomUrl(1).'</td>';
+							print '<td class="linkedcol-ref tdoverflowmax150 nopaddingtopimp nopaddingbottomimp" title="'.dol_escape_htmltag($invoicestatic->ref_client).'">';
+							if ($invoicestatic->ref_client) {
+								print '<span class="small">'.dol_escape_htmltag($invoicestatic->ref_client).'</span>';
+							} else {
+								print '&nbsp;';
+							}
+							print '</td>';
+							if ($showproject) {
+								$project_label = '&nbsp;';
+								if (!empty($objinv->fk_projet) && $projectstatic->fetch($objinv->fk_projet) > 0) {
+									$project_label = $projectstatic->getNomUrl(1);
+								}
+								print '<td class="linkedcol-project">'.$project_label.'</td>';
+							}
+							print '<td class="linkedcol-date center">'.dol_print_date($invoicestatic->date, 'day').'</td>';
+							print '<td class="linkedcol-amount right">'.price($invoicestatic->total_ht).'</td>';
+							print '<td class="linkedcol-statut right">'.$invoicestatic->getLibStatut(3).'</td>';
+							print '</tr>';
+							$j++;
+						}
+						$colspan = $showproject ? 7 : 6;
+						if (!$num_invoices) {
+							print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+						}
+					} else {
+						dol_print_error($db);
+					}
+
+					// Footer row - manual ref input
+					print '<tr class="liste_titre">';
+					print '<td></td>';
+					print '<td><input type="text" name="invoicereftolink" placeholder="'.dol_escape_htmltag($langs->trans("Ref")).'" style="width: 95%;" value="'.dol_escape_htmltag($invoicereftolink_post).'"></td>';
+					print '<td colspan="'.($showproject ? 5 : 4).'"></td>';
+					print '</tr>';
+
+					print '</table>';
+					print '</div>';
+				}
+				// ===== END BLOCK: Invoices =====
+
+				// Orders of the thirdparty, the 5 newest only
+				// ===== START BLOCK: Orders =====
+				if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
+					$sql_orders = "SELECT c.rowid, c.fk_projet";
+					$sql_orders .= " FROM ".MAIN_DB_PREFIX."commande as c";
+					$sql_orders .= " WHERE c.fk_soc = ".((int) $object->socid)." AND c.entity IN (".getEntity('commande').")";
+					$sql_orders .= $db->order("c.date_commande", "DESC");
+					// Keep only the 5 latest orders, the list can be long
+					$sql_orders .= $db->plimit(5);
+
+					print '<div class="div-table-responsive-no-min">';
+					print '<table class="noborder allwidth">';
+					print '<tr class="liste_titre">';
+					// Block title is placed on the 2 first header cells to save space, so the Ref column has no more title
+					print '<td colspan="2" class="left">'.$langs->trans("LastOrders", 5).'</td>';
+					print '<td>'.$langs->trans("RefCustomer").'</td>';
+					if ($showproject) {
+						print '<td>'.$langs->trans("Project").'</td>';
+					}
+					print '<td class="center">'.$langs->trans("Date").'</td>';
+					print '<td class="right">'.$langs->trans("AmountHT").'</td>';
+					print '<td class="right">'.$langs->trans("Status").'</td>';
+					print '</tr>';
+
+					$resql_orders = $db->query($sql_orders);
+					if ($resql_orders) {
+						$num_orders = $db->num_rows($resql_orders);
+						$orderstatic = new Commande($db);
+
+						$j = 0;
+						while ($j < $num_orders) {
+							$objord = $db->fetch_object($resql_orders);
+							$orderstatic->fetch($objord->rowid);
+
+							print '<tr class="oddeven">';
+							print '<td class="center" style="padding: 4px;"><input type="checkbox" name="orders_to_link[]" value="'.$orderstatic->id.'" style="width: 14px; height: 14px;"'.(is_array($orders_to_link_post) && in_array($orderstatic->id, $orders_to_link_post) ? ' checked' : '').'></td>';
+							print '<td class="linkedcol-name tdoverflowmax150">'.$orderstatic->getNomUrl(1).'</td>';
+							print '<td class="linkedcol-ref tdoverflowmax150 nopaddingtopimp nopaddingbottomimp" title="'.dol_escape_htmltag($orderstatic->ref_client).'">';
+							if ($orderstatic->ref_client) {
+								print '<span class="small">'.dol_escape_htmltag($orderstatic->ref_client).'</span>';
+							} else {
+								print '&nbsp;';
+							}
+							print '</td>';
+							if ($showproject) {
+								$project_label = '&nbsp;';
+								if (!empty($objord->fk_projet) && $projectstatic->fetch($objord->fk_projet) > 0) {
+									$project_label = $projectstatic->getNomUrl(1);
+								}
+								print '<td class="linkedcol-project">'.$project_label.'</td>';
+							}
+							print '<td class="linkedcol-date center">'.dol_print_date($orderstatic->date, 'day').'</td>';
+							print '<td class="linkedcol-amount right">'.price($orderstatic->total_ht).'</td>';
+							print '<td class="linkedcol-statut right">'.$orderstatic->getLibStatut(3).'</td>';
+							print '</tr>';
+							$j++;
+						}
+						$colspan = $showproject ? 7 : 6;
+						if (!$num_orders) {
+							print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+						}
+					} else {
+						dol_print_error($db);
+					}
+
+					// Footer row - manual ref input
+					print '<tr class="liste_titre">';
+					print '<td></td>';
+					print '<td><input type="text" name="orderreftolink" placeholder="'.dol_escape_htmltag($langs->trans("Ref")).'" style="width: 95%;" value="'.dol_escape_htmltag($orderreftolink_post).'"></td>';
+					print '<td colspan="'.($showproject ? 5 : 4).'"></td>';
+					print '</tr>';
+
+					print '</table>';
+					print '</div>';
+				}
+				// ===== END BLOCK: Orders =====
+				print '</div>';
+			}
+			// ===== END link BLOCK =====
 			print '</td></tr>';
 
 			// Bank account
@@ -1195,7 +1512,7 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 		$formmail = new FormMail($db);
 		// Set output language
 		$outputlangs = new Translate('', $conf);
-		$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+		$outputlangs->setDefaultLang(!empty($object->default_lang) ? $object->default_lang : (empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang));
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "members"));
 		// Get email content from template

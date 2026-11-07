@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2026 ATM Consulting <support@atm-consulting.fr>
+ * Copyright (C) 2026		MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +22,7 @@
  * \brief   Keeps the permissions section of a module descriptor in sync with ModuleBuilder actions.
  */
 
+require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/modulebuilder/class/RightsSyncCommand.class.php';
 require_once DOL_DOCUMENT_ROOT.'/modulebuilder/class/SyncReport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/modulebuilder/class/PermissionsBlock.class.php';
@@ -155,7 +157,7 @@ final class DescriptorRightsSyncService implements RightsSyncService
 			// Addressed by key, never by value: two rights may carry the very same label.
 			$permissions[$key] = array(
 				self::INDEX_LABEL => (string) $cmd->rightLabel,
-				self::INDEX_OBJECT => strtolower($cmd->objectName),
+				self::INDEX_OBJECT => dol_strtolower($cmd->objectName),
 				self::INDEX_CRUD => (string) $cmd->rightCrud,
 			);
 			return $permissions;
@@ -175,16 +177,16 @@ final class DescriptorRightsSyncService implements RightsSyncService
 	 */
 	private function addObjectRights(array $permissions, string $module, string $objectName): ?array
 	{
-		$target = strtolower($objectName);
+		$target = dol_strtolower($objectName);
 		foreach ($permissions as $right) {
-			if (isset($right[self::INDEX_OBJECT]) && strtolower((string) $right[self::INDEX_OBJECT]) === $target) {
+			if (isset($right[self::INDEX_OBJECT]) && dol_strtolower((string) $right[self::INDEX_OBJECT]) === $target) {
 				return null;
 			}
 		}
 
 		foreach (self::CRUD_LABELS as $crud => $template) {
 			$permissions[] = array(
-				self::INDEX_LABEL => sprintf($template, $objectName, ucfirst($module)),
+				self::INDEX_LABEL => sprintf($template, $objectName, dol_ucfirst($module)),
 				self::INDEX_OBJECT => $target,
 				self::INDEX_CRUD => $crud,
 			);
@@ -204,7 +206,7 @@ final class DescriptorRightsSyncService implements RightsSyncService
 	 */
 	private function removeObjectRights(array $permissions, string $objectName): array
 	{
-		$target = strtolower($objectName);
+		$target = dol_strtolower($objectName);
 
 		return array_values(array_filter(
 			$permissions,
@@ -213,7 +215,7 @@ final class DescriptorRightsSyncService implements RightsSyncService
 			 * @return 	bool
 			 */
 			static function ($right) use ($target) {
-				return !isset($right[self::INDEX_OBJECT]) || strtolower((string) $right[self::INDEX_OBJECT]) !== $target;
+				return !isset($right[self::INDEX_OBJECT]) || dol_strtolower((string) $right[self::INDEX_OBJECT]) !== $target;
 			}
 		));
 	}
@@ -230,10 +232,10 @@ final class DescriptorRightsSyncService implements RightsSyncService
 	 */
 	private function addRight(array $permissions, string $objectName, string $label, string $crud): array
 	{
-		$target = strtolower($objectName);
+		$target = dol_strtolower($objectName);
 		foreach ($permissions as $right) {
 			if (isset($right[self::INDEX_OBJECT], $right[self::INDEX_CRUD])
-				&& strtolower((string) $right[self::INDEX_OBJECT]) === $target
+				&& dol_strtolower((string) $right[self::INDEX_OBJECT]) === $target
 				&& (string) $right[self::INDEX_CRUD] === $crud) {
 				throw new \InvalidArgumentException('Permission "'.$crud.'" is already declared for object "'.$objectName.'"');
 			}

@@ -484,13 +484,14 @@ class ReceptionLineBatch extends CommonObjectLine
 		$sql .= " t.comment,";
 		$sql .= " t.status,";
 		$sql .= " t.tms,";
-		$sql .= " t.batch,";
+		$sql .= " t.batch, t.cost_price, t.ref_fourn,";
 		$sql .= " t.eatby,";
 		$sql .= " t.sellby,";
 		$sql .= " t.fk_unit,";
 		$sql .= " t.description,";
 		$sql .= " t.rang,";
-		$sql .= " t.fk_reception";
+		$sql .= " t.fk_reception,";
+		$sql .= " t.extraparams";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		if ($ref) {
 			$sql .= " WHERE t.ref = '".$this->db->escape($ref)."'";
@@ -521,12 +522,15 @@ class ReceptionLineBatch extends CommonObjectLine
 				$this->status = $obj->status;
 				$this->tms = $this->db->jdate($obj->tms);
 				$this->batch = $obj->batch;
+				$this->cost_price = $obj->cost_price;
+				$this->ref_fourn = $obj->ref_fourn;
 				$this->eatby = $this->db->jdate($obj->eatby);
 				$this->sellby = $this->db->jdate($obj->sellby);
 				$this->description = $obj->description;
 				$this->fk_unit = $obj->fk_unit;
 				$this->rang = $obj->rang;
 				$this->fk_reception = $obj->fk_reception;
+				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				$this->fetch_optionals();
 			}
@@ -598,6 +602,8 @@ class ReceptionLineBatch extends CommonObjectLine
 		$sql .= " status=".(isset($this->status) ? ((int) $this->status) : "null").",";
 		$sql .= " tms=".(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " batch=".(isset($this->batch) ? "'".$this->db->escape($this->batch)."'" : "null").",";
+		$sql .= " cost_price=".(isset($this->cost_price) ? ((float) $this->cost_price) : "0").",";
+		$sql .= " ref_fourn=".(isset($this->ref_fourn) ? "'".$this->db->escape($this->ref_fourn)."'" : "null").",";
 		$sql .= " eatby=".(dol_strlen((string) $this->eatby) != 0 ? "'".$this->db->idate((int) $this->eatby)."'" : 'null').",";
 		$sql .= " sellby=".(dol_strlen((string) $this->sellby) != 0 ? "'".$this->db->idate((int) $this->sellby)."'" : 'null').",";
 		$sql .= " fk_unit = ".((int) $this->fk_unit);

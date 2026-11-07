@@ -145,7 +145,8 @@ try {
 }
 // access type needed to have oauth provider refreshing token
 // also note that a refresh token is sent only after a prompt
-$apiService->setAccessType('offline');
+// For login, no refresh token is needed (token is deleted once the email is read), so we use online.
+$apiService->setAccessType($forlogin ? 'online' : 'offline');
 
 
 if (!getDolGlobalString($keyforparamid)) {
@@ -461,9 +462,15 @@ if (!GETPOST('code')) {
 
 			// If call back to this url was for a OAUTH2 login
 			if ($forlogin) {
+				// Define $urlwithroot
+				$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+				$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+				//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
 				// _SESSION['googleoauth_receivedlogin'] has been set to the key to validate the next test by function_googleoauth(), so we can make the redirect
 				// $backtourl is a relative url like /mypage.php?param1=value1 but without param token and action. Part after the # should also have been removed when saving it.
-				$backtourl = DOL_MAIN_URL_ROOT.$backtourl;
+				// $backtourl comes from $_SERVER['REQUEST_URI'], so it already contains DOL_URL_ROOT.
+				$backtourl = rtrim($urlwithouturlroot, '/').$backtourl;
 				$backtourl .= (preg_match('/\?/', $backtourl) ? '&' : '?').'actionlogin=login&afteroauthloginreturn=google&mainmenu=home'.($username ? '&username='.urlencode($username) : '').'&token='.newToken();
 				if (!empty($tmparray['entity'])) {
 					$backtourl .= '&entity='.$tmparray['entity'];

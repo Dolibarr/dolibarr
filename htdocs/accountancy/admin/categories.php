@@ -418,8 +418,8 @@ if ($useNewSystem) {
 			print '<td>'.length_accountg($cpt->account_number).'</td>';
 			print '<td>'.$cpt->label.'</td>';
 			print '<td>';
-			print '<input type="submit" class="button smallpaddingimp" name="cpt" value="'.$cpt->rowid.'" title="'.$langs->trans("DeleteFromCat").'">';
-			print img_picto($langs->trans("DeleteFromCat"), 'unlink', 'class="paddingleft"');
+			print '<input type="submit" class="button smallpaddingimp" name="cpt" value="'.$cpt->rowid.'" title="'.$langs->trans("DeleteFromAccountingGroup").'">';
+			print img_picto($langs->trans("DeleteFromAccountingGroup"), 'unlink', 'class="paddingleft"');
 			print "</td>";
 			print "</tr>\n";
 		}

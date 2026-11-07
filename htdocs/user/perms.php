@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2020       Tobias Sekan            <tobias.sekan@startmail.com>
- * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025-2026  Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
@@ -214,8 +214,8 @@ foreach ($modulesdir as $dir) {
 	$handle = @opendir(dol_osencode($dir));
 	if (is_resource($handle)) {
 		while (($file = readdir($handle)) !== false) {
-			if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
-				$modName = substr($file, 0, dol_strlen($file) - 10);
+			if (is_readable($dir.$file) && dol_substr($file, 0, 3) == 'mod' && dol_substr($file, dol_strlen($file) - 10) == '.class.php') {
+				$modName = dol_substr($file, 0, dol_strlen($file) - 10);
 
 				if ($modName) {
 					// Exclude old/new supplier descriptors depending on MAIN_USE_NEW_SUPPLIERMOD
@@ -417,7 +417,7 @@ if ($user->hasRight("user", "user", "read") || $user->admin) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
-$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid valignmiddle" rel="noopener">';
+$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid valignmiddle" tabindex="-1" rel="noopener">';
 $morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 $morehtmlref .= '</a>';
 
@@ -758,7 +758,7 @@ foreach ($arrayofpermission as $i => $obj) {
 		}
 		print '<td>';
 		print '</td>';
-	} elseif (isset($permsgroupbyentitypluszero) && is_array($permsgroupbyentitypluszero)) {
+	} elseif (!empty($permsgroupbyentitypluszero)) {
 		print '<!-- permsgroupbyentitypluszero -->';
 		if (in_array($obj->id, $permsgroupbyentitypluszero)) {	// Permission granted by group
 			print '<td class="center nowrap">';
@@ -827,23 +827,27 @@ foreach ($arrayofpermission as $i => $obj) {
 			print ' <span class="opacitymedium">('.$langs->trans("AdvancedModeOnly").')</span>';
 		}
 	}
-		// Special warning case for the permission "Allow to modify other users password"
+	// Special warning case for the permission "Allow to modify other users password"
 	if ($obj->module == 'user' && $obj->perms == 'user' && $obj->subperms == 'password') {
 		if ((!empty($object->admin) && !empty($objMod->rights_admin_allowed)) ||
 			in_array($obj->id, $permsuser) /* if edited user owns this permissions */ ||
-			(isset($permsgroupbyentitypluszero) && is_array($permsgroupbyentitypluszero) && in_array($obj->id, $permsgroupbyentitypluszero))) {
+			(!empty($permsgroupbyentitypluszero) && in_array($obj->id, $permsgroupbyentitypluszero))) {
 			print ' '.img_warning($langs->trans("AllowPasswordResetBySendingANewPassByEmail"));
 		}
 	}
-		// Special warning case for the permission "Create/modify other users, groups and permissions"
+	// Special warning case for the permission "Create/modify other users, groups and permissions"
 	if ($obj->module == 'user' && $obj->perms == 'user' && ($obj->subperms == 'creer' || $obj->subperms == 'create')) {
 		if ((!empty($object->admin) && !empty($objMod->rights_admin_allowed)) ||
 			in_array($obj->id, $permsuser) /* if edited user owns this permissions */ ||
-			(isset($permsgroupbyentitypluszero) && is_array($permsgroupbyentitypluszero) && in_array($obj->id, $permsgroupbyentitypluszero))) {
+			(!empty($permsgroupbyentitypluszero) && in_array($obj->id, $permsgroupbyentitypluszero))) {
 			print ' '.img_warning($langs->trans("AllowAnyPrivileges"));
 		}
 	}
-		// Special case for reading bank account when you have permission to manage Chart of account
+	// Special warning case for the permission "Create/modify and execute cron"
+	if ($obj->module == 'cron' && $obj->perms == 'create' ) {
+		print ' '.img_warning($langs->trans("YouAlsoNeedToBeAdminForThisPermission"), '', 'colorgrey');
+	}
+	// Special case for reading bank account when you have permission to manage Chart of account
 	if ($obj->module == 'banque' && $obj->perms == 'lire') {
 		if (isModEnabled("accounting") && $object->hasRight('accounting', 'chartofaccount')) {
 			print ' '.img_warning($langs->trans("WarningReadBankAlsoAllowedIfUserHasPermission"));

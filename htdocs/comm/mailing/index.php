@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -101,7 +101,7 @@ $handle = opendir($dir);
 
 if (is_resource($handle)) {
 	while (($file = readdir($handle)) !== false) {
-		if (substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS') {
+		if (dol_substr($file, 0, 1) != '.' && dol_substr($file, 0, 3) != 'CVS') {
 			if (preg_match("/(.*)\.(.*)\.(.*)/i", $file, $reg)) {
 				$modulename = $reg[1];
 				if ($modulename == 'example') {
@@ -166,10 +166,10 @@ print '</div><div class="secondcolumn fichehalfright boxhalfright" id="boxhalfri
  */
 
 $limit = 10;
-$sql  = "SELECT m.rowid, m.titre as title, m.nbemail, m.statut as status, m.date_creat, m.messtype";
+$sql  = "SELECT m.rowid, m.titre as title, m.nbemail, m.statut as status, m.date_creation, m.messtype";
 $sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
 $sql .= " WHERE m.entity = ".((int) $conf->entity);
-$sql .= " ORDER BY m.date_creat DESC";
+$sql .= " ORDER BY m.date_creation DESC";
 $sql .= $db->plimit($limit);
 
 $result = $db->query($sql);
@@ -208,7 +208,7 @@ if ($result) {
 			if (getDolGlobalInt('EMAILINGS_SUPPORT_ALSO_SMS')) {
 				print '<td class="center">'.dol_escape_htmltag($obj->messtype).'</td>';
 			}
-			print '<td class="center">'.dol_print_date($db->jdate($obj->date_creat), 'day').'</td>';
+			print '<td class="center">'.dol_print_date($db->jdate($obj->date_creation), 'day').'</td>';
 			print '<td class="center">'.($obj->nbemail ? (int) $obj->nbemail : "0").'</td>';
 			print '<td class="right">'.$mailstatic->LibStatut($obj->status, 5).'</td>';
 			print '</tr>';

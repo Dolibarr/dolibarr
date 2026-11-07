@@ -186,14 +186,14 @@ abstract class CommonDocGenerator
 	/**
 	 * Local tax rates Array[tax_type][tax_rate]
 	 *
-	 * @var array<int,array<string,float>>
+	 * @var array<int|string,array<string,float>>
 	 */
 	public $localtax1;
 
 	/**
 	 * Local tax rates Array[tax_type][tax_rate]
 	 *
-	 * @var array<int,array<string,float>>
+	 * @var array<int|string,array<string,float>>
 	 */
 	public $localtax2;
 
@@ -224,7 +224,7 @@ abstract class CommonDocGenerator
 	public $phpmin = array(7, 1);
 
 	/**
-	 * @var array<string,array{rank:int,width:float|false,status:bool|int<0,1>,border-left?:bool,title:array{textkey:string,label?:string,align?:string,padding?:array{0:float,1:float,2:float,3:float}},content?:array{align?:string,padding?:array{0:float,1:float,2:float,3:float}}}>	Array of document table columns
+	 * @var array<string,array{rank:int,width:float|int|false,status:bool|int<0,1>,border-left?:bool,title:array{textkey:string,label?:string,align?:string,padding?:array{0:float|int,1:float|int,2:float|int,3:float|int}},content?:array{align?:string,padding?:array{0:float|int,1:float|int,2:float|int,3:float|int}}}>	Array of document table columns
 	 */
 	public $cols;
 
@@ -409,6 +409,22 @@ abstract class CommonDocGenerator
 			'mymember_gender' => (string) $member->gender,
 			'mymember_birth_locale' => dol_print_date($member->birth, 'day', 'tzuser', $outputlangs),
 			'mymember_birth' => dol_print_date($member->birth, 'day', 'tzuser'),
+			'mymember_ref' => (string) $member->ref,
+			'mymember_civility' => (string) $member->civility,
+			'mymember_company' => (string) $member->company,
+			'mymember_morphy' => $member->getmorphylib((string) $member->morphy),
+			'mymember_type' => (string) $member->type,
+			'mymember_status' => $member->getLibStatut(1),
+			'mymember_note_public' => (string) $member->note_public,
+			'mymember_datevalid_locale' => dol_print_date($member->datevalid, 'day', 'tzuser', $outputlangs),
+			'mymember_datevalid' => dol_print_date($member->datevalid, 'day', 'tzuser'),
+			'mymember_datefin_locale' => dol_print_date($member->datefin, 'day', 'tzuser', $outputlangs),
+			'mymember_datefin' => dol_print_date($member->datefin, 'day', 'tzuser'),
+			'mymember_first_subscription_date_locale' => dol_print_date($member->first_subscription_date, 'day', 'tzuser', $outputlangs),
+			'mymember_first_subscription_date' => dol_print_date($member->first_subscription_date, 'day', 'tzuser'),
+			'mymember_last_subscription_date_locale' => dol_print_date($member->last_subscription_date, 'day', 'tzuser', $outputlangs),
+			'mymember_last_subscription_date' => dol_print_date($member->last_subscription_date, 'day', 'tzuser'),
+			'mymember_last_subscription_amount' => price($member->last_subscription_amount, 0, $outputlangs),
 		);
 		// Retrieve extrafields
 		if (is_array($member->array_options) && count($member->array_options)) {
@@ -891,8 +907,9 @@ abstract class CommonDocGenerator
 			'line_up_locale' => price($line->subprice, 0, $outputlangs),
 			'line_total_up' => price2num($line->subprice * (float) $line->qty),
 			'line_total_up_locale' => price($line->subprice * (float) $line->qty, 0, $outputlangs),
-			'line_qty' => $line->qty,
-			'line_qty_locale' => price($line->qty),
+			// A title or subtotal line of the Subtotals module (special_code 3) carries the level in qty, not a quantity. The PDF hides it, see pdf_getlineqty().
+			'line_qty' => (empty($line->special_code) || $line->special_code != 3) ? $line->qty : '',
+			'line_qty_locale' => (empty($line->special_code) || $line->special_code != 3) ? price($line->qty) : '',
 			'line_discount_percent' => ($line->remise_percent ? $line->remise_percent.'%' : ''),
 			'line_price_ht' => price2num($line->total_ht),
 			'line_price_ttc' => price2num($line->total_ttc),
@@ -1591,7 +1608,9 @@ abstract class CommonDocGenerator
 			$columnText = $hookmanager->resArray['columnText'];
 		}
 		if ($reshook < 0) {
-			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			$this->error = $hookmanager->error;
+			$this->errors = $hookmanager->errors;
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
 		}
 		if (!$reshook || $reshook > 0) {
 			if (empty($columnText)) {
@@ -1667,7 +1686,9 @@ abstract class CommonDocGenerator
 		);
 		$reshook = $hookmanager->executeHooks('printColDescContent', $parameters, $this); // Note that $action and $object may have been modified by hook
 		if ($reshook < 0) {
-			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			$this->error = $hookmanager->error;
+			$this->errors = $hookmanager->errors;
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
 		}
 	}
 
@@ -1735,7 +1756,9 @@ abstract class CommonDocGenerator
 		);
 		$reshook = $hookmanager->executeHooks('getPDFExtrafieldContent', $parameters, $this); // Note that $action and $object may have been modified by hook
 		if ($reshook < 0) {
-			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			$this->error = $hookmanager->error;
+			$this->errors = $hookmanager->errors;
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
 		}
 		if ($reshook) {
 			$extrafieldOutputContent = $hookmanager->resPrint;
@@ -1992,7 +2015,9 @@ abstract class CommonDocGenerator
 
 			$reshook = $hookmanager->executeHooks('pdfTabTitles', $parameters, $this); // Note that $object may have been modified by hook
 			if ($reshook < 0) {
-				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				$this->error = $hookmanager->error;
+				$this->errors = $hookmanager->errors;
+				dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
 			} elseif (empty($reshook)) {
 				if (!$this->getColumnStatus($colKey)) {
 					continue;
@@ -2012,6 +2037,9 @@ abstract class CommonDocGenerator
 
 					// Add space for lines (more if we need to show a second alternative language)
 					global $outputlangsbis;
+					/** @var Translate $outputlangsbis */
+					'@phan-var-force Translate $outputlangsbis';
+
 					if (is_object($outputlangsbis)) {
 						// set cell padding with column title definition
 						$pdf->setCellPaddings($colDef['title']['padding'][3], $colDef['title']['padding'][0], $colDef['title']['padding'][1], 0.5);
@@ -2183,5 +2211,26 @@ abstract class CommonDocGenerator
 			),
 		);
 		*/
+	}
+
+	/**
+	 * Return if the terms of sale file must be concatenated to the generated document.
+	 * Option MAIN_PDF_ADD_TERMSOFSALE_xxx: 0 = never, 1 = added by default, 2 = not added by default.
+	 * The choice made on the document generation form (moreparams 'addtermsofsale') overrides the default.
+	 *
+	 * @param	CommonObject	$object		Object the document is generated for
+	 * @param	string			$type		Type of document: 'PROPAL', 'ORDER', 'CONTRACT' or 'INVOICE'
+	 * @return	bool						True if the terms of sale file must be added
+	 */
+	public function mustAddTermsOfSale($object, $type)
+	{
+		$option = getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_'.$type);
+		if (empty($option)) {
+			return false;
+		}
+		if (isset($object->context['moreparams']['addtermsofsale'])) {
+			return !empty($object->context['moreparams']['addtermsofsale']);
+		}
+		return ($option == 1);
 	}
 }

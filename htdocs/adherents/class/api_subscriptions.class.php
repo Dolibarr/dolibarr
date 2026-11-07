@@ -75,6 +75,11 @@ class Subscriptions extends DolibarrApi
 			throw new RestException(404, 'Subscription not found');
 		}
 
+		// A subscription has no entity, the entity is the one of its member
+		if (!DolibarrApi::_checkAccessToResource('adherent', $this->subscription->fk_adherent)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$this->subscription->fetchObjectLinked();
 
 		return $this->_cleanObjectDatas($this->subscription);
@@ -108,9 +113,12 @@ class Subscriptions extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$sql = "SELECT rowid";
+		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."subscription as t";
-		$sql .= ' WHERE 1 = 1';
+		// llx_subscription carries no entity column, the entity of a subscription is the one of its member,
+		// so the restriction goes through llx_adherent, as adherents/subscription/list.php does.
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."adherent as d ON d.rowid = t.fk_adherent";
+		$sql .= ' WHERE d.entity IN ('.getEntity('adherent').')';
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
@@ -121,7 +129,7 @@ class Subscriptions extends DolibarrApi
 		}
 
 		//this query will return total orders with the filters given
-		$sqlTotals = str_replace('SELECT rowid', 'SELECT count(rowid) as total', $sql);
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -189,6 +197,11 @@ class Subscriptions extends DolibarrApi
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
 
+		// The member of the new subscription must be a member of an entity the user can access
+		if (!empty($request_data['fk_adherent']) && !DolibarrApi::_checkAccessToResource('adherent', (int) $request_data['fk_adherent'])) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$subscription = new Subscription($this->db);
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
@@ -220,7 +233,7 @@ class Subscriptions extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('adherent', 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'creer')) {
 			throw new RestException(403);
 		}
 
@@ -228,6 +241,11 @@ class Subscriptions extends DolibarrApi
 		$result = $subscription->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Subscription not found');
+		}
+
+		// A subscription has no entity, the entity is the one of its member
+		if (!DolibarrApi::_checkAccessToResource('adherent', $subscription->fk_adherent)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		foreach ($request_data as $field => $value) {
@@ -252,7 +270,7 @@ class Subscriptions extends DolibarrApi
 		if ($subscription->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, 'Error when updating contribution: '.$subscription->error);
+			throw new RestException(500, 'Error when updating contribution: '.$subscription->errorsToString());
 		}
 	}
 
@@ -279,6 +297,11 @@ class Subscriptions extends DolibarrApi
 		$result = $subscription->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Subscription not found');
+		}
+
+		// A subscription has no entity, the entity is the one of its member
+		if (!DolibarrApi::_checkAccessToResource('adherent', $subscription->fk_adherent)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$res = $subscription->delete(DolibarrApiAccess::$user);

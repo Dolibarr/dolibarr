@@ -23,15 +23,14 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+global $conf,$user,$langs,$db,$mysoc;
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/admin.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/prelevement/class/bonprelevement.class.php';
 require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.facture.class.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/companybankaccount.class.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/bank/class/account.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -185,16 +184,13 @@ class BonVirementTest extends CommonClassTest
 	}
 
 	/**
-	 * Constructor
-	 * We save global variables into local variables
+	 * Init phpunit tests
 	 *
-	 * @param string       $name       Name
-	 * @param array<mixed> $data      Test data
-	 * @param string       $dataName   Test data name.
+	 * @return void
 	 */
-	public function __construct($name = null, array $data = array(), $dataName = '')
+	protected function setUp(): void
 	{
-		parent::__construct($name, $data, $dataName);
+		parent::setUp();
 
 		// This const is tested in prelevement_check_config(), it SHOULD be set.
 		$this->savconf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT = self::$fkBankAccount;

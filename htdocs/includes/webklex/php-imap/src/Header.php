@@ -173,13 +173,18 @@ class Header {
      * @return string|null
      */
     public function getBoundary(){
-        $boundary = $this->find("/boundary\=(.*)/i");
-
-        if ($boundary === null) {
+        // @CHANGE DOL Fix #40907 (see dev/dolibarr_changes.txt)
+        // Match a quoted boundary ("...") or an unquoted token, stopping at the first ; or whitespace,
+        // so following Content-Type parameters on the same line (e.g. boundary="X"; type="...") are not
+        // captured into the boundary. A greedy /boundary=(.*)/ would swallow them and break MIME splitting.
+        if (!preg_match('/boundary\s*=\s*(?:"([^"]*)"|([^;\s]+))/i', $this->raw, $matches)) {
             return null;
         }
 
-        return $this->clearBoundaryString($boundary);
+        $boundary = (isset($matches[2]) && $matches[2] !== '') ? $matches[2] : $matches[1];
+        $boundary = $this->clearBoundaryString($boundary);
+
+        return $boundary !== '' ? $boundary : null;
     }
 
     /**

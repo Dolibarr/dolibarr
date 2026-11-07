@@ -187,13 +187,15 @@ function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
 	//$metric=$arrayformat['unit'];
 
 	//$pdfa = false; // PDF default version
-	$pdfa = getDolGlobalInt('PDF_USE_A', 0); 	// PDF/A-1 ou PDF/A-3
+	$pdfa = getDolGlobalInt('PDF_USE_A', 0); 	// 0=PDF 1.7, 1=PDF 1.4/A-1b ou 3=PDF 1.7/A-3b
 
 	if (!getDolGlobalString('MAIN_DISABLE_TCPDI') && class_exists('TCPDI')) {
 		$pdf = new TCPDI($pagetype, $metric, $format, true, 'UTF-8', false, $pdfa);
 	} else {
 		$pdf = new TCPDF($pagetype, $metric, $format, true, 'UTF-8', false, $pdfa);
 	}
+	// Allow "file://..." image src values (used to embed local server paths translated from a public URL)
+	$pdf->setAllowLocalFiles(true);
 
 	// Protection and encryption of pdf
 	if (getDolGlobalString('PDF_SECURITY_ENCRYPTION')) {
@@ -472,18 +474,19 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
  *   	@param  Societe|string|null   $targetcompany		Target company object
  *      @param  Contact|string|null	  $targetcontact	    Target contact object
  * 		@param	int			          $usecontact		    Use contact instead of company
- * 		@param	string  	          $mode				    Address type ('source', 'target', 'targetwithdetails', 'targetwithdetails_xxx': target but include also phone/fax/email/url)
+ * 		@param	string  	          $mode				    Address type ('source', 'target', 'targetshipping', 'targetwithdetails', 'targetwithdetails_xxx': target but include also phone/fax/email/url)
  *      @param  ?CommonObject         $object               Object we want to build document for
+ *      @param   string               $type                 Type of address ('BILLING' or 'SHIPPING')
  * 		@return	string|int				    		        String with full address or -1 if KO
  */
-function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $targetcontact = '', $usecontact = 0, $mode = 'source', $object = null)
+function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $targetcontact = '', $usecontact = 0, $mode = 'source', $object = null, $type = 'BILLING')
 {
 	global $hookmanager;
 
 	if ($mode == 'source' && !is_object($sourcecompany)) {
 		return -1;
 	}
-	if ($mode == 'target' && !is_object($targetcompany)) {
+	if (($mode == 'target' || $mode == 'targetshipping') && !is_object($targetcompany)) {
 		return -1;
 	}
 
@@ -497,7 +500,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 	$reshook = 0;
 	$stringaddress = '';
 	if (is_object($hookmanager)) {
-		$parameters = array('sourcecompany' => &$sourcecompany, 'targetcompany' => &$targetcompany, 'targetcontact' => &$targetcontact, 'outputlangs' => $outputlangs, 'mode' => $mode, 'usecontact' => $usecontact);
+		$parameters = array('sourcecompany' => &$sourcecompany, 'targetcompany' => &$targetcompany, 'targetcontact' => &$targetcontact, 'outputlangs' => $outputlangs, 'mode' => $mode, 'usecontact' => $usecontact, 'type' => $type);
 		$action = '';
 		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 		$reshook = $hookmanager->executeHooks('pdf_build_address', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -592,7 +595,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 			}
 		}
 
-		if ($mode == 'target' || preg_match('/targetwithdetails/', $mode)) {
+		if ($mode == 'target' || $mode == 'targetshipping' || preg_match('/targetwithdetails/', $mode)) {
 			if ($usecontact && (is_object($targetcontact))) {
 				$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset($targetcontact->getFullName($outputlangs, 1));
 
@@ -702,7 +705,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 			}
 
 			// Intra VAT
-			if (!getDolGlobalString('MAIN_TVAINTRA_NOT_IN_ADDRESS')) {
+			if ($type == 'BILLING' && !getDolGlobalString('MAIN_TVAINTRA_NOT_IN_ADDRESS')) {
 				if ($usecontact && is_object($targetcontact) && getDolGlobalInt('MAIN_USE_COMPANY_NAME_OF_CONTACT')) {
 					$targetcontact->fetch_thirdparty();
 					if (!empty($targetcontact->thirdparty->id) && $targetcontact->thirdparty->tva_intra) {
@@ -720,47 +723,49 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 			}
 
 			// Professional Ids
-			if (getDolGlobalString('MAIN_PROFID1_IN_ADDRESS') && !empty($targetcompany->idprof1)) {
-				$tmp = $outputlangs->transcountrynoentities("ProfId1", $targetcompany->country_code);
-				if (preg_match('/\((.+)\)/', $tmp, $reg)) {
-					$tmp = $reg[1];
+			if ($type == 'BILLING') {
+				if (getDolGlobalString('MAIN_PROFID1_IN_ADDRESS') && !empty($targetcompany->idprof1)) {
+					$tmp = $outputlangs->transcountrynoentities("ProfId1", $targetcompany->country_code);
+					if (preg_match('/\((.+)\)/', $tmp, $reg)) {
+						$tmp = $reg[1];
+					}
+					$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof1);
 				}
-				$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof1);
-			}
-			if (getDolGlobalString('MAIN_PROFID2_IN_ADDRESS') && !empty($targetcompany->idprof2)) {
-				$tmp = $outputlangs->transcountrynoentities("ProfId2", $targetcompany->country_code);
-				if (preg_match('/\((.+)\)/', $tmp, $reg)) {
-					$tmp = $reg[1];
+				if (getDolGlobalString('MAIN_PROFID2_IN_ADDRESS') && !empty($targetcompany->idprof2)) {
+					$tmp = $outputlangs->transcountrynoentities("ProfId2", $targetcompany->country_code);
+					if (preg_match('/\((.+)\)/', $tmp, $reg)) {
+						$tmp = $reg[1];
+					}
+					$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof2);
 				}
-				$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof2);
-			}
-			if (getDolGlobalString('MAIN_PROFID3_IN_ADDRESS') && !empty($targetcompany->idprof3)) {
-				$tmp = $outputlangs->transcountrynoentities("ProfId3", $targetcompany->country_code);
-				if (preg_match('/\((.+)\)/', $tmp, $reg)) {
-					$tmp = $reg[1];
+				if (getDolGlobalString('MAIN_PROFID3_IN_ADDRESS') && !empty($targetcompany->idprof3)) {
+					$tmp = $outputlangs->transcountrynoentities("ProfId3", $targetcompany->country_code);
+					if (preg_match('/\((.+)\)/', $tmp, $reg)) {
+						$tmp = $reg[1];
+					}
+					$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof3);
 				}
-				$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof3);
-			}
-			if (getDolGlobalString('MAIN_PROFID4_IN_ADDRESS') && !empty($targetcompany->idprof4)) {
-				$tmp = $outputlangs->transcountrynoentities("ProfId4", $targetcompany->country_code);
-				if (preg_match('/\((.+)\)/', $tmp, $reg)) {
-					$tmp = $reg[1];
+				if (getDolGlobalString('MAIN_PROFID4_IN_ADDRESS') && !empty($targetcompany->idprof4)) {
+					$tmp = $outputlangs->transcountrynoentities("ProfId4", $targetcompany->country_code);
+					if (preg_match('/\((.+)\)/', $tmp, $reg)) {
+						$tmp = $reg[1];
+					}
+					$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof4);
 				}
-				$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof4);
-			}
-			if (getDolGlobalString('MAIN_PROFID5_IN_ADDRESS') && !empty($targetcompany->idprof5)) {
-				$tmp = $outputlangs->transcountrynoentities("ProfId5", $targetcompany->country_code);
-				if (preg_match('/\((.+)\)/', $tmp, $reg)) {
-					$tmp = $reg[1];
+				if (getDolGlobalString('MAIN_PROFID5_IN_ADDRESS') && !empty($targetcompany->idprof5)) {
+					$tmp = $outputlangs->transcountrynoentities("ProfId5", $targetcompany->country_code);
+					if (preg_match('/\((.+)\)/', $tmp, $reg)) {
+						$tmp = $reg[1];
+					}
+					$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof5);
 				}
-				$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof5);
-			}
-			if (getDolGlobalString('MAIN_PROFID6_IN_ADDRESS') && !empty($targetcompany->idprof6)) {
-				$tmp = $outputlangs->transcountrynoentities("ProfId6", $targetcompany->country_code);
-				if (preg_match('/\((.+)\)/', $tmp, $reg)) {
-					$tmp = $reg[1];
+				if (getDolGlobalString('MAIN_PROFID6_IN_ADDRESS') && !empty($targetcompany->idprof6)) {
+					$tmp = $outputlangs->transcountrynoentities("ProfId6", $targetcompany->country_code);
+					if (preg_match('/\((.+)\)/', $tmp, $reg)) {
+						$tmp = $reg[1];
+					}
+					$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof6);
 				}
-				$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof6);
 			}
 
 			// Public note
@@ -768,7 +773,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 				if ($mode == 'source' && !empty($sourcecompany->note_public)) {
 					$stringaddress .= ($stringaddress ? "\n" : '').dol_string_nohtmltag($sourcecompany->note_public);
 				}
-				if (($mode == 'target' || preg_match('/targetwithdetails/', $mode)) && !empty($targetcompany->note_public)) {
+				if (($mode == 'target' || $mode == 'targetshipping' || preg_match('/targetwithdetails/', $mode)) && !empty($targetcompany->note_public)) {
 					$stringaddress .= ($stringaddress ? "\n" : '').dol_string_nohtmltag($targetcompany->note_public);
 				}
 			}
@@ -1269,6 +1274,8 @@ function pdfCertifMention($pdf, $outputlangs, $seller, $default_font_size, &$pos
 
 /**
  *  Show bank information for PDF generation
+ *  The hook 'pdf_bank' can replace this block (return > 0). A hook that does it draws the block itself and gives the Y position
+ *  reached in $hookmanager->resArray['posy'] (if not set, the Y position received is returned).
  *
  *  @param	TCPDF		$pdf            		Object PDF
  *  @param  Translate	$outputlangs     		Object lang
@@ -1281,7 +1288,18 @@ function pdfCertifMention($pdf, $outputlangs, $seller, $default_font_size, &$pos
  */
 function pdf_bank($pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, $default_font_size = 10)
 {
+	global $hookmanager;
+
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbank.class.php';
+
+	if (is_object($hookmanager)) {
+		$parameters = array('pdf' => $pdf, 'outputlangs' => $outputlangs, 'curx' => $curx, 'cury' => $cury, 'onlynumber' => $onlynumber, 'default_font_size' => $default_font_size);
+		$action = '';
+		$reshook = $hookmanager->executeHooks('pdf_bank', $parameters, $account, $action); // Note that $action and $account may have been modified by some hooks
+		if ($reshook > 0) {
+			return isset($hookmanager->resArray['posy']) ? (float) $hookmanager->resArray['posy'] : $cury;
+		}
+	}
 
 	$diffsizetitle = getDolGlobalInt('PDF_DIFFSIZE_TITLE', 3);
 	$diffsizecontent = getDolGlobalInt('PDF_DIFFSIZE_CONTENT', 4);
@@ -1363,7 +1381,7 @@ function pdf_bank($pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, $
 				$pdf->SetXY($curx, $cury + 1);
 				$curx += $tmplength;
 				$pdf->SetFont('', 'B', $default_font_size - $diffsizecontent);
-				$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities($val), 0, 'C', false);
+				$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities($account->getBankFieldLabel($val)), 0, 'C', false);
 				if (empty($onlynumber)) {
 					$pdf->line($curx, $cury + 1, $curx, $cury + 7);
 				}
@@ -1678,10 +1696,12 @@ function pdf_pagefoot($pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_b
 	$posy = 0;
 	// For customized footer
 	if (is_object($hookmanager)) {
-		$parameters = array('line1' => $line1, 'line2' => $line2, 'line3' => $line3, 'line4' => $line4, 'outputlangs' => $outputlangs);
+		$parameters = array('line1' => $line1, 'line2' => $line2, 'line3' => $line3, 'line4' => $line4, 'outputlangs' => $outputlangs, 'hidefreetext' => $hidefreetext, 'pdf' => $pdf, 'pagenb' => $pdf->PageNo());
 		$action = '';
 		$hookmanager->executeHooks('pdf_pagefoot', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-		if (!empty($hookmanager->resPrint) && $hidefreetext == 0) {
+		// The footer returned by a hook replaces the default footer on the last page only (the one that shows the free text), unless
+		// the hook also returns $this->results['footeronallpages'] = 1 to replace it on all pages.
+		if (!empty($hookmanager->resPrint) && ($hidefreetext == 0 || !empty($hookmanager->resArray['footeronallpages']))) {
 			$mycustomfooter = $hookmanager->resPrint;
 			$mycustomfooterheight = pdfGetHeightForHtmlContent($pdf, dol_htmlentitiesbr($mycustomfooter, 1, 'UTF-8', 0));
 
@@ -1836,6 +1856,8 @@ function pdf_pagefoot($pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_b
 
 /**
  *	Show linked objects for PDF generation
+ *	The hook 'pdf_writeLinkedObjects' can replace this block (return > 0). A hook that does it draws the block itself and gives the
+ *	Y position reached in $hookmanager->resArray['posy'] (if not set, the current Y position of the PDF is returned).
  *
  *	@param	TCPDF		$pdf				Object PDF
  *	@param	CommonObject	$object				Object
@@ -1850,6 +1872,17 @@ function pdf_pagefoot($pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_b
  */
 function pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, $w, $h, $align, $default_font_size)
 {
+	global $hookmanager;
+
+	if (is_object($hookmanager)) {
+		$parameters = array('pdf' => $pdf, 'outputlangs' => $outputlangs, 'posx' => $posx, 'posy' => $posy, 'w' => $w, 'h' => $h, 'align' => $align, 'default_font_size' => $default_font_size);
+		$action = '';
+		$reshook = $hookmanager->executeHooks('pdf_writeLinkedObjects', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			return isset($hookmanager->resArray['posy']) ? (float) $hookmanager->resArray['posy'] : $pdf->getY();
+		}
+	}
+
 	$linkedobjects = pdf_getLinkedObjects($object, $outputlangs);	// May update $object->note_public
 
 	if (!empty($linkedobjects)) {
@@ -2033,14 +2066,30 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			// Set desc
 			// Manage HTML entities description test because $prodser->description is store with htmlentities but $desc no
 			$textwasnotmodified = false;
+			$textdiffersonlybymarkup = false;
 			if (!empty($desc) && dol_textishtml($desc) && !empty($prodser->description) && dol_textishtml($prodser->description)) {
 				$textwasnotmodified = (strpos(dol_html_entity_decode($desc, ENT_QUOTES | ENT_HTML5), dol_html_entity_decode($prodser->description, ENT_QUOTES | ENT_HTML5)) !== false);
+			} elseif (!empty($desc) && !empty($prodser->description) && dol_textishtml($desc) != dol_textishtml($prodser->description)) {
+				// One side is HTML and the other is not. This happens as soon as a line is saved while the
+				// WYSIWYG editor is enabled on line details: the plain product description becomes "<p>...</p>".
+				// Comparing the raw strings would then report a manual change and silently drop the translation,
+				// so compare the text content instead.
+				$desctextonly = trim(dol_html_entity_decode(dol_string_nohtmltag($desc, 1), ENT_QUOTES | ENT_HTML5));
+				$prodtextonly = trim(dol_html_entity_decode(dol_string_nohtmltag($prodser->description, 1), ENT_QUOTES | ENT_HTML5));
+				$textwasnotmodified = ($prodtextonly !== '' && strpos($desctextonly, $prodtextonly) !== false);
+				$textdiffersonlybymarkup = ($textwasnotmodified && $desctextonly === $prodtextonly);
 			} else {
 				$textwasnotmodified = ($desc == $prodser->description);
 			}
 			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["description"])) {
 				if ($textwasnotmodified) {
-					$desc = str_replace($prodser->description, $prodser->multilangs[$outputlangs->defaultlang]["description"], $desc);
+					if ($textdiffersonlybymarkup && strpos($desc, $prodser->description) === false) {
+						// Same text, but wrapped in tags or written with HTML entities: the product description
+						// is not present verbatim, so the str_replace below would find nothing to replace.
+						$desc = $prodser->multilangs[$outputlangs->defaultlang]["description"];
+					} else {
+						$desc = str_replace($prodser->description, $prodser->multilangs[$outputlangs->defaultlang]["description"], $desc);
+					}
 				} elseif ($translatealsoifmodified) {
 					$desc = $prodser->multilangs[$outputlangs->defaultlang]["description"];
 				}
@@ -2900,7 +2949,7 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
 					// new mode: we need to compute the total (sum of previous + delta)
 					$prev_progress + $object->lines[$i]->situation_percent;
 			}
-			$result = round($result, 1).'%';
+			$result = round($result, getDolGlobalInt('INVOICE_SITUATION_PROGRESS_DECIMALS', 2)).'%';
 		}
 	}
 	return $result;
@@ -3055,10 +3104,12 @@ function pdf_getLinkedObjects($object, $outputlangs)
 			$outputlangs->load('propal');
 
 			foreach ($objects as $elementobject) {
-				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefProposal");
-				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref);
-				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DatePropal");
-				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date, 'day', '', $outputlangs);
+				if (canDisplayLinkedObjectInPDF($object, $elementobject)) {
+					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefProposal");
+					$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref);
+					$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DatePropal");
+					$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date, 'day', '', $outputlangs);
+				}
 			}
 		} elseif ($objecttype == 'commande' || $objecttype == 'supplier_order' || $objecttype == 'order_supplier') {
 			$optiontohidelinkedorders = "PDF_HIDE_LINKED_ORDERS_ON_SAME_THIRDPARTY";
@@ -3329,6 +3380,8 @@ function pdfExtractMetadata($file, $field = 'Keywords')
 
 /**
  * Render subtotals line with a colored background and adapted text color .
+ * The hook 'pdf_render_subtotals' can replace this rendering (return > 0). A hook that does it must write the description
+ * of the line and call $generator->setAfterColsLinePositionsData('desc', ...) itself, and must not open/close a PDF transaction.
  *
  * @param  TCPDF              $pdf                PDF instance
  * @param  CommonDocGenerator $generator          Generator object
@@ -3357,9 +3410,21 @@ function pdf_render_subtotals(
 	bool               $isSubtotal = false,
 	bool               $applySubtotalLogic = true
 ) {
+	global $hookmanager;
+
+	if (is_object($hookmanager)) {
+		$parameters = array('pdf' => $pdf, 'generator' => $generator, 'curY' => $curY, 'i' => $i, 'outputlangs' => $outputlangs, 'hideref' => $hideref, 'hidedesc' => $hidedesc, 'bgColor' => $bgColor, 'isSubtotal' => $isSubtotal, 'applySubtotalLogic' => $applySubtotalLogic);
+		$action = '';
+		$reshook = $hookmanager->executeHooks('pdf_render_subtotals', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			return;
+		}
+	}
+
 	$savePage = $pdf->getPage();
 	$saveX = $pdf->GetX();
 	$prevAlign = $generator->cols['desc']['content']['align'];
+	$prevDesc = $object->lines[$i]->desc;
 
 	if ($isSubtotal && $applySubtotalLogic && $object->lines[$i]->qty < 0) {
 		$outputlangs->load("subtotals");
@@ -3383,6 +3448,13 @@ function pdf_render_subtotals(
 	} else {
 		$pdf->MultiCell($width, $pdf->getPageHeight() - $pdf->getBreakMargin() - $curY, '', 0, '', true);
 
+		// The page reached by the measuring pass above was discarded along with
+		// the transaction, and the MultiCell only recreates it when some room was
+		// left to fill. A line starting below the break margin leaves none, so
+		// the page must be added before it can be selected.
+		while ($pdf->getNumPages() < $pageAfter) {
+			$pdf->AddPage();
+		}
 		$pdf->setPage($pageAfter);
 		$pdf->SetXY($generator->marge_gauche, $pdf->getMargins()['top']);
 		$pdf->MultiCell($width, max(0, $yAfter - $pdf->getMargins()['top']), '', 0, '', true);
@@ -3390,10 +3462,94 @@ function pdf_render_subtotals(
 		$pdf->setPage($savePage);
 	}
 
-	$pdf->SetTextColor(colorIsLight(implode(',', $bgColor)));
+	// Dark text on a light background, white text on a dark one (a single argument of SetTextColor() is a gray level 0-255)
+	$textGray = (colorIsLight(implode(',', $bgColor)) === 0) ? 255 : 0;
+	$pdf->SetTextColor($textGray);
 	$pdf->SetXY($saveX, $curY);
 	$generator->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
 	$generator->setAfterColsLinePositionsData('desc', $pdf->GetY(), $pdf->getPage());
 
 	$generator->cols['desc']['content']['align'] = $prevAlign;
+	// The text "Subtotal of ..." must not stay in the line: a second generation of the document would prefix it again
+	$object->lines[$i]->desc = $prevDesc;
+}
+
+
+/**
+ * Truncates text to fit a specified width in TCPDF, with configurable ellipsis position.
+ *
+ * @param TCPDF  $pdf           TCPDF instance.
+ * @param string $text          Text to truncate.
+ * @param float  $max_width     Maximum allowed width in user units.
+ * @param int|'left'|'right'    $ellipsis_pos  Ellipsis position: 0 = none, < 0 = start, > 0 = end.
+ * @param string $ellipsis      Ellipsis string (default: UTF-8 ellipsis '\u{2026}').
+ * @return string Truncated text with ellipsis if necessary.
+ */
+function pdf_truncate_text($pdf, $text, $max_width, $ellipsis_pos = 1, $ellipsis = "\u{2026}")
+{
+	if ($ellipsis_pos == 0) {
+		$ellipsis = '';
+	}
+	if ($ellipsis_pos == 'left') {
+		// Keep left part of the string
+		$ellipsis_pos = 1;
+	}
+	if ($ellipsis_pos == 'right') {
+		// Keep right part of the string
+		$ellipsis_pos = 0;
+	}
+
+	$ellipsis_width = $pdf->GetStringWidth($ellipsis);
+	$available_width = $max_width - $ellipsis_width;
+
+	if ($available_width <= 0) {
+		return ($ellipsis_pos <= 0) ? $ellipsis : '';
+	}
+
+	$text_width = $pdf->GetStringWidth($text);
+	if ($text_width <= $max_width) {
+		return $text;
+	}
+
+	if ($ellipsis_pos < 0) {
+		// Ellipsis at start: truncate from the beginning
+		$low = 0;
+		$high = dol_strlen($text, 'UTF-8');
+		$best = $high;
+
+		while ($low <= $high) {
+			$mid = (int) (($low + $high) / 2);
+			$substring = dol_substr($text, $mid, null, 'UTF-8');
+			$substring_width = $pdf->GetStringWidth($substring);
+
+			if ($substring_width <= $available_width) {
+				$best = $mid;
+				$high = $mid - 1;
+			} else {
+				$low = $mid + 1;
+			}
+		}
+
+		return $ellipsis . dol_substr($text, $best, null, 'UTF-8');
+	} else {
+		// Ellipsis at end (default)
+		$low = 0;
+		$high = dol_strlen($text, 'UTF-8');
+		$best = 0;
+
+		while ($low <= $high) {
+			$mid = (int) (($low + $high) / 2);
+			$substring = dol_substr($text, 0, $mid, 'UTF-8');
+			$substring_width = $pdf->GetStringWidth($substring);
+
+			if ($substring_width <= $available_width) {
+				$best = $mid;
+				$low = $mid + 1;
+			} else {
+				$high = $mid - 1;
+			}
+		}
+
+		return dol_substr($text, 0, $best, 'UTF-8') . $ellipsis;
+	}
 }

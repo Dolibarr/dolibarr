@@ -5,9 +5,9 @@
  * Copyright (C) 2014-2025  Charlene BENKE           <charlene@patas-monkey.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019       Pierre Ardoin           <mapiolca@me.com>
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +42,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/dashboard.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
 $type = GETPOST("type", 'intcomma');
@@ -73,18 +74,8 @@ if ($type == '0') {
 // Load $resultboxes
 $resultboxes = FormOther::getBoxesArea($user, "4");
 
-if (GETPOST('addbox')) {
-	// Add box (when submit is done from a form when ajax disabled)
-	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone = GETPOSTINT('areacode');
-	$userid = GETPOSTINT('userid');
-	$boxorder = GETPOST('boxorder', 'aZ09');
-	$boxorder .= GETPOST('boxcombo', 'aZ09');
-	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
-	if ($result > 0) {
-		setEventMessages($langs->trans("BoxAdded"), null);
-	}
-}
+// Add box (when submit is done from a form when ajax disabled)
+include DOL_DOCUMENT_ROOT.'/core/actions_addbox.inc.php';
 
 $max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
 
@@ -198,50 +189,18 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 		}
 	}
 
-	if ($conf->use_javascript_ajax) {
-		$graph .= '<div class="div-table-responsive-no-min">';
-		$graph .= '<table class="noborder centpercent">';
-		$graph .= '<tr class="liste_titre"><th>'.$langs->trans("Statistics").' - '.$langs->trans("ProductStatus").'</th></tr>';
-		$graph .= '<tr><td class="center nopaddingleftimp nopaddingrightimp">';
-
-		$SommeA = $prodser[0]['sell'];
-		$SommeB = $prodser[0]['buy'];
-		$SommeC = $prodser[0]['none'];
-		$SommeD = $prodser[1]['sell'];
-		$SommeE = $prodser[1]['buy'];
-		$SommeF = $prodser[1]['none'];
-		$total = 0;
-		$dataval = array();
-		$datalabels = array();
-		$i = 0;
-
-		$total = $SommeA + $SommeB + $SommeC + $SommeD + $SommeE + $SommeF;
-		$dataseries = array();
-		if (isModEnabled("product")) {
-			$dataseries[] = array($langs->transnoentitiesnoconv("ProductsOnSale"), round($SommeA));
-			$dataseries[] = array($langs->transnoentitiesnoconv("ProductsOnPurchase"), round($SommeB));
-			$dataseries[] = array($langs->transnoentitiesnoconv("ProductsNotOnSell"), round($SommeC));
-		}
-		if (isModEnabled("service")) {
-			$dataseries[] = array($langs->transnoentitiesnoconv("ServicesOnSale"), round($SommeD));
-			$dataseries[] = array($langs->transnoentitiesnoconv("ServicesOnPurchase"), round($SommeE));
-			$dataseries[] = array($langs->transnoentitiesnoconv("ServicesNotOnSell"), round($SommeF));
-		}
-		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-		$dolgraph = new DolGraph();
-		$dolgraph->SetData($dataseries);
-		$dolgraph->setShowLegend(2);
-		$dolgraph->setShowPercent(0);
-		$dolgraph->SetType(array('pie'));
-		$dolgraph->setHeight('200');
-		$dolgraph->draw('idgraphstatus');
-		$graph .= $dolgraph->show($total ? 0 : 1);
-
-		$graph .= '</td></tr>';
-		$graph .= '</table>';
-		$graph .= '</div>';
-		$graph .= '<br>';
+	$series = array();
+	if (isModEnabled("product")) {
+		$series[] = array('label' => $langs->transnoentitiesnoconv("ProductsOnSale"), 'nb' => round($prodser[0]['sell']));
+		$series[] = array('label' => $langs->transnoentitiesnoconv("ProductsOnPurchase"), 'nb' => round($prodser[0]['buy']));
+		$series[] = array('label' => $langs->transnoentitiesnoconv("ProductsNotOnSell"), 'nb' => round($prodser[0]['none']));
 	}
+	if (isModEnabled("service")) {
+		$series[] = array('label' => $langs->transnoentitiesnoconv("ServicesOnSale"), 'nb' => round($prodser[1]['sell']));
+		$series[] = array('label' => $langs->transnoentitiesnoconv("ServicesOnPurchase"), 'nb' => round($prodser[1]['buy']));
+		$series[] = array('label' => $langs->transnoentitiesnoconv("ServicesNotOnSell"), 'nb' => round($prodser[1]['none']));
+	}
+	$graph .= getStatusPieChart($langs->trans("Statistics").' - '.$langs->trans("ProductStatus"), $series, array('showpercent' => 0, 'total' => false));
 }
 
 $graphcat = '';
@@ -730,7 +689,7 @@ function activitytrim($product_type)
 	global $conf, $langs, $db;
 
 	// We display the last 3 years
-	$yearofbegindate = (int) date('Y', dol_time_plus_duree(time(), -3, "y"));
+	$yearofbegindate = (int) date('Y', dol_time_plus_duree(dol_now(), -3, "y"));
 	$out = '';
 	// breakdown by quarter
 	$sql = "SELECT DATE_FORMAT(p.datep,'%Y') as annee, DATE_FORMAT(p.datep,'%m') as mois, SUM(fd.total_ht) as mnttot";

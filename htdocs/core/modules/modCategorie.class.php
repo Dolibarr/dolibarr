@@ -358,7 +358,8 @@ class modCategorie extends DolibarrModules
 		}
 
 		// 4 Contacts
-		if (isModEnabled("contact")) {
+		// Contacts belong to the societe module, there is no "contact" module to enable
+		if (isModEnabled("societe")) {
 			$categcode = 'contact';
 			$r++;
 			$this->export_code[$r] = $this->rights_class.'_4_'.$categcode;
@@ -946,6 +947,9 @@ class modCategorie extends DolibarrModules
 		}
 		if (isModEnabled("propal")) {
 			$this->_load_tables('/install/mysql/', 'propal');
+		}
+		if (isModEnabled("supplier_proposal")) {
+			$this->_load_tables('/install/mysql/', 'supplier_proposal');
 		}
 
 		// Permissions

@@ -3,7 +3,6 @@
 #
 # Global
 #
-Subtotal=Subtotaluri
 SubTotalModuleDesc=Linii de subtotal și de titlu pentru anumite documente
 #
 # Admin
@@ -12,12 +11,19 @@ SubtotalSetup=Configurare modul Subtotaluri
 MaxSubtotalLevel=Nivel maxim
 SubtotalLineBackColor=Culoarea de fundal a liniilor de nivel %s
 NotSupportedByAllPDF=Funcționează cu PDF-uri mai noi, dar nu și cu cele vechi %s
+SubtotalsPredefinedTitles=Subtotals predefined titles
+SubtotalsPredefinedTexts=Subtotals predefined texts
+SubtotalTextColumnTitle=Text
 
 #
 # Card
 #
 AddTitleLine=Adăugare linie titlu
 AddSubtotalLine=Adăugare linie subtotal
+AddTextLine=Adăugare linie text
+PredefinedTitle=Titlu predefinit
+PredefinedText=Text predefinit
+SubtotalTextContent=Conținut text
 TitleNeedDesc=Trebuie să introduci o descriere validă pentru a crea un titlu.
 TitleAddedLevelTooHigh=Nivelul titlului adăugat este prea ridicat (adăugat în schimb cu nivelul %s).
 TitleEditedLevelTooHigh=Nivelul titlului editat este prea ridicat (editat cu nivelul %s).

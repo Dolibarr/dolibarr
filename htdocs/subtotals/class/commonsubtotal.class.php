@@ -810,30 +810,60 @@ trait CommonSubtotal
 	}
 
 	/**
+	 * Return the sum of the total_ht (or multicurrency_total_ht) of the lines located above the given
+	 * subtotal line, up to (and excluding) the first title line of the same level or higher.
+	 * Deeper title lines and subtotal lines do not contribute.
+	 *
+	 * Lines are scanned by descending rang: $this->lines is not assumed to be indexed by rang - 1.
+	 *
+	 * @param object	$line			Subtotal line that needs its amount.
+	 * @param bool		$multicurrency	True to sum multicurrency_total_ht instead of total_ht.
+	 * @return float					The computed amount.
+	 *
+	 * @phan-suppress PhanUndeclaredProperty
+	 */
+	public function getSubtotalLineAmountValue($line, $multicurrency = false)
+	{
+		$field = $multicurrency ? 'multicurrency_total_ht' : 'total_ht';
+
+		$abovelines = array();
+		$aboverangs = array();
+		foreach ($this->lines as $l) {
+			if (!is_object($l) || $l->rang >= $line->rang) {
+				continue;
+			}
+			$aboverangs[] = (int) $l->rang;
+			$abovelines[] = $l;
+		}
+		// Scan the lines above the current one from the nearest to the farthest.
+		array_multisort($aboverangs, SORT_DESC, SORT_NUMERIC, $abovelines);
+
+		$final_amount = 0;
+		foreach ($abovelines as $l) {
+			if ($l->special_code == SUBTOTALS_SPECIAL_CODE && $l->qty > 0) {
+				if ($l->qty <= abs($line->qty)) {
+					break;
+				}
+				continue;
+			}
+			$final_amount += (float) $l->$field;
+		}
+
+		return $final_amount;
+	}
+
+	/**
 	 * Return the total_ht of lines that are above the current line (excluded) and that are not a subtotal line
 	 * until a title line of the same level is found
 	 *
 	 * @param object	$line	Line that needs the subtotal amount.
-	 * @return string	$total_ht
+	 * @return string			Formatted amount
 	 *
 	 * @phan-suppress PhanUndeclaredProperty
 	 */
 	public function getSubtotalLineAmount($line)
 	{
-		$final_amount = 0;
-		for ($i = $line->rang-1; $i > 0; $i--) {
-			if (is_null($this->lines[$i-1]) || $this->lines[$i-1]->rang >= $line->rang) {
-				continue;
-			}
-			if ($this->lines[$i-1]->special_code == SUBTOTALS_SPECIAL_CODE && $this->lines[$i-1]->qty > 0) {
-				if ($this->lines[$i-1]->qty <= abs($line->qty)) {
-					return price($final_amount);
-				}
-			} else {
-				$final_amount += $this->lines[$i-1]->total_ht;
-			}
-		}
-		return price($final_amount);
+		return price($this->getSubtotalLineAmountValue($line, false));
 	}
 
 	/**
@@ -841,26 +871,13 @@ trait CommonSubtotal
 	 * until a title line of the same level is found
 	 *
 	 * @param object	$line	Line that needs the subtotal amount with multicurrency mod activated.
-	 * @return string	$total_ht
+	 * @return string			Formatted amount
 	 *
 	 * @phan-suppress PhanUndeclaredProperty
 	 */
 	public function getSubtotalLineMulticurrencyAmount($line)
 	{
-		$final_amount = 0;
-		for ($i = $line->rang-1; $i > 0; $i--) {
-			if (is_null($this->lines[$i-1]) || $this->lines[$i-1]->rang >= $line->rang) {
-				continue;
-			}
-			if ($this->lines[$i-1]->special_code == SUBTOTALS_SPECIAL_CODE && $this->lines[$i-1]->qty>0) {
-				if ($this->lines[$i-1]->qty <= abs($line->qty)) {
-					return price($final_amount);
-				}
-			} else {
-				$final_amount += $this->lines[$i-1]->multicurrency_total_ht;
-			}
-		}
-		return price($final_amount);
+		return price($this->getSubtotalLineAmountValue($line, true));
 	}
 
 	/**
@@ -916,7 +933,7 @@ trait CommonSubtotal
 	/**
 	 * Retrieve the list of active predefined titles usable as description of a title line.
 	 *
-	 * @return array<string,string>	Array with the title label as both key and value, sorted alphabetically
+	 * @return array<int,string>	Array of title labels keyed by dictionary rowid, sorted alphabetically by label
 	 *
 	 * @phan-suppress PhanUndeclaredProperty
 	 * @phan-suppress PhanPluginUnknownObjectMethodCall
@@ -925,14 +942,14 @@ trait CommonSubtotal
 	{
 		$titles = array();
 
-		$sql = "SELECT label FROM ".MAIN_DB_PREFIX."c_subtotals_titles";
+		$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."c_subtotals_titles";
 		$sql .= " WHERE active = 1 AND entity IN (".getEntity('c_subtotals_titles').")";
 		$sql .= " ORDER BY label ASC";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
-				$titles[dol_escape_htmltag($obj->label)] = $obj->label;
+				$titles[(int) $obj->rowid] = $obj->label;
 			}
 		}
 

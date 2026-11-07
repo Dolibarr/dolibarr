@@ -80,6 +80,8 @@ if ($id > 0 || !empty($ref)) {
 	$ret = $object->fetch($id, $ref);
 	$isdraft = (($object->status == FactureFournisseur::STATUS_DRAFT) ? 1 : 0);
 	if ($ret > 0) {
+		$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+		$fieldid = 'rowid';	// $id is now the id of the invoice, not its ref
 		$object->fetch_thirdparty();
 	}
 }
@@ -992,7 +994,6 @@ if ($object->id > 0) {
 			$tmpuser->email = $obj->email;
 			$tmpuser->lastname = $obj->lastname;
 			$tmpuser->firstname = $obj->firstname;
-			$tmpuser->statut = $obj->user_status;
 			$tmpuser->status = $obj->user_status;
 
 			print '<tr class="oddeven">';
@@ -1128,7 +1129,6 @@ if ($object->id > 0) {
 			$tmpuser->email = $obj->email;
 			$tmpuser->lastname = $obj->lastname;
 			$tmpuser->firstname = $obj->firstname;
-			$tmpuser->statut = $obj->user_status;
 			$tmpuser->status = $obj->user_status;
 			$tmpuser->photo = $obj->user_photo;
 

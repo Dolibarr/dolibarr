@@ -272,7 +272,7 @@ report_header($name, '', $period, $periodlink, $description, $builddate, $export
 
 print '<br>';
 
-if ($refresh === true) {
+if ($refresh) {
 	print '<div class="fichecenter"><div class="fichethirdleft">';
 
 	print load_fiche_titre($langs->trans("VATSummary"), '', '');

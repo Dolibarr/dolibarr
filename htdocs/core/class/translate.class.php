@@ -411,7 +411,7 @@ class Translate
 			if ($langofdir == 'ar_AR') {
 				$langofdir = 'ar_SA'; // main parent for ar_EG is not 'ar_AR' but 'ar_SA'
 			}
-			$this->load($domain, $alt + 1, $stopafterdirection, $langofdir, 0, 0, $tabtranslatedomain, $langkey);
+			$this->load($domain, $alt + 1, $stopafterdirection, $langofdir, 0, $forceloadifalreadynotfound, $tabtranslatedomain, $langkey);
 		}
 
 		// Now we complete with reference file (en_US)
@@ -419,7 +419,7 @@ class Translate
 			// This function MUST NOT contains call to syslog
 			//dol_syslog("Translate::Load loading alternate translation file (to complete ".$this->defaultlang."/".$newdomain.".lang file)", LOG_DEBUG);
 			$langofdir = 'en_US';
-			$this->load($domain, $alt + 1, $stopafterdirection, $langofdir, 0, 0, $tabtranslatedomain, $langkey);
+			$this->load($domain, $alt + 1, $stopafterdirection, $langofdir, 0, $forceloadifalreadynotfound, $tabtranslatedomain, $langkey);
 		}
 
 		// We are in the pass of the reference file. No more files to scan to complete.
@@ -517,7 +517,9 @@ class Translate
 		$usecachekey = '';
 		// Using a memcached server
 		if (isModEnabled('memcached') && getDolGlobalString('MEMCACHED_SERVER')) {
-			$usecachekey = $newdomain . '_' . $langofdir; // Should not contains special chars
+			// The SQL below is filtered with getEntity(), so the cached result is entity dependent and the key must be too,
+			// otherwise entities with different overwrite translations share one cache entry (memcached is shared by all entities).
+			$usecachekey = $newdomain . '_' . $langofdir . '_' . str_replace(',', '-', getEntity('overwrite_trans')); // Should not contains special chars
 		} elseif (getDolGlobalInt('MAIN_OPTIMIZE_SPEED') & 0x02) {
 			// Using cache with shmop. Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
 			$usecachekey = $newdomain;

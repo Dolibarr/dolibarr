@@ -74,6 +74,9 @@ class FormOther
 	{
 		global $langs;
 
+		// $jstoexecuteonadd is the name of a js function: it is used as an id and called, so it can't contain anything else
+		$jstoexecuteonadd = sanitizeVal($jstoexecuteonadd, 'aZ09');
+
 		$out = '';
 
 		$out .= '<!-- Popup for mass barcode scanning -->'."\n";
@@ -112,7 +115,7 @@ class FormOther
 		*/
 		$out .= '<br>';
 		$out .= '<center>';
-		$out .= '<input type="submit" class="button marginleftonly marginrightonly" id ="exec'.dol_escape_js($jstoexecuteonadd).'" name="addscan" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
+		$out .= '<input type="submit" class="button marginleftonly marginrightonly" id="exec'.$jstoexecuteonadd.'" name="addscan" value="'.dolPrintHTMLForAttribute($langs->trans("Add")).'">';
 		$out .= '<input type="submit" class="button marginleftonly marginrightonly" name="cancel" value="'.dol_escape_htmltag($langs->trans("CloseWindow")).'">';
 		$out .= '</center>';
 		$out .= '<br>';
@@ -123,9 +126,9 @@ class FormOther
 		$out .= 'console.log("select choice");';
 		$out .= 'jQuery("#scantoolmessage").text("");';
 		$out .= '});'."\n";
-		$out .= '$("#exec'.dol_escape_js($jstoexecuteonadd).'").click(function(){
-			console.log("We call js to execute \''.dol_escape_js($jstoexecuteonadd).'\'");
-			'.dol_escape_js($jstoexecuteonadd).'();
+		$out .= '$(\'#exec'.$jstoexecuteonadd.'\').click(function(){
+			console.log(\'We call js to execute '.$jstoexecuteonadd.'\');
+			'.$jstoexecuteonadd.'();
 			return false;	/* We want to stay on the scan tool */
 		})';
 		$out .= '</script>';
@@ -926,7 +929,7 @@ class FormOther
 		                  }
 				        },
 						function(color, context) { console.log("close color selector"); },
-						function(color, context) { var hex = color.val(\'hex\'); console.log("new color selected in jpicker "+hex+" setpropertyonselect='.dol_escape_js($setpropertyonselect).'");';
+						function(color, context) { var hex = color.val(\'hex\'); console.log("new color selected in jpicker "+hex+\' setpropertyonselect='.dol_escape_js($setpropertyonselect).'\');';
 				if ($setpropertyonselect) {
 					$out .= 'if (originalhex == null) {';
 					$out .= ' 	originalhex = getComputedStyle(document.querySelector(":root")).getPropertyValue(\'--'.dol_escape_js($setpropertyonselect).'\');';
@@ -959,7 +962,7 @@ class FormOther
 					var originalhex = null;
 					jQuery("#colorpicker'.$prefix.'").on(\'change\', function() {
 						var hex = jQuery("#colorpicker'.$prefix.'").val();
-						console.log("new color selected in input color "+hex+" setpropertyonselect='.dol_escape_js($setpropertyonselect).'");';
+						console.log("new color selected in input color "+hex+\' setpropertyonselect='.dol_escape_js($setpropertyonselect).'\');';
 				if ($setpropertyonselect) {
 					$out .= 'if (originalhex == null) {';
 					$out .= ' 	originalhex = getComputedStyle(document.querySelector(":root")).getPropertyValue(\'--'.dol_escape_js($setpropertyonselect).'\');';
@@ -1310,7 +1313,7 @@ class FormOther
 
 		// Define selectboxlist
 		$arrayboxtoactivatelabel = array();
-		if (getDolUserString($confuserzone)) {
+		if (getDolUserString($confuserzone) && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {	// No combo list to add a widget in text browser mode
 			$boxorder = '';
 			$langs->load("boxes"); // Load label of boxes
 			foreach ($boxactivated as $box) {

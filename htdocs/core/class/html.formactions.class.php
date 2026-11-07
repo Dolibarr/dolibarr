@@ -135,7 +135,7 @@ class FormActions
                     var defaultvalue = $('#select' + htmlname).val();
 					console.log('val='+defaultvalue);
                     var percentage = $('input[name=percentage]');
-                    var selected = '".(isset($selected) ? dol_escape_js($selected) : '')."';
+                    var selected = '".dol_escape_js(isset($selected) ? $selected : '')."';
                     var value = (selected>0?selected:(defaultvalue>=0?defaultvalue:''));
 
                     percentage.val(value);

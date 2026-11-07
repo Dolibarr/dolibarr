@@ -8,7 +8,7 @@
  * Copyright (C) 2021-2023	Anthony Berton				<anthony.berton@bb2a.fr>
  * Copyright (C) 2023		Eric Seigne					<eric.seigne@cap-rel.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -276,6 +276,10 @@ if ($action == 'update') {
 			dolibarr_set_const($db, "MAIN_CHECKBOX_LEFT_COLUMN", GETPOSTINT("MAIN_CHECKBOX_LEFT_COLUMN"), 'chaine', 0, '', $conf->entity);
 		}
 
+		if (GETPOSTISSET("MAIN_ROW_SINGLECLICK_TOSELECT")) {
+			dolibarr_set_const($db, "MAIN_ROW_SINGLECLICK_TOSELECT", GETPOSTINT("MAIN_ROW_SINGLECLICK_TOSELECT"), 'chaine', 0, '', $conf->entity);
+		}
+
 		//dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", GETPOST("MAIN_DISABLE_JAVASCRIPT", 'aZ09'), 'chaine', 0, '', $conf->entity);
 		//dolibarr_set_const($db, "MAIN_BUTTON_HIDE_UNAUTHORIZED", GETPOST("MAIN_BUTTON_HIDE_UNAUTHORIZED", 'aZ09'), 'chaine', 0, '', $conf->entity);
 		//dolibarr_set_const($db, "MAIN_MENU_HIDE_UNAUTHORIZED", GETPOST("MAIN_MENU_HIDE_UNAUTHORIZED", 'aZ09'), 'chaine', 0, '', $conf->entity);
@@ -298,7 +302,7 @@ if ($action == 'update') {
 
 		$varforimage = 'imagebackground';
 		$dirforimage = $conf->mycompany->dir_output . '/logos/';
-		if ($_FILES[$varforimage]["tmp_name"]) {
+		if (!empty($_FILES[$varforimage]["tmp_name"])) {
 			$reg = array();
 			if (preg_match('/([^\\/:]+)$/i', (string) $_FILES[$varforimage]["name"], $reg)) {
 				$original_file = $reg[1];
@@ -310,13 +314,13 @@ if ($action == 'update') {
 						dol_mkdir($dirforimage);
 					}
 					$result = dol_move_uploaded_file($_FILES[$varforimage]["tmp_name"], $dirforimage . $original_file, 1, 0, $_FILES[$varforimage]['error']);
-					if ($result > 0) {
+					// Note: a refused file is reported with a string, and in PHP 8 such a string is > 0, so we must test is_numeric() first
+					if (is_numeric($result) && $result > 0) {
 						dolibarr_set_const($db, "MAIN_LOGIN_BACKGROUND", $original_file, 'chaine', 0, '', $conf->entity);
-					} elseif (preg_match('/^ErrorFileIsInfectedWithAVirus/', $result)) {
+					} elseif (!is_numeric($result)) {	// $result is a translation key
 						$error++;
 						$langs->load("errors");
-						$tmparray = explode(':', $result);
-						setEventMessages($langs->trans('ErrorFileIsInfectedWithAVirus', $tmparray[1]), null, 'errors');
+						setEventMessages($langs->trans($result), null, 'errors');
 					} else {
 						$error++;
 						setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
@@ -480,6 +484,12 @@ if ($mode == 'other') {
 	// Display checkboxes and fields menu left / right
 	print '<tr class="oddeven"><td>' . $langs->trans("MAIN_CHECKBOX_LEFT_COLUMN") . '</td><td>';
 	print ajax_constantonoff("MAIN_CHECKBOX_LEFT_COLUMN", array(), $conf->entity, 0, 0, 1, 0, 0, 1, '', 'other');
+	print '</td>';
+	print '</tr>';
+
+	// Single click to select/unselect a list row
+	print '<tr class="oddeven"><td>' . $form->textwithpicto($langs->trans("RowSingleClickToSelect"), $langs->trans("RowSingleClickToSelectDesc")) . '</td><td>';
+	print ajax_constantonoff("MAIN_ROW_SINGLECLICK_TOSELECT", array(), $conf->entity, 0, 0, 1, 0, 0, 1, '', 'other');
 	print '</td>';
 	print '</tr>';
 

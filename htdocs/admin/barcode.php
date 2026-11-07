@@ -91,8 +91,10 @@ if ($action == 'setcoder') {
 		dol_print_error($db);
 	}
 } elseif ($action == 'update') {
-	$location = GETPOST('GENBARCODE_LOCATION', 'alpha');
-	$res = dolibarr_set_const($db, "GENBARCODE_LOCATION", $location, 'chaine', 0, '', $conf->entity);
+	if (GETPOSTISSET('GENBARCODE_LOCATION')) {
+		$location = GETPOST('GENBARCODE_LOCATION', 'alpha');
+		$res = dolibarr_set_const($db, "GENBARCODE_LOCATION", $location, 'chaine', 0, '', $conf->entity);
+	}
 	$coder_id = GETPOST('PRODUIT_DEFAULT_BARCODE_TYPE', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_DEFAULT_BARCODE_TYPE", $coder_id, 'chaine', 0, '', $conf->entity);
 	$coder_id = GETPOST('GENBARCODE_BARCODETYPE_THIRDPARTY', 'alpha');
@@ -220,7 +222,7 @@ foreach ($dirbarcode as $reldir) {
 	$handle = @opendir($newdir);
 	if (is_resource($handle)) {
 		while (($file = readdir($handle)) !== false) {
-			if (substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS') {
+			if (dol_substr($file, 0, 1) != '.' && dol_substr($file, 0, 3) != 'CVS') {
 				if (is_readable($newdir.$file)) {
 					$reg = array();
 					if (preg_match('/(.*)\.modules\.php$/i', $file, $reg)) {
@@ -276,7 +278,7 @@ if (getDolGlobalString('BARCODE_USE_ON_PRODUCT') && isModEnabled('product')) {
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
 				if (preg_match('/^mod_barcode_product_.*php$/', $file)) {
-					$file = substr($file, 0, dol_strlen($file) - 4);
+					$file = dol_substr($file, 0, dol_strlen($file) - 4);
 
 					try {
 						dol_include_once($dirroot.$file.'.php');
@@ -344,7 +346,7 @@ if (getDolGlobalString('BARCODE_USE_ON_THIRDPARTY') && isModEnabled('societe')) 
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
 				if (preg_match('/^mod_barcode_thirdparty_.*php$/', $file)) {
-					$file = substr($file, 0, dol_strlen($file) - 4);
+					$file = dol_substr($file, 0, dol_strlen($file) - 4);
 
 					try {
 						dol_include_once($dirroot.$file.'.php');
@@ -394,7 +396,7 @@ if (getDolGlobalString('BARCODE_USE_ON_THIRDPARTY') && isModEnabled('societe')) 
  *  CHOOSE ENCODING
  */
 if (getDolGlobalString('BARCODE_USE_ON_PRODUCT') || getDolGlobalString('BARCODE_USE_ON_THIRDPARTY')) {
-	print load_fiche_titre($langs->trans("BarcodeEncodeModule"), '', '');
+	print load_fiche_titre($langs->trans("BarcodeEncodeModule"), '', 'barcode');
 
 	if (empty($conf->use_javascript_ajax)) {
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" id="form_engine" spellcheck="false">';
@@ -514,8 +516,8 @@ if (getDolGlobalString('BARCODE_USE_ON_PRODUCT') || getDolGlobalString('BARCODE_
 	print '<td>&nbsp;</td>';
 	print '</tr>';
 
-	// Chemin du binaire genbarcode sous linux
-	if (!isset($_SERVER['WINDIR'])) {
+	// Path to binary genbarcode (linux only)
+	if (getDolGlobalString("BARCODE_ALLOW_CLI_BARCODE_GENERATOR") && !isset($_SERVER['WINDIR'])) {
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans("GenbarcodeLocation").'</td>';
 		print '<td width="60" class="center">';

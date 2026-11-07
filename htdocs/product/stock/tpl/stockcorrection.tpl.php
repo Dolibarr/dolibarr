@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -39,7 +39,7 @@ if (empty($conf) || !is_object($conf)) {
 }
 
 '
-@phan-var-force Entrepot|MouvementStock $object
+@phan-var-force Product|MouvementStock $object
 @phan-var-force FormProduct $formproduct
 @phan-var-force FormProjets $formproject
 @phan-var-force string $backtopage
@@ -124,8 +124,8 @@ print '<script type="text/javascript">
 
 if ($disableSellBy == 0 || $disableEatBy == 0) {
 	print '
-			var disableSellBy = '.dol_escape_js((string) $disableSellBy).';
-			var disableEatBy = '.dol_escape_js((string) $disableSellBy).';
+			var disableSellBy = \''.dol_escape_js((string) $disableSellBy).'\';
+			var disableEatBy = \''.dol_escape_js((string) $disableSellBy).'\';
 			jQuery("#batch_number").change(function(event) {
 				var batch = jQuery(this).val();
 				jQuery.getJSON("'.DOL_URL_ROOT.'/product/ajax/product_lot.php?action=search&token='.currentToken().'&product_id='.$id.'&batch="+batch, function(data) {

@@ -7,7 +7,8 @@ namespace Sprain\SwissQrBill\Constraint;
  */
 final class ValidCreditorInformationPaymentReferenceCombination extends \Symfony\Component\Validator\Constraint
 {
-	public string $message = 'The payment reference type "{{ referenceType }}" does not match with the iban type of "{{ iban }}".';
+	/** @var string */
+	public $message = 'The payment reference type "{{ referenceType }}" does not match with the iban type of "{{ iban }}".';
 	public function getTargets() : string
 	{
 	}
@@ -17,7 +18,10 @@ final class ValidCreditorInformationPaymentReferenceCombination extends \Symfony
  */
 final class ValidCreditorInformationPaymentReferenceCombinationValidator extends \Symfony\Component\Validator\ConstraintValidator
 {
-	public function validate(mixed $qrBill, \Symfony\Component\Validator\Constraint $constraint) : void
+	/**
+	 * @param mixed $qrBill
+	 */
+	public function validate($qrBill, \Symfony\Component\Validator\Constraint $constraint) : void
 	{
 	}
 }
@@ -26,14 +30,21 @@ final class ValidCreditorInformationPaymentReferenceCombinationValidator extends
  */
 final class ValidCreditorReference extends \Symfony\Component\Validator\Constraint
 {
-	public string $message = 'The string "{{ string }}" is not a valid Creditor Reference.';
+	/**
+	 * @var string
+	 */
+	public $message = 'The string "{{ string }}" is not a valid Creditor Reference.';
 }
+
 /**
  * @internal
  */
 final class ValidCreditorReferenceValidator extends \Symfony\Component\Validator\ConstraintValidator
 {
-	public function validate(mixed $value, \Symfony\Component\Validator\Constraint $constraint) : void
+	/**
+	 * @param mixed $value
+	 */
+	public function validate($value, \Symfony\Component\Validator\Constraint $constraint) : void
 	{
 	}
 }
@@ -98,7 +109,8 @@ interface SelfValidatableInterface
  */
 trait SelfValidatableTrait
 {
-	private ?\Symfony\Component\Validator\Validator\ValidatorInterface $validator = null;
+	/** @var ?\Symfony\Component\Validator\Validator\ValidatorInterface */
+	private $validator = null;
 	public function getViolations() : \Symfony\Component\Validator\ConstraintViolationListInterface
 	{
 	}
@@ -276,7 +288,10 @@ final class PaymentReference implements \Symfony\Component\Validator\GroupSequen
 	public static function loadValidatorMetadata(\Symfony\Component\Validator\Mapping\ClassMetadata $metadata) : void
 	{
 	}
-	public function getGroupSequence() : array|\Symfony\Component\Validator\Constraints\GroupSequence
+	/**
+	 * @return array|\Symfony\Component\Validator\Constraints\GroupSequence
+	 */
+	public function getGroupSequence() : array
 	{
 	}
 }
@@ -367,17 +382,21 @@ interface OutputInterface
 	public function getQrBill() : ?\Sprain\SwissQrBill\QrBill;
 	public function getLanguage() : ?string;
 	public function getPaymentPart() : ?string;
-	public function setPrintable(bool $printable) : static;
+	public function setPrintable(bool $printable) : self;
 	public function isPrintable() : bool;
-	public function setQrCodeImageFormat(string $imageFormat) : static;
+	public function setQrCodeImageFormat(string $imageFormat) : self;
 	public function getQrCodeImageFormat() : string;
 }
 abstract class AbstractOutput implements \Sprain\SwissQrBill\PaymentPart\Output\OutputInterface
 {
-	protected \Sprain\SwissQrBill\QrBill $qrBill;
-	protected string $language;
-	protected bool $printable;
-	protected string $qrCodeImageFormat;
+	/** @var \Sprain\SwissQrBill\QrBill */
+	protected $qrBill;
+	/** @var string */
+	protected $language;
+	/** @var bool */
+	protected $printable;
+	/** @var string */
+	protected $qrCodeImageFormat;
 	public function __construct(\Sprain\SwissQrBill\QrBill $qrBill, string $language)
 	{
 	}
@@ -387,13 +406,13 @@ abstract class AbstractOutput implements \Sprain\SwissQrBill\PaymentPart\Output\
 	public function getLanguage() : ?string
 	{
 	}
-	public function setPrintable(bool $printable) : static
+	public function setPrintable(bool $printable) : self
 	{
 	}
 	public function isPrintable() : bool
 	{
 	}
-	public function setQrCodeImageFormat(string $fileExtension) : static
+	public function setQrCodeImageFormat(string $fileExtension) : self
 	{
 	}
 	public function getQrCodeImageFormat() : string
@@ -516,13 +535,16 @@ namespace Sprain\SwissQrBill\PaymentPart\Output\FpdfOutput;
 
 final class FpdfOutput extends \Sprain\SwissQrBill\PaymentPart\Output\AbstractOutput
 {
-	public function __construct(\Sprain\SwissQrBill\QrBill $qrBill, string $language, \Fpdf\Fpdf|\setasign\Fpdi\Fpdi $fpdf, float $offsetX = 0, float $offsetY = 0)
+	/**
+	 * @param \Fpdf\Fpdf|\setasign\Fpdi\Fpdi $fpdf
+	 */
+	public function __construct(\Sprain\SwissQrBill\QrBill $qrBill, string $language, $fpdf, float $offsetX = 0, float $offsetY = 0)
 	{
 	}
 	public function getPaymentPart() : ?string
 	{
 	}
-	public function setQrCodeImageFormat(string $fileExtension) : static
+	public function setQrCodeImageFormat(string $fileExtension) : self
 	{
 	}
 }
@@ -815,7 +837,10 @@ namespace Sprain\SwissQrBill\PaymentPart\Output\TcPdfOutput;
 
 final class TcPdfOutput extends \Sprain\SwissQrBill\PaymentPart\Output\AbstractOutput
 {
-	public function __construct(\Sprain\SwissQrBill\QrBill $qrBill, string $language, \TCPDF|\setasign\Fpdi\Tcpdf\Fpdi $tcPdf, float $offsetX = 0, float $offsetY = 0)
+	/**
+	 * @param \TCPDF|\setasign\Fpdi\Tcpdf\Fpdi $tcPdf
+	 */
+	public function __construct(\Sprain\SwissQrBill\QrBill $qrBill, string $language, $tcPdf, float $offsetX = 0, float $offsetY = 0)
 	{
 	}
 	public function getPaymentPart() : ?string

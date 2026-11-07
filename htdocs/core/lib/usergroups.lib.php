@@ -175,7 +175,7 @@ function user_prepare_head(User $object)
 		if (!empty($object->note_private)) {
 			$nbNote++;
 		}
-		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/user/note.php', ['id' => $object->id]);
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/core/note.php', ['element' => 'user', 'id' => $object->id]);
 		$head[$h][1] = $langs->trans("Note");
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
@@ -503,8 +503,9 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	$butactionbg = '';
 	$textbutaction = '';
 	// Set the variables with the default value
-	if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php')) {
-		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+	$theme_vars_file = dol_getThemeFilePath('theme_vars.inc.php');
+	if ($theme_vars_file) {
+		include $theme_vars_file;
 	}
 
 	// Dark mode
