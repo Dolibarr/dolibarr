@@ -36,7 +36,6 @@ if (!defined('NOCSRFCHECK')) {
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', 1);
 }
-//if (! defined('NOLOGIN')) define('NOLOGIN',1);					// Not disabled cause need to load personalized language
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', 1);
 }
@@ -84,7 +83,10 @@ if ($action == 'redirect') {	// Test on permission not required here. Test will 
 	$url = preg_replace('/'.preg_quote($dolibarr_main_url_root, '/').'/', '', $url);
 	$url = preg_replace('/'.preg_quote(DOL_MAIN_URL_ROOT, '/').'/', '', $url);
 	$url = preg_replace('/'.preg_quote($tmpurlrootwithouthttp, '/').'/', '', $url);
-	$urlrelativeforredirect = (DOL_URL_ROOT.(preg_match('/\//', $url) ? '' : '/').$url);
+	// After the removal of the root url, what remains must be a path inside this site. We remove the leading slashes, or a pasted url
+	// like https://host//evil.com would give //evil.com, an url that the browser takes for another site when DOL_URL_ROOT is empty.
+	$url = ltrim($url, '/\\');
+	$urlrelativeforredirect = DOL_URL_ROOT.'/'.$url;
 	//$urlrelativeforredirectwithoutparam = preg_replace('/\?.*$/', '', $urlrelativeforredirect);
 	//var_dump($urlrelativeforredirect);
 

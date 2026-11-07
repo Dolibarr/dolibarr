@@ -50,6 +50,7 @@ ALTER TABLE llx_categorie_project_task DROP FOREIGN KEY fk_categorie_project_tas
 -- VPGSQL8.2 DROP INDEX idx_categorie_project_fk_task;
 ALTER TABLE llx_categorie_project_task ADD INDEX idx_categorie_project_fk_task (fk_project_task);
 ALTER TABLE llx_categorie_project_task ADD CONSTRAINT fk_categorie_project_task_rowid FOREIGN KEY (fk_project_task) REFERENCES llx_projet_task (rowid);
+ALTER TABLE llx_stock_mouvement ADD INDEX idx_stock_mouvement_batch_entrepot_type_datem (batch, fk_entrepot, type_mouvement, datem);
 
 -- V24 migration
 ALTER TABLE llx_expensereport_det ADD COLUMN tcheck_file	integer DEFAULT NULL after fk_ecm_files;
@@ -92,7 +93,7 @@ CREATE TABLE llx_accounting_transaction_template_det (
 ) ENGINE=innodb;
 
 ALTER TABLE llx_accounting_transaction_template_det ADD INDEX idx_accounting_transaction_template_det_rowid (rowid);
-ALTER TABLE llx_accounting_transaction_template_det ADD CONSTRAINT llx_accounting_transaction_template_det_fk_transaction_template FOREIGN KEY (fk_transaction_template) REFERENCES llx_accounting_transaction_template(rowid);
+ALTER TABLE llx_accounting_transaction_template_det ADD CONSTRAINT fk_accounting_transaction_template_det_template FOREIGN KEY (fk_transaction_template) REFERENCES llx_accounting_transaction_template(rowid);
 
 create table llx_categorie_mo
 (
@@ -172,6 +173,7 @@ ALTER TABLE llx_adherent_type ADD COLUMN amountformuladescription text;
 ALTER TABLE llx_blockedlog ADD COLUMN pos_source varchar(32) DEFAULT '';
 ALTER TABLE llx_blockedlog ADD COLUMN signature_backward varchar(100) DEFAULT '';
 ALTER TABLE llx_blockedlog ADD COLUMN type_code varchar(8) DEFAULT '';
+ALTER TABLE llx_blockedlog ADD COLUMN note varchar(128) DEFAULT NULL;
 
 ALTER TABLE llx_website_page ADD COLUMN keep_history integer DEFAULT 5;
 ALTER TABLE llx_website_page ADD COLUMN metarobots varchar(128) after keywords;
@@ -377,7 +379,7 @@ UPDATE llx_c_country SET phone_code = 502 WHERE code = 'GT';
 UPDATE llx_c_country SET phone_code = 224 WHERE code = 'GN';
 UPDATE llx_c_country SET phone_code = 245 WHERE code = 'GW';
 UPDATE llx_c_country SET phone_code = 509 WHERE code = 'HT';
-UPDATE llx_c_country SET phone_code = 379 WHERE code = 'VA';
+UPDATE llx_c_country SET phone_code = 39 WHERE code = 'VA';
 UPDATE llx_c_country SET phone_code = 504 WHERE code = 'HN';
 UPDATE llx_c_country SET phone_code = 852 WHERE code = 'HK';
 UPDATE llx_c_country SET phone_code = 354 WHERE code = 'IS';
@@ -408,9 +410,7 @@ UPDATE llx_c_country SET phone_code = 352 WHERE code = 'LU';
 UPDATE llx_c_country SET phone_code = 853 WHERE code = 'MO';
 UPDATE llx_c_country SET phone_code = 389 WHERE code = 'MK';
 UPDATE llx_c_country SET phone_code = 261 WHERE code = 'MG';
-UPDATE llx_c_country SET phone_code = 265 WHERE code = 'GH';
-UPDATE llx_c_country SET phone_code = 350 WHERE code = 'GI';
-UPDATE llx_c_country SET phone_code = 30 WHERE code = 'MW';
+UPDATE llx_c_country SET phone_code = 265 WHERE code = 'MW';
 UPDATE llx_c_country SET phone_code = 60 WHERE code = 'MY';
 UPDATE llx_c_country SET phone_code = 960 WHERE code = 'MV';
 UPDATE llx_c_country SET phone_code = 223 WHERE code = 'ML';
@@ -509,18 +509,21 @@ UPDATE llx_c_country SET phone_code = 382 WHERE code = 'ME';
 UPDATE llx_c_country SET phone_code = 590 WHERE code = 'BL';
 UPDATE llx_c_country SET phone_code = 590 WHERE code = 'MF';
 UPDATE llx_c_country SET phone_code = 383 WHERE code = 'XK';
+UPDATE llx_c_country SET phone_code = 212 WHERE code = 'EH';
 
 -- Add trunk_prefix column to llx_c_country
 ALTER TABLE llx_c_country ADD COLUMN trunk_prefix varchar(5);
 
 -- Populate trunk_prefix for countries with trunk prefix '0'
-UPDATE llx_c_country SET trunk_prefix = '0' WHERE code IN ('FR','BE','DE','CH','GB','IE','NL','SE','AT','GR','FI','HR','BA','BG','RO','RS','ME','MK','AL','SK','SI','LT','MD','UA','GE','XK','TR','CN','IN','ID','JP','KR','TH','VN','MY','PH','BD','PK','AF','IR','IQ','JO','LB','SA','AE','IL','SY','YE','AM','AZ','KH','LA','MM','NP','LK','TW','MN','KG','UZ','PS','KP','MA','DZ','EG','ZA','NG','GH','KE','ET','TZ','UG','SD','LY','NA','SL','ZM','ZW','ER','CD','AO','EH','AU','NZ','AR','BR','CU','VE','PE','EC','BO','PY','SR','GF','YT','PM','BL','MF','GG','JE','IM','AX');
+UPDATE llx_c_country SET trunk_prefix = '0' WHERE code IN ('FR','BE','DE','CH','GB','IE','NL','SE','AT','FI','HR','BA','BG','RO','RS','ME','MK','AL','SK','SI','LT','MD','UA','GE','XK','TR','CN','IN','ID','JP','KR','TH','VN','MY','PH','BD','PK','AF','IR','IQ','JO','LB','SA','AE','IL','SY','YE','AM','AZ','KH','LA','MM','NP','LK','TW','MN','KG','PS','KP','MA','DZ','EG','ZA','NG','GH','KE','ET','TZ','UG','SD','LY','NA','SL','ZM','ZW','ER','CD','EH','AU','NZ','AR','BR','CU','VE','PE','EC','BO','PY','GF','YT','PM','BL','MF','GG','JE','IM','AX','CC','CO','CX','KI','LI','LR','MC','MG','MW','RW','SO','UY');
 -- Populate trunk_prefix for post-Soviet countries with trunk prefix '8'
-UPDATE llx_c_country SET trunk_prefix = '8' WHERE code IN ('RU','BY','KZ','TJ','TM');
+UPDATE llx_c_country SET trunk_prefix = '8' WHERE code IN ('RU','BY','KZ','TM');
 -- Populate trunk_prefix for Hungary with trunk prefix '06'
 UPDATE llx_c_country SET trunk_prefix = '06' WHERE code = 'HU';
 -- Populate trunk_prefix for NANP countries with trunk prefix '1'
-UPDATE llx_c_country SET trunk_prefix = '1' WHERE code IN ('US','CA','PR','VI','GU','AS','MP','JM','BS','BB','AG','DM','GD','KN','LC','VC','TT','DO','AI','BM','VG','KY','MS','TC','SX','MH','FM');
+UPDATE llx_c_country SET trunk_prefix = '1' WHERE code IN ('US','CA','PR','VI','GU','AS','MP','JM','BS','BB','AG','DM','GD','KN','LC','VC','TT','DO','AI','BM','VG','KY','MS','TC','SX','MH');
+-- Reset trunk_prefix of countries that have no national trunk prefix (wrong values set by a previous run of this script)
+UPDATE llx_c_country SET trunk_prefix = NULL WHERE code IN ('AO','GR','SR','UZ','TJ','FM');
 
 -- Strip formatting sugar from existing phone numbers in llx_socpeople
 UPDATE llx_socpeople SET phone = REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(phone, ' ', ''), '-', ''), '.', ''), '(', ''), ')', '') WHERE phone IS NOT NULL AND phone != '';
@@ -569,4 +572,17 @@ UPDATE llx_const SET name = __ENCRYPT('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELE
 --noqa:enable=PRS
 
 
+ALTER TABLE llx_adherent MODIFY COLUMN societe VARCHAR(128);
+
+DELETE FROM llx_rights_def WHERE module= 'cron' AND perms = 'execute';
+
+-- Quick memo: date_archived is a plain data field, not an auto-updated column, so it must be datetime and not timestamp
+ALTER TABLE llx_quickmemo_memo MODIFY COLUMN date_archived datetime DEFAULT NULL;
+
 -- end of migration
+
+-- Add supplier ref on reception lines (standalone receptions)
+ALTER TABLE llx_receptiondet_batch ADD COLUMN ref_fourn varchar(128) NULL AFTER cost_price;
+
+-- Default warehouse on receptions
+ALTER TABLE llx_reception ADD COLUMN fk_warehouse integer DEFAULT NULL AFTER fk_projet;

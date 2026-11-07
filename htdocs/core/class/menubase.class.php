@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2009	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -230,7 +230,7 @@ class Menubase
 					$maxrowid = 1;
 				}
 
-				$sql = "SELECT setval('".$this->db->prefix()."menu_rowid_seq', ".($maxrowid).")";
+				$sql = "SELECT setval('".$this->db->prefix()."menu_rowid_seq', ".((int) $maxrowid).")";
 				//print $sql; exit;
 				$resqlrowidset = $this->db->query($sql);
 				if (!$resqlrowidset) {
@@ -248,7 +248,7 @@ class Menubase
 		$sql .= " AND fk_menu = ".((int) $this->fk_menu);
 		$sql .= " AND position = ".((int) $this->position);
 		$sql .= " AND url = '".$this->db->escape($this->url)."'";
-		$sql .= " AND entity IN (0, ".$conf->entity.")";
+		$sql .= " AND entity IN (0, ".((int) $conf->entity).")";
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -649,7 +649,7 @@ class Menubase
 		$sql = "SELECT m.rowid, m.type, m.module, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.url, m.titre,";
 		$sql .= " m.prefix, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu, m.position, m.showtopmenuinframe";
 		$sql .= " FROM ".$this->db->prefix()."menu as m";
-		$sql .= " WHERE m.entity IN (0,".$conf->entity.")";
+		$sql .= " WHERE m.entity IN (0,".((int) $conf->entity).")";
 		$sql .= " AND m.menu_handler IN ('".$this->db->escape($menu_handler)."','all')";
 		if ($type_user == 0) {
 			$sql .= " AND m.usertype IN (0,2)";
@@ -665,6 +665,11 @@ class Menubase
 		if ($resql) {
 			$numa = $this->db->num_rows($resql);
 
+			// Many entries share the same condition (isModEnabled('xxx'), $user->hasRight('xxx', 'yyy')...): a condition is evaluated once
+			// per call, the result is reused for the other entries. The cache is local to the call, the conditions depend on $mainmenu
+			// and $leftmenu, that are fixed for the call.
+			$cacheresultofconditions = array();
+
 			$a = 0;
 			$b = 0;
 			while ($a < $numa) {
@@ -678,8 +683,11 @@ class Menubase
 					if ($leftmenu == 'all') {
 						$tmpcond = preg_replace('/\$leftmenu\s*==\s*["\'a-zA-Z_]+/', '1==1', $tmpcond); // Force the part of condition on leftmenu to true
 					}
-					$perms = verifCond($tmpcond);
-					//print "verifCond rowid=".$menu['rowid']." ".$tmpcond.":".$perms."<br>\n";
+					if (!isset($cacheresultofconditions[$tmpcond])) {
+						$cacheresultofconditions[$tmpcond] = verifCond($tmpcond);
+					}
+					$perms = $cacheresultofconditions[$tmpcond];
+					//var_dump($menu['rowid'].' - '.$menu['titre'].' - '.$menu['perms'].' => '.$tmpcond.":".$perms);
 				}
 
 				// Define $enabled
@@ -689,7 +697,10 @@ class Menubase
 					if ($leftmenu == 'all') {
 						$tmpcond = preg_replace('/\$leftmenu\s*==\s*["\'a-zA-Z_]+/', '1==1', $tmpcond); // Force the part of condition on leftmenu to true
 					}
-					$enabled = verifCond($tmpcond);
+					if (!isset($cacheresultofconditions[$tmpcond])) {
+						$cacheresultofconditions[$tmpcond] = verifCond($tmpcond);
+					}
+					$enabled = $cacheresultofconditions[$tmpcond];
 					//var_dump($menu['type'].' - '.$menu['titre'].' - '.$menu['enabled'].' => '.$enabled);
 				}
 
@@ -777,7 +788,7 @@ class Menubase
 		// Loop on tab array
 		$num = count($tab);
 		for ($x = 0; $x < $num; $x++) {
-			//si un element a pour pere : $pere
+			// if an element has a parent: $pere
 			if ((($tab[$x]['fk_menu'] >= 0 && $tab[$x]['fk_menu'] == $pere)) && $tab[$x]['enabled']) {
 				$this->newmenu->add($tab[$x]['url'], $tab[$x]['titre'], ($level - 1), (int) $tab[$x]['perms'], $tab[$x]['target'], $tab[$x]['mainmenu'], $tab[$x]['leftmenu'], 0, '', '', '', $tab[$x]['prefix']);
 				$this->recur($tab, (int) $tab[$x]['rowid'], ($level + 1));

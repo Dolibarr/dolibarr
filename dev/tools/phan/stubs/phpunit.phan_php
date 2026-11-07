@@ -24,3 +24,13 @@ class TestCase {
 	{
 	}
 }
+
+class CommonClassTest {
+    public static function assertEquals($expected, $actual, string $message = '') : void {}
+    public static function assertTrue($condition, string $message = '') : void {}
+    public static function assertNotNull($actual, string $message = '') : void {}
+    public static function assertFileExists(string $filename, string $message = '') : void {}
+    public static function assertGreaterThan($expected, $actual, string $message = '') : void {}
+    public static function assertGreaterThanOrEqual($expected, $actual, string $message = '') : void {}
+    public static function assertNotFalse($actual, string $message = '') : void {}
+}

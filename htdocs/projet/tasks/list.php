@@ -62,6 +62,7 @@ $search_categ = GETPOST("search_categ", 'intcomma');
 $search_projectstatus = GETPOST('search_projectstatus', 'intcomma');
 $search_project_ref = GETPOST('search_project_ref');
 $search_project_title = GETPOST('search_project_title');
+$search_id = GETPOST('search_id', 'alpha');
 $search_task_ref = GETPOST('search_task_ref');
 $search_task_label = GETPOST('search_task_label');
 $search_task_description = GETPOST('search_task_description');
@@ -165,6 +166,7 @@ if (empty($user->socid)) {
 }
 
 $arrayfields = array(
+	't.rowid' => array('label' => "TechnicalID", 'checked' => (getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? '1' : '-1'), 'enabled' => '1', 'position' => 1),
 	't.ref' => array('label' => "RefTask", 'checked' => '1', 'position' => 50),
 	't.fk_task_parent' => array('label' => "RefTaskParent", 'checked' => '0', 'position' => 70),
 	't.label' => array('label' => "LabelTask", 'checked' => '1', 'position' => 75),
@@ -191,6 +193,9 @@ $arrayfields = array(
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -235,6 +240,7 @@ if (empty($reshook)) {
 		$search_societe = "";
 		$search_societe_alias = "";
 		$search_project_title = "";
+		$search_id = '';
 		$search_task_ref = "";
 		$search_task_label = "";
 		$search_task_description = "";
@@ -410,6 +416,9 @@ if ($search_project_ref) {
 }
 if ($search_project_title) {
 	$sql .= natural_search('p.title', $search_project_title);
+}
+if ($search_id != '') {
+	$sql .= natural_search('t.rowid', $search_id, 1);
 }
 if ($search_task_ref) {
 	$sql .= natural_search('t.ref', $search_task_ref);
@@ -676,6 +685,9 @@ if ($search_project_ref != '') {
 if ($search_project_title != '') {
 	$param .= '&search_project_title='.urlencode($search_project_title);
 }
+if ($search_id != '') {
+	$param .= '&search_id='.urlencode($search_id);
+}
 if ($search_task_ref != '') {
 	$param .= '&search_task_ref='.urlencode($search_task_ref);
 }
@@ -761,6 +773,7 @@ $newcardbutton = '';
 
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/projet/tasks/stats/index.php?mode=statistics&contextpage='.$contextpage.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?action=create&backtopage='.urlencode(DOL_URL_ROOT.'/projet/tasks/list.php'), '', $permissiontocreate);
 
@@ -857,6 +870,11 @@ if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
+	print '</td>';
+}
+if (!empty($arrayfields['t.rowid']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['t.ref']['checked'])) {
@@ -1029,6 +1047,10 @@ if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['t.rowid']['checked'])) {
+	print_liste_field_titre($arrayfields['t.rowid']['label'], $_SERVER["PHP_SELF"], 't.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['t.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['t.ref']['label'], $_SERVER["PHP_SELF"], "t.ref", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
@@ -1178,6 +1200,7 @@ while ($i < $imaxinloop) {
 	$projectstatic->title = $obj->projecttitle;
 	$projectstatic->public = $obj->public;
 	$projectstatic->statut = $obj->projectstatus;
+	$projectstatic->status = $obj->projectstatus;
 	$projectstatic->datee = $db->jdate($obj->projectdatee);
 
 	if ($obj->socid) {
@@ -1229,6 +1252,13 @@ while ($i < $imaxinloop) {
 					$totalarray['nbfield']++;
 				}
 			}
+			// Technical ID
+			if (!empty($arrayfields['t.rowid']['checked'])) {
+				print '<td class="center" data-key="id">'.((int) $object->id).'</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
 			// Ref
 			if (!empty($arrayfields['t.ref']['checked'])) {
 				print '<td class="nowraponall">';
@@ -1264,7 +1294,7 @@ while ($i < $imaxinloop) {
 			// Label
 			if (!empty($arrayfields['t.label']['checked'])) {
 				print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($object->label).'">';
-				print dol_escape_htmltag($object->label);
+				print '<span class="spantitle">'.dol_escape_htmltag($object->label).'</span>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1348,7 +1378,7 @@ while ($i < $imaxinloop) {
 			// Project status
 			if (!empty($arrayfields['p.fk_statut']['checked'])) {
 				print '<td class="center">';
-				print $projectstatic->getLibStatut(1);
+				print $projectstatic->getLibStatut(5);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1373,15 +1403,9 @@ while ($i < $imaxinloop) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.planned_workload';
 				}
-				if (!isset($totalarray['val']['t.planned_workload'])) {
-					$totalarray['val']['t.planned_workload'] = 0;
-				}
 				$totalarray['val']['t.planned_workload'] += $obj->planned_workload;
 				if (!$i) {
 					$totalarray['totalplannedworkloadfield'] = $totalarray['nbfield'];
-				}
-				if (!isset($totalarray['totalplannedworkload'])) {
-					$totalarray['totalplannedworkload'] = 0;
 				}
 				$totalarray['totalplannedworkload'] += $obj->planned_workload;
 			}
@@ -1421,15 +1445,9 @@ while ($i < $imaxinloop) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.duration_effective';
 				}
-				if (!isset($totalarray['val']['t.duration_effective'])) {
-					$totalarray['val']['t.duration_effective'] = 0;
-				}
 				$totalarray['val']['t.duration_effective'] += $obj->duration_effective;
 				if (!$i) {
 					$totalarray['totaldurationeffectivefield'] = $totalarray['nbfield'];
-				}
-				if (!isset($totalarray['totaldurationeffective'])) {
-					$totalarray['totaldurationeffective'] = 0;
 				}
 				$totalarray['totaldurationeffective'] += $obj->duration_effective;
 			}
@@ -1464,15 +1482,9 @@ while ($i < $imaxinloop) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.progress';
 				}
-				if (!isset($totalarray['val']['t.progress'])) {
-					$totalarray['val']['t.progress'] = 0;
-				}
 				$totalarray['val']['t.progress'] += ($obj->planned_workload * $obj->progress / 100);
 				if (!$i) {
 					$totalarray['totalprogress_declaredfield'] = $totalarray['nbfield'];
-				}
-				if (!isset($totalarray['totaldurationdeclared'])) {
-					$totalarray['totaldurationdeclared'] = 0;
 				}
 				$totalarray['totaldurationdeclared'] += $obj->planned_workload * $obj->progress / 100;
 			}
@@ -1623,7 +1635,7 @@ if (!empty($totalarray['totalizable']) && is_array($totalarray['totalizable'])) 
 // Show total line
 //include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['totalplannedworkloadfield']) || isset($totalarray['totalprogress_calculatedfield'])
-	|| isset($totalarray['totaltobill']) || isset($totalarray['totalbilled']) || isset($totalarray['totalbudget'])) {
+	|| !empty($totalarray['pos'])) {
 	print '<tr class="liste_total">';
 	$i = 0;
 	while ($i < $totalarray['nbfield']) {
@@ -1654,16 +1666,16 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 			print '<td class="center">'.($totalarray['totalplannedworkload'] > 0 ? round(100 * $totalarray['totaldurationeffective'] / $totalarray['totalplannedworkload'], 2).' %' : '').'</td>';
 		} elseif (isset($totalarray['totalprogress_declaredfield']) && $totalarray['totalprogress_declaredfield'] == $i) {
 			print '<td class="center">'.($totalarray['totalplannedworkload'] > 0 ? round(100 * $totalarray['totaldurationdeclared'] / $totalarray['totalplannedworkload'], 2).' %' : '').'</td>';
-		} elseif (isset($totalarray['totaltobillfield']) && $totalarray['totaltobillfield'] == $i) {
+		} elseif ($totalarray['totaltobillfield'] == $i) {
 			print '<td class="center">'.convertSecondToTime($totalarray['totaltobill'], $plannedworkloadoutputformat).'</td>';
-		} elseif (isset($totalarray['totalbilledfield']) && $totalarray['totalbilledfield'] == $i) {
+		} elseif ($totalarray['totalbilledfield'] == $i) {
 			print '<td class="center">'.convertSecondToTime($totalarray['totalbilled'], $plannedworkloadoutputformat).'</td>';
-		} elseif (isset($totalarray['totalbudget_amountfield']) && $totalarray['totalbudget_amountfield'] == $i) {
+		} elseif ($totalarray['totalbudget_amountfield'] == $i) {
 			print '<td class="center">'.price((float) $totalarray['totalbudgetamount'], 0, $langs, 1, 0, 0, $conf->currency).'</td>';
 		} elseif (!empty($totalarray['pos'][$i])) {
 			print '<td class="right">';
 			// @phan-suppress-next-line PhanTypeInvalidDimOffset
-			if (isset($totalarray['type']) && $totalarray['type'][$i] == 'duration') {
+			if (isset($totalarray['type'][$i]) && $totalarray['type'][$i] == 'duration') {
 				print(!empty($totalarray['val'][$totalarray['pos'][$i]]) ? convertSecondToTime($totalarray['val'][$totalarray['pos'][$i]], 'allhourmin') : 0);
 			} else {
 				print price(!empty($totalarray['val'][$totalarray['pos'][$i]]) ? $totalarray['val'][$totalarray['pos'][$i]] : 0);

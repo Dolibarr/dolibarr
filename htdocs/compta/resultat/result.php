@@ -558,16 +558,23 @@ if ($modecompta == 'CREANCES-DETTES') {
 					foreach ($months as $k => $v) {
 						$monthtoprocess = $k + 1; // ($k+1) is month 1, 2, ..., 12
 						$yeartoprocess = $start_year;
-						if (($k + 1) < $start_month) {
+						if ($monthtoprocess < $start_month) {
 							$yeartoprocess++;
 						}
 
-						if (($yeartoprocess == $start_year && ($k + 1) >= $date_startmonth && $k < $date_endmonth) ||
-							($yeartoprocess == $start_year + 1 && ($k + 1) < $date_startmonth)
-						) {
+						// $k is the month index (0 = January). Compare the month number with the period bounds.
+						// A period inside one calendar year keeps months from the start month through the end month.
+						// A period that crosses New Year keeps the start year from the start month, then the next year through the end month.
+						if ($date_startmonth <= $date_endmonth) {
+							$keepmonth = ($yeartoprocess == $start_year && $monthtoprocess >= $date_startmonth && $monthtoprocess <= $date_endmonth);
+						} else {
+							$keepmonth = ($yeartoprocess == $start_year && $monthtoprocess >= $date_startmonth);
+							$keepmonth = $keepmonth || ($yeartoprocess == ($start_year + 1) && $monthtoprocess <= $date_endmonth);
+						}
+						if ($keepmonth) {
 							//var_dump($monthtoprocess.'_'.$yeartoprocess);
 							if (isset($cpt['account_number'])) {
-								$return = $AccCat->getSumDebitCredit((int) $cpt['account_number'], $date_start, $date_end, empty($cat['dc']) ? 0 : $cat['dc'], 'nofilter', $monthtoprocess, $yeartoprocess);
+								$return = $AccCat->getSumDebitCredit($cpt['account_number'], $date_start, $date_end, empty($cat['dc']) ? 0 : $cat['dc'], 'nofilter', $monthtoprocess, $yeartoprocess);
 								if ($return < 0) {
 									setEventMessages(null, $AccCat->errors, 'errors');
 									$resultM = 0;

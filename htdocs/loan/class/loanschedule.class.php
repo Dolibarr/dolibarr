@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017       Florian HENRY           <florian.henry@atm-consulting.fr>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,10 +151,11 @@ class LoanSchedule extends CommonObject
 	 *  Create payment of loan into database.
 	 *  Use this->amounts to have list of lines for the payment
 	 *
-	 *  @param      User		$user   User making payment
+	 *  @param      User		$user   	User making payment
+	 *  @param      int<0,1>	$notrigger	1=Disable triggers
 	 *  @return     int     			Return integer <0 if KO, id of payment if OK
 	 */
-	public function create($user)
+	public function create($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -209,7 +210,7 @@ class LoanSchedule extends CommonObject
 		if ($totalamount != 0) {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element." (fk_loan, datec, datep, amount_capital, amount_insurance, amount_interest,";
 			$sql .= " fk_typepayment, fk_user_creat, fk_bank)";
-			$sql .= " VALUES (".$this->fk_loan.", '".$this->db->idate($now)."',";
+			$sql .= " VALUES (".((int) $this->fk_loan).", '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datep)."',";
 			$sql .= " ".price2num($this->amount_capital).",";
 			$sql .= " ".price2num($this->amount_insurance).",";
@@ -226,6 +227,15 @@ class LoanSchedule extends CommonObject
 				$this->error = $this->db->lasterror();
 				$error++;
 			}
+		}
+
+		if ($totalamount != 0 && !$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('LOANSCHEDULE_CREATE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
 		}
 
 		if ($totalamount != 0 && !$error) {
@@ -357,14 +367,14 @@ class LoanSchedule extends CommonObject
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
 
-		$sql .= " fk_loan=".(isset($this->fk_loan) ? $this->fk_loan : "null").",";
+		$sql .= " fk_loan=".(isset($this->fk_loan) ? ((int) $this->fk_loan) : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " tms=".(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " datep=".(dol_strlen($this->datep) != 0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
-		$sql .= " amount_capital=".(isset($this->amount_capital) ? $this->amount_capital : "null").",";
-		$sql .= " amount_insurance=".(isset($this->amount_insurance) ? $this->amount_insurance : "null").",";
-		$sql .= " amount_interest=".(isset($this->amount_interest) ? $this->amount_interest : "null").",";
-		$sql .= " fk_typepayment=".(isset($this->fk_typepayment) ? $this->fk_typepayment : "null").",";
+		$sql .= " amount_capital=".(isset($this->amount_capital) ? ((float) $this->amount_capital) : "null").",";
+		$sql .= " amount_insurance=".(isset($this->amount_insurance) ? ((float) $this->amount_insurance) : "null").",";
+		$sql .= " amount_interest=".(isset($this->amount_interest) ? ((float) $this->amount_interest) : "null").",";
+		$sql .= " fk_typepayment=".(isset($this->fk_typepayment) ? ((int) $this->fk_typepayment) : "null").",";
 		$sql .= " num_payment=".(isset($this->num_payment) ? "'".$this->db->escape($this->num_payment)."'" : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
@@ -382,6 +392,15 @@ class LoanSchedule extends CommonObject
 		if (!$resql) {
 			$error++;
 			$this->errors[] = "Error ".$this->db->lasterror();
+		}
+
+		if (!$error && $user && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('LOANSCHEDULE_MODIFY', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
 		}
 
 		// Commit or rollback
@@ -421,6 +440,15 @@ class LoanSchedule extends CommonObject
 			}
 		}
 
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('LOANSCHEDULE_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
 		// Commit or rollback
 		if ($error) {
 			foreach ($this->errors as $errmsg) {
@@ -441,17 +469,24 @@ class LoanSchedule extends CommonObject
 	 * @param   double  $capital        Capital
 	 * @param   double  $rate           rate
 	 * @param   int     $nbterm         nb term
+	 * @param   int     $frequency      Number of payments per year (52, 26, 12, 4, 2 or 1)
+	 * @param   int     $interest_basis 0 = rate / number of payments per year, 1 = daily (rate x days / 365, average period)
+	 * @param   float   $balloon        Balloon / residual paid with the last payment, on top of the last instalment (0 = none)
 	 * @return  double                  mensuality
 	 */
-	public function calcMonthlyPayments($capital, $rate, $nbterm)
+	public function calcMonthlyPayments($capital, $rate, $nbterm, $frequency = 12, $interest_basis = 0, $balloon = 0)
 	{
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
+
 		$result = '';
 
 		if (!empty($capital) && !empty($nbterm)) {
 			if (!empty($rate)) {
-				$result = ($capital * ($rate / 12)) / (1 - pow((1 + ($rate / 12)), ($nbterm * -1)));
+				$periodrate = loanPeriodRate($rate, $frequency, $interest_basis);
+				// With a balloon, only what is not left for the balloon (its present value) is repaid by the instalments
+				$result = (($capital - (float) $balloon / pow(1 + $periodrate, $nbterm)) * $periodrate) / (1 - pow((1 + $periodrate), ($nbterm * -1)));
 			} else {
-				$result = $capital / $nbterm;
+				$result = ($capital - (float) $balloon) / $nbterm;
 			}
 		}
 

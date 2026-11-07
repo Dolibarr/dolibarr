@@ -4,7 +4,7 @@
  * Copyright (C) 2015       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -153,10 +153,10 @@ class Cchargesociales
 		$sql .= 'accountancy_code';
 		$sql .= ') VALUES (';
 		$sql .= ' '.(!isset($this->libelle) ? 'NULL' : "'".$this->db->escape($this->libelle)."'").',';
-		$sql .= ' '.(!isset($this->deductible) ? 'NULL' : $this->deductible).',';
+		$sql .= ' '.(!isset($this->deductible) ? 'NULL' : "'".$this->db->escape($this->deductible)."'").',';
 		$sql .= ' ' . (int) $this->active . ',';
 		$sql .= ' '.(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").',';
-		$sql .= ' '.(!isset($this->fk_pays) ? 'NULL' : $this->fk_pays).',';
+		$sql .= ' '.(!isset($this->fk_pays) ? 'NULL' : ((int) $this->fk_pays)).',';
 		$sql .= ' '.(!isset($this->module) ? 'NULL' : "'".$this->db->escape($this->module)."'").',';
 		$sql .= ' '.(!isset($this->accountancy_code) ? 'NULL' : "'".$this->db->escape($this->accountancy_code)."'");
 		$sql .= ')';

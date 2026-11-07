@@ -5,7 +5,6 @@ SupplierInvoices=ใบแจ้งหนี้ของผู้ขาย
 ShowSupplierInvoice=แสดงใบแจ้งหนี้ของผู้ขาย
 NewSupplier=ผู้ขายรายใหม่
 NewSupplierInvoice = ใบแจ้งหนี้ของผู้จัดจำหน่ายใหม่
-History=ประวัติศาสตร์
 ListOfSuppliers=รายชื่อผู้จำหน่าย
 ShowSupplier=แสดงผู้ขาย
 BuyingPriceMin=ราคาซื้อดีที่สุด

@@ -13,6 +13,7 @@ ConfirmClassifyPaidPartiallyReasonDiscountVat=El impago restante <b>(%s%s)</b> e
 AmountOfBillsHT=Importe de las facturas (Sin IGV)
 AmountOfBillsByMonthHT=Importe de las facturas por mes (Sin IGV)
 DatePointOfTax=Punto de impuestos
+RecurringInvoiceSource=Source recurring invoice
 CreditNote=Nota de crédito
 IdSocialContribution=RUC/RUS
 IntracommunityVATNumber=ID de IGV intracomunitario

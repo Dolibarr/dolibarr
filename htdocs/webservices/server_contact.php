@@ -456,7 +456,9 @@ function createContact($authentication, $contact)
 		if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
 			foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
 				$key = 'options_'.$key;
-				$newobject->array_options[$key] = $contact[$key];
+				if (isset($contact[$key])) {
+					$newobject->array_options[$key] = $contact[$key];
+				}
 			}
 		}
 
@@ -544,7 +546,7 @@ function getContactsForThirdParty($authentication, $idthirdparty)
 			$num = $db->num_rows($resql);
 			$i = 0;
 			while ($i < $num) {
-				// En attendant remplissage par boucle
+				// While waiting to be filled by a loop
 				$obj = $db->fetch_object($resql);
 
 				$contact = new Contact($db);
@@ -702,7 +704,9 @@ function updateContact($authentication, $contact)
 			if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
 				foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
 					$key = 'options_'.$key;
-					$object->array_options[$key] = $contact[$key];
+					if (isset($contact[$key])) {
+						$object->array_options[$key] = $contact[$key];
+					}
 				}
 			}
 

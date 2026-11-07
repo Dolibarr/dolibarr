@@ -31,6 +31,10 @@ MenuClosedServices=Servicios cerrados
 NewContract=Nuevo contrato
 NewContractSubscription=Nuevo contrato o suscripción
 AddContract=Crear contrato
+ContractType=Contract type
+CustomerContract=Customer contract
+SupplierContract=Supplier contract
+LastSupplierContracts=Latest %s supplier contracts
 DeleteAContract=Eliminar un contrato
 ActivateAllOnContract=Activar todos los servicios
 CloseAContract=Cerrar un contrato
@@ -103,7 +107,13 @@ ConfirmCloneContract=¿Está seguro de querer copiar el contrato <b>%s</b>?
 LowerDateEndPlannedShort=La fecha de finalización planificada es anterior a los servicios activos
 SendContractRef=Información del contrato __REF__
 OtherContracts=Otros contratos
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Estadísticas del contrato
+NbOfContracts=Número de contratos
+NumberOfContractsByMonth=Número de contratos por mes
+AmountOfServices=Número de servicios
+AmountOfServicesByMonthHT=Número de servicios (sin impuestos) por mes
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Comercial firmante del contrato
 TypeContact_contrat_internal_SALESREPFOLL=Comercial seguimiento del contrato
 TypeContact_contrat_external_BILLING=Contacto cliente de facturación del contrato
@@ -114,3 +124,7 @@ ShowClosedServices=Mostrar servicios cerrados
 HideClosedServices=Ocultar servicios cerrados
 UserStartingService=Usuario inicio del servicio
 UserClosingService=Usuario cierre del servicio
+SendReminderForExpiredServicesTitle=Send reminder by email for expiring contract services
+SendReminderForExpiredServices=Send reminder by email to the customer when a running contract service is about to expire (parameter is number of days before end of service to send the reminder. It can be a list of days separated by a semicolon, for example '10;5;0;-5'). The template of email to send is defined in setup of contract module.
+DescCONTRACT_EMAIL_TEMPLATE_REMIND_EXPIRATION=Email template to use to send email reminder when a contract service is about to expire
+ContractID=Contract ID

@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Jon Bendtsen            <jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -188,7 +188,7 @@ class Mailing extends CommonObject
 
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
-		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Fk project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 10),
+		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 10),
 	);
 
 	const STATUS_DRAFT = 0;
@@ -256,7 +256,7 @@ class Mailing extends CommonObject
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing";
-		$sql .= " (messtype, date_creat, fk_user_creat, entity)";
+		$sql .= " (messtype, date_creation, fk_user_creat, entity)";
 		$sql .= " VALUES ('".$this->db->escape($this->messtype)."', '".$this->db->idate($now)."', ".((int) $user->id).", ".((int) $conf->entity).")";
 
 		if (!$this->title) {
@@ -335,7 +335,7 @@ class Mailing extends CommonObject
 		$sql .= ", evenunsubscribe = ".((int) $this->evenunsubscribe);
 		$sql .= ", note_public = '".$this->db->escape($this->note_public)."'";
 		$sql .= ", note_private = '".$this->db->escape($this->note_private)."'";
-		$sql .= ", fk_project = '".((int) $this->fk_project)."'";
+		$sql .= ", fk_project = ".((int) $this->fk_project);
 		$sql .= " WHERE rowid = ".(int) $this->id;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -385,7 +385,7 @@ class Mailing extends CommonObject
 		$sql .= ", m.statut as status, m.nbemail";
 		$sql .= ", m.fk_user_creat, m.fk_user_valid";
 		$sql .= ", m.tms as date_modification";
-		$sql .= ", m.date_creat";
+		$sql .= ", m.date_creation";
 		$sql .= ", m.date_valid";
 		$sql .= ", m.date_envoi";
 		$sql .= ", m.extraparams";
@@ -445,12 +445,12 @@ class Mailing extends CommonObject
 				$this->user_creation_id = $obj->fk_user_creat;
 				$this->user_validation_id = $obj->fk_user_valid;
 
-				$this->date_creation = $this->db->jdate($obj->date_creat);
+				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_validation = $this->db->jdate($obj->date_valid);
 				$this->date_envoi = $this->db->jdate($obj->date_envoi);
 				$this->date_modification = $this->db->jdate($obj->date_modification); // tms
 
-				$this->extraparams = (array) json_decode($obj->extraparams, true);
+				$this->extraparams = (array) json_decode((string) $obj->extraparams, true);
 
 				$this->tag = $obj->tag;
 				$this->name_from = $obj->name_from;
@@ -527,7 +527,7 @@ class Mailing extends CommonObject
 				}
 			}
 			if (count($sqlwhere) > 0) {
-				$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+				$sql .= ' AND ('.implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere).')';
 			}
 
 			$filter = '';
@@ -703,7 +703,7 @@ class Mailing extends CommonObject
 		$now = dol_now();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
-		$sql .= " SET statut = 1, date_valid = '".$this->db->idate($now)."', fk_user_valid=".$user->id;
+		$sql .= " SET statut = 1, date_valid = '".$this->db->idate($now)."', fk_user_valid=".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog("Mailing::valid", LOG_DEBUG);
@@ -726,7 +726,7 @@ class Mailing extends CommonObject
 		$now = dol_now();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
-		$sql .= " SET statut = 0, tms = '".$this->db->idate($now)."', fk_user_modif=".$user->id;
+		$sql .= " SET statut = 0, tms = '".$this->db->idate($now)."', fk_user_modif=".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog("Mailing::valid", LOG_DEBUG);

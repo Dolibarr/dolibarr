@@ -15,4 +15,5 @@ LDAPFieldLastSubscriptionDate=Enddatum des Abonnementes
 LDAPFieldLastSubscriptionAmount=Umfang des Abonnementes
 LDAPFieldSkypeExample=Beispiel: skypeName
 MemberTypeSynchronized=Mitgliedstyp synchronisiert
+ErrorFailedToReadLDAP=Fehler beim Lesen der LDAP-Datenbank. Überprüfen Sie die Verfügbarkeit der Datenbank sowie die entsprechenden Moduleinstellungen.
 PasswordOfUserInLDAP=Benutzerpasswort für LDAP - Verzeichnis

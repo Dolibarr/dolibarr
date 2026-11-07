@@ -82,7 +82,6 @@ NoValidatedMemberYet=No se encontraron miembros válidos
 MembersStatisticsDesc=Elige las estadísticas que deseas visualizar ...
 NewMemberbyWeb=Nuevo miembro agregado. Esperando aprobación
 NewMemberForm=Formulario de miembro nuevo
-TurnoverOrBudget=Volumen de negocios (para una empresa) o Presupuesto (para una fundación)
 NoEmailSentToMember=No se han enviado correos al miembro
 EmailSentToMember=Correo enviado al miembro a %s
 YouMayFindYourInvoiceInThisEmail=Puede encontrar su factura adjunta a este correo

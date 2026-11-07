@@ -91,7 +91,8 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-restrictedArea($user, $object->element, $object->id, 'payment', '');
+
+restrictedArea($user, $object->element, $object->id, 'paiement', '');
 
 $permissiontoadd = ($user->hasRight('facture', 'creer')); // Used by the include of actions_setnotes.inc.php
 
@@ -114,7 +115,7 @@ llxHeader('', $title, $help_url);
 if ($object->id > 0 && $upload_dir !== null) {
 	$head = payment_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'documents', $langs->trans("Payment"), -1, 'payment');
+	print dol_get_fiche_head($head, 'documents', $langs->trans("Payment"), -1, 'payment', 0, '', '', 0, '', 1);
 
 	// Supplier order card
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';

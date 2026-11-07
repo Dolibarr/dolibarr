@@ -28,6 +28,7 @@ require '../../main.inc.php';
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
+ * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  *
@@ -54,7 +55,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("install", "other", "admin", "errors", "website"));
+$langs->loadLangs(array("install", "other", "admin", "website"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -135,6 +136,7 @@ print (ini_get('session.cookie_samesite') ? img_picto('', 'tick', 'class="pictof
 if (!ini_get('session.cookie_samesite') || ini_get('session.cookie_samesite') == 'Lax') {
 	print ' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'Lax').")</span>";
 } elseif (ini_get('session.cookie_samesite') == 'Strict') {
+	$langs->load('errors');
 	print ' &nbsp; '.img_warning().' <span class="opacitymedium">'.$langs->trans("WarningPaypalPaymentNotCompatibleWithStrict")."</span>";
 }
 print "<br>\n";
@@ -347,6 +349,7 @@ if ($test) {
 		print img_picto('', 'tick').' '.$langs->trans("InstallAndUpgradeLockedBy", $installlock);
 	}
 } else {
+	$langs->load('errors');
 	print img_warning().' '.$langs->trans("WarningLockFileDoesNotExists", DOL_DATA_ROOT);
 }
 
@@ -357,6 +360,7 @@ print '<br>';
 if (file_exists($installlock)) {	// If install not locked, no need to show this.
 	if (file_exists($upgradeunlock)) {
 		print '<strong>'.$langs->trans("DolibarrUpgrade").'</strong>: ';
+		$langs->load('errors');
 		print img_warning().' '.$langs->trans("WarningUpgradeHasBeenUnlocked", $upgradeunlock);
 		print '<br>';
 		print '<br>';
@@ -411,7 +415,7 @@ if (empty($dolibarr_main_restrict_os_commands)) {
 } else {
 	print $dolibarr_main_restrict_os_commands;
 }
-print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan').')</span>';
+print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, ls').')</span>';
 print '<br>';
 
 
@@ -681,7 +685,7 @@ print '<br>';
 print '<strong>MAIN_SECURITY_FORCESTS</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCESTS', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": max-age=31536000; includeSubDomains)</span><br>";
 print '<br>';
 
-print '<strong>MAIN_SECURITY_FORCEPP</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCEPP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": camera=*, microphone=(), geolocation=*)</span><br>";
+print '<strong>MAIN_SECURITY_FORCEPP</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCEPP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": camera=*, microphone=(self), geolocation=*)</span><br>";
 print '<br>';
 
 if (getDolGlobalString('MAIN_SECURITY_FORCECSPRO')) {
@@ -874,9 +878,22 @@ if ($action == 'doldecrypt' && $user->admin && $exampletodecrypt) {
 	usleep(200);
 	$decryptedstring = $exampletodecrypt;
 	if (preg_match('/^dolobfuscationv1/', $exampletodecrypt)) {
+		// Clear cache
+		unset($_SESSION['obfuscationkey_'.((int) $conf->entity)]);
+		unset($conf->cache['obfuscationkey_'.((int) $conf->entity)]);
+		// Reload obfuscationkey
 		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 		$b = new BlockedLog($db);
 		$obfuscationkey = $b->getObfuscationKey();
+
+		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+		$registrationnumber = getHashUniqueIdOfRegistration();
+		print '<!-- registrationnumber '.$registrationnumber.' -->'."\n";
+		print '<!-- mysoc->idprof1 = '.$mysoc->idprof1.' -->'."\n";
+		print '<!-- session '.$_SESSION['obfuscationkey_'.((int) $conf->entity)].' -->'."\n";
+		print '<!-- conf->cache = '. (string) $conf->cache['obfuscationkey_'.((int) $conf->entity)].' -->'."\n";
+		print '<!-- obfuscationkey => '.$obfuscationkey.' -->'."\n";	// For debug only
+
 		$decryptedstring = dolDecrypt($exampletodecrypt, $obfuscationkey);
 	} elseif (preg_match('/^dolcrypt/', $exampletodecrypt)) {
 		$decryptedstring = dolDecrypt($exampletodecrypt);

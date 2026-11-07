@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2011-2014	Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2014	    Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -135,7 +135,7 @@ $fsearch .= $langs->trans("SalesTurnoverMinimum").': ';
 $fsearch .= '<input type="text" name="min" id="min" value="'.$min.'" class="width75 right">';
 
 // Show report header
-$calc = getDolGlobalString('MAIN_INFO_LOCALTAX_CALC').$local;
+$calc = getDolGlobalInt('MAIN_INFO_LOCALTAX_CALC'.$local);
 $description = '';
 if ($calc == 0 || $calc == 1) {	// Calculate on invoice for goods and services
 	$calcmode = $calc == 0 ? $langs->trans("CalcModeLT".$local) : $langs->trans("CalcModeLT".$local."Rec");
@@ -205,6 +205,7 @@ if ($calc == 0 || $calc == 2) {
 
 	$action = "tvaclient";
 	$object = &$coll_list;
+	$parameters = array();
 	$parameters["mode"] = $modetax;
 	$parameters["start"] = $date_start;
 	$parameters["end"] = $date_end;

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012       JF FERRY                <jfefe@aternatik.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -92,7 +92,7 @@ $server->wsdl->addComplexType(
 );
 
 /*
- * Une catégorie
+ * A category
  */
 $server->wsdl->addComplexType(
 	'categorie',
@@ -167,7 +167,7 @@ $server->wsdl->addComplexType(
 );
 
 /*
- * Retour
+ * Return
  */
 $server->wsdl->addComplexType(
 	'result',

@@ -29,3 +29,5 @@ LDAPPasswordHashType=Vrsta zgoščene vrednosti gesla
 LDAPPasswordHashTypeExample=Vrsta zgoščene vrednosti gesla, ki se uporablja na strežniku
 SupportedForLDAPExportScriptOnly=Podprto samo s skriptom za izvoz ldap
 SupportedForLDAPImportScriptOnly=Podprto samo s skriptom za uvoz ldap
+LDAPUserAccountControl = userAccountControl ob ustvarjanju (aktivni imenik)
+LDAPUserAccountControlExample = 512 Normal Account / 546 Normal Account + Brez gesla + Onemogočeno (glejte: https://fr.wikipedia.org/wiki/Active_Directory)

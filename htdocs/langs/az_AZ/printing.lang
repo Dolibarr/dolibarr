@@ -46,6 +46,10 @@ IPP_Color=Rəng
 IPP_Device=Qurğu
 IPP_Media=Çap mediası
 IPP_Supported=Media növü
+STATE_IPP_idle=Idle printer
+STATE_IPP_none=None
+IPP_COLOR_print-black=Black and White
+IPP_COLOR_print-color=Color
 DirectPrintingJobsDesc=Bu səhifə mövcud printerlər üçün tapılan çap işlərini sadalayır.
 GoogleAuthNotConfigured=Google OAuth quraşdırılmayıb. OAuth modulunu aktivləşdirin və Google ID/Secret təyin edin.
 GoogleAuthConfigured=Google OAuth etimadnamələri OAuth modulunun quraşdırılmasında tapıldı.
@@ -53,4 +57,4 @@ PrintingDriverDescprintgcp=Çap sürücüsü Google Bulud Çapı üçün konfiqu
 PrintingDriverDescprintipp=Çap sürücüsü Kubokları üçün konfiqurasiya dəyişənləri.
 PrintTestDescprintgcp=Google Bulud Çapı üçün Printerlərin Siyahısı.
 PrintTestDescprintipp=Kuboklar üçün printerlərin siyahısı.
-Testbbbb
+PrinterLocation=Printer location

@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -264,10 +264,11 @@ interface Database
 	 * @param   string 			$passwd 					Password
 	 * @param   string 			$name 						Name of database (not used for mysql, used for pgsql)
 	 * @param   int    			$port 						Port of database server
+	 * @param   bool			$forcenew					Force opening of a genuinely new connection instead of reusing one already opened to the same server/database in this process (relevant for pgsql only, see DoliDBPgsql::connect())
 	 * @return  false|resource|mysqli|mysqliDoli|PgSql\Connection|SQLite3    Database access handler
 	 * @see     close()
 	 */
-	public function connect($host, $login, $passwd, $name, $port = 0);
+	public function connect($host, $login, $passwd, $name, $port = 0, $forcenew = false);
 
 	/**
 	 *    Define limits and offset of request
@@ -477,9 +478,9 @@ interface Database
 	 * Encrypt sensitive data in database
 	 * Warning: This function includes the escape and add the SQL simple quotes on strings.
 	 *
-	 * @param	string	$fieldorvalue	Field name or value to encrypt
-	 * @param	int		$withQuotes		Return string including the SQL simple quotes. This param must always be 1 (Value 0 is bugged and deprecated).
-	 * @return	string					XXX(field) or XXX('value') or field or 'value'
+	 * @param	string		$fieldorvalue	Field name or value to encrypt
+	 * @param	int<1,1>	$withQuotes		Return string including the SQL simple quotes. This param must always be 1 (Value 0 is bugged and deprecated).
+	 * @return	string						XXX(field) or XXX('value') or field or 'value'
 	 */
 	public function encrypt($fieldorvalue, $withQuotes = 1);
 
@@ -542,4 +543,22 @@ interface Database
 	 */
 	public function select_db($database);
 	// phpcs:enable
+
+	/**
+	 * Prepare a SQL statement for execution. Use '?' as the placeholder for every bound value.
+	 *
+	 * @param	string	$sql	SQL query with '?' placeholders
+	 * @return	mixed			Driver-specific prepared statement handle, or false on failure
+	 */
+	public function prepare($sql);
+
+	/**
+	 * Execute a statement previously created with prepare().
+	 *
+	 * @param	mixed				$stmt	Statement handle returned by prepare()
+	 * @param	array<int,mixed>	$params	Ordered list of values for the '?' placeholders
+	 * @return	mixed						Resultset (SELECT) usable with fetch_object()/num_rows()/free(),
+	 *										true for another successful statement, false on failure
+	 */
+	public function execute($stmt, $params = array());
 }

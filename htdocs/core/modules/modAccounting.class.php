@@ -258,10 +258,11 @@ class modAccounting extends DolibarrModules
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'accounting_account as aa';
-		$this->export_sql_end[$r] .= ' ,'.MAIN_DB_PREFIX.'accounting_system as ac';
-		$this->export_sql_end[$r] .= ' ,'.MAIN_DB_PREFIX.'accounting_account as aa2';
-		$this->export_sql_end[$r] .= ' WHERE ac.pcg_version = aa.fk_pcg_version AND aa.entity IN ('.getEntity('accounting').')';
-		$this->export_sql_end[$r] .= ' AND aa2.rowid = aa.account_parent AND aa2.active = 1 AND ac.pcg_version = aa2.fk_pcg_version AND aa2.entity IN ('.getEntity('accounting').')';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'accounting_system as ac ON ac.pcg_version = aa.fk_pcg_version';
+		// LEFT JOIN on the parent account: keep accounts that have no parent (root accounts) or whose parent is
+		// inactive or belongs to another chart (common when a custom chart is derived from a base one).
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'accounting_account as aa2 ON aa2.rowid = aa.account_parent AND aa2.entity IN ('.getEntity('accounting').')';
+		$this->export_sql_end[$r] .= ' WHERE aa.entity IN ('.getEntity('accounting').')';
 
 
 		// Imports
@@ -277,7 +278,7 @@ class modAccounting extends DolibarrModules
 		$this->import_tables_array[$r] = array('aa'=>MAIN_DB_PREFIX.'accounting_account');
 		$this->import_tables_creator_array[$r] = array('aa'=>'fk_user_author'); // Fields to store import user id
 		$this->import_fields_array[$r] = array('aa.fk_pcg_version'=>"Chartofaccounts*", 'aa.account_number'=>"AccountAccounting*", 'aa.label'=>"Label*", 'aa.account_parent'=>"Accountparent", "aa.fk_accounting_category"=>"AccountingCategory", "aa.pcg_type"=>"Pcgtype*", 'aa.centralized'=>'Centralized*', 'aa.active'=>'Status*', 'aa.datec'=>"DateCreation");
-		$this->import_regex_array[$r] = array('aa.fk_pcg_version'=>'pcg_version@'.MAIN_DB_PREFIX.'accounting_system', 'aa.account_number'=>'^.{1,32}$', 'aa.label'=>'^.{1,255}$', 'aa.account_parent'=>'^.{0,32}$', 'aa.fk_accounting_category'=>'rowid@'.MAIN_DB_PREFIX.'c_accounting_category', 'aa.pcg_type'=>'^.{1,20}$', 'aa.centralized'=>'^0|1$', 'aa.active'=>'^0|1$', 'aa.datec'=>'^\d{4}-\d{2}-\d{2}$');
+		$this->import_regex_array[$r] = array('aa.fk_pcg_version'=>'pcg_version@'.MAIN_DB_PREFIX.'accounting_system', 'aa.account_number'=>'^.{1,32}$', 'aa.label'=>'^.{1,255}$', 'aa.account_parent'=>'^.{0,32}$', 'aa.fk_accounting_category'=>'rowid@'.MAIN_DB_PREFIX.'c_accounting_category', 'aa.pcg_type'=>'^.{1,60}$', 'aa.centralized'=>'^0|1$', 'aa.active'=>'^0|1$', 'aa.datec'=>'^\d{4}-\d{2}-\d{2}$');
 		$this->import_convertvalue_array[$r] = array(
 			'aa.account_number'=>array('rule'=>'accountingaccount'),
 			'aa.account_parent'=>array('rule'=>'fetchidfromref', 'classfile'=>'/accountancy/class/accountingaccount.class.php', 'class'=>'AccountingAccount', 'method'=>'fetch', 'element'=>'AccountingAccount'),

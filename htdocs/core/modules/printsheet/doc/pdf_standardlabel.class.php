@@ -215,7 +215,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 		}
 
 		if ($this->_COUNTX == $this->_X_Number) {
-			// Si on est en bout de page, alors on repart sur une nouvelle page
+			// If we are at the end of the page, then start a new page
 			$this->_COUNTX = 0;
 			$this->_COUNTY = 0;
 		}

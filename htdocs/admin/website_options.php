@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('errors', 'admin', 'companies', 'website'));
+$langs->loadLangs(array('admin', 'companies', 'website'));
 
 $action = GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view';
 $confirm = GETPOST('confirm', 'alpha');

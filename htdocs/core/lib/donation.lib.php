@@ -48,7 +48,7 @@ function donation_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname); to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'donation_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/don/admin/donation_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'don'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['don']['count'];
 	if ($nbExtrafields > 0) {
@@ -113,7 +113,7 @@ function donation_prepare_head($object)
 	if (!empty($object->note_public)) {
 		$nbNote++;
 	}
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/don/note.php', ['id' => $object->id]);
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/core/note.php', ['element' => 'don', 'id' => $object->id]);
 	$head[$h][1] = $langs->trans("Notes");
 	if ($nbNote > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';

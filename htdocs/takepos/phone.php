@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
  * Copyright (C) 2024   Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ $idproduct = GETPOSTINT('idproduct');
 $mobilepage = GETPOST('mobilepage', 'alphanohtml');	// Set when page is loaded by a js .load()
 
 if ($setterminal > 0) {
-	$_SESSION["takeposterminal"] = $setterminal;
+	$_SESSION["takeposterminal"] = ((int) $setterminal);
 }
 
 $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk", "receiptprinter"));
@@ -250,7 +250,7 @@ if ($action == "productinfo" && $user->hasRight('takepos', 'run')) {
 
 	function SetNote(place, selectedline){
 		console.log("We click on SetNote()");
-		var note = prompt("<?php dol_escape_js($langs->trans('Note')); ?>", "");
+		var note = prompt(<?php echo "'".dol_escape_js($langs->trans('Note'))."'"; ?>, "");
 		$("#phonediv2").load("<?php echo DOL_URL_ROOT ?>/takepos/public/auto_order.php?mobilepage=invoice&action=updateqty&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+qty, function() {
 		});
 		LoadCats();

@@ -146,6 +146,12 @@ class Login
 			throw new RestException(500, 'Failed to load user');
 		}
 
+		// A password alone must not be enough for a user with a two-factor authentication: such a user gets the API key from the backoffice
+		if (dolTotpGetEnrollment($this->db, $tmpuser->id) !== null) {
+			dol_syslog("Login API refused for ".$login.": two-factor authentication is enabled, the API key must be used", LOG_WARNING);
+			throw new RestException(403, 'Two-factor authentication is enabled for this user, the login API with a password is not allowed. Use the API key generated from the backoffice.');
+		}
+
 		// Renew the hash
 		if (empty($tmpuser->api_key) || $reset) {
 			$tmpuser->loadRights();
@@ -163,7 +169,7 @@ class Login
 			// We store API token into database
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 			$sql .= " SET api_key = '".$this->db->escape(dolEncrypt($token, '', '', 'dolibarr'))."'";
-			$sql .= " WHERE login = '".$this->db->escape($login)."'";
+			$sql .= " WHERE rowid = ".((int) $tmpuser->id);
 
 			dol_syslog(get_class($this)."::login", LOG_DEBUG); // No log
 			$result = $this->db->query($sql);

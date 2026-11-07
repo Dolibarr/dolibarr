@@ -45,6 +45,11 @@ class FileUpload
 	protected $fk_element;
 
 	/**
+	 * @var ?CommonObject	Object the files are uploaded for (null when the upload_dir is given in the options)
+	 */
+	protected $object = null;
+
+	/**
 	 * @var string object element
 	 */
 	protected $element;
@@ -56,10 +61,11 @@ class FileUpload
 	 * @param ?array{script_url?:string,upload_dir?:string,upload_url?:string,param_name?:string,delete_type?:string,max_file_size?:?int,min_file_size?:int,accept_file_types?:string,max_number_of_files?:?int,max_width?:?int,max_height?:?int,min_width?:int,min_height?:int,discard_aborted_uploads?:bool,image_versions?:array<string,array{upload_dir?:string,upload_url?:string,max_width?:int,max_height?:int,jpeg_quality?:int}>}	$options		Options array
 	 * @param int		$fk_element		ID of element
 	 * @param string	$element		Code of element
+	 * @throws Exception				If the object was not found, if the element does not support file
+	 *									uploading, or if the upload directory is missing or not writable
 	 */
 	public function __construct($options = null, $fk_element = null, $element = null)
 	{
-		global $db;
 		global $hookmanager;
 
 		$hookmanager->initHooks(array('fileupload'));
@@ -77,48 +83,70 @@ class FileUpload
 
 		//print 'fileupload.class.php: element='.$element.' pathname='.$pathname.' filename='.$filename.' dir_output='.$dir_output."\n";
 
-		if (empty($dir_output)) {
-			setEventMessage('The element '.$element.' is not supported for uploading file. dir_output is unknown.', 'errors');
-			throw new Exception('The element '.$element.' is not supported for uploading file. dir_output is unknown.');
-		}
-
 		$object_ref = 'UndefinedReference';
 		$object = null;
-		// If pathname and filename are null then we can still upload files if we have specified upload_dir on $options
-		if ($pathname !== null && $filename !== null) {
+		// If pathname and filename are empty then we can still upload files if we have specified upload_dir on $options
+		if ($pathname !== '' && $filename !== '') {
 			// Get object from its id and type
 			$object = fetchObjectByElement($fk_element, $element);
 
-			$object_ref = dol_sanitizeFileName($object->ref);
+			// fetchObjectByElement() also returns an object when the record was not found (fetch() returning 0),
+			// so we must check the object was really loaded. Without this, files would be stored at the root of
+			// the module directory, out of any object and out of any permission check on the object.
+			if (!is_object($object) || empty($object->id)) {
+				dol_syslog(get_class($this)."::__construct object ".$element." with id ".((int) $fk_element)." was not found", LOG_WARNING);
+				throw new Exception('objectnotfound');
+			}
+			$this->object = $object;
+
+			// Directory of the module, including the sub directory used by some elements (/sending for a shipment,
+			// /commande for a supplier order, /<project ref> for a task, ...). We must use the same directory than
+			// the one used by the "Attached files" tab of the object, otherwise the uploaded file is stored but
+			// never shown to the user.
+			// Note: getMultidirOutput() only knows the elements of its own switch, that is a minority of them. For
+			// all the others it does not return an empty string but the string
+			// 'error-diroutput-not-defined-for-this-object=x', and keeping the directory of getElementProperties()
+			// is then the nominal case, not a degraded one. So we only accept an absolute path: that string is a
+			// relative path, and writing into it would create the files under the web root.
+			$tmpdir = getMultidirOutput($object, $element);
+			if (!empty($tmpdir) && preg_match('/^([a-z]:)?[\\\\\/]/i', $tmpdir)) {
+				$dir_output = dol_sanitizePathName($tmpdir);
+			}
 
 			// Add object reference as file name prefix if const MAIN_DISABLE_SUGGEST_REF_AS_PREFIX is not enabled
 			if (!getDolGlobalInt('MAIN_DISABLE_SUGGEST_REF_AS_PREFIX')) {
-				$savingDocMask = $object_ref . '-__file__';
+				$savingDocMask = dol_sanitizeFileName($object->ref).'-__file__';
 			}
 
-			// Special cases to forge $object_ref used to forge $upload_dir
-			if ($element == 'invoice_supplier') {
-				$object_ref = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$object_ref;
-			} elseif ($element == 'project_task') {
-				$parentForeignKey = 'fk_project';
-				$parentClass = 'Project';
-				$parentElement = 'projet';
-				$parentObject = 'project';
+			// get_exdir() forges the directory of an object the way the "Attached files" tabs do: it always
+			// uses the id for a thirdparty (a thirdparty ref is a company name, so it is not unique), and it
+			// falls back on the id when the ref is empty. Using anything else here would store the file into
+			// a directory the tab never reads.
+			// Note that a few tabs sanitize the ref themselves instead of calling this function, so they have
+			// no fallback: on an object whose ref is empty in database, which the interface does not produce
+			// but old records may hold, they read the root of the directory of the module while we store
+			// under the id. Storing at the root would mix the files of every object of the module, so the
+			// fallback is kept and those tabs are the ones that should be fixed.
+			$object_ref = get_exdir(0, 0, 0, 1, $object, $element);
 
-				dol_include_once('/'.$parentElement.'/class/'.$parentObject.'.class.php');
-				$parent = new $parentClass($db);
-				if ($object->$parentForeignKey !== null) {
-					$parent->fetch((int) $object->$parentForeignKey);
-					if (!empty($parent->socid)) {
-						$parent->fetch_thirdparty();
-					}
-					$object->$parentObject = clone $parent;
-				}
-
-				$object_ref = dol_sanitizeFileName($object->project->ref).'/'.$object_ref;
+			// For the modules storing their documents on several levels, get_exdir() returned the level
+			// directories only, so we must append the directory of the object itself.
+			if (in_array($element, array('invoice_supplier', 'supplier_invoice'))) {
+				$object_ref .= '/'.dol_sanitizeFileName($object->ref);
 			}
 		}
 
+		// Tested after the call to getMultidirOutput(), because some elements have no 'dir_output' returned by
+		// getElementProperties() while getMultidirOutput() is still able to resolve their output directory.
+		if (empty($dir_output)) {
+			dol_syslog(get_class($this)."::__construct element ".$element." is not supported for uploading file, dir_output is unknown", LOG_WARNING);
+			throw new Exception('elementnotsupported');
+		}
+
+		// Note: 'upload_url' is not always the url of the file stored into 'upload_dir', because document.php
+		// forges the path of the file with its own rules for each value of modulepart. It is currently not a
+		// problem because the only caller of this class (the drag and drop of a file on a card) does not use
+		// the url returned into the json.
 		$this->options = array(
 			'script_url' => $_SERVER['PHP_SELF'],
 			'upload_dir' => $dir_output.'/'.$object_ref.'/',
@@ -284,7 +312,8 @@ class FileUpload
 		$new_file_path = $options['upload_dir'].$file_name;
 
 		if (dol_mkdir($options['upload_dir']) >= 0) {
-			list($img_width, $img_height) = @getimagesize($file_path);
+			$imagesize = @getimagesize($file_path);	// false if the file is not an image, and destructuring false raises a warning since PHP 8.5
+			list($img_width, $img_height) = (is_array($imagesize) ? $imagesize : array(null, null));
 			if (!$img_width || !$img_height) {
 				return false;
 			}
@@ -353,7 +382,8 @@ class FileUpload
 			$file->error = 'maxNumberOfFiles';
 			return false;
 		}
-		list($img_width, $img_height) = @getimagesize($uploaded_file);
+		$imagesize = @getimagesize($uploaded_file);	// false if the file is not an image, and destructuring false raises a warning since PHP 8.5
+		list($img_width, $img_height) = (is_array($imagesize) ? $imagesize : array(null, null));
 		if (is_numeric($img_width)) {
 			if ($this->options['max_width'] && $img_width > $this->options['max_width'] ||
 					$this->options['max_height'] && $img_height > $this->options['max_height']) {
@@ -458,6 +488,20 @@ class FileUpload
 					$file->name = $fileNameWithPrefix;
 				}
 
+				// trimFileName() checked the name is not already used, but it did it before the reference of the
+				// object was added as a prefix above, so it compared a name that is not the one we store. We must
+				// check it again on the final name, otherwise uploading twice the same file silently overwrites
+				// the first one, because dol_move_uploaded_file() is called below with $allowoverwrite = 1.
+				// The .noexe suffix is appended by dol_move_uploaded_file() on an executable file, so we must also
+				// look for the suffixed name, otherwise such a file is never seen as already existing and it is
+				// overwritten at each upload.
+				if ($this->options['discard_aborted_uploads']) {
+					$tmppath = dol_sanitizePathName($this->options['upload_dir']);
+					while (dol_is_file($tmppath.dol_sanitizeFileName($file->name)) || dol_is_file($tmppath.dol_sanitizeFileName($file->name).'.noexe')) {
+						$file->name = $this->upcountName($file->name);
+					}
+				}
+
 				$file_path = dol_sanitizePathName($this->options['upload_dir']).dol_sanitizeFileName($file->name);
 				$append_file = !$this->options['discard_aborted_uploads'] && dol_is_file($file_path) && $file->size > dol_filesize($file_path);
 
@@ -470,15 +514,47 @@ class FileUpload
 					} else {
 						// TODO Replace this with a call of dol_add_file_process(... $mode=1)
 						$result = dol_move_uploaded_file($uploaded_file, $file_path, 1, 0, 0, 0, 'userfile');
+
+						// A return of 2 means the file was stored with a .noexe suffix appended on its name.
+						// We must follow that renaming, otherwise the size check below is done on a file that
+						// does not exist, and we report an error on a file that was correctly stored.
+						if ($result == 2) {
+							$file->name .= '.noexe';
+							$file_path .= '.noexe';
+						}
 					}
 				} else {
-					// Non-multipart uploads (PUT method support)
-					file_put_contents($file_path, fopen('php://input', 'r'), $append_file ? FILE_APPEND : 0);
+					// Non-multipart uploads (file sent as the body of the request) are refused: the file would be written
+					// without the checks done by dol_move_uploaded_file() on an uploaded file (antivirus, .noexe suffix on
+					// an executable file, file name). The drag and drop of a file sends a multipart upload.
+					$file->error = 'notmultipartupload';
+					return $file;
 				}
 				dolChmod($file_path);
 
 				$file_size = dol_filesize($file_path);
 				if ($file_size === $file->size) {
+					// Update index table of files (llx_ecm_files), as dol_add_file_process() does for the files added
+					// from the "Attached files" tab. The name with its .noexe suffix is given, it is removed by
+					// addFileIntoDatabaseIndex() as for any uploaded file.
+					$sharefile = 0;
+					if (dol_mimetype($file->name) == 'application/pdf' && $this->element == 'product' && getDolGlobalString('PRODUCT_ALLOW_EXTERNAL_DOWNLOAD')) {
+						$sharefile = 1;
+					}
+					// The directory is given with no trailing slash, as by the tab: with it, the test of a temporary
+					// directory done by addFileIntoDatabaseIndex() would match an object whose directory is named 'temp'.
+					$indexdir = rtrim(dol_sanitizePathName($this->options['upload_dir']), '/');
+					$indexfile = dol_sanitizeFileName($file->name);
+					// When aborted uploads are not discarded, an existing file with the same name was overwritten, so
+					// its index is removed first, as dol_add_file_process() does when it allows overwriting.
+					if (!$this->options['discard_aborted_uploads']) {
+						deleteFilesIntoDatabaseIndex($indexdir, $indexfile, '', $this->object);
+					}
+					$resultindex = addFileIntoDatabaseIndex($indexdir, $indexfile, $name, 'uploaded', $sharefile, $this->object);
+					if (!is_numeric($resultindex) || $resultindex < 0) {	// An array is returned when the extraction of the text failed
+						dol_syslog(get_class($this)."::handleFileUpload failed to add file ".$file->name." into the index of files", LOG_WARNING);
+					}
+
 					$file->url = $this->options['upload_url'].urlencode($file->name);
 					foreach ($this->options['image_versions'] as $version => $options) {
 						if ($this->createScaledImage($file->name, $options)) {	// Creation of thumbs mini and small is ok

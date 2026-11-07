@@ -3,7 +3,7 @@
 /**
  * Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2012 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -54,7 +54,7 @@ require_once DOL_DOCUMENT_ROOT."/user/class/user.class.php";
  * @var User $user
  */
 
-$langs->loadLangs(array("main", "errors"));
+$langs->loadLangs(array("main"));
 
 // Global variables
 $version = DOL_VERSION;
@@ -138,7 +138,7 @@ print "----- To Dolibarr database:\n";
 print "type=".$conf->db->type."\n";
 print "host=".$conf->db->host."\n";
 print "port=".$conf->db->port."\n";
-print "login=".$conf->db->user."\n";
+print "login=".(string) $conf->db->user."\n";
 print "database=".$conf->db->name."\n";
 print "----- Options:\n";
 print "commitiferror=".$forcecommit."\n";
@@ -204,9 +204,9 @@ if ($result >= 0) {
 			$fuser = new User($db);
 
 			if (getDolGlobalString('LDAP_KEY_USERS') == getDolGlobalString('LDAP_FIELD_SID')) {
-				$fuser->fetch(0, '', $ldapuser[getDolGlobalString('LDAP_KEY_USERS')]); // Chargement du user concerné par le SID
+				$fuser->fetch(0, '', $ldapuser[getDolGlobalString('LDAP_KEY_USERS')]); // Load the user matched by SID
 			} elseif (getDolGlobalString('LDAP_KEY_USERS') == getDolGlobalString('LDAP_FIELD_LOGIN')) {
-				$fuser->fetch(0, $ldapuser[getDolGlobalString('LDAP_KEY_USERS')]); // Chargement du user concerné par le login
+				$fuser->fetch(0, $ldapuser[getDolGlobalString('LDAP_KEY_USERS')]); // Load the user matched by login
 			}
 
 			// Propriete membre
@@ -288,6 +288,7 @@ if ($result >= 0) {
 		}
 
 		if (!$error || $forcecommit) {
+			$langs->load('errors');
 			if (!$error) {
 				print $langs->transnoentities("NoErrorCommitIsDone")."\n";
 			} else {
