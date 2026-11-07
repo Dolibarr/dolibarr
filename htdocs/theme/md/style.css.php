@@ -301,6 +301,7 @@ if ($tmpval <= 460) {
 } else {
 	$colortextbackhmenu = '000000';
 }
+$colortextbackhmenu = colorGetReadableTextColor($colorbackhmenu1, $colortextbackhmenu, ($colortextbackhmenu == 'FFFFFF' ? '000000' : 'FFFFFF'));
 
 $colorbackvmenu1 = implode(',', colorStringToArray($colorbackvmenu1)); // Normalize value to 'x,y,z'
 $tmppart = explode(',', $colorbackvmenu1);
@@ -310,6 +311,7 @@ if ($tmpval <= 460) {
 } else {
 	$colortextbackvmenu = '222222';
 }
+$colortextbackvmenu = colorGetReadableTextColor($colorbackvmenu1, $colortextbackvmenu, ($colortextbackvmenu == 'FFFFFF' ? '222222' : 'FFFFFF'));
 
 $colortopbordertitle1 = implode(',', colorStringToArray($colortopbordertitle1)); // Normalize value to 'x,y,z'
 
@@ -324,6 +326,8 @@ if ($colortexttitle == '') {
 		$colortexttitle = '101010';
 		$colorshadowtitle = 'FFFFFF';
 	}
+	$colortexttitle = colorGetReadableTextColor($colorbacktitle1, $colortexttitle, ($colortexttitle == 'FFFFFF' ? '101010' : 'FFFFFF'));
+	$colorshadowtitle = ($colortexttitle == 'FFFFFF' ? '888888' : 'FFFFFF');
 } else {
 	$colorshadowtitle = '888888';
 }
@@ -336,6 +340,7 @@ if ($tmpval <= 460) {
 } else {
 	$colortextbacktab = '111111';
 }
+$colortextbacktab = colorGetReadableTextColor($colorbacktabcard1, $colortextbacktab, ($colortextbacktab == 'FFFFFF' ? '111111' : 'FFFFFF'));
 
 // Format color value to match expected format (may be 'FFFFFF' or '255,255,255')
 $colorbackhmenu1 = implode(',', colorStringToArray($colorbackhmenu1));
@@ -452,8 +457,8 @@ $leftmenuwidth = 254;
 	--tableforfieldcolor:#666;
 	--amountremaintopaycolor:#880000;
 	--amountpaymentcomplete:#008855;
-	--amountremaintopaybackcolor:none;
-	--productlinestockod: #002200;
+	--amountremaintopaybackcolor:inherit;
+	--productlinestockok: #002200;
 	--productlinestocktoolow: #884400;
 	--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #fff, #fff, #fff, #e4efe8);
 	--tablevalidbgcolor: rgb(252, 248, 227);
@@ -513,7 +518,7 @@ if (getDolGlobalString('THEME_DARKMODEENABLED')) {
 	            --tableforfieldcolor:rgb(220,220,220);
 	            --amountremaintopaycolor:rgb(252,84,91);
 	            --amountpaymentcomplete:rgb(101,184,77);
-	            --amountremaintopaybackcolor:rbg(245,130,46);
+	            --amountremaintopaybackcolor:rgb(245,130,46);
 				--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #000, #000, #000, #274231);
 				--tablevalidbgcolor: rgb(80, 64, 33);
 				--colorblack: #fff;
@@ -3569,7 +3574,7 @@ div.menu_titre {
 	padding-<?php print $right; ?>: 2px;
 	font-family: Roboto,<?php echo $fontlist; ?>;
 	font-weight: 400;
-	opacity: 0.9;
+	opacity: 0.95;
 }
 
 div.mainmenu {
@@ -5057,6 +5062,7 @@ table.listwithfilterbefore {
 .confirmquestions .tagtr .tagtd:not(:first-child)  { padding-left: 10px; }
 .confirmquestions { margin-top: 5px; }
 .confirmquestions .tagtr .tagtd { height: 2em; vertical-align: middle; }
+.confirmquestions .tagtd { padding-top: 5px; padding-bottom: 5px; }	/* same spacing than eldy (where it is set on all .tagtd) */
 
 
 /* Pagination */
@@ -6436,7 +6442,8 @@ div#card-errors {
 
 button.ui-button-icon-only.ui-dialog-titlebar-close {
 	padding: 12px;
-	margin-top: -15px;
+	margin-top: 0;
+	transform: translateY(-50%);	/* center vertically whatever the real height of the button (padding + border) */
 	margin-right: 15px;
 }
 .ui-dialog-content {
@@ -6469,6 +6476,11 @@ div#dialogforpopup {
 
 .ui-dialog .ui-dialog-buttonpane {
 	padding: .5em 1em .3em .4em;
+}
+.ui-dialog .ui-dialog-buttonpane .ui-button:active, .ui-dialog .ui-dialog-buttonpane .ui-button.ui-state-active, .ui-dialog .ui-dialog-buttonpane .ui-button.ui-state-active:hover {
+	background: var(--butactionbg) !important;	/* same than .butAction instead of the default blue of .ui-state-active */
+	color: var(--textbutaction) !important;
+	border-color: var(--butactionbg) !important;	/* keep border width so button does not move, but remove the blue color */
 }
 .ui-dialog .ui-dialog-content, .ui-dialog .ui-dialog-titlebar.ui-widget-header {
 	padding-left: 1em !important;

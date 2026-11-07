@@ -171,12 +171,16 @@ if (!extension_loaded("mbstring")) {
 	$extensionok[] = 'MBString';
 }
 
-// Check for json extension
+// Check for json extension. Dolibarr calls json_encode() and json_decode() in hundreds of places
+// and has no fallback for them, so without this extension nothing runs at all: this one is blocking.
 if (!extension_loaded("json")) {
-	$extensionko[] = 'JSON';
-	// $checksok = 0; // If ko, just warning. So check must still be 1 (otherwise no way to install)
+	$langs->load("errors");
+	print img_picto('', 'warning', 'class="pictofixedwidth error"');
+	print $langs->trans("ErrorPHPDoesNotSupport", '<b>JSON</b>')."<br>\n";
+	$checksok = 0;
 } else {
-	$extensionok[] = 'JSON';
+	print img_picto('', 'tick', 'class="pictofixedwidth"');
+	print $langs->trans("PHPSupport", '<b>JSON</b>')."<br>\n";
 }
 
 // Check if GD is supported (we need GD for image conversion)
