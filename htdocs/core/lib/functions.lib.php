@@ -8758,6 +8758,10 @@ function dolEvalSimpleCondition($s)
 		} elseif (preg_match('/^\$conf->([a-zA-Z0-9_]+)->enabled$/', $term, $reg)) {
 			$value = !empty($conf->{$reg[1]}->enabled);
 		} elseif (preg_match('/^getDolGlobal(String|Int)\(\s*[\'"]([a-zA-Z0-9_]+)[\'"]\s*\)$/', $term, $reg)) {
+			// A constant storing a secret is not evaluated here, so dol_eval() can refuse it
+			if (isASecretKey($reg[2])) {
+				return null;
+			}
 			$value = ($reg[1] == 'Int' ? (bool) getDolGlobalInt($reg[2]) : (bool) getDolGlobalString($reg[2]));
 		} elseif (preg_match('/^\$(leftmenu|mainmenu)\s*(==|!=)\s*[\'"]([a-zA-Z0-9_]*)[\'"]$/', $term, $reg)) {
 			$current = ($reg[1] == 'leftmenu' ? $leftmenu : $mainmenu);
