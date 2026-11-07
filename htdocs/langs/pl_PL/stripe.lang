@@ -5,7 +5,7 @@ StripeOrCBDoPayment=Zapłać przy użyciu karty lub Stripe
 FollowingUrlAreAvailableToMakePayments=Nastepujące adresy są dostępne dla klienta, by mógł dokonać płatności za faktury zamówienia
 PaymentForm=Formularz płatności
 WelcomeOnPaymentPage=Witaj w naszym serwisie płatności online
-ThisScreenAllowsYouToPay=Ten ekran pozwala na dokonanie płatności on-line do %s.
+ThisScreenAllowsYouToPay=This screen allows you to make an online payment to %s.
 ThisIsInformationOnPayment=To jest informacja o płatności do zrobienia
 ToComplete=Aby zakończyć
 YourEMail=Adres email do wysłania potwierdzenia płatności
@@ -25,7 +25,7 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=Adres URL oferujący stronę płatnośc
 ToOfferALinkForOnlinePaymentOnMemberSubscription=Adres URL oferujący stronę płatności online %s za subskrypcję członka
 ToOfferALinkForOnlinePaymentOnDonation=Adres URL oferujący stronę płatności online %s do wpłaty darowizny
 YouCanAddTagOnUrl=Możesz również dodać parametr adresu URL <b>&tag=value</b> do dowolnego z tych adresów URL (obowiązkowe tylko w przypadku płatności niepowiązanych z obiektem), aby dodać własny tag komentarza do płatności.<br>W przypadku adresu URL płatności bez istniejącego obiektu możesz również dodać parametr <strong>&noidempotency=1</strong>, dzięki czemu ten sam link z tym samym tagiem będzie mógł być użyto kilka razy (niektóre tryby płatności mogą ograniczać płatność do 1 dla każdego innego linku bez tego parametru)
-YouCanEmbedOnWebsite=Jeśli chcesz zintegrować stronę płatności ze stroną Dolibarr, możesz uwzględnić parametr: <b>&ws=website_ref</b>.<br>Dodatkowo dwie strony o nazwach <b>paymentok</b> i <b>paymentko</b> musi zostać utworzony na stronie internetowej, aby otrzymać przekierowanie po pomyślnej lub nieudanej płatności online.
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful or failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Skonfiguruj swój Stripe z linkiem <b>z %s</b> do opłat stworzonych automatycznie, gdy są zatwierdzone przez Stripe.
 AccountParameter=Parametry konta
 UsageParameter=Parametry użytkownika
@@ -110,3 +110,4 @@ PAYBOX_PBX_RANG=Wartość dla zasięgu PBX
 PAYBOX_PBX_IDENTIFIANT=Wartośc dla PBX ID
 PAYBOX_HMAC_KEY=Klucz HMAC
 FeatureNotUsedAccordingtoSetup=Feature not used according to your %s setup
+PaymentRecordedButPostPocessingKo=Your payment was recorded by the payment system. However, it appears that our post-payment processing could not be fully completed. We were alerted and will try to solve this soon. We recommend you to not try to pay a second time, and send us a screenshot of this page by email to be sure so we take into account the issue.

@@ -4,10 +4,11 @@
  * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2016   	Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2023   	Romain Neil             <contact@romain-neil.fr>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  * Copyright (C) 2025-2026	Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 /**
- * API class for receive files
+ * API class to receive files
  *
  * @since	6.0.0	Initial implementation
  *
@@ -109,6 +110,10 @@ class Documents extends DolibarrApi
 		}
 		if (!$accessallowed) {
 			throw new RestException(403);
+		}
+		// Check permission on the object the document is attached to (thirdparties of a restricted sales representative, ...)
+		if (!checkUserAccessToDocumentObject(DolibarrApiAccess::$user, $modulepart, $relativefile, 'read')) {
+			throw new RestException(403, 'Access not allowed to the object of this document');
 		}
 
 		if (DolibarrApiAccess::$user->socid > 0) {
@@ -212,6 +217,10 @@ class Documents extends DolibarrApi
 		}
 		if (!$accessallowed) {
 			throw new RestException(403);
+		}
+		// Check permission on the object the document is attached to (thirdparties of a restricted sales representative, ...)
+		if (!checkUserAccessToDocumentObject(DolibarrApiAccess::$user, $modulepart, $relativefile, 'write')) {
+			throw new RestException(403, 'Access not allowed to the object of this document');
 		}
 
 		if (DolibarrApiAccess::$user->socid > 0) {
@@ -435,7 +444,7 @@ class Documents extends DolibarrApi
 	 * List all documents of an element
 	 *
 	 * Use element ID or Ref.
-	 * Supported modules: thirdparty, user, member, proposal, order, supplier_order, shipment, invoice, supplier_invoice, product, event, expensereport, knowledgemanagement, category, contract, project, project_task
+	 * Supported modules: thirdparty, user, member, proposal, order, supplier_order, shipment, invoice, supplier_invoice, product, event, expensereport, knowledgemanagement, category, contract, project, project_task, intervention, stock
 	 *
 	 * @since	7.0.0	Initial implementation
 	 *
@@ -472,6 +481,27 @@ class Documents extends DolibarrApi
 
 		$id = (empty($id) ? 0 : $id);
 
+		// Aliases unknown by fetchObjectByElement() or by the check of permission on module below
+		$modulepartaliases = array(
+			'agenda' => 'action',
+			'event' => 'action',
+			'company' => 'societe',
+			'thirdparty' => 'societe',
+			'entrepot' => 'stock',
+			'facture_fournisseur' => 'supplier_invoice',
+			'invoice_supplier' => 'supplier_invoice',
+			'fichinter' => 'ficheinter',
+			'intervention' => 'ficheinter',
+			'order_supplier' => 'supplier_order',
+			'produit' => 'product',
+			'propale' => 'propal',
+			'proposal' => 'propal',
+			'shipping' => 'shipment',
+			'socpeople' => 'contact',
+			'task' => 'project_task',
+		);
+		$modulepart = $modulepartaliases[$modulepart] ?? $modulepart;
+
 		// Define $object
 		$object = fetchObjectByElement($id, $modulepart, $ref);		// Note that we don't mind id and ref, we want to get a valid instantiated $object but not necessarily initialized
 		if (!is_object($object)) {
@@ -479,10 +509,28 @@ class Documents extends DolibarrApi
 		}
 
 		// Define $upload_dir to scan
-		$upload_dir = getMultidirOutput($object, '', 1);
+		if ($object->element == 'invoice_supplier' && $object->id > 0) {
+			// Supplier invoices are stored under a hashed subdir, as in the other methods of this file
+			$upload_dir = getMultidirOutput($object).'/'.get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').dol_sanitizeFileName($object->ref);
+		} elseif ($object->element == 'mo') {
+			// The element of a manufacturing order is 'mo' but its module is 'mrp', as in mrp/mo_document.php
+			$upload_dir = (string) getMultidirOutput($object, 'mrp', 1);
+		} elseif ($object->element == 'contact' && $object->id > 0) {
+			// Contacts are stored into a subdir of the module of third parties, as in contact/document.php
+			$upload_dir = getMultidirOutput($object, 'societe').'/contact/'.dol_sanitizeFileName($object->ref);
+		} else {
+			$upload_dir = (string) getMultidirOutput($object, '', 1);
+		}
 
 		// Check object-level permissions
-		$ok = checkUserAccessToObject(DolibarrApiAccess::$user, array($object->element), $object, $object->table_element, '');
+		$feature = $object->element;
+		$dbt_select = 'rowid';
+		if ($object->element == 'action') {
+			// The check on owner and attendees of an event is done on feature 'agenda' only, and the primary key of its table is id
+			$feature = 'agenda';
+			$dbt_select = 'id';
+		}
+		$ok = checkUserAccessToObject(DolibarrApiAccess::$user, array($feature), $object, $object->table_element, '', 'fk_soc', $dbt_select);
 		if (empty($ok)) {
 			throw new RestException(403, 'Access not allowed to this object (refused by checkUserAccessToObject)');
 		}
@@ -494,7 +542,7 @@ class Documents extends DolibarrApi
 			}
 		} elseif ($modulepart == 'user') {
 			// Can get doc if has permission to read all user or if it is user itself
-			if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && DolibarrApiAccess::$user->id != $id) {
+			if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && DolibarrApiAccess::$user->id != $object->id) {
 				throw new RestException(403);
 			}
 		} elseif ($modulepart == 'adherent' || $modulepart == 'member') {
@@ -520,6 +568,10 @@ class Documents extends DolibarrApi
 			}
 		} elseif ($modulepart == 'shipment' || $modulepart == 'expedition') {
 			if (!DolibarrApiAccess::$user->hasRight('expedition', 'lire')) {
+				throw new RestException(403);
+			}
+		} elseif ($modulepart == 'reception') {
+			if (!DolibarrApiAccess::$user->hasRight('reception', 'lire')) {
 				throw new RestException(403);
 			}
 		} elseif ($modulepart == 'facture' || $modulepart == 'invoice') {
@@ -642,7 +694,10 @@ class Documents extends DolibarrApi
 								$fileitem['keywords'] = $line->keywords;
 								$fileitem['cover'] = $line->cover;
 								$fileitem['share'] = $line->share;
-								$fileitem['date_c'] = $line->date_c;
+								// The property was renamed into date_creation; the key of the answer keeps its name,
+								// so that the clients already reading date_c are not broken a second time.
+								$fileitem['date_c'] = $line->date_creation;
+								$fileitem['date_creation'] = $line->date_creation;
 								$fileitem['agenda_id'] = $line->agenda_id;
 								$fileitem['fk_user_c'] = $line->fk_user_c;
 								$fileitem['fk_user_m'] = $line->fk_user_m;
@@ -693,6 +748,94 @@ class Documents extends DolibarrApi
 		}
 
 		return $filearray;
+	}
+
+
+	/**
+	 * Return the list of files and subdirectories of a directory of a documents area not linked to an object
+	 *
+	 * Supported areas: ecm (manual tree of the DMS module), medias (public medias of the website module).
+	 *
+	 * @since	25.0.0	Initial implementation
+	 *
+	 * @param   string 	$modulepart		Name of the area ('ecm' or 'medias')
+	 * @param	string	$subdir			Directory to list, relative to the root of the area ('' for the root)
+	 * @param	int		$recursive		1=Also list the content of the subdirectories
+	 * @param	string	$search			Return only entries whose name contains this string
+	 * @param	string	$sortfield		Sort criteria ('name','date','size')
+	 * @param	string	$sortorder		Sort order ('asc' or 'desc')
+	 * @param	int		$limit			List limit
+	 * @param	int		$page			Page number
+	 * @param	bool	$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @return	array<array{name:string,relativename:string,type:string,date:int,size:int}>|array{data:array<array{name:string,relativename:string,type:string,date:int,size:int}>,pagination:array{total:int,page:int,page_count:int,limit:int}}	Array of files and directories
+	 * @phan-return array<array{name:string,relativename:string,type:string,date:int,size:int}>|array{data:array<array{name:string,relativename:string,type:string,date:int,size:int}>,pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return array<array{name:string,relativename:string,type:string,date:int,size:int}>|array{data:array<array{name:string,relativename:string,type:string,date:int,size:int}>,pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 *
+	 * @url GET /directory
+	 *
+	 * @throws	RestException	400		Bad value for a parameter
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		Directory not found
+	 */
+	public function getDocumentsListByDirectory($modulepart, $subdir = '', $recursive = 0, $search = '', $sortfield = 'name', $sortorder = 'asc', $limit = 100, $page = 0, $pagination_data = false)
+	{
+		global $conf;
+
+		if (!in_array($modulepart, array('ecm', 'medias'))) {
+			throw new RestException(400, 'bad value for parameter modulepart, only ecm and medias are supported');
+		}
+		if ($modulepart == 'ecm' && !isModEnabled('ecm')) {
+			throw new RestException(400, 'Module ECM is not enabled');
+		}
+		$subdir = trim((string) $subdir, '/');
+		if (preg_match('/\.\./', $subdir) || preg_match('/[<>|]/', $subdir)) {
+			throw new RestException(400, 'bad value for parameter subdir');
+		}
+		if (!in_array($sortfield, array('name', 'date', 'size'))) {
+			$sortfield = 'name';
+		}
+
+		$check_access = dol_check_secure_access_document($modulepart, $subdir, $conf->entity, DolibarrApiAccess::$user, '', 'read');
+		if (empty($check_access['accessallowed'])) {
+			throw new RestException(403);
+		}
+		$dir = rtrim($check_access['original_file'], '/');
+		if (!dol_is_dir($dir)) {
+			throw new RestException(404, 'Directory '.$subdir.' not found in area '.$modulepart);
+		}
+
+		$filter = ($search !== '' ? preg_quote($search, '/') : '');
+		$excludefilter = array('^\.', '(\.meta|_preview.*\.png)$', '^temp$', '^CVS$', '^thumbs$');
+		$filearray = dol_dir_list($dir, 'all', $recursive ? 1 : 0, $filter, $excludefilter, $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
+
+		$countarray = count($filearray);
+		$filearray = array_slice($filearray, $limit * $page, $limit);
+
+		// Return paths relative to the root of the area, so they can be used as original_file of /download
+		$result = array();
+		foreach ($filearray as $fileitem) {
+			$result[] = array(
+				'name' => $fileitem['name'],
+				'relativename' => ($subdir !== '' ? $subdir.'/' : '').$fileitem['relativename'],
+				'type' => ($fileitem['type'] == 'dir' ? 'dir' : 'file'),
+				'date' => (int) $fileitem['date'],
+				'size' => (int) $fileitem['size']
+			);
+		}
+
+		if ($pagination_data) {
+			$result = array(
+				'data' => $result,
+				'pagination' => array(
+					'total' => (int) $countarray,
+					'page' => (int) $page,
+					'page_count' => (int) ceil((int) $countarray / max(1, (int) $limit)),
+					'limit' => (int) $limit
+				)
+			);
+		}
+
+		return $result;
 	}
 
 
@@ -748,7 +891,9 @@ class Documents extends DolibarrApi
 	 */
 	public function post($filename, $modulepart, $ref = '', $subdir = '', $filecontent = '', $fileencoding = '', $overwriteifexists = 0, $createdirifnotexists = 1, $position = 0, $cover = '', $array_options = [], $generateThumbs = 0, $share = 0)
 	{
-		global $conf;
+		dol_syslog(__METHOD__.'::begin', LOG_DEBUG);
+		global $conf, $langs;
+
 
 		$modulepartorig = $modulepart;
 
@@ -920,6 +1065,10 @@ class Documents extends DolibarrApi
 			if (empty($tmp['accessallowed'])) {
 				throw new RestException(403, 'Access not allowed to upload file into this directory');
 			}
+			// Check permission on the object the document is attached to (thirdparties of a restricted sales representative, ...)
+			if (!checkUserAccessToDocumentObject(DolibarrApiAccess::$user, $modulepart, $relativefile.'/'.$original_file, 'write')) {
+				throw new RestException(403, 'Access not allowed to the object of this document');
+			}
 			$upload_dir = $tmp['original_file']; // No dirname here, tmp['original_file'] is already the dir because dol_check_secure_access_document was called with param original_file that is only the dir
 			/*} else {
 				if (!DolibarrApiAccess::$user->hasRight('ecm', 'upload')) {
@@ -946,12 +1095,24 @@ class Documents extends DolibarrApi
 				if (empty($tmp['accessallowed'])) {
 					throw new RestException(403, 'Access not allowed to upload file into this directory');
 				}
+				// Check permission on the object the document is attached to (thirdparties of a restricted sales representative, ...)
+				if (!checkUserAccessToDocumentObject(DolibarrApiAccess::$user, $modulepart, $relativefile.'/'.$original_file, 'write')) {
+					throw new RestException(403, 'Access not allowed to the object of this document');
+				}
 				$upload_dir = $tmp['original_file']; // No dirname here, tmp['original_file'] is already the dir because dol_check_secure_access_document was called with param original_file that is only the dir
 			} else {
 				if (!DolibarrApiAccess::$user->hasRight('ecm', 'upload')) {
 					throw new RestException(403, 'Missing permission to upload files in ECM module');
 				}
-				$upload_dir = $conf->medias->multidir_output[$conf->entity];
+				if (!isModEnabled('ecm') || empty($conf->ecm->dir_output)) {
+					throw new RestException(400, 'Module ECM is not enabled');
+				}
+				$relativefile = $subdir;
+				if (preg_match('/\.\./', $subdir) || preg_match('/[<>|]/', $subdir)) {
+					throw new RestException(400, 'Bad value for parameter subdir');
+				}
+				// Manual area of the ECM module: the free tree of directories
+				$upload_dir = $conf->ecm->dir_output.($subdir !== '' ? '/'.$subdir : '');
 			}
 
 			if (empty($upload_dir) || $upload_dir == '/') {
@@ -1009,7 +1170,15 @@ class Documents extends DolibarrApi
 			$checkvirusarray = dolCheckVirus($src_file, $dest_file);
 			if (count($checkvirusarray)) {
 				dol_syslog('Files.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$dest_file.'") KO with antivirus: errors='.implode(',', $checkvirusarray), LOG_WARNING);
-				throw new RestException(500, 'ErrorFileIsInfectedWithAVirus: '.implode(',', $checkvirusarray));
+				// Differentiate based on the error key in the array
+				$errorkey = array_keys($checkvirusarray)[0];
+				$langs->load('errors');
+				if (in_array($errorkey, array('ErrorFileIsInfectedKnownVirus', 'ErrorAntivirusNotAvailable', 'ErrorFileIsInfectedWithAVirus'))) {
+					$restmsg = $langs->trans($errorkey);
+				} else {
+					$restmsg = $langs->trans('ErrorFileIsInfectedWithAVirus'); // fallback
+				}
+				throw new RestException(500, $restmsg . ': ' . implode(',', $checkvirusarray));
 			}
 		}
 
@@ -1139,6 +1308,10 @@ class Documents extends DolibarrApi
 		}
 		if (!$accessallowed) {
 			throw new RestException(403);
+		}
+		// Check permission on the object the document is attached to (thirdparties of a restricted sales representative, ...)
+		if (!checkUserAccessToDocumentObject(DolibarrApiAccess::$user, $modulepart, $relativefile, 'write')) {
+			throw new RestException(403, 'Access not allowed to the object of this document');
 		}
 
 		if (DolibarrApiAccess::$user->socid > 0) {

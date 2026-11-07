@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "errors", "holiday", "other"));
+$langs->loadLangs(array("admin", "holiday", "other"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -53,7 +53,7 @@ $modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions
 
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
-$type = 'contract';
+$type = 'holiday';
 
 if (!getDolGlobalString('HOLIDAY_ADDON')) {
 	$conf->global->HOLIDAY_ADDON = 'mod_holiday_madonna';
@@ -116,6 +116,7 @@ if ($action == 'updateMask') {
 			dol_syslog($module->error, LOG_ERR);
 		}
 	} else {
+		$langs->load('errors');
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
@@ -200,16 +201,12 @@ print '<br>';
  *  Documents models for Holidays
  */
 
-if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-	printDocumentModelList($type, 'holiday', 'HOLIDAY_ADDON_PDF', $langs->trans("TemplatePDFHolidays"), array(
-		'Logo' => 'option_logo',
-		'PaymentMode' => 'option_modereg',
-		'PaymentConditions' => 'option_condreg',
-		'MultiLanguage' => 'option_multilang',
-		'WatermarkOnDraftOrders' => 'option_draft_watermark',
-	));
-	print "<br>";
-}
+printDocumentModelList($type, 'holiday', 'HOLIDAY_ADDON_PDF', $langs->trans("TemplatePDFHolidays"), array(
+	'Logo' => 'option_logo',
+	'MultiLanguage' => 'option_multilang',
+));
+
+print "<br>";
 
 
 /*

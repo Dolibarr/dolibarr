@@ -30,7 +30,6 @@ SupplierOrderSentByEMail=Bon de commande %s envoyé par courriel
 ORDER_SUPPLIER_DELETEInDolibarr=Bon de commande %s supprimé
 SupplierInvoiceSentByEMail=Facture fournisseur %s envoyée par e-mail
 ShippingSentByEMail=Expédition %s envoyée par courriel
-InterventionSentByEMail=Intervention %s envoyée par courriel
 ProjectSentByEMail=Projet %s envoyé par courriel
 ProposalDeleted=Proposition supprimée
 DraftInvoiceDeleted=Projet de facture supprimé

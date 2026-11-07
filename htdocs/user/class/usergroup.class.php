@@ -152,6 +152,11 @@ class UserGroup extends CommonObject
 	 */
 	protected $childtablesoncascade = array('usergroup_rights', 'usergroup_user');
 
+	/**
+	 * @var int<0,1>	Does object support extrafields ? 0=No, 1=Yes
+	 */
+	public $isextrafieldmanaged = 1;
+
 
 	/**
 	 *    Class constructor
@@ -734,7 +739,7 @@ class UserGroup extends CommonObject
 	 */
 	public function update($notrigger = 0)
 	{
-		global $user, $conf;
+		global $user;
 
 		if (!empty($this->name)) {
 			$this->nom = $this->name; // Field for 'name' is called 'nom' in database
@@ -763,7 +768,7 @@ class UserGroup extends CommonObject
 		$lastname = $this->lastname;
 		$firstname = $this->firstname;
 		if (empty($lastname)) {
-			$lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (isset($this->nom) ? $this->nom : (isset($this->societe) ? $this->societe : (isset($this->company) ? $this->company : '')))));
+			$lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (isset($this->nom) ? $this->nom : '')));
 		}
 
 		$ret = '';

@@ -4,7 +4,7 @@
  * Copyright (C) 2012		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2012		Charles-Fr BENKE	<charles.fr@benke.fr>
  * Copyright (C) 2015       Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -350,6 +350,9 @@ if ($action == 'deleteprof' && $user->hasRight('export', 'lire')) {
 	if (GETPOSTINT("id")) {
 		$objexport->fetch(GETPOSTINT('id'));
 		$result = $objexport->delete($user);
+		if ($result < 0) {
+			setEventMessages($objexport->error, $objexport->errors, 'errors');
+		}
 	}
 }
 

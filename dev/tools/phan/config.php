@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This is the phan config file used by .github/workflows/phan.yml
  */
@@ -280,13 +280,19 @@ return [
 		'disableremove' => 'int<0,1>',
 		'dolibarr_main_authentication' => 'string',
 		'dolibarr_main_data_root' => 'string',
+		'dolibarr_main_db_character_set' => 'string',
 		'dolibarr_main_db_encrypted_pass' => 'string',
 		'dolibarr_main_db_host' => 'string',
+		'dolibarr_main_db_name' => 'string',
 		'dolibarr_main_db_pass' => 'string',
+		'dolibarr_main_db_port' => 'int|string',
+		'dolibarr_main_db_readonly' => 'int',
 		'dolibarr_main_db_type' => '?string',
+		'dolibarr_main_db_user' => 'string',
 		'dolibarr_main_demo' => 'string',
 		'dolibarr_main_document_root' => 'string',
 		'dolibarr_main_url_root' => 'string',
+		'dolibarr_nocsrfcheck' => 'int|string',
 		'dolibarr_font_DOL_DEFAULT_TTF' => '?string',
 		'dolibarr_font_DOL_DEFAULT_TTF_BOLD' => '?string',
 		'dolibarr_js_CKEDITOR' => '?string',
@@ -303,6 +309,7 @@ return [
 		'filter' => 'string',
 		'filtert' => 'int',
 		'forceall' => 'int<0,1>',
+		'force_install_noedit' => 'int',
 		'form' => '\Form',
 		'formcompany' => '\FormCompany',
 		'hookmanager' => '\HookManager',
@@ -416,8 +423,6 @@ return [
 		__DIR__.'/plugins/NoVarDumpPlugin.php',
 		__DIR__.'/plugins/ParamMatchRegexPlugin.php',
 		__DIR__.'/plugins/SqlInjectionPlugin.php',
-		// checks if a function, closure or method unconditionally returns.
-		// can also be written as 'vendor/phan/phan/.phan/plugins/AlwaysReturnPlugin.php'
 		'DeprecateAliasPlugin',
 		//'EmptyMethodAndFunctionPlugin',
 		'InvalidVariableIssetPlugin',
@@ -434,10 +439,10 @@ return [
 		'ConstantVariablePlugin', // Warns about values that are actually constant
 		//'HasPHPDocPlugin', // Requires PHPDoc
 		// 'InlineHTMLPlugin', // html in PHP file, or at end of file
-		//'NonBoolBranchPlugin', // Requires test on bool, nont on ints
+		//'NonBoolBranchPlugin', // Requires test on bool, not on ints
 		//'NonBoolInLogicalArithPlugin',
 		'NumericalComparisonPlugin',
-		//'PHPDocToRealTypesPlugin',
+		//'PHPDocToRealTypesPlugin',  // Report/Add types to function definitions
 		'PHPDocInWrongCommentPlugin', // Missing /** (/* was used)
 		//'ShortArrayPlugin', // Checks that [] is used
 		//'StrictLiteralComparisonPlugin',
@@ -472,12 +477,17 @@ return [
 		// Dolibarr uses a lot of internal deprecated stuff, not reporting
 		'PhanDeprecatedProperty',
 		'PhanDeprecatedImplicitNullableParam',
+		// TCPDF >= 6.11 marks the whole library deprecated (in favor of tecnickcom/tc-lib-pdf)
+		// in its own class docblocks; Dolibarr intentionally keeps using it (TCPDI and all
+		// local patches depend on TCPDF internals), so don't flag every TCPDF/TCPDFBarcode/
+		// TCPDF2DBarcode usage across the codebase for it.
+		'PhanDeprecatedClass',
 
 		'PhanCompatibleNegativeStringOffset',	// return false positive
 		'PhanPluginConstantVariableBool',		// a lot of false positive, in most cases, we want to keep the code as it is
 		'PhanPluginConstantVariableNull',		// a lot of false positive, in most cases, we want to keep the code as it is
 		// 'PhanPluginUnknownArrayPropertyType', // Helps find missing array keys or mismatches, remaining occurrences are likely unused properties
-		'PhanTypeArraySuspiciousNullable',	// About 440 occurrences
+		'PhanTypeArraySuspiciousNullable',	// About 400 occurrences
 		// 'PhanTypeInvalidDimOffset',			// Helps identify missing array indexes in types or reference to unset indexes
 		'PhanTypeObjectUnsetDeclaredProperty',
 		'PhanTypePossiblyInvalidDimOffset',			// a lot of false positive, in most cases, we want to keep the code as it is
@@ -497,7 +507,6 @@ return [
 		'PhanPluginEmptyStatementIf',		// Usually done on purpose with a comment
 		'PhanPluginNonBoolBranch',			// Not essential - 31240+ occurrences
 		'PhanPluginNumericalComparison',	// Not essential - 19870+ occurrences
-		// 'PhanTypeMismatchArgument',		// Can detect missing array keys, invalid types, objects being passed when scalar expected - Not all reported by phpstan - <=3800 cases (was: 12300+ before)
 		'PhanPluginNonBoolInLogicalArith',	// Not essential - 11040+ occurrences
 		'PhanPluginConstantVariableScalar',	// Not essential - 5180+ occurrences
 		'PhanPluginDuplicateAdjacentStatement',
@@ -507,7 +516,7 @@ return [
 		'PhanPluginRedundantAssignment',				// Not essential, useless
 		'PhanPluginDuplicateCatchStatementBody',  // Requires PHP7.1 - 50+ occurrences
 
-		'PhanPluginUnknownClosureReturnType',	// When we use closure (we must avoid), we do not have PHP doc
+		//'PhanPluginUnknownClosureReturnType',	// When we use closure (we must avoid), we do not have PHP doc
 
 		// 'PhanPluginUnknownArrayMethodParamType',	// All fixed
 		// 'PhanPluginUnknownArrayMethodReturnType',	// All fixed

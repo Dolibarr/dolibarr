@@ -133,7 +133,7 @@ class pdf_standard_salary extends ModelePDFSalary
 		}
 
 		$objref = dol_sanitizeFileName($object->ref);
-		$dir = $conf->salaries->dir_output . "/salary/" . $objref;
+		$dir = $conf->salaries->dir_output . "/" . $objref;
 		$file = $dir . "/" . $objref . ".pdf";
 
 		if (!dol_is_dir($dir)) {
@@ -162,6 +162,8 @@ class pdf_standard_salary extends ModelePDFSalary
 			$pdf->Close();
 			$pdf->Output($file, 'F');
 			dolChmod($file);
+
+			$this->result = array('fullpath' => $file);
 
 			return 1;
 		} else {

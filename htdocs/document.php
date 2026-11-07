@@ -50,21 +50,20 @@ if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
 
+// Some value of modulepart can be used to get resources that are public so no login are required.
+// Note that only directory logo is free to access without login.
+$needlogin = 1;
 // For direct external download link, we don't need to load/check we are into a login session
 if (isset($_GET["hashp"]) && !defined("NOLOGIN")) {
-	if (!defined("NOLOGIN")) {
-		define("NOLOGIN", 1);
-	}
-	if (!defined("NOCSRFCHECK")) {
-		define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
-	}
-	if (!defined("NOIPCHECK")) {
-		define("NOIPCHECK", 1); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-	}
+	$needlogin = 0;
 }
 // Some value of modulepart can be used to get resources that are public so no login are required.
 // Keep $_GET here, GETPOST is not available yet
 if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias')) {
+	$needlogin = 0;
+}
+// If nologin required
+if (!$needlogin) {
 	if (!defined("NOLOGIN")) {
 		define("NOLOGIN", 1);
 	}
@@ -265,9 +264,10 @@ if (getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS')) {
 
 // Define mime type
 $type = 'application/octet-stream'; // By default
-if (GETPOST('type', 'alpha')) {
-	$type = GETPOST('type', 'alpha');
-} else {
+$type = GETPOST('type', 'alpha');
+// Security: The type given into the URL must not turn a file (like a .txt or a .png that a user can upload) into a page (html, xhtml, svg, xml)
+// that the browser displays instead of downloading it. For such a file, the type is the one of the file extension.
+if (empty($type) || preg_match('/(html|xml|svg)/i', $type)) {
 	$type = dol_mimetype($original_file);
 }
 // Security: Force to octet-stream if file is a dangerous file. For example when it is a .noexe file
@@ -293,6 +293,8 @@ if ($refname == 'thumbs' || $refname == 'temp') {
 if (empty($modulepart)) {
 	accessforbidden('Bad value for parameter modulepart');
 }
+
+$hookmanager->initHooks(array('document'));
 
 // Check security and set return info with full path of file
 $check_access = dol_check_secure_access_document($modulepart, $original_file, (int) $entity, $user, $refname, 'read');
@@ -326,15 +328,10 @@ if (!empty($hashp) && $hashp != 'shared') {
 }
 
 // Check permission on per object basis
-if ($accessallowed && (empty($hashp) || $hashp == 'shared')) {
-	$object = fetchObjectByElement(0, $modulepart, $refname);		// This init and load the object
-
-	//var_dump($object);
-	if (is_object($object)) {
-		$accessallowed = restrictedArea($user, $modulepart, $object);
-	} else {
-		$accessallowed = 0;
-	}
+if ($accessallowed && (empty($hashp) || $hashp == 'shared') && $needlogin) {
+	// If $modulepart is not an object type (userphoto, companylogo, memberphoto, apercuxxx, systemtools...), there is no object to check
+	// a permission on: we keep the result of dol_check_secure_access_document(), that has checked the permission for this modulepart.
+	$accessallowed = checkUserAccessToDocumentObject($user, $modulepart, $original_file, 'read');
 }
 
 // Security:
@@ -369,7 +366,6 @@ if (!file_exists($fullpath_original_file_osencoded)) {
 }
 
 // Hooks
-$hookmanager->initHooks(array('document'));
 $parameters = array('ecmfile' => $ecmfile, 'modulepart' => $modulepart, 'original_file' => $original_file,
 	'entity' => $entity, 'fullpath_original_file' => $fullpath_original_file,
 	'filename' => $filename, 'fullpath_original_file_osencoded' => $fullpath_original_file_osencoded);
@@ -378,8 +374,7 @@ $reshook = $hookmanager->executeHooks('downloadDocument', $parameters, $object, 
 if ($reshook < 0) {
 	$errors = $hookmanager->error.(is_array($hookmanager->errors) ? (!empty($hookmanager->error) ? ', ' : '').implode(', ', $hookmanager->errors) : '');
 	dol_syslog("document.php - Errors when executing the hook 'downloadDocument' : ".$errors);
-	print "ErrorDownloadDocumentHooks: ".$errors;
-	exit;
+	httponly_accessforbidden("ErrorDownloadDocumentHooks: ".$errors, 403);
 }
 
 // Set this for test

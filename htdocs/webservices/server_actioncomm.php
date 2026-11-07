@@ -485,7 +485,9 @@ function createActionComm($authentication, $actioncomm)
 		if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
 			foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
 				$key = 'options_'.$key;
-				$newobject->array_options[$key] = $actioncomm[$key];
+				if (isset($actioncomm[$key])) {
+					$newobject->array_options[$key] = $actioncomm[$key];
+				}
 			}
 		}
 
@@ -580,7 +582,9 @@ function updateActionComm($authentication, $actioncomm)
 			if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
 				foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
 					$key = 'options_'.$key;
-					$object->array_options[$key] = $actioncomm[$key];
+					if (isset($actioncomm[$key])) {
+						$object->array_options[$key] = $actioncomm[$key];
+					}
 				}
 			}
 

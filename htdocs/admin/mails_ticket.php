@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'products', 'admin', 'mails', 'other', 'errors'));
+$langs->loadLangs(array('companies', 'products', 'admin', 'mails', 'other'));
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
@@ -728,7 +728,10 @@ if ($action == 'edit') {
 	if (getDolGlobalString('MAIN_MAIL_SENDMODE_TICKET') && getDolGlobalString('MAIN_MAIL_SENDMODE_TICKET') != 'default') {
 		if (getDolGlobalString('MAIN_MAIL_SENDMODE_TICKET') != 'mail' || !$linuxlike) {
 			if (function_exists('fsockopen') && $port && $server) {
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testconnect&token='.newToken().'">'.$langs->trans("DoTestServerAvailability").'</a>';
+				include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+				$mailtest = new CMailFile('test', '', '', '', array(), array(), array(), '', '', 0, 0, '', '', '', $trackid, $sendcontext);
+				$testconnectrefusal = $mailtest->checkSmtpTargetAllowed((string) $server, (int) $port);
+				print dolGetButtonAction($testconnectrefusal, $langs->trans("DoTestServerAvailability"), 'default', $_SERVER["PHP_SELF"].'?action=testconnect&token='.newToken(), '', $testconnectrefusal ? -1 : 1);
 			}
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("FeatureNotAvailableOnLinux").'">'.$langs->trans("DoTestServerAvailability").'</a>';
@@ -757,12 +760,7 @@ if ($action == 'edit') {
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$mail = new CMailFile('test', '', '', '', array(), array(), array(), '', '', 0, 0, '', '', '', $trackid, $sendcontext);
 
-		$errormsg = '';
-
-		$listOfAllowedPorts = array('25', '465', '587', '2525');
-		if (!in_array((string) $port, $listOfAllowedPorts)) {
-			$errormsg = $langs->trans("Testing the SMTP port on different ports than ".implode(', ', $listOfAllowedPorts)." is not allowed.");
-		}
+		$errormsg = $mail->checkSmtpTargetAllowed((string) $server, (int) $port);
 
 		if (empty($errormsg)) {
 			$result = $mail->check_server_port((string) $server, (int) $port);

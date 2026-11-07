@@ -70,7 +70,7 @@ class Opensurveysondage extends CommonObject
 	 *
 	 * @var array<array{id_users:int,nom:string,responses:string}>
 	 */
-	public $lines;
+	public $lines; // @phpstan-ignore-line
 
 	/**
 	 *  'type' field format:
@@ -484,6 +484,14 @@ class Opensurveysondage extends CommonObject
 
 		if (!$error) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."opensurvey_comments WHERE id_sondage = '".$this->db->escape($numsondage)."'";
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			// Answers and questions of a survey of format 'F' (form), the answers must be deleted before the respondents they refer to
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."opensurvey_user_formanswers WHERE fk_user_survey IN";
+			$sql .= " (SELECT id_users FROM ".MAIN_DB_PREFIX."opensurvey_user_studs WHERE id_sondage = '".$this->db->escape($numsondage)."')";
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."opensurvey_formquestions WHERE id_sondage = '".$this->db->escape($numsondage)."'";
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."opensurvey_user_studs WHERE id_sondage = '".$this->db->escape($numsondage)."'";

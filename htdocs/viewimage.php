@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -82,7 +82,7 @@ if (isset($_GET["modulepart"])) {
 		$needlogin = 0;
 	}
 	// Used by TakePOS Auto Order. TODO Image product may became public in this case. A security check to check that product is in takepos tree must be done later.
-	// isModEnabled is not defined, DOL_DOCUMENT_ROOT is not defined
+	// isModEnabled is not yet defined, DOL_DOCUMENT_ROOT is not yet defined
 	if ($_GET["modulepart"] == 'product' /* && isModEnabled('takepos') */ && isset($_GET["publictakepos"])) {
 		$needlogin = 0;
 	}
@@ -258,6 +258,10 @@ if (GETPOST('type', 'alpha')) {
 if (preg_match('/html/i', $type)) {
 	httponly_accessforbidden('Error: Using the image wrapper to output a file with a mime type HTML is not possible.');
 }
+// Security: The type given into the URL must not be a type of page (xml, xhtml, svg) for a file of another extension
+if (GETPOST('type', 'alpha') && preg_match('/(xml|svg)/i', $type) && !preg_match('/(xml|svg)/i', dol_mimetype($original_file))) {
+	httponly_accessforbidden('Error: Using the image wrapper to output a file with a mime type XML is not possible.');
+}
 // Security: This wrapper is for images. We do not allow files ending with .noexe
 if (preg_match('/\.noexe$/i', $original_file)) {
 	httponly_accessforbidden('Error: Using the image wrapper to output a file ending with .noexe is not allowed.');
@@ -292,12 +296,14 @@ if ($modulepart === 'medias' && $entity != $conf->entity) {
 	$conf->setValues($db);
 }
 
+$hookmanager->initHooks(array('viewimage'));
+
 $check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $user, $refname, 'read');
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
 
-$imagepublicfortakepos = (GETPOSTINT("publictakepos") && getDolGlobalString('TAKEPOS_AUTO_ORDER') && in_array($modulepart, array('product', 'category')));
+$imagepublicfortakepos = (GETPOSTISSET("publictakepos") && getDolGlobalString('TAKEPOS_AUTO_ORDER') && isModEnabled('takepos') && in_array($modulepart, array('product', 'category')));
 
 if (!empty($hashp) && $hashp != 'shared') {
 	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
@@ -328,14 +334,10 @@ if (!empty($hashp) && $hashp != 'shared') {
 }
 
 // Check permission on per object basis
-if (!empty($hashp) && $hashp != 'shared' && $accessallowed && !$imagepublicfortakepos) {
-	$object = fetchObjectByElement(0, $modulepart, $refname);		// This init and load the object
-	//var_dump($object);
-	if (is_object($object)) {
-		$accessallowed = restrictedArea($user, $modulepart, $object);
-	} else {
-		$accessallowed = 0;
-	}
+if ($accessallowed && (empty($hashp) || $hashp == 'shared') && $needlogin && !$imagepublicfortakepos) {
+	// If $modulepart is not an object type (userphoto, companylogo, memberphoto, apercuxxx, systemtools...), there is no object to check
+	// a permission on: we keep the result of dol_check_secure_access_document(), that has checked the permission for this modulepart.
+	$accessallowed = checkUserAccessToDocumentObject($user, $modulepart, $original_file, 'read');
 }
 
 // Security:
@@ -386,7 +388,7 @@ if ($modulepart == 'barcode') {
 			// we must check the securekey that protet against forging url
 			if ($reg[1] == 'user' && (int) $reg[2] > 0) {
 				$encodedsecurekey = dol_hash($conf->file->instance_unique_id.'uservirtualcard'.$id.'-'.$login, 'md5');
-				if ($encodedsecurekey != GETPOST('securekey')) {
+				if (!hash_equals($encodedsecurekey, (string) GETPOST('securekey'))) {
 					$code = 'badvalueforsecurekey';
 				}
 			}
@@ -438,6 +440,19 @@ if ($modulepart == 'barcode') {
 	clearstatcache();
 
 	$filename = basename($fullpath_original_file);
+
+	// Hooks (same hook as document.php, so a module can control the output of a file by both pages)
+	$parameters = array('ecmfile' => null, 'modulepart' => $modulepart, 'original_file' => $original_file,
+		'entity' => $entity, 'fullpath_original_file' => $fullpath_original_file,
+		'filename' => $filename, 'fullpath_original_file_osencoded' => dol_osencode($fullpath_original_file));
+	$object = new stdClass();
+	$action = 'view';
+	$reshook = $hookmanager->executeHooks('downloadDocument', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if ($reshook < 0) {
+		$errors = $hookmanager->error.(is_array($hookmanager->errors) ? (!empty($hookmanager->error) ? ', ' : '').implode(', ', $hookmanager->errors) : '');
+		dol_syslog("viewimage.php - Errors when executing the hook 'downloadDocument' : ".$errors);
+		httponly_accessforbidden("ErrorDownloadDocumentHooks: ".$errors, 403);
+	}
 
 	// Output files on browser
 	dol_syslog("viewimage.php return file $fullpath_original_file filename=$filename content-type=$type");

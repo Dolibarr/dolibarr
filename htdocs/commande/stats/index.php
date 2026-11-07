@@ -7,6 +7,7 @@
  * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Joachim Kueter          <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,11 +66,11 @@ if ($mode == 'supplier' && !$usercanreadsupplierstatistic) {
 	accessforbidden();
 }
 
-if ($mode == 'supplier') {
-	$object_status = GETPOST('object_status', 'array:int');
-	$object_status = implode(',', $object_status);
+$object_status = GETPOST('object_status', 'intcomma');
+if (!empty($object_status)) {
+	$object_status = explode(',', $object_status);
 } else {
-	$object_status = GETPOST('object_status', 'intcomma');
+	$object_status = GETPOST('object_status', 'array:int');
 }
 
 
@@ -157,19 +158,16 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sort
 dol_mkdir($dir);
 
 $stats = new CommandeStats($db, $socid, $mode, ($userid > 0 ? $userid : 0), ($typent_id > 0 ? $typent_id : 0), ($categ_id > 0 ? $categ_id : 0));
+if (!empty($object_status)) {
+	$stats->where .= ' AND c.fk_statut IN ('.$db->sanitize(implode(",", $object_status)).')';
+}
 if ($mode == 'customer') {
-	if ($object_status != '' && $object_status >= -1) {
-		$stats->where .= ' AND c.fk_statut IN ('.$db->sanitize($object_status).')';
-	}
 	if (is_array($select_categ_comande_id) && !empty($select_categ_comande_id)) {
 		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_order as cat ON (c.rowid = cat.fk_order)';
 		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $select_categ_comande_id)).')';
 	}
 }
 if ($mode == 'supplier') {
-	if ($object_status != '' && $object_status >= 0) {
-		$stats->where .= ' AND c.fk_statut IN ('.$db->sanitize($object_status).')';
-	}
 	if (is_array($select_categ_comande_id) && !empty($select_categ_comande_id)) {
 		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_supplier_order as cat ON (c.rowid = cat.fk_supplier_order)';
 		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $select_categ_comande_id)).')';
@@ -217,11 +215,11 @@ if (!$mesg) {
 	$px1->SetMinValue(min(0, $px1->GetFloorMinValue()));
 	$px1->SetWidth($WIDTH);
 	$px1->SetHeight($HEIGHT);
-	$px1->SetYLabel($langs->trans("NbOfOrder"));
+	$px1->SetYLabel($langs->trans($mode == 'supplier' ? "NumberOfSupplierOrders" : "NumberOfOrders"));
 	$px1->SetShading(3);
 	$px1->SetHorizTickIncrement(1);
 	$px1->mode = 'depth';
-	$px1->SetTitle($langs->trans("NumberOfOrdersByMonth"));
+	$px1->SetTitle($langs->trans($mode == 'supplier' ? "NumberOfSupplierOrdersByMonth" : "NumberOfOrdersByMonth"));
 
 	$px1->draw($filenamenb, $fileurlnb);
 }
@@ -264,11 +262,11 @@ if (!$mesg) {
 	$px2->SetMinValue(min(0, $px2->GetFloorMinValue()));
 	$px2->SetWidth($WIDTH);
 	$px2->SetHeight($HEIGHT);
-	$px2->SetYLabel($langs->trans("AmountOfOrders"));
+	$px2->SetYLabel($langs->trans($mode == 'supplier' ? "AmountOfSupplierOrders" : "AmountOfOrders"));
 	$px2->SetShading(3);
 	$px2->SetHorizTickIncrement(1);
 	$px2->mode = 'depth';
-	$px2->SetTitle($langs->trans("AmountOfOrdersByMonthHT"));
+	$px2->SetTitle($langs->trans($mode == 'supplier' ? "AmountOfSupplierOrdersByMonthHT" : "AmountOfOrdersByMonthHT"));
 
 	$px2->draw($filenameamount, $fileurlamount);
 }
@@ -433,10 +431,10 @@ if ($mode == 'customer') {
 		Commande::STATUS_CLOSED => $langs->trans("StatusOrderDelivered"),
 		Commande::STATUS_CANCELED => $langs->trans("StatusOrderCanceled")
 	);
-	print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'intcomma'), -4);
+	print $form->multiselectarray('object_status', $liststatus, $object_status, 0, 0, 'minwidth300');
 }
 if ($mode == 'supplier') {
-	$formorder->selectSupplierOrderStatus((strstr($object_status, ',') ? -1 : $object_status), 0, 'object_status');
+	$formorder->selectSupplierOrderStatus($object_status, 0, 'object_status', 'minwidth300', 1);
 }
 print '</td></tr>';
 // Year
@@ -461,7 +459,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre" height="24">';
 print '<td class="center">'.$langs->trans("Year").'</td>';
-print '<td class="right">'.$langs->trans("NbOfOrders").'</td>';
+print '<td class="right">'.$langs->trans($mode == 'supplier' ? "NumberOfSupplierOrders" : "NbOfOrders").'</td>';
 print '<td class="right">%</td>';
 print '<td class="right">'.$langs->trans("AmountTotal").'</td>';
 print '<td class="right">%</td>';
@@ -477,12 +475,14 @@ foreach ($data as $val) {
 
 		print '<tr class="oddeven" height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$oldyear.'</a></td>';
+		// Empty year just after a year with records: delta is -100%
+		$isyearbeforeval = ($oldyear == (int) $year + 1);
 		print '<td class="right">0</td>';
-		print '<td class="right"></td>';
+		print '<td class="right opacitylow" style="color: red;">'.(($isyearbeforeval && $val['nb'] > 0) ? '-100%' : '').'</td>';
 		print '<td class="right">0</td>';
-		print '<td class="right"></td>';
+		print '<td class="right opacitylow" style="color: red;">'.(($isyearbeforeval && $val['total'] > 0) ? '-100%' : '').'</td>';
 		print '<td class="right">0</td>';
-		print '<td class="right"></td>';
+		print '<td class="right opacitylow" style="color: red;">'.(($isyearbeforeval && $val['avg'] > 0) ? '-100%' : '').'</td>';
 		print '</tr>';
 	}
 
@@ -490,11 +490,11 @@ foreach ($data as $val) {
 	print '<tr class="oddeven" height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
-	print '<td class="right opacitylow" style="'.((!isset($val['nb_diff']) || $val['nb_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.(isset($val['nb_diff']) ? round($val['nb_diff']) : "0").'%</td>';
+	print '<td class="right opacitylow" style="'.((!isset($val['nb_diff']) || $val['nb_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.(isset($val['nb_diff']) ? ($val['nb_diff'] < 0 ? '' : '+').round($val['nb_diff']).'%' : '').'</td>';
 	print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
-	print '<td class="right opacitylow" style="'.((!isset($val['total_diff']) || $val['total_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.(isset($val['total_diff']) ? round($val['total_diff']) : "0").'%</td>';
+	print '<td class="right opacitylow" style="'.((!isset($val['total_diff']) || $val['total_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.(isset($val['total_diff']) ? ($val['total_diff'] < 0 ? '' : '+').round($val['total_diff']).'%' : '').'</td>';
 	print '<td class="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';
-	print '<td class="right opacitylow" style="'.((!isset($val['avg_diff']) || $val['avg_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.(isset($val['avg_diff']) ? round($val['avg_diff']) : "0").'%</td>';
+	print '<td class="right opacitylow" style="'.((!isset($val['avg_diff']) || $val['avg_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.(isset($val['avg_diff']) ? ($val['avg_diff'] < 0 ? '' : '+').round($val['avg_diff']).'%' : '').'</td>';
 	print '</tr>';
 	$oldyear = $year;
 }

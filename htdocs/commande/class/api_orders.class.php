@@ -288,7 +288,7 @@ class Orders extends DolibarrApi
 				$i++;
 			}
 		} else {
-			throw new RestException(503, 'Error when retrieve commande list : '.$this->db->lasterror());
+			throw new RestException(503, 'Error when retrieving sale order list : '.$this->db->lasterror());
 		}
 
 		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
@@ -361,13 +361,6 @@ class Orders extends DolibarrApi
 
 			$this->commande->$field = $this->_checkValForAPI($field, $value, $this->commande);
 		}
-		/*if (isset($request_data["lines"])) {
-		  $lines = array();
-		  foreach ($request_data["lines"] as $line) {
-			array_push($lines, (object) $line);
-		  }
-		  $this->commande->lines = $lines;
-		}*/
 
 		if ($this->commande->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating order", array_merge(array($this->commande->error), $this->commande->errors));
@@ -1325,15 +1318,25 @@ class Orders extends DolibarrApi
 		$shipment->socid = $this->commande->socid;
 		$shipment->origin_id = $this->commande->id;
 		$shipment->origin = $this->commande->element;
+
+		// Give the lines to Expedition::create() instead of adding them after, so that it expands the kits into their
+		// components. Without this, a kit is stored as a parent line with a warehouse and no child lines.
+		$shipment->lines = array();
+		foreach ($this->commande->lines as $line) {
+			$shipmentline = new ExpeditionLigne($this->db);
+			$shipmentline->entrepot_id = (int) $warehouse_id;
+			$shipmentline->origin_line_id = $line->id;
+			$shipmentline->fk_elementdet = $line->id;
+			$shipmentline->qty = $line->qty;
+			if (empty($line->product_type) || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
+				$shipmentline->fk_product = (int) $line->fk_product;
+			}
+			$shipment->lines[] = $shipmentline;
+		}
+
 		$result = $shipment->create(DolibarrApiAccess::$user);
 		if ($result <= 0) {
-			throw new RestException(500, 'Error on creating expedition :'.$this->db->lasterror());
-		}
-		foreach ($this->commande->lines as $line) {
-			$result = $shipment->create_line($warehouse_id, $line->id, $line->qty);
-			if ($result <= 0) {
-				throw new RestException(500, 'Error on creating expedition lines:'.$this->db->lasterror());
-			}
+			throw new RestException(500, 'Error on creating expedition :'.$shipment->errorsToString());
 		}
 		return $shipment->id;
 	}

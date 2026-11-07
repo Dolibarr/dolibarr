@@ -146,7 +146,7 @@ class mod_mo_advanced extends ModeleNumRefMos
 			return 0;
 		}
 
-		$date = ($object->date_mo ? $object->date_mo : $object->date);
+		$date = $object->date_creation;
 
 		$numFinal = get_next_value($db, $mask, 'mrp_mo', 'ref', '', null, $date);
 

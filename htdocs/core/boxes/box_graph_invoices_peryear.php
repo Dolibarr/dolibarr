@@ -107,9 +107,9 @@ class box_graph_invoices_peryear extends ModeleBoxes
 				$endyear = GETPOSTINT($param_year);
 				$showtot = GETPOST($param_showtot, 'alpha');
 			} else {
-				$tmparray = json_decode($_COOKIE['DOLUSER_box_'.$this->boxcode], true);
-				$endyear = $tmparray['year'];
-				$showtot = $tmparray['showtot'];
+				$tmparray = (!empty($_COOKIE['DOLUSER_box_'.$this->boxcode]) ? json_decode($_COOKIE['DOLUSER_box_'.$this->boxcode], true) : array());
+				$endyear = (!empty($tmparray['year']) ? $tmparray['year'] : '');
+				$showtot = (!empty($tmparray['showtot']) ? $tmparray['showtot'] : '');
 			}
 			if (empty($showtot)) {
 				$showtot = 1;

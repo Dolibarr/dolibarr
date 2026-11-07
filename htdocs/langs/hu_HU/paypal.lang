@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal modul beállítása
-PaypalDesc=Ez a modul lehetővé teszi az ügyfelek számára a <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a> keresztül történő fizetést. Ez felhasználható eseti vagy Dolibarr objektumhoz kapcsolódó fizetésre (számla, megrendelés, ...)
+PaypalDesc=This module allows payment by customers via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. This can be used for an ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
 PaypalOrCBDoPayment=Fizetés PayPal-lal (kártya vagy PayPal)
 PaypalDoPayment=Fizetés PayPal-lal
 PAYPAL_API_SANDBOX=Mód teszt/sandbox
@@ -19,7 +19,7 @@ NewOnlinePaymentFailed=Új online fizetés próbálkozott, de sikertelen
 ONLINE_PAYMENT_SENDEMAIL=E-mail cím minden fizetési kísérlet után (siker és sikertelenség esetén)
 ReturnURLAfterPayment=Visszaküldési URL fizetés után
 ValidationOfOnlinePaymentFailed=Az online fizetés ellenőrzése nem sikerült
-PaymentSystemConfirmPaymentPageWasCalledButFailed=A fizetést megerősítő oldalt a fizetési rendszer hívta meg, és hibát adott vissza
+PaymentSystemConfirmPaymentPageWasCalledButFailed=The payment confirmation page was called by the online payment system and returned an error
 SetExpressCheckoutAPICallFailed=SetExpressCheckout API hívás sikertelen.
 DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API hívás sikertelen.
 DetailedErrorMessage=Részletes hibaüzenet

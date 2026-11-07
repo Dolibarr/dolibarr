@@ -65,6 +65,7 @@ $toselect = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'bankaccountlist'; // To manage different context of search
 $mode = GETPOST('mode', 'aZ');
 
+$search_id = GETPOST('search_id', 'alpha');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
 $search_number = GETPOST('search_number', 'alpha');
@@ -119,6 +120,7 @@ $fieldstosearchall = array(
 
 $checkedtypetiers = 0;
 $arrayfields = array(
+	'b.rowid' => array('label' => $langs->trans("TechnicalID"), 'checked' => (getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? '1' : '-1'), 'enabled' => '1', 'position' => 1),
 	'b.ref' => array('label' => $langs->trans("BankAccounts"), 'checked' => '1', 'position' => 10),
 	'b.label' => array('label' => $langs->trans("Label"), 'checked' => '1', 'position' => 12),
 	'accountype' => array('label' => $langs->trans("Type"), 'checked' => '1', 'position' => 14),
@@ -176,6 +178,7 @@ if (empty($reshook)) {
 
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+		$search_id = '';
 		$search_ref = '';
 		$search_label = '';
 		$search_number = '';
@@ -203,6 +206,9 @@ $help_url = 'EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses|ES:M&oacute;d
 // Load array of financial accounts (opened by default)
 $accounts = array();
 
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+
 
 // Build and execute select
 // --------------------------------------------------------------------
@@ -225,6 +231,10 @@ $sql .= " FROM ".MAIN_DB_PREFIX."bank_account as b";
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (b.rowid = ef.fk_object)";
 }
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE b.entity IN (".getEntity('bank_account').")";
 if ($search_status === 'opened') {
 	$sql .= " AND clos = 0";
@@ -232,8 +242,16 @@ if ($search_status === 'opened') {
 if ($search_status === 'closed') {
 	$sql .= " AND clos = 1";
 }
+if ($search_id != '') {
+	$sql .= natural_search('b.rowid', $search_id, 1);
+}
 if ($search_ref != '') {
-	$sql .= natural_search('b.ref', $search_ref);
+	if (empty($arrayfields['b.label']['checked'])) {
+		// Label is shown into the ref column, so search on both
+		$sql .= natural_search(array('b.ref', 'b.label'), $search_ref);
+	} else {
+		$sql .= natural_search('b.ref', $search_ref);
+	}
 }
 if ($search_label != '') {
 	$sql .= natural_search('b.label', $search_label);
@@ -340,6 +358,9 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
+if ($search_id != '') {
+	$param .= '&search_id='.urlencode($search_id);
+}
 if ($search_ref != '') {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
@@ -436,8 +457,6 @@ if (!empty($moreforfilter)) {
 	print '</div>';
 }
 
-$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -452,6 +471,12 @@ if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
+	print '</td>';
+}
+// Technical ID
+if (!empty($arrayfields['b.rowid']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 // Ref
@@ -546,6 +571,10 @@ print '<tr class="liste_titre">';
 // Action column
 if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['b.rowid']['checked'])) {
+	print_liste_field_titre($arrayfields['b.rowid']['label'], $_SERVER["PHP_SELF"], 'b.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['b.ref']['checked'])) {
@@ -679,9 +708,28 @@ foreach ($accounts as $key => $type) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Technical ID
+		if (!empty($arrayfields['b.rowid']['checked'])) {
+			print '<td class="center" data-key="id">'.((int) $objecttmp->id).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		// Ref
 		if (!empty($arrayfields['b.ref']['checked'])) {
-			print '<td class="nowraponall">'.$objecttmp->getNomUrl(1).'</td>';
+			if (empty($arrayfields['b.label']['checked'])) {
+				// Show label under the ref when label column is not enabled
+				print '<td class="tdlineheightsmall">';
+				print '<div class="tdoverflowmax200 inline-block lineheightsmall">';
+				print $objecttmp->getNomUrl(1);
+				if (!empty($objecttmp->label)) {
+					print '<br><span class="spantitle">'.dolPrintHTML($objecttmp->label).'</span>';
+				}
+				print '</div>';
+				print '</td>';
+			} else {
+				print '<td class="nowraponall">'.$objecttmp->getNomUrl(1).'</td>';
+			}
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -689,7 +737,11 @@ foreach ($accounts as $key => $type) {
 
 		// Label
 		if (!empty($arrayfields['b.label']['checked'])) {
-			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($objecttmp->label).'">'.dol_escape_htmltag($objecttmp->label).'</td>';
+			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($objecttmp->label).'">';
+			print '<span class="spantitle">';
+			print dolPrintHTML($objecttmp->label);
+			print '</span>';
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -715,7 +767,7 @@ foreach ($accounts as $key => $type) {
 
 		// Account number
 		if (!empty($arrayfields['b.account_number']['checked'])) {
-			print '<td class="tdoverflowmax250">';
+			print '<td class="tdoverflowmax200">';
 			if (isModEnabled('accounting')) {
 				if (empty($objecttmp->account_number)) {
 					print img_warning($langs->trans("Mandatory"));

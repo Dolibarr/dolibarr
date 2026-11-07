@@ -110,14 +110,14 @@ class RecruitmentJobPosition extends CommonObject
 		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => 4, 'noteditable' => 1, 'default' => '(PROV)', 'index' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'comment' => "Reference of object", 'css' => 'nowraponall'),
 		'label' => array('type' => 'varchar(255)', 'label' => 'JobLabel', 'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth500', 'csslist' => 'tdoverflowmax300', 'showoncombobox' => 2, 'autofocusoncreate' => 1),
 		'qty' => array('type' => 'integer', 'label' => 'NbOfEmployeesExpected', 'enabled' => 1, 'position' => 45, 'notnull' => 1, 'visible' => 1, 'default' => '1', 'isameasure' => 1, 'css' => 'maxwidth75imp'),
-		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php:1', 'label' => 'Project', 'enabled' => 'isModProject("project")', 'position' => 52, 'notnull' => -1, 'visible' => -1, 'index' => 1, 'css' => 'maxwidth500', 'picto' => 'project'),
+		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php:1', 'label' => 'Project', 'enabled' => 'isModEnabled("project")', 'position' => 52, 'notnull' => -1, 'visible' => -1, 'index' => 1, 'css' => 'maxwidth500', 'picto' => 'project'),
 		'fk_user_recruiter' => array('type' => 'integer:User:user/class/user.class.php:1:(statut:=:1)', 'label' => 'ResponsibleOfRecruitement', 'enabled' => 1, 'position' => 54, 'notnull' => 1, 'visible' => 1, 'foreignkey' => 'user.rowid', 'css' => 'maxwidth500', 'csslist' => 'tdoverflowmax150', 'picto' => 'user'),
 		'email_recruiter' => array('type' => 'varchar(255)', 'label' => 'EmailRecruiter', 'enabled' => 1, 'position' => 54, 'notnull' => 0, 'visible' => -1, 'help' => 'ToUseAGenericEmail', 'picto' => 'email'),
 		'fk_user_supervisor' => array('type' => 'integer:User:user/class/user.class.php:1:(statut:=:1)', 'label' => 'FutureManager', 'enabled' => 1, 'position' => 55, 'notnull' => 0, 'visible' => -1, 'foreignkey' => 'user.rowid', 'css' => 'maxwidth500', 'csslist' => 'tdoverflowmax150', 'picto' => 'user'),
 		'fk_establishment' => array('type' => 'integer:Establishment:hrm/class/establishment.class.php', 'label' => 'Establishment', 'enabled' => 'isModEnabled("hrm")', 'position' => 56, 'notnull' => 0, 'visible' => -1, 'foreignkey' => 'establishment.rowid',),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label' => 'WorkPlace', 'enabled' => 'isModEnabled("societe")', 'position' => 57, 'notnull' => -1, 'visible' => -1, 'css' => 'maxwidth500', 'index' => 1, 'help' => "IfJobIsLocatedAtAPartner", 'picto' => 'company'),
 		'date_planned' => array('type' => 'date', 'label' => 'DateExpected', 'enabled' => 1, 'position' => 60, 'notnull' => 0, 'visible' => 1,),
-		'remuneration_suggested' => array('type' => 'varchar(255)', 'label' => 'Remuneration', 'enabled' => 1, 'position' => 62, 'notnull' => 0, 'visible' => 1,),
+		'remuneration_suggested' => array('type' => 'varchar(255)', 'label' => 'Remuneration', 'enabled' => 1, 'position' => 62, 'notnull' => 0, 'visible' => 1, 'csslist' => 'tdoverflowmax150'),
 		'description' => array('type' => 'html', 'label' => 'Description', 'enabled' => 1, 'position' => 65, 'notnull' => 0, 'visible' => 3,),
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'position' => 101, 'notnull' => 0, 'visible' => 0,),
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'position' => 102, 'notnull' => 0, 'visible' => 0,),
@@ -360,15 +360,6 @@ class RecruitmentJobPosition extends CommonObject
 			// copy internal contacts
 			if ($this->copy_linked_contact($object, 'internal') < 0) {
 				$error++;
-			}
-		}
-
-		if (!$error) {
-			// copy external contacts if same company
-			if (property_exists($this, 'socid') && $this->socid == $object->socid) {
-				if ($this->copy_linked_contact($object, 'external') < 0) {
-					$error++;
-				}
 			}
 		}
 
