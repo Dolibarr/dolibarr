@@ -24,6 +24,9 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * Hookmanager  $hookmanager
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -49,6 +52,7 @@ if (!$user->admin) {
 }
 
 $error = 0;
+
 
 
 /*

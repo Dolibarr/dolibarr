@@ -934,7 +934,9 @@ if (empty($reshook)) {
 	$triggersendname = 'PROPAL_SENTBYMAIL';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_PROPOSAL_TO';
 	$trackid = 'pro'.$object->id;
-	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+	if ($usercansend) {	// The right to send is also tested here, not only to show the button (action=send can be forged)
+		include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+	}
 
 
 	// Go back to draft
@@ -1623,7 +1625,12 @@ if (empty($reshook)) {
 			$res = $product->fetch($productid);
 
 			$type = $product->type;
-			$price_base_type = $product->price_base_type;
+
+			// If base type TTc, we change pu value to define the TTC one
+			if ($price_base_type == 'TTC' && !empty($pu_ttc)) {
+				$pu = $pu_ttc;
+			}
+
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
 
 			$price_min = $product->price_min;

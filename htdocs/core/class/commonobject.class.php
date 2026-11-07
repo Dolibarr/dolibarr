@@ -4435,7 +4435,7 @@ abstract class CommonObject
 									$object = new $className($this->db);
 									'@phan-var-force CommonObject $object';
 									$ret = $object->fetch($objectid);
-									if ($ret >= 0) {
+									if ($ret > 0) {
 										$this->linkedObjects[$objecttype][$i] = $object;
 									}
 								}
@@ -10393,7 +10393,7 @@ abstract class CommonObject
 
 		if (array_key_exists('date_creation', $fieldvalues) && empty($fieldvalues['date_creation'])) {
 			$fieldvalues['date_creation'] = $this->db->idate($now);
-			$this->date_creation = $this->db->idate($now);
+			$this->date_creation = $now;
 		}
 		// For backward compatibility, if a property ->fk_user_creat exists and not filled.
 		if (array_key_exists('fk_user_creat', $fieldvalues) && !($fieldvalues['fk_user_creat'] > 0)) {
