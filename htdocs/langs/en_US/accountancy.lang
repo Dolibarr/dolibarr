@@ -653,3 +653,26 @@ Clone=Clone
 AlreadyReturnedAccount=Entry n°%s has already been reversed
 SuccessReturnedAccount=Entry n°%s has been reversed
 AccountancyCodeToSet=Accountancy code to set on products/services for
+
+## Customer deposit control
+MenuAccountancyAdjustments=Adjustments
+CustomerDepositControl=Customer deposit control
+DepositControlDescription=Control customer deposits at the selected cutoff using dated receipts, refunds, credit notes and applications. Amounts include tax, in the company currency. The remaining receipt is not a deferred revenue amount or an accounting balance: review the source accounting and actual delivery before deciding between customer advances, deferred revenue or another treatment. No accounting entries are generated.
+DepositControlHistoryWarning=Reconstruction uses currently existing documents and links, invoice and validation dates, and payment dates. Later deletions, unlinks, edits or status changes cannot be reconstructed. Linked order statuses are current and planned dates are not evidence of delivery. Fully applied deposits remain available in the All view because the consuming invoice may still require review.
+DepositControlCutoffDate=Cutoff date
+DepositControlInvoiced=Deposit invoiced (incl. tax)
+DepositControlReceived=Net cash received (incl. tax)
+DepositControlRefunded=Cash refunded (incl. tax)
+DepositControlCredited=Credit notes (incl. tax)
+DepositControlLastPayment=Last payment by cutoff
+DepositControlApplied=Applied by cutoff (incl. tax)
+DepositControlRemaining=Remaining receipt (incl. tax)
+DepositControlApplications=Consuming invoices
+DepositControlOrders=Linked orders (current status)
+DepositControlOutstanding=Remaining receipt to review
+DepositControlCleared=No remaining receipt
+DepositControlInconsistent=Amounts or document status to review
+DepositControlAppliedAtCutoff=Applied by cutoff
+DepositControlNotAppliedAtCutoff=After cutoff or not validated
+DepositControlNoOrder=No accessible directly linked order
+DepositControlPageTotal=This page, including tax: net receipts %s; applied %s; remaining %s
