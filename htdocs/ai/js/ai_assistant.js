@@ -1609,7 +1609,7 @@ export function initAiAssistant(container) {
         'thirdparties': ['thirdparties', 'contacts'], 'customer invoices': ['invoices'], 'supplier invoices': ['supplier_invoices'],
         'sales orders': ['orders'], 'supplier orders': ['supplier_orders'], 'commercial proposals': ['proposals'],
         'supplier proposals': ['supplier_proposals'], 'products and services': ['products'],
-        'stock and warehouses': ['warehouses', 'stockmovements'], 'projects': ['projects', 'tasks'], 'contracts': ['contracts'],
+        'stock and warehouses': ['warehouses', 'stockmovements'], 'projects': ['projects', 'project_tasks'], 'contracts': ['contracts'],
         'interventions': ['interventions'], 'tickets': ['tickets'], 'shipments': ['shipments'], 'receptions': ['receptions'],
         'members': ['members', 'subscriptions'], 'donations': ['donations'], 'expense reports': ['expensereports'],
         'agenda': ['agendaevents'], 'manufacturing': ['mos', 'boms']

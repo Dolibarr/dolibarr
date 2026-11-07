@@ -2282,7 +2282,7 @@ class Facture extends CommonInvoice
 			if ($txttoshow) {
 				$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.$txttoshow;
 				$result .= ' <span class="note inline-block">';
-				$result .= '<a href="'.DOL_URL_ROOT.'/compta/facture/note.php?id='.$this->id.'" class="classfortooltip" title="'.dolPrintHTMLForAttribute($notetoshow).'">';
+				$result .= '<a href="'.DOL_URL_ROOT.'/core/note.php?element=compta_facture&id='.$this->id.'" class="classfortooltip" title="'.dolPrintHTMLForAttribute($notetoshow).'">';
 				$result .= img_picto('', 'note');
 				$result .= '</a>';
 				$result .= '</span>';
@@ -6524,9 +6524,9 @@ class Facture extends CommonInvoice
 	 *  Send reminders by emails for invoices validated that are due.
 	 *  CAN BE A CRON TASK
 	 *
-	 *  @param	int			$nbdays				Delay before due date (or after if delay is negative)
+	 *  @param	int|string	$nbdays				Delay before due date (or after if delay is negative). Several reminder levels can be set with a list separated by ';' (then $template must have the same number of values)
 	 *  @param	string		$paymentmode		'' or 'all' by default (no filter), or 'LIQ', 'CHQ', CB', ...
-	 *  @param	int|string	$template			Name (or id) of email template (Must be a template of type 'facture_send')
+	 *  @param	int|string	$template			Name (or id) of email template (Must be a template of type 'facture_send'). One per level if $nbdays is a list separated by ';'
 	 *  @param	string		$datetouse			'duedate' (default) or 'invoicedate'
 	 *  @param	string		$forcerecipient		Forced recipients. '' (default) to send to the email of thirdparty, or a list of values separated by ';' among: a fixed email,
 	 *  										'thirdpartyemail' (email of thirdparty), 'externalbillingcontacts' (external contacts of invoice of type BILLING),
@@ -6552,6 +6552,29 @@ class Facture extends CommonInvoice
 		if (!in_array($datetouse, array('duedate', 'invoicedate'))) {
 			$this->output .= 'Bad value for parameter datetouse. Must be "duedate" or "invoicedate"';
 			return 0;
+		}
+
+		// Several reminder levels in one call: each level is processed like a single call with its own delay and template
+		// (the delays are trimmed because a space may remain around the values)
+		if (strpos((string) $nbdays, ';') !== false) {
+			$arraynbdays = array_map('trim', explode(';', (string) $nbdays));
+			$arraytemplate = explode(';', (string) $template);
+			if (count($arraynbdays) != count($arraytemplate) || array_map('strval', array_map('intval', $arraynbdays)) !== $arraynbdays) {
+				$this->error = 'Bad value for parameters nbdays and template. They must contain the same number of values separated by ";", and nbdays must be integers';
+				return 1;
+			}
+			$leveloutput = '';
+			$levelerrors = array();
+			foreach ($arraynbdays as $key => $levelnbdays) {
+				$levelerror = $this->sendEmailsRemindersOnInvoiceDueDate((int) $levelnbdays, $paymentmode, trim($arraytemplate[$key]), $datetouse, $forcerecipient);
+				$leveloutput .= $this->output.'<br>';
+				if ($levelerror) {
+					$levelerrors[] = $this->error;
+				}
+			}
+			$this->output = $leveloutput;
+			$this->error = implode(' / ', $levelerrors);
+			return count($levelerrors) ? 1 : 0;
 		}
 
 		// Build list of forced recipients (separator is ';' because cron splits parameters on ',')

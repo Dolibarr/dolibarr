@@ -12188,6 +12188,11 @@ class Form
 
 			$navurl = $_SERVER["PHP_SELF"];
 
+			// Keep the popup context (page shown inside a dialog popup iframe) on previous/next links
+			if (GETPOST('dol_openinpopup', 'aZ09') && !preg_match('/[&?]dol_openinpopup=/', $moreparam)) {
+				$moreparam .= '&dol_openinpopup='.urlencode(GETPOST('dol_openinpopup', 'aZ09'));
+			}
+
 			// Special case for token card
 			if ($paramid == 'api_token_card') {
 				if (preg_match('/\/user\/api_token/', $navurl)) {
@@ -14658,7 +14663,12 @@ class Form
 	public function getNomUrl(&$object, $withpicto = 0, $option = '', $maxlength = 0, $save_lastsearch_value = -1, $notooltip = 0, $morecss = '', $add_label = 0, $sep = ' - ')
 	{
 		if (is_object($object) && method_exists($object, 'getNomUrl')) {
-			$out = $object->getNomUrl($withpicto, $option, $maxlength, $save_lastsearch_value, $notooltip, $morecss, $add_label, $sep);
+			if ($object instanceof Categorie) {
+				// The signature of Categorie::getNomUrl() is different: ($withpicto, $option, $maxlength, $moreparam, $notooltip, $morecss, $save_lastsearch_value)
+				$out = $object->getNomUrl($withpicto, $option, $maxlength, '', $notooltip, $morecss, $save_lastsearch_value);
+			} else {
+				$out = $object->getNomUrl($withpicto, $option, $maxlength, $save_lastsearch_value, $notooltip, $morecss, $add_label, $sep);
+			}
 			return $out;
 		} else {
 			return '';

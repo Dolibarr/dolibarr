@@ -299,6 +299,10 @@ foreach ($arrayfields as $tmpkey => $tmpval) {
 		break;
 	}
 }
+// The table of lines is joined only if a field of lines is shown, so do not search into it otherwise
+if (!$atleastonefieldinlines) {
+	unset($fieldstosearchall['fd.description']);
+}
 
 $sql = "SELECT";
 $sql .= " f.ref, f.ref_client, f.rowid, f.fk_statut as status, f.signed_status as signed_status, f.description, f.datec as date_creation, f.tms as date_modification, f.note_public, f.note_private,";
@@ -709,8 +713,8 @@ if ($conf->main_checkbox_left_column) {
 	print '</td>';
 }
 if (!empty($arrayfields['f.rowid']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat maxwidth50" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['f.ref']['checked'])) {
@@ -1014,7 +1018,7 @@ while ($i < $imaxinloop) {
 			if (!empty($obj->note_private)) {
 				$warnornote .= ($warnornote ? ' ' : '');
 				$warnornote .= '<span class="note">';
-				$warnornote .= '<a href="note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"), 'object_generic').'</a>';
+				$warnornote .= '<a href="'.DOL_URL_ROOT.'/core/note.php?element=fichinter&id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"), 'object_generic').'</a>';
 				$warnornote .= '</span>';
 			}
 			if ($warnornote) {
