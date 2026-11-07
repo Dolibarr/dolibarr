@@ -679,4 +679,52 @@ class RestAPIContactTest extends AbstractRestAPITest
 			}
 		}
 	}
+
+	/**
+	 * testRestDeleteContact
+	 *
+	 * Delete a contact, then check the errors for a deleted contact, a nonexistent contact and the id 0.
+	 *
+	 * @return	void
+	 *
+	 * @depends testRestGetContact
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testRestDeleteContact()
+	{
+		$contactid = 0;
+
+		try {
+			$contactid = $this->callApi('POST', '/contacts', array("lastname" => "testRestDeleteContact".mt_rand()));
+			$this->assertIsInt($contactid, 'Contact creation failed: '.var_export($contactid, true));
+
+			// Delete the contact
+			$object = $this->callApi('GET', '/contacts/'.$contactid);
+			$this->assertEquals($contactid, $object['id'] ?? null, 'The contact must exist before the delete: '.var_export($object, true));
+			$object = $this->callApi('DELETE', '/contacts/'.$contactid);
+			$this->assertEquals(200, $object['success']['code'] ?? null, 'Delete of the contact failed: '.var_export($object, true));
+
+			// A deleted contact is not found anymore
+			$object = $this->callApi('GET', '/contacts/'.$contactid);
+			$this->assertEquals(404, $object['error']['code'] ?? null, 'Get of a deleted contact must return 404: '.var_export($object, true));
+			$object = $this->callApi('DELETE', '/contacts/'.$contactid);
+			$this->assertEquals(404, $object['error']['code'] ?? null, 'Delete of a deleted contact must return 404: '.var_export($object, true));
+
+			// Nonexistent contact
+			$object = $this->callApi('DELETE', '/contacts/123456789');
+			$this->assertEquals(404, $object['error']['code'] ?? null, 'Delete of a nonexistent contact must return 404: '.var_export($object, true));
+
+			// Contact::fetch() returns -1 for the id 0: nothing must be deleted on an empty contact
+			$object = $this->callApi('DELETE', '/contacts/0');
+			$this->assertEquals(500, $object['error']['code'] ?? null, 'Delete of the id 0 must return 500: '.var_export($object, true));
+
+			// The id 0 of the get route returns the specimen, without calling Contact::fetch()
+			$object = $this->callApi('GET', '/contacts/0');
+			$this->assertEquals('DOLIBARR', $object['lastname'] ?? null, 'Get of the id 0 must return the specimen: '.var_export($object, true));
+		} finally {
+			if ($contactid > 0) {
+				getURLContent($this->api_url.'/contacts/'.$contactid.'?api_key='.$this->api_key, 'DELETE', '', 1, array(), array('http', 'https'), 2);
+			}
+		}
+	}
 }
