@@ -27,6 +27,7 @@ Earnings=Guanys
 TotalEarnings=Guanys totals
 TotalDeductions=Deduccions totals
 NetPaid=Total pagat
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Compte (del pla comptable) utilitzat per defecte per als «usuaris» dels sous
@@ -55,8 +56,6 @@ FillFieldFirst=Empleneu primer el camp dels empleats
 UpdateAmountWithLastSalary=Establiu l'import de l'últim sou
 MakeTransferRequest=Fes una sol·licitud de transferència
 VirementOrder=Sol·licitud de transferència de crèdit
-WithdrawalReceipt=Ordre de transferència bancària
-OrderWaiting=Comanda pendent
 FillEndOfMonth=Final de mes
 
 # Shortcuts

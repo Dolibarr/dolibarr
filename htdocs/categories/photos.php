@@ -92,7 +92,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && GETPOST("sendit") && getDolGlobalString('MAIN_UPLOAD_DOC')) {
+	if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && GETPOST("sendit") && getDolGlobalString('MAIN_UPLOAD_DOC') && $permissiontoadd) {
 		if ($object->id) {
 			$file = $_FILES['userfile'];
 			if (is_array($file['name']) && count($file['name']) > 0) {
@@ -123,7 +123,7 @@ if (empty($reshook)) {
  * View
  */
 
-llxHeader("", "", $langs->trans("Categories"));
+llxHeader("", $langs->trans("Categories"));
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -135,11 +135,11 @@ if ($object->id) {
 	$head = categories_prepare_head($object, $type);
 	print dol_get_fiche_head($head, 'photos', $langs->trans($title), -1, 'category');
 
-	$backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/categories/categorie_list.php?leftmenu=cat&type='.urlencode($type));
+	$backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : dolBuildUrl(DOL_URL_ROOT.'/categories/categorie_list.php', ['leftmenu' => 'cat', 'type' => $type]));
 	$linkback = '<a href="'.dol_sanitizeUrl($backtolist).'">'.$langs->trans("BackToList").'</a>';
 	$object->next_prev_filter = 'type:=:'.((int) $object->type);
 	$object->ref = $object->label;
-	$morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/categorie_list.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
+	$morehtmlref = '<br><div class="refidno"><a href="'.dolBuildUrl(DOL_URL_ROOT.'/categories/categorie_list.php', ['leftmenu' => 'cat', 'type' => $type]).'">'.$langs->trans("Root").'</a> >> ';
 	$ways = $object->print_all_ways("auto", '', 1);
 	foreach ($ways as $way) {
 		$morehtmlref .= $way."<br>\n";
@@ -193,7 +193,7 @@ if ($object->id) {
 
 	if ($action != 'ajout_photo' && $user->hasRight('categorie', 'creer')) {
 		if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
-			print '<a class="butAction hideonsmartphone" href="'.$_SERVER['PHP_SELF'].'?action=ajout_photo&amp;id='.$object->id.'&amp;type='.$type.'">';
+			print '<a class="butAction hideonsmartphone" href="'.$_SERVER['PHP_SELF'].'?action=ajout_photo&amp;token='.newToken().'&amp;id='.$object->id.'&amp;type='.$type.'">';
 			print $langs->trans("AddPhoto").'</a>';
 		} else {
 			print '<a class="butActionRefused classfortooltip hideonsmartphone" href="#">';
@@ -248,7 +248,7 @@ if ($object->id) {
 					$filename = $obj['photo'];
 				}
 
-				// Nom affiche
+				// Displayed name
 				$viewfilename = $obj['photo'];
 
 				// Taille de l'image
@@ -278,7 +278,7 @@ if ($object->id) {
 				}
 			}
 
-			// Ferme tableau
+			// Close array
 			while ($nbphoto % $nbbyrow) {
 				print '<td width="'.ceil(100 / $nbbyrow).'%">&nbsp;</td>';
 				$nbphoto++;

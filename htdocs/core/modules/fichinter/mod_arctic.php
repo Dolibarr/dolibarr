@@ -53,6 +53,11 @@ class mod_arctic extends ModeleNumRefFicheinter
 	public $nom = 'arctic';
 
 	/**
+	 * @var int		Position
+	 */
+	public $position = 60;
+
+	/**
 	 * @var string model name
 	 */
 	public $name = 'arctic';

@@ -31,5 +31,6 @@ create table llx_payment_donation
   ext_payment_site varchar(128),						-- name of external paymentmode (for example 'stripe')
   fk_bank         integer NOT NULL,
   fk_user_creat   integer,                              -- creation user
-  fk_user_modif   integer                               -- last modification user
+  fk_user_modif   integer,                              -- last modification user
+  import_key      varchar(14)                            -- import key
 )ENGINE=innodb;

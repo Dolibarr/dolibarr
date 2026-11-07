@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2011 		Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ function check_authentication($authentication, &$error, &$errorcode, &$errorlabe
 			$errorlabel = 'Bad value for login or password';
 		}
 
-		if (!$error && $fuser->statut == 0) {
+		if (!$error && $fuser->status == 0) {
 			$error++;
 			$errorcode = 'ERROR_USER_DISABLED';
 			$errorlabel = 'This user has been locked or disabled';
@@ -92,7 +92,14 @@ function check_authentication($authentication, &$error, &$errorcode, &$errorlabe
 				$login = '';
 			}
 
-			if (empty($login)) {
+			if (!empty($login) && dolTotpGetEnrollment($db, $fuser->id) !== null) {
+				// A password alone must not be enough for a user with a two-factor authentication, and the web services have no other credential
+				dol_syslog("Web service access refused for ".$login.": two-factor authentication is enabled", LOG_WARNING);
+				$login = '';
+				$error++;
+				$errorcode = 'TWO_FACTOR_AUTHENTICATION_REQUIRED';
+				$errorlabel = 'Two-factor authentication is enabled for this user, the web services can not be used with a password';
+			} elseif (empty($login)) {
 				$error++;
 				$errorcode = 'BAD_CREDENTIALS';
 				$errorlabel = 'Bad value for login or password';

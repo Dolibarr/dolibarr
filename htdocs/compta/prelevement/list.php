@@ -80,8 +80,8 @@ $search_code = GETPOST('search_code', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
 $statut = GETPOSTINT('statut');
 
+$object = new LignePrelevement($db);
 $bon = new BonPrelevement($db);
-$line = new LignePrelevement($db);
 $company = new Societe($db);
 $userstatic = new User($db);
 
@@ -97,6 +97,32 @@ if ($type == 'bank-transfer') {
 } else {
 	$result = restrictedArea($user, 'prelevement', '', '', 'bons');
 }
+
+// Definition of array of fields for columns from ->fields
+$arrayfields = array();
+/*
+$tableprefix = 't';
+foreach ($object->fields as $key => $val) {
+	// If $val['visible']==0, then we never show the field
+	if (!empty($val['visible'])) {
+		$visible = (int) dol_eval((string) $val['visible'], 1);
+		$arrayfields[$tableprefix.'.'.$key] = array(
+			'label' => $val['label'],
+			'checked' => (($visible < 0) ? '0' : '1'),
+			'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
+			'position' => $val['position'],
+			'help' => isset($val['help']) ? $val['help'] : ''
+		);
+	}
+}
+*/
+
+// Extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
 
 
 /*
@@ -127,7 +153,7 @@ $help_url = '';
 $sql  = "SELECT p.rowid, p.ref, p.statut as status, p.datec";
 $sql .= " , f.rowid as facid, f.ref as invoiceref, f.total_ttc";
 $sql .= " , s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur, s.email";
-$sql .= " , pl.amount, pl.statut as statut_ligne, pl.rowid as rowid_ligne";
+$sql .= " , pl.amount as amount_line, pl.statut as status_line, pl.rowid as rowid_line";
 
 $sqlfields = $sql; // $sql fields to remove for count total
 
@@ -177,7 +203,7 @@ if ($type == 'bank-transfer') {
 	$sql .= " SELECT p.rowid, p.ref, p.statut as status, p.datec";
 	$sql .= ", sl.rowid as facid, sl.ref as invoiceref, sl.amount";
 	$sql .= ", u.rowid as socid, CONCAT(u.firstname, ' ', u.lastname) as name, u.ref_employee as code_client, NULL as code_fournisseur, u.email";
-	$sql .= ", pl.amount, pl.statut as statut_ligne, pl.rowid as rowid_ligne";
+	$sql .= ", pl.amount as amount_line, pl.statut as status_line, pl.rowid as rowid_line";
 
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 	$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
@@ -413,6 +439,10 @@ $imaxinloop = ($limit ? min($num, $limit) : $num);
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 
+	$object->id = $obj->rowid_line;
+	$object->status = $obj->status_line;
+	$object->amount = $obj->amount_line;
+
 	$bon->id = $obj->rowid;
 	$bon->ref = $obj->ref;
 	$bon->date_creation = $db->jdate($obj->datec);
@@ -421,8 +451,8 @@ while ($i < $imaxinloop) {
 	$bon->amount = $obj->amount;
 	$bon->status = $obj->status;
 
-	$object = $bon;
-	if ($object->checkIfSalaryBonPrelevement()) {
+	//$object = $bon;
+	if ($bon->checkIfSalaryBonPrelevement()) {
 		$fullname = explode(' ', $obj->name);
 
 		$userstatic->id = $obj->socid;
@@ -445,7 +475,7 @@ while ($i < $imaxinloop) {
 		$selected = -1;
 		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
-			if (in_array($object->id, $arrayofselected)) {
+			if (in_array($bon->id, $arrayofselected)) {
 				$selected = 1;
 			}
 		}
@@ -479,10 +509,10 @@ while ($i < $imaxinloop) {
 		print "</td>\n";
 
 		print '<td>';
-		print $line->LibStatut($obj->statut_ligne, 2);
+		print $object->LibStatut($obj->status_line, 2);
 		print "&nbsp;";
-		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid_ligne.($type == 'bank-transfer' ? '&type=bank-transfer' : '').'">';
-		print substr('000000'.$obj->rowid_ligne, -6);
+		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid_line.($type == 'bank-transfer' ? '&type=bank-transfer' : '').'">';
+		print substr('000000'.$obj->rowid_line, -6);
 		print '</a></td>';
 
 		// Ref invoice or salary
@@ -528,7 +558,7 @@ while ($i < $imaxinloop) {
 
 		print '<td class="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
 
-		print '<td class="nowraponall right"><span class="amount">'.price($obj->amount)."</span></td>\n";
+		print '<td class="nowraponall right"><span class="amount">'.price($obj->amount_line)."</span></td>\n";
 
 		// Action column
 		if (!$conf->main_checkbox_left_column) {

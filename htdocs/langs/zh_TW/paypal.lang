@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal 模組設定
-PaypalDesc=此模組允許客戶透過 <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a> 付款。可用於臨時付款，或與 Dolibarr 物件(如發票、訂單等)相關的付款。
+PaypalDesc=This module allows payment by customers via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. This can be used for an ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
 PaypalOrCBDoPayment=使用 PayPal(信用卡或 PayPal)付款
 PaypalDoPayment=使用 PayPal 付款
 PAYPAL_API_SANDBOX=測試 / 沙盒模式
@@ -19,7 +19,7 @@ NewOnlinePaymentFailed=有新的線上付款嘗試，但失敗
 ONLINE_PAYMENT_SENDEMAIL=每次付款嘗試(成功與失敗)後的通知收件人 Email
 ReturnURLAfterPayment=付款完成後返回的 URL
 ValidationOfOnlinePaymentFailed=線上付款驗證失敗
-PaymentSystemConfirmPaymentPageWasCalledButFailed=付款系統已呼叫確認頁面，但返回錯誤
+PaymentSystemConfirmPaymentPageWasCalledButFailed=The payment confirmation page was called by the online payment system and returned an error
 SetExpressCheckoutAPICallFailed=SetExpressCheckout API 呼叫失敗。
 DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API 呼叫失敗。
 DetailedErrorMessage=詳細錯誤訊息

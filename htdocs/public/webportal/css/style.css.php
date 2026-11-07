@@ -472,3 +472,44 @@ table.dp {
 .text-right {
 	text-align: right;
 }
+
+/**
+ * PHONE INPUT (picto + phone code select + number on one line)
+ */
+.valuefield:has(> select.selectphonecode) {
+	display: flex;
+	align-items: center;
+	gap: calc(var(--form-element-spacing-horizontal) * 0.5);
+	margin-bottom: var(--form-input-margin-bottom);
+}
+.valuefield:has(> select.selectphonecode) > .select2.select2-container {
+	flex: 0 0 auto;
+	width: auto !important;
+	min-width: 7em;
+	margin-bottom: 0;
+}
+.valuefield:has(> select.selectphonecode) > input[type="tel"] {
+	flex: 1 1 auto;
+	margin-bottom: 0;
+}
+/* Dropdown list wider than the phone code select, to show country name and code on one line */
+.select2-dropdown:has(.select2-results__options[id$="_code-results"]) {
+	min-width: 18em;
+}
+.select2-results__options[id$="_code-results"] .select2-results__option {
+	white-space: nowrap;
+}
+.select2-selection__rendered .flag-sprite, .select2-results__option .flag-sprite {
+	vertical-align: middle;
+	margin-<?php print $right; ?>: 4px;
+}
+
+/**
+ * FLAGS (used by the phone code select)
+ */
+<?php
+if (!defined('ISLOADEDBYSTEELSHEET')) {
+	define('ISLOADEDBYSTEELSHEET', '1');
+}
+$path = '';
+include DOL_DOCUMENT_ROOT.'/theme/eldy/flags-sprite.inc.php';

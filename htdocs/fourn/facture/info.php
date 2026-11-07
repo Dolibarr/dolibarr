@@ -53,14 +53,18 @@ $action = GETPOST('action', 'aZ09');
 $id = GETPOSTINT("facid") ? GETPOSTINT("facid") : GETPOSTINT("id");
 $ref = GETPOST("ref", 'alpha');
 
+$object = new FactureFournisseur($db);
+$object->fetch($id, $ref);
+if ($object->id > 0) {
+	$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+}
+
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $hookmanager->initHooks(array('invoicesuppliercardinfo'));
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
-
-$object = new FactureFournisseur($db);
 
 $usercancreate = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"));
 $permissiontoadd = $usercancreate;
@@ -71,7 +75,6 @@ $permissiontoadd = $usercancreate;
  */
 
 $form = new Form($db);
-$object->fetch($id, $ref);
 $object->fetch_thirdparty();
 $object->info($object->id);
 $alreadypaid = $object->getSommePaiement();
@@ -108,7 +111,7 @@ if (isModEnabled('project')) {
 	} else {
 		if (!empty($object->fk_project)) {
 			$proj = new Project($db);
-			$proj->fetch($object->fk_project);
+			$proj->fetch((int) $object->fk_project);
 			$morehtmlref .= $proj->getNomUrl(1);
 			if ($proj->title) {
 				$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';

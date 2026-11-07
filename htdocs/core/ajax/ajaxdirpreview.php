@@ -73,6 +73,14 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	$module = GETPOST("module", 'alpha');
 	$urlsource = GETPOST("urlsource", 'alpha');
 	$search_doc_ref = GETPOST('search_doc_ref', 'alpha');
+	$search_doc_date_start = '';
+	$search_doc_date_end = '';
+	if (GETPOSTISSET('search_doc_date_start') || GETPOSTISSET('search_doc_date_startday') || GETPOSTISSET('search_doc_date_startmonth') || GETPOSTISSET('search_doc_date_startyear')) {
+		$search_doc_date_start = GETPOSTDATE('search_doc_date_start');
+	}
+	if (GETPOSTISSET('search_doc_date_end') || GETPOSTISSET('search_doc_date_endday') || GETPOSTISSET('search_doc_date_endmonth') || GETPOSTISSET('search_doc_date_endyear')) {
+		$search_doc_date_end = GETPOSTDATE('search_doc_date_end', 'end');
+	}
 
 	$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 	$sortfield = GETPOST("sortfield", 'aZ09comma');
@@ -166,7 +174,7 @@ if (empty($modulepart)) {
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-// On interdit les remontees de repertoire ainsi que les pipe dans les noms de fichiers.
+// We forbid directory traversal as well as pipes in file names.
 if (preg_match('/\.\./', $upload_dir) || preg_match('/[<>|]/', $upload_dir)) {
 	dol_syslog("Refused to deliver file ".$upload_dir);
 	// Do no show plain path in shown error message
@@ -198,7 +206,7 @@ if ($modulepart == 'ecm') {
  */
 
 if (!isset($mode) || $mode != 'noajax') {
-	// Ajout directives pour resoudre bug IE
+	// Add directives to fix IE bug
 	header('Cache-Control: Public, must-revalidate');
 	header('Pragma: public');
 
@@ -224,6 +232,16 @@ if (!empty($websitekey)) {
 }
 if (!empty($pageid)) {
 	$param .= '&pageid='.((int) $pageid);
+}
+// Keep the popup mode (no menus) when the file manager is open into a dialog popup
+if (GETPOSTINT('dol_hide_topmenu')) {
+	$param .= '&dol_hide_topmenu='.GETPOSTINT('dol_hide_topmenu');
+}
+if (GETPOSTINT('dol_hide_leftmenu')) {
+	$param .= '&dol_hide_leftmenu='.GETPOSTINT('dol_hide_leftmenu');
+}
+if (GETPOST('dol_openinpopup', 'aZ09')) {
+	$param .= '&dol_openinpopup='.urlencode(GETPOST('dol_openinpopup', 'aZ09'));
 }
 
 
@@ -279,7 +297,7 @@ if ($type == 'directory') {
 	} elseif ($module == 'invoice') {
 		$upload_dir = $conf->invoice->dir_output;
 	} elseif ($module == 'invoice_supplier') {
-		$upload_dir = $conf->fournisseur->facture->dir_output;
+		$upload_dir = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
 	} elseif ($module == 'propal') {
 		$upload_dir = $conf->propal->dir_output;
 	} elseif ($module == 'supplier_proposal') {
@@ -335,11 +353,31 @@ if ($type == 'directory') {
 		if (isset($search_doc_ref) && $search_doc_ref != '') {
 			$param .= '&search_doc_ref='.urlencode($search_doc_ref);
 		}
+		if (!empty($search_doc_date_start)) {
+			$param .= '&search_doc_date_startday='.dol_print_date($search_doc_date_start, '%d');
+			$param .= '&search_doc_date_startmonth='.dol_print_date($search_doc_date_start, '%m');
+			$param .= '&search_doc_date_startyear='.dol_print_date($search_doc_date_start, '%Y');
+		}
+		if (!empty($search_doc_date_end)) {
+			$param .= '&search_doc_date_endday='.dol_print_date($search_doc_date_end, '%d');
+			$param .= '&search_doc_date_endmonth='.dol_print_date($search_doc_date_end, '%m');
+			$param .= '&search_doc_date_endyear='.dol_print_date($search_doc_date_end, '%Y');
+		}
 
 		$textifempty = ($section ? $langs->trans("NoFileFound") : ($showonrightsize == 'featurenotyetavailable' ? $langs->trans("FeatureNotYetAvailable") : $langs->trans("NoFileFound")));
 
 		$filter = preg_quote((string) $search_doc_ref, '/');
 		$filearray = dol_dir_list($upload_dir, "files", 1, $filter, $excludefiles, $sortfield, $sorting, 1);
+		if (!empty($search_doc_date_start) || !empty($search_doc_date_end)) {
+			foreach ($filearray as $key => $file) {
+				$filedate = empty($file['date']) ? 0 : (int) $file['date'];
+				if ((!empty($search_doc_date_start) && $filedate < $search_doc_date_start)
+					|| (!empty($search_doc_date_end) && $filedate > $search_doc_date_end)
+				) {
+					unset($filearray[$key]);
+				}
+			}
+		}
 		//var_dump($filearray);
 
 		// To allow external users,we must restrict $filearray to entries the user is a thirdparty.
@@ -404,7 +442,7 @@ if ($type == 'directory') {
 		}
 
 		if ($section) {
-			$param .= '&section='.$section;
+			$param .= '&section='.urlencode($section);
 			if (isset($search_doc_ref) && $search_doc_ref != '') {
 				$param .= '&search_doc_ref='.urlencode($search_doc_ref);
 			}
@@ -456,7 +494,7 @@ if ($type == 'directory') {
 		// When we show list of files for a directory, $filearray ciontains file list, and directory is defined with modulepart + $relativepath
 		//var_dump("section=".$section." title=".$title." modulepart=".$modulepart." useinecm=".$useinecm." perm(permtoeditline)=".$perm." relativepath=".$relativepath." upload_dir=".$upload_dir." param=".$param." url=".$url);
 
-		$formfile->list_of_documents($filearray, null, $modulepart, $param, 1, $relativepath, $perm, $useinecm, $textifempty, $maxlengthname, $title, $url, 0, $perm, $upload_dir, $sortfield, $sortorder);
+		$formfile->list_of_documents($filearray, null, $modulepart, $param, 1, $relativepath, $perm, $useinecm, $textifempty, $maxlengthname, $title, $url, 0, $perm, $upload_dir, $sortfield, $sortorder, 1, 1);
 	}
 }
 
@@ -505,6 +543,14 @@ if ($useajax || $action == 'deletefile') {
 	}
 	if (!empty($pageid) && $pageid > 0) {
 		$formquestion['pageid'] = array('type' => 'hidden', 'value' => $pageid, 'name' => 'pageid');
+	}
+	foreach (array('dol_hide_topmenu', 'dol_hide_leftmenu') as $tmpparam) {
+		if (GETPOSTINT($tmpparam)) {
+			$formquestion[$tmpparam] = array('type' => 'hidden', 'value' => GETPOSTINT($tmpparam), 'name' => $tmpparam);
+		}
+	}
+	if (GETPOST('dol_openinpopup', 'aZ09')) {
+		$formquestion['dol_openinpopup'] = array('type' => 'hidden', 'value' => GETPOST('dol_openinpopup', 'aZ09'), 'name' => 'dol_openinpopup');
 	}
 
 	print $form->formconfirm($url, $langs->trans("DeleteFile"), $langs->trans("ConfirmDeleteFile"), 'confirm_deletefile', $formquestion, "no", ($useajax ? 'deletefile' : 0));

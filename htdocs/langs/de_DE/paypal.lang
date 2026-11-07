@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal Moduleinstellungen
-PaypalDesc=Dieses Modul ermöglicht die Zahlung durch Kunden über <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a>. Dies kann sowohl für eine allgemeine Zahlung als auch für eine Zahlung im Zusammenhang mit einem Dolibarr-Objekt (Rechnung, Bestellung, ...) verwendet werden.
+PaypalDesc=Dieses Modul ermöglicht die Zahlung durch Kunden über <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. Dies kann sowohl für eine allgemeine Zahlung als auch für eine Zahlung im Zusammenhang mit einem Dolibarr-Objekt (Rechnung, Kundenauftrag, ...) verwendet werden.
 PaypalOrCBDoPayment=Bezahlen mit PayPal  (Kreditkarte oder PayPal)
 PaypalDoPayment=Zahlung mit PayPal
 PAYPAL_API_SANDBOX=Testmodus/Sandbox
@@ -19,7 +19,7 @@ NewOnlinePaymentFailed=Neue Onlinezahlung versucht, aber fehlgeschlagen
 ONLINE_PAYMENT_SENDEMAIL=Status-E-Mail nach einer Zahlung (erfolgreich oder nicht)
 ReturnURLAfterPayment=Rückkehr-URL nach Zahlung
 ValidationOfOnlinePaymentFailed=Validierung der Onlinezahlung fehlgeschlagen
-PaymentSystemConfirmPaymentPageWasCalledButFailed=Die aufgerufene Zahlungsbestätigungsseite hat einen Fehler zurückgemeldet
+PaymentSystemConfirmPaymentPageWasCalledButFailed=Die Zahlungsbestätigungsseite wurde vom Online-Zahlungssystem aufgerufen und hat einen Fehler zurückgegeben
 SetExpressCheckoutAPICallFailed=Aufruf des API SetExpressCheckout fehlgeschlagen
 DoExpressCheckoutPaymentAPICallFailed=Aufruf des API DoExpressCheckoutPayment fehlgeschlagen
 DetailedErrorMessage=Detaillierte Fehlermeldung

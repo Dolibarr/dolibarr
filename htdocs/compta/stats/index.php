@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2017       Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
@@ -261,6 +262,11 @@ if ($modecompta == 'CREANCES-DETTES') {
 	} else {
 		$sql .= " AND f.type IN (0,1,2,3,5)";
 	}
+	// Add SQL restrictions from hooks (context turnoverreport), e.g. a deposit pivot date restricting deposits by their date
+	$hookmanager->initHooks(array('turnoverreport'));
+	$parameters = array('invoicealias' => 'f', 'issupplier' => 0, 'datefield' => 'datef');
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by some hooks
+	$sql .= $hookmanager->resPrint;
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
 	if ($socid) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
@@ -500,13 +506,13 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 			//var_dump($annee.' '.$year_end.' '.$mois.' '.$month_end);
 			if ($annee < $year_end || ($annee == $year_end && $mois <= $month_end)) {
 				if ($annee_decalage > $minyear && $case <= $casenow) {
-					if ($modecompta == 'CREANCES-DETTES') {
-						$cumulative_previous_year = (!empty($cumulative_ht[$caseprev]) ? $cumulative_ht[$caseprev] : 0);
-						$cumulative_year = (!empty($cumulative_ht[$case]) ? $cumulative_ht[$case] : 0);
+					if ($modecompta=='CREANCES-DETTES') {
+						$cumulative_previous_year = (!empty($cumulative_ht[$caseprev]) ? (float) $cumulative_ht[$caseprev] : 0);
+						$cumulative_year = (!empty($cumulative_ht[$case]) ? (float) $cumulative_ht[$case] : 0);
 						$isset_cumulative_previous_year = isset($cumulative_ht[$caseprev]);
 					} else {
-						$cumulative_previous_year = (!empty($cumulative[$caseprev]) ? $cumulative[$caseprev] : 0);
-						$cumulative_year = (!empty($cumulative[$case]) ? $cumulative[$case] : 0);
+						$cumulative_previous_year = (!empty($cumulative[$caseprev]) ? (float) $cumulative[$caseprev] : 0);
+						$cumulative_year = (!empty($cumulative[$case]) ? (float) $cumulative[$case] : 0);
 						$isset_cumulative_previous_year = isset($cumulative_ht[$caseprev]);
 					}
 					if (!empty($cumulative_previous_year) && !empty($cumulative_year)) {
@@ -649,11 +655,11 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 	// Percentage total
 	if ($annee > $minyear && $annee <= max($nowyear, $maxyear)) {
 		if ($modecompta == 'CREANCES-DETTES') {
-			$total_previous_year = (!empty($total_ht[$annee - 1]) ? $total_ht[$annee - 1] : 0);
-			$total_year = (!empty($total_ht[$annee]) ? $total_ht[$annee] : 0);
+			$total_previous_year = (!empty($total_ht[$annee - 1]) ? (float) $total_ht[$annee - 1] : 0);
+			$total_year = (!empty($total_ht[$annee]) ? (float) $total_ht[$annee] : 0);
 		} else {
-			$total_previous_year = (!empty($total[$annee - 1]) ? $total[$annee - 1] : 0);
-			$total_year = (!empty($total[$annee]) ? $total[$annee] : 0);
+			$total_previous_year = (!empty($total[$annee - 1]) ? (float) $total[$annee - 1] : 0);
+			$total_year = (!empty($total[$annee]) ? (float) $total[$annee] : 0);
 		}
 		if (!empty($total_previous_year) && !empty($total_year)) {
 			$percent = (round(($total_year - $total_previous_year) / $total_previous_year, 4) * 100);

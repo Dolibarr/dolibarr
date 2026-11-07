@@ -164,7 +164,7 @@ class ExpenseReportIk extends CommonObject
 
 		$sql = 'SELECT rowid, label, entity, active';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'c_exp_tax_cat';
-		$sql .= ' WHERE entity IN (0, '.getEntity($this->element).')';
+		$sql .= ' WHERE entity IN (0, '.getEntity('c_exp_tax_cat').')';
 		if ($mode == 1) {
 			$sql .= ' AND active = 1';
 		} elseif ($mode == 2) {
@@ -224,7 +224,7 @@ class ExpenseReportIk extends CommonObject
 			$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'c_exp_tax_cat c ON (r.fk_c_exp_tax_cat = c.rowid)';
 		}
 		$sql .= ' WHERE r.fk_c_exp_tax_cat = '.((int) $fk_c_exp_tax_cat);
-		$sql .= " AND r.entity IN(0, ".getEntity($this->element).")";
+		$sql .= " AND r.entity IN(0, ".getEntity('c_exp_tax_range').")";
 		if ($active) {
 			$sql .= ' AND r.active = 1 AND c.active = 1';
 		}
@@ -261,7 +261,7 @@ class ExpenseReportIk extends CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'c_exp_tax_range r';
 		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'c_exp_tax_cat c ON (r.fk_c_exp_tax_cat = c.rowid)';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'expensereport_ik i ON (r.rowid = i.fk_range)';
-		$sql .= ' WHERE r.entity IN (0, '.getEntity($this->element).')';
+		$sql .= ' WHERE r.entity IN (0, '.getEntity('c_exp_tax_range').')';
 		$sql .= ' ORDER BY r.fk_c_exp_tax_cat, r.range_ik';
 
 		dol_syslog(get_called_class().'::getAllRanges', LOG_DEBUG);
@@ -300,7 +300,7 @@ class ExpenseReportIk extends CommonObject
 		$sql = 'SELECT MAX(counted) as nbRange FROM (';
 		$sql .= ' SELECT COUNT(*) as counted';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'c_exp_tax_range r';
-		$sql .= ' WHERE r.entity IN (0, '.getEntity($this->element).')';
+		$sql .= ' WHERE r.entity IN (0, '.getEntity('c_exp_tax_range').')';
 		if ($default_c_exp_tax_cat > 0) {
 			$sql .= ' AND r.fk_c_exp_tax_cat = '.((int) $default_c_exp_tax_cat);
 		}

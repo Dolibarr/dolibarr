@@ -27,6 +27,7 @@ Earnings=Earnings
 TotalEarnings=Total earnings
 TotalDeductions=Total deductions
 NetPaid=Net paid
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Сметка (од Сметковниот план) стандардно користена за „корисници“ на плати
@@ -55,8 +56,6 @@ FillFieldFirst=Прво пополнете го полето за вработе
 UpdateAmountWithLastSalary=Поставете го износот на последната плата
 MakeTransferRequest=Направете барање за трансфер
 VirementOrder=Барање за трансфер на кредит
-WithdrawalReceipt=Налог за трансфер на кредит
-OrderWaiting=Нарачка во очекување
 FillEndOfMonth=End of month
 
 # Shortcuts

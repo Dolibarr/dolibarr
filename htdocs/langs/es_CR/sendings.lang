@@ -77,7 +77,6 @@ Recipient=Destinatario de entrega
 NonShippable=No se puede enviar
 ShowReceiving=Mostrar comprobante de entrega
 NonExistentOrder=Orden inexistente
-DocumentModelTyphon=Modelo de documento completo para comprobantes de entrega (logotipo...)
 SumOfProductVolumes=Suma de volúmenes de productos
 SumOfProductWeights=Suma de los pesos del producto
 DetailWarehouseFormat=W: %s (Cant.: %d)

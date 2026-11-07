@@ -3,7 +3,7 @@
  * Copyright (C) 2011-2015	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2021-2024  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2021-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -127,6 +127,7 @@ if (preg_match('/set_(.*)/', $action, $reg)) {
 			$color = '';
 		}
 		$enabled = trim(GETPOST('AGENDA_EXT_ENABLED'.$i, 'alpha'));
+		$cachedelay = (GETPOSTINT('AGENDA_EXT_CACHE'.$i) > 0 ? (string) GETPOSTINT('AGENDA_EXT_CACHE'.$i) : '');
 
 		if (!empty($src) && !dol_is_url($src)) {
 			setEventMessages($langs->trans("ErrorParamMustBeAnUrl"), null, 'errors');
@@ -153,7 +154,13 @@ if (preg_match('/set_(.*)/', $action, $reg)) {
 		if (!($res > 0)) {
 			$error++;
 		}
-		$res = dolibarr_set_const($db, 'AGENDA_EXT_ENABLED'.$i, $enabled, 'chaine', 0, '', $conf->entity);
+		if (GETPOSTISSET('AGENDA_EXT_ENABLED'.$i)) {
+			$res = dolibarr_set_const($db, 'AGENDA_EXT_ENABLED'.$i, $enabled, 'chaine', 0, '', $conf->entity);
+			if (!($res > 0)) {
+				$error++;
+			}
+		}
+		$res = dolibarr_set_const($db, 'AGENDA_EXT_CACHE'.$i, $cachedelay, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
 		}
@@ -189,7 +196,7 @@ $linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore
 
 print load_fiche_titre($langs->trans("AgendaSetup"), $linkback, 'title_setup');
 
-print '<form name="extsitesconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<form name="extsitesconfig" action="'.$_SERVER["PHP_SELF"].'" method="post" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="save">';
 
@@ -197,7 +204,7 @@ $head = agenda_prepare_head();
 
 print dol_get_fiche_head($head, 'extsites', $langs->trans("Agenda"), -1, 'action');
 
-print '<span class="opacitymedium">'.$langs->trans("AgendaExtSitesDesc")."</span><br>\n";
+print '<div class="info">'.$langs->trans("AgendaExtSitesDesc")."</div><br>\n";
 print "<br>\n";
 
 
@@ -210,7 +217,8 @@ print "<td>".$langs->trans("Name")."</td>";
 print "<td>".$langs->trans("ExtSiteUrlAgenda");
 print '<br><span class="hideonsmartphone opacitymedium">('.$langs->trans("Example").': http://yoursite/agenda/agenda.ics)</span></td>';
 print "<td>".$form->textwithpicto($langs->trans("FixTZ"), $langs->trans("FillFixTZOnlyIfRequired"), 1).'</td>';
-print '<td class="right">'.$langs->trans("Color").'</td>';
+print '<td class="nowrap">'.$form->textwithpicto($langs->trans("AgendaExtCacheDelay"), $langs->trans("AgendaExtCacheDelayDesc", 300), 1).'</td>';
+print '<td class="center">'.$langs->trans("Color").'</td>';
 print '<td class="center">'.$langs->trans("Enabled").'</td>';
 print '<td class="center">'.$langs->trans("ActiveByDefault").'</td>';
 print "</tr>";
@@ -222,6 +230,7 @@ while ($i <= $MAXAGENDA) {
 	$src = 'AGENDA_EXT_SRC' . $key;
 	$offsettz = 'AGENDA_EXT_OFFSETTZ' . $key;
 	$color = 'AGENDA_EXT_COLOR' . $key;
+	$cachedelay = 'AGENDA_EXT_CACHE' . $key;
 	$enabled = 'AGENDA_EXT_ENABLED' . $key;
 	$default = 'AGENDA_EXT_ACTIVEBYDEFAULT' . $key;
 
@@ -239,6 +248,9 @@ while ($i <= $MAXAGENDA) {
 	// Offset TZ
 	print '<td><input type="text" class="flat hideifnotset" name="AGENDA_EXT_OFFSETTZ' . $key . '" value="' . (GETPOST('AGENDA_EXT_OFFSETTZ' . $key) ? GETPOST('AGENDA_EXT_OFFSETTZ' . $key) : getDolGlobalString($offsettz)) . '" size="2"></td>';
 
+	// Cache duration
+	print '<td><input type="number" min="0" class="flat hideifnotset width75" name="AGENDA_EXT_CACHE' . $key . '" value="' . (GETPOSTISSET('AGENDA_EXT_CACHE' . $key) ? GETPOSTINT('AGENDA_EXT_CACHE' . $key) : getDolGlobalString($cachedelay)) . '" placeholder="300"></td>' . "\n";
+
 	// Color (Possible colors are limited by Google)
 	print '<td class="nowraponall right">';
 	print $formother->selectColor((GETPOST("AGENDA_EXT_COLOR" . $key) ? GETPOST("AGENDA_EXT_COLOR" . $key) : getDolGlobalString($color)), "AGENDA_EXT_COLOR" . $key, '', 1, array(), 'hideifnotset');
@@ -249,11 +261,12 @@ while ($i <= $MAXAGENDA) {
 	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('AGENDA_EXT_ENABLED' . $key, array(), null, 0, 0, 1);
 	} else {
-		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-		if (getDolGlobalString($default)) {
-			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_AGENDA_EXT_ENABLED' . $key . '&token='.newToken().'">' . img_picto($langs->trans("Disabled"), 'off') . '</a>';
+		// The state shown is the one of this column, AGENDA_EXT_ENABLED, and the picto says what it
+		// is, the way ajax_constantonoff() does it when javascript is off: a set constant shows "on".
+		if (getDolGlobalString($enabled)) {
+			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_AGENDA_EXT_ENABLED' . $key . '&token='.newToken().'">' . img_picto($langs->trans("Enabled"), 'on') . '</a>';
 		} else {
-			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_AGENDA_EXT_ENABLED' . $key . '&token='.newToken().'">' . img_picto($langs->trans("Enabled"), 'on') . '</a>';
+			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_AGENDA_EXT_ENABLED' . $key . '&token='.newToken().'">' . img_picto($langs->trans("Disabled"), 'off') . '</a>';
 		}
 	}
 	print '</td>';
@@ -261,18 +274,17 @@ while ($i <= $MAXAGENDA) {
 	// Calendar active by default
 	print '<td class="nowrap center">';
 	if (!empty($conf->use_javascript_ajax)) {
+		// A calendar that is not enabled cannot be made active by default, so the switch is greyed
+		// out. It still carries its own constant name: a placeholder name shared by every disabled
+		// row would repeat the same set_, del_ and confirm_ html ids down the page.
 		$disabled = getDolGlobalString('AGENDA_EXT_ENABLED'.$key) ? 0 : 1;
-		if ($disabled) {
-			print ajax_constantonoff('EMPTYPARAM', array(), null, 0, 0, 1, 2, 0, 0, '', '', 'inline-block', 0, '', $disabled);
-		} else {
-			print ajax_constantonoff('AGENDA_EXT_ACTIVEBYDEFAULT' . $key, array(), null, 0, 0, 1, 2, 0, 0, '', '', 'inline-block', 0, '');
-		}
+		print ajax_constantonoff('AGENDA_EXT_ACTIVEBYDEFAULT' . $key, array(), null, 0, 0, 1, 2, 0, 0, '', '', 'inline-block', 0, '', $disabled);
 	} else {
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		if (getDolGlobalString($default)) {
-			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_AGENDA_EXT_ACTIVEBYDEFAULT' . $key . '&token='.newToken().'">' . img_picto($langs->trans("Disabled"), 'off') . '</a>';
+			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_AGENDA_EXT_ACTIVEBYDEFAULT' . $key . '&token='.newToken().'">' . img_picto($langs->trans("Enabled"), 'on') . '</a>';
 		} else {
-			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_AGENDA_EXT_ACTIVEBYDEFAULT' . $key . '&token='.newToken().'">' . img_picto($langs->trans("Enabled"), 'on') . '</a>';
+			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_AGENDA_EXT_ACTIVEBYDEFAULT' . $key . '&token='.newToken().'">' . img_picto($langs->trans("Disabled"), 'off') . '</a>';
 		}
 	}
 	print '</td>';

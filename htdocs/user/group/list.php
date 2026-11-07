@@ -90,6 +90,9 @@ if (!$sortorder) {
 }
 
 $arrayfields = array();
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
@@ -111,10 +114,11 @@ if (!$user->hasRight("user", "user", "read") && !$user->admin) {
 
 // Define if user can modify other users and permissions
 $caneditperms = (isModEnabled('multicompany') && !empty($user->entity) && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') ? false : (!empty($user->admin) || $user->hasRight("user", "user", "write")));
-$permissiontodelete = $caneditperms;
+$permissiontodelete = (isModEnabled('multicompany') && !empty($user->entity) && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') ? false : (!empty($user->admin) || $user->hasRight("user", "user", "delete")));
 // Advanced permissions
 if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$caneditperms = (isModEnabled('multicompany') && !empty($user->entity) && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') ? false : ($user->admin || $user->hasRight("user", "group_advance", "write")));
+	$permissiontodelete = (isModEnabled('multicompany') && !empty($user->entity) && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') ? false : ($user->admin || $user->hasRight("user", "group_advance", "delete")));
 }
 
 

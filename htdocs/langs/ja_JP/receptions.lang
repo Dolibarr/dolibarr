@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=検証済
 StatusReceptionProcessedShort=処理
 ReceptionSheet=領収シート
 ValidateReception=受信確認
+DeleteReception=Delete reception
 ConfirmDeleteReception=この領収を削除してもよいか？
 ConfirmValidateReception=意思確認： この受領を検証したいか？参照番号 <b>%s</b>
 ConfirmCancelReception=この領収をキャンセルしてもよいか？

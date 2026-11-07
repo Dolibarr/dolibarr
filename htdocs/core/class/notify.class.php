@@ -8,7 +8,7 @@
  * Copyright (C) 2023      William Mead         <william.mead@manchenumerique.fr>
  * Copyright (C) 2024      Jon Bendtsen         <jon.bendtsen.github@jonb.dk>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2026      Pierre Ardoin        <developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -285,6 +285,7 @@ class Notify
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
 			$sql .= " WHERE rowid = ".((int) $this->id);
+			$sql .= " AND entity IN (".getEntity('notify_def').")";
 
 			if (!$this->db->query($sql)) {
 				$error++;
@@ -310,6 +311,8 @@ class Notify
 	 */
 	public function create($user = null, $notrigger = 0)
 	{
+		global $conf;
+
 		$now = dol_now();
 
 		$error = 0;
@@ -327,8 +330,8 @@ class Notify
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (fk_soc, fk_action, fk_contact, type, datec)";
-		$sql .= " VALUES (".((int) $this->socid).", ".((int) $this->event).", ".((int) $this->contact_id).",";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (entity, fk_soc, fk_action, fk_contact, type, datec)";
+		$sql .= " VALUES (".((int) $conf->entity).", ".((int) $this->socid).", ".((int) $this->event).", ".((int) $this->contact_id).",";
 		$sql .= "'".$this->db->escape($this->type)."', '".$this->db->idate($this->datec)."')";
 
 		$resql = $this->db->query($sql);
@@ -432,6 +435,7 @@ class Notify
 		$sql .= ",fk_action = ".((int) $this->event);
 		$sql .= ",fk_contact = ".((int) $this->contact_id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
+		$sql .= " AND entity IN (".getEntity('notify_def').")";
 
 		$result = $this->db->query($sql);
 		if (!$result) {
@@ -498,6 +502,7 @@ class Notify
 				$sql .= " AND n.fk_soc = s.rowid";
 				$sql .= $sqlnotifcode;
 				$sql .= " AND s.entity IN (".getEntity('societe').")";
+				$sql .= " AND n.entity IN (".getEntity('notify_def').")";
 				if ($socid > 0) {
 					$sql .= " AND s.rowid = ".((int) $socid);
 				}
@@ -538,6 +543,7 @@ class Notify
 				$sql .= " AND a.rowid = n.fk_action";
 				$sql .= $sqlnotifcode;
 				$sql .= " AND c.entity IN (".getEntity('user').")";
+				$sql .= " AND n.entity IN (".getEntity('notify_def').")";
 				if ($userid > 0) {
 					$sql .= " AND c.rowid = ".((int) $userid);
 				}
@@ -693,6 +699,7 @@ class Notify
 			$sql .= " ".$this->db->prefix()."notify_def as n,";
 			$sql .= " ".$this->db->prefix()."societe as s";
 			$sql .= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action";
+			$sql .= " AND n.entity IN (".getEntity('notify_def').")";
 			$sql .= " AND n.fk_soc = s.rowid";
 			$sql .= " AND c.statut = 1";
 			if (is_numeric($notifcode)) {
@@ -713,6 +720,7 @@ class Notify
 		$sql .= " ".$this->db->prefix()."c_action_trigger as a,";
 		$sql .= " ".$this->db->prefix()."notify_def as n";
 		$sql .= " WHERE n.fk_user = c.rowid AND a.rowid = n.fk_action";
+		$sql .= " AND n.entity IN (".getEntity('notify_def').")";
 		$sql .= " AND c.statut = 1";
 		if (is_numeric($notifcode)) {
 			$sql .= " AND n.fk_action = ".((int) $notifcode); // Old usage
@@ -938,7 +946,7 @@ class Notify
 							case 'CONTRACT_MODIFY':
 								$link = '<a href="'.$urlwithroot.'/contrat/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
-								$dir_output = $conf->contract->multidir_output;
+								$dir_output = rtrim(getMultidirOutput($object, '', 1), '/');
 								$object_type = 'contract';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextContractModified", $link, $context_info);
 								break;
@@ -966,6 +974,12 @@ class Notify
 							$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
 							complete_substitutions_array($substitutionarray, $outputlangs, $object);
 							// Note the substitution array should contains __REF__, __NEWREF__ ....
+							// On a first validation the object still carries its provisional ref while
+							// newref already holds the final one. Use the final ref for __REF__ so the
+							// notification never shows a (PROVxxx) reference to the recipient.
+							if (!empty($object->newref)) {
+								$substitutionarray['__REF__'] = $object->newref;
+							}
 							$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
 							$message = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
 						} else {
@@ -1207,13 +1221,13 @@ class Notify
 						$link = '<a href="'.$urlwithroot.'/expedition/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
 						$dir_output = $conf->expedition->dir_output."/sending/".get_exdir(0, 0, 0, 1, $object, 'shipment');
-						$object_type = 'order_supplier';
+						$object_type = 'shipping';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextExpeditionModified", $link, $context_info);
 						break;
 					case 'SHIPPING_VALIDATE':
 						$link = '<a href="'.$urlwithroot.'/expedition/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$dir_output = $conf->expedition->dir_output."/sending/".get_exdir(0, 0, 0, 1, $object, 'shipment');
-						$object_type = 'order_supplier';
+						$object_type = 'shipping';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextExpeditionValidated", $link);
 						break;
 					case 'EXPENSE_REPORT_VALIDATE':
@@ -1249,8 +1263,8 @@ class Notify
 					case 'CONTRACT_MODIFY':
 						$link = '<a href="'.$urlwithroot.'/contrat/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
-						$dir_output = $conf->contract->multidir_output;
-						$object_type = 'contrat';
+						$dir_output = rtrim(getMultidirOutput($object, '', 1), '/');
+						$object_type = 'contract';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextContractModified", $link, $context_info);
 						break;
 					default:
@@ -1298,6 +1312,12 @@ class Notify
 
 					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
+					// On a first validation the object still carries its provisional ref while newref
+					// already holds the final one. Use the final ref for __REF__ so the notification
+					// never shows a (PROVxxx) reference to the recipient.
+					if (!empty($object->newref)) {
+						$substitutionarray['__REF__'] = $object->newref;
+					}
 					$subject = make_substitutions($emailTemplate->topic, $substitutionarray, $outputlangs);
 					$message = make_substitutions($emailTemplate->content, $substitutionarray, $outputlangs);
 				} else {

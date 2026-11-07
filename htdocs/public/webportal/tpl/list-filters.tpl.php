@@ -42,7 +42,7 @@ $formList = &$this->formList;
 
 	// Fields from hook
 	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $context);
+	$reshook = $hookmanager->executeHooks('webPortalPrintFieldListOption', $parameters, $context);
 	print $hookmanager->resPrint;
 
 	// Remain to pay

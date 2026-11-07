@@ -29,6 +29,7 @@ InfDirExample=<br>Then declare it in the file <strong>conf.php</strong><br> $dol
 GenericNumRefModelDesc=Returns a customisable number according to a defined mask.
 ListOfDirectories=List of OpenDocument template directories
 ListOfDirectoriesForModelGenODT=List of directories containing template files in OpenDocument format.<br><br>Put here full path of directories.<br>Add a carriage return between each directory.<br>To add a directory of the GED module, add here <b>DOL_DATA_ROOT/ecm/yourdirectoryname</b>.<br><br>Files in those directories must end with <b>.odt</b> or <b>.ods</b>.
+ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\myapp\\mydocumentdir\\mysubdir<br>/home/myapp/mydocumentdir/mysubdir<br>DOL_DATA_ROOT/ecm/ecmdir
 FollowingSubstitutionKeysCanBeUsed=<br>To learn how to create your .odt document templates, before storing them in those directories, read wiki documentation:
 Module50200Name=PayPal
 DictionaryAccountancyJournal=Finance journals

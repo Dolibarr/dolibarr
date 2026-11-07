@@ -128,7 +128,7 @@ if ($action == "set") {
 
 if ($action == "addnotif") {
 	$bon = new BonPrelevement($db);
-	$bon->addNotification($db, GETPOSTINT('user'), $action);
+	$bon->addNotification($db, GETPOSTINT('user'), GETPOST('notifaction', 'int'));
 
 	header("Location: ".$_SERVER["PHP_SELF"]);
 	exit;
@@ -158,7 +158,7 @@ $linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore
 print load_fiche_titre($langs->trans("WithdrawalsSetup"), $linkback, 'title_setup');
 print '<br>';
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=set">';
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=set" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<table class="noborder centpercent">';
@@ -303,8 +303,8 @@ foreach ($dirmodels as $reldir)
 
 						if (file_exists($dir.'/'.$file))
 						{
-							$name = substr($file, 4, dol_strlen($file) -16);
-							$classname = substr($file, 0, dol_strlen($file) -12);
+							$name = dol_substr($file, 4, dol_strlen($file) -16);
+							$classname = dol_substr($file, 0, dol_strlen($file) -12);
 
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
@@ -456,7 +456,7 @@ if (isModEnabled('notification') )
 	}
 
 
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=addnotif&token='.newToken().'">';
+	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=addnotif&token='.newToken().'" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
@@ -470,7 +470,7 @@ if (isModEnabled('notification') )
 	print '</td>';
 
 	print '<td>';
-	print $form->selectarray('action',$actions);//  select_dolusers(0,'user',0);
+	print $form->selectarray('notifaction', $actions);
 	print '</td>';
 
 	print '<td class="right"><input type="submit" class="button button-add" value="'.$langs->trans("Add").'"></td></tr>';
