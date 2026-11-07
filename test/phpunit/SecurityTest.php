@@ -428,6 +428,22 @@ class SecurityTest extends CommonClassTest
 		$decodedstring = preg_replace("/\n$/", "", $decodedstring);
 		$this->assertEquals('<div><a href="123"><span class="abc">abc</span></a></div>', $decodedstring, 'Function did not sanitize correctly with test 2');
 
+		// Legitimate attributes (id, data-*, aria-*, table attributes) must be kept, bad ones removed
+		$stringtotest = '<div id="a1" data-foo="x" data-bar-baz="y" aria-label="z" role="note" onclick="alert(1)"><table border="1"><tr><td colspan="2" rowspan="1" align="center" onmouseover="b">c</td></tr></table><img src="i.png" srcset="j.png 2x" loading="lazy"></div>';
+		$decodedstring = dol_string_onlythesehtmlattributes($stringtotest);
+		$decodedstring = preg_replace("/\n$/", "", $decodedstring);
+		$this->assertEquals('<div id="a1" data-foo="x" data-bar-baz="y" aria-label="z" role="note"><table border="1"><tr><td colspan="2" rowspan="1" align="center">c</td></tr></table><img src="i.png" loading="lazy"></div>', $decodedstring, 'Function did not sanitize correctly with test 3');
+
+		// With an explicit list, data-* attributes are not added
+		$decodedstring = dol_string_onlythesehtmlattributes('<span class="c" data-foo="x">t</span>', array('class'));
+		$decodedstring = preg_replace("/\n$/", "", $decodedstring);
+		$this->assertEquals('<span class="c">t</span>', $decodedstring, 'Function did not sanitize correctly with test 4');
+
+		// itemprop is allowed by default, srcset, usemap and on* are not
+		$decodedstring = dol_string_onlythesehtmlattributes('<img src="i.png" srcset="j.png 2x" itemprop="image" onclick="alert(1)" usemap="#m">');
+		$decodedstring = preg_replace("/\n$/", "", $decodedstring);
+		$this->assertEquals('<img src="i.png" itemprop="image">', $decodedstring, 'Function did not sanitize correctly with test 5');
+
 		return 0;
 	}
 
@@ -1675,6 +1691,22 @@ class SecurityTest extends CommonClassTest
 		$result = dol_htmlwithnojs('String in Hindi लेखाकर्म', 0, 'restricthtml');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('String in Hindi लेखाकर्म', $result, 'Test js sanitizing a Hindi string is ko');
+
+
+		// Test that legitimate attributes (id, data-*, aria-*, role, table attributes, itemprop) are kept and unknown ones are removed
+		$test = '<div id="a1" data-foo="x" aria-label="z" role="note" onclick="alert(1)"><table border="1"><tr><td colspan="2" rowspan="1" onmouseover="b">c</td></tr></table><span itemprop="name" foo="bar">t</span><img src="data:image/png;base64,AAAA" srcset="j.png 2x" alt="i"></div>';
+
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1;
+		$result = dol_htmlwithnojs($test, 0, 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$normalizedresult = trim(preg_replace('/>\s*</', '><', str_replace(array("\r", "\n", "\t"), ' ', $result)));
+		$this->assertEquals('<div id="a1" data-foo="x" aria-label="z" role="note"><table border="1"><tr><td colspan="2" rowspan="1">c</td></tr></table><span itemprop="name">t</span><img src="data:image/png;base64,AAAA" alt="i"></div>', $normalizedresult, 'Test sanitizing attributes with MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES=1 is ko');
+
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
+		$result = dol_htmlwithnojs($test, 0, 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$normalizedresult = trim(preg_replace('/>\s*</', '><', str_replace(array("\r", "\n", "\t"), ' ', $result)));
+		$this->assertEquals('<div id="a1" data-foo="x" aria-label="z" role="note"><table border="1"><tr><td colspan="2" rowspan="1">c</td></tr></table><span itemprop="name" foo="bar">t</span><img src="data:image/png;base64,AAAA" srcset="j.png 2x" alt="i"></div>', $normalizedresult, 'Test sanitizing attributes with MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES=0 is ko');
 
 
 		// Test emoticons
