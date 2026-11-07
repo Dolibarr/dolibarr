@@ -210,6 +210,7 @@ print dol_get_fiche_head($head, 'tools', 'MCP Server', -1, 'ai');
 
 print '<!-- Tools quick setup -->';
 print '<div class="info">' . $langs->trans("ToolAccessControlHelp") . '<br>' . $langs->trans("ToolAccessControlHelp2") . '</div>';
+print '<br>';
 
 print '<div class="marginleftonly" style="display:flex; flex-wrap:wrap; gap:40px; margin-top:15px; padding-top:15px;">';
 
@@ -260,7 +261,7 @@ if (empty($groupedNormalTools) && empty($groupedSystemTools)) {
 
 		print '<tr class="trgroup trforbreaknobg" data-group="group-' . $groupId . '">';
 		print '<td colspan="6" class="mcp-trigger-collapse" style="cursor:pointer;">';
-		print '<span class="toggle-icon">▼</span> ' . dol_escape_htmltag($categoryName);
+		print '<span class="toggle-icon">▼</span> ' . dol_escape_htmltag($categoryName) . ' <span class="opacitymedium">(' . count($definitions) . ')</span>';
 		print '</td>';
 		print '</tr>';
 
@@ -303,7 +304,9 @@ if (empty($groupedNormalTools) && empty($groupedSystemTools)) {
 			print '</td>';
 
 			// Tool Description (hidden on mobile)
-			print '<td class="small opacitymedium hideonsmartphone">' . dol_escape_htmltag($desc) . '</td>';
+			print '<td class="small opacitymedium hideonsmartphone">';
+			print '<div class="twolinesmax-normallineheight" title="' . dolPrintHTMLForAttribute($desc) . '">' . dol_escape_htmltag($desc) . '</div>';
+			print '</td>';
 
 			// Type Badge
 			print '<td class="center">' . $typeBadge . '</td>';

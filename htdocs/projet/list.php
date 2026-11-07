@@ -684,7 +684,7 @@ if (!$user->hasRight('projet', 'all', 'lire')) {
 if ($socid > 0) {
 	$sql .= " AND (p.fk_soc = ".((int) $socid).")"; // This filter if when we use a hard coded filter on company on url (not related to filter for external users)
 }
-if ($search_id) {
+if ($search_id != '') {
 	$sql .= natural_search('p.rowid', $search_id, 1);
 }
 if ($search_ref) {
@@ -1482,8 +1482,8 @@ if ($conf->main_checkbox_left_column) {
 }
 // Project ID
 if (!empty($arrayfields['p.rowid']['checked'])) {
-	print '<td class="liste_titre" id="search_id">';
-	print '<input type="text" class="flat width50" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
+	print '<td class="liste_titre center" id="search_id">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 // Project ref
@@ -1741,7 +1741,7 @@ if ($conf->main_checkbox_left_column) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.rowid']['checked'])) {
-	print_liste_field_titre($arrayfields['p.rowid']['label'], $_SERVER["PHP_SELF"], "p.rowid", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['p.rowid']['label'], $_SERVER["PHP_SELF"], "p.rowid", "", $param, "", $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.ref']['checked'])) {
@@ -2173,7 +2173,7 @@ while ($i < $imaxinloop) {
 		}
 		// Project ID
 		if (!empty($arrayfields['p.rowid']['checked'])) {
-			print '<td class="nowraponall">';
+			print '<td class="center nowraponall">';
 			print $object->id;
 			print '</td>';
 			if (!$i) {

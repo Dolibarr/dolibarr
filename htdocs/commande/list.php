@@ -1831,8 +1831,8 @@ if ($conf->main_checkbox_left_column) {
 
 // Line numbering
 if (!empty($arrayfields['c.rowid']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input class="flat" size="6" type="text" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 

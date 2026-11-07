@@ -80,7 +80,9 @@ jobs:
 
           if [ -n "$CHANGED_FILES" ]; then
             echo "::error::Files into htdocs/includes (external libraries) must not be modified into a PR on a stable branch (here '${BASE_REF}'). Such changes must be done into a PR on the develop branch only. The following files were modified:"
-            echo "$CHANGED_FILES" | sed 's/^/ - /'
+            while IFS= read -r CHANGED_FILE; do
+              echo " - ${CHANGED_FILE}"
+            done <<< "$CHANGED_FILES"
             exit 1
           fi
 
@@ -138,3 +140,28 @@ jobs:
           fi
 
           echo "The ChangeLog file was not modified. OK."
+
+      - name: Check that database structure and code are not modified in the same PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get the list of files changed (whatever is the status) by the pull request,
+          # using the GitHub API so no git history is needed (no checkout).
+          ALL_FILES=$(gh api --paginate "repos/${{ github.repository }}/pulls/${{ github.event.number }}/files?per_page=100" \
+            --jq '.[] | .filename, (.previous_filename // empty)' | sort -u)
+
+          # Files of the database structure (tables, keys, migrations, ...)
+          SQL_FILES=$(echo "$ALL_FILES" | grep -E '^htdocs/install/mysql/.*\.sql$' || true)
+          # Files of code: PHP files outside htdocs/install
+          PHP_FILES=$(echo "$ALL_FILES" | grep -E '\.php$' | grep -v '^htdocs/install/' || true)
+
+          if [ -n "$SQL_FILES" ] && [ -n "$PHP_FILES" ]; then
+            echo "::error::A PR must not modify the database structure (htdocs/install/mysql/**/*.sql) and the code (PHP files outside htdocs/install) at the same time. Please submit the database structure change into a dedicated PR first (see the CONTRIBUTING.md file)."
+            echo "Database structure files modified:"
+            echo "$SQL_FILES" | sed 's/^/ - /'
+            echo "Code files modified:"
+            echo "$PHP_FILES" | sed 's/^/ - /'
+            exit 1
+          fi
+
+          echo "The PR does not mix database structure and code changes. OK."

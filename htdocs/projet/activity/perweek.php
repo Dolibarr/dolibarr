@@ -200,13 +200,24 @@ if (GETPOST('submitdateselect')) {
 
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
+// Entering time or assigning a task requires permission to enter time, and the user to process must be me or one of my subordinates
+if ($action == 'addtime' && GETPOST('formfilteraction') != 'listafterchangingselectedfields') {	// Test on permission done later
+	$childids = $user->getAllChildIds(1);
+	if (!$user->hasRight('projet', 'time') || (!in_array($usertoprocess->id, $childids) && !$user->hasRight('projet', 'all', 'creer'))) {
+		accessforbidden();
+	}
+}
+
 if ($action == 'addtime' && $user->hasRight('projet', 'lire') && GETPOST('assigntask') && GETPOST('formfilteraction') != 'listafterchangingselectedfields') {
 	$action = 'assigntask';
 
 	if ($taskid > 0) {
 		$result = $object->fetch($taskid);
-		if ($result < 0) {
+		if ($result <= 0) {
 			$error++;
+		} else {
+			// Check that I can read the project of the task
+			restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 		}
 	} else {
 		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Task")), null, 'errors');
@@ -287,7 +298,11 @@ if ($action == 'addtime' && $user->hasRight('projet', 'lire') && GETPOST('formfi
 					}
 
 					if ($newduration > 0) {
-						$object->fetch($tmptaskid);
+						if ($object->fetch($tmptaskid) <= 0) {
+							accessforbidden();
+						}
+						// Check that I can read the project of the task
+						restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 
 						if (GETPOSTISSET($tmptaskid.'progress')) {
 							$object->progress = GETPOSTINT($tmptaskid.'progress');
@@ -314,7 +329,11 @@ if ($action == 'addtime' && $user->hasRight('projet', 'lire') && GETPOST('formfi
 			}
 
 			if (!$updateoftaskdone && GETPOSTISSET($tmptaskid.'progress')) {  // Check to update progress if no update were done on task.
-				$object->fetch($tmptaskid);
+				if ($object->fetch($tmptaskid) <= 0) {
+					accessforbidden();
+				}
+				// Check that I can read the project of the task
+				restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 				//var_dump($object->progress);
 				//var_dump(GETPOST($tmptaskid . 'progress', 'int')); exit;
 				if ($object->progress != GETPOSTINT($tmptaskid.'progress')) {

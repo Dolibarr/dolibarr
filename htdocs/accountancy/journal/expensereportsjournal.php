@@ -147,7 +147,7 @@ $sql .= " JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = er.fk_user_author";
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-$sql .= " WHERE er.fk_statut > 0";
+$sql .= " WHERE er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseReport::STATUS_CLOSED.")";	// Same statuses as for binding: a validated, refused or canceled report must not be journalized
 $sql .= " AND erd.fk_code_ventilation > 0";
 $sql .= " AND er.entity IN (".getEntity('expensereport', 0).")"; // We don't share object for accountancy
 if ($date_start && $date_end) {
@@ -213,7 +213,6 @@ if ($result) {
 		}
 		$taber[$obj->rowid]["ref"] = $obj->ref;
 		$taber[$obj->rowid]["comments"] = $obj->comments;
-		$taber[$obj->rowid]["fk_expensereportdet"] = $obj->erdid;
 
 		// Avoid warnings
 		if (!isset($tabttc[$obj->rowid][$compta_user])) {
@@ -314,7 +313,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 					$bookkeeping->date_creation = $now;
 					$bookkeeping->doc_type = 'expense_report';
 					$bookkeeping->fk_doc = (int) $key;
-					$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
+					$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 
 					$bookkeeping->subledger_account = $tabuser[$key]['user_accountancy_code'];
 					$bookkeeping->subledger_label = $tabuser[$key]['name'];
@@ -375,7 +374,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 						$bookkeeping->date_creation = $now;
 						$bookkeeping->doc_type = 'expense_report';
 						$bookkeeping->fk_doc = (int) $key;
-						$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
+						$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->subledger_label = '';
@@ -447,7 +446,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 						$bookkeeping->date_creation = $now;
 						$bookkeeping->doc_type = 'expense_report';
 						$bookkeeping->fk_doc = (int) $key;
-						$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
+						$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->subledger_label = '';
