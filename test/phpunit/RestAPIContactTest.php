@@ -136,8 +136,15 @@ class RestAPIContactTest extends AbstractRestAPITest
 		$lastname = 'testRestContactCountry'.mt_rand();
 		$contactids = array();
 
+		// The 3 letters code is tested only if code_iso is set (it is empty on databases created with old versions, like the pgsql CI one)
+		global $db;
+		$countrycodes = array('FR');
+		if (dol_getIdFromCode($db, 'FRA', 'c_country', 'code_iso', 'rowid') > 0) {
+			$countrycodes[] = 'FRA';
+		}
+
 		try {
-			foreach (array('FR', 'FRA') as $country_code) {
+			foreach ($countrycodes as $country_code) {
 				$body = json_encode(array('lastname' => $lastname, 'country_code' => $country_code));
 				$result = getURLContent($this->api_url.'/contacts?api_key='.$this->api_key, 'POST', $body, 1, $addheaders, array('http', 'https'), 2);
 				$this->assertEquals(0, $result['curl_error_no']);
