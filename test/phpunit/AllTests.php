@@ -223,6 +223,8 @@ class AllTests
 		$suite->addTestSuite('InstallRepairEcmTest');
 		require_once dirname(__FILE__).'/InstallRepairImagesTest.php';
 		$suite->addTestSuite('InstallRepairImagesTest');
+		require_once dirname(__FILE__).'/InstallRepairMailingTest.php';
+		$suite->addTestSuite('InstallRepairMailingTest');
 		require_once dirname(__FILE__).'/GetUrlLibTest.php';
 		$suite->addTestSuite('GetUrlLibTest');
 		require_once dirname(__FILE__).'/JsonLibTest.php';
