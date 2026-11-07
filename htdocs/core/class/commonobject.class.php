@@ -5153,6 +5153,64 @@ abstract class CommonObject
 	}
 
 	/**
+	 *	Return the proposals, orders and invoices of the same thirdparty that are linked to the documents linked to this object (second level of links).
+	 *	The documents of the same type as this object are ignored, and so are the ones that the user can not read.
+	 *	The links of this object must have been loaded with fetchObjectLinked().
+	 *	The linkedObjects of each document returned are the documents linked to this object that it is listed through.
+	 *
+	 *	@param	User			$user	User reading the documents
+	 *	@return	array<int,Propal|Commande|Facture>	Documents
+	 *	@see	fetchObjectLinked()
+	 */
+	public function fetchIndirectObjectLinked($user)
+	{
+		$documents = array();
+		$elements = array('propal', 'commande', 'facture');
+
+		// @phan-suppress-next-line PhanUndeclaredProperty
+		$socid = (int) ($this->socid ?? $this->fk_soc ?? 0);
+		$sql = "SELECT rowid, fk_source, sourcetype, fk_target, targettype FROM ".$this->db->prefix()."element_element WHERE 1 = 0";
+		$direct = array();
+		foreach ($elements as $element) {
+			$direct[$element] = array();
+			foreach ($this->linkedObjects[$element] ?? array() as $linked) {
+				$direct[$element][(int) $linked->id] = $linked;
+			}
+			if ($direct[$element]) {
+				$sql .= " OR (sourcetype = '".$this->db->escape($element)."' AND fk_source IN (".$this->db->sanitize(implode(',', array_keys($direct[$element])))."))";
+				$sql .= " OR (targettype = '".$this->db->escape($element)."' AND fk_target IN (".$this->db->sanitize(implode(',', array_keys($direct[$element])))."))";
+			}
+		}
+
+		$via = array();
+		$resql = $this->db->query($sql);
+		while ($resql && $obj = $this->db->fetch_object($resql)) {
+			$source = (int) $obj->fk_source;
+			$target = (int) $obj->fk_target;
+			if (isset($direct[$obj->sourcetype][$source])) {
+				$via[$obj->targettype][$target][$obj->sourcetype][(int) $obj->rowid] = $direct[$obj->sourcetype][$source];
+			}
+			if (isset($direct[$obj->targettype][$target])) {
+				$via[$obj->sourcetype][$source][$obj->targettype][(int) $obj->rowid] = $direct[$obj->targettype][$target];
+			}
+		}
+
+		foreach (array_diff($elements, array($this->element)) as $element) {
+			foreach (array_diff_key($via[$element] ?? array(), $direct[$element]) as $id => $vias) {
+				$document = fetchObjectByElement($id, $element);
+				'@phan-var-force Propal|Commande|Facture|int $document';
+				/** @var Propal|Commande|Facture|int $document */
+				if (is_object($document) && restrictedArea($user, $element, $id, '', '', 'fk_soc', 'rowid', 0, 1) && $document->socid == $socid) {
+					$document->linkedObjects = $vias;
+					$documents[] = $document;
+				}
+			}
+		}
+
+		return $documents;
+	}
+
+	/**
 	 *	Update object linked of a current object
 	 *
 	 *	@param	int		$sourceid		Object source id
