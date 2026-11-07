@@ -786,7 +786,7 @@ if ($conf->main_checkbox_left_column) {
 	print '</td>';
 }
 if (!empty($arrayfields['u.rowid']['checked'])) {
-	print '<td class="liste_titre"><input type="text" name="search_rowid" class="maxwidth50" value="'.$search_rowid.'"></td>';
+	print '<td class="liste_titre center"><input class="searchstring width50" type="text" name="search_rowid" value="'.dolPrintLabelForAttribute($search_rowid).'"></td>';
 }
 if (!empty($arrayfields['u.login']['checked'])) {
 	print '<td class="liste_titre"><input type="text" name="search_login" class="maxwidth50" value="'.$search_login.'"></td>';
@@ -909,7 +909,7 @@ if ($conf->main_checkbox_left_column) {
 }
 if (!empty($arrayfields['u.rowid']['checked'])) {
 	// @phan-suppress-next-line PhanTypeInvalidDimOffset
-	print_liste_field_titre($arrayfields['u.rowid']['label'], $_SERVER['PHP_SELF'], "u.rowid", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['u.rowid']['label'], $_SERVER['PHP_SELF'], "u.rowid", "", $param, "", $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.login']['checked'])) {
@@ -1130,7 +1130,7 @@ while ($i < $imaxinloop) {
 		}
 		// TechnicalID
 		if (!empty($arrayfields['u.rowid']['checked'])) {
-			print '<td class="nowraponall">'.dolPrintHTML((string) $obj->rowid).'</td>';
+			print '<td class="center nowraponall">'.dolPrintHTML((string) $obj->rowid).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Налаштування модуля PayPal
-PaypalDesc=Цей модуль дозволяє здійснювати оплату клієнтами через <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a> . Це можна використовувати для спеціального платежу або для платежу, пов’язаного з об’єктом Dolibarr (рахунок-фактура, замовлення, ...)
+PaypalDesc=This module allows payment by customers via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. This can be used for an ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
 PaypalOrCBDoPayment=Оплата за допомогою PayPal (картка або PayPal)
 PaypalDoPayment=Оплатіть за допомогою PayPal
 PAYPAL_API_SANDBOX=Тестовий режим/пісочниця
@@ -19,7 +19,7 @@ NewOnlinePaymentFailed=Спробували новий онлайн-платеж
 ONLINE_PAYMENT_SENDEMAIL=Адреса електронної пошти для сповіщень після кожної спроби платежу (для успішної та невдалої)
 ReturnURLAfterPayment=Повернення URL-адреси після оплати
 ValidationOfOnlinePaymentFailed=Помилка перевірки онлайн-платежу
-PaymentSystemConfirmPaymentPageWasCalledButFailed=Сторінка підтвердження платежу викликана платіжною системою, повернула помилку
+PaymentSystemConfirmPaymentPageWasCalledButFailed=The payment confirmation page was called by the online payment system and returned an error
 SetExpressCheckoutAPICallFailed=Помилка виклику API SetExpressCheckout.
 DoExpressCheckoutPaymentAPICallFailed=Помилка виклику API DoExpressCheckoutPayment.
 DetailedErrorMessage=Детальне повідомлення про помилку

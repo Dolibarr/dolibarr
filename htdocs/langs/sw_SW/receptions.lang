@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=Imethibitishwa
 StatusReceptionProcessedShort=Imechakatwa
 ReceptionSheet=Karatasi ya mapokezi
 ValidateReception=Thibitisha mapokezi
+DeleteReception=Delete reception
 ConfirmDeleteReception=Je, una uhakika unataka kufuta mapokezi haya?
 ConfirmValidateReception=Are you sure you want to validate this reception with the reference <b>%s</b>?
 ConfirmCancelReception=Je, una uhakika unataka kughairi mapokezi haya?

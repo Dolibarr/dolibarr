@@ -56,6 +56,7 @@ The user request should contain, when available:
 - Do not use @dataProvider or #[DataProvider] in test methods. Use a simple PHP loop instead. 
 - Do not use the `assertRegExp()`, `assertNotRegExp`, `assertNull`, `assertNotNull`, `assertMatchesRegularExpression()`, or `assertDoesNotMatchRegularExpression()` method. Use a simple PHP regex and an assert on result instead.
 - Do not remove comment like, above all lines with @depends
+- Loading and calling functions must be explicit to imported functions: Do not write dynamic closure functions, do not use `call_user_func` and `call_user_func_array` or `spl_autoload_functions`
 
 
 ## Test Location

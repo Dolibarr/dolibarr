@@ -3,7 +3,6 @@
 #
 # Global
 #
-Subtotal=الإجماليات الفرعية
 SubTotalModuleDesc=بنود الإجماليات الفرعية والعناوين لبعض المستندات
 #
 # Admin
@@ -12,12 +11,19 @@ SubtotalSetup=إعدادات وحدة الإجماليات الفرعية
 MaxSubtotalLevel=الحد الأقصى للمستوى
 SubtotalLineBackColor=لون خلفية بنود المستوى %s
 NotSupportedByAllPDF=يعمل مع نماذج PDF الأحدث، وليس مع النماذج القديمة %s
+SubtotalsPredefinedTitles=Subtotals predefined titles
+SubtotalsPredefinedTexts=Subtotals predefined texts
+SubtotalTextColumnTitle=النص
 
 #
 # Card
 #
 AddTitleLine=إضافة بند عنوان
 AddSubtotalLine=إضافة بند إجمالي فرعي
+AddTextLine=Add text line
+PredefinedTitle=Predefined title
+PredefinedText=Predefined text
+SubtotalTextContent=Text content
 TitleNeedDesc=يجب إدخال وصف صالح لإنشاء عنوان.
 TitleAddedLevelTooHigh=مستوى العنوان المضاف مرتفع جدًا (أُضيف بالمستوى %s بدلًا منه).
 TitleEditedLevelTooHigh=مستوى العنوان المعدّل مرتفع جدًا (عُدّل إلى المستوى %s بدلًا منه).

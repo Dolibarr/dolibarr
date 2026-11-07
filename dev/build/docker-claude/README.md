@@ -6,7 +6,7 @@ and the same protections (no email can be sent from the container). See `dev/bui
 of the common parts. The scripts `open-on-host`, `xdg-open-shim` and `smtpblock.sh` are shared with docker-vibe: they are
 taken from the directory `dev/build/docker-vibe` when the image is built.
 
-## Credentials
+## Prepare AI api key
 
 The configuration directory `~/.claude` of the host is mounted at the same path into the container, so the container uses
 the same credentials (`~/.claude/.credentials.json`, created by a `claude` login on the host), settings, plugins, memory and
@@ -29,6 +29,15 @@ container gets the MCP servers, the trusted directories and the theme of the hos
 alias claudes='dev/build/docker-claude/claudes.sh'
 ````
 
+## Prepare GitHub token key
+
+````
+gh auth login -h github.com -p https -w 
+(or for a branch maintener: gh auth login -h github.com -p https -w -s workflow)
+gh auth status
+````
+
+
 ## Run Claude Code into a container
 Run from the root of your repository:
 ````
@@ -50,19 +59,24 @@ claudes --no-exit
 ````
 
 If you want to run claude in Remote Control mode (`claude remote-control`, to drive the session from claude.ai/code
-or the Claude mobile app), you can run (add `--yolo` to have the permissions automatically accepted
-with `--permission-mode bypassPermissions`)
+or the Claude mobile app), you can run
 ````
 claudes --rc
 ````
+The sessions are then started with `--permission-mode auto`: the safe actions are approved automatically, the risky or
+outward-facing ones (push, pull request, ...) are still asked. Add `--yolo` to have all the permissions automatically
+accepted with `--permission-mode bypassPermissions`.
 
 The other arguments are passed to claude, for example to resume the last conversation:
 ````
 claudes --continue
 ````
 
-Into the container, the links `.claude` (to `.agents`) and `CLAUDE.md` (to `.agents/AGENTS.md`) are created at the root of the
-repository when they do not exist, so Claude Code uses the instructions, skills and agents shared by all the AI agents.
+Into the container, the directory `.claude` (with the links `skills`, `agents` and `hooks` to the same entries of `.agents`) and
+the link `CLAUDE.md` (to `.agents/AGENTS.md`) are created at the root of the repository when they do not exist, so Claude Code
+uses the instructions, skills and agents shared by all the AI agents.
+`.claude` is a real directory and not a link to `.agents`: Claude Code refuses to create its worktrees (`.claude/worktrees/`)
+when `.claude` is a link. An old link `.claude` -> `.agents` is replaced automatically.
 
 ### Build (or rebuild) image of the container.
 Claude Code is installed into the image when it is built, and its auto-updater is disabled. To get a new version of Claude Code, rebuild the image with:

@@ -81,6 +81,7 @@ ExpenseReportsToPay=Αναφορές εξόδων για πληρωμή
 ExpensesArea=Τομέας αναφοράς εξόδων
 FeesKilometersOrAmout=Ποσότητα ή χιλιόμετρα
 LastExpenseReports=Τελευταίες %s αναφορές εξόδων
+LinkTheLineToADocument=Link the line to a document
 ListOfFees=Λίστα χρεώσεων
 ListOfTrips=Λίστα αναφορών εξόδων
 ListToApprove=Σε αναμονή για έγκριση

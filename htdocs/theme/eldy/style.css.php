@@ -300,6 +300,7 @@ if ($tmpval <= 460) {
 } else {
 	$colortextbackhmenu = '000000';
 }
+$colortextbackhmenu = colorGetReadableTextColor($colorbackhmenu1, $colortextbackhmenu, ($colortextbackhmenu == 'FFFFFF' ? '000000' : 'FFFFFF'));
 
 $colorbackvmenu1 = implode(',', colorStringToArray($colorbackvmenu1)); // Normalize value to 'x,y,z'
 $tmppart = explode(',', $colorbackvmenu1);
@@ -309,6 +310,7 @@ if ($tmpval <= 460) {
 } else {
 	$colortextbackvmenu = '222222';
 }
+$colortextbackvmenu = colorGetReadableTextColor($colorbackvmenu1, $colortextbackvmenu, ($colortextbackvmenu == 'FFFFFF' ? '222222' : 'FFFFFF'));
 
 $colortopbordertitle1 = implode(',', colorStringToArray($colortopbordertitle1)); // Normalize value to 'x,y,z'
 
@@ -323,6 +325,8 @@ if ($colortexttitle == '') {
 		$colortexttitle = '000000';
 		$colorshadowtitle = 'FFFFFF';
 	}
+	$colortexttitle = colorGetReadableTextColor($colorbacktitle1, $colortexttitle, ($colortexttitle == 'FFFFFF' ? '000000' : 'FFFFFF'));
+	$colorshadowtitle = ($colortexttitle == 'FFFFFF' ? '888888' : 'FFFFFF');
 } else {
 	$colorshadowtitle = '888888';
 }
@@ -335,6 +339,7 @@ if ($tmpval <= 460) {
 } else {
 	$colortextbacktab = '000000';
 }
+$colortextbacktab = colorGetReadableTextColor($colorbacktabcard1, $colortextbacktab, ($colortextbacktab == 'FFFFFF' ? '000000' : 'FFFFFF'));
 
 
 // Format color value to match expected format (may be 'FFFFFF' or '255,255,255')
@@ -477,8 +482,8 @@ $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobal
 	--tableforfieldcolor:#666;
 	--amountremaintopaycolor:#880000;
 	--amountpaymentcomplete:#008855;
-	--amountremaintopaybackcolor:none;
-	--productlinestockod: #002200;
+	--amountremaintopaybackcolor:inherit;
+	--productlinestockok: #002200;
 	--productlinestocktoolow: #884400;
 	--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #fff, #fff, #fff, #e4efe8);
 	--tablevalidbgcolor: rgb(252, 248, 227);
@@ -536,7 +541,7 @@ if (getDolGlobalInt('THEME_DARKMODEENABLED')) {
 	            --tableforfieldcolor:rgb(220,220,220);
 	            --amountremaintopaycolor:rgb(252,84,91);
 	            --amountpaymentcomplete:rgb(101,184,77);
-	            --amountremaintopaybackcolor:rbg(245,130,46);
+	            --amountremaintopaybackcolor:rgb(245,130,46);
 				--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #000, #000, #000, #274231);
 				--tablevalidbgcolor: rgb(80, 64, 33);
 				--colorblack: #fff;
@@ -3067,11 +3072,20 @@ td.showDragHandle {
 }
 <?php } ?>
 
-@media screen and (prefers-color-scheme: dark) {
+<?php
+if (getDolGlobalInt('THEME_DARKMODEENABLED')) {
+	if (getDolGlobalInt('THEME_DARKMODEENABLED') != 2) {
+		print "@media screen and (prefers-color-scheme: dark) {\n";
+	} else {
+		print "@media not print {\n";
+	} ?>
 	.side-nav-vert {
 		border-bottom: 1px solid #888;
 	}
+	<?php
+	print "}\n";
 }
+?>
 
 .side-nav {
 <?php if (getDolGlobalString('THEME_STICKY_TOPMENU') == 'scrollleftmenu_after_mainpage') { ?>
@@ -3786,7 +3800,7 @@ div.menu_titre {
 	padding-<?php print $right; ?>: 2px;
 	font-family: Roboto,<?php echo $fontlist; ?>;
 	font-weight: 400;
-	opacity: 0.9;
+	opacity: 0.95;
 }
 
 div.mainmenu {
@@ -6358,6 +6372,36 @@ img.boxhandle, img.boxclose {
 .fieldcombo-field.selected, .customreportscombo-field.selected {
 	font-weight: bold;
 }
+/* A date field of custom reports is shown once, its variants (by year, by month, by day) are into an expandable sub list */
+.customreportscombo-datefieldheader {
+	position: relative;
+	z-index: 0;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 4px 15px 4px 8px;
+	cursor: pointer;
+}
+.customreportscombo-datefieldheader:focus {
+	outline: none;
+}
+.customreportscombo-datefieldheader:hover::before, .customreportscombo-datefieldheader:focus::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: -1000px;
+	right: 0;
+	z-index: -1;
+	background: var(--colorbacklinepairhover);
+}
+.customreportscombo-datefield.open .customreportscombo-datefieldcaret {
+	transform: rotate(90deg);
+}
+.customreportscombo-variants {
+	/* Hidden by default with an inline style, shown dynamically by JS after a search or a click on the date field */
+	padding-left: 20px;
+}
 /* The operator and value (text, date or select) of the filter editor have the same height and border than the combo of fields (.fieldcombo-toggle) */
 .search-component-assistance .operator .select2-container--default .select2-selection--single,
 .search-component-assistance .value .select2-container--default .select2-selection--single,
@@ -6805,10 +6849,10 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 	margin-bottom: 10px;	/* same than .ui-widget-header */
 }
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable {
-	z-index: 1005 !important;		/* Default 101 with ui-jquery, top menu have a z-index of 1000 */
+	z-index: 1007 !important;		/* Default 101 with ui-jquery. jquery-ui sets the modal overlay to this value - 1, which must be over the top menu (1005) */
 }
 .ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front {
-	z-index:1006 !important; /* To always be over the dialog box */
+	z-index: 1008 !important; /* To always be over the dialog box */
 }
 .ui-dialog.ui-widget.ui-widget-content {
 	border: 1px solid #e0e0e0;

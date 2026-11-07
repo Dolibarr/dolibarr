@@ -420,6 +420,7 @@ if ($result) {
 			$is_sc = false;
 			$is_salary = false;
 			$is_expensereport = false;
+			$is_various = false;
 			foreach ($links as $v) {
 				if ($v['type'] == 'sc') {
 					$is_sc = true;
@@ -431,6 +432,10 @@ if ($result) {
 				}
 				if ($v['type'] == 'payment_expensereport') {
 					$is_expensereport = true;
+					break;
+				}
+				if ($v['type'] == 'payment_various') {
+					$is_various = true;
 					break;
 				}
 			}
@@ -477,7 +482,7 @@ if ($result) {
 					$societestatic->name = $links[$key]['label'];
 					$societestatic->email = $tabcompany[$obj->rowid]['email'];
 					$tabpay[$obj->rowid]["soclib"] = $societestatic->getNomUrl(1, '', 30);
-					if ($compta_soc) {
+					if ($compta_soc && !$is_various) {
 						// because we are in 2 loop (loop on the line from the sql queries and loop on $links)
 						// and in case of option FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS is on,
 						// we will pass here n times for each payment line
@@ -572,6 +577,22 @@ if ($result) {
 					$tabpay[$obj->rowid]["lib"] .= ' '.$paymentdonstatic->getNomUrl(2);
 					$tabpay[$obj->rowid]["paymentdonationid"] = $paymentdonstatic->id;
 					$tabtp[$obj->rowid][$account_pay_donation] = isset($tabtp[$obj->rowid][$account_pay_donation]) ? $tabtp[$obj->rowid][$account_pay_donation] + $amounttouse : $amounttouse;
+
+					// Retrieve the donor of the donation of the payment, as in the list of bank entries
+					$tmppaymentdonation = new PaymentDonation($db);
+					if ($tmppaymentdonation->fetch($paymentdonstatic->id) > 0) {
+						$tmpdonation = new Don($db);
+						if ($tmpdonation->fetch($tmppaymentdonation->fk_donation) > 0) {
+							if ($tmpdonation->socid > 0 && $tmpdonation->fetch_thirdparty() > 0) {
+								$tabpay[$obj->rowid]["soclib"] = $tmpdonation->thirdparty->getNomUrl(1, '', 30);
+							} else {
+								$donorname = (!empty($tmpdonation->societe) ? $tmpdonation->societe : $tmpdonation->getFullName($langs));
+								if ($donorname) {
+									$tabpay[$obj->rowid]["soclib"] = dolPrintLabel($donorname);
+								}
+							}
+						}
+					}
 				} elseif ($links[$key]['type'] == 'member') {
 					$paymentsubscriptionstatic->id = $links[$key]['url_id'];
 					$paymentsubscriptionstatic->ref = (string) $links[$key]['url_id'];

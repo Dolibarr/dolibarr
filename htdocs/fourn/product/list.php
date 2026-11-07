@@ -194,6 +194,10 @@ if ($catid) {
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as ppf ON p.rowid = ppf.fk_product AND ppf.entity IN (".getEntity('productsupplierprice').")";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ppf.fk_soc = s.rowid AND s.entity IN (".getEntity('societe').")";
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE p.entity IN (".getEntity('product').")";
 if ($sRefSupplier) {
 	$sql .= natural_search('ppf.ref_fourn', $sRefSupplier);

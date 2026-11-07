@@ -446,7 +446,7 @@ class Tickets extends DolibarrApi
 		} else {
 			$result = $this->ticket->fetch(0, '', $this->ticket->track_id);
 		}
-		if (!$result) {
+		if ($result <= 0) {
 			throw new RestException(404, 'Ticket not found');
 		}
 

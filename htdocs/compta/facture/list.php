@@ -100,6 +100,7 @@ $ref = GETPOST('ref', 'alpha');
 $socid = GETPOSTINT('socid');
 
 $userid = GETPOSTINT('userid');
+$search_id = GETPOST('search_id', 'alpha');
 $search_ref = GETPOST('sf_ref') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
 $search_refcustomer = GETPOST('search_refcustomer', 'alpha');
 $search_type = GETPOST('search_type', 'intcomma');
@@ -265,6 +266,7 @@ $showpos = (isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalI
 
 $checkedtypetiers = '0';
 $arrayfields = array(
+	'f.rowid' => array('label' => "TechnicalID", 'checked' => (getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? '1' : '-1'), 'enabled' => '1', 'position' => 1),
 	'f.ref' => array('label' => "Ref", 'checked' => '1', 'position' => 5),
 	'f.ref_client' => array('label' => "RefCustomer", 'checked' => '-1', 'position' => 10),
 	'f.type' => array('label' => "Type", 'checked' => '0', 'position' => 15),
@@ -425,6 +427,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_sale = '';
 	$search_product_category = '';
 	$searchCategoryInvoiceList = array();
+	$search_id = '';
 	$search_ref = '';
 	$search_refcustomer = '';
 	$search_type = '';
@@ -883,6 +886,9 @@ if ($userid) {
 	} else {
 		$sql .= ' AND f.fk_user_author = '.((int) $userid);
 	}
+}
+if ($search_id != '') {
+	$sql .= natural_search('f.rowid', $search_id, 1);
 }
 if ($search_ref) {
 	$sql .= natural_search('f.ref', $search_ref);
@@ -1363,6 +1369,9 @@ foreach (array('search_datec_start', 'search_datec_end', 'search_datem_start', '
 		}
 	}
 }
+if ($search_id != '') {
+	$param .= '&search_id='.urlencode($search_id);
+}
 if ($search_ref) {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
@@ -1694,6 +1703,12 @@ if ($conf->main_checkbox_left_column) {
 
 if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 	print '<td class="liste_titre">';
+	print '</td>';
+}
+// Technical ID
+if (!empty($arrayfields['f.rowid']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 // Ref
@@ -2062,6 +2077,10 @@ if ($conf->main_checkbox_left_column) {
 }
 if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 	print_liste_field_titre('#', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['f.rowid']['checked'])) {
+	print_liste_field_titre($arrayfields['f.rowid']['label'], $_SERVER['PHP_SELF'], 'f.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['f.ref']['checked'])) {
@@ -2500,6 +2519,14 @@ if ($num > 0) {
 			// No
 			if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 				print '<td>'.(($offset * $limit) + $i).'</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+
+			// Technical ID
+			if (!empty($arrayfields['f.rowid']['checked'])) {
+				print '<td class="center" data-key="id">'.((int) $obj->id).'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}

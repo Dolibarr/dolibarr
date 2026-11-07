@@ -19,14 +19,20 @@
 /**
  * \file       dev/translation/find_notranslate.php
  * \ingroup    dev
- * \brief      Script to find translation entries containing the string "notranslate" and
- *             display a clickable Transifex link to review and fix them one by one.
+ * \brief      Script to remove the translation entries that contain the string "notranslate",
+ *             which means a translator has translated the content of a notranslate tag and
+ *             broken the entry. Removing it is the fix: a key missing from a translation file
+ *             falls back to its en_US value, while a broken entry stays broken and makes the
+ *             test LangTest::testLang fail. The entry must still be fixed into Transifex, so
+ *             the link to do it is shown for each removed entry.
+ *             With --report, nothing is removed and the entries are shown one by one instead.
  *
- * Usage: php dev/translation/find_notranslate.php [all|lang_code] [all|file.lang]
+ * Usage: php dev/translation/fix_notranslate.php [--report] [all|lang_code] [all|file.lang]
  * Examples:
- *   php dev/translation/find_notranslate.php all
- *   php dev/translation/find_notranslate.php fr_FR
- *   php dev/translation/find_notranslate.php fr_FR website.lang
+ *   php dev/translation/fix_notranslate.php all
+ *   php dev/translation/fix_notranslate.php fr_FR
+ *   php dev/translation/fix_notranslate.php fr_FR website.lang
+ *   php dev/translation/fix_notranslate.php --report fr_FR
  */
 
 $sapi_type = php_sapi_name();
@@ -48,15 +54,20 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
  */
 function printUsage($script_file)
 {
-	echo "Find translation entries containing the string 'notranslate' and show a clickable Transifex link\n";
-	echo "for each of them, so you can click on it, fix the translation into Transifex, then press Enter\n";
-	echo "to see the next entry to review.\n";
+	echo "Remove the translation entries containing the string 'notranslate', which are entries a\n";
+	echo "translator broke by translating the content of a notranslate tag. A key missing from a\n";
+	echo "translation file falls back to its en_US value, so removing the entry restores a readable\n";
+	echo "string, while keeping it makes the test LangTest::testLang fail. A clickable Transifex link\n";
+	echo "is shown for each removed entry, so the translation can also be fixed at the source.\n";
 	echo "\n";
-	echo "Usage: php dev/translation/".$script_file." [all|lang_code] [all|file.lang]\n";
+	echo "With --report, nothing is removed: the entries are shown one by one instead.\n";
+	echo "\n";
+	echo "Usage: php dev/translation/".$script_file." [--report] [all|lang_code] [all|file.lang]\n";
 	echo "Examples:\n";
 	echo "  php dev/translation/".$script_file." all\n";
 	echo "  php dev/translation/".$script_file." fr_FR\n";
 	echo "  php dev/translation/".$script_file." fr_FR website.lang\n";
+	echo "  php dev/translation/".$script_file." --report fr_FR\n";
 }
 
 
@@ -128,6 +139,40 @@ function loadLangFileKeyValues($langfilepath)
 
 
 /**
+ * Remove some lines from a file, by their line number
+ *
+ * @param	string		$filepath		Full path of the file to rewrite
+ * @param	int[]		$linenumbers	Line numbers to remove, counted from 1
+ * @return	int							Number of lines removed, -1 if the file could not be rewritten
+ */
+function removeLinesFromFile($filepath, $linenumbers)
+{
+	$lines = file($filepath);
+	if ($lines === false) {
+		return -1;
+	}
+
+	$removed = 0;
+	foreach ($linenumbers as $linenumber) {
+		if (isset($lines[$linenumber - 1])) {
+			unset($lines[$linenumber - 1]);
+			$removed++;
+		}
+	}
+
+	if ($removed == 0) {
+		return 0;
+	}
+
+	if (file_put_contents($filepath, implode('', $lines)) === false) {
+		return -1;
+	}
+
+	return $removed;
+}
+
+
+/**
  * Print a clickable URL (using the OSC 8 terminal hyperlink sequence).
  * If the terminal does not support OSC 8, the plain URL remains visible and can be opened manually.
  *
@@ -161,13 +206,26 @@ if (function_exists('posix_isatty') && !posix_isatty(STDOUT)) {
 	$outputistty = false;
 }
 
-$langcode = (isset($argv[1]) && $argv[1] != '') ? trim($argv[1]) : 'all';
-$filename = (isset($argv[2]) && $argv[2] != '') ? trim($argv[2]) : 'all';
-
-if (in_array($langcode, array('-h', '--help', 'help'))) {
-	printUsage($script_file);
-	exit(0);
+// Read the options, then the 2 positional parameters left
+$reportonly = false;
+$parameters = array();
+foreach (array_slice($argv, 1) as $argument) {
+	$argument = trim($argument);
+	if ($argument == '') {
+		continue;
+	}
+	if ($argument == '--report' || $argument == '-n') {
+		$reportonly = true;
+	} elseif (in_array($argument, array('-h', '--help', 'help'))) {
+		printUsage($script_file);
+		exit(0);
+	} else {
+		$parameters[] = $argument;
+	}
 }
+
+$langcode = isset($parameters[0]) ? $parameters[0] : 'all';
+$filename = isset($parameters[1]) ? $parameters[1] : 'all';
 
 $langsdir = $path.'../../htdocs/langs/';
 
@@ -280,6 +338,52 @@ echo ($langcode != 'all' ? " for lang '".$langcode."'" : '')." into htdocs/langs
 if ($num == 0) {
 	echo "Nothing to review. Perfect!\n";
 	exit(0);
+}
+
+
+
+// Remove the entries, unless only a report was asked for
+
+if (!$reportonly) {
+	// Group the line numbers by file, so each file is rewritten once, and remove the highest
+	// line numbers first so removing one does not move the next ones
+	$linestoremove = array();
+	foreach ($listofmatches as $match) {
+		$linestoremove[$match['lang'].'/'.$match['file']][] = $match['line'];
+	}
+
+	$removed = 0;
+	$errors = 0;
+	foreach ($linestoremove as $relativepath => $linenumbers) {
+		rsort($linenumbers);
+		$result = removeLinesFromFile($langsdir.$relativepath, $linenumbers);
+		if ($result < 0) {
+			echo "Error: Can't rewrite htdocs/langs/".$relativepath."\n";
+			$errors++;
+		} else {
+			$removed += $result;
+		}
+	}
+
+	foreach ($listofmatches as $match) {
+		echo "Removed htdocs/langs/".$match['lang']."/".$match['file']." line ".$match['line'].": ".$match['key']."\n";
+
+		$filebase = preg_replace('/\.lang$/', '', $match['file']);
+		$resource = isset($resourcemap[$filebase]) ? $resourcemap[$filebase] : '';
+		$langtx = isset($langmaptx[$match['lang']]) ? $langmaptx[$match['lang']] : $match['lang'];
+		if ($resource == '') {
+			echo "  No Transifex resource found for file ".$match['file'].", fix it directly into the .lang file.\n";
+		} else {
+			echo "  Fix it into Transifex: ";
+			printClickableUrl($transifexurlroot.$langtx.'/'.$resource.'?q=key%3A'.rawurlencode($match['key']));
+			echo "\n";
+		}
+	}
+
+	echo "\n".$removed." ".($removed > 1 ? 'entries' : 'entry')." removed.";
+	echo " Until they are fixed into Transifex, these keys fall back to their en_US value.\n";
+
+	exit($errors > 0 ? 1 : 0);
 }
 
 $enUScache = array();	// Cache of en_US values, one entry per lang file already loaded
