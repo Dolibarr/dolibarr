@@ -317,6 +317,69 @@ class FunctionsLibTest extends CommonClassTest
 	}
 
 	/**
+	 * The request headers are rebuilt from $_SERVER when the SAPI does not provide getallheaders().
+	 *
+	 * @return	void
+	 */
+	public function testDolGetRequestHeaders()
+	{
+		$savserver = $_SERVER;
+
+		$_SERVER['HTTP_AUTHORIZATION'] = 'Bearer abc123';
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$_SERVER['CONTENT_TYPE'] = 'application/json';
+		$_SERVER['REQUEST_METHOD'] = 'POST';		// not a header, must not come out
+
+		$headers = dolGetRequestHeaders();
+
+		$_SERVER = $savserver;
+
+		$this->assertIsArray($headers, 'The request headers must always be an array');
+
+		// Under the CLI of the test runner getallheaders() does not exist, so the rebuilt array is
+		// what is checked. Under a SAPI that provides it, only the type above can be asserted.
+		if (!function_exists('getallheaders')) {
+			$this->assertSame('Bearer abc123', $headers['Authorization'], 'HTTP_AUTHORIZATION must come out as Authorization');
+			$this->assertSame('XMLHttpRequest', $headers['X-Requested-With'], 'The name must be capitalised word by word and keep its dashes');
+			$this->assertSame('application/json', $headers['Content-Type'], 'Content-Type is not prefixed with HTTP_ in $_SERVER and must be picked up anyway');
+			$this->assertArrayNotHasKey('Request-Method', $headers, 'What is not a header must not be returned as one');
+		}
+	}
+
+	/**
+	 * The url of the server is the configured one with DOL_URL_ROOT removed from its end.
+	 *
+	 * @return	void
+	 */
+	public function testDolGetUrlWithoutUrlRoot()
+	{
+		global $dolibarr_main_url_root;
+
+		$savurlroot = $dolibarr_main_url_root;
+
+		// What the 73 copies of the expression this replaces used to compute
+		$dolibarr_main_url_root = 'https://example.org'.DOL_URL_ROOT;
+		$this->assertSame(
+			preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root)),
+			dolGetUrlWithoutUrlRoot(),
+			'The helper must return exactly what the expression it replaces returned'
+		);
+		$this->assertSame('https://example.org', dolGetUrlWithoutUrlRoot(), 'DOL_URL_ROOT must be removed from the end');
+
+		// Surrounding spaces are trimmed, as the expression did
+		$dolibarr_main_url_root = '  https://example.org'.DOL_URL_ROOT.'  ';
+		$this->assertSame('https://example.org', dolGetUrlWithoutUrlRoot(), 'The configured url must be trimmed');
+
+		// Only the end is removed, never an occurrence in the middle of the host
+		if (DOL_URL_ROOT !== '') {
+			$dolibarr_main_url_root = 'https://example.org'.DOL_URL_ROOT.'/other';
+			$this->assertSame('https://example.org'.DOL_URL_ROOT.'/other', dolGetUrlWithoutUrlRoot(), 'Only a trailing DOL_URL_ROOT is removed');
+		}
+
+		$dolibarr_main_url_root = $savurlroot;
+	}
+
+	/**
 	 * testDolCheckFilters
 	 *
 	 * @return boolean
@@ -1235,11 +1298,11 @@ class FunctionsLibTest extends CommonClassTest
 	 */
 	public function testDolHtmlEntitiesBr()
 	{
-		// Text not already HTML
+		// Text NOT already HTML
 
-		$input = "A string\nwith a é, &, < and >.";
-		$after = dol_htmlentitiesbr($input, 0);    // Add <br> before \n
-		$this->assertEquals("A string<br>\nwith a &eacute;, &amp;, &lt; and &gt;.", $after);
+		$input = "A string\nwith a é, &, < and > and \".";
+		$after = dol_htmlentitiesbr($input, 0);    // Add <br> before \n, so must also encode in html entities special char because result move from text to HTML.
+		$this->assertEquals("A string<br>\nwith a &eacute;, &amp;, &lt; and &gt; and &quot;.", $after);
 
 		$input = "A string\nwith a é, &, < and >.";
 		$after = dol_htmlentitiesbr($input, 1);    // Replace \n with <br>
@@ -1255,9 +1318,9 @@ class FunctionsLibTest extends CommonClassTest
 
 		// Text already HTML, so &,<,> should not be converted
 
-		$input = "A string<br>\nwith a é, &, < and >.";
+		$input = "A string<br>\nwith a é, &, < and > and \".";
 		$after = dol_htmlentitiesbr($input);
-		$this->assertEquals("A string<br>\nwith a &eacute;, &, < and >.", $after);
+		$this->assertEquals("A string<br>\nwith a &eacute;, &, < and > and \".", $after);
 
 		$input = "<li>\nA string with a é, &, < and >.</li>\nAnother string";
 		$after = dol_htmlentitiesbr($input);
@@ -2591,6 +2654,26 @@ class FunctionsLibTest extends CommonClassTest
 
 		$s = natural_search("t.field", "KØB", 3);						// mode 3 is to provide a list of string separated with coma
 		$this->assertEquals(" AND (t.field IN ('KØB'))", $s);
+
+		// A criteria with only '!' is searched as a string, a leading '!' followed by a text is an exclusion
+		$s = natural_search("t.field", "Bonjour !");
+		$this->assertEquals(" AND (t.field LIKE '%Bonjour%' AND t.field LIKE '%!%')", $s);
+
+		$s = natural_search("t.field", "!!!");
+		$this->assertEquals(" AND (t.field LIKE '%!!!%')", $s);
+
+		$s = natural_search("t.field", "!abc");
+		$this->assertEquals(" AND ((t.field NOT LIKE '%abc%' OR t.field IS NULL))", $s);
+
+		// mode 1 is a numeric test, '!' or '!=' means "different of"
+		$s = natural_search("t.field", "!34", 1);
+		$this->assertEquals(" AND (t.field <> 34)", $s);
+
+		$s = natural_search("t.field", "!= 34", 1);
+		$this->assertEquals(" AND (t.field <> 34)", $s);
+
+		$s = natural_search("t.field", ">=10 <20", 1);
+		$this->assertEquals(" AND (t.field >= 10 AND t.field < 20)", $s);
 	}
 
 	/**
@@ -3125,5 +3208,49 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals(-1, fetchObjectByElement(0, 'product_error'), 'a PHP internal class is never instantiated');
 
 		$conf->modules = $savmodules;
+	}
+
+	/**
+	 * testDolGetFicheHeadMoreTabsIsAccessible
+	 *
+	 * @return void
+	 */
+	public function testDolGetFicheHeadMoreTabsIsAccessible()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/html.lib.php';
+
+		$savedconsts = array();
+		foreach (array('MAIN_MAXTABS_IN_CARD', 'MAIN_OPTIMIZEFORTEXTBROWSER') as $constname) {
+			$savedconsts[$constname] = (property_exists($conf->global, $constname) ? $conf->global->$constname : null);
+		}
+		$conf->global->MAIN_MAXTABS_IN_CARD = 2;
+		$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = 0;
+
+		$links = array();
+		for ($i = 0; $i < 5; $i++) {
+			$links[$i] = array('/test.php?tab='.$i, 'Tab'.$i, 'tab'.$i);
+		}
+		$out = dol_get_fiche_head($links, 'tab0', '', 0, '', 0, '', '', 0, 'unittest');
+
+		foreach ($savedconsts as $constname => $constvalue) {
+			if ($constvalue === null) {
+				unset($conf->global->$constname);
+			} else {
+				$conf->global->$constname = $constvalue;
+			}
+		}
+
+		// The "+" must be operable without a mouse and announce the list it opens
+		$this->assertSame(1, preg_match('/<a href="#" class="[^"]*moretab[^"]*" role="button" aria-haspopup="true" aria-expanded="false" aria-controls="moretabsListunittest">/', $out));
+		$this->assertStringContainsString('id="moretabsListunittest"', $out);
+		$this->assertStringContainsString('e.preventDefault()', $out);
+		$this->assertStringContainsString("'Escape'", $out);
+		$this->assertStringNotContainsString('console.log', $out);
 	}
 }

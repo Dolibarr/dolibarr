@@ -748,6 +748,7 @@ class pdf_sponge extends ModelePDFFactures
 				$pdf_sub_options = array();
 				$pdf_sub_options['titleshowuponpdf'] = 1;
 				$pdf_sub_options['titleshowtotalexludingvatonpdf'] = 1;
+				$pdf_sub_options_before_title = array();	// Options in use before each title line, by level
 
 				$hidenextline = 0;
 
@@ -759,6 +760,10 @@ class pdf_sponge extends ModelePDFFactures
 
 					if ($object->lines[$i]->special_code == SUBTOTALS_SPECIAL_CODE) {
 						$level = $object->lines[$i]->qty;
+						// Keep the options in use before a title line, to restore them after the subtotal line that closes its block
+						if ($level > 0 && !isset($pdf_sub_options_before_title[(int) $level])) {
+							$pdf_sub_options_before_title[(int) $level] = $pdf_sub_options;
+						}
 						if ($sub_options) {
 							$hidenextline = 0;
 							if (isset($sub_options['titleshowuponpdf'])) {
@@ -777,6 +782,15 @@ class pdf_sponge extends ModelePDFFactures
 							}
 							if (isset($pdf_sub_options['titleshowtotalexludingvatonpdf']) && abs($level) <= $pdf_sub_options['titleshowtotalexludingvatonpdf']) {
 								unset($pdf_sub_options['titleshowtotalexludingvatonpdf']);
+							}
+						}
+						// A subtotal line closes the block of the title line of same level: the next lines get back the options in use before this title line
+						if ($level < 0 && isset($pdf_sub_options_before_title[(int) abs($level)])) {
+							$pdf_sub_options = $pdf_sub_options_before_title[(int) abs($level)];
+							foreach (array_keys($pdf_sub_options_before_title) as $tmplevel) {
+								if ($tmplevel >= abs($level)) {
+									unset($pdf_sub_options_before_title[$tmplevel]);
+								}
 							}
 						}
 					}
@@ -974,9 +988,9 @@ class pdf_sponge extends ModelePDFFactures
 					}
 
 					// Collect total by value of vat rate into $this->tva_array
-					// Lines are already stored as delta (not cumulative) once INVOICE_USE_SITUATION=2, so no ratio must be reapplied here (same guard as CommonObject::update_price())
+					// Lines are already stored as delta (not cumulative) once INVOICE_USE_SITUATION != 1, so no ratio must be reapplied here (same guard as CommonObject::update_price())
 					if ($object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE && $object->lines[$i]->product_type != 9) {
-						$prev_progress = getDolGlobalInt('INVOICE_USE_SITUATION') == 2 ? 0 : $object->lines[$i]->get_prev_progress($object->id);
+						$prev_progress = (!$object->isSituationInvoice() || getDolGlobalInt('INVOICE_USE_SITUATION') != 1) ? 0 : $object->lines[$i]->get_prev_progress($object->id);
 
 						if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation
 							if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
@@ -1159,7 +1173,7 @@ class pdf_sponge extends ModelePDFFactures
 
 				// Add terms to sale
 				$termsofsalefilename = getDolGlobalString('MAIN_INFO_INVOICE_TERMSOFSALE');
-				if (getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE') && $termsofsalefilename) {
+				if ($this->mustAddTermsOfSale($object, 'INVOICE') && $termsofsalefilename) {
 					$termsofsale = $conf->invoice->dir_output.'/'.$termsofsalefilename;
 					if (!empty($conf->invoice->multidir_output[$object->entity ?? $conf->entity])) {
 						$termsofsale = $conf->invoice->multidir_output[$object->entity ?? $conf->entity].'/'.$termsofsalefilename;
@@ -2567,7 +2581,7 @@ class pdf_sponge extends ModelePDFFactures
 			$carac_client_name = is_object($thirdparty) ? pdfBuildThirdpartyName($thirdparty, $outputlangs) : '';
 
 			$mode = 'target';
-			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), ($usecontact ? 1 : 0), $mode, $object);
+			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), ($usecontact ? 1 : 0), $mode, $object, 'SHIPPING');
 
 			// Show recipient
 			$widthrecbox = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 92 : 100;

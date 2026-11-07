@@ -1129,7 +1129,7 @@ class Reception extends CommonObject
 			// Rank to use
 			$ranktouse = $rang;
 			if ($ranktouse == -1) {
-				$rangmax = $this->line_max($this->fk_reception);
+				$rangmax = $this->line_max();
 				$ranktouse = $rangmax + 1;
 			}
 
@@ -1159,9 +1159,7 @@ class Reception extends CommonObject
 			$result = $this->line->insert($user);
 			if ($result > 0) {
 				if (!isset($this->context['createfromclone'])) {
-					if ($this->fk_reception) {
-						$this->line_order(true, 'DESC');
-					} elseif ($ranktouse > 0 && $ranktouse <= count($this->lines)) {
+					if ($ranktouse > 0 && $ranktouse <= count($this->lines)) {
 						$linecount = count($this->lines);
 						for ($ii = $ranktouse; $ii <= $linecount; $ii++) {
 							$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);

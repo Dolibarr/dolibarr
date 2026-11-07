@@ -69,7 +69,6 @@ DOL_VALUE_DAY=Factuur dag
 DOL_VALUE_DAY_LETTERS=Factuur dag in brieven
 DOL_LINE_FEED_REVERSE=Line feed achteruit
 InvoiceID=Factuur ID
-InvoiceRef=Factuurreferentie
 DOL_PRINT_OBJECT_LINES=Factuur lijnen
 DOL_VALUE_CUSTOMER_FIRSTNAME=Voornaam klant
 DOL_VALUE_CUSTOMER_LASTNAME=Achternaam klant

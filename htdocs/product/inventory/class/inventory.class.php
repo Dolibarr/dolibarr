@@ -116,6 +116,7 @@ class Inventory extends CommonObject
 		'fk_user_modif'      => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 511, 'csslist' => 'tdoverflowmax150'),
 		'fk_user_valid'      => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'visible' => -2, 'enabled' => 1, 'position' => 512, 'csslist' => 'tdoverflowmax150'),
 		'import_key'         => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'index' => 0, 'position' => 1000),
+		'model_pdf'          => array('type' => 'varchar(255)', 'label' => 'PDFTemplate', 'enabled' => 1, 'visible' => 0, 'position' => 510),
 		'status'             => array('type' => 'integer', 'label' => 'Status', 'visible' => 4, 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'default' => '0', 'index' => 1, 'arrayofkeyval' => array(0 => 'Draft', 1 => 'Validated', 2 => 'Closed', 9 => 'Canceled'))
 	);
 
@@ -176,6 +177,11 @@ class Inventory extends CommonObject
 	 * @var string import key
 	 */
 	public $import_key;
+
+	/**
+	 * @var string	Name of the document template used to build the document of the inventory
+	 */
+	public $model_pdf;
 	// END MODULEBUILDER PROPERTIES
 
 

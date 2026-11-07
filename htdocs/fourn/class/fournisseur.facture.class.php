@@ -1874,6 +1874,7 @@ class FactureFournisseur extends CommonInvoice
 		if (count($this->lines) <= 0) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorObjectMustHaveLinesToBeValidated", $this->ref);
+			dol_syslog(__METHOD__.' '.$this->error, LOG_WARNING);
 			return -1;
 		}
 
@@ -2955,6 +2956,29 @@ class FactureFournisseur extends CommonInvoice
 	}
 
 	/**
+	 *	Return the display context of the lines, as defined by the card before printObjectLines() and formAddObjectLine()
+	 *	On supplier documents, the supplier is the seller.
+	 *
+	 *	@return	array{seller:Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	See CommonObject::getObjectLinesDisplayContext()
+	 */
+	public function getObjectLinesDisplayContext()
+	{
+		global $mysoc;
+
+		$context = parent::getObjectLinesDisplayContext();
+		// The supplier is the seller, an empty third party is used if it is not loaded (same as a failed fetch in the card)
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		$context['seller'] = (is_object($this->thirdparty) ? $this->thirdparty : new Societe($this->db));
+		$context['buyer'] = $mysoc;
+		$context['forceall'] = 1;
+		$context['inputalsopricewithtax'] = 1;
+		// 2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum
+		$context['senderissupplier'] = (getDolGlobalInt('SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY') ? getDolGlobalInt('SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY') : 2);
+
+		return $context;
+	}
+
+	/**
 	 *	Return clickable name (with optional picto)
 	 *
 	 *	@param		int<0,1>	$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
@@ -3056,7 +3080,7 @@ class FactureFournisseur extends CommonInvoice
 			if ($txttoshow) {
 				$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.dol_string_nohtmltag($txttoshow, 1);
 				$result .= ' <span class="note inline-block">';
-				$result .= '<a href="'.DOL_URL_ROOT.'/fourn/facture/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
+				$result .= '<a href="'.DOL_URL_ROOT.'/core/note.php?element=fourn_facture&id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
 				$result .= img_picto('', 'note');
 				$result .= '</a>';
 				$result .= '</span>';
@@ -3646,7 +3670,8 @@ class FactureFournisseur extends CommonInvoice
 		$tmpinvoice = new FactureFournisseur($this->db);
 
 		// Label of the event recorded once a reminder is sent. It is also used to not send the same reminder twice the same day.
-		$labelreminderok = 'sendEmailsRemindersOnInvoiceDueDateOK (nbdays='.$nbdays.' paymentmode='.$paymentmode.' template='.$template.' datetouse='.$datetouse.' forcerecipient='.$forcerecipient.')';
+		// The template is the last parameter: the label is truncated to 128 characters when saved and the template is the longest value.
+		$labelreminderok = 'sendEmailsRemindersOnInvoiceDueDateOK (nbdays='.$nbdays.' paymentmode='.$paymentmode.' datetouse='.$datetouse.' forcerecipient='.$forcerecipient.' template='.$template.')';
 
 		dol_syslog(__METHOD__." start", LOG_INFO);
 
@@ -3671,7 +3696,8 @@ class FactureFournisseur extends CommonInvoice
 		// Exclude invoices for which the same reminder was already sent today
 		$sql .= " AND NOT EXISTS (SELECT a.id FROM ".MAIN_DB_PREFIX."actioncomm as a";
 		$sql .= " WHERE a.elementtype = 'invoice_supplier' AND a.fk_element = f.rowid AND a.code = 'AC_EMAIL'";
-		$sql .= " AND a.label = '".$this->db->escape($labelreminderok)."'";
+		// The label of an event is sanitized and truncated to 128 characters when saved (ActionComm::create), so search it the same way
+		$sql .= " AND a.label = '".$this->db->escape(dol_trunc(sanitizeVal($labelreminderok, 'alphawithlgt'), 128))."'";
 		$sql .= " AND a.datep >= '".$this->db->idate(dol_get_first_hour($now))."')";
 		if ($datetouse == 'invoicedate') {
 			$sql .= $this->db->order("datef", "ASC");

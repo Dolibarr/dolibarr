@@ -263,3 +263,154 @@ function repairEcmFiles($db, $entity, $documentroot, $confirmed = false, $maxdel
 	}
 	return $report;
 }
+
+/**
+ * Check an image repair path, including a missing destination, against its owner's directory.
+ *
+ * @param string $path File or directory to read or write
+ * @param string $directory Owner's module directory
+ * @param string $documentroot Installation's documents directory
+ * @return bool True when no path component redirects the operation outside its expected location
+ */
+function repairImagePathIsSafe($path, $directory, $documentroot)
+{
+	$path = rtrim(str_replace('\\', '/', $path), '/');
+	$directory = rtrim(str_replace('\\', '/', $directory), '/');
+	$documentroot = rtrim(str_replace('\\', '/', $documentroot), '/');
+	$windows = stripos(PHP_OS, 'WIN') === 0;
+	$documentrootlength = dol_strlen($documentroot, 'UTF-8', 1);
+	$directorylength = dol_strlen($directory, 'UTF-8', 1);
+	if ($path === '' || $directory === '' || $documentroot === '' || preg_match('~(?:^|/)\.\.?(?:/|$)~', $path)) {
+		return false;
+	}
+	if (($windows ? strncasecmp($directory.'/', $documentroot.'/', $documentrootlength + 1) : strncmp($directory.'/', $documentroot.'/', $documentrootlength + 1)) !== 0
+		|| ($windows ? strncasecmp($path.'/', $directory.'/', $directorylength + 1) : strncmp($path.'/', $directory.'/', $directorylength + 1)) !== 0) {
+		return false;
+	}
+	$realroot = realpath(dol_osencode($documentroot));
+	$realdirectory = realpath(dol_osencode($directory));
+	if ($realroot === false || $realdirectory === false || !dol_is_dir($directory)) {
+		return false;
+	}
+	$realroot = rtrim(str_replace('\\', '/', $realroot), '/');
+	$expected = $realroot.dol_substr($directory, $documentrootlength, null, 'UTF-8', 1);
+	$realdirectory = str_replace('\\', '/', $realdirectory);
+	if (($windows ? strcasecmp($realdirectory, $expected) : strcmp($realdirectory, $expected)) !== 0) {
+		return false;
+	}
+	$parent = $path;
+	// lstat also detects broken links and Windows junctions that is_link() may miss.
+	while (@lstat(dol_osencode($parent)) === false) {
+		$nextparent = dirname($parent);
+		if ($nextparent === $parent) {
+			return false;
+		}
+		$parent = $nextparent;
+	}
+	$realparent = realpath(dol_osencode($parent));
+	if ($realparent === false) {
+		return false;
+	}
+	$expected = $realroot.dol_substr($parent, $documentrootlength, null, 'UTF-8', 1);
+	$realparent = str_replace('\\', '/', $realparent);
+	return ($windows ? strcasecmp($realparent, $expected) : strcmp($realparent, $expected)) === 0;
+}
+
+/**
+ * Find or delete document files whose object no longer exists in any entity.
+ *
+ * @param DoliDB $db Database handler
+ * @param string $modulepart Supported native document module
+ * @param string $directory One owner's native module directory
+ * @param string $documentroot Installation's documents directory
+ * @param bool $confirmed Delete candidates; false only reports them
+ * @return array{files:list<string>,deleted:int,error:string}
+ */
+function repairOrphanFiles($db, $modulepart, $directory, $documentroot, $confirmed = false)
+{
+	$report = array('files' => array(), 'deleted' => 0, 'error' => '');
+	$tables = array('company' => 'societe', 'invoice' => 'facture', 'invoice_supplier' => 'facture_fourn', 'propal' => 'propal', 'order' => 'commande', 'order_supplier' => 'commande_fournisseur', 'contract' => 'contrat', 'tax' => 'chargesociales');
+	if (!isset($tables[$modulepart]) || !repairImagePathIsSafe($directory.'/', $directory, $documentroot) || !is_readable(dol_osencode($directory))) {
+		$report['error'] = 'RepairOrphanFilesFailed';
+		return $report;
+	}
+	// This maintenance inventory is deliberately global: an inaccessible or shared object is not an orphan.
+	$sql = "SELECT rowid".($modulepart === 'company' ? '' : ', ref')." FROM ".$db->prefix().$db->sanitize($tables[$modulepart]);
+	$resql = $db->query($sql);
+	if (!$resql) {
+		$report['error'] = 'RepairOrphanFilesFailed';
+		return $report;
+	}
+	$existingdirectories = array();
+	while (is_object($obj = $db->fetch_object($resql))) {
+		$id = (int) $obj->rowid;
+		$ref = $modulepart === 'company' || $modulepart === 'tax' ? (string) $id : dol_sanitizeFileName((string) $obj->ref);
+		if ($modulepart === 'invoice_supplier') {
+			$prefix = get_exdir($id, 2, 0, 0, null, 'invoice_supplier');
+			$existingdirectories[dol_strtolower(dol_string_unaccent($prefix.$ref))] = true;
+			$existingdirectories[$prefix.$id] = true; // Historical numeric object directory.
+			$existingdirectories[(string) $id] = true;
+		} elseif ($ref !== '') {
+			$existingdirectories[dol_strtolower(dol_string_unaccent($ref))] = true;
+		}
+	}
+	$db->free($resql);
+	$files = array();
+	$pendingdirectories = array($directory);
+	while (!empty($pendingdirectories)) {
+		$currentdirectory = array_pop($pendingdirectories);
+		if (!repairImagePathIsSafe($currentdirectory, $directory, $documentroot) || !is_readable(dol_osencode($currentdirectory))) {
+			$report['error'] = 'RepairOrphanFilesFailed';
+			return $report;
+		}
+		// Check each directory before descending, including Windows junctions.
+		$entries = dol_dir_list($currentdirectory, 'all', 0, '', array('^SPECIMEN\.pdf$', '^\.', '(\.meta|_preview.*\.png)$', '^temp$', '^payments$', '^CVS$', '^thumbs$'), 'name', SORT_ASC, 0, 1, '', 1);
+		foreach ($entries as $entry) {
+			if ($entry['type'] === 'dir') {
+				$pendingdirectories[] = $entry['fullname'];
+			} else {
+				$files[] = $entry;
+			}
+		}
+	}
+	foreach ($files as $file) {
+		$relativefile = substr($file['fullname'], strlen($directory) + 1);
+		$parts = explode('/', $relativefile);
+		if (count($parts) < 2) {
+			continue; // Root files cannot be assigned to an object directory reliably.
+		}
+		$objectdirectory = $parts[0];
+		if ($modulepart === 'invoice_supplier') {
+			if (count($parts) >= 4 && preg_match('/^[0-9]$/', $parts[0]) && preg_match('/^[0-9]$/', $parts[1])) {
+				$objectdirectory = $parts[0].'/'.$parts[1].'/'.$parts[2];
+			} elseif (count($parts) !== 2 || !ctype_digit($parts[0])) {
+				continue;
+			}
+		} elseif ($modulepart === 'company') {
+			if (!ctype_digit($parts[0]) || (count($parts) > 2 && $parts[1] !== 'logos')) {
+				continue; // Preserve legacy hierarchies and shared courrier/logo directories.
+			}
+		} elseif ($modulepart === 'tax' && !ctype_digit($parts[0])) {
+			continue;
+		}
+		if (isset($existingdirectories[dol_strtolower(dol_string_unaccent($objectdirectory))])) {
+			continue;
+		}
+		if (!repairImagePathIsSafe($file['fullname'], $directory, $documentroot)) {
+			$report['error'] = 'RepairOrphanFilesFailed';
+			return $report;
+		}
+		$report['files'][] = $file['fullname'];
+	}
+	if ($confirmed) {
+		foreach ($report['files'] as $file) {
+			if (!dol_delete_file($file, 0, 0, 1)) {
+				$report['error'] = 'RepairOrphanFilesFailed';
+				break;
+			}
+			$report['deleted']++;
+			dol_delete_dir(dirname($file), 1); // rmdir only: never remove other files recursively.
+		}
+	}
+	return $report;
+}
