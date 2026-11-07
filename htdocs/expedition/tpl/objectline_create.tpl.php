@@ -187,6 +187,12 @@ if (isModEnabled('stock')) {
 	$coldisplay++;
 	print '<td class="bordertop nobottom linecolwarehouse">';
 	print $formproduct->selectWarehouses(GETPOSTISSET('entrepot_id') ? GETPOSTINT('entrepot_id') : -1, 'entrepot_id', 'warehouseopen', 1);
+	print '<div id="shipment-stock-preview" class="small" data-url="'.DOL_URL_ROOT.'/expedition/ajax/stockpreview.php" data-suggestion-label="'.dol_escape_htmltag($langs->transnoentities('SuggestedWarehouse')).'">';
+	print '<div class="shipment-stock-no-warehouse opacitymedium'.(GETPOSTINT('entrepot_id') > 0 ? ' hideobject' : '').'">'.$langs->trans('NoWarehouseNoStockMovement').'</div>';
+	print '<div class="shipment-stock-suggestion opacitymedium"></div>';
+	print '<div>'.$langs->trans('StockAvailable').': <span class="shipment-stock-available"></span></div>';
+	print '<div>'.$langs->trans('StockAfterShipment').': <span class="shipment-stock-after"></span></div>';
+	print '</div>';
 	print '</td>';
 }
 
