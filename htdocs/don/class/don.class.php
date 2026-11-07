@@ -672,7 +672,7 @@ class Don extends CommonObject
 		$sql = "SELECT d.rowid, d.entity, d.datec, d.date_valid, d.tms as datem, d.datedon,";
 		$sql .= " d.fk_soc as socid, d.firstname, d.lastname, d.societe, d.amount, d.fk_statut as status, d.address, d.zip, d.town, ";
 		$sql .= " d.fk_country, d.public, d.amount, d.fk_payment, d.paid, d.note_private, d.note_public, d.email, d.phone, ";
-		$sql .= " d.phone_mobile, d.fk_projet as fk_project, d.model_pdf,";
+		$sql .= " d.phone_mobile, d.fk_projet as fk_project, d.model_pdf, d.extraparams,";
 		$sql .= " p.ref as project_ref,";
 		$sql .= " cp.libelle as payment_label, cp.code as payment_code,";
 		$sql .= " c.code as country_code, c.label as country";
@@ -730,6 +730,7 @@ class Don extends CommonObject
 				$this->note_private	      = $obj->note_private;
 				$this->note_public = $obj->note_public;
 				$this->model_pdf          = $obj->model_pdf;
+				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels

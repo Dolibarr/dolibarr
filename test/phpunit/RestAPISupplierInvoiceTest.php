@@ -93,6 +93,78 @@ class RestAPISupplierInvoiceTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * Create a draft supplier invoice
+	 *
+	 * @param string	$test	Text to be added to output
+	 *
+	 * @return int		Id of the invoice
+	 */
+	private function createInvoice($test)
+	{
+		$data = array(
+			"socid" => 1,
+			"ref_supplier" => "TEST".mt_rand(0, 99999999),
+		);
+		$result = $this->getUrl('supplierinvoices', $test, 'POST', $data);
+		$invoice_id = (int) $result['content'];
+		$this->assertGreaterThan(0, $invoice_id, "$test Id of invoice is not > 0");
+
+		return $invoice_id;
+	}
+
+	/**
+	 * Get the data of a line, with a unit price of 10 and no VAT, to POST or PUT
+	 *
+	 * @param float		$qty	Quantity
+	 *
+	 * @return array<string,mixed>	Data of the line
+	 */
+	private function getLineData($qty)
+	{
+		return array(
+			"description" => "RestAPISupplierInvoiceTest line",
+			"pu_ht" => 10,
+			"tva_tx" => 0,
+			"localtax1_tx" => 0,
+			"localtax2_tx" => 0,
+			"qty" => $qty,
+			"fk_product" => 0,
+			"remise_percent" => 0,
+			"date_start" => "",
+			"date_end" => "",
+			"fk_code_ventilation" => 0,
+			"info_bits" => 0,
+			"price_base_type" => "HT",
+			"product_type" => 0,
+			"rang" => 1,
+			"array_options" => array(),
+			"fk_unit" => null,
+			"origin_id" => 0,
+			"multicurrency_subprice" => 0,
+			"ref_supplier" => "",
+			"special_code" => 0,
+		);
+	}
+
+	/**
+	 * Add a line to a supplier invoice
+	 *
+	 * @param string	$test		Text to be added to output
+	 * @param int		$invoice_id	Id of the invoice
+	 * @param float		$qty		Quantity
+	 *
+	 * @return int		Id of the line
+	 */
+	private function addLine($test, $invoice_id, $qty)
+	{
+		$result = $this->getUrl('supplierinvoices/'.$invoice_id.'/lines', $test, 'POST', $this->getLineData($qty));
+		$line_id = (int) $result['content'];
+		$this->assertGreaterThan(0, $line_id, "$test Id of line is not > 0");
+
+		return $line_id;
+	}
+
+	/**
 	 * testRestSupplierInvoiceGetLines
 	 *
 	 * @return void
@@ -153,5 +225,61 @@ class RestAPISupplierInvoiceTest extends AbstractRestAPITest
 		$test = "Get lines of a supplier invoice that does not exist";
 
 		$this->getUrl('supplierinvoices/999999999/lines', $test, 'GET', null, 404);
+	}
+
+	/**
+	 * testRestSupplierInvoiceDraftLinesCanBeChanged
+	 *
+	 * @return void
+	 */
+	public function testRestSupplierInvoiceDraftLinesCanBeChanged()
+	{
+		$test = "Change the lines of a draft supplier invoice";
+
+		$invoice_id = $this->createInvoice($test);
+		$line_id = $this->addLine($test, $invoice_id, 2);
+		$other_line_id = $this->addLine($test, $invoice_id, 1);
+
+		$this->getUrl('supplierinvoices/'.$invoice_id.'/lines/'.$line_id, $test, 'PUT', $this->getLineData(3));
+
+		$result = $this->getUrl('supplierinvoices/'.$invoice_id, $test, 'GET');
+		$this->assertEquals(40, $result['content']['total_ht'] ?? null, "$test Total after updating a line");
+
+		$this->getUrl('supplierinvoices/'.$invoice_id.'/lines/'.$other_line_id, $test, 'DELETE');
+
+		$result = $this->getUrl('supplierinvoices/'.$invoice_id.'/lines', $test, 'GET');
+		$this->assertCount(1, $result['content'], "$test Invoice must have one line left");
+		$this->assertEquals($line_id, $result['content'][0]['id'] ?? null, "$test Line left must be the line updated");
+		$this->assertEquals(3, $result['content'][0]['qty'] ?? null, "$test Quantity of line");
+
+		$result = $this->getUrl('supplierinvoices/'.$invoice_id, $test, 'GET');
+		$this->assertEquals(30, $result['content']['total_ht'] ?? null, "$test Total after deleting a line");
+	}
+
+	/**
+	 * testRestSupplierInvoiceValidatedLinesCannotBeChanged
+	 *
+	 * @return void
+	 */
+	public function testRestSupplierInvoiceValidatedLinesCannotBeChanged()
+	{
+		$test = "Change the lines of a validated supplier invoice";
+
+		$invoice_id = $this->createInvoice($test);
+		$line_id = $this->addLine($test, $invoice_id, 2);
+
+		$this->getUrl('supplierinvoices/'.$invoice_id.'/validate', $test, 'POST', array("idwarehouse" => 0, "notrigger" => 0));
+
+		$this->getUrl('supplierinvoices/'.$invoice_id.'/lines/'.$line_id, "$test (update)", 'PUT', $this->getLineData(3), 405);
+		$this->getUrl('supplierinvoices/'.$invoice_id.'/lines/'.$line_id, "$test (delete)", 'DELETE', null, 405);
+
+		$result = $this->getUrl('supplierinvoices/'.$invoice_id.'/lines', $test, 'GET');
+		$this->assertCount(1, $result['content'], "$test Invoice must still have its line");
+		$this->assertEquals($line_id, $result['content'][0]['id'] ?? null, "$test Line must be unchanged");
+		$this->assertEquals(2, $result['content'][0]['qty'] ?? null, "$test Quantity of line must be unchanged");
+
+		$result = $this->getUrl('supplierinvoices/'.$invoice_id, $test, 'GET');
+		$this->assertEquals(20, $result['content']['total_ht'] ?? null, "$test Total must be unchanged");
+		$this->assertEquals(20, $result['content']['total_ttc'] ?? null, "$test Total with tax must be unchanged");
 	}
 }

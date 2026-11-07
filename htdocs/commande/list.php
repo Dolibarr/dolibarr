@@ -115,7 +115,7 @@ if (GETPOSTISSET('formfilteraction')) {
 }
 $searchCategoryOrderList = GETPOST('search_category_order_list', 'array');
 $search_product_category = GETPOST('search_product_category', 'intcomma');
-$search_id = GETPOST('search_id', 'int');
+$search_id = GETPOST('search_id', 'alpha');
 $search_ref = GETPOST('search_ref', 'alpha') != '' ? GETPOST('search_ref', 'alpha') : GETPOST('sref', 'alpha');
 $search_ref_ext = GETPOST('search_ref_ext', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
@@ -215,7 +215,7 @@ $showpos = (isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalI
 
 $checkedtypetiers = '0';
 $arrayfields = array(
-	'c.rowid' => array('label' => "ID", 'checked' => '1', 'enabled' => (string) getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'position' => 1),
+	'c.rowid' => array('label' => "TechnicalID", 'checked' => (getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? '1' : '-1'), 'enabled' => '1', 'position' => 1),
 	'c.ref' => array('label' => "Ref", 'checked' => '1', 'position' => 5, 'searchall' => 1),
 	'c.ref_ext' => array('label' => "RefExt", 'checked' => '1', 'position' => 5, 'visible' => 0, 'searchall' => 1),
 	'c.ref_client' => array('label' => "RefCustomerOrder", 'checked' => '-1', 'position' => 10, 'searchall' => 1),
@@ -1051,8 +1051,8 @@ if (empty($user->socid) && !$permissiontoreadallthirdparty) {
 	$sql .= ")";
 }
 
-if ($search_id > 0) {
-	$sql .= natural_search('c.rowid', $search_id);
+if ($search_id != '') {
+	$sql .= natural_search('c.rowid', $search_id, 1);
 }
 if ($search_ref) {
 	$sql .= natural_search('c.ref', $search_ref);
@@ -1831,8 +1831,8 @@ if ($conf->main_checkbox_left_column) {
 
 // Line numbering
 if (!empty($arrayfields['c.rowid']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input class="flat" size="6" type="text" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 
