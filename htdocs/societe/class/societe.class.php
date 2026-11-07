@@ -6176,6 +6176,12 @@ class Societe extends CommonObject
 		}
 
 		if (!$error) {
+			// The introspection of the tables must not be done into the SQL transaction below
+			$listOfInstalledTables = array();
+			foreach (array('delivery', 'mrp_mo', 'don', 'partnership', 'fichinter', 'ticket') as $tableName) {
+				$listOfInstalledTables[$tableName] = $this->db->DDLListTables((string) $conf->db->name, $this->db->prefix().$tableName);
+			}
+
 			$this->db->begin();
 
 			// Recopy some data
@@ -6295,22 +6301,22 @@ class Societe extends CommonObject
 					'Societe' => '/societe/class/societe.class.php',
 					//'SocieteAccount', 'SocietePrice', 'SocieteRib',... are processed into the replaceThirdparty of Societe.
 				);
-				if ($this->db->DDLListTables((string) $conf->db->name, $this->db->prefix().'delivery')) {
+				if (!empty($listOfInstalledTables['delivery'])) {
 					$objects['Delivery'] = '/delivery/class/delivery.class.php';
 				}
-				if ($this->db->DDLListTables((string) $conf->db->name, $this->db->prefix().'mrp_mo')) {
+				if (!empty($listOfInstalledTables['mrp_mo'])) {
 					$objects['Mo'] = '/mrp/class/mo.class.php';
 				}
-				if ($this->db->DDLListTables((string) $conf->db->name, $this->db->prefix().'don')) {
+				if (!empty($listOfInstalledTables['don'])) {
 					$objects['Don'] = '/don/class/don.class.php';
 				}
-				if ($this->db->DDLListTables((string) $conf->db->name, $this->db->prefix().'partnership')) {
+				if (!empty($listOfInstalledTables['partnership'])) {
 					$objects['PartnerShip'] = '/partnership/class/partnership.class.php';
 				}
-				if ($this->db->DDLListTables((string) $conf->db->name, $this->db->prefix().'fichinter')) {
+				if (!empty($listOfInstalledTables['fichinter'])) {
 					$objects['Fichinter'] = '/fichinter/class/fichinter.class.php';
 				}
-				if ($this->db->DDLListTables((string) $conf->db->name, $this->db->prefix().'ticket')) {
+				if (!empty($listOfInstalledTables['ticket'])) {
 					$objects['Ticket'] = '/ticket/class/ticket.class.php';
 				}
 
