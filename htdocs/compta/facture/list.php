@@ -1707,8 +1707,8 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 }
 // Technical ID
 if (!empty($arrayfields['f.rowid']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input class="flat maxwidth50" type="text" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 // Ref

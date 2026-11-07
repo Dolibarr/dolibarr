@@ -458,8 +458,8 @@ if (!empty($disablelinefree)) {
 if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
 }
-if ($search_id) {
-	$sql .= natural_search('cdet.rowid', $search_id);
+if ($search_id != '') {
+	$sql .= natural_search('cdet.rowid', $search_id, 1);
 }
 if ($search_refProduct) {
 	$sql .= natural_search('pr.ref', $search_refProduct);
@@ -1029,8 +1029,8 @@ if ($resql) {
 	}
 	// ID
 	if (!empty($arrayfields['rowid']['checked'])) {
-		print '<td class="liste_titre right" data-key="id">';
-		print '<input class="flat searchstring width50" type="text" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
+		print '<td class="liste_titre center" data-key="id">';
+		print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 		print '</td>';
 	}
 	// Ref order
@@ -1325,7 +1325,7 @@ if ($resql) {
 	// Detail order
 	if (!empty($arrayfields['rowid']['checked'])) {
 		// @phan-suppress-next-line PhanTypeInvalidDimOffset
-		print_liste_field_titre($arrayfields['rowid']['label'], $_SERVER["PHP_SELF"], 'rowid', '', $param, '', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['rowid']['label'], $_SERVER["PHP_SELF"], 'rowid', '', $param, '', $sortfield, $sortorder, 'center ');
 	}
 	if (!empty($arrayfields['c.ref']['checked'])) {
 		print_liste_field_titre($arrayfields['c.ref']['label'], $_SERVER["PHP_SELF"], 'c.ref', '', $param, '', $sortfield, $sortorder);
@@ -1606,7 +1606,7 @@ if ($resql) {
 
 		// ID
 		if (!empty($arrayfields['rowid']['checked'])) {
-			print '<td class="nowrap right">'.$obj->rowid.'</td>';
+			print '<td class="nowrap center">'.$obj->rowid.'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

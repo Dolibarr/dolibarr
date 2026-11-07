@@ -445,6 +445,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 	if (in_array($modulepart, array('produit', 'product')) && getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 		// TODO Remove this when PRODUCT_USE_OLD_PATH_FOR_PHOTO will be removed
 		global $object;
+		'@phan-var-force CommonObject $object';
 		if (!empty($object->id)) {
 			if (isModEnabled("product")) {
 				$upload_dirold = $conf->product->multidir_output[$object->entity ?? $conf->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
@@ -3695,12 +3696,14 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->expedition->dir_output."/".(strpos($original_file, 'sending/') === 0 ? '' : 'sending/').$original_file;
 		//$original_file = $conf->expedition->dir_output."/".$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."expedition WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('expedition').")";
 	} elseif (($modulepart == 'livraison' || $modulepart == 'delivery') && !empty($conf->expedition->dir_output)) {
 		// Delivery Note Wrapping
 		if ($fuser->hasRight('expedition', 'delivery', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->expedition->dir_output."/".(strpos($original_file, 'receipt/') === 0 ? '' : 'receipt/').$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."delivery WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('delivery').")";
 	} elseif ($modulepart == 'actionsreport' && !empty($conf->agenda->dir_temp)) {
 		// Wrapping for actions
 		if ($fuser->hasRight('agenda', 'allactions', $read) || preg_match('/^specimen/i', $original_file)) {
@@ -4159,6 +4162,7 @@ function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathre
 function dragAndDropFileUpload($htmlname)
 {
 	global $object, $langs;
+	'@phan-var-force CommonObject $object';
 
 	// Every generated javascript string that carries an interpolated value is delimited by a single quote, so
 	// dol_escape_js() is called with the mode 1 everywhere below: it escapes a single quote and leaves a double

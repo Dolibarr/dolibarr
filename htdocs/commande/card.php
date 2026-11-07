@@ -234,7 +234,7 @@ if (empty($reshook)) {
 				// We clone object to avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object.
 				$objectutil = dol_clone($object, 1);
 
-				$result = $objectutil->createFromClone($user, $socid, (GETPOSTISSET('entity') ? GETPOSTINT('entity') : null));
+				$result = $objectutil->createFromClone($user, $socid, (GETPOSTISSET('entity') ? GETPOSTINT('entity') : null), (GETPOST('clone_ref_customer') == 'on'));
 				if ($result > 0) {
 					$warningMsgLineList = array();
 					// check all product lines are to sell otherwise add a warning message for each product line is not to sell
@@ -3097,6 +3097,10 @@ if ($action == 'create' && $usercancreate) {
 			$formquestion = array(
 				array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOSTINT('socid'), 'socid', $filter, '', 0, 0, array(), 0, 'maxwidth300'))
 			);
+			// Offer to keep the customer reference only if the order has one
+			if (!empty($object->ref_customer)) {
+				$formquestion[] = array('type' => 'checkbox', 'name' => 'clone_ref_customer', 'label' => $form->textwithpicto($langs->trans("CloneRefCustomer"), $langs->trans("CloneRefCustomerHelpOrder"), 1, 'help', '', 0, 3, 'clonerefcustomer'), 'value' => getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING') ? 1 : 0);
+			}
 			$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('ToClone'), $langs->trans('ConfirmCloneOrder', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 		}
 

@@ -75,7 +75,9 @@ class Contacts extends DolibarrApi
 	 * @param	int		$includeroles		Includes roles of the contact
 	 * @return	object 						Cleaned contact object
 	 *
-	 * @throws	RestException
+	 * @throws	RestException	403 Insufficient rights
+	 * @throws	RestException	404 Contact not found
+	 * @throws	RestException	500 Error when fetching contact
 	 */
 	public function get($id, $includecount = 0, $includeroles = 0)
 	{
@@ -89,7 +91,10 @@ class Contacts extends DolibarrApi
 			$result = $this->contact->fetch($id);
 		}
 
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching contact: '.$this->contact->errorsToString());
+		}
+		if ($result == 0) {
 			throw new RestException(404, 'Contact not found');
 		}
 
@@ -124,8 +129,10 @@ class Contacts extends DolibarrApi
 	 *
 	 * @url GET email/{email}
 	 *
-	 * @throws	RestException	401 Insufficient rights
-	 * @throws	RestException	404 User or group not found
+	 * @throws	RestException	403 Insufficient rights
+	 * @throws	RestException	404 Contact not found
+	 * @throws	RestException	409 Several contacts found with this email
+	 * @throws	RestException	500 Error when fetching contact
 	 */
 	public function getByEmail($email, $includecount = 0, $includeroles = 0)
 	{
@@ -139,8 +146,15 @@ class Contacts extends DolibarrApi
 			$result = $this->contact->fetch(0, null, '', $email);
 		}
 
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching contact: '.$this->contact->errorsToString());
+		}
+		if ($result == 0) {
 			throw new RestException(404, 'Contact not found');
+		}
+		// fetch() returns 2 without loading the contact when several contacts match
+		if ($result == 2) {
+			throw new RestException(409, 'Several contacts found with this email, use GET /contacts with sqlfilters instead');
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id, 'socpeople&societe')) {
@@ -286,8 +300,7 @@ class Contacts extends DolibarrApi
 			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$contact_static = new Contact($this->db);
-				if ($contact_static->fetch($obj->rowid)) {
-					$contact_static->fetchRoles();
+				if ($contact_static->fetch($obj->rowid) > 0) {
 					if ($includecount) {
 						$contact_static->load_ref_elements();
 					}
@@ -310,6 +323,9 @@ class Contacts extends DolibarrApi
 		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
 		if ($pagination_data) {
 			$totalsResult = $this->db->query($sqlTotals);
+			if (!$totalsResult) {
+				throw new RestException(503, 'Error when retrieve contact list total : '.$this->db->lasterror());
+			}
 			$total = $this->db->fetch_object($totalsResult)->total;
 
 			$tmp = $obj_ret;
@@ -319,7 +335,7 @@ class Contacts extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -515,6 +531,10 @@ class Contacts extends DolibarrApi
 	 * @return	array[]
 	 * @phan-return array<string,array{code:int,message:string}>
 	 * @phpstan-return array<string,array{code:int,message:string}>
+	 *
+	 * @throws	RestException	403 Insufficient rights
+	 * @throws	RestException	404 Contact not found
+	 * @throws	RestException	500 Error when fetching or deleting contact
 	 */
 	public function delete($id)
 	{
@@ -522,7 +542,10 @@ class Contacts extends DolibarrApi
 			throw new RestException(403, 'No permission to delete contacts');
 		}
 		$result = $this->contact->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching contact: '.$this->contact->errorsToString());
+		}
+		if ($result == 0) {
 			throw new RestException(404, 'Contact not found');
 		}
 
@@ -556,13 +579,15 @@ class Contacts extends DolibarrApi
 	 *
 	 * @url	POST {id}/createUser
 	 * @suppress PhanPluginUnknownArrayMethodParamType  Luracast limitation
+	 *
+	 * @throws	RestException	400 Login or password missing
+	 * @throws	RestException	403 Insufficient rights
+	 * @throws	RestException	404 Contact not found
+	 * @throws	RestException	409 Contact already has a user, or login or email already used by another user
+	 * @throws	RestException	500 System error, or password rejected by the password policy
 	 */
 	public function createUser($id, $request_data = null)
 	{
-		//if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer')) {
-		//throw new RestException(403);
-		//}
-
 		if (!isset($request_data["login"])) {
 			throw new RestException(400, "login field missing");
 		}
@@ -578,8 +603,11 @@ class Contacts extends DolibarrApi
 		}
 
 		$contact = new Contact($this->db);
-		$contact->fetch($id);
-		if ($contact->id <= 0) {
+		$result = $contact->fetch($id);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching contact: '.$contact->errorsToString());
+		}
+		if ($result == 0) {
 			throw new RestException(404, 'Contact not found');
 		}
 
@@ -587,16 +615,31 @@ class Contacts extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		if ($contact->user_id > 0) {
+			throw new RestException(409, 'Contact already has a user');
+		}
+
 		// Check mandatory fields
 		$login = $request_data["login"];
 		$password = $request_data["password"];
+
+		$this->db->begin();
+
 		$useraccount = new User($this->db);
 		$result = $useraccount->create_from_contact($contact, $login, $password);
 		if ($result <= 0) {
-			throw new RestException(500, "User not created");
+			$this->db->rollback();
+			// -6 is returned when login or email is already used by another user
+			throw new RestException($result == -6 ? 409 : 500, 'User not created: '.$useraccount->errorsToString());
 		}
 		// password parameter not used in create_from_contact
-		$useraccount->setPassword($useraccount, $password);
+		$resultpassword = $useraccount->setPassword(DolibarrApiAccess::$user, $password);
+		if (is_int($resultpassword) && $resultpassword <= 0) {
+			$this->db->rollback();
+			throw new RestException(500, 'Error when setting password of user: '.$useraccount->errorsToString());
+		}
+
+		$this->db->commit();
 
 		return $result;
 	}

@@ -2199,7 +2199,7 @@ if ($action == 'create') {
 					print '<td class="center linecolcarcategory">'.$langs->trans('CarCategory').'</td>';
 				}
 				print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
-				print '<td class="right linecolvat">'.$langs->trans('VAT').'</td>';
+				print '<td class="right linecolvat">'.$form->textwithpicto($langs->trans('VAT'), $langs->trans('ExpenseReportVatRateHelp')).'</td>';
 				print '<td class="right linecolpriceuht">'.$langs->trans('PriceUHT').'</td>';
 				print '<td class="right linecolpriceuttc">'.$langs->trans('PriceUTTC').'</td>';
 				print '<td class="right linecolqty">'.$langs->trans('Qty').'</td>';
@@ -2654,7 +2654,7 @@ if ($action == 'create') {
 					print '<td>'.$langs->trans('CarCategory').'</td>';
 				}
 				print '<td class="expensereportcreatedescription">'.$langs->trans('Description').'</td>';
-				print '<td class="right expensereportcreatevat">'.$langs->trans('VAT').'</td>';
+				print '<td class="right expensereportcreatevat">'.$form->textwithpicto($langs->trans('VAT'), $langs->trans('ExpenseReportVatRateHelp')).'</td>';
 				print '<td class="right expensereportcreatepriceuth">'.$langs->trans('PriceUHT').'</td>';
 				print '<td class="right expensereportcreatepricettc">'.$langs->trans('PriceUTTC').'</td>';
 				print '<td class="right expensereportcreateqty">'.$langs->trans('Qty').'</td>';
