@@ -416,7 +416,7 @@ function dolButtonToOpenExportDialog($name, $label, $buttonstring, $exportSiteNa
 	$out .= '    jQuery("#custom-dialog-' . $name . '").dialog({';
 	$out .= '      autoOpen: false,';
 	$out .= '      modal: true,';
-	$out .= '      height: 310,';
+	$out .= '      height: 330,';
 	$out .= '      width: "40%",';
 	$out .= '      title: \'' . dol_escape_js($label) . '\',';
 	$out .= '    });';
