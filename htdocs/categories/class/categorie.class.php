@@ -477,7 +477,7 @@ class Categorie extends CommonObject
 		}
 
 		$sql = "SELECT rowid, fk_parent, entity, label, description, color, position, fk_soc, visible, type, ref_ext";
-		$sql .= ", date_creation, tms, fk_user_creat, fk_user_modif, import_key";
+		$sql .= ", date_creation, tms, fk_user_creat, fk_user_modif, import_key, extraparams";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
 		if ($id) {
 			$sql .= " WHERE rowid = ".((int) $id);
@@ -511,6 +511,7 @@ class Categorie extends CommonObject
 				$this->user_creation_id = (int) $res['fk_user_creat'];
 				$this->user_modification_id = (int) $res['fk_user_modif'];
 				$this->import_key = $res['import_key'];
+				$this->extraparams = !empty($res['extraparams']) ? (array) json_decode($res['extraparams'], true) : array();
 
 				// Retrieve all extrafields
 				// fetch optionals attributes and labels

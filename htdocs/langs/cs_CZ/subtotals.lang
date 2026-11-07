@@ -3,7 +3,6 @@
 #
 # Global
 #
-Subtotal=Mezisoučty
 SubTotalModuleDesc=Mezisoučty a nadpisové řádky pro určité dokumenty
 #
 # Admin
@@ -12,12 +11,19 @@ SubtotalSetup=Nastavení modulu mezisoučtů
 MaxSubtotalLevel=Maximální úroveň
 SubtotalLineBackColor=Level %s lines background color
 NotSupportedByAllPDF=Will work with newer PDF but not with old ones %s
+SubtotalsPredefinedTitles=Subtotals predefined titles
+SubtotalsPredefinedTexts=Subtotals predefined texts
+SubtotalTextColumnTitle=Text
 
 #
 # Card
 #
 AddTitleLine=Přidat nadpisový řádek
 AddSubtotalLine=Přidat řádek mezisoučtu
+AddTextLine=Add text line
+PredefinedTitle=Predefined title
+PredefinedText=Predefined text
+SubtotalTextContent=Text content
 TitleNeedDesc=You must enter a valid description to create a title.
 TitleAddedLevelTooHigh=Added title level too high (added with level %s instead).
 TitleEditedLevelTooHigh=Edited title level too high (edited with level %s instead).

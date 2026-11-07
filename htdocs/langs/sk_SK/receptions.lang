@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=Overené
 StatusReceptionProcessedShort=Spracované
 ReceptionSheet=Recepčný list
 ValidateReception=Overte príjem
+DeleteReception=Delete reception
 ConfirmDeleteReception=Naozaj chcete odstrániť tento príjem?
 ConfirmValidateReception=Are you sure you want to validate this reception with the reference <b>%s</b>?
 ConfirmCancelReception=Naozaj chcete zrušiť tento príjem?

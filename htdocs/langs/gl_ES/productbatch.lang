@@ -47,9 +47,13 @@ HideLots=Agochar lotes
 OutOfOrder=Fora de servizo
 InWorkingOrder=En funcionamento
 ToReplace=Substituir
-CantMoveNonExistantSerial=Erro. Solicita un movemento nun rexistro para unha serie que xa non existe. Pode levar o mesmo número de serie no mesmo almacén varias veces no mesmo envío ou que foi usado por outro envío. Elimine este envío e prepare outro.
+CantMoveNonExistantSerial=Erro: Solicitou un movemento de existencias nun rexistro para unha serie que xa non existe. Pode que usase a mesma serie no mesmo almacén varias veces no mesmo envío ou que a usou outro envío. Retire esta envío e prepare outr0.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Reparación de execución incompleta da táboa de lote co parámetro '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= Requírese corrección de stock porque o número de serie é único.
 ErrorBatchesNeedStockManagement=Erro. Un produto con xestión de lotes/cantidades tamén debe xestionarse en stock.
 ForceBatchesNeedStockManagement=Un produto con xestión de lotes debe xestionarse en existencias (xestión de stock forzada a si)
 BatchInformationNotfound=Non se atopou a información do lote
+EnterMultipleSerialNumbers=Introduza varios números de serie
+EnterOneSerialNumberPerLine=Escriba, pegue ou escanee os números de serie, un por liña
+NbOfSerialNumbersDetected=Detectáronse os números de serie %s
+ErrorDuplicateSerialNumberInList=O número de serie %s aparece varias veces na lista

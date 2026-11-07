@@ -171,4 +171,4 @@ ListeLB=Liste des congés balance
 LeaveType = Type de congé balance
 HolidayHrInformationsPreviousMonth=Résumé des congés du mois dernier
 HolidayHrInformationsPreviousMonthTopic=Récapitulatif des congés du mois de __PREVIOUS_MONTH_TEXT__
-HolidayHrInformationsPreviousMonthContent=Veuillez trouver ci-joint le récapitulatif des congés du mois de __PREVIOUS_MON_MOIS_TEXTE__ pour __MYCOMPANY_NAME__
+HolidayHrInformationsPreviousMonthContent=Veuillez trouver ci-joint le récapitulatif des congés du mois de __PREVIOUS_MONTH_TEXT__ pour __MYCOMPANY_NAME__

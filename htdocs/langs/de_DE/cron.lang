@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = Geplante Jobs einsehen
-Permission23102 = Erstelle/aktualisiere geplanten Job
-Permission23103 = Lösche geplanten Job
-Permission23104 = Führe geplanten Job aus
 # Admin
 CronSetup=Jobverwaltungs-Konfiguration
 URLToLaunchCronJobs=URL zum Überprüfen und Starten qualifizierter Cron-Jobs über einen Browser
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=In Unix-Umgebung sollten Sie die folgenden crontab-Eintr
 CronExplainHowToRunWin=In Microsoft™ Windows Umgebungen können Sie die Aufgabenplanung benutzen, um die Kommandozeile alle 5 Minuten aufzurufen.
 CronMethodDoesNotExists=Die Klasse %s enthält keine Methode %s
 CronMethodNotAllowed=Die Methode %s der Klasse %s befindet sich in der Sperrliste der verbotenen Methoden
-CronJobDefDesc=Cron-Jobprofile sind in der Moduldeskriptordatei definiert. Wenn das Modul aktiviert ist, sind diese geladen und verfügbar, so dass Sie die Jobs über das Menü admin tools %s verwalten können.
+CronJobDefDesc=Cron-Jobprofile sind in der Moduldeskriptordatei definiert. Wenn das Modul aktiviert ist, sind diese geladen und verfügbar, so dass Sie die Jobs über das Menü Admin-Tools %s verwalten können.
 CronJobProfiles=Liste vordefinierter Cron-Job Profile
 # Menu
 EnabledAndDisabled=Aktiviert und deaktiviert
@@ -79,7 +74,7 @@ CronType_command=Shell-Befehl
 CronCannotLoadClass=Die Klassendatei %s kann nicht geladen werden (um die Klasse %s zu verwenden)
 CronModuleNotEnabledInThisEntity=Cron-Modul ist in dieser Entität nicht aktiviert (um die Methode %s von %s Objekt zu verwenden)
 CronCannotLoadObject=Die Klassendatei %s wurde geladen, aber das Objekt %s wurde nicht gefunden
-UseMenuModuleToolsToAddCronJobs=Gehen Sie in das Menü "<a href="%s"> Home - Admin-Tools - Geplante Jobs </a>", um geplante Jobs anzuzeigen und zu bearbeiten.
+UseMenuModuleToolsToAddCronJobs=Gehen Sie in das Menü "<a href="%s">Start - Admin-Tools - Geplante Jobs</a>", um geplante Jobs anzuzeigen und zu bearbeiten.
 JobDisabled=Job deaktiviert
 MakeLocalDatabaseDumpShort=Lokales Datenbank-Backup
 MakeLocalDatabaseDump=Erstellen Sie einen lokalen Datenbankspeicherauszug. Parameter sind: Komprimierung ('gz' oder 'bz' oder 'none'), Sicherungstyp ('mysql', 'pgsql', 'auto'), 1, 'auto' oder zu erstellender Dateiname, Anzahl der zu speichernden Sicherungsdateien

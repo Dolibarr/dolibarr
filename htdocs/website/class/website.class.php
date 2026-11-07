@@ -1405,19 +1405,24 @@ class Website extends CommonObject
 		dolSaveJsFile($conf->website->dir_output.'/'.$object->ref.'/javascript.js.php', $jscontent);
 
 
-		// Now generate the manifest.json.php
-		$filemanifestjson = dol_osencode($conf->website->dir_temp.'/'.$object->ref.'/containers/manifest.json.php');
+		// Now generate the manifest.json (old templates provide a manifest.json.php with a PHP wrapper around the JSON content)
+		$filemanifestjson = dol_osencode($conf->website->dir_temp.'/'.$object->ref.'/containers/manifest.json');
+		if (!dol_is_file($conf->website->dir_temp.'/'.$object->ref.'/containers/manifest.json')) {
+			$filemanifestjson = dol_osencode($conf->website->dir_temp.'/'.$object->ref.'/containers/manifest.json.php');
+		}
 		$manifestjsoncontent = @file_get_contents($filemanifestjson);
 		// Clean the manifestjson file to remove php code and get only html part
 		$manifestjsoncontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP( \?>)?\n*/ims', '', $manifestjsoncontent);
-		// Check there is no PHP content into the imported file (must be only HTML + JS)
+		// Check there is no PHP content into the imported file (must be only JSON)
 		$phpcontent = dolKeepOnlyPhpCode($manifestjsoncontent);
 		if ($phpcontent) {
-			$this->error = 'Error: you try to import a website with a page with PHP dynamic content in '.$filename.'.';
+			$this->error = 'Error: you try to import a website with a page with PHP dynamic content in manifest.json.';
 			$this->errors[] = $this->error;
 			return -1;
 		}
-		dolSaveManifestJson($conf->website->dir_output.'/'.$object->ref.'/manifest.json.php', $manifestjsoncontent);
+		$manifestjsoncontent = trim($manifestjsoncontent);
+		dolSaveManifestJson($conf->website->dir_output.'/'.$object->ref.'/manifest.json', ($manifestjsoncontent ? $manifestjsoncontent."\n" : ''));
+		dol_delete_file($conf->website->dir_output.'/'.$object->ref.'/manifest.json.php');
 
 
 		// Now generate the master.inc.php page
@@ -1675,6 +1680,21 @@ class Website extends CommonObject
 			}
 			$filewrapper = $pathofwebsite.'/wrapper.php';
 			dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $object);	// This includes also a version of index.php into sublanguage directories
+
+			// Migrate the old manifest.json.php (JSON with a PHP wrapper) into a static manifest.json now that pages link to manifest.json
+			$filemanifestjsonold = $pathofwebsite.'/manifest.json.php';
+			if (dol_is_file($filemanifestjsonold)) {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/website2.lib.php';
+				if (!dol_is_file($pathofwebsite.'/manifest.json')) {
+					$manifestjsoncontent = (string) @file_get_contents($filemanifestjsonold);
+					$manifestjsoncontent = trim(preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP( \?>)?\n*/ims', '', $manifestjsoncontent));
+					if (!dolKeepOnlyPhpCode($manifestjsoncontent)) {	// Never copy PHP code into the static file
+						dolSaveManifestJson($pathofwebsite.'/manifest.json', ($manifestjsoncontent ? $manifestjsoncontent."\n" : ''));
+					}
+				}
+				dol_delete_file($filemanifestjsonold);
+			}
 		}
 
 		// Erase cache files

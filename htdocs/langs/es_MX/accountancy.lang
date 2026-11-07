@@ -78,7 +78,6 @@ LabelAccount=Descripción de la cuenta
 DelYear=Año a borrar
 DelJournal=Diario a borrar
 DescFinanceJournal=Diario financiero incluyendo todos los tipos de pagos por cuenta bancaria
-CustomerInvoicePayment=Pago de factura de cliente
 NewAccountingMvt=Nueva transacción
 NumMvts=Número de transacción
 ListeMvts=Lista de movimientos

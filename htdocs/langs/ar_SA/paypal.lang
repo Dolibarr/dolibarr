@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=إعدادات وحدة PayPal
-PaypalDesc=تتيح هذه الوحدة للعملاء الدفع عبر <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. ويمكن استخدامها لإجراء دفعة حرة أو لسداد عنصر محدد في Dolibarr (فاتورة، أمر، ...).
+PaypalDesc=This module allows payment by customers via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. This can be used for an ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
 PaypalOrCBDoPayment=الدفع عبر PayPal (بالبطاقة أو حساب PayPal)
 PaypalDoPayment=الدفع عبر PayPal
 PAYPAL_API_SANDBOX=وضع الاختبار/البيئة التجريبية
@@ -19,7 +19,7 @@ NewOnlinePaymentFailed=جرت محاولة دفع جديدة عبر الإنتر
 ONLINE_PAYMENT_SENDEMAIL=عنوان البريد الإلكتروني الذي تُرسل إليه إشعارات بعد كل محاولة دفع، سواء نجحت أم فشلت
 ReturnURLAfterPayment=عنوان URL للعودة بعد الدفع
 ValidationOfOnlinePaymentFailed=فشل التحقق من صحة الدفع عبر الإنترنت
-PaymentSystemConfirmPaymentPageWasCalledButFailed=استدعى نظام الدفع صفحة تأكيد الدفع، لكنها أعادت خطأً
+PaymentSystemConfirmPaymentPageWasCalledButFailed=The payment confirmation page was called by the online payment system and returned an error
 SetExpressCheckoutAPICallFailed=فشل استدعاء واجهة API‏ SetExpressCheckout.
 DoExpressCheckoutPaymentAPICallFailed=فشل استدعاء واجهة API‏ DoExpressCheckoutPayment.
 DetailedErrorMessage=رسالة الخطأ التفصيلية
