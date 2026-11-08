@@ -238,7 +238,7 @@ class ToolReports extends McpTool
 			return " AND ".$this->db->sanitize($alias).".fk_soc = ".((int) $this->user->socid);
 		}
 		if (!$this->user->hasRight('societe', 'client', 'voir')) {
-			return " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = ".$this->db->sanitize($alias).".fk_soc AND sc.fk_user = ".((int) $this->user->id).")";
+			return " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE ".$this->db->sanitize($alias).".fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $this->user->id).")";
 		}
 
 		return '';
