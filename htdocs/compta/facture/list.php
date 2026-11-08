@@ -2422,15 +2422,20 @@ if ($num > 0) {
 		$projectstatic->ref = $obj->project_ref;
 		$projectstatic->title = $obj->project_label;
 
-		$paiement = $facturestatic->getSommePaiement();
-		$totalcreditnotes = $facturestatic->getSumCreditNotesUsed();
-		$totaldeposits = $facturestatic->getSumDepositsUsed();
+		// Get amounts in main currency and in foreign currency with one call for each
+		$tmppaiement = $facturestatic->getSommePaiement(-1);
+		$tmpcreditnotes = $facturestatic->getSumCreditNotesUsed(-1);
+		$tmpdeposits = $facturestatic->getSumDepositsUsed(-1);
+
+		$paiement = is_array($tmppaiement) ? $tmppaiement['alreadypaid'] : 0;
+		$totalcreditnotes = is_array($tmpcreditnotes) ? $tmpcreditnotes['totalcreditnotes'] : 0;
+		$totaldeposits = is_array($tmpdeposits) ? $tmpdeposits['totaldeposits'] : 0;
 		$totalallpayments = $paiement + $totalcreditnotes + $totaldeposits;
 		$remaintopay = $obj->total_ttc - $totalallpayments;
 
-		$multicurrency_paiement = $facturestatic->getSommePaiement(1);
-		$multicurrency_totalcreditnotes = $facturestatic->getSumCreditNotesUsed(1);
-		$multicurrency_totaldeposits = $facturestatic->getSumDepositsUsed(1);
+		$multicurrency_paiement = is_array($tmppaiement) ? $tmppaiement['alreadypaid_multicurrency'] : 0;
+		$multicurrency_totalcreditnotes = is_array($tmpcreditnotes) ? $tmpcreditnotes['totalcreditnotes_multicurrency'] : 0;
+		$multicurrency_totaldeposits = is_array($tmpdeposits) ? $tmpdeposits['totaldeposits_multicurrency'] : 0;
 
 		$totalallpayments = $paiement + $totalcreditnotes + $totaldeposits;
 		$remaintopay = price2num($facturestatic->total_ttc - $totalallpayments);
