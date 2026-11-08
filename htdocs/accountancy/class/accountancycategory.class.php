@@ -912,10 +912,13 @@ class AccountancyCategory // extends CommonObject
 					return -1;
 				}
 				if (count($byrule)) {
-					$data = array_merge($data, $byrule);
-					usort($data, static function ($a, $b) {
-						return strcmp((string) $a['account_number'], (string) $b['account_number']);
-					});
+					// Keep the list sorted by account number
+					$sorteddata = array();
+					foreach (array_merge($data, $byrule) as $line) {
+						$sorteddata[$line['account_number'].'_'.$line['id']] = $line;
+					}
+					ksort($sorteddata, SORT_STRING);
+					$data = array_values($sorteddata);
 				}
 			}
 			return $data;
