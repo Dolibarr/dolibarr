@@ -121,7 +121,7 @@ class Conf extends stdClass
 	/**
 	 * @var array<string,array<string,mixed>>  List of activated modules
 	 */
-	public $modules_parts;
+	public $modules_parts = array();
 
 	/**
 	 * @var array<string,mixed> An array to store cache results ->cache['nameofcache']=...
@@ -1511,3 +1511,4 @@ class Conf extends stdClass
 		return 0;
 	}
 }
+
