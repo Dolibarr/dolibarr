@@ -1549,6 +1549,7 @@ if (!$error && ($action == 'setsupervisor' && $confirm == 'yes') && $permissiont
 }
 
 if (!$error && ($action == 'affectuser' && $confirm == 'yes') && $permissiontoadd) {
+	'@phan-var-force Project $object';
 	$nbok = 0;
 	$db->begin();
 
