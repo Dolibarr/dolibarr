@@ -68,22 +68,22 @@ class AccountancyCategoryTest extends CommonClassTest
 	}
 
 	/**
-	 * testAccountRangeMatch
+	 * testIsAccountInRange
 	 *
 	 * @return	void
 	 */
-	public function testAccountRangeMatch()
+	public function testIsAccountInRange()
 	{
-		$this->assertSame(1, AccountancyCategory::accountRangeMatch('4', '4010'));
-		$this->assertSame(-1, AccountancyCategory::accountRangeMatch('4', '5010'));
+		$this->assertTrue(AccountancyCategory::isAccountInRange('4', '4010'));
+		$this->assertFalse(AccountancyCategory::isAccountInRange('4', '5010'));
 
-		$this->assertSame(1, AccountancyCategory::accountRangeMatch('4,!4900', '4010'));
-		$this->assertSame(-1, AccountancyCategory::accountRangeMatch('4,!4900', '4900'));
-		$this->assertSame(-1, AccountancyCategory::accountRangeMatch('4,!4900', '49001'));
-		$this->assertSame(-1, AccountancyCategory::accountRangeMatch('!4900,4', '4900'), 'Order of the prefixes does not matter');
+		$this->assertTrue(AccountancyCategory::isAccountInRange('4,!4900', '4010'));
+		$this->assertFalse(AccountancyCategory::isAccountInRange('4,!4900', '4900'));
+		$this->assertFalse(AccountancyCategory::isAccountInRange('4,!4900', '49001'));
+		$this->assertFalse(AccountancyCategory::isAccountInRange('!4900,4', '4900'), 'Order of the prefixes does not matter');
 
-		$this->assertSame(2, AccountancyCategory::accountRangeMatch('4,41', '4110'), 'Longest prefix is returned');
-		$this->assertSame(4, AccountancyCategory::accountRangeMatch('6000, 6020', '6020'), 'Spaces around commas are ignored');
-		$this->assertSame(1, AccountancyCategory::accountRangeMatch('7xxxxx', '706000'), 'Trailing x are ignored');
+		$this->assertTrue(AccountancyCategory::isAccountInRange('6000, 6020', '6020'), 'Spaces around commas are ignored');
+		$this->assertTrue(AccountancyCategory::isAccountInRange('7xxxxx', '706000'), 'Trailing x are ignored');
+		$this->assertTrue(AccountancyCategory::isAccountInRange('6', '6110'), 'A range does not depend on the other groups');
 	}
 }

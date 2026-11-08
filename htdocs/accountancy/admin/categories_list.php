@@ -149,7 +149,7 @@ $tabcond[32] = isModEnabled('accounting');
 // List of help for fields
 $tabhelp = array();
 $tabhelp[32] = array('code' => $langs->trans("EnterAnyCode"), 'category_type' => $langs->trans("SetToYesIfGroupIsComputationOfOtherGroups"), 'formula' => $langs->trans("EnterCalculationRuleIfPreviousFieldIsYes"));
-if (getDolGlobalInt('ACCOUNTING_GROUP_RANGE_AS_RULE')) {
+if (getDolGlobalInt('ACCOUNTING_GROUP_RANGE_AS_RULE', 1)) {
 	$tabhelp[32]['range_account'] = $langs->trans("AccountRangeHelp");
 }
 
@@ -637,7 +637,7 @@ if ($tabname[$id]) {
 			$valuetoshow = $langs->trans("Pcg_version");
 		}
 		if ($fieldlist[$field] == 'range_account') {
-			$valuetoshow = $langs->trans(getDolGlobalInt('ACCOUNTING_GROUP_RANGE_AS_RULE') ? "AccountRange" : "Comment");
+			$valuetoshow = $langs->trans(getDolGlobalInt('ACCOUNTING_GROUP_RANGE_AS_RULE', 1) ? "AccountRange" : "Comment");
 			$class = 'width75';
 		}
 		if ($fieldlist[$field] == 'category_type') {
@@ -858,7 +858,7 @@ if ($resql) {
 		}
 		if ($fieldlist[$field] == 'range_account') {
 			$valuetoshow = $langs->trans("Comment");
-			if (getDolGlobalInt('ACCOUNTING_GROUP_RANGE_AS_RULE')) {
+			if (getDolGlobalInt('ACCOUNTING_GROUP_RANGE_AS_RULE', 1)) {
 				$valuetoshow = $form->textwithpicto($langs->trans("AccountRange"), $langs->trans("AccountRangeHelp"));
 			}
 		}
@@ -981,7 +981,7 @@ if ($resql) {
 						} elseif (in_array($fieldlist[$field], array('range_account'))) {
 							$class = "tdoverflowmax250 small";
 							$title = $valuetoshow;
-							if (getDolGlobalInt('ACCOUNTING_GROUP_RANGE_AS_RULE') && empty($obj->category_type) && (string) $valuetoshow !== '' && !AccountancyCategory::isValidAccountRange((string) $valuetoshow)) {
+							if (getDolGlobalInt('ACCOUNTING_GROUP_RANGE_AS_RULE', 1) && empty($obj->category_type) && (string) $valuetoshow !== '' && !AccountancyCategory::isValidAccountRange((string) $valuetoshow)) {
 								$morehtml = ' '.img_warning($langs->trans("AccountRangeNotARule"));
 							}
 						} elseif ($fieldlist[$field] == 'region_id' || $fieldlist[$field] == 'country_id') {

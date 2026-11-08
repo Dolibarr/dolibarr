@@ -976,7 +976,7 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>';
 print $form->textwithpicto($langs->trans("ACCOUNTING_GROUP_RANGE_AS_RULE"), $langs->trans("ACCOUNTING_GROUP_RANGE_AS_RULE_DESC")).'</td>';
-if (getDolGlobalInt('ACCOUNTING_GROUP_RANGE_AS_RULE')) {
+if (getDolGlobalInt('ACCOUNTING_GROUP_RANGE_AS_RULE', 1)) {
 	print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setgrouprangeasrule&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 	print '</a></td>';
