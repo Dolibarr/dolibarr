@@ -445,6 +445,18 @@ NOTES   :
         +   getIndirectObject() and findObjectOffset() look for the header with it
         +   the key of the table of the offsets is always "num gen obj", whatever separates them in the file
 
+==> FILE   : tcpdi_parser.php, functions __construct(), decodeXref() and decodeXrefStream()
+    REASON : An encrypted document was read as if it was not. Its streams are the encrypted bytes, so the page
+             imported was a page of garbage written without any error when they are not compressed, and the
+             import stopped on an obscure "decodeFilterFlateDecode: invalid code" when they are. The /Encrypt
+             entry of the trailer was also only read when it is a reference to an object and the cross-reference
+             is a table, not when the dictionary is written in place nor when the cross-reference is a stream.
+    DIFF   :
+        +   the import of an encrypted document stops with the message "This PDF document is encrypted and
+            cannot be imported."
+        +   /Encrypt is read from the trailer of a cross-reference table, written in place or as a reference,
+            and from the dictionary of a cross-reference stream
+
 
 
 ####################################################################################################

@@ -175,9 +175,10 @@ class PdfDocTest extends CommonClassTest
 	 *
 	 * @param	array<int,string>	$objects	Content of each object, the key is the object number
 	 * @param	string				$sep		What separates the numbers and the keyword into the header of each object
+	 * @param	string				$trailer	Entries added to the trailer dictionary
 	 * @return	string							Content of the PDF document
 	 */
-	private function buildPdf($objects, $sep = ' ')
+	private function buildPdf($objects, $sep = ' ', $trailer = '')
 	{
 		$out = "%PDF-1.4\n";
 		$offsets = array();
@@ -192,7 +193,7 @@ class PdfDocTest extends CommonClassTest
 		for ($num = 1; $num < $size; $num++) {
 			$out .= isset($offsets[$num]) ? sprintf("%010d 00000 n \n", $offsets[$num]) : "0000000000 65535 f \n";
 		}
-		$out .= "trailer\n<< /Size ".$size." /Root 1 0 R >>\nstartxref\n".$startxref."\n%%EOF\n";
+		$out .= "trailer\n<< /Size ".$size." /Root 1 0 R ".$trailer.">>\nstartxref\n".$startxref."\n%%EOF\n";
 
 		return $out;
 	}
@@ -205,9 +206,10 @@ class PdfDocTest extends CommonClassTest
 	 * @param	string				$content	Content stream of the page (object 4)
 	 * @param	string				$sep		What separates the numbers into the header of the object stream
 	 * @param	string				$filter		Value of the /Filter entry of the object stream
+	 * @param	string				$trailer	Entries added to the dictionary of the cross-reference stream
 	 * @return	string							Content of the PDF document
 	 */
-	private function buildPdfWithObjectStream($objects, $content, $sep = ' ', $filter = '/FlateDecode')
+	private function buildPdfWithObjectStream($objects, $content, $sep = ' ', $filter = '/FlateDecode', $trailer = '')
 	{
 		$out = "%PDF-1.5\n";
 		$entries = [];	// object number => type, field 2, field 3
@@ -237,7 +239,7 @@ class PdfDocTest extends CommonClassTest
 			$rows .= pack('Cnn', $entry[0], $entry[1], $entry[2]);
 		}
 		$data = gzcompress($rows);
-		$out .= "7 0 obj\n<< /Type /XRef /Size 9 /W [1 2 2] /Root 1 0 R /Filter /FlateDecode /Length ".strlen($data)." >>\nstream\n".$data."\nendstream\nendobj\n";
+		$out .= "7 0 obj\n<< /Type /XRef /Size 9 /W [1 2 2] /Root 1 0 R ".$trailer."/Filter /FlateDecode /Length ".strlen($data)." >>\nstream\n".$data."\nendstream\nendobj\n";
 		$out .= "startxref\n".$startxref."\n%%EOF\n";
 
 		return $out;
@@ -369,5 +371,49 @@ class PdfDocTest extends CommonClassTest
 		$this->assertSame($sizes['space'], $sizes['spaces']);
 		$this->assertSame($sizes['space'], $sizes['newline']);
 		$this->assertSame($sizes['space'], $sizes['tab']);
+	}
+	/**
+	 * Refuse a document that is encrypted. Its streams can not be read, so the page imported used to be either
+	 * filled with the encrypted bytes - a page of garbage, written without any error - or to stop later on an
+	 * obscure "decodeFilterFlateDecode: invalid code".
+	 *
+	 * @return void
+	 */
+	public function testPdfImportPageOfAnEncryptedDocumentIsRefused()
+	{
+		pdf_getInstance();	// Load the TCPDF and TCPDI classes and define their constants
+
+		$content = "BT /F1 24 Tf 72 700 Td (Hello TCPDI) Tj ET";
+		$objects = array(
+			1 => "<< /Type /Catalog /Pages 2 0 R >>",
+			2 => "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+			3 => "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>",
+			5 => "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+		);
+		$encrypt = "<< /Filter /Standard /V 2 /R 3 /Length 128 /P -1 /O <00> /U <00> >>";
+
+		$documents = array(
+			// the encryption dictionary of the trailer of a cross-reference table, as a reference and written in place
+			'reference' => $this->buildPdf($objects + array(4 => "<< /Length ".strlen($content)." >>\nstream\n".$content."\nendstream", 9 => $encrypt), ' ', '/Encrypt 9 0 R '),
+			'inplace' => $this->buildPdf($objects + array(4 => "<< /Length ".strlen($content)." >>\nstream\n".$content."\nendstream"), ' ', '/Encrypt '.$encrypt.' '),
+			// the same entry in the dictionary of a cross-reference stream
+			'xrefstream' => $this->buildPdfWithObjectStream($objects, $content, ' ', '/FlateDecode', '/Encrypt '.$encrypt.' '),
+		);
+
+		foreach ($documents as $case => $document) {
+			$file = tempnam(sys_get_temp_dir(), 'tcpdi').'.pdf';
+			file_put_contents($file, $document);
+
+			$message = '';
+			try {
+				$tcpdi = new TCPDI();
+				$tcpdi->setSourceFile($file);
+			} catch (Exception $e) {
+				$message = $e->getMessage();
+			}
+			unlink($file);
+
+			$this->assertStringContainsString('encrypted', $message, 'Case '.$case.': the document should be refused as encrypted, got "'.$message.'"');
+		}
 	}
 }
