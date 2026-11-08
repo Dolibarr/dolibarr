@@ -89,7 +89,9 @@ class ToolApiBridge extends McpTool
 		'stockmovements' => array('stock'),
 		'warehouses' => array('stock'),
 		'projects' => array('project'),
-		'tasks' => array('project'),
+		'project_tasks' => array('project'),
+		'project' => array('project'),
+		'project_tasks_timespent' => array('project'),
 		'agendaevents' => array('thirdparty', 'project'),
 		'interventions' => array('project', 'commercial'),
 		'contracts' => array('commercial', 'billing'),
@@ -119,12 +121,124 @@ class ToolApiBridge extends McpTool
 	);
 
 	/**
+	 * Endpoint key -> list methods whose table stores the creation date in a
+	 * 'date_creation' column instead of the usual 'datec': their sortfield doc
+	 * tells to use 't.date_creation' (the common doc says 't.datec').
+	 */
+	const DATE_CREATION_LISTS = array(
+		'categories' => array('index'),
+		'orders' => array('index'),
+		'supplier_orders' => array('index'),
+		'shipments' => array('index'),
+		'receptions' => array('index'),
+		'expensereports' => array('index'),
+		'holidays' => array('index'),
+		'socialcontributions' => array('index'),
+		'boms' => array('index'),
+		'mos' => array('index'),
+		'workstations' => array('index'),
+		'knowledgemanagement' => array('index'),
+		'partnerships' => array('index'),
+		'websites' => array('index', 'indexPages')
+	);
+
+	/**
 	 * Default and ceiling applied to list 'limit' parameters when called
 	 * through the bridge. API methods default to 100 full objects — too much
 	 * model context for a single call; everything stays reachable via 'page'.
 	 */
 	const BRIDGE_DEFAULT_LIMIT = 25;
 	const BRIDGE_MAX_LIMIT = 100;
+
+	/**
+	 * Generic tools replacing all the api_<endpoint>_<suffix> tools of a suffix: one
+	 * tool with an 'object' argument naming the endpoint, instead of one per object.
+	 * 'params' gives a description valid for any object to some arguments.
+	 * 'via' (optional): a tool run for the objects with no tool of their own, its argument
+	 * 'arg' set from 'object' (object => array(value of 'arg', module that must be enabled)).
+	 */
+	const MERGED_TOOLS = array(
+		'api_objects_contacts_list' => array(
+			'suffix' => 'contacts_list',
+			'method' => 'getContacts',
+			'description' => "Contacts of one object with their role. Set 'object' to the type of the object and 'id' to its rowid.",
+			'object' => 'Type of the object whose contacts are listed.',
+			'params' => array(
+				'id' => 'Rowid of the object.',
+				'type' => "Role code to restrict to, e.g. BILLING, SHIPPING, CUSTOMER. For a project: 'internal' or 'external', empty for both."
+			)
+		),
+		'api_objects_contacts_link' => array(
+			'suffix' => 'add_contact',
+			'method' => 'postContact',
+			'description' => "Link a contact (person of a third party) or a user to one object, with a role. Set 'object' to the type of the object. The user confirms before anything is written.",
+			'object' => 'Type of the object to link the contact to.',
+			'params' => array(
+				'id' => 'The object: rowid, or its ref (required).'
+			)
+		),
+		'api_objects_contacts_unlink' => array(
+			'suffix' => 'remove_contact',
+			'method' => 'deleteContact',
+			'description' => "Unlink a contact (person of a third party) or a user from one object, for a role. Set 'object' to the type of the object. The user confirms before anything is written.",
+			'object' => 'Type of the object to unlink the contact from.',
+			'params' => array(
+				'id' => 'The object: rowid, or its ref (required).'
+			)
+		),
+		'api_objects_line_create' => array(
+			'suffix' => 'add_line',
+			'method' => 'postLine',
+			'description' => "Add ONE line to a DRAFT document. Set 'object' to the type of the document and 'id' to the document. The user confirms before anything is written.",
+			'object' => 'Type of the draft document to add the line to.',
+			'params' => array(
+				'id' => 'The draft document: rowid (required). For an intervention, its ref is accepted too.'
+			)
+		),
+		'api_objects_line_update' => array(
+			'suffix' => 'update_line',
+			'method' => 'putLine',
+			'description' => "Change ONE line of a DRAFT document. Set 'object' to the type of the document. The user confirms before anything is written.",
+			'object' => 'Type of the draft document whose line is changed.',
+			'params' => array(
+				'id' => 'The draft document: rowid, or its ref (required).'
+			)
+		),
+		'api_objects_line_delete' => array(
+			'suffix' => 'delete_line',
+			'method' => 'deleteLine',
+			'description' => "Delete ONE line of a DRAFT document. Set 'object' to the type of the document. The user confirms before anything is written.",
+			'object' => 'Type of the draft document whose line is deleted.',
+			'params' => array(
+				'id' => 'The draft document: rowid, or its ref (required).'
+			)
+		),
+		'api_objects_categories_list' => array(
+			'suffix' => 'categories_list',
+			'method' => 'getCategories',
+			'description' => "Tags (categories) of one object. Set 'object' to the type of the object and 'id' to its rowid. To list or search the tags themselves, use api_categories_list.",
+			'object' => 'Type of the object whose tags are listed.',
+			'params' => array(
+				'id' => 'Rowid of the object.'
+			),
+			'via' => array(
+				'tool' => 'api_categories_of_object_list',
+				'arg' => 'type',
+				'description' => "tags of this kind of object (for a third party, suppliers gives its supplier tags and thirdparties its customer tags).",
+				'objects' => array(
+					'suppliers' => array('supplier', 'societe'),
+					'members' => array('member', 'member'),
+					'projects' => array('project', 'project'),
+					'users' => array('user', 'user'),
+					'warehouses' => array('warehouse', 'stock'),
+					'agendaevents' => array('actioncomm', 'agenda'),
+					'tickets' => array('ticket', 'ticket'),
+					'knowledgemanagement' => array('knowledgemanagement', 'knowledgemanagement'),
+					'interventions' => array('fichinter', 'intervention')
+				)
+			)
+		)
+	);
 
 	/**
 	 * Generated tool definitions cache (per request).
@@ -156,6 +270,8 @@ class ToolApiBridge extends McpTool
 	 * 'description' (appended to the derived tool description), 'params'
 	 * (per-parameter doc overriding what the docblock parser guessed),
 	 * 'fixed_params' (arguments forced on the call and hidden from the schema).
+	 * 'get_by' (argument => API method: a get by rowid also reachable by ref, email...).
+	 * 'param_defaults' (argument => value used when the caller omits it, instead of the API default).
 	 * An entry may set 'endpoint' to call the REST class of another key, so
 	 * several groups of tools can share one REST class (documents_*).
 	 * TODO Replace path/class discovery with the dynamic scan of api_*.class.php
@@ -167,7 +283,7 @@ class ToolApiBridge extends McpTool
 	 * endpoint absent from this map is still exposed, with the description and
 	 * parameter docs reflection gives — that is the whole point of scanning.
 	 *
-	 * @var array<string, array{endpoint?:string, label?:string, methods?:array<string, array{suffix?:string, description?:string, params?:array<string,string>, fixed_params?:array<string,string>}>}>
+	 * @var array<string, array{endpoint?:string, label?:string, methods?:array<string, array{suffix?:string, description?:string, params?:array<string,string>, fixed_params?:array<string,string>, get_by?:array<string,string>, param_defaults?:array<string,mixed>}>}>
 	 */
 	private $enrichments = [];
 
@@ -265,7 +381,7 @@ class ToolApiBridge extends McpTool
 		$descriptionlist .= "- t.status : integer enum (status ID) among 1=open, 0=closed.";
 		$descriptionlist .= "\n";
 
-		$descriptionfetch = "Fetch the full record of a given thirdparty with main properties (name, name_alias, email, address, status, contact channels, customer/supplier codes, VAT number, default payment terms/modes, outstanding limit).";
+		$descriptionfetch = "Fetch the full record of a given thirdparty with main properties (name, name_alias, email, address, status, contact channels, customer/supplier codes, VAT number, default payment terms/modes, outstanding limit), by its rowid (id), by its exact company email address (email, not contact emails) or by its barcode (barcode).";
 		$descriptionfetch .= "Fetch is done from ID.\n";
 		$descriptionfetch .= "In the result 'client' is 1=customer, 2=prospect, 3=both; 'fournisseur' is 1 when supplier.";
 
@@ -298,12 +414,13 @@ class ToolApiBridge extends McpTool
 					]
 				],
 				'get' => [
-					'description' => $descriptionfetch
-				],
-				'getByEmail' => [
-					'suffix' => 'get_by_email',
-					'description' => "Find one third party by its exact company email address (not contact emails).",
-					'params' => ['email' => "Exact email address of the company."]
+					'description' => $descriptionfetch,
+					'get_by' => ['email' => 'getByEmail', 'barcode' => 'getByBarcode'],
+					'params' => [
+						'id' => "Rowid of the third party (use 0 when identifying by email or barcode).",
+						'email' => "Exact email address of the company (not contact emails), alternative to id.",
+						'barcode' => "Barcode value of the third party, alternative to id."
+					]
 				],
 				'getOutStandingInvoices' => [
 					'suffix' => 'outstanding_invoices',
@@ -517,23 +634,21 @@ class ToolApiBridge extends McpTool
 					]
 				],
 				'get' => [
-					'description' => "One invoice with its lines (product, qty, unit price, VAT rate, line totals), status, remaining amount to pay and linked contacts. Look the rowid up with api_invoices_list (sqlfilters on t.ref) when only the reference is known.",
+					'description' => "One invoice with its lines (product, qty, unit price, VAT rate, line totals), status, remaining amount to pay and linked contacts, by its rowid (id) or by its exact reference (ref, e.g. 'FA2401-0001').",
+					'get_by' => ['ref' => 'getByRef'],
 					'params' => [
+						'id' => "Rowid of the invoice (use 0 when identifying by ref).",
+						'ref' => "Exact invoice reference, alternative to id.",
 						'contact_list' => "0 = no contacts, 1 (default) = contact rowids, 2 = full contact records.",
-						'withLines' => "false to omit the lines."
+						'withLines' => "false to omit the lines (only with id)."
 					]
-				],
-				'getByRef' => [
-					'suffix' => 'get_by_ref',
-					'description' => "One invoice by its exact reference (e.g. 'FA2401-0001').",
-					'params' => ['ref' => "Exact invoice reference.", 'contact_list' => "0 = no contacts, 1 (default) = contact rowids, 2 = full contact records."]
 				],
 				'getPayments' => [
 					'suffix' => 'payments_list',
 					'description' => "Payments already recorded on one invoice: amount, date, payment mode, bank reference.",
 					'params' => ['id' => "Rowid of the invoice."]
 				],
-				'postLine' => $this->addLineMethod('customer invoice', 'api_invoices_get_by_ref', 'Facture', ['facture', 'creer'])
+				'postLine' => $this->addLineMethod('customer invoice', 'api_invoices_get', 'Facture', ['facture', 'creer'])
 			]
 		];
 
@@ -548,9 +663,7 @@ class ToolApiBridge extends McpTool
 		$descriptionlist .= "- t.total_ht : float, t.total_ttc : float,\n";
 		$descriptionlist .= "- t.fk_statut : integer enum (status ID) among -1=cancelled, 0=draft, 1=validated (open), 2=shipment in progress, 3=closed (delivered / billed).";
 
-		$descriptionfetch = "Fetch one order with its lines (product, qty, unit price, discount, line totals), status and dates. Fetch is done from ID.";
-
-		$descriptionfetchref = "Fetch one order with its lines (product, qty, unit price, discount, line totals), status and dates. Fetch is done from exact REF (e.g. 'CO2401-0001').";
+		$descriptionfetch = "Fetch one order with its lines (product, qty, unit price, discount, line totals), status and dates. Fetch is done from its rowid (id) or from its exact reference (ref, e.g. 'CO2401-0001').";
 
 		$this->enrichments['orders'] = [
 			'label' => 'sale orders',
@@ -585,14 +698,14 @@ class ToolApiBridge extends McpTool
 				],
 				'get' => [
 					'description' => $descriptionfetch,
-					'params' => ['contact_list' => "0 = no need of contacts, 1 (default) = need contact rowids, 2 = need full contact records."]
+					'get_by' => ['ref' => 'getByRef'],
+					'params' => [
+						'id' => "Rowid of the order (use 0 when identifying by ref).",
+						'ref' => "Exact order reference, alternative to id.",
+						'contact_list' => "0 = no need of contacts, 1 (default) = need contact rowids, 2 = need full contact records."
+					]
 				],
-				'getByRef' => [
-					'suffix' => 'get_by_ref',
-					'description' => $descriptionfetchref,
-					'params' => ['ref' => "Exact order reference.", 'contact_list' => "0 = no need of contacts, 1 (default) = need contact rowids, 2 = need full contact records."]
-				],
-				'postLine' => $this->addLineMethod('sale order', 'api_orders_get_by_ref', 'Commande', ['commande', 'creer'])
+				'postLine' => $this->addLineMethod('sale order', 'api_orders_get', 'Commande', ['commande', 'creer'])
 			]
 		];
 
@@ -626,15 +739,15 @@ class ToolApiBridge extends McpTool
 					]
 				],
 				'get' => [
-					'description' => "One proposal with its lines (product, qty, unit price, discount, line totals), status and validity date.",
-					'params' => ['contact_list' => "0 = no contacts, 1 (default) = contact rowids, 2 = full contact records."]
+					'description' => "One proposal with its lines (product, qty, unit price, discount, line totals), status and validity date, by its rowid (id) or by its exact reference (ref, e.g. 'PR2401-0001').",
+					'get_by' => ['ref' => 'getByRef'],
+					'params' => [
+						'id' => "Rowid of the proposal (use 0 when identifying by ref).",
+						'ref' => "Exact proposal reference, alternative to id.",
+						'contact_list' => "0 = no contacts, 1 (default) = contact rowids, 2 = full contact records."
+					]
 				],
-				'getByRef' => [
-					'suffix' => 'get_by_ref',
-					'description' => "One proposal by its exact reference (e.g. 'PR2401-0001').",
-					'params' => ['ref' => "Exact proposal reference.", 'contact_list' => "0 = no contacts, 1 (default) = contact rowids, 2 = full contact records."]
-				],
-				'postLine' => $this->addLineMethod('commercial proposal', 'api_proposals_get_by_ref', 'Propal', ['propal', 'creer'])
+				'postLine' => $this->addLineMethod('commercial proposal', 'api_proposals_get', 'Propal', ['propal', 'creer'])
 			]
 		];
 
@@ -831,17 +944,13 @@ class ToolApiBridge extends McpTool
 					]
 				],
 				'get' => [
-					'description' => "One ticket with its subject, full message, status, severity, assigned user and linked third party. The public tracking id is in track_id."
-				],
-				'getByTrackId' => [
-					'suffix' => 'get_by_track_id',
-					'description' => "One ticket by its public tracking id (the hash customers receive by email).",
-					'params' => ['track_id' => "Public tracking id of the ticket."]
-				],
-				'getByRef' => [
-					'suffix' => 'get_by_ref',
-					'description' => "One ticket by its exact internal reference (e.g. 'TS2401-0001').",
-					'params' => ['ref' => "Exact ticket reference."]
+					'description' => "One ticket with its subject, full message, status, severity, assigned user and linked third party, by its rowid (id), by its exact internal reference (ref, e.g. 'TS2401-0001') or by its public tracking id (track_id). The public tracking id is in track_id.",
+					'get_by' => ['ref' => 'getByRef', 'track_id' => 'getByTrackId'],
+					'params' => [
+						'id' => "Rowid of the ticket (use 0 when identifying by ref or track_id).",
+						'ref' => "Exact ticket reference, alternative to id.",
+						'track_id' => "Public tracking id of the ticket (the hash customers receive by email), alternative to id."
+					]
 				]
 			]
 		];
@@ -851,7 +960,7 @@ class ToolApiBridge extends McpTool
 			'methods' => [
 				'index' => [
 					'default_properties' => 'id,ref,title,fk_soc,public,date_start,date_end,fk_statut,opp_status,opp_amount',
-					'description' => "Statuses (t.fk_statut): 0=draft, 1=open, 2=closed. A project used as a sales opportunity carries opp_status (pipeline step rowid), opp_percent (probability) and opp_amount. Dates are unix timestamps: date_start (dateo), date_end (datee). Useful sqlfilters fields: t.ref, t.title, t.fk_soc, t.fk_statut, t.dateo, t.datee, t.public (1=visible to everyone). Tasks of a project: use api_tasks_list with sqlfilters \"(t.fk_projet:=:'ID')\".",
+					'description' => "Statuses (t.fk_statut): 0=draft, 1=open, 2=closed. A project used as a sales opportunity carries opp_status (pipeline step rowid), opp_percent (probability) and opp_amount. Dates are unix timestamps: date_start (dateo), date_end (datee). Useful sqlfilters fields: t.ref, t.title, t.fk_soc, t.fk_statut, t.dateo, t.datee, t.public (1=visible to everyone). Tasks of a project: use api_project_tasks_list with sqlfilters \"(t.fk_projet:=:'ID')\".",
 					'params' => [
 						'thirdparty_ids' => "Comma-separated third-party rowids to restrict to (e.g. '1,5').",
 						'category' => "Rowid of a project category (tag) to restrict the list to.",
@@ -859,18 +968,20 @@ class ToolApiBridge extends McpTool
 					]
 				],
 				'get' => [
-					'description' => "One project with its dates, status, budget, opportunity data and linked third party."
+					'description' => "One project with its dates, status, budget, opportunity data and linked third party, by its rowid (id) or by its exact reference (ref, e.g. 'PJ2401-0001').",
+					'get_by' => ['ref' => 'getByRef'],
+					'params' => [
+						'id' => "Rowid of the project (use 0 when identifying by ref).",
+						'ref' => "Exact project reference, alternative to id."
+					]
 				],
-				'put' => $this->projectUpdateMethod(),
-				'getByRef' => [
-					'suffix' => 'get_by_ref',
-					'description' => "One project by its exact reference (e.g. 'PJ2401-0001').",
-					'params' => ['ref' => "Exact project reference."]
-				]
+				'put' => $this->projectUpdateMethod()
 			]
 		];
 
-		$this->enrichments['tasks'] = [
+		// Group calling the REST class of tasks, so the tools are named api_project_tasks_xxx
+		$this->enrichments['project_tasks'] = [
+			'endpoint' => 'tasks',
 			'label' => 'project tasks',
 			'methods' => [
 				'index' => [
@@ -884,11 +995,6 @@ class ToolApiBridge extends McpTool
 				'get' => [
 					'description' => "One task with its project, planned workload, progress and dates (durations in seconds).",
 					'params' => ['includetimespent' => "1 to include the detail of time spent records."]
-				],
-				'getTimespent' => [
-					'suffix' => 'timespent_list',
-					'description' => "Time records logged on one task: date, duration in seconds, user and note. Sum task_duration for the total.",
-					'params' => ['id' => "Rowid of the task."]
 				],
 				'put' => [
 					'suffix' => 'update',
@@ -915,9 +1021,17 @@ class ToolApiBridge extends McpTool
 						'date_start' => "New start date YYYY-MM-DD.",
 						'date_end' => "New end date YYYY-MM-DD."
 					]
-				],
+				]
+			]
+		];
+
+		// Own group calling the REST class of tasks, so the tool is named api_project_tasks_timespent_create
+		$this->enrichments['project'] = [
+			'endpoint' => 'tasks',
+			'label' => 'project tasks',
+			'methods' => [
 				'addTimeSpent' => [
-					'suffix' => 'add_timespent',
+					'suffix' => 'tasks_timespent_create',
 					'description' => "Log a time-spent record on a task: date, duration in hours, optional note and a new progress percent. The user confirms before anything is written.",
 					'write' => [
 						'preview' => 'AIPreviewAddTimespent',
@@ -1017,7 +1131,12 @@ class ToolApiBridge extends McpTool
 					]
 				],
 				'get' => [
-					'description' => "One member with identity, member type, status, linked third party and paid-up end date (datefin)."
+					'description' => "One member with identity, member type, status, linked third party and paid-up end date (datefin), by its rowid (id) or by the rowid of its linked third party (thirdparty).",
+					'get_by' => ['thirdparty' => 'getByThirdparty'],
+					'params' => [
+						'id' => "Rowid of the member (use 0 when identifying by third party).",
+						'thirdparty' => "Rowid of the third party linked to the member, alternative to id."
+					]
 				],
 				'getSubscriptions' => [
 					'suffix' => 'subscriptions_list',
@@ -1109,10 +1228,10 @@ class ToolApiBridge extends McpTool
 					]
 				],
 				'get' => [
-					'description' => "One shipment: customer, source order, dates, status, tracking number; the lines are in api_shipments_get_lines."
+					'description' => "One shipment: customer, source order, dates, status, tracking number; the lines are in api_shipments_lines_get."
 				],
 				'getLines' => [
-					'suffix' => 'get_lines',
+					'suffix' => 'lines_get',
 					'description' => "Lines of a shipment: product, quantity shipped, batch/lot when the product is tracked.",
 					'params' => ['id' => "Rowid of the shipment."]
 				]
@@ -1160,10 +1279,10 @@ class ToolApiBridge extends McpTool
 					]
 				],
 				'get' => [
-					'description' => "One reception: supplier, supplier reference, dates, status; the lines are in api_receptions_get_lines."
+					'description' => "One reception: supplier, supplier reference, dates, status; the lines are in api_receptions_lines_get."
 				],
 				'getLines' => [
-					'suffix' => 'get_lines',
+					'suffix' => 'lines_get',
 					'description' => "Lines of a reception: product, quantity received, batch/lot and warehouse when tracked.",
 					'params' => ['id' => "Rowid of the reception."]
 				]
@@ -1203,7 +1322,7 @@ class ToolApiBridge extends McpTool
 		$descriptionlist .= "- t.status_buy : integer (status For purchase) among 0=not for purchase, 1=for purchase\n";
 		$descriptionlist .= "- t.stock_reel : float (qty in stock, output only when param includestockdata=1)\n";
 
-		$descriptionfetch = "Fetch full product record (description, prices, VAT, barcode, weight/dimensions, accounting codes, optional stock and sub-products), status and dates. Fetch is done from ID.";
+		$descriptionfetch = "Fetch full product record (description, prices, VAT, barcode, weight/dimensions, accounting codes, optional stock and sub-products), status and dates. Fetch is done from its rowid (id), its exact reference (ref, e.g. 'PROD-001') or its barcode (barcode, EAN/UPC).";
 
 		$this->enrichments['products'] = [
 			'label' => 'products and services catalog',
@@ -1219,7 +1338,8 @@ class ToolApiBridge extends McpTool
 						'right' => ['produit', 'creer']
 					],
 					'params' => [
-						"ref" => "Internal reference.", "label" => "Product label.", "price" => "Selling price excl. tax.", "type" => "0 product, 1 service."
+						"ref" => "Internal reference.", "label" => "Product label.", "price" => "Selling price excl. tax.", "type" => "0 product, 1 service.",
+						"tva_tx" => "VAT rate in percent (e.g. 20). Omit it to use the default VAT rate of the company."
 					]
 				],
 				'index' => [
@@ -1236,22 +1356,16 @@ class ToolApiBridge extends McpTool
 				],
 				'get' => [
 					'description' => $descriptionfetch,
+					'get_by' => ['ref' => 'getByRef', 'barcode' => 'getByBarcode'],
 					'params' => [
+						'id' => "Rowid of the product (use 0 when identifying by ref or barcode).",
+						'ref' => "Exact product reference, alternative to id.",
+						'barcode' => "Barcode value as printed, alternative to id.",
 						'includestockdata' => "1 to load stock_reel, stock_theorique and per-warehouse stock (requires the Stock module).",
 						'includesubproducts' => "true to load the kit/BOM components (sub-products).",
 						'includeparentid' => "true to add fk_product_parent for a variant.",
 						'includetrans' => "true to load multilingual labels/descriptions."
 					]
-				],
-				'getByRef' => [
-					'suffix' => 'get_by_ref',
-					'description' => "One product by its exact reference (e.g. 'PROD-001'); same options as get.",
-					'params' => ['ref' => "Exact product reference."]
-				],
-				'getByBarcode' => [
-					'suffix' => 'get_by_barcode',
-					'description' => "One product by its barcode (EAN/UPC); same options as get.",
-					'params' => ['barcode' => "Barcode value as printed."]
 				],
 				'getPurchasePrices' => [
 					'suffix' => 'purchase_prices_list',
@@ -1523,6 +1637,8 @@ class ToolApiBridge extends McpTool
 	 */
 	private function addReadEndpoints()
 	{
+		global $mysoc;
+
 		$pagination = "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many records match.";
 
 		$this->enrichments['bankaccounts'] = array(
@@ -1530,22 +1646,23 @@ class ToolApiBridge extends McpTool
 			'methods' => array(
 				'index' => array(
 					'default_properties' => 'id,ref,label,bank,currency_code,clos,courant',
-					'description' => "Bank and cash accounts: ref, label, bank, currency. clos: 0 open, 1 closed. courant: 0 savings, 1 current, 2 cash. The balance is in api_bankaccounts_balance, the transactions in api_bankaccounts_lines."
+					'description' => "Bank and cash accounts: ref, label, bank, currency. clos: 0 open, 1 closed. courant: 0 savings, 1 current, 2 cash. The current balance of one account is given by api_bankaccounts_get with includebalance=1, the transactions by api_bankaccounts_lines_list."
 				),
-				'get' => array('description' => "One bank account with its bank details and currency."),
+				'get' => array(
+					'description' => "One bank account with its bank details and currency. Set includebalance to 1 to also get its current balance (operations dated in the future excluded) in the field 'balance'.",
+					'params' => array(
+						'id' => "Rowid of the bank account.",
+						'includebalance' => "1 to also return the current balance of the account in the field 'balance', 0 (default) otherwise."
+					)
+				),
 				'getLines' => array(
-					'suffix' => 'lines',
+					'suffix' => 'lines_list',
 					'description' => "Transactions of one bank account: date (dateo), value date (datev), amount (signed: positive is money in), label, payment type, reconciliation (rappro 1 when reconciled). Only the most recent 50 are returned: restrict the period with sqlfilters. Here the field names have NO 't.' prefix, e.g. \"(dateo:>=:'2026-01-01')\" or \"(label:like:'%rent%')\".",
 					'params' => array('id' => "Rowid of the bank account."),
 					// The REST method has no limit: a real account would send its whole history.
 					// Oldest first there, so the end is the most recent.
 					'max_items' => 50,
 					'keep' => 'last'
-				),
-				'getBalance' => array(
-					'suffix' => 'balance',
-					'description' => "Current balance of one bank account.",
-					'params' => array('id' => "Rowid of the bank account.")
 				)
 			)
 		);
@@ -1566,13 +1683,29 @@ class ToolApiBridge extends McpTool
 			'methods' => array(
 				'index' => array(
 					'description' => "Social and fiscal charges to pay: label, type, period, amount, paye (1 paid). Unpaid ones: sqlfilters \"(t.paye:=:0)\".",
-					'params' => array('pagination_data' => $pagination)
+					'params' => array('pagination_data' => $pagination),
+					'right' => array('tax', 'charges', 'lire')
 				),
-				'get' => array('description' => "One social or fiscal charge."),
+				'get' => array(
+					'description' => "One social or fiscal charge.",
+					'right' => array('tax', 'charges', 'lire')
+				),
 				'getPayments' => array(
 					'suffix' => 'payments_list',
 					'description' => "Payments made on one social or fiscal charge.",
-					'params' => array('id' => "Rowid of the charge.")
+					'params' => array('id' => "Rowid of the charge."),
+					'right' => array('tax', 'charges', 'lire')
+				),
+				'getAllPayments' => array(
+					'suffix' => 'all_payments',
+					'description' => "All payments made on social or fiscal charges, across every charge: payment date, amount, payment reference and the charge each settles.",
+					'right' => array('tax', 'charges', 'lire')
+				),
+				'getPayment' => array(
+					'suffix' => 'payment_get',
+					'description' => "One payment of a social or fiscal charge, by its payment rowid.",
+					'params' => array('pid' => "Rowid of the payment."),
+					'right' => array('tax', 'charges', 'lire')
 				)
 			)
 		);
@@ -1582,13 +1715,29 @@ class ToolApiBridge extends McpTool
 			'methods' => array(
 				'index' => array(
 					'description' => "VAT to pay or refund per period: label, period end (datev), amount, paye (1 paid).",
-					'params' => array('pagination_data' => $pagination)
+					'params' => array('pagination_data' => $pagination),
+					'right' => array('tax', 'charges', 'lire')
 				),
-				'get' => array('description' => "One VAT declaration."),
+				'get' => array(
+					'description' => "One VAT declaration.",
+					'right' => array('tax', 'charges', 'lire')
+				),
 				'getPayments' => array(
 					'suffix' => 'payments_list',
 					'description' => "Payments made on one VAT declaration.",
-					'params' => array('id' => "Rowid of the VAT declaration.")
+					'params' => array('id' => "Rowid of the VAT declaration."),
+					'right' => array('tax', 'charges', 'lire')
+				),
+				'getAllPayments' => array(
+					'suffix' => 'all_payments',
+					'description' => "All payments made on VAT declarations, across every declaration: payment date, amount, payment reference and the declaration each settles.",
+					'right' => array('tax', 'charges', 'lire')
+				),
+				'getPayment' => array(
+					'suffix' => 'payment_get',
+					'description' => "One payment of a VAT declaration, by its payment rowid.",
+					'params' => array('pid' => "Rowid of the payment."),
+					'right' => array('tax', 'charges', 'lire')
 				)
 			)
 		);
@@ -1630,11 +1779,11 @@ class ToolApiBridge extends McpTool
 			'label' => 'bills of materials (BOM)',
 			'methods' => array(
 				'index' => array(
-					'description' => "Bills of materials: ref, label, the product it makes (fk_product), quantity made. Statuses (t.status): 0 draft, 1 validated, 9 canceled. The components are in api_boms_lines."
+					'description' => "Bills of materials: ref, label, the product it makes (fk_product), quantity made. Statuses (t.status): 0 draft, 1 validated, 9 canceled. The components are in api_boms_lines_list."
 				),
 				'get' => array('description' => "One bill of materials."),
 				'getLines' => array(
-					'suffix' => 'lines',
+					'suffix' => 'lines_list',
 					'description' => "Components of one bill of materials: product, quantity, efficiency.",
 					'params' => array('id' => "Rowid of the bill of materials.")
 				)
@@ -1666,11 +1815,10 @@ class ToolApiBridge extends McpTool
 			'label' => 'workstations (manufacturing)',
 			'methods' => array(
 				'index' => array('description' => "Workstations used in manufacturing: ref, label, type, hourly costs."),
-				'get' => array('description' => "One workstation."),
-				'getByRef' => array(
-					'suffix' => 'get_by_ref',
-					'description' => "One workstation by its exact reference.",
-					'params' => array('ref' => "Exact workstation reference.")
+				'get' => array(
+					'description' => "One workstation, by its rowid (id) or by its exact reference (ref).",
+					'get_by' => array('ref' => 'getByRef'),
+					'params' => array('id' => "Rowid of the workstation (use 0 when identifying by ref).", 'ref' => "Exact workstation reference, alternative to id.")
 				)
 			)
 		);
@@ -1709,11 +1857,10 @@ class ToolApiBridge extends McpTool
 			'label' => 'currencies and exchange rates',
 			'methods' => array(
 				'index' => array('description' => "Currencies in use, with their code and current rate."),
-				'get' => array('description' => "One currency."),
-				'getByCode' => array(
-					'suffix' => 'get_by_code',
-					'description' => "One currency by its ISO code (e.g. 'USD').",
-					'params' => array('code' => "ISO code of the currency.")
+				'get' => array(
+					'description' => "One currency, by its rowid (id) or by its ISO code (code, e.g. 'USD').",
+					'get_by' => array('code' => 'getByCode'),
+					'params' => array('id' => "Rowid of the currency (use 0 when identifying by code).", 'code' => "ISO code of the currency, alternative to id.")
 				),
 				'getRates' => array(
 					'suffix' => 'rates',
@@ -1726,7 +1873,7 @@ class ToolApiBridge extends McpTool
 		);
 
 		// Websites of the website module, with their pages and blog posts. The page content is
-		// left out of the lists (it can be large): read one page with api_websites_page_get.
+		// left out of the lists (it can be large): read one page with api_websites_pages_get.
 		$this->enrichments['websites'] = array(
 			'label' => 'websites (website module)',
 			'methods' => array(
@@ -1734,25 +1881,26 @@ class ToolApiBridge extends McpTool
 					'description' => "Websites built with the website module: ref, description, main language, virtual host, home page (fk_default_home). Statuses (t.status): 0 offline, 1 online.",
 					'default_properties' => 'id,ref,description,lang,otherlang,status,virtualhost'
 				),
-				'get' => array('description' => "One website."),
-				'getByRef' => array(
-					'suffix' => 'get_by_ref',
-					'description' => "One website by its exact reference.",
-					'params' => array('ref' => "Exact website reference.")
+				'get' => array(
+					'description' => "One website, by its rowid (id) or by its exact reference (ref).",
+					'get_by' => array('ref' => 'getByRef'),
+					'params' => array('id' => "Rowid of the website (use 0 when identifying by ref).", 'ref' => "Exact website reference, alternative to id.")
 				),
 				'indexPages' => array(
 					'suffix' => 'pages_list',
 					'description' => "Pages of one website: pageurl (alias), title, type_container ('page', 'blogpost', 'menu', 'other', 'header', 'footer'...), lang, status (0 offline, 1 online). Blog posts are the pages with type_container 'blogpost'. Search with sqlfilters \"(t.type_container:=:'blogpost')\".",
 					'default_properties' => 'id,pageurl,title,description,type_container,lang,status,date_creation,author_alias',
-					'params' => array('id' => "Rowid of the website.")
+					'params' => array(
+						'id' => "Rowid of the website."
+					)
 				),
 				'getPage' => array(
-					'suffix' => 'page_get',
+					'suffix' => 'pages_get',
 					'description' => "One page of a website, with its HTML content.",
 					'params' => array('id' => "Rowid of the website.", 'pageid' => "Rowid of the page.")
 				),
 				'postPage' => array(
-					'suffix' => 'page_create',
+					'suffix' => 'pages_create',
 					'description' => "Create a page (type_container 'page') or a blog post (type_container 'blogpost') in a website. Give id (rowid of the website), pageurl (alias, only a-z, 0-9, - and _), title and content (HTML, put inside a <section> tag, no PHP code). It is created offline (status 0) unless status 1 is given. The user confirms before anything is written.",
 					'write' => array(
 						'preview' => 'AIPreviewCreateWebsitePage',
@@ -1774,6 +1922,34 @@ class ToolApiBridge extends McpTool
 						'author_alias' => "Name of the author to show.",
 						'status' => "0 offline (default), 1 online."
 					)
+				),
+				'putPage' => array(
+					'suffix' => 'pages_update',
+					'description' => "Change fields of an existing page or blog post of a website. Give 'pageid' (rowid of the page, from api_websites_pages_list) and ONLY the fields to change, with their new value: title, description, keywords, content, lang, author_alias, status. To change a part of the content, read the page first with api_websites_pages_get and send the whole new content (HTML, inside a <section> tag, no PHP code). The alias (pageurl) cannot be changed here. The user confirms before anything is written.",
+					'write' => array(
+						'kind' => 'update',
+						'preview' => 'AIPreviewChangeRecord',
+						'object' => 'WebsitePage',
+						'label' => 'website page',
+						'target' => 'pageid',
+						'lookup' => '',
+						// The website of the page is read from the page itself
+						'target_parent' => array('id' => 'fk_website'),
+						'fields' => array('title', 'description', 'keywords', 'content', 'lang', 'author_alias', 'status'),
+						'required' => array('pageid'),
+						'right' => array('website', 'write')
+					),
+					'params' => array(
+						'pageid' => "Rowid of the page to change.",
+						'id' => "Rowid of the website of the page. Optional: it is found from the page.",
+						'title' => "New title of the page.",
+						'description' => "New short description (meta description), 255 characters max.",
+						'keywords' => "New keywords, separated by commas.",
+						'content' => "New full HTML content of the page, inside a <section> tag. No PHP code.",
+						'lang' => "New language code of the page, e.g. 'en' or 'fr'.",
+						'author_alias' => "New name of the author to show.",
+						'status' => "0 offline, 1 online."
+					)
 				)
 			)
 		);
@@ -1790,12 +1966,11 @@ class ToolApiBridge extends McpTool
 						'pagination_data' => $pagination
 					)
 				),
-				'get' => array('description' => "One contact with name, job title, phones, email and third party."),
-				'getByEmail' => array(
-					'suffix' => 'get_by_email',
-					'description' => "One contact by its exact email address.",
-					'params' => array('email' => "Exact email address of the contact."),
-					// The REST method returns an empty contact when several share the address.
+				'get' => array(
+					'description' => "One contact with name, job title, phones, email and third party, by its rowid (id) or by its exact email address (email).",
+					'get_by' => array('email' => 'getByEmail'),
+					'params' => array('id' => "Rowid of the contact (use 0 when identifying by email).", 'email' => "Exact email address of the contact, alternative to id."),
+					// The REST method by email returns an empty contact when several share the address.
 					'needs_id' => "No single contact has this email (none, or several): search with api_contacts_list and sqlfilters on t.email."
 				),
 				'getCategories' => array(
@@ -1811,18 +1986,16 @@ class ToolApiBridge extends McpTool
 		// EACH side of the link - so everything is enforced downstream. The
 		// write side (create/delete links) needs rights on both element types
 		// too and is left for a follow-up.
-		$this->enrichments['objectlinks'] = array(
+		$this->enrichments['objects_links'] = array(
+			'endpoint' => 'objectlinks',
 			'label' => 'links between records',
 			'methods' => array(
 				'getById' => array(
 					'suffix' => 'get',
-					'description' => "One object link by its rowid: the pair it joins, (fk_source, sourcetype) to (fk_target, targettype).",
-					'params' => array('id' => "Rowid of the object link.")
-				),
-				'getByValues' => array(
-					'suffix' => 'get_by_values',
-					'description' => "Whether two records are linked: give the rowid and element type of each side. Answers 'is invoice X linked to proposal Y'. Element types are names like 'propal' (proposal), 'commande' (customer order), 'facture' (customer invoice), 'contrat', 'project', 'task', 'ticket', 'actioncomm' (agenda event), 'subscription' (membership), 'shipping', 'reception'.",
+					'description' => "One object link: the pair it joins, (fk_source, sourcetype) to (fk_target, targettype). Give its rowid (id), or, to know whether two records are linked, the rowid and element type of each side (fk_source, sourcetype, fk_target, targettype). Answers 'is invoice X linked to proposal Y'. Element types are names like 'propal' (proposal), 'commande' (customer order), 'facture' (customer invoice), 'contrat', 'project', 'task', 'ticket', 'actioncomm' (agenda event), 'subscription' (membership), 'shipping', 'reception'.",
+					'get_by' => array('fk_source' => 'getByValues'),
 					'params' => array(
+						'id' => "Rowid of the object link (use 0 when identifying by the two linked records).",
 						'fk_source' => "Rowid of the record the link starts from.",
 						'sourcetype' => "Element type of the source record (e.g. 'propal', 'facture', 'project').",
 						'fk_target' => "Rowid of the record the link points to.",
@@ -1850,41 +2023,109 @@ class ToolApiBridge extends McpTool
 					'right' => array('user', 'user', 'lire')
 				),
 				'get' => array(
-					'description' => "One user with login, name, email, phones, job and status.",
-					'params' => array('id' => "Rowid of the user.", 'includepermissions' => "1 to also load his permission set (heavy, default 0).")
-				),
-				'getByLogin' => array(
-					'suffix' => 'get_by_login',
-					'description' => "One user by its exact login.",
-					'params' => array('login' => "Exact login of the user.", 'includepermissions' => "1 to also load his permission set (heavy, default 0).")
-				),
-				'getByEmail' => array(
-					'suffix' => 'get_by_email',
-					'description' => "One user by its exact email address.",
-					'params' => array('email' => "Exact email address of the user.", 'includepermissions' => "1 to also load his permission set (heavy, default 0).")
+					'description' => "One user with login, name, email, phones, job and status, by its rowid (id), by its exact login (login) or by its exact email address (email). Set includegroups=1 to also get the groups he belongs to.",
+					'get_by' => array('login' => 'getByLogin', 'email' => 'getByEmail'),
+					'params' => array(
+						'id' => "Rowid of the user (use 0 when identifying by login or email).",
+						'login' => "Exact login of the user, alternative to id.",
+						'email' => "Exact email address of the user, alternative to id.",
+						'includepermissions' => "1 to also load his permission set (heavy, default 0).",
+						'includegroups' => "1 to also load the groups the user belongs to, in user_group_list (default 0)."
+					)
 				),
 				'getInfo' => array(
 					'suffix' => 'me',
 					'description' => "The user currently connected: answers 'who am I', 'my email', 'my permissions'.",
 					'params' => array('includepermissions' => "1 to also load his permission set (heavy, default 0).")
 				),
-				'getGroups' => array(
-					'suffix' => 'groups_of_user',
-					'description' => "Groups a user belongs to.",
-					'params' => array('id' => "Rowid of the user."),
-					'right' => array('user', 'user', 'lire')
-				),
 				'listGroups' => array(
 					'suffix' => 'groups_list',
-					'description' => "All user groups (e.g. administrators, sales): name, note. Members of one group come from api_users_group_info with load_members=1.",
+					'description' => "All user groups (e.g. administrators, sales): name, note. Members of one group come from api_users_group_get with load_members=1.",
 					'params' => array(
 						'group_ids' => "Comma-separated group rowids to restrict to (e.g. '1,5')."
 					)
 				),
 				'infoGroups' => array(
-					'suffix' => 'group_info',
+					'suffix' => 'group_get',
 					'description' => "One user group: name, note; set load_members=1 to include its members.",
 					'params' => array('group' => "Rowid of the user group.", 'load_members' => "1 to include the members of the group (default 0).", 'includepermissions' => "1 to also load its permission set (heavy, default 0).")
+				)
+			)
+		);
+
+		// Local tax payments (llx_localtax): country-specific extra taxes
+		// recorded by the company (RE/IRPF in Spain, empty elsewhere). The
+		// records are entity-scoped, not country-scoped, so no country
+		// filter applies; the tools are registered only when the company
+		// country actually uses local taxes, the table is empty otherwise.
+		// Write side is left out on purpose.
+		if (is_object($mysoc) && $mysoc->useLocalTax(0)) {
+			$this->enrichments['localtaxes'] = array(
+				'label' => 'local tax payments (second/third country taxes)',
+				'methods' => array(
+					'index' => array(
+						'default_properties' => 'id,ltt,label,amount,datep,datev,paymenttype,rappro',
+						'description' => "Local tax payments recorded by the company (country-specific extra taxes, e.g. RE and IRPF in Spain). ltt: 1 = localtax1, 2 = localtax2. datep = payment date, datev = value date, rappro = 1 when bank-reconciled. Search with sqlfilters on t.label or t.amount (e.g. \"(t.datep:>=:'20250101')\").",
+						'params' => array('pagination_data' => $pagination),
+						'right' => array('tax', 'charges', 'lire')
+					),
+					'get' => array(
+						'description' => "One local tax payment by its rowid: type (ltt), label, amount, dates and bank reconciliation state.",
+						'params' => array('id' => "Rowid of the local tax payment."),
+						'right' => array('tax', 'charges', 'lire')
+					)
+				)
+			);
+		}
+
+		// Cron jobs (llx_cronjob): read side, plus run which launches a job
+		// already defined by an admin. post/put stay out on purpose: they can
+		// edit command, classesname, methodename and params, which is arbitrary
+		// code execution as the web user — not a power the bridge should hand
+		// to a model, even behind a confirmation. delete stays out too.
+		$this->enrichments['cronjobs'] = array(
+			'label' => 'scheduled cron jobs',
+			'methods' => array(
+				'index' => array(
+					'default_properties' => 'id,label,jobtype,module_name,command,classesname,methodename,frequency,unitfrequency,status,datelastrun,datenextrun,lastresult,nbrun',
+					'description' => "Scheduled cron jobs: label, what they run (jobtype 'method' = a PHP method on a class, 'command' = a CLI command), schedule as frequency + unitfrequency (unit in seconds or 'd'/'m'), status (0 disabled, 1 enabled, 2 archived), last/next run dates and last result. Filter by status with the status parameter (1 = enabled only). Search with sqlfilters on t.label or t.module_name.",
+					'params' => array(
+						'status' => "Filter on status: 0 disabled, 1 enabled, 2 archived, -1 (default) all.",
+						'pagination_data' => $pagination
+					),
+					'right' => array('cron', 'read')
+				),
+				'get' => array(
+					'description' => "One cron job with its full definition, schedule, last output and result.",
+					'params' => array('id' => "Rowid of the cron job."),
+					'right' => array('cron', 'read')
+				),
+				'run' => array(
+					'suffix' => 'run',
+					'description' => "Run a cron job now, as the Run button of the cron list does. The job was defined by an administrator; only admin users may launch it. The user confirms before anything is executed.",
+					'write' => array(
+						'kind' => 'action',
+						'preview' => 'AIPreviewRunCronjob',
+						'object' => 'Cronjob',
+						'label' => 'cron job',
+						'target' => 'id',
+						'args' => array('id'),
+						'right' => array('cron', 'write')
+					),
+					'params' => array('id' => "Rowid of the cron job to run.")
+				)
+			)
+		);
+
+		// Own group calling the REST class of projects, so the tool is named api_project_tasks_timespent_list
+		$this->enrichments['project_tasks_timespent'] = array(
+			'endpoint' => 'projects',
+			'label' => 'time spent on project tasks',
+			'methods' => array(
+				'listTimespent' => array(
+					'suffix' => 'list',
+					'description' => "Time spent records, one per line: project, task, user, date (element_datehour), duration in seconds (element_duration, sum it for a total) and note. Restrict with thirdparty_ids or sqlfilters: one project with \"(p.rowid:=:ID)\", one task with \"(t.rowid:=:ID)\", one user with \"(et.fk_user:=:ID)\", a period with \"(et.element_datehour:>=:'2026-01-01')\".",
+					'params' => array('thirdparty_ids' => "Comma-separated third-party rowids.", 'pagination_data' => $pagination)
 				)
 			)
 		);
@@ -1939,18 +2180,6 @@ class ToolApiBridge extends McpTool
 					'suffix' => 'contacts_list',
 					'description' => "People of one project: internal users and external contacts, with their role (project leader, contributor...).",
 					'params' => array('id' => "Rowid of the project.", 'type' => "'internal' or 'external' to restrict, empty for both.")
-				),
-				'getTimespent' => array(
-					'suffix' => 'timespent_list',
-					'description' => "Summary of the time spent on each task of one project (first 100 tasks): total duration in seconds and the users who recorded it. The time records themselves are in api_projects_timespent_all or api_tasks_timespent_list.",
-					'params' => array('id' => "Rowid of the project."),
-					'max_items' => 100,
-					'keep' => 'first'
-				),
-				'listTimespent' => array(
-					'suffix' => 'timespent_all',
-					'description' => "Time recorded across projects, with project, task, user, date and duration in seconds. Restrict with thirdparty_ids or sqlfilters (e.g. a period on t.element_date).",
-					'params' => array('thirdparty_ids' => "Comma-separated third-party rowids.", 'pagination_data' => $pagination)
 				)
 			),
 			'orders' => array(
@@ -1998,7 +2227,7 @@ class ToolApiBridge extends McpTool
 			),
 			'expensereports' => array(
 				'getLines' => array(
-					'suffix' => 'lines',
+					'suffix' => 'lines_list',
 					'description' => "Lines of one expense report: date, expense type, amounts, VAT.",
 					'params' => array('id' => "Rowid of the expense report.")
 				),
@@ -2015,11 +2244,6 @@ class ToolApiBridge extends McpTool
 				)
 			),
 			'thirdparties' => array(
-				'getByBarcode' => array(
-					'suffix' => 'get_by_barcode',
-					'description' => "One third party by its barcode.",
-					'params' => array('barcode' => "Barcode value.")
-				),
 				'getFixedAmountDiscounts' => array(
 					'suffix' => 'discounts_list',
 					'description' => "Fixed-amount discounts and credits of one third party: available, or already used on an invoice.",
@@ -2034,11 +2258,6 @@ class ToolApiBridge extends McpTool
 					'suffix' => 'categories_list',
 					'description' => "Customer tags (categories) of one third party.",
 					'params' => array('id' => "Rowid of the third party.")
-				),
-				'getSupplierCategories' => array(
-					'suffix' => 'supplier_categories_list',
-					'description' => "Supplier tags (categories) of one third party.",
-					'params' => array('id' => "Rowid of the third party.")
 				)
 			),
 			'categories' => array(
@@ -2049,24 +2268,29 @@ class ToolApiBridge extends McpTool
 				)
 			),
 			'members' => array(
-				'getByThirdparty' => array(
-					'suffix' => 'get_by_thirdparty',
-					'description' => "The member linked to one third party.",
-					'params' => array('thirdparty' => "Rowid of the third party.")
-				),
+				// One tool for both statistics: per year, or per month of the year when one is given
 				'getNbByYear' => array(
-					'suffix' => 'count_by_year',
-					'description' => "Number of new members per year."
+					'suffix' => 'count',
+					'description' => "Number of new members: per year, or per month of one year when 'year' is given.",
+					'get_by' => array('year' => 'getNbByMonth'),
+					'params' => array(
+						'year' => "Year, e.g. 2026, to get the count per month of this year. Omit it to get the count per year.",
+						'format' => "Only with year. Label of each month: 1 (default) month number, 0 translated month name, 2 first letter of the month."
+					),
+					// Month numbers: the translated labels are meant for a graph, not for a model
+					'param_defaults' => array('format' => 1)
 				),
-				'getNbByMonth' => array(
-					'suffix' => 'count_by_month',
-					'description' => "Number of new members per month of one year.",
-					'params' => array('year' => "Year, e.g. 2026.")
-				),
-				'getAmountByMonth' => array(
-					'suffix' => 'subscriptions_amount_by_month',
-					'description' => "Amount of subscriptions per month of one year.",
-					'params' => array('year' => "Year, e.g. 2026.")
+				// One tool for both statistics: per year, or per month of the year when one is given
+				'getAmountByYear' => array(
+					'suffix' => 'subscriptions_amount',
+					'description' => "Amount of the subscriptions of members: per year (with the number of subscriptions, the total, the average and the change in % from the year before), or per month of one year when 'year' is given.",
+					'get_by' => array('year' => 'getAmountByMonth'),
+					'params' => array(
+						'year' => "Year, e.g. 2026, to get the amount per month of this year. Omit it to get the amounts per year.",
+						'format' => "Only with year. Label of each month: 1 (default) month number, 0 translated month name, 2 first letter of the month."
+					),
+					// Month numbers: the translated labels are meant for a graph, not for a model
+					'param_defaults' => array('format' => 1)
 				)
 			)
 		);
@@ -2095,7 +2319,13 @@ class ToolApiBridge extends McpTool
 	 */
 	private function addLineMethod($label, $lookupTool, $class, array $right, $buy = false, array $rename = array(), array $defaults = array())
 	{
-		$lookup = (substr($lookupTool, -7) === '_by_ref') ? $lookupTool : $lookupTool." with sqlfilters (t.ref:=:'THEREF')";
+		if (substr($lookupTool, -7) === '_by_ref') {
+			$lookup = $lookupTool;
+		} elseif (substr($lookupTool, -4) === '_get') {
+			$lookup = $lookupTool." with ref";	// a get that also accepts a ref ('get_by')
+		} else {
+			$lookup = $lookupTool." with sqlfilters (t.ref:=:'THEREF')";
+		}
 
 		$description = "Add ONE line to an existing ".$label.". Only a DRAFT ".$label." (status 0) accepts new lines. ";
 		$description .= "Give 'id' (".$label." rowid; when only the ref is known, look it up with ".$lookup.") and the line fields: product_ref (product ref or exact label) and qty, ";
@@ -2241,7 +2471,7 @@ class ToolApiBridge extends McpTool
 
 		// A payment: the distributed method, the only one that takes an amount.
 		$this->enrichments['invoices']['methods']['addPaymentDistributed'] = array(
-			'suffix' => 'add_payment',
+			'suffix' => 'payment_create',
 			'description' => "Record a payment received on a VALIDATED customer invoice. Give 'id' (rowid, or its ref), and 'amount' only for a partial payment: by default what remains is paid. payment_mode is how it was paid (cash, cheque, transfer, card, or a code like LIQ, CHQ, VIR, CB); bank_account is the account it went into (name or rowid, may be omitted when there is only one). The user confirms before anything is written.",
 			'write' => array(
 				'kind' => 'payment',
@@ -2400,7 +2630,7 @@ class ToolApiBridge extends McpTool
 			)
 		);
 
-		$this->enrichments['tasks']['methods']['post'] = array(
+		$this->enrichments['project_tasks']['methods']['post'] = array(
 			'suffix' => 'create',
 			'description' => "Create a task in a project, with its reference from the numbering. Give label and fk_project (rowid, ref or exact title of the project). The user confirms before anything is written.",
 			'write' => array(
@@ -2714,93 +2944,50 @@ class ToolApiBridge extends McpTool
 	/**
 	 * Discover the REST API endpoints of every enabled module.
 	 *
-	 * Mirrors the scan htdocs/api/index.php performs to register endpoints with
-	 * Restler, so the bridge exposes exactly the API surface the REST layer
-	 * exposes — external modules included — instead of a list maintained by hand.
+	 * The walk itself lives in dolGetApiEndpoints(), shared with
+	 * htdocs/api/index.php, so the bridge exposes exactly the API surface the REST
+	 * layer exposes - external modules included - instead of a copy of that scan
+	 * kept in step by hand.
 	 *
-	 * The walk is the same in both places: dolGetModulesDirs() gives the module
-	 * directories, each mod*.class.php names a module, getModuleDirForApiClass()
-	 * maps it to the directory holding its API classes, and every
-	 * api_<key>.class.php there is one endpoint. A few modules are named
-	 * differently in their descriptor and in isModEnabled(); those exceptions are
-	 * copied from api/index.php rather than reinvented, so the two stay in step.
-	 *
-	 * Note the class name is resolved through class_exists(), which is
-	 * case-insensitive in PHP: api_agendaevents.class.php yields the candidate
-	 * "Agendaevents" and still matches the declared AgendaEvents. Reflection is
-	 * then used to recover the real spelling for display.
+	 * What stays here is what is the bridge's own: the key is the file suffix and
+	 * not the class name, because it is the tool name the model sees; the framework
+	 * endpoints are left out; and the class is still resolved lazily by
+	 * resolveEndpointClass(), which is also where the label is taken from the class
+	 * docblock.
 	 *
 	 * @return array<string, array{module:string, path:string, candidate:string, class:string, label:string}> Endpoints keyed by name
 	 */
 	private function discoverEndpoints(): array
 	{
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/api.lib.php';
+
 		$endpoints = [];
 
-		foreach (dolGetModulesDirs() as $dir) {
-			$handle = @opendir(dol_osencode($dir));
-			if (!is_resource($handle)) {
+		foreach (dolGetApiEndpoints(true, true) as $endpoint) {
+			$regapi = [];
+			$file = basename($endpoint['path']);
+			if (in_array($file, ['api_setup.class.php', 'api_login.class.php', 'api_status.class.php'], true)) {
+				continue;	// Framework plumbing, not business endpoints. api_access is left out by the shared scan.
+			}
+			if (!preg_match("/^api_(.*)\\.class\\.php$/i", $file, $regapi)) {
 				continue;
 			}
 
-			while (($file = readdir($handle)) !== false) {
-				$regmod = [];
-				if (!is_readable($dir.$file) || !preg_match("/^mod(.*)\\.class\\.php$/i", $file, $regmod)) {
-					continue;
-				}
-
-				$module = strtolower($regmod[1]);
-				$moduledirforclass = getModuleDirForApiClass($module);
-
-				// Same descriptor-name to module-name exceptions as api/index.php.
-				$modulenameforenabled = $module;
-				if ($module == 'propale') {
-					$modulenameforenabled = 'propal';
-				} elseif ($module == 'supplierproposal') {
-					$modulenameforenabled = 'supplier_proposal';
-				} elseif ($module == 'ficheinter') {
-					$modulenameforenabled = 'intervention';
-				} elseif ($module == 'product' && !isModEnabled('product') && isModEnabled('service')) {
-					$modulenameforenabled = 'service';
-				}
-
-				if (!isModEnabled($modulenameforenabled)) {
-					continue;	// A disabled module exposes no tools.
-				}
-
-				$dir_part = dol_buildpath('/'.$moduledirforclass.'/class/');
-				$handle_part = @opendir(dol_osencode($dir_part));
-				if (!is_resource($handle_part)) {
-					continue;
-				}
-
-				while (($file_searched = readdir($handle_part)) !== false) {
-					if (in_array($file_searched, ['api_access.class.php', 'api_setup.class.php', 'api_login.class.php', 'api_status.class.php'], true)) {
-						continue;	// Framework plumbing, not business endpoints.
-					}
-					$regapi = [];
-					if (!is_readable($dir_part.$file_searched) || !preg_match("/^api_(.*)\\.class\\.php$/i", $file_searched, $regapi)) {
-						continue;
-					}
-
-					$key = strtolower($regapi[1]);
-					if (isset($endpoints[$key])) {
-						continue;	// First module wins, as in the REST layer.
-					}
-
-					$endpoints[$key] = [
-						'module' => $modulenameforenabled,
-						'path' => $dir_part.$file_searched,
-						'candidate' => str_replace('_', '', ucwords($regapi[1])),
-						'class' => '',	// resolved lazily by resolveEndpointClass()
-						'label' => $this->enrichments[$key]['label'] ?? $key,
-					];
-				}
-				closedir($handle_part);
+			$key = strtolower($regapi[1]);
+			if (isset($endpoints[$key])) {
+				continue;	// First module wins, as in the REST layer.
 			}
-			closedir($handle);
-		}
 
-		ksort($endpoints);
+			$endpoints[$key] = [
+				// The name isModEnabled() answers to, which is not always the name of the
+				// module directory: see dolGetModuleNameForEnabled().
+				'module' => dolGetModuleNameForEnabled($endpoint['module']),
+				'path' => $endpoint['path'],
+				'candidate' => str_replace('_', '', ucwords($regapi[1])),
+				'class' => '',	// resolved lazily by resolveEndpointClass()
+				'label' => $this->enrichments[$key]['label'] ?? $key,
+			];
+		}
 
 		return $endpoints;
 	}
@@ -3005,11 +3192,186 @@ class ToolApiBridge extends McpTool
 			}
 		}
 
+		foreach (array_keys(self::MERGED_TOOLS) as $mergedName) {
+			$this->mergeTools($mergedName);
+		}
+
+		// Alphabetical order of the tool names (merged tools are appended at the end by mergeTools()).
+		$toolnames = array_map('strval', array_column($this->defs, 'name'));
+		array_multisort($toolnames, SORT_STRING, $this->defs);
+
 		if ($cachefile !== '') {
 			$this->writeDefsCache($cachefile);
 		}
 
 		return $this->defs;
+	}
+
+	/**
+	 * Replace every api_<endpoint>_<suffix> definition of a MERGED_TOOLS entry by the
+	 * single generic tool. The routes of the original tools are kept: execute() and
+	 * the write gate dispatch the generic tool to them according to its 'object' argument.
+	 *
+	 * @param  string $mergedName Name of the generic tool, key of MERGED_TOOLS.
+	 * @return void
+	 */
+	private function mergeTools($mergedName)
+	{
+		$mconf = self::MERGED_TOOLS[$mergedName];
+		$viaconf = $mconf['via'] ?? array();
+		$viadef = null;
+		$merged = array();
+		$kept = array();
+		foreach ((array) $this->defs as $def) {
+			$name = (string) ($def['name'] ?? '');
+			if (!empty($viaconf) && $name === $viaconf['tool']) {
+				$viadef = $def;
+			} elseif (isset($this->routes[$name]) && $name === 'api_'.$this->routes[$name][0].'_'.$mconf['suffix']) {
+				$merged[$this->routes[$name][0]] = $def;
+			} else {
+				$kept[] = $def;
+			}
+		}
+
+		// Objects with no tool of their own run the 'via' tool, its 'arg' argument given by 'object'.
+		$viaobjects = array();
+		if ($viadef !== null) {
+			foreach ($viaconf['objects'] as $obj => $typeandmodule) {
+				if (!isset($merged[$obj]) && isModEnabled($typeandmodule[1])) {
+					$viaobjects[] = $obj;
+				}
+			}
+			if (empty($viaobjects)) {
+				$kept[] = $viadef;
+			} else {
+				unset($viadef['inputSchema']['properties'][$viaconf['arg']]);
+				$viadef['inputSchema']['required'] = array_values(array_diff((array) ($viadef['inputSchema']['required'] ?? array()), array($viaconf['arg'])));
+			}
+		}
+		if (empty($merged) && empty($viaobjects)) {
+			return;
+		}
+		$sources = $merged;
+		foreach ($viaobjects as $obj) {
+			$sources[$obj] = $viadef;
+		}
+
+		// Arguments: the union of those of the merged tools, required when required by all.
+		$properties = array('object' => array('type' => 'string', 'enum' => array_keys($sources), 'description' => $mconf['object']));
+		$required = null;
+		$objectsOf = array();
+		$categories = array();
+		$descriptions = array();
+		foreach ($sources as $key => $def) {
+			foreach ((array) ($def['inputSchema']['properties'] ?? array()) as $pname => $pdef) {
+				$objectsOf[$pname][] = $key;
+				if (!isset($properties[$pname])) {
+					$properties[$pname] = $pdef;
+				} elseif (isset($pdef['type']) && isset($properties[$pname]['type']) && $pdef['type'] !== $properties[$pname]['type']) {
+					// Typed differently by the merged tools (a rowid, or a rowid or ref): a string carries both.
+					$properties[$pname]['type'] = 'string';
+				}
+			}
+			$required = ($required === null) ? (array) ($def['inputSchema']['required'] ?? array()) : array_intersect($required, (array) ($def['inputSchema']['required'] ?? array()));
+			$categories = array_merge($categories, (array) ($def['categories'] ?? array()));
+			if (isset($merged[$key])) {
+				$descriptions[] = $key.': '.(string) ($def['description'] ?? '');
+			}
+		}
+		if (!empty($viaobjects)) {
+			$descriptions[] = implode(', ', $viaobjects).': '.$viaconf['description'];
+		}
+		foreach ($mconf['params'] as $pname => $pdesc) {
+			$properties[$pname] = array_merge(array('type' => 'string'), $properties[$pname] ?? array(), array('description' => $pdesc));
+		}
+		// An argument only some objects take says which.
+		foreach ($objectsOf as $pname => $keys) {
+			if (!isset($mconf['params'][$pname]) && count($keys) < count($sources)) {
+				$properties[$pname]['description'] = trim(rtrim((string) ($properties[$pname]['description'] ?? ''), '. ').'. Only for: '.implode(', ', $keys).'.');
+			}
+		}
+
+		$kept[] = array(
+			'name' => $mergedName,
+			'description' => $mconf['description'].' '.implode(' ', $descriptions),
+			'inputSchema' => array('type' => 'object', 'properties' => $properties, 'required' => array_values(array_unique(array_merge(array('object'), (array) $required)))),
+			'categories' => array_values(array_unique($categories))
+		);
+		$this->defs = $kept;
+	}
+
+	/**
+	 * Original tool a generic tool of MERGED_TOOLS runs, from its 'object' argument.
+	 *
+	 * @param  string              $name Tool name.
+	 * @param  array<string,mixed> $args Tool arguments.
+	 * @return string|null                Original tool name, '' when 'object' names none, null when not a generic tool.
+	 */
+	private function mergedToolTarget($name, array $args)
+	{
+		if (!isset(self::MERGED_TOOLS[$name])) {
+			return null;
+		}
+		$this->getDefinitions();	// ensure routes are built
+		$object = (string) ($args['object'] ?? '');
+		$target = 'api_'.$object.'_'.self::MERGED_TOOLS[$name]['suffix'];
+		if (!preg_match('/^[a-z0-9_]+$/', $object)) {
+			return '';
+		}
+		if (empty($this->routes[$target])) {
+			// No tool of its own: the 'via' tool, when it serves this object.
+			$via = self::MERGED_TOOLS[$name]['via'] ?? array();
+			if (!empty($via['objects'][$object]) && isModEnabled($via['objects'][$object][1]) && !empty($this->routes[$via['tool']])) {
+				return $via['tool'];
+			}
+			return '';
+		}
+
+		return $target;
+	}
+
+	/**
+	 * Whether a generic tool of MERGED_TOOLS writes: its original tools do.
+	 *
+	 * @param  string $name Generic tool name.
+	 * @return bool
+	 */
+	private function mergedToolWrites($name)
+	{
+		foreach (array_keys($this->routes) as $toolName) {
+			if ($toolName === 'api_'.$this->routes[$toolName][0].'_'.self::MERGED_TOOLS[$name]['suffix']) {
+				return !empty($this->writeMetaFor($toolName));
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * The rights an original tool declares, checked when a generic tool runs it:
+	 * the generic tool itself declares none since they depend on the object.
+	 *
+	 * @param  string $target Original tool name.
+	 * @return string         Error message, or '' when the user holds the rights.
+	 */
+	private function mergedToolRightsRefusal($target)
+	{
+		global $langs;
+
+		$declared = $this->getRequiredRights($target);
+		if (!is_array($declared)) {
+			return '';
+		}
+		foreach ($declared as $right) {
+			$right = array_values((array) $right);
+			if (empty($right[0]) || !$this->user->hasRight($right[0], $right[1] ?? '', $right[2] ?? '')) {
+				$langs->load('errors');
+
+				return $langs->transnoentitiesnoconv('NotEnoughPermissions');
+			}
+		}
+
+		return '';
 	}
 
 	/**
@@ -3197,6 +3559,9 @@ class ToolApiBridge extends McpTool
 			// unsupported IN, the datec/tms column names), so there the common doc
 			// is APPENDED to the docblock description instead of being shadowed.
 			$commondesc = (string) ($this->commonParamDocs[$pname] ?? '');
+			if ($pname === 'sortfield' && in_array($method, self::DATE_CREATION_LISTS[$key] ?? array(), true)) {
+				$commondesc = "Field to sort on, prefixed with 't.' (e.g. 't.rowid', 't.date_creation'). Use the SQL column names: here the creation date is 't.date_creation' (NEVER 't.datec', it does not exist on this table, also in sqlfilters) and last modification 't.tms' (never 'date_modification').";
+			}
 			if (isset($meta['params'][$pname])) {
 				$pdesc = $meta['params'][$pname];
 			} elseif (!empty($paramDocs[$pname]['desc'])) {
@@ -3271,6 +3636,36 @@ class ToolApiBridge extends McpTool
 			}
 			foreach ((array) ($meta['write']['required'] ?? array()) as $pname) {
 				$required[] = $pname;
+			}
+		}
+
+		// One tool for a get by rowid or by another key ('get_by' maps an argument
+		// such as ref or email to the API method used when no id is given): id
+		// becomes optional and the parameters of that method are added (all
+		// optional, the API method checks them). A method without id (a statistic) gets the parameters too.
+		foreach ((array) ($meta['get_by'] ?? array()) as $byarg => $bymethod) {
+			if (method_exists($ep['class'], (string) $bymethod)) {
+				if (isset($properties['id'])) {
+					$properties['id']['default'] = 0;
+					$required = array_values(array_diff($required, array('id')));
+				}
+				$byrm = new ReflectionMethod($ep['class'], (string) $bymethod);
+				$bydoc = (string) $byrm->getDocComment();
+				foreach ($byrm->getParameters() as $byp) {
+					$bypname = $byp->getName();
+					if (isset($properties[$bypname])) {
+						continue;
+					}
+					$bytype = preg_match('/@param\s+(\S+)\s+\$'.$bypname.'\b/', $bydoc, $bym) ? $this->docTypeToJson($bym[1]) : 'string';
+					$properties[$bypname] = ['type' => $bytype, 'description' => (string) ($meta['params'][$bypname] ?? "Exact ".$bypname.", alternative to id.")];
+				}
+			}
+		}
+
+		// Defaults of the bridge replacing the API ones (also for the parameters of a 'get_by' method).
+		foreach ((array) ($meta['param_defaults'] ?? array()) as $pname => $pvalue) {
+			if (isset($properties[$pname])) {
+				$properties[$pname]['default'] = $pvalue;
 			}
 		}
 
@@ -3469,6 +3864,11 @@ class ToolApiBridge extends McpTool
 	 */
 	public function getRequiredRights(string $toolName)
 	{
+		// A generic tool: the rights of the original tool it runs are checked then.
+		if (isset(self::MERGED_TOOLS[$toolName])) {
+			return self::RIGHTS_ENFORCED_DOWNSTREAM;
+		}
+
 		// A write declares its right here as well as relying on the REST class,
 		// so the call is refused before the gate issues a confirmation: no
 		// preview for a write the user could never perform.
@@ -4241,11 +4641,11 @@ class ToolApiBridge extends McpTool
 					$warehouses[$wid] = ($warehouse->fetch($wid) > 0) ? $warehouse->ref : '#'.$wid;
 				}
 				if ($wid > 0) {
-					$text .= ' '.$langs->trans('AIPreviewIntoWarehouse', $warehouses[$wid]);
+					$text .= ' '.$langs->transnoentitiesnoconv('AIPreviewIntoWarehouse', $warehouses[$wid]);
 				}
-				$text .= (isset($line['cost_price']) && (float) $line['cost_price'] > 0) ? ' @ '.price($line['cost_price']) : ' ('.$langs->trans('AIPreviewNoCostPrice').')';
+				$text .= (isset($line['cost_price']) && (float) $line['cost_price'] > 0) ? ' @ '.price($line['cost_price']) : ' ('.$langs->transnoentitiesnoconv('AIPreviewNoCostPrice').')';
 				if (!empty($line['batch'])) {
-					$text .= ', '.$langs->trans('Batch').' '.$line['batch'];
+					$text .= ', '.$langs->transnoentitiesnoconv('Batch').' '.$line['batch'];
 				}
 			}
 			$out[] = $text;
@@ -4299,6 +4699,17 @@ class ToolApiBridge extends McpTool
 
 		$langs->load("other");
 
+		// A generic tool: the preview of the original tool it runs.
+		$target = $this->mergedToolTarget($toolName, $args);
+		if ($target !== null) {
+			if ($target === '') {
+				return $this->mergedToolWrites($toolName) ? "Unknown or missing value for 'object'." : McpTool::NO_WRITE;
+			}
+			unset($args['object']);
+
+			return $this->writeConfirmationPreview($target, $args);
+		}
+
 		$write = $this->writeMetaFor($toolName);
 		if (empty($write)) {
 			return McpTool::NO_WRITE;
@@ -4308,7 +4719,7 @@ class ToolApiBridge extends McpTool
 			try {
 				$args = $this->normaliseWriteArgs($args, $write);
 			} catch (InvalidArgumentException $e) {
-				return $e->getMessage();
+				return dol_escape_htmltag($e->getMessage());
 			}
 			$parent = $this->fetchWriteParent($write, $args);
 			if (!$parent) {
@@ -4326,7 +4737,7 @@ class ToolApiBridge extends McpTool
 			foreach ($write['update'] as $field => $definition) {
 				if (array_key_exists($field, $args)) {
 					$old = $parent->$field ?? null;
-					$label = isset($write['preview_labels'][$field]) ? $langs->trans($write['preview_labels'][$field]) : $field;
+					$label = isset($write['preview_labels'][$field]) ? $langs->transnoentitiesnoconv($write['preview_labels'][$field]) : $field;
 					if (is_array($args[$field])) {
 						foreach ($args[$field] as $key => $value) {
 							$changes[] = $label.'.'.$key.': '.json_encode($old[$key] ?? null, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES).' → '.json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -4346,7 +4757,7 @@ class ToolApiBridge extends McpTool
 					}
 				}
 			}
-			return $langs->trans($write['preview'], $parent->ref, (string) $context, implode('; ', $changes));
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $parent->ref, (string) $context, implode('; ', $changes)));
 		}
 
 		$args = $this->normaliseWriteArgs($args, $write);
@@ -4368,7 +4779,7 @@ class ToolApiBridge extends McpTool
 			$qty = (float) ($args['qty'] ?? 1);
 			$total = $qty * (float) ($args['subprice'] ?? 0) * (1 - (float) ($args['remise_percent'] ?? 0) / 100);
 
-			return $langs->trans($write['preview'], (string) $qty, dol_trunc($what, 60), ($parent ? $parent->ref : ''), price(price2num($total, 'MT')));
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], (string) $qty, dol_trunc($what, 60), ($parent ? $parent->ref : ''), price(price2num($total, 'MT'))));
 		}
 
 		// A single record (third party, product, category, ticket) has no lines:
@@ -4392,7 +4803,7 @@ class ToolApiBridge extends McpTool
 				$extra[] = $argname.'='.dol_trunc($this->previewValue($write, $argname, $argvalue, $args), 40);
 			}
 			$values[] = empty($extra) ? '' : ' ('.implode(', ', $extra).')';
-			return $langs->trans($write['preview'], ...$values);
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], ...$values));
 		}
 
 		$who = '';
@@ -4401,7 +4812,7 @@ class ToolApiBridge extends McpTool
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 			$soc = new Societe($this->db);
 			if ($soc->fetch($socid) > 0) {
-				$who = ' '.$langs->trans("AIPreviewForThirdparty", $soc->name);
+				$who = ' '.$langs->transnoentitiesnoconv("AIPreviewForThirdparty", $soc->name);
 			}
 		}
 
@@ -4417,18 +4828,18 @@ class ToolApiBridge extends McpTool
 			$priced = true;
 			$total += ((float) ($line['qty'] ?? 1)) * ((float) $unitprice);
 		}
-		$what = $langs->trans(count($lines) === 1 ? "AIPreviewLine" : "AIPreviewLines", (string) count($lines));
+		$what = $langs->transnoentitiesnoconv(count($lines) === 1 ? "AIPreviewLine" : "AIPreviewLines", (string) count($lines));
 		if ($priced) {
 			$what .= ', '.price($total);
 		} elseif (($write['kind'] ?? '') !== 'shipment') {
-			$what .= ', '.$langs->trans("AIPreviewFromCatalogue");	// a shipment line carries no price at all
+			$what .= ', '.$langs->transnoentitiesnoconv("AIPreviewFromCatalogue");	// a shipment line carries no price at all
 		}
 		if (($write['kind'] ?? '') !== '' && $lines) {
 			// Goods are confirmed line by line: what, how many, and where they go.
 			$what .= ': '.$this->previewLogisticLines($lines, (string) $write['kind']);
 		}
 
-		return $langs->trans($write['preview'], $who, $what);
+		return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $who, $what));
 	}
 
 	/**
@@ -4505,6 +4916,39 @@ class ToolApiBridge extends McpTool
 	 * @return string                       Error message, or '' to proceed.
 	 */
 	public function writePrecheck(string $toolName, array $args)
+	{
+		// A generic tool: the checks of the original tool it runs, and its rights.
+		$target = $this->mergedToolTarget($toolName, $args);
+		if ($target !== null) {
+			if ($target === '') {
+				return $this->mergedToolWrites($toolName) ? "Unknown or missing value for 'object'." : '';
+			}
+			$refused = $this->mergedToolRightsRefusal($target);
+			if ($refused !== '') {
+				return $refused;
+			}
+			unset($args['object']);
+
+			return $this->writePrecheck($target, $args);
+		}
+
+		// The checks of core first, then the ones of the modules.
+		$refused = $this->precheckWrite($toolName, $args);
+		if ($refused !== '') {
+			return $refused;
+		}
+
+		return $this->precheckByModules($toolName, $args);
+	}
+
+	/**
+	 * The checks of writePrecheck() core makes itself.
+	 *
+	 * @param  string             $toolName Tool being called.
+	 * @param  array<string,mixed> $args    Arguments as received.
+	 * @return string                       Error message, or '' to proceed.
+	 */
+	private function precheckWrite(string $toolName, array $args)
 	{
 		global $langs, $user;
 
@@ -4653,6 +5097,117 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Let the modules refuse a write before the user is asked to approve it,
+	 * the way their doActions hook refuses the same record on the card: hook
+	 * 'checkMcpApiBridgeWrite' of the 'aimcp' context. The hook receives the
+	 * record as it will be after the write (a new, unsaved one for a create),
+	 * and in $parameters:
+	 * - 'tool': name of the tool;
+	 * - 'operation': 'create', 'addline', 'update', 'action', 'delete',
+	 *   'payment' or 'line';
+	 * - 'class': business class of the record;
+	 * - 'args': the arguments the write will be made with.
+	 * It returns a negative value, with its message in ->error or ->errors,
+	 * to refuse: the message is what the user reads, and nothing is written.
+	 *
+	 * @param  string             $toolName Tool being called.
+	 * @param  array<string,mixed> $args    Arguments as received.
+	 * @return string                       Message of the module that refuses, or '' to proceed.
+	 */
+	private function precheckByModules(string $toolName, array $args)
+	{
+		global $hookmanager, $langs;
+
+		$write = $this->writeMetaFor($toolName);
+		if (empty($write) || empty($this->db)) {
+			return '';
+		}
+		if (!is_object($hookmanager)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager = new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('aimcp'));
+		if (empty($hookmanager->hooks['aimcp'])) {
+			return '';	// no module listens: the arguments are not prepared twice for nothing
+		}
+		$args = $this->applyFixedParams($toolName, $args);
+		try {
+			$args = $this->normaliseWriteArgs($args, $write);
+		} catch (InvalidArgumentException $e) {
+			return $e->getMessage();
+		}
+		foreach (array_keys($args) as $name) {
+			if ($name === 'requestState' || substr((string) $name, 0, 1) === '_') {
+				unset($args[$name]);
+			}
+		}
+
+		$class = (string) ($write['object'] ?? '');
+		$kind = (string) ($write['kind'] ?? '');
+		$object = null;
+		if (!empty($write['update']) || $kind === 'update') {
+			$operation = 'update';
+			$current = !empty($write['update']) ? $this->fetchWriteParent($write, $args) : $this->writeTarget;
+			if ($current instanceof CommonObject) {
+				// The record as the write leaves it.
+				$object = clone $current;
+				$changes = !empty($write['update']) ? array_intersect_key($args, $write['update']) : array_intersect_key($args, array_flip((array) ($write['fields'] ?? array())));
+				$this->applyWriteFields($object, $changes);
+			}
+		} elseif (in_array($kind, array('action', 'delete', 'payment', 'line'), true)) {
+			$operation = $kind;
+			$object = $this->writeTarget;
+		} elseif (!empty($write['parent'])) {
+			$operation = 'addline';
+			$object = $this->fetchWriteParent($write, $args);
+		} else {
+			$operation = 'create';
+			$object = ($class !== '') ? $this->newWriteObject($class) : null;
+			if ($object instanceof CommonObject) {
+				$this->applyWriteFields($object, $args);
+			}
+		}
+
+		// The hook manager keeps the errors of every hook run before: only the
+		// ones this run adds are the refusal. ->error is set by the run that fails.
+		$knownErrors = count($hookmanager->errors);
+		$parameters = array('tool' => $toolName, 'operation' => $operation, 'class' => $class, 'args' => $args);
+		$action = $operation;
+		$reshook = $hookmanager->executeHooks('checkMcpApiBridgeWrite', $parameters, $object, $action);
+		if ($reshook >= 0) {
+			return '';
+		}
+		$newErrors = array_slice($hookmanager->errors, $knownErrors);
+		$message = trim($hookmanager->error.' '.implode(' ', array_filter($newErrors)));
+		dol_syslog(get_class($this).'::precheckByModules '.$toolName.' refused by a module: '.$message, LOG_INFO);
+		if ($message === '') {
+			$langs->load('other');
+			$message = $langs->transnoentitiesnoconv('AIWriteRefusedByModule');
+		}
+
+		return $message;
+	}
+
+	/**
+	 * Copy the fields of a write onto a record, for a module to check it: only
+	 * the properties the class has, the extra fields merged.
+	 *
+	 * @param  CommonObject        $object Record.
+	 * @param  array<string,mixed> $fields Field => value.
+	 * @return void
+	 */
+	private function applyWriteFields($object, array $fields)
+	{
+		foreach ($fields as $field => $value) {
+			if ($field === 'array_options') {
+				$object->array_options = array_merge((array) $object->array_options, (array) $value);
+			} elseif ($field !== 'lines' && property_exists($object, (string) $field)) {
+				$object->$field = $value;
+			}
+		}
+	}
+
+	/**
 	 * References close to one that matched no product, for the user to pick from:
 	 * the supplier's references when the document is a supplier one (the note
 	 * says "33303", the catalogue has "33303-6"), else our own references.
@@ -4723,18 +5278,13 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
-	 * Record of a write on an existing record, by rowid or by ref: the business
-	 * documents of fetchBusinessObject() and the records only these writes use
-	 * (contacts, projects, tasks, interventions, contracts, tickets).
+	 * Files of the business classes the writes name, by class.
 	 *
-	 * @param  string $class Business class declared by the write.
-	 * @param  int    $id    Rowid of the record, 0 to look it up by ref.
-	 * @param  string $ref   Ref of the record, used when no rowid is given.
-	 * @return CommonObject|null Record, or null when it cannot be read.
+	 * @return array<string,string> Class => path under DOL_DOCUMENT_ROOT.
 	 */
-	private function fetchRecord($class, $id, $ref = '')
+	private function recordClassFiles()
 	{
-		$paths = array(
+		return array(
 			'Facture' => '/compta/facture/class/facture.class.php',
 			'Commande' => '/commande/class/commande.class.php',
 			'Propal' => '/comm/propal/class/propal.class.php',
@@ -4752,15 +5302,50 @@ class ToolApiBridge extends McpTool
 			'Reception' => '/reception/class/reception.class.php',
 			'Expedition' => '/expedition/class/expedition.class.php',
 			'WebsitePage' => '/website/class/websitepage.class.php',
-			'Website' => '/website/class/website.class.php'
+			'Website' => '/website/class/website.class.php',
+			'Cronjob' => '/cron/class/cronjob.class.php'
 		);
+	}
+
+	/**
+	 * A new, unsaved record of one of the classes the writes name.
+	 *
+	 * @param  string $class Business class.
+	 * @return CommonObject|null Record, or null for a class the writes do not name.
+	 */
+	private function newWriteObject($class)
+	{
+		$paths = $this->recordClassFiles();
+		if (empty($paths[$class])) {
+			return null;
+		}
+		require_once DOL_DOCUMENT_ROOT.$paths[$class];
+		$obj = new $class($this->db);
+		'@phan-var-force CommonObject $obj';
+
+		return $obj;
+	}
+
+	/**
+	 * Record of a write on an existing record, by rowid or by ref: the business
+	 * documents of fetchBusinessObject() and the records only these writes use
+	 * (contacts, projects, tasks, interventions, contracts, tickets).
+	 *
+	 * @param  string $class Business class declared by the write.
+	 * @param  int    $id    Rowid of the record, 0 to look it up by ref.
+	 * @param  string $ref   Ref of the record, used when no rowid is given.
+	 * @return CommonObject|null Record, or null when it cannot be read.
+	 */
+	private function fetchRecord($class, $id, $ref = '')
+	{
+		$paths = $this->recordClassFiles();
 		$ref = trim((string) $ref);
 		if (empty($paths[$class]) || ((int) $id <= 0 && $ref === '')) {
 			return null;
 		}
 		require_once DOL_DOCUMENT_ROOT.$paths[$class];
 		$obj = new $class($this->db);
-		'@phan-var-force Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Contact|Project|Task|Ticket|Fichinter|Contrat|Reception|Expedition|WebsitePage|Website $obj';
+		'@phan-var-force Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Contact|Project|Task|Ticket|Fichinter|Contrat|Reception|Expedition|WebsitePage|Website|Cronjob $obj';
 		if ((int) $id > 0) {
 			$found = ($obj->fetch((int) $id) > 0);
 		} elseif ($obj instanceof Contact || $obj instanceof Societe) {
@@ -4850,8 +5435,18 @@ class ToolApiBridge extends McpTool
 			'Reception' => array('reception', '', ''),
 			'Expedition' => array('expedition', '', ''),
 			'Contrat' => array('contrat', '', ''),
-			'Fichinter' => array('ficheinter', '', '')
+			'Fichinter' => array('ficheinter', '', ''),
+			'Website' => array('website', '', '')
 		);
+		// A website page has no entity: it is reached through its website, as the REST class checks it.
+		if ($class === 'WebsitePage') {
+			$page = $this->fetchRecord('WebsitePage', (int) $id);
+			if (!($page instanceof WebsitePage)) {
+				return false;
+			}
+			$class = 'Website';
+			$id = (int) $page->fk_website;
+		}
 		if (!isset($map[$class])) {
 			return true;
 		}
@@ -5167,11 +5762,24 @@ class ToolApiBridge extends McpTool
 		$this->writeTarget = $this->resolveWriteTarget($write, $given);
 		$out = array($field => ($this->writeTarget ? (int) $this->writeTarget->id : $given));
 
+		// Arguments read from the target record (the website of a page): a different value given is refused.
+		$targetparent = (array) ($write['target_parent'] ?? array());
+		foreach ($targetparent as $name => $property) {
+			if (!$this->writeTarget) {
+				continue;
+			}
+			$out[$name] = (int) $this->writeTarget->$property;
+			if (isset($args[$name]) && $args[$name] !== '' && (int) $args[$name] !== $out[$name]) {
+				$langs->load('other');
+				$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteRecordNotFound', (string) ($write['label'] ?? $write['object']), (string) $given.' ('.$name.' '.$args[$name].')');
+			}
+		}
+
 		if ($kind === 'update') {
 			$aliases = array('nom' => 'name', 'company' => 'name', 'mail' => 'email', 'tel' => 'phone', 'telephone' => 'phone', 'mobile' => 'phone_mobile', 'job' => 'poste', 'libelle' => 'label', 'title' => 'label');
 			$this->writeRefusedFields = array();
 			foreach ($args as $name => $value) {
-				if (in_array($name, array($field, 'ref', 'requestState'), true) || substr((string) $name, 0, 1) === '_') {
+				if (in_array($name, array($field, 'ref', 'requestState'), true) || isset($targetparent[$name]) || substr((string) $name, 0, 1) === '_') {
 					continue;
 				}
 				if (isset($aliases[$name]) && in_array($aliases[$name], $write['fields'], true) && !isset($args[$aliases[$name]])) {
@@ -5540,10 +6148,10 @@ class ToolApiBridge extends McpTool
 				$changes[] = $name.' "'.dol_trunc($old, 40).'" → "'.dol_trunc((string) $args[$name], 40).'"';
 			}
 
-			return $langs->trans($write['preview'], $write['label'], $what, implode(', ', $changes));
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $write['label'], $what, implode(', ', $changes)));
 		}
 		if ($kind === 'delete') {
-			return $langs->trans($write['preview'], $write['label'], $what);
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $write['label'], $what));
 		}
 		if ($kind === 'line') {
 			return $this->previewLineWrite($write, $what);
@@ -5562,21 +6170,21 @@ class ToolApiBridge extends McpTool
 
 			$how = $langs->transnoentitiesnoconv('AIPreviewPaymentHow', ($code !== '' ? $langs->transnoentitiesnoconv('PaymentType'.$code) : ''), $account, dol_print_date(dol_stringtotime((string) $args['datepaye']), 'day'));
 
-			return $langs->trans($write['preview'], price((float) ($args['_amount'] ?? 0)), $what, $how);
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], price((float) ($args['_amount'] ?? 0)), $what, $how));
 		}
 
 		// Other actions: who the record goes to, or the other way to end it.
 		if (array_key_exists('fk_user_assign', $args) && !empty($write['preview_unassign'])) {
 			if ((int) $args['fk_user_assign'] <= 0) {
-				return $langs->trans($write['preview_unassign'], $what);
+				return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview_unassign'], $what));
 			}
 			$assignee = new User($this->db);
 			$name = ($assignee->fetch((int) $args['fk_user_assign']) > 0) ? $assignee->getFullName($langs) : (string) $args['fk_user_assign'];
 
-			return $langs->trans($write['preview'], $what, $name);
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $what, $name));
 		}
 		if (!empty($args['cancel']) && !empty($write['preview_cancel'])) {
-			return $langs->trans($write['preview_cancel'], $what);
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview_cancel'], $what));
 		}
 
 		// Validation: the warehouse is said when the stock moves.
@@ -5584,11 +6192,11 @@ class ToolApiBridge extends McpTool
 			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 			$wh = new Entrepot($this->db);
 			if ($wh->fetch((int) $args['idwarehouse']) > 0) {
-				$what .= ', '.$langs->trans('AIPreviewStockFrom', (string) $wh->ref);
+				$what .= ', '.$langs->transnoentitiesnoconv('AIPreviewStockFrom', (string) $wh->ref);
 			}
 		}
 
-		return $langs->trans($write['preview'], $what);
+		return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $what));
 	}
 
 	/**
@@ -5639,12 +6247,12 @@ class ToolApiBridge extends McpTool
 		}
 
 		if ($write['line_action'] === 'add') {
-			return $langs->trans($write['preview'], $what, implode(', ', $text));
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $what, implode(', ', $text)));
 		}
 		$name = $line ? dol_trunc($this->lineName($line), 60) : '';
 		if ($write['line_action'] === 'delete') {
 			$amount = ($line && isset($line->total_ht)) ? ', '.price((float) $line->total_ht) : '';
-			return $langs->trans($write['preview'], $position, $what, $name.(isset($line->qty) ? ' x '.((float) $line->qty) : '').$amount);
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $position, $what, $name.(isset($line->qty) ? ' x '.((float) $line->qty) : '').$amount));
 		}
 		// The new total of the line, as core will compute it before taxes.
 		if ($line && (array_key_exists('qty', $changes) || array_key_exists('subprice', $changes) || array_key_exists('remise_percent', $changes))) {
@@ -5654,7 +6262,7 @@ class ToolApiBridge extends McpTool
 			$text[] = $langs->transnoentitiesnoconv('TotalHT').' '.price((float) ($line->total_ht ?? 0)).' → '.price(price2num($qty * $pu * (1 - $rem / 100), 'MT'));
 		}
 
-		return $langs->trans($write['preview'], $position, $what, $name, implode(', ', $text));
+		return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $position, $what, $name, implode(', ', $text)));
 	}
 
 	/**
@@ -5703,7 +6311,7 @@ class ToolApiBridge extends McpTool
 			if (!empty($this->writeRefusedFields)) {
 				return $langs->transnoentitiesnoconv('AIWriteFieldsNotAllowed', implode(', ', $this->writeRefusedFields), implode(', ', (array) $write['fields']));
 			}
-			if (count($args) < 2) {
+			if (!array_intersect_key($args, array_flip((array) $write['fields']))) {
 				return $langs->transnoentitiesnoconv('AIWriteNothingToChange');
 			}
 
@@ -6054,6 +6662,26 @@ class ToolApiBridge extends McpTool
 	 */
 	public function execute(string $name, array $args)
 	{
+		// A generic tool runs the original tool of the object it names.
+		$target = $this->mergedToolTarget($name, $args);
+		if ($target !== null) {
+			if ($target === '') {
+				return ['error' => "Unknown or missing value for 'object'."];
+			}
+			$refused = $this->mergedToolRightsRefusal($target);
+			if ($refused !== '') {
+				return ['error' => $refused, 'http_status' => 403];
+			}
+			// The 'via' tool gets its argument (e.g. the category type) from 'object'.
+			$via = self::MERGED_TOOLS[$name]['via'] ?? array();
+			if (!empty($via) && $target === $via['tool']) {
+				$args[$via['arg']] = $via['objects'][(string) $args['object']][0];
+			}
+			unset($args['object']);
+
+			return $this->execute($target, $args);
+		}
+
 		$args = $this->applyFixedParams($name, $args);
 
 		// A model may send the record as a request_data body, or name line fields
@@ -6100,8 +6728,21 @@ class ToolApiBridge extends McpTool
 		// caller did not choose, the default applies; an explicit 'properties'
 		// from the model always wins.
 		$methodmeta = isset($this->enrichments[$key]['methods'][$method]) ? $this->enrichments[$key]['methods'][$method] : array();
+		// A get by rowid or by another key: no id but a ref (or email...) calls the matching method of the API.
+		foreach ((array) ($methodmeta['get_by'] ?? array()) as $byarg => $bymethod) {
+			if (empty($args['id']) && (string) ($args[$byarg] ?? '') !== '') {
+				$method = (string) $bymethod;
+				unset($args['id']);
+				break;
+			}
+		}
 		if (!empty($methodmeta['default_properties']) && !array_key_exists('properties', $args)) {
 			$args['properties'] = $methodmeta['default_properties'];
+		}
+		foreach ((array) ($methodmeta['param_defaults'] ?? array()) as $pname => $pvalue) {
+			if (!array_key_exists($pname, $args)) {
+				$args[$pname] = $pvalue;
+			}
 		}
 
 		// --- Authentication bridge (in-process replacement of DolibarrApiAccess::__isAllowed) ---
@@ -6289,6 +6930,13 @@ class ToolApiBridge extends McpTool
 					dol_syslog(get_class($this).'::execute '.$name.' '.$message, LOG_WARNING);
 					$langs->load('other');
 					$message = $langs->transnoentitiesnoconv('AIBadSearchFilter');
+				} elseif (in_array($code, array(401, 403, 404), true)) {
+					// The API answers in English ("Workstation not found"): show the
+					// user a message in their language, the API wording goes to the log.
+					global $langs;
+					dol_syslog(get_class($this).'::execute '.$name.' '.$message, LOG_DEBUG);
+					$langs->loadLangs(array('main', 'errors'));
+					$message = $langs->transnoentitiesnoconv($code == 404 ? 'ErrorRecordNotFound' : 'NotEnoughPermissions');
 				}
 				$output = [
 					"error" => $message,
@@ -6343,6 +6991,9 @@ class ToolApiBridge extends McpTool
 	public function toolRoute(string $name)
 	{
 		$this->getDefinitions();
+		if (isset(self::MERGED_TOOLS[$name])) {
+			return array('endpoint' => 'objects', 'method' => self::MERGED_TOOLS[$name]['method'], 'suffix' => self::MERGED_TOOLS[$name]['suffix'], 'label' => 'objects');
+		}
 		if (empty($this->routes[$name])) {
 			return null;
 		}
