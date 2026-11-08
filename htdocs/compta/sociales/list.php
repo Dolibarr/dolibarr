@@ -232,8 +232,8 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (cs.fk_user = u.rowid)";
 $sql .= " WHERE cs.fk_type = c.id";
 $sql .= " AND cs.entity = ".((int) $conf->entity);
 // Search criteria
-if ($search_ref) {
-	$sql .= " AND cs.ref = '".$db->escape($search_ref)."'";
+if ($search_ref != '') {
+	$sql .= natural_search('cs.rowid', $search_ref, 1);
 }
 if ($search_label) {
 	$sql .= natural_search("cs.libelle", $search_label);

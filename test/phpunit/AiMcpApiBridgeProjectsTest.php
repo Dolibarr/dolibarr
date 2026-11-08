@@ -39,8 +39,9 @@ class AiMcpApiBridgeProjectsTest extends CommonClassTest
 		$endpoints = $property->getValue($bridge);
 
 		$this->assertArrayHasKey('projects', $endpoints);
-		$this->assertArrayNotHasKey('project', $endpoints);
-		$this->assertSame(array('index', 'get', 'put', 'getContacts', 'getTimespent', 'listTimespent', 'post'), array_keys($endpoints['projects']['methods']));
+		// The 'project' group only names the api_project_tasks_timespent_create tool: it calls the tasks endpoint
+		$this->assertSame('tasks', $endpoints['project']['endpoint']);
+		$this->assertSame(array('index', 'get', 'put', 'getContacts', 'post'), array_keys($endpoints['projects']['methods']));
 		$this->assertSame(array('project'), ToolApiBridge::ENDPOINT_CATEGORIES['projects']);
 	}
 

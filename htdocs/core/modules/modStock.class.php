@@ -90,6 +90,13 @@ class modStock extends DolibarrModules
 				0,
 			],
 			[
+				"INVENTORY_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/inventories",
+				"",
+				0,
+			],
+			[
 				"MOUVEMENT_ADDON_PDF",
 				"chaine",
 				"standard_movement_stock",

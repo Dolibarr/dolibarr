@@ -24,7 +24,7 @@ permissions: {}
 
 jobs:
   check-pr:
-    name: Check PR title and description syntax
+    name: Check PR title, description and branch
     if: github.event.pull_request.draft != true
     runs-on: ubuntu-latest
     permissions:

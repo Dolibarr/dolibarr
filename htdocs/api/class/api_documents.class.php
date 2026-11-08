@@ -85,6 +85,10 @@ class Documents extends DolibarrApi
 		if ($modulepart == 'task' || $modulepart == 'project_task') {
 			$modulepart = 'project_task';
 		}
+		// 'agenda' uses the generic case of dol_check_secure_access_document() that only allows admins. Other users need the agenda permissions of 'actions'.
+		if ($modulepart == 'agenda' && empty(DolibarrApiAccess::$user->admin)) {
+			$modulepart = 'actions';
+		}
 
 		//--- Finds and returns the document
 		$entity = $conf->entity;
@@ -444,7 +448,7 @@ class Documents extends DolibarrApi
 	 * List all documents of an element
 	 *
 	 * Use element ID or Ref.
-	 * Supported modules: thirdparty, user, member, proposal, order, supplier_order, shipment, invoice, supplier_invoice, product, event, expensereport, knowledgemanagement, category, contract, project, project_task
+	 * Supported modules: thirdparty, user, member, proposal, order, supplier_order, shipment, invoice, supplier_invoice, product, event, expensereport, knowledgemanagement, category, contract, project, project_task, intervention, stock
 	 *
 	 * @since	7.0.0	Initial implementation
 	 *
@@ -481,9 +485,26 @@ class Documents extends DolibarrApi
 
 		$id = (empty($id) ? 0 : $id);
 
-		if ($modulepart == 'facture_fournisseur') {
-			$modulepart = 'supplier_invoice';	// Alias unknown by fetchObjectByElement()
-		}
+		// Aliases unknown by fetchObjectByElement() or by the check of permission on module below
+		$modulepartaliases = array(
+			'agenda' => 'action',
+			'event' => 'action',
+			'company' => 'societe',
+			'thirdparty' => 'societe',
+			'entrepot' => 'stock',
+			'facture_fournisseur' => 'supplier_invoice',
+			'invoice_supplier' => 'supplier_invoice',
+			'fichinter' => 'ficheinter',
+			'intervention' => 'ficheinter',
+			'order_supplier' => 'supplier_order',
+			'produit' => 'product',
+			'propale' => 'propal',
+			'proposal' => 'propal',
+			'shipping' => 'shipment',
+			'socpeople' => 'contact',
+			'task' => 'project_task',
+		);
+		$modulepart = $modulepartaliases[$modulepart] ?? $modulepart;
 
 		// Define $object
 		$object = fetchObjectByElement($id, $modulepart, $ref);		// Note that we don't mind id and ref, we want to get a valid instantiated $object but not necessarily initialized
@@ -495,12 +516,25 @@ class Documents extends DolibarrApi
 		if ($object->element == 'invoice_supplier' && $object->id > 0) {
 			// Supplier invoices are stored under a hashed subdir, as in the other methods of this file
 			$upload_dir = getMultidirOutput($object).'/'.get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').dol_sanitizeFileName($object->ref);
+		} elseif ($object->element == 'mo') {
+			// The element of a manufacturing order is 'mo' but its module is 'mrp', as in mrp/mo_document.php
+			$upload_dir = (string) getMultidirOutput($object, 'mrp', 1);
+		} elseif ($object->element == 'contact' && $object->id > 0) {
+			// Contacts are stored into a subdir of the module of third parties, as in contact/document.php
+			$upload_dir = getMultidirOutput($object, 'societe').'/contact/'.dol_sanitizeFileName($object->ref);
 		} else {
 			$upload_dir = (string) getMultidirOutput($object, '', 1);
 		}
 
 		// Check object-level permissions
-		$ok = checkUserAccessToObject(DolibarrApiAccess::$user, array($object->element), $object, $object->table_element, '');
+		$feature = $object->element;
+		$dbt_select = 'rowid';
+		if ($object->element == 'action') {
+			// The check on owner and attendees of an event is done on feature 'agenda' only, and the primary key of its table is id
+			$feature = 'agenda';
+			$dbt_select = 'id';
+		}
+		$ok = checkUserAccessToObject(DolibarrApiAccess::$user, array($feature), $object, $object->table_element, '', 'fk_soc', $dbt_select);
 		if (empty($ok)) {
 			throw new RestException(403, 'Access not allowed to this object (refused by checkUserAccessToObject)');
 		}
@@ -512,7 +546,7 @@ class Documents extends DolibarrApi
 			}
 		} elseif ($modulepart == 'user') {
 			// Can get doc if has permission to read all user or if it is user itself
-			if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && DolibarrApiAccess::$user->id != $id) {
+			if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && DolibarrApiAccess::$user->id != $object->id) {
 				throw new RestException(403);
 			}
 		} elseif ($modulepart == 'adherent' || $modulepart == 'member') {
@@ -958,7 +992,8 @@ class Documents extends DolibarrApi
 				require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 				$object = new Propal($this->db);
 			} elseif ($modulepart == 'agenda' || $modulepart == 'action' || $modulepart == 'event') {
-				$modulepart = 'agenda';
+				// 'agenda' uses the generic case of dol_check_secure_access_document() that only allows admins. Other users need the agenda permissions of 'actions'.
+				$modulepart = (empty(DolibarrApiAccess::$user->admin) ? 'actions' : 'agenda');
 				require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
 				$object = new ActionComm($this->db);
 			} elseif ($modulepart == 'contact' || $modulepart == 'socpeople') {
@@ -1056,6 +1091,10 @@ class Documents extends DolibarrApi
 			}
 			if ($modulepart == 'member') {
 				$modulepart = 'adherent';
+			}
+			// 'agenda' uses the generic case of dol_check_secure_access_document() that only allows admins. Other users need the agenda permissions of 'actions'.
+			if ($modulepart == 'agenda' && empty(DolibarrApiAccess::$user->admin)) {
+				$modulepart = 'actions';
 			}
 
 			// Test on permissions
@@ -1252,6 +1291,10 @@ class Documents extends DolibarrApi
 		// Normalize modulepart for project_task
 		if ($modulepart == 'task') {
 			$modulepart = 'project_task';
+		}
+		// 'agenda' uses the generic case of dol_check_secure_access_document() that only allows admins. Other users need the agenda permissions of 'actions'.
+		if ($modulepart == 'agenda' && empty(DolibarrApiAccess::$user->admin)) {
+			$modulepart = 'actions';
 		}
 
 		//--- Finds and returns the document

@@ -368,7 +368,8 @@ class EcmDirectory extends CommonObject
 		$sql .= " t.fk_user_c,";
 		$sql .= " t.fk_user_m,";
 		$sql .= " t.date_creation as date_creation,";
-		$sql .= " t.tms as date_m";
+		$sql .= " t.tms as date_m,";
+		$sql .= " t.extraparams";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ecm_directories as t";
 		$sql .= " WHERE t.rowid = ".((int) $id);
 
@@ -388,6 +389,7 @@ class EcmDirectory extends CommonObject
 				$this->fk_user_c = $obj->fk_user_c;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_m = $this->db->jdate($obj->date_m);
+				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 			}
 
 			// Retrieve all extrafields for ecm_files

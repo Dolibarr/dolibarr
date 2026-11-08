@@ -93,7 +93,7 @@ class Form
 	public $cache_demand_reason = array();
 	/** @var array<string,string> */
 	public $cache_types_fees = array();
-	/** @var array<int,array{rowid:int,type_vat:int,code:string,txtva:string,nprtva:int,localtax1:string|float|null,localtax1_type:string,localtax2:string|float|null,localtax2_type:string,label:string,labelallrates:string,labelpositiverates:string}> */
+	/** @var array<int,array{rowid:int,type_vat:int,code:string,use_default:int,txtva:string,nprtva:int,localtax1:string|float|null,localtax1_type:string,localtax2:string|float|null,localtax2_type:string,label:string,labelallrates:string,labelpositiverates:string}> */
 	public $cache_vatrates = array();
 	/** @var array<int,array{rowid:int,code:string,label:string}> */
 	public $cache_invoice_subtype = array();
@@ -1287,7 +1287,7 @@ class Form
 		}
 
 		// Split into code + number
-		$parsed = dol_parse_phone($fullPhone);
+		$parsed = dol_parse_phone($fullPhone, $this->db);
 
 		// Resolve default phone code: parsed code if set, else from country hint
 		$phonecode = !empty($parsed['code']) ? $parsed['code'] : dol_get_phone_code_from_country($this->db, $country_id_hint);
@@ -1301,12 +1301,16 @@ class Form
 		}
 
 		// Add back trunk prefix for display (e.g. "644986885" → "0644986885" for France)
-		if ($numberValue !== '' && $selectedCode !== '') {
+		// A number still starting with "+" has an unknown country code: never prefix it
+		if ($numberValue !== '' && $selectedCode !== '' && strpos($numberValue, '+') !== 0) {
 			$trunkPrefix = dol_get_trunk_prefix($this->db, $selectedCode);
 			if ($trunkPrefix !== '' && strpos($numberValue, $trunkPrefix) !== 0) {
 				$numberValue = $trunkPrefix.$numberValue;
 			}
 		}
+
+		// Keep digits only, as the visible field only accepts digits (pattern) and the JS keeps only digits on save
+		$numberValue = preg_replace('/[^0-9]/', '', $numberValue);
 
 		// Build output: hidden field (POSTed value)
 		$out = '<input type="hidden" name="'.dol_escape_htmltag($htmlname).'" id="'.dol_escape_htmltag($htmlname).'" value="'.dol_escape_htmltag($fullPhone).'">';
@@ -8424,7 +8428,7 @@ class Form
 
 		// entity and fk_pays are returned so a hook on loadDictionaryCache can tell two rows apart
 		// when the dictionary is read across entities (most rows carry an empty code)
-		$sql = "SELECT t.rowid, t.entity, t.fk_pays, t.type_vat, t.code, t.taux, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.recuperableonly, t.einvoice_vatex";
+		$sql = "SELECT t.rowid, t.entity, t.fk_pays, t.type_vat, t.code, t.use_default, t.taux, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.recuperableonly, t.einvoice_vatex";
 		$sql .= " FROM ".$this->db->prefix()."c_tva as t, ".$this->db->prefix()."c_country as c";
 		$sql .= " WHERE t.fk_pays = c.rowid";
 		$sql .= " AND t.active > 0";
@@ -8445,6 +8449,7 @@ class Form
 					$tmparray['fk_pays']		= (int) $obj->fk_pays;
 					$tmparray['type_vat']		= ($obj->type_vat <= 0 ? 0 : $obj->type_vat);	// Some version have type_vat corrupted with value -1
 					$tmparray['code']			= $obj->code;
+					$tmparray['use_default']	= (int) $obj->use_default;
 					$tmparray['txtva']			= $obj->taux;
 					$tmparray['nprtva']			= $obj->recuperableonly;
 					$tmparray['localtax1']	    = $obj->localtax1;
@@ -8703,6 +8708,18 @@ class Form
 
 			if (!$options_only) {
 				$return .= '<select class="flat valignmiddle minwidth75imp maxwidth100 right" id="' . $htmlname . '" name="' . $htmlname . '"' . ($disabled ? ' disabled' : '') . $title . '>';
+			}
+
+			// When the rate to preselect has no VAT code and several rows have this rate, preselect the default one
+			// (use_default) and not the first one of the list: the VAT code decides the accounting account and the tax
+			// return box of the line, so the default one must be proposed.
+			if (!$defaultcode) {
+				foreach ($arrayofvatrates as $rate) {
+					if ($rate['code'] && !empty($rate['use_default']) && $rate['txtva'] == $defaulttx && $rate['nprtva'] == $defaultnpr) {
+						$defaultcode = $rate['code'];
+						break;
+					}
+				}
 			}
 
 			$selectedfound = false;
@@ -12171,6 +12188,11 @@ class Form
 
 			$navurl = $_SERVER["PHP_SELF"];
 
+			// Keep the popup context (page shown inside a dialog popup iframe) on previous/next links
+			if (GETPOST('dol_openinpopup', 'aZ09') && !preg_match('/[&?]dol_openinpopup=/', $moreparam)) {
+				$moreparam .= '&dol_openinpopup='.urlencode(GETPOST('dol_openinpopup', 'aZ09'));
+			}
+
 			// Special case for token card
 			if ($paramid == 'api_token_card') {
 				if (preg_match('/\/user\/api_token/', $navurl)) {
@@ -14641,7 +14663,12 @@ class Form
 	public function getNomUrl(&$object, $withpicto = 0, $option = '', $maxlength = 0, $save_lastsearch_value = -1, $notooltip = 0, $morecss = '', $add_label = 0, $sep = ' - ')
 	{
 		if (is_object($object) && method_exists($object, 'getNomUrl')) {
-			$out = $object->getNomUrl($withpicto, $option, $maxlength, $save_lastsearch_value, $notooltip, $morecss, $add_label, $sep);
+			if ($object instanceof Categorie) {
+				// The signature of Categorie::getNomUrl() is different: ($withpicto, $option, $maxlength, $moreparam, $notooltip, $morecss, $save_lastsearch_value)
+				$out = $object->getNomUrl($withpicto, $option, $maxlength, '', $notooltip, $morecss, $save_lastsearch_value);
+			} else {
+				$out = $object->getNomUrl($withpicto, $option, $maxlength, $save_lastsearch_value, $notooltip, $morecss, $add_label, $sep);
+			}
 			return $out;
 		} else {
 			return '';

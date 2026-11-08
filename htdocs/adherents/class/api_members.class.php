@@ -1115,6 +1115,25 @@ class Members extends DolibarrApi
 	}
 
 	/**
+	 *  Return the number, total amount and average amount of subscriptions by year
+	 *
+	 * @return array 				Array of statistics by year, most recent year first
+	 * @phan-return array<array{year:string,nb:int,nb_diff?:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>
+	 * @phpstan-return array<array{year:string,nb:int,nb_diff?:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>
+	 *
+	 * @url GET stats/amountbyyear
+	 * @throws	RestException	403		Access denied
+	 */
+	public function getAmountByYear()
+	{
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
+			throw new RestException(403);
+		}
+
+		return $this->memberstats->getAllByYear();
+	}
+
+	/**
 	 * Last Modified Members
 	 *
 	 * Get an array of statistics for last modified members
