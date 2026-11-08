@@ -331,6 +331,19 @@ class ODFTest extends CommonClassTest
 				'charset' => 'UTF-8',
 				'expected' => 'text with <text:span text:style-name="boldText">strong text </text:span>, a line'."\n".'break and <text:span text:style-name="underlineText">underlined</text:span> words with <text:span text:style-name="italicText">it@lic sp&ciàlchärs éè l\'</text:span>',
 			],
+			// A <br> followed by a newline, as stored by the WYSIWYG editor, must give only one line break.
+			34 => [
+				'to_convert' => "<strong>Title</strong><br>\r\nFirst line<br>\r\nSecond line",
+				'encode' => true,
+				'charset' => null,
+				'expected' => '<text:span text:style-name="boldText">Title</text:span><text:line-break/>First line<text:line-break/>Second line',
+			],
+			35 => [
+				'to_convert' => "Break<br />\nline<br>\n<br>\nafter an empty line",
+				'encode' => true,
+				'charset' => null,
+				'expected' => 'Break<text:line-break/>line<text:line-break/><text:line-break/>after an empty line',
+			],
 		];
 
 		$odf = new Odf($filename, array());

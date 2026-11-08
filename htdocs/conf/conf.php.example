@@ -466,6 +466,18 @@ $dolibarr_cron_allow_cli='0';
 //
 // $dolibarr_allow_localurl_for_webhooks = '0';
 
+// dolibarr_ai_allow_local_endpoints
+// =================================
+// Define which endpoints of AI services (module AI and AI assistant) can be called.
+// 0 = only external endpoints are allowed (local and private network IP addresses are refused).
+// 1 = only local endpoints are allowed (for example a local LLM server like Ollama). External AI services are refused.
+// 2 = both external and local endpoints are allowed.
+// Warning: values 1 and 2 allow requests to your local network (network scan risk), set them only if you use a local AI server.
+// Default value: '0'
+// Examples: '0', '1' or '2'
+//
+// $dolibarr_ai_allow_local_endpoints = '0';
+
 // dolibarr_allow_unsecured_select_in_extrafields_filter
 // =====================================================
 // Allow the use of subrequests inside USF IN filters

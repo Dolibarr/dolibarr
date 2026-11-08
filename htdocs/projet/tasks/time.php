@@ -2149,7 +2149,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 		// Technical ID
 		if (!empty($arrayfields['t.rowid']['checked'])) {
-			print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_id" value="' . dol_escape_htmltag($search_id) . '"></td>';
+			print '<td class="liste_titre center"><input class="searchstring width50" type="text" name="search_id" value="' . dolPrintLabelForAttribute($search_id) . '"></td>';
 		}
 		// Date
 		if (!empty($arrayfields['t.element_date']['checked'])) {

@@ -165,6 +165,66 @@ class RestAPISupplierOrderTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * testRestSupplierOrderMakeOrder
+	 *
+	 * @return int	Id of the ordered supplier order
+	 */
+	public function testRestSupplierOrderMakeOrder()
+	{
+		$test = "Make a supplier order";
+
+		$order_id = $this->createOrder($test);
+		$data = array("date" => dol_now(), "method" => 1, "comment" => "");
+
+		// Only approved orders can be sent to the vendor
+		$this->getUrl('supplierorders/'.$order_id.'/makeorder', "$test (draft)", 'POST', $data, 405);
+
+		$result = $this->getUrl('supplierorders/'.$order_id, $test, 'GET');
+		$this->assertEquals(CommandeFournisseur::STATUS_DRAFT, $result['content']['status'] ?? null, "$test Order status must not change");
+
+		$this->getUrl('supplierorders/'.$order_id.'/validate', $test, 'POST', array("idwarehouse" => 0, "notrigger" => 0));
+
+		$this->getUrl('supplierorders/'.$order_id.'/makeorder', "$test (validated)", 'POST', $data, 405);
+
+		$this->getUrl('supplierorders/'.$order_id.'/approve', $test, 'POST', array("idwarehouse" => 0, "secondlevel" => 0));
+
+		$result = $this->getUrl('supplierorders/'.$order_id.'/makeorder', $test, 'POST', $data);
+		$this->assertEquals(200, $result['content']['success']['code'] ?? null, "$test Make order must succeed");
+
+		$result = $this->getUrl('supplierorders/'.$order_id, $test, 'GET');
+		$this->assertEquals(CommandeFournisseur::STATUS_ORDERSENT, $result['content']['status'] ?? null, "$test Order must be sent");
+
+		return $order_id;
+	}
+
+	/**
+	 * testRestSupplierOrderMakeOrderAgain
+	 *
+	 * @depends testRestSupplierOrderMakeOrder
+	 *
+	 * @param int $order_id	Id of the ordered supplier order
+	 * @return void
+	 */
+	public function testRestSupplierOrderMakeOrderAgain($order_id)
+	{
+		$test = "Make an already ordered supplier order";
+
+		$this->getUrl('supplierorders/'.$order_id.'/makeorder', $test, 'POST', array("date" => dol_now(), "method" => 1, "comment" => ""), 405);
+	}
+
+	/**
+	 * testRestSupplierOrderMakeOrderNotFound
+	 *
+	 * @return void
+	 */
+	public function testRestSupplierOrderMakeOrderNotFound()
+	{
+		$test = "Make a supplier order that does not exist";
+
+		$this->getUrl('supplierorders/999999999/makeorder', $test, 'POST', array("date" => dol_now(), "method" => 1, "comment" => ""), 404);
+	}
+
+	/**
 	 * testRestSupplierOrderCancel
 	 *
 	 * @return int	Id of the canceled supplier order
@@ -280,6 +340,50 @@ class RestAPISupplierOrderTest extends AbstractRestAPITest
 		$test = "Set to draft a supplier order that does not exist";
 
 		$this->getUrl('supplierorders/999999999/settodraft', $test, 'POST', array(), 404);
+	}
+
+	/**
+	 * testRestSupplierOrderSetInvoiced
+	 *
+	 * @return void
+	 */
+	public function testRestSupplierOrderSetInvoiced()
+	{
+		$test = "Classify a supplier order as billed";
+
+		$order_id = $this->createOrder($test);
+
+		// Only approved orders, or later statuses, can be classified as billed
+		$this->getUrl('supplierorders/'.$order_id.'/setinvoiced', "$test (draft)", 'POST', array(), 405);
+
+		$this->getUrl('supplierorders/'.$order_id.'/validate', $test, 'POST', array("idwarehouse" => 0, "notrigger" => 0));
+
+		$this->getUrl('supplierorders/'.$order_id.'/setinvoiced', "$test (validated)", 'POST', array(), 405);
+
+		$this->getUrl('supplierorders/'.$order_id.'/approve', $test, 'POST', array("idwarehouse" => 0, "secondlevel" => 0));
+
+		$result = $this->getUrl('supplierorders/'.$order_id.'/setinvoiced', $test, 'POST', array());
+		$this->assertEquals(200, $result['content']['success']['code'] ?? null, "$test Classify billed must succeed");
+
+		$result = $this->getUrl('supplierorders/'.$order_id, $test, 'GET');
+		$this->assertEquals(1, $result['content']['billed'] ?? null, "$test Order must be billed");
+		$this->assertEquals(CommandeFournisseur::STATUS_ACCEPTED, $result['content']['status'] ?? null, "$test Order status must not change");
+
+		// Classifying an already billed order again does nothing and succeeds
+		$result = $this->getUrl('supplierorders/'.$order_id.'/setinvoiced', "$test (already billed)", 'POST', array());
+		$this->assertEquals(200, $result['content']['success']['code'] ?? null, "$test Classify billed again must succeed");
+	}
+
+	/**
+	 * testRestSupplierOrderSetInvoicedNotFound
+	 *
+	 * @return void
+	 */
+	public function testRestSupplierOrderSetInvoicedNotFound()
+	{
+		$test = "Classify as billed a supplier order that does not exist";
+
+		$this->getUrl('supplierorders/999999999/setinvoiced', $test, 'POST', array(), 404);
 	}
 
 	/**

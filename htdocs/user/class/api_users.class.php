@@ -173,6 +173,7 @@ class Users extends DolibarrApi
 	 *
 	 * @param	int		$id						ID of user
 	 * @param	int		$includepermissions		Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
+	 * @param	int		$includegroups			Set this to 1 to have the list of groups of the user loaded into user_group_list (not done by default)
 	 * @return	array|mixed						data without useless information
 	 * @phan-return Object
 	 * @phpstan-return Object
@@ -181,7 +182,7 @@ class Users extends DolibarrApi
 	 * @throws RestException 401 Insufficient rights
 	 * @throws RestException 404 User or group not found
 	 */
-	public function get($id, $includepermissions = 0)
+	public function get($id, $includepermissions = 0, $includegroups = 0)
 	{
 		if ($id == 0) {
 			throw new RestException(400, 'No user with id=0 can exist');
@@ -207,6 +208,9 @@ class Users extends DolibarrApi
 		if ($includepermissions) {
 			$this->useraccount->loadRights();
 		}
+		if ($includegroups) {
+			$this->_loadUserGroupList();
+		}
 
 		return $this->_cleanObjectDatas($this->useraccount);
 	}
@@ -218,6 +222,7 @@ class Users extends DolibarrApi
 	 *
 	 * @param	string	$login					Login of user
 	 * @param	int		$includepermissions		Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
+	 * @param	int		$includegroups			Set this to 1 to have the list of groups of the user loaded into user_group_list (not done by default)
 	 * @return	array|mixed						Data without useless information
 	 * @phan-return Object
 	 * @phpstan-return Object
@@ -228,7 +233,7 @@ class Users extends DolibarrApi
 	 * @throws RestException 401	Insufficient rights
 	 * @throws RestException 404	User or group not found
 	 */
-	public function getByLogin($login, $includepermissions = 0)
+	public function getByLogin($login, $includepermissions = 0, $includegroups = 0)
 	{
 		if (empty($login)) {
 			throw new RestException(400, 'Bad parameters');
@@ -250,6 +255,9 @@ class Users extends DolibarrApi
 		if ($includepermissions) {
 			$this->useraccount->loadRights();
 		}
+		if ($includegroups) {
+			$this->_loadUserGroupList();
+		}
 
 		return $this->_cleanObjectDatas($this->useraccount);
 	}
@@ -261,6 +269,7 @@ class Users extends DolibarrApi
 	 *
 	 * @param	string	$email					Email of user
 	 * @param	int		$includepermissions		Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
+	 * @param	int		$includegroups			Set this to 1 to have the list of groups of the user loaded into user_group_list (not done by default)
 	 * @return	array|mixed						Data without useless information
 	 * @phan-return Object
 	 * @phpstan-return Object
@@ -271,7 +280,7 @@ class Users extends DolibarrApi
 	 * @throws RestException 401     Insufficient rights
 	 * @throws RestException 404     User or group not found
 	 */
-	public function getByEmail($email, $includepermissions = 0)
+	public function getByEmail($email, $includepermissions = 0, $includegroups = 0)
 	{
 		if (empty($email)) {
 			throw new RestException(400, 'Bad parameters');
@@ -292,6 +301,9 @@ class Users extends DolibarrApi
 
 		if ($includepermissions) {
 			$this->useraccount->loadRights();
+		}
+		if ($includegroups) {
+			$this->_loadUserGroupList();
 		}
 
 		return $this->_cleanObjectDatas($this->useraccount);
@@ -1510,6 +1522,24 @@ class Users extends DolibarrApi
 		unset($object->warehouse_id);
 
 		return $object;
+	}
+
+	/**
+	 * Load the cleaned list of groups of the fetched user into user_group_list
+	 *
+	 * @return	void
+	 *
+	 * @throws RestException 404 User group not found
+	 */
+	private function _loadUserGroupList()
+	{
+		$usergroup = new UserGroup($this->db);
+		$userGroupList = $usergroup->listGroupsForUser($this->useraccount->id, false);
+		if (!is_array($userGroupList)) {
+			throw new RestException(404, 'User group not found');
+		}
+
+		$this->useraccount->user_group_list = $this->_cleanUserGroupListDatas($userGroupList);
 	}
 
 	/**

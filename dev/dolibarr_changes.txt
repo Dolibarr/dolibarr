@@ -330,6 +330,30 @@ NOTES   :
         -   protected $default_monospaced_font = 'courier';
         +   protected $default_monospaced_font = 'freemono';
 
+==> FILE   : include/tcpdf_filters.php, function decodeFilterLZWDecode()
+    REASON : Used by TCPDI to import the pages of documents compressed with LZW. The previous code was not
+             updated when the code read is not yet in the dictionary, so everything decoded after such a code
+             was wrong, and the bits read were removed from the start of the string for each code (the whole
+             remaining string was copied each time, so the time was quadratic).
+    DIFF   :
+        -   while (($data_length > 0) AND (($index = bindec(substr($bitstring, 0, $bitlen))) != 257)) {
+        -       // remove read bits from string
+        -       $bitstring = substr($bitstring, $bitlen);
+        +   $bitpos = 0;
+        +   while (($data_length > 0) AND (($index = bindec(substr($bitstring, $bitpos, $bitlen))) != 257)) {
+        +       // move after the read bits
+        +       $bitpos += $bitlen;
+            and, after
+                $dic_val = $dictionary[$prev_index].$dictionary[$prev_index][0];
+                $decoded .= $dic_val;
+        +       $prev_index = $index;
+
+==> FILE   : include/tcpdf_filters.php, function decodeFilterASCII85Decode()
+    REASON : Deprecation of PHP 8.5 (chr() of a value over 255).
+    DIFF   :
+        -   chr($tuple >> NN)
+        +   chr(($tuple >> NN) & 0xff)
+
 
 
 ####################################################################################################
@@ -375,6 +399,63 @@ NOTES   :
         +       // Default: exit program and print error
                 die("<strong>TCPDI_PARSER ERROR [{$this->uniqueid}]: </strong>".$msg);
             }
+
+==> FILE   : tcpdi_parser.php, functions getRawObject() and getDictValue()
+    REASON : The reader of a dictionary could never end. The text of the dictionary was first cut out by counting
+             the "<<" and the ">>" without looking at what they belong to, so a hexadecimal string closed just
+             before the end of the dictionary ("/Panose <0105>>>", as written by FPDI and by xdvipdfmx) ended it
+             one character too early and the parsing of what was cut out never ended, writing warnings until the
+             process was killed. getRawObject() also left the offset where it was on a token it did not know, and
+             read nothing at all for an empty hexadecimal string or for one written on several lines.
+    DIFF   :
+            getDictValue() now reads the entries one after the other up to the closing ">>", with no cutting out,
+            and getRawObject():
+        +       returns the type 'eof' when the offset reaches the end of the data, so the callers stop
+        +       reads a hexadecimal string up to its closing ">" whatever it holds
+        +       moves the offset past a token it does not know
+        +       returns the pair (object, offset) for a comment, as it does everywhere else
+
+==> FILE   : tcpdi_parser.php, functions decodeXrefStream() and decodeStream()
+    REASON : A cross-reference stream that does not use a PNG predictor was decoded as if it did: one byte of
+             every row was dropped and the rest was shifted, so the offsets read were wrong and the length of an
+             object stream could not be resolved, which ended in the memory being exhausted (cairo 1.18, PDFlib).
+             The PNG decoding itself used the /Predictor value of the stream for every row instead of the tag
+             byte of each row, and added the byte on the left as it was read instead of as it was decoded.
+             A /Index holding several subsections only read the first one. And a stream whose filter is written
+             as an array ("/Filter [/FlateDecode]") was never decoded, as the filters were looked for inside a
+             test that is only true for a name.
+    DIFF   :
+        +   the PNG unpredictor only runs when /Predictor >= 10
+        +   the filter of a row is read from its own tag byte
+        +   the byte on the left is the decoded one
+        +   every subsection of /Index is read
+        +   the filters of a stream are read from $sdic['/Filter'], whether it is a name or an array
+
+==> FILE   : tcpdi_parser.php, functions getIndirectObject(), findObjectOffset() and findObjectOffsets()
+    REASON : The header of an object was compared to the string "num gen obj", so an object of a document that
+             does not separate the two numbers and the keyword with one single space was never found. A reference
+             to such an object is then read as a reference to the null object, and all it holds is silently lost:
+             the page imported from a document whose numbers are aligned on a column with several
+             spaces, or from one that writes a line break between them, came out empty.
+             findObjectOffset() also gave strpos() an offset read from the cross-reference table, which may be
+             beyond the end of the data: with PHP 8 that throws a ValueError instead of returning false.
+    DIFF   :
+        +   new function matchObjectHeader(), which accepts any white space between the numbers and the keyword
+            and returns the length of the header it matched, or false when the object does not start there
+        +   getIndirectObject() and findObjectOffset() look for the header with it
+        +   the key of the table of the offsets is always "num gen obj", whatever separates them in the file
+
+==> FILE   : tcpdi_parser.php, functions __construct(), decodeXref() and decodeXrefStream()
+    REASON : An encrypted document was read as if it was not. Its streams are the encrypted bytes, so the page
+             imported was a page of garbage written without any error when they are not compressed, and the
+             import stopped on an obscure "decodeFilterFlateDecode: invalid code" when they are. The /Encrypt
+             entry of the trailer was also only read when it is a reference to an object and the cross-reference
+             is a table, not when the dictionary is written in place nor when the cross-reference is a stream.
+    DIFF   :
+        +   the import of an encrypted document stops with the message "This PDF document is encrypted and
+            cannot be imported."
+        +   /Encrypt is read from the trailer of a cross-reference table, written in place or as a reference,
+            and from the dictionary of a cross-reference stream
 
 
 
