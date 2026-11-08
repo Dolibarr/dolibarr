@@ -181,3 +181,6 @@ select#date_startday, select#date_startmonth, select#date_endday, select#date_en
 		$db->query("INSERT INTO ".MAIN_DB_PREFIX."opensurvey_user_studs (nom, id_sondage, reponses, ip, date_creation) VALUES ('Bob', '".$db->escape($survey->id_sondage)."', '', '127.0.0.1', '".$db->idate(dol_now())."')");
 			// reponses is not used for a survey of format 'F': the answers are into opensurvey_user_formanswers
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."opensurvey_user_formanswers (fk_user_survey, fk_question, reponses)";
+		$sql = "SELECT us.id_users, us.nom, us.ip, us.date_creation, fa.fk_question, fa.reponses";
+				$list[$idusers]['answers'][(int) $obj->fk_question] = (string) $obj->reponses;
+			$db->query("INSERT INTO ".MAIN_DB_PREFIX."opensurvey_user_studs (nom, id_sondage, reponses, ip, date_creation) VALUES ('".$name."', '".$db->escape($survey->id_sondage)."', '', '127.0.0.1', '".$db->idate(dol_now())."')");
