@@ -445,6 +445,61 @@ NOTES   :
         +   getIndirectObject() and findObjectOffset() look for the header with it
         +   the key of the table of the offsets is always "num gen obj", whatever separates them in the file
 
+==> FILE   : tcpdi_parser.php, functions __construct(), decodeXref() and decodeXrefStream()
+    REASON : An encrypted document was read as if it was not. Its streams are the encrypted bytes, so the page
+             imported was a page of garbage written without any error when they are not compressed, and the
+             import stopped on an obscure "decodeFilterFlateDecode: invalid code" when they are. The /Encrypt
+             entry of the trailer was also only read when it is a reference to an object and the cross-reference
+             is a table, not when the dictionary is written in place nor when the cross-reference is a stream.
+    DIFF   :
+        +   the import of an encrypted document stops with the message "This PDF document is encrypted and
+            cannot be imported."
+        +   /Encrypt is read from the trailer of a cross-reference table, written in place or as a reference,
+            and from the dictionary of a cross-reference stream
+
+==> FILE   : tcpdi_parser.php, new function decodeFilter(), used by decodeStream() and _rebuildContentStream()
+    REASON : A deflated stream that has no end marker - the writer did not flush it, or the /Length declared is
+             shorter than the data - is refused by gzuncompress(), so the import stopped on
+             "decodeFilterFlateDecode: invalid code" while every PDF reader opens the document and draws the page.
+    DIFF   :
+        +   a FlateDecode stream that gzuncompress() refuses is decoded with inflate_add() in ZLIB_SYNC_FLUSH,
+            which returns what the data holds; the error is raised only when that fails too
+        +   the two places that decoded a stream call it instead of TCPDF_FILTERS::decodeFilter()
+
+==> FILE   : tcpdi_parser.php, function getObjectStream()
+    REASON : The list of the object numbers and their offsets at the head of an object stream was split on each
+             single white space character, so a separator of more than one character - a CRLF, two spaces -
+             gave empty values between the numbers. The offset was then a string added to /First:
+             "TypeError: Unsupported operand types: string + int", and the page was not imported at all.
+    DIFF   :
+        +   the list is split on runs of white space, and a pair is kept only when both values are numeric
+        +   the object number and the offset are cast to int before being stored
+
+==> FILE   : tcpdi_parser.php, function getXrefData()
+    REASON : The offset read from startxref was passed to strpos() without being checked. When it is beyond the
+             end of the file, PHP 8 throws "ValueError: strpos(): Argument #3 ($offset) must be contained in
+             argument #1 ($haystack)"; when it points somewhere else inside the file, the data was read as a
+             cross-reference stream and the import stopped on "Unable to find xref".
+    DIFF   :
+        +   the offset is checked to be inside the file and to be the start of a xref table or of an object
+        +   when it is neither, the last xref table of the file is used instead, and a previous section that
+            can not be found leaves what the newer ones already gave
+
+==> FILE   : tcpdi_parser.php, functions getObjectData() and getRawStream(), new function isStreamKeyword()
+    REASON : A dictionary was read as the dictionary of a stream as soon as it had a /Length entry, which other
+             dictionaries have too, and /Length bytes were then taken from the file - 256 MB on one file of the
+             audit, which exhausts the memory. The declared length was also used as is: a stream that does not
+             end there was read too short or too long, and the parser went on from the wrong place. The number
+             of the object holding an indirect length was used as the length when that object was not found.
+    DIFF   :
+        +   a dictionary is the dictionary of a stream when the keyword "stream" follows it, not when it has a
+            /Length entry
+        +   the declared length is trusted only when "endstream" really follows the data, otherwise the end of
+            the stream is looked for
+        +   the keyword "stream" is followed by ONE end-of-line marker; every CR and LF was skipped, so a stream
+            whose data starts with such a byte lost its first bytes
+        +   reading an object stops at the end of the data, instead of looping past it looking for "endobj"
+
 
 
 ####################################################################################################

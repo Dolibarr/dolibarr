@@ -5188,10 +5188,11 @@ function get_localtax_by_third($local)
  *  @param	?Societe		$buyer         		Company object
  *  @param	?Societe		$seller        		Company object
  *  @param  int<0,1>		$firstparamisid     1 if first param is id into table (use this if you can)
+ *  @param  int<0,2>		$type_vat			When the rate has no code: 0=All types, 1=VAT rate for sales, 2=VAT rate for purchases
  *  @return	array{}|array{rowid:int,code:string,rate:float,localtax1:float,localtax1_type:string,localtax2:float,localtax2_type:string,npr:float,accountancy_code_sell:string,accountancy_code_buy:string} array('rowid'=> , 'code'=> ...)
  *  @see getLocalTaxesFromRate()
  */
-function getTaxesFromId($vatrate, $buyer = null, $seller = null, $firstparamisid = 1)
+function getTaxesFromId($vatrate, $buyer = null, $seller = null, $firstparamisid = 1, $type_vat = 0)
 {
 	global $db;
 
@@ -5225,6 +5226,16 @@ function getTaxesFromId($vatrate, $buyer = null, $seller = null, $firstparamisid
 		$sql .= " AND t.entity IN (" . getEntity('c_tva') . ")";
 		if ($vatratecode) {
 			$sql .= " AND t.code = '" . $db->escape($vatratecode) . "'";
+		} else {
+			// No code: several lines may have this rate (for example one for sales and one for purchases), so we take the default one of the type
+			if ($type_vat > 0) {
+				$sql .= " AND t.type_vat IN (0, " . ((int) $type_vat) . ")";
+			}
+			$sql .= " ORDER BY t.use_default DESC";
+			if ($type_vat > 0) {
+				$sql .= ", t.type_vat DESC";	// a line for sales only (or purchases only) wins over a line for both
+			}
+			$sql .= ", t.recuperableonly ASC, t.code ASC";
 		}
 	}
 
@@ -5331,10 +5342,11 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
  *  @param	int				$idprod          				Id of product or 0 if not a predefined product
  *  @param  Societe			$thirdpartytouseforcountry  	Thirdparty with a ->country_code defined (FR, US, IT, ...)
  *	@param	int				$idprodfournprice				Id product_fournisseur_price (for "supplier" proposal/order/invoice)
+ *  @param  int<0,2>		$type_vat						When the product rate is not known: 0=All types, 1=VAT rate for sales, 2=VAT rate for purchases
  *  @return float|string   					    			Vat rate to use with format 5.0 or '5.0 (XXX)'
  *  @see get_default_tva(), get_product_localtax_for_country()
  */
-function get_product_vat_for_country($idprod, $thirdpartytouseforcountry, $idprodfournprice = 0)
+function get_product_vat_for_country($idprod, $thirdpartytouseforcountry, $idprodfournprice = 0, $type_vat = 0)
 {
 	global $db, $mysoc;
 
@@ -5383,7 +5395,14 @@ function get_product_vat_for_country($idprod, $thirdpartytouseforcountry, $idpro
 			$sql .= " FROM " . MAIN_DB_PREFIX . "c_tva as t, " . MAIN_DB_PREFIX . "c_country as c";
 			$sql .= " WHERE t.active = 1 AND t.fk_pays = c.rowid AND c.code = '" . $db->escape($thirdpartytouseforcountry->country_code) . "'";
 			$sql .= " AND t.entity IN (" . getEntity('c_tva') . ")";
-			$sql .= " ORDER BY t.use_default DESC, t.taux DESC, t.code ASC, t.recuperableonly ASC";
+			if ($type_vat > 0) {
+				$sql .= " AND t.type_vat IN (0, " . ((int) $type_vat) . ")";	// Do not take the default purchase rate for a sale, nor the opposite
+			}
+			$sql .= " ORDER BY t.use_default DESC, t.taux DESC";
+			if ($type_vat > 0) {
+				$sql .= ", t.type_vat DESC";	// a line for sales only (or purchases only) wins over a line for both
+			}
+			$sql .= ", t.code ASC, t.recuperableonly ASC";
 			$sql .= $db->plimit(1);
 
 			$resql = $db->query($sql);
@@ -5501,10 +5520,11 @@ function get_product_localtax_for_country($idprod, $local, $thirdpartytouseforco
  *	@param  Societe		$thirdparty_buyer   	Object Buyer company
  *	@param  int			$idprod					Id product
  *	@param	int			$idprodfournprice		Id product_fournisseur_price (for supplier order/invoice)
+ *  @param  int<0,2>	$type_vat				When the product rate is not known: 0=All types, 1=VAT rate for sales, 2=VAT rate for purchases
  *	@return float|string   				      	Vat rate to use with format 5.0 or '5.0 (XXX)', -1 if we can't guess it
  *  @see get_default_localtax(), get_default_npr()
  */
-function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, $idprod = 0, $idprodfournprice = 0)
+function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, $idprod = 0, $idprodfournprice = 0, $type_vat = 0)
 {
 	global $mysoc, $db, $hookmanager;
 
@@ -5547,7 +5567,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 			}
 
 			if (!$isacompany) {
-				$vatvalue = get_product_vat_for_country($idprod, $thirdparty_buyer, $idprodfournprice);
+				$vatvalue = get_product_vat_for_country($idprod, $thirdparty_buyer, $idprodfournprice, $type_vat);
 				$vatrule = 'VATRULE 0';
 			}
 		}
@@ -5594,7 +5614,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 		|| (in_array($seller_country_code, array('MQ', 'GP')) && in_array($buyer_country_code, array('MQ', 'GP')))	// We should be able to manage the case of MQ, GP, ... with a deicated vat rate at previous step.
 	)) { // Warning ->country_code not always defined
 		//print 'VATRULE 3';
-		$tmpvat = get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+		$tmpvat = get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice, $type_vat);
 
 		if ($seller_country_code == 'IN' && getDolGlobalString('MAIN_SALETAX_AUTOSWITCH_I_CS_FOR_INDIA')) {
 			// Special case for india.
@@ -5629,7 +5649,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 
 		if (!$isacompany) {
 			//print 'VATRULE 5';
-			$vatvalue = get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+			$vatvalue = get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice, $type_vat);
 			$vatrule = 'VATRULE 5';
 		} else {
 			//print 'VATRULE 6';
@@ -5646,7 +5666,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	if (empty($vatrule) && getDolGlobalString('MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC') && empty($buyer_in_cee)) {
 		$isacompany = $thirdparty_buyer->isACompany();
 		if (!$isacompany) {
-			$vatvalue = get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+			$vatvalue = get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice, $type_vat);
 			$vatrule = 'VATRULE extra';
 			//print 'VATRULE extra';
 		}
