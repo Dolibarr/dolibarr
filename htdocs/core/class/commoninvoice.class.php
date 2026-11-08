@@ -398,11 +398,6 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public function getSumDepositsUsed($multicurrency = 0)
 	{
-		/*if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') {
-			// FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS was never supported for purchase invoice, so we can return 0 with no need of SQL for this case.
-			return 0.0;
-		}*/
-
 		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
 		$discountstatic = new DiscountAbsolute($this->db);
