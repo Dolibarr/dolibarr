@@ -3,6 +3,7 @@
  * Copyright (C) 2016-2026	Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Michael Wallis          <mh.wallis@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,6 +123,11 @@ class AccountancyCategory // extends CommonObject
 	 * @var Object[] Lines display
 	 */
 	public $lines_display;
+
+	/**
+	 * @var array<int,array<int,array<array{id:int,account_number:string,account_label:string,by_rule:int}>>> Accounts given by account range, per report and group
+	 */
+	private $accountsbyrangecache = array();
 
 	/**
 	 * @var float Sum debit credit
@@ -845,7 +851,10 @@ class AccountancyCategory // extends CommonObject
 	 * @param 	string 		$sanitizedpredefinedgroupwhere 	Sql criteria filter to select accounting accounts. This value must be sanitized and not come from an input of a user.
 	 * 														Example: "pcg_type = 'EXPENSE' AND fk_pcg_version = 'xx'"
 	 * 														Example: "fk_accounting_category = 99"
-	 * @return	never|array<array{id:int,account_number:string,account_label:string}>|int<-1,-1>		Array of accounting accounts or -1 if error
+	 * When ACCOUNTING_GROUP_RANGE_AS_RULE is on and $cat_id is given, the accounts that the account range of
+	 * the groups gives to this group are added (key 'by_rule' = 1), see getCptsCatByRule().
+	 *
+	 * @return	never|array<array{id:int,account_number:string,account_label:string,by_rule?:int}>|int<-1,-1>		Array of accounting accounts or -1 if error
 	 * @see getCats(), getCatsCpts()
 	 */
 	public function getCptsCat($cat_id, $sanitizedpredefinedgroupwhere = '')
@@ -898,6 +907,18 @@ class AccountancyCategory // extends CommonObject
 					$i++;
 				}
 			}
+			if (!empty($cat_id) && getDolGlobalInt('ACCOUNTING_GROUP_RANGE_AS_RULE')) {
+				$byrule = $this->getCptsCatByRule((int) $cat_id, (string) $pcgvercode);
+				if (!is_array($byrule)) {
+					return -1;
+				}
+				if (count($byrule)) {
+					$data = array_merge($data, $byrule);
+					usort($data, static function ($a, $b) {
+						return strcmp((string) $a['account_number'], (string) $b['account_number']);
+					});
+				}
+			}
 			return $data;
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
@@ -905,6 +926,148 @@ class AccountancyCategory // extends CommonObject
 
 			return -1;
 		}
+	}
+
+	/**
+	 * Get the accounting accounts that the account range of the custom groups gives to a group.
+	 *
+	 * Only accounts with no custom group set on the account itself are given by range. Among the active
+	 * groups of the same report with a valid range, an account goes to the group whose range matches it
+	 * with the longest prefix (the first one by position if equal), so it is in one group only.
+	 *
+	 * @param	int		$cat_id			Id of the custom group
+	 * @param	string	$pcgvercode		Code of the chart of accounts
+	 * @return	array<array{id:int,account_number:string,account_label:string,by_rule:int}>|int<-1,-1>	Accounts, or -1 if error
+	 * @see isValidAccountRange(), accountRangeMatch()
+	 */
+	public function getCptsCatByRule($cat_id, $pcgvercode)
+	{
+		global $conf, $mysoc;
+
+		$sql = "SELECT fk_report FROM ".$this->db->prefix().$this->table_element." WHERE rowid = ".((int) $cat_id);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = "Error ".$this->db->lasterror();
+			return -1;
+		}
+		$obj = $this->db->fetch_object($resql);
+		if (!$obj) {
+			return array();
+		}
+		$id_report = (int) $obj->fk_report;
+
+		if (!isset($this->accountsbyrangecache[$id_report])) {
+			// Groups of the report with a valid range
+			$ranges = array();
+			$sql = "SELECT c.rowid, c.range_account";
+			$sql .= " FROM ".$this->db->prefix().$this->table_element." as c";
+			$sql .= " WHERE c.active = 1";
+			$sql .= " AND c.category_type = 0";
+			$sql .= " AND c.fk_report = ".((int) $id_report);
+			$sql .= " AND c.entity = ".((int) $conf->entity);
+			$sql .= " AND (c.fk_country = ".((int) $mysoc->country_id)." OR c.fk_country = 0)";
+			$sql .= " ORDER BY c.position ASC";
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->error = "Error ".$this->db->lasterror();
+				return -1;
+			}
+			while ($obj = $this->db->fetch_object($resql)) {
+				if (self::isValidAccountRange((string) $obj->range_account)) {
+					$ranges[(int) $obj->rowid] = (string) $obj->range_account;
+				}
+			}
+
+			$accounts = array();
+			if (count($ranges)) {
+				// Accounts with no custom group set on the account
+				$sql = "SELECT t.rowid, t.account_number, t.label as account_label";
+				$sql .= " FROM ".$this->db->prefix()."accounting_account as t";
+				$sql .= " WHERE (t.fk_accounting_category IS NULL OR t.fk_accounting_category = 0)";
+				$sql .= " AND t.entity = ".((int) $conf->entity);
+				$sql .= " AND t.active = 1";
+				$sql .= " AND t.fk_pcg_version = '".$this->db->escape($pcgvercode)."'";
+				$sql .= " ORDER BY t.account_number";
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$this->error = "Error ".$this->db->lasterror();
+					return -1;
+				}
+				while ($obj = $this->db->fetch_object($resql)) {
+					$bestcat = 0;
+					$bestlength = 0;
+					foreach ($ranges as $rangecat => $range) {
+						$length = self::accountRangeMatch($range, (string) $obj->account_number);
+						if ($length > $bestlength) {
+							$bestcat = $rangecat;
+							$bestlength = $length;
+						}
+					}
+					if ($bestcat) {
+						$accounts[$bestcat][] = array(
+							'id' => (int) $obj->rowid,
+							'account_number' => (string) $obj->account_number,
+							'account_label' => (string) $obj->account_label,
+							'by_rule' => 1,
+						);
+					}
+				}
+			}
+			$this->accountsbyrangecache[$id_report] = $accounts;
+		}
+
+		return $this->accountsbyrangecache[$id_report][(int) $cat_id] ?? array();
+	}
+
+	/**
+	 * Is an account range of a custom group a valid range, that can select accounts?
+	 *
+	 * A valid range is a list of account number prefixes separated by commas, each one optionally starting
+	 * with ! to leave it out, and with at least one prefix that is not left out. Trailing x are ignored
+	 * ("7xxxxx" is the prefix "7"). Example: "4,!4900". Any other text (like "Example: 7xxxxx" or
+	 * "6000-6099") is only a comment.
+	 *
+	 * @param	string	$range	Account range of the group (field range_account)
+	 * @return	bool			True if it is a valid range
+	 */
+	public static function isValidAccountRange($range)
+	{
+		$hasinclude = false;
+		foreach (explode(',', $range) as $item) {
+			$item = trim($item);
+			if (!preg_match('/^(!?)([0-9A-Za-z]*[0-9][0-9A-Za-z]*)$/', $item, $reg)) {
+				return false;
+			}
+			if ($reg[1] === '') {
+				$hasinclude = true;
+			}
+		}
+		return $hasinclude;
+	}
+
+	/**
+	 * How well does an account range match an account number?
+	 *
+	 * @param	string	$range		A valid account range (see isValidAccountRange()), example "4,!4900"
+	 * @param	string	$number		Account number
+	 * @return	int					Length of the longest prefix of the range that the number starts with, or -1 if none or if a left out prefix matches
+	 */
+	public static function accountRangeMatch($range, $number)
+	{
+		$best = -1;
+		foreach (explode(',', $range) as $item) {
+			$item = trim($item);
+			$exclude = (substr($item, 0, 1) === '!');
+			$prefix = rtrim($exclude ? substr($item, 1) : $item, 'xX');
+			if ($prefix === '' || strpos($number, $prefix) !== 0) {
+				continue;
+			}
+			if ($exclude) {
+				return -1;
+			}
+			$best = max($best, strlen($prefix));
+		}
+		return $best;
 	}
 
 

@@ -3,6 +3,7 @@
  * Copyright (C) 2011-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Michael Wallis				<mh.wallis@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,6 +149,9 @@ $tabcond[32] = isModEnabled('accounting');
 // List of help for fields
 $tabhelp = array();
 $tabhelp[32] = array('code' => $langs->trans("EnterAnyCode"), 'category_type' => $langs->trans("SetToYesIfGroupIsComputationOfOtherGroups"), 'formula' => $langs->trans("EnterCalculationRuleIfPreviousFieldIsYes"));
+if (getDolGlobalInt('ACCOUNTING_GROUP_RANGE_AS_RULE')) {
+	$tabhelp[32]['range_account'] = $langs->trans("AccountRangeHelp");
+}
 
 // List of check for fields (NOT USED YET)
 $tabfieldcheck = array();
@@ -633,7 +637,7 @@ if ($tabname[$id]) {
 			$valuetoshow = $langs->trans("Pcg_version");
 		}
 		if ($fieldlist[$field] == 'range_account') {
-			$valuetoshow = $langs->trans("Comment");
+			$valuetoshow = $langs->trans(getDolGlobalInt('ACCOUNTING_GROUP_RANGE_AS_RULE') ? "AccountRange" : "Comment");
 			$class = 'width75';
 		}
 		if ($fieldlist[$field] == 'category_type') {
@@ -854,6 +858,9 @@ if ($resql) {
 		}
 		if ($fieldlist[$field] == 'range_account') {
 			$valuetoshow = $langs->trans("Comment");
+			if (getDolGlobalInt('ACCOUNTING_GROUP_RANGE_AS_RULE')) {
+				$valuetoshow = $form->textwithpicto($langs->trans("AccountRange"), $langs->trans("AccountRangeHelp"));
+			}
 		}
 		if ($fieldlist[$field] == 'category_type') {
 			$valuetoshow = $langs->trans("Calculated");
@@ -953,6 +960,7 @@ if ($resql) {
 						$showfield = 1;
 						$title = '';
 						$class = 'tddict';
+						$morehtml = '';
 
 						$tmpvar = $fieldlist[$field];
 						$valuetoshow = $obj->$tmpvar;
@@ -973,13 +981,16 @@ if ($resql) {
 						} elseif (in_array($fieldlist[$field], array('range_account'))) {
 							$class = "tdoverflowmax250 small";
 							$title = $valuetoshow;
+							if (getDolGlobalInt('ACCOUNTING_GROUP_RANGE_AS_RULE') && empty($obj->category_type) && (string) $valuetoshow !== '' && !AccountancyCategory::isValidAccountRange((string) $valuetoshow)) {
+								$morehtml = ' '.img_warning($langs->trans("AccountRangeNotARule"));
+							}
 						} elseif ($fieldlist[$field] == 'region_id' || $fieldlist[$field] == 'country_id') {
 							$showfield = 0;
 						}
 
 						// Show value for field
 						if ($showfield) {
-							print '<!-- '.$fieldlist[$field].' --><td class="'.$class.'"'.($title ? ' title="'.dol_escape_htmltag($title).'"' : '').'>'.dol_escape_htmltag($valuetoshow).'</td>';
+							print '<!-- '.$fieldlist[$field].' --><td class="'.$class.'"'.($title ? ' title="'.dol_escape_htmltag($title).'"' : '').'>'.dol_escape_htmltag($valuetoshow).$morehtml.'</td>';
 						}
 					}
 				}
