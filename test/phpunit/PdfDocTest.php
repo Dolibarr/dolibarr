@@ -543,4 +543,86 @@ class PdfDocTest extends CommonClassTest
 		$this->assertSame($sizes['right'], $sizes['beyond']);
 		$this->assertSame($sizes['right'], $sizes['inside']);
 	}
+
+	/**
+	 * Import a page of a document that holds a dictionary with a /Length entry which is not the dictionary of a
+	 * stream - an encryption dictionary, a layer, an optional content group all have one. It was read as a stream
+	 * anyway, and /Length bytes were taken from the file: 256 MB on the file of the audit, which exhausts the
+	 * memory, and in any case the parser lost its place in the object.
+	 *
+	 * @return void
+	 */
+	public function testPdfImportPageWithANonStreamDictionaryHoldingALengthKey()
+	{
+		pdf_getInstance();	// Load the TCPDF and TCPDI classes and define their constants
+
+		$content = "BT /F1 24 Tf 72 700 Td (Hello TCPDI) Tj ET";
+		$objects = array(
+			1 => "<< /Type /Catalog /Pages 2 0 R >>",
+			2 => "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+			3 => "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R >> /Properties << /MC0 6 0 R >> >> /Contents 4 0 R >>",
+			4 => "<< /Length ".strlen($content)." >>\nstream\n".$content."\nendstream",
+			5 => "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+		);
+
+		// The same document, the dictionary of object 6 declaring two lengths it does not have. Both are written
+		// with the same number of digits, so the only thing that could change the size of the page imported is
+		// the number of bytes read after that dictionary.
+		$sizes = array();
+		foreach (array('small' => 123456789, 'huge' => 268435456) as $case => $length) {
+			$file = tempnam(sys_get_temp_dir(), 'tcpdi').'.pdf';
+			file_put_contents($file, $this->buildPdf($objects + array(6 => "<< /Length ".$length." /Kind /Layer >>")));
+
+			$tcpdi = new TCPDI();
+			$this->assertSame(1, $tcpdi->setSourceFile($file), 'Case '.$case.': the document should hold one page');
+			$tpl = $tcpdi->importPage(1);
+			$tcpdi->AddPage();
+			$tcpdi->useTemplate($tpl);
+			$sizes[$case] = strlen($tcpdi->Output('', 'S'));
+			unlink($file);
+		}
+
+		// The /Length of that dictionary is not a stream length, so it changes nothing to the page imported
+		$this->assertSame($sizes['small'], $sizes['huge']);
+	}
+	/**
+	 * Import a page whose content stream declares a /Length that is not where the stream ends. The declared value
+	 * was taken as is, so the data read was cut short or ran over the end of the stream, and the parser went on
+	 * from the wrong place.
+	 *
+	 * @return void
+	 */
+	public function testPdfImportPageWithAWrongStreamLength()
+	{
+		pdf_getInstance();	// Load the TCPDF and TCPDI classes and define their constants
+
+		$content = "BT /F1 24 Tf 72 700 Td (Hello TCPDI) Tj ET";
+		$objects = array(
+			1 => "<< /Type /Catalog /Pages 2 0 R >>",
+			2 => "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+			3 => "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>",
+			5 => "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+		);
+
+		$lengths = array('right' => strlen($content), 'short' => strlen($content) - 10, 'long' => strlen($content) + 10);
+
+		$sizes = array();
+		foreach ($lengths as $case => $length) {
+			$file = tempnam(sys_get_temp_dir(), 'tcpdi').'.pdf';
+			$object = "<< /Length ".$length." >>\nstream\n".$content."\nendstream";
+			file_put_contents($file, $this->buildPdf($objects + array(4 => $object)));
+
+			$tcpdi = new TCPDI();
+			$this->assertSame(1, $tcpdi->setSourceFile($file), 'Case '.$case.': the document should hold one page');
+			$tpl = $tcpdi->importPage(1);
+			$tcpdi->AddPage();
+			$tcpdi->useTemplate($tpl);
+			$sizes[$case] = strlen($tcpdi->Output('', 'S'));
+			unlink($file);
+		}
+
+		// The end of the stream is where "endstream" is, whatever /Length says
+		$this->assertSame($sizes['right'], $sizes['short']);
+		$this->assertSame($sizes['right'], $sizes['long']);
+	}
 }

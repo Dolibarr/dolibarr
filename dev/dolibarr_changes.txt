@@ -485,6 +485,21 @@ NOTES   :
         +   when it is neither, the last xref table of the file is used instead, and a previous section that
             can not be found leaves what the newer ones already gave
 
+==> FILE   : tcpdi_parser.php, functions getObjectData() and getRawStream(), new function isStreamKeyword()
+    REASON : A dictionary was read as the dictionary of a stream as soon as it had a /Length entry, which other
+             dictionaries have too, and /Length bytes were then taken from the file - 256 MB on one file of the
+             audit, which exhausts the memory. The declared length was also used as is: a stream that does not
+             end there was read too short or too long, and the parser went on from the wrong place. The number
+             of the object holding an indirect length was used as the length when that object was not found.
+    DIFF   :
+        +   a dictionary is the dictionary of a stream when the keyword "stream" follows it, not when it has a
+            /Length entry
+        +   the declared length is trusted only when "endstream" really follows the data, otherwise the end of
+            the stream is looked for
+        +   the keyword "stream" is followed by ONE end-of-line marker; every CR and LF was skipped, so a stream
+            whose data starts with such a byte lost its first bytes
+        +   reading an object stops at the end of the data, instead of looping past it looking for "endobj"
+
 
 
 ####################################################################################################
