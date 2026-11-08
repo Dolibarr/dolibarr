@@ -625,4 +625,60 @@ class PdfDocTest extends CommonClassTest
 		$this->assertSame($sizes['right'], $sizes['short']);
 		$this->assertSame($sizes['right'], $sizes['long']);
 	}
+	/**
+	 * Import a page of a document whose page tree does not say everything in place: the /Kids of the
+	 * /Pages node is an indirect reference to the array instead of the array itself, and the page
+	 * carries neither /Resources of its own nor /Annots. Both are allowed by the specification - any
+	 * value of a dictionary may be an indirect reference, and /Resources is inherited from the parent
+	 * node - and both are produced by real writers.
+	 *
+	 * Watched failing before the fix: the direct form imports, the indirect one does not.
+	 *
+	 * @return	void
+	 */
+	public function testPdfImportPageWhoseKidsAreIndirectAndWithoutResources()
+	{
+		pdf_getInstance();	// Load the TCPDF and TCPDI classes and define their constants
+
+		$content = "BT /F1 24 Tf 72 700 Td (Hello TCPDI) Tj ET";
+		$stream = "<< /Length ".strlen($content)." >>\nstream\n".$content."\nendstream";
+
+		// The page holds no /Resources: it inherits the ones of its parent node, as the specification says.
+		$cases = array(
+			// /Kids written in place, the form every writer of the test suite uses so far
+			'direct' => array(
+				1 => "<< /Type /Catalog /Pages 2 0 R >>",
+				2 => "<< /Type /Pages /Kids [3 0 R] /Count 1 /Resources << /Font << /F1 5 0 R >> >> >>",
+				3 => "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R >>",
+				4 => $stream,
+				5 => "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+			),
+			// The same document, with /Kids an indirect reference to the array
+			'indirect' => array(
+				1 => "<< /Type /Catalog /Pages 2 0 R >>",
+				2 => "<< /Type /Pages /Kids 6 0 R /Count 1 /Resources << /Font << /F1 5 0 R >> >> >>",
+				3 => "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R >>",
+				4 => $stream,
+				5 => "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+				6 => "[3 0 R]",
+			),
+		);
+
+		$sizes = array();
+		foreach ($cases as $case => $objects) {
+			$file = tempnam(sys_get_temp_dir(), 'tcpdi').'.pdf';
+			file_put_contents($file, $this->buildPdf($objects));
+
+			$tcpdi = new TCPDI();
+			$this->assertSame(1, $tcpdi->setSourceFile($file), 'Case '.$case.': the document should hold one page');
+			$tpl = $tcpdi->importPage(1);
+			$tcpdi->AddPage();
+			$tcpdi->useTemplate($tpl);
+			$sizes[$case] = strlen($tcpdi->Output('', 'S'));
+			unlink($file);
+		}
+
+		// Both say the same thing, so both import to the same document
+		$this->assertSame($sizes['direct'], $sizes['indirect']);
+	}
 }
