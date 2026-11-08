@@ -1090,10 +1090,12 @@ class tcpdi_parser {
         }
         $stream = $this->decodeStream($obj[1][1], $obj[2][1]);// Decode object stream, as we need the first bit
         $first = intval($obj[1][1]['/First'][1]);
-        $ints = preg_split('/\s/', substr($stream[0], 0, $first)); // Get list of object / offset pairs
-        for ($j=1; $j<count($ints); $j++) {
-            if (($j % 2) == 1) {
-                $this->objstreamobjs[$ints[$j-1]] = array($key, $ints[$j]+$first);
+        // @CHANGE DOL Get list of object / offset pairs. They may be separated by any number of white space chars, the
+        // split on each single one gave empty values (then a TypeError) with a CRLF or two spaces.
+        $ints = preg_split('/[\s]+/', trim(substr($stream[0], 0, $first)));
+        for ($j=1; $j<count($ints); $j+=2) {
+            if (is_numeric($ints[$j-1]) && is_numeric($ints[$j])) {
+                $this->objstreamobjs[(int) $ints[$j-1]] = array($key, ((int) $ints[$j]) + $first);
             }
         }
 
@@ -1194,13 +1196,44 @@ class tcpdi_parser {
         $remaining_filters = array();
         foreach ($filters as $filter) {
             if (in_array($filter, $this->FilterDecoders->getAvailableFilters())) {
-                $stream = $this->FilterDecoders->decodeFilter($filter, $stream);
+                $stream = $this->decodeFilter($filter, $stream);	// @CHANGE DOL
             } else {
                 // add missing filter to array
                 $remaining_filters[] = $filter;
             }
         }
         return array($stream, $remaining_filters);
+    }
+
+    /**
+     * Decode data with a filter.
+     * @CHANGE DOL New method. A FlateDecode stream that has no end marker (the writer did not flush it, or the declared
+     * length is too short) is refused by gzuncompress() but opens in every PDF reader: decode what is there.
+     *
+     * @param $filter (string) Name of the filter
+     * @param $stream (string) Data to decode
+     * @return string Decoded data
+     */
+    private function decodeFilter($filter, $stream) {
+        if ($filter == 'FlateDecode') {
+            if ($stream === '') {
+                return '';
+            }
+            $decoded = @gzuncompress($stream);
+            if ($decoded === false) {
+                if (function_exists('inflate_init')) {
+                    $context = @inflate_init(ZLIB_ENCODING_DEFLATE);
+                    if ($context !== false) {
+                        $decoded = @inflate_add($context, $stream, ZLIB_SYNC_FLUSH);
+                    }
+                }
+                if ($decoded === false) {
+                    $this->Error('decodeFilterFlateDecode: invalid code');
+                }
+            }
+            return $decoded;
+        }
+        return $this->FilterDecoders->decodeFilter($filter, $stream);
     }
 
 
@@ -1368,7 +1401,7 @@ class tcpdi_parser {
         $stream = $obj[2][1];
 
         foreach ($filters AS $_filter) {
-            $stream = $this->FilterDecoders->decodeFilter($_filter[1], $stream);
+            $stream = $this->decodeFilter($_filter[1], $stream);	// @CHANGE DOL
         }
 
         return $stream;
