@@ -496,4 +496,51 @@ class PdfDocTest extends CommonClassTest
 		$this->assertSame($sizes['space'], $sizes['spaces']);
 		$this->assertSame($sizes['space'], $sizes['newline']);
 	}
+
+	/**
+	 * Import a page of a document whose startxref does not point at a cross-reference section: beyond the end of
+	 * the file, or inside it but somewhere else. strpos() was given that offset, which throws a ValueError with
+	 * PHP 8 when it is beyond the data, and the page was not imported.
+	 *
+	 * @return void
+	 */
+	public function testPdfImportPageWithAWrongStartxref()
+	{
+		pdf_getInstance();	// Load the TCPDF and TCPDI classes and define their constants
+
+		$content = "BT /F1 24 Tf 72 700 Td (Hello TCPDI) Tj ET";
+		$objects = array(
+			1 => "<< /Type /Catalog /Pages 2 0 R >>",
+			2 => "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+			3 => "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>",
+			4 => "<< /Length ".strlen($content)." >>\nstream\n".$content."\nendstream",
+			5 => "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+		);
+		$document = $this->buildPdf($objects);
+
+		$documents = array(
+			'right' => $document,
+			// Beyond the end of the file, and inside it but not on the "xref" keyword
+			'beyond' => preg_replace('/startxref\n[0-9]+\n/', "startxref\n9999999\n", $document),
+			'inside' => preg_replace('/startxref\n[0-9]+\n/', "startxref\n10\n", $document),
+		);
+
+		$sizes = array();
+		foreach ($documents as $case => $data) {
+			$file = tempnam(sys_get_temp_dir(), 'tcpdi').'.pdf';
+			file_put_contents($file, $data);
+
+			$tcpdi = new TCPDI();
+			$this->assertSame(1, $tcpdi->setSourceFile($file), 'Case '.$case.': the document should hold one page');
+			$tpl = $tcpdi->importPage(1);
+			$tcpdi->AddPage();
+			$tcpdi->useTemplate($tpl);
+			$sizes[$case] = strlen($tcpdi->Output('', 'S'));
+			unlink($file);
+		}
+
+		// The cross-reference table of the file is found again, so the same page is imported
+		$this->assertSame($sizes['right'], $sizes['beyond']);
+		$this->assertSame($sizes['right'], $sizes['inside']);
+	}
 }
