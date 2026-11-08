@@ -652,6 +652,7 @@ UPDATE llx_facturedet SET pos_printer_id = 1, special_code = 0 WHERE special_cod
 UPDATE llx_facturedet SET special_code = 0 WHERE special_code IN (1, 2, 3) AND fk_facture IN (SELECT rowid FROM llx_facture WHERE module_source = 'takepos' AND fk_statut = 0);
 
 -- Social and fiscal tax types for Australia
+ALTER TABLE llx_c_chargesociales MODIFY COLUMN code varchar(24) NOT NULL;
 insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2801, 'PAYG withholding (PAYGW)',               0, 1, 'TAXAUPAYGW');
 insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2802, 'PAYG income tax instalment (PAYGI)',     0, 1, 'TAXAUPAYGI');
 insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2803, 'Company income tax',                     0, 1, 'TAXAUCIT');
