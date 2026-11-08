@@ -457,6 +457,15 @@ NOTES   :
         +   /Encrypt is read from the trailer of a cross-reference table, written in place or as a reference,
             and from the dictionary of a cross-reference stream
 
+==> FILE   : tcpdi_parser.php, new function decodeFilter(), used by decodeStream() and _rebuildContentStream()
+    REASON : A deflated stream that has no end marker - the writer did not flush it, or the /Length declared is
+             shorter than the data - is refused by gzuncompress(), so the import stopped on
+             "decodeFilterFlateDecode: invalid code" while every PDF reader opens the document and draws the page.
+    DIFF   :
+        +   a FlateDecode stream that gzuncompress() refuses is decoded with inflate_add() in ZLIB_SYNC_FLUSH,
+            which returns what the data holds; the error is raised only when that fails too
+        +   the two places that decoded a stream call it instead of TCPDF_FILTERS::decodeFilter()
+
 
 
 ####################################################################################################

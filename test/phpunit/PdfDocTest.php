@@ -416,4 +416,45 @@ class PdfDocTest extends CommonClassTest
 			$this->assertStringContainsString('encrypted', $message, 'Case '.$case.': the document should be refused as encrypted, got "'.$message.'"');
 		}
 	}
+	/**
+	 * Import a page whose content stream is deflated but has no end marker: the writer did not flush it, or the
+	 * /Length declared is shorter than the data. gzuncompress() refuses it, so the import used to stop on
+	 * "decodeFilterFlateDecode: invalid code", while every PDF reader opens the document and draws the page.
+	 *
+	 * @return void
+	 */
+	public function testPdfImportPageWithATruncatedDeflatedStream()
+	{
+		pdf_getInstance();	// Load the TCPDF and TCPDI classes and define their constants
+
+		$content = "BT /F1 24 Tf 72 700 Td (Hello TCPDI) Tj ET";
+		$deflated = gzcompress($content);
+		$objects = array(
+			1 => "<< /Type /Catalog /Pages 2 0 R >>",
+			2 => "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+			3 => "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>",
+			5 => "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+		);
+
+		// The same stream, complete and with its end marker cut off
+		$streams = array('complete' => $deflated, 'truncated' => substr($deflated, 0, -4));
+
+		$sizes = array();
+		foreach ($streams as $case => $stream) {
+			$file = tempnam(sys_get_temp_dir(), 'tcpdi').'.pdf';
+			$object = "<< /Filter /FlateDecode /Length ".strlen($stream)." >>\nstream\n".$stream."\nendstream";
+			file_put_contents($file, $this->buildPdf($objects + array(4 => $object)));
+
+			$tcpdi = new TCPDI();
+			$this->assertSame(1, $tcpdi->setSourceFile($file), 'Case '.$case.': the document should hold one page');
+			$tpl = $tcpdi->importPage(1);
+			$tcpdi->AddPage();
+			$tcpdi->useTemplate($tpl);
+			$sizes[$case] = strlen($tcpdi->Output('', 'S'));
+			unlink($file);
+		}
+
+		// The page drawn from the truncated stream is the page drawn from the complete one
+		$this->assertSame($sizes['complete'], $sizes['truncated']);
+	}
 }
