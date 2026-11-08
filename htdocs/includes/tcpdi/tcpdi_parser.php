@@ -194,6 +194,11 @@ class tcpdi_parser {
         $this->FilterDecoders = new TCPDF_FILTERS();
         // get xref and trailer data
         $this->xref = $this->getXrefData();
+        // @CHANGE DOL An encrypted document can not be imported: say so instead of writing a page of the encrypted
+        // bytes without any error, or failing later on an obscure "decodeFilterFlateDecode: invalid code".
+        if (isset($this->xref['trailer'][1]['/Encrypt'])) {
+            $this->Error('This PDF document is encrypted and cannot be imported.');
+        }
         $this->findObjectOffsets();
         // parse all document objects
         $this->objects = array();
@@ -422,6 +427,9 @@ class tcpdi_parser {
                 }
                 if (preg_match('/Encrypt[\s]+([0-9]+)[\s]+([0-9]+)[\s]+R/i', $trailer_data, $matches) > 0) {
                     $xref['trailer'][1]['/Encrypt'] = array(PDF_TYPE_OBJREF, intval($matches[1]), intval($matches[2]));
+                } elseif (preg_match('/\/Encrypt[\s]*<</', $trailer_data) > 0) {
+                    // @CHANGE DOL the encryption dictionary written in place in the trailer
+                    $xref['trailer'][1]['/Encrypt'] = array(PDF_TYPE_DICTIONARY, array());
                 }
                 if (preg_match('/Info[\s]+([0-9]+)[\s]+([0-9]+)[\s]+R/i', $trailer_data, $matches) > 0) {
                     $xref['trailer'][1]['/Info'] = array(PDF_TYPE_OBJREF, intval($matches[1]), intval($matches[2]));
@@ -520,6 +528,7 @@ class tcpdi_parser {
                     case '/Root':
                     case '/Info':
                     case '/ID':
+                    case '/Encrypt':	// @CHANGE DOL the cross-reference stream of an encrypted document holds it too
                         $xref['trailer'][1][$key] = $v;
                         break;
                     default:
