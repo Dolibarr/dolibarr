@@ -4515,4 +4515,3 @@ function removeLastLine($fullpath)
 
 	return 1;
 }
-
