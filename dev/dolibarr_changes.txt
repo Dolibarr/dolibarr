@@ -475,6 +475,16 @@ NOTES   :
         +   the list is split on runs of white space, and a pair is kept only when both values are numeric
         +   the object number and the offset are cast to int before being stored
 
+==> FILE   : tcpdi_parser.php, function getXrefData()
+    REASON : The offset read from startxref was passed to strpos() without being checked. When it is beyond the
+             end of the file, PHP 8 throws "ValueError: strpos(): Argument #3 ($offset) must be contained in
+             argument #1 ($haystack)"; when it points somewhere else inside the file, the data was read as a
+             cross-reference stream and the import stopped on "Unable to find xref".
+    DIFF   :
+        +   the offset is checked to be inside the file and to be the start of a xref table or of an object
+        +   when it is neither, the last xref table of the file is used instead, and a previous section that
+            can not be found leaves what the newer ones already gave
+
 
 
 ####################################################################################################

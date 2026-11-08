@@ -350,11 +350,34 @@ class tcpdi_parser {
         }
         unset($matches);
 
-        // DOMPDF gets the startxref wrong, giving us the linebreak before the xref starts.
-        $startxref += strspn($this->pdfdata, "\r\n", $startxref);
+        // @CHANGE DOL Check that the offset is inside the file and really is the start of a xref section (table or
+        // stream). With PHP 8, strpos() throws a ValueError on an offset beyond the end of the data.
+        $startxref = (int) $startxref;
+        $pdflen = strlen($this->pdfdata);
+        if ($startxref < $pdflen) {
+            // DOMPDF gets the startxref wrong, giving us the linebreak before the xref starts.
+            $startxref += strspn($this->pdfdata, "\x00\x09\x0a\x0c\x0d\x20", $startxref);
+        }
+        $isxreftable = ($startxref < $pdflen && substr($this->pdfdata, $startxref, 4) === 'xref');
+        $isxrefstream = (!$isxreftable && $startxref < $pdflen && preg_match('/\G[0-9]+[\s]+[0-9]+[\s]+obj/', $this->pdfdata, $matches, 0, $startxref) == 1);
+        if (!$isxreftable && !$isxrefstream) {
+            if ($offset != 0) {
+                // A previous xref section that can not be found: keep what the newer sections gave.
+                return $xref;
+            }
+            // The startxref of the file is wrong: fall back on the last xref table of the file, if any.
+            if (preg_match_all('/[\r\n]xref[\s]*[\r\n]/', $this->pdfdata, $matches, PREG_OFFSET_CAPTURE) >= 1) {
+                $last = end($matches[0]);
+                $startxref = $last[1] + 1;
+                $isxreftable = true;
+            } else {
+                $this->Error('Unable to find xref');
+            }
+        }
+        unset($matches);
 
         // check xref position
-        if (strpos($this->pdfdata, 'xref', $startxref) == $startxref) {
+        if ($isxreftable) {
             // Cross-Reference
             $xref = $this->decodeXref($startxref, $xref);
         } else {
