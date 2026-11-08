@@ -846,14 +846,13 @@ class AccountancyCategory // extends CommonObject
 	/**
 	 * Get all accounting account of a given custom group (or a list of custom groups).
 	 * You must choose between first parameter (personalized group) or the second (free criteria filter)
+	 * When ACCOUNTING_GROUP_RANGE_AS_RULE is on and $cat_id is given, the accounts that the account range of
+	 * the groups gives to this group are added (key 'by_rule' = 1), see getCptsCatByRule().
 	 *
 	 * @param 	int 		$cat_id 						Id if personalized accounting group/category
 	 * @param 	string 		$sanitizedpredefinedgroupwhere 	Sql criteria filter to select accounting accounts. This value must be sanitized and not come from an input of a user.
 	 * 														Example: "pcg_type = 'EXPENSE' AND fk_pcg_version = 'xx'"
 	 * 														Example: "fk_accounting_category = 99"
-	 * When ACCOUNTING_GROUP_RANGE_AS_RULE is on and $cat_id is given, the accounts that the account range of
-	 * the groups gives to this group are added (key 'by_rule' = 1), see getCptsCatByRule().
-	 *
 	 * @return	never|array<array{id:int,account_number:string,account_label:string,by_rule?:int}>|int<-1,-1>		Array of accounting accounts or -1 if error
 	 * @see getCats(), getCatsCpts()
 	 */
