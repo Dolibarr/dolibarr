@@ -216,7 +216,7 @@ if (!$sortfield) {
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$diroutputmassaction = $conf->invoice->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = isModEnabled('invoice') ? $conf->invoice->dir_output.'/temp/massgeneration/'.$user->id : '';
 
 $now = dol_now();
 $error = 0;
