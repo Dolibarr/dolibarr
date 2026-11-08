@@ -917,7 +917,7 @@ function pdfWriteVATArray($docgenerator, &$index, $pdf, $outputlangs, $outputlan
 	if (!getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {	// by default, we show detail of vat here
 		// VAT
 		foreach ($docgenerator->tva_array as $tvakey => $tvaval) {
-			if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_VAT_LINE_IF_ZERO')) {
+			if ((float) $tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_VAT_LINE_IF_ZERO')) {	// $tvakey can be 'rate (code)', for example '0 (C+S-18)'
 				$tmpatleastoneratenotnull++;
 
 				$index++;
