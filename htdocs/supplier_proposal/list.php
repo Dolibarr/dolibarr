@@ -1273,7 +1273,7 @@ if ($resql) {
 			if (!empty($arrayfields['p.title']['checked'])) {
 				print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->project_title).'">';
 				if ($obj->project_id > 0) {
-					print dol_escape_htmltag($obj->project_title);
+					print '<span class="spantitle">'.dol_escape_htmltag($obj->project_title).'</span>';
 				}
 				print '</td>';
 				if (!$i) {

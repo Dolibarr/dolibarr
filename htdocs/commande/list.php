@@ -2536,7 +2536,7 @@ while ($i < $imaxinloop) {
 
 		// Project ref
 		if (!empty($arrayfields['p.ref']['checked'])) {
-			print '<td class="nocellnopadd nowraponall">';
+			print '<td class="tdoverflowmax150">';
 			if ($obj->project_id > 0) {
 				print $projectstatic->getNomUrl(1);
 			}
@@ -2548,9 +2548,9 @@ while ($i < $imaxinloop) {
 
 		// Project label
 		if (!empty($arrayfields['p.title']['checked'])) {
-			print '<td class="nowraponall">';
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($projectstatic->title).'">';
 			if ($obj->project_id > 0) {
-				print $projectstatic->title;
+				print '<span class="spantitle">'.dol_escape_htmltag($projectstatic->title).'</span>';
 			}
 			print '</td>';
 			if (!$i) {
