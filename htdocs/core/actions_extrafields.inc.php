@@ -256,7 +256,7 @@ if ($action == 'add') {
 					(GETPOST('perms', 'alpha') ? GETPOST('perms', 'alpha') : ''),
 					$visibility,
 					GETPOST('help', 'alpha'),
-					GETPOST('computed_value', 'alpha'),
+					GETPOST('computed_value', 'nohtml'),
 					(GETPOST('entitycurrentorall', 'alpha') ? 0 : ''),
 					GETPOST('langfile', 'alpha'),
 					'1',
@@ -437,8 +437,8 @@ if ($action == 'update') {
 					$visibility = 3;
 				}
 
-				// Example: is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : 'objnotdefined'
-				$computedvalue = GETPOST('computed_value', 'alphanohtml');
+				// Example: is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : 'objnotdefined' or isModEnabled("sellyoursaas")
+				$computedvalue = GETPOST('computed_value', 'nohtml');
 
 				$result = $extrafields->update(
 					GETPOST('attrname', 'aZ09'),
@@ -458,7 +458,7 @@ if ($action == 'update') {
 					$computedvalue,
 					(GETPOST('entitycurrentorall', 'alpha') ? 0 : ''),
 					GETPOST('langfile'),
-					GETPOST('enabled', 'alphanohtml'),
+					GETPOST('enabled', 'nohtml'),
 					(GETPOST('totalizable', 'alpha') ? 1 : 0),
 					GETPOSTINT('printable'),
 					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist),
