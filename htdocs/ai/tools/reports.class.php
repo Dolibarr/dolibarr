@@ -235,10 +235,10 @@ class ToolReports extends McpTool
 			return " AND 1 = 0";
 		}
 		if ($this->user->socid > 0) {
-			return " AND ".$alias.".fk_soc = ".((int) $this->user->socid);
+			return " AND ".$this->db->sanitize($alias).".fk_soc = ".((int) $this->user->socid);
 		}
 		if (!$this->user->hasRight('societe', 'client', 'voir')) {
-			return " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = ".$alias.".fk_soc AND sc.fk_user = ".((int) $this->user->id).")";
+			return " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = ".this->db->sanitize($alias).".fk_soc AND sc.fk_user = ".((int) $this->user->id).")";
 		}
 
 		return '';
