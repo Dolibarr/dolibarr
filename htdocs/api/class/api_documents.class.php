@@ -85,6 +85,10 @@ class Documents extends DolibarrApi
 		if ($modulepart == 'task' || $modulepart == 'project_task') {
 			$modulepart = 'project_task';
 		}
+		// 'agenda' uses the generic case of dol_check_secure_access_document() that only allows admins. Other users need the agenda permissions of 'actions'.
+		if ($modulepart == 'agenda' && empty(DolibarrApiAccess::$user->admin)) {
+			$modulepart = 'actions';
+		}
 
 		//--- Finds and returns the document
 		$entity = $conf->entity;
@@ -988,7 +992,8 @@ class Documents extends DolibarrApi
 				require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 				$object = new Propal($this->db);
 			} elseif ($modulepart == 'agenda' || $modulepart == 'action' || $modulepart == 'event') {
-				$modulepart = 'agenda';
+				// 'agenda' uses the generic case of dol_check_secure_access_document() that only allows admins. Other users need the agenda permissions of 'actions'.
+				$modulepart = (empty(DolibarrApiAccess::$user->admin) ? 'actions' : 'agenda');
 				require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
 				$object = new ActionComm($this->db);
 			} elseif ($modulepart == 'contact' || $modulepart == 'socpeople') {
@@ -1086,6 +1091,10 @@ class Documents extends DolibarrApi
 			}
 			if ($modulepart == 'member') {
 				$modulepart = 'adherent';
+			}
+			// 'agenda' uses the generic case of dol_check_secure_access_document() that only allows admins. Other users need the agenda permissions of 'actions'.
+			if ($modulepart == 'agenda' && empty(DolibarrApiAccess::$user->admin)) {
+				$modulepart = 'actions';
 			}
 
 			// Test on permissions
@@ -1282,6 +1291,10 @@ class Documents extends DolibarrApi
 		// Normalize modulepart for project_task
 		if ($modulepart == 'task') {
 			$modulepart = 'project_task';
+		}
+		// 'agenda' uses the generic case of dol_check_secure_access_document() that only allows admins. Other users need the agenda permissions of 'actions'.
+		if ($modulepart == 'agenda' && empty(DolibarrApiAccess::$user->admin)) {
+			$modulepart = 'actions';
 		}
 
 		//--- Finds and returns the document
