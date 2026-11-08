@@ -3,6 +3,7 @@
  * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Vincent de Grandpré	<vincent@de-grandpre.quebec>
+ * Copyright (C) 2026		Joachim Kueter		<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3952,6 +3953,7 @@ class EmailCollector extends CommonObject
 							if ($reshook < 0) {
 								$errorforthisaction++;
 								$this->error = $hookmanager->resPrint;
+								$this->errors[] = (!empty($hookmanager->resPrint) ? $hookmanager->resPrint : 'Hook doCollectImapOneCollector returned an error');
 								if (!empty($hookmanager->resPrint)) {
 									$operationslog .= '<br>Hook error: '.dol_escape_htmltag($hookmanager->resPrint);
 								}
@@ -3995,7 +3997,10 @@ class EmailCollector extends CommonObject
 						}
 					}
 				} else {
+					// This email is not moved into the target directory, so it stays into the source directory and will be processed again by next collect
 					$errorforemail++;
+					$this->errors[] = 'Error during processing of email with MsgId '.dol_escape_htmltag($msgid).', the email stays into the source directory';
+					$operationslog .= '<br>Error during processing of email, the email stays into the source directory';
 				}
 
 
@@ -4038,7 +4043,9 @@ class EmailCollector extends CommonObject
 			$output .= ' (defaultlang='.$langs->defaultlang.')';
 		}
 
-		// Disconnect
+		// Move emails into the target directory, then disconnect.
+		// Note: $arrayofemailtodelete contains only the emails whose operations succeeded, so we move them even if another email
+		// of this collect had an error (that email is not into $arrayofemailtodelete and stays into the source directory).
 		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 			// We sort to move/delete array with the more recent first (with higher number) so renumbering does not affect number of others to delete
 			krsort($arrayofemailtodelete, SORT_NUMERIC);
@@ -4048,7 +4055,7 @@ class EmailCollector extends CommonObject
 
 				$operationslog .= "<br> move email ".$imapemailnum.($mode > 0 ? ' (test)' : '');
 
-				if (empty($mode) && empty($error)) {
+				if (empty($mode)) {
 					$tmptargetdir = $targetdir;
 					if (!getDolGlobalString('MAIL_DISABLE_UTF7_ENCODE_OF_DIR')) {
 						$tmptargetdir = $this->getEncodedUtf7($targetdir);
@@ -4069,7 +4076,7 @@ class EmailCollector extends CommonObject
 				}
 			}
 
-			if (empty($mode) && empty($error)) {
+			if (empty($mode)) {
 				dol_syslog("Expunge", LOG_DEBUG);
 				$operationslog .= "<br>Expunge";
 
@@ -4083,7 +4090,7 @@ class EmailCollector extends CommonObject
 
 				$operationslog .= "<br> delete email ".$imapemail." ".$msgid.($mode > 0 ? ' (test)' : '');
 
-				if (empty($mode) && empty($error)) {
+				if (empty($mode)) {
 					$res = imap_mail_move($connection, $imapemail, $targetdir, CP_UID);
 					if (!$res) {
 						// $errorforemail++;  // Not in loop, not needed, not initialised
@@ -4097,7 +4104,7 @@ class EmailCollector extends CommonObject
 				}
 			}
 
-			if (empty($mode) && empty($error)) {
+			if (empty($mode)) {
 				dol_syslog("Expunge", LOG_DEBUG);
 				$operationslog .= "<br>Expunge";
 
