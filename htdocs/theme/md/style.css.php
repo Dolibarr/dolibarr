@@ -5086,6 +5086,9 @@ div.refidno  {
 }
 div.refidno form {
 	display: inline-block;
+	/* Negative vertical margins so the edit form (select2 28px + button) does not increase the line height of the banner */
+	margin-top: -4px;
+	margin-bottom: -4px;
 }
 div.refaddress div.address {
 	line-height: 1.2em;
