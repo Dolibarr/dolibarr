@@ -457,4 +457,43 @@ class PdfDocTest extends CommonClassTest
 		// The page drawn from the truncated stream is the page drawn from the complete one
 		$this->assertSame($sizes['complete'], $sizes['truncated']);
 	}
+
+	/**
+	 * Import a page of a document whose object stream separates the object numbers and their offsets with something
+	 * else than one single space: the list was split on each single white space character, so a CRLF or two spaces
+	 * gave empty values between the numbers, and the offset added to /First was a string.
+	 *
+	 * @return void
+	 */
+	public function testPdfImportPageWithAnObjectStreamHeaderNotSeparatedBySingleSpaces()
+	{
+		pdf_getInstance();	// Load the TCPDF and TCPDI classes and define their constants
+
+		$content = "BT /F1 24 Tf 72 700 Td (Hello TCPDI) Tj ET";
+		$objects = array(
+			1 => "<< /Type /Catalog /Pages 2 0 R >>",
+			2 => "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+			3 => "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>",
+			5 => "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+		);
+
+		$sizes = array();
+		foreach (array('space' => ' ', 'crlf' => "\r\n", 'spaces' => '  ', 'newline' => "\n") as $case => $sep) {
+			$file = tempnam(sys_get_temp_dir(), 'tcpdi').'.pdf';
+			file_put_contents($file, $this->buildPdfWithObjectStream($objects, $content, $sep));
+
+			$tcpdi = new TCPDI();
+			$this->assertSame(1, $tcpdi->setSourceFile($file), 'Case '.$case.': the document should hold one page');
+			$tpl = $tcpdi->importPage(1);
+			$tcpdi->AddPage();
+			$tcpdi->useTemplate($tpl);
+			$sizes[$case] = strlen($tcpdi->Output('', 'S'));
+			unlink($file);
+		}
+
+		// Whatever separates them, the same page is imported
+		$this->assertSame($sizes['space'], $sizes['crlf']);
+		$this->assertSame($sizes['space'], $sizes['spaces']);
+		$this->assertSame($sizes['space'], $sizes['newline']);
+	}
 }

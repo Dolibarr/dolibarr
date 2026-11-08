@@ -1090,10 +1090,12 @@ class tcpdi_parser {
         }
         $stream = $this->decodeStream($obj[1][1], $obj[2][1]);// Decode object stream, as we need the first bit
         $first = intval($obj[1][1]['/First'][1]);
-        $ints = preg_split('/\s/', substr($stream[0], 0, $first)); // Get list of object / offset pairs
-        for ($j=1; $j<count($ints); $j++) {
-            if (($j % 2) == 1) {
-                $this->objstreamobjs[$ints[$j-1]] = array($key, $ints[$j]+$first);
+        // @CHANGE DOL Get list of object / offset pairs. They may be separated by any number of white space chars, the
+        // split on each single one gave empty values (then a TypeError) with a CRLF or two spaces.
+        $ints = preg_split('/[\s]+/', trim(substr($stream[0], 0, $first)));
+        for ($j=1; $j<count($ints); $j+=2) {
+            if (is_numeric($ints[$j-1]) && is_numeric($ints[$j])) {
+                $this->objstreamobjs[(int) $ints[$j-1]] = array($key, ((int) $ints[$j]) + $first);
             }
         }
 
