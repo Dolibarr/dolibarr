@@ -509,6 +509,64 @@ class FilesLibTest extends CommonClassTest
 	}
 
 	/**
+	 * testDolCheckSecureAccessDocumentAliases
+	 *
+	 * The aliases of modulepart used by the REST API must use the permissions and the directory of the module they are an alias of.
+	 *
+	 * @return void
+	 */
+	public function testDolCheckSecureAccessDocumentAliases()
+	{
+		global $conf, $user;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+
+		$savadmin = $user->admin;
+		$user->admin = 0;
+		$filename = 'REF/REF.pdf';
+
+		$rightsallowed = new stdClass();
+		$rightsallowed->lire = 1;
+		$rightsallowed->creer = 1;
+		foreach (array('intervention' => 'ficheinter', 'proposal' => 'propal') as $modulepart => $module) {
+			if (!isModEnabled($module)) {
+				continue;
+			}
+			$savrights = $user->rights->$module ?? null;
+
+			$user->rights->$module = $rightsallowed;
+			foreach (array('read', 'write') as $mode) {
+				$result = dol_check_secure_access_document($modulepart, $filename, 0, '', '', $mode);
+				$this->assertEquals(1, $result['accessallowed'], "Check $mode access allowed to '$modulepart/$filename':".json_encode($result));
+				$this->assertEquals($conf->$module->multidir_output[$conf->entity].'/'.$filename, $result['original_file']);
+			}
+
+			$user->rights->$module = new stdClass();
+			foreach (array('read', 'write') as $mode) {
+				$result = dol_check_secure_access_document($modulepart, $filename, 0, '', '', $mode);
+				$this->assertEquals(0, $result['accessallowed'], "Check $mode access denied to '$modulepart/$filename':".json_encode($result));
+			}
+
+			$user->rights->$module = $savrights;
+		}
+
+		// A module called like an alias keeps its own directory
+		$savconfmodule = isset($conf->proposal) ? $conf->proposal : null;
+		$conf->proposal = new stdClass();
+		$conf->proposal->dir_output = DOL_DATA_ROOT.'/proposal';
+		$conf->proposal->multidir_output = array(1 => DOL_DATA_ROOT.'/proposal');
+		$result = dol_check_secure_access_document('proposal', 'REF/REF.pdf', 0, '', '', 'read');
+		$this->assertEquals(DOL_DATA_ROOT.'/proposal/REF/REF.pdf', $result['original_file']);
+		if ($savconfmodule === null) {
+			unset($conf->proposal);
+		} else {
+			$conf->proposal = $savconfmodule;
+		}
+
+		$user->admin = $savadmin;
+	}
+
+	/**
 	 * testDolCheckSecureAccessDocumentHook
 	 *
 	 * A module using the hook checkSecureAccess can grant access, and can also refuse it.

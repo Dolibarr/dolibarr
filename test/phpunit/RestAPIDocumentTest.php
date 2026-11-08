@@ -501,4 +501,33 @@ class RestAPIDocumentTest extends AbstractRestAPITest
 
 		return 0;
 	}
+
+	/**
+	 * testModulepartAliases
+	 *
+	 * The aliases of modulepart must return a REST error on a file that does not exist, and not stop on an HTML error page.
+	 *
+	 * @return void
+	 */
+	public function testModulepartAliases()
+	{
+		$aliases = array('intervention' => 'ficheinter', 'proposal' => 'propal');
+
+		foreach ($aliases as $modulepart => $module) {
+			if (!isModEnabled($module)) {
+				continue;
+			}
+			$param = 'modulepart='.urlencode($modulepart).'&original_file='.urlencode('tmpphpunit/notexistingfile.pdf').'&api_key='.$this->api_key;
+
+			foreach (array('GET' => '/documents/download', 'DELETE' => '/documents') as $method => $route) {
+				$url = $this->api_url.$route.'?'.$param;
+				echo __METHOD__.' Request '.$method.' url='.$url."\n";
+
+				$result = getURLContent($url, $method, '', 1, array(), array('http', 'https'), 2);
+				$object = json_decode($result['content'], true);
+				$this->assertNotNull($object, "$method $route with modulepart $modulepart must return json");
+				$this->assertEquals(404, $result['http_code'], "$method $route with modulepart $modulepart on a not found file must return 404");
+			}
+		}
+	}
 }
