@@ -501,6 +501,29 @@ NOTES   :
         +   reading an object stops at the end of the data, instead of looping past it looking for "endobj"
 
 
+==> FILE   : tcpdi_parser.php, functions readPages(), readPage(), _getPageResources() and _getPageAnnotations(),
+             new function getKids()
+    REASON : The page tree was read as if everything were written in place. /Kids was only followed when the
+             array itself was there, while any value of a dictionary may be an indirect reference to it: a
+             document written that way imported ZERO page without any error. A page carries neither /Resources
+             nor /Annots of its own when it inherits them, and the search up the /Parent chain returns false at
+             the root of the tree, which was then indexed as an array. A page tree that refers back to a node
+             above it made the reader recurse until the memory ran out.
+    DIFF   :
+        +   new getKids(), which resolves an indirect /Kids, used by readPages() and readPage()
+        +   a node already visited is not followed again
+        +   a /Kids entry that does not resolve to an array is ignored instead of being read as one
+        +   the inherited /Resources and /Annots are tested before being used as an array
+        +   readPages() always leaves a usable page list, even without a /Root
+
+==> FILE   : tcpdi.php, function _putformxobjects()
+    REASON : getPageResources() returns false when no node of the page tree carries any, and isset() is true for
+             false: the value was written as if it were a dictionary, which wrote nothing at all after
+             "/Resources" and left the imported page without any resource dictionary.
+    DIFF   :
+        +   the default set of resources is written when the page inherits none
+
+
 
 ####################################################################################################
 # LIBRARY : JQUERYFILETREE (JS)
