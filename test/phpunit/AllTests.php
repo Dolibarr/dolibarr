@@ -187,6 +187,8 @@ class AllTests
 		$suite->addTestSuite('AiMcpApiBridgeDocumentsTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeProjectsTest.php';
 		$suite->addTestSuite('AiMcpApiBridgeProjectsTest');
+		require_once dirname(__FILE__).'/AiMcpApiBridgeSupplierOrderWorkflowTest.php';
+		$suite->addTestSuite('AiMcpApiBridgeSupplierOrderWorkflowTest');
 		require_once dirname(__FILE__).'/ApiExplorerAccessControlTest.php';
 		$suite->addTestSuite('ApiExplorerAccessControlTest');
 		require_once dirname(__FILE__).'/ApiListStatusFilterTest.php';
