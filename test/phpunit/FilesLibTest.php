@@ -509,6 +509,64 @@ class FilesLibTest extends CommonClassTest
 	}
 
 	/**
+	 * testDolCheckSecureAccessDocumentAliases
+	 *
+	 * The aliases of modulepart used by the REST API must use the permissions and the directory of the module they are an alias of.
+	 *
+	 * @return void
+	 */
+	public function testDolCheckSecureAccessDocumentAliases()
+	{
+		global $conf, $user;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+
+		$savadmin = $user->admin;
+		$user->admin = 0;
+		$filename = 'REF/REF.pdf';
+
+		$rightsallowed = new stdClass();
+		$rightsallowed->lire = 1;
+		$rightsallowed->creer = 1;
+		foreach (array('intervention' => 'ficheinter', 'proposal' => 'propal') as $modulepart => $module) {
+			if (!isModEnabled($module)) {
+				continue;
+			}
+			$savrights = $user->rights->$module ?? null;
+
+			$user->rights->$module = $rightsallowed;
+			foreach (array('read', 'write') as $mode) {
+				$result = dol_check_secure_access_document($modulepart, $filename, 0, '', '', $mode);
+				$this->assertEquals(1, $result['accessallowed'], "Check $mode access allowed to '$modulepart/$filename':".json_encode($result));
+				$this->assertEquals($conf->$module->multidir_output[$conf->entity].'/'.$filename, $result['original_file']);
+			}
+
+			$user->rights->$module = new stdClass();
+			foreach (array('read', 'write') as $mode) {
+				$result = dol_check_secure_access_document($modulepart, $filename, 0, '', '', $mode);
+				$this->assertEquals(0, $result['accessallowed'], "Check $mode access denied to '$modulepart/$filename':".json_encode($result));
+			}
+
+			$user->rights->$module = $savrights;
+		}
+
+		// A module called like an alias keeps its own directory
+		$savconfmodule = isset($conf->proposal) ? $conf->proposal : null;
+		$conf->proposal = new stdClass();
+		$conf->proposal->dir_output = DOL_DATA_ROOT.'/proposal';
+		$conf->proposal->multidir_output = array(1 => DOL_DATA_ROOT.'/proposal');
+		$result = dol_check_secure_access_document('proposal', 'REF/REF.pdf', 0, '', '', 'read');
+		$this->assertEquals(DOL_DATA_ROOT.'/proposal/REF/REF.pdf', $result['original_file']);
+		if ($savconfmodule === null) {
+			unset($conf->proposal);
+		} else {
+			$conf->proposal = $savconfmodule;
+		}
+
+		$user->admin = $savadmin;
+	}
+
+	/**
 	 * testDolCheckSecureAccessDocumentHook
 	 *
 	 * A module using the hook checkSecureAccess can grant access, and can also refuse it.
@@ -583,6 +641,75 @@ class FilesLibTest extends CommonClassTest
 		} else {
 			$conf->mytestmodule = $savconfmodule;
 		}
+	}
+
+	/**
+	 * testDolCheckSecureAccessDocumentAgendaAliases
+	 *
+	 * The aliases of modulepart used by the REST API for events must use the permissions and the directory of the agenda.
+	 *
+	 * @return void
+	 */
+	public function testDolCheckSecureAccessDocumentAgendaAliases()
+	{
+		global $conf, $user;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+
+		$savadmin = $user->admin;
+		$user->admin = 0;
+
+		if (isModEnabled('agenda')) {
+			$savrights = $user->rights->agenda ?? null;
+			$filename = '1/1.pdf';
+
+			foreach (array('action', 'event') as $modulepart) {
+				$user->rights->agenda = new stdClass();
+				$user->rights->agenda->allactions = new stdClass();
+				$user->rights->agenda->allactions->read = 1;
+				$user->rights->agenda->allactions->create = 1;
+				foreach (array('read', 'write') as $mode) {
+					$result = dol_check_secure_access_document($modulepart, $filename, 0, '', '', $mode);
+					$this->assertEquals(1, $result['accessallowed'], "Check $mode access allowed to '$modulepart/$filename':".json_encode($result));
+					$this->assertEquals($conf->agenda->dir_output.'/'.$filename, $result['original_file']);
+				}
+
+				$user->rights->agenda = new stdClass();
+				foreach (array('read', 'write') as $mode) {
+					$result = dol_check_secure_access_document($modulepart, $filename, 0, '', '', $mode);
+					$this->assertEquals(0, $result['accessallowed'], "Check $mode access denied to '$modulepart/$filename':".json_encode($result));
+				}
+			}
+
+			// 'agenda' is not an alias here: it stays on the generic case (allowed to admins only, with the hook checkSecureAccess)
+			$user->rights->agenda = new stdClass();
+			$user->rights->agenda->allactions = new stdClass();
+			$user->rights->agenda->allactions->read = 1;
+			$result = dol_check_secure_access_document('agenda', $filename, 0, '', '', 'read');
+			$this->assertEquals(0, $result['accessallowed'], "Check access denied to 'agenda/$filename' for a non admin:".json_encode($result));
+			$user->admin = 1;
+			$user->rights->agenda = new stdClass();
+			$result = dol_check_secure_access_document('agenda', $filename, 0, '', '', 'read');
+			$this->assertEquals(1, $result['accessallowed'], "Check access allowed to 'agenda/$filename' for an admin:".json_encode($result));
+			$user->admin = 0;
+
+			$user->rights->agenda = $savrights;
+		}
+
+		// A module called like an alias keeps its own directory
+		$savconfmodule = isset($conf->event) ? $conf->event : null;
+		$conf->event = new stdClass();
+		$conf->event->dir_output = DOL_DATA_ROOT.'/event';
+		$conf->event->multidir_output = array(1 => DOL_DATA_ROOT.'/event');
+		$result = dol_check_secure_access_document('event', 'REF/REF.pdf', 0, '', '', 'read');
+		$this->assertEquals(DOL_DATA_ROOT.'/event/REF/REF.pdf', $result['original_file']);
+		if ($savconfmodule === null) {
+			unset($conf->event);
+		} else {
+			$conf->event = $savconfmodule;
+		}
+
+		$user->admin = $savadmin;
 	}
 
 	/**

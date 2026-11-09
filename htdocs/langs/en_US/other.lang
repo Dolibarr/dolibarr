@@ -560,6 +560,7 @@ AIPreviewCloseTicket=Close the ticket %s.
 AIPreviewCancelTicket=Cancel (abandon) the ticket %s.
 AIPreviewAssignTicket=Assign the ticket %s to %s.
 AIPreviewUnassignTicket=Unassign the ticket %s.
+AIPreviewRunCronjob=Run the cron job %s now.
 AIWriteTicketClosed=The %s %s is already closed or canceled.
 AIWriteUseOtherTool=%s cannot be set to %s here: use the tool %s, which does what the card does.
 AIWriteUnknownRole=No role "%s" for this record. Roles: %s.

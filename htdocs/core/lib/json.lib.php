@@ -255,22 +255,6 @@ if (!function_exists('json_encode') || defined('PHPUNIT_MODE')) {
 	}
 }
 
-if (!function_exists('json_encode')) {
-	/**
-	 * Implement json_encode for PHP that does not have module enabled.
-	 *
-	 * @param	mixed	$elements		PHP Object to json encode
-	 * @return 	string					Json encoded string
-	 * @phan-suppress PhanRedefineFunctionInternal
-	 */
-	function json_encode($elements)
-	{
-		// @phan-suppress-next-line PhanDeprecatedFunction
-		return dol_json_encode($elements);
-	}
-}
-
-
 if (!function_exists('json_decode') || defined('PHPUNIT_MODE')) {
 	/**
 	 * Implement json_decode for PHP that does not support it
@@ -414,21 +398,5 @@ if (!function_exists('json_decode') || defined('PHPUNIT_MODE')) {
 
 		// ignoring UTF-32 for now, sorry
 		return '';
-	}
-}
-
-if (!function_exists('json_decode')) {
-	/**
-	 * Implement json_decode for PHP that does not support it
-	 *
-	 * @param	string	$json		Json encoded to PHP Object or Array
-	 * @param	bool	$assoc		False return an object, true return an array
-	 * @return 	mixed				Object or Array
-	 * @phan-suppress PhanRedefineFunctionInternal
-	 */
-	function json_decode($json, $assoc = false)
-	{
-		// @phan-suppress-next-line PhanDeprecatedFunction
-		return dol_json_decode($json, $assoc);
 	}
 }

@@ -585,12 +585,21 @@ try {
 			$s .= '<div class="ai-tools-debug">';
 			$s .= '<strong>Tool families loaded ('.count($mcp->loadedTools).')</strong>';
 			$s .= '<ul class="small">';
+			// Tools allowed by the setup of the assistant (system tools are always allowed)
+			$allowedToolNames = McpHandler::resolveAllowList(getDolGlobalString('AI_ASSISTANT_ALLOWED_TOOLS'), array_keys($mcp->toolsByName));
 			foreach ($mcp->loadedTools as $familyKey => $familyInstance) {
 				/** @param object $instance */
-				$nbInFamily = count(array_filter($mcp->toolsByName, function ($instance) use ($familyInstance): bool {
+				$toolNamesInFamily = array_keys(array_filter($mcp->toolsByName, function ($instance) use ($familyInstance): bool {
 					return $instance === $familyInstance;
 				}));
-				$s .= '<li><strong>'.dol_escape_htmltag((string) $familyKey).'</strong> <span class="opacitymedium">'.dol_escape_htmltag(get_class($familyInstance)).' - '.$nbInFamily.' tool(s)</span></li>';
+				$isSystemFamily = (method_exists($familyInstance, 'isSystem') && $familyInstance->isSystem());
+				$nbDisabled = $isSystemFamily ? 0 : count(array_diff($toolNamesInFamily, $allowedToolNames));
+				$nbInFamily = count($toolNamesInFamily) - $nbDisabled;
+				$s .= '<li><strong>'.dol_escape_htmltag((string) $familyKey).'</strong> <span class="opacitymedium">'.dol_escape_htmltag(get_class($familyInstance)).' - '.$nbInFamily.' tool(s)</span>';
+				if ($nbDisabled > 0) {
+					$s .= '<br><span class="opacitymedium">... '.$nbDisabled.' other tool(s) are disabled in the AI assistant setup</span>';
+				}
+				$s .= '</li>';
 			}
 			$s .= '</ul>';
 		}
@@ -1929,98 +1938,6 @@ function filterToolsProfessional(array $allTools, array $activeCategories)
 	}
 
 	return $filtered;
-}
-
-/**
- * Compresses tool schema by removing optional parameters with defaults
- * and stripping descriptions, relying on LLM inference of variable names.
- *
- * @param array<int, array<string, mixed>> $tools Array of tool definitions.
- * @param bool $isLargeSchema True if compression is needed.
- * @return array<int, array<string, mixed>>
- */
-function cleanToolSchemaForLLM(array $tools, bool $isLargeSchema = false)
-{
-	$cleaned = [];
-
-	foreach ($tools as $tool) {
-		// Tool descriptions are how the LLM selects the right tool -- never truncate
-		// them, even when the schema is large. Truncating to 3 words ("Create documents
-		// other", "Add a single") breaks tool selection. If the schema really is too
-		// big for the chosen model, the right answer is to filter the toolset before
-		// it reaches the LLM (which is what filterToolsProfessional() already does
-		// upstream of this function), not to mutilate each tool's description.
-		// Parameter-level compression (stripping defaults, descriptions of optional
-		// fields, etc.) remains gated on $isLargeSchema below.
-		$desc = $tool['description'];
-
-		// Get parameters
-		$toolParams = $tool['parameters'] ?? $tool['inputSchema'] ?? [];
-		// requestState is set by the chat after the user confirmed a write, never by the model.
-		unset($toolParams['properties']['requestState']);
-
-		if ($isLargeSchema && isset($toolParams['properties']) && is_array($toolParams['properties'])) {
-			$requiredList = $toolParams['required'] ?? [];
-			$newProperties = [];
-
-			foreach ($toolParams['properties'] as $propKey => $propData) {
-				$isRequired = in_array($propKey, $requiredList);
-
-				// -----------------------------------------------------------
-				// Remove Optional Parameters with Defaults
-				// -----------------------------------------------------------
-				// If a parameter is optional and has a default value defined in
-				// the schema, we assume the backend will handle it. We remove it
-				// from the prompt entirely. This saves massive amounts of tokens
-				// on list/search functions (limit, sortorder, sqlfilters, etc).
-				// -----------------------------------------------------------
-				if (!$isRequired && isset($propData['default'])) {
-					continue;
-				}
-
-				// Remove 'type' for string (LLM default), Keep others (int/bool/arr)
-				if (isset($propData['type']) && $propData['type'] === 'string') {
-					unset($propData['type']);
-				}
-
-				// Handle Descriptions
-				// Remove descriptions entirely. Rely on the key name (e.g. 'email', 'qty').
-				// Exception: Keep 1 word if it's a required parameter with a confusing name.
-				if (isset($propData['description'])) {
-					unset($propData['description']);
-					// If we want to keep a tiny hint for required params, uncomment below:
-					// if ($isRequired) {
-					//     $propData['description'] = explode(' ', trim($propData['description']))[0];
-					// }
-				}
-
-				// Collapse Complex Objects
-				// If a parameter is a deep object (like a complex filter), replace the
-				// recursive properties definition with a generic string to save tokens.
-				if (isset($propData['type']) && $propData['type'] === 'object' && isset($propData['properties'])) {
-					unset($propData['properties']);
-					unset($propData['required']);
-					$propData['description'] = "JSON object"; // Minimal hint
-				}
-
-				$newProperties[$propKey] = $propData;
-			}
-
-			$toolParams['properties'] = $newProperties;
-
-			// Clean up root metadata
-			unset($toolParams['type']);
-			unset($toolParams['additionalProperties']);
-		}
-
-		$cleaned[] = [
-			'name' => $tool['name'],
-			'description' => $desc,
-			'parameters' => $toolParams
-		];
-	}
-
-	return $cleaned;
 }
 
 /**

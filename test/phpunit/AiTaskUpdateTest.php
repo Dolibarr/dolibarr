@@ -68,8 +68,8 @@ class AiTaskUpdateTest extends PHPUnit\Framework\TestCase
 		$changes = ['label' => '  Revised task  ', 'note_private' => '', 'date_end' => null];
 		$expected = ['label' => 'Revised task', 'note_private' => '', 'date_end' => null];
 		foreach ([array_merge(['id' => 42], $changes), ['id' => 42, 'request_data' => $changes], ['ref' => 'TK-42', 'request_data' => json_encode($changes)]] as $args) {
-			$this->assertSame('', $this->bridge->writePrecheck('api_tasks_update', $args));
-			$this->assertSame(['success' => true, 'id' => 42, 'ref' => 'TK-42'], $this->bridge->execute('api_tasks_update', $args));
+			$this->assertSame('', $this->bridge->writePrecheck('api_project_tasks_update', $args));
+			$this->assertSame(['success' => true, 'id' => 42, 'ref' => 'TK-42'], $this->bridge->execute('api_project_tasks_update', $args));
 			$this->assertSame(['id' => 42, 'body' => $expected], AiTaskUpdateEndpointFixture::$received);
 			$this->assertArrayNotHasKey('status', AiTaskUpdateEndpointFixture::$received['body']);
 			$this->assertArrayNotHasKey('fk_soc', AiTaskUpdateEndpointFixture::$received['body']);
@@ -79,7 +79,7 @@ class AiTaskUpdateTest extends PHPUnit\Framework\TestCase
 	/** @return void */
 	public function testTextIsTrimmedBeforeConfirmationAndDispatch()
 	{
-		foreach (['api_tasks_update' => 42] as $tool => $id) {
+		foreach (['api_project_tasks_update' => 42] as $tool => $id) {
 			$args = ['id' => $id, 'description' => '  Updated description  ', 'note_public' => "\n Public note \n", 'note_private' => '   '];
 			$this->assertSame('', $this->bridge->writePrecheck($tool, $args));
 			$preview = $this->bridge->writeConfirmationPreview($tool, $args);
@@ -104,8 +104,8 @@ class AiTaskUpdateTest extends PHPUnit\Framework\TestCase
 			['request_data' => ['label' => 'Body'], 'label' => 'Flat'], ['request_data' => ['id' => 42, 'label' => 'New']]
 		] as $changes) {
 			$args = array_merge(['id' => 42], $changes);
-			$this->assertNotSame('', $this->bridge->writePrecheck('api_tasks_update', $args), json_encode($args));
-			$this->assertArrayHasKey('error', $this->bridge->execute('api_tasks_update', $args));
+			$this->assertNotSame('', $this->bridge->writePrecheck('api_project_tasks_update', $args), json_encode($args));
+			$this->assertArrayHasKey('error', $this->bridge->execute('api_project_tasks_update', $args));
 			$this->assertSame([], AiTaskUpdateEndpointFixture::$received);
 		}
 	}
@@ -113,7 +113,7 @@ class AiTaskUpdateTest extends PHPUnit\Framework\TestCase
 	/** @return void */
 	public function testExactlyOneExistingTaskIdentifierIsRequired()
 	{
-		foreach (['api_tasks_update' => 42] as $tool => $id) {
+		foreach (['api_project_tasks_update' => 42] as $tool => $id) {
 			$ref = 'TK-42';
 			foreach ([[], ['id' => 0], ['id' => (string) $id], ['id' => 42.5], ['ref' => ''], ['ref' => '   '], ['id' => $id, 'ref' => $ref], ['id' => 99], ['ref' => 'UNKNOWN']] as $identifier) {
 				$args = array_merge($identifier, ['note_private' => 'New']);
@@ -127,7 +127,7 @@ class AiTaskUpdateTest extends PHPUnit\Framework\TestCase
 	/** @return void */
 	public function testExistingDatesParticipateInValidation()
 	{
-		foreach (['api_tasks_update' => 42] as $tool => $id) {
+		foreach (['api_project_tasks_update' => 42] as $tool => $id) {
 			foreach ([['date_start' => 1735862400], ['date_end' => 1703980800], ['date_start' => 1735862400, 'date_end' => 1735776000]] as $changes) {
 				$args = array_merge(['id' => $id], $changes);
 				$this->assertNotSame('', $this->bridge->writePrecheck($tool, $args));
@@ -155,7 +155,7 @@ class AiTaskUpdateTest extends PHPUnit\Framework\TestCase
 			$enrichments[$endpoint]['methods']['put']['write']['rename'] = ['note_private' => 'note_public'];
 		}
 		$metadata->setValue($this->bridge, $enrichments);
-		foreach (['api_tasks_update' => 42] as $tool => $id) {
+		foreach (['api_project_tasks_update' => 42] as $tool => $id) {
 			$changes = ['date_start' => null, 'date_end' => null, 'note_private' => ''];
 			$args = array_merge(['id' => $id, 'requestState' => 'confirmation-state'], $changes);
 			$this->assertSame('', $this->bridge->writePrecheck($tool, $args));
@@ -167,7 +167,7 @@ class AiTaskUpdateTest extends PHPUnit\Framework\TestCase
 	/** @return void */
 	public function testReadWriteAndRecordVisibilityAreAllRequired()
 	{
-		foreach (['api_tasks_update' => 42] as $tool => $id) {
+		foreach (['api_project_tasks_update' => 42] as $tool => $id) {
 			foreach (['lire', 'creer'] as $denied) {
 				$actingUser = new AiTaskUpdateUserFixture();
 				$actingUser->denied = $denied;
@@ -189,7 +189,7 @@ class AiTaskUpdateTest extends PHPUnit\Framework\TestCase
 	public function testReadAllDoesNotGrantProjectWriteAccess()
 	{
 		$this->bridge->allowProjectWrite = false;
-		foreach (['api_tasks_update' => 42] as $tool => $id) {
+		foreach (['api_project_tasks_update' => 42] as $tool => $id) {
 			$args = ['id' => $id, 'note_private' => 'New'];
 			$this->assertNotSame('', $this->bridge->writePrecheck($tool, $args));
 			$this->assertArrayHasKey('error', $this->bridge->execute($tool, $args));
@@ -202,7 +202,7 @@ class AiTaskUpdateTest extends PHPUnit\Framework\TestCase
 	{
 		foreach ([2, -1, 99, null, 'oops', false, '00'] as $status) {
 			$this->bridge->projectStatus = $status;
-			foreach (['api_tasks_update' => 42] as $tool => $id) {
+			foreach (['api_project_tasks_update' => 42] as $tool => $id) {
 				$args = ['id' => $id, 'note_private' => 'New'];
 				$this->assertNotSame('', $this->bridge->writePrecheck($tool, $args));
 				$this->assertArrayHasKey('error', $this->bridge->execute($tool, $args));
@@ -211,14 +211,14 @@ class AiTaskUpdateTest extends PHPUnit\Framework\TestCase
 		$this->assertSame([], AiTaskUpdateEndpointFixture::$received);
 		foreach ([0, 1] as $status) {
 			$this->bridge->projectStatus = $status;
-			$this->assertSame('', $this->bridge->writePrecheck('api_tasks_update', ['id' => 42, 'note_private' => 'New']));
+			$this->assertSame('', $this->bridge->writePrecheck('api_project_tasks_update', ['id' => 42, 'note_private' => 'New']));
 		}
 	}
 
 	/** @return void */
 	public function testMaximumLabelLengthIsAccepted()
 	{
-		foreach (['api_tasks_update' => ['id' => 42, 'label' => str_repeat('x', 255)]] as $tool => $args) {
+		foreach (['api_project_tasks_update' => ['id' => 42, 'label' => str_repeat('x', 255)]] as $tool => $args) {
 			$this->assertSame('', $this->bridge->writePrecheck($tool, $args));
 			$this->assertArrayNotHasKey('error', $this->bridge->execute($tool, $args));
 		}
@@ -227,7 +227,7 @@ class AiTaskUpdateTest extends PHPUnit\Framework\TestCase
 	/** @return void */
 	public function testPermissionsAndVisibilityAreRevalidatedAfterConfirmationPreview()
 	{
-		foreach (['api_tasks_update' => 42] as $tool => $id) {
+		foreach (['api_project_tasks_update' => 42] as $tool => $id) {
 			$args = ['id' => $id, 'note_private' => 'New'];
 			foreach (['lire', 'creer'] as $denied) {
 				$actingUser = new AiTaskUpdateUserFixture();
@@ -266,7 +266,7 @@ class AiTaskUpdateTest extends PHPUnit\Framework\TestCase
 	/** @return void */
 	public function testPreviewNamesTaskProjectAndChangesWithoutLoadingSupplier()
 	{
-		$project = $this->bridge->writeConfirmationPreview('api_tasks_update', ['ref' => 'TK-42', 'label' => 'Revised task', 'date_end' => 1735862400]);
+		$project = $this->bridge->writeConfirmationPreview('api_project_tasks_update', ['ref' => 'TK-42', 'label' => 'Revised task', 'date_end' => 1735862400]);
 		foreach (['TK-42', 'Example task', 'PJ-7', 'Example project', 'Revised task', '2025-01-02', '2025-01-03', '→'] as $expected) {
 			$this->assertStringContainsString(dol_escape_htmltag($expected), $project);
 		}
@@ -278,7 +278,7 @@ class AiTaskUpdateTest extends PHPUnit\Framework\TestCase
 	/** @return void */
 	public function testOnlyCompactRecordIdentityIsReturnedAfterASuccessfulWrite()
 	{
-		foreach (['api_tasks_update' => 42] as $tool => $id) {
+		foreach (['api_project_tasks_update' => 42] as $tool => $id) {
 			$ref = 'TK-42';
 			$this->assertSame(['success' => true, 'id' => $id, 'ref' => $ref], $this->bridge->execute($tool, ['id' => $id, 'note_private' => 'New']));
 		}
@@ -290,7 +290,7 @@ class AiTaskUpdateTest extends PHPUnit\Framework\TestCase
 		AiTaskUpdateEndpointFixture::$customResult = true;
 		foreach ([false, null, 0, -1, '', [], ['id' => 99, 'ref' => 'TK-42'], ['id' => 42], ['id' => 42, 'ref' => '']] as $result) {
 			AiTaskUpdateEndpointFixture::$result = $result;
-			foreach (['api_tasks_update' => 42] as $tool => $id) {
+			foreach (['api_project_tasks_update' => 42] as $tool => $id) {
 				$this->assertArrayHasKey('error', $this->bridge->execute($tool, ['id' => $id, 'note_private' => 'New']));
 			}
 		}
@@ -303,8 +303,8 @@ class AiTaskUpdateTest extends PHPUnit\Framework\TestCase
 		foreach (['label' => ['<b></b>', '../', '"'], 'note_private' => ['<script>alert(1)</script>']] as $field => $values) {
 			foreach ($values as $value) {
 				$args = ['id' => 42, $field => $value];
-				$this->assertNotSame('', $this->bridge->writePrecheck('api_tasks_update', $args), $value);
-				$this->assertArrayHasKey('error', $this->bridge->execute('api_tasks_update', $args));
+				$this->assertNotSame('', $this->bridge->writePrecheck('api_project_tasks_update', $args), $value);
+				$this->assertArrayHasKey('error', $this->bridge->execute('api_project_tasks_update', $args));
 			}
 		}
 		$this->assertSame([], AiTaskUpdateEndpointFixture::$received);
@@ -314,7 +314,7 @@ class AiTaskUpdateTest extends PHPUnit\Framework\TestCase
 	public function testTaskDatePreviewKeepsTimeInUtc()
 	{
 		date_default_timezone_set('America/Los_Angeles');
-		$preview = $this->bridge->writeConfirmationPreview('api_tasks_update', ['id' => 42, 'date_end' => 1735866000]);
+		$preview = $this->bridge->writeConfirmationPreview('api_project_tasks_update', ['id' => 42, 'date_end' => 1735866000]);
 		$this->assertStringContainsString(dol_escape_htmltag('2025-01-02 00:00:00 UTC → 2025-01-03 01:00:00 UTC'), $preview);
 	}
 
@@ -325,7 +325,7 @@ class AiTaskUpdateTest extends PHPUnit\Framework\TestCase
 		$includePath = get_include_path();
 		foreach ([false, true, false] as $failure) {
 			AiTaskUpdateEndpointFixture::$customResult = $failure;
-			$result = $this->bridge->execute('api_tasks_update', ['id' => 42, 'label' => 'Updated']);
+			$result = $this->bridge->execute('api_project_tasks_update', ['id' => 42, 'label' => 'Updated']);
 			$this->assertSame($autoloaders, spl_autoload_functions());
 			$this->assertSame($includePath, get_include_path());
 			$this->assertSame($failure, array_key_exists('error', $result));
@@ -337,10 +337,10 @@ class AiTaskUpdateTest extends PHPUnit\Framework\TestCase
 	{
 		foreach ([null, 0, 3600, 2147483647] as $workload) {
 			$args = ['ref' => 'TK-42', 'request_data' => ['planned_workload' => $workload]];
-			$this->assertSame('', $this->bridge->writePrecheck('api_tasks_update', $args));
-			$preview = $this->bridge->writeConfirmationPreview('api_tasks_update', $args);
+			$this->assertSame('', $this->bridge->writePrecheck('api_project_tasks_update', $args));
+			$preview = $this->bridge->writeConfirmationPreview('api_project_tasks_update', $args);
 			$this->assertStringContainsString(dol_escape_htmltag('AIPlannedWorkloadSeconds: 3600 → '.json_encode($workload)), $preview);
-			$this->assertSame(['success' => true, 'id' => 42, 'ref' => 'TK-42'], $this->bridge->execute('api_tasks_update', $args));
+			$this->assertSame(['success' => true, 'id' => 42, 'ref' => 'TK-42'], $this->bridge->execute('api_project_tasks_update', $args));
 			$this->assertSame(['id' => 42, 'body' => ['planned_workload' => $workload]], AiTaskUpdateEndpointFixture::$received);
 		}
 	}
@@ -352,15 +352,15 @@ class AiTaskUpdateTest extends PHPUnit\Framework\TestCase
 		$args = ['id' => 42, 'note_private' => 'New'];
 		foreach ([1, '1', 'yes'] as $enabled) {
 			$conf->global->PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE = $enabled;
-			$this->assertNotSame('', $this->bridge->writePrecheck('api_tasks_update', $args));
-			$this->assertStringContainsString('automatic project closure', $this->bridge->writeConfirmationPreview('api_tasks_update', $args));
-			$this->assertArrayHasKey('error', $this->bridge->execute('api_tasks_update', $args));
+			$this->assertNotSame('', $this->bridge->writePrecheck('api_project_tasks_update', $args));
+			$this->assertStringContainsString('automatic project closure', $this->bridge->writeConfirmationPreview('api_project_tasks_update', $args));
+			$this->assertArrayHasKey('error', $this->bridge->execute('api_project_tasks_update', $args));
 		}
 		$conf->global->PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE = 0;
-		$this->assertSame('', $this->bridge->writePrecheck('api_tasks_update', $args));
-		$this->assertStringContainsString('TK-42', $this->bridge->writeConfirmationPreview('api_tasks_update', $args));
+		$this->assertSame('', $this->bridge->writePrecheck('api_project_tasks_update', $args));
+		$this->assertStringContainsString('TK-42', $this->bridge->writeConfirmationPreview('api_project_tasks_update', $args));
 		$conf->global->PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE = 1;
-		$this->assertArrayHasKey('error', $this->bridge->execute('api_tasks_update', $args));
+		$this->assertArrayHasKey('error', $this->bridge->execute('api_project_tasks_update', $args));
 		$this->assertSame([], AiTaskUpdateEndpointFixture::$received);
 	}
 
@@ -371,8 +371,8 @@ class AiTaskUpdateTest extends PHPUnit\Framework\TestCase
 			$bridge = new AiTaskUpdateBridgeFixture(null, new AiTaskUpdateUserFixture());
 			$bridge->$flag = false;
 			$args = ['id' => 42, 'label' => 'New'];
-			$this->assertNotSame('', $bridge->writePrecheck('api_tasks_update', $args));
-			$this->assertArrayHasKey('error', $bridge->execute('api_tasks_update', $args));
+			$this->assertNotSame('', $bridge->writePrecheck('api_project_tasks_update', $args));
+			$this->assertArrayHasKey('error', $bridge->execute('api_project_tasks_update', $args));
 		}
 		$this->assertSame([], AiTaskUpdateEndpointFixture::$received);
 	}
@@ -389,7 +389,7 @@ class AiTaskUpdateTest extends PHPUnit\Framework\TestCase
 		if (PHP_VERSION_ID < 80100) {
 			$schemaMethod->setAccessible(true);
 		}
-		foreach (['tasks' => ['label', 'description', 'note_public', 'note_private', 'date_start', 'date_end', 'planned_workload']] as $endpoint => $fields) {
+		foreach (['project_tasks' => ['label', 'description', 'note_public', 'note_private', 'date_start', 'date_end', 'planned_workload']] as $endpoint => $fields) {
 			$write = $enrichments[$endpoint]['methods']['put']['write'];
 			$this->assertEqualsCanonicalizing($fields, array_keys($write['update']));
 			$schema = $schemaMethod->invoke($this->bridge, $write);
@@ -412,11 +412,13 @@ class AiTaskUpdateTest extends PHPUnit\Framework\TestCase
 		if (PHP_VERSION_ID < 80100) {
 			$metadata->setAccessible(true);
 		}
-		$methods = $metadata->getValue($this->bridge)['tasks']['methods'];
+		$methods = $metadata->getValue($this->bridge)['project_tasks']['methods'];
 		$this->assertSame('update', $methods['put']['suffix']);
 		$this->assertArrayNotHasKey('progress', $methods['put']['write']['update']);
-		$this->assertSame('add_timespent', $methods['addTimeSpent']['suffix']);
-		$this->assertSame('AIPreviewAddTimespent', $methods['addTimeSpent']['write']['preview']);
+		$this->assertArrayNotHasKey('addTimeSpent', $methods);
+		$timeMethods = $metadata->getValue($this->bridge)['project']['methods'];
+		$this->assertSame('tasks_timespent_create', $timeMethods['addTimeSpent']['suffix']);
+		$this->assertSame('AIPreviewAddTimespent', $timeMethods['addTimeSpent']['write']['preview']);
 	}
 }
 
@@ -549,7 +551,7 @@ class AiTaskUpdateBridgeFixture extends ToolApiBridge
 		if (PHP_VERSION_ID < 80100) {
 			$routes->setAccessible(true);
 		}
-		$routes->setValue($this, ['api_tasks_update' => ['tasks', 'put']]);
+		$routes->setValue($this, ['api_project_tasks_update' => ['project_tasks', 'put']]);
 		$endpoints = new ReflectionProperty(ToolApiBridge::class, 'endpoints');
 		if (PHP_VERSION_ID < 80100) {
 			$endpoints->setAccessible(true);

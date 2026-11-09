@@ -159,7 +159,7 @@ class ExpenseReport extends CommonObject
 
 	// Create
 	/**
-	 * @var int|string
+	 * @var int|''|null		Object creation date
 	 */
 	public $date_creation;
 
@@ -700,7 +700,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " d.date_debut, d.date_fin, d.date_creation, d.tms as date_modif, d.date_valid, d.date_approve,"; // DATES (datetime)
 		$sql .= " d.fk_user_creat, d.fk_user_author, d.fk_user_modif, d.fk_user_validator,";
 		$sql .= " d.fk_user_valid, d.fk_user_approve,";
-		$sql .= " d.fk_statut as status, d.fk_c_paiement, d.paid";
+		$sql .= " d.fk_statut as status, d.fk_c_paiement, d.paid, d.extraparams";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as d";
 		if ($ref) {
 			$sql .= " WHERE d.ref = '".$this->db->escape($ref)."'";
@@ -770,6 +770,7 @@ class ExpenseReport extends CommonObject
 				$this->status                   = (int) $obj->status;
 				$this->fk_c_paiement            = $obj->fk_c_paiement;
 				$this->paid                     = $obj->paid;
+				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				if ($this->status == self::STATUS_APPROVED || $this->status == self::STATUS_CLOSED) {
 					$user_valid = new User($this->db);

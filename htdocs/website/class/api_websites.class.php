@@ -385,6 +385,11 @@ class Websites extends DolibarrApi
 				}
 				continue;
 			}
+			if ($field == 'content') {
+				// Security: PHP content can't be added through the API (the HTML sanitizer would also silently remove it)
+				$this->websitepage->content = $this->_checkPageContentForAPI($value, '');
+				continue;
+			}
 			$this->websitepage->$field = $this->_checkValForAPI($field, $value, $this->websitepage);
 		}
 
@@ -420,13 +425,6 @@ class Websites extends DolibarrApi
 		}
 		if ($result > 0) {
 			throw new RestException(409, 'A page with this pageurl already exists in this website');
-		}
-
-		// Security: check PHP content is allowed, with same rules than web editor
-		$phpfullcodestringold = '';
-		$phpfullcodestring = dolKeepOnlyPhpCode((string) $this->websitepage->content);
-		if (checkPHPCode($phpfullcodestringold, $phpfullcodestring)) {	// Contains the setEventMessages
-			throw new RestException(403, 'NotAllowedToAddDynamicContent');
 		}
 
 		// Clean data: remove head section from content (same as web interface)
@@ -535,15 +533,12 @@ class Websites extends DolibarrApi
 				}
 				continue;
 			}
+			if ($field == 'content') {
+				// Security: PHP content can't be added or modified through the API, only kept unchanged
+				$this->websitepage->content = $this->_checkPageContentForAPI($value, $phpfullcodestringold);
+				continue;
+			}
 			$this->websitepage->$field = $this->_checkValForAPI($field, $value, $this->websitepage);
-		}
-
-		// Security: check PHP content is allowed, with same rules than web editor
-		// (checkPHPCode checks the permission website->writephp if PHP content has changed and
-		// checks the global option dolibarr_website_allow_custom_php and the forbidden PHP functions list)
-		$phpfullcodestring = dolKeepOnlyPhpCode($this->websitepage->content);
-		if (checkPHPCode($phpfullcodestringold, $phpfullcodestring)) {	// Contains the setEventMessages
-			throw new RestException(403, 'NotAllowedToAddDynamicContent');
 		}
 
 		// Clean data: remove head section from content (same as web interface)
@@ -676,6 +671,87 @@ class Websites extends DolibarrApi
 		}
 
 		return $this->_cleanObjectDatas($this->website);
+	}
+
+	/**
+	 * Refuse a page content containing javascript: a script tag, a 'javascript:' link or an 'on...=' event attribute
+	 * (the javascript dol_htmlwithnojs() removes).
+	 *
+	 * @param	string		$content		HTML content of page (without its PHP code)
+	 * @return	void
+	 *
+	 * @throws	RestException	400		Content contains javascript
+	 */
+	private function _checkNoJsInPageContentForAPI($content)
+	{
+		// We only look for non obfuscated javascript. Obfuscated javascript will be cleaned by the
+		// sanitizeVal 'restricthtmlallowclass' without a proper error message.
+		$jspattern = '/<script\b|javascript\s*:|\son[a-z]+\s*=/i';
+
+		if (preg_match_all($jspattern, $content) > 0) {
+			throw new RestException(400, 'The content contains javascript (script tag, javascript: link or on... event attribute): javascript is not allowed in a website page created or updated through the API. Remove it and retry.');
+		}
+	}
+
+	/**
+	 * Check and sanitize the content of a page received by the API.
+	 * PHP code can't be added or modified through the API, even with permission website->writephp. If the page
+	 * already contains PHP code, the content can be resubmitted only if this PHP code is kept unchanged.
+	 *
+	 * @param	mixed		$content				Content of page received by the API
+	 * @param	string		$phpfullcodestringold	PHP code of the current content of the page ('' for a new page)
+	 * @return	string								Sanitized content
+	 *
+	 * @throws	RestException	400		PHP code could not be preserved by the HTML sanitizer, or content contains javascript
+	 * @throws	RestException	403		Content contains new or modified PHP code
+	 */
+	private function _checkPageContentForAPI($content, $phpfullcodestringold)
+	{
+		if (is_array($content) || is_object($content)) {
+			throw new RestException(400, 'Field content must be a string');
+		}
+		$content = (string) $content;
+
+		$phpfullcodestring = dolKeepOnlyPhpCode($content);
+
+		// Removing all the PHP code is allowed. Adding or modifying PHP code is not.
+		if ($phpfullcodestring !== '' && $phpfullcodestring !== $phpfullcodestringold) {
+			if (!DolibarrApiAccess::$user->hasRight('website', 'writephp')) {
+				throw new RestException(403, 'Permission incomplete: you are not allowed to add or modify dynamic PHP content in a website page (permission website->writephp is required). Keep the existing PHP code unchanged.');
+			}
+			throw new RestException(403, 'Adding or modifying dynamic PHP content of a website page is not allowed through the API, even with the permission to edit PHP content. Use the website editor of the application to do it, or keep the existing PHP code unchanged.');
+		}
+
+		if ($phpfullcodestring === '') {
+			$this->_checkNoJsInPageContentForAPI($content);
+			// Keep the class attributes: the CSS of a website page relies on them
+			return (string) sanitizeVal($content, 'restricthtmlallowclass');
+		}
+
+		// PHP code is unchanged: protect the PHP blocks so the HTML sanitizer does not remove them, then restore them
+		$phpblocks = array();
+		$contentwithoutphp = '';
+		$parts = preg_split('/(<\?.*?(?:\?>|\z))/s', $content, -1, PREG_SPLIT_DELIM_CAPTURE);
+		foreach ((array) $parts as $i => $part) {
+			if ($i % 2) {	// Odd parts are the captured PHP blocks
+				$phpblocks[] = $part;
+				$contentwithoutphp .= 'DOLAPIPHPBLOCK'.(count($phpblocks) - 1).'DOLAPIPHPBLOCKEND';
+			} else {
+				$contentwithoutphp .= $part;
+			}
+		}
+		$this->_checkNoJsInPageContentForAPI($contentwithoutphp);
+		$newcontent = (string) sanitizeVal($contentwithoutphp, 'restricthtmlallowclass');
+		foreach ($phpblocks as $key => $phpblock) {
+			$newcontent = str_replace('DOLAPIPHPBLOCK'.$key.'DOLAPIPHPBLOCKEND', $phpblock, $newcontent);
+		}
+
+		// Final check: the PHP code of the content to save must be exactly the PHP code of the current page
+		if (dolKeepOnlyPhpCode($newcontent) !== $phpfullcodestringold) {
+			throw new RestException(400, 'The existing PHP code of the page could not be preserved by the HTML sanitizer of the API (PHP code is probably inside a forbidden HTML tag or attribute). Use the website editor of the application to update this page.');
+		}
+
+		return $newcontent;
 	}
 
 	/**
