@@ -188,22 +188,21 @@ class pdf_aurore extends ModelePDFBom
 		$outputlangs->loadLangs($langfiles);
 
 		// Show Draft Watermark
-		if (getDolGlobalString('BOM_DRAFT_WATERMARK') && $object->status == $object::STATUS_DRAFT) {
-			$this->watermark = getDolGlobalString('BOM_DRAFT_WATERMARK');
+		$draftwatermark = getDolGlobalString('BOM_DRAFT_WATERMARK');
+		if ($draftwatermark && $object->status == $object::STATUS_DRAFT) {
+			$this->watermark = $draftwatermark;
 		}
 
 		global $outputlangsbis;
 		$outputlangsbis = null;
-		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
+		$langcodebis = getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE');
+		if ($langcodebis && $outputlangs->defaultlang != $langcodebis) {
 			$outputlangsbis = new Translate('', $conf);
-			$outputlangsbis->setDefaultLang(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE'));
+			$outputlangsbis->setDefaultLang($langcodebis);
 			$outputlangsbis->loadLangs($langfiles);
 		}
 
-		$hidetop = 0;
-		if (getDolGlobalString('MAIN_PDF_DISABLE_COL_HEAD_TITLE')) {
-			$hidetop = (int) getDolGlobalString('MAIN_PDF_DISABLE_COL_HEAD_TITLE');
-		}
+		$hidetop = getDolGlobalInt('MAIN_PDF_DISABLE_COL_HEAD_TITLE');
 
 		$dir_output = getMultidirOutput($object);
 		if (!empty($dir_output)) {
@@ -234,10 +233,19 @@ class pdf_aurore extends ModelePDFBom
 
 			// Enrich BOM lines with product details for PDF line description helper
 			if (!empty($object->lines) && is_array($object->lines)) {
+				$cacheProducts = array();
+				$cacheBoms = array();
+				$cacheWorkstations = array();
 				foreach ($object->lines as $line) {
 					/** @var BOMLine $line */
 					if ($line->fk_product > 0) {
-						$line->fetch_product();
+						$fk_product = (int) $line->fk_product;
+						if (!isset($cacheProducts[$fk_product])) {
+							$line->fetch_product();
+							$cacheProducts[$fk_product] = is_object($line->product) ? $line->product : null;
+						} else {
+							$line->product = $cacheProducts[$fk_product];
+						}
 						if (is_object($line->product)) {
 							$line->product_ref = $line->product->ref;
 							$line->product_desc = $line->product->description;
@@ -247,19 +255,28 @@ class pdf_aurore extends ModelePDFBom
 						}
 					}
 					if (empty($line->desc)) {
-						$line->desc = !empty($line->description) ? $line->description : (!empty($line->product_desc) ? $line->product_desc : '');
+						$line->desc = !empty($line->description) ? (string) $line->description : (!empty($line->product_desc) ? (string) $line->product_desc : '');
 					}
-					if ($line->fk_bom_child > 0) {
-						$bomchild = new BOM($this->db);
-						if ($bomchild->fetch($line->fk_bom_child) > 0) {
-							$line->desc = dol_concatdesc($line->desc, $outputlangs->transnoentities("BOM").' : '.$bomchild->ref);
+					if (!empty($line->fk_bom_child) && $line->fk_bom_child > 0) {
+						$fk_bom_child = (int) $line->fk_bom_child;
+						if (!isset($cacheBoms[$fk_bom_child])) {
+							$bomchild = new BOM($this->db);
+							$cacheBoms[$fk_bom_child] = ($bomchild->fetch($fk_bom_child) > 0) ? $bomchild : null;
+						}
+						if (!empty($cacheBoms[$fk_bom_child])) {
+							$line->desc = dol_concatdesc((string) $line->desc, $outputlangs->transnoentities("BOM").' : '.$cacheBoms[$fk_bom_child]->ref);
 						}
 					}
-					if ($line->fk_default_workstation > 0 && isModEnabled('workstation')) {
+					if (!empty($line->fk_default_workstation) && $line->fk_default_workstation > 0 && isModEnabled('workstation')) {
 						require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
-						$workstation = new Workstation($this->db);
-						if ($workstation->fetch($line->fk_default_workstation) > 0) {
-							$line->desc = dol_concatdesc($line->desc, $outputlangs->transnoentities("DefaultWorkstation").' : '.$workstation->ref.($workstation->label ? ' - '.$workstation->label : ''));
+						$fk_workstation = (int) $line->fk_default_workstation;
+						if (!isset($cacheWorkstations[$fk_workstation])) {
+							$workstation = new Workstation($this->db);
+							$cacheWorkstations[$fk_workstation] = ($workstation->fetch($fk_workstation) > 0) ? $workstation : null;
+						}
+						if (!empty($cacheWorkstations[$fk_workstation])) {
+							$ws = $cacheWorkstations[$fk_workstation];
+							$line->desc = dol_concatdesc((string) $line->desc, $outputlangs->transnoentities("DefaultWorkstation").' : '.$ws->ref.(!empty($ws->label) ? ' - '.$ws->label : ''));
 						}
 					}
 				}
@@ -333,17 +350,14 @@ class pdf_aurore extends ModelePDFBom
 				$pdf->SetSubject($outputlangs->transnoentities("BillOfMaterials"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("BillOfMaterials").(!empty($object->label) ? " ".$outputlangs->convToOutputCharset($object->label) : ""));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("BillOfMaterials").(!empty($object->label) ? " ".$outputlangs->convToOutputCharset((string) $object->label) : ""));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
 				}
 
 				// Set certificate
-				$cert = empty($user->conf->CERTIFICATE_CRT) ? '' : $user->conf->CERTIFICATE_CRT;
-				// If user has no certificate, we try to take the company one
-				if (!$cert) {
-					$cert = getDolGlobalString('CERTIFICATE_CRT');
-				}
+				$cert = getDolUserString('CERTIFICATE_CRT', getDolGlobalString('CERTIFICATE_CRT'));
+				$certprivate = getDolUserString('CERTIFICATE_CRT_PRIVATE', getDolGlobalString('CERTIFICATE_CRT_PRIVATE'));
 				// If a certificate is found
 				if ($cert) {
 					$info = array(
@@ -352,7 +366,7 @@ class pdf_aurore extends ModelePDFBom
 						'Reason' => 'BOM',
 						'ContactInfo' => $this->emetteur->email
 					);
-					$pdf->setSignature($cert, $cert, $this->emetteur->name, '', 2, $info);
+					$pdf->setSignature($cert, $certprivate, $this->emetteur->name, '', 2, $info);
 				}
 
 				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
@@ -371,22 +385,23 @@ class pdf_aurore extends ModelePDFBom
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
 
+				$donotrepeathead = getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD');
 				$tab_top = 90 + $top_shift;
-				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
+				$tab_top_newpage = (!$donotrepeathead ? 42 + $top_shift : 10);
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
 				$tab_height_newpage = 150;
-				if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+				if (!$donotrepeathead) {
 					$tab_height_newpage -= $top_shift;
 				}
 
 				$nexY = $tab_top - 1;
 
 				// Display description and public note
-				$notetoshow = empty($object->description) ? '' : $object->description;
+				$notetoshow = empty($object->description) ? '' : (string) $object->description;
 				if (!empty($object->note_public)) {
-					$notetoshow = dol_concatdesc($notetoshow, $object->note_public);
+					$notetoshow = dol_concatdesc($notetoshow, (string) $object->note_public);
 				}
 				// Extrafields in note
 				$extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
@@ -424,7 +439,7 @@ class pdf_aurore extends ModelePDFBom
 							if (!empty($tplidx)) {
 								$pdf->useTemplate($tplidx);
 							}
-							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+							if (!$donotrepeathead) {
 								$this->_pagehead($pdf, $object, 0, $outputlangs);
 							}
 							$pdf->setTopMargin($tab_top_newpage);
@@ -480,7 +495,7 @@ class pdf_aurore extends ModelePDFBom
 						if (!empty($tplidx)) {
 							$pdf->useTemplate($tplidx);
 						}
-						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+						if (!$donotrepeathead) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 						$height_note = $posyafter - $tab_top_newpage;
@@ -502,7 +517,7 @@ class pdf_aurore extends ModelePDFBom
 							if (!empty($tplidx)) {
 								$pdf->useTemplate($tplidx);
 							}
-							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+							if (!$donotrepeathead) {
 								$this->_pagehead($pdf, $object, 0, $outputlangs);
 							}
 
@@ -529,6 +544,8 @@ class pdf_aurore extends ModelePDFBom
 				// Loop on each lines
 				$pageposbeforeprintlines = $pdf->getPage();
 				$pagenb = $pageposbeforeprintlines;
+				$dataonfirstpage = getDolGlobalInt('MAIN_PDF_DATA_ON_FIRST_PAGE');
+				$dashbetweenlines = getDolGlobalInt('MAIN_PDF_DASH_BETWEEN_LINES');
 				for ($i = 0; $i < $nblines; $i++) {
 					$curY = $nexY;
 					$pdf->SetFont('', '', $default_font_size - 1); // Into loop to work with multipage
@@ -570,7 +587,7 @@ class pdf_aurore extends ModelePDFBom
 							} else {
 								// We found a page break
 								// Allows data in the first page if description is long enough to break in multiples pages
-								if (getDolGlobalInt('MAIN_PDF_DATA_ON_FIRST_PAGE')) {
+								if ($dataonfirstpage) {
 									$showpricebeforepagebreak = 1;
 								} else {
 									$showpricebeforepagebreak = 0;
@@ -599,14 +616,20 @@ class pdf_aurore extends ModelePDFBom
 
 					// Quantity
 					if ($this->getColumnStatus('qty')) {
-						$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
+						$qty = (empty($hidedetails) || $hidedetails > 1) ? (string) price2num($object->lines[$i]->qty, 'MS') : '';
 						$this->printStdColumnContent($pdf, $curY, 'qty', $qty);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
 					// Unit
 					if ($this->getColumnStatus('unit')) {
-						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails);
+						$unit = '';
+						if (empty($hidedetails) || $hidedetails > 1) {
+							$tmpunit = $object->lines[$i]->getLabelOfUnit('short', $outputlangs, 1);
+							if (is_string($tmpunit)) {
+								$unit = $tmpunit;
+							}
+						}
 						$this->printStdColumnContent($pdf, $curY, 'unit', $unit);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
@@ -665,7 +688,7 @@ class pdf_aurore extends ModelePDFBom
 					$nexY = max($nexY, $posYAfterImage);
 
 					// Add line
-					if (getDolGlobalInt('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
+					if ($dashbetweenlines && $i < ($nblines - 1)) {
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash' => '1,1', 'color' => array(80, 80, 80)));
 						$pdf->line($this->marge_gauche, $nexY, $this->page_largeur - $this->marge_droite, $nexY);
@@ -684,7 +707,7 @@ class pdf_aurore extends ModelePDFBom
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
-						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+						if (!$donotrepeathead) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 						if (!empty($tplidx)) {
@@ -705,7 +728,7 @@ class pdf_aurore extends ModelePDFBom
 							$pdf->useTemplate($tplidx);
 						}
 						$pagenb++;
-						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+						if (!$donotrepeathead) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 					}
@@ -871,8 +894,9 @@ class pdf_aurore extends ModelePDFBom
 			$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top - 4);
 			$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 
-			if (getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')) {
-				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, 'F', array(), explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
+			$titlebgcolor = getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR');
+			if ($titlebgcolor) {
+				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, 'F', array(), explode(',', $titlebgcolor));
 			}
 		}
 
@@ -918,8 +942,9 @@ class pdf_aurore extends ModelePDFBom
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
 		// Show Draft Watermark
-		if (getDolGlobalString('BOM_DRAFT_WATERMARK') && $object->status == $object::STATUS_DRAFT) {
-			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', dol_escape_htmltag(getDolGlobalString('BOM_DRAFT_WATERMARK')));
+		$draftwatermark = getDolGlobalString('BOM_DRAFT_WATERMARK');
+		if ($draftwatermark && $object->status == $object::STATUS_DRAFT) {
+			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', dol_escape_htmltag($draftwatermark));
 		}
 
 		$pdf->SetTextColor(0, 0, 60);
@@ -936,8 +961,9 @@ class pdf_aurore extends ModelePDFBom
 		if (!getDolGlobalInt('PDF_DISABLE_MYCOMPANY_LOGO')) {
 			if ($this->emetteur->logo) {
 				$logodir = $conf->mycompany->dir_output;
-				if (!empty(getMultidirOutput($object, 'mycompany'))) {
-					$logodir = getMultidirOutput($object, 'mycompany');
+				$tmpmultidir = getMultidirOutput($object, 'mycompany');
+				if (!empty($tmpmultidir)) {
+					$logodir = $tmpmultidir;
 				}
 				if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
 					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
@@ -988,7 +1014,7 @@ class pdf_aurore extends ModelePDFBom
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Label")." : ".$outputlangs->convToOutputCharset($object->label), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Label")." : ".$outputlangs->convToOutputCharset((string) $object->label), '', 'R');
 		}
 
 		$posy += 4;
@@ -1095,18 +1121,21 @@ class pdf_aurore extends ModelePDFBom
 			// Show BOM parameters (quantity, efficiency, duration, warehouse)
 			$carac_bom = $outputlangs->transnoentities("Quantity")." : ".price2num($object->qty, 'MS');
 			if (getDolGlobalInt('PRODUCT_USE_UNITS') && !empty($object->fk_unit)) {
-				$carac_bom .= ' '.$object->getLabelOfUnit('short', $outputlangs, 1);
+				$tmpobjunit = $object->getLabelOfUnit('short', $outputlangs, 1);
+				if (is_string($tmpobjunit) && $tmpobjunit !== '') {
+					$carac_bom .= ' '.$tmpobjunit;
+				}
 			}
 			if (!empty($object->efficiency)) {
 				$carac_bom .= "\n".$outputlangs->transnoentities("ManufacturingEfficiency")." : ".price2num($object->efficiency);
 			}
 			if (!empty($object->duration)) {
-				$carac_bom .= "\n".$outputlangs->transnoentities("EstimatedDuration")." : ".convertSecondToTime($object->duration, 'allhourmin');
+				$carac_bom .= "\n".$outputlangs->transnoentities("EstimatedDuration")." : ".convertSecondToTime((int) $object->duration, 'allhourmin');
 			}
-			if ($object->fk_warehouse > 0 && isModEnabled('stock')) {
+			if (!empty($object->fk_warehouse) && $object->fk_warehouse > 0 && isModEnabled('stock')) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 				$warehouse = new Entrepot($this->db);
-				if ($warehouse->fetch($object->fk_warehouse) > 0) {
+				if ($warehouse->fetch((int) $object->fk_warehouse) > 0) {
 					$carac_bom .= "\n".$outputlangs->transnoentities("WarehouseForProduction")." : ".$warehouse->ref;
 				}
 			}
@@ -1132,7 +1161,7 @@ class pdf_aurore extends ModelePDFBom
 	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
-		$showdetails = !getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS') ? 0 : getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS');
+		$showdetails = getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS');
 		return pdf_pagefoot($pdf, $outputlangs, 'BOM_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 
