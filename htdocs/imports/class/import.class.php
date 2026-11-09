@@ -62,7 +62,7 @@ class Import
 	public $array_import_types;
 
 	/**
-	 * @var int[]
+	 * @var bool[]
 	 */
 	public $array_import_perms;
 
