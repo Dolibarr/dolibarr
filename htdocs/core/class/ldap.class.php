@@ -1088,6 +1088,17 @@ class Ldap
 	}
 
 	/**
+	 *  Restrict a search to the entries allowed by the user search filter (LDAP_FILTER_CONNECTION)
+	 *
+	 *	@param	string	$search		Search filter, with its enclosing parentheses
+	 *	@return	string				Search filter restricted to the user search filter when one is set
+	 */
+	public function restrictToUserFilter($search)
+	{
+		return empty($this->filter) ? $search : '(&('.$this->filter.')'.$search.')';
+	}
+
+	/**
 	 *  Returns an array containing attributes and values for first record
 	 *
 	 *  array{count:int,0..max:string|mixed[],string:array}
@@ -1106,13 +1117,6 @@ class Ldap
 		if (!$this->bind) {
 			$this->error = "NotConnected";
 			return -3;
-		}
-
-		// Honor the admin-configured user search filter (LDAP_FILTER_CONNECTION)
-		// so an identifier match outside the configured scope does not leak
-		// attributes for an unrelated LDAP user (see #37120).
-		if (!empty($this->filter) && !preg_match('/^\s*\(\s*&\s*\(/', $filter)) {
-			$filter = '(&(' . $this->filter . ')' . $filter . ')';
 		}
 
 		$search = @ldap_search($this->connection, $dn, $filter);
