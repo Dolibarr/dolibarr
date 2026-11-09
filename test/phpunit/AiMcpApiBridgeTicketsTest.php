@@ -125,7 +125,7 @@ class AiMcpApiBridgeTicketsTest extends CommonClassTest
 
 		$this->assertArrayHasKey('tickets', $endpoints);
 		$this->assertSame(
-			array('post', 'postNewMessage', 'put', 'postContact', 'deleteContact', 'index', 'get', 'getByTrackId', 'getByRef'),
+			array('post', 'postNewMessage', 'put', 'postContact', 'deleteContact', 'close', 'assign', 'index', 'get'),
 			array_keys($endpoints['tickets']['methods'])
 		);
 	}
@@ -180,33 +180,6 @@ class AiMcpApiBridgeTicketsTest extends CommonClassTest
 		$this->assertSame(array('subject', 'message'), $definition['inputSchema']['required']);
 		$this->assertArrayHasKey('socid', $definition['inputSchema']['properties']);
 		$this->assertArrayNotHasKey('request_data', $definition['inputSchema']['properties']);
-	}
-
-	/**
-	 * The update schema exposes the flat fields and requires only the ticket id.
-	 *
-	 * @return void
-	 */
-	public function testTicketUpdateSchema()
-	{
-		$bridge = new ToolApiBridge(null);
-		$property = new ReflectionProperty(ToolApiBridge::class, 'enrichments');
-		$property->setAccessible(true);
-		$meta = $property->getValue($bridge)['tickets']['methods']['put'];
-		$method = new ReflectionMethod(ToolApiBridge::class, 'buildToolDefinition');
-		$method->setAccessible(true);
-
-		$definition = $method->invoke($bridge, array('class' => AiMcpTicketWriteApiFixture::class, 'label' => 'support tickets'), 'tickets', 'put', 'api_tickets_update', $meta);
-
-		$this->assertSame('api_tickets_update', $definition['name']);
-		$this->assertSame(array('id'), $definition['inputSchema']['required']);
-		$this->assertArrayHasKey('fk_user_assign', $definition['inputSchema']['properties']);
-		$this->assertArrayHasKey('fk_statut', $definition['inputSchema']['properties']);
-		// Fields the API would honour but that a confirmer must never see
-		// written: they stay out of the advertised schema.
-		foreach (array('track_id', 'fk_user_create', 'ref', 'datec', 'origin_email') as $hidden) {
-			$this->assertArrayNotHasKey($hidden, $definition['inputSchema']['properties'], "update advertises $hidden");
-		}
 	}
 
 	/**

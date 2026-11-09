@@ -171,4 +171,4 @@ ListeLB=Lista de saldo de vacacións
 LeaveType = Tipo de saldo de vacacións
 HolidayHrInformationsPreviousMonth=Resumo dos días libres do último mes
 HolidayHrInformationsPreviousMonthTopic=Resumo das follas para o mes de __PREVIOUS_MONTH_TEXT__
-HolidayHrInformationsPreviousMonthContent=Consulte o resumo das vacacións para o mes __MES_ANTERIOR_TEXT__ para __NOME_DA_MIÑA_EMPRESA__
+HolidayHrInformationsPreviousMonthContent=Consulte o resumo das vacacións para o mes __PREVIOUS_MONTH_TEXT__ para __MYCOMPANY_NAME__
