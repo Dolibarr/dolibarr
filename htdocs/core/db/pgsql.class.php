@@ -420,7 +420,9 @@ class DoliDBPgsql extends DoliDB
 	public function connect($host, $login, $passwd, $name, $port = 0, $forcenew = false)
 	{
 		// use pg_pconnect() instead of pg_connect() if you want to use persistent connection costing 1ms, instead of 30ms for non persistent
-
+		
+		// PATCH: 20260329 - Dennis, x509 authentication
+		global $dolibarr_main_db_sslkey, $dolibarr_main_db_sslcert, $dolibarr_main_db_sslca;
 		$this->db = false;
 
 		// connections parameters must be protected (only \ and ' according to pg_connect() manual)
@@ -459,6 +461,23 @@ class DoliDBPgsql extends DoliDB
 			}
 
 			$con_string = "host='".$host."' port='".$port."' dbname='".$name."' user='".$login."' password='".$passwd."'";
+		    
+			// PATCH: 20260329 - Dennis, x509 authentication        
+		    if (!empty($dolibarr_main_db_sslcert)) {
+				$con_string .= " sslcert='" . addslashes($dolibarr_main_db_sslcert) . "'";
+		    }
+		    if (!empty($dolibarr_main_db_sslkey)) {
+				$con_string .= " sslkey='" . addslashes($dolibarr_main_db_sslkey) . "'";
+		    }
+		    if (!empty($dolibarr_main_db_sslca)) {
+				// Note: PostgreSQL expects 'sslrootcert', not 'ca'
+				$con_string .= " sslrootcert='" . addslashes($dolibarr_main_db_sslca) . "'";
+
+				// You generally need to enforce sslmode when using certificates.
+				// Change 'verify-ca' to 'verify-full' or 'require' depending on your Postgres setup.
+				$con_string .= " sslmode='verify-full'"; 
+			}
+			
 			try {
 				$this->db = @pg_connect($con_string, $connectflags);
 			} catch (Throwable $e) {
