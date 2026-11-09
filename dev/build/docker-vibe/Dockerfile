@@ -24,6 +24,7 @@ RUN apt-get update \
 		iptables \
 		jq \
 		libglib2.0-bin \
+		libportaudio2 \
 		liblzma-dev \
 		libboost-iostreams-dev libboost-filesystem-dev libboost-date-time-dev \
 		libboost-program-options-dev libboost-system-dev \
