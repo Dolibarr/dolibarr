@@ -43,6 +43,7 @@ RUN apt-get update \
 		python3 \
 		python3-pip \
 		shellcheck \
+		sox \
 		sshpass \
 		sudo \
 		time \
