@@ -5836,7 +5836,8 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 		$arrayforoldpath['product'] = 2;
 	}
 
-	if (empty($level) && array_key_exists($modulepart, $arrayforoldpath)) {
+	if (empty($level) && array_key_exists($modulepart, $arrayforoldpath)
+		&& !($modulepart === 'mailing' && getDolGlobalInt('MAILING_USE_NEW_PATH_FOR_FILES'))) {
 		$level = $arrayforoldpath[$modulepart];
 	}
 	if (!empty($level) && array_key_exists($modulepart, $arrayforoldpath)) {
