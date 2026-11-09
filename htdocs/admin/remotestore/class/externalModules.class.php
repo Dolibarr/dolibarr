@@ -44,6 +44,11 @@ class ExternalModules
 	 */
 	public $search;
 
+	/**
+	 * @var string Sort of the list: 'datec_desc' (default), 'datec_asc', 'label_asc' or 'label_desc'
+	 */
+	public $sortby = 'datec_desc';
+
 	// setups
 	/**
 	 * @var string
@@ -370,6 +375,8 @@ class ExternalModules
 
 		$current = $active;
 
+		$sortparam = http_build_query($this->getSortParam());
+
 		$resCategories = $this->callApi('categories', $data);
 		if (isset($resCategories['response']) && is_array($resCategories['response'])) {
 			$organized_tree = $resCategories['response'];
@@ -381,13 +388,13 @@ class ExternalModules
 		foreach ($organized_tree as $key => $value) {
 			if ($value['label'] != "Versions" && $value['label'] != "Specials") {
 				$html .= '<li' . ($current == $value['rowid'] ? ' class="active"' : '') . '>';
-				$html .= '<a href="?mode=marketplace&categorie=' . $value['rowid'] . '">' . $value['label'] . '</a>';
+				$html .= '<a href="?mode=marketplace&categorie=' . $value['rowid'] . ($sortparam ? '&' . $sortparam : '') . '">' . $value['label'] . '</a>';
 				if (isset($value['children'])) {
 					$html .= '<ul>';
 					usort($value['children'], $this->buildSorter('position'));
 					foreach ($value['children'] as $key_children => $value_children) {
 						$html .= '<li' . ($current == $value_children['rowid'] ? ' class="active"' : '') . '>';
-						$html .= '<a href="?mode=marketplace&categorie=' . $value_children['rowid'] . '" title="' . dol_escape_htmltag(strip_tags($value_children['description'])) . '">' . $value_children['label'] . '</a>';
+						$html .= '<a href="?mode=marketplace&categorie=' . $value_children['rowid'] . ($sortparam ? '&' . $sortparam : '') . '" title="' . dol_escape_htmltag(strip_tags($value_children['description'])) . '">' . $value_children['label'] . '</a>';
 						$html .= '</li>';
 					}
 					$html .= '</ul>';
@@ -436,6 +443,9 @@ class ExternalModules
 
 		$this->per_page = 11;	// We fix number of products per page to 11
 
+		$this->sortby = $this->cleanSortBy($options['sortby'] ?? '');
+		list($sortfield, $sortorder) = explode('_', $this->sortby);
+
 		// Length of $search must be at least 2 characters
 		if (!empty($this->search) && strlen(str_replace(' ', '', (string) $this->search)) < 2) {
 			$html .= '<tr class=""><td colspan="3" class="center">';
@@ -451,7 +461,9 @@ class ExternalModules
 			'limit' 		=> $this->per_page,
 			'page' 			=> $this->no_page,
 			'search' 		=> $this->search,
-			'lang' 			=> $this->lang
+			'lang' 			=> $this->lang,
+			'sortfield' 	=> ($sortfield == 'label' ? 'name' : 'datec'),		// Values known by the DoliStore API: 'name', 'reference', 'price', else 'datec'
+			'sortorder' 	=> $sortorder											// 'asc' or 'desc' (lower case for the DoliStore API)
 		];
 
 
@@ -534,7 +546,8 @@ class ExternalModules
 
 		// Merge all sources (github modules have priority on dolistore, the additional repos have priority on the community repo).
 		$this->products = $dolistoreProducts;
-		foreach (array_merge($fileProducts, $customFileProducts) as $fileProduct) {
+		// array_unshift() below adds each product at the top, which reverses the order, so we reverse each sorted source first
+		foreach (array_merge(array_reverse($fileProducts), array_reverse($customFileProducts)) as $fileProduct) {
 			$id = $fileProduct['id'];
 			if ($id > 0) {
 				if (empty($this->products[$id])) {		// Not already present in array
@@ -995,6 +1008,7 @@ class ExternalModules
 		if ($this->categorie != 0) {
 			$param_array['categorie'] = $this->categorie;
 		}
+		$param_array = array_merge($param_array, $this->getSortParam());
 		$param = http_build_query($param_array);
 		return $this->url."&".$param;
 	}
@@ -1021,6 +1035,7 @@ class ExternalModules
 		if ($this->categorie != 0) {
 			$param_array['categorie'] = $this->categorie;
 		}
+		$param_array = array_merge($param_array, $this->getSortParam());
 		$param = http_build_query($param_array);
 		return $this->url."&".$param;
 	}
@@ -1070,6 +1085,7 @@ class ExternalModules
 				if ($this->categorie != 0) {
 					$param_array['categorie'] = $this->categorie;
 				}
+				$param_array = array_merge($param_array, $this->getSortParam());
 				$urlforpage = $this->url.($param_array ? '&'.http_build_query($param_array) : '');
 				$pagelist .= '<input type="text" id="page_input" name="no_page" value="'.($page).'" min="1" max="'.$nbpages.'" class="width40 page_input right" data-url="'.dol_escape_htmltag($urlforpage).'"';
 				$pagelist .= ' oninput="if(this.value > '.$nbpages.') this.value='.$nbpages.'"';
@@ -1406,20 +1422,8 @@ class ExternalModules
 	{
 		$filteredData = $list;
 
-		// Sort products list by datec
-		usort(
-			$filteredData,
-			/**
-			 * Compare creation times
-			 * @param array<string, mixed> $a First product for comparison.
-			 * @param array<string, mixed> $b Second product for comparison.
-			 *
-			 * @return int
-			 */
-			static function ($a, $b) {
-				return strtotime($b['datec'] ?? '0') - strtotime($a['datec'] ?? '0');
-			}
-		);
+		// Sort products list (by datec descending by default)
+		usort($filteredData, $this->getProductComparator($this->sortby));
 
 		if (!empty($options['search'])) {
 			$filteredData = array_filter(
@@ -1460,6 +1464,63 @@ class ExternalModules
 		$filteredData = array_slice($filteredData, ($options['page'] - 1) * $options['limit'], $options['limit']);
 
 		return ['total' => $total, 'data' => $filteredData];
+	}
+
+	/**
+	 * Return a valid sort of the list of products
+	 *
+	 * @param	string	$sortby		Sort asked ('datec_desc', 'datec_asc', 'label_asc' or 'label_desc')
+	 * @return	string				The sort asked if valid, else 'datec_desc'
+	 */
+	public function cleanSortBy($sortby)
+	{
+		return in_array($sortby, array('datec_desc', 'datec_asc', 'label_asc', 'label_desc')) ? $sortby : 'datec_desc';
+	}
+
+	/**
+	 * Return the URL parameter to keep the sort of the list in links (empty for the default sort)
+	 *
+	 * @return array<string,string>
+	 */
+	public function getSortParam()
+	{
+		return ($this->sortby != 'datec_desc') ? array('sortby' => $this->sortby) : array();
+	}
+
+	/**
+	 * Return a function to compare two products for the sort of the list
+	 *
+	 * @param	string	$sortby		Sort ('datec_desc', 'datec_asc', 'label_asc' or 'label_desc')
+	 * @return	callable(array<string,mixed>,array<string,mixed>):int
+	 */
+	public function getProductComparator($sortby)
+	{
+		$sortby = $this->cleanSortBy($sortby);
+		$desc = (substr($sortby, -5) == '_desc');
+		if (substr($sortby, 0, 6) == 'label_') {
+			/**
+			 * Compare labels
+			 * @param array<string, mixed> $a First product for comparison.
+			 * @param array<string, mixed> $b Second product for comparison.
+			 *
+			 * @return int
+			 */
+			return static function ($a, $b) use ($desc) {
+				$result = strcasecmp((string) ($a['label'] ?? ''), (string) ($b['label'] ?? ''));	// Same order as the DoliStore API (SQL order by label)
+				return $desc ? -$result : $result;
+			};
+		}
+		/**
+		 * Compare creation times
+		 * @param array<string, mixed> $a First product for comparison.
+		 * @param array<string, mixed> $b Second product for comparison.
+		 *
+		 * @return int
+		 */
+		return static function ($a, $b) use ($desc) {
+			$result = strtotime((string) ($a['datec'] ?? '0')) - strtotime((string) ($b['datec'] ?? '0'));
+			return $desc ? -$result : $result;
+		};
 	}
 
 	/**

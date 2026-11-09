@@ -254,7 +254,7 @@ $tabmoreinfo = array();
 @phan-var-force array<array{id:mixed,name:mixed,code_compta_client:string,email:string}> $tabcompany
 @phan-var-force array<array{id:int,name:string,lastname:string,firstname:string,email:string,accountancy_code:string,status:int> $tabuser
 @phan-var-force array<int,array{date:string,type_payment:string,ref:string,fk_bank:int,ban_account_ref:string,fk_bank_account:int,lib:string,type:string}> $tabpay
-@phan-var-force array<array{lib:string,date?:int|string,type_payment?:string,ref?:string,fk_bank?:int,ban_account_ref?:string,fk_bank_account?:int,type?:string,bank_account_ref?:string,paymentid?:int,paymentsupplierid?:int,soclib?:string,paymentscid?:int,paymentdonationid?:int,paymentsubscriptionid?:int,paymentvatid?:int,paymentsalid?:int,paymentexpensereport?:int,paymentvariousid?:int,account_various?:string,paymentloanid?:int}> $tabtp
+@phan-var-force array<array{lib:string,date?:int|string,type_payment?:string,ref?:string,fk_bank?:int,ban_account_ref?:string,fk_bank_account?:int,type?:string,bank_account_ref?:string,paymentid?:int,paymentsupplierid?:int,soclib?:string,socialcontributionid?:int,paymentdonationid?:int,paymentsubscriptionid?:int,paymentvatid?:int,paymentsalid?:int,paymentexpensereport?:int,paymentvariousid?:int,account_various?:string,paymentloanid?:int}> $tabtp
 ';
 
 $account_customer = 'NotDefined';
@@ -569,7 +569,7 @@ if ($result) {
 					}
 
 					$tabpay[$obj->rowid]["soclib"] = $chargestatic->getNomUrl(1, '30');
-					$tabpay[$obj->rowid]["paymentscid"] = $chargestatic->id;
+					$tabpay[$obj->rowid]["socialcontributionid"] = $chargestatic->id;
 				} elseif ($links[$key]['type'] == 'payment_donation') {
 					$paymentdonstatic->id = $links[$key]['url_id'];
 					$paymentdonstatic->ref = (string) $links[$key]['url_id'];
@@ -1694,9 +1694,9 @@ function getSourceDocRef($val, $typerecord)
 		$sqlmid .= " WHERE s.rowid=".((int) $val["paymentsalid"]);
 		$ref = $langs->transnoentitiesnoconv("SalaryPayment");
 	} elseif ($typerecord == 'sc') {
-		$sqlmid = 'SELECT sc.rowid as ref';
-		$sqlmid .= " FROM ".MAIN_DB_PREFIX."paiementcharge as sc";
-		$sqlmid .= " WHERE sc.rowid=".((int) $val["paymentscid"]);
+		$sqlmid = 'SELECT cs.rowid as ref';
+		$sqlmid .= " FROM ".MAIN_DB_PREFIX."chargesociales as cs";
+		$sqlmid .= " WHERE cs.rowid=".((int) $val["socialcontributionid"]);
 		$ref = $langs->transnoentitiesnoconv("SocialContribution");
 	} elseif ($typerecord == 'payment_vat') {
 		$sqlmid = 'SELECT pv.fk_tva as ref';	// paymentvatid is the id of the payment, the ref is the id of the VAT declaration it pays

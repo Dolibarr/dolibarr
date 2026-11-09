@@ -32,6 +32,7 @@
  * @var Form $form
  * @var FormAdmin $formadmin
  * @var Translate $langs
+ * @var HookManager $hookmanager
  *
  * @var string $action
  */
@@ -44,6 +45,7 @@ if (empty($conf) || !is_object($conf)) {
 
 '
 @phan-var-force ?string $keyforbreak
+@phan-var-force CommonObject $object
 ';
 if (!is_object($form)) {
 	$form = new Form($db);
@@ -73,6 +75,14 @@ foreach ($object->fields as $key => $val) {
 	}
 
 	$value = $object->$key;
+
+	// A hook returning 1 replaces the line of the field with its output, 0 prints its output before the line
+	$parameters = array('key' => $key, 'val' => $val, 'value' => $value, 'column' => 'left');
+	$reshook = $hookmanager->executeHooks('printFieldView', $parameters, $object, $action);
+	print $hookmanager->resPrint;
+	if ($reshook > 0) {
+		continue;
+	}
 
 	print '<tr class="field_'.$key.'"><td';
 	print ' class="'.(empty($val['tdcss']) ? 'titlefieldmiddle' : $val['tdcss']).' fieldname_'.$key;
@@ -165,6 +175,13 @@ foreach ($object->fields as $key => $val) {
 	}
 
 	$value = $object->$key;
+
+	$parameters = array('key' => $key, 'val' => $val, 'value' => $value, 'column' => 'right');
+	$reshook = $hookmanager->executeHooks('printFieldView', $parameters, $object, $action);
+	$rightpart .= $hookmanager->resPrint;
+	if ($reshook > 0) {
+		continue;
+	}
 
 	$rightpart .= '<tr><td';
 	$rightpart .= ' class="'.(empty($val['tdcss']) ? 'titlefieldmiddle' : $val['tdcss']).'  fieldname_'.$key;

@@ -2137,7 +2137,7 @@ function aiPaletteToolTitle($langs, $name, $route)
 		'thirdparties' => array('companies', 'ThirdParty', 'ThirdParties'),
 		'products' => array('products', 'Product', 'Products'),
 		'projects' => array('main', 'Project', 'Projects'),
-		'tasks' => array('projects', 'Task', 'Tasks'),
+		'project_tasks' => array('projects', 'Task', 'Tasks'),
 		'tickets' => array('ticket', 'Ticket', 'Tickets'),
 		'warehouses' => array('stocks', 'Warehouse', 'Warehouses'),
 		'stockmovements' => array('stocks', 'StockMovement', 'StockMovements'),
@@ -2194,7 +2194,7 @@ function aiPaletteToolTitle($langs, $name, $route)
 		'update' => array('AIToolTitleUpdate', $one),
 		'delete' => array('AIToolTitleDelete', $one),
 		'validate' => array('AIToolTitleValidate', $one),
-		'add_payment' => array('AIToolTitleAddPayment', $one),
+		'payment_create' => array('AIToolTitleAddPayment', $one),
 		'add_line' => array('AIToolTitleAddLine', $one)
 	);
 	$langs->load('other');
