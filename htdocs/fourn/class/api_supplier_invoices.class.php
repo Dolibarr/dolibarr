@@ -1074,7 +1074,9 @@ class SupplierInvoices extends DolibarrApi
 			$request_data->info_bits,
 			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
 			$request_data->product_type,
-			$request_data->rang,
+			// -1 is the "append at the end" value of addline(). An absent rang is null, which empty() turns into 0,
+			// so without this every line added through the API is stored with rang 0 instead of being appended.
+			isset($request_data->rang) ? $request_data->rang : -1,
 			0,
 			$request_data->array_options,
 			$request_data->fk_unit,
@@ -1108,6 +1110,7 @@ class SupplierInvoices extends DolibarrApi
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 Not found
+	 * @throws RestException 405 Supplier invoice is not in draft status
 	 * @throws RestException 304 Error
 	 */
 	public function putLine($id, $lineid, $request_data = null)
@@ -1131,6 +1134,9 @@ class SupplierInvoices extends DolibarrApi
 		}
 		if ($invoiceline->fk_facture_fourn != $this->invoice->id) {
 			throw new RestException(403, 'Line does not belong to this supplier invoice');
+		}
+		if ((int) $this->invoice->status !== FactureFournisseur::STATUS_DRAFT) {
+			throw new RestException(405, 'Supplier invoice must be in draft status to update lines');
 		}
 
 		$request_data = (object) $request_data;
@@ -1187,6 +1193,7 @@ class SupplierInvoices extends DolibarrApi
 	 * @throws RestException 400 Bad parameters
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 Not found
+	 * @throws RestException 405 Supplier invoice is not in draft status
 	 * @throws RestException 405 Error
 	 */
 	public function deleteLine($id, $lineid)
@@ -1213,6 +1220,9 @@ class SupplierInvoices extends DolibarrApi
 		}
 		if ($invoiceline->fk_facture_fourn != $this->invoice->id) {
 			throw new RestException(403, 'Line does not belong to this supplier invoice');
+		}
+		if ((int) $this->invoice->status !== FactureFournisseur::STATUS_DRAFT) {
+			throw new RestException(405, 'Supplier invoice must be in draft status to delete lines');
 		}
 
 		$updateRes = $this->invoice->deleteLine($lineid);

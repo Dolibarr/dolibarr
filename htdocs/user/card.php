@@ -768,6 +768,19 @@ if (empty($reshook)) {
 						setEventMessages($object->error, $object->errors, 'errors');
 					}
 				}
+
+				// The API key field is shown in edit form to a user allowed to change only their password, so they can also renew (revoke) it
+				if (isModEnabled('api') && !getDolGlobalString('API_IN_TOKEN_TABLE') && GETPOSTISSET("api_key")) {
+					$newapikey = trim(GETPOST("api_key", 'alphanohtml'));
+					if ($newapikey != $object->api_key) {
+						$ret = $object->setValueFrom('api_key', ($newapikey ? dolEncrypt($newapikey, '', '', 'dolibarr') : ''), '', null, 'text', '', $user);
+						if ($ret < 0) {
+							setEventMessages($object->error, $object->errors, 'errors');
+						} else {
+							$object->api_key = $newapikey;
+						}
+					}
+				}
 			}
 		}
 	}

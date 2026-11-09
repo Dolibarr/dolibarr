@@ -59,6 +59,7 @@ create table llx_facturedet
 
   batch                         varchar(128) NULL,					-- To store the batch to consume in stock when using a POS module
   fk_warehouse					integer NULL,						-- To store the warehouse where to consume stock when using a POS module
+  pos_printer_id				integer NULL,						-- POS module: order printer of line (-N=to print on printer N, N=printed on printer N)
 
   special_code					integer    DEFAULT 0,				-- code for special lines (may be 1=transport, 2=ecotax, 3=option, moduleid=...)
   rang							integer    DEFAULT 0,				-- position of line
@@ -82,5 +83,6 @@ create table llx_facturedet
   multicurrency_total_tva		double(24,8) DEFAULT 0,
   multicurrency_total_ttc		double(24,8) DEFAULT 0,
   ref_ext						varchar(255) DEFAULT NULL,
+  ref_customer					varchar(128) DEFAULT NULL,		-- reference the customer gives to the line it is billed for (line of its purchase order)
   extraparams				 	varchar(255)						-- to stock other parameters in json format
 )ENGINE=innodb;
