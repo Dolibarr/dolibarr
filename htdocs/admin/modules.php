@@ -90,6 +90,7 @@ $options['per_page']  		= 11;
 $options['no_page']   		= (GETPOSTINT('no_page') ? GETPOSTINT('no_page') : 1);
 $options['categorie'] 		= (GETPOSTINT('categorie') ? GETPOSTINT('categorie') : 0);
 $options['search']    		= GETPOST('search_keyword', 'alpha');
+$options['sortby']    		= GETPOST('sortby', 'aZ09');
 
 // If it is a new search, we reset page to 1
 if (GETPOST('buttonsubmit', 'alphanohtml', 2)) {
@@ -1550,9 +1551,9 @@ if ($mode == 'marketplace') {
 
 		//print '<span class="opacitymedium hideonsmartphone">'.$langs->trans('DOLISTOREdescriptionLong').'</span><br><br>';
 
-		$categories_tree = $remotestore->getCategories($options['categorie']);		// Call API to get the categories
+		$products_list = $remotestore->getProducts($options, $modules);	// Get list of product from all sources. Done before getCategories() so category links keep the sort.
 
-		$products_list = $remotestore->getProducts($options, $modules);	// Get list of product from all sources
+		$categories_tree = $remotestore->getCategories($options['categorie']);		// Call API to get the categories
 
 		$previouslink = $remotestore->get_previous_link();
 
@@ -1567,6 +1568,18 @@ if ($mode == 'marketplace') {
 					<input type="hidden" name="page_y" value="">
 					<div class="divsearchfield">
 						<input name="search_keyword" placeholder="<?php echo $langs->trans('Keyword') ?>" id="search_keyword" type="text" class="minwidth200" value="<?php echo dolPrintHTMLForAttribute($options['search']) ?>" spellcheck="false">
+					</div>
+					<div class="divsearchfield">
+						<?php
+						$sortbyarray = array(
+							'datec_desc' => $langs->trans('MarketplaceSortNewest'),
+							'datec_asc' => $langs->trans('MarketplaceSortOldest'),
+							'label_asc' => $langs->trans('MarketplaceSortNameAsc'),
+							'label_desc' => $langs->trans('MarketplaceSortNameDesc'),
+						);
+						// Changing the sort submits the form with the search button, so the list goes back to page 1
+						print $form->selectarray('sortby', $sortbyarray, $remotestore->sortby, 0, 0, 0, 'onchange="this.form.elements[\'buttonsubmit\'].click()" title="'.dolPrintHTMLForAttribute($langs->trans('SortOrder')).'"', 0, 0, 0, '', 'minwidth150');
+						?>
 					</div>
 					<div class="divsearchfield">
 						<input name="buttonsubmit" class="button buttongen reposition" value="<?php echo $langs->trans('Search') ?>" type="submit">

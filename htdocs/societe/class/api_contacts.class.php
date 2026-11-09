@@ -511,13 +511,22 @@ class Contacts extends DolibarrApi
 			$this->contact->$field = $this->_checkValForAPI($field, $value, $this->contact);
 		}
 
+		$this->db->begin();
+
 		if ($this->contact->update($id, DolibarrApiAccess::$user, 0, 'update') <= 0) {
+			$this->db->rollback();
 			throw new RestException(500, $this->contact->errorsToString());
 		}
 
 		if (isModEnabled('mailing') && !empty($this->contact->email) && isset($this->contact->no_email)) {
-			$this->contact->setNoEmail($this->contact->no_email);
+			// Update mass emailing flag into table mailing_unsubscribe, contact is not updated if this fails
+			if ($this->contact->setNoEmail($this->contact->no_email) < 0) {
+				$this->db->rollback();
+				throw new RestException(500, 'Error when setting no_email of contact: '.$this->contact->errorsToString());
+			}
 		}
+
+		$this->db->commit();
 
 		return $this->get($id);
 	}
