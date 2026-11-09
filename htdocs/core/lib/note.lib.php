@@ -3590,7 +3590,7 @@ function noteLoadTriggerHistory()
 		'notepagetitle' => $langs->trans('').' - '.$langs->trans("Notes"),
 		'notebodyclass' => 'mod-webhook page-card_notes',
 		'noteparamid' => 'ref',
-		'notelinkback' => '<a href="'.dolBuildUrl('/webhook/triggerhistory_list.php', $query).'">'.$langs->trans("BackToList").'</a>',
+		'notelinkback' => '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/webhook/triggerhistory_list.php', $query).'">'.$langs->trans("BackToList").'</a>',
 		'notefieldid' => 'ref',
 		'notefieldref' => 'ref',
 	);

@@ -221,6 +221,7 @@ MigrationApiRestTokens=Migrate user's API keys to llx_oauth_token
 MigratedTokens=%s token(s) migrated
 InitAHMACKeyForBlockedLog=Initialization of the BLOCKEDLOG_HMAC_KEY constant for the new HMAC encryption of Unalterable Log module
 MigrationAlreadyDone=This migration appears to have already been completed.
+Repair=Repair
 RepairEcmEntity=Entity for ECM index repair only
 RepairEcmHeading=Check missing-file index entries for entity %s
 RepairEcmSummary=Entries checked: %s. Missing files: %s. Index entries removed: %s. Unsafe or unavailable paths skipped: %s.
@@ -238,3 +239,6 @@ RepairImagesEntity=Entity for this image repair
 
 RepairOrphanFilesFailed=Some orphan files could not be checked or removed. Existing objects, unreadable paths and database errors must be resolved before retrying.
 RepairOrphanDirectoryNotConfigured=Entity %s, module %s: no native document directory is configured. Files have been preserved.
+
+RepairMailingFailed=Some mailing files could not be migrated. Check paths, existing destination files and installer logs.
+RepairMailingAmbiguous=Several mailings in this entity share this legacy directory. Its files have been preserved; identify their owners before migrating them.

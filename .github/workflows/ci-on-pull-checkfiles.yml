@@ -80,7 +80,9 @@ jobs:
 
           if [ -n "$CHANGED_FILES" ]; then
             echo "::error::Files into htdocs/includes (external libraries) must not be modified into a PR on a stable branch (here '${BASE_REF}'). Such changes must be done into a PR on the develop branch only. The following files were modified:"
-            echo "$CHANGED_FILES" | sed 's/^/ - /'
+            while IFS= read -r CHANGED_FILE; do
+              echo " - ${CHANGED_FILE}"
+            done <<< "$CHANGED_FILES"
             exit 1
           fi
 

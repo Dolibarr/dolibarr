@@ -1767,7 +1767,7 @@ if ($resql) {
 				}
 				print $tmpuser->getNomUrl(-1);
 			} elseif ($thirdstr) {
-				print $thirdstr;
+				print dolPrintLabel($thirdstr);
 			} else {
 				print '&nbsp;';
 			}
