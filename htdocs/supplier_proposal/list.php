@@ -106,6 +106,7 @@ $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'a
 $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 'alpha');
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
+$search_project = GETPOST('search_project', 'alpha');
 $search_status = GETPOST('search_status', 'intcomma');
 $search_note_private = GETPOST('search_note_private', 'alpha');
 $search_note_public = GETPOST('search_note_public', 'alpha');
@@ -212,6 +213,7 @@ $arrayfields = array(
 	'sp.multicurrency_total_vat' => array('label' => 'MulticurrencyAmountVAT', 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1')),
 	'sp.multicurrency_total_ttc' => array('label' => 'MulticurrencyAmountTTC', 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1')),
 	'sp.fk_projet' => array('label' => $langs->trans("RefProject"), 'checked' => '1', 'enabled' => (!isModEnabled("project") ? '0' : '1')),
+	'p.title' => array('label' => $langs->trans("ProjectLabel"), 'checked' => '0', 'enabled' => (!isModEnabled("project") ? '0' : '1')),
 	'u.login' => array('label' => $langs->trans("Author"), 'checked' => '1', 'position' => 10),
 	'sp.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => '0', 'position' => 500),
 	'sp.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => '0', 'position' => 500),
@@ -279,6 +281,7 @@ if (empty($reshook)) {
 		$search_multicurrency_montant_vat = '';
 		$search_multicurrency_montant_ttc = '';
 		$search_project_ref = '';
+		$search_project = '';
 		$search_login = '';
 		$search_product_category = '';
 		$searchCategorySupplierPropalList = array();
@@ -451,6 +454,9 @@ if ($search_multicurrency_montant_ttc != '') {
 }
 if ($search_project_ref != '') {
 	$sql .= natural_search("p.ref", $search_project_ref);
+}
+if ($search_project != '') {
+	$sql .= natural_search("p.title", $search_project);
 }
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
@@ -712,6 +718,9 @@ if ($resql) {
 	if ($search_project_ref >= 0) {
 		$param .= "&search_project_ref=".urlencode($search_project_ref);
 	}
+	if ($search_project != '') {
+		$param .= "&search_project=".urlencode($search_project);
+	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
@@ -853,6 +862,12 @@ if ($resql) {
 	if (!empty($arrayfields['sp.fk_projet']['checked'])) {
 		print '<td class="liste_titre">';
 		print '<input type="text" class="flat width100" name="search_project_ref" value="'.$search_project_ref.'">';
+		print '</td>';
+	}
+	// Project label
+	if (!empty($arrayfields['p.title']['checked'])) {
+		print '<td class="liste_titre">';
+		print '<input type="text" class="flat width100" name="search_project" value="'.dol_escape_htmltag($search_project).'">';
 		print '</td>';
 	}
 	if (!empty($arrayfields['s.nom']['checked'])) {
@@ -1030,6 +1045,10 @@ if ($resql) {
 
 	if (!empty($arrayfields['sp.fk_projet']['checked'])) {
 		print_liste_field_titre($arrayfields['sp.fk_projet']['label'], $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
+	}
+	if (!empty($arrayfields['p.title']['checked'])) {
+		print_liste_field_titre($arrayfields['p.title']['label'], $_SERVER["PHP_SELF"], "p.title", "", $param, '', $sortfield, $sortorder);
 		$totalarray['nbfield']++;
 	}
 
@@ -1240,9 +1259,21 @@ if ($resql) {
 				$projectstatic->id = $obj->project_id;
 				$projectstatic->ref = $obj->project_ref;
 				$projectstatic->title = $obj->project_title;
-				print '<td>';
+				print '<td class="tdoverflowmax150">';
 				if ($obj->project_id > 0) {
 					print $projectstatic->getNomUrl(1);
+				}
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+
+			// Project label
+			if (!empty($arrayfields['p.title']['checked'])) {
+				print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->project_title).'">';
+				if ($obj->project_id > 0) {
+					print '<span class="spantitle">'.dol_escape_htmltag($obj->project_title).'</span>';
 				}
 				print '</td>';
 				if (!$i) {
