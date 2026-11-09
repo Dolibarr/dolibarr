@@ -88,7 +88,7 @@ function propal_prepare_head($object)
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/comm/propal/note.php', ['id' => $object->id]);
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/core/note.php', ['element' => 'comm_propal', 'id' => $object->id]);
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
@@ -266,7 +266,10 @@ function getCustomerProposalPieChart($socid = 0)
 		$db->free($resql);
 
 		global $badgeStatus0, $badgeStatus1, $badgeStatus4, $badgeStatus6, $badgeStatus9;
-		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+		$theme_vars_file = dol_getThemeFilePath('theme_vars.inc.php');
+		if ($theme_vars_file) {
+			include $theme_vars_file;
+		}
 
 		$result = '<div class="div-table-responsive-no-min">';
 		$result .= '<table class="noborder nohover centpercent">';
@@ -308,7 +311,7 @@ function getCustomerProposalPieChart($socid = 0)
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			$dolgraph = new DolGraph();
 			$dolgraph->SetData($dataseries);
-			$dolgraph->SetDataColor(array_values($colorseries));
+			$dolgraph->SetDataColor($colorseries);
 			$dolgraph->setShowLegend(2);
 			$dolgraph->setShowPercent(1);
 			$dolgraph->SetType(array('pie'));

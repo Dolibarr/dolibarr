@@ -138,7 +138,7 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 				if (empty($response['curl_error_no']) && $response['http_code'] >= 200 && $response['http_code'] < 300) {
 					$nbPosts++;
 				} else {
-					$errormsg = "The WebHook for triggercode ".$action." failed to do the GET URL ".$tmpobject->url." with httpcode=".(!empty($response['http_code']) ? $response['http_code'] : "")." curl_error_no=".(!empty($response['curl_error_no']) ? $response['curl_error_no'] : "");
+					$errormsg = "The WebHook for triggercode ".$action." failed to do the POST to URL ".$tmpobject->url." with httpcode=".(!empty($response['http_code']) ? $response['http_code'] : "")." curl_error_no=".(!empty($response['curl_error_no']) ? $response['curl_error_no'] : "");
 					// getURLContent returns http_code 400 with an explanation in $response['content']
 					// when the host is rejected by the SSRF protection (private/reserved range, local
 					// network, metadata server, ...). Surface that explanation so the operator can
@@ -162,29 +162,35 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 					}*/
 				}
 
-				if (empty($dbhistory)) {
-					$dbhistory = getDoliDBInstance($conf->db->type, $conf->db->host, (string) $conf->db->user, $dolibarr_main_db_pass, (string) $conf->db->name, (int) $conf->db->port);
-				}
+				// Save the trace of the webhook call into the history table only if the option to log webhook calls is on
+				if (getDolGlobalString('WEBHOOK_ENABLE_CALL_LOGS')) {
+					if (empty($dbhistory)) {
+						// Force a genuinely new connection (not one silently reused/shared with the main $db, as pg_connect() would otherwise do for
+						// an identical connection string): $dbhistory is closed independently below, and closing a connection shared with $this->db
+						// would break any later query on $this->db (e.g. the caller's pending commit) with "PostgreSQL connection has already been closed".
+						$dbhistory = getDoliDBInstance($conf->db->type, $conf->db->host, (string) $conf->db->user, $dolibarr_main_db_pass, (string) $conf->db->name, (int) $conf->db->port, true);
+					}
 
-				$dbhistory->begin();
+					$dbhistory->begin();
 
-				$triggerhistory = new TriggerHistory($dbhistory);
-				$triggerhistory->trigger_code = $action;
-				$triggerhistory->trigger_data = $jsonstr;
-				$triggerhistory->fk_target = $tmpobject->id;
-				$triggerhistory->url = $tmpobject->url;
-				$triggerhistory->error_message = $errormsg;
-				$triggerhistory->status = ($errorforhistory == 0 ? 1 : -1);
+					$triggerhistory = new TriggerHistory($dbhistory);
+					$triggerhistory->trigger_code = $action;
+					$triggerhistory->trigger_data = $jsonstr;
+					$triggerhistory->fk_target = $tmpobject->id;
+					$triggerhistory->url = $tmpobject->url;
+					$triggerhistory->error_message = $errormsg;
+					$triggerhistory->status = ($errorforhistory == 0 ? 1 : -1);
 
-				$resql = $triggerhistory->create($user);
+					$resql = $triggerhistory->create($user);
 
-				if (!$resql) {
-					$errors++;
-					$this->errors = array_merge($this->errors, $triggerhistory->errors);
-					$this->warnings = array_merge($this->warnings, $triggerhistory->warnings);
-					$dbhistory->rollback();
-				} else {
-					$dbhistory->commit();
+					if (!$resql) {
+						$errors++;
+						$this->errors = array_merge($this->errors, $triggerhistory->errors);
+						$this->warnings = array_merge($this->warnings, $triggerhistory->warnings);
+						$dbhistory->rollback();
+					} else {
+						$dbhistory->commit();
+					}
 				}
 			}
 		}

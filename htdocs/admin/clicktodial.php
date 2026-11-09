@@ -169,7 +169,7 @@ print '</form><br><br>';
 if (getDolGlobalString('CLICKTODIAL_URL')) {
 	$user->fetch_clicktodial();
 
-	$phonefortest = $mysoc->phone ?? '';
+	$phonefortest = (string) $mysoc->phone;
 	if (GETPOST('phonefortest')) {
 		$phonefortest = GETPOST('phonefortest');
 	}

@@ -41,7 +41,7 @@ class modTicket extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs, $conf;
+		global $langs, $conf, $user;
 		$langs->load("ticket");
 
 		$this->db = $db;
@@ -122,6 +122,7 @@ class modTicket extends DolibarrModules
 			['MAIN_SECURITY_ENABLECAPTCHA_TICKET', 'chaine', getDolGlobalInt('MAIN_SECURITY_ENABLECAPTCHA_TICKET'), 'Enable captcha code by default', 0],
 			['TICKET_SHOW_COMPANY_LOGO', 'chaine', getDolGlobalInt('TICKET_SHOW_COMPANY_LOGO', 1), 'Enable logo header on ticket public page', 0],
 			['TICKET_SHOW_COMPANY_FOOTER', 'chaine', getDolGlobalInt('TICKET_SHOW_COMPANY_FOOTER', 1), 'Enable footer on ticket public page', 0],
+			['TICKET_EMAIL_TEMPLATE_REMIND_STALE', 'emailtemplate:ticket', '(SendingReminderForStaleTicket)', 'Email template used to remind the assigned user of a late ticket (see TICKET_DELAY_BEFORE_FIRST_RESPONSE and TICKET_DELAY_SINCE_LAST_RESPONSE)', 0],
 		];
 
 		/*
@@ -209,6 +210,27 @@ class modTicket extends DolibarrModules
 					'use_default' => $langs->trans('Enter0or1'),
 				],
 			]
+		);
+
+		// Cronjobs
+		$arraydate = dol_getdate(dol_now());
+		$datestart = dol_mktime(22, 0, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
+		$this->cronjobs = array(
+			0 => array(
+				'label' => 'SendReminderForStaleTicketsTitle',
+				'jobtype' => 'method',
+				'class' => 'ticket/class/ticket.class.php',
+				'objectname' => 'Ticket',
+				'method' => 'sendReminderForStaleTickets',
+				'parameters' => '',
+				'comment' => 'SendReminderForStaleTickets',
+				'frequency' => 1,
+				'unitfrequency' => 3600 * 24,
+				'priority' => 50,
+				'status' => 1,
+				'test' => 'isModEnabled("ticket")',
+				'datestart' => $datestart
+			),
 		);
 
 		// Boxes
@@ -391,6 +413,10 @@ class modTicket extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'ticket_extrafields as extra on (t.rowid = extra.fk_object)';
 		$this->export_sql_end[$r] .= ' WHERE 1 = 1';
 		$this->export_sql_end[$r] .= ' AND t.entity IN ('.getEntity('ticket').')';
+		if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
+			// Restrict to tickets with no thirdparty or with a thirdparty the user is sales representative of
+			$this->export_sql_end[$r] .= ' AND (t.fk_soc IS NULL OR EXISTS (SELECT sc.fk_soc FROM '.MAIN_DB_PREFIX.'societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = '.((int) $user->id).'))';
+		}
 		$r++;
 	}
 

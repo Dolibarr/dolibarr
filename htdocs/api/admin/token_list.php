@@ -300,7 +300,7 @@ $morehtmlright = '';
 $tmpurlforbutton = DOL_URL_ROOT.'/user/api_token/card.php?action=create&backtopage='.urlencode(DOL_URL_ROOT.'/api/admin/token_list.php');
 $morehtmlright .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $tmpurlforbutton);
 
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="action" value="list">';

@@ -73,6 +73,11 @@ class pdf_storm extends ModelePDFDeliveryOrder
 	 */
 	public $version = 'dolibarr';
 
+	/**
+	 * @var int		Position
+	 */
+	public $position = 50;
+
 
 	/**
 	 *	Constructor
@@ -627,11 +632,11 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		$larg_sign = ($this->page_largeur - $this->marge_gauche - $this->marge_droite) / 3;
 		$pdf->RoundedRect($this->marge_gauche, $posy + 1, $larg_sign, 25, $this->corner_radius, '1234', 'D');
 		$pdf->SetXY($this->marge_gauche + 2, $posy + 2);
-		$pdf->MultiCell($larg_sign, 2, $outputlangs->trans("For").' '.$outputlangs->convToOutputCharset($mysoc->name).":", '', 'L');
+		$pdf->MultiCell($larg_sign, 2, $outputlangs->transnoentities("For").' '.$outputlangs->convToOutputCharset($mysoc->name).":", '', 'L');
 
 		$pdf->RoundedRect(2 * $larg_sign + $this->marge_gauche, $posy + 1, $larg_sign, 25, $this->corner_radius, '1234', 'D');
 		$pdf->SetXY(2 * $larg_sign + $this->marge_gauche + 2, $posy + 2);
-		$pdf->MultiCell($larg_sign, 2, $outputlangs->trans("ForCustomer").':', '', 'L');
+		$pdf->MultiCell($larg_sign, 2, $outputlangs->transnoentities("ForCustomer").':', '', 'L');
 	}
 
 
@@ -945,14 +950,14 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		$rank += 10;
 		$this->cols['photo'] = array(
 			'rank' => $rank,
-			'width' => getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20), // in mm
+			'width' => (float) getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20), // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => 'Photo',
 				'label' => ' '
 			),
 			'content' => array(
-				'padding' => array(0, 0, 0, 0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(0.0, 0.0, 0.0, 0.0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 			'border-left' => false, // remove left line separator
 		);
@@ -965,7 +970,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		$rank += 10;
 		$this->cols['Comments'] = array(
 			'rank' => $rank,
-			'width' => 50, // in mm
+			'width' => 50.0, // in mm
 			'status' => true,
 			'title' => array(
 				'textkey' => 'Comments'
@@ -987,7 +992,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		$rank += 10;
 		$this->cols['qty_shipped'] = array(
 			'rank' => $rank,
-			'width' => 20, // in mm
+			'width' => 20.0, // in mm
 			'status' => !getDolGlobalString('DELIVERY_PDF_HIDE_SHIPPED'),
 			'title' => array(
 				'textkey' => 'QtyShippedShort'
@@ -998,7 +1003,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		$rank += 10;
 		$this->cols['qty_remaining'] = array(
 			'rank' => $rank,
-			'width' => 20, // in mm
+			'width' => 20.0, // in mm
 			'status' => !getDolGlobalString('DELIVERY_PDF_HIDE_QTYTOSHIP'),
 			'title' => array(
 				'textkey' => 'KeepToShipShort'

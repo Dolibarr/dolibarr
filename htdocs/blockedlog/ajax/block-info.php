@@ -96,7 +96,7 @@ $db->close();
  */
 function formatObject($objtoshow, $prefix, $parentelement = '')
 {
-	global $db, $langs;
+	global $db, $langs, $mysoc;
 
 	$s = '';
 
@@ -169,6 +169,7 @@ function formatObject($objtoshow, $prefix, $parentelement = '')
 		'email' => 'Email',
 		'address' => 'Address',
 		'town' => 'Town',
+		'zip' => 'Zip',
 		'state_code' => 'State',
 		'fk_pays' => 'Country',
 		'fk_typent' => 'CompanyType',
@@ -178,10 +179,11 @@ function formatObject($objtoshow, $prefix, $parentelement = '')
 		'capital' => 'Capital',
 		'fullname' => 'Fullname',
 		'period' => 'Period',
-		'localtax1_assuj' => 'UseLocalTax1',
-		'localtax2_assuj' => 'UseLocalTax2',
-		'localtax1_value' => 'LocalTax1DefaultValue',
-		'localtax2_value' => 'LocalTax2DefaultValue',
+		'tva_assuj' => 'VATIsUsed',
+		'localtax1_assuj' => $langs->transcountry('LocalTax1IsUsed', $mysoc->country_code),
+		'localtax2_assuj' => $langs->transcountry('LocalTax2IsUsed', $mysoc->country_code),
+		'localtax1_value' => 'Localtax1Rate',
+		'localtax2_value' => 'Localtax2Rate',
 		'subprice' => 'UnitPrice',
 		'product_type' => 'ProductType',
 		'product_label' => 'ProductLabel',
@@ -218,7 +220,7 @@ function formatObject($objtoshow, $prefix, $parentelement = '')
 		//var_dump($newobjtoshow);
 		foreach ($newobjtoshow as $key => $val) {
 			if (!is_object($val) && !is_array($val)) {
-				// TODO $val can be '__PHP_Incomplete_Class', the is_object return false
+				// $val can be '__PHP_Incomplete_Class', the is_object return false
 				$s .= '<tr>';
 
 				// Field code

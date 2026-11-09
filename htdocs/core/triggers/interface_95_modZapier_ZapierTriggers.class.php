@@ -416,20 +416,6 @@ function zapierPostWebhook($url, $json)
 
 	dol_syslog("Send message to Zapier with json size=".dol_strlen($json), LOG_DEBUG);
 	getURLContent($url, 'POSTALREADYFORMATED', $json, 1, $headers, array('http', 'https'), 0);
-
-	/*
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, $url);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-	curl_setopt($ch, CURLOPT_POST, 1);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
-	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-	$output = curl_exec($ch);
-	curl_close($ch);
-	*/
 }
 
 /**

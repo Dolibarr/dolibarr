@@ -138,6 +138,16 @@ class ExtraFields
 	}
 
 	/**
+	 * Method to output saved errors
+	 *
+	 * @return	string		String with errors
+	 */
+	public function errorsToString()
+	{
+		return $this->error.(is_array($this->errors) && count($this->errors) > 0 ? (($this->error != '' ? ', ' : '').implode(', ', $this->errors)) : '');
+	}
+
+	/**
 	 *  Add a new extra field parameter
 	 *
 	 *  @param	string			$attrname           Code of attribute
@@ -1203,7 +1213,7 @@ class ExtraFields
 			$form = new Form($this->db);
 		}
 
-		if ($mode == 1) {	// When field is used for search input into a list, we limit its size.
+		if ($mode == 1 && empty($morecss)) {	// When field is used for search input into a list, we limit its size.
 			$morecss = 'maxwidth125';
 		}
 
@@ -1353,18 +1363,20 @@ class ExtraFields
 		} elseif (in_array($type, array('int', 'integer'))) {
 			$tmp = explode(',', $size);
 			$newsize = $tmp[0];
-			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$newsize.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
+			$out = '<input type="text" class="flat valignmiddle '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$newsize.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
 		} elseif (preg_match('/varchar/', $type)) {
-			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
+			$out = '<input type="text" class="flat valignmiddle '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
+		} elseif ($type == 'phone' && $mode != 1) {
+			$out = $form->showPhoneInput($value, $keyprefix.$key.$keysuffix, (is_object($object) && !empty($object->country_id)) ? $object->country_id : 0);
 		} elseif (in_array($type, array('email', 'mail', 'ip', 'phone', 'url'))) {
-			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
+			$out = '<input type="text" class="flat valignmiddle '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 		} elseif ($type == 'icon') {
 			/* External lib inclusion are not allowed in backoffice. Also lib is included several time if there is several icon file.
 			 Some code must be added into main when MAIN_ADD_ICONPICKER_JS is set to add of lib in html header
 			 $out ='<link rel="stylesheet" href="'.dol_buildpath('/myfield/css/fontawesome-iconpicker.min.css', 1).'">';
 			 $out.='<script src="'.dol_buildpath('/myfield/js/fontawesome-iconpicker.min.js', 1).'"></script>';
 			 */
-			$out .= '<input type="text" class="form-control icp icp-auto iconpicker-element iconpicker-input flat '.$morecss.' maxwidthonsmartphone"';
+			$out .= '<input type="text" class="form-control icp icp-auto iconpicker-element iconpicker-input flat valignmiddle '.$morecss.' maxwidthonsmartphone"';
 			$out .= ' name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 			if (getDolGlobalInt('MAIN_ADD_ICONPICKER_JS')) {
 				$out .= '<script>';
@@ -1389,7 +1401,7 @@ class ExtraFields
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, false, ROWS_5, '90%');
 				$out = (string) $doleditor->Create(1);
 			} else {
-				$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
+				$out = '<input type="text" class="flat valignmiddle '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 			}
 		} elseif ($type == 'html') {
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
@@ -1397,7 +1409,7 @@ class ExtraFields
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, isModEnabled('fckeditor') && getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_5, '90%');
 				$out = (string) $doleditor->Create(1);
 			} else {
-				$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
+				$out = '<input type="text" class="flat valignmiddle '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 			}
 		} elseif ($type == 'boolean') {
 			if (empty($mode)) {
@@ -1416,7 +1428,7 @@ class ExtraFields
 			if (!empty($value)) {		// $value in memory is a php numeric, we format it into user number format.
 				$value = price($value);
 			}
-			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone right" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').' placeholder="'.$langs->getCurrencySymbol($conf->currency).'">';
+			$out = '<input type="text" class="flat valignmiddle '.$morecss.' maxwidthonsmartphone right" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').' placeholder="'.$langs->getCurrencySymbol($conf->currency).'">';
 		} elseif ($type == 'pricecy') {
 			$currency = $conf->currency;
 			if (!empty($value)) {
@@ -1425,7 +1437,7 @@ class ExtraFields
 				$currency = !empty($pricetmp[1]) ? $pricetmp[1] : $conf->currency;
 				$value = price($pricetmp[0]);
 			}
-			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'> ';
+			$out = '<input type="text" class="flat valignmiddle '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'> ';
 			$out .= $form->selectCurrency($currency, $keyprefix.$key.$keysuffix.'currency_id');
 		} elseif ($type == 'duration') {
 			$value = intval($value);
@@ -1434,7 +1446,7 @@ class ExtraFields
 			if (!empty($value)) {		// $value in memory is a php numeric, we format it into user number format.
 				$value = price($value);
 			}
-			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'> ';
+			$out = '<input type="text" class="flat valignmiddle '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'> ';
 		} elseif ($type == 'select') {
 			$out = '';
 			if ($mode) {
@@ -1520,11 +1532,11 @@ class ExtraFields
 									var query = {
 										search: params.term,
 										page: params.page || 1,
-										objecttype: '".$extrafieldsobjectkey."',
-										objectid: '".$object->id."',
-										objectkey: '".$key."',
-										mode: '".$mode."',
-										value: '".$value."'
+										objecttype: '".dol_escape_js($extrafieldsobjectkey)."',
+										objectid: '".dol_escape_js($objectid)."',
+										objectkey: '".dol_escape_js($key)."',
+										mode: '".((int) $mode)."',
+										value: '".dol_escape_js($value)."'
 									}
 									return query;
 								}
@@ -1610,6 +1622,10 @@ class ExtraFields
 						} else {
 							$keyList .= ', '.$parentField;
 						}
+						// Re-add parent field that was removed by keyList reset above
+						if (!empty($parentField)) {
+							$keyList .= ', '.$parentField;
+						}
 					}
 
 					$filter_categorie = false;
@@ -1656,11 +1672,15 @@ class ExtraFields
 							} elseif (substr($_SERVER["PHP_SELF"], -8) == 'list.php') {
 								// In filters of list views, we do not want $ID$ replaced by 0. So we remove the '=' condition.
 								// Do nothing if condition is using 'IN' keyword
-								// Replace 'column = $any$' by "1=1"
-								$word = '#([a-zA-Z0-9._-]+):=:\$([A-Za-z0-9_]+)\$#';
+
+								// Replace 'column = $ID$' by an always true test, the parent object is unknown in a list
+								$word = '#\b([a-zA-Z0-9-\.-_]+)\b *= *\$ID\$#';
 								$InfoFieldList[4] = preg_replace($word, '1:=:1', $InfoFieldList[4]);
-								// Replace '$any$ = column' by "1:=:1"
-								$word = '#\$([A-Za-z0-9_]+)\$:=:([A-Za-z0-9._-]+)#';
+								// Replace '$ID$ = column' by an always true test
+								$word = '#\$ID\$ *= *\b([a-zA-Z0-9-\.-_]+)\b#';
+								$InfoFieldList[4] = preg_replace($word, '1:=:1', $InfoFieldList[4]);
+								// Same with the Universal Search Filter syntax, '(column:=:$ID$)'
+								$word = '#\b([a-zA-Z0-9-\.-_]+)\b *: *[<>!=]?= *: *\$ID\$#';
 								$InfoFieldList[4] = preg_replace($word, '1:=:1', $InfoFieldList[4]);
 							} else {
 								$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
@@ -1820,7 +1840,7 @@ class ExtraFields
 			$out = '';
 			$selectedvalue = ((string) $value !== '' ? $value : $default);
 			foreach ($param['options'] as $keyopt => $val) {
-				$out .= '<input class="flat '.$morecss.'" type="radio" name="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '');
+				$out .= '<input class="flat '.$morecss.'" type="radio" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '');
 				$out .= ' value="'.$keyopt.'"';
 				$out .= ' id="'.$keyprefix.$key.$keysuffix.'_'.$keyopt.'"';
 				$out .= ((string) $selectedvalue == (string) $keyopt ? ' checked' : '');
@@ -1834,10 +1854,11 @@ class ExtraFields
 				} else {
 					$value_arr = explode(',', $value);
 				}
+
 				$out .= "
 				<script>
 				$(document).ready(function () {
-					$('#".$keyprefix.$key.$keysuffix."').select2({
+					$('#".dol_escape_js($keyprefix.$key.$keysuffix)."').select2({
 						ajax: {
 							url: '".DOL_URL_ROOT.'/core/ajax/ajaxextrafield.php'."',
 							dataType: 'json',
@@ -1847,11 +1868,11 @@ class ExtraFields
 								var query = {
 									search: params.term,
 									page: params.page || 1,
-									objecttype: '".$extrafieldsobjectkey."',
-									objectid: '".$object->id."',
-									objectkey: '".$key."',
-									mode: '".$mode."',
-									value: '".$value."'
+									objecttype: '".dol_escape_js($extrafieldsobjectkey)."',
+									objectid: '".dol_escape_js($object->id)."',
+									objectkey: '".dol_escape_js($key)."',
+									mode: '".((int) $mode)."',
+									value: '".dol_escape_js($value)."'
 								}
 								return query;
 							}
@@ -1924,9 +1945,9 @@ class ExtraFields
 							$InfoFieldList = array_merge($InfoFieldList, explode(':', $tmpafter));
 						}
 
-						// Fix better compatibility with some old extrafield syntax filter "(field=123)"
+						// Fix better compatibility with some old extrafield syntax filter "(field_name=123)"
 						$reg = array();
-						if (preg_match('/^\(?([a-z0-9]+)([=<>]+)(\d+)\)?$/i', $InfoFieldList[4], $reg)) {
+						if (preg_match('/^\(?([a-z0-9_]+)([=<>]+)(\d+)\)?$/i', $InfoFieldList[4], $reg)) {
 							$InfoFieldList[4] = '('.$reg[1].':'.$reg[2].':'.$reg[3].')';
 						}
 					}
@@ -1951,12 +1972,16 @@ class ExtraFields
 						} else {
 							$keyList .= ', '.$parentField;
 						}
+						// Re-add parent field that was removed by keyList reset above
+						if (!empty($parentField)) {
+							$keyList .= ', '.$parentField;
+						}
 					}
 
+					$InfoFieldList[5] = (string) ($InfoFieldList[5]??'');
 
 					$filter_categorie = false;
 					if (count($InfoFieldList) > 5 && ($InfoFieldList[5] != '')) {
-						$InfoFieldList[5] = (string) $InfoFieldList[5];
 						if ($InfoFieldList[0] == 'categorie') {
 							$filter_categorie = true;	// The combo list is a list of categories
 						} else {
@@ -2469,7 +2494,7 @@ class ExtraFields
 				} else {
 					$toprint = array();
 					$obj = $this->db->fetch_object($resql);
-					if ($obj->rowid) {
+					if ($obj && $obj->rowid) {	// fetch_object() returns null when the query returned no row, for example when the field has no value
 						require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 						$c = new Categorie($this->db);
 						$result = $c->fetch($obj->rowid);
@@ -3062,16 +3087,13 @@ class ExtraFields
 						$value_key = '';
 					}
 				} elseif (in_array($key_type, array('text'))) {
-					$label_security_check = 'alphanohtml';
-					// by default 'alphanohtml' (better security); hidden conf MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML allows basic html
-					if (getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
-						$label_security_check = 'nohtml';
-					} else {
-						$label_security_check = !getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML') ? 'alphanohtml' : 'restricthtml';
+					$security_check = 'nohtml';	// Default for text
+					if (getDolGlobalString('MAIN_SECURITY_DISALLOW_UNSECURED_TEXT')) {
+						$security_check = 'alphanohtml';
 					}
-					$value_key = GETPOST("options_".$key, $label_security_check);
+					$value_key = GETPOST("options_".$key, $security_check);
 				} else {
-					$value_key = GETPOST("options_".$key);
+					$value_key = GETPOST("options_".$key);	// Default: 'alphanohtml'
 					if (in_array($key_type, array('link')) && $value_key == '-1') {
 						$value_key = '';
 					}
@@ -3315,6 +3337,9 @@ class ExtraFields
 		}
 		if ($type == 'sellist') {
 			return ($v == '0');
+		}
+		if (in_array($type, array('int', 'double', 'price'))) {
+			return false;
 		}
 		return empty($v);  // Note empty('0') is also true, tested 7.0 up to 8.3.12
 	}

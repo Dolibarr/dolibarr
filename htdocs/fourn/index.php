@@ -300,7 +300,7 @@ if ($resql) {
 $companystatic->LoadSupplierCateg();
 $categstatic = new Categorie($db);
 
-if (count($companystatic->SupplierCategories)) {
+if (count($companystatic->supplierCategories)) {
 	print '<br>';
 
 	print '<table class="liste centpercent">';
@@ -308,7 +308,7 @@ if (count($companystatic->SupplierCategories)) {
 	print $langs->trans("Category");
 	print "</td></tr>\n";
 
-	foreach ($companystatic->SupplierCategories as $rowid => $label) {
+	foreach ($companystatic->supplierCategories as $rowid => $label) {
 		print '<tr class="oddeven">'."\n";
 		print '<td>';
 		$categstatic->id = (int) $rowid;

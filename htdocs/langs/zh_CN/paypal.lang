@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=贝宝模块的设置
-PaypalDesc=该模块允许客户通过<a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>付款。这可用于临时付款或与 Dolibarr 对象相关的付款 (发票、订单……)
+PaypalDesc=This module allows payment by customers via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. This can be used for an ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
 PaypalOrCBDoPayment=使用 PayPal 付款 (信用卡或 PayPal)
 PaypalDoPayment=使用 PayPal 付款
 PAYPAL_API_SANDBOX=测试/沙箱模式
@@ -19,7 +19,7 @@ NewOnlinePaymentFailed=新的在线支付尝试但失败了
 ONLINE_PAYMENT_SENDEMAIL=每次付款尝试 (成功和失败) 后通知的电子邮件地址
 ReturnURLAfterPayment=付款后返回网页地址
 ValidationOfOnlinePaymentFailed=验证在线支付失败
-PaymentSystemConfirmPaymentPageWasCalledButFailed=支付系统调用支付确认页面返回错误
+PaymentSystemConfirmPaymentPageWasCalledButFailed=The payment confirmation page was called by the online payment system and returned an error
 SetExpressCheckoutAPICallFailed=SetExpressCheckout API调用失败。
 DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API调用失败。
 DetailedErrorMessage=详细的错误消息

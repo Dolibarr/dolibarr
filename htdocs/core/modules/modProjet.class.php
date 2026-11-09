@@ -46,7 +46,7 @@ class modProjet extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf;
+		global $conf, $user;
 
 		$this->db = $db;
 		$this->numero = 400;
@@ -125,6 +125,13 @@ class modProjet extends DolibarrModules
 				"",
 				0,
 			],
+			[
+				"PROJECT_TASK_EMAIL_TEMPLATE_REMIND_OVERDUE",
+				"emailtemplate:project_task",
+				"(SendingReminderForOverdueTask)",
+				'Email template used to remind the task executives of an overdue task (see MAIN_DELAY_TASKS_TODO)',
+				0,
+			],
 		];
 
 		// Boxes
@@ -147,6 +154,19 @@ class modProjet extends DolibarrModules
 			'frequency' => 1,
 			'unitfrequency' => 86400 * 7,
 			'status' => 0,
+			'test' => 'isModEnabled("project")',
+		);
+		$this->cronjobs[] = array(
+			'label' => 'SendReminderForOverdueTasksTitle',
+			'jobtype' => 'method',
+			'class' => 'projet/class/task.class.php',
+			'objectname' => 'Task',
+			'method' => 'sendReminderForOverdueTasks',
+			'parameters' => '',
+			'comment' => 'SendReminderForOverdueTasks',
+			'frequency' => 1,
+			'unitfrequency' => 86400,
+			'status' => 1,
 			'test' => 'isModEnabled("project")',
 		);
 		// Permissions
@@ -296,6 +316,13 @@ class modProjet extends DolibarrModules
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture as f ON ptt.invoice_id = f.rowid';
 		}
 		$this->export_sql_end[$r] .= " WHERE p.entity IN (".getEntity('project').")";
+		if (is_object($user) && !$user->hasRight('projet', 'all', 'lire')) {
+			// Restrict to projects the user is allowed to see (public projects and projects the user is linked to)
+			require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+			$projectstatic = new Project($this->db);
+			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
+			$this->export_sql_end[$r] .= ' AND p.rowid IN ('.$this->db->sanitize($projectsListId != '' ? $projectsListId : '0').')';
+		}
 
 		// Import project/opportunities
 		$r++;

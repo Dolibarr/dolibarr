@@ -950,29 +950,7 @@ class Availabilities extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $langs;
-
-		$result = 0;
-
-		$langs->load("agenda");
-
-		if (!dol_strlen($modele)) {
-			$modele = 'standard_availabilities';
-
-			if (!empty($this->model_pdf)) {
-				$modele = $this->model_pdf;
-			} elseif (getDolGlobalString('AVAILABILITIES_ADDON_PDF')) {
-				$modele = getDolGlobalString('AVAILABILITIES_ADDON_PDF');
-			}
-		}
-
-		$modelpath = "core/modules/bookcal/doc/";
-
-		if (!empty($modele)) {
-			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
-		}
-
-		return $result;
+		return 0;
 	}
 
 	/**

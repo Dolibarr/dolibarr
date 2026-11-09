@@ -47,7 +47,7 @@ $currencycode = GETPOST('currencycode', 'alpha');
 if (empty($action)) {
 	$action = 'edit';
 }
-if (isModEnabled('multicompany') && getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY')) {
+if ((isModEnabled('multicompany') || isModEnabled('multicurrency')) && getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY')) {
 	// When MULTICURRENCY_USE_LIMIT_BY_CURRENCY is on, we use always a defined currency code instead of '' even for default.
 	$currencycode = (!empty($currencycode) ? $currencycode : getDolCurrency());
 }
@@ -56,11 +56,15 @@ $mainmaxdecimalsunit = 'MAIN_MAX_DECIMALS_UNIT'.(!empty($currencycode) ? '_'.$cu
 $mainmaxdecimalstot = 'MAIN_MAX_DECIMALS_TOT'.(!empty($currencycode) ? '_'.$currencycode : '');
 $mainmaxdecimalsshown = 'MAIN_MAX_DECIMALS_SHOWN'.(!empty($currencycode) ? '_'.$currencycode : '');
 $mainroundingruletot = 'MAIN_ROUNDING_RULE_TOT'.(!empty($currencycode) ? '_'.$currencycode : '');
+$mainmaxdecimalscurrencyrate = 'MAIN_MAX_DECIMALS_CURRENCY_RATE' . (!empty($currencycode) ? '_' . $currencycode : '');
 
 $valmainmaxdecimalsunit = GETPOSTINT($mainmaxdecimalsunit);
 $valmainmaxdecimalstot = GETPOSTINT($mainmaxdecimalstot);
 $valmainmaxdecimalsshown = GETPOST($mainmaxdecimalsshown, 'alpha');	// Can be 'x.y' but also 'x...'
 $valmainroundingruletot = price2num(GETPOST($mainroundingruletot, 'alphanohtml'), '', 2);
+$valmainmaxdecimalscurrencyrate = GETPOSTINT($mainmaxdecimalscurrencyrate);
+$valmainweightdefaultround = GETPOSTISSET('MAIN_WEIGHT_DEFAULT_ROUND') ? GETPOST('MAIN_WEIGHT_DEFAULT_ROUND', 'int') : getDolGlobalInt('MAIN_WEIGHT_DEFAULT_ROUND', -1);
+$valmainvolumedefaultround = GETPOSTISSET('MAIN_VOLUME_DEFAULT_ROUND') ? GETPOST('MAIN_VOLUME_DEFAULT_ROUND', 'int') : getDolGlobalInt('MAIN_VOLUME_DEFAULT_ROUND', -1);
 
 if (!$user->admin) {
 	accessforbidden();
@@ -91,6 +95,15 @@ if ($action == 'update' && !$cancel) {
 		$action = 'edit';
 	}
 
+	foreach (array('MAIN_WEIGHT_DEFAULT_ROUND' => $valmainweightdefaultround, 'MAIN_VOLUME_DEFAULT_ROUND' => $valmainvolumedefaultround) as $roundingparameter => $roundingvalue) {
+		if (filter_var($roundingvalue, FILTER_VALIDATE_INT, array('options' => array('min_range' => -1, 'max_range' => $MAXDEC))) === false) {
+			$langs->load('errors');
+			$error++;
+			setEventMessages($langs->trans('ErrorBadValueForParameter', $roundingvalue, $langs->transnoentitiesnoconv($roundingparameter)), null, 'errors');
+			$action = 'edit';
+		}
+	}
+
 	if ($valmainroundingruletot) {
 		if ((float) $valmainroundingruletot * pow(10, $valmainmaxdecimalstot) < 1) {
 			$langs->load("errors");
@@ -113,12 +126,22 @@ if ($action == 'update' && !$cancel) {
 		$action = 'edit';
 	}
 
+	if ($valmainmaxdecimalscurrencyrate < 0) {
+		$valmainmaxdecimalscurrencyrate = 0;
+	}
+	if ($valmainmaxdecimalscurrencyrate > $MAXDEC) {
+		$valmainmaxdecimalscurrencyrate = $MAXDEC;
+	}
+
 	if (!$error) {
 		dolibarr_set_const($db, $mainmaxdecimalsunit, $valmainmaxdecimalsunit, 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, $mainmaxdecimalstot, $valmainmaxdecimalstot, 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, $mainmaxdecimalsshown, $valmainmaxdecimalsshown, 'chaine', 0, '', $conf->entity);
 
 		dolibarr_set_const($db, $mainroundingruletot, $valmainroundingruletot, 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, $mainmaxdecimalscurrencyrate, $valmainmaxdecimalscurrencyrate, 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, 'MAIN_WEIGHT_DEFAULT_ROUND', $valmainweightdefaultround, 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, 'MAIN_VOLUME_DEFAULT_ROUND', $valmainvolumedefaultround, 'chaine', 0, '', $conf->entity);
 
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 
@@ -143,7 +166,7 @@ print load_fiche_titre($title, '', 'title_setup');
 
 $aCurrencies = array(getDolCurrency()); // Default currency always first position
 
-if (isModEnabled('multicompany') && getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY')) {
+if ((isModEnabled('multicompany') || isModEnabled('multicurrency')) && getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY')) {
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/multicurrency.lib.php';
 
 	$sql = "SELECT rowid, code FROM " . MAIN_DB_PREFIX . "multicurrency";
@@ -170,7 +193,7 @@ if ($action == 'edit') {
 	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '" spellcheck="false">';
 	print '<input type="hidden" name="token" value="' . newToken() . '">';
 	print '<input type="hidden" name="action" value="update">';
-	if (isModEnabled('multicompany') && getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY')) {
+	if ((isModEnabled('multicompany') || isModEnabled('multicurrency')) && getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY')) {
 		print '<input type="hidden" name="currencycode" value="' . $currencycode . '">';
 	}
 
@@ -193,6 +216,15 @@ if ($action == 'edit') {
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_ROUNDING_RULE_TOT"), $langs->trans("ParameterActiveForNextInputOnly"));
 	print '</td><td><input class="flat right" name="'.$mainroundingruletot.'" size="3" value="'.(GETPOSTISSET($mainroundingruletot) ? GETPOST($mainroundingruletot) : getDolGlobalString('MAIN_ROUNDING_RULE_TOT')).'"></td></tr>';
+
+	print '<tr class="oddeven"><td>' . $form->textwithpicto($langs->trans('MAIN_MAX_DECIMALS_CURRENCY_RATE'), $langs->trans('MAIN_MAX_DECIMALS_CURRENCY_RATE_Help')) . '</td>';
+	print '<td><input class="flat right" name="' . $mainmaxdecimalscurrencyrate . '" size="3" value="' . (GETPOSTISSET($mainmaxdecimalscurrencyrate) ? GETPOST($mainmaxdecimalscurrencyrate) : getDolGlobalInt($mainmaxdecimalscurrencyrate, 8)) . '"></td></tr>';
+
+	print '<tr class="oddeven"><td>' . $form->textwithpicto($langs->trans('MAIN_WEIGHT_DEFAULT_ROUND'), $langs->trans('WeightVolumeRoundingHelp')) . '</td>';
+	print '<td><input class="flat right" name="MAIN_WEIGHT_DEFAULT_ROUND" size="3" value="' . (GETPOSTISSET('MAIN_WEIGHT_DEFAULT_ROUND') ? GETPOSTINT('MAIN_WEIGHT_DEFAULT_ROUND') : getDolGlobalInt('MAIN_WEIGHT_DEFAULT_ROUND', -1)) . '"></td></tr>';
+
+	print '<tr class="oddeven"><td>' . $form->textwithpicto($langs->trans('MAIN_VOLUME_DEFAULT_ROUND'), $langs->trans('WeightVolumeRoundingHelp')) . '</td>';
+	print '<td><input class="flat right" name="MAIN_VOLUME_DEFAULT_ROUND" size="3" value="' . (GETPOSTISSET('MAIN_VOLUME_DEFAULT_ROUND') ? GETPOSTINT('MAIN_VOLUME_DEFAULT_ROUND') : getDolGlobalInt('MAIN_VOLUME_DEFAULT_ROUND', -1)) . '"></td></tr>';
 
 	print '</table>';
 
@@ -227,6 +259,12 @@ if ($action == 'edit') {
 	print $form->textwithpicto($langs->trans("MAIN_ROUNDING_RULE_TOT"), $langs->trans("ParameterActiveForNextInputOnly"));
 	print '</td><td align="right">'.(isset($conf->global->$mainroundingruletot) ? $conf->global->$mainroundingruletot : getDolGlobalString('MAIN_ROUNDING_RULE_TOT')).'</td></tr>';
 
+	print '<tr class="oddeven"><td>' . $form->textwithpicto($langs->trans('MAIN_WEIGHT_DEFAULT_ROUND'), $langs->trans('WeightVolumeRoundingHelp')) . '</td>';
+	print '<td class="right">' . getDolGlobalInt('MAIN_WEIGHT_DEFAULT_ROUND', -1) . '</td></tr>';
+
+	print '<tr class="oddeven"><td>' . $form->textwithpicto($langs->trans('MAIN_VOLUME_DEFAULT_ROUND'), $langs->trans('WeightVolumeRoundingHelp')) . '</td>';
+	print '<td class="right">' . getDolGlobalInt('MAIN_VOLUME_DEFAULT_ROUND', -1) . '</td></tr>';
+
 	print '</table>';
 	print '</div>';
 
@@ -235,7 +273,7 @@ if ($action == 'edit') {
 	print '</div>';
 }
 
-if (isModEnabled('multicompany') && getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY')) {
+if ((isModEnabled('multicompany') || isModEnabled('multicurrency')) && getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY')) {
 	if (!empty($aCurrencies) && count($aCurrencies) > 1) {
 		print dol_get_fiche_end();
 	}

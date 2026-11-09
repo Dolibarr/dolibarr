@@ -55,6 +55,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/takepos.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -69,8 +70,9 @@ $setcurrency = GETPOST('setcurrency', 'aZ09');
 
 $hookmanager->initHooks(array('takeposfrontend'));
 if (empty($_SESSION["takeposterminal"])) {
-	if (getDolGlobalInt('TAKEPOS_NUM_TERMINALS') == 1) {
-		$_SESSION["takeposterminal"] = 1; // Use terminal 1 if there is only 1 terminal
+	$enabledterminals = takeposEnabledTerminals();
+	if (count($enabledterminals) == 1) {
+		$_SESSION["takeposterminal"] = (int) $enabledterminals[0]; // Use the only usable terminal
 	} elseif (!empty($_COOKIE["takeposterminal"])) {
 		$_SESSION["takeposterminal"] = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE["takeposterminal"]); // Restore takeposterminal from previous session
 	}
@@ -187,6 +189,7 @@ var subcategories = <?php echo json_encode($subcategories); ?>;
 
 var currentcat;
 var pageproducts=0;
+var currentsubcategories=[];	// Subcategories of currentcat, shown before its products in the product grid
 var pagecategories=0;
 var pageactions=0;
 var place="<?php echo $place; ?>";
@@ -306,6 +309,28 @@ function MoreCategories(moreorless) {
 	ClearSearch(false);
 }
 
+// Show a subcategory into the tile ishow of the product grid
+function PrintSubCategory(ishow, val) {
+	$("#prodivdesc"+ishow).show();
+	<?php if (getDolGlobalString('TAKEPOS_SHOW_CATEGORY_DESCRIPTION') == 1) { ?>
+		$("#prodesc"+ishow).html(val.label.bold() + ' - ' + val.description);
+	   $("#probutton"+ishow).html(val.label);
+	<?php } else { ?>
+		$("#prodesc"+ishow).text(val.label);
+	  $("#probutton"+ishow).text(val.label);
+	<?php } ?>
+	$("#probutton"+ishow).show();
+	$("#proprice"+ishow).attr("class", "hidden");
+	$("#proprice"+ishow).html("");
+	$("#proimg"+ishow).attr("src","genimg/index.php?query=cat&id="+val.rowid);
+	$("#prodiv"+ishow).data("rowid",val.rowid);
+	$("#prodiv"+ishow).attr("data-rowid",val.rowid);
+	$("#prodiv"+ishow).data("iscat", 1);
+	$("#prodiv"+ishow).attr("data-iscat", 1);
+	$("#prodiv"+ishow).removeClass("divempty");
+	$("#prowatermark"+ishow).show();
+}
+
 // LoadProducts
 function LoadProducts(position, issubcat) {
 	console.log("LoadProducts position="+position+" issubcat="+issubcat);
@@ -334,31 +359,73 @@ function LoadProducts(position, issubcat) {
 	pageproducts=0;
 	ishow=0; //product to show counter
 
+	var parent_cat = 0;
+	var parent_cat_label = <?php echo "'".dol_escape_js($langs->trans('GoBack'))."'" ; ?>;
+	currentsubcategories = [];
 	if (currentcat != "supplements") {
+		jQuery.each(subcategories, function(i, val) {
+			if (val.rowid == currentcat) {
+				parent_cat = val.fk_parent;
+				return false;
+			}
+		});
+
+		if (parent_cat > 0) {
+			var found = false;
+			jQuery.each(categories, function(i, val) {
+				if (val.rowid == parent_cat) {
+					parent_cat_label = val.label;
+					found = true;
+					return false;
+				}
+			});
+			if (!found) {
+				jQuery.each(subcategories, function(i, val) {
+					if (val.rowid == parent_cat) {
+						parent_cat_label = val.label;
+						return false;
+					}
+				});
+			}
+
+			$("#prodivdesc"+ishow).show();
+			var back_html = '<span class="fa fa-chevron-left paddingright"></span> ' + parent_cat_label;
+
+			<?php if (getDolGlobalString('TAKEPOS_SHOW_CATEGORY_DESCRIPTION') == 1) { ?>
+				$("#prodesc"+ishow).html('<strong>' + back_html + '</strong>');
+			<?php } else { ?>
+				$("#prodesc"+ishow).html(back_html);
+			<?php } ?>
+			$("#probutton"+ishow).html(back_html);
+
+			$("#probutton"+ishow).show();
+			$("#proprice"+ishow).attr("class", "hidden");
+			$("#proprice"+ishow).html("");
+			<?php if (!getDolGlobalString('TAKEPOS_HIDE_PRODUCT_IMAGES')) { ?>
+			$("#proimg"+ishow).attr("src", "img/back.png");
+			<?php } ?>
+			$("#prodiv"+ishow).data("rowid", parent_cat);
+			$("#prodiv"+ishow).attr("data-rowid", parent_cat);
+			$("#prodiv"+ishow).data("iscat", 1);
+			$("#prodiv"+ishow).attr("data-iscat", 1);
+			$("#prodiv"+ishow).removeClass("divempty");
+			$("#prowatermark"+ishow).hide();
+			ishow++;
+		}
+
 		console.log("Loop on each category level 2 or more");
 		jQuery.each(subcategories, function(i, val) {
 			if (currentcat == val.fk_parent) {
-				$("#prodivdesc"+ishow).show();
-				<?php if (getDolGlobalString('TAKEPOS_SHOW_CATEGORY_DESCRIPTION') == 1) { ?>
-					$("#prodesc"+ishow).html(val.label.bold() + ' - ' + val.description);
-				   $("#probutton"+ishow).html(val.label);
-				<?php } else { ?>
-					$("#prodesc"+ishow).text(val.label);
-				  $("#probutton"+ishow).text(val.label);
-				<?php } ?>
-				$("#probutton"+ishow).show();
-				$("#proprice"+ishow).attr("class", "hidden");
-				$("#proprice"+ishow).html("");
-				$("#proimg"+ishow).attr("src","genimg/index.php?query=cat&id="+val.rowid);
-				$("#prodiv"+ishow).data("rowid",val.rowid);
-				$("#prodiv"+ishow).attr("data-rowid",val.rowid);
-				$("#prodiv"+ishow).data("iscat", 1);
-				$("#prodiv"+ishow).attr("data-iscat", 1);
-				$("#prodiv"+ishow).removeClass("divempty");
-				$("#prowatermark"+ishow).show();
-				ishow++;
+				currentsubcategories.push(val);
 			}
 		});
+	}
+	// Show the first subcategories, the next ones are shown by MoreProducts(). The tile 0 may already be used by the back button.
+	var isubcat = 0;
+	while (isubcat < currentsubcategories.length && ishow < maxproduct) {
+		PrintSubCategory(ishow, currentsubcategories[isubcat]);
+		isubcat++;
+		ishow++;
 	}
 
 	idata=0; //product data counter
@@ -369,8 +436,8 @@ function LoadProducts(position, issubcat) {
 
 	// Get socid
 	let socid = jQuery('#thirdpartyid').val();
-	if ((socid === undefined || socid === "") && parseInt("<?php echo dol_escape_js($socid) ?>") > 0) {
-		socid = parseInt("<?php echo dol_escape_js($socid); ?>");
+	if ((socid === undefined || socid === "") && parseInt(<?php echo "'".dol_escape_js($socid)."'"; ?>) > 0) {
+		socid = parseInt(<?php echo "'".dol_escape_js($socid)."'" ; ?>);
 	}
 
 	// Only show products for sale (tosell=1)
@@ -499,22 +566,28 @@ function MoreProducts(moreorless) {
 		limit = maxproduct-1;
 	}
 
-	var nb_cat_shown = $('.div5 div.wrapper2[data-iscat=1]').length;
-	var offset = <?php echo($MAXPRODUCT - 2); ?> * pageproducts - nb_cat_shown;
+	// The grid shows the subcategories of currentcat first, then its products
+	var first = maxproduct * pageproducts;	// Rank of the first tile of the page into the list of subcategories then products
+	var offset = Math.max(0, first - currentsubcategories.length);
 
 	// Get socid
 	let socid = jQuery('#thirdpartyid').val();
-	if ((socid === undefined || socid === "") && parseInt("<?php echo dol_escape_js($socid) ?>") > 0) {
-		socid = parseInt("<?php echo dol_escape_js($socid); ?>");
+	if ((socid === undefined || socid === "") && parseInt(<?php echo "'".dol_escape_js($socid)."'"; ?>) > 0) {
+		socid = parseInt(<?php echo "'".dol_escape_js($socid)."'" ; ?>);
 	}
 
 	// Only show products for sale (tosell=1)
 	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo currentToken();?>&thirdpartyid=' + socid + '&category='+currentcat+'&tosell=1&limit='+limit+'&offset='+offset, function(data) {
 		console.log("Call ajax.php (in MoreProducts) to get Products of category "+currentcat);
 
-		if (typeof (data[0]) == "undefined" && moreorless=="more"){ // Return if no more pages
+		if (typeof (data[0]) == "undefined" && first >= currentsubcategories.length && moreorless=="more"){ // Return if no more pages
 			pageproducts=pageproducts-1;
 			return;
+		}
+
+		while (ishow < maxproduct && first + ishow < currentsubcategories.length) {
+			PrintSubCategory(ishow, currentsubcategories[first + ishow]);
+			ishow++;
 		}
 
 		while (ishow < maxproduct) {
@@ -529,6 +602,8 @@ function MoreProducts(moreorless) {
 				$("#prodiv"+ishow).data("rowid","");
 				$("#prodiv"+ishow).attr("data-rowid","");
 				$("#prodiv"+ishow).addClass("divempty");
+				$("#prodiv"+ishow).data("iscat",0);
+				$("#prodiv"+ishow).attr("data-iscat",0);
 			} else {
 				$("#prodivdesc"+ishow).show();
 				$("#prodiv"+ishow).removeClass("divempty");
@@ -559,6 +634,7 @@ function MoreProducts(moreorless) {
 				$("#prodiv"+ishow).data("rowid",data[idata]['id']);
 				$("#prodiv"+ishow).attr("data-rowid",data[idata]['id']);
 				$("#prodiv"+ishow).data("iscat",0);
+				$("#prodiv"+ishow).attr("data-iscat",0);
 			}
 			$("#prowatermark"+ishow).hide();
 			ishow++; //Next product to show after print data product
@@ -624,12 +700,21 @@ function ChangeThirdparty(idcustomer) {
 }
 
 function deleteline() {
+	if (selectedline == 0) return;
 	invoiceid = $("#invoiceid").val();
 	console.log("Delete line invoiceid="+invoiceid);
 	$("#poslines").load("invoice.php?action=deleteline&token=<?php echo currentToken(); ?>&place="+place+"&idline="+selectedline+"&invoiceid="+invoiceid, function() {
 		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
 	ClearSearch(false);
+}
+
+function editbatch(lineid, idproduct, clonebatch) {
+	$("#poslines").load("invoice.php?action=editbatch_popup&token=<?php echo newToken(); ?>&place="+place+"&idline="+lineid+"&idproduct="+idproduct+"&invoiceid="+invoiceid+(clonebatch ? '&clonebatch=1' : ''), function() {});
+}
+
+function updatebatch(batch, warehouseid, lineid, clonebatch) {
+	$("#poslines").load("invoice.php?action=setbatch&token=<?php echo newToken(); ?>&place="+place+"&idline="+lineid+"&batch="+encodeURIComponent(batch)+"&warehouseid="+warehouseid+"&invoiceid="+invoiceid+(clonebatch ? '&clonebatch=1' : ''), function() {});
 }
 
 function Customer() {
@@ -648,10 +733,51 @@ function History()
 	$.colorbox({href:"../compta/facture/list.php?contextpage=poslist&search_module_source=takepos", width:"90%", height:"80%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("History"); ?>"});
 }
 
+function CloneTicket(sourceinvoiceid) {
+	if (!sourceinvoiceid) {
+		sourceinvoiceid = invoiceid;
+	}
+	if (!sourceinvoiceid) {
+		return false;
+	}
+	$.getJSON("<?php print DOL_URL_ROOT; ?>/takepos/invoice.php?action=cloneticket&format=json&token=<?php echo currentToken(); ?>&sourceinvoiceid="+sourceinvoiceid)
+		.done(function(data) {
+			if (!data.success) {
+				alert(data.message || <?php echo "'".dol_escape_js($langs->trans('ErrorFailedToCloneTicket'))."'"; ?>);
+				return;
+			}
+
+			place = data.place;
+			invoiceid = data.invoiceid;
+			if (data.batchlineid > 0) {
+				editbatch(data.batchlineid, data.batchproductid, 1);
+			} else {
+				$("#poslines").load("invoice.php?place="+place+"&invoiceid="+invoiceid, function() {});
+			}
+		})
+		.fail(function() {
+			alert(<?php echo "'".dol_escape_js($langs->trans('ErrorFailedToCloneTicket'))."'"; ?>);
+		});
+	return true;
+}
+
 function Reduction() {
 	invoiceid = $("#invoiceid").val();
 	console.log("Open popup to enter reduction on invoiceid="+invoiceid);
 	$.colorbox({href:"reduction.php?place="+place+"&invoiceid="+invoiceid, width:"80%", height:"90%", transition:"none", iframe:"true", title:""});
+}
+
+function CreditList() {
+	invoiceid = $("#invoiceid").val();
+	console.log("Open popup to manage customer credits for invoiceid="+invoiceid);
+	$.colorbox({
+		href: "creditnote_apply.php?place="+place+"&invoiceid="+invoiceid+"&token=<?php echo currentToken(); ?>",
+		width: "80%",
+		height: "85%",
+		transition: "none",
+		iframe: "true",
+		title: <?php echo "'".dol_escape_js($langs->trans('TakeposManageCredits'))."'"; ?>
+	});
 }
 
 var closeBillParams="";
@@ -661,8 +787,8 @@ function CloseBill() {
 	$reshook = $hookmanager->executeHooks('paramsForCloseBill', $parameters, $obj, $action);
 	if (getDolGlobalString('TAKEPOS_FORBID_SALES_TO_DEFAULT_CUSTOMER')) {
 		echo "customerAnchorTag = document.querySelector('a[id=\"customer\"]'); ";
-		echo "if (customerAnchorTag && customerAnchorTag.innerText.trim() === '".$langs->trans("Customer")."') { ";
-		echo "alert('".dol_escape_js($langs->trans("NoClientErrorMessage"))."'); ";
+		echo "if (customerAnchorTag && customerAnchorTag.innerText.trim() === '".dol_escape_js($langs->transnoentitiesnoconv("Customer"))."') { ";
+		echo "alert('".dol_escape_js($langs->transnoentitiesnoconv("NoClientErrorMessage"))."'); ";
 		echo "return; } \n";
 	}
 	?>
@@ -670,7 +796,7 @@ function CloseBill() {
 	console.log("Open popup to enter payment on invoiceid="+invoiceid);
 	<?php if (getDolGlobalInt("TAKEPOS_NO_GENERIC_THIRDPARTY")) { ?>
 		if ($("#idcustomer").val() == "") {
-			alert("<?php echo $langs->trans('TakePosCustomerMandatory'); ?>");
+			alert("<?php echo dol_escape_js($langs->transnoentitiesnoconv('TakePosCustomerMandatory'), 2); ?>");
 			<?php if (getDolGlobalString('TAKEPOS_CHOOSE_CONTACT')) { ?>
 				Contact();
 			<?php } else { ?>
@@ -765,7 +891,7 @@ function DeleteSale() {
 	if (typeof place === 'undefined') {
 		return;
 	}
-	if (confirm('<?php echo dol_escape_js($langs->transnoentitiesnoconv("ConfirmDeletionOfThisPOSSale")); ?>')) {
+	if (confirm(<?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("ConfirmDeletionOfThisPOSSale"))."'" ; ?>)) {
 		// Fully remove the draft (its tab disappears), then switch to the main cart.
 		$("#poslines").load("invoice.php?action=discardsale&token=<?php echo newToken(); ?>&place=" + place, function () {
 			place = '0';
@@ -841,12 +967,12 @@ function Search2(keyCodeForEnter, moreorless) {
 
 			// Only show products for sale (tosell=1)
 			let socid = jQuery('#thirdpartyid').val();
-			if ((socid === undefined || socid === "") && parseInt("<?php echo dol_escape_js($socid) ?>") > 0) {
-				socid = parseInt("<?php echo dol_escape_js($socid); ?>");
+			if ((socid === undefined || socid === "") && parseInt(<?php echo "'".dol_escape_js($socid)."'"; ?>) > 0) {
+				socid = parseInt(<?php echo "'".dol_escape_js($socid)."'" ; ?>);
 			}
 
 			$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&token=<?php echo currentToken();?>&search_term=' + search_term + '&thirdpartyid=' + socid + '&search_start=' + search_start + '&search_limit=' + search_limit, function (data) {
-				for (i = 0; i < <?php echo $MAXPRODUCT - 2; ?>; i++) {	// the last 2 slots are the pager arrows, not product slots
+				for (i = 0; i < <?php echo ($MAXPRODUCT - 2); ?>; i++) {	// the last 2 slots are the pager arrows, not product slots
 					if (typeof (data[i]) == "undefined") {
 						$("#prowatermark" + i).html("");
 						$("#prodesc" + i).text("");
@@ -926,10 +1052,10 @@ function Search2(keyCodeForEnter, moreorless) {
 				}
 				if (eventKeyCode == keyCodeForEnter){
 					if (data.length == 0) {
-						$('#search').val('<?php
+						$('#search').val(<?php
 						$langs->load('errors');
-						echo dol_escape_js($langs->transnoentitiesnoconv("ErrorRecordNotFoundShort"));
-						?> ('+search_term+')');
+						echo "'".dol_escape_js($langs->transnoentitiesnoconv("ErrorRecordNotFoundShort"))." ('";
+						?>+search_term+')');
 						$('#search').select();
 					}
 					else ClearSearch(false);
@@ -1049,13 +1175,6 @@ function Edit(number) {
 function TakeposPrintingOrder(){
 	console.log("TakeposPrintingOrder output invoice to print order");
 	$("#poslines").load("invoice.php?action=order&token=<?php echo currentToken();?>&place="+place, function() {
-		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
-	});
-}
-
-function TakeposPrintingTemp(){
-	console.log("TakeposPrintingTemp");
-	$("#poslines").load("invoice.php?action=temp&token=<?php echo currentToken();?>&place="+place, function() {
 		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
 }
@@ -1189,7 +1308,7 @@ $( document ).ready(function() {
 		print "ModalBox('ModalTerminal');";
 	}
 
-	if (getDolGlobalString('TAKEPOS_CONTROL_CASH_OPENING')) {
+	if (getDolGlobalString('TAKEPOS_CONTROL_CASH_OPENING') && !empty($_SESSION["takeposterminal"])) {
 		// Look for any cash control fence created today on this terminal, regardless of its status,
 		// so the auto-open popup only fires on the first cash control of a calendar day. Without this,
 		// refreshing the browser the same day after closing a fence used to immediately re-fire the
@@ -1319,7 +1438,7 @@ if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 				if ($reshook == 0) {  //Search method
 					?>
 					<div class="login_block_other takepos">
-					<input type="text" id="search" name="search" class="input-nobottom" onkeyup="Search2('<?php echo dol_escape_js($keyCodeForEnter); ?>', null);" placeholder="<?php echo dol_escape_htmltag($langs->trans("Search")); ?>" autofocus>
+					<input type="text" id="search" name="search" class="input-nobottom" onkeyup="Search2(<?php echo "'".dol_escape_js($keyCodeForEnter)."'" ; ?>, null);" placeholder="<?php echo dol_escape_htmltag($langs->trans("Search")); ?>" autofocus>
 					<a onclick="ClearSearch(false);" class="nohover"><span class="fa fa-backspace"></span></a>
 					<a href="<?php echo DOL_URL_ROOT.'/'; ?>" target="backoffice" rel="opener"><!-- we need rel="opener" here, we are on same domain and we need to be able to reuse this tab several times -->
 					<span class="fas fa-home"></span></a>
@@ -1359,10 +1478,8 @@ if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 		<h3><?php print $langs->trans("TerminalSelect"); ?></h3>
 	</div>
 	<div class="modal-body">
-		<button type="button" class="block" onclick="location.href='index.php?setterminal=1'"><?php print getDolGlobalString("TAKEPOS_TERMINAL_NAME_1", $langs->trans("TerminalName", 1)); ?></button>
 		<?php
-		$nbloop = getDolGlobalInt('TAKEPOS_NUM_TERMINALS');
-		for ($i = 2; $i <= $nbloop; $i++) {
+		foreach (takeposEnabledTerminals() as $i) {
 			print '<button type="button" class="block" onclick="location.href=\'index.php?setterminal='.$i.'\'">'.getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$i, $langs->trans("TerminalName", $i)).'</button>';
 		}
 		?>
@@ -1541,6 +1658,9 @@ if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 
 // Add a discount
 $menus[$r++] = array('title' => '<span class="fa fa-percent paddingrightonly"></span><div class="trunc">'.$langs->trans("InvoiceDiscountShort").'</div>', 'action' => 'Reduction();');
+
+// Manage available customer credits (credit notes converted to credit, deposits, etc.)
+$menus[$r++] = array('title' => '<span class="fa fa-wallet paddingrightonly"></span><div class="trunc">'.$langs->trans("TakeposAvailableCredits").'</div>', 'action' => 'CreditList();');
 
 if (!getDolGlobalString('TAKEPOS_NO_SPLIT_SALE')) {
 	$menus[$r++] = array('title' => '<span class="fas fa-cut paddingrightonly"></span><div class="trunc">'.$langs->trans("SplitSale").'</div>', 'action' => 'Split();');

@@ -36,6 +36,7 @@ require '../main.inc.php';
  * @var User $user
  */
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/phone.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("resource", "companies", "other"));
@@ -317,7 +318,7 @@ if ($search_country && $search_country != '-1') {
 	$sql .= " AND t.fk_country IN (".$db->sanitize($search_country).')';
 }
 if ($search_phone) {
-	$sql .= natural_search('t.phone', $search_phone);
+	$sql .= dol_natural_search_phone($db, 't.phone', $search_phone);
 }
 if ($search_email) {
 	$sql .= natural_search('t.email', $search_email);
@@ -709,7 +710,7 @@ while ($i < $imaxinloop) {
 
 	if (!empty($arrayfields['t.email']['checked'])) {
 		$showinvalidemail = (int) !getDolGlobalInt('MAIN_SHOW_INVALID_EMAIL_IN_LIST'); // to avoid slow display
-		print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->email).'">'.dol_print_email($objectstatic->email, 0, 0, 1, 0, $showinvalidemail, 1).'</td>';
+		print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute((string) $obj->email).'">'.dol_print_email((string) $objectstatic->email, 0, 0, 1, 0, $showinvalidemail, 1).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

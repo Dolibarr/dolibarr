@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("ecm", "companies", "other", "users", "orders", "propal", "bills", "contracts"));
+$langs->loadLangs(array("ecm", "companies", "other", "users", "orders", "propal", "bills", "contracts", "salaries"));
 
 // Get parameters
 $socid = GETPOSTINT('socid');
@@ -173,7 +173,11 @@ if ($action == 'confirm_deletefile' && $user->hasRight('ecm', 'upload')) {
 // Remove directory
 if ($action == 'confirm_deletesection' && GETPOST('confirm') == 'yes' && $user->hasRight('ecm', 'setup')) {
 	$result = $ecmdir->delete($user);
-	setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');
+	if ($result > 0) {
+		setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');
+	} else {
+		setEventMessages($ecmdir->error, $ecmdir->errors, 'errors');
+	}
 
 	clearstatcache();
 }
@@ -546,7 +550,7 @@ if (!getDolGlobalString('ECM_AUTO_TREE_HIDEN')) {
 	if (isModEnabled('recruitment')) {
 		$langs->load("recruitment");
 		$rowspan++;
-		$sectionauto[] = array('position' => 210, 'level' => 1, 'module' => 'recruitment-recruitmentcandidature', 'test' => $user->hasRight('recruitment', 'read'), 'label' => $langs->trans("Candidatures"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("JobApplications")));
+		$sectionauto[] = array('position' => 210, 'level' => 1, 'module' => 'recruitment-recruitmentcandidature', 'test' => $user->hasRight('recruitment', 'recruitmentjobposition', 'read'), 'label' => $langs->trans("Candidatures"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("JobApplications")));
 	}
 	$rowspan++;
 	$sectionauto[] = array('position' => 220, 'level' => 1, 'module' => 'user', 'test' => 1, 'label' => $langs->trans("Users"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Users")));

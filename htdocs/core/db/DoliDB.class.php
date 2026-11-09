@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2015 Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -492,14 +492,36 @@ abstract class DoliDB implements Database
 	/**
 	 * Prepare a SQL statement for execution
 	 *
+	 * Use '?' as the placeholder for every bound value, whatever the driver.
 	 * This method must be implemented by subclasses.
 	 *
-	 * @param string $sql SQL query to prepare
-	 * @return mixed Driver-specific prepared statement object or false on failure
+	 * @param string $sql SQL query to prepare (values replaced by '?' placeholders)
+	 * @return mixed Driver-specific prepared statement handle, or false on failure
+	 * @see execute()
 	 */
 	public function prepare($sql)
 	{
 		$this->lasterror = 'prepare() not implemented for this driver. Failed to prepare '.$sql;
+
+		return false;
+	}
+
+	/**
+	 * Execute a statement previously created with prepare().
+	 *
+	 * This method must be implemented by subclasses.
+	 *
+	 * @param mixed            $stmt   Statement handle returned by prepare()
+	 * @param array<int,mixed> $params Ordered list of values for the '?' placeholders
+	 * @return mixed                   For a SELECT: a resultset usable with fetch_object(),
+	 *                                 fetch_array(), num_rows(), free(). For any other
+	 *                                 successful statement: true. On failure: false.
+	 * @see prepare()
+	 */
+	public function execute($stmt, $params = array())
+	{
+		$this->lasterror = 'execute() not implemented for this driver. Failed to execute statement '
+			.(is_scalar($stmt) ? $stmt : gettype($stmt)).' with '.(is_array($params) ? count($params) : 0).' param(s)';
 
 		return false;
 	}
