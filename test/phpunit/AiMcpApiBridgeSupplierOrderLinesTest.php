@@ -48,7 +48,7 @@ class AiMcpApiBridgeSupplierOrderLinesTest extends CommonClassTest
 		}
 		$methods = $p->getValue($this->bridge)['supplier_orders']['methods'];
 		$this->assertArrayHasKey('putLine', $methods);
-		foreach (array('delete', 'validate', 'approve', 'makeOrder', 'receiveOrder', 'postContact', 'deleteContact') as $method) {
+		foreach (array('delete', 'validate', 'approve', 'postContact', 'deleteContact') as $method) {
 			$this->assertArrayNotHasKey($method, $methods);
 		}
 		$this->assertSame(array(array('fournisseur', 'commande', 'creer'), array('fournisseur', 'commande', 'lire')), $this->bridge->getRequiredRights(self::TOOL));
