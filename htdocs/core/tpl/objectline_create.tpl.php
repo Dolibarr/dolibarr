@@ -678,7 +678,7 @@ if ((isModEnabled("service") || ($object->element == 'contrat')) && $dateSelecto
 	print '<script>';
 	?>
 	$(document).ready(function() {
-		const labelOnThe = '<?php echo dol_escape_js($langs->trans('On the')); ?>' || 'On the';
+		const labelOnThe = '<?php echo dol_escape_js($langs->trans('OnThe')); ?>' || 'On the';
 		const labelFrom = '<?php echo dol_escape_js($langs->trans('From')); ?>' || 'From';
 		function updateDateMode() {
 			var endVal = $.trim($('#date_end').val());
