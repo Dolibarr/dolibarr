@@ -224,6 +224,80 @@ class RestAPIContractTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * testRestContractUnactivateLineUnknownLine
+	 *
+	 * @return void
+	 */
+	public function testRestContractUnactivateLineUnknownLine()
+	{
+		$test = "Unactivate a line that does not exist";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$this->getUrl('contracts/'.$contract_id.'/lines/999999999/unactivate', $test, 'PUT', array("datestart" => dol_now()), 404);
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
+	}
+
+	/**
+	 * testRestContractUnactivateLineOfAnotherContract
+	 *
+	 * @return void
+	 */
+	public function testRestContractUnactivateLineOfAnotherContract()
+	{
+		$test = "Unactivate a line of another contract";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$other_contract_id = $this->createContract($test);
+
+			try {
+				$other_line_id = $this->createContractLine($other_contract_id, $test);
+
+				$this->getUrl('contracts/'.$contract_id.'/lines/'.$other_line_id.'/unactivate', $test, 'PUT', array("datestart" => dol_now()), 403);
+			} finally {
+				$this->getUrl('contracts/'.$other_contract_id, "$test (cleanup other contract)", 'DELETE');
+			}
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
+	}
+
+	/**
+	 * testRestContractUnactivateLine
+	 *
+	 * @return void
+	 */
+	public function testRestContractUnactivateLine()
+	{
+		$test = "Unactivate an active line";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$line_id = $this->createContractLine($contract_id, $test);
+
+			$this->getUrl('contracts/'.$contract_id.'/lines/'.$line_id.'/activate', "$test (activate)", 'PUT', array("datestart" => dol_now()));
+
+			$result = $this->getUrl('contracts/'.$contract_id.'/lines', "$test (read before unactivate)", 'GET');
+			$this->assertEquals(4, $result['content'][0]['statut'] ?? '', "$test Line must be active before unactivation");
+			$this->assertEmpty($result['content'][0]['date_end_real'] ?? '', "$test Line must not have a real end date before unactivation");
+
+			$this->getUrl('contracts/'.$contract_id.'/lines/'.$line_id.'/unactivate', $test, 'PUT', array("datestart" => dol_now()));
+
+			$result = $this->getUrl('contracts/'.$contract_id.'/lines', "$test (read after unactivate)", 'GET');
+			$this->assertEquals(5, $result['content'][0]['statut'] ?? '', "$test Line must be closed");
+			$this->assertNotEmpty($result['content'][0]['date_end_real'] ?? '', "$test Line must have a real end date");
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
+	}
+
+	/**
 	 * testRestContractPostExtrafieldHtml
 	 *
 	 * @return void
