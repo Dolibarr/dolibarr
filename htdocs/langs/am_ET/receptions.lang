@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=ተረጋግጧል
 StatusReceptionProcessedShort=ተሰራ
 ReceptionSheet=መቀበያ ወረቀት
 ValidateReception=መቀበሉን ያረጋግጡ
+DeleteReception=Delete reception
 ConfirmDeleteReception=እርግጠኛ ነዎት ይህን አቀባበል መሰረዝ ይፈልጋሉ?
 ConfirmValidateReception=Are you sure you want to validate this reception with the reference <b>%s</b>?
 ConfirmCancelReception=እርግጠኛ ነዎት ይህን አቀባበል መሰረዝ ይፈልጋሉ?

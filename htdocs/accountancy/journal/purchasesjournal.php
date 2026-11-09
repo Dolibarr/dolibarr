@@ -3,7 +3,7 @@
  * Copyright (C) 2007-2010	Jean Heimburger				<jean@tiaris.info>
  * Copyright (C) 2011		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin				<regis.houssin@inodbox.com>
- * Copyright (C) 2013-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2013-2016	Olivier Geffroy				<jeff@jeffinfo.com>
  * Copyright (C) 2013-2016	Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
@@ -30,7 +30,17 @@
  * \ingroup		Accountancy (Double entries)
  * \brief		Page with purchases journal
  */
+
+// Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -40,15 +50,6 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("commercial", "compta", "bills", "other", "accountancy"));
@@ -63,7 +64,7 @@ $date_endmonth = GETPOSTINT('date_endmonth');
 $date_endday = GETPOSTINT('date_endday');
 $date_endyear = GETPOSTINT('date_endyear');
 $in_bookkeeping = GETPOST('in_bookkeeping');
-if ($in_bookkeeping == '') {
+if ($in_bookkeeping == '' || $action == 'writebookkeeping') {	// Never transfer again documents already in bookkeeping
 	$in_bookkeeping = 'notyet';
 }
 
@@ -224,6 +225,17 @@ $vatdata_cache = array();
 // Variables
 $cptfour = getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER', 'NotDefined');
 $cpttva = getDolGlobalString('ACCOUNTING_VAT_BUY_ACCOUNT', 'NotDefined');
+// Empty by default: deductible VAT stays on the dictionary account, or on ACCOUNTING_VAT_BUY_ACCOUNT.
+$cpttvaasset = getDolGlobalString('ACCOUNTING_VAT_BUY_ASSET_ACCOUNT');
+
+// Account-number prefixes of fixed assets. Class 2 in the French chart.
+// Several prefixes can be entered, separated by commas: "20,21,22,23,27".
+$assetaccountprefixlist = array();
+
+if ($cpttvaasset !== '') {
+	$assetaccountprefixlist = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_ASSET_ACCOUNT_PREFIXES', '2'))));
+}
+
 $rcctva = getDolGlobalString('ACCOUNTING_VAT_BUY_REVERSE_CHARGES_CREDIT', 'NotDefined');
 $rcdtva = getDolGlobalString('ACCOUNTING_VAT_BUY_REVERSE_CHARGES_DEBIT', 'NotDefined');
 $cptlocaltax1 = getDolGlobalString('ACCOUNTING_LT1_BUY_ACCOUNT', 'NotDefined');
@@ -234,6 +246,7 @@ $rcclocaltax2 = getDolGlobalString('ACCOUNTING_LT2_BUY_REVERSE_CHARGES_CREDIT', 
 $rcdlocaltax2 = getDolGlobalString('ACCOUNTING_LT2_BUY_REVERSE_CHARGES_DEBIT', 'NotDefined');
 $noTaxDispatchingKeepWithLines = getDolGlobalInt('ACCOUNTING_PURCHASES_DO_NOT_DISPATCH_TAXES'); //If enabled, Tax will NOT get split off from the base entry and credited to a separate tax account (good for non-VAT countries like USA)
 $country_code_in_EEC = getCountriesInEEC();		// This make a database call but there is a cache done into $conf->cache['country_code_in_EEC']
+$supplierstatic = new Societe($db);
 
 $result = $db->query($sql);
 if ($result) {
@@ -245,7 +258,7 @@ if ($result) {
 
 		// Controls
 		$accountancy_code_supplier_general = (!empty($obj->accountancy_code_supplier_general)) ? $obj->accountancy_code_supplier_general : $cptfour;
-		$compta_soc = ($obj->code_compta_fournisseur != "") ? $obj->code_compta_fournisseur : $cptfour;
+		$compta_soc = getSubledgerAccountWithDefault($obj->code_compta_fournisseur, 'supplier');
 
 		$compta_prod = $obj->compte;
 		if (empty($compta_prod)) {
@@ -257,13 +270,23 @@ if ($result) {
 		}
 
 		$tax_id = $obj->tva_tx . ($obj->vat_src_code ? ' (' . $obj->vat_src_code . ')' : '');
-		if (array_key_exists($tax_id, $vatdata_cache)) {
-			$vatdata = $vatdata_cache[$tax_id];
+		$suppliercountrycode = $obj->country_code ? $obj->country_code : $mysoc->country_code;
+		$vatdata_cache_key = $suppliercountrycode.'|'.$tax_id;
+		if (array_key_exists($vatdata_cache_key, $vatdata_cache)) {
+			$vatdata = $vatdata_cache[$vatdata_cache_key];
 		} else {
-			$vatdata = getTaxesFromId($tax_id, $mysoc, $mysoc, 0);
-			$vatdata_cache[$tax_id] = $vatdata;
+			$supplierstatic->country_code = $suppliercountrycode;
+			$vatdata = getTaxesFromId($tax_id, $mysoc, $supplierstatic, 0, 2);
+			$vatdata_cache[$vatdata_cache_key] = $vatdata;
 		}
 		$compta_tva = (!empty($vatdata['accountancy_code_buy']) ? $vatdata['accountancy_code_buy'] : $cpttva);
+		// A bound fixed-asset account sends this line's deductible VAT to the dedicated account, ahead of the dictionary.
+		foreach ($assetaccountprefixlist as $assetaccountprefix) {
+			if (strpos((string) $compta_prod, $assetaccountprefix) === 0) {
+				$compta_tva = $cpttvaasset;
+				break;
+			}
+		}
 		$compta_localtax1 = (!empty($vatdata['accountancy_code_buy']) ? $vatdata['accountancy_code_buy'] : $cptlocaltax1);
 		$compta_localtax2 = (!empty($vatdata['accountancy_code_buy']) ? $vatdata['accountancy_code_buy'] : $cptlocaltax2);
 		$compta_counterpart_tva_npr = getDolGlobalString('ACCOUNTING_COUNTERPART_VAT_NPR', 'NotDefined');
@@ -319,7 +342,7 @@ if ($result) {
 
 		// VAT Reverse charge
 		if (($mysoc->country_code == 'FR' || getDolGlobalString('ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE')) && $obj->vat_reverse_charge == 1 && (in_array($obj->country_code, $country_code_in_EEC) || getDolGlobalString('ACCOUNTING_REVERSE_CHARGE_ALSO_NON_EEC'))) {
-			$rcvatdata = getTaxesFromId($obj->product_buy_vat . ($obj->product_buy_default_vat_code ? ' (' . $obj->product_buy_default_vat_code . ')' : ''), $mysoc, $mysoc, 0);
+			$rcvatdata = getTaxesFromId($obj->product_buy_vat . ($obj->product_buy_default_vat_code ? ' (' . $obj->product_buy_default_vat_code . ')' : ''), $mysoc, $mysoc, 0, 2);
 			$rcc_compta_tva = (!empty($vatdata['accountancy_code_vat_reverse_charge_credit']) ? $vatdata['accountancy_code_vat_reverse_charge_credit'] : $rcctva);
 			$rcd_compta_tva = (!empty($vatdata['accountancy_code_vat_reverse_charge_debit']) ? $vatdata['accountancy_code_vat_reverse_charge_debit'] : $rcdtva);
 			$rcc_compta_localtax1 = (!empty($vatdata['accountancy_code_vat_reverse_charge_credit']) ? $vatdata['accountancy_code_vat_reverse_charge_credit'] : $rcclocaltax1);

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=ການຕັ້ງຄ່າມໍດູນ PayPal
-PaypalDesc=ມໍດູນນີ້ອະນຸຍາດໃຫ້ລູກຄ້າຊຳລະເງິນຜ່ານ <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. ສາມາດໃຊ້ສຳລັບການຊຳລະເງິນທົ່ວໄປ ຫຼື ການຊຳລະເງິນທີ່ກ່ຽວຂ້ອງກັບ Dolibarr (ໃບເກັບເງິນ, ໃບສັ່ງຊື້, ...)
+PaypalDesc=This module allows payment by customers via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. This can be used for an ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
 PaypalOrCBDoPayment=ຊຳລະດ້ວຍ PayPal (ບັດ ຫຼື PayPal)
 PaypalDoPayment=ຊຳລະດ້ວຍ PayPal
 PAYPAL_API_SANDBOX=ໂໝດທົດລອງ (Sandbox)
@@ -19,7 +19,7 @@ NewOnlinePaymentFailed=ການພະຍາຍາມຊຳລະເງິນອ
 ONLINE_PAYMENT_SENDEMAIL=ທີ່ຢູ່ອີເມວສຳລັບການແຈ້ງເຕືອນຫຼັງຈາກການພະຍາຍາມຊຳລະເງິນແຕ່ລະຄັ້ງ (ທັງສຳເລັດ ແລະ ຫຼົ້ມເຫຼວ)
 ReturnURLAfterPayment=URL ທີ່ກັບຄືນມາຫຼັງຈາກຊຳລະເງິນ
 ValidationOfOnlinePaymentFailed=ການກວດສອບການຊຳລະເງິນອອນລາຍຫຼົ້ມເຫຼວ
-PaymentSystemConfirmPaymentPageWasCalledButFailed=ໜ້າຍືນຍັນການຊຳລະເງິນຖືກເອີ້ນໃຊ້ໂດຍລະບົບການຊຳລະເງິນ ແຕ່ມີຂໍ້ຜິດພາດກັບຄືນມາ
+PaymentSystemConfirmPaymentPageWasCalledButFailed=The payment confirmation page was called by the online payment system and returned an error
 SetExpressCheckoutAPICallFailed=ການເອີ້ນໃຊ້ SetExpressCheckout API ຫຼົ້ມເຫຼວ.
 DoExpressCheckoutPaymentAPICallFailed=ການເອີ້ນໃຊ້ DoExpressCheckoutPayment API ຫຼົ້ມເຫຼວ.
 DetailedErrorMessage=ລາຍລະອຽດຂໍ້ຜິດພາດ

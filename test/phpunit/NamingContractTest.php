@@ -21,6 +21,11 @@
  * \brief   Unit tests for NamingContract and StrictNamingContractValidator.
  */
 
+global $conf,$user,$langs,$db,$mysoc;
+if (!defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__) . '/../../htdocs/modulebuilder/class/NamingContract.class.php';
 require_once dirname(__FILE__) . '/../../htdocs/modulebuilder/class/NamingContractValidator.class.php';
 

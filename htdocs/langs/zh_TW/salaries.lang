@@ -27,6 +27,7 @@ Earnings=Earnings
 TotalEarnings=Total earnings
 TotalDeductions=Total deductions
 NetPaid=實付淨額
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=薪資中「用戶」預設使用的會計科目(依會計科目表)
@@ -55,8 +56,6 @@ FillFieldFirst=請先填寫員工欄位
 UpdateAmountWithLastSalary=以最近薪資金額更新
 MakeTransferRequest=建立轉帳請求
 VirementOrder=信用轉帳請求
-WithdrawalReceipt=信用轉帳單
-OrderWaiting=待處理訂單
 FillEndOfMonth=月底
 
 # Shortcuts

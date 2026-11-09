@@ -11,6 +11,7 @@
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024       Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2026       Nick Fragoulis
+ * Copyright (C) 2026       Joachim Kueter              <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -837,6 +838,15 @@ print ajax_constantonoff('INVOICE_CHECK_POSTERIOR_DATE');
 }*/
 print '</td></tr>';
 
+// Point of tax date mandatory (only when the field is used, hidden option INVOICE_POINTOFTAX_DATE)
+if (getDolGlobalString('INVOICE_POINTOFTAX_DATE')) {
+	print '<tr class="oddeven"><td>'.$langs->trans("InvoicePointOfTaxDateMandatory").'&nbsp;';
+	print $form->textwithpicto('', $langs->trans("InvoicePointOfTaxDateMandatoryHelp"), 1, 'help').'</td>';
+	print '<td class="left" colspan="2">';
+	print ajax_constantonoff('INVOICE_POINTOFTAX_DATE_MANDATORY');
+	print '</td></tr>';
+}
+
 // Allow external download
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowExternalDownload").'</td>';
@@ -844,6 +854,16 @@ print '<td class="left" colspan="2">';
 print ajax_constantonoff('INVOICE_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0, 2, 0, 1);
 print '</td></tr>';
 
+
+// Reminder by email of unpaid invoices
+if (isModEnabled('cron')) {
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("SendEmailsRemindersOnInvoiceDueDate").'</td>';
+	print '<td colspan="2">';
+	print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.DOL_URL_ROOT.'/cron/list.php?search_label=SendEmailsRemindersOnInvoiceDueDate">'.$langs->trans("ConfigureContractReminderCronjobToSetFrequency").'</a>';
+	print '</td>';
+	print '</tr>';
+}
 
 // Notifications
 print '<tr class="oddeven">';

@@ -272,9 +272,11 @@ class PaymentSocialContribution extends CommonObject
 			}
 		}
 
-		$result = $this->call_trigger('PAYMENTSOCIALCONTRIBUTION_CREATE', $user);
-		if ($result < 0) {
-			$error++;
+		if (!$error) {
+			$result = $this->call_trigger('PAYMENTSOCIALCONTRIBUTION_CREATE', $user);
+			if ($result < 0) {
+				$error++;
+			}
 		}
 
 		if ($totalamount != 0 && !$error) {

@@ -188,7 +188,7 @@ function product_prepare_head($object)
 		$h++;
 	}
 	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/stats/facture.php', ['showmessage' => 1, 'id' => $object->id]);
-	$head[$h][1] = $langs->trans('Referers');
+	$head[$h][1] = $langs->trans('ReferringItems');
 	$head[$h][2] = 'referers';
 	$h++;
 
@@ -212,7 +212,7 @@ function product_prepare_head($object)
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/note.php', ['id' => $object->id]);
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/core/note.php', ['element' => 'product', 'id' => $object->id]);
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
@@ -319,7 +319,7 @@ function productlot_prepare_head($object)
 	$h++;
 
 	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/stock/stats/expedition.php', ['showmessage' => 1, 'id' => $object->id]);
-	$head[$h][1] = $langs->trans('Referers');
+	$head[$h][1] = $langs->trans('ReferringItems');
 	$head[$h][2] = 'referers';
 	$h++;
 
@@ -346,7 +346,7 @@ function productlot_prepare_head($object)
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT .'/product/stock/productlot_note.php', ['id' => $object->id]);
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT .'/core/note.php', ['element' => 'productlot', 'id' => $object->id]);
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbNote . '</span>';
@@ -534,7 +534,7 @@ function show_stats_for_company($product, $socid)
 
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre left">';
-	print $form->textwithpicto($langs->trans("Referers"), $langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers")));
+	print $form->textwithpicto($langs->trans("ReferringItems"), $langs->trans("ClickOnALinkOfColumn", $langs->transnoentitiesnoconv("ReferringItems")));
 	print '</td>';
 	print '<td class="liste_titre right">'.$langs->trans("NbOfThirdParties").'</td>';
 	print '<td class="liste_titre right">'.$langs->trans("NbOfObjectReferers").'</td>';
@@ -848,7 +848,7 @@ function show_stats_for_batch($batch, $socid)
 	$nblines = 0;
 
 	print '<tr class="liste_titre">';
-	print '<td class="left" width="25%">'.$langs->trans("Referers").'</td>';
+	print '<td class="left" width="25%">'.$langs->trans("ReferringItems").'</td>';
 	print '<td class="right" width="25%">'.$langs->trans("NbOfThirdParties").'</td>';
 	print '<td class="right" width="25%">'.$langs->trans("NbOfObjectReferers").'</td>';
 	print '<td class="right" width="25%">'.$langs->trans("TotalQuantity").'</td>';

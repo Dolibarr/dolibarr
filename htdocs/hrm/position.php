@@ -421,6 +421,7 @@ if ($job !== null && $job->id > 0 && (empty($action) || ($action != 'edit' && $a
 
 	$sql .= $db->order($sortfield, $sortorder);
 
+	$resql = null;
 	// Count total nb of records
 	$nbtotalofrecords = '';
 	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
@@ -432,7 +433,6 @@ if ($job !== null && $job->id > 0 && (empty($action) || ($action != 'edit' && $a
 		}
 	}
 	// if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.
-	$resql = null;
 	if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit))) {
 		$num = $nbtotalofrecords;
 	} else {

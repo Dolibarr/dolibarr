@@ -57,6 +57,7 @@ create table llx_societe_rib
   -- For BAN direct debit feature
   rum								varchar(32),	 				-- RUM value to use for SEPA generation
   date_rum							date,							-- Date of mandate
+  payment_reference					varchar(35),					-- Reference to give when paying to this account (RF or national reference the supplier gave us)
   frstrecur							varchar(16) DEFAULT 'FRST',     -- 'FRST' or 'RECUR'
 
   -- For credit card

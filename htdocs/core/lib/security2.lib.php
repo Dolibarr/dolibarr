@@ -673,3 +673,395 @@ function showEyeForField($htmlname, $htmlnameofinput)
 	});
 </script>';
 }
+
+/**
+ *  Generate a new secret for a TOTP enrollment (RFC 6238), in the base32 form expected by the authenticator applications.
+ *
+ *  @param		int			$nbbytes		Length of the secret in bytes (20 = 160 bits, the recommendation of the RFC 4226)
+ *  @return		string						Secret in base32
+ *  @see dolTotpCheckCode(), dolTotpGetUri()
+ */
+function dolTotpNewSecret($nbbytes = 20)
+{
+	return dolTotpBase32Encode(random_bytes($nbbytes));
+}
+
+/**
+ *  Encode a binary string into base32 (alphabet of the RFC 4648, no padding).
+ *
+ *  @param		string		$bin			Binary string
+ *  @return		string						Base32 string
+ */
+function dolTotpBase32Encode($bin)
+{
+	$alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+	$bits = '';
+	$out = '';
+	$nboctets = strlen($bin);	// Byte length of a binary string, dol_strlen() would count UTF-8 chars
+	for ($i = 0; $i < $nboctets; $i++) {
+		$bits .= str_pad(decbin(ord($bin[$i])), 8, '0', STR_PAD_LEFT);
+	}
+	foreach (str_split($bits, 5) as $chunk) {
+		$out .= $alphabet[bindec(str_pad($chunk, 5, '0', STR_PAD_RIGHT))];
+	}
+	return $out;
+}
+
+/**
+ *  Decode a base32 string (alphabet of the RFC 4648). The chars out of the alphabet, like the spaces of a key typed by hand, are ignored.
+ *
+ *  @param		string		$base32			Base32 string
+ *  @return		string						Binary string
+ */
+function dolTotpBase32Decode($base32)
+{
+	$alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+	$clean = preg_replace('/[^A-Z2-7]/', '', dol_strtoupper($base32));
+	$bits = '';
+	$out = '';
+	$nbchars = dol_strlen($clean);
+	for ($i = 0; $i < $nbchars; $i++) {
+		$bits .= str_pad(decbin((int) strpos($alphabet, $clean[$i])), 5, '0', STR_PAD_LEFT);
+	}
+	foreach (str_split($bits, 8) as $chunk) {
+		if (dol_strlen($chunk) == 8) {
+			$out .= chr(bindec($chunk));
+		}
+	}
+	return $out;
+}
+
+/**
+ *  Compute the TOTP code (RFC 6238) of a secret for one time step.
+ *
+ *  @param		string		$base32secret	Secret in base32
+ *  @param		int			$timestep		Time step, that is the timestamp divided by the period
+ *  @param		int			$digits			Number of digits of the code
+ *  @param		string		$algo			Hash algorithm ('sha1', 'sha256' or 'sha512')
+ *  @return		string						Code, left padded with zeros
+ */
+function dolTotpGetCode($base32secret, $timestep, $digits = 6, $algo = 'sha1')
+{
+	$hash = hash_hmac($algo, pack('J', $timestep), dolTotpBase32Decode($base32secret), true);
+	$offset = ord($hash[strlen($hash) - 1]) & 0x0F;		// Dynamic truncation of the RFC 4226, on the bytes of the hash
+	$value = unpack('N', substr($hash, $offset, 4))[1] & 0x7FFFFFFF;
+	return str_pad((string) ($value % (10 ** $digits)), $digits, '0', STR_PAD_LEFT);
+}
+
+/**
+ *  Check a code sent by a user against a secret, accepting a drift of some periods to tolerate a clock offset.
+ *
+ *  @param		string		$base32secret	Secret in base32
+ *  @param		string		$code			Code sent by the user
+ *  @param		int			$timestamp		Timestamp to check at (0 = now)
+ *  @param		int			$period			Duration of a time step, in seconds
+ *  @param		int			$digits			Number of digits of the code
+ *  @param		int			$drift			Number of periods accepted before and after the current one
+ *  @return		int							Accepted time step, to be stored to refuse a replay of the same code, or 0 if no step matches
+ *  @see dolTotpNewSecret()
+ */
+function dolTotpCheckCode($base32secret, $code, $timestamp = 0, $period = 30, $digits = 6, $drift = 1)
+{
+	if (!is_string($code) && !is_int($code)) {		// An array posted as totpcode[] must be refused, not cast
+		return 0;
+	}
+	$code = preg_replace('/[^0-9]/', '', (string) $code);
+	if (dol_strlen($code) != $digits || empty($base32secret)) {
+		return 0;
+	}
+	if (empty($timestamp)) {
+		$timestamp = dol_now();
+	}
+	$currentstep = (int) floor($timestamp / $period);
+	for ($i = -$drift; $i <= $drift; $i++) {
+		if (hash_equals(dolTotpGetCode($base32secret, $currentstep + $i, $digits), $code)) {
+			return $currentstep + $i;
+		}
+	}
+	return 0;
+}
+
+/**
+ *  Build the otpauth:// URI of an enrollment, to be shown as a QR code to the user.
+ *
+ *  @param		string		$login			Login of the user, shown as the account name in the application
+ *  @param		string		$base32secret	Secret in base32
+ *  @param		string		$issuer			Name of the issuer shown in the application ('' = name of the company)
+ *  @param		int			$digits			Number of digits of the code
+ *  @param		int			$period			Duration of a time step, in seconds
+ *  @return		string						URI otpauth://totp/...
+ */
+function dolTotpGetUri($login, $base32secret, $issuer = '', $digits = 6, $period = 30)
+{
+	global $mysoc;
+
+	if (empty($issuer)) {
+		$issuer = (empty($mysoc->name) ? 'Dolibarr' : $mysoc->name);
+	}
+	$label = rawurlencode($issuer).':'.rawurlencode($login);
+	$params = 'secret='.rawurlencode($base32secret).'&issuer='.rawurlencode($issuer).'&algorithm=SHA1&digits='.((int) $digits).'&period='.((int) $period);
+
+	return 'otpauth://totp/'.$label.'?'.$params;
+}
+
+/**
+ *  Load the TOTP enrollment of a user. The row is written into llx_oauth_token only once the enrollment has been confirmed by a valid code, so its presence means the 2FA is active for this user.
+ *
+ *  @param		DoliDB		$db				Database handler
+ *  @param		int			$fk_user		Id of the user
+ *  @return		array{rowid:int,secret:string,laststep:int,datec:int|string,lastaccess:int|string}|int|null		Enrollment, null if the user has no 2FA, -1 if the query failed or the row can't be read: a caller must then refuse the login, not treat it as no 2FA
+ *  @see dolTotpSaveEnrollment(), dolTotpDeleteEnrollment()
+ */
+function dolTotpGetEnrollment($db, $fk_user)
+{
+	$sql = "SELECT rowid, tokenstring, state, datec, lastaccess FROM ".$db->prefix()."oauth_token";
+	$sql .= " WHERE service = 'dolibarr_totp' AND fk_user = ".((int) $fk_user);
+
+	$resql = $db->query($sql);
+	if (!$resql) {
+		dol_syslog("dolTotpGetEnrollment ".$db->lasterror(), LOG_ERR);
+		return -1;
+	}
+	$num = $db->num_rows($resql);
+	$obj = ($num > 0 ? $db->fetch_object($resql) : null);
+	$db->free($resql);
+	if ($num == 0) {
+		return null;
+	}
+	if (empty($obj)) {	// A row exists but can't be fetched: not the same as no row
+		dol_syslog("dolTotpGetEnrollment: row of user ".((int) $fk_user)." can't be fetched", LOG_ERR);
+		return -1;
+	}
+
+	$data = json_decode((string) $obj->tokenstring, true);
+	if (!is_array($data) || empty($data['secret'])) {
+		dol_syslog("dolTotpGetEnrollment: unreadable tokenstring for user ".((int) $fk_user), LOG_ERR);
+		return -1;
+	}
+
+	return array('rowid' => (int) $obj->rowid, 'secret' => dolDecrypt($data['secret']), 'laststep' => (int) $obj->state, 'datec' => $db->jdate($obj->datec), 'lastaccess' => $db->jdate($obj->lastaccess));
+}
+
+/**
+ *  Save a TOTP enrollment confirmed by a valid code. The secret is encrypted at rest and written only once, the accepted time step goes into the 'state' field.
+ *
+ *  @param		DoliDB		$db				Database handler
+ *  @param		int			$fk_user		Id of the user
+ *  @param		string		$secret			Secret in base32
+ *  @param		int			$laststep		Time step of the code that confirmed the enrollment
+ *  @param		int			$entity			Entity of the user
+ *  @return		int							1 if OK, -1 if KO, -2 if the secret can't be encrypted (no instance key or no openssl)
+ */
+function dolTotpSaveEnrollment($db, $fk_user, $secret, $laststep, $entity = 1)
+{
+	$encryptedsecret = dolEncrypt($secret);
+	if (strpos($encryptedsecret, 'dolcrypt:') !== 0) {	// dolEncrypt() returns the clear value when there is no key or no openssl: we refuse to store a secret in clear
+		dol_syslog("dolTotpSaveEnrollment: the instance has no encryption key or no openssl, the secret would be stored in clear", LOG_ERR);
+		return -2;
+	}
+	$tokenstring = json_encode(array('secret' => $encryptedsecret));
+	$now = dol_now();
+
+	$sql = "INSERT INTO ".$db->prefix()."oauth_token(service, tokenstring, state, fk_user, entity, datec, lastaccess)";
+	$sql .= " VALUES ('dolibarr_totp', '".$db->escape($tokenstring)."', '".$db->escape(dolTotpFormatStep($laststep))."', ".((int) $fk_user).", ".((int) $entity).", '".$db->idate($now)."', '".$db->idate($now)."')";
+
+	if (!$db->query($sql)) {
+		dol_syslog("dolTotpSaveEnrollment ".$db->lasterror(), LOG_ERR);
+		return -1;
+	}
+
+	return 1;
+}
+
+/**
+ *  Store the time step of the last code accepted, so the same code can't be played twice. The update is conditional: when two
+ *  requests carry the same code at the same time, only the first one gets its row updated and the second one is refused.
+ *
+ *  @param		DoliDB		$db				Database handler
+ *  @param		int			$rowid			Id of the row of the enrollment
+ *  @param		int			$laststep		Time step just accepted
+ *  @return		int							1 if OK, 0 if a code of this step or later was already accepted, -1 if KO
+ */
+function dolTotpSetLastStep($db, $rowid, $laststep)
+{
+	$newstate = dolTotpFormatStep($laststep);
+
+	$sql = "UPDATE ".$db->prefix()."oauth_token SET state = '".$db->escape($newstate)."', lastaccess = '".$db->idate(dol_now())."'";
+	$sql .= " WHERE rowid = ".((int) $rowid)." AND (state IS NULL OR state = '' OR state < '".$db->escape($newstate)."')";
+
+	$resql = $db->query($sql);
+	if (!$resql) {
+		dol_syslog("dolTotpSetLastStep ".$db->lasterror(), LOG_ERR);
+		return -1;
+	}
+	if ($db->affected_rows($resql) < 1) {
+		return 0;
+	}
+
+	return 1;
+}
+
+/**
+ *  Format a time step for the 'state' field, at a fixed width so the string comparison done in SQL is a numeric one.
+ *
+ *  @param		int			$timestep		Time step
+ *  @return		string						Time step left padded with zeros
+ */
+function dolTotpFormatStep($timestep)
+{
+	return str_pad((string) ((int) $timestep), 12, '0', STR_PAD_LEFT);
+}
+
+/**
+ *  Delete the TOTP enrollment of a user, who then logs in with the password only again.
+ *
+ *  @param		DoliDB		$db				Database handler
+ *  @param		int			$fk_user		Id of the user
+ *  @return		int							1 if OK, -1 if KO
+ */
+function dolTotpDeleteEnrollment($db, $fk_user)
+{
+	$sql = "DELETE FROM ".$db->prefix()."oauth_token WHERE service = 'dolibarr_totp' AND fk_user = ".((int) $fk_user);
+
+	if (!$db->query($sql)) {
+		dol_syslog("dolTotpDeleteEnrollment ".$db->lasterror(), LOG_ERR);
+		return -1;
+	}
+
+	return 1;
+}
+
+/**
+ *  Start the second step of a two-factor authentication, just after a password has been validated.
+ *  The session is not opened here: we only remember that the first step succeeded, so a code can be asked for in the next request.
+ *
+ *  @param		DoliDB		$db				Database handler
+ *  @param		string		$login			Login validated by the first step
+ *  @param		int			$entity			Entity the login was tested on
+ *  @return		string						The login if this user has no 2FA, or '' to ask for a code first
+ *  @see dolTotpCheckPendingLogin()
+ */
+function dolTotpStartSecondFactor($db, $login, $entity)
+{
+	global $conf, $langs;
+
+	$tmpuser = new User($db);
+	if ($tmpuser->fetch(0, $login, '', 0, ($entity > 0 ? $entity : -1)) <= 0) {	// Just validated but not loadable: we fail closed rather than skip the second factor
+		$langs->loadLangs(array('main', 'errors'));
+		$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorCantLoadUserFromDolibarrDatabase", $login);
+		return '';
+	}
+	$enrollment = dolTotpGetEnrollment($db, $tmpuser->id);
+	if ($enrollment === null) {
+		return $login;		// No 2FA for this user, the password is enough
+	}
+	if (!is_array($enrollment)) {	// An enrollment exists but can't be read: we fail closed, an admin has to remove it from the user card
+		$langs->load("users");
+		$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("TOTPUnreadableEnrollment");
+		return '';
+	}
+
+	if (session_status() === PHP_SESSION_ACTIVE && !session_regenerate_id(true)) {	// The password is verified: a fresh session id, so an id fixed before the login is worth nothing
+		dol_syslog("dolTotpStartSecondFactor: session id could not be regenerated", LOG_WARNING);
+	}
+	// The entity and the authentication mode are the ones the password was checked with: the second step restores them and ignores what is posted then
+	$_SESSION['dol_totp_pending'] = array('login' => $login, 'entity' => (int) $entity, 'authmode' => (empty($conf->authmode) ? '' : $conf->authmode), 'tries' => 0, 'expire' => dol_now() + 300);
+	dol_syslog("Password accepted for ".$login.", now waiting for the two-factor authentication code", LOG_NOTICE);
+
+	return '';
+}
+
+/**
+ *  Check the code of the second step of a two-factor authentication. The login is read from the session and never from the request,
+ *  so the first step can't be skipped by posting a code alone.
+ *
+ *  @param		DoliDB		$db				Database handler
+ *  @return		string						The login if the code is valid, '' otherwise
+ *  @see dolTotpStartSecondFactor()
+ */
+function dolTotpCheckPendingLogin($db)
+{
+	global $conf, $langs;
+
+	$langs->load("users");
+
+	$pending = empty($_SESSION['dol_totp_pending']) ? array() : $_SESSION['dol_totp_pending'];
+	if (empty($pending['login']) || $pending['expire'] < dol_now()) {
+		unset($_SESSION['dol_totp_pending']);
+		$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("TOTPLoginExpired");
+		return '';
+	}
+
+	// Same rule as the password check of check_user_password_dolibarr(): past the quota of failed authentications for this IP, no code is checked.
+	// Without it, a login mode that has no quota of its own, like ldap, would let an attacker who knows the password try codes without limit.
+	$nbfailedauth = dolTotpGetNbFailedAuthFromIp($db);
+	if ($nbfailedauth < 0 || $nbfailedauth > getDolGlobalInt("MAIN_SECURITY_MAX_NUMBER_FAILED_AUTH", 100)) {	// A quota that can't be counted is treated as exceeded
+		unset($_SESSION['dol_totp_pending']);
+		dol_syslog("Two-factor authentication code refused for ".$pending['login'].": too many failed authentications from ".getUserRemoteIP(), LOG_WARNING);
+		$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("TOTPBadCode");
+		return '';
+	}
+
+	$tmpuser = new User($db);
+	if ($tmpuser->fetch(0, $pending['login'], '', 0, ($pending['entity'] > 0 ? $pending['entity'] : -1)) <= 0) {
+		unset($_SESSION['dol_totp_pending']);
+		return '';
+	}
+	$enrollment = dolTotpGetEnrollment($db, $tmpuser->id);
+	if (!is_array($enrollment)) {	// Removed meanwhile, or unreadable: refused either way
+		unset($_SESSION['dol_totp_pending']);
+		return '';
+	}
+
+	$laststep = dolTotpCheckCode($enrollment['secret'], GETPOST('totpcode', 'alphanohtml', 2));	// Read from POST only, so a code never ends up in an access log
+	if ($laststep <= 0 || $laststep <= $enrollment['laststep']) {	// A code already accepted once is refused, so a captured code can't be played again
+		$pending['tries'] = (empty($pending['tries']) ? 0 : (int) $pending['tries']) + 1;
+		if ($pending['tries'] >= 3) {
+			unset($_SESSION['dol_totp_pending']);		// Too many wrong codes, the password has to be entered again
+		} else {
+			$_SESSION['dol_totp_pending'] = $pending;
+		}
+		dol_syslog("Two-factor authentication code refused for ".$pending['login'], LOG_WARNING);
+		$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("TOTPBadCode");
+		return '';
+	}
+
+	unset($_SESSION['dol_totp_pending']);
+	if (dolTotpSetLastStep($db, $enrollment['rowid'], $laststep) <= 0) {	// Not stored, or already stored by a concurrent request: the code would stay replayable, so we fail closed
+		dol_syslog("Two-factor authentication code refused for ".$pending['login'].", its time step could not be recorded", LOG_WARNING);
+		$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("TOTPBadCode");
+		return '';
+	}
+	$conf->authmode = $pending['authmode'];		// Same value checkLoginPassEntity() set on the first step
+	if (session_status() === PHP_SESSION_ACTIVE && !session_regenerate_id(true)) {	// Fully authenticated: a fresh session id again
+		dol_syslog("dolTotpCheckPendingLogin: session id could not be regenerated", LOG_WARNING);
+	}
+
+	return $pending['login'];
+}
+
+/**
+ *  Count the failed authentications recorded for the IP of the current request over the last 24 hours.
+ *  This is the count check_user_password_dolibarr() does before testing a password; it needs MAIN_LOGEVENTS_USER_LOGIN_FAILED to be enabled, like it.
+ *
+ *  @param		DoliDB		$db				Database handler
+ *  @return		int							Number of USER_LOGIN_FAILED events, or -1 if they can't be counted
+ */
+function dolTotpGetNbFailedAuthFromIp($db)
+{
+	$sql = "SELECT COUNT(e.rowid) as nbevent";
+	$sql .= " FROM ".$db->prefix()."events as e";
+	$sql .= " WHERE e.type = 'USER_LOGIN_FAILED'";
+	$sql .= " AND e.ip = '".$db->escape(getUserRemoteIP())."'";
+	$sql .= " AND e.dateevent > '".$db->idate(dol_now() - 24 * 3600)."'";
+
+	$resql = $db->query($sql);
+	if (!$resql) {
+		dol_syslog("dolTotpGetNbFailedAuthFromIp ".$db->lasterror(), LOG_ERR);
+		return -1;
+	}
+	$obj = $db->fetch_object($resql);
+	$db->free($resql);
+
+	return (empty($obj) ? 0 : (int) $obj->nbevent);
+}

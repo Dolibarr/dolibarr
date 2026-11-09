@@ -5,6 +5,7 @@
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024       Alexandre Janniaux          <alexandre.janniaux@gmail.com>
  * Copyright (C) 2025-2026  Alexandre Spangaro          <alexandre@inovea-conseil.com>
+ * Copyright (C) 2026       Joachim Kueter              <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -425,7 +426,7 @@ class AccountingJournal extends CommonObject
 	 */
 	public function getAssetData(User $user, $type = 'view', $date_start = null, $date_end = null, $in_bookkeeping = 'notyet')
 	{
-		global $conf, $langs;
+		global $conf, $langs, $mysoc;
 
 		if (!isModEnabled('asset')) {
 			return array();
@@ -512,6 +513,11 @@ class AccountingJournal extends CommonObject
 		}
 
 		$disposal_ref = $langs->transnoentitiesnoconv('AssetDisposal');
+		// VAT rate of a disposal: option ASSET_DISPOSAL_VAT, else default VAT rate of the company country
+		$disposal_vat = (float) price2num(getDolGlobalString('ASSET_DISPOSAL_VAT'));
+		if (!($disposal_vat > 0)) {
+			$disposal_vat = (float) price2num(preg_replace('/\s*\(.*\)/', '', (string) get_default_tva($mysoc, $mysoc)));
+		}
 		$journal = $this->code;
 		$journal_label = $this->label;
 		$journal_label_formatted = $langs->transnoentities($journal_label);
@@ -616,7 +622,6 @@ class AccountingJournal extends CommonObject
 					$disposal_amount = $pre_data_info['disposal']['amount'];
 					$disposal_subject_to_vat = $pre_data_info['disposal']['subject_to_vat'];
 					$disposal_date_formatted = dol_print_date($disposal_date, 'day');
-					$disposal_vat = getDolGlobalInt('ASSET_DISPOSAL_VAT') > 0 ? getDolGlobalInt('ASSET_DISPOSAL_VAT') : 20;
 
 					// Get accountancy codes
 					//---------------------------

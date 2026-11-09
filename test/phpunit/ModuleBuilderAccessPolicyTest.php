@@ -23,13 +23,15 @@
 
 global $conf, $user, $langs, $db, $mysoc;
 
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+if (!defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/modulebuilder.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/modulebuilder/class/AccessPolicyConfig.class.php';
 require_once dirname(__FILE__).'/../../htdocs/modulebuilder/class/AccessPolicyEvaluator.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
-if (empty($user->id)) {
+if (empty($user->id) && is_object($db)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->loadRights();
@@ -227,7 +229,7 @@ class ModuleBuilderAccessPolicyTest extends CommonClassTest
 		));
 
 		$this->assertSame("(!empty(\$user->admin) || (\$user->hasRight('mymodule', 'myobject', 'read') && empty(\$user->socid)))", $rule->toPhp());
-		$this->assertDoesNotMatchRegularExpression('/\b(and|or)\b/i', $rule->toPhp());
+		$this->assertSame(0, preg_match('/\b(and|or)\b/i', $rule->toPhp()));	// Not assertDoesNotMatchRegularExpression(), only available since PHPUnit 9.1
 	}
 
 	/**

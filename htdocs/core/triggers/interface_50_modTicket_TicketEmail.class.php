@@ -502,7 +502,13 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$message_customer .= '<li>'.$langs->trans('Severity').' : '.$langs->getLabelFromKey($this->db, 'TicketSeverityShort'.$object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code).'</li>';
 
 		// Extrafields
-		if (is_array($extrafields->attributes[$object->table_element]['label'])) {
+		// master.inc.php creates the global $extrafields object, but its attributes stay empty
+		// until a fetch_name_optionals_label() call, which nothing guarantees for the ticket
+		// table on the paths reaching this trigger.
+		// A table holding no extrafield at all leaves its key unset even after the fetch, so the
+		// test below also has to tolerate a missing entry.
+		$extrafields->fetch_name_optionals_label($object->table_element);
+		if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label'])) {
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $value) {
 				$enabled = 1;
 				if ($enabled && isset($extrafields->attributes[$object->table_element]['list'][$key])) {

@@ -28,11 +28,10 @@
 global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/class/html.form.class.php';
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
 require_once dirname(__FILE__).'/../../htdocs/contact/class/contact.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -831,6 +830,42 @@ class FormTest extends CommonClassTest
 		} finally {
 			$conf = $savedconf;
 		}
+	}
+
+	/**
+	 * testFormMailTemplateTranslatedInRecipientLanguage
+	 *
+	 * The language keys of the subject and of the body of an email template are translated in the language of the recipient,
+	 * also the keys of main.lang and of the language files of the documents.
+	 *
+	 * @return void
+	 */
+	public function testFormMailTemplateTranslatedInRecipientLanguage()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+		$savmultilangs = getDolGlobalString('MAIN_MULTILANGS');
+		$conf->global->MAIN_MULTILANGS = 1;
+		$db->query("INSERT INTO ".$db->prefix()."c_email_templates (entity, module, type_template, lang, private, label, position, active, topic, content) VALUES (".((int) $conf->entity).", 'facture', 'facture_send', 'en_US', 0, 'TestFormMailLangs', 1, 1, '__(RemainderToPay)__ (__(DateDue)__)', '__(DateDue)__ - __(RemainderToPay)__')");
+		$id = $db->last_insert_id($db->prefix()."c_email_templates");
+
+		$formmail = new FormMail($db);
+		$formmail->param['models'] = 'facture_send';
+		$formmail->param['models_id'] = $id;
+		$formmail->param['langsmodels'] = 'en_US';
+		$formmail->param['returnurl'] = '';
+		$html = $formmail->get_form();
+
+		$conf->global->MAIN_MULTILANGS = $savmultilangs;
+		$db->query("DELETE FROM ".$db->prefix()."c_email_templates WHERE rowid = ".((int) $id));
+
+		$this->assertStringContainsString('value="Remaining unpaid (Due date)"', $html, 'Subject');
+		$this->assertStringContainsString('Due date - Remaining unpaid', $html, 'Body');
 	}
 
 	/**

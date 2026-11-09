@@ -28,9 +28,8 @@
 global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -504,6 +503,36 @@ class DateLibTest extends CommonClassTest
 	}
 
 	/**
+	 * Check monthly dates calculated from the original date do not drift after short months.
+	 *
+	 * @return void
+	 */
+	public function testDolTimePlusDureeMonthlyAnchor()
+	{
+		$cases = array(
+			array(10, 31, 2026, array('2026-11-30', '2026-12-31', '2027-01-31', '2027-02-28', '2027-03-31')),
+			array(1, 31, 2028, array('2028-02-29', '2028-03-31')),
+			array(1, 30, 2027, array('2027-02-28', '2027-03-30')),
+			array(1, 28, 2027, array('2027-02-28', '2027-03-28')),
+			array(1, 29, 2028, array('2028-02-29', '2028-03-29')),
+			array(1, 29, 2027, array('2027-02-28', '2027-03-29')),
+		);
+
+		foreach ($cases as $case) {
+			$anchor = dol_mktime(10, 0, 0, $case[0], $case[1], $case[2], 'gmt');
+			foreach ($case[3] as $index => $expecteddate) {
+				$occurrence = dol_time_plus_duree($anchor, $index + 1, 'm', 1, 'gmt');
+				$this->assertSame($expecteddate, dol_print_date($occurrence, '%Y-%m-%d', 'gmt'));
+			}
+		}
+
+		// dol_mktime() needs 'tz,TimeZone' for a named timezone, and dol_print_date() does not support it, so we compare timestamps
+		$timedanchor = dol_mktime(9, 0, 0, 3, 28, 2026, 'tz,Europe/Paris');
+		$timedoccurrence = dol_time_plus_duree($timedanchor, 1, 'm', 1, 'Europe/Paris');
+		$this->assertSame(dol_mktime(9, 0, 0, 4, 28, 2026, 'tz,Europe/Paris'), $timedoccurrence);
+	}
+
+	/**
 	 * testDolStringToTime
 	 *
 	 * @return int
@@ -568,6 +597,44 @@ class DateLibTest extends CommonClassTest
 		$this->assertEquals(1, (int) $prev['first_day']);		// sunday for month 2, year 2015 is the 1st
 
 		return 1;
+	}
+
+	/**
+	 * Check previous weeks across month and year boundaries.
+	 *
+	 * @return void
+	 */
+	public function testDolGetPrevWeek()
+	{
+		global $conf;
+
+		$oldstartweek = isset($conf->global->MAIN_START_WEEK) ? getDolGlobalInt('MAIN_START_WEEK') : null;
+		$oldtimezone = date_default_timezone_get();
+		try {
+			date_default_timezone_set('UTC');
+			$cases = array(
+				array(1, 1, 3, 2024, array('year' => 2024, 'month' => 2, 'day' => 19)),
+				array(1, 1, 1, 2025, array('year' => 2024, 'month' => 12, 'day' => 23)),
+				array(1, 1, 3, 2023, array('year' => 2023, 'month' => 2, 'day' => 20)),
+				array(1, 15, 3, 2024, array('year' => 2024, 'month' => 3, 'day' => 4)),
+				array(1, 1, 6, 2026, array('year' => 2026, 'month' => 5, 'day' => 25)),
+				array(1, 1, 1, 2024, array('year' => 2023, 'month' => 12, 'day' => 25)),
+				array(0, 1, 3, 2024, array('year' => 2024, 'month' => 2, 'day' => 18)),
+				array(0, 1, 1, 2025, array('year' => 2024, 'month' => 12, 'day' => 22)),
+				array(0, 15, 3, 2024, array('year' => 2024, 'month' => 3, 'day' => 3))
+			);
+			foreach ($cases as $case) {
+				$conf->global->MAIN_START_WEEK = $case[0];
+				$this->assertSame($case[4], dol_get_prev_week($case[1], 0, $case[2], $case[3]));
+			}
+		} finally {
+			date_default_timezone_set($oldtimezone);
+			if ($oldstartweek === null) {
+				unset($conf->global->MAIN_START_WEEK);
+			} else {
+				$conf->global->MAIN_START_WEEK = $oldstartweek;
+			}
+		}
 	}
 
 	/**

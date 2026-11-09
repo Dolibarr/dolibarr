@@ -1405,19 +1405,24 @@ class Website extends CommonObject
 		dolSaveJsFile($conf->website->dir_output.'/'.$object->ref.'/javascript.js.php', $jscontent);
 
 
-		// Now generate the manifest.json.php
-		$filemanifestjson = dol_osencode($conf->website->dir_temp.'/'.$object->ref.'/containers/manifest.json.php');
+		// Now generate the manifest.json (old templates provide a manifest.json.php with a PHP wrapper around the JSON content)
+		$filemanifestjson = dol_osencode($conf->website->dir_temp.'/'.$object->ref.'/containers/manifest.json');
+		if (!dol_is_file($conf->website->dir_temp.'/'.$object->ref.'/containers/manifest.json')) {
+			$filemanifestjson = dol_osencode($conf->website->dir_temp.'/'.$object->ref.'/containers/manifest.json.php');
+		}
 		$manifestjsoncontent = @file_get_contents($filemanifestjson);
 		// Clean the manifestjson file to remove php code and get only html part
 		$manifestjsoncontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP( \?>)?\n*/ims', '', $manifestjsoncontent);
-		// Check there is no PHP content into the imported file (must be only HTML + JS)
+		// Check there is no PHP content into the imported file (must be only JSON)
 		$phpcontent = dolKeepOnlyPhpCode($manifestjsoncontent);
 		if ($phpcontent) {
-			$this->error = 'Error: you try to import a website with a page with PHP dynamic content in '.$filename.'.';
+			$this->error = 'Error: you try to import a website with a page with PHP dynamic content in manifest.json.';
 			$this->errors[] = $this->error;
 			return -1;
 		}
-		dolSaveManifestJson($conf->website->dir_output.'/'.$object->ref.'/manifest.json.php', $manifestjsoncontent);
+		$manifestjsoncontent = trim($manifestjsoncontent);
+		dolSaveManifestJson($conf->website->dir_output.'/'.$object->ref.'/manifest.json', ($manifestjsoncontent ? $manifestjsoncontent."\n" : ''));
+		dol_delete_file($conf->website->dir_output.'/'.$object->ref.'/manifest.json.php');
 
 
 		// Now generate the master.inc.php page
@@ -1433,7 +1438,7 @@ class Website extends CommonObject
 		if (dol_is_dir($conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey')) {
 			$result = dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref, '0', 1);
 			if ($result < 0) {
-				$this->error = 'Failed to copy files into '.$conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref.'.';
+				$this->error = 'Failed to copy medias images from '.$conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey into '.$conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref.'.';
 				dol_syslog($this->error, LOG_WARNING);
 				$this->errors[] = $this->error;
 				return -5;
@@ -1444,7 +1449,7 @@ class Website extends CommonObject
 		if (dol_is_dir($conf->website->dir_temp.'/'.$object->ref.'/medias/js/websitekey')) {
 			$result = dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/js/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref, '0', 1);
 			if ($result < 0) {
-				$this->error = 'Failed to copy files into '.$conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref.'.';
+				$this->error = 'Failed to copy medias js into '.$conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref.'.';
 				dol_syslog($this->error, LOG_WARNING);
 				$this->errors[] = $this->error;
 				return -6;
@@ -1507,6 +1512,22 @@ class Website extends CommonObject
 				if ($newid) {
 					$objectpagestatic->fetch($newid);
 
+					// Reject imported values that are embedded into generated PHP code or used as file names
+					if (preg_match('/[^\w\-]/', (string) $objectpagestatic->type_container) || preg_match('/[^\w\-]/', (string) $objectpagestatic->lang)) {
+						$this->errors[] = 'Bad value for type_container or lang of page ID '.$newid;
+						$error++;
+						continue;
+					}
+					if (is_array($aliasesarray)) {
+						foreach ($aliasesarray as $aliasshortcuttocreate) {
+							if (preg_match('/[^\w\-]/', trim($aliasshortcuttocreate))) {
+								$this->errors[] = 'Bad value for alias of page ID '.$newid;
+								$error++;
+								continue 2;
+							}
+						}
+					}
+
 					// We write the pageX.tpl.php
 					$filetpl = $conf->website->dir_output.'/'.$object->ref.'/page'.$newid.'.tpl.php';
 					$result = dolSavePageContent($filetpl, $object, $objectpagestatic);
@@ -1527,6 +1548,9 @@ class Website extends CommonObject
 							$this->error = 'Error: you try to import a website with a page with PHP dynamic content without having permissions for that.';
 							$this->errors[] = $this->error;
 							$error++;
+							// Do not keep on disk a file with unauthorized PHP content
+							dol_delete_file($filetpl, 0, 0, 0, null, false, 0);
+							continue;
 						}
 					}
 
@@ -1656,6 +1680,21 @@ class Website extends CommonObject
 			}
 			$filewrapper = $pathofwebsite.'/wrapper.php';
 			dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $object);	// This includes also a version of index.php into sublanguage directories
+
+			// Migrate the old manifest.json.php (JSON with a PHP wrapper) into a static manifest.json now that pages link to manifest.json
+			$filemanifestjsonold = $pathofwebsite.'/manifest.json.php';
+			if (dol_is_file($filemanifestjsonold)) {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/website2.lib.php';
+				if (!dol_is_file($pathofwebsite.'/manifest.json')) {
+					$manifestjsoncontent = (string) @file_get_contents($filemanifestjsonold);
+					$manifestjsoncontent = trim(preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP( \?>)?\n*/ims', '', $manifestjsoncontent));
+					if (!dolKeepOnlyPhpCode($manifestjsoncontent)) {	// Never copy PHP code into the static file
+						dolSaveManifestJson($pathofwebsite.'/manifest.json', ($manifestjsoncontent ? $manifestjsoncontent."\n" : ''));
+					}
+				}
+				dol_delete_file($filemanifestjsonold);
+			}
 		}
 
 		// Erase cache files

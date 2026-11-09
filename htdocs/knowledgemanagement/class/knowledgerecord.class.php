@@ -168,6 +168,11 @@ class KnowledgeRecord extends CommonObject
 	 * @var string
 	 */
 	public $lang;
+
+	/**
+	 * @var ?int	Id of the group of tickets the article is suggested for
+	 */
+	public $fk_c_ticket_category;
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -337,15 +342,6 @@ class KnowledgeRecord extends CommonObject
 			// copy internal contacts
 			if ($this->copy_linked_contact($object, 'internal') < 0) {
 				$error++;
-			}
-		}
-
-		if (!$error) {
-			// copy external contacts if same company
-			if (property_exists($this, 'fk_soc') && $this->fk_soc == $object->socid) {
-				if ($this->copy_linked_contact($object, 'external') < 0) {
-					$error++;
-				}
 			}
 		}
 

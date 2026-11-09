@@ -1,0 +1,70 @@
+List of maintainers and how to submit module changes
+====================================================
+
+This file is using the standard format for MAINTAINERS files.
+You can find here the name of main maintainers of each module of this repository.
+
+Submission of patches for code must be done using a PR at the repository system provided in the T entry in
+the list of Maintainers at bottom of this file.
+
+Note that this list is only a list of few modules qualified to be available as community modules. Most of
+existing Dolibarr modules are not referenced here and completely under control of their maintainers, outside of
+this repository. See https://www.dolistore.com for a complete list of all Dolibarr external modules.
+
+
+Descriptions of section entries and preferred order
+---------------------------------------------------
+
+	M: Name of main maintainer <email> / github id
+	S: *Status*, one of the following:
+	   Supported:	Someone is actually paid to look after this.
+	   Maintained:	Someone actually looks after it.
+	   Odd Fixes:	It has a maintainer but they don't have time to do
+			much other than throw the odd patch in. See below..
+	   Orphan:	No current maintainer [but maybe you could take the
+			role as you write your new code].
+	   Obsolete:	Old code. Something tagged obsolete generally means
+			it has been replaced by a better system and you
+			should be using that.
+	W: *Web-page* with status/info
+	T: *SCM* tree type and location.
+	   Type is one of: git, hg, quilt, stgit, topgit
+	F: *Files* and directories wildcard patterns.
+	   A trailing slash includes all files and subdirectory files.
+	   F:	moduleabc/dir/	all files in and below moduleabc/dir
+	   F:	*/dir/*		all files in "any top level directory"/dir
+	   One pattern per line.  Multiple F: lines acceptable.
+	X: *Excluded* files and directories that are NOT maintained, same
+	   rules as F:. Files exclusions are tested before file matches.
+	   Can be useful for excluding a specific subdirectory, for instance:
+	   F:	moduleabc/
+	   X:	moduleabc/subdir/
+	   matches all files in and below net excluding net/ipv6/
+
+
+Maintainers List
+----------------
+
+ACCOUNTING
+M:	Alexandre Spangaro <aspangaro.dolibarr@gmail.com> / aspangaro
+M:	Laurent Destailleur <ldestailleur@dolicloud.com> / eldy
+S:	Maintained
+F:	accountancy/
+F:	core/lib/accounting.lib.php
+F:	langs/en_US/accountancy.lang
+T:	https://github.com/Dolibarr/dolibarr.git
+
+ASSET
+M:	Alexandre Spangaro <aspangaro.dolibarr@gmail.com> / aspangaro
+M:	Laurent Destailleur <ldestailleur@dolicloud.com> / eldy
+S:	Maintained
+F:	asset/
+F:	core/lib/asset.lib.php
+F:	langs/en_US/assets.lang
+T:	https://github.com/Dolibarr/dolibarr.git
+
+ALL
+M:	Laurent Destailleur <ldestailleur@dolicloud.com> / eldy
+S:	Maintained
+F:	/
+T:	https://github.com/Dolibarr/dolibarr.git
