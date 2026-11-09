@@ -238,3 +238,6 @@ RepairImagesEntity=Entity for this image repair
 
 RepairOrphanFilesFailed=Some orphan files could not be checked or removed. Existing objects, unreadable paths and database errors must be resolved before retrying.
 RepairOrphanDirectoryNotConfigured=Entity %s, module %s: no native document directory is configured. Files have been preserved.
+
+RepairMailingFailed=Some mailing files could not be migrated. Check paths, existing destination files and installer logs.
+RepairMailingAmbiguous=Several mailings in this entity share this legacy directory. Its files have been preserved; identify their owners before migrating them.

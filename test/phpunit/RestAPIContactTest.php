@@ -136,8 +136,15 @@ class RestAPIContactTest extends AbstractRestAPITest
 		$lastname = 'testRestContactCountry'.mt_rand();
 		$contactids = array();
 
+		// The 3 letters code is tested only if code_iso is set (it is empty on databases created with old versions, like the pgsql CI one)
+		global $db;
+		$countrycodes = array('FR');
+		if (dol_getIdFromCode($db, 'FRA', 'c_country', 'code_iso', 'rowid') > 0) {
+			$countrycodes[] = 'FRA';
+		}
+
 		try {
-			foreach (array('FR', 'FRA') as $country_code) {
+			foreach ($countrycodes as $country_code) {
 				$body = json_encode(array('lastname' => $lastname, 'country_code' => $country_code));
 				$result = getURLContent($this->api_url.'/contacts?api_key='.$this->api_key, 'POST', $body, 1, $addheaders, array('http', 'https'), 2);
 				$this->assertEquals(0, $result['curl_error_no']);
@@ -552,6 +559,48 @@ class RestAPIContactTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * testRestUpdateContactNoEmail
+	 *
+	 * Set no_email on a contact with PUT, check it is saved with a GET, then unset it.
+	 *
+	 * @return	void
+	 *
+	 * @depends testRestGetContact
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testRestUpdateContactNoEmail()
+	{
+		if (!isModEnabled('mailing')) {
+			$this->markTestSkipped('Module mailing must be enabled to test no_email');
+		}
+
+		$email = 'testrestcontactnoemail'.mt_rand().'@example.com';
+		$contactid = $this->callApi('POST', '/contacts', array("firstname" => "testRestContactNoEmail", "lastname" => "testRestContact", "email" => $email));
+		$this->assertIsInt($contactid, 'Contact creation failed: '.var_export($contactid, true));
+
+		try {
+			// Set no_email
+			$object = $this->callApi('PUTALREADYFORMATED', '/contacts/'.$contactid, array("no_email" => 1));
+			$this->assertEquals(1, $object['no_email'] ?? null, 'Update of no_email failed: '.var_export($object, true));
+
+			$object = $this->callApi('GET', '/contacts/'.$contactid);
+			$this->assertEquals(1, $object['no_email'] ?? null, 'no_email=1 must be saved: '.var_export($object, true));
+
+			// Unset no_email
+			$object = $this->callApi('PUTALREADYFORMATED', '/contacts/'.$contactid, array("no_email" => 0));
+			$this->assertEquals(0, $object['no_email'] ?? null, 'Update of no_email failed: '.var_export($object, true));
+
+			$object = $this->callApi('GET', '/contacts/'.$contactid);
+			$this->assertArrayHasKey('no_email', $object, 'GET must return no_email: '.var_export($object, true));
+			$this->assertEquals(0, $object['no_email'], 'no_email=0 must be saved: '.var_export($object, true));
+		} finally {
+			// Clean up, even if an assertion failed
+			$this->callApi('PUTALREADYFORMATED', '/contacts/'.$contactid, array("no_email" => 0));
+			$this->callApi('DELETE', '/contacts/'.$contactid);
+		}
+	}
+
+	/**
 	 * testRestCreateUserFromContact
 	 *
 	 * Create a user from a contact, then check the errors for missing fields, an unknown contact,
@@ -667,6 +716,54 @@ class RestAPIContactTest extends AbstractRestAPITest
 			if ($userid > 0) {
 				getURLContent($this->api_url.'/users/'.$userid.'?api_key='.$this->api_key, 'DELETE', '', 1, array(), array('http', 'https'), 2);
 			}
+			if ($contactid > 0) {
+				getURLContent($this->api_url.'/contacts/'.$contactid.'?api_key='.$this->api_key, 'DELETE', '', 1, array(), array('http', 'https'), 2);
+			}
+		}
+	}
+
+	/**
+	 * testRestDeleteContact
+	 *
+	 * Delete a contact, then check the errors for a deleted contact, a nonexistent contact and the id 0.
+	 *
+	 * @return	void
+	 *
+	 * @depends testRestGetContact
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testRestDeleteContact()
+	{
+		$contactid = 0;
+
+		try {
+			$contactid = $this->callApi('POST', '/contacts', array("lastname" => "testRestDeleteContact".mt_rand()));
+			$this->assertIsInt($contactid, 'Contact creation failed: '.var_export($contactid, true));
+
+			// Delete the contact
+			$object = $this->callApi('GET', '/contacts/'.$contactid);
+			$this->assertEquals($contactid, $object['id'] ?? null, 'The contact must exist before the delete: '.var_export($object, true));
+			$object = $this->callApi('DELETE', '/contacts/'.$contactid);
+			$this->assertEquals(200, $object['success']['code'] ?? null, 'Delete of the contact failed: '.var_export($object, true));
+
+			// A deleted contact is not found anymore
+			$object = $this->callApi('GET', '/contacts/'.$contactid);
+			$this->assertEquals(404, $object['error']['code'] ?? null, 'Get of a deleted contact must return 404: '.var_export($object, true));
+			$object = $this->callApi('DELETE', '/contacts/'.$contactid);
+			$this->assertEquals(404, $object['error']['code'] ?? null, 'Delete of a deleted contact must return 404: '.var_export($object, true));
+
+			// Nonexistent contact
+			$object = $this->callApi('DELETE', '/contacts/123456789');
+			$this->assertEquals(404, $object['error']['code'] ?? null, 'Delete of a nonexistent contact must return 404: '.var_export($object, true));
+
+			// Contact::fetch() returns -1 for the id 0: nothing must be deleted on an empty contact
+			$object = $this->callApi('DELETE', '/contacts/0');
+			$this->assertEquals(500, $object['error']['code'] ?? null, 'Delete of the id 0 must return 500: '.var_export($object, true));
+
+			// The id 0 of the get route returns the specimen, without calling Contact::fetch()
+			$object = $this->callApi('GET', '/contacts/0');
+			$this->assertEquals('DOLIBARR', $object['lastname'] ?? null, 'Get of the id 0 must return the specimen: '.var_export($object, true));
+		} finally {
 			if ($contactid > 0) {
 				getURLContent($this->api_url.'/contacts/'.$contactid.'?api_key='.$this->api_key, 'DELETE', '', 1, array(), array('http', 'https'), 2);
 			}

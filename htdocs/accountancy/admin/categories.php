@@ -4,6 +4,7 @@
  * Copyright (C) 2014-2015  Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2019       Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2024-2026  MDW                 <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Michael Wallis      <mh.wallis@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -167,6 +168,22 @@ if ($useNewSystem) {
 	}
 } else {
 	// OLD SYSTEM: One-to-many via fk_accounting_category field
+	if ($action == 'add' && $id > 0) {
+		$cpts = array();
+		foreach (GETPOST('cpt_bk', 'array') as $selectedoption) {
+			$cpts[$selectedoption] = "'".$selectedoption."'";
+		}
+		if (count($cpts)) {
+			$result = $accountingcategory->updateAccAcc($id, $cpts);
+			if ($result > 0) {
+				setEventMessages($langs->trans('RecordModifiedSuccessfully'), null, 'mesgs');
+				header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+				exit;
+			} else {
+				setEventMessages($accountingcategory->error, $accountingcategory->errors, 'errors');
+			}
+		}
+	}
 	if ($action == 'clean') {
 		$result = $accountingcategory->deleteCptCat($cpt_id);
 		if ($result >= 0) {
@@ -396,14 +413,28 @@ if ($useNewSystem) {
 	// OLD SYSTEM VIEW (compatibility)
 	// ============================================================================
 
-	$listcpt = $accountingcategory->display($id);
-	$listcptNotIn = $accountingcategory->getAccountsWithNoCategory($id);
+	// display() and getAccountsWithNoCategory() return a count and load ->lines_display / ->lines_cptbk
+	if ($accountingcategory->display($id) < 0 || $accountingcategory->getAccountsWithNoCategory($id) < 0) {
+		setEventMessages($accountingcategory->error, $accountingcategory->errors, 'errors');
+	}
 
 	print load_fiche_titre($langs->trans('AccountingCategory')." : ".$accountingcategory->label);
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="clean">';
+	// Add accounts that are not yet in this group
+	if (is_array($accountingcategory->lines_cptbk) && count($accountingcategory->lines_cptbk) > 0) {
+		$arraykeyvalue = array();
+		foreach ($accountingcategory->lines_cptbk as $val) {
+			$arraykeyvalue[length_accountg($val->numero_compte)] = length_accountg($val->numero_compte).' - '.$val->label_compte;
+		}
+		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="action" value="add">';
+		print img_picto($langs->trans("AccountingAccount"), 'accounting_account', 'class="pictofixedwidth"');
+		print $form->multiselectarray('cpt_bk', $arraykeyvalue, GETPOST('cpt_bk', 'array'), 0, 0, '', 0, "80%", '', '', $langs->transnoentitiesnoconv("AddAccountFromBookKeepingWithNoCategories"));
+		print '<input type="submit" class="button button-add small" value="'.$langs->trans("Add").'">';
+		print '</form>';
+		print '<br>';
+	}
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
@@ -412,14 +443,15 @@ if ($useNewSystem) {
 	print '<td></td>';
 	print "</tr>\n";
 
-	if (is_array($listcpt) && count($listcpt) > 0) {
-		foreach ($listcpt as $cpt) {
+	if (is_array($accountingcategory->lines_display) && count($accountingcategory->lines_display) > 0) {
+		foreach ($accountingcategory->lines_display as $cpt) {
 			print '<tr class="oddeven">';
 			print '<td>'.length_accountg($cpt->account_number).'</td>';
-			print '<td>'.$cpt->label.'</td>';
-			print '<td>';
-			print '<input type="submit" class="button smallpaddingimp" name="cpt" value="'.$cpt->rowid.'" title="'.$langs->trans("DeleteFromAccountingGroup").'">';
-			print img_picto($langs->trans("DeleteFromAccountingGroup"), 'unlink', 'class="paddingleft"');
+			print '<td>'.dol_escape_htmltag($cpt->label).'</td>';
+			print '<td class="right">';
+			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=clean&token='.newToken().'&cpt='.((int) $cpt->rowid).'">';
+			print img_picto($langs->trans("DeleteFromAccountingGroup"), 'unlink');
+			print '</a>';
 			print "</td>";
 			print "</tr>\n";
 		}
@@ -428,7 +460,6 @@ if ($useNewSystem) {
 	}
 
 	print '</table>';
-	print '</form>';
 }
 
 // End of page

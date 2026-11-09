@@ -75,7 +75,9 @@ class Contacts extends DolibarrApi
 	 * @param	int		$includeroles		Includes roles of the contact
 	 * @return	object 						Cleaned contact object
 	 *
-	 * @throws	RestException
+	 * @throws	RestException	403 Insufficient rights
+	 * @throws	RestException	404 Contact not found
+	 * @throws	RestException	500 Error when fetching contact
 	 */
 	public function get($id, $includecount = 0, $includeroles = 0)
 	{
@@ -89,7 +91,10 @@ class Contacts extends DolibarrApi
 			$result = $this->contact->fetch($id);
 		}
 
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching contact: '.$this->contact->errorsToString());
+		}
+		if ($result == 0) {
 			throw new RestException(404, 'Contact not found');
 		}
 
@@ -506,13 +511,22 @@ class Contacts extends DolibarrApi
 			$this->contact->$field = $this->_checkValForAPI($field, $value, $this->contact);
 		}
 
+		$this->db->begin();
+
 		if ($this->contact->update($id, DolibarrApiAccess::$user, 0, 'update') <= 0) {
+			$this->db->rollback();
 			throw new RestException(500, $this->contact->errorsToString());
 		}
 
 		if (isModEnabled('mailing') && !empty($this->contact->email) && isset($this->contact->no_email)) {
-			$this->contact->setNoEmail($this->contact->no_email);
+			// Update mass emailing flag into table mailing_unsubscribe, contact is not updated if this fails
+			if ($this->contact->setNoEmail($this->contact->no_email) < 0) {
+				$this->db->rollback();
+				throw new RestException(500, 'Error when setting no_email of contact: '.$this->contact->errorsToString());
+			}
 		}
+
+		$this->db->commit();
 
 		return $this->get($id);
 	}
@@ -526,6 +540,10 @@ class Contacts extends DolibarrApi
 	 * @return	array[]
 	 * @phan-return array<string,array{code:int,message:string}>
 	 * @phpstan-return array<string,array{code:int,message:string}>
+	 *
+	 * @throws	RestException	403 Insufficient rights
+	 * @throws	RestException	404 Contact not found
+	 * @throws	RestException	500 Error when fetching or deleting contact
 	 */
 	public function delete($id)
 	{
@@ -533,7 +551,10 @@ class Contacts extends DolibarrApi
 			throw new RestException(403, 'No permission to delete contacts');
 		}
 		$result = $this->contact->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching contact: '.$this->contact->errorsToString());
+		}
+		if ($result == 0) {
 			throw new RestException(404, 'Contact not found');
 		}
 

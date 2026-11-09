@@ -92,6 +92,7 @@ $search_company = GETPOST('search_company', 'alpha');
 $search_alias = GETPOST('search_alias', 'alpha');
 $search_desc = GETPOST('search_desc', 'alpha');
 $search_projet_ref = GETPOST('search_projet_ref', 'alpha');
+$search_project = GETPOST('search_project', 'alpha');
 $search_contrat_ref = GETPOST('search_contrat_ref', 'alpha');
 $search_status = GETPOST('search_status', 'alpha');
 $search_signed_status = GETPOST('search_signed_status', 'alpha');
@@ -172,6 +173,7 @@ $arrayfields = array(
 	's.nom' => array('label' => 'ThirdParty', 'checked' => '1'),
 	's.name_alias' => array('label' => 'AliasNameShort', 'checked' => '0'),
 	'pr.ref' => array('label' => 'Project', 'checked' => '1', 'enabled' => (!isModEnabled('project') ? '0' : '1')),
+	'pr.title' => array('label' => 'ProjectLabel', 'checked' => '0', 'enabled' => (!isModEnabled('project') ? '0' : '1')),
 	'c.ref' => array('label' => 'Contract', 'checked' => '1', 'enabled' => (empty($conf->contrat->enabled) ? '0' : '1')),
 	'f.description' => array('label' => 'Description', 'checked' => '1'),
 	'f.datec' => array('label' => 'DateCreation', 'checked' => '0', 'position' => 500),
@@ -238,6 +240,7 @@ if (empty($reshook)) {
 		$search_company = "";
 		$search_alias = "";
 		$search_projet_ref = "";
+		$search_project = "";
 		$search_contrat_ref = "";
 		$search_desc = "";
 		$search_status = "";
@@ -368,6 +371,9 @@ if ($search_alias) {
 }
 if ($search_projet_ref) {
 	$sql .= natural_search('pr.ref', $search_projet_ref);
+}
+if ($search_project != '' && isModEnabled('project')) {
+	$sql .= natural_search('pr.title', $search_project);
 }
 if ($search_contrat_ref) {
 	$sql .= natural_search('c.ref', $search_contrat_ref);
@@ -564,6 +570,9 @@ if ($search_desc) {
 if ($search_projet_ref) {
 	$param .= "&search_projet_ref=".urlencode($search_projet_ref);
 }
+if ($search_project != '') {
+	$param .= "&search_project=".urlencode($search_project);
+}
 if ($search_contrat_ref) {
 	$param .= "&search_contrat_ref=".urlencode($search_contrat_ref);
 }
@@ -742,6 +751,11 @@ if (!empty($arrayfields['pr.ref']['checked'])) {
 	print '<input type="text" class="flat" name="search_projet_ref" value="'.$search_projet_ref.'" size="8">';
 	print '</td>';
 }
+if (!empty($arrayfields['pr.title']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat maxwidth100" name="search_project" value="'.dol_escape_htmltag($search_project).'">';
+	print '</td>';
+}
 if (!empty($arrayfields['c.ref']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_contrat_ref" value="'.$search_contrat_ref.'" size="8">';
@@ -859,6 +873,10 @@ if (!empty($arrayfields['s.name_alias']['checked'])) {
 }
 if (!empty($arrayfields['pr.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['pr.ref']['label'], $_SERVER["PHP_SELF"], "pr.ref", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['pr.title']['checked'])) {
+	print_liste_field_titre($arrayfields['pr.title']['label'], $_SERVER["PHP_SELF"], "pr.title", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['c.ref']['checked'])) {
@@ -1076,6 +1094,17 @@ while ($i < $imaxinloop) {
 			$projetstatic->title = $obj->projet_title;
 			if ($projetstatic->id > 0) {
 				print $projetstatic->getNomUrl(1, '');
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Project label
+		if (!empty($arrayfields['pr.title']['checked'])) {
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->projet_title).'">';
+			if ($obj->projet_id > 0) {
+				print '<span class="spantitle">'.dol_escape_htmltag($obj->projet_title).'</span>';
 			}
 			print '</td>';
 			if (!$i) {
