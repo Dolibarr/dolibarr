@@ -149,26 +149,21 @@ class CGenericDic extends CommonDict
 	}
 
 	/**
-	 * Return if the dictionary table has a column 'entity' (cached per table)
+	 * Return if the dictionary table has a column 'entity'
+	 * (hard coded list: no DDL request, the fetch may run inside a transaction)
 	 *
 	 * @return bool
 	 */
 	private function tableHasEntityColumn()
 	{
-		static $cache = array();
-
-		$table = $this->table_element;
-		if (!isset($cache[$table])) {
-			$cache[$table] = false;
-			foreach ($this->db->DDLInfoTable($this->db->prefix().$table) as $column) {
-				if (reset($column) == 'entity') {
-					$cache[$table] = true;
-					break;
-				}
-			}
-		}
-
-		return $cache[$table];
+		return in_array($this->table_element, array(
+			'c_accounting_category', 'c_accounting_report', 'c_asset_disposal_type', 'c_barcode_type',
+			'c_email_senderprofile', 'c_email_templates', 'c_exp_tax_cat', 'c_exp_tax_range', 'c_field_list',
+			'c_holiday_types', 'c_hrm_public_holiday', 'c_invoice_subtype', 'c_paiement', 'c_partnership_type',
+			'c_payment_term', 'c_productbatch_qcstatus', 'c_shipment_mode', 'c_shipment_package_type',
+			'c_socialnetworks', 'c_ticket_category', 'c_ticket_resolution', 'c_ticket_severity', 'c_ticket_type',
+			'c_transport_mode', 'c_tva', 'c_type_container'
+		));
 	}
 
 	/**
