@@ -221,7 +221,7 @@ function dol_sql_strip_phone_formatting($db, $field)
 	// COALESCE so that a NULL field is an empty string, also for an exclusion search (NOT)
 	$sql = "COALESCE(".$db->sanitize($field).", '')";
 	foreach (array(' ', '-', '.', '(', ')') as $char) {
-		$sql = "REPLACE(".$sql.", '".$char."', '')";	// $char is one of the constant characters above @phan-suppress-current-line SqlInjection
+		$sql = "REPLACE(".$sql.", '".$db->escape($char)."', '')";
 	}
 
 	return $sql;
