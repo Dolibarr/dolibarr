@@ -197,6 +197,19 @@ function mcp_log_request(array $req, $resp, float $tStart, string $rawInput): vo
 	);
 }
 
+// For debug, a plain GET (browser, curl) with debug=1 returns the list of tools. Any other GET gets a 405, as
+// required by the MCP Streamable HTTP spec when no SSE stream is offered.
+$acceptHeader = isset($headers['accept']) ? (string) $headers['accept'] : '';
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && GETPOSTINT('debug') == 1 && strpos($acceptHeader, 'text/event-stream') === false) {
+	$server = new MCPServer($db, $conf, $serviceUser);
+	$response = $server->handleRequest(["jsonrpc" => "2.0", "id" => 1, "method" => "tools/list"]);
+	if ($server->getHttpStatus() !== 200) {
+		http_response_code($server->getHttpStatus());
+	}
+	echo json_encode($response);
+	exit;
+}
+
 // Only POST is supported (no SSE stream on GET): MCP Streamable HTTP spec requires a 405 for other methods.
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 	http_response_code(405);

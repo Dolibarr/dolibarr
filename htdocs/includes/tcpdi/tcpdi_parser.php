@@ -194,6 +194,11 @@ class tcpdi_parser {
         $this->FilterDecoders = new TCPDF_FILTERS();
         // get xref and trailer data
         $this->xref = $this->getXrefData();
+        // @CHANGE DOL An encrypted document can not be imported: say so instead of writing a page of the encrypted
+        // bytes without any error, or failing later on an obscure "decodeFilterFlateDecode: invalid code".
+        if (isset($this->xref['trailer'][1]['/Encrypt'])) {
+            $this->Error('This PDF document is encrypted and cannot be imported.');
+        }
         $this->findObjectOffsets();
         // parse all document objects
         $this->objects = array();
@@ -255,12 +260,21 @@ class tcpdi_parser {
      *
      */
     function readPages() {
+        // @CHANGE DOL Always leave a usable (possibly empty) page list
+        $this->pages = array();
+        $this->page_count = 0;
+        if (!isset($this->xref['trailer'][1]['/Root'])) {
+            return;
+        }
         $params = $this->getObjectVal($this->xref['trailer'][1]['/Root']);
         $objref = null;
-        foreach ($params[1][1] as $k=>$v) {
-            if ($k == '/Pages') {
-                $objref = $v;
-                break;
+        // @CHANGE DOL The catalog may not have been resolved to a dictionary
+        if (isset($params[1][1]) && is_array($params[1][1])) {
+            foreach ($params[1][1] as $k=>$v) {
+                if ($k == '/Pages') {
+                    $objref = $v;
+                    break;
+                }
             }
         }
         if ($objref == null || $objref[0] !== PDF_TYPE_OBJREF) {
@@ -269,7 +283,7 @@ class tcpdi_parser {
         }
 
         $dict = $this->getObjectVal($objref);
-        if ($dict[0] == PDF_TYPE_OBJECT && $dict[1][0] == PDF_TYPE_DICTIONARY) {
+        if ($dict[0] == PDF_TYPE_OBJECT && isset($dict[1][0]) && $dict[1][0] == PDF_TYPE_DICTIONARY) {    // @CHANGE DOL
             // Dict wrapped in an object
             $dict = $dict[1];
         }
@@ -278,14 +292,13 @@ class tcpdi_parser {
             return;
         }
 
-        $this->pages = array();
-        if (isset($dict[1]['/Kids'])) {
-            $v = $dict[1]['/Kids'];
-            if ($v[0] == PDF_TYPE_ARRAY) {
-                foreach ($v[1] as $ref) {
-                    $page = $this->getObjectVal($ref);
-                    $this->readPage($page);
-                }
+        // @CHANGE DOL /Kids may be an indirect reference to the array, and the tree may loop back on itself
+        $seen = array();
+        $kids = $this->getKids($dict[1]);
+        if ($kids !== null) {
+            foreach ($kids as $ref) {
+                $page = $this->getObjectVal($ref);
+                $this->readPage($page, $seen);
             }
         }
 
@@ -293,15 +306,48 @@ class tcpdi_parser {
     }
 
     /**
+     * Get the list of references of the /Kids entry of a /Pages dictionary.
+     * @CHANGE DOL New method: /Kids may be an indirect reference to the array, as any value of a dictionary may be.
+     *
+     * @param array $dict Content of the dictionary
+     * @return array|null List of references, null when there is no usable /Kids entry
+     */
+    private function getKids($dict) {
+        if (!isset($dict['/Kids'])) {
+            return null;
+        }
+        $kids = $dict['/Kids'];
+        if ($kids[0] == PDF_TYPE_OBJREF) {
+            $kids = $this->getObjectVal($kids);
+            $kids = isset($kids[1]) ? $kids[1] : null;
+        }
+        if (is_array($kids) && isset($kids[0]) && $kids[0] == PDF_TYPE_ARRAY && isset($kids[1]) && is_array($kids[1])) {
+            return $kids[1];
+        }
+        return null;
+    }
+
+    /**
      * Read a single /Page element, recursing through /Kids if necessary
      *
      */
-    private function readPage($page) {
-        if (isset($page[1][1]['/Kids'])) {
+    private function readPage($page, &$seen = array()) {
+        if (!isset($page[1][1]) || !is_array($page[1][1])) {
+            // @CHANGE DOL Not a dictionary (unresolved reference): this is not a page
+            return;
+        }
+        $kids = $this->getKids($page[1][1]);    // @CHANGE DOL
+        if ($kids !== null) {
             // Nested pages!
-            foreach ($page[1][1]['/Kids'][1] as $subref) {
+            foreach ($kids as $subref) {
+                // @CHANGE DOL Do not follow a page tree that loops back on itself
+                $id = (isset($subref[1]) ? $subref[1] : '').'_'.(isset($subref[2]) ? $subref[2] : '');
+                if (isset($seen[$id])) {
+                    continue;
+                }
+                $seen[$id] = true;
                 $subpage = $this->getObjectVal($subref);
-                $this->readPage($subpage);
+                $this->readPage($subpage, $seen);
             }
         } else {
             $this->pages[] = $page;
@@ -345,11 +391,34 @@ class tcpdi_parser {
         }
         unset($matches);
 
-        // DOMPDF gets the startxref wrong, giving us the linebreak before the xref starts.
-        $startxref += strspn($this->pdfdata, "\r\n", $startxref);
+        // @CHANGE DOL Check that the offset is inside the file and really is the start of a xref section (table or
+        // stream). With PHP 8, strpos() throws a ValueError on an offset beyond the end of the data.
+        $startxref = (int) $startxref;
+        $pdflen = strlen($this->pdfdata);
+        if ($startxref < $pdflen) {
+            // DOMPDF gets the startxref wrong, giving us the linebreak before the xref starts.
+            $startxref += strspn($this->pdfdata, "\x00\x09\x0a\x0c\x0d\x20", $startxref);
+        }
+        $isxreftable = ($startxref < $pdflen && substr($this->pdfdata, $startxref, 4) === 'xref');
+        $isxrefstream = (!$isxreftable && $startxref < $pdflen && preg_match('/\G[0-9]+[\s]+[0-9]+[\s]+obj/', $this->pdfdata, $matches, 0, $startxref) == 1);
+        if (!$isxreftable && !$isxrefstream) {
+            if ($offset != 0) {
+                // A previous xref section that can not be found: keep what the newer sections gave.
+                return $xref;
+            }
+            // The startxref of the file is wrong: fall back on the last xref table of the file, if any.
+            if (preg_match_all('/[\r\n]xref[\s]*[\r\n]/', $this->pdfdata, $matches, PREG_OFFSET_CAPTURE) >= 1) {
+                $last = end($matches[0]);
+                $startxref = $last[1] + 1;
+                $isxreftable = true;
+            } else {
+                $this->Error('Unable to find xref');
+            }
+        }
+        unset($matches);
 
         // check xref position
-        if (strpos($this->pdfdata, 'xref', $startxref) == $startxref) {
+        if ($isxreftable) {
             // Cross-Reference
             $xref = $this->decodeXref($startxref, $xref);
         } else {
@@ -422,6 +491,9 @@ class tcpdi_parser {
                 }
                 if (preg_match('/Encrypt[\s]+([0-9]+)[\s]+([0-9]+)[\s]+R/i', $trailer_data, $matches) > 0) {
                     $xref['trailer'][1]['/Encrypt'] = array(PDF_TYPE_OBJREF, intval($matches[1]), intval($matches[2]));
+                } elseif (preg_match('/\/Encrypt[\s]*<</', $trailer_data) > 0) {
+                    // @CHANGE DOL the encryption dictionary written in place in the trailer
+                    $xref['trailer'][1]['/Encrypt'] = array(PDF_TYPE_DICTIONARY, array());
                 }
                 if (preg_match('/Info[\s]+([0-9]+)[\s]+([0-9]+)[\s]+R/i', $trailer_data, $matches) > 0) {
                     $xref['trailer'][1]['/Info'] = array(PDF_TYPE_OBJREF, intval($matches[1]), intval($matches[2]));
@@ -520,6 +592,7 @@ class tcpdi_parser {
                     case '/Root':
                     case '/Info':
                     case '/ID':
+                    case '/Encrypt':	// @CHANGE DOL the cross-reference stream of an encrypted document holds it too
                         $xref['trailer'][1][$key] = $v;
                         break;
                     default:
@@ -682,19 +755,61 @@ class tcpdi_parser {
     /**
      * Get raw stream data
      * @param $offset (int) Stream offset.
-     * @param $length (int) Stream length.
-     * @return string Steam content
+     * @param $sdic (array) Stream's dictionary array.
+     * @return array containing the stream and the offset to the next object
      * @protected
      */
-    protected function getRawStream($offset, $length) {
+    protected function getRawStream($offset, $sdic) {
+        $pdflen = strlen($this->pdfdata);
         $offset += strspn($this->pdfdata, "\x00\x09\x0a\x0c\x0d\x20", $offset);
         $offset += 6; // "stream"
-        $offset += strspn($this->pdfdata, "\x20", $offset);
-        $offset += strspn($this->pdfdata, "\r\n", $offset);
+        // @CHANGE DOL The keyword is followed by ONE end-of-line marker (CRLF or LF, a lone CR is tolerated). Every CR and
+        // LF was skipped, so a stream whose data starts with such a byte lost its first bytes and the parser lost its way.
+        $spaces = strspn($this->pdfdata, "\x09\x20", $offset);
+        if ($spaces > 0 && isset($this->pdfdata[$offset + $spaces]) && ($this->pdfdata[$offset + $spaces] === "\r" || $this->pdfdata[$offset + $spaces] === "\n")) {
+            $offset += $spaces;
+        }
+        if (substr($this->pdfdata, $offset, 2) === "\r\n") {
+            $offset += 2;
+        } elseif (isset($this->pdfdata[$offset]) && ($this->pdfdata[$offset] === "\n" || $this->pdfdata[$offset] === "\r")) {
+            $offset += 1;
+        }
+
+        // @CHANGE DOL Get the declared length. It may be an indirect object, that may not be found.
+        $length = null;
+        if (isset($sdic['/Length'])) {
+            $lengthobj = $sdic['/Length'];
+            if ($lengthobj[0] === PDF_TYPE_OBJREF) {
+                $lengthobj = $this->getObjectVal($lengthobj);
+                if ($lengthobj[0] === PDF_TYPE_OBJECT && isset($lengthobj[1]) && is_array($lengthobj[1])) {
+                    $lengthobj = $lengthobj[1];
+                }
+            }
+            if (isset($lengthobj[0]) && $lengthobj[0] === PDF_TYPE_NUMERIC && is_numeric($lengthobj[1])) {
+                $length = (int) $lengthobj[1];
+            }
+        }
+        // @CHANGE DOL Trust the declared length only if the stream really ends there, else look for the end of the stream.
+        // The number of the object holding the length was used as the length when this object was not found.
+        if ($length === null || $length < 0 || ($offset + $length) > $pdflen || preg_match('/\G[\s]*endstream/', $this->pdfdata, $unused, 0, $offset + $length) != 1) {
+            $end = ($offset <= $pdflen) ? strpos($this->pdfdata, 'endstream', $offset) : false;
+            if ($end === false) {
+                $this->Error('Unable to find the end of a stream');
+                $end = $pdflen;
+            }
+            $length = $end - $offset;
+            // remove the end-of-line marker before the keyword, it is not part of the data
+            if ($length > 0 && $this->pdfdata[$offset + $length - 1] === "\n") {
+                $length--;
+            }
+            if ($length > 0 && $this->pdfdata[$offset + $length - 1] === "\r") {
+                $length--;
+            }
+        }
 
         $obj = array();
         $obj[] = PDF_TYPE_STREAM;
-        $obj[] = substr($this->pdfdata, $offset, $length);
+        $obj[] = (string) substr($this->pdfdata, $offset, $length);
 
         return array($obj, $offset+$length);
     }
@@ -952,44 +1067,78 @@ class tcpdi_parser {
             $this->Error('Invalid object reference: '.$obj);
             return;
         }
-        $objref = $obj[0].' '.$obj[1].' obj';
-
-        if (strpos($this->pdfdata, $objref, $offset) != $offset) {
+        // @CHANGE DOL Accept any white space between the object number, the generation number and the keyword
+        $headerlen = $this->matchObjectHeader($obj[0], $obj[1], $offset);
+        if ($headerlen === false) {
             // an indirect reference to an undefined object shall be considered a reference to the null object
             return array('null', 'null', $offset);
         }
         // starting position of object content
-        $offset += strlen($objref);
+        $offset += $headerlen;
+        $pdflen = strlen($this->pdfdata);
         // get array of object content
         $objdata = array();
         $i = 0; // object main index
         do {
-            if (($i > 0) AND (isset($objdata[($i - 1)][0])) AND ($objdata[($i - 1)][0] == PDF_TYPE_DICTIONARY) AND array_key_exists('/Length', $objdata[($i - 1)][1])) {
-                // Stream - get using /Length in stream's dict
-                $lengthobj = $objdata[($i-1)][1]['/Length'];
-                if ($lengthobj[0] === PDF_TYPE_OBJREF) {
-                    $lengthobj = $this->getObjectVal($lengthobj);
-                    if ($lengthobj[0] === PDF_TYPE_OBJECT) {
-                        $lengthobj = $lengthobj[1];
-                    }
-                }
-                $streamlength = $lengthobj[1];
-                list($element, $offset) = $this->getRawStream($offset, $streamlength);
+            // @CHANGE DOL A dictionary is the dictionary of a stream if it is followed by the keyword "stream", not if
+            // it has a /Length entry: other dictionaries have one too (the encryption dictionary for example).
+            if (($i > 0) AND (isset($objdata[($i - 1)][0])) AND ($objdata[($i - 1)][0] === PDF_TYPE_DICTIONARY) AND $this->isStreamKeyword($offset)) {
+                list($element, $offset) = $this->getRawStream($offset, $objdata[($i - 1)][1]);
             } else {
                 // get element
                 list($element, $offset) = $this->getRawObject($offset);
             }
             // decode stream using stream's dictionary information
-            if ($decoding AND ($element[0] == PDF_TYPE_STREAM) AND (isset($objdata[($i - 1)][0])) AND ($objdata[($i - 1)][0] == PDF_TYPE_DICTIONARY)) {
+            if ($decoding AND ($element[0] === PDF_TYPE_STREAM) AND (isset($objdata[($i - 1)][0])) AND ($objdata[($i - 1)][0] === PDF_TYPE_DICTIONARY)) {
                 $element[3] = $this->decodeStream($objdata[($i - 1)][1], $element[1]);
             }
             $objdata[$i] = $element;
             ++$i;
-        } while ($element[0] != 'endobj');
+            // @CHANGE DOL Stop at the end of the data too
+        } while (($element[0] !== 'endobj') AND ($element[0] !== 'eof') AND ($offset < $pdflen));
         // remove closing delimiter
-        array_pop($objdata);
+        if (($element[0] === 'endobj') OR ($element[0] === 'eof')) {
+            array_pop($objdata);
+        }
         // return raw object content
         return $objdata;
+    }
+
+    /**
+     * Tell if the keyword "stream" is the next thing to read.
+     * @CHANGE DOL New method.
+     *
+     * @param $offset (int) Offset in the document
+     * @return bool
+     */
+    private function isStreamKeyword($offset) {
+        $pdflen = strlen($this->pdfdata);
+        if ($offset >= $pdflen) {
+            return false;
+        }
+        $offset += strspn($this->pdfdata, "\x00\x09\x0a\x0c\x0d\x20", $offset);
+        return (($offset + 6) <= $pdflen && substr_compare($this->pdfdata, 'stream', $offset, 6) === 0);
+    }
+
+    /**
+     * Check that an object starts at a given offset, and give the length of its header ("12 0 obj").
+     * @CHANGE DOL New method. The header was compared to the string "$num $gen obj": the objects of a file that separates
+     * them with something else than one space ("12         0 obj", or a line break) were never found.
+     *
+     * @param $num (int) Object number
+     * @param $gen (int) Generation number
+     * @param $offset (int) Offset in the document
+     * @return int|false Length of the header, false if this object does not start at this offset
+     */
+    private function matchObjectHeader($num, $gen, $offset) {
+        if (!is_numeric($offset) || $offset < 0 || $offset >= strlen($this->pdfdata)) {
+            // with PHP 8, the string functions throw a ValueError on an offset out of the data
+            return false;
+        }
+        if (preg_match('/\G'.intval($num).'[\s]+'.intval($gen).'[\s]+obj/', $this->pdfdata, $matches, 0, (int) $offset) == 1) {
+            return strlen($matches[0]);
+        }
+        return false;
     }
 
     /**
@@ -1060,10 +1209,12 @@ class tcpdi_parser {
         }
         $stream = $this->decodeStream($obj[1][1], $obj[2][1]);// Decode object stream, as we need the first bit
         $first = intval($obj[1][1]['/First'][1]);
-        $ints = preg_split('/\s/', substr($stream[0], 0, $first)); // Get list of object / offset pairs
-        for ($j=1; $j<count($ints); $j++) {
-            if (($j % 2) == 1) {
-                $this->objstreamobjs[$ints[$j-1]] = array($key, $ints[$j]+$first);
+        // @CHANGE DOL Get list of object / offset pairs. They may be separated by any number of white space chars, the
+        // split on each single one gave empty values (then a TypeError) with a CRLF or two spaces.
+        $ints = preg_split('/[\s]+/', trim(substr($stream[0], 0, $first)));
+        for ($j=1; $j<count($ints); $j+=2) {
+            if (is_numeric($ints[$j-1]) && is_numeric($ints[$j])) {
+                $this->objstreamobjs[(int) $ints[$j-1]] = array($key, ((int) $ints[$j]) + $first);
             }
         }
 
@@ -1087,7 +1238,8 @@ class tcpdi_parser {
                     // Contained within another stream, skip it.
                     continue;
                 }
-                $this->objoffsets[trim($match[0])] = $offset;
+                // @CHANGE DOL the key is always "num gen obj", whatever separates the numbers in the file
+                $this->objoffsets[intval($matches[1][$i][0]).' '.intval($matches[2][$i][0]).' obj'] = $offset;
                 $dictoffset = $match[1] + strlen($match[0]);
                 $dictfrag = substr($this->pdfdata, $dictoffset, 256);
                 if (preg_match('|^\s+<<[^>]+/Length\s+(\d+)|', $dictfrag, $lengthmatch, PREG_OFFSET_CAPTURE) == 1) {
@@ -1111,13 +1263,13 @@ class tcpdi_parser {
      * @private
      */
     private function findObjectOffset($key) {
-        $objref = $key[0].' '.$key[1].' obj';
+        $objref = intval($key[0]).' '.intval($key[1]).' obj';	// @CHANGE DOL normalized key
         if (isset($this->xref['xref'][$key[0]][$key[1]])) {
             $offset = $this->xref['xref'][$key[0]][$key[1]];
-            if (strpos($this->pdfdata, $objref, $offset) === $offset) {
+            if ($this->matchObjectHeader($key[0], $key[1], $offset) !== false) {	// @CHANGE DOL
                 // Offset is in xref table and matches actual position in file
                 //echo "Offset in XREF is correct, returning<br>";
-                return $this->xref['xref'][$key[0]][$key[1]];
+                return $offset;
             }
         }
         if (array_key_exists($objref, $this->objoffsets)) {
@@ -1163,13 +1315,44 @@ class tcpdi_parser {
         $remaining_filters = array();
         foreach ($filters as $filter) {
             if (in_array($filter, $this->FilterDecoders->getAvailableFilters())) {
-                $stream = $this->FilterDecoders->decodeFilter($filter, $stream);
+                $stream = $this->decodeFilter($filter, $stream);	// @CHANGE DOL
             } else {
                 // add missing filter to array
                 $remaining_filters[] = $filter;
             }
         }
         return array($stream, $remaining_filters);
+    }
+
+    /**
+     * Decode data with a filter.
+     * @CHANGE DOL New method. A FlateDecode stream that has no end marker (the writer did not flush it, or the declared
+     * length is too short) is refused by gzuncompress() but opens in every PDF reader: decode what is there.
+     *
+     * @param $filter (string) Name of the filter
+     * @param $stream (string) Data to decode
+     * @return string Decoded data
+     */
+    private function decodeFilter($filter, $stream) {
+        if ($filter == 'FlateDecode') {
+            if ($stream === '') {
+                return '';
+            }
+            $decoded = @gzuncompress($stream);
+            if ($decoded === false) {
+                if (function_exists('inflate_init')) {
+                    $context = @inflate_init(ZLIB_ENCODING_DEFLATE);
+                    if ($context !== false) {
+                        $decoded = @inflate_add($context, $stream, ZLIB_SYNC_FLUSH);
+                    }
+                }
+                if ($decoded === false) {
+                    $this->Error('decodeFilterFlateDecode: invalid code');
+                }
+            }
+            return $decoded;
+        }
+        return $this->FilterDecoders->decodeFilter($filter, $stream);
     }
 
 
@@ -1219,7 +1402,7 @@ class tcpdi_parser {
                 return false;
             } else {
                 $res = $this->_getPageResources($obj[1][1]['/Parent']);
-                if ($res[0] == PDF_TYPE_OBJECT)
+                if (is_array($res) && $res[0] == PDF_TYPE_OBJECT)    // @CHANGE DOL false when no node of the tree has any
                     return $res[1];
                 return $res;
             }
@@ -1257,6 +1440,10 @@ class tcpdi_parser {
             }
         }
 
+        if (!is_array($annots)) {
+            // @CHANGE DOL no annotation on this page nor on any node above it
+            return false;
+        }
         if ($annots[0] == PDF_TYPE_OBJREF)
             return $this->getObjectVal($annots);
         return $annots;
@@ -1337,7 +1524,7 @@ class tcpdi_parser {
         $stream = $obj[2][1];
 
         foreach ($filters AS $_filter) {
-            $stream = $this->FilterDecoders->decodeFilter($_filter[1], $stream);
+            $stream = $this->decodeFilter($_filter[1], $stream);	// @CHANGE DOL
         }
 
         return $stream;

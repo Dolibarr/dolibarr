@@ -85,6 +85,10 @@ class Documents extends DolibarrApi
 		if ($modulepart == 'task' || $modulepart == 'project_task') {
 			$modulepart = 'project_task';
 		}
+		// 'agenda' uses the generic case of dol_check_secure_access_document() that only allows admins. Other users need the agenda permissions of 'actions'.
+		if ($modulepart == 'agenda' && empty(DolibarrApiAccess::$user->admin)) {
+			$modulepart = 'actions';
+		}
 
 		//--- Finds and returns the document
 		$entity = $conf->entity;
@@ -512,6 +516,12 @@ class Documents extends DolibarrApi
 		if ($object->element == 'invoice_supplier' && $object->id > 0) {
 			// Supplier invoices are stored under a hashed subdir, as in the other methods of this file
 			$upload_dir = getMultidirOutput($object).'/'.get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').dol_sanitizeFileName($object->ref);
+		} elseif ($object->element == 'mo') {
+			// The element of a manufacturing order is 'mo' but its module is 'mrp', as in mrp/mo_document.php
+			$upload_dir = (string) getMultidirOutput($object, 'mrp', 1);
+		} elseif ($object->element == 'contact' && $object->id > 0) {
+			// Contacts are stored into a subdir of the module of third parties, as in contact/document.php
+			$upload_dir = getMultidirOutput($object, 'societe').'/contact/'.dol_sanitizeFileName($object->ref);
 		} else {
 			$upload_dir = (string) getMultidirOutput($object, '', 1);
 		}
@@ -982,7 +992,8 @@ class Documents extends DolibarrApi
 				require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 				$object = new Propal($this->db);
 			} elseif ($modulepart == 'agenda' || $modulepart == 'action' || $modulepart == 'event') {
-				$modulepart = 'agenda';
+				// 'agenda' uses the generic case of dol_check_secure_access_document() that only allows admins. Other users need the agenda permissions of 'actions'.
+				$modulepart = (empty(DolibarrApiAccess::$user->admin) ? 'actions' : 'agenda');
 				require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
 				$object = new ActionComm($this->db);
 			} elseif ($modulepart == 'contact' || $modulepart == 'socpeople') {
@@ -1080,6 +1091,10 @@ class Documents extends DolibarrApi
 			}
 			if ($modulepart == 'member') {
 				$modulepart = 'adherent';
+			}
+			// 'agenda' uses the generic case of dol_check_secure_access_document() that only allows admins. Other users need the agenda permissions of 'actions'.
+			if ($modulepart == 'agenda' && empty(DolibarrApiAccess::$user->admin)) {
+				$modulepart = 'actions';
 			}
 
 			// Test on permissions
@@ -1276,6 +1291,10 @@ class Documents extends DolibarrApi
 		// Normalize modulepart for project_task
 		if ($modulepart == 'task') {
 			$modulepart = 'project_task';
+		}
+		// 'agenda' uses the generic case of dol_check_secure_access_document() that only allows admins. Other users need the agenda permissions of 'actions'.
+		if ($modulepart == 'agenda' && empty(DolibarrApiAccess::$user->admin)) {
+			$modulepart = 'actions';
 		}
 
 		//--- Finds and returns the document

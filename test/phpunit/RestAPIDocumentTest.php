@@ -231,6 +231,20 @@ class RestAPIDocumentTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * Check a file can be downloaded with its path relative to the directory of the modulepart
+	 *
+	 * @param string	$modulepart		Modulepart
+	 * @param string	$originalfile	Path of the file, relative to the directory of the modulepart
+	 * @return void
+	 */
+	private function assertDocumentDownloaded($modulepart, $originalfile)
+	{
+		$result = $this->callApi('GET', 'documents/download?modulepart='.$modulepart.'&original_file='.urlencode($originalfile), $this->api_key);
+		$this->assertEquals(200, $result['code'], "Download of $originalfile with $modulepart must work: ".var_export($result, true));
+		$this->assertEquals('content text', base64_decode($result['content']['content']), "Download of $originalfile with $modulepart must return the content of the file");
+	}
+
+	/**
 	 * A user without the permission to see all third parties lists the documents of the interventions
 	 * of their third parties only.
 	 *
@@ -292,6 +306,49 @@ class RestAPIDocumentTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * The directory of a manufacturing order is into the directory of module mrp, but its element is 'mo':
+	 * the directory scanned was the error string of getMultidirOutput() (error 404).
+	 *
+	 * @return void
+	 */
+	public function testListDocumentsOfManufacturingOrder()
+	{
+		global $conf;
+
+		$id = $this->createObject('mos', array("ref" => "auto", "mrptype" => 0, "fk_product" => 1, "qty" => 1, "status" => 0));
+
+		$result = $this->callApi('GET', 'mos/'.$id, $this->api_key);
+		$this->assertEquals(200, $result['code'], 'Manufacturing order must be found');
+		$ref = $result['content']['ref'];
+
+		$this->addFile($conf->mrp->dir_output.'/'.dol_sanitizeFileName($ref), 'mo.txt');
+
+		$this->assertDocumentListed('modulepart=mrp&id='.$id, $this->api_key, 'mo.txt');
+		$this->assertDocumentListed('modulepart=mrp&ref='.urlencode($ref), $this->api_key, 'mo.txt');
+		$this->assertDocumentDownloaded('mrp', dol_sanitizeFileName($ref).'/mo.txt');
+	}
+
+	/**
+	 * The directory of a contact is into the directory of third parties: there is no directory for
+	 * a module 'contact', so the directory scanned was an error string (error 404).
+	 *
+	 * @return void
+	 */
+	public function testListDocumentsOfContact()
+	{
+		global $conf;
+
+		$id = $this->createObject('contacts', array("lastname" => "testRestDocument".mt_rand()));
+
+		$this->addFile($conf->societe->dir_output.'/contact/'.$id, 'contact.txt');
+
+		foreach (array('contact', 'socpeople') as $modulepart) {
+			$this->assertDocumentListed('modulepart='.$modulepart.'&id='.$id, $this->api_key, 'contact.txt');
+		}
+		$this->assertDocumentDownloaded('contact', $id.'/contact.txt');
+	}
+
+	/**
 	 * A user without the permission to read users lists their own documents by ref, but not the ones of another user.
 	 *
 	 * @return void
@@ -305,6 +362,34 @@ class RestAPIDocumentTest extends AbstractRestAPITest
 
 		$this->assertDocumentListed('modulepart=user&ref='.urlencode($restricteduser['login']), $restricteduser['apikey'], 'fileofuser.txt');
 		$this->assertDocumentRefused('modulepart=user&ref=admin', $restricteduser['apikey']);
+	}
+
+	/**
+	 * testAgendaModulepartAliases
+	 *
+	 * The aliases of modulepart for events must return a REST error on a file that does not exist, and not stop on an HTML error page.
+	 *
+	 * @return void
+	 */
+	public function testAgendaModulepartAliases()
+	{
+		if (!isModEnabled('agenda')) {
+			return;
+		}
+
+		foreach (array('action', 'event', 'agenda') as $modulepart) {
+			$param = 'modulepart='.urlencode($modulepart).'&original_file='.urlencode('tmpphpunit/notexistingfile.pdf').'&api_key='.$this->api_key;
+
+			foreach (array('GET' => '/documents/download', 'DELETE' => '/documents') as $method => $route) {
+				$url = $this->api_url.$route.'?'.$param;
+				echo __METHOD__.' Request '.$method.' url='.$url."\n";
+
+				$result = getURLContent($url, $method, '', 1, array(), array('http', 'https'), 2);
+				$object = json_decode($result['content'], true);
+				$this->assertNotNull($object, "$method $route with modulepart $modulepart must return json");
+				$this->assertEquals(404, $result['http_code'], "$method $route with modulepart $modulepart on a not found file must return 404");
+			}
+		}
 	}
 
 	/**
@@ -415,5 +500,34 @@ class RestAPIDocumentTest extends AbstractRestAPITest
 		dol_delete_dir_recursive(DOL_DATA_ROOT.'/medias/tmpphpunit', 0, 0, 0, $countdeleted, 0);
 
 		return 0;
+	}
+
+	/**
+	 * testModulepartAliases
+	 *
+	 * The aliases of modulepart must return a REST error on a file that does not exist, and not stop on an HTML error page.
+	 *
+	 * @return void
+	 */
+	public function testModulepartAliases()
+	{
+		$aliases = array('intervention' => 'ficheinter', 'proposal' => 'propal');
+
+		foreach ($aliases as $modulepart => $module) {
+			if (!isModEnabled($module)) {
+				continue;
+			}
+			$param = 'modulepart='.urlencode($modulepart).'&original_file='.urlencode('tmpphpunit/notexistingfile.pdf').'&api_key='.$this->api_key;
+
+			foreach (array('GET' => '/documents/download', 'DELETE' => '/documents') as $method => $route) {
+				$url = $this->api_url.$route.'?'.$param;
+				echo __METHOD__.' Request '.$method.' url='.$url."\n";
+
+				$result = getURLContent($url, $method, '', 1, array(), array('http', 'https'), 2);
+				$object = json_decode($result['content'], true);
+				$this->assertNotNull($object, "$method $route with modulepart $modulepart must return json");
+				$this->assertEquals(404, $result['http_code'], "$method $route with modulepart $modulepart on a not found file must return 404");
+			}
+		}
 	}
 }
