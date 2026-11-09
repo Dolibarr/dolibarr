@@ -41,6 +41,11 @@ class mod_reception_beryl extends ModelNumRefReception
 	 */
 	public $nom = 'Beryl';
 
+	/**
+	 * @var int		Position
+	 */
+	public $position = 10;
+
 
 	/**
 	 *	Return default description of numbering model

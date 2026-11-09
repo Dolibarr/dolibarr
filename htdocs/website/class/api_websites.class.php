@@ -331,6 +331,138 @@ class Websites extends DolibarrApi
 	}
 
 	/**
+	 * Create a website page
+	 *
+	 * Create a new page (or blog post with type_container = 'blogpost') into a website.
+	 * The request data can include any field of the website_page table (pageurl and title are mandatory).
+	 *
+	 * @param   int     $id             ID of website
+	 * @param   array   $request_data   Page data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 * @return  int						ID of the new page
+	 *
+	 * @url     POST {id}/pages
+	 *
+	 * @throws  RestException   400     Bad or missing value for a field
+	 * @throws  RestException   403     Access denied
+	 * @throws  RestException   404     Website not found
+	 * @throws  RestException   409     A page with this pageurl already exists
+	 * @throws  RestException   500     Error creating page
+	 */
+	public function postPage($id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('website', 'write')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->website->fetch($id);
+		if ($result <= 0) {
+			throw new RestException(404, 'Website not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('website', $this->website->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$this->websitepage = new WebsitePage($this->db);
+
+		// Apply request data to the page object
+		foreach ((array) $request_data as $field => $value) {
+			if ($field == 'id' || $field == 'rowid' || $field == 'fk_website') {
+				continue;
+			}
+			if ($field == 'image') {
+				continue;	// The image used by the CMS is the one found into the content
+			}
+			if ($field === 'caller') {
+				$this->websitepage->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->websitepage->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->websitepage);
+				}
+				continue;
+			}
+			if ($field == 'content') {
+				// Security: PHP content can't be added through the API (the HTML sanitizer would also silently remove it)
+				$this->websitepage->content = $this->_checkPageContentForAPI($value, '');
+				continue;
+			}
+			$this->websitepage->$field = $this->_checkValForAPI($field, $value, $this->websitepage);
+		}
+
+		$this->websitepage->fk_website = $this->website->id;
+		if (empty($this->websitepage->type_container)) {
+			$this->websitepage->type_container = 'page';
+		}
+		if (!isset($request_data['status'])) {
+			$this->websitepage->status = WebsitePage::STATUS_DRAFT;
+		}
+		if (is_null($this->websitepage->aliasalt)) {
+			$this->websitepage->aliasalt = '';	// Field is notnull (same default as web interface)
+		}
+		$this->websitepage->pageurl = preg_replace('/\.php$/i', '', trim((string) $this->websitepage->pageurl));
+		$this->websitepage->ref = $this->websitepage->pageurl;
+
+		// Check mandatory fields (same rules than web interface)
+		if (empty($this->websitepage->pageurl)) {
+			throw new RestException(400, 'Field pageurl is mandatory');
+		}
+		if (!preg_match('/^[a-z0-9\-\_]+$/i', $this->websitepage->pageurl) || preg_match('/^page\d+/i', $this->websitepage->pageurl)) {
+			throw new RestException(400, 'Field pageurl must contain only a-z, 0-9, - and _ characters and must not be pageX');
+		}
+		if (empty($this->websitepage->title)) {
+			throw new RestException(400, 'Field title is mandatory');
+		}
+
+		// Check there is no other page with the same name or alias
+		$websitepagetemp = new WebsitePage($this->db);
+		$result = $websitepagetemp->fetch(0, (string) $this->website->id, $this->websitepage->pageurl);
+		if ($result < 0) {
+			throw new RestException(500, $websitepagetemp->errorsToString());
+		}
+		if ($result > 0) {
+			throw new RestException(409, 'A page with this pageurl already exists in this website');
+		}
+
+		// Clean data: remove head section from content (same as web interface)
+		$this->websitepage->content = preg_replace('/<head>.*<\/head>/ims', '', (string) $this->websitepage->content);
+
+		// A blog post gets the header and footer containers of its language, and its structured data
+		$phpwrappers = array();
+		if ($this->websitepage->type_container == 'blogpost') {
+			$phpwrappers = $this->_addBlogpostWrappers($this->website, $this->websitepage);
+		}
+
+		// Create the page in database
+		$pageid = $this->websitepage->create(DolibarrApiAccess::$user, 0, $phpwrappers);
+		if ($pageid <= 0) {
+			throw new RestException(500, $this->websitepage->errorsToString());
+		}
+
+		// Regenerate static files on disk (same as web interface in index.php)
+		$this->_regeneratePageFiles($this->website, $this->websitepage);
+
+		// If there is no home page yet, this new page is set as the home page (same as web interface)
+		if (empty($this->website->fk_default_home)) {
+			$this->website->fk_default_home = $pageid;
+			$result = $this->website->update(DolibarrApiAccess::$user);
+			if ($result > 0) {
+				global $conf, $dolibarr_main_data_root;
+
+				$pathofwebsite = $dolibarr_main_data_root.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.$this->website->ref;
+				dolSaveIndexPage($pathofwebsite, $pathofwebsite.'/index.php', $pathofwebsite.'/page'.$pageid.'.tpl.php', $pathofwebsite.'/wrapper.php', $this->website);
+			} else {
+				dol_syslog("Failed to set the default home page of website ".$this->website->ref, LOG_WARNING);
+			}
+		}
+
+		return $pageid;
+	}
+
+	/**
 	 * Update a website page
 	 *
 	 * Update a page of a website by its ID. The request data can include any field
@@ -384,6 +516,9 @@ class Websites extends DolibarrApi
 			if ($field == 'id' || $field == 'rowid') {
 				continue;
 			}
+			if ($field == 'image') {
+				continue;	// The image used by the CMS is the one found into the content
+			}
 			if ($field == 'fk_website') {
 				// Do not allow changing the website ownership of a page via this endpoint
 				continue;
@@ -398,15 +533,12 @@ class Websites extends DolibarrApi
 				}
 				continue;
 			}
-			$this->websitepage->$field = $this->_checkValForAPI($field, $value, $this->websitepage);
-		}
-
-		// Security: check PHP content if user does not have writephp permission
-		$phpfullcodestring = dolKeepOnlyPhpCode($this->websitepage->content);
-		if ($phpfullcodestringold != $phpfullcodestring) {
-			if (!DolibarrApiAccess::$user->hasRight('website', 'writephp')) {
-				throw new RestException(403, 'NotAllowedToAddDynamicContent');
+			if ($field == 'content') {
+				// Security: PHP content can't be added or modified through the API, only kept unchanged
+				$this->websitepage->content = $this->_checkPageContentForAPI($value, $phpfullcodestringold);
+				continue;
 			}
+			$this->websitepage->$field = $this->_checkValForAPI($field, $value, $this->websitepage);
 		}
 
 		// Clean data: remove head section from content (same as web interface)
@@ -415,7 +547,7 @@ class Websites extends DolibarrApi
 		// Update the page in database
 		$result = $this->websitepage->update(DolibarrApiAccess::$user);
 		if ($result < 0) {
-			throw new RestException(500, $this->websitepage->error);
+			throw new RestException(500, $this->websitepage->errorsToString());
 		}
 
 		// Regenerate static files on disk (same as web interface in index.php)
@@ -539,6 +671,135 @@ class Websites extends DolibarrApi
 		}
 
 		return $this->_cleanObjectDatas($this->website);
+	}
+
+	/**
+	 * Refuse a page content containing javascript: a script tag, a 'javascript:' link or an 'on...=' event attribute
+	 * (the javascript dol_htmlwithnojs() removes).
+	 *
+	 * @param	string		$content		HTML content of page (without its PHP code)
+	 * @return	void
+	 *
+	 * @throws	RestException	400		Content contains javascript
+	 */
+	private function _checkNoJsInPageContentForAPI($content)
+	{
+		// We only look for non obfuscated javascript. Obfuscated javascript will be cleaned by the
+		// sanitizeVal 'restricthtmlallowclass' without a proper error message.
+		$jspattern = '/<script\b|javascript\s*:|\son[a-z]+\s*=/i';
+
+		if (preg_match_all($jspattern, $content) > 0) {
+			throw new RestException(400, 'The content contains javascript (script tag, javascript: link or on... event attribute): javascript is not allowed in a website page created or updated through the API. Remove it and retry.');
+		}
+	}
+
+	/**
+	 * Check and sanitize the content of a page received by the API.
+	 * PHP code can't be added or modified through the API, even with permission website->writephp. If the page
+	 * already contains PHP code, the content can be resubmitted only if this PHP code is kept unchanged.
+	 *
+	 * @param	mixed		$content				Content of page received by the API
+	 * @param	string		$phpfullcodestringold	PHP code of the current content of the page ('' for a new page)
+	 * @return	string								Sanitized content
+	 *
+	 * @throws	RestException	400		PHP code could not be preserved by the HTML sanitizer, or content contains javascript
+	 * @throws	RestException	403		Content contains new or modified PHP code
+	 */
+	private function _checkPageContentForAPI($content, $phpfullcodestringold)
+	{
+		if (is_array($content) || is_object($content)) {
+			throw new RestException(400, 'Field content must be a string');
+		}
+		$content = (string) $content;
+
+		$phpfullcodestring = dolKeepOnlyPhpCode($content);
+
+		// Removing all the PHP code is allowed. Adding or modifying PHP code is not.
+		if ($phpfullcodestring !== '' && $phpfullcodestring !== $phpfullcodestringold) {
+			if (!DolibarrApiAccess::$user->hasRight('website', 'writephp')) {
+				throw new RestException(403, 'Permission incomplete: you are not allowed to add or modify dynamic PHP content in a website page (permission website->writephp is required). Keep the existing PHP code unchanged.');
+			}
+			throw new RestException(403, 'Adding or modifying dynamic PHP content of a website page is not allowed through the API, even with the permission to edit PHP content. Use the website editor of the application to do it, or keep the existing PHP code unchanged.');
+		}
+
+		if ($phpfullcodestring === '') {
+			$this->_checkNoJsInPageContentForAPI($content);
+			// Keep the class attributes: the CSS of a website page relies on them
+			return (string) sanitizeVal($content, 'restricthtmlallowclass');
+		}
+
+		// PHP code is unchanged: protect the PHP blocks so the HTML sanitizer does not remove them, then restore them
+		$phpblocks = array();
+		$contentwithoutphp = '';
+		$parts = preg_split('/(<\?.*?(?:\?>|\z))/s', $content, -1, PREG_SPLIT_DELIM_CAPTURE);
+		foreach ((array) $parts as $i => $part) {
+			if ($i % 2) {	// Odd parts are the captured PHP blocks
+				$phpblocks[] = $part;
+				$contentwithoutphp .= 'DOLAPIPHPBLOCK'.(count($phpblocks) - 1).'DOLAPIPHPBLOCKEND';
+			} else {
+				$contentwithoutphp .= $part;
+			}
+		}
+		$this->_checkNoJsInPageContentForAPI($contentwithoutphp);
+		$newcontent = (string) sanitizeVal($contentwithoutphp, 'restricthtmlallowclass');
+		foreach ($phpblocks as $key => $phpblock) {
+			$newcontent = str_replace('DOLAPIPHPBLOCK'.$key.'DOLAPIPHPBLOCKEND', $phpblock, $newcontent);
+		}
+
+		// Final check: the PHP code of the content to save must be exactly the PHP code of the current page
+		if (dolKeepOnlyPhpCode($newcontent) !== $phpfullcodestringold) {
+			throw new RestException(400, 'The existing PHP code of the page could not be preserved by the HTML sanitizer of the API (PHP code is probably inside a forbidden HTML tag or attribute). Use the website editor of the application to update this page.');
+		}
+
+		return $newcontent;
+	}
+
+	/**
+	 * Wrap the content of a blog post with the header and footer containers and the structured data.
+	 * A container is included only if the website has exactly one container of this type in the language of the post.
+	 *
+	 * @param	Website		$website		Website
+	 * @param	WebsitePage	$websitepage	Blog post to complete (its content is modified)
+	 * @return	string[]					PHP wrappers added to the content (to pass to WebsitePage::create())
+	 */
+	private function _addBlogpostWrappers($website, $websitepage)
+	{
+		dol_syslog("_addBlogpostWrappers");
+
+		$pagelang = (string) (empty($websitepage->lang) ? $website->lang : $websitepage->lang);
+
+		$websitepagetemp = new WebsitePage($this->db);
+		$containers = $websitepagetemp->fetchAll($website->id, '', '', 0, 0, "((t.type_container:=:'header') OR (t.type_container:=:'footer'))");
+		if (!is_array($containers)) {
+			throw new RestException(500, $websitepagetemp->errorsToString());
+		}
+
+		// Keep the containers of the language of the post (an empty language is the main language of the website)
+		$found = array('header' => array(), 'footer' => array());
+		foreach ($containers as $container) {
+			$containerlang = (string) (empty($container->lang) ? $website->lang : $container->lang);
+			if ($containerlang == $pagelang) {
+				$found[$container->type_container][] = $container->pageurl;
+			}
+		}
+
+		$phpwrappers = array();
+
+		$content = (string) $websitepage->content;
+		if (count($found['header']) == 1 && strpos($content, "includeContainer('".$found['header'][0]."')") === false) {
+			$wrapper = "<?php includeContainer('".$found['header'][0]."'); ?>\n";
+			$content = $wrapper.$content;
+			$phpwrappers[] = $wrapper;
+		}
+		if (count($found['footer']) == 1 && strpos($content, "includeContainer('".$found['footer'][0]."')") === false) {
+			$wrapper = "\n<?php includeContainer('".$found['footer'][0]."'); ?>\n";
+			$content .= $wrapper;
+			$phpwrappers[] = $wrapper;
+		}
+
+		$websitepage->content = $content;
+
+		return $phpwrappers;
 	}
 
 	/**

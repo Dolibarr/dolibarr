@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("products", "categories", "errors", 'accountancy'));
+$langs->loadLangs(array("products", "categories", 'accountancy'));
 
 // Security pack (data & check)
 $socid = GETPOSTINT('socid');

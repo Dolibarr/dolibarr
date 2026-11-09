@@ -27,6 +27,7 @@ Earnings=Earnings
 TotalEarnings=Total earnings
 TotalDeductions=Total deductions
 NetPaid=Net paid
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Рахунок (з Плану рахунків), що використовується за замовчуванням для "користувачів" із зарплат
@@ -55,8 +56,6 @@ FillFieldFirst=Спочатку заповніть поле співробітн
 UpdateAmountWithLastSalary=Встановити розмір останньої зарплати
 MakeTransferRequest=Зробіть запит на переказ
 VirementOrder=Запит на кредитовий переказ
-WithdrawalReceipt=Доручення на кредитовий переказ
-OrderWaiting=Відкладене замовлення
 FillEndOfMonth=Кінець місяця
 
 # Shortcuts

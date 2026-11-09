@@ -3,7 +3,6 @@
 #
 # Global
 #
-Subtotal=Subtotales
 SubTotalModuleDesc=Subtotales y líneas de título para ciertos documentos
 #
 # Admin
@@ -12,12 +11,19 @@ SubtotalSetup=Configuración del módulo de subtotales
 MaxSubtotalLevel=Nivel máximo
 SubtotalLineBackColor=Color de fondo de las líneas de nivel %s
 NotSupportedByAllPDF=Funcionará con archivos PDF más nuevos, pero no con los antiguos. %s
+SubtotalsPredefinedTitles=Subtotals predefined titles
+SubtotalsPredefinedTexts=Subtotals predefined texts
+SubtotalTextColumnTitle=Texto largo
 
 #
 # Card
 #
 AddTitleLine=Añadir línea de título
 AddSubtotalLine=Agregar línea de subtotal
+AddTextLine=Add text line
+PredefinedTitle=Predefined title
+PredefinedText=Predefined text
+SubtotalTextContent=Text content
 TitleNeedDesc=Debe ingresar una descripción válida para crear un título.
 TitleAddedLevelTooHigh=Se agregó un nivel de título demasiado alto (en su lugar se agregó con el nivel %s).
 TitleEditedLevelTooHigh=El nivel del título editado es demasiado alto (en su lugar se editó con el nivel %s).

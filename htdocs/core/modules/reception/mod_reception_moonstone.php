@@ -39,6 +39,12 @@ class mod_reception_moonstone extends ModelNumRefReception
 	public $nom = 'Moonstone';
 
 	/**
+	 * @var int		Position
+	 */
+	public $position = 20;
+
+
+	/**
 	 *  Return default description of numbering model
 	 *
 	 *	@param	Translate	$langs      Lang object to use for output

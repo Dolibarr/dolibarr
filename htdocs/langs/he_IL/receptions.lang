@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=מאומת
 StatusReceptionProcessedShort=מעובד
 ReceptionSheet=גיליון קבלה
 ValidateReception=אימות קבלה
+DeleteReception=Delete reception
 ConfirmDeleteReception=האם אתה בטוח שברצונך למחוק את הקבלה הזו?
 ConfirmValidateReception=האם אתה בטוח שברצונך לאמת קבלה זו עם ההפניה <b>%s</b>?
 ConfirmCancelReception=האם אתה בטוח שברצונך לבטל קבלת פנים זו?

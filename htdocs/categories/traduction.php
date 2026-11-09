@@ -137,7 +137,10 @@ if (empty($reshook) && $action == 'vadd' && $cancel != $langs->trans("Cancel") &
 				$object->label = $label;
 				$object->description = dol_htmlcleanlastbr($desc);
 
-				$object->update($user);
+				$res = $object->update($user);
+				if ($res < 0) {
+					$error++;
+				}
 			} else {
 				$object->multilangs[$forcelangprod]["label"] = $label;
 				$object->multilangs[$forcelangprod]["description"] = dol_htmlcleanlastbr($desc);
@@ -176,7 +179,10 @@ if (empty($reshook) && $action == 'vedit' && $cancel != $langs->trans("Cancel") 
 		if ($key == $current_lang) {
 			$object->label       = $label;
 			$object->description = dol_htmlcleanlastbr($desc);
-			$object->update($user, 1);
+			$res = $object->update($user, 1);
+			if ($res < 0) {
+				$error++;
+			}
 		} else {
 			$object->multilangs[$key]["label"]       = $label;
 			$object->multilangs[$key]["description"] = dol_htmlcleanlastbr($desc);
@@ -207,7 +213,7 @@ $form      = new Form($db);
 $formadmin = new FormAdmin($db);
 $formother = new FormOther($db);
 
-llxHeader("", "", $langs->trans("Translation"));
+llxHeader("", $langs->trans("Translation"));
 
 $title = $langs->trans("Categories");
 $title .= ' ('.$langs->trans(empty(Categorie::$MAP_TYPE_TITLE_AREA[$type]) ? ucfirst($type) : Categorie::$MAP_TYPE_TITLE_AREA[$type]).')';
@@ -224,11 +230,11 @@ if (!empty($object->multilangs)) {
 
 print dol_get_fiche_head($head, 'translation', $langs->trans($title), -1, 'category');
 
-$backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/categories/categorie_list.php?leftmenu=cat&type='.urlencode($type));
+$backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : dolBuildUrl(DOL_URL_ROOT.'/categories/categorie_list.php', ['leftmenu' => 'cat', 'type' => $type]));
 $linkback = '<a href="'.dol_sanitizeUrl($backtolist).'">'.$langs->trans("BackToList").'</a>';
 $object->next_prev_filter = 'type:=:'.((int) $object->type);
 $object->ref = $object->label;
-$morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/categorie_list.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
+$morehtmlref = '<br><div class="refidno"><a href="'.dolBuildUrl(DOL_URL_ROOT.'/categories/categorie_list.php', ['leftmenu' => 'cat', 'type' => $type]).'">'.$langs->trans("Root").'</a> >> ';
 $ways = $object->print_all_ways("auto", '', 1);
 foreach ($ways as $way) {
 	$morehtmlref .= $way."<br>\n";

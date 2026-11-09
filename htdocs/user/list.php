@@ -400,7 +400,7 @@ $sql .= " u.fk_user,";
 $sql .= " u.ref_employee, u.national_registration_number, u.job, u.salary, u.thm, u.datelastlogin, u.datepreviouslogin,";
 $sql .= " u.datestartvalidity, u.dateendvalidity,";
 $sql .= " u.ldap_sid, u.statut as status, u.entity, u.import_key,";
-$sql .= " GREATEST(u.tms, ef.tms) as date_modification, u.datec as date_creation,";
+$sql .= " GREATEST(u.tms, COALESCE(ef.tms, u.tms)) as date_modification, u.datec as date_creation,";
 $sql .= " u2.rowid as id2, u2.login as login2, u2.firstname as firstname2, u2.lastname as lastname2, u2.admin as admin2, u2.fk_soc as fk_soc2, u2.office_phone as ofice_phone2, u2.user_mobile as user_mobile2, u2.email as email2, u2.gender as gender2, u2.photo as photo2, u2.entity as entity2, u2.statut as status2,";
 $sql .= " s.nom as name, s.canvas,";
 $sql .= " co.code as country_code, co.label as country_label";
@@ -786,7 +786,7 @@ if ($conf->main_checkbox_left_column) {
 	print '</td>';
 }
 if (!empty($arrayfields['u.rowid']['checked'])) {
-	print '<td class="liste_titre"><input type="text" name="search_rowid" class="maxwidth50" value="'.$search_rowid.'"></td>';
+	print '<td class="liste_titre center"><input class="searchstring width50" type="text" name="search_rowid" value="'.dolPrintLabelForAttribute($search_rowid).'"></td>';
 }
 if (!empty($arrayfields['u.login']['checked'])) {
 	print '<td class="liste_titre"><input type="text" name="search_login" class="maxwidth50" value="'.$search_login.'"></td>';
@@ -909,7 +909,7 @@ if ($conf->main_checkbox_left_column) {
 }
 if (!empty($arrayfields['u.rowid']['checked'])) {
 	// @phan-suppress-next-line PhanTypeInvalidDimOffset
-	print_liste_field_titre($arrayfields['u.rowid']['label'], $_SERVER['PHP_SELF'], "u.rowid", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['u.rowid']['label'], $_SERVER['PHP_SELF'], "u.rowid", "", $param, "", $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.login']['checked'])) {
@@ -1130,7 +1130,7 @@ while ($i < $imaxinloop) {
 		}
 		// TechnicalID
 		if (!empty($arrayfields['u.rowid']['checked'])) {
-			print '<td class="nowraponall">'.dolPrintHTML((string) $obj->rowid).'</td>';
+			print '<td class="center nowraponall">'.dolPrintHTML((string) $obj->rowid).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1361,13 +1361,7 @@ while ($i < $imaxinloop) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'u.salary';
 			}
-			if (!isset($totalarray['val'])) {
-				$totalarray['val'] = array();
-			}
-			if (!isset($totalarray['val']['u.salary'])) {
-				$totalarray['val']['u.salary'] = 0;
-			}
-			$totalarray['val']['u.salary'] += $obj->salary;
+			$totalarray['val']['u.salary'] = (float) $totalarray['val']['u.salary'] + (float) $obj->salary;
 		}
 
 		// Hourly rate

@@ -113,6 +113,7 @@ class CompanyPaymentMode extends CommonObject
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -2, 'position' => 20),
 		'tms' => array('type' => 'timestamp', 'label' => 'Tms', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 25),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'Import key', 'enabled' => 1, 'visible' => -2, 'position' => 105),
+		'extraparams' => array('type' => 'varchar(255)', 'label' => 'Extraparams', 'enabled' => 1, 'visible' => 0, 'position' => 106, 'notnull' => 0),
 		//'aaa' =>array('type'=>'date', 'label'=>'Ending date', 'enabled'=>0, 'visible'=>-2, 'position'=>185),
 	);
 

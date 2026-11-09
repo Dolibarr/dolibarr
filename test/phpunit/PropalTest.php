@@ -25,12 +25,11 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/comm/propal/class/propal.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/comm/propal/class/propal.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -266,7 +265,7 @@ class PropalTest extends CommonClassTest
 				'date', 'datec', 'datev', 'datep', 'date_creation', 'date_validation', 'date_lim_reglement', 'fin_validite', 'datem', 'date_modification',
 				'ref', 'statut', 'status', 'socid', 'billed', 'fk_incoterms', 'actiontypecode', 'actionmsg2', 'actionmsg',
 				'mode_reglement', 'cond_reglement', 'mode_reglement_code', 'cond_reglement_code', 'availability', 'availability_code', 'demand_reason', 'demand_reason_code',
-				'cond_reglement_doc', 'modelpdf', 'total',
+				'cond_reglement_doc', 'cond_reglement_label', 'modelpdf', 'total',
 				// Totals are ignored here: specimen lines reference random real products, and a kit/BOM product can
 				// expand into extra lines with a different amount - total correctness is checked by assertLineTotalsMatchHeader() instead.
 				'total_ht', 'total_tva', 'total_ttc', 'total_localtax1', 'total_localtax2',
@@ -326,5 +325,55 @@ class PropalTest extends CommonClassTest
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 		return $result;
+	}
+
+	/**
+	 * testPropalAddlinePackaging
+	 *
+	 * With PRODUCT_USE_CUSTOMER_PACKAGING, a quantity already multiple of the packaging must not be rounded
+	 * to the next multiple.
+	 *
+	 * @return  void
+	 */
+	public function testPropalAddlinePackaging()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$savconst = getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING');
+		$conf->global->PRODUCT_USE_CUSTOMER_PACKAGING = 1;
+
+		$product = new Product($db);
+		$product->ref = 'PHPUNIT-PACKAGING-'.dol_print_date(dol_now(), 'dayhourlog').'-'.mt_rand(100, 999);
+		$product->label = 'Product sold by packaging of 6';
+		$product->type = Product::TYPE_PRODUCT;
+		$product->price = 10;
+		$product->tva_tx = 20;
+		$product->packaging = 6;
+		$productid = $product->create($user);
+		$this->assertGreaterThan(0, $productid, (string) $product->error);
+
+		$localobject = new Propal($db);
+		$localobject->socid = 1;
+		$localobject->date = dol_now();
+		$localobject->duree_validite = 15;
+		$this->assertGreaterThan(0, $localobject->create($user), (string) $localobject->error);
+		$localobject->fetch_thirdparty();
+
+		$result = array();
+		foreach (array(1, 7, 12, 13) as $qty) {
+			$lineid = $localobject->addline('Line', 10, $qty, 20, 0, 0, $productid);
+			$this->assertGreaterThan(0, $lineid, (string) $localobject->error);
+			$line = new PropaleLigne($db);
+			$line->fetch($lineid);
+			$result[$qty] = (float) $line->qty;
+		}
+		$conf->global->PRODUCT_USE_CUSTOMER_PACKAGING = $savconst;
+
+		print __METHOD__." result=".json_encode($result)."\n";
+		$this->assertEquals(array(1 => 6, 7 => 12, 12 => 12, 13 => 18), $result, 'Quantities rounded to the packaging of 6');
 	}
 }

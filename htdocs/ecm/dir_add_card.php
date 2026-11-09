@@ -206,7 +206,11 @@ if ($action == 'add' && $permissiontoadd) {
 } elseif ($action == 'confirm_deletesection' && $confirm == 'yes' && $permissiontodelete) {
 	// Deleting file
 	$result = $ecmdir->delete($user);
-	setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');
+	if ($result > 0) {
+		setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');
+	} else {
+		setEventMessages($ecmdir->error, $ecmdir->errors, 'errors');
+	}
 }
 
 
@@ -235,6 +239,16 @@ if ($action == 'create') {
 	}
 	if ($pageid) {
 		print '<input type="hidden" name="pageid" value="'.dol_escape_htmltag((string) $pageid).'">';
+	}
+	// Keep the popup mode (no menus) when page is open into a dialog popup
+	if (GETPOSTINT('dol_hide_topmenu')) {
+		print '<input type="hidden" name="dol_hide_topmenu" value="'.GETPOSTINT('dol_hide_topmenu').'">';
+	}
+	if (GETPOSTINT('dol_hide_leftmenu')) {
+		print '<input type="hidden" name="dol_hide_leftmenu" value="'.GETPOSTINT('dol_hide_leftmenu').'">';
+	}
+	if (GETPOST('dol_openinpopup', 'aZ09')) {
+		print '<input type="hidden" name="dol_openinpopup" value="'.dol_escape_htmltag(GETPOST('dol_openinpopup', 'aZ09')).'">';
 	}
 
 	$title = $langs->trans("ECMNewSection");
@@ -300,7 +314,7 @@ if (empty($action) || $action == 'delete_section') {
 	print '<div class="tabsAction">';
 
 	// Delete
-	print dolGetButtonAction($langs->trans('Delete'), '', 'delete', dolBuildUrl($_SERVER["PHP_SELF"], array('section' => $section, 'action' => 'delete_section'), true), '', $user->hasRight('ecm', 'setup'));
+	print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], array('section' => $section, 'action' => 'delete_section'), true), '', $user->hasRight('ecm', 'setup'), array('attr' => array('class' => 'reposition')))."\n";
 
 	print '</div>';
 }

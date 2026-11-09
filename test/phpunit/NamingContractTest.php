@@ -21,6 +21,11 @@
  * \brief   Unit tests for NamingContract and StrictNamingContractValidator.
  */
 
+global $conf,$user,$langs,$db,$mysoc;
+if (!defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__) . '/../../htdocs/modulebuilder/class/NamingContract.class.php';
 require_once dirname(__FILE__) . '/../../htdocs/modulebuilder/class/NamingContractValidator.class.php';
 
@@ -32,7 +37,7 @@ require_once dirname(__FILE__) . '/../../htdocs/modulebuilder/class/NamingContra
  * @phan-file-suppress PhanNoopNew
  */
 /** @phpstan-ignore class.notFound */
-class NamingContractTest extends \PHPUnit\Framework\TestCase
+class NamingContractTest extends CommonClassTest
 {
 	// ── NamingContract — properties ───────────────────────────────────────
 

@@ -3,7 +3,6 @@
 #
 # Global
 #
-Subtotal=ຜົນລວມຍ່ອຍ
 SubTotalModuleDesc=ແຖວຜົນລວມຍ່ອຍ ແລະ ແຖວຫົວຂໍ້ ສຳລັບບາງເອກະສານ
 #
 # Admin
@@ -12,12 +11,19 @@ SubtotalSetup=ການຕັ້ງຄ່າໂມດູນຜົນລວມຍ
 MaxSubtotalLevel=ລະດັບສູງສຸດ
 SubtotalLineBackColor=ສີພື້ນຫຼັງຂອງແຖວລະດັບ %s
 NotSupportedByAllPDF=ຈະໃຊ້ໄດ້ກັບ PDF ເວີຊັນໃໝ່ ແຕ່ບໍ່ຮອງຮັບເວີຊັນເກົ່າ %s
+SubtotalsPredefinedTitles=Subtotals predefined titles
+SubtotalsPredefinedTexts=Subtotals predefined texts
+SubtotalTextColumnTitle=ຂໍ້ຄວາມ (Text)
 
 #
 # Card
 #
 AddTitleLine=ເພີ່ມແຖວຫົວຂໍ້
 AddSubtotalLine=ເພີ່ມແຖວຜົນລວມຍ່ອຍ
+AddTextLine=Add text line
+PredefinedTitle=Predefined title
+PredefinedText=Predefined text
+SubtotalTextContent=Text content
 TitleNeedDesc=ທ່ານຕ້ອງປ້ອນຄຳອະທິບາຍທີ່ຖືກຕ້ອງເພື່ອສ້າງຫົວຂໍ້.
 TitleAddedLevelTooHigh=ລະດັບຫົວຂໍ້ທີ່ເພີ່ມສູງເກີນໄປ (ເພີ່ມດ້ວຍລະດັບ %s ແທນ).
 TitleEditedLevelTooHigh=ລະດັບຫົວຂໍ້ທີ່ແກ້ໄຂສູງເກີນໄປ (ແກ້ໄຂດ້ວຍລະດັບ %s ແທນ).

@@ -31,11 +31,6 @@
  *      \brief      age to setup extra fields of delivery
  */
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/expedition.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -44,6 +39,10 @@ require_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/expedition.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "sendings", "other"));
@@ -180,12 +179,20 @@ if ($action == 'setdoc') {
 		$conf->global->DELIVERY_ADDON_PDF = $value;
 	}
 
-	// On active le modele
+	// We activate the template
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
 		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
 }
+if ($action == 'unsetdoc') {
+	if (dolibarr_del_const($db, "DELIVERY_ADDON_PDF")) {
+		// The constant that was read before the new set
+		// so we go through a variable to get a consistent display
+		$conf->global->DELIVERY_ADDON_PDF = '';
+	}
+}
+
 
 if ($action == 'setmod') {
 	// TODO Verify if the chosen numbering module can be activated
@@ -209,7 +216,7 @@ $form = new Form($db);
 $linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans("SendingsSetup"), $linkback, 'title_setup');
-print '<br>';
+
 $head = expedition_admin_prepare_head();
 
 print dol_get_fiche_head($head, 'receivings', $langs->trans("Receivings"), -1, 'shipment');
@@ -242,9 +249,7 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 	 *  Documents Models for delivery
 	 */
 	print '<br>';
-	printDocumentModelList('delivery', 'delivery', 'DELIVERY_ADDON_PDF', $langs->trans("DeliveryOrderModel"), array(
-		'Logo' => 'option_logo',
-	));
+	printDocumentModelList('delivery', 'delivery', 'DELIVERY_ADDON_PDF', $langs->trans("DeliveryOrderModel"), array('Logo' => 'option_logo'), false, '', 1, 'unsetdoc');
 
 	// Other Options
 	print "<br>";

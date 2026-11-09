@@ -726,7 +726,7 @@ class Setup extends DolibarrApi
 
 		$result = $region->fetch($id, (int) $code);
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieving region : '.$region->error);
+			throw new RestException(503, 'Error when retrieving region : '.$region->errorsToString());
 		} elseif ($result == 0) {
 			throw new RestException(404, 'Region not found');
 		}
@@ -751,7 +751,7 @@ class Setup extends DolibarrApi
 
 		$result = $state->fetch($id, $code);
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieving state : '.$state->error);
+			throw new RestException(503, 'Error when retrieving state : '.$state->errorsToString());
 		} elseif ($result == 0) {
 			throw new RestException(404, 'State not found');
 		}
@@ -784,7 +784,7 @@ class Setup extends DolibarrApi
 		$result = $country->fetch($id, $code, $iso);
 
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieving country : '.$country->error);
+			throw new RestException(503, 'Error when retrieving country : '.$country->errorsToString());
 		} elseif ($result == 0) {
 			throw new RestException(404, 'Country not found');
 		} else {
@@ -1473,7 +1473,7 @@ class Setup extends DolibarrApi
 
 		$sql = "SELECT t.rowid as id, t.name, t.entity, t.elementtype, t.label, t.type, t.size, t.fieldcomputed, t.fielddefault,";
 		$sql .= " t.fieldunique, t.fieldrequired, t.perms, t.enabled, t.pos, t.alwayseditable, t.param, t.list, t.printable,";
-		$sql .= " t.totalizable, t.langs, t.help, t.css, t.cssview, t.csslist, t.fk_user_author, t.fk_user_modif, t.datec, t.tms";
+		$sql .= " t.showintooltip, t.totalizable, t.langs, t.help, t.css, t.cssview, t.csslist, t.fk_user_author, t.fk_user_modif, t.datec, t.tms";
 		$sql .= " FROM ".MAIN_DB_PREFIX."extrafields as t";
 		$sql .= " WHERE t.entity IN (".getEntity('extrafields').")";
 		if (!empty($elementtype)) {
@@ -1555,7 +1555,7 @@ class Setup extends DolibarrApi
 		}
 
 		if (!$extrafields->delete($attrname, $elementtype)) {
-			throw new RestException(500, 'Error when delete extrafield : '.$extrafields->error);
+			throw new RestException(500, 'Error when delete extrafield : '.$extrafields->errorsToString());
 		}
 
 		return array(
@@ -2625,7 +2625,8 @@ class Setup extends DolibarrApi
 		$list = array();
 		global $mysoc;
 
-		$sql = "SELECT rowid, code, type_vat, active, fk_pays, taux, localtax1, localtax2,  localtax1_type, localtax2_type, note";
+		$sql = "SELECT rowid, entity, code, type_vat, active, fk_pays, fk_department_buyer, taux, localtax1, localtax2,  localtax1_type, localtax2_type,";
+		$sql .= " use_default, recuperableonly, einvoice_vatex, note, accountancy_code_sell, accountancy_code_buy";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t";
 		$sql .= " WHERE 1=1";
 
@@ -2796,7 +2797,7 @@ class Setup extends DolibarrApi
 
 		$result = $establishment->fetch($id);
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieving establishment : '.$establishment->error);
+			throw new RestException(503, 'Error when retrieving establishment : '.$establishment->errorsToString());
 		} elseif ($result == 0) {
 			throw new RestException(404, 'Establishment not found');
 		}
@@ -3228,9 +3229,10 @@ class Setup extends DolibarrApi
 			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_MODULES');
 		}
 
-		sort($conf->modules);
+		$modules = $conf->modules;
+		asort($modules); // Sort a copy to keep array keys and avoid mutating the global $conf->modules
 
-		return $conf->modules;
+		return $modules;
 	}
 
 	/**

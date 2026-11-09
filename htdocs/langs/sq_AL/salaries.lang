@@ -27,6 +27,7 @@ Earnings=Earnings
 TotalEarnings=Total earnings
 TotalDeductions=Total deductions
 NetPaid=Net paid
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Llogaria (nga Tabela e Llogarive) e përdorur si parazgjedhje për "përdoruesit" në paga
@@ -55,8 +56,6 @@ FillFieldFirst=Plotësoni fillimisht fushën e punonjësve
 UpdateAmountWithLastSalary=Përcaktoni shumën e pagës së fundit
 MakeTransferRequest=Bëni kërkesë për transferim
 VirementOrder=Kërkesa për transferim kredie
-WithdrawalReceipt=Urdhër transferimi i kredisë
-OrderWaiting=Porosia në pritje
 FillEndOfMonth=Fundi i muajit
 
 # Shortcuts

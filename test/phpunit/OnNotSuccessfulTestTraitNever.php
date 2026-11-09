@@ -153,6 +153,7 @@ trait OnNotSuccessfulTestTrait
 		*/
 
 		// Try to output DB info
+		/*
 		if ($db->type == 'mysqli') {
 			print "\n";
 			print "########## We try to output some DB info".PHP_EOL;
@@ -164,6 +165,7 @@ trait OnNotSuccessfulTestTrait
 				print $db->lasterror().PHP_EOL;
 			}
 		}
+		*/
 
 		print PHP_EOL;
 

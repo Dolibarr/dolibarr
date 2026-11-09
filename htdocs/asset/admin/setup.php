@@ -86,7 +86,7 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 $moduledir = 'asset';
 $myTmpObjects = [
-	'asset' => array('label' => 'Asset', 'includerefgeneration' => 1, 'includedocgeneration' => 0, 'class' => 'Asset')
+	'asset' => array('label' => 'Asset', 'includerefgeneration' => 1, 'includedocgeneration' => 1, 'class' => 'Asset')
 ];
 
 $tmpobjectkey = GETPOST('object', 'aZ09');
@@ -476,6 +476,9 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		print '</table>';
 	}
 }
+
+print '<br>';
+print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 
 if ($action == 'edit') {
 	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';

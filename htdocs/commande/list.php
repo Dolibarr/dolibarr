@@ -115,7 +115,7 @@ if (GETPOSTISSET('formfilteraction')) {
 }
 $searchCategoryOrderList = GETPOST('search_category_order_list', 'array');
 $search_product_category = GETPOST('search_product_category', 'intcomma');
-$search_id = GETPOST('search_id', 'int');
+$search_id = GETPOST('search_id', 'alpha');
 $search_ref = GETPOST('search_ref', 'alpha') != '' ? GETPOST('search_ref', 'alpha') : GETPOST('sref', 'alpha');
 $search_ref_ext = GETPOST('search_ref_ext', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
@@ -162,13 +162,6 @@ $search_option = GETPOST('search_option', 'alpha');
 if ($search_option == 'late') {
 	$search_status = '-2';
 }
-$search_orderday = '';
-$search_ordermonth = '';
-$search_orderyear = '';
-$search_deliveryday = '';
-$search_deliverymonth = '';
-$search_deliveryyear = '';
-
 $search_import_key  = trim(GETPOST("search_import_key", "alpha"));
 
 $diroutputmassaction = $conf->order->multidir_output[$conf->entity].'/temp/massgeneration/'.$user->id;
@@ -222,7 +215,7 @@ $showpos = (isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalI
 
 $checkedtypetiers = '0';
 $arrayfields = array(
-	'c.rowid' => array('label' => "ID", 'checked' => '1', 'enabled' => (string) getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'position' => 1),
+	'c.rowid' => array('label' => "TechnicalID", 'checked' => (getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? '1' : '-1'), 'enabled' => '1', 'position' => 1),
 	'c.ref' => array('label' => "Ref", 'checked' => '1', 'position' => 5, 'searchall' => 1),
 	'c.ref_ext' => array('label' => "RefExt", 'checked' => '1', 'position' => 5, 'visible' => 0, 'searchall' => 1),
 	'c.ref_client' => array('label' => "RefCustomerOrder", 'checked' => '-1', 'position' => 10, 'searchall' => 1),
@@ -268,7 +261,9 @@ $arrayfields = array(
 	'c.import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => '1', 'visible' => -2, 'position' => 999),
 	'c.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000)
 );
-
+if ($user->socid) {
+	unset($arrayfields['c.note_private']);
+}
 $parameters = array('fieldstosearchall' => $fieldstosearchall);
 $reshook = $hookmanager->executeHooks('completeFieldsToSearchAll', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook > 0) {
@@ -419,8 +414,8 @@ if (empty($reshook)) {
 	$month = "";
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-	if ($massaction == 'confirm_createbills' && $user->hasRight('facture', 'creer')) {   // Create bills from orders.
-		$orders = GETPOST('toselect', 'array:int');
+	if (!$error && $massaction == 'confirm_createbills' && $user->hasRight('facture', 'creer')) {   // @phpstan-ignore-line $error may have been modified by the actions_massactions.inc.php. Create bills from orders.
+		$orders = $toselect;	// Ids already checked for access by the mass actions include
 		$createbills_onebythird = GETPOSTINT('createbills_onebythird');
 		$validate_invoices = GETPOSTINT('validate_invoices');
 
@@ -437,6 +432,7 @@ if (empty($reshook)) {
 		$db->begin();
 
 		$nbOrders = is_array($orders) ? count($orders) : 1;
+		$reuseNotesOnCreateFrom = getDolGlobalString('FACTURE_REUSE_NOTES_ON_CREATE_FROM');
 
 		$currentIndex = 0;
 		foreach ($orders as $id_order) {
@@ -456,10 +452,21 @@ if (empty($reshook)) {
 			$cmd->fetch_thirdparty();
 
 			$objecttmp = new Facture($db);
+			$notesUpdated = false;
 			if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) {
 				// If option "one bill per third" is set, and an invoice for this thirdparty was already created, we reuse it.
 				$currentIndex++;
 				$objecttmp = $TFactThird[$cmd->socid];
+				if ($reuseNotesOnCreateFrom) {
+					if (!empty($cmd->note_public)) {
+						$objecttmp->note_public = dol_concatdesc($objecttmp->note_public, $cmd->note_public);
+						$notesUpdated = true;
+					}
+					if (!empty($cmd->note_private)) {
+						$objecttmp->note_private = dol_concatdesc($objecttmp->note_private, $cmd->note_private);
+						$notesUpdated = true;
+					}
+				}
 			} else {
 				// If we want one invoice per order or if there is no first invoice yet for this thirdparty.
 				$objecttmp->socid = $cmd->socid;
@@ -471,12 +478,17 @@ if (empty($reshook)) {
 				$objecttmp->demand_reason_id = !empty($cmd->demand_reason_id) ? $cmd->demand_reason_id : $cmd->thirdparty->demand_reason_id;
 
 				$objecttmp->fk_project = $cmd->fk_project;
-				$objecttmp->multicurrency_code = $cmd->multicurrency_code;
+				if (isModEnabled('multicurrency')) {
+					$objecttmp->multicurrency_code = $cmd->multicurrency_code;
+				}
 				if (empty($createbills_onebythird)) {
 					$objecttmp->ref_client = $cmd->ref_client;
 				}
 
-				if (empty($objecttmp->note_public) && getDolGlobalInt("MAXREFONDOC", 10)>0) {
+				$objecttmp->note_public = $objecttmp->getDefaultCreateValueFor('note_public', ($reuseNotesOnCreateFrom ? $cmd->note_public : null));
+				$objecttmp->note_private = $objecttmp->getDefaultCreateValueFor('note_private', ($reuseNotesOnCreateFrom ? $cmd->note_private : null));
+
+				if (!$reuseNotesOnCreateFrom && empty($objecttmp->note_public) && getDolGlobalInt("MAXREFONDOC", 10)>0) {
 					$objecttmp->note_public =  $langs->transnoentities("Orders");
 				}
 
@@ -494,6 +506,8 @@ if (empty($reshook)) {
 				$res = $objecttmp->create($user);
 
 				if ($res > 0) {
+					$objecttmp->user_creation_id = $user->id;
+
 					$nb_bills_created++;
 					$lastref = $objecttmp->ref;
 					$lastid = $objecttmp->id;
@@ -563,6 +577,7 @@ if (empty($reshook)) {
 							$desc = dol_concatdesc($desc, $langs->trans("Order").' '.$cmd->ref.' - '.dol_print_date($cmd->date, 'day'));
 						}
 
+						// If order line has a negative unit price, we will include it as a discount for the generated invoice
 						if ($lines[$i]->subprice < 0 && !getDolGlobalString('INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN')) {
 							// Negative line, we create a discount line
 							$discount = new DiscountAbsolute($db);
@@ -583,7 +598,7 @@ if (empty($reshook)) {
 								$error++;
 								break;
 							}
-						} else {
+						} else {	// We are here if INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN (a hidden option not supported and deprecated that should not be used)
 							// Positive line
 							$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
 							// Date start
@@ -682,9 +697,15 @@ if (empty($reshook)) {
 				}
 			}
 
-			if ($currentIndex <= getDolGlobalInt("MAXREFONDOC", 10)) {
+			if (!$reuseNotesOnCreateFrom && $currentIndex <= getDolGlobalInt("MAXREFONDOC", 10)) {
 				$objecttmp->note_public = dol_concatdesc($objecttmp->note_public, $langs->transnoentities($cmd->ref).(empty($cmd->ref_client) ? '' : ' ('.$cmd->ref_client.')'));
-				$objecttmp->update($user);
+				if ($objecttmp->update($user) < 0) {
+					$error++;
+					$errors[] = $objecttmp->error;
+				}
+			} elseif ($notesUpdated && $objecttmp->update($user) < 0) {
+				$error++;
+				$errors[] = $objecttmp->error;
 			}
 
 			//$cmd->classifyBilled($user);        // Disabled. This behavior must be set or not using the workflow module.
@@ -778,24 +799,6 @@ if (empty($reshook)) {
 			}
 			if ($search_option) {
 				$param .= "&search_option=".urlencode($search_option);
-			}
-			if ($search_orderday) {
-				$param .= '&search_orderday='.urlencode($search_orderday);
-			}
-			if ($search_ordermonth) {
-				$param .= '&search_ordermonth='.urlencode($search_ordermonth);
-			}
-			if ($search_orderyear) {
-				$param .= '&search_orderyear='.urlencode($search_orderyear);
-			}
-			if ($search_deliveryday) {
-				$param .= '&search_deliveryday='.urlencode($search_deliveryday);
-			}
-			if ($search_deliverymonth) {
-				$param .= '&search_deliverymonth='.urlencode($search_deliverymonth);
-			}
-			if ($search_deliveryyear) {
-				$param .= '&search_deliveryyear='.urlencode($search_deliveryyear);
 			}
 			if ($search_id) {
 				$param .= '&search_id='.urlencode((string) $search_id);
@@ -1048,8 +1051,8 @@ if (empty($user->socid) && !$permissiontoreadallthirdparty) {
 	$sql .= ")";
 }
 
-if ($search_id > 0) {
-	$sql .= natural_search('c.rowid', $search_id);
+if ($search_id != '') {
+	$sql .= natural_search('c.rowid', $search_id, 1);
 }
 if ($search_ref) {
 	$sql .= natural_search('c.ref', $search_ref);
@@ -1828,8 +1831,8 @@ if ($conf->main_checkbox_left_column) {
 
 // Line numbering
 if (!empty($arrayfields['c.rowid']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input class="flat" size="6" type="text" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 
@@ -2533,7 +2536,7 @@ while ($i < $imaxinloop) {
 
 		// Project ref
 		if (!empty($arrayfields['p.ref']['checked'])) {
-			print '<td class="nocellnopadd nowraponall">';
+			print '<td class="tdoverflowmax150">';
 			if ($obj->project_id > 0) {
 				print $projectstatic->getNomUrl(1);
 			}
@@ -2545,9 +2548,9 @@ while ($i < $imaxinloop) {
 
 		// Project label
 		if (!empty($arrayfields['p.title']['checked'])) {
-			print '<td class="nowraponall">';
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($projectstatic->title).'">';
 			if ($obj->project_id > 0) {
-				print $projectstatic->title;
+				print '<span class="spantitle">'.dol_escape_htmltag($projectstatic->title).'</span>';
 			}
 			print '</td>';
 			if (!$i) {
@@ -2581,8 +2584,10 @@ while ($i < $imaxinloop) {
 
 		// Alias name
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
-			print '<td class="nocellnopadd tdoverflowmax100" title="'.dolPrintHTMLForTextArea($obj->alias).'">';
+			print '<td class="nocellnopadd tdoverflowmax100" title="'.dolPrintHTMLForAttribute($obj->alias).'">';
+			print '<span class="spantitle">';
 			print dolPrintLabel($obj->alias);
+			print '</span>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

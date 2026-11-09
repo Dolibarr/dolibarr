@@ -140,6 +140,10 @@ class FactureLigne extends CommonInvoiceLine
 	 * @var int		To store the warehouse where to consume stock when using a POS module
 	 */
 	public $fk_warehouse;
+	/**
+	 * @var int|null	To store the order printer of line when using a POS module (-N=to print on printer N, N=printed on printer N)
+	 */
+	public $pos_printer_id;
 
 
 	/**
@@ -228,7 +232,7 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ' fd.date_start as date_start, fd.date_end as date_end, fd.fk_product_fournisseur_price as fk_fournprice, fd.buy_price_ht as pa_ht,';
 		$sql .= ' fd.info_bits, fd.special_code, fd.total_ht, fd.total_tva, fd.total_ttc, fd.total_localtax1, fd.total_localtax2, fd.rang,';
 		$sql .= ' fd.fk_code_ventilation,';
-		$sql .= ' fd.batch, fd.fk_warehouse,';
+		$sql .= ' fd.batch, fd.fk_warehouse, fd.pos_printer_id,';
 		$sql .= ' fd.fk_unit, fd.fk_user_author, fd.fk_user_modif,';
 		$sql .= ' fd.situation_percent, fd.fk_prev_id, fd.extraparams,';
 		$sql .= ' fd.multicurrency_subprice,';
@@ -304,6 +308,7 @@ class FactureLigne extends CommonInvoiceLine
 			$this->fk_code_ventilation  = $objp->fk_code_ventilation;
 			$this->batch                = $objp->batch;
 			$this->fk_warehouse         = $objp->fk_warehouse;
+			$this->pos_printer_id       = $objp->pos_printer_id;
 			$this->rang					= $objp->rang;
 			$this->fk_fournprice = $objp->fk_fournprice;
 			$marginInfos				= getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $this->fk_fournprice, $objp->pa_ht);
@@ -472,7 +477,7 @@ class FactureLigne extends CommonInvoiceLine
 
 		// if buy price not defined, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0 && $pa_ht_isemptystring) {
-			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product);
+			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product, $this->qty);
 			if ($result < 0) {
 				return $result;
 			} else {
@@ -723,7 +728,7 @@ class FactureLigne extends CommonInvoiceLine
 		// if buy price not provided, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0 && $pa_ht_isemptystring) {
 			// We call defineBuyPrice only if data was not provided (if input was '0', we will not go here and value will remaine '0')
-			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product);
+			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product, $this->qty);
 			if ($result < 0) {
 				return $result;
 			} else {
@@ -1005,7 +1010,7 @@ class FactureLigne extends CommonInvoiceLine
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Returns situation_percent of all the previous line. Used when INVOICE_USE_SITUATION = 2.
+	 * Returns cumulated situation_percent of all the previous lines. Used when INVOICE_USE_SITUATION != 1.
 	 * Warning: If invoice is a replacement invoice, this->fk_prev_id is id of the replaced line.
 	 *
 	 * @param  int     $invoiceid      Invoice id
@@ -1087,15 +1092,16 @@ class FactureLigne extends CommonInvoiceLine
 	 * New mode = the values on the line already represent the delta between the previous
 	 * state and the current state, so we don't need a conversion (we return 1).
 	 *
+	 * @param float|null $previousProgress Previous progress already loaded by the caller, null to fetch it
 	 * @return float
 	 */
-	public function getSituationRatio()
+	public function getSituationRatio($previousProgress = null)
 	{
 		if (getDolGlobalInt('INVOICE_USE_SITUATION') === 1) {
 			// in legacy mode, the situation invoice line stores the (cumulative) state of the
 			// cycle at the current situation. To get the delta, we need to subtract the
 			// state at the previous situation (if applicable).
-			$prevProgress = $this->get_prev_progress($this->fk_facture);
+			$prevProgress = $previousProgress === null ? $this->get_prev_progress($this->fk_facture) : $previousProgress;
 
 			if ($this->situation_percent == 0) {
 				// should not happen
@@ -1104,7 +1110,7 @@ class FactureLigne extends CommonInvoiceLine
 
 			return ($this->situation_percent - $prevProgress) / $this->situation_percent;
 		}
-		// new mode (INVOICE_USE_SITUATION == 2):
+		// new mode (INVOICE_USE_SITUATION != 1):
 		// no ratio needed (data stored on line is already a delta)
 		// or not a situation invoice: no ratio needed either
 		return 1;
