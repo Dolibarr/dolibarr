@@ -413,6 +413,11 @@ class Contracts extends DolibarrApi
 	/**
 	 * Add a line to given contract
 	 *
+	 * Unit price: give 'subprice' (excl. tax) with price_base_type 'HT' (default),
+	 * or 'subprice_ttc' (incl. tax) with price_base_type 'TTC'.
+	 * 'subprice_excl_tax' is a deprecated alias of 'subprice_ttc': despite its name,
+	 * it has always been read as the unit price including tax.
+	 *
 	 * @since	7.0.0	Initial implementation
 	 *
 	 * @param int   $id             Id of contrat to update
@@ -422,7 +427,11 @@ class Contracts extends DolibarrApi
 	 *
 	 * @url	POST {id}/lines
 	 *
-	 * @return int|bool
+	 * @return int  Id of the new contract line
+	 *
+	 * @throws RestException 403 Access denied
+	 * @throws RestException 404 Contract not found
+	 * @throws RestException 500 Error when adding the line
 	 */
 	public function postLine($id, $request_data = null)
 	{
@@ -441,34 +450,38 @@ class Contracts extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
-		$request_data->price_base_type = sanitizeVal($request_data->price_base_type);
+		$request_data->desc = sanitizeVal($request_data->desc ?? '', 'restricthtml');
+		$request_data->price_base_type = sanitizeVal($request_data->price_base_type ?? '');
+
+		// Unit price including tax, used when price_base_type is TTC. 'subprice_excl_tax' is the deprecated name of this field.
+		$subprice_ttc = $request_data->subprice_ttc ?? ($request_data->subprice_excl_tax ?? 0);
 
 		$updateRes = $this->contract->addline(
 			$request_data->desc,
-			$request_data->subprice,
-			$request_data->qty,
-			$request_data->tva_tx,
-			$request_data->localtax1_tx,
-			$request_data->localtax2_tx,
-			$request_data->fk_product,
-			$request_data->remise_percent,
-			$request_data->date_start,
-			$request_data->date_end,
+			$request_data->subprice ?? 0,
+			$request_data->qty ?? 1,
+			$request_data->tva_tx ?? 0,
+			$request_data->localtax1_tx ?? 0,
+			$request_data->localtax2_tx ?? 0,
+			$request_data->fk_product ?? 0,
+			$request_data->remise_percent ?? 0,
+			$request_data->date_start ?? '',
+			$request_data->date_end ?? '',
 			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
-			$request_data->subprice_excl_tax,
-			$request_data->info_bits,
-			$request_data->fk_fournprice,
-			$request_data->pa_ht,
-			$request_data->array_options,
-			$request_data->fk_unit,
-			$request_data->rang
+			$subprice_ttc,
+			$request_data->info_bits ?? 0,
+			$request_data->fk_fournprice ?? null,
+			$request_data->pa_ht ?? 0,
+			$request_data->array_options ?? array(),
+			$request_data->fk_unit ?? null,
+			$request_data->rang ?? 0
 		);
 
 		if ($updateRes > 0) {
 			return $updateRes;
 		}
-		return false;
+
+		throw new RestException(500, 'Error when adding contract line: '.$this->contract->errorsToString());
 	}
 
 	/**

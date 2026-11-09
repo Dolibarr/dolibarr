@@ -2524,7 +2524,7 @@ class ToolApiBridge extends McpTool
 			$this->enrichments[$key]['methods']['deleteLine'] = $this->lineMethod('delete', $l[0], $l[1], $l[2], $l[3]);
 		}
 		// The REST postLine() of a contract reads every field: none is left unset.
-		$this->enrichments['contracts']['methods']['postLine'] = $this->addLineMethod('contract', 'api_contracts_list', 'Contrat', array('contrat', 'creer'), false, array(), array('price_base_type' => 'HT', 'localtax1_tx' => 0, 'localtax2_tx' => 0, 'remise_percent' => 0, 'date_start' => '', 'date_end' => '', 'subprice_excl_tax' => 0, 'info_bits' => 0, 'fk_fournprice' => null, 'pa_ht' => 0, 'array_options' => array(), 'fk_unit' => null, 'rang' => -1));
+		$this->enrichments['contracts']['methods']['postLine'] = $this->addLineMethod('contract', 'api_contracts_list', 'Contrat', array('contrat', 'creer'), false, array(), array('price_base_type' => 'HT', 'localtax1_tx' => 0, 'localtax2_tx' => 0, 'remise_percent' => 0, 'date_start' => '', 'date_end' => '', 'subprice_ttc' => 0, 'info_bits' => 0, 'fk_fournprice' => null, 'pa_ht' => 0, 'array_options' => array(), 'fk_unit' => null, 'rang' => -1));
 		$this->enrichments['interventions']['methods']['postLine'] = $this->lineMethod('add', 'intervention', 'Fichinter', array('ficheinter', 'creer'), 'intervention');
 
 		// Header of a draft: the fields a user corrects, by their old and new value.
