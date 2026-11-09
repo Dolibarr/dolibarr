@@ -434,4 +434,58 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 
 		$this->assertLineUnchanged($test, $intervention_id, $line_id);
 	}
+
+	/**
+	 * testRestInterventionDelete
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionDelete()
+	{
+		$test = "Delete an intervention";
+
+		$intervention_id = $this->createIntervention($test);
+		array_unshift($this->objectstodelete, 'interventions/'.$intervention_id);
+
+		$result = $this->getUrl('interventions/'.$intervention_id, $test, 'DELETE');
+		$this->assertEquals(200, $result['content']['success']['code'] ?? null, "$test Delete must succeed");
+		$this->assertEquals('Intervention deleted', $result['content']['success']['message'] ?? null, "$test Delete must succeed");
+
+		// Already deleted, so tearDown must not delete it again
+		$this->objectstodelete = array_values(array_diff($this->objectstodelete, array('interventions/'.$intervention_id)));
+
+		$this->getUrl('interventions/'.$intervention_id, $test, 'GET', null, 404);
+	}
+
+	/**
+	 * testRestInterventionDeleteWithoutPermission
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionDeleteWithoutPermission()
+	{
+		$test = "Delete an intervention without the delete permission";
+
+		$intervention_id = $this->createIntervention($test);
+		array_unshift($this->objectstodelete, 'interventions/'.$intervention_id);
+		// The user can see all third parties, so it has access to the intervention and only the permission can refuse it
+		$api_key = $this->createRestrictedUser($test, array(array('ficheinter', 'lire'), array('ficheinter', 'creer'), array('societe', 'client')));
+
+		$this->getUrl('interventions/'.$intervention_id, $test, 'DELETE', null, 403, $api_key);
+
+		$result = $this->getUrl('interventions/'.$intervention_id, $test, 'GET');
+		$this->assertEquals($intervention_id, $result['content']['id'] ?? null, "$test The intervention must still exist");
+	}
+
+	/**
+	 * testRestInterventionDeleteNotFound
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionDeleteNotFound()
+	{
+		$test = "Delete an intervention that does not exist";
+
+		$this->getUrl('interventions/999999999', $test, 'DELETE', null, 404);
+	}
 }
