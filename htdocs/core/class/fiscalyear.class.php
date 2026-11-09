@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2020		OScss-Shop					<support@oscss-shop.fr>
- * Copyright (C) 2023-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2023-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -131,8 +131,6 @@ class Fiscalyear extends CommonObject
 	{
 		global $conf;
 
-		$error = 0;
-
 		$now = dol_now();
 
 		// Check for date overlaps with existing fiscal years
@@ -165,6 +163,15 @@ class Fiscalyear extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			$this->id = $this->db->last_insert_id($this->db->prefix()."accounting_fiscalyear");
+
+			// Call trigger
+			$triggerres = $this->call_trigger('FISCALYEAR_CREATE', $user);
+			if ($triggerres < 0) {
+				$this->db->rollback();
+				return -1;
+			}
+			// End call triggers
+
 			$this->db->commit();
 			return $this->id;
 		} else {
@@ -207,6 +214,14 @@ class Fiscalyear extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
+			// Call trigger
+			$triggerres = $this->call_trigger('FISCALYEAR_MODIFY', $user);
+			if ($triggerres < 0) {
+				$this->db->rollback();
+				return -1;
+			}
+			// End call triggers
+
 			$this->db->commit();
 			return 1;
 		} else {
@@ -220,14 +235,19 @@ class Fiscalyear extends CommonObject
 	/**
 	 * Load an object from database
 	 *
-	 * @param	int		$id		Id of record to load
-	 * @return	int				Return integer <0 if KO, >0 if OK
+	 * @param	int		$idorref	Id of record to load
+	 * @param   string	$label		Label of fiscal year
+	 * @return	int					Return integer <0 if KO, >0 if OK
 	 */
-	public function fetch($id)
+	public function fetch($idorref, $label = '')
 	{
 		$sql = "SELECT rowid, label, date_start, date_end, statut as status";
 		$sql .= " FROM ".$this->db->prefix()."accounting_fiscalyear";
-		$sql .= " WHERE rowid = ".((int) $id);
+		if ($label) {
+			$sql .= " WHERE label = '".$this->db->escape($label)."'";
+		} else {
+			$sql .= " WHERE rowid = ".((int) $idorref);
+		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -236,9 +256,9 @@ class Fiscalyear extends CommonObject
 
 			$this->id = $obj->rowid;
 			$this->ref = $obj->rowid;
+			$this->label = $obj->label;
 			$this->date_start	= $this->db->jdate($obj->date_start);
 			$this->date_end = $this->db->jdate($obj->date_end);
-			$this->label = $obj->label;
 			$this->statut = $obj->status;
 			$this->status = $obj->status;
 
@@ -264,6 +284,14 @@ class Fiscalyear extends CommonObject
 
 		$result = $this->db->query($sql);
 		if ($result) {
+			// Call trigger
+			$triggerres = $this->call_trigger('FISCALYEAR_DELETE', $user);
+			if ($triggerres < 0) {
+				$this->db->rollback();
+				return -1;
+			}
+			// End call triggers
+
 			$this->db->commit();
 			return 1;
 		} else {
@@ -507,8 +535,6 @@ class Fiscalyear extends CommonObject
 	 */
 	public function getAccountancyEntriesByFiscalYear($datestart = '', $dateend = '')
 	{
-		global $conf;
-
 		if (empty($datestart)) {
 			$datestart = $this->date_start;
 		}
@@ -542,8 +568,6 @@ class Fiscalyear extends CommonObject
 	 */
 	public function getAccountancyMovementsByFiscalYear($datestart = '', $dateend = '')
 	{
-		global $conf;
-
 		if (empty($datestart)) {
 			$datestart = $this->date_start;
 		}

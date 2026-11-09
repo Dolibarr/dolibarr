@@ -3,7 +3,8 @@
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentjobposition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentcandidature.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/dashboard.lib.php';
 
 /**
  * @var Conf $conf
@@ -44,8 +46,8 @@ $langs->loadLangs(array("recruitment", "boxes"));
 
 $action = GETPOST('action', 'aZ09');
 
-$NBMAX = getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT', 5);
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$NBMAX = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
 $now = dol_now();
 
 $socid = GETPOSTINT('socid');
@@ -90,176 +92,83 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
  * Statistics
  */
 
-if ($conf->use_javascript_ajax) {
-	$sql = "SELECT COUNT(t.rowid) as nb, status";
-	$sql .= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as t";
-	$sql .= " GROUP BY t.status";
-	$sql .= " ORDER BY t.status ASC";
-	$resql = $db->query($sql);
+$colors = getThemeBadgeStatusColors();
 
-	if ($resql) {
-		$num = $db->num_rows($resql);
-		$i = 0;
-
-		$totalnb = 0;
-		$dataseries = array();
-		$colorseries = array();
-		$vals = array();
-
-		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
-
-		while ($i < $num) {
-			$obj = $db->fetch_object($resql);
-			if ($obj) {
-				$vals[$obj->status] = $obj->nb;
-
-				$totalnb += $obj->nb;
-			}
-			$i++;
-		}
-		$db->free($resql);
-
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder nohover centpercent">';
-		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("JobPositions").'</th></tr>'."\n";
-		$listofstatus = array(0, 1, 3, 9);
-		foreach ($listofstatus as $status) {
-			$dataseries[] = array(dol_html_entity_decode($staticrecruitmentjobposition->LibStatut($status, 1), ENT_QUOTES | ENT_HTML5), (isset($vals[$status]) ? (int) $vals[$status] : 0));
-			if ($status == RecruitmentJobPosition::STATUS_DRAFT) {
-				$colorseries[$status] = '-'.$badgeStatus0;
-			}
-			if ($status == RecruitmentJobPosition::STATUS_VALIDATED) {
-				$colorseries[$status] = $badgeStatus4;
-			}
-			if ($status == RecruitmentJobPosition::STATUS_RECRUITED) {
-				$colorseries[$status] = $badgeStatus6;
-			}
-			if ($status == RecruitmentJobPosition::STATUS_CANCELED) {
-				$colorseries[$status] = $badgeStatus9;
-			}
-
-			if (empty($conf->use_javascript_ajax)) {
-				print '<tr class="oddeven">';
-				print '<td>'.$staticrecruitmentjobposition->LibStatut($status, 0).'</td>';
-				print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).'</a></td>';
-				print "</tr>\n";
-			}
-		}
-		if ($conf->use_javascript_ajax) {
-			print '<tr><td class="center" colspan="2">';
-
-			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-			$dolgraph = new DolGraph();
-			$dolgraph->SetData($dataseries);
-			$dolgraph->SetDataColor(array_values($colorseries));
-			$dolgraph->setShowLegend(2);
-			$dolgraph->setShowPercent(1);
-			$dolgraph->SetType(array('pie'));
-			$dolgraph->SetHeight('200');
-			$dolgraph->draw('idgraphstatus');
-			print $dolgraph->show($totalnb ? 0 : 1);
-
-			print '</td></tr>';
-		}
-		print "</table>";
-		print "</div>";
-
-		print "<br>";
-	} else {
-		dol_print_error($db);
+$sql = "SELECT COUNT(t.rowid) as nb, status";
+$sql .= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as t";
+$sql .= " WHERE t.entity IN (".getEntity('recruitmentjobposition').")";
+$sql .= " GROUP BY t.status";
+$sql .= " ORDER BY t.status ASC";
+$resql = $db->query($sql);
+if ($resql) {
+	$vals = array();
+	while ($obj = $db->fetch_object($resql)) {
+		$vals[$obj->status] = $obj->nb;
 	}
+	$db->free($resql);
 
-	$sql = "SELECT COUNT(t.rowid) as nb, status";
-	$sql .= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as t";
-	$sql .= " GROUP BY t.status";
-	$sql .= " ORDER BY t.status ASC";
-	$resql = $db->query($sql);
-
-	if ($resql) {
-		$num = $db->num_rows($resql);
-		$i = 0;
-
-		$totalnb = 0;
-		$dataseries = array();
-		$colorseries = array();
-		$vals = array();
-
-		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
-
-		while ($i < $num) {
-			$obj = $db->fetch_object($resql);
-			if ($obj) {
-				$vals[$obj->status] = $obj->nb;
-
-				$totalnb += $obj->nb;
-			}
-			$i++;
-		}
-		$db->free($resql);
-
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder nohover centpercent">';
-		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("RecruitmentCandidatures").'</th></tr>'."\n";
-		$listofstatus = array(0, 1, 3, 5, 8, 9);
-		foreach ($listofstatus as $status) {
-			$dataseries[] = array(dol_html_entity_decode($staticrecruitmentcandidature->LibStatut($status, 1), ENT_QUOTES | ENT_HTML5), (isset($vals[$status]) ? (int) $vals[$status] : 0));
-			if ($status == RecruitmentCandidature::STATUS_DRAFT) {
-				$colorseries[$status] = '-'.$badgeStatus0;
-			}
-			if ($status == RecruitmentCandidature::STATUS_VALIDATED) {
-				$colorseries[$status] = $badgeStatus1;
-			}
-			if ($status == RecruitmentCandidature::STATUS_CONTRACT_PROPOSED) {
-				$colorseries[$status] = $badgeStatus4;
-			}
-			if ($status == RecruitmentCandidature::STATUS_CONTRACT_SIGNED) {
-				$colorseries[$status] = $badgeStatus5;
-			}
-			if ($status == RecruitmentCandidature::STATUS_REFUSED) {
-				$colorseries[$status] = $badgeStatus9;
-			}
-			if ($status == RecruitmentCandidature::STATUS_CANCELED) {
-				$colorseries[$status] = $badgeStatus9;
-			}
-
-			if (empty($conf->use_javascript_ajax)) {
-				print '<tr class="oddeven">';
-				print '<td>'.$staticrecruitmentcandidature->LibStatut($status, 0).'</td>';
-				print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).'</a></td>';
-				print "</tr>\n";
-			}
-		}
-		if ($conf->use_javascript_ajax) {
-			print '<tr><td class="center" colspan="2">';
-
-			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-			$dolgraph = new DolGraph();
-			$dolgraph->SetData($dataseries);
-			$dolgraph->SetDataColor(array_values($colorseries));
-			$dolgraph->setShowLegend(2);
-			$dolgraph->setShowPercent(1);
-			$dolgraph->SetType(array('pie'));
-			$dolgraph->SetHeight('200');
-			$dolgraph->draw('idgraphstatuscandidature');
-			print $dolgraph->show($totalnb ? 0 : 1);
-
-			print '</td></tr>';
-		}
-		print "</table>";
-		print "</div>";
-
-		print "<br>";
-	} else {
-		dol_print_error($db);
+	$colorofstatus = array(
+		RecruitmentJobPosition::STATUS_DRAFT => '-'.$colors[0],
+		RecruitmentJobPosition::STATUS_VALIDATED => $colors[4],
+		RecruitmentJobPosition::STATUS_RECRUITED => $colors[6],
+		RecruitmentJobPosition::STATUS_CANCELED => $colors[9],
+	);
+	$series = array();
+	foreach (array(0, 1, 3, 9) as $status) {
+		$series[] = array(
+			'label' => dol_html_entity_decode($staticrecruitmentjobposition->LibStatut($status, 1), ENT_QUOTES | ENT_HTML5),
+			'labelnojs' => $staticrecruitmentjobposition->LibStatut($status, 0),
+			'nb' => (isset($vals[$status]) ? (int) $vals[$status] : 0),
+			'color' => $colorofstatus[$status],
+			'url' => 'recruitmentjobposition_list.php?search_status='.$status,
+		);
 	}
+	print getStatusPieChart($langs->trans("Statistics").' - '.$langs->trans("JobPositions"), $series, array('total' => false));
+} else {
+	dol_print_error($db);
+}
+
+$sql = "SELECT COUNT(t.rowid) as nb, status";
+$sql .= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as t";
+$sql .= " WHERE t.entity IN (".getEntity('recruitmentcandidature').")";
+$sql .= " GROUP BY t.status";
+$sql .= " ORDER BY t.status ASC";
+$resql = $db->query($sql);
+if ($resql) {
+	$vals = array();
+	while ($obj = $db->fetch_object($resql)) {
+		$vals[$obj->status] = $obj->nb;
+	}
+	$db->free($resql);
+
+	$colorofstatus = array(
+		RecruitmentCandidature::STATUS_DRAFT => '-'.$colors[0],
+		RecruitmentCandidature::STATUS_VALIDATED => $colors[1],
+		RecruitmentCandidature::STATUS_CONTRACT_PROPOSED => $colors[4],
+		RecruitmentCandidature::STATUS_CONTRACT_SIGNED => $colors[5],
+		RecruitmentCandidature::STATUS_REFUSED => $colors[9],
+		RecruitmentCandidature::STATUS_CANCELED => $colors[9],
+	);
+	$series = array();
+	foreach (array(0, 1, 3, 5, 8, 9) as $status) {
+		$series[] = array(
+			'label' => dol_html_entity_decode($staticrecruitmentcandidature->LibStatut($status, 1), ENT_QUOTES | ENT_HTML5),
+			'labelnojs' => $staticrecruitmentcandidature->LibStatut($status, 0),
+			'nb' => (isset($vals[$status]) ? (int) $vals[$status] : 0),
+			'color' => $colorofstatus[$status],
+			'url' => 'recruitmentcandidature_list.php?search_status='.$status,
+		);
+	}
+	print getStatusPieChart($langs->trans("Statistics").' - '.$langs->trans("RecruitmentCandidatures"), $series, array('graphid' => 'idgraphstatuscandidature', 'total' => false));
+} else {
+	dol_print_error($db);
 }
 
 print '<br>';
 
 /* BEGIN MODULEBUILDER DRAFT MYOBJECT
 // Draft MyObject
-if (isModEnabled('recruitment') && $user->rights->recruitment->read)
-{
+if (isModEnabled('recruitment') && $user->rights->recruitment->read) {
 	$langs->load("orders");
 
 	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ht, c.total_tva, c.total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
@@ -352,7 +261,7 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 		$sql .= " AND s.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
-		$sql .= " AND s.fk_soc = $socid";
+		$sql .= " AND s.fk_soc = ".((int) $socid);
 	}
 	$sql .= " GROUP BY s.rowid, s.ref, s.label, s.date_creation, s.tms, s.status";
 	$sql .= $db->order('s.tms', 'DESC');
@@ -423,7 +332,7 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 		$sql .= " AND s.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
-		$sql .= " AND s.fk_soc = $socid";
+		$sql .= " AND s.fk_soc = ".((int) $socid);
 	}
 	$sql .= $db->order('rc.tms', 'DESC');
 	$sql .= $db->plimit($max, 0);

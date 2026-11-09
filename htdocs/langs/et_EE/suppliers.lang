@@ -5,7 +5,6 @@ SupplierInvoices=Tarnija arved
 ShowSupplierInvoice=Näita tarnija arvet
 NewSupplier=Uus müüja
 NewSupplierInvoice = Uus tarnija arve
-History=Ajalugu
 ListOfSuppliers=Müüjate nimekiri
 ShowSupplier=Näita müüjat
 BuyingPriceMin=Parim ostuhind

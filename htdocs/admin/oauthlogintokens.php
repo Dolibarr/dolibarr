@@ -2,7 +2,7 @@
 /* Copyright (C) 2013-2016  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014-2024	Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2020		Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +65,6 @@ if (!$mode) {
 if (!$user->admin) {
 	accessforbidden();
 }
-
 
 /*
  * Action
@@ -130,6 +129,7 @@ if ($action == 'refreshtoken' && $user->admin) {
 
 	// Show value of token
 	$tokenobj = null;
+	$outputofrefresh = '';
 	// Load OAUth libraries
 	require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 
@@ -148,15 +148,16 @@ if ($action == 'refreshtoken' && $user->admin) {
 	$storage = new DoliStorage($db, $conf, $keyforprovider, getDolGlobalString($keyforparamtenant));
 	try {
 		// $OAUTH_SERVICENAME is for example 'Google-keyforprovider'
-		print '<!-- '.$OAUTH_SERVICENAME.' -->'."\n";
+		//print '<!-- '.$OAUTH_SERVICENAME.' -->'."\n";	// No output in actions, it is before the HTML header
 
 		dol_syslog("oauthlogintokens.php: Read token for service ".$OAUTH_SERVICENAME);
 		$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
 
+		// tokenobj uses time() @phan-suppress-next-line DolibarrForbiddenFunctionPlugin
 		$expire = ($tokenobj->getEndOfLife() !== -9002 && $tokenobj->getEndOfLife() !== -9001 && time() > ($tokenobj->getEndOfLife() - 30));
 		// We have to save the refresh token in a memory variable because Google give it only once
 		$refreshtoken = $tokenobj->getRefreshToken();
-		print '<!-- data stored into field token: '.$storage->token.' - expire '.((string) $expire).' -->';
+		//print '<!-- data stored into field token: '.$storage->token.' - expire '.((string) $expire).' -->';
 
 		//print $tokenobj->getExtraParams()['id_token'].'<br>';
 		//print $tokenobj->getAccessToken().'<br>';
@@ -193,7 +194,13 @@ if ($action == 'refreshtoken' && $user->admin) {
 		if ($apiService instanceof OAuth\OAuth2\Service\AbstractService || $apiService instanceof OAuth\OAuth1\Service\AbstractService) {
 			// ServiceInterface does not provide refreshAccessToekn, AbstractService does
 			dol_syslog("oauthlogintokens.php: call refreshAccessToken to get the new access token");
-			$tokenobj = $apiService->refreshAccessToken($tokenobj);		// This call refresh and store the new token (but does not include the refresh token)
+			// The OAuth library may print the error_description received, so we capture it to avoid output before the HTML header
+			ob_start();
+			try {
+				$tokenobj = $apiService->refreshAccessToken($tokenobj);		// This call refresh and store the new token (but does not include the refresh token)
+			} finally {
+				$outputofrefresh = trim((string) ob_get_clean());
+			}
 
 			dol_syslog("oauthlogintokens.php: call setRefreshToken");
 			$tokenobj->setRefreshToken($refreshtoken);	// Restore the refresh token
@@ -213,8 +220,10 @@ if ($action == 'refreshtoken' && $user->admin) {
 		dol_syslog("oauthlogintokens.php: Read token again for service ".$OAUTH_SERVICENAME);
 		$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
 	} catch (Exception $e) {
-		// Return an error if token not found
-		print $e->getMessage();
+		// Return an error if token not found or if refresh failed
+		$errormessage = $e->getMessage().(empty($outputofrefresh) ? '' : ' - '.$outputofrefresh);
+		dol_syslog("oauthlogintokens.php: Error on refreshtoken for service ".$OAUTH_SERVICENAME.": ".$errormessage, LOG_WARNING);
+		setEventMessages($errormessage, null, 'errors');
 	}
 }
 
@@ -235,7 +244,8 @@ $help_url = 'EN:Module_OAuth|FR:Module_OAuth_FR|ES:Módulo_OAuth_ES';
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-admin page-oauthlogintokens');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans('ConfigOAuth'), $linkback, 'title_setup');
 
 $head = oauthadmin_prepare_head();
@@ -358,6 +368,7 @@ if ($mode == 'setup' && $user->admin) {
 			$expire = false;
 			// Is token expired or will token expire in the next 30 seconds
 			if (is_object($tokenobj)) {
+				// tokenobj uses time() @phan-suppress-next-line DolibarrForbiddenFunctionPlugin
 				$expire = ($tokenobj->getEndOfLife() !== $tokenobj::EOL_NEVER_EXPIRES && $tokenobj->getEndOfLife() !== $tokenobj::EOL_UNKNOWN && time() > ($tokenobj->getEndOfLife() - 30));
 			}
 			if ($key[1] != '' && $key[2] != '') {
@@ -377,7 +388,7 @@ if ($mode == 'setup' && $user->admin) {
 
 			$submit_enabled = 0;
 
-			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=setup&amp;driver='.$driver.'" autocomplete="off">';
+			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=setup&amp;driver='.$driver.'" autocomplete="off" spellcheck="false">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setconst">';
 			print '<input type="hidden" name="page_y" value="">';
@@ -432,7 +443,7 @@ if ($mode == 'setup' && $user->admin) {
 			print '<td>';
 			if ($keyforprovider != 'Login') {
 				if (is_object($tokenobj)) {
-					print $form->textwithpicto(yn(1), $langs->trans("HasAccessToken").' : '.dol_print_date($storage->date_modification, 'dayhour').' state='.dol_escape_htmltag($storage->state));
+					print $form->textwithpicto(yn(1), $langs->trans("HasAccessToken").' : '.dol_print_date($storage->date_modification, 'dayhour').'<br>Scopes saved into field state='.dol_escape_htmltag($storage->state));
 				} else {
 					print '<span class="opacitymedium">'.$langs->trans("NoAccessToken").'</span>';
 				}

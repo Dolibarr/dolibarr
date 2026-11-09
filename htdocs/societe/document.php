@@ -6,7 +6,7 @@
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,11 +82,12 @@ if (!$sortfield) {
 
 // Initialize objects
 $object = new Societe($db);
+$upload_dir = null;
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
 
-	$upload_dir = $conf->societe->multidir_output[$object->entity]."/".$object->id;
-	$courrier_dir = $conf->societe->multidir_output[$object->entity]."/courrier/".get_exdir($object->id, 0, 0, 0, $object, 'thirdparty');
+	$upload_dir = $conf->societe->multidir_output[$object->entity ?? $conf->entity]."/".$object->id;
+	$courrier_dir = $conf->societe->multidir_output[$object->entity ?? $conf->entity]."/courrier/".get_exdir($object->id, 0, 0, 0, $object, 'thirdparty');
 }
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
@@ -101,7 +102,7 @@ if ($user->socid > 0) {
 }
 $result = restrictedArea($user, 'societe', $object->id, '&societe');
 
-if (empty($object->id)) {
+if (empty($object->id) || $upload_dir === null) {
 	accessforbidden();
 }
 
@@ -110,7 +111,15 @@ if (empty($object->id)) {
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+$parameters = array('id' => $object->id, 'socid' => $object->id);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+
+if (empty($reshook)) {
+	include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+}
 
 
 /*
@@ -129,7 +138,7 @@ llxHeader('', $title, $help_url);
 // Show tabs
 $head = societe_prepare_head($object);
 
-print dol_get_fiche_head($head, 'document', $langs->trans("ThirdParty"), -1, 'company');
+print dol_get_fiche_head($head, 'document', $langs->trans("ThirdParty"), -1, 'company', 0, '', '', 0, '', 1);
 
 
 // Build file list
@@ -152,11 +161,6 @@ print '<table class="border tableforfield centpercent">';
 print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
 print $object->getTypeUrl(1);
 print '</td></tr>';
-
-// Prefix
-if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
-	print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
-}
 
 if ($object->client) {
 	print '<tr><td class="titlefield">';

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014	    Maxime Kohlhaas		<support@atm-consulting.fr>
  * Copyright (C) 2014	    Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2021-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,7 +33,9 @@
  * @var int 	$cols		@deprecated 	Add this information into $parameters['cols']
  * @var string	$forcefieldid
  * @var string	$forceobjectid
+ * @var string	$moreparam		More parameters to add to the edit link/form url (must start with '&')
  */
+'@phan-var-force array<string,mixed>	$parameters';
 
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
@@ -45,8 +47,12 @@ if (!is_object($form)) {
 	$form = new Form($db);
 }
 
+// Ensure $objectoffield is available for dol_eval visibility formulas.
+global $objectoffield;
+$objectoffield = $object;
+
 ?>
-<!-- BEGIN PHP TEMPLATE core/tpl/extrafields_view.tpl.php -->
+<!-- BEGIN PHP TEMPLATE core/tpl/extrafields_view.tpl.php to show formObjectOptions + extrafields -->
 <?php
 if (!isset($parameters) || !is_array($parameters)) {
 	$parameters = array();
@@ -59,7 +65,8 @@ if (!empty($cols) && !isset($parameters['cols'])) {
 } elseif (isset($parameters['cols'])) {
 	$cols = $parameters['cols'];
 }
-if (!empty($object->fk_soc)) {
+if (property_exists($object, 'fk_soc') && !empty($object->fk_soc)) {
+	// @phan-suppress-next-line PhanUndeclaredProperty
 	$parameters['socid'] = $object->fk_soc;
 }
 $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);
@@ -262,7 +269,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 						});
 					</script>';
 				}
-				print '<a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?'.$fieldid.'='.$valueid.'&action=edit_extras&token='.newToken().'&attribute='.$tmpkeyextra.'&ignorecollapsesetup=1">'.img_edit().'</a>';
+				print '<a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?'.$fieldid.'='.$valueid.'&action=edit_extras&token='.newToken().'&attribute='.$tmpkeyextra.'&ignorecollapsesetup=1'.(empty($moreparam) ? '' : $moreparam).'">'.img_edit().'</a>';
 				print'</td>';
 			}
 			print '</tr></table>';
@@ -296,18 +303,22 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 			// TODO Improve element and rights detection
 			if ($action == 'edit_extras' && $permtoeditextrafield && GETPOST('attribute', 'restricthtml') == $tmpkeyextra) {
 				// Show the extrafield in create or edit mode
-				$fieldid = 'id';
+				$fieldid = empty($forcefieldid) ? 'id' : $forcefieldid;
+				$valueid = empty($forceobjectid) ? $object->id : $forceobjectid;
 				if ($object->table_element == 'societe') {
 					$fieldid = 'socid';
 				}
-				print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"] . '?' . $fieldid . '=' . $object->id . '" method="post" name="formextra">';
+				print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"] . '?' . $fieldid . '=' . $valueid . (empty($moreparam) ? '' : $moreparam) . '" method="post" name="formextra">';
 				print '<input type="hidden" name="action" value="update_extras">';
 				print '<input type="hidden" name="attribute" value="'.$tmpkeyextra.'">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
-				print '<input type="hidden" name="'.$fieldid.'" value="'.$object->id.'">';
-				print $extrafields->showInputField($tmpkeyextra, $value, '', '', '', '', $object, $object->table_element);
+				print '<input type="hidden" name="'.$fieldid.'" value="'.$valueid.'">';
+				print '<input type="hidden" name="page_y" value="">';
+				// Last parameter is 1 because the field is edited alone: a dependent list can't be filtered by javascript
+				// here (its parent list is not on this form), so it must be filtered on the saved value of its parent.
+				print $extrafields->showInputField($tmpkeyextra, $value, '', '', '', '', $object, $object->table_element, 0, 1);
 
-				print '<input type="submit" class="button" value="'.dolPrintHTMLForAttribute($langs->trans('Modify')).'">';
+				print '<input type="submit" class="button smallpaddingimp reposition" value="'.dolPrintHTMLForAttribute($langs->trans('Modify')).'">';
 
 				print '</form>';
 

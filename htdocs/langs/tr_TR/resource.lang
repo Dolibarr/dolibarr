@@ -34,5 +34,6 @@ ResourceTypeCode=Kaynak türü kodu
 ImportDataset_resource_1=Kaynaklar
 ErrorResourcesAlreadyInUse=Bazı kaynaklar kullanımda
 ErrorResourceUseInEvent=%s öğe %s olayda kullanıldı
-MaxUsers=Maksimum kullanıcı (yerler, koltuklar vb.)
+MaxUsers=Maksimum kullanıcı sayısı
+MaxUsersResourceDesc=Kaynak aynı anda birkaç kişi tarafından kullanılabiliyorsa (araba, oda,...), kaynağı aynı anda kullanmasına izin verilen maksimum kullanıcı sayısını buraya girebilirsiniz (koltuk sayısı, yerler, ...).
 MaxUsersLabel=Maksimum kullanıcı

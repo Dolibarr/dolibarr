@@ -10,7 +10,7 @@
  * Copyright (C) 2016      Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2019-2024	Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2019      Tim Otte			    <otte@meuser.it>
- * Copyright (C) 2020      Pierre Ardoin        <mapiolca@me.com>
+ * Copyright (C) 2020-2025 Pierre Ardoin        <developpeur@lesmetiersdubatiment.fr>
  * Copyright (C) 2023	   Joachim Kueter		<git-jk@bloxera.com>
  * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
@@ -36,6 +36,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -46,15 +54,6 @@ require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.
 if (isModEnabled('barcode')) {
 	dol_include_once('/core/class/html.formbarcode.class.php');
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'suppliers', 'bills', 'margins', 'stocks'));
@@ -88,10 +87,6 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-if (!$user->hasRight('fournisseur', 'lire') && (!isModEnabled('margin') && !$user->hasRight("margin", "liretous"))) {
-	accessforbidden();
-}
-
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -119,8 +114,14 @@ if ($id > 0 || $ref) {
 	$prod->fetch($id, $ref);
 }
 
+if (!$user->hasRight('fournisseur', 'lire') && (!isModEnabled('margin') && !$user->hasRight("margin", "liretous"))) {
+	accessforbidden();
+}
+
 $usercanread = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'lire')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
 $usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'creer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
+// Case of advanced permission to write supplier prices
+$usercancreate = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $usercancreate : $user->hasRight('product', 'product_advance', 'write_supplier_prices'));
 
 if ($object->id > 0) {
 	if ($object->type == $object::TYPE_PRODUCT) {
@@ -168,11 +169,10 @@ if (empty($reshook)) {
 	if ($action == 'setpmp' && $usercancreate) {
 		if ($id) {
 			$result = $object->fetch($id);
-			$object->pmp = $pmp;
-			$sql = "UPDATE ".MAIN_DB_PREFIX."product SET pmp = ".((float) $object->pmp)." WHERE rowid = ".((int) $id);
-			$resql = $db->query($sql);
-			//$result = $object->update($object->id, $user);
-			if ($resql) {
+			if ($result > 0) {
+				$result = $object->setValueFrom('pmp', price2num($pmp), '', null, 'text', '', $user, 'PRODUCT_MODIFY');
+			}
+			if ($result > 0) {
 				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 				$action = '';
 			} else {
@@ -213,11 +213,17 @@ if (empty($reshook)) {
 		$quantity = price2num(GETPOST("qty", 'alphanohtml'), 'MS');
 		$remise_percent = price2num(GETPOST('remise_percent', 'alpha'));
 
-		$npr = preg_match('/\*/', GETPOST('tva_tx', 'alpha')) ? 1 : 0;
-		$tva_tx = str_replace('*', '', GETPOST('tva_tx', 'alpha'));
-		if (!preg_match('/\((.*)\)/', $tva_tx)) {
-			$tva_tx = price2num($tva_tx);
+		// A rate typed in the free field (when the list has not the wanted rate) is used instead of the one of the list
+		$vatposted = (trim(GETPOST('tva_tx_free', 'alpha')) !== '' ? trim(GETPOST('tva_tx_free', 'alpha')) : GETPOST('tva_tx', 'alpha'));
+		$npr = preg_match('/\*/', $vatposted) ? 1 : 0;
+		$tva_tx = str_replace('*', '', $vatposted);
+		$vat_src_code = '';	// The VAT code of the rate chosen in the list, e.g. '10 (CODE)'
+		$reg = array();
+		if (preg_match('/\((.*)\)/', $tva_tx, $reg)) {
+			$vat_src_code = $reg[1];
+			$tva_tx = preg_replace('/\s*\(.*\)/', '', $tva_tx);
 		}
+		$tva_tx = price2num($tva_tx);
 
 		$price_expression = GETPOSTINT('eid') ? GETPOSTINT('eid') : ''; // Discard expression if not in expression mode
 		$delivery_time_days = GETPOSTINT('delivery_time_days') ? GETPOSTINT('delivery_time_days') : '';
@@ -325,9 +331,9 @@ if (empty($reshook)) {
 					$multicurrency_price = GETPOSTFLOAT("multicurrency_price");
 					$multicurrency_code = GETPOST("multicurrency_code", 'alpha');
 
-					$ret = $object->update_buyprice((float) $quantity, $newprice, $user, GETPOST("price_base_type"), $supplier, GETPOSTINT("oselDispo"), $ref_fourn, (float) $tva_tx, GETPOST("charges"), (float) $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', $multicurrency_price, GETPOST("multicurrency_price_base_type"), $multicurrency_tx, $multicurrency_code, $supplier_description, $barcode, $fk_barcode_type, $extrafield_values);
+					$ret = $object->update_buyprice((float) $quantity, $newprice, $user, GETPOST("price_base_type"), $supplier, GETPOSTINT("oselDispo"), $ref_fourn, (float) $tva_tx, GETPOST("charges"), (float) $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), $vat_src_code, $multicurrency_price, GETPOST("multicurrency_price_base_type"), $multicurrency_tx, $multicurrency_code, $supplier_description, $barcode, $fk_barcode_type, $extrafield_values);
 				} else {
-					$ret = $object->update_buyprice((float) $quantity, $newprice, $user, GETPOST("price_base_type"), $supplier, GETPOSTINT("oselDispo"), $ref_fourn, (float) $tva_tx, GETPOST("charges"), (float) $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', 0, 'HT', 1, '', $supplier_description, $barcode, $fk_barcode_type, $extrafield_values);
+					$ret = $object->update_buyprice((float) $quantity, $newprice, $user, GETPOST("price_base_type"), $supplier, GETPOSTINT("oselDispo"), $ref_fourn, (float) $tva_tx, GETPOST("charges"), (float) $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), $vat_src_code, 0, 'HT', 1, '', $supplier_description, $barcode, $fk_barcode_type, $extrafield_values);
 				}
 				if ($ret < 0) {
 					$error++;
@@ -389,7 +395,7 @@ if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
 llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'classforhorizontalscrolloftabs mod-product page-price_suppliers');
 
 if ($id > 0 || $ref) {
-	if ($action == 'ask_remove_pf') {
+	if ($action == 'ask_remove_pf' && $usercancreate) {
 		$form = new Form($db);
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$id.'&rowid='.$rowid, $langs->trans('DeleteProductBuyPrice'), $langs->trans('ConfirmDeleteProductBuyPrice'), 'confirm_remove_pf', '', 0, 1);
 		echo $formconfirm;
@@ -514,8 +520,7 @@ if ($id > 0 || $ref) {
 				print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 				print '<input type="hidden" name="socid" value="'.$socid.'">';
 			} else {
-				$events = array();
-				$events[] = array('method' => 'getVatRates', 'url' => dol_buildpath('/core/ajax/vatrates.php', 1), 'htmlname' => 'tva_tx', 'params' => array());
+				$events = array();	// The VAT rates of the supplier are loaded by load_vat() below
 				$filter = '(fournisseur:=:1) AND (status:=:1)';
 				print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company(GETPOST("id_fourn", 'alpha'), 'id_fourn', $filter, $langs->transnoentitiesnoconv('SelectThirdParty'), 0, 0, $events);
 
@@ -531,7 +536,7 @@ if ($id > 0 || $ref) {
 				print '<script type="text/javascript">
 				$(document).ready(function () {
 					console.log("Requesting default VAT rate for the supplier...")
-					$("#search_id_fourn").change(load_vat)
+					$("#id_fourn, #search_id_fourn").change(load_vat)
 				});
 				function load_vat() {
 					// get soc id
@@ -545,25 +550,26 @@ if ($id > 0 || $ref) {
 					options += "&htmlname=tva_tx"
 					options += "&token='.currentToken().'"
 					options += "&action=getBuyerVATRates" // not defined in vatrates.php, default behavior.
+					options += "&productid='.((int) $object->id).'"
+					options += "&mode=1"		// keep the VAT code in the values
+					options += "&type_vat=2"	// purchase VAT rates
 
 					var get = $.getJSON(
 						vat_url,
 						options,
 						(data) => {
-							rate_options = $.parseHTML(data.value)
-							rate_options.forEach(opt => {
-								if (opt.selected) {
-									replaceVATWithSupplierValue(opt.value);
-									return;
-								}
-							})
+							// The purchase VAT rates of the supplier\'s country, its default one selected
+							console.log("VAT rates for the supplier loaded: " + data.num);
+							if (data.num > 0) {
+								$("#tva_tx").html(data.value).show();
+								$(".tva_tx_or").show();
+							} else {	// No VAT rate for the country of the supplier, only the free field can be used
+								$("#tva_tx").html("").hide();
+								$(".tva_tx_or").hide();
+							}
 						}
 					);
 
-				}
-				function replaceVATWithSupplierValue(vat_rate) {
-					console.log("Default VAT rate for the supplier: " + vat_rate + "%")
-					$("[name=\'tva_tx\']")[0].value = vat_rate;
 				}
 			</script>';
 			}
@@ -612,9 +618,9 @@ if ($id > 0 || $ref) {
 				// Packaging/Conditionnement
 				print '<tr>';
 
-				print '<td class="fieldrequired">'.$form->textwithpicto($langs->trans("PackagingForThisProduct"), $langs->trans("PackagingForThisProductDesc")).'</td>';
+				print '<td>'.$form->textwithpicto($langs->trans("PackagingForThisProduct"), $langs->trans("PackagingForThisProductDesc")).'</td>';
 				print '<td>';
-				$packaging = GETPOSTISSET('packaging') ? price2num(GETPOST('packaging', 'alphanohtml'), 'MS') : ((empty($rowid)) ? "1" : price2num($object->packaging, 'MS'));
+				$packaging = GETPOSTISSET('packaging') ? price2num(GETPOST('packaging', 'alphanohtml'), 'MS') : ((empty($rowid)) ? "" : price2num($object->packaging, 'MS'));
 				print '<input class="flat" name="packaging" size="5" value="'.$packaging.'">';
 
 				// Units
@@ -626,35 +632,57 @@ if ($id > 0 || $ref) {
 				}
 			}
 			// Vat rate
-			$default_vat = '';
 
 			// We don't have supplier, so we try to guess.
 			// For this we build a fictive supplier with same properties than user but using vat)
 			$mysoc2 = clone $mysoc;
 			$mysoc2->name = 'Fictive seller with same country';
 			$mysoc2->tva_assuj = 1;
-			$default_vat = get_default_tva($mysoc2, $mysoc, $object->id, 0);
-			$default_npr = get_default_npr($mysoc2, $mysoc, $object->id, 0);
-			if (empty($default_vat)) {
-				$default_npr = $default_vat;
-			}
 
 			print '<tr><td class="fieldrequired">'.$langs->trans("VATRateForSupplierProduct").'</td>';
 			print '<td>';
-			//print $form->load_tva('tva_tx',$object->tva_tx,$supplier,$mysoc);    // Do not use list here as it may be any vat rates for any country
-			if (!empty($rowid)) {	// If we have a supplier, it is an update, we must show the vat of current supplier price
-				$tmpproductsupplier = new ProductFournisseur($db);
-				$tmpproductsupplier->fetch_product_fournisseur_price($rowid, 1);
-				$default_vat = $tmpproductsupplier->fourn_tva_tx;
-				$default_npr = $tmpproductsupplier->fourn_tva_npr;
-			} else {
-				if (empty($default_vat)) {
-					$default_vat = $object->tva_tx;
+			// List of the purchase VAT rates of the seller's country, as on the lines of purchase orders and supplier
+			// invoices that this price pre-fills. The value keeps the VAT code ('10 (CODE)'), saved as default_vat_code,
+			// so that those lines get the same rate and code (and so the same accounting account and tax return box).
+			$vatseller = $mysoc2;	// No supplier chosen yet: rates of the company's country, the list is reloaded when a supplier is chosen
+			$vatsellerid = (!empty($rowid) ? $socid : GETPOSTINT('id_fourn'));	// The supplier of the price being edited, or the one chosen
+			if ($vatsellerid > 0) {
+				$tmpseller = new Fournisseur($db);
+				if ($tmpseller->fetch($vatsellerid) > 0) {
+					$vatseller = $tmpseller;
 				}
 			}
-			$vattosuggest = (GETPOSTISSET("tva_tx") ? vatrate(GETPOST("tva_tx")) : ($default_vat != '' ? vatrate($default_vat) : ''));
-			$vattosuggest = preg_replace('/\s*\(.*\)$/', '', $vattosuggest);
-			print '<input type="text" class="flat" size="5" name="tva_tx" value="'.$vattosuggest.'">';
+			if (GETPOSTISSET("tva_tx")) {
+				$vattoselect = GETPOST("tva_tx", 'alpha');
+			} elseif (!empty($rowid)) {	// If we have a supplier, it is an update, we must show the vat of current supplier price
+				$tmpproductsupplier = new ProductFournisseur($db);
+				$tmpproductsupplier->fetch_product_fournisseur_price($rowid, 1);
+				$vattoselect = $tmpproductsupplier->fourn_tva_tx.($tmpproductsupplier->default_vat_code ? ' ('.$tmpproductsupplier->default_vat_code.')' : '').($tmpproductsupplier->fourn_tva_npr ? '*' : '');
+			} else {
+				$vattoselect = -1;	// Default rate for this product, seller and buyer (the default purchase rate when there are several)
+			}
+			$vatoptions = $form->load_tva('tva_tx', $vattoselect, $vatseller, $mysoc, $object->id, 0, $object->type, true, 1, 2);
+			$vatinlist = ($form->num > 0);
+			// When the rate to show is not in the list (rate of a country without VAT rates, or typed in the free field), show it in the free field
+			$vatfree = '';
+			if (GETPOSTISSET("tva_tx_free")) {
+				$vatfree = GETPOST("tva_tx_free", 'alpha');
+			} elseif ($vattoselect != -1 && strpos($vatoptions, ' selected') === false) {
+				$vatfree = preg_replace('/\s*\(.*\)/', '', (string) $vattoselect);
+				$vatfree = vatrate(str_replace('*', '', $vatfree)).(strpos($vatfree, '*') !== false ? '*' : '');	// '5.0000*' shown as '5*'
+			}
+			print '<select class="flat valignmiddle minwidth75imp maxwidth100 right" id="tva_tx" name="tva_tx"'.($vatinlist ? '' : ' style="display: none"').'>'.($vatinlist ? $vatoptions : '').'</select>';
+			print '<span class="tva_tx_or opacitymedium"'.($vatinlist ? '' : ' style="display: none"').'> ... '.$langs->trans("or").' ... </span>';
+			print '<input type="text" class="flat right width50" id="tva_tx_free" name="tva_tx_free" value="'.dol_escape_htmltag($vatfree).'" placeholder="%">';
+			print $form->textwithpicto('', $langs->trans("VATRateForSupplierProductFreeHelp"), 1, 'info');
+			// The list is greyed while a rate is typed in the free field, as the typed rate is the one saved
+			print '<script>
+			$(document).ready(function () {
+				function tva_tx_free_toggle() { $("#tva_tx").css("opacity", $("#tva_tx_free").val().trim() !== "" ? 0.4 : 1); }
+				$("#tva_tx_free").on("input", tva_tx_free_toggle);
+				tva_tx_free_toggle();
+			});
+			</script>';
 			print '</td></tr>';
 
 			if (isModEnabled('dynamicprices')) { //Only show price mode and expression selector if module is enabled
@@ -698,7 +726,7 @@ if ($id > 0 || $ref) {
 				if (empty($currencycodetouse) && $object->fourn_multicurrency_tx == 1) {
 					$currencycodetouse = $conf->currency;
 				}
-				print $form->selectMultiCurrency($currencycodetouse, "multicurrency_code", 1);
+				print $form->selectMultiCurrency((string) $currencycodetouse, "multicurrency_code", 1);
 				print ' &nbsp; &nbsp; '.$langs->trans("CurrencyRate").' ';
 				print '<input class="flat width50" name="multicurrency_tx" value="';
 				print GETPOST('multicurrency_tx');
@@ -928,14 +956,19 @@ if ($id > 0 || $ref) {
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) {
+				// Display add button only when user can write supplier prices
 				if ($usercancreate) {
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/price_suppliers.php?id='.((int) $object->id).'&action=create_price&token='.newToken().'">';
+					print $langs->trans("AddSupplierPrice").'</a>';
+				} else {
+					print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">';
 					print $langs->trans("AddSupplierPrice").'</a>';
 				}
 			}
 		}
 
 		print "</div>\n";
+
 
 		if ($user->hasRight("fournisseur", "read")) { // Duplicate ? this check is already in the head of this file
 			$param = '';
@@ -1002,7 +1035,7 @@ if ($id > 0 || $ref) {
 			include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 			$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-			$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+			$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post" name="formulaire">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1023,7 +1056,7 @@ if ($id > 0 || $ref) {
 			print '<tr class="liste_titre">';
 
 			// Action column
-			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if ($conf->main_checkbox_left_column) {
 				print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
 				$nbfields++;
 			}
@@ -1132,7 +1165,7 @@ if ($id > 0 || $ref) {
 				$parameters = array('id_fourn' => (!empty($id_fourn) ? $id_fourn : ''), 'prod_id' => $object->id, 'nbfields' => $nbfields);
 				$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action);
 			}
-			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if (!$conf->main_checkbox_left_column) {
 				print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
 				$nbfields++;
 			}
@@ -1143,8 +1176,9 @@ if ($id > 0 || $ref) {
 					print '<tr class="oddeven">';
 
 					// Action column
-					if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					if ($conf->main_checkbox_left_column) {
 						print '<td class="center nowraponall">';
+						// EN: Allow editing and deletion when user can write supplier prices
 						if ($usercancreate) {
 							print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $productfourn->fourn_id).'&action=edit_price&token='.newToken().'&rowid='.((int) $productfourn->product_fourn_price_id).'">'.img_edit()."</a>";
 							print ' &nbsp; ';
@@ -1165,7 +1199,7 @@ if ($id > 0 || $ref) {
 					}
 
 					// Supplier ref
-					if ($usercancreate) { // change required right here
+					if ($usercancreate) { // EN: Supplier link allowed when user can write supplier prices
 						print '<td class="tdoverflowmax150">'.$productfourn->getNomUrl().'</td>';
 					} else {
 						print '<td class="tdoverflowmax150">'.dol_escape_htmltag($productfourn->fourn_ref).'</td>';
@@ -1309,17 +1343,19 @@ if ($id > 0 || $ref) {
 						$sql .= " WHERE fk_object = ".((int) $productfourn->product_fourn_price_id);
 						$resql = $db->query($sql);
 						if ($resql) {
-							if ($db->num_rows($resql) != 1) {
-								foreach ($extralabels as $key => $value) {
-									if (!empty($arrayfields['ef.'.$key]['checked']) && !empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
+							// Row may not exist yet (e.g. if the only extrafield configured is a computed one, no row is ever inserted)
+							$obj = ($db->num_rows($resql) == 1) ? $db->fetch_object($resql) : null;
+							foreach ($extralabels as $key => $value) {
+								if (!empty($arrayfields['ef.'.$key]['checked']) && !empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
+									// If field is a computed field, we make computation to get value, whether or not a stored row exists
+									if (!empty($extrafields->attributes["product_fournisseur_price"]['computed'][$key])) {
+										$objectoffield = $productfourn; // For compatibility with the computed formula. $objectoffield is exported by dol_eval().
+										$extravalue = dol_eval((string) $extrafields->attributes["product_fournisseur_price"]['computed'][$key], 1, 1, '2');
+										print '<td align="right">'.$extrafields->showOutputField($key, $extravalue, '', 'product_fournisseur_price', $langs, $productfourn)."</td>";
+									} elseif ($obj) {
+										print '<td align="right">'.$extrafields->showOutputField($key, $obj->{$key}, '', 'product_fournisseur_price', $langs, $productfourn)."</td>";
+									} else {
 										print "<td></td>";
-									}
-								}
-							} else {
-								$obj = $db->fetch_object($resql);
-								foreach ($extralabels as $key => $value) {
-									if (!empty($arrayfields['ef.'.$key]['checked']) && !empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
-										print '<td align="right">'.$extrafields->showOutputField($key, $obj->{$key}, '', 'product_fournisseur_price')."</td>";
 									}
 								}
 							}
@@ -1333,8 +1369,9 @@ if ($id > 0 || $ref) {
 					}
 
 					// Modify-Remove
-					if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					if (!$conf->main_checkbox_left_column) {
 						print '<td class="center nowraponall">';
+						// EN: Allow editing and deletion when user can write supplier prices
 						if ($usercancreate) {
 							print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $productfourn->fourn_id).'&action=edit_price&token='.newToken().'&rowid='.((int) $productfourn->product_fourn_price_id).'">'.img_edit()."</a>";
 							print ' &nbsp; ';

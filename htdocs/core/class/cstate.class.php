@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2016  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2025		MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,23 +33,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
 class Cstate extends CommonDict
 {
 	/**
-	 * @var int         The ID of the state
-	 */
-	public $rowid;
-
-	/**
 	 * @var string      The code of the state
+	 * @deprecated      Use $code
 	 *                  (ex: LU0011, MA12, 07, 0801, etc.)
 	 */
 	public $code_departement;
 
 	/**
-	 * @var string      The name of the state
+	 * @var ?string      The name of the state
 	 */
 	public $name = '';
 
 	/**
-	 * @var string
+	 * @var ?string
 	 * @deprecated
 	 * @see $name
 	 */
@@ -77,19 +74,19 @@ class Cstate extends CommonDict
 	{
 		$error = 0;
 
+		if (empty($this->id)) {
+			return -1;
+		}
 		// Clean parameters
 		if (isset($this->code_departement)) {
 			$this->code_departement = trim($this->code_departement);
 		}
-		if (isset($this->nom)) {
-			$this->nom = trim($this->nom);
+		if (isset($this->name)) {
+			$this->name = trim($this->name);
 		}
 		if (isset($this->active)) {
 			$this->active = (int) $this->active;
 		}
-
-		// Check parameters
-		// Put here code to add control on parameters values
 
 		// Insert request
 		$sql = "INSERT INTO ".$this->db->prefix()."c_departements(";
@@ -98,9 +95,9 @@ class Cstate extends CommonDict
 		$sql .= "nom,";
 		$sql .= "active";
 		$sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->rowid) ? 'NULL' : "'".$this->db->escape((string) $this->rowid)."'").",";
+		$sql .= (int) $this->id . ",";
 		$sql .= " ".(!isset($this->code_departement) ? 'NULL' : "'".$this->db->escape($this->code_departement)."'").",";
-		$sql .= " ".(!isset($this->nom) ? 'NULL' : "'".$this->db->escape($this->nom)."'").",";
+		$sql .= " ".(!isset($this->name) ? 'NULL' : "'".$this->db->escape($this->name)."'").",";
 		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape((string) $this->active)."'");
 		$sql .= ")";
 

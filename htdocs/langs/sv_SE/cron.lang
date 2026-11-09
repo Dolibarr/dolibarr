@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = Läs Planerad jobb
-Permission23102 = Skapa / uppdatera Schemalagt jobb
-Permission23103 = Radera schemalagt jobb
-Permission23104 = Utför schemalagt jobb
 # Admin
 CronSetup=Planerad jobbhantering installation
 URLToLaunchCronJobs=URL för att kontrollera och starta kvalificerade cron-jobb från en webbläsare
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=I en Unix-miljö bör följande rad läggas i crontab s�
 CronExplainHowToRunWin=I Microsoft (tm) Windows-miljö kan du använda Schemalagda uppgiftsverktyg för att köra kommandoraden var 5: e minut
 CronMethodDoesNotExists=Klass %s innehåller ingen metod %s
 CronMethodNotAllowed=Metoden %s av klassen %s finns i blocklistan över förbjudna metoder
-CronJobDefDesc=Cron-jobbprofiler definieras i modulbeskrivningsfilen. När modulen är aktiverad laddas de och är tillgängliga så att du kan administrera jobben från adminverktygsmenyn %s.
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=Förteckning över fördefinierade cron jobbprofiler
 # Menu
 EnabledAndDisabled=Aktiverad och inaktiverad
@@ -27,7 +22,7 @@ CronDelete=Radera schemalagda jobb
 CronConfirmDelete=Är du säker på att du vill ta bort dessa schemalagda jobb?
 CronExecute=Kör nu
 CronConfirmExecute=Är du säker på att du vill utföra dessa schemalagda jobb nu?
-CronInfo=Schemalagd arbetsmodul gör det möjligt att schemalägga jobb för att utföra dem automatiskt. Jobb kan också startas manuellt.
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=Jobb
 CronNone=Nästa körning av schemalagd uppgift
 CronNotYetRan=Aldrig avrättad
@@ -79,7 +74,7 @@ CronType_command=Skalkommando
 CronCannotLoadClass=Kan inte ladda klassfilen %s (för att använda klass %s)
 CronModuleNotEnabledInThisEntity=Cron-modulen är inte aktiverad i denna entitet (för att använda %s-metoden för %s-objektet)
 CronCannotLoadObject=Klassfilen %s laddades, men objektet %s kunde inte hittas i det
-UseMenuModuleToolsToAddCronJobs=Gå till menyn "<a href="%s">Hem - Adminverktyg - Schemalagda jobb</a>" för att se och redigera schemalagda jobb.
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=Jobb inaktiverat
 MakeLocalDatabaseDumpShort=Lokal databas säkerhetskopia
 MakeLocalDatabaseDump=Skapa en lokal databasdump. Parametrarna är: komprimering ('gz' eller 'bz' eller 'none'), säkerhetskopieringstyp ('mysql', 'pgsql', 'auto'), 1, 'auto' eller filnamn att bygga, antal backupfiler för att hålla

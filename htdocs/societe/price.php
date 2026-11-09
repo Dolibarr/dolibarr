@@ -6,7 +6,7 @@
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2023	    Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		Mélina Joum				<melina.joum@altairis.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -214,8 +214,50 @@ if (empty($reshook)) {
 		$prodcustprice->price = price2num(GETPOST("price"), 'MU');
 		$prodcustprice->price_min = price2num(GETPOST("price_min"), 'MU');
 		$prodcustprice->price_base_type = GETPOST("price_base_type", 'alpha');
-		$prodcustprice->tva_tx = str_replace('*', '', GETPOST("tva_tx"));
-		$prodcustprice->recuperableonly = (preg_match('/\*/', GETPOST("tva_tx")) ? 1 : 0);
+		$tva_tx_txt = GETPOST('tva_tx', 'alpha'); // tva_tx can be '8.5'  or  '8.5*'  or  '8.5 (XXX)' or '8.5* (XXX)'
+
+		// We must define tva_tx, npr and local taxes, as when adding a price
+		$vatratecode = '';
+		$tva_tx = preg_replace('/[^0-9\.].*$/', '', $tva_tx_txt); // keep remove all after the numbers and dot
+		$npr = preg_match('/\*/', $tva_tx_txt) ? 1 : 0;
+		$localtax1 = 0;
+		$localtax2 = 0;
+		$localtax1_type = '0';
+		$localtax2_type = '0';
+		// If value contains the unique code of vat line (new recommended method), we use it to find npr and local taxes, else we use the line with no code
+		if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg)) {
+			$vatratecode = $reg[1];
+		}
+		if ($tva_tx !== '') {
+			$sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
+			$sql .= " FROM ".$db->prefix()."c_tva as t, ".$db->prefix()."c_country as c";
+			$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($mysoc->country_code)."'";
+			$sql .= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
+			$sql .= " AND t.code = '".$db->escape($vatratecode)."'";
+			if ($vatratecode === '') {
+				$sql .= " AND t.recuperableonly = ".((int) $npr);
+			}
+			$sql .= " AND t.entity IN (".getEntity('c_tva').")";
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				if ($obj) {
+					$npr = $obj->recuperableonly;
+					$localtax1 = $obj->localtax1;
+					$localtax2 = $obj->localtax2;
+					$localtax1_type = $obj->localtax1_type;
+					$localtax2_type = $obj->localtax2_type;
+				}
+			}
+		}
+
+		$prodcustprice->default_vat_code = $vatratecode;
+		$prodcustprice->tva_tx = $tva_tx;
+		$prodcustprice->recuperableonly = $npr;
+		$prodcustprice->localtax1_tx = $localtax1;
+		$prodcustprice->localtax2_tx = $localtax2;
+		$prodcustprice->localtax1_type = $localtax1_type;
+		$prodcustprice->localtax2_type = $localtax2_type;
 		$prodcustprice->discount_percent = price2num(GETPOST("discount_percent"));
 		$prodcustprice->date_begin = dol_mktime(0, 0, 0, GETPOSTINT('date_beginmonth'), GETPOSTINT('date_beginday'), GETPOSTINT('date_beginyear'), 'tzserver');	// If we enter the 02 january, we need to save the 02 january for server;
 		$prodcustprice->date_end = dol_mktime(0, 0, 0, GETPOSTINT('date_endmonth'), GETPOSTINT('date_endday'), GETPOSTINT('date_endyear'), 'tzserver');	// If we enter the 02 january, we need to save the 02 january for server
@@ -280,10 +322,6 @@ print '<table class="border centpercent tableforfield">';
 print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
 print $object->getTypeUrl(1);
 print '</td></tr>';
-
-if (getDolGlobalString('SOCIETE_USEPREFIX')) { // Old not used prefix field
-	print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
-}
 
 if ($object->client) {
 	print '<tr><td class="titlefield">';
@@ -396,7 +434,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 
 		// VAT
 		print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
-		print $form->load_tva("tva_tx", GETPOST("tva_tx", "alpha"), $mysoc, $object, 0, 0, '', false, 1);
+		print $form->load_tva("tva_tx", GETPOST("tva_tx", "alpha"), $mysoc, $object, 0, 0, '', false, 1, 1);
 		print '</td></tr>';
 
 		// Price base
@@ -505,7 +543,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 
 			// VAT
 			print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
-			print $form->load_tva("tva_tx", $prodcustprice->tva_tx, $mysoc, null, $staticprod->id, $prodcustprice->recuperableonly);
+			print $form->load_tva("tva_tx", $prodcustprice->default_vat_code ? $prodcustprice->tva_tx.' ('.$prodcustprice->default_vat_code.')' : $prodcustprice->tva_tx, $mysoc, null, $staticprod->id, $prodcustprice->recuperableonly, '', false, 1, 1);
 			print '</td></tr>';
 
 			// Price base
@@ -768,7 +806,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		print '<!-- view specific price for each product -->'."\n";
 
 		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-		print_barre_liste($langs->trans('PriceForEachProduct'), $page, $_SERVER['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords, '');
+		print_barre_liste($langs->trans('PriceForEachProduct'), $page, $_SERVER['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords, 'product');
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -788,9 +826,6 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		}
 		if ($search_label) {
 			$param .= '&search_label='.urlencode($search_label);
-		}
-		if ($search_price) {
-			$param .= '&search_price='.urlencode($search_price);
 		}
 		if ($search_price) {
 			$param .= '&search_price='.urlencode($search_price);
@@ -881,7 +916,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 
 				// Extrafields
 				$extrafields->fetch_name_optionals_label("product_customer_price");
-				$extralabels = $extrafields->attributes["product_customer_price"]['label'];
+				$extralabels = !empty($extrafields->attributes["product_customer_price"]['label']) ? $extrafields->attributes["product_customer_price"]['label'] : '';
 				if (!empty($extralabels)) {
 					$sql  = "SELECT";
 					$sql .= " fk_object";

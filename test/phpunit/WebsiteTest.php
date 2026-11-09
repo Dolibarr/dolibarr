@@ -25,7 +25,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
@@ -134,6 +134,10 @@ class WebsiteTest extends CommonClassTest
 	{
 		global $conf, $user;
 
+		// Force allow of PHP in website from main setup
+		global $dolibarr_website_allow_custom_php;
+		$dolibarr_website_allow_custom_php = 2;		// Value 2 allow PHP code, so we can check the protections. Value 1 will allow PHP code only if exec fautres are disabled in PHP.
+
 		// Force permission so this is not the permission that will affect result of checkPHPCode
 		$user->rights->website->writephp = 1;
 
@@ -180,6 +184,18 @@ class WebsiteTest extends CommonClassTest
 
 		$t = '';
 		$s = '<?php $_="{"; $_=($_^"<").($_^">;").($_^"/"); ?><?=${\'_\'.$_}["_"](${\'_\'.$_}["__"]);?>';
+		$result = checkPHPCode($t, $s);
+		print __METHOD__." result checkPHPCode=".$result."\n";
+		$this->assertEquals($result, 1, 'checkPHPCode did not detect the string was dangerous');
+
+		$t = '';
+		$s = '<?php $pid = pcntl_fork(); ?>';
+		$result = checkPHPCode($t, $s);
+		print __METHOD__." result checkPHPCode=".$result."\n";
+		$this->assertEquals($result, 1, 'checkPHPCode did not detect the string was dangerous');
+
+		$t = '';
+		$s = '<?php $pid = pcntl_fork(); if (!$pid) { pcntl_exec("/usr/bin/touch", array("/tmp/totouch")); } ?>';
 		$result = checkPHPCode($t, $s);
 		print __METHOD__." result checkPHPCode=".$result."\n";
 		$this->assertEquals($result, 1, 'checkPHPCode did not detect the string was dangerous');

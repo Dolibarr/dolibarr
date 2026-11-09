@@ -26,11 +26,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,6 +33,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 // Load translation files required by the page
 $langs->load("projects");
@@ -64,16 +63,21 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if (GETPOST('actioncode', 'array')) {
-	$actioncode = GETPOST('actioncode', 'array', 3);
+if (GETPOSTISARRAY('actioncode')) {
+	$actioncode = GETPOST('actioncode', 'array:alpha', 3);
 	if (!count($actioncode)) {
 		$actioncode = '0';
 	}
 } else {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ? GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
 }
+
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
+$search_complete = GETPOST('search_complete');
+$search_filtert = GETPOSTINT('search_filtert');
+$search_dateevent_start = GETPOSTDATE('dateevent_start');
+$search_dateevent_end = GETPOSTDATE('dateevent_end');
 
 $hookmanager->initHooks(array('projectcardinfo'));
 
@@ -89,12 +93,11 @@ if ($id > 0 || !empty($ref)) {
 }
 $socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
-$result = restrictedArea($user, 'projet', $id, 'projet&project');
+restrictedArea($user, 'projet', $id, 'projet&project');
 
 if (!$user->hasRight('projet', 'lire')) {
 	accessforbidden();
 }
-
 
 
 /*
@@ -108,9 +111,12 @@ if ($reshook < 0) {
 }
 
 // Purge search criteria
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$actioncode = '';
+	$search_rowid = '';
 	$search_agenda_label = '';
+	$search_complete = '';
+	$search_filtert = '';
 }
 
 
@@ -231,7 +237,33 @@ if (!empty($object->id)) {
 	if ($limit > 0 && $limit != $conf->liste_limit) {
 		$param .= '&limit='.((int) $limit);
 	}
+	if ($search_rowid) {
+		$param .= '&search_rowid='.urlencode($search_rowid);
+	}
+	if ($actioncode !== '' && $actioncode !== '-1') {
+		$param .= '&actioncode='.urlencode($actioncode);
+	}
+	if ($search_agenda_label) {
+		$param .= '&search_agenda_label='.urlencode($search_agenda_label);
+	}
+	if ($search_complete != '') {
+		$param .= '&search_complete='.urlencode($search_complete);
+	}
+	if ($search_filtert != '') {
+		$param .= '&search_filtert='.urlencode((string) $search_filtert);
+	}
+	if ($search_dateevent_start != '') {
+		$param .= '&dateevent_startyear='.GETPOSTINT('dateevent_startyear');
+		$param .= '&dateevent_startmonth='.GETPOSTINT('dateevent_startmonth');
+		$param .= '&dateevent_startday='.GETPOSTINT('dateevent_startday');
+	}
+	if ($search_dateevent_end != '') {
+		$param .= '&dateevent_endyear='.GETPOSTINT('dateevent_endyear');
+		$param .= '&dateevent_endmonth='.GETPOSTINT('dateevent_endmonth');
+		$param .= '&dateevent_endday='.GETPOSTINT('dateevent_endday');
+	}
 
+	// Try to know count of actioncomm from cache
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 	$cachekey = 'count_events_project_'.$object->id;
 	$nbEvent = dol_getcache($cachekey);
@@ -241,13 +273,16 @@ if (!empty($object->id)) {
 		$titlelist = $langs->trans("Actions").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
 	}
 
-	print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
+	print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
 
 	// List of all actions
 	$filters = array();
 	$filters['search_agenda_label'] = $search_agenda_label;
 	$filters['search_rowid'] = $search_rowid;
+	$filters['search_complete'] = $search_complete;		// Can be 'na', '0', '100', '50'
+	$filters['search_filtert'] = $search_filtert;
 
+	// TODO Replace this with the same code than into list.php
 	show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
 }
 

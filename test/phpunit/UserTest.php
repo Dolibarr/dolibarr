@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2010-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2023      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2010-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,12 +26,11 @@
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/user/class/user.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/user/class/user.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -144,7 +143,38 @@ class UserTest extends CommonClassTest
 		$newlocalobject->initAsSpecimen();
 		$this->changeProperties($newlocalobject);	// Change some properties int $newlocalobject
 
-		$this->assertEquals($this->objCompare($localobject, $newlocalobject, true, array('array_options','id','socid','societe_id','specimen','note','ref','pass','pass_indatabase','pass_indatabase_crypted','pass_temp','datec','datem','datelastlogin','datepreviouslogin','datelastpassvalidation','flagdelsessionsbefore','iplastlogin','ippreviouslogin','trackid')), array());    // Actual, Expected
+		$this->assertEquals(
+			$this->objCompare(    // Actual, Expected
+				$localobject,
+				$newlocalobject,
+				true,
+				array(
+					'array_options',
+					'id',
+					'socid',
+					'societe_id',
+					'specimen',
+					'statut',
+					'user_modification_id',
+					'note',
+					'ref',
+					'pass',
+					'pass_indatabase',
+					'pass_indatabase_crypted',
+					'pass_temp',
+					'datec',
+					'datem',
+					'datelastlogin',
+					'datepreviouslogin',
+					'datelastpassvalidation',
+					'flagdelsessionsbefore',
+					'iplastlogin',
+					'ippreviouslogin',
+					'trackid'
+				)
+			),
+			array()
+		);
 		return $localobject;
 	}
 

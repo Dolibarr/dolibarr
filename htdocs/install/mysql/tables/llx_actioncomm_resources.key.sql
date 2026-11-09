@@ -22,4 +22,3 @@ ALTER TABLE llx_actioncomm_resources ADD UNIQUE INDEX uk_actioncomm_resources(fk
 ALTER TABLE llx_actioncomm_resources ADD INDEX idx_actioncomm_resources_fk_element (fk_element);
 
 -- Pas de contrainte sur fk_source et fk_target car pointe sur differentes tables
-	

@@ -82,14 +82,14 @@ abstract class ModelePDFPropales extends CommonDocGenerator
 	/**
 	 * Local tax rates Array[tax_type][tax_rate]
 	 *
-	 * @var array<int,array<string,float>>
+	 * @var array<int|string,array<string,float>>
 	 */
 	public $localtax1;
 
 	/**
 	 * Local tax rates Array[tax_type][tax_rate]
 	 *
-	 * @var array<int,array<string,float>>
+	 * @var array<int|string,array<string,float>>
 	 */
 	public $localtax2;
 
@@ -101,6 +101,17 @@ abstract class ModelePDFPropales extends CommonDocGenerator
 	 * @var int<0,1>
 	 */
 	public $atleastoneratenotnull = 0;
+
+	/**
+	 * @var int<0,1>
+	 */
+	public $showAmountBeforeDiscount = 1;
+
+	/**
+	 * @var int<0,1>
+	 */
+	public $showDiscountAmount = 1;
+
 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

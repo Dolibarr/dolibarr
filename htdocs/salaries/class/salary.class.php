@@ -2,8 +2,8 @@
 /* Copyright (C) 2011-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/salaries/modules_salary.php';
 
 
 /**
@@ -40,9 +41,19 @@ class Salary extends CommonObject
 	public $element = 'salary';
 
 	/**
+	 * @var DoliDB Database handler
+	 */
+	public $db;
+
+	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'salary';
+
+	/**
+	 * @var string Module name (must match the module folder name)
+	 */
+	public $module = 'salaries';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -98,6 +109,11 @@ class Salary extends CommonObject
 	 * @var string
 	 */
 	public $type_payment_code;
+
+	/**
+	 * @var string|null
+	 */
+	public $num_payment;
 
 	/**
 	 * @var string salary payments label
@@ -203,6 +219,91 @@ class Salary extends CommonObject
 	}
 
 	/**
+	 *  Generate a document from a model
+	 *
+	 *  @param	    string		$model			Name of model ('standard_salary', ...)
+	 *  @param      Translate	$outputlangs    Object langs to use for output
+	 *  @param      int			$hidedetails    Hide details of lines
+	 *  @param      int			$hidedesc       Hide description
+	 *  @param      int			$hideref        Hide ref
+	 *  @param      array<string,mixed>		$moreparams		More parameters
+	 *  @return     int         				0 if KO, 1 if OK
+	 */
+	public function generateDocument($model, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = array())
+	{
+		global $conf, $langs;
+
+		if (!dol_strlen($model)) {
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Model"));
+			$this->errors[] = $this->error;
+			return 0;
+		}
+
+		// A template chosen in the list comes as "modelname:/path/to/template.odt"
+		$srctemplatepath = '';
+		$tmp = explode(':', $model, 2);
+		if (!empty($tmp[1])) {
+			$model = $tmp[0];
+			$srctemplatepath = $tmp[1];
+		}
+
+		// Search the file of the template, under the core and under the modules that provide some.
+		// Both prefixes are tried: a model built on a template file is a doc_, not a pdf_.
+		$modelpath = 'core/modules/salaries/doc/';
+		$modelbasename = preg_replace('/^(doc|pdf)_/', '', $model);
+		$modelfile = '';
+		$classname = '';
+		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+		foreach ($dirmodels as $reldir) {
+			foreach (array('doc', 'pdf') as $prefix) {
+				$tmpfile = dol_buildpath($reldir.$modelpath.$prefix."_".$modelbasename.".modules.php", 0);
+				if (file_exists($tmpfile)) {
+					$modelfile = $tmpfile;
+					$classname = $prefix.'_'.$modelbasename;
+					break 2;
+				}
+			}
+		}
+
+		if ($modelfile !== '') {
+			require_once $modelfile;
+
+			if (class_exists($classname)) {
+				$module = new $classname($this->db);
+
+				// Generate the document
+				/** @phan-suppress-next-line PhanPluginUnknownObjectMethodCall */
+				$result = $module->writeFile($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref);
+				if ($result > 0) {
+					// Index file in database, as commonGenerateDocument() does
+					if (!empty($module->result['fullpath'])) {
+						if (dol_is_file($module->result['fullpath'])) {
+							$this->indexFile($module->result['fullpath'], (empty($module->update_main_doc_field) ? 0 : 1));
+						}
+					} else {
+						dol_syslog('Method ->writeFile was called on object '.get_class($module).' and return a success but the return array ->result["fullpath"] was not set.', LOG_WARNING);
+					}
+
+					return 1;
+				} else {
+					$this->error = $module->error;
+					$this->errors = $module->errors;
+					return 0;
+				}
+			} else {
+				$this->error = 'Failed to load class '.$classname;
+				$this->errors[] = $this->error;
+				return 0;
+			}
+		} else {
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorModuleNotFound", $model);
+			$this->errors[] = $this->error;
+			return 0;
+		}
+	}
+
+	/**
 	 * Update database
 	 *
 	 * @param   User	$user        	User that modify
@@ -214,11 +315,11 @@ class Salary extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->amount = trim($this->amount);
-		$this->label = trim($this->label);
-		$this->note = trim($this->note);
-		$this->note_private = trim($this->note_private);
-		$this->note_public = trim($this->note_public);
+		$this->amount = trim((string) $this->amount);
+		$this->label = trim((string) $this->label);
+		$this->note = trim((string) $this->note);
+		$this->note_private = trim((string) $this->note_private);
+		$this->note_public = trim((string) $this->note_public);
 
 		// Check parameters
 		if (empty($this->fk_user) || $this->fk_user < 0) {
@@ -235,7 +336,7 @@ class Salary extends CommonObject
 		/*$sql .= " datep='".$this->db->idate($this->datep)."',";
 		$sql .= " datev='".$this->db->idate($this->datev)."',";*/
 		$sql .= " amount=".price2num($this->amount).",";
-		$sql .= " fk_projet=".((int) $this->fk_project).",";
+		$sql .= " fk_projet=".($this->fk_project > 0 ? ((int) $this->fk_project) : "null").",";
 		$sql .= " fk_typepayment=".((int) $this->type_payment).",";
 		$sql .= " label='".$this->db->escape($this->label)."',";
 		$sql .= " datesp='".$this->db->idate($this->datesp)."',";
@@ -254,11 +355,9 @@ class Salary extends CommonObject
 		}
 
 		// Update extrafield
-		if (!$error) {
-			$result = $this->insertExtraFields();
-			if ($result < 0) {
-				$error++;
-			}
+		$result = $this->insertExtraFields();
+		if ($result < 0) {
+			$error++;
 		}
 
 		if (!$notrigger) {
@@ -341,7 +440,7 @@ class Salary extends CommonObject
 				$this->status 			= $obj->paye;
 				$this->fk_bank          = $obj->fk_bank;
 				$this->fk_user_author   = $obj->fk_user_author;
-				$this->fk_user_modif    = $obj->fk_user_modif;
+				$this->fk_user_modif = $obj->fk_user_modif;
 				$this->fk_account = $obj->fk_account;
 				$this->accountid = $obj->fk_account;
 
@@ -413,9 +512,9 @@ class Salary extends CommonObject
 		$now = dol_now();
 
 		// Clean parameters
-		$this->amount = price2num(trim($this->amount));
-		$this->label = trim($this->label);
-		$this->note = trim($this->note);
+		$this->amount = price2num(trim((string) $this->amount));
+		$this->label = trim((string) $this->label);
+		$this->note = trim((string) $this->note);
 		$this->fk_bank = (int) $this->fk_bank;
 		$this->fk_user_author = (int) $this->fk_user_author;
 		$this->fk_user_modif = (int) $this->fk_user_modif;
@@ -459,11 +558,11 @@ class Salary extends CommonObject
 		$sql .= ", entity";
 		$sql .= ") ";
 		$sql .= " VALUES (";
-		$sql .= "'".((int) $this->fk_user)."'";
+		$sql .= ((int) $this->fk_user);
 		//$sql .= ", '".$this->db->idate($this->datep)."'";
 		//$sql .= ", '".$this->db->idate($this->datev)."'";
 		$sql .= ", ".((float) $this->amount);
-		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : 0);
+		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
 		$sql .= ", ".($this->salary > 0 ? ((float) $this->salary) : "null");
 		$sql .= ", ".($this->type_payment > 0 ? ((int) $this->type_payment) : 0);
 		$sql .= ", ".($this->accountid > 0 ? ((int) $this->accountid) : "null");
@@ -473,7 +572,7 @@ class Salary extends CommonObject
 		$sql .= ", '".$this->db->escape($this->label)."'";
 		$sql .= ", '".$this->db->idate($this->datesp)."'";
 		$sql .= ", '".$this->db->idate($this->dateep)."'";
-		$sql .= ", '".((int) $user->id)."'";
+		$sql .= ", ".((int) $user->id);
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", NULL";
 		$sql .= ", ".((int) $conf->entity);
@@ -486,11 +585,9 @@ class Salary extends CommonObject
 
 			if ($this->id > 0) {
 				// Update extrafield
-				if (!$error) {
-					$result = $this->insertExtraFields();
-					if ($result < 0) {
-						$error++;
-					}
+				$result = $this->insertExtraFields();
+				if ($result < 0) {
+					$error++;
 				}
 
 				// Call trigger
@@ -551,16 +648,16 @@ class Salary extends CommonObject
 		$langs->loadLangs(['salaries']);
 
 		// Complete datas
-		if (!empty($params['fromajaxtooltip']) && !isset($this->alreadypaid)) {
-			// Load the alreadypaid field
-			$this->alreadypaid = $this->getSommePaiement(0);
+		if (!empty($params['fromajaxtooltip']) && !isset($this->totalpaid)) {
+			// Load the totalpaid field
+			$this->totalpaid = $this->getSommePaiement(0);
 		}
 
 		$datas = [];
 
 		$datas['picto'] = '<u>'.$langs->trans("Salary").'</u>';
-		if (isset($this->status) && isset($this->alreadypaid)) {
-			$datas['picto'] .= ' '.$this->getLibStatut(5, $this->alreadypaid);
+		if (isset($this->status) && isset($this->totalpaid)) {
+			$datas['picto'] .= ' '.$this->getLibStatut(5, $this->totalpaid);
 		}
 		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
@@ -575,7 +672,7 @@ class Salary extends CommonObject
 	 *  @param	int  	$notooltip					1=Disable tooltip
 	 *  @param  string  $morecss            		Add more css on link
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@return	string								Chaine with URL
+	 *	@return	string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
@@ -657,17 +754,14 @@ class Salary extends CommonObject
 	 * 	Return amount of payments already done
 	 *
 	 *  @param 		int 			$multicurrency 		Return multicurrency_amount instead of amount. -1=Return both.
-	 *	@return		float|int|array						Amount of payment already done, <0 and set ->error if KO
+	 *	@return		float|int|array{}					Amount of payment already done, <0 and set ->error if KO
 	 */
 	public function getSommePaiement($multicurrency = 0)
 	{
-		$table = 'payment_salary';
-		$field = 'fk_salary';
-
 		$sql = "SELECT sum(amount) as amount";
 		//sum(multicurrency_amount) as multicurrency_amount		// Not yet supported
-		$sql .= " FROM ".MAIN_DB_PREFIX.$table;
-		$sql .= " WHERE ".$field." = ".((int) $this->id);
+		$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary";
+		$sql .= " WHERE fk_salary = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSommePaiement for salary id=".((int) $this->id), LOG_DEBUG);
 
@@ -680,16 +774,16 @@ class Salary extends CommonObject
 
 			if ($obj) {
 				if ($multicurrency < 0) {
-					//$this->sumpayed = $obj->amount;
-					//$this->sumpayed_multicurrency = $obj->multicurrency_amount;
+					//$this->totalpaid = $obj->amount;
+					//$this->totalpaid_multicurrency = $obj->multicurrency_amount;
 					//return array('alreadypaid'=>(float) $obj->amount, 'alreadypaid_multicurrency'=>(float) $obj->multicurrency_amount);
 					return array();	// Not yet supported
 				} elseif ($multicurrency) {
-					//$this->sumpayed_multicurrency = $obj->multicurrency_amount;
+					//$this->totalpaid_multicurrency = $obj->multicurrency_amount;
 					//return (float) $obj->multicurrency_amount;
 					return -1;		// Not yet supported
 				} else {
-					//$this->sumpayed = $obj->amount;
+					//$this->totalpaid = $obj->amount;
 					return (float) $obj->amount;
 				}
 			} else {
@@ -874,33 +968,31 @@ class Salary extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">' . $this->getNomUrl(1) . '</span>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		if (!empty($arraydata['user']) && is_object($arraydata['user'])) {
 			$user = $arraydata['user'];
 			'@phan-var-force User $user';
+			/** @var User $user */
 			$return .= '<br><span class="info-box-label">'.$user->getNomUrl(empty($arraydata['user']->photo) ? 1 : -1, '', 0, 0, 16, 0, '', 'maxwidth100').'</span>';
 		}
-		if (property_exists($this, 'amount')) {
-			$return .= '<br><span class="info-box-label amount">'.price($this->amount).'</span>';
-			if (property_exists($this, 'type_payment') && !empty($this->type_payment)) {
-				$return .= ' <span class="info-box-label opacitymedium small">';
-				if ($langs->trans("PaymentTypeShort".$this->type_payment) != "PaymentTypeShort".$this->type_payment) {
-					$return .= $langs->trans("PaymentTypeShort".$this->type_payment);
-				} elseif ($langs->trans("PaymentType".$this->type_payment) != "PaymentType".$this->type_payment) {
-					$return .= $langs->trans("PaymentType".$this->type_payment);
-				}
-				$return .= '</span>';
+		$return .= '<br><span class="info-box-label amount">'.price($this->amount).'</span>';
+		if (!empty($this->type_payment)) {
+			$return .= ' <span class="info-box-label opacitymedium small">';
+			if ($langs->trans("PaymentTypeShort".$this->type_payment) != "PaymentTypeShort".$this->type_payment) {
+				$return .= $langs->trans("PaymentTypeShort".$this->type_payment);
+			} elseif ($langs->trans("PaymentType".$this->type_payment) != "PaymentType".$this->type_payment) {
+				$return .= $langs->trans("PaymentType".$this->type_payment);
 			}
+			$return .= '</span>';
 		}
-		if (method_exists($this, 'LibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, isset($this->alreadypaid) ? $this->alreadypaid : $this->totalpaid).'</div>';
-		}
+		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, $this->totalpaid).'</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
+
 		return $return;
 	}
 

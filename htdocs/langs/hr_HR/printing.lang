@@ -46,6 +46,10 @@ IPP_Color=Kolor
 IPP_Device=Uređaj
 IPP_Media=Medij pisača
 IPP_Supported=Vrsta medija
+STATE_IPP_idle=Idle printer
+STATE_IPP_none=Niti jedan
+IPP_COLOR_print-black=Black and White
+IPP_COLOR_print-color=Boja
 DirectPrintingJobsDesc=This page lists printing jobs found for available printers.
 GoogleAuthNotConfigured=Google OAuth nije postavljen. Omogućite modul OAuth i postavite Google ID/Tajnu.
 GoogleAuthConfigured=Google OAuth vjerodajnice pronađene su u postavljanju modula OAuth.
@@ -53,4 +57,4 @@ PrintingDriverDescprintgcp=Configuration variables for printing driver Google Cl
 PrintingDriverDescprintipp=Konfiguracijske varijable za ispis driver CUPS.
 PrintTestDescprintgcp=List of Printers for Google Cloud Print.
 PrintTestDescprintipp=Popis pisača za CUPS.
-Testbbbb
+PrinterLocation=Printer location

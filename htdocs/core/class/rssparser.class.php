@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -99,6 +99,9 @@ class RssParser
 	 */
 	private $current_namespace;
 
+	/**
+	 * @var array<array<string,string>|array<string,array<string,string>>>
+	 */
 	public $items = array();
 	/**
 	 * @var array<string,string>|array<string,array<string,string>>
@@ -558,7 +561,8 @@ class RssParser
 							$itemLink = sanitizeVal((string) $item['link']);
 							$itemTitle = sanitizeVal((string) $item['title']);
 							$itemDescription = sanitizeVal((string) $item['description']);
-							$itemPubDate = sanitizeVal((string) $item['pubdate']);
+							// pubDate (RSS 2.0) or dc:date (RSS 1.0)
+							$itemPubDate = sanitizeVal((string) ($item['pubdate'] ?? ($item['dc']['date'] ?? '')));
 							$itemId = sanitizeVal((string) $item['guid']);
 							$itemAuthor = sanitizeVal((string) ($item['author'] ?? ''));
 						}
@@ -574,7 +578,14 @@ class RssParser
 						$itemLink = (isset($item['link']) ? sanitizeVal((string) $item['link']) : '');
 						$itemTitle = sanitizeVal((string) $item['title']);
 						$itemDescription = sanitizeVal($this->getAtomItemDescription($item));
-						$itemPubDate = sanitizeVal((string) $item['created']);
+						// Atom 1.0: published or updated, Atom 0.3: issued, created or modified
+						$itemPubDate = '';
+						foreach (array('published', 'issued', 'created', 'updated', 'modified') as $datekey) {
+							if (!empty($item[$datekey]) && is_string($item[$datekey])) {
+								$itemPubDate = sanitizeVal($item[$datekey]);
+								break;
+							}
+						}
 						$itemId = sanitizeVal((string) $item['id']);
 						$itemAuthor = sanitizeVal((string) ($item['author'] ? $item['author'] : $item['author_name']));
 						$itemCategory = array();
@@ -830,11 +841,14 @@ class RssParser
 			}
 		} else {
 			if (!empty($this->initem)) {
-				$this->concat($this->current_item[$el], $text);
+				// @phpstan-ignore-next-line argument.type
+				$this->concat($this->current_item[$el], $text);  // @phan-suppress-current-line PhanTypeMismatchArgument
 			} elseif (!empty($this->intextinput)) {
-				$this->concat($this->textinput[$el], $text);
+				// @phpstan-ignore-next-line argument.type
+				$this->concat($this->textinput[$el], $text);  // @phan-suppress-current-line PhanTypeMismatchArgument
 			} elseif (!empty($this->inimage)) {
-				$this->concat($this->image[$el], $text);
+				// @phpstan-ignore-next-line argument.type
+				$this->concat($this->image[$el], $text);  // @phan-suppress-current-line PhanTypeMismatchArgument
 			} elseif (!empty($this->inchannel)) {
 				$this->concat($this->channel[$el], $text);
 			}
@@ -880,24 +894,19 @@ class RssParser
 	 */
 	private function getAtomImageUrl(array $feed)
 	{
-		if (isset($feed['icon'])) {
+		if (!empty($feed['logo']) && is_string($feed['logo'])) {
 			return $feed['logo'];
 		}
 
-		if (isset($feed['icon'])) {
-			return $feed['logo'];
+		if (!empty($feed['icon']) && is_string($feed['icon'])) {
+			return $feed['icon'];
 		}
 
-		if (isset($feed['webfeeds:logo'])) {
-			return $feed['webfeeds:logo'];
-		}
-
-		if (isset($feed['webfeeds:icon'])) {
-			return $feed['webfeeds:icon'];
-		}
-
-		if (isset($feed['webfeeds:wordmark'])) {
-			return $feed['webfeeds:wordmark'];
+		// Elements of a namespace are stored by namespace (see append())
+		foreach (array('logo', 'icon', 'wordmark') as $key) {
+			if (!empty($feed['webfeeds'][$key]) && is_string($feed['webfeeds'][$key])) {
+				return $feed['webfeeds'][$key];
+			}
 		}
 
 		return "";

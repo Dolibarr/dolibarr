@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2010-2011	Regis Houssin <regis.houssin@inodbox.com>
- * Copyright (C) 2013		Juanjo Menent <jmenent@2byte.es>
- * Copyright (C) 2014       Marcos García <marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2010-2011	Regis Houssin 			<regis.houssin@inodbox.com>
+ * Copyright (C) 2013		Juanjo Menent 			<jmenent@2byte.es>
+ * Copyright (C) 2014       Marcos García 			<marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,14 +33,24 @@ global $user;
 
 $langs = $GLOBALS['langs'];
 '@phan-var-force Translate $langs';
+/**
+ * @var CommonObject $object
+ * @var Translate $langs
+ */
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
-'@phan-var-force CommonObject[] $linkedObjectBlock';
+'@phan-var-force ExpenseReport[] $linkedObjectBlock';
+/** @var ExpenseReport[] $linkedObjectBlock */
 
-$var = true;
 $total = 0;
+$ilink = 0;
 foreach ($linkedObjectBlock as $key => $objectlink) {
+	$ilink++;
+		$trclass = 'oddeven';
+	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
+		$trclass .= ' liste_sub_total';
+	}
 	?>
-<tr <?php echo $GLOBALS['bc'][$var]; ?> >
+<tr <?php echo $trclass; ?> >
 	<td><?php echo $langs->trans("ExpenseReport"); ?></td>
 	<td><?php echo $objectlink->getNomUrl(1); ?></td>
 	<td></td>

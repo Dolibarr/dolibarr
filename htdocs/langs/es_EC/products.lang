@@ -148,7 +148,6 @@ GlobalVariableUpdaterHelpFormat1=El formato de la solicitud es {"URL": "http://e
 PropalMergePdfProductChooseFile=Seleccionar archivos PDF
 DefaultPriceRealPriceMayDependOnCustomer=Precio predeterminado, el precio real puede depender del cliente
 NbOfQtyInProposals=Cantidad en las propuestas
-ClinkOnALinkOfColumn=Haga clic en un enlace de la columna %s para obtener una vista detallada ...
 ProductsOrServicesTranslations=Traducciones de productos / servicios
 TranslatedLabel=Etiqueta traducida
 TranslatedDescription=Descripción traducida

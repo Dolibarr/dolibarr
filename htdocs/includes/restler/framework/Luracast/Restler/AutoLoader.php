@@ -63,21 +63,12 @@ namespace Luracast\Restler {
 		 * AutoLoader is capable enough to handle all standards so no need
 		 * for others stumbling about.
 		 *
+		 * @CHANGE DOL The other autoloaders are not unregistered anymore (see dev/dolibarr_changes.txt).
+		 *
 		 * @return callable the one true auto loader.
 		 */
 		public static function thereCanBeOnlyOne()
 		{
-			if (static::$perfectLoaders === spl_autoload_functions())
-			return static::$instance;
-
-			if (false !== $loaders = spl_autoload_functions())
-			if (0 < $count = count($loaders))
-				for ($i = 0, static::$rogueLoaders += $loaders;
-					 $i < $count && false != ($loader = $loaders[$i]);
-					 $i++)
-					if ($loader !== static::$perfectLoaders[0])
-						spl_autoload_unregister($loader);
-
 			return static::$instance;
 		}
 
@@ -285,23 +276,12 @@ namespace Luracast\Restler {
 		 */
 		private function loadThisLoader($className, $loader)
 		{
-			if (is_array($loader)
-				&& is_callable($loader)) {
-					$b = new $loader[0];
-					//avoid PHP Fatal error:  Uncaught Error: Access to undeclared static property: Composer\\Autoload\\ClassLoader::$loader
-					//in case of multiple autoloader systems
-					if (property_exists($b, $loader[1])) {
-						if (false !== $file = $b::$loader[1]($className)
-							&& $this->exists($className, $b::$loader[1])) {
-								return $file;
-							}
-					}
-				} elseif (is_callable($loader)
-					&& false !== $file = $loader($className)
-					&& $this->exists($className, $loader)) {
-						return $file;
-				}
-				return false;
+			if (is_callable($loader)) {
+				// @CHANGE DOL Keep the registered loader instance and accept void return values.
+				$loader($className);
+				return $this->exists($className, $loader);
+			}
+			return false;
 
 			/* other code tested to reduce autoload conflict
 			$s = '';

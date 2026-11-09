@@ -5,8 +5,8 @@
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ interface Database
 	 * Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
 	 * Function to use to build INSERT, UPDATE or WHERE predica
 	 *
-	 * @param   int		$param 		Date TMS to convert
+	 * @param   int|''		$param 		Date TMS to convert
 	 * @param	'gmt'|'tzserver'	$gm		'gmt'=Input information are GMT values, 'tzserver'=Local to server TZ
 	 * @return  string            	Date in a string YYYYMMDDHHMMSS
 	 */
@@ -264,10 +264,11 @@ interface Database
 	 * @param   string 			$passwd 					Password
 	 * @param   string 			$name 						Name of database (not used for mysql, used for pgsql)
 	 * @param   int    			$port 						Port of database server
+	 * @param   bool			$forcenew					Force opening of a genuinely new connection instead of reusing one already opened to the same server/database in this process (relevant for pgsql only, see DoliDBPgsql::connect())
 	 * @return  false|resource|mysqli|mysqliDoli|PgSql\Connection|SQLite3    Database access handler
 	 * @see     close()
 	 */
-	public function connect($host, $login, $passwd, $name, $port = 0);
+	public function connect($host, $login, $passwd, $name, $port = 0, $forcenew = false);
 
 	/**
 	 *    Define limits and offset of request
@@ -396,7 +397,7 @@ interface Database
 	 *
 	 * @param    string 	$table 			Name of table
 	 * @param    string 	$field_name 	Name of field to modify
-	 * @param    array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string} 	$field_desc 	Array with description of field format
+	 * @param    array{type:string,label?:string,enabled?:int<0,2>|string,position?:int,notnull?:int,visible?:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string,value?:string,null?:string}	$field_desc 	Array with description of field format
 	 * @return   int                        Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLUpdateField($table, $field_name, $field_desc);
@@ -467,8 +468,8 @@ interface Database
 	 * 19700101020000 -> 3600 with TZ+1 and gmt=0
 	 * 19700101020000 -> 7200 whatever is TZ if gmt=1
 	 *
-	 * @param	string			$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
-	 * @param	bool			$gm			1=Input information are GMT values, otherwise local to server TZ
+	 * @param	?string			$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
+	 * @param	bool|int|string	$gm			1=Input information are GMT values, otherwise local to server TZ
 	 * @return	int|''						Date TMS or ''
 	 */
 	public function jdate($string, $gm = false);
@@ -477,9 +478,9 @@ interface Database
 	 * Encrypt sensitive data in database
 	 * Warning: This function includes the escape and add the SQL simple quotes on strings.
 	 *
-	 * @param	string	$fieldorvalue	Field name or value to encrypt
-	 * @param	int		$withQuotes		Return string including the SQL simple quotes. This param must always be 1 (Value 0 is bugged and deprecated).
-	 * @return	string					XXX(field) or XXX('value') or field or 'value'
+	 * @param	string		$fieldorvalue	Field name or value to encrypt
+	 * @param	int<1,1>	$withQuotes		Return string including the SQL simple quotes. This param must always be 1 (Value 0 is bugged and deprecated).
+	 * @return	string						XXX(field) or XXX('value') or field or 'value'
 	 */
 	public function encrypt($fieldorvalue, $withQuotes = 1);
 
@@ -542,4 +543,22 @@ interface Database
 	 */
 	public function select_db($database);
 	// phpcs:enable
+
+	/**
+	 * Prepare a SQL statement for execution. Use '?' as the placeholder for every bound value.
+	 *
+	 * @param	string	$sql	SQL query with '?' placeholders
+	 * @return	mixed			Driver-specific prepared statement handle, or false on failure
+	 */
+	public function prepare($sql);
+
+	/**
+	 * Execute a statement previously created with prepare().
+	 *
+	 * @param	mixed				$stmt	Statement handle returned by prepare()
+	 * @param	array<int,mixed>	$params	Ordered list of values for the '?' placeholders
+	 * @return	mixed						Resultset (SELECT) usable with fetch_object()/num_rows()/free(),
+	 *										true for another successful statement, false on failure
+	 */
+	public function execute($stmt, $params = array());
 }

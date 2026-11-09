@@ -1,6 +1,7 @@
 <?php
 /*
 /* Copyright (C) 2025  Jon Bendtsen         <jon.bendtsen.github@jonb.dk>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +20,6 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
 
 /**
@@ -84,6 +84,9 @@ class EventAttendees extends DolibarrApi
 	 */
 	public function deleteById($id)
 	{
+		if ($id < 1 ) {
+			throw new RestException(400, 'No eventattendee with id<1 can exist');
+		}
 		$allowaccess = $this->_checkAccessRights('delete', 0);
 		if (!$allowaccess) {
 			throw new RestException(403, 'denied read access to Event attendees');
@@ -95,7 +98,7 @@ class EventAttendees extends DolibarrApi
 		}
 
 		if (!$this->event_attendees->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete event attendee : '.$this->event_attendees->error);
+			throw new RestException(500, 'Error when delete event attendee : '.$this->event_attendees->errorsToString());
 		}
 
 		return array(
@@ -133,7 +136,7 @@ class EventAttendees extends DolibarrApi
 		}
 
 		if (!$this->event_attendees->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete event attendee : '.$this->event_attendees->error);
+			throw new RestException(500, 'Error when delete event attendee : '.$this->event_attendees->errorsToString());
 		}
 
 		return array(
@@ -196,7 +199,8 @@ class EventAttendees extends DolibarrApi
 	 * @param string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.status:=:1) and (t.email:=:'bad@example.com')"
 	 * @param string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool		$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
-	 * @return  array						Array of order objects
+	 * @param int		$loadlinkedobjects	Load also linked object. 0 (default), 1 load linked objects
+	* @return  array						Array of order objects
 	 * @phan-return ConferenceOrBoothAttendee[]|array{data:ConferenceOrBoothAttendee[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 * @phpstan-return ConferenceOrBoothAttendee[]|array{data:ConferenceOrBoothAttendee[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 *
@@ -205,13 +209,13 @@ class EventAttendees extends DolibarrApi
 	 * @throws RestException 403 Access denied
 	 * @throws RestException 503 Error
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false, $loadlinkedobjects = 0)
 	{
-		// $allowaccess = $this->_checkAccessRights('read', 0);
-		// if (!$allowaccess) {
-		//		throw new RestException(403, 'denied read access to Event attendees');
-		// }
-		// access check delayed until we can do it for each row checking each fk_project
+		$allowaccess = $this->_checkAccessRights('read', 0);
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied read access to Event attendees');
+		}
+		// Fine-grained access is still checked later for each row on its fk_project
 		// entity stolen from api_setup.class.php
 		$entity = (int) DolibarrApiAccess::$user->entity;
 		$obj_ret = array();
@@ -223,6 +227,15 @@ class EventAttendees extends DolibarrApi
 			$sql .= ' WHERE p.entity = '.((int) $entity);
 		} else {
 			$sql .= ' WHERE 1 = 1';
+		}
+		// If user has no permission to see all projects, we restrict the list to projects he is allowed to see
+		// (public projects or projects he is a contact of), like api_projects::index() does,
+		// so unauthorized rows can't be probed with the sqlfilters parameter
+		if (!DolibarrApiAccess::$user->hasRight('project', 'all', 'read')) {
+			require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+			$projectstatic = new Project($this->db);
+			$projectsListId = $projectstatic->getProjectsAuthorizedForUser(DolibarrApiAccess::$user, 0, 1, 0);
+			$sql .= ' AND t.fk_project IN ('.$this->db->sanitize($projectsListId).')';
 		}
 
 
@@ -255,21 +268,25 @@ class EventAttendees extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			$i = 0;
-			$onerowaccessgranted = false;
 			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$event_attendees_static = new ConferenceOrBoothAttendee($this->db);
-				if ($event_attendees_static->fetch($obj->rowid, '') > 0) {
-					$rowallowaccess = $this->_checkAccessRights('read', $event_attendees_static->fk_project);
+				if ($event_attendees_static->fetch($obj->rowid) > 0) {
+					try {
+						$rowallowaccess = $this->_checkAccessRights('read', $event_attendees_static->fk_project);
+					} catch (RestException $e) {
+						// No access to this row, we skip it so the response does not depend on rows we are not allowed to see
+						$rowallowaccess = false;
+					}
 					if ($rowallowaccess) {
+						if ($loadlinkedobjects) {
+							// retrieve linked objects
+								$event_attendees_static->fetchObjectLinked();
+						}
 						$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($event_attendees_static), $properties);
-						$onerowaccessgranted = $rowallowaccess;
 					}
 				}
 				$i++;
-			}
-			if (($num > 0) && !$onerowaccessgranted) {
-				throw new RestException(403, 'No access granted for even a single of the rows found');
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieve event attendee list : '.$this->db->lasterror());
@@ -361,6 +378,9 @@ class EventAttendees extends DolibarrApi
 	 */
 	public function putById($id, $request_data = null)
 	{
+		if ($id < 1 ) {
+			throw new RestException(400, 'No eventattendee with id<1 can exist');
+		}
 		$allowaccess = $this->_checkAccessRights('write', 0);
 		if (!$allowaccess) {
 			throw new RestException(403, 'denied update access to Event attendees');
@@ -462,6 +482,16 @@ class EventAttendees extends DolibarrApi
 	 */
 	private function _fetch($id, $ref = '')
 	{
+		if ($id < 1 && empty($ref)) {
+			throw new RestException(400, 'No eventattendee with id<1 can exist');
+		}
+		if (empty($id) && empty($ref)) {
+			throw new RestException(400, 'No eventattendee can be found with no criteria');
+		}
+		$allowaccess = $this->_checkAccessRights('read', 0);
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied read access to Event attendees');
+		}
 		// we first need to fetch the object so we can get the fk_project id and then check for access
 		$result = $this->event_attendees->fetch($id, $ref);
 		if (!$result) {
@@ -479,20 +509,23 @@ class EventAttendees extends DolibarrApi
 			throw new RestException(403, 'denied read access to Event attendees');
 		}
 
+		$this->event_attendees->fetchObjectLinked();
+
 		return $this->_cleanObjectDatas($this->event_attendees);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     	Object to clean
 	 * @phan-param		ConferenceOrBoothAttendee	$object
-	 * @phpstan-param	ConferenceOrBoothAttendee	$object
+	 * @phpstan-param	T	$object
 	 *
 	 * @return  Object	Object with cleaned properties
 	 * @phan-return		ConferenceOrBoothAttendee
-	 * @phpstan-return	ConferenceOrBoothAttendee
+	 * @phpstan-return	T
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -539,14 +572,9 @@ class EventAttendees extends DolibarrApi
 		unset($object->actiontypecode);
 		unset($object->name);
 		unset($object->civility_id);
-		unset($object->user_author);
-		unset($object->user_creation);
 		unset($object->user_creation_id);
-		unset($object->user_valid);
-		unset($object->user_validation);
 		unset($object->user_validation_id);
 		unset($object->user_closing_id);
-		unset($object->user_modification);
 		unset($object->user_modification_id);
 		unset($object->totalpaid);
 		unset($object->product);
@@ -604,11 +632,11 @@ class EventAttendees extends DolibarrApi
 	{
 		// what kind of access management do we need?
 		$moduleaccess = false;
-		if (isModEnabled("eventorganization") && DolibarrApiAccess::$user->hasRight('eventorganization', $accesstype)) {
+		if (isModEnabled("eventorganization") && DolibarrApiAccess::$user->hasRight('project', $accesstype)) {
 			$moduleaccess = true;
 		}
 		$fullprojectaccess = false;
-		if (DolibarrApiAccess::$user->hasRight('projet', 'all', $accesstype)) {
+		if (DolibarrApiAccess::$user->hasRight('project', 'all', $accesstype)) {
 			$fullprojectaccess = true;
 		}
 

@@ -70,6 +70,10 @@ if (!class_exists('FormSetup')) {
 
 $formSetup = new FormSetup($db);
 
+// Enable/Disable logging of webhook calls (trace of calls saved into the webhook history table)
+$item = $formSetup->newItem('WEBHOOK_ENABLE_CALL_LOGS');
+$item->setAsYesNo();
+
 $setupnotempty = count($formSetup->items);
 
 
@@ -126,12 +130,6 @@ if ($action == 'updateMask') {
 			// We therefore requires a variable to have a coherent view
 			$conf->global->$constforval = $value;
 		}
-
-		// We disable/enable the document template (into llx_document_model table)
-		$ret = delDocumentModel($value, $type);
-		if ($ret > 0) {
-			$ret = addDocumentModel($value, $type, $label, $scandir);
-		}
 	}
 } elseif ($action == 'unsetdoc') {
 	$tmpobjectkey = GETPOST('object', 'aZ09');
@@ -153,7 +151,7 @@ $page_name = "WebhookSetup";
 llxHeader('', $langs->trans($page_name), $help_url, '', 0, 0, '', '', '', 'mod-admin page-webhook');
 
 // Subheader
-$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
@@ -161,11 +159,10 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 $head = webhookAdminPrepareHead();
 print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "webhook");
 
-print '<br>';
-
 // Setup page goes here
-print '<span class="opacitymedium">'.$langs->trans("WebhookSetupPage", $langs->transnoentitiesnoconv("Targets")).'...</span><br><br>';
+print '<div class="info">'.$langs->trans("WebhookSetupPage", $langs->transnoentitiesnoconv("Targets")).'...</div>';
 
+print '<br>';
 
 if ($action == 'edit') {
 	print $formSetup->generateOutput(true);

@@ -25,12 +25,11 @@
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/core/class/utils.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/class/utils.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -93,6 +92,7 @@ class UtilsTest extends CommonClassTest
 
 		$localobject = new Utils($db);
 		$result = $localobject->executeCLI('ls', $conf->admin->dir_temp.'/out.tmp', 1);
+		print __METHOD__." ls with param 1 result=".$result['result']."\n";
 		print var_export($result, true);
 		$this->assertEquals($result['result'], 0);
 		$this->assertEquals($result['error'], '');
@@ -100,12 +100,12 @@ class UtilsTest extends CommonClassTest
 
 		$localobject = new Utils($db);
 		$result = $localobject->executeCLI('ls', $conf->admin->dir_temp.'/out.tmp', 2);
+		print __METHOD__." ls with param 2 result=".$result['result']."\n";
 		print var_export($result, true);
 		$this->assertEquals($result['result'], 0);
 		$this->assertEquals($result['error'], '');
 		//$this->assertEquals(preg_match('/phpunit/', $result['output']), 1);
 
-		print __METHOD__." result=".$result['result']."\n";
 		return $result;
 	}
 }

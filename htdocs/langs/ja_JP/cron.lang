@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = スケジュールされたジョブを読込む
-Permission23102 = スケジュールされたジョブの作成/更新
-Permission23103 = スケジュールされたジョブを削除する
-Permission23104 = スケジュールされたジョブを実行する
 # Admin
 CronSetup=スケジュールされたジョブ管理の設定
 URLToLaunchCronJobs=ブラウザから修飾されたcronジョブを確認して起動するためのURL
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=Unix環境では、次のcrontabエントリを使用し
 CronExplainHowToRunWin=Microsoft(tm)Windows環境では、スケジュールされたタスクツールを使用して、5分ごとにコマンドラインを実行できる。
 CronMethodDoesNotExists=クラス %s にはメソッド %s が含まれていない
 CronMethodNotAllowed=クラス %s のメソッド %s は禁止されたメソッドのブロックリストに含まれている
-CronJobDefDesc=cronジョブプロファイルは、モジュール記述子ファイルに定義されている。モジュールが活性化されると、それらがロードされて使用可能になるため、管理ツールメニュー%sからジョブを管理できる。
+CronJobDefDesc=Cron ジョブ プロファイルは、モジュール記述子 ファイル で定義されます。モジュールがアクティブ化されると、ジョブがロードされて使用可能になり、管理画面 ツール メニュー %s からジョブを管理できるようになります。
 CronJobProfiles=事前定義されたcronジョブプロファイルのリスト
 # Menu
 EnabledAndDisabled=有効および無効
@@ -27,7 +22,7 @@ CronDelete=スケジュールされたジョブを削除する
 CronConfirmDelete=これらのスケジュールされたジョブを削除してもよいか？
 CronExecute=今すぐ起動
 CronConfirmExecute=これらのスケジュールされたジョブを今すぐ実行してもよいか？
-CronInfo=スケジュールされたジョブモジュールを使用すると、ジョブをスケジュールして自動的に実行できる。ジョブは手動で開始することもできる。
+CronInfo=スケジュール済みジョブモジュールを使用すると、ジョブの実行をスケジュールできます。自動的に。ジョブは手動で開始することもできます。
 CronTask=ジョブ
 CronNone=スケジュールされたタスクの次回実行
 CronNotYetRan=決して実行されない
@@ -79,7 +74,7 @@ CronType_command=シェルコマンド
 CronCannotLoadClass=クラスファイル%sをロードできない(クラス%sを使用するため)
 CronModuleNotEnabledInThisEntity=このエンティティでは Cron モジュールが有効になっていません (%s オブジェクトの %s メソッドを使用するため)
 CronCannotLoadObject=クラスファイル%sがロードされたが、オブジェクト%sが見つからなかった
-UseMenuModuleToolsToAddCronJobs=メニュー ”<a href="%s">ホーム - 管理ツール - スケジュールされたジョブ</a>" に移動して、スケジュールされたジョブを表示および編集する。
+UseMenuModuleToolsToAddCronJobs=スケジュールされたジョブを表示および編集するには、メニュー "<a href="%s">ホーム - 管理者 ツール - スケジュールされたジョブ</a> に移動してください。
 JobDisabled=ジョブが無効
 MakeLocalDatabaseDumpShort=ローカルデータベースのバックアップ
 MakeLocalDatabaseDump=ローカルデータベースダンプを作成する。パラメータは次のもの: 圧縮 ('gz' or 'bz' or 'none')、バックアップ種別 ('mysql', 'pgsql', 'auto')、1、 'auto' またはビルドするファイル名、保持するバックアップファイルの数

@@ -72,7 +72,7 @@ if (!empty($_SERVER['HTTP_DOLAPIENTITY'])) {
 if (!empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'OPTIONS' && !empty($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'])) {
 	header('Access-Control-Allow-Origin: *');
 	header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
-	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY');
+	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY, DOLAPIENTITY');
 	http_response_code(204);
 	exit;
 }
@@ -81,13 +81,13 @@ if (!empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'OPTIONS
 if (preg_match('/\/explorer\/swagger\.json/', $_SERVER["PHP_SELF"])) {
 	header('Access-Control-Allow-Origin: *');
 	header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
-	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY');
+	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY, DOLAPIENTITY');
 }
 // When we request url to get an API, we accept Cross site so we can make js API call inside another website
 if (preg_match('/\/api\/index\.php/', $_SERVER["PHP_SELF"])) {
 	header('Access-Control-Allow-Origin: *');
 	header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
-	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY');
+	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY, DOLAPIENTITY');
 }
 header('X-Frame-Options: SAMEORIGIN');
 
@@ -99,7 +99,17 @@ if (!$res && file_exists("../main.inc.php")) {
 if (!$res) {
 	die("Include of main fails");
 }
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string	$dolibarr_api_count_always_enabled
+ */
 
+require_once DOL_DOCUMENT_ROOT.'/core/lib/api.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/AutoLoader.php';
 
 call_user_func(
@@ -116,26 +126,20 @@ call_user_func(
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 
 // In API context, we force the protection to avoid forging of criteria including bind SQL injection
-$conf->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER = 1;
+global $dolibarr_allow_unsecured_select_in_extrafields_filter;
+$dolibarr_allow_unsecured_select_in_extrafields_filter = 0;
 
 
 $url = $_SERVER['PHP_SELF'];
 if (preg_match('/api\/index\.php$/', $url)) {	// sometimes $_SERVER['PHP_SELF'] is 'api\/index\.php' instead of 'api\/index\.php/explorer.php' or 'api\/index\.php/method'
-	$url = $_SERVER['PHP_SELF'].(empty($_SERVER['PATH_INFO']) ? $_SERVER['ORIG_PATH_INFO'] : $_SERVER['PATH_INFO']);
+	$url = $_SERVER['PHP_SELF'].(empty($_SERVER['PATH_INFO']) ? ($_SERVER['ORIG_PATH_INFO'] ?? '') : $_SERVER['PATH_INFO']);
 }
 // Fix for some NGINX setups (this should not be required even with NGINX, however setup of NGINX are often mysterious and this may help is such cases)
 if (getDolGlobalString('MAIN_NGINX_FIX')) {
-	$url = (isset($_SERVER['SCRIPT_URI']) && $_SERVER["SCRIPT_URI"] !== null) ? $_SERVER["SCRIPT_URI"] : $_SERVER['PHP_SELF'];
+	$url = $_SERVER['SCRIPT_URI'] ?? $_SERVER['PHP_SELF'];
 }
 
 // Enable and test if module Api is enabled
@@ -208,9 +212,9 @@ if (getDolGlobalString('MAIN_API_DEBUG')) {
 		//	'route'   => $api->r->apiMethodInfo->className.'::'.$api->r->apiMethodInfo->methodName,
 		//	'version' => $api->r->getRequestedApiVersion(),
 		//	'data'    => $api->r->getRequestData(),
-		//dol_syslog("Debug API input ".var_export($r, true), LOG_DEBUG, 0, '_api');
-		dol_syslog("Debug API url ".var_export($r->url, true), LOG_DEBUG, 0, '_api');
-		dol_syslog("Debug API input ".var_export($r->getRequestData(), true), LOG_DEBUG, 0, '_api');
+		//dol_syslog("Debug API input ".formatLogOb
+		dol_syslog("Debug API url ".formatLogObject($r->url), LOG_DEBUG, 0, '_api');
+		dol_syslog("Debug API input ".formatLogObject($r->getRequestData()), LOG_DEBUG, 0, '_api');
 		//}
 	});
 }
@@ -233,8 +237,8 @@ if (getDolGlobalString('API_RESTRICT_ON_IP')) {
 	$ipremote = getUserRemoteIP();
 	if (!in_array($ipremote, $allowedip)) {
 		dol_syslog('Remote ip is '.$ipremote.', not into list ' . getDolGlobalString('API_RESTRICT_ON_IP'));
-		print 'APIs are not allowed from the IP '.$ipremote;
 		header('HTTP/1.1 503 API not allowed from your IP '.$ipremote);
+		print 'APIs are not allowed from the IP '.$ipremote;
 		//session_destroy();
 		exit(0);
 	}
@@ -245,89 +249,19 @@ if (getDolGlobalString('API_RESTRICT_ON_IP')) {
 if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $reg[2] == '/swagger.json/root' || $reg[2] == '/resources.json' || $reg[2] == '/resources.json/root')) {
 	// Scan all API files to load them
 
+	// One description of what an endpoint is, shared with the AI API bridge.
+	// The classes are sorted before being registered: the API Explorer lists them
+	// in registration order and is unreadable otherwise.
 	$listofapis = array();
-
-	$modulesdir = dolGetModulesDirs();
-	foreach ($modulesdir as $dir) {
-		// Search available module
-		dol_syslog("Scan directory ".$dir." for module descriptor files, then search for API files");
-
-		$handle = @opendir(dol_osencode($dir));
-		if (is_resource($handle)) {
-			while (($file = readdir($handle)) !== false) {
-				$regmod = array();
-				if (is_readable($dir.$file) && preg_match("/^mod(.*)\.class\.php$/i", $file, $regmod)) {
-					$module = strtolower($regmod[1]);
-					$moduledirforclass = getModuleDirForApiClass($module);
-					$modulenameforenabled = $module;
-					if ($module == 'propale') {
-						$modulenameforenabled = 'propal';
-					} elseif ($module == 'supplierproposal') {
-						$modulenameforenabled = 'supplier_proposal';
-					} elseif ($module == 'ficheinter') {
-						$modulenameforenabled = 'intervention';
-					} elseif ($module == 'product' && !isModEnabled('product') && isModEnabled('service')) {
-						$modulenameforenabled = 'service';
-					}
-
-					dol_syslog("Found module file ".$file." - module=".$module." - modulenameforenabled=".$modulenameforenabled." - moduledirforclass=".$moduledirforclass);
-
-					// Defined if module is enabled
-					$enabled = true;
-					if (!isModEnabled($modulenameforenabled)) {
-						$enabled = false;
-					}
-
-					if ($enabled) {
-						// If exists, load the API class for enable module
-						// Search files named api_<object>.class.php into /htdocs/<module>/class directory
-						// @todo : use getElementProperties() function ?
-						$dir_part = dol_buildpath('/'.$moduledirforclass.'/class/');
-
-						$handle_part = @opendir(dol_osencode($dir_part));
-						if (is_resource($handle_part)) {
-							while (($file_searched = readdir($handle_part)) !== false) {
-								if ($file_searched == 'api_access.class.php') {
-									continue;
-								}
-
-								//$conf->global->API_DISABLE_LOGIN_API = 1;
-								if ($file_searched == 'api_login.class.php' && getDolGlobalString('API_DISABLE_LOGIN_API')) {
-									continue;
-								}
-
-								//dol_syslog("We scan to search api file with into ".$dir_part.$file_searched);
-
-								$regapi = array();
-								if (is_readable($dir_part.$file_searched) && preg_match("/^api_(.*)\.class\.php$/i", $file_searched, $regapi)) {
-									$classname = ucwords($regapi[1]);
-									$classname = str_replace('_', '', $classname);
-									require_once $dir_part.$file_searched;
-									if (class_exists($classname.'Api')) {
-										//dol_syslog("Found API by index.php: classname=".$classname."Api for module ".$dir." into ".$dir_part.$file_searched);
-										$listofapis[strtolower($classname.'Api')] = $classname.'Api';
-									} elseif (class_exists($classname)) {
-										//dol_syslog("Found API by index.php: classname=".$classname." for module ".$dir." into ".$dir_part.$file_searched);
-										$listofapis[strtolower($classname)] = $classname;
-									} else {
-										dol_syslog("We found an api_xxx file (".$file_searched.") but class ".$classname." does not exists after loading file", LOG_WARNING);
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
+	foreach (dolGetApiEndpoints(true, true) as $apiname => $endpoint) {
+		require_once $endpoint['path'];
+		$listofapis[$apiname] = $endpoint['class'];
 	}
-
-	// Sort the classes before adding them to Restler.
-	// The Restler API Explorer shows the classes in the order they are added and it's a mess if they are not sorted.
 	asort($listofapis);
+
 	foreach ($listofapis as $apiname => $classname) {
 		$api->r->addAPIClass($classname, $apiname);
 	}
-	//var_dump($api->r);
 }
 
 // Call one APIs or one definition of an API
@@ -366,13 +300,20 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 	if ($moduleobject == 'interventions') {
 		$classfile = 'interventions';
 	}
-	if ($moduleobject == 'eventattendees') {
-		$moduledirforclass = 'eventorganization';
+	if ($moduleobject == 'resources') {
+		// The API class is named Dolresources because "resources" is already used by the API explorer itself
+		$classfile = 'dolresources';
 	}
 
 	$dir_part_file = dol_buildpath('/'.$moduledirforclass.'/class/api_'.$classfile.'.class.php', 0, 2);
 
 	$classname = ucwords($moduleobject);
+	if ($moduleobject == 'resources') {
+		// Force the class name, because ucwords() would give Resources, which is the name of
+		// the class of the API explorer itself (Luracast\Restler\Resources) and is autoloadable,
+		// so the wrong class would be dispatched.
+		$classname = 'Dolresources';
+	}
 
 	// Test rules on endpoints. For example:
 	// $conf->global->API_ENDPOINT_RULES = 'endpoint1:1,endpoint2:1,...'
@@ -420,8 +361,19 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 		exit(0);
 	}
 
-	if (class_exists($classname)) {
-		$api->r->addAPIClass($classname);
+	// Match the discovery loop above which accepts both "Foo" and "FooApi" class
+	// names (see line ~308). Without the Api suffix branch, a module file named
+	// api_mymodule.class.php exposing class MyModuleApi cannot be dispatched
+	// even though the api explorer lists it (#37282).
+	// When the class name does not match the called endpoint (for example the endpoint /resources
+	// served by the class Dolresources), the endpoint must be given to Restler as the resource path,
+	// because Restler builds its routes from the class name and would answer 404 otherwise.
+	$resourcepath = (strtolower($classname) != $moduleobject) ? $moduleobject : null;
+
+	if (class_exists($classname.'Api')) {
+		$api->r->addAPIClass($classname.'Api', $resourcepath);
+	} elseif (class_exists($classname)) {
+		$api->r->addAPIClass($classname, $resourcepath);
 	}
 }
 
@@ -448,7 +400,11 @@ if ($usecompression) {
 	}
 }
 
-//dol_syslog('We found some compression algorithm: '.$foundonealgorithm.' -> usecompression='.$usecompression, LOG_DEBUG);
+
+if (getDolGlobalString('MAIN_API_DEBUG')) {
+		dol_syslog('We found some compression algorithm: '.$foundonealgorithm.' -> usecompression='.(int) $usecompression, LOG_DEBUG, 0, '_api');
+}
+
 
 Luracast\Restler\Defaults::$returnResponse = $usecompression;
 
@@ -477,7 +433,7 @@ if (Luracast\Restler\Defaults::$returnResponse) {
 	echo $result;
 }
 
-if (getDolGlobalInt("API_ENABLE_COUNT_CALLS") && $api->r->responseCode == 200) {
+if ((getDolGlobalInt("API_ENABLE_COUNT_CALLS") || !empty($dolibarr_api_count_always_enabled)) && $api->r->responseCode == 200) {
 	$error = 0;
 	$db->begin();
 	$userid = DolibarrApiAccess::$user->id;
@@ -525,18 +481,20 @@ if (getDolGlobalInt("API_ENABLE_COUNT_CALLS") && $api->r->responseCode == 200) {
 
 // Call API termination method
 $apiMethodInfo = &$api->r->apiMethodInfo;
-$terminateCall = '_terminate_' . $apiMethodInfo->methodName . '_' . $api->r->responseFormat->getExtension();
-if (method_exists($apiMethodInfo->className, $terminateCall)) {
-	// Now flush output buffers so that response data is sent to the client even if we still have action to do in a termination method.
-	ob_end_flush();
+if (!is_null($apiMethodInfo)) {
+	$terminateCall = '_terminate_' . $apiMethodInfo->methodName . '_' . $api->r->responseFormat->getExtension();
+	if (method_exists($apiMethodInfo->className, $terminateCall)) {
+		// Now flush output buffers so that response data is sent to the client even if we still have action to do in a termination method.
+		ob_end_flush();
 
-	// If you're using PHP-FPM, this function will allow you to send the response and then continue processing
-	if (function_exists('fastcgi_finish_request')) {
-		fastcgi_finish_request();
+		// If you're using PHP-FPM, this function will allow you to send the response and then continue processing
+		if (function_exists('fastcgi_finish_request')) {
+			fastcgi_finish_request();
+		}
+
+		// Call a termination method. Warning: This method can do I/O, sync but must not make output.
+		call_user_func(array(Luracast\Restler\Scope::get($apiMethodInfo->className), $terminateCall), $responsedata);
 	}
-
-	// Call a termination method. Warning: This method can do I/O, sync but must not make output.
-	call_user_func(array(Luracast\Restler\Scope::get($apiMethodInfo->className), $terminateCall), $responsedata);
 }
 
 //session_destroy();

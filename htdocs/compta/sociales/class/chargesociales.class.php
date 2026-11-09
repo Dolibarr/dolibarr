@@ -1,10 +1,10 @@
 <?php
 /* Copyright (C) 2002       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2016-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2016-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2017       Alexandre Spangaro	    <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL		    <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,13 +38,6 @@ class ChargeSociales extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'chargesociales';
-
-	/**
-	 * @var string Name of table without prefix where object is stored
-	 * @deprecated Use $table_element
-	 * @see $table_element
-	 */
-	public $table = 'chargesociales';
 
 	/**
 	 * @var string Name of table without prefix where object is stored
@@ -119,7 +112,7 @@ class ChargeSociales extends CommonObject
 	public $lib;
 
 	/**
-	 * @var int account ID
+	 * @var ?int account ID
 	 */
 	public $fk_account;
 
@@ -300,7 +293,7 @@ class ChargeSociales extends CommonObject
 		$sql .= ", ".($this->mode_reglement_id > 0 ? ((int) $this->mode_reglement_id) : "NULL");
 		$sql .= ", '".$this->db->escape($this->label ? $this->label : $this->lib)."'";
 		$sql .= ", '".$this->db->idate($this->date_ech)."'";
-		$sql .= ", '".$this->db->idate($this->period)."'";
+		$sql .= ", '".$this->db->idate($this->period)."'";		// Will be '2026-10-31' for example because $this->period was done with dol_mktime(0,0,0,lastday) so value is GMT date when 00:00 in timezone server and idate reconvert GMT date into 00:00.
 		$sql .= ", '".price2num($newamount)."'";
 		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : 'NULL');
 		$sql .= ", ".((int) $conf->entity);
@@ -354,10 +347,11 @@ class ChargeSociales extends CommonObject
 	/**
 	 *      Delete a social contribution
 	 *
-	 *      @param		User    $user   Object user making delete
-	 *      @return     		int 	Return integer <0 if KO, >0 if OK
+	 *      @param		User		$user		Object user making delete
+	 *      @param		int<0,1>	$notrigger	1=Disable triggers
+	 *      @return     			int 		Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($user)
+	public function delete($user, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -404,6 +398,15 @@ class ChargeSociales extends CommonObject
 				$error++;
 				$this->error = $this->db->lasterror();
 			}
+		}
+
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('SOCIALCONTRIBUTION_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
 		}
 
 		if (!$error) {
@@ -734,7 +737,7 @@ class ChargeSociales extends CommonObject
 			if ($txttoshow) {
 				$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.$txttoshow;
 				$result .= ' <span class="note inline-block">';
-				$result .= '<a href="'.DOL_URL_ROOT.'/compta/sociales/note.php?id='.$this->id.'" class="classfortooltip" title="'.dolPrintHTMLForAttribute($notetoshow).'">';
+				$result .= '<a href="'.DOL_URL_ROOT.'/core/note.php?element=compta_sociales&id='.$this->id.'" class="classfortooltip" title="'.dolPrintHTMLForAttribute($notetoshow).'">';
 				$result .= img_picto('', 'note');
 				$result .= '</a>';
 				$result .= '</span>';
@@ -761,12 +764,9 @@ class ChargeSociales extends CommonObject
 	 */
 	public function getSommePaiement()
 	{
-		$table = 'paiementcharge';
-		$field = 'fk_charge';
-
 		$sql = 'SELECT sum(amount) as amount';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$table;
-		$sql .= " WHERE ".$field." = ".((int) $this->id);
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementcharge';
+		$sql .= " WHERE fk_charge = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -886,7 +886,7 @@ class ChargeSociales extends CommonObject
 			$return .= '<span class="info-box-label amount">'.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
 		}
 		if (method_exists($this, 'LibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, $this->alreadypaid).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, (float) $this->totalpaid).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

@@ -24,11 +24,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -36,6 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
 
 $action = GETPOST('action', 'aZ09');
 
@@ -123,7 +121,8 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-accountancy page-adm
 
 $sql = "SELECT f.rowid, f.label, f.date_start, f.date_end, f.statut as status, f.entity";
 $sql .= " FROM ".MAIN_DB_PREFIX."accounting_fiscalyear as f";
-$sql .= " WHERE f.entity = ".$conf->entity;
+$sql .= " WHERE f.entity = ".((int) $conf->entity);
+
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
@@ -131,7 +130,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -202,7 +201,7 @@ if ($result) {
 			if (getDolGlobalString('ACCOUNTANCY_FISCALYEAR_DEFAULT') == (int) $fiscalyearstatic->ref) {
 				print img_picto($langs->trans("Default"), 'on');
 			} else {
-				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdefault&token='.newToken().'&value='.urlencode($fiscalyearstatic->ref).'&label='.urlencode($fiscalyearstatic->label).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("SetAsDefault"), 'off').'</a>';
+				print '<a class="reposition" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'setdefault', 'value' => $fiscalyearstatic->ref, 'label'=>$fiscalyearstatic->label], true).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("SetAsDefault"), 'off').'</a>';
 			}
 			print '</td>';
 

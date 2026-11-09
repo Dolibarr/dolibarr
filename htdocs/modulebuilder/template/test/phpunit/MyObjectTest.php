@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2023		Alexandre Janniaux			<alexandre.janniaux@gmail.com>
  * Copyright (C) ---Replace with your own copyright and developer email---
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +51,7 @@ $langs->load("main");
  */
 class MyObjectTest extends PHPUnit\Framework\TestCase  // @phan-suppress-current-line PhanUndeclaredExtendedClass
 {
+	// Note: Class must not inherit CommonClassTest like other core uit test as it is for a module store into a different dir.
 	/**
 	 * @var Conf Saved configuration object
 	 */
@@ -66,6 +68,10 @@ class MyObjectTest extends PHPUnit\Framework\TestCase  // @phan-suppress-current
 	 * @var DoliDB Saved database object
 	 */
 	protected $savdb;
+	/**
+	 * @var Societe Saved database object
+	 */
+	protected $savmysoc;
 
 	/**
 	 * Constructor
@@ -78,11 +84,12 @@ class MyObjectTest extends PHPUnit\Framework\TestCase  // @phan-suppress-current
 		parent::__construct($name);  // @phan-suppress-current-line PhanUndeclaredClass
 
 		//$this->sharedFixture
-		global $conf, $user, $langs, $db;
+		global $conf, $user, $langs, $db, $mysoc;
 		$this->savconf = $conf;
 		$this->savuser = $user;
 		$this->savlangs = $langs;
 		$this->savdb = $db;
+		$this->savmysoc = $mysoc;
 
 		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
 		//print " - db ".$db->db;
@@ -96,7 +103,7 @@ class MyObjectTest extends PHPUnit\Framework\TestCase  // @phan-suppress-current
 	 */
 	public static function setUpBeforeClass(): void
 	{
-		global $conf, $user, $langs, $db;
+		global $conf, $user, $langs, $db, $mysoc;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
 		print __METHOD__."\n";
@@ -109,11 +116,12 @@ class MyObjectTest extends PHPUnit\Framework\TestCase  // @phan-suppress-current
 	 */
 	protected function setUp(): void
 	{
-		global $conf, $user, $langs, $db;
+		global $conf, $user, $langs, $db, $mysoc;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		print __METHOD__."\n";
 	}
@@ -135,7 +143,7 @@ class MyObjectTest extends PHPUnit\Framework\TestCase  // @phan-suppress-current
 	 */
 	public static function tearDownAfterClass(): void
 	{
-		global $conf, $user, $langs, $db;
+		global $conf, $user, $langs, $db, $mysoc;
 		$db->rollback();
 
 		print __METHOD__."\n";
@@ -150,11 +158,12 @@ class MyObjectTest extends PHPUnit\Framework\TestCase  // @phan-suppress-current
 	 */
 	public function testSomething()
 	{
-		global $conf, $user, $langs, $db;
+		global $conf, $user, $langs, $db, $mysoc;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		$result = true;
 
@@ -172,11 +181,12 @@ class MyObjectTest extends PHPUnit\Framework\TestCase  // @phan-suppress-current
 	 */
 	public function testMyObjectCreate()
 	{
-		global $conf, $user, $langs, $db;
+		global $conf, $user, $langs, $db, $mysoc;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		$localobject = new MyObject($this->savdb);
 		$localobject->initAsSpecimen();
@@ -200,11 +210,12 @@ class MyObjectTest extends PHPUnit\Framework\TestCase  // @phan-suppress-current
 	 */
 	public function testMyObjectDelete($id)
 	{
-		global $conf, $user, $langs, $db;
+		global $conf, $user, $langs, $db, $mysoc;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		$localobject = new MyObject($this->savdb);
 		$result = $localobject->fetch($id);

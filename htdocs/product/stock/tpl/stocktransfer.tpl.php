@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2010-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +51,7 @@ if (empty($conf) || !is_object($conf)) {
 $productref = '';
 if ($object->element == 'product') {
 	/** @var Product $object */
-	$productref = $object->ref;
+	$productref = (string) $object->ref;
 }
 
 $langs->load("productbatch");
@@ -92,7 +93,7 @@ if ($object->element == 'product') {
 	/** @var Product $object */
 	print '<td class="fieldrequired">'.$langs->trans("WarehouseSource").'</td>';
 	print '<td>';
-	print img_picto('', 'stock');
+	print img_picto('', 'stock', 'class="pictofixedwidth"');
 	$selected = (GETPOST("dwid") ? GETPOSTINT("dwid") : (GETPOST('id_entrepot') ? GETPOSTINT('id_entrepot') : ($object->element == 'product' && $object->fk_default_warehouse ? $object->fk_default_warehouse : 'ifone')));
 	$warehousestatus = 'warehouseopen,warehouseinternal';
 	print $formproduct->selectWarehouses($selected, 'id_entrepot', $warehousestatus, 1, 0, 0, '', 0, 0, array(), 'minwidth75 maxwidth300 widthcentpercentminusx');
@@ -102,7 +103,7 @@ if ($object->element == 'stockmouvement') {
 	/** @var MouvementStock $object */
 	print '<td class="fieldrequired">'.$langs->trans("Product").'</td>';
 	print '<td>';
-	print img_picto('', 'product');
+	print img_picto('', 'product', 'class="pictofixedwidth"');
 	$form->select_produits(GETPOSTINT('product_id'), 'product_id', (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') ? '0' : ''), 0, 0, -1, 2, '', 0, array(), 0, 1, 0, 'maxwidth500');
 	print '</td>';
 }
@@ -154,7 +155,8 @@ print '<input type="text" name="label" class="minwidth300" value="'.dol_escape_h
 print '</td>';
 print '<td>'.$langs->trans("InventoryCode").'</td>';
 print '<td>';
-print '<input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(GETPOSTISSET("inventorycode") ? GETPOST("inventorycode", 'alpha') : dol_print_date(dol_now(), '%Y%m%d%H%M%S')).'">';
+// Prefix the default inventory code so transfers can be told apart from other movement batches
+print '<input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(GETPOSTISSET("inventorycode") ? GETPOST("inventorycode", 'alpha') : getDolGlobalString('STOCK_TRANSFER_CODE_PREFIX', 'TRA-').dol_print_date(dol_now(), '%Y%m%d%H%M%S')).'">';
 print '</td>';
 print '</tr>';
 

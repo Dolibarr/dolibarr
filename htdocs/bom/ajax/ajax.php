@@ -1,7 +1,7 @@
 <?php
 /**
  * Copyright (C) 2020 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +86,7 @@ if ($action == 'getWorkstationByProduct' && $user->hasRight('product', 'lire')) 
 		$error = 'NOT FOUND';
 	} else {
 		$error = null;
-		$result['defaultWk']=$product->fk_default_workstation;
+		$result['defaultWk'] = $product->fk_default_workstation;
 	}
 
 	$result['error']=$error;

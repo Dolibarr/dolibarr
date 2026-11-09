@@ -4,8 +4,9 @@
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013   	Peter Fontaine          <contact@peterfontaine.fr>
  * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,12 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 class CompanyBankAccount extends Account
 {
 	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'COMPANY_RIB';
+
+	/**
 	 * @var string ID to identify managed object.
 	 */
 	public $element = 'societe_rib';
@@ -57,7 +64,7 @@ class CompanyBankAccount extends Account
 	 *  	'date', 'datetime', 'timestamp', 'duration',
 	 *  	'boolean', 'checkbox', 'radio', 'array',
 	 *  	'mail', 'phone', 'url', 'password', 'ip'
-	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM' or 'isModEnabled("multicurrency")' ...)
@@ -66,7 +73,7 @@ class CompanyBankAccount extends Account
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -86,7 +93,7 @@ class CompanyBankAccount extends Account
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => -1,),
@@ -107,10 +114,11 @@ class CompanyBankAccount extends Account
 		'owner_address' => array('type' => 'varchar(255)', 'label' => 'Owneraddress', 'enabled' => 1, 'position' => 85, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
 		'default_rib' => array('type' => 'smallint(6)', 'label' => 'Defaultrib', 'enabled' => 1, 'position' => 90, 'notnull' => 1, 'visible' => -1, 'alwayseditable' => 1,),
 		'state_id' => array('type' => 'integer', 'label' => 'Stateid', 'enabled' => 1, 'position' => 95, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
-		'fk_country' => array('type' => 'integer', 'label' => 'Fkcountry', 'enabled' => 1, 'position' => 100, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx',),
+		'fk_country' => array('type' => 'integer', 'label' => 'Country', 'enabled' => 1, 'position' => 100, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx',),
 		'currency_code' => array('type' => 'varchar(3)', 'label' => 'Currencycode', 'enabled' => 1, 'position' => 105, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
 		'rum' => array('type' => 'varchar(32)', 'label' => 'Rum', 'enabled' => 1, 'position' => 110, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
 		'date_rum' => array('type' => 'date', 'label' => 'Daterum', 'enabled' => 1, 'position' => 115, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
+		'payment_reference' => array('type' => 'varchar(35)', 'label' => 'PaymentReferenceOfAccount', 'enabled' => 1, 'position' => 117, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
 		'frstrecur' => array('type' => 'varchar(16)', 'label' => 'Frstrecur', 'enabled' => 1, 'position' => 120, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 900, 'notnull' => 0, 'visible' => -2, 'alwayseditable' => 1,),
 		'last_four' => array('type' => 'varchar(4)', 'label' => 'Lastfour', 'enabled' => 1, 'position' => 130, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
@@ -232,6 +240,12 @@ class CompanyBankAccount extends Account
 	public $date_rum;
 
 	/**
+	 * @var string Reference to give when paying to this account: the RF (ISO 11649) or national
+	 *             reference a supplier gave us.
+	 */
+	public $payment_reference;
+
+	/**
 	 * Value 'FRST' or 'RCUR' (For SEPA mandate)
 	 *
 	 * @var string
@@ -329,12 +343,8 @@ class CompanyBankAccount extends Account
 	 */
 	public $datem;
 
-	/**
-	 * @var string TRIGGER_PREFIX  Dolibarr 16.0 and above use the prefix to prevent the creation of inconsistently
-	 *                             named triggers
-	 * @see CommonObject::call_trigger()
-	 */
-	const TRIGGER_PREFIX = 'COMPANY_RIB';
+	const STATUS_OPEN = 0;
+	const STATUS_CLOSED = 1;
 
 	/**
 	 *  Constructor
@@ -343,6 +353,8 @@ class CompanyBankAccount extends Account
 	 */
 	public function __construct(DoliDB $db)
 	{
+		global $langs;
+
 		$this->db = $db;
 
 		$this->socid = 0;
@@ -350,6 +362,11 @@ class CompanyBankAccount extends Account
 		$this->balance = 0;
 		$this->default_rib = 0;
 		$this->type = "ban";
+
+		$this->labelStatus = array(
+			self::STATUS_OPEN => $langs->transnoentitiesnoconv("StatusAccountOpened"),
+			self::STATUS_CLOSED => $langs->transnoentitiesnoconv("StatusAccountClosed")
+		);
 	}
 
 
@@ -445,6 +462,17 @@ class CompanyBankAccount extends Account
 			return -1;
 		}
 
+		// Stored clean (an RF without spaces), the object keeps what is stored. A reference with
+		// check digits (RF) is checked, a typing error is found at once.
+		$this->payment_reference = self::cleanPaymentReference((string) $this->payment_reference);
+		$errorkey = self::checkPaymentReference($this->payment_reference);
+		if ($errorkey !== '') {
+			$langs->load('banks');
+			$this->error = $langs->trans($errorkey);
+			$this->errors[] = $this->error;
+			return -1;
+		}
+
 		if (!empty($this->address) && dol_strlen($this->address) > 255) {
 			$this->address = dol_trunc($this->address, 254, 'right', 'UTF-8', 1);
 		}
@@ -466,10 +494,15 @@ class CompanyBankAccount extends Account
 		$sql .= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
 		$sql .= ",bic='".$this->db->escape($this->bic)."'";
 		$sql .= ",iban_prefix = '".$this->db->escape(dolEncrypt($this->iban))."'";
+		$sql .= ",currency_code = '".$this->db->escape($this->currency_code)."'";
+		$sql .= ",fk_country = ".((int) $this->fk_country);
+		$sql .= ",state_id = ".((int) $this->state_id);
+		$sql .= ",status = ".((int) $this->status);
 		$sql .= ",domiciliation = '".$this->db->escape($this->address)."'";
 		$sql .= ",proprio = '".$this->db->escape($this->owner_name)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 		$sql .= ",default_rib = ".((int) $this->default_rib);
+		$sql .= ",payment_reference = ".($this->payment_reference !== '' ? "'".$this->db->escape($this->payment_reference)."'" : "NULL");
 		if (isModEnabled('prelevement')) {
 			$sql .= ",frstrecur = '".$this->db->escape($this->frstrecur)."'";
 			$sql .= ",rum = '".$this->db->escape($this->rum)."'";
@@ -530,24 +563,26 @@ class CompanyBankAccount extends Account
 			return -1;
 		}
 
-		$sql = "SELECT rowid, label, type, fk_soc as socid, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban,";
-		$sql .= " domiciliation as address,";
-		$sql .= " proprio as owner_name, owner_address, default_rib, datec, tms as datem, rum, frstrecur, date_rum,";
-		$sql .= " stripe_card_ref, stripe_account, ext_payment_site,";
-		$sql .= " last_main_doc, model_pdf";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib";
+		$sql = "SELECT sr.rowid, sr.label, sr.type, sr.fk_soc as socid, sr.bank, sr.number, sr.code_banque, sr.code_guichet, sr.cle_rib, sr.bic, sr.iban_prefix as iban,";
+		$sql .= " sr.currency_code, sr.fk_country, sr.state_id, sr.status, sr.domiciliation as address,";
+		$sql .= " sr.proprio as owner_name, sr.owner_address, sr.default_rib, sr.datec, sr.tms as datem, sr.rum, sr.frstrecur, sr.date_rum, sr.payment_reference,";
+		$sql .= " sr.stripe_card_ref, sr.stripe_account, sr.ext_payment_site,";
+		$sql .= " sr.last_main_doc, model_pdf, sr.extraparams,";
+		$sql .= " cc.code as country_code";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib as sr";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = sr.fk_country";
 
 		if ($id) {
-			$sql .= " WHERE rowid = ".((int) $id);
+			$sql .= " WHERE sr.rowid = ".((int) $id);
 		} elseif ($ref) {
-			$sql .= " WHERE rowid = ".((int) $ref);
+			$sql .= " WHERE sr.rowid = ".((int) $ref);
 		} elseif ($socid > 0) {
-			$sql .= " WHERE fk_soc  = ".((int) $socid);
+			$sql .= " WHERE sr.fk_soc  = ".((int) $socid);
 			if ($default > -1) {
-				$sql .= " AND default_rib = ".((int) $default);
+				$sql .= " AND sr.default_rib = ".((int) $default);
 			}
 			if ($type) {
-				$sql .= " AND type = '".$this->db->escape($type)."'";
+				$sql .= " AND sr.type = '".$this->db->escape($type)."'";
 			}
 		}
 
@@ -569,7 +604,15 @@ class CompanyBankAccount extends Account
 				$this->bic             = $obj->bic;
 				$this->iban            = dolDecrypt($obj->iban);
 
+				$this->currency_code   = $obj->currency_code;
+
+				$this->fk_country      = $obj->fk_country;			// deprecated
+				$this->country_id      = $obj->fk_country;
+				$this->country_code    = $obj->country_code;
+				$this->state_id        = $obj->state_id;
 				$this->address         = $obj->address;
+
+				$this->status          = $obj->status;
 
 				$this->owner_name      = $obj->owner_name;
 				$this->proprio = $obj->owner_name;
@@ -581,11 +624,14 @@ class CompanyBankAccount extends Account
 				$this->rum             = $obj->rum;
 				$this->frstrecur       = $obj->frstrecur;
 				$this->date_rum        = $this->db->jdate($obj->date_rum);
+				$this->payment_reference = (string) $obj->payment_reference;
 				$this->stripe_card_ref = $obj->stripe_card_ref;		// External system payment mode ID
 				$this->stripe_account  = $obj->stripe_account;		// External system customer ID
 				$this->ext_payment_site = $obj->ext_payment_site;	// External system name ('StripeLive', 'StripeTest', 'StancerLive', 'StancerTest', ...)
 				$this->last_main_doc   = $obj->last_main_doc;
 				$this->model_pdf   	   = $obj->model_pdf;
+
+				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 			}
 			$this->db->free($resql);
 
@@ -640,6 +686,50 @@ class CompanyBankAccount extends Account
 	}
 
 	/**
+	 * Payment reference in the form it is stored: an ISO 11649 (RF) reference without
+	 * spaces and in upper case, any other reference trimmed (national references, such as
+	 * the belgian structured communication, keep their separators)
+	 *
+	 * @param	string	$ref	Payment reference as typed
+	 * @return	string			Payment reference to store, '' for none
+	 */
+	public static function cleanPaymentReference($ref)
+	{
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_creditorref.lib.php';
+
+		$ref = trim($ref);
+		if (strtoupper(substr(dolPayRefStrip($ref), 0, 2)) === 'RF') {
+			$ref = strtoupper(dolPayRefStrip($ref));
+		}
+
+		return $ref;
+	}
+
+	/**
+	 * Check a payment reference before it is stored
+	 *
+	 * @param	string	$ref	Payment reference as typed
+	 * @return	string			Translation key of the error, '' when it can be stored
+	 */
+	public static function checkPaymentReference($ref)
+	{
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_creditorref.lib.php';
+
+		$ref = self::cleanPaymentReference($ref);
+		if ($ref === '') {
+			return '';
+		}
+		if (dol_strlen($ref) > 35) {
+			return 'ErrorPaymentReferenceOfAccountTooLong';
+		}
+		if (dolPayRefDetectScheme($ref) == 'SCOR' && !dolCreditorRefIsValid($ref)) {
+			return 'ErrorPaymentReferenceOfAccountNotValid';
+		}
+
+		return '';
+	}
+
+	/**
 	 * Return RIB
 	 *
 	 * @param   boolean     $displayriblabel     Prepend or Hide Label
@@ -670,7 +760,7 @@ class CompanyBankAccount extends Account
 	public function setAsDefault($rib = 0, $resetolddefaultfor = 'ban')
 	{
 		$sql1 = "SELECT rowid as id, fk_soc as socid FROM ".MAIN_DB_PREFIX."societe_rib";
-		$sql1 .= " WHERE rowid = ".((int) ($rib ? $rib : $this->id));
+		$sql1 .= " WHERE rowid = ".((int) ($rib ? $rib : ((int) $this->id)));
 
 		dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
 		$result1 = $this->db->query($sql1);

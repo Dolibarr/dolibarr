@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +20,7 @@
 use Luracast\Restler\RestException;
 
 dol_include_once('/partnership/class/partnership.class.php');
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
 
@@ -94,7 +96,7 @@ class Partnerships extends DolibarrApi
 	 * @param string		   $sortorder			Sort order
 	 * @param int			   $limit				Limit for list
 	 * @param int			   $page				Page number
-	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
 	 * @phan-return Partnership[]
@@ -115,7 +117,8 @@ class Partnerships extends DolibarrApi
 
 		$socid = DolibarrApiAccess::$user->socid ?: 0;
 
-		$restrictonsocid = 0; // Set to 1 if there is a field socid in table of object
+		// Partnership::$fields only has a 'fk_soc' field when PARTNERSHIP_IS_MANAGED_FOR is not 'member' (it has 'fk_member' instead in that case, see Partnership::__construct())
+		$restrictonsocid = (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') ? 0 : 1;
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
@@ -136,9 +139,9 @@ class Partnerships extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		if ($sqlfilters) {
@@ -163,7 +166,8 @@ class Partnerships extends DolibarrApi
 		$i = 0;
 		if ($result) {
 			$num = $this->db->num_rows($result);
-			while ($i < $num) {
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$tmp_object = new Partnership($this->db);
 				if ($tmp_object->fetch($obj->rowid)) {
@@ -257,7 +261,7 @@ class Partnerships extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->partnership->array_options[$index] = $this->_checkValForAPI($field, $val, $this->partnership);
+					$this->partnership->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->partnership);
 				}
 				continue;
 			}
@@ -271,7 +275,7 @@ class Partnerships extends DolibarrApi
 		if ($this->partnership->update(DolibarrApiAccess::$user, 0) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->partnership->error);
+			throw new RestException(500, $this->partnership->errorsToString());
 		}
 	}
 
@@ -302,7 +306,7 @@ class Partnerships extends DolibarrApi
 		}
 
 		if (!$this->partnership->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when deleting Partnership : '.$this->partnership->error);
+			throw new RestException(500, 'Error when deleting Partnership : '.$this->partnership->errorsToString());
 		}
 
 		return array(
@@ -317,9 +321,13 @@ class Partnerships extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
+	 *
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{

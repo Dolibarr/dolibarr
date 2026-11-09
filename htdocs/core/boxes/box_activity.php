@@ -2,7 +2,7 @@
 /* Copyright (C) 2012      Charles-François BENKE <charles.fr@benke.fr>
  * Copyright (C) 2005-2015 Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2014-2024  Frédéric France        <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ class box_activity extends ModeleBoxes
 	public $boxcode = "activity";
 	public $boximg = "object_bill";
 	public $boxlabel = 'BoxGlobalActivity';
-	public $depends = array("facture");
+	public $depends = array("invoice|propal|order");
 
 	public $enabled = 1;
 
@@ -44,7 +44,7 @@ class box_activity extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
-	public function __construct($db, $param)
+	public function __construct($db, $param)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $conf, $user;
 
@@ -429,7 +429,7 @@ class box_activity extends ModeleBoxes
 		// Add the sum in the bottom of the boxes
 		$this->info_box_contents[$line][0] = array('tr' => 'class="liste_total_wrap"');
 		$this->info_box_contents[$line][1] = array('td' => 'class="liste_total left" ', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
-		$this->info_box_contents[$line][2] = array('td' => 'class="liste_total right" ', 'text' => $totalnb);
+		$this->info_box_contents[$line][2] = array('td' => 'class="liste_total right" ', 'text' => (string) $totalnb);
 		$this->info_box_contents[$line][3] = array('td' => 'class="liste_total right" ', 'text' => '');
 		$this->info_box_contents[$line][4] = array('td' => 'class="liste_total right" ', 'text' => "");
 

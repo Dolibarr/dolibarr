@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - banks
-MenuNewVariousPayment=Nuevo Pago Varios
 BankName=Nombre del Banco
 BankAccount=Cuenta Bancaria
 ShowAccount=Mostrar Cuenta
@@ -58,6 +57,7 @@ ReConciliedBy=Reconciliado por
 DateConciliating=Fecha de Reconciliación
 BankLineConciliated=Registro reconciliado con extracto bancario
 SupplierInvoicePayment=Pago de Proveedor
+SubscriptionPayment=Pago de Suscripción
 TransferTo=A
 ValidateCheckReceipt=¿Validar recibo de cheque?
 BankChecks=Cheques bancarios
@@ -79,7 +79,5 @@ ConfirmRejectCheck=¿Está seguro que quiere marcar este cheque como rechazado?
 RejectCheckDate=Fecha cuando fue devuelto el cheque
 BankAccountModelModule=Template para cuentas bancarias
 VariousPayment=Pago Varios
-ShowVariousPayment=Mostrar Pagos Varios
-AddVariousPayment=Agregar pago varios
 BankColorizeMovementName1=Color de fondo para movimiento de débito
 BankColorizeMovementName2=Color de fondo para movimiento de crédito

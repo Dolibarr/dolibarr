@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "members", "bills", "users"));
 
-if (!$user->hasRight('adherent', 'lire')) {
+if (!$user->hasRight('adherent', 'cotisation', 'lire')) {
 	accessforbidden();
 }
 

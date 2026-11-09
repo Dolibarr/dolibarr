@@ -3,7 +3,7 @@
 /*
  * Copyright (C) 2009-2012 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +51,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice2.lib.php';
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Translate $langs
+ *
+ * @var int $dolibarr_main_db_readonly
  */
 
 // Load main language strings
@@ -168,7 +170,7 @@ foreach ($argv as $key => $value) {
 			print 'Error: Bad date format or value'."\n";
 			exit(1);
 		}
-		print 'Rebuild PDF for ivoices with at least one payment between '.dol_print_date($paymentdateafter, 'day', 'gmt')." and ".dol_print_date($paymentdatebefore, 'day', 'gmt').".\n";
+		print 'Rebuild PDF for invoices with at least one payment between '.dol_print_date($paymentdateafter, 'day', 'gmt')." and ".dol_print_date($paymentdatebefore, 'day', 'gmt').".\n";
 	}
 
 	if ($value == 'filter=nopayment') {
@@ -176,7 +178,7 @@ foreach ($argv as $key => $value) {
 		$option .= (empty($option) ? '' : '_').'nopayment';
 		$filter[] = 'nopayment';
 
-		print 'Rebuild PDF for ivoices with no payment done yet.'."\n";
+		print 'Rebuild PDF for invoices with no payment done yet.'."\n";
 	}
 
 	if ($value == 'filter=bank') {
@@ -306,7 +308,11 @@ function rebuild_merge_pdf_usage()
 	print "To exclude deposit invoices, use filter=nodeposit\n";
 	print "To exclude some thirdparties, use filter=excludethirdparties id1,id2...\n";
 	print "To limit to some thirdparties, use filter=onlythirdparties id1,id2...\n";
-	print "To regenerate existing PDF, use regenerate=templatename or regeneratenomerge=templatename\n";
+	print "\n";
+	print "To regenerate existing PDF before merge, use regenerate=templatename\n";
+	print "To regenerate existing PDF with no merge (regenerate only), use regeneratenomerge=templatename\n";
+	print "To merge by reusing existing PDF (generation only for non already existing PDF), use regenerate=no or nothing\n";
+	print "\n";
 	print "To generate documents in a given language, use lang=xx_XX\n";
 	print "To set prefix of generated file name, use prefix=myfileprefix\n";
 	print "\n";
