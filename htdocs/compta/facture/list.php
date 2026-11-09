@@ -100,6 +100,7 @@ $ref = GETPOST('ref', 'alpha');
 $socid = GETPOSTINT('socid');
 
 $userid = GETPOSTINT('userid');
+$search_id = GETPOST('search_id', 'alpha');
 $search_ref = GETPOST('sf_ref') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
 $search_refcustomer = GETPOST('search_refcustomer', 'alpha');
 $search_type = GETPOST('search_type', 'intcomma');
@@ -229,7 +230,7 @@ if (!$sortfield) {
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$diroutputmassaction = $conf->invoice->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = isModEnabled('invoice') ? $conf->invoice->dir_output.'/temp/massgeneration/'.$user->id : '';
 
 $now = dol_now();
 $error = 0;
@@ -265,6 +266,7 @@ $showpos = (isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalI
 
 $checkedtypetiers = '0';
 $arrayfields = array(
+	'f.rowid' => array('label' => "TechnicalID", 'checked' => (getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? '1' : '-1'), 'enabled' => '1', 'position' => 1),
 	'f.ref' => array('label' => "Ref", 'checked' => '1', 'position' => 5),
 	'f.ref_client' => array('label' => "RefCustomer", 'checked' => '-1', 'position' => 10),
 	'f.type' => array('label' => "Type", 'checked' => '0', 'position' => 15),
@@ -425,6 +427,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_sale = '';
 	$search_product_category = '';
 	$searchCategoryInvoiceList = array();
+	$search_id = '';
 	$search_ref = '';
 	$search_refcustomer = '';
 	$search_type = '';
@@ -883,6 +886,9 @@ if ($userid) {
 	} else {
 		$sql .= ' AND f.fk_user_author = '.((int) $userid);
 	}
+}
+if ($search_id != '') {
+	$sql .= natural_search('f.rowid', $search_id, 1);
 }
 if ($search_ref) {
 	$sql .= natural_search('f.ref', $search_ref);
@@ -1363,6 +1369,9 @@ foreach (array('search_datec_start', 'search_datec_end', 'search_datem_start', '
 		}
 	}
 }
+if ($search_id != '') {
+	$param .= '&search_id='.urlencode($search_id);
+}
 if ($search_ref) {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
@@ -1694,6 +1703,12 @@ if ($conf->main_checkbox_left_column) {
 
 if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 	print '<td class="liste_titre">';
+	print '</td>';
+}
+// Technical ID
+if (!empty($arrayfields['f.rowid']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 // Ref
@@ -2064,6 +2079,10 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 	print_liste_field_titre('#', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['f.rowid']['checked'])) {
+	print_liste_field_titre($arrayfields['f.rowid']['label'], $_SERVER['PHP_SELF'], 'f.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['f.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['f.ref']['label'], $_SERVER['PHP_SELF'], 'f.ref', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
@@ -2403,15 +2422,20 @@ if ($num > 0) {
 		$projectstatic->ref = $obj->project_ref;
 		$projectstatic->title = $obj->project_label;
 
-		$paiement = $facturestatic->getSommePaiement();
-		$totalcreditnotes = $facturestatic->getSumCreditNotesUsed();
-		$totaldeposits = $facturestatic->getSumDepositsUsed();
+		// Get amounts in main currency and in foreign currency with one call for each
+		$tmppaiement = $facturestatic->getSommePaiement(-1);
+		$tmpcreditnotes = $facturestatic->getSumCreditNotesUsed(-1);
+		$tmpdeposits = $facturestatic->getSumDepositsUsed(-1);
+
+		$paiement = is_array($tmppaiement) ? $tmppaiement['alreadypaid'] : 0;
+		$totalcreditnotes = is_array($tmpcreditnotes) ? $tmpcreditnotes['totalcreditnotes'] : 0;
+		$totaldeposits = is_array($tmpdeposits) ? $tmpdeposits['totaldeposits'] : 0;
 		$totalallpayments = $paiement + $totalcreditnotes + $totaldeposits;
 		$remaintopay = $obj->total_ttc - $totalallpayments;
 
-		$multicurrency_paiement = $facturestatic->getSommePaiement(1);
-		$multicurrency_totalcreditnotes = $facturestatic->getSumCreditNotesUsed(1);
-		$multicurrency_totaldeposits = $facturestatic->getSumDepositsUsed(1);
+		$multicurrency_paiement = is_array($tmppaiement) ? $tmppaiement['alreadypaid_multicurrency'] : 0;
+		$multicurrency_totalcreditnotes = is_array($tmpcreditnotes) ? $tmpcreditnotes['totalcreditnotes_multicurrency'] : 0;
+		$multicurrency_totaldeposits = is_array($tmpdeposits) ? $tmpdeposits['totaldeposits_multicurrency'] : 0;
 
 		$totalallpayments = $paiement + $totalcreditnotes + $totaldeposits;
 		$remaintopay = price2num($facturestatic->total_ttc - $totalallpayments);
@@ -2500,6 +2524,14 @@ if ($num > 0) {
 			// No
 			if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 				print '<td>'.(($offset * $limit) + $i).'</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+
+			// Technical ID
+			if (!empty($arrayfields['f.rowid']['checked'])) {
+				print '<td class="center" data-key="id">'.((int) $obj->id).'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -2605,7 +2637,7 @@ if ($num > 0) {
 
 			// Project ref
 			if (!empty($arrayfields['p.ref']['checked'])) {
-				print '<td class="nocellnopadd nowraponall">';
+				print '<td class="tdoverflowmax150">';
 				if ($obj->project_id > 0) {
 					print $projectstatic->getNomUrl(1);
 				}
@@ -2617,9 +2649,9 @@ if ($num > 0) {
 
 			// Project label
 			if (!empty($arrayfields['p.title']['checked'])) {
-				print '<td class="nowraponall">';
+				print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($projectstatic->title).'">';
 				if ($obj->project_id > 0) {
-					print dol_escape_htmltag($projectstatic->title);
+					print '<span class="spantitle">'.dol_escape_htmltag($projectstatic->title).'</span>';
 				}
 				print '</td>';
 				if (!$i) {
