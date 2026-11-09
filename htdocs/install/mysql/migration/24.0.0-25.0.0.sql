@@ -673,3 +673,10 @@ insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code
 insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2809, 'Land tax (state or territory)',          1, 1, 'TAXAULAND');
 insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2810, 'ATO interest charges (GIC / SIC)',       0, 1, 'TAXAUGIC');
 insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2811, 'Activity statement (BAS / IAS)',         0, 1, 'TAXAUBAS');
+
+-- Empty general accounts of thirdparties and users were stored as '-1' (value of the empty option of the select of accounting accounts)
+UPDATE llx_societe SET accountancy_code_customer_general = NULL WHERE accountancy_code_customer_general = '-1';
+UPDATE llx_societe SET accountancy_code_supplier_general = NULL WHERE accountancy_code_supplier_general = '-1';
+UPDATE llx_societe_perentity SET accountancy_code_customer_general = NULL WHERE accountancy_code_customer_general = '-1';
+UPDATE llx_societe_perentity SET accountancy_code_supplier_general = NULL WHERE accountancy_code_supplier_general = '-1';
+UPDATE llx_user SET accountancy_code_user_general = NULL WHERE accountancy_code_user_general = '-1';
