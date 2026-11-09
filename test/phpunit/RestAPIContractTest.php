@@ -136,7 +136,7 @@ class RestAPIContractTest extends AbstractRestAPITest
 			"date_start" => null,
 			"date_end" => $date_end,
 			"price_base_type" => "HT",
-			"subprice_ttc" => 0,
+			"subprice_excl_tax" => 0,
 			"info_bits" => 0,
 			"fk_fournprice" => null,
 			"pa_ht" => 0,
@@ -350,7 +350,7 @@ class RestAPIContractTest extends AbstractRestAPITest
 		$contract_id = $this->createContract($test);
 
 		try {
-			$data = array("desc" => "API test service TTC", "subprice_ttc" => 120, "qty" => 2, "tva_tx" => 20, "price_base_type" => "TTC");
+			$data = array("desc" => "API test service TTC", "subprice_inc_tax" => 120, "qty" => 2, "tva_tx" => 20, "price_base_type" => "TTC");
 			$result = $this->getUrl('contracts/'.$contract_id.'/lines', $test, 'POST', $data);
 			$this->assertGreaterThan(0, (int) $result['content'], "$test Id of line is not > 0");
 

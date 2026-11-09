@@ -414,8 +414,8 @@ class Contracts extends DolibarrApi
 	 * Add a line to given contract
 	 *
 	 * Unit price: give 'subprice' (excl. tax) with price_base_type 'HT' (default),
-	 * or 'subprice_ttc' (incl. tax) with price_base_type 'TTC'.
-	 * 'subprice_excl_tax' is a deprecated alias of 'subprice_ttc': despite its name,
+	 * or 'subprice_inc_tax' (incl. tax) with price_base_type 'TTC'.
+	 * 'subprice_excl_tax' is a deprecated alias of 'subprice_inc_tax': despite its name,
 	 * it has always been read as the unit price including tax.
 	 *
 	 * @since	7.0.0	Initial implementation
@@ -454,7 +454,7 @@ class Contracts extends DolibarrApi
 		$request_data->price_base_type = sanitizeVal($request_data->price_base_type ?? '');
 
 		// Unit price including tax, used when price_base_type is TTC. 'subprice_excl_tax' is the deprecated name of this field.
-		$subprice_ttc = $request_data->subprice_ttc ?? ($request_data->subprice_excl_tax ?? 0);
+		$subprice_inc_tax = $request_data->subprice_inc_tax ?? ($request_data->subprice_excl_tax ?? 0);
 
 		$updateRes = $this->contract->addline(
 			$request_data->desc,
@@ -468,7 +468,7 @@ class Contracts extends DolibarrApi
 			$request_data->date_start ?? 0,
 			$request_data->date_end ?? 0,
 			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
-			$subprice_ttc,
+			$subprice_inc_tax,
 			$request_data->info_bits ?? 0,
 			$request_data->fk_fournprice ?? null,
 			$request_data->pa_ht ?? 0,
