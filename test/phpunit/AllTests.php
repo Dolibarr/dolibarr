@@ -219,6 +219,8 @@ class AllTests
 		$suite->addTestSuite('FilesLibMoveDirTest');
 		require_once dirname(__FILE__).'/FilesLibTest.php';
 		$suite->addTestSuite('FilesLibTest');
+		require_once dirname(__FILE__).'/CommonFieldsViewTplTest.php';
+		$suite->addTestSuite('CommonFieldsViewTplTest');
 		require_once dirname(__FILE__).'/InstallRepairEcmTest.php';
 		$suite->addTestSuite('InstallRepairEcmTest');
 		require_once dirname(__FILE__).'/InstallRepairImagesTest.php';
@@ -465,6 +467,8 @@ class AllTests
 			$suite->addTestSuite('RestAPIUserTest');
 			require_once dirname(__FILE__).'/RestAPIAgendaEventsPutTest.php';
 			$suite->addTestSuite('RestAPIAgendaEventsPutTest');
+			require_once dirname(__FILE__).'/RestAPIAgendaEventsGetTest.php';
+			$suite->addTestSuite('RestAPIAgendaEventsGetTest');
 			require_once dirname(__FILE__).'/RestAPIContactTest.php';
 			$suite->addTestSuite('RestAPIContactTest');
 			require_once dirname(__FILE__).'/RestAPIDocumentTest.php';
