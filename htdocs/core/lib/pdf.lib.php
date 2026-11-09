@@ -704,67 +704,47 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 				}
 			}
 
-			// Intra VAT
-			if ($type == 'BILLING' && !getDolGlobalString('MAIN_TVAINTRA_NOT_IN_ADDRESS')) {
-				if ($usecontact && is_object($targetcontact) && getDolGlobalInt('MAIN_USE_COMPANY_NAME_OF_CONTACT')) {
-					$targetcontact->fetch_thirdparty();
-					if (!empty($targetcontact->thirdparty->id) && $targetcontact->thirdparty->tva_intra) {
-						$stringaddress .= ($stringaddress ? "\n" : '') . $outputlangs->transnoentities("VATIntraShort") . ': ' . $outputlangs->convToOutputCharset($targetcontact->thirdparty->tva_intra);
+			// Company whose legal information (intra VAT, legal form, professional ids) is shown.
+			// When the contact belongs to another thirdparty than the one of the object, the documents show
+			// the name of the thirdparty of the contact (unless MAIN_USE_COMPANY_NAME_OF_CONTACT is set to 0),
+			// so the legal information must be the one of that thirdparty, not the one of the object.
+			// A contact without thirdparty shows no legal information.
+			$companyforlegalinfo = is_object($targetcompany) ? $targetcompany : null;
+			if ($usecontact && is_object($targetcontact) && getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT', '1')
+				&& (!is_object($targetcompany) || $targetcontact->socid != $targetcompany->id)) {
+				$companyforlegalinfo = null;
+				if ($targetcontact->socid > 0) {
+					if (empty($targetcontact->thirdparty->id)) {
+						$targetcontact->fetch_thirdparty();
 					}
-				} elseif (!empty($targetcompany->tva_intra)) {
-					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($targetcompany->tva_intra);
+					if (!empty($targetcontact->thirdparty->id)) {
+						$companyforlegalinfo = $targetcontact->thirdparty;
+					}
 				}
 			}
 
+			// Intra VAT
+			if ($type == 'BILLING' && !getDolGlobalString('MAIN_TVAINTRA_NOT_IN_ADDRESS') && !empty($companyforlegalinfo->tva_intra)) {
+				$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($companyforlegalinfo->tva_intra);
+			}
+
 			// Legal form
-			if (getDolGlobalString('MAIN_LEGALFORM_IN_ADDRESS') && !empty($targetcompany->forme_juridique_code)) {
-				$tmp = getFormeJuridiqueLabel((string) $targetcompany->forme_juridique_code);
+			if (getDolGlobalString('MAIN_LEGALFORM_IN_ADDRESS') && !empty($companyforlegalinfo->forme_juridique_code)) {
+				$tmp = getFormeJuridiqueLabel((string) $companyforlegalinfo->forme_juridique_code);
 				$stringaddress .= ($stringaddress ? "\n" : '').$tmp;
 			}
 
 			// Professional Ids
-			if ($type == 'BILLING') {
-				if (getDolGlobalString('MAIN_PROFID1_IN_ADDRESS') && !empty($targetcompany->idprof1)) {
-					$tmp = $outputlangs->transcountrynoentities("ProfId1", $targetcompany->country_code);
-					if (preg_match('/\((.+)\)/', $tmp, $reg)) {
-						$tmp = $reg[1];
+			if ($type == 'BILLING' && is_object($companyforlegalinfo)) {
+				for ($i = 1; $i <= 6; $i++) {
+					$idprof = 'idprof'.$i;
+					if (getDolGlobalString('MAIN_PROFID'.$i.'_IN_ADDRESS') && !empty($companyforlegalinfo->$idprof)) {
+						$tmp = $outputlangs->transcountrynoentities('ProfId'.$i, $companyforlegalinfo->country_code);
+						if (preg_match('/\((.+)\)/', $tmp, $reg)) {
+							$tmp = $reg[1];
+						}
+						$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($companyforlegalinfo->$idprof);
 					}
-					$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof1);
-				}
-				if (getDolGlobalString('MAIN_PROFID2_IN_ADDRESS') && !empty($targetcompany->idprof2)) {
-					$tmp = $outputlangs->transcountrynoentities("ProfId2", $targetcompany->country_code);
-					if (preg_match('/\((.+)\)/', $tmp, $reg)) {
-						$tmp = $reg[1];
-					}
-					$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof2);
-				}
-				if (getDolGlobalString('MAIN_PROFID3_IN_ADDRESS') && !empty($targetcompany->idprof3)) {
-					$tmp = $outputlangs->transcountrynoentities("ProfId3", $targetcompany->country_code);
-					if (preg_match('/\((.+)\)/', $tmp, $reg)) {
-						$tmp = $reg[1];
-					}
-					$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof3);
-				}
-				if (getDolGlobalString('MAIN_PROFID4_IN_ADDRESS') && !empty($targetcompany->idprof4)) {
-					$tmp = $outputlangs->transcountrynoentities("ProfId4", $targetcompany->country_code);
-					if (preg_match('/\((.+)\)/', $tmp, $reg)) {
-						$tmp = $reg[1];
-					}
-					$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof4);
-				}
-				if (getDolGlobalString('MAIN_PROFID5_IN_ADDRESS') && !empty($targetcompany->idprof5)) {
-					$tmp = $outputlangs->transcountrynoentities("ProfId5", $targetcompany->country_code);
-					if (preg_match('/\((.+)\)/', $tmp, $reg)) {
-						$tmp = $reg[1];
-					}
-					$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof5);
-				}
-				if (getDolGlobalString('MAIN_PROFID6_IN_ADDRESS') && !empty($targetcompany->idprof6)) {
-					$tmp = $outputlangs->transcountrynoentities("ProfId6", $targetcompany->country_code);
-					if (preg_match('/\((.+)\)/', $tmp, $reg)) {
-						$tmp = $reg[1];
-					}
-					$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof6);
 				}
 			}
 
