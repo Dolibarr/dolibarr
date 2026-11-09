@@ -2356,7 +2356,11 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 	$stripecu = null;
 
 	// For Stripe
-	if (GETPOST('dopayment_stripe', 'alpha')) {
+	if (GETPOST('dopayment_stripe', 'alpha') && empty($stripearrayofkeys['publishable_key'])) {
+		// Setup not complete: show only this error instead of also trying to create a PaymentIntent that will fail
+		$langs->load("errors");
+		print info_admin($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Stripe")), 0, 0, 'error marginleftonly marginrightonly');
+	} elseif (GETPOST('dopayment_stripe', 'alpha')) {
 		// Personalized checkout
 		print '<style>
 		/**
