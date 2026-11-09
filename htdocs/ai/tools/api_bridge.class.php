@@ -2533,6 +2533,10 @@ class ToolApiBridge extends McpTool
 			$this->enrichments[$key]['methods']['putLine'] = $this->lineMethod('update', $l[0], $l[1], $l[2], $l[3]);
 			$this->enrichments[$key]['methods']['deleteLine'] = $this->lineMethod('delete', $l[0], $l[1], $l[2], $l[3]);
 		}
+		$supplierOrderDeleteLine = $this->lineMethod('delete', 'supplier order', 'CommandeFournisseur', array('fournisseur', 'commande', 'creer'), 'product');
+		$supplierOrderDeleteLine['write']['read_right'] = array('fournisseur', 'commande', 'lire');
+		$supplierOrderDeleteLine['write']['access'] = array('fournisseur', 'commande_fournisseur', 'commande');
+		$this->enrichments['supplier_orders']['methods']['deleteLine'] = $supplierOrderDeleteLine;
 		// The REST postLine() of a contract reads every field: none is left unset.
 		$this->enrichments['contracts']['methods']['postLine'] = $this->addLineMethod('contract', 'api_contracts_list', 'Contrat', array('contrat', 'creer'), false, array(), array('price_base_type' => 'HT', 'localtax1_tx' => 0, 'localtax2_tx' => 0, 'remise_percent' => 0, 'date_start' => '', 'date_end' => '', 'subprice_excl_tax' => 0, 'info_bits' => 0, 'fk_fournprice' => null, 'pa_ht' => 0, 'array_options' => array(), 'fk_unit' => null, 'rang' => -1));
 		$this->enrichments['interventions']['methods']['postLine'] = $this->lineMethod('add', 'intervention', 'Fichinter', array('ficheinter', 'creer'), 'intervention');
@@ -2847,7 +2851,7 @@ class ToolApiBridge extends McpTool
 	 * @param  string   $class   Business class of the document.
 	 * @param  string[] $right   Right needed to write.
 	 * @param  string   $profile Line shape: 'product', 'supplier', 'contract' or 'intervention'.
-	 * @return array<string,mixed> Method enrichment.
+	 * @return array{suffix:string,description:string,write:array<string,mixed>,params:array<string,string>} Method enrichment.
 	 */
 	private function lineMethod($action, $label, $class, array $right, $profile)
 	{
@@ -4310,6 +4314,9 @@ class ToolApiBridge extends McpTool
 	private function normaliseWriteArgs(array $args, array $write = array())
 	{
 		$this->unresolvedProducts = array();
+		if (($write['object'] ?? '') === 'CommandeFournisseur' && ($write['line_action'] ?? '') === 'delete') {
+			return $this->normaliseSupplierOrderLineDeletion($args, $write);
+		}
 		if (!empty($write['update'])) {
 			return $this->normaliseUpdateArgs($args, $write);
 		}
@@ -5409,7 +5416,7 @@ class ToolApiBridge extends McpTool
 	 * @param  string $ref   Ref of the record, used when no rowid is given.
 	 * @return CommonObject|null Record, or null when it cannot be read.
 	 */
-	private function fetchRecord($class, $id, $ref = '')
+	protected function fetchRecord($class, $id, $ref = '')
 	{
 		$paths = $this->recordClassFiles();
 		$ref = trim((string) $ref);
@@ -5912,6 +5919,58 @@ class ToolApiBridge extends McpTool
 		}
 
 		return $out;	// delete: the record alone
+	}
+
+	/**
+	 * Validate a supplier order line deletion before preview and execution.
+	 *
+	 * @param array<string,mixed> $args Arguments as received.
+	 * @param array<string,mixed> $write Method metadata.
+	 * @return array<string,mixed> REST arguments.
+	 */
+	private function normaliseSupplierOrderLineDeletion(array $args, array $write)
+	{
+		global $langs;
+
+		$langs->load('other');
+		$this->resetWriteState();
+		foreach (array($write['right'], $write['read_right']) as $right) {
+			if (!$this->user || !$this->user->hasRight($right[0], $right[1], $right[2])) {
+				throw new InvalidArgumentException($langs->transnoentitiesnoconv('NotEnoughPermissions'));
+			}
+		}
+		$ids = array('lineid', 'line_id', 'rowid');
+		$selectors = array('line', 'position', 'product_ref', 'product');
+		foreach ($args as $name => $value) {
+			if ($name === 'requestState') {
+				continue;
+			}
+			if (!in_array($name, array_merge(array('id', 'ref'), $ids, $selectors), true)
+				|| (!is_string($value) && !is_int($value))
+				|| trim((string) $value) === ''
+				|| ((in_array($name, $ids, true) || (is_numeric($value) && $name !== 'ref')) && (!ctype_digit((string) $value) || (int) $value <= 0))) {
+				throw new InvalidArgumentException($langs->transnoentitiesnoconv('AIWriteInvalidLineDeletionArgument', $name));
+			}
+		}
+		if (count(array_intersect(array_keys($args), array('id', 'ref'))) !== 1) {
+			throw new InvalidArgumentException($langs->transnoentitiesnoconv('AIWriteInvalidLineDeletionArgument', 'id / ref'));
+		}
+		// Do not silently prefer one line selector over another for a deletion.
+		if (count(array_intersect(array_keys($args), array_merge($ids, $selectors))) !== 1) {
+			throw new InvalidArgumentException($langs->transnoentitiesnoconv('AIWriteInvalidLineDeletionArgument', 'line / lineid'));
+		}
+		$given = $args['id'] ?? ($args['ref'] ?? '');
+		$this->writeTarget = $this->resolveWriteTarget($write, $given);
+		if (!$this->writeTarget || !$this->canAccessWriteObject($write['access'], (int) $this->writeTarget->id)) {
+			throw new InvalidArgumentException($langs->transnoentitiesnoconv('AIWriteRecordNotFound', 'supplier order', (string) $given));
+		}
+		$out = $this->normaliseLineArgs($args, $write, array('id' => (int) $this->writeTarget->id));
+		$error = $this->precheckTargetWrite($write, $out);
+		if ($error !== '') {
+			throw new InvalidArgumentException($error);
+		}
+
+		return $out;
 	}
 
 	/**
@@ -6772,7 +6831,7 @@ class ToolApiBridge extends McpTool
 		if (!empty($this->writeProblems)) {
 			return $this->writeProblems[0];
 		}
-		if (!$obj || !$this->userCanReach((string) $write['object'], (int) $obj->id)) {
+		if (!$obj || (!empty($write['access']) ? !$this->canAccessWriteObject($write['access'], (int) $obj->id) : !$this->userCanReach((string) $write['object'], (int) $obj->id))) {
 			return $langs->transnoentitiesnoconv('AIWriteRecordNotFound', $label, $given);
 		}
 		$kind = (string) $write['kind'];

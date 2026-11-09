@@ -753,3 +753,5 @@ dolIncludeError=The call of dol_include_once of the file "%s" in module "%s" is 
 moduleNameMismatch=Warning, the module file contains a directory in root called "%s" but this does not match the name of module used as file name that is "%s".
 rootDirWarning=Warning, a module file can contain only 1 root directory with the same name as the module (into the root of zip or into the htdocs directory). We found %s files/directories into the root of module. If this module is a meta-package (a module embedding several other modules), you must include a file metapackage.conf with list of all embedded module names in directory "%s"
 NoDataRelatedTo=No data found related to this object
+
+AIWriteInvalidLineDeletionArgument=Invalid argument for deleting a line: %s. Give the order and exactly one line identifier, position or product reference.
