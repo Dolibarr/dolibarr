@@ -2024,7 +2024,7 @@ if ($action == 'create') {
 		$formquestion = array(
 			array('type' => 'textarea', 'name' => 'closing_note', 'label' => $langs->trans('Note'), 'value' => dol_escape_htmltag(GETPOSTISSET('closing_note') || GETPOSTISSET('note') ? $closingnote : $object->note_private), 'morecss' => 'centpercent', 'moreattr' => 'rows="'.ROWS_3.'"', 'inputko' => 1),
 		);
-		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('SetAcceptedRefused'), $text, 'setstatut', $formquestion, 'no', 2, 0, 600, 0, 'ToAccept', 'ToRefuse', '', 'Cancel', '');
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('SetAcceptedRefused'), $text, 'setstatut', $formquestion, 'no', 2, 0, 600, 0, 'Accept', 'Deny', '', 'Cancel', '');
 	}
 	// Subtotal line form
 	if ($action == 'add_title_line') {
