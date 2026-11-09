@@ -252,15 +252,15 @@ class Shipments extends DolibarrApi
 			foreach ($request_data["lines"] as $line) {
 				$shipmentline = new ExpeditionLigne($this->db);
 
-				$shipmentline->entrepot_id = (int) $line['entrepot_id'];
+				$shipmentline->entrepot_id = (int) ($line['entrepot_id'] ?? 0);	// a line with lots takes the warehouse of its lots
 				$shipmentline->fk_element = (int) ($line['fk_element'] ?? $line['origin_id']);				// example: order id.  this->origin is 'commande'
 				$shipmentline->origin_line_id = (int) ($line['fk_elementdet'] ?? $line['origin_line_id']);	// example: order id
 				$shipmentline->fk_elementdet = (int) ($line['fk_elementdet'] ?? $line['origin_line_id']);	// example: order line id
 				$shipmentline->origin_type = $line['element_type'] ?? $line['origin_type'];			// example 'commande' or 'order'
 				$shipmentline->element_type = $line['element_type'] ?? $line['origin_type'];		// example 'commande' or 'order'
 				$shipmentline->qty = (float) $line['qty'];
-				$shipmentline->rang = (int) $line['rang'];
-				$array_options = $line['array_options'];
+				$shipmentline->rang = (int) ($line['rang'] ?? 0);
+				$array_options = $line['array_options'] ?? null;
 				if (is_array($array_options)) {
 					$shipmentline->array_options = $array_options;
 				}
