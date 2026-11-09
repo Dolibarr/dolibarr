@@ -204,4 +204,67 @@ class FichinterTest extends CommonClassTest
 		$this->assertLessThan($result, 0, $localobject->errorsToString());
 		return $result;
 	}
+
+	/**
+	 * testFichinterSetValidSetCloseStatusGuards
+	 *
+	 * setValid() and setClose() must do nothing, and return 0, when the intervention
+	 * does not have a status allowed for the action.
+	 *
+	 * @return	void
+	 */
+	public function testFichinterSetValidSetCloseStatusGuards()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$soc = new Societe($db);
+		$soc->name = "FichinterTest Unittest status guards";
+		$socid = $soc->create($user);
+		$this->assertGreaterThan(0, $socid, $soc->errorsToString());
+
+		$localobject = new Fichinter($db);
+		$localobject->initAsSpecimen();
+		$localobject->socid = $socid;
+		$id = $localobject->create($user);
+		$this->assertGreaterThan(0, $id, $localobject->errorsToString());
+
+		$check = new Fichinter($db);
+
+		// A draft cannot be closed
+		$localobject->fetch($id);
+		$result = $localobject->setClose($user);
+		$this->assertEquals(0, $result, 'Closing a draft intervention must do nothing');
+		$this->assertEquals(Fichinter::STATUS_DRAFT, $localobject->status, 'In memory status must stay draft');
+		$check->fetch($id);
+		$this->assertEquals(Fichinter::STATUS_DRAFT, $check->status, 'Status in database must stay draft');
+
+		// Draft -> validated -> closed still works
+		$result = $localobject->setValid($user);
+		$this->assertGreaterThan(0, $result, $localobject->errorsToString());
+		$result = $localobject->setClose($user);
+		$this->assertGreaterThan(0, $result, $localobject->errorsToString());
+		$check->fetch($id);
+		$this->assertEquals(Fichinter::STATUS_CLOSED, $check->status, 'Intervention must be closed');
+		$closedref = $check->ref;
+
+		// A closed intervention cannot be validated
+		$localobject->fetch($id);
+		$result = $localobject->setValid($user);
+		$this->assertEquals(0, $result, 'Validating a closed intervention must do nothing');
+		$this->assertEquals(Fichinter::STATUS_CLOSED, $localobject->status, 'In memory status must stay closed');
+		$this->assertEquals($closedref, $localobject->ref, 'In memory ref must not change');
+		$check->fetch($id);
+		$this->assertEquals(Fichinter::STATUS_CLOSED, $check->status, 'Status in database must stay closed');
+		$this->assertEquals($closedref, $check->ref, 'Ref in database must not change');
+
+		// Closing again does nothing
+		$result = $localobject->setClose($user);
+		$this->assertEquals(0, $result, 'Closing a closed intervention must do nothing');
+
+		$localobject->delete($user);
+	}
 }

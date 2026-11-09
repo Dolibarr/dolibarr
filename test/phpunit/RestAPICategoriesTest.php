@@ -259,6 +259,62 @@ class RestAPICategoriesTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * testRestCategoryListForObjectContact
+	 *
+	 * @return void
+	 */
+	public function testRestCategoryListForObjectContact()
+	{
+		$test = "List categories of a contact";
+
+		$result = $this->getUrl('contacts', $test, 'POST', array("lastname" => "API test categories ".mt_rand(0, 99999999)));
+		$contact_id = (int) $result['content'];
+		$this->assertGreaterThan(0, $contact_id, "$test Id of contact is not > 0");
+
+		$result = $this->getUrl('categories/object/contact/'.$contact_id, $test, 'GET');
+		$this->assertEquals(200, $result['http_code'], "$test Must be allowed for an admin");
+		$this->assertIsArray($result['content'], "$test Result must be a list");
+
+		$this->getUrl('contacts/'.$contact_id, $test, 'DELETE');
+	}
+
+	/**
+	 * testRestCategoryListForObjectUser
+	 *
+	 * @return void
+	 */
+	public function testRestCategoryListForObjectUser()
+	{
+		$test = "List categories of a user";
+
+		$result = $this->getUrl('categories/object/user/1', $test, 'GET');
+		$this->assertEquals(200, $result['http_code'], "$test Must be allowed for an admin");
+		$this->assertIsArray($result['content'], "$test Result must be a list");
+	}
+
+	/**
+	 * testRestCategoryListForObjectPageAfterLast
+	 *
+	 * @return void
+	 */
+	public function testRestCategoryListForObjectPageAfterLast()
+	{
+		$test = "List categories of an object with a page after the last one";
+
+		$category_id = $this->createCategory($test, 2);	// customer
+		$this->getUrl('categories/'.$category_id.'/objects/customer/1', $test, 'POST', array());
+
+		$result = $this->getUrl('categories/object/customer/1', $test, 'GET', array('limit' => 1, 'page' => 0));
+		$this->assertCount(1, $result['content'], "$test First page must have one category");
+
+		$result = $this->getUrl('categories/object/customer/1', $test, 'GET', array('limit' => 1, 'page' => 100000));
+		$this->assertCount(0, $result['content'], "$test A page after the last one must be empty, not the first page");
+
+		$this->getUrl('categories/'.$category_id.'/objects/customer/1', $test, 'DELETE');
+		$this->getUrl('categories/'.$category_id, $test, 'DELETE');
+	}
+
+	/**
 	 * testRestCategoryLinkUnlink
 	 *
 	 * @return void

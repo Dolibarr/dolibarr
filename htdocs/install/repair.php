@@ -121,11 +121,13 @@ $imagerepairentity = $imagerepairaction !== '' && GETPOSTISSET($imagerepairactio
 $imagerepairmode = $imagerepairaction !== '' ? GETPOST($imagerepairaction, 'aZ09') : '';
 $imagerepairtoken = GETPOST('token', 'alphanohtml');
 $imagerepairpost = $imagerepairmode === 'confirmed' && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST';
+$mailingrepairmode = GETPOST('repair_mailing_path', 'aZ09');
+$mailingrepairpost = $mailingrepairmode === 'confirmed' && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST';
 $orphanrepairmode = GETPOST('clean_orphelin_dir', 'aZ09');
 $orphanrepairpost = $orphanrepairmode === 'confirmed' && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST';
 $ecmrepairbufferlevel = ob_get_level();
 $ecmrepairpost = GETPOST('clean_ecm_files_table', 'aZ09') === 'confirmed' && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST';
-if ($ecmrepairpost || $imagerepairpost || $orphanrepairpost) {
+if ($ecmrepairpost || $imagerepairpost || $orphanrepairpost || $mailingrepairpost) {
 	ob_start(); // Allow a redirect after the installer has rendered its progress output.
 }
 
@@ -284,7 +286,7 @@ $sections = [
 		],
 		[
 			'name' => 'repair_mailing_path',
-			'info' => 'Repair path of mailing files',
+			'info' => 'Repair path of mailing files (all entities)',
 			'tooltip' => 'Should be applied when using emailing module with > 99 mailings. In that case, please also set MAILING_USE_NEW_PATH_FOR_FILES.'
 		]
 	],
@@ -347,6 +349,21 @@ if ($db->type == 'pgsql') {
 			'info' => 'For postgresql only'
 		]
 	];
+}
+
+if (GETPOSTISSET('repair_mailing_path')) {
+	$mailingrepairvalid = in_array($mailingrepairmode, array('test', 'confirmed'), true);
+	foreach ($sections as $options) {
+		foreach ($options as $opt) {
+			if ($opt['name'] !== 'repair_mailing_path' && GETPOSTISSET($opt['name'])) {
+				$mailingrepairvalid = false;
+			}
+		}
+	}
+	if (!$mailingrepairvalid || ($mailingrepairmode === 'confirmed' && (!$mailingrepairpost || !is_string($imagerepairtoken) || !hash_equals(newToken(), $imagerepairtoken)))) {
+		$ok = 0;
+		print '<tr><td colspan="4" class="error">'.$langs->trans('ErrorWrongParameters').'</td></tr>';
+	}
 }
 
 if (GETPOSTISSET('clean_orphelin_dir')) {
@@ -427,7 +444,7 @@ foreach ($sections as $section => $options) {
 			print $form->selectarray($option.'_entity', $ecmrepairentities, $imageentity, 0, 0, 0, 'style="width: 220px"', 0, 0, 0, '', 'minwidth150');
 		}
 		print '</td>';
-		if ($option == 'clean_orphelin_dir' || $option == 'clean_ecm_files_table' || in_array($option, $imagerepairactions, true)) {
+		if ($option == 'repair_mailing_path' || $option == 'clean_orphelin_dir' || $option == 'clean_ecm_files_table' || in_array($option, $imagerepairactions, true)) {
 			print '<td class="center"><button class="button" type="submit" name="'.$option.'" value="test">'.$langs->trans('Test').'</button></td>';
 			print '<td class="center"><button class="button" type="submit" name="'.$option.'" value="confirmed">'.$langs->trans('Repair').'</button></td>';
 		} else {
@@ -461,7 +478,7 @@ if ($ok && $oneoptionset) {
 
 	// Flush (some browser need a certain amount of data)
 	print str_repeat(' ', 1024);
-	if (!$ecmrepairpost && !$imagerepairpost && !$orphanrepairpost) {
+	if (!$ecmrepairpost && !$imagerepairpost && !$orphanrepairpost && !$mailingrepairpost) {
 		if (ob_get_level() > 0) {
 			ob_flush();
 		}
@@ -2218,82 +2235,66 @@ if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
 	}
 }
 
-// Repair mailing path
+// Repair mailing paths globally, retaining each mailing's owning entity.
 if ($ok && GETPOST('repair_mailing_path')) {
-	global $user;
-	$sav_user = is_object($user) ? clone $user : $user;
-
 	require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-
-	print '<tr><td colspan="2"><br>*** Repair mailing path<br>';
-
-	/**
-	 * Migrate file from old path to new one for mailing $mailing
-	 *
-	 * @param 	Mailing $mailing		Object mailing
-	 * @return 	void
-	 */
-	function migrate_mailing_filespath($mailing)
-	{
-		global $db, $conf, $user;
-
-		$dir = $conf->mailing->dir_output;
-		$origin = $dir.'/'.get_exdir($mailing->id, 2, 0, 1, $mailing, 'mailing');
-		$destin = $dir.'/'.get_exdir($mailing->id, 0, 0, 1, $mailing, 'mailing');
-
-		$origin_osencoded = dol_osencode($origin);
-		$destin_osencoded = dol_osencode($destin);
-		dol_mkdir($destin);
-
-		$user = new User($db);
-		$user->fetch($mailing->user_creation_id);
-
-		if (dol_is_dir($origin)) {
-			$handle = opendir($origin_osencoded);
-			if (is_resource($handle)) {
-				while (($file = readdir($handle)) !== false) {
-					if ($file != '.' && $file != '..' && is_dir($origin_osencoded.'/'.$file)) {
-						$thumbs = opendir($origin_osencoded.'/'.$file);
-						if (is_resource($thumbs)) {
-							dol_mkdir($destin.'/'.$file);
-							while (($thumb = readdir($thumbs)) !== false) {
-								$res = dol_move($origin.'/'.$file.'/'.$thumb, $destin.'/'.$file.'/'.$thumb);
-								$msg = ($res ? '  * Migration successful' : 'Migration failed') . ' for file '.$origin.'/'.$file.'.<br>';
-								print($msg);
-							}
-							// dol_delete_dir($origin.'/'.$file);
-						}
-					} else {
-						if (dol_is_file($origin.'/'.$file)) {
-							$res = dol_move($origin.'/'.$file, $destin.'/'.$file);
-							$msg = ($res ? '  * Migration successful' : 'Migration failed') . ' for file '.$origin.'/'.$file.'.<br>';
-							print($msg);
-						}
-					}
-				}
-			}
-		}
-	}
-
-	$mailing = new Mailing($db);
-
-	$sql = "SELECT rowid as mid from ".MAIN_DB_PREFIX."mailing"; // Get list of all mailing
+	print '<tr><td colspan="2"><br>*** Repair mailing paths (all entities)<br>';
+	$savedconf = clone $conf;
+	$savedmc = $mc ?? null;
+	$mailingrows = array();
+	$mailingbuckets = array();
+	$sql = "SELECT rowid, entity FROM ".MAIN_DB_PREFIX."mailing ORDER BY entity, rowid";
 	$resql = $db->query($sql);
 	if ($resql) {
-		while ($obj = $db->fetch_object($resql)) {
-			$mailing->fetch($obj->mid);
-			print "Migrating mailing id=".$mailing->id." ref=".$mailing->ref."<br>\n";
-			migrate_mailing_filespath($mailing);
+		while (is_object($obj = $db->fetch_object($resql))) {
+			$mailingrows[] = $obj;
+			$bucketkey = ((int) $obj->entity).':'.((int) $obj->rowid % 100);
+			$mailingbuckets[$bucketkey] = ($mailingbuckets[$bucketkey] ?? 0) + 1;
+		}
+		$db->free($resql);
+		foreach ($mailingrows as $obj) {
+			$mailingentity = (int) $obj->entity;
+			if ($mailingentity < 1 || !isset($ecmrepairentities[$mailingentity]) || $conf->setEntityValues($db, $mailingentity) < 0) {
+				$error++;
+				print '<span class="error">'.$langs->trans('RepairMailingFailed').'</span><br>';
+				continue;
+			}
+			$mailing = new Mailing($db);
+			$mailing->id = (int) $obj->rowid;
+			$mailing->ref = (string) $mailing->id;
+			$mailing->entity = $mailingentity;
+			$mailingdirectory = $conf->mailing->multidir_output[$mailingentity] ?? '';
+			$bucketkey = $mailingentity.':'.($mailing->id % 100);
+			$report = repairMailingFiles($mailing, $mailingdirectory, $dolibarr_main_data_root, $mailingbuckets[$bucketkey] > 1, $mailingrepairmode === 'confirmed');
+			print 'Check mailing '.$mailing->id.' entity='.$mailingentity.'<br>';
+			foreach ($report['files'] as $mailingfile) {
+				print 'Move '.dol_escape_htmltag($mailingfile['source']).' -&gt; '.dol_escape_htmltag($mailingfile['target']).'<br>';
+			}
+			if ($report['error'] !== '') {
+				$error++;
+				print '<span class="error">'.$langs->trans($report['error']).'</span><br>';
+			}
 		}
 	} else {
-		$ok = 0;
+		$error++;
 		dol_print_error($db);
 	}
-
-	$user = $sav_user;
-
+	$conf = $savedconf;
+	$mc = $savedmc;
+	if ($error) {
+		$ok = 0;
+	}
 	print '</td></tr>';
+}
+
+if ($ok && $mailingrepairpost && !$error) {
+	setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+	while (ob_get_level() > $ecmrepairbufferlevel) {
+		ob_end_clean();
+	}
+	$db->close();
+	header('Location: '.$_SERVER['PHP_SELF'].'?repair_mailing_path=test&selectlang='.urlencode($setuplang), true, 303);
+	exit;
 }
 
 if ($ok && $orphanrepairpost && !$error) {
