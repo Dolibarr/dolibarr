@@ -345,15 +345,8 @@ class Proposals extends DolibarrApi
 
 			$this->propal->$field = $this->_checkValForAPI($field, $value, $this->propal);
 		}
-		/*if (isset($request_data["lines"])) {
-		  $lines = array();
-		  foreach ($request_data["lines"] as $line) {
-			array_push($lines, (object) $line);
-		  }
-		  $this->propal->lines = $lines;
-		}*/
 		if ($this->propal->create(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, "Error creating order", array_merge(array($this->propal->error), $this->propal->errors));
+			throw new RestException(500, "Error creating proposal", array_merge(array($this->propal->error), $this->propal->errors));
 		}
 
 		return ((int) $this->propal->id);
@@ -475,7 +468,7 @@ class Proposals extends DolibarrApi
 		if ($updateRes > 0) {
 			return $updateRes;
 		} else {
-			throw new RestException(400, $this->propal->error);
+			throw new RestException(400, $this->propal->errorsToString());
 		}
 	}
 
@@ -682,7 +675,7 @@ class Proposals extends DolibarrApi
 		if ($updateRes > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(405, $this->propal->error);
+			throw new RestException(405, $this->propal->errorsToString());
 		}
 	}
 	/**
@@ -950,14 +943,14 @@ class Proposals extends DolibarrApi
 		}
 		if (!empty($this->propal->fin_validite)) {
 			if ($this->propal->set_echeance(DolibarrApiAccess::$user, $this->propal->fin_validite) < 0) {
-				throw new RestException(500, $this->propal->error);
+				throw new RestException(500, $this->propal->errorsToString());
 			}
 		}
 
 		if ($this->propal->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->propal->error);
+			throw new RestException(500, $this->propal->errorsToString());
 		}
 	}
 
@@ -992,7 +985,7 @@ class Proposals extends DolibarrApi
 		}
 
 		if (!$this->propal->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete Commercial Proposal : '.$this->propal->error);
+			throw new RestException(500, 'Error when delete Commercial Proposal : '.$this->propal->errorsToString());
 		}
 
 		return array(
@@ -1034,7 +1027,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(304, 'Nothing done. May be object is already draft');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error : '.$this->propal->error);
+			throw new RestException(500, 'Error : '.$this->propal->errorsToString());
 		}
 
 		$result = $this->propal->fetch($id);
@@ -1093,7 +1086,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating Commercial Proposal: '.$this->propal->error);
+			throw new RestException(500, 'Error when validating Commercial Proposal: '.$this->propal->errorsToString());
 		}
 
 		$result = $this->propal->fetch($id);
@@ -1146,7 +1139,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already closed');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when closing Commercial Proposal: '.$this->propal->error);
+			throw new RestException(500, 'Error when closing Commercial Proposal: '.$this->propal->errorsToString());
 		}
 
 		$result = $this->propal->fetch($id);
@@ -1192,7 +1185,7 @@ class Proposals extends DolibarrApi
 
 		$result = $this->propal->classifyBilled(DolibarrApiAccess::$user);
 		if ($result < 0) {
-			throw new RestException(500, 'Error : '.$this->propal->error);
+			throw new RestException(500, 'Error : '.$this->propal->errorsToString());
 		}
 
 		$result = $this->propal->fetch($id);

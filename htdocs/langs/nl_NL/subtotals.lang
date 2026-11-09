@@ -3,7 +3,6 @@
 #
 # Global
 #
-Subtotal=Subtotalen
 SubTotalModuleDesc=Subtotaal- en titelregels voor bepaalde documenten
 #
 # Admin
@@ -12,12 +11,19 @@ SubtotalSetup=Instellen van de subtotalenmodule
 MaxSubtotalLevel=Maximaal niveau
 SubtotalLineBackColor=Niveau %s lijnen achtergrondkleur
 NotSupportedByAllPDF=Werkt met nieuwere PDF-bestanden, maar niet met oude %s
+SubtotalsPredefinedTitles=Subtotalen vooraf gedefinieerde titels
+SubtotalsPredefinedTexts=Subtotaal vooraf gedefinieerde teksten
+SubtotalTextColumnTitle=Tekst
 
 #
 # Card
 #
 AddTitleLine=Titelregel toevoegen
 AddSubtotalLine=Subtotaalregel toevoegen
+AddTextLine=Voeg een tekstregel toe
+PredefinedTitle=Voorgedefinieerde titel
+PredefinedText=Voorgedefinieerde tekst
+SubtotalTextContent=Tekstinhoud
 TitleNeedDesc=U moet een geldige beschrijving invoeren om een titel te kunnen maken.
 TitleAddedLevelTooHigh=Titelniveau is te hoog (in plaats daarvan toegevoegd met niveau %s).
 TitleEditedLevelTooHigh=Het titelniveau is te hoog (bewerkt met niveau %s in plaats daarvan).

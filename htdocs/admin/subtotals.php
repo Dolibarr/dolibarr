@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('main', 'admin', 'subtotals', 'errors'));
+$langs->loadLangs(array('main', 'admin', 'subtotals'));
 $action = GETPOST('action', 'aZ09');
 
 if (!$user->admin) {

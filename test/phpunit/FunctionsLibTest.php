@@ -30,12 +30,11 @@
 global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
 require_once dirname(__FILE__).'/../../htdocs/contact/class/contact.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (! defined('NOREQUIREUSER')) {
 	define('NOREQUIREUSER', '1');
@@ -318,6 +317,69 @@ class FunctionsLibTest extends CommonClassTest
 	}
 
 	/**
+	 * The request headers are rebuilt from $_SERVER when the SAPI does not provide getallheaders().
+	 *
+	 * @return	void
+	 */
+	public function testDolGetRequestHeaders()
+	{
+		$savserver = $_SERVER;
+
+		$_SERVER['HTTP_AUTHORIZATION'] = 'Bearer abc123';
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$_SERVER['CONTENT_TYPE'] = 'application/json';
+		$_SERVER['REQUEST_METHOD'] = 'POST';		// not a header, must not come out
+
+		$headers = dolGetRequestHeaders();
+
+		$_SERVER = $savserver;
+
+		$this->assertIsArray($headers, 'The request headers must always be an array');
+
+		// Under the CLI of the test runner getallheaders() does not exist, so the rebuilt array is
+		// what is checked. Under a SAPI that provides it, only the type above can be asserted.
+		if (!function_exists('getallheaders')) {
+			$this->assertSame('Bearer abc123', $headers['Authorization'], 'HTTP_AUTHORIZATION must come out as Authorization');
+			$this->assertSame('XMLHttpRequest', $headers['X-Requested-With'], 'The name must be capitalised word by word and keep its dashes');
+			$this->assertSame('application/json', $headers['Content-Type'], 'Content-Type is not prefixed with HTTP_ in $_SERVER and must be picked up anyway');
+			$this->assertArrayNotHasKey('Request-Method', $headers, 'What is not a header must not be returned as one');
+		}
+	}
+
+	/**
+	 * The url of the server is the configured one with DOL_URL_ROOT removed from its end.
+	 *
+	 * @return	void
+	 */
+	public function testDolGetUrlWithoutUrlRoot()
+	{
+		global $dolibarr_main_url_root;
+
+		$savurlroot = $dolibarr_main_url_root;
+
+		// What the 73 copies of the expression this replaces used to compute
+		$dolibarr_main_url_root = 'https://example.org'.DOL_URL_ROOT;
+		$this->assertSame(
+			preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root)),
+			dolGetUrlWithoutUrlRoot(),
+			'The helper must return exactly what the expression it replaces returned'
+		);
+		$this->assertSame('https://example.org', dolGetUrlWithoutUrlRoot(), 'DOL_URL_ROOT must be removed from the end');
+
+		// Surrounding spaces are trimmed, as the expression did
+		$dolibarr_main_url_root = '  https://example.org'.DOL_URL_ROOT.'  ';
+		$this->assertSame('https://example.org', dolGetUrlWithoutUrlRoot(), 'The configured url must be trimmed');
+
+		// Only the end is removed, never an occurrence in the middle of the host
+		if (DOL_URL_ROOT !== '') {
+			$dolibarr_main_url_root = 'https://example.org'.DOL_URL_ROOT.'/other';
+			$this->assertSame('https://example.org'.DOL_URL_ROOT.'/other', dolGetUrlWithoutUrlRoot(), 'Only a trailing DOL_URL_ROOT is removed');
+		}
+
+		$dolibarr_main_url_root = $savurlroot;
+	}
+
+	/**
 	 * testDolCheckFilters
 	 *
 	 * @return boolean
@@ -492,6 +554,42 @@ class FunctionsLibTest extends CommonClassTest
 		$filter = "(t.fk_soc:IN:'1','2=b')";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr, 0, 0, 0, array('fk_soc'));
 		$this->assertEquals(" AND (1=1)", $sql);
+
+		// Test that a forbidden field with 2 levels of prefix (dbprefix.table.field) is also forbidden (protection against CVE-2026-89012 bypass)
+		$filter = "(dolibarr.u.pass_crypted:like:'ZZZZ%')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		$filter = "(DOLIBARR.U.API_KEY:like:'ZZZZ%')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		$filter = "(mydb.t.pass_temp:like:'ZZZZ%')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		$filter = "(u.pass_temp:like:'ZZZZ%')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		// Test that any other field with 2 levels of prefix is neutralized too (no db prefix existence oracle, no SQL error)
+		$filter = "(dolibarr.t.ref:like:'SO-%')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		// Test that a field forbidden by the caller is also forbidden with 2 levels of prefix
+		$filter = "(dolibarr.u.salary:like:'1%')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr, 0, 0, 0, array('salary'));
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		// Test that valid filters with a single level of prefix still work
+		$filter = "(u.api_key:like:'ZZZZ%')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr, 0, 0, 0, array('ref'));
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		$filter = "(t.ref:like:'SO-%')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr, 0, 0, 0, array('salary'));
+		$this->assertEquals(" AND ((t.ref LIKE 'SO-%'))", $sql);
 
 
 		global $dolibarr_allow_unsecured_select_in_extrafields_filter;
@@ -931,12 +1029,50 @@ class FunctionsLibTest extends CommonClassTest
 	}
 
 	/**
+	 * testIsModEnabled
+	 *
+	 * @return void
+	 */
+	public function testIsModEnabled()
+	{
+		global $conf;
+
+		// New names (the module is registered under its internal name in $conf->modules)
+		$this->assertSame(!empty($conf->modules['facture']), isModEnabled('invoice'));
+		$this->assertSame(!empty($conf->modules['societe']), isModEnabled('thirdparty'));
+		$this->assertFalse(isModEnabled('amodulethatdoesnotexist'));
+
+		// Old and new names of the mapping must give the same answer, whichever one is enabled. A new name that several old
+		// names point to ('intervention' <= 'fichinter' and 'ficheinter') is ambiguous by design (array_flip keeps the last one),
+		// so only the unambiguous pairs are checked.
+		$countbynewname = array_count_values(MODULE_MAPPING);
+		foreach (MODULE_MAPPING as $oldname => $newname) {
+			if ($countbynewname[$newname] > 1) {
+				continue;
+			}
+			$this->assertSame(isModEnabled($newname), isModEnabled($oldname), 'isModEnabled('.$oldname.') must equal isModEnabled('.$newname.')');
+		}
+
+		// supplier_order / supplier_invoice are the 'fournisseur' module unless MAIN_USE_NEW_SUPPLIERMOD is set
+		if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+			$this->assertSame(isModEnabled('supplier'), isModEnabled('supplier_order'));
+			$this->assertSame(isModEnabled('supplier'), isModEnabled('supplier_invoice'));
+		}
+	}
+
+	/**
 	 * testDolTextIsHtml
 	 *
 	 * @return void
 	 */
 	public function testDolTextIsHtml()
 	{
+		// Plain strings, without tag nor entity, must be refused quickly
+		$this->assertFalse(dol_textishtml('Customer proposal PR2609-0042, label with digits 12345'));
+		$this->assertFalse(dol_textishtml('a > b and "quotes" and 5 * 2 = 10'));
+		$this->assertFalse(dol_textishtml(''));
+		$this->assertFalse(dol_textishtml(null));
+
 		// True
 		$input = '<html>xxx</html>';
 		$after = dol_textishtml($input);
@@ -1162,11 +1298,11 @@ class FunctionsLibTest extends CommonClassTest
 	 */
 	public function testDolHtmlEntitiesBr()
 	{
-		// Text not already HTML
+		// Text NOT already HTML
 
-		$input = "A string\nwith a é, &, < and >.";
-		$after = dol_htmlentitiesbr($input, 0);    // Add <br> before \n
-		$this->assertEquals("A string<br>\nwith a &eacute;, &amp;, &lt; and &gt;.", $after);
+		$input = "A string\nwith a é, &, < and > and \".";
+		$after = dol_htmlentitiesbr($input, 0);    // Add <br> before \n, so must also encode in html entities special char because result move from text to HTML.
+		$this->assertEquals("A string<br>\nwith a &eacute;, &amp;, &lt; and &gt; and &quot;.", $after);
 
 		$input = "A string\nwith a é, &, < and >.";
 		$after = dol_htmlentitiesbr($input, 1);    // Replace \n with <br>
@@ -1182,9 +1318,9 @@ class FunctionsLibTest extends CommonClassTest
 
 		// Text already HTML, so &,<,> should not be converted
 
-		$input = "A string<br>\nwith a é, &, < and >.";
+		$input = "A string<br>\nwith a é, &, < and > and \".";
 		$after = dol_htmlentitiesbr($input);
-		$this->assertEquals("A string<br>\nwith a &eacute;, &, < and >.", $after);
+		$this->assertEquals("A string<br>\nwith a &eacute;, &, < and > and \".", $after);
 
 		$input = "<li>\nA string with a é, &, < and >.</li>\nAnother string";
 		$after = dol_htmlentitiesbr($input);
@@ -1419,6 +1555,11 @@ class FunctionsLibTest extends CommonClassTest
 		$result = dol_escape_js($input, 2);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("x&<b>#</b>,\\\"'", $result, "Test mode=2");
+
+		$input = "a</script><script>alert(1)</SCRIPT >";
+		$result = dol_escape_js($input);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals("a<\\/script><script>alert(1)<\\/SCRIPT >", $result, "Test closing script tag");
 	}
 
 
@@ -1477,6 +1618,18 @@ class FunctionsLibTest extends CommonClassTest
 		</div>';
 		$result = dol_escape_htmltag($input, 1, 1, 'common,code');
 		$this->assertEquals($input, $result);
+
+		// A string without any tag, with tags to keep: the tag protection is skipped for tags that are not in the string, result must not change
+		$input = 'Customer proposal PR2609-0042 & "quoted" < 10 > 5 \'single\' &amp; &lt;b&gt;';
+		$this->assertEquals('Customer proposal PR2609-0042 &amp; &quot;quoted&quot; &lt; 10 &gt; 5 \'single\' &amp; &lt;b&gt;', dol_escape_htmltag($input, 1, 1, 'common'));
+
+		// Tags in another case: the check "is the tag in the string" is case insensitive, the protection itself keeps its case rules
+		$input = 'a <B>X</B> <span style="color:red">s</span> </br>';
+		$this->assertEquals('a &lt;B&gt;X</b> <span style="color:red">s</span> </br>', dol_escape_htmltag($input, 1, 1, 'common'));
+
+		// A reserved marker in the source is still removed, and only the tags present are restored
+		$input = '__BEGINTAGTOREPLACEb__ <i>x</i>';
+		$this->assertEquals('b__ <i>x</i>', dol_escape_htmltag($input, 1, 1, 'common'));
 	}
 
 
@@ -1639,19 +1792,17 @@ class FunctionsLibTest extends CommonClassTest
 	/**
 	 * testVerifCond
 	 *
-	 * @dataProvider verifCondDataProvider
-	 *
-	 * @param string $cond     Condition to test using verifCond
-	 * @param string $expected Expected outcome of verifCond
-	 *
 	 * @return	void
 	 */
-	public function testVerifCond($cond, $expected)
+	public function testVerifCond()
 	{
-		if ($expected) {
-			$this->assertTrue(verifCond($cond));
-		} else {
-			$this->assertFalse(verifCond($cond));
+		foreach ($this->verifCondDataProvider() as $case) {
+			list($cond, $expected) = $case;
+			if ($expected) {
+				$this->assertTrue(verifCond($cond));
+			} else {
+				$this->assertFalse(verifCond($cond));
+			}
 		}
 	}
 
@@ -1667,6 +1818,71 @@ class FunctionsLibTest extends CommonClassTest
 
 		$a = verifCond('$user->hasMethodKo("facture", "read")');
 		$this->assertFalse($a);
+	}
+
+	/**
+	 * testVerifCondFastPath
+	 *
+	 * verifCond() evaluates the simple conditions with dolEvalSimpleCondition() instead of dol_eval(): both must give the same
+	 * result, and the conditions that are not simple must be left to dol_eval().
+	 *
+	 * @return	void
+	 */
+	public function testVerifCondFastPath()
+	{
+		global $conf, $user, $langs, $db, $leftmenu, $mainmenu;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$leftmenu = 'setup';
+		$mainmenu = 'home';
+		$conf->global->PHPUNIT_FASTPATH_STRING = 'abc';
+		$conf->global->PHPUNIT_FASTPATH_ZERO = '0';
+
+		// Simple conditions: the fast path must answer, with the result of dol_eval()
+		$simpleconditions = array(
+			'1', '0', 'true', 'false', ' 1 ',
+			'isModEnabled("societe")', "isModEnabled('societe')", 'isModEnabled("nonexistingmodulexyz")', '!isModEnabled("nonexistingmodulexyz")',
+			'$user->hasRight("facture", "read")', "\$user->hasRight('facture', 'lire')", '$user->hasRight("facture", "nonexistingperm")', '$user->hasRight("user", "user", "lire")',
+			'$user->rights->facture->lire', '$user->rights->user->user', '$user->rights->user->user->lire', '$user->rights->nonexistingmodulexyz->lire', '$user->rights->facture->lire->nonexistinglevel',
+			'$user->admin', '!$user->admin',
+			'$conf->societe->enabled', '$conf->nonexistingmodulexyz->enabled', '!$conf->nonexistingmodulexyz->enabled',
+			'getDolGlobalString("PHPUNIT_FASTPATH_STRING")', 'getDolGlobalString("PHPUNIT_FASTPATH_ZERO")', '!getDolGlobalString("PHPUNIT_FASTPATH_NOTSET")', 'getDolGlobalInt("PHPUNIT_FASTPATH_ZERO")', 'getDolGlobalInt("PHPUNIT_FASTPATH_STRING")',
+			'$leftmenu == "setup"', "\$leftmenu=='setup'", '$leftmenu != "setup"', '$mainmenu == "home"', '$mainmenu == "companies"', '$leftmenu == ""',
+			'isModEnabled("societe") && $user->hasRight("facture", "lire")', 'isModEnabled("societe") && isModEnabled("nonexistingmodulexyz")',
+			'isModEnabled("nonexistingmodulexyz") || isModEnabled("societe")', 'isModEnabled("nonexistingmodulexyz") || isModEnabled("othernonexistingxyz")',
+			'isModEnabled("societe") && !isModEnabled("nonexistingmodulexyz") && $leftmenu == "setup"', '$user->admin || $user->hasRight("user", "user", "lire")',
+		);
+		foreach ($simpleconditions as $cond) {
+			$fast = dolEvalSimpleCondition($cond);
+			$this->assertNotNull($fast, 'Condition must be recognized by the fast path: '.$cond);
+			$this->assertIsBool($fast, 'Fast path must return a boolean for: '.$cond);
+			$rep = dol_eval($cond, 1, 1, '1');
+			$slow = (bool) $rep && (!is_string($rep) || (strpos($rep, 'Exception during') === false && strpos($rep, 'Bad call of') === false && strpos($rep, 'Bad string syntax to evaluate') === false));
+			$this->assertSame($slow, $fast, 'Fast path and dol_eval() must agree on: '.$cond);
+			$this->assertSame($slow, verifCond($cond), 'verifCond() must give the result of dol_eval() on: '.$cond);
+		}
+
+		// Conditions that are not simple: left to dol_eval()
+		$complexconditions = array(
+			'isModEnabled("societe") && (isModEnabled("facture") || isModEnabled("propal"))',
+			'isModEnabled("societe") || isModEnabled("facture") && isModEnabled("propal")',
+			'getDolGlobalInt("MAIN_FEATURES_LEVEL") >= 2', '$user->id > 0', 'preg_match("/^setup/", $leftmenu)', '$user->isExternalUser()',
+			'(getDolGlobalString("MAIN_USE_ADVANCED_PERMS") ? $user->rights->user->group_advance->read : $user->hasRight("user", "user", "lire"))',
+			'$object->status == 1', 'isModEnabled($leftmenu)', 'isModEnabled("societe");', 'isModEnabled("societe") ||',
+		);
+		foreach ($complexconditions as $cond) {
+			$this->assertNull(dolEvalSimpleCondition($cond), 'Condition must not be handled by the fast path: '.$cond);
+		}
+		// ...and verifCond() still works on them
+		$this->assertTrue(verifCond('isModEnabled("societe") && (isModEnabled("facture") || isModEnabled("nonexistingmodulexyz"))'));
+		$this->assertTrue(verifCond('$user->id > 0'));
+		$this->assertTrue(verifCond('preg_match("/^setup/", $leftmenu)'));
+
+		unset($conf->global->PHPUNIT_FASTPATH_STRING);
+		unset($conf->global->PHPUNIT_FASTPATH_ZERO);
 	}
 
 
@@ -2237,9 +2453,9 @@ class FunctionsLibTest extends CommonClassTest
 
 
 		// Try mix HTML into not HTML but no replaement is done
-		$newstring = make_substitutions('¿Necesitas ayuda para empezar con GLPI?', array('__SENDEREMAIL_SIGNATURE__' => '<br><strong>HTML content</strong>'), $langs, 1);
+		$newstring = make_substitutions('¿Necesitas ayuda?', array('__SENDEREMAIL_SIGNATURE__' => '<br><strong>HTML content</strong>'), $langs, 1);
 		print __METHOD__." ".$newstring."\n";
-		$this->assertEquals($newstring, '¿Necesitas ayuda para empezar con GLPI?');
+		$this->assertEquals($newstring, '¿Necesitas ayuda?');
 
 		return true;
 	}
@@ -2438,6 +2654,26 @@ class FunctionsLibTest extends CommonClassTest
 
 		$s = natural_search("t.field", "KØB", 3);						// mode 3 is to provide a list of string separated with coma
 		$this->assertEquals(" AND (t.field IN ('KØB'))", $s);
+
+		// A criteria with only '!' is searched as a string, a leading '!' followed by a text is an exclusion
+		$s = natural_search("t.field", "Bonjour !");
+		$this->assertEquals(" AND (t.field LIKE '%Bonjour%' AND t.field LIKE '%!%')", $s);
+
+		$s = natural_search("t.field", "!!!");
+		$this->assertEquals(" AND (t.field LIKE '%!!!%')", $s);
+
+		$s = natural_search("t.field", "!abc");
+		$this->assertEquals(" AND ((t.field NOT LIKE '%abc%' OR t.field IS NULL))", $s);
+
+		// mode 1 is a numeric test, '!' or '!=' means "different of"
+		$s = natural_search("t.field", "!34", 1);
+		$this->assertEquals(" AND (t.field <> 34)", $s);
+
+		$s = natural_search("t.field", "!= 34", 1);
+		$this->assertEquals(" AND (t.field <> 34)", $s);
+
+		$s = natural_search("t.field", ">=10 <20", 1);
+		$this->assertEquals(" AND (t.field >= 10 AND t.field < 20)", $s);
 	}
 
 	/**
@@ -2851,7 +3087,7 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals('myobject', $properties['element']);
 		$this->assertEquals('mymodule', $properties['module']);
 		$this->assertEquals('myobject', $properties['subelement']);
-		$this->assertEquals('myobject@mymodule', $properties['table_element']);
+		$this->assertEquals('mymodule_myobject', $properties['table_element']);
 		$this->assertEquals('mymodule/class', $properties['classpath']);
 		$this->assertEquals('myobject', $properties['classfile']);
 		$this->assertEquals('Myobject', $properties['classname']);
@@ -2972,5 +3208,49 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals(-1, fetchObjectByElement(0, 'product_error'), 'a PHP internal class is never instantiated');
 
 		$conf->modules = $savmodules;
+	}
+
+	/**
+	 * testDolGetFicheHeadMoreTabsIsAccessible
+	 *
+	 * @return void
+	 */
+	public function testDolGetFicheHeadMoreTabsIsAccessible()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/html.lib.php';
+
+		$savedconsts = array();
+		foreach (array('MAIN_MAXTABS_IN_CARD', 'MAIN_OPTIMIZEFORTEXTBROWSER') as $constname) {
+			$savedconsts[$constname] = (property_exists($conf->global, $constname) ? $conf->global->$constname : null);
+		}
+		$conf->global->MAIN_MAXTABS_IN_CARD = 2;
+		$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = 0;
+
+		$links = array();
+		for ($i = 0; $i < 5; $i++) {
+			$links[$i] = array('/test.php?tab='.$i, 'Tab'.$i, 'tab'.$i);
+		}
+		$out = dol_get_fiche_head($links, 'tab0', '', 0, '', 0, '', '', 0, 'unittest');
+
+		foreach ($savedconsts as $constname => $constvalue) {
+			if ($constvalue === null) {
+				unset($conf->global->$constname);
+			} else {
+				$conf->global->$constname = $constvalue;
+			}
+		}
+
+		// The "+" must be operable without a mouse and announce the list it opens
+		$this->assertSame(1, preg_match('/<a href="#" class="[^"]*moretab[^"]*" role="button" aria-haspopup="true" aria-expanded="false" aria-controls="moretabsListunittest">/', $out));
+		$this->assertStringContainsString('id="moretabsListunittest"', $out);
+		$this->assertStringContainsString('e.preventDefault()', $out);
+		$this->assertStringContainsString("'Escape'", $out);
+		$this->assertStringNotContainsString('console.log', $out);
 	}
 }

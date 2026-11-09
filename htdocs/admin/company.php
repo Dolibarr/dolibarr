@@ -6,7 +6,7 @@
  * Copyright (C) 2011-2017	Philippe Grand				<philippe.grand@atoo-net.com>
  * Copyright (C) 2015-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2017		Rui Strecht					<rui.strecht@aliartalentos.com>
- * Copyright (C) 2023		Nick Fragoulis
+ * Copyright (C) 2023-2026  Nick Fragoulis
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -248,6 +248,36 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 
 	dolibarr_set_const($db, "MAIN_INFO_TVAINTRA", GETPOST("tva", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_OBJECT", GETPOST("socialobject", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+
+	// Payment identifier used when the reference mode is one reference for the company.
+	// It is printed on every invoice, so a greek reference that checks one fixed amount
+	// is refused, the bank would reject most payments.
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_gr.lib.php';
+	$companypaymentid = GETPOST("MAIN_INFO_SOCIETE_PAYMENT_ID", 'alphanohtml');
+	if ($mysoc->country_code == 'GR' && dolGRIsAmountCheckedReference($companypaymentid)) {
+		setEventMessages($langs->trans("ErrorDIASReferenceAmountChecked"), null, 'errors');
+	} else {
+		dolibarr_set_const($db, "MAIN_INFO_SOCIETE_PAYMENT_ID", $companypaymentid, 'chaine', 0, '', $conf->entity);
+	}
+
+	// DIAS merchant code, greek companies only. It is assigned by the bank and a wrong
+	// value would route payments to another creditor, so refuse anything but 9nnnn.
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_gr.lib.php';
+	$diascode = preg_replace('/[^0-9]/', '', GETPOST("MAIN_INFO_SOCIETE_DIAS_CODE", 'alphanohtml'));
+	if ($diascode == '' || dolGRIsValidDiasCode($diascode)) {
+		dolibarr_set_const($db, "MAIN_INFO_SOCIETE_DIAS_CODE", $diascode, 'chaine', 0, '', $conf->entity);
+	} else {
+		setEventMessages($langs->trans("ErrorDIASCodeMustBe5Digits"), null, 'errors');
+	}
+
+	// DIAS code usage digit, position 10 of a greek reference
+	if (GETPOSTISSET("MAIN_INFO_SOCIETE_DIAS_CODE_USAGE")) {
+		$diasusage = GETPOST("MAIN_INFO_SOCIETE_DIAS_CODE_USAGE", 'aZ09');
+		if (!in_array($diasusage, array('8', '9'), true)) {
+			$diasusage = '8';
+		}
+		dolibarr_set_const($db, "MAIN_INFO_SOCIETE_DIAS_CODE_USAGE", $diasusage, 'chaine', 0, '', $conf->entity);
+	}
 
 	dolibarr_set_const($db, "SOCIETE_FISCAL_MONTH_START", GETPOSTINT("SOCIETE_FISCAL_MONTH_START"), 'chaine', 0, '', $conf->entity);
 
@@ -628,6 +658,27 @@ print '<input name="capital" id="capital" class="maxwidth100" value="'.dolPrintH
 // Object of the company
 print '<tr class="oddeven"><td><label for="socialobject">'.$langs->trans("CompanyObject").'</label></td><td>';
 print '<textarea class="flat quatrevingtpercent" name="socialobject" id="socialobject" rows="'.ROWS_3.'">'.getDolGlobalString('MAIN_INFO_SOCIETE_OBJECT').'</textarea></td></tr>';
+
+// Payment identifier used to build the company wide payment reference
+print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("PaymentRefCompanyPaymentId"), $langs->trans("PaymentRefCompanyPaymentIdHelp")).'</td><td>';
+print '<input name="MAIN_INFO_SOCIETE_PAYMENT_ID" id="payment_id" class="minwidth250" maxlength="25" value="'.dolPrintHTMLForAttribute(getDolGlobalString('MAIN_INFO_SOCIETE_PAYMENT_ID')).'">';
+print '</td></tr>';
+
+// DIAS merchant code, greek companies only
+if ($mysoc->country_code == 'GR') {
+	print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("DIASCode"), $langs->trans("DIASCodeHelp")).'</td><td>';
+	print '<input name="MAIN_INFO_SOCIETE_DIAS_CODE" id="dias_code" class="minwidth100" maxlength="5" value="'.dolPrintHTMLForAttribute(getDolGlobalString('MAIN_INFO_SOCIETE_DIAS_CODE')).'">';
+	print ' <span class="opacitymedium">'.$langs->trans("DIASCodeExample").'</span>';
+	print '</td></tr>';
+
+	print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("DIASCodeUsage"), $langs->trans("DIASCodeUsageHelp")).'</td><td>';
+	$arraydiasusage = array(
+		'8' => $langs->trans("DIASCodeUsage8"),
+		'9' => $langs->trans("DIASCodeUsage9"),
+	);
+	print $form->selectarray("MAIN_INFO_SOCIETE_DIAS_CODE_USAGE", $arraydiasusage, getDolGlobalString('MAIN_INFO_SOCIETE_DIAS_CODE_USAGE', '8'), 0, 0, 0, '', 0, 0, 0, '', 'minwidth200');
+	print '</td></tr>';
+}
 print '</td></tr>';
 
 // Tax ID Intra-community VAT number

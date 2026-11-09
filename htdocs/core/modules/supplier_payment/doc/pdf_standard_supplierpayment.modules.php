@@ -883,11 +883,14 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 			$pdf->SetXY($posx + 2, $posy);
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
 
-			// Show default IBAN account (destination account)
+			// Show default IBAN account (destination account).
+			// The address block above has a variable height (address, town, country, VAT number and
+			// professional ids), so the IBAN must start where it actually ends and not at a fixed offset.
+			$posy = $pdf->GetY();
 			$iban = $this->getDefaultThirdpartyIban((int) $object->thirdparty->id);
 			if (!empty($iban)) {
 				$pdf->SetFont('', '', $default_font_size - 1);
-				$pdf->SetXY($posx + 2, $posy + 15);
+				$pdf->SetXY($posx + 2, $posy);
 				$pdf->MultiCell($widthrecbox, 4, $langs->trans("IBAN").': '.$iban, 0, 'L');
 			}
 

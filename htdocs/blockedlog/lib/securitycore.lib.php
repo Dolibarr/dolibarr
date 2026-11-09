@@ -194,7 +194,6 @@ function dolDecrypt($chain, $key = '', $patterntotest = '')
 			}
 
 			// Test validity of decryption
-			//if (!ascii_check($newchain)) {
 			if (!ascii_check($newchain) && !utf8_check($newchain)) {
 				if (empty($savkey)) {
 					dol_syslog("Error dolDecrypt failed: The key dolibarr_main_dolcrypt or dolibarr_main_instance_unique_id, found in conf.php file, seems not to be the one used to encrypt the encrypted string", LOG_ERR);
@@ -345,5 +344,10 @@ function dol_verifyHash($chain, $hash, $type = '0')
 		return false;
 	}
 
-	return dol_hash($chain, $type) == $hash;
+	// password_hash() is salted, so hash must be checked with password_verify() and not compared to a new hash
+	if (($type == '6' || $type == 'password_hash') && function_exists('password_verify')) {
+		return password_verify($chain, (string) $hash);
+	}
+
+	return hash_equals((string) dol_hash($chain, $type), (string) $hash);
 }

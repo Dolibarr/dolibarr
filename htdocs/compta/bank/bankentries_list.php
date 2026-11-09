@@ -713,15 +713,6 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$nbtotalofpages = ceil($nbtotalofrecords / $limit);
 }
 
-if (($id > 0 || !empty($ref)) && ((string) $page == '')) {
-	// We open a list of transaction of a dedicated account and no page was set by default
-	// We force on last page.
-	$page = ($nbtotalofpages - 1);
-	$offset = $limit * $page;
-	if ($page < 0) {
-		$page = 0;
-	}
-}
 if ($page >= $nbtotalofpages) {
 	// If we made a search and result has low page than the page number we were on
 	$page = ($nbtotalofpages - 1);
@@ -1015,13 +1006,19 @@ if ($resql) {
 		print '<!-- Last bank statements -->'."\n";
 		print $langs->trans("LastAccountStatements").' : ';
 
+		$nbmaxlinks = (empty($conf->dol_optimize_smallscreen) ? 5 : 2);	// Number of links of last statements to show
+		$j = 0;
 		foreach ($last_receipts as $num_releve) {
+			if ($j >= $nbmaxlinks) {
+				break;
+			}
 			$newentreyinlist = '<a target="_blank" href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.((int) $id).'&num='.urlencode($num_releve).'">';
 			$newentreyinlist .= img_picto($num_releve, 'generic', 'class="paddingright"');
 			$newentreyinlist .= dol_escape_htmltag($num_releve).'</a> &nbsp; ';
 			$listoflastreceipts = $newentreyinlist.$listoflastreceipts;
+			$j++;
 		}
-		if ($numr >= $nbmax) {
+		if ($numr > $nbmaxlinks) {
 			$listoflastreceipts = "... &nbsp; ".$listoflastreceipts;
 		}
 		print $listoflastreceipts;
@@ -1125,7 +1122,7 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['b.rowid']['checked'])) {
 		print '<td class="liste_titre">';
-		print '<input type="text" class="flat" name="search_ref" size="2" value="'.dol_escape_htmltag($search_ref).'">';
+		print '<input type="text" class="flat" name="search_ref" size="2" value="'.dolPrintLabelForAttribute($search_ref).'">';
 		print '</td>';
 	}
 	if (!empty($arrayfields['b.label']['checked'])) {
@@ -1481,14 +1478,18 @@ if ($resql) {
 
 		$banklinestatic->id = $objp->rowid;
 		$banklinestatic->ref = (string) $objp->rowid;
+		$banklinestatic->amount = $objp->amount;
 
-		print '<tr class="oddeven" '.$backgroundcolor.'>';
+		// Lines that can be reconciled use the intuitive row selection (Ctrl/Shift+click, and single click if MAIN_ROW_SINGLECLICK_TOSELECT)
+		$lineselectable = (!$objp->conciliated && ($action == 'reconcile' || $action == 'confirm_deleteonreconcile'));
+
+		print '<tr class="oddeven'.($lineselectable ? ' row-with-select' : '').'" '.$backgroundcolor.'>';
 
 		// Action column
 		if ($conf->main_checkbox_left_column) {
 			print '<td class="center">';
-			if (!$objp->conciliated && ($action == 'reconcile' || $action == 'confirm_deleteonreconcile')) {
-				print '<input class="flat checkforselect" name="rowid['.$objp->rowid.']" type="checkbox" name="toselect[]" value="'.$objp->rowid.'" size="1"'.(!empty($tmparray[$objp->rowid]) ? ' checked' : '').'>';
+			if ($lineselectable) {
+				print '<input class="flat checkforselect" name="rowid['.$objp->rowid.']" type="checkbox" name="toselect[]" value="'.$objp->rowid.'" size="1"'.(in_array($objp->rowid, $rowids) ? ' checked' : '').'>';
 			}
 			print '</td>';
 			if (!$i) {
@@ -1697,9 +1698,11 @@ if ($resql) {
 
 		// Cheque
 		if (!empty($arrayfields['b.fk_bordereau']['checked'])) {
-			$bordereaustatic->fetch($objp->fk_bordereau);
 			print '<td class="nowraponall center">';
-			print $bordereaustatic->getNomUrl();
+			if ($objp->fk_bordereau > 0) {
+				$bordereaustatic->fetch($objp->fk_bordereau);
+				print $bordereaustatic->getNomUrl();
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1764,7 +1767,7 @@ if ($resql) {
 				}
 				print $tmpuser->getNomUrl(-1);
 			} elseif ($thirdstr) {
-				print $thirdstr;
+				print dolPrintLabel($thirdstr);
 			} else {
 				print '&nbsp;';
 			}
@@ -1882,16 +1885,6 @@ if ($resql) {
 			}
 		}
 
-		if (!empty($arrayfields['b.fk_bordereau']['checked'])) {
-			$bordereaustatic->fetch($objp->fk_bordereau);
-			print '<td class="nowraponall center">';
-			print $bordereaustatic->getNomUrl();
-			print '</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-		}
-
 		// Extra fields
 		$obj = $objp; // Because extrafield template use $obj and not $objp as object variable name
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
@@ -1939,8 +1932,8 @@ if ($resql) {
 		// Action column
 		if (!$conf->main_checkbox_left_column) {
 			print '<td class="center">';
-			if (!$objp->conciliated && ($action == 'reconcile' || $action == 'confirm_deleteonreconcile')) {
-				print '<input class="flat checkforselect" name="rowid['.$objp->rowid.']" type="checkbox" value="'.$objp->rowid.'" size="1"'.(!empty($tmparray[$objp->rowid]) ? ' checked' : '').'>';
+			if ($lineselectable) {
+				print '<input class="flat checkforselect" name="rowid['.$objp->rowid.']" type="checkbox" value="'.$objp->rowid.'" size="1"'.(in_array($objp->rowid, $rowids) ? ' checked' : '').'>';
 			}
 			print '</td>';
 			if (!$i) {
@@ -1955,31 +1948,36 @@ if ($resql) {
 
 	// Show total line
 	if (isset($totalarray['totaldebfield']) || isset($totalarray['totalcredfield'])) {
-		print '<tr class="liste_total">';
-		$i = 0;
-		while ($i < $totalarray['nbfield']) {
-			$i++;
-			if ($i == 1) {
-				if ($num < $limit && empty($offset)) {
-					print '<td class="left">'.$langs->trans("Total").'</td>';
+		$nbcurrencies = (empty($totalarray['totalpercurrency']) ? 0 : count($totalarray['totalpercurrency']));
+
+		// Show the global total line only when all lines are in the same currency (otherwise amounts would be mixed)
+		if ($nbcurrencies <= 1) {
+			print '<tr class="liste_total">';
+			$i = 0;
+			while ($i < $totalarray['nbfield']) {
+				$i++;
+				if ($i == 1) {
+					if ($num < $limit && empty($offset)) {
+						print '<td class="left">'.$langs->trans("Total").'</td>';
+					} else {
+						print '<td class="left tdoverflowmax50" title="'.$langs->trans("Totalforthispage").'">'.$langs->trans("Totalforthispage").'</td>';
+					}
+				} elseif ($totalarray['totaldebfield'] == $i) {
+					print '<td class="right"><span class="amount">'.price(-1 * $totalarray['totaldeb']).'</span></td>';
+				} elseif ($totalarray['totalcredfield'] == $i) {
+					print '<td class="right"><span class="amount">'.price($totalarray['totalcred']).'</span></td>';
+				} elseif ($i == $posconciliatecol) {
+					print '<td class="center">';
+					print '</td>';
 				} else {
-					print '<td class="left tdoverflowmax50" title="'.$langs->trans("Totalforthispage").'">'.$langs->trans("Totalforthispage").'</td>';
+					print '<td></td>';
 				}
-			} elseif ($totalarray['totaldebfield'] == $i) {
-				print '<td class="right"><span class="amount">'.price(-1 * $totalarray['totaldeb']).'</span></td>';
-			} elseif ($totalarray['totalcredfield'] == $i) {
-				print '<td class="right"><span class="amount">'.price($totalarray['totalcred']).'</span></td>';
-			} elseif ($i == $posconciliatecol) {
-				print '<td class="center">';
-				print '</td>';
-			} else {
-				print '<td></td>';
 			}
+			print '</tr>';
 		}
-		print '</tr>';
 
 		// Show one line per currency when the list holds accounts in several currencies
-		if (count($totalarray['totalpercurrency']) > 1) {
+		if ($nbcurrencies > 1) {
 			foreach ($totalarray['totalpercurrency'] as $currencycode => $totalpercurrency) {
 				print '<tr class="liste_total">';
 				$i = 0;
@@ -2013,6 +2011,41 @@ if ($resql) {
 
 	print "</table>";
 	print "</div>";
+
+	// Remember the lines ticked for reconciliation in the browser tab (per bank account), so that
+	// adding or deleting a line, changing page or reloading the page does not lose them.
+	if (($action == 'reconcile' || $action == 'confirm_deleteonreconcile') && !empty($conf->use_javascript_ajax)) {
+		print '<script nonce="'.getNonce().'">
+		$(document).ready(function() {
+			var key = "dol_bankreconcile_checked_'.((int) $object->id).'";
+			var checked = {};
+			try { checked = JSON.parse(sessionStorage.getItem(key) || "{}") || {}; } catch (e) { checked = {}; }
+			function saveChecked() { try { sessionStorage.setItem(key, JSON.stringify(checked)); } catch (e) {} }
+			$("input.checkforselect").each(function() {
+				if (this.checked) {
+					checked[this.value] = 1;	// Line already ticked by the server (kept after an error)
+				} else if (checked[this.value]) {
+					console.log("Restore tick of bank line "+this.value);
+					$(this).prop("checked", true).trigger("change");
+				}
+			});
+			saveChecked();
+			$(document).on("change", "input.checkforselect", function() {
+				if (this.checked) {
+					checked[this.value] = 1;
+				} else {
+					delete checked[this.value];
+				}
+				saveChecked();
+			});
+			$("input[name=confirm_reconcile]").on("click", function() {
+				// Lines being reconciled will no longer be listed, so forget them
+				$("input.checkforselect:checked").each(function() { delete checked[this.value]; });
+				saveChecked();
+			});
+		});
+		</script>';
+	}
 
 	print '</form>';
 	$db->free($resql);

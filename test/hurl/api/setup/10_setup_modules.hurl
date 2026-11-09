@@ -2,7 +2,7 @@
 GET http://{{hostnport}}/api/index.php/setup/modules
 HTTP 200
 [Asserts]
-jsonpath "$" count > 2
+jsonpath "$.*" count > 2
 
 # Get all states for all modules
 GET http://{{hostnport}}/api/index.php/setup/modules/status/all?status=all

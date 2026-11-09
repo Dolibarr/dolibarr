@@ -74,18 +74,10 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		<td class="center"><?php echo dol_print_date($objectlink->date, 'day'); ?></td>
 		<td class="right"><?php
 		if ($user->hasRight('fournisseur', 'facture', 'lire')) {
-			$sign = 1;
-			if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
-				$sign = -1;
-			}
 			if ($objectlink->status != 3) {
 				// If not abandoned
-				$total += $sign * $objectlink->total_ht;
-				if (isModEnabled('multicurrency') && !empty($objectlink->multicurrency_code) && $objectlink->multicurrency_code != $conf->currency) {
-					echo price($objectlink->multicurrency_total_ht, 0, $langs, 1, -1, -1, $objectlink->multicurrency_code);
-				} else {
-					echo price($objectlink->total_ht);
-				}
+				$total += $objectlink->total_ht;
+				echo price($objectlink->total_ht);
 			} else {
 				if (isModEnabled('multicurrency') && !empty($objectlink->multicurrency_code) && $objectlink->multicurrency_code != $conf->currency) {
 					echo '<strike>'.price($objectlink->multicurrency_total_ht, 0, $langs, 1, -1, -1, $objectlink->multicurrency_code).'</strike>';

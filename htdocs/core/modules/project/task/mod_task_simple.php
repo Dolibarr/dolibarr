@@ -50,11 +50,9 @@ class mod_task_simple extends ModeleNumRefTask
 	public $error = '';
 
 	/**
-	 * @var string
-	 * @deprecated
-	 * @see $name
+	 * @var int		Position
 	 */
-	public $nom = 'Simple';
+	public $position = 10;
 
 	/**
 	 * @var string name

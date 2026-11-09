@@ -331,7 +331,7 @@ function dol_print_object_info($object, $usetable = 0)
 			print '<div class="valignmiddle inline-block">';
 			print dol_print_date($object->date_approve ? $object->date_approve : $object->date_approval, 'dayhour', 'tzserver');
 			if ($deltadateforuser) {
-				print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_approve, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
+				print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_approve ? $object->date_approve : $object->date_approval, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
 			}
 			print '</div>';
 		}
@@ -465,8 +465,8 @@ function dol_print_object_info($object, $usetable = 0)
 	}
 
 	// Reconciliation
-	if (!empty($object->user_rappro) || !empty($object->user_rappro_id) || !empty($object->date_rappro)) {
-		'@phan-var-force Account $object';
+	if (!empty($object->user_rappro) || !empty($object->fk_user_rappro) || !empty($object->date_rappro)) {
+		'@phan-var-force AccountLine $object';
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -486,7 +486,7 @@ function dol_print_object_info($object, $usetable = 0)
 			}
 		} else {
 			$userstatic = new User($db);
-			$userstatic->fetch($object->user_rappro_id ? $object->user_rappro_id : $object->user_rappro);
+			$userstatic->fetch($object->fk_user_rappro ? $object->fk_user_rappro : $object->user_rappro);
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(1, '', 0, 0, 0);
 			} else {
@@ -2554,6 +2554,78 @@ function colorHexToRgb($hex, $alpha = false, $returnArray = false)
 }
 
 /**
+ * Return the WCAG 2.x contrast ratio between two colors.
+ *
+ * @param	string	$color1		Color in hex ('#AA1122', 'AA1122', '#a12') or comma RGB ('170,17,34')
+ * @param	string	$color2		Color in hex ('#AA1122', 'AA1122', '#a12') or comma RGB ('170,17,34')
+ * @return	float				Contrast ratio from 1 to 21, or 0 if one of the colors is not valid
+ * @see colorGetReadableTextColor()
+ */
+function colorGetContrastRatio(string $color1, string $color2): float
+{
+	$luminance1 = colorGetRelativeLuminance($color1);
+	$luminance2 = colorGetRelativeLuminance($color2);
+	if ($luminance1 < 0 || $luminance2 < 0) {
+		return 0.0;
+	}
+
+	return (max($luminance1, $luminance2) + 0.05) / (min($luminance1, $luminance2) + 0.05);
+}
+
+/**
+ * Return a text color readable on a background: the given one, unless its WCAG 2.x contrast is below a minimum and the other one does better.
+ *
+ * @param	string	$backgroundcolor	Background color in hex ('#AA1122', 'AA1122', '#a12') or comma RGB ('170,17,34')
+ * @param	string	$textcolor			Text color, same formats
+ * @param	string	$othercolor			Other text color, same formats
+ * @param	float	$minratio			Minimum contrast ratio to keep $textcolor
+ * @return	string						$textcolor or $othercolor, unchanged. $textcolor if a color is not valid.
+ * @see colorGetContrastRatio()
+ */
+function colorGetReadableTextColor(string $backgroundcolor, string $textcolor, string $othercolor, float $minratio = 2.6): string
+{
+	$ratio = colorGetContrastRatio($backgroundcolor, $textcolor);
+	if ($ratio <= 0 || $ratio >= $minratio) {
+		return $textcolor;
+	}
+	if (colorGetContrastRatio($backgroundcolor, $othercolor) > $ratio) {
+		return $othercolor;
+	}
+
+	return $textcolor;
+}
+
+/**
+ * Return the WCAG 2.x relative luminance of a color.
+ *
+ * @param	string	$color		Color in hex ('#AA1122', 'AA1122', '#a12') or comma RGB ('170,17,34')
+ * @return	float				Relative luminance from 0 (black) to 1 (white), or -1 if the color is not valid
+ * @see colorGetContrastRatio()
+ */
+function colorGetRelativeLuminance(string $color): float
+{
+	$color = trim($color);
+	$reg = array();
+	if (preg_match('/^#?([0-9a-f])([0-9a-f])([0-9a-f])$/i', $color, $reg)) {
+		$channels = array(hexdec($reg[1].$reg[1]), hexdec($reg[2].$reg[2]), hexdec($reg[3].$reg[3]));
+	} elseif (preg_match('/^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i', $color, $reg)) {
+		$channels = array(hexdec($reg[1]), hexdec($reg[2]), hexdec($reg[3]));
+	} elseif (preg_match('/^\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*$/', $color, $reg)) {
+		$channels = array((int) $reg[1], (int) $reg[2], (int) $reg[3]);
+	} else {
+		return -1.0;
+	}
+
+	$linear = array();
+	foreach ($channels as $channel) {
+		$value = min(255, (int) $channel) / 255;
+		$linear[] = ($value <= 0.04045 ? $value / 12.92 : pow(($value + 0.055) / 1.055, 2.4));
+	}
+
+	return 0.2126 * $linear[0] + 0.7152 * $linear[1] + 0.0722 * $linear[2];
+}
+
+/**
  * Color Hex to Hsl (used for style)
  *
  * @param	string 			$hex 			Color in hex
@@ -2698,6 +2770,8 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'fourn';
 	} elseif ($moduleobject == 'ficheinter' || $moduleobject == 'interventions') {
 		$moduledirforclass = 'fichinter';
+	} elseif ($moduleobject == 'cronjobs') {
+		$moduledirforclass = 'cron';
 	} elseif ($moduleobject == 'mos') {
 		$moduledirforclass = 'mrp';
 	} elseif ($moduleobject == 'workstations') {
@@ -2772,7 +2846,7 @@ function convertBackOfficeMediasLinksToPublicLinks($notetoshow)
 {
 	global $dolibarr_main_url_root;
 	// Define $urlwithroot
-	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	$urlwithouturlroot = dolGetUrlWithoutUrlRoot();
 	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 	$notetoshow = preg_replace('/src="[a-zA-Z0-9_\/\-\.]*(viewimage\.php\?modulepart=medias[^"]*)"/', 'src="'.$urlwithroot.'/\1"', $notetoshow);
@@ -2917,7 +2991,7 @@ function acceptLocalLinktoMedia()
 
 	// If $acceptlocallinktomedia is true, we can add link media files int email templates (we already can do this into HTML editor of an email).
 	// Note that local link to a file into medias are replaced with a real link by email in CMailFile.class.php with value $urlwithroot defined like this:
-	// $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	// $urlwithouturlroot = dolGetUrlWithoutUrlRoot();
 	// $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 
 	$acceptlocallinktomedia = getDolGlobalInt('MAIN_DISALLOW_MEDIAS_IN_EMAIL_TEMPLATES') ? 0 : 1;
@@ -2928,7 +3002,7 @@ function acceptLocalLinktoMedia()
 
 	if ($acceptlocallinktomedia) {
 		global $dolibarr_main_url_root;
-		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+		$urlwithouturlroot = dolGetUrlWithoutUrlRoot();
 
 		// Parse $newUrl to get the IP of the server
 		$newUrlArray = parse_url($urlwithouturlroot);
@@ -3117,12 +3191,16 @@ function csvClean($newvalue, $charset = '', $separator = '')
 	}
 
 	// Rule 3 CSV: If value contains separator, we must add "
-	if (preg_match('/'.$separator.'/', $newvalue)) {
+	if ($separator === '\\t') {
+		$separator = "\t";
+	}
+	if ($separator !== '' && strpos($newvalue, $separator) !== false) {
 		$addquote = 1;
 	}
 
-	// Rule 4 CSV: If value is a string started with char that trigger formula in calc software, we must add "
-	if (preg_match('/^\s*[=+-@]/', $newvalue)) {
+	// Rule 4 CSV: If value is a string started with char that trigger formula in calc software (= + - @), we must add "
+	// Note: in a character class, + - @ would be a range, so - is escaped. A number (like -5) is not a formula.
+	if (preg_match('/^\s*[=+\-@]/', $newvalue) && !is_numeric(trim($newvalue))) {
 		$addquote = 1;
 	}
 
@@ -3202,7 +3280,7 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 								url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
 								timeout: 500,     // timeout milliseconds
 								cache: false,
-								data: { hash_algo: 'dol_hash-sha256', hash_unique_id: <?php echo "'".dol_escape_js($hash_unique_id)."'"; ?>, action: '<?php echo $constanttosavefirstok ?>', token: <?php echo "'".currentToken()."'"; ?> },	// for update
+								data: { action: '<?php echo $constanttosavefirstok ?>', token: <?php echo "'".currentToken()."'"; ?> },	// for update
 							});
 					},
 					error: function (data,status,xhr) {   // error callback function
@@ -3212,7 +3290,7 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 								url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
 								timeout: 500,     // timeout milliseconds
 								cache: false,
-								data: { hash_algo: 'dol_hash-sha256', hash_unique_id: <?php echo "'".dol_escape_js($hash_unique_id)."'"; ?>, action: '<?php echo $constanttosavelastko ?>', token: <?php echo "'".currentToken()."'"; ?> },
+								data: { action: '<?php echo $constanttosavelastko ?>', token: <?php echo "'".currentToken()."'"; ?> },
 							});
 					}
 				});

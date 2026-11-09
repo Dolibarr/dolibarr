@@ -120,6 +120,21 @@ class modPropale extends DolibarrModules
 				"",
 				0,
 			],
+			// For emails
+			[
+				"PROPOSAL_MAIL_FROM",
+				"chaine",
+				"",
+				"From des mails",
+				0,
+			],
+			[
+				"PROPOSAL_EMAIL_TEMPLATE_REMIND_EXPIRATION",
+				"emailtemplate:propal",
+				"(SendingReminderForExpiringProposal)",
+				"",
+				0,
+			],
 		];
 
 		/*$this->const[$r][0] = "PROPALE_DRAFT_WATERMARK";
@@ -132,6 +147,26 @@ class modPropale extends DolibarrModules
 		$this->boxes = array(
 			0 => array('file' => 'box_graph_propales_permonth.php', 'enabledbydefaulton' => 'Home'),
 			1 => array('file' => 'box_propales.php', 'enabledbydefaulton' => 'Home'),
+		);
+
+		// Cronjobs
+		$arraydate = dol_getdate(dol_now());
+		$datestart = dol_mktime(22, 0, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
+		$this->cronjobs = array(
+			0 => array(
+				'label' => 'SendReminderForExpiringProposalsTitle',
+				'jobtype' => 'method', 'class' => 'comm/propal/class/propal.class.php',
+				'objectname' => 'Propal',
+				'method' => 'sendReminderForExpiringProposals',
+				'parameters' => '10',
+				'comment' => 'SendReminderForExpiringProposals',
+				'frequency' => 1,
+				'unitfrequency' => 3600 * 24,
+				'priority' => 50,
+				'status' => 1,
+				'test' => 'isModEnabled("propal")',
+				'datestart' => $datestart
+			),
 		);
 
 		// Permissions
@@ -335,6 +370,7 @@ class modPropale extends DolibarrModules
 			'c.ref' => 'Ref*',
 			'c.ref_client' => 'RefCustomer',
 			'c.fk_soc' => 'ThirdPartyName*',
+			'c.fk_projet' => 'ProjectRef',
 			'c.datec' => 'DateCreation',
 			'c.datep' => 'DatePropal',
 			'c.fin_validite' => 'DateEndPropal',
@@ -365,6 +401,7 @@ class modPropale extends DolibarrModules
 			'c.ref' => 'PROV0077',
 			'c.ref_client' => 'Client1',
 			'c.fk_soc' => 'MyBigCompany',
+			'c.fk_projet' => 'PJ2601-0001',
 			'c.datec' => '2020-01-01',
 			'c.datep' => '2020-01-01',
 			'c.fin_validite' => '2020-01-01',
@@ -397,6 +434,13 @@ class modPropale extends DolibarrModules
 				'class' => 'Societe',
 				'method' => 'fetch',
 				'element' => 'ThirdParty'
+			),
+			'c.fk_projet' => array(
+				'rule' => 'fetchidfromref',
+				'file' => '/projet/class/project.class.php',
+				'class' => 'Project',
+				'method' => 'fetch',
+				'element' => 'Project'
 			)
 		);
 

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Installation av PayPal-modul
-PaypalDesc=Denna modul låter dig ta betalt av kunder via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. Detta kan användas vid en direktbetalning eller för betalning relaterad till ett Dolibarr-objekt (faktura, order, ...)
+PaypalDesc=This module allows payment by customers via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. This can be used for an ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
 PaypalOrCBDoPayment=Betala med PayPal (kort eller PayPal)
 PaypalDoPayment=Betala med PayPal
 PAYPAL_API_SANDBOX=Testläge/sandlåda
@@ -19,7 +19,7 @@ NewOnlinePaymentFailed=Ny onlinebetalning har misslyckats
 ONLINE_PAYMENT_SENDEMAIL=E-postadress för meddelanden efter varje betalningsförsök (lyckade och misslyckade)
 ReturnURLAfterPayment=Retur-URL efter betalning
 ValidationOfOnlinePaymentFailed=Bekräftelse av onlinebetalning misslyckades
-PaymentSystemConfirmPaymentPageWasCalledButFailed=Sidan för betalningsbekräftelse returnerade ett fel
+PaymentSystemConfirmPaymentPageWasCalledButFailed=The payment confirmation page was called by the online payment system and returned an error
 SetExpressCheckoutAPICallFailed=SetExpressCheckout API-anrop misslyckades.
 DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API-anrop misslyckades.
 DetailedErrorMessage=Detaljerat felmeddelande

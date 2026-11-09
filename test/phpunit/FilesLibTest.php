@@ -4,6 +4,7 @@
  * Copyright (C) 2023		Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Joachim Kueter          <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,12 +28,11 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -486,45 +486,230 @@ class FilesLibTest extends CommonClassTest
 		// We restore user properties
 		$user->rights->facture->lire = $savpermlire;
 		$user->rights->facture->creer = $savpermcreer;
+
+		// The API maps modulepart to 'supplier_invoice' / 'supplier_order': they must use the supplier module permissions
+		if (!empty($conf->fournisseur->facture->dir_output) && !empty($conf->fournisseur->commande->dir_output)) {
+			$savpermsupplier = $user->rights->fournisseur;
+			$user->rights->fournisseur = new stdClass();
+			$user->rights->fournisseur->facture = new stdClass();
+			$user->rights->fournisseur->commande = new stdClass();
+			foreach (array('supplier_invoice' => 'facture', 'supplier_order' => 'commande') as $modulepart => $permobject) {
+				$filename = 'SI010101/SI010101.pdf';
+				$user->rights->fournisseur->$permobject->creer = 1;
+				$result = dol_check_secure_access_document($modulepart, $filename, 0, '', '', 'write');
+				$this->assertEquals(1, $result['accessallowed'], "Check write access allowed to '$modulepart/$filename':".json_encode($result));
+				$this->assertEquals($conf->fournisseur->$permobject->dir_output.'/'.$filename, $result['original_file']);
+
+				$user->rights->fournisseur->$permobject->creer = 0;
+				$result = dol_check_secure_access_document($modulepart, $filename, 0, '', '', 'write');
+				$this->assertEquals(0, $result['accessallowed'], "Check write access denied to '$modulepart/$filename':".json_encode($result));
+			}
+			$user->rights->fournisseur = $savpermsupplier;
+		}
 	}
 
 	/**
-	 * Check that a user allowed to export the ledger can download the generated accounting export.
+	 * testDolCheckSecureAccessDocumentAliases
+	 *
+	 * The aliases of modulepart used by the REST API must use the permissions and the directory of the module they are an alias of.
 	 *
 	 * @return void
 	 */
-	public function testDolCheckSecureAccessAccountingExport()
+	public function testDolCheckSecureAccessDocumentAliases()
 	{
-		global $conf, $user, $langs, $db;
+		global $conf, $user;
 		$conf = $this->savconf;
 		$user = $this->savuser;
-		$langs = $this->savlangs;
-		$db = $this->savdb;
 
-		$savpermbindwrite = $user->hasRight('accounting', 'bind', 'write');
-		$savpermexport = $user->hasRight('accounting', 'mouvements', 'export');
+		$savadmin = $user->admin;
+		$user->admin = 0;
+		$filename = 'REF/REF.pdf';
 
-		if (empty($user->rights->accounting)) {
-			$user->rights->accounting = new stdClass();
+		$rightsallowed = new stdClass();
+		$rightsallowed->lire = 1;
+		$rightsallowed->creer = 1;
+		foreach (array('intervention' => 'ficheinter', 'proposal' => 'propal') as $modulepart => $module) {
+			if (!isModEnabled($module)) {
+				continue;
+			}
+			$savrights = $user->rights->$module ?? null;
+
+			$user->rights->$module = $rightsallowed;
+			foreach (array('read', 'write') as $mode) {
+				$result = dol_check_secure_access_document($modulepart, $filename, 0, '', '', $mode);
+				$this->assertEquals(1, $result['accessallowed'], "Check $mode access allowed to '$modulepart/$filename':".json_encode($result));
+				$this->assertEquals($conf->$module->multidir_output[$conf->entity].'/'.$filename, $result['original_file']);
+			}
+
+			$user->rights->$module = new stdClass();
+			foreach (array('read', 'write') as $mode) {
+				$result = dol_check_secure_access_document($modulepart, $filename, 0, '', '', $mode);
+				$this->assertEquals(0, $result['accessallowed'], "Check $mode access denied to '$modulepart/$filename':".json_encode($result));
+			}
+
+			$user->rights->$module = $savrights;
 		}
-		if (empty($user->rights->accounting->bind)) {
-			$user->rights->accounting->bind = new stdClass();
+
+		// A module called like an alias keeps its own directory
+		$savconfmodule = isset($conf->proposal) ? $conf->proposal : null;
+		$conf->proposal = new stdClass();
+		$conf->proposal->dir_output = DOL_DATA_ROOT.'/proposal';
+		$conf->proposal->multidir_output = array(1 => DOL_DATA_ROOT.'/proposal');
+		$result = dol_check_secure_access_document('proposal', 'REF/REF.pdf', 0, '', '', 'read');
+		$this->assertEquals(DOL_DATA_ROOT.'/proposal/REF/REF.pdf', $result['original_file']);
+		if ($savconfmodule === null) {
+			unset($conf->proposal);
+		} else {
+			$conf->proposal = $savconfmodule;
 		}
-		if (empty($user->rights->accounting->mouvements)) {
-			$user->rights->accounting->mouvements = new stdClass();
+
+		$user->admin = $savadmin;
+	}
+
+	/**
+	 * testDolCheckSecureAccessDocumentHook
+	 *
+	 * A module using the hook checkSecureAccess can grant access, and can also refuse it.
+	 *
+	 * @return void
+	 */
+	public function testDolCheckSecureAccessDocumentHook()
+	{
+		global $conf, $user, $hookmanager;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+
+		$savhookmanager = $hookmanager;
+		$savconfmodule = isset($conf->mytestmodule) ? $conf->mytestmodule : null;
+		$savadmin = $user->admin;
+
+		// A module of the generic case, with its directory
+		$conf->mytestmodule = new stdClass();
+		$conf->mytestmodule->dir_output = DOL_DATA_ROOT.'/mytestmodule';
+		$conf->mytestmodule->multidir_output = array(1 => DOL_DATA_ROOT.'/mytestmodule');
+		$filename = 'export/FA010101.zip';
+
+		// A hook of a module on the context 'main' of the page, answering what the test sets in $answer
+		$hook = new class {
+			/** @var array<string,mixed> */
+			public $results = array();
+			/** @var int */
+			public $answer = 0;
+			/** @var array<string,mixed> */
+			public $answerresults = array();
+			/**
+			 * @param array<string,mixed>	$parameters	Hook parameters
+			 * @return int
+			 */
+			public function checkSecureAccess($parameters)
+			{
+				$this->results = $this->answerresults;
+				return $this->answer;
+			}
+		};
+		$hookmanager = new HookManager($this->savdb);
+		$hookmanager->contextarray = array('main');
+		$hookmanager->hooks['main']['mytestmodule'] = $hook;
+		$hookmanager->hooksSorted['main']['50:mytestmodule'] = $hook;
+
+		// Admin, hook without opinion (0): access allowed as without hook
+		$user->admin = 1;
+		$result = dol_check_secure_access_document('mytestmodule', $filename, 0, '', '', 'read');
+		$this->assertEquals(1, $result['accessallowed'], "Admin, hook returns 0: access allowed:".json_encode($result));
+
+		// Admin, hook replaces the result and refuses access
+		$hook->answer = 1;
+		$hook->answerresults = array('accessallowed' => 0);
+		$result = dol_check_secure_access_document('mytestmodule', $filename, 0, '', '', 'read');
+		$this->assertEquals(0, $result['accessallowed'], "Admin, hook returns 1 with accessallowed 0: access refused:".json_encode($result));
+
+		// No permission, hook replaces the result and grants access (behaviour before this change, kept)
+		$user->admin = 0;
+		$hook->answerresults = array('accessallowed' => 1);
+		$result = dol_check_secure_access_document('mytestmodule', $filename, 0, '', '', 'read');
+		$this->assertEquals(1, $result['accessallowed'], "No permission, hook returns 1 with accessallowed 1: access allowed:".json_encode($result));
+
+		// No permission, hook replaces the result without saying anything about access: refused as without hook
+		$hook->answerresults = array();
+		$result = dol_check_secure_access_document('mytestmodule', $filename, 0, '', '', 'read');
+		$this->assertEquals(0, $result['accessallowed'], "No permission, hook returns 1 without accessallowed: access refused:".json_encode($result));
+
+		$user->admin = $savadmin;
+		$hookmanager = $savhookmanager;
+		if ($savconfmodule === null) {
+			unset($conf->mytestmodule);
+		} else {
+			$conf->mytestmodule = $savconfmodule;
+		}
+	}
+
+	/**
+	 * testDolCheckSecureAccessDocumentAgendaAliases
+	 *
+	 * The aliases of modulepart used by the REST API for events must use the permissions and the directory of the agenda.
+	 *
+	 * @return void
+	 */
+	public function testDolCheckSecureAccessDocumentAgendaAliases()
+	{
+		global $conf, $user;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+
+		$savadmin = $user->admin;
+		$user->admin = 0;
+
+		if (isModEnabled('agenda')) {
+			$savrights = $user->rights->agenda ?? null;
+			$filename = '1/1.pdf';
+
+			foreach (array('action', 'event') as $modulepart) {
+				$user->rights->agenda = new stdClass();
+				$user->rights->agenda->allactions = new stdClass();
+				$user->rights->agenda->allactions->read = 1;
+				$user->rights->agenda->allactions->create = 1;
+				foreach (array('read', 'write') as $mode) {
+					$result = dol_check_secure_access_document($modulepart, $filename, 0, '', '', $mode);
+					$this->assertEquals(1, $result['accessallowed'], "Check $mode access allowed to '$modulepart/$filename':".json_encode($result));
+					$this->assertEquals($conf->agenda->dir_output.'/'.$filename, $result['original_file']);
+				}
+
+				$user->rights->agenda = new stdClass();
+				foreach (array('read', 'write') as $mode) {
+					$result = dol_check_secure_access_document($modulepart, $filename, 0, '', '', $mode);
+					$this->assertEquals(0, $result['accessallowed'], "Check $mode access denied to '$modulepart/$filename':".json_encode($result));
+				}
+			}
+
+			// 'agenda' is not an alias here: it stays on the generic case (allowed to admins only, with the hook checkSecureAccess)
+			$user->rights->agenda = new stdClass();
+			$user->rights->agenda->allactions = new stdClass();
+			$user->rights->agenda->allactions->read = 1;
+			$result = dol_check_secure_access_document('agenda', $filename, 0, '', '', 'read');
+			$this->assertEquals(0, $result['accessallowed'], "Check access denied to 'agenda/$filename' for a non admin:".json_encode($result));
+			$user->admin = 1;
+			$user->rights->agenda = new stdClass();
+			$result = dol_check_secure_access_document('agenda', $filename, 0, '', '', 'read');
+			$this->assertEquals(1, $result['accessallowed'], "Check access allowed to 'agenda/$filename' for an admin:".json_encode($result));
+			$user->admin = 0;
+
+			$user->rights->agenda = $savrights;
 		}
 
-		$user->rights->accounting->bind->write = 0;
-		$user->rights->accounting->mouvements->export = 1;
-		$result = dol_check_secure_access_document('export_compta', 'export/1/general_ledger.csv', 0, $user, '', 'read');
-		$this->assertEquals(1, $result['accessallowed']);
+		// A module called like an alias keeps its own directory
+		$savconfmodule = isset($conf->event) ? $conf->event : null;
+		$conf->event = new stdClass();
+		$conf->event->dir_output = DOL_DATA_ROOT.'/event';
+		$conf->event->multidir_output = array(1 => DOL_DATA_ROOT.'/event');
+		$result = dol_check_secure_access_document('event', 'REF/REF.pdf', 0, '', '', 'read');
+		$this->assertEquals(DOL_DATA_ROOT.'/event/REF/REF.pdf', $result['original_file']);
+		if ($savconfmodule === null) {
+			unset($conf->event);
+		} else {
+			$conf->event = $savconfmodule;
+		}
 
-		$user->rights->accounting->mouvements->export = 0;
-		$result = dol_check_secure_access_document('export_compta', 'export/1/general_ledger.csv', 0, $user, '', 'read');
-		$this->assertEquals(0, $result['accessallowed']);
-
-		$user->rights->accounting->bind->write = $savpermbindwrite;
-		$user->rights->accounting->mouvements->export = $savpermexport;
+		$user->admin = $savadmin;
 	}
 
 	/**

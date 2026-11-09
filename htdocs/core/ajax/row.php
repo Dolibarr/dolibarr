@@ -130,6 +130,8 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 		$perm = 1;
 	} elseif ($table_element_line == 'contratdet' && $fk_element == 'fk_contrat' && $user->hasRight('contrat', 'creer')) {
 		$perm = 1;
+	} elseif ($table_element_line == 'receptiondet_batch' && $fk_element == 'fk_reception' && $user->hasRight('reception', 'creer')) {
+		$perm = 1;
 	} elseif ($table_element_line == 'stocktransfer_stocktransferline' && $fk_element == 'fk_stocktransfer' && $user->hasRight('stocktransfer', 'stocktransfer', 'write')) {
 		$perm = 1;
 	} elseif ($table_element_line == 'expeditiondet' && $user->hasRight('expedition', 'creer')) {

@@ -173,6 +173,7 @@ class Users extends DolibarrApi
 	 *
 	 * @param	int		$id						ID of user
 	 * @param	int		$includepermissions		Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
+	 * @param	int		$includegroups			Set this to 1 to have the list of groups of the user loaded into user_group_list (not done by default)
 	 * @return	array|mixed						data without useless information
 	 * @phan-return Object
 	 * @phpstan-return Object
@@ -181,7 +182,7 @@ class Users extends DolibarrApi
 	 * @throws RestException 401 Insufficient rights
 	 * @throws RestException 404 User or group not found
 	 */
-	public function get($id, $includepermissions = 0)
+	public function get($id, $includepermissions = 0, $includegroups = 0)
 	{
 		if ($id == 0) {
 			throw new RestException(400, 'No user with id=0 can exist');
@@ -207,6 +208,9 @@ class Users extends DolibarrApi
 		if ($includepermissions) {
 			$this->useraccount->loadRights();
 		}
+		if ($includegroups) {
+			$this->_loadUserGroupList();
+		}
 
 		return $this->_cleanObjectDatas($this->useraccount);
 	}
@@ -218,6 +222,7 @@ class Users extends DolibarrApi
 	 *
 	 * @param	string	$login					Login of user
 	 * @param	int		$includepermissions		Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
+	 * @param	int		$includegroups			Set this to 1 to have the list of groups of the user loaded into user_group_list (not done by default)
 	 * @return	array|mixed						Data without useless information
 	 * @phan-return Object
 	 * @phpstan-return Object
@@ -228,7 +233,7 @@ class Users extends DolibarrApi
 	 * @throws RestException 401	Insufficient rights
 	 * @throws RestException 404	User or group not found
 	 */
-	public function getByLogin($login, $includepermissions = 0)
+	public function getByLogin($login, $includepermissions = 0, $includegroups = 0)
 	{
 		if (empty($login)) {
 			throw new RestException(400, 'Bad parameters');
@@ -250,6 +255,9 @@ class Users extends DolibarrApi
 		if ($includepermissions) {
 			$this->useraccount->loadRights();
 		}
+		if ($includegroups) {
+			$this->_loadUserGroupList();
+		}
 
 		return $this->_cleanObjectDatas($this->useraccount);
 	}
@@ -261,6 +269,7 @@ class Users extends DolibarrApi
 	 *
 	 * @param	string	$email					Email of user
 	 * @param	int		$includepermissions		Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
+	 * @param	int		$includegroups			Set this to 1 to have the list of groups of the user loaded into user_group_list (not done by default)
 	 * @return	array|mixed						Data without useless information
 	 * @phan-return Object
 	 * @phpstan-return Object
@@ -271,7 +280,7 @@ class Users extends DolibarrApi
 	 * @throws RestException 401     Insufficient rights
 	 * @throws RestException 404     User or group not found
 	 */
-	public function getByEmail($email, $includepermissions = 0)
+	public function getByEmail($email, $includepermissions = 0, $includegroups = 0)
 	{
 		if (empty($email)) {
 			throw new RestException(400, 'Bad parameters');
@@ -292,6 +301,9 @@ class Users extends DolibarrApi
 
 		if ($includepermissions) {
 			$this->useraccount->loadRights();
+		}
+		if ($includegroups) {
+			$this->_loadUserGroupList();
 		}
 
 		return $this->_cleanObjectDatas($this->useraccount);
@@ -522,7 +534,7 @@ class Users extends DolibarrApi
 			if ($field == 'statut' || $field == 'status') {
 				$result = $this->useraccount->setstatus($value);
 				if ($result < 0) {
-					throw new RestException(500, 'Error when updating status of user: '.$this->useraccount->error);
+					throw new RestException(500, 'Error when updating status of user: '.$this->useraccount->errorsToString());
 				}
 			} else {
 				$this->useraccount->$field = $this->_checkValForAPI($field, $value, $this->useraccount);
@@ -534,7 +546,7 @@ class Users extends DolibarrApi
 		if ($this->useraccount->update(DolibarrApiAccess::$user) >= 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->useraccount->error);
+			throw new RestException(500, $this->useraccount->errorsToString());
 		}
 	}
 
@@ -581,14 +593,14 @@ class Users extends DolibarrApi
 
 		$newpassword = $this->useraccount->setPassword($this->useraccount, '');	// This will generate a new password
 		if (is_int($newpassword) && $newpassword < 0) {
-			throw new RestException(500, 'ErrorFailedToSetNewPassword'.$this->useraccount->error);
+			throw new RestException(500, 'ErrorFailedToSetNewPassword'.$this->useraccount->errorsToString());
 		} else {
 			// Success
 			if ($send_password) {
 				if ($this->useraccount->send_password($this->useraccount, $newpassword) > 0) {
 					return 2;
 				} else {
-					throw new RestException(500, 'ErrorFailedSendingNewPassword - '.$this->useraccount->error);
+					throw new RestException(500, 'ErrorFailedSendingNewPassword - '.$this->useraccount->errorsToString());
 				}
 			} else {
 				return 1;
@@ -682,9 +694,9 @@ class Users extends DolibarrApi
 			$entity = (((int) DolibarrApiAccess::$user->entity) > 0 ? (int) DolibarrApiAccess::$user->entity : $conf->entity);
 		}
 
-		$result = $this->useraccount->SetInGroup($group, $entity);
+		$result = $this->useraccount->setInGroup($group, $entity);
 		if (!($result > 0)) {
-			throw new RestException(500, $this->useraccount->error);
+			throw new RestException(500, $this->useraccount->errorsToString());
 		}
 
 		return 1;
@@ -760,6 +772,10 @@ class Users extends DolibarrApi
 			throw new RestException(404, 'Usergroup not found');
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('user', $usergroup->id, 'usergroup&usergroup')) {
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
 				throw new RestException(400, 'Updating with id field is forbidden');
@@ -782,7 +798,7 @@ class Users extends DolibarrApi
 		if ($usergroup->update() >= 0) {
 			return $this->infoGroups($group);
 		} else {
-			throw new RestException(500, $usergroup->error);
+			throw new RestException(500, $usergroup->errorsToString());
 		}
 	}
 
@@ -803,18 +819,28 @@ class Users extends DolibarrApi
 	 */
 	public function removeUserFromGroup($id, $group)
 	{
+		global $conf;
+
 		if (!DolibarrApiAccess::$user->admin) {
 			throw new RestException(403, 'Only admin can remove users from groups');
 		}
 
-		$sql = "DELETE FROM " . MAIN_DB_PREFIX . "usergroup_user";
-		$sql .= " WHERE fk_user = " . ((int) $id);
-		$sql .= " AND fk_usergroup = " . ((int) $group);
+		$result = $this->useraccount->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'User not found');
+		}
 
-		$resql = $this->db->query($sql);
+		// Same entity resolution as setGroup(): the action is done on the entity of the logged user, so an
+		// admin of one entity can not remove the group link of a user in another entity.
+		if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && empty(DolibarrApiAccess::$user->entity)) {
+			$entity = $conf->entity;
+		} else {
+			$entity = (((int) DolibarrApiAccess::$user->entity) > 0 ? (int) DolibarrApiAccess::$user->entity : $conf->entity);
+		}
 
-		if (!$resql) {
-			throw new RestException(503, 'DB error: ' . $this->db->lasterror());
+		$result = $this->useraccount->removeFromGroup($group, $entity);
+		if (!($result > 0)) {
+			throw new RestException(500, $this->useraccount->error);
 		}
 
 		return [
@@ -941,6 +967,10 @@ class Users extends DolibarrApi
 			throw new RestException(404, 'Usergroup not found');
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('user', $group_static->id, 'usergroup&usergroup')) {
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		if ($includepermissions) {
 			$group_static->loadRights();
 		}
@@ -1028,6 +1058,10 @@ class Users extends DolibarrApi
 		$result = $usergroup->fetch($group);
 		if ($result < 0) {
 			throw new RestException(404, 'Usergroup not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('user', $usergroup->id, 'usergroup&usergroup')) {
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$usergroup->delete(DolibarrApiAccess::$user)) {
@@ -1488,6 +1522,24 @@ class Users extends DolibarrApi
 		unset($object->warehouse_id);
 
 		return $object;
+	}
+
+	/**
+	 * Load the cleaned list of groups of the fetched user into user_group_list
+	 *
+	 * @return	void
+	 *
+	 * @throws RestException 404 User group not found
+	 */
+	private function _loadUserGroupList()
+	{
+		$usergroup = new UserGroup($this->db);
+		$userGroupList = $usergroup->listGroupsForUser($this->useraccount->id, false);
+		if (!is_array($userGroupList)) {
+			throw new RestException(404, 'User group not found');
+		}
+
+		$this->useraccount->user_group_list = $this->_cleanUserGroupListDatas($userGroupList);
 	}
 
 	/**
