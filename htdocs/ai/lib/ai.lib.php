@@ -2194,7 +2194,7 @@ function aiPaletteToolTitle($langs, $name, $route)
 		'update' => array('AIToolTitleUpdate', $one),
 		'delete' => array('AIToolTitleDelete', $one),
 		'validate' => array('AIToolTitleValidate', $one),
-		'add_payment' => array('AIToolTitleAddPayment', $one),
+		'payment_create' => array('AIToolTitleAddPayment', $one),
 		'add_line' => array('AIToolTitleAddLine', $one)
 	);
 	$langs->load('other');

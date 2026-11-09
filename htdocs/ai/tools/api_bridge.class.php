@@ -91,6 +91,7 @@ class ToolApiBridge extends McpTool
 		'projects' => array('project'),
 		'project_tasks' => array('project'),
 		'project' => array('project'),
+		'project_tasks_timespent' => array('project'),
 		'agendaevents' => array('thirdparty', 'project'),
 		'interventions' => array('project', 'commercial'),
 		'contracts' => array('commercial', 'billing'),
@@ -153,6 +154,8 @@ class ToolApiBridge extends McpTool
 	 * Generic tools replacing all the api_<endpoint>_<suffix> tools of a suffix: one
 	 * tool with an 'object' argument naming the endpoint, instead of one per object.
 	 * 'params' gives a description valid for any object to some arguments.
+	 * 'via' (optional): a tool run for the objects with no tool of their own, its argument
+	 * 'arg' set from 'object' (object => array(value of 'arg', module that must be enabled)).
 	 */
 	const MERGED_TOOLS = array(
 		'api_objects_contacts_list' => array(
@@ -217,6 +220,22 @@ class ToolApiBridge extends McpTool
 			'object' => 'Type of the object whose tags are listed.',
 			'params' => array(
 				'id' => 'Rowid of the object.'
+			),
+			'via' => array(
+				'tool' => 'api_categories_of_object_list',
+				'arg' => 'type',
+				'description' => "tags of this kind of object (for a third party, suppliers gives its supplier tags and thirdparties its customer tags).",
+				'objects' => array(
+					'suppliers' => array('supplier', 'societe'),
+					'members' => array('member', 'member'),
+					'projects' => array('project', 'project'),
+					'users' => array('user', 'user'),
+					'warehouses' => array('warehouse', 'stock'),
+					'agendaevents' => array('actioncomm', 'agenda'),
+					'tickets' => array('ticket', 'ticket'),
+					'knowledgemanagement' => array('knowledgemanagement', 'knowledgemanagement'),
+					'interventions' => array('fichinter', 'intervention')
+				)
 			)
 		)
 	);
@@ -985,11 +1004,6 @@ class ToolApiBridge extends McpTool
 				'get' => [
 					'description' => "One task with its project, planned workload, progress and dates (durations in seconds).",
 					'params' => ['includetimespent' => "1 to include the detail of time spent records."]
-				],
-				'getTimespent' => [
-					'suffix' => 'timespent_list',
-					'description' => "Time records logged on one task: date, duration in seconds, user and note. Sum task_duration for the total.",
-					'params' => ['id' => "Rowid of the task."]
 				],
 				'put' => [
 					'suffix' => 'update',
@@ -2055,7 +2069,7 @@ class ToolApiBridge extends McpTool
 		// filter applies; the tools are registered only when the company
 		// country actually uses local taxes, the table is empty otherwise.
 		// Write side is left out on purpose.
-		if ($mysoc->useLocalTax(0)) {
+		if (is_object($mysoc) && $mysoc->useLocalTax(0)) {
 			$this->enrichments['localtaxes'] = array(
 				'label' => 'local tax payments (second/third country taxes)',
 				'methods' => array(
@@ -2113,6 +2127,19 @@ class ToolApiBridge extends McpTool
 			)
 		);
 
+		// Own group calling the REST class of projects, so the tool is named api_project_tasks_timespent_list
+		$this->enrichments['project_tasks_timespent'] = array(
+			'endpoint' => 'projects',
+			'label' => 'time spent on project tasks',
+			'methods' => array(
+				'listTimespent' => array(
+					'suffix' => 'list',
+					'description' => "Time spent records, one per line: project, task, user, date (element_datehour), duration in seconds (element_duration, sum it for a total) and note. Restrict with thirdparty_ids or sqlfilters: one project with \"(p.rowid:=:ID)\", one task with \"(t.rowid:=:ID)\", one user with \"(et.fk_user:=:ID)\", a period with \"(et.element_datehour:>=:'2026-01-01')\".",
+					'params' => array('thirdparty_ids' => "Comma-separated third-party rowids.", 'pagination_data' => $pagination)
+				)
+			)
+		);
+
 		// Read methods of endpoints already exposed.
 		$more = array(
 			'warehouses' => array(
@@ -2163,18 +2190,6 @@ class ToolApiBridge extends McpTool
 					'suffix' => 'contacts_list',
 					'description' => "People of one project: internal users and external contacts, with their role (project leader, contributor...).",
 					'params' => array('id' => "Rowid of the project.", 'type' => "'internal' or 'external' to restrict, empty for both.")
-				),
-				'getTimespent' => array(
-					'suffix' => 'timespent_list',
-					'description' => "Summary of the time spent on each task of one project (first 100 tasks): total duration in seconds and the users who recorded it. The time records themselves are in api_projects_timespent_all or api_project_tasks_timespent_list.",
-					'params' => array('id' => "Rowid of the project."),
-					'max_items' => 100,
-					'keep' => 'first'
-				),
-				'listTimespent' => array(
-					'suffix' => 'timespent_all',
-					'description' => "Time recorded across projects, with project, task, user, date and duration in seconds. Restrict with thirdparty_ids or sqlfilters (e.g. a period on t.element_date).",
-					'params' => array('thirdparty_ids' => "Comma-separated third-party rowids.", 'pagination_data' => $pagination)
 				)
 			),
 			'orders' => array(
@@ -2252,11 +2267,6 @@ class ToolApiBridge extends McpTool
 				'getCategories' => array(
 					'suffix' => 'categories_list',
 					'description' => "Customer tags (categories) of one third party.",
-					'params' => array('id' => "Rowid of the third party.")
-				),
-				'getSupplierCategories' => array(
-					'suffix' => 'supplier_categories_list',
-					'description' => "Supplier tags (categories) of one third party.",
 					'params' => array('id' => "Rowid of the third party.")
 				)
 			),
@@ -2471,7 +2481,7 @@ class ToolApiBridge extends McpTool
 
 		// A payment: the distributed method, the only one that takes an amount.
 		$this->enrichments['invoices']['methods']['addPaymentDistributed'] = array(
-			'suffix' => 'add_payment',
+			'suffix' => 'payment_create',
 			'description' => "Record a payment received on a VALIDATED customer invoice. Give 'id' (rowid, or its ref), and 'amount' only for a partial payment: by default what remains is paid. payment_mode is how it was paid (cash, cheque, transfer, card, or a code like LIQ, CHQ, VIR, CB); bank_account is the account it went into (name or rowid, may be omitted when there is only one). The user confirms before anything is written.",
 			'write' => array(
 				'kind' => 'payment',
@@ -3268,27 +3278,51 @@ class ToolApiBridge extends McpTool
 	private function mergeTools($mergedName)
 	{
 		$mconf = self::MERGED_TOOLS[$mergedName];
+		$viaconf = $mconf['via'] ?? array();
+		$viadef = null;
 		$merged = array();
 		$kept = array();
 		foreach ((array) $this->defs as $def) {
 			$name = (string) ($def['name'] ?? '');
-			if (isset($this->routes[$name]) && $name === 'api_'.$this->routes[$name][0].'_'.$mconf['suffix']) {
+			if (!empty($viaconf) && $name === $viaconf['tool']) {
+				$viadef = $def;
+			} elseif (isset($this->routes[$name]) && $name === 'api_'.$this->routes[$name][0].'_'.$mconf['suffix']) {
 				$merged[$this->routes[$name][0]] = $def;
 			} else {
 				$kept[] = $def;
 			}
 		}
-		if (empty($merged)) {
+
+		// Objects with no tool of their own run the 'via' tool, its 'arg' argument given by 'object'.
+		$viaobjects = array();
+		if ($viadef !== null) {
+			foreach ($viaconf['objects'] as $obj => $typeandmodule) {
+				if (!isset($merged[$obj]) && isModEnabled($typeandmodule[1])) {
+					$viaobjects[] = $obj;
+				}
+			}
+			if (empty($viaobjects)) {
+				$kept[] = $viadef;
+			} else {
+				unset($viadef['inputSchema']['properties'][$viaconf['arg']]);
+				$viadef['inputSchema']['required'] = array_values(array_diff((array) ($viadef['inputSchema']['required'] ?? array()), array($viaconf['arg'])));
+			}
+		}
+		if (empty($merged) && empty($viaobjects)) {
 			return;
+		}
+		$sources = $merged;
+		foreach ($viaobjects as $obj) {
+			$sources[$obj] = $viadef;
 		}
 
 		// Arguments: the union of those of the merged tools, required when required by all.
-		$properties = array('object' => array('type' => 'string', 'enum' => array_keys($merged), 'description' => $mconf['object']));
+		$properties = array('object' => array('type' => 'string', 'enum' => array_keys($sources), 'description' => $mconf['object']));
 		$required = null;
 		$objectsOf = array();
 		$categories = array();
 		$descriptions = array();
-		foreach ($merged as $key => $def) {
+		foreach ($sources as $key => $def) {
 			foreach ((array) ($def['inputSchema']['properties'] ?? array()) as $pname => $pdef) {
 				$objectsOf[$pname][] = $key;
 				if (!isset($properties[$pname])) {
@@ -3300,14 +3334,19 @@ class ToolApiBridge extends McpTool
 			}
 			$required = ($required === null) ? (array) ($def['inputSchema']['required'] ?? array()) : array_intersect($required, (array) ($def['inputSchema']['required'] ?? array()));
 			$categories = array_merge($categories, (array) ($def['categories'] ?? array()));
-			$descriptions[] = $key.': '.(string) ($def['description'] ?? '');
+			if (isset($merged[$key])) {
+				$descriptions[] = $key.': '.(string) ($def['description'] ?? '');
+			}
+		}
+		if (!empty($viaobjects)) {
+			$descriptions[] = implode(', ', $viaobjects).': '.$viaconf['description'];
 		}
 		foreach ($mconf['params'] as $pname => $pdesc) {
 			$properties[$pname] = array_merge(array('type' => 'string'), $properties[$pname] ?? array(), array('description' => $pdesc));
 		}
 		// An argument only some objects take says which.
 		foreach ($objectsOf as $pname => $keys) {
-			if (!isset($mconf['params'][$pname]) && count($keys) < count($merged)) {
+			if (!isset($mconf['params'][$pname]) && count($keys) < count($sources)) {
 				$properties[$pname]['description'] = trim(rtrim((string) ($properties[$pname]['description'] ?? ''), '. ').'. Only for: '.implode(', ', $keys).'.');
 			}
 		}
@@ -3336,7 +3375,15 @@ class ToolApiBridge extends McpTool
 		$this->getDefinitions();	// ensure routes are built
 		$object = (string) ($args['object'] ?? '');
 		$target = 'api_'.$object.'_'.self::MERGED_TOOLS[$name]['suffix'];
-		if (!preg_match('/^[a-z0-9_]+$/', $object) || empty($this->routes[$target])) {
+		if (!preg_match('/^[a-z0-9_]+$/', $object)) {
+			return '';
+		}
+		if (empty($this->routes[$target])) {
+			// No tool of its own: the 'via' tool, when it serves this object.
+			$via = self::MERGED_TOOLS[$name]['via'] ?? array();
+			if (!empty($via['objects'][$object]) && isModEnabled($via['objects'][$object][1]) && !empty($this->routes[$via['tool']])) {
+				return $via['tool'];
+			}
 			return '';
 		}
 
@@ -5461,8 +5508,18 @@ class ToolApiBridge extends McpTool
 			'Reception' => array('reception', '', ''),
 			'Expedition' => array('expedition', '', ''),
 			'Contrat' => array('contrat', '', ''),
-			'Fichinter' => array('ficheinter', '', '')
+			'Fichinter' => array('ficheinter', '', ''),
+			'Website' => array('website', '', '')
 		);
+		// A website page has no entity: it is reached through its website, as the REST class checks it.
+		if ($class === 'WebsitePage') {
+			$page = $this->fetchRecord('WebsitePage', (int) $id);
+			if (!($page instanceof WebsitePage)) {
+				return false;
+			}
+			$class = 'Website';
+			$id = (int) $page->fk_website;
+		}
 		if (!isset($map[$class])) {
 			return true;
 		}
@@ -7084,6 +7141,11 @@ class ToolApiBridge extends McpTool
 			$refused = $this->mergedToolRightsRefusal($target);
 			if ($refused !== '') {
 				return ['error' => $refused, 'http_status' => 403];
+			}
+			// The 'via' tool gets its argument (e.g. the category type) from 'object'.
+			$via = self::MERGED_TOOLS[$name]['via'] ?? array();
+			if (!empty($via) && $target === $via['tool']) {
+				$args[$via['arg']] = $via['objects'][(string) $args['object']][0];
 			}
 			unset($args['object']);
 

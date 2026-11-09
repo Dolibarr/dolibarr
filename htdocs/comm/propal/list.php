@@ -2045,9 +2045,9 @@ while ($i < $imaxinloop) {
 
 		if (!empty($arrayfields['pr.title']['checked'])) {
 			// Project label
-			print '<td class="nowrap">';
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($projectstatic->title).'">';
 			if ($obj->project_id > 0) {
-				print dol_escape_htmltag($projectstatic->title);
+				print '<span class="spantitle">'.dol_escape_htmltag($projectstatic->title).'</span>';
 			}
 			print '</td>';
 			if (!$i) {

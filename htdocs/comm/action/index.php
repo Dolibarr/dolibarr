@@ -667,8 +667,9 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 		$s .= 'frm.attr("action", newurl).children("#newdate").val(newval);frm.submit();}'."\n";
 		$s .= '});'."\n";
 	}
-	if ($mode == 'show_day') {
-		// Day view: side by side layout of the events that overlap in the positioned grid
+	if ($mode == 'show_day' || ($mode == 'show_week' && !getDolGlobalString('AGENDA_WEEK_VIEW_NO_HOURLY_GRID'))) {
+		// Day and week views: side by side layout of the events that overlap in the positioned grid.
+		// It works on every .agendadaylayer of the page, so the seven columns of a week need no variant.
 		$s .= <<<'JSDAYVIEW'
 function dolAgendaDayColumns(items) {
 	var sorted = items.slice().sort(function (a, b) { return (a.start - b.start) || ((b.end - b.start) - (a.end - a.start)); });
@@ -1569,9 +1570,20 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	print_actions_filter($form, $canedit, $status, $year, $month, $day, $check_birthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroupids, '', $resourceid);
 	print '</div>';
 
-	print '<div class="div-table-responsive-no-min sectioncalendarbyweek maxscreenheightless300">';
+	// Hidden option AGENDA_WEEK_VIEW_NO_HOURLY_GRID: keep the former flat list of events per day, which is
+	// denser when a day holds many events, instead of the hourly grid.
+	$weekhourlygrid = !getDolGlobalString('AGENDA_WEEK_VIEW_NO_HOURLY_GRID');
+
+	// No maxscreenheightless300 with the grid, for the same reason as the day view: a max-height combined
+	// with the overflow-x:auto of div-table-responsive-no-min forces overflow-y to auto as well, which gives
+	// an inner scrollbar instead of letting the page itself scroll.
+	print '<div class="div-table-responsive-no-min sectioncalendarbyweek'.($weekhourlygrid ? '' : ' maxscreenheightless300').'">';
 	print '<table class="centpercent noborder nocellnopadd cal_pannel cal_month listwithfilterbefore">';
 	print ' <tr class="liste_titre">';
+	if ($weekhourlygrid) {
+		// The column of the hour labels, empty in the header
+		print '  <td class="tdfordaytitle width100"></td>'."\n";
+	}
 	$i = 0;
 	while ($i < 7) {
 		echo '  <td class="center bold uppercase tdfordaytitle">'.$langs->trans("Day".(($i + (getDolGlobalInt('MAIN_START_WEEK', 1))) % 7))."</td>\n";
@@ -1579,7 +1591,21 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	}
 	echo " </tr>\n";
 
-	echo ' <tr class="trcalweek">'."\n";
+	// tr.trcalweek carries height: 300px in the themes, which is right when the cell holds the events of the
+	// day but leaves 300 px of white above the grid when it only holds the title bar of each day.
+	echo ' <tr class="'.($weekhourlygrid ? 'trcalweektitle' : 'trcalweek').'">'."\n";
+	if ($weekhourlygrid) {
+		echo '  <td class="tdfordaytitle width100"></td>'."\n";
+	}
+
+	$weekdayinfo = array();
+	$weekhourlybuckets = array();
+	// show_day_events() fills each entry by reference, which phan does not follow: without
+	// this it infers the empty shape array{} and refuses the 'allday' offset below.
+	'@phan-var-force array<int,array<string,string[]>> $weekhourlybuckets';
+	/**
+	 * @var array<int,array<string,string[]>> $weekhourlybuckets
+	 */
 
 	for ($iter_day = 0; $iter_day < 7; $iter_day++) {
 		// Show days of the current week
@@ -1602,12 +1628,109 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 			$style = 'cal_today';
 		}
 
-		echo '  <td class="'.$style.'" width="14%" valign="top">';
-		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-		show_day_events($db, $tmpday, $tmpmonth, $tmpyear, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 0, $bookcalcalendars);
+		$weekdayinfo[$iter_day] = array('day' => $tmpday, 'month' => $tmpmonth, 'year' => $tmpyear, 'style' => $style);
+
+		echo '  <td class="'.$style.'" width="'.($weekhourlygrid ? '13' : '14').'%" valign="top">';
+		if ($weekhourlygrid) {
+			// show_day_events() still prints the title bar of the day, which is what this row is for, and
+			// collects the html of the events instead of printing it. They are placed by the grid below.
+			$weekhourlybuckets[$iter_day] = array();
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+			show_day_events($db, $tmpday, $tmpmonth, $tmpyear, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 0, $bookcalcalendars, $weekhourlybuckets[$iter_day]);
+		} else {
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+			show_day_events($db, $tmpday, $tmpmonth, $tmpyear, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 0, $bookcalcalendars);
+		}
 		echo "  </td>\n";
 	}
 	echo " </tr>\n";
+
+	if ($weekhourlygrid) {
+		// All-day, multi-day, birthday and holiday events: one row above the grid, one cell per day
+		echo ' <tr class="trcalweekallday">'."\n";
+		echo '  <td class="tdfordaytitle width100"></td>'."\n";
+		for ($iter_day = 0; $iter_day < 7; $iter_day++) {
+			$dateint = sprintf("%04d", $weekdayinfo[$iter_day]['year']).sprintf("%02d", $weekdayinfo[$iter_day]['month']).sprintf("%02d", $weekdayinfo[$iter_day]['day']);
+			echo '  <td class="'.$weekdayinfo[$iter_day]['style'].'" valign="top">';
+			// height: auto against .agendacell { height: 60px } of the themes: a day of the week can hold
+			// several all-day events (a holiday calendar for each country subscribed to), and they would
+			// otherwise overflow the row and be drawn over the grid below.
+			print '<div id="alldayevent_'.$dateint.'" class="centpercent agendacell" style="height: auto;">';
+			if (!empty($weekhourlybuckets[$iter_day]['allday'])) {
+				foreach ($weekhourlybuckets[$iter_day]['allday'] as $eventhtml) {
+					print $eventhtml;
+				}
+			}
+			print '</div>';
+			echo "  </td>\n";
+		}
+		echo " </tr>\n";
+
+		// Hour range: the working hours, widened so that every timed event of the week is fully visible.
+		// The seven days share one range, otherwise the columns would not line up.
+		$tmp = explode('-', str_replace(' ', '', getDolGlobalString('MAIN_DEFAULT_WORKING_HOURS', '9-18')));
+		$begin_h = ((int) $tmp[0] >= 0 && (int) $tmp[0] <= 23) ? (int) $tmp[0] : 9;
+		$end_h = (isset($tmp[1]) && (int) $tmp[1] >= 1 && (int) $tmp[1] <= 24) ? (int) $tmp[1] : 18;
+		if ($end_h <= $begin_h) {
+			$end_h = $begin_h + 1;
+		}
+		$weekdates = array();
+		for ($iter_day = 0; $iter_day < 7; $iter_day++) {
+			$weekdates[] = sprintf("%04d", $weekdayinfo[$iter_day]['year']).sprintf("%02d", $weekdayinfo[$iter_day]['month']).sprintf("%02d", $weekdayinfo[$iter_day]['day']);
+		}
+		foreach ($eventarray as $daykey => $dayevents) {
+			if (!in_array(dol_print_date($daykey, '%Y%m%d', 'gmt'), $weekdates, true)) {
+				continue;
+			}
+			foreach ($dayevents as $dayevent) {
+				$dayminutes = agenda_event_day_minutes($dayevent);
+				if ($dayminutes === null) {
+					continue;
+				}
+				$begin_h = min($begin_h, intdiv($dayminutes[0], 60));
+				$end_h = max($end_h, (int) ceil(max($dayminutes[1], $dayminutes[0] + 20) / 60));
+			}
+		}
+		$end_h = min($end_h, 24);
+		$gridheight = ($end_h - $begin_h) * 60;
+
+		// The grid, 1 px per minute, the same scale as the day view. Each day is its own layer, shifted up by
+		// the first hour shown because show_day_events() positions an event from midnight.
+		echo ' <tr class="trcalweekgrid">'."\n";
+		echo '  <td class="tdfordaytitle width100 tdtop">';
+		print '<div class="agendaweekhours" style="position: relative; height: '.$gridheight.'px;">';
+		for ($h = $begin_h; $h < $end_h; $h++) {
+			print '<div class="agendadayhour small opacitymedium" style="position: absolute; left: 4px; top: '.((($h - $begin_h) * 60) + 2).'px;">'.dol_print_date($h * 3600, 'hour', 'gmt').'</div>';
+		}
+		print '</div>';
+		echo "</td>\n";
+		for ($iter_day = 0; $iter_day < 7; $iter_day++) {
+			$dateint = $weekdates[$iter_day];
+			echo '  <td class="'.$weekdayinfo[$iter_day]['style'].' tdtop" valign="top">';
+			print '<div class="agendadaygrid" style="position: relative; height: '.$gridheight.'px;">';
+			for ($h = $begin_h; $h < $end_h; $h++) {
+				foreach (array(0, 30) as $slotmin) {
+					$top = ($h - $begin_h) * 60 + $slotmin;
+					print '<div class="agendadayline'.($slotmin ? ' opacitymedium' : '').'" style="position: absolute; left: 0; right: 0; top: '.$top.'px; border-top: 1px solid var(--colortopbordertitle1);"></div>';
+				}
+			}
+			print '<div class="agendadaycolumn" id="daycolumn_'.$dateint.'" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; overflow: hidden;">';
+			print '<div class="agendadaylayer" id="daylayer_'.$dateint.'" style="position: absolute; left: 0; right: 0; top: -'.($begin_h * 60).'px; height: 1440px;">';
+			foreach ($weekhourlybuckets[$iter_day] as $slotkey => $slotevents) {
+				if ($slotkey === 'allday') {
+					continue;
+				}
+				foreach ($slotevents as $eventhtml) {
+					print $eventhtml;
+				}
+			}
+			print '</div>';
+			print '</div>';
+			print '</div>';
+			echo "  </td>\n";
+		}
+		echo " </tr>\n";
+	}
 
 	print "</table>\n";
 	print '</div>';
