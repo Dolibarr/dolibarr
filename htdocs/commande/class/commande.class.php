@@ -1186,7 +1186,8 @@ class Commande extends CommonOrder
 						$originid,
 						0,
 						$line->ref_ext,
-						1
+						1,
+						(empty($line->ref_customer) ? '' : (string) $line->ref_customer)
 					);
 
 					if ($result < 0) {
@@ -1332,9 +1333,10 @@ class Commande extends CommonOrder
 	 *  @param	    User	$user		    User making the clone
 	 *	@param		int		$socid		    Id of thirdparty
 	 *	@param		int		$forceentity	Entity id to force (used by multicompany to clone into another entity)
+	 *	@param		?bool	$keep_ref_customer	Keep the customer reference. If null, MAIN_KEEP_REF_CUSTOMER_ON_CLONING decides.
 	 *	@return		int					    New id of clone
 	 */
-	public function createFromClone(User $user, $socid = 0, $forceentity = null)
+	public function createFromClone(User $user, $socid = 0, $forceentity = null, $keep_ref_customer = null)
 	{
 		global $hookmanager;
 
@@ -1379,15 +1381,16 @@ class Commande extends CommonOrder
 		$object->date_commande = dol_now();
 		$object->date_creation = '';
 		$object->date_validation = '';
-		if (!getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING')) {
+		if (!($keep_ref_customer ?? getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING'))) {
 			$object->ref_client = '';
 			$object->ref_customer = '';
 		}
 
-		// Do not clone ref_ext
+		// Do not clone ref_ext, nor the reference the customer gave to a line of another order
 		$num = count($object->lines);
 		for ($i = 0; $i < $num; $i++) {
 			$object->lines[$i]->ref_ext = '';
+			$object->lines[$i]->ref_customer = '';
 		}
 
 		// Create clone
@@ -1651,6 +1654,7 @@ class Commande extends CommonOrder
 	 * 	@param		float			$pu_ht_devise		Unit price in currency
 	 * 	@param		string			$ref_ext		    Line external reference
 	 *  @param		int				$noupdateafterinsertline	No update after insert of line
+	 *  @param		string			$ref_customer		Reference the customer gives to the line (line of its purchase order)
 	 *	@return     int             					>0 if OK, <0 if KO
 	 *
 	 *	@see        add_product()
@@ -1659,7 +1663,7 @@ class Commande extends CommonOrder
 	 *  Also, for the VAT rate, it must have already been defined by the caller using the method get_default_tva(societe_vendeuse, societe_acheteuse, produit)
 	 *  and the description (desc) must already have the correct value (it's up to the caller to manage multilanguage)
 	 */
-	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $info_bits = 0, $fk_remise_except = 0, $price_base_type = 'HT', $pu_ttc = 0, $date_start = '', $date_end = '', $type = 0, $rang = -1, $special_code = 0, $fk_parent_line = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $array_options = array(), $fk_unit = null, $origin = '', $origin_id = 0, $pu_ht_devise = 0, $ref_ext = '', $noupdateafterinsertline = 0)
+	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $info_bits = 0, $fk_remise_except = 0, $price_base_type = 'HT', $pu_ttc = 0, $date_start = '', $date_end = '', $type = 0, $rang = -1, $special_code = 0, $fk_parent_line = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $array_options = array(), $fk_unit = null, $origin = '', $origin_id = 0, $pu_ht_devise = 0, $ref_ext = '', $noupdateafterinsertline = 0, $ref_customer = '')
 	{
 		global $mysoc, $langs, $user;
 
@@ -1833,6 +1837,7 @@ class Commande extends CommonOrder
 			$this->line->desc = $desc;
 			$this->line->qty = (float) $qty;
 			$this->line->ref_ext = $ref_ext;
+			$this->line->ref_customer = (string) $ref_customer;
 
 			$this->line->vat_src_code = $vat_src_code;
 			$this->line->tva_tx = $txtva;
@@ -2278,7 +2283,7 @@ class Commande extends CommonOrder
 		// phpcs:enable
 		$this->lines = array();
 
-		$sql = 'SELECT l.rowid, l.fk_product, l.fk_parent_line, l.product_type, l.fk_commande, l.label as custom_label, l.description, l.price, l.qty, l.vat_src_code, l.tva_tx, l.ref_ext,';
+		$sql = 'SELECT l.rowid, l.fk_product, l.fk_parent_line, l.product_type, l.fk_commande, l.label as custom_label, l.description, l.price, l.qty, l.vat_src_code, l.tva_tx, l.ref_ext, l.ref_customer,';
 		$sql .= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.fk_remise_except, l.remise_percent, l.subprice, l.subprice_ttc, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht, l.rang, l.info_bits, l.special_code,';
 		$sql .= ' l.total_ht, l.total_ttc, l.total_tva, l.total_localtax1, l.total_localtax2, l.date_start, l.date_end,';
 		$sql .= ' l.fk_unit, l.extraparams,';
@@ -2316,6 +2321,7 @@ class Commande extends CommonOrder
 				$line->product_type     = $objp->product_type;
 				$line->qty              = $objp->qty;
 				$line->ref_ext          = $objp->ref_ext;
+				$line->ref_customer     = $objp->ref_customer;
 
 				$line->vat_src_code     = $objp->vat_src_code;
 				$line->tva_tx           = $objp->tva_tx;
@@ -3269,9 +3275,10 @@ class Commande extends CommonOrder
 	 * 	@param		int				$notrigger			disable line update trigger
 	 * 	@param		string			$ref_ext			external reference
 	 *	@param		int				$rang				line rank
+	 *	@param		?string			$ref_customer		Reference the customer gives to the line (line of its purchase order), null to keep it
 	 *  @return   	int              					Return integer < 0 if KO, > 0 if OK
 	 */
-	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $price_base_type = 'HT', $info_bits = 0, $date_start = '', $date_end = '', $type = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = array(), $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $ref_ext = '', $rang = 0)
+	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $price_base_type = 'HT', $info_bits = 0, $date_start = '', $date_end = '', $type = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = array(), $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $ref_ext = '', $rang = 0, $ref_customer = null)
 	{
 		global $mysoc, $langs, $user;
 
@@ -3442,6 +3449,9 @@ class Commande extends CommonOrder
 			$this->line->desc = $desc;
 			$this->line->qty = $qty;
 			$this->line->ref_ext = $ref_ext;
+			if ($ref_customer !== null) {
+				$this->line->ref_customer = $ref_customer;
+			}
 
 			$this->line->vat_src_code = $vat_src_code;
 			$this->line->tva_tx         = $txtva;
@@ -4160,7 +4170,7 @@ class Commande extends CommonOrder
 			if ($txttoshow) {
 				$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.dol_string_nohtmltag($txttoshow, 1);
 				$result .= ' <span class="note inline-block">';
-				$result .= '<a href="'.DOL_URL_ROOT.'/commande/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
+				$result .= '<a href="'.DOL_URL_ROOT.'/core/note.php?element=commande&id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
 				$result .= img_picto('', 'note');
 				$result .= '</a>';
 				//$result.=img_picto($langs->trans("ViewNote"),'object_generic');
