@@ -2038,7 +2038,7 @@ function dol_meta_create($object)
 			}
 			$client = $object->thirdparty->name." ".$object->thirdparty->address." ".$object->thirdparty->zip." ".$object->thirdparty->town;
 			$meta = "REFERENCE=\"".$object->ref."\"
-			DATE=\"" . dol_print_date(property_exists($object, 'date') ? $object->date : '', '')."\"
+			DATE=\"" . dol_print_date(property_exists($object, 'date') ? $object->date : '', '')."\"  // @phan-suppress-current-line PhanUndeclaredProperty
 			NB_ITEMS=\"" . $nblines."\"
 			CLIENT=\"" . $client."\"
 			AMOUNT_EXCL_TAX=\"" . $object->total_ht."\"
