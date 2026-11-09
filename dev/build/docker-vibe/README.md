@@ -1,6 +1,6 @@
 # How to run an IA Agent into a container.
 
-## Prepare api key
+## Prepare AI api key
 With the payment mode of Mistral, the credential is stored into the OS system and not into the .vibe/.env directory so is not available into another docker container.
 So you must first get it from your OS system keystore with:
 ````
@@ -16,14 +16,20 @@ and/or for Eurouter
 EUROUTER_API_KEY='<your_api_key>'
 ````
 
-
-So now when running the container, the .vibe/.env file has your paid key that will be used to set the environment variable MISTRAL_API_KEY.
+So now when running the container, the .vibe/.env file has your paid key that will be used to set the local variable MISTRAL_API_KEY.
 
 ## You can add an alias into your /etc/bash.bashrc or ~/.bashrc the line
 ````
 alias vibes='dev/build/docker-vibe/vibes.sh'
 ````
  
+## Prepare GitHub token key
+
+````
+gh auth login -h github.com -p https -w 
+(or for a branch maintener: gh auth login -h github.com -p https -w -s workflow)
+gh auth status
+````
 
 ## Run vibe into a container
 ````
@@ -70,6 +76,20 @@ If the clipboard still does not work:
 - Check that `DISPLAY` is set on the host (`echo $DISPLAY`). On a Wayland session, GNOME runs XWayland, so `DISPLAY` is normally defined and `xclip` works through it.
 - If the copy fails with an authorization error, allow your own user to connect to the X server from the container with `xhost +si:localuser:$(id -un)` on the host (the connections from the container come with your UID).
 - The links can also be opened with Shift+clic: it is then the terminal itself that opens them (OSC 8 hyperlinks), which bypasses the container.
+
+## Voice features (microphone capture and speech playback) work in the container
+
+The voice features of Vibe (see `/voice`) capture the microphone and play the synthesized speech through the Python library `sounddevice`, that needs the PortAudio library (`libportaudio2`, installed into the image) and an audio server to talk to. The container has no sound card, so `vibes.sh` passes it the audio server of the host session, like it does for the graphical session:
+- the socket `XDG_RUNTIME_DIR/pulse/native` of the host is already reachable through the mount of `XDG_RUNTIME_DIR` (see the clipboard section above),
+- the environment variable `PULSE_SERVER` points `sounddevice`/PortAudio at that socket,
+- the PulseAudio cookie of the host (`~/.config/pulse`) is mounted read-only at the same path, so the server accepts the connections coming from the container.
+
+It works out of the box when the container is started with `vibes.sh` from a terminal of the graphical session of the host, with PipeWire (the default of Ubuntu, that provides the same socket as PulseAudio) or PulseAudio. Outside a session with an audio server, nothing is added and Vibe disables its voice features: the warning `sounddevice unavailable, voice disabled` then appears into `~/.vibe/logs/vibe.log` after the container start.
+
+If the voice is still disabled into the container with that warning:
+- Check that the socket exists on the host: `ls $XDG_RUNTIME_DIR/pulse/native`.
+- Check that `PULSE_SERVER` is set into the container: `echo $PULSE_SERVER`.
+- The audio server of the host may have to be authorized to record from the microphone (the recording indicator of GNOME shows it).
 
 ## pre-commit
 The tool `pre-commit` is installed into the image (see https://pre-commit.com).

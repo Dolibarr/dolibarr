@@ -310,6 +310,15 @@ if (empty($reshook)) {
 			$object->calculateCosts();
 		}
 	}
+
+	// Update duration from service lines
+	if ($action == 'updatedurationfromlines' && $permissiontoadd) {
+		$result = $object->updateDuration($user, true);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+		$action = '';
+	}
 }
 
 

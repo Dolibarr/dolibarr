@@ -200,6 +200,28 @@ ALTER TABLE llx_receptiondet_batch ADD COLUMN ref_fourn varchar(128) NULL AFTER 
 -- VPGSQL ALTER TABLE llx_bookcal_availabilities RENAME COLUMN start TO date_start;
 -- VPGSQL ALTER TABLE llx_bookcal_availabilities RENAME COLUMN "end" TO date_end;
 
+-- ExpenseReport: rename date_create into date_creation to align with the Dolibarr naming convention
+ALTER TABLE llx_expensereport CHANGE COLUMN date_create date_creation datetime NOT NULL;
+
+-- ElementContact: rename datecreate into date_creation to align with the Dolibarr naming convention
+ALTER TABLE llx_element_contact CHANGE COLUMN datecreate date_creation datetime NULL;
+
+-- Mailing: rename date_creat into date_creation to align with the Dolibarr naming convention
+ALTER TABLE llx_mailing CHANGE COLUMN date_creat date_creation datetime;
+ALTER TABLE llx_mailing_unsubscribe CHANGE COLUMN date_creat date_creation datetime;
+
+-- ECM: rename date_c into date_creation to align with the Dolibarr naming convention
+ALTER TABLE llx_ecm_directories CHANGE COLUMN date_c date_creation datetime;
+ALTER TABLE llx_ecm_files CHANGE COLUMN date_c date_creation datetime;
+
+-- Multicurrency: rename date_create into date_creation to align with the Dolibarr naming convention
+ALTER TABLE llx_multicurrency CHANGE COLUMN date_create date_creation datetime DEFAULT NULL;
+
+-- Holiday: rename date_create into date_creation to align with the Dolibarr naming convention
+ALTER TABLE llx_holiday CHANGE COLUMN date_create date_creation datetime NOT NULL;
+ALTER TABLE llx_holiday DROP INDEX idx_holiday_date_create;
+ALTER TABLE llx_holiday ADD INDEX idx_holiday_date_creation (date_creation);
+
 -- Inventory: add last_main_doc used to save the relative path of last generated main document
 ALTER TABLE llx_inventory ADD COLUMN last_main_doc varchar(255) DEFAULT NULL AFTER date_validation;
 
@@ -515,6 +537,11 @@ UPDATE llx_c_action_trigger SET elementtype = 'holiday', label = 'Holiday approv
 -- Same values as in data/llx_c_action_trigger.sql.
 UPDATE llx_c_action_trigger SET code = 'BILL_SUPPLIER_CANCEL' WHERE code = 'BILL_SUPPLIER_CANCELED';
 
+-- On PostgreSQL, repair rowid of llx_c_type_contact that was not set as auto-incremented by migration 20
+-- VPGSQL8.2 CREATE SEQUENCE IF NOT EXISTS llx_c_type_contact_rowid_seq OWNED BY llx_c_type_contact.rowid;
+-- VPGSQL8.2 ALTER TABLE llx_c_type_contact ALTER COLUMN rowid SET DEFAULT nextval('llx_c_type_contact_rowid_seq');
+-- VPGSQL8.2 SELECT setval('llx_c_type_contact_rowid_seq', MAX(rowid)) FROM llx_c_type_contact;
+
 -- Add type of contacts for stock transfer (module is new in v25). Same values as in data/llx_c_type_contact.sql.
 INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('stocktransfer', 'internal', 'STRESP', 'Responsible for stock transfers', 1);
 INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('stocktransfer', 'external', 'STFROM', 'Contact sending the stock transfer', 1);
@@ -532,6 +559,9 @@ ALTER TABLE llx_bank ADD INDEX idx_bank_fk_account_amount(fk_account, amount);
 -- VMYSQL4.1 DROP INDEX uk_product_attribute_ref ON llx_product_attribute;
 -- VPGSQL8.2 DROP INDEX uk_product_attribute_ref;
 ALTER TABLE llx_product_attribute ADD UNIQUE INDEX uk_product_attribute_ref (ref, entity);
+
+-- Index on the date of modification of thirdparties: the thirdparty area shows the last modified ones
+ALTER TABLE llx_societe ADD INDEX idx_societe_tms(tms);
 
 -- API keys created from the user's token tab were written to the deprecated column token, while
 -- the API authenticates against tokenstring (where the upgrade that moves user api_key values
@@ -607,3 +637,39 @@ ALTER TABLE llx_opensurvey_formquestions ADD COLUMN mandatory TINYINT NOT NULL D
 ALTER TABLE llx_opensurvey_formquestions ADD INDEX idx_opensurvey_formquestions_id_sondage (id_sondage);
 ALTER TABLE llx_opensurvey_user_formanswers ADD UNIQUE INDEX uk_opensurvey_user_formanswers (fk_user_survey, fk_question);
 ALTER TABLE llx_opensurvey_user_formanswers ADD INDEX idx_opensurvey_user_formanswers_fk_question (fk_question);
+
+-- Add the document template of an inventory, so that a generated document can be rebuilt with the same one
+ALTER TABLE llx_inventory ADD COLUMN model_pdf varchar(255) AFTER date_validation;
+
+-- Add the document template of a leave request, so that a generated document can be rebuilt with the same one
+ALTER TABLE llx_holiday ADD COLUMN model_pdf varchar(255) AFTER import_key;
+-- Add the document template of a loan, so that a generated document can be rebuilt with the same one
+ALTER TABLE llx_loan ADD COLUMN model_pdf varchar(255) AFTER fk_user_modif;
+
+-- Reference the customer gives to a line of invoice (the line of its purchase order, sent as BT-132 in an e-invoice)
+ALTER TABLE llx_facturedet ADD COLUMN ref_customer varchar(128) DEFAULT NULL AFTER ref_ext;
+-- Reference the customer gives to a line of order (the line of its purchase order, sent as BT-132 in an e-invoice)
+ALTER TABLE llx_commandedet ADD COLUMN ref_customer varchar(128) DEFAULT NULL AFTER ref_ext;
+
+-- TakePOS: store the order printer of an invoice line into a dedicated field instead of special_code
+ALTER TABLE llx_facturedet ADD COLUMN pos_printer_id integer NULL AFTER fk_warehouse;
+UPDATE llx_facturedet SET pos_printer_id = 1, special_code = 0 WHERE special_code = 4 AND fk_facture IN (SELECT rowid FROM llx_facture WHERE module_source = 'takepos' AND fk_statut = 0);
+UPDATE llx_facturedet SET special_code = 0 WHERE special_code IN (1, 2, 3) AND fk_facture IN (SELECT rowid FROM llx_facture WHERE module_source = 'takepos' AND fk_statut = 0);
+
+-- Bank accounts of users: an empty currency is the company currency, and each user has one default bank account per currency
+UPDATE llx_user_rib SET currency_code = (SELECT __DECRYPT('value')__ FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_MONNAIE' AND entity = llx_user_rib.entity) WHERE currency_code IS NULL OR currency_code = '';
+UPDATE llx_user_rib SET default_rib = 1 WHERE rowid IN (SELECT rowid FROM (SELECT MIN(rowid) as rowid FROM llx_user_rib GROUP BY fk_user, currency_code HAVING MAX(default_rib) = 0) as tmp);
+
+-- Social and fiscal tax types for Australia
+ALTER TABLE llx_c_chargesociales MODIFY COLUMN code varchar(24) NOT NULL;
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2801, 'PAYG withholding (PAYGW)',               0, 1, 'TAXAUPAYGW');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2802, 'PAYG income tax instalment (PAYGI)',     0, 1, 'TAXAUPAYGI');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2803, 'Company income tax',                     0, 1, 'TAXAUCIT');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2804, 'Fringe benefits tax (FBT)',              1, 1, 'TAXAUFBT');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2805, 'Superannuation guarantee contributions', 1, 1, 'TAXAUSUPER');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2806, 'Superannuation guarantee charge (SGC)',  1, 1, 'TAXAUSGC');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2807, 'Payroll tax (state or territory)',       1, 1, 'TAXAUPAYROLL');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2808, 'Workers compensation premium',           1, 1, 'TAXAUWORKCOMP');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2809, 'Land tax (state or territory)',          1, 1, 'TAXAULAND');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2810, 'ATO interest charges (GIC / SIC)',       0, 1, 'TAXAUGIC');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2811, 'Activity statement (BAS / IAS)',         0, 1, 'TAXAUBAS');

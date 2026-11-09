@@ -839,7 +839,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("AUTHOR")." : ".dolGetFirstLastname($userfee->firstname, $userfee->lastname), 0, 'L');
 				$posy = $pdf->GetY() + 1;
 				$pdf->SetXY($posx + 2, $posy);
-				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("DateCreation")." : ".dol_print_date($object->date_create, "day", false, $outputlangs), 0, 'L');
+				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("DateCreation")." : ".dol_print_date($object->date_creation, "day", false, $outputlangs), 0, 'L');
 			}
 
 			if ($object->fk_statut == 99) {
