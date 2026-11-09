@@ -6317,6 +6317,11 @@ class Facture extends CommonInvoice
 				// Load event
 				$res = $tmpinvoice->fetch($obj->id);
 				if ($res > 0) {
+					// No reminder for an invoice with nothing left to pay (an overpaid invoice is not classified paid) or with a dispute open
+					if ($tmpinvoice->getRemainToPay() <= 0 || $tmpinvoice->dispute_status == 1) {
+						continue;
+					}
+
 					$tmpinvoice->fetch_thirdparty();
 
 					$outputlangs = new Translate('', $conf);
@@ -6327,8 +6332,9 @@ class Facture extends CommonInvoice
 						$outputlangs = $langs;
 					}
 
-					// Select email template according to language of recipient
-					$arraymessage = $formmail->getEMailTemplate($this->db, 'facture_send', $user, $outputlangs, (is_numeric($template) ? $template : 0), 1, (is_numeric($template) ? '' : $template));
+					// Select email template according to language of recipient (id -2 returns an error when the label is not found, else a generic text is returned)
+					// EmailTemplateCode is the placeholder of the default parameters of the job: it means no template
+					$arraymessage = $formmail->getEMailTemplate($this->db, 'facture_send', $user, $outputlangs, (is_numeric($template) ? $template : ((empty($template) || $template == 'EmailTemplateCode') ? 0 : -2)), 1, (is_numeric($template) ? '' : $template));
 					if (is_numeric($arraymessage) && $arraymessage <= 0) {
 						$langs->load("errors");
 						if (is_numeric($template)) {
@@ -6349,6 +6355,7 @@ class Facture extends CommonInvoice
 						// Log the error and continue so a single missing translation does
 						// not stop reminders for everyone else (see issue #34656).
 						$errorsMsg[] = $langs->trans('ErrorFailedToFindEmailTemplate', $template).' (invoice '.$tmpinvoice->ref.')';
+						$error++;
 						continue;
 					}
 

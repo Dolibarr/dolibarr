@@ -410,7 +410,7 @@ print '</td>';
 // Module source
 print '<td class="liste_titre">';
 //print $form->multiselectarray('search_module_source', $block_static->trackedmodules, $search_module_source, 0, 0, 'minwidth75 maxwidth200', 1);
-print '<input type="text" class="maxwidth100" name="search_module_source" list="search_module_sources" value="'.dol_escape_htmltag($search_module_source[0]).'">';
+print '<input type="text" class="maxwidth100" name="search_module_source" list="search_module_sources" value="'.dol_escape_htmltag($search_module_source[0] ?? '').'">';
 if (isModEnabled('takepos')) {
 	print '<datalist id="search_module_sources">
 	    <option value="takepos">
@@ -974,6 +974,15 @@ if (is_array($blocks)) {
 			include DOL_DOCUMENT_ROOT.'/blockedlog/admin/lifetimeamount.inc.php';
 			'@phan-var-force array<string,array<string,float>> $totalamountlifetime';
 			'@phan-var-force array<string,array<string,float>> $totalhtamountlifetime';
+			// A source with invoices but no payment yet (or the reverse) has no lifetime entry for the missing code
+			foreach (array('BILL_VALIDATE', 'PAYMENT_CUSTOMER_CREATE', 'PAYMENT_CUSTOMER_DELETE') as $tmpactioncode) {
+				if (empty($totalamountlifetime[$tmpactioncode][$source])) {
+					$totalamountlifetime[$tmpactioncode][$source] = 0;
+				}
+				if (empty($totalhtamountlifetime[$tmpactioncode][$source])) {
+					$totalhtamountlifetime[$tmpactioncode][$source] = 0;
+				}
+			}
 
 			print '<tr class="liste_titre totalblockedlog" style="border-top: 1px solid #222">';
 			print '<td colspan="'.$colspan.'"';

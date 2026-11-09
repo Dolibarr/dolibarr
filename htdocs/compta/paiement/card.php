@@ -134,9 +134,10 @@ if (empty($reshook)) {
 
 		$result = $object->delete($user);
 		if ($result > 0) {
-			$db->commit();
-
-			if ($backtopage) {
+			if (!$db->commit()) {
+				setEventMessages($db->lasterror(), null, 'errors');
+				$db->rollback();
+			} elseif ($backtopage) {
 				header("Location: ".$backtopage);
 				exit;
 			} else {

@@ -156,6 +156,8 @@ class AllTests
 		$suite->addTestSuite('ImagesLibTest');
 		require_once dirname(__FILE__).'/FunctionsLibTest.php';
 		$suite->addTestSuite('FunctionsLibTest');
+		require_once dirname(__FILE__).'/TaxLibTest.php';
+		$suite->addTestSuite('TaxLibTest');
 		require_once dirname(__FILE__).'/Functions2LibTest.php';
 		$suite->addTestSuite('Functions2LibTest');
 		require_once dirname(__FILE__).'/FunctionsBELibTest.php';

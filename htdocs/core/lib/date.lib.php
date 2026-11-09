@@ -822,7 +822,9 @@ function num_public_holiday($timestampStart, $timestampEnd, $countryCodeOrId = '
 		$tmpArrayOfPublicHolidays = array();
 		$sql = "SELECT id, code, entity, fk_country, dayrule, year, month, day, active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_hrm_public_holiday";
-		$sql .= " WHERE active = 1 and fk_country IN (0".($country_id > 0 ? ", ".((int) $country_id) : 0).")";
+		// A public holiday created without a country has fk_country NULL, and NULL never matches an IN list,
+		// so such a holiday was ignored and the day was counted as a working day.
+		$sql .= " WHERE active = 1 and (fk_country IS NULL OR fk_country IN (0".($country_id > 0 ? ", ".((int) $country_id) : 0)."))";
 		$sql .= " AND entity IN (0," .getEntity('holiday') .")";
 
 		$resql = $db->query($sql);
@@ -1088,7 +1090,9 @@ function listPublicHoliday($timestampStart, $timestampEnd, $countryCodeOrId = ''
 		$tmpArrayOfPublicHolidays = array();
 		$sql = "SELECT id, code, entity, fk_country, dayrule, year, month, day, active";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "c_hrm_public_holiday";
-		$sql .= " WHERE active = 1 and fk_country IN (0" . ($country_id > 0 ? ", " . ((int) $country_id) : 0) . ")";
+		// A public holiday created without a country has fk_country NULL, and NULL never matches an IN list,
+		// so such a holiday was missing from the list.
+		$sql .= " WHERE active = 1 and (fk_country IS NULL OR fk_country IN (0" . ($country_id > 0 ? ", " . ((int) $country_id) : 0) . "))";
 		$sql .= " AND entity IN (0," . getEntity('holiday') . ")";
 
 		$resql = $db->query($sql);

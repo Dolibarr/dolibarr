@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Marukome0743
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -361,5 +362,265 @@ class ExpeditionTest extends CommonClassTest
 
 		$pdf = new pdf_espadon($db);
 		$this->assertEquals(array($contact_id), self::callMethod($pdf, 'getIdContactOfShipment', array($shipment, 'external', 'SHIPPING')));
+	}
+
+	/**
+	 * A shipment created by the REST API must expand a kit into its components, like the shipment card does,
+	 * so that the stock consumed on validation is restored on deletion.
+	 *
+	 * @return void
+	 */
+	public function testApiPostExpandsKitAndDeleteRestoresComponentStock()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		// Loading the Restler autoloader unregisters all the other ones, including the one PHPUnit needs: restore them.
+		$autoloaders = spl_autoload_functions();
+		require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
+		spl_autoload_unregister(Luracast\Restler\AutoLoader::instance());
+		foreach ($autoloaders as $autoloader) {
+			spl_autoload_register($autoloader);
+		}
+		require_once DOL_DOCUMENT_ROOT.'/expedition/class/api_shipments.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+
+		$saved = array();
+		foreach (array('PRODUIT_SOUSPRODUITS' => 1, 'STOCK_CALCULATE_ON_SHIPMENT' => 1, 'PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE' => 0, 'STOCK_SUPPORTS_SERVICES' => 0, 'SHIPMENT_SUPPORTS_SERVICES' => 0) as $key => $value) {
+			$saved[$key] = getDolGlobalString($key);
+			$conf->global->$key = $value;
+		}
+
+		try {
+			$suffix = 'ApiKit'.mt_rand(100000, 999999);
+
+			$soc = new Societe($db);
+			$soc->name = 'ExpeditionTest '.$suffix;
+			$socId = $soc->create($user);
+			$this->assertGreaterThan(0, $socId, $soc->errorsToString());
+
+			$warehouse = new Entrepot($db);
+			$warehouse->ref = 'WH'.$suffix;
+			$warehouse->label = 'WH'.$suffix;
+			$warehouse->statut = 1;
+			$warehouseId = $warehouse->create($user);
+			$this->assertGreaterThan(0, $warehouseId, $warehouse->errorsToString());
+
+			$productIds = array();
+			foreach (array('kit' => Product::TYPE_PRODUCT, 'component' => Product::TYPE_PRODUCT, 'service' => Product::TYPE_SERVICE) as $code => $type) {
+				$product = new Product($db);
+				$product->ref = $code.$suffix;
+				$product->label = $code.$suffix;
+				$product->type = $type;
+				$productIds[$code] = $product->create($user);
+				$this->assertGreaterThan(0, $productIds[$code], $product->errorsToString());
+			}
+
+			$kit = new Product($db);
+			$this->assertGreaterThan(0, $kit->add_sousproduit($productIds['kit'], $productIds['component'], 3, 1));
+
+			$movement = new MouvementStock($db);
+			$this->assertGreaterThan(0, $movement->reception($user, $productIds['component'], $warehouseId, 10, 0, 'ExpeditionTest initial stock'));
+			$this->assertEquals(10.0, $this->getRealStock($productIds['component'], $warehouseId));
+
+			$order = new Commande($db);
+			$order->socid = $socId;
+			$order->date = dol_now();
+			$orderId = $order->create($user);
+			$this->assertGreaterThan(0, $orderId, $order->errorsToString());
+			$kitLineId = $order->addline('Kit', 0, 2, 0, 0, 0, $productIds['kit']);
+			$this->assertGreaterThan(0, $kitLineId, $order->errorsToString());
+			$serviceLineId = $order->addline('Service', 0, 1, 0, 0, 0, $productIds['service'], 0, 0, 0, 'HT', 0, '', '', Product::TYPE_SERVICE);
+			$this->assertGreaterThan(0, $serviceLineId, $order->errorsToString());
+
+			DolibarrApiAccess::$user = $user;
+			$api = new Shipments();
+			$shipmentId = $api->post(array(
+				'socid' => $socId,
+				'origin_id' => $orderId,
+				'origin_type' => 'commande',
+				'lines' => array(
+					array('origin_id' => $orderId, 'fk_elementdet' => $kitLineId, 'element_type' => 'commande', 'entrepot_id' => $warehouseId, 'qty' => 2, 'rang' => 1, 'array_options' => null, 'detail_batch' => null),
+					array('origin_id' => $orderId, 'fk_elementdet' => $serviceLineId, 'element_type' => 'commande', 'entrepot_id' => $warehouseId, 'qty' => 1, 'rang' => 2, 'array_options' => null, 'detail_batch' => null),
+				),
+			));
+			$this->assertGreaterThan(0, $shipmentId);
+
+			$lines = array();
+			$resql = $db->query("SELECT rowid, fk_product, fk_parent, fk_entrepot, qty FROM ".$db->prefix()."expeditiondet WHERE fk_expedition = ".((int) $shipmentId)." ORDER BY rowid");
+			$this->assertNotFalse($resql, (string) $db->lasterror());
+			while ($obj = $db->fetch_object($resql)) {
+				$lines[(int) $obj->fk_product] = $obj;
+			}
+			$this->assertCount(3, $lines);
+
+			// The kit is stored without warehouse and its component carries the warehouse, as with the shipment card
+			$this->assertEmpty($lines[$productIds['kit']]->fk_parent);
+			$this->assertEmpty($lines[$productIds['kit']]->fk_entrepot);
+			$this->assertEquals(2.0, (float) $lines[$productIds['kit']]->qty);
+			$this->assertEquals($lines[$productIds['kit']]->rowid, $lines[$productIds['component']]->fk_parent);
+			$this->assertEquals($warehouseId, $lines[$productIds['component']]->fk_entrepot);
+			$this->assertEquals(6.0, (float) $lines[$productIds['component']]->qty);
+
+			// A line that is not a kit keeps its warehouse. A service line stays on the shipment as before.
+			$this->assertEmpty($lines[$productIds['service']]->fk_parent);
+			$this->assertEquals($warehouseId, $lines[$productIds['service']]->fk_entrepot);
+
+			$shipment = new Expedition($db);
+			$this->assertGreaterThan(0, $shipment->fetch($shipmentId), $shipment->errorsToString());
+			$this->assertGreaterThan(0, $shipment->valid($user), $shipment->errorsToString());
+			$this->assertEquals(4.0, $this->getRealStock($productIds['component'], $warehouseId));
+
+			$this->assertGreaterThan(0, $shipment->delete($user, 0, true), $shipment->errorsToString());
+			$this->assertEquals(10.0, $this->getRealStock($productIds['component'], $warehouseId));
+		} finally {
+			foreach ($saved as $key => $value) {
+				$conf->global->$key = $value;
+			}
+		}
+	}
+
+	/**
+	 * A kit shipped through POST /orders/{id}/shipment/{warehouse_id} must be stored as the shipment card stores it,
+	 * so that validating then deleting the shipment gives back the stock of its components.
+	 *
+	 * @return void
+	 */
+	public function testApiCreateOrderShipmentExpandsKitAndDeleteRestoresComponentStock()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		// Loading the Restler autoloader unregisters all the other ones, including the one PHPUnit needs: restore them.
+		$autoloaders = spl_autoload_functions();
+		require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
+		spl_autoload_unregister(Luracast\Restler\AutoLoader::instance());
+		foreach ($autoloaders as $autoloader) {
+			spl_autoload_register($autoloader);
+		}
+		require_once DOL_DOCUMENT_ROOT.'/commande/class/api_orders.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+
+		$saved = array();
+		foreach (array('PRODUIT_SOUSPRODUITS' => 1, 'STOCK_CALCULATE_ON_SHIPMENT' => 1, 'PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE' => 0, 'STOCK_SUPPORTS_SERVICES' => 0, 'SHIPMENT_SUPPORTS_SERVICES' => 0) as $key => $value) {
+			$saved[$key] = getDolGlobalString($key);
+			$conf->global->$key = $value;
+		}
+
+		try {
+			$suffix = 'ApiOrderKit'.mt_rand(100000, 999999);
+
+			$soc = new Societe($db);
+			$soc->name = 'ExpeditionTest '.$suffix;
+			$socId = $soc->create($user);
+			$this->assertGreaterThan(0, $socId, $soc->errorsToString());
+
+			$warehouse = new Entrepot($db);
+			$warehouse->ref = 'WH'.$suffix;
+			$warehouse->label = 'WH'.$suffix;
+			$warehouse->statut = 1;
+			$warehouseId = $warehouse->create($user);
+			$this->assertGreaterThan(0, $warehouseId, $warehouse->errorsToString());
+
+			$productIds = array();
+			foreach (array('kit' => Product::TYPE_PRODUCT, 'component' => Product::TYPE_PRODUCT, 'plain' => Product::TYPE_PRODUCT, 'service' => Product::TYPE_SERVICE) as $code => $type) {
+				$product = new Product($db);
+				$product->ref = $code.$suffix;
+				$product->label = $code.$suffix;
+				$product->type = $type;
+				$productIds[$code] = $product->create($user);
+				$this->assertGreaterThan(0, $productIds[$code], $product->errorsToString());
+			}
+
+			$kit = new Product($db);
+			$this->assertGreaterThan(0, $kit->add_sousproduit($productIds['kit'], $productIds['component'], 3, 1));
+
+			$movement = new MouvementStock($db);
+			$this->assertGreaterThan(0, $movement->reception($user, $productIds['component'], $warehouseId, 10, 0, 'ExpeditionTest initial stock'));
+			$this->assertGreaterThan(0, $movement->reception($user, $productIds['plain'], $warehouseId, 10, 0, 'ExpeditionTest initial stock'));
+
+			$order = new Commande($db);
+			$order->socid = $socId;
+			$order->date = dol_now();
+			$orderId = $order->create($user);
+			$this->assertGreaterThan(0, $orderId, $order->errorsToString());
+			$this->assertGreaterThan(0, $order->addline('Kit', 0, 2, 0, 0, 0, $productIds['kit']), $order->errorsToString());
+			$this->assertGreaterThan(0, $order->addline('Plain', 0, 1, 0, 0, 0, $productIds['plain']), $order->errorsToString());
+			$this->assertGreaterThan(0, $order->addline('Service', 0, 1, 0, 0, 0, $productIds['service'], 0, 0, 0, 'HT', 0, '', '', Product::TYPE_SERVICE), $order->errorsToString());
+
+			DolibarrApiAccess::$user = $user;
+			$api = new Orders();
+			$shipmentId = $api->createOrderShipment($orderId, $warehouseId);
+			$this->assertGreaterThan(0, $shipmentId);
+
+			$lines = array();
+			$resql = $db->query("SELECT rowid, fk_product, fk_parent, fk_entrepot, qty FROM ".$db->prefix()."expeditiondet WHERE fk_expedition = ".((int) $shipmentId)." ORDER BY rowid");
+			$this->assertNotFalse($resql, (string) $db->lasterror());
+			while ($obj = $db->fetch_object($resql)) {
+				$lines[(int) $obj->fk_product] = $obj;
+			}
+			$this->assertCount(4, $lines);
+
+			// The kit is stored without warehouse and its component carries the warehouse, as with the shipment card
+			$this->assertEmpty($lines[$productIds['kit']]->fk_parent);
+			$this->assertEmpty($lines[$productIds['kit']]->fk_entrepot);
+			$this->assertEquals(2.0, (float) $lines[$productIds['kit']]->qty);
+			$this->assertEquals($lines[$productIds['kit']]->rowid, $lines[$productIds['component']]->fk_parent);
+			$this->assertEquals($warehouseId, $lines[$productIds['component']]->fk_entrepot);
+			$this->assertEquals(6.0, (float) $lines[$productIds['component']]->qty);
+
+			// The other lines keep their warehouse. A service line stays on the shipment as before.
+			$this->assertEquals($warehouseId, $lines[$productIds['plain']]->fk_entrepot);
+			$this->assertEquals(1.0, (float) $lines[$productIds['plain']]->qty);
+			$this->assertEmpty($lines[$productIds['service']]->fk_parent);
+			$this->assertEquals($warehouseId, $lines[$productIds['service']]->fk_entrepot);
+
+			$shipment = new Expedition($db);
+			$this->assertGreaterThan(0, $shipment->fetch($shipmentId), $shipment->errorsToString());
+			$this->assertGreaterThan(0, $shipment->valid($user), $shipment->errorsToString());
+			$this->assertEquals(4.0, $this->getRealStock($productIds['component'], $warehouseId));
+			$this->assertEquals(9.0, $this->getRealStock($productIds['plain'], $warehouseId));
+
+			$this->assertGreaterThan(0, $shipment->delete($user, 0, true), $shipment->errorsToString());
+			$this->assertEquals(10.0, $this->getRealStock($productIds['component'], $warehouseId));
+			$this->assertEquals(10.0, $this->getRealStock($productIds['plain'], $warehouseId));
+		} finally {
+			foreach ($saved as $key => $value) {
+				$conf->global->$key = $value;
+			}
+		}
+	}
+
+	/**
+	 * Return the real stock of a product in a warehouse
+	 *
+	 * @param	int		$productId		Id of product
+	 * @param	int		$warehouseId	Id of warehouse
+	 * @return	float					Real stock
+	 */
+	private function getRealStock($productId, $warehouseId)
+	{
+		global $db;
+
+		$resql = $db->query("SELECT reel FROM ".$db->prefix()."product_stock WHERE fk_product = ".((int) $productId)." AND fk_entrepot = ".((int) $warehouseId));
+		$this->assertNotFalse($resql, (string) $db->lasterror());
+		$obj = $db->fetch_object($resql);
+
+		return $obj ? (float) $obj->reel : 0.0;
 	}
 }

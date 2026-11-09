@@ -1903,6 +1903,21 @@ if (empty($reshook)) {
 									continue;
 								}
 
+								// Cost price of the line: cost of the source lines with the same vat rate (all lines for a fixed amount), prorated
+								// to the amount of the line, like a down payment from a percent of all lines that keeps the cost price of each line.
+								$totalhtofsource = 0;
+								$totalcostofsource = 0;
+								foreach ((is_array($srcobject->lines) ? $srcobject->lines : array()) as $srcline) {
+									if (empty($srcline->qty) || !empty($srcline->special_code)) {
+										continue;
+									}
+									if (($typeamount == 'amount' && !getDolGlobalString('MAIN_DEPOSIT_MULTI_TVA')) || price2num($srcline->tva_tx) == price2num(preg_replace('/\s*\(.*\)/', '', (string) $tva))) {
+										$totalhtofsource += (float) $srcline->total_ht;
+										$totalcostofsource += (float) $srcline->qty * (float) $srcline->pa_ht;
+									}
+								}
+								$pa_ht = ($totalhtofsource != 0 ? (float) price2num($amount * $totalcostofsource / $totalhtofsource, 'MU') : 0);
+
 								$arraylist = array(
 									'amount' => 'FixAmount',
 									'variable' => 'VarAmount'
@@ -1939,7 +1954,7 @@ if (empty($reshook)) {
 									0,
 									0,
 									0,
-									0,
+									$pa_ht, // pa_ht
 									'',
 									array(), // array_options
 									100,
@@ -3564,21 +3579,26 @@ if (empty($reshook)) {
 		&& ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA || $object->type == Facture::TYPE_SITUATION)) {
 		// add lines from objectlinked
 		$fromElement = GETPOST('fromelement');
-		$fromElementid = GETPOST('fromelementid');
+		$fromElementid = GETPOSTINT('fromelementid');
 		$importLines = GETPOST('line_checkbox');
 
 		if (!empty($importLines) && is_array($importLines) && !empty($fromElement) && ctype_alpha($fromElement) && !empty($fromElementid)) {
 			$lineClassName = '';
+			$lineParentField = '';
 			if ($fromElement == 'commande') {
 				dol_include_once('/'.$fromElement.'/class/'.$fromElement.'.class.php');
 				$lineClassName = 'OrderLine';
+				$lineParentField = 'fk_commande';
 			} elseif ($fromElement == 'propal') {
 				dol_include_once('/comm/'.$fromElement.'/class/'.$fromElement.'.class.php');
 				$lineClassName = 'PropaleLigne';
+				$lineParentField = 'fk_propal';
 			}
 			$nextRang = count($object->lines) + 1;
 			$importCount = 0;
 			$error = 0;
+			// Check user can read the source object (permission, thirdparty and entity)
+			$fromElementAllowed = ($lineParentField && $fromElementid > 0 && restrictedArea($user, $fromElement, $fromElementid, '', '', 'fk_soc', 'rowid', 0, 1));
 			foreach ($importLines as $lineId) {
 				if ($lineClassName === '') {
 					// No class
@@ -3593,7 +3613,7 @@ if (empty($reshook)) {
 
 				$lineId = intval($lineId);
 				$originLine = new $lineClassName($db);
-				if (intval($fromElementid) > 0 && $originLine->fetch($lineId) > 0) {
+				if ($fromElementAllowed && $originLine->fetch($lineId) > 0 && $originLine->$lineParentField == $fromElementid) {
 					$originLine->fetch_optionals();
 					$desc = $originLine->desc;
 					$pu_ht = $originLine->subprice;
