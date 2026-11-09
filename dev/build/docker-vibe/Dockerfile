@@ -7,6 +7,7 @@ RUN apt-get update \
 		bash \
 		bash-completion \
 		ca-certificates \
+        cairosvg \
 		cmake \
 		composer \
         vim \
@@ -23,6 +24,7 @@ RUN apt-get update \
 		iptables \
 		jq \
 		libglib2.0-bin \
+		libportaudio2 \
 		liblzma-dev \
 		libboost-iostreams-dev libboost-filesystem-dev libboost-date-time-dev \
 		libboost-program-options-dev libboost-system-dev \
@@ -47,6 +49,7 @@ RUN apt-get update \
 		python3 \
 		python3-pip \
 		shellcheck \
+		sox \
 		sshpass \
 		sudo \
 		time \

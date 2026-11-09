@@ -1866,7 +1866,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					if (!empty($conf->dol_use_jmobile)) {
 						$widthpopup = 350;
 					}
-					$heightpopup = 400;
+					$heightpopup = 420;
 					print "\n";
 					print '<script type="text/javascript">';
 					print "function CheckVAT(a) {\n";
@@ -2795,7 +2795,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						if (!empty($conf->dol_use_jmobile)) {
 							$widthpopup = 350;
 						}
-						$heightpopup = 400;
+						$heightpopup = 420;
 						print "\n";
 						print '<script type="text/javascript">';
 						print "function CheckVAT(a) {\n";
@@ -3347,7 +3347,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						if (!empty($conf->dol_use_jmobile)) {
 							$widthpopup = 350;
 						}
-						$heightpopup = 400;
+						$heightpopup = 420;
 						print "\n";
 						print '<script type="text/javascript">';
 						print "function CheckVAT(a) {\n";

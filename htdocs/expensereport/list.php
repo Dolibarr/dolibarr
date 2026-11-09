@@ -181,7 +181,7 @@ $arrayfields = array(
 	'd.total_ht' => array('label' => $langs->trans("AmountHT"), 'checked' => '1'),
 	'd.total_vat' => array('label' => $langs->trans("AmountVAT"), 'checked' => '-1'),
 	'd.total_ttc' => array('label' => $langs->trans("AmountTTC"), 'checked' => '1'),
-	'd.date_create' => array('label' => $langs->trans("DateCreation"), 'checked' => '0', 'position' => 500),
+	'd.date_creation' => array('label' => $langs->trans("DateCreation"), 'checked' => '0', 'position' => 500),
 	'd.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => '0', 'position' => 500),
 	'd.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => '1', 'position' => 1000),
 );
@@ -295,7 +295,7 @@ if ($id > 0) {
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = "SELECT d.rowid, d.ref, d.fk_user_author, d.total_ht, d.total_tva, d.total_ttc, d.fk_statut as status,";
-$sql .= " d.date_debut, d.date_fin, d.date_create, d.tms as date_modif, d.date_valid, d.date_approve, d.note_private, d.note_public,";
+$sql .= " d.date_debut, d.date_fin, d.date_creation, d.tms as date_modif, d.date_valid, d.date_approve, d.note_private, d.note_public,";
 $sql .= " u.rowid as id_user, u.firstname, u.lastname, u.login, u.email, u.statut as user_status, u.photo";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -315,8 +315,12 @@ $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as d";
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (d.rowid = ef.fk_object)";
 }
-$sql .= ", ".MAIN_DB_PREFIX."user as u";
-$sql .= " WHERE d.fk_user_author = u.rowid AND d.entity IN (".getEntity('expensereport').")";
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = d.fk_user_author";
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+$sql .= " WHERE d.entity IN (".getEntity('expensereport').")";
 // Search all
 if (!empty($search_all)) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
@@ -696,7 +700,7 @@ $parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Date creation
-if (!empty($arrayfields['d.date_create']['checked'])) {
+if (!empty($arrayfields['d.date_creation']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
@@ -777,8 +781,8 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-if (!empty($arrayfields['d.date_create']['checked'])) {
-	print_liste_field_titre($arrayfields['d.date_create']['label'], $_SERVER["PHP_SELF"], "d.date_create", "", $param, '', $sortfield, $sortorder, 'nowraponall center');
+if (!empty($arrayfields['d.date_creation']['checked'])) {
+	print_liste_field_titre($arrayfields['d.date_creation']['label'], $_SERVER["PHP_SELF"], "d.date_creation", "", $param, '', $sortfield, $sortorder, 'nowraponall center');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['d.tms']['checked'])) {
@@ -829,7 +833,7 @@ if ($num > 0) {
 		$expensereportstatic->status = $obj->status;
 		$expensereportstatic->date_debut = $db->jdate($obj->date_debut);
 		$expensereportstatic->date_fin = $db->jdate($obj->date_fin);
-		$expensereportstatic->date_create = $db->jdate($obj->date_create);
+		$expensereportstatic->date_creation = $db->jdate($obj->date_creation);
 		$expensereportstatic->date_modif = $db->jdate($obj->date_modif);
 		$expensereportstatic->date_valid = $db->jdate($obj->date_valid);
 		$expensereportstatic->date_approve = $db->jdate($obj->date_approve);
@@ -897,7 +901,7 @@ if ($num > 0) {
 				}
 				if (!empty($obj->note_private) || !empty($obj->note_public)) {
 					print ' <span class="note">';
-					print '<a href="'.DOL_URL_ROOT.'/expensereport/note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"), 'object_generic').'</a>';
+					print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/core/note.php', ['element' => 'expensereport', 'id' => $obj->rowid]).'">'.img_picto($langs->trans("ViewPrivateNote"), 'object_generic').'</a>';
 					print '</span>';
 				}
 				$filename = dol_sanitizeFileName($obj->ref);
@@ -1002,9 +1006,9 @@ if ($num > 0) {
 			print $hookmanager->resPrint;
 
 			// Date creation
-			if (!empty($arrayfields['d.date_create']['checked'])) {
+			if (!empty($arrayfields['d.date_creation']['checked'])) {
 				print '<td class="nowrap center">';
-				print dol_print_date($db->jdate($obj->date_create), 'dayhour');
+				print dol_print_date($db->jdate($obj->date_creation), 'dayhour');
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

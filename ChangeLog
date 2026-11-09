@@ -22,6 +22,11 @@ The following changes may create regressions for some external modules, but were
 * The setup of a dedicated menu manager for smartphones has been removed. Constants MAIN_MENU_SMARTPHONE and MAIN_MENUFRONT_SMARTPHONE
   are no longer used, and the directories 'smartphone' provided by external modules into their menus directory are no longer scanned.
   Menu managers must be provided into the 'standard' directory.
+* The column date_create of llx_expensereport, llx_multicurrency and llx_holiday, datecreate of llx_element_contact, date_c of llx_ecm_directories
+  and llx_ecm_files and date_creat of llx_mailing and llx_mailing_unsubscribe were renamed into date_creation.
+* Old per-module URLs (commande/note.php?id=X, fourn/facture/note.php?facid=X, adherents/note.php?id=X, bom/bom_note.php?id=X, comm/mailing/note.php?id=X, contact/note.php?id=X, product/note.php?id=X,
+  hrm/job_note.php?id=X, user/note.php?id=X, etc. — 41 paths total) 404 after this PR — no redirect is provided. Any external bookmark, saved link, or third-party module linking directly to one of
+  these paths will need updating to core/note.php?element=<key>&id=X. All in-tree references (tab links, tooltip icons, list-view links) were found and updated.
 
 
 ***** ChangeLog for 24.0.3 compared to 24.0.2 *****
