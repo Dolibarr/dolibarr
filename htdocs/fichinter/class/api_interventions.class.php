@@ -472,7 +472,9 @@ class Interventions extends DolibarrApi
 	 * @phan-return array<string,array{code:int,message:string}>
 	 * @phpstan-return array<string,array{code:int,message:string}>
 	 *
-	 * @throws RestException
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		Intervention not found
+	 * @throws	RestException	500		Error when deleting the intervention
 	 */
 	public function delete($id)
 	{
@@ -488,7 +490,7 @@ class Interventions extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (!$this->fichinter->delete(DolibarrApiAccess::$user)) {
+		if ($this->fichinter->delete(DolibarrApiAccess::$user) <= 0) {
 			throw new RestException(500, 'Error when delete intervention : '.$this->fichinter->errorsToString());
 		}
 
@@ -517,7 +519,10 @@ class Interventions extends DolibarrApi
 	 *
 	 * @return	Object
 	 *
-	 * @throws RestException
+	 * @throws	RestException	304		Intervention already validated
+	 * @throws	RestException	403		Access denied or intervention not in draft status
+	 * @throws	RestException	404		Intervention not found
+	 * @throws	RestException	500		Error when validating the intervention
 	 */
 	public function validate($id, $notrigger = 0)
 	{
@@ -535,7 +540,10 @@ class Interventions extends DolibarrApi
 
 		$result = $this->fichinter->setValid(DolibarrApiAccess::$user, $notrigger);
 		if ($result == 0) {
-			throw new RestException(304, 'Error nothing done. May be object is already validated');
+			if ($this->fichinter->status == Fichinter::STATUS_VALIDATED) {
+				throw new RestException(304, 'Error nothing done. May be object is already validated');
+			}
+			throw new RestException(403, 'Intervention not in draft status : '.$this->fichinter->getLibStatut(1));
 		}
 		if ($result < 0) {
 			throw new RestException(500, 'Error when validating Intervention: '.$this->fichinter->errorsToString());
@@ -564,8 +572,10 @@ class Interventions extends DolibarrApi
 	 *
 	 * @return	Object
 	 *
-	 * @throws RestException
-	 *
+	 * @throws	RestException	304		Intervention already closed
+	 * @throws	RestException	403		Access denied or intervention in draft status
+	 * @throws	RestException	404		Intervention not found
+	 * @throws	RestException	500		Error when closing the intervention
 	 */
 	public function close($id, $notrigger = 0)
 	{
@@ -583,7 +593,10 @@ class Interventions extends DolibarrApi
 
 		$result = $this->fichinter->setClose(DolibarrApiAccess::$user, $notrigger);
 		if ($result == 0) {
-			throw new RestException(304, 'Error nothing done. May be object is already closed');
+			if ($this->fichinter->status == Fichinter::STATUS_CLOSED) {
+				throw new RestException(304, 'Error nothing done. May be object is already closed');
+			}
+			throw new RestException(403, 'Intervention in draft status, it must be validated before being closed');
 		}
 		if ($result < 0) {
 			throw new RestException(500, 'Error when closing Intervention: '.$this->fichinter->errorsToString());

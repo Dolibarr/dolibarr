@@ -434,4 +434,194 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 
 		$this->assertLineUnchanged($test, $intervention_id, $line_id);
 	}
+
+	/**
+	 * testRestInterventionDelete
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionDelete()
+	{
+		$test = "Delete an intervention";
+
+		$intervention_id = $this->createIntervention($test);
+		array_unshift($this->objectstodelete, 'interventions/'.$intervention_id);
+
+		$result = $this->getUrl('interventions/'.$intervention_id, $test, 'DELETE');
+		$this->assertEquals(200, $result['content']['success']['code'] ?? null, "$test Delete must succeed");
+		$this->assertEquals('Intervention deleted', $result['content']['success']['message'] ?? null, "$test Delete must succeed");
+
+		// Already deleted, so tearDown must not delete it again
+		$this->objectstodelete = array_values(array_diff($this->objectstodelete, array('interventions/'.$intervention_id)));
+
+		$this->getUrl('interventions/'.$intervention_id, $test, 'GET', null, 404);
+	}
+
+	/**
+	 * testRestInterventionDeleteWithoutPermission
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionDeleteWithoutPermission()
+	{
+		$test = "Delete an intervention without the delete permission";
+
+		$intervention_id = $this->createIntervention($test);
+		array_unshift($this->objectstodelete, 'interventions/'.$intervention_id);
+		// The user can see all third parties, so it has access to the intervention and only the permission can refuse it
+		$api_key = $this->createRestrictedUser($test, array(array('ficheinter', 'lire'), array('ficheinter', 'creer'), array('societe', 'client')));
+
+		$this->getUrl('interventions/'.$intervention_id, $test, 'DELETE', null, 403, $api_key);
+
+		$result = $this->getUrl('interventions/'.$intervention_id, $test, 'GET');
+		$this->assertEquals($intervention_id, $result['content']['id'] ?? null, "$test The intervention must still exist");
+	}
+
+	/**
+	 * testRestInterventionDeleteNotFound
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionDeleteNotFound()
+	{
+		$test = "Delete an intervention that does not exist";
+
+		$this->getUrl('interventions/999999999', $test, 'DELETE', null, 404);
+	}
+
+	/**
+	 * Close an intervention
+	 *
+	 * @param string	$test				Text to be added to output
+	 * @param int		$intervention_id	Id of the intervention
+	 * @return void
+	 */
+	private function closeIntervention($test, $intervention_id)
+	{
+		$this->getUrl('interventions/'.$intervention_id.'/close', $test, 'POST', array("notrigger" => 0));
+
+		$result = $this->getUrl('interventions/'.$intervention_id, $test, 'GET');
+		$this->assertEquals(Fichinter::STATUS_CLOSED, $result['content']['status'] ?? null, "$test Intervention must be closed");
+	}
+
+	/**
+	 * Call the API with POST and check the answer is 304 Not Modified, which has no JSON body
+	 *
+	 * @param string				$endpoint	Endpoint - "interventions/id/close"
+	 * @param string				$test_title	Text to be added to output
+	 * @param array<string,mixed>	$data		Data that will be JSON encoded
+	 * @return void
+	 */
+	private function assertPostNotModified($endpoint, $test_title, $data)
+	{
+		$addheaders = array(
+			'Content-Type: application/json', 'Accept: application/json', "DOLAPIKEY: ".$this->api_key
+		);
+
+		$result = getURLContent($this->api_url.'/'.$endpoint, 'POST', json_encode($data), 1, $addheaders, array('http', 'https'), 2);
+
+		$this->assertEquals(0, $result['curl_error_no'], $test_title." Should not have a curl error");
+		$this->assertEquals(304, $result['http_code'], $test_title." HTTP code must be 304".PHP_EOL.json_encode($result, JSON_PRETTY_PRINT));
+	}
+
+	/**
+	 * testRestInterventionValidateAndClose
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionValidateAndClose()
+	{
+		$test = "Validate then close an intervention";
+
+		list($intervention_id) = $this->createInterventionWithLine($test);
+
+		$result = $this->getUrl('interventions/'.$intervention_id.'/validate', $test, 'POST', array("notrigger" => 0));
+		$this->assertEquals(Fichinter::STATUS_VALIDATED, $result['content']['status'] ?? null, "$test Validate must return the validated intervention");
+		$result = $this->getUrl('interventions/'.$intervention_id, $test, 'GET');
+		$this->assertEquals(Fichinter::STATUS_VALIDATED, $result['content']['status'] ?? null, "$test Intervention must be validated");
+		$this->assertStringNotContainsString('PROV', $result['content']['ref'] ?? 'PROV', "$test Validated intervention must have a definitive ref");
+
+		$result = $this->getUrl('interventions/'.$intervention_id.'/close', $test, 'POST', array("notrigger" => 0));
+		$this->assertEquals(Fichinter::STATUS_CLOSED, $result['content']['status'] ?? null, "$test Close must return the closed intervention");
+		$result = $this->getUrl('interventions/'.$intervention_id, $test, 'GET');
+		$this->assertEquals(Fichinter::STATUS_CLOSED, $result['content']['status'] ?? null, "$test Intervention must be closed");
+	}
+
+	/**
+	 * testRestInterventionValidateAlreadyValidated
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionValidateAlreadyValidated()
+	{
+		$test = "Validate an intervention already validated";
+
+		list($intervention_id) = $this->createInterventionWithLine($test);
+		$this->validateIntervention($test, $intervention_id);
+
+		$this->assertPostNotModified('interventions/'.$intervention_id.'/validate', $test, array("notrigger" => 0));
+
+		$result = $this->getUrl('interventions/'.$intervention_id, $test, 'GET');
+		$this->assertEquals(Fichinter::STATUS_VALIDATED, $result['content']['status'] ?? null, "$test Intervention must stay validated");
+	}
+
+	/**
+	 * testRestInterventionCloseDraft
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionCloseDraft()
+	{
+		$test = "Close a draft intervention";
+
+		list($intervention_id) = $this->createInterventionWithLine($test);
+
+		$result = $this->getUrl('interventions/'.$intervention_id.'/close', $test, 'POST', array("notrigger" => 0), 403);
+		$this->assertStringContainsString('draft status', $result['content']['error']['message'] ?? '', "$test The status must be the reason of the refusal");
+
+		$result = $this->getUrl('interventions/'.$intervention_id, $test, 'GET');
+		$this->assertEquals(Fichinter::STATUS_DRAFT, $result['content']['status'] ?? null, "$test Intervention must stay draft");
+	}
+
+	/**
+	 * testRestInterventionCloseAlreadyClosed
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionCloseAlreadyClosed()
+	{
+		$test = "Close an intervention already closed";
+
+		list($intervention_id) = $this->createInterventionWithLine($test);
+		$this->validateIntervention($test, $intervention_id);
+		$this->closeIntervention($test, $intervention_id);
+
+		$this->assertPostNotModified('interventions/'.$intervention_id.'/close', $test, array("notrigger" => 0));
+
+		$result = $this->getUrl('interventions/'.$intervention_id, $test, 'GET');
+		$this->assertEquals(Fichinter::STATUS_CLOSED, $result['content']['status'] ?? null, "$test Intervention must stay closed");
+	}
+
+	/**
+	 * testRestInterventionValidateClosed
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionValidateClosed()
+	{
+		$test = "Validate a closed intervention";
+
+		list($intervention_id) = $this->createInterventionWithLine($test);
+		$this->validateIntervention($test, $intervention_id);
+		$this->closeIntervention($test, $intervention_id);
+		$result = $this->getUrl('interventions/'.$intervention_id, $test, 'GET');
+		$ref = $result['content']['ref'] ?? null;
+
+		$result = $this->getUrl('interventions/'.$intervention_id.'/validate', $test, 'POST', array("notrigger" => 0), 403);
+		$this->assertStringContainsString('draft status', $result['content']['error']['message'] ?? '', "$test The status must be the reason of the refusal");
+
+		$result = $this->getUrl('interventions/'.$intervention_id, $test, 'GET');
+		$this->assertEquals(Fichinter::STATUS_CLOSED, $result['content']['status'] ?? null, "$test Intervention must stay closed");
+		$this->assertEquals($ref, $result['content']['ref'] ?? null, "$test Ref must not change");
+	}
 }
