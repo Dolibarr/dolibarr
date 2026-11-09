@@ -124,7 +124,7 @@ if (empty($reshook)) {
 	}
 
 	// Action remove group
-	if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontoedit) {
+	if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontodisable) {
 		$object->fetch($id);
 		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
@@ -190,10 +190,10 @@ if (empty($reshook)) {
 			$edituser = new User($db);
 			$edituser->fetch($userid);
 			if ($action == 'adduser') {		// Test on permission already done
-				$result = $edituser->SetInGroup($object->id, $object->entity);
+				$result = $edituser->setInGroup($object->id, $object->entity);
 			}
 			if ($action == 'removeuser') {	// Test on permission already done
-				$result = $edituser->RemoveFromGroup($object->id, $object->entity);
+				$result = $edituser->removeFromGroup($object->id, $object->entity);
 			}
 
 			if ($result > 0) {
@@ -214,9 +214,12 @@ if (empty($reshook)) {
 		$object->oldcopy = clone $object;  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		$object->name = GETPOST("nom", 'alphanohtml');
+
 		$object->note = dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
+		$object->note_private = $object->note;
+
 		$object->color = GETPOST("color", 'alphanohtml');
-		$object->tms = dol_now();
+		$object->date_modification = dol_now();
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');

@@ -44,3 +44,6 @@ markRateShouldBeLesserThan100=Το ποσοστό κέρδους πρέπει ν
 ShowMarginInfos=Δείτε πληροφορίες για τα περιθώρια
 CheckMargins=Λεπτομέρεια περιθωρίων
 MarginPerSaleRepresentativeWarning=Η αναφορά περιθωρίου ανά χρήστη χρησιμοποιεί τη σχέση μεταξύ τρίτων μερών και αντιπροσώπων πωλήσεων για να υπολογίσει το περιθώριο κάθε αντιπροσώπου πωλήσεων. Επειδή ορισμένα τρίτα μέρη ενδέχεται να μην έχουν εξειδικευμένο αντιπρόσωπο πώλησης και ορισμένα τρίτα μέρη ενδέχεται να συνδέονται με πολλούς αντιπρόσωπους, ορισμένα ποσά ενδέχεται να μην περιλαμβάνονται στην έκθεση (εάν δεν υπάρχει αντιπρόσωπος πώλησης) και μερικά ενδέχεται να εμφανίζονται σε διαφορετικές γραμμές (για κάθε αντιπρόσωπο πώλησης) .
+MarginUpdateLinkedBuyingPrice=Suggest to propagate the cost price modified on a line to all the lines of the linked proposals, orders and invoices that has the same product (users will decide yes or no at eachmodification)
+UpdateLinkedBuyingPrice=Update the cost price on all lines (with the same product) of the linked documents
+UpdateLinkedBuyingPriceQuestion=The cost price of this line has changed. Apply it to the lines of the linked documents that has the same product ?

@@ -205,7 +205,7 @@ if ($reshook < 0) {
 	llxFooterVierge();
 } elseif (empty($reshook)) {
 	// Check exportkey
-	if (!GETPOST("exportkey") || getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY') != GETPOST("exportkey")) {
+	if (!GETPOST("exportkey") || !hash_equals(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY'), (string) GETPOST("exportkey"))) {
 		$user->loadRights();
 
 		top_httphead();
@@ -340,7 +340,8 @@ if ($format == 'ical' || $format == 'vcal') {
 		$outputfile = $conf->agenda->dir_temp.'/'.$filename;
 		$result = readfile($outputfile);
 		if (!$result) {
-			print 'File '.$outputfile.' was empty.';
+			dol_syslog("File ".$outputfile." was empty", LOG_WARNING);	// The path of the file is not shown on this public page
+			print 'File was empty.';
 		}
 
 		//header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
@@ -394,7 +395,8 @@ if ($format == 'rss') {
 		$outputfile = $conf->agenda->dir_temp.'/'.$filename;
 		$result = readfile($outputfile);
 		if (!$result) {
-			print 'File '.$outputfile.' was empty.';
+			dol_syslog("File ".$outputfile." was empty", LOG_WARNING);	// The path of the file is not shown on this public page
+			print 'File was empty.';
 		}
 
 		// header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));

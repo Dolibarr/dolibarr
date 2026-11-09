@@ -55,7 +55,7 @@ require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
 require_once DOL_DOCUMENT_ROOT."/user/class/user.class.php";
 require_once DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php";
 
-$langs->loadLangs(array("main", "errors"));
+$langs->loadLangs(array("main"));
 
 // Global variables
 $version = DOL_VERSION;
@@ -252,6 +252,7 @@ if ($result >= 0) {
 		}
 
 		if (!$error || $forcecommit) {
+			$langs->load('errors');
 			if (!$error) {
 				print $langs->transnoentities("NoErrorCommitIsDone")."\n";
 			} else {

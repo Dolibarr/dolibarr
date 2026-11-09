@@ -100,6 +100,7 @@ $ref = GETPOST('ref', 'alpha');
 $socid = GETPOSTINT('socid');
 
 $userid = GETPOSTINT('userid');
+$search_id = GETPOST('search_id', 'alpha');
 $search_ref = GETPOST('sf_ref') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
 $search_refcustomer = GETPOST('search_refcustomer', 'alpha');
 $search_type = GETPOST('search_type', 'intcomma');
@@ -229,7 +230,7 @@ if (!$sortfield) {
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$diroutputmassaction = $conf->invoice->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = isModEnabled('invoice') ? $conf->invoice->dir_output.'/temp/massgeneration/'.$user->id : '';
 
 $now = dol_now();
 $error = 0;
@@ -265,6 +266,7 @@ $showpos = (isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalI
 
 $checkedtypetiers = '0';
 $arrayfields = array(
+	'f.rowid' => array('label' => "TechnicalID", 'checked' => (getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? '1' : '-1'), 'enabled' => '1', 'position' => 1),
 	'f.ref' => array('label' => "Ref", 'checked' => '1', 'position' => 5),
 	'f.ref_client' => array('label' => "RefCustomer", 'checked' => '-1', 'position' => 10),
 	'f.type' => array('label' => "Type", 'checked' => '0', 'position' => 15),
@@ -323,7 +325,9 @@ $arrayfields = array(
 	'f.dispute_status' => array('label' => "DisputeStatus", 'checked' => '-1', 'position' => 999),
 	'f.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
 );
-
+if ($user->socid) {
+	unset($arrayfields['f.note_private']);
+}
 if (getDolGlobalString("INVOICE_USE_SITUATION") && getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 	$arrayfields['f.retained_warranty'] = array('label' => $langs->trans("RetainedWarranty"), 'checked' => '0', 'position' => 86);
 }
@@ -423,6 +427,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_sale = '';
 	$search_product_category = '';
 	$searchCategoryInvoiceList = array();
+	$search_id = '';
 	$search_ref = '';
 	$search_refcustomer = '';
 	$search_type = '';
@@ -764,6 +769,7 @@ $formother = new FormOther($db);
 $formfile = new FormFile($db);
 $formmargin = new FormMargin($db);
 $facturestatic = new Facture($db);
+$facrecstatic = new FactureRec($db);
 $accountstatic = new Account($db);
 $formcompany = new FormCompany($db);
 $companystatic = new Societe($db);
@@ -808,6 +814,9 @@ $sql .= ' typent.code as typent_code,';
 $sql .= ' state.code_departement as state_code, state.nom as state_name,';
 $sql .= ' country.code as country_code,';
 $sql .= ' f.fk_fac_rec_source,';
+if (!empty($arrayfields['f.fk_fac_rec_source']['checked'])) {
+	$sql .= ' facrec.rowid as facrec_id, facrec.titre as facrec_title,';
+}
 $sql .= ' p.rowid as project_id, p.ref as project_ref, p.title as project_label,';
 $sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender';
 // We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0).
@@ -854,7 +863,8 @@ if ($sortfield == "f.datef") {
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (f.rowid = ef.fk_object)";
 }
-if (!empty($search_fac_rec_source_title)) {
+// 1:1 join on facture_rec.rowid. A deleted template leaves facrec columns NULL.
+if (!empty($arrayfields['f.fk_fac_rec_source']['checked']) || !empty($search_fac_rec_source_title) || strpos((string) $sortfield, 'facrec.') !== false) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_rec as facrec ON f.fk_fac_rec_source = facrec.rowid';
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = f.fk_projet";
@@ -876,6 +886,9 @@ if ($userid) {
 	} else {
 		$sql .= ' AND f.fk_user_author = '.((int) $userid);
 	}
+}
+if ($search_id != '') {
+	$sql .= natural_search('f.rowid', $search_id, 1);
 }
 if ($search_ref) {
 	$sql .= natural_search('f.ref', $search_ref);
@@ -1348,8 +1361,25 @@ if ($search_datelimit_endmonth) {
 if ($search_datelimit_endyear) {
 	$param .= '&search_datelimit_endyear='.urlencode((string) ($search_datelimit_endyear));
 }
+// The 4 date filters above are read by GETPOSTDATE from their day/month/year/hour/min parts, so the parts are what must be kept
+foreach (array('search_datec_start', 'search_datec_end', 'search_datem_start', 'search_datem_end') as $tmpprefix) {
+	foreach (array('day', 'month', 'year', 'hour', 'min') as $tmpsuffix) {
+		if (GETPOSTISSET($tmpprefix.$tmpsuffix)) {
+			$param .= '&'.$tmpprefix.$tmpsuffix.'='.urlencode((string) GETPOSTINT($tmpprefix.$tmpsuffix));
+		}
+	}
+}
+if ($search_id != '') {
+	$param .= '&search_id='.urlencode($search_id);
+}
 if ($search_ref) {
 	$param .= '&search_ref='.urlencode($search_ref);
+}
+if ($search_note_private) {
+	$param .= '&search_note_private='.urlencode($search_note_private);
+}
+if ($search_note_public) {
+	$param .= '&search_note_public='.urlencode($search_note_public);
 }
 if ($search_refcustomer) {
 	$param .= '&search_refcustomer='.urlencode($search_refcustomer);
@@ -1380,6 +1410,9 @@ if ($search_town) {
 }
 if ($search_zip) {
 	$param .= '&search_zip='.urlencode($search_zip);
+}
+if ($search_state) {
+	$param .= '&search_state='.urlencode($search_state);
 }
 if ($search_country) {
 	$param .= "&search_country=".urlencode($search_country);
@@ -1627,7 +1660,7 @@ if (isModEnabled('category') && $user->hasRight("categorie", "lire")) {
 }
 // alert on due date
 $moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= '<label for="search_option">'.$langs->trans('Alert').' </label><input type="checkbox" name="search_option" id="search_option" value="late"'.($search_option == 'late' ? ' checked' : '').'>';
+$moreforfilter .= '<label for="search_option" class="opacitymedium valignmiddle">'.$langs->trans('Alert').' </label><input type="checkbox" name="search_option" id="search_option" class="opacitymedium valignmiddle" value="late"'.($search_option == 'late' ? ' checked' : '').'>';
 $moreforfilter .= '</div>';
 
 $parameters = array();
@@ -1670,6 +1703,12 @@ if ($conf->main_checkbox_left_column) {
 
 if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 	print '<td class="liste_titre">';
+	print '</td>';
+}
+// Technical ID
+if (!empty($arrayfields['f.rowid']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 // Ref
@@ -2040,6 +2079,10 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 	print_liste_field_titre('#', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['f.rowid']['checked'])) {
+	print_liste_field_titre($arrayfields['f.rowid']['label'], $_SERVER['PHP_SELF'], 'f.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['f.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['f.ref']['label'], $_SERVER['PHP_SELF'], 'f.ref', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
@@ -2379,15 +2422,20 @@ if ($num > 0) {
 		$projectstatic->ref = $obj->project_ref;
 		$projectstatic->title = $obj->project_label;
 
-		$paiement = $facturestatic->getSommePaiement();
-		$totalcreditnotes = $facturestatic->getSumCreditNotesUsed();
-		$totaldeposits = $facturestatic->getSumDepositsUsed();
+		// Get amounts in main currency and in foreign currency with one call for each
+		$tmppaiement = $facturestatic->getSommePaiement(-1);
+		$tmpcreditnotes = $facturestatic->getSumCreditNotesUsed(-1);
+		$tmpdeposits = $facturestatic->getSumDepositsUsed(-1);
+
+		$paiement = is_array($tmppaiement) ? $tmppaiement['alreadypaid'] : 0;
+		$totalcreditnotes = is_array($tmpcreditnotes) ? $tmpcreditnotes['totalcreditnotes'] : 0;
+		$totaldeposits = is_array($tmpdeposits) ? $tmpdeposits['totaldeposits'] : 0;
 		$totalallpayments = $paiement + $totalcreditnotes + $totaldeposits;
 		$remaintopay = $obj->total_ttc - $totalallpayments;
 
-		$multicurrency_paiement = $facturestatic->getSommePaiement(1);
-		$multicurrency_totalcreditnotes = $facturestatic->getSumCreditNotesUsed(1);
-		$multicurrency_totaldeposits = $facturestatic->getSumDepositsUsed(1);
+		$multicurrency_paiement = is_array($tmppaiement) ? $tmppaiement['alreadypaid_multicurrency'] : 0;
+		$multicurrency_totalcreditnotes = is_array($tmpcreditnotes) ? $tmpcreditnotes['totalcreditnotes_multicurrency'] : 0;
+		$multicurrency_totaldeposits = is_array($tmpdeposits) ? $tmpdeposits['totaldeposits_multicurrency'] : 0;
 
 		$totalallpayments = $paiement + $totalcreditnotes + $totaldeposits;
 		$remaintopay = price2num($facturestatic->total_ttc - $totalallpayments);
@@ -2476,6 +2524,14 @@ if ($num > 0) {
 			// No
 			if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 				print '<td>'.(($offset * $limit) + $i).'</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+
+			// Technical ID
+			if (!empty($arrayfields['f.rowid']['checked'])) {
+				print '<td class="center" data-key="id">'.((int) $obj->id).'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -2581,7 +2637,7 @@ if ($num > 0) {
 
 			// Project ref
 			if (!empty($arrayfields['p.ref']['checked'])) {
-				print '<td class="nocellnopadd nowraponall">';
+				print '<td class="tdoverflowmax150">';
 				if ($obj->project_id > 0) {
 					print $projectstatic->getNomUrl(1);
 				}
@@ -2593,9 +2649,9 @@ if ($num > 0) {
 
 			// Project label
 			if (!empty($arrayfields['p.title']['checked'])) {
-				print '<td class="nowraponall">';
+				print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($projectstatic->title).'">';
 				if ($obj->project_id > 0) {
-					print dol_escape_htmltag($projectstatic->title);
+					print '<span class="spantitle">'.dol_escape_htmltag($projectstatic->title).'</span>';
 				}
 				print '</td>';
 				if (!$i) {
@@ -2619,7 +2675,7 @@ if ($num > 0) {
 			// Alias name
 			if (!empty($arrayfields['s.name_alias']['checked'])) {
 				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->name_alias).'">';
-				print dol_escape_htmltag($companystatic->name_alias);
+				print '<span class="spantitle">'.dol_escape_htmltag($companystatic->name_alias).'</span>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -3121,12 +3177,13 @@ if ($num > 0) {
 			if (!empty($arrayfields['f.fk_fac_rec_source']['checked'])) {
 				print '<td class="center">';
 				if (!empty($obj->fk_fac_rec_source)) {
-					$facrec = new FactureRec($db);
-					$result = $facrec->fetch($obj->fk_fac_rec_source);
-					if ($result < 0) {
-						setEventMessages($facrec->error, $facrec->errors, 'errors');
+					if (!empty($obj->facrec_id)) {
+						$facrecstatic->id = $obj->facrec_id;
+						$facrecstatic->ref = $obj->facrec_title;
+						$facrecstatic->title = $obj->facrec_title;
+						print $facrecstatic->getNomUrl();
 					} else {
-						print $facrec->getNomUrl();
+						print '<span class="opacitymedium">'.$langs->trans('ObjectDeleted').'</span>';
 					}
 				}
 				print '</td>';
@@ -3176,6 +3233,12 @@ if ($num > 0) {
 						$selected = 1;
 					}
 					print '<input id="cb'.$obj->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id.'"'.($selected ? ' checked="checked"' : '').'>';
+				}
+				if ($contextpage == 'poslist') {
+					// Button to preview the full ticket detail in a colorbox without leaving the history list
+					print '<a href="#" onclick="parent.$.colorbox({href: \''.DOL_URL_ROOT.'/takepos/receipt.php?facid='.$obj->id.'&token='.newToken().'\', width: \'40%\', height: \'90%\', transition: \'none\', iframe: \'true\', title: \''.dol_escape_js($langs->trans('TakeposTicketDetail')).'\'}); return false;" class="butActionSmall" title="'.dol_escape_htmltag($langs->trans('TakeposTicketDetail')).'">'
+						. img_picto($langs->trans('TakeposTicketDetail'), 'search')
+						. '</a>';
 				}
 				print '</td>';
 				if (!$i) {

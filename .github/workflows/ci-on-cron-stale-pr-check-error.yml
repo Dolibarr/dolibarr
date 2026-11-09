@@ -21,9 +21,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
         run: |
-          ONE_YEAR_AGO=$(date -d "6 months ago" --iso-8601=seconds)
+          FOUR_MONTHS_AGO=$(date -d "4 months ago" --iso-8601=seconds)
 
-          echo "Looking for PRs created before: $ONE_YEAR_AGO"
+          echo "Looking for open PRs not updated since: $FOUR_MONTHS_AGO"
 
           CLOSED_COUNT=0
           MAX_CLOSED=20
@@ -33,7 +33,7 @@ jobs:
             --state open \
             --limit 1000 \
             --json number,title,createdAt,updatedAt \
-            --jq '.[] | select(.updatedAt < "'"$ONE_YEAR_AGO"'")' |
+            --jq '.[] | select(.updatedAt < "'"$FOUR_MONTHS_AGO"'")' |
           while IFS= read -r PR; do
 
             PR_NUMBER=$(echo "$PR" | jq -r '.number')
@@ -72,7 +72,7 @@ jobs:
 
               echo "Closing PR #$PR_NUMBER"
 
-              COMMENT=$(printf 'This PR has been closed automatically because it is older than 6 months, and at least one CI check is still in failure.\nChecks with error : 🚫 %s\n\nYou can try to resubmit it if you think the trouble has been fixed.' "$FAILED_NAMES")
+              COMMENT=$(printf 'This PR has been closed automatically because it has not been updated for more than 4 months, and at least one CI check is still in failure.\nChecks with error : 🚫 %s\n\nYou can try to resubmit it if you think the trouble has been fixed.' "$FAILED_NAMES")
 
               gh pr close "$PR_NUMBER" \
                 --repo "$REPO" \

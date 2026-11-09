@@ -239,21 +239,51 @@ class Salary extends CommonObject
 			return 0;
 		}
 
+		// A template chosen in the list comes as "modelname:/path/to/template.odt"
+		$srctemplatepath = '';
+		$tmp = explode(':', $model, 2);
+		if (!empty($tmp[1])) {
+			$model = $tmp[0];
+			$srctemplatepath = $tmp[1];
+		}
+
+		// Search the file of the template, under the core and under the modules that provide some.
+		// Both prefixes are tried: a model built on a template file is a doc_, not a pdf_.
 		$modelpath = 'core/modules/salaries/doc/';
-		$modelfile = $modelpath."pdf_".$model.".modules.php";
+		$modelbasename = preg_replace('/^(doc|pdf)_/', '', $model);
+		$modelfile = '';
+		$classname = '';
+		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+		foreach ($dirmodels as $reldir) {
+			foreach (array('doc', 'pdf') as $prefix) {
+				$tmpfile = dol_buildpath($reldir.$modelpath.$prefix."_".$modelbasename.".modules.php", 0);
+				if (file_exists($tmpfile)) {
+					$modelfile = $tmpfile;
+					$classname = $prefix.'_'.$modelbasename;
+					break 2;
+				}
+			}
+		}
 
-		// Check if model file exists
-		if (file_exists(DOL_DOCUMENT_ROOT.'/'.$modelfile)) {
-			require_once DOL_DOCUMENT_ROOT.'/'.$modelfile;
+		if ($modelfile !== '') {
+			require_once $modelfile;
 
-			$classname = 'pdf_'.$model;
 			if (class_exists($classname)) {
 				$module = new $classname($this->db);
 
-				// Generate the PDF
+				// Generate the document
 				/** @phan-suppress-next-line PhanPluginUnknownObjectMethodCall */
-				$result = $module->writeFile($this, $outputlangs);
+				$result = $module->writeFile($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref);
 				if ($result > 0) {
+					// Index file in database, as commonGenerateDocument() does
+					if (!empty($module->result['fullpath'])) {
+						if (dol_is_file($module->result['fullpath'])) {
+							$this->indexFile($module->result['fullpath'], (empty($module->update_main_doc_field) ? 0 : 1));
+						}
+					} else {
+						dol_syslog('Method ->writeFile was called on object '.get_class($module).' and return a success but the return array ->result["fullpath"] was not set.', LOG_WARNING);
+					}
+
 					return 1;
 				} else {
 					$this->error = $module->error;
@@ -266,6 +296,7 @@ class Salary extends CommonObject
 				return 0;
 			}
 		} else {
+			$langs->load("errors");
 			$this->error = $langs->trans("ErrorModuleNotFound", $model);
 			$this->errors[] = $this->error;
 			return 0;

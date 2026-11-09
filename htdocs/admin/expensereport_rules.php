@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_rule.class.ph
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "other", "trips", "errors", "dict"));
+$langs->loadLangs(array("admin", "other", "trips", "dict"));
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('admin', 'dictionaryadmin','expensereport_rules'));

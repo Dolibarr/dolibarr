@@ -193,6 +193,12 @@ foreach ($object->fields as $key => $val) {
 		);
 	}
 }
+// Definition of array of fields with hardcoded columns
+/*
+$arrayfields = array_merge($arrayfields, array(
+	't.anotherfield' => array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>'1', 'enabled'=>'1', 'position'=>'90', 'csslist'=>'right'),
+));
+*/
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -228,10 +234,12 @@ if ($enablepermissioncheck) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
+// BEGIN MODULEBUILDER ACCESSPOLICY
 //if ($user->socid > 0) accessforbidden();
 //$socid = 0; if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->module, 0, $object->table_element, $object->element, 'fk_soc', 'rowid', $isdraft);
+// END MODULEBUILDER ACCESSPOLICY
 if (!isModEnabled("mymodule")) {
 	accessforbidden('Module mymodule not enabled');
 }

@@ -83,6 +83,12 @@ class pdf_eratosthene extends ModelePDFCommandes
 	public $version = 'dolibarr';
 
 	/**
+	 * @var int		Position
+	 */
+	public $position = 50;
+
+
+	/**
 	 * @var array<string,array{rank:int,width:float|int|false,status:bool|int<0,1>,border-left?:bool,title:array{textkey:string,label?:string,align?:string,padding?:array{0:float|int,1:float|int,2:float|int,3:float|int}},content?:array{align?:string,padding?:array{0:float|int,1:float|int,2:float|int,3:float|int}}}>	Array of document table columns
 	 */
 	public $cols;
@@ -564,6 +570,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 				$pdf_sub_options = array();
 				$pdf_sub_options['titleshowuponpdf'] = 1;
 				$pdf_sub_options['titleshowtotalexludingvatonpdf'] = 1;
+				$pdf_sub_options_before_title = array();	// Options in use before each title line, by level
 
 				$hidenextline = 0;
 
@@ -575,6 +582,10 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 					if ($object->lines[$i]->special_code == SUBTOTALS_SPECIAL_CODE) {
 						$level = $object->lines[$i]->qty;
+						// Keep the options in use before a title line, to restore them after the subtotal line that closes its block
+						if ($level > 0 && !isset($pdf_sub_options_before_title[(int) $level])) {
+							$pdf_sub_options_before_title[(int) $level] = $pdf_sub_options;
+						}
 						if ($sub_options) {
 							$hidenextline = 0;
 							if (isset($sub_options['titleshowuponpdf'])) {
@@ -593,6 +604,15 @@ class pdf_eratosthene extends ModelePDFCommandes
 							}
 							if (isset($pdf_sub_options['titleshowtotalexludingvatonpdf']) && abs($level) <= $pdf_sub_options['titleshowtotalexludingvatonpdf']) {
 								unset($pdf_sub_options['titleshowtotalexludingvatonpdf']);
+							}
+						}
+						// A subtotal line closes the block of the title line of same level: the next lines get back the options in use before this title line
+						if ($level < 0 && isset($pdf_sub_options_before_title[(int) abs($level)])) {
+							$pdf_sub_options = $pdf_sub_options_before_title[(int) abs($level)];
+							foreach (array_keys($pdf_sub_options_before_title) as $tmplevel) {
+								if ($tmplevel >= abs($level)) {
+									unset($pdf_sub_options_before_title[$tmplevel]);
+								}
 							}
 						}
 					}
@@ -937,7 +957,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 				// Add terms to sale
 				$termsofsalefilename = getDolGlobalString('MAIN_INFO_ORDER_TERMSOFSALE');
-				if (getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_ORDER') && $termsofsalefilename) {
+				if ($this->mustAddTermsOfSale($object, 'ORDER') && $termsofsalefilename) {
 					$termsofsale = $conf->order->dir_output.'/'.$termsofsalefilename;
 					if (!empty($conf->order->multidir_output[$conf->entity])) {
 						$termsofsale = $conf->order->multidir_output[$conf->entity].'/'.$termsofsalefilename;
@@ -1275,7 +1295,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalHT") : ''), 0, 'L', true);
 		$total_ht = ((isModEnabled("multicurrency") && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ht : $object->total_ht);
 		$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-		$pdf->MultiCell($largcol2, $tab2_hl, price($total_ht + (!empty($object->remise) ? $object->remise : 0), 0, $outputlangs), 0, 'R', true);
+		$pdf->MultiCell($largcol2, $tab2_hl, price($total_ht, 0, $outputlangs), 0, 'R', true);
 
 		// Show VAT by rates and total
 		$pdf->SetFillColor(248, 248, 248);

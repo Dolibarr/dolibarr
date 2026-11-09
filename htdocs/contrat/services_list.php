@@ -47,6 +47,7 @@ require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
 $langs->loadLangs(array('products', 'contracts', 'companies'));
 
 // Get parameters
+$action ='';
 $massaction = GETPOST('massaction', 'alpha');
 $toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
@@ -72,7 +73,7 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
-$search_id = trim(GETPOST("search_id", "int"));
+$search_id = trim(GETPOST("search_id", 'alpha'));	// Can contains a numeric test like ">10" or "!= 34"
 $search_contract_id = trim(GETPOST("search_contract_id", "int"));
 $search_name = GETPOST("search_name", 'alpha');
 $search_subprice = GETPOST("search_subprice", 'alpha');
@@ -346,7 +347,7 @@ if ($search_status == "4&filter=notexpired" || ($search_status == '4' && $filter
 if ($search_status == "5") {
 	$sql .= " AND cd.statut = 5";
 }
-if ($search_id > 0) {
+if ($search_id != '') {
 	$sql .= natural_search("cd.rowid", $search_id, 1);
 }
 if ($search_contract_id > 0) {
@@ -515,7 +516,7 @@ if ($search_all != '') {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
-if ($search_id > 0) {
+if ($search_id != '') {
 	$param .= '&search_id='.urlencode($search_id);
 }
 if ($search_contract_id > 0) {
@@ -677,8 +678,8 @@ if ($conf->main_checkbox_left_column) {
 	print '</td>';
 }
 if (!empty($arrayfields['cd.rowid']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input class="flat searchstring" type="text" name="search_id" size="1" value="'.dol_escape_htmltag($search_id).'">';
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['c.rowid']['checked'])) {
@@ -826,7 +827,7 @@ if ($conf->main_checkbox_left_column) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['cd.rowid']['checked'])) {
-	print_liste_field_titre($arrayfields['cd.rowid']['label'], $_SERVER["PHP_SELF"], "cd.rowid", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cd.rowid']['label'], $_SERVER["PHP_SELF"], "cd.rowid", "", $param, "", $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['c.rowid']['checked'])) {
 	print_liste_field_titre($arrayfields['c.rowid']['label'], $_SERVER["PHP_SELF"], "c.rowid", "", $param, "", $sortfield, $sortorder);
@@ -951,7 +952,7 @@ while ($i < $imaxinloop) {
 
 	// Technical ID
 	if (!empty($arrayfields['cd.rowid']['checked'])) {
-		print '<td class="tdoverflowmax50" data-key="id">';
+		print '<td class="center tdoverflowmax50" data-key="id">';
 		print $obj->rowid;
 		print "</td>\n";
 		if (!$i) {

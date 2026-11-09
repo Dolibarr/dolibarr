@@ -27,7 +27,6 @@
 global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (! defined('NOREQUIREUSER')) {
@@ -90,5 +89,68 @@ class ImportTest extends CommonClassTest
 
 
 		return true;
+	}
+
+	/**
+	 * testImportCsvReadRecord
+	 *
+	 * Check that the BOM is not part of the first value, that a long line is not cut, and that a separator
+	 * or an enclosure of more than one char is refused (and does not throw a ValueError)
+	 *
+	 * @return void
+	 */
+	public function testImportCsvReadRecord()
+	{
+		global $db;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/modules/import/import_csv.modules.php';
+
+		$long = str_repeat('a', 150000);
+		$content = "\xEF\xBB\xBFref;label;note\r\nP1;\"Label; with separator\";".$long."\r\nP2;\xC3\xA9t\xC3\xA9;\r\n";
+		$file = tempnam(sys_get_temp_dir(), 'importcsv');
+		file_put_contents($file, $content);
+
+		$obj = new ImportCsv($db, 'product_1');
+		$obj->separator = ';';
+		$obj->enclosure = '"';
+		$this->assertEquals(1, $obj->import_open_file($file));
+
+		$header = $obj->import_read_record();
+		$this->assertIsArray($header);
+		$this->assertEquals('ref', $header[0]['val'], 'The BOM must not be part of the first value');
+
+		$record = $obj->import_read_record();
+		$this->assertIsArray($record);
+		$this->assertCount(3, $record, 'A line longer than 100000 bytes must not be split in two records');
+		$this->assertEquals('P1', $record[0]['val']);
+		$this->assertEquals('Label; with separator', $record[1]['val']);
+		$this->assertEquals(150000, strlen($record[2]['val']));
+
+		$record = $obj->import_read_record();
+		$this->assertIsArray($record);
+		$this->assertEquals('P2', $record[0]['val']);
+		$this->assertEquals("\xC3\xA9t\xC3\xA9", $record[1]['val']);
+		$this->assertFalse($obj->import_read_record());
+		$obj->import_close_file();
+
+		// A file without BOM is read from its first byte
+		file_put_contents($file, "ref;label\r\nP1;test\r\n");
+		$this->assertEquals(1, $obj->import_open_file($file));
+		$header = $obj->import_read_record();
+		$this->assertIsArray($header);
+		$this->assertEquals('ref', $header[0]['val']);
+		$obj->import_close_file();
+
+		// A separator or an enclosure of more than one char is refused
+		$obj->separator = ';;';
+		$this->assertEquals(-1, $obj->import_open_file($file));
+		$this->assertNotEmpty($obj->error);
+		$obj->separator = '';
+		$this->assertEquals(-1, $obj->import_open_file($file));
+		$obj->separator = ';';
+		$obj->enclosure = '""';
+		$this->assertEquals(-1, $obj->import_open_file($file));
+
+		unlink($file);
 	}
 }

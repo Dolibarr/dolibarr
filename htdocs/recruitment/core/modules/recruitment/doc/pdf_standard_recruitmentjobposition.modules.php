@@ -800,13 +800,6 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 		$posy += 1;
 		$pdf->SetFont('', '', $default_font_size - 2);
 
-		if ($object->ref_client) {
-			$posy += 4;
-			$pdf->SetXY($posx, $posy);
-			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefCustomer")." : ".pdf_truncate_text($pdf, $outputlangs->convToOutputCharset($object->ref_client), 65), '', 'R');
-		}
-
 		if (getDolGlobalString('PDF_SHOW_PROJECT_TITLE')) {
 			$object->fetchProject();
 			if (!empty($object->project->ref)) {

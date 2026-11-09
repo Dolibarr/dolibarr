@@ -111,8 +111,14 @@ if ($object->id > 0) {
 
 $maxpricesupplier = 0;
 
+$permissiontoadd = 0;
 if ($object->id > 0) {
-	$permissiontoadd = $object->getRights()->creer;
+	if ($object->type == $object::TYPE_PRODUCT) {
+		$permissiontoadd = $user->hasRight('produit', 'creer');
+	}
+	if ($object->type == $object::TYPE_SERVICE) {
+		$permissiontoadd = $user->hasRight('service', 'creer');
+	}
 } else {
 	$permissiontoadd = ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'));
 }
@@ -595,9 +601,16 @@ if (empty($reshook)) {
 	if ($action == 'activate_price_by_qty' && $permissiontoadd) {
 		// Activating product price by quantity add a new price line with price_by_qty set to 1
 		$level = GETPOSTINT('level');
-		$basePrice = ($object->price_base_type == 'HT') ? $object->price : $object->price_ttc;
-		$basePriceMin = ($object->price_base_type == 'HT') ? $object->price_min : $object->price_min_ttc;
-		$ret = $object->updatePrice($basePrice, $object->price_base_type, $user, $object->tva_tx, $basePriceMin, $level, $object->tva_npr, 1, 0, array(), $object->default_vat_code);
+		$basePriceType = $object->price_base_type;
+		$basePrice = ($basePriceType == 'HT') ? $object->price : $object->price_ttc;
+		$basePriceMin = ($basePriceType == 'HT') ? $object->price_min : $object->price_min_ttc;
+		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') && $level > 0 && isset($object->multiprices[$level])) {
+			// With a price per level, the price to keep is the price of the level, not the default price of the product
+			$basePriceType = (empty($object->multiprices_base_type[$level]) ? 'HT' : $object->multiprices_base_type[$level]);
+			$basePrice = ($basePriceType == 'HT') ? $object->multiprices[$level] : $object->multiprices_ttc[$level];
+			$basePriceMin = ($basePriceType == 'HT') ? $object->multiprices_min[$level] : $object->multiprices_min_ttc[$level];
+		}
+		$ret = $object->updatePrice($basePrice, $basePriceType, $user, $object->tva_tx, $basePriceMin, $level, $object->tva_npr, 1, 0, array(), $object->default_vat_code);
 
 		if ($ret < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -607,9 +620,16 @@ if (empty($reshook)) {
 	if ($action == 'disable_price_by_qty' && $permissiontoadd) {
 		// Disabling product price by quantity add a new price line with price_by_qty set to 0
 		$level = GETPOSTINT('level');
-		$basePrice = ($object->price_base_type == 'HT') ? $object->price : $object->price_ttc;
-		$basePriceMin = ($object->price_base_type == 'HT') ? $object->price_min : $object->price_min_ttc;
-		$ret = $object->updatePrice($basePrice, $object->price_base_type, $user, $object->tva_tx, $basePriceMin, $level, $object->tva_npr, 0, 0, array(), $object->default_vat_code);
+		$basePriceType = $object->price_base_type;
+		$basePrice = ($basePriceType == 'HT') ? $object->price : $object->price_ttc;
+		$basePriceMin = ($basePriceType == 'HT') ? $object->price_min : $object->price_min_ttc;
+		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') && $level > 0 && isset($object->multiprices[$level])) {
+			// With a price per level, the price to keep is the price of the level, not the default price of the product
+			$basePriceType = (empty($object->multiprices_base_type[$level]) ? 'HT' : $object->multiprices_base_type[$level]);
+			$basePrice = ($basePriceType == 'HT') ? $object->multiprices[$level] : $object->multiprices_ttc[$level];
+			$basePriceMin = ($basePriceType == 'HT') ? $object->multiprices_min[$level] : $object->multiprices_min_ttc[$level];
+		}
+		$ret = $object->updatePrice($basePrice, $basePriceType, $user, $object->tva_tx, $basePriceMin, $level, $object->tva_npr, -1, 0, array(), $object->default_vat_code);
 
 		if ($ret < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -1124,12 +1144,6 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 			$positiverates = '';
 			if (price2num($object->multiprices_tva_tx[$soc->price_level])) {
 				$positiverates .= ($positiverates ? '/' : '').price2num($object->multiprices_tva_tx[$soc->price_level]);
-			}
-			if (price2num($object->multiprices_localtax1_type[$soc->price_level])) {
-				$positiverates .= ($positiverates ? '/' : '').price2num($object->multiprices_localtax1_tx[$soc->price_level]);
-			}
-			if (price2num($object->multiprices_localtax2_type[$soc->price_level])) {
-				$positiverates .= ($positiverates ? '/' : '').price2num($object->multiprices_localtax2_tx[$soc->price_level]);
 			}
 			if (empty($positiverates)) {
 				$positiverates = '0';
@@ -1658,7 +1672,9 @@ if ($action == 'edit_vat' && ($user->hasRight('produit', 'creer') || $user->hasR
 
 	// VAT
 	print '<tr><td>'.$langs->trans("DefaultTaxRate").'</td><td>';
-	print $form->load_tva("tva_tx", $object->default_vat_code ? $object->tva_tx.' ('.$object->default_vat_code.')' : $object->tva_tx, $mysoc, null, $object->id, $object->tva_npr, $object->type, false, 1);
+
+	print $form->load_tva("tva_tx", $object->default_vat_code ? $object->tva_tx.' ('.$object->default_vat_code.')' : $object->tva_tx, $mysoc, null, $object->id, $object->tva_npr, $object->type, false, 1, 1);
+
 	print '</td></tr>';
 
 	print '</table>';
@@ -1670,7 +1686,7 @@ if ($action == 'edit_vat' && ($user->hasRight('produit', 'creer') || $user->hasR
 	print '<br></form><br>';
 }
 
-if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRights()->creer) {
+if (($action == 'edit_price' || $action == 'edit_level_price') && $permissiontoadd) {
 	print '<br>';
 	print load_fiche_titre($langs->trans("NewPrice"), '');
 
@@ -1688,7 +1704,7 @@ if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRi
 
 		// VAT
 		print '<tr><td class="titlefield">'.$langs->trans("DefaultTaxRate").'</td><td>';
-		print $form->load_tva("tva_tx", $object->default_vat_code ? $object->tva_tx.' ('.$object->default_vat_code.')' : $object->tva_tx, $mysoc, null, $object->id, $object->tva_npr, $object->type, false, 1);
+		print $form->load_tva("tva_tx", $object->default_vat_code ? $object->tva_tx.' ('.$object->default_vat_code.')' : $object->tva_tx, $mysoc, null, $object->id, $object->tva_npr, $object->type, false, 1, 1);
 		print '</td></tr>';
 
 		// Price base
@@ -1798,7 +1814,7 @@ if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRi
 		print $form->buttonsSaveCancel();
 
 		print '</form>';
-	} elseif ($action == 'edit_level_price' && $object->getRights()->creer) {
+	} elseif ($action == 'edit_level_price' && $permissiontoadd) {
 		print '<!-- Edit price per level -->'."\n"; ?>
 		<script>
 
@@ -1901,7 +1917,7 @@ if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRi
 			} else {
 				// This option is kept for backward compatibility but has no sense
 				print '<td style="text-align: center">';
-				print $form->load_tva("tva_tx[".$i.']', $object->multiprices_tva_tx[$i], $mysoc, null, $object->id, 0, $object->type, false, 1);
+				print $form->load_tva("tva_tx[".$i.']', $object->multiprices_tva_tx[$i], $mysoc, null, $object->id, 0, $object->type, false, 1, 1);
 				print '</td>';
 			}
 
@@ -2043,7 +2059,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 
 		// VAT
 		print '<tr><td class="fieldrequired">'.$langs->trans("DefaultTaxRate").'</td><td>';
-		print $form->load_tva("tva_tx", $object->default_vat_code ? $object->tva_tx.' ('.$object->default_vat_code.')' : $object->tva_tx, $mysoc, null, $object->id, $object->tva_npr, $object->type, false, 1);
+		print $form->load_tva("tva_tx", $object->default_vat_code ? $object->tva_tx.' ('.$object->default_vat_code.')' : $object->tva_tx, $mysoc, null, $object->id, $object->tva_npr, $object->type, false, 1, 1);
 		print '</td></tr>';
 
 		// Price base
@@ -2176,7 +2192,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 
 		// VAT
 		print '<tr><td class="fieldrequired">'.$langs->trans("DefaultTaxRate").'</td><td>';
-		print $form->load_tva("tva_tx", $prodcustprice->default_vat_code ? $prodcustprice->tva_tx.' ('.$prodcustprice->default_vat_code.')' : $prodcustprice->tva_tx, $mysoc, null, $object->id, $prodcustprice->recuperableonly, $object->type, false, 1);
+		print $form->load_tva("tva_tx", $prodcustprice->default_vat_code ? $prodcustprice->tva_tx.' ('.$prodcustprice->default_vat_code.')' : $prodcustprice->tva_tx, $mysoc, null, $object->id, $prodcustprice->recuperableonly, $object->type, false, 1, 1);
 		print '</td></tr>';
 
 		// Price base
@@ -2401,7 +2417,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 					$positiverates = '0';
 				}
 
-				echo vatrate($positiverates.($line->default_vat_code ? ' ('.$line->default_vat_code.')' : ''), true, (!empty($line->tva_npr) ? $line->tva_npr : $line->recuperableonly));
+				echo vatrate($positiverates.($line->default_vat_code ? ' ('.$line->default_vat_code.')' : ''), true, $line->recuperableonly);
 
 				//. vatrate($tva_tx, true, $line->recuperableonly) .
 				print "</td>";
@@ -2660,7 +2676,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 					$positiverates = '0';
 				}
 
-				echo vatrate($positiverates.($line->default_vat_code ? ' ('.$line->default_vat_code.')' : ''), true, (!empty($line->tva_npr) ? $line->tva_npr : $line->recuperableonly));
+				echo vatrate($positiverates.($line->default_vat_code ? ' ('.$line->default_vat_code.')' : ''), true, $line->recuperableonly);
 
 				print "</td>";
 

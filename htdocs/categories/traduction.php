@@ -213,7 +213,7 @@ $form      = new Form($db);
 $formadmin = new FormAdmin($db);
 $formother = new FormOther($db);
 
-llxHeader("", "", $langs->trans("Translation"));
+llxHeader("", $langs->trans("Translation"));
 
 $title = $langs->trans("Categories");
 $title .= ' ('.$langs->trans(empty(Categorie::$MAP_TYPE_TITLE_AREA[$type]) ? ucfirst($type) : Categorie::$MAP_TYPE_TITLE_AREA[$type]).')';
@@ -230,11 +230,11 @@ if (!empty($object->multilangs)) {
 
 print dol_get_fiche_head($head, 'translation', $langs->trans($title), -1, 'category');
 
-$backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/categories/categorie_list.php?leftmenu=cat&type='.urlencode($type));
+$backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : dolBuildUrl(DOL_URL_ROOT.'/categories/categorie_list.php', ['leftmenu' => 'cat', 'type' => $type]));
 $linkback = '<a href="'.dol_sanitizeUrl($backtolist).'">'.$langs->trans("BackToList").'</a>';
 $object->next_prev_filter = 'type:=:'.((int) $object->type);
 $object->ref = $object->label;
-$morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/categorie_list.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
+$morehtmlref = '<br><div class="refidno"><a href="'.dolBuildUrl(DOL_URL_ROOT.'/categories/categorie_list.php', ['leftmenu' => 'cat', 'type' => $type]).'">'.$langs->trans("Root").'</a> >> ';
 $ways = $object->print_all_ways("auto", '', 1);
 foreach ($ways as $way) {
 	$morehtmlref .= $way."<br>\n";

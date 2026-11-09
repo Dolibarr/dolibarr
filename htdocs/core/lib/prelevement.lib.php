@@ -39,7 +39,7 @@ function prelevement_prepare_head(BonPrelevement $object)
 
 	$salary = $object->checkIfSalaryBonPrelevement();
 
-	$langs->loadLangs(array("bills", "withdrawals"));
+	$langs->loadLangs(array("bills", "salaries", "withdrawals"));
 
 	$h = 0;
 	$head = array();

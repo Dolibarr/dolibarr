@@ -594,9 +594,10 @@ function calendars_prepare_head($param)
  * @param   int		$minheight       Minimum height for each event. 60px by default.
  * @param	int<-1,1>	$nonew			 0=Add "new entry button", 1=No "new entry button", -1=Only "new entry button"
  * @param	array{}|array{help:'toreporttype',0:array{0:int,1:int,2:int},1:array{0:int,1:int,2:int},2:array{0:int,1:int,2:int}}	$bookcalcalendarsarray	 Used for Bookcal module array of calendar of bookcal
+ * @param	array<string,string[]>|null	$hourlybuckets	 When set, the html of each event is collected here instead of being printed, keyed by 'allday' or by the HHMM of its half-hour slot
  * @return	void
  */
-function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint = 0, $maxnbofchar = 16, $newparam = '', $showinfo = 0, $minheight = 60, $nonew = 0, $bookcalcalendarsarray = array())
+function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint = 0, $maxnbofchar = 16, $newparam = '', $showinfo = 0, $minheight = 60, $nonew = 0, $bookcalcalendarsarray = array(), ?array &$hourlybuckets = null) // @phpstan-ignore-line missingType.iterableValue
 {
 	global $user, $conf, $langs;
 	global $action, $mode, $filter, $filtert, $status, $actioncode, $usergroup; // Filters used into search form
@@ -664,8 +665,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	}
 
 	// Line with td contains all div of each events
-	print '<div class="tagtr">';
-	print '<div class="tagtd centpercent agendacell sortable">';
+	if ($hourlybuckets === null) {
+		print '<div class="tagtr">';
+		print '<div class="tagtd centpercent agendacell sortable">';
+	}
 
 	//$curtime = dol_mktime (0, 0, 0, $month, $day, $year);
 	$i = 0;
@@ -840,6 +843,19 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						$ireallyshown++;
 					}
 
+					// Day view: a timed event is positioned from its real start and end, 1 px per minute from
+					// midnight (see the day branch of comm/action/index.php). An all-day one goes to the all-day row.
+					$dayminutes = ($hourlybuckets !== null) ? agenda_event_day_minutes($event) : null;
+					$daypositionattr = '';
+					if ($hourlybuckets !== null && $dayminutes !== null) {
+						$daypositionattr = ' data-agenda-start="'.$dayminutes[0].'" data-agenda-end="'.$dayminutes[1].'"';
+						$daypositionattr .= ' style="position: absolute; left: 0; right: 0; top: '.$dayminutes[0].'px; height: '.max($dayminutes[1] - $dayminutes[0], 20).'px; margin: 0; padding-right: 2px; overflow: hidden; box-sizing: border-box;"';
+					}
+
+					if ($hourlybuckets !== null) {
+						ob_start();
+					}
+
 					//var_dump($event->type.' - '.$morecss.' - '.$cssclass.' - '.$i.' - '.$ireallyshown.' - '.$itoshow);
 					if (isModEnabled("bookcal") && $event->type == 'bookcal_calendar') {
 						print '<div id="event_'.$ymd.'_'.$i.'" class="event family_'.$event->type.'_'.$bookcalcalendarsarray["availabilitieslink"][$event->fk_bookcal_calendar].' '.$cssclass.($morecss ? ' '.$morecss : '').'"';
@@ -849,6 +865,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					//print ' style="height: 100px;';
 					//print ' position: absolute; top: 40px; width: 50%;';
 					//print '"';
+					print $daypositionattr;
 					print '>';
 
 					//var_dump($event->userassigned);
@@ -953,6 +970,32 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 								$titletoshow = (($event->type_picto || $event->type_code) ? $event->getTypePicto() : '');
 								$titletoshow .= $event->getNomUrl(0, $maxnbofchar, 'cal_event cal_event_title valignmiddle', '', 0, 0);	// do not add 'inline-block' in css here: it makes the title transformed completely into '...'
 								$event->label = $savlabel;
+							}
+
+							// Details of an event of an external calendar, into a tooltip
+							if ($event->type_code == 'ICALEVENT' && !empty($event->icaldetails)) {
+								$tooltip = '';
+								if (!empty($event->icaldetails['description'])) {
+									$tooltip .= '<b>'.$langs->trans("Description").'</b>: '.implode('<br>', array_map('dol_escape_htmltag', (array) preg_split('/\r\n|\n|\r/', dol_trunc($event->icaldetails['description'], 500)))).'<br>';
+								}
+								if (!empty($event->icaldetails['organizer'])) {
+									$tooltip .= '<b>'.$langs->trans("ExtEventOrganizer").'</b>: '.dol_escape_htmltag($event->icaldetails['organizer']).'<br>';
+								}
+								if (!empty($event->icaldetails['attendees']) && is_array($event->icaldetails['attendees'])) {
+									$tooltip .= '<b>'.$langs->trans("ExtEventAttendees").'</b>: '.dol_escape_htmltag(dol_trunc(implode(', ', $event->icaldetails['attendees']), 300)).'<br>';
+								}
+								if (!empty($event->icaldetails['categories'])) {
+									$tooltip .= '<b>'.$langs->trans("Categories").'</b>: '.dol_escape_htmltag($event->icaldetails['categories']).'<br>';
+								}
+								if (!empty($event->icaldetails['url']) && preg_match('/^https?:\/\//i', $event->icaldetails['url'])) {
+									$tooltip .= '<b>'.$langs->trans("Link").'</b>: '.dol_escape_htmltag(dol_trunc($event->icaldetails['url'], 100)).'<br>';
+								}
+								if (!empty($event->icaldetails['geo']) && preg_match('/^(-?[0-9.]+);(-?[0-9.]+)$/', $event->icaldetails['geo'])) {
+									$tooltip .= '<b>'.$langs->trans("Position").'</b>: '.dol_escape_htmltag(str_replace(';', ', ', $event->icaldetails['geo'])).'<br>';
+								}
+								if ($tooltip) {
+									$titletoshow = '<span class="classfortooltip" title="'.dol_escape_htmltag($tooltip, 1, 1).'">'.$titletoshow.'</span>';
+								}
 							}
 
 							// Loop on each assigned user
@@ -1073,6 +1116,24 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					print '</td></tr></table>';
 					print '</div><!-- end event '.$i.' -->'."\n";
 
+					if ($hourlybuckets !== null) {
+						$eventhtml = ob_get_clean();
+
+						// Note: type_code alone (AC_OTH_AUTO/HOLIDAY/BIRTHDAY/ICALEVENT) is not used here, it only
+						// drives the (unchanged) unmovable/movable css class above. Placement in the all-day row
+						// is strictly about whether the event is conceptually all-day: birthdays, holidays and
+						// full-day ICS entries already carry fulldayevent=1 so they are caught below; a system-log
+						// entry (e.g. "Record modified") has a real timestamp and belongs in its own time slot.
+						if ($dayminutes === null) {
+							// The all-day row of the day view is fixed, nothing is dragged out of it
+							$hourlybuckets['allday'][] = str_replace(' movable cursormove', ' unmovable', $eventhtml);
+						} else {
+							/** @var array{0:int,1:int} $dayminutes */
+							$slotkey = sprintf('%02d', intdiv($dayminutes[0], 60)).(($dayminutes[0] % 60) < 30 ? '00' : '30');
+							$hourlybuckets[$slotkey][] = $eventhtml;
+						}
+					}
+
 					$i++;
 				} else {
 					print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode='.$mode.'&maxprint=0&month='.((int) $monthshown).'&year='.((int) $year);
@@ -1091,11 +1152,11 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 			break;
 		}
 	}
-	if (!$i) {	// No events
+	if ($hourlybuckets === null && !$i) {	// No events
 		print '&nbsp;';
 	}
 
-	if (getDolGlobalString('MAIN_JS_SWITCH_AGENDA') && $itoshow > $ireallyshown && $maxprint) {
+	if ($hourlybuckets === null && getDolGlobalString('MAIN_JS_SWITCH_AGENDA') && $itoshow > $ireallyshown && $maxprint) {
 		print '<div class="center cursorpointer cal_showmore" id="more_'.$ymd.'">'.img_picto("All", "angle-double-down", 'class="warning"').' +'.($itoshow - $ireallyshown).'</div>';
 		//print ' +'.(count($eventarray[$daykey])-$maxprint);
 
@@ -1116,7 +1177,9 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 		print '</script>'."\n";
 	}
 
-	print '</div></div>'; // td tr
+	if ($hourlybuckets === null) {
+		print '</div></div>'; // td tr
+	}
 
 	print '</div>'; // table
 	print "\n";
@@ -1620,4 +1683,37 @@ function agenda_get_birthday_events($db, $langs, $user, $mode, $month, $day, $ye
 	}
 
 	return $num;
+}
+
+/**
+ * Return the start and the end of a timed event as minutes since midnight in the user timezone, as used
+ * by the day view to position events (1 px per minute). Return null for an event shown in the all-day
+ * row: a full-day event, or an event whose real start and end (datep/datef, not the calendar dates that
+ * are clipped to the displayed window) are on different days in the user timezone. An event ending
+ * exactly at 00:00 the next day stays on its start day. The end is the start plus the duration of the
+ * calendar dates in whole minutes, capped at 1440 (24:00).
+ *
+ * @param	ActionComm	$event	Event with date_start_in_calendar and date_end_in_calendar set
+ * @return	?array{0:int,1:int}	[start, end] with start <= end <= 1440, or null
+ */
+function agenda_event_day_minutes($event)
+{
+	if ($event->fulldayevent) {
+		return null;
+	}
+
+	$realstart = empty($event->datep) ? $event->date_start_in_calendar : $event->datep;
+	$realend = empty($event->datef) ? $realstart : $event->datef;
+	if ($realend > $realstart && dol_print_date($realstart, '%Y%m%d', 'tzuserrel') != dol_print_date((int) $realend - 1, '%Y%m%d', 'tzuserrel')) {
+		return null;
+	}
+
+	$start = (int) dol_print_date($event->date_start_in_calendar, '%H', 'tzuserrel') * 60 + (int) dol_print_date($event->date_start_in_calendar, '%M', 'tzuserrel');
+	$duration = 0;
+	if ($event->date_end_in_calendar && $event->date_end_in_calendar > $event->date_start_in_calendar) {
+		$duration = (int) floor(($event->date_end_in_calendar - $event->date_start_in_calendar) / 60);
+	}
+	$end = min($start + $duration, 1440);
+
+	return array($start, $end);
 }

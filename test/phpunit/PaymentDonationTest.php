@@ -24,10 +24,27 @@
  */
 
 global $conf,$user,$langs,$db,$mysoc;
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/don/class/don.class.php';
 require_once dirname(__FILE__).'/../../htdocs/don/class/paymentdonation.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
+// Restler unregisters existing loaders; keep PHPUnit's Composer loader available.
+call_user_func(
+	/** @return void */
+	static function () {
+		$autoloaders = spl_autoload_functions();
+		try {
+			require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/don/class/api_donations.class.php';
+		} finally {
+			foreach (array_reverse($autoloaders) as $autoloader) {
+				if (!in_array($autoloader, spl_autoload_functions(), true)) {
+					spl_autoload_register($autoloader, true, true);
+				}
+			}
+		}
+	}
+);
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -50,6 +67,82 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
  */
 class PaymentDonationTest extends CommonClassTest
 {
+	/**
+	 * The donation payments API returns each payment, including an unlinked bank ID,
+	 * returns an empty list for unpaid donations, and requires donation read access.
+	 *
+	 * @return void
+	 */
+	public function testDonationPaymentsApi()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$donation = new Don($db);
+		$donation->initAsSpecimen();
+		$donation->amount = 100;
+		$donationId = $donation->create($user);
+		$this->assertGreaterThan(0, $donationId, $donation->errorsToString());
+
+		$paymentTypeId = dol_getIdFromCode($db, 'VIR', 'c_paiement', 'code', 'id', 1);
+		$this->assertGreaterThan(0, $paymentTypeId, 'VIR must be a known active payment type in this environment');
+
+		$paymentIds = array();
+		foreach (array(40, 60) as $amount) {
+			$payment = new PaymentDonation($db);
+			$payment->fk_donation = $donationId;
+			$payment->datep = dol_now();
+			$payment->paymenttype = $paymentTypeId;
+			$payment->amounts = array($donationId => $amount);
+			$payment->num_payment = 'API-'.$amount;
+			$paymentId = $payment->create($user);
+			$this->assertGreaterThan(0, $paymentId, $payment->errorsToString());
+			$paymentIds[] = $paymentId;
+		}
+
+		$previousApiUser = DolibarrApiAccess::$user;
+		try {
+			$apiUser = $this->createMock(User::class);
+			$apiUser->method('hasRight')->willReturn(true);
+			$apiUser->id = $user->id;
+			$apiUser->socid = 0;
+			$apiUser->login = $user->login;
+			DolibarrApiAccess::$user = $apiUser;
+
+			$api = new Donations();
+			$payments = $api->getPayments($donationId);
+			$this->assertCount(2, $payments);
+			$this->assertSame($paymentIds, array_column($payments, 'rowid'));
+			$this->assertSame(array(40.0, 60.0), array_column($payments, 'amount'));
+			$this->assertSame(array(0, 0), array_column($payments, 'fk_bank'));
+
+			$unpaidDonation = new Don($db);
+			$unpaidDonation->initAsSpecimen();
+			$unpaidDonation->amount = 10;
+			$unpaidDonationId = $unpaidDonation->create($user);
+			$this->assertGreaterThan(0, $unpaidDonationId, $unpaidDonation->errorsToString());
+			$this->assertSame(array(), $api->getPayments($unpaidDonationId));
+
+			$deniedUser = $this->createMock(User::class);
+			$deniedUser->method('hasRight')->willReturn(false);
+			$deniedUser->id = $user->id;
+			$deniedUser->socid = 0;
+			$deniedUser->login = 'no-donation-read';
+			DolibarrApiAccess::$user = $deniedUser;
+			try {
+				$api->getPayments($donationId);
+				$this->fail('A user without donation read permission must be denied');
+			} catch (\Luracast\Restler\RestException $e) {
+				$this->assertSame(403, $e->getCode());
+			}
+		} finally {
+			DolibarrApiAccess::$user = $previousApiUser;
+		}
+	}
+
 	/**
 	 * setUpBeforeClass
 	 *

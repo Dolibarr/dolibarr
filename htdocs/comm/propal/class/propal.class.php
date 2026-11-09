@@ -246,6 +246,11 @@ class Propal extends CommonObject
 	public $cond_reglement_doc;
 
 	/**
+	 * @var string Label of the payment terms, used when there is no label for documents
+	 */
+	public $cond_reglement_label;
+
+	/**
 	 * @var string method of payment code
 	 */
 	public $mode_reglement_code;
@@ -373,7 +378,7 @@ class Propal extends CommonObject
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 15, 'index' => 1),
 		'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'showoncombobox' => 1, 'position' => 20),
-		'ref_client' => array('type' => 'varchar(255)', 'label' => 'RefCustomer', 'enabled' => 1, 'visible' => -1, 'position' => 22),
+		'ref_client' => array('type' => 'varchar(255)', 'label' => 'RefCustomer', 'enabled' => 1, 'visible' => -1, 'position' => 22, 'uieditable' => 1, 'alwayseditable' => 1),
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 40),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'visible' => -1, 'position' => 23),
 		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 24),
@@ -398,8 +403,8 @@ class Propal extends CommonObject
 		'fk_cond_reglement' => array('type' => 'integer', 'label' => 'PaymentTerm', 'enabled' => 1, 'visible' => -1, 'position' => 160),
 		'deposit_percent' => array('type' => 'varchar(63)', 'label' => 'DepositPercent', 'enabled' => 1, 'visible' => -1, 'position' => 161),
 		'fk_mode_reglement' => array('type' => 'integer', 'label' => 'PaymentMode', 'enabled' => 1, 'visible' => -1, 'position' => 165),
-		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 170),
-		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 175),
+		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 170, 'uieditable' => 1, 'alwayseditable' => 1),
+		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 175, 'uieditable' => 1, 'alwayseditable' => 1),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'PDFTemplate', 'enabled' => 1, 'visible' => 0, 'position' => 180),
 		'date_livraison' => array('type' => 'date', 'label' => 'DateDeliveryPlanned', 'enabled' => 1, 'visible' => -1, 'position' => 185),
 		'fk_shipping_method' => array('type' => 'integer', 'label' => 'ShippingMethod', 'enabled' => 1, 'visible' => -1, 'position' => 190),
@@ -468,6 +473,22 @@ class Propal extends CommonObject
 		$this->fields['ref_ext']['visible'] = getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT');
 	}
 
+	/**
+	 * Save into database the current value of one field, called by updateFieldFromUi().
+	 * Override of CommonObject::persistFieldValue(): the customer ref of proposals is saved with set_ref_client().
+	 *
+	 * @param User   $user  User making the change
+	 * @param string $field Field name
+	 * @return int          Return integer <0 if KO, >0 if OK
+	 */
+	protected function persistFieldValue(User $user, $field)
+	{
+		if ($field == 'ref_client') {
+			return $this->set_ref_client($user, (string) $this->ref_client);
+		}
+
+		return parent::persistFieldValue($user, $field);
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -766,7 +787,7 @@ class Propal extends CommonObject
 				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 			}
 
-			$tabprice = calcul_price_total($qty, (float) $pu, (float) $remise_percent, $txtva, (float) $txlocaltax1, (float) $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise);
+			$tabprice = calcul_price_total($qty, (float) $pu, (float) $remise_percent, $txtva, (float) $txlocaltax1, (float) $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise, $this->multicurrency_code);
 
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -858,9 +879,12 @@ class Propal extends CommonObject
 						$this->line_order(true, 'DESC');
 					} elseif ($ranktouse > 0 && $ranktouse <= count($this->lines)) {
 						// Update all rank of all other lines starting from the same $ranktouse
-						$linecount = count($this->lines);
-						for ($ii = $ranktouse; $ii <= $linecount; $ii++) {
-							$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
+						foreach ($this->lines as $tmpline) {
+							if ($tmpline->rang >= $ranktouse) {
+								if (!empty($tmpline->id)) {
+									$this->updateRangOfLine($tmpline->id, $tmpline->rang + 1);
+								}
+							}
 						}
 					}
 
@@ -1001,7 +1025,7 @@ class Propal extends CommonObject
 				}
 			}
 
-			$tabprice = calcul_price_total($qty, (float) $pu, (float) $remise_percent, $txtva, (float) $txlocaltax1, (float) $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise);
+			$tabprice = calcul_price_total($qty, (float) $pu, (float) $remise_percent, $txtva, (float) $txlocaltax1, (float) $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise, $this->multicurrency_code);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
@@ -1276,9 +1300,9 @@ class Propal extends CommonObject
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", '(PROV)'";
 		$sql .= ", ".($user->id > 0 ? ((int) $user->id) : "NULL");
-		$sql .= ", '".$this->db->escape($this->note_private)."'";
-		$sql .= ", '".$this->db->escape($this->note_public)."'";
-		$sql .= ", '".$this->db->escape($this->model_pdf)."'";
+		$sql .= ", '".$this->db->escape((string) $this->note_private)."'";
+		$sql .= ", '".$this->db->escape((string) $this->note_public)."'";
+		$sql .= ", '".$this->db->escape((string) $this->model_pdf)."'";
 		$sql .= ", ".($this->fin_validite != '' ? "'".$this->db->idate($this->fin_validite)."'" : "NULL");
 		$sql .= ", ".($this->cond_reglement_id > 0 ? ((int) $this->cond_reglement_id) : 'NULL');
 		$sql .= ", ".(!empty($this->deposit_percent) ? "'".$this->db->escape($this->deposit_percent)."'" : 'NULL');
@@ -1348,19 +1372,22 @@ class Propal extends CommonObject
 					$fk_parent_line = 0;
 					$num = count($this->lines);
 
+					// Convert all lines into PropaleLigne objects before inserting the first one: when coming from REST API, they are still arrays, and addline() reads the whole of this->lines
 					for ($i = 0; $i < $num; $i++) {
-						if (!is_object($this->lines[$i])) {	// If this->lines is not array of objects, coming from REST API
+						if (!is_object($this->lines[$i])) {		// If this->lines is not array of objects, coming from REST API
 							// Build a real line object: the loop below calls methods on it
 							// (getPriceBaseType), which a cast to stdClass cannot answer.
 							$lineobj = new PropaleLigne($this->db);
 							foreach ($this->lines[$i] as $key => $val) {
 								$lineobj->$key = $val;
 							}
-							$line = $lineobj;
-							$this->lines[$i] = $line;
-						} else {
-							$line = $this->lines[$i];
+							$this->lines[$i] = $lineobj;
 						}
+					}
+
+					for ($i = 0; $i < $num; $i++) {
+						$line = $this->lines[$i];
+
 						// Reset fk_parent_line for line that are not child lines or special product
 						if (($line->product_type != 9 && empty($line->fk_parent_line)) || $line->product_type == 9) {
 							$fk_parent_line = 0;
@@ -1421,6 +1448,15 @@ class Propal extends CommonObject
 						// Set the id on created row
 						$line->id = $result;
 
+						// Keep the extra parameters of the source line (for example the options of subtotal lines): addline() can't
+						// do it when the object is cloned, because the origin it receives is the one of the source line, not the source line
+						if ($result > 0 && !empty($line->extraparams)) {
+							$newline = new PropaleLigne($this->db);
+							$newline->id = $result;
+							$newline->extraparams = $line->extraparams;
+							$newline->setExtraParameters();
+						}
+
 						// Defined the new fk_parent_line
 						if ($result > 0 && $line->product_type == 9) {
 							$fk_parent_line = $result;
@@ -1479,9 +1515,10 @@ class Propal extends CommonObject
 	 *		@param		int		$forceentity	Entity id to force
 	 *		@param		bool	$update_prices	[=false] Update prices if true
 	 *		@param		bool	$update_desc	[=false] Update description if true
+	 *		@param		?bool	$keep_ref_customer	Keep the customer reference. If null, MAIN_KEEP_REF_CUSTOMER_ON_CLONING decides.
 	 * 	 	@return		int						New id of clone
 	 */
-	public function createFromClone(User $user, $socid = 0, $forceentity = null, $update_prices = false, $update_desc = false)
+	public function createFromClone(User $user, $socid = 0, $forceentity = null, $update_prices = false, $update_desc = false, $keep_ref_customer = null)
 	{
 		global $conf, $hookmanager, $mysoc;
 
@@ -1524,7 +1561,7 @@ class Propal extends CommonObject
 			}
 
 			// reset ref_client
-			if (!getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING')) {
+			if (!($keep_ref_customer ?? getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING'))) {
 				$object->ref_client = '';
 				$object->ref_customer = '';
 			}
@@ -1616,7 +1653,7 @@ class Propal extends CommonObject
 		$object->date = $now;
 		$object->datep = $now; // deprecated
 		$object->fin_validite = $object->date + (int) ($object->duree_validite * 24 * 3600);
-		if (!getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING')) {
+		if (!($keep_ref_customer ?? getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING'))) {
 			$object->ref_client = '';
 			$object->ref_customer = '';
 		}
@@ -1626,6 +1663,8 @@ class Propal extends CommonObject
 		}
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
+		$object->context['createfromclone_fromid'] = $this->id;
+		$object->context['createfromclone_fromref'] = $this->ref;
 		$result = $object->create($user);
 		if ($result < 0) {
 			$this->setErrorsFromObject($object);
@@ -1662,6 +1701,8 @@ class Propal extends CommonObject
 		}
 
 		unset($object->context['createfromclone']);
+		unset($object->context['createfromclone_fromid']);
+		unset($object->context['createfromclone_fromref']);
 
 		// End
 		if (!$error) {
@@ -1798,6 +1839,7 @@ class Propal extends CommonObject
 				$this->cond_reglement_id    = $obj->fk_cond_reglement;
 				$this->cond_reglement_code  = $obj->cond_reglement_code;
 				$this->cond_reglement       = $obj->cond_reglement;
+				$this->cond_reglement_label = $obj->cond_reglement;
 				$this->cond_reglement_doc   = $obj->cond_reglement_libelle_doc;
 				$this->deposit_percent      = $obj->deposit_percent;
 
@@ -2725,7 +2767,7 @@ class Propal extends CommonObject
 
 				// The connected company is classified as a client
 				$soc = new Societe($this->db);
-				$soc->id = $this->socid;
+				$soc->fetch($this->socid);
 				$result = $soc->setAsCustomer();
 
 				if ($result < 0) {
@@ -4035,7 +4077,7 @@ class Propal extends CommonObject
 
 			if ($txttoshow) {
 				$result .= ' <span class="note inline-block">';
-				$result .= '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/comm/propal/note.php', ['id' => $this->id]).'" class="classfortooltip" title="'.dol_escape_htmltag($txttoshow).'">';
+				$result .= '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/core/note.php', ['element' => 'comm_propal', 'id' => $this->id]).'" class="classfortooltip" title="'.dol_escape_htmltag($txttoshow).'">';
 				$result .= img_picto('', 'note');
 				$result .= '</a>';
 				$result .= '</span>';
@@ -4052,6 +4094,19 @@ class Propal extends CommonObject
 			$result .= $hookmanager->resPrint;
 		}
 		return $result;
+	}
+
+	/**
+	 *	Return the display context of the lines, as defined by the card before printObjectLines() and formAddObjectLine()
+	 *
+	 *	@return	array{seller:Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	See CommonObject::getObjectLinesDisplayContext()
+	 */
+	public function getObjectLinesDisplayContext()
+	{
+		$context = parent::getObjectLinesDisplayContext();
+		$context['inputalsopricewithtax'] = 1;
+
+		return $context;
 	}
 
 	/**
@@ -4182,5 +4237,198 @@ class Propal extends CommonObject
 	{
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		return parent::setCategoriesCommon($categories, Categorie::TYPE_PROPOSAL);
+	}
+
+	/**
+	 * Send reminders by email before a validated commercial proposal expires.
+	 * CAN BE A CRON TASK
+	 *
+	 * Modeled on Contrat::sendReminderForExpiredServices(): for each requested delay, it looks for
+	 * validated proposals whose end of validity falls on that one exact day (today + delay), so a
+	 * proposal is only ever matched once per delay value. A proposal already reminded today for the
+	 * same delay is skipped, so running the job more than once the same day does not resend the
+	 * reminder. Each successful send is logged as an agenda event on the proposal, same as other
+	 * automated reminder emails in the application. A failure on one proposal (ex: no email template
+	 * found) is counted and does not prevent the other due proposals from being processed.
+	 *
+	 * @param	string		$daysbeforeendlist		Nb of days before end of validity (negative number = after end). Can be a list of delays, separated by a semicolon, for example '10;5;0;-5'
+	 * @return	int									0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function sendReminderForExpiringProposals($daysbeforeendlist = '10')
+	{
+		global $conf, $langs, $mysoc, $user;
+
+		$error = 0;
+		$this->output = '';
+		$this->error = '';
+
+		$blockingerrormsg = '';
+
+		if (!isModEnabled('propal')) { // Should not happen. If module disabled, cron job should not be visible.
+			$langs->load("agenda");
+			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Proposals"));
+			return 0;
+		}
+
+		$now = dol_now();
+		$nbok = 0;
+		$nbko = 0;
+
+		$listofpropalsok = array();
+		$listofpropalsko = array();
+
+		$arraydaysbeforeend = explode(';', $daysbeforeendlist);
+		foreach ($arraydaysbeforeend as $daysbeforeend) { // Loop on each delay
+			dol_syslog(__METHOD__.' - Process delta = '.$daysbeforeend, LOG_DEBUG);
+
+			if (!is_numeric($daysbeforeend)) {
+				$blockingerrormsg = "Value for delta is not a numeric value";
+				$nbko++;
+				break;
+			}
+
+			// Label of the event recorded once a reminder is sent for a given delay. Also used to not send the same reminder twice the same day.
+			$labelreminderok = 'sendReminderForExpiringProposalsOK (daysbeforeend='.$daysbeforeend.')';
+
+			$tmp = dol_getdate($now);
+			$datetosearchfor = dol_time_plus_duree(dol_mktime(0, 0, 0, $tmp['mon'], $tmp['mday'], $tmp['year'], 'tzserver'), (int) $daysbeforeend, 'd');
+			$datetosearchforend = dol_time_plus_duree(dol_mktime(23, 59, 59, $tmp['mon'], $tmp['mday'], $tmp['year'], 'tzserver'), (int) $daysbeforeend, 'd');
+
+			$sql = "SELECT p.rowid";
+			$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
+			$sql .= " WHERE p.entity = ".((int) $conf->entity); // Do not use getEntity('propal') here, we want the batch to be on its entity only
+			$sql .= " AND p.fk_statut = ".((int) self::STATUS_VALIDATED);
+			$sql .= " AND p.fin_validite >= '".$this->db->idate($datetosearchfor)."'";
+			$sql .= " AND p.fin_validite <= '".$this->db->idate($datetosearchforend)."'";
+			$sql .= " AND NOT EXISTS (SELECT a.id FROM ".MAIN_DB_PREFIX."actioncomm as a";
+			$sql .= " WHERE a.elementtype = 'propal' AND a.fk_element = p.rowid AND a.code = 'AC_EMAIL'";
+			$sql .= " AND a.label = '".$this->db->escape($labelreminderok)."'";
+			$sql .= " AND a.datep >= '".$this->db->idate(dol_get_first_hour($now))."')";
+
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$num_rows = $this->db->num_rows($resql);
+
+				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+				$formmail = new FormMail($this->db);
+
+				$i = 0;
+				while ($i < $num_rows) {
+					$obj = $this->db->fetch_object($resql);
+
+					$propalstatic = new Propal($this->db);
+					$propalstatic->fetch($obj->rowid);
+					$thirdpartyres = $propalstatic->fetch_thirdparty();
+
+					if ($thirdpartyres <= 0 || empty($propalstatic->thirdparty->email)) {
+						$nbko++;
+						$listofpropalsko[$propalstatic->id] = $propalstatic->id;
+					} else {
+						$languagefromcountrycode = getLanguageCodeFromCountryCode($propalstatic->thirdparty->country_code);
+						$languagecodetouse = (empty($propalstatic->thirdparty->default_lang) ? ($languagefromcountrycode ? $languagefromcountrycode : $mysoc->default_lang) : $propalstatic->thirdparty->default_lang);
+
+						$outputlangs = new Translate('', $conf);
+						$outputlangs->setDefaultLang($languagecodetouse);
+						$outputlangs->loadLangs(array("main", "propal"));
+						dol_syslog("sendReminderForExpiringProposals Language for thirdparty id ".$propalstatic->thirdparty->id." set to ".$outputlangs->defaultlang." mysoc->default_lang=".$mysoc->default_lang);
+
+						$arraydefaultmessage = null;
+						$labeltouse = getDolGlobalString('PROPOSAL_EMAIL_TEMPLATE_REMIND_EXPIRATION');
+
+						if (!empty($labeltouse)) {
+							$arraydefaultmessage = $formmail->getEMailTemplate($this->db, 'propal', $user, $outputlangs, 0, 1, $labeltouse);
+						}
+
+						if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+							$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $propalstatic);
+							complete_substitutions_array($substitutionarray, $outputlangs, $propalstatic);
+
+							$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
+							$msg = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
+							$email_from = getDolGlobalString('PROPOSAL_MAIL_FROM', $conf->email_from);
+							$to = (string) $propalstatic->thirdparty->email;
+							$cc = getDolGlobalString('PROPOSAL_CC_MAIL_FROM');
+
+							$trackid = 'pro'.$propalstatic->id;
+							$moreinheader = 'X-Dolibarr-Info: sendReminderForExpiringProposals'."\r\n";
+
+							include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+							$cmail = new CMailFile($subject, $to, $email_from, $msg, array(), array(), array(), $cc, '', 0, 1, '', '', $trackid, $moreinheader);
+							$result = $cmail->sendfile();
+							if (!$result) {
+								$error++;
+								$this->error .= $cmail->error.' ';
+								if (!is_null($cmail->errors)) {
+									$this->errors = array_merge($this->errors, $cmail->errors);
+								}
+								$nbko++;
+								$listofpropalsko[$propalstatic->id] = $propalstatic->id;
+							} else {
+								$nbok++;
+								$listofpropalsok[$propalstatic->id] = $propalstatic->id;
+
+								// Insert record of email sent, as an agenda event on the proposal (same convention as other automated reminder emails)
+								require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+								$actioncomm = new ActionComm($this->db);
+								$actioncomm->type_code = 'AC_OTH_AUTO';
+								$actioncomm->code = 'AC_EMAIL';
+								$actioncomm->label = $labelreminderok;
+								$actioncomm->note_private = $msg;
+								$actioncomm->fk_project = $propalstatic->fk_project;
+								$actioncomm->datep = $now;
+								$actioncomm->datef = $now;
+								$actioncomm->percentage = -1; // Not applicable
+								$actioncomm->socid = $propalstatic->thirdparty->id;
+								$actioncomm->contact_id = 0;
+								$actioncomm->authorid = $user->id;
+								$actioncomm->userownerid = $user->id;
+								$actioncomm->email_msgid = $cmail->msgid;
+								$actioncomm->email_from = $email_from;
+								$actioncomm->email_sender = '';
+								$actioncomm->email_to = $to;
+								$actioncomm->email_subject = $subject;
+
+								$actioncomm->fk_element = $propalstatic->id;
+								$actioncomm->elementid = $propalstatic->id;
+								$actioncomm->elementtype = $propalstatic->element;
+
+								$actioncomm->create($user);
+							}
+						} else {
+							$error++;
+							$this->error .= "Can't find email template with label=".$labeltouse.", to use for the reminding email ";
+
+							$nbko++;
+							$listofpropalsko[$propalstatic->id] = $propalstatic->id;
+
+							// Do not break here: a template issue for one proposal (ex: not found for its language) must not
+							// prevent the reminder from being sent for the other proposals due the same day.
+						}
+					}
+
+					$i++;
+				}
+			} else {
+				$this->error = $this->db->lasterror();
+				return 1;
+			}
+		}
+
+		if ($blockingerrormsg) {
+			$this->error = $blockingerrormsg;
+			return 1;
+		} else {
+			$this->output = 'Found '.($nbok + $nbko).' proposals to send reminder for.';
+			$this->output .= ' Sent email successfully for '.$nbok.' proposals';
+			if ($nbko) {
+				$this->output .= ' - Canceled for '.$nbko.' proposal(s) (no thirdparty email, missing template, or send error)';
+			}
+		}
+
+		if ($error) {
+			return 1;
+		}
+		return 0;
 	}
 }

@@ -425,6 +425,19 @@ $dolibarr_cron_allow_cli='0';
 //
 // $dolibarr_mailing_limit_sendbycli='0';
 
+// dolibarr_mail_allow_unrestricted_smtp_target
+// ============================================
+// When set to a not empty value, the SMTP target (host and port) used to send emails is no more restricted:
+// ports other than the standard SMTP ports (25, 465, 587, 2525) and private or reserved IP addresses are accepted.
+// Set this only if your SMTP server (for example an internal SMTP relay) requires a non standard port or is
+// reachable on a private network.
+// Warning: keep this parameter unset if you don't need it. When it is set, the email setup can be used to
+// connect to any host and port of your network (network scan risk).
+// Default value: '0'
+// Examples: '1'
+//
+// $dolibarr_mail_allow_unrestricted_smtp_target='1';
+
 // dolibarr_main_stream_to_disable
 // ================================
 // Can set a list of PHP stream to disable.
@@ -452,6 +465,18 @@ $dolibarr_cron_allow_cli='0';
 // Examples: '1'
 //
 // $dolibarr_allow_localurl_for_webhooks = '0';
+
+// dolibarr_ai_allow_local_endpoints
+// =================================
+// Define which endpoints of AI services (module AI and AI assistant) can be called.
+// 0 = only external endpoints are allowed (local and private network IP addresses are refused).
+// 1 = only local endpoints are allowed (for example a local LLM server like Ollama). External AI services are refused.
+// 2 = both external and local endpoints are allowed.
+// Warning: values 1 and 2 allow requests to your local network (network scan risk), set them only if you use a local AI server.
+// Default value: '0'
+// Examples: '0', '1' or '2'
+//
+// $dolibarr_ai_allow_local_endpoints = '0';
 
 // dolibarr_allow_unsecured_select_in_extrafields_filter
 // =====================================================

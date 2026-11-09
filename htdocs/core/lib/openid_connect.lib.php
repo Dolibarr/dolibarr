@@ -189,7 +189,7 @@ function openid_connect_create_user($db, $userinfo, $login, $entity)
 	// Add to default group if configured
 	$default_group = getDolGlobalInt('MAIN_AUTHENTICATION_OIDC_DEFAULT_GROUP');
 	if ($default_group > 0) {
-		$res_group = $newuser->SetInGroup($default_group, $entity);
+		$res_group = $newuser->setInGroup($default_group, $entity);
 		if ($res_group < 0) {
 			dol_syslog("openid_connect_create_user::Warning: Error adding user to group ".$default_group.": ".$newuser->error, LOG_WARNING);
 			// Don't fail user creation if group assignment fails

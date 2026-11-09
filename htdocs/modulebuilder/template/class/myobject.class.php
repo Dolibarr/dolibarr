@@ -75,6 +75,8 @@ class MyObject extends CommonObject
 	 * 							0=No test on entity, 1=Test with field entity in local table, 'field@table'=Test entity into the field@table (example 'fk_soc@societe')
 	 */
 	public $ismultientitymanaged = 0;
+	// BEGIN MODULEBUILDER ACCESSPOLICY
+	// END MODULEBUILDER ACCESSPOLICY
 
 
 	const STATUS_DRAFT = 0;
@@ -121,6 +123,7 @@ class MyObject extends CommonObject
 	 *	'validate' is 1 if you need to validate the field with $this->validateField(). Need MAIN_ACTIVATE_VALIDATION_RESULT.
 	 *  'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
 	 *  'description' is a description of the field. Can be used to help the MCP server.
+	 *  'bi' is set to 0 if you want to hide property on BI tool.
 	 *
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
@@ -328,6 +331,7 @@ class MyObject extends CommonObject
 
 		// Load source object
 		$result = $object->fetchCommon($fromid);
+
 		//BEGIN MODULEBUILDER LINES
 		if ($result > 0 && !empty($object->table_element_line)) {
 			$object->fetchLines();
@@ -338,6 +342,9 @@ class MyObject extends CommonObject
 			$line->fetch_optionals();
 		}
 		//END MODULEBUILDER LINES
+
+		$fromref = (property_exists($object, 'ref') ? $object->ref : '');	// Save ref of source object before it is overwritten
+
 		// Reset some properties
 		unset($object->id);
 		unset($object->fk_user_creat);
@@ -375,6 +382,8 @@ class MyObject extends CommonObject
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
+		$object->context['createfromclone_fromid'] = $fromid;
+		$object->context['createfromclone_fromref'] = $fromref;
 		$result = $object->createCommon($user);
 		if ($result < 0) {
 			$error++;
@@ -398,6 +407,8 @@ class MyObject extends CommonObject
 		}
 
 		unset($object->context['createfromclone']);
+		unset($object->context['createfromclone_fromid']);
+		unset($object->context['createfromclone_fromref']);
 
 		// End
 		if (!$error) {

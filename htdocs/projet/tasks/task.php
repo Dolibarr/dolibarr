@@ -81,7 +81,7 @@ if ($reshook < 0) {
 if ($id > 0 || $ref) {
 	$ret = $object->fetch($id, $ref);
 	if ($ret > 0) {
-		$projectstatic->fetch($object->fk_project);
+		$projectstatic->fetch((int) $object->fk_project);
 	}
 }
 
@@ -130,10 +130,16 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('projet', 'cree
 		$object->progress = price2num(GETPOST('progress', 'alphanohtml'));
 		$object->budget_amount = (GETPOST('budget_amount') != '' ? GETPOSTFLOAT('budget_amount'): null);
 		$object->billable = (GETPOST('billable', 'aZ') == 'yes' ? 1 : 0);
-		if (GETPOST('progress') == '100') {
-			$object->status = $object::STATUS_CLOSED;
-		} elseif (GETPOST('progress') != '0') {
-			$object->status = $object::STATUS_ONGOING;
+		// The progress selector offers an empty choice that posts -1, so only move the status when a
+		// real percentage was submitted, and never pull a closed task back to ongoing (the ReOpen
+		// button is there for that).
+		$progresstouse = GETPOST('progress');
+		if ($progresstouse !== '' && $progresstouse >= 0) {
+			if ($progresstouse == '100') {
+				$object->status = $object::STATUS_CLOSED;
+			} elseif ($progresstouse != '0' && $object->status != $object::STATUS_CLOSED) {
+				$object->status = $object::STATUS_ONGOING;
+			}
 		}
 
 		// Fill array 'array_options' with data from add form
@@ -506,11 +512,11 @@ if ($id > 0 || !empty($ref)) {
 
 		// Ref
 		print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Ref").'</td>';
-		print '<td><input class="minwidth100" name="taskref" value="'.$object->ref.'"></td></tr>';
+		print '<td><input class="minwidth100" name="taskref" value="'.dolPrintHTMLForAttribute($object->ref).'"></td></tr>';
 
 		// Label
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
-		print '<td><input class="minwidth500" name="label" value="'.$object->label.'"></td></tr>';
+		print '<td><input class="minwidth500" name="label" value="'.dolPrintHTMLForAttribute($object->label).'"></td></tr>';
 
 		// Project
 		if (empty($withproject)) {

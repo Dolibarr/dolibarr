@@ -92,7 +92,12 @@ foreach ($object->fields as $key => $val) {
 		} else {
 			$check = 'nohtml';
 		}
-		$value = GETPOSTISSET($key) ? GETPOST($key, $check) : $object->$key;
+		if (getDolGlobalString('MAIN_SECURITY_DISALLOW_UNSECURED_TEXT')) {
+			$security_check = 'alphanohtml';
+		} else {
+			$security_check = $check;
+		}
+		$value = GETPOSTISSET($key) ? GETPOST($key, $security_check) : $object->$key;
 	} elseif (preg_match('/^html/', $val['type'])) {
 		$tmparray = explode(':', $val['type']);
 		if (!empty($tmparray[1])) {
