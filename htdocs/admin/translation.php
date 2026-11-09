@@ -687,6 +687,7 @@ if ($mode == 'searchkey') {
 				$sql .= " FROM ".MAIN_DB_PREFIX."overwrite_trans";
 				$sql .= " WHERE entity IN (".getEntity('overwrite_trans').")";
 				$sql .= " AND transkey = '".$db->escape($key)."'";
+				$sql .= " AND lang = '".$db->escape($langcode)."'";	// The same key may be overwritten for several languages
 				dol_syslog("translation::select from table", LOG_DEBUG);
 				$result = $db->query($sql);
 				$obj = null;
@@ -719,6 +720,7 @@ if ($mode == 'searchkey') {
 			$sql .= " FROM ".MAIN_DB_PREFIX."overwrite_trans";
 			$sql .= " WHERE entity IN (".getEntity('overwrite_trans').")";
 			$sql .= " AND transkey = '".$db->escape($key)."'";
+			$sql .= " AND lang = '".$db->escape($langcode)."'";	// The same key may be overwritten for several languages
 			dol_syslog("translation::select from table", LOG_DEBUG);
 			$result = $db->query($sql);
 			$obj = null;

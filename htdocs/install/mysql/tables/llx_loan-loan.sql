@@ -58,5 +58,6 @@ create table llx_loan
 
   fk_user_author				integer DEFAULT NULL,
   fk_user_modif					integer DEFAULT NULL,
+  model_pdf						varchar(255),				-- name of the document template used to generate the document of the loan
   active						tinyint DEFAULT 1  NOT NULL
 )ENGINE=innodb;

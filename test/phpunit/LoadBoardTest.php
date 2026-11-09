@@ -256,7 +256,7 @@ class LoadBoardTest extends CommonClassTest
 			$beforeapprove = $object->load_board($user, 'toapprove');
 			$beforepay = $object->load_board($user, 'topay');
 			foreach ([[ExpenseReport::STATUS_VALIDATED, "'".$old."'"], [ExpenseReport::STATUS_VALIDATED, "'".$recent."'"], [ExpenseReport::STATUS_VALIDATED, 'NULL'], [ExpenseReport::STATUS_APPROVED, "'".$old."'"], [ExpenseReport::STATUS_APPROVED, "'".$recent."'"]] as $k => [$status, $datevalid]) {
-				$this->insert($db, "INSERT INTO ".$db->prefix()."expensereport (ref, entity, date_debut, date_fin, date_create, fk_user_author, fk_statut, date_valid) VALUES ('TESTBRD".$suffix."-".$k."', ".$entity.", '".$db->idate($now)."', '".$db->idate($now)."', '".$db->idate($now)."', ".$userid.", ".$status.", ".$datevalid.")");
+				$this->insert($db, "INSERT INTO ".$db->prefix()."expensereport (ref, entity, date_debut, date_fin, date_creation, fk_user_author, fk_statut, date_valid) VALUES ('TESTBRD".$suffix."-".$k."', ".$entity.", '".$db->idate($now)."', '".$db->idate($now)."', '".$db->idate($now)."', ".$userid.", ".$status.", ".$datevalid.")");
 			}
 			$this->assertBoard($beforeapprove, $object->load_board($user, 'toapprove'), 3, 2, 'expense reports to approve');
 			$this->assertBoard($beforepay, $object->load_board($user, 'topay'), 2, 1, 'expense reports to pay');
@@ -268,7 +268,7 @@ class LoadBoardTest extends CommonClassTest
 			$object = new Holiday($db);
 			$before = $object->load_board($user);
 			foreach ([[2, $old], [2, $recent], [3, $old]] as $k => [$status, $datestart]) {
-				$this->insert($db, "INSERT INTO ".$db->prefix()."holiday (ref, entity, fk_user, fk_type, date_create, description, date_debut, date_fin, fk_validator, statut) VALUES ('TESTBRD".$suffix."-".$k."', ".$entity.", ".$userid.", 1, '".$db->idate($now)."', 'Board test', '".$datestart."', '".$datestart."', ".$userid.", ".$status.")");
+				$this->insert($db, "INSERT INTO ".$db->prefix()."holiday (ref, entity, fk_user, fk_type, date_creation, description, date_debut, date_fin, fk_validator, statut) VALUES ('TESTBRD".$suffix."-".$k."', ".$entity.", ".$userid.", 1, '".$db->idate($now)."', 'Board test', '".$datestart."', '".$datestart."', ".$userid.", ".$status.")");
 			}
 			$this->assertBoard($before, $object->load_board($user), 2, 1, 'holidays to approve');
 		}

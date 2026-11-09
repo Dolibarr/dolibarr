@@ -400,7 +400,7 @@ ErrorDeletingAClosedCashControlIsNotPossible=La suppression d'une clôture de ca
 ErrorFailedToConvertFileInText=Échec de la conversion de fichier en texte.
 ErrorAIServiceTimeout=L'IA (%s) n'a pas répondu à temps. Le document est peut-être trop volumineux ou l'IA est peut-être surchargée. Veuillez réessayer plus tard (un administrateur peut également augmenter le délai d'attente avec la constante MAIN_USE_RESPONSE_TIMEOUT).
 ErrorAIAnswerIsNotValidJSON=La réponse de l'IA service n'est pas un JSON valide (%s). Veuillez réessayer ou utiliser un autre modèle.
-ErrorAIModuleNotActive=This feature requires the AI module (Artificial Intelligence module) to be enabled. Ask the administrator of your instance to enable it...
+ErrorAIModuleNotActive=Cette fonctionnalité nécessite l'activation du module d'IA (Intelligence Artificielle). Veuillez demander à l'administrateur de votre instance de l'activer.
 ErrorCantSignDocument=Erreur : impossible de signer le document. Le lien a peut-être expiré ou le document a été modifié depuis l’envoi du lien.
 ErrorProposalValidityDatePassed=Erreur, ce certificat devis ne peut plus être signé : sa date de validité était %s. Veuillez demander un certificat devis à jour.
 
