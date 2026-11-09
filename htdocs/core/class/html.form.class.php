@@ -28,6 +28,7 @@
  * Copyright (C) 2026		Lenin Rivas				<lenin.rivas777@gmail.com>
  * Copyright (C) 2026		Open-Dsi				<support@open-dsi.fr>
  * Copyright (C) 2026		Jose MARTINEZ				<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Joachim Kueter		<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -7335,6 +7336,20 @@ class Form
 							$(this).parent().find("button.ui-button:eq(2)").focus();
 						},';
 			}
+			if ($useajax == 2 && !empty($pageno)) {
+				// Closing the dialog with the close button of the title bar must behave like the button "No",
+				// otherwise the page stays on action=xxx and may hide its action buttons.
+				// The buttons set the flag formconfirmchoicedone before closing the dialog, so they are not affected.
+				$formconfirm .= '
+						beforeClose: function() {
+							if ($(this).data("formconfirmchoicedone")) {
+								return true;
+							}
+							console.log("formconfirm closed without choice, we do as if button No was clicked");
+							$(this).closest(".ui-dialog").find(".ui-dialog-buttonpane button").eq(1).trigger("click");
+							return false;
+						},';
+			}
 
 			$jsforcursor = '';
 			if ($useajax == 1) {
@@ -7392,6 +7407,7 @@ class Form
 			$formconfirm .= '
 								console.log("after post ok");
 							}
+							$(this).data("formconfirmchoicedone", 1);
 							$(this).dialog("close");
 						}
 					}, {
@@ -7426,6 +7442,7 @@ class Form
 			$formconfirm .= '
 								console.log("after post ko");
 							}
+							$(this).data("formconfirmchoicedone", 1);
 							$(this).dialog("close");
 						}
 					}';
@@ -7451,6 +7468,7 @@ class Form
 							dolSubmitConfirmForm(urljump, pageother, options, ' . $maxurllengthforget . ');';
 				}
 				$formconfirm .= '
+							$(this).data("formconfirmchoicedone", 1);
 							$(this).dialog("close");
 						}
 					}';
