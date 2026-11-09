@@ -263,8 +263,28 @@ class Import
 							}
 						}
 
+						// Test permissions specific to the dataset (if defined). A permission on 'user' with no sub-level means admin only.
+						$bool = true;
+						if (isset($module->import_permission[$r]) && is_array($module->import_permission[$r])) {
+							foreach ($module->import_permission[$r] as $perm) {
+								if (!empty($perm[2])) {
+									$bool = $user->hasRight($perm[0], $perm[1], $perm[2]);
+								} elseif (!empty($perm[1])) {
+									$bool = $user->hasRight($perm[0], $perm[1]);
+								} else {
+									$bool = false;
+								}
+								if ($perm[0] == 'user' && $user->admin) {
+									$bool = true;
+								}
+								if (!$bool) {
+									break;
+								}
+							}
+						}
+
 						// Permission
-						$this->array_import_perms[$i] = $user->hasRight('import', 'run');
+						$this->array_import_perms[$i] = ($user->hasRight('import', 'run') && $bool);
 						// Icon
 						$this->array_import_icon[$i] = (isset($module->import_icon[$r]) ? $module->import_icon[$r] : $module->picto);
 						// Code of dataset export
