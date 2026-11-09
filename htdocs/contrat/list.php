@@ -51,12 +51,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 if (isModEnabled("category")) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('contracts', 'products', 'companies', 'compta'));
+$langs->loadLangs(array('contracts', 'products', 'companies', 'compta', 'projects'));
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
@@ -83,6 +84,8 @@ $search_id = GETPOST('search_id', 'alpha');
 $search_contract = GETPOST('search_contract', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
 $search_ref_supplier = GETPOST('search_ref_supplier', 'alpha');
+$search_project_ref = GETPOST('search_project_ref', 'alpha');
+$search_project = GETPOST('search_project', 'alpha');
 $search_type = (GETPOSTISSET('search_type') ? GETPOSTINT('search_type') : -1);
 $search_all = GETPOST('search_all', 'alphanohtml');
 $search_status = GETPOST('search_status', 'alpha');
@@ -168,6 +171,7 @@ if ($search_status == '') {
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Contrat($db);
 $staticcontratligne = new ContratLigne($db);
+$projectstatic = new Project($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -200,6 +204,8 @@ $arrayfields = array(
 	'c.ref_customer' => array('label' => $langs->trans("RefCustomer"), 'checked' => '1', 'position' => 12),
 	'c.ref_supplier' => array('label' => $langs->trans("RefSupplier"), 'checked' => '1', 'position' => 14),
 	'c.fk_contract_type' => array('label' => $langs->trans("ContractType"), 'checked' => '1', 'position' => 16),
+	'p.ref' => array('label' => $langs->trans("ProjectRef"), 'checked' => '0', 'enabled' => (isModEnabled('project') ? '1' : '0'), 'position' => 18),
+	'p.title' => array('label' => $langs->trans("ProjectLabel"), 'checked' => '0', 'enabled' => (isModEnabled('project') ? '1' : '0'), 'position' => 19),
 	's.nom' => array('label' => $langs->trans("ThirdParty"), 'checked' => '1', 'position' => 30),
 	's.name_alias' => array('label' => $langs->trans("AliasNameShort"), 'checked' => '0', 'position' => 30),
 	's.town' => array('label' => $langs->trans("Town"), 'checked' => '0', 'position' => 31),
@@ -278,6 +284,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_contract = "";
 	$search_ref_customer = "";
 	$search_ref_supplier = "";
+	$search_project_ref = '';
+	$search_project = '';
 	$search_type = -1;
 	$search_user = '';
 	$search_sale = '';
@@ -341,6 +349,7 @@ $title = "";
 
 $sql = 'SELECT';
 $sql .= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_modification, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.fk_contract_type, c.note_private, c.note_public, c.entity, c.signed_status,";
+$sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias, s.email, s.town, s.zip, s.fk_pays as country_id, s.phone, s.phone_mobile, s.client, s.code_client, s.status as company_status, s.logo as company_logo,';
 $sql .= " typent.code as typent_code, c.note_public, c.note_private,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
@@ -372,6 +381,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (c.fk_soc = s.rowid)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = c.fk_projet";
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (c.rowid = ef.fk_object)";
 }
@@ -422,6 +432,12 @@ if (!empty($search_ref_customer)) {
 }
 if (!empty($search_ref_supplier)) {
 	$sql .= natural_search(array('c.ref_supplier'), $search_ref_supplier);
+}
+if ($search_project_ref != '') {
+	$sql .= natural_search('p.ref', $search_project_ref);
+}
+if ($search_project != '') {
+	$sql .= natural_search('p.title', $search_project);
 }
 if ($search_type >= 0) {
 	$sql .= " AND c.fk_contract_type = ".((int) $search_type);
@@ -616,6 +632,9 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 			$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as state on (state.rowid = s.fk_departement)', '', $sqlforcount);
 		}
 		$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'contratdet as cd ON c.rowid = cd.fk_contrat', '', $sqlforcount);
+		if ($search_project_ref == '' && $search_project == '') {	// The join is required by the filters on project
+			$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'projet as p ON p.rowid = c.fk_projet', '', $sqlforcount);
+		}
 		//$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'contrat_extrafields as ef on (c.rowid = ef.fk_object)', '', $sqlforcount);	// We my need this if there is filters on extrafields
 		$sqlforcount = preg_replace('/GROUP BY.*$/', '', $sqlforcount);
 
@@ -719,6 +738,12 @@ if ($search_ref_customer != '') {
 }
 if ($search_ref_supplier != '') {
 	$param .= '&search_ref_supplier='.urlencode($search_ref_supplier);
+}
+if ($search_project_ref != '') {
+	$param .= '&search_project_ref='.urlencode($search_project_ref);
+}
+if ($search_project != '') {
+	$param .= '&search_project='.urlencode($search_project);
 }
 if ($search_type >= 0) {
 	$param .= '&search_type='.$search_type;
@@ -978,8 +1003,8 @@ if ($conf->main_checkbox_left_column) {
 	print '</td>';
 }
 if (!empty($arrayfields['c.rowid']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat maxwidth50" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['c.ref']['checked'])) {
@@ -1000,6 +1025,18 @@ if (!empty($arrayfields['c.ref_supplier']['checked'])) {
 if (!empty($arrayfields['c.fk_contract_type']['checked'])) {
 	print '<td class="liste_titre">';
 	print $form->selectarray('search_type', array('-1' => '', '0' => $langs->trans('CustomerContract'), '1' => $langs->trans('SupplierContract')), $search_type, 0, 0, 0, '', 0, 0, 0, '', 'flat maxwidth100');
+	print '</td>';
+}
+// Project ref
+if (!empty($arrayfields['p.ref']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat maxwidth75" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'">';
+	print '</td>';
+}
+// Project label
+if (!empty($arrayfields['p.title']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat maxwidth100" name="search_project" value="'.dol_escape_htmltag($search_project).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
@@ -1172,6 +1209,14 @@ if (!empty($arrayfields['c.ref_supplier']['checked'])) {
 }
 if (!empty($arrayfields['c.fk_contract_type']['checked'])) {
 	print_liste_field_titre($arrayfields['c.fk_contract_type']['label'], $_SERVER["PHP_SELF"], "c.fk_contract_type", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['p.ref']['checked'])) {
+	print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['p.title']['checked'])) {
+	print_liste_field_titre($arrayfields['p.title']['label'], $_SERVER["PHP_SELF"], "p.title", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
@@ -1363,7 +1408,7 @@ while ($i < $imaxinloop) {
 			}
 			if (!empty($obj->note_private) || !empty($obj->note_public)) {
 				print ' <span class="note">';
-				print '<a href="'.DOL_URL_ROOT.'/contrat/note.php?id='.$obj->rowid.'&save_lastsearch_values=1">'.img_picto($langs->trans("ViewPrivateNote"), 'note').'</a>';
+				print '<a href="'.DOL_URL_ROOT.'/core/note.php?element=contrat&id='.$obj->rowid.'&save_lastsearch_values=1">'.img_picto($langs->trans("ViewPrivateNote"), 'note').'</a>';
 				print '</span>';
 			}
 
@@ -1392,6 +1437,31 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['c.fk_contract_type']['checked'])) {
 			$contractTypeLabels = array(0 => $langs->trans('CustomerContract'), 1 => $langs->trans('SupplierContract'));
 			print '<td>'.dol_escape_htmltag($contractTypeLabels[(int) $obj->fk_contract_type] ?? '').'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Project ref
+		if (!empty($arrayfields['p.ref']['checked'])) {
+			print '<td class="tdoverflowmax150">';
+			if ($obj->project_id > 0) {
+				$projectstatic->id = $obj->project_id;
+				$projectstatic->ref = $obj->project_ref;
+				$projectstatic->title = $obj->project_label;
+				print $projectstatic->getNomUrl(1);
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Project label
+		if (!empty($arrayfields['p.title']['checked'])) {
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->project_label).'">';
+			if ($obj->project_id > 0) {
+				print '<span class="spantitle">'.dol_escape_htmltag($obj->project_label).'</span>';
+			}
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

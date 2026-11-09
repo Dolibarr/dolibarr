@@ -80,10 +80,13 @@ class AgendaEvents extends DolibarrApi
 			$result = $this->actioncomm->initAsSpecimen();
 		} else {
 			$result = $this->actioncomm->fetch($id);
-			if ($result) {
+			if ($result > 0) {
 				$this->actioncomm->fetch_optionals();
 				$this->actioncomm->fetchObjectLinked();
 			}
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching Agenda Event : '.$this->actioncomm->errorsToString());
 		}
 		if (!$result) {
 			throw new RestException(404, 'Agenda Events not found');
@@ -208,6 +211,9 @@ class AgendaEvents extends DolibarrApi
 		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
 		if ($pagination_data) {
 			$totalsResult = $this->db->query($sqlTotals);
+			if (!$totalsResult) {
+				throw new RestException(503, 'Error when retrieve Agenda Event list : '.$this->db->lasterror());
+			}
 			$total = $this->db->fetch_object($totalsResult)->total;
 
 			$tmp = $obj_ret;
@@ -217,7 +223,7 @@ class AgendaEvents extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => (int) ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -242,12 +248,13 @@ class AgendaEvents extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('agenda', 'myactions', 'create')) {
 			throw new RestException(403, "Insufficient rights to create your Agenda Event");
 		}
+
+		// Check mandatory fields
+		$this->_validate($request_data);
+
 		if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'create') && DolibarrApiAccess::$user->id != $request_data['userownerid']) {
 			throw new RestException(403, "Insufficient rights to create an Agenda Event for owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
 		}
-
-		// Check mandatory fields
-		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
@@ -256,8 +263,26 @@ class AgendaEvents extends DolibarrApi
 				continue;
 			}
 
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->actioncomm->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->actioncomm);
+				}
+				continue;
+			}
 			$this->actioncomm->$field = $this->_checkValForAPI($field, $value, $this->actioncomm);
 		}
+
+		// Check on the sanitized value, because it is the one that create() stores into fk_soc
+		$socid = (int) $this->actioncomm->socid;
+		// External user can only create events of its own thirdparty, so link the event to it when socid is not provided
+		if (DolibarrApiAccess::$user->socid > 0 && $socid <= 0) {
+			$socid = (int) DolibarrApiAccess::$user->socid;
+			$this->actioncomm->socid = $socid;
+		}
+		if ($socid > 0 && !DolibarrApi::_checkAccessToResource('societe', $socid)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		/*if (isset($request_data["lines"])) {
 		  $lines = array();
 		  foreach ($request_data["lines"] as $line) {
@@ -337,6 +362,8 @@ class AgendaEvents extends DolibarrApi
 			$this->actioncomm->$field = $this->_checkValForAPI($field, $value, $this->actioncomm);
 		}
 
+		// Returning false sent back an HTTP 200 with a body of false, so a refused update looked like a
+		// success to the caller. update() returns <= 0 on an error, which is an error for the API too.
 		if ($this->actioncomm->update(DolibarrApiAccess::$user, 1) <= 0) {
 			throw new RestException(500, 'Error when updating Agenda Event : '.$this->actioncomm->errorsToString());
 		}
@@ -382,6 +409,8 @@ class AgendaEvents extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		// delete() is documented int<-2,1> and returns -1 or -2 on an error, and !(-1) is false, so a failed
+		// delete went past this test and the API answered 200 "Agenda Event deleted" with the event still there.
 		if ($this->actioncomm->delete(DolibarrApiAccess::$user) <= 0) {
 			throw new RestException(500, 'Error when delete Agenda Event : '.$this->actioncomm->errorsToString());
 		}

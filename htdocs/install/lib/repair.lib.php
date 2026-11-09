@@ -315,3 +315,167 @@ function repairImagePathIsSafe($path, $directory, $documentroot)
 	$realparent = str_replace('\\', '/', $realparent);
 	return ($windows ? strcasecmp($realparent, $expected) : strcmp($realparent, $expected)) === 0;
 }
+
+/**
+ * Find or delete document files whose object no longer exists in any entity.
+ *
+ * @param DoliDB $db Database handler
+ * @param string $modulepart Supported native document module
+ * @param string $directory One owner's native module directory
+ * @param string $documentroot Installation's documents directory
+ * @param bool $confirmed Delete candidates; false only reports them
+ * @return array{files:list<string>,deleted:int,error:string}
+ */
+function repairOrphanFiles($db, $modulepart, $directory, $documentroot, $confirmed = false)
+{
+	$report = array('files' => array(), 'deleted' => 0, 'error' => '');
+	$tables = array('company' => 'societe', 'invoice' => 'facture', 'invoice_supplier' => 'facture_fourn', 'propal' => 'propal', 'order' => 'commande', 'order_supplier' => 'commande_fournisseur', 'contract' => 'contrat', 'tax' => 'chargesociales');
+	if (!isset($tables[$modulepart]) || !repairImagePathIsSafe($directory.'/', $directory, $documentroot) || !is_readable(dol_osencode($directory))) {
+		$report['error'] = 'RepairOrphanFilesFailed';
+		return $report;
+	}
+	// This maintenance inventory is deliberately global: an inaccessible or shared object is not an orphan.
+	$sql = "SELECT rowid".($modulepart === 'company' ? '' : ', ref')." FROM ".$db->prefix().$db->sanitize($tables[$modulepart]);
+	$resql = $db->query($sql);
+	if (!$resql) {
+		$report['error'] = 'RepairOrphanFilesFailed';
+		return $report;
+	}
+	$existingdirectories = array();
+	while (is_object($obj = $db->fetch_object($resql))) {
+		$id = (int) $obj->rowid;
+		$ref = $modulepart === 'company' || $modulepart === 'tax' ? (string) $id : dol_sanitizeFileName((string) $obj->ref);
+		if ($modulepart === 'invoice_supplier') {
+			$prefix = get_exdir($id, 2, 0, 0, null, 'invoice_supplier');
+			$existingdirectories[dol_strtolower(dol_string_unaccent($prefix.$ref))] = true;
+			$existingdirectories[$prefix.$id] = true; // Historical numeric object directory.
+			$existingdirectories[(string) $id] = true;
+		} elseif ($ref !== '') {
+			$existingdirectories[dol_strtolower(dol_string_unaccent($ref))] = true;
+		}
+	}
+	$db->free($resql);
+	$files = array();
+	$pendingdirectories = array($directory);
+	while (!empty($pendingdirectories)) {
+		$currentdirectory = array_pop($pendingdirectories);
+		if (!repairImagePathIsSafe($currentdirectory, $directory, $documentroot) || !is_readable(dol_osencode($currentdirectory))) {
+			$report['error'] = 'RepairOrphanFilesFailed';
+			return $report;
+		}
+		// Check each directory before descending, including Windows junctions.
+		$entries = dol_dir_list($currentdirectory, 'all', 0, '', array('^SPECIMEN\.pdf$', '^\.', '(\.meta|_preview.*\.png)$', '^temp$', '^payments$', '^CVS$', '^thumbs$'), 'name', SORT_ASC, 0, 1, '', 1);
+		foreach ($entries as $entry) {
+			if ($entry['type'] === 'dir') {
+				$pendingdirectories[] = $entry['fullname'];
+			} else {
+				$files[] = $entry;
+			}
+		}
+	}
+	foreach ($files as $file) {
+		$relativefile = substr($file['fullname'], strlen($directory) + 1);
+		$parts = explode('/', $relativefile);
+		if (count($parts) < 2) {
+			continue; // Root files cannot be assigned to an object directory reliably.
+		}
+		$objectdirectory = $parts[0];
+		if ($modulepart === 'invoice_supplier') {
+			if (count($parts) >= 4 && preg_match('/^[0-9]$/', $parts[0]) && preg_match('/^[0-9]$/', $parts[1])) {
+				$objectdirectory = $parts[0].'/'.$parts[1].'/'.$parts[2];
+			} elseif (count($parts) !== 2 || !ctype_digit($parts[0])) {
+				continue;
+			}
+		} elseif ($modulepart === 'company') {
+			if (!ctype_digit($parts[0]) || (count($parts) > 2 && $parts[1] !== 'logos')) {
+				continue; // Preserve legacy hierarchies and shared courrier/logo directories.
+			}
+		} elseif ($modulepart === 'tax' && !ctype_digit($parts[0])) {
+			continue;
+		}
+		if (isset($existingdirectories[dol_strtolower(dol_string_unaccent($objectdirectory))])) {
+			continue;
+		}
+		if (!repairImagePathIsSafe($file['fullname'], $directory, $documentroot)) {
+			$report['error'] = 'RepairOrphanFilesFailed';
+			return $report;
+		}
+		$report['files'][] = $file['fullname'];
+	}
+	if ($confirmed) {
+		foreach ($report['files'] as $file) {
+			if (!dol_delete_file($file, 0, 0, 1)) {
+				$report['error'] = 'RepairOrphanFilesFailed';
+				break;
+			}
+			$report['deleted']++;
+			dol_delete_dir(dirname($file), 1); // rmdir only: never remove other files recursively.
+		}
+	}
+	return $report;
+}
+
+/**
+ * Migrate one mailing's legacy files inside its owner's native directory.
+ *
+ * @param Mailing $mailing Mailing with id, ref and entity loaded
+ * @param string $directory Owner's native mailing directory
+ * @param string $documentroot Installation's documents directory
+ * @param bool $ambiguous Other mailings in this entity use the same legacy bucket
+ * @param bool $confirmed Apply moves; false only reports planned moves
+ * @return array{files:list<array{source:string,target:string}>,error:string}
+ */
+function repairMailingFiles($mailing, $directory, $documentroot, $ambiguous = false, $confirmed = false)
+{
+	global $conf;
+	$report = array('files' => array(), 'error' => '');
+	if ($mailing->id <= 0 || $mailing->entity <= 0 || !repairImagePathIsSafe($directory.'/'.$mailing->id, $directory, $documentroot)) {
+		$report['error'] = 'RepairMailingFailed';
+		return $report;
+	}
+	$origin = $directory.'/'.get_exdir($mailing->id, 2, 0, 1, $mailing, 'mailing');
+	// Calculate the destination without changing the administrator's persisted path setting.
+	$hadsetting = isset($conf->global->MAILING_USE_NEW_PATH_FOR_FILES);
+	$previoussetting = $hadsetting ? $conf->global->MAILING_USE_NEW_PATH_FOR_FILES : null;
+	$conf->global->MAILING_USE_NEW_PATH_FOR_FILES = 1;
+	$destination = $directory.'/'.get_exdir($mailing->id, 0, 0, 1, $mailing, 'mailing');
+	if ($hadsetting) {
+		$conf->global->MAILING_USE_NEW_PATH_FOR_FILES = $previoussetting;
+	} else {
+		unset($conf->global->MAILING_USE_NEW_PATH_FOR_FILES);
+	}
+	if (!repairImagePathIsSafe($origin, $directory, $documentroot) || !repairImagePathIsSafe($destination, $directory, $documentroot) || $origin === $destination) {
+		$report['error'] = 'RepairMailingFailed';
+		return $report;
+	}
+	if (!dol_is_dir($origin)) {
+		return $report;
+	}
+	if (!is_readable(dol_osencode($origin))) {
+		$report['error'] = 'RepairMailingFailed';
+		return $report;
+	}
+	$files = dol_dir_list($origin, 'files', 1, '', null, 'name', SORT_ASC, 0, 1, '', 1);
+	if (!empty($files) && $ambiguous) {
+		$report['error'] = 'RepairMailingAmbiguous';
+		return $report;
+	}
+	foreach ($files as $file) {
+		$source = $file['fullname'];
+		$target = $destination.'/'.substr($source, strlen($origin) + 1);
+		if (!repairImagePathIsSafe($source, $directory, $documentroot) || !repairImagePathIsSafe($target, $directory, $documentroot) || file_exists(dol_osencode($target))) {
+			$report['error'] = 'RepairMailingFailed';
+			return $report; // Refuse the entire mailing before moving any file on a collision.
+		}
+		$report['files'][] = array('source' => $source, 'target' => $target);
+	}
+	if ($confirmed) {
+		foreach ($report['files'] as $file) {
+			if (dol_mkdir(dirname($file['target'])) < 0 || !dol_move($file['source'], $file['target'], '0', 0, 0, 1, array(), (int) $mailing->entity)) {
+				$report['error'] = 'RepairMailingFailed';
+				break;
+			}
+		}
+	}
+	return $report;
+}

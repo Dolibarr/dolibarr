@@ -304,7 +304,9 @@ if (empty($groupedNormalTools) && empty($groupedSystemTools)) {
 			print '</td>';
 
 			// Tool Description (hidden on mobile)
-			print '<td class="small opacitymedium hideonsmartphone">' . dol_escape_htmltag($desc) . '</td>';
+			print '<td class="small opacitymedium hideonsmartphone">';
+			print '<div class="twolinesmax-normallineheight" title="' . dolPrintHTMLForAttribute($desc) . '">' . dol_escape_htmltag($desc) . '</div>';
+			print '</td>';
 
 			// Type Badge
 			print '<td class="center">' . $typeBadge . '</td>';

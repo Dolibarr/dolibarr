@@ -32,7 +32,8 @@ alias claudes='dev/build/docker-claude/claudes.sh'
 ## Prepare GitHub token key
 
 ````
-gh auth login -h github.com -p https -w -s workflow
+gh auth login -h github.com -p https -w 
+(or for a branch maintener: gh auth login -h github.com -p https -w -s workflow)
 gh auth status
 ````
 
@@ -71,8 +72,11 @@ The other arguments are passed to claude, for example to resume the last convers
 claudes --continue
 ````
 
-Into the container, the links `.claude` (to `.agents`) and `CLAUDE.md` (to `.agents/AGENTS.md`) are created at the root of the
-repository when they do not exist, so Claude Code uses the instructions, skills and agents shared by all the AI agents.
+Into the container, the directory `.claude` (with the links `skills`, `agents` and `hooks` to the same entries of `.agents`) and
+the link `CLAUDE.md` (to `.agents/AGENTS.md`) are created at the root of the repository when they do not exist, so Claude Code
+uses the instructions, skills and agents shared by all the AI agents.
+`.claude` is a real directory and not a link to `.agents`: Claude Code refuses to create its worktrees (`.claude/worktrees/`)
+when `.claude` is a link. An old link `.claude` -> `.agents` is replaced automatically.
 
 ### Build (or rebuild) image of the container.
 Claude Code is installed into the image when it is built, and its auto-updater is disabled. To get a new version of Claude Code, rebuild the image with:

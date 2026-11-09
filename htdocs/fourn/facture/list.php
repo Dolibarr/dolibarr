@@ -82,6 +82,7 @@ $search_refsupplier = GETPOST('search_refsupplier', 'alpha');
 $search_type = GETPOST('search_type', 'intcomma');
 $search_subtype = GETPOST('search_subtype', 'intcomma');
 $search_project = GETPOST('search_project', 'alpha');
+$search_project_label = GETPOST('search_project_label', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
 $search_company_alias = GETPOST('search_company_alias', 'alpha');
 $search_supplier_code = GETPOST('search_supplier_code', 'alphanohtml');
@@ -212,6 +213,7 @@ $arrayfields = array(
 	'f.datef' => array('label' => "DateInvoice", 'checked' => '1', 'position' => 25),
 	'f.date_lim_reglement' => array('label' => "DateDue", 'checked' => '1', 'position' => 27),
 	'p.ref' => array('label' => "ProjectRef", 'checked' => '1', 'position' => 30, 'enabled' => (isModEnabled('project') ? '1' : '0')),
+	'p.title' => array('label' => "ProjectLabel", 'checked' => '0', 'position' => 31, 'enabled' => (isModEnabled('project') ? '1' : '0')),
 	's.nom' => array('label' => "ThirdParty", 'checked' => '1', 'position' => 41),
 	's.name_alias' => array('label' => "AliasNameShort", 'checked' => '0', 'position' => 42),
 	's.code_fournisseur' => array('label' => "SupplierCodeShort", 'checked' => '-1', 'position' => 43),
@@ -315,6 +317,7 @@ if (empty($reshook)) {
 		$search_subtype = '';
 		$search_label = "";
 		$search_project = '';
+		$search_project_label = '';
 		$search_company = "";
 		$search_company_alias = "";
 		$search_supplier_code = "";
@@ -660,6 +663,9 @@ if ($search_subtype != '' && $search_subtype != '-1') {
 }
 if ($search_project) {
 	$sql .= natural_search('p.ref', $search_project);
+}
+if ($search_project_label) {
+	$sql .= natural_search('p.title', $search_project_label);
 }
 if (empty($arrayfields['s.name_alias']['checked']) && $search_company) {
 	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_company);
@@ -1052,6 +1058,12 @@ if ($search_subtype != '') {
 if ($search_label) {
 	$param .= '&search_label='.urlencode($search_label);
 }
+if ($search_project) {
+	$param .= '&search_project='.urlencode($search_project);
+}
+if ($search_project_label) {
+	$param .= '&search_project_label='.urlencode($search_project_label);
+}
 if ($search_company) {
 	$param .= '&search_company='.urlencode($search_company);
 }
@@ -1291,8 +1303,8 @@ if ($conf->main_checkbox_left_column) {
 }
 // Technical ID
 if (!empty($arrayfields['f.rowid']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input class="flat maxwidth50" type="text" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 // Ref
@@ -1360,6 +1372,10 @@ if (!empty($arrayfields['f.date_lim_reglement']['checked'])) {
 // Project
 if (!empty($arrayfields['p.ref']['checked'])) {
 	print '<td class="liste_titre"><input class="flat maxwidth50" type="text" name="search_project" value="'.dol_escape_htmltag($search_project).'"></td>';
+}
+// Project label
+if (!empty($arrayfields['p.title']['checked'])) {
+	print '<td class="liste_titre"><input class="flat maxwidth100" type="text" name="search_project_label" value="'.dol_escape_htmltag($search_project_label).'"></td>';
 }
 // Thirpdarty
 if (!empty($arrayfields['s.nom']['checked'])) {
@@ -1604,6 +1620,10 @@ if (!empty($arrayfields['f.date_lim_reglement']['checked'])) {
 }
 if (!empty($arrayfields['p.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER['PHP_SELF'], "p.ref", '', $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['p.title']['checked'])) {
+	print_liste_field_titre($arrayfields['p.title']['label'], $_SERVER['PHP_SELF'], "p.title", '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
@@ -2016,12 +2036,24 @@ while ($i < $imaxinloop) {
 
 		// Project
 		if (!empty($arrayfields['p.ref']['checked'])) {
-			print '<td class="nowrap">';
+			print '<td class="tdoverflowmax150">';
 			if ($obj->project_id > 0) {
 				$projectstatic->id = $obj->project_id;
 				$projectstatic->ref = $obj->project_ref;
 				$projectstatic->title = $obj->project_label;
 				print $projectstatic->getNomUrl(1);
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Project label
+		if (!empty($arrayfields['p.title']['checked'])) {
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->project_label).'">';
+			if ($obj->project_id > 0) {
+				print '<span class="spantitle">'.dol_escape_htmltag($obj->project_label).'</span>';
 			}
 			print '</td>';
 			if (!$i) {

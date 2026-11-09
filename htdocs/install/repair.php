@@ -121,9 +121,13 @@ $imagerepairentity = $imagerepairaction !== '' && GETPOSTISSET($imagerepairactio
 $imagerepairmode = $imagerepairaction !== '' ? GETPOST($imagerepairaction, 'aZ09') : '';
 $imagerepairtoken = GETPOST('token', 'alphanohtml');
 $imagerepairpost = $imagerepairmode === 'confirmed' && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST';
+$mailingrepairmode = GETPOST('repair_mailing_path', 'aZ09');
+$mailingrepairpost = $mailingrepairmode === 'confirmed' && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST';
+$orphanrepairmode = GETPOST('clean_orphelin_dir', 'aZ09');
+$orphanrepairpost = $orphanrepairmode === 'confirmed' && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST';
 $ecmrepairbufferlevel = ob_get_level();
 $ecmrepairpost = GETPOST('clean_ecm_files_table', 'aZ09') === 'confirmed' && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST';
-if ($ecmrepairpost || $imagerepairpost) {
+if ($ecmrepairpost || $imagerepairpost || $orphanrepairpost || $mailingrepairpost) {
 	ob_start(); // Allow a redirect after the installer has rendered its progress output.
 }
 
@@ -177,7 +181,7 @@ $form = new Form($db);
 
 if ($db->connected) {
 	print '<tr><td class="nowrap">';
-	print $langs->trans("ServerConnection")." : ".$dolibarr_main_db_host.'</td><td class="right">'.$langs->trans("OK")."</td></tr>";
+	print $langs->trans("ServerConnection")." : ".$dolibarr_main_db_host.'</td><td class="right">'.img_picto($langs->trans("OK"), 'tick')."</td></tr>";
 	dolibarr_install_syslog("repair: ".$langs->transnoentities("ServerConnection").": ".$dolibarr_main_db_host.$langs->transnoentities("OK"));
 	$ok = 1;
 } else {
@@ -189,7 +193,7 @@ if ($db->connected) {
 if ($ok) {
 	if ($db->database_selected) {
 		print '<tr><td class="nowrap">';
-		print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name.'</td><td class="right">'.$langs->trans("OK")."</td></tr>";
+		print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name.'</td><td class="right">'.img_picto($langs->trans("OK"), 'tick')."</td></tr>";
 		dolibarr_install_syslog("repair: database connection successful: ".$dolibarr_main_db_name);
 		$ok = 1;
 	} else {
@@ -241,13 +245,7 @@ print '</div>';
 print '<br>';
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="liste centpercent" style="border: 1px solid #ccc">';
-print '<tr>';
-print '<th></th>';
-print '<th></th>';
-print '<th>Launch test</th>';
-print '<th>Launch confirmed</th>';
-print '</tr>';
+print '<table class="liste centpercent repairoptions" style="border: 1px solid #ccc">';
 
 $warning_using_utf8mb4 = '';
 if ($dolibarr_main_db_character_set != 'utf8mb4') {
@@ -282,7 +280,7 @@ $sections = [
 		],
 		[
 			'name' => 'repair_mailing_path',
-			'info' => 'Repair path of mailing files',
+			'info' => 'Repair path of mailing files (all entities)',
 			'tooltip' => 'Should be applied when using emailing module with > 99 mailings. In that case, please also set MAILING_USE_NEW_PATH_FOR_FILES.'
 		]
 	],
@@ -297,7 +295,7 @@ $sections = [
 		],
 		[
 			'name' => 'clean_orphelin_dir',
-			'info' => 'Clean orphan directories'
+			'info' => 'Clean orphan directories (all entities)'
 		],
 		[
 			'name' => 'clean_product_stock_batch',
@@ -347,6 +345,36 @@ if ($db->type == 'pgsql') {
 	];
 }
 
+if (GETPOSTISSET('repair_mailing_path')) {
+	$mailingrepairvalid = in_array($mailingrepairmode, array('test', 'confirmed'), true);
+	foreach ($sections as $options) {
+		foreach ($options as $opt) {
+			if ($opt['name'] !== 'repair_mailing_path' && GETPOSTISSET($opt['name'])) {
+				$mailingrepairvalid = false;
+			}
+		}
+	}
+	if (!$mailingrepairvalid || ($mailingrepairmode === 'confirmed' && (!$mailingrepairpost || !is_string($imagerepairtoken) || !hash_equals(newToken(), $imagerepairtoken)))) {
+		$ok = 0;
+		print '<tr><td colspan="4" class="error">'.$langs->trans('ErrorWrongParameters').'</td></tr>';
+	}
+}
+
+if (GETPOSTISSET('clean_orphelin_dir')) {
+	$orphanrepairvalid = in_array($orphanrepairmode, array('test', 'confirmed'), true);
+	foreach ($sections as $options) {
+		foreach ($options as $opt) {
+			if ($opt['name'] !== 'clean_orphelin_dir' && GETPOSTISSET($opt['name'])) {
+				$orphanrepairvalid = false;
+			}
+		}
+	}
+	if (!$orphanrepairvalid || ($orphanrepairmode === 'confirmed' && (!$orphanrepairpost || !is_string($imagerepairtoken) || !hash_equals(newToken(), $imagerepairtoken)))) {
+		$ok = 0;
+		print '<tr><td colspan="4" class="error">'.$langs->trans('ErrorWrongParameters').'</td></tr>';
+	}
+}
+
 if ($imagerepairaction !== '') {
 	$imagevalid = in_array($imagerepairmode, array('test', 'confirmed'), true) && $imagerepairentity > 0 && isset($ecmrepairentities[$imagerepairentity]);
 	foreach ($sections as $options) {
@@ -390,7 +418,7 @@ foreach ($sections as $section => $options) {
 		// Generate links with the right option and value
 		$url_test = $_SERVER['PHP_SELF'].'?'.$option.'=test#pleasebepatient';
 		$url_confirmed = $_SERVER['PHP_SELF'].'?'.$option.'=confirmed#pleasebepatient';
-		print '<tr>';
+		print '<tr class="repairoption">';
 		print '<td>' . $option . '</td>';
 		print '<td>';
 		if ($tooltip) {
@@ -410,12 +438,12 @@ foreach ($sections as $section => $options) {
 			print $form->selectarray($option.'_entity', $ecmrepairentities, $imageentity, 0, 0, 0, 'style="width: 220px"', 0, 0, 0, '', 'minwidth150');
 		}
 		print '</td>';
-		if ($option == 'clean_ecm_files_table' || in_array($option, $imagerepairactions, true)) {
+		if ($option == 'repair_mailing_path' || $option == 'clean_orphelin_dir' || $option == 'clean_ecm_files_table' || in_array($option, $imagerepairactions, true)) {
 			print '<td class="center"><button class="button" type="submit" name="'.$option.'" value="test">'.$langs->trans('Test').'</button></td>';
 			print '<td class="center"><button class="button" type="submit" name="'.$option.'" value="confirmed">'.$langs->trans('Repair').'</button></td>';
 		} else {
-			print '<td class="center"><a href="'.$url_test.'" title="Launch test on option '.$option.'">test</a>'.($value == 'test' ? ' (launched)' : '').'</td>';
-			print '<td class="center"><a href="'.$url_confirmed.'" title="Launch repair on option '.$option.'">repair</a>'.($value == 'confirmed' ? ' (launched)' : '').'</td>';
+			print '<td class="center"><a href="'.$url_test.'" title="Launch test on option '.$option.'" class="button">'.$langs->trans('Test').'</a></td>';
+			print '<td class="center"><a href="'.$url_confirmed.'" title="Launch repair on option '.$option.'" class="button">'.$langs->trans('Repair').'</a></td>';
 		}
 		print '</tr>';
 	}
@@ -444,7 +472,7 @@ if ($ok && $oneoptionset) {
 
 	// Flush (some browser need a certain amount of data)
 	print str_repeat(' ', 1024);
-	if (!$ecmrepairpost && !$imagerepairpost) {
+	if (!$ecmrepairpost && !$imagerepairpost && !$orphanrepairpost && !$mailingrepairpost) {
 		if (ob_get_level() > 0) {
 			ob_flush();
 		}
@@ -1162,133 +1190,46 @@ if ($ok && GETPOST('clean_menus', 'alpha')) {
 
 
 
-// clean_orphelin_dir: Run purge of directory
+// clean_orphelin_dir: Visit every owner's directory, preserving all existing objects.
 if ($ok && GETPOST('clean_orphelin_dir', 'alpha')) {
-	$listmodulepart = array('company', 'invoice', 'invoice_supplier', 'propal', 'order', 'order_supplier', 'contract', 'tax');
-	foreach ($listmodulepart as $modulepart) {
-		$filearray = array();
-		$upload_dir = isset($conf->$modulepart->dir_output) ? $conf->$modulepart->dir_output : '';
-		if ($modulepart == 'company') {
-			$upload_dir = $conf->societe->dir_output; // TODO change for multicompany sharing
-		}
-		if ($modulepart == 'invoice') {
-			$upload_dir = $conf->facture->dir_output;
-		}
-		if ($modulepart == 'invoice_supplier') {
-			$upload_dir = $conf->fournisseur->facture->dir_output;
-		}
-		if ($modulepart == 'order') {
-			$upload_dir = $conf->commande->dir_output;
-		}
-		if ($modulepart == 'order_supplier') {
-			$upload_dir = $conf->fournisseur->commande->dir_output;
-		}
-		if ($modulepart == 'contract') {
-			$upload_dir = $conf->contrat->dir_output;
-		}
-
-		if (empty($upload_dir)) {
+	$savedconf = clone $conf;
+	$savedmc = $mc ?? null;
+	$listmodulepart = array('company' => 'societe', 'invoice' => 'facture', 'invoice_supplier' => 'supplier_invoice', 'propal' => 'propal', 'order' => 'commande', 'order_supplier' => 'supplier_order', 'contract' => 'contrat', 'tax' => 'tax');
+	foreach ($ecmrepairentities as $orphanentity => $orphanlabel) {
+		if ($conf->setEntityValues($db, $orphanentity) < 0) {
+			$error++;
+			dol_print_error($db);
 			continue;
 		}
-
-		print '<tr><td colspan="2"><br>*** Clean orphelins files into files '.$upload_dir.'</td></tr>';
-
-		$filearray = dol_dir_list($upload_dir, "files", 1, '', array('^SPECIMEN\.pdf$', '^\.', '(\.meta|_preview.*\.png)$', '^temp$', '^payments$', '^CVS$', '^thumbs$'), '', SORT_DESC, 1, 1);
-
-		$object_instance = null;
-		// To show ref or specific information according to view to show (defined by $module)
-		if ($modulepart == 'company') {
-			include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-			$object_instance = new Societe($db);
-		}
-		if ($modulepart == 'invoice') {
-			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-			$object_instance = new Facture($db);
-		} elseif ($modulepart == 'invoice_supplier') {
-			include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-			$object_instance = new FactureFournisseur($db);
-		} elseif ($modulepart == 'propal') {
-			include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-			$object_instance = new Propal($db);
-		} elseif ($modulepart == 'order') {
-			include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-			$object_instance = new Commande($db);
-		} elseif ($modulepart == 'order_supplier') {
-			include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-			$object_instance = new CommandeFournisseur($db);
-		} elseif ($modulepart == 'contract') {
-			include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-			$object_instance = new Contrat($db);
-		} elseif ($modulepart == 'tax') {
-			include_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
-			$object_instance = new ChargeSociales($db);
-		}
-
-		foreach ($filearray as $key => $file) {
-			if (!is_dir($file['name'])
-			&& $file['name'] != '.'
-			&& $file['name'] != '..'
-			&& $file['name'] != 'CVS'
-			) {
-				// Define relative path used to store the file
-				$relativefile = preg_replace('/'.preg_quote($upload_dir.'/', '/').'/', '', $file['fullname']);
-
-				//var_dump($file);
-				$id = 0;
-				$ref = '';
-				$object_instance->id = 0;
-				$object_instance->ref = '';
-				$label = '';
-
-				// To show ref or specific information according to view to show (defined by $module)
-				if ($modulepart == 'invoice') {
-					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
-					$ref = empty($reg[1]) ? '' : $reg[1];
-				}
-				if ($modulepart == 'invoice_supplier') {
-					preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg);
-					$id = empty($reg[1]) ? '' : $reg[1];
-				}
-				if ($modulepart == 'propal') {
-					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
-					$ref = empty($reg[1]) ? '' : $reg[1];
-				}
-				if ($modulepart == 'order') {
-					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
-					$ref = empty($reg[1]) ? '' : $reg[1];
-				}
-				if ($modulepart == 'order_supplier') {
-					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
-					$ref = empty($reg[1]) ? '' : $reg[1];
-				}
-				if ($modulepart == 'contract') {
-					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
-					$ref = empty($reg[1]) ? '' : $reg[1];
-				}
-				if ($modulepart == 'tax') {
-					preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg);
-					$id = empty($reg[1]) ? '' : $reg[1];
-				}
-
-				if (($id || $ref) && $object_instance !== null) {
-					//print 'Fetch '.$id.' or '.$ref.'<br>';
-					$result = $object_instance->fetch($id, $ref);
-					//print $result.'<br>';
-					if ($result == 0) {    // Not found but no error
-						// Clean of orphelins directories are done into repair.php
-						print '<tr><td colspan="2">';
-						print 'Delete orphelins file '.$file['fullname'].'<br>';
-						if (GETPOST('clean_orphelin_dir', 'alpha') == 'confirmed') {
-							dol_delete_file($file['fullname'], 1, 1, 1);
-							dol_delete_dir(dirname($file['fullname']), 1);
-						}
-						print "</td></tr>";
-					} elseif ($result < 0) {
-						print 'Error in '.get_class($object_instance).'.fetch of id'.$id.' ref='.$ref.', result='.$result.'<br>';
-					}
-				}
+		foreach ($listmodulepart as $modulepart => $confmodule) {
+			if (!isset($conf->$confmodule->multidir_output[$orphanentity])) {
+				print '<tr><td colspan="2">'.$langs->trans('RepairOrphanDirectoryNotConfigured', (int) $orphanentity, dol_escape_htmltag($modulepart)).'</td></tr>';
+				continue;
 			}
+			$upload_dir = getMultidirOutput(null, $confmodule);
+			if (!is_string($upload_dir) || $upload_dir === '' || strpos($upload_dir, 'error-') === 0) {
+				$error++;
+				continue;
+			}
+			if (!file_exists(dol_osencode($upload_dir))) {
+				continue; // A module with no documents does not need a directory to be created.
+			}
+			$report = repairOrphanFiles($db, $modulepart, $upload_dir, $dolibarr_main_data_root, $orphanrepairmode === 'confirmed');
+			print '<tr><td colspan="2">Check orphan files entity='.((int) $orphanentity).' module='.dol_escape_htmltag($modulepart).' candidates='.count($report['files']).'<br>';
+			foreach ($report['files'] as $orphanfile) {
+				print 'Delete orphan file '.dol_escape_htmltag(substr($orphanfile, strlen($upload_dir) + 1)).'<br>';
+			}
+			if ($report['error'] !== '') {
+				$error++;
+				print '<span class="error">'.$langs->trans($report['error']).'</span><br>';
+			}
+			print '</td></tr>';
 		}
+	}
+	$conf = $savedconf;
+	$mc = $savedmc;
+	if ($error) {
+		$ok = 0;
 	}
 }
 
@@ -1602,7 +1543,7 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 		$listofmods .= ($listofmods ? ',' : '')."'".$db->escape($val)."'";
 	}
 
-	$sql = "SELECT id, libelle as label, module from ".MAIN_DB_PREFIX."rights_def WHERE module NOT IN (".$db->sanitize($listofmods, 1).") AND id > 100000";
+	$sql = "SELECT id, entity, libelle as label, module from ".MAIN_DB_PREFIX."rights_def WHERE module NOT IN (".$db->sanitize($listofmods, 1).") AND id > 100000";
 	$sql .= " AND entity = ".((int) $conf->entity);
 
 	$resql = $db->query($sql);
@@ -1613,10 +1554,12 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
 				if ($obj->id > 0) {
-					print '<tr><td>Found line with id '.$obj->id.', label "'.$obj->label.'" of module "'.$obj->module.'" to delete';
+					print '<tr><td>Found line with id '.$obj->id.', entity '.$obj->entity.', label "'.$obj->label.'" of module "'.$obj->module.'" to delete';
 					if (GETPOST('clean_perm_table', 'alpha') == 'confirmed') { // If confirmed, proceed with deletion
+						// The primary key of rights_def is (id, entity), so the entity of the found line must be part of the
+						// delete. Without it, cleaning a permission of one entity removes the same id in all the other ones.
 						$sqldelete = "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE id = ".((int) $obj->id);
-						$sqldelete .= " AND entity = ".((int) $conf->entity);
+						$sqldelete .= " AND entity = ".((int) $obj->entity);
 						$resqldelete = $db->query($sqldelete);
 						if (!$resqldelete) {
 							dol_print_error($db);
@@ -2286,82 +2229,76 @@ if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
 	}
 }
 
-// Repair mailing path
+// Repair mailing paths globally, retaining each mailing's owning entity.
 if ($ok && GETPOST('repair_mailing_path')) {
-	global $user;
-	$sav_user = is_object($user) ? clone $user : $user;
-
 	require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-
-	print '<tr><td colspan="2"><br>*** Repair mailing path<br>';
-
-	/**
-	 * Migrate file from old path to new one for mailing $mailing
-	 *
-	 * @param 	Mailing $mailing		Object mailing
-	 * @return 	void
-	 */
-	function migrate_mailing_filespath($mailing)
-	{
-		global $db, $conf, $user;
-
-		$dir = $conf->mailing->dir_output;
-		$origin = $dir.'/'.get_exdir($mailing->id, 2, 0, 1, $mailing, 'mailing');
-		$destin = $dir.'/'.get_exdir($mailing->id, 0, 0, 1, $mailing, 'mailing');
-
-		$origin_osencoded = dol_osencode($origin);
-		$destin_osencoded = dol_osencode($destin);
-		dol_mkdir($destin);
-
-		$user = new User($db);
-		$user->fetch($mailing->user_creation_id);
-
-		if (dol_is_dir($origin)) {
-			$handle = opendir($origin_osencoded);
-			if (is_resource($handle)) {
-				while (($file = readdir($handle)) !== false) {
-					if ($file != '.' && $file != '..' && is_dir($origin_osencoded.'/'.$file)) {
-						$thumbs = opendir($origin_osencoded.'/'.$file);
-						if (is_resource($thumbs)) {
-							dol_mkdir($destin.'/'.$file);
-							while (($thumb = readdir($thumbs)) !== false) {
-								$res = dol_move($origin.'/'.$file.'/'.$thumb, $destin.'/'.$file.'/'.$thumb);
-								$msg = ($res ? '  * Migration successful' : 'Migration failed') . ' for file '.$origin.'/'.$file.'.<br>';
-								print($msg);
-							}
-							// dol_delete_dir($origin.'/'.$file);
-						}
-					} else {
-						if (dol_is_file($origin.'/'.$file)) {
-							$res = dol_move($origin.'/'.$file, $destin.'/'.$file);
-							$msg = ($res ? '  * Migration successful' : 'Migration failed') . ' for file '.$origin.'/'.$file.'.<br>';
-							print($msg);
-						}
-					}
-				}
-			}
-		}
-	}
-
-	$mailing = new Mailing($db);
-
-	$sql = "SELECT rowid as mid from ".MAIN_DB_PREFIX."mailing"; // Get list of all mailing
+	print '<tr><td colspan="2"><br>*** Repair mailing paths (all entities)<br>';
+	$savedconf = clone $conf;
+	$savedmc = $mc ?? null;
+	$mailingrows = array();
+	$mailingbuckets = array();
+	$sql = "SELECT rowid, entity FROM ".MAIN_DB_PREFIX."mailing ORDER BY entity, rowid";
 	$resql = $db->query($sql);
 	if ($resql) {
-		while ($obj = $db->fetch_object($resql)) {
-			$mailing->fetch($obj->mid);
-			print "Migrating mailing id=".$mailing->id." ref=".$mailing->ref."<br>\n";
-			migrate_mailing_filespath($mailing);
+		while (is_object($obj = $db->fetch_object($resql))) {
+			$mailingrows[] = $obj;
+			$bucketkey = ((int) $obj->entity).':'.((int) $obj->rowid % 100);
+			$mailingbuckets[$bucketkey] = ($mailingbuckets[$bucketkey] ?? 0) + 1;
+		}
+		$db->free($resql);
+		foreach ($mailingrows as $obj) {
+			$mailingentity = (int) $obj->entity;
+			if ($mailingentity < 1 || !isset($ecmrepairentities[$mailingentity]) || $conf->setEntityValues($db, $mailingentity) < 0) {
+				$error++;
+				print '<span class="error">'.$langs->trans('RepairMailingFailed').'</span><br>';
+				continue;
+			}
+			$mailing = new Mailing($db);
+			$mailing->id = (int) $obj->rowid;
+			$mailing->ref = (string) $mailing->id;
+			$mailing->entity = $mailingentity;
+			$mailingdirectory = $conf->mailing->multidir_output[$mailingentity] ?? '';
+			$bucketkey = $mailingentity.':'.($mailing->id % 100);
+			$report = repairMailingFiles($mailing, $mailingdirectory, $dolibarr_main_data_root, $mailingbuckets[$bucketkey] > 1, $mailingrepairmode === 'confirmed');
+			print 'Check mailing '.$mailing->id.' entity='.$mailingentity.'<br>';
+			foreach ($report['files'] as $mailingfile) {
+				print 'Move '.dol_escape_htmltag($mailingfile['source']).' -&gt; '.dol_escape_htmltag($mailingfile['target']).'<br>';
+			}
+			if ($report['error'] !== '') {
+				$error++;
+				print '<span class="error">'.$langs->trans($report['error']).'</span><br>';
+			}
 		}
 	} else {
-		$ok = 0;
+		$error++;
 		dol_print_error($db);
 	}
-
-	$user = $sav_user;
-
+	$conf = $savedconf;
+	$mc = $savedmc;
+	if ($error) {
+		$ok = 0;
+	}
 	print '</td></tr>';
+}
+
+if ($ok && $mailingrepairpost && !$error) {
+	setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+	while (ob_get_level() > $ecmrepairbufferlevel) {
+		ob_end_clean();
+	}
+	$db->close();
+	header('Location: '.$_SERVER['PHP_SELF'].'?repair_mailing_path=test&selectlang='.urlencode($setuplang), true, 303);
+	exit;
+}
+
+if ($ok && $orphanrepairpost && !$error) {
+	setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+	while (ob_get_level() > $ecmrepairbufferlevel) {
+		ob_end_clean();
+	}
+	$db->close();
+	header('Location: '.$_SERVER['PHP_SELF'].'?clean_orphelin_dir=test&selectlang='.urlencode($setuplang), true, 303);
+	exit;
 }
 
 if ($imagerepairaction !== '' && $error) {

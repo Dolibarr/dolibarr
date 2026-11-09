@@ -496,6 +496,29 @@ a.button:link,a.button:visited,a.button:active {
 a.button:hover {
     text-decoration:none;
 }
+table.repairoptions {
+    border-collapse: collapse;
+}
+table.repairoptions tr {
+    height: 3em;
+}
+table.repairoptions td:first-child {
+    padding-left: 10px;
+}
+table.repairoptions tr.repairoption + tr.repairoption td {
+    border-top: 1px solid #e8e8e8;
+}
+#pleasebepatient {
+    scroll-margin-top: 1.5em;
+}
+button.button {
+    color: #555;
+    border: none;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    cursor: pointer;
+}
 
 .suggestedchoice {
 	/* color: rgba(70, 3, 62, 0.6) !important;

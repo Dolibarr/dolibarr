@@ -792,7 +792,7 @@ class EmailCollector extends CommonObject
 	{
 		$this->actions = array();
 
-		$sql = 'SELECT rowid, type, actionparam, status';
+		$sql = 'SELECT rowid, type, actionparam, status, position';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'emailcollector_emailcollectoraction';
 		$sql .= ' WHERE fk_emailcollector = '.((int) $this->id);
 		$sql .= ' ORDER BY position';
@@ -803,7 +803,7 @@ class EmailCollector extends CommonObject
 			$i = 0;
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
-				$this->actions[$obj->rowid] = array('id' => $obj->rowid, 'type' => $obj->type, 'actionparam' => $obj->actionparam, 'status' => $obj->status);
+				$this->actions[$obj->rowid] = array('id' => $obj->rowid, 'type' => $obj->type, 'actionparam' => $obj->actionparam, 'status' => $obj->status, 'position' => $obj->position);
 				$i++;
 			}
 			$this->db->free($resql);
@@ -1273,8 +1273,10 @@ class EmailCollector extends CommonObject
 						$refreshtoken = $tokenobj->getRefreshToken();
 						$tokenobj = $apiService->refreshAccessToken($tokenobj);
 
-						// We have to save the token because answer give it only once
-						$tokenobj->setRefreshToken($refreshtoken);
+						// Keep the previous refresh token only when the provider did not return a new one.
+						if (empty($tokenobj->getRefreshToken())) {
+							$tokenobj->setRefreshToken($refreshtoken);
+						}
 						$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
 					}
 					$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
