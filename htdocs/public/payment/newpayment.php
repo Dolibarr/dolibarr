@@ -665,6 +665,7 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 			$_SESSION['paymentoksessioncode'] = $randomseckey;		// key between newpayment.php to paymentok.php
 
 			$urlok .= '&paymentoksessioncode='.urlencode($randomseckey);
+			$urlok .= '&payment_intent='.urlencode($paymentintent->id);	// So paymentok.php finds the payment even if the session cookie is lost
 		}
 	}
 

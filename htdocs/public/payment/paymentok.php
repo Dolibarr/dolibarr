@@ -379,14 +379,17 @@ if (isModEnabled('paypal') && $paymentmethod === 'paypal') {	// We call this pag
 if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 	// TODO: Move this block to the top to ensure all session variables (e.g., TRANSACTIONID, FinalPaymentAmt, currencyCodeType, etc.) are loaded before executing checks for any payment module.
 	if (empty($TRANSACTIONID)) {
-		$TRANSACTIONID = empty($_SESSION['TRANSACTIONID']) ? '' : $_SESSION['TRANSACTIONID'];	// pi_... or ch_...
-		if (empty($TRANSACTIONID) && GETPOST('payment_intent', 'alphanohtml')) {
-			// For the case we use STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION
+		if (GETPOST('payment_intent', 'alphanohtml')) {
+			// For the case we use STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 2 (payment_intent is added by Stripe in the return_url)
 			$TRANSACTIONID = GETPOST('payment_intent', 'alphanohtml');
 		}
 		if (empty($TRANSACTIONID) && GETPOST('session_id', 'alphanohtml')) {
-			// For the case we use STRIPE_USE_NEW_CHECKOUT (session cookie lost, the id comes from the success_url)
+			// For the case we use STRIPE_USE_NEW_CHECKOUT (the id comes from the success_url)
 			$TRANSACTIONID = GETPOST('session_id', 'alphanohtml');
+		}
+		if (empty($TRANSACTIONID)) {
+			// Last resort: the id saved in session by newpayment.php (pi_... or cs_...)
+			$TRANSACTIONID = empty($_SESSION['TRANSACTIONID']) ? '' : $_SESSION['TRANSACTIONID'];
 		}
 	}
 	$FinalPaymentAmt = empty($_SESSION["FinalPaymentAmt"]) ? '' : $_SESSION["FinalPaymentAmt"];
@@ -399,7 +402,7 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 		$servicestatus = 1;
 	}
 
-	// Find the data saved by newpayment.php in database. The key is the Checkout Session id (session_id) or the PaymentIntent/charge id.
+	// Find the data saved by newpayment.php in database. The key is the Checkout Session id (session_id) or the PaymentIntent id.
 	$onlinepaymentsessionservice = $service;
 	$onlinepaymentsessionid = GETPOST('session_id', 'alphanohtml') ? GETPOST('session_id', 'alphanohtml') : $TRANSACTIONID;
 	if ($onlinepaymentsessionid) {
