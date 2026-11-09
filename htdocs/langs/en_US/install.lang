@@ -221,6 +221,7 @@ MigrationApiRestTokens=Migrate user's API keys to llx_oauth_token
 MigratedTokens=%s token(s) migrated
 InitAHMACKeyForBlockedLog=Initialization of the BLOCKEDLOG_HMAC_KEY constant for the new HMAC encryption of Unalterable Log module
 MigrationAlreadyDone=This migration appears to have already been completed.
+Repair=Repair
 RepairEcmEntity=Entity for ECM index repair only
 RepairEcmHeading=Check missing-file index entries for entity %s
 RepairEcmSummary=Entries checked: %s. Missing files: %s. Index entries removed: %s. Unsafe or unavailable paths skipped: %s.

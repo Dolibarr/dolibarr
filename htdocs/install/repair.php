@@ -181,7 +181,7 @@ $form = new Form($db);
 
 if ($db->connected) {
 	print '<tr><td class="nowrap">';
-	print $langs->trans("ServerConnection")." : ".$dolibarr_main_db_host.'</td><td class="right">'.$langs->trans("OK")."</td></tr>";
+	print $langs->trans("ServerConnection")." : ".$dolibarr_main_db_host.'</td><td class="right">'.img_picto($langs->trans("OK"), 'tick')."</td></tr>";
 	dolibarr_install_syslog("repair: ".$langs->transnoentities("ServerConnection").": ".$dolibarr_main_db_host.$langs->transnoentities("OK"));
 	$ok = 1;
 } else {
@@ -193,7 +193,7 @@ if ($db->connected) {
 if ($ok) {
 	if ($db->database_selected) {
 		print '<tr><td class="nowrap">';
-		print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name.'</td><td class="right">'.$langs->trans("OK")."</td></tr>";
+		print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name.'</td><td class="right">'.img_picto($langs->trans("OK"), 'tick')."</td></tr>";
 		dolibarr_install_syslog("repair: database connection successful: ".$dolibarr_main_db_name);
 		$ok = 1;
 	} else {
@@ -245,13 +245,7 @@ print '</div>';
 print '<br>';
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="liste centpercent" style="border: 1px solid #ccc">';
-print '<tr>';
-print '<th></th>';
-print '<th></th>';
-print '<th>Launch test</th>';
-print '<th>Launch confirmed</th>';
-print '</tr>';
+print '<table class="liste centpercent repairoptions" style="border: 1px solid #ccc">';
 
 $warning_using_utf8mb4 = '';
 if ($dolibarr_main_db_character_set != 'utf8mb4') {
@@ -424,7 +418,7 @@ foreach ($sections as $section => $options) {
 		// Generate links with the right option and value
 		$url_test = $_SERVER['PHP_SELF'].'?'.$option.'=test#pleasebepatient';
 		$url_confirmed = $_SERVER['PHP_SELF'].'?'.$option.'=confirmed#pleasebepatient';
-		print '<tr>';
+		print '<tr class="repairoption">';
 		print '<td>' . $option . '</td>';
 		print '<td>';
 		if ($tooltip) {
@@ -448,8 +442,8 @@ foreach ($sections as $section => $options) {
 			print '<td class="center"><button class="button" type="submit" name="'.$option.'" value="test">'.$langs->trans('Test').'</button></td>';
 			print '<td class="center"><button class="button" type="submit" name="'.$option.'" value="confirmed">'.$langs->trans('Repair').'</button></td>';
 		} else {
-			print '<td class="center"><a href="'.$url_test.'" title="Launch test on option '.$option.'">test</a>'.($value == 'test' ? ' (launched)' : '').'</td>';
-			print '<td class="center"><a href="'.$url_confirmed.'" title="Launch repair on option '.$option.'">repair</a>'.($value == 'confirmed' ? ' (launched)' : '').'</td>';
+			print '<td class="center"><a href="'.$url_test.'" title="Launch test on option '.$option.'" class="button">'.$langs->trans('Test').'</a></td>';
+			print '<td class="center"><a href="'.$url_confirmed.'" title="Launch repair on option '.$option.'" class="button">'.$langs->trans('Repair').'</a></td>';
 		}
 		print '</tr>';
 	}
