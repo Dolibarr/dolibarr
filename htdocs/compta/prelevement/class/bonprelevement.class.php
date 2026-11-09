@@ -2934,15 +2934,17 @@ class BonPrelevement extends CommonObject
 				//$XML_SEPA_INFO .= '			<BtchBookg>False</BtchBookg>'.$CrLf;
 				$XML_SEPA_INFO .= '			<NbOfTxs>' . $nombre . '</NbOfTxs>' . $CrLf;
 				$XML_SEPA_INFO .= '			<CtrlSum>' . $total . '</CtrlSum>' . $CrLf;
-				if (!empty($this->sepa_xml_pti_in_ctti) && !empty($format)) {	// @TODO Using $format (FRST ou RCUR) in a section for a Credit Transfer looks strange.
+				if (empty($this->sepa_xml_pti_in_ctti)) {	// Empty = at PmtInf, Set = at CdtTrfTxInf
 					$XML_SEPA_INFO .= '			<PmtTpInf>' . $CrLf;
 					$XML_SEPA_INFO .= '				<SvcLvl>' . $CrLf;
 					$XML_SEPA_INFO .= '					<Cd>SEPA</Cd>' . $CrLf;
 					$XML_SEPA_INFO .= '				</SvcLvl>' . $CrLf;
+					/*
 					$XML_SEPA_INFO .= '				<LclInstrm>' . $CrLf;
 					$XML_SEPA_INFO .= '					<Cd>' . $localInstrument . '</Cd>' . $CrLf;
 					$XML_SEPA_INFO .= '				</LclInstrm>' . $CrLf;
 					$XML_SEPA_INFO .= '				<SeqTp>' . $format . '</SeqTp>' . $CrLf;
+					*/
 					$XML_SEPA_INFO .= '			</PmtTpInf>' . $CrLf;
 				}
 				$XML_SEPA_INFO .= '			<ReqdExctnDt>' . dol_print_date($dateTime_ETAD, 'dayrfc') . '</ReqdExctnDt>' . $CrLf;
