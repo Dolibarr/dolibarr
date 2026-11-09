@@ -673,3 +673,7 @@ insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code
 insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2809, 'Land tax (state or territory)',          1, 1, 'TAXAULAND');
 insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2810, 'ATO interest charges (GIC / SIC)',       0, 1, 'TAXAUGIC');
 insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2811, 'Activity statement (BAS / IAS)',         0, 1, 'TAXAUBAS');
+
+ALTER TABLE llx_website_page MODIFY COLUMN aliasalt text;
+ALTER TABLE llx_website_page MODIFY COLUMN htmlheader longtext;
+ALTER TABLE llx_website_page MODIFY COLUMN content longtext;
