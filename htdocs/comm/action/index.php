@@ -670,6 +670,10 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	if ($mode == 'show_day' || ($mode == 'show_week' && !getDolGlobalString('AGENDA_WEEK_VIEW_NO_HOURLY_GRID'))) {
 		// Day and week views: side by side layout of the events that overlap in the positioned grid.
 		// It works on every .agendadaylayer of the page, so the seven columns of a week need no variant.
+		$s .= 'var dolAgendaGridCfg = '.json_encode([
+			'url' => DOL_URL_ROOT.'/comm/action/ajax/ajaxmovetimeevent.php',
+			'msgsaved' => $langs->transnoentitiesnoconv('RecordSaved'),
+		], JSON_HEX_TAG).';'."\n";
 		$s .= <<<'JSDAYVIEW'
 function dolAgendaDayColumns(items) {
 	var sorted = items.slice().sort(function (a, b) { return (a.start - b.start) || ((b.end - b.start) - (a.end - a.start)); });
@@ -695,7 +699,7 @@ function dolAgendaDayColumns(items) {
 	});
 	if (cluster.length) { flush(); }
 }
-function dolAgendaDayLayout(layer) {
+function dolAgendaDayItems(layer) {
 	var items = [];
 	jQuery(layer).children('.event[data-agenda-start]').each(function () {
 		if (jQuery(this).is(':hidden')) { return; }
@@ -703,7 +707,65 @@ function dolAgendaDayLayout(layer) {
 		var e = parseInt(this.getAttribute('data-agenda-end'), 10);
 		items.push({el: this, start: s, end: Math.max(e, s + 20)});
 	});
-	dolAgendaDayColumns(items);
+
+	return items;
+}
+function dolAgendaDayLayout(layer) {
+	dolAgendaDayColumns(dolAgendaDayItems(layer));
+	dolAgendaDayDrag(layer);
+}
+function dolAgendaDaySnapTop(el, ui) {
+	var layer = el.parentNode;
+	var begin = parseInt(layer.getAttribute('data-begin-min'), 10);
+	var end = parseInt(layer.getAttribute('data-end-min'), 10);
+	var boxheight = parseInt(el.style.height, 10);
+	var oldstart = parseInt(el.getAttribute('data-agenda-start'), 10);
+	// Absolute 15 min snap of the new start, with a dead zone so that a small move keeps the old start
+	var rawdelta = ui.position.top - ui.originalPosition.top;
+	var newstart = (Math.abs(rawdelta) < 8) ? oldstart : Math.round((oldstart + rawdelta) / 15) * 15;
+	// The upper bound never goes above the old start: a box near midnight can be taller than the time left
+	return Math.max(begin, Math.min(newstart, Math.max(oldstart, end - boxheight)));
+}
+function dolAgendaDayDrag(layer) {
+	jQuery(layer).children('.event.movable[data-agenda-event-id]').not('.ui-draggable').draggable({
+		axis: 'y',
+		zIndex: 100,
+		drag: function (event, ui) {
+			ui.position.top = dolAgendaDaySnapTop(this, ui);
+		},
+		stop: function (event, ui) {
+			var el = this;
+			var oldstart = parseInt(el.getAttribute('data-agenda-start'), 10);
+			var oldend = parseInt(el.getAttribute('data-agenda-end'), 10);
+			// ui.position is the value drag already snapped and clamped; don't snap it again here
+			var newstart = Math.round(ui.position.top);
+			if (newstart === oldstart) { el.style.top = oldstart + 'px'; return; }
+			var hh = ('0' + Math.floor(newstart / 60)).slice(-2);
+			var mm = ('0' + (newstart % 60)).slice(-2);
+			// No second drag of this box until the server answered
+			jQuery(el).draggable('disable');
+			jQuery.ajax({type: 'POST', url: dolAgendaGridCfg.url, dataType: 'json', data: {
+				id: el.getAttribute('data-agenda-event-id'),
+				newdatetime: el.parentNode.getAttribute('data-agenda-date') + hh + mm + '00',
+				token: jQuery('#searchFormList input[name=token]').val()
+			}}).done(function (data) {
+				jQuery(el).draggable('enable');
+				if (data.error) {
+					el.style.top = oldstart + 'px';
+					Dolibarr.tools.setEventMessage(data.message, 'errors');
+					return;
+				}
+				el.setAttribute('data-agenda-start', newstart);
+				el.setAttribute('data-agenda-end', newstart + (oldend - oldstart));
+				el.style.top = newstart + 'px';
+				dolAgendaDayColumns(dolAgendaDayItems(el.parentNode));
+				Dolibarr.tools.setEventMessage(dolAgendaGridCfg.msgsaved, 'mesgs');
+			}).fail(function () {
+				// Transport failure: we don't know whether the server saved the move, show the real state
+				location.reload();
+			});
+		}
+	});
 }
 jQuery('.agendadaylayer').each(function () { dolAgendaDayLayout(this); });
 // Run the layout again when events are shown or hidden by the calendar checkboxes
@@ -1715,7 +1777,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 				}
 			}
 			print '<div class="agendadaycolumn" id="daycolumn_'.$dateint.'" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; overflow: hidden;">';
-			print '<div class="agendadaylayer" id="daylayer_'.$dateint.'" style="position: absolute; left: 0; right: 0; top: -'.($begin_h * 60).'px; height: 1440px;">';
+			print '<div class="agendadaylayer" id="daylayer_'.$dateint.'" data-agenda-date="'.$dateint.'" data-begin-min="'.($begin_h * 60).'" data-end-min="'.($end_h * 60).'" style="position: absolute; left: 0; right: 0; top: -'.($begin_h * 60).'px; height: 1440px;">';
 			foreach ($weekhourlybuckets[$iter_day] as $slotkey => $slotevents) {
 				if ($slotkey === 'allday') {
 					continue;
@@ -1843,7 +1905,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 		}
 	}
 	print '<div class="agendadaycolumn" id="daycolumn_'.$dateint.'" style="position: absolute; top: 0; bottom: 0; left: 100px; right: 0; overflow: hidden;">';
-	print '<div class="agendadaylayer" id="daylayer_'.$dateint.'" style="position: absolute; left: 0; right: 0; top: -'.($begin_h * 60).'px; height: 1440px;">';
+	print '<div class="agendadaylayer" id="daylayer_'.$dateint.'" data-agenda-date="'.$dateint.'" data-begin-min="'.($begin_h * 60).'" data-end-min="'.($end_h * 60).'" style="position: absolute; left: 0; right: 0; top: -'.($begin_h * 60).'px; height: 1440px;">';
 	foreach ($hourlybuckets as $slotkey => $slotevents) {
 		if ($slotkey === 'allday') {
 			continue;
