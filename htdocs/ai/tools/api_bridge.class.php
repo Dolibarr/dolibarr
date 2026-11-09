@@ -5868,9 +5868,9 @@ class ToolApiBridge extends McpTool
 			}
 		}
 		$allowed = $receive ? array('id', 'lineid', 'qty', 'warehouse', 'closeopenorder', 'comment', 'requestState') : array('id', 'date', 'method', 'comment', 'requestState');
-		foreach ($args as $key => $value) {
-			if (!in_array($key, $allowed, true) || (!is_string($value) && !is_int($value) && !is_float($value))) {
-				throw new InvalidArgumentException($langs->transnoentitiesnoconv('AISupplierWorkflowArgument', $key));
+		foreach ($args as $argumentName => $value) {
+			if (!in_array($argumentName, $allowed, true) || (!is_string($value) && !is_int($value) && !is_float($value))) {
+				throw new InvalidArgumentException($langs->transnoentitiesnoconv('AISupplierWorkflowArgument', $argumentName));
 			}
 		}
 		foreach ($write['required'] as $field) {
@@ -5927,7 +5927,7 @@ class ToolApiBridge extends McpTool
 		}
 		$remaining = (float) $line->qty - $this->supplierOrderReceivedQuantity((int) $out['id'], (int) $line->id);
 		if ((float) $args['qty'] > $remaining) {
-			throw new InvalidArgumentException($langs->transnoentitiesnoconv('AISupplierReceiptRemaining', $remaining));
+			throw new InvalidArgumentException($langs->transnoentitiesnoconv('AISupplierReceiptRemaining', (string) $remaining));
 		}
 		$warehouse = $this->supplierOrderWarehouse($args['warehouse']);
 		if (!$warehouse || (int) $warehouse->status !== 1 || !$this->canAccessWriteObject(array('stock', 'entrepot', ''), (int) $warehouse->id)) {
@@ -7325,6 +7325,8 @@ class ToolApiBridge extends McpTool
 	 */
 	public function execute(string $name, array $args)
 	{
+		global $langs;
+
 		// A generic tool runs the original tool of the object it names.
 		$target = $this->mergedToolTarget($name, $args);
 		if ($target !== null) {
@@ -7523,7 +7525,7 @@ class ToolApiBridge extends McpTool
 			$receiveTransaction = ($writemeta['supplier_workflow'] ?? '') === 'receiveOrder';
 			try {
 				if ($receiveTransaction && !$this->db->begin()) {
-					throw new RuntimeException($GLOBALS['langs']->transnoentitiesnoconv('AISupplierReceiptTransactionFailed'));
+					throw new RuntimeException($langs->transnoentitiesnoconv('AISupplierReceiptTransactionFailed'));
 				}
 				$result = call_user_func_array([$api, $method], $callArgs);
 				// Serialize API return (cleaned objects) into plain arrays for the MCP client.
@@ -7583,7 +7585,7 @@ class ToolApiBridge extends McpTool
 				}
 				if ($receiveTransaction) {
 					if (!$this->db->commit()) {
-						throw new RuntimeException($GLOBALS['langs']->transnoentitiesnoconv('AISupplierReceiptTransactionFailed'));
+						throw new RuntimeException($langs->transnoentitiesnoconv('AISupplierReceiptTransactionFailed'));
 					}
 				}
 			} catch (Throwable $e) {
