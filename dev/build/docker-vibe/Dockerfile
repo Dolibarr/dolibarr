@@ -7,6 +7,7 @@ RUN apt-get update \
 		bash \
 		bash-completion \
 		ca-certificates \
+        cairosvg \
 		cmake \
 		composer \
         vim \
