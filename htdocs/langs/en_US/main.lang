@@ -1180,6 +1180,7 @@ ValidFrom=Valid from
 ValidUntil=Valid until
 NoRecordedUsers=No users
 ToClose=To close
+ToAccept=To accept
 ToRefuse=To refuse
 ToProcess=To process
 ToApprove=To approve
