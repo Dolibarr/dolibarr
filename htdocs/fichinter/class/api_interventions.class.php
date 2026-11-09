@@ -472,7 +472,9 @@ class Interventions extends DolibarrApi
 	 * @phan-return array<string,array{code:int,message:string}>
 	 * @phpstan-return array<string,array{code:int,message:string}>
 	 *
-	 * @throws RestException
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		Intervention not found
+	 * @throws	RestException	500		Error when deleting the intervention
 	 */
 	public function delete($id)
 	{
@@ -488,7 +490,7 @@ class Interventions extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (!$this->fichinter->delete(DolibarrApiAccess::$user)) {
+		if ($this->fichinter->delete(DolibarrApiAccess::$user) <= 0) {
 			throw new RestException(500, 'Error when delete intervention : '.$this->fichinter->errorsToString());
 		}
 
