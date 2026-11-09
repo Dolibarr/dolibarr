@@ -837,22 +837,26 @@ class Facture extends CommonInvoice
 				$fk_parent_line = 0;
 
 				dol_syslog("There is ".count($this->lines)." lines into ->lines that are InvoiceLines");
-				foreach ($this->lines as $i => $val) {
-					$newinvoiceline = $this->lines[$i];
+				// Loop on a copy: addline() appends the inserted lines to $this->lines and uses
+				// count($this->lines) to shift ranks, so the input lines must not remain in it.
+				$linestoadd = $this->lines;
+				$this->lines = array();
+				foreach ($linestoadd as $i => $val) {
+					$newinvoiceline = $linestoadd[$i];
 					'@phan-var-force FactureLigne $newinvoiceline';
 
 					$newinvoiceline->context = $this->context;
 
 					$newinvoiceline->fk_facture = $this->id;
 
-					$newinvoiceline->origin = $this->lines[$i]->element;
-					$newinvoiceline->origin_id = $this->lines[$i]->id;
+					$newinvoiceline->origin = $linestoadd[$i]->element;
+					$newinvoiceline->origin_id = $linestoadd[$i]->id;
 
 					// Auto set date of service ?
-					if ($this->lines[$i]->date_start_fill == 1 && $originaldatewhen) {		// $originaldatewhen is defined when generating from recurring invoice only
+					if ($linestoadd[$i]->date_start_fill == 1 && $originaldatewhen) {		// $originaldatewhen is defined when generating from recurring invoice only
 						$newinvoiceline->date_start = $originaldatewhen;
 					}
-					if ($this->lines[$i]->date_end_fill == 1 && $previousdaynextdatewhen) {	// $previousdaynextdatewhen is defined when generating from recurring invoice only
+					if ($linestoadd[$i]->date_end_fill == 1 && $previousdaynextdatewhen) {	// $previousdaynextdatewhen is defined when generating from recurring invoice only
 						$newinvoiceline->date_end = $previousdaynextdatewhen;
 					}
 
