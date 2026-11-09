@@ -406,7 +406,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 
 	$sessiontokenforthisurl = (empty($_SESSION['token']) ? '' : $_SESSION['token']);
 	// TODO Get the sessiontokenforthisurl into an array of session token (one array per base URL so we can use the CSRF per page and we keep ability for several tabs per url in a browser)
-	if (GETPOSTISSET('token') && GETPOST('token') != 'notrequired' && GETPOST('token', 'alpha') != $sessiontokenforthisurl) {
+	if (GETPOSTISSET('token') && GETPOST('token') != 'notrequired' && !hash_equals((string) $sessiontokenforthisurl, (string) GETPOST('token', 'alpha'))) {
 		dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (invalid token), so we disable POST and some GET parameters - referrer=".(empty($_SERVER['HTTP_REFERER']) ? '' : $_SERVER['HTTP_REFERER']).", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha'), LOG_WARNING);
 		//dol_syslog("_SESSION['token']=".$sessiontokenforthisurl, LOG_DEBUG);
 		// Do not output anything on standard output because this create problems when using the BACK button on browsers. So we just set a message into session.
@@ -3742,7 +3742,7 @@ if (!function_exists("llxFooter")) {
 
 		// JS wrapper to add log when clicking on download or preview
 		if (isModEnabled('blockedlog') && is_object($object) && !empty($object->id) && $object->id > 0) {
-			if (in_array($object->element, array('facture')) && $object->statut > 0) {       // Restrict for the moment to element 'facture'
+			if (!empty($object->element) && in_array($object->element, array('facture')) && $object->statut > 0) {       // Restrict for the moment to element 'facture'
 				print "\n<!-- JS CODE TO ENABLE log when making a download or a preview of a document -->\n";
 				?>
 				<script>

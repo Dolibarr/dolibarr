@@ -118,7 +118,7 @@ sudo dev/build/docker-vibe/smtpblock.sh --remove   Remove the block
 The script rejects the connections to the ports 25, 465 and 587 for the whole VM (IPv4 and IPv6), inserted at the top of the OUTPUT chain so they take precedence over any existing ACCEPT rule. The connections fail immediately (REJECT) instead of hanging.
 
 Requirements and notes:
-- The container must be run with the capability `--cap-add=NET_ADMIN` (done by `vibes.sh`), otherwise the block can not be installed and the container refuses to start. To start a container that is allowed to send emails (for example to test the SMTP features of Dolibarr), run it with `-e VIBE_ALLOW_SMTP=1`.
+- The container must be run with the capability `--cap-add=NET_ADMIN` (done by `vibes.sh`), otherwise the block can not be installed and the container refuses to start. To start a container that is allowed to send emails (for example to test the SMTP features of Dolibarr), run it with `DOCKER_ALLOW_SMTP=1 vibes` (the variable is passed to the container by `vibes.sh`).
 - The block stays on the VM when the container stops (it is reinstalled at the next start anyway). Use `--remove` to remove it.
 - The rules are not persistent: they are lost at the next reboot of the VM (and reinstalled at the next container start). To have them permanent, save them with `iptables-persistent` (`sudo apt-get install iptables-persistent` then `sudo netfilter-persistent save`).
 - The block applies to all the processes of the VM, not only to the containers: an MTA running on the VM can no longer deliver its queue either, and the local submission to a MTA of the VM through the port 25 is also blocked (this is one of the paths to close).

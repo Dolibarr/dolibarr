@@ -224,4 +224,54 @@ class PropalTest extends CommonClassTest
 		$this->assertLessThan($result, 0);
 		return $result;
 	}
+
+	/**
+	 * testPropalAddlinePackaging
+	 *
+	 * With PRODUCT_USE_CUSTOMER_PACKAGING, a quantity already multiple of the packaging must not be rounded
+	 * to the next multiple.
+	 *
+	 * @return  void
+	 */
+	public function testPropalAddlinePackaging()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$savconst = getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING');
+		$conf->global->PRODUCT_USE_CUSTOMER_PACKAGING = 1;
+
+		$product = new Product($db);
+		$product->ref = 'PHPUNIT-PACKAGING-'.dol_print_date(dol_now(), 'dayhourlog').'-'.mt_rand(100, 999);
+		$product->label = 'Product sold by packaging of 6';
+		$product->type = Product::TYPE_PRODUCT;
+		$product->price = 10;
+		$product->tva_tx = 20;
+		$product->packaging = 6;
+		$productid = $product->create($user);
+		$this->assertGreaterThan(0, $productid, (string) $product->error);
+
+		$localobject = new Propal($db);
+		$localobject->socid = 1;
+		$localobject->date = dol_now();
+		$localobject->duree_validite = 15;
+		$this->assertGreaterThan(0, $localobject->create($user), (string) $localobject->error);
+		$localobject->fetch_thirdparty();
+
+		$result = array();
+		foreach (array(1, 7, 12, 13) as $qty) {
+			$lineid = $localobject->addline('Line', 10, $qty, 20, 0, 0, $productid);
+			$this->assertGreaterThan(0, $lineid, (string) $localobject->error);
+			$line = new PropaleLigne($db);
+			$line->fetch($lineid);
+			$result[$qty] = (float) $line->qty;
+		}
+		$conf->global->PRODUCT_USE_CUSTOMER_PACKAGING = $savconst;
+
+		print __METHOD__." result=".json_encode($result)."\n";
+		$this->assertEquals(array(1 => 6, 7 => 12, 12 => 12, 13 => 18), $result, 'Quantities rounded to the packaging of 6');
+	}
 }

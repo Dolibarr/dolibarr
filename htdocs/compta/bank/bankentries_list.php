@@ -1871,16 +1871,6 @@ if ($resql) {
 			}
 		}
 
-		if (!empty($arrayfields['b.fk_bordereau']['checked'])) {
-			$bordereaustatic->fetch($objp->fk_bordereau);
-			print '<td class="nowraponall center">';
-			print $bordereaustatic->getNomUrl();
-			print '</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-		}
-
 		// Extra fields
 		$obj = $objp; // Because extrafield template use $obj and not $objp as object variable name
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';

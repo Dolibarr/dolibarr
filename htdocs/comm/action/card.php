@@ -1210,7 +1210,7 @@ if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate' && $usercancr
 	$smin = (int) dol_print_date($object->datep, "%M", 'tzuserrel');
 
 	$newdate = GETPOST('newdate', 'alpha');
-	if (empty($newdate) || strpos($newdate, 'dayevent_') != 0) {
+	if (empty($newdate) || strpos($newdate, 'dayevent_') !== 0) {
 		header("Location: ".$backtopage, true, 307);
 		exit;
 	}

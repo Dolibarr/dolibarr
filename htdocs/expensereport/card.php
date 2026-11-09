@@ -1209,7 +1209,7 @@ if (empty($reshook)) {
 			if (is_array($arrayoffiles) && !empty($arrayoffiles[0])) {
 				include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 				$entityprefix = ($conf->entity != '1') ? $conf->entity.'/' : '';
-				$relativepath = 'expensereport/'.$object->ref.'/'.$arrayoffiles[0];
+				$relativepath = $entityprefix.'expensereport/'.$object->ref.'/'.$arrayoffiles[0];
 				$ecmfiles = new EcmFiles($db);
 				$ecmfiles->fetch(0, '', $relativepath);
 				$fk_ecm_files = $ecmfiles->id;
@@ -1386,7 +1386,8 @@ if (empty($reshook)) {
 			$arrayoffiles = GETPOST('attachfile', 'array');
 			if (is_array($arrayoffiles) && !empty($arrayoffiles[0])) {
 				include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
-				$relativepath = 'expensereport/'.$object->ref.'/'.$arrayoffiles[0];
+				$entityprefix = ($conf->entity != '1') ? $conf->entity.'/' : '';
+				$relativepath = $entityprefix.'expensereport/'.$object->ref.'/'.$arrayoffiles[0];
 				$ecmfiles = new EcmFiles($db);
 				$ecmfiles->fetch(0, '', $relativepath);
 				$fk_ecm_files = $ecmfiles->id;
@@ -2332,7 +2333,7 @@ if ($action == 'create') {
 
 							$result = $ecmfilesstatic->fetch($line->fk_ecm_files);
 							if ($result > 0) {
-								$relativepath = preg_replace('/expensereport\//', '', $ecmfilesstatic->filepath);
+								$relativepath = preg_replace('/^([0-9]+\/)?expensereport\//', '', $ecmfilesstatic->filepath);
 								$fileinfo = pathinfo($ecmfilesstatic->filepath.'/'.$ecmfilesstatic->filename);
 								if (image_format_supported($fileinfo['basename']) > 0) {
 									$minifile = getImageFileNameForSize($fileinfo['basename'], '_mini'); // For new thumbs using same ext (in lower case however) than original

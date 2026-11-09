@@ -516,7 +516,9 @@ class Translate
 		$usecachekey = '';
 		// Using a memcached server
 		if (isModEnabled('memcached') && getDolGlobalString('MEMCACHED_SERVER')) {
-			$usecachekey = $newdomain . '_' . $langofdir; // Should not contains special chars
+			// The SQL below is filtered with getEntity(), so the cached result is entity dependent and the key must be too,
+			// otherwise entities with different overwrite translations share one cache entry (memcached is shared by all entities).
+			$usecachekey = $newdomain . '_' . $langofdir . '_' . str_replace(',', '-', getEntity('overwrite_trans')); // Should not contains special chars
 		} elseif (getDolGlobalInt('MAIN_OPTIMIZE_SPEED') & 0x02) {
 			// Using cache with shmop. Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
 			$usecachekey = $newdomain;

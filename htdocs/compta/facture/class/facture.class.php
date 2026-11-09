@@ -1830,11 +1830,15 @@ class Facture extends CommonInvoice
 
 			foreach ($TTotalByTva as $tva => &$total) {
 				$tva_rate_only = preg_replace('/\s*\(.*\)/', '', (string) $tva);
-				$coef = $total / $origin->total_ttc; // Calc coef
+				$coef = ($origin->total_ttc != 0 ? $total / $origin->total_ttc : 0); // Calc coef (0 if the total of the origin is 0, there is nothing to split)
 				$am = $amount * $coef;
 				$amount_ttc_diff += $am;
+				if (!isset($amountdeposit[$tva])) {
+					$amountdeposit[$tva] = 0;
+				}
 				$amountdeposit[$tva] += $am / (1 + ((float) $tva_rate_only) / 100); // Convert into HT for the addline
 			}
+			unset($total);	// Break the reference, it must not alter $TTotalByTva later
 		} else {
 			$totalamount = 0;
 			$lines = $origin->lines;
@@ -4338,13 +4342,14 @@ class Facture extends CommonInvoice
 			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
 				$tmpproduct = new Product($this->db);
 				$result = $tmpproduct->fetch($fk_product);
-				if (abs($qty) < $tmpproduct->packaging) {
-					$qty = (float) $tmpproduct->packaging;
+				$qtysign = ((float) $qty < 0 ? -1 : 1);	// The rounding is done on the absolute value, the sign of the quantity is kept
+				if (abs((float) $qty) < (float) $tmpproduct->packaging) {
+					$qty = $qtysign * (float) $tmpproduct->packaging;
 					setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
 				} else {
-					if (!empty($tmpproduct->packaging) && $qty > $tmpproduct->packaging) {
+					if (!empty($tmpproduct->packaging) && (float) price2num(abs((float) $qty) - round(abs((float) $qty) / (float) $tmpproduct->packaging) * (float) $tmpproduct->packaging, 'MS') != 0) {	// Not a multiple of the packaging
 						$coeff = intval(abs($qty) / $tmpproduct->packaging) + 1;
-						$qty = price2num((float) $tmpproduct->packaging * $coeff, 'MS');
+						$qty = price2num($qtysign * (float) $tmpproduct->packaging * $coeff, 'MS');
 						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
 					}
 				}
@@ -4617,6 +4622,27 @@ class Facture extends CommonInvoice
 				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 			}
 
+			// Round the quantity to the packaging before computing the amounts of the line (and checking the stock),
+			// else the line is saved with the rounded quantity but with the amounts of the quantity before rounding
+			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
+				$tmpline = new FactureLigne($this->db);
+				if ($tmpline->fetch($rowid) > 0) {
+					$qtysign = ((float) $qty < 0 ? -1 : 1);	// The rounding is done on the absolute value, the sign of the quantity is kept
+					if (abs((float) $qty) < (float) $tmpline->packaging) {
+						$qty = $qtysign * (float) $tmpline->packaging;
+					} else {
+						if (!empty($tmpline->packaging)
+							&& is_numeric($tmpline->packaging)
+							&& (float) $tmpline->packaging > 0
+							&& (float) price2num(abs((float) $qty) - round(abs((float) $qty) / (float) $tmpline->packaging) * (float) $tmpline->packaging, 'MS') != 0) {
+							$coeff = intval(abs((float) $qty) / $tmpline->packaging) + 1;
+							$qty = price2num($qtysign * (float) $tmpline->packaging * $coeff, 'MS');
+							setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
+						}
+					}
+				}
+			}
+
 			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, $situation_percent, $this->multicurrency_tx, $pu_ht_devise);
 
 			$total_ht  = $tabprice[0];
@@ -4703,21 +4729,6 @@ class Facture extends CommonInvoice
 				$apply_abs_price_on_credit_note = true;
 			}
 
-
-			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
-				if ($qty < $this->line->packaging) {
-					$qty = $this->line->packaging;
-				} else {
-					if (!empty($this->line->packaging)
-						&& is_numeric($this->line->packaging)
-						&& (float) $this->line->packaging > 0
-						&& fmod((float) $qty, (float) $this->line->packaging) > 0) {
-						$coeff = intval($qty / $this->line->packaging) + 1;
-						$qty = $this->line->packaging * $coeff;
-						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
-					}
-				}
-			}
 
 			$this->line->id = $rowid;
 			$this->line->rowid = $rowid;

@@ -148,6 +148,12 @@ class AgendaEvents extends DolibarrApi
 		if ($user_ids) {
 			$sql .= " AND t.fk_user_action IN (".$this->db->sanitize($user_ids).")";
 		}
+		// $user_ids is provided by the caller, so it can not be the only owner filter. A user without the
+		// "read all actions" right must never see the events of somebody else, whatever it asks for.
+		if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'read')) {
+			$childids = DolibarrApiAccess::$user->getAllChildIds(1);
+			$sql .= " AND t.fk_user_action IN (".$this->db->sanitize(implode(',', $childids)).")";
+		}
 		if ($socid > 0) {
 			$sql .= " AND t.fk_soc = ".((int) $socid);
 		}
@@ -303,6 +309,12 @@ class AgendaEvents extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('actioncomm', $this->actioncomm->id, 'actioncomm', '', 'fk_soc', 'id')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+		// The test above on userownerid looks at the owner posted in the request, not at the owner of the
+		// event being updated, and actioncomm is not in the $checkhierarchy list of checkUserAccessToObject().
+		// So the event of another user must be refused here, the same way get() does it.
+		if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'read') && $this->actioncomm->userownerid != DolibarrApiAccess::$user->id) {
+			throw new RestException(403, 'Insufficient rights to update event of this owner id. Your id is '.DolibarrApiAccess::$user->id);
+		}
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
 				continue;
@@ -322,11 +334,13 @@ class AgendaEvents extends DolibarrApi
 			$this->actioncomm->$field = $this->_checkValForAPI($field, $value, $this->actioncomm);
 		}
 
-		if ($this->actioncomm->update(DolibarrApiAccess::$user, 1) > 0) {
-			return $this->get($id);
+		// Returning false sent back an HTTP 200 with a body of false, so a refused update looked like a
+		// success to the caller. update() returns <= 0 on an error, which is an error for the API too.
+		if ($this->actioncomm->update(DolibarrApiAccess::$user, 1) <= 0) {
+			throw new RestException(500, 'Error when updating Agenda Event : '.$this->actioncomm->errorsToString());
 		}
 
-		return false;
+		return $this->get($id);
 	}
 
 	/**
@@ -367,7 +381,9 @@ class AgendaEvents extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (!$this->actioncomm->delete(DolibarrApiAccess::$user)) {
+		// delete() is documented int<-2,1> and returns -1 or -2 on an error, and !(-1) is false, so a failed
+		// delete went past this test and the API answered 200 "Agenda Event deleted" with the event still there.
+		if ($this->actioncomm->delete(DolibarrApiAccess::$user) <= 0) {
 			throw new RestException(500, 'Error when delete Agenda Event : '.$this->actioncomm->error);
 		}
 

@@ -621,7 +621,7 @@ class SupplierInvoices extends DolibarrApi
 	 */
 	public function getLines($id)
 	{
-		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "facture", "creer")) {
+		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "facture", "lire")) {
 			throw new RestException(403);
 		}
 		if (!DolibarrApi::_checkAccessToResource('fournisseur', $id, 'facture_fourn', 'facture')) {
