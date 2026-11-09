@@ -244,6 +244,14 @@ if (GETPOST('theme', 'aZ09')) {
 // Set global MAIN_OPTIMIZEFORTEXTBROWSER (must be before login part)
 if (GETPOSTINT('textbrowser') || (!empty($conf->browser->name) && $conf->browser->name == 'textbrowser')) {   // If we must enable text browser
 	$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = 2;
+	// A detected text browser (w3m, lynx...) has no javascript engine, so we disable javascript and ajax features
+	if (!empty($conf->browser->name) && $conf->browser->name == 'textbrowser') {
+		$conf->use_javascript_ajax = 0;
+		unset($conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
+		unset($conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+		unset($conf->global->CONTACT_USE_SEARCH_TO_SELECT);
+		unset($conf->global->PROJECT_USE_SEARCH_TO_SELECT);
+	}
 }
 
 // Force HTTPS if required ($conf->file->main_force_https is 0/1 or 'https dolibarr root url')
@@ -1773,7 +1781,10 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 	print '<!doctype html>'."\n";
 
-	print '<html lang="'.substr($langs->defaultlang, 0, 2).'">'."\n";
+	// Same value as the one given to the css file (THEME_DARKMODEENABLED can be forced on URL)
+	$darkmode = GETPOSTISSET('THEME_DARKMODEENABLED') ? GETPOSTINT('THEME_DARKMODEENABLED') : getDolGlobalInt('THEME_DARKMODEENABLED');
+	$thememode = ($darkmode == 2 ? 'dark' : ($darkmode == 1 ? 'auto' : 'light'));
+	print '<html lang="'.substr($langs->defaultlang, 0, 2).'" data-theme-mode="'.$thememode.'">'."\n";
 
 	//print '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">'."\n";
 	if (empty($disablehead)) {

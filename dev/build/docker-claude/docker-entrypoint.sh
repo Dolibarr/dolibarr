@@ -110,9 +110,23 @@ fi
 # Claude Code reads its project settings, skills and agents from .claude and
 # its instructions from CLAUDE.md: they are links to the files shared by all
 # the agents (.agents). Links are created only when the files do not exist.
-if [ -n "$WORKDIR" ] && [ -d "$WORKDIR/.agents" ] && [ ! -e "$WORKDIR/.claude" ] && [ ! -L "$WORKDIR/.claude" ]; then
-	echo "Create link $WORKDIR/.claude"
-	runuser -u "$USER_NAME" -- ln -s .agents "$WORKDIR/.claude" 2>/dev/null
+# .claude is a real directory (a link would block the worktrees of Claude Code) whose entries are links.
+if [ -n "$WORKDIR" ] && [ -d "$WORKDIR/.agents" ]; then
+	# Replace the old link .claude -> .agents created by previous versions of this script
+	if [ -L "$WORKDIR/.claude" ] && [ "$(readlink "$WORKDIR/.claude")" = ".agents" ]; then
+		echo "Replace link $WORKDIR/.claude with a directory"
+		rm -f "$WORKDIR/.claude"
+	fi
+	if [ ! -e "$WORKDIR/.claude" ] && [ ! -L "$WORKDIR/.claude" ]; then
+		echo "Create directory $WORKDIR/.claude"
+		runuser -u "$USER_NAME" -- mkdir "$WORKDIR/.claude"
+	fi
+	for ENTRY in skills agents hooks; do
+		if [ -d "$WORKDIR/.agents/$ENTRY" ] && [ -d "$WORKDIR/.claude" ] && [ ! -L "$WORKDIR/.claude" ] && [ ! -e "$WORKDIR/.claude/$ENTRY" ] && [ ! -L "$WORKDIR/.claude/$ENTRY" ]; then
+			echo "Create link $WORKDIR/.claude/$ENTRY"
+			runuser -u "$USER_NAME" -- ln -s "../.agents/$ENTRY" "$WORKDIR/.claude/$ENTRY" 2>/dev/null
+		fi
+	done
 fi
 if [ -n "$WORKDIR" ] && [ -f "$WORKDIR/.agents/AGENTS.md" ] && [ ! -e "$WORKDIR/CLAUDE.md" ] && [ ! -L "$WORKDIR/CLAUDE.md" ]; then
 	echo "Create link $WORKDIR/CLAUDE.md"
@@ -181,11 +195,13 @@ done
 
 # The remote-control subcommand has no --dangerously-skip-permissions option:
 # the yolo mode is given to the spawned sessions with --permission-mode.
+# Without --yolo, the spawned sessions use the mode auto: safe actions are approved
+# automatically, the risky or outward-facing ones (push, pull request...) are still asked.
 if [ "$REMOTE_CONTROL" = "1" ]; then
     if [ -n "$CLAUDE_OPTIONS" ]; then
         CLAUDE_OPTIONS="remote-control --permission-mode bypassPermissions"
     else
-        CLAUDE_OPTIONS="remote-control"
+        CLAUDE_OPTIONS="remote-control --permission-mode auto"
     fi
 fi
 

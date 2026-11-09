@@ -101,8 +101,8 @@ class ApiSupplierOrderHeaderUpdateTest extends CommonClassTest
 			$this->assertSame($changes, ApiSupplierOrderHeaderEndpointFixture::$received['body']);
 			$preview = $this->bridge->writeConfirmationPreview('api_supplier_orders_update', $args);
 			$this->assertStringContainsString(dol_escape_htmltag('array_options.options_reference: "old" → "new"'), $preview);
-			$this->assertStringNotContainsString(dol_escape_htmltag('options_other'), $preview);
-			$this->assertStringNotContainsString(dol_escape_htmltag('{'), $preview);
+			$this->assertStringNotContainsString('options_other', $preview);
+			$this->assertStringNotContainsString('{', $preview);
 		}
 	}
 
@@ -202,8 +202,8 @@ class ApiSupplierOrderHeaderUpdateTest extends CommonClassTest
 		$preview = $this->bridge->writeConfirmationPreview('api_supplier_orders_update', ['id' => 42, 'delivery_date' => 1735776000, 'note_public' => 'Visible note']);
 		$this->assertStringContainsString(dol_escape_htmltag('DeliveryDate: 2024-01-01 00:00:00 UTC → 2025-01-02 00:00:00 UTC'), $preview);
 		$this->assertStringContainsString(dol_escape_htmltag('NotePublic: null → "Visible note"'), $preview);
-		$this->assertStringNotContainsString(dol_escape_htmltag('1704067200'), $preview);
-		$this->assertStringNotContainsString(dol_escape_htmltag('1735776000'), $preview);
+		$this->assertStringNotContainsString('1704067200', $preview);
+		$this->assertStringNotContainsString('1735776000', $preview);
 	}
 
 	/** @return void */
@@ -281,11 +281,9 @@ class ApiSupplierOrderHeaderLanguageFixture
 	{
 		return $key.($values ? ' '.implode(' ', $values) : '');
 	}
-
-	/**
-	 * @param string $key Translation key
+	/** @param string $key Translation key
 	 * @param mixed ...$values Substitution values
-	 * @return string Unescaped preview text
+	 * @return string Preview text
 	 */
 	public function transnoentitiesnoconv($key, ...$values)
 	{
