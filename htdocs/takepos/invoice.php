@@ -1703,6 +1703,14 @@ function PrintHTMLToSlashPrint(id){
 function PrintByESCPOSOld(id){
 	console.log("PrintByESCPOSOld id=" + id);
 	$.get("<?php echo DOL_URL_ROOT; ?>/takepos/ajax/ajax.php?action=printinvoiceticket&token=<?php echo currentToken(); ?>&term=<?php echo urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : ''); ?>&id="+id, function(data, status) {
+		// The answer must be the base64url ESC/POS ticket. Anything else (login page after session loss, PHP error...) must not be sent to the printer.
+		data = $.trim(data);
+		if (!/^[A-Za-z0-9_-]+$/.test(data)) {
+			console.log("PrintByESCPOSOld: answer is not a ticket, print canceled");
+			alert("<?php echo dol_escape_js($langs->transnoentitiesnoconv("FailedToSendToPrinter")); ?>");
+			window.location.reload();	// Session lost: Dolibarr will show the login page
+			return;
+		}
 		$.ajax({
 			type: "POST",
 			url: '<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>/printer/index.php',
