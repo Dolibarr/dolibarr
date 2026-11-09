@@ -277,7 +277,8 @@ function testAIConnection(string $service, string $key, string $url): array
 	// By default, we accept only external endpoints ($dolibarr_ai_allow_local_endpoints is not set).
 	// To allow local endpoints, we must set $dolibarr_ai_allow_local_endpoints to 1 or 2 in conf.php.
 	global $dolibarr_ai_allow_local_endpoints;
-	$localurl = empty($dolibarr_ai_allow_local_endpoints) ? 0 : 2;
+	// 0 or empty = external only, 1 = local only, 2 = both (same rule as Ai::generateContent())
+	$localurl = empty($dolibarr_ai_allow_local_endpoints) ? 0 : (int) $dolibarr_ai_allow_local_endpoints;
 
 	$result = getURLContent($url, 'POST', json_encode($data), 1, $headers, array('http', 'https'), $localurl, -1, 0, 10);
 	$httpCode = (int) ($result['http_code'] ?? 0);
@@ -794,7 +795,7 @@ function aiSuggestClosestModel($missing, array $models)
  */
 function getAiChatAssistantConfig()
 {
-	global $conf, $langs, $user;
+	global $conf, $langs, $mysoc, $user;
 
 	$langs->loadLangs(array('main', 'admin', 'bills', 'companies', 'products', 'other'));
 
@@ -849,6 +850,7 @@ function getAiChatAssistantConfig()
 
 		// Errors
 		'MicError',
+		'MicNotAllowedHelp',
 		'MicTooQuiet',
 		'ConnectionBlocked',
 		'ConnectionBlockedHelp',
@@ -1019,6 +1021,9 @@ function getAiChatAssistantConfig()
 		// Gemini is the only wired provider taking HEIC natively; the chat JS
 		// falls back to it when the browser cannot transcode HEIC to JPEG.
 		'providerAcceptsHeic' => ((getListOfAIServices()[getDolGlobalString('AI_API_SERVICE')]['adapter_type'] ?? '') === 'google' ? 1 : 0),
+		// Local taxes used by the country of the company: their fields are hidden in the chat otherwise.
+		'useLocalTax1' => ($mysoc->useLocalTax(1, 1, $mysoc) ? 1 : 0),
+		'useLocalTax2' => ($mysoc->useLocalTax(2, 1, $mysoc) ? 1 : 0),
 		'currency' => $conf->currency,
 		'locale' => str_replace('_', '-', $langs->getDefaultLang()),
 		'urlRoot' => DOL_URL_ROOT,
@@ -2132,7 +2137,7 @@ function aiPaletteToolTitle($langs, $name, $route)
 		'thirdparties' => array('companies', 'ThirdParty', 'ThirdParties'),
 		'products' => array('products', 'Product', 'Products'),
 		'projects' => array('main', 'Project', 'Projects'),
-		'tasks' => array('projects', 'Task', 'Tasks'),
+		'project_tasks' => array('projects', 'Task', 'Tasks'),
 		'tickets' => array('ticket', 'Ticket', 'Tickets'),
 		'warehouses' => array('stocks', 'Warehouse', 'Warehouses'),
 		'stockmovements' => array('stocks', 'StockMovement', 'StockMovements'),
@@ -2189,7 +2194,7 @@ function aiPaletteToolTitle($langs, $name, $route)
 		'update' => array('AIToolTitleUpdate', $one),
 		'delete' => array('AIToolTitleDelete', $one),
 		'validate' => array('AIToolTitleValidate', $one),
-		'add_payment' => array('AIToolTitleAddPayment', $one),
+		'payment_create' => array('AIToolTitleAddPayment', $one),
 		'add_line' => array('AIToolTitleAddLine', $one)
 	);
 	$langs->load('other');
@@ -2236,4 +2241,96 @@ function aiPaletteToolDescription($description)
 	$text = (string) preg_replace('/\s*through the Dolibarr REST API \(auto-generated tool\)\.?/i', '', (string) $description);
 
 	return trim((string) preg_replace('/\s{2,}/', ' ', $text));
+}
+
+/**
+ * Compresses tool schema by removing optional parameters with defaults
+ * and stripping descriptions, relying on LLM inference of variable names.
+ *
+ * @param array<int, array<string, mixed>> $tools Array of tool definitions.
+ * @param bool $isLargeSchema True if compression is needed.
+ * @return array<int, array<string, mixed>>
+ */
+function cleanToolSchemaForLLM(array $tools, bool $isLargeSchema = false)
+{
+	$cleaned = [];
+
+	foreach ($tools as $tool) {
+		// Tool descriptions are how the LLM selects the right tool -- never truncate
+		// them, even when the schema is large. Truncating to 3 words ("Create documents
+		// other", "Add a single") breaks tool selection. If the schema really is too
+		// big for the chosen model, the right answer is to filter the toolset before
+		// it reaches the LLM (which is what filterToolsProfessional() already does
+		// upstream of this function), not to mutilate each tool's description.
+		// Parameter-level compression (stripping defaults, descriptions of optional
+		// fields, etc.) remains gated on $isLargeSchema below.
+		$desc = $tool['description'];
+
+		// Get parameters
+		$toolParams = $tool['parameters'] ?? $tool['inputSchema'] ?? [];
+		// requestState is set by the chat after the user confirmed a write, never by the model.
+		unset($toolParams['properties']['requestState']);
+
+		if ($isLargeSchema && isset($toolParams['properties']) && is_array($toolParams['properties'])) {
+			$requiredList = $toolParams['required'] ?? [];
+			$newProperties = [];
+
+			foreach ($toolParams['properties'] as $propKey => $propData) {
+				$isRequired = in_array($propKey, $requiredList);
+
+				// -----------------------------------------------------------
+				// Remove Optional Parameters with Defaults
+				// -----------------------------------------------------------
+				// If a parameter is optional and has a default value defined in
+				// the schema, we assume the backend will handle it. We remove it
+				// from the prompt entirely. This saves massive amounts of tokens
+				// on list/search functions (limit, sortorder, sqlfilters, etc).
+				// -----------------------------------------------------------
+				if (!$isRequired && isset($propData['default'])) {
+					continue;
+				}
+
+				// Remove 'type' for string (LLM default), Keep others (int/bool/arr)
+				if (isset($propData['type']) && $propData['type'] === 'string') {
+					unset($propData['type']);
+				}
+
+				// Handle Descriptions
+				// Remove descriptions entirely. Rely on the key name (e.g. 'email', 'qty').
+				// Exception: Keep 1 word if it's a required parameter with a confusing name.
+				if (isset($propData['description'])) {
+					unset($propData['description']);
+					// If we want to keep a tiny hint for required params, uncomment below:
+					// if ($isRequired) {
+					//     $propData['description'] = explode(' ', trim($propData['description']))[0];
+					// }
+				}
+
+				// Collapse Complex Objects
+				// If a parameter is a deep object (like a complex filter), replace the
+				// recursive properties definition with a generic string to save tokens.
+				if (isset($propData['type']) && $propData['type'] === 'object' && isset($propData['properties'])) {
+					unset($propData['properties']);
+					unset($propData['required']);
+					$propData['description'] = "JSON object"; // Minimal hint
+				}
+
+				$newProperties[$propKey] = $propData;
+			}
+
+			$toolParams['properties'] = $newProperties;
+
+			// Clean up root metadata
+			unset($toolParams['type']);
+			unset($toolParams['additionalProperties']);
+		}
+
+		$cleaned[] = [
+			'name' => $tool['name'],
+			'description' => $desc,
+			'parameters' => $toolParams
+		];
+	}
+
+	return $cleaned;
 }
