@@ -163,10 +163,17 @@ function getFileData($jk, $fpos, $type, $mbox)
 }
 
 /**
- * Save joined file into a directory with a given name
+ * Save joined file into a directory with a given name.
  *
- * @param 	string 		$path 		Path to file
- * @param 	string 		$filename 	Name of file
+ * Warning: this function writes $filename as is, without sanitizing it, so it must never be called with a name
+ * coming from an email (directory traversal, no .noexe). It is no longer used by the email collector, which now
+ * goes through the private EmailCollector::saveAttachment() applying the rules of an uploaded file. It is kept
+ * only for backward compatibility with external modules that may call it; the caller must pass a trusted name.
+ *
+ * @see EmailCollector::saveAttachment()
+ *
+ * @param 	string 		$path 		Path to file (must end with a directory separator)
+ * @param 	string 		$filename 	Name of file (trusted: NOT sanitized here)
  * @param 	mixed 		$data 		contenu à sauvegarder
  * @return 	string 					emplacement du fichier
  **/
