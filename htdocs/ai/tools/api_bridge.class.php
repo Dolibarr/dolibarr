@@ -1932,7 +1932,7 @@ class ToolApiBridge extends McpTool
 				),
 				'putPage' => array(
 					'suffix' => 'pages_update',
-					'description' => "Change fields of an existing page or blog post of a website. Give 'pageid' (rowid of the page, from api_websites_pages_list) and ONLY the fields to change, with their new value: title, description, keywords, content, lang, author_alias, status. To change a part of the content, read the page first with api_websites_pages_get and send the whole new content (HTML, inside a <section> tag, no PHP code). The alias (pageurl) cannot be changed here. The user confirms before anything is written.",
+					'description' => "Change fields of an existing page or blog post of a website. Give 'pageid' (rowid of the page, from api_websites_pages_list) and ONLY the fields to change, with their new value: title, description, keywords, content, lang, author_alias, status. To change a part of the content, read the page first with api_websites_pages_get and send the whole new content (HTML, inside a <section> tag); every PHP block (<?php ... ?>) of the current content must be copied character for character, unchanged, or the change is refused. The alias (pageurl) cannot be changed here. The user confirms before anything is written.",
 					'write' => array(
 						'kind' => 'update',
 						'preview' => 'AIPreviewChangeRecord',
@@ -1952,7 +1952,7 @@ class ToolApiBridge extends McpTool
 						'title' => "New title of the page.",
 						'description' => "New short description (meta description), 255 characters max.",
 						'keywords' => "New keywords, separated by commas.",
-						'content' => "New full HTML content of the page, inside a <section> tag. No PHP code.",
+						'content' => "New full HTML content of the page, inside a <section> tag. Never add or change PHP code: keep the existing PHP blocks (<?php ... ?>) exactly as they are.",
 						'lang' => "New language code of the page, e.g. 'en' or 'fr'.",
 						'author_alias' => "New name of the author to show.",
 						'status' => "0 offline, 1 online."
@@ -7443,6 +7443,7 @@ class ToolApiBridge extends McpTool
 			} catch (Throwable $e) {
 				$code = (int) $e->getCode();
 				$message = $e->getMessage();
+				$detail = '';
 				if ($message === '') {
 					// Core throws bare RestException(403) in places: give the model
 					// something to reason on instead of an empty string.
@@ -7462,12 +7463,19 @@ class ToolApiBridge extends McpTool
 					global $langs;
 					dol_syslog(get_class($this).'::execute '.$name.' '.$message, LOG_DEBUG);
 					$langs->loadLangs(array('main', 'errors'));
+					// A 403 that explains itself (e.g. PHP code of a website page changed) is kept for the model, so it can correct its call.
+					if ($code == 403 && $e->getMessage() !== '' && !preg_match('/^(Forbidden|Access not allowed)/i', $e->getMessage())) {
+						$detail = $e->getMessage();
+					}
 					$message = $langs->transnoentitiesnoconv($code == 404 ? 'ErrorRecordNotFound' : 'NotEnoughPermissions');
 				}
 				$output = [
 					"error" => $message,
 					"http_status" => ($code > 0 ? $code : 500)
 				];
+				if ($detail !== '') {
+					$output['detail'] = $detail;
+				}
 				// The API answers 404 for an object with no files: that is an empty
 				// list, unless the object itself does not exist. For a download,
 				// 404 means the file itself is missing: keep the error.

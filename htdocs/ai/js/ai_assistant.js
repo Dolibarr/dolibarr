@@ -2713,10 +2713,12 @@ export function initAiAssistant(container) {
 
     // Compact, model-oriented snippet of a tool result for the pinned context:
     // the model needs the shape and the ids, not the full rendered table.
+    // Max size (in characters) of one tool result sent back as context (setup AI_CHAT_CONTEXT_MAX_SIZE).
+    const CONTEXT_MAX_SIZE = Math.max(0, isNaN(parseInt(config.contextMaxSize, 10)) ? 200000 : parseInt(config.contextMaxSize, 10));
     function contextSnippetOf(result, toolName) {
         let s = '';
         try { s = JSON.stringify(result); } catch (e) { s = String(result); }
-        if (s.length > 1500) s = s.slice(0, 1500) + '…';
+        if (s.length > CONTEXT_MAX_SIZE) s = s.slice(0, CONTEXT_MAX_SIZE) + '…';
         return '[' + (toolName || 'tool') + ' result] ' + s;
     }
 
@@ -3281,7 +3283,11 @@ export function initAiAssistant(container) {
 
     function formatResult(data, isRecursive = false, toolName = '') {
         if (!data) return t('NoDataAvailable');
-        if (data.error) return `<span style="color:red">${t('error')}: ${data.error}</span>`;
+        if (data.error) {
+            // 'detail' is the reason given by the API (e.g. a 403 that explains itself), shown under the translated error
+            const detail = data.detail ? `<br><span class="small opacitymedium">${escapeHtml(String(data.detail))}</span>` : '';
+            return `<span style="color:red">${t('error')}: ${data.error}</span>${detail}`;
+        }
         let content = '';
         let isArray = false;
         let isObject = false;
