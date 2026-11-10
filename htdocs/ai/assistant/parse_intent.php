@@ -1245,7 +1245,10 @@ try {
 				$hasPdf = $hasPdf || ($att['mime'] === 'application/pdf');
 			}
 			$attachmentWords = '/\b(?:file|files|pdf|document|image_url|image|attachment|content.?type|mime|multimodal|vision)\b/i';
-			if (!empty($attachments) && preg_match($attachmentWords, $reason)) {
+			if (isset($adapter) && $adapter->lastTruncated) {
+				// The answer was cut by the max tokens limit: retrying the same request gives the same cut answer
+				$message = $langs->transnoentitiesnoconv('AIAnswerTruncated', $reason);
+			} elseif (!empty($attachments) && preg_match($attachmentWords, $reason)) {
 				$message = $langs->transnoentitiesnoconv($hasPdf ? 'AIProviderRejectedPdf' : 'AIProviderRejectedAttachment', getAiAssistantProviderLabel(), $reason);
 			} elseif (UniversalLLMAdapter::isModelUnavailableError($reason)) {
 				// The chosen model is unknown or retired at the provider: rephrasing
