@@ -564,6 +564,7 @@ try {
 	$intentJSON = null;
 	$confidence = 0.0;
 	$allToolsSchema = [];
+	$adapter = null;
 
 	if ($serviceKey && $serviceKey !== '-1') {
 		$providerUsed = $serviceKey;
@@ -822,7 +823,6 @@ try {
 			}
 		}
 		$adapterType = $servicesList[$serviceKey]['adapter_type'] ?? 'openai';
-		$adapter = null;
 
 
 		// The request.
