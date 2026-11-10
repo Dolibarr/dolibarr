@@ -725,31 +725,31 @@ class dolReceiptPrinter extends Printer
 
 		$this->template = str_replace('{dol_value_customer_firstname}', $object->thirdparty->firstname, $this->template);
 		$this->template = str_replace('{dol_value_customer_lastname}', $object->thirdparty->lastname, $this->template);
-		$this->template = str_replace('{dol_value_customer_mail}', $object->thirdparty->email, $this->template);
-		$this->template = str_replace('{dol_value_customer_phone}', $object->thirdparty->phone, $this->template);
+		$this->template = str_replace('{dol_value_customer_mail}', (string) $object->thirdparty->email, $this->template);
+		$this->template = str_replace('{dol_value_customer_phone}', (string) $object->thirdparty->phone, $this->template);
 		//$this->template = str_replace('<dol_value_customer_mobile>', $object->thirdparty->mobile, $this->template);
-		$this->template = str_replace('{dol_value_customer_tax_number}', $object->thirdparty->tva_intra, $this->template);
+		$this->template = str_replace('{dol_value_customer_tax_number}', (string) $object->thirdparty->tva_intra, $this->template);
 		//$this->template = str_replace('<dol_value_customer_account_balance>', $object->customer_account_balance, $this->template);
 		//$this->template = str_replace('<dol_value_customer_points>', $object->customer_points, $this->template);
 
 		$this->template = str_replace('{dol_value_mysoc_name}', $mysoc->name, $this->template);
-		$this->template = str_replace('{dol_value_mysoc_address}', $mysoc->address, $this->template);
-		$this->template = str_replace('{dol_value_mysoc_zip}', $mysoc->zip, $this->template);
-		$this->template = str_replace('{dol_value_mysoc_town}', $mysoc->town, $this->template);
+		$this->template = str_replace('{dol_value_mysoc_address}', (string) $mysoc->address, $this->template);
+		$this->template = str_replace('{dol_value_mysoc_zip}', (string) $mysoc->zip, $this->template);
+		$this->template = str_replace('{dol_value_mysoc_town}', (string) $mysoc->town, $this->template);
 		$this->template = str_replace('{dol_value_mysoc_country}', $mysoc->country, $this->template);
-		$this->template = str_replace('{dol_value_mysoc_idprof1}', $mysoc->idprof1, $this->template);
-		$this->template = str_replace('{dol_value_mysoc_idprof2}', $mysoc->idprof2, $this->template);
-		$this->template = str_replace('{dol_value_mysoc_idprof3}', $mysoc->idprof3, $this->template);
-		$this->template = str_replace('{dol_value_mysoc_idprof4}', $mysoc->idprof4, $this->template);
-		$this->template = str_replace('{dol_value_mysoc_idprof5}', $mysoc->idprof5, $this->template);
-		$this->template = str_replace('{dol_value_mysoc_idprof6}', $mysoc->idprof6, $this->template);
-		$this->template = str_replace('{dol_value_mysoc_tva_intra}', $mysoc->tva_intra, $this->template);
+		$this->template = str_replace('{dol_value_mysoc_idprof1}', (string) $mysoc->idprof1, $this->template);
+		$this->template = str_replace('{dol_value_mysoc_idprof2}', (string) $mysoc->idprof2, $this->template);
+		$this->template = str_replace('{dol_value_mysoc_idprof3}', (string) $mysoc->idprof3, $this->template);
+		$this->template = str_replace('{dol_value_mysoc_idprof4}', (string) $mysoc->idprof4, $this->template);
+		$this->template = str_replace('{dol_value_mysoc_idprof5}', (string) $mysoc->idprof5, $this->template);
+		$this->template = str_replace('{dol_value_mysoc_idprof6}', (string) $mysoc->idprof6, $this->template);
+		$this->template = str_replace('{dol_value_mysoc_tva_intra}', (string) $mysoc->tva_intra, $this->template);
 		$this->template = str_replace('{dol_value_mysoc_capital}', (string) $mysoc->capital, $this->template);
-		$this->template = str_replace('{dol_value_mysoc_url}', $mysoc->url, $this->template);
+		$this->template = str_replace('{dol_value_mysoc_url}', (string) $mysoc->url, $this->template);
 
 		$this->template = str_replace('{dol_value_vendor_firstname}', $user->firstname, $this->template);
 		$this->template = str_replace('{dol_value_vendor_lastname}', $user->lastname, $this->template);
-		$this->template = str_replace('{dol_value_vendor_mail}', $user->email, $this->template);
+		$this->template = str_replace('{dol_value_vendor_mail}', (string) $user->email, $this->template);
 
 		$parameters = array('object' => $object);
 		$action = '';
