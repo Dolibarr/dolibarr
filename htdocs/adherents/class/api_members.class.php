@@ -280,6 +280,8 @@ class Members extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $typeid = '', $category = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
+		global $hookmanager;
+
 		$obj_ret = array();
 
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
@@ -299,6 +301,16 @@ class Members extends DolibarrApi
 		if ($category > 0) {
 			$sql .= " AND c.fk_categorie = ".((int) $category);
 			$sql .= " AND c.fk_member = t.rowid";
+		}
+		// Add where from hooks
+		$parameters = array('sqlfilters' => $sqlfilters, 'apiroute' => 'members', 'apimethod' => __METHOD__);
+		$object = new Adherent($this->db);
+		$action = 'list';
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if ($reshook > 0) {
+			$sql = $hookmanager->resPrint;
+		} elseif ($reshook == 0) {
+			$sql .= $hookmanager->resPrint;
 		}
 		// Add sql filters
 		if ($sqlfilters) {

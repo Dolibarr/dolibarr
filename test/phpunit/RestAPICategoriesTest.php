@@ -166,6 +166,11 @@ class RestAPICategoriesTest extends AbstractRestAPITest
 
 		$this->getUrl('categories/'.$category_id_customer, $test, 'PUT', array("type" => "notatype"), 400);
 
+		// The type of a category cannot be changed
+		$this->getUrl('categories/'.$category_id_customer, $test, 'PUT', array("type" => "product"), 400);
+		$result = $this->getUrl('categories/'.$category_id_customer, $test, 'GET');
+		$this->assertEquals(2, $result['content']['type'], "$test Type must not be changed");
+
 		$this->getUrl('categories/'.$category_id_customer, $test, 'DELETE');
 		$this->getUrl('categories/'.$category_id_product, $test, 'DELETE');
 	}
