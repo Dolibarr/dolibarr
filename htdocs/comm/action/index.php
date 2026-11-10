@@ -1717,7 +1717,10 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 			// height: auto against .agendacell { height: 60px } of the themes: a day of the week can hold
 			// several all-day events (a holiday calendar for each country subscribed to), and they would
 			// otherwise overflow the row and be drawn over the grid below.
-			print '<div id="alldayevent_'.$dateint.'" class="centpercent agendacell" style="height: auto;">';
+			// dayevent_YYYYMMDD and .sortable put back the drag of an event to another day, which the
+			// hourly grid of the week took away: the drag&drop JS reads the id of the closest .dayevent,
+			// and card.php expects a value that starts with dayevent_ (see its actionmove=mupdate block).
+			print '<div id="dayevent_'.$dateint.'" class="dayevent sortable centpercent agendacell" style="height: auto;">';
 			if (!empty($weekhourlybuckets[$iter_day]['allday'])) {
 				foreach ($weekhourlybuckets[$iter_day]['allday'] as $eventhtml) {
 					print $eventhtml;
