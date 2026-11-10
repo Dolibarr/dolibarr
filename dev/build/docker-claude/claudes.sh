@@ -59,17 +59,21 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+# Directory containing this script (the docker-claude build directory), whatever the current
+# directory is. Symbolic links are resolved so a link to claudes.sh (in ~/bin for example) works too.
+SCRIPT_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)
+
 # Build image
 # The build context is created on the fly: it contains the docker-claude directory,
 # the scripts shared with docker-vibe (open-on-host, xdg-open-shim, smtpblock.sh),
 # and the .pre-commit-config.yaml of the repository when it exists (it is used by
 # the Dockerfile to preload the pre-commit hooks environments into the image).
-CONTEXT_TAR_ARGS=(. -C "$PWD/dev/build/docker-vibe" open-on-host xdg-open-shim smtpblock.sh)
+CONTEXT_TAR_ARGS=(. -C "$SCRIPT_DIR/../docker-vibe" open-on-host xdg-open-shim smtpblock.sh)
 if [ -f .pre-commit-config.yaml ]; then
   CONTEXT_TAR_ARGS+=(-C "$PWD" .pre-commit-config.yaml)
 fi
 
-if ! tar -cf - -C dev/build/docker-claude "${CONTEXT_TAR_ARGS[@]}" | sudo docker build -t docker-claude "${BUILD_ARGS[@]}" -; then
+if ! tar -cf - -C "$SCRIPT_DIR" "${CONTEXT_TAR_ARGS[@]}" | sudo docker build -t docker-claude "${BUILD_ARGS[@]}" -; then
     echo "ERROR: Build of the docker-claude image failed."
     echo "The container is not started to avoid running an outdated image."
     exit 1

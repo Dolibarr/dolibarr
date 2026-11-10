@@ -51,6 +51,10 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+# Directory containing this script (the docker-vibe build directory), whatever the current
+# directory is. Symbolic links are resolved so a link to vibes.sh (in ~/bin for example) works too.
+SCRIPT_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)
+
 # Build image
 # The build context is created on the fly: it contains the docker-vibe directory,
 # and the .pre-commit-config.yaml of the repository when it exists (it is used by
@@ -60,7 +64,7 @@ if [ -f .pre-commit-config.yaml ]; then
   CONTEXT_TAR_ARGS+=(-C "$PWD" .pre-commit-config.yaml)
 fi
 
-if ! tar -cf - -C dev/build/docker-vibe "${CONTEXT_TAR_ARGS[@]}" | sudo docker build -t docker-vibe "${BUILD_ARGS[@]}" -; then
+if ! tar -cf - -C "$SCRIPT_DIR" "${CONTEXT_TAR_ARGS[@]}" | sudo docker build -t docker-vibe "${BUILD_ARGS[@]}" -; then
     echo "ERROR: Build of the docker-vibe image failed."
     echo "The container is not started to avoid running an outdated image."
     exit 1
