@@ -41,6 +41,30 @@ if (empty($user->id)) {
 
 
 /**
+ * Receipt printer that takes its template from a property: the table of the templates only exists once the module is enabled
+ */
+class DolReceiptPrinterWithTemplate extends dolReceiptPrinter
+{
+	/**
+	 * @var string	Template to print
+	 */
+	public $testtemplate = '';
+
+	/**
+	 * Load the template of the property instead of the database
+	 *
+	 * @param	int		$templateid		Template id (not used)
+	 * @return	int						0 if OK
+	 */
+	public function loadTemplate($templateid)
+	{
+		$this->template = $this->testtemplate;
+		return 0;
+	}
+}
+
+
+/**
  * Class for PHPUnit tests
  *
  * @backupGlobals disabled
@@ -115,21 +139,18 @@ class DolReceiptPrinterTest extends CommonClassTest
 		$template .= '{dol_unknown_tag}{dol_line_feed}';
 		$template .= "{dol_print_text}after\r\n";
 
-		$receiptprinter = new dolReceiptPrinter($db);
-		$this->assertEquals(0, $receiptprinter->addTemplate('PHPUNIT_EMPTYTAGS', $template));
-		$templateid = (int) $db->last_insert_id(MAIN_DB_PREFIX.'printer_receipt_template');
-		$this->assertGreaterThan(0, $templateid);
+		$receiptprinter = new DolReceiptPrinterWithTemplate($db);
+		$receiptprinter->testtemplate = $template;
 
 		$result = -1;
 		self::$phperrors = array();
 		set_error_handler(array('DolReceiptPrinterTest', 'collectPhpError'));
 		ob_start();
 		try {
-			$result = $receiptprinter->sendToPrinter($object, $templateid, 0);
+			$result = $receiptprinter->sendToPrinter($object, 1, 0);	// A template id is required to load a custom template
 		} finally {
 			restore_error_handler();
 			$printed = (string) base64_decode(strtr(ob_get_clean(), '-_', '+/'));
-			$receiptprinter->deleteTemplate($templateid);
 		}
 		print __METHOD__ . " result=" . $result . "\n";
 		$this->assertEquals(2, $result, 'Only the empty barcode and the unknown tag are reported as errors');
