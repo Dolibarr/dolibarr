@@ -436,6 +436,105 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * testRestInterventionDeleteLine
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionDeleteLine()
+	{
+		$test = "Delete a line of a draft intervention";
+
+		list($intervention_id, $line_id) = $this->createInterventionWithLine($test);
+		$result = $this->getUrl('interventions/'.$intervention_id.'/lines', $test, 'POST', $this->lineData(array("description" => "Line to keep")));
+		$other_line_id = (int) $result['content'];
+		$this->assertGreaterThan(0, $other_line_id, "$test Id of the second line is not > 0");
+
+		$result = $this->getUrl('interventions/'.$intervention_id.'/lines/'.$line_id, $test, 'DELETE');
+
+		$this->assertEquals($intervention_id, $result['content']['id'] ?? null, "$test The intervention must be returned");
+		$lineids = array_map('intval', array_column($result['content']['lines'] ?? array(), 'id'));
+		$this->assertNotContains($line_id, $lineids, "$test The deleted line must not be in the response");
+		$this->assertContains($other_line_id, $lineids, "$test The other line must be in the response");
+
+		$result = $this->getUrl('interventions/'.$intervention_id.'/lines', $test, 'GET');
+		$lineids = array_map('intval', array_column($result['content'], 'id'));
+		$this->assertEquals(array($other_line_id), $lineids, "$test Only the other line must remain");
+	}
+
+	/**
+	 * testRestInterventionDeleteLineValidated
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionDeleteLineValidated()
+	{
+		$test = "Delete a line of a validated intervention";
+
+		list($intervention_id, $line_id) = $this->createInterventionWithLine($test);
+		$this->validateIntervention($test, $intervention_id);
+
+		$this->getUrl('interventions/'.$intervention_id.'/lines/'.$line_id, $test, 'DELETE', null, 403);
+
+		$this->assertLineUnchanged($test, $intervention_id, $line_id);
+	}
+
+	/**
+	 * testRestInterventionDeleteLineOfOtherIntervention
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionDeleteLineOfOtherIntervention()
+	{
+		$test = "Delete a line through another intervention";
+
+		list($intervention_id) = $this->createInterventionWithLine($test);
+		list($other_intervention_id, $other_line_id) = $this->createInterventionWithLine($test);
+
+		$this->getUrl('interventions/'.$intervention_id.'/lines/'.$other_line_id, $test, 'DELETE', null, 403);
+
+		$this->assertLineUnchanged($test, $other_intervention_id, $other_line_id);
+	}
+
+	/**
+	 * testRestInterventionDeleteLineNotFound
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionDeleteLineNotFound()
+	{
+		$test = "Delete a line that does not exist";
+
+		list($intervention_id, $line_id) = $this->createInterventionWithLine($test);
+
+		$this->getUrl('interventions/'.$intervention_id.'/lines/999999999', $test, 'DELETE', null, 404);
+
+		$this->assertLineUnchanged($test, $intervention_id, $line_id);
+	}
+
+	/**
+	 * testRestInterventionDeleteLineNoAccessToIntervention
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionDeleteLineNoAccessToIntervention()
+	{
+		$test = "Delete a line of a validated intervention the user has no access to";
+
+		list($intervention_id, $line_id) = $this->createInterventionWithLine($test);
+		$this->validateIntervention($test, $intervention_id);
+		// The user cannot see all third parties and is not a representative of the third party of the intervention
+		$api_key = $this->createRestrictedUser($test, array(array('ficheinter', 'lire'), array('ficheinter', 'creer')));
+
+		$result = $this->getUrl('interventions/'.$intervention_id.'/lines/'.$line_id, $test, 'DELETE', null, 403, $api_key);
+
+		$message = $result['content']['error']['message'] ?? '';
+		$this->assertStringContainsString('Access not allowed', $message, "$test Access must be refused first");
+		$this->assertStringNotContainsString('draft status', $message, "$test The status must not be revealed");
+
+		$this->assertLineUnchanged($test, $intervention_id, $line_id);
+	}
+
+	/**
 	 * testRestInterventionDelete
 	 *
 	 * @return void
