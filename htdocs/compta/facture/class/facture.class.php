@@ -1024,23 +1024,27 @@ class Facture extends CommonInvoice
 				$fk_parent_line = 0;
 
 				dol_syslog("There is ".count($this->lines)." lines into ->lines that are InvoiceLines");
-				foreach ($this->lines as $i => $val) {
-					$newinvoiceline = $this->lines[$i];
+				// Loop on a copy: addline() appends the inserted lines to $this->lines and uses
+				// count($this->lines) to shift ranks, so the input lines must not remain in it.
+				$linestoadd = $this->lines;
+				$this->lines = array();
+				foreach ($linestoadd as $i => $val) {
+					$newinvoiceline = $linestoadd[$i];
 					'@phan-var-force FactureLigne $newinvoiceline';
 
 					$newinvoiceline->context = $this->context;
 
 					$newinvoiceline->fk_facture = $this->id;
 
-					$newinvoiceline->origin = $this->lines[$i]->element;
-					$newinvoiceline->origin_type = $this->lines[$i]->element;
-					$newinvoiceline->origin_id = $this->lines[$i]->id;
+					$newinvoiceline->origin = $linestoadd[$i]->element;
+					$newinvoiceline->origin_type = $linestoadd[$i]->element;
+					$newinvoiceline->origin_id = $linestoadd[$i]->id;
 
 					// Auto set date of service ?
-					if ($this->lines[$i]->date_start_fill == 1 && $originaldatewhen) {		// $originaldatewhen is defined when generating from recurring invoice only
+					if ($linestoadd[$i]->date_start_fill == 1 && $originaldatewhen) {		// $originaldatewhen is defined when generating from recurring invoice only
 						$newinvoiceline->date_start = $originaldatewhen;
 					}
-					if ($this->lines[$i]->date_end_fill == 1 && $previousdaynextdatewhen) {	// $previousdaynextdatewhen is defined when generating from recurring invoice only
+					if ($linestoadd[$i]->date_end_fill == 1 && $previousdaynextdatewhen) {	// $previousdaynextdatewhen is defined when generating from recurring invoice only
 						$newinvoiceline->date_end = $previousdaynextdatewhen;
 					}
 
@@ -6646,9 +6650,9 @@ class Facture extends CommonInvoice
 	 *  Send reminders by emails for invoices validated that are due.
 	 *  CAN BE A CRON TASK
 	 *
-	 *  @param	int			$nbdays				Delay before due date (or after if delay is negative)
+	 *  @param	int|string	$nbdays				Delay before due date (or after if delay is negative). Several reminder levels can be set with a list separated by ';' (then $template must have the same number of values)
 	 *  @param	string		$paymentmode		'' or 'all' by default (no filter), or 'LIQ', 'CHQ', CB', ...
-	 *  @param	int|string	$template			Name (or id) of email template (Must be a template of type 'facture_send')
+	 *  @param	int|string	$template			Name (or id) of email template (Must be a template of type 'facture_send'). One per level if $nbdays is a list separated by ';'
 	 *  @param	string		$datetouse			'duedate' (default) or 'invoicedate'
 	 *  @param	string		$forcerecipient		Forced recipients. '' (default) to send to the email of thirdparty, or a list of values separated by ';' among: a fixed email,
 	 *  										'thirdpartyemail' (email of thirdparty), 'externalbillingcontacts' (external contacts of invoice of type BILLING),
@@ -6674,6 +6678,29 @@ class Facture extends CommonInvoice
 		if (!in_array($datetouse, array('duedate', 'invoicedate'))) {
 			$this->output .= 'Bad value for parameter datetouse. Must be "duedate" or "invoicedate"';
 			return 0;
+		}
+
+		// Several reminder levels in one call: each level is processed like a single call with its own delay and template
+		// (the delays are trimmed because a space may remain around the values)
+		if (strpos((string) $nbdays, ';') !== false) {
+			$arraynbdays = array_map('trim', explode(';', (string) $nbdays));
+			$arraytemplate = explode(';', (string) $template);
+			if (count($arraynbdays) != count($arraytemplate) || array_map('strval', array_map('intval', $arraynbdays)) !== $arraynbdays) {
+				$this->error = 'Bad value for parameters nbdays and template. They must contain the same number of values separated by ";", and nbdays must be integers';
+				return 1;
+			}
+			$leveloutput = '';
+			$levelerrors = array();
+			foreach ($arraynbdays as $key => $levelnbdays) {
+				$levelerror = $this->sendEmailsRemindersOnInvoiceDueDate((int) $levelnbdays, $paymentmode, trim($arraytemplate[$key]), $datetouse, $forcerecipient);
+				$leveloutput .= $this->output.'<br>';
+				if ($levelerror) {
+					$levelerrors[] = $this->error;
+				}
+			}
+			$this->output = $leveloutput;
+			$this->error = implode(' / ', $levelerrors);
+			return count($levelerrors) ? 1 : 0;
 		}
 
 		// Build list of forced recipients (separator is ';' because cron splits parameters on ',')

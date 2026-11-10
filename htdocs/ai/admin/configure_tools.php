@@ -296,7 +296,17 @@ if (empty($groupedNormalTools) && empty($groupedSystemTools)) {
 			if (!$isSystem) {
 				$llmDef = cleanToolSchemaForLLM(array($def));
 				$llmJson = (string) json_encode($llmDef[0], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-				print '<a href="#" class="ai-tool-definition" data-target="aitooldef' . $groupId . '_' . dol_escape_htmltag($name) . '" data-title="' . dolPrintHTMLForAttribute($name) . '">';
+				// REST API route called by the tool, when identifiable
+				$popupTitle = $name;
+				$toolObj = $mcpHandler->toolsByName[$name] ?? null;
+				if (is_object($toolObj) && method_exists($toolObj, 'toolApiUrl')) {
+					// @phan-suppress-next-line PhanUndeclaredMethod  The method's existence is tested above.
+					$apiUrl = (string) $toolObj->toolApiUrl($name);
+					if ($apiUrl !== '') {
+						$popupTitle .= ' (' . $apiUrl . ')';
+					}
+				}
+				print '<a href="#" class="ai-tool-definition" data-target="aitooldef' . $groupId . '_' . dol_escape_htmltag($name) . '" data-title="' . dolPrintHTMLForAttribute($popupTitle) . '">';
 				print img_picto($langs->trans('ToolDefinitionSentToLLM'), 'info');
 				print '</a>';
 				print '<div id="aitooldef' . $groupId . '_' . dol_escape_htmltag($name) . '" style="display: none;"><pre class="small">' . dol_escape_htmltag($llmJson, 0, 1) . '</pre></div>';
@@ -304,7 +314,9 @@ if (empty($groupedNormalTools) && empty($groupedSystemTools)) {
 			print '</td>';
 
 			// Tool Description (hidden on mobile)
-			print '<td class="small opacitymedium hideonsmartphone">' . dol_escape_htmltag($desc) . '</td>';
+			print '<td class="small opacitymedium hideonsmartphone">';
+			print '<div class="twolinesmax-normallineheight" title="' . dolPrintHTMLForAttribute($desc) . '">' . dol_escape_htmltag($desc) . '</div>';
+			print '</td>';
 
 			// Type Badge
 			print '<td class="center">' . $typeBadge . '</td>';

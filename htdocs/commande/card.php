@@ -225,6 +225,24 @@ if (empty($reshook)) {
 
 	include DOL_DOCUMENT_ROOT . '/core/actions_lineupdown.inc.php';  // Must be 'include', not 'include_once'
 
+	// Create the purchase orders of the suppliers
+	if ($action == 'confirm_createpurchaseorders' && $confirm == 'yes' && $usercancreatepurchaseorder) {
+		$result = $object->createPurchaseOrders($user);
+		if (is_array($result)) {
+			if (!empty($result['noprice'])) {
+				setEventMessages($langs->trans('ProductsWithoutSupplierPrice', implode(', ', $result['noprice'])), null, 'warnings');
+			}
+			if (!empty($result['orders'])) {
+				setEventMessages($langs->trans('OrderCreated'), null, 'mesgs');
+			}
+			header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $object->id);
+			exit;
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = '';
+		}
+	}
+
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $usercancreate) {
 		if (!($socid > 0)) {
@@ -1498,7 +1516,7 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				// Insert line
-				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $info_bits, 0, $price_base_type, $pu_ttc, $date_start, $date_end, $type, min($rank, count($object->lines) + 1), 0, GETPOSTINT('fk_parent_line'), (int) $fournprice, $buyingprice, $label, $array_options, $fk_unit, '', 0, (float) $pu_ht_devise);
+				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $info_bits, 0, $price_base_type, $pu_ttc, $date_start, $date_end, $type, min($rank, count($object->lines) + 1), 0, GETPOSTINT('fk_parent_line'), (int) $fournprice, $buyingprice, $label, $array_options, $fk_unit, '', 0, (float) $pu_ht_devise, '', 0, GETPOST('line_ref_customer', 'alphanohtml'));
 
 				if ($result > 0) {
 					$db->commit();
@@ -1866,7 +1884,7 @@ if (empty($reshook)) {
 				}
 			}
 
-			$result = $object->updateline(GETPOSTINT('lineid'), $description, (float) $pu, (float) $qty, (float) $remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $price_base_type, $info_bits, $date_start, $date_end, $type, GETPOSTINT('fk_parent_line'), 0, (int) $fournprice, $buyingprice, $label, $special_code, $array_options, GETPOSTINT('units'), (float) $pu_ht_devise);
+			$result = $object->updateline(GETPOSTINT('lineid'), $description, (float) $pu, (float) $qty, (float) $remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $price_base_type, $info_bits, $date_start, $date_end, $type, GETPOSTINT('fk_parent_line'), 0, (int) $fournprice, $buyingprice, $label, $special_code, $array_options, GETPOSTINT('units'), (float) $pu_ht_devise, 0, '', 0, GETPOSTISSET('line_ref_customer') ? GETPOST('line_ref_customer', 'alphanohtml') : null);
 
 
 			if ($result >= 0) {
@@ -2135,27 +2153,37 @@ if (empty($reshook)) {
 	// Add lines from objectlinked
 	if ($action == 'import_lines_from_object' && $usercancreate && $object->status == Commande::STATUS_DRAFT) {
 		$fromElement = GETPOST('fromelement');
-		$fromElementid = GETPOST('fromelementid');
+		$fromElementid = GETPOSTINT('fromelementid');
 		$importLines = GETPOST('line_checkbox');
 
 		if (!empty($importLines) && is_array($importLines) && !empty($fromElement) && preg_match('/^[a-zA-Z]+$/', $fromElement) && !empty($fromElementid)) {
+			$lineParentField = '';
 			if ($fromElement == 'commande') {
 				dol_include_once('/' . $fromElement . '/class/' . $fromElement . '.class.php');
 				$lineClassName = 'OrderLine';
+				$lineParentField = 'fk_commande';
 			} elseif ($fromElement == 'propal') {
 				dol_include_once('/comm/' . $fromElement . '/class/' . $fromElement . '.class.php');
 				$lineClassName = 'PropaleLigne';
+				$lineParentField = 'fk_propal';
 			} elseif ($fromElement == 'facture') {
 				dol_include_once('/compta/' . $fromElement . '/class/' . $fromElement . '.class.php');
 				$lineClassName = 'FactureLigne';
+				$lineParentField = 'fk_facture';
 			}
 			$nextRang = count($object->lines) + 1;
 			$importCount = 0;
 			$error = 0;
+			// Check user can read the source object (permission, thirdparty and entity)
+			$fromElementAllowed = ($lineParentField && $fromElementid > 0 && restrictedArea($user, $fromElement, $fromElementid, '', '', 'fk_soc', 'rowid', 0, 1));
 			foreach ($importLines as $lineId) {
+				if (!$fromElementAllowed) {
+					$error++;
+					continue;
+				}
 				$lineId = intval($lineId);
 				$originLine = new $lineClassName($db);
-				if (intval($fromElementid) > 0 && $originLine->fetch($lineId) > 0) {
+				if ($fromElementAllowed && $originLine->fetch($lineId) > 0 && $originLine->$lineParentField == $fromElementid) {
 					$originLine->fetch_optionals();
 					$desc = $originLine->desc;
 					$pu_ht = $originLine->subprice;
@@ -3083,6 +3111,11 @@ if ($action == 'create' && $usercancreate) {
 			$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('ToClone'), $langs->trans('ConfirmCloneOrder', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 		}
 
+		// Create the purchase orders confirmation
+		if ($action == 'createpurchaseorders') {
+			$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('CreatePurchaseOrdersPerSupplier'), $langs->trans('ConfirmCreatePurchaseOrders'), 'confirm_createpurchaseorders', '', 'yes', 1);
+		}
+
 		// Subtotal line form
 		if ($action == 'add_title_line') {
 			$langs->load('subtotals');
@@ -3688,6 +3721,13 @@ if ($action == 'create' && $usercancreate) {
 						'perm' => $usercancreatepurchaseorder,
 						'label' => 'AddPurchaseOrder',
 						'url' => '/fourn/commande/card.php?action=create&amp;origin=' . urlencode($object->element) . '&amp;originid=' . ((int) $object->id)
+					);
+					$arrayforbutaction[] = array(
+						'lang' => 'orders',
+						'enabled' => (isModEnabled("supplier_order") && $object->status > Commande::STATUS_DRAFT),
+						'perm' => $usercancreatepurchaseorder,
+						'label' => 'CreatePurchaseOrdersPerSupplier',
+						'url' => '/commande/card.php?id=' . ((int) $object->id) . '&amp;action=createpurchaseorders&amp;token=' . newToken()
 					);
 				}
 

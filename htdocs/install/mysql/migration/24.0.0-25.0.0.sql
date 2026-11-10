@@ -495,7 +495,7 @@ create table llx_ai_chat_message
   rowid						integer AUTO_INCREMENT PRIMARY KEY,
   fk_conversation			integer NOT NULL,
   role						varchar(16) NOT NULL,
-  content_raw				text,
+  content_raw				mediumtext,
   content_html				MEDIUMTEXT,
   tool_name					varchar(255),
   pinned					smallint DEFAULT 0,
@@ -536,6 +536,11 @@ UPDATE llx_c_action_trigger SET elementtype = 'holiday', label = 'Holiday approv
 -- The trigger BILL_SUPPLIER_CANCELED is renamed into BILL_SUPPLIER_CANCEL to be consistent with the trigger BILL_CANCEL of customer invoices.
 -- Same values as in data/llx_c_action_trigger.sql.
 UPDATE llx_c_action_trigger SET code = 'BILL_SUPPLIER_CANCEL' WHERE code = 'BILL_SUPPLIER_CANCELED';
+
+-- On PostgreSQL, repair rowid of llx_c_type_contact that was not set as auto-incremented by migration 20
+-- VPGSQL8.2 CREATE SEQUENCE IF NOT EXISTS llx_c_type_contact_rowid_seq OWNED BY llx_c_type_contact.rowid;
+-- VPGSQL8.2 ALTER TABLE llx_c_type_contact ALTER COLUMN rowid SET DEFAULT nextval('llx_c_type_contact_rowid_seq');
+-- VPGSQL8.2 SELECT setval('llx_c_type_contact_rowid_seq', MAX(rowid)) FROM llx_c_type_contact;
 
 -- Add type of contacts for stock transfer (module is new in v25). Same values as in data/llx_c_type_contact.sql.
 INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('stocktransfer', 'internal', 'STRESP', 'Responsible for stock transfers', 1);
@@ -650,3 +655,34 @@ ALTER TABLE llx_commandedet ADD COLUMN ref_customer varchar(128) DEFAULT NULL AF
 ALTER TABLE llx_facturedet ADD COLUMN pos_printer_id integer NULL AFTER fk_warehouse;
 UPDATE llx_facturedet SET pos_printer_id = 1, special_code = 0 WHERE special_code = 4 AND fk_facture IN (SELECT rowid FROM llx_facture WHERE module_source = 'takepos' AND fk_statut = 0);
 UPDATE llx_facturedet SET special_code = 0 WHERE special_code IN (1, 2, 3) AND fk_facture IN (SELECT rowid FROM llx_facture WHERE module_source = 'takepos' AND fk_statut = 0);
+
+-- Bank accounts of users: an empty currency is the company currency, and each user has one default bank account per currency
+UPDATE llx_user_rib SET currency_code = (SELECT __DECRYPT('value')__ FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_MONNAIE' AND entity = llx_user_rib.entity) WHERE currency_code IS NULL OR currency_code = '';
+UPDATE llx_user_rib SET default_rib = 1 WHERE rowid IN (SELECT rowid FROM (SELECT MIN(rowid) as rowid FROM llx_user_rib GROUP BY fk_user, currency_code HAVING MAX(default_rib) = 0) as tmp);
+
+-- Social and fiscal tax types for Australia
+ALTER TABLE llx_c_chargesociales MODIFY COLUMN code varchar(24) NOT NULL;
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2801, 'PAYG withholding (PAYGW)',               0, 1, 'TAXAUPAYGW');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2802, 'PAYG income tax instalment (PAYGI)',     0, 1, 'TAXAUPAYGI');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2803, 'Company income tax',                     0, 1, 'TAXAUCIT');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2804, 'Fringe benefits tax (FBT)',              1, 1, 'TAXAUFBT');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2805, 'Superannuation guarantee contributions', 1, 1, 'TAXAUSUPER');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2806, 'Superannuation guarantee charge (SGC)',  1, 1, 'TAXAUSGC');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2807, 'Payroll tax (state or territory)',       1, 1, 'TAXAUPAYROLL');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2808, 'Workers compensation premium',           1, 1, 'TAXAUWORKCOMP');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2809, 'Land tax (state or territory)',          1, 1, 'TAXAULAND');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2810, 'ATO interest charges (GIC / SIC)',       0, 1, 'TAXAUGIC');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2811, 'Activity statement (BAS / IAS)',         0, 1, 'TAXAUBAS');
+
+-- Empty general accounts of thirdparties and users were stored as '-1' (value of the empty option of the select of accounting accounts)
+UPDATE llx_societe SET accountancy_code_customer_general = NULL WHERE accountancy_code_customer_general = '-1';
+UPDATE llx_societe SET accountancy_code_supplier_general = NULL WHERE accountancy_code_supplier_general = '-1';
+UPDATE llx_societe_perentity SET accountancy_code_customer_general = NULL WHERE accountancy_code_customer_general = '-1';
+UPDATE llx_societe_perentity SET accountancy_code_supplier_general = NULL WHERE accountancy_code_supplier_general = '-1';
+UPDATE llx_user SET accountancy_code_user_general = NULL WHERE accountancy_code_user_general = '-1';
+
+ALTER TABLE llx_website_page MODIFY COLUMN aliasalt text;
+ALTER TABLE llx_website_page MODIFY COLUMN htmlheader longtext;
+ALTER TABLE llx_website_page MODIFY COLUMN content longtext;
+
+ALTER TABLE llx_ai_chat_message MODIFY COLUMN content_raw mediumtext;

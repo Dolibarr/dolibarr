@@ -260,6 +260,10 @@ $sqlfields = $sql; // $sql fields to remove for count total
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS p";
 $sql .= " ON p.rowid = d.fk_projet";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe AS s ON s.rowid = d.fk_soc";
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE d.entity IN (". getEntity('donation') . ")";
 
 if ($search_status != '' && $search_status != '-4') {
@@ -289,6 +293,10 @@ if ($search_date_start) {
 if ($search_date_end) {
 	$sql .= " AND d.datedon <= '".$db->idate($search_date_end)."'";
 }
+// Add where from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 
 // Count total nb of records
 $nbtotalofrecords = '';

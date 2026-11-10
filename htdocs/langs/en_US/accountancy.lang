@@ -326,6 +326,7 @@ ValidateHistory=Bind Automatically
 AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 DoManualBindingForFailedRecord=You have to do a manual link for the %s row(s) not linked automatically.
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot remove or disable this account of chart of account because it is used
+ConfirmChangeChartOfAccountsWithData=The current chart of accounts is already used: %s line(s) are bound to its accounts and the ledger has %s entries.<br>Changing the chart migrates nothing: bindings and entries keep the accounts of the current chart, and products, bank accounts or default accounts set to an account number missing from the new chart will no longer find it. This transition must be prepared with your accountant.<br>Change the chart of accounts anyway?
 MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
 Balancing=Balancing
 FicheVentilation=Binding card
