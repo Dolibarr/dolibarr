@@ -65,10 +65,10 @@ SCRIPT_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)
 
 # Build image
 # The build context is created on the fly: it contains the docker-claude directory,
-# the scripts shared with docker-vibe (open-on-host, xdg-open-shim, smtpblock.sh),
+# the files shared with docker-vibe (open-on-host, xdg-open-shim, smtpblock.sh, sendmail-stub, bashrc-prompt),
 # and the .pre-commit-config.yaml of the repository when it exists (it is used by
 # the Dockerfile to preload the pre-commit hooks environments into the image).
-CONTEXT_TAR_ARGS=(. -C "$SCRIPT_DIR/../docker-vibe" open-on-host xdg-open-shim smtpblock.sh)
+CONTEXT_TAR_ARGS=(. -C "$SCRIPT_DIR/../docker-vibe" open-on-host xdg-open-shim smtpblock.sh sendmail-stub bashrc-prompt)
 if [ -f .pre-commit-config.yaml ]; then
   CONTEXT_TAR_ARGS+=(-C "$PWD" .pre-commit-config.yaml)
 fi
