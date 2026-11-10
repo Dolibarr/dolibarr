@@ -82,10 +82,10 @@ print '<td class="linecolqty width100 right">'.$form->textwithpicto($langs->tran
 
 if ($filtertype != 1) { // Product
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
-		print '<td class="linecoluseunit"></td>';
+		print '<td class="linecoluseunit left">'.$langs->trans('Unit').'</td>';
 	}
 } else { // Service
-	print '<td class="linecolunit"></td>';
+	print '<td class="linecolunit left">'.$langs->trans('Unit').'</td>';
 }
 if ($filtertype != 1 || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) { // Product or stock support for Services is active
 	// Qty frozen

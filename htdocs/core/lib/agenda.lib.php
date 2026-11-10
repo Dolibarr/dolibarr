@@ -849,6 +849,8 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					$daypositionattr = '';
 					if ($hourlybuckets !== null && $dayminutes !== null) {
 						$daypositionattr = ' data-agenda-start="'.$dayminutes[0].'" data-agenda-end="'.$dayminutes[1].'"';
+						// The id of the event itself, for the ajax of the drag&drop (the id attribute of the div is an index of the loop)
+						$daypositionattr .= ' data-agenda-event-id="'.((int) $event->id).'"';
 						$daypositionattr .= ' style="position: absolute; left: 0; right: 0; top: '.$dayminutes[0].'px; height: '.max($dayminutes[1] - $dayminutes[0], 20).'px; margin: 0; padding-right: 2px; overflow: hidden; box-sizing: border-box;"';
 					}
 

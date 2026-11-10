@@ -495,7 +495,7 @@ create table llx_ai_chat_message
   rowid						integer AUTO_INCREMENT PRIMARY KEY,
   fk_conversation			integer NOT NULL,
   role						varchar(16) NOT NULL,
-  content_raw				text,
+  content_raw				mediumtext,
   content_html				MEDIUMTEXT,
   tool_name					varchar(255),
   pinned					smallint DEFAULT 0,
@@ -680,3 +680,9 @@ UPDATE llx_societe SET accountancy_code_supplier_general = NULL WHERE accountanc
 UPDATE llx_societe_perentity SET accountancy_code_customer_general = NULL WHERE accountancy_code_customer_general = '-1';
 UPDATE llx_societe_perentity SET accountancy_code_supplier_general = NULL WHERE accountancy_code_supplier_general = '-1';
 UPDATE llx_user SET accountancy_code_user_general = NULL WHERE accountancy_code_user_general = '-1';
+
+ALTER TABLE llx_website_page MODIFY COLUMN aliasalt text;
+ALTER TABLE llx_website_page MODIFY COLUMN htmlheader longtext;
+ALTER TABLE llx_website_page MODIFY COLUMN content longtext;
+
+ALTER TABLE llx_ai_chat_message MODIFY COLUMN content_raw mediumtext;
