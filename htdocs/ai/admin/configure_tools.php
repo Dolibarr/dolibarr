@@ -296,7 +296,16 @@ if (empty($groupedNormalTools) && empty($groupedSystemTools)) {
 			if (!$isSystem) {
 				$llmDef = cleanToolSchemaForLLM(array($def));
 				$llmJson = (string) json_encode($llmDef[0], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-				print '<a href="#" class="ai-tool-definition" data-target="aitooldef' . $groupId . '_' . dol_escape_htmltag($name) . '" data-title="' . dolPrintHTMLForAttribute($name) . '">';
+				// REST API route called by the tool, when identifiable
+				$popupTitle = $name;
+				$toolObj = $mcpHandler->toolsByName[$name] ?? null;
+				if (is_object($toolObj) && method_exists($toolObj, 'toolApiUrl')) {
+					$apiUrl = (string) $toolObj->toolApiUrl($name);
+					if ($apiUrl !== '') {
+						$popupTitle .= ' (' . $apiUrl . ')';
+					}
+				}
+				print '<a href="#" class="ai-tool-definition" data-target="aitooldef' . $groupId . '_' . dol_escape_htmltag($name) . '" data-title="' . dolPrintHTMLForAttribute($popupTitle) . '">';
 				print img_picto($langs->trans('ToolDefinitionSentToLLM'), 'info');
 				print '</a>';
 				print '<div id="aitooldef' . $groupId . '_' . dol_escape_htmltag($name) . '" style="display: none;"><pre class="small">' . dol_escape_htmltag($llmJson, 0, 1) . '</pre></div>';

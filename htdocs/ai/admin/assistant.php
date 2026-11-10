@@ -281,10 +281,12 @@ if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	print '<tr class="oddeven">';
 	print '<td>' . $form->textwithpicto($langs->trans('ObfuscatePIIData'), $langs->trans("RedactionHelp")) . '</td>';
 	print '<td>';
+	$labelredaction1 = $langs->trans("RedactionSensitiveData").' ('.$langs->trans("Recommended").')';
+	$labelredaction2 = $langs->trans("RedactionSensitiveDataAndThirdparties").' ('.$langs->trans("VersionExperimental").')';
 	$redaction_options = [
 		'0' => $langs->trans("RedactionNone"),
-		'1' => $langs->trans("RedactionSensitiveData"),
-		'2' => $langs->trans("RedactionSensitiveDataAndThirdparties")
+		'1' => array('label' => $labelredaction1, 'data-html' => dolPrintHTML($langs->trans("RedactionSensitiveData")).' <span class="opacitymedium">('.$langs->trans("Recommended").')</span>'),
+		'2' => array('label' => $labelredaction2, 'data-html' => dolPrintHTML($langs->trans("RedactionSensitiveDataAndThirdparties")).' <span class="opacitymedium">('.$langs->trans("VersionExperimental").')</span>')
 	];
 	print $form->selectarray('AI_PRIVACY_REDACTION', $redaction_options, getDolGlobalInt('AI_PRIVACY_REDACTION', 0), 0, 0, 0, '', 0, 0, 0, '', 'minwidth300');
 	print '</td>';

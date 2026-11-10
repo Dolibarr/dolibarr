@@ -139,7 +139,7 @@ class ToolApiBridge extends McpTool
 		'workstations' => array('index'),
 		'knowledgemanagement' => array('index'),
 		'partnerships' => array('index'),
-		'websites' => array('index', 'indexPages')
+		'websites' => array('index', 'indexAllPages')
 	);
 
 	/**
@@ -1883,7 +1883,7 @@ class ToolApiBridge extends McpTool
 		);
 
 		// Websites of the website module, with their pages and blog posts. The page content is
-		// left out of the lists (it can be large): read one page with api_websites_pages_get.
+		// left out of the lists (it can be large): read one page with api_websites_pages_get (by the page rowid only).
 		$this->enrichments['websites'] = array(
 			'label' => 'websites (website module)',
 			'methods' => array(
@@ -1896,18 +1896,15 @@ class ToolApiBridge extends McpTool
 					'get_by' => array('ref' => 'getByRef'),
 					'params' => array('id' => "Rowid of the website (use 0 when identifying by ref).", 'ref' => "Exact website reference, alternative to id.")
 				),
-				'indexPages' => array(
+				'indexAllPages' => array(
 					'suffix' => 'pages_list',
-					'description' => "Pages of one website: pageurl (alias), title, type_container ('page', 'blogpost', 'menu', 'other', 'header', 'footer'...), lang, status (0 offline, 1 online). Blog posts are the pages with type_container 'blogpost'. Search with sqlfilters \"(t.type_container:=:'blogpost')\".",
-					'default_properties' => 'id,pageurl,title,description,type_container,lang,status,date_creation,author_alias',
-					'params' => array(
-						'id' => "Rowid of the website."
-					)
+					'description' => "Pages of all websites: fk_website (rowid of the website), pageurl (alias), title, type_container ('page', 'blogpost', 'menu', 'other', 'header', 'footer'...), lang, status (0 offline, 1 online). Blog posts are the pages with type_container 'blogpost'. Pages of one website: sqlfilters \"(t.fk_website:=:1)\". Blog posts: sqlfilters \"(t.type_container:=:'blogpost')\". To read one page or blog post known by its number, use api_websites_pages_get instead.",
+					'default_properties' => 'id,fk_website,pageurl,title,description,type_container,lang,status,date_creation,author_alias'
 				),
-				'getPage' => array(
+				'getPageById' => array(
 					'suffix' => 'pages_get',
-					'description' => "One page of a website, with its HTML content.",
-					'params' => array('id' => "Rowid of the website.", 'pageid' => "Rowid of the page.")
+					'description' => "One page or blog post of a website, with its HTML content, by the rowid of the page.",
+					'params' => array('pageid' => "Rowid of the page or blog post.")
 				),
 				'postPage' => array(
 					'suffix' => 'pages_create',
@@ -7534,5 +7531,47 @@ class ToolApiBridge extends McpTool
 			'suffix' => (string) substr($name, strlen('api_'.$key.'_')),
 			'label' => (string) ($this->enrichments[$key]['label'] ?? ($this->endpoints[$this->enrichments[$key]['endpoint'] ?? $key]['label'] ?? $key))
 		);
+	}
+
+	/**
+	 * REST API route a bridge tool calls (e.g. 'GET /websites/pages/{pageid}'), read from the @url tag
+	 * of the API method, or from the Restler convention for index/get/post/put/delete.
+	 *
+	 * @param  string $name Tool name.
+	 * @return string       HTTP verb and path, or '' when the tool calls no identifiable API route (generic tool...).
+	 */
+	public function toolApiUrl(string $name)
+	{
+		$this->getDefinitions();	// ensure routes are built
+		if (empty($this->routes[$name])) {
+			return '';
+		}
+		list($key, $method) = $this->routes[$name];
+		$epkey = (string) ($this->enrichments[$key]['endpoint'] ?? $key);
+		if (empty($this->endpoints[$epkey]) || !$this->resolveEndpointClass($epkey)) {
+			return '';
+		}
+		// With definitions read from the cache, the class name is known but its file (and the API base classes) are not loaded yet
+		$this->loadApiRuntime();
+		require_once $this->endpoints[$epkey]['path'];
+		if (!method_exists($this->endpoints[$epkey]['class'], $method)) {
+			return '';
+		}
+		$rm = new ReflectionMethod($this->endpoints[$epkey]['class'], $method);
+		if (preg_match('/@url\s+(GET|POST|PUT|PATCH|DELETE)\s+(\S*)/i', (string) $rm->getDocComment(), $reg)) {
+			$path = trim($reg[2], '/');
+			return dol_strtoupper($reg[1]).' /'.$epkey.($path !== '' ? '/'.$path : '');
+		}
+		$conventions = array('index' => 'GET', 'get' => 'GET {id}', 'post' => 'POST', 'put' => 'PUT {id}', 'delete' => 'DELETE {id}');
+		if (isset($conventions[$method])) {
+			$parts = explode(' ', $conventions[$method]);
+			return $parts[0].' /'.$epkey.(isset($parts[1]) ? '/'.$parts[1] : '');
+		}
+		// Restler auto routing: verb prefix + rest of the method name in lower case (postNewMessage => POST newmessage)
+		if (preg_match('/^(get|post|put|patch|delete)([A-Z]\w*)$/', $method, $reg)) {
+			return dol_strtoupper($reg[1]).' /'.$epkey.'/'.dol_strtolower($reg[2]);
+		}
+
+		return '';
 	}
 }

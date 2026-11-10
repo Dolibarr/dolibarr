@@ -331,6 +331,129 @@ class Websites extends DolibarrApi
 	}
 
 	/**
+	 * List pages of all websites
+	 *
+	 * Get a list of pages (and blog posts), whatever is their website
+	 *
+	 * @param   string  $sortfield      Sort field
+	 * @param   string  $sortorder      Sort order
+	 * @param   int     $limit          Limit for list
+	 * @param   int     $page           Page number
+	 * @param   string  $sqlfilters     Other criteria to filter answers separated by a comma. Syntax example "(t.fk_website:=:1) and (t.type_container:=:'blogpost')"
+	 * @param   string  $properties     Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @return  array                   Array of website page objects
+	 * @phan-return WebsitePage[]
+	 * @phpstan-return WebsitePage[]
+	 *
+	 * @url     GET pages
+	 *
+	 * @throws  RestException   400     Bad sqlfilters
+	 * @throws  RestException   403     Access denied
+	 * @throws  RestException   503     Error retrieving list of pages
+	 */
+	public function indexAllPages($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
+	{
+		if (!DolibarrApiAccess::$user->hasRight('website', 'read')) {
+			throw new RestException(403);
+		}
+
+		$obj_ret = array();
+
+		$sql = "SELECT t.rowid, t.pageurl";
+		$sql .= " FROM ".$this->db->prefix()."website_page as t";
+		$sql .= " INNER JOIN ".$this->db->prefix()."website as w ON w.rowid = t.fk_website";
+		$sql .= " WHERE w.entity IN (".getEntity('website').")";
+
+		// Add sql filters
+		if ($sqlfilters) {
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			}
+		}
+
+		$sqlTotals = str_replace('SELECT t.rowid, t.pageurl', 'SELECT count(t.rowid) as total', $sql);
+
+		$sql .= $this->db->order($sortfield, $sortorder);
+		if ($limit) {
+			if ($page < 0) {
+				$page = 0;
+			}
+			$offset = $limit * $page;
+			$sql .= $this->db->plimit($limit + 1, $offset);
+		}
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			$i = 0;
+			while ($i < $min) {
+				$obj = $this->db->fetch_object($result);
+				$page_static = new WebsitePage($this->db);
+				if ($page_static->fetch($obj->rowid) > 0) {
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($page_static), $properties);
+				}
+				$i++;
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieve page list : '.$this->db->lasterror());
+		}
+
+		if ($page > 0) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = array();
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = array(
+				'total' => (int) $total,
+				'page' => $page,
+				'page_count' => (int) ceil((int) $total / $limit),
+				'limit' => $limit
+			);
+		}
+
+		return $obj_ret;
+	}
+
+	/**
+	 * Get properties of a website page by its id only
+	 *
+	 * Return an array with page information. The website of the page is found from the page.
+	 *
+	 * @param   int     $pageid         ID of page
+	 * @return  array|mixed             Object with cleaned properties
+	 * @phan-return WebsitePage
+	 * @phpstan-return WebsitePage
+	 *
+	 * @url     GET pages/{pageid}
+	 *
+	 * @throws  RestException   403     Access denied
+	 * @throws  RestException   404     Page not found
+	 */
+	public function getPageById($pageid)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('website', 'read')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->websitepage->fetch($pageid);
+		if ($result <= 0) {
+			throw new RestException(404, 'Page not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('website', $this->websitepage->fk_website)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		return $this->_cleanObjectDatas($this->websitepage);
+	}
+
+	/**
 	 * Create a website page
 	 *
 	 * Create a new page (or blog post with type_container = 'blogpost') into a website.
@@ -634,6 +757,9 @@ class Websites extends DolibarrApi
 		unset($object->validation);
 		unset($object->user_validation_id);
 		unset($object->tms);
+		unset($object->newid);
+		unset($object->object_type);
+		unset($object->fk_object);
 
 		return $object;
 	}

@@ -138,6 +138,11 @@ export function initAiAssistant(container) {
     // sessionStorage key of the conversation (per user and entity), see saveChatHistory()
     const HISTORY_KEY = config.historyKey || '';
     const HISTORY_MAX_MSGS = 20;
+    // sessionStorage key of the prompts typed by the user, recalled with ArrowUp/ArrowDown in the input
+    const PROMPTS_KEY = HISTORY_KEY ? HISTORY_KEY + '_prompts' : '';
+    const PROMPTS_MAX = 50;
+    let promptsIndex = -1;    // -1 = not browsing the history, else position from the most recent prompt
+    let promptsDraft = '';    // what was typed before browsing, restored when going back down
     // "All" mode of the context bar: every exchange, including the next ones, travels as context
     let contextAllMode = false;
 
@@ -241,6 +246,7 @@ export function initAiAssistant(container) {
     // Handle Submit (Enter) vs New Line (Shift+Enter)
     input.addEventListener('keydown', (e) => {
         if (paletteKey(e)) return;
+        if (promptsKey(e)) return;
         if (e.key === 'Enter') {
             if (e.shiftKey) {
                 // Shift+Enter: Allow new line (default behavior), just ensure resize happens
@@ -252,6 +258,62 @@ export function initAiAssistant(container) {
             }
         }
     });
+
+    /**
+     * Load the list of the previous prompts (oldest first).
+     * @returns {string[]}
+     */
+    function promptsLoad() {
+        if (!PROMPTS_KEY) return [];
+        try {
+            const list = JSON.parse(sessionStorage.getItem(PROMPTS_KEY) || '[]');
+            return Array.isArray(list) ? list.filter((v) => typeof v === 'string') : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    /**
+     * Add a prompt to the history (no consecutive duplicate) and stop browsing it.
+     * @param {string} prompt - The prompt sent by the user
+     */
+    function promptsAdd(prompt) {
+        promptsIndex = -1;
+        promptsDraft = '';
+        prompt = String(prompt || '').trim();
+        if (!prompt || !PROMPTS_KEY) return;
+        const list = promptsLoad();
+        if (list[list.length - 1] !== prompt) list.push(prompt);
+        try { sessionStorage.setItem(PROMPTS_KEY, JSON.stringify(list.slice(-PROMPTS_MAX))); } catch (e) { /* private mode or quota: no history */ }
+    }
+
+    /**
+     * ArrowUp/ArrowDown in the input recall the previous/next prompts, like in a shell.
+     * Only when the caret is on the first line (up) or the last line (down), so a multi-line prompt stays editable.
+     * @param {KeyboardEvent} e - The keydown event
+     * @returns {boolean} true if the key was handled
+     */
+    function promptsKey(e) {
+        if ((e.key !== 'ArrowUp' && e.key !== 'ArrowDown') || e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
+        if (input.selectionStart !== input.selectionEnd) return false;
+        const caret = input.selectionStart;
+        if (e.key === 'ArrowUp' && input.value.lastIndexOf('\n', caret - 1) !== -1) return false;
+        if (e.key === 'ArrowDown' && input.value.indexOf('\n', caret) !== -1) return false;
+        const list = promptsLoad();
+        if (e.key === 'ArrowUp') {
+            if (promptsIndex + 1 >= list.length) return false;
+            if (promptsIndex === -1) promptsDraft = input.value;
+            promptsIndex++;
+        } else {
+            if (promptsIndex < 0) return false;
+            promptsIndex--;
+        }
+        e.preventDefault();
+        input.value = (promptsIndex < 0) ? promptsDraft : list[list.length - 1 - promptsIndex];
+        input.setSelectionRange(input.value.length, input.value.length);
+        autoResizeInput();
+        return true;
+    }
 
     // Handle Send Button Click
     if (sendBtn) {
@@ -2079,8 +2141,12 @@ export function initAiAssistant(container) {
                 e.preventDefault();
                 paletteLoad().then(() => {
                     const later = paletteParseCommand(input.value);
-                    if (later && (later.text !== '' || later.cmd.name === 'total')) runCommand(later.cmd.name, later.text);
-                    else paletteOpen(input.value.slice(1));
+                    if (later && (later.text !== '' || later.cmd.name === 'total')) {
+                        promptsAdd(input.value);
+                        runCommand(later.cmd.name, later.text);
+                    } else {
+                        paletteOpen(input.value.slice(1));
+                    }
                 });
                 return true;
             }
@@ -2093,6 +2159,7 @@ export function initAiAssistant(container) {
             }
             if (typed && (typed.text !== '' || typed.cmd.name === 'total')) {
                 e.preventDefault();
+                promptsAdd(input.value);
                 runCommand(typed.cmd.name, typed.text);
                 return true;
             }
@@ -2817,6 +2884,7 @@ export function initAiAssistant(container) {
         // again, without a second bubble.
         const isResend = !!(resend && typeof resend.sentQuery === 'string');
         const query = isResend ? resend.query : input.value.trim();
+        if (!isResend) promptsAdd(query);
         if (!isResend && paletteWanted(query)) {
             // A tool or a command, not a question for the model.
             paletteLoad().then(() => {
