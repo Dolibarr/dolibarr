@@ -619,7 +619,7 @@ class Interventions extends DolibarrApi
 	 *
 	 * @throws RestException 403
 	 * @throws RestException 404
-	 * @throws RestException 405
+	 * @throws RestException 500
 	 *
 	 * @url DELETE /{id}/lines/{lineid}
 	 */
@@ -634,12 +634,12 @@ class Interventions extends DolibarrApi
 			throw new RestException(404, 'Intervention not found');
 		}
 
-		if ($this->fichinter->status != 0) {
-			throw new RestException(403, 'Intervention not in draft status : '.$this->fichinter->getLibStatut(1));
-		}
-
 		if (!DolibarrApi::_checkAccessToResource('ficheinter', $this->fichinter->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		if ($this->fichinter->status != 0) {
+			throw new RestException(403, 'Intervention not in draft status : '.$this->fichinter->getLibStatut(1));
 		}
 
 		$objectline = new FichinterLigne($this->db);
@@ -653,9 +653,14 @@ class Interventions extends DolibarrApi
 		$updateRes = $objectline->deleteLine(DolibarrApiAccess::$user);
 
 		if ($updateRes >= 0) {
-			return $this->_cleanObjectDatas($this->fichinter);
+			$result = $this->fichinter->fetch($id);
+			if ($result > 0) {
+				return $this->_cleanObjectDatas($this->fichinter);
+			} else {
+				throw new RestException(500, $this->fichinter->errorsToString());
+			}
 		} else {
-			throw new RestException(405, $this->fichinter->errorsToString());
+			throw new RestException(500, $objectline->errorsToString());
 		}
 	}
 
