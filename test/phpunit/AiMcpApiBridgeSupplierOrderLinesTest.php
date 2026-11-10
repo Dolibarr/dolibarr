@@ -172,6 +172,17 @@ class AiMcpApiBridgeSupplierOrderLinesTest extends CommonClassTest
 	}
 
 	/** @return void */
+	public function testConfirmationFixtureSupportsExpiredStateCleanup()
+	{
+		require_once DOL_DOCUMENT_ROOT.'/ai/class/writeconfirmation.class.php';
+		$db = new AiSupplierOrderConfirmationDbFixture();
+		$db->query('INSERT INTO confirmation_fixture');
+		$confirmation = new AiWriteConfirmation($db);
+		$this->assertSame(0, $confirmation->purge());
+		$this->assertSame('INSERT INTO confirmation_fixture', $db->sql);
+	}
+
+	/** @return void */
 	public function testAssistantAndMcpRequireHumanConfirmation()
 	{
 		global $conf, $dolibarr_main_instance_unique_id;
@@ -314,12 +325,23 @@ class AiSupplierOrderConfirmationDbFixture
 	}
 
 	/**
+	 * @param mixed $result Query result.
+	 * @return int
+	 */
+	public function affected_rows($result = null)
+	{
+		return 0;
+	}
+
+	/**
 	 * @param string $sql Statement to capture.
 	 * @return bool
 	 */
 	public function query($sql)
 	{
-		$this->sql = $sql;
+		if (strpos($sql, 'INSERT INTO') === 0) {
+			$this->sql = $sql;
+		}
 		return true;
 	}
 }

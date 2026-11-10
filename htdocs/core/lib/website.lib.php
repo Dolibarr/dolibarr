@@ -110,6 +110,80 @@ function dolKeepOnlyPhpCode($str)
 }
 
 /**
+ * Replace one fragment of a page content with another one. The fragment must be found once and only once.
+ * If the exact fragment is not found, a match ignoring the differences of spaces, tabs and line feeds is tried.
+ *
+ * @param 	string	$content		Current content of the page
+ * @param 	string	$oldfragment	Fragment of the current content to replace (must not be empty)
+ * @param 	string	$newfragment	New fragment (empty string to remove the old fragment)
+ * @return 	array{nbfound:int,content:string}	Number of times the fragment was found and the new content (unchanged if nbfound is not 1)
+ * @see dolKeepOnlyPhpCode()
+ */
+function dolReplaceFragmentOfPageContent($content, $oldfragment, $newfragment)
+{
+	$content = (string) $content;
+	$oldfragment = (string) $oldfragment;
+	if (trim($oldfragment) === '') {
+		return array('nbfound' => 0, 'content' => $content);
+	}
+
+	$nbfound = substr_count($content, $oldfragment);
+	if ($nbfound == 1) {
+		$pos = strpos($content, $oldfragment);
+		return array('nbfound' => 1, 'content' => substr_replace($content, (string) $newfragment, (int) $pos, strlen($oldfragment)));
+	}
+	if ($nbfound > 1) {
+		return array('nbfound' => $nbfound, 'content' => $content);
+	}
+
+	// Not found as is: the fragment may have been copied with other spaces or line feeds
+	$quotedwords = array();
+	foreach ((array) preg_split('/\s+/', trim($oldfragment)) as $word) {
+		$quotedwords[] = preg_quote((string) $word, '/');
+	}
+	$regex = '/'.implode('\s+', $quotedwords).'/u';
+	$matches = array();
+	$nbfound = (int) preg_match_all($regex, $content, $matches, PREG_OFFSET_CAPTURE);
+	if ($nbfound == 1) {
+		return array('nbfound' => 1, 'content' => substr_replace($content, (string) $newfragment, (int) $matches[0][0][1], strlen($matches[0][0][0])));
+	}
+
+	return array('nbfound' => $nbfound, 'content' => $content);
+}
+
+/**
+ * Apply a list of replacements to a page content, in order (to move an element: remove it, then add it elsewhere).
+ * Each fragment 'old' must be found once and only once in the content as left by the previous replacements.
+ *
+ * @param 	string	$content		Current content of the page
+ * @param 	mixed	$replacements	List of array('old' => fragment to replace, 'new' => its replacement, empty to remove it)
+ * @return 	array{error:string,index:int,nbfound:int,content:string}	error is '' if OK, 'badformat', 'notfound' or 'notunique' (index = position of the failing replacement, from 0)
+ * @see dolReplaceFragmentOfPageContent()
+ */
+function dolApplyReplacementsToPageContent($content, $replacements)
+{
+	$content = (string) $content;
+	if (!is_array($replacements) || empty($replacements)) {
+		return array('error' => 'badformat', 'index' => 0, 'nbfound' => 0, 'content' => $content);
+	}
+
+	$originalcontent = $content;	// returned unchanged if one replacement fails: all or nothing
+	$index = 0;
+	foreach (array_values($replacements) as $index => $replacement) {
+		if (!is_array($replacement) || !isset($replacement['old']) || !is_string($replacement['old']) || trim($replacement['old']) === '' || (isset($replacement['new']) && !is_string($replacement['new']))) {
+			return array('error' => 'badformat', 'index' => $index, 'nbfound' => 0, 'content' => $originalcontent);
+		}
+		$result = dolReplaceFragmentOfPageContent($content, $replacement['old'], (string) ($replacement['new'] ?? ''));
+		if ($result['nbfound'] != 1) {
+			return array('error' => ($result['nbfound'] == 0 ? 'notfound' : 'notunique'), 'index' => $index, 'nbfound' => $result['nbfound'], 'content' => $originalcontent);
+		}
+		$content = $result['content'];
+	}
+
+	return array('error' => '', 'index' => $index, 'nbfound' => 1, 'content' => $content);
+}
+
+/**
  * Convert a page content to have correct links (based on DOL_URL_ROOT) into an html content. It replaces also dynamic content with '...php...'
  * Used to output the page on the Preview from backoffice.
  *

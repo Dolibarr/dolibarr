@@ -13,6 +13,7 @@
  * Copyright (C) 2018-2024	Eric Seigne					<eric.seigne@cap-rel.fr>
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Joachim Kueter				<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -341,7 +342,7 @@ if ($result) {
 		// Set accountancy code for user
 		// $obj->accountancy_code is the accountancy_code of table u=user (but it is defined only if
 		// a link with type 'user' exists and user as a subledger account)
-		$accountancy_code_user_general = (!empty($obj->accountancy_code_user_general)) ? $obj->accountancy_code_user_general : $account_employee;
+		$accountancy_code_user_general = (!empty($obj->accountancy_code_user_general) && $obj->accountancy_code_user_general != '-1') ? $obj->accountancy_code_user_general : $account_employee;
 		$compta_user = (!empty($obj->accountancy_code) ? $obj->accountancy_code : '');
 
 		$tabuser[$obj->rowid] = array(
@@ -637,7 +638,7 @@ if ($result) {
 						}
 
 						if (empty($obj->typeop_user)) {	// Add test to avoid adding amount twice if a link already exists also on user.
-							$accountancy_code_user_general = (!empty($obj->accountancy_code_user_general)) ? $obj->accountancy_code_user_general : $account_employee;
+							$accountancy_code_user_general = (!empty($obj->accountancy_code_user_general) && $obj->accountancy_code_user_general != '-1') ? $obj->accountancy_code_user_general : $account_employee;
 							$compta_user = $userstatic->accountancy_code;
 							if ($compta_user) {
 								$tabtp[$obj->rowid][$compta_user] = isset($tabtp[$obj->rowid][$compta_user]) ? $tabtp[$obj->rowid][$compta_user] + $amounttouse : $amounttouse;
@@ -1181,15 +1182,15 @@ if ($action == 'exportcsv' && $user->hasRight('accounting', 'bind', 'write')) {	
 					print '"'.$date.'"'.$sep;
 					print '"'.$val["type_payment"].'"'.$sep;
 					if ($tabtype[$key] == 'payment_supplier') {
-						$account_ledger = (!empty($obj->accountancy_code_supplier_general)) ? $obj->accountancy_code_supplier_general : $account_supplier;
+						$account_ledger = (!empty($tabcompany[$key]['accountancy_code_general']) ? $tabcompany[$key]['accountancy_code_general'] : $account_supplier);
 						print '"'.length_accountg($account_ledger).'"'.$sep;
 					} elseif ($tabtype[$key] == 'payment') {
-						$account_ledger = (!empty($obj->accountancy_code_customer_general)) ? $obj->accountancy_code_customer_general : $account_customer;
+						$account_ledger = (!empty($tabcompany[$key]['accountancy_code_general']) ? $tabcompany[$key]['accountancy_code_general'] : $account_customer);
 						print '"'.length_accountg($account_ledger).'"'.$sep;
 					} elseif ($tabtype[$key] == 'payment_expensereport') {
 						print '"'.length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT')).'"'.$sep;
 					} elseif ($tabtype[$key] == 'payment_salary') {
-						$account_ledger = (!empty($obj->accountancy_code_user_general)) ? $obj->accountancy_code_user_general : $account_employee;
+						$account_ledger = (!empty($tabuser[$key]['accountancy_code_general']) ? $tabuser[$key]['accountancy_code_general'] : $account_employee);
 						print '"'.length_accountg($account_ledger).'"'.$sep;
 					} else {
 						print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
@@ -1470,16 +1471,16 @@ if (empty($action) || $action == 'view') {
 					$account_ledger = $k;
 					// Try to force general ledger account depending on type
 					if ($tabtype[$key] == 'payment') {
-						$account_ledger = (!empty($obj->accountancy_code_customer_general)) ? $obj->accountancy_code_customer_general : $account_customer;
+						$account_ledger = (!empty($tabcompany[$key]['accountancy_code_general']) ? $tabcompany[$key]['accountancy_code_general'] : $account_customer);
 					}
 					if ($tabtype[$key] == 'payment_supplier') {
-						$account_ledger = (!empty($obj->accountancy_code_supplier_general)) ? $obj->accountancy_code_supplier_general : $account_supplier;
+						$account_ledger = (!empty($tabcompany[$key]['accountancy_code_general']) ? $tabcompany[$key]['accountancy_code_general'] : $account_supplier);
 					}
 					if ($tabtype[$key] == 'payment_expensereport') {
 						$account_ledger = getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT');
 					}
 					if ($tabtype[$key] == 'payment_salary') {
-						$account_ledger = (!empty($obj->accountancy_code_user_general)) ? $obj->accountancy_code_user_general : $account_employee;
+						$account_ledger = (!empty($tabuser[$key]['accountancy_code_general']) ? $tabuser[$key]['accountancy_code_general'] : $account_employee);
 					}
 					if ($tabtype[$key] == 'payment_vat') {
 						$account_ledger = getDolGlobalString('ACCOUNTING_VAT_PAY_ACCOUNT');
