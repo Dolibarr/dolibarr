@@ -41,3 +41,4 @@ TypeContact_dolresource_internal_USERINCHARGE=In charge of resource
 TypeContact_dolresource_external_THIRDINCHARGE=In charge of resource
 ResourceTypeShortRES_ROOMS=Rooms
 ResourceTypeShortRES_CARS=Cars
+ResourceTypeShortRES_MACHINES=Machines

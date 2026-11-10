@@ -3,7 +3,7 @@
 This is the equivalent of `dev/build/docker-vibe` (Mistral Vibe) for Claude Code.
 The image provides the same tools (PHP, phpunit, phpstan, phan, phpcs, hurl, gh, tx, pre-commit, rtk, mariadb client, ...)
 and the same protections (no email can be sent from the container). See `dev/build/docker-vibe/README.md` for the details
-of the common parts. The scripts `open-on-host`, `xdg-open-shim` and `smtpblock.sh` are shared with docker-vibe: they are
+of the common parts. The files `open-on-host`, `xdg-open-shim`, `smtpblock.sh`, `sendmail-stub` and `bashrc-prompt` are shared with docker-vibe: they are
 taken from the directory `dev/build/docker-vibe` when the image is built.
 
 ## Prepare AI api key
