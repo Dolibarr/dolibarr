@@ -21,7 +21,9 @@ $limit = GETPOST('limit', 'int');
 
 // Security check
 if ($hashp == 'shared') {
-	httponly_accessforbidden('Bad link. Bad value for parameter hashp', 400);
+	http_response_code(400);
+	print 'Bad link. Bad value for parameter hashp';
+	exit(1);
 }
 
 // Parameters for RSS
@@ -49,7 +51,9 @@ if (!empty($hashp)) {
 				$original_file = (($tmp[1] ? $tmp[1].'/' : '').$ecmfile->filename); // this is relative to module dir
 				//var_dump($original_file); exit;
 			} else {
+				http_response_code(401);
 				print 'Bad link. File is from another module part.';
+				exit(1);
 			}
 		} else {
 			$modulepart = $moduleparttocheck;
