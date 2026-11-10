@@ -377,6 +377,11 @@ foreach ($search as $key => $val) {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
+// Add $param from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $objectwebsiteaccount, $action);	// Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
+
 $head = societe_prepare_head($object);
 
 print dol_get_fiche_head($head, 'website', $langs->trans("ThirdParty"), - 1, 'company');
