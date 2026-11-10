@@ -14,5 +14,5 @@
 -- along with this program.  If not, see https://www.gnu.org/licenses/.
 
 
--- Two levels of an element never have the same number of days
-ALTER TABLE llx_dunning_level ADD UNIQUE INDEX uk_dunning_level(entity, element, nbdays);
+-- Two levels never have the same number of days
+ALTER TABLE llx_dunning_level ADD UNIQUE INDEX uk_dunning_level(entity, nbdays);

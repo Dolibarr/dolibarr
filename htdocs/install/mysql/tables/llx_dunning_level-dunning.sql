@@ -19,10 +19,9 @@
 CREATE TABLE llx_dunning_level(
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	entity integer DEFAULT 1 NOT NULL,
-	element varchar(32) DEFAULT 'facture' NOT NULL,	-- 'facture' only for now, the reference date follows the element
 	label varchar(128) NOT NULL,
 	nbdays integer NOT NULL,						-- days after the due date, negative = before
-	fk_c_type_contact integer DEFAULT 0 NOT NULL,	-- external contact type of the element (llx_c_type_contact), 0 = email of the thirdparty
+	fk_c_type_contact integer DEFAULT 0 NOT NULL,	-- external contact type of the invoice (llx_c_type_contact), 0 = email of the thirdparty
 	percustomer tinyint DEFAULT 0 NOT NULL,			-- 1 = one email per customer with all its invoices due at this level
 	byhand tinyint DEFAULT 0 NOT NULL,				-- 1 = never sent by the job: the reminder waits to be checked and sent by a user
 	fk_email_template integer NOT NULL,				-- llx_c_email_templates (type facture_send), its label finds the version in the customer language
