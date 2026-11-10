@@ -187,6 +187,8 @@ class AllTests
 		$suite->addTestSuite('AiMcpApiBridgeDocumentsTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeProjectsTest.php';
 		$suite->addTestSuite('AiMcpApiBridgeProjectsTest');
+		require_once dirname(__FILE__).'/AiMcpApiBridgeSupplierOrderDeleteLineTest.php';
+		$suite->addTestSuite('AiMcpApiBridgeSupplierOrderDeleteLineTest');
 		require_once dirname(__FILE__).'/ApiExplorerAccessControlTest.php';
 		$suite->addTestSuite('ApiExplorerAccessControlTest');
 		require_once dirname(__FILE__).'/ApiListStatusFilterTest.php';
@@ -493,6 +495,8 @@ class AllTests
 			$suite->addTestSuite('RestAPIAgendaEventsTest');
 			require_once dirname(__FILE__).'/RestAPIContractTest.php';
 			$suite->addTestSuite('RestAPIContractTest');
+			require_once dirname(__FILE__).'/RestAPITicketTest.php';
+			$suite->addTestSuite('RestAPITicketTest');
 
 			// Old WS
 			require_once dirname(__FILE__).'/WebservicesProductsTest.php';

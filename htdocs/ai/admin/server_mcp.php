@@ -258,8 +258,6 @@ print '<br>';
 
 if (getDolGlobalString('AI_MCP_ENABLED')) {
 	/*
-	print load_fiche_titre($langs->trans("PrivateModeTitle"), '', 'fas fa-lock');
-
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
@@ -370,7 +368,6 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	*/
 
 	// External Access Configuration
-	print load_fiche_titre($langs->trans("AiMcpExternalAccess"), '', 'fas fa-lock-open');
 
 	// A new key makes the current one useless for the tools already using it: ask first
 	if ($action == 'ask_generate_key') {
@@ -383,6 +380,8 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
+
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td></td><td></td></tr>';
 
 	// Service User
 	print '<tr class="oddeven">';
