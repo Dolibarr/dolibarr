@@ -7,6 +7,7 @@ RUN apt-get update \
 		bash \
 		bash-completion \
 		ca-certificates \
+        cairosvg \
 		composer \
         vim \
 		wget \
@@ -43,6 +44,7 @@ RUN apt-get update \
 		python3 \
 		python3-pip \
 		shellcheck \
+		sox \
 		sshpass \
 		sudo \
 		time \
