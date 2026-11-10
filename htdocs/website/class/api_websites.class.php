@@ -590,6 +590,8 @@ class Websites extends DolibarrApi
 	 *
 	 * Update a page of a website by its ID. The request data can include any field
 	 * of the website_page table (title, description, content, pageurl, status, etc.).
+	 * To change only a part of the content, give content_old (a fragment of the current
+	 * content, found once and only once) and content_new (its replacement) instead of content.
 	 *
 	 * @param   int     $id             ID of website
 	 * @param   int     $pageid         ID of page to update
@@ -633,6 +635,25 @@ class Websites extends DolibarrApi
 
 		// Keep the old PHP content to detect if PHP content changed
 		$phpfullcodestringold = dolKeepOnlyPhpCode($this->websitepage->content);
+
+		// Partial change of the content: content_old is replaced with content_new in the current content
+		if (is_array($request_data) && (array_key_exists('content_old', $request_data) || array_key_exists('content_new', $request_data))) {
+			if (array_key_exists('content', $request_data)) {
+				throw new RestException(400, 'Give either content (the whole new content) or content_old and content_new (a partial change), not both');
+			}
+			if (!isset($request_data['content_old']) || !is_string($request_data['content_old']) || trim($request_data['content_old']) === '' || !array_key_exists('content_new', $request_data) || is_array($request_data['content_new']) || is_object($request_data['content_new'])) {
+				throw new RestException(400, 'A partial change of the content needs content_old (a non empty fragment of the current content) and content_new (its replacement, empty to remove it)');
+			}
+			$replacement = dolReplaceFragmentOfPageContent((string) $this->websitepage->content, $request_data['content_old'], (string) $request_data['content_new']);
+			if ($replacement['nbfound'] == 0) {
+				throw new RestException(400, 'The fragment content_old was not found in the current content of the page. Read the page again and copy the fragment exactly.');
+			}
+			if ($replacement['nbfound'] > 1) {
+				throw new RestException(400, 'The fragment content_old was found '.$replacement['nbfound'].' times in the current content of the page. Give a longer fragment so it is found only once.');
+			}
+			$request_data['content'] = $replacement['content'];
+			unset($request_data['content_old'], $request_data['content_new']);
+		}
 
 		// Apply request data to the page object
 		foreach ($request_data as $field => $value) {

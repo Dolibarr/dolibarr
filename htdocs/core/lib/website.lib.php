@@ -110,6 +110,48 @@ function dolKeepOnlyPhpCode($str)
 }
 
 /**
+ * Replace one fragment of a page content with another one. The fragment must be found once and only once.
+ * If the exact fragment is not found, a match ignoring the differences of spaces, tabs and line feeds is tried.
+ *
+ * @param 	string	$content		Current content of the page
+ * @param 	string	$oldfragment	Fragment of the current content to replace (must not be empty)
+ * @param 	string	$newfragment	New fragment (empty string to remove the old fragment)
+ * @return 	array{nbfound:int,content:string}	Number of times the fragment was found and the new content (unchanged if nbfound is not 1)
+ * @see dolKeepOnlyPhpCode()
+ */
+function dolReplaceFragmentOfPageContent($content, $oldfragment, $newfragment)
+{
+	$content = (string) $content;
+	$oldfragment = (string) $oldfragment;
+	if (trim($oldfragment) === '') {
+		return array('nbfound' => 0, 'content' => $content);
+	}
+
+	$nbfound = substr_count($content, $oldfragment);
+	if ($nbfound == 1) {
+		$pos = strpos($content, $oldfragment);
+		return array('nbfound' => 1, 'content' => substr_replace($content, (string) $newfragment, (int) $pos, strlen($oldfragment)));
+	}
+	if ($nbfound > 1) {
+		return array('nbfound' => $nbfound, 'content' => $content);
+	}
+
+	// Not found as is: the fragment may have been copied with other spaces or line feeds
+	$quotedwords = array();
+	foreach ((array) preg_split('/\s+/', trim($oldfragment)) as $word) {
+		$quotedwords[] = preg_quote((string) $word, '/');
+	}
+	$regex = '/'.implode('\s+', $quotedwords).'/u';
+	$matches = array();
+	$nbfound = (int) preg_match_all($regex, $content, $matches, PREG_OFFSET_CAPTURE);
+	if ($nbfound == 1) {
+		return array('nbfound' => 1, 'content' => substr_replace($content, (string) $newfragment, (int) $matches[0][0][1], strlen($matches[0][0][0])));
+	}
+
+	return array('nbfound' => $nbfound, 'content' => $content);
+}
+
+/**
  * Convert a page content to have correct links (based on DOL_URL_ROOT) into an html content. It replaces also dynamic content with '...php...'
  * Used to output the page on the Preview from backoffice.
  *

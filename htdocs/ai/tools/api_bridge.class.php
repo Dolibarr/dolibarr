@@ -1932,7 +1932,7 @@ class ToolApiBridge extends McpTool
 				),
 				'putPage' => array(
 					'suffix' => 'pages_update',
-					'description' => "Change fields of an existing page or blog post of a website. Give 'pageid' (rowid of the page, from api_websites_pages_list) and ONLY the fields to change, with their new value: title, description, keywords, content, lang, author_alias, status. To change a part of the content, read the page first with api_websites_pages_get and send the whole new content (HTML, inside a <section> tag); every PHP block (<?php ... ?>) of the current content must be copied character for character, unchanged, or the change is refused. The alias (pageurl) cannot be changed here. The user confirms before anything is written.",
+					'description' => "Change fields of an existing page or blog post of a website. Give 'pageid' (rowid of the page, from api_websites_pages_list) and ONLY the fields to change, with their new value: title, description, keywords, content, lang, author_alias, status. To change only a part of the content (move, add, remove or fix an element), read the page first with api_websites_pages_get, then give content_old (the exact fragment of the current content to replace, long enough to be found only once) and content_new (its replacement, empty to remove it): do not send the whole content for that. Give 'content' only to replace the whole content (HTML, inside a <section> tag). Never give both. PHP blocks (<?php ... ?>) of the current content must stay unchanged, or the change is refused. The alias (pageurl) cannot be changed here. The user confirms before anything is written.",
 					'write' => array(
 						'kind' => 'update',
 						'preview' => 'AIPreviewChangeRecord',
@@ -1942,7 +1942,7 @@ class ToolApiBridge extends McpTool
 						'lookup' => '',
 						// The website of the page is read from the page itself
 						'target_parent' => array('id' => 'fk_website'),
-						'fields' => array('title', 'description', 'keywords', 'content', 'lang', 'author_alias', 'status'),
+						'fields' => array('title', 'description', 'keywords', 'content', 'content_old', 'content_new', 'lang', 'author_alias', 'status'),
 						'required' => array('pageid'),
 						'right' => array('website', 'write')
 					),
@@ -1953,6 +1953,8 @@ class ToolApiBridge extends McpTool
 						'description' => "New short description (meta description), 255 characters max.",
 						'keywords' => "New keywords, separated by commas.",
 						'content' => "New full HTML content of the page, inside a <section> tag. Never add or change PHP code: keep the existing PHP blocks (<?php ... ?>) exactly as they are.",
+						'content_old' => "For a partial change of the content: the exact fragment of the current content to replace, copied character for character, long enough to be found only once. Use with content_new, never with content.",
+						'content_new' => "For a partial change of the content: the HTML that replaces content_old (empty string to remove it). Never add or change PHP code.",
 						'lang' => "New language code of the page, e.g. 'en' or 'fr'.",
 						'author_alias' => "New name of the author to show.",
 						'status' => "0 offline, 1 online."
@@ -6666,8 +6668,12 @@ class ToolApiBridge extends McpTool
 
 		if ($kind === 'update') {
 			$changes = array();
+			// Partial change of a content: show the fragment replaced and its replacement
+			if (array_key_exists('content_old', $args) && array_key_exists('content_new', $args)) {
+				$changes[] = 'content "'.dol_trunc((string) $args['content_old'], 80).'" → "'.dol_trunc((string) $args['content_new'], 80).'"';
+			}
 			foreach ((array) $write['fields'] as $name) {
-				if (!array_key_exists($name, $args)) {
+				if (!array_key_exists($name, $args) || in_array($name, array('content_old', 'content_new'), true)) {
 					continue;
 				}
 				$old = ($obj && isset($obj->$name) && !is_array($obj->$name)) ? (string) $obj->$name : '';
@@ -6839,6 +6845,22 @@ class ToolApiBridge extends McpTool
 			}
 			if (!array_intersect_key($args, array_flip((array) $write['fields']))) {
 				return $langs->transnoentitiesnoconv('AIWriteNothingToChange');
+			}
+			// Partial change of a content: checked here so a fragment not found is refused before the confirmation
+			if (array_key_exists('content_old', $args) || array_key_exists('content_new', $args)) {
+				if (array_key_exists('content', $args) || trim((string) ($args['content_old'] ?? '')) === '' || !array_key_exists('content_new', $args)) {
+					return $langs->transnoentitiesnoconv('AIWriteContentFragmentIncomplete');
+				}
+				if (property_exists($obj, 'content')) {
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
+					$replacement = dolReplaceFragmentOfPageContent((string) $obj->content, (string) $args['content_old'], (string) $args['content_new']);
+					if ($replacement['nbfound'] == 0) {
+						return $langs->transnoentitiesnoconv('AIWriteContentFragmentNotFound');
+					}
+					if ($replacement['nbfound'] > 1) {
+						return $langs->transnoentitiesnoconv('AIWriteContentFragmentNotUnique', $replacement['nbfound']);
+					}
+				}
 			}
 
 			return '';
