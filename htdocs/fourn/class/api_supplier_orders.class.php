@@ -88,6 +88,100 @@ class SupplierOrders extends DolibarrApi
 	}
 
 	/**
+	 * List recorded outgoing emails for a supplier order, newest first.
+	 *
+	 * Only ORDER_SUPPLIER_SENTBYMAIL agenda events are returned. This is not a
+	 * mailbox or proof of delivery: disabled logging and deleted events leave gaps.
+	 * Subject is never inferred from the label; the body is the stored agenda note.
+	 * Attachments and delivery status are unknown, not empty or successful.
+	 *
+	 * @param int $id Supplier order ID
+	 * @param int $limit Page size, from 1 to 50
+	 * @param int $page Page number, starting at 0
+	 * @param int $include_body Include recorded body and event note (0 or 1)
+	 * @return array<string,mixed> Recorded emails and pagination, restricted by agenda permissions
+	 *
+	 * @url GET {id}/emails
+	 * @throws RestException
+	 */
+	public function getEmails($id, $limit = 10, $page = 0, $include_body = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('fournisseur', 'commande', 'lire')
+			|| !DolibarrApiAccess::$user->hasRight('agenda', 'myactions', 'read')
+			|| !empty(DolibarrApiAccess::$user->socid)) {
+			throw new RestException(403, 'Internal supplier order and agenda read permissions are required');
+		}
+		foreach (array('id' => $id, 'limit' => $limit, 'page' => $page, 'include_body' => $include_body) as $key => $value) {
+			if ((!is_int($value) && (!is_string($value) || !ctype_digit($value)))
+				|| filter_var($value, FILTER_VALIDATE_INT) === false) {
+				throw new RestException(400, 'Invalid integer parameter: '.$key);
+			}
+		}
+		$id = (int) $id;
+		$limit = (int) $limit;
+		$page = (int) $page;
+		$include_body = (int) $include_body;
+		if ($id < 1 || $limit < 1 || $limit > 50 || $page < 0 || $page > intdiv(PHP_INT_MAX, $limit) || !in_array($include_body, array(0, 1), true)) {
+			throw new RestException(400, 'Invalid id, pagination or include_body');
+		}
+		$result = $this->order->fetch($id);
+		if ($result < 0) {
+			throw new RestException(503, 'Unable to read supplier order');
+		}
+		if (!$result) {
+			throw new RestException(404, 'Supplier order not found');
+		}
+		if (!static::_checkAccessToResource('fournisseur', $this->order->id, 'commande_fournisseur', 'commande')) {
+			throw new RestException(403, 'Access to supplier order denied');
+		}
+
+		$filters = "(t.fk_element:=:".$id.") and (t.elementtype:=:'order_supplier') and (t.code:=:'AC_ORDER_SUPPLIER_SENTBYMAIL')";
+		$properties = 'id,datep,label,email_msgid,email_subject,email_from,email_to,email_tocc,email_tobcc';
+		if ($include_body) {
+			$properties .= ',note_private';
+		}
+		// Reuse agenda's entity, owner/hierarchy and sales representative restrictions.
+		$agenda = $this->supplierOrderEmailAgenda();
+		$history = $agenda->index('t.datep,t.id', 'DESC,DESC', $limit, $page, '', $filters, $properties, true);
+		$emails = array();
+		foreach ($history['data'] as $event) {
+			$hasEmailData = !empty($event->email_msgid) || !empty($event->email_subject) || !empty($event->email_from) || !empty($event->email_to);
+			$email = array(
+				'event_id' => (int) $event->id,
+				'date' => $event->datep,
+				'event_label' => $event->label,
+				'record_type' => $hasEmailData ? 'email' : 'event_only',
+				'message_id' => $event->email_msgid ?? null,
+				'subject' => $event->email_subject ?? null,
+				'from' => $event->email_from ?? null,
+				'to' => $event->email_to ?? null,
+				'cc' => $event->email_tocc ?? null,
+				'bcc' => $event->email_tobcc ?? null,
+				'attachments' => null,
+				'delivery_status' => null
+			);
+			if ($include_body) {
+				$email['body'] = $hasEmailData ? ($event->note_private ?? null) : null;
+				$email['body_source'] = $hasEmailData ? 'agenda_note' : null;
+				$email['event_note'] = $event->note_private ?? null;
+			}
+			$emails[] = $email;
+		}
+		return array('data' => $emails, 'pagination' => $history['pagination'], 'source' => 'agenda', 'history_complete' => false);
+	}
+
+	/**
+	 * Get the agenda reader used for supplier order email history.
+	 *
+	 * @return AgendaEvents Agenda API with its native access restrictions
+	 */
+	protected function supplierOrderEmailAgenda()
+	{
+		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/api_agendaevents.class.php';
+		return new AgendaEvents();
+	}
+
+	/**
 	 * List orders
 	 *
 	 * Get a list of supplier orders
