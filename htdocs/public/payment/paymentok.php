@@ -304,16 +304,36 @@ if (isModEnabled('paypal') && $paymentmethod === 'paypal') {	// We call this pag
 		$onlinetoken        = $PAYPALTOKEN;
 		$fulltag            = $FULLTAG;
 		$payerID 			= !empty($PAYPALPAYERID) ? $PAYPALPAYERID : '';
-		// Set by newpayment.php
-		$ipaddress          = $_SESSION['ipaddress'];
-		$currencyCodeType   = $_SESSION['currencyCodeType'];
-		$FinalPaymentAmt    = $_SESSION["FinalPaymentAmt"];
-		$paymentType        = $_SESSION['PaymentType'];			// Value can be 'Mark', 'Sole', 'Sale' for example
+
+		// Find the data saved in database by callSetExpressCheckout() (key = PayPal token). If not found, we use the session.
+		$onlinepaymentsessionservice = 'paypal';
+		$onlinepaymentsessionid = $PAYPALTOKEN;
+		$onlinepaymentsession = onlinePaymentSessionFetch($onlinepaymentsessionservice, $onlinepaymentsessionid);
+		if (is_object($onlinepaymentsession)) {
+			// The payment must be the one created for the object of this fulltag
+			if (empty($onlinepaymentsession->fulltag) || $onlinepaymentsession->fulltag !== $FULLTAG) {
+				$ErrorCode = "BADFULLTAG";
+				$ErrorLongMsg = "PayPal payment verification failed: the payment was not created for fulltag ".$FULLTAG.". Payment has not been validated.";
+				$ErrorShortMsg = "Bad fulltag";
+
+				dol_syslog($ErrorLongMsg, LOG_ERR, 0, '_payment');
+			}
+			$ipaddress          = empty($onlinepaymentsession->ipaddress) ? '' : $onlinepaymentsession->ipaddress;
+			$currencyCodeType   = empty($onlinepaymentsession->currencyCodeType) ? '' : $onlinepaymentsession->currencyCodeType;
+			$FinalPaymentAmt    = empty($onlinepaymentsession->FinalPaymentAmt) ? '' : $onlinepaymentsession->FinalPaymentAmt;
+			$paymentType        = empty($onlinepaymentsession->paymentType) ? '' : $onlinepaymentsession->paymentType;
+		} else {
+			// Set by newpayment.php
+			$ipaddress          = $_SESSION['ipaddress'];
+			$currencyCodeType   = $_SESSION['currencyCodeType'];
+			$FinalPaymentAmt    = $_SESSION["FinalPaymentAmt"];
+			$paymentType        = $_SESSION['PaymentType'];			// Value can be 'Mark', 'Sole', 'Sale' for example
+		}
 
 		dol_syslog("Call paymentok with token=".$onlinetoken." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_payment');
 
 		// Validate record
-		if (!empty($paymentType)) {
+		if (empty($ErrorCode) && !empty($paymentType)) {
 			dol_syslog("We call GetExpressCheckoutDetails", LOG_DEBUG, 0, '_payment');
 			$resArray = getDetails($onlinetoken);
 			//var_dump($resarray);
@@ -357,7 +377,7 @@ if (isModEnabled('paypal') && $paymentmethod === 'paypal') {	// We call this pag
 				$ErrorLongMsg = urldecode($resArray2["L_LONGMESSAGE0"]);
 				$ErrorSeverityCode = urldecode($resArray2["L_SEVERITYCODE0"]);
 			}
-		} else {
+		} elseif (empty($ErrorCode)) {
 			$ErrorCode = "SESSIONEXPIRED";
 			$ErrorLongMsg = "Session expired. Can't retrieve PaymentType. Payment has not been validated.";
 			$ErrorShortMsg = "Session expired";
@@ -379,14 +399,17 @@ if (isModEnabled('paypal') && $paymentmethod === 'paypal') {	// We call this pag
 if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 	// TODO: Move this block to the top to ensure all session variables (e.g., TRANSACTIONID, FinalPaymentAmt, currencyCodeType, etc.) are loaded before executing checks for any payment module.
 	if (empty($TRANSACTIONID)) {
-		$TRANSACTIONID = empty($_SESSION['TRANSACTIONID']) ? '' : $_SESSION['TRANSACTIONID'];	// pi_... or ch_...
-		if (empty($TRANSACTIONID) && GETPOST('payment_intent', 'alphanohtml')) {
-			// For the case we use STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION
+		if (GETPOST('payment_intent', 'alphanohtml')) {
+			// For the case we use STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 2 (payment_intent is added by Stripe in the return_url)
 			$TRANSACTIONID = GETPOST('payment_intent', 'alphanohtml');
 		}
 		if (empty($TRANSACTIONID) && GETPOST('session_id', 'alphanohtml')) {
-			// For the case we use STRIPE_USE_NEW_CHECKOUT (session cookie lost, the id comes from the success_url)
+			// For the case we use STRIPE_USE_NEW_CHECKOUT (the id comes from the success_url)
 			$TRANSACTIONID = GETPOST('session_id', 'alphanohtml');
+		}
+		if (empty($TRANSACTIONID)) {
+			// Last resort: the id saved in session by newpayment.php (pi_... or cs_...)
+			$TRANSACTIONID = empty($_SESSION['TRANSACTIONID']) ? '' : $_SESSION['TRANSACTIONID'];
 		}
 	}
 	$FinalPaymentAmt = empty($_SESSION["FinalPaymentAmt"]) ? '' : $_SESSION["FinalPaymentAmt"];
@@ -399,7 +422,7 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 		$servicestatus = 1;
 	}
 
-	// Find the data saved by newpayment.php in database. The key is the Checkout Session id (session_id) or the PaymentIntent/charge id.
+	// Find the data saved by newpayment.php in database. The key is the Checkout Session id (session_id) or the PaymentIntent id.
 	$onlinepaymentsessionservice = $service;
 	$onlinepaymentsessionid = GETPOST('session_id', 'alphanohtml') ? GETPOST('session_id', 'alphanohtml') : $TRANSACTIONID;
 	if ($onlinepaymentsessionid) {
@@ -2147,11 +2170,16 @@ dol_syslog("ispaymentok=".$ispaymentok." ispostactionok=".$ispostactionok." doac
 if ($ispaymentok) {
 	// Get on url call
 	$onlinetoken        = empty($PAYPALTOKEN) ? $_SESSION['onlinetoken'] : $PAYPALTOKEN;
-	$payerID            = empty($PAYPALPAYERID) ? $_SESSION['payerID'] : $PAYPALPAYERID;
-	// Set by newpayment.php
-	$currencyCodeType   = empty($_SESSION['currencyCodeType']) ? '' : $_SESSION['currencyCodeType'];
-	$FinalPaymentAmt    = empty($_SESSION["FinalPaymentAmt"]) ? '' : $_SESSION["FinalPaymentAmt"];
-	$paymentType        = empty($_SESSION['PaymentType']) ? '' : $_SESSION['PaymentType'];	// Seems used by paypal only
+	if (is_object($onlinepaymentsession)) {
+		// Data were found in database, currencyCodeType, FinalPaymentAmt and paymentType are already set from them
+		$payerID        = empty($PAYPALPAYERID) ? (empty($onlinepaymentsession->payerID) ? '' : $onlinepaymentsession->payerID) : $PAYPALPAYERID;
+	} else {
+		$payerID            = empty($PAYPALPAYERID) ? $_SESSION['payerID'] : $PAYPALPAYERID;
+		// Set by newpayment.php
+		$currencyCodeType   = empty($_SESSION['currencyCodeType']) ? '' : $_SESSION['currencyCodeType'];
+		$FinalPaymentAmt    = empty($_SESSION["FinalPaymentAmt"]) ? '' : $_SESSION["FinalPaymentAmt"];
+		$paymentType        = empty($_SESSION['PaymentType']) ? '' : $_SESSION['PaymentType'];	// Seems used by paypal only
+	}
 
 	if (is_object($object) && method_exists($object, 'call_trigger')) {
 		'@phan-var-force CommonObject $object';
@@ -2185,7 +2213,7 @@ if (empty($doactionsthenredirect)) {
 		print img_picto('', 'tick', 'class="green fa-2x"');
 		print '</center>';
 
-		if ($ispostactionok > 0) {
+		if ($ispostactionok >= 0) {	// 0 = no post action to do (ie payment of a free amount), 1 = post actions done
 			// Show a custom message
 			$key = 'ONLINE_PAYMENT_MESSAGE_OK';
 			if (getDolGlobalString($key)) {
@@ -2361,11 +2389,16 @@ if ($ispaymentok) {
 
 	// Get on url call
 	$onlinetoken = empty($PAYPALTOKEN) ? $_SESSION['onlinetoken'] : $PAYPALTOKEN;
-	$payerID            = empty($PAYPALPAYERID) ? $_SESSION['payerID'] : $PAYPALPAYERID;
-	// Set by newpayment.php
-	$paymentType        = $_SESSION['PaymentType'];
-	$currencyCodeType   = $_SESSION['currencyCodeType'];
-	$FinalPaymentAmt    = $_SESSION["FinalPaymentAmt"];
+	if (is_object($onlinepaymentsession)) {
+		// Data were found in database, currencyCodeType, FinalPaymentAmt and paymentType are already set from them
+		$payerID        = empty($PAYPALPAYERID) ? (empty($onlinepaymentsession->payerID) ? '' : $onlinepaymentsession->payerID) : $PAYPALPAYERID;
+	} else {
+		$payerID            = empty($PAYPALPAYERID) ? $_SESSION['payerID'] : $PAYPALPAYERID;
+		// Set by newpayment.php
+		$paymentType        = $_SESSION['PaymentType'];
+		$currencyCodeType   = $_SESSION['currencyCodeType'];
+		$FinalPaymentAmt    = $_SESSION["FinalPaymentAmt"];
+	}
 
 	if (is_object($object) && method_exists($object, 'call_trigger')) {
 		// Call trigger
