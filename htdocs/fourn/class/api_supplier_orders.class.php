@@ -292,7 +292,8 @@ class SupplierOrders extends DolibarrApi
 	 * @param 	array 	$request_data   	Data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
-	 * @return 	Object|false				Updated object
+	 * @return 	Object					Updated object
+	 * @throws RestException
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -328,11 +329,11 @@ class SupplierOrders extends DolibarrApi
 			$this->order->$field = $this->_checkValForAPI($field, $value, $this->order);
 		}
 
-		if ($this->order->update(DolibarrApiAccess::$user)) {
+		if ($this->order->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		}
 
-		return false;
+		throw new RestException(500, 'Error updating supplier order', array_merge(array($this->order->error), $this->order->errors));
 	}
 
 	/**
