@@ -90,7 +90,9 @@ if (!empty($user->socid)) {
 	}
 }
 
-$result = restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission, 'fk_soc', 'rowid', 0, 1);	// Call with mode return
+// Mode 'write': storing a file into the documents of the object needs the permission to write on it, not only to read it.
+// Without it, restrictedArea() deduces the intent from GETPOST('sendit') and action=upload, which an ajax upload never sends.
+$result = restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission, 'fk_soc', 'rowid', 0, 1, 'write');	// Call with mode return
 if (!$result) {
 	// The module and the table are reported into the log only, they must not be disclosed to the caller
 	dol_syslog("fileupload.php not allowed by restrictedArea (module=".$object->module." table_element=".$object->table_element.")", LOG_WARNING);

@@ -2640,7 +2640,7 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
  */
 function get_left_menu_tools($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 'none', $type_user = 0)
 {
-	global $user, $langs;
+	global $conf, $user, $langs;
 
 	if ($mainmenu == 'tools') {
 		if (isModEnabled('category')) {
@@ -2687,6 +2687,11 @@ function get_left_menu_tools($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu 
 		} */
 
 		$newmenu->add(dolBuildUrl('/core/customreports.php', ['leftmenu' => 'customreports']), $langs->trans("BICustomReports"), 0, $user->isExternalUser() ? 0 : 1, '', $mainmenu, 'customreports', 100, '', '', '', img_picto('', 'graph', 'class="paddingright pictofixedwidth"'));
+
+		// Without javascript, the AI assistant popover of the top menu is not available, so we add a link to the AI assistant page
+		if (empty($conf->use_javascript_ajax) && isModEnabled('ai') && getDolGlobalString('AI_ASSISTANT_ENABLED')) {
+			$newmenu->add(dolBuildUrl('/ai/assistant/index.php', ['leftmenu' => 'ai']), $langs->trans("AIAssistant"), 0, $user->hasRight('ai', 'assistant', 'use'), '', $mainmenu, 'ai', 110, '', '', '', img_picto('', 'fa-magic', 'class="paddingright pictofixedwidth"'));
+		}
 	}
 }
 

@@ -106,6 +106,24 @@ if [ -z "${XAUTHORITY:-}" ] && [ -f "$HOME/.Xauthority" ]; then
     GRAPHIC_ARGS+=(-e "XAUTHORITY=$HOME/.Xauthority" --mount "type=bind,src=$HOME/.Xauthority,dst=$HOME/.Xauthority")
 fi
 
+# Pass the audio session of the host to the container so that the voice
+# features of Vibe (microphone capture and speech playback through the
+# PortAudio library installed into the image) work into the container:
+# the container has no sound card, PortAudio must reach the audio server
+# (PulseAudio, or PipeWire that provides the same socket) of the host
+# session. The socket lives into XDG_RUNTIME_DIR, already mounted and
+# passed by the graphic section above, PULSE_SERVER points PortAudio at
+# it and the PulseAudio cookie of the host is mounted read-only so the
+# server accepts the connection. Nothing is added outside a session with
+# an audio server: Vibe then disables its voice features.
+AUDIO_ARGS=()
+if [ -n "${XDG_RUNTIME_DIR:-}" ] && [ -S "${XDG_RUNTIME_DIR}/pulse/native" ]; then
+    AUDIO_ARGS+=(-e "PULSE_SERVER=unix:${XDG_RUNTIME_DIR}/pulse/native")
+    if [ -d "$HOME/.config/pulse" ]; then
+        AUDIO_ARGS+=(--mount "type=bind,src=$HOME/.config/pulse,dst=$HOME/.config/pulse,readonly")
+    fi
+fi
+
 # Pass the Dolibarr PHPUnit credentials to the container: the REST API tests
 # (test/phpunit/AbstractRestAPITest.php) and SecurityLoginTest.php use them to
 # log in with a dedicated account instead of the admin/admin default.
@@ -155,6 +173,7 @@ sudo docker run --rm -it \
   -e HOST_GROUP="$(id -un)" \
   -e GH_TOKEN="$GH_TOKEN" \
   "${GRAPHIC_ARGS[@]}" \
+  "${AUDIO_ARGS[@]}" \
   "${TEST_ARGS[@]}" \
   "${LOG_ARGS[@]}" \
   "${TX_ARGS[@]}" \

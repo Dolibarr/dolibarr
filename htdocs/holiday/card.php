@@ -983,12 +983,12 @@ if (empty($reshook)) {
 	 $autocopy='MAIN_MAIL_AUTOCOPY_HOLIDAY_TO';
 	 $trackid='leav'.$object->id;
 	 include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
-
-	 // Actions to build doc
-	 $upload_dir = $conf->holiday->dir_output;
-	 $permissiontoadd = $user->rights->holiday->creer;
-	 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 	 */
+
+	// Actions to build doc
+	$upload_dir = $conf->holiday->dir_output;
+	$permissiontoadd = ($user->hasRight('holiday', 'write') && $object->fk_user == $user->id) || $user->hasRight('holiday', 'writeall');
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
 
@@ -1692,16 +1692,12 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			print '<a name="builddoc"></a>'; // ancre
 
 			// Documents
-			/* $includedocgeneration = 0;
-			if ($includedocgeneration) {
-				$objref = dol_sanitizeFileName($object->ref);
-				$relativepath = $objref.'/'.$objref.'.pdf';
-				$filedir = $conf->holiday->dir_output.'/'.$object->element.'/'.$objref;
-				$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-				$genallowed = ($user->hasRight('holiday', 'read') && $object->fk_user == $user->id) || $user->hasRight('holiday', 'readall'); // If you can read, you can build the PDF to read content
-				$delallowed = ($user->hasRight('holiday', 'write') && $object->fk_user == $user->id) || $user->hasRight('holiday', 'writeall'); // If you can create/edit, you can remove a file on card
-				print $formfile->showdocuments('holiday:Holiday', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
-			} */
+			$objref = dol_sanitizeFileName($object->ref);
+			$filedir = $conf->holiday->dir_output.'/'.$objref;
+			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
+			$genallowed = (int) (($user->hasRight('holiday', 'read') && $object->fk_user == $user->id) || $user->hasRight('holiday', 'readall')); // If you can read, you can build the PDF to read content
+			$delallowed = (int) (($user->hasRight('holiday', 'write') && $object->fk_user == $user->id) || $user->hasRight('holiday', 'writeall')); // If you can create/edit, you can remove a file on card
+			print $formfile->showdocuments('holiday:Holiday', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 
 			// Show links to link elements
 			//$tmparray = $form->showLinkToObjectBlock($object, null, array('myobject'), 1);

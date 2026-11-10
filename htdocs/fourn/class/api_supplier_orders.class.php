@@ -418,7 +418,9 @@ class SupplierOrders extends DolibarrApi
 			$request_data->multicurrency_subprice,
 			$request_data->origin,
 			$request_data->origin_id,
-			$request_data->rang,
+			// -1 is the "append at the end" value of addline(). An absent rang is null, which empty() turns into 0,
+			// so without this every line added through the API is stored with rang 0 instead of being appended.
+			isset($request_data->rang) ? $request_data->rang : -1,
 			$request_data->special_code
 		);
 
@@ -1093,6 +1095,8 @@ class SupplierOrders extends DolibarrApi
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
+	 * @throws RestException 405 Order is not approved
+	 *
 	 * FIXME An error 403 is returned if the request has an empty body.
 	 * Error message: "Forbidden: Content type `text/plain` is not supported."
 	 * Workaround: send this in the body
@@ -1114,6 +1118,11 @@ class SupplierOrders extends DolibarrApi
 
 		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, 'commande_fournisseur', 'commande')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// Same status as the one allowing the make order button on the supplier order card
+		if ((int) $this->order->status !== CommandeFournisseur::STATUS_ACCEPTED) {
+			throw new RestException(405, 'Only approved supplier orders can be sent to the vendor');
 		}
 
 		$result = $this->order->commande(DolibarrApiAccess::$user, $date, $method, $comment);
@@ -1191,6 +1200,119 @@ class SupplierOrders extends DolibarrApi
 			'success' => array(
 				'code' => 200,
 				'message' => 'Order canceled (Ref='.$this->order->ref.')'
+			)
+		);
+	}
+
+	/**
+	 * Classify an order as billed. Could be also called setbilled
+	 *
+	 * @since	25.0.0	Initial implementation
+	 *
+	 * @param   int		$id			Order ID
+	 *
+	 * @url POST    {id}/setinvoiced
+	 *
+	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 404 Not found
+	 * @throws RestException 405 Order status does not allow it, or a supplier invoice is required
+	 * @throws RestException 500 Error
+	 */
+	public function setinvoiced($id)
+	{
+		// Same right as checked by the supplier order card before calling CommandeFournisseur::classifyBilled()
+		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "commande", "creer") && !DolibarrApiAccess::$user->hasRight("supplier_order", "creer")) {
+			throw new RestException(403);
+		}
+		$result = $this->order->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Order not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, 'commande_fournisseur', 'commande')) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// Same statuses as the ones showing the "Classify billed" button on the supplier order card
+		$status = (int) $this->order->status;
+		if ($status < CommandeFournisseur::STATUS_ACCEPTED || $status === CommandeFournisseur::STATUS_CANCELED_AFTER_ORDER) {
+			throw new RestException(405, 'Only approved supplier orders, or later statuses except canceled after order, can be classified as billed');
+		}
+
+		// Same rule as the supplier order card, which then requires at least one linked supplier invoice
+		if (isModEnabled('invoice') && getDolGlobalInt('SUPPLIER_ORDER_DISABLE_CLASSIFY_BILLED_FROM_SUPPLIER_ORDER')) {
+			$this->order->fetchObjectLinked();
+			if (empty($this->order->linkedObjectsIds['invoice_supplier'])) {
+				throw new RestException(405, 'At least one supplier invoice linked to the order is required to classify it as billed');
+			}
+		}
+
+		// CommandeFournisseur::classifyBilled() returns 0 when the order is already billed
+		$result = $this->order->classifyBilled(DolibarrApiAccess::$user);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when classifying Order as billed: '.$this->order->errorsToString());
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => ($result == 0 ? 'Order already classified as billed' : 'Order classified as billed').' (Ref='.$this->order->ref.')'
+			)
+		);
+	}
+
+	/**
+	 * Classify an order as unbilled. Could be also called setunbilled
+	 *
+	 * @since	25.0.0	Initial implementation
+	 *
+	 * @param   int		$id			Order ID
+	 *
+	 * @url POST    {id}/setuninvoiced
+	 *
+	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 404 Not found
+	 * @throws RestException 405 Order status does not allow it
+	 * @throws RestException 500 Error
+	 */
+	public function setuninvoiced($id)
+	{
+		// Same right as checked by the supplier order card before calling CommandeFournisseur::classifyUnBilled()
+		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "commande", "creer") && !DolibarrApiAccess::$user->hasRight("supplier_order", "creer")) {
+			throw new RestException(403);
+		}
+		$result = $this->order->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Order not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, 'commande_fournisseur', 'commande')) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// Same statuses as the ones showing the "Classify unbilled" button on the supplier order card
+		if ((int) $this->order->status <= CommandeFournisseur::STATUS_DRAFT) {
+			throw new RestException(405, 'A draft supplier order can not be classified as unbilled');
+		}
+
+		// CommandeFournisseur::classifyUnBilled() returns 0 when the order is not billed
+		$result = $this->order->classifyUnBilled(DolibarrApiAccess::$user);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when classifying Order as unbilled: '.$this->order->errorsToString());
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => ($result == 0 ? 'Order already classified as unbilled' : 'Order classified as unbilled').' (Ref='.$this->order->ref.')'
 			)
 		);
 	}

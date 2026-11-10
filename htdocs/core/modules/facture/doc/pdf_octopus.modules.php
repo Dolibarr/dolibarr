@@ -182,8 +182,8 @@ class pdf_octopus extends ModelePDFFactures
 			$conf->global->USE_RETAINED_WARRANTY_ONLY_FOR_SITUATION_FINAL = 1;
 		}
 
-		// If hidden option INVOICE_USE_SITUATION is set to 2, we can show the invoice situation template
-		if (getDolGlobalString('INVOICE_USE_SITUATION') == 2) {
+		// If hidden option INVOICE_USE_SITUATION is not 1 (bugged version), we can show this invoice situation document template
+		if (getDolGlobalString('INVOICE_USE_SITUATION') && getDolGlobalString('INVOICE_USE_SITUATION') != 1) {
 			$this->version = 'dolibarr';
 		}
 
@@ -937,7 +937,7 @@ class pdf_octopus extends ModelePDFFactures
 					}
 					// Collect total by value of vat rate into $this->tva_array
 					if ($object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE && $object->lines[$i]->product_type != 9) {
-						$prev_progress = getDolGlobalInt('INVOICE_USE_SITUATION') == 2 ? 0 : $object->lines[$i]->get_prev_progress($object->id);
+						$prev_progress = getDolGlobalInt('INVOICE_USE_SITUATION') != 1 ? 0 : $object->lines[$i]->get_prev_progress($object->id);
 						if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation
 							if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
 								$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;

@@ -113,6 +113,8 @@ if (empty($reshook)) {
 			if ($color == '-1') {
 				$color = '';
 			}
+			// An unticked checkbox is not posted at all, so its absence is what says "switched off".
+			$enabled = (GETPOSTISSET('AGENDA_EXT_ENABLED_'.$id.'_'.$i) ? '1' : '0');
 			$cachedelay = (GETPOSTINT('AGENDA_EXT_CACHE_'.$id.'_'.$i) > 0 ? (string) GETPOSTINT('AGENDA_EXT_CACHE_'.$id.'_'.$i) : '');
 
 			if (!empty($src) && !dol_is_url($src)) {
@@ -126,10 +128,16 @@ if (empty($reshook)) {
 			$tabparam['AGENDA_EXT_SRC_'.$id.'_'.$i] = $src;
 			$tabparam['AGENDA_EXT_OFFSETTZ_'.$id.'_'.$i] = $offsettz;
 			$tabparam['AGENDA_EXT_COLOR_'.$id.'_'.$i] = $color;
-			// Note: this form has no "enabled" switch, so AGENDA_EXT_ENABLED_x_y is not listed here.
-			// Listing it would hand dol_set_user_param() an empty value, and that function deletes
-			// every key it is given before reinserting the non-empty ones: saving the form would
-			// silently drop the parameter.
+			// '0' has to be forced in. dol_set_user_param() deletes every key it is given and then
+			// reinserts only the ones holding a non-empty value, and a missing parameter is read as
+			// a calendar set up before this switch existed, which stays visible. A calendar the user
+			// switched off must therefore keep a value that says so. A line with nothing on it keeps
+			// nothing.
+			if ($name === '' && $src === '') {
+				$tabparam['AGENDA_EXT_ENABLED_'.$id.'_'.$i] = '';
+			} else {
+				$tabparam['AGENDA_EXT_ENABLED_'.$id.'_'.$i] = array('value' => $enabled, 'forcevalue' => 1);
+			}
 			$tabparam['AGENDA_EXT_CACHE_'.$id.'_'.$i] = $cachedelay;
 
 			$i++;
@@ -240,6 +248,7 @@ print "<td>".$langs->trans("ExtSiteUrlAgenda").'<div class="hideonsmartphone opa
 print "<td>".$form->textwithpicto($langs->trans("FixTZ"), $langs->trans("FillFixTZOnlyIfRequired"), 1).'</td>';
 print '<td class="nowrap">'.$form->textwithpicto($langs->trans("AgendaExtCacheDelay"), $langs->trans("AgendaExtCacheDelayDesc", 300), 1).'</td>';
 print '<td class="right">'.$langs->trans("Color").'</td>';
+print '<td class="center">'.$langs->trans("Enabled").'</td>';
 print "</tr>";
 
 $i = 1;
@@ -250,6 +259,7 @@ while ($i <= $MAXAGENDA) {
 	$offsettz = 'AGENDA_EXT_OFFSETTZ_'.$id.'_'.$key;
 	$color = 'AGENDA_EXT_COLOR_'.$id.'_'.$key;
 	$cachedelay = 'AGENDA_EXT_CACHE_'.$id.'_'.$key;
+	$enabled = 'AGENDA_EXT_ENABLED_'.$id.'_'.$key;
 
 	print '<tr class="oddeven">';
 	// Nb @phan-suppress-next-line PhanPluginSuspiciousParamPosition
@@ -273,6 +283,12 @@ while ($i <= $MAXAGENDA) {
 	print '<td class="nowraponall right">';
 	$color_value = (GETPOST("AGENDA_EXT_COLOR_".$id.'_'.$key) ? GETPOST("AGENDA_EXT_COLOR_".$id.'_'.$key) : (empty($object->conf->$color) ? 'ffffff' : $object->conf->$color));
 	print $formother->selectColor($color_value, "AGENDA_EXT_COLOR_".$id.'_'.$key, '', 1, array(), 'hideifnotset');
+	print '</td>';
+	// Calendar enabled. A calendar set up before this switch existed carries no parameter, and the
+	// default below is what keeps it ticked instead of making it disappear from the agenda.
+	print '<td class="center">';
+	$enabled_value = ($actionsave ? GETPOSTISSET('AGENDA_EXT_ENABLED_'.$id.'_'.$key) : (bool) getDolUserString($enabled, '1', $object));
+	print '<input type="checkbox" class="flat hideifnotset" name="AGENDA_EXT_ENABLED_'.$id.'_'.$key.'" value="1"'.($enabled_value ? ' checked' : '').'>';
 	print '</td>';
 	print "</tr>";
 	$i++;
