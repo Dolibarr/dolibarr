@@ -440,13 +440,13 @@ if ($resql) {
 	}
 
 	if ($search_date_sync) {
-		$param = "&search_date_sync=".$search_date_sync;
+		$param .= "&search_date_sync=".$search_date_sync;
 	}
 	if ($search_date_sync_end) {
-		$param = "&search_date_sync_end=".$search_date_sync_end;
+		$param .= "&search_date_sync_end=".$search_date_sync_end;
 	}
 	if ($search_rate) {
-		$param = "&search_rate=".urlencode($search_rate);
+		$param .= "&search_rate=".urlencode($search_rate);
 	}
 	if ($search_code != '') {
 		$param .= "&search_code=".urlencode($search_code);
@@ -455,6 +455,12 @@ if ($resql) {
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
+	// Add $param from hooks
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters);	// Note that $action and $object may have been modified by hook
+	$param .= $hookmanager->resPrint;
+
+	$arrayofmassactions = array();
 	if ($user->admin) {
 		$arrayofmassactions['predelete'] = $langs->trans("Delete");
 	}

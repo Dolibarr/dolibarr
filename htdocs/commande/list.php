@@ -2233,11 +2233,11 @@ if (!empty($arrayfields['c.fk_input_reason']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['c.module_source']['checked'])) {
-	print_liste_field_titre($arrayfields['c.module_source']['label'], $_SERVER["PHP_SELF"], "f.module_source", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['c.module_source']['label'], $_SERVER["PHP_SELF"], "c.module_source", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['c.pos_source']['checked'])) {
-	print_liste_field_titre($arrayfields['c.pos_source']['label'], $_SERVER["PHP_SELF"], "f.pos_source", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['c.pos_source']['label'], $_SERVER["PHP_SELF"], "c.pos_source", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['c.total_ht']['checked'])) {
@@ -2536,7 +2536,7 @@ while ($i < $imaxinloop) {
 
 		// Project ref
 		if (!empty($arrayfields['p.ref']['checked'])) {
-			print '<td class="nocellnopadd nowraponall">';
+			print '<td class="tdoverflowmax150">';
 			if ($obj->project_id > 0) {
 				print $projectstatic->getNomUrl(1);
 			}
@@ -2548,9 +2548,9 @@ while ($i < $imaxinloop) {
 
 		// Project label
 		if (!empty($arrayfields['p.title']['checked'])) {
-			print '<td class="nowraponall">';
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($projectstatic->title).'">';
 			if ($obj->project_id > 0) {
-				print $projectstatic->title;
+				print '<span class="spantitle">'.dol_escape_htmltag($projectstatic->title).'</span>';
 			}
 			print '</td>';
 			if (!$i) {

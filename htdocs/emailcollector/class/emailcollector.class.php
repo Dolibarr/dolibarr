@@ -1273,8 +1273,10 @@ class EmailCollector extends CommonObject
 						$refreshtoken = $tokenobj->getRefreshToken();
 						$tokenobj = $apiService->refreshAccessToken($tokenobj);
 
-						// We have to save the token because answer give it only once
-						$tokenobj->setRefreshToken($refreshtoken);
+						// Keep the previous refresh token only when the provider did not return a new one.
+						if (empty($tokenobj->getRefreshToken())) {
+							$tokenobj->setRefreshToken($refreshtoken);
+						}
 						$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
 					}
 					$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
