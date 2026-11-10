@@ -1129,8 +1129,16 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						// full-day ICS entries already carry fulldayevent=1 so they are caught below; a system-log
 						// entry (e.g. "Record modified") has a real timestamp and belongs in its own time slot.
 						if ($dayminutes === null) {
-							// The all-day row of the day view is fixed, nothing is dragged out of it
-							$hourlybuckets['allday'][] = str_replace(' movable cursormove', ' unmovable', $eventhtml);
+							// The all-day row of the day view is fixed: there is one day on the screen, so there is
+							// nowhere to drag an event to. The same row of the week view is the drop target of the
+							// drag between days (the .sortable cell printed by comm/action/index.php), so the event
+							// must keep the movable class there, otherwise jQuery sortable({items: "div.movable"})
+							// finds nothing to drag and the row is a target with no source.
+							if ($mode == 'show_week') {
+								$hourlybuckets['allday'][] = $eventhtml;
+							} else {
+								$hourlybuckets['allday'][] = str_replace(' movable cursormove', ' unmovable', $eventhtml);
+							}
 						} else {
 							/** @var array{0:int,1:int} $dayminutes */
 							$slotkey = sprintf('%02d', intdiv($dayminutes[0], 60)).(($dayminutes[0] % 60) < 30 ? '00' : '30');
