@@ -90,6 +90,15 @@ if [ ! -d "$WORK_DIR" ]; then
     WORK_DIR="$PWD"
 fi
 
+# Files of the host home directory mounted only when they exist (production context), as docker refuses
+# to start with a missing bind source.
+HOME_MOUNTS=()
+for HOME_FILE in .gitconfig .bash_history; do
+    if [ -f "$HOME/$HOME_FILE" ]; then
+        HOME_MOUNTS+=(--mount "type=bind,src=$HOME/$HOME_FILE,dst=$HOME/$HOME_FILE")
+    fi
+done
+
 # When working on something else than the Dolibarr core (a module for example),
 # also mount the sibling directory dolibarr_dev or dolibarr (in this order of
 # preference) when it exists next to the current directory.
@@ -211,7 +220,6 @@ sudo docker run --rm -it \
   --mount "type=bind,src=$WORK_DIR,dst=$WORK_DIR" \
   "${EXTRA_MOUNTS[@]}" \
   --mount "type=bind,src=$HOME/.claude,dst=$HOME/.claude" \
-  --mount "type=bind,src=$HOME/.gitconfig,dst=$HOME/.gitconfig" \
-  --mount "type=bind,src=$HOME/.bash_history,dst=$HOME/.bash_history" \
+  "${HOME_MOUNTS[@]}" \
   -w "$WORK_DIR" \
   docker-claude "${ARGS[@]}"
