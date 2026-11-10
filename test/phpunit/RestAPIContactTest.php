@@ -603,8 +603,8 @@ class RestAPIContactTest extends AbstractRestAPITest
 	/**
 	 * testRestCreateUserFromContact
 	 *
-	 * Create a user from a contact, then check the errors for missing or empty fields, an unknown contact,
-	 * a contact that already has a user and a login that is already used.
+	 * Create a user from a contact, and one without password, then check the errors for a missing or empty login,
+	 * an unknown contact, a contact that already has a user and a login that is already used.
 	 *
 	 * @return	void
 	 *
@@ -626,23 +626,26 @@ class RestAPIContactTest extends AbstractRestAPITest
 			$this->assertIsInt($othercontactid, 'Contact creation failed: '.var_export($othercontactid, true));
 			$contactids[] = $othercontactid;
 
-			// Missing fields
+			// Missing or empty login
 			$object = $this->callApi('POST', '/contacts/'.$contactid.'/createUser', array("password" => $password));
 			$this->assertEquals(400, $object['error']['code'] ?? null, 'A missing login must return 400: '.var_export($object, true));
-			$object = $this->callApi('POST', '/contacts/'.$contactid.'/createUser', array("login" => $login));
-			$this->assertEquals(400, $object['error']['code'] ?? null, 'A missing password must return 400: '.var_export($object, true));
-
-			// Empty fields
 			$object = $this->callApi('POST', '/contacts/'.$contactid.'/createUser', array("login" => "", "password" => $password));
 			if (is_int($object)) {
 				$userids[] = $object;
 			}
 			$this->assertEquals(400, $object['error']['code'] ?? null, 'An empty login must return 400: '.var_export($object, true));
-			$object = $this->callApi('POST', '/contacts/'.$contactid.'/createUser', array("login" => $login, "password" => ""));
+
+			// Empty password: the user is created without password
+			$nopasscontactid = $this->callApi('POST', '/contacts', array("lastname" => "testRestCreateUser".mt_rand()));
+			$this->assertIsInt($nopasscontactid, 'Contact creation failed: '.var_export($nopasscontactid, true));
+			$contactids[] = $nopasscontactid;
+			$object = $this->callApi('POST', '/contacts/'.$nopasscontactid.'/createUser', array("login" => $login.'n', "password" => ""));
 			if (is_int($object)) {
 				$userids[] = $object;
 			}
-			$this->assertEquals(400, $object['error']['code'] ?? null, 'An empty password must return 400: '.var_export($object, true));
+			$this->assertIsInt($object, 'A user without password must be created: '.var_export($object, true));
+			$nopassuser = $this->callApi('GET', '/contacts/'.$nopasscontactid);
+			$this->assertEquals($object, $nopassuser['user_id'] ?? null, 'The user without password must be linked to the contact');
 
 			// Nonexistent contact
 			$object = $this->callApi('POST', '/contacts/123456789/createUser', array("login" => $login, "password" => $password));
