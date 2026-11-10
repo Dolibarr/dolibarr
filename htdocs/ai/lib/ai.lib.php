@@ -102,7 +102,7 @@ function getListOfAIServices()
 			'label' => 'Mistral AI',
 			'url' => 'https://api.mistral.ai/v1/',
 			'setup' => 'https://console.mistral.ai/api-keys/',
-			'textgeneration' => array('default' => 'mistral-medium-latest', 'examples' => 'mistral-tiny-latest, mistral-small-latest, mistral-medium-latest, mistral-large-latest'),    // Points to Mistral Small 3 (updated Feb 2026)
+			'textgeneration' => array('default' => 'mistral-large-latest', 'examples' => 'mistral-tiny-latest, mistral-small-latest, mistral-medium-latest, mistral-large-latest'),    // Points to the latest Mistral Large
 			'imagegeneration' => array('default' => 'na'),
 			'audiogeneration' => array('default' => 'na'),
 			'videogeneration' => array('default' => 'na'),
@@ -946,7 +946,8 @@ function getAiChatAssistantConfig()
 		'AIModelFast',
 		'AIModelBalanced',
 		'AIModelDeep',
-		'AIModelSavedGone'
+		'AIModelSavedGone',
+		'Default'
 	);
 
 	$ai_translations = array();
@@ -1011,6 +1012,8 @@ function getAiChatAssistantConfig()
 		// business content the privacy masking does not cover, so sending them
 		// back on every request is not a default the module takes by itself.
 		'autoContext' => getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 2),
+		// Max size (in characters) of the context sent back to the model, also the cap of one tool result.
+		'contextMaxSize' => getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 200000),
 		// The "/" palette of the chat input, always on.
 		'palette' => 1,
 		// The raw API tools in the "/" palette (testing, advanced use); the commands are always there.
@@ -1036,6 +1039,11 @@ function getAiChatAssistantConfig()
 		// Key of the conversation kept in the browser sessionStorage, so the chat
 		// survives a page change (popover <-> full page) for this user and entity only.
 		'historyKey' => 'aiChatHistory_'.((int) $conf->entity).'_'.((int) $user->id),
+		// Key of the model picked in the chat, kept in the browser localStorage. It includes the
+		// login date, so a new login starts again on the default model (AI_API_<SERVICE>_MODEL_TEXT).
+		'modelChoiceKey' => 'aiModelChoice_'.((int) $conf->entity).'_'.((int) $user->id).'_'.((int) ($_SESSION['dol_logindate'] ?? 0)),
+		// Model used by default (AI_API_<SERVICE>_MODEL_TEXT), flagged with "(Default)" in the model picker
+		'defaultModel' => getAiAssistantDefaultModel(),
 	);
 }
 

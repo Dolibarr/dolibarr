@@ -385,6 +385,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $import_examplevalues_array;
 	/**
+	 * @var array<array<array{0:string,1?:string,2?:string}>>
+	 */
+	public $import_permission;
+	/**
 	 * @var array<array<string,string>>
 	 */
 	public $import_updatekeys_array;

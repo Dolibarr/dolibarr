@@ -624,4 +624,135 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 		$this->assertEquals(Fichinter::STATUS_CLOSED, $result['content']['status'] ?? null, "$test Intervention must stay closed");
 		$this->assertEquals($ref, $result['content']['ref'] ?? null, "$test Ref must not change");
 	}
+
+	/**
+	 * Create a draft intervention. It is deleted at end of the test.
+	 *
+	 * @param string	$test	Text to be added to output
+	 * @return int				Id of the intervention
+	 */
+	private function createInterventionToDelete($test)
+	{
+		$intervention_id = $this->createIntervention($test);
+		array_unshift($this->objectstodelete, 'interventions/'.$intervention_id);
+
+		return $intervention_id;
+	}
+
+	/**
+	 * Link a contact to an intervention
+	 *
+	 * @param string	$test				Text to be added to output
+	 * @param int		$intervention_id	Id of the intervention
+	 * @param int		$fk_socpeople		Id of the user (internal) or of the contact (external)
+	 * @param string	$type_contact		Code of the type of contact
+	 * @param string	$source				internal or external
+	 * @param int		$expected_error		Expected error code
+	 * @return mixed						Decoded JSON value returned by the service
+	 */
+	private function addInterventionContact($test, $intervention_id, $fk_socpeople, $type_contact, $source, $expected_error = 0)
+	{
+		$data = array("fk_socpeople" => $fk_socpeople, "type_contact" => $type_contact, "source" => $source);
+
+		return $this->getUrl('interventions/'.$intervention_id.'/contacts', $test, 'POST', $data, $expected_error);
+	}
+
+	/**
+	 * Get the contacts linked to an intervention, as "source:id:code" strings
+	 *
+	 * @param string	$test				Text to be added to output
+	 * @param int		$intervention_id	Id of the intervention
+	 * @return string[]						Sorted list of "source:id:code"
+	 */
+	private function getInterventionContacts($test, $intervention_id)
+	{
+		$result = $this->getUrl('interventions/'.$intervention_id.'/contacts', $test, 'GET');
+		$this->assertIsArray($result['content'], "$test The contacts must be an array");
+
+		$contacts = array();
+		foreach ($result['content'] as $contact) {
+			$contacts[] = $contact['source'].':'.$contact['id'].':'.$contact['code'];
+		}
+		sort($contacts);
+
+		return $contacts;
+	}
+
+	/**
+	 * testRestInterventionContacts
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionContacts()
+	{
+		$test = "Link and unlink internal and external contacts of an intervention";
+
+		// Created before the intervention, so tearDown deletes the intervention first
+		$result = $this->getUrl('contacts', $test, 'POST', array("lastname" => "testRestIntervention".mt_rand()));
+		$contact_id = (int) $result['content'];
+		$this->assertGreaterThan(0, $contact_id, "$test Id of contact is not > 0");
+		array_unshift($this->objectstodelete, 'contacts/'.$contact_id);
+
+		$intervention_id = $this->createInterventionToDelete($test);
+
+		$result = $this->addInterventionContact($test, $intervention_id, 1, 'INTERREPFOLL', 'internal');
+		$this->assertEquals($intervention_id, $result['content']['id'] ?? null, "$test Add must return the intervention");
+		$this->addInterventionContact($test, $intervention_id, $contact_id, 'CUSTOMER', 'external');
+
+		$expected = array('external:'.$contact_id.':CUSTOMER', 'internal:1:INTERREPFOLL');
+		$this->assertEquals($expected, $this->getInterventionContacts($test, $intervention_id), "$test Both contacts must be listed");
+
+		$result = $this->getUrl('interventions/'.$intervention_id.'/contact/1/INTERREPFOLL', $test, 'DELETE');
+		$this->assertEquals($intervention_id, $result['content']['id'] ?? null, "$test Delete must return the intervention");
+
+		$expected = array('external:'.$contact_id.':CUSTOMER');
+		$this->assertEquals($expected, $this->getInterventionContacts($test, $intervention_id), "$test The deleted contact must no longer be listed");
+	}
+
+	/**
+	 * testRestInterventionAddContactTwice
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionAddContactTwice()
+	{
+		$test = "Link the same contact twice with the same type to an intervention";
+
+		$intervention_id = $this->createInterventionToDelete($test);
+
+		$this->addInterventionContact($test, $intervention_id, 1, 'INTERREPFOLL', 'internal');
+		$this->addInterventionContact("$test (again)", $intervention_id, 1, 'INTERREPFOLL', 'internal', 400);
+
+		$this->assertEquals(array('internal:1:INTERREPFOLL'), $this->getInterventionContacts($test, $intervention_id), "$test The contact must be listed once");
+	}
+
+	/**
+	 * testRestInterventionAddContactWrongType
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionAddContactWrongType()
+	{
+		$test = "Link a contact with a type that does not exist to an intervention";
+
+		$intervention_id = $this->createInterventionToDelete($test);
+
+		$this->addInterventionContact($test, $intervention_id, 1, 'NOTATYPEOFCONTACT', 'internal', 400);
+
+		$this->assertEquals(array(), $this->getInterventionContacts($test, $intervention_id), "$test No contact must be linked");
+	}
+
+	/**
+	 * testRestInterventionDeleteContactNotLinked
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionDeleteContactNotLinked()
+	{
+		$test = "Unlink a contact that is not linked to an intervention";
+
+		$intervention_id = $this->createInterventionToDelete($test);
+
+		$this->getUrl('interventions/'.$intervention_id.'/contact/1/INTERREPFOLL', $test, 'DELETE', null, 404);
+	}
 }

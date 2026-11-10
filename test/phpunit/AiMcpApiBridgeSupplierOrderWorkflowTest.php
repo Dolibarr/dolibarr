@@ -475,12 +475,23 @@ class AiSupplierWorkflowConfirmationDbFixture
 	}
 
 	/**
+	 * @param mixed $result Query result.
+	 * @return int
+	 */
+	public function affected_rows($result = null)
+	{
+		return 0;
+	}
+
+	/**
 	 * @param string $sql Statement to capture.
 	 * @return bool
 	 */
 	public function query($sql)
 	{
-		$this->sql = $sql;
+		if (strpos($sql, 'INSERT INTO') === 0) {
+			$this->sql = $sql;
+		}
 		return true;
 	}
 }

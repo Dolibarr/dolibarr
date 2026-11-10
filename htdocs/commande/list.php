@@ -2233,11 +2233,11 @@ if (!empty($arrayfields['c.fk_input_reason']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['c.module_source']['checked'])) {
-	print_liste_field_titre($arrayfields['c.module_source']['label'], $_SERVER["PHP_SELF"], "f.module_source", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['c.module_source']['label'], $_SERVER["PHP_SELF"], "c.module_source", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['c.pos_source']['checked'])) {
-	print_liste_field_titre($arrayfields['c.pos_source']['label'], $_SERVER["PHP_SELF"], "f.pos_source", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['c.pos_source']['label'], $_SERVER["PHP_SELF"], "c.pos_source", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['c.total_ht']['checked'])) {

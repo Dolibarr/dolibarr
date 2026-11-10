@@ -139,7 +139,7 @@ class ToolApiBridge extends McpTool
 		'workstations' => array('index'),
 		'knowledgemanagement' => array('index'),
 		'partnerships' => array('index'),
-		'websites' => array('index', 'indexPages')
+		'websites' => array('index', 'indexAllPages')
 	);
 
 	/**
@@ -1883,7 +1883,7 @@ class ToolApiBridge extends McpTool
 		);
 
 		// Websites of the website module, with their pages and blog posts. The page content is
-		// left out of the lists (it can be large): read one page with api_websites_pages_get.
+		// left out of the lists (it can be large): read one page with api_websites_pages_get (by the page rowid only).
 		$this->enrichments['websites'] = array(
 			'label' => 'websites (website module)',
 			'methods' => array(
@@ -1896,18 +1896,15 @@ class ToolApiBridge extends McpTool
 					'get_by' => array('ref' => 'getByRef'),
 					'params' => array('id' => "Rowid of the website (use 0 when identifying by ref).", 'ref' => "Exact website reference, alternative to id.")
 				),
-				'indexPages' => array(
+				'indexAllPages' => array(
 					'suffix' => 'pages_list',
-					'description' => "Pages of one website: pageurl (alias), title, type_container ('page', 'blogpost', 'menu', 'other', 'header', 'footer'...), lang, status (0 offline, 1 online). Blog posts are the pages with type_container 'blogpost'. Search with sqlfilters \"(t.type_container:=:'blogpost')\".",
-					'default_properties' => 'id,pageurl,title,description,type_container,lang,status,date_creation,author_alias',
-					'params' => array(
-						'id' => "Rowid of the website."
-					)
+					'description' => "Pages of all websites: fk_website (rowid of the website), pageurl (alias), title, type_container ('page', 'blogpost', 'menu', 'other', 'header', 'footer'...), lang, status (0 offline, 1 online). Blog posts are the pages with type_container 'blogpost'. Pages of one website: sqlfilters \"(t.fk_website:=:1)\". Blog posts: sqlfilters \"(t.type_container:=:'blogpost')\". To read one page or blog post known by its number, use api_websites_pages_get instead.",
+					'default_properties' => 'id,fk_website,pageurl,title,description,type_container,lang,status,date_creation,author_alias'
 				),
-				'getPage' => array(
+				'getPageById' => array(
 					'suffix' => 'pages_get',
-					'description' => "One page of a website, with its HTML content.",
-					'params' => array('id' => "Rowid of the website.", 'pageid' => "Rowid of the page.")
+					'description' => "One page or blog post of a website, with its HTML content, by the rowid of the page.",
+					'params' => array('pageid' => "Rowid of the page or blog post.")
 				),
 				'postPage' => array(
 					'suffix' => 'pages_create',
@@ -1935,7 +1932,7 @@ class ToolApiBridge extends McpTool
 				),
 				'putPage' => array(
 					'suffix' => 'pages_update',
-					'description' => "Change fields of an existing page or blog post of a website. Give 'pageid' (rowid of the page, from api_websites_pages_list) and ONLY the fields to change, with their new value: title, description, keywords, content, lang, author_alias, status. To change a part of the content, read the page first with api_websites_pages_get and send the whole new content (HTML, inside a <section> tag, no PHP code). The alias (pageurl) cannot be changed here. The user confirms before anything is written.",
+					'description' => "Change fields of an existing page or blog post of a website. Give 'pageid' (rowid of the page, from api_websites_pages_list) and ONLY the fields to change, with their new value: title, description, keywords, content, lang, author_alias, status. To change only parts of the content (move, add, remove or fix elements), read the page first with api_websites_pages_get, then give content_replacements: a list of {old, new} applied in order in ONE call, where 'old' is an exact fragment of the content (long enough to be found only once) and 'new' its replacement (empty to remove it). To MOVE an element, give 2 replacements in the same call: one that removes it, one that adds it at its new place. Do not send the whole content for that. Give 'content' only to replace the whole content (HTML, inside a <section> tag). Never give both. PHP blocks (<?php ... ?>) of the current content must stay unchanged, or the change is refused. The alias (pageurl) cannot be changed here. The user confirms before anything is written.",
 					'write' => array(
 						'kind' => 'update',
 						'preview' => 'AIPreviewChangeRecord',
@@ -1945,7 +1942,12 @@ class ToolApiBridge extends McpTool
 						'lookup' => '',
 						// The website of the page is read from the page itself
 						'target_parent' => array('id' => 'fk_website'),
-						'fields' => array('title', 'description', 'keywords', 'content', 'lang', 'author_alias', 'status'),
+						'fields' => array('title', 'description', 'keywords', 'content', 'content_replacements', 'lang', 'author_alias', 'status'),
+						// Fields given as a list of objects instead of a string
+						'list_fields' => array('content_replacements' => array(
+							'old' => array('type' => 'string', 'description' => 'Exact fragment of the content to replace, found only once.'),
+							'new' => array('type' => 'string', 'description' => 'Replacement, empty to remove the fragment.')
+						)),
 						'required' => array('pageid'),
 						'right' => array('website', 'write')
 					),
@@ -1955,7 +1957,8 @@ class ToolApiBridge extends McpTool
 						'title' => "New title of the page.",
 						'description' => "New short description (meta description), 255 characters max.",
 						'keywords' => "New keywords, separated by commas.",
-						'content' => "New full HTML content of the page, inside a <section> tag. No PHP code.",
+						'content' => "New full HTML content of the page, inside a <section> tag. Never add or change PHP code: keep the existing PHP blocks (<?php ... ?>) exactly as they are.",
+						'content_replacements' => "Partial changes of the content, applied in order in one call (all or nothing): list of {\"old\": exact fragment of the current content copied character for character and found only once, \"new\": its replacement, empty string to remove it}. To move an element: [{\"old\": element, \"new\": \"\"}, {\"old\": fragment where to put it, \"new\": same fragment + element}]. Never with content. Never add or change PHP code.",
 						'lang' => "New language code of the page, e.g. 'en' or 'fr'.",
 						'author_alias' => "New name of the author to show.",
 						'status' => "0 offline, 1 online."
@@ -2556,6 +2559,10 @@ class ToolApiBridge extends McpTool
 			$this->enrichments[$key]['methods']['putLine'] = $this->lineMethod('update', $l[0], $l[1], $l[2], $l[3]);
 			$this->enrichments[$key]['methods']['deleteLine'] = $this->lineMethod('delete', $l[0], $l[1], $l[2], $l[3]);
 		}
+		$supplierOrderDeleteLine = $this->lineMethod('delete', 'supplier order', 'CommandeFournisseur', array('fournisseur', 'commande', 'creer'), 'product');
+		$supplierOrderDeleteLine['write']['read_right'] = array('fournisseur', 'commande', 'lire');
+		$supplierOrderDeleteLine['write']['access'] = array('fournisseur', 'commande_fournisseur', 'commande');
+		$this->enrichments['supplier_orders']['methods']['deleteLine'] = $supplierOrderDeleteLine;
 		// The REST postLine() of a contract reads every field: none is left unset.
 		$this->enrichments['contracts']['methods']['postLine'] = $this->addLineMethod('contract', 'api_contracts_list', 'Contrat', array('contrat', 'creer'), false, array(), array('price_base_type' => 'HT', 'localtax1_tx' => 0, 'localtax2_tx' => 0, 'remise_percent' => 0, 'date_start' => '', 'date_end' => '', 'subprice_excl_tax' => 0, 'info_bits' => 0, 'fk_fournprice' => null, 'pa_ht' => 0, 'array_options' => array(), 'fk_unit' => null, 'rang' => -1));
 		$this->enrichments['interventions']['methods']['postLine'] = $this->lineMethod('add', 'intervention', 'Fichinter', array('ficheinter', 'creer'), 'intervention');
@@ -2870,7 +2877,7 @@ class ToolApiBridge extends McpTool
 	 * @param  string   $class   Business class of the document.
 	 * @param  string[] $right   Right needed to write.
 	 * @param  string   $profile Line shape: 'product', 'supplier', 'contract' or 'intervention'.
-	 * @return array<string,mixed> Method enrichment.
+	 * @return array{suffix:string,description:string,write:array<string,mixed>,params:array<string,string>} Method enrichment.
 	 */
 	private function lineMethod($action, $label, $class, array $right, $profile)
 	{
@@ -3720,6 +3727,11 @@ class ToolApiBridge extends McpTool
 					$properties[$pname] = ['type' => 'object', 'description' => $pdesc];
 					continue;
 				}
+				if (!empty($meta['write']['list_fields'][$pname])) {
+					// A list of objects (e.g. the replacements of a content)
+					$properties[$pname] = ['type' => 'array', 'description' => $pdesc, 'items' => ['type' => 'object', 'properties' => $meta['write']['list_fields'][$pname]]];
+					continue;
+				}
 				$properties[$pname] = ['type' => 'string', 'description' => $pdesc];
 			}
 			foreach ((array) ($meta['write']['required'] ?? array()) as $pname) {
@@ -4335,6 +4347,9 @@ class ToolApiBridge extends McpTool
 		$this->unresolvedProducts = array();
 		if (!empty($write['supplier_workflow'])) {
 			return $this->normaliseSupplierOrderWorkflow($args, $write);
+		}
+		if (($write['object'] ?? '') === 'CommandeFournisseur' && ($write['line_action'] ?? '') === 'delete') {
+			return $this->normaliseSupplierOrderLineDeletion($args, $write);
 		}
 		if (!empty($write['update'])) {
 			return $this->normaliseUpdateArgs($args, $write);
@@ -6043,7 +6058,7 @@ class ToolApiBridge extends McpTool
 				if (isset($aliases[$name]) && in_array($aliases[$name], $write['fields'], true) && !isset($args[$aliases[$name]])) {
 					$name = $aliases[$name];
 				}
-				if (in_array($name, $write['fields'], true) && !is_array($value)) {
+				if (in_array($name, $write['fields'], true) && (!is_array($value) || !empty($write['list_fields'][$name]))) {
 					$out[$name] = $value;
 				} else {
 					$this->writeRefusedFields[] = (string) $name;
@@ -6097,6 +6112,58 @@ class ToolApiBridge extends McpTool
 		}
 
 		return $out;	// delete: the record alone
+	}
+
+	/**
+	 * Validate a supplier order line deletion before preview and execution.
+	 *
+	 * @param array<string,mixed> $args Arguments as received.
+	 * @param array<string,mixed> $write Method metadata.
+	 * @return array<string,mixed> REST arguments.
+	 */
+	private function normaliseSupplierOrderLineDeletion(array $args, array $write)
+	{
+		global $langs;
+
+		$langs->load('other');
+		$this->resetWriteState();
+		foreach (array($write['right'], $write['read_right']) as $right) {
+			if (!$this->user || !$this->user->hasRight($right[0], $right[1], $right[2])) {
+				throw new InvalidArgumentException($langs->transnoentitiesnoconv('NotEnoughPermissions'));
+			}
+		}
+		$ids = array('lineid', 'line_id', 'rowid');
+		$selectors = array('line', 'position', 'product_ref', 'product');
+		foreach ($args as $name => $value) {
+			if ($name === 'requestState') {
+				continue;
+			}
+			if (!in_array($name, array_merge(array('id', 'ref'), $ids, $selectors), true)
+				|| (!is_string($value) && !is_int($value))
+				|| trim((string) $value) === ''
+				|| ((in_array($name, $ids, true) || (is_numeric($value) && $name !== 'ref')) && (!ctype_digit((string) $value) || (int) $value <= 0))) {
+				throw new InvalidArgumentException($langs->transnoentitiesnoconv('AIWriteInvalidLineDeletionArgument', $name));
+			}
+		}
+		if (count(array_intersect(array_keys($args), array('id', 'ref'))) !== 1) {
+			throw new InvalidArgumentException($langs->transnoentitiesnoconv('AIWriteInvalidLineDeletionArgument', 'id / ref'));
+		}
+		// Do not silently prefer one line selector over another for a deletion.
+		if (count(array_intersect(array_keys($args), array_merge($ids, $selectors))) !== 1) {
+			throw new InvalidArgumentException($langs->transnoentitiesnoconv('AIWriteInvalidLineDeletionArgument', 'line / lineid'));
+		}
+		$given = $args['id'] ?? ($args['ref'] ?? '');
+		$this->writeTarget = $this->resolveWriteTarget($write, $given);
+		if (!$this->writeTarget || !$this->canAccessWriteObject($write['access'], (int) $this->writeTarget->id)) {
+			throw new InvalidArgumentException($langs->transnoentitiesnoconv('AIWriteRecordNotFound', 'supplier order', (string) $given));
+		}
+		$out = $this->normaliseLineArgs($args, $write, array('id' => (int) $this->writeTarget->id));
+		$error = $this->precheckTargetWrite($write, $out);
+		if ($error !== '') {
+			throw new InvalidArgumentException($error);
+		}
+
+		return $out;
 	}
 
 	/**
@@ -6803,8 +6870,16 @@ class ToolApiBridge extends McpTool
 
 		if ($kind === 'update') {
 			$changes = array();
+			// Partial changes of a content: show each fragment replaced and its replacement
+			if (isset($args['content_replacements']) && is_array($args['content_replacements'])) {
+				foreach ($args['content_replacements'] as $replacement) {
+					if (is_array($replacement)) {
+						$changes[] = 'content "'.dol_trunc((string) ($replacement['old'] ?? ''), 80).'" → "'.dol_trunc((string) ($replacement['new'] ?? ''), 80).'"';
+					}
+				}
+			}
 			foreach ((array) $write['fields'] as $name) {
-				if (!array_key_exists($name, $args)) {
+				if (!array_key_exists($name, $args) || is_array($args[$name])) {
 					continue;
 				}
 				$old = ($obj && isset($obj->$name) && !is_array($obj->$name)) ? (string) $obj->$name : '';
@@ -6976,6 +7051,26 @@ class ToolApiBridge extends McpTool
 			}
 			if (!array_intersect_key($args, array_flip((array) $write['fields']))) {
 				return $langs->transnoentitiesnoconv('AIWriteNothingToChange');
+			}
+			// Partial changes of a content: checked here so a fragment not found is refused before the confirmation
+			if (array_key_exists('content_replacements', $args)) {
+				if (array_key_exists('content', $args)) {
+					return $langs->transnoentitiesnoconv('AIWriteContentFragmentIncomplete');
+				}
+				if (property_exists($obj, 'content')) {
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
+					// @phan-suppress-next-line PhanUndeclaredProperty  The property's existence is tested above.
+					$replacement = dolApplyReplacementsToPageContent((string) $obj->content, $args['content_replacements']);
+					if ($replacement['error'] == 'badformat') {
+						return $langs->transnoentitiesnoconv('AIWriteContentFragmentIncomplete');
+					}
+					if ($replacement['error'] == 'notfound') {
+						return $langs->transnoentitiesnoconv('AIWriteContentFragmentNotFound', (string) ($replacement['index'] + 1));
+					}
+					if ($replacement['error'] == 'notunique') {
+						return $langs->transnoentitiesnoconv('AIWriteContentFragmentNotUnique', (string) ($replacement['index'] + 1), (string) $replacement['nbfound']);
+					}
+				}
 			}
 
 			return '';
@@ -7594,6 +7689,7 @@ class ToolApiBridge extends McpTool
 				}
 				$code = (int) $e->getCode();
 				$message = $e->getMessage();
+				$detail = '';
 				if ($message === '') {
 					// Core throws bare RestException(403) in places: give the model
 					// something to reason on instead of an empty string.
@@ -7613,12 +7709,19 @@ class ToolApiBridge extends McpTool
 					global $langs;
 					dol_syslog(get_class($this).'::execute '.$name.' '.$message, LOG_DEBUG);
 					$langs->loadLangs(array('main', 'errors'));
+					// A 403 that explains itself (e.g. PHP code of a website page changed) is kept for the model, so it can correct its call.
+					if ($code == 403 && $e->getMessage() !== '' && !preg_match('/^(Forbidden|Access not allowed)/i', $e->getMessage())) {
+						$detail = $e->getMessage();
+					}
 					$message = $langs->transnoentitiesnoconv($code == 404 ? 'ErrorRecordNotFound' : 'NotEnoughPermissions');
 				}
 				$output = [
 					"error" => $message,
 					"http_status" => ($code > 0 ? $code : 500)
 				];
+				if ($detail !== '') {
+					$output['detail'] = $detail;
+				}
 				// The API answers 404 for an object with no files: that is an empty
 				// list, unless the object itself does not exist. For a download,
 				// 404 means the file itself is missing: keep the error.
@@ -7682,5 +7785,47 @@ class ToolApiBridge extends McpTool
 			'suffix' => (string) substr($name, strlen('api_'.$key.'_')),
 			'label' => (string) ($this->enrichments[$key]['label'] ?? ($this->endpoints[$this->enrichments[$key]['endpoint'] ?? $key]['label'] ?? $key))
 		);
+	}
+
+	/**
+	 * REST API route a bridge tool calls (e.g. 'GET /websites/pages/{pageid}'), read from the @url tag
+	 * of the API method, or from the Restler convention for index/get/post/put/delete.
+	 *
+	 * @param  string $name Tool name.
+	 * @return string       HTTP verb and path, or '' when the tool calls no identifiable API route (generic tool...).
+	 */
+	public function toolApiUrl(string $name)
+	{
+		$this->getDefinitions();	// ensure routes are built
+		if (empty($this->routes[$name])) {
+			return '';
+		}
+		list($key, $method) = $this->routes[$name];
+		$epkey = (string) ($this->enrichments[$key]['endpoint'] ?? $key);
+		if (empty($this->endpoints[$epkey]) || !$this->resolveEndpointClass($epkey)) {
+			return '';
+		}
+		// With definitions read from the cache, the class name is known but its file (and the API base classes) are not loaded yet
+		$this->loadApiRuntime();
+		require_once $this->endpoints[$epkey]['path'];
+		if (!method_exists($this->endpoints[$epkey]['class'], $method)) {
+			return '';
+		}
+		$rm = new ReflectionMethod($this->endpoints[$epkey]['class'], $method);
+		if (preg_match('/@url\s+(GET|POST|PUT|PATCH|DELETE)\s+(\S*)/i', (string) $rm->getDocComment(), $reg)) {
+			$path = trim($reg[2], '/');
+			return dol_strtoupper($reg[1]).' /'.$epkey.($path !== '' ? '/'.$path : '');
+		}
+		$conventions = array('index' => 'GET', 'get' => 'GET {id}', 'post' => 'POST', 'put' => 'PUT {id}', 'delete' => 'DELETE {id}');
+		if (isset($conventions[$method])) {
+			$parts = explode(' ', $conventions[$method]);
+			return $parts[0].' /'.$epkey.(isset($parts[1]) ? '/'.$parts[1] : '');
+		}
+		// Restler auto routing: verb prefix + rest of the method name in lower case (postNewMessage => POST newmessage)
+		if (preg_match('/^(get|post|put|patch|delete)([A-Z]\w*)$/', $method, $reg)) {
+			return dol_strtoupper($reg[1]).' /'.$epkey.'/'.dol_strtolower($reg[2]);
+		}
+
+		return '';
 	}
 }
