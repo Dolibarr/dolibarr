@@ -1124,6 +1124,10 @@ class User extends CommonObject
 			$this->error = 'Try to call addrights on an object user with an empty id';
 			return -1;
 		}
+		if (getDolGlobalInt('MAIN_USER_PERMISSIONS_ONLY_BY_GROUPS')) {
+			$this->error = 'PermissionsManagedByGroupsOnly';
+			return -1;
+		}
 
 		$error = 0;
 		$whereforadd = '';
@@ -2237,6 +2241,11 @@ class User extends CommonObject
 	{
 		// phpcs:enable
 		global $conf;
+
+		// Permissions are given by user groups only
+		if (getDolGlobalInt('MAIN_USER_PERMISSIONS_ONLY_BY_GROUPS')) {
+			return 0;
+		}
 
 		$rd = array();
 		$num = 0;
