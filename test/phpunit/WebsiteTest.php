@@ -252,4 +252,31 @@ class WebsiteTest extends CommonClassTest
 		print __METHOD__." result secondImage=".$secondImage."\n";
 		$this->assertEquals('/mydir/image2.jpg', $secondImage, ' failed to get second image');
 	}
+
+	/**
+	 * testDolReplaceFragmentOfPageContent
+	 *
+	 * @return void
+	 */
+	public function testDolReplaceFragmentOfPageContent()
+	{
+		$content = "<section>\n  <img src=\"a.png\">\n  <p>Text</p>\n<?php echo 1; ?>\n<p>End</p></section>";
+
+		// Exact fragment found once
+		$result = dolReplaceFragmentOfPageContent($content, '<img src="a.png">', '');
+		$this->assertEquals(1, $result['nbfound']);
+		$this->assertEquals("<section>\n  \n  <p>Text</p>\n<?php echo 1; ?>\n<p>End</p></section>", $result['content']);
+
+		// Fragment copied with other spaces and line feeds
+		$result = dolReplaceFragmentOfPageContent($content, '<img src="a.png"> <p>Text</p>', 'X');
+		$this->assertEquals(1, $result['nbfound']);
+		$this->assertEquals("<section>\n  X\n<?php echo 1; ?>\n<p>End</p></section>", $result['content']);
+
+		// Fragment found several times, not found, or empty: content unchanged
+		$result = dolReplaceFragmentOfPageContent($content, '<p>', 'X');
+		$this->assertEquals(2, $result['nbfound']);
+		$this->assertEquals($content, $result['content']);
+		$this->assertEquals(0, dolReplaceFragmentOfPageContent($content, 'absent', 'X')['nbfound']);
+		$this->assertEquals(0, dolReplaceFragmentOfPageContent($content, '  ', 'X')['nbfound']);
+	}
 }
