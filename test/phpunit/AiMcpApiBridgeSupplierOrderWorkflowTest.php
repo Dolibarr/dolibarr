@@ -478,6 +478,7 @@ class AiSupplierWorkflowConfirmationDbFixture
 	 * @param mixed $result Query result.
 	 * @return int
 	 */
+	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps -- Implements the DoliDB method name.
 	public function affected_rows($result = null)
 	{
 		return 0;
