@@ -79,6 +79,13 @@ if ($action == 'update') {
 		}
 	}
 
+	if (GETPOSTISSET('AI_CHAT_CONTEXT_MAX_SIZE')) {
+		$res = dolibarr_set_const($db, "AI_CHAT_CONTEXT_MAX_SIZE", max(0, GETPOSTINT("AI_CHAT_CONTEXT_MAX_SIZE")), 'int', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error++;
+		}
+	}
+
 	if (GETPOSTISSET('AI_LOG_RETENTION')) {
 		$res = dolibarr_set_const($db, "AI_LOG_RETENTION", GETPOST("AI_LOG_RETENTION"), 'int', 0, '', $conf->entity);
 		if ($res <= 0) {
@@ -281,10 +288,12 @@ if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	print '<tr class="oddeven">';
 	print '<td>' . $form->textwithpicto($langs->trans('ObfuscatePIIData'), $langs->trans("RedactionHelp")) . '</td>';
 	print '<td>';
+	$labelredaction1 = $langs->trans("RedactionSensitiveData").' ('.$langs->trans("Recommended").')';
+	$labelredaction2 = $langs->trans("RedactionSensitiveDataAndThirdparties").' ('.$langs->trans("VersionExperimental").')';
 	$redaction_options = [
 		'0' => $langs->trans("RedactionNone"),
-		'1' => $langs->trans("RedactionSensitiveData"),
-		'2' => $langs->trans("RedactionSensitiveDataAndThirdparties")
+		'1' => array('label' => $labelredaction1, 'data-html' => dolPrintHTML($langs->trans("RedactionSensitiveData")).' <span class="opacitymedium">('.$langs->trans("Recommended").')</span>'),
+		'2' => array('label' => $labelredaction2, 'data-html' => dolPrintHTML($langs->trans("RedactionSensitiveDataAndThirdparties")).' <span class="opacitymedium">('.$langs->trans("VersionExperimental").')</span>')
 	];
 	print $form->selectarray('AI_PRIVACY_REDACTION', $redaction_options, getDolGlobalInt('AI_PRIVACY_REDACTION', 0), 0, 0, 0, '', 0, 0, 0, '', 'minwidth300');
 	print '</td>';
@@ -307,6 +316,12 @@ if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	print '<tr class="oddeven">';
 	print '<td>' . $form->textwithpicto($langs->trans("AIContextAutoExchanges"), $langs->trans("AIContextAutoExchangesHelp")) . '</td>';
 	print '<td><input class="width50" type="number" min="0" name="AI_CHAT_CONTEXT_AUTO_EXCHANGES" value="' . getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 2) . '"></td>';
+	print '</tr>';
+
+	// Max size of the context sent back with the question
+	print '<tr class="oddeven">';
+	print '<td>' . $form->textwithpicto($langs->trans("AIContextMaxSize"), $langs->trans("AIContextMaxSizeHelp")) . '</td>';
+	print '<td><input class="width100" type="number" min="0" name="AI_CHAT_CONTEXT_MAX_SIZE" value="' . getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 200000) . '"></td>';
 	print '</tr>';
 
 	// API tools in the palette of the chat input (the palette itself is always on)

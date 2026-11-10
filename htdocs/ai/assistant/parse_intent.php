@@ -883,7 +883,8 @@ try {
 					}
 				}
 
-				$histBudget = 6000;
+				$histBudget = getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 200000);	// in characters
+				$histTurnMaxSize = $histBudget;	// cap of one turn, same as the whole budget
 				foreach ($histTurns as $turn) {
 					if (is_array($turn) && !empty($turn['id'])) {
 						$turn = $histRows[(int) $turn['id']] ?? null;
@@ -901,8 +902,8 @@ try {
 						$hdata = json_decode((string) preg_replace('/^\[[^\]]*\]\s*/', '', $htext), true);
 						$htext = $guard->maskNames($htext, array_merge($aiNamesToMask, aiThirdpartyNamesToMask($db, $user, $htext, $dynamicStopWords, $hdata)));
 					}
-					if (dol_strlen($htext) > 1500) {
-						$htext = dol_substr($htext, 0, 1500).' ...';
+					if (dol_strlen($htext) > $histTurnMaxSize) {
+						$htext = dol_substr($htext, 0, $histTurnMaxSize).' ...';
 					}
 					if ($guard) {
 						$htext = $guard->mask($htext);
@@ -1244,7 +1245,10 @@ try {
 				$hasPdf = $hasPdf || ($att['mime'] === 'application/pdf');
 			}
 			$attachmentWords = '/\b(?:file|files|pdf|document|image_url|image|attachment|content.?type|mime|multimodal|vision)\b/i';
-			if (!empty($attachments) && preg_match($attachmentWords, $reason)) {
+			if (isset($adapter) && $adapter->lastTruncated) {
+				// The answer was cut by the max tokens limit: retrying the same request gives the same cut answer
+				$message = $langs->transnoentitiesnoconv('AIAnswerTruncated', $reason);
+			} elseif (!empty($attachments) && preg_match($attachmentWords, $reason)) {
 				$message = $langs->transnoentitiesnoconv($hasPdf ? 'AIProviderRejectedPdf' : 'AIProviderRejectedAttachment', getAiAssistantProviderLabel(), $reason);
 			} elseif (UniversalLLMAdapter::isModelUnavailableError($reason)) {
 				// The chosen model is unknown or retired at the provider: rephrasing

@@ -413,6 +413,10 @@ if ($search_type_id) {
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+// Add where from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " GROUP BY u.rowid, u.lastname, u.firstname, u.login, u.email, u.admin, u.photo, u.salary, u.fk_soc, u.statut,";
 $sql .= " s.rowid, s.fk_account, s.paye, s.fk_user, s.amount, s.salary, s.label, s.datesp, s.dateep, s.fk_typepayment, s.fk_bank,";
 $sql .= " ba.rowid, ba.ref, ba.number, ba.account_number, ba.fk_accountancy_journal, ba.label, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos,";
