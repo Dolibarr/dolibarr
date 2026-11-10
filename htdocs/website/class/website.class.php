@@ -1467,8 +1467,8 @@ class Website extends CommonObject
 				$collation = '';
 				$infotable = $this->db->DDLInfoTable(MAIN_DB_PREFIX.'website_page');
 				foreach ($infotable as $infocolumn) {
-					if ($infocolumn[0] == 'content') {
-						$collation = (string) $infocolumn[2];
+					if ($infocolumn[0] == 'content') { // @phan-suppress-current-line PhanTypeMismatchDimFetch The DDLInfoTable() rows are numerically indexed at runtime
+						$collation = (string) $infocolumn[2]; // @phan-suppress-current-line PhanTypeMismatchDimFetch
 						break;
 					}
 				}

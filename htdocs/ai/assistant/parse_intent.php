@@ -822,6 +822,7 @@ try {
 			}
 		}
 		$adapterType = $servicesList[$serviceKey]['adapter_type'] ?? 'openai';
+		$adapter = null;
 
 
 		// The request.

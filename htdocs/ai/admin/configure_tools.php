@@ -300,7 +300,7 @@ if (empty($groupedNormalTools) && empty($groupedSystemTools)) {
 				$popupTitle = $name;
 				$toolObj = $mcpHandler->toolsByName[$name] ?? null;
 				if (is_object($toolObj) && method_exists($toolObj, 'toolApiUrl')) {
-					$apiUrl = (string) $toolObj->toolApiUrl($name);
+					$apiUrl = (string) $toolObj->toolApiUrl($name); // @phan-suppress-current-line PhanUndeclaredMethod The method exists only on ApiBridgeTool tools, guarded by method_exists() above
 					if ($apiUrl !== '') {
 						$popupTitle .= ' (' . $apiUrl . ')';
 					}
