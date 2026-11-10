@@ -293,6 +293,8 @@ class Categories extends DolibarrApi
 	/**
 	 * Update category
 	 *
+	 * The type of a category cannot be changed. A 'type' field is accepted only if it matches the current type.
+	 *
 	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param 	int   		$id             Id of category to update
@@ -331,7 +333,11 @@ class Categories extends DolibarrApi
 			}
 
 			if ($field == 'type') {
-				$this->category->type = $this->_getTypeId($value);
+				$type_id = $this->_getTypeId($value);
+				if ((string) (int) $type_id !== (string) (int) $this->category->type) {
+					throw new RestException(400, 'The type of a category cannot be changed');
+				}
+				$this->category->type = $type_id;
 				continue;
 			}
 
