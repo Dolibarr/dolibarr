@@ -797,9 +797,10 @@ class dolReceiptPrinter extends Printer
 			$nboflines = count($vals);
 			for ($tplline = 0; $tplline < $nboflines; $tplline++) {
 				//var_dump($vals[$tplline]['value']);
+				$tagvalue = $vals[$tplline]['value'] ?? '';	// A tag without text has no 'value' key
 				switch ($vals[$tplline]['tag']) {
 					case 'DOL_PRINT_TEXT':
-						$this->printer->text($vals[$tplline]['value']);
+						$this->printer->text($tagvalue);
 						break;
 					case 'DOL_PRINT_OBJECT_LINES':
 						foreach ($object->lines as $line) {
@@ -879,7 +880,7 @@ class dolReceiptPrinter extends Printer
 						$this->printer->text($title.$spaces.str_pad(price($object->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
 						break;
 					case 'DOL_PRINT_CURR_DATE':
-						if (strlen($vals[$tplline]['value']) < 2) {
+						if (dol_strlen($tagvalue) < 2) {
 							$this->printer->text(date('d/m/Y H:i:s')."\n");
 						} else {
 							$this->printer->text(date($vals[$tplline]['value'])."\n");
@@ -910,9 +911,9 @@ class dolReceiptPrinter extends Printer
 						// $vals[$tplline]['value'] -> barcode($content, $type)
 						// var_dump($vals[$tplline]['value']);
 						try {
-							$this->printer->barcode($vals[$tplline]['value']);
+							$this->printer->barcode($tagvalue);
 						} catch (Exception $e) {
-							$this->errors[] = 'Invalid Barcode value: '.$vals[$tplline]['value'];
+							$this->errors[] = 'Invalid Barcode value: '.$tagvalue;
 							$error++;
 						}
 						break;
@@ -930,7 +931,7 @@ class dolReceiptPrinter extends Printer
 						break;
 					case 'DOL_PRINT_QRCODE':
 						// $vals[$tplline]['value'] -> qrCode($content, $ec, $size, $model)
-						$this->printer->qrcode($vals[$tplline]['value']);
+						$this->printer->qrcode($tagvalue);
 						break;
 					case 'DOL_CUT_PAPER_FULL':
 						$this->printer->cut(Printer::CUT_FULL);
@@ -1028,7 +1029,7 @@ class dolReceiptPrinter extends Printer
 
 						if (!$reshook || $reshook < 0) {
 							$this->printer->text($vals[$tplline]['tag']);
-							$this->printer->text($vals[$tplline]['value']);
+							$this->printer->text($tagvalue);
 							$this->errors[] = 'UnknowTag: &lt;'.strtolower($vals[$tplline]['tag']).'&gt;';
 							$error++;
 						}
