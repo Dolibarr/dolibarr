@@ -605,7 +605,7 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
  *
  * @param		string 		$htmlname			HTML name of element to insert key into
  * @param		string		$htmlnameofbutton	HTML name of button
- * @param		int			$generic			1=Return a generic pass, 0=Return a pass following setup rules
+ * @param		int<0,2>	$generic			0=Return a pass following setup rules, 1=Return a generic key (32 chars), 2=Return a generic password (16 chars)
  * @return		string		    				HTML javascript code to set a password
  * @see getRandomPassword()
  */
@@ -624,7 +624,7 @@ function dolJSToSetRandomPassword($htmlname, $htmlnameofbutton = 'generate_token
 				console.log(\'dolJSToSetRandomPassword: We click on the button '.dol_escape_js($htmlnameofbutton).' to suggest a key. anti-csrf-currenttoken is \'+currenttoken+\'. We will fill '.dol_escape_js($htmlname).'\');
 				jQuery.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
             		action: \'getrandompassword\',
-            		generic: '.($generic ? '1' : '0').',
+            		generic: '.((int) $generic).',
 					token: currenttoken
 				},
 				function(result) {
