@@ -1762,7 +1762,9 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 			// dayevent_YYYYMMDD and .sortable put back the drag of an event to another day, which the
 			// hourly grid of the week took away: the drag&drop JS reads the id of the closest .dayevent,
 			// and card.php expects a value that starts with dayevent_ (see its actionmove=mupdate block).
-			print '<div id="dayevent_'.$dateint.'" class="dayevent sortable centpercent agendacell" style="height: auto;">';
+			// min-height because jQuery sortable takes its drop zone from this div, not from the cell:
+			// a day with no all-day event is 0 pixel high with height: auto, so it can never be dropped on.
+			print '<div id="dayevent_'.$dateint.'" class="dayevent sortable centpercent agendacell" style="height: auto; min-height: 60px;">';
 			if (!empty($weekhourlybuckets[$iter_day]['allday'])) {
 				foreach ($weekhourlybuckets[$iter_day]['allday'] as $eventhtml) {
 					print $eventhtml;
