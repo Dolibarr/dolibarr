@@ -1285,7 +1285,7 @@ class Website extends CommonObject
 	 */
 	public function importWebSite($pathtofile)
 	{
-		global $conf, $mysoc, $user;
+		global $conf, $langs, $mysoc, $user;
 
 		$error = 0;
 
@@ -1459,6 +1459,42 @@ class Website extends CommonObject
 		$sqlfile = $conf->website->dir_temp."/".$object->ref.'/website_pages.sql';
 
 		$result = dolReplaceInFile($sqlfile, $arrayreplacement);
+
+		// Warn if source contains 4-byte UTF-8 chars (emojis...) but the target MySQL table or connection charset (utf8/utf8mb3) can't store them
+		if (in_array($this->db->type, array('mysql', 'mysqli'))) {
+			$sqlfilecontent = (string) file_get_contents($sqlfile);
+			if (preg_match('/[\xF0-\xF4][\x80-\xBF]{3}/', $sqlfilecontent)) {
+				$collation = '';
+				$infotable = $this->db->DDLInfoTable(MAIN_DB_PREFIX.'website_page');
+				foreach ($infotable as $infocolumn) {
+					if ($infocolumn[0] == 'content') {
+						$collation = (string) $infocolumn[2];
+						break;
+					}
+				}
+				if ($collation && !preg_match('/^utf8mb4/i', $collation)) {
+					$langs->load("website");
+					$this->warnings[] = $langs->trans("WarningWebsiteTemplateHas4BytesCharsButDatabaseNotUtf8mb4", MAIN_DB_PREFIX.'website_page', $collation);
+					dol_syslog(__METHOD__." The sql file contains 4-byte UTF-8 chars but table collation is ".$collation, LOG_WARNING);
+				}
+				// The connection charset must also be utf8mb4, else 4-byte chars are rejected before reaching the table
+				$connectioncharset = '';
+				$resqlcharset = $this->db->query("SHOW SESSION VARIABLES LIKE 'character_set_connection'");
+				if ($resqlcharset) {
+					$objcharset = $this->db->fetch_object($resqlcharset);
+					if ($objcharset) {
+						$connectioncharset = (string) $objcharset->Value;
+					}
+					$this->db->free($resqlcharset);
+				}
+				if ($connectioncharset && !preg_match('/^utf8mb4/i', $connectioncharset)) {
+					$langs->load("website");
+					$this->warnings[] = $langs->trans("WarningWebsiteTemplateHas4BytesCharsButConnectionNotUtf8mb4", $connectioncharset);
+					dol_syslog(__METHOD__." The sql file contains 4-byte UTF-8 chars but database connection charset is ".$connectioncharset, LOG_WARNING);
+				}
+			}
+			unset($sqlfilecontent);
+		}
 
 		$this->db->begin();
 

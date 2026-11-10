@@ -29,10 +29,7 @@ if (!defined('NOREQUIREDB')) {
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/modulebuilder.lib.php';
-require_once dirname(__FILE__).'/../../htdocs/modulebuilder/class/SyncReport.class.php';
-require_once dirname(__FILE__).'/../../htdocs/modulebuilder/class/RightsSyncCommand.class.php';
 require_once dirname(__FILE__).'/../../htdocs/modulebuilder/class/PermissionsBlock.class.php';
-require_once dirname(__FILE__).'/../../htdocs/modulebuilder/class/RightsSyncService.class.php';
 
 /**
  * Class for PHPUnit tests
@@ -137,72 +134,6 @@ class ModuleBuilderRightsSyncTest extends CommonClassTest
 		}
 		$this->fixtures = array();
 		parent::tearDown();
-	}
-
-	/**
-	 * A report with conflicts reports no write and maps to the legacy -1 return code.
-	 *
-	 * @return void
-	 */
-	public function testSyncReportConflictSemantics()
-	{
-		$clean = new SyncReport(12, 0, array(), array());
-		$this->assertFalse($clean->hasConflicts());
-		$this->assertFalse($clean->hasWarnings());
-		$this->assertFalse($clean->isNoop());
-		$this->assertSame(1, $clean->toLegacyReturnCode());
-
-		$blocked = new SyncReport(0, 0, array('dynamic code detected'), array());
-		$this->assertTrue($blocked->hasConflicts());
-		$this->assertTrue($blocked->isNoop());
-		$this->assertSame(-1, $blocked->toLegacyReturnCode());
-
-		// A warning is non-blocking: the write happened, the legacy code stays 1
-		$warned = new SyncReport(12, 0, array(), array('right #0 carries unsupported index 2'));
-		$this->assertTrue($warned->hasWarnings());
-		$this->assertFalse($warned->hasConflicts());
-		$this->assertSame(1, $warned->toLegacyReturnCode());
-
-		$skippedReport = new SyncReport(0, 1, array(), array());
-		$this->assertSame(1, $skippedReport->skipped);
-		$this->assertTrue($skippedReport->isNoop());
-	}
-
-	/**
-	 * Each factory pins one scope/action pair, and the constructor refuses an incomplete command.
-	 *
-	 * @return void
-	 */
-	public function testRightsSyncCommandFactories()
-	{
-		$perms = array(array(1 => 'Read', 4 => 'myobject', 5 => 'read'));
-
-		$cmd = RightsSyncCommand::forObjectCreation('MyModule', '/tmp/modMyModule.class.php', $perms, 'MyObject');
-		$this->assertSame(RightsSyncCommand::SCOPE_OBJECT, $cmd->scope);
-		$this->assertSame(RightsSyncCommand::ACTION_ADD, $cmd->actionType);
-		$this->assertSame('MyObject', $cmd->objectName);
-		$this->assertNull($cmd->rightKey);
-
-		$cmd = RightsSyncCommand::forObjectDeletion('MyModule', '/tmp/modMyModule.class.php', $perms, 'MyObject');
-		$this->assertSame(RightsSyncCommand::SCOPE_OBJECT, $cmd->scope);
-		$this->assertSame(RightsSyncCommand::ACTION_DELETE, $cmd->actionType);
-
-		$cmd = RightsSyncCommand::forRightAddition('MyModule', '/tmp/modMyModule.class.php', $perms, 'myobject', 'Export MyObject', 'export');
-		$this->assertSame(RightsSyncCommand::SCOPE_RIGHT, $cmd->scope);
-		$this->assertSame(RightsSyncCommand::ACTION_ADD, $cmd->actionType);
-		$this->assertSame('export', $cmd->rightCrud);
-
-		$cmd = RightsSyncCommand::forRightUpdate('MyModule', '/tmp/modMyModule.class.php', $perms, 0, 'myobject', 'Read it', 'read');
-		$this->assertSame(RightsSyncCommand::ACTION_UPDATE, $cmd->actionType);
-		$this->assertSame(0, $cmd->rightKey);
-
-		$cmd = RightsSyncCommand::forRightDeletion('MyModule', '/tmp/modMyModule.class.php', $perms, 0);
-		$this->assertSame(RightsSyncCommand::ACTION_DELETE, $cmd->actionType);
-		$this->assertSame('', $cmd->objectName);
-
-		// An empty module name is never a valid target
-		$this->expectException(\InvalidArgumentException::class);
-		RightsSyncCommand::forRightDeletion('', '/tmp/modMyModule.class.php', $perms, 0);
 	}
 
 	/**
@@ -524,12 +455,9 @@ class ModuleBuilderRightsSyncTest extends CommonClassTest
 	public function testObjectCreationDeclaresThreeRights()
 	{
 		$path = $this->makeDescriptorFixture('');
-		$report = (new DescriptorRightsSyncService())->sync(
-			RightsSyncCommand::forObjectCreation('MyModule', $path, array(), 'MyObject')
-		);
+		$report = PermissionsBlock::sync($path, PermissionsBlock::SYNC_ADD_OBJECT, array(), 'MyModule', 'MyObject');
 
-		$this->assertFalse($report->hasConflicts());
-		$this->assertGreaterThan(0, $report->updatedLines);
+		$this->assertSame(array(), $report['conflicts']);
 
 		$rights = $this->parseRenderedRights($path);
 		$this->assertCount(3, $rights);
@@ -549,12 +477,10 @@ class ModuleBuilderRightsSyncTest extends CommonClassTest
 		$existing = array(array(1 => 'Read myobject', 4 => 'myobject', 5 => 'read'));
 		$before = (string) file_get_contents($path);
 
-		$report = (new DescriptorRightsSyncService())->sync(
-			RightsSyncCommand::forObjectCreation('MyModule', $path, $existing, 'MyObject')
-		);
+		$report = PermissionsBlock::sync($path, PermissionsBlock::SYNC_ADD_OBJECT, $existing, 'MyModule', 'MyObject');
 
-		$this->assertSame(1, $report->skipped);
-		$this->assertFalse($report->hasConflicts());
+		$this->assertTrue($report['skipped']);
+		$this->assertSame(array(), $report['conflicts']);
 		$this->assertSame($before, (string) file_get_contents($path));
 	}
 
@@ -572,9 +498,7 @@ class ModuleBuilderRightsSyncTest extends CommonClassTest
 			array(1 => 'Write beta', 4 => 'beta', 5 => 'write'),
 		);
 
-		(new DescriptorRightsSyncService())->sync(
-			RightsSyncCommand::forObjectDeletion('MyModule', $path, $existing, 'Alpha')
-		);
+		PermissionsBlock::sync($path, PermissionsBlock::SYNC_DELETE_OBJECT, $existing, 'MyModule', 'Alpha');
 
 		$rights = $this->parseRenderedRights($path);
 		$this->assertCount(2, $rights);
@@ -595,11 +519,9 @@ class ModuleBuilderRightsSyncTest extends CommonClassTest
 			array(1 => 'Write alpha', 4 => 'alpha', 5 => 'write'),
 		);
 
-		$report = (new DescriptorRightsSyncService())->sync(
-			RightsSyncCommand::forRightUpdate('MyModule', $path, $existing, 1, 'alpha', 'Edit alpha entries', 'write')
-		);
+		$report = PermissionsBlock::sync($path, PermissionsBlock::SYNC_UPDATE_RIGHT, $existing, 'MyModule', 'alpha', 1, 'Edit alpha entries', 'write');
 
-		$this->assertFalse($report->hasConflicts());
+		$this->assertSame(array(), $report['conflicts']);
 
 		$rights = $this->parseRenderedRights($path);
 		$this->assertCount(2, $rights);
@@ -620,17 +542,13 @@ class ModuleBuilderRightsSyncTest extends CommonClassTest
 		);
 
 		$path = $this->makeDescriptorFixture('');
-		(new DescriptorRightsSyncService())->sync(
-			RightsSyncCommand::forRightDeletion('MyModule', $path, $twins, 1)
-		);
+		PermissionsBlock::sync($path, PermissionsBlock::SYNC_DELETE_RIGHT, $twins, 'MyModule', '', 1);
 		$rights = $this->parseRenderedRights($path);
 		$this->assertCount(1, $rights);
 		$this->assertSame('read', $rights[0][5]);
 
 		$path = $this->makeDescriptorFixture('');
-		(new DescriptorRightsSyncService())->sync(
-			RightsSyncCommand::forRightUpdate('MyModule', $path, $twins, 1, 'alpha', 'Renamed second', 'write')
-		);
+		PermissionsBlock::sync($path, PermissionsBlock::SYNC_UPDATE_RIGHT, $twins, 'MyModule', 'alpha', 1, 'Renamed second', 'write');
 		$rights = $this->parseRenderedRights($path);
 		$this->assertSame('Renamed second', $rights[1][1]);
 		$this->assertSame('Same label', $rights[0][1]);
@@ -647,11 +565,9 @@ class ModuleBuilderRightsSyncTest extends CommonClassTest
 		$existing = array(array(1 => 'Read alpha', 4 => 'alpha', 5 => 'read'));
 		$before = (string) file_get_contents($path);
 
-		$report = (new DescriptorRightsSyncService())->sync(
-			RightsSyncCommand::forRightDeletion('MyModule', $path, $existing, 42)
-		);
+		$report = PermissionsBlock::sync($path, PermissionsBlock::SYNC_DELETE_RIGHT, $existing, 'MyModule', '', 42);
 
-		$this->assertTrue($report->hasConflicts());
+		$this->assertNotEmpty($report['conflicts']);
 		$this->assertSame($before, (string) file_get_contents($path));
 	}
 
@@ -666,11 +582,9 @@ class ModuleBuilderRightsSyncTest extends CommonClassTest
 		$path = $this->makeDescriptorFixture($inner);
 		$before = (string) file_get_contents($path);
 
-		$report = (new DescriptorRightsSyncService())->sync(
-			RightsSyncCommand::forRightAddition('MyModule', $path, array(), 'alpha', 'Read alpha', 'read')
-		);
+		$report = PermissionsBlock::sync($path, PermissionsBlock::SYNC_ADD_RIGHT, array(), 'MyModule', 'alpha', null, 'Read alpha', 'read');
 
-		$this->assertTrue($report->hasConflicts());
+		$this->assertNotEmpty($report['conflicts']);
 		$this->assertSame($before, (string) file_get_contents($path));
 	}
 
@@ -690,11 +604,9 @@ class ModuleBuilderRightsSyncTest extends CommonClassTest
 		file_put_contents($path, "<?php\nclass modNoBlock {}\n");
 		$before = (string) file_get_contents($path);
 
-		$report = (new DescriptorRightsSyncService())->sync(
-			RightsSyncCommand::forRightAddition('MyModule', $path, array(), 'alpha', 'Read alpha', 'read')
-		);
+		$report = PermissionsBlock::sync($path, PermissionsBlock::SYNC_ADD_RIGHT, array(), 'MyModule', 'alpha', null, 'Read alpha', 'read');
 
-		$this->assertTrue($report->hasConflicts());
+		$this->assertNotEmpty($report['conflicts']);
 		$this->assertSame($before, (string) file_get_contents($path));
 	}
 
@@ -709,11 +621,9 @@ class ModuleBuilderRightsSyncTest extends CommonClassTest
 		$existing = array(array(1 => 'Read alpha', 4 => 'alpha', 5 => 'read'));
 		$before = (string) file_get_contents($path);
 
-		$report = (new DescriptorRightsSyncService())->sync(
-			RightsSyncCommand::forRightAddition('MyModule', $path, $existing, 'alpha', 'Read alpha again', 'read')
-		);
+		$report = PermissionsBlock::sync($path, PermissionsBlock::SYNC_ADD_RIGHT, $existing, 'MyModule', 'alpha', null, 'Read alpha again', 'read');
 
-		$this->assertTrue($report->hasConflicts());
+		$this->assertNotEmpty($report['conflicts']);
 		$this->assertSame($before, (string) file_get_contents($path));
 	}
 
@@ -727,12 +637,10 @@ class ModuleBuilderRightsSyncTest extends CommonClassTest
 		$path = $this->makeDescriptorFixture('');
 		$existing = array(array(1 => 'Read alpha', 2 => 'r', 3 => 0, 4 => 'alpha', 5 => 'read'));
 
-		$report = (new DescriptorRightsSyncService())->sync(
-			RightsSyncCommand::forRightAddition('MyModule', $path, $existing, 'alpha', 'Write alpha', 'write')
-		);
+		$report = PermissionsBlock::sync($path, PermissionsBlock::SYNC_ADD_RIGHT, $existing, 'MyModule', 'alpha', null, 'Write alpha', 'write');
 
-		$this->assertFalse($report->hasConflicts());
-		$this->assertTrue($report->hasWarnings());
+		$this->assertSame(array(), $report['conflicts']);
+		$this->assertNotEmpty($report['warnings']);
 		$this->assertCount(2, $this->parseRenderedRights($path));
 		$this->assertStringNotContainsString('[2]', (string) file_get_contents($path));
 	}
@@ -832,31 +740,26 @@ class ModuleBuilderRightsSyncTest extends CommonClassTest
 		$path = $this->makeDescriptorFixture('');
 		$traversal = dirname($path).'/../'.basename(dirname($path)).'/'.basename($path);
 
-		$report = (new DescriptorRightsSyncService())->sync(
-			RightsSyncCommand::forObjectCreation('Acme', $traversal, array(), 'Invoice')
-		);
+		$report = PermissionsBlock::sync($traversal, PermissionsBlock::SYNC_ADD_OBJECT, array(), 'Acme', 'Invoice');
 
-		$this->assertTrue($report->hasConflicts());
-		$this->assertStringContainsString('parent directory', $report->conflicts[0]);
+		$this->assertNotEmpty($report['conflicts']);
+		$this->assertStringContainsString('parent directory', $report['conflicts'][0]);
 	}
 
 	/**
-	 * Removing the last right writes an empty block: no line written, yet the file did change.
+	 * Removing the last right writes an empty block: the file did change.
 	 *
 	 * @return void
 	 */
 	public function testRemovingLastRightWritesAnEmptyBlock()
 	{
 		$path = $this->makeDescriptorFixture('');
-		$service = new DescriptorRightsSyncService();
-		$service->sync(RightsSyncCommand::forObjectCreation('Acme', $path, array(), 'Invoice'));
+		PermissionsBlock::sync($path, PermissionsBlock::SYNC_ADD_OBJECT, array(), 'Acme', 'Invoice');
 
 		$before = md5_file($path);
-		$report = $service->sync(
-			RightsSyncCommand::forRightDeletion('Acme', $path, array(array(1 => 'Read invoice', 4 => 'invoice', 5 => 'read')), 0)
-		);
+		$report = PermissionsBlock::sync($path, PermissionsBlock::SYNC_DELETE_RIGHT, array(array(1 => 'Read invoice', 4 => 'invoice', 5 => 'read')), 'Acme', '', 0);
 
-		$this->assertTrue($report->isNoop());
+		$this->assertSame(array(), $report['conflicts']);
 		$this->assertNotSame($before, md5_file($path));
 		$this->assertSame(array(), $this->parseRenderedRights($path));
 	}
@@ -871,12 +774,9 @@ class ModuleBuilderRightsSyncTest extends CommonClassTest
 		$path = $this->makeDescriptorFixture('');
 		$before = (string) file_get_contents($path);
 
-		$report = (new DescriptorRightsSyncService())->sync(
-			RightsSyncCommand::forRightAddition('Acme', $path, array(), '', 'Orphan right', 'read')
-		);
+		$report = PermissionsBlock::sync($path, PermissionsBlock::SYNC_ADD_RIGHT, array(), 'Acme', '', null, 'Orphan right', 'read');
 
-		$this->assertTrue($report->hasConflicts());
-		$this->assertSame(0, $report->updatedLines);
+		$this->assertNotEmpty($report['conflicts']);
 		$this->assertSame($before, (string) file_get_contents($path));
 	}
 }
