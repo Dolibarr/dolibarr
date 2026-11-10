@@ -4,6 +4,7 @@
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  * Copyright (C) 2026		Nick Fragoulis
+ * Copyright (C) 2026		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 /**
  * API class for ticket object
+ *
+ * @since	8.0.0	Initial implementation
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
@@ -70,6 +73,8 @@ class Tickets extends DolibarrApi
 	 *
 	 * Return an array with ticket information
 	 *
+	 * @since	8.0.0	Initial implementation
+	 *
 	 * @param	int				$id				ID of ticket
 	 * @param   int         	$contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
 	 * @return  Object							Object with cleaned properties
@@ -87,6 +92,8 @@ class Tickets extends DolibarrApi
 	 * Get properties of a Ticket object from track id
 	 *
 	 * Return an array with ticket information
+	 *
+	 * @since	8.0.0	Initial implementation
 	 *
 	 * @param	string			$track_id		Tracking ID of ticket
 	 * @param   int         	$contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
@@ -107,6 +114,8 @@ class Tickets extends DolibarrApi
 	 * Get properties of a Ticket object from ref
 	 *
 	 * Return an array with ticket information
+	 *
+	 * @since	8.0.0	Initial implementation
 	 *
 	 * @param	string			$ref			Reference for ticket
 	 * @param   int         	$contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
@@ -217,6 +226,8 @@ class Tickets extends DolibarrApi
 	 * List tickets
 	 *
 	 * Get a list of tickets
+	 *
+	 * @since	8.0.0	Initial implementation
 	 *
 	 * @param int       $socid      		Filter list with thirdparty ID
 	 * @param string	$sortfield			Sort field
@@ -350,6 +361,8 @@ class Tickets extends DolibarrApi
 	 *   { "id": int (or "contactid"), "type": string (contact type code), "source": "external"|"internal" (default external) }
 	 * The whole creation is atomic: if any contact is invalid, the ticket is not created (rollback + error).
 	 *
+	 * @since	8.0.0	Initial implementation
+	 *
 	 * @param array $request_data   Request data
 	 * @phan-param ?array<string,mixed> $request_data
 	 * @phpstan-param ?array<string,mixed> $request_data
@@ -432,6 +445,8 @@ class Tickets extends DolibarrApi
 
 	/**
 	 * Add a new message to an existing ticket identified by property ->track_id into request.
+	 *
+	 * @since	8.0.0	Initial implementation
 	 *
 	 * @param array $request_data   Request data
 	 * @phan-param ?array<string,mixed> $request_data
@@ -572,6 +587,8 @@ class Tickets extends DolibarrApi
 	/**
 	 * Update ticket
 	 *
+	 * @since	8.0.0	Initial implementation
+	 *
 	 * @param 	int   	$id             	Id of ticket to update
 	 * @param 	array 	$request_data   	Data
 	 * @phan-param ?array<string,string> $request_data
@@ -640,6 +657,8 @@ class Tickets extends DolibarrApi
 	 * closing date and the progress are set by core, and the TICKET_CLOSE trigger
 	 * runs (notifications, linked interventions).
 	 *
+	 * @since	25.0.0	Initial implementation
+	 *
 	 * @param	int		$id			Ticket ID
 	 * @param	int		$cancel		1 to cancel (abandon) the ticket instead of closing it
 	 * @return	Object				Ticket after the change
@@ -678,6 +697,8 @@ class Tickets extends DolibarrApi
 	 * Same as the assignment of the ticket card: the status follows the
 	 * assignment, the TICKET_ASSIGNED trigger runs (notification of the user) and
 	 * the internal "SUPPORTTEC" contact of the ticket becomes the assigned user.
+	 *
+	 * @since	25.0.0	Initial implementation
 	 *
 	 * @param	int		$id					Ticket ID
 	 * @param	int		$fk_user_assign		Rowid of an active user, 0 to unassign
@@ -751,6 +772,8 @@ class Tickets extends DolibarrApi
 
 	/**
 	 * Delete ticket
+	 *
+	 * @since	8.0.0	Initial implementation
 	 *
 	 * @param   int     $id   Ticket ID
 	 * @return  array
@@ -1028,6 +1051,8 @@ class Tickets extends DolibarrApi
 	/**
 	 * Add a contact type of given ticket
 	 *
+	 * @since	24.0.0	Initial implementation
+	 *
 	 * @param int    $id            Id of ticket to update
 	 * @param int    $contactid     Id of contact to add
 	 * @param string $type          Type (code in dictionary) of the contact (BILLING, SHIPPING, CUSTOMER + possibly your own)
@@ -1139,7 +1164,8 @@ class Tickets extends DolibarrApi
 	/**
 	 * Unlink a contact type of given ticket
 	 *
-	 * @since	12.0.0	Initial implementation
+	 * @since	24.0.0	Initial implementation
+	 *
 	 * @param int    $id             Id of ticket to update
 	 * @param int    $contactid      Id of contact
 	 * @param string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER).

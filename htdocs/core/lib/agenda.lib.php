@@ -637,7 +637,9 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	}
 
 	// Line with title of day
-	print '<div id="dayevent_'.$dateint.'" class="dayevent tagtable centpercent nobordernopadding">'."\n";
+	// In the hourly grid views this div only holds the title bar of the day: the id dayevent_YYYYMMDD
+	// belongs to the cell of the all-day row, which is the one the drag&drop between days drops into.
+	print '<div id="'.($hourlybuckets === null ? 'dayevent_' : 'dayeventtitle_').$dateint.'" class="dayevent tagtable centpercent nobordernopadding">'."\n";
 
 	if ($nonew <= 0) {
 		print '<div class="tagtr cursorpointer" onclick="window.location=\''.$urltocreate.'\';"><div class="nowrap tagtd"><div class="left inline-block">';
