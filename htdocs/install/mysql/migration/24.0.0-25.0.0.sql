@@ -686,3 +686,5 @@ ALTER TABLE llx_website_page MODIFY COLUMN htmlheader longtext;
 ALTER TABLE llx_website_page MODIFY COLUMN content longtext;
 
 ALTER TABLE llx_ai_chat_message MODIFY COLUMN content_raw mediumtext;
+
+INSERT INTO llx_c_type_resource (code, label, active) VALUES ('RES_MACHINES', 'Machines', 1);
