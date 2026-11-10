@@ -603,7 +603,7 @@ class RestAPIContactTest extends AbstractRestAPITest
 	/**
 	 * testRestCreateUserFromContact
 	 *
-	 * Create a user from a contact, then check the errors for missing fields, an unknown contact,
+	 * Create a user from a contact, then check the errors for missing or empty fields, an unknown contact,
 	 * a contact that already has a user and a login that is already used.
 	 *
 	 * @return	void
@@ -631,6 +631,18 @@ class RestAPIContactTest extends AbstractRestAPITest
 			$this->assertEquals(400, $object['error']['code'] ?? null, 'A missing login must return 400: '.var_export($object, true));
 			$object = $this->callApi('POST', '/contacts/'.$contactid.'/createUser', array("login" => $login));
 			$this->assertEquals(400, $object['error']['code'] ?? null, 'A missing password must return 400: '.var_export($object, true));
+
+			// Empty fields
+			$object = $this->callApi('POST', '/contacts/'.$contactid.'/createUser', array("login" => "", "password" => $password));
+			if (is_int($object)) {
+				$userids[] = $object;
+			}
+			$this->assertEquals(400, $object['error']['code'] ?? null, 'An empty login must return 400: '.var_export($object, true));
+			$object = $this->callApi('POST', '/contacts/'.$contactid.'/createUser', array("login" => $login, "password" => ""));
+			if (is_int($object)) {
+				$userids[] = $object;
+			}
+			$this->assertEquals(400, $object['error']['code'] ?? null, 'An empty password must return 400: '.var_export($object, true));
 
 			// Nonexistent contact
 			$object = $this->callApi('POST', '/contacts/123456789/createUser', array("login" => $login, "password" => $password));

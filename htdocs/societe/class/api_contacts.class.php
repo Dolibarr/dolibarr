@@ -589,7 +589,7 @@ class Contacts extends DolibarrApi
 	 * @url	POST {id}/createUser
 	 * @suppress PhanPluginUnknownArrayMethodParamType  Luracast limitation
 	 *
-	 * @throws	RestException	400 Login or password missing
+	 * @throws	RestException	400 Login or password missing or empty
 	 * @throws	RestException	403 Insufficient rights
 	 * @throws	RestException	404 Contact not found
 	 * @throws	RestException	409 Contact already has a user, or login or email already used by another user
@@ -597,11 +597,11 @@ class Contacts extends DolibarrApi
 	 */
 	public function createUser($id, $request_data = null)
 	{
-		if (!isset($request_data["login"])) {
-			throw new RestException(400, "login field missing");
+		if (!isset($request_data["login"]) || trim((string) $request_data["login"]) === '') {
+			throw new RestException(400, "login field missing or empty");
 		}
-		if (!isset($request_data["password"])) {
-			throw new RestException(400, "password field missing");
+		if (!isset($request_data["password"]) || trim((string) $request_data["password"]) === '') {
+			throw new RestException(400, "password field missing or empty");
 		}
 
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'lire')) {
