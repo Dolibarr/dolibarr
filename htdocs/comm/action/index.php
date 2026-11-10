@@ -726,39 +726,81 @@ function dolAgendaDaySnapTop(el, ui) {
 	// The upper bound never goes above the old start: a box near midnight can be taller than the time left
 	return Math.max(begin, Math.min(newstart, Math.max(oldstart, end - boxheight)));
 }
+function dolAgendaDayLayerAt(clientx) {
+	// The day under the pointer. The layers of a week are side by side and never overlap,
+	// so the horizontal position alone names the column.
+	var found = null;
+	jQuery('.agendadaylayer').each(function () {
+		var r = this.getBoundingClientRect();
+		if (clientx >= r.left && clientx < r.right) { found = this; return false; }
+	});
+	return found;
+}
 function dolAgendaDayDrag(layer) {
+	// More than one layer on the page means the week grid: there the box can also change day
+	var manydays = jQuery('.agendadaylayer').length > 1;
 	jQuery(layer).children('.event.movable[data-agenda-event-id]').not('.ui-draggable').draggable({
-		axis: 'y',
+		axis: manydays ? false : 'y',
 		zIndex: 100,
+		start: function () {
+			if (!manydays) { return; }
+			// .agendadaycolumn clips its own layer, so the box would be cut at the edge of its day
+			// as soon as the drag enters the next column. Only the column being dragged from has to
+			// let it out: an ancestor clips its descendants, never its siblings' content.
+			jQuery(this).closest('.agendadaycolumn').css('overflow', 'visible');
+			// The layout gives the box a left and a right, which is what sets its width. Draggable only
+			// writes left, so a box dragged sideways would stretch to the right edge of its day instead
+			// of moving. Hold the width for the drag; the layout gives the percentages back at the end.
+			var w = jQuery(this).outerWidth();
+			this.style.right = 'auto';
+			this.style.width = w + 'px';
+		},
 		drag: function (event, ui) {
 			ui.position.top = dolAgendaDaySnapTop(this, ui);
 		},
 		stop: function (event, ui) {
 			var el = this;
+			var oldlayer = el.parentNode;
+			if (manydays) { jQuery(el).closest('.agendadaycolumn').css('overflow', 'hidden'); }
+			// Released outside every column (the hour gutter, outside the table): keep the day
+			var newlayer = (manydays && event && typeof event.clientX === 'number') ? (dolAgendaDayLayerAt(event.clientX) || oldlayer) : oldlayer;
 			var oldstart = parseInt(el.getAttribute('data-agenda-start'), 10);
 			var oldend = parseInt(el.getAttribute('data-agenda-end'), 10);
 			// ui.position is the value drag already snapped and clamped; don't snap it again here
 			var newstart = Math.round(ui.position.top);
-			if (newstart === oldstart) { el.style.top = oldstart + 'px'; return; }
+			// Nothing moved. The layout is still run: a drag that went sideways and came back left a
+			// pixel left on the box, and only the layout puts the column percentages back.
+			if (newstart === oldstart && newlayer === oldlayer) {
+				el.style.top = oldstart + 'px';
+				dolAgendaDayColumns(dolAgendaDayItems(oldlayer));
+				return;
+			}
 			var hh = ('0' + Math.floor(newstart / 60)).slice(-2);
 			var mm = ('0' + (newstart % 60)).slice(-2);
 			// No second drag of this box until the server answered
 			jQuery(el).draggable('disable');
 			jQuery.ajax({type: 'POST', url: dolAgendaGridCfg.url, dataType: 'json', data: {
 				id: el.getAttribute('data-agenda-event-id'),
-				newdatetime: el.parentNode.getAttribute('data-agenda-date') + hh + mm + '00',
+				newdatetime: newlayer.getAttribute('data-agenda-date') + hh + mm + '00',
 				token: jQuery('#searchFormList input[name=token]').val()
 			}}).done(function (data) {
 				jQuery(el).draggable('enable');
 				if (data.error) {
 					el.style.top = oldstart + 'px';
+					dolAgendaDayColumns(dolAgendaDayItems(oldlayer));
 					Dolibarr.tools.setEventMessage(data.message, 'errors');
 					return;
+				}
+				if (newlayer !== oldlayer) {
+					newlayer.appendChild(el);
 				}
 				el.setAttribute('data-agenda-start', newstart);
 				el.setAttribute('data-agenda-end', newstart + (oldend - oldstart));
 				el.style.top = newstart + 'px';
-				dolAgendaDayColumns(dolAgendaDayItems(el.parentNode));
+				dolAgendaDayColumns(dolAgendaDayItems(newlayer));
+				if (newlayer !== oldlayer) {
+					dolAgendaDayColumns(dolAgendaDayItems(oldlayer));
+				}
 				Dolibarr.tools.setEventMessage(dolAgendaGridCfg.msgsaved, 'mesgs');
 			}).fail(function () {
 				// Transport failure: we don't know whether the server saved the move, show the real state
