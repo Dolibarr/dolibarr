@@ -715,7 +715,9 @@ class Interventions extends DolibarrApi
 	 * @return  object
 	 *
 	 * @throws RestException 304
+	 * @throws RestException 400 Contact already linked with this type, or type of contact not valid
 	 * @throws RestException 401
+	 * @throws RestException 403
 	 * @throws RestException 404
 	 * @throws RestException 500 System error
 	 */
@@ -736,6 +738,10 @@ class Interventions extends DolibarrApi
 		$result = $this->fichinter->add_contact($fk_socpeople, $type_contact, $source, $notrigger);
 		if ($result < 0) {
 			throw new RestException(500, 'Error : '.$this->fichinter->errorsToString());
+		}
+		if ($result == 0) {
+			// add_contact() returns 0 both when the contact is already linked with this type and when the type code is not valid
+			throw new RestException(400, 'Contact='.$fk_socpeople.' is already linked to the intervention='.$id.' as source='.$source.' and type='.$type_contact.', or this type is not valid');
 		}
 
 		$result = $this->fichinter->fetch($id);
@@ -785,6 +791,9 @@ class Interventions extends DolibarrApi
 		} else {
 			$socpeoples = array();
 		}
+		if (!is_array($contacts) || !is_array($socpeoples)) {
+			throw new RestException(500, 'Error when reading contacts: '.$this->fichinter->errorsToString());
+		}
 
 		$contacts = array_merge($contacts, $socpeoples);
 
@@ -803,6 +812,7 @@ class Interventions extends DolibarrApi
 	 * @url	DELETE {id}/contact/{contactid}/{type}
 	 *
 	 * @throws RestException 401
+	 * @throws RestException 403
 	 * @throws RestException 404
 	 * @throws RestException 500 System error
 	 */
@@ -821,18 +831,32 @@ class Interventions extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('ficheinter', $this->fichinter->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+		$found = false;
 		foreach (array('internal', 'external') as $source) {
 			$contacts = $this->fichinter->liste_contact(-1, $source);
+			if (!is_array($contacts)) {
+				throw new RestException(500, 'Error when reading contacts: '.$this->fichinter->errorsToString());
+			}
 
 			foreach ($contacts as $contact) {
 				if ($contact['id'] == $contactid && $contact['code'] == $type) {
+					$found = true;
 					$result = $this->fichinter->delete_contact($contact['rowid']);
-					if (!$result) {
+					if ($result < 0) {
 						throw new RestException(500, 'Error when deleted the contact');
 					}
 				}
 			}
 		}
+		if (!$found) {
+			throw new RestException(404, 'Contact not found');
+		}
+
+		$result = $this->fichinter->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Interventional not found');
+		}
+
 		return $this->_cleanObjectDatas($this->fichinter);
 	}
 
