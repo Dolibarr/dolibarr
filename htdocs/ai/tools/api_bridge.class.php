@@ -6866,15 +6866,16 @@ class ToolApiBridge extends McpTool
 				}
 				if (property_exists($obj, 'content')) {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
+					// @phan-suppress-next-line PhanUndeclaredProperty  The property's existence is tested above.
 					$replacement = dolApplyReplacementsToPageContent((string) $obj->content, $args['content_replacements']);
 					if ($replacement['error'] == 'badformat') {
 						return $langs->transnoentitiesnoconv('AIWriteContentFragmentIncomplete');
 					}
 					if ($replacement['error'] == 'notfound') {
-						return $langs->transnoentitiesnoconv('AIWriteContentFragmentNotFound', $replacement['index'] + 1);
+						return $langs->transnoentitiesnoconv('AIWriteContentFragmentNotFound', (string) ($replacement['index'] + 1));
 					}
 					if ($replacement['error'] == 'notunique') {
-						return $langs->transnoentitiesnoconv('AIWriteContentFragmentNotUnique', $replacement['index'] + 1, $replacement['nbfound']);
+						return $langs->transnoentitiesnoconv('AIWriteContentFragmentNotUnique', (string) ($replacement['index'] + 1), (string) $replacement['nbfound']);
 					}
 				}
 			}
