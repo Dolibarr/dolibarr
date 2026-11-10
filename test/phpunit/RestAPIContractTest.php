@@ -50,8 +50,8 @@ class RestAPIContractTest extends AbstractRestAPITest
 	 *
 	 * @param string			$endpoint 	Endpoint - "contracts/id"
 	 * @param string			$test_title	Text to be added to output
-	 * @param 'POST'|'GET'|'DELETE'	$method		Call Method
-	 * @param mixed				$data		Data that will be JSON encoded (POST) or sent as query params (GET/DELETE)
+	 * @param 'POST'|'GET'|'PUT'|'DELETE'	$method		Call Method
+	 * @param mixed				$data		Data that will be JSON encoded (POST/PUT) or sent as query params (GET/DELETE)
 	 * @param int				$expected_error	Expected error code
 	 *
 	 * @return mixed	Decodes JSON value returned by the service
@@ -60,7 +60,7 @@ class RestAPIContractTest extends AbstractRestAPITest
 	{
 		$params = '';
 		$body = null;
-		if ($method === 'POST') {
+		if ($method === 'POST' || $method === 'PUT') {
 			$body = json_encode($data);
 		} elseif (!empty($data)) {
 			$params = '?'.http_build_query($data);
@@ -72,7 +72,9 @@ class RestAPIContractTest extends AbstractRestAPITest
 
 		$url = $this->api_url.'/'.$endpoint.$params;
 
-		$result = getURLContent($url, $method, $body, 1, $addheaders, array('http', 'https'), 2);
+		$httpmethod = ($method === 'PUT') ? 'PUTALREADYFORMATED' : $method;
+
+		$result = getURLContent($url, $httpmethod, $body, 1, $addheaders, array('http', 'https'), 2);
 
 		$this->assertEquals(0, $result['curl_error_no'], $test_title." Should not have a curl error");
 
@@ -89,6 +91,210 @@ class RestAPIContractTest extends AbstractRestAPITest
 		$this->assertEquals($expected_error, $resultcode, $test_title." Error code is ".$resultcode." so not ".$expected_error.$dbg_info);
 
 		return $result;
+	}
+
+	/**
+	 * Create a draft contract
+	 *
+	 * @param string	$test	Text to be added to output
+	 *
+	 * @return int		Id of the contract
+	 */
+	private function createContract($test)
+	{
+		$data = array(
+			"socid" => 1,
+			"date_contrat" => dol_now(),
+		);
+		$result = $this->getUrl('contracts', "$test (create contract)", 'POST', $data);
+		$contract_id = (int) $result['content'];
+		$this->assertGreaterThan(0, $contract_id, "$test Id of contract is not > 0");
+
+		return $contract_id;
+	}
+
+	/**
+	 * Add a free text line to a contract
+	 *
+	 * @param int		$contract_id	Id of the contract
+	 * @param string	$test			Text to be added to output
+	 * @param ?int		$date_end		Planned end date of the line
+	 *
+	 * @return int		Id of the line
+	 */
+	private function createContractLine($contract_id, $test, $date_end = null)
+	{
+		$data = array(
+			"desc" => "API test service",
+			"subprice" => 10,
+			"qty" => 1,
+			"tva_tx" => 0,
+			"localtax1_tx" => 0,
+			"localtax2_tx" => 0,
+			"fk_product" => 0,
+			"remise_percent" => 0,
+			"date_start" => null,
+			"date_end" => $date_end,
+			"price_base_type" => "HT",
+			"subprice_excl_tax" => 0,
+			"info_bits" => 0,
+			"fk_fournprice" => null,
+			"pa_ht" => 0,
+			"array_options" => array(),
+			"fk_unit" => null,
+			"rang" => 0,
+		);
+		$result = $this->getUrl('contracts/'.$contract_id.'/lines', "$test (create line)", 'POST', $data);
+		$line_id = (int) $result['content'];
+		$this->assertGreaterThan(0, $line_id, "$test Id of line is not > 0");
+
+		return $line_id;
+	}
+
+	/**
+	 * testRestContractActivateLineUnknownLine
+	 *
+	 * @return void
+	 */
+	public function testRestContractActivateLineUnknownLine()
+	{
+		$test = "Activate a line that does not exist";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$this->getUrl('contracts/'.$contract_id.'/lines/999999999/activate', $test, 'PUT', array("datestart" => dol_now()), 404);
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
+	}
+
+	/**
+	 * testRestContractActivateLineOfAnotherContract
+	 *
+	 * @return void
+	 */
+	public function testRestContractActivateLineOfAnotherContract()
+	{
+		$test = "Activate a line of another contract";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$other_contract_id = $this->createContract($test);
+
+			try {
+				$other_line_id = $this->createContractLine($other_contract_id, $test);
+
+				$this->getUrl('contracts/'.$contract_id.'/lines/'.$other_line_id.'/activate', $test, 'PUT', array("datestart" => dol_now()), 403);
+			} finally {
+				$this->getUrl('contracts/'.$other_contract_id, "$test (cleanup other contract)", 'DELETE');
+			}
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
+	}
+
+	/**
+	 * testRestContractActivateLineKeepsPlannedEndDate
+	 *
+	 * @return void
+	 */
+	public function testRestContractActivateLineKeepsPlannedEndDate()
+	{
+		$test = "Activate a line without dateend";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$line_id = $this->createContractLine($contract_id, $test, dol_now() + 30 * 24 * 3600);
+
+			$result = $this->getUrl('contracts/'.$contract_id.'/lines', "$test (read before activate)", 'GET');
+			$date_end = $result['content'][0]['date_end'] ?? '';
+			$this->assertNotEmpty($date_end, "$test Line must have a planned end date before activation");
+
+			$this->getUrl('contracts/'.$contract_id.'/lines/'.$line_id.'/activate', $test, 'PUT', array("datestart" => dol_now()));
+
+			$result = $this->getUrl('contracts/'.$contract_id.'/lines', "$test (read after activate)", 'GET');
+			$this->assertNotEmpty($result['content'][0]['date_start_real'] ?? '', "$test Line must be activated");
+			$this->assertEquals($date_end, $result['content'][0]['date_end'] ?? '', "$test Planned end date must be kept");
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
+	}
+
+	/**
+	 * testRestContractUnactivateLineUnknownLine
+	 *
+	 * @return void
+	 */
+	public function testRestContractUnactivateLineUnknownLine()
+	{
+		$test = "Unactivate a line that does not exist";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$this->getUrl('contracts/'.$contract_id.'/lines/999999999/unactivate', $test, 'PUT', array("datestart" => dol_now()), 404);
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
+	}
+
+	/**
+	 * testRestContractUnactivateLineOfAnotherContract
+	 *
+	 * @return void
+	 */
+	public function testRestContractUnactivateLineOfAnotherContract()
+	{
+		$test = "Unactivate a line of another contract";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$other_contract_id = $this->createContract($test);
+
+			try {
+				$other_line_id = $this->createContractLine($other_contract_id, $test);
+
+				$this->getUrl('contracts/'.$contract_id.'/lines/'.$other_line_id.'/unactivate', $test, 'PUT', array("datestart" => dol_now()), 403);
+			} finally {
+				$this->getUrl('contracts/'.$other_contract_id, "$test (cleanup other contract)", 'DELETE');
+			}
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
+	}
+
+	/**
+	 * testRestContractUnactivateLine
+	 *
+	 * @return void
+	 */
+	public function testRestContractUnactivateLine()
+	{
+		$test = "Unactivate an active line";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$line_id = $this->createContractLine($contract_id, $test);
+
+			$this->getUrl('contracts/'.$contract_id.'/lines/'.$line_id.'/activate', "$test (activate)", 'PUT', array("datestart" => dol_now()));
+
+			$result = $this->getUrl('contracts/'.$contract_id.'/lines', "$test (read before unactivate)", 'GET');
+			$this->assertEquals(4, $result['content'][0]['statut'] ?? '', "$test Line must be active before unactivation");
+			$this->assertEmpty($result['content'][0]['date_end_real'] ?? '', "$test Line must not have a real end date before unactivation");
+
+			$this->getUrl('contracts/'.$contract_id.'/lines/'.$line_id.'/unactivate', $test, 'PUT', array("datestart" => dol_now()));
+
+			$result = $this->getUrl('contracts/'.$contract_id.'/lines', "$test (read after unactivate)", 'GET');
+			$this->assertEquals(5, $result['content'][0]['statut'] ?? '', "$test Line must be closed");
+			$this->assertNotEmpty($result['content'][0]['date_end_real'] ?? '', "$test Line must have a real end date");
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
 	}
 
 	/**
