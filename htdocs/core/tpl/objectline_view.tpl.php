@@ -310,6 +310,10 @@ if (($line->info_bits & 2) == 2) {
 		}
 	}
 
+	// Reference the customer gives to the line (line of its purchase order)
+	if ($line instanceof OrderLine && !empty($line->ref_customer)) {
+		print '<br><span class="opacitymedium">'.$langs->trans('RefCustomerLine').':</span> '.dol_escape_htmltag($line->ref_customer);
+	}
 
 	$parameters = ['line' => $line, 'i' => & $i, 'coldisplay' => & $coldisplay];
 	$reshook = $hookmanager->executeHooks('objectLineView_BeforeProductExtrafield', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -499,6 +503,10 @@ if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicu
 if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) { ?>
 	<td class="linecoluttc_currency nowraponall right"><?php $coldisplay++; ?><?php
 	$multicurrency_upinctax = isset($line->multicurrency_subprice_ttc) ? $line->multicurrency_subprice_ttc : null;
+	if (!$multicurrency_upinctax && empty((float) $line->localtax1_tx) && empty((float) $line->localtax2_tx) && !empty((float) $line->multicurrency_subprice)) {
+		// With only VAT, the unit price excl. tax gives an exact value, not rounded to the precision of totals like an estimate from total_ttc
+		$multicurrency_upinctax = price2num($line->multicurrency_subprice * (1 + ((($line->info_bits & 1) ? 0 : (float) $line->tva_tx) / 100)), 'MU');
+	}
 	if (!$multicurrency_upinctax && $line->multicurrency_total_ttc && $line->qty) {
 		$multicurrency_upinctax = price2num($line->multicurrency_total_ttc / (float) $line->qty, 'MU');
 	}
@@ -581,7 +589,7 @@ if (!empty($line->remise_percent) && $line->special_code != 3) {
 if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 	$coldisplay++;
-	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+	if (getDolGlobalInt('INVOICE_USE_SITUATION') > 1) {
 		$previous_progress = $line->getAllPrevProgress($object->id);
 		$current_progress = $previous_progress + (float) $line->situation_percent;
 		print '<td class="linecolcycleref nowraponall right">'.$current_progress.'%</td>';

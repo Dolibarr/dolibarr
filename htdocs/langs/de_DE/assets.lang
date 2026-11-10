@@ -18,10 +18,8 @@ AccountancyCodeDepreciationAsset=Buchungskonto (Abschreibung auf Anlagegut)
 AccountancyCodeDepreciationExpense=Buchungskonto (Aufwendungen für Abschreibungen)
 AssetsLines=Anlagegüter
 ConfirmValidateAsset=Sind Sie sicher, dass Sie das Anlagegut mit der Referenz <b>%s</b> freigeben wollen?
-DeleteType=Lösche Gruppe
 DeleteAnAssetType=Vorlage für Anlagegüter löschen
 ConfirmDeleteAssetType=Möchten Sie diese Vorlage für Anlagegüter wirklich löschen?
-ShowTypeCard=Vorlage '%s' anzeigen
 # Module label 'ModuleAssetsName'
 ModuleAssetsName=Anlagegüter
 # Module description 'ModuleAssetsDesc'
@@ -29,13 +27,18 @@ ModuleAssetsDesc=Resourcenbeschreibung
 # Admin page
 AssetSetup=Resourcensetup
 AssetSetupPage=Resourcen Setupseite
-ExtraFieldsAssetModel=Ergänzende Attribute (Vorlage Anlagegüter)
+ExtraFieldsAssetModel=Extrafelder (Vorlage Anlagegüter)
 AssetsType=Vermögenswert-Modell
 AssetsTypeId=ID der Vorlage für Anlagegüter
 AssetsTypeLabel=Bezeichnung des Vermögenswert-Modells
 AssetsTypes=Vorlagen für Anlagegüter
 ASSET_ACCOUNTANCY_CATEGORY=Kontengruppe für Anlagevermögen
 ASSET_DEPRECIATION_DURATION_PER_YEAR=Anteiliger Zeitraum in Tagen zur Berechnung der Amortisation über ein Jahr
+ASSET_DEPRECIATION_DAY_COUNT_CONVENTION=Tageszählmethode für die zeitanteilige Abschreibung (pro rata temporis)
+ASSET_DEPRECIATION_DAY_COUNT_CONVENTIONTooltip=Legt fest, wie die Abschreibung eines <b>angebrochenen</b> Zeitraums berechnet wird, also des ersten und des letzten Jahres einer Anlage. Eine volle Jahresrate ist immer der Wert geteilt durch die Nutzungsdauer und wird von dieser Einstellung nie beeinflusst.<br><br>Eine Methode legt <b>sowohl</b> fest, wie die Tage des Zeitraums gezählt werden, <b>als auch</b>, durch wie viele Tage ein volles Jahr geteilt wird. Beides muss immer zusammenpassen: Werden echte Kalendertage gezählt und durch 360 geteilt, wird jeder angebrochene Zeitraum um etwa 1,39 Prozent zu hoch angesetzt.<br><br><b>30/360</b>: Jeder Monat zählt 30 Tage und jedes Jahr 360 Tage. Die von den meisten Steuerkanzleien in Frankreich angewandte Methode.<br><b>Echte Tage / 365</b>: echte Kalendertage des Zeitraums, geteilt durch 365.<br><b>Echte Tage / echtes Jahr</b>: echte Kalendertage, jedes Jahr geteilt durch seine eigene tatsächliche Länge, 365 oder 366. Am genauesten bei einem Zeitraum mit Schalttag.<br><br>Beispiel für eine Anlage im Wert von 13000, abgeschrieben über 5 Jahre, in Betrieb genommen am 10. März und verkauft am 23. Februar des vierten Jahres, Geschäftsjahr von August bis Juli. Kumulierte Abschreibung beim Abgang: 7684,44 mit 30/360, 7700,27 mit echte Tage / 365, 7697,29 mit echte Tage / echtes Jahr.<br><br><b>Achtung</b>: Eine Änderung dieser Einstellung berechnet bereits erstellte Abschreibungspläne nicht neu. Speichern Sie die Abschreibungsoptionen einer Anlage erneut, um ihren Plan neu zu erstellen.
+AssetDayCountConventionThirty360=30/360 - jeder Monat zählt 30 Tage, jedes Jahr 360 Tage (üblich in Frankreich)
+AssetDayCountConventionAct365=Echte Tage / 365 - echte Kalendertage geteilt durch 365
+AssetDayCountConventionActAct=Echte Tage / echtes Jahr - echte Kalendertage, jedes Jahr geteilt durch seine eigene Länge (365 oder 366)
 # Menu
 MenuAssets=Anlagegüter
 MenuNewAsset=Neues Anlagegut
@@ -142,5 +145,6 @@ AssetErrorCalculationDepreciationLines=Fehler bei der Berechnung der Abschreibun
 AssetErrorReversalDateNotProvidedForMode=Für die Abschreibungsmethode „%s“ ist kein Stornodatum vorgesehen
 AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=Bei der Abschreibungsmethode '%s' muss das Stornodatum größer oder gleich dem Beginn des laufenden Geschäftsjahres sein
 AssetErrorReversalAmountNotProvidedForMode=Für den Abschreibungsmodus '%s' ist der Stornobetrag nicht vorgesehen.
+AssetErrorDegressiveDailyDurationForMode=Eine degressive Abschreibung benötigt für den Abschreibungsmodus '%s' eine Dauer in Jahren oder Monaten.
 AssetErrorFetchCumulativeDepreciation=Fehler beim Abrufen des kumulierten Abschreibungsbetrags aus der Abschreibungsposition
 AssetErrorSetLastCumulativeDepreciation=Fehler beim Erfassen des letzten kumulierten Abschreibungsbetrags

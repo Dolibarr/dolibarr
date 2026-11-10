@@ -34,7 +34,7 @@ class QuickMemo {
 			sharedFontAIcon: 'far fa-copy',
 			notSharedFontAIcon: 'far fa-file',
 			modelFontAIcon: 'far fa-share-square',
-			menuDropDownId: 'quickmemo-create-dropdown',
+			menuDropDownId: 'topmenu-quickmemo-dropdown',
 			menuDropDownModelListContainerId: 'quickmemo-model-list',
 			menuDropDownPresetListContainerId: 'quickmemo-preset-list'
 		};
@@ -2067,8 +2067,8 @@ class QuickMemo {
 		if (!menuContainer) return;
 
 		const dropdown = document.createElement('div');
-		dropdown.className = 'dropdown inline-block mod-quick-memo-menu';
-		dropdown.id = 'quickmemo-create-dropdown'
+		dropdown.className = 'atoplogin dropdown inline-block mod-quick-memo-menu';
+		dropdown.id = this.param.menuDropDownId;
 
 		let textLoading = await Dolibarr.tools.langs.trans('Loading');
 		let textNewNote = await Dolibarr.tools.langs.trans('NewNote');
@@ -2108,7 +2108,7 @@ class QuickMemo {
 		</div>
 	`;
 
-		menuContainer.prepend(dropdown);
+		menuContainer.append(dropdown);
 
 		const dropDownMenuToggleBtn = dropdown.querySelector('.dropdown-toggle');
 		const presetListDiv = document.getElementById(this.param.menuDropDownPresetListContainerId);

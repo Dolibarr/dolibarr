@@ -1,0 +1,417 @@
+<?php
+/* Copyright (C) 2026 William Mead <william@m34d.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
+ */
+
+/**
+ *      \file       test/phpunit/RestAPICategoriesTest.php
+ *      \ingroup    test
+ *      \brief      PHPUnit test
+ *      \remarks    To run this script as CLI:  phpunit filename.php
+ */
+
+require_once __DIR__."/AbstractRestAPITest.php";
+
+/**
+ * Class for PHPUnit tests
+ *
+ * @backupGlobals disabled
+ * @backupStaticAttributes enabled
+ * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ */
+class RestAPICategoriesTest extends AbstractRestAPITest
+{
+	/**
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass(): void
+	{
+		self::assertTrue(isModEnabled('category'), 'module category must be enabled');
+		self::assertTrue(isModEnabled('societe'), 'module societe must be enabled');
+		parent::setUpBeforeClass();
+	}
+
+	/**
+	 * Call the API and check the error code
+	 *
+	 * @param string					$endpoint 	Endpoint - "categories/id"
+	 * @param string					$test_title	Text to be added to output
+	 * @param 'POST'|'GET'|'PUT'|'DELETE'	$method		Call Method
+	 * @param mixed						$data		Data that will be JSON encoded
+	 * @param int						$expected_error	Expected error code
+	 *
+	 * @return mixed	Decodes JSON value returned by the service
+	 */
+	private function getUrl($endpoint, $test_title = "", $method = "GET", $data = null, $expected_error = 0)
+	{
+		$params = '';
+		$body = null;
+		if ($method === 'POST' || $method === 'PUT') {
+			$body = json_encode($data);
+		} elseif (!empty($data)) {
+			$params = '?'.http_build_query($data);
+		}
+
+		$addheaders = array(
+			'Content-Type: application/json', 'Accept: application/json', "DOLAPIKEY: {$this->api_key}"
+		);
+
+		$url = $this->api_url.'/'.$endpoint.$params;
+
+		$httpmethod = ($method === 'PUT') ? 'PUTALREADYFORMATED' : $method;
+
+		$result = getURLContent($url, $httpmethod, $body, 1, $addheaders, array('http', 'https'), 2);
+
+		$this->assertEquals(0, $result['curl_error_no'], $test_title." Should not have a curl error");
+
+		$object = json_decode($result['content'], true);
+
+		$dbg_info = PHP_EOL.json_encode($result, JSON_PRETTY_PRINT);
+
+		$this->assertNotNull($object, $test_title." - Parsing of JSON result must not be null ".$dbg_info);
+
+		$result['content'] = $object;
+		$dbg_info = PHP_EOL.json_encode($result, JSON_PRETTY_PRINT);
+
+		$resultcode = (empty($object['error']['code']) ? 0 : $object['error']['code']);
+		$this->assertEquals($expected_error, $resultcode, $test_title." Error code is ".$resultcode." so not ".$expected_error.$dbg_info);
+
+		return $result;
+	}
+
+	/**
+	 * Create a category
+	 *
+	 * @param string	$test	Text to be added to output
+	 * @param int|string	$type	Type id or type code of category (see Categorie::$MAP_ID)
+	 * @return int				Id of the category
+	 */
+	private function createCategory($test, $type)
+	{
+		$data = array(
+			"label" => "API test type ".$type." ".mt_rand(0, 99999999),
+			"type" => $type,
+		);
+		$result = $this->getUrl('categories', $test, 'POST', $data);
+		$this->assertGreaterThan(0, (int) $result['content'], "$test Id of category is not > 0");
+
+		return (int) $result['content'];
+	}
+
+	/**
+	 * testRestCategoryPostTypeCode
+	 *
+	 * @return void
+	 */
+	public function testRestCategoryPostTypeCode()
+	{
+		$test = "Create a category with a type code";
+
+		$category_id = $this->createCategory($test, 'customer');
+
+		$result = $this->getUrl('categories/'.$category_id, $test, 'GET');
+		$this->assertEquals(2, $result['content']['type'], "$test Type code must be stored as its type id");
+
+		$this->getUrl('categories/'.$category_id, $test, 'DELETE');
+	}
+
+	/**
+	 * testRestCategoryPostUnknownType
+	 *
+	 * @return void
+	 */
+	public function testRestCategoryPostUnknownType()
+	{
+		$test = "Create a category with an unknown type";
+
+		$label = "API test unknown type ".mt_rand(0, 99999999);
+
+		$this->getUrl('categories', $test, 'POST', array("label" => $label, "type" => "notatype"), 400);
+		$this->getUrl('categories', $test, 'POST', array("label" => $label, "type" => 999999), 400);
+	}
+
+	/**
+	 * testRestCategoryPutType
+	 *
+	 * @return void
+	 */
+	public function testRestCategoryPutType()
+	{
+		$test = "Update a category with a type code";
+
+		// Same label on a product category: if the type code is lost, the update finds it as a duplicate
+		$label = "API test put type ".mt_rand(0, 99999999);
+		$result = $this->getUrl('categories', $test, 'POST', array("label" => $label, "type" => 0));
+		$category_id_product = (int) $result['content'];
+		$result = $this->getUrl('categories', $test, 'POST', array("label" => $label, "type" => 2));
+		$category_id_customer = (int) $result['content'];
+
+		$result = $this->getUrl('categories/'.$category_id_customer, $test, 'PUT', array("type" => "customer"));
+		$this->assertEquals(2, $result['content']['type'], "$test Type must stay the customer type");
+
+		$this->getUrl('categories/'.$category_id_customer, $test, 'PUT', array("type" => "notatype"), 400);
+
+		$this->getUrl('categories/'.$category_id_customer, $test, 'DELETE');
+		$this->getUrl('categories/'.$category_id_product, $test, 'DELETE');
+	}
+
+	/**
+	 * testRestCategoryPostExtrafields
+	 *
+	 * @return void
+	 */
+	public function testRestCategoryPostExtrafields()
+	{
+		$test = "Create a category with an extrafield";
+
+		$attrname = 'apitest'.mt_rand(0, 99999999);
+		$extrafield = array(
+			'label' => $attrname, 'type' => 'varchar', 'pos' => 100, 'size' => '32', 'list' => '1', 'default' => '', 'param' => '', 'perms' => '', 'help' => '',
+			'computed' => '', 'langfile' => '', 'unique' => 0, 'required' => 0, 'alwayseditable' => 1, 'totalizable' => 0, 'printable' => 0, 'showintooltip' => 0,
+		);
+		$this->getUrl('setup/extrafields/categorie/'.$attrname, $test, 'POST', $extrafield);
+
+		$data = array(
+			"label" => "API test extrafield ".mt_rand(0, 99999999),
+			"type" => 2,
+			"array_options" => array('options_'.$attrname => 'Some text'),
+		);
+		$result = $this->getUrl('categories', $test, 'POST', $data);
+		$category_id = (int) $result['content'];
+		$this->assertGreaterThan(0, $category_id, "$test Id of category is not > 0");
+
+		$result = $this->getUrl('categories/'.$category_id, $test, 'GET');
+		$this->assertEquals('Some text', $result['content']['array_options']['options_'.$attrname] ?? '', "$test Extrafield must be saved");
+
+		$this->getUrl('categories/'.$category_id, $test, 'DELETE');
+		$this->getUrl('setup/extrafields/categorie/'.$attrname, $test, 'DELETE');
+	}
+
+	/**
+	 * testRestCategoryListPagination
+	 *
+	 * @return void
+	 */
+	public function testRestCategoryListPagination()
+	{
+		$test = "List categories with and without pagination data";
+
+		$category_id1 = $this->createCategory($test, 2);	// customer
+		$category_id2 = $this->createCategory($test, 2);	// customer
+
+		$result = $this->getUrl('categories', $test, 'GET', array('type' => 2, 'limit' => 1));
+		$this->assertArrayNotHasKey('pagination', $result['content'], "$test Without pagination_data the result must not have a pagination key");
+		$this->assertArrayHasKey(0, $result['content'], "$test Without pagination_data the result must be a plain list");
+		$this->assertCount(1, $result['content'], "$test Limit must be applied");
+
+		$result = $this->getUrl('categories', $test, 'GET', array('type' => 2, 'limit' => 1, 'page' => 0, 'pagination_data' => 'true'));
+		$this->assertArrayHasKey('data', $result['content'], "$test With pagination_data the result must have a data key");
+		$this->assertArrayHasKey('pagination', $result['content'], "$test With pagination_data the result must have a pagination key");
+		$this->assertCount(1, $result['content']['data'], "$test Limit must be applied to data");
+
+		$pagination = $result['content']['pagination'];
+		$this->assertGreaterThanOrEqual(2, $pagination['total'], "$test Total must count at least the created categories");
+		$this->assertEquals(0, $pagination['page'], "$test Page must be the requested one");
+		$this->assertEquals(1, $pagination['limit'], "$test Limit must be the requested one");
+		$this->assertEquals($pagination['total'], $pagination['page_count'], "$test Page count must be total divided by limit");
+
+		$this->getUrl('categories/'.$category_id1, $test, 'DELETE');
+		$this->getUrl('categories/'.$category_id2, $test, 'DELETE');
+	}
+
+	/**
+	 * testRestCategoryGetNotFound
+	 *
+	 * @return void
+	 */
+	public function testRestCategoryGetNotFound()
+	{
+		$test = "Get a category that does not exist";
+
+		$this->getUrl('categories/999999999', $test, 'GET', null, 404);
+	}
+
+	/**
+	 * testRestCategoryListForObjectBadType
+	 *
+	 * @return void
+	 */
+	public function testRestCategoryListForObjectBadType()
+	{
+		$test = "List categories of an object with an unsupported type";
+
+		$this->getUrl('categories/object/notatype/1', $test, 'GET', null, 400);
+	}
+
+	/**
+	 * testRestCategoryListForObjectContact
+	 *
+	 * @return void
+	 */
+	public function testRestCategoryListForObjectContact()
+	{
+		$test = "List categories of a contact";
+
+		$result = $this->getUrl('contacts', $test, 'POST', array("lastname" => "API test categories ".mt_rand(0, 99999999)));
+		$contact_id = (int) $result['content'];
+		$this->assertGreaterThan(0, $contact_id, "$test Id of contact is not > 0");
+
+		$result = $this->getUrl('categories/object/contact/'.$contact_id, $test, 'GET');
+		$this->assertEquals(200, $result['http_code'], "$test Must be allowed for an admin");
+		$this->assertIsArray($result['content'], "$test Result must be a list");
+
+		$this->getUrl('contacts/'.$contact_id, $test, 'DELETE');
+	}
+
+	/**
+	 * testRestCategoryListForObjectUser
+	 *
+	 * @return void
+	 */
+	public function testRestCategoryListForObjectUser()
+	{
+		$test = "List categories of a user";
+
+		$result = $this->getUrl('categories/object/user/1', $test, 'GET');
+		$this->assertEquals(200, $result['http_code'], "$test Must be allowed for an admin");
+		$this->assertIsArray($result['content'], "$test Result must be a list");
+	}
+
+	/**
+	 * testRestCategoryListForObjectPageAfterLast
+	 *
+	 * @return void
+	 */
+	public function testRestCategoryListForObjectPageAfterLast()
+	{
+		$test = "List categories of an object with a page after the last one";
+
+		$category_id = $this->createCategory($test, 2);	// customer
+		$this->getUrl('categories/'.$category_id.'/objects/customer/1', $test, 'POST', array());
+
+		$result = $this->getUrl('categories/object/customer/1', $test, 'GET', array('limit' => 1, 'page' => 0));
+		$this->assertCount(1, $result['content'], "$test First page must have one category");
+
+		$result = $this->getUrl('categories/object/customer/1', $test, 'GET', array('limit' => 1, 'page' => 100000));
+		$this->assertCount(0, $result['content'], "$test A page after the last one must be empty, not the first page");
+
+		$this->getUrl('categories/'.$category_id.'/objects/customer/1', $test, 'DELETE');
+		$this->getUrl('categories/'.$category_id, $test, 'DELETE');
+	}
+
+	/**
+	 * testRestCategoryLinkUnlink
+	 *
+	 * @return void
+	 */
+	public function testRestCategoryLinkUnlink()
+	{
+		$test = "Link and unlink a third party to a customer category";
+
+		$category_id = $this->createCategory($test, 2);	// customer
+
+		$result = $this->getUrl('categories/'.$category_id.'/objects/customer/1', $test, 'POST', array());
+		$this->assertEquals(200, $result['content']['success']['code'] ?? null, "$test Link must succeed");
+
+		$result = $this->getUrl('categories/object/customer/1', $test, 'GET');
+		$this->assertContains($category_id, array_map('intval', array_column($result['content'], 'id')), "$test Category must be listed for the third party");
+
+		$result = $this->getUrl('categories/'.$category_id.'/objects/customer/1', $test, 'DELETE');
+		$this->assertEquals(200, $result['content']['success']['code'] ?? null, "$test Unlink must succeed");
+
+		$this->getUrl('categories/'.$category_id, $test, 'DELETE');
+	}
+
+	/**
+	 * testRestCategoryUnlinkWrongType
+	 *
+	 * @return void
+	 */
+	public function testRestCategoryUnlinkWrongType()
+	{
+		$test = "Unlink a third party from a product category";
+
+		$category_id = $this->createCategory($test, 0);	// product
+
+		$this->getUrl('categories/'.$category_id.'/objects/customer/1', $test, 'DELETE', null, 400);
+
+		$this->getUrl('categories/'.$category_id, $test, 'DELETE');
+	}
+
+	/**
+	 * testRestCategoryUnlinkNotFound
+	 *
+	 * @return void
+	 */
+	public function testRestCategoryUnlinkNotFound()
+	{
+		$test = "Unlink an object from a category that does not exist";
+
+		$this->getUrl('categories/999999999/objects/customer/1', $test, 'DELETE', null, 404);
+	}
+
+	/**
+	 * testRestCategoryLinkUnlinkObjectNotFound
+	 *
+	 * @return void
+	 */
+	public function testRestCategoryLinkUnlinkObjectNotFound()
+	{
+		$test = "Link and unlink a third party that does not exist";
+
+		$category_id = $this->createCategory($test, 2);	// customer
+
+		$this->getUrl('categories/'.$category_id.'/objects/customer/999999999', $test, 'POST', array(), 404);
+		$this->getUrl('categories/'.$category_id.'/objects/customer/999999999', $test, 'DELETE', null, 404);
+		$this->getUrl('categories/'.$category_id.'/objects/customer/ref/APITESTNOTFOUND'.mt_rand(0, 99999999), $test, 'POST', array(), 404);
+		$this->getUrl('categories/'.$category_id.'/objects/customer/ref/APITESTNOTFOUND'.mt_rand(0, 99999999), $test, 'DELETE', null, 404);
+
+		$this->getUrl('categories/'.$category_id, $test, 'DELETE');
+	}
+
+	/**
+	 * testRestCategoryLinkUnlinkContactByRef
+	 *
+	 * @return void
+	 */
+	public function testRestCategoryLinkUnlinkContactByRef()
+	{
+		$test = "Link and unlink a contact by its external ref";
+
+		$ref_ext = "APITESTCAT".mt_rand(0, 99999999);
+		$result = $this->getUrl('contacts', $test, 'POST', array("lastname" => "API test categories ".$ref_ext, "ref_ext" => $ref_ext));
+		$contact_id = (int) $result['content'];
+		$this->assertGreaterThan(0, $contact_id, "$test Id of contact is not > 0");
+
+		$category_id = $this->createCategory($test, 'contact');
+
+		$result = $this->getUrl('categories/'.$category_id.'/objects/contact/ref/'.$ref_ext, $test, 'POST', array());
+		$this->assertEquals(200, $result['content']['success']['code'] ?? null, "$test Link must succeed");
+
+		$result = $this->getUrl('categories/object/contact/'.$contact_id, $test, 'GET');
+		$this->assertContains($category_id, array_map('intval', array_column($result['content'], 'id')), "$test Category must be listed for the contact");
+
+		$result = $this->getUrl('categories/'.$category_id.'/objects/contact/ref/'.$ref_ext, $test, 'DELETE');
+		$this->assertEquals(200, $result['content']['success']['code'] ?? null, "$test Unlink must succeed");
+
+		$this->getUrl('categories/'.$category_id.'/objects/contact/ref/'.$ref_ext.'NOTFOUND', $test, 'POST', array(), 404);
+
+		$this->getUrl('categories/'.$category_id, $test, 'DELETE');
+		$this->getUrl('contacts/'.$contact_id, $test, 'DELETE');
+	}
+}

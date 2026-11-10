@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal modulio nustatymas
-PaypalDesc=Šis modulis leidžia klientams atlikti mokėjimus per <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. Tai galima naudoti ad hoc mokėjimams arba mokėjimams, susijusiems su „Dolibarr“ objektu (sąskaita faktūra, užsakymu ir kt.).
+PaypalDesc=This module allows payment by customers via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. This can be used for an ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
 PaypalOrCBDoPayment=Mokėti naudojant „PayPal“ (kortele arba „PayPal“)
 PaypalDoPayment=Mokėti naudojant PayPal
 PAYPAL_API_SANDBOX=Režimas testas/smėlio dėžė (Sandbox)
@@ -19,7 +19,7 @@ NewOnlinePaymentFailed=Bandyta atlikti naują mokėjimą internetu, bet nepavyko
 ONLINE_PAYMENT_SENDEMAIL=El. pašto adresas pranešimams gauti po kiekvieno mokėjimo bandymo (sėkmingo ir nesėkmingo)
 ReturnURLAfterPayment=Grįžti į URL po apmokėjimo
 ValidationOfOnlinePaymentFailed=Nepavyko patvirtinti internetinio mokėjimo
-PaymentSystemConfirmPaymentPageWasCalledButFailed=Mokėjimo sistema iškvietė mokėjimo patvirtinimo puslapį ir pateikė klaidą
+PaymentSystemConfirmPaymentPageWasCalledButFailed=The payment confirmation page was called by the online payment system and returned an error
 SetExpressCheckoutAPICallFailed=„SetExpressCheckout“ API iškvietimas nepavyko.
 DoExpressCheckoutPaymentAPICallFailed=Nepavyko iškviesti „DoExpressCheckoutPayment“ API.
 DetailedErrorMessage=Išsamus klaidos pranešimas

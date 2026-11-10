@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = Irakurri programatutako lana
-Permission23102 = Sortu/eguneratu programatutako lana
-Permission23103 = Ezabatu programatutako lana
-Permission23104 = Programatutako lana exekutatu
 # Admin
 CronSetup=Lan-kudeaketaren konfigurazioa programatuta
 URLToLaunchCronJobs=URLa cron lan kualifikatuak arakatzaile batetik egiaztatu eta abiarazteko
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=Unix ingurunean, crontab sarrera hau erabili beharko zen
 CronExplainHowToRunWin=Microsoft(tm) Windows ingurunean, Programatutako Zereginen tresnak erabil ditzakezu komando-lerroa 5 minuturo exekutatzeko.
 CronMethodDoesNotExists=%s klaseak ez du %s metodorik.
 CronMethodNotAllowed=%s klaseko %s metodoa debekatutako metodoen blokeo-zerrendan dago.
-CronJobDefDesc=Cron lan-profilak moduluaren deskribapen-fitxategian definitzen dira. Modulua aktibatzen denean, kargatu eta eskuragarri jartzen dira, beraz, lanak administrazio-tresnen menutik %s administratu ahal izango dituzu.
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=Aurredefinitutako cron lan profilen zerrenda
 # Menu
 EnabledAndDisabled=Gaituta eta desgaituta
@@ -27,7 +22,7 @@ CronDelete=Ezabatu programatutako lanak
 CronConfirmDelete=Ziur zaude programatutako lan hauek ezabatu nahi dituzula?
 CronExecute=Abiarazi orain
 CronConfirmExecute=Ziur zaude programatutako lan hauek orain exekutatu nahi dituzula?
-CronInfo=Programatutako lan moduluak lanak automatikoki exekutatzeko programatzea ahalbidetzen du. Lanak eskuz ere has daitezke.
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=Lana
 CronNone=Programatutako zereginaren hurrengo exekuzioa
 CronNotYetRan=Inoiz ez exekutatua
@@ -79,7 +74,7 @@ CronType_command=Shell komandoa
 CronCannotLoadClass=Ezin da %s klase fitxategia kargatu (%s klasea erabiltzeko)
 CronModuleNotEnabledInThisEntity=Cron modulua ez dago gaituta entitate honetan (%s objektuaren %s metodoa erabiltzeko)
 CronCannotLoadObject=%s klase-fitxategia kargatu da, baina %s objektua ez da bertan aurkitu.
-UseMenuModuleToolsToAddCronJobs=Joan "<a href="%s">Hasiera - Administrazio tresnak - Programatutako lanak</a>" menura programatutako lanak ikusteko eta editatzeko.
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=Lana desgaituta
 MakeLocalDatabaseDumpShort=Tokiko datu-basearen babeskopia
 MakeLocalDatabaseDump=Sortu datu-base lokal baten zabortegi bat. Parametroak hauek dira: konpresioa ('gz' edo 'bz' edo 'none'), babeskopia mota ('mysql', 'pgsql', 'auto'), 1, 'auto' edo eraikitzeko fitxategi-izena, gordetzeko babeskopia-fitxategien kopurua

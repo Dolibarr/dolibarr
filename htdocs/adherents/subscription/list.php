@@ -58,7 +58,7 @@ $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hier
 
 $statut = (GETPOSTISSET("statut") ? GETPOST("statut", "alpha") : 1);
 $search_ref = GETPOST('search_ref', 'alpha');
-$search_id = GETPOST('search_id', 'alpha');
+$search_id = trim(GETPOST('search_id', 'alpha'));	// Can contains a numeric test like ">10" or "!= 34"
 $search_type = GETPOSTINT('search_type');
 $search_lastname = GETPOST('search_lastname', 'alpha');
 $search_firstname = GETPOST('search_firstname', 'alpha');
@@ -252,6 +252,10 @@ $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
 $sql .= " JOIN ".MAIN_DB_PREFIX."subscription as c on d.rowid = c.fk_adherent";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_extrafields as ef on (d.rowid = ef.fk_object)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank = b.rowid";
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE d.entity IN (".getEntity('adherent').")";
 if (isset($date_select) && $date_select != '') {
 	$sql .= " AND c.dateadh >= '".((int) $date_select)."-01-01 00:00:00'";
@@ -264,8 +268,8 @@ if ($search_ref) {
 		$sql .= " AND 1 = 2"; // Always wrong
 	}
 }
-if ($search_id) {
-	$sql .= natural_search("c.rowid", $search_id);
+if ($search_id != '') {
+	$sql .= natural_search("c.rowid", $search_id, 1);
 }
 if ($search_type > 0) {
 	$sql .= natural_search(array('c.fk_type'), (string) $search_type);
@@ -383,8 +387,8 @@ if ($statut != '') {
 if ($search_type) {
 	$param .= "&search_type=".((int) $search_type);
 }
-if ($search_id) {
-	$param .= "&search_id=".((int) $search_id);
+if ($search_id != '') {
+	$param .= "&search_id=".urlencode($search_id);
 }
 if ($date_select) {
 	$param .= "&date_select=".urlencode($date_select);
@@ -526,7 +530,7 @@ if ($conf->main_checkbox_left_column) {
 // Technical ID
 if (!empty($arrayfields['c.rowid']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<input class="width50" type="text" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 
