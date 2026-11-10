@@ -152,6 +152,38 @@ function dolReplaceFragmentOfPageContent($content, $oldfragment, $newfragment)
 }
 
 /**
+ * Apply a list of replacements to a page content, in order (to move an element: remove it, then add it elsewhere).
+ * Each fragment 'old' must be found once and only once in the content as left by the previous replacements.
+ *
+ * @param 	string	$content		Current content of the page
+ * @param 	mixed	$replacements	List of array('old' => fragment to replace, 'new' => its replacement, empty to remove it)
+ * @return 	array{error:string,index:int,nbfound:int,content:string}	error is '' if OK, 'badformat', 'notfound' or 'notunique' (index = position of the failing replacement, from 0)
+ * @see dolReplaceFragmentOfPageContent()
+ */
+function dolApplyReplacementsToPageContent($content, $replacements)
+{
+	$content = (string) $content;
+	if (!is_array($replacements) || empty($replacements)) {
+		return array('error' => 'badformat', 'index' => 0, 'nbfound' => 0, 'content' => $content);
+	}
+
+	$originalcontent = $content;	// returned unchanged if one replacement fails: all or nothing
+	$index = 0;
+	foreach (array_values($replacements) as $index => $replacement) {
+		if (!is_array($replacement) || !isset($replacement['old']) || !is_string($replacement['old']) || trim($replacement['old']) === '' || (isset($replacement['new']) && !is_string($replacement['new']))) {
+			return array('error' => 'badformat', 'index' => $index, 'nbfound' => 0, 'content' => $originalcontent);
+		}
+		$result = dolReplaceFragmentOfPageContent($content, $replacement['old'], (string) ($replacement['new'] ?? ''));
+		if ($result['nbfound'] != 1) {
+			return array('error' => ($result['nbfound'] == 0 ? 'notfound' : 'notunique'), 'index' => $index, 'nbfound' => $result['nbfound'], 'content' => $originalcontent);
+		}
+		$content = $result['content'];
+	}
+
+	return array('error' => '', 'index' => $index, 'nbfound' => 1, 'content' => $content);
+}
+
+/**
  * Convert a page content to have correct links (based on DOL_URL_ROOT) into an html content. It replaces also dynamic content with '...php...'
  * Used to output the page on the Preview from backoffice.
  *

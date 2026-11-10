@@ -279,4 +279,37 @@ class WebsiteTest extends CommonClassTest
 		$this->assertEquals(0, dolReplaceFragmentOfPageContent($content, 'absent', 'X')['nbfound']);
 		$this->assertEquals(0, dolReplaceFragmentOfPageContent($content, '  ', 'X')['nbfound']);
 	}
+
+	/**
+	 * testDolApplyReplacementsToPageContent
+	 *
+	 * @return void
+	 */
+	public function testDolApplyReplacementsToPageContent()
+	{
+		$content = "<section>\n<p><img src=\"a.png\"></p>\n<p>Text</p>\n<p>End</p>\n</section>";
+
+		// Move the image at the end: remove it, then add it after the last paragraph
+		$result = dolApplyReplacementsToPageContent($content, array(
+			array('old' => '<p><img src="a.png"></p>', 'new' => ''),
+			array('old' => '<p>End</p>', 'new' => '<p>End</p><p><img src="a.png"></p>'),
+		));
+		$this->assertEquals('', $result['error']);
+		$this->assertEquals("<section>\n\n<p>Text</p>\n<p>End</p><p><img src=\"a.png\"></p>\n</section>", $result['content']);
+
+		// The second replacement fails: all or nothing, the content is unchanged
+		$result = dolApplyReplacementsToPageContent($content, array(
+			array('old' => '<p><img src="a.png"></p>', 'new' => ''),
+			array('old' => 'absent', 'new' => 'X'),
+		));
+		$this->assertEquals('notfound', $result['error']);
+		$this->assertEquals(1, $result['index']);
+		$this->assertEquals($content, $result['content']);
+
+		// Fragment found several times, or bad format
+		$this->assertEquals('notunique', dolApplyReplacementsToPageContent($content, array(array('old' => '<p>', 'new' => '')))['error']);
+		$this->assertEquals('badformat', dolApplyReplacementsToPageContent($content, array())['error']);
+		$this->assertEquals('badformat', dolApplyReplacementsToPageContent($content, 'not a list')['error']);
+		$this->assertEquals('badformat', dolApplyReplacementsToPageContent($content, array(array('new' => 'X')))['error']);
+	}
 }

@@ -590,14 +590,15 @@ class Websites extends DolibarrApi
 	 *
 	 * Update a page of a website by its ID. The request data can include any field
 	 * of the website_page table (title, description, content, pageurl, status, etc.).
-	 * To change only a part of the content, give content_old (a fragment of the current
-	 * content, found once and only once) and content_new (its replacement) instead of content.
+	 * To change only parts of the content, give instead of content a list content_replacements
+	 * of {"old": fragment of the current content, found once and only once, "new": its replacement},
+	 * applied in order (all or nothing). For example, to move an element: remove it, then add it elsewhere.
 	 *
 	 * @param   int     $id             ID of website
 	 * @param   int     $pageid         ID of page to update
 	 * @param   array   $request_data   Page data
-	 * @phan-param ?array<string,string> $request_data
-	 * @phpstan-param ?array<string,string> $request_data
+	 * @phan-param ?array<string,mixed> $request_data
+	 * @phpstan-param ?array<string,mixed> $request_data
 	 * @return  array|mixed				Object after update
 	 * @phan-return WebsitePage
 	 * @phpstan-return WebsitePage
@@ -636,23 +637,24 @@ class Websites extends DolibarrApi
 		// Keep the old PHP content to detect if PHP content changed
 		$phpfullcodestringold = dolKeepOnlyPhpCode($this->websitepage->content);
 
-		// Partial change of the content: content_old is replaced with content_new in the current content
-		if (is_array($request_data) && (array_key_exists('content_old', $request_data) || array_key_exists('content_new', $request_data))) {
+		// Partial changes of the content: each fragment 'old' of content_replacements is replaced with its 'new', in order
+		if (is_array($request_data) && array_key_exists('content_replacements', $request_data)) {
 			if (array_key_exists('content', $request_data)) {
-				throw new RestException(400, 'Give either content (the whole new content) or content_old and content_new (a partial change), not both');
+				throw new RestException(400, 'Give either content (the whole new content) or content_replacements (partial changes), not both');
 			}
-			if (!isset($request_data['content_old']) || !is_string($request_data['content_old']) || trim($request_data['content_old']) === '' || !array_key_exists('content_new', $request_data) || is_array($request_data['content_new']) || is_object($request_data['content_new'])) {
-				throw new RestException(400, 'A partial change of the content needs content_old (a non empty fragment of the current content) and content_new (its replacement, empty to remove it)');
+			$replacement = dolApplyReplacementsToPageContent((string) $this->websitepage->content, $request_data['content_replacements']);
+			$numreplacement = $replacement['index'] + 1;
+			if ($replacement['error'] == 'badformat') {
+				throw new RestException(400, 'content_replacements must be a list of {"old": fragment of the current content (not empty), "new": its replacement (empty to remove it)}. Error on replacement '.$numreplacement.'.');
 			}
-			$replacement = dolReplaceFragmentOfPageContent((string) $this->websitepage->content, $request_data['content_old'], (string) $request_data['content_new']);
-			if ($replacement['nbfound'] == 0) {
-				throw new RestException(400, 'The fragment content_old was not found in the current content of the page. Read the page again and copy the fragment exactly.');
+			if ($replacement['error'] == 'notfound') {
+				throw new RestException(400, 'The fragment "old" of replacement '.$numreplacement.' was not found in the content of the page (as left by the previous replacements). Read the page again and copy the fragment exactly. Nothing was changed.');
 			}
-			if ($replacement['nbfound'] > 1) {
-				throw new RestException(400, 'The fragment content_old was found '.$replacement['nbfound'].' times in the current content of the page. Give a longer fragment so it is found only once.');
+			if ($replacement['error'] == 'notunique') {
+				throw new RestException(400, 'The fragment "old" of replacement '.$numreplacement.' was found '.$replacement['nbfound'].' times in the content of the page. Give a longer fragment so it is found only once. Nothing was changed.');
 			}
 			$request_data['content'] = $replacement['content'];
-			unset($request_data['content_old'], $request_data['content_new']);
+			unset($request_data['content_replacements']);
 		}
 
 		// Apply request data to the page object
