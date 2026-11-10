@@ -1781,7 +1781,10 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 	print '<!doctype html>'."\n";
 
-	print '<html lang="'.substr($langs->defaultlang, 0, 2).'">'."\n";
+	// Same value as the one given to the css file (THEME_DARKMODEENABLED can be forced on URL)
+	$darkmode = GETPOSTISSET('THEME_DARKMODEENABLED') ? GETPOSTINT('THEME_DARKMODEENABLED') : getDolGlobalInt('THEME_DARKMODEENABLED');
+	$thememode = ($darkmode == 2 ? 'dark' : ($darkmode == 1 ? 'auto' : 'light'));
+	print '<html lang="'.substr($langs->defaultlang, 0, 2).'" data-theme-mode="'.$thememode.'">'."\n";
 
 	//print '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">'."\n";
 	if (empty($disablehead)) {

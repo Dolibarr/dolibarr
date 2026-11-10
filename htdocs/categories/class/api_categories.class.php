@@ -293,6 +293,8 @@ class Categories extends DolibarrApi
 	/**
 	 * Update category
 	 *
+	 * The type of a category cannot be changed. A 'type' field is accepted only if it matches the current type.
+	 *
 	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param 	int   		$id             Id of category to update
@@ -331,7 +333,11 @@ class Categories extends DolibarrApi
 			}
 
 			if ($field == 'type') {
-				$this->category->type = $this->_getTypeId($value);
+				$type_id = $this->_getTypeId($value);
+				if ((string) (int) $type_id !== (string) (int) $this->category->type) {
+					throw new RestException(400, 'The type of a category cannot be changed');
+				}
+				$this->category->type = $type_id;
 				continue;
 			}
 
@@ -437,7 +443,7 @@ class Categories extends DolibarrApi
 
 		if ($type == Categorie::TYPE_PRODUCT && !DolibarrApiAccess::$user->hasRight('produit', 'lire') && !DolibarrApiAccess::$user->hasRight('service', 'lire')) {
 			throw new RestException(403);
-		} elseif ($type == Categorie::TYPE_CONTACT && !DolibarrApiAccess::$user->hasRight('contact', 'lire')) {
+		} elseif ($type == Categorie::TYPE_CONTACT && !DolibarrApiAccess::$user->hasRight('societe', 'contact', 'lire')) {
 			throw new RestException(403);
 		} elseif ($type == Categorie::TYPE_CUSTOMER && !DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
 			throw new RestException(403);
@@ -455,7 +461,7 @@ class Categories extends DolibarrApi
 			throw new RestException(403);
 		} elseif ($type == Categorie::TYPE_TICKET && !DolibarrApiAccess::$user->hasRight('ticket', 'read')) {
 			throw new RestException(403);
-		} elseif ($type == Categorie::TYPE_USER && !DolibarrApiAccess::$user->hasRight('user', 'lire')) {
+		} elseif ($type == Categorie::TYPE_USER && !DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && empty(DolibarrApiAccess::$user->admin)) {
 			throw new RestException(403);
 		} elseif ($type == Categorie::TYPE_WAREHOUSE && !DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
 			throw new RestException(403);
@@ -595,6 +601,8 @@ class Categories extends DolibarrApi
 					throw new RestException(500, 'Error when linking object', array_merge(array($this->category->error), $this->category->errors));
 				}
 			}
+		} elseif ($result == 0) {
+			throw new RestException(404, 'object not found');
 		} else {
 			throw new RestException(500, 'Error when fetching object', array_merge(array($object->error), $object->errors));
 		}
@@ -614,7 +622,7 @@ class Categories extends DolibarrApi
 	 *
 	 * @param int 		$id  		ID of category
 	 * @param string   	$type 		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
-	 * @param string   	$object_ref Reference of object (product, thirdparty, member, ...)
+	 * @param string   	$object_ref Reference of object (product, thirdparty, member, ...). For a contact, its external reference (ref_ext)
 	 *
 	 * @return array
 	 * @phan-return array{success:array{code:int,message:string}}
@@ -689,7 +697,12 @@ class Categories extends DolibarrApi
 			throw new RestException(400, "this type is not recognized yet.");
 		}
 
-		$result = $object->fetch(0, $object_ref);
+		if ($object instanceof Contact) {
+			// Contacts have no ref, so they are found by their external ref (ref_ext)
+			$result = $object->fetch(0, null, (string) $object_ref);
+		} else {
+			$result = $object->fetch(0, (string) $object_ref);
+		}
 		if ($result > 0) {
 			$this->_checkAccessToLinkedObject($type, $object);
 			$result = $this->category->add_type($object, $type);
@@ -698,6 +711,8 @@ class Categories extends DolibarrApi
 					throw new RestException(500, 'Error when linking object', array_merge(array($this->category->error), $this->category->errors));
 				}
 			}
+		} elseif ($result == 0) {
+			throw new RestException(404, 'object not found');
 		} else {
 			throw new RestException(500, 'Error when fetching object', array_merge(array($object->error), $object->errors));
 		}
@@ -799,6 +814,8 @@ class Categories extends DolibarrApi
 			if ($result < 0) {
 				throw new RestException(500, 'Error when unlinking object', array_merge(array($this->category->error), $this->category->errors));
 			}
+		} elseif ($result == 0) {
+			throw new RestException(404, 'object not found');
 		} else {
 			throw new RestException(500, 'Error when fetching object', array_merge(array($object->error), $object->errors));
 		}
@@ -818,7 +835,7 @@ class Categories extends DolibarrApi
 	 *
 	 * @param int      $id         	ID of category
 	 * @param string   $type 		Type  of category ('member', 'customer', 'supplier', 'product', 'contact', 'actioncomm')
-	 * @param string   $object_ref 	Reference of the object (product, thirdparty, member, ...)
+	 * @param string   $object_ref 	Reference of the object (product, thirdparty, member, ...). For a contact, its external reference (ref_ext)
 	 *
 	 * @return array
 	 * @phan-return array{success:array{code:int,message:string}}
@@ -893,13 +910,20 @@ class Categories extends DolibarrApi
 			throw new RestException(400, "this type is not recognized yet.");
 		}
 
-		$result = $object->fetch(0, (string) $object_ref);
+		if ($object instanceof Contact) {
+			// Contacts have no ref, so they are found by their external ref (ref_ext)
+			$result = $object->fetch(0, null, (string) $object_ref);
+		} else {
+			$result = $object->fetch(0, (string) $object_ref);
+		}
 		if ($result > 0) {
 			$this->_checkAccessToLinkedObject($type, $object);
 			$result = $this->category->del_type($object, $type);
 			if ($result < 0) {
 				throw new RestException(500, 'Error when unlinking object', array_merge(array($this->category->error), $this->category->errors));
 			}
+		} elseif ($result == 0) {
+			throw new RestException(404, 'object not found');
 		} else {
 			throw new RestException(500, 'Error when fetching object', array_merge(array($object->error), $object->errors));
 		}
