@@ -74,6 +74,13 @@ fi
 GIT_DIR=$(basename "$PWD")
 export GIT_DIR
 
+# Directory mounted as the working directory: ~/git/GIT_DIR (development context). When it does not exist
+# (production context, sources outside of ~/git), the current directory is mounted at the same path.
+WORK_DIR="$HOME/git/$GIT_DIR"
+if [ ! -d "$WORK_DIR" ]; then
+    WORK_DIR="$PWD"
+fi
+
 # When working on something else than the Dolibarr core (a module for example),
 # also mount the sibling directory dolibarr_dev or dolibarr (in this order of
 # preference) when it exists next to the current directory.
@@ -189,10 +196,10 @@ sudo docker run --rm -it \
   --network=host \
   --cap-add=NET_ADMIN \
   --mount "type=bind,src=/var/run/mysqld/mysqld.sock,dst=/var/run/mysqld/mysqld.sock" \
-  --mount "type=bind,src=$HOME/git/$GIT_DIR,dst=$HOME/git/$GIT_DIR" \
+  --mount "type=bind,src=$WORK_DIR,dst=$WORK_DIR" \
   "${EXTRA_MOUNTS[@]}" \
   --mount "type=bind,src=$HOME/.vibe,dst=/home/$(id -un)/.vibe" \
   --mount "type=bind,src=$HOME/.gitconfig,dst=$HOME/.gitconfig" \
   --mount "type=bind,src=$HOME/.bash_history,dst=$HOME/.bash_history" \
-  -w "$HOME/git/$GIT_DIR" \
+  -w "$WORK_DIR" \
   docker-vibe "${ARGS[@]}"
