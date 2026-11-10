@@ -5,8 +5,8 @@
 # --no-exit: stay into the container with a bash shell after vibe has ended
 #            (by default, when vibe is terminated, the container is terminated too)
 #
-# When the current directory is not a git clone of the Dolibarr core repository
-# (github.com/Dolibarr/dolibarr), the directory dolibarr_dev or dolibarr found
+# When the current directory is not the Dolibarr core sources (the first line of
+# its README.md file is not "# DOLIBARR ERP & CRM"), the directory dolibarr_dev or dolibarr found
 # next to the current directory is also mounted into the container, so the
 # Dolibarr sources are available into the container at the same path as on the host.
 
@@ -23,14 +23,18 @@ done
 
 echo "Launch the docker VM with Vibe harness for AI"
 
-# Detect if the current directory is a git clone of the Dolibarr core repository
-# (github.com/Dolibarr/dolibarr, or a fork of it: any remote pointing to a
-# repository named "dolibarr"): in that case it is already mounted as the
-# working directory and no other dolibarr directory must be mounted.
+# Detect if the current directory is the Dolibarr core sources (the first line of
+# the README.md file is "# DOLIBARR ERP & CRM"): in that case it is already mounted
+# as the working directory and no other dolibarr directory must be mounted.
 IS_DOLIBARR_CORE=0
-if git remote -v 2>/dev/null | grep origin | awk '{print $2}' | sed -e 's/\.git$//' -e 's#.*/##' | grep -qix dolibarr; then
+if [ -f README.md ] && [ "$(head -n 1 README.md | tr -d '\r')" = "# DOLIBARR ERP & CRM" ]; then
     IS_DOLIBARR_CORE=1
 fi
+# Previous detection, using the git remote (github.com/Dolibarr/dolibarr, or a fork of it:
+# any remote pointing to a repository named "dolibarr")
+#if git remote -v 2>/dev/null | grep origin | awk '{print $2}' | sed -e 's/\.git$//' -e 's#.*/##' | grep -qix dolibarr; then
+#    IS_DOLIBARR_CORE=1
+#fi
 
 echo IS_DOLIBARR_CORE="$IS_DOLIBARR_CORE"
 echo DOL_CTI_ADMIN_LOGIN="$DOL_CTI_ADMIN_LOGIN"
