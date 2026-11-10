@@ -10,6 +10,7 @@
  * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2026	   Guillaume de Wellenstein	<guillaume@tecneo.fr>
  * Copyright (C) 2026	   Nick Fragoulis
+ * Copyright (C) 2026	   Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1650,10 +1651,7 @@ class BonPrelevement extends CommonObject
 		$resql1 = $resql2 = $resql3 = $resql4 = 0;
 
 		if (!$notrigger) {
-			$triggername = 'DIRECT_DEBIT_ORDER_DELETE';
-			if ($this->type == 'bank-transfer') {
-				$triggername = 'PAYMENTBYBANKTRANFER_DELETE';
-			}
+			$triggername = ($this->type == 'bank-transfer') ? 'CREDIT_TRANSFER_ORDER_DELETE' : 'DIRECT_DEBIT_ORDER_DELETE';
 			// Call trigger
 			$result = $this->call_trigger($triggername, $user);
 			if ($result < 0) {
