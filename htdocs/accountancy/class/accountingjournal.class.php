@@ -827,7 +827,7 @@ class AccountingJournal extends CommonObject
 			}
 
 			$customer_static->fetch($invoice_static->socid);
-			$account_customer_general = !empty($customer_static->accountancy_code_customer_general) ? $customer_static->accountancy_code_customer_general : getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER');
+			$account_customer_general = (!empty($customer_static->accountancy_code_customer_general) && $customer_static->accountancy_code_customer_general != '-1') ? $customer_static->accountancy_code_customer_general : getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER');
 			$account_customer_subsidiary = !empty($customer_static->code_compta_client) ? $customer_static->code_compta_client : '';
 
 			$piece_link = $invoice_static->getNomUrl(1, 'withlabel');
@@ -1141,7 +1141,7 @@ class AccountingJournal extends CommonObject
 			}
 
 			$supplier_static->fetch($invoicesupplier_static->socid);
-			$account_supplier_general = !empty($supplier_static->accountancy_code_supplier_general) ? $supplier_static->accountancy_code_supplier_general : getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER');
+			$account_supplier_general = (!empty($supplier_static->accountancy_code_supplier_general) && $supplier_static->accountancy_code_supplier_general != '-1') ? $supplier_static->accountancy_code_supplier_general : getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER');
 			$account_supplier_subsidiary = !empty($supplier_static->code_compta_fournisseur) ? $supplier_static->code_compta_fournisseur : '';
 
 			$piece_link = $invoicesupplier_static->getNomUrl(1, 'withlabel');
