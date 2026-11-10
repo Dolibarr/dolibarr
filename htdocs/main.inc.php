@@ -1161,8 +1161,8 @@ if (!defined('NOLOGIN')) {
 		}
 	}
 
-	// Check if user must change password at next login
-	if (!empty($user->force_pass_change) && $dol_authmode == 'dolibarr') {
+	// Check if user must change password at next login. The mode is read from the session: $dol_authmode is set only by the login request.
+	if (!empty($user->force_pass_change) && (empty($_SESSION['dol_authmode']) ? '' : $_SESSION['dol_authmode']) == 'dolibarr') {
 		// redirect to a simple page with only one action is possible : change your password
 		$allowedpages = array('/user/changepassword.php', '/user/logout.php');
 		$currentpage = $_SERVER['PHP_SELF'];

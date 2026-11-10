@@ -3645,7 +3645,7 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 	box-shadow: 0 2px 23px 2px rgba(0, 0, 0, <?php print getDolGlobalInt('THEME_DARKMODEENABLED') ? 0.4 : 0.2; ?>), 0 2px 6px rgba(60, 60, 60, 0.15);
 	border-radius: 5px;
 }
-.login_table input#username, .login_table input#password, .login_table input#securitycode {
+.login_table input#username, .login_table input#password, .login_table input#securitycode, .login_table input#newpassword, .login_table input#newpassword2 {
 	/* border: none; */
 	border-bottom: solid 1px rgba(160,160,160,.4);
 	padding: 8px;
@@ -3655,7 +3655,7 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 	margin-bottom: 5px;
 	margin-right: 10px;
 }
-.login_table input#username:focus, .login_table input#password:focus, .login_table input#securitycode:focus {
+.login_table input#username:focus, .login_table input#password:focus, .login_table input#securitycode:focus, .login_table input#newpassword:focus, .login_table input#newpassword2:focus {
 	outline: none !important;
 }
 .login_table .trinputlogin {
@@ -3672,7 +3672,7 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 	padding-left: 10px;
 	width: 14px;
 }
-.login_table .tdinputlogin input#username, .login_table .tdinputlogin input#password, .login_table .tdinputlogin input#securitycode {
+.login_table .tdinputlogin input#username, .login_table .tdinputlogin input#password, .login_table .tdinputlogin input#securitycode, .login_table .tdinputlogin input#newpassword, .login_table .tdinputlogin input#newpassword2 {
 	font-size: 1.1em;
 }
 /* Serve as reference for icon that toggles showing the password */
