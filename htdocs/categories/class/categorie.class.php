@@ -1213,15 +1213,13 @@ class Categorie extends CommonObject
 				dol_print_error($this->db);
 			}
 
-			if (($limit >= (int) $nbtotalofrecords) && $page > 0) {
-				return [];
+			if ($resql) {
+				$this->db->free($resql);
 			}
 
-			if (($page * $limit) >= (int) $nbtotalofrecords) {	// if total resultset is smaller or equal then paging size (filtering), goto and load page 0
-				$page = 0;
-				$offset = 0;
+			if ($page > 0 && ($page * $limit) >= (int) $nbtotalofrecords) {	// requested page is after the last one, so there is nothing to return
+				return [];
 			}
-			$this->db->free($resql);
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);

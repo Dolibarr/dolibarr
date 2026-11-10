@@ -331,6 +331,129 @@ class Websites extends DolibarrApi
 	}
 
 	/**
+	 * List pages of all websites
+	 *
+	 * Get a list of pages (and blog posts), whatever is their website
+	 *
+	 * @param   string  $sortfield      Sort field
+	 * @param   string  $sortorder      Sort order
+	 * @param   int     $limit          Limit for list
+	 * @param   int     $page           Page number
+	 * @param   string  $sqlfilters     Other criteria to filter answers separated by a comma. Syntax example "(t.fk_website:=:1) and (t.type_container:=:'blogpost')"
+	 * @param   string  $properties     Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @return  array                   Array of website page objects
+	 * @phan-return WebsitePage[]
+	 * @phpstan-return WebsitePage[]
+	 *
+	 * @url     GET pages
+	 *
+	 * @throws  RestException   400     Bad sqlfilters
+	 * @throws  RestException   403     Access denied
+	 * @throws  RestException   503     Error retrieving list of pages
+	 */
+	public function indexAllPages($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
+	{
+		if (!DolibarrApiAccess::$user->hasRight('website', 'read')) {
+			throw new RestException(403);
+		}
+
+		$obj_ret = array();
+
+		$sql = "SELECT t.rowid, t.pageurl";
+		$sql .= " FROM ".$this->db->prefix()."website_page as t";
+		$sql .= " INNER JOIN ".$this->db->prefix()."website as w ON w.rowid = t.fk_website";
+		$sql .= " WHERE w.entity IN (".getEntity('website').")";
+
+		// Add sql filters
+		if ($sqlfilters) {
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			}
+		}
+
+		$sqlTotals = str_replace('SELECT t.rowid, t.pageurl', 'SELECT count(t.rowid) as total', $sql);
+
+		$sql .= $this->db->order($sortfield, $sortorder);
+		if ($limit) {
+			if ($page < 0) {
+				$page = 0;
+			}
+			$offset = $limit * $page;
+			$sql .= $this->db->plimit($limit + 1, $offset);
+		}
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			$i = 0;
+			while ($i < $min) {
+				$obj = $this->db->fetch_object($result);
+				$page_static = new WebsitePage($this->db);
+				if ($page_static->fetch($obj->rowid) > 0) {
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($page_static), $properties);
+				}
+				$i++;
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieve page list : '.$this->db->lasterror());
+		}
+
+		if ($page > 0) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = array();
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = array(
+				'total' => (int) $total,
+				'page' => $page,
+				'page_count' => (int) ceil((int) $total / $limit),
+				'limit' => $limit
+			);
+		}
+
+		return $obj_ret;
+	}
+
+	/**
+	 * Get properties of a website page by its id only
+	 *
+	 * Return an array with page information. The website of the page is found from the page.
+	 *
+	 * @param   int     $pageid         ID of page
+	 * @return  array|mixed             Object with cleaned properties
+	 * @phan-return WebsitePage
+	 * @phpstan-return WebsitePage
+	 *
+	 * @url     GET pages/{pageid}
+	 *
+	 * @throws  RestException   403     Access denied
+	 * @throws  RestException   404     Page not found
+	 */
+	public function getPageById($pageid)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('website', 'read')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->websitepage->fetch($pageid);
+		if ($result <= 0) {
+			throw new RestException(404, 'Page not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('website', $this->websitepage->fk_website)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		return $this->_cleanObjectDatas($this->websitepage);
+	}
+
+	/**
 	 * Create a website page
 	 *
 	 * Create a new page (or blog post with type_container = 'blogpost') into a website.
@@ -385,6 +508,11 @@ class Websites extends DolibarrApi
 				}
 				continue;
 			}
+			if ($field == 'content') {
+				// Security: PHP content can't be added through the API (the HTML sanitizer would also silently remove it)
+				$this->websitepage->content = $this->_checkPageContentForAPI($value, '');
+				continue;
+			}
 			$this->websitepage->$field = $this->_checkValForAPI($field, $value, $this->websitepage);
 		}
 
@@ -420,13 +548,6 @@ class Websites extends DolibarrApi
 		}
 		if ($result > 0) {
 			throw new RestException(409, 'A page with this pageurl already exists in this website');
-		}
-
-		// Security: check PHP content is allowed, with same rules than web editor
-		$phpfullcodestringold = '';
-		$phpfullcodestring = dolKeepOnlyPhpCode((string) $this->websitepage->content);
-		if (checkPHPCode($phpfullcodestringold, $phpfullcodestring)) {	// Contains the setEventMessages
-			throw new RestException(403, 'NotAllowedToAddDynamicContent');
 		}
 
 		// Clean data: remove head section from content (same as web interface)
@@ -469,12 +590,15 @@ class Websites extends DolibarrApi
 	 *
 	 * Update a page of a website by its ID. The request data can include any field
 	 * of the website_page table (title, description, content, pageurl, status, etc.).
+	 * To change only parts of the content, give instead of content a list content_replacements
+	 * of {"old": fragment of the current content, found once and only once, "new": its replacement},
+	 * applied in order (all or nothing). For example, to move an element: remove it, then add it elsewhere.
 	 *
 	 * @param   int     $id             ID of website
 	 * @param   int     $pageid         ID of page to update
 	 * @param   array   $request_data   Page data
-	 * @phan-param ?array<string,string> $request_data
-	 * @phpstan-param ?array<string,string> $request_data
+	 * @phan-param ?array<string,mixed> $request_data
+	 * @phpstan-param ?array<string,mixed> $request_data
 	 * @return  array|mixed				Object after update
 	 * @phan-return WebsitePage
 	 * @phpstan-return WebsitePage
@@ -513,6 +637,26 @@ class Websites extends DolibarrApi
 		// Keep the old PHP content to detect if PHP content changed
 		$phpfullcodestringold = dolKeepOnlyPhpCode($this->websitepage->content);
 
+		// Partial changes of the content: each fragment 'old' of content_replacements is replaced with its 'new', in order
+		if (is_array($request_data) && array_key_exists('content_replacements', $request_data)) {
+			if (array_key_exists('content', $request_data)) {
+				throw new RestException(400, 'Give either content (the whole new content) or content_replacements (partial changes), not both');
+			}
+			$replacement = dolApplyReplacementsToPageContent((string) $this->websitepage->content, $request_data['content_replacements']);
+			$numreplacement = $replacement['index'] + 1;
+			if ($replacement['error'] == 'badformat') {
+				throw new RestException(400, 'content_replacements must be a list of {"old": fragment of the current content (not empty), "new": its replacement (empty to remove it)}. Error on replacement '.$numreplacement.'.');
+			}
+			if ($replacement['error'] == 'notfound') {
+				throw new RestException(400, 'The fragment "old" of replacement '.$numreplacement.' was not found in the content of the page (as left by the previous replacements). Read the page again and copy the fragment exactly. Nothing was changed.');
+			}
+			if ($replacement['error'] == 'notunique') {
+				throw new RestException(400, 'The fragment "old" of replacement '.$numreplacement.' was found '.$replacement['nbfound'].' times in the content of the page. Give a longer fragment so it is found only once. Nothing was changed.');
+			}
+			$request_data['content'] = $replacement['content'];
+			unset($request_data['content_replacements']);
+		}
+
 		// Apply request data to the page object
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id' || $field == 'rowid') {
@@ -535,15 +679,12 @@ class Websites extends DolibarrApi
 				}
 				continue;
 			}
+			if ($field == 'content') {
+				// Security: PHP content can't be added or modified through the API, only kept unchanged
+				$this->websitepage->content = $this->_checkPageContentForAPI($value, $phpfullcodestringold);
+				continue;
+			}
 			$this->websitepage->$field = $this->_checkValForAPI($field, $value, $this->websitepage);
-		}
-
-		// Security: check PHP content is allowed, with same rules than web editor
-		// (checkPHPCode checks the permission website->writephp if PHP content has changed and
-		// checks the global option dolibarr_website_allow_custom_php and the forbidden PHP functions list)
-		$phpfullcodestring = dolKeepOnlyPhpCode($this->websitepage->content);
-		if (checkPHPCode($phpfullcodestringold, $phpfullcodestring)) {	// Contains the setEventMessages
-			throw new RestException(403, 'NotAllowedToAddDynamicContent');
 		}
 
 		// Clean data: remove head section from content (same as web interface)
@@ -639,6 +780,9 @@ class Websites extends DolibarrApi
 		unset($object->validation);
 		unset($object->user_validation_id);
 		unset($object->tms);
+		unset($object->newid);
+		unset($object->object_type);
+		unset($object->fk_object);
 
 		return $object;
 	}
@@ -676,6 +820,87 @@ class Websites extends DolibarrApi
 		}
 
 		return $this->_cleanObjectDatas($this->website);
+	}
+
+	/**
+	 * Refuse a page content containing javascript: a script tag, a 'javascript:' link or an 'on...=' event attribute
+	 * (the javascript dol_htmlwithnojs() removes).
+	 *
+	 * @param	string		$content		HTML content of page (without its PHP code)
+	 * @return	void
+	 *
+	 * @throws	RestException	400		Content contains javascript
+	 */
+	private function _checkNoJsInPageContentForAPI($content)
+	{
+		// We only look for non obfuscated javascript. Obfuscated javascript will be cleaned by the
+		// sanitizeVal 'restricthtmlallowclass' without a proper error message.
+		$jspattern = '/<script\b|javascript\s*:|\son[a-z]+\s*=/i';
+
+		if (preg_match_all($jspattern, $content) > 0) {
+			throw new RestException(400, 'The content contains javascript (script tag, javascript: link or on... event attribute): javascript is not allowed in a website page created or updated through the API. Remove it and retry.');
+		}
+	}
+
+	/**
+	 * Check and sanitize the content of a page received by the API.
+	 * PHP code can't be added or modified through the API, even with permission website->writephp. If the page
+	 * already contains PHP code, the content can be resubmitted only if this PHP code is kept unchanged.
+	 *
+	 * @param	mixed		$content				Content of page received by the API
+	 * @param	string		$phpfullcodestringold	PHP code of the current content of the page ('' for a new page)
+	 * @return	string								Sanitized content
+	 *
+	 * @throws	RestException	400		PHP code could not be preserved by the HTML sanitizer, or content contains javascript
+	 * @throws	RestException	403		Content contains new or modified PHP code
+	 */
+	private function _checkPageContentForAPI($content, $phpfullcodestringold)
+	{
+		if (is_array($content) || is_object($content)) {
+			throw new RestException(400, 'Field content must be a string');
+		}
+		$content = (string) $content;
+
+		$phpfullcodestring = dolKeepOnlyPhpCode($content);
+
+		// Removing all the PHP code is allowed. Adding or modifying PHP code is not.
+		if ($phpfullcodestring !== '' && $phpfullcodestring !== $phpfullcodestringold) {
+			if (!DolibarrApiAccess::$user->hasRight('website', 'writephp')) {
+				throw new RestException(403, 'Permission incomplete: you are not allowed to add or modify dynamic PHP content in a website page (permission website->writephp is required). Keep the existing PHP code unchanged.');
+			}
+			throw new RestException(403, 'Adding or modifying dynamic PHP content of a website page is not allowed through the API, even with the permission to edit PHP content. Use the website editor of the application to do it, or keep the existing PHP code unchanged.');
+		}
+
+		if ($phpfullcodestring === '') {
+			$this->_checkNoJsInPageContentForAPI($content);
+			// Keep the class attributes: the CSS of a website page relies on them
+			return (string) sanitizeVal($content, 'restricthtmlallowclass');
+		}
+
+		// PHP code is unchanged: protect the PHP blocks so the HTML sanitizer does not remove them, then restore them
+		$phpblocks = array();
+		$contentwithoutphp = '';
+		$parts = preg_split('/(<\?.*?(?:\?>|\z))/s', $content, -1, PREG_SPLIT_DELIM_CAPTURE);
+		foreach ((array) $parts as $i => $part) {
+			if ($i % 2) {	// Odd parts are the captured PHP blocks
+				$phpblocks[] = $part;
+				$contentwithoutphp .= 'DOLAPIPHPBLOCK'.(count($phpblocks) - 1).'DOLAPIPHPBLOCKEND';
+			} else {
+				$contentwithoutphp .= $part;
+			}
+		}
+		$this->_checkNoJsInPageContentForAPI($contentwithoutphp);
+		$newcontent = (string) sanitizeVal($contentwithoutphp, 'restricthtmlallowclass');
+		foreach ($phpblocks as $key => $phpblock) {
+			$newcontent = str_replace('DOLAPIPHPBLOCK'.$key.'DOLAPIPHPBLOCKEND', $phpblock, $newcontent);
+		}
+
+		// Final check: the PHP code of the content to save must be exactly the PHP code of the current page
+		if (dolKeepOnlyPhpCode($newcontent) !== $phpfullcodestringold) {
+			throw new RestException(400, 'The existing PHP code of the page could not be preserved by the HTML sanitizer of the API (PHP code is probably inside a forbidden HTML tag or attribute). Use the website editor of the application to update this page.');
+		}
+
+		return $newcontent;
 	}
 
 	/**

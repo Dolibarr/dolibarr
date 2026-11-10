@@ -108,6 +108,16 @@ foreach ($arrayofai as $ia => $iarecord) {
 	if ($ia == 'custom') {
 		$item->fieldAttr['placeholder'] = 'https://domainofapi.com/v1/';
 	}
+
+	// Max tokens of the answers (required by the Anthropic API, optional for the others)
+	if ($ia == 'anthropic') {
+		$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_MAX_TOKENS')->setAsNumber(1);
+		$item->nameText = $langs->trans("AI_API_MAX_TOKENS").' ('.$ialabel.')';
+		$item->defaultFieldValue = '1024';
+		$item->fieldParams['trClass'] = 'iaservice '.$ia;
+		$item->cssClass = 'width100 input'.$ia;
+		$item->helpText = $langs->trans("AI_API_MAX_TOKENSHelp");
+	}
 }
 
 $setupnotempty = + count($formSetup->items);

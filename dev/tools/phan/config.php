@@ -21,6 +21,7 @@ $sanitizeRegex
 			'alpha',
 			'alphawithlgt',
 			'alphanohtml',
+			'alphanohtmlquote',
 			'MS',
 			'aZ',
 			'aZ09',
