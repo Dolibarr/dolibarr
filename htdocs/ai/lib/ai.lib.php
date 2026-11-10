@@ -946,7 +946,8 @@ function getAiChatAssistantConfig()
 		'AIModelFast',
 		'AIModelBalanced',
 		'AIModelDeep',
-		'AIModelSavedGone'
+		'AIModelSavedGone',
+		'Default'
 	);
 
 	$ai_translations = array();
@@ -1038,6 +1039,11 @@ function getAiChatAssistantConfig()
 		// Key of the conversation kept in the browser sessionStorage, so the chat
 		// survives a page change (popover <-> full page) for this user and entity only.
 		'historyKey' => 'aiChatHistory_'.((int) $conf->entity).'_'.((int) $user->id),
+		// Key of the model picked in the chat, kept in the browser localStorage. It includes the
+		// login date, so a new login starts again on the default model (AI_API_<SERVICE>_MODEL_TEXT).
+		'modelChoiceKey' => 'aiModelChoice_'.((int) $conf->entity).'_'.((int) $user->id).'_'.((int) ($_SESSION['dol_logindate'] ?? 0)),
+		// Model used by default (AI_API_<SERVICE>_MODEL_TEXT), flagged with "(Default)" in the model picker
+		'defaultModel' => getAiAssistantDefaultModel(),
 	);
 }
 

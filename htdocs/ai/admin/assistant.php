@@ -250,14 +250,14 @@ print '<br>';
 print '<br>';
 
 if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
-	print load_fiche_titre($langs->trans("PrivateModeTitle"), '', 'fas fa-lock');
-
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
+
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td></td></tr>';
 
 	// Input Mode
 	print '<tr class="oddeven">';
@@ -364,37 +364,6 @@ if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	print '<br>';
 	print '<br>';
 
-
-	// AI Provider Config and Connection testing
-	$services = getListOfAIServices();
-	$currentService = getDolGlobalString('AI_API_SERVICE');
-
-	print load_fiche_titre($langs->trans("AIProviderConfigTitle"), '', 'fa fa-plug');
-
-	if ((string) $currentService == '-1') {
-		print '<div class="warning">'.$langs->trans("NoAIProviderSelected").' <a href="'.dol_buildpath('/ai/admin/setup.php', 1).'">'.$langs->trans("ConfigureHere").'</a></div>';
-	} else {
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
-
-		print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("AIProvider").'</td><td>'.$services[$currentService]['label'].'</td></tr>';
-
-		$prefix = 'AI_API_'.strtoupper($currentService);
-		$modelVal = getDolGlobalString($prefix.'_MODEL_TEXT', $services[$currentService]['textgeneration']['default']);
-
-		print '<tr class="oddeven"><td>'.$langs->trans("AI_API_MODEL").'</td><td>'.$modelVal.'</td></tr>';
-		print '</table></div>';
-
-		print '<div class="center">';
-
-		if ($currentService && $currentService !== '-1') {
-			print '<a class="reposition button smallpaddingimp" href="'.$_SERVER['PHP_SELF'].'?action=test_provider&token='.newToken().'&service_key='.urlencode($currentService).'">'.$langs->trans('TestConnection').'</a>';
-		}
-
-		print '</div>';
-	}
-
-	print '<br><br>';
 
 	// External Access Configuration
 	/*

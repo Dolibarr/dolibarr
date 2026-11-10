@@ -140,6 +140,9 @@ export function initAiAssistant(container) {
     const HISTORY_MAX_MSGS = 20;
     // sessionStorage key of the prompts typed by the user, recalled with ArrowUp/ArrowDown in the input
     const PROMPTS_KEY = HISTORY_KEY ? HISTORY_KEY + '_prompts' : '';
+    // localStorage key of the picked model, bound to the login session (see getAiChatAssistantConfig()).
+    // Declared before the bootstrap: initModelPicker() reads it when called there.
+    const MODEL_CHOICE_KEY = config.modelChoiceKey || 'aiModelChoice';
     const PROMPTS_MAX = 50;
     let promptsIndex = -1;    // -1 = not browsing the history, else position from the most recent prompt
     let promptsDraft = '';    // what was typed before browsing, restored when going back down
@@ -655,7 +658,14 @@ export function initAiAssistant(container) {
     function initModelPicker() {
         if (!modelSelect) return;
         let saved = '';
-        try { saved = localStorage.getItem('aiModelChoice') || ''; } catch (e) { /* private mode */ }
+        try {
+            // Forget the choices of the previous logins: a new login starts on the default model
+            for (let i = localStorage.length - 1; i >= 0; i--) {
+                const k = localStorage.key(i);
+                if (k && k.indexOf('aiModelChoice') === 0 && k !== MODEL_CHOICE_KEY) localStorage.removeItem(k);
+            }
+            saved = localStorage.getItem(MODEL_CHOICE_KEY) || '';
+        } catch (e) { /* private mode */ }
 
         // Presets rely on a name heuristic (see resolveModel): only offered when
         // AI_SUGGESTS_PRESETS_TO_TRY_TO_CHANGE_MODEL_DYNAMICALLY is on.
@@ -690,7 +700,8 @@ export function initAiAssistant(container) {
                     modelSelect.appendChild(sep);
                     modelList.forEach((id) => {
                         const o = document.createElement('option');
-                        o.value = id; o.textContent = id;
+                        o.value = id;
+                        o.textContent = id + ((config.defaultModel && id === config.defaultModel) ? ' (' + t('Default') + ')' : '');
                         modelSelect.appendChild(o);
                     });
                     // Saved model no longer offered by the provider: fall back to
@@ -698,7 +709,7 @@ export function initAiAssistant(container) {
                     // picker never looks silently ignored, cf. review on #39878).
                     if (saved && saved.indexOf('preset:') !== 0 && modelList.indexOf(saved) < 0) {
                         appendMsg('system', escapeHtml(t('AIModelSavedGone').replace('%s', saved)));
-                        try { localStorage.removeItem('aiModelChoice'); } catch (e) { /* ignore */ }
+                        try { localStorage.removeItem(MODEL_CHOICE_KEY); } catch (e) { /* ignore */ }
                         saved = '';
                     }
                 }
@@ -707,7 +718,15 @@ export function initAiAssistant(container) {
             .catch(() => { /* provider unreachable: keep Auto + presets */ });
 
         modelSelect.addEventListener('change', () => {
-            try { localStorage.setItem('aiModelChoice', modelSelect.value); } catch (e) { /* ignore */ }
+            try { localStorage.setItem(MODEL_CHOICE_KEY, modelSelect.value); } catch (e) { /* ignore */ }
+        });
+
+        // Model changed in another browser tab of the same session: show it in this tab too
+        window.addEventListener('storage', (e) => {
+            if (e.key !== MODEL_CHOICE_KEY) return;
+            saved = e.newValue || '';
+            modelSelect.value = Array.prototype.some.call(modelSelect.options, (o) => o.value === saved) ? saved : '';
+            refreshSelect2Combo(modelSelect);
         });
     }
 
