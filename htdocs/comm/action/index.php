@@ -713,6 +713,7 @@ function dolAgendaDayItems(layer) {
 function dolAgendaDayLayout(layer) {
 	dolAgendaDayColumns(dolAgendaDayItems(layer));
 	dolAgendaDayDrag(layer);
+	dolAgendaDayResize(layer);
 }
 function dolAgendaDaySnapTop(el, ui) {
 	var layer = el.parentNode;
@@ -755,6 +756,8 @@ function dolAgendaDayDrag(layer) {
 			this.style.right = 'auto';
 			this.style.width = w + 'px';
 		},
+		// Without this, grabbing the resize handle at the bottom edge moves the event instead
+		cancel: '.ui-resizable-handle',
 		drag: function (event, ui) {
 			ui.position.top = dolAgendaDaySnapTop(this, ui);
 		},
@@ -808,6 +811,76 @@ function dolAgendaDayDrag(layer) {
 			});
 		}
 	});
+}
+function dolAgendaDaySnapEnd(el, boxheight) {
+	// Absolute 15 min snap of the new end, like dolAgendaDaySnapTop does for the start: a box is at
+	// least 20 px tall whatever its duration, so snapping the height would land on 10:05 or 11:20.
+	// The end never goes past the last hour the grid shows, nor closer than the step to the start.
+	var start = parseInt(el.getAttribute('data-agenda-start'), 10);
+	var gridend = parseInt(el.parentNode.getAttribute('data-end-min'), 10);
+	return Math.max(start + 15, Math.min(Math.round((start + boxheight) / 15) * 15, gridend));
+}
+function dolAgendaDayResizeHeight(el, minutes) {
+	// Same floor as the server rendering: a very short event still shows a box that can be grabbed
+	el.style.height = Math.max(minutes, 20) + 'px';
+}
+function dolAgendaDayResize(layer) {
+	var boxes = jQuery(layer).children('.event.movable[data-agenda-event-id]').not('.ui-resizable');
+	boxes.resizable({
+		handles: 's',
+		minHeight: 15,
+		resize: function (event, ui) {
+			ui.size.height = dolAgendaDaySnapEnd(this, ui.size.height) - parseInt(this.getAttribute('data-agenda-start'), 10);
+			// Resizable writes a width too; the side by side layout is what owns it
+			ui.size.width = ui.originalSize.width;
+		},
+		stop: function (event, ui) {
+			var el = this;
+			var layerofel = el.parentNode;
+			var start = parseInt(el.getAttribute('data-agenda-start'), 10);
+			var oldend = parseInt(el.getAttribute('data-agenda-end'), 10);
+			var newend = dolAgendaDaySnapEnd(el, ui.size.height);
+			// Resizable writes a width in pixels, the side by side layout drives the box with a left
+			// and a right instead, so the layout is what puts the column back in both branches below.
+			if (newend === oldend) {
+				dolAgendaDayResizeHeight(el, oldend - start);
+				dolAgendaDayColumns(dolAgendaDayItems(layerofel));
+				return;
+			}
+			var hh = ('0' + Math.floor(newend / 60)).slice(-2);
+			var mm = ('0' + (newend % 60)).slice(-2);
+			var hhstart = ('0' + Math.floor(start / 60)).slice(-2);
+			var mmstart = ('0' + (start % 60)).slice(-2);
+			// No second resize and no drag of this box until the server answered
+			jQuery(el).resizable('disable');
+			jQuery(el).draggable('disable');
+			jQuery.ajax({type: 'POST', url: dolAgendaGridCfg.url, dataType: 'json', data: {
+				id: el.getAttribute('data-agenda-event-id'),
+				newdatetime: layerofel.getAttribute('data-agenda-date') + hhstart + mmstart + '00',
+				newenddatetime: layerofel.getAttribute('data-agenda-date') + hh + mm + '00',
+				token: jQuery('#searchFormList input[name=token]').val()
+			}}).done(function (data) {
+				jQuery(el).resizable('enable');
+				jQuery(el).draggable('enable');
+				if (data.error) {
+					dolAgendaDayResizeHeight(el, oldend - start);
+					dolAgendaDayColumns(dolAgendaDayItems(layerofel));
+					Dolibarr.tools.setEventMessage(data.message, 'errors');
+					return;
+				}
+				el.setAttribute('data-agenda-end', newend);
+				dolAgendaDayResizeHeight(el, newend - start);
+				dolAgendaDayColumns(dolAgendaDayItems(layerofel));
+				Dolibarr.tools.setEventMessage(dolAgendaGridCfg.msgsaved, 'mesgs');
+			}).fail(function () {
+				// Transport failure: we don't know whether the server saved the resize, show the real state
+				location.reload();
+			});
+		}
+	});
+	// The box has overflow: hidden and the handle of the theme sits at bottom: -5px, so only two of
+	// its seven pixels would be inside the box, and the grip would be nearly impossible to catch.
+	boxes.children('.ui-resizable-s').css({bottom: '0', height: '6px'});
 }
 jQuery('.agendadaylayer').each(function () { dolAgendaDayLayout(this); });
 // Run the layout again when events are shown or hidden by the calendar checkboxes
