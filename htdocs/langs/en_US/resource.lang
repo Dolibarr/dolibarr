@@ -37,3 +37,7 @@ ErrorResourceUseInEvent=%s used in %s event
 MaxUsers=Maximum number of users
 MaxUsersResourceDesc=If the resource can be used by several people at once (car, room, ...), you can enter here the maximum number of users allowed to use the resource at the same time (number of seats, places, ...).
 MaxUsersLabel=Maximum users
+TypeContact_dolresource_internal_USERINCHARGE=In charge of resource
+TypeContact_dolresource_external_THIRDINCHARGE=In charge of resource
+ResourceTypeShortRES_ROOMS=Rooms
+ResourceTypeShortRES_CARS=Cars
