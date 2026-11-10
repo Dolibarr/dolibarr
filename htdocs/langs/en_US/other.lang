@@ -446,6 +446,7 @@ AIProviderInUse=AI provider in use
 AICannotUnderstandRequest=I'm having trouble understanding your request. Please try rephrasing it differently. If the problem persists, please contact your administrator to check the AI connection status.
 AIProviderBusy=The AI service could not answer right now (%s). This is usually temporary: please try again in a moment.
 AIProviderError=The AI service returned an error: %s. If it persists, please contact your administrator to check the AI configuration.
+AIAnswerTruncated=The answer of the AI was cut before its end (%s), so it was not used. Ask for a shorter task, or ask your administrator to increase the max number of tokens of the answers in the setup of the AI module.
 AIModelNotAvailableAtProvider=The AI model '%s' is not available (or no longer available) at the provider %s (%s). Choose another model from the assistant's model list, or ask your administrator to check the AI setup.
 AIGreeting=Hi %s, how can I help?
 AIGreetingSubtitle=Ask a question in natural language about your third parties, invoices, orders or products.
@@ -545,6 +546,9 @@ AIWriteNotDraftDelete=The %s %s is not a draft: only drafts can be deleted here.
 AIWriteValidateNoLines=The %s %s has no lines: add some before validating it.
 AIWriteFieldsNotAllowed=These fields cannot be changed here: %s. Fields that can be changed: %s.
 AIWriteNothingToChange=Nothing to change: give the fields to change with their new value.
+AIWriteContentFragmentIncomplete=For partial changes of the content, give content_replacements: a list of {"old": fragment of the current content to replace, "new": its replacement}, without content.
+AIWriteContentFragmentNotFound=The fragment to replace of the change %s was not found in the content of the page. Read the page again and copy the fragment exactly. Nothing was changed.
+AIWriteContentFragmentNotUnique=The fragment to replace of the change %s was found %s times in the content of the page. Give a longer fragment so it is found only once. Nothing was changed.
 AIWriteNotDraftEdit=The %s %s is not a draft: its header can no longer be changed here.
 AIWriteNotDraftLines=The %s %s is not a draft: its lines can no longer be changed.
 AIWriteLineNotGiven=Say which line: its position (1 = first) or its product. Lines: %s
@@ -755,3 +759,5 @@ dolIncludeError=The call of dol_include_once of the file "%s" in module "%s" is 
 moduleNameMismatch=Warning, the module file contains a directory in root called "%s" but this does not match the name of module used as file name that is "%s".
 rootDirWarning=Warning, a module file can contain only 1 root directory with the same name as the module (into the root of zip or into the htdocs directory). We found %s files/directories into the root of module. If this module is a meta-package (a module embedding several other modules), you must include a file metapackage.conf with list of all embedded module names in directory "%s"
 NoDataRelatedTo=No data found related to this object
+
+AIWriteInvalidLineDeletionArgument=Invalid argument for deleting a line: %s. Give the order and exactly one line identifier, position or product reference.

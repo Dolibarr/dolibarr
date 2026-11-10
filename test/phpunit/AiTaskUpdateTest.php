@@ -32,20 +32,24 @@ class AiTaskUpdateTest extends PHPUnit\Framework\TestCase
 	private $previousUser;
 	/** @var mixed Previous configuration */
 	private $previousConf;
+	/** @var mixed Previous company */
+	private $previousCompany;
 	/** @var string Original timezone */
 	private $previousTimezone;
 
 	/** @return void */
 	protected function setUp(): void
 	{
-		global $langs, $user, $conf;
+		global $langs, $user, $conf, $mysoc;
 		$this->previousLangs = $langs;
 		$this->previousUser = $user;
 		$this->previousConf = $conf;
+		$this->previousCompany = $mysoc;
+		$mysoc = null;
 		$this->previousTimezone = date_default_timezone_get();
 		date_default_timezone_set('UTC');
 		$langs = new AiTaskUpdateLanguageFixture();
-		$conf = (object) ['global' => new stdClass(), 'cache' => [], 'modules_parts' => ['hooks' => []]];
+		$conf = (object) ['entity' => 1, 'modules' => [], 'global' => new stdClass(), 'cache' => [], 'modules_parts' => ['hooks' => []]];
 		$this->bridge = new AiTaskUpdateBridgeFixture(null, new AiTaskUpdateUserFixture());
 		AiTaskUpdateEndpointFixture::$received = [];
 		AiTaskUpdateEndpointFixture::$customResult = false;
@@ -55,10 +59,11 @@ class AiTaskUpdateTest extends PHPUnit\Framework\TestCase
 	/** @return void */
 	protected function tearDown(): void
 	{
-		global $langs, $user, $conf;
+		global $langs, $user, $conf, $mysoc;
 		$langs = $this->previousLangs;
 		$user = $this->previousUser;
 		$conf = $this->previousConf;
+		$mysoc = $this->previousCompany;
 		date_default_timezone_set($this->previousTimezone);
 	}
 
