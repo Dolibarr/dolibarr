@@ -88,6 +88,7 @@ $rawRequestLog = "";
 $rawResponseLog = "";
 $providerUsed = "offline";
 $errorDetails = "";
+$adapter = null;	// LLM adapter, set only when an AI API is called
 
 $assistantEnabled = getDolGlobalInt('AI_ASSISTANT_ENABLED', 0);
 $serviceKey = getDolGlobalString('AI_API_SERVICE');
@@ -1245,7 +1246,7 @@ try {
 				$hasPdf = $hasPdf || ($att['mime'] === 'application/pdf');
 			}
 			$attachmentWords = '/\b(?:file|files|pdf|document|image_url|image|attachment|content.?type|mime|multimodal|vision)\b/i';
-			if (isset($adapter) && $adapter->lastTruncated) {
+			if ($adapter !== null && $adapter->lastTruncated) {
 				// The answer was cut by the max tokens limit: retrying the same request gives the same cut answer
 				$message = $langs->transnoentitiesnoconv('AIAnswerTruncated', $reason);
 			} elseif (!empty($attachments) && preg_match($attachmentWords, $reason)) {
