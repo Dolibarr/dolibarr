@@ -495,7 +495,7 @@ create table llx_ai_chat_message
   rowid						integer AUTO_INCREMENT PRIMARY KEY,
   fk_conversation			integer NOT NULL,
   role						varchar(16) NOT NULL,
-  content_raw				text,
+  content_raw				mediumtext,
   content_html				MEDIUMTEXT,
   tool_name					varchar(255),
   pinned					smallint DEFAULT 0,
@@ -677,3 +677,5 @@ insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code
 ALTER TABLE llx_website_page MODIFY COLUMN aliasalt text;
 ALTER TABLE llx_website_page MODIFY COLUMN htmlheader longtext;
 ALTER TABLE llx_website_page MODIFY COLUMN content longtext;
+
+ALTER TABLE llx_ai_chat_message MODIFY COLUMN content_raw mediumtext;
