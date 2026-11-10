@@ -1,4 +1,4 @@
--- Copyright (C) 2026		Maxime DION				<contact@guiltek.com>
+-- Copyright (C) 2026		Maxime DION				<m.dion@guiltek.fr>
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
