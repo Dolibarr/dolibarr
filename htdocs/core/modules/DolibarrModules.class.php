@@ -2224,8 +2224,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 						}
 					}
 
-					// If we want to init permissions on admin users
-					if (!empty($reinitadminperms)) {
+					// If we want to init permissions on admin users (not when permissions are given by user groups only)
+					if (!empty($reinitadminperms) && !getDolGlobalInt('MAIN_USER_PERMISSIONS_ONLY_BY_GROUPS')) {
 						$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."user WHERE admin = 1";
 						dol_syslog(get_class($this)."::insert_permissions Search all admin users", LOG_DEBUG);
 
