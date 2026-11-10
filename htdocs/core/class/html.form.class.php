@@ -2086,7 +2086,7 @@ class Form
 				});' . (getDolGlobalString('CONTACT_SEARCH_AUTOFOCUS') ? '
 				jQuery("#' . $htmlidjs . '").select2("open");' : '') . '
 			});</script>';
-			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.select2-container { z-index: 1010; }</style>';
+			$out .= '<!-- force css of dropdown (attached to body) to be higher than dialog popup, but not the combo itself so it stays under the sticky top menu --><style type="text/css">body > .select2-container { z-index: 1010; }</style>';
 		} else {
 			// Immediate load of all database
 			$disableifempty = 0;
@@ -3068,7 +3068,7 @@ class Form
 			$ajaxpagesize = getDolGlobalInt('USER_LIMIT_SIZE', 20);
 
 			$out .= $this->buildSelectDolusersAjaxSelect2Script($htmlname, $urloption, $minlengthforajax, $ajaxpagesize);
-			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.select2-container { z-index: 1010; }</style>';
+			$out .= '<!-- force css of dropdown (attached to body) to be higher than dialog popup, but not the combo itself so it stays under the sticky top menu --><style type="text/css">body > .select2-container { z-index: 1010; }</style>';
 
 			return $out;
 		}
@@ -3114,7 +3114,7 @@ class Form
 			$ajaxpagesize = getDolGlobalInt('USER_LIMIT_SIZE', 20);
 
 			$out .= $this->buildSelectDolusersAjaxSelect2Script($htmlname, $urloption, $minlengthforajax, $ajaxpagesize);
-			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.select2-container { z-index: 1010; }</style>';
+			$out .= '<!-- force css of dropdown (attached to body) to be higher than dialog popup, but not the combo itself so it stays under the sticky top menu --><style type="text/css">body > .select2-container { z-index: 1010; }</style>';
 
 			return $out;
 		}
