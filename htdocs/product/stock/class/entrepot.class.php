@@ -370,6 +370,10 @@ class Entrepot extends CommonObject
 		$this->town = trim($this->town);
 		$this->country_id = ($this->country_id > 0 ? $this->country_id : 0);
 
+		if (!isset($this->status) && isset($this->statut)) {
+			$this->status = $this->statut;
+		}
+
 		$sql = "UPDATE ".$this->db->prefix()."entrepot";
 		$sql .= " SET ref = '".$this->db->escape($this->label)."'";
 		$sql .= ", fk_parent = ".(($this->fk_parent > 0) ? ((int) $this->fk_parent) : "NULL");
