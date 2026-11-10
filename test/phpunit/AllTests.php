@@ -187,6 +187,8 @@ class AllTests
 		$suite->addTestSuite('AiMcpApiBridgeDocumentsTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeProjectsTest.php';
 		$suite->addTestSuite('AiMcpApiBridgeProjectsTest');
+		require_once dirname(__FILE__).'/AiMcpApiBridgeSupplierOrderDeleteLineTest.php';
+		$suite->addTestSuite('AiMcpApiBridgeSupplierOrderDeleteLineTest');
 		require_once dirname(__FILE__).'/ApiExplorerAccessControlTest.php';
 		$suite->addTestSuite('ApiExplorerAccessControlTest');
 		require_once dirname(__FILE__).'/ApiListStatusFilterTest.php';
@@ -225,6 +227,8 @@ class AllTests
 		$suite->addTestSuite('InstallRepairEcmTest');
 		require_once dirname(__FILE__).'/InstallRepairImagesTest.php';
 		$suite->addTestSuite('InstallRepairImagesTest');
+		require_once dirname(__FILE__).'/InstallRepairMailingTest.php';
+		$suite->addTestSuite('InstallRepairMailingTest');
 		require_once dirname(__FILE__).'/GetUrlLibTest.php';
 		$suite->addTestSuite('GetUrlLibTest');
 		require_once dirname(__FILE__).'/JsonLibTest.php';

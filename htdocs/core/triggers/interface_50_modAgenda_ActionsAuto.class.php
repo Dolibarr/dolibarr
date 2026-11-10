@@ -1456,6 +1456,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 			$object->sendtoid = array();
 		} elseif ($action == 'ECMFILES_CREATE' && $object instanceof EcmFiles && getDolGlobalString('AGENDA_TRACK_UPLOAD_ON_OBJECTS')) {
+			//  For the moment we do not enable this as there is troubles in how we can manage all type of objects.
+			// insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('ECMFILES_CREATE','Document uploaded','Executed when a document is uploaded','all',2500);
 			if ($object->src_object_type !== 'commande_fournisseur' || $object->src_object_id <= 0 || $object->gen_or_uploaded !== 'uploaded') {
 				return 0;
 			}

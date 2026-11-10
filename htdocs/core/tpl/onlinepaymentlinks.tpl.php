@@ -197,7 +197,7 @@ if ($showinpopup) {
 			modal: true,
 			width: "80%",
 			maxHeight: (window.innerHeight - 100),
-			title: "'.dol_escape_js($langs->transnoentitiesnoconv("GetAPaymentLink")).'"
+			title: \''.dol_escape_js($langs->transnoentitiesnoconv("GetAPaymentLink")).'\'
 		});
 		jQuery("#linkforonlinepaymentlinks").click(function () {
 			console.log("Click on linkforonlinepaymentlinks, we open the popup");
