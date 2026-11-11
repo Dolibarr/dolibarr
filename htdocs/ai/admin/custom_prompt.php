@@ -291,7 +291,7 @@ print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 $head = aiAdminPrepareHead();
 print dol_get_fiche_head($head, 'custom', $langs->trans($title), -1, "ai");
 
-$newcardbutton = dolGetButtonTitle($langs->trans('NewCustomPrompt'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=create', '', 1);
+$newcardbutton = dolGetButtonTitle($langs->trans('NewCustomPrompt'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=create', '', 1, array('morecss' => 'reposition'));
 /*
 $newbutton = '<a href="'.$_SERVER["PHP_SELF"].'?action=create" title="'.$langs->trans("NewCustomPrompt").'">';
 $newbutton .= img_picto('', 'add');
@@ -428,8 +428,14 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 	if (empty($currentConfigurations)) {
 		if ($action != 'create') {
 			print '<!-- no custom prompt-->'."\n";
-			print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
-			print '<br>';
+			print '<table class="noborder centpercent">';
+			print '<tr class="liste_titre">';
+			print '<td>'.$langs->trans("CustomPromptTitle").'</td>';
+			print '</tr>';
+			print '<tr class="oddeven">';
+			print '<td><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
+			print '</tr>';
+			print '</table>';
 			print '<br>';
 		}
 		print '<br>';
