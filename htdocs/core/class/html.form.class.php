@@ -28,6 +28,7 @@
  * Copyright (C) 2026		Lenin Rivas				<lenin.rivas777@gmail.com>
  * Copyright (C) 2026		Open-Dsi				<support@open-dsi.fr>
  * Copyright (C) 2026		Jose MARTINEZ				<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Joachim Kueter		<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2085,7 +2086,7 @@ class Form
 				});' . (getDolGlobalString('CONTACT_SEARCH_AUTOFOCUS') ? '
 				jQuery("#' . $htmlidjs . '").select2("open");' : '') . '
 			});</script>';
-			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.select2-container { z-index: 1010; }</style>';
+			$out .= '<!-- force css of dropdown (attached to body) to be higher than dialog popup, but not the combo itself so it stays under the sticky top menu --><style type="text/css">body > .select2-container { z-index: 1010; }</style>';
 		} else {
 			// Immediate load of all database
 			$disableifempty = 0;
@@ -3067,7 +3068,7 @@ class Form
 			$ajaxpagesize = getDolGlobalInt('USER_LIMIT_SIZE', 20);
 
 			$out .= $this->buildSelectDolusersAjaxSelect2Script($htmlname, $urloption, $minlengthforajax, $ajaxpagesize);
-			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.select2-container { z-index: 1010; }</style>';
+			$out .= '<!-- force css of dropdown (attached to body) to be higher than dialog popup, but not the combo itself so it stays under the sticky top menu --><style type="text/css">body > .select2-container { z-index: 1010; }</style>';
 
 			return $out;
 		}
@@ -3113,7 +3114,7 @@ class Form
 			$ajaxpagesize = getDolGlobalInt('USER_LIMIT_SIZE', 20);
 
 			$out .= $this->buildSelectDolusersAjaxSelect2Script($htmlname, $urloption, $minlengthforajax, $ajaxpagesize);
-			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.select2-container { z-index: 1010; }</style>';
+			$out .= '<!-- force css of dropdown (attached to body) to be higher than dialog popup, but not the combo itself so it stays under the sticky top menu --><style type="text/css">body > .select2-container { z-index: 1010; }</style>';
 
 			return $out;
 		}
@@ -7335,6 +7336,20 @@ class Form
 							$(this).parent().find("button.ui-button:eq(2)").focus();
 						},';
 			}
+			if ($useajax == 2 && !empty($pageno)) {
+				// Closing the dialog with the close button of the title bar must behave like the button "No",
+				// otherwise the page stays on action=xxx and may hide its action buttons.
+				// The buttons set the flag formconfirmchoicedone before closing the dialog, so they are not affected.
+				$formconfirm .= '
+						beforeClose: function() {
+							if ($(this).data("formconfirmchoicedone")) {
+								return true;
+							}
+							console.log("formconfirm closed without choice, we do as if button No was clicked");
+							$(this).closest(".ui-dialog").find(".ui-dialog-buttonpane button").eq(1).trigger("click");
+							return false;
+						},';
+			}
 
 			$jsforcursor = '';
 			if ($useajax == 1) {
@@ -7392,6 +7407,7 @@ class Form
 			$formconfirm .= '
 								console.log("after post ok");
 							}
+							$(this).data("formconfirmchoicedone", 1);
 							$(this).dialog("close");
 						}
 					}, {
@@ -7426,6 +7442,7 @@ class Form
 			$formconfirm .= '
 								console.log("after post ko");
 							}
+							$(this).data("formconfirmchoicedone", 1);
 							$(this).dialog("close");
 						}
 					}';
@@ -7451,6 +7468,7 @@ class Form
 							dolSubmitConfirmForm(urljump, pageother, options, ' . $maxurllengthforget . ');';
 				}
 				$formconfirm .= '
+							$(this).data("formconfirmchoicedone", 1);
 							$(this).dialog("close");
 						}
 					}';
@@ -12570,8 +12588,14 @@ class Form
 
 				if (isModEnabled('gravatar') && $email && empty($noexternsourceoverwrite)) {
 					// see https://gravatar.com/site/implement/images/php/
+					$onerror = '';
+					if (preg_match('/^\/public\/theme\/common\/user_/', $nophoto)) {
+						// For a person, if no gravatar is found (or gravatar is not reachable), fallback on the local generic image of its gender
+						$defaultimg = '404';
+						$onerror = ' onerror="' . dol_escape_htmltag('this.onerror=null; this.src=\'' . dol_escape_js(DOL_URL_ROOT . $nophoto) . '\';') . '"';
+					}
 					$ret .= '<!-- Put link to gravatar -->';
-					$ret .= '<img class="gravatar photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" alt="" title="'.dolPrintHTMLForAttribute('Gravatar avatar - '.$email).'" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="https://www.gravatar.com/avatar/' . dol_hash(strtolower(trim($email)), 'sha256', 1) . '?s=' . $width . '&d=' . $defaultimg . '">'; // gravatar accepts a sha256 hash
+					$ret .= '<img class="gravatar photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" alt="" title="'.dolPrintHTMLForAttribute('Gravatar avatar - '.$email).'" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="https://www.gravatar.com/avatar/' . dol_hash(strtolower(trim($email)), 'sha256', 1) . '?s=' . $width . '&d=' . $defaultimg . '"' . $onerror . '>'; // gravatar accepts a sha256 hash
 				} else {
 					if ($nophoto == 'company') {
 						$ret .= '<div class="divforspanimg valignmiddle inline-block center photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" alt="" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . '>' . img_picto('', 'company') . '</div>';
@@ -12697,7 +12721,8 @@ class Form
 
 					$label = $obj->name;
 					$labelhtml = $obj->name;
-					if (isModEnabled('multicompany') && !getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1) {
+					// The entity label is selected only for a superadmin on the master entity (see the SQL request above)
+					if (isModEnabled('multicompany') && !getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1 && $user->admin && !$user->entity && !empty($obj->label)) {
 						$label .= " (" . $obj->label . ")";
 						$labelhtml .= ' <span class="opacitymedium">(' . $obj->label . ')</span>';
 					}

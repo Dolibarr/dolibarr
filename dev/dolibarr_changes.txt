@@ -292,6 +292,23 @@ NOTES   :
         -   imagesetpixel($imgalpha, $xpx, $ypx, $alpha);
         +   imagesetpixel($imgalpha, (int) $xpx, (int) $ypx, (int) $alpha);
 
+==> FILE   : tcpdf.php, method Image() (search for "@CHANGE DOL Preserve WebP alpha")
+    REASON : Preserve transparency of WebP images (see issue #41046). Upstream converts WebP to JPEG, so
+             transparent areas were rendered black. The WebP is decoded with GD (and resized if needed),
+             saved into a temporary PNG and passed to the existing ImagePngAlpha() handler.
+    DIFF   :
+            } elseif ($type == 'jpg') {
+                $type = 'jpeg';
+            }
+        +   // @CHANGE DOL Preserve WebP alpha via the existing PNG mask path.
+        +   if (($type === 'webp') AND ($ismask === false) AND ($imgmask === false)
+        +       AND function_exists('imagecreatefromwebp') AND function_exists('imagepng')) {
+        +       ... (decode with imagecreatefromwebp(), resize if $resize, write a temporary PNG with
+        +       imagepng(), then return $this->ImagePngAlpha($tmpwebp, ..., 'PNG', ..., $filehash)
+        +       and delete the temporary PNG in a finally block)
+        +   }
+            // Specific image handlers (defined on TCPDF_IMAGES CLASS)
+
 ==> FILE   : tcpdf_autoconfig.php (at the beginning of the file)
     REASON : DOCUMENT_ROOT fix for IIS Webserver.
     DIFF   :
@@ -499,6 +516,29 @@ NOTES   :
         +   the keyword "stream" is followed by ONE end-of-line marker; every CR and LF was skipped, so a stream
             whose data starts with such a byte lost its first bytes
         +   reading an object stops at the end of the data, instead of looping past it looking for "endobj"
+
+
+==> FILE   : tcpdi_parser.php, functions readPages(), readPage(), _getPageResources() and _getPageAnnotations(),
+             new function getKids()
+    REASON : The page tree was read as if everything were written in place. /Kids was only followed when the
+             array itself was there, while any value of a dictionary may be an indirect reference to it: a
+             document written that way imported ZERO page without any error. A page carries neither /Resources
+             nor /Annots of its own when it inherits them, and the search up the /Parent chain returns false at
+             the root of the tree, which was then indexed as an array. A page tree that refers back to a node
+             above it made the reader recurse until the memory ran out.
+    DIFF   :
+        +   new getKids(), which resolves an indirect /Kids, used by readPages() and readPage()
+        +   a node already visited is not followed again
+        +   a /Kids entry that does not resolve to an array is ignored instead of being read as one
+        +   the inherited /Resources and /Annots are tested before being used as an array
+        +   readPages() always leaves a usable page list, even without a /Root
+
+==> FILE   : tcpdi.php, function _putformxobjects()
+    REASON : getPageResources() returns false when no node of the page tree carries any, and isset() is true for
+             false: the value was written as if it were a dictionary, which wrote nothing at all after
+             "/Resources" and left the imported page without any resource dictionary.
+    DIFF   :
+        +   the default set of resources is written when the page inherits none
 
 
 

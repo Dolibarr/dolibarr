@@ -193,6 +193,7 @@ class Ai
 		}
 
 		dol_syslog("Call API for apiKey=".substr($this->apiKey, 0, 5).'***********, apiEndpoint='.$this->apiEndpoint.", model=".$model.", format=".$format);
+
 		if (getDolGlobalString("AI_DEBUG")) {
 			if (@is_writable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
 				$outputfile = $dolibarr_main_data_root."/dolibarr_ai.log";
@@ -396,9 +397,10 @@ class Ai
 			$localurl = empty($dolibarr_ai_allow_local_endpoints) ? 0 : (int) $dolibarr_ai_allow_local_endpoints;
 
 			// Parsing a document is long, so we use a response timeout of at least 90 seconds for this case
+			// For both step "ocr" and step "analyze/docparsing"
 			$timeoutresponse = 0;
 			if (in_array($function, array('docparsing', 'ocr'))) {
-				$timeoutresponse = max(90, getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
+				$timeoutresponse = max(90, getDolGlobalInt('AI_USE_RESPONSE_TIMEOUT'), getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT'));
 			}
 
 			// Hooks of the calling page context (for example 'main'): a module can refuse the request (quota...) then read the answer (token usage...)

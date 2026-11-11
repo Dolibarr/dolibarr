@@ -267,6 +267,11 @@ if ($resql) {
 		$param .= '&search_account='.urlencode((string) ($search_account));
 	}
 
+	// Add $param from hooks
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters);	// Note that $action and $object may have been modified by hook
+	$param .= $hookmanager->resPrint;
+
 	$url = DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=create2';
 
 	$newcardbutton  = '';

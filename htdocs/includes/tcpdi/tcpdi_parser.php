@@ -260,12 +260,21 @@ class tcpdi_parser {
      *
      */
     function readPages() {
+        // @CHANGE DOL Always leave a usable (possibly empty) page list
+        $this->pages = array();
+        $this->page_count = 0;
+        if (!isset($this->xref['trailer'][1]['/Root'])) {
+            return;
+        }
         $params = $this->getObjectVal($this->xref['trailer'][1]['/Root']);
         $objref = null;
-        foreach ($params[1][1] as $k=>$v) {
-            if ($k == '/Pages') {
-                $objref = $v;
-                break;
+        // @CHANGE DOL The catalog may not have been resolved to a dictionary
+        if (isset($params[1][1]) && is_array($params[1][1])) {
+            foreach ($params[1][1] as $k=>$v) {
+                if ($k == '/Pages') {
+                    $objref = $v;
+                    break;
+                }
             }
         }
         if ($objref == null || $objref[0] !== PDF_TYPE_OBJREF) {
@@ -274,7 +283,7 @@ class tcpdi_parser {
         }
 
         $dict = $this->getObjectVal($objref);
-        if ($dict[0] == PDF_TYPE_OBJECT && $dict[1][0] == PDF_TYPE_DICTIONARY) {
+        if ($dict[0] == PDF_TYPE_OBJECT && isset($dict[1][0]) && $dict[1][0] == PDF_TYPE_DICTIONARY) {    // @CHANGE DOL
             // Dict wrapped in an object
             $dict = $dict[1];
         }
@@ -283,14 +292,13 @@ class tcpdi_parser {
             return;
         }
 
-        $this->pages = array();
-        if (isset($dict[1]['/Kids'])) {
-            $v = $dict[1]['/Kids'];
-            if ($v[0] == PDF_TYPE_ARRAY) {
-                foreach ($v[1] as $ref) {
-                    $page = $this->getObjectVal($ref);
-                    $this->readPage($page);
-                }
+        // @CHANGE DOL /Kids may be an indirect reference to the array, and the tree may loop back on itself
+        $seen = array();
+        $kids = $this->getKids($dict[1]);
+        if ($kids !== null) {
+            foreach ($kids as $ref) {
+                $page = $this->getObjectVal($ref);
+                $this->readPage($page, $seen);
             }
         }
 
@@ -298,15 +306,48 @@ class tcpdi_parser {
     }
 
     /**
+     * Get the list of references of the /Kids entry of a /Pages dictionary.
+     * @CHANGE DOL New method: /Kids may be an indirect reference to the array, as any value of a dictionary may be.
+     *
+     * @param array $dict Content of the dictionary
+     * @return array|null List of references, null when there is no usable /Kids entry
+     */
+    private function getKids($dict) {
+        if (!isset($dict['/Kids'])) {
+            return null;
+        }
+        $kids = $dict['/Kids'];
+        if ($kids[0] == PDF_TYPE_OBJREF) {
+            $kids = $this->getObjectVal($kids);
+            $kids = isset($kids[1]) ? $kids[1] : null;
+        }
+        if (is_array($kids) && isset($kids[0]) && $kids[0] == PDF_TYPE_ARRAY && isset($kids[1]) && is_array($kids[1])) {
+            return $kids[1];
+        }
+        return null;
+    }
+
+    /**
      * Read a single /Page element, recursing through /Kids if necessary
      *
      */
-    private function readPage($page) {
-        if (isset($page[1][1]['/Kids'])) {
+    private function readPage($page, &$seen = array()) {
+        if (!isset($page[1][1]) || !is_array($page[1][1])) {
+            // @CHANGE DOL Not a dictionary (unresolved reference): this is not a page
+            return;
+        }
+        $kids = $this->getKids($page[1][1]);    // @CHANGE DOL
+        if ($kids !== null) {
             // Nested pages!
-            foreach ($page[1][1]['/Kids'][1] as $subref) {
+            foreach ($kids as $subref) {
+                // @CHANGE DOL Do not follow a page tree that loops back on itself
+                $id = (isset($subref[1]) ? $subref[1] : '').'_'.(isset($subref[2]) ? $subref[2] : '');
+                if (isset($seen[$id])) {
+                    continue;
+                }
+                $seen[$id] = true;
                 $subpage = $this->getObjectVal($subref);
-                $this->readPage($subpage);
+                $this->readPage($subpage, $seen);
             }
         } else {
             $this->pages[] = $page;
@@ -1361,7 +1402,7 @@ class tcpdi_parser {
                 return false;
             } else {
                 $res = $this->_getPageResources($obj[1][1]['/Parent']);
-                if ($res[0] == PDF_TYPE_OBJECT)
+                if (is_array($res) && $res[0] == PDF_TYPE_OBJECT)    // @CHANGE DOL false when no node of the tree has any
                     return $res[1];
                 return $res;
             }
@@ -1399,6 +1440,10 @@ class tcpdi_parser {
             }
         }
 
+        if (!is_array($annots)) {
+            // @CHANGE DOL no annotation on this page nor on any node above it
+            return false;
+        }
         if ($annots[0] == PDF_TYPE_OBJREF)
             return $this->getObjectVal($annots);
         return $annots;

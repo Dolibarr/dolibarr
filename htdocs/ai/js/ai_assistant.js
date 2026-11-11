@@ -138,6 +138,14 @@ export function initAiAssistant(container) {
     // sessionStorage key of the conversation (per user and entity), see saveChatHistory()
     const HISTORY_KEY = config.historyKey || '';
     const HISTORY_MAX_MSGS = 20;
+    // sessionStorage key of the prompts typed by the user, recalled with ArrowUp/ArrowDown in the input
+    const PROMPTS_KEY = HISTORY_KEY ? HISTORY_KEY + '_prompts' : '';
+    // localStorage key of the picked model, bound to the login session (see getAiChatAssistantConfig()).
+    // Declared before the bootstrap: initModelPicker() reads it when called there.
+    const MODEL_CHOICE_KEY = config.modelChoiceKey || 'aiModelChoice';
+    const PROMPTS_MAX = 50;
+    let promptsIndex = -1;    // -1 = not browsing the history, else position from the most recent prompt
+    let promptsDraft = '';    // what was typed before browsing, restored when going back down
     // "All" mode of the context bar: every exchange, including the next ones, travels as context
     let contextAllMode = false;
 
@@ -241,6 +249,7 @@ export function initAiAssistant(container) {
     // Handle Submit (Enter) vs New Line (Shift+Enter)
     input.addEventListener('keydown', (e) => {
         if (paletteKey(e)) return;
+        if (promptsKey(e)) return;
         if (e.key === 'Enter') {
             if (e.shiftKey) {
                 // Shift+Enter: Allow new line (default behavior), just ensure resize happens
@@ -252,6 +261,62 @@ export function initAiAssistant(container) {
             }
         }
     });
+
+    /**
+     * Load the list of the previous prompts (oldest first).
+     * @returns {string[]}
+     */
+    function promptsLoad() {
+        if (!PROMPTS_KEY) return [];
+        try {
+            const list = JSON.parse(sessionStorage.getItem(PROMPTS_KEY) || '[]');
+            return Array.isArray(list) ? list.filter((v) => typeof v === 'string') : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    /**
+     * Add a prompt to the history (no consecutive duplicate) and stop browsing it.
+     * @param {string} prompt - The prompt sent by the user
+     */
+    function promptsAdd(prompt) {
+        promptsIndex = -1;
+        promptsDraft = '';
+        prompt = String(prompt || '').trim();
+        if (!prompt || !PROMPTS_KEY) return;
+        const list = promptsLoad();
+        if (list[list.length - 1] !== prompt) list.push(prompt);
+        try { sessionStorage.setItem(PROMPTS_KEY, JSON.stringify(list.slice(-PROMPTS_MAX))); } catch (e) { /* private mode or quota: no history */ }
+    }
+
+    /**
+     * ArrowUp/ArrowDown in the input recall the previous/next prompts, like in a shell.
+     * Only when the caret is on the first line (up) or the last line (down), so a multi-line prompt stays editable.
+     * @param {KeyboardEvent} e - The keydown event
+     * @returns {boolean} true if the key was handled
+     */
+    function promptsKey(e) {
+        if ((e.key !== 'ArrowUp' && e.key !== 'ArrowDown') || e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
+        if (input.selectionStart !== input.selectionEnd) return false;
+        const caret = input.selectionStart;
+        if (e.key === 'ArrowUp' && input.value.lastIndexOf('\n', caret - 1) !== -1) return false;
+        if (e.key === 'ArrowDown' && input.value.indexOf('\n', caret) !== -1) return false;
+        const list = promptsLoad();
+        if (e.key === 'ArrowUp') {
+            if (promptsIndex + 1 >= list.length) return false;
+            if (promptsIndex === -1) promptsDraft = input.value;
+            promptsIndex++;
+        } else {
+            if (promptsIndex < 0) return false;
+            promptsIndex--;
+        }
+        e.preventDefault();
+        input.value = (promptsIndex < 0) ? promptsDraft : list[list.length - 1 - promptsIndex];
+        input.setSelectionRange(input.value.length, input.value.length);
+        autoResizeInput();
+        return true;
+    }
 
     // Handle Send Button Click
     if (sendBtn) {
@@ -593,7 +658,14 @@ export function initAiAssistant(container) {
     function initModelPicker() {
         if (!modelSelect) return;
         let saved = '';
-        try { saved = localStorage.getItem('aiModelChoice') || ''; } catch (e) { /* private mode */ }
+        try {
+            // Forget the choices of the previous logins: a new login starts on the default model
+            for (let i = localStorage.length - 1; i >= 0; i--) {
+                const k = localStorage.key(i);
+                if (k && k.indexOf('aiModelChoice') === 0 && k !== MODEL_CHOICE_KEY) localStorage.removeItem(k);
+            }
+            saved = localStorage.getItem(MODEL_CHOICE_KEY) || '';
+        } catch (e) { /* private mode */ }
 
         // Presets rely on a name heuristic (see resolveModel): only offered when
         // AI_SUGGESTS_PRESETS_TO_TRY_TO_CHANGE_MODEL_DYNAMICALLY is on.
@@ -628,7 +700,8 @@ export function initAiAssistant(container) {
                     modelSelect.appendChild(sep);
                     modelList.forEach((id) => {
                         const o = document.createElement('option');
-                        o.value = id; o.textContent = id;
+                        o.value = id;
+                        o.textContent = id + ((config.defaultModel && id === config.defaultModel) ? ' (' + t('Default') + ')' : '');
                         modelSelect.appendChild(o);
                     });
                     // Saved model no longer offered by the provider: fall back to
@@ -636,7 +709,7 @@ export function initAiAssistant(container) {
                     // picker never looks silently ignored, cf. review on #39878).
                     if (saved && saved.indexOf('preset:') !== 0 && modelList.indexOf(saved) < 0) {
                         appendMsg('system', escapeHtml(t('AIModelSavedGone').replace('%s', saved)));
-                        try { localStorage.removeItem('aiModelChoice'); } catch (e) { /* ignore */ }
+                        try { localStorage.removeItem(MODEL_CHOICE_KEY); } catch (e) { /* ignore */ }
                         saved = '';
                     }
                 }
@@ -645,7 +718,15 @@ export function initAiAssistant(container) {
             .catch(() => { /* provider unreachable: keep Auto + presets */ });
 
         modelSelect.addEventListener('change', () => {
-            try { localStorage.setItem('aiModelChoice', modelSelect.value); } catch (e) { /* ignore */ }
+            try { localStorage.setItem(MODEL_CHOICE_KEY, modelSelect.value); } catch (e) { /* ignore */ }
+        });
+
+        // Model changed in another browser tab of the same session: show it in this tab too
+        window.addEventListener('storage', (e) => {
+            if (e.key !== MODEL_CHOICE_KEY) return;
+            saved = e.newValue || '';
+            modelSelect.value = Array.prototype.some.call(modelSelect.options, (o) => o.value === saved) ? saved : '';
+            refreshSelect2Combo(modelSelect);
         });
     }
 
@@ -2079,8 +2160,12 @@ export function initAiAssistant(container) {
                 e.preventDefault();
                 paletteLoad().then(() => {
                     const later = paletteParseCommand(input.value);
-                    if (later && (later.text !== '' || later.cmd.name === 'total')) runCommand(later.cmd.name, later.text);
-                    else paletteOpen(input.value.slice(1));
+                    if (later && (later.text !== '' || later.cmd.name === 'total')) {
+                        promptsAdd(input.value);
+                        runCommand(later.cmd.name, later.text);
+                    } else {
+                        paletteOpen(input.value.slice(1));
+                    }
                 });
                 return true;
             }
@@ -2093,6 +2178,7 @@ export function initAiAssistant(container) {
             }
             if (typed && (typed.text !== '' || typed.cmd.name === 'total')) {
                 e.preventDefault();
+                promptsAdd(input.value);
                 runCommand(typed.cmd.name, typed.text);
                 return true;
             }
@@ -2646,10 +2732,12 @@ export function initAiAssistant(container) {
 
     // Compact, model-oriented snippet of a tool result for the pinned context:
     // the model needs the shape and the ids, not the full rendered table.
+    // Max size (in characters) of one tool result sent back as context (setup AI_CHAT_CONTEXT_MAX_SIZE).
+    const CONTEXT_MAX_SIZE = Math.max(0, isNaN(parseInt(config.contextMaxSize, 10)) ? 200000 : parseInt(config.contextMaxSize, 10));
     function contextSnippetOf(result, toolName) {
         let s = '';
         try { s = JSON.stringify(result); } catch (e) { s = String(result); }
-        if (s.length > 1500) s = s.slice(0, 1500) + '…';
+        if (s.length > CONTEXT_MAX_SIZE) s = s.slice(0, CONTEXT_MAX_SIZE) + '…';
         return '[' + (toolName || 'tool') + ' result] ' + s;
     }
 
@@ -2817,6 +2905,7 @@ export function initAiAssistant(container) {
         // again, without a second bubble.
         const isResend = !!(resend && typeof resend.sentQuery === 'string');
         const query = isResend ? resend.query : input.value.trim();
+        if (!isResend) promptsAdd(query);
         if (!isResend && paletteWanted(query)) {
             // A tool or a command, not a question for the model.
             paletteLoad().then(() => {
@@ -3213,7 +3302,11 @@ export function initAiAssistant(container) {
 
     function formatResult(data, isRecursive = false, toolName = '') {
         if (!data) return t('NoDataAvailable');
-        if (data.error) return `<span style="color:red">${t('error')}: ${data.error}</span>`;
+        if (data.error) {
+            // 'detail' is the reason given by the API (e.g. a 403 that explains itself), shown under the translated error
+            const detail = data.detail ? `<br><span class="small opacitymedium">${escapeHtml(String(data.detail))}</span>` : '';
+            return `<span style="color:red">${t('error')}: ${data.error}</span>${detail}`;
+        }
         let content = '';
         let isArray = false;
         let isObject = false;
