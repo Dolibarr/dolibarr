@@ -49,11 +49,9 @@ if (!$user->admin) {
 }
 
 $dirstandard = array();
-$dirsmartphone = array();
 $dirmenus = array_merge(array("/core/menus/"), (array) $conf->modules_parts['menus']);
 foreach ($dirmenus as $dirmenu) {
 	$dirstandard[] = $dirmenu.'standard';
-	$dirsmartphone[] = $dirmenu.'smartphone';
 }
 
 $action = GETPOST('action', 'aZ09');
@@ -61,11 +59,8 @@ $action = GETPOST('action', 'aZ09');
 $menu = new Menubase($db);
 
 $menu_handler_top = getDolGlobalString('MAIN_MENU_STANDARD');
-$menu_handler_smartphone = getDolGlobalString('MAIN_MENU_SMARTPHONE');
 $menu_handler_top = preg_replace('/_backoffice.php/i', '', $menu_handler_top);
 $menu_handler_top = preg_replace('/_frontoffice.php/i', '', $menu_handler_top);
-$menu_handler_smartphone = preg_replace('/_backoffice.php/i', '', $menu_handler_smartphone);
-$menu_handler_smartphone = preg_replace('/_frontoffice.php/i', '', $menu_handler_smartphone);
 
 $menu_handler = $menu_handler_top;
 
@@ -332,7 +327,7 @@ if ($action == 'create') {
 	// Handler
 	print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans('MenuHandler'), $langs->trans('DetailMenuHandler')).'</td>';
 	print '<td>';
-	$formadmin->select_menu_families($menu_handler.(preg_match('/_menu/', $menu_handler) ? '' : '_menu'), 'menu_handler', array_merge($dirstandard, $dirsmartphone));
+	$formadmin->select_menu_families($menu_handler.(preg_match('/_menu/', $menu_handler) ? '' : '_menu'), 'menu_handler', $dirstandard);
 	print '</td>';
 	print '<td></td></tr>';
 

@@ -123,6 +123,11 @@ class WebsitePage extends CommonObject
 	public $allowed_in_frames;
 
 	/**
+	 * @var ?int		Number of versions to keep in history (0 = keep all versions, n = keep only the n last versions)
+	 */
+	public $keep_history;
+
+	/**
 	 * @var int 		Use meta robot tag "index" (else "noindex")
 	 */
 	public $index = 1;
@@ -223,7 +228,7 @@ class WebsitePage extends CommonObject
 	public $fields = array(
 		'rowid'          => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
 		'pageurl'        => array('type' => 'varchar(16)', 'label' => 'WEBSITE_PAGENAME', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'index' => 1, 'position' => 10, 'searchall' => 1, 'comment' => 'Ref/alias of page'),
-		'aliasalt'       => array('type' => 'varchar(255)', 'label' => 'AliasAlt', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'index' => 0, 'position' => 11, 'searchall' => 0, 'comment' => 'Alias alternative of page'),
+		'aliasalt'       => array('type' => 'text', 'label' => 'AliasAlt', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'index' => 0, 'position' => 11, 'searchall' => 0, 'comment' => 'Alias alternative of page'),
 		'type_container' => array('type' => 'varchar(16)', 'label' => 'Type', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'index' => 0, 'position' => 12, 'comment' => 'Type of container'),
 		'title'          => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'visible' => 1, 'position' => 30, 'searchall' => 1, 'help' => 'UseTextBetween5And70Chars'),
 		'description'    => array('type' => 'varchar(255)', 'label' => 'Description', 'enabled' => 1, 'visible' => 1, 'position' => 30, 'searchall' => 1),
@@ -234,6 +239,7 @@ class WebsitePage extends CommonObject
 		'fk_website'     => array('type' => 'integer', 'label' => 'WebsiteId', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 40, 'searchall' => 0, 'foreignkey' => 'websitepage.rowid'),
 		'fk_page'        => array('type' => 'integer', 'label' => 'ParentPageId', 'enabled' => 1, 'visible' => 1, 'notnull' => -1, 'position' => 45, 'searchall' => 0, 'foreignkey' => 'website.rowid'),
 		'allowed_in_frames'   => array('type' => 'integer', 'label' => 'AllowedInFrames', 'enabled' => 1, 'visible' => -1, 'position' => 48, 'searchall' => 0, 'default' => '0'),
+		'keep_history'   => array('type' => 'integer', 'label' => 'NumberOfVersionsToKeepInHistory', 'enabled' => 1, 'visible' => -1, 'position' => 49, 'default' => '5', 'help' => 'NumberOfVersionsToKeepInHistoryHelp'),
 		'htmlheader'     => array('type' => 'html', 'label' => 'HtmlHeader', 'enabled' => 1, 'visible' => 0, 'position' => 50, 'searchall' => 0),
 		'content'        => array('type' => 'html', 'label' => 'Content', 'enabled' => 1, 'visible' => 0, 'position' => 51, 'searchall' => 0),
 		'grabbed_from'   => array('type' => 'varchar(255)', 'label' => 'GrabbedFrom', 'enabled' => 1, 'visible' => 1, 'index' => 1, 'position' => 400, 'comment' => 'URL page content was grabbed from'),
@@ -267,9 +273,10 @@ class WebsitePage extends CommonObject
 	 *
 	 * @param  User		$user      User that creates
 	 * @param  int<0,1> $notrigger 0=launch triggers after, 1=disable triggers
+	 * @param  string[] $phpwrappers	PHP code strings added by the application itself (like header and footer containers), allowed even without permission writephp
 	 * @return int      	       Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = 0)
+	public function create(User $user, $notrigger = 0, $phpwrappers = array())
 	{
 		$this->description = dol_trunc($this->description, 255, 'right', 'utf-8', 1);
 		$this->keywords = dol_trunc($this->keywords, 255, 'right', 'utf-8', 1);
@@ -302,7 +309,14 @@ class WebsitePage extends CommonObject
 		// Test if page contains dynamic PHP content
 		if (!$user->hasRight('website', 'writephp')) {
 			// Check there is no PHP content into the imported file (must be only HTML + JS)
-			$phpcontent = dolKeepOnlyPhpCode($this->content);
+			// PHP wrappers added by the application itself (parameter $phpwrappers) are excluded from this test
+			$contenttocheck = (string) $this->content;
+			if (is_array($phpwrappers)) {
+				foreach ($phpwrappers as $wrapper) {
+					$contenttocheck = str_replace((string) $wrapper, '', $contenttocheck);
+				}
+			}
+			$phpcontent = dolKeepOnlyPhpCode($contenttocheck);
 
 			if ($phpcontent) {
 				$this->error = 'Error: you try to create a page with PHP content in HTML body without having permissions for that.';
@@ -346,6 +360,7 @@ class WebsitePage extends CommonObject
 		$sql .= " t.lang,";
 		$sql .= " t.fk_page,";				// Translation parent page (in mani language)
 		$sql .= " t.allowed_in_frames,";
+		$sql .= " t.keep_history,";
 		$sql .= " t.status,";
 		$sql .= " t.grabbed_from,";
 		$sql .= " t.date_creation,";
@@ -417,6 +432,7 @@ class WebsitePage extends CommonObject
 				$this->lang = $obj->lang;
 				$this->fk_page = $obj->fk_page;
 				$this->allowed_in_frames = $obj->allowed_in_frames;
+				$this->keep_history = $obj->keep_history;
 				$this->status = (int) $obj->status;
 				$this->grabbed_from = $obj->grabbed_from;
 				$this->date_creation = $this->db->jdate($obj->date_creation);

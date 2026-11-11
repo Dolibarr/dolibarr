@@ -181,7 +181,7 @@ if ($nolinesbefore) {
 		// Fields for situation invoice
 		if (property_exists($this, 'situation_cycle_ref') && isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 			print '<td class="linecolcycleref right">'.$langs->trans('Progress').'</td>';
-			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+			if (getDolGlobalInt('INVOICE_USE_SITUATION') > 1) {
 				print '<td class="nobottom nowrap right"></td>';
 			}
 			print '<td class="linecolcycleref2 right"></td>';
@@ -433,6 +433,12 @@ if ($nolinesbefore) {
 						event.preventDefault();
 						$("#dropdownAddProductAndService").toggleClass("open");
 					});
+					// Close the dropdown when clicking outside of it
+					$(document).on("click", function(event) {
+						if ($(event.target).closest("#dropdownAddProductAndService").length == 0) {
+							$("#dropdownAddProductAndService").removeClass("open");
+						}
+					});
 				});
 			</script>
 			<?php
@@ -443,6 +449,11 @@ if ($nolinesbefore) {
 
 		if (getDolGlobalString('MAIN_ADD_LINE_AT_POSITION')) {
 			echo '<br>'.$langs->trans('AddLineOnPosition').' : <input type="number" name="rank" step="1" min="0" style="width: 5em;">';
+		}
+
+		// Reference the customer gives to the line (line of its purchase order)
+		if (getDolGlobalString('MAIN_ENABLE_LINE_REF_CUSTOMER') && $object->element == 'commande') {
+			echo '<div class="paddingtop">'.$langs->trans('RefCustomerLine').' : <input type="text" name="line_ref_customer" id="line_ref_customer" class="width150" maxlength="128" value="'.dol_escape_htmltag(GETPOST('line_ref_customer', 'alphanohtml')).'"></div>';
 		}
 
 		if (is_object($hookmanager) && empty($senderissupplier)) {
@@ -596,7 +607,7 @@ if ($nolinesbefore) {
 	if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 		$coldisplay++;
 		print '<td class="nobottom nowrap right"><input class="flat right" type="text" size="1" value="" name="progress"><span class="opacitymedium hideonsmartphone">%</span></td>';
-		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') > 1) {
 			$coldisplay++;
 			print '<td class="nobottom nowrap right"></td>';
 		}

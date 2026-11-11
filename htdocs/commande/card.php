@@ -225,6 +225,24 @@ if (empty($reshook)) {
 
 	include DOL_DOCUMENT_ROOT . '/core/actions_lineupdown.inc.php';  // Must be 'include', not 'include_once'
 
+	// Create the purchase orders of the suppliers
+	if ($action == 'confirm_createpurchaseorders' && $confirm == 'yes' && $usercancreatepurchaseorder) {
+		$result = $object->createPurchaseOrders($user);
+		if (is_array($result)) {
+			if (!empty($result['noprice'])) {
+				setEventMessages($langs->trans('ProductsWithoutSupplierPrice', implode(', ', $result['noprice'])), null, 'warnings');
+			}
+			if (!empty($result['orders'])) {
+				setEventMessages($langs->trans('OrderCreated'), null, 'mesgs');
+			}
+			header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $object->id);
+			exit;
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = '';
+		}
+	}
+
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $usercancreate) {
 		if (!($socid > 0)) {
@@ -234,7 +252,7 @@ if (empty($reshook)) {
 				// We clone object to avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object.
 				$objectutil = dol_clone($object, 1);
 
-				$result = $objectutil->createFromClone($user, $socid, (GETPOSTISSET('entity') ? GETPOSTINT('entity') : null));
+				$result = $objectutil->createFromClone($user, $socid, (GETPOSTISSET('entity') ? GETPOSTINT('entity') : null), (GETPOST('clone_ref_customer') == 'on'));
 				if ($result > 0) {
 					$warningMsgLineList = array();
 					// check all product lines are to sell otherwise add a warning message for each product line is not to sell
@@ -679,7 +697,13 @@ if (empty($reshook)) {
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
 	} elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
 		// Multicurrency rate
-		$result = $object->setMulticurrencyRate(GETPOSTFLOAT('multicurrency_tx'), GETPOSTINT('calculation_mode'));
+		if (!in_array(GETPOSTINT('calculation_mode'), array(1, 2))) {
+			$langs->load("compta");
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CalculationMode")), null, 'errors');
+			$action = 'editmulticurrencyrate';
+		} else {
+			$result = $object->setMulticurrencyRate(GETPOSTFLOAT('multicurrency_tx'), GETPOSTINT('calculation_mode'));
+		}
 	} elseif ($action == 'setavailability' && $usercancreate) {
 		$result = $object->availability(GETPOSTINT('availability_id'));
 		if ($result < 0) {
@@ -1176,7 +1200,9 @@ if (empty($reshook)) {
 						$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
 						$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
 						$price_min_ttc = $prod->multiprices_min_ttc[$object->thirdparty->price_level];
-						$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
+						// A price level with no price row leaves multiprices_base_type empty (null or ''), and an empty
+						// value is not 'HT' for addline(), which then takes the price as TTC and stores it with the VAT added.
+						$price_base_type = (empty($prod->multiprices_base_type[$object->thirdparty->price_level]) ? 'HT' : $prod->multiprices_base_type[$object->thirdparty->price_level]);
 						if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {  // using this option is a bug. kept for backward compatibility
 							if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) {
 								$tva_tx = $prod->multiprices_tva_tx[$object->thirdparty->price_level];
@@ -1191,7 +1217,9 @@ if (empty($reshook)) {
 					$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
 					$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
 					$price_min_ttc = $prod->multiprices_min_ttc[$object->thirdparty->price_level];
-					$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
+					// A price level with no price row leaves multiprices_base_type empty (null or ''), and an empty
+					// value is not 'HT' for addline(), which then takes the price as TTC and stores it with the VAT added.
+					$price_base_type = (empty($prod->multiprices_base_type[$object->thirdparty->price_level]) ? 'HT' : $prod->multiprices_base_type[$object->thirdparty->price_level]);
 					if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {  // using this option is a bug. kept for backward compatibility
 						if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) {
 							$tva_tx = $prod->multiprices_tva_tx[$object->thirdparty->price_level];
@@ -1488,7 +1516,7 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				// Insert line
-				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $info_bits, 0, $price_base_type, $pu_ttc, $date_start, $date_end, $type, min($rank, count($object->lines) + 1), 0, GETPOSTINT('fk_parent_line'), (int) $fournprice, $buyingprice, $label, $array_options, $fk_unit, '', 0, (float) $pu_ht_devise);
+				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $info_bits, 0, $price_base_type, $pu_ttc, $date_start, $date_end, $type, min($rank, count($object->lines) + 1), 0, GETPOSTINT('fk_parent_line'), (int) $fournprice, $buyingprice, $label, $array_options, $fk_unit, '', 0, (float) $pu_ht_devise, '', 0, GETPOST('line_ref_customer', 'alphanohtml'));
 
 				if ($result > 0) {
 					$db->commit();
@@ -1844,6 +1872,8 @@ if (empty($reshook)) {
 		if (!$error) {
 			$db->begin();
 
+			$oldbuyingprice = array_column($object->lines, 'pa_ht', 'id')[$lineid] ?? null;
+
 			if (!$user->hasRight('margins', 'creer')) {
 				foreach ($object->lines as &$line) {
 					if ($line->id == GETPOSTINT('lineid')) {
@@ -1854,7 +1884,7 @@ if (empty($reshook)) {
 				}
 			}
 
-			$result = $object->updateline(GETPOSTINT('lineid'), $description, (float) $pu, (float) $qty, (float) $remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $price_base_type, $info_bits, $date_start, $date_end, $type, GETPOSTINT('fk_parent_line'), 0, (int) $fournprice, $buyingprice, $label, $special_code, $array_options, GETPOSTINT('units'), (float) $pu_ht_devise);
+			$result = $object->updateline(GETPOSTINT('lineid'), $description, (float) $pu, (float) $qty, (float) $remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $price_base_type, $info_bits, $date_start, $date_end, $type, GETPOSTINT('fk_parent_line'), 0, (int) $fournprice, $buyingprice, $label, $special_code, $array_options, GETPOSTINT('units'), (float) $pu_ht_devise, 0, '', 0, GETPOSTISSET('line_ref_customer') ? GETPOST('line_ref_customer', 'alphanohtml') : null);
 
 
 			if ($result >= 0) {
@@ -1905,6 +1935,10 @@ if (empty($reshook)) {
 				unset($_POST['date_endday']);
 				unset($_POST['date_endmonth']);
 				unset($_POST['date_endyear']);
+
+				if ($object->getLinkedBuyPriceDocuments($user, $lineid, $oldbuyingprice)) {
+					$action = 'ask_updatelinkedbuyingprice';
+				}
 			} else {
 				$db->rollback();
 
@@ -1914,6 +1948,9 @@ if (empty($reshook)) {
 	} elseif ($action == 'updateline' && $usercancreate && GETPOST('cancel', 'alpha')) {
 		header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); //  To re-display card in edit mode
 		exit();
+	} elseif ($action == 'confirm_updatelinkedbuyingprice' && $confirm == 'yes' && $usercancreate) {
+		$result = $object->updateLinkedBuyPrice($user, $lineid, array('propal' => GETPOST('updatelinked_propal'), 'commande' => GETPOST('updatelinked_commande'), 'facture' => GETPOST('updatelinked_facture')));
+		setEventMessages(($result < 0 ? $object->error : $langs->trans('RecordsModified', $result)), null, ($result < 0 ? 'errors' : 'mesgs'));
 	} elseif ($action == 'confirm_validate' && $confirm == 'yes' && $usercanvalidate) {
 		$idwarehouse = GETPOSTINT('idwarehouse');
 
@@ -2116,27 +2153,37 @@ if (empty($reshook)) {
 	// Add lines from objectlinked
 	if ($action == 'import_lines_from_object' && $usercancreate && $object->status == Commande::STATUS_DRAFT) {
 		$fromElement = GETPOST('fromelement');
-		$fromElementid = GETPOST('fromelementid');
+		$fromElementid = GETPOSTINT('fromelementid');
 		$importLines = GETPOST('line_checkbox');
 
 		if (!empty($importLines) && is_array($importLines) && !empty($fromElement) && preg_match('/^[a-zA-Z]+$/', $fromElement) && !empty($fromElementid)) {
+			$lineParentField = '';
 			if ($fromElement == 'commande') {
 				dol_include_once('/' . $fromElement . '/class/' . $fromElement . '.class.php');
 				$lineClassName = 'OrderLine';
+				$lineParentField = 'fk_commande';
 			} elseif ($fromElement == 'propal') {
 				dol_include_once('/comm/' . $fromElement . '/class/' . $fromElement . '.class.php');
 				$lineClassName = 'PropaleLigne';
+				$lineParentField = 'fk_propal';
 			} elseif ($fromElement == 'facture') {
 				dol_include_once('/compta/' . $fromElement . '/class/' . $fromElement . '.class.php');
 				$lineClassName = 'FactureLigne';
+				$lineParentField = 'fk_facture';
 			}
 			$nextRang = count($object->lines) + 1;
 			$importCount = 0;
 			$error = 0;
+			// Check user can read the source object (permission, thirdparty and entity)
+			$fromElementAllowed = ($lineParentField && $fromElementid > 0 && restrictedArea($user, $fromElement, $fromElementid, '', '', 'fk_soc', 'rowid', 0, 1));
 			foreach ($importLines as $lineId) {
+				if (!$fromElementAllowed) {
+					$error++;
+					continue;
+				}
 				$lineId = intval($lineId);
 				$originLine = new $lineClassName($db);
-				if (intval($fromElementid) > 0 && $originLine->fetch($lineId) > 0) {
+				if ($fromElementAllowed && $originLine->fetch($lineId) > 0 && $originLine->$lineParentField == $fromElementid) {
 					$originLine->fetch_optionals();
 					$desc = $originLine->desc;
 					$pu_ht = $originLine->subprice;
@@ -3027,6 +3074,16 @@ if ($action == 'create' && $usercancreate) {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lineid=' . $lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 		}
 
+		// Confirmation to apply the cost price of the line to the linked documents
+		if ($action == 'ask_updatelinkedbuyingprice') {
+			$labels = array('propal' => 'Proposal', 'commande' => 'Order', 'facture' => 'Invoice');
+			$formquestion = array(array('type' => 'hidden', 'name' => 'lineid', 'value' => $lineid));
+			foreach ($object->getLinkedBuyPriceDocuments($user, $lineid) as $element => $document) {
+				$formquestion[] = array('type' => 'checkbox', 'name' => 'updatelinked_' . $element, 'label' => $langs->trans($labels[$element]) . ' ' . dol_escape_htmltag(implode(', ', $document['refs'])), 'value' => ($element != 'facture'));
+			}
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('UpdateLinkedBuyingPrice'), $langs->trans('UpdateLinkedBuyingPriceQuestion'), 'confirm_updatelinkedbuyingprice', $formquestion, 'yes', 1);
+		}
+
 		// Generate form to delete a subtotal line
 		if ($action == 'ask_subtotal_deleteline') {
 			$langs->load("subtotals");
@@ -3047,7 +3104,16 @@ if ($action == 'create' && $usercancreate) {
 			$formquestion = array(
 				array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOSTINT('socid'), 'socid', $filter, '', 0, 0, array(), 0, 'maxwidth300'))
 			);
+			// Offer to keep the customer reference only if the order has one
+			if (!empty($object->ref_customer)) {
+				$formquestion[] = array('type' => 'checkbox', 'name' => 'clone_ref_customer', 'label' => $form->textwithpicto($langs->trans("CloneRefCustomer"), $langs->trans("CloneRefCustomerHelpOrder"), 1, 'help', '', 0, 3, 'clonerefcustomer'), 'value' => getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING') ? 1 : 0);
+			}
 			$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('ToClone'), $langs->trans('ConfirmCloneOrder', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+		}
+
+		// Create the purchase orders confirmation
+		if ($action == 'createpurchaseorders') {
+			$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('CreatePurchaseOrdersPerSupplier'), $langs->trans('ConfirmCreatePurchaseOrders'), 'confirm_createpurchaseorders', '', 'yes', 1);
 		}
 
 		// Subtotal line form
@@ -3531,10 +3597,8 @@ if ($action == 'create' && $usercancreate) {
 			// Get object lines
 			$result = $object->getLinesArray();
 
-			// Add products/services form
-			//$forceall = 1;
-			global $inputalsopricewithtax;
-			$inputalsopricewithtax = 1;
+			// Display context of lines, also sets the global variables used by the line templates
+			$linesContext = $object->initObjectLinesDisplay();
 
 			print '<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">
 			<input type="hidden" name="token" value="' . newToken() . '">
@@ -3557,8 +3621,9 @@ if ($action == 'create' && $usercancreate) {
 			print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 			// Show object lines
-			if (!empty($object->lines)) {
-				$object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
+			// With nolines=1, the card is loaded without its lines, to refresh the other parts of the page in ajax
+			if (!empty($object->lines) && !GETPOSTINT('nolines')) {
+				$object->printObjectLines($action, $linesContext['seller'], $linesContext['buyer'], $lineid, $linesContext['dateSelector']);
 			}
 
 			/*
@@ -3575,7 +3640,7 @@ if ($action == 'create' && $usercancreate) {
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 					}
 					if (empty($reshook)) {
-						$object->formAddObjectLine(1, $mysoc, $soc);
+						$object->formAddObjectLine($linesContext['dateSelector'], $linesContext['seller'], $linesContext['buyer']);
 					}
 				} else {
 					$parameters = array();
@@ -3675,6 +3740,13 @@ if ($action == 'create' && $usercancreate) {
 						'perm' => $usercancreatepurchaseorder,
 						'label' => 'AddPurchaseOrder',
 						'url' => '/fourn/commande/card.php?action=create&amp;origin=' . urlencode($object->element) . '&amp;originid=' . ((int) $object->id)
+					);
+					$arrayforbutaction[] = array(
+						'lang' => 'orders',
+						'enabled' => (isModEnabled("supplier_order") && $object->status > Commande::STATUS_DRAFT),
+						'perm' => $usercancreatepurchaseorder,
+						'label' => 'CreatePurchaseOrdersPerSupplier',
+						'url' => '/commande/card.php?id=' . ((int) $object->id) . '&amp;action=createpurchaseorders&amp;token=' . newToken()
 					);
 				}
 

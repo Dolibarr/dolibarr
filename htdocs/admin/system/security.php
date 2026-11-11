@@ -685,7 +685,7 @@ print '<br>';
 print '<strong>MAIN_SECURITY_FORCESTS</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCESTS', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": max-age=31536000; includeSubDomains)</span><br>";
 print '<br>';
 
-print '<strong>MAIN_SECURITY_FORCEPP</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCEPP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": camera=*, microphone=(), geolocation=*)</span><br>";
+print '<strong>MAIN_SECURITY_FORCEPP</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCEPP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": camera=*, microphone=(self), geolocation=*)</span><br>";
 print '<br>';
 
 if (getDolGlobalString('MAIN_SECURITY_FORCECSPRO')) {

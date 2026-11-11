@@ -33,8 +33,10 @@ global $conf,$user,$langs,$db,$mysoc;
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
+require_once dirname(__FILE__).'/../../htdocs/commande/class/commande.class.php';
 require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.facture.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/class/workboardresponse.class.php';
+require_once dirname(__FILE__).'/../../htdocs/comm/action/class/actioncomm.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/modBlockedLog.class.php';
 
 if (empty($user->id)) {
@@ -92,6 +94,67 @@ class FactureTest extends CommonClassTest
 		$this->assertLessThan($result, 0);
 		print __METHOD__." result=".$result."\n";
 		return $result;
+	}
+
+	/**
+	 * testSendEmailsRemindersTemplateNotFound
+	 *
+	 * @return  void
+	 */
+	public function testSendEmailsRemindersTemplateNotFound()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$conf->global->MAIN_MAIL_EMAIL_FROM = 'test@example.com';
+		$db->query("INSERT INTO ".$db->prefix()."c_email_templates (entity, type_template, private, datec, label, position, enabled, active, topic, joinfiles, content) VALUES (1, 'facture_send', 0, '".$db->idate(dol_now())."', 'TestRemindFound', 990, '1', 1, 'Topic', 0, 'Content')");
+
+		// An invoice due today, for a third party with an email
+		$soc = new Societe($db);
+		$soc->name = 'TESTREMIND template '.dol_now();
+		$soc->email = 'customer@example.com';
+		$soc->client = 1;
+		$soc->code_client = -1;
+		$socid = $soc->create($user);
+		$invoice = new Facture($db);
+		$invoice->socid = $socid;
+		$invoice->date = dol_now();
+		$invoice->cond_reglement_id = 1;
+		$id = $invoice->create($user);
+		$invoice->addline('Test', 100, 1, 20);
+		$duedate = dol_get_first_hour(dol_now(), 'gmt');
+		$db->query("UPDATE ".$db->prefix()."facture SET fk_statut = 1, paye = 0, date_lim_reglement = '".$db->idate($duedate, 'gmt')."' WHERE rowid = ".((int) $id));
+
+		// Mails are disabled here, so an email that is prepared fails to be sent and the failure is recorded as an event of the invoice
+		$sql = "SELECT count(*) as nb FROM ".$db->prefix()."actioncomm WHERE elementtype = 'invoice' AND fk_element = ".((int) $id)." AND label = 'sendEmailsRemindersOnInvoiceDueDateKO'";
+
+		// The template does not exist: no email is prepared (it was the generic text of an invoice that was sent), and the error is reported
+		$localobject = new Facture($db);
+		$result = $localobject->sendEmailsRemindersOnInvoiceDueDate(0, 'all', 'TestRemindMissing');
+		$this->assertGreaterThan(0, $result);
+		$this->assertStringContainsString('TestRemindMissing', $localobject->error);
+		$this->assertEquals(0, $db->fetch_object($db->query($sql))->nb, 'An email was prepared with a template that does not exist');
+
+		// The template exists: the email is prepared
+		$localobject->sendEmailsRemindersOnInvoiceDueDate(0, 'all', 'TestRemindFound');
+		$this->assertEquals(1, $db->fetch_object($db->query($sql))->nb, 'No email was prepared with a template that exists');
+
+		// No template set: the generic text is still used, as before
+		$localobject->sendEmailsRemindersOnInvoiceDueDate(0, 'all', '');
+		$this->assertEquals(2, $db->fetch_object($db->query($sql))->nb, 'No email was prepared without a template');
+
+		// The placeholder of the default parameters means no template too
+		$localobject->sendEmailsRemindersOnInvoiceDueDate(0, 'all', 'EmailTemplateCode');
+		$this->assertEquals(3, $db->fetch_object($db->query($sql))->nb, 'No email was prepared with the placeholder of the default parameters');
+
+		$db->query("DELETE FROM ".$db->prefix()."actioncomm WHERE fk_soc = ".((int) $socid));
+		$db->query("DELETE FROM ".$db->prefix()."facturedet WHERE fk_facture = ".((int) $id));
+		$db->query("DELETE FROM ".$db->prefix()."facture WHERE rowid = ".((int) $id));
+		$db->query("DELETE FROM ".$db->prefix()."societe WHERE rowid = ".((int) $socid));
+		$db->query("DELETE FROM ".$db->prefix()."c_email_templates WHERE label = 'TestRemindFound'");
 	}
 
 	/**
@@ -361,6 +424,10 @@ class FactureTest extends CommonClassTest
 			$this->assertGreaterThan(0, $invoices[Facture::TYPE_STANDARD]->validate($user), $invoices[Facture::TYPE_STANDARD]->errorsToString());
 
 			$this->assertGreaterThan(0, $invoices[Facture::TYPE_DEPOSIT]->validate($user), $invoices[Facture::TYPE_DEPOSIT]->errorsToString());
+
+			// Delete the validated invoices, so the invoice of testFactureValid is again the last one for testFactureDelete
+			$this->assertGreaterThan(0, $invoices[Facture::TYPE_DEPOSIT]->delete($user), $invoices[Facture::TYPE_DEPOSIT]->errorsToString());
+			$this->assertGreaterThan(0, $invoices[Facture::TYPE_STANDARD]->delete($user), $invoices[Facture::TYPE_STANDARD]->errorsToString());
 		} finally {
 			$conf->global->INVOICE_POINTOFTAX_DATE = 0;
 			$conf->global->INVOICE_POINTOFTAX_DATE_MANDATORY = 0;
@@ -394,6 +461,76 @@ class FactureTest extends CommonClassTest
 		$this->assertLessThan($result, 0);
 
 		return $localobject->id;
+	}
+
+	/**
+	 * testSendEmailsRemindersSkipSettled
+	 *
+	 * @return  void
+	 */
+	public function testSendEmailsRemindersSkipSettled()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once dirname(__FILE__).'/../../htdocs/compta/paiement/class/paiement.class.php';
+
+		$conf->global->MAIN_MAIL_EMAIL_FROM = 'test@example.com';
+		$db->query("INSERT INTO ".$db->prefix()."c_email_templates (entity, type_template, private, datec, label, position, enabled, active, topic, joinfiles, content) VALUES (1, 'facture_send', 0, '".$db->idate(dol_now())."', 'TestRemindSettled', 990, '1', 1, 'Topic', 0, 'Content')");
+
+		// Invoices of 120 due today, for third parties with an email: with a reminder expected (1) or not (0)
+		$cases = array('unpaid' => 1, 'partial' => 1, 'exact' => 0, 'overpaid' => 0, 'disputeopen' => 0, 'disputewon' => 1);
+		$paid = array('partial' => 50, 'exact' => 120, 'overpaid' => 150);
+		$dispute = array('disputeopen' => 1, 'disputewon' => 9);
+		$duedate = dol_get_first_hour(dol_now(), 'gmt');
+		$items = array();
+		$paymentids = array();
+		foreach ($cases as $key => $expected) {
+			$soc = new Societe($db);
+			$soc->name = 'TESTREMIND settled '.$key.' '.dol_now();
+			$soc->email = 'customer@example.com';
+			$soc->client = 1;
+			$soc->code_client = -1;
+			$socid = $soc->create($user);
+			$invoice = new Facture($db);
+			$invoice->socid = $socid;
+			$invoice->date = dol_now();
+			$invoice->cond_reglement_id = 1;
+			$id = $invoice->create($user);
+			$invoice->addline('Test', 100, 1, 20);
+			$db->query("UPDATE ".$db->prefix()."facture SET fk_statut = 1, paye = 0, dispute_status = ".(empty($dispute[$key]) ? 0 : $dispute[$key]).", date_lim_reglement = '".$db->idate($duedate, 'gmt')."' WHERE rowid = ".((int) $id));
+			if (isset($paid[$key])) {
+				$payment = new Paiement($db);
+				$payment->datepaye = dol_now();
+				$payment->amounts = array($id => $paid[$key]);
+				$payment->paiementid = dol_getIdFromCode($db, 'LIQ', 'c_paiement', 'code', 'id', 1);
+				$paymentids[] = $payment->create($user, 0);
+			}
+			$items[$key] = array('socid' => $socid, 'id' => $id);
+		}
+
+		// Mails are disabled here, so an email that is prepared fails to be sent and the failure is recorded as an event of the invoice
+		$localobject = new Facture($db);
+		$localobject->sendEmailsRemindersOnInvoiceDueDate(0, 'all', 'TestRemindSettled');
+		foreach ($cases as $key => $expected) {
+			$sql = "SELECT count(*) as nb FROM ".$db->prefix()."actioncomm WHERE elementtype = 'invoice' AND fk_element = ".((int) $items[$key]['id'])." AND label = 'sendEmailsRemindersOnInvoiceDueDateKO'";
+			$this->assertEquals($expected, $db->fetch_object($db->query($sql))->nb, 'Reminders of the invoice '.$key);
+		}
+
+		foreach ($items as $item) {
+			$db->query("DELETE FROM ".$db->prefix()."actioncomm WHERE fk_soc = ".((int) $item['socid']));
+			$db->query("DELETE FROM ".$db->prefix()."paiement_facture WHERE fk_facture = ".((int) $item['id']));
+			$db->query("DELETE FROM ".$db->prefix()."facturedet WHERE fk_facture = ".((int) $item['id']));
+			$db->query("DELETE FROM ".$db->prefix()."facture WHERE rowid = ".((int) $item['id']));
+			$db->query("DELETE FROM ".$db->prefix()."societe WHERE rowid = ".((int) $item['socid']));
+		}
+		foreach ($paymentids as $paymentid) {
+			$db->query("DELETE FROM ".$db->prefix()."paiement WHERE rowid = ".((int) $paymentid));
+		}
+		$db->query("DELETE FROM ".$db->prefix()."c_email_templates WHERE label = 'TestRemindSettled'");
 	}
 
 	/**
@@ -603,6 +740,282 @@ class FactureTest extends CommonClassTest
 		$db->rollback();
 	}
 	*/
+
+	/**
+	 * Deposit created from an order with the hidden option MAIN_DEPOSIT_MULTI_TVA (one line per VAT rate).
+	 * Check the amount, and that an order whose total is 0 does not make a division by zero.
+	 * Done in a transaction that is rolled back.
+	 *
+	 * @return void
+	 */
+	public function testFactureDepositMultiVat()
+	{
+		global $conf, $user, $langs, $db, $mysoc;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
+
+		$db->begin();
+
+		// A payment term with a deposit percent (restored by the rollback)
+		$sql = "SELECT rowid FROM ".$db->prefix()."c_payment_term ORDER BY rowid LIMIT 1";
+		$resql = $db->query($sql);
+		$this->assertNotFalse($resql, $db->lasterror());
+		$obj = $db->fetch_object($resql);
+		$this->assertNotEmpty($obj, 'No payment term in the database');
+		$db->query("UPDATE ".$db->prefix()."c_payment_term SET deposit_percent = '30' WHERE rowid = ".((int) $obj->rowid));
+
+		$soc = new Societe($db);
+		$soc->name = 'Test deposit multi vat '.dol_print_date(dol_now(), 'dayhourlog');
+		$soc->client = 1;
+		$soc->code_client = -1;
+		$this->assertGreaterThan(0, $soc->create($user), (string) $soc->error);
+
+		$savmulti = getDolGlobalString('MAIN_DEPOSIT_MULTI_TVA');
+		$conf->global->MAIN_DEPOSIT_MULTI_TVA = '1';
+
+		// Order with 2 VAT rates: 100 at 20% and 50 at 5.5%, so 120 + 52.75 = 172.75
+		$order = new Commande($db);
+		$order->socid = $soc->id;
+		$order->date = dol_now();
+		$order->cond_reglement_id = (int) $obj->rowid;
+		$this->assertGreaterThan(0, $order->create($user), (string) $order->error);
+		$this->assertGreaterThan(0, $order->addline('Line 20', 100, 1, 20));
+		$this->assertGreaterThan(0, $order->addline('Line 5.5', 50, 1, 5.5));
+		$order->fetch($order->id);
+		$order->fetch_lines();
+		$order->deposit_percent = '30';
+		$this->assertEquals(172.75, (float) price2num($order->total_ttc, 'MT'));
+
+		$deposit = Facture::createDepositFromOrigin($order, dol_now(), (int) $obj->rowid, $user);
+		$this->assertNotNull($deposit, (string) $order->error);
+		$this->assertEquals(2, count($deposit->lines), 'One line per VAT rate');
+		$this->assertEqualsWithDelta(51.825, (float) $deposit->total_ttc, 0.011, 'The deposit is 30% of the TTC of the order (to the cent)');
+
+		// Order with a total of 0: 100 and -100 at 20%
+		$order2 = new Commande($db);
+		$order2->socid = $soc->id;
+		$order2->date = dol_now();
+		$order2->cond_reglement_id = (int) $obj->rowid;
+		$this->assertGreaterThan(0, $order2->create($user), (string) $order2->error);
+		$this->assertGreaterThan(0, $order2->addline('Line +', 100, 1, 20));
+		$this->assertGreaterThan(0, $order2->addline('Line -', -100, 1, 20));
+		$order2->fetch($order2->id);
+		$order2->fetch_lines();
+		$order2->deposit_percent = '30';
+		$this->assertEquals(0, (float) price2num($order2->total_ttc, 'MT'));
+
+		$deposit2 = Facture::createDepositFromOrigin($order2, dol_now(), (int) $obj->rowid, $user);
+		$this->assertNotNull($deposit2, 'No division by zero when the total of the order is 0');
+
+		$conf->global->MAIN_DEPOSIT_MULTI_TVA = $savmulti;
+		$db->rollback();
+	}
+
+	/**
+	 * testSendEmailsRemindersOncePerDay
+	 *
+	 * @return  void
+	 */
+	public function testSendEmailsRemindersOncePerDay()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$savmailfrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+		$conf->global->MAIN_MAIL_EMAIL_FROM = 'noreply@example.com';
+		$thirdparty = new Societe($db);
+		$thirdparty->name = 'Thirdparty of the reminders test';
+		$thirdparty->email = 'customer@example.com';
+		$thirdparty->client = 1;
+		$thirdparty->code_client = -1;
+		$this->assertGreaterThan(0, $thirdparty->create($user), (string) $thirdparty->error);
+
+		// Validated and unpaid invoice, due 7 days ago
+		$invoice = new Facture($db);
+		$invoice->socid = $thirdparty->id;
+		$invoice->date = dol_now();
+		$invoice->cond_reglement_id = 1;
+		$this->assertGreaterThan(0, $invoice->create($user), (string) $invoice->error);
+		$this->assertGreaterThan(0, $invoice->addline('Line', 100, 1, 20));
+		$duedate = dol_get_first_hour(dol_time_plus_duree(dol_now(), -7, 'd'), 'gmt');
+		$db->query("UPDATE ".MAIN_DB_PREFIX."facture SET fk_statut = ".Facture::STATUS_VALIDATED.", paye = 0, date_lim_reglement = '".$db->idate($duedate, 'gmt')."' WHERE rowid = ".((int) $invoice->id));
+
+		// The reminder was already sent today: its event has a label longer than 128 characters, so it is truncated when saved, and with a quote, so it is sanitized
+		$template = 'Reminder "template" with a very long name to check that the event of a reminder already sent is still found';
+		$db->query("INSERT INTO ".MAIN_DB_PREFIX."c_email_templates (entity, type_template, private, datec, label, position, enabled, active, topic, joinfiles, content) VALUES (1, 'facture_send', 0, '".$db->idate(dol_now())."', '".$db->escape($template)."', 990, '1', 1, 'Topic', 0, 'Content')");
+		$event = new ActionComm($db);
+		$event->type_code = 'AC_OTH_AUTO';
+		$event->code = 'AC_EMAIL';
+		$event->label = 'sendEmailsRemindersOnInvoiceDueDateOK (nbdays=-7 paymentmode=all datetouse=duedate forcerecipient= template='.$template.')';
+		$event->socid = $thirdparty->id;
+		$event->elementtype = 'invoice';
+		$event->elementid = $invoice->id;
+		$event->datep = dol_now();
+		$event->datef = $event->datep;
+		$event->percentage = -1;
+		$event->authorid = $user->id;
+		$event->userownerid = $user->id;
+		$this->assertGreaterThan(128, dol_strlen($event->label));
+		$this->assertGreaterThan(0, $event->create($user), (string) $event->error);
+
+		// Mails are disabled here: a reminder sent again would be recorded as a failed sending of the same invoice
+		$localobject = new Facture($db);
+		$localobject->sendEmailsRemindersOnInvoiceDueDate(-7, 'all', $template);
+		$resql = $db->query("SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."actioncomm WHERE elementtype = 'invoice' AND fk_element = ".((int) $invoice->id)." AND code = 'AC_EMAIL'");
+		$obj = $db->fetch_object($resql);
+		$this->assertEquals(1, $obj->nb, 'The reminder was sent again');
+
+		// Another job that differs only by the recipient has its own memory, even if the label is truncated: its reminder is sent
+		$localobject->sendEmailsRemindersOnInvoiceDueDate(-7, 'all', $template, 'duedate', 'other@example.com');
+		$resql = $db->query("SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."actioncomm WHERE elementtype = 'invoice' AND fk_element = ".((int) $invoice->id)." AND code = 'AC_EMAIL'");
+		$obj = $db->fetch_object($resql);
+		$this->assertEquals(2, $obj->nb, 'The reminder of a job with another recipient was not sent');
+		$db->query("DELETE FROM ".MAIN_DB_PREFIX."c_email_templates WHERE label = '".$db->escape($template)."'");
+		$conf->global->MAIN_MAIL_EMAIL_FROM = $savmailfrom;
+	}
+
+	/**
+	 * testSendEmailsRemindersSeveralLevels
+	 *
+	 * @return  void
+	 */
+	public function testSendEmailsRemindersSeveralLevels()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new Facture($db);
+
+		// One delay and one template per level (delays far in the future so that no invoice matches)
+		$result = $localobject->sendEmailsRemindersOnInvoiceDueDate('36500;36501;36502', 'all', 'Reminder1;Reminder2;Reminder3');
+		$this->assertEquals(0, $result, $localobject->error);
+		$this->assertEquals(3, substr_count($localobject->output, 'Nb of emails sent'));
+
+		// Spaces around the values are accepted
+		$result = $localobject->sendEmailsRemindersOnInvoiceDueDate(' 36500 ; 36501 ', 'all', 'Reminder1 ; Reminder2');
+		$this->assertEquals(0, $result, $localobject->error);
+
+		// Not the same number of delays and templates
+		$result = $localobject->sendEmailsRemindersOnInvoiceDueDate('10;0', 'all', 'Reminder1');
+		$this->assertEquals(1, $result);
+
+		// A delay that is not a number is refused, it must not be read as 0 (the due date) and send the reminder of the day
+		$result = $localobject->sendEmailsRemindersOnInvoiceDueDate('10;O', 'all', 'Reminder1;Reminder2');
+		$this->assertEquals(1, $result);
+
+		// A delay that is not an integer is refused too, it would be truncated to 5
+		$result = $localobject->sendEmailsRemindersOnInvoiceDueDate('10;5.5', 'all', 'Reminder1;Reminder2');
+		$this->assertEquals(1, $result);
+	}
+
+	/**
+	 * testSendEmailsRemindersSeveralLevelsError
+	 *
+	 * @return  void
+	 */
+	public function testSendEmailsRemindersSeveralLevelsError()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$conf->global->MAIN_MAIL_EMAIL_FROM = 'test@example.com';
+		$db->query("INSERT INTO ".$db->prefix()."c_email_templates (entity, type_template, private, datec, label, position, enabled, active, topic, joinfiles, content) VALUES (1, 'facture_send', 0, '".$db->idate(dol_now())."', 'TestLevels', 990, '1', 1, 'Topic', 0, 'Content')");
+
+		// An invoice that is due today, for a third party without email: its reminder fails
+		$soc = new Societe($db);
+		$soc->name = 'TESTLEVELS '.dol_now();
+		$soc->client = 1;
+		$soc->code_client = -1;
+		$socid = $soc->create($user);
+		$invoice = new Facture($db);
+		$invoice->socid = $socid;
+		$invoice->date = dol_now();
+		$invoice->cond_reglement_id = 1;
+		$id = $invoice->create($user);
+		$invoice->addline('Test', 100, 1, 20);
+		$duedate = dol_get_first_hour(dol_now(), 'gmt');
+		$db->query("UPDATE ".$db->prefix()."facture SET fk_statut = 1, paye = 0, date_lim_reglement = '".$db->idate($duedate, 'gmt')."' WHERE rowid = ".((int) $id));
+
+		// The error of the level of today is returned, even if the other level has nothing to send
+		$localobject = new Facture($db);
+		$result = $localobject->sendEmailsRemindersOnInvoiceDueDate('0;36500', 'all', 'TestLevels;TestLevels');
+		$this->assertEquals(1, $result);
+		$this->assertStringContainsString('thirdparty id='.$socid.'.', $localobject->error);
+
+		// Clean
+		$db->query("DELETE FROM ".$db->prefix()."facturedet WHERE fk_facture = ".((int) $id));
+		$db->query("DELETE FROM ".$db->prefix()."facture WHERE rowid = ".((int) $id));
+		$db->query("DELETE FROM ".$db->prefix()."societe WHERE rowid = ".((int) $socid));
+		$db->query("DELETE FROM ".$db->prefix()."c_email_templates WHERE label = 'TestLevels'");
+	}
+
+	/**
+	 * testSendEmailsRemindersSeveralLevelsTemplates
+	 *
+	 * @return  void
+	 */
+	public function testSendEmailsRemindersSeveralLevelsTemplates()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$conf->global->MAIN_MAIL_EMAIL_FROM = 'test@example.com';
+		foreach (array('TestLevelA' => 'TopicOfLevelA', 'TestLevelB' => 'TopicOfLevelB') as $label => $topic) {
+			$db->query("INSERT INTO ".$db->prefix()."c_email_templates (entity, type_template, private, datec, label, position, enabled, active, topic, joinfiles, content) VALUES (1, 'facture_send', 0, '".$db->idate(dol_now())."', '".$label."', 990, '1', 1, '".$topic."', 0, 'Content')");
+		}
+
+		// An invoice due today and an invoice due 3 days ago, for third parties with an email
+		$items = array();
+		foreach (array('today' => 0, 'threedaysago' => -3) as $key => $shift) {
+			$soc = new Societe($db);
+			$soc->name = 'TESTLEVELS '.$key.' '.dol_now();
+			$soc->email = 'customer@example.com';
+			$soc->client = 1;
+			$soc->code_client = -1;
+			$socid = $soc->create($user);
+			$invoice = new Facture($db);
+			$invoice->socid = $socid;
+			$invoice->date = dol_now();
+			$invoice->cond_reglement_id = 1;
+			$id = $invoice->create($user);
+			$invoice->addline('Test', 100, 1, 20);
+			$duedate = dol_get_first_hour(dol_time_plus_duree(dol_now(), $shift, 'd'), 'gmt');
+			$db->query("UPDATE ".$db->prefix()."facture SET fk_statut = 1, paye = 0, date_lim_reglement = '".$db->idate($duedate, 'gmt')."' WHERE rowid = ".((int) $id));
+			$items[$key] = array('socid' => $socid, 'id' => $id);
+		}
+
+		// Each level uses its own template (with spaces around the values). Mails are disabled here, so each reminder is recorded as a failed sending, with the subject of its template
+		$localobject = new Facture($db);
+		$localobject->sendEmailsRemindersOnInvoiceDueDate('0 ; -3', 'all', 'TestLevelA ; TestLevelB');
+		foreach (array('today' => 'TopicOfLevelA', 'threedaysago' => 'TopicOfLevelB') as $key => $topic) {
+			$resql = $db->query("SELECT email_subject FROM ".$db->prefix()."actioncomm WHERE elementtype = 'invoice' AND fk_element = ".((int) $items[$key]['id'])." AND label = 'sendEmailsRemindersOnInvoiceDueDateKO'");
+			$this->assertEquals(1, $db->num_rows($resql), 'Reminders of the invoice '.$key);
+			$this->assertStringContainsString($topic, $db->fetch_object($resql)->email_subject);
+		}
+
+		foreach ($items as $item) {
+			$db->query("DELETE FROM ".$db->prefix()."actioncomm WHERE fk_soc = ".((int) $item['socid']));
+			$db->query("DELETE FROM ".$db->prefix()."facturedet WHERE fk_facture = ".((int) $item['id']));
+			$db->query("DELETE FROM ".$db->prefix()."facture WHERE rowid = ".((int) $item['id']));
+			$db->query("DELETE FROM ".$db->prefix()."societe WHERE rowid = ".((int) $item['socid']));
+		}
+		$db->query("DELETE FROM ".$db->prefix()."c_email_templates WHERE label IN ('TestLevelA', 'TestLevelB')");
+	}
 
 	/**
 	 * Edit an object to test updates

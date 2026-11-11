@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = קרא עבודה מתוזמנת
-Permission23102 = צור/עדכן עבודה מתוזמנת
-Permission23103 = מחק עבודה מתוזמנת
-Permission23104 = בצע עבודה מתוזמנת
 # Admin
 CronSetup=הגדרת ניהול עבודה מתוזמנת
 URLToLaunchCronJobs=כתובת אתר לבדיקה והשקה של משרות cron מוסמכות מדפדפן
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=בסביבת יוניקס עליך להשתמש בערך
 CronExplainHowToRunWin=בסביבת Microsoft(tm) Windows אתה יכול להשתמש בכלי משימות מתוזמנות כדי להפעיל את שורת הפקודה כל 5 דקות
 CronMethodDoesNotExists=Class %s אינו מכיל שום שיטה %s
 CronMethodNotAllowed=השיטה %s של המחלקה %s נמצאת ברשימת החסימה של השיטות האסורות
-CronJobDefDesc=פרופילי עבודה של Cron מוגדרים בקובץ מתאר המודול. כאשר המודול מופעל, הם נטענים וזמינים כך שתוכל לנהל את המשימות מתפריט כלי הניהול %s.
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=רשימה של פרופילי משרות קרון מוגדרים מראש
 # Menu
 EnabledAndDisabled=מופעל ומושבת
@@ -27,7 +22,7 @@ CronDelete=מחק עבודות מתוזמנות
 CronConfirmDelete=האם אתה בטוח שברצונך למחוק את העבודות המתוזמנות הללו?
 CronExecute=הפעל עכשיו
 CronConfirmExecute=האם אתה בטוח שברצונך לבצע את העבודות המתוזמנות האלה עכשיו?
-CronInfo=מודול עבודה מתוזמנת מאפשר לתזמן עבודות לביצוען באופן אוטומטי. ניתן להתחיל עבודות גם באופן ידני.
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=עבודה
 CronNone=Next run of scheduled task
 CronNotYetRan=Never executed
@@ -79,7 +74,7 @@ CronType_command=פקודת מעטפת
 CronCannotLoadClass=לא ניתן לטעון את קובץ המחלקה %s (כדי להשתמש במחלקה %s)
 CronModuleNotEnabledInThisEntity=Cron module not enabled in this entity (to use %s method of %s object)
 CronCannotLoadObject=קובץ הכיתה %s נטען, אך האובייקט %s לא נמצא בו
-UseMenuModuleToolsToAddCronJobs=היכנס לתפריט "<a href="%s">בית - כלי ניהול - משימות מתוזמנות</a>" כדי לראות ולערוך עבודות מתוזמנות.
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=עבודה מושבתת
 MakeLocalDatabaseDumpShort=גיבוי מקומי של מסד נתונים
 MakeLocalDatabaseDump=צור dump של מסד נתונים מקומי. הפרמטרים הם: דחיסה ('gz' או 'bz' או 'none'), סוג גיבוי ('mysql', 'pgsql', 'auto'), 1, 'auto' או שם קובץ לבנייה, מספר קבצי גיבוי לשמירה

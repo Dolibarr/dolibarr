@@ -284,7 +284,8 @@ class Dolresource extends CommonObject
 		$sql .= " t.note_private,";
 		$sql .= " t.tms as date_modification,";
 		$sql .= " t.datec as date_creation,";
-		$sql .= " ty.label as type_label";
+		$sql .= " ty.label as type_label,";
+		$sql .= " t.extraparams";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_resource as ty ON ty.code=t.fk_code_type_resource";
 		if ($id) {
@@ -318,6 +319,7 @@ class Dolresource extends CommonObject
 				$this->date_creation     = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
 				$this->type_label = $obj->type_label;
+				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels

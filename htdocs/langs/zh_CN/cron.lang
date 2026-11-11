@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = 读取计划任务
-Permission23102 = 创建/更新计划任务
-Permission23103 = 删除计划任务
-Permission23104 = 执行计划任务
 # Admin
 CronSetup=计划任务管理设置
 URLToLaunchCronJobs=用于从浏览器检查并启动合格的计划任务作业的 URL
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=在 Unix 环境中，您应该使用以下 crontab 条�
 CronExplainHowToRunWin=在 Microsoft(tm) Windows 环境中，您可以使用计划任务工具每 5 分钟运行一次命令行
 CronMethodDoesNotExists=类 %s 未包含任何 %s 方法
 CronMethodNotAllowed=Method %s of class %s is in blocklist of forbidden methods
-CronJobDefDesc=计划任务配置文件被定义在模块描述符文件中。激活模块后，它们会被加载并可用，因此您可以从管理工具菜单 %s 中管理此计划任务。
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=预定义的计划任务配置文件清单
 # Menu
 EnabledAndDisabled=启用和禁用
@@ -27,7 +22,7 @@ CronDelete=删除计划任务
 CronConfirmDelete=您确定要删除这些计划任务吗？
 CronExecute=立即启动
 CronConfirmExecute=您确定要立即执行这些计划任务吗？
-CronInfo=计划任务模块允许自动执行定时任务。也可以手动执行任务。
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=任务
 CronNone=Next run of scheduled task
 CronNotYetRan=Never executed
@@ -79,7 +74,7 @@ CronType_command=Shell命令
 CronCannotLoadClass=无法加载类文件 %s（使用类 %s）
 CronModuleNotEnabledInThisEntity=Cron module not enabled in this entity (to use %s method of %s object)
 CronCannotLoadObject=类文件 %s 已加载，但未在其中找到对象 %s
-UseMenuModuleToolsToAddCronJobs=进入菜单“<a href="%s">主页 - 管理工具 - 计划任务</a>”查看和编辑计划任务。
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=任务已禁用
 MakeLocalDatabaseDumpShort=本地数据库备份
 MakeLocalDatabaseDump=创建本地数据库备份。参数为：压缩类型（'gz'或'bz'或'none'），备份类型（'mysql'，'pgsql'，'auto'），1，'auto' 或 要构建的文件名，要保留的备份文件数

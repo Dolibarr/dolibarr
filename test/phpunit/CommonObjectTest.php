@@ -30,6 +30,8 @@ global $conf,$user,$langs,$db,$mysoc;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/commande/class/commande.class.php';
+require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.facture.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/class/html.form.class.php';
 require_once dirname(__FILE__).'/../../htdocs/projet/class/project.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/class/defaultvalues.class.php';
 
@@ -1818,6 +1820,91 @@ class CommonObjectTest extends CommonClassTest
 	}
 
 	/**
+	 *  testGetObjectLineHtml
+	 *  The HTML of a line must be the same as the one printed by printObjectLines() in the card
+	 *
+	 *  @return void
+	 */
+	public function testGetObjectLineHtml()
+	{
+		global $conf,$user,$langs,$db,$mysoc;
+		global $object,$form,$inputalsopricewithtax;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new Commande($db);
+		$localobject->initAsSpecimen();
+		$id = $localobject->create($user);
+		$this->assertGreaterThan(0, $id, 'create: '.$localobject->error);
+
+		$localobject = new Commande($db);
+		$localobject->fetch($id);
+		$localobject->fetch_thirdparty();
+		$localobject->getLinesArray();
+		$this->assertNotEmpty($localobject->lines);
+		$lineid = $localobject->lines[count($localobject->lines) - 1]->id;
+
+		// Lines printed as in the card
+		$object = $localobject;
+		$form = new Form($db);
+		$linesContext = $localobject->initObjectLinesDisplay();
+		$this->assertSame(1, $inputalsopricewithtax, 'initObjectLinesDisplay must set the global variables of the line templates');
+		ob_start();
+		$localobject->printObjectLines('', $linesContext['seller'], $linesContext['buyer'], 0, $linesContext['dateSelector']);
+		$cardhtml = ob_get_clean();
+
+		// Line rendered alone, with other global variables of the caller
+		$callerobject = new stdClass();
+		$object = $callerobject;
+		$form = null;
+		$inputalsopricewithtax = 0;
+		$linehtml = $localobject->getObjectLineHtml($lineid);
+
+		$this->assertStringContainsString('id="row-'.$lineid.'"', $linehtml);
+		$this->assertStringContainsString($linehtml, $cardhtml, 'The line must be rendered as in printObjectLines()');
+		$this->assertSame($callerobject, $object, 'Global $object of the caller must be restored');
+		$this->assertNull($form, 'Global $form of the caller must be restored');
+		$this->assertSame(0, $inputalsopricewithtax, 'Global variables of the line templates must be restored');
+
+		// Unknown line
+		$this->assertSame('', $localobject->getObjectLineHtml(-1));
+		$this->assertSame('ErrorRecordNotFound', $localobject->error);
+
+		$this->assertGreaterThan(0, $localobject->delete($user));
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 *  testGetObjectLinesDisplayContextSupplier
+	 *  On supplier documents, the supplier is the seller
+	 *
+	 *  @return void
+	 */
+	public function testGetObjectLinesDisplayContextSupplier()
+	{
+		global $conf,$user,$langs,$db,$mysoc;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new FactureFournisseur($db);
+		$localobject->thirdparty = new Societe($db);
+
+		$context = $localobject->getObjectLinesDisplayContext();
+		$this->assertSame($localobject->thirdparty, $context['seller']);
+		$this->assertSame($mysoc, $context['buyer']);
+		$this->assertSame(1, $context['forceall']);
+		$this->assertSame(1, $context['inputalsopricewithtax']);
+		$this->assertSame(getDolGlobalInt('SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY') ? getDolGlobalInt('SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY') : 2, $context['senderissupplier']);
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
 	 * Create, update then delete the object with createCommon(), updateCommon() and deleteCommon()
 	 *
 	 * @param	DefaultValuesTriggerSpy	$localobject	Object to process
@@ -1843,5 +1930,38 @@ class CommonObjectTest extends CommonClassTest
 		return array_values(array_filter($localobject->calledTriggers, function ($code) {
 			return strpos($code, 'OBJECT_LINK_') !== 0;
 		}));
+	}
+
+	/**
+	 *  testRoundQtyToPackaging
+	 *
+	 *  @return void
+	 */
+	public function testRoundQtyToPackaging()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new Commande($db);
+
+		// Rounded up to the next multiple of the packaging, the sign is kept
+		$this->assertEquals(6, $localobject->roundQtyToPackaging(1, 6), '1 with packaging 6');
+		$this->assertEquals(12, $localobject->roundQtyToPackaging(7, 6), '7 with packaging 6');
+		$this->assertEquals(12, $localobject->roundQtyToPackaging(12, 6), '12 with packaging 6');
+		$this->assertEquals(-12, $localobject->roundQtyToPackaging(-7, 6), '-7 with packaging 6');
+		$this->assertEquals(0.3, $localobject->roundQtyToPackaging(0.25, 0.1), '0.25 with packaging 0.1');
+		// A multiple of a decimal packaging is kept (fmod(0.5, 0.1) is 0.0999..., not 0)
+		$this->assertEquals(3, $localobject->roundQtyToPackaging(3, 1.5), '3 with packaging 1.5');
+		$this->assertEquals(0.5, $localobject->roundQtyToPackaging(0.5, 0.1), '0.5 with packaging 0.1');
+		$this->assertEquals(1, $localobject->roundQtyToPackaging(1, 0.1), '1 with packaging 0.1');
+		$this->assertEquals(2.2, $localobject->roundQtyToPackaging(2.2, 0.1), '2.2 with packaging 0.1');
+		// No packaging: quantity unchanged
+		$this->assertEquals(7, $localobject->roundQtyToPackaging(7, 0), '7 with packaging 0');
+		$this->assertEquals(7, $localobject->roundQtyToPackaging(7, null), '7 with packaging null');
+
+		print __METHOD__." OK\n";
 	}
 }

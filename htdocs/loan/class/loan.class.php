@@ -37,13 +37,6 @@ class Loan extends CommonObject
 
 	/**
 	 * @var string Name of table without prefix where object is stored
-	 * @deprecated Use $table_element
-	 * @see $table_element
-	 */
-	public $table = 'loan';
-
-	/**
-	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'loan';
 
@@ -168,6 +161,11 @@ class Loan extends CommonObject
 	public $fk_user_modif;
 
 	/**
+	 * @var string	Name of the document template used to build the document of the loan
+	 */
+	public $model_pdf;
+
+	/**
 	 * @var float totalpaid
 	 */
 	public $totalpaid;
@@ -207,7 +205,7 @@ class Loan extends CommonObject
 	public function fetch($id)
 	{
 		$sql = "SELECT l.rowid, l.entity, l.label, l.capital, l.datestart, l.dateend, l.nbterm, l.rate, l.frequency, l.interest_basis, l.note_private, l.note_public, l.insurance_amount, l.balloon_amount, l.charge_type, l.charge_per_payment,";
-		$sql .= " l.paid, l.fk_bank, l.accountancy_account_capital, l.accountancy_account_insurance, l.accountancy_account_interest, l.fk_projet as fk_project";
+		$sql .= " l.paid, l.fk_bank, l.accountancy_account_capital, l.accountancy_account_insurance, l.accountancy_account_interest, l.fk_projet as fk_project, l.model_pdf";
 		$sql .= " FROM ".MAIN_DB_PREFIX."loan as l";
 		$sql .= " WHERE l.rowid = ".((int) $id);
 
@@ -220,6 +218,7 @@ class Loan extends CommonObject
 				$this->id = $obj->rowid;
 				$this->entity = $obj->entity;
 				$this->ref = $obj->rowid;
+				$this->model_pdf = $obj->model_pdf;
 				$this->datestart = $this->db->jdate($obj->datestart);
 				$this->dateend = $this->db->jdate($obj->dateend);
 				$this->label = $obj->label;
@@ -881,5 +880,38 @@ class Loan extends CommonObject
 		$return .= '</div>';
 
 		return $return;
+	}
+
+	/**
+	 *  Create a document onto disk according to template module.
+	 *
+	 *  @param	string		$modele			Force template to use ('' to not force)
+	 *  @param	Translate	$outputlangs	Object lang to use for translation
+	 *  @param	int<0,1>	$hidedetails	Hide details of lines
+	 *  @param	int<0,1>	$hidedesc		Hide description
+	 *  @param	int<0,1>	$hideref		Hide ref
+	 *  @param	?array<string,mixed>	$moreparams	Array to provide more information
+	 *  @return	int<-1,1>					0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
+	{
+		global $langs;
+
+		$langs->load("loan");
+		$outputlangs->load("loan");
+
+		if (!dol_strlen($modele)) {
+			$modele = 'generic_loan_odt';
+
+			if (!empty($this->model_pdf)) {
+				$modele = $this->model_pdf;
+			} elseif (getDolGlobalString('LOAN_ADDON_PDF')) {
+				$modele = getDolGlobalString('LOAN_ADDON_PDF');
+			}
+		}
+
+		$modelpath = "core/modules/loan/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
 }

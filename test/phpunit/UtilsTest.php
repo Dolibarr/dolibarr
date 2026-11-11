@@ -49,6 +49,30 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 class UtilsTest extends CommonClassTest
 {
 	/**
+	 * testShellPasswordParam
+	 *
+	 * The password of the database must reach the command as it is, whatever the chars it contains
+	 *
+	 * @return  void
+	 */
+	public function testShellPasswordParam()
+	{
+		if ($this->fakeAssertIfNotUnix(__METHOD__." only works on *nix")) {
+			return;
+		}
+
+		global $db;
+		$db = $this->savdb;
+
+		$utils = new Utils($db);
+		foreach (array('plain', 'abc\\', 'x\\"y', 'a\\$HOME', 'p"w', "it's", '$(id)', 'a`id`b', 'a b;c|d&e', '%PATH%') as $password) {
+			$out = array();
+			exec('printf %s '.$utils->getShellPasswordParam($password).' 2>&1', $out);
+			$this->assertEquals('-p'.$password, implode("\n", $out), 'Password '.$password.' was altered by the shell');
+		}
+	}
+
+	/**
 	 * testExecuteCLI
 	 *
 	 * @return  void

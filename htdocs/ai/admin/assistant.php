@@ -79,6 +79,13 @@ if ($action == 'update') {
 		}
 	}
 
+	if (GETPOSTISSET('AI_CHAT_CONTEXT_MAX_SIZE')) {
+		$res = dolibarr_set_const($db, "AI_CHAT_CONTEXT_MAX_SIZE", max(0, GETPOSTINT("AI_CHAT_CONTEXT_MAX_SIZE")), 'int', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error++;
+		}
+	}
+
 	if (GETPOSTISSET('AI_LOG_RETENTION')) {
 		$res = dolibarr_set_const($db, "AI_LOG_RETENTION", GETPOST("AI_LOG_RETENTION"), 'int', 0, '', $conf->entity);
 		if ($res <= 0) {
@@ -88,6 +95,13 @@ if ($action == 'update') {
 
 	if (GETPOSTISSET('AI_DEFAULT_INPUT_MODE')) {
 		$res = dolibarr_set_const($db, "AI_DEFAULT_INPUT_MODE", GETPOST("AI_DEFAULT_INPUT_MODE"), 'chaine', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error++;
+		}
+	}
+
+	if (GETPOSTISSET('AI_PRIVACY_REDACTION')) {
+		$res = dolibarr_set_const($db, "AI_PRIVACY_REDACTION", min(2, max(0, GETPOSTINT("AI_PRIVACY_REDACTION"))), 'int', 0, '', $conf->entity);
 		if ($res <= 0) {
 			$error++;
 		}
@@ -236,8 +250,6 @@ print '<br>';
 print '<br>';
 
 if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
-	print load_fiche_titre($langs->trans("PrivateModeTitle"), '', 'fas fa-lock');
-
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
@@ -245,27 +257,45 @@ if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td></td></tr>';
+
 	// Input Mode
 	print '<tr class="oddeven">';
 	print '<td>';
 	print $form->textwithpicto('Default Interface', $langs->trans("InputMethodHelp"));
 	print '</td>';
 	print '<td>';
+	// Same values and pictos than the engine selector of the assistant (see ai.lib.php)
+	$labelcloud = $langs->trans('OptionCloudFast') . ' - ' . $langs->trans('OptionCloudFasthelp');
 	$input_modes = [
-		'text' => $langs->trans('OptionTextOnly'),
-		'native' => $langs->trans('OptionCloudFast') . ' - ' . $langs->trans('OptionCloudFasthelp'),
-		'whisper' => $langs->trans('OptionWhisperLocal') . ' - ' . $langs->trans('OptionWhisperLocalhelp')
+		'text' => array('label' => $langs->trans('OptionTextOnly'), 'data-html' => img_picto('', 'fa-keyboard', 'class="pictofixedwidth"') . dolPrintHTML($langs->trans('OptionTextOnly'))),
+		'cloud' => array('label' => $labelcloud, 'data-html' => img_picto('', 'fa-cloud', 'class="pictofixedwidth"') . dolPrintHTML($labelcloud)),
 	];
-	print $form->selectarray('AI_DEFAULT_INPUT_MODE', $input_modes, getDolGlobalString('AI_DEFAULT_INPUT_MODE'), 0, 0, 0);
+	// The local whisper mode is experimental: only offered with the experimental features enabled
+	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
+		$labelwhisper = $langs->trans('OptionWhisperLocal') . ' - ' . $langs->trans('OptionWhisperLocalhelp');
+		$input_modes['whisper'] = array('label' => $labelwhisper, 'data-html' => img_picto('', 'fa-microphone', 'class="pictofixedwidth"') . dolPrintHTML($labelwhisper) . ' <span class="opacitymedium">(' . $langs->trans('VersionExperimental') . ')</span>');
+	}
+	$defaultinputmode = getDolGlobalString('AI_DEFAULT_INPUT_MODE');
+	if ($defaultinputmode == 'native') {	// Old value saved before the key was aligned with the assistant selector
+		$defaultinputmode = 'cloud';
+	}
+	print $form->selectarray('AI_DEFAULT_INPUT_MODE', $input_modes, $defaultinputmode, 0, 0, 0, '', 0, 0, 0, '', 'minwidth300');
 	print '</td>';
 	print '</tr>';
 
 	// Enhanced Privacy control
 	print '<tr class="oddeven">';
-	print '<td>' . $langs->trans('ObfuscatePIIData') . '</td>';
+	print '<td>' . $form->textwithpicto($langs->trans('ObfuscatePIIData'), $langs->trans("RedactionHelp")) . '</td>';
 	print '<td>';
-	print ajax_constantonoff('AI_PRIVACY_REDACTION');
-	print ' &nbsp; <span class="opacitymedium">' . $langs->trans("RedactionHelp") . '</span>';
+	$labelredaction1 = $langs->trans("RedactionSensitiveData").' ('.$langs->trans("Recommended").')';
+	$labelredaction2 = $langs->trans("RedactionSensitiveDataAndThirdparties").' ('.$langs->trans("VersionExperimental").')';
+	$redaction_options = [
+		'0' => $langs->trans("RedactionNone"),
+		'1' => array('label' => $labelredaction1, 'data-html' => dolPrintHTML($langs->trans("RedactionSensitiveData")).' <span class="opacitymedium">('.$langs->trans("Recommended").')</span>'),
+		'2' => array('label' => $labelredaction2, 'data-html' => dolPrintHTML($langs->trans("RedactionSensitiveDataAndThirdparties")).' <span class="opacitymedium">('.$langs->trans("VersionExperimental").')</span>')
+	];
+	print $form->selectarray('AI_PRIVACY_REDACTION', $redaction_options, getDolGlobalInt('AI_PRIVACY_REDACTION', 0), 0, 0, 0, '', 0, 0, 0, '', 'minwidth300');
 	print '</td>';
 	print '</tr>';
 
@@ -288,21 +318,19 @@ if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	print '<td><input class="width50" type="number" min="0" name="AI_CHAT_CONTEXT_AUTO_EXCHANGES" value="' . getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 2) . '"></td>';
 	print '</tr>';
 
-	// Palette of the chat input: on unless switched off (the constant records the off state)
+	// Max size of the context sent back with the question
 	print '<tr class="oddeven">';
-	print '<td>' . $form->textwithpicto($langs->trans("AIPalette"), $langs->trans("AIPaletteHelp")) . '</td>';
+	print '<td>' . $form->textwithpicto($langs->trans("AIContextMaxSize"), $langs->trans("AIContextMaxSizeHelp")) . '</td>';
+	print '<td><input class="width100" type="number" min="0" name="AI_CHAT_CONTEXT_MAX_SIZE" value="' . getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 200000) . '"></td>';
+	print '</tr>';
+
+	// API tools in the palette of the chat input (the palette itself is always on)
+	print '<tr class="oddeven">';
+	print '<td>' . $form->textwithpicto($langs->trans("AIPaletteApiTools"), $langs->trans("AIPaletteApiToolsHelp")) . '</td>';
 	print '<td>';
-	print ajax_constantonoff('AI_PALETTE_DISABLED', array(), null, 1, 0, 1);
+	print ajax_constantonoff('AI_PALETTE_API_TOOLS');
 	print '</td>';
 	print '</tr>';
-	if (!getDolGlobalString('AI_PALETTE_DISABLED')) {
-		print '<tr class="oddeven">';
-		print '<td>' . $form->textwithpicto($langs->trans("AIPaletteApiTools"), $langs->trans("AIPaletteApiToolsHelp")) . '</td>';
-		print '<td>';
-		print ajax_constantonoff('AI_PALETTE_API_TOOLS');
-		print '</td>';
-		print '</tr>';
-	}
 
 	// Logging
 	print '<tr class="oddeven">';
@@ -336,37 +364,6 @@ if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	print '<br>';
 	print '<br>';
 
-
-	// AI Provider Config and Connection testing
-	$services = getListOfAIServices();
-	$currentService = getDolGlobalString('AI_API_SERVICE');
-
-	print load_fiche_titre($langs->trans("AIProviderConfigTitle"), '', 'fa fa-plug');
-
-	if ((string) $currentService == '-1') {
-		print '<div class="warning">'.$langs->trans("NoAIProviderSelected").' <a href="'.dol_buildpath('/ai/admin/setup.php', 1).'">'.$langs->trans("ConfigureHere").'</a></div>';
-	} else {
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
-
-		print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("AIProvider").'</td><td>'.$services[$currentService]['label'].'</td></tr>';
-
-		$prefix = 'AI_API_'.strtoupper($currentService);
-		$modelVal = getDolGlobalString($prefix.'_MODEL_TEXT', $services[$currentService]['textgeneration']['default']);
-
-		print '<tr class="oddeven"><td>'.$langs->trans("AI_API_MODEL").'</td><td>'.$modelVal.'</td></tr>';
-		print '</table></div>';
-
-		print '<div class="center">';
-
-		if ($currentService && $currentService !== '-1') {
-			print '<a class="reposition button smallpaddingimp" href="'.$_SERVER['PHP_SELF'].'?action=test_provider&token='.newToken().'&service_key='.urlencode($currentService).'">'.$langs->trans('TestConnection').'</a>';
-		}
-
-		print '</div>';
-	}
-
-	print '<br><br>';
 
 	// External Access Configuration
 	/*

@@ -3094,7 +3094,7 @@ if ($action == 'merge') {
 			'name' => 'product_origin',
 			'label' => $langs->trans('MergeOriginProduct'),
 			'type' => 'other',
-			'value' => $form->select_produits(0, 'product_origin', '', 0, 0, 1, 2, '', 1, array(), 0, 1, 0, 'minwidth200', 0, '', null, 1),
+			'value' => $form->select_produits(0, 'product_origin', (int) $object->type, 0, 0, -1, 2, '', 1, array(), 0, 1, 0, 'minwidth200 maxwidth500', 0, '', null, 1, -1),
 		)
 	);
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("MergeProducts"), $langs->trans("ConfirmMergeProducts"), "confirm_merge", $formquestion, 'no', 1, 250);

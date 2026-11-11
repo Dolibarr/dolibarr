@@ -284,6 +284,9 @@ if (getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 	print '</div>';
 	print ajax_autoselect('publicurlmember');
 
+	// The tracking ID of a ticket created from the public interface is sent only by email
+	print '<br><div class="warning">'.$langs->trans("TicketPublicInterfaceRequireEmailSending", '<a href="'.DOL_URL_ROOT.'/admin/mails_ticket.php">'.$langs->transnoentitiesnoconv("EMailsSetup").' - '.$langs->transnoentitiesnoconv("Tickets").'</a>').'</div>';
+
 
 	print '<br><br>';
 

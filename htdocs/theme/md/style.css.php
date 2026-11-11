@@ -301,6 +301,7 @@ if ($tmpval <= 460) {
 } else {
 	$colortextbackhmenu = '000000';
 }
+$colortextbackhmenu = colorGetReadableTextColor($colorbackhmenu1, $colortextbackhmenu, ($colortextbackhmenu == 'FFFFFF' ? '000000' : 'FFFFFF'));
 
 $colorbackvmenu1 = implode(',', colorStringToArray($colorbackvmenu1)); // Normalize value to 'x,y,z'
 $tmppart = explode(',', $colorbackvmenu1);
@@ -310,6 +311,7 @@ if ($tmpval <= 460) {
 } else {
 	$colortextbackvmenu = '222222';
 }
+$colortextbackvmenu = colorGetReadableTextColor($colorbackvmenu1, $colortextbackvmenu, ($colortextbackvmenu == 'FFFFFF' ? '222222' : 'FFFFFF'));
 
 $colortopbordertitle1 = implode(',', colorStringToArray($colortopbordertitle1)); // Normalize value to 'x,y,z'
 
@@ -324,6 +326,8 @@ if ($colortexttitle == '') {
 		$colortexttitle = '101010';
 		$colorshadowtitle = 'FFFFFF';
 	}
+	$colortexttitle = colorGetReadableTextColor($colorbacktitle1, $colortexttitle, ($colortexttitle == 'FFFFFF' ? '101010' : 'FFFFFF'));
+	$colorshadowtitle = ($colortexttitle == 'FFFFFF' ? '888888' : 'FFFFFF');
 } else {
 	$colorshadowtitle = '888888';
 }
@@ -336,6 +340,7 @@ if ($tmpval <= 460) {
 } else {
 	$colortextbacktab = '111111';
 }
+$colortextbacktab = colorGetReadableTextColor($colorbacktabcard1, $colortextbacktab, ($colortextbacktab == 'FFFFFF' ? '111111' : 'FFFFFF'));
 
 // Format color value to match expected format (may be 'FFFFFF' or '255,255,255')
 $colorbackhmenu1 = implode(',', colorStringToArray($colorbackhmenu1));
@@ -452,8 +457,8 @@ $leftmenuwidth = 254;
 	--tableforfieldcolor:#666;
 	--amountremaintopaycolor:#880000;
 	--amountpaymentcomplete:#008855;
-	--amountremaintopaybackcolor:none;
-	--productlinestockod: #002200;
+	--amountremaintopaybackcolor:inherit;
+	--productlinestockok: #002200;
 	--productlinestocktoolow: #884400;
 	--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #fff, #fff, #fff, #e4efe8);
 	--tablevalidbgcolor: rgb(252, 248, 227);
@@ -513,7 +518,7 @@ if (getDolGlobalString('THEME_DARKMODEENABLED')) {
 	            --tableforfieldcolor:rgb(220,220,220);
 	            --amountremaintopaycolor:rgb(252,84,91);
 	            --amountpaymentcomplete:rgb(101,184,77);
-	            --amountremaintopaybackcolor:rbg(245,130,46);
+	            --amountremaintopaybackcolor:rgb(245,130,46);
 				--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #000, #000, #000, #274231);
 				--tablevalidbgcolor: rgb(80, 64, 33);
 				--colorblack: #fff;
@@ -542,6 +547,10 @@ body {
 	font-weight: 400;
 	background-color: var(--colorbackbody);
 	<?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
+}
+/* A page loaded into a dialog popup has the background of the card, not the one of the body */
+body.dol_openinpopup {
+	/* background-color: var(--colorbacktabcard1); */
 }
 
 /* Style used to protect html content in output to avoid attack by replacing full page with js content */
@@ -3565,7 +3574,7 @@ div.menu_titre {
 	padding-<?php print $right; ?>: 2px;
 	font-family: Roboto,<?php echo $fontlist; ?>;
 	font-weight: 400;
-	opacity: 0.9;
+	opacity: 0.95;
 }
 
 div.mainmenu {
@@ -3969,6 +3978,10 @@ div.login a:hover {
 div.login_block_user, div.login_block_other { clear: both; }
 div.login_block_other { padding-top: 15px; }
 div.login_block_tools { padding-top: 0px; }
+div.login_block_tools .atoplogin {
+	width: 1em;
+	text-align: center;
+}
 
 .topnav div.login_block_user {
 	display: inline-block;
@@ -4884,10 +4897,12 @@ table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.trfirs
 	border-top-right-radius: <?php echo $borderradius; ?>px;
 }
 table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child td:first-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.lastvisible td:first-child,
 table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child th:first-child {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 }
 table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child td:last-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.lastvisible td:last-child,
 table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child th:last-child {
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
@@ -4928,11 +4943,11 @@ div.liste_titre_bydiv_nothingafter {
 	border-bottom-color: #BBB;
 	border-bottom-style: solid;
 }
-table.liste tr:last-child td:first-child,
+table.liste tr:last-child td:first-child, table.liste tr.lastvisible td:first-child,
 table.liste > tr:last-child th:first-child, table.liste tfoot tr:last-child th:first-child {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 }
-table.liste tr:last-child td:last-child,
+table.liste tr:last-child td:last-child, table.liste tr.lastvisible td:last-child,
 table.liste > tr:last-child th:last-child, table.liste tfoot tr:last-child th:last-child {
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
@@ -5047,6 +5062,7 @@ table.listwithfilterbefore {
 .confirmquestions .tagtr .tagtd:not(:first-child)  { padding-left: 10px; }
 .confirmquestions { margin-top: 5px; }
 .confirmquestions .tagtr .tagtd { height: 2em; vertical-align: middle; }
+.confirmquestions .tagtd { padding-top: 5px; padding-bottom: 5px; }	/* same spacing than eldy (where it is set on all .tagtd) */
 
 
 /* Pagination */
@@ -5070,6 +5086,9 @@ div.refidno  {
 }
 div.refidno form {
 	display: inline-block;
+	/* Negative vertical margins so the edit form (select2 28px + button) does not increase the line height of the banner */
+	margin-top: -4px;
+	margin-bottom: -4px;
 }
 div.refaddress div.address {
 	line-height: 1.2em;
@@ -5965,6 +5984,36 @@ img.boxhandle, img.boxclose {
 .fieldcombo-field.selected, .customreportscombo-field.selected {
 	font-weight: bold;
 }
+/* A date field of custom reports is shown once, its variants (by year, by month, by day) are into an expandable sub list */
+.customreportscombo-datefieldheader {
+	position: relative;
+	z-index: 0;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 4px 15px 4px 8px;
+	cursor: pointer;
+}
+.customreportscombo-datefieldheader:focus {
+	outline: none;
+}
+.customreportscombo-datefieldheader:hover::before, .customreportscombo-datefieldheader:focus::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: -1000px;
+	right: 0;
+	z-index: -1;
+	background: var(--colorbacklinepairhover);
+}
+.customreportscombo-datefield.open .customreportscombo-datefieldcaret {
+	transform: rotate(90deg);
+}
+.customreportscombo-variants {
+	/* Hidden by default with an inline style, shown dynamically by JS after a search or a click on the date field */
+	padding-left: 20px;
+}
 /* The operator and value (text, date or select) of the filter editor have the same height and border than the combo of fields (.fieldcombo-toggle) */
 .search-component-assistance .operator .select2-container--default .select2-selection--single,
 .search-component-assistance .value .select2-container--default .select2-selection--single,
@@ -6396,7 +6445,8 @@ div#card-errors {
 
 button.ui-button-icon-only.ui-dialog-titlebar-close {
 	padding: 12px;
-	margin-top: -15px;
+	margin-top: 0;
+	transform: translateY(-50%);	/* center vertically whatever the real height of the button (padding + border) */
 	margin-right: 15px;
 }
 .ui-dialog-content {
@@ -6404,10 +6454,10 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize; ?> !important;
 }
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable {
-	z-index: 1005 !important;		/* Default 101 with ui-jquery, top menu have a z-index of 1000 */
+	z-index: 1007 !important;		/* Default 101 with ui-jquery. jquery-ui sets the modal overlay to this value - 1, which must be over the top menu (1005) */
 }
 .ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front {
-	z-index:1006 !important; 		/* To always be over the dialog box */
+	z-index: 1008 !important; 		/* To always be over the dialog box */
 }
 
 .ui-dialog.ui-widget.ui-widget-content {
@@ -6429,6 +6479,11 @@ div#dialogforpopup {
 
 .ui-dialog .ui-dialog-buttonpane {
 	padding: .5em 1em .3em .4em;
+}
+.ui-dialog .ui-dialog-buttonpane .ui-button:active, .ui-dialog .ui-dialog-buttonpane .ui-button.ui-state-active, .ui-dialog .ui-dialog-buttonpane .ui-button.ui-state-active:hover {
+	background: var(--butactionbg) !important;	/* same than .butAction instead of the default blue of .ui-state-active */
+	color: var(--textbutaction) !important;
+	border-color: var(--butactionbg) !important;	/* keep border width so button does not move, but remove the blue color */
 }
 .ui-dialog .ui-dialog-content, .ui-dialog .ui-dialog-titlebar.ui-widget-header {
 	padding-left: 1em !important;
@@ -6748,6 +6803,15 @@ span#morelines {
 }
 .websitebar .buttonDelete, .websitebar .button {
 	text-shadow: none;
+}
+.websitebar .button.buttonpictoonly {
+	display: inline-block;
+	min-width: 1.4em;
+	height: 1.2em;
+	line-height: 1.2em;
+	text-align: center;
+	box-sizing: content-box;
+	font-size: inherit;
 }
 .websitebar .button, .websitebar .buttonDelete
 {
@@ -7634,6 +7698,11 @@ div.ecmjqft {
 	float: <?php echo $right; ?>;
 	right:4px;
 	clear: both;
+}
+#ecm-layout-north {
+	min-height: 40px;
+	margin-top: 8px;
+	margin-bottom: 8px;
 }
 div#ecm-layout-west {
 	width: 380px;
@@ -9514,7 +9583,8 @@ table.jPicker {
 	div#topmenu-global-search-dropdown,
 	div#topmenu-quickadd-dropdown,
 	div#topmenu-bookmark-dropdown,
-	div#topmenu-uploadfile-dropdown {
+	div#topmenu-uploadfile-dropdown,
+	div#topmenu-quickmemo-dropdown {
 		line-height: unset;
 	}
 
