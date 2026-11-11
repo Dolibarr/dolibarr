@@ -514,6 +514,7 @@ if ($action == 'create') {
 		print '<table class="noborder centpercent">';
 
 		$arrayOfMoLines = array();
+        $qty_highest = array();
 		foreach ($objectbom->lines as $key => $val) {
 			$moLine = new MoLine($db);
 			$moLine->id = $objectbom->lines[$key]->id;
@@ -526,12 +527,24 @@ if ($action == 'create') {
 			$moLine->fk_bom_child = $objectbom->lines[$key]->fk_bom_child;
 
 			$arrayOfMoLines[] = $moLine;
+
+            // Need to fetch current stock to calculate highest Qty
+            $prod_tmp = new Product($db);
+            $prod_tmp->fetch($moLine->fk_product);
+            $prod_tmp->load_virtual_stock();
+            if (empty($prod_tmp->stock_reel)) {
+                $prod_tmp->stock_reel = 0;
+            }
+            $qty_highest[] = floor($prod_tmp->stock_reel / $moLine->qty);
 		}
 		$object->lines = $arrayOfMoLines;
 		$object->mrptype = $objectbom->bomtype;
 		$object->bom = $objectbom;
 
 		$object->printOriginLinesList('', array());
+        print('<tr><td colspan="100%">');
+        print($langs->trans("HighestMRPQty", '', 'mrp') . min($qty_highest) . '<br>');
+        print('</td></tr>');
 
 		print '</table>';
 		print '</div>';
