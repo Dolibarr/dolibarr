@@ -125,6 +125,23 @@ if (empty($reshook)) {
 		$massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
 	}
 
+	// Without the permission to delete all bookmarks, a user can only delete his own bookmarks: the mass action must
+	// not delete other records than these, whatever the list of ids received.
+	if (!$user->hasRight('bookmark', 'supprimer') && is_array($toselect) && count($toselect) > 0) {
+		$ownbookmarks = array();
+		$sqlown = "SELECT rowid FROM ".MAIN_DB_PREFIX."bookmark";
+		$sqlown .= " WHERE rowid IN (".$db->sanitize(implode(',', array_map('intval', $toselect))).")";
+		$sqlown .= " AND fk_user = ".((int) $user->id);
+		$sqlown .= " AND entity IN (".getEntity('bookmark').")";
+		$resqlown = $db->query($sqlown);
+		if ($resqlown) {
+			while ($objown = $db->fetch_object($resqlown)) {
+				$ownbookmarks[] = (int) $objown->rowid;
+			}
+		}
+		$toselect = $ownbookmarks;
+	}
+
 	// Mass actions
 	$objectclass = 'Bookmark';
 	$objectlabel = 'Bookmark';
@@ -180,6 +197,10 @@ $sql = preg_replace('/,\s*$/', '', $sql);
 $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as b LEFT JOIN ".MAIN_DB_PREFIX."user as u ON b.fk_user=u.rowid";
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action);	// Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE 1=1";
 if ($search_title) {
 	$sql .= natural_search('title', $search_title);
@@ -188,6 +209,10 @@ $sql .= " AND b.entity IN (".getEntity('bookmark').")";
 if (!$user->admin) {
 	$sql .= " AND (b.fk_user = ".((int) $user->id)." OR b.fk_user is NULL OR b.fk_user = 0)";
 }
+// Add where from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 
 // Count total nb of records
 $nbtotalofrecords = '';

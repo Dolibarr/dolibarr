@@ -35,7 +35,7 @@
 
 /**
  * Return a string label (so on 1 line only and that should not contains any HTML) ready to be output on HTML page.
- * To use text that is not HTML content inside an attribute, you can simply use only dol_escape_htmltag(). In doubt, use dolPrintHTMLForAttribute().
+ * To use text that is not HTML content inside an attribute, you can simply use only dolPrintLabelForAttribute(). In doubt, use dolPrintHTMLForAttribute().
  *
  * @param	string	$s						String to print
  * @param	int		$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
@@ -44,6 +44,20 @@
  * @example <span><?php echo dolPrintLabel($object->name); ?></span>
  */
 function dolPrintLabel($s, $escapeonlyhtmltags = 0)
+{
+	return dol_escape_htmltag(dol_string_nohtmltag($s, 1, 'UTF-8', 0, 0), 0, 0, '', $escapeonlyhtmltags, 1);
+}
+
+/**
+ * Return a string label (so on 1 line only and that should not contains any HTML) ready to be output on HTML attribute.
+ *
+ * @param	string	$s						String to print
+ * @param	int		$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
+ * @return	string							String ready for HTML attribute output
+ * @see dolPrintText()
+ * @example <input type="texte" value="<?php echo dolPrintLabelForAttribute($object->description); ?>">
+ */
+function dolPrintLabelForAttribute($s, $escapeonlyhtmltags = 0)
 {
 	return dol_escape_htmltag(dol_string_nohtmltag($s, 1, 'UTF-8', 0, 0), 0, 0, '', $escapeonlyhtmltags, 1);
 }
@@ -92,7 +106,7 @@ function dolPrintHTML($s, $allowiframe = 0, $moreallowedtags = array())
 
 /**
  * Return a string ready to be output into an HTML attribute (alt, title, data-html, ...)
- * With dolPrintHTMLForAttribute(), the content is HTML encode, even if it is already HTML content.
+ * With dolPrintHTMLForAttribute(), the content is HTML encoded, even if it is already HTML content.
  *
  * @param	string		$s						String to print
  * @param	int			$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
@@ -112,13 +126,17 @@ function dolPrintHTMLForAttribute($s, $escapeonlyhtmltags = 0, $allowothertags =
 	if ($escapeonlyhtmltags) {
 		return dol_escape_htmltag(dol_string_onlythesehtmltags($s, 1, 0, 0, 0, $allowedtags), 1, -1, '', 1, 1);
 	} else {
+		/*print "aaa ".$s."\n";
+		print "xxx ".dol_htmlentitiesbr($s)."\n"; // this is html
+		print "yyy ".dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 0, 0, 0, $allowedtags)."\n";
+		print "zzz ".dol_escape_htmltag(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 0, 0, 0, $allowedtags), 1, -1, '', 0, 1)."\n";*/
 		return dol_escape_htmltag(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 0, 0, 0, $allowedtags), 1, -1, '', 0, 1);
 	}
 }
 
 /**
  * Return a string ready to be output on a href attribute (this one need a special because we need content is HTML with no way to detect it is HTML).
- * With dolPrintHTMLForAttribute(), the content is HTML encode, even if it is already HTML content.
+ * With dolPrintHTMLForAttribute(), the content is HTML encoded, even if it is already HTML content.
  *
  * @param	string	$s		String to print
  * @return	string			String ready for HTML output
@@ -136,6 +154,8 @@ function dolPrintHTMLForAttributeUrl($s)
 /**
  * Return a string ready to be output on input textarea.
  * Differs from dolPrintHTML because all tags are escape. With dolPrintHTML, all tags except common one are escaped.
+ * If the content is for a textare that need to edit a text string (not HTML), you can also use
+ * dolPrintText() for the textarea.
  *
  * @param	string	$s				String to print
  * @param	int		$allowiframe	Allow iframe tags
@@ -348,9 +368,14 @@ function dolButtonToOpenExportDialog($name, $label, $buttonstring, $exportSiteNa
 	if (empty($templatenameforexport)) {
 		$templatenameforexport = 'website_' . $website->ref;
 	}
+	// Use the last export path entered by the user for this website, if any
+	$templatenameforexport = getDolUserString('WEBSITE_EXPORT_PATH_' . $website->id, $templatenameforexport);
 
 	$out = '';
-	$out .= '<input type="button" class="cursorpointer button bordertransp" id="open-dialog-' . $name . '"  value="' . dol_escape_htmltag($buttonstring) . '"/>';
+	$out .= '<button type="button" class="cursorpointer button bordertransp valignmiddle" id="open-dialog-' . $name . '" title="' . dol_escape_htmltag($buttonstring) . '">';
+	$out .= img_picto('', 'download');
+	$out .= '<span class="hideonsmartphone paddingleft">' . dol_escape_htmltag($buttonstring) . '</span>';
+	$out .= '</button>';
 
 	// for generate popup
 	$out .= '<script nonce="' . getNonce() . '" type="text/javascript">';
@@ -360,8 +385,8 @@ function dolButtonToOpenExportDialog($name, $label, $buttonstring, $exportSiteNa
 
 	$dialogcontent = '      <div id="custom-dialog-' . $name . '">';
 	$dialogcontent .= '        <div style="margin-top: 20px;">';
-	$dialogcontent .= '          <label for="export-site-' . $name . '"><strong>' . $langs->trans("ExportSiteLabel") . '...</label><br>';
-	$dialogcontent .= '          <button class="button smallpaddingimp" id="export-site-' . $name . '">' . dol_escape_htmltag($langs->trans("DownloadZip")) . '</button>';
+	$dialogcontent .= '          <label for="export-site-' . $name . '"><strong>' . $langs->trans("ExportSiteLabel") . '...</strong></label><br>';
+	$dialogcontent .= '          <button class="button smallpaddingimp nomarginleft margintoponly" id="export-site-' . $name . '">' . dol_escape_htmltag($langs->trans("DownloadZip")) . '</button>';
 	$dialogcontent .= '        </div>';
 	$dialogcontent .= '        <br>';
 	$dialogcontent .= '        <div style="margin-top: 20px;">';
@@ -369,8 +394,8 @@ function dolButtonToOpenExportDialog($name, $label, $buttonstring, $exportSiteNa
 	$dialogcontent .= '     		<form action="' . dol_escape_htmltag($overwriteGitUrl) . '" method="POST">';
 	$dialogcontent .= '        		<input type="hidden" name="action" value="overwritesite">';
 	$dialogcontent .= '        		<input type="hidden" name="token" value="' . newToken() . '">';
-	$dialogcontent .= '          		<input type="text" autofocus name="export_path" id="export-path-' . $name . '" placeholder="' . $langs->trans('ExportPath') . '" style="width:400px " value="' . dol_escape_htmltag($templatenameforexport) . '"/><br>';
-	$dialogcontent .= '          		<button type="submit" class="button smallpaddingimp" id="overwrite-git-' . $name . '">' . dol_escape_htmltag($langs->trans("ExportIntoGIT")) . '</button>';
+	$dialogcontent .= '          		<input type="text" autofocus class="margintoponly quatrevingtpercent" name="export_path" id="export-path-' . $name . '" placeholder="' . $langs->trans('ExportPath') . '" value="' . dol_escape_htmltag($templatenameforexport) . '"/><br>';
+	$dialogcontent .= '          		<button type="submit" class="button smallpaddingimp nomarginleft margintoponly" id="overwrite-git-' . $name . '">' . dol_escape_htmltag($langs->trans("ExportIntoThisDirectory")) . '</button>';
 	$dialogcontent .= '      		</form>';
 	$dialogcontent .= '        </div>';
 	$dialogcontent .= '      </div>';
@@ -391,7 +416,7 @@ function dolButtonToOpenExportDialog($name, $label, $buttonstring, $exportSiteNa
 	$out .= '    jQuery("#custom-dialog-' . $name . '").dialog({';
 	$out .= '      autoOpen: false,';
 	$out .= '      modal: true,';
-	$out .= '      height: 290,';
+	$out .= '      height: 330,';
 	$out .= '      width: "40%",';
 	$out .= '      title: \'' . dol_escape_js($label) . '\',';
 	$out .= '    });';
@@ -399,7 +424,7 @@ function dolButtonToOpenExportDialog($name, $label, $buttonstring, $exportSiteNa
 	// Simulate a click on the original "submit" input to export the site.
 	$out .= '    jQuery("#export-site-' . $name . '").click(function () {';
 	$out .= '      console.log("Click on exportsite.");';
-	$out .= '      var target = jQuery("input[name=\'' . dol_escape_js($exportSiteName) . '\']");';
+	$out .= '      var target = jQuery("[name=\'' . dol_escape_js($exportSiteName) . '\']");';
 	$out .= '      console.log("element founded:", target.length > 0);';
 	$out .= '      if (target.length > 0) { target.click(); }';
 	$out .= '      jQuery("#custom-dialog-' . $name . '").dialog("close");';
@@ -670,27 +695,66 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		if (empty($tabsname)) {
 			$tabsname = str_replace("@", "", $picto);
 		}
-		$out .= '<div id="moretabs' . $tabsname . '" class="inline-block tabsElem valignmiddle">';
-		if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2) {
-			$out .= '<div class="tab valignmiddle"><a href="#" class="tab moretab inline-block tabunactive valignmiddle"><span class="fa fa-angle-down"></span> <span class="opacitymedium">+' . $nbintab . '</span></a></div>'; // Do not use "reposition" class in the "More".
+		$withmorebutton = (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2);
+		$out .= '<div id="moretabs' . dol_escape_htmltag($tabsname) . '" class="inline-block tabsElem valignmiddle">';
+		if ($withmorebutton) {
+			$out .= '<div class="tab valignmiddle"><a href="#" class="tab moretab inline-block tabunactive valignmiddle" role="button" aria-haspopup="true" aria-expanded="false" aria-controls="moretabsList' . dol_escape_htmltag($tabsname) . '"><span class="fa fa-angle-down"></span> <span class="opacitymedium">+' . $nbintab . '</span></a></div>'; // Do not use "reposition" class in the "More".
 		}
-		$out .= '<div id="moretabsList' . $tabsname . '" style="width: ' . $widthofpopup . 'px; position: absolute; ' . $left . ': -999em; text-align: ' . $left . '; margin:0px; padding:2px; z-index:10;">';
+		// The list stays readable by screen readers when the button is not output (MAIN_OPTIMIZEFORTEXTBROWSER >= 2)
+		$out .= '<div id="moretabsList' . dol_escape_htmltag($tabsname) . '" style="width: ' . $widthofpopup . 'px; position: absolute; ' . $left . ': -999em; text-align: ' . $left . '; margin:0px; padding:2px; z-index:10;' . ($withmorebutton ? ' visibility: hidden;' : '') . '">';
 		$out .= $outmore;
 		$out .= '</div>';
 		$out .= '<div></div>';
 		$out .= "</div>\n";
 
 		$out .= '<script nonce="' . getNonce() . '">';
-		$out .= "$('#moretabs" . $tabsname . "').mouseenter( function() {
-			var x = this.offsetLeft, y = this.offsetTop;
-			console.log('mouseenter " . $left . " x='+x+' y='+y+' window.innerWidth='+window.innerWidth);
-			if ((window.innerWidth - x) < " . ($widthofpopup + 10) . ") {
-				$('#moretabsList" . $tabsname . "').css('" . $right . "','8px');
+		$out .= "(function() {
+			var moretabs = $('#moretabs" . dol_escape_js($tabsname) . "'), moretabsList = $('#moretabsList" . dol_escape_js($tabsname) . "'), morebutton = moretabs.find('a.moretab');
+			var hoveropen = false;
+			function showMoreTabs(show) {
+				if (show) {
+					var x = moretabs[0].offsetLeft;
+					if ((window.innerWidth - x) < " . ($widthofpopup + 10) . ") {
+						moretabsList.css('" . $right . "', '8px');
+					}
+					moretabsList.css('" . $left . "', 'auto');
+				} else {
+					moretabsList.css('" . $left . "', '-999em');
+				}
+				if (morebutton.length) {
+					moretabsList.css('visibility', show ? 'visible' : 'hidden');
+					morebutton.attr('aria-expanded', show ? 'true' : 'false');
+				}
 			}
-			$('#moretabsList" . $tabsname . "').css('" . $left . "','auto');
+			moretabs.on('pointerenter', function(e) {
+				if (e.originalEvent.pointerType == 'mouse') { hoveropen = true; showMoreTabs(true); }
 			});
+			moretabs.on('pointerleave', function(e) {
+				if (e.originalEvent.pointerType == 'mouse') { hoveropen = false; showMoreTabs(false); }
+			});
+			morebutton.on('click', function(e) {
+				e.preventDefault();
+				showMoreTabs(hoveropen || morebutton.attr('aria-expanded') != 'true');
+			});
+			morebutton.on('keydown', function(e) {
+				if (e.key == 'Enter' || e.key == ' ') {
+					e.preventDefault();
+					showMoreTabs(morebutton.attr('aria-expanded') != 'true');
+				}
+			});
+			moretabs.on('keydown', function(e) {
+				if (e.key == 'Escape' && morebutton.attr('aria-expanded') == 'true') {
+					showMoreTabs(false);
+					morebutton.trigger('focus');
+				}
+			});
+			moretabs.on('focusout', function(e) {
+				if (!hoveropen && !$.contains(moretabs[0], e.relatedTarget)) {
+					showMoreTabs(false);
+				}
+			});
+		})();
 		";
-		$out .= "$('#moretabs" . $tabsname . "').mouseleave( function() { console.log('mouseleave " . $left . "'); $('#moretabsList" . $tabsname . "').css('" . $left . "','-999em');});";
 		$out .= "</script>";
 	}
 
@@ -4465,11 +4529,13 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  * @param string    	$label      	Long label (or tooltip of button if param $text is provided). Also used as tooltip in title attribute. Can be escaped HTML content or full simple text. Used only if $url not defined.
  * @param string    	$text       	Optional : Short label on button. Can be escaped HTML content or full simple text.
  * @param string 		$actionType 	'default', 'edit', 'danger', 'email', 'clone', 'cancel', 'delete', ...
- * @param string|array<int,array{lang:string,enabled:bool,perm:bool|int,label:string,text?:string,url:string,urlroot?:string,isDropDown?:int<0,1>}> 	$url        	Url for link or array of subbutton description
+ * @param string|array<int,array{lang:string,enabled:bool,perm:bool|int,label:string,text?:string,url:string,urlroot?:string,isDropDown?:int<0,1>}> 	$url        	If string, complete relative Url for link,
+ * 																																										or if array, array of subbutton description with:
+ *                                                                                                                                                                      'url' for relative url from core module, 'urlroot' for external module relative url including DOL_URL_ROOT like when using dol_buildpath, 'urlraw' for final URL.
  *                                                                                                                                                                      Example when an array is used:
  *                                                                                                                                                                      $arrayforbutaction = array(
- *                                                                                                                                                                      10 => array('attr' => array('class'=>''), 'lang'=>'propal', 'enabled'=>isModEnabled("propal"), 'perm'=>$user->hasRight('propal', 'creer'), 'label' => 'AddProp', 'url'=>'/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
- *                                                                                                                                                                      20 => array('attr' => array('class'=>''), 'lang'=>'mymodule', 'enabled'=>isModEnabled("mymodule"), 'perm'=>$user->hasRight('mymodule', 'write'), 'label' => 'MyModuleAction', 'urlroot'=>dol_build_patch('/mymodule/mypage.php?action=create')),
+ *                                                                                                                                                                      10 => array('attr' => array('class'=>''), 'lang'=>'propal',   'enabled'=>isModEnabled("propal"),   'perm'=>$user->hasRight('propal', 'creer'),   'label' => 'AddProp',             'url'=>'/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+ *                                                                                                                                                                      20 => array('attr' => array('class'=>''), 'lang'=>'mymodule', 'enabled'=>isModEnabled("mymodule"), 'perm'=>$user->hasRight('mymodule', 'write'), 'label' => 'MyModuleAction',      'urlroot'=>dol_buildpath('/mymodule/mypage.php?action=create')),
  *                                                                                                                                                                      30 => array('attr' => array('class'=>''), 'lang'=>'mymodule', 'enabled'=>isModEnabled("mymodule"), 'perm'=>$user->hasRight('mymodule', 'write'), 'label' => 'MyModuleOtherAction', 'urlraw' => '# || external Url || javascript: || tel: || mailto:' ),
  *                                                                                                                                                                      );                                                                                                               );
  * @param string    	$id         	Attribute id of action button. Example 'action-delete'. This can be used for full ajax confirm if this code is reused into the ->formconfirm() method.
@@ -4518,7 +4584,15 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 				$label = $langs->trans($button['label']);
 				$text = $button['text'] ?? '';
 				$actionType = $button['actionType'] ?? '';
-				$tmpUrl = DOL_URL_ROOT . $button['url'] . (empty($params['backtopage']) ? '' : '&amp;backtopage=' . urlencode($params['backtopage']));
+				$tmpUrl = '';
+				if (isset($button['urlraw']) && !empty($button['urlraw'])) {
+					$tmpUrl = $button['urlraw']; // Use raw url, no url completion, use only what developer send
+				} elseif (!empty($button['urlroot'])) {
+					$tmpUrl = $button['urlroot'] . (empty($params['backtopage']) ? '' : '&amp;backtopage=' . urlencode($params['backtopage']));
+				} elseif (!empty($button['url'])) {
+					$tmpUrl = DOL_URL_ROOT . $button['url'] . (empty($params['backtopage']) ? '' : '&amp;backtopage=' . urlencode($params['backtopage']));
+				}
+
 				$id = $button['id'] ?? '';
 				$userRight = $button['perm'] ?? 1;
 				$button['params'] = $button['params'] ?? [];  // @phan-suppress-current-line PhanPluginDuplicateExpressionAssignmentOperation
@@ -4541,7 +4615,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 					$tmpurl = $subbutton['urlraw']; // Use raw url, no url completion, use only what developer send
 				} else {
 					$tmpurl = !empty($subbutton['urlroot']) ? $subbutton['urlroot'] : $subbutton['url'];
-					$tmpurl = dolCompletUrlForDropdownButton($tmpurl, $params, empty($subbutton['urlroot']));
+					$tmpurl = dolCompletUrlForDropdownButton($tmpurl, $params, empty($subbutton['urlroot']));	// For 'urlroot', no need to complete with DOL_URL_ROOT.
 				}
 
 				$subbuttonparam = array();
@@ -4600,6 +4674,9 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 				$url .= '&token=' . newToken();
 			}
 		}
+	}
+	if (empty($label) && !empty($userRight) && $userRight > 0 && in_array($actionType, array('email', 'clone', 'delete', 'danger', 'cancel'))) {
+		$label = $text;	// These buttons are shown as a picto only, so we need the text as tooltip
 	}
 	$attr = array(
 		'class' => $class,
@@ -5568,7 +5645,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 		$contactGetNomUrlCache = array();
 
 		$out .= '<div class="filters-container" >';
-		$out .= '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
+		$out .= '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST" spellcheck="false">';
 		$out .= '<input type="hidden" name="token" value="' . newToken() . '">';
 
 		if (

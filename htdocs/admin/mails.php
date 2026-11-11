@@ -1036,7 +1036,10 @@ if ($action == 'edit') {
 	if (!getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
 		if (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') != 'mail' || !$linuxlike) {
 			if (function_exists('fsockopen') /* && $port && $server */) { // $port and $server can't be empty
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testconnect&token='.newToken().'&date='.dol_now().'#formmailaftertstconnect">'.$langs->trans("DoTestServerAvailability").'</a>';
+				include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+				$mailtest = new CMailFile('test', '', '', '', array(), array(), array(), '', '', 0, 0, '', '', '', $trackid, $sendcontext);
+				$testconnectrefusal = $mailtest->checkSmtpTargetAllowed((string) $server, (int) $port);
+				print dolGetButtonAction($testconnectrefusal, $langs->trans("DoTestServerAvailability"), 'default', $_SERVER["PHP_SELF"].'?action=testconnect&token='.newToken().'&date='.dol_now().'#formmailaftertstconnect', '', $testconnectrefusal ? -1 : 1);
 			}
 		} else {
 			//print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("FeatureNotAvailableOnLinux").'">'.$langs->trans("DoTestServerAvailability").'</a>';
@@ -1189,12 +1192,7 @@ if ($action == 'edit') {
 
 		$mail = new CMailFile('test', '', '', '', array(), array(), array(), '', '', 0, 0, '', '', '', $trackid, $sendcontext);
 
-		$errormsg = '';
-
-		$listOfAllowedPorts = array('25', '465', '587', '2525');
-		if (!in_array((string) $port, $listOfAllowedPorts)) {
-			$errormsg = $langs->trans("Testing the SMTP port on different ports than ".implode(', ', $listOfAllowedPorts)." is not allowed.");
-		}
+		$errormsg = $mail->checkSmtpTargetAllowed((string) $server, (int) $port);
 
 		if (empty($errormsg)) {
 			$result = $mail->check_server_port((string) $server, (int) $port);

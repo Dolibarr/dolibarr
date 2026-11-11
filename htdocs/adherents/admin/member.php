@@ -102,12 +102,13 @@ if ($action == 'updateMask') {
 	$adherentspecimen->initAsSpecimen();
 	$adherentspecimen->status = 0; // Force statut draft to show watermark
 
-	// Search template files
+	// Search template files. The pdf models of the members are named pdf_xxx.class.php, as the loop of
+	// members_card_pdf_create() in core/modules/member/modules_cards.php looks for them.
 	$file = '';
 	$classname = '';
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
-		$file = dol_buildpath($reldir."core/modules/member/doc/pdf_".$modele.".modules.php", 0);
+		$file = dol_buildpath($reldir."core/modules/member/doc/pdf_".$modele.".class.php", 0);
 		if (file_exists($file)) {
 			$classname = "pdf_".$modele;
 			break;
@@ -121,8 +122,12 @@ if ($action == 'updateMask') {
 		'@phan-var-force ModelePDFMember $module';
 		/** @var ModelePDFMember $module */
 
-		if ($module->write_file($adherentspecimen, $langs) > 0) {
-			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=member&file=SPECIMEN.pdf");
+		// The format of the card is the third parameter of write_file() for this model ($this->code) and the
+		// name of the file, without its extension, is the sixth. write_file() itself puts the file in the
+		// directory of the member given by get_exdir(), so only the name is passed here.
+		if ($module->write_file($adherentspecimen, $langs, getDolGlobalString('ADHERENT_CARD_TYPE', 'CARD'), 'member', 0, 'SPECIMEN') > 0) {
+			$specimenfile = get_exdir(0, 0, 0, 0, $adherentspecimen, 'member').'SPECIMEN.'.$module->type;
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=member&file=".urlencode($specimenfile));
 			return;
 		} else {
 			setEventMessages($module->error, $module->errors, 'errors');
@@ -646,6 +651,7 @@ if (isModEnabled('invoice')) {
 	print '<tr class="oddeven"><td>'.$langs->trans("VATToUseForSubscriptions").'</td>';
 	if (isModEnabled("bank")) {
 		print '<td>';
+		// TODO Use the vat selector
 		print $form->selectarray('ADHERENT_VAT_FOR_SUBSCRIPTIONS', array('0' => $langs->trans("NoVatOnSubscription"), 'defaultforfoundationcountry' => $langs->trans("Default")), getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS', '0'), 0);
 		print '</td>';
 	} else {

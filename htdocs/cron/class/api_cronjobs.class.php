@@ -264,7 +264,7 @@ class Cronjobs extends DolibarrApi
 			throw new RestException(403, "Insufficient rights - running a cron job requires an admin user");
 		}
 
-		if (getDolGlobalString('CRON_KEY') && getDolGlobalString('CRON_KEY') != $securitykey) {
+		if (getDolGlobalString('CRON_KEY') && !hash_equals(getDolGlobalString('CRON_KEY'), (string) $securitykey)) {
 			throw new RestException(403, 'Security key is wrong');
 		}
 

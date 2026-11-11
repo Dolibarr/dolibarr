@@ -28,9 +28,8 @@
 global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/functions2.lib.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/functions2.lib.php';
 
 if (! defined('NOREQUIREUSER')) {
 	define('NOREQUIREUSER', '1');
@@ -349,5 +348,49 @@ class Functions2LibTest extends CommonClassTest
 		$text = 'abc ✅ def';
 		$result = removeEmoji($text, 2);
 		$this->assertEquals($text, $result, 'testRemoveEmoji 2');
+	}
+
+	/**
+	 * Test colorGetContrastRatio()
+	 *
+	 * @return void
+	 */
+	public function testColorGetContrastRatio()
+	{
+		print __METHOD__."\n";
+
+		$this->assertEqualsWithDelta(21.0, colorGetContrastRatio('#000000', '#ffffff'), 0.001, 'black on white');
+		$this->assertEqualsWithDelta(21.0, colorGetContrastRatio('fff', '000'), 0.001, 'short hex, any order');
+		$this->assertEqualsWithDelta(1.0, colorGetContrastRatio('#263c5c', '38,60,92'), 0.001, 'hex and comma RGB');
+		$this->assertEqualsWithDelta(1.79, colorGetContrastRatio('#e6be00', 'FFFFFF'), 0.01, 'white on yellow');
+		$this->assertEqualsWithDelta(11.73, colorGetContrastRatio('#e6be00', '000000'), 0.01, 'black on yellow');
+		$this->assertEqualsWithDelta(2.33, colorGetContrastRatio('#ff8c00', 'FFFFFF'), 0.01, 'white on orange');
+		$this->assertEqualsWithDelta(11.15, colorGetContrastRatio('#263c5c', 'FFFFFF'), 0.01, 'white on default eldy top menu');
+		$this->assertEqualsWithDelta(4.84, colorGetContrastRatio('#007f7f', 'FFFFFF'), 0.01, 'white on teal');
+		$this->assertEqualsWithDelta(4.34, colorGetContrastRatio('#007f7f', '000000'), 0.01, 'black on teal');
+
+		$this->assertSame(0.0, colorGetContrastRatio('notacolor', '#ffffff'), 'invalid first color');
+		$this->assertSame(0.0, colorGetContrastRatio('#ffffff', '#12345'), 'invalid second color');
+		$this->assertSame(0.0, colorGetContrastRatio('', '#ffffff'), 'empty color');
+	}
+
+	/**
+	 * Test colorGetReadableTextColor()
+	 *
+	 * @return void
+	 */
+	public function testColorGetReadableTextColor()
+	{
+		print __METHOD__."\n";
+
+		$this->assertSame('000000', colorGetReadableTextColor('#e6be00', 'FFFFFF', '000000'), 'white on yellow is below 3:1');
+		$this->assertSame('000000', colorGetReadableTextColor('255,140,0', 'FFFFFF', '000000'), 'white on orange is below 3:1');
+		$this->assertSame('FFFFFF', colorGetReadableTextColor('#4a90e2', 'FFFFFF', '000000'), 'white on mid blue is kept although black contrasts more');
+		$this->assertSame('FFFFFF', colorGetReadableTextColor('38,60,92', 'FFFFFF', '000000'), 'default eldy top menu');
+		$this->assertSame('222222', colorGetReadableTextColor('248,248,248', '222222', 'FFFFFF'), 'dark on light is kept');
+		$this->assertSame('FFFFFF', colorGetReadableTextColor('#1e1e1e', '222222', 'FFFFFF'), 'dark on dark switches to light');
+		$this->assertSame('777777', colorGetReadableTextColor('#808080', '777777', '888888'), 'other color is not better');
+		$this->assertSame('FFFFFF', colorGetReadableTextColor('notacolor', 'FFFFFF', '000000'), 'invalid background keeps the text color');
+		$this->assertSame('FFFFFF', colorGetReadableTextColor('#e6be00', 'FFFFFF', '000000', 1.5), 'white on yellow is kept with a 1.5 minimum');
 	}
 }

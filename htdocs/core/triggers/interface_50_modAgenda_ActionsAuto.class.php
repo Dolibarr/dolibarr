@@ -1054,7 +1054,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			$object->sendtoid = array();
-		} elseif ($action == 'BILL_SUPPLIER_CANCELED' && $object instanceof FactureFournisseur) {
+		} elseif ($action == 'BILL_SUPPLIER_CANCEL' && $object instanceof FactureFournisseur) {
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "bills"));
 

@@ -12,7 +12,7 @@
  * Copyright (C) 2018-2024	Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2022-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Nick Fragoulis
+ * Copyright (C) 2024-2026  Nick Fragoulis
  * Copyright (C) 2024       Franck Moreau
  *
  * This program is free software; you can redistribute it and/or modify
@@ -487,7 +487,8 @@ class pdf_sponge extends ModelePDFFactures
 					if ($object->fk_account > 0 || $object->fk_bank > 0 || getDolGlobalInt('FACTURE_RIB_NUMBER')) {
 						$qrcodestring = $object->buildSwitzerlandQRString();
 					}
-				} elseif (getDolGlobalString('INVOICE_ADD_EPC_QR_CODE') == '1' && (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR')) {
+				} elseif (getDolGlobalString('INVOICE_ADD_EPC_QR_CODE') == '1' && (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR') && $object->getRemainToPay() > 0) {
+					// No EPC QR code once the invoice is fully paid: the amount to pay would be 0 (same rule as for INVOICE_ADD_EPC_QR_CODE == 'bottom')
 					if ($object->fk_account > 0 || $object->fk_bank > 0 || getDolGlobalInt('FACTURE_RIB_NUMBER')) {
 						$qrcodestring = $object->buildEPCQrCodeString();
 					}
@@ -515,6 +516,33 @@ class pdf_sponge extends ModelePDFFactures
 					}
 
 					$extra_under_address_shift += 25;
+				}
+
+				// Finnish domestic payment barcode. Same data as the QR code but in the
+				// format finnish banks scan from a credit transfer form.
+				if (getDolGlobalString('INVOICE_ADD_FI_BARCODE') && $mysoc->country_code == 'FI') {
+					include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_fi.lib.php';
+					$fibarcodedata = dolFIGetInvoiceBarcodeData($object);
+					if ($fibarcodedata != '') {
+						$styleBc = array(
+							'position' => '',
+							'align' => 'L',
+							'stretch' => false,
+							'fitwidth' => true,
+							'cellfitalign' => '',
+							'border' => false,
+							'hpadding' => 'auto',
+							'vpadding' => 0,
+							'fgcolor' => array(0, 0, 0),
+							'bgcolor' => false,
+							'text' => false
+						);
+						$pdf->write1DBarcode($fibarcodedata, 'C128C', $this->marge_gauche, $this->tab_top + $extra_under_address_shift, 90, 13, 0.35, $styleBc, 'N');
+						$pdf->SetXY($this->marge_gauche, $pdf->GetY());
+						$pdf->SetFont('', '', $default_font_size - 4);
+						$pdf->MultiCell(90, 3, $outputlangs->transnoentitiesnoconv("FIVirtualBarcode").': '.dolFIFormatVirtualBarcode($fibarcodedata), 0, 'L', false);
+						$extra_under_address_shift += 22;
+					}
 				}
 
 				// Call hook printUnderHeaderPDFline
@@ -720,6 +748,7 @@ class pdf_sponge extends ModelePDFFactures
 				$pdf_sub_options = array();
 				$pdf_sub_options['titleshowuponpdf'] = 1;
 				$pdf_sub_options['titleshowtotalexludingvatonpdf'] = 1;
+				$pdf_sub_options_before_title = array();	// Options in use before each title line, by level
 
 				$hidenextline = 0;
 
@@ -731,6 +760,10 @@ class pdf_sponge extends ModelePDFFactures
 
 					if ($object->lines[$i]->special_code == SUBTOTALS_SPECIAL_CODE) {
 						$level = $object->lines[$i]->qty;
+						// Keep the options in use before a title line, to restore them after the subtotal line that closes its block
+						if ($level > 0 && !isset($pdf_sub_options_before_title[(int) $level])) {
+							$pdf_sub_options_before_title[(int) $level] = $pdf_sub_options;
+						}
 						if ($sub_options) {
 							$hidenextline = 0;
 							if (isset($sub_options['titleshowuponpdf'])) {
@@ -749,6 +782,15 @@ class pdf_sponge extends ModelePDFFactures
 							}
 							if (isset($pdf_sub_options['titleshowtotalexludingvatonpdf']) && abs($level) <= $pdf_sub_options['titleshowtotalexludingvatonpdf']) {
 								unset($pdf_sub_options['titleshowtotalexludingvatonpdf']);
+							}
+						}
+						// A subtotal line closes the block of the title line of same level: the next lines get back the options in use before this title line
+						if ($level < 0 && isset($pdf_sub_options_before_title[(int) abs($level)])) {
+							$pdf_sub_options = $pdf_sub_options_before_title[(int) abs($level)];
+							foreach (array_keys($pdf_sub_options_before_title) as $tmplevel) {
+								if ($tmplevel >= abs($level)) {
+									unset($pdf_sub_options_before_title[$tmplevel]);
+								}
 							}
 						}
 					}
@@ -946,76 +988,85 @@ class pdf_sponge extends ModelePDFFactures
 					}
 
 					// Collect total by value of vat rate into $this->tva_array
-					// Lines are already stored as delta (not cumulative) once INVOICE_USE_SITUATION=2, so no ratio must be reapplied here (same guard as CommonObject::update_price())
-					$prev_progress = getDolGlobalInt('INVOICE_USE_SITUATION') == 2 ? 0 : $object->lines[$i]->get_prev_progress($object->id);
+					// Lines are already stored as delta (not cumulative) once INVOICE_USE_SITUATION != 1, so no ratio must be reapplied here (same guard as CommonObject::update_price())
+					if ($object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE && $object->lines[$i]->product_type != 9) {
+						$prev_progress = (!$object->isSituationInvoice() || getDolGlobalInt('INVOICE_USE_SITUATION') != 1) ? 0 : $object->lines[$i]->get_prev_progress($object->id);
 
-					if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation
-						if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
-							$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
+						if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation
+							if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
+								$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
+							} else {
+								$tvaligne = $sign * $object->lines[$i]->total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
+							}
 						} else {
-							$tvaligne = $sign * $object->lines[$i]->total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
+							if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
+								$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva;
+							} else {
+								$tvaligne = $sign * $object->lines[$i]->total_tva;
+							}
 						}
-					} else {
-						if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
-							$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva;
+
+						$localtax1ligne = $object->lines[$i]->total_localtax1;
+						$localtax2ligne = $object->lines[$i]->total_localtax2;
+						$localtax1_rate = $object->lines[$i]->localtax1_tx;
+						$localtax2_rate = $object->lines[$i]->localtax2_tx;
+						$localtax1_type = $object->lines[$i]->localtax1_type;
+						$localtax2_type = $object->lines[$i]->localtax2_type;
+
+						$vatrate = (string) $object->lines[$i]->tva_tx;
+
+						// Retrieve type from database for backward compatibility with old records
+						if ((!isset($localtax1_type) || $localtax1_type == '' || !isset($localtax2_type) || $localtax2_type == '') // if tax type not defined
+							&& (!empty($localtax1_rate) || !empty($localtax2_rate))) { // and there is local tax
+							$localtaxtmp_array = getLocalTaxesFromRate($vatrate, 0, $object->thirdparty, $mysoc);
+							$localtax1_type = isset($localtaxtmp_array[0]) ? $localtaxtmp_array[0] : '';
+							$localtax2_type = isset($localtaxtmp_array[2]) ? $localtaxtmp_array[2] : '';
+						}
+
+						// retrieve global local tax
+						if ($localtax1_type && $localtax1ligne != 0) {
+							if (empty($this->localtax1[$localtax1_type][$localtax1_rate])) {
+								$this->localtax1[$localtax1_type][$localtax1_rate] = $localtax1ligne;
+							} else {
+								$this->localtax1[$localtax1_type][$localtax1_rate] += $localtax1ligne;
+							}
+						}
+						if ($localtax2_type && $localtax2ligne != 0) {
+							if (empty($this->localtax2[$localtax2_type][$localtax2_rate])) {
+								$this->localtax2[$localtax2_type][$localtax2_rate] = $localtax2ligne;
+							} else {
+								$this->localtax2[$localtax2_type][$localtax2_rate] += $localtax2ligne;
+							}
+						}
+
+						if (($object->lines[$i]->info_bits & 0x01) == 0x01) {
+							$vatrate .= '*';
+						}
+
+						// Fill $this->tva and $this->tva_array
+						if (!isset($this->tva[$vatrate])) {
+							$this->tva[$vatrate] = 0;
+						}
+						$this->tva[$vatrate] += $tvaligne;    // ->tva is abandoned, we use now ->tva_array that is more complete
+						$vatcode = $object->lines[$i]->vat_src_code;
+						if (empty($this->tva_array[$vatrate . ($vatcode ? ' (' . $vatcode . ')' : '')]['amount'])) {
+							$this->tva_array[$vatrate . ($vatcode ? ' (' . $vatcode . ')' : '')]['amount'] = 0;
+						}
+						$vatkey = $vatrate . ($vatcode ? ' (' . $vatcode . ')' : '');
+						$previouslocaltax1 = empty($this->tva_array[$vatkey]['localtax1']) ? 0 : $this->tva_array[$vatkey]['localtax1'];
+						$previouslocaltax2 = empty($this->tva_array[$vatkey]['localtax2']) ? 0 : $this->tva_array[$vatkey]['localtax2'];
+						if (getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {
+							if (empty($this->tva_array[$vatrate . ($vatcode ? ' (' . $vatcode . ')' : '')]['tot_ht'])) {
+								$this->tva_array[$vatrate . ($vatcode ? ' (' . $vatcode . ')' : '')]['tot_ht'] = 0;
+							}
+							$this->tva_array[$vatrate . ($vatcode ? ' (' . $vatcode . ')' : '')] = array('vatrate' => $vatrate, 'vatcode' => $vatcode, 'amount' => $this->tva_array[$vatrate . ($vatcode ? ' (' . $vatcode . ')' : '')]['amount'] + $tvaligne, 'tot_ht' => $this->tva_array[$vatrate . ($vatcode ? ' (' . $vatcode . ')' : '')]['tot_ht'] + $object->lines[$i]->total_ht);
 						} else {
-							$tvaligne = $sign * $object->lines[$i]->total_tva;
+							$this->tva_array[$vatrate . ($vatcode ? ' (' . $vatcode . ')' : '')] = array('vatrate' => $vatrate, 'vatcode' => $vatcode, 'amount' => $this->tva_array[$vatrate . ($vatcode ? ' (' . $vatcode . ')' : '')]['amount'] + $tvaligne);
 						}
-					}
-
-					$localtax1ligne = $object->lines[$i]->total_localtax1;
-					$localtax2ligne = $object->lines[$i]->total_localtax2;
-					$localtax1_rate = $object->lines[$i]->localtax1_tx;
-					$localtax2_rate = $object->lines[$i]->localtax2_tx;
-					$localtax1_type = $object->lines[$i]->localtax1_type;
-					$localtax2_type = $object->lines[$i]->localtax2_type;
-
-					$vatrate = (string) $object->lines[$i]->tva_tx;
-
-					// Retrieve type from database for backward compatibility with old records
-					if ((!isset($localtax1_type) || $localtax1_type == '' || !isset($localtax2_type) || $localtax2_type == '') // if tax type not defined
-						&& (!empty($localtax1_rate) || !empty($localtax2_rate))) { // and there is local tax
-						$localtaxtmp_array = getLocalTaxesFromRate($vatrate, 0, $object->thirdparty, $mysoc);
-						$localtax1_type = isset($localtaxtmp_array[0]) ? $localtaxtmp_array[0] : '';
-						$localtax2_type = isset($localtaxtmp_array[2]) ? $localtaxtmp_array[2] : '';
-					}
-
-					// retrieve global local tax
-					if ($localtax1_type && $localtax1ligne != 0) {
-						if (empty($this->localtax1[$localtax1_type][$localtax1_rate])) {
-							$this->localtax1[$localtax1_type][$localtax1_rate] = $localtax1ligne;
-						} else {
-							$this->localtax1[$localtax1_type][$localtax1_rate] += $localtax1ligne;
+						if (getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {
+							$this->tva_array[$vatkey]['localtax1'] = $previouslocaltax1 + $localtax1ligne;
+							$this->tva_array[$vatkey]['localtax2'] = $previouslocaltax2 + $localtax2ligne;
 						}
-					}
-					if ($localtax2_type && $localtax2ligne != 0) {
-						if (empty($this->localtax2[$localtax2_type][$localtax2_rate])) {
-							$this->localtax2[$localtax2_type][$localtax2_rate] = $localtax2ligne;
-						} else {
-							$this->localtax2[$localtax2_type][$localtax2_rate] += $localtax2ligne;
-						}
-					}
-
-					if (($object->lines[$i]->info_bits & 0x01) == 0x01) {
-						$vatrate .= '*';
-					}
-
-					// Fill $this->tva and $this->tva_array
-					if (!isset($this->tva[$vatrate])) {
-						$this->tva[$vatrate] = 0;
-					}
-					$this->tva[$vatrate] += $tvaligne;    // ->tva is abandoned, we use now ->tva_array that is more complete
-					$vatcode = $object->lines[$i]->vat_src_code;
-					if (empty($this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'])) {
-						$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] = 0;
-					}
-					if (getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {
-						if (empty($this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['tot_ht'])) {
-							$this->tva_array[$vatrate . ($vatcode ? ' (' . $vatcode . ')' : '')]['tot_ht'] = 0;
-						}
-						$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate' => $vatrate, 'vatcode' => $vatcode, 'amount' => $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] + $tvaligne, 'tot_ht' => $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['tot_ht'] + $object->lines[$i]->total_ht);
-					} else {
-						$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate' => $vatrate, 'vatcode' => $vatcode, 'amount' => $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] + $tvaligne);
 					}
 
 					if (!$hidenextline) {
@@ -1129,7 +1180,7 @@ class pdf_sponge extends ModelePDFFactures
 
 				// Add terms to sale
 				$termsofsalefilename = getDolGlobalString('MAIN_INFO_INVOICE_TERMSOFSALE');
-				if (getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE') && $termsofsalefilename) {
+				if ($this->mustAddTermsOfSale($object, 'INVOICE') && $termsofsalefilename) {
 					$termsofsale = $conf->invoice->dir_output.'/'.$termsofsalefilename;
 					if (!empty($conf->invoice->multidir_output[$object->entity ?? $conf->entity])) {
 						$termsofsale = $conf->invoice->multidir_output[$object->entity ?? $conf->entity].'/'.$termsofsalefilename;
@@ -1353,59 +1404,62 @@ class pdf_sponge extends ModelePDFFactures
 		$object->total_tva = (float) $object->total_tva;
 
 		// Show VAT details
-		if ($object->total_tva != 0 && getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {
+		$showlocaltax1 = ((float) $object->total_localtax1 != 0);
+		$showlocaltax2 = ((float) $object->total_localtax2 != 0);
+		if (($object->total_tva != 0 || $showlocaltax1 || $showlocaltax2) && getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {
+			// Columns: rate, net total, VAT amount, [tax 2], [tax 3], total. Same overall width (100) as before.
+			$columns = array(array('VAT', 'rate'), array('NetTotal', 'tot_ht'), array('VATAmount', 'amount'));
+			if ($showlocaltax1) {
+				$columns[] = array($outputlangs->transcountrynoentities('LT1', $mysoc->country_code), 'localtax1');
+			}
+			if ($showlocaltax2) {
+				$columns[] = array($outputlangs->transcountrynoentities('LT2', $mysoc->country_code), 'localtax2');
+			}
+			$columns[] = array('AmountTotal', 'total');
+			$colwidth = 100 / count($columns);
+
 			$pdf->SetFillColor(224, 224, 224);
-
 			$pdf->SetFont('', '', $default_font_size - 2);
-			$pdf->SetXY($this->marge_gauche, $posy);
-			$titre = $outputlangs->transnoentities("VAT");
-			$pdf->MultiCell(25, 4, $titre, 0, 'L', true);
+			$headerlines = 1;
+			foreach ($columns as $colnum => $column) {
+				$columns[$colnum][0] = in_array($column[1], array('localtax1', 'localtax2')) ? $column[0] : $outputlangs->transnoentities($column[0]);
+				$headerlines = max($headerlines, $pdf->getNumLines($columns[$colnum][0], $colwidth));
+			}
+			$nexty = $posy;
+			foreach ($columns as $colnum => $column) {
+				$pdf->SetXY($this->marge_gauche + $colnum * $colwidth, $posy);
+				$pdf->MultiCell($colwidth, 4 * $headerlines, $column[0], 0, 'L', true);
+				$nexty = max($nexty, $pdf->GetY());
+			}
 
-			$pdf->SetFont('', '', $default_font_size - 2);
-			$pdf->SetXY($this->marge_gauche + 25, $posy);
-			$titre = $outputlangs->transnoentities("NetTotal");
-			$pdf->MultiCell(25, 4, $titre, 0, 'L', true);
-
-			$pdf->SetFont('', '', $default_font_size - 2);
-			$pdf->SetXY($this->marge_gauche + 50, $posy);
-			$titre = $outputlangs->transnoentities("VATAmount");
-			$pdf->MultiCell(25, 4, $titre, 0, 'L', true);
-
-			$pdf->SetFont('', '', $default_font_size - 2);
-			$pdf->SetXY($this->marge_gauche + 75, $posy);
-			$titre = $outputlangs->transnoentities("AmountTotal");
-			$pdf->MultiCell(25, 4, $titre, 0, 'L', true);
-
-			$posy = $pdf->GetY();
-			$tot_ht = 0;
-			$tot_tva = 0;
-			$tot_ttc = 0;
+			$posy = $nexty;
 
 			foreach ($this->tva_array as $tvakey => $tvaval) {
-				$pdf->SetFont('', '', $default_font_size - 2);
-				$pdf->SetXY($this->marge_gauche, $posy);
-				$titre = round((float) $tvakey, 2) . "%";
-				$pdf->MultiCell(25, 4, $titre, 0, 'L');
+				$localtax1 = (($showlocaltax1 && !empty($tvaval['localtax1'])) ? $tvaval['localtax1'] : 0);
+				$localtax2 = (($showlocaltax2 && !empty($tvaval['localtax2'])) ? $tvaval['localtax2'] : 0);
+				$nexty = $posy;
+				foreach ($columns as $colnum => $column) {
+					if ($column[1] == 'rate') {
+						$titre = round((float) $tvakey, 2) . "%";
+						if (($showlocaltax1 || $showlocaltax2) && !empty($tvaval['vatcode'])) {
+							$titre .= ' (' . $tvaval['vatcode'] . ')';
+						}
+					} elseif ($column[1] == 'total') {
+						$titre = price($tvaval['tot_ht'] + $tvaval['amount'] + $localtax1 + $localtax2);
+					} elseif ($column[1] == 'localtax1') {
+						$titre = price($localtax1);
+					} elseif ($column[1] == 'localtax2') {
+						$titre = price($localtax2);
+					} else {
+						$titre = price($tvaval[$column[1]]);
+					}
+					$pdf->SetFont('', '', $default_font_size - 2);
+					$pdf->SetXY($this->marge_gauche + $colnum * $colwidth, $posy);
+					$pdf->MultiCell($colwidth, 4, $titre, 0, 'L');
+					$nexty = max($nexty, $pdf->GetY());
+				}
 
-				$pdf->SetFont('', '', $default_font_size - 2);
-				$pdf->SetXY($this->marge_gauche + 25, $posy);
-				$titre = price($tvaval['tot_ht']);
-				$pdf->MultiCell(25, 4, $titre, 0, 'L');
-				$tot_ht += $tvaval['tot_ht'];
-
-				$pdf->SetFont('', '', $default_font_size - 2);
-				$pdf->SetXY($this->marge_gauche + 50, $posy);
-				$titre = price($tvaval['amount']);
-				$pdf->MultiCell(25, 4, $titre, 0, 'L');
-				$tot_tva += $tvaval['amount'];
-
-				$pdf->SetFont('', '', $default_font_size - 2);
-				$pdf->SetXY($this->marge_gauche + 75, $posy);
-				$titre = price($tvaval['tot_ht'] + $tvaval['amount']);
-				$pdf->MultiCell(25, 4, $titre, 0, 'L');
-				$tot_ttc += ($tvaval['tot_ht'] + $tvaval['amount']);
-
-				$posy = $pdf->GetY();
+				$posy = $nexty;
 			}
 		}
 
@@ -1676,6 +1730,19 @@ class pdf_sponge extends ModelePDFFactures
 				}
 			}
 
+			// A structured payment reference can be paid with on its own, so when no
+			// bank account is shown on the invoice it is printed by itself.
+			$showbankblock = ((empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR')
+				&& ($object->fk_account > 0 || $object->fk_bank > 0 || getDolGlobalInt('FACTURE_RIB_NUMBER')));
+			if (!empty($object->payment_reference) && !$showbankblock) {
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/paymentref.lib.php';
+				$pdf->SetXY($this->marge_gauche, $posy);
+				// Same weight and size as the IBAN and BIC lines drawn by pdf_bank()
+				$pdf->SetFont('', 'B', $default_font_size - 3);
+				$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentReference').": " . $outputlangs->convToOutputCharset(dolPayRefFormatForDisplay($object->payment_reference, $mysoc->country_code)), 0, 'L', false);
+				$posy = $pdf->GetY() + 1;
+			}
+
 			// If payment mode not forced or forced to VIR, show payment with BAN
 			if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR') {
 				if ($object->fk_account > 0 || $object->fk_bank > 0 || getDolGlobalInt('FACTURE_RIB_NUMBER')) {
@@ -1690,6 +1757,18 @@ class pdf_sponge extends ModelePDFFactures
 					$cury = $posy;
 
 					$posy = pdf_bank($pdf, $outputlangs, $curx, $cury, $account, 0, $default_font_size);
+
+					// The payment reference belongs with the account it is paid to, so it
+					// is shown right after the IBAN and the BIC. Grouped for reading, the
+					// stored value stays compact for the QR code and the SEPA file.
+					if (!empty($object->payment_reference)) {
+						include_once DOL_DOCUMENT_ROOT.'/core/lib/paymentref.lib.php';
+						// Same weight and size as the IBAN and BIC lines above
+						$pdf->SetXY($this->marge_gauche, $posy);
+						$pdf->SetFont('', 'B', $default_font_size - 3);
+						$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentReference').": " . $outputlangs->convToOutputCharset(dolPayRefFormatForDisplay($object->payment_reference, $mysoc->country_code)), 0, 'L', false);
+						$posy = $pdf->GetY();
+					}
 
 					$posy += 2;
 
@@ -1713,11 +1792,14 @@ class pdf_sponge extends ModelePDFFactures
 						$pdf->SetXY($qrPosX + 25, $qrPosY + 5);
 						$pdf->SetFont('', '', $default_font_size - 5);
 						$pdf->MultiCell(30, 3, $outputlangs->transnoentitiesnoconv("INVOICE_ADD_EPC_QR_CODEPay"), 0, 'L', false);
-						$posy = $pdf->GetY() + 2;
+						// Continue below the QR code, which is taller than the text beside it
+						$posy = max($pdf->GetY(), $qrPosY + 20) + 2;
+						$pdf->SetXY($this->marge_gauche, $posy);
 					}
 
-					// Show structured communication
-					if (getDolGlobalString('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION')) {
+					// Show structured communication of invoices validated before the
+					// payment reference was stored on them
+					if (empty($object->payment_reference) && getDolGlobalString('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION')) {
 						include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_be.lib.php';
 						$invoicePaymentKey = dolBECalculateStructuredCommunication($object->ref, $object->type);
 
@@ -2328,6 +2410,7 @@ class pdf_sponge extends ModelePDFFactures
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
 				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".pdf_truncate_text($pdf, $object->project->title, 50), '', 'R');
+				$posy = $pdf->getY();
 			}
 		}
 
@@ -2508,7 +2591,7 @@ class pdf_sponge extends ModelePDFFactures
 			$carac_client_name = is_object($thirdparty) ? pdfBuildThirdpartyName($thirdparty, $outputlangs) : '';
 
 			$mode = 'target';
-			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), ($usecontact ? 1 : 0), $mode, $object);
+			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), ($usecontact ? 1 : 0), $mode, $object, 'SHIPPING');
 
 			// Show recipient
 			$widthrecbox = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 92 : 100;

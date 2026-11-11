@@ -73,7 +73,6 @@ $socid = 0;
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'commande', $order_id);
 
 $object = new Commande($db);
 $shipment = new Expedition($db);
@@ -84,6 +83,11 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'
+
+if ($object->id > 0) {
+	$order_id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+}
+$result = restrictedArea($user, 'commande', $order_id);	// After the fetch: the page may be called with the ref only, the security check must be done on the object found
 
 // Security check
 if ($user->socid) {
@@ -736,8 +740,12 @@ if ($order_id > 0 || !empty($ref)) {
 
 						$text = $product_static->getNomUrl(1);
 						$text .= ' - '.$label;
-						$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($objp->description)).'<br>';
-						$description .= $product_static->show_photos('product', $conf->product->multidir_output[$product_static->entity ?? $conf->entity], 1, 1, 0, 0, 0, 80);
+
+						$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($objp->description));
+						$photos = $product_static->show_photos('product', $conf->product->multidir_output[$product_static->entity ?? $conf->entity], 1, 1, 0, 0, 0, 80);
+						if (strpos($photos, '<img') !== false) {
+							$description .= ($description ? '<br>' : '').$photos;
+						}
 						print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i);
 
 						// Show range

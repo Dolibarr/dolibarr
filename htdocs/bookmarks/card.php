@@ -93,9 +93,14 @@ if (($action == 'add' || $action == 'addproduct' || $action == 'update') && $per
 	if ($action == 'update') {	// Test on permission already done
 		$object->fetch(GETPOSTINT("id"));
 	}
-	// Check if null because user not admin can't set an user and send empty value here.
-	if (!empty($userid)) {
-		$object->fk_user = $userid;
+	if (!empty($user->admin)) {
+		// Only an admin can choose the owner of a bookmark (the form offers no choice to the other users)
+		if (!empty($userid)) {
+			$object->fk_user = $userid;
+		}
+	} elseif ($action != 'update') {
+		// A user that is not admin creates bookmarks for himself only, whatever is posted. On update, the owner is not changed.
+		$object->fk_user = $user->id;
 	}
 	$object->title = $title;
 	$object->url = $url;
@@ -110,6 +115,12 @@ if (($action == 'add' || $action == 'addproduct' || $action == 'update') && $per
 	if (!$url) {
 		$error++;
 		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("UrlOrLink")), null, 'errors');
+	}
+
+	if (dol_strlen($title) > 64) {	// Size of the field title in database
+		$error++;
+		$langs->load("errors");
+		setEventMessages($langs->transnoentities("ErrorFieldTooLong", $langs->transnoentitiesnoconv("BookmarkTitle")), null, 'errors');
 	}
 
 	if (!$error) {

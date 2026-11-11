@@ -126,7 +126,7 @@ class Contact extends CommonObject
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 35),
 		'civility' => array('type' => 'varchar(6)', 'label' => 'Civility', 'enabled' => 1, 'visible' => 3, 'position' => 40),
 		'lastname' => array('type' => 'varchar(50)', 'label' => 'Lastname', 'enabled' => 1, 'visible' => 1, 'position' => 45, 'showoncombobox' => 1, 'searchall' => 1),
-		'name_alias' => array('type' => 'varchar(255)', 'label' => 'Name alias', 'enabled' => 1, 'visible' => -1, 'position' => 46, 'searchall' => 1),
+		//'name_alias' => array('type' => 'varchar(255)', 'label' => 'Name alias', 'enabled' => 1, 'visible' => -1, 'position' => 46, 'searchall' => 1),
 		'firstname' => array('type' => 'varchar(50)', 'label' => 'Firstname', 'enabled' => 1, 'visible' => 1, 'position' => 50, 'showoncombobox' => 1, 'searchall' => 1),
 		'poste' => array('type' => 'varchar(80)', 'label' => 'PostOrFunction', 'enabled' => 1, 'visible' => -1, 'position' => 52),
 		'address' => array('type' => 'varchar(255)', 'label' => 'Address', 'enabled' => 1, 'visible' => -1, 'position' => 55),
@@ -240,7 +240,7 @@ class Contact extends CommonObject
 	 */
 	public $socid;		// both socid and fk_soc are used
 	/**
-	 * @var int
+	 * @var int Thirdparty ID
 	 */
 	public $fk_soc;		// both socid and fk_soc are used
 
@@ -505,8 +505,6 @@ class Contact extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf;
-
 		$error = 0;
 		$now = dol_now();
 
@@ -758,7 +756,7 @@ class Contact extends CommonObject
 					$tmpobj->zip = $this->zip;
 					$usermustbemodified++;
 				}
-				if ($tmpobj->zip != $this->zip) {
+				if ($tmpobj->state_id != $this->state_id) {
 					$tmpobj->state_id = $this->state_id;
 					$usermustbemodified++;
 				}
@@ -770,7 +768,10 @@ class Contact extends CommonObject
 					$tmpobj->email = $this->email;
 					$usermustbemodified++;
 				}
-				if (!empty(array_diff($tmpobj->socialnetworks, $this->socialnetworks))) {
+				$usersocialnetworks = (is_array($tmpobj->socialnetworks) ? $tmpobj->socialnetworks : array());
+				$contactsocialnetworks = (is_array($this->socialnetworks) ? $this->socialnetworks : array());
+				// Compare in both directions, so a network added on the contact is also seen as a difference
+				if (!empty(array_diff_assoc($usersocialnetworks, $contactsocialnetworks)) || !empty(array_diff_assoc($contactsocialnetworks, $usersocialnetworks))) {
 					$tmpobj->socialnetworks = $this->socialnetworks;
 					$usermustbemodified++;
 				}
@@ -1044,7 +1045,10 @@ class Contact extends CommonObject
 			return -1;
 		}
 
-		$langs->loadLangs(array("dict", "companies"));
+		// $langs may be null when called from a page with NOREQUIRETRAN (like viewimage.php)
+		if (is_object($langs)) {
+			$langs->loadLangs(array("dict", "companies"));
+		}
 
 		$sql = "SELECT c.rowid, c.entity, c.fk_soc, c.ref_ext, c.civility as civility_code, c.name_alias, c.lastname, c.firstname,";
 		$sql .= " c.address, c.statut as status, c.zip, c.town,";
@@ -1057,7 +1061,7 @@ class Contact extends CommonObject
 		$sql .= " c.priv, c.note_private, c.note_public, c.default_lang, c.canvas,";
 		$sql .= " c.fk_prospectlevel, c.fk_stcommcontact, st.libelle as stcomm, st.picto as stcomm_picto,";
 		$sql .= " c.import_key,";
-		$sql .= " c.datec as date_creation, GREATEST(c.tms, cef.tms) as date_modification, c.fk_user_creat, c.fk_user_modif,";
+		$sql .= " c.datec as date_creation, GREATEST(c.tms, COALESCE(cef.tms, c.tms)) as date_modification, c.fk_user_creat, c.fk_user_modif,";
 		$sql .= " co.label as country, co.code as country_code,";
 		$sql .= " d.nom as state, d.code_departement as state_code,";
 		$sql .= " u.rowid as user_id, u.login as user_login,";
@@ -1132,7 +1136,7 @@ class Contact extends CommonObject
 
 				$this->fk_prospectlevel = $obj->fk_prospectlevel;
 
-				$transcode = $langs->trans('StatusProspect'.$obj->fk_stcommcontact);
+				$transcode = (is_object($langs) ? $langs->trans('StatusProspect'.$obj->fk_stcommcontact) : 'StatusProspect'.$obj->fk_stcommcontact);
 				$label_sale_status = ($transcode != 'StatusProspect'.$obj->fk_stcommcontact ? $transcode : $obj->stcomm);
 				$this->stcomm_id = $obj->fk_stcommcontact; // id statut commercial
 				$this->statut_commercial = $label_sale_status; // libelle statut commercial
@@ -1326,10 +1330,13 @@ class Contact extends CommonObject
 	 *
 	 *  @param		User	$user			User making the delete
 	 *  @param		int		$notrigger		Disable all trigger
+	 *  @param		int		$nodeletefiles	Do not delete the documents files of the contact
 	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($user, $notrigger = 0)
+	public function delete($user, $notrigger = 0, $nodeletefiles = 0)
 	{
+		global $conf;
+
 		$error = 0;
 
 		$this->db->begin();
@@ -1414,13 +1421,46 @@ class Contact extends CommonObject
 		}
 
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
-			$sql .= " WHERE rowid = ".((int) $this->id);
+			// Remove the birthday alerts set by users on this contact
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_alert WHERE fk_contact = ".((int) $this->id);
 			dol_syslog(__METHOD__, LOG_DEBUG);
-			$result = $this->db->query($sql);
-			if (!$result) {
+			$resql = $this->db->query($sql);
+			if (!$resql) {
 				$error++;
-				$this->error = $this->db->error().' sql='.$sql;
+				$this->error .= $this->db->lasterror();
+			}
+		}
+
+		if (!$error) {
+			// Remove the link of the user created from this contact (the user is kept)
+			$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_socpeople = NULL WHERE fk_socpeople = ".((int) $this->id);
+			dol_syslog(__METHOD__, LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->error .= $this->db->lasterror();
+			}
+		}
+
+		if (!$error) {
+			// Remove the links with other objects
+			$result = $this->deleteObjectLinked();
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
+		// Remove the index of the documents of the contact (the files are removed after the commit).
+		// Nothing is done when $nodeletefiles is set: the caller moves the documents elsewhere.
+		$dirofdocuments = '';
+		if ($this->id > 0 && !empty($conf->societe->multidir_output[$this->entity])) {
+			$dirofdocuments = $conf->societe->multidir_output[$this->entity].'/contact/'.dol_sanitizeFileName((string) $this->id);
+		}
+		if (!$error && $dirofdocuments) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			if (deleteFilesIntoDatabaseIndex($dirofdocuments, '', '') < 0 || !$this->deleteEcmFiles(1)) {
+				$error++;
+				$this->error .= $this->db->lasterror();
 			}
 		}
 
@@ -1434,7 +1474,27 @@ class Contact extends CommonObject
 		}
 
 		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
+			$sql .= " WHERE rowid = ".((int) $this->id);
+			dol_syslog(__METHOD__, LOG_DEBUG);
+			$result = $this->db->query($sql);
+			if (!$result) {
+				$error++;
+				$this->error = $this->db->error().' sql='.$sql;
+			}
+		}
+
+		if (!$error) {
 			$this->db->commit();
+
+			// Delete the directory of the documents of the contact
+			if (empty($nodeletefiles) && $dirofdocuments) {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+				if (dol_is_dir($dirofdocuments)) {
+					dol_delete_dir_recursive($dirofdocuments);
+				}
+			}
+
 			return 1;
 		} else {
 			$this->db->rollback();
@@ -1453,7 +1513,7 @@ class Contact extends CommonObject
 	public function info($id)
 	{
 		$sql = "SELECT c.rowid, c.datec as datec, c.fk_user_creat,";
-		$sql .= " GREATEST(c.tms, cef.tms) as tms, c.fk_user_modif";
+		$sql .= " GREATEST(c.tms, COALESCE(cef.tms, c.tms)) as tms, c.fk_user_modif";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as cef ON cef.fk_object=c.rowid";
 		$sql .= " WHERE c.rowid = ".((int) $id);
@@ -2252,15 +2312,26 @@ class Contact extends CommonObject
 		}
 
 		if (!$error) {
-			// We finally remove the old contact
-			if ($contact_origin->delete($user) < 1) {
+			// We finally remove the old contact. Its documents are kept ($nodeletefiles): they are moved
+			// to the target contact once the transaction is committed, after this deletion.
+			if ($contact_origin->delete($user, 0, 1) <= 0) {
 				$this->error = $contact_origin->error;
 				$this->errors = $contact_origin->errors;
 				$error++;
 			}
 		}
 
-		if ($error) {
+		if (!$error) {
+			// Files are moved once the transaction is committed: dol_move() is not transactional, and
+			// the old contact was deleted with $nodeletefiles = 1 so its documents are still there.
+			$this->mergeContactFiles($contact_origin->id);
+		}
+
+		if (!$error) {
+			$this->db->commit();
+			return 0;
+		} else {
+			$langs->load("errors");
 			$this->error = $langs->trans('ErrorContactsMerge').' '.$this->error;
 			$this->db->rollback();
 			// The object still holds the merged values in memory, reload it so the caller does not
@@ -2268,14 +2339,6 @@ class Contact extends CommonObject
 			$this->fetch($this->id);
 			return -1;
 		}
-
-		$this->db->commit();
-
-		// Files are moved once the transaction is committed: dol_move() is not transactional, and
-		// Contact::delete() does not remove the directory of the contact, so the files are still there.
-		$this->mergeContactFiles($contact_origin->id);
-
-		return 0;
 	}
 
 	/**
@@ -2546,7 +2609,7 @@ class Contact extends CommonObject
 		if (!empty($failed)) {
 			dol_syslog(__METHOD__.' Failed to move '.count($failed).' file(s) from '.$srcdir, LOG_ERR);
 			// The merge itself is committed, so this is reported as a warning and not as a failure
-			$this->warnings[] = $langs->trans('WarningContactsMergeFilesNotMoved', implode(', ', $failed));
+			$this->warnings[] = $langs->trans('WarningMergeFilesNotMoved', implode(', ', $failed));
 		}
 	}
 
@@ -2885,7 +2948,7 @@ class Contact extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 					$noemail = $obj->nb;
 					if (empty($noemail)) {
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe(email, entity, date_creat) VALUES ('".$this->db->escape($this->email)."', ".getEntity('mailing', 0).", '".$this->db->idate(dol_now())."')";
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe(email, entity, date_creation) VALUES ('".$this->db->escape($this->email)."', ".getEntity('mailing', 0).", '".$this->db->idate(dol_now())."')";
 						$resql = $this->db->query($sql);
 						if (!$resql) {
 							$error++;

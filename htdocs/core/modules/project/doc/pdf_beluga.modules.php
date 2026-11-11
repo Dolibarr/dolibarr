@@ -652,6 +652,9 @@ class pdf_beluga extends ModelePDFProjects
 								} else {
 									$pdf->MultiCell($this->posxamountht - $this->posxsociety, 3, (is_object($element->thirdparty) ? $element->thirdparty->name : ''), 1, 'L');
 								}
+								// The third party name can wrap over several lines, while every column written
+								// after it stays on one. Remember where it ended so the row height accounts for it.
+								$posYAfterThirdparty = $pdf->GetY();
 
 								// Amount without tax
 								if (empty($value['disableamount'])) {
@@ -683,7 +686,7 @@ class pdf_beluga extends ModelePDFProjects
 									$total_ht += $element->total_ht;
 									$total_ttc += $element->total_ttc;
 								}
-								$nexY = $pdf->GetY();
+								$nexY = max($pdf->GetY(), $posYAfterThirdparty);
 								$curY = $nexY;
 							}
 

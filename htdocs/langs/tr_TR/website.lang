@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - website
 Shortname=Kod
 WebsiteName=Web sitesinin adı
-WebsiteSetupDesc=Kullanmak istediğiniz web sitelerini burada oluşturun. Daha sonra bunları düzenlemek için "Web siteleri" menüsüne gidin.
+WebsiteSetupDesc=Create here the websites you wish to use. Then go to menu Websites to edit them.
 DeleteWebsite=Websitesi sil
 ConfirmDeleteWebsite=Bu web sitesini silmek istediğinizden emin misiniz? Tüm sayfaları ve içeriği de kaldırılacaktır. Yüklenen dosyalar (medias dizinine, ECM modülüne vb. gibi) kalacaktır.
 WEBSITE_TYPE_CONTAINER=Sayfa/kapsayıcı türü
@@ -17,8 +17,8 @@ WEBSITE_ROBOT=Robot dosyası (robots.txt)
 WEBSITE_HTACCESS=Web sitesinin .htaccess dosyası
 WEBSITE_MANIFEST_JSON=Web sitesi manifest.json dosyası
 WEBSITE_KEYWORDSDesc=Değerleri ayırmak için virgül kullanın
-EnterHereReadmeInformation=Buraya web sitesinin bir açıklamasını girin. Web sitenizi şablon olarak dağıtırsanız dosya temptate paketine dahil edilecektir.
-EnterHereLicenseInformation=Buraya web sitesinin kodunun LİSANSINI girin. Web sitenizi şablon olarak dağıtırsanız dosya temptate paketine dahil edilecektir.
+EnterHereReadmeInformation=Enter here a description of the website. If you distribute your website as a template, the file will be included in the template package.
+EnterHereLicenseInformation=Enter here the LICENSE of the code of the website. If you distribute your website as a template, the file will be included in the template package.
 HtmlHeaderPage=HTML başlığı (yalnızca bu sayfaya özgü)
 PageNameAliasHelp=Sayfanın adı veya takma adı.<br>Bu takma ad, web sitesi bir web sunucusunun (Apacke, Nginx gibi ...) Sanal host'undan çalıştırıldığında bir SEO URL'si oluşturmak için de kullanılır. Bu takma adı düzenlemek için "<strong>%s</strong>" düşmesini kullanın.
 EditTheWebSiteForACommonHeader=Not: Tüm sayfalar için kişiselleştirilmiş bir başlık tanımlamak istiyorsanız başlığı sayfa/kapsayıcı yerine seviye sitesinde düzenleyin.
@@ -51,12 +51,12 @@ ToDeployYourWebsiteOnLiveYouHave3Solutions=Bu web sitesini canlı olarak dağıt
 SetHereVirtualHost=<u>Apache/NGinx/... ile kullanın</u><br>Oluşturma tarihi web sunucunuz (Apache, Nginx, ...), PHP etkinleştirilmiş özel bir Sanal Ana Bilgisayar ve<br><strong> üzerinde bir Kök dizin %s</strong>
 ExampleToUseInApacheVirtualHostConfig=Apache sanal konak kurulumunda kullanılacak örnek:
 YouCanAlsoTestWithPHPS=<u>PHP gömülü sunucusuyla kullanın</u><br>Geliştirme ortamında, PHP gömülü web sunucusunu çalıştırarak siteyi test etmeyi tercih edebilirsiniz
-YouCanAlsoDeployToAnotherWHP=<u>Web sitenizi bir Dolibarr web barındırma sağlayıcısında çalıştırın</u><br>İnternette Apache veya NGinx gibi bir web sunucunuz yoksa, ve'i dışa aktarabilir veya web sitenizi Web sitesi modülüyle tam entegrasyon sağlayan başka bir Dolibarr barındırma sağlayıcısı tarafından sağlanan başka bir Dolibarr örneğine aktarabilirsiniz. Bazı Dolibarr barındırma sağlayıcılarının Liste'ini <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a> adresinde bulabilirsiniz
+YouCanAlsoDeployToAnotherWHP=<u>Run your web site inside a Dolibarr web Hosting provider</u><br>If you don't have a web server like Apache or NGinx available on the internet, you can export and import your web site to another Dolibarr instance provided by another Dolibarr hosting provider that provides full integration with the Website module. You can find a list of some Dolibarr hosting providers on <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
 CheckVirtualHostPerms=Ayrıca sanal ana bilgisayar kullanıcısının (örneğin www-data) <strong>%s</strong>'a sahip olup olmadığını kontrol edin.  <br><strong>%s</strong>
 ReadPerm=Okundu
 WritePerm=Yaz
 TestDeployOnWeb=Web'de dene/yayınla
-PreviewSiteServedByWebServer=<u>Preview %s in a new tab.</u><br><br>The %s will be served by an external web server (like Apache, Nginx, IIS). You must install and setup this server before to point to directory:<br><strong>%s</strong><br>URL served by external server:<br><strong>%s</strong>
+PreviewSiteServedByWebServer=<u>Preview %s in a new tab.</u><br><br>The %s will be served by an external web server (like Apache, Nginx, IIS). You must install and setup this server before pointing to the directory:<br><strong>%s</strong><br>URL served by external server:<br><strong>%s</strong>
 PreviewSiteServedByDolibarr=<u>%s'i yeni bir sekmede önizleyin.</u><br><br>%s, Dolibarr sunucusu tarafından destekleneceğinden herhangi bir ekstra web sunucusunun (Apache, Nginx, IIS gibi) kurulmasına gerek yoktur.<br>Sakıncası, sayfaların URL'lerinin kullanıcı dostu olmamasıdır. ve Dolibarr'ınızın yoluyla başlar.<br>Dolibarr tarafından sunulan URL:<br><strong>%s</strong><br><br>Kendi harici web sunucunuzu (Apache, Nginx, Lighttp gibi) kullanarak dağıtmak veya test etmek için bağlantı "%s" komutunu kullanın.
 VirtualHostUrlNotDefined=Harici web sunucusu tarafından sunulan sanal host URL'si tanımlanmamış
 NoPageYet=Henüz hiç sayfa yok
@@ -65,12 +65,13 @@ SyntaxHelp=Belirli sözdizimi ipuçları hakkında yardım
 YouCanEditHtmlSourceckeditor=Düzenleyicideki "Kaynak" düğmesini kullanarak HTML kaynak kodunu düzenleyebilirsiniz
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>You can also make a redirection with GET parameters:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br>
 YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> <strong>SEO başlığı ve meta etiketlerini</strong> (başlık, anahtar kelimeler, Tanım) dinamik olarak ayarlayabilirsiniz. Aşağıdaki değişkenleri tanımlamanız yeterlidir::<br> <code>define('__SEO_PAGE_TITLE__', "Başlık değeri …");</code><br> <code>define('__SEO_PAGE_KEYWORDS__', 'anahtar kelime1, anahtar kelime2, anahtar kelime3 …');</code><br> <code>define('__SEO_PAGE_DESC__', "Tanım …");</code><br>
-YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
+YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored in the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file in documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file in documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSourced=Bir bağlantı paylaşımıyla paylaşılan bir dosya için (dosya paylaşım karma anahtarını kullanarak açık erişim), sözdizimi :<br><strong>&lt;a href="/belge.php?hashp=publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored into the <strong>medias</strong> directory (directory open for public access), use the relative path starting with <strong>/medias</strong>, example:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored in the <strong>medias</strong> directory (directory open for public access), use the relative path starting with <strong>/medias</strong>, example:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), use the wrapper:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=Bir PHP nesnesinin görüntüsünün URL'sini almak için, <br><strong>&lt;&lt;&lt;&lt;<strong>&lt;&lt;&lt; komutunu kullanın. span>img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
-YouCanEditHtmlSource4=Bir makalenin HTML içeriğindeki bir resmin URL'sini almak için <br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource4=To get the URL of an image inside a HTML content of an article, use<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource5=<br><span class="fa fa-edit paddingright"></span> To let a part of the page be changed with mode <strong>Edit inline</strong>, add the attributes <strong>contenteditable="true"</strong> and <strong>id</strong> to its tag. It must contain no PHP code, only text with formatting tags (bold, color, font size...), links, paragraphs, titles, lists and div, example:<br><strong>&lt;p id="intro" contenteditable="true"&gt;My &lt;b&gt;text&lt;/b&gt;&lt;/p&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>Daha fazla HTML veya dinamik kod örneğini <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">wiki belgelerinde</a> bulabilirsiniz >.<br>
 ClonePage=Sayfa/kapsayıcı kopyasını oluştur
 CloneSite=Sitenin kopyasını oluştur
@@ -88,6 +89,8 @@ ImportSite=Web sitesi şablonunu içe aktar
 IDOfPage=Sayfanın kimliği
 Banner=Banner
 BlogPost=Blog yazısı
+PageHeader=Başlık
+PageFooter=Altbilgi
 WebsiteAccount=Web sitesi hesabı
 WebsiteAccounts=Web sitesi hesapları
 AddWebsiteAccount=Web sitesi hesabı oluştur
@@ -102,7 +105,7 @@ YouMustDefineTheHomePage=Öncelikle varsayılan Giriş sayfasını tanımlamanı
 OnlyEditionOfSourceForGrabbedContentFuture=Uyarı: Harici bir web sayfasını içe aktararak web sayfası oluşturma işlemi yalnızca deneyimli kullanıcılara özeldir. ve yalnızca HTML ve ve CSS ile oluşturulan sayfalarda çalışabilir. JS çerçeveleri tarafından oluşturulan sayfaların içe aktarılması DESTEKLENMEZ. Kaynak sayfanın karmaşıklığına bağlı olarak, içe aktarma sonucu muhtemelen orijinal sayfadan farklı olacaktır. Ayrıca, kaynak sayfa yaygın CSS stilleri veya çakışan JavaScript kullanıyorsa, bu sayfa üzerinde çalışırken Web sitesi düzenleyicisinin görünümü veya özellikleri bozulabilir. Bu yöntem, kaynak sayfa izin verdiğinde çok ileri düzey kullanıcılar için bir sayfayı oluştur hızlı bir şekilde oluşturmanın bir yoludur, ancak yeni sayfanızı sıfırdan veya önerilen bir sayfa şablonundan oluştur oluşturmanız önerilir.<br>Ayrıca, satır içi düzenleyicinin, alınan bir sayfada kullanıldığında düzgün çalışmayabileceğini unutmayın.
 OnlyEditionOfSourceForGrabbedContent=İçerik harici bir siteden alındığında yalnızca HTML kaynak değişikliği mümkündür
 GrabImagesInto=Ayrıca css ve sayfada bulunan görselleri de alın.
-ImagesShouldBeSavedInto=Görüntüler dizine kaydedilmelidir
+ImagesShouldBeSavedInto=Images should be saved in the directory
 WebsiteRootOfImages=Web sitesi görüntü dosyaları için kök dizin
 SubdirOfPage=Sayfaya adanmış alt-dizin
 AliasPageAlreadyExists=Takma ad sayfası <strong>%s</strong> zaten mevcut
@@ -118,8 +121,8 @@ ThisPageHasTranslationPages=Bu sayfa/kapsayıcı'nın çevirisi mevcut
 NoWebSiteCreateOneFirst=Henüz bir web sitesi oluşturulmadı. Önce bir tane oluşturun.
 GoTo=Git
 DynamicPHPCodeContainsAForbiddenInstruction='<strong>%s</strong> PHP talimatını içeren dinamik PHP kodunu eklersiniz. ' Bu, dinamik içerik olarak varsayılan olarak yasaktır (izin verilen komutların listesini artırmak için WEBSITE_PHP_ALLOW_xxx gizli seçeneklerine bakın).
-NotAllowedToAddDynamicContent=You don't have permission to add or edit dynamic PHP content in websites. Ask permission or just keep code into php tags unmodified.
-NotAllowedToAddDynamicContentDisabledGlobaly=You currently can't add or edit dynamic PHP content in this website (even if you have permission to), because this feature must be first enabled globally by setting the parameter %s=1 int the conf.php file.<br>Edit your conf.php file to add this parameter, or ask your administrator or support to do it for you.
+NotAllowedToAddDynamicContent=Web sitelerinde dinamik PHP içeriği ekleme veya düzenleme izniniz yok. İzin isteyin veya kodu PHP etiketleri içinde olduğu gibi bırakın.
+NotAllowedToAddDynamicContentDisabledGlobaly=Şu anda bu web sitesinde dinamik PHP içeriği ekleyemez veya düzenleyemezsiniz (izniniz olsa bile), çünkü bu özelliğin öncelikle parametre ayarlanarak global olarak etkinleştirilmesi gerekir.%s=1 iconf.php dosyasına.<br>Bu parametreyi eklemek için conf.php dosyanızı düzenleyin veya yöneticinizden ya da destek ekibinizden bunu sizin için yapmalarını isteyin.
 ReplaceWebsiteContent=Web sitesi içeriğini arayın veya değiştirin
 DeleteAlsoJs=Bu web sitesine özel tüm JavaScript dosyaları da silinsin mi?
 DeleteAlsoMedias=Bu web sitesine özel tüm medya dosyaları da silinsin mi?
@@ -140,10 +143,10 @@ MainLanguage=Ana dil
 OtherLanguages=Diğer diller
 UseManifest=Bir manifest.json dosyası sağlayın
 PublicAuthorAlias=Genel yazar takma adı
-AvailableLanguagesAreDefinedIntoWebsiteProperties=Kullanılabilir diller web sitesi özelliklerine göre tanımlanır
+AvailableLanguagesAreDefinedIntoWebsiteProperties=Available languages are defined in website properties
 ReplacementDoneInXPages=%s sayfalarda veya kapsayıcılarda değiştirme işlemi yapıldı
 RSSFeed=RSS Besleme
-RSSFeedDesc=Bu URL'yi kullanarak 'blogpost' türündeki en son makalelerin RSS beslemesini alabilirsiniz
+RSSFeedDesc=You can get an RSS feed of latest articles with type 'blogpost' using this URL
 PagesRegenerated=%s sayfa(lar)/kapsayıcı(lar) yeniden oluşturuldu
 RegenerateWebsiteContent=Web sitesi önbellek dosyalarını yeniden oluşturun
 AllowedInFrames=Çerçevelerde izin veriliyor
@@ -151,11 +154,12 @@ DefineListOfAltLanguagesInWebsiteProperties=Mevcut tüm dillerin listesini web s
 GenerateSitemaps=Web sitesi site haritası.xml dosyası oluşturun
 ConfirmGenerateSitemaps=Onaylarsanız mevcut site haritası dosyasını sileceksiniz...
 ConfirmSitemapsCreation=Site haritası oluşturmayı onaylayın
+ConfirmSetAsHomePage=Are you sure you want to set the page <b>%s</b> as the home page of the website?
 SitemapGenerated=Site haritası dosyası <b>%s</b> oluşturuldu
 ImportFavicon=Site simgesi
 ErrorFaviconType=Site simgesi png olmalıdır
 ErrorFaviconSize=Favicon 16x16, 32x32 veya 64x64 boyutunda olmalıdır
-ErrorFaviconMustBeASquaredImage=Favicon must be a squared image
+ErrorFaviconMustBeASquaredImage=Favicon kare şeklinde bir resim olmalıdır.
 FaviconTooltip=PNG olması gereken bir resim yükleyin (16x16, 32x32 veya 64x64)
 NextContainer=Sonraki sayfa/kapsayıcı
 PreviousContainer=Önceki sayfa/kapsayıcı
@@ -191,20 +195,20 @@ WebPortalPartnerShipCardAccessHelp=Ortaklık kaydına erişimi etkinleştirin (G
 WEBPORTAL_PROPAL_LIST_ACCESS=Tekliflere erişimi etkinleştirin
 WEBPORTAL_ORDER_LIST_ACCESS=Siparişlere erişimi etkinleştir
 WEBPORTAL_INVOICE_LIST_ACCESS=Faturalara erişimi etkinleştirin
-WEBPORTAL_FICHEINTER_LIST_ACCESS=Enable access to interventions
-WEBPORTAL_TICKET_LIST_ACCESS=Enable access to tickets
+WEBPORTAL_FICHEINTER_LIST_ACCESS=Müdahalelere erişimi sağlayın
+WEBPORTAL_TICKET_LIST_ACCESS=destek bildirimleri adresine erişimi etkinleştirin.
 WebPortalFicheinterListMenu=Müdahaleler
 WebPortalFicheinterListTitle=Müdahaleler
-WebPortalFicheinterListDesc=You will find here all your interventions
-WebPortalFicheinterListNothing=Interventions not found
+WebPortalFicheinterListDesc=Burada tüm müdahalelerinizi bulacaksınız.
+WebPortalFicheinterListNothing=Müdahale bulunamadı.
 WebPortalTicketListMenu=Destek Bildirimleri
 WebPortalTicketListTitle=Destek Bildirimleri
-WebPortalTicketListDesc=You will find here all your tickets
-WebPortalTicketListNothing=Tickets not found
-WebPortalTicketConsultation=Consultation
+WebPortalTicketListDesc=Burada tüm destek bildirimleri kodlu ürününüzü bulacaksınız.
+WebPortalTicketListNothing=destek bildirimleri bulunamadı
+WebPortalTicketConsultation=Danışma
 WebPortalTicketConsultationLink=İzle
-WebPortalTicketConsultationTooltipNotPublic=The ticket was not created from the public interface.
-WebPortalTicketNotAssigned=Not assigned
+WebPortalTicketConsultationTooltipNotPublic=Bilet, herkese açık arayüzden oluşturulmadı.
+WebPortalTicketNotAssigned=Atanmadı
 StatusInterInDraft=Taslak
 StatusInterInValidated=Doğrulanmış
 StatusInterInClosed=Kapalı
@@ -250,24 +254,24 @@ WEBPORTAL_MENU_LOGO_URLTooltip=Giriş logosunu kullanmak için boş bırakın
 WEBPORTAL_LOGIN_BACKGROUND=Arka plan giriş resmi URL'si
 WEBPORTAL_BANNER_BACKGROUND=Banner için arka plan
 WEBPORTAL_BANNER_BACKGROUND_IS_DARK=Banner için koyu temayı kullanın
-WEBPORTAL_LOGIN_FORM_THEME = Login theme
-UseDefaultLoginForm = Use default login form
-UseRightLoginForm = Use right login form
+WEBPORTAL_LOGIN_FORM_THEME = giriş teması
+UseDefaultLoginForm = varsayılan kullanın giriş form'i kullanın
+UseRightLoginForm = Doğru kullanım giriş form
 AriaPrevPage=Önceki sayfa
 AriaNextPage=Sonraki Sayfa
 AriaPageX=Sayfa %s
 WebPortalError404=sayfa bulunamadı
 WebPortalErrorPageNotExist=Sayfa mevcut değil
 WebPortalErrorFetchThirdPartyAccountFromLogin=Üçüncü taraf hesabı yüklenirken hata oluştu (oturum açma: %s)
-WebPortalErrorFetchMemberAccountFromLogin=Error when loading member account (login : %s)
+WebPortalErrorFetchMemberAccountFromLogin=Üye hesabı yüklenirken hata oluştu.(giriş: %s)
 WebPortalErrorAuthentication=Doğrulama hatası
 WebPortalErrorFetchLoggedThirdPartyAccount=Üçüncü taraf hesabı yüklenirken hata oluştu (oturum açma: %s)
 WebPortalErrorFetchLoggedUser=Kullanıcı yüklenirken hata oluştu (Kimlik: %s)
 WebPortalErrorFetchLoggedThirdParty=Üçüncü taraf yüklenirken hata oluştu (Kimlik: %s)
 WebPortalErrorFetchLoggedMember=Üye yüklenirken hata oluştu (Kimlik: %s)
 WebPortalErrorFetchLoggedPartnership=Ortaklık yüklenirken hata oluştu (Üçüncü Taraf Kimliği : %s, Üye Kimliği : %s)
-WebPortalErrorNoFetchMethod=Error no fetch method found for authentication
-WebPortalErrorNoThirdPartyScope=No third-party associated with the logged account: access denied
+WebPortalErrorNoFetchMethod=Kimlik doğrulama için hiçbir getirme yöntemi bulunamadı hatası.
+WebPortalErrorNoThirdPartyScope=Kayıtlı Hesap ile ilişkili üçüncü-parti bulunamadı: erişim engellendi.
 DownloadZip=Zip'i indirin
 ExportIntoGIT=Sunucu dizinine aktar
 WebPortalMember=Üyelik
@@ -492,20 +496,30 @@ SampleGoalthree=Toplumun tamamına fayda sağlayacak etkili Projeler'i destekley
 SHOW_LANG_SELECTOR=göster Dil seçim açılır menüsü
 ForAdvancedWebmastersOnly=Yalnızca teknik web yöneticileri için
 # For WebPortal Document Features
-MyDocuments=My Documents
-ListOfMyDocuments=List of my personal documents.
-WebPortalDocumentListTitle=My Documents
-WebPortalDocumentListDesc=List of my documents.
-NoDocumentAvailable=No documents are available at the moment.
-SharedDocuments=Shared Documents
-ListOfSharedDocuments=List of documents shared with all clients.
-NoSharedDocumentAvailable=No shared documents are available at the moment.
-WEBPORTAL_DOCUMENT_LIST_ACCESS=Enable "My Documents" page
-WEBPORTAL_SHARED_DOCUMENT_ACCESS=Enable "Shared Documents" page
-WebPortalSharedDocsDir=Name of the shared documents directory
-WebPortalSharedDocsDirHelp=Enter the name of the directory, located in the ECM/GED folder, that contains the documents to be shared with all portal users.
-DateM=Modification Date
-ThisDirectoryIsEmpty=This directory is empty
-WrittenBy=Written by %s
-ImportOfWebsiteTemplateIncludingPHPIsAllowedIf=Import of website templates using dynamic content in PHP is allowed only if $dolibarr_website_allow_custom_php is set to 2 in conf.php.
-ImportOfWebsiteTemplateIncludingPHPIsDisabled=Import of website templates using dynamic content in PHP need to have $dolibarr_website_allow_custom_php set to 1 or 2 in conf.php to be allowed.
+MyDocuments=Belgelerim
+ListOfMyDocuments=Liste belgelerimin Çalışan
+WebPortalDocumentListTitle=Belgelerim
+WebPortalDocumentListDesc=Liste belgelerimin.
+NoDocumentAvailable=Şu anda hiçbir belge mevcut değil.
+SharedDocuments=Paylaşılan Belgeler
+ListOfSharedDocuments=Liste tüm müşterilerle paylaşılan belgelerin.
+NoSharedDocumentAvailable=Şu anda paylaşılan hiçbir belge bulunmamaktadır.
+WEBPORTAL_DOCUMENT_LIST_ACCESS="Belgelerim" sayfasını etkinleştirin
+WEBPORTAL_SHARED_DOCUMENT_ACCESS="Paylaşılan Belgeler" sayfasını etkinleştirin.
+WebPortalSharedDocsDir=Paylaşılan belgelerin adı yönerge
+WebPortalSharedDocsDirHelp=gir, ECM/GED klasöründe bulunan ve tüm portal kullanıcılarıyla paylaşılacak belgeleri içeren yönerge dosyasının adıdır.
+DateM=Değişiklik tarih
+ThisDirectoryIsEmpty=Bu yönerge boştur.
+WrittenBy=Yazan %s
+ImportOfWebsiteTemplateIncludingPHPIsAllowedIf=PHP'de dinamik içerik kullanan web sitesi şablonlarının içe aktarılmasına yalnızca conf.php dosyasında $dolibarr_website_allow_custom_php değeri 2 olarak ayarlanmışsa izin verilir.
+ImportOfWebsiteTemplateIncludingPHPIsDisabled=PHP'de dinamik içerik kullanan web sitesi şablonlarının içe aktarılmasına izin verilmesi için conf.php dosyasında $dolibarr_website_allow_custom_php değerinin 1 veya 2 olarak ayarlanması gerekir.
+CurrentPageVersion=Current page
+ListOfPageVersions=List of archived versions of page (a backup file of page is created each time you save a change, for example on the HTML source)
+EditInLineAllowedAreas=In mode Edit inline, the tags with contenteditable="true", an id and no PHP code inside can be changed and are saved when you leave them. Text formatting (bold, color, font size...), links, paragraphs, titles and lists are allowed, images and other HTML can only be changed in the HTML source.
+ErrorEditInlineElementNoId=This element has contenteditable="true" but no id, so it can not be edited inline.
+ErrorEditInlineElementNotFound=No element with id %s and contenteditable="true" was found in the source of the page.
+ErrorEditInlineElementNotUnique=The id %s is used by several elements with contenteditable="true" in the source of the page.
+ErrorEditInlineElementWithPhp=The element with id %s contains PHP code in the source of the page, so it can only be changed in the HTML source.
+ErrorEditInlineElementNotAllowedHtml=The element with id %s contains HTML that can not be edited inline (image, form, script, comment, other tags or attributes...), so it can only be changed in the HTML source.
+ErrorEditInlineElementNotPlainText=The element with id %s contains HTML in the source of the page and can only be edited inline as plain text, so it can only be changed in the HTML source.
+ErrorEditInlineContentNotAllowed=The new content of the element with id %s contains HTML tags or attributes that are not allowed, so it was not saved.

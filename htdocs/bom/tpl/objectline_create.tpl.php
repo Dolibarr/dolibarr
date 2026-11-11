@@ -151,7 +151,7 @@ if (isModEnabled("product") || isModEnabled("service")) {
 	} else {
 		print $form->select_produits(GETPOSTINT('idprod'), (($filtertype == 1) ? 'idprodservice' : 'idprod'), $filtertype, getDolGlobalInt('PRODUIT_LIMIT_SIZE'), 0, $statustoshow, 2, '', 1, array(), 0, '1', 0, 'maxwidth500 widthcentpercentminusx', 0, '', GETPOST('combinations', 'array:alphanohtml'), 1);
 	}
-	$urltocreateproduct = DOL_URL_ROOT.'/product/card.php?action=create'.(($filtertype == 1) ? '&leftmenu=service&type=1' : '&leftmenu=product&type=0').'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id);
+	$urltocreateproduct = DOL_URL_ROOT.'/product/card.php?action=create'.(($filtertype == 1) ? '&leftmenu=service&type=1' : '&leftmenu=product&type=0').'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&idprod=__ID__').'&backtopageforcancel='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id);
 	print '<a href="'.$urltocreateproduct.'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProduct").'"></span></a>';
 
 	echo '</span>';
@@ -181,7 +181,8 @@ print '</td>';
 if ($filtertype != 1) { // Product
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		$coldisplay++;
-		print '<td class="nobottom linecoluseunit">';
+		print '<td class="bordertop nobottom nowrap linecoluseunit">';
+		print $formproduct->selectMeasuringUnits("fk_unit", '', (GETPOSTISSET('fk_unit') ? GETPOST('fk_unit', 'alpha') : '0'), 1, 0);
 		print '</td>';
 	}
 } else { // Service
@@ -256,23 +257,33 @@ jQuery(document).ready(function() {
 			}
 	});
 
-	//change unit selected if we change service selected
+	//change unit and duration qty selected if we change service selected
 	<?php if ($filtertype == 1) { ?>
 	$('#idprodservice').change(function(){
 		var idproduct = $(this).val();
+		var $row = $(this).closest('tr');
 
 			$.ajax({
 				url : "<?php echo dol_buildpath('/bom/ajax/ajax.php', 1); ?>"
 				,type: 'POST'
 				,data: {
-					'action': 'getDurationUnitByProduct'
+					'action': 'getDurationByProduct'
 					,'token' : "<?php echo currentToken() ?>"
 					,'idproduct' : idproduct
 				}
 			}).done(function(data) {
 
 				console.log(data);
-				$("#fk_unit").val(data).change();
+				if (data && typeof data === 'object') {
+					if (data.fk_unit) {
+						$("#fk_unit").val(data.fk_unit).change();
+					}
+					if (data.duration_value) {
+						$row.find('input[name="qty"]').val(data.duration_value);
+					}
+				} else {
+					$("#fk_unit").val(data).change();
+				}
 			});
 
 			$.ajax({

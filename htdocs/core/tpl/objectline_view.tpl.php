@@ -310,6 +310,10 @@ if (($line->info_bits & 2) == 2) {
 		}
 	}
 
+	// Reference the customer gives to the line (line of its purchase order)
+	if ($line instanceof OrderLine && !empty($line->ref_customer)) {
+		print '<br><span class="opacitymedium">'.$langs->trans('RefCustomerLine').':</span> '.dol_escape_htmltag($line->ref_customer);
+	}
 
 	$parameters = ['line' => $line, 'i' => & $i, 'coldisplay' => & $coldisplay];
 	$reshook = $hookmanager->executeHooks('objectLineView_BeforeProductExtrafield', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -455,6 +459,23 @@ print '</td>';
 </td>
 
 <?php
+if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) { ?>
+	<td class="linecoluttc nowraponall right"><?php $coldisplay++; ?><?php
+	$upinctax = isset($line->subprice_ttc) ? $line->subprice_ttc : null;
+	if (!$upinctax && $line->total_ttc && $line->qty) {		// The unit price including tax was not saved, so we try to guess it
+		// Note that unit price is always for 100% of line, it is not prorata of situation percent, when total_ttc is.
+		$upinctax = price2num($line->total_ttc * ($line->situation_percent ? 100 / $line->situation_percent : 1) / (float) $line->qty, 'MU');
+	}
+	if (!$upinctax) {
+		$upinctax = price2num($line->subprice * (1 + ((($line->info_bits & 1) ? 0 : (float) $line->tva_tx) / 100)), 'MU'); // one tax
+	}
+	if (empty($line->fk_remise_except)) {
+		print(isset($upinctax) ? price($sign * $upinctax) : price($sign * $line->subprice));
+	}	// if upinctax can't be known, we show subprice excl ta
+	?>
+	</td>
+<?php }
+
 // Multicurrency unit price excluding tax - HT
 if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) { ?>
 	<td class="linecoluht_currency nowraponall right">
@@ -478,27 +499,14 @@ if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicu
 	</td>
 <?php }
 
-if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) { ?>
-	<td class="linecoluttc nowraponall right"><?php $coldisplay++; ?><?php
-	$upinctax = isset($line->subprice_ttc) ? $line->subprice_ttc : null;
-	if (!$upinctax && $line->total_ttc && $line->qty) {		// The unit price including tax was not saved, so we try to guess it
-		// Note that unit price is always for 100% of line, it is not prorata of situation percent, when total_ttc is.
-		$upinctax = price2num($line->total_ttc * ($line->situation_percent ? 100 / $line->situation_percent : 1) / (float) $line->qty, 'MU');
-	}
-	if (!$upinctax) {
-		$upinctax = price2num($line->subprice * (1 + ((($line->info_bits & 1) ? 0 : (float) $line->tva_tx) / 100)), 'MU'); // one tax
-	}
-	if (empty($line->fk_remise_except)) {
-		print(isset($upinctax) ? price($sign * $upinctax) : price($sign * $line->subprice));
-	}	// if upinctax can't be known, we show subprice excl ta
-	?>
-	</td>
-<?php }
-
 // Multicurrency unit price including tax - TTC
 if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) { ?>
 	<td class="linecoluttc_currency nowraponall right"><?php $coldisplay++; ?><?php
 	$multicurrency_upinctax = isset($line->multicurrency_subprice_ttc) ? $line->multicurrency_subprice_ttc : null;
+	if (!$multicurrency_upinctax && empty((float) $line->localtax1_tx) && empty((float) $line->localtax2_tx) && !empty((float) $line->multicurrency_subprice)) {
+		// With only VAT, the unit price excl. tax gives an exact value, not rounded to the precision of totals like an estimate from total_ttc
+		$multicurrency_upinctax = price2num($line->multicurrency_subprice * (1 + ((($line->info_bits & 1) ? 0 : (float) $line->tva_tx) / 100)), 'MU');
+	}
 	if (!$multicurrency_upinctax && $line->multicurrency_total_ttc && $line->qty) {
 		$multicurrency_upinctax = price2num($line->multicurrency_total_ttc / (float) $line->qty, 'MU');
 	}
@@ -590,7 +598,7 @@ if (!empty($line->remise_percent) && $line->special_code != 3) {
 if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 	$coldisplay++;
-	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+	if (getDolGlobalInt('INVOICE_USE_SITUATION') > 1) {
 		$previous_progress = $line->getAllPrevProgress($object->id);
 		$current_progress = $previous_progress + (float) $line->situation_percent;
 		print '<td class="linecolcycleref nowraponall right">'.$current_progress.'%</td>';
@@ -653,9 +661,7 @@ if ($outputalsopricetotalwithtax) {
 	$coldisplay++;
 }
 
-// TODO Replace this with $permissiontoedit ?
-$objectRights = $this->getRights();
-$tmppermtoedit = $objectRights->creer;
+$tmppermtoedit = $this->hasUserPermission($user, 'write');
 
 if ($this->status == 0 && $tmppermtoedit && $action != 'selectlines') {
 	// Asset info
@@ -704,7 +710,7 @@ if ($this->status == 0 && $tmppermtoedit && $action != 'selectlines') {
 	$coldisplay++;
 	if (($line->info_bits & 2) == 2 || !empty($disableedit)) {
 	} else { ?>
-		<a class="editfielda reposition" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&action=editline&token='.newToken().'&lineid='.$line->id; ?>">
+		<a class="editfielda reposition" data-dol-action="editline" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&action=editline&token='.newToken().'&lineid='.$line->id; ?>">
 		<?php print img_edit().'</a>';
 	}
 	print '</td>';
@@ -713,7 +719,7 @@ if ($this->status == 0 && $tmppermtoedit && $action != 'selectlines') {
 	print '<td class="linecoldelete center">';
 	$coldisplay++;
 	if (!$situationinvoicelinewithchild && empty($disableremove)) { // For situation invoice, deletion is not possible if there is a child line.
-		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=ask_deleteline&token='.newToken().'&lineid='.$line->id.'">';
+		print '<a class="reposition" data-dol-action="deleteline" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=ask_deleteline&token='.newToken().'&lineid='.$line->id.'">';
 		print img_delete();
 		print '</a>';
 	}
@@ -724,12 +730,12 @@ if ($this->status == 0 && $tmppermtoedit && $action != 'selectlines') {
 		print '<td class="linecolmove tdlineupdown center">';
 		$coldisplay++;
 		if ($i > 0) { ?>
-			<a class="lineupdown" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&action=up&token='.newToken().'&rowid='.$line->id; ?>">
+			<a class="lineupdown" data-dol-action="lineup" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&action=up&token='.newToken().'&rowid='.$line->id; ?>">
 			<?php print img_up('default', 0, 'imgupforline'); ?>
 			</a>
 		<?php }
 		if ($i < $num - 1) { ?>
-			<a class="lineupdown" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&action=down&token='.newToken().'&rowid='.$line->id; ?>">
+			<a class="lineupdown" data-dol-action="linedown" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&action=down&token='.newToken().'&rowid='.$line->id; ?>">
 			<?php print img_down('default', 0, 'imgdownforline'); ?>
 			</a>
 		<?php }
