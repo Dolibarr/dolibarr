@@ -7,6 +7,8 @@ RUN apt-get update \
 		bash \
 		bash-completion \
 		ca-certificates \
+        cairosvg \
+		cmake \
 		composer \
         vim \
 		wget \
@@ -15,13 +17,18 @@ RUN apt-get update \
 		gh \
 		ghostscript \
 		git \
+		golang-go \
         graphviz \
         gzip \
 		hurl \
 		iptables \
 		jq \
 		libglib2.0-bin \
-        memcached \
+		libportaudio2 \
+		liblzma-dev \
+		libboost-iostreams-dev libboost-filesystem-dev libboost-date-time-dev \
+		libboost-program-options-dev libboost-system-dev \
+		memcached \
 		mariadb-client \
 		mariadb-server \
 		openssh-client \
@@ -42,6 +49,7 @@ RUN apt-get update \
 		python3 \
 		python3-pip \
 		shellcheck \
+		sox \
 		sshpass \
 		sudo \
 		time \
@@ -82,6 +90,13 @@ RUN curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/master/install.sh | 
     && rtk gain
 
 
+# Install tx - Transifex CLI, used to push/pull the language files (configuration is the file .tx/config at repository root)
+RUN ARCH="$(dpkg --print-architecture)" \
+    && curl -fsSL "https://github.com/transifex/cli/releases/latest/download/tx-linux-${ARCH}.tar.gz" | tar xz -C /usr/local/bin tx \
+    && chmod 755 /usr/local/bin/tx \
+    && tx --version
+
+
 
 RUN mkdir -p /opt/php-tools \
 	&& composer require \
@@ -116,7 +131,7 @@ COPY .pre-commit-config.yaml* /tmp/pre-commit-warmup/
 RUN if [ -f /tmp/pre-commit-warmup/.pre-commit-config.yaml ]; then \
         git init -q /tmp/pre-commit-warmup \
         && cd /tmp/pre-commit-warmup \
-        && pre-commit install-hooks \
+        && for i in 1 2 3; do pre-commit install-hooks && break; [ "$i" = 3 ] && exit 1; echo "pre-commit install-hooks failed, retry $i..."; sleep 10; done \
         && cd / \
         && rm -rf /tmp/pre-commit-warmup \
         && chmod -R a+rwX /var/cache/pre-commit; \
@@ -128,26 +143,9 @@ RUN if [ -f /tmp/pre-commit-warmup/.pre-commit-config.yaml ]; then \
 # that stores the emails it receives into /var/mail/outbox instead of delivering them, so
 # the code and the tests that send emails (the Dolibarr send mode "PHP mail function") run
 # without error but no email ever leaves the container.
-RUN cat > /usr/sbin/sendmail <<'EOF'
-#!/bin/sh
-# Sendmail stub installed by the docker-vibe image (see dev/build/docker-vibe/README.md).
-# No MTA is installed in this image: emails received here are stored into /var/mail/outbox
-# and are never delivered anywhere.
-
-umask 000
-
-outbox=/var/mail/outbox
-mkdir -p "$outbox" 2>/dev/null || exit 0
-
-file="$outbox/$(date +%Y%m%d_%H%M%S%N)_$$.eml"
-{
-    echo "X-SendmailStub-Args: $*"
-    echo
-    cat
-} > "$file" 2>/dev/null
-
-exit 0
-EOF
+# Do not use a heredoc into a RUN: the classic builder (used when docker buildx is not
+# installed) silently ignores its content, so the files are copied from the build context.
+COPY sendmail-stub /usr/sbin/sendmail
 
 RUN chmod 755 /usr/sbin/sendmail \
     && mkdir -p /var/mail/outbox \
@@ -168,29 +166,11 @@ RUN chmod 755 /usr/sbin/sendmail \
     && rm -f /var/mail/outbox/*.eml
 
 
-# Prompt
-RUN cat >> /etc/bash.bashrc <<'EOF'
-
-git_branch() {
-    git branch --show-current 2>/dev/null
-}
-
-alias egrep='egrep --color=auto'
-alias fgrep='fgrep --color=auto'
-alias grep='grep --color=auto'
-alias l='ls -CF'
-alias la='ls -A'
-alias ll='ls -alF'
-alias ls='ls --color=auto'
-
-export HISTSIZE=10000
-export HISTFILESIZE=20000
-
-shopt -s histappend
-PROMPT_COMMAND="history -a; history -n${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
-
-PS1='\[\e[1;31m\][CONTAINER]\[\e[0m\] \[\e[1;34m\]\w\[\e[0m\] \[\e[1;32m\]$(git_branch)\[\e[0m\] \$ '
-EOF
+# Prompt (no heredoc into a RUN, see the sendmail stub above)
+COPY bashrc-prompt /tmp/bashrc-prompt
+RUN cat /tmp/bashrc-prompt >> /etc/bash.bashrc \
+    && rm -f /tmp/bashrc-prompt \
+    && grep -q "git_branch()" /etc/bash.bashrc
 
 WORKDIR /workspace
 
@@ -198,8 +178,13 @@ WORKDIR /workspace
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 # Add the URL opener used by the BROWSER environment variable (see above)
 COPY open-on-host /usr/local/bin/open-on-host
+# Add the xdg-open shim: the Rust TUI of Vibe (vibe-rs) opens the links of the
+# chat with xdg-open, ignoring the BROWSER variable (only the Python parts of
+# Vibe honor it), and xdg-utils is not installed into the image. The shim
+# forwards to open-on-host, so a click on a link opens it on the host.
+COPY xdg-open-shim /usr/local/bin/xdg-open
 # Add the tool used by the launcher to block the outbound SMTP ports on the network stack
 # shared with the VM (see docker-entrypoint.sh and README.md)
 COPY smtpblock.sh /usr/local/bin/smtpblock.sh
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh /usr/local/bin/open-on-host /usr/local/bin/smtpblock.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh /usr/local/bin/open-on-host /usr/local/bin/xdg-open /usr/local/bin/smtpblock.sh
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

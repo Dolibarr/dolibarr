@@ -75,6 +75,10 @@ if (!empty($id)) {
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
+	// fetch() returns 1 even when no record is found (deleted job)
+	if ($result > 0 && empty($object->id)) {
+		recordNotFound();
+	}
 }
 
 if (!empty($cancel)) {
@@ -106,7 +110,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontodelete) {
 
 // Execute jobs
 if ($action == 'confirm_execute' && $confirm == "yes" && $permissiontoexecute) {
-	if (getDolGlobalString('CRON_KEY') && getDolGlobalString('CRON_KEY') != $securitykey) {
+	if (getDolGlobalString('CRON_KEY') && !hash_equals(getDolGlobalString('CRON_KEY'), (string) $securitykey)) {
 		setEventMessages('Security key '.$securitykey.' is wrong', null, 'errors');
 	} else {
 		$now = dol_now(); // Date we start

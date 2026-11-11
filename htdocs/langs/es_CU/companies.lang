@@ -175,7 +175,6 @@ Contacts=Contactos/Direcciones
 ContactId=Identificación de contacto
 DefaultContact=Contacto/dirección predeterminados
 ContactByDefaultFor=Contacto/dirección predeterminados para
-AccountancyCode=cuenta contable
 CustomerCode=Código de cliente
 SupplierCode=Código de proveedor
 CustomerCodeShort=Código de cliente

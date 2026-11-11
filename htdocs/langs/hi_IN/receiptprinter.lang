@@ -69,7 +69,6 @@ DOL_VALUE_DAY=चालान दिवस
 DOL_VALUE_DAY_LETTERS=पत्रों में चालान का दिन
 DOL_LINE_FEED_REVERSE=लाइन फ़ीड रिवर्स
 InvoiceID=इनवॉइस आईडी
-InvoiceRef=चालान संदर्भ
 DOL_PRINT_OBJECT_LINES=चालान लाइनें
 DOL_VALUE_CUSTOMER_FIRSTNAME=ग्राहक का प्रथम नाम
 DOL_VALUE_CUSTOMER_LASTNAME=ग्राहक का अंतिम नाम

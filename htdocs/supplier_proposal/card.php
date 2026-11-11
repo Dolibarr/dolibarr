@@ -82,6 +82,7 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $origin = GETPOST('origin', 'alpha');
 $originid = GETPOSTINT('originid');
 $confirm = GETPOST('confirm', 'alpha');
+$closingnote = GETPOSTISSET('closing_note') ? GETPOST('closing_note', 'restricthtml') : GETPOST('note', 'restricthtml');
 $lineid = GETPOSTINT('lineid');
 $contactid = GETPOSTINT('contactid');
 $projectid = GETPOSTINT('projectid');
@@ -465,7 +466,7 @@ if (empty($reshook)) {
 									$lines[$i]->pa_ht,
 									$label,
 									$array_options,
-									$lines[$i]->ref_supplier,
+									(property_exists($lines[$i], 'ref_supplier') ? $lines[$i]->ref_supplier : ''),
 									$lines[$i]->fk_unit
 								);
 
@@ -577,13 +578,29 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'setstatut' && $usercanclose && !GETPOST('cancel', 'alpha')) {
 		// Set accepted/refused
-		if (!GETPOST('statut')) {
+		$status = GETPOSTINT('statut');
+		if ($confirm == 'yes') {
+			$status = SupplierProposal::STATUS_SIGNED;
+		} elseif ($confirm == 'no') {
+			$status = SupplierProposal::STATUS_NOTSIGNED;
+		}
+		// Only the 2 values of the form are accepted (like for a customer proposal), not any status
+		if (!in_array($status, array(SupplierProposal::STATUS_SIGNED, SupplierProposal::STATUS_NOTSIGNED), true)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("CloseAs")), null, 'errors');
 			$action = 'statut';
 		} else {
 			// prevent browser refresh from closing proposal several times
 			if ($object->status == SupplierProposal::STATUS_VALIDATED) {
-				$object->cloture($user, GETPOSTINT('statut'), GETPOST('note', 'restricthtml'));
+				$result = $object->cloture($user, $status, $closingnote);
+				if ($result > 0) {
+					header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
+					exit();
+				}
+				setEventMessages($object->error, $object->errors, 'errors');
+				$ret = $object->fetch($object->id);
+				if ($ret > 0) {
+					$action = 'statut';
+				}
 			}
 		}
 	} elseif ($action == 'addline' && GETPOST('updateallvatlinesblock', 'alpha') && GETPOST('vatforblocklines', 'alpha') !== '' && $usercancreate) {
@@ -1389,6 +1406,14 @@ if (empty($reshook)) {
 				$pu_ht_devise = 0;
 			}
 
+			// Only the unit price incl. tax in currency was entered: it becomes the reference price of the line.
+			// updateline() reads the currency price in the price_base_type, so it receives the TTC currency amount.
+			if (GETPOST('price_ht') === '' && GETPOST('price_ttc') === '' && GETPOST('multicurrency_subprice') === '' && GETPOST('multicurrency_price_ttc') !== '') {
+				$ht = 0;
+				$price_base_type = 'TTC';
+				$pu_ht_devise = price2num(GETPOST('multicurrency_price_ttc'), 'CU', 2);
+			}
+
 			$result = $object->updateline(
 				GETPOSTINT('lineid'),
 				(float) $ht,
@@ -1492,7 +1517,13 @@ if (empty($reshook)) {
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
 	} elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
 		// Multicurrency rate
-		$result = $object->setMulticurrencyRate(GETPOSTFLOAT('multicurrency_tx'), GETPOSTINT('calculation_mode'));
+		if (!in_array(GETPOSTINT('calculation_mode'), array(1, 2))) {
+			$langs->load("compta");
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CalculationMode")), null, 'errors');
+			$action = 'editmulticurrencyrate';
+		} else {
+			$result = $object->setMulticurrencyRate(GETPOSTFLOAT('multicurrency_tx'), GETPOSTINT('calculation_mode'));
+		}
 	} elseif ($action == 'update_extras' && $permissiontoeditextra) {
 		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
@@ -1702,7 +1733,7 @@ if ($action == 'create') {
 		if (isModEnabled("shipping")) {
 			print '<tr><td>'.$langs->trans('SendingMethod').'</td><td colspan="2">';
 			print img_picto('', 'dolly', 'class="pictofixedwidth"');
-			$form->selectShippingMethod(GETPOST('shipping_method_id') > 0 ? GETPOSTINT('shipping_method_id') : "", 'shipping_method_id', '', 1);
+			$form->selectShippingMethod(GETPOST('shipping_method_id') > 0 ? (string) GETPOSTINT('shipping_method_id') : "", 'shipping_method_id', '', 1);
 			print '</td></tr>';
 		}
 
@@ -1984,6 +2015,17 @@ if ($action == 'create') {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateAsk'), $text, 'confirm_validate', '', 0, 1);
 		}
 	}
+	// Form to set the supplier proposal accepted/refused
+	if ($action == 'statut' && $usercanclose && $object->status == SupplierProposal::STATUS_VALIDATED) {
+		$text = '';
+		if (getDolGlobalString('SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL')) {
+			$text = $langs->trans('SupplierProposalRefFournNotice'); // TODO Suggest a permanent checkbox instead of option
+		}
+		$formquestion = array(
+			array('type' => 'textarea', 'name' => 'closing_note', 'label' => $langs->trans('Note'), 'value' => dol_escape_htmltag(GETPOSTISSET('closing_note') || GETPOSTISSET('note') ? $closingnote : $object->note_private), 'morecss' => 'centpercent', 'moreattr' => 'rows="'.ROWS_3.'"', 'inputko' => 1),
+		);
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('SetAcceptedRefused'), $text, 'setstatut', $formquestion, 'no', 2, 0, 600, 0, 'Accept', 'Deny', '', 'Cancel', '');
+	}
 	// Subtotal line form
 	if ($action == 'add_title_line') {
 		$langs->load('subtotals');
@@ -2120,7 +2162,7 @@ if ($action == 'create') {
 		print '</tr></table>';
 		print '</td><td class="valuefield">';
 		if ($action == 'editdate_livraison') {
-			print '<form name="editdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post" class="formconsumeproduce">';
+			print '<form name="editdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate_livraison">';
 			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
@@ -2323,18 +2365,12 @@ if ($action == 'create') {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table id="tablelines" class="noborder noshadow centpercent">';
 
-		// Add free products/services form
-		global $forceall, $senderissupplier, $inputalsopricewithtax;
-		$forceall = 1;
-		$dateSelector = 0;
-		$inputalsopricewithtax = 1;
-		$senderissupplier = 2; // $senderissupplier=2 is same than 1 but disable test on minimum qty.
-		if (getDolGlobalInt('SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY')) {
-			$senderissupplier = getDolGlobalInt('SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY');
-		}
+		// Display context of lines, also sets the global variables used by the line templates
+		$linesContext = $object->initObjectLinesDisplay();
 
-		if (!empty($object->lines)) {
-			$object->printObjectLines($action, $soc, $mysoc, $lineid, $dateSelector);
+		// With nolines=1, the card is loaded without its lines, to refresh the other parts of the page in ajax
+		if (!empty($object->lines) && !GETPOSTINT('nolines')) {
+			$object->printObjectLines($action, $linesContext['seller'], $linesContext['buyer'], $lineid, $linesContext['dateSelector']);
 		}
 
 		// Form to add new line
@@ -2342,13 +2378,13 @@ if ($action == 'create') {
 			if ($action != 'editline') {
 				// Add products/services form
 
-				$parameters = array('dateSelector' => $dateSelector);
+				$parameters = array('dateSelector' => $linesContext['dateSelector']);
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 				if ($reshook < 0) {
 					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 				}
 				if (empty($reshook)) {
-					$object->formAddObjectLine($dateSelector, $soc, $mysoc);
+					$object->formAddObjectLine($linesContext['dateSelector'], $linesContext['seller'], $linesContext['buyer']);
 				}
 			}
 		}
@@ -2359,34 +2395,6 @@ if ($action == 'create') {
 	}
 
 	print dol_get_fiche_end();
-
-	if ($action == 'statut') {
-		// Form to set proposal accepted/refused
-		$form_close = '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST" id="formacceptrefuse" class="formconsumeproduce paddingbottom paddingleft paddingright">';
-		$form_close .= '<input type="hidden" name="token" value="'.newToken().'">';
-		$form_close .= '<input type="hidden" name="action" value="setstatut">';
-
-		if (getDolGlobalString('SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL')) {
-			$form_close .= '<p class="notice">'.$langs->trans('SupplierProposalRefFournNotice').'</p>'; // TODO Suggest a permanent checkbox instead of option
-		}
-		$form_close .= '<table class="border centpercent marginleftonly marginrightonly">';
-		$form_close .= '<tr><td>'.$langs->trans("CloseAs").'</td><td class="left">';
-		$form_close .= '<select id="statut" name="statut" class="flat">';
-		$form_close .= '<option value="0">&nbsp;</option>';
-		$form_close .= '<option value="2">'.$langs->trans('SupplierProposalStatusSigned').'</option>';
-		$form_close .= '<option value="3">'.$langs->trans('SupplierProposalStatusNotSigned').'</option>';
-		$form_close .= '</select>';
-		$form_close .= '</td></tr>';
-		$form_close .= '<tr><td class="left">'.$langs->trans('Note').'</td><td class="left"><textarea cols="70" rows="'.ROWS_3.'" wrap="soft" name="note">';
-		$form_close .= $object->note_private;
-		$form_close .= '</textarea></td></tr>';
-		$form_close .= '</table>';
-		$form_close .= $form->buttonsSaveCancel();
-		$form_close .= '<a id="acceptedrefused">&nbsp;</a>';
-		$form_close .= '</form>';
-
-		print $form_close;
-	}
 
 	/*
 	 * Boutons Actions
@@ -2471,7 +2479,7 @@ if ($action == 'create') {
 
 				// Set accepted/refused
 				if ($object->status == SupplierProposal::STATUS_VALIDATED && $usercanclose) {
-					print '<div class="inline-block divButAction"><a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;token='.newToken().'&amp;action=statut'.(!getDolGlobalString('MAIN_JUMP_TAG') ? '' : '#acceptedrefused').'"';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;token='.newToken().'&amp;action=statut"';
 					print '>'.$langs->trans('SetAcceptedRefused').'</a></div>';
 				}
 

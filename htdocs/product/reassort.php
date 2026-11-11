@@ -391,6 +391,11 @@ if ($resql) {
 		$param .= '&search_stock_physique=' . urlencode($search_stock_physique);
 	}
 
+	// Add $param from hooks
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action);	// Note that $action and $object may have been modified by hook
+	$param .= $hookmanager->resPrint;
+
 	llxHeader("", $texte, $helpurl, '', 0, 0, '', '', '', 'mod-product page-reassort');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';

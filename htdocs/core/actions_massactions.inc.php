@@ -62,6 +62,7 @@
  * @var ?string $permissiontoread
  * @var ?string $permissiontodelete
  * @var ?string $permissiontoclose
+ * @var ?string $permissiontocancel
  * @var ?string $permissiontoapprove
  * @var ?string $option
  * @var int $deliveryreceipt
@@ -79,6 +80,7 @@
 @phan-var-force ?string $permissiontoread
 @phan-var-force ?string $permissiontodelete
 @phan-var-force ?string $permissiontoclose
+@phan-var-force ?string $permissiontocancel
 @phan-var-force ?string $permissiontoapprove
 @phan-var-force ?int[] $toselect
 @phan-var-force ?string $diroutputmassaction
@@ -140,7 +142,9 @@ if (!$error && isset($toselect) && is_array($toselect) && count($toselect) > $ma
 // The ids in $toselect come from the request and not from the list: the list only showed the objects the user can see, the
 // request can contain any id. Refuse the selection if the user can not access one of the objects, with the same rules as the
 // lists and the cards (entity, third parties of the sales representative, projects the user can see...).
-if (!$error && $massaction && !empty($toselect) && is_array($toselect)) {
+// Note: some mass actions are done on ids that are not ids of $objectclass: users for 'increaseholiday' (holiday/define_holiday.php),
+// lines of invoices or expense reports for 'ventil' and 'set_default_account' (accountancy/.../list.php).
+if (!$error && $massaction && !in_array($massaction, array('increaseholiday', 'ventil', 'set_default_account')) && !empty($toselect) && is_array($toselect)) {
 	$objecttmpforaccesscheck = new $objectclass($db);
 	$refusedids = getObjectIdsRefusedToUser($user, $objecttmpforaccesscheck, $toselect);
 	if (!empty($refusedids)) {
@@ -197,6 +201,7 @@ if (!$error && $massaction == 'confirm_presend') {
 				$listofobjectid[$toselectid] = $toselectid;
 
 				// Set $tmpobjectid that is ID of parent object (thirdparty or user in most cases)
+				// fk_soc and socid are declared in child classes: @phan-suppress-next-line PhanUndeclaredProperty
 				$tmpobjectid = ($objecttmp->fk_soc ? $objecttmp->fk_soc : $objecttmp->socid);
 				if ($objecttmp->element == 'societe') {
 					'@phan-var-force Societe $objecttmp';
@@ -306,7 +311,7 @@ if (!$error && $massaction == 'confirm_presend') {
 				foreach ($receiver as $key => $val) {
 					// Recipient was provided from combo list
 					if ($val == 'thirdparty') { // Id of third party or user
-						$tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
+						$tmparray[] = dol_string_nospecial((string) $thirdparty->name, ' ', array(",")).' <'.$thirdparty->email.'>';
 					} elseif ($val && method_exists($thirdparty, 'contact_get_property')) {		// Id of contact
 						$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
 						//$sendtoid[] = $val;
@@ -332,7 +337,7 @@ if (!$error && $massaction == 'confirm_presend') {
 				foreach ($receivercc as $key => $val) {
 					// Recipient was provided from combo list
 					if ($val == 'thirdparty') { // Id of third party
-						$tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
+						$tmparray[] = dol_string_nospecial((string) $thirdparty->name, ' ', array(",")).' <'.$thirdparty->email.'>';
 					} elseif ($val) {	// Id du contact
 						$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
 						//$sendtoid[] = $val;  TODO Add also id of contact in CC ?
@@ -373,6 +378,17 @@ if (!$error && $massaction == 'confirm_presend') {
 
 				// Test recipient
 				if (empty($sendto)) { 	// For the case, no recipient were set (multi thirdparties send)
+					// Hook to allow an external module to define the recipient of an object (for example a thirdparty in charge instead of the thirdparty of the object)
+					$parameters = array('objectid' => $objectid, 'thirdpartyid' => $thirdpartyid, 'listofobjectcontacts' => $listofobjectcontacts);
+					$reshook = $hookmanager->executeHooks('getMassActionRecipient', $parameters, $objectobj, $action); // Note that $action and $objectobj may have been modified by some hooks
+					if ($reshook < 0) {
+						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+					} elseif ($reshook > 0 && !empty($hookmanager->resArray['sendto'])) {
+						$sendto = $hookmanager->resArray['sendto'];
+						$contactidtosend = (empty($hookmanager->resArray['sendtoid']) ? array() : (array) $hookmanager->resArray['sendtoid']);
+					}
+				}
+				if (empty($sendto)) {
 					if ($objectobj->element == 'societe') {
 						$sendto = $objectobj->email;
 					} elseif ($objectobj->element == 'expensereport') {
@@ -816,7 +832,7 @@ if (!$error && $massaction == 'confirm_presend') {
 }
 
 
-if (!$error && $massaction == 'cancelorders') {
+if (!$error && $massaction == 'cancelorders' && !empty($permissiontocancel)) {
 	$db->begin();
 
 	$nbok = 0;
@@ -826,6 +842,12 @@ if (!$error && $massaction == 'cancelorders') {
 		$cmd = new Commande($db);
 		if ($cmd->fetch($id_order) <= 0) {
 			continue;
+		}
+		// Check the user can access this order (external users, sales representatives restrictions)
+		if (!checkUserAccessToObject($user, array('commande'), $cmd, 'commande', '', 'fk_soc', 'rowid')) {
+			setEventMessages($langs->trans("ErrorForbidden"), null, 'errors');
+			$error++;
+			break;
 		}
 
 		if ($cmd->status != Commande::STATUS_VALIDATED) {
@@ -1527,6 +1549,7 @@ if (!$error && ($action == 'setsupervisor' && $confirm == 'yes') && $permissiont
 }
 
 if (!$error && ($action == 'affectuser' && $confirm == 'yes') && $permissiontoadd) {
+	'@phan-var-force Project $object';
 	$nbok = 0;
 	$db->begin();
 
@@ -1836,51 +1859,10 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 				}
 
 				if (!$error) {
-					// To
-					$destinataire = new User($db);
-					$destinataire->fetch($objecttmp->fk_user);
-					$emailTo = $destinataire->email;
-
-					if (!$emailTo) {
-						dol_syslog("User that request leave has no email, so we redirect directly to finished page without sending email");
-					} else {
-						// From
-						$expediteur = new User($db);
-						$expediteur->fetch($objecttmp->fk_validator);
-						//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
-						$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
-
-						// Subject
-						$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
-						if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-							$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
-						}
-
-						$subject = $societeName." - ".$langs->transnoentitiesnoconv("HolidaysValidated");
-
-						// Content
-						$message = $langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",\n";
-						$message .= "\n";
-
-						$message .= $langs->transnoentities("HolidaysValidatedBody", dol_print_date($objecttmp->date_debut, 'day'), dol_print_date($objecttmp->date_fin, 'day'))."\n";
-
-						$message .= "- ".$langs->transnoentitiesnoconv("ValidatedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
-
-						$message .= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/card.php?id=".$objecttmp->id."\n\n";
-						$message .= "\n";
-
-						$trackid = 'leav'.$objecttmp->id;
-
-						require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-						$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', '', 0, 0, '', '', $trackid);
-
-						// Sending email
-						$result = $mail->sendfile();
-
-						if (!$result) {
-							setEventMessages($mail->error, $mail->errors, 'warnings'); // Show error, but do no make rollback, so $error is not set to 1
-							$action = '';
-						}
+					$result = $objecttmp->sendApprovalEmail();
+					if ($result < 0) {
+						setEventMessages($objecttmp->error, $objecttmp->errors, 'warnings'); // Show error, but do no make rollback, so $error is not set to 1
+						$action = '';
 					}
 				}
 			} else {
@@ -1906,7 +1888,8 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 	}
 }
 
-if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday' && $confirm == 'yes')) && $permissiontoapprove && is_array($toselect)) {
+// Changing the balance of users requires the same permission than the single user update (holiday/define_holiday.php)
+if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday' && $confirm == 'yes')) && $user->hasRight('holiday', 'define_holiday') && is_array($toselect)) {
 	'@phan-var-force Holiday $holiday';  // Supposing that $holiday is set, it is needed.
 	/** @var Holiday $holiday */
 	$db->begin();

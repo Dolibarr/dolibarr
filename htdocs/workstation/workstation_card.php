@@ -487,13 +487,29 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$deleteUrl = $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken();
 			$buttonId = 'action-delete-no-ajax';
 			if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)) {	// We can use preloaded confirm if not jmobile
-				$deleteUrl = '';
 				$buttonId = 'action-delete';
 			}
 			$params = array();
 			print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $deleteUrl, $buttonId, $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 		}
 		print '</div>'."\n";
+	}
+
+	// Documents
+	if ($action != 'presend' && $action != 'editline') {
+		print '<div class="fichecenter"><div class="fichehalfleft">';
+		print '<a name="builddoc"></a>'; // ancre
+
+		$objref = dol_sanitizeFileName($object->ref);
+		$filedir = $conf->workstation->dir_output.'/'.$objref;
+		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
+		$genallowed = $permissiontoread;
+		$delallowed = $permissiontoadd;
+
+		print $formfile->showdocuments('workstation', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
+
+		print '</div><div class="fichehalfright">';
+		print '</div></div>';
 	}
 }
 

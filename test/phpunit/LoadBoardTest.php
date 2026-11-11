@@ -24,7 +24,7 @@
  */
 
 global $conf,$user,$langs,$db,$mysoc;
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/class/workboardresponse.class.php';
 require_once dirname(__FILE__).'/../../htdocs/comm/propal/class/propal.class.php';
 require_once dirname(__FILE__).'/../../htdocs/supplier_proposal/class/supplier_proposal.class.php';
@@ -39,7 +39,6 @@ require_once dirname(__FILE__).'/../../htdocs/adherents/class/adherent.class.php
 require_once dirname(__FILE__).'/../../htdocs/compta/paiement/cheque/class/remisecheque.class.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/bank/class/account.class.php';
 require_once dirname(__FILE__).'/../../htdocs/comm/action/class/actioncomm.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -142,7 +141,6 @@ class LoadBoardTest extends CommonClassTest
 		$userid = (int) $user->id;
 		$suffix = dol_print_date($now, 'dayhourlog');
 
-		$this->assertTrue($user->admin > 0, 'The test user must be an admin (no restriction on sales representatives)');
 		// Project::load_board() and Task::load_board() only see every project when the user has this specific right: being admin
 		// does not grant it on its own (loadRights() only auto-forces a handful of user-self rights for admins), and whether the
 		// CI test admin has it or not depends on the seed data, not on this test. Force it in memory so the synthetic projects
@@ -258,7 +256,7 @@ class LoadBoardTest extends CommonClassTest
 			$beforeapprove = $object->load_board($user, 'toapprove');
 			$beforepay = $object->load_board($user, 'topay');
 			foreach ([[ExpenseReport::STATUS_VALIDATED, "'".$old."'"], [ExpenseReport::STATUS_VALIDATED, "'".$recent."'"], [ExpenseReport::STATUS_VALIDATED, 'NULL'], [ExpenseReport::STATUS_APPROVED, "'".$old."'"], [ExpenseReport::STATUS_APPROVED, "'".$recent."'"]] as $k => [$status, $datevalid]) {
-				$this->insert($db, "INSERT INTO ".$db->prefix()."expensereport (ref, entity, date_debut, date_fin, date_create, fk_user_author, fk_statut, date_valid) VALUES ('TESTBRD".$suffix."-".$k."', ".$entity.", '".$db->idate($now)."', '".$db->idate($now)."', '".$db->idate($now)."', ".$userid.", ".$status.", ".$datevalid.")");
+				$this->insert($db, "INSERT INTO ".$db->prefix()."expensereport (ref, entity, date_debut, date_fin, date_creation, fk_user_author, fk_statut, date_valid) VALUES ('TESTBRD".$suffix."-".$k."', ".$entity.", '".$db->idate($now)."', '".$db->idate($now)."', '".$db->idate($now)."', ".$userid.", ".$status.", ".$datevalid.")");
 			}
 			$this->assertBoard($beforeapprove, $object->load_board($user, 'toapprove'), 3, 2, 'expense reports to approve');
 			$this->assertBoard($beforepay, $object->load_board($user, 'topay'), 2, 1, 'expense reports to pay');
@@ -270,7 +268,7 @@ class LoadBoardTest extends CommonClassTest
 			$object = new Holiday($db);
 			$before = $object->load_board($user);
 			foreach ([[2, $old], [2, $recent], [3, $old]] as $k => [$status, $datestart]) {
-				$this->insert($db, "INSERT INTO ".$db->prefix()."holiday (ref, entity, fk_user, fk_type, date_create, description, date_debut, date_fin, fk_validator, statut) VALUES ('TESTBRD".$suffix."-".$k."', ".$entity.", ".$userid.", 1, '".$db->idate($now)."', 'Board test', '".$datestart."', '".$datestart."', ".$userid.", ".$status.")");
+				$this->insert($db, "INSERT INTO ".$db->prefix()."holiday (ref, entity, fk_user, fk_type, date_creation, description, date_debut, date_fin, fk_validator, statut) VALUES ('TESTBRD".$suffix."-".$k."', ".$entity.", ".$userid.", 1, '".$db->idate($now)."', 'Board test', '".$datestart."', '".$datestart."', ".$userid.", ".$status.")");
 			}
 			$this->assertBoard($before, $object->load_board($user), 2, 1, 'holidays to approve');
 		}

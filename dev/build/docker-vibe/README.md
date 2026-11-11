@@ -1,6 +1,6 @@
 # How to run an IA Agent into a container.
 
-## Prepare api key
+## Prepare AI api key
 With the payment mode of Mistral, the credential is stored into the OS system and not into the .vibe/.env directory so is not available into another docker container.
 So you must first get it from your OS system keystore with:
 ````
@@ -16,14 +16,20 @@ and/or for Eurouter
 EUROUTER_API_KEY='<your_api_key>'
 ````
 
-
-So now when running the container, the .vibe/.env file has your paid key that will be used to set the environment variable MISTRAL_API_KEY.
+So now when running the container, the .vibe/.env file has your paid key that will be used to set the local variable MISTRAL_API_KEY.
 
 ## You can add an alias into your /etc/bash.bashrc or ~/.bashrc the line
 ````
 alias vibes='dev/build/docker-vibe/vibes.sh'
 ````
  
+## Prepare GitHub token key
+
+````
+gh auth login -h github.com -p https -w 
+(or for a branch maintener: gh auth login -h github.com -p https -w -s workflow)
+gh auth status
+````
 
 ## Run vibe into a container
 ````
@@ -60,7 +66,7 @@ GIT_DIR=`basename $PWD` sudo docker run --rm -it -e HOST_UID="$(id -u)" -e HOST_
 Two features of Vibe need to reach the desktop of the host, and a container cannot do it alone. The image and `vibes.sh` provide what is needed:
 
 - **Copy to clipboard**: Vibe copies first through `pyperclip` (installed into the image), that uses `xclip` (installed into the image) to talk to the X server of the host, reached through the socket `/tmp/.X11-unix` mounted by `vibes.sh`. When this native copy works, Vibe verifies it by reading the clipboard back (the message "Selection copied to clipboard" without a hint is then displayed). `wl-clipboard` is also installed for the Wayland native equivalent (`wl-copy`, `wl-paste`).
-- **Open links**: the links of the chat are opened by the program declared in the `BROWSER` environment variable of the image: `open-on-host`. It forwards the URL to the xdg-desktop-portal of the host session over the D-Bus session bus (socket into `XDG_RUNTIME_DIR`, mounted by `vibes.sh`), and the host opens the URL in its default browser. The container itself contains no browser.
+- **Open links**: two paths are involved, because the parts of Vibe written in Python and its Rust TUI (`vibe-rs`) do not open the links the same way. The Python parts call the program declared in the `BROWSER` environment variable of the image: `open-on-host`. The Rust TUI ignores `BROWSER` and runs `xdg-open` instead, so the image installs the shim `xdg-open-shim` as `/usr/local/bin/xdg-open`, that forwards to `open-on-host`. `open-on-host` forwards the URL to the xdg-desktop-portal of the host session over the D-Bus session bus (socket into `XDG_RUNTIME_DIR`, mounted by `vibes.sh`), and the host opens the URL in its default browser. The container itself contains no browser. Without the shim, a click on a link of the chat does nothing: `xdg-open` does not exist inside the container and the TUI swallows the error.
 
 It works out of the box when the container is started with `vibes.sh` from a terminal of the graphical session of the host (GNOME on Wayland or X11): `vibes.sh` passes the environment (`DISPLAY`, `WAYLAND_DISPLAY`, `XDG_SESSION_TYPE`, `XDG_RUNTIME_DIR`, `XAUTHORITY`) and mounts the host sockets (`/tmp/.X11-unix`, `XDG_RUNTIME_DIR`). Outside a graphical session (SSH, console), nothing is added and Vibe falls back to its own mechanisms: the OSC 52 escape sequence for the clipboard, that the terminals based on VTE (GNOME Terminal, Tilix) do not support, and the selection of the terminal itself (hold Shift while selecting, paste with the mouse wheel).
 
@@ -70,6 +76,20 @@ If the clipboard still does not work:
 - Check that `DISPLAY` is set on the host (`echo $DISPLAY`). On a Wayland session, GNOME runs XWayland, so `DISPLAY` is normally defined and `xclip` works through it.
 - If the copy fails with an authorization error, allow your own user to connect to the X server from the container with `xhost +si:localuser:$(id -un)` on the host (the connections from the container come with your UID).
 - The links can also be opened with Shift+clic: it is then the terminal itself that opens them (OSC 8 hyperlinks), which bypasses the container.
+
+## Voice features (microphone capture and speech playback) work in the container
+
+The voice features of Vibe (see `/voice`) capture the microphone and play the synthesized speech through the Python library `sounddevice`, that needs the PortAudio library (`libportaudio2`, installed into the image) and an audio server to talk to. The container has no sound card, so `vibes.sh` passes it the audio server of the host session, like it does for the graphical session:
+- the socket `XDG_RUNTIME_DIR/pulse/native` of the host is already reachable through the mount of `XDG_RUNTIME_DIR` (see the clipboard section above),
+- the environment variable `PULSE_SERVER` points `sounddevice`/PortAudio at that socket,
+- the PulseAudio cookie of the host (`~/.config/pulse`) is mounted read-only at the same path, so the server accepts the connections coming from the container.
+
+It works out of the box when the container is started with `vibes.sh` from a terminal of the graphical session of the host, with PipeWire (the default of Ubuntu, that provides the same socket as PulseAudio) or PulseAudio. Outside a session with an audio server, nothing is added and Vibe disables its voice features: the warning `sounddevice unavailable, voice disabled` then appears into `~/.vibe/logs/vibe.log` after the container start.
+
+If the voice is still disabled into the container with that warning:
+- Check that the socket exists on the host: `ls $XDG_RUNTIME_DIR/pulse/native`.
+- Check that `PULSE_SERVER` is set into the container: `echo $PULSE_SERVER`.
+- The audio server of the host may have to be authorized to record from the microphone (the recording indicator of GNOME shows it).
 
 ## pre-commit
 The tool `pre-commit` is installed into the image (see https://pre-commit.com).
@@ -82,6 +102,18 @@ pre-commit install
 The hooks environments are preloaded into the image when it is built (they are the downloads you see at the first use of pre-commit elsewhere).
 They are stored into the directory `/var/cache/pre-commit`, declared with `PRE_COMMIT_HOME` in the Dockerfile, and are already present at the first run into the container.
 If the `.pre-commit-config.yaml` of the repository changes after the image was built (new revision of a hook), only the changed hooks are downloaded at the first run.
+
+## Transifex CLI
+
+The Transifex client `tx` is installed into the image (see https://github.com/transifex/cli).
+The project configuration is the file `.tx/config` at the repository root.
+When the file `~/.transifexrc` exists on the host, `vibes.sh` mounts it read-only at the same path into the container, so `tx` uses the API token of the host.
+Otherwise, provide the token with the environment variable `TX_TOKEN` (for example `export TX_TOKEN=...` into the container).
+
+## Apache logs of the host
+
+When the directory `/var/log/apache2` exists on the host, `vibes.sh` mounts it read-only at the same path into the container, so the agent can read the Apache logs (for example `tail /var/log/apache2/error.log`).
+The directory is owned by the group `adm` on Debian/Ubuntu and is not readable by others: the user of the container is added to the group with the same GID by `docker-entrypoint.sh`.
 
 ## No email can be delivered
 
@@ -106,7 +138,7 @@ sudo dev/build/docker-vibe/smtpblock.sh --remove   Remove the block
 The script rejects the connections to the ports 25, 465 and 587 for the whole VM (IPv4 and IPv6), inserted at the top of the OUTPUT chain so they take precedence over any existing ACCEPT rule. The connections fail immediately (REJECT) instead of hanging.
 
 Requirements and notes:
-- The container must be run with the capability `--cap-add=NET_ADMIN` (done by `vibes.sh`), otherwise the block can not be installed and the container refuses to start. To start a container that is allowed to send emails (for example to test the SMTP features of Dolibarr), run it with `-e VIBE_ALLOW_SMTP=1`.
+- The container must be run with the capability `--cap-add=NET_ADMIN` (done by `vibes.sh`), otherwise the block can not be installed and the container refuses to start. To start a container that is allowed to send emails (for example to test the SMTP features of Dolibarr), run it with `DOCKER_ALLOW_SMTP=1 vibes` (the variable is passed to the container by `vibes.sh`).
 - The block stays on the VM when the container stops (it is reinstalled at the next start anyway). Use `--remove` to remove it.
 - The rules are not persistent: they are lost at the next reboot of the VM (and reinstalled at the next container start). To have them permanent, save them with `iptables-persistent` (`sudo apt-get install iptables-persistent` then `sudo netfilter-persistent save`).
 - The block applies to all the processes of the VM, not only to the containers: an MTA running on the VM can no longer deliver its queue either, and the local submission to a MTA of the VM through the port 25 is also blocked (this is one of the paths to close).

@@ -26,7 +26,7 @@
  */
 
 global $conf,$user,$langs,$db,$mysoc;
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 // Define HTTP_HOST before loading dav.lib.php to avoid warning
 if (!isset($_SERVER['HTTP_HOST'])) {
@@ -35,7 +35,6 @@ if (!isset($_SERVER['HTTP_HOST'])) {
 
 require_once dirname(__FILE__).'/../../htdocs/dav/dav.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/dav/dav.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 // Ensure constants are defined for tests
 if (!defined('CDAV_URI_KEY')) {

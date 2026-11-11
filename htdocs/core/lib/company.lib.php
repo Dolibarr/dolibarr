@@ -208,7 +208,7 @@ function societe_prepare_head(Societe $object, $subtabs = '')
 		&& !getDolGlobalString('THIRDPARTIES_DISABLE_RELATED_OBJECT_TAB')
 	) {
 		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/consumption.php', ['socid' => $object->id]);
-		$head[$h][1] = $langs->trans("Referers");
+		$head[$h][1] = $langs->trans("ReferringItems");
 		$head[$h][2] = 'consumption';
 		$h++;
 	}
@@ -476,7 +476,7 @@ function societe_prepare_head(Societe $object, $subtabs = '')
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/note.php', ['id' => $object->id]);
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/core/note.php', ['element' => 'societe', 'id' => $object->id]);
 		$head[$h][1] = $langs->trans("Notes");
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbNote . '</span>';
@@ -1451,6 +1451,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 	$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+	$showuserlogin = (!empty($showuserlogin) || !empty($arrayfields['u.user']['checked'])) ? 1 : 0;
 	$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -2393,7 +2394,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		}
 
 		// ID
-		$out .= '<td class="liste_titre"><input type="text" class="width50" name="search_rowid" value="' . (isset($filters['search_rowid']) ? $filters['search_rowid'] : '') . '"></td>';
+		$out .= '<td class="liste_titre"><input class="searchstring width50" type="text" name="search_rowid" value="' . (isset($filters['search_rowid']) ? dolPrintLabelForAttribute($filters['search_rowid']) : '') . '"></td>';
 		// Date
 		$out .= '<td class="liste_titre center">';
 		$out .= $form->selectDateToDate($tms_start, $tms_end, 'dateevent', 1);
@@ -2781,7 +2782,7 @@ function show_subsidiaries($conf, $langs, $db, $object)
  *                                          ids. 0 / '' / empty array => only test that the thirdparty is assigned to
  *                                          at least one sales representative.
  * @param	int<0,1>			$not		1 to return "NOT EXISTS(...)" instead of "EXISTS(...)"
- * @param	int<0,1>			$allownull	Allow null value for the sales representative (i.e. contract is not assigned to any third party)
+ * @param	int<0,1>			$allownull	1 to also accept a null $socidfield (i.e. the record is not linked to any thirdparty)
  * @return	string							SQL "EXISTS(...)" / "NOT EXISTS(...)" fragment
  */
 function getSalesRepresentativeSqlFilter($socidfield, $userids = 0, $not = 0, $allownull = 0)
@@ -2797,7 +2798,7 @@ function getSalesRepresentativeSqlFilter($socidfield, $userids = 0, $not = 0, $a
 
 	$sql = "";
 	if ($allownull) {
-		$sql .= "(t.fk_soc IS NULL OR ";
+		$sql .= "(".$db->sanitize($socidfield)." IS NULL OR ";
 	}
 	$sql .= ($not ? 'NOT EXISTS' : 'EXISTS');
 	// $socidfield is a column expression of the outer query (e.g. 's.rowid'); it is compared to sc.fk_soc
@@ -2805,6 +2806,7 @@ function getSalesRepresentativeSqlFilter($socidfield, $userids = 0, $not = 0, $a
 	if (!empty($userids)) {
 		$sql .= ' AND sc.fk_user IN ('.$db->sanitize(implode(',', $userids)).')';
 	}
+	$sql .= ')';
 	if ($allownull) {
 		$sql .= ')';
 	}

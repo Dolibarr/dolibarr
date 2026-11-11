@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=банк
 MenuBankCash=Банки | Готівка
+BankArea=Banks and cash area
+LatestBankTransactionsModified=Latest %s modified bank transactions
 MenuVariousPayment=Ручні записи в журналі
 MenuNewVariousPayment=Новий ручний запис у журналі
 BankName=назва банку
@@ -47,6 +49,9 @@ LastAccountStatements=Останні виписки з рахунку
 IOMonthlyReporting=Щомісячна звітність
 BankAccountDomiciliation=адреса банку
 BankAccountCountry=Країна рахунку
+InstitutionNumber=Institution number
+TransitNumber=Branch (transit) number
+ABARoutingNumber=ABA routing number
 BankAccountOwner=Ім'я власника рахунку
 BankAccountOwnerAddress=Адреса власника рахунку
 BankAccountOwnerZip=Поштовий індекс власника рахунку
@@ -206,3 +211,7 @@ PendingDirectDebitToComplete=Прямі дебети до закриття
 PendingCreditTransferToCompleteShort=Кредитні перекази до закриття
 PendingCreditTransferToComplete=Кредитні перекази до закриття
 Requests=Запити
+PaymentReferenceOfAccount=Payment reference
+PaymentReferenceOfAccountHelp=Reference to give when paying to this account, the same for all the invoices: the RF (ISO 11649) or national reference a supplier gave you for your contract, meter or customer account. An RF reference is checked.
+ErrorPaymentReferenceOfAccountTooLong=The payment reference is too long (35 characters at most)
+ErrorPaymentReferenceOfAccountNotValid=The RF payment reference is not valid: check digits do not match

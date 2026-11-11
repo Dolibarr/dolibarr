@@ -46,10 +46,9 @@ const PREFIXES = [
 /**
  * Expand tabs in string to spaces.
  *
- * @param $str      String in which to expand the tabs to spaces
- * @param $tabWidth Width to use for a tabstop
- *
- * @return string   Expanded string value.
+ * @param string	$str		String in which to expand the tabs to spaces
+ * @param int		$tabWidth	Width to use for a tabstop
+ * @return string	Expanded string value.
  */
 function expandTabs($str, $tabWidth)
 {
@@ -71,11 +70,11 @@ function expandTabs($str, $tabWidth)
 /**
  * Update or add copyright notice in a file
  *
- * @param $filename string Path to the file to modify
- * @param $fileType string Filetype identification for the file
- * @param $name     string Name of developer to add in header
- * @param $email    string Email for the developer
- * @return          bool   True if license was updated
+ * @param string	$filename	Path to the file to modify
+ * @param string	$fileType	Filetype identification for the file
+ * @param string	$name		Name of developer to add in header
+ * @param string	$email		Email for the developer
+ * @return bool		True if license was updated
  */
 function updateCopyrightNotice($filename, $fileType, $name, $email)
 {
@@ -184,6 +183,11 @@ if ($argc < 2) {
 	exit(1);
 }
 
+// Retrieve Git user information (once for all files)
+$gitUserInfo = getGitUserInfo();
+$name = $gitUserInfo['name'];
+$email = $gitUserInfo['email'];
+
 // Process each filename provided
 $changesDetected = false;
 for ($i = 1; $i < $argc; $i++) {
@@ -192,14 +196,9 @@ for ($i = 1; $i < $argc; $i++) {
 	// Determine file type based on extension
 	$fileType = pathinfo($filename, PATHINFO_EXTENSION);
 
-	// Retrieve Git user information
-	$gitUserInfo = getGitUserInfo();
-	$name = $gitUserInfo['name'];
-	$email = $gitUserInfo['email'];
-
 	// Update or add copyright notice based on file type
 	$changeDetected = updateCopyrightNotice($filename, $fileType, $name, $email);
-	$changesDetected |= $changeDetected;
+	$changesDetected = $changesDetected || $changeDetected;
 	if ($changeDetected) {
 		echo "Copyright notice updated in '$filename'" . PHP_EOL;
 	}

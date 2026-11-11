@@ -31,9 +31,9 @@ UseDiscountOnTotal=Ara toplamla
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Genel bir indirimin, kâr oranı hesaplaması için bir ürün, hizmet ya da yalnızca ara toplam olarak mı değerlendirildiğini tanımlayın.
 MARGIN_TYPE=Kâr oranı hesaplaması için varsayılan olarak önerilen Satınalma/Maliyet fiyatı
 MargeType1=En iyi satıcı fiyatındaki kâr oranı
-MargeType2=Margin on Weighted Average Cost (WAC)
+MargeType2=Ağırlıklı Ortalama Maliyet (WAC) Üzerinden Kar Marjı
 MargeType3=Maliyet fiyatındaki kâr oranı
-MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
+MarginTypeDesc=*En iyi alış fiyatındaki kar marjı = Satış fiyatı - Ürün kartında belirtilen en iyi tedarikçi fiyatı<br>* Ağırlıklı Ortalama Maliyet (AMA) Üzerinden Kar Marjı = Satış fiyatı - Ürün Ağırlıklı Ortalama Fiyatı (AMA) veya AMA henüz tanımlanmamışsa en iyi tedarikçi fiyatı<br>*Maliyet fiyatı üzerinden kar marjı = Satış fiyatı - Ürün kartında belirtilen maliyet fiyatı veya maliyet fiyatı belirtilmemişse ağırlıklı ortalama maliyet (WAC) veya WAC henüz belirtilmemişse en iyi tedarikçi fiyatı.
 CostPrice=Maliyet fiyatı
 UnitCharges=Birim masrafları
 Charges=Masraflar
@@ -43,4 +43,7 @@ rateMustBeNumeric=Kar oran sayısal bir değer olmalı
 markRateShouldBeLesserThan100=Yayınlanmış kar oranı 100 den daha düşük olmalı
 ShowMarginInfos=Kâr oranı bilgilerini göster
 CheckMargins=Kâr oranı ayrıntıları
-MarginPerSaleRepresentativeWarning=Kullanıcı başına kâr oranı raporu, her bir satış temsilcisinin kârını hesaplamak için üçüncü partiler ve satış temsilcileri arasındaki bağlantıyı kullanır. Bazı üçüncü partilerin özel satış temsilcisi bulunmayabileceğinden ve bazı üçüncü partiler birkaç özel satış temsilcisine bağlı olabileceğinden, bazı tutarlar bu rapora dahil edilmeyebilir (satış temsilcisi yoksa) ve bazıları farklı satırlarda görünebilir (her satış temsilcisi için).
+MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any dedicated sale representative and some third parties may be linked to several, some amounts may not be included in this report (if there is no sale representative) and some may appear on different lines (for each sale representative).
+MarginUpdateLinkedBuyingPrice=Suggest to propagate the cost price modified on a line to all the lines of the linked proposals, orders and invoices that has the same product (users will decide yes or no at eachmodification)
+UpdateLinkedBuyingPrice=Update the cost price on all lines (with the same product) of the linked documents
+UpdateLinkedBuyingPriceQuestion=The cost price of this line has changed. Apply it to the lines of the linked documents that has the same product ?
