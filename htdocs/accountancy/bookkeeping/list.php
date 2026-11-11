@@ -1357,6 +1357,10 @@ while ($i < min($num, $limit)) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$objectstatic = new AccountLine($db);
 			$objectstatic->fetch($line->fk_doc);
+		} elseif ($line->doc_type === 'stock_mouvement') {
+			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+			$objectstatic = new MouvementStock($db);
+			$objectstatic->fetch($line->fk_doc);
 		} else {
 			// Other type
 		}
@@ -1374,6 +1378,9 @@ while ($i < min($num, $limit)) {
 			$bank_ref = strstr($line->doc_ref, '-');
 			$labeltoshow .= " " . $bank_ref;
 			$labeltoshowalt .= " " . $bank_ref;
+		} elseif ($line->doc_type === 'stock_mouvement' && is_object($objectstatic) && $objectstatic->id > 0) {
+			$labeltoshow .= $objectstatic->getNomUrl(1, 'movements').' '.$line->doc_ref;
+			$labeltoshowalt .= $line->doc_ref;
 		} else {
 			$labeltoshow .= $line->doc_ref;
 			$labeltoshowalt .= $line->doc_ref;

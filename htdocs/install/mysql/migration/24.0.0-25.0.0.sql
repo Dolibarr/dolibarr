@@ -558,3 +558,9 @@ ALTER TABLE llx_societe_rib ADD COLUMN payment_reference varchar(35) AFTER date_
 -- New page/container types for web sites, they can't be disabled from dictionary (can be included into other pages but not accessed directly)
 INSERT INTO llx_c_type_container (code, label, active, module, position, typecontainer, entity) VALUES ('header', 'PageHeader', 1, 'system', 32, 'container', __ENTITY__);
 INSERT INTO llx_c_type_container (code, label, active, module, position, typecontainer, entity) VALUES ('footer', 'PageFooter', 1, 'system', 33, 'container', __ENTITY__);
+
+-- Product stock and COGS accounting codes for perpetual inventory
+ALTER TABLE llx_product ADD COLUMN accountancy_code_stock varchar(32) AFTER accountancy_code_buy_export;
+ALTER TABLE llx_product ADD COLUMN accountancy_code_cogs varchar(32) AFTER accountancy_code_stock;
+ALTER TABLE llx_product_perentity ADD COLUMN accountancy_code_stock varchar(32) AFTER accountancy_code_buy_export;
+ALTER TABLE llx_product_perentity ADD COLUMN accountancy_code_cogs varchar(32) AFTER accountancy_code_stock;

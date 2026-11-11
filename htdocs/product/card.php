@@ -539,6 +539,8 @@ if (empty($reshook)) {
 			$accountancy_code_buy = GETPOST('accountancy_code_buy', 'alpha');
 			$accountancy_code_buy_intra = GETPOST('accountancy_code_buy_intra', 'alpha');
 			$accountancy_code_buy_export = GETPOST('accountancy_code_buy_export', 'alpha');
+			$accountancy_code_stock = GETPOST('accountancy_code_stock', 'alpha');
+			$accountancy_code_cogs = GETPOST('accountancy_code_cogs', 'alpha');
 
 			if (empty($accountancy_code_sell) || $accountancy_code_sell == '-1') {
 				$object->accountancy_code_sell = '';
@@ -569,6 +571,16 @@ if (empty($reshook)) {
 				$object->accountancy_code_buy_export = '';
 			} else {
 				$object->accountancy_code_buy_export = $accountancy_code_buy_export;
+			}
+			if (empty($accountancy_code_stock) || $accountancy_code_stock == '-1') {
+				$object->accountancy_code_stock = '';
+			} else {
+				$object->accountancy_code_stock = $accountancy_code_stock;
+			}
+			if (empty($accountancy_code_cogs) || $accountancy_code_cogs == '-1') {
+				$object->accountancy_code_cogs = '';
+			} else {
+				$object->accountancy_code_cogs = $accountancy_code_cogs;
 			}
 
 			// MultiPrix
@@ -757,6 +769,8 @@ if (empty($reshook)) {
 				$accountancy_code_buy = GETPOST('accountancy_code_buy', 'alpha');
 				$accountancy_code_buy_intra = GETPOST('accountancy_code_buy_intra', 'alpha');
 				$accountancy_code_buy_export = GETPOST('accountancy_code_buy_export', 'alpha');
+				$accountancy_code_stock = GETPOST('accountancy_code_stock', 'alpha');
+				$accountancy_code_cogs = GETPOST('accountancy_code_cogs', 'alpha');
 				$checkmandatory = GETPOST('mandatoryperiod', 'alpha');
 				if (empty($accountancy_code_sell) || $accountancy_code_sell == '-1') {
 					$object->accountancy_code_sell = '';
@@ -787,6 +801,16 @@ if (empty($reshook)) {
 					$object->accountancy_code_buy_export = '';
 				} else {
 					$object->accountancy_code_buy_export = $accountancy_code_buy_export;
+				}
+				if (empty($accountancy_code_stock) || $accountancy_code_stock == '-1') {
+					$object->accountancy_code_stock = '';
+				} else {
+					$object->accountancy_code_stock = $accountancy_code_stock;
+				}
+				if (empty($accountancy_code_cogs) || $accountancy_code_cogs == '-1') {
+					$object->accountancy_code_cogs = '';
+				} else {
+					$object->accountancy_code_cogs = $accountancy_code_cogs;
 				}
 				if ($object->isService()) {
 					$object->mandatory_period =  (!empty($checkmandatory)) ? 1 : 0 ;
@@ -1855,6 +1879,21 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					}
 					print $formaccounting->select_account($accountancy_code_buy_export, 'accountancy_code_buy_export', 1, array(), 1, 1, 'minwidth150 maxwidth300', '1');
 					print '</td></tr>';
+
+					// Accountancy_code_cogs
+					if ($type == 0 && isModEnabled('stock')) {
+						print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyStockCode").'</td>';
+						print '<td>';
+						$accountancy_code_stock = (GETPOST('accountancy_code_stock', 'alpha') ? GETPOST('accountancy_code_stock', 'alpha') : getDolGlobalString("ACCOUNTING_PRODUCT_STOCK_ACCOUNT"));
+						print $formaccounting->select_account($accountancy_code_stock, 'accountancy_code_stock', 1, array(), 1, 1, 'minwidth150 maxwidth300', '1');
+						print '</td></tr>';
+
+						print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyCogsCode").'</td>';
+						print '<td>';
+						$accountancy_code_cogs = (GETPOST('accountancy_code_cogs', 'alpha') ? GETPOST('accountancy_code_cogs', 'alpha') : getDolGlobalString("ACCOUNTING_PRODUCT_COGS_ACCOUNT"));
+						print $formaccounting->select_account($accountancy_code_cogs, 'accountancy_code_cogs', 1, array(), 1, 1, 'minwidth150 maxwidth300', '1');
+						print '</td></tr>';
+					}
 				} else {// For external software
 					if (!empty($accountancy_code_sell)) {
 						$object->accountancy_code_sell = $accountancy_code_sell;
@@ -2434,6 +2473,19 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						print '<td>';
 						print $formaccounting->select_account((GETPOSTISSET('accountancy_code_buy_export') ? GETPOST('accountancy_code_buy_export') : $object->accountancy_code_buy_export), 'accountancy_code_buy_export', 1, array(), 1, 1, 'minwidth150 maxwidth300');
 						print '</td></tr>';
+
+						// Accountancy_code_cogs
+						if ($object->isProduct() && isModEnabled('stock')) {
+							print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyStockCode").'</td>';
+							print '<td>';
+							print $formaccounting->select_account((GETPOSTISSET('accountancy_code_stock') ? GETPOST('accountancy_code_stock') : $object->accountancy_code_stock), 'accountancy_code_stock', 1, array(), 1, 1, 'minwidth150 maxwidth300');
+							print '</td></tr>';
+
+							print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyCogsCode").'</td>';
+							print '<td>';
+							print $formaccounting->select_account((GETPOSTISSET('accountancy_code_cogs') ? GETPOST('accountancy_code_cogs') : $object->accountancy_code_cogs), 'accountancy_code_cogs', 1, array(), 1, 1, 'minwidth150 maxwidth300');
+							print '</td></tr>';
+						}
 					} else {
 						// For external software
 						// Accountancy_code_sell
@@ -2777,6 +2829,39 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						print dolPrintHTML($object->accountancy_code_buy_export);
 					}
 					print '</td></tr>';
+
+					// Accountancy Stock & COGS code
+					if ($object->isProduct() && isModEnabled('stock')) {
+						print '<tr class="tr_collapseaccounting'.($collapse ? ' hidden' : '').'"><td class="nowrap">';
+						print $langs->trans("ProductAccountancyStockCode");
+						print '</td><td>';
+						if (isModEnabled('accounting')) {
+							if (!empty($object->accountancy_code_stock)) {
+								$accountingaccountstock = new AccountingAccount($db);
+								$accountingaccountstock->fetch(0, $object->accountancy_code_stock, 1);
+
+								print $accountingaccountstock->getNomUrl(0, 1, 1, '', 1);
+							}
+						} else {
+							print dolPrintHTML($object->accountancy_code_stock);
+						}
+						print '</td></tr>';
+
+						print '<tr class="tr_collapseaccounting'.($collapse ? ' hidden' : '').'"><td class="nowrap">';
+						print $langs->trans("ProductAccountancyCogsCode");
+						print '</td><td>';
+						if (isModEnabled('accounting')) {
+							if (!empty($object->accountancy_code_cogs)) {
+								$accountingaccount7 = new AccountingAccount($db);
+								$accountingaccount7->fetch(0, $object->accountancy_code_cogs, 1);
+
+								print $accountingaccount7->getNomUrl(0, 1, 1, '', 1);
+							}
+						} else {
+							print dolPrintHTML($object->accountancy_code_cogs);
+						}
+						print '</td></tr>';
+					}
 				}
 
 				// Description

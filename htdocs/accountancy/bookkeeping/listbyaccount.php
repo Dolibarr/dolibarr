@@ -1540,6 +1540,10 @@ while ($i < min($num, $limit)) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$objectstatic = new AccountLine($db);
 			$objectstatic->fetch($line->fk_doc);
+		} elseif ($line->doc_type == 'stock_mouvement') {
+			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+			$objectstatic = new MouvementStock($db);
+			$objectstatic->fetch($line->fk_doc);
 		} else {
 			// Other type
 		}
@@ -1554,6 +1558,8 @@ while ($i < min($num, $limit)) {
 			print $objectstatic->getNomUrl(1);
 			$bank_ref = strstr($line->doc_ref, '-');
 			print ' <span class="classfortooltip" title="'.dol_escape_htmltag($line->doc_ref).'">'.dol_escape_htmltag($bank_ref).'</span>';
+		} elseif ($line->doc_type == 'stock_mouvement' && is_object($objectstatic) && $objectstatic->id > 0) {
+			print $objectstatic->getNomUrl(1, 'movements').' '.dol_escape_htmltag($line->doc_ref);
 		} else {
 			print $line->doc_ref;
 		}
