@@ -293,7 +293,7 @@ include DOL_DOCUMENT_ROOT . '/core/actions_sendmails.inc.php';
  *	View
  */
 
-$title = $langs->trans('Delivery');
+$title = $langs->trans('DeliveryOrder');
 
 llxHeader('', $title, 'Livraison', '', 0, 0, '', '', '', 'mod-delivery page-card');
 
@@ -384,7 +384,7 @@ if ($action == 'create') {
 				} else {
 					if (!empty($objectsrc->fk_project)) {
 						$proj = new Project($db);
-						$proj->fetch($objectsrc->fk_project);
+						$proj->fetch((int) $objectsrc->fk_project);
 						$morehtmlref .= $proj->getNomUrl(1);
 						if ($proj->title) {
 							$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';

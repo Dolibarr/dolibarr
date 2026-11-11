@@ -114,7 +114,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		if ($action == 'COMPANY_CREATE' && $object instanceof Societe) {
 			'@phan-var-force Societe $object';
 			// Load translation files required by the page
-			$langs->loadLangs(array("agenda", "other", "companies"));
+			$langs->loadLangs(array("agenda", "other", "companies", "users"));
 
 			if (empty($object->actionmsg2)) {
 				if (empty($object->context['actionmsg2'])) {
@@ -132,7 +132,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		} elseif ($action == 'COMPANY_MODIFY' && $object instanceof Societe) {
 			'@phan-var-force Societe $object';
 			// Load translation files required by the page
-			$langs->loadLangs(array("agenda", "other", "companies"));
+			$langs->loadLangs(array("agenda", "other", "companies", "users"));
 
 			if (empty($object->actionmsg2)) {
 				if (empty($object->context['actionmsg2'])) {
@@ -170,7 +170,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		} elseif ($action == 'CONTACT_CREATE' && $object instanceof Contact) {
 			'@phan-var-force Contact $object';
 			// Load translation files required by the page
-			$langs->loadLangs(array("agenda", "other", "companies"));
+			$langs->loadLangs(array("agenda", "other", "companies", "users"));
 
 			if (empty($object->actionmsg2)) {
 				if (empty($object->context['actionmsg2'])) {
@@ -188,7 +188,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		} elseif ($action == 'CONTACT_MODIFY' && $object instanceof Contact) {
 			'@phan-var-force Contact $object';
 			// Load translation files required by the page
-			$langs->loadLangs(array("agenda", "other", "companies"));
+			$langs->loadLangs(array("agenda", "other", "companies", "users"));
 
 			if (empty($object->actionmsg2)) {
 				if (empty($object->context['actionmsg2'])) {
@@ -1054,7 +1054,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			$object->sendtoid = array();
-		} elseif ($action == 'BILL_SUPPLIER_CANCELED' && $object instanceof FactureFournisseur) {
+		} elseif ($action == 'BILL_SUPPLIER_CANCEL' && $object instanceof FactureFournisseur) {
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "bills"));
 

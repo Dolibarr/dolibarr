@@ -103,13 +103,9 @@ class modAi extends DolibarrModules
 			// Set this to 1 if module has its own theme directory (theme)
 			'theme' => 0,
 			// Set this to relative path of css file if module has its own css file
-			'css' => array(
-				//    '/ai/css/ai.css.php',
-			),
+			'css' => array(),
 			// Set this to relative path of js file if module must load a js on all pages
-			'js' => array(
-				//   '/ai/js/ai.js.php',
-			),
+			'js' => array(),
 			// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context to 'all'
 			'hooks' => array('all'),
 			// Set this to 1 if features of module are opened to external users
@@ -153,6 +149,7 @@ class modAi extends DolibarrModules
 			3 => array('AI_EMAILCLEANER_MIN_CONFIDENCE', 'chaine', '0.60', 'Minimum confidence to trust AI cleaned text', 0, 'current'),
 			4 => array('AI_EMAILCLEANER_EXPOSE_OPERATION', 'yesno', '0', 'Expose AI Email Cleaner operation in EmailCollector card', 0, 'current'),
 			5 => array('AI_EMAILCLEANER_ISOLATED_MODE', 'yesno', '1', 'Force isolated cleaner runtime (no business decision / no cross-module side effects)', 0, 'current'),
+			6 => array('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 'integer', '2', 'Number of recent exchanges of the AI chat sent back as context by default', 0, 'current'),
 		);
 
 		// Some keys to add into the overwriting translation tables

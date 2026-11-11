@@ -1048,7 +1048,7 @@ class FactureRec extends CommonInvoice
 		// VERY IMPORTANT: It's at the time of line insertion that we must store the net, VAT, and gross amounts,
 		// and this is done at the line level, which has its own VAT rate
 
-		$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
+		$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise, $this->multicurrency_code);
 		$total_ht  = $tabprice[0];
 		$total_tva = $tabprice[1];
 		$total_ttc = $tabprice[2];
@@ -1283,7 +1283,7 @@ class FactureRec extends CommonInvoice
 			$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 		}
 
-		$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
+		$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise, $this->multicurrency_code);
 
 		$total_ht  = $tabprice[0];
 		$total_tva = $tabprice[1];
@@ -1373,55 +1373,8 @@ class FactureRec extends CommonInvoice
 			return false;
 		}
 
-		// Get the original day of the month from date_when
-		$dateInfo = dol_getdate($this->date_when);
-		$originalDay = (int) $dateInfo['mday'];
-		$originalMonth = (int) $dateInfo['mon'];
-		$originalYear = (int) $dateInfo['year'];
-		$originalHour = (int) $dateInfo['hours'];
-		$originalMin = (int) $dateInfo['minutes'];
-		$originalSec = (int) $dateInfo['seconds'];
-
-		// Special handling for end-of-month: if day >= 28 and frequency is monthly
-		if ($originalDay >= 28 && $this->unit_frequency == 'm') {
-			// Get the last day of the original month to determine if this was an "end of month" date
-			$lastDayOfOriginalMonth = (int) date('t', $this->date_when);
-
-			// Calculate target month and year
-			$targetMonth = $originalMonth + (int) $this->frequency;
-			$targetYear = $originalYear;
-
-			// Handle year rollover
-			while ($targetMonth > 12) {
-				$targetMonth -= 12;
-				$targetYear++;
-			}
-			while ($targetMonth < 1) {
-				$targetMonth += 12;
-				$targetYear--;
-			}
-
-			// Get the last day of the target month
-			$lastDayOfTargetMonth = (int) date('t', dol_mktime(0, 0, 0, $targetMonth, 1, $targetYear));
-
-			// Determine the target day:
-			// If original was last day of month, OR original day >= 29, use end-of-month behavior
-			if ($originalDay >= $lastDayOfOriginalMonth || $originalDay >= 29) {
-				// End of month mode: use the last day of target month
-				$targetDay = $lastDayOfTargetMonth;
-			} else {
-				// Day is 28 but not end of month in a 30/31 day month
-				// Keep as 28 or use last day if target month is shorter (like February)
-				$targetDay = min($originalDay, $lastDayOfTargetMonth);
-			}
-
-			// Return the calculated date
-			return dol_mktime($originalHour, $originalMin, $originalSec, $targetMonth, $targetDay, $targetYear);
-		}
-
-		// For yearly frequency or days < 28, use standard calculation.
 		// date_when is read from database in the timezone of the server (jdate), so the delay must be added in this timezone
-		return dol_time_plus_duree($this->date_when, $this->frequency, $this->unit_frequency, 0, 'tzserver');
+		return dol_time_plus_duree($this->date_when, $this->frequency, $this->unit_frequency, 1, 'tzserver');
 	}
 
 	/**
@@ -2580,6 +2533,25 @@ class FactureRec extends CommonInvoice
 			dol_print_error($this->db);
 			return -1;
 		}
+	}
+
+	/**
+	 * Check if user has a permission on template customer invoices
+	 *
+	 * @param User   $user User to check rights
+	 * @param string $mode Permission to check: 'read', 'write' or 'delete'
+	 * @return bool True if user has the permission, false otherwise
+	 */
+	public function hasUserPermission(User $user, $mode = 'write')
+	{
+		if ($mode == 'create') {
+			$mode = 'write';
+		}
+		if (!in_array($mode, array('read', 'write', 'delete'))) {
+			return false;
+		}
+
+		return (bool) $user->hasRight("facture", $mode);
 	}
 }
 

@@ -197,6 +197,10 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON (b.rowid = pd.fk_bank)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON (ba.rowid = b.fk_account)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (s.rowid = d.fk_soc)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON (c.id = pd.fk_typepayment)";
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE d.entity IN (".getEntity('donation').")";
 
 if ($search_ref) {
@@ -321,6 +325,11 @@ if ($search_payment_num) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
+
+// Add $param from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action);	// Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
 
 print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 if ($optioncss != '') {

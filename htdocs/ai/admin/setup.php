@@ -94,6 +94,7 @@ foreach ($arrayofai as $ia => $iarecord) {
 	$item->nameText = $langs->trans("AI_API_KEY").' ('.$ialabel.')';
 	$item->defaultFieldValue = '';
 	$item->fieldParams['hideGenerateButton'] = 1;
+	$item->fieldParams['showEyeButton'] = 1;
 	$item->fieldParams['trClass'] = 'iaservice '.$ia;
 	$item->cssClass = 'minwidth500 text-security input'.$ia;
 	$item->helpText = '<span class="helptoshow">HelpToShow</span>';
@@ -106,6 +107,16 @@ foreach ($arrayofai as $ia => $iarecord) {
 	$item->cssClass = 'minwidth500 input'.$ia;
 	if ($ia == 'custom') {
 		$item->fieldAttr['placeholder'] = 'https://domainofapi.com/v1/';
+	}
+
+	// Max tokens of the answers (required by the Anthropic API, optional for the others)
+	if ($ia == 'anthropic') {
+		$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_MAX_TOKENS')->setAsNumber(1);
+		$item->nameText = $langs->trans("AI_API_MAX_TOKENS").' ('.$ialabel.')';
+		$item->defaultFieldValue = '1024';
+		$item->fieldParams['trClass'] = 'iaservice '.$ia;
+		$item->cssClass = 'width100 input'.$ia;
+		$item->helpText = $langs->trans("AI_API_MAX_TOKENSHelp");
 	}
 }
 
@@ -154,6 +165,7 @@ print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 $head = aiAdminPrepareHead();
 print dol_get_fiche_head($head, 'settings', $langs->trans($title), -1, "ai");
 
+print '<br>';
 
 if ($action == 'edit') {
 	print $formSetup->generateOutput(true);
@@ -163,7 +175,7 @@ if ($action == 'edit') {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
 	print '</div>';
 } else {
-	print '<br>'.$langs->trans("NothingToSetup");
+	print $langs->trans("NothingToSetup");
 }
 
 

@@ -65,7 +65,7 @@ $checksok = 1;
 $setuplang = GETPOST("selectlang", 'aZ09', 3) ? GETPOST("selectlang", 'aZ09', 3) : $langs->getDefaultLang();
 $langs->setDefaultLang($setuplang);
 
-$langs->loadLangs(array("install"));
+$langs->loadLangs(array("install", "admin"));
 
 // Now we load forced/pre-set values from install.forced.php file.
 $useforcedwizard = false;
@@ -171,12 +171,16 @@ if (!extension_loaded("mbstring")) {
 	$extensionok[] = 'MBString';
 }
 
-// Check for json extension
+// Check for json extension. Dolibarr calls json_encode() and json_decode() in hundreds of places
+// and has no fallback for them, so without this extension nothing runs at all: this one is blocking.
 if (!extension_loaded("json")) {
-	$extensionko[] = 'JSON';
-	// $checksok = 0; // If ko, just warning. So check must still be 1 (otherwise no way to install)
+	$langs->load("errors");
+	print img_picto('', 'warning', 'class="pictofixedwidth error"');
+	print $langs->trans("ErrorPHPDoesNotSupport", '<b>JSON</b>')."<br>\n";
+	$checksok = 0;
 } else {
-	$extensionok[] = 'JSON';
+	print img_picto('', 'tick', 'class="pictofixedwidth"');
+	print $langs->trans("PHPSupport", '<b>JSON</b>')."<br>\n";
 }
 
 // Check if GD is supported (we need GD for image conversion)
@@ -213,10 +217,12 @@ if (!function_exists("simplexml_load_string")) {
 // Check if Dom is supported. Dolibarr uses DOMDocument to sanitize html, so a page can not even be rendered without it.
 if (!extension_loaded("dom")) {
 	$langs->load("errors");
-	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle paddingright"> '.$langs->trans("ErrorPHPDoesNotSupport", "Dom")."<br>\n";
+	print img_picto('', 'warning', 'class="pictofixedwidth warning"');
+	print $langs->trans("ErrorPHPDoesNotSupport", "Dom")."<br>\n";
 	// $checksok = 0;	// If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
-	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle paddingright"> '.$langs->trans("PHPSupport", "Dom")."<br>\n";
+	print img_picto('', 'tick', 'class="pictofixedwidth"');
+	print $langs->trans("PHPSupport", "Dom")."<br>\n";
 }
 
 // Check if UTF8 is supported

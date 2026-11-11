@@ -79,7 +79,7 @@ $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_cti = preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml'))); // Phone number without any special chars
 $search_phone = GETPOST("search_phone", 'alpha');
 
-$search_id = GETPOST("search_id", "intcomma");
+$search_id = trim(GETPOST("search_id", 'alpha'));	// Can contains a numeric test like ">10" or "!= 34"
 $search_ref_ext = GETPOST("search_ref_ext", "alpha");
 $search_firstlast_only = GETPOST("search_firstlast_only", 'alpha');
 $search_lastname = GETPOST("search_lastname", 'alpha');
@@ -535,7 +535,7 @@ if ($resql) {
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias as alias,";
-$sql .= " p.rowid, p.ref_ext, p.lastname as lastname, p.statut, p.firstname, p.address, p.zip, p.town, p.poste, p.email, p.birthday,";
+$sql .= " p.rowid, p.ref_ext, p.lastname as lastname, p.statut, p.firstname, p.name_alias, p.address, p.zip, p.town, p.poste, p.email, p.birthday,";
 $sql .= " p.socialnetworks, p.photo,";
 $sql .= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.ip, p.datec as date_creation, p.tms as date_modification,";
 $sql .= " p.import_key, p.fk_stcommcontact as stcomm_id, p.fk_prospectlevel, p.note_public, p.note_private,";
@@ -715,14 +715,19 @@ if (strlen($search_firstlast_only)) {
 	$sql .= natural_search(array('p.lastname', 'p.firstname'), $search_firstlast_only);
 }
 
-if ($search_id > 0) {
+if ($search_id != '') {
 	$sql .= natural_search('p.rowid', $search_id, 1);
 }
 if ($search_ref_ext) {
 	$sql .= natural_search('p.ref_ext', $search_ref_ext);
 }
 if ($search_lastname) {
-	$sql .= natural_search('p.lastname', $search_lastname);
+	if (empty($arrayfields['p.firstname']['checked'])) {
+		// Firstname is shown into the lastname column, so search on both
+		$sql .= natural_search(array('p.lastname', 'p.firstname'), $search_lastname);
+	} else {
+		$sql .= natural_search('p.lastname', $search_lastname);
+	}
 }
 if ($search_firstname) {
 	$sql .= natural_search('p.firstname', $search_firstname);
@@ -943,8 +948,8 @@ if (!empty($search_categ_supplier) && $search_categ_supplier != '-1') {
 if ($search_all != '') {
 	$param .= '&search_all='.urlencode($search_all);
 }
-if ($search_id > 0) {
-	$param .= "&search_id=".((int) $search_id);
+if ($search_id != '') {
+	$param .= "&search_id=".urlencode($search_id);
 }
 if ($search_ref_ext) {
 	$param .= "&search_ref_ext=".urlencode($search_ref_ext);
@@ -1085,6 +1090,11 @@ if ($search_birthday_end) {
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+
+// Add $param from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action);	// Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
 
 // List of mass actions available
 $arrayofmassactions = array(
@@ -1233,8 +1243,8 @@ if ($conf->main_checkbox_left_column) {
 	print '</td>';
 }
 if (!empty($arrayfields['p.rowid']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input class="flat searchstring" type="text" name="search_id" size="1" value="'.dolPrintHTMLForAttribute($search_id).'">';
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['p.lastname']['checked'])) {
@@ -1440,7 +1450,7 @@ if ($conf->main_checkbox_left_column) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.rowid']['checked'])) {
-	print_liste_field_titre($arrayfields['p.rowid']['label'], $_SERVER["PHP_SELF"], "p.rowid", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['p.rowid']['label'], $_SERVER["PHP_SELF"], "p.rowid", "", $param, "", $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.lastname']['checked'])) {
@@ -1673,7 +1683,7 @@ while ($i < $imaxinloop) {
 
 		// ID
 		if (!empty($arrayfields['p.rowid']['checked'])) {
-			print '<td class="tdoverflowmax50">';
+			print '<td class="center tdoverflowmax50">';
 			print dolPrintHTML($obj->rowid);
 			print "</td>\n";
 			if (!$i) {
@@ -1683,12 +1693,22 @@ while ($i < $imaxinloop) {
 
 		// (Last) Name
 		if (!empty($arrayfields['p.lastname']['checked'])) {
-			print '<td class="middle tdoverflowmax150" title="'.dolPrintHTMLForAttribute($contactstatic->lastname).'">';
+			print '<td class="middle tdlineheightsmall" title="'.dolPrintHTMLForAttribute($contactstatic->lastname).'">';
+			print '<div class="tdoverflowmax150 inline-block lineheightsmall">';
 			if ($contextpage == 'poslist') {
 				print $contactstatic->lastname;
+			} elseif (empty($arrayfields['p.firstname']['checked'])) {
+				// Show only lastname in link and firstname under it when firstname column is not enabled
+				$contactstatic->firstname = '';
+				print $contactstatic->getNomUrl(1);
+				$contactstatic->firstname = $obj->firstname;
+				if (!empty($obj->firstname)) {
+					print '<br><span class="spantitle">'.dolPrintHTML($obj->firstname).'</span>';
+				}
 			} else {
 				print $contactstatic->getNomUrl(1);
 			}
+			print '</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1846,7 +1866,8 @@ while ($i < $imaxinloop) {
 
 		// Company / Third Party
 		if (!empty($arrayfields['p.fk_soc']['checked']) || !empty($arrayfields['s.nom']['checked'])) {
-			print '<td class="tdoverflowmax125">';
+			print '<td class="tdlineheightsmall">';
+			print '<div class="tdoverflowmax150 inline-block lineheightsmall">';
 			if ($obj->socid) {
 				$objsoc = new Societe($db);
 				$objsoc->fetch($obj->socid);
@@ -1859,11 +1880,16 @@ while ($i < $imaxinloop) {
 				if ($contextpage == 'poslist') {
 					print $objsoc->name;
 				} else {
-					print $objsoc->getNomUrl(1, $option_link, 100, 0, 1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
+					print $objsoc->getNomUrl(1, $option_link, 100, 0, 1, 1);
+					// Show alias name under the third party name when alias column is not enabled
+					if (empty($arrayfields['s.name_alias']['checked']) && !empty($obj->alias)) {
+						print '<br><span class="spantitle">'.dolPrintHTML($obj->alias).'</span>';
+					}
 				}
 			} else {
 				print '&nbsp;';
 			}
+			print '</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

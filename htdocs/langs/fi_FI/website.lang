@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - website
 Shortname=Koodi
 WebsiteName=Verkkosivuston nimi
-WebsiteSetupDesc=luo tässä verkkosivustot, joita haluat käyttää. Siirry sitten valikko Web-sivustoihin muokataksesi niitä.
+WebsiteSetupDesc=Create here the websites you wish to use. Then go to menu Websites to edit them.
 DeleteWebsite=Poista sivusto
 ConfirmDeleteWebsite=Haluatko varmasti poistaa tämän verkkosivuston? Myös kaikki sen sivujen ja sisältö poistetaan. Ladatut tiedostot (kuten medias-hakemistoon, ECM-moduuliin...) säilyvät.
 WEBSITE_TYPE_CONTAINER=Sivun/säilön tyyppi
@@ -17,8 +17,8 @@ WEBSITE_ROBOT=Robotti tiedosto (robots.txt)
 WEBSITE_HTACCESS=Verkkosivusto .htaccess tiedosto
 WEBSITE_MANIFEST_JSON=Verkkosivuston manifest.json tiedosto
 WEBSITE_KEYWORDSDesc=Erottele arvot pilkulla
-EnterHereReadmeInformation=Kirjoita tähän verkkosivuston kuvaus. Jos jaat verkkosivustoasi mallina, tiedosto sisällytetään houkutuspakettiin.
-EnterHereLicenseInformation=Syötä tähän sivuston koodin KÄYTTÖOIKEUS. Jos jaat verkkosivustoasi mallina, tiedosto sisällytetään houkutuspakettiin.
+EnterHereReadmeInformation=Enter here a description of the website. If you distribute your website as a template, the file will be included in the template package.
+EnterHereLicenseInformation=Enter here the LICENSE of the code of the website. If you distribute your website as a template, the file will be included in the template package.
 HtmlHeaderPage=HTML-otsikko (vain tälle sivulle)
 PageNameAliasHelp=Sivun nimi tai alias.<br>Tätä aliasta käytetään myös hakukoneoptimoinnin URL-osoitteen väärentämiseen, kun verkkosivustoa ajetaan verkkopalvelimen virtuaalipalvelimelta (kuten Apacke, Nginx, .. .). Muokkaa tätä aliasta painikkeella <strong>%s</strong>.
 EditTheWebSiteForACommonHeader=Huomautus: Jos haluat määrittää yksilöllisen otsikon kaikille sivuille, muokkaa otsikkoa sivustotasolla sivun/säilön sijaan.
@@ -51,12 +51,12 @@ ToDeployYourWebsiteOnLiveYouHave3Solutions=Tämän verkkosivuston julkaisuun sin
 SetHereVirtualHost=<u>Käytä kanssa Apache/NGinx/...</u><br>Luo verkkopalvelimesi (Apache, Nginx, ...) omistettu virtuaalipalvelin, jossa PHP on käytössä ja juurihakemisto osoitteessa<br><strong>%s</strong>
 ExampleToUseInApacheVirtualHostConfig=Esimerkki käytettäväksi Apache-virtuaaliisäntäasetuksissa:
 YouCanAlsoTestWithPHPS=<u>Käytä PHP:n sulautetun palvelimen kanssa</u><br>Kehitysympäristössä voit halutessasi testata sivustoa PHP:n sulautetulla web-palvelimella suorittamalla
-YouCanAlsoDeployToAnotherWHP=<u>Käytä verkkosivustoasi Dolibarr-verkkopalveluntarjoajan sisällä</u><br>Jos sinulla ei ole internetissä käytettävissä olevaa web-palvelinta, kuten Apachea tai NGinxiä, voit viedä ja tai tuoda verkkosivustosi toiseen Dolibarr-instanssiin, jonka tarjoaa toinen Dolibarr-palveluntarjoaja, joka tarjoaa täyden integroinnin verkkosivustomoduuliin. Löydät luettelon joistakin Dolibarr-hostingpalveluntarjoajista osoitteesta <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
+YouCanAlsoDeployToAnotherWHP=<u>Run your web site inside a Dolibarr web Hosting provider</u><br>If you don't have a web server like Apache or NGinx available on the internet, you can export and import your web site to another Dolibarr instance provided by another Dolibarr hosting provider that provides full integration with the Website module. You can find a list of some Dolibarr hosting providers on <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
 CheckVirtualHostPerms=Tarkista myös, että virtuaalipalvelimen käyttäjällä (esimerkiksi www-data) on <strong>%s</strong>  tiedostojen käyttöoikeudet kohteeseen<br><strong>%s</strong>
 ReadPerm=Lue
 WritePerm=Kirjoita
 TestDeployOnWeb=Testaa / ota käyttöön verkossa
-PreviewSiteServedByWebServer=<u>Preview %s in a new tab.</u><br><br>The %s will be served by an external web server (like Apache, Nginx, IIS). You must install and setup this server before to point to directory:<br><strong>%s</strong><br>URL served by external server:<br><strong>%s</strong>
+PreviewSiteServedByWebServer=<u>Preview %s in a new tab.</u><br><br>The %s will be served by an external web server (like Apache, Nginx, IIS). You must install and setup this server before pointing to the directory:<br><strong>%s</strong><br>URL served by external server:<br><strong>%s</strong>
 PreviewSiteServedByDolibarr=<u>Preview %s in a new tab.</u><br><br>The %s will be served by Dolibarr server so it does not need any extra web server (like Apache, Nginx, IIS) to be installed.<br>The inconvenient is that the URLs of pages are not user friendly and start with the path of your Dolibarr.<br>URL served by Dolibarr:<br><strong>%s</strong><br><br>To deploy or test using your own external web server (like Apache, Nginx, Lighttp) use the link "%s".
 VirtualHostUrlNotDefined=Ulkoisen verkkopalvelimen palveleman virtuaalisen isännän URL-osoitetta ei ole määritetty
 NoPageYet=Ei vielä sivuja
@@ -65,12 +65,13 @@ SyntaxHelp=Ohje tiettyihin syntaksivinkkeihin
 YouCanEditHtmlSourceckeditor=Voit muokata HTML-lähdekoodia käyttämällä "Lähde"-painiketta editorissa.
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> Voit sisällyttää PHP-koodia tähän lähdekoodiin käyttämällä tageja <strong>&lt;?php ?&gt;</strong>. Seuraavat globaalit muuttujat ovat käytettävissä: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> Voit myös sisällyttää toisen sivun/säilön sisältöä seuraavalla syntaksilla:<br><strong>&lt;?php includeContainer('sisältö_lisättävän_säilön_alias'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> Voit tehdä uudelleenohjauksen toiselle sivulle/säilölle seuraavalla syntaksilla (Huomaa: älä tuota mitään sisältöä ennen uudelleenohjausta):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>Voit myös tehdä uudelleenohjauksen GET-parametreilla:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> Voit lisätä linkin toiselle sivulle käyttämällä seuraavaa syntaksia:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br>
 YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> You can dynamically set <strong>SEO title and meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>define('__SEO_PAGE_TITLE__', "Title value …");</code><br> <code>define('__SEO_PAGE_KEYWORDS__', 'keyword1, keyword2, keyword3 …');</code><br> <code>define('__SEO_PAGE_DESC__', "Description …");</code><br>
-YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
+YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored in the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file in documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file in documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSourced=Jakolinkillä jaetulle tiedosto-objektille (avoin pääsy jakamisavaimella tiedosto) syntaksi on:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> Sisällyttääksesi <strong>kuvan</strong> tallennettuna <strong>medias</strong>-hakemistoon (julkisesti käytettävissä oleva hakemisto), käytä suhteellista polkua, joka alkaa <strong>/medias</strong>, esimerkki:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored in the <strong>medias</strong> directory (directory open for public access), use the relative path starting with <strong>/medias</strong>, example:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=Jos kuva on jaettu jakolinkillä (avoin pääsy jakamisavaimella tiedosto), käytä käärettä:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=To get the URL of the image of a PHP object, use<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
-YouCanEditHtmlSource4=Saadaksesi kuvan URL-osoitteen artikkelin HTML-sisällöstä, käytä funktiota <br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource4=To get the URL of an image inside a HTML content of an article, use<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource5=<br><span class="fa fa-edit paddingright"></span> To let a part of the page be changed with mode <strong>Edit inline</strong>, add the attributes <strong>contenteditable="true"</strong> and <strong>id</strong> to its tag. It must contain no PHP code, only text with formatting tags (bold, color, font size...), links, paragraphs, titles, lists and div, example:<br><strong>&lt;p id="intro" contenteditable="true"&gt;My &lt;b&gt;text&lt;/b&gt;&lt;/p&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">the wiki documentation</a>.<br>
 ClonePage=Kloonaa sivu/säilö
 CloneSite=Kloonaa sivusto
@@ -88,6 +89,8 @@ ImportSite=Tuo verkkosivustomalli
 IDOfPage=Sivuston ID
 Banner=Banneri
 BlogPost=Blogipostaus
+PageHeader=Header
+PageFooter=Footer
 WebsiteAccount=Verkkosivuston tili
 WebsiteAccounts=Nettisivun käyttäjä
 AddWebsiteAccount=luo verkkosivustotili
@@ -102,7 +105,7 @@ YouMustDefineTheHomePage=Sinun on ensin määritettävä oletus Kotisivu
 OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users and can work only pages rendered with HTML and CSS only. Importing pages rendered by JS frameworks are NOT supported. Depending on the complexity of the source page, the result of importation will probably differ from the original page. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quick way to create a page for very advanced users when source page allows it, but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor might not work correctly when used on a page that was grabbed.
 OnlyEditionOfSourceForGrabbedContent=Vain HTML-lähdekoodin muokkaus on mahdollista, kun sisältö noudetaan ulkoiselta sivustolta
 GrabImagesInto=Nappaa myös kuvia, jotka löytyvät css:n ja -sivulta.
-ImagesShouldBeSavedInto=Kuvat tulee tallentaa hakemistoon
+ImagesShouldBeSavedInto=Images should be saved in the directory
 WebsiteRootOfImages=Verkkosivuston kuvien juurihakemisto
 SubdirOfPage=Sivulle omistettu alihakemisto
 AliasPageAlreadyExists=Aliassivu <strong>%s</strong> on jo olemassa
@@ -119,7 +122,7 @@ NoWebSiteCreateOneFirst=Sivustoa ei ole vielä luotu. Luo sivu ensin.
 GoTo=Mene
 DynamicPHPCodeContainsAForbiddenInstruction=Lisäät dynaamisen PHP-koodin, joka sisältää PHP-käskyn '<strong>%s</strong> ', jonka oletus on kieltänyt dynaamisena sisältönä (katso piilotettuja valintoja WEBSITE_PHP_ALLOW_xxx lisätäksesi sallittujen komentojen luetteloa).
 NotAllowedToAddDynamicContent=You don't have permission to add or edit dynamic PHP content in websites. Ask permission or just keep code into php tags unmodified.
-NotAllowedToAddDynamicContentDisabledGlobaly=You currently can't add or edit dynamic PHP content in this website (even if you have permission to), because this feature must be first enabled globally by setting the parameter %s=1 int the conf.php file.<br>Edit your conf.php file to add this parameter, or ask your administrator or support to do it for you.
+NotAllowedToAddDynamicContentDisabledGlobaly=You currently can't add or edit dynamic PHP content in this website (even if you have permission to), because this feature must be first enabled globally by setting the parameter %s=1 into the conf.php file.<br>Edit your conf.php file to add this parameter, or ask your administrator or support team to do it for you.
 ReplaceWebsiteContent=Etsi tai korvaa verkkosivuston sisältöä
 DeleteAlsoJs=Poistetaanko myös kaikki tätä verkkosivustoa koskevat JavaScript-tiedostot?
 DeleteAlsoMedias=Poistetaanko myös kaikki tähän verkkosivustoon liittyvät mediatiedostot?
@@ -140,10 +143,10 @@ MainLanguage=Ensisijainen kieli
 OtherLanguages=Muut kielet
 UseManifest=Anna manifest.json tiedosto
 PublicAuthorAlias=Julkinen tekijän alias
-AvailableLanguagesAreDefinedIntoWebsiteProperties=Käytettävissä olevat kielet on määritelty verkkosivuston ominaisuuksissa
+AvailableLanguagesAreDefinedIntoWebsiteProperties=Available languages are defined in website properties
 ReplacementDoneInXPages=Korvaus tehty %s sivulla tai säilössä
 RSSFeed=RSS-syöte
-RSSFeedDesc=Voit saada RSS-syötteen uusimmista artikkeleista, joiden tyyppi on "blogiteksti" käyttämällä tätä URL-osoitetta
+RSSFeedDesc=You can get an RSS feed of latest articles with type 'blogpost' using this URL
 PagesRegenerated=%s sivu(a)/säilö(t) uusittu
 RegenerateWebsiteContent=Luo uudelleen web-sivuston välimuistitiedostot
 AllowedInFrames=Sallittu framen sisällä
@@ -151,6 +154,7 @@ DefineListOfAltLanguagesInWebsiteProperties=Määritä luettelo kaikista saatavi
 GenerateSitemaps=Luo verkkosivusto sitemap.xml tiedosto
 ConfirmGenerateSitemaps=Jos vahvistat, poistat nykyisen sivustokartan tiedosto...
 ConfirmSitemapsCreation=Vahvista sivustokartan luominen
+ConfirmSetAsHomePage=Are you sure you want to set the page <b>%s</b> as the home page of the website?
 SitemapGenerated=Sitemap file <b>%s</b> generated
 ImportFavicon=Favicon
 ErrorFaviconType=Faviconin on oltava png
@@ -509,3 +513,13 @@ ThisDirectoryIsEmpty=This directory is empty
 WrittenBy=Written by %s
 ImportOfWebsiteTemplateIncludingPHPIsAllowedIf=Import of website templates using dynamic content in PHP is allowed only if $dolibarr_website_allow_custom_php is set to 2 in conf.php.
 ImportOfWebsiteTemplateIncludingPHPIsDisabled=Import of website templates using dynamic content in PHP need to have $dolibarr_website_allow_custom_php set to 1 or 2 in conf.php to be allowed.
+CurrentPageVersion=Current page
+ListOfPageVersions=List of archived versions of page (a backup file of page is created each time you save a change, for example on the HTML source)
+EditInLineAllowedAreas=In mode Edit inline, the tags with contenteditable="true", an id and no PHP code inside can be changed and are saved when you leave them. Text formatting (bold, color, font size...), links, paragraphs, titles and lists are allowed, images and other HTML can only be changed in the HTML source.
+ErrorEditInlineElementNoId=This element has contenteditable="true" but no id, so it can not be edited inline.
+ErrorEditInlineElementNotFound=No element with id %s and contenteditable="true" was found in the source of the page.
+ErrorEditInlineElementNotUnique=The id %s is used by several elements with contenteditable="true" in the source of the page.
+ErrorEditInlineElementWithPhp=The element with id %s contains PHP code in the source of the page, so it can only be changed in the HTML source.
+ErrorEditInlineElementNotAllowedHtml=The element with id %s contains HTML that can not be edited inline (image, form, script, comment, other tags or attributes...), so it can only be changed in the HTML source.
+ErrorEditInlineElementNotPlainText=The element with id %s contains HTML in the source of the page and can only be edited inline as plain text, so it can only be changed in the HTML source.
+ErrorEditInlineContentNotAllowed=The new content of the element with id %s contains HTML tags or attributes that are not allowed, so it was not saved.

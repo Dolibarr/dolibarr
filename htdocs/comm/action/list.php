@@ -434,6 +434,11 @@ if ($search_categ_cus != 0) {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
+// Add $param from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action);	// Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
+
 $paramnoactionodate = $param;
 
 // List of mass actions available
@@ -581,7 +586,7 @@ if ($search_status == 'todo') {
 if ($search_import_key) {
 	$sql .= natural_search("a.import_key", $search_import_key);
 }
-if ($search_id) {
+if ($search_id != '') {
 	$sql .= natural_search("a.id", $search_id, 1);
 }
 if ($search_title) {
@@ -714,7 +719,7 @@ $tabactive = 'cardlist';
 
 $head = calendars_prepare_head($param);
 
-print '<form method="POST" id="searchFormList" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+print '<form method="POST" id="searchFormList" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'" spellcheck="false">'."\n";
 
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -843,7 +848,7 @@ if ($conf->main_checkbox_left_column) {
 	print '</td>';
 }
 if (!empty($arrayfields['a.id']['checked'])) {
-	print '<td class="liste_titre"><input type="text" class="maxwidth50" name="search_id" value="'.$search_id.'"></td>';
+	print '<td class="liste_titre"><input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'"></td>';
 }
 if (!empty($arrayfields['a.datep']['checked'])) {
 	print '<td class="liste_titre nowraponall center">';

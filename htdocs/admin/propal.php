@@ -486,6 +486,16 @@ if (getDolGlobalString('PROPOSAL_ALLOW_ONLINESIGN')) {
 }
 */
 
+// Reminder by email before a commercial proposal expires
+if (isModEnabled('cron')) {
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("SendReminderForExpiringProposalsTitle").'</td>';
+	print '<td>';
+	print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.DOL_URL_ROOT.'/cron/list.php?search_label=SendReminderForExpiringProposalsTitle&status=-1">'.$langs->trans("ConfigureContractReminderCronjobToSetFrequency").'</a>';
+	print '</td>';
+	print '</tr>';
+}
+
 // Notifications
 print '<tr class="oddeven">';
 print '<td>'.img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("Notifications").'</td>';

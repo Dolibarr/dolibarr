@@ -124,7 +124,7 @@ if (empty($reshook)) {
 	}
 
 	// Action remove group
-	if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontoedit) {
+	if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontodisable) {
 		$object->fetch($id);
 		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
@@ -463,6 +463,10 @@ if ($action == 'create') {
 				print "</tr>\n";
 
 				$object->fetch($object->id, '', true);	// true to force load of all users, member of the group
+
+				// Allow modules to filter the members shown (the members of the group are not changed)
+				$parameters = array('members' => &$object->members);
+				$reshook = $hookmanager->executeHooks('filterGroupMembers', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 				if (!empty($object->members)) {
 					foreach ($object->members as $useringroup) {

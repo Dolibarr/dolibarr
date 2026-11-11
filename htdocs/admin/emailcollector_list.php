@@ -184,6 +184,18 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
+	// Save setup parameters
+	if (GETPOSTISSET('saveemailcollectorsettings')) {
+		$allowedext = trim((string) GETPOST('EMAILCOLLECTOR_ALLOWED_ATTACHMENT_EXTENSIONS', 'restricthtml'));
+		$result = dolibarr_set_const($db, 'EMAILCOLLECTOR_ALLOWED_ATTACHMENT_EXTENSIONS', $allowedext, 'chaine', 0, '', $conf->entity);
+		if ($result > 0) {
+			$conf->global->EMAILCOLLECTOR_ALLOWED_ATTACHMENT_EXTENSIONS = $allowedext;
+			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("Error"), null, 'errors');
+		}
+	}
+
 	// Selection of new fields
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
@@ -252,6 +264,10 @@ $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 }
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action);	// Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 if ($object->ismultientitymanaged == 1) {
 	$sql .= " WHERE t.entity IN (".getEntity($object->element).")";
 } else {
@@ -822,10 +838,21 @@ if ($conf->use_javascript_ajax) {
 print '</td>';
 print '</tr>';
 
+// EMAILCOLLECTOR_ALLOWED_ATTACHMENT_EXTENSIONS: Allowlist of attachment extensions to download/save.
+print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("EmailCollectorAllowedAttachmentExtensions"), $langs->transnoentitiesnoconv("EmailCollectorAllowedAttachmentExtensionsHelp")).'</td>';
+print '<td class="left">';
+print '<input class="minwidth300" type="text" name="EMAILCOLLECTOR_ALLOWED_ATTACHMENT_EXTENSIONS" value="'.dol_escape_htmltag(getDolGlobalString('EMAILCOLLECTOR_ALLOWED_ATTACHMENT_EXTENSIONS')).'">';
+print '</td>';
+print '</tr>';
+
 print '</table>';
 print '</div>';
 
 print '<br>';
+
+print '<div class="center">';
+print '<button type="submit" class="button button-save" name="saveemailcollectorsettings" value="1">'.$langs->trans("Save").'</button>';
+print '</div>';
 
 print '</form>'."\n";
 

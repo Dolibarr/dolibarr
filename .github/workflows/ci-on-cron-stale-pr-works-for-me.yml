@@ -22,9 +22,9 @@ jobs:
         run: |
           set -euo pipefail
 
-          SIX_MONTHS_AGO=$(date -d "6 months ago" --iso-8601=seconds)
+          FOUR_MONTHS_AGO=$(date -d "4 months ago" --iso-8601=seconds)
 
-          echo "Looking for open PRs with 'Works for me / Can't reproduce' label not updated since: $SIX_MONTHS_AGO"
+          echo "Looking for open PRs with 'Works for me / Can't reproduce' label not updated since: $FOUR_MONTHS_AGO"
 
           CLOSED_COUNT=0
           MAX_CLOSED=20
@@ -35,7 +35,7 @@ jobs:
             --limit 1000 \
             --label "Works for me / Can't reproduce" \
             --json number,title,createdAt,updatedAt,labels |
-          jq -c '.[] | select(.updatedAt < "'"$SIX_MONTHS_AGO"'")' |
+          jq -c '.[] | select(.updatedAt < "'"$FOUR_MONTHS_AGO"'")' |
           while IFS= read -r PR; do
 
             PR_NUMBER=$(echo "$PR" | jq -r '.number')
@@ -60,7 +60,7 @@ jobs:
 
               echo "PR #$PR_NUMBER has the required label."
 
-              COMMENT="This PR has been closed automatically because it has not been updated for more than 6 months and has the label 'Works for me / Can't reproduce'. If the issue is still relevant, please reopen the PR and provide additional context or a reproducible test case."
+              COMMENT="This PR has been closed automatically because it has not been updated for more than 4 months and has the label 'Works for me / Can't reproduce'. If the issue is still relevant, please reopen the PR and provide additional context or a reproducible test case."
 
               echo "Closing PR #$PR_NUMBER"
 

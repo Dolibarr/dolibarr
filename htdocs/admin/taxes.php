@@ -7,6 +7,7 @@
  * Copyright (C) 2023  		Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Michael Wallis			<mh.wallis@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -233,10 +234,8 @@ if (empty($mysoc->tva_assuj)) {
 	print '<tr class="oddeven"><td><input type="radio" id="tax_mode1" name="tax_mode" value="1"'.($tax_mode == 1 ? ' checked' : '').'> <label for="tax_mode1">'.$langs->trans('OptionVATDebitOption').'</label></td>';
 	print '<td>'.nl2br($langs->trans('OptionVatDebitOptionDesc'))."</td></tr>\n";
 	// On payment for both products and services
-	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
-		print '<tr class="oddeven"><td><input type="radio" id="tax_mode2"  name="tax_mode" value="2"'.($tax_mode == 2 ? ' checked' : '').'> <label for="tax_mode2">'.$langs->trans('OptionPaymentForProductAndServices').'</label></td>';
-		print '<td>'.nl2br($langs->trans('OptionPaymentForProductAndServicesDesc'))."</td></tr>\n";
-	}
+	print '<tr class="oddeven"><td><input type="radio" id="tax_mode2" name="tax_mode" value="2"'.($tax_mode == 2 ? ' checked' : '').'> <label for="tax_mode2">'.$langs->trans('OptionPaymentForProductAndServices').'</label></td>';
+	print '<td>'.nl2br($langs->trans('OptionPaymentForProductAndServicesDesc'))."</td></tr>\n";
 	print "</table>\n";
 	print '</div>';
 

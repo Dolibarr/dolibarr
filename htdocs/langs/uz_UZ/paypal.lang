@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal modulini sozlash
-PaypalDesc=Ushbu modul <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a> orqali mijozlar tomonidan to'lovlarni amalga oshirish imkonini beradi. Bu vaqtinchalik to'lov uchun yoki Dolibarr ob'ekti bilan bog'liq to'lov uchun (hisob-faktura, buyurtma, ...)
+PaypalDesc=This module allows payment by customers via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. This can be used for an ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
 PaypalOrCBDoPayment=PayPal (Card yoki PayPal) bilan to'lash
 PaypalDoPayment=PayPal bilan to'lash
 PAYPAL_API_SANDBOX=Rejim sinovi / qum qutisi
@@ -19,7 +19,7 @@ NewOnlinePaymentFailed=Yangi onlayn to'lov amalga oshirildi, ammo muvaffaqiyatsi
 ONLINE_PAYMENT_SENDEMAIL=Har bir to'lov urinishidan so'ng bildirishnomalar uchun elektron pochta manzili (muvaffaqiyatli va muvaffaqiyatsiz bo'lganligi uchun)
 ReturnURLAfterPayment=To'lovdan so'ng URL manzilini qaytaring
 ValidationOfOnlinePaymentFailed=Onlayn to'lovni tasdiqlash amalga oshmadi
-PaymentSystemConfirmPaymentPageWasCalledButFailed=To'lov tizimi tomonidan to'lovni tasdiqlash sahifasi chaqirildi, xato yuz berdi
+PaymentSystemConfirmPaymentPageWasCalledButFailed=The payment confirmation page was called by the online payment system and returned an error
 SetExpressCheckoutAPICallFailed=SetExpressCheckout API chaqiruvi amalga oshmadi.
 DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API chaqiruvi amalga oshmadi.
 DetailedErrorMessage=Batafsil xato xabari

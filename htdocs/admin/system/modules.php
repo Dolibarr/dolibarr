@@ -40,7 +40,7 @@ if (empty($user->admin)) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("install", "other", "admin"));
+$langs->loadLangs(array("install", "other", "admin", "modulebuilder"));
 
 $action = GETPOST('action', 'aZ09');
 $optioncss = GETPOST('optioncss', 'alpha');

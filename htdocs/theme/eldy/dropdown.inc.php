@@ -56,6 +56,10 @@ button.dropdown-item.global-search-item {
 	border-bottom-right-radius: 6px;
 }
 
+#top-bookmark-search-nothing-found {
+	color: #444;
+}
+
 
 .dropdown-search {
 	border-color: #eee;
@@ -154,7 +158,7 @@ button.dropdown-item.global-search-item {
 
 
 /* CSS to hide the arrow to show open/close */
-div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
+div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after, div#topmenu-quickmemo-dropdown a.dropdown-toggle::after {
 	display: none;
 }
 
@@ -336,6 +340,7 @@ a.top-menu-dropdown-link {
 #topmenu-quickadd-dropdown,
 #topmenu-bookmark-dropdown,
 #topmenu-uploadfile-dropdown,
+#topmenu-quickmemo-dropdown,
 #topmenu-login-dropdown {
 	padding: 0 5px 0 5px;
 }
@@ -576,7 +581,8 @@ div.quickaddblock:focus {
 	background: none;
 	color: #333 !important;
 }
-.dropdown-content a:is(.butAction,.butActionDelete,.butActionRefused) {
+.dropdown-content a:is(.butAction,.butActionDelete,.butActionRefused),
+.dropdown-content span:is(.butAction,.butActionDelete,.butActionRefused) {
 	display: flex;
 	border-radius: 0;
 }

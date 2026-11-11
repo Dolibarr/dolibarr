@@ -514,7 +514,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 		} else {
 			if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
 				$proj = new Project($db);
-				$proj->fetch($objectsrc->fk_project);
+				$proj->fetch((int) $objectsrc->fk_project);
 				$morehtmlref .= $proj->getNomUrl(1);
 				if ($proj->title) {
 					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
@@ -673,17 +673,28 @@ if ($object->id > 0 || !empty($object->ref)) {
 			}
 			$sql .= $hookmanager->resPrint;
 
+			$sql .= " FROM ".$db->prefix().($isStandaloneShipment ? "expeditiondet" : "commandedet")." as l";
+			$sql .= " LEFT JOIN ".$db->prefix()."product as p ON l.fk_product=p.rowid";
+			// Enable hooks to alter the SQL query (FROM)
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks(
+				'printFieldListFrom',
+				$parameters,
+				$object,
+				$action
+			);
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			}
+			$sql .= $hookmanager->resPrint;
+
 			if ($isStandaloneShipment) {
-				$sql .= " FROM ".$db->prefix()."expeditiondet as l";
-				$sql .= " LEFT JOIN ".$db->prefix()."product as p ON l.fk_product=p.rowid";
 				$sql .= " WHERE l.fk_expedition = ".((int) $object->id);
 				$sql .= " AND (l.fk_parent IS NULL OR l.fk_parent = 0)";
 				if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 					$sql .= " AND p.fk_product_type = 0";
 				}
 			} else {
-				$sql .= " FROM ".$db->prefix()."commandedet as l";
-				$sql .= " LEFT JOIN ".$db->prefix()."product as p ON l.fk_product=p.rowid";
 				$sql .= " WHERE l.fk_commande = ".((int) $objectsrc->id);
 				if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 					$sql .= " AND l.product_type = 0";

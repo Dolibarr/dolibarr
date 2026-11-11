@@ -315,7 +315,7 @@ foreach ($demoprofiles as $profilearray) {
 			$langs->load($profilearray['lang']);
 		}
 
-		$url = $_SERVER["PHP_SELF"].'?action=gotodemo';
+		$url = $_SERVER["PHP_SELF"].'?action=gotodemo&token='.newToken();
 		$urlwithmod = $url.'&amp;demochoice='.$profilearray['key'];
 		// Should work with DOL_URL_ROOT='' or DOL_URL_ROOT='/dolibarr'
 		//print "xx".$_SERVER["PHP_SELF"].' '.DOL_URL_ROOT.'<br>';

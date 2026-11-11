@@ -23,6 +23,10 @@
  * @var int[] $selectedLines
  */
 
+'
+@phan-var-force CommonObjectLine $line
+';
+
 $line_color = $object->getSubtotalColors($line->qty);
 
 print '<!-- line for order line '.$line->id.' -->'."\n";
