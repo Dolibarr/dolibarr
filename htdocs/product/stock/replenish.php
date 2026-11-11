@@ -778,6 +778,11 @@ if (!empty($salert)) {
 	$param .= '&salert='.urlencode($salert);
 }
 
+// Add $param from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action);	// Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
+
 $stocklabel = $langs->trans('Stock');
 $stocklabelbis = $langs->trans('Stock');
 $stocktooltip = '';

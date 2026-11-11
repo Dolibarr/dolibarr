@@ -65,10 +65,10 @@ SCRIPT_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)
 
 # Build image
 # The build context is created on the fly: it contains the docker-claude directory,
-# the scripts shared with docker-vibe (open-on-host, xdg-open-shim, smtpblock.sh),
+# the files shared with docker-vibe (open-on-host, xdg-open-shim, smtpblock.sh, sendmail-stub, bashrc-prompt),
 # and the .pre-commit-config.yaml of the repository when it exists (it is used by
 # the Dockerfile to preload the pre-commit hooks environments into the image).
-CONTEXT_TAR_ARGS=(. -C "$SCRIPT_DIR/../docker-vibe" open-on-host xdg-open-shim smtpblock.sh)
+CONTEXT_TAR_ARGS=(. -C "$SCRIPT_DIR/../docker-vibe" open-on-host xdg-open-shim smtpblock.sh sendmail-stub bashrc-prompt)
 if [ -f .pre-commit-config.yaml ]; then
   CONTEXT_TAR_ARGS+=(-C "$PWD" .pre-commit-config.yaml)
 fi
@@ -82,6 +82,22 @@ fi
 # Run image
 GIT_DIR=$(basename "$PWD")
 export GIT_DIR
+
+# Directory mounted as the working directory: ~/git/GIT_DIR (development context). When it does not exist
+# (production context, sources outside of ~/git), the current directory is mounted at the same path.
+WORK_DIR="$HOME/git/$GIT_DIR"
+if [ ! -d "$WORK_DIR" ]; then
+    WORK_DIR="$PWD"
+fi
+
+# Files of the host home directory mounted only when they exist (production context), as docker refuses
+# to start with a missing bind source.
+HOME_MOUNTS=()
+for HOME_FILE in .gitconfig .bash_history; do
+    if [ -f "$HOME/$HOME_FILE" ]; then
+        HOME_MOUNTS+=(--mount "type=bind,src=$HOME/$HOME_FILE,dst=$HOME/$HOME_FILE")
+    fi
+done
 
 # When working on something else than the Dolibarr core (a module for example),
 # also mount the sibling directory dolibarr_dev or dolibarr (in this order of
@@ -201,10 +217,9 @@ sudo docker run --rm -it \
   --network=host \
   --cap-add=NET_ADMIN \
   --mount "type=bind,src=/var/run/mysqld/mysqld.sock,dst=/var/run/mysqld/mysqld.sock" \
-  --mount "type=bind,src=$HOME/git/$GIT_DIR,dst=$HOME/git/$GIT_DIR" \
+  --mount "type=bind,src=$WORK_DIR,dst=$WORK_DIR" \
   "${EXTRA_MOUNTS[@]}" \
   --mount "type=bind,src=$HOME/.claude,dst=$HOME/.claude" \
-  --mount "type=bind,src=$HOME/.gitconfig,dst=$HOME/.gitconfig" \
-  --mount "type=bind,src=$HOME/.bash_history,dst=$HOME/.bash_history" \
-  -w "$HOME/git/$GIT_DIR" \
+  "${HOME_MOUNTS[@]}" \
+  -w "$WORK_DIR" \
   docker-claude "${ARGS[@]}"

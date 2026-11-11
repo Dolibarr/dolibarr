@@ -1177,7 +1177,9 @@ class Tickets extends DolibarrApi
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
+	 * @throws RestException 400
 	 * @throws RestException 401
+	 * @throws RestException 403
 	 * @throws RestException 404
 	 * @throws RestException 500 System error
 	 */
@@ -1192,13 +1194,16 @@ class Tickets extends DolibarrApi
 		if (empty($source)) {
 			throw new RestException(400, 'Source can not be empty');
 		}
+		if (!in_array($source, array('internal', 'external'), true)) {
+			throw new RestException(400, 'Source must be internal or external');
+		}
 		// test type
 		if (empty($type)) {
 			throw new RestException(400, 'type can not be empty');
 		}
 
 		$result = $this->ticket->fetch($id);
-		if (!$result) {
+		if ($result <= 0) {
 			throw new RestException(404, 'Ticket not found');
 		}
 
@@ -1207,14 +1212,24 @@ class Tickets extends DolibarrApi
 		}
 
 		$contacts = $this->ticket->liste_contact(-1, $source);
+		if (!is_array($contacts)) {
+			throw new RestException(500, 'Error when reading the contacts of the ticket: '.$this->ticket->errorsToString());
+		}
+
+		$found = false;
 		foreach ($contacts as $contact) {
 			if ($contact['id'] == $contactid && $contact['code'] == $type) {
+				$found = true;
 				$result = $this->ticket->delete_contact($contact['rowid']);
 
-				if (!$result) {
-					throw new RestException(500, 'Error when deleting the contact '.$contact['rowid']);
+				if ($result <= 0) {
+					throw new RestException(500, 'Error when deleting the contact '.$contact['rowid'].': '.$this->ticket->errorsToString());
 				}
 			}
+		}
+
+		if (!$found) {
+			throw new RestException(404, 'Contact id='.$contactid.' with type='.$type.' and source='.$source.' not linked to ticket');
 		}
 
 		return array(
