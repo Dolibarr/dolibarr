@@ -2178,8 +2178,12 @@ class EmailCollector extends CommonObject
 				} else {
 					$getMsg = $this->getmsg($connection, $imapemail); // This set global var $charset, $htmlmsg, $plainmsg, $attachments
 					if ($getMsg < 0) {
-						$this->errors = array_merge($this->errors, [$this->error]);
-						return $getMsg;
+						// We can't read this email. We do not stop the collect, so the other emails are still processed and moved,
+						// but this email is not processed and stays into the source directory.
+						$error++;
+						$this->errors[] = 'Failed to read email '.$this->uidAsString($imapemail).', the email stays into the source directory';	// The IMAP error was already added by getmsg()
+						$operationslog .= '<br>Failed to read email '.$this->uidAsString($imapemail).', the email stays into the source directory';
+						continue;
 					}
 				}
 				'@phan-var-force Webklex\PHPIMAP\Attachment[] $attachments';
@@ -3630,8 +3634,8 @@ class EmailCollector extends CommonObject
 												} else {
 													$getMsg = $this->getmsg($connection, $imapemail, $destdir);
 													if ($getMsg < 0) {
-														$this->errors = array_merge($this->errors, [$this->error]);
-														return $getMsg;
+														// Error for this email only (the IMAP error was already added by getmsg()): its transaction is rolled back and it stays into the source directory
+														$errorforactions++;
 													}
 												}
 
@@ -3802,8 +3806,8 @@ class EmailCollector extends CommonObject
 												} else {
 													$getMsg = $this->getmsg($connection, $imapemail, $destdir);
 													if ($getMsg < 0) {
-														$this->errors = array_merge($this->errors, [$this->error]);
-														return $getMsg;
+														// Error for this email only (the IMAP error was already added by getmsg()): its transaction is rolled back and it stays into the source directory
+														$errorforactions++;
 													}
 												}
 
@@ -3973,7 +3977,9 @@ class EmailCollector extends CommonObject
 				}
 
 				// Error for email or not ?
-				if (!$errorforactions) {
+				// Note: we must test also $errorforemail (set for example by an error of SQL request to find the object linked to the
+				// email), because the transaction of the email is rolled back if $errorforemail is set, so the email must not be moved.
+				if (!$errorforactions && !$errorforemail) {
 					if (!empty($targetdir)) {
 						if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 							// Move mail using PHP-IMAP
