@@ -863,12 +863,12 @@ jQuery(document).on('dolagenda:relayout', function () {
 JSDAYVIEW;
 		$s .= "\n";
 	}
-	if (getDolGlobalString('AGENDA_AUTOREFRESH_ENABLED') && ($mode == 'show_day' || $mode == 'show_week' || $mode == 'show_month' || empty($mode))) {
+	if (getDolGlobalInt('AGENDA_AUTOREFRESH_FREQUENCY') > 0 && ($mode == 'show_day' || $mode == 'show_week' || $mode == 'show_month' || empty($mode))) {
 		// Fetch, every few seconds, the events created or modified since the last check and put them in
 		// place without reloading the page. ajax/ajaxrefreshevents.php is the server side half.
 		$s .= 'var dolAgendaRefreshCfg = '.json_encode([
 			'url' => DOL_URL_ROOT.'/comm/action/ajax/ajaxrefreshevents.php',
-			'delay' => max(30, getDolGlobalInt('AGENDA_AUTOREFRESH_FREQUENCY', 60)) * 1000,
+			'delay' => max(30, getDolGlobalInt('AGENDA_AUTOREFRESH_FREQUENCY')) * 1000,
 			'since' => dol_now(),
 			'params' => [
 				'mode' => (empty($mode) ? 'show_month' : $mode),

@@ -105,7 +105,7 @@ if (!$user->hasRight('agenda', 'allactions', 'read') || $filter == 'mine') {
 // $day only means something in the day and week views: the month view sends 0
 $daycheckfails = ($mode == 'show_day' || $mode == 'show_week') && ($day <= 0 || $day > 31);
 
-if (!getDolGlobalString('AGENDA_AUTOREFRESH_ENABLED')) {
+if (getDolGlobalInt('AGENDA_AUTOREFRESH_FREQUENCY') <= 0) {
 	$response['error'] = 1;
 	$response['message'] = $langs->transnoentitiesnoconv('ErrorForbidden');
 } elseif (!$user->hasRight('agenda', 'myactions', 'read') || !restrictedArea($user, 'agenda', 0, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id', 0, 1)) {
