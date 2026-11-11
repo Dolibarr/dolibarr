@@ -562,14 +562,14 @@ if (empty($action) || $action == 'view') {
 		'notyet' => $langs->trans("NotYetInGeneralLedger"),
 		'already' => $langs->trans("AlreadyInGeneralLedger")
 	);
-	$listofmovementtypes = array(
+	$array_movement = array(
 		'all' => $langs->trans("AllStockMovements"),
 		'decrease' => $langs->trans("StockDecreasesOnly"),
 		'increase' => $langs->trans("StockIncreasesOnly")
 	);
 	$period = $form->selectDate($date_start ? $date_start : -1, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end ? $date_end : -1, 'date_end', 0, 0, 0, '', 1, 0);
 	$period .= ' -  '.$langs->trans("JournalizationInLedgerStatus").' '.$form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
-	$period .= ' -  '.$langs->trans("Movement").' '.$form->selectarray('search_type_movement', $listofmovementtypes, $search_type_movement, 0);
+	$period .= ' -  '.$langs->trans("Movement").' '.$form->selectarray('search_type_movement', $array_movement, $search_type_movement, 0);
 
 	$varlink = 'id_journal='.$id_journal;
 
