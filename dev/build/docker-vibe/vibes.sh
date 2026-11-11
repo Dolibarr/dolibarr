@@ -9,6 +9,8 @@
 # its README.md file is not "# DOLIBARR ERP & CRM"), the directory dolibarr_dev or dolibarr found
 # next to the current directory is also mounted into the container, so the
 # Dolibarr sources are available into the container at the same path as on the host.
+# When it is the Dolibarr core sources without a documents directory, the directory
+# dolibarr_documents found next to it (when it exists) is mounted as its documents directory.
 
 # Extract --no-cache flag from arguments (consumed by docker build, not passed to container)
 BUILD_ARGS=()
@@ -103,6 +105,19 @@ if [ "$IS_DOLIBARR_CORE" -eq 0 ]; then
             break
         fi
     done
+fi
+
+# When working on the Dolibarr core without a documents directory into the working directory,
+# mount the sibling directory dolibarr_documents (when it exists) as the documents directory.
+# An empty documents directory is the mount point left by a previous run, so it is reused.
+if [ "$IS_DOLIBARR_CORE" -eq 1 ]; then
+    DOCUMENTS_DIR="$(dirname "$WORK_DIR")/dolibarr_documents"
+    if [ -d "$DOCUMENTS_DIR" ] && [ ! -L "$WORK_DIR/documents" ]; then
+        if [ ! -e "$WORK_DIR/documents" ] || { [ -d "$WORK_DIR/documents" ] && [ -z "$(ls -A "$WORK_DIR/documents")" ]; }; then
+            echo "Mount $DOCUMENTS_DIR as $WORK_DIR/documents"
+            EXTRA_MOUNTS+=(--mount "type=bind,src=$DOCUMENTS_DIR,dst=$WORK_DIR/documents")
+        fi
+    fi
 fi
 
 # Pass the host graphical session to the container so that Vibe can copy to
