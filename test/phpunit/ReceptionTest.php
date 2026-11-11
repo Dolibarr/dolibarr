@@ -26,10 +26,9 @@
 
 global $conf,$user,$langs,$db,$mysoc;
 
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
 require_once dirname(__FILE__).'/../../htdocs/reception/class/reception.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 $langs->load("dict");
 

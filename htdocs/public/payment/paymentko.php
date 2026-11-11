@@ -138,7 +138,6 @@ if (empty($validpaymentmethod)) {
 
 
 $object = new stdClass(); // For triggers
-/** @var CommonObject $object */
 
 $error = 0;
 

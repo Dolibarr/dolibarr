@@ -8,6 +8,7 @@
  * Copyright (C) 2024		Jon Bendtsen			<jon.bendtsen.github@jonb.dk>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2026		William Mead			<william@m34d.com>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1584,8 +1585,9 @@ class Setup extends DolibarrApi
 	{
 		$answer = array();
 
-		if (!DolibarrApiAccess::$user->admin) {
-			throw new RestException(403, 'Only an admin user can get list of extrafields');
+		if (!DolibarrApiAccess::$user->admin
+			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_EXTRAFIELDS') || DolibarrApiAccess::$user->login != getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_EXTRAFIELDS'))) {
+			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_EXTRAFIELDS');
 		}
 
 		if ($elementtype == 'thirdparty') {
@@ -2626,7 +2628,7 @@ class Setup extends DolibarrApi
 		global $mysoc;
 
 		$sql = "SELECT rowid, entity, code, type_vat, active, fk_pays, fk_department_buyer, taux, localtax1, localtax2,  localtax1_type, localtax2_type,";
-		$sql .= " use_default, recuperableonly, note, accountancy_code_sell, accountancy_code_buy";
+		$sql .= " use_default, recuperableonly, einvoice_vatex, note, accountancy_code_sell, accountancy_code_buy";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t";
 		$sql .= " WHERE 1=1";
 
@@ -3164,14 +3166,6 @@ class Setup extends DolibarrApi
 				}
 				$out .= '</table>';
 				$out .= '</div>';
-
-
-				// Show warning
-				if (empty($tmpfilelist) && empty($tmpfilelist2) && empty($tmpfilelist3)) {
-					//setEventMessages($langs->trans("FileIntegrityIsStrictlyConformedWithReference"), null, 'mesgs');
-				} else {
-					//setEventMessages($langs->trans("FileIntegritySomeFilesWereRemovedOrModified"), null, 'warnings');
-				}
 			} else {
 				throw new RestException(500, 'Error: Failed to found dolibarr_htdocs_dir into XML file '.$xmlfile);
 			}

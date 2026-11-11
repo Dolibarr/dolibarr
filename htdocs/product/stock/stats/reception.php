@@ -123,7 +123,7 @@ if ($id > 0 || !empty($ref)) {
 	$title = $langs->trans('ProductServiceCard');
 	$helpurl = '';
 	$shortlabel = dol_trunc($object->batch, 16);
-	$title = $langs->trans('Batch')." ".$shortlabel." - ".$langs->trans('Referers');
+	$title = $langs->trans('Batch')." ".$shortlabel." - ".$langs->trans('ReferringItems');
 
 	llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-stock-stats_reception');
 
@@ -226,7 +226,7 @@ if ($id > 0 || !empty($ref)) {
 		print dol_get_fiche_end();
 
 		if ($showmessage && $nboflines > 1) {
-			print '<span class="opacitymedium">'.$langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers")).'</span>';
+			print '<span class="opacitymedium">'.$langs->trans("ClickOnALinkOfColumn", $langs->transnoentitiesnoconv("ReferringItems")).'</span>';
 		} elseif ($user->hasRight('reception', 'lire')) {
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_fournisseur,";
 			$sql .= " recep.ref, recep.date_creation, recep.fk_statut as statut, recep.rowid as facid,";

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Nastavitev modula PayPal
-PaypalDesc=Ta modul omogoča plačilo strankam preko <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a> . Uporablja se lahko za ad hoc plačilo ali za plačilo v zvezi z objektom Dolibarr (račun, naročilo, ...)
+PaypalDesc=This module allows payment by customers via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. This can be used for an ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
 PaypalOrCBDoPayment=Plačajte s PayPal (kartica ali PayPal)
 PaypalDoPayment=Plačajte s PayPal
 PAYPAL_API_SANDBOX=Način test/sandbox
@@ -19,7 +19,7 @@ NewOnlinePaymentFailed=Poskus z novim spletnim plačilom, vendar neuspešen
 ONLINE_PAYMENT_SENDEMAIL=E-poštni naslov za obvestila po vsakem poskusu plačila (za uspeh in neuspeh)
 ReturnURLAfterPayment=URL za vrnitev po izvedenem plačilu
 ValidationOfOnlinePaymentFailed=Preverjanje spletnega plačila ni uspelo
-PaymentSystemConfirmPaymentPageWasCalledButFailed=Plačilni sistem je poklical stran za potrditev plačila in je vrnil napako
+PaymentSystemConfirmPaymentPageWasCalledButFailed=The payment confirmation page was called by the online payment system and returned an error
 SetExpressCheckoutAPICallFailed=Klic API-ja SetExpressCheckout ni uspel.
 DoExpressCheckoutPaymentAPICallFailed=Klic API-ja DoExpressCheckoutPayment ni uspel.
 DetailedErrorMessage=Podrobno sporočilo o napaki

@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = អានការងារដែលបានគ្រោងទុក
-Permission23102 = បង្កើត/ធ្វើបច្ចុប្បន្នភាពការងារដែលបានគ្រោងទុក
-Permission23103 = លុបការងារដែលបានគ្រោងទុក
-Permission23104 = អនុវត្តការងារដែលបានគ្រោងទុក
 # Admin
 CronSetup=ការរៀបចំការគ្រប់គ្រងការងារតាមកាលវិភាគ
 URLToLaunchCronJobs=URL ដើម្បីពិនិត្យ និងបើកដំណើរការការងារ cron ដែលមានលក្ខណៈសម្បត្តិគ្រប់គ្រាន់ពីកម្មវិធីរុករកតាមអ៊ីនធឺណិត
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=នៅលើបរិស្ថាន Unix អ្នក�
 CronExplainHowToRunWin=នៅលើបរិស្ថាន Microsoft(tm) Windows អ្នកអាចប្រើឧបករណ៍កិច្ចការដែលបានកំណត់ពេលដើម្បីដំណើរការបន្ទាត់ពាក្យបញ្ជារៀងរាល់ 5 នាទីម្តង
 CronMethodDoesNotExists=ថ្នាក់ %s មិនមានវិធីសាស្រ្តណាមួយទេ %s
 CronMethodNotAllowed=វិធីសាស្រ្ត %s នៃថ្នាក់ %s គឺស្ថិតនៅក្នុងបញ្ជីទប់ស្កាត់នៃវិធីសាស្ត្រហាមឃាត់
-CronJobDefDesc=ទម្រង់ការងារ Cron ត្រូវបានកំណត់ទៅក្នុងឯកសារពិពណ៌នាម៉ូឌុល។ នៅពេលដែលម៉ូឌុលត្រូវបានធ្វើឱ្យសកម្ម ពួកវាត្រូវបានផ្ទុក និងអាចប្រើបាន ដូច្នេះអ្នកអាចគ្រប់គ្រងការងារពីម៉ឺនុយឧបករណ៍គ្រប់គ្រង %s ។
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=បញ្ជីនៃទម្រង់ការងារ cron ដែលបានកំណត់ជាមុន
 # Menu
 EnabledAndDisabled=បានបើក និងបិទ
@@ -27,7 +22,7 @@ CronDelete=លុបការងារដែលបានគ្រោងទុក
 CronConfirmDelete=តើអ្នកប្រាកដថាចង់លុបការងារដែលបានកំណត់ពេលទាំងនេះទេ?
 CronExecute=បើកដំណើរការឥឡូវនេះ
 CronConfirmExecute=តើ​អ្នក​ប្រាកដ​ជា​ចង់​ប្រតិបត្តិ​ការងារ​ដែល​បាន​កំណត់​ពេល​នេះ​ទេ?
-CronInfo=ម៉ូឌុលការងារដែលបានកំណត់ពេលអនុញ្ញាតឱ្យកំណត់ពេលវេលាការងារដើម្បីប្រតិបត្តិពួកវាដោយស្វ័យប្រវត្តិ។ ការងារក៏អាចចាប់ផ្តើមដោយដៃផងដែរ។
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=ការងារ
 CronNone=ដំណើរការបន្ទាប់នៃកិច្ចការដែលបានគ្រោងទុក
 CronNotYetRan=មិនដែលបានប្រតិបត្តិ
@@ -79,7 +74,7 @@ CronType_command=ពាក្យបញ្ជាសែល
 CronCannotLoadClass=មិនអាចផ្ទុកឯកសារថ្នាក់ %s (ដើម្បីប្រើថ្នាក់ %s)
 CronModuleNotEnabledInThisEntity=Cron module not enabled in this entity (to use %s method of %s object)
 CronCannotLoadObject=ឯកសារថ្នាក់ %s ត្រូវបានផ្ទុក ប៉ុន្តែវត្ថុ %s មិនត្រូវបានរកឃើញនៅក្នុងវាទេ
-UseMenuModuleToolsToAddCronJobs=ចូលទៅកាន់ម៉ឺនុយ "<a href="%s">Home - ឧបករណ៍គ្រប់គ្រង - ការងារដែលបានកំណត់ពេល</a>" ដើម្បីមើល និងកែសម្រួលការងារដែលបានកំណត់ពេល។
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=ការងារត្រូវបានបិទ
 MakeLocalDatabaseDumpShort=ការបម្រុងទុកមូលដ្ឋានទិន្នន័យមូលដ្ឋាន
 MakeLocalDatabaseDump=បង្កើតការបោះចោលមូលដ្ឋានទិន្នន័យមូលដ្ឋាន។ ប៉ារ៉ាម៉ែត្រគឺ៖ ការបង្ហាប់ ('gz' ឬ 'bz' ឬ 'none'), ប្រភេទបម្រុងទុក ('mysql', 'pgsql', 'auto'), 1, 'auto' ឬឈ្មោះឯកសារដែលត្រូវបង្កើត ចំនួនឯកសារបម្រុងទុកដែលត្រូវរក្សាទុក

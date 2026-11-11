@@ -604,15 +604,16 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	// Show logo company
 	if (!getDolGlobalString('MAIN_MENU_INVERT') && getDolGlobalString('MAIN_SHOW_LOGO') && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 		//$mysoc->logo_mini=(empty($conf->global->MAIN_INFO_SOCIETE_LOGO_MINI)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI);
-		$mysoc->logo_squarred_mini = getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI');
+		// Use a local variable: $mysoc may not be loaded (pages defining NOREQUIRESOC)
+		$logosquarredmini = getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI');
 
 		$logoContainerAdditionalClass = 'backgroundforcompanylogo';
 		if (getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_NO_BACKGROUND')) {
 			$logoContainerAdditionalClass = '';
 		}
 
-		if (!empty($mysoc->logo_squarred_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini)) {
-			$urllogo = dolBuildUrl(DOL_URL_ROOT.'/viewimage.php', ['cache' => 1, 'modulepart' => 'mycompany', 'file' => 'logos/thumbs/'.$mysoc->logo_squarred_mini]);
+		if (!empty($logosquarredmini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosquarredmini)) {
+			$urllogo = dolBuildUrl(DOL_URL_ROOT.'/viewimage.php', ['cache' => 1, 'modulepart' => 'mycompany', 'file' => 'logos/thumbs/'.$logosquarredmini]);
 			/*} elseif (!empty($mysoc->logo_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
 			{
 			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini);
@@ -2639,7 +2640,7 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
  */
 function get_left_menu_tools($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 'none', $type_user = 0)
 {
-	global $user, $langs;
+	global $conf, $user, $langs;
 
 	if ($mainmenu == 'tools') {
 		if (isModEnabled('category')) {
@@ -2686,6 +2687,11 @@ function get_left_menu_tools($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu 
 		} */
 
 		$newmenu->add(dolBuildUrl('/core/customreports.php', ['leftmenu' => 'customreports']), $langs->trans("BICustomReports"), 0, $user->isExternalUser() ? 0 : 1, '', $mainmenu, 'customreports', 100, '', '', '', img_picto('', 'graph', 'class="paddingright pictofixedwidth"'));
+
+		// Without javascript, the AI assistant popover of the top menu is not available, so we add a link to the AI assistant page
+		if (empty($conf->use_javascript_ajax) && isModEnabled('ai') && getDolGlobalString('AI_ASSISTANT_ENABLED')) {
+			$newmenu->add(dolBuildUrl('/ai/assistant/index.php', ['leftmenu' => 'ai']), $langs->trans("AIAssistant"), 0, $user->hasRight('ai', 'assistant', 'use'), '', $mainmenu, 'ai', 110, '', '', '', img_picto('', 'fa-magic', 'class="paddingright pictofixedwidth"'));
+		}
 	}
 }
 

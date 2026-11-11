@@ -30,6 +30,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/lib/stripe.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
@@ -74,6 +75,12 @@ $action = GETPOST('action', 'aZ09');
  * Actions
  */
 $error = 0;
+
+// The bank account is required when the module Bank is enabled, otherwise the online payments can't be recorded
+if ($action == 'setvalue' && $user->admin && isModEnabled('bank') && GETPOSTINT('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS') <= 0) {
+	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
+	$action = '';
+}
 
 if ($action == 'setvalue' && $user->admin) {
 	$db->begin();
@@ -210,9 +217,7 @@ print dol_get_fiche_head($head, 'stripeaccount', '', -1);
 
 $stripearrayofwebhookevents = array('account.updated', 'payout.created', 'payout.paid', 'charge.pending', 'charge.refunded', 'charge.succeeded', 'charge.failed', 'payment_intent.succeeded', 'payment_intent.payment_failed', 'payment_method.attached', 'payment_method.updated', 'payment_method.card_automatically_updated', 'payment_method.detached', 'source.chargeable', 'customer.deleted');
 
-print '<span class="opacitymedium">'.$langs->trans("StripeDesc")."</span><br>\n";
-
-print '<br>';
+print '<div class="info">'.$langs->trans("StripeDesc")."</div><br>\n";
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
@@ -241,7 +246,10 @@ if (empty($conf->stripeconnect->enabled)) {
 
 	print '<tr class="oddeven"><td>';
 	print '<span class="titlefield fieldrequired">'.$langs->trans("STRIPE_TEST_SECRET_KEY").'</span></td><td>';
-	print '<input class="minwidth300" type="text" name="STRIPE_TEST_SECRET_KEY" value="' . getDolGlobalString('STRIPE_TEST_SECRET_KEY').'" placeholder="'.$langs->trans("Example").': sk_test_xxxxxxxxxxxxxxxxxxxxxxxx">';
+	print '<input class="minwidth300 input-icon-password" type="password" id="STRIPE_TEST_SECRET_KEY" name="STRIPE_TEST_SECRET_KEY" value="' . getDolGlobalString('STRIPE_TEST_SECRET_KEY').'" placeholder="'.$langs->trans("Example").': sk_test_xxxxxxxxxxxxxxxxxxxxxxxx">';
+	if (getDolGlobalString('STRIPE_TEST_SECRET_KEY')) {
+		print showEyeForField('eyeSTRIPE_TEST_SECRET_KEY', 'STRIPE_TEST_SECRET_KEY');
+	}
 	print '</td><td></td></tr>';
 
 	print '<tr class="oddeven"><td>';
@@ -250,7 +258,10 @@ if (empty($conf->stripeconnect->enabled)) {
 		print '<input class="minwidth300" type="text" name="STRIPE_TEST_WEBHOOK_ID" value="'.getDolGlobalString('STRIPE_TEST_WEBHOOK_ID').'" placeholder="'.$langs->trans("Example").': we_xxxxxxxxxxxxxxxxxxxxxxxx">';
 		print '<br>';
 	}
-	print '<input class="minwidth300" type="text" name="STRIPE_TEST_WEBHOOK_KEY" value="'.getDolGlobalString('STRIPE_TEST_WEBHOOK_KEY').'" placeholder="'.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx">';
+	print '<input class="minwidth300 input-icon-password" type="password" id="STRIPE_TEST_WEBHOOK_KEY" name="STRIPE_TEST_WEBHOOK_KEY" value="'.getDolGlobalString('STRIPE_TEST_WEBHOOK_KEY').'" placeholder="'.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx">';
+	if (getDolGlobalString('STRIPE_TEST_WEBHOOK_KEY')) {
+		print showEyeForField('eyeSTRIPE_TEST_WEBHOOK_KEY', 'STRIPE_TEST_WEBHOOK_KEY');
+	}
 	$out = img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForTestWebhook").'</span> ';
 	$url = dol_buildpath('/public/stripe/ipn.php', 3);
 	$url .= '?test=1';
@@ -324,7 +335,10 @@ if (empty($conf->stripeconnect->enabled)) {
 
 	print '<tr class="oddeven"><td>';
 	print '<span class="fieldrequired">'.$langs->trans("STRIPE_LIVE_SECRET_KEY").'</span></td><td>';
-	print '<input class="minwidth300" type="text" name="STRIPE_LIVE_SECRET_KEY" value="'.getDolGlobalString('STRIPE_LIVE_SECRET_KEY').'" placeholder="'.$langs->trans("Example").': sk_live_xxxxxxxxxxxxxxxxxxxxxxxx" spellcheck="false">';
+	print '<input class="minwidth300 input-icon-password" type="password" id="STRIPE_LIVE_SECRET_KEY" name="STRIPE_LIVE_SECRET_KEY" value="'.getDolGlobalString('STRIPE_LIVE_SECRET_KEY').'" placeholder="'.$langs->trans("Example").': sk_live_xxxxxxxxxxxxxxxxxxxxxxxx" spellcheck="false">';
+	if (getDolGlobalString('STRIPE_LIVE_SECRET_KEY')) {
+		print showEyeForField('eyeSTRIPE_LIVE_SECRET_KEY', 'STRIPE_LIVE_SECRET_KEY');
+	}
 	print '</td><td></td></tr>';
 
 	print '<tr class="oddeven"><td>';
@@ -333,13 +347,17 @@ if (empty($conf->stripeconnect->enabled)) {
 		print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_ID" value="'.getDolGlobalString('STRIPE_LIVE_WEBHOOK_ID').'" placeholder="'.$langs->trans("Example").': we_xxxxxxxxxxxxxxxxxxxxxxxx" spellcheck="false">';
 		print '<br>';
 	}
-	print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_KEY" value="'.getDolGlobalString('STRIPE_LIVE_WEBHOOK_KEY').'" placeholder="'.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx" spellcheck="false">';
+	print '<input class="minwidth300 input-icon-password" type="password" id="STRIPE_LIVE_WEBHOOK_KEY" name="STRIPE_LIVE_WEBHOOK_KEY" value="'.getDolGlobalString('STRIPE_LIVE_WEBHOOK_KEY').'" placeholder="'.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx" spellcheck="false">';
+	if (getDolGlobalString('STRIPE_LIVE_WEBHOOK_KEY')) {
+		print showEyeForField('eyeSTRIPE_LIVE_WEBHOOK_KEY', 'STRIPE_LIVE_WEBHOOK_KEY');
+	}
 	$out = img_picto('', 'globe', 'class="pictofixedwidth"').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForLiveWebhook").'</span> ';
 	$url = dol_buildpath('/public/stripe/ipn.php', 3);
 	//global $dolibarr_main_instance_unique_id;
 	//$url .= '?securitykey='.dol_hash('stripeipn-'.$dolibarr_main_instance_unique_id.'-'.getDolGlobalString('STRIPE_LIVE_PUBLISHABLE_KEY'), 'md5');
 	$out .= '<input type="text" id="onlinelivewebhookurl" class="minwidth500" value="'.$url.'" disabled>';
 	$out .= ajax_autoselect("onlinelivewebhookurl", '0');
+
 	print '<br>'.$out;
 
 	$messagepopup = $langs->trans('ListOfSupportedHooksToActivate').':<br><br>';
@@ -401,12 +419,11 @@ print "</tr>\n";
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("PublicVendorName").'</td><td>';
-print '<input class="minwidth300" type="text" name="ONLINE_PAYMENT_CREDITOR" value="'.getDolGlobalString('ONLINE_PAYMENT_CREDITOR').'">';
-print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': '.$mysoc->name.'</span>';
+print '<input class="minwidth300" type="text" name="ONLINE_PAYMENT_CREDITOR" value="'.getDolGlobalString('ONLINE_PAYMENT_CREDITOR').'" placeholder="'.dolPrintHTMLForAttribute($mysoc->name).'">';
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
-print $langs->trans("BankAccount").'</td><td>';
+print '<span'.(isModEnabled('bank') ? ' class="fieldrequired"' : '').'>'.$langs->trans("BankAccount").'</span></td><td>';
 print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 $form->select_comptes(getDolGlobalString('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS'), 'STRIPE_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
 print '</td></tr>';
@@ -594,7 +611,7 @@ print '<tr class="oddeven"><td>';
 print $langs->trans("ONLINE_PAYMENT_SENDEMAIL").'</td><td>';
 print img_picto('', 'email', 'class="pictofixedwidth"');
 print '<input class="minwidth200" type="text" name="ONLINE_PAYMENT_SENDEMAIL" value="' . getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL').'">';
-print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': myemail@myserver.com, Payment service &lt;myemail2@myserver2.com&gt;</span>';
+print ' &nbsp; <span class="opacitymedium small">'.$langs->trans("Example").': myemail@myserver.com, Payment service &lt;myemail2@myserver2.com&gt;</span>';
 print '</td></tr>';
 
 print '</table>';
@@ -607,7 +624,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>Payout</td>';
-print '<td class="width300"></td>';
+print '<td></td>';
 print "</tr>\n";
 
 // Param to record automatically payouts (received from IPN payout.paid and payout.created)
@@ -647,14 +664,15 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("UrlGenerationParameters").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
+print '<td>'.$langs->trans("LinksToMakeAPayment").'</td>';
+print '<td></td>';
 print "</tr>\n";
 
 // Payment token for URL
 print '<tr class="oddeven"><td>';
 print $langs->trans("SecurityToken").'</td><td>';
-print '<input class="minwidth300" type="text" id="PAYMENT_SECURITY_TOKEN" name="PAYMENT_SECURITY_TOKEN" value="' . getDolGlobalString('PAYMENT_SECURITY_TOKEN').'" spellcheck="false">';
+print '<input class="minwidth400 input-icon-password" type="password" id="PAYMENT_SECURITY_TOKEN" name="PAYMENT_SECURITY_TOKEN" value="' . getDolGlobalString('PAYMENT_SECURITY_TOKEN').'" spellcheck="false">';
+print showEyeForField('eyePAYMENT_SECURITY_TOKEN', 'PAYMENT_SECURITY_TOKEN');
 if (!empty($conf->use_javascript_ajax)) {
 	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 }
@@ -663,6 +681,13 @@ if (getDolGlobalString('PAYMENT_SECURITY_ACCEPT_ANY_TOKEN')) {
 	print img_warning($langs->trans("WarningTheHiddenOptionIsOn", 'PAYMENT_SECURITY_ACCEPT_ANY_TOKEN'), '', 'pictowarning marginleftonly');
 }
 print '</td></tr>';
+
+// Link to open the popup to get the url of a payment
+if (!empty($conf->use_javascript_ajax)) {
+	print '<tr class="oddeven"><td colspan="2" class="center">';
+	print '<a href="#" id="linkforonlinepaymentlinks">'.img_picto('', 'globe', 'class="pictofixedwidth"').$langs->trans("GetAPaymentLink").'</a>';
+	print '</td></tr>';
+}
 
 print '</table>';
 print '</div>';
@@ -677,15 +702,18 @@ print '<br><br><br>';
 
 
 $token = '';
+$onlinepaymentlinksinpopup = 1;
 include DOL_DOCUMENT_ROOT.'/core/tpl/onlinepaymentlinks.tpl.php';
 
 
-
-print info_admin($langs->trans("ExampleOfTestCreditCard", '4242424242424242 (no 3DSecure) or 4000000000003063 (3DSecure required) or 4000002760003184 (3DSecure2 required on all transaction) or 4000003800000446 (3DSecure2 required, the off-session allowed)', '4000000000000101', '4000000000000069', '4000000000000341').'. '.$langs->trans('SeeAlso', 'https://docs.stripe.com/testing?testing-method=card-numbers'));
+// Show test credit cards and test bank accounts into the same info box
+$texttestexamples = $langs->trans("ExampleOfTestCreditCard", '4242424242424242 (no 3DSecure) or 4000000000003063 (3DSecure required) or 4000002760003184 (3DSecure2 required on all transaction) or 4000003800000446 (3DSecure2 required, the off-session allowed)', '4000000000000101', '4000000000000069', '4000000000000341').'. '.$langs->trans('SeeAlso', 'https://docs.stripe.com/testing?testing-method=card-numbers');
 
 if (getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT')) {
-	print info_admin($langs->trans("ExampleOfTestBankAcountForSEPA", 'AT611904300234573201 (pending->succeed) or AT861904300235473202 (pending->failed)').'. '.$langs->trans('SeeAlso', 'https://docs.stripe.com/testing?payment-method=sepa-direct-debit'));
+	$texttestexamples .= '<br><br>'.$langs->trans("ExampleOfTestBankAcountForSEPA", 'AT611904300234573201 (pending->succeed) or AT861904300235473202 (pending->failed)').'. '.$langs->trans('SeeAlso', 'https://docs.stripe.com/testing?payment-method=sepa-direct-debit');
 }
+
+print info_admin($texttestexamples);
 
 
 

@@ -65,7 +65,8 @@ if (!empty($cols) && !isset($parameters['cols'])) {
 } elseif (isset($parameters['cols'])) {
 	$cols = $parameters['cols'];
 }
-if (!empty($object->fk_soc)) {
+if (property_exists($object, 'fk_soc') && !empty($object->fk_soc)) {
+	// @phan-suppress-next-line PhanUndeclaredProperty
 	$parameters['socid'] = $object->fk_soc;
 }
 $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);
@@ -317,7 +318,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 				// here (its parent list is not on this form), so it must be filtered on the saved value of its parent.
 				print $extrafields->showInputField($tmpkeyextra, $value, '', '', '', '', $object, $object->table_element, 0, 1);
 
-				print '<input type="submit" class="button reposition" value="'.dolPrintHTMLForAttribute($langs->trans('Modify')).'">';
+				print '<input type="submit" class="button smallpaddingimp reposition" value="'.dolPrintHTMLForAttribute($langs->trans('Modify')).'">';
 
 				print '</form>';
 

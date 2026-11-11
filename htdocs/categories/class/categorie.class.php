@@ -477,7 +477,7 @@ class Categorie extends CommonObject
 		}
 
 		$sql = "SELECT rowid, fk_parent, entity, label, description, color, position, fk_soc, visible, type, ref_ext";
-		$sql .= ", date_creation, tms, fk_user_creat, fk_user_modif, import_key";
+		$sql .= ", date_creation, tms, fk_user_creat, fk_user_modif, import_key, extraparams";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
 		if ($id) {
 			$sql .= " WHERE rowid = ".((int) $id);
@@ -511,6 +511,7 @@ class Categorie extends CommonObject
 				$this->user_creation_id = (int) $res['fk_user_creat'];
 				$this->user_modification_id = (int) $res['fk_user_modif'];
 				$this->import_key = $res['import_key'];
+				$this->extraparams = !empty($res['extraparams']) ? (array) json_decode($res['extraparams'], true) : array();
 
 				// Retrieve all extrafields
 				// fetch optionals attributes and labels
@@ -688,6 +689,23 @@ class Categorie extends CommonObject
 			dol_syslog($this->error, LOG_WARNING);
 			return -1;
 		}
+		// Nor one of its descendants, which would detach both from the tree and make a loop: go up from the new parent
+		// (only when the parent changes, or when we do not know the previous parent)
+		if (empty($this->oldcopy) || $this->fk_parent != $this->oldcopy->fk_parent) {
+			$ancestorid = $this->fk_parent;
+			$protection = 1000;
+			while ($ancestorid > 0 && $protection-- > 0) {
+				$resql = $this->db->query("SELECT fk_parent FROM ".MAIN_DB_PREFIX."categorie WHERE rowid = ".((int) $ancestorid));
+				$obj = $resql ? $this->db->fetch_object($resql) : null;
+				$ancestorid = $obj ? (int) $obj->fk_parent : 0;
+				if ($ancestorid == $this->id) {
+					$langs->load('categories');
+					$this->error = $langs->trans("ErrorCategoryCannotBeMovedIntoItsDescendant");
+					dol_syslog($this->error, LOG_WARNING);
+					return -1;
+				}
+			}
+		}
 
 		if ($this->already_exists()) {
 			$this->error = $langs->trans("ImpossibleUpdateCat");
@@ -811,6 +829,17 @@ class Categorie extends CommonObject
 			'categorie_lang' => 'fk_category',
 			'categorie' => 'rowid',
 		);
+		// The links of the category are in the table of its own type: make sure that table is purged even when it is
+		// missing from the list above or disabled there, otherwise its foreign key refuses to delete the category.
+		$typecode = is_numeric($this->type) ? array_search((int) $this->type, $this->MAP_ID) : $this->type;
+		if (!empty($typecode) && $typecode != 'bank_line') {	// the links of bank lines are in category_bankline, already in the list
+			$linktable = 'categorie_'.(empty($this->MAP_CAT_TABLE[$typecode]) ? $typecode : $this->MAP_CAT_TABLE[$typecode]);
+			if (array_key_exists($linktable, $arraydelete)) {
+				$arraydelete[$linktable] = 'fk_categorie';
+			} else {
+				$arraydelete = array($linktable => 'fk_categorie') + $arraydelete;
+			}
+		}
 		foreach ($arraydelete as $key => $value) {
 			$sanitizedvalue = $value;
 			if (is_array($value)) {
@@ -1184,15 +1213,13 @@ class Categorie extends CommonObject
 				dol_print_error($this->db);
 			}
 
-			if (($limit >= (int) $nbtotalofrecords) && $page > 0) {
-				return [];
+			if ($resql) {
+				$this->db->free($resql);
 			}
 
-			if (($page * $limit) >= (int) $nbtotalofrecords) {	// if total resultset is smaller or equal then paging size (filtering), goto and load page 0
-				$page = 0;
-				$offset = 0;
+			if ($page > 0 && ($page * $limit) >= (int) $nbtotalofrecords) {	// requested page is after the last one, so there is nothing to return
+				return [];
 			}
-			$this->db->free($resql);
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -1331,7 +1358,7 @@ class Categorie extends CommonObject
 		global $langs;
 
 		if (!is_numeric($type)) {
-			$type = $this->MAP_ID[$type];
+			$type = isset($this->MAP_ID[$type]) ? $this->MAP_ID[$type] : null;
 		}
 		if (is_null($type)) {
 			$this->error = 'BadValueForParameterType';
@@ -2306,7 +2333,7 @@ class Categorie extends CommonObject
 	{
 		global $langs;
 
-		$current_lang = $langs->getDefaultLang();
+		$current_lang = (is_object($langs) ? $langs->getDefaultLang() : '');	// $langs may be null when called from a page with NOREQUIRETRAN
 
 		$sql = "SELECT lang, label, description";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie_lang";

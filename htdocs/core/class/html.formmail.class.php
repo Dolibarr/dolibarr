@@ -162,6 +162,11 @@ class FormMail extends Form
 	public $witherrorsto;
 
 	/**
+	 * @var string					Email used for the errors-to field (default value of the errorstomail input)
+	 */
+	public $errorstomail;
+
+	/**
 	 * @var int<0,2>|string 		0=No attaches files, 1=Show attached files, 2=Can add new attached files, 'text'=Show attached files and the text
 	 */
 	public $withfile;
@@ -513,14 +518,15 @@ class FormMail extends Form
 
 			// Define output language
 			$outputlangs = $langs;
-			$newlang = '';
+			$newlang = getDolGlobalInt('MAIN_MULTILANGS') ? '' : getDolGlobalString('MAIN_LANG_DEFAULT', 'auto');
 			if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($this->param['langsmodels'])) {
 				$newlang = $this->param['langsmodels'];
 			}
 			if (!empty($newlang)) {
 				$outputlangs = new Translate("", $conf);
 				$outputlangs->setDefaultLang($newlang);
-				$outputlangs->load('other');
+				// Same files as the language of the recipient in card_presend.tpl.php, so that the __(Key)__ of the templates are translated
+				$outputlangs->loadLangs(array('other', 'commercial', 'bills', 'orders', 'contracts', 'main', 'members', 'propal', 'products', 'supplier_proposal', 'interventions', 'receptions', 'sendings'));
 			}
 
 			// Get message template for $this->param["models"] into c_email_templates
@@ -602,7 +608,7 @@ class FormMail extends Form
 						$labeltouse = $line->label;
 					}
 
-					if ($break != $line->lang) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && $break != $line->lang) {
 						// New break for a new language, we add the break
 						$s = $line->lang;
 						$shtml = '----- '.$langs->trans("Language_".$line->lang).' -----';
@@ -612,7 +618,7 @@ class FormMail extends Form
 					// We escape the $labeltouse to store it into $modelmail_array.
 					$s = dol_escape_htmltag($labeltouse);
 					$shtml = dol_escape_htmltag($labeltouse);
-					if ($line->lang) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && $line->lang) {
 						$shtml = picto_from_langcode($line->lang).'</span> '.$shtml;
 					}
 					if ($line->private) {
@@ -1768,7 +1774,7 @@ class FormMail extends Form
 		if (is_object($arraydefaultmessage) && !empty($arraydefaultmessage->lang)) {
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($arraydefaultmessage->lang);
-			$outputlangs->load('other');
+			$outputlangs->loadLangs(array('other', 'commercial', 'bills', 'orders', 'contracts', 'main', 'members', 'propal', 'products', 'supplier_proposal', 'interventions', 'receptions', 'sendings'));
 		}
 
 		$defaulttopic = make_substitutions($defaulttopic, $this->substit, $outputlangs);

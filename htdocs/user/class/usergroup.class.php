@@ -768,7 +768,7 @@ class UserGroup extends CommonObject
 		$lastname = $this->lastname;
 		$firstname = $this->firstname;
 		if (empty($lastname)) {
-			$lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (isset($this->nom) ? $this->nom : (isset($this->societe) ? $this->societe : (isset($this->company) ? $this->company : '')))));
+			$lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (isset($this->nom) ? $this->nom : '')));
 		}
 
 		$ret = '';

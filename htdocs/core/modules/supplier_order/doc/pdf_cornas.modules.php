@@ -543,10 +543,10 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 					$pageposbefore = $pdf->getPage();
+					$this->resetAfterColsLinePositionsData($curY, $pageposbefore);
 
 					$showpricebeforepagebreak = 1;
 					$posYAfterImage = 0;
-					$posYAfterDescription = 0;
 
 					// We start with Photo of product line
 					if ($this->getColumnStatus('photo')) {
@@ -572,6 +572,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 							$pdf->Image($realpatharray[$i], $this->getColumnContentXStart('photo'), $curY + 1, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300); // Use 300 dpi
 							// $pdf->Image does not increase value return by getY, so we save it manually
 							$posYAfterImage = $curY + $imglinesize['height'];
+							$this->setAfterColsLinePositionsData('photo', $posYAfterImage, $pdf->getPage());
 						}
 					}
 
@@ -613,12 +614,11 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 						} else { // No pagebreak
 							$pdf->commitTransaction();
 						}
-						$posYAfterDescription = $pdf->GetY();
+						$this->setAfterColsLinePositionsData('desc', $pdf->GetY(), $pdf->getPage());
 					}
 
-					$nexY = max($pdf->GetY(), $posYAfterImage);
-
-					$pageposafter = $pdf->getPage();
+					$afterPosData = $this->getMaxAfterColsLinePositionsData();
+					$pageposafter = $afterPosData['page'];
 
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
@@ -641,14 +641,14 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					if ($this->getColumnStatus('vat') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
 						$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $curY, 'vat', $vat_rate);
-						$nexY = max($pdf->GetY(), $nexY);
+						$this->setAfterColsLinePositionsData('vat', $pdf->GetY(), $pdf->getPage());
 					}
 
 					// Unit price before discount
 					if ($this->getColumnStatus('subprice') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE && isset($pdf_sub_options['titleshowuponpdf'])) {
 						$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $curY, 'subprice', $up_excl_tax);
-						$nexY = max($pdf->GetY(), $nexY);
+						$this->setAfterColsLinePositionsData('subprice', $pdf->GetY(), $pdf->getPage());
 					}
 
 					// Quantity
@@ -656,7 +656,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					if ($this->getColumnStatus('qty') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
 						$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $curY, 'qty', $qty);
-						$nexY = max($pdf->GetY(), $nexY);
+						$this->setAfterColsLinePositionsData('qty', $pdf->GetY(), $pdf->getPage());
 					}
 
 
@@ -664,14 +664,14 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					if ($this->getColumnStatus('unit') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
 						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $curY, 'unit', $unit);
-						$nexY = max($pdf->GetY(), $nexY);
+						$this->setAfterColsLinePositionsData('unit', $pdf->GetY(), $pdf->getPage());
 					}
 
 					// Discount on line
 					if ($this->getColumnStatus('discount') && $object->lines[$i]->remise_percent && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
 						$remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $curY, 'discount', $remise_percent);
-						$nexY = max($pdf->GetY(), $nexY);
+						$this->setAfterColsLinePositionsData('discount', $pdf->GetY(), $pdf->getPage());
 					}
 
 					// Total HT line
@@ -687,7 +687,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 							}
 							$this->printStdColumnContent($pdf, $curY, 'totalexcltax', $total_excl_tax);
 						}
-						$nexY = max($pdf->GetY(), $nexY);
+						$this->setAfterColsLinePositionsData('totalexcltax', $pdf->GetY(), $pdf->getPage());
 					}
 
 					// Extrafields
@@ -696,10 +696,14 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 							if ($this->getColumnStatus($extrafieldColKey)) {
 								$extrafieldValue = $this->getExtrafieldContent($object->lines[$i], $extrafieldColKey, $outputlangs);
 								$this->printStdColumnContent($pdf, $curY, $extrafieldColKey, $extrafieldValue);
-								$nexY = max($pdf->GetY(), $nexY);
+								$this->setAfterColsLinePositionsData('options_'.$extrafieldColKey, $pdf->GetY(), $pdf->getPage());
 							}
 						}
 					}
+
+					$afterPosData = $this->getMaxAfterColsLinePositionsData();
+					$nexY = $afterPosData['y'];
+					$pageposafter = $afterPosData['page'];
 
 					$parameters = array(
 						'object' => $object,
@@ -767,10 +771,6 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 						$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] = 0;
 					}
 					$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate' => $vatrate, 'vatcode' => $vatcode, 'amount' => $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] + $tvaligne);
-
-					if ($posYAfterImage > $posYAfterDescription) {
-						$nexY = $posYAfterImage;
-					}
 
 					// Add line
 					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
@@ -924,7 +924,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		$posxval = 52;
 
 		// Show payments conditions
-		if (!empty($object->cond_reglement_code) || $object->cond_reglement) {
+		if (!empty($object->cond_reglement_code)) {
 			$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$titre = $outputlangs->transnoentities("PaymentConditions").':';
@@ -1002,7 +1002,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 
 		$total_ht = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ht : $object->total_ht);
 		$pdf->SetXY($col2x, $tab2_top);
-		$pdf->MultiCell($largcol2, $tab2_hl, price($total_ht + (!empty($object->remise) ? $object->remise : 0)), 0, 'R', true);
+		$pdf->MultiCell($largcol2, $tab2_hl, price($total_ht), 0, 'R', true);
 
 		// Show VAT by rates and total
 		$pdf->SetFillColor(248, 248, 248);

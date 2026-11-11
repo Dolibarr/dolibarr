@@ -27,6 +27,7 @@ Earnings=Earnings
 TotalEarnings=Total earnings
 TotalDeductions=Total deductions
 NetPaid=HT maksetaan
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=oletus-tilin käyttämä tili (tilikartasta) palkkojen "käyttäjille"
@@ -55,8 +56,6 @@ FillFieldFirst=Täytä ensin työntekijä Kenttä
 UpdateAmountWithLastSalary=Aseta viimeisen palkan määrä
 MakeTransferRequest=Tee siirtopyyntö
 VirementOrder=Luotonsiirtopyyntö
-WithdrawalReceipt=Tilisiirtomääräys
-OrderWaiting=Odottava tilaus
 FillEndOfMonth=Kuukauden loppu
 
 # Shortcuts

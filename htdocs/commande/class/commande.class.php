@@ -160,6 +160,11 @@ class Commande extends CommonOrder
 	public $cond_reglement_doc;
 
 	/**
+	 * @var string Label of the payment terms, used when there is no label for documents
+	 */
+	public $cond_reglement_label;
+
+	/**
 	 * @var string|float 	Deposit percent for payment terms. Populated by $CommonObject->setPaymentTerms().
 	 * @see setPaymentTerms()
 	 */
@@ -333,7 +338,7 @@ class Commande extends CommonOrder
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 20, 'index' => 1),
 		'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'showoncombobox' => 1, 'position' => 25),
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 26),
-		'ref_client' => array('type' => 'varchar(255)', 'label' => 'RefCustomer', 'enabled' => 1, 'visible' => -1, 'position' => 28),
+		'ref_client' => array('type' => 'varchar(255)', 'label' => 'RefCustomer', 'enabled' => 1, 'visible' => -1, 'position' => 28, 'uieditable' => 1, 'alwayseditable' => 1),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'visible' => -1, 'notnull' => 1, 'position' => 20),
 		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 25),
 		'date_commande' => array('type' => 'date', 'label' => 'Date', 'enabled' => 1, 'visible' => 1, 'position' => 60, 'csslist' => 'nowraponall'),
@@ -348,8 +353,8 @@ class Commande extends CommonOrder
 		'total_ht' => array('type' => 'double(24,8)', 'label' => 'TotalHT', 'enabled' => 1, 'visible' => -1, 'position' => 140, 'isameasure' => 1),
 		'total_ttc' => array('type' => 'double(24,8)', 'label' => 'TotalTTC', 'enabled' => 1, 'visible' => -1, 'position' => 145, 'isameasure' => 1),
 		'signed_status' => array('type' => 'smallint(6)', 'label' => 'SignedStatus', 'enabled' => 1, 'visible' => -1, 'position' => 146, 'arrayofkeyval' => array(0 => 'NoSignature', 1 => 'SignedSender', 2 => 'SignedReceiver', 9 => 'SignedAll')),
-		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 150),
-		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 155),
+		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 150, 'uieditable' => 1, 'alwayseditable' => 1),
+		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 155, 'uieditable' => 1, 'alwayseditable' => 1),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'PDFTemplate', 'enabled' => 1, 'visible' => 0, 'position' => 160),
 		'fk_account' => array('type' => 'integer', 'label' => 'BankAccount', 'enabled' => 'isModEnabled("bank")', 'visible' => -1, 'position' => 170),
 		'fk_currency' => array('type' => 'varchar(3)', 'label' => 'MulticurrencyID', 'enabled' => 1, 'visible' => -1, 'position' => 175),
@@ -450,6 +455,23 @@ class Commande extends CommonOrder
 		$this->isextrafieldmanaged = 1;
 
 		$this->fields['ref_ext']['visible'] = getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT');
+	}
+
+	/**
+	 * Save into database the current value of one field, called by updateFieldFromUi().
+	 * Override of CommonObject::persistFieldValue(): the customer ref of orders is saved with set_ref_client().
+	 *
+	 * @param User   $user  User making the change
+	 * @param string $field Field name
+	 * @return int          Return integer <0 if KO, >0 if OK
+	 */
+	protected function persistFieldValue(User $user, $field)
+	{
+		if ($field == 'ref_client') {
+			return $this->set_ref_client($user, (string) $this->ref_client);
+		}
+
+		return parent::persistFieldValue($user, $field);
 	}
 
 	/**
@@ -590,7 +612,7 @@ class Commande extends CommonOrder
 						$mouvP->origin = &$this;
 						$mouvP->setOrigin($this->element, $this->id);
 						// We decrement stock of product (and sub-products)
-						$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderValidatedInDolibarr", $num));
+						$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->transnoentitiesnoconv("OrderValidatedInDolibarr", $num));
 						if ($result < 0) {
 							$error++;
 							$this->setErrorsFromObject($mouvP);
@@ -930,7 +952,7 @@ class Commande extends CommonOrder
 						$mouvP = new MouvementStock($this->db);
 						$mouvP->setOrigin($this->element, $this->id);
 						// We increment stock of product (and sub-products)
-						$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("OrderCanceledInDolibarr", $this->ref)); // price is 0, we don't want WAP to be changed
+						$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->transnoentitiesnoconv("OrderCanceledInDolibarr", $this->ref)); // price is 0, we don't want WAP to be changed
 						if ($result < 0) {
 							$error++;
 							$this->setErrorsFromObject($mouvP);
@@ -1164,7 +1186,8 @@ class Commande extends CommonOrder
 						$originid,
 						0,
 						$line->ref_ext,
-						1
+						1,
+						(empty($line->ref_customer) ? '' : (string) $line->ref_customer)
 					);
 
 					if ($result < 0) {
@@ -1176,6 +1199,16 @@ class Commande extends CommonOrder
 						$this->db->rollback();
 						return -1;
 					}
+
+					// Keep the extra parameters of the source line (for example the options of subtotal lines): addline() can't
+					// do it when the object is cloned, because the origin it receives is the one of the source line, not the source line
+					if ($result > 0 && !empty($line->extraparams)) {
+						$newline = new OrderLine($this->db);
+						$newline->id = $result;
+						$newline->extraparams = $line->extraparams;
+						$newline->setExtraParameters();
+					}
+
 					// Defined the new fk_parent_line
 					if ($result > 0 && $line->product_type == 9) {
 						$fk_parent_line = $result;
@@ -1300,9 +1333,10 @@ class Commande extends CommonOrder
 	 *  @param	    User	$user		    User making the clone
 	 *	@param		int		$socid		    Id of thirdparty
 	 *	@param		int		$forceentity	Entity id to force (used by multicompany to clone into another entity)
+	 *	@param		?bool	$keep_ref_customer	Keep the customer reference. If null, MAIN_KEEP_REF_CUSTOMER_ON_CLONING decides.
 	 *	@return		int					    New id of clone
 	 */
-	public function createFromClone(User $user, $socid = 0, $forceentity = null)
+	public function createFromClone(User $user, $socid = 0, $forceentity = null, $keep_ref_customer = null)
 	{
 		global $hookmanager;
 
@@ -1347,19 +1381,22 @@ class Commande extends CommonOrder
 		$object->date_commande = dol_now();
 		$object->date_creation = '';
 		$object->date_validation = '';
-		if (!getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING')) {
+		if (!($keep_ref_customer ?? getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING'))) {
 			$object->ref_client = '';
 			$object->ref_customer = '';
 		}
 
-		// Do not clone ref_ext
+		// Do not clone ref_ext, nor the reference the customer gave to a line of another order
 		$num = count($object->lines);
 		for ($i = 0; $i < $num; $i++) {
 			$object->lines[$i]->ref_ext = '';
+			$object->lines[$i]->ref_customer = '';
 		}
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
+		$object->context['createfromclone_fromid'] = $objFrom->id;
+		$object->context['createfromclone_fromref'] = $objFrom->ref;
 		$result = $object->create($user);
 		if ($result < 0) {
 			$error++;
@@ -1396,6 +1433,8 @@ class Commande extends CommonOrder
 		}
 
 		unset($object->context['createfromclone']);
+		unset($object->context['createfromclone_fromid']);
+		unset($object->context['createfromclone_fromref']);
 
 		// End
 		if (!$error) {
@@ -1583,6 +1622,81 @@ class Commande extends CommonOrder
 		}
 	}
 
+	/**
+	 *	Create a draft purchase order per supplier for the product lines of this order, with the supplier having the best price of each product.
+	 *	The lines without supplier price for their quantity are ignored.
+	 *
+	 *	@param	User	$user	User creating the purchase orders
+	 *	@return	array{orders:int[],noprice:string[]}|int<-1,-1>		Ids of the purchase orders created and refs of the products without supplier price for their quantity, or -1 if KO
+	 *	@see	ProductFournisseur::find_min_price_product_fournisseur()
+	 *	@see	CommandeFournisseur::create()
+	 */
+	public function createPurchaseOrders($user)
+	{
+		global $mysoc;
+
+		if (!$user->hasRight('fournisseur', 'commande', 'creer') && !$user->hasRight('supplier_order', 'creer')) {
+			$this->error = 'NotAuthorized';
+			return -1;
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+
+		$result = array('orders' => array(), 'noprice' => array());
+
+		// Lines by supplier, with the best supplier price of the product
+		$bysupplier = array();
+		foreach ($this->lines as $line) {
+			if ($line->fk_product <= 0 || $line->qty <= 0) {
+				continue;
+			}
+			$productsupplier = new ProductFournisseur($this->db);
+			if ($productsupplier->find_min_price_product_fournisseur($line->fk_product, $line->qty) > 0) {
+				$bysupplier[$productsupplier->fourn_id][] = array($line, $productsupplier);
+			} else {
+				$result['noprice'][] = $line->product_ref;
+			}
+		}
+
+		$this->db->begin();
+		foreach ($bysupplier as $socid => $items) {
+			$order = new CommandeFournisseur($this->db);
+			$order->socid = $socid;
+			$order->fetch_thirdparty();
+			$order->cond_reglement_id = $order->thirdparty->cond_reglement_supplier_id;
+			$order->mode_reglement_id = $order->thirdparty->mode_reglement_supplier_id;
+			$order->multicurrency_code = $order->thirdparty->multicurrency_code;
+			$order->fk_project = $this->fk_project;
+			$order->delivery_date = $this->delivery_date;
+			$order->origin = $this->element;
+			$order->origin_id = $this->id;
+			$order->linked_objects[$this->element] = $this->id;
+			$orderid = $order->create($user);
+			if ($orderid <= 0) {
+				$this->setErrorsFromObject($order);
+				$this->db->rollback();
+				return -1;
+			}
+
+			foreach ($items as list($line, $productsupplier)) {
+				$tva_tx = get_default_tva($order->thirdparty, $mysoc, $line->fk_product, $productsupplier->product_fourn_price_id);
+				$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $order->thirdparty);
+				$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $order->thirdparty);
+				$ret = $order->addline($line->desc, $productsupplier->fourn_unitprice, $line->qty, $tva_tx, $localtax1_tx, $localtax2_tx, $line->fk_product, $productsupplier->product_fourn_price_id, $productsupplier->ref_supplier, (float) $productsupplier->fourn_remise_percent, 'HT', 0, $line->product_type, 0, 0, null, null, array(), $line->fk_unit, 0, $this->element, $line->id);
+				if ($ret < 0) {
+					$this->setErrorsFromObject($order);
+					$this->db->rollback();
+					return -1;
+				}
+			}
+			$result['orders'][] = $orderid;
+		}
+		$this->db->commit();
+
+		return $result;
+	}
+
 
 	/**
 	 *	Add an order line into database (linked to product/service or not)
@@ -1615,6 +1729,7 @@ class Commande extends CommonOrder
 	 * 	@param		float			$pu_ht_devise		Unit price in currency
 	 * 	@param		string			$ref_ext		    Line external reference
 	 *  @param		int				$noupdateafterinsertline	No update after insert of line
+	 *  @param		string			$ref_customer		Reference the customer gives to the line (line of its purchase order)
 	 *	@return     int             					>0 if OK, <0 if KO
 	 *
 	 *	@see        add_product()
@@ -1623,7 +1738,7 @@ class Commande extends CommonOrder
 	 *  Also, for the VAT rate, it must have already been defined by the caller using the method get_default_tva(societe_vendeuse, societe_acheteuse, produit)
 	 *  and the description (desc) must already have the correct value (it's up to the caller to manage multilanguage)
 	 */
-	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $info_bits = 0, $fk_remise_except = 0, $price_base_type = 'HT', $pu_ttc = 0, $date_start = '', $date_end = '', $type = 0, $rang = -1, $special_code = 0, $fk_parent_line = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $array_options = array(), $fk_unit = null, $origin = '', $origin_id = 0, $pu_ht_devise = 0, $ref_ext = '', $noupdateafterinsertline = 0)
+	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $info_bits = 0, $fk_remise_except = 0, $price_base_type = 'HT', $pu_ttc = 0, $date_start = '', $date_end = '', $type = 0, $rang = -1, $special_code = 0, $fk_parent_line = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $array_options = array(), $fk_unit = null, $origin = '', $origin_id = 0, $pu_ht_devise = 0, $ref_ext = '', $noupdateafterinsertline = 0, $ref_customer = '')
 	{
 		global $mysoc, $langs, $user;
 
@@ -1764,7 +1879,7 @@ class Commande extends CommonOrder
 				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 			}
 
-			$tabprice = calcul_price_total($qty, (float) $pu, $remise_percent, $txtva, (float) $txlocaltax1, (float) $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise);
+			$tabprice = calcul_price_total($qty, (float) $pu, $remise_percent, $txtva, (float) $txlocaltax1, (float) $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise, $this->multicurrency_code);
 
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -1797,6 +1912,7 @@ class Commande extends CommonOrder
 			$this->line->desc = $desc;
 			$this->line->qty = (float) $qty;
 			$this->line->ref_ext = $ref_ext;
+			$this->line->ref_customer = (string) $ref_customer;
 
 			$this->line->vat_src_code = $vat_src_code;
 			$this->line->tva_tx = $txtva;
@@ -1874,7 +1990,7 @@ class Commande extends CommonOrder
 					} else {
 						// Loop on all lines of parent object
 						foreach ($this->lines as $tmpline) {
-							if ($tmpline->id == $origin_id && $tmpline->element = $origin) {
+							if ($tmpline->id == $origin_id && $tmpline->element == $origin) {
 								$this->line->extraparams = $tmpline->extraparams;
 								$this->line->setExtraParameters();
 							}
@@ -2099,6 +2215,7 @@ class Commande extends CommonOrder
 				$this->cond_reglement_id	= $obj->fk_cond_reglement;
 				$this->cond_reglement_code	= $obj->cond_reglement_code;
 				$this->cond_reglement		= $obj->cond_reglement_libelle;
+				$this->cond_reglement_label = $obj->cond_reglement_libelle;
 				$this->cond_reglement_doc = $obj->cond_reglement_libelle_doc;
 				$this->deposit_percent = $obj->deposit_percent;
 				$this->fk_account = $obj->fk_account;
@@ -2241,7 +2358,7 @@ class Commande extends CommonOrder
 		// phpcs:enable
 		$this->lines = array();
 
-		$sql = 'SELECT l.rowid, l.fk_product, l.fk_parent_line, l.product_type, l.fk_commande, l.label as custom_label, l.description, l.price, l.qty, l.vat_src_code, l.tva_tx, l.ref_ext,';
+		$sql = 'SELECT l.rowid, l.fk_product, l.fk_parent_line, l.product_type, l.fk_commande, l.label as custom_label, l.description, l.price, l.qty, l.vat_src_code, l.tva_tx, l.ref_ext, l.ref_customer,';
 		$sql .= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.fk_remise_except, l.remise_percent, l.subprice, l.subprice_ttc, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht, l.rang, l.info_bits, l.special_code,';
 		$sql .= ' l.total_ht, l.total_ttc, l.total_tva, l.total_localtax1, l.total_localtax2, l.date_start, l.date_end,';
 		$sql .= ' l.fk_unit, l.extraparams,';
@@ -2279,6 +2396,7 @@ class Commande extends CommonOrder
 				$line->product_type     = $objp->product_type;
 				$line->qty              = $objp->qty;
 				$line->ref_ext          = $objp->ref_ext;
+				$line->ref_customer     = $objp->ref_customer;
 
 				$line->vat_src_code     = $objp->vat_src_code;
 				$line->tva_tx           = $objp->tva_tx;
@@ -3232,9 +3350,10 @@ class Commande extends CommonOrder
 	 * 	@param		int				$notrigger			disable line update trigger
 	 * 	@param		string			$ref_ext			external reference
 	 *	@param		int				$rang				line rank
+	 *	@param		?string			$ref_customer		Reference the customer gives to the line (line of its purchase order), null to keep it
 	 *  @return   	int              					Return integer < 0 if KO, > 0 if OK
 	 */
-	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $price_base_type = 'HT', $info_bits = 0, $date_start = '', $date_end = '', $type = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = array(), $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $ref_ext = '', $rang = 0)
+	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $price_base_type = 'HT', $info_bits = 0, $date_start = '', $date_end = '', $type = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = array(), $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $ref_ext = '', $rang = 0, $ref_customer = null)
 	{
 		global $mysoc, $langs, $user;
 
@@ -3322,7 +3441,7 @@ class Commande extends CommonOrder
 				}
 			}
 
-			$tabprice = calcul_price_total($qty, (float) $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise);
+			$tabprice = calcul_price_total($qty, (float) $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise, $this->multicurrency_code);
 
 			$total_ht = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -3405,6 +3524,9 @@ class Commande extends CommonOrder
 			$this->line->desc = $desc;
 			$this->line->qty = $qty;
 			$this->line->ref_ext = $ref_ext;
+			if ($ref_customer !== null) {
+				$this->line->ref_customer = $ref_customer;
+			}
 
 			$this->line->vat_src_code = $vat_src_code;
 			$this->line->tva_tx         = $txtva;
@@ -3636,7 +3758,7 @@ class Commande extends CommonOrder
 					$mouvP->origin = &$this;
 					$mouvP->setOrigin($this->element, $this->id);
 					// 0 as price so the weighted average value is not changed
-					$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("OrderDeletedInDolibarr", $this->ref));
+					$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->transnoentitiesnoconv("OrderDeletedInDolibarr", $this->ref));
 					if ($result < 0) {
 						$error++;
 						$this->error = $mouvP->error;
@@ -4123,7 +4245,7 @@ class Commande extends CommonOrder
 			if ($txttoshow) {
 				$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.dol_string_nohtmltag($txttoshow, 1);
 				$result .= ' <span class="note inline-block">';
-				$result .= '<a href="'.DOL_URL_ROOT.'/commande/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
+				$result .= '<a href="'.DOL_URL_ROOT.'/core/note.php?element=commande&id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
 				$result .= img_picto('', 'note');
 				$result .= '</a>';
 				//$result.=img_picto($langs->trans("ViewNote"),'object_generic');
@@ -4323,6 +4445,19 @@ class Commande extends CommonOrder
 			$this->error = $this->db->error();
 			return -1;
 		}
+	}
+
+	/**
+	 *	Return the display context of the lines, as defined by the card before printObjectLines() and formAddObjectLine()
+	 *
+	 *	@return	array{seller:Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	See CommonObject::getObjectLinesDisplayContext()
+	 */
+	public function getObjectLinesDisplayContext()
+	{
+		$context = parent::getObjectLinesDisplayContext();
+		$context['inputalsopricewithtax'] = 1;
+
+		return $context;
 	}
 
 	/**

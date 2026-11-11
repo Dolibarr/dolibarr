@@ -107,6 +107,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 if ($id > 0 || !empty($ref)) {
 	$ret = $object->fetch($id, $ref);
 	if ($ret > 0) {
+		$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
 		$ret = $object->fetch_thirdparty();
 	}
 	if ($ret < 0) {
@@ -1949,7 +1950,7 @@ if ($action == 'create') {
 				// Date intervention
 				print '<td class="center nowrap">';
 				$now = dol_now();
-				$timearray = dol_getdate($now);
+				$timearray = dol_getdate($now + getDolGlobalInt('FICHINTER_DEFAULT_START', 0));
 				if (!GETPOSTINT('diday')) {
 					if (getDolGlobalInt('FICHINTER_DATE_WITHOUT_HOUR')) {
 						$timewithnohour = dol_mktime(0, 0, 0, $timearray['mon'], $timearray['mday'], $timearray['year']);
@@ -1973,7 +1974,8 @@ if ($action == 'create') {
 					if (getDolGlobalString('INTERVENTION_ADDLINE_FREEDUREATION')) {
 						$selectmode = 'text';
 					}
-					$form->select_duration('duration', (!GETPOSTINT('durationhour') && !GETPOSTINT('durationmin')) ? 3600 : (60 * 60 * GETPOSTINT('durationhour') + 60 * GETPOSTINT('durationmin')), 0, $selectmode);
+					$defaultDuration = getDolGlobalInt('FICHINTER_DEFAULT_DURATION', 3600);
+					$form->select_duration('duration', (!GETPOSTINT('durationhour') && !GETPOSTINT('durationmin')) ? $defaultDuration : (60 * 60 * GETPOSTINT('durationhour') + 60 * GETPOSTINT('durationmin')), 0, $selectmode);
 				}
 				print '</td>';
 
@@ -2171,6 +2173,11 @@ if ($action == 'create') {
 
 	print '</div>';
 
+	// Select mail models is same action as presend
+	if (GETPOST('modelselected')) {
+		$action = 'presend';
+	}
+
 	if ($action != 'presend') {
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 
@@ -2218,12 +2225,6 @@ if ($action == 'create') {
 		$somethingshown = $formactions->showactions($object, 'fichinter', $socid, 1, '', $MAXEVENT, '', $morehtmlcenter); // Show all action for thirdparty
 
 		print '</div></div>';
-	}
-
-
-	// Select mail models is same action as presend
-	if (GETPOST('modelselected')) {
-		$action = 'presend';
 	}
 
 	// Presend form

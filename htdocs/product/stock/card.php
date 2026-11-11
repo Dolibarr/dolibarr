@@ -157,6 +157,7 @@ if (empty($reshook)) {
 		$object->label        = (string) GETPOST("libelle", "alpha");
 		$object->description  = (string) GETPOST("desc", "alpha");
 		$object->statut       = GETPOSTINT("statut");
+		$object->status       = $object->statut;
 		$object->lieu         = (string) GETPOST("lieu", "alpha");
 		$object->address      = (string) GETPOST("address", "alpha");
 		$object->zip          = (string) GETPOST("zipcode", "alpha");
@@ -222,6 +223,7 @@ if (empty($reshook)) {
 			$object->fk_project = GETPOSTINT('projectid');
 			$object->description = GETPOST("desc", 'restricthtml');
 			$object->statut = GETPOSTINT("statut");
+			$object->status = $object->statut;
 			$object->lieu = GETPOST("lieu");
 			$object->address = GETPOST("address");
 			$object->zip = GETPOST("zipcode");
@@ -336,7 +338,7 @@ if ($action == 'create') {
 	// Ref
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input class="width200" name="libelle" value=""></td></tr>';
 
-	print '<tr><td>'.$langs->trans("LocationSummary").'</td><td><input name="lieu" size="40" value="'.(!empty($object->lieu) ? $object->lieu : '').'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Label").'</td><td><input name="lieu" class="width300" value="'.dolPrintHTMLForAttribute(empty($object->lieu) ? '' : $object->lieu).'"></td></tr>';
 
 	// Parent entrepot
 	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';

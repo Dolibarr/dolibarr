@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2026 Association P'tite Tete <asso@ptitetete.org>
+ * Copyright (C) 2026 Joachim Kueter <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,10 +26,9 @@
 
 global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/asset.lib.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -294,6 +294,116 @@ class AssetDepreciationTest extends CommonClassTest
 				$plan = $this->getDepreciationPlan($assetids['until_term']);
 				$this->assertEquals(13000, round(array_sum($plan), 2), 'Sum of the plan with the convention '.$convention);
 			}
+		} finally {
+			foreach ($assetids as $assetid) {
+				$asset = new Asset($db);
+				if ($asset->fetch($assetid) > 0) {
+					$asset->delete($user);
+				}
+			}
+			if (!empty($fiscalyearids)) {
+				$db->query("DELETE FROM ".MAIN_DB_PREFIX."accounting_fiscalyear WHERE rowid IN (".implode(',', array_map('intval', $fiscalyearids)).")");
+			}
+			$conf->global->ASSET_DEPRECIATION_DAY_COUNT_CONVENTION = $savconvention;
+		}
+	}
+
+	/**
+	 * A degressive plan: yearly rate of the coefficient times the straight line rate on the remaining value,
+	 * then straight line on the remaining value as soon as this one gives more.
+	 *
+	 * Asset of 12000 EUR excl. tax over 10 years with a coefficient of 3 (30%), put in service on 2025-07-01,
+	 * fiscal years from January to December, convention THIRTY_360 so that the first fiscal year is exactly
+	 * half a year. The plan switches to straight line in 2033 (1/2.5 years = 40% > 30%). Like the straight line
+ * plan above, the amounts assume the bounds of the fiscal periods are anchored on GMT midnight (server on UTC).
+	 *
+	 * @return	void
+	 */
+	public function testCalculationDepreciationDegressive()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/asset/class/asset.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/asset/class/assetdepreciationoptions.class.php';
+
+		$resql = $db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."asset_depreciation LIMIT 1");
+		if (!$resql) {
+			$this->markTestSkipped('Tables of the asset module not available on this database.');
+		}
+
+		$savconvention = getDolGlobalString('ASSET_DEPRECIATION_DAY_COUNT_CONVENTION');
+		$fiscalyearids = array();
+		$assetids = array();
+
+		try {
+			$conf->global->ASSET_DEPRECIATION_DAY_COUNT_CONVENTION = 'THIRTY_360';
+
+			for ($year = 2025; $year <= 2036; $year++) {
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."accounting_fiscalyear";
+				$sql .= " (label, date_start, date_end, statut, entity, datec, fk_user_author)";
+				$sql .= " VALUES ('PHPUNIT ".$year."', '".$year."-01-01', '".$year."-12-31'";
+				$sql .= ", 0, ".((int) $conf->entity).", '".$db->idate(dol_now())."', ".((int) $user->id).")";
+				$this->assertNotFalse($db->query($sql), $db->lasterror());
+				$fiscalyearids[] = $db->last_insert_id(MAIN_DB_PREFIX."accounting_fiscalyear");
+			}
+
+			// Same asset with a duration in years, in months and in days
+			foreach (array('yearly' => array(10, 0), 'monthly' => array(120, 1), 'daily' => array(3650, 2)) as $kind => $duration) {
+				$asset = new Asset($db);
+				$asset->label = 'PHPUNIT degressive '.$kind;
+				$asset->date_acquisition = dol_mktime(0, 0, 0, 7, 1, 2025, 'gmt');
+				$asset->date_start = $asset->date_acquisition;
+				$asset->acquisition_value_ht = 12000;
+				$asset->fk_asset_model = 0;
+
+				$assetid = $asset->create($user);
+				$this->assertGreaterThan(0, $assetid, $asset->errorsToString());
+				$assetids[$kind] = $assetid;
+
+				$options = new AssetDepreciationOptions($db);
+				$options->deprecation_options['economic'] = array(
+					'depreciation_type' => 1,			// Degressive
+					'degressive_coefficient' => 3,
+					'duration' => $duration[0],
+					'duration_type' => $duration[1],
+					'accelerated_depreciation_option' => 0,
+					'amount_base_depreciation_ht' => 12000,
+					'amount_base_deductible_ht' => 0,
+					'total_amount_last_depreciation_ht' => 0,
+				);
+				if ($kind == 'daily') {
+					// A degressive depreciation on a duration in days makes no sense: saving the options computes
+					// the plan, which is refused
+					$this->assertLessThan(0, $options->updateDeprecationOptions($user, $assetid));
+					$this->assertStringContainsString($langs->trans('AssetErrorDegressiveDailyDurationForMode', 'economic'), $options->errorsToString());
+				} else {
+					$this->assertGreaterThan(0, $options->updateDeprecationOptions($user, $assetid), $options->errorsToString());
+				}
+			}
+
+			$expectedplan = array(1800.00, 3060.00, 2142.00, 1499.40, 1049.58, 734.71, 514.29, 360.01, 336.00, 336.01, 168.00);
+
+			$asset = new Asset($db);
+			$this->assertGreaterThan(0, $asset->fetch($assetids['yearly']));
+			$this->assertGreaterThan(0, $asset->calculationDepreciation(), $asset->errorsToString());
+			$plan = $this->getDepreciationPlan($assetids['yearly']);
+			$this->assertEquals($expectedplan, $plan, 'Degressive plan with a duration in years');
+			$this->assertEquals(12000, round(array_sum($plan), 2));
+
+			// With a duration in months, the yearly amount is fixed at the beginning of the fiscal year and
+			// spread on its months: the first two fiscal years give the same amounts as the yearly plan.
+			$asset = new Asset($db);
+			$this->assertGreaterThan(0, $asset->fetch($assetids['monthly']));
+			$this->assertGreaterThan(0, $asset->calculationDepreciation(), $asset->errorsToString());
+			$plan = $this->getDepreciationPlan($assetids['monthly']);
+			$this->assertCount(120, $plan);
+			$this->assertEquals(array_fill(0, 6, 300.00), array_slice($plan, 0, 6), 'Months of 2025');
+			$this->assertEquals(array_fill(0, 12, 255.00), array_slice($plan, 6, 12), 'Months of 2026');
+			$this->assertEquals(12000, round(array_sum($plan), 2));
 		} finally {
 			foreach ($assetids as $assetid) {
 				$asset = new Asset($db);

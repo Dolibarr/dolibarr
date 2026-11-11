@@ -311,6 +311,9 @@ if (empty($reshook)) {
 			$object->ref_customer				= GETPOST('ref_customer', 'alpha');
 			$object->ref_supplier				= GETPOST('ref_supplier', 'alpha');
 			$object->fk_contract_type = GETPOSTINT('contract_type');
+			if (isModEnabled('multicurrency')) {
+				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
+			}
 
 			// If creation from another object of another module (Example: origin=propal, originid=1)
 			if (!empty($origin) && !empty($originid)) {
@@ -539,6 +542,7 @@ if (empty($reshook)) {
 
 			$price_base_type = '';
 			$price_min = '';
+			$pu_ht_devise = 0;
 			// Ecrase $tva_tx par celui du produit. TODO Remove this once vat selection is open
 			// Get and check minimum price
 			if ($idprod > 0) {
@@ -682,7 +686,8 @@ if (empty($reshook)) {
 					(float) $pa_ht,
 					$array_options,
 					(int) $fk_unit,
-					$rang
+					$rang,
+					(float) $pu_ht_devise
 				);
 			}
 
@@ -931,15 +936,29 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'confirm_move' && $confirm == 'yes' && $permissiontoedit) {
 		if (GETPOST('newcid') > 0) {
+			$newcid = GETPOSTINT('newcid');
+
+			// Check the user can access the target contract
+			$result = restrictedArea($user, 'contrat', $newcid);
+
+			$newcontract = new Contrat($db);
+			$resultnewcontract = $newcontract->fetch($newcid);
+
 			$contractline = new ContratLigne($db);
 			$result = $contractline->fetch(GETPOSTINT('lineid'));
-			$contractline->fk_contrat = GETPOSTINT('newcid');
-			$result = $contractline->update($user, 1);
-			if ($result >= 0) {
-				header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
-				return;
+
+			// The line must belong to the current contract and the target contract must be another contract of the same thirdparty
+			if ($result <= 0 || $resultnewcontract <= 0 || $contractline->fk_contrat != $object->id || $newcontract->id == $object->id || $newcontract->socid != $object->socid) {
+				setEventMessages($langs->trans("ErrorBadValueForParameter", GETPOSTINT('lineid').'/'.$newcid, 'lineid/newcid'), null, 'errors');
 			} else {
-				setEventMessages($object->error, $object->errors, 'errors');
+				$contractline->fk_contrat = $newcontract->id;
+				$result = $contractline->update($user, 1);
+				if ($result >= 0) {
+					header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+					return;
+				} else {
+					setEventMessages($contractline->error, $contractline->errors, 'errors');
+				}
 			}
 		} else {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("RefNewContract")), null, 'errors');
@@ -1280,21 +1299,32 @@ if ($action == 'create') {
 	}
 
 	// Commercial suivi
-	print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("TypeContact_contrat_internal_SALESREPFOLL").'</span></td><td>';
+	print '<tr><td class="nowrap">'.$langs->trans("TypeContact_contrat_internal_SALESREPFOLL").'</td><td>';
 	print img_picto('', 'user', 'class="pictofixedwidth"');
-	print $form->select_dolusers(GETPOST("commercial_suivi_id") ? GETPOST("commercial_suivi_id") : $user->id, 'commercial_suivi_id', 1, null);
+	print $form->select_dolusers(GETPOSTINT('commercial_suivi_id') > 0 ? GETPOSTINT('commercial_suivi_id') : -1, 'commercial_suivi_id', 1, null);
 	print '</td></tr>';
 
 	// Commercial signature
-	print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("TypeContact_contrat_internal_SALESREPSIGN").'</span></td><td>';
+	print '<tr><td class="nowrap">'.$langs->trans("TypeContact_contrat_internal_SALESREPSIGN").'</td><td>';
 	print img_picto('', 'user', 'class="pictofixedwidth"');
-	print $form->select_dolusers(GETPOST("commercial_signature_id") ? GETPOST("commercial_signature_id") : $user->id, 'commercial_signature_id', 1, null);
+	print $form->select_dolusers(GETPOSTINT('commercial_signature_id') > 0 ? GETPOSTINT('commercial_signature_id') : -1, 'commercial_signature_id', 1, null);
 	print '</td></tr>';
 
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Date").'</span></td><td>';
 	print img_picto('', 'action', 'class="pictofixedwidth"');
 	print $form->selectDate($datecontrat, '', 0, 0, 0, "contrat");
 	print "</td></tr>";
+
+	// Multicurrency
+	if (isModEnabled('multicurrency')) {
+		$currency_code = (is_object($objectsrc) && !empty($objectsrc->multicurrency_code)) ? $objectsrc->multicurrency_code : ($soc->multicurrency_code ? $soc->multicurrency_code : $conf->currency);
+		print '<tr>';
+		print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
+		print '<td>';
+		print img_picto('', 'currency', 'class="pictofixedwidth"');
+		print $form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code', 'alpha') : $currency_code), 'multicurrency_code');
+		print '</td></tr>';
+	}
 
 	// Project
 	if (isModEnabled('project')) {
@@ -1726,9 +1756,9 @@ if ($action == 'create') {
 					print '<td>'.$langs->trans("ServiceNb", $cursorline).'</td>';
 					print '<td width="80" class="center">'.$langs->trans("VAT").'</td>';
 					print '<td width="80" class="right">'.$langs->trans("PriceUHT").'</td>';
-					//if (isModEnabled("multicurrency")) {
-					//	print '<td width="80" class="right">'.$langs->trans("PriceUHTCurrency").'</td>';
-					//}
+					if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
+						print '<td width="80" class="right">'.$langs->trans("PriceUHT").'&nbsp;<span class="opacitymedium">('.$langs->getCurrencySymbol($object->multicurrency_code).')</span></td>';
+					}
 					print '<td width="30" class="center">'.$langs->trans("Qty").'</td>';
 					if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 						print '<td width="30" class="left">'.$langs->trans("Unit").'</td>';
@@ -1820,9 +1850,9 @@ if ($action == 'create') {
 						// Price
 						print '<td class="right">'.($objp->subprice != '' ? price($objp->subprice) : '')."</td>\n";
 						// Price multicurrency
-						/*if (isModEnabled("multicurrency")) {
+						if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
 							print '<td class="linecoluht_currency nowrap right">'.price($objp->multicurrency_subprice).'</td>';
-						}*/
+						}
 						// Quantity
 						print '<td class="center">'.$objp->qty.'</td>';
 						// Unit
@@ -1974,9 +2004,9 @@ if ($action == 'create') {
 						print '<td class="right"><input class="width50" type="text" name="elprice" value="'.(GETPOSTISSET('elprice') ? GETPOST('elprice') : price($objp->subprice)).'"></td>';
 
 						// Price multicurrency
-						/*if (isModEnabled("multicurrency")) {
-						 print '<td class="linecoluht_currency nowrap right">'.price($objp->multicurrency_subprice).'</td>';
-						 }*/
+						if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
+							print '<td class="linecoluht_currency nowrap right">'.price($objp->multicurrency_subprice).'</td>';
+						}
 
 						// Quantity
 						print '<td class="center"><input size="2" type="text" name="elqty" value="'.(GETPOSTISSET('elqty') ? GETPOST('elqty') : $objp->qty).'"></td>';
@@ -2294,7 +2324,8 @@ if ($action == 'create') {
 			if ($action != 'editline') {
 				$forcetoshowtitlelines = 1;
 				if (empty($object->multicurrency_code)) {
-					$object->multicurrency_code = $conf->currency; // TODO Remove this when multicurrency supported on contracts
+					// Contracts created before multicurrency support existed on this object have no currency stored.
+					$object->multicurrency_code = $conf->currency;
 				}
 
 				// Add free products/services

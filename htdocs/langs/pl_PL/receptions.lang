@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=Zatwierdzone
 StatusReceptionProcessedShort=Przetwarzany
 ReceptionSheet=Karta przyjęcia
 ValidateReception=Potwierdź odbiór
+DeleteReception=Delete reception
 ConfirmDeleteReception=Czy na pewno chcesz usunąć to przyjęcie?
 ConfirmValidateReception=Czy jesteś pewien, że chcesz zatwierdzić to przyjęcie z numerem <b>%s</b>?
 ConfirmCancelReception=Czy jesteś pewien, że chcesz anulować to przyjęcie?

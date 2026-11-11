@@ -251,15 +251,12 @@ if ($permissiontoreadgroup) {
 
 		$lastgroupbox .= '<div class="div-table-responsive-no-min">';
 		$lastgroupbox .= '<table class="noborder centpercent">';
-		$lastgroupbox .= '<tr class="liste_titre"><td colspan="'.$colspan.'">';
+		$lastgroupbox .= '<tr class="liste_titre"><td colspan="'.($colspan + 1).'">';
 		$lastgroupbox .= '<span class="valignmiddle">'.$langs->trans("LastGroupsCreated", ($num ? $num : $max)).'</span>';
 		$lastgroupbox .= '<a class="valignmiddle marginleftonlyshort" href="'.DOL_URL_ROOT.'/user/group/list.php?sortfield=g.datec&sortorder=DESC" title="'.$langs->trans("FullList").'">';
 		$lastgroupbox .= '<span class="badge marginleftonlyshort valignmiddle">...</span>';
 		$lastgroupbox .= '</a>';
 
-		$lastgroupbox .= '</td>';
-		$lastgroupbox .= '<td class="right">';
-		//$lastgroupbox .= '<a class="commonlink" href="'.DOL_URL_ROOT.'/user/group/list.php?sortfield=g.datec&sortorder=DESC">'.$langs->trans("FullList");
 		$lastgroupbox .= '</td>';
 		$lastgroupbox .= '</tr>';
 		$i = 0;
@@ -274,7 +271,7 @@ if ($permissiontoreadgroup) {
 			$grouptemp->note = $obj->note;
 
 			$lastgroupbox .= '<tr class="oddeven">';
-			$lastgroupbox .= '<td>';
+			$lastgroupbox .= '<td class="tdoverflowmax300">';
 			$lastgroupbox .= $grouptemp->getNomUrl(1);
 			if (!$obj->entity) {
 				$lastgroupbox .= img_picto($langs->trans("GlobalGroup"), 'superadmin');

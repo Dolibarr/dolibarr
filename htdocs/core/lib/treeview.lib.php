@@ -29,7 +29,7 @@
 /**
  * Show indent and picto of a tree line. Return array with information of line.
  *
- * @param	array<int,array{rowid:?int,id:int,fk_parent?:int,label:string,description:string,color?:string,position?:string,visible?:int,ref_ext?:string,picto?:string,fullpath:string,fulllabel:string,level:int,cachenbofdoc?:int}>	$fulltree		Array of entries in correct order
+ * @param	array<int,array{id:int,id_mere:int,fulllabel:string,fullpath:string,fullrelativename:string,label:string,description:string,cachenbofdoc:int,date_creation:int,fk_user_c:int,statut_c:int,login_c:string,id_children?:int[],level:int}>	$fulltree		Array of entries in correct order
  * @param 	int	$key			Key of entry into fulltree to show picto
  * @param	int<0,1>		$silent			Do not output indent and picto, returns only value
  * @return	array{0:int,1:int,2:int}	array(0 or 1 if at least one of this level after, 0 or 1 if at least one of higher level after, nbofdirinsub, nbofdocinsub)
@@ -108,8 +108,8 @@ function tree_showpad(&$fulltree, $key, $silent = 0)
  *	$arrayofcss=array('/public/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
  *  TODO Replace with jstree plugin instead of treeview plugin.
  *
- *  @param	array<array{rowid:int,module?:string,fk_menu?:int,title?:string,mainmenu?:string,leftmenu?:string,fk_mainmenu?:string,fk_leftmenu?:string,statut?:int,entry?:string,buttons?:string}>	$tab    			Array of all elements
- *  @param  array{rowid:int,module?:string,fk_menu?:int,title?:string,mainmenu?:string,leftmenu?:string,fk_mainmenu?:string,fk_leftmenu?:string,statut?:int,entry?:string,buttons?:string}   $pere   					Array with parent ids ('rowid'=>,'mainmenu'=>,'leftmenu'=>,'fk_mainmenu'=>,'fk_leftmenu'=>)
+ *  @param	array<array{rowid:int,module?:string,fk_menu?:int,title?:string,mainmenu?:string,leftmenu?:string,fk_mainmenu?:string,fk_leftmenu?:string,type?:string,statut?:int,entry?:string,buttons?:string}>	$tab    			Array of all elements
+ *  @param  array{rowid:int,module?:string,fk_menu?:int,title?:string,mainmenu?:string,leftmenu?:string,fk_mainmenu?:string,fk_leftmenu?:string,type?:string,statut?:int,entry?:string,buttons?:string}   $pere   					Array with parent ids ('rowid'=>,'mainmenu'=>,'leftmenu'=>,'fk_mainmenu'=>,'fk_leftmenu'=>)
  *  @param  int	    $rang   					Level of element
  *  @param	string	$iddivjstree				Id to use for parent ul element
  *  @param  int<0,1>     $donoresetalreadyloaded     Do not reset global array $donoresetalreadyloaded used to avoid to go down on an already processed record
@@ -185,7 +185,8 @@ function tree_recur($tab, $pere, $rang, $iddivjstree = 'iddivjstree', $donoreset
 			// And now we search all its sons of lower level
 			tree_recur($tab, $tab[$x], $rang + 1, 'iddivjstree', 0, $showfk);
 			print '</li>';
-		} elseif (!empty($tab[$x]['rowid']) && ((int) $tab[$x]['fk_menu']) == -1 && $tab[$x]['fk_mainmenu'] == $pere['mainmenu'] && $tab[$x]['fk_leftmenu'] == $pere['leftmenu']) {
+		} elseif (!empty($tab[$x]['rowid']) && ((int) $tab[$x]['fk_menu']) == -1 && $tab[$x]['fk_mainmenu'] == $pere['mainmenu'] && $tab[$x]['fk_leftmenu'] == $pere['leftmenu'] && ($pere['leftmenu'] != '' || empty($pere['type']) || $pere['type'] == 'top')) {
+			// Note: a left menu entry with an empty leftmenu code can't be the parent of entries linked by code (fk_mainmenu/fk_leftmenu)
 			//print 'rang='.$rang.'-x='.$x." rowid=".$tab[$x]['rowid']." tab[x]['fk_leftmenu'] = ".$tab[$x]['fk_leftmenu']." leftmenu pere = ".$pere['leftmenu']."<br>\n";
 			if (empty($ulprinted) && !empty($pere['rowid'])) {
 				if (!empty($tree_recur_alreadyadded[$tab[$x]['rowid']])) {

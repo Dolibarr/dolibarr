@@ -151,10 +151,12 @@ if ($enablepermissioncheck) {
 }
 
 // Security check (enable the most restrictive one)
+// BEGIN MODULEBUILDER ACCESSPOLICY
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->module, $object->id, $object->table_element, $object->element, 'fk_soc', 'rowid', $isdraft);
+// END MODULEBUILDER ACCESSPOLICY
 if (!isModEnabled("mymodule")) {
 	accessforbidden();
 }
@@ -171,7 +173,15 @@ if (empty($object->id) || $upload_dir === null) {
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+$parameters = array('id' => $object->id);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+
+if (empty($reshook)) {
+	include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+}
 
 
 /*
