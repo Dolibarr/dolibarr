@@ -42,6 +42,29 @@ ALTER TABLE llx_opensurvey_user_studs ADD COLUMN tms timestamp DEFAULT CURRENT_T
 
 
 -- V23 migration
+ALTER TABLE llx_usergroup ADD color VARCHAR(6) AFTER tms;
+
+create table llx_categorie_project_task (
+  fk_categorie  	integer NOT NULL,
+  fk_project_task   integer NOT NULL,
+  import_key    	varchar(14)
+) ENGINE=innodb;
+
+--noqa:disable=PRS
+ALTER TABLE llx_categorie_project_task ADD PRIMARY KEY pk_categorie_propal (fk_categorie, fk_project_task);
+--noqa:enable=PRS
+ALTER TABLE llx_categorie_project_task ADD INDEX idx_categorie_project_fk_categorie (fk_categorie);
+
+ALTER TABLE llx_categorie_project_task ADD CONSTRAINT fk_categorie_project_task_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+
+ALTER TABLE llx_categorie_project_task DROP FOREIGN KEY fk_categorie_project_task_rowid;
+-- VMYSQL4.1 DROP INDEX idx_categorie_project_fk_task ON llx_categorie_project_task;
+-- VPGSQL8.2 DROP INDEX idx_categorie_project_fk_task;
+ALTER TABLE llx_categorie_project_task ADD INDEX idx_categorie_project_fk_task (fk_project_task);
+ALTER TABLE llx_categorie_project_task ADD CONSTRAINT fk_categorie_project_task_rowid FOREIGN KEY (fk_project_task) REFERENCES llx_projet_task (rowid);
+
+
+UPDATE llx_actioncomm SET elementtype = 'project_task' WHERE elementtype = 'task';
 
 ALTER TABLE llx_document_model ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
@@ -114,6 +137,8 @@ ALTER TABLE llx_accounting_analytic_distribution ADD CONSTRAINT fk_accounting_an
 
 ALTER TABLE llx_facture ADD COLUMN dispute_status integer DEFAULT 0 after payment_reference;
 ALTER TABLE llx_facture ADD COLUMN ip varchar(250);
+ALTER TABLE llx_facture ADD COLUMN pos_print_counter integer DEFAULT 0;
+ALTER TABLE llx_facture ADD COLUMN email_sent_counter integer DEFAULT 0;
 
 ALTER TABLE llx_commande ADD COLUMN ip varchar(250);
 ALTER TABLE llx_commande ADD COLUMN user_agent varchar(255);
@@ -130,10 +155,38 @@ ALTER TABLE llx_oauth_token ADD COLUMN apicount_total BIGINT UNSIGNED DEFAULT 0;
 
 ALTER TABLE llx_webhook_target ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 
+-- In case of table exists
+ALTER TABLE llx_webhook_history MODIFY COLUMN url varchar(255);
+
+-- In cas table does not exist
+CREATE TABLE llx_webhook_history(
+	-- BEGIN MODULEBUILDER FIELDS
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	--ref varchar(128) NOT NULL,
+	trigger_code varchar(128) NOT NULL,
+	trigger_data text NOT NULL,
+	fk_target integer NOT NULL,
+	url varchar(255) NOT NULL,
+	error_message text,
+	--note_public text,
+	note_private text,
+	date_creation datetime NOT NULL,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_user_creat integer NOT NULL,
+	--fk_user_modif integer,
+	import_key varchar(14),
+	status integer DEFAULT 1 NOT NULL
+	-- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
+
+ALTER TABLE llx_webhook_history ADD COLUMN trigger_code varchar(128) NOT NULL DEFAULT 'UNKOWN';
+ALTER TABLE llx_webhook_history ADD COLUMN error_message text;
+
+
 ALTER TABLE llx_extrafields ADD COLUMN emptyonclone integer DEFAULT 0 AFTER alwayseditable;
 
 ALTER TABLE llx_blockedlog ADD COLUMN object_format varchar(16) DEFAULT 'V1' AFTER object_version;
-UPDATE llx_blockedlog SET object_format = '' WHERE object_version = '18' OR object_version = ''  OR object_version IS NULL;
+UPDATE llx_blockedlog SET object_format = '' WHERE object_version = ''  OR object_version IS NULL;
 
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite, numeric_code) VALUES (248, 'BQ', 'BES', 'Bonaire, Sint Eustatius and Saba', 1, 0, 535);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite, numeric_code) VALUES (249, 'GP', 'GLP', 'Guadeloupe', 0, 0, 312);
@@ -145,20 +198,31 @@ INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite, numer
 UPDATE llx_c_country SET sepa = 1 WHERE code IN ('AD','AL','AT','AX','BE','BG','BL','CH','CY','CZ','DE','DK','EE','ES','FI','FR','GB','GF','GG','GI','GP','GR','HR','HU','IE','IM','IS','IT','JE','LI','LT','LU','LV','MC','MD','ME','MF','MK','MQ','MT','NL','NO','PL','PM','PT','RE','RO','RS','SE','SI','SK','SM','VA','YT');
 
 ALTER TABLE llx_user DROP COLUMN egroupware_id;
+ALTER TABLE llx_user ADD COLUMN access_hours varchar(128) DEFAULT NULL;
 
 ALTER TABLE llx_adherent ADD COLUMN birth_place varchar(64) after birth;
 
 ALTER TABLE llx_societe ADD COLUMN birth date DEFAULT NULL after fk_forme_juridique;
+ALTER TABLE llx_societe ADD vatexemptcode varchar(24) DEFAULT NULL;
 
+-- Remove deprecated permissions
 DELETE FROM llx_user_rights WHERE fk_id IN (SELECT id FROM llx_rights_def WHERE module = 'webhook' AND perms = 'webhook_target');
 DELETE FROM llx_usergroup_rights WHERE fk_id IN (SELECT id FROM llx_rights_def WHERE module = 'webhook' AND perms = 'webhook_target');
-
 DELETE FROM llx_rights_def WHERE module = 'webhook' AND perms = 'webhook_target';
+
+DELETE FROM llx_user_rights WHERE fk_id IN (SELECT id FROM llx_rights_def WHERE module = 'eventorganization');
+DELETE FROM llx_usergroup_rights WHERE fk_id IN (SELECT id FROM llx_rights_def WHERE module = 'eventorganization');
+DELETE FROM llx_rights_def WHERE module = 'eventorganization';
+
+ALTER TABLE llx_rights_def ADD COLUMN family VARCHAR(64) AFTER module_position;
+
+-- Reorder some permission
+UPDATE llx_rights_def SET module_position = 64 WHERE module = 'intracommreport' AND module_position <> 64;
+UPDATE llx_rights_def SET module_position = 62 WHERE module = 'accounting' AND module_position <> 62;
 
 ALTER TABLE llx_prelevement_lignes ADD COLUMN bic   varchar(11);   -- 11 according to ISO 9362
 ALTER TABLE llx_prelevement_lignes ADD COLUMN iban	varchar(80);   -- full iban. 34 according to ISO 13616 but we set 80 to allow to store it with encryption information
 ALTER TABLE llx_prelevement_lignes ADD COLUMN rum	varchar(32);   -- rum used
-
 
 ALTER TABLE llx_product_customer_price CHANGE COLUMN localtax1_tx localtax1_tx varchar(20) DEFAULT '0';
 ALTER TABLE llx_product_customer_price CHANGE COLUMN localtax2_tx localtax2_tx varchar(20) DEFAULT '0';
@@ -182,6 +246,13 @@ ALTER TABLE llx_element_contact ADD mandatory_signature TINYINT AFTER element_id
 -- default deposit % if payment term needs it on supplier
 ALTER TABLE llx_supplier_proposal ADD COLUMN deposit_percent varchar(63) DEFAULT NULL AFTER fk_cond_reglement;
 ALTER TABLE llx_commande_fournisseur ADD COLUMN deposit_percent varchar(63) DEFAULT NULL AFTER fk_cond_reglement;
+
+
+-- import key for subscriptions
+ALTER TABLE llx_subscription ADD COLUMN import_key varchar(14) NULL;
+
+ALTER TABLE llx_categorie ADD COLUMN extraparams varchar(255) AFTER fk_soc;
+
 CREATE TABLE llx_categorie_propal
 (
   fk_categorie integer NOT NULL,
@@ -251,5 +322,142 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '5
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '518', 'Stiftung', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '519', 'gGmbH - gemeinnützige Gesellschaft mit beschränkter Haftung', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '520', 'gUG - gemeinnützige Unternehmergesellschaft (haftungsbeschränkt)', 1);
+
+ALTER TABLE llx_oauth_token ADD COLUMN tokenstring_refresh text NULL AFTER tokenstring;
+ALTER TABLE llx_oauth_token ADD COLUMN expire_at datetime NULL AFTER lastaccess;
+
+ALTER TABLE llx_blockedlog ADD COLUMN linktoref text;
+ALTER TABLE llx_blockedlog DROP FOREIGN KEY fk_linktoref;
+ALTER TABLE llx_blockedlog DROP INDEX fk_linktoref;
+ALTER TABLE llx_blockedlog DROP INDEX idx_linktoref;
+ALTER TABLE llx_blockedlog MODIFY COLUMN linktoref text;
+ALTER TABLE llx_blockedlog ADD COLUMN linktype varchar(16);
+ALTER TABLE llx_blockedlog ADD COLUMN module_source varchar(32) DEFAULT '' AFTER action;
+ALTER TABLE llx_blockedlog ADD COLUMN amounts_taxexcl double(24,8) DEFAULT NULL AFTER amounts;
+
+-- VMYSQL4.3 ALTER TABLE llx_blockedlog ADD INDEX idx_linktoref (linktoref(255));
+
+
+-- Incoterms 2025 and specific terms
+-- DAT is replaced by DPU - but not deactivating for existing installations
+-- UPDATE llx_c_incoterms SET active = 0 WHERE code = 'DAT';
+
+-- Add new 2025 Incoterms and specific terms when they do not exist
+ALTER TABLE llx_c_incoterms MODIFY code varchar(8) NOT NULL;
+
+-- For MySQL and MariaDB:
+INSERT INTO llx_c_incoterms (code, label, libelle, active) VALUES ('DPU', 'Delivered at Place Unloaded', 'Delivered at Place Unloaded, marchandises déchargées et livrées au lieu de destination désigné (remplace DAT, élargit les lieux de livraison possibles)', 1);
+INSERT INTO llx_c_incoterms (code, label, libelle, active) VALUES ('DTP', 'Delivered at Terminal Paid', 'Delivered at Terminal Paid, marchandises livrées et dédouanées dans un terminal du pays de destination', 0);
+INSERT INTO llx_c_incoterms (code, label, libelle, active) VALUES ('DPP', 'Delivered at Place Paid', 'Delivered at Place Paid, marchandises livrées et dédouanées à une adresse précise du pays de destination', 0);
+INSERT INTO llx_c_incoterms (code, label, libelle, active) VALUES ('DTP(DHL)', 'Duties and Taxes Paid', 'Duties and Taxes Paid (service DHL) : l''expéditeur paie les droits de douane et taxes à l''importation (spécifique à DHL)', 0);
+
+-- Update existing Incoterms descriptions
+UPDATE llx_c_incoterms
+SET libelle = 'Cost and Freight, chargé dans le bateau, livraison au port de départ, frais payés jusqu''au port d''arrivée, sans assurance pour le transport, non déchargé du navire à destination (les frais de déchargement sont inclus ou non au port d''arrivée)'
+WHERE code = 'CFR';
+
+UPDATE llx_c_incoterms
+SET libelle = 'Cost, Insurance and Freight, chargé sur le bateau, frais jusqu''au port d''arrivée, avec l''assurance marchandise transportée souscrite par le vendeur pour le compte de l''acheteur (couverture standard, 10% de la valeur commerciale)'
+WHERE code = 'CIF';
+
+UPDATE llx_c_incoterms
+SET libelle = 'Carriage and Insurance Paid to, idem CPT, avec assurance marchandise transportée souscrite par le vendeur pour le compte de l''acheteur (couverture tous risques)'
+WHERE code = 'CIP';
+
+
+
+-- Fix a wrong migration script
+UPDATE llx_oauth_token SET tokenstring = token, token = NULL WHERE service = 'dolibarr_rest_api' AND tokenstring IS NULL AND token IS NOT NULL;
+
+
+ALTER TABLE llx_categorie_supplier_proposal ADD PRIMARY KEY pk_categorie_supplier_proposal (fk_categorie, fk_supplier_proposal);
+ALTER TABLE llx_categorie_supplier_proposal ADD INDEX idx_categorie_supplier_proposal_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_supplier_proposal ADD INDEX idx_categorie_supplier_proposal_fk_supplier_proposal (fk_supplier_proposal);
+
+ALTER TABLE llx_categorie_supplier_proposal ADD CONSTRAINT fk_categorie_supplier_proposal_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_supplier_proposal ADD CONSTRAINT fk_categorie_supplier_proposal_fk_supplier_proposal_rowid FOREIGN KEY (fk_supplier_proposal) REFERENCES llx_supplier_proposal (rowid);
+
+ALTER TABLE llx_blockedlog DROP INDEX entity;
+ALTER TABLE llx_blockedlog DROP INDEX entity_action_certified;
+ALTER TABLE llx_blockedlog ADD INDEX idx_entity_action (entity,action);
+
+ALTER TABLE llx_blockedlog DROP COLUMN signature_line;
+ALTER TABLE llx_blockedlog ADD COLUMN actionrefisunique varchar(16) DEFAULT NULL;
+
+ALTER TABLE llx_blockedlog ADD INDEX idx_ref_object (ref_object);
+
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN matching_general tinyint DEFAULT 0 NOT NULL AFTER multicurrency_code;
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD COLUMN matching_general tinyint DEFAULT 0 NOT NULL AFTER multicurrency_code;
+
+INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'CDF', '[70,67]', 1, 'Congolese Franc');
+
+ALTER TABLE llx_societe MODIFY COLUMN mode_reglement integer;
+
+
+ALTER TABLE llx_ecm_files ADD COLUMN geolat double(24,8) DEFAULT NULL;
+ALTER TABLE llx_ecm_files ADD COLUMN geolong double(24,8) DEFAULT NULL;
+ALTER TABLE llx_ecm_files ADD COLUMN geopoint point DEFAULT NULL;
+ALTER TABLE llx_ecm_files ADD COLUMN georesultcode varchar(16) NULL;
+
+-- Add table for extrafields lines support on expensereport module
+CREATE TABLE llx_expensereport_det_extrafields
+(
+	rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+	tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_object                 integer NOT NULL,
+	import_key                varchar(14)
+) ENGINE=innodb;
+
+
+ALTER TABLE llx_fichinterdet ADD COLUMN special_code integer DEFAULT 0 AFTER fk_parent_line;
+ALTER TABLE llx_fichinterdet ADD COLUMN product_type integer DEFAULT 0 AFTER special_code;
+
+ALTER TABLE llx_pos_cash_fence ADD COLUMN hour_close INTEGER DEFAULT null after year_close;
+ALTER TABLE llx_pos_cash_fence ADD COLUMN min_close INTEGER DEFAULT null after hour_close;
+ALTER TABLE llx_pos_cash_fence ADD COLUMN sec_close INTEGER DEFAULT null after min_close;
+
+ALTER TABLE llx_pos_cash_fence ADD COLUMN cash_declared double(24,8) DEFAULT null;
+ALTER TABLE llx_pos_cash_fence ADD COLUMN card_declared double(24,8) DEFAULT null;
+ALTER TABLE llx_pos_cash_fence ADD COLUMN cheque_declared double(24,8) DEFAULT null;
+
+-- The declared amounts were stored in cash, card and cheque before this version, and the cash fence
+-- card now reads the _declared columns to show the final balance. Without this, every record closed
+-- before the upgrade shows 0. Rows already carrying a declared value are left untouched.
+UPDATE llx_pos_cash_fence SET cash_declared = cash WHERE cash_declared IS NULL;
+UPDATE llx_pos_cash_fence SET card_declared = card WHERE card_declared IS NULL;
+UPDATE llx_pos_cash_fence SET cheque_declared = cheque WHERE cheque_declared IS NULL;
+
+ALTER TABLE llx_pos_cash_fence ADD COLUMN cash_lifetime double(24,8) DEFAULT null;
+ALTER TABLE llx_pos_cash_fence ADD COLUMN card_lifetime double(24,8) DEFAULT null;
+ALTER TABLE llx_pos_cash_fence ADD COLUMN cheque_lifetime double(24,8) DEFAULT null;
+
+ALTER TABLE llx_pos_cash_fence ADD COLUMN lifetime_start datetime DEFAULT NULL;
+
+-- VMYSQL4.3 UPDATE llx_cronjob set test = 'getDolDBType() == ''mysqli''' WHERE label = 'MakeLocalDatabaseDumpShort';
+-- VMYSQL4.3 UPDATE llx_cronjob set test = 'getDolGlobalString(''MAIN_ALLOW_BACKUP_BY_EMAIL'') && getDolDBType() == ''mysqli''' WHERE label = 'MakeSendLocalDatabaseDumpShort';
+
+UPDATE llx_c_socialnetworks SET icon = 'fa-mastodon' WHERE icon = '' AND code = 'mastodon';
+
+INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'PGK', '[75]', 1,			'Papua New Guinea Kina');
+
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  1, 'PCG25-DEV', 'The developed accountancy french plan 2025', 1);
+
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  4, 'PCG08-PYME-CAT', 'The PYME accountancy spanish plan in catalan language', 1);
+
+-- Rename OIDC enable constant: openidconnect was converted from a module to a config-level feature (#36051)
+UPDATE llx_const SET name = 'MAIN_AUTHENTICATION_OIDC_ON' WHERE name = 'MAIN_MODULE_OPENIDCONNECT';
+
+-- this table was created only during fresh install
+CREATE TABLE llx_workstation_workstation_extrafields
+(
+    rowid           integer     AUTO_INCREMENT PRIMARY KEY,
+    tms             timestamp   DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    fk_object       integer     NOT NULL,
+    import_key      varchar(14)                          -- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_workstation_workstation_extrafields ADD INDEX idx_workstation_workstation_extrafields (fk_object);
+
+ALTER TABLE llx_adherent MODIFY COLUMN societe VARCHAR(128);
 
 -- end of migration

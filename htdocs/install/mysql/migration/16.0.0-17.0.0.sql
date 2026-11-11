@@ -65,7 +65,7 @@ ALTER TABLE llx_overwrite_trans ADD UNIQUE INDEX uk_overwrite_trans(lang, transk
 
 -- v17
 
-ALTER TABLE llx_mailing_cibles MODIFY COLUMN source_type varchar(32); 
+ALTER TABLE llx_mailing_cibles MODIFY COLUMN source_type varchar(32);
 
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_percent (percent);
 
@@ -391,7 +391,9 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 
 
 ALTER TABLE llx_prelevement_facture RENAME TO llx_prelevement;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_prelevement_facture_rowid_seq RENAME TO llx_prelevement_rowid_seq;
 ALTER TABLE llx_prelevement_facture_demande RENAME TO llx_prelevement_demande;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_prelevement_facture_demande_rowid_seq RENAME TO llx_prelevement_demande_rowid_seq;
 
 ALTER TABLE llx_prelevement ADD COLUMN fk_salary INTEGER NULL AFTER fk_facture_fourn;
 ALTER TABLE llx_prelevement_demande ADD COLUMN fk_salary INTEGER NULL AFTER fk_facture_fourn;
@@ -424,4 +426,3 @@ INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, m
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('GR-ΣΥΝΑΞΗ ΘΕΟΤΟΚΟΥ', 0, 102, '', 0, 12, 26, 1);
 
 UPDATE llx_menu SET url = '/fourn/paiement/list.php?mainmenu=billing&leftmenu=suppliers_bills_payment' WHERE leftmenu = 'suppliers_bills_payment';
-

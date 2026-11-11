@@ -21,7 +21,7 @@ AppVerName=__FILENAMEEXEDOLIWAMP__
 ; Replace key with DoliWamp-x.x x or DoliWamp-x.x.x-alpha or DoliWamp-x.x.x-beta or DoliWamp-x.x.x-rc or DoliWamp-x.x.x
 OutputBaseFilename=__FILENAMEEXEDOLIWAMP__
 ; ----- End of change
-;OutputManifestFile=build\doliwampbuild.log
+;OutputManifestFile=dev\build\doliwampbuild.log
 ; Define full path from which all relative path are defined
 ; You must modify this to put here your dolibarr root directory
 SourceDir=..\..\..\..
@@ -48,28 +48,28 @@ ChangesEnvironment=no
 CreateUninstallRegKey=yes
 ;UseSetupLdr=no
 ;UninstallDisplayIcon={app}\bidon
-OutputDir=build
+OutputDir=dev\build
 ShowLanguageDialog=auto
 ShowUndisplayableLanguages=no
 LanguageDetectionMethod=uilanguage
 ;SignedUninstaller=yes
 
 [Languages]
-Name: "en"; MessagesFile: "compiler:Default.isl,build\exe\doliwamp\Languages\MyEnglish.isl"
-Name: "br"; MessagesFile: "compiler:Languages\Portuguese.isl,build\exe\doliwamp\Languages\MyBrazilianPortuguese.isl"
-Name: "ca"; MessagesFile: "compiler:Languages\Catalan.isl,build\exe\doliwamp\Languages\MyCatalan.isl"
-Name: "da"; MessagesFile: "compiler:Languages\Danish.isl,build\exe\doliwamp\Languages\MyDanish.isl"
-Name: "es"; MessagesFile: "compiler:Languages\Spanish.isl,build\exe\doliwamp\Languages\MySpanish.isl"
-Name: "nl"; MessagesFile: "compiler:Languages\Dutch.isl,build\exe\doliwamp\Languages\MyDutch.isl"
-Name: "fi"; MessagesFile: "compiler:Languages\Finnish.isl,build\exe\doliwamp\Languages\MyFinnish.isl"
-Name: "fr"; MessagesFile: "compiler:Languages\French.isl,build\exe\doliwamp\Languages\MyFrench.isl"
-Name: "ge"; MessagesFile: "compiler:Languages\German.isl,build\exe\doliwamp\Languages\MyGerman.isl"
-Name: "it"; MessagesFile: "compiler:Languages\Italian.isl,build\exe\doliwamp\Languages\MyItalian.isl"
-Name: "nb"; MessagesFile: "compiler:Languages\Norwegian.isl,build\exe\doliwamp\Languages\MyNorwegian.isl"
-Name: "po"; MessagesFile: "compiler:Languages\Polish.isl,build\exe\doliwamp\Languages\MyPolish.isl"
-Name: "pt"; MessagesFile: "compiler:Languages\Portuguese.isl,build\exe\doliwamp\Languages\MyPortuguese.isl"
-Name: "ru"; MessagesFile: "compiler:Languages\Russian.isl,build\exe\doliwamp\Languages\MyRussian.isl"
-Name: "sv"; MessagesFile: "compiler:Languages\Slovenian.isl,build\exe\doliwamp\Languages\MySlovenian.isl"
+Name: "en"; MessagesFile: "compiler:Default.isl,dev\build\exe\doliwamp\Languages\MyEnglish.isl"
+Name: "br"; MessagesFile: "compiler:Languages\Portuguese.isl,dev\build\exe\doliwamp\Languages\MyBrazilianPortuguese.isl"
+Name: "ca"; MessagesFile: "compiler:Languages\Catalan.isl,dev\build\exe\doliwamp\Languages\MyCatalan.isl"
+Name: "da"; MessagesFile: "compiler:Languages\Danish.isl,dev\build\exe\doliwamp\Languages\MyDanish.isl"
+Name: "es"; MessagesFile: "compiler:Languages\Spanish.isl,dev\build\exe\doliwamp\Languages\MySpanish.isl"
+Name: "nl"; MessagesFile: "compiler:Languages\Dutch.isl,dev\build\exe\doliwamp\Languages\MyDutch.isl"
+Name: "fi"; MessagesFile: "compiler:Languages\Finnish.isl,dev\build\exe\doliwamp\Languages\MyFinnish.isl"
+Name: "fr"; MessagesFile: "compiler:Languages\French.isl,dev\build\exe\doliwamp\Languages\MyFrench.isl"
+Name: "ge"; MessagesFile: "compiler:Languages\German.isl,dev\build\exe\doliwamp\Languages\MyGerman.isl"
+Name: "it"; MessagesFile: "compiler:Languages\Italian.isl,dev\build\exe\doliwamp\Languages\MyItalian.isl"
+Name: "nb"; MessagesFile: "compiler:Languages\Norwegian.isl,dev\build\exe\doliwamp\Languages\MyNorwegian.isl"
+Name: "po"; MessagesFile: "compiler:Languages\Polish.isl,dev\build\exe\doliwamp\Languages\MyPolish.isl"
+Name: "pt"; MessagesFile: "compiler:Languages\Portuguese.isl,dev\build\exe\doliwamp\Languages\MyPortuguese.isl"
+Name: "ru"; MessagesFile: "compiler:Languages\Russian.isl,dev\build\exe\doliwamp\Languages\MyRussian.isl"
+Name: "sv"; MessagesFile: "compiler:Languages\Slovenian.isl,dev\build\exe\doliwamp\Languages\MySlovenian.isl"
 
 [Tasks]
 ;Name: "autostart"; Description: "Automatically launch DoliWamp server on startup. If you check this option, Services will be installed as automatic. Otherwise, services will be installed as manual and will start and stop with the service manager."; GroupDescription: "Auto Start:" ;Flags: unchecked;
@@ -80,30 +80,30 @@ Name: "desktopicon"; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:
 Name: "{app}\logs"
 Name: "{app}\tmp"
 Name: "{app}\dolibarr_documents"
-Name: "{app}\bin\apache\apache2.4.51\logs"
+Name: "{app}\bin\apache\apache2.4.65\logs"
 
 [Files]
 ; Stop/start
-Source: "build\exe\doliwamp\stopdoliwamp.bat"; DestDir: "{app}\"; Flags: ignoreversion; AfterInstall: close()
-Source: "build\exe\doliwamp\startdoliwamp.bat"; DestDir: "{app}\"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\install_services.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\uninstall_services.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\removefiles.bat"; DestDir: "{app}\"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\rundoliwamp.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\rundolihelp.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\rundoliadmin.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\mysqlinitpassword.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\mysqltestinstall.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\startdoliwamp_manual_donotuse.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\builddemosslfiles.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\UsedPort.exe"; DestDir: "{app}\"; Flags: ignoreversion;
+Source: "dev\build\exe\doliwamp\stopdoliwamp.bat"; DestDir: "{app}\"; Flags: ignoreversion; AfterInstall: close()
+Source: "dev\build\exe\doliwamp\startdoliwamp.bat"; DestDir: "{app}\"; Flags: ignoreversion;
+Source: "dev\build\exe\doliwamp\install_services.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
+Source: "dev\build\exe\doliwamp\uninstall_services.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
+Source: "dev\build\exe\doliwamp\removefiles.bat"; DestDir: "{app}\"; Flags: ignoreversion;
+Source: "dev\build\exe\doliwamp\rundoliwamp.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
+Source: "dev\build\exe\doliwamp\rundolihelp.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
+Source: "dev\build\exe\doliwamp\rundoliadmin.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
+Source: "dev\build\exe\doliwamp\mysqlinitpassword.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
+Source: "dev\build\exe\doliwamp\mysqltestinstall.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
+Source: "dev\build\exe\doliwamp\startdoliwamp_manual_donotuse.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
+Source: "dev\build\exe\doliwamp\builddemosslfiles.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
+Source: "dev\build\exe\doliwamp\UsedPort.exe"; DestDir: "{app}\"; Flags: ignoreversion;
 
 ; Apache, Php, Mysql
 ; Put here path of Wampserver applications
-; Value OK: apache 2.4.51, php 7.4.26, mariadb10.6.5 (wampserver3.2.6_x64.exe)
-Source: "C:\wamp64\bin\apache\apache2.4.51\*.*"; DestDir: "{app}\bin\apache\apache2.4.51"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,httpd.conf,wampserver.conf,*.log,*_log"
-Source: "C:\wamp64\bin\php\php7.4.26\*.*"; DestDir: "{app}\bin\php\php7.4.26"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,phpForApache.ini,wampserver.conf,*.log,*_log"
-Source: "C:\wamp64\bin\mariadb\mariadb10.6.5\*.*"; DestDir: "{app}\bin\mariadb\mariadb10.6.5"; Flags: ignoreversion recursesubdirs; Excludes: "my.ini,data\*,wampserver.conf,*.log,*_log,MySQLInstanceConfig.exe"
+; Value OK: apache 2.4.65, php 8.4.27 (windows.php.net TS x64, fix of CVE-2026-109618/109619), mariadb11.4.9 (wampserver3.4.0_x64.exe)
+Source: "C:\wamp64\bin\apache\apache2.4.65\*.*"; DestDir: "{app}\bin\apache\apache2.4.65"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,httpd.conf,wampserver.conf,*.log,*_log"
+Source: "C:\wamp64\bin\php\php8.4.27\*.*"; DestDir: "{app}\bin\php\php8.4.27"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,phpForApache.ini,wampserver.conf,*.log,*_log"
+Source: "C:\wamp64\bin\mariadb\mariadb11.4.9\*.*"; DestDir: "{app}\bin\mariadb\mariadb11.4.9"; Flags: ignoreversion recursesubdirs; Excludes: "my.ini,data\*,wampserver.conf,*.log,*_log,MySQLInstanceConfig.exe"
 
 ; Mysql data files (does not overwrite if exists)
 ; We must copy them because the tool mysql_install_db.exe to generate them at first install does not return to prompt so make install hang
@@ -117,16 +117,16 @@ Source: "scripts\*.*"; DestDir: "{app}\www\dolibarr\scripts"; Flags: ignoreversi
 Source: "*.*"; DestDir: "{app}\www\dolibarr"; Flags: ignoreversion; Excludes: ".gitignore,.project,CVS\*,Thumbs.db,default.properties,install.lock"
 
 ; Config files
-Source: "build\exe\doliwamp\dolibarr.conf.install"; DestDir: "{app}\alias"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\httpd.conf.install"; DestDir: "{app}\bin\apache\apache2.4.51\conf"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\my.ini.install"; DestDir: "{app}\bin\mysql\mysql5.0.45"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\my.ini.install"; DestDir: "{app}\bin\mariadb\mariadb10.6.5"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\php.ini.install"; DestDir: "{app}\bin\php\php7.4.26"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\index.php.install"; DestDir: "{app}\www"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\install.forced.php.install"; DestDir: "{app}\www\dolibarr\htdocs\install"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\openssl.conf"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\ca_demo_dolibarr.crt"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\ca_demo_dolibarr.key"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "dev\build\exe\doliwamp\dolibarr.conf.install"; DestDir: "{app}\alias"; Flags: ignoreversion;
+Source: "dev\build\exe\doliwamp\httpd.conf.install"; DestDir: "{app}\bin\apache\apache2.4.65\conf"; Flags: ignoreversion;
+Source: "dev\build\exe\doliwamp\my.ini.install"; DestDir: "{app}\bin\mysql\mysql5.0.45"; Flags: ignoreversion;
+Source: "dev\build\exe\doliwamp\my.ini.install"; DestDir: "{app}\bin\mariadb\mariadb11.4.9"; Flags: ignoreversion;
+Source: "dev\build\exe\doliwamp\php.ini.install"; DestDir: "{app}\bin\php\php8.4.27"; Flags: ignoreversion;
+Source: "dev\build\exe\doliwamp\index.php.install"; DestDir: "{app}\www"; Flags: ignoreversion;
+Source: "dev\build\exe\doliwamp\install.forced.php.install"; DestDir: "{app}\www\dolibarr\htdocs\install"; Flags: ignoreversion;
+Source: "dev\build\exe\doliwamp\openssl.conf"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "dev\build\exe\doliwamp\ca_demo_dolibarr.crt"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "dev\build\exe\doliwamp\ca_demo_dolibarr.key"; DestDir: "{app}"; Flags: ignoreversion;
 
 ; Licence
 Source: "COPYRIGHT"; DestDir: "{app}"; Flags: ignoreversion;
@@ -184,7 +184,6 @@ var destFileA: String;
 var srcContents: String;
 var browser: String;
 var mysqlVersion: String;
-var phpDllCopy: String;
 var batFile: String;
 
 var mysmtp: String;
@@ -207,17 +206,16 @@ begin
   begin
 
 	//----------------------------------------------
-	// Test if msvcr110 DLL has been installed
+	// Test if VC++ 2015-2022 redistributable DLLs has been installed (required by Apache, PHP and MariaDB)
 	//----------------------------------------------
 
-	if not FileExists ('c:/windows/system32/msvcr110.dll') and not FileExists ('c:/windows/sysWOW64/msvcr110.dll') and not FileExists ('c:/winnt/system32/msvcr110.dll') and not FileExists ('c:/winnt/sysWOW64/msvcr110.dll') then
+	if not FileExists ('c:/windows/system32/vcruntime140.dll') and not FileExists ('c:/windows/sysWOW64/vcruntime140.dll') and not FileExists ('c:/winnt/system32/vcruntime140.dll') and not FileExists ('c:/winnt/sysWOW64/vcruntime140.dll') then
 	begin
 	    // TODO - offer to install the component by opening the URL in the default browser, abort installation if user doesn't accept
 	    Result := MsgBox(CustomMessage('DLLMissing')+#13#13+CustomMessage('ContinueAnyway'), mbConfirmation, MB_YESNO) = IDYES;
 
 	end;
-	// Pb seems similar with msvcp110.dll
-	//vcredist_x64.exe
+	// vcredist_x64.exe
 
   end;
 
@@ -227,9 +225,9 @@ procedure InitializeWizard();
 begin
 
   //version des applis, a modifier pour chaque version de WampServer 2
-  apacheVersion := '2.4.51';
-  phpVersion := '7.4.26' ;
-  mysqlVersion := '10.6.5';
+  apacheVersion := '2.4.65';
+  phpVersion := '8.4.27' ;
+  mysqlVersion := '11.4.9';
 
   smtpServer := 'localhost';
   apachePort := '80';
@@ -345,6 +343,7 @@ var datadir: String;
 var exedirold: String;
 var exedirnew: String;
 var themessage: String;
+var FindRec: TFindRec;
 begin
 
    res := True;
@@ -390,24 +389,18 @@ begin
     //----------------------------------------------
     // Copie des dll de php vers apache
     //----------------------------------------------
-	// TODO Update this list when changing PHP/Apache versions
+	// Copy all DLL files of the PHP directory into the Apache bin directory so that php extensions can find them
 
-    phpDllCopy := 'libssh2.dll';
-    filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-    phpDllCopy := 'icuuc64.dll';
-    filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-    phpDllCopy := 'icuin64.dll';
-    filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-    phpDllCopy := 'icuio64.dll';
-    filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-    phpDllCopy := 'icudt64.dll';
-    filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-    phpDllCopy := 'libsasl.dll';
-    filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-    phpDllCopy := 'php7apache2_4.dll';
-    filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-    phpDllCopy := 'php7ts.dll';
-    filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
+    if FindFirst(pathWithSlashes+'/bin/php/php'+phpVersion+'/*.dll', FindRec) then
+    begin
+        try
+            repeat
+                filecopy(pathWithSlashes+'/bin/php/php'+phpVersion+'/'+FindRec.Name, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+FindRec.Name, False);
+            until not FindNext(FindRec);
+        finally
+            FindClose(FindRec);
+        end;
+    end;
 
 
     // Remove lock file
@@ -1026,7 +1019,7 @@ Filename: "{app}\rundoliwamp.bat"; Description: {cm:LaunchNow}; Flags: shellexec
 
 [UninstallDelete]
 Type: files; Name: "{app}\*.*"
-Type: files; Name: "{app}\bin\mariadb\mariadb10.6.5\*.*"
+Type: files; Name: "{app}\bin\mariadb\mariadb11.4.9\*.*"
 Type: filesandordirs; Name: "{app}\alias"
 Type: filesandordirs; Name: "{app}\apps"
 Type: filesandordirs; Name: "{app}\bin\apache"

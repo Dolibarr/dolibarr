@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2025		MDW	<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2025-2026	MDW	<mdeweerd@users.noreply.github.com>
  */
 
 // This tpl file is included into the init part of pages, so before action.
@@ -10,13 +10,19 @@
 /**
  * @var Conf	$conf
  *
+ * @var array<string,array{label:string,checked?:string,position?:int,help?:string,enabled?:string}> $arrayfields
  * @var string 	$extrafieldsobjectkey
  * @var string 	$extrafieldsobjectprefix
  * @var int		$extrafieldspositionoffset
+ * @var ?CommonObject $object
  */
 
 '
 @phan-var-force array<string,array{label:string,checked?:string,position?:int,help?:string,enabled?:string}> $arrayfields
+@phan-var-force string 	$extrafieldsobjectkey
+@phan-var-force string 	$extrafieldsobjectprefix
+@phan-var-force int		$extrafieldspositionoffset
+@phan-var-force ?CommonObject $object
 ';
 
 // Protection to avoid direct call of template
@@ -48,10 +54,10 @@ if (!empty($extrafieldsobjectkey)) {	// $extrafieldsobject is the $object->table
 				$arrayfields[$extrafieldsobjectprefix.$key] = array(
 					'label'    => $extrafields->attributes[$extrafieldsobjectkey]['label'][$key],
 					'type'     => $extrafields->attributes[$extrafieldsobjectkey]['type'][$key],
-					'checked'  => (((int) dol_eval($extrafields->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '1') <= 0) ? '0' : '1'),
+					'checked'  => (((int) dol_eval((string) $extrafields->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '1') <= 0) ? '0' : '1'),
 					'position' => $extrafieldspositionoffset + $extrafields->attributes[$extrafieldsobjectkey]['pos'][$key],
-					'perms'    => ((dol_eval($extrafields->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '1') <= 0) ? '0' : '1'),
-					'enabled'  => (string) (int) (abs((int) dol_eval($extrafields->attributes[$extrafieldsobjectkey]['list'][$key], 1)) != 3),
+					'perms'    => ((dol_eval((string) $extrafields->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '1') <= 0) ? '0' : '1'),
+					'enabled'  => (string) (int) (abs((int) dol_eval((string) $extrafields->attributes[$extrafieldsobjectkey]['list'][$key], 1)) != 3),
 					'langfile' => $extrafields->attributes[$extrafieldsobjectkey]['langfile'][$key],
 					'help'     => $extrafields->attributes[$extrafieldsobjectkey]['help'][$key],
 				);

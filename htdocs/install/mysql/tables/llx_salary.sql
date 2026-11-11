@@ -38,6 +38,7 @@ create table llx_salary
   entity          integer DEFAULT 1 NOT NULL, -- multi company id
   note            text,
   note_public     text,
+  model_pdf 			varchar(255) DEFAULT NULL,
   fk_bank         integer,
   paye            smallint default 0 NOT NULL,
   fk_account      integer,

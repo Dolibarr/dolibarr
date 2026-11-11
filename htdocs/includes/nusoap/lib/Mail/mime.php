@@ -23,8 +23,8 @@
  * - Redistributions in binary form must reproduce the above copyright
  *   notice, this list of conditions and the following disclaimer in the
  *   documentation and/or other materials provided with the distribution.
- * - Neither the name of the authors, nor the names of its contributors 
- *   may be used to endorse or promote products derived from this 
+ * - Neither the name of the authors, nor the names of its contributors
+ *   may be used to endorse or promote products derived from this
  *   software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -655,7 +655,7 @@ class Mail_mime
         $params['encoding']     = $value['encoding'];
         $params['content_type'] = $value['c_type'];
         $params['body_file']    = $value['body_file'];
-        $params['disposition']  = isset($value['disposition']) ? 
+        $params['disposition']  = isset($value['disposition']) ?
                                   $value['disposition'] : 'attachment';
 
         // content charset
@@ -693,9 +693,9 @@ class Mail_mime
      * Returns the complete e-mail, ready to send using an alternative
      * mail delivery method. Note that only the mailpart that is made
      * with Mail_Mime is created. This means that,
-     * YOU WILL HAVE NO TO: HEADERS UNLESS YOU SET IT YOURSELF 
+     * YOU WILL HAVE NO TO: HEADERS UNLESS YOU SET IT YOURSELF
      * using the $headers parameter!
-     * 
+     *
      * @param string $separation The separation between these two parts.
      * @param array  $params     The Build parameters passed to the
      *                           get() function. See get() for more info.
@@ -726,7 +726,7 @@ class Mail_mime
     /**
      * Returns the complete e-mail body, ready to send using an alternative
      * mail delivery method.
-     * 
+     *
      * @param array $params The Build parameters passed to the
      *                      get() method. See get() for more info.
      *
@@ -741,7 +741,7 @@ class Mail_mime
 
     /**
      * Writes (appends) the complete e-mail into file.
-     * 
+     *
      * @param string $filename  Output file location
      * @param array  $params    The Build parameters passed to the
      *                          get() method. See get() for more info.
@@ -851,7 +851,7 @@ class Mail_mime
                 $domainID = '@localhost';
             }
             foreach ($this->_html_images as $i => $img) {
-                $cid = $this->_html_images[$i]['cid']; 
+                $cid = $this->_html_images[$i]['cid'];
                 if (!preg_match('#'.preg_quote($domainID).'$#', $cid)) {
                     $this->_html_images[$i]['cid'] = $cid . $domainID;
                 }
@@ -1033,7 +1033,7 @@ class Mail_mime
      * @param bool  $overwrite    Overwrite already existing headers.
      * @param bool  $skip_content Don't return content headers: Content-Type,
      *                            Content-Disposition and Content-Transfer-Encoding
-     * 
+     *
      * @return array              Assoc array with the mime headers
      * @access public
      */
@@ -1247,7 +1247,7 @@ class Mail_mime
      * Since the PHP send function requires you to specify
      * recipients (To: header) separately from the other
      * headers, the To: header is not properly encoded.
-     * To fix this, you can use this public method to 
+     * To fix this, you can use this public method to
      * encode your recipients before sending to the send
      * function
      *
@@ -1319,7 +1319,7 @@ class Mail_mime
     }
 
     /**
-     * Get file's basename (locale independent) 
+     * Get file's basename (locale independent)
      *
      * @param string $filename Filename
      *

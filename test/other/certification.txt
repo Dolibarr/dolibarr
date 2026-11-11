@@ -1,0 +1,44 @@
+QUICK TOOL FOR CERTIFICATION
+
+
+***** To generate manually the filelist of files footprints:
+~/git/dolibarr_xxx/dev/build/generate_filelist_xml.php' release=auto
+
+
+***** To reload demo database
+To reload:
+~/git/dolibarr_test/dev/initdemo/initdemo.sh confirm 'mysqldump_dolibarr_24.0.0.sql' dolibarr_test 3306 dolibarr_test xxxxpass
+or to reload dump and clean blockedlog:
+~/git/dolibarr_test/dev/initdemo/initdemo.sh confirmcleanblockedlog 'mysqldump_dolibarr_24.0.0.sql' dolibarr_test 3306 dolibarr_test xxxxpass
+
+To save:
+~/git/dolibarr_test/dev/initdemo/savedemo.sh 'mysqldump_dolibarr_24.0.0.sql' dolibarr_test 3306 dolibarr_test xxxxpass
+
+
+***** To force all event in the blockedlog to year 2025
+UPDATE votre_table SET
+    date_object = STR_TO_DATE(CONCAT('2025-', DATE_FORMAT(date_object, '%m-%d')), '%Y-%m-%d'),
+    date_creation = STR_TO_DATE(CONCAT('2025-', DATE_FORMAT(date_creation, '%m-%d')), '%Y-%m-%d');
+
+
+***** To force date of a server to make tests
+timedatectl set-ntp false;   ou  systemctl stop ntp;
+timedatectl set-time "2025-04-15 09:30:00";
+timedatectl status;
+
+sudo /etc/init.d/apache2 stop; sudo /etc/init.d/apache2 start; sudo /etc/init.d/apache2 status;
+
+Warning: When going in past, you must be sure that users have no date of session invalidation after this date. You can fix this with:
+UPDATE llx_user set flagdelsessionsbefore = NULL WHERE flagdelsessionsbefore IS NOT NULL;
+
+
+***** To restore current date
+sudo timedatectl set-ntp true; sudo timedatectl status;
+ou
+systemctl stop/start ntp
+
+
+
+TODO
+
+Add column type_code in llx_blockedlog (for perf + filter on type_code)

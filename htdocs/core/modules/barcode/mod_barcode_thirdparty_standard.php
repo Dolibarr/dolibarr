@@ -4,8 +4,8 @@
  * Copyright (C) 2007-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2022      Faustin Boitel <fboitel@enseirb-matmeca.fr>
- * Copyright (C) 2024		Frédéric France			    <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France			    <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -321,7 +321,7 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 		$sql = "SELECT barcode FROM ".MAIN_DB_PREFIX."societe";
 		$sql .= " WHERE barcode = '".$db->escape($code)."'";
 		if ($thirdparty->id > 0) {
-			$sql .= " AND rowid <> ".$thirdparty->id;
+			$sql .= " AND rowid <> ".((int) $thirdparty->id);
 		}
 
 		$resql = $db->query($sql);
@@ -347,12 +347,10 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	public function verif_syntax($codefortest, $typefortest)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$result = 0;
 
 		// Get Mask value
-		$mask = !getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK') ? '' : $conf->global->BARCODE_STANDARD_THIRDPARTY_MASK;
+		$mask = getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK');
 		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return -1;

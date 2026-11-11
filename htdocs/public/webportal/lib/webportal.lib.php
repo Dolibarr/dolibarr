@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  */
 
@@ -45,7 +45,7 @@ function getNavItem($item, $deep = 0)
 		'separator' => false,
 	);
 
-	$item = array_replace($itemDefault, $item); // applique les valeurs par default
+	$item = array_replace($itemDefault, $item); // Apply the default values
 
 	if ($context->menuIsActive($item['id'])) {
 		$item['active'] = true;
@@ -63,7 +63,7 @@ function getNavItem($item, $deep = 0)
 		$haveChildActive = false;
 
 		foreach ($item['children'] as $child) {
-			$item = array_replace($itemDefault, $item); // applique les valeurs par default
+			$item = array_replace($itemDefault, $item); // Apply the default values
 			'@phan-var-force array{id:string,rank:int,url:string,name:string,group:string,override?:int<0,1>,active?:bool,separator?:bool}	$child';
 
 			if (!empty($child['separator'])) {

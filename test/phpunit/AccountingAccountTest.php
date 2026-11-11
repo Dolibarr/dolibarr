@@ -25,13 +25,12 @@
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/accountancy/class/accountingaccount.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/accounting.lib.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -57,17 +56,9 @@ class AccountingAccountTest extends CommonClassTest
 	 */
 	public static function setUpBeforeClass(): void
 	{
-		global $conf,$user,$langs,$db;
-		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
-
-		if (!isModEnabled('accounting')) {
-			print __METHOD__." module accounting must be enabled.\n";
-			exit(1);
-		}
-
-		print __METHOD__."\n";
+		self::assertTrue(isModEnabled('accounting'), " module double party accounting must be enabled");
+		parent::setUpBeforeClass();
 	}
-
 
 	/**
 	 * testAccountingAccountCreate
@@ -176,6 +167,43 @@ class AccountingAccountTest extends CommonClassTest
 		$this->assertLessThan($result, 0);
 
 		return $result;
+	}
+
+	/**
+	 * testAccountingAccountCheckUsageExpenseReport
+	 * An account bound to an expense report line must not be deleted.
+	 *
+	 * @return  void
+	 */
+	public function testAccountingAccountCheckUsageExpenseReport()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new AccountingAccount($db);
+		$localobject->fk_pcg_version = 'PCG99-ABREGE';
+		$localobject->pcg_type = 'XXXXX';
+		$localobject->account_number = '625123456';
+		$localobject->account_parent = 0;
+		$localobject->label = 'Account bound to an expense report line';
+		$id = $localobject->create($user);
+		$this->assertGreaterThan(0, $id);
+
+		$sql = "INSERT INTO ".$db->prefix()."expensereport_det (fk_expensereport, fk_c_type_fees, comments, qty, value_unit, date, fk_code_ventilation)";
+		$sql .= " VALUES (0, 0, 'checkUsage test', 1, 10, '".$db->idate(dol_now())."', ".((int) $id).")";
+		$resql = $db->query($sql);
+		$this->assertNotFalse($resql, (string) $db->lasterror());
+
+		$result = $localobject->checkUsage();
+		print __METHOD__." id=".$id." checkUsage=".$result."\n";
+		$this->assertEquals(0, $result);
+
+		$result = $localobject->delete($user);
+		$this->assertLessThanOrEqual(0, $result);
+		$this->assertGreaterThan(0, (new AccountingAccount($db))->fetch($id));
 	}
 
 	/**

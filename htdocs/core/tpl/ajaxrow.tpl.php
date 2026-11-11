@@ -51,86 +51,135 @@ if (empty($object) || !is_object($object)) {
 ';
 
 ?>
-
 <!-- BEGIN PHP TEMPLATE AJAXROW.TPL.PHP - Script to enable drag and drop on lines of a table -->
 <?php
-$id = $object->id;
-$fk_element = empty($object->fk_element) ? $fk_element : $object->fk_element;
-$table_element_line = (empty($table_element_line) ? $object->table_element_line : $table_element_line);
+
+$redirectURL = empty($urltorefreshaftermove) ? ($_SERVER['PHP_SELF'].'?'.dol_escape_js($_SERVER['QUERY_STRING'])) : $urltorefreshaftermove;
+// remove some parameters from URL
+$redirectURL = preg_replace('/(&|\?)action=[^&#]*/', '', $redirectURL);
+$redirectURL = preg_replace('/(&|\?)page_y=[^&#]*/', '', $redirectURL);
+
 $nboflines = (isset($object->lines) ? count($object->lines) : (isset($tasksarray) ? count($tasksarray) : (empty($nboflines) ? 0 : $nboflines)));
-$forcereloadpage = getDolGlobalInt('MAIN_FORCE_RELOAD_PAGE');
-$tagidfortablednd = (empty($tagidfortablednd) ? 'tablelines' : $tagidfortablednd);
-$filepath = (empty($filepath) ? '' : $filepath);
 
-if (GETPOST('action', 'aZ09') != 'editline' && $nboflines > 1 && $conf->browser->layout != 'phone') { ?>
-<script>
-$(document).ready(function(){
-	$(".imgupforline").hide();
-	$(".imgdownforline").hide();
-	$(".lineupdown").removeAttr('href');
-	$(".tdlineupdown").css("background-image",'url(<?php echo DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/grip.png'; ?>)');
-	$(".tdlineupdown").css("background-repeat","no-repeat");
-	$(".tdlineupdown").css("background-position","center center");
+$jsConf = [
+	'object' => [
+		'id' => $object->id,
+		'fkElement' => empty($object->fk_element) ? $fk_element : $object->fk_element,
+		'tableElementLine' =>  (empty($table_element_line) ? $object->table_element_line : $table_element_line),
+		'nbOfLines' => $nboflines,
+	],
+	'forceReloadPage' => getDolGlobalInt('MAIN_FORCE_RELOAD_PAGE'),
+	'tagIdForTableDND' => (empty($tagidfortablednd) ? 'tablelines' : $tagidfortablednd),
+	'filePath' => (empty($filepath) ? '' : $filepath),
+	'activeAjaxReorder' => GETPOST('action', 'aZ09') != 'editline' && $nboflines > 1 && $conf->browser->layout != 'phone',
+	'gripImg' => DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/grip.png',
+	'token' => currentToken(), // We use old 'token' and not 'newtoken' for Ajax call because the ajax page has the NOTOKENRENEWAL constant set.
+	'DOL_URL_ROOT' => DOL_URL_ROOT,
+	'redirectURL' => $redirectURL
+];
 
-	console.log("Prepare tableDnd for #<?php echo $tagidfortablednd; ?>");
-	$("#<?php echo $tagidfortablednd; ?>").tableDnD({
-		onDrop: function(table, row) {
-			var page_y = jQuery(document).scrollTop();
-			var reloadpage = "<?php echo $forcereloadpage; ?>";
-			console.log("tableDND onDrop");
-			console.log(decodeURI($("#<?php echo $tagidfortablednd; ?>").tableDnDSerialize()));
-			$('#<?php echo $tagidfortablednd; ?> tr[data-element=extrafield]').attr('id', '');	// Set extrafields id to empty value in order to ignore them in tableDnDSerialize function
-			$('#<?php echo $tagidfortablednd; ?> tr[data-ignoreidfordnd=1]').attr('id', '');	// Set id to empty value in order to ignore them in tableDnDSerialize function
-			var roworder = cleanSerialize(decodeURI($("#<?php echo $tagidfortablednd; ?>").tableDnDSerialize()));
-			var table_element_line = "<?php echo $table_element_line; ?>";
-			var fk_element = "<?php echo $fk_element; ?>";
-			var element_id = "<?php echo $id; ?>";
-			var filepath = "<?php echo urlencode($filepath); ?>";
-			var token = "<?php echo currentToken(); ?>";	// We use old 'token' and not 'newtoken' for Ajax call because the ajax page has the NOTOKENRENEWAL constant set.
-			$.post("<?php echo DOL_URL_ROOT; ?>/core/ajax/row.php",
-					{
-						roworder: roworder,
-						table_element_line: table_element_line,
-						fk_element: fk_element,
-						element_id: element_id,
-						filepath: filepath,
-						token: token
-					},
-					function() {
-						console.log("tableDND end of ajax call, reloadpage = " + reloadpage);
+?>
+<script nonce="<?php print getNonce(); ?>">
+Dolibarr.on('Ready', function() {
+	/**
+	 * @typedef {Object} JsConfElementObject
+	 * @property {number} id
+	 * @property {number|string|null} fkElement
+	 * @property {string} tableElementLine
+	 * @property {number} nbOfLines
+	 */
+
+	/**
+	 * @typedef {Object} JsConf
+	 * @property {JsConfElementObject} object
+	 * @property {number} forceReloadPage
+	 * @property {string} tagIdForTableDND
+	 * @property {string} filePath
+	 * @property {string} gripImg
+	 * @property {string} token
+	 * @property {string} DOL_URL_ROOT
+	 * @property {string} redirectURL
+	 */
+
+	/** @type {JsConf} */
+	const jsConf = <?php print json_encode($jsConf); ?>;
+
+	const applyCssAndDisplay = function() {
+		$(".imgupforline").hide();
+		$(".imgdownforline").hide();
+		$(".lineupdown").removeAttr('href');
+
+		if(jsConf.activeAjaxReorder) {
+			$(".tdlineupdown").css("background-image",`url(${jsConf.gripImg})`);
+			$(".tdlineupdown").css("background-repeat","no-repeat");
+			$(".tdlineupdown").css("background-position","center center");
+		}
+	}
+
+
+	let tableDnDInstance = null;
+
+	function initTableDnD() {
+		if (!jsConf.activeAjaxReorder) return;
+
+		Dolibarr.log("Prepare tableDnd for #" + jsConf.tagIdForTableDND);
+		// TODO : replace old tableDnD with modern SortableJS
+		tableDnDInstance = $("#" + jsConf.tagIdForTableDND).tableDnD({
+			onDrop: function (table, row) {
+				var page_y = jQuery(document).scrollTop();
+				var reloadpage = jsConf.forceReloadPage;
+				Dolibarr.log("tableDND onDrop");
+				Dolibarr.log(decodeURI($("#" + jsConf.tagIdForTableDND).tableDnDSerialize()));
+				$(`#${jsConf.tagIdForTableDND} tr[data-element=extrafield]`).attr('id', '');	// Set extrafields id to empty value in order to ignore them in tableDnDSerialize function
+				$(`#${jsConf.tagIdForTableDND} tr[data-ignoreidfordnd=1]`).attr('id', '');	// Set id to empty value in order to ignore them in tableDnDSerialize function
+				var roworder = cleanSerialize(decodeURI($(`#${jsConf.tagIdForTableDND}`).tableDnDSerialize()));
+				var table_element_line = jsConf.object.tableElementLine;
+				var fk_element = jsConf.object.fkElement;
+				var element_id = jsConf.object.id;
+				var filepath = decodeURIComponent(jsConf.filePath);
+
+				let postData = {
+					roworder: roworder,
+					table_element_line: table_element_line,
+					fk_element: fk_element,
+					element_id: element_id,
+					filepath: filepath,
+					token: jsConf.token
+				};
+
+				$.post(`${jsConf.DOL_URL_ROOT}/core/ajax/row.php`,
+					postData,
+					function () {
+						Dolibarr.log("tableDND end of ajax call, reloadpage = " + reloadpage);
+
+						Dolibarr.executeHook('documentRowMoved', postData)
+
 						if (reloadpage == 1) {
-							<?php
-							$redirectURL = empty($urltorefreshaftermove) ? ($_SERVER['PHP_SELF'].'?'.dol_escape_js($_SERVER['QUERY_STRING'])) : $urltorefreshaftermove;
-							// remove some parameters from URL
-							$redirectURL = preg_replace('/(&|\?)action=[^&#]*/', '', $redirectURL);
-							$redirectURL = preg_replace('/(&|\?)page_y=[^&#]*/', '', $redirectURL);
-							?>
-							location.href = '<?php echo dol_escape_js($redirectURL); ?>&page_y='+page_y;
-						} else {
-							$("#<?php echo $tagidfortablednd; ?> .drag").each(
-									function( intIndex ) {
-										// $(this).removeClass("pair impair");
-										//if (intIndex % 2 == 0) $(this).addClass('impair');
-										//if (intIndex % 2 == 1) $(this).addClass('pair');
-									});
+							location.href = jsConf.redirectURL + '&page_y=' + page_y;
 						}
-					});
-		},
-		onDragClass: "dragClass",
-		dragHandle: "td.tdlineupdown"
+					}
+				);
+			},
+			onDragClass: "dragClass",
+			dragHandle: "td.tdlineupdown"
+		});
+
+		$(".tdlineupdown").on("mouseenter", function () {
+			$(this).addClass("showDragHandle");
+		}).on("mouseleave", function () {
+			$(this).removeClass("showDragHandle");
+		});
+	}
+
+	applyCssAndDisplay();
+	initTableDnD();
+
+	Dolibarr.on('reloadDocumentLine', /** @param {{lineId:number, lineElement:string}} data */  function (data) {
+		Dolibarr.log('triggered by hook reloadDocumentLine : TEMPLATE AJAXROW.TPL.PHP')
+		applyCssAndDisplay();
+		initTableDnD();
 	});
-	$(".tdlineupdown").hover( function() { $(this).addClass('showDragHandle'); },
-		function() { $(this).removeClass('showDragHandle'); }
-	);
+
 });
 </script>
-<?php } else { ?>
-<script>
-$(document).ready(function(){
-	$(".imgupforline").hide();
-	$(".imgdownforline").hide();
-	$(".lineupdown").removeAttr('href');
-});
-</script>
-<?php } ?>
 <!-- END PHP TEMPLATE AJAXROW.TPL.PHP -->

@@ -10,6 +10,7 @@
  * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2024		Vincent Maury			<vmaury@timgroup.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		José MARTINEZ			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -140,14 +141,17 @@ if (isModEnabled("product") || isModEnabled("service")) {
 
 	echo '<span class="prod_entry_mode_predef nowraponall">';
 
-	$statustoshow = -1;
+	// By default, show all products whatever their "on sale" status, because a BOM may legitimately use raw
+	// materials that are only bought and never sold. Set BOM_STATUS_OF_PRODUCT_TO_SHOW to 1 to list only the
+	// products on sale (like the sale documents do), or to 0 to list only the products not on sale.
+	$statustoshow = getDolGlobalInt('BOM_STATUS_OF_PRODUCT_TO_SHOW', -1);
 	if (getDolGlobalString('ENTREPOT_EXTRA_STATUS')) {
 		// hide products in closed warehouse, but show products for internal transfer
 		print $form->select_produits(GETPOSTINT('idprod'), (($filtertype == 1) ? 'idprodservice' : 'idprod'), $filtertype, getDolGlobalInt('PRODUIT_LIMIT_SIZE'), 0, $statustoshow, 2, '', 1, array(), 0, '1', 0, 'maxwidth500 widthcentpercentminusx', 0, 'warehouseopen,warehouseinternal', GETPOST('combinations', 'array:alphanohtml'), 1);
 	} else {
 		print $form->select_produits(GETPOSTINT('idprod'), (($filtertype == 1) ? 'idprodservice' : 'idprod'), $filtertype, getDolGlobalInt('PRODUIT_LIMIT_SIZE'), 0, $statustoshow, 2, '', 1, array(), 0, '1', 0, 'maxwidth500 widthcentpercentminusx', 0, '', GETPOST('combinations', 'array:alphanohtml'), 1);
 	}
-	$urltocreateproduct = DOL_URL_ROOT.'/product/card.php?action=create'.(($filtertype == 1) ? '&leftmenu=service&type=1' : '&leftmenu=product&type=0').'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id);
+	$urltocreateproduct = DOL_URL_ROOT.'/product/card.php?action=create'.(($filtertype == 1) ? '&leftmenu=service&type=1' : '&leftmenu=product&type=0').'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&idprod=__ID__').'&backtopageforcancel='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id);
 	print '<a href="'.$urltocreateproduct.'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProduct").'"></span></a>';
 
 	echo '</span>';
@@ -177,7 +181,8 @@ print '</td>';
 if ($filtertype != 1) { // Product
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		$coldisplay++;
-		print '<td class="nobottom linecoluseunit">';
+		print '<td class="bordertop nobottom nowrap linecoluseunit">';
+		print $formproduct->selectMeasuringUnits("fk_unit", '', (GETPOSTISSET('fk_unit') ? GETPOST('fk_unit', 'alpha') : '0'), 1, 0);
 		print '</td>';
 	}
 } else { // Service
@@ -252,23 +257,33 @@ jQuery(document).ready(function() {
 			}
 	});
 
-	//change unit selected if we change service selected
+	//change unit and duration qty selected if we change service selected
 	<?php if ($filtertype == 1) { ?>
 	$('#idprodservice').change(function(){
 		var idproduct = $(this).val();
+		var $row = $(this).closest('tr');
 
 			$.ajax({
 				url : "<?php echo dol_buildpath('/bom/ajax/ajax.php', 1); ?>"
 				,type: 'POST'
 				,data: {
-					'action': 'getDurationUnitByProduct'
-					,'token' : "<?php echo newToken() ?>"
+					'action': 'getDurationByProduct'
+					,'token' : "<?php echo currentToken() ?>"
 					,'idproduct' : idproduct
 				}
 			}).done(function(data) {
 
 				console.log(data);
-				$("#fk_unit").val(data).change();
+				if (data && typeof data === 'object') {
+					if (data.fk_unit) {
+						$("#fk_unit").val(data.fk_unit).change();
+					}
+					if (data.duration_value) {
+						$row.find('input[name="qty"]').val(data.duration_value);
+					}
+				} else {
+					$("#fk_unit").val(data).change();
+				}
 			});
 
 			$.ajax({
@@ -276,7 +291,7 @@ jQuery(document).ready(function() {
 				,type: 'POST'
 				,data: {
 					'action': 'getWorkstationByProduct'
-					,'token' :  "<?php echo newToken() ?>"
+					,'token' :  "<?php echo currentToken() ?>"
 					,'idproduct' : idproduct
 				}
 			}).done(function(data) {

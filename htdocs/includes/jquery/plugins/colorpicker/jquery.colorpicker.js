@@ -48,7 +48,7 @@
             var clear = $('<div style="clear:both;"></div>');
 
             var clickcount=0;
-            
+
             return this.each(function() {
                 obj = this;
 
@@ -98,7 +98,7 @@
                     var offset = $(this).position();
                     var top = offset.top;
                     var left = offset.left + $(this).width() + 5;
-                	if ((left + (options.size + 4) * options.count) > $(window).width()) 
+                	if ((left + (options.size + 4) * options.count) > $(window).width())
                 	{
                 		left = offset.left - (options.size + 4) * options.count - 15;
                 	}

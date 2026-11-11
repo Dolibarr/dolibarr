@@ -4,11 +4,11 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2020  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2015-2020  Charlene Benke          <charlie@patas-monkey.com>
+ * Copyright (C) 2015-2026  Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2023-2024  William Mead            <william.mead@manchenumerique.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2023-2026  William Mead            <william@m34d.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,8 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinterligne.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonsignedobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/subtotals/class/commonsubtotal.class.php';
+
 
 /**
  *	Class to manage interventions
@@ -41,6 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonsignedobject.class.php';
 class Fichinter extends CommonObject
 {
 	use CommonSignedObject;
+	use CommonSubtotal;
 
 	/**
 	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
@@ -52,7 +55,7 @@ class Fichinter extends CommonObject
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'visible' => -1, 'notnull' => 1, 'position' => 15),
 		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => 'isModEnabled("project")', 'visible' => -1, 'position' => 20),
-		'fk_contrat' => array('type' => 'integer:Contrat:contrat/class/contrat.class.php', 'label' => 'Contract', 'enabled' => '$conf->contrat->enabled', 'visible' => -1, 'position' => 25),
+		'fk_contrat' => array('type' => 'integer:Contrat:contrat/class/contrat.class.php', 'label' => 'Contract', 'enabled' => 'isModEnabled("contract")', 'visible' => -1, 'position' => 25),
 		'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'showoncombobox' => 1, 'position' => 30),
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 35),
 		'ref_client' => array('type' => 'varchar(255)', 'label' => 'RefCustomer', 'enabled' => 1, 'visible' => -1, 'position' => 36),
@@ -85,6 +88,11 @@ class Fichinter extends CommonObject
 	public $element = 'fichinter';
 
 	/**
+	 * @var string Name of field in database that is used as reference when object is linked to another one.
+	 */
+	public $fk_element = 'fk_fichinter';
+
+	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'fichinter';
@@ -93,6 +101,11 @@ class Fichinter extends CommonObject
 	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = 'fichinterdet';
+
+	/**
+	 * @var string    Name of subtable class that manage subtable lines
+	 */
+	public $class_element_line = 'FichinterLigne';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -212,6 +225,11 @@ class Fichinter extends CommonObject
 	const STATUS_CLOSED = 3;
 
 	/**
+	 * Canceled status
+	 */
+	const STATUS_CANCELED = 9;
+
+	/**
 	 * Date of delivery of receipt
 	 * @var null|int|''		Date the intervention receipt has been delivered
 	 * @deprecated Use $delivery_date_receipt
@@ -286,8 +304,6 @@ class Fichinter extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		dol_syslog(get_class($this)."::create ref=".$this->ref);
@@ -341,7 +357,7 @@ class Fichinter extends CommonObject
 		$sql .= ", note_public";
 		$sql .= ") ";
 		$sql .= " VALUES (";
-		$sql .= $this->socid;
+		$sql .= ((int) $this->socid);
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", '".$this->db->escape($this->ref)."'";
 		$sql .= ", ".($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null");
@@ -499,9 +515,10 @@ class Fichinter extends CommonObject
 	public function fetch($rowid, $ref = '', $ref_ext = '')
 	{
 		$sql = "SELECT f.rowid, f.ref, f.ref_client, f.description, f.fk_soc, f.fk_statut as status, f.signed_status,";
-		$sql .= " f.datec, f.dateo, f.datee, f.datet, f.fk_user_author,";
+		$sql .= " f.datec, f.dateo, f.datee, f.datet,";
 		$sql .= " f.date_valid as datev,";
 		$sql .= " f.tms as datem,";
+		$sql .= " f.fk_user_author, f.fk_user_modif,";
 		$sql .= " f.duree, f.fk_projet as fk_project, f.note_public, f.note_private, f.model_pdf, f.last_main_doc, f.extraparams, fk_contrat, f.entity as entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 		$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
@@ -540,7 +557,8 @@ class Fichinter extends CommonObject
 				$this->fk_contrat = $obj->fk_contrat;
 				$this->entity = $obj->entity;
 
-				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_author_id = $this->user_creation_id = $obj->fk_user_author;
+				$this->user_modification_id = $obj->fk_user_modif;
 
 				$this->extraparams = is_null($obj->extraparams) ? [] : (array) json_decode($obj->extraparams, true);
 
@@ -621,7 +639,7 @@ class Fichinter extends CommonObject
 	 *
 	 *	@param		User		$user		User that validate
 	 *  @param		int			$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return		int						Return integer <0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, 0 if nothing done (intervention not in draft status), >0 if OK
 	 */
 	public function setValid($user, $notrigger = 0)
 	{
@@ -630,13 +648,18 @@ class Fichinter extends CommonObject
 
 		$error = 0;
 
-		if ($this->status != self::STATUS_VALIDATED) {
+		// Only a draft intervention can be validated. Any other status would leave the database
+		// unchanged (UPDATE filtered on fk_statut = 0) while ref, files and triggers are processed.
+		if ($this->status == self::STATUS_DRAFT) {
 			$this->db->begin();
 
 			$now = dol_now();
 
 			// Define new ref
 			if ((preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
+				if (empty($this->thirdparty)) {	// Not loaded when validated by the API or on closing a ticket
+					$this->fetch_thirdparty();
+				}
 				$num = $this->getNextNumRef($this->thirdparty);
 			} else {
 				$num = (string) $this->ref;
@@ -649,7 +672,7 @@ class Fichinter extends CommonObject
 			$sql .= ", date_valid = '".$this->db->idate($now)."'";
 			$sql .= ", fk_user_valid = ".($user->id > 0 ? (int) $user->id : "null");
 			$sql .= " WHERE rowid = ".((int) $this->id);
-			$sql .= " AND entity = ".((int) $this->entity);
+			$sql .= " AND entity IN (".getEntity('intervention').")";
 
 			$sql .= " AND fk_statut = 0";
 
@@ -685,7 +708,7 @@ class Fichinter extends CommonObject
 						$this->error = $this->db->lasterror();
 					}
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'ficheinter/".$this->db->escape($this->newref)."'";
-					$sql .= " WHERE filepath = 'ficheinter/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$sql .= " WHERE filepath = 'ficheinter/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 					$resql = $this->db->query($sql);
 					if (!$resql) {
 						$error++;
@@ -731,7 +754,125 @@ class Fichinter extends CommonObject
 			}
 		}
 
+		$this->error = 'ErrorObjectMustHaveStatusDraftToBeValidated';
+		dol_syslog(get_class($this)."::setValid action abandoned: intervention is not in draft status", LOG_WARNING);
+
 		return 0;
+	}
+
+	/**
+	 * 	Cancel an intervention
+	 *
+	 * 	@param      User	$user       Object user that cancel
+	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
+	 *	@return		int					Return integer <0 if KO, 0 if nothing done, >0 if OK
+	 */
+	public function setCanceled($user, $notrigger = 0)
+	{
+		$error = 0;
+
+		if ($this->status == self::STATUS_CANCELED) {
+			return 0;
+		}
+
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
+		$sql .= " SET fk_statut = ".self::STATUS_CANCELED.",";
+		$sql .= " fk_user_modif = ".((int) $user->id);
+		$sql .= " WHERE rowid = ".((int) $this->id);
+		$sql .= " AND fk_statut = ".self::STATUS_VALIDATED;
+		$sql .= " AND entity IN (".getEntity('intervention').")";
+
+		dol_syslog(get_class($this)."::setCanceled", LOG_DEBUG);
+		if ($this->db->query($sql)) {
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('FICHINTER_CANCEL', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+
+			if (!$error) {
+				$this->status = self::STATUS_CANCELED;
+				$this->statut = self::STATUS_CANCELED;	// deprecated
+				$this->db->commit();
+				return 1;
+			} else {
+				foreach ($this->errors as $errmsg) {
+					dol_syslog(get_class($this)."::setCanceled ".$errmsg, LOG_ERR);
+					$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+				}
+				$this->db->rollback();
+				return -1 * $error;
+			}
+		} else {
+			$this->error = $this->db->error();
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+
+	/**
+	 *	Tag the intervention as validated (opened)
+	 *	Function used when the intervention is reopened after being closed or canceled.
+	 *
+	 *	@param      User	$user       Object user that change status
+	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
+	 *	@return     int 	Return integer < 0 if KO, 0 if nothing is done, > 0 if OK
+	 */
+	public function setReopen($user, $notrigger = 0)
+	{
+		// phpcs:enable
+		$error = 0;
+
+		if ($this->statut != self::STATUS_CANCELED && $this->statut != self::STATUS_CLOSED) {
+			dol_syslog(get_class($this)."::setReopen intervention has not status closed or canceled", LOG_WARNING);
+			return 0;
+		}
+
+		$this->db->begin();
+
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'fichinter';
+		$sql .= ' SET fk_statut='.self::STATUS_VALIDATED;
+		$sql .= ", fk_user_modif = ".((int) $user->id);
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		dol_syslog(get_class($this)."::setReopen", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('FICHINTER_REOPEN', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+		} else {
+			$error++;
+			$this->error = $this->db->lasterror();
+			dol_print_error($this->db);
+		}
+
+		if (!$error) {
+			$this->status = self::STATUS_VALIDATED;
+			$this->statut = self::STATUS_VALIDATED;	// deprecated
+			$this->billed = 0;
+
+			$this->db->commit();
+			return 1;
+		} else {
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(get_class($this)."::setReopen ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+			}
+			$this->db->rollback();
+			return -1 * $error;
+		}
 	}
 
 	/**
@@ -739,7 +880,7 @@ class Fichinter extends CommonObject
 	 *
 	 * 	@param      User	$user       Object user that close
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
-	 *	@return		int					Return integer <0 if KO, >0 if OK
+	 *	@return		int					Return integer <0 if KO, 0 if nothing done (already closed or still draft), >0 if OK
 	 */
 	public function setClose($user, $notrigger = 0)
 	{
@@ -748,6 +889,12 @@ class Fichinter extends CommonObject
 		$error = 0;
 
 		if ($this->status == self::STATUS_CLOSED) {
+			return 0;
+		} elseif ($this->status == self::STATUS_DRAFT) {
+			// A draft intervention must be validated before being closed. The UPDATE below is filtered
+			// on fk_statut > 0, so going on would run the trigger without changing anything.
+			$this->error = 'ErrorObjectHasWrongStatus';
+			dol_syslog(get_class($this)."::setClose action abandoned: intervention is in draft status", LOG_WARNING);
 			return 0;
 		} else {
 			$this->db->begin();
@@ -760,7 +907,7 @@ class Fichinter extends CommonObject
 			$sql .= " fk_user_modif = " . ((int) $user->id);
 			$sql .= " WHERE rowid = " . ((int) $this->id);
 			$sql .= " AND fk_statut > " . self::STATUS_DRAFT;
-			$sql .= " AND entity = " . ((int) $conf->entity);
+			$sql .= " AND entity IN (".getEntity('intervention').")";
 
 			if ($this->db->query($sql)) {
 				if (!$notrigger) {
@@ -875,10 +1022,12 @@ class Fichinter extends CommonObject
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
 			$this->labelStatus[self::STATUS_BILLED] = $langs->transnoentitiesnoconv('StatusInterInvoiced');
 			$this->labelStatus[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Done');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
 			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
 			$this->labelStatusShort[self::STATUS_BILLED] = $langs->transnoentitiesnoconv('StatusInterInvoiced');
 			$this->labelStatusShort[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Done');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
 		}
 
 		$statuscode = 'status'.$status;
@@ -1189,7 +1338,7 @@ class Fichinter extends CommonObject
 
 			// Remove directory with files
 			$fichinterref = dol_sanitizeFileName($this->ref);
-			if ($conf->ficheinter->dir_output) {
+			if ($conf->ficheinter->dir_output && !empty($fichinterref)) {
 				$dir = $conf->ficheinter->dir_output."/".$fichinterref;
 				$file = $conf->ficheinter->dir_output."/".$fichinterref."/".$fichinterref.".pdf";
 				if (file_exists($file)) {
@@ -1232,6 +1381,8 @@ class Fichinter extends CommonObject
 	{
 		// phpcs:enable
 		if ($user->hasRight('ficheinter', 'creer')) {
+			$this->db->begin();
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
 			$sql .= " SET datei = '".$this->db->idate($delivery_date_receipt)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -1240,10 +1391,19 @@ class Fichinter extends CommonObject
 			if ($this->db->query($sql)) {
 				$this->date_delivery = $delivery_date_receipt;
 				$this->delivery_date_receipt = $delivery_date_receipt;
+
+				$result = $this->call_trigger($this->TRIGGER_PREFIX . '_MODIFY', $user);
+				if ($result < 0) {
+					$this->db->rollback();
+					return -1;
+				}
+
+				$this->db->commit();
 				return 1;
 			} else {
 				$this->error = $this->db->error();
 				dol_syslog("Fichinter::set_date_delivery Erreur SQL");
+				$this->db->rollback();
 				return -1;
 			}
 		}
@@ -1263,6 +1423,8 @@ class Fichinter extends CommonObject
 	{
 		// phpcs:enable
 		if ($user->hasRight('ficheinter', 'creer')) {
+			$this->db->begin();
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
 			$sql .= " SET description = '".$this->db->escape($description)."',";
 			$sql .= " fk_user_modif = ".((int) $user->id);
@@ -1270,10 +1432,19 @@ class Fichinter extends CommonObject
 
 			if ($this->db->query($sql)) {
 				$this->description = $description;
+
+				$result = $this->call_trigger($this->TRIGGER_PREFIX . '_MODIFY', $user);
+				if ($result < 0) {
+					$this->db->rollback();
+					return -1;
+				}
+
+				$this->db->commit();
 				return 1;
 			} else {
 				$this->error = $this->db->error();
 				dol_syslog("Fichinter::set_description Erreur SQL");
+				$this->db->rollback();
 				return -1;
 			}
 		}
@@ -1294,15 +1465,26 @@ class Fichinter extends CommonObject
 	{
 		// phpcs:enable
 		if ($user->hasRight('ficheinter', 'creer')) {
+			$this->db->begin();
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
 			$sql .= " SET fk_contrat = ".((int) $contractid);
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			if ($this->db->query($sql)) {
 				$this->fk_contrat = $contractid;
+
+				$result = $this->call_trigger($this->TRIGGER_PREFIX . '_MODIFY', $user);
+				if ($result < 0) {
+					$this->db->rollback();
+					return -1;
+				}
+
+				$this->db->commit();
 				return 1;
 			} else {
 				$this->error = $this->db->error();
+				$this->db->rollback();
 				return -1;
 			}
 		}
@@ -1363,6 +1545,7 @@ class Fichinter extends CommonObject
 		$this->user_validation_id = 0;
 		$this->date_creation = '';
 		$this->date_validation = '';
+		$this->signed_status = 0;
 
 		$this->ref_client = '';
 
@@ -1443,16 +1626,19 @@ class Fichinter extends CommonObject
 	 *	@param      int		$date_intervention  	Intervention date
 	 *	@param      int		$duration            	Intervention duration
 	 *  @param		array<string,?mixed>	$array_options	Array option
+	 *  @param      int     $type               	Type of line (0=product, other for subtotal).
+	 *  @param      int     $rang                   Position of line
+	 *  @param      int  	$special_code       	Special code for subtotal lines
 	 *	@return    	int             				>0 if ok, <0 if ko
 	 */
-	public function addline($user, $fichinterid, $desc, $date_intervention, $duration, $array_options = [])
+	public function addline($user, $fichinterid, $desc, $date_intervention, $duration, $array_options = [], $type = 0, $rang = -1, $special_code = 0)
 	{
-		dol_syslog(get_class($this)."::addline $fichinterid, $desc, $date_intervention, $duration");
+		dol_syslog(get_class($this)."::addline $fichinterid, $desc, $date_intervention, $duration, $type, $rang, $special_code");
 
 		if ($this->status == self::STATUS_DRAFT) {
 			$this->db->begin();
 
-			// Insertion ligne
+			// Insert line
 			$line = new FichinterLigne($this->db);
 
 			$line->fk_fichinter = $fichinterid;
@@ -1460,6 +1646,10 @@ class Fichinter extends CommonObject
 			$line->date         = $date_intervention;
 			$line->datei        = $date_intervention;	// For backward compatibility
 			$line->duration     = $duration;
+			$line->product_type = $type;
+			$line->rang         = $rang;
+			$line->special_code = $special_code;
+
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				$line->array_options = $array_options;
@@ -1534,7 +1724,7 @@ class Fichinter extends CommonObject
 		// phpcs:enable
 		$this->lines = array();
 
-		$sql = "SELECT rowid, fk_fichinter, description, duree, date, rang, extraparams";
+		$sql = "SELECT rowid, fk_fichinter, description, duree, date, rang, extraparams, special_code";
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinterdet";
 		$sql .= " WHERE fk_fichinter = ".((int) $this->id);
 		$sql .= " ORDER BY rang ASC, date ASC";
@@ -1553,8 +1743,14 @@ class Fichinter extends CommonObject
 				$line->fk_fichinter = $objp->fk_fichinter;
 				$line->desc = $objp->description;
 				$line->duration = $objp->duree;
-				//For invoicing we calculing hours
-				$line->qty = round($objp->duree / 3600, 2);
+				$line->special_code = (int) ($objp->special_code ?? 0);
+				if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
+					// Subtotals module lines store their depth (not a real duration) in duree — do not convert to hours
+					$line->qty = (int) $objp->duree;
+				} else {
+					//For invoicing we calculing hours
+					$line->qty = round($objp->duree / 3600, 2);
+				}
 				$line->date	= $this->db->jdate($objp->date);
 				$line->datei = $this->db->jdate($objp->date);	// For backward compatibility
 				$line->rang	= $objp->rang;
@@ -1590,6 +1786,22 @@ class Fichinter extends CommonObject
 		);
 
 		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
+	}
+
+	/**
+	 * Sets object to given categories.
+	 *
+	 * Adds it to non existing supplied categories.
+	 * Existing categories are left untouch.
+	 *
+	 * @param int[]|int $categories Category or categories IDs
+	 *
+	 * @return int Return integer <0 if KO, >0 if OK
+	 */
+	public function setCategories($categories)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		return parent::setCategoriesCommon($categories, Categorie::TYPE_FICHINTER);
 	}
 
 	/**

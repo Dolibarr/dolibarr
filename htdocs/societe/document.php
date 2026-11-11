@@ -111,7 +111,15 @@ if (empty($object->id) || $upload_dir === null) {
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+$parameters = array('id' => $object->id, 'socid' => $object->id);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+
+if (empty($reshook)) {
+	include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+}
 
 
 /*
@@ -130,7 +138,7 @@ llxHeader('', $title, $help_url);
 // Show tabs
 $head = societe_prepare_head($object);
 
-print dol_get_fiche_head($head, 'document', $langs->trans("ThirdParty"), -1, 'company');
+print dol_get_fiche_head($head, 'document', $langs->trans("ThirdParty"), -1, 'company', 0, '', '', 0, '', 1);
 
 
 // Build file list
@@ -153,11 +161,6 @@ print '<table class="border tableforfield centpercent">';
 print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
 print $object->getTypeUrl(1);
 print '</td></tr>';
-
-// Prefix
-if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
-	print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
-}
 
 if ($object->client) {
 	print '<tr><td class="titlefield">';

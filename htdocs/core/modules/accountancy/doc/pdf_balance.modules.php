@@ -240,7 +240,7 @@ class pdf_balance extends ModelePdfAccountancy
 			$pdf->SetSubject($outputlangs->transnoentities("AccountancyBalance"));
 		}
 		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 		$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("AccountancyBalance"));
 		if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 			$pdf->SetCompression(false);
@@ -303,7 +303,7 @@ class pdf_balance extends ModelePdfAccountancy
 		$groupDebit = $groupCredit = $totalDebit = $totalCredit = 0;
 		for ($i = 0; $i < $nblines; $i++) {
 			$accountingAccount = new AccountingAccount($this->db);
-			$accountingAccount->fetch(0, $object->lines[$i]->numero_compte);
+			$accountingAccount->fetch(0, $object->lines[$i]->numero_compte, true);
 
 			// Init the first account group
 			if (empty($accountGroup)) {
@@ -317,7 +317,7 @@ class pdf_balance extends ModelePdfAccountancy
 					$curY,
 					$nexY,
 					$default_font_size,
-					$langs->trans('Total') . ' ' . $langs->trans('AccountancyGroup' . $accountGroup),
+					$langs->transnoentitiesnoconv('Total') . ' ' . $langs->transnoentitiesnoconv('AccountancyGroup' . $accountGroup),
 					$tab_top_newpage,
 					$groupDebit,
 					$groupCredit
@@ -347,9 +347,9 @@ class pdf_balance extends ModelePdfAccountancy
 			$pdf->startTransaction();
 
 			if ($this->balanceType == "sub") {
-				$this->printStdColumnContent($pdf, $curY, 'account_label', $object->lines[$i]->subledger_label);
+				$this->printStdColumnContent($pdf, $curY, 'account_label', (string) $object->lines[$i]->subledger_label);
 			} else {
-				$this->printStdColumnContent($pdf, $curY, 'account_label', $accountingAccount->label);
+				$this->printStdColumnContent($pdf, $curY, 'account_label', (string) $accountingAccount->label);
 			}
 
 			$pageposafter = $pdf->getPage();
@@ -360,9 +360,9 @@ class pdf_balance extends ModelePdfAccountancy
 				$pdf->setPage($pageposafter);
 				$curY = $tab_top_newpage + $this->tabTitleHeight;
 				if ($this->balanceType == "sub") {
-					$this->printStdColumnContent($pdf, $curY, 'account_label',  $object->lines[$i]->subledger_label);
+					$this->printStdColumnContent($pdf, $curY, 'account_label', (string) $object->lines[$i]->subledger_label);
 				} else {
-					$this->printStdColumnContent($pdf, $curY, 'account_label', $accountingAccount->label);
+					$this->printStdColumnContent($pdf, $curY, 'account_label', (string) $accountingAccount->label);
 				}
 
 				$pageposafter = $pdf->getPage();
@@ -511,7 +511,7 @@ class pdf_balance extends ModelePdfAccountancy
 				$curY,
 				$nexY,
 				$default_font_size,
-				$langs->transnoentitiesnoconv('Total') . ' ' . $langs->trans('AccountancyGroup' . $accountingAccount->pcg_type),
+				$langs->transnoentitiesnoconv('Total') . ' ' . $langs->transnoentitiesnoconv('AccountancyGroup' . $accountingAccount->pcg_type),
 				$tab_top_newpage,
 				$groupDebit,
 				$groupCredit
@@ -530,9 +530,8 @@ class pdf_balance extends ModelePdfAccountancy
 			$langs->transnoentities('GrandTotals'),
 			$tab_top_newpage,
 			$totalDebit,
-			$totalCredit,
+			$totalCredit
 		);
-
 
 
 		// Show square
@@ -559,6 +558,7 @@ class pdf_balance extends ModelePdfAccountancy
 		$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 		global $action;
 		$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		$this->warnings = $hookmanager->warnings;
 		if ($reshook < 0) {
 			$this->error = $hookmanager->error;
 			$this->errors = $hookmanager->errors;
@@ -667,7 +667,7 @@ class pdf_balance extends ModelePdfAccountancy
 
 		// Name of soc
 		$pdf->SetXY($this->marge_gauche + 2, $posy + 2);
-		$text = $this->emetteur->name;
+		$text = (string) $this->emetteur->name;
 		$pdf->MultiCell($w / 3, 4, $outputlangs->convToOutputCharset($text), 0, $ltrdirection);
 		$nexY = max($pdf->GetY(), $nexY);
 
@@ -725,11 +725,11 @@ class pdf_balance extends ModelePdfAccountancy
 	/**
 	 * Define Array Column Field
 	 *
-	 * @param	BookKeeping	   $object    	    common object
-	 * @param	Translate	   $outputlangs     langs
-	 * @param	int			   $hidedetails		Do not show line details
-	 * @param	int			   $hidedesc		Do not show desc
-	 * @param	int			   $hideref			Do not show ref
+	 * @param	CommonObject	$object    	    common object
+	 * @param	Translate		$outputlangs    langs
+	 * @param	int<0,1>		$hidedetails	Do not show line details
+	 * @param	int<0,1>		$hidedesc		Do not show desc
+	 * @param	int<0,1>		$hideref		Do not show ref
 	 * @return	void
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
@@ -751,7 +751,7 @@ class pdf_balance extends ModelePdfAccountancy
 		$rank = 0; // do not use negative rank
 		$this->cols['position'] = [
 			'rank' => $rank,
-			'width' => 10,
+			'width' => 10.0,
 			'status' => (bool) getDolGlobalInt('PDF_ACCOUNTANCY_BALANCE_ADD_POSITION'),
 			'title' => [
 				'textkey' => '#', // use lang key is useful in some case with module
@@ -762,14 +762,14 @@ class pdf_balance extends ModelePdfAccountancy
 			],
 			'content' => [
 				'align' => 'C',
-				'padding' => [1, 0.5, 1, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => [1.0, 0.5, 1.0, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			],
 		];
 
 		$rank += 10; // do not use negative rank
 		$this->cols['account_number'] = [
 			'rank' => $rank,
-			'width' => 20, // only for desc
+			'width' => 20.0, // only for desc
 			'status' => true,
 			'title' => [
 				'textkey' => 'AccountNumber', // use lang key is useful in some case with module
@@ -780,7 +780,7 @@ class pdf_balance extends ModelePdfAccountancy
 			],
 			'content' => [
 				'align' => 'L',
-				'padding' => [1, 0.5, 1, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => [1.0, 0.5, 1.0, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			],
 		];
 
@@ -798,7 +798,7 @@ class pdf_balance extends ModelePdfAccountancy
 			],
 			'content' => [
 				'align' => 'L',
-				'padding' => [1, 0.5, 1, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => [1.0, 0.5, 1.0, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			],
 			'border-left' => true, // add left line separator
 		];
@@ -807,7 +807,7 @@ class pdf_balance extends ModelePdfAccountancy
 		$rank += 10;
 		$this->cols['debit'] = [
 			'rank' => $rank,
-			'width' => 30,
+			'width' => 30.0,
 			'status' => true,
 			'title' => [
 				'textkey' => 'AccountingDebit', // use lang key is useful in some case with module
@@ -818,7 +818,7 @@ class pdf_balance extends ModelePdfAccountancy
 			],
 			'content' => [
 				'align' => 'R',
-				'padding' => [1, 0.5, 1, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => [1.0, 0.5, 1.0, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			],
 			'border-left' => true, // add left line separator
 		];
@@ -826,7 +826,7 @@ class pdf_balance extends ModelePdfAccountancy
 		$rank += 10;
 		$this->cols['credit'] = array(
 			'rank' => $rank,
-			'width' => 30,
+			'width' => 30.0,
 			'status' => true,
 			'title' => array(
 				'textkey' => 'AccountingCredit', // use lang key is useful in some case with module
@@ -837,7 +837,7 @@ class pdf_balance extends ModelePdfAccountancy
 			),
 			'content' => array(
 				'align' => 'R',
-				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(1.0, 0.5, 1.0, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 			'border-left' => true, // add left line separator
 		);
@@ -845,7 +845,7 @@ class pdf_balance extends ModelePdfAccountancy
 		$rank += 10;
 		$this->cols['balance'] = [
 			'rank' => $rank,
-			'width' => 32,
+			'width' => 32.0,
 			'status' => true,
 			'title' => [
 				'textkey' => 'Balance', // use lang key is useful in some case with module
@@ -856,7 +856,7 @@ class pdf_balance extends ModelePdfAccountancy
 			],
 			'content' => [
 				'align' => 'R',
-				'padding' => [1, 0.5, 1, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => [1.0, 0.5, 1.0, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			],
 			'border-left' => true, // add left line separator
 		];

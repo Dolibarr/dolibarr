@@ -2,7 +2,8 @@
 /* Copyright (C) 2012	   Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez		<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,7 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
@@ -44,7 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'products'));
+$langs->loadLangs(array('admin', 'products', 'stocks'));
 
 // Security check
 if (!$user->admin) {
@@ -56,7 +58,7 @@ $oldvatrate = GETPOST('oldvatrate', 'alpha');
 $newvatrate = GETPOST('newvatrate', 'alpha');
 //$price_base_type=GETPOST('price_base_type');
 
-
+$hookmanager->initHooks(array('productvatadmin'));
 
 /*
  * Actions
@@ -107,7 +109,7 @@ if ($action == 'convert') {
 			if ($vat_src_code_old) {
 				$sql .= " AND default_vat_code = '".$db->escape($vat_src_code_old)."'";
 			} else {
-				$sql .= " AND default_vat_code = IS NULL";
+				$sql .= " AND (default_vat_code IS NULL OR default_vat_code = '')";
 			}
 
 			$resql = $db->query($sql);
@@ -197,6 +199,18 @@ if ($action == 'convert') {
 			} else {
 				dol_print_error($db);
 			}
+
+			// Sweep: updatePrice() above only reaches products that have a defined price. Set the target
+			// rate and VAT code directly on any product/price row still matching the old value (products
+			// without a price, and historical price rows), so the mass change is complete.
+			$sweepwhere = " AND tva_tx = '".$db->escape($oldvatrateclean)."'";
+			if ($vat_src_code_old) {
+				$sweepwhere .= " AND default_vat_code = '".$db->escape($vat_src_code_old)."'";
+			} else {
+				$sweepwhere .= " AND (default_vat_code IS NULL OR default_vat_code = '')";
+			}
+			$db->query("UPDATE ".MAIN_DB_PREFIX."product SET tva_tx = '".$db->escape($newvatrateclean)."', default_vat_code = '".$db->escape($vat_src_code_new)."' WHERE entity IN (".getEntity('product').")".$sweepwhere);
+			$db->query("UPDATE ".MAIN_DB_PREFIX."product_price SET tva_tx = '".$db->escape($newvatrateclean)."', default_vat_code = '".$db->escape($vat_src_code_new)."' WHERE 1 = 1".$sweepwhere);
 		}
 
 		$fourn = new Fournisseur($db);
@@ -209,7 +223,7 @@ if ($action == 'convert') {
 		if ($vat_src_code_old) {
 			$sql .= " AND default_vat_code = '".$db->escape($vat_src_code_old)."'";
 		} else {
-			$sql .= " AND default_vat_code = IS NULL";
+			$sql .= " AND (default_vat_code IS NULL OR default_vat_code = '')";
 		}
 		$sql .= " AND s.fk_pays = ".((int) $country_id);
 
@@ -251,11 +265,32 @@ if ($action == 'convert') {
 					$newdeliverydelay = $objectstatic2->delivery_time_days;
 					$newsupplierreputation = $objectstatic2->supplier_reputation;
 
+					// When the multicurrency module is on, update_buyprice() always recomputes the base price from
+					// the currency price it receives. Passing nothing here means the defaults (price 0, rate 1) are
+					// used and the price of every line is rewritten to 0, so the values read by
+					// fetch_product_fournisseur_price() above have to be given back. A line recorded before the
+					// module was enabled has no currency: it keeps its own price, at rate 1.
+					$newmulticurrencyprice = 0;
+					$newmulticurrencytx = 1;
+					$newmulticurrencycode = '';
+					if (isModEnabled("multicurrency")) {
+						$newmulticurrencycode = (string) $objectstatic2->fourn_multicurrency_code;
+						if (!empty($newmulticurrencycode)) {
+							$newmulticurrencyprice = (float) $objectstatic2->fourn_multicurrency_price;
+							$newmulticurrencytx = (float) $objectstatic2->fourn_multicurrency_tx;
+						} else {
+							$newmulticurrencyprice = (float) $newprice;
+						}
+						if (empty($newmulticurrencytx)) {
+							$newmulticurrencytx = 1;
+						}
+					}
+
 					$newlevel = 0;
 					if (!empty($price_base_type) && !$updatelevel1) {
 						//print "$objectstatic2->id $newprice, $price_base_type, $newvat, $newminprice, $newlevel, $newnpr<br>\n";
 						$fourn->id = $obj->fk_soc;
-						$ret = $objectstatic2->update_buyprice($obj->qty, (float) $newprice, $user, $price_base_type, $fourn, $obj->fk_availability, $obj->ref_fourn, (float) $newvat, '', $newpercent, 0, $newnpr, $newdeliverydelay, $newsupplierreputation, $localtaxes_type, $newdefaultvatcode);
+						$ret = $objectstatic2->update_buyprice($obj->qty, (float) $newprice, $user, $price_base_type, $fourn, $obj->fk_availability, $obj->ref_fourn, (float) $newvat, '', $newpercent, 0, $newnpr, $newdeliverydelay, $newsupplierreputation, $localtaxes_type, $newdefaultvatcode, $newmulticurrencyprice, 'HT', $newmulticurrencytx, $newmulticurrencycode);
 					}
 
 					if ($ret < 0 || $retm < 0) {
@@ -314,7 +349,8 @@ llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-product page-admin_product_
 
 print load_fiche_titre($title, '', 'title_setup');
 
-print $langs->trans("ProductVatMassChangeDesc").'<br><br>';
+print '<div class="info">'.$langs->trans("ProductVatMassChangeDesc").'</div>';
+print '<br>';
 
 if (empty($mysoc->country_code)) {
 	$langs->load("errors");
@@ -327,15 +363,30 @@ if (empty($mysoc->country_code)) {
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Parameters").'</td>'."\n";
-	print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
+	print '<td>'.$langs->trans("From").'/'.$langs->trans("To").'</td>'."\n";
+	print '<td class="right" width="60"></td>'."\n";
 	print '</tr>'."\n";
 
 
 	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans("OldVATRates").'</td>'."\n";
 	print '<td width="60" class="right">'."\n";
-	print $form->load_tva('oldvatrate', $oldvatrate, $mysoc, null, 0, 0, '', false, 1);
+	// Old VAT rate: distinct (rate, code) pairs present on products, with the count of products for
+	// each -- so the source to convert (including rates without a VAT code) is visible and quantified.
+	print '<select class="flat" name="oldvatrate" id="oldvatrate">';
+	$sqloldvat = "SELECT tva_tx, default_vat_code, COUNT(*) as nb FROM ".MAIN_DB_PREFIX."product";
+	$sqloldvat .= " WHERE entity IN (".getEntity('product').") AND tva_tx IS NOT NULL";
+	$sqloldvat .= " GROUP BY tva_tx, default_vat_code ORDER BY tva_tx DESC, default_vat_code";
+	$resqloldvat = $db->query($sqloldvat);
+	while ($resqloldvat && $objoldvat = $db->fetch_object($resqloldvat)) {
+		$rateclean = price2num($objoldvat->tva_tx);
+		$hascode = !empty($objoldvat->default_vat_code);
+		$optval = $rateclean.($hascode ? ' ('.$objoldvat->default_vat_code.')' : '');
+		$optlbl = vatrate($rateclean, true).($hascode ? ' ('.$objoldvat->default_vat_code.')' : ' ('.$langs->trans("WithoutVATCode").')').' &nbsp; ['.$objoldvat->nb.' '.$langs->trans("Products").']';
+		print '<option value="'.dol_escape_htmltag($optval).'"'.((string) $oldvatrate === (string) $optval ? ' selected' : '').'>'.$optlbl.'</option>';
+	}
+	print '</select>';
+	print ajax_combobox('oldvatrate');
 	print '</td>'."\n";
 	print '</tr>'."\n";
 
@@ -344,6 +395,7 @@ if (empty($mysoc->country_code)) {
 	print '<td>'.$langs->trans("NewVATRates").'</td>'."\n";
 	print '<td width="60" class="right">'."\n";
 	print $form->load_tva('newvatrate', $newvatrate, $mysoc, null, 0, 0, '', false, 1);
+	print ajax_combobox('newvatrate');
 	print '</td>'."\n";
 	print '</tr>'."\n";
 
@@ -368,6 +420,17 @@ if (empty($mysoc->country_code)) {
 	print '</div>';
 
 	print '</form>';
+
+	// The conversion loops over every matching product with updatePrice(): on a large
+	// catalog the request runs for minutes with no feedback, which invites re-submits.
+	// Show the native blocking overlay (dolBlockUI + working.gif) while it runs.
+	print '<script>
+	jQuery(function() {
+		jQuery("#convert_vatrate").closest("form").on("submit", function() {
+			dolBlockUI(\''.dol_escape_js($langs->transnoentities("MassConvertInProgress")).'\');
+		});
+	});
+	</script>';
 }
 
 // End of page

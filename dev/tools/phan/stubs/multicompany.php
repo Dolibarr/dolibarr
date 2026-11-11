@@ -21,7 +21,7 @@ class ActionsMulticompany
 	public $db;
 
 	/**
-	 * @param string $login
+	 * @param bool|string $login
 	 * @param bool $bool1
 	 * @param bool $bool2
 	 * @return array<int,string>

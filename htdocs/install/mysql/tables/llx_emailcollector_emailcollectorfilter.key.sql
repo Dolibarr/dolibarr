@@ -20,4 +20,3 @@ ALTER TABLE llx_emailcollector_emailcollectorfilter ADD CONSTRAINT fk_emailcolle
 -- END MODULEBUILDER INDEXES
 
 ALTER TABLE llx_emailcollector_emailcollectorfilter ADD UNIQUE INDEX uk_emailcollector_emailcollectorfilter (fk_emailcollector, type, rulevalue);
-

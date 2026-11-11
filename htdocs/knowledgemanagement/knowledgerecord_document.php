@@ -88,7 +88,7 @@ if ($id > 0 || !empty($ref)) {
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
-restrictedArea($user, $object->module, $object->id, $object->table_element, $object->element, '', 'rowid', $isdraft);
+restrictedArea($user, $object->module, $object->id, $object->table_element.'&'.$object->element, $object->element, '', 'rowid', $isdraft);
 
 $permissiontoadd = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
 
@@ -118,7 +118,7 @@ if ($object->id && $upload_dir !== null) {
 	 */
 	$head = knowledgerecordPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'document', $langs->trans("KnowledgeRecord"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'document', $langs->trans("KnowledgeRecord"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 
 	// Build file list

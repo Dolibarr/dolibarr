@@ -49,6 +49,12 @@ $ilink = 0;
 foreach ($linkedObjectBlock as $key => $objectlink) {
 	$ilink++;
 
+	$objectlink->fetch_thirdparty();
+
+	$refWithThirdparty = '<span class="small">';
+	$refWithThirdparty .= $objectlink->thirdparty->getNomUrl(1);
+	$refWithThirdparty .= '</span>';
+
 	$trclass = 'oddeven';
 	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
 		$trclass .= ' liste_sub_total';
@@ -56,7 +62,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	<tr class="<?php echo $trclass; ?>">
 		<td><?php echo $langs->trans("Intervention"); ?></td>
 		<td><?php echo $objectlink->getNomUrl(1); ?></td>
-		<td></td>
+		<td class="nopaddingtopimp nopaddingbottomimp"><?php echo $refWithThirdparty; ?></td>
 		<td class="center"><?php echo dol_print_date($objectlink->datev, 'day'); ?></td>
 		<td></td>
 		<td class="right"><?php echo $objectlink->getLibStatut(3); ?></td>

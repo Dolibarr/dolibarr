@@ -62,7 +62,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 	public $update_main_doc_field;
 
 	/**
-	 * @var string document type
+	 * @var string 			Document type
 	 */
 	public $type;
 
@@ -73,12 +73,12 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 	public $version = 'dolibarr';
 
 	/**
-	 * @var int $fromDate Start timestamp
+	 * @var int $fromDate 	Start timestamp
 	 */
 	public $fromDate;
 
 	/**
-	 * @var int $toDate Start timestamp
+	 * @var int $toDate 	Start timestamp
 	 */
 	public $toDate;
 
@@ -230,7 +230,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 		$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 		$pdf->SetSubject($outputlangs->transnoentities("AccountancyBookkeeping"));
 		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 		$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("AccountancyBookkeeping"));
 		if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 			$pdf->SetCompression(false);
@@ -278,15 +278,15 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 		$pagenb = $pageposbeforeprintlines;
 
 		// Knowing how many month our period covers
-		$fromYear = date('Y', $this->fromDate);
-		$fromMonth = date('m', $this->fromDate);
-		$toYear = date('Y', $this->toDate);
-		$toMonth = date('m', $this->toDate);
+		$fromYear = dol_print_date($this->fromDate, "%Y");
+		$fromMonth = dol_print_date($this->fromDate, "%m");
+		$toYear = dol_print_date($this->toDate, "%Y");
+		$toMonth = dol_print_date($this->toDate, "%m");
 		$nbMonths = (((int) $toYear - (int) $fromYear) * 12) + ((int) $toMonth - (int) $fromMonth) + 1;
-		$datePlusOneMonth = strtotime("-1 month", $this->fromDate);
+		$datePlusOneMonth = dol_time_plus_duree($this->fromDate, -1, 'm');
 		$dates = [];
 		for ($i = 0; $i  < $nbMonths; $i++) {
-			$datePlusOneMonth = strtotime("+1 month", $datePlusOneMonth);
+			$datePlusOneMonth = dol_time_plus_duree($datePlusOneMonth, 1, "m");
 			$dates[$datePlusOneMonth] = dol_print_date($datePlusOneMonth, "%B %Y");
 		}
 
@@ -518,8 +518,8 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 			$tab_top_newpage,
 			$totalDebit,
 			$totalCredit,
+			true
 		);
-
 
 
 		// Show square
@@ -544,6 +544,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 		$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 		global $action;
 		$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		$this->warnings = $hookmanager->warnings;
 		if ($reshook < 0) {
 			$this->error = $hookmanager->error;
 			$this->errors = $hookmanager->errors;
@@ -652,7 +653,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 
 		// Name of soc
 		$pdf->SetXY($this->marge_gauche + 2, $posy + 2);
-		$text = $this->emetteur->name;
+		$text = (string) $this->emetteur->name;
 		$pdf->MultiCell($w / 3, 4, $outputlangs->convToOutputCharset($text), 0, $ltrdirection);
 		$nexY = max($pdf->GetY(), $nexY);
 
@@ -706,11 +707,11 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 	/**
 	 *   	Define Array Column Field
 	 *
-	 *   	@param	BookKeeping	   $object    	    common object
-	 *   	@param	Translate	   $outputlangs     langs
-	 *      @param	int			   $hidedetails		Do not show line details
-	 *      @param	int			   $hidedesc		Do not show desc
-	 *      @param	int			   $hideref			Do not show ref
+	 *   	@param	CommonObject	$object    	    common object
+	 *   	@param	Translate		$outputlangs    langs
+	 *      @param	int<0,1>		$hidedetails	Do not show line details
+	 *      @param	int<0,1>		$hidedesc		Do not show desc
+	 *      @param	int<0,1>		$hideref		Do not show ref
 	 *      @return	void
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
@@ -732,10 +733,10 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 		$rank = 0; // do not use negative rank
 		$this->cols['position'] = [
 			'rank' => $rank,
-			'width' => 10,
+			'width' => 10.0,
 			'status' => (bool) getDolGlobalInt('PDF_ACCOUNTANCY_LEDGER_ADD_POSITION'),
 			'title' => [
-				'textkey' => '#', // use lang key is useful in somme case with module
+				'textkey' => '#', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -743,17 +744,17 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 			],
 			'content' => [
 				'align' => 'C',
-				'padding' => [1, 0.5, 1, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => [1.0, 0.5, 1.0, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			],
 		];
 
 		$rank += 10; // do not use negative rank
 		$this->cols['date'] = [
 			'rank' => $rank,
-			'width' => 18, // only for desc
+			'width' => 18.0, // only for desc
 			'status' => true,
 			'title' => [
-				'textkey' => 'Date', // use lang key is useful in somme case with module
+				'textkey' => 'Date', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -761,17 +762,17 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 			],
 			'content' => [
 				'align' => 'L',
-				'padding' => [1, 0.5, 1, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => [1.0, 0.5, 1.0, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			],
 		];
 
 		$rank += 10;
 		$this->cols['piece_num'] = [
 			'rank' => $rank,
-			'width' => 14,
+			'width' => 14.0,
 			'status' => true,
 			'title' => [
-				'textkey' => 'Piece', // use lang key is useful in somme case with module
+				'textkey' => 'Piece', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -779,7 +780,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 			],
 			'content' => [
 				'align' => 'L',
-				'padding' => [1, 0.5, 1, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => [1.0, 0.5, 1.0, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			],
 			'border-left' => true, // add left line separator
 		];
@@ -787,10 +788,10 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 		$rank += 10;
 		$this->cols['account'] = [
 			'rank' => $rank,
-			'width' => 15,
+			'width' => 15.0,
 			'status' => true,
 			'title' => [
-				'textkey' => 'Account', // use lang key is useful in somme case with module
+				'textkey' => 'Account', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -798,7 +799,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 			],
 			'content' => [
 				'align' => 'L',
-				'padding' => [1, 0.5, 1, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => [1.0, 0.5, 1.0, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			],
 			'border-left' => true, // add left line separator
 		];
@@ -806,10 +807,10 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 		$rank += 10;
 		$this->cols['account_label'] = [
 			'rank' => $rank,
-			'width' => 30,
+			'width' => 30.0,
 			'status' => true,
 			'title' => [
-				'textkey' => 'LabelAccount', // use lang key is useful in somme case with module
+				'textkey' => 'LabelAccount', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -817,7 +818,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 			],
 			'content' => [
 				'align' => 'L',
-				'padding' => [1, 0.5, 1, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => [1.0, 0.5, 1.0, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			],
 			'border-left' => true, // add left line separator
 		];
@@ -828,7 +829,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 			'width' => false,
 			'status' => true,
 			'title' => [
-				'textkey' => 'Label', // use lang key is useful in somme case with module
+				'textkey' => 'Label', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -836,7 +837,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 			],
 			'content' => [
 				'align' => 'L',
-				'padding' => [1, 0.5, 1, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => [1.0, 0.5, 1.0, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			],
 			'border-left' => true, // add left line separator
 		];
@@ -844,10 +845,10 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 		$rank += 10;
 		$this->cols['debit'] = [
 			'rank' => $rank,
-			'width' => 15,
+			'width' => 15.0,
 			'status' => true,
 			'title' => [
-				'textkey' => 'Debit', // use lang key is useful in somme case with module
+				'textkey' => 'Debit', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -855,7 +856,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 			],
 			'content' => [
 				'align' => 'R',
-				'padding' => [1, 0.5, 1, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => [1.0, 0.5, 1.0, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			],
 			'border-left' => true, // add left line separator
 		];
@@ -863,10 +864,10 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 		$rank += 10;
 		$this->cols['credit'] = array(
 			'rank' => $rank,
-			'width' => 15,
+			'width' => 15.0,
 			'status' => true,
 			'title' => array(
-				'textkey' => 'Credit', // use lang key is useful in somme case with module
+				'textkey' => 'Credit', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -874,7 +875,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 			),
 			'content' => array(
 				'align' => 'R',
-				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(1.0, 0.5, 1.0, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 			'border-left' => true, // add left line separator
 		);

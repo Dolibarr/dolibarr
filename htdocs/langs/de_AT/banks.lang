@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - banks
-BankName=Banknamen
 BankAccount=Kontonummer
 BankAccounts=Kontonummern
 AccountRef=Referenznummer
@@ -21,7 +20,6 @@ AccountStatements=Kontoauszug
 LastAccountStatements=letzter Kontoauszug
 IOMonthlyReporting=monatlicher Report
 LabelBankCashAccount=Bank- oder Kassabezeichnung
-BankType0=Sparkonto\n
 BankType2=Kassa
 IncludeClosedAccount=Geschlossene konten miteinbeziehen
 StatusAccountClosed=geschlossen

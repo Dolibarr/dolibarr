@@ -26,8 +26,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
  *
  * @var string $dolibarr_main_url_root
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // Load translation files required by the page
 $langs->load("admin");
@@ -88,7 +87,7 @@ print load_fiche_titre($langs->trans("ClickToDialSetup"), $linkback, 'title_setu
 print '<span class="opacitymedium">'.$langs->trans("ClickToDialDesc")."</span><br>\n";
 
 print '<br>';
-print '<form method="post" action="clicktodial.php">';
+print '<form method="post" action="clicktodial.php" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
@@ -170,12 +169,12 @@ print '</form><br><br>';
 if (getDolGlobalString('CLICKTODIAL_URL')) {
 	$user->fetch_clicktodial();
 
-	$phonefortest = $mysoc->phone ?? '';
+	$phonefortest = (string) $mysoc->phone;
 	if (GETPOST('phonefortest')) {
 		$phonefortest = GETPOST('phonefortest');
 	}
 
-	print '<form action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+	print '<form action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print $langs->trans("LinkToTestClickToDial", $user->login).' : ';
 	print '<input class="flat" type="text" name="phonefortest" value="'.dol_escape_htmltag($phonefortest).'">';

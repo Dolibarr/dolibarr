@@ -11,7 +11,7 @@
  * Copyright (C) 2017       Juanjo Menent      	    <jmenent@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2020       Open-Dsi                <support@open-dsi.fr>
- * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2021-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Anthony Berton          <anthony.berton@bb2a.fr>
  * Copyright (C) 2023       William Mead            <william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -52,6 +52,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/phone.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 if (isModEnabled('category')) {
@@ -80,7 +81,7 @@ $mode = GETPOST("mode", 'alpha');
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_cti = preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml'))); // Phone number without any special chars
 
-$search_id = GETPOST("search_id", 'int');
+$search_id = trim(GETPOST("search_id", 'alpha'));	// Can contains a numeric test like ">10" or "!= 34"
 $search_nom = trim(GETPOST("search_nom", 'restricthtml'));
 $search_alias = trim(GETPOST("search_alias", 'restricthtml'));
 $search_nom_only = trim(GETPOST("search_nom_only", 'restricthtml'));
@@ -111,7 +112,7 @@ $search_vat = trim(GETPOST('search_vat', 'alpha'));
 $search_sale = "";
 if (GETPOSTISARRAY('search_sale')) {
 	$search_sale = GETPOST('search_sale', 'array:int');
-} elseif (GETPOSTISSET('search_sale')) {
+} elseif (GETPOSTISSET('search_sale') && GETPOSTINT('search_sale') > 0) {
 	$search_sale = array(GETPOSTINT('search_sale'));
 }
 $search_categ_cus = GETPOSTINT("search_categ_cus");
@@ -168,10 +169,11 @@ $search_date_modif_end = dol_mktime(23, 59, 59, $search_date_modif_endmonth, $se
 $type = GETPOST('type', 'alpha');
 $place = GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'; // $place is string id of table for Bar or Restaurant
 
-$diroutputmassaction = $conf->societe->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = isModEnabled('societe') ? $conf->societe->dir_output.'/temp/massgeneration/'.$user->id : '';
 
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
@@ -297,7 +299,7 @@ $checkstcomm = (in_array($contextpage, array('prospectlist')) ? '1' : '0');
 $arrayfields = array(
 	's.rowid' => array('label' => "TechnicalID", 'position' => 1, 'checked' => '-1', 'enabled' => '1'),
 	's.nom' => array('label' => "ThirdPartyName", 'position' => 2, 'checked' => '1'),
-	's.name_alias' => array('label' => "AliasNameShort", 'position' => 3, 'checked' => '1'),
+	's.name_alias' => array('label' => "AliasNameShort", 'position' => 3, 'checked' => '0'),
 	's.ref_ext' => array('label' => "RefExt", 'position' => 4, 'checked' => '-1', 'enabled' => (string) getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT')),
 	's.barcode' => array('label' => "Gencod", 'position' => 5, 'checked' => '1', 'enabled' => (string) (int) isModEnabled('barcode')),
 	's.code_client' => array('label' => "CustomerCodeShort", 'position' => 10, 'checked' => $checkedcustomercode),
@@ -347,6 +349,9 @@ $arrayfields['sales.representative'] = array('label' => $langs->trans("SalesRepr
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 // @phpstan-ignore-next-line
 $object->fields = dol_sort_array($object->fields, 'position');
@@ -559,6 +564,10 @@ if ($type == 'f' && (empty($search_type) || ($search_type == '4'))) {
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 
 
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+
+
 // Select every potentials, and note each potentials which fit in search parameters
 $tab_level = array();
 $sql = "SELECT code, label, sortorder";
@@ -645,12 +654,12 @@ if (!empty($search_sale) && $search_sale != '-1') {
 	$search_sale_req = implode(',', $search_sale_req);
 
 	if (count($search_sale) == 1 && in_array('-2', $search_sale)) {
-		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid)";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('s.rowid', 0, 1);
 	} elseif (count($search_sale) > 0 && !in_array('-2', $search_sale)) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid AND sc.fk_user IN (".$db->sanitize($search_sale_req)."))";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('s.rowid', $db->sanitize($search_sale_req));
 	} elseif (count($search_sale) > 0 && in_array('-2', $search_sale)) {
-		$sql .= " AND (EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid AND sc.fk_user IN (".$db->sanitize($search_sale_req)."))";
-		$sql .= " OR NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid))";
+		$sql .= " AND (".getSalesRepresentativeSqlFilter('s.rowid', $db->sanitize($search_sale_req));
+		$sql .= " OR ".getSalesRepresentativeSqlFilter('s.rowid', 0, 1).")";
 	}
 }
 
@@ -717,7 +726,7 @@ if ($search_all) {
 if (strlen($search_cti)) {
 	$sql .= natural_search('s.phone', $search_cti);
 }
-if ($search_id > 0) {
+if ($search_id != '') {
 	$sql .= natural_search("s.rowid", $search_id, 1);
 }
 if (empty($arrayfields['s.name_alias']['checked']) && $search_nom) {
@@ -726,7 +735,6 @@ if (empty($arrayfields['s.name_alias']['checked']) && $search_nom) {
 	if ($search_nom) {
 		$sql .= natural_search("s.nom", $search_nom);
 	}
-
 	if ($search_alias) {
 		$sql .= natural_search("s.name_alias", $search_alias);
 	}
@@ -774,13 +782,13 @@ if ($search_noemail) {
 	$sql .= " AND EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = '".$db->escape($search_email)."' AND unsubscribegroup = '' AND entity IN (".getEntity('societe')."))";
 }
 if (strlen($search_phone)) {
-	$sql .= natural_search("s.phone", $search_phone);
+	$sql .= dol_natural_search_phone($db, "s.phone", $search_phone);
 }
 if (strlen($search_phone_mobile)) {
-	$sql .= natural_search("s.phone_mobile", $search_phone_mobile);
+	$sql .= dol_natural_search_phone($db, "s.phone_mobile", $search_phone_mobile);
 }
 if (strlen($search_fax)) {
-	$sql .= natural_search("s.fax", $search_fax);
+	$sql .= dol_natural_search_phone($db, "s.fax", $search_fax);
 }
 if ($search_url) {
 	$sql .= natural_search("s.url", $search_url);
@@ -1001,8 +1009,8 @@ if (is_array($search_sale)) {
 		$param .= '&search_sale[]=' . urlencode($sale_id);
 	}
 }
-if ($search_id > 0) {
-	$param .= "&search_id=".((int) $search_id);
+if ($search_id != '') {
+	$param .= "&search_id=".urlencode($search_id);
 }
 if ($search_nom != '') {
 	$param .= "&search_nom=".urlencode($search_nom);
@@ -1112,6 +1120,12 @@ if ($search_parent_name != '') {
 }
 if ($search_import_key != '') {
 	$param .= '&search_import_key='.urlencode($search_import_key);
+}
+if ($search_note_public != '') {
+	$param .= '&search_note_public='.urlencode($search_note_public);
+}
+if ($search_note_private != '') {
+	$param .= '&search_note_private='.urlencode($search_note_private);
 }
 if ($type != '') {
 	$param .= '&type='.urlencode($type);
@@ -1248,7 +1262,7 @@ if (empty($reshook)) {
 	$newcardbutton = $hookmanager->resPrint;
 }
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off">'."\n";
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off" spellcheck="false">'."\n";
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -1301,7 +1315,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if (!empty($search_categ_cus) || !empty($search_categ_sup)) {
 	print "<div id='ways'>";
 	$c = new Categorie($db);
-	$ways = $c->print_all_ways(' &gt; ', 'societe/list.php');
+	$ways = $c->print_all_ways('auto', 'societe/list.php');
 	print " &gt; ".$ways[0]."<br>\n";
 	print "</div><br>";
 }
@@ -1354,13 +1368,11 @@ if (!empty($moreforfilter)) {
 	print '</div>';
 }
 
-$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= ((count($arrayofmassactions) && $contextpage != 'poslist') ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+print '<table class="tagtable nobottomiftotal noborder liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 // Fields title search
 // --------------------------------------------------------------------
@@ -1373,8 +1385,8 @@ if ($conf->main_checkbox_left_column) {
 	print '</td>';
 }
 if (!empty($arrayfields['s.rowid']['checked'])) {
-	print '<td class="liste_titre" data-key="id">';
-	print '<input class="flat searchstring" type="text" name="search_id" size="1" value="'.dol_escape_htmltag($search_id).'">';
+	print '<td class="liste_titre center" data-key="id">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
@@ -1431,11 +1443,6 @@ if (!empty($arrayfields['s.address']['checked'])) {
 	print '<input class="flat searchstring maxwidth50imp" type="text" name="search_address" value="'.dol_escape_htmltag($search_address).'">';
 	print '</td>';
 }
-// Sales representatives
-if (!empty($arrayfields['sales.representative']['checked'])) {
-	print '<td class="liste_titre">';
-	print '</td>';
-}
 // Zip
 if (!empty($arrayfields['s.zip']['checked'])) {
 	print '<td class="liste_titre">';
@@ -1470,7 +1477,7 @@ if (!empty($arrayfields['country.code_iso']['checked'])) {
 if (!empty($arrayfields['typent.code']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
 	// We use showempty=0 here because there is already an unknown value into dictionary.
-	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), 'minwidth50 maxwidth125', 1);
+	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, getDolGlobalString('SOCIETE_SORT_ON_TYPEENT', 'ASC'), 'minwidth50 maxwidth125', 1);
 	print '</td>';
 }
 // Multiprice level
@@ -1582,6 +1589,11 @@ if (!empty($arrayfields['customerorsupplier']['checked'])) {
 	}
 	print '</td>';
 }
+// Sales representatives
+if (!empty($arrayfields['sales.representative']['checked'])) {
+	print '<td class="liste_titre">';
+	print '</td>';
+}
 // Prospect level
 if (!empty($arrayfields['s.fk_prospectlevel']['checked'])) {
 	print '<td class="liste_titre center">';
@@ -1683,7 +1695,7 @@ if ($conf->main_checkbox_left_column) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.rowid']['checked'])) {
-	print_liste_field_titre($arrayfields['s.rowid']['label'], $_SERVER["PHP_SELF"], "s.rowid", "", $param, ' data-key="id"', $sortfield, $sortorder, '');
+	print_liste_field_titre($arrayfields['s.rowid']['label'], $_SERVER["PHP_SELF"], "s.rowid", "", $param, ' data-key="id"', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
@@ -1701,7 +1713,7 @@ if (!empty($arrayfields['s.ref_ext']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.barcode']['checked'])) {
-	print_liste_field_titre($arrayfields['s.barcode']['label'], $_SERVER["PHP_SELF"], "s.barcode", $param, '', '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['s.barcode']['label'], $_SERVER["PHP_SELF"], "s.barcode", '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.code_client']['checked'])) {
@@ -1722,10 +1734,6 @@ if (!empty($arrayfields['s.code_compta_fournisseur']['checked'])) {
 }
 if (!empty($arrayfields['s.address']['checked'])) {
 	print_liste_field_titre($arrayfields['s.address']['label'], $_SERVER['PHP_SELF'], 's.address', '', $param, '', $sortfield, $sortorder);
-	$totalarray['nbfield']++;
-}
-if (!empty($arrayfields['sales.representative']['checked'])) {
-	print_liste_field_titre($arrayfields['sales.representative']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.zip']['checked'])) {
@@ -1819,6 +1827,10 @@ if (!empty($arrayfields['s.tva_intra']['checked'])) {
 }
 if (!empty($arrayfields['customerorsupplier']['checked'])) {
 	print_liste_field_titre($arrayfields['customerorsupplier']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'center '); // type of customer
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['sales.representative']['checked'])) {
+	print_liste_field_titre($arrayfields['sales.representative']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.fk_prospectlevel']['checked'])) {
@@ -1946,7 +1958,7 @@ while ($i < $imaxinloop) {
 		$j = 0;
 		print '<tr data-rowid="'.$companystatic->id.'" class="oddeven row-with-select"';
 		if ($contextpage == 'poslist') {
-			print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.urlencode($place).'\'"';
+			print ' onclick="location.href=\'list.php?action=change&token='.newToken().'&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.urlencode($place).'\'"';
 		}
 		print '>';
 
@@ -1966,7 +1978,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		if (!empty($arrayfields['s.rowid']['checked'])) {
-			print '<td class="tdoverflowmax50" data-key="id">';
+			print '<td class="center tdoverflowmax50" data-key="id">';
 			print dol_escape_htmltag($obj->rowid);
 			print "</td>\n";
 			if (!$i) {
@@ -1974,20 +1986,27 @@ while ($i < $imaxinloop) {
 			}
 		}
 		if (!empty($arrayfields['s.nom']['checked'])) {
-			print '<td'.(getDolGlobalString('MAIN_SOCIETE_SHOW_COMPLETE_NAME') ? '' : ' class="tdoverflowmax200"').' data-key="ref">';
+			print '<td class="tdlineheightsmall" data-key="ref">';
+			print '<div class="tdoverflowmax200 inline-block lineheightsmall">';
 			if ($contextpage == 'poslist') {
-				print dol_escape_htmltag($companystatic->name);
+				print dolPrintHTML($companystatic->name);
 			} else {
-				print $companystatic->getNomUrl(1, '', 100, 0, 1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
+				print $companystatic->getNomUrl(1, '', 100, 0, 1, 1, '', 'valignmiddle', 1);
+				if (empty($arrayfields['s.name_alias']['checked'])) {
+					print '<br><span class="spantitle">'.dolPrintHTML($companystatic->name_alias).'</span>';
+				}
 			}
+			print '</div>';
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->name_alias).'">';
-			print dol_escape_htmltag($companystatic->name_alias);
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($companystatic->name_alias).'">';
+			print '<span class="spantitle">';
+			print dolPrintHTML($companystatic->name_alias);
+			print '</span>';
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1995,8 +2014,8 @@ while ($i < $imaxinloop) {
 		}
 		// Ref ext
 		if (!empty($arrayfields['s.ref_ext']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->ref_ext).'">';
-			print dol_escape_htmltag($companystatic->ref_ext);
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($companystatic->ref_ext).'">';
+			print dolPrintHTML($companystatic->ref_ext);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2004,14 +2023,14 @@ while ($i < $imaxinloop) {
 		}
 		// Barcode
 		if (!empty($arrayfields['s.barcode']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->barcode).'">'.dol_escape_htmltag($companystatic->barcode).'</td>';
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($companystatic->barcode).'">'.dolPrintHTML($companystatic->barcode).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Customer code
 		if (!empty($arrayfields['s.code_client']['checked'])) {
-			print '<td class="nowraponall">'.dol_escape_htmltag($companystatic->code_client).'</td>';
+			print '<td class="nowraponall">'.dolPrintHTML($companystatic->code_client).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -2025,89 +2044,49 @@ while ($i < $imaxinloop) {
 		}
 		// Account customer code
 		if (!empty($arrayfields['s.code_compta']['checked'])) {
-			print '<td>'.dol_escape_htmltag($companystatic->code_compta_client).'</td>';
+			print '<td>'.dolPrintHTML($companystatic->code_compta_client).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Account supplier code
 		if (!empty($arrayfields['s.code_compta_fournisseur']['checked'])) {
-			print '<td>'.dol_escape_htmltag($companystatic->code_compta_fournisseur).'</td>';
+			print '<td>'.dolPrintHTML($companystatic->code_compta_fournisseur).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Address
 		if (!empty($arrayfields['s.address']['checked'])) {
-			print '<td class="tdoverflowmax250" title="'.dol_escape_htmltag($companystatic->address).'">'.dol_escape_htmltag($companystatic->address).'</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-		}
-		// Sales Representative
-		if (!empty($arrayfields['sales.representative']['checked'])) {
-			print '<td class="nowraponall tdoverflowmax200">';
-			$listsalesrepresentatives = $companystatic->getSalesRepresentatives($user);
-			$nbofsalesrepresentative = count($listsalesrepresentatives);
-			if ($nbofsalesrepresentative > 6) {
-				// We print only number
-				print $nbofsalesrepresentative;
-			} elseif ($nbofsalesrepresentative > 0) {
-				$userstatic = new User($db);
-				$j = 0;
-				foreach ($listsalesrepresentatives as $val) {
-					$userstatic->id = $val['id'];
-					$userstatic->lastname = $val['lastname'];
-					$userstatic->firstname = $val['firstname'];
-					$userstatic->email = $val['email'];
-					$userstatic->entity = $val['entity'];
-					$userstatic->photo = $val['photo'];
-					$userstatic->login = $val['login'];
-					$userstatic->office_phone = $val['office_phone'];
-					$userstatic->office_fax = $val['office_fax'];
-					$userstatic->user_mobile = $val['user_mobile'];
-					$userstatic->job = $val['job'];
-					$userstatic->gender = $val['gender'];
-					$userstatic->statut = $val['statut'];
-					$userstatic->status = $val['statut'];
-					print ($nbofsalesrepresentative < 2) ? $userstatic->getNomUrl(-1, '', 0, 0, 12) : $userstatic->getNomUrl(-2);
-					$j++;
-					if ($j < $nbofsalesrepresentative) {
-						print ' ';
-					}
-				}
-			} else {
-				print '&nbsp;';
-			}
-			print '</td>';
+			print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttribute($companystatic->address).'">'.dolPrintHTML($companystatic->address).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Zip
 		if (!empty($arrayfields['s.zip']['checked'])) {
-			print "<td>".dol_escape_htmltag($companystatic->zip)."</td>\n";
+			print "<td>".dolPrintHTML($companystatic->zip)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Town
 		if (!empty($arrayfields['s.town']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->town).'">'.dol_escape_htmltag($companystatic->town)."</td>\n";
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($companystatic->town).'">'.dolPrintHTML($companystatic->town)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// State
 		if (!empty($arrayfields['state.nom']['checked'])) {
-			print "<td>".dol_escape_htmltag($obj->state_name)."</td>\n";
+			print "<td>".dolPrintHTML($obj->state_name)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Region
 		if (!empty($arrayfields['region.nom']['checked'])) {
-			print "<td>".dol_escape_htmltag($obj->region_name)."</td>\n";
+			print "<td>".dolPrintHTML($obj->region_name)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -2127,8 +2106,8 @@ while ($i < $imaxinloop) {
 			$typenArray = $formcompany->typent_array(1);
 			$labeltypeofcompany = empty($typenArray[$obj->typent_code]) ? '' : $typenArray[$obj->typent_code];
 
-			print '<td class="center tdoverflowmax125" title="'.dol_escape_htmltag($labeltypeofcompany).'">';
-			print dol_escape_htmltag($labeltypeofcompany);
+			print '<td class="center tdoverflowmax125" title="'.dolPrintHTMLForAttribute($labeltypeofcompany).'">';
+			print dolPrintHTML($labeltypeofcompany);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2173,7 +2152,8 @@ while ($i < $imaxinloop) {
 		}
 		// Email
 		if (!empty($arrayfields['s.email']['checked'])) {
-			print '<td class="tdoverflowmax150">'.dol_print_email($obj->email, $obj->rowid, $obj->rowid, 1, 0, 0, 1)."</td>\n";
+			$showinvalidemail = (int) !getDolGlobalInt('MAIN_SHOW_INVALID_EMAIL_IN_LIST'); // to avoid slow display
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute((string) $obj->email).'">'.dol_print_email((string) $obj->email, $obj->rowid, $obj->rowid, 1, 0, $showinvalidemail, 1)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -2263,6 +2243,46 @@ while ($i < $imaxinloop) {
 			$reshook = $hookmanager->executeHooks('getTypeUrl', array('client_type' => $obj->client));
 			if (empty($reshook)) {
 				print $companystatic->getTypeUrl(1);
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Sales Representative
+		if (!empty($arrayfields['sales.representative']['checked'])) {
+			print '<td class="nowraponall tdoverflowmax150">';
+			$listsalesrepresentatives = $companystatic->getSalesRepresentatives($user);
+			$nbofsalesrepresentative = count($listsalesrepresentatives);
+			if ($nbofsalesrepresentative > 6) {
+				// We print only number
+				print $nbofsalesrepresentative;
+			} elseif ($nbofsalesrepresentative > 0) {
+				$userstatic = new User($db);
+				$j = 0;
+				foreach ($listsalesrepresentatives as $val) {
+					$userstatic->id = $val['id'];
+					$userstatic->lastname = $val['lastname'];
+					$userstatic->firstname = $val['firstname'];
+					$userstatic->email = $val['email'];
+					$userstatic->entity = $val['entity'];
+					$userstatic->photo = $val['photo'];
+					$userstatic->login = $val['login'];
+					$userstatic->office_phone = $val['office_phone'];
+					$userstatic->office_fax = $val['office_fax'];
+					$userstatic->user_mobile = $val['user_mobile'];
+					$userstatic->job = $val['job'];
+					$userstatic->gender = $val['gender'];
+					$userstatic->statut = $val['statut'];
+					$userstatic->status = $val['statut'];
+					print ($nbofsalesrepresentative < 2) ? $userstatic->getNomUrl(-1, '', 0, 0, 12) : $userstatic->getNomUrl(-2);
+					$j++;
+					if ($j < $nbofsalesrepresentative) {
+						print ' ';
+					}
+				}
+			} else {
+				print '&nbsp;';
 			}
 			print '</td>';
 			if (!$i) {

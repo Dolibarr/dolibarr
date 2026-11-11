@@ -137,8 +137,17 @@ class FormWebsite
 				}
 
 				$lasttypecontainer = '';
+
+				// Sort by group of type first, then position: sorting on position only can
+				// interleave the groups and make them appear several times in the list.
+				$arrayofcontainers = array();
 				while ($i < $num) {
-					$obj = $this->db->fetch_object($result);
+					$arrayofcontainers[] = $this->db->fetch_object($result);
+					$i++;
+				}
+				usort($arrayofcontainers, array('FormWebsite', 'compareTypeOfContainer'));
+
+				foreach ($arrayofcontainers as $obj) {
 					/*if (in_array($obj->typecontainer, array('library', 'service'))) {
 						if (!getDolGlobalString('WEBSITE_ADD_PAGE_TYPE_PHPLIB')) {
 							$i++;
@@ -172,8 +181,6 @@ class FormWebsite
 					$out .= '</option>';
 
 					$conf->cache['type_of_container'][$obj->code] = $obj->label;
-
-					$i++;
 				}
 				$out .= "</select>";
 				if ($user->admin) {
@@ -191,6 +198,29 @@ class FormWebsite
 		}
 
 		return $out;
+	}
+
+	/**
+	 *  Compare 2 types of container to sort them by group of type, then position, then label.
+	 *  Used as callback of usort() by selectTypeOfContainer().
+	 *
+	 *  @param	stdClass	$a		First record of c_type_container
+	 *  @param	stdClass	$b		Second record of c_type_container
+	 *  @return	int					Negative if $a is before $b, positive if $a is after $b, 0 if equal
+	 */
+	public static function compareTypeOfContainer($a, $b)
+	{
+		$rankofgroup = array('page' => 0, 'container' => 1, 'library' => 2);
+
+		$ga = array_key_exists($a->typecontainer, $rankofgroup) ? $rankofgroup[$a->typecontainer] : 3;
+		$gb = array_key_exists($b->typecontainer, $rankofgroup) ? $rankofgroup[$b->typecontainer] : 3;
+		if ($ga != $gb) {
+			return $ga - $gb;
+		}
+		if ($a->position != $b->position) {
+			return $a->position - $b->position;
+		}
+		return strcmp($a->label, $b->label);
 	}
 
 	/**
@@ -349,6 +379,7 @@ class FormWebsite
 	 *
 	 * @param   string      $htmlContent    HTML name of WYSIWYG field
 	 * @return 	string      HTML for model page boxes
+	 * @see getEmailLayoutSelector()
 	 */
 	public function getContentPageTemplate($htmlContent = 'message')
 	{
@@ -359,8 +390,12 @@ class FormWebsite
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/emaillayout.lib.php';
 
 		$listofsamples = dol_dir_list(DOL_DOCUMENT_ROOT.'/website/samples', 'files', 0, '^page-sample-.*\.html$');
-		$arrayofsamples = array();
-		$arrayofsamples['empty'] = 'EmptyPage'; // Always this one first
+
+		// Define list of layouts to use
+		$arrayofsamples = array(
+			'empty' => 'EmptyPage',
+		);
+
 		foreach ($listofsamples as $sample) {
 			$reg = array();
 			if (preg_match('/^page-sample-(.*)\.html$/', $sample['name'], $reg)) {
@@ -391,7 +426,7 @@ class FormWebsite
 			$contentHtml = file_exists($pathtoTemplateFile) ? make_substitutions(@file_get_contents($pathtoTemplateFile), $substitutionarray) : '';
 
 			$out .= '<div class="template-option" data-template="'.$template.'" data-content="'.htmlentities($contentHtml).'">';
-			$out .= '<img class="maillayout" alt="'.$template.'" src="'.DOL_URL_ROOT.'/theme/common/maillayout/'.$template.'.png" />';
+			$out .= '<img class="maillayout" alt="'.$template.'" src="'.DOL_URL_ROOT.'/theme/common/maillayout/'.($template === 'empty' ? 'none' : $template).'.png" />';
 			$out .= '<span class="template-option-text">'.($template != 'text' ? ucfirst($template) : ucfirst($templateFunction)).'</span>';
 			$out .= '</div>';
 		}

@@ -290,7 +290,7 @@ if ($result) {
 	print '<table class="tagtable noborder nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre liste_titre_search">';
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="liste_titre center">';
 		$searchpitco = $form->showFilterButtons();
 		print $searchpitco;
@@ -302,7 +302,7 @@ if ($result) {
 	print '<td></td>';
 	print '<td></td>';
 	print '<td></td>';
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="liste_titre center">';
 		$searchpitco = $form->showFilterButtons();
 		print $searchpitco;
@@ -311,7 +311,7 @@ if ($result) {
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	}
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
@@ -320,7 +320,7 @@ if ($result) {
 	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "d.buy_price_ht", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"], "d.total_ht", "", $param, '', $sortfield, $sortorder, 'right ');
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	}
 	print "</tr>\n";
@@ -331,7 +331,7 @@ if ($result) {
 
 		print '<tr class="oddeven">';
 
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td></td>';
 		}
 
@@ -376,7 +376,7 @@ if ($result) {
 		print '<span class="amount">'.price($objp->total_ht).'</span>';
 		print '</td>';
 
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td></td>';
 		}
 

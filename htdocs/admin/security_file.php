@@ -27,17 +27,18 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_restrict_os_commands
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('users', 'admin', 'other'));
@@ -116,7 +117,7 @@ if ($action == 'updateform') {
 	// Delete file
 	$langs->load("other");
 	$file = $conf->admin->dir_temp.'/'.GETPOST('urlfile', 'alpha');
-	$ret = dol_delete_file($file);
+	$ret = dol_delete_file($file, 1);
 	if ($ret) {
 		setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile', 'alpha')), null, 'mesgs');
 	} else {
@@ -136,11 +137,10 @@ llxHeader('', $langs->trans("Files"), $wikihelp, '', 0, 0, '', '', '', 'mod-admi
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("SecurityFilesDesc")."</span><br>\n";
-print "<br>\n";
+print '<div class="info">'.$langs->trans("SecurityFilesDesc")."</div>\n";
 
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateform">';
 
@@ -188,7 +188,7 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MaxSizeForUploadedFiles").'.';
 $max = @ini_get('upload_max_filesize');
-if (isset($max)) {
+if (!empty($max)) {
 	print '<br><span class="opacitymedium">'.$langs->trans("MustBeLowerThanPHPLimit", ((int) $max) * 1024, $langs->trans("Kb")).'.</span>';
 } else {
 	print ' '.$langs->trans("NoMaxSizeByPHPLimit").'.';
@@ -225,8 +225,8 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UseAntivirusOnUploadedFile").'</td>';
 print '<td class="">';
-if (defined('MAIN_ANTIVIRUS_UPLOAD_ON')) {
-	print img_picto($langs->trans("Enabled")." - Can't be disabled", 'switch_on', '', 0, 0, 0, '', 'opacitymedium');
+if (defined('MAIN_ANTIVIRUS_UPLOAD_ON') && constant('MAIN_ANTIVIRUS_UPLOAD_ON')) {
+	print img_picto($langs->trans("Enabled")." - Can't be disabled (PHP constant MAIN_ANTIVIRUS_UPLOAD_ON is set)", 'switch_on', '', 0, 0, 0, '', 'opacitymedium');
 } else {
 	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('MAIN_ANTIVIRUS_UPLOAD_ON', array(), null, 0, 0, 1);

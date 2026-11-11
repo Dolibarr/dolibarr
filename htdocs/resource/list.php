@@ -4,6 +4,7 @@
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+  * Copyright (C) 2026		Anthony Berton			<anthony.berton@bb2a.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +28,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -36,6 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/phone.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("resource", "companies", "other"));
@@ -70,6 +71,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 if (!is_array($search_array_options)) {
 	$search_array_options = array();
 }
+$search_all          = trim(GETPOST('search_all', 'alphanohtml'));
 $search_ref			= GETPOST("search_ref", 'alpha');
 $search_type		= GETPOST("search_type", 'alpha');
 $search_address		= GETPOST("search_address", 'alpha');
@@ -93,6 +95,8 @@ if (empty($sortfield)) {
 	$sortfield = "t.ref";
 }
 
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
+
 // Load variable for pagination
 $limit	= GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 
@@ -103,6 +107,12 @@ if (empty($page) || $page == -1) {
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+	't.ref' => 'Ref',
+	't.description' => 'Description',
+);
 
 $arrayfields = array(
 	't.ref' => array(
@@ -163,6 +173,9 @@ $arrayfields = array(
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -279,6 +292,10 @@ $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object
 $sql .= $hookmanager->resPrint;
 
 $sql .= " WHERE t.entity IN (".getEntity('resource').")";
+// Search all
+if (!empty($search_all)) {
+	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
+}
 if ($search_ref) {
 	$sql .= natural_search('t.ref', $search_ref);
 }
@@ -301,7 +318,7 @@ if ($search_country && $search_country != '-1') {
 	$sql .= " AND t.fk_country IN (".$db->sanitize($search_country).')';
 }
 if ($search_phone) {
-	$sql .= natural_search('t.phone', $search_phone);
+	$sql .= dol_natural_search_phone($db, 't.phone', $search_phone);
 }
 if ($search_email) {
 	$sql .= natural_search('t.email', $search_email);
@@ -356,7 +373,7 @@ if (!$resql) {
 $num = $db->num_rows($resql);
 
 // Direct jump if only one record found
-if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && !$page) {
+if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".dol_buildpath('/resource/card.php', 1).'?id='.$id);
@@ -424,7 +441,7 @@ if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predel
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);
 
 print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 if ($optioncss != '') {
@@ -449,8 +466,18 @@ $objecttmp = new Dolresource($db);
 $trackid = 'int'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
+if ($search_all) {
+	$setupstring = '';
+	foreach ($fieldstosearchall as $key => $val) {
+		$fieldstosearchall[$key] = $langs->trans($val);
+		$setupstring .= $key."=".$val.";";
+	}
+	print '<!-- Search done like if RESOURCE_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
+}
+
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'))); // This also change content of $arrayfields
+$selectedfields = ($form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column)); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
@@ -459,9 +486,10 @@ print '<table class="tagtable liste">'."\n";
 // Fields title search
 
 print '<tr class="liste_titre_filter">';
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print '<td class="liste_titre center maxwidthsearch">';
-	$searchpicto = $form->showFilterButtons();
+// Action column
+if ($conf->main_checkbox_left_column) {
+	print '<td class="liste_titre maxwidthsearch center">';
+	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
 	print '</td>';
 }
@@ -524,7 +552,7 @@ if (!empty($arrayfields['t.url']['checked'])) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -538,7 +566,8 @@ $totalarray['nbfield'] = 0;
 // Fields title label
 
 print '<tr class="liste_titre">';
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+// Action column
+if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 }
 if (!empty($arrayfields['t.ref']['checked'])) {
@@ -578,7 +607,7 @@ if (!empty($arrayfields['t.url']['checked'])) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 }
 print "</tr>\n";
@@ -605,10 +634,10 @@ while ($i < $imaxinloop) {
 	$objectstatic->max_users = $obj->max_users;
 	$objectstatic->url = $obj->url;
 
-	print '<tr class="oddeven row-with-select">';
+	print '<tr data-rowid="'.$obj->rowid.'" class="oddeven row-with-select">';
 
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="nowrap center">';
 		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
@@ -624,14 +653,14 @@ while ($i < $imaxinloop) {
 	}
 
 	if (!empty($arrayfields['t.ref']['checked'])) {
-		print '<td>'.$objectstatic->getNomUrl(5).'</td>';
+		print '<td class="tdoverflowmax150">'.$objectstatic->getNomUrl(5).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 
 	if (!empty($arrayfields['ty.label']['checked'])) {
-		print '<td>'.$objectstatic->type_label.'</td>';
+		print '<td class="tdoverflowmax200">'.$objectstatic->type_label.'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -680,7 +709,8 @@ while ($i < $imaxinloop) {
 	}
 
 	if (!empty($arrayfields['t.email']['checked'])) {
-		print '<td>'.dol_print_email($objectstatic->email, 0, 0, 1, 0, 0, 1).'</td>';
+		$showinvalidemail = (int) !getDolGlobalInt('MAIN_SHOW_INVALID_EMAIL_IN_LIST'); // to avoid slow display
+		print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute((string) $obj->email).'">'.dol_print_email((string) $objectstatic->email, 0, 0, 1, 0, $showinvalidemail, 1).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -703,7 +733,7 @@ while ($i < $imaxinloop) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="nowrap center">';
 		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;

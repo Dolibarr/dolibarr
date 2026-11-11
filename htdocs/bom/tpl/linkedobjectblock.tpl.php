@@ -20,6 +20,24 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ *  \file		htdocs/bom/tpl/linkedobjectblock.tpl.php
+ *  \ingroup	bom
+ *  \brief		Template to show objects linked to bom
+ */
+
+/**
+ * @var Translate $langs
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var User $user
+ *
+ * @var CommonObject $object
+ * @var int $noMoreLinkedObjectBlockAfter
+ * @var int $showImportButton
+ * @var BOM[] $linkedObjectBlock
+ */
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -28,23 +46,9 @@ if (empty($conf) || !is_object($conf)) {
 
 print "<!-- BEGIN PHP TEMPLATE bom/tpl/linkedobjectblock.tpl.php -->\n";
 
-global $user, $db;
-global $noMoreLinkedObjectBlockAfter;
-
-$langs = $GLOBALS['langs'];
-'@phan-var-force Translate $langs';
-/**
- * @var DoliDB $db
- * @var Translate $langs
- * @var CommonObject $object
- */
-$linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
-
 // Load translation files required by the page
 $langs->load("bom");
 
-'@phan-var-force BOM[] $linkedObjectBlock';  // Type before use
-/** @var BOM[] $linkedObjectBlock */
 $linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date,ref', 'desc', 0, 0, 1);
 '@phan-var-force BOM[] $linkedObjectBlock';  // Type after dol_sort_array which looses typing
 /** @var BOM[] $linkedObjectBlock */
@@ -59,14 +63,15 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		$trclass .= ' liste_sub_total';
 	}
 	echo '<tr class="'.$trclass.'" >';
-	echo '<td class="linkedcol-element tdoverflowmax100">'.$langs->trans("Bom");
-	if (!empty($showImportButton) && getDolGlobalInt('MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES')) {
-		print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, '1').'&amp;action=selectlines&amp;token='.newToken().'" data-element="'.$objectlink->element.'" data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';
+	echo '<td class="linkedcol-element tdoverflowmax125">';
+	if (!empty($showImportButton) && getDolGlobalString('MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES')) {
+		print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, '1').'&action=selectlines&token='.newToken().'" data-element="'.$objectlink->element.'" data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a>';
 	}
+	echo $langs->trans("Bom");
 	echo '</td>';
 	echo '<td class="linkedcol-name tdoverflowmax150" >'.$objectlink->getNomUrl(1).'</td>';
 
-	echo '<td class="linkedcol-ref">';
+	echo '<td class="linkedcol-ref tdoverflowmax150">';
 	$result = $product_static->fetch($objectlink->fk_product);
 	if ($result < 0) {
 		setEventMessage($product_static->error, 'errors');

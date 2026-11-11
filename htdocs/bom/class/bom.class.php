@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2019	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2023	Benjamin Falière	<benjamin.faliere@altairis.fr>
- * Copyright (C) 2023	Charlene Benke		<charlene@patas-monkey.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2019	    Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2023	    Benjamin Falière	    <benjamin.faliere@altairis.fr>
+ * Copyright (C) 2023	    Charlene Benke		    <charlene@patas-monkey.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ class BOM extends CommonObject
 	public $picto = 'bom';
 
 	/**
-	 * @var Product	Object product of the BOM
+	 * @var ?Product	Object product of the BOM
 	 */
 	public $product;
 
@@ -79,7 +79,7 @@ class BOM extends CommonObject
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
@@ -105,13 +105,13 @@ class BOM extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'position' => 1, 'notnull' => 1, 'index' => 1, 'comment' => "Id",),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'default' => '1', 'index' => 1, 'position' => 5),
 		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'noteditable' => 1, 'visible' => 4, 'position' => 10, 'notnull' => 1, 'default' => '(PROV)', 'index' => 1, 'searchall' => 1, 'comment' => "Reference of BOM", 'showoncombobox' => 1, 'csslist' => 'nowraponall'),
-		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'visible' => 1, 'position' => 30, 'notnull' => 1, 'searchall' => 1, 'showoncombobox' => 2, 'autofocusoncreate' => 1, 'css' => 'minwidth300 maxwidth400', 'csslist' => 'tdoverflowmax200'),
+		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'visible' => 1, 'position' => 30, 'notnull' => 1, 'searchall' => 1, 'showoncombobox' => 2, 'autofocusoncreate' => 1, 'alwayseditable' => 1, 'css' => 'minwidth300 maxwidth400', 'csslist' => 'tdoverflowmax200'),
 		'bomtype' => array('type' => 'integer', 'label' => 'Type', 'enabled' => 1, 'visible' => 1, 'position' => 33, 'notnull' => 1, 'default' => '0', 'arrayofkeyval' => array(0 => 'Manufacturing', 1 => 'Disassemble'), 'css' => 'minwidth175', 'csslist' => 'minwidth175 center'),
 		//'bomtype' => array('type'=>'integer', 'label'=>'Type', 'enabled'=>1, 'visible'=>-1, 'position'=>32, 'notnull'=>1, 'default'=>'0', 'arrayofkeyval'=>array(0=>'Manufacturing')),
 		'fk_product' => array('type' => 'integer:Product:product/class/product.class.php:1:((finished:is:null) or (finished:!=:0))', 'label' => 'Product', 'picto' => 'product', 'enabled' => 1, 'visible' => 1, 'position' => 35, 'notnull' => 1, 'index' => 1, 'help' => 'ProductBOMHelp', 'css' => 'maxwidth500', 'csslist' => 'tdoverflowmax100'),
@@ -287,10 +287,12 @@ class BOM extends CommonObject
 		}
 
 		// Translate some data of arrayofkeyval
-		foreach ($this->fields as $key => $val) {
-			if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
-				foreach ($val['arrayofkeyval'] as $key2 => $val2) {
-					$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
+		if (is_object($langs)) {
+			foreach ($this->fields as $key => $val) {
+				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+					foreach ($val['arrayofkeyval'] as $key2 => $val2) {
+						$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
+					}
 				}
 			}
 		}
@@ -344,7 +346,7 @@ class BOM extends CommonObject
 		unset($object->id);
 		unset($object->fk_user_creat);
 		unset($object->import_key);
-
+		unset($object->date_creation);
 		// Clear fields
 		$default_ref = $this->fields['ref']['default'] ?? null;
 		$object->ref = empty($default_ref) ? $langs->trans("copy_of_").$object->ref : $default_ref;
@@ -459,7 +461,7 @@ class BOM extends CommonObject
 		$sql = "SELECT ".$objectline->getFieldList('l');
 		$sql .= " FROM ".$this->db->prefix().$objectline->table_element." as l";
 		$sql .= " LEFT JOIN ".$this->db->prefix()."product as p ON p.rowid = l.fk_product";
-		$sql .= " WHERE l.fk_".$this->db->escape($this->element)." = ".((int) $this->id);
+		$sql .= " WHERE l.fk_".$this->db->sanitize($this->element)." = ".((int) $this->id);
 		$sql .= " AND p.fk_product_type = ". ((int) $typeproduct);
 		if (isset($objectline->fields['position'])) {
 			$sql .= $this->db->order('position', 'ASC');
@@ -715,6 +717,11 @@ class BOM extends CommonObject
 	{
 		global $user;
 
+		if (!$this->isLineOfObject($rowid)) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
 		$logtext = "::updateLine bomid=$this->id, qty=$qty, qty_frozen=$qty_frozen, disable_stock_change=$disable_stock_change, efficiency=$efficiency";
 		$logtext .= ", import_key=$import_key";
 		dol_syslog(get_class($this).$logtext, LOG_DEBUG);
@@ -830,11 +837,15 @@ class BOM extends CommonObject
 			return -2;
 		}
 
-		$this->db->begin();
-
 		// Fetch current line from the database and then clone the object and set it in $oldline property
 		$line = new BOMLine($this->db);
 		$line->fetch($idline);
+		if ($this->id > 0 && (int) $line->fk_bom !== (int) $this->id) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
+		$this->db->begin();
 		$line->fetch_optionals();
 
 		$staticLine = clone $line;
@@ -940,7 +951,11 @@ class BOM extends CommonObject
 
 		// Define new ref
 		if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
-			$this->fetch_product();
+			$res = $this->fetch_product();
+			if ($res < 0 || !is_object($this->product)) {
+				$this->db->rollback();
+				return -1;
+			}
 			$num = $this->getNextNumRef($this->product);
 		} else {
 			$num = (string) $this->ref;
@@ -979,14 +994,14 @@ class BOM extends CommonObject
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'bom/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'bom/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'bom/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'bom/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filepath = 'bom/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filepath = 'bom/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
@@ -1155,7 +1170,9 @@ class BOM extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = DOL_URL_ROOT.'/bom/bom_card.php?id='.$this->id;
+		$baseurl = DOL_URL_ROOT.'/bom/bom_card.php';
+
+		$query = ['id' => $this->id];
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -1164,9 +1181,10 @@ class BOM extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkclose = '';
 		if (empty($notooltip)) {
@@ -1507,6 +1525,83 @@ class BOM extends CommonObject
 	}
 
 	/**
+	 * Calculate and update BOM estimated duration based on service lines duration.
+	 *
+	 * @param  User $user         User that modifies
+	 * @param  bool $forceifempty Force update to 0 even if no service line remains
+	 * @return int                Return integer <0 if KO, >=0 if OK
+	 */
+	public function updateDuration(User $user, $forceifempty = false)
+	{
+		if ($this->id <= 0) {
+			return 0;
+		}
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+		$totalduration = 0.0;
+		$hasserviceline = false;
+
+		$sqlSelect = "SELECT bl.qty, bl.fk_unit, p.duration, u.scale";
+		$sqlSelect .= " FROM ".$this->db->prefix()."bom_bomline as bl";
+		$sqlSelect .= " INNER JOIN ".$this->db->prefix()."product as p ON p.rowid = bl.fk_product";
+		$sqlSelect .= " LEFT JOIN ".$this->db->prefix()."c_units as u ON u.rowid = bl.fk_unit";
+		$sqlSelect .= " WHERE bl.fk_bom = ".((int) $this->id);
+		$sqlSelect .= " AND p.fk_product_type = 1";
+
+		$resql = $this->db->query($sqlSelect);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$hasserviceline = true;
+				if (!empty($obj->scale)) {
+					$totalduration += (float) $obj->qty * (int) $obj->scale;
+				} elseif (!empty($obj->duration)) {
+					$reg = array();
+					if (preg_match('/^(\d+)([a-z]+)$/', (string) $obj->duration, $reg)) {
+						$totalduration += (float) convertDurationtoHour((float) $reg[1], $reg[2]) * 3600 * (float) $obj->qty;
+					}
+				}
+			}
+			$this->db->free($resql);
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		if ($hasserviceline || $forceifempty) {
+			$this->duration = $totalduration;
+			return $this->update($user);
+		}
+
+		return 0;
+	}
+
+	/**
+	 * Return HTML string to show a field into a page
+	 *
+	 * @param  array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>,noteditable?:int,default?:int|string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,cssview?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int,required?:int,picto?:string}	$val	Array of properties of field to show
+	 * @param  string  			$key            	Key of attribute
+	 * @param  string|int|null  $value          	Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
+	 * @param  string  			$moreparam      	To add more parameters on html tag
+	 * @param  string  			$keysuffix      	Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  string  			$keyprefix      	Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  mixed   			$morecss        	Value for CSS to use (Old usage: May also be a numeric to define a size).
+	 * @return string
+	 */
+	public function showOutputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
+	{
+		global $contextpage, $langs, $user;
+
+		$out = parent::showOutputField($val, $key, $value, $moreparam, $keysuffix, $keyprefix, $morecss);
+
+		if ($key == 'duration' && $contextpage == 'bomcard' && $this->status == self::STATUS_DRAFT && $user->hasRight('bom', 'write')) {
+			$out .= ' &nbsp; <a class="reposition small" href="'.dolBuildUrl($_SERVER["PHP_SELF"], array('id' => $this->id, 'action' => 'updatedurationfromlines'), true).'">('.$langs->trans("UpdateFromLines").')</a>';
+		}
+
+		return $out;
+	}
+
+	/**
 	 * Function used to replace a product id with another one.
 	 *
 	 * @param DoliDB	$db Database handler
@@ -1517,6 +1612,7 @@ class BOM extends CommonObject
 	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
 	{
 		$tables = array(
+			'bom_bom',
 			'bom_bomline'
 		);
 
@@ -1554,7 +1650,7 @@ class BOM extends CommonObject
 	/**
 	 * Get/add Net needs Tree by product or bom
 	 *
-	 * @param array<int,array{product:array,bom:BOM,parentid:int,qty:float,level:int,fk_unit:?int}> 	$TNetNeeds 	Array of ChildBom and infos linked to
+	 * @param array<int,array{product:array<int,array{fk_unit:int,qty:float,level:int,position:int}>,bom:BOM,parentid:int,qty:float,level:int,position:int,fk_unit:?int}> 	$TNetNeeds 	Array of ChildBom and infos linked to
 	 * @param float			$qty       qty needed (used as a factor to produce 1 unit)
 	 * @param int<0,1000>  	$level     level of recursivity
 	 * @return void
@@ -1572,6 +1668,7 @@ class BOM extends CommonObject
 						//$TNetNeeds[$childBom->id]['fk_unit'] = $line->fk_unit;
 						$TNetNeeds[$childBom->id]['qty'] = $line->qty * $qty;
 						$TNetNeeds[$childBom->id]['level'] = $level;
+						$TNetNeeds[$childBom->id]['position'] = $line->position;
 						$childBom->getNetNeedsTree($TNetNeeds, $line->qty * $qty / $childBom->qty, $level + 1);
 					}
 				} else {
@@ -1589,6 +1686,7 @@ class BOM extends CommonObject
 					}
 					$TNetNeeds[$this->id]['product'][$line->fk_product]['qty'] += $line->qty * $qty;
 					$TNetNeeds[$this->id]['product'][$line->fk_product]['level'] = $level;
+					$TNetNeeds[$this->id]['product'][$line->fk_product]['position'] = $line->position;
 				}
 			}
 		}

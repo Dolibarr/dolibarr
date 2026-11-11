@@ -24,9 +24,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/dav/dav.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,6 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/dav/dav.lib.php';
  *
  * @var string $dolibarr_main_url_root
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/dav/dav.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "agenda"));
@@ -90,7 +89,7 @@ $linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore
 print load_fiche_titre($langs->trans("DAVSetup"), $linkback, 'title_setup');
 
 
-print '<form name="agendasetupform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<form name="agendasetupform" action="'.$_SERVER["PHP_SELF"].'" method="post" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 $head = dav_admin_prepare_head();
@@ -98,7 +97,7 @@ $head = dav_admin_prepare_head();
 print dol_get_fiche_head($head, 'webdav', '', -1, '');
 
 if ($action == 'edit') {
-	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
@@ -115,7 +114,7 @@ if ($action == 'edit') {
 		$label = $langs->trans($key);
 		if ($key == 'DAV_RESTICT_ON_IP') {
 			$label = $langs->trans("RESTRICT_ON_IP");
-			$tooltiphelp .= ' '.$langs->trans("Example").': '.$langs->trans("IPListExample");
+			$tooltiphelp .= $langs->trans("RESTRICT_ON_IPHelp").'<br>'.$langs->trans("Example").': '.$langs->trans("IPListExample");
 		}
 		print $form->textwithpicto($label, $tooltiphelp);
 		print '</td><td>';

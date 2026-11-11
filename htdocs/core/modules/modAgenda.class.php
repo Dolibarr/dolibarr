@@ -8,7 +8,7 @@
  * Copyright (C) 2013       Cedric Gross            <c.gross@kreiz-it.fr>
  * Copyright (C) 2015       Bahfir Abbes            <bafbes@gmail.com>
  * Copyright (C) 2017       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -126,18 +126,18 @@ class modAgenda extends DolibarrModules
 			1 => array('label' => 'SendSmsReminders', 'jobtype' => 'method', 'class' => 'comm/action/class/actioncomm.class.php', 'objectname' => 'ActionComm', 'method' => 'sendSmsReminder', 'parameters' => '', 'comment' => 'SendSmsReminder', 'frequency' => 5, 'unitfrequency' => 60, 'priority' => 10, 'status' => 1, 'test' => 'isModEnabled("agenda")', 'datestart' => $datestart),
 		);
 
-		// Permissions
+		// Rights
 		//------------
 		$this->rights = array();
 		$this->rights_class = 'agenda';
 		$r = 0;
 
-		// $this->rights[$r][0]     Id permission (unique tous modules confondus)
-		// $this->rights[$r][1]     Libelle par default si traduction de cle "PermissionXXX" non trouvee (XXX = Id permission)
-		// $this->rights[$r][2]     Non utilise
-		// $this->rights[$r][3]     1=Permis par default, 0=Non permis par default
-		// $this->rights[$r][4]     Niveau 1 pour nommer permission dans code
-		// $this->rights[$r][5]     Niveau 2 pour nommer permission dans code
+		// $this->rights[$r][0]     Id for right (unique across all modules)
+		// $this->rights[$r][1]     Default label if the translation key "PermissionXXX" is not found (XXX = Id for right)
+		// $this->rights[$r][2]     Not used
+		// $this->rights[$r][3]     1=Authorised by default, 0=Denied by default
+		// $this->rights[$r][4]     Level 1 to name right in the code
+		// $this->rights[$r][5]     Level 2 to name right in the code
 		// $r++;
 
 		$this->rights[$r][0] = 2401;
@@ -445,7 +445,7 @@ class modAgenda extends DolibarrModules
 		$this->export_fields_array[$r] = array('ac.id' => "IdAgenda", 'ac.ref_ext' => "ExternalRef",'ac.ref' => "Ref", 'ac.datec' => "DateCreation", 'ac.datep' => "DateActionBegin",
 			'ac.datep2' => "DateActionEnd", 'ac.location' => 'Location', 'ac.label' => "Title", 'ac.note' => "Note", 'ac.percent' => "Percentage", 'ac.durationp' => "Duration",
 			'ac.fk_user_author' => 'CreatedById', 'ac.fk_user_action' => 'ActionsOwnedBy', 'ac.fk_user_mod' => 'ModifiedBy', 'ac.transparency' => "Transparency", 'ac.priority' => "Priority", 'ac.fk_element' => "ElementID", 'ac.elementtype' => "ElementType",
-			'cac.libelle' => "ActionType", 'cac.code' => "Code",
+			'cac.libelle' => "ActionType", 'cac.code' => "Code", 'cac.type' => "Type",
 			's.rowid' => "IdCompany", 's.nom' => 'CompanyName', 's.address' => 'Address', 's.zip' => 'Zip', 's.town' => 'Town',
 			'co.code' => 'CountryCode', 's.phone' => 'Phone', 's.siren' => 'ProfId1', 's.siret' => 'ProfId2', 's.ape' => 'ProfId3', 's.idprof4' => 'ProfId4', 's.idprof5' => 'ProfId5', 's.idprof6' => 'ProfId6',
 			's.code_compta' => 'CustomerAccountancyCode', 's.code_compta_fournisseur' => 'SupplierAccountancyCode', 's.tva_intra' => 'VATIntra',
@@ -461,7 +461,7 @@ class modAgenda extends DolibarrModules
 		$this->export_TypeFields_array[$r] = array('ac.ref_ext' => "Text", 'ac.ref' => "Text", 'ac.datec' => "Date", 'ac.datep' => "Date",
 			'ac.datep2' => "Date", 'ac.location' => 'Text', 'ac.label' => "Text", 'ac.note' => "Text", 'ac.percent' => "Numeric",
 			'ac.durationp' => "Duree",'ac.fk_user_author' => 'Numeric', 'ac.fk_user_action' => 'Numeric', 'ac.fk_user_mod' => 'Numeric', 'ac.transparency' => "Numeric", 'ac.priority' => "Numeric", 'ac.fk_element' => "Numeric", 'ac.elementtype' => "Text",
-			'cac.libelle' => "List:c_actioncomm:libelle:libelle", 'cac.code' => "Text",
+			'cac.libelle' => "List:c_actioncomm:libelle:libelle", 'cac.code' => "Text", 'cac.type' => "Text",
 			's.nom' => 'Text', 's.address' => 'Text', 's.zip' => 'Text', 's.town' => 'Text',
 			'co.code' => 'Text', 's.phone' => 'Text', 's.siren' => 'Text', 's.siret' => 'Text', 's.ape' => 'Text', 's.idprof4' => 'Text', 's.idprof5' => 'Text', 's.idprof6' => 'Text',
 			's.code_compta' => 'Text', 's.code_compta_fournisseur' => 'Text', 's.tva_intra' => 'Text',
@@ -498,10 +498,10 @@ class modAgenda extends DolibarrModules
 		$this->export_sql_end[$r] .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = ac.fk_project";
 		$this->export_sql_end[$r] .= ' WHERE ac.entity IN ('.getEntity('agenda').')';
 		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
-			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.(empty($user) ? 0 : $user->id).' OR ac.fk_soc IS NULL)';
+			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.(empty($user) ? 0 : ((int) $user->id)).' OR ac.fk_soc IS NULL)';
 		}
 		if (!empty($user) && !$user->hasRight('agenda', 'allactions', 'read')) {
-			$this->export_sql_end[$r] .= ' AND acr.fk_element = '.(empty($user) ? 0 : $user->id);
+			$this->export_sql_end[$r] .= ' AND acr.fk_element = '.(empty($user) ? 0 : ((int) $user->id));
 		}
 		$this->export_sql_end[$r] .= ' AND ac.entity IN ('.getEntity('agenda').')';
 		$this->export_sql_order[$r] = ' ORDER BY ac.datep';
@@ -541,17 +541,10 @@ class modAgenda extends DolibarrModules
 
 		// Add extra fields
 		$import_extrafield_sample = array();
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'actioncomm' AND entity IN (0, ".$conf->entity.")";
-		$resql = $this->db->query($sql);
-
-		if ($resql) {
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.'.$obj->name;
-				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-			}
-		}
-		// End add extra fields
+		$keyforselect = 'actioncomm';
+		$keyforelement = 'action';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 
 		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
 		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'actioncomm');
@@ -584,7 +577,14 @@ class modAgenda extends DolibarrModules
 				'class' => 'CActionComm',
 				'method' => 'fetch',
 				'dict' => 'DictionaryActions'
-			)
+			),
+			'ac.fk_project' => array(
+				'rule'    => 'fetchidfromref',
+				'file'    => '/projet/class/project.class.php',
+				'class'   => 'Project',
+				'method'  => 'fetch',
+				'element' => 'Project'
+			),
 		);
 
 		// Import Event Extra Fields

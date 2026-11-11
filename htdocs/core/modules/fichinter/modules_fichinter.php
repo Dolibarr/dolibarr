@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2019 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,7 +102,7 @@ abstract class ModeleNumRefFicheinter extends CommonNumRefGenerator
  *  Create an intervention document on disk using template defined into FICHEINTER_ADDON_PDF
  *
  *  @param	DoliDB		$db  			object base de donnee
- *  @param	Object		$object			Object fichinter
+ *  @param	Fichinter	$object			Object fichinter
  *  @param	string		$modele			force le modele a utiliser ('' par default)
  *  @param	Translate	$outputlangs	object lang a utiliser pour traduction
  *  @param  int			$hidedetails    Hide details of lines
@@ -119,7 +120,7 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 
 	$srctemplatepath = '';
 
-	// Positionne modele sur le nom du modele de fichinter a utiliser
+	// Set model to the name of the fichinter model to use
 	if (!dol_strlen($modele)) {
 		if (getDolGlobalString('FICHEINTER_ADDON_PDF')) {
 			$modele = getDolGlobalString('FICHEINTER_ADDON_PDF');
@@ -138,10 +139,7 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 	// Search template files
 	$file = '';
 	$classname = '';
-	$dirmodels = array('/');
-	if (is_array($conf->modules_parts['models'])) {
-		$dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
-	}
+	$dirmodels = array_merge(['/'], (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		foreach (array('doc', 'pdf') as $prefix) {
 			$file = $prefix."_".$modele.".modules.php";
@@ -175,6 +173,16 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 			// We delete old preview
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_delete_preview($object);
+
+			// Index file in database, as commonGenerateDocument() does
+			if (!empty($obj->result['fullpath'])) {
+				// Check that the file exists, before indexing it (it does not exist if we create a PDF and auto delete the ODT file)
+				if (dol_is_file($obj->result['fullpath'])) {
+					$object->indexFile($obj->result['fullpath'], (empty($obj->update_main_doc_field) ? 0 : 1));
+				}
+			} else {
+				dol_syslog('Method ->write_file was called on object '.get_class($obj).' and return a success but the return array ->result["fullpath"] was not set.', LOG_WARNING);
+			}
 
 			return 1;
 		} else {

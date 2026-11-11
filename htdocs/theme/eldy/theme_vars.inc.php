@@ -33,7 +33,7 @@
 
 global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
 $theme_bordercolor = array(235, 235, 224);
-$theme_datacolor = array(array(137, 86, 161), array(60, 147, 183), array(250, 190, 80), array(80, 166, 90), array(190, 190, 100), array(91, 115, 247), array(140, 140, 220), array(190, 120, 120), array(115, 125, 150), array(100, 170, 20), array(150, 135, 125), array(85, 135, 150), array(150, 135, 80), array(150, 80, 150));
+$theme_datacolor = array(array(137, 86, 161), array(60, 147, 183), array(189, 134, 4), array(80, 166, 90), array(149, 148, 57), array(91, 115, 247), array(140, 140, 220), array(190, 120, 120), array(115, 125, 150), array(93, 161, 2), array(150, 135, 125), array(85, 135, 150), array(150, 135, 80), array(150, 80, 150));
 if (!defined('ISLOADEDBYSTEELSHEET')) {	// File is run after an include of a php page, not by the style sheet, if the constant is not defined.
 	if (getDolGlobalString('MAIN_OPTIMIZEFORCOLORBLIND')) { // user is loaded by dolgraph.class.php
 		if (getDolGlobalString('MAIN_OPTIMIZEFORCOLORBLIND') == 'flashy') {
@@ -59,23 +59,23 @@ $colorbacktabcard1 = '255,255,255'; // card
 $colorbacktabactive = '234,234,234';
 $colorbacklineimpair1 = '255,255,255'; // line impair
 $colorbacklineimpair2 = '255,255,255'; // line impair
-$colorbacklinepair1 = '252,252,252'; // line pair
-$colorbacklinepair2 = '252,252,252'; // line pair
+$colorbacklinepair1 = '255,255,255'; // line pair
+$colorbacklinepair2 = '255,255,255'; // line pair
 $colorbacklinepairhover = '240,242,249'; // line hover
 $colorbacklinepairchecked = '240,242,249'; // line checked
 $colorbacklinebreak = '248,247,244'; // line break
-$colortexttitlenotab = '35,135,140'; // 150,90,121 140,80,10 or 10,140,80  #875a7b  green=0,123,140, violet: 0,50,120
+$colortexttitlenotab = '0,135,160'; // 150,90,121 140,80,10 or 10,140,80  #875a7b  green=0,123,140, violet: 0,50,120
 $colortexttitlenotab2 = '100,0,100'; // 150,90,121 140,80,10 or 10,140,80  #875a7b  green=0,123,140, violet: 0,50,120
 $colortexttitle = '40, 40, 60';
 $colortexttitlelink = '10, 20, 100';
 $colortext = '0,0,0';
 $colortextlink = '10, 20, 100';
-$fontsize = '0.92em';
+$fontsize = '0.94em';
 $fontsizesmaller = '0.75em';
 $topMenuFontSize = '1.1em';
 $toolTipBgColor = 'rgba(255, 255, 255, 0.96)';
 $toolTipFontColor = '#333';
-$butactionbg = '150, 110, 162, 0.95';
+$butactionbg = '116, 96, 170';
 $textbutaction = '255, 255, 255';
 
 // text color

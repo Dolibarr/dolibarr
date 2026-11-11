@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2025	Christophe Battarel	<christophe@altairis.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +20,7 @@
 /**
  * \file       htdocs/core/modules/member/mod_member_custom.php
  * \ingroup    member
- * \brief      Fichier contenant la class du modele de numerotation d'ahérent Custom
+ * \brief      File containing the class for the Custom member numbering model
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/member/modules_member.class.php';
@@ -85,7 +86,7 @@ class mod_member_custom extends ModeleNumRefMembers
 		$tooltip .= $langs->trans("GenericMaskCodes5");
 		$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
-		// Parametrage du prefix
+		// Setting of prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$mask = getDolGlobalString('MEMBER_CUSTOM_MASK');
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskvalue" value="'.$mask.'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';

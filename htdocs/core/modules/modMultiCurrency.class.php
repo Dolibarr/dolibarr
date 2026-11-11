@@ -291,15 +291,15 @@ class modMultiCurrency extends DolibarrModules
 	 */
 	private function createFirstCurrency()
 	{
-		global $conf, $user, $langs;
+		global $user, $langs;
 
 		$multicurrency = new MultiCurrency($this->db);
 
-		if (! $multicurrency->checkCodeAlreadyExists($conf->currency)) {
+		if (! $multicurrency->checkCodeAlreadyExists(getDolCurrency())) {
 			$langs->loadCacheCurrencies('');
 
-			$multicurrency->code = $conf->currency;
-			$multicurrency->name = $langs->cache_currencies[$conf->currency]['label'].' ('.$langs->getCurrencySymbol($conf->currency).')';
+			$multicurrency->code = getDolCurrency();
+			$multicurrency->name = $langs->cache_currencies[getDolCurrency()]['label'].' ('.$langs->getCurrencySymbol(getDolCurrency()).')';
 			$r = $multicurrency->create($user);
 
 			if ($r > 0) {

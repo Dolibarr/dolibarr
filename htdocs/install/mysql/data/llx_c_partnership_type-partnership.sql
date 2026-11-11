@@ -24,4 +24,3 @@
 --
 
 INSERT INTO llx_c_partnership_type (code, label, active) VALUES ('DEFAULT', 'Default', 1);
-

@@ -4,8 +4,8 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2023-2025  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2023-2026  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'skillcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
@@ -114,6 +114,8 @@ $MaxNumberSkill = getDolGlobalInt('HRM_MAXRANK', Skill::DEFAULT_MAX_RANK_PER_SKI
  */
 
 $parameters = array();
+/** @var int|Skill $result Set to the cloned object by actions_addupdatedelete.inc.php */
+$result = -1;
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -205,6 +207,9 @@ if (empty($reshook)) {
 	// Action to build doc
 	include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
 
+	/** @var int|Skill $result May be set by the includes above */
+	'@phan-var-force int|Skill $result';
+
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
 		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', null, 'date', '', $user, $triggermodname);
 	}
@@ -222,9 +227,16 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
-		$id = $result->id;
-		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+	if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd && is_object($result)) {
+		'@phan-var-force Skill $result';
+		// createFromClone() names the copy "Copy of ...": apply the label typed in the clone dialog
+		$clonelabel = GETPOST('clone_label', 'alphanohtml');
+		if ($clonelabel !== '' && $clonelabel !== $result->label) {
+			if ($result->setValueFrom('label', $clonelabel, '', null, 'text', '', $user) < 0) {
+				setEventMessages($result->error, $result->errors, 'errors');
+			}
+		}
+		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$result->id);
 		exit;
 	}
 }
@@ -270,7 +282,7 @@ if ($action == 'create') {
 
 
 	// SKILLDET ADD
-	//@todo je stop ici ... à continuer  (affichage des 5 skilled input pour create action
+	//@todo stopped here ... to be continued (display of the 5 skill input fields for create action
 	//print $object->showInputField($val, $key, $value, '', '['']', '', 0);
 
 	print '</table>' . "\n";
@@ -426,7 +438,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$res = $object->fetch_optionals();
 
 	$head = skillPrepareHead($object);
-	print dol_get_fiche_head($head, 'card', $langs->trans("Workstation"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'card', $langs->trans("Workstation"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 	$formconfirm = '';
 
@@ -513,10 +525,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER["PHP_SELF"].'?action=clone&token='.newToken().'&id='.$object->id, '');
+				print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $_SERVER["PHP_SELF"].'?action=clone&token='.newToken().'&id='.$object->id, '', true, array('attr' => array('class' => 'reposition')));
 			}
 			// Delete (need delete permission, or if draft, just need create/modify permission)
-			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=delete&token=' . newToken(), '', $permissiontodelete);
+			print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=delete&token=' . newToken(), '', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 		}
 		print '</div>' . "\n";
 	}
@@ -605,7 +617,7 @@ if ($action != "create" && $action != "edit") {
 			$arrayfields['t.' . $key] = array(
 				'label' => $val['label'],
 				'checked' => (($visible < 0) ? 0 : 1),
-				'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+				'enabled' => (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
 				'position' => $val['position'],
 				'help' => isset($val['help']) ? $val['help'] : ''
 			);
@@ -660,7 +672,7 @@ if ($action != "create" && $action != "edit") {
 		print '<input type="hidden" name="id" value="' . $id . '">';
 	}
 
-	$param_fk = "&fk_skill=" . $id . "&fk_user_creat=" . (!empty($user->rowid) ? $user->rowid : 0);
+	$param_fk = "&fk_skill=" . $id . "&fk_user_creat=" . $user->id;
 	$backtopage = dol_buildpath('/hrm/skill_card.php', 1) . '?id=' . $id;
 	$param = "";
 	$massactionbutton = "";
@@ -778,7 +790,7 @@ if ($action != "create" && $action != "edit") {
 					print $objectline->getLibStatut(5);
 				} elseif ($key == 'rowid') {
 					print $objectline->showOutputField($val, $key, (string) $objectline->id, '');
-					// ajout pencil
+					// add pencil icon
 					print '<a class="timeline-btn" href="' . DOL_MAIN_URL_ROOT . '/comm/action/skilldet_card.php?action=edit&id=' . $objectline->id . '"><i class="fa fa-pencil" title="' . $langs->trans("Modify") . '" ></i></a>';
 				} else {
 					print $objectline->showOutputField($val, $key, $objectline->$key, '');

@@ -69,7 +69,10 @@ if ($user->socid) {
 }
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('productdocuments'));
+$hookmanager->initHooks([
+	'productdocument',
+	'productdocuments' // Deprecated : standard hook name have no s
+]);
 
 // Get parameters
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -164,8 +167,6 @@ if ($action == 'filemerge' && $permissiontoadd) {
 	if (empty($is_refresh)) {
 		$filetomerge_file_array = GETPOST('filetoadd');
 
-		$filetomerge_file_array = GETPOST('filetoadd');
-
 		$lang_id = null;
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$lang_id = GETPOST('lang_id', 'aZ09');
@@ -229,7 +230,7 @@ if ($object->id > 0 && $upload_dir !== null) {
 	$titre = $langs->trans("CardProduct".$object->type);
 	$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 
-	print dol_get_fiche_head($head, 'documents', $titre, -1, $picto);
+	print dol_get_fiche_head($head, 'documents', $titre, -1, $picto, 0, '', '', 0, '', 1);
 
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook

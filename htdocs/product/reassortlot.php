@@ -7,7 +7,8 @@
  * Copyright (C) 2016       Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2019       Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2021       Noé Cendrier			<noe.cendrier@altairis.fr>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@
 
 /**
  *  \file       htdocs/product/reassortlot.php
- *  \ingroup    produit
+ *  \ingroup    product
  *  \brief      Page to list stocks
  */
 
@@ -364,10 +365,10 @@ foreach ($search as $key => $val) {
 			$columnName = preg_replace('/(_dtstart|_dtend)$/', '', $key);
 			if ($columnName == 'eatby' || $columnName == 'sellby') {
 				if (preg_match('/_dtstart$/', $key)) {
-					$sql .= " AND pl.".$db->escape($columnName)." >= '".$db->idate($search[$key])."'";
+					$sql .= " AND pl.".$db->sanitize($columnName)." >= '".$db->idate($search[$key])."'";
 				}
 				if (preg_match('/_dtend$/', $key)) {
-					$sql .= " AND pl.".$db->escape($columnName)." <= '".$db->idate($search[$key])."'";
+					$sql .= " AND pl.".$db->sanitize($columnName)." <= '".$db->idate($search[$key])."'";
 				}
 			}
 		}
@@ -394,14 +395,14 @@ if ($search_toolowstock) {
 	$sql_having .= " HAVING SUM(".$db->ifsql('ps.reel IS NULL', '0', 'ps.reel').") < p.seuil_stock_alerte"; // Not used yet
 }
 if ($search_stock_physique != '') {
-	$natural_search_physique = natural_search('SUM(' . $db->ifsql('pb.qty IS NULL', $db->ifsql('ps.reel IS NULL', '0', 'ps.reel'), 'pb.qty') . ')', $search_stock_physique, 1, 1);
-	$natural_search_physique = " " . substr($natural_search_physique, 1, -1); // remove first "(" and last ")" characters
+	$natural_search_physique = natural_search('__SEARCH_PHYSIQUE__', $search_stock_physique, 1, 1);
+	$natural_search_physique = " " . substr(str_replace('__SEARCH_PHYSIQUE__', 'SUM(COALESCE(pb.qty, ps.reel, 0))', $natural_search_physique), 1, -1); // remove first "(" and last ")" characters
 	if (!empty($sql_having)) {
 		$sql_having .= " AND";
 	} else {
 		$sql_having .= " HAVING";
 	}
-	$sql_having .= $natural_search_physique;
+	$sql_having .= $natural_search_physique;  // natural_search gives save sql @phan-suppress-current-line SqlInjection
 }
 // Add HAVING from hooks
 $parameters = array();
@@ -456,14 +457,10 @@ if ($num == 1 && GETPOST('autojumpifoneonly') && ($search_all || $snom || $sref)
 	exit;
 }
 
-if (isset($type)) {
-	if ($type == 1) {
-		$texte = $langs->trans("Services");
-	} else {
-		$texte = $langs->trans("Products");
-	}
+if ($type == 1) {
+	$texte = $langs->trans("Services");
 } else {
-	$texte = $langs->trans("ProductsAndServices");
+	$texte = $langs->trans("Products");
 }
 $texte .= ' ('.$langs->trans("StocksByLotSerial").')';
 
@@ -542,6 +539,11 @@ if ($search_stock_physique) {
 /*if ($eatby)		$param.="&eatby=".$eatby;
 if ($sellby)	$param.="&sellby=".$sellby;*/
 
+// Add $param from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action);	// Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
+
 llxHeader("", $title, $helpurl, $texte, 0, 0, '', '', '', 'mod-product page-reassortlot');
 
 print '<form id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">'."\n";
@@ -564,7 +566,7 @@ if ($search_categ > 0) {
 	print "<div id='ways'>";
 	$c = new Categorie($db);
 	$c->fetch($search_categ);
-	$ways = $c->print_all_ways(' &gt; ', 'product/reassortlot.php');
+	$ways = $c->print_all_ways('auto', 'product/reassortlot.php');
 	print " &gt; ".$ways[0]."<br>\n";
 	print "</div><br>";
 }
@@ -603,7 +605,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -656,7 +658,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -671,7 +673,7 @@ $totalarray['nbfield'] = 0;
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre('');
 }
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", '', $param, "", $sortfield, $sortorder);
@@ -698,7 +700,7 @@ print_liste_field_titre("ProductStatusOnBuy", $_SERVER["PHP_SELF"], "p.tobuy", "
 $parameters = array('param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print_liste_field_titre('');
 }
 print "</tr>\n";
@@ -758,7 +760,7 @@ while ($i < $imaxinloop) {
 	print '<tr>';
 
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td></td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -889,7 +891,7 @@ while ($i < $imaxinloop) {
 	print $hookmanager->resPrint;
 
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td></td>';
 		if (!$i) {
 			$totalarray['nbfield']++;

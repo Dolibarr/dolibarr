@@ -26,11 +26,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-
-// Libraries
-require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
-require_once '../lib/bookcal.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,6 +33,11 @@ require_once '../lib/bookcal.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+// Libraries
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once '../lib/bookcal.lib.php';
+
+
 
 // Translations
 $langs->loadLangs(array("admin", "agenda"));
@@ -168,8 +168,9 @@ $form = new Form($db);
 
 $help_url = '';
 $page_name = "BookCalSetup";
+$title = $langs->trans($page_name);
 
-llxHeader('', $langs->trans($page_name), $help_url, '', 0, 0, '', '', '', 'mod-bookcal page-admin_setup');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bookcal page-admin_setup');
 
 // Subheader
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
@@ -178,7 +179,7 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
 // Configuration header
 $head = bookcalAdminPrepareHead();
-print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "fa-calendar-check");
+print dol_get_fiche_head($head, 'settings', $title, -1, "fa-calendar-check");
 
 print '<br>';
 

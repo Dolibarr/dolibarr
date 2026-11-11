@@ -95,16 +95,12 @@ $permissiontoadd  = $user->hasRight('hrm', 'evaluation', 'write'); // Used by th
 $permissiontoread = $user->hasRight('hrm', 'evaluation', 'read');
 
 // Security check (enable the most restrictive one)
-//if ($user->socid > 0) accessforbidden();
-//if ($user->socid > 0) $socid = $user->socid;
-//$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
-//restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->hrm->enabled)) {
-	accessforbidden();
-}
-if (!$permissiontoread) {
-	accessforbidden();
-}
+
+$isdraft = $object->status == Evaluation::STATUS_DRAFT ? 1 : 0;
+restrictedArea($user, $object->element, $object, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
+
+if (!isModEnabled('hrm')) accessforbidden();
+if (!$permissiontoread) accessforbidden();
 
 
 /*
@@ -131,7 +127,7 @@ if ($object->id && $upload_dir !== null) {
 	 */
 	$head = evaluationPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'document', $langs->trans("Documents"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'document', $langs->trans("Documents"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 
 	// Build file list
@@ -174,7 +170,7 @@ if ($object->id && $upload_dir !== null) {
 
 	print dol_get_fiche_end();
 
-	$modulepart = 'hrm';
+	$modulepart = 'evaluation@hrm';
 	$permtoedit = $permissiontoadd;
 	$param = '&id='.$object->id;
 

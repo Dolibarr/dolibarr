@@ -146,7 +146,7 @@ include_once DOL_DOCUMENT_ROOT . '/core/lib/security2.lib.php';
 print dolJSToSetRandomPassword($constname);
 
 print '<br>';
-print '<form method="post" action="' . $_SERVER["PHP_SELF"] . '">';
+print '<form method="post" action="' . $_SERVER["PHP_SELF"] . '" spellcheck="false">';
 print '<input type="hidden" name="token" value="' . newToken() . '">';
 print '<input type="hidden" name="action" value="setvalue">';
 
@@ -162,7 +162,7 @@ print '<tr class="oddeven"><td>';
 $help = img_help(1, $langs->trans("EMailHelpMsgSPFDKIM"));
 print $langs->trans("MailingEMailFrom") . ' ' . $help . '</td><td>';
 print '<input class="minwidth100" type="text" name="MAILING_EMAIL_FROM" value="' . getDolGlobalString('MAILING_EMAIL_FROM') . '">';
-if (getDolGlobalString('MAILING_EMAIL_FROM') && !isValidEmail($conf->global->MAILING_EMAIL_FROM)) {
+if (getDolGlobalString('MAILING_EMAIL_FROM') && !isValidEmail(getDolGlobalString('MAILING_EMAIL_FROM'))) {
 	print ' ' . img_warning($langs->trans("BadEMail"));
 }
 print '</td>';

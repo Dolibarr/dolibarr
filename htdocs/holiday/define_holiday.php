@@ -3,9 +3,9 @@
  * Copyright (C) 2011		Dimitri Mouillard			<dmouillard@teclib.com>
  * Copyright (C) 2013		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2016		Regis Houssin				<regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,16 +31,16 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 
 // Load translation files required by the page
 $langs->loadlangs(array('users', 'other', 'holiday', 'hrm'));
@@ -78,7 +78,6 @@ if (!$sortorder) {
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('defineholidaylist'));
-$extrafields = new ExtraFields($db);
 
 $holiday = new Holiday($db);
 
@@ -156,13 +155,13 @@ if (empty($reshook)) {
 
 		$typeleaves = $holiday->getTypes(1, 1);
 
-		$userID = array_keys(GETPOST('update_cp'));
-		$userID = $userID[0];
+		$userID = array_keys(GETPOST('update_cp', 'array:int'));
+		$userID = (int) $userID[0];
 
 		$db->begin();
 
 		foreach ($typeleaves as $key => $val) {
-			$userValue = GETPOST('nb_holiday_'.$val['rowid']);
+			$userValue = GETPOST('nb_holiday_'.$val['rowid'], 'array');
 			$userValue = $userValue[$userID];
 
 			if (!empty($userValue) || (string) $userValue == '0') {
@@ -347,7 +346,7 @@ if (count($typeleaves) == 0) {
 	$selectedfields = '';
 	if ($massactionbutton) {
 		$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-		$selectedfields .= ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+		$selectedfields .= ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column) : ''); // This also change content of $arrayfields
 		$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 	}
 
@@ -357,7 +356,7 @@ if (count($typeleaves) == 0) {
 	print '<tr class="liste_titre_filter">';
 
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="liste_titre maxwidthsearch center">';
 		$searchpicto = $form->showFilterButtons();
 		print $searchpicto;
@@ -393,7 +392,7 @@ if (count($typeleaves) == 0) {
 	print '<td class="liste_titre"></td>';
 
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="liste_titre maxwidthsearch center">';
 		$searchpicto = $form->showFilterButtons();
 		print $searchpicto;
@@ -404,7 +403,7 @@ if (count($typeleaves) == 0) {
 
 	print '<tr class="liste_titre">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	}
 	if (!empty($arrayfields['cp.rowid']['checked'])) {
@@ -429,7 +428,7 @@ if (count($typeleaves) == 0) {
 	print_liste_field_titre('');
 	print_liste_field_titre('');
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	}
 	print '</tr>';
@@ -461,7 +460,7 @@ if (count($typeleaves) == 0) {
 		print '<tr class="oddeven">';
 
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
@@ -534,7 +533,7 @@ if (count($typeleaves) == 0) {
 		print '</td>';
 
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined

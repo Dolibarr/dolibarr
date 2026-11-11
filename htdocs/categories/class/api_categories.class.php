@@ -1,9 +1,11 @@
 <?php
 /* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2024       Jose MARTINEZ			<jose.martinez@pichinov.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Jose Martinez           <jose.martinez@pichinov.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025       MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2026       William Mead            <william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +32,12 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/api_products.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/api_contacts.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/api_thirdparties.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/api_projects.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ticket/class/api_tickets.class.php';
 
 /**
  * API class for categories
+ *
+ * @since	5.0.0	Initial implementation
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
@@ -68,6 +73,9 @@ class Categories extends DolibarrApi
 	 *
 	 * Return an array with category information
 	 *
+	 * @since	5.0.0	Initial implementation
+	 * @since	11.0.0	Added include_childs parameter
+	 *
 	 * @param	int		$id ID of category
 	 * @param	bool	$include_childs Include child categories list (true or false)
 	 * @return	array   Data without useless information
@@ -83,7 +91,9 @@ class Categories extends DolibarrApi
 		}
 
 		$result = $this->category->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching category', array_merge(array($this->category->error), $this->category->errors));
+		} elseif ($result == 0) {
 			throw new RestException(404, 'category not found');
 		}
 
@@ -110,20 +120,25 @@ class Categories extends DolibarrApi
 	 *
 	 * Get a list of categories according to filters
 	 *
+	 * @since	5.0.0	Initial implementation
+	 * @since	19.0.0	Added properties parameter
+	 * @since	25.0.0	Added pagination_data parameter
+	 *
 	 * @param string	$sortfield	Sort field
 	 * @param string	$sortorder	Sort order
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
 	 * @param string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact', 'actioncomm')
-	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool		$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0
 	 * @return array                Array of category objects
-	 * @phan-return Categorie[]
-	 * @phpstan-return Categorie[]
+	 * @phan-return Categorie[]|array{data:Categorie[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return Categorie[]|array{data:Categorie[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
 		$obj_ret = array();
 
@@ -152,6 +167,9 @@ class Categories extends DolibarrApi
 			}
 		}
 
+		//this query will return total categories with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0) {
@@ -179,11 +197,55 @@ class Categories extends DolibarrApi
 			throw new RestException(503, 'Error when retrieve category list : '.$this->db->lasterror());
 		}
 
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			if (!$totalsResult) {
+				throw new RestException(503, 'Error when retrieve category list total : '.$this->db->lasterror());
+			}
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
+				'limit' => $limit
+			];
+		}
+
 		return $obj_ret;
 	}
 
 	/**
+	 * List categories types
+	 *
+	 * Get a list of type of categories according to filters
+	 *
+	 * @since	24.0.0	Initial implementation
+	 *
+	 * @return array<string, string> Array of category types
+	 * @url GET /types
+	 *
+	 * @throws RestException
+	 */
+	public function getTypes()
+	{
+
+		if (!DolibarrApiAccess::$user->hasRight('categorie', 'lire')) {
+			throw new RestException(403);
+		}
+
+		return Categorie::$MAP_TYPE_TITLE_AREA;
+	}
+
+	/**
 	 * Create category object
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param array $request_data   Request data
 	 * @phan-param ?array<string,string> $request_data
@@ -206,6 +268,20 @@ class Categories extends DolibarrApi
 				continue;
 			}
 
+			if ($field == 'type') {
+				$this->category->type = $this->_getTypeId($value);
+				continue;
+			}
+
+			if ($field == 'array_options' && is_array($value)) {
+				$this->category->fetch_optionals();	// To force the load of the extrafields definition by fetch_name_optionals_label()
+
+				foreach ($value as $index => $val) {
+					$this->category->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->category);
+				}
+				continue;
+			}
+
 			$this->category->$field = $this->_checkValForAPI($field, $value, $this->category);
 		}
 		if ($this->category->create(DolibarrApiAccess::$user) < 0) {
@@ -216,6 +292,10 @@ class Categories extends DolibarrApi
 
 	/**
 	 * Update category
+	 *
+	 * The type of a category cannot be changed. A 'type' field is accepted only if it matches the current type.
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param 	int   		$id             Id of category to update
 	 * @param 	array 		$request_data   Data
@@ -232,7 +312,9 @@ class Categories extends DolibarrApi
 		}
 
 		$result = $this->category->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching category', array_merge(array($this->category->error), $this->category->errors));
+		} elseif ($result == 0) {
 			throw new RestException(404, 'category not found');
 		}
 
@@ -250,9 +332,18 @@ class Categories extends DolibarrApi
 				continue;
 			}
 
+			if ($field == 'type') {
+				$type_id = $this->_getTypeId($value);
+				if ((string) (int) $type_id !== (string) (int) $this->category->type) {
+					throw new RestException(400, 'The type of a category cannot be changed');
+				}
+				$this->category->type = $type_id;
+				continue;
+			}
+
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->category->array_options[$index] = $this->_checkValForAPI($field, $val, $this->category);
+					$this->category->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->category);
 				}
 				continue;
 			}
@@ -263,12 +354,14 @@ class Categories extends DolibarrApi
 		if ($this->category->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->category->error);
+			throw new RestException(500, $this->category->errorsToString());
 		}
 	}
 
 	/**
 	 * Delete category
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param 	int 	$id   Category ID
 	 * @return 	array
@@ -282,7 +375,9 @@ class Categories extends DolibarrApi
 			throw new RestException(403);
 		}
 		$result = $this->category->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching category', array_merge(array($this->category->error), $this->category->errors));
+		} elseif ($result == 0) {
 			throw new RestException(404, 'category not found');
 		}
 
@@ -291,7 +386,7 @@ class Categories extends DolibarrApi
 		}
 
 		if ($this->category->delete(DolibarrApiAccess::$user) <= 0) {
-			throw new RestException(500, 'Error when delete category : ' . $this->category->error);
+			throw new RestException(500, 'Error when delete category : ' . $this->category->errorsToString());
 		}
 
 		return array(
@@ -306,6 +401,8 @@ class Categories extends DolibarrApi
 	 * List categories of an object
 	 *
 	 * Get the list of categories linked to an object
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param int       $id         Object ID
 	 * @param string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact', 'project', 'actioncomm')
@@ -323,6 +420,10 @@ class Categories extends DolibarrApi
 	 */
 	public function getListForObject($id, $type, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
+		if (!DolibarrApiAccess::$user->hasRight('categorie', 'lire')) {
+			throw new RestException(403);
+		}
+
 		if (!in_array($type, [
 			Categorie::TYPE_PRODUCT,
 			Categorie::TYPE_CONTACT,
@@ -337,16 +438,16 @@ class Categories extends DolibarrApi
 			Categorie::TYPE_TICKET,
 			Categorie::TYPE_FICHINTER
 		])) {
-			throw new RestException(403);
+			throw new RestException(400, "this type is not recognized yet.");
 		}
 
 		if ($type == Categorie::TYPE_PRODUCT && !DolibarrApiAccess::$user->hasRight('produit', 'lire') && !DolibarrApiAccess::$user->hasRight('service', 'lire')) {
 			throw new RestException(403);
-		} elseif ($type == Categorie::TYPE_CONTACT && !DolibarrApiAccess::$user->hasRight('contact', 'lire')) {
+		} elseif ($type == Categorie::TYPE_CONTACT && !DolibarrApiAccess::$user->hasRight('societe', 'contact', 'lire')) {
 			throw new RestException(403);
 		} elseif ($type == Categorie::TYPE_CUSTOMER && !DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
 			throw new RestException(403);
-		} elseif ($type == Categorie::TYPE_SUPPLIER && !DolibarrApiAccess::$user->hasRight('fournisseur', 'lire')) {
+		} elseif ($type == Categorie::TYPE_SUPPLIER && !DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
 			throw new RestException(403);
 		} elseif ($type == Categorie::TYPE_MEMBER && !DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
 			throw new RestException(403);
@@ -360,22 +461,54 @@ class Categories extends DolibarrApi
 			throw new RestException(403);
 		} elseif ($type == Categorie::TYPE_TICKET && !DolibarrApiAccess::$user->hasRight('ticket', 'read')) {
 			throw new RestException(403);
-		} elseif ($type == Categorie::TYPE_USER && !DolibarrApiAccess::$user->hasRight('user', 'lire')) {
+		} elseif ($type == Categorie::TYPE_USER && !DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && empty(DolibarrApiAccess::$user->admin)) {
 			throw new RestException(403);
 		} elseif ($type == Categorie::TYPE_WAREHOUSE && !DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
 			throw new RestException(403);
 		}
 
+		// Check the user can access the object, with the same restrictions as on its own API
+		if ($type == Categorie::TYPE_PRODUCT) {
+			$allowed = DolibarrApi::_checkAccessToResource('product', $id);
+		} elseif ($type == Categorie::TYPE_CUSTOMER || $type == Categorie::TYPE_SUPPLIER) {
+			$allowed = DolibarrApi::_checkAccessToResource('societe', $id);
+		} elseif ($type == Categorie::TYPE_CONTACT) {
+			$allowed = DolibarrApi::_checkAccessToResource('contact', $id, 'socpeople&societe');
+		} elseif ($type == Categorie::TYPE_MEMBER) {
+			$allowed = DolibarrApi::_checkAccessToResource('adherent', $id);
+		} elseif ($type == Categorie::TYPE_PROJECT) {
+			$allowed = DolibarrApi::_checkAccessToResource('project', $id);
+		} elseif ($type == Categorie::TYPE_KNOWLEDGEMANAGEMENT) {
+			$allowed = DolibarrApi::_checkAccessToResource('knowledgerecord', $id, 'knowledgemanagement_knowledgerecord');
+		} elseif ($type == Categorie::TYPE_ACTIONCOMM) {
+			$allowed = DolibarrApi::_checkAccessToResource('agenda', $id, 'actioncomm', '', 'fk_soc', 'id');
+		} elseif ($type == Categorie::TYPE_FICHINTER) {
+			$allowed = DolibarrApi::_checkAccessToResource('fichinter', $id);
+		} elseif ($type == Categorie::TYPE_TICKET) {
+			$allowed = DolibarrApi::_checkAccessToResource('ticket', $id);
+		} elseif ($type == Categorie::TYPE_USER) {
+			$allowed = DolibarrApi::_checkAccessToResource('user', $id, 'user');
+		} elseif ($type == Categorie::TYPE_WAREHOUSE) {
+			$allowed = DolibarrApi::_checkAccessToResource('stock', $id, 'entrepot');
+		} else {
+			$allowed = false;
+		}
+		if (!$allowed) {
+			throw new RestException(403, 'Access to '.$type.' '.((int) $id).' not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$categories = $this->category->getListForItem($id, $type, $sortfield, $sortorder, $limit, $page);
 
 		if (!is_array($categories)) {
-			throw new RestException(600, 'Error when fetching object categories', array_merge(array($this->category->error), $this->category->errors));
+			throw new RestException(503, 'Error when fetching object categories', array_merge(array($this->category->error), $this->category->errors));
 		}
 		return $categories;
 	}
 
 	/**
 	 * Link an object to a category by id
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param int $id  ID of category
 	 * @param string   $type Type of category ('member', 'customer', 'supplier', 'product', 'contact', 'actioncomm')
@@ -391,7 +524,7 @@ class Categories extends DolibarrApi
 	public function linkObjectById($id, $type, $object_id)
 	{
 		if (empty($type) || empty($object_id)) {
-			throw new RestException(403);
+			throw new RestException(400, 'The "type" and "object_id" parameters are required.');
 		}
 
 		if (!DolibarrApiAccess::$user->hasRight('categorie', 'lire')) {
@@ -399,8 +532,25 @@ class Categories extends DolibarrApi
 		}
 
 		$result = $this->category->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching category', array_merge(array($this->category->error), $this->category->errors));
+		} elseif ($result == 0) {
 			throw new RestException(404, 'category not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('categorie', $this->category->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		// An object can only be linked to a category of its own type
+		$typeid = -1;
+		foreach ($this->category->getMapList() as $map) {
+			if ($map['code'] === $type) {
+				$typeid = (int) $map['id'];
+				break;
+			}
+		}
+		if ($typeid < 0 || $typeid !== (int) $this->category->type) {
+			throw new RestException(400, 'The category '.((int) $this->category->id).' is not a category of type '.$type);
 		}
 
 		if ($type === Categorie::TYPE_PRODUCT) {
@@ -429,7 +579,7 @@ class Categories extends DolibarrApi
 			}
 			$object = new Adherent($this->db);
 		} elseif ($type === Categorie::TYPE_ACTIONCOMM) {
-			if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'read')) {
+			if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'create')) {
 				throw new RestException(403);
 			}
 			$object = new ActionComm($this->db);
@@ -444,12 +594,15 @@ class Categories extends DolibarrApi
 
 		$result = $object->fetch($object_id);
 		if ($result > 0) {
+			$this->_checkAccessToLinkedObject($type, $object);
 			$result = $this->category->add_type($object, $type);
 			if ($result < 0) {
 				if ($this->category->error != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 					throw new RestException(500, 'Error when linking object', array_merge(array($this->category->error), $this->category->errors));
 				}
 			}
+		} elseif ($result == 0) {
+			throw new RestException(404, 'object not found');
 		} else {
 			throw new RestException(500, 'Error when fetching object', array_merge(array($object->error), $object->errors));
 		}
@@ -465,9 +618,11 @@ class Categories extends DolibarrApi
 	/**
 	 * Link an object to a category by ref
 	 *
+	 * @since	11.0.0	Initial implementation
+	 *
 	 * @param int 		$id  		ID of category
 	 * @param string   	$type 		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
-	 * @param string   	$object_ref Reference of object (product, thirdparty, member, ...)
+	 * @param string   	$object_ref Reference of object (product, thirdparty, member, ...). For a contact, its external reference (ref_ext)
 	 *
 	 * @return array
 	 * @phan-return array{success:array{code:int,message:string}}
@@ -479,7 +634,7 @@ class Categories extends DolibarrApi
 	public function linkObjectByRef($id, $type, $object_ref)
 	{
 		if (empty($type) || empty($object_ref)) {
-			throw new RestException(403);
+			throw new RestException(400, 'The "type" and "object_ref" parameters are required.');
 		}
 
 		if (!DolibarrApiAccess::$user->hasRight('categorie', 'lire')) {
@@ -487,8 +642,25 @@ class Categories extends DolibarrApi
 		}
 
 		$result = $this->category->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching category', array_merge(array($this->category->error), $this->category->errors));
+		} elseif ($result == 0) {
 			throw new RestException(404, 'category not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('categorie', $this->category->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		// An object can only be linked to a category of its own type
+		$typeid = -1;
+		foreach ($this->category->getMapList() as $map) {
+			if ($map['code'] === $type) {
+				$typeid = (int) $map['id'];
+				break;
+			}
+		}
+		if ($typeid < 0 || $typeid !== (int) $this->category->type) {
+			throw new RestException(400, 'The category '.((int) $this->category->id).' is not a category of type '.$type);
 		}
 
 		if ($type === Categorie::TYPE_PRODUCT) {
@@ -517,7 +689,7 @@ class Categories extends DolibarrApi
 			}
 			$object = new Adherent($this->db);
 		} elseif ($type === Categorie::TYPE_ACTIONCOMM) {
-			if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'read')) {
+			if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'create')) {
 				throw new RestException(403);
 			}
 			$object = new ActionComm($this->db);
@@ -525,14 +697,22 @@ class Categories extends DolibarrApi
 			throw new RestException(400, "this type is not recognized yet.");
 		}
 
-		$result = $object->fetch(0, $object_ref);
+		if ($object instanceof Contact) {
+			// Contacts have no ref, so they are found by their external ref (ref_ext)
+			$result = $object->fetch(0, null, (string) $object_ref);
+		} else {
+			$result = $object->fetch(0, (string) $object_ref);
+		}
 		if ($result > 0) {
+			$this->_checkAccessToLinkedObject($type, $object);
 			$result = $this->category->add_type($object, $type);
 			if ($result < 0) {
 				if ($this->category->error != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 					throw new RestException(500, 'Error when linking object', array_merge(array($this->category->error), $this->category->errors));
 				}
 			}
+		} elseif ($result == 0) {
+			throw new RestException(404, 'object not found');
 		} else {
 			throw new RestException(500, 'Error when fetching object', array_merge(array($object->error), $object->errors));
 		}
@@ -548,6 +728,8 @@ class Categories extends DolibarrApi
 	/**
 	 * Unlink an object from a category by id
 	 *
+	 * @since	11.0.0	Initial implementation
+	 *
 	 * @param int      $id        ID of category
 	 * @param string   $type      Type of category ('member', 'customer', 'supplier', 'product', 'contact', 'actioncomm')
 	 * @param int      $object_id ID of the object
@@ -562,7 +744,7 @@ class Categories extends DolibarrApi
 	public function unlinkObjectById($id, $type, $object_id)
 	{
 		if (empty($type) || empty($object_id)) {
-			throw new RestException(403);
+			throw new RestException(400, 'The "type" and "object_id" parameters are required.');
 		}
 
 		if (!DolibarrApiAccess::$user->hasRight('categorie', 'lire')) {
@@ -570,8 +752,25 @@ class Categories extends DolibarrApi
 		}
 
 		$result = $this->category->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching category', array_merge(array($this->category->error), $this->category->errors));
+		} elseif ($result == 0) {
 			throw new RestException(404, 'category not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('categorie', $this->category->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		// An object can only be unlinked from a category of its own type
+		$typeid = -1;
+		foreach ($this->category->getMapList() as $map) {
+			if ($map['code'] === $type) {
+				$typeid = (int) $map['id'];
+				break;
+			}
+		}
+		if ($typeid < 0 || $typeid !== (int) $this->category->type) {
+			throw new RestException(400, 'The category '.((int) $this->category->id).' is not a category of type '.$type);
 		}
 
 		if ($type === Categorie::TYPE_PRODUCT) {
@@ -600,7 +799,7 @@ class Categories extends DolibarrApi
 			}
 			$object = new Adherent($this->db);
 		} elseif ($type === Categorie::TYPE_ACTIONCOMM) {
-			if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'read')) {
+			if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'create')) {
 				throw new RestException(403);
 			}
 			$object = new ActionComm($this->db);
@@ -610,10 +809,13 @@ class Categories extends DolibarrApi
 
 		$result = $object->fetch((int) $object_id);
 		if ($result > 0) {
+			$this->_checkAccessToLinkedObject($type, $object);
 			$result = $this->category->del_type($object, $type);
 			if ($result < 0) {
 				throw new RestException(500, 'Error when unlinking object', array_merge(array($this->category->error), $this->category->errors));
 			}
+		} elseif ($result == 0) {
+			throw new RestException(404, 'object not found');
 		} else {
 			throw new RestException(500, 'Error when fetching object', array_merge(array($object->error), $object->errors));
 		}
@@ -629,9 +831,11 @@ class Categories extends DolibarrApi
 	/**
 	 * Unlink an object from a category by ref
 	 *
+	 * @since	11.0.0	Initial implementation
+	 *
 	 * @param int      $id         	ID of category
 	 * @param string   $type 		Type  of category ('member', 'customer', 'supplier', 'product', 'contact', 'actioncomm')
-	 * @param string   $object_ref 	Reference of the object (product, thirdparty, member, ...)
+	 * @param string   $object_ref 	Reference of the object (product, thirdparty, member, ...). For a contact, its external reference (ref_ext)
 	 *
 	 * @return array
 	 * @phan-return array{success:array{code:int,message:string}}
@@ -643,7 +847,7 @@ class Categories extends DolibarrApi
 	public function unlinkObjectByRef($id, $type, $object_ref)
 	{
 		if (empty($type) || empty($object_ref)) {
-			throw new RestException(403);
+			throw new RestException(400, 'The "type" and "object_ref" parameters are required.');
 		}
 
 		if (!DolibarrApiAccess::$user->hasRight('categorie', 'lire')) {
@@ -651,8 +855,25 @@ class Categories extends DolibarrApi
 		}
 
 		$result = $this->category->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching category', array_merge(array($this->category->error), $this->category->errors));
+		} elseif ($result == 0) {
 			throw new RestException(404, 'category not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('categorie', $this->category->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		// An object can only be unlinked from a category of its own type
+		$typeid = -1;
+		foreach ($this->category->getMapList() as $map) {
+			if ($map['code'] === $type) {
+				$typeid = (int) $map['id'];
+				break;
+			}
+		}
+		if ($typeid < 0 || $typeid !== (int) $this->category->type) {
+			throw new RestException(400, 'The category '.((int) $this->category->id).' is not a category of type '.$type);
 		}
 
 		if ($type === Categorie::TYPE_PRODUCT) {
@@ -681,7 +902,7 @@ class Categories extends DolibarrApi
 			}
 			$object = new Adherent($this->db);
 		} elseif ($type === Categorie::TYPE_ACTIONCOMM) {
-			if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'read')) {
+			if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'create')) {
 				throw new RestException(403);
 			}
 			$object = new ActionComm($this->db);
@@ -689,12 +910,20 @@ class Categories extends DolibarrApi
 			throw new RestException(400, "this type is not recognized yet.");
 		}
 
-		$result = $object->fetch(0, (string) $object_ref);
+		if ($object instanceof Contact) {
+			// Contacts have no ref, so they are found by their external ref (ref_ext)
+			$result = $object->fetch(0, null, (string) $object_ref);
+		} else {
+			$result = $object->fetch(0, (string) $object_ref);
+		}
 		if ($result > 0) {
+			$this->_checkAccessToLinkedObject($type, $object);
 			$result = $this->category->del_type($object, $type);
 			if ($result < 0) {
 				throw new RestException(500, 'Error when unlinking object', array_merge(array($this->category->error), $this->category->errors));
 			}
+		} elseif ($result == 0) {
+			throw new RestException(404, 'object not found');
 		} else {
 			throw new RestException(500, 'Error when fetching object', array_merge(array($object->error), $object->errors));
 		}
@@ -711,9 +940,12 @@ class Categories extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Categorie  $object  Object to clean
 	 * @return  Object     			Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -721,6 +953,7 @@ class Categories extends DolibarrApi
 		$object = parent::_cleanObjectDatas($object);
 
 		// Remove fields not relevant to categories
+		unset($object->MAP_ID);
 		unset($object->MAP_CAT_FK);
 		unset($object->MAP_CAT_TABLE);
 		unset($object->MAP_OBJ_CLASS);
@@ -729,11 +962,19 @@ class Categories extends DolibarrApi
 		unset($object->country_id);
 		unset($object->country_code);
 		unset($object->total_ht);
-		unset($object->total_ht);
 		unset($object->total_localtax1);
 		unset($object->total_localtax2);
 		unset($object->total_ttc);
 		unset($object->total_tva);
+
+		unset($object->multicurrency_tx);
+		unset($object->multicurrency_code);
+		unset($object->multicurrency_total_ht);
+		unset($object->multicurrency_total_localtax1);
+		unset($object->multicurrency_total_localtax2);
+		unset($object->multicurrency_total_ttc);
+		unset($object->multicurrency_total_tva);
+
 		unset($object->lines);
 		unset($object->civility_id);
 		unset($object->name);
@@ -741,6 +982,9 @@ class Categories extends DolibarrApi
 		unset($object->firstname);
 		unset($object->shipping_method_id);
 		unset($object->fk_delivery_address);
+		unset($object->demand_reason_id);
+		unset($object->transport_mode_id);
+		unset($object->shipping_method);
 		unset($object->cond_reglement);
 		unset($object->cond_reglement_id);
 		unset($object->mode_reglement_id);
@@ -761,6 +1005,14 @@ class Categories extends DolibarrApi
 		unset($object->fk_project);
 		unset($object->note);
 		unset($object->statut);
+		unset($object->actiontypecode);
+		unset($object->date_cloture);
+		unset($object->user_closing_id);
+		unset($object->totalpaid);
+		unset($object->totalpaid_multicurrency);
+		unset($object->warehouse_id);
+		unset($object->state_id);
+		unset($object->region_id);
 
 		return $object;
 	}
@@ -788,8 +1040,34 @@ class Categories extends DolibarrApi
 		return $category;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Get the id of a category type from a type id or a type code.
+	 * The generic field check can't be used: as the type field is an integer, it empties a type code.
+	 *
+	 * @param	mixed	$type	Type id or type code (see Categorie::$MAP_ID, completed by modules)
+	 * @return	string			Type id
+	 * @throws	RestException	400
+	 */
+	private function _getTypeId($type)
+	{
+		// phpcs:enable
+		$map_id = $this->category->getMapId();
+
+		if (is_numeric($type) && in_array($type, $map_id)) {
+			return (string) (int) $type;
+		}
+		if (is_string($type) && array_key_exists($type, $map_id)) {
+			return (string) $map_id[$type];
+		}
+
+		throw new RestException(400, "this type is not recognized yet.");
+	}
+
 	/**
 	 * Get the list of objects in a category.
+	 *
+	 * @since	10.0.0	Initial implementation
 	 *
 	 * @param int        $id         ID of category
 	 * @param string     $type       Type of category ('member', 'customer', 'supplier', 'product', 'contact', 'project')
@@ -808,11 +1086,13 @@ class Categories extends DolibarrApi
 		}
 
 		if (empty($type)) {
-			throw new RestException(500, 'The "type" parameter is required.');
+			throw new RestException(400, 'The "type" parameter is required.');
 		}
 
 		$result = $this->category->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching category', array_merge(array($this->category->error), $this->category->errors));
+		} elseif ($result == 0) {
 			throw new RestException(404, 'category not found');
 		}
 
@@ -820,10 +1100,25 @@ class Categories extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		// The objects are returned only to a user who can read them: the permission of their module, and for each
+		// object the same restrictions as on its own API (sales representative, external user, entity).
+		$readaccess = array(
+			'member' => array(DolibarrApiAccess::$user->hasRight('adherent', 'lire'), 'adherent', ''),
+			'customer' => array(DolibarrApiAccess::$user->hasRight('societe', 'lire'), 'societe', ''),
+			'supplier' => array(DolibarrApiAccess::$user->hasRight('societe', 'lire'), 'societe', ''),
+			'product' => array(DolibarrApiAccess::$user->hasRight('produit', 'lire') || DolibarrApiAccess::$user->hasRight('service', 'lire'), 'product', ''),
+			'contact' => array(DolibarrApiAccess::$user->hasRight('societe', 'contact', 'lire'), 'contact', 'socpeople&societe'),
+			'project' => array(DolibarrApiAccess::$user->hasRight('projet', 'lire'), 'project', ''),
+			'ticket' => array(DolibarrApiAccess::$user->hasRight('ticket', 'read'), 'ticket', ''),
+		);
+		if (isset($readaccess[$type]) && !$readaccess[$type][0]) {
+			throw new RestException(403, 'Access to the objects of type '.$type.' not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$result = $this->category->getObjectsInCateg($type, $onlyids);
 
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieving objects list : '.$this->category->error);
+			throw new RestException(503, 'Error when retrieving objects list : '.$this->category->errorsToString());
 		}
 
 		$objects = $result;
@@ -839,14 +1134,54 @@ class Categories extends DolibarrApi
 			$objects_api = new Contacts();
 		} elseif ($type == 'project') {
 			$objects_api = new Projects();
+		} elseif ($type == 'ticket') {
+			$objects_api = new Tickets();
 		}
 
 		if (is_object($objects_api)) {
 			foreach ($objects as $obj) {
+				$objid = is_object($obj) ? (int) $obj->id : (int) $obj;
+				if (isset($readaccess[$type]) && !DolibarrApi::_checkAccessToResource($readaccess[$type][1], $objid, $readaccess[$type][2])) {
+					continue;
+				}
 				$cleaned_objects[] = $objects_api->_cleanObjectDatas($obj);
 			}
 		}
 
 		return $cleaned_objects;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Check the user can access the object a category is linked to / unlinked from.
+	 * Linking is a write on the target object, so the same restrictions as on its own API apply
+	 * (sales representative and external user scoping, entity), not only the module permission.
+	 *
+	 * @param	string			$type		Category type (Categorie::TYPE_*)
+	 * @param	CommonObject	$object		Fetched target object
+	 * @return	void
+	 * @throws	RestException	403
+	 */
+	private function _checkAccessToLinkedObject($type, $object)
+	{
+		// phpcs:enable
+		if ($type === Categorie::TYPE_PRODUCT) {
+			$allowed = DolibarrApi::_checkAccessToResource('product', $object->id);
+		} elseif ($type === Categorie::TYPE_CUSTOMER || $type === Categorie::TYPE_SUPPLIER) {
+			$allowed = DolibarrApi::_checkAccessToResource('societe', $object->id);
+		} elseif ($type === Categorie::TYPE_CONTACT) {
+			$allowed = DolibarrApi::_checkAccessToResource('contact', $object->id, 'socpeople&societe');
+		} elseif ($type === Categorie::TYPE_MEMBER) {
+			$allowed = DolibarrApi::_checkAccessToResource('adherent', $object->id);
+		} elseif ($type === Categorie::TYPE_ACTIONCOMM) {
+			$allowed = DolibarrApi::_checkAccessToResource('agenda', $object->id, 'actioncomm', '', 'fk_soc', 'id');
+		} elseif ($type === Categorie::TYPE_PROJECT) {
+			$allowed = DolibarrApi::_checkAccessToResource('project', $object->id);
+		} else {
+			$allowed = false;
+		}
+		if (!$allowed) {
+			throw new RestException(403, 'Access to '.$type.' '.$object->id.' not allowed for login '.DolibarrApiAccess::$user->login);
+		}
 	}
 }

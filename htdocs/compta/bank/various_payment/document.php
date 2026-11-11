@@ -26,6 +26,13 @@
 
 // Load Dolibarr environment
 require '../../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
@@ -35,16 +42,8 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
-$langs->loadLangs(array("compta", "banks", "bills", "users", "accountancy"));
+$langs->loadLangs(array("compta", "banks", "bills", "users", "accountancy", "other"));
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
@@ -80,7 +79,8 @@ if (!$sortfield) {
 $object = new PaymentVarious($db);
 $object->fetch($id);
 
-$upload_dir = $conf->bank->dir_output.'/'.dol_sanitizeFileName((string) $object->id);
+$upload_dir = $conf->bank->dir_output.'/various_payment/'.dol_sanitizeFileName((string) $object->id);
+$upload_dirold = $conf->bank->dir_output.'/'.dol_sanitizeFileName((string) $object->id);
 $modulepart = 'banque';
 
 $permissiontoadd = $user->hasRight('banque', 'modifier');	// Used by the include of actions_dellink.inc.php
@@ -107,7 +107,7 @@ llxHeader("", $title, $help_url);
 if ($object->id) {
 	$head = various_payment_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'documents', $langs->trans("VariousPayment"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'documents', $langs->trans("VariousPayment"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 	$morehtmlref = '<div class="refidno">';
 	// Project
@@ -123,7 +123,7 @@ if ($object->id) {
 				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-				$morehtmlref .= $formproject->select_projects(0, (string) $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+				$morehtmlref .= $formproject->select_projects(0, (string) $object->fk_project, 'projectid', 16, 0, 1, 0, 1, 0, 0, '', 1);
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
@@ -150,6 +150,22 @@ if ($object->id) {
 
 	// Build file list
 	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
+	if (is_array($filearray)) {
+		foreach ($filearray as $key => $file) {
+			$filearray[$key]['relativepath'] = 'various_payment/'.dol_sanitizeFileName((string) $object->id).'/';
+		}
+	} else {
+		$filearray = array();
+	}
+	if (!empty($upload_dirold) && dol_is_dir($upload_dirold)) {
+		$filearrayold = dol_dir_list($upload_dirold, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
+		if (is_array($filearrayold) && !empty($filearrayold)) {
+			foreach ($filearrayold as $key => $file) {
+				$filearrayold[$key]['relativepath'] = dol_sanitizeFileName((string) $object->id).'/';
+			}
+			$filearray = array_merge($filearray, $filearrayold);
+		}
+	}
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];
@@ -170,6 +186,7 @@ if ($object->id) {
 	$modulepart = 'banque';
 	$permissiontoadd = $user->hasRight('banque', 'modifier');
 	$param = '&id='.$object->id;
+	$relativepathwithnofile = 'various_payment/'.dol_sanitizeFileName((string) $object->id).'/';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	print $langs->trans("ErrorUnknown");

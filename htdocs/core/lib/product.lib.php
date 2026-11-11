@@ -8,7 +8,7 @@
  * Copyright (C) 2024	   	Jean-Rémi TAPONIER		<jean-remi@netlogic.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Mélina Joum				<melina.joum@altairis.fr>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,21 +26,21 @@
  */
 
 /**
- * \file       htdocs/core/lib/product.lib.php
- * \brief      Ensemble de functions de base pour le module produit et service
- * \ingroup	product
+ * \file       	htdocs/core/lib/product.lib.php
+ * \brief      	Set of functions for the module product and service
+ * \ingroup		product
  */
 
 /**
  * Prepare array with list of tabs
  *
- * @param   Product	$object		Object related to tabs
+ * @param   Product				$object					Object related to tabs
  * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function product_prepare_head($object)
 {
 	global $db, $langs, $conf, $user;
-	$langs->load("products");
+	$langs->loadLangs(array("products", "stocks"));
 
 	$label = $langs->trans('Product');
 	$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_prices') : $user->hasRight('product', 'read');
@@ -111,9 +111,18 @@ function product_prepare_head($object)
 		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/composition/card.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans('AssociatedProducts');
 
-		$nbFatherAndChild = $object->hasFatherOrChild();
-		if ($nbFatherAndChild > 0) {
-			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbFatherAndChild.'</span>';
+		$nbFather = $object->hasFatherOrChild(-1);
+		$nbChild = $object->hasFatherOrChild(1);
+		if ($nbFather > 0 || $nbChild > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">';
+			if ($nbFather) {
+				$head[$h][1] .= $nbFather;
+			}
+			$head[$h][1] .= ($nbFather && $nbChild) ? '+' : '';
+			if ($nbChild) {
+				$head[$h][1] .= $nbChild;
+			}
+			$head[$h][1] .= '</span>';
 		}
 		$head[$h][2] = 'subproduct';
 		$h++;
@@ -163,13 +172,27 @@ function product_prepare_head($object)
 			$h++;
 		}
 	}
-
+	if (getDolGlobalString('MAIN_ENABLE_PRODUCTS_CONTACTS_TAB')) {
+		$objectsrc = $object;
+		if ($object->origin_type == 'product' && $object->origin_id > 0) {
+			$objectsrc = new Product($db);
+			$objectsrc->fetch($object->origin_id);
+		}
+		$nbContact = count($objectsrc->liste_contact(-1, 'internal')) + count($objectsrc->liste_contact(-1, 'external'));
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/contact.php', ['id' => $object->id]);
+		$head[$h][1] = $langs->trans("ContactsAddresses");
+		if ($nbContact > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+		}
+		$head[$h][2] = 'contact';
+		$h++;
+	}
 	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/stats/facture.php', ['showmessage' => 1, 'id' => $object->id]);
-	$head[$h][1] = $langs->trans('Referers');
+	$head[$h][1] = $langs->trans('ReferringItems');
 	$head[$h][2] = 'referers';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/stats/card.php', ['id' => $object->id]);
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/stats/index.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans('Statistics');
 	$head[$h][2] = 'stats';
 	$h++;
@@ -189,7 +212,7 @@ function product_prepare_head($object)
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/note.php', ['id' => $object->id]);
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/core/note.php', ['element' => 'product', 'id' => $object->id]);
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
@@ -236,8 +259,33 @@ function product_prepare_head($object)
 	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/messaging.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("Events");
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
+		$nbEvent = 0;
+		// Enable caching of product count actioncomm
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_events_product_'.$object->id;
+		$dataretrieved = dol_getcache($cachekey);
+		if (!is_null($dataretrieved)) {
+			$nbEvent = $dataretrieved;
+		} else {
+			$sql = "SELECT COUNT(id) as nb";
+			$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
+			$sql .= " WHERE fk_element = ".((int) $object->id);
+			$sql .= " AND elementtype = 'product'";
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				$nbEvent = $obj->nb;
+			} else {
+				dol_syslog('Failed to count actioncomm '.$db->lasterror(), LOG_ERR);
+			}
+			dol_setcache($cachekey, $nbEvent, 120);		// If setting cache fails, this is not a problem, so we do not test result.
+		}
+
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
+		if ($nbEvent > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbEvent.'</span>';
+		}
 	}
 	$head[$h][2] = 'agenda';
 	$h++;
@@ -271,7 +319,7 @@ function productlot_prepare_head($object)
 	$h++;
 
 	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/stock/stats/expedition.php', ['showmessage' => 1, 'id' => $object->id]);
-	$head[$h][1] = $langs->trans('Referers');
+	$head[$h][1] = $langs->trans('ReferringItems');
 	$head[$h][2] = 'referers';
 	$h++;
 
@@ -298,7 +346,7 @@ function productlot_prepare_head($object)
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT .'/product/stock/productlot_note.php', ['id' => $object->id]);
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT .'/core/note.php', ['element' => 'productlot', 'id' => $object->id]);
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbNote . '</span>';
@@ -335,10 +383,10 @@ function productlot_prepare_head($object)
  */
 function product_admin_prepare_head()
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('product');
+	$extrafields->fetch_name_optionals_label('product_lang');
 	$extrafields->fetch_name_optionals_label('product_price');
 	$extrafields->fetch_name_optionals_label('product_customer_price');
 	$extrafields->fetch_name_optionals_label('product_fournisseur_price');
@@ -366,7 +414,7 @@ function product_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'product_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/admin/product_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'product'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = isset($extrafields->attributes['product']['count']) ? $extrafields->attributes['product']['count'] : 0;
 	if ($nbExtrafields > 0) {
@@ -375,9 +423,21 @@ function product_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
+	// Multilangs Extrafields
+	if (getDolGlobalInt('MAIN_MULTILANGS')) {
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'product_lang'));
+		$head[$h][1] = $langs->trans("TranslationsExtrafields");
+		$nbExtrafields = isset($extrafields->attributes['product_lang']['count']) ? $extrafields->attributes['product_lang']['count'] : 0;
+		if ($nbExtrafields > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+		}
+		$head[$h][2] = 'translationAttributes';
+		$h++;
+	}
+
 	// Extrafields for price levels
 	if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
-		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/admin/product_price_extrafields.php');
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'product_price'));
 		$head[$h][1] = $langs->trans("ProductLevelExtraFields");
 		$nbExtrafields = isset($extrafields->attributes['product_price']['count']) ? $extrafields->attributes['product_price']['count'] : 0;
 		if ($nbExtrafields > 0) {
@@ -387,9 +447,9 @@ function product_admin_prepare_head()
 		$h++;
 	}
 
-	//Extrafields for price per customer
+	// Extrafields for price per customer
 	if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
-		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/admin/product_customer_extrafields.php');
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'product_customer_price'));
 		$head[$h][1] = $langs->trans("ProductCustomerExtraFields");
 		$nbExtrafields = isset($extrafields->attributes['product_customer_price']['count']) ? $extrafields->attributes['product_customer_price']['count'] : 0;
 		if ($nbExtrafields > 0) {
@@ -400,7 +460,7 @@ function product_admin_prepare_head()
 	}
 
 	// Supplier prices
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/admin/product_supplier_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'product_fournisseur_price'));
 	$head[$h][1] = $langs->trans("ProductSupplierExtraFields");
 	$nbExtrafields = isset($extrafields->attributes['product_fournisseur_price']['count']) ? $extrafields->attributes['product_fournisseur_price']['count'] : 0;
 	if ($nbExtrafields > 0) {
@@ -423,9 +483,8 @@ function product_admin_prepare_head()
  */
 function product_lot_admin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $user, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('product_lot');
 
 	$h = 0;
@@ -442,7 +501,7 @@ function product_lot_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'product_lot_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/admin/product_lot_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'product_lot'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['product_lot']['count'];
 	if ($nbExtrafields > 0) {
@@ -474,10 +533,12 @@ function show_stats_for_company($product, $socid)
 	$nblines = 0;
 
 	print '<tr class="liste_titre">';
-	print '<td class="left" width="25%">'.$langs->trans("Referers").'</td>';
-	print '<td class="right" width="25%">'.$langs->trans("NbOfThirdParties").'</td>';
-	print '<td class="right" width="25%">'.$langs->trans("NbOfObjectReferers").'</td>';
-	print '<td class="right" width="25%">'.$langs->trans("TotalQuantity").'</td>';
+	print '<td class="liste_titre left">';
+	print $form->textwithpicto($langs->trans("ReferringItems"), $langs->trans("ClickOnALinkOfColumn", $langs->transnoentitiesnoconv("ReferringItems")));
+	print '</td>';
+	print '<td class="liste_titre right">'.$langs->trans("NbOfThirdParties").'</td>';
+	print '<td class="liste_titre right">'.$langs->trans("NbOfObjectReferers").'</td>';
+	print '<td class="liste_titre right">'.$langs->trans("TotalQuantity").'</td>';
 	print '</tr>';
 
 	// Customer proposals
@@ -489,7 +550,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("propal");
 		print '<tr><td>';
-		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/propal.php', ['id' => $product->id]).'">'.img_object('', 'propal', 'class="pictofixedwidth"').$langs->trans("Proposals").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/propal.php', ['id' => $product->id], false, 'anchorundermenu').'">'.img_object('', 'propal', 'class="pictofixedwidth"').$langs->trans("Proposals").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_propale['customers'];
 		print '</td><td class="right">';
@@ -508,7 +569,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("supplier_proposal");
 		print '<tr><td>';
-		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/supplier_proposal.php', ['id' => $product->id]).'">'.img_object('', 'supplier_proposal', 'class="pictofixedwidth"').$langs->trans("SupplierProposals").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/supplier_proposal.php', ['id' => $product->id], false, 'anchorundermenu').'">'.img_object('', 'supplier_proposal', 'class="pictofixedwidth"').$langs->trans("SupplierProposals").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_proposal_supplier['suppliers'];
 		print '</td><td class="right">';
@@ -527,7 +588,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("orders");
 		print '<tr><td>';
-		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/commande.php', ['id' => $product->id]).'">'.img_object('', 'order', 'class="pictofixedwidth"').$langs->trans("CustomersOrders").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/commande.php', ['id' => $product->id], false, 'anchorundermenu').'">'.img_object('', 'order', 'class="pictofixedwidth"').$langs->trans("CustomersOrders").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_commande['customers'];
 		print '</td><td class="right">';
@@ -546,7 +607,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("orders");
 		print '<tr><td>';
-		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/commande_fournisseur.php', ['id' => $product->id]).'">'.img_object('', 'supplier_order', 'class="pictofixedwidth"').$langs->trans("SuppliersOrders").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/commande_fournisseur.php', ['id' => $product->id], false, 'anchorundermenu').'">'.img_object('', 'supplier_order', 'class="pictofixedwidth"').$langs->trans("SuppliersOrders").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_commande_fournisseur['suppliers'];
 		print '</td><td class="right">';
@@ -565,7 +626,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/facture.php', ['id' => $product->id]).'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("CustomersInvoices").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/facture.php', ['id' => $product->id], false, 'anchorundermenu').'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("CustomersInvoices").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_facture['customers'];
 		print '</td><td class="right">';
@@ -584,7 +645,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/facturerec.php', ['id' => $product->id]).'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("RecurringInvoiceTemplate").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/facturerec.php', ['id' => $product->id], false, 'anchorundermenu').'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("RecurringInvoiceTemplate").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_facturerec['customers'];
 		print '</td><td class="right">';
@@ -603,7 +664,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/facture_fournisseur.php', ['id' => $product->id]).'">'.img_object('', 'supplier_invoice', 'class="pictofixedwidth"').$langs->trans("SuppliersInvoices").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/facture_fournisseur.php', ['id' => $product->id], false, 'anchorundermenu').'">'.img_object('', 'supplier_invoice', 'class="pictofixedwidth"').$langs->trans("SuppliersInvoices").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_facture_fournisseur['suppliers'];
 		print '</td><td class="right">';
@@ -623,7 +684,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/facture_facturerec.php', ['id' => $product->id]).'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("RecurringInvoiceTemplate").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/facture_facturerec.php', ['id' => $product->id], false, 'anchorundermenu').'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("RecurringInvoiceTemplate").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_facturefournrec['customers'];
 		print '</td><td class="right">';
@@ -644,7 +705,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("sendings");
 		print '<tr><td>';
-		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/expedition.php', ['id' => $product->id]).'">'.img_object('', 'shipment', 'class="pictofixedwidth"').$langs->trans("Shipments").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/expedition.php', ['id' => $product->id], false, 'anchorundermenu').'">'.img_object('', 'shipment', 'class="pictofixedwidth"').$langs->trans("Shipments").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_expedition['customers'];
 		print '</td><td class="right">';
@@ -664,7 +725,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("receptions");
 		print '<tr><td>';
-		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/reception.php', ['id' => $product->id]).'">'.img_object('', 'reception', 'class="pictofixedwidth"').$langs->trans("Receptions").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/reception.php', ['id' => $product->id], false, 'anchorundermenu').'">'.img_object('', 'reception', 'class="pictofixedwidth"').$langs->trans("Receptions").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_reception['suppliers'];
 		print '</td><td class="right">';
@@ -684,7 +745,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("contracts");
 		print '<tr><td>';
-		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/contrat.php', ['id' => $product->id]).'">'.img_object('', 'contract', 'class="pictofixedwidth"').$langs->trans("Contracts").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/contrat.php', ['id' => $product->id], false, 'anchorundermenu').'">'.img_object('', 'contract', 'class="pictofixedwidth"').$langs->trans("Contracts").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_contrat['customers'];
 		print '</td><td class="right">';
@@ -705,7 +766,7 @@ function show_stats_for_company($product, $socid)
 		$langs->load("mrp");
 
 		print '<tr><td>';
-		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/bom.php', ['id' => $product->id]).'">'.img_object('', 'bom', 'class="pictofixedwidth"').$langs->trans("BOM").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/bom.php', ['id' => $product->id], false, 'anchorundermenu').'">'.img_object('', 'bom', 'class="pictofixedwidth"').$langs->trans("BOM").'</a>';
 		print '</td><td class="right">';
 
 		print '</td><td class="right">';
@@ -729,7 +790,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("mrp");
 		print '<tr><td>';
-		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/mo.php', ['id' => $product->id]).'">'.img_object('', 'mrp', 'class="pictofixedwidth"').$langs->trans("MO").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/mo.php', ['id' => $product->id], false, 'anchorundermenu').'">'.img_object('', 'mrp', 'class="pictofixedwidth"').$langs->trans("MO").'</a>';
 		print '</td><td class="right">';
 		print $form->textwithpicto((string) $product->stats_mo['customers_toconsume'], $langs->trans("ToConsume"));
 		print ' ';
@@ -787,7 +848,7 @@ function show_stats_for_batch($batch, $socid)
 	$nblines = 0;
 
 	print '<tr class="liste_titre">';
-	print '<td class="left" width="25%">'.$langs->trans("Referers").'</td>';
+	print '<td class="left" width="25%">'.$langs->trans("ReferringItems").'</td>';
 	print '<td class="right" width="25%">'.$langs->trans("NbOfThirdParties").'</td>';
 	print '<td class="right" width="25%">'.$langs->trans("NbOfObjectReferers").'</td>';
 	print '<td class="right" width="25%">'.$langs->trans("TotalQuantity").'</td>';
@@ -957,9 +1018,9 @@ function measuringUnitString($unitid, $measuring_style = '', $unitscale = null, 
 				if ($use_short_label == 1) {
 					$labeltoreturn = $measuringUnits->records[key($measuringUnits->records)]->short_label;
 				} elseif ($use_short_label == 2) {
-					$labeltoreturn = $outputlangs->transnoentitiesnoconv(ucfirst($measuringUnits->records[key($measuringUnits->records)]->label).'Short');
+					$labeltoreturn = $outputlangs->transnoentitiesnoconv(ucfirst((string) $measuringUnits->records[key($measuringUnits->records)]->label).'Short');
 				} else {
-					$labeltoreturn = $outputlangs->transnoentitiesnoconv($measuringUnits->records[key($measuringUnits->records)]->label);
+					$labeltoreturn = $outputlangs->transnoentitiesnoconv((string) $measuringUnits->records[key($measuringUnits->records)]->label);
 				}
 			} else {
 				$labeltoreturn = '';
@@ -1009,4 +1070,130 @@ function measuring_units_cubed($unit)
 	$measuring_units[98] = 88; // foot -> foot3
 	$measuring_units[99] = 89; // inch -> inch3
 	return $measuring_units[$unit];
+}
+
+/**
+ * Retrieve and return product for mail template.
+ *
+ * @param int $id The ID of the product to retrieve.
+ * @return array<string,mixed>|int<-1,-1>   Return array if OK, -1 if KO
+ */
+function getProductForEmailTemplate($id)
+{
+	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+	global $db, $conf;
+
+	$productarray = array();
+	$sql = "SELECT p.rowid as id, p.ref, p.label, p.description, p.entity";
+	$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+	$sql .= " WHERE p.entity IN (".getEntity('product').")";
+	$sql .= " AND p.rowid = ".((int) $id);
+
+	$resql = $db->query($sql);
+
+	if ($resql) {
+		$productarray = $db->fetch_array($resql);
+	} else {
+		dol_print_error($db);
+		return -1;
+	}
+
+	$object = new Product($db);
+	$result = $object->fetch($id);
+	if ($result < 0) {
+		dol_print_error($db, $object->error, $object->errors);
+	}
+	$entity = (empty($object->entity) ? $conf->entity : $object->entity);
+	$productarray["image"] = $object->show_photos('product', $conf->product->multidir_output[$entity], 1, 1, 0, 0, 0, 120, 160, 1, '');
+	if ($object->nbphoto <= 0) {
+		$productarray["image"] = "";
+	}
+	return $productarray;
+}
+
+/**
+ * Return the links to show or hide all lot/serial lines of a table.
+ *
+ * @param	Translate	$langs			Language object
+ * @param	bool		$showByDefault	True if lot lines are visible when the page is loaded
+ * @return	string						HTML content
+ */
+function getBatchLinesToggleHeader(Translate $langs, bool $showByDefault): string
+{
+	$out = '<a id="batchlines_show_all" href="#" class="nowraponall'.($showByDefault ? ' hideobject' : '').'">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ShowAllLots").'</a>';
+	$out .= '<a id="batchlines_hide_all" href="#" class="nowraponall'.($showByDefault ? '' : ' hideobject').'">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("HideLots").'</a>';
+
+	return $out;
+}
+
+/**
+ * Return the link to show or hide the lot/serial lines of one group of lines.
+ *
+ * @param	string	$groupKey		Key shared with the lot lines of the group (see getBatchLineChildRowAttributes())
+ * @param	bool	$showByDefault	True if lot lines are visible when the page is loaded
+ * @return	string					HTML content
+ */
+function getBatchLineToggleLink(string $groupKey, bool $showByDefault): string
+{
+	$out = '<a href="#" class="batchlines_toggle marginleftonly" data-batchtoggle="'.dol_escape_htmltag($groupKey).'">';
+	$out .= img_picto('', 'plus-square', 'class="batchlines_icon_collapsed'.($showByDefault ? ' hideobject' : '').'"');
+	$out .= img_picto('', 'minus-square', 'class="batchlines_icon_expanded'.($showByDefault ? '' : ' hideobject').'"');
+	$out .= '</a>';
+
+	return $out;
+}
+
+/**
+ * Return the attributes of a lot/serial line belonging to a group of lines.
+ *
+ * @param	string	$groupKey		Key shared with the toggle link of the group (see getBatchLineToggleLink())
+ * @param	bool	$showByDefault	True if lot lines are visible when the page is loaded
+ * @return	string					HTML attributes, without leading space
+ */
+function getBatchLineChildRowAttributes(string $groupKey, bool $showByDefault): string
+{
+	return 'data-batchgroup="'.dol_escape_htmltag($groupKey).'"'.($showByDefault ? '' : ' style="display: none"');
+}
+
+/**
+ * Return the link to a lot/serial number, or a tooltip with its known information when it is not recorded as a lot.
+ *
+ * @param	DoliDB		$db			Database handler
+ * @param	Form		$form		Form object
+ * @param	Translate	$langs		Language object
+ * @param	int			$productId	Id of product
+ * @param	string		$batch		Lot/serial number
+ * @param	int|string	$sellby		Sell-by date of the line, used when the lot is not recorded
+ * @param	int|string	$eatby		Eat-by date of the line, used when the lot is not recorded
+ * @return	string					HTML content
+ */
+function getBatchLotNomUrl(DoliDB $db, Form $form, Translate $langs, int $productId, string $batch, $sellby, $eatby): string
+{
+	global $conf;
+
+	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
+
+	$cacheKey = $productId.'|'.$batch;
+	if (!isset($conf->cache['productlot'][$cacheKey])) {
+		$productlot = new Productlot($db);
+		$result = $productlot->fetch(0, $productId, $batch);
+		if ($result < 0) {
+			dol_syslog(__FUNCTION__.' '.$productlot->error, LOG_ERR);
+		}
+		$conf->cache['productlot'][$cacheKey] = ($result > 0 ? $productlot : false);
+	}
+
+	if ($conf->cache['productlot'][$cacheKey]) {
+		return $conf->cache['productlot'][$cacheKey]->getNomUrl(1);
+	}
+
+	$batchinfo = $langs->trans("Batch").': '.dol_escape_htmltag($batch);
+	if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY') && !empty($sellby)) {
+		$batchinfo .= ' - '.$langs->trans("SellByDate").': '.dol_print_date($sellby, "day");
+	}
+	if (!getDolGlobalString('PRODUCT_DISABLE_EATBY') && !empty($eatby)) {
+		$batchinfo .= ' - '.$langs->trans("EatByDate").': '.dol_print_date($eatby, "day");
+	}
+
+	return $form->textwithtooltip(img_picto('', 'object_barcode').' '.dol_escape_htmltag($batch), $batchinfo);
 }

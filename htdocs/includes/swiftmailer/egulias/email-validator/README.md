@@ -76,4 +76,3 @@ As this is a port from another library and work, here are other people related t
 
 ## License ##
 Released under the MIT License attached with this code.
-

@@ -56,6 +56,11 @@ class Controller
 	 */
 	public $tplPath;
 
+	/**
+	 * @var FormListWebPortal Form for list
+	 */
+	public $formList;
+
 
 	/**
 	 * Constructor

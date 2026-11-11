@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +42,7 @@
  * @var ?int $usercangeneratedoc
  * @var int $permissiontoadd
  * @var string $upload_dir
+ * @var int $donotredirect
  *
  * @var ?int $hidedetails
  * @var ?int $hidedesc
@@ -49,8 +50,14 @@
  * @var ?array<string,mixed> $moreparams
  */
 '
+@phan-var-force int $id
+@phan-var-force int $permissiontoadd
+@phan-var-force ?int $hidedetails
+@phan-var-force ?int $hidedesc
+@phan-var-force ?int $hideref
 @phan-var-force ?array<string,mixed> $moreparams
 @phan-var-force CommonObject|Societe $object
+@phan-var-force int $id
 ';
 
 if (!empty($permissioncreate) && empty($permissiontoadd)) {
@@ -58,7 +65,7 @@ if (!empty($permissioncreate) && empty($permissiontoadd)) {
 }
 
 // Build doc
-if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneretedoc))) {
+if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneratedoc))) {
 	if (is_numeric(GETPOST('model', 'alpha'))) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Model")), null, 'errors');
 	} else {
@@ -97,14 +104,23 @@ if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneretedoc))) 
 		}
 
 		// To be sure vars is defined
-		$hidedetails = isset($hidedetails) ? $hidedetails : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0);
-		$hidedesc = isset($hidedesc) ? $hidedesc : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0);
-		$hideref = isset($hideref) ? $hideref : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0);
+		$hidedetails = isset($hidedetails) ? $hidedetails : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0);  // @phan-suppress-current-line PhanPluginUndeclaredVariableIsset
+		$hidedesc = isset($hidedesc) ? $hidedesc : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0);  // @phan-suppress-current-line PhanPluginUndeclaredVariableIsset
+		$hideref = isset($hideref) ? $hideref : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0);  // @phan-suppress-current-line PhanPluginUndeclaredVariableIsset
 		$moreparams = isset($moreparams) ? $moreparams : null;
+		// Choice made on the generation form to append or not the terms of sale file
+		if (GETPOSTISSET('addtermsofsale_shown')) {
+			if (!is_array($moreparams)) {
+				$moreparams = array();
+			}
+			$moreparams['addtermsofsale'] = (GETPOSTINT('addtermsofsale') ? 1 : 0);
+		}
 
 		$result = $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+
 		if ($result <= 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
+			setEventMessages($object->warning, $object->warnings, 'warnings');
 			$action = '';
 		} else {
 			if (empty($donotredirect)) {	// This is set when include is done by bulk action "Bill Orders"
@@ -135,12 +151,12 @@ if ($action == 'remove_file' && $permissiontoadd) {
 		$langs->load("other");
 		$filetodelete = GETPOST('file', 'alpha');
 		$file = $upload_dir.'/'.$filetodelete;
-		$dirthumb = dirname($file).'/thumbs/'; // Chemin du dossier contenant la vignette (if file is an image)
-		$ret = dol_delete_file($file, 0, 0, 0, $object);
+		$dirthumb = dirname($file).'/thumbs/'; // Path to the folder containing the thumbnail (if file is an image)
+		$ret = dol_delete_file($file, 1, 0, 0, $object);
 		if ($ret) {
 			// If it exists, remove thumb.
 			$regs = array();
-			if (preg_match('/(\.jpg|\.jpeg|\.bmp|\.gif|\.png|\.tiff)$/i', $file, $regs)) {
+			if (preg_match('/(\.jpg|\.jpeg|\.bmp|\.gif|\.png|\.tiff|\.webp|\.xpm|\.xbm|\.avif)$/i', $file, $regs)) {
 				$photo_vignette = basename(preg_replace('/'.$regs[0].'/i', '', $file).'_small'.$regs[0]);
 				if (file_exists(dol_osencode($dirthumb.$photo_vignette))) {
 					dol_delete_file($dirthumb.$photo_vignette);

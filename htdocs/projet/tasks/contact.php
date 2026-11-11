@@ -27,12 +27,6 @@
  */
 
 require "../../main.inc.php";
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -40,14 +34,20 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies'));
 
-$id = GETPOSTINT('id');
-$ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
+
+$id = GETPOSTINT('id');						// Id of task
+$ref = GETPOST('ref', 'alpha');				// Ref of task
 $withproject = GETPOSTINT('withproject');
 $project_ref = GETPOST('project_ref', 'alpha');
 
@@ -56,6 +56,7 @@ $projectstatic = new Project($db);
 
 $hookmanager->initHooks(array('projecttaskcontact', 'globalcard'));
 
+// Load task
 if ($id > 0 || $ref) {
 	$object->fetch($id, $ref);
 }
@@ -95,7 +96,7 @@ if (empty($reshook)) {
 				$typeid = GETPOST('typecontact');
 			}
 			if ($idfortaskuser == -2) {
-				$result = $projectstatic->fetch($object->fk_project);
+				$result = $projectstatic->fetch((int) $object->fk_project);
 				if ($result <= 0) {
 					dol_print_error($db, $projectstatic->error, $projectstatic->errors);
 				} else {
@@ -165,7 +166,7 @@ $form = new Form($db);
 $formcompany   = new FormCompany($db);
 $contactstatic = new Contact($db);
 $userstatic = new User($db);
-$result = $projectstatic->fetch($object->fk_project);
+$result = $projectstatic->fetch((int) $object->fk_project);
 
 $title = $object->ref . ' - ' . $langs->trans("Contacts");
 if (!empty($withproject)) {
@@ -184,11 +185,11 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project project-task
 
 if ($id > 0 || !empty($ref)) {
 	if ($object->fetch($id, $ref) > 0) {
-		if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_TASK') && method_exists($object, 'fetchComments') && empty($object->comments)) {
-			$object->fetchComments();
-		}
 		$id = $object->id; // So when doing a search from ref, id is also set correctly.
 
+		if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_TASK') && empty($object->comments)) {
+			$object->fetchComments();
+		}
 		if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
 			$projectstatic->fetchComments();
 		}
@@ -227,7 +228,7 @@ if ($id > 0 || !empty($ref)) {
 				$projectstatic->next_prev_filter = "rowid:IN:".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0');
 			}
 
-			dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+			dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);
 
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';
@@ -270,7 +271,7 @@ if ($id > 0 || !empty($ref)) {
 			// Budget
 			print '<tr><td>'.$langs->trans("Budget").'</td><td>';
 			if (isset($projectstatic->budget_amount) && strcmp($projectstatic->budget_amount, '')) {
-				print price($projectstatic->budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
+				print '<span class="amount">'.price($projectstatic->budget_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
 			}
 			print '</td></tr>';
 
@@ -364,7 +365,7 @@ if ($id > 0 || !empty($ref)) {
 
 		// Project
 		if (empty($withproject)) {
-			$result = $projectstatic->fetch($object->fk_project);
+			$result = $projectstatic->fetch((int) $object->fk_project);
 			$morehtmlref .= '<div class="refidno">';
 			$morehtmlref .= $langs->trans("Project").': ';
 			$morehtmlref .= $projectstatic->getNomUrl(1);
@@ -432,7 +433,7 @@ if ($id > 0 || !empty($ref)) {
 			print '</td>';
 
 			print '<td>';
-			// On recupere les id des users deja selectionnes
+			// Retrieve ids of already selected users
 			if ($object->project->public) {
 				$contactsofproject = ''; // Everybody
 			} else {
@@ -555,7 +556,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<td class="center">';
 				// Activation desativation du contact
 				if ($object->status >= 0) {
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=swapstatut&ligne='.$tab[$i]['rowid'].($withproject ? '&withproject=1' : '').'">';
+					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $object->id).'&action=swapstatut&token='.newToken().'&ligne='.((int) $tab[$i]['rowid']).($withproject ? '&withproject=1' : '').'">';
 				}
 				print $contactstatic->LibStatut($tab[$i]['status'], 3);
 				if ($object->status >= 0) {
@@ -567,7 +568,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<td class="center nowrap">';
 				if ($user->hasRight('projet', 'creer')) {
 					print '&nbsp;';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteline&token='.newToken().'&lineid='.$tab[$i]['rowid'].($withproject ? '&withproject=1' : '').'">';
+					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteline&token='.newToken().'&lineid='.((int) $tab[$i]['rowid']).($withproject ? '&withproject=1' : '').'">';
 					print img_picto($langs->trans('Unlink'), 'unlink');
 					print '</a>';
 				}

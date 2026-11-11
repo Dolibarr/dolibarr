@@ -137,7 +137,7 @@ class Zapier extends DolibarrApi
 	 * @param string           $sortorder           Sort order
 	 * @param int              $limit               Limit for list
 	 * @param int              $page                Page number
-	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
 	 * @phan-return Hook[]
@@ -275,7 +275,7 @@ class Zapier extends DolibarrApi
 		}
 
 		if (!$this->hook->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when deleting Hook : '.$this->hook->error);
+			throw new RestException(500, 'Error when deleting Hook : '.$this->hook->errorsToString());
 		}
 
 		return array(
@@ -290,8 +290,13 @@ class Zapier extends DolibarrApi
 	/**
 	 * Clean sensible object datas
 	 *
+	 * @phpstan-template T
+	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
+	 *
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	public function _cleanObjectDatas($object)
 	{

@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2013-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García	    <marcosgdf@gmail.com>
- * Copyright (C) 2020-2025  Frédéric France		<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2020-2026  Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +70,7 @@ class Opensurveysondage extends CommonObject
 	 *
 	 * @var array<array{id_users:int,nom:string,responses:string}>
 	 */
-	public $lines;
+	public $lines; // @phpstan-ignore-line
 
 	/**
 	 *  'type' field format:
@@ -84,7 +84,7 @@ class Opensurveysondage extends CommonObject
 	 *  	'date', 'datetime', 'timestamp', 'duration',
 	 *  	'boolean', 'checkbox', 'radio', 'array',
 	 *  	'mail', 'phone', 'url', 'password', 'ip'
-	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalInt("MY_SETUP_PARAM")' or 'isModEnabled("multicurrency")' ...)
@@ -113,7 +113,7 @@ class Opensurveysondage extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'id_sondage' => array('type' => 'varchar(16)', 'label' => 'Idsondage', 'enabled' => '1', 'position' => 10, 'notnull' => 1, 'visible' => -1,),
@@ -182,7 +182,7 @@ class Opensurveysondage extends CommonObject
 	public $status;
 
 	/**
-	 * @var ?string format 'A' = Text choice (choices are saved into sujet field), 'D' = Date choice (choices are saved into sujet field), 'F' = Form survey
+	 * @var ?string format 'A' = Text choice (choices are saved into 'sujet' field), 'D' = Date choice (choices are saved into 'sujet' field), 'F' = Form survey
 	 */
 	public $format;
 
@@ -347,7 +347,7 @@ class Opensurveysondage extends CommonObject
 		$sql .= " t.sujet,";
 		$sql .= " t.tms";
 		$sql .= " FROM ".MAIN_DB_PREFIX."opensurvey_sondage as t";
-		$sql .= " WHERE t.id_sondage = '".$this->db->escape($id ? $id : $numsurvey)."'";
+		$sql .= " WHERE t.id_sondage = '".$this->db->escape($id ? ((int) $id) : $numsurvey)."'";
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -486,6 +486,14 @@ class Opensurveysondage extends CommonObject
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."opensurvey_comments WHERE id_sondage = '".$this->db->escape($numsondage)."'";
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
+			// Answers and questions of a survey of format 'F' (form), the answers must be deleted before the respondents they refer to
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."opensurvey_user_formanswers WHERE fk_user_survey IN";
+			$sql .= " (SELECT id_users FROM ".MAIN_DB_PREFIX."opensurvey_user_studs WHERE id_sondage = '".$this->db->escape($numsondage)."')";
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."opensurvey_formquestions WHERE id_sondage = '".$this->db->escape($numsondage)."'";
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			$resql = $this->db->query($sql);
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."opensurvey_user_studs WHERE id_sondage = '".$this->db->escape($numsondage)."'";
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -513,6 +521,43 @@ class Opensurveysondage extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
+	}
+
+	/**
+	 * Delete a respondent of the survey, with the answers of a survey of format 'F' (form) that he gave
+	 *
+	 * @param	int		$idusers	Id of the respondent (id_users of the table opensurvey_user_studs)
+	 * @return	int					Return integer <0 if KO, 0 if the respondent is not a respondent of this survey, >0 if OK
+	 */
+	public function deleteVoter($idusers)
+	{
+		// The respondent must be one of this survey
+		$sql = "SELECT id_users FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
+		$sql .= " WHERE id_users = ".((int) $idusers)." AND id_sondage = '".$this->db->escape($this->id_sondage)."'";
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		if ($this->db->num_rows($resql) == 0) {
+			return 0;
+		}
+
+		$this->db->begin();
+
+		$resql = $this->db->query("DELETE FROM ".MAIN_DB_PREFIX."opensurvey_user_formanswers WHERE fk_user_survey = ".((int) $idusers));
+		if ($resql) {
+			$resql = $this->db->query("DELETE FROM ".MAIN_DB_PREFIX."opensurvey_user_studs WHERE id_users = ".((int) $idusers)." AND id_sondage = '".$this->db->escape($this->id_sondage)."'");
+		}
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			$this->db->rollback();
+			return -1;
+		}
+
+		$this->db->commit();
+
+		return 1;
 	}
 
 	/**

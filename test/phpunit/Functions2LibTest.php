@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024      MDW                  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                  <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,12 +25,11 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/functions2.lib.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/functions2.lib.php';
 
 if (! defined('NOREQUIREUSER')) {
 	define('NOREQUIREUSER', '1');
@@ -74,15 +73,58 @@ if (! defined("NOLOGIN")) {
 class Functions2LibTest extends CommonClassTest
 {
 	/**
-	 * testJsUnEscape
+	 * Data provider for testJsUnEscape.
 	 *
+	 * Note: Tests the behavior of jsUnEscape() which mimics JavaScript's deprecated unescape() function.
+	 * JavaScript unescape() reads exactly 4 hex digits after %u and 2 hex digits after %.
+	 *
+	 * @return array<int, array{0: string, 1: string}>
+	 */
+	public static function unescapeProvider(): array
+	{
+		return [
+			// Original Mixed %uXXXX only test
+			['%u03BD%u03B5%u03BF','νεο'],
+
+			// Mixed %uXXXX and raw UTF-8
+			['Hello %u0041 ❤ %u2764', 'Hello A ❤ ❤'],
+
+			// %u1F600 is decoded as %u1F60 (ὠ) + 0 (js unescape only reads 4 hex digits after %u)
+			['Café %u1F600 😊 %u2764', 'Café ὠ0 😊 ❤'],
+
+			// %F0%9F%8C%88 is decoded as individual bytes that form 🌈 in UTF-8
+			// %u1F308 is decoded as %u1F30 (ι with tonos) + 8 (js unescape only reads 4 hex digits after %u)
+			['%F0%9F%8C%88 %u1F308', "\xF0\x9F\x8C\x88 \xE1\xBC\xB0\x38"],
+
+			// %u20AC is correctly decoded to €, but %E2%82%AC is also decoded to € (bytes form UTF-8)
+			['Price: %u20AC100 or %E2%82%AC100', 'Price: €100 or ' . chr(0xE2) . chr(0x82) . chr(0xAC) . '100'],
+
+			// %u26A1 is correct, but %F0%9F%8C%88 is decoded as individual bytes
+			['%u26A1 %F0%9F%8C%88 %u2194', '⚡ ' . chr(0xF0) . chr(0x9F) . chr(0x8C) . chr(0x88) . ' ↔'],
+
+			// %u0024 is correctly decoded to $
+			['%u0024100', '$100'],
+
+			// %20 is correctly decoded to space
+			['%20', ' '],
+
+			// %u0020 is correctly decoded to space
+			['%u0020', ' ']
+		];
+	}
+
+	/**
+	 * Test jsUnEscape function.
 	 * @return void
 	 */
 	public function testJsUnEscape()
 	{
-		$result = jsUnEscape('%u03BD%u03B5%u03BF');
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('νεο', $result);
+		foreach ($this->unescapeProvider() as $case) {
+			list($input, $expected) = $case;
+			$result = jsUnEscape($input);
+			print __METHOD__." result=".$result."\n";
+			$this->assertEquals($result, $expected);
+		}
 	}
 
 	/**
@@ -235,18 +277,14 @@ class Functions2LibTest extends CommonClassTest
 	/**
 	 * Test get_string_between()
 	 *
-	 * @param string $string String to search in.
-	 * @param string $start String indicating start
-	 * @param string $end String indicating end
-	 * @param string $expected Expected result
-	 *
 	 * @return void
-	 *
-	 * @dataProvider stringBetweenDataProvider
 	 */
-	public function testGetStringBetween($string, $start, $end, $expected)
+	public function testGetStringBetween()
 	{
-		$this->assertEquals($expected, get_string_between($string, $start, $end));
+		foreach ($this->stringBetweenDataProvider() as $case) {
+			list($string, $start, $end, $expected) = $case;
+			$this->assertEquals($expected, get_string_between($string, $start, $end));
+		}
 	}
 
 
@@ -276,19 +314,17 @@ class Functions2LibTest extends CommonClassTest
 	/**
 	 * Test numero_semaine()
 	 *
-	 * @param string $time_str Time (string) to test
-	 * @param int    $expected_week Week expected
-	 *
 	 * @return void
-	 *
-	 * @dataProvider numeroSemaineDataProvider
 	 */
-	public function testNumeroSemaine($time_str, $expected_week)
+	public function testNumeroSemaine()
 	{
-		$time = strtotime($time_str);
-		$str = date(DATE_ATOM, $time).PHP_EOL;
-		print __METHOD__." time=".$time."\n";
-		$this->assertEquals($expected_week, numero_semaine($time), "Computed week incorrect for $str");
+		foreach ($this->numeroSemaineDataProvider() as $case) {
+			list($time_str, $expected_week) = $case;
+			$time = strtotime($time_str);
+			$str = date(DATE_ATOM, $time).PHP_EOL;
+			print __METHOD__." time=".$time."\n";
+			$this->assertEquals($expected_week, numero_semaine($time), "Computed week incorrect for $str");
+		}
 	}
 
 
@@ -312,5 +348,49 @@ class Functions2LibTest extends CommonClassTest
 		$text = 'abc ✅ def';
 		$result = removeEmoji($text, 2);
 		$this->assertEquals($text, $result, 'testRemoveEmoji 2');
+	}
+
+	/**
+	 * Test colorGetContrastRatio()
+	 *
+	 * @return void
+	 */
+	public function testColorGetContrastRatio()
+	{
+		print __METHOD__."\n";
+
+		$this->assertEqualsWithDelta(21.0, colorGetContrastRatio('#000000', '#ffffff'), 0.001, 'black on white');
+		$this->assertEqualsWithDelta(21.0, colorGetContrastRatio('fff', '000'), 0.001, 'short hex, any order');
+		$this->assertEqualsWithDelta(1.0, colorGetContrastRatio('#263c5c', '38,60,92'), 0.001, 'hex and comma RGB');
+		$this->assertEqualsWithDelta(1.79, colorGetContrastRatio('#e6be00', 'FFFFFF'), 0.01, 'white on yellow');
+		$this->assertEqualsWithDelta(11.73, colorGetContrastRatio('#e6be00', '000000'), 0.01, 'black on yellow');
+		$this->assertEqualsWithDelta(2.33, colorGetContrastRatio('#ff8c00', 'FFFFFF'), 0.01, 'white on orange');
+		$this->assertEqualsWithDelta(11.15, colorGetContrastRatio('#263c5c', 'FFFFFF'), 0.01, 'white on default eldy top menu');
+		$this->assertEqualsWithDelta(4.84, colorGetContrastRatio('#007f7f', 'FFFFFF'), 0.01, 'white on teal');
+		$this->assertEqualsWithDelta(4.34, colorGetContrastRatio('#007f7f', '000000'), 0.01, 'black on teal');
+
+		$this->assertSame(0.0, colorGetContrastRatio('notacolor', '#ffffff'), 'invalid first color');
+		$this->assertSame(0.0, colorGetContrastRatio('#ffffff', '#12345'), 'invalid second color');
+		$this->assertSame(0.0, colorGetContrastRatio('', '#ffffff'), 'empty color');
+	}
+
+	/**
+	 * Test colorGetReadableTextColor()
+	 *
+	 * @return void
+	 */
+	public function testColorGetReadableTextColor()
+	{
+		print __METHOD__."\n";
+
+		$this->assertSame('000000', colorGetReadableTextColor('#e6be00', 'FFFFFF', '000000'), 'white on yellow is below 3:1');
+		$this->assertSame('000000', colorGetReadableTextColor('255,140,0', 'FFFFFF', '000000'), 'white on orange is below 3:1');
+		$this->assertSame('FFFFFF', colorGetReadableTextColor('#4a90e2', 'FFFFFF', '000000'), 'white on mid blue is kept although black contrasts more');
+		$this->assertSame('FFFFFF', colorGetReadableTextColor('38,60,92', 'FFFFFF', '000000'), 'default eldy top menu');
+		$this->assertSame('222222', colorGetReadableTextColor('248,248,248', '222222', 'FFFFFF'), 'dark on light is kept');
+		$this->assertSame('FFFFFF', colorGetReadableTextColor('#1e1e1e', '222222', 'FFFFFF'), 'dark on dark switches to light');
+		$this->assertSame('777777', colorGetReadableTextColor('#808080', '777777', '888888'), 'other color is not better');
+		$this->assertSame('FFFFFF', colorGetReadableTextColor('notacolor', 'FFFFFF', '000000'), 'invalid background keeps the text color');
+		$this->assertSame('FFFFFF', colorGetReadableTextColor('#e6be00', 'FFFFFF', '000000', 1.5), 'white on yellow is kept with a 1.5 minimum');
 	}
 }

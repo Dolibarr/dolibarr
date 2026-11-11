@@ -4,8 +4,9 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,18 +30,18 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
-if (isModEnabled('project')) {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-}
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'donations'));
@@ -92,7 +93,6 @@ $pagenext = $page + 1;
 
 // Initialize a technical objects
 $object = new Don($db);
-$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->don->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array($contextpage)); 	// Note that conf->hooks_modules contains array of activated contexes
 
@@ -130,11 +130,21 @@ $fieldstosearchall = array(
 	'd.lastname' => 'Lastname',
 	'd.firstname' => 'Firstname',
 );
+
+$arrayfields = array();
+
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
+// Complete arrayfields with special fields
+/*$arrayfields = array_merge($arrayfields, array(
+	'anotherfield' => array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>'1', 'enabled'=>'1', 'position'=>'90', 'csslist'=>'right'),
+));*/
 
 $object->fields = dol_sort_array($object->fields, 'position');
-//$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 
@@ -236,9 +246,9 @@ $morecss = array();
 
 // Build and execute select
 // --------------------------------------------------------------------
-$sql = "SELECT d.rowid, d.datedon, d.fk_soc as socid, d.firstname, d.lastname, d.societe,";
-$sql .= " d.amount, d.fk_statut as status,";
-$sql .= " p.rowid as pid, p.ref, p.title, p.public";
+$sql = "SELECT d.rowid, d.ref, d.datedon, d.fk_soc as socid, d.firstname, d.lastname, d.societe,";
+$sql .= " d.amount, d.fk_statut as status, s.nom,";
+$sql .= " p.rowid as pid, p.ref as pref, p.title, p.public";
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -250,6 +260,10 @@ $sqlfields = $sql; // $sql fields to remove for count total
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS p";
 $sql .= " ON p.rowid = d.fk_projet";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe AS s ON s.rowid = d.fk_soc";
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE d.entity IN (". getEntity('donation') . ")";
 
 if ($search_status != '' && $search_status != '-4') {
@@ -279,6 +293,10 @@ if ($search_date_start) {
 if ($search_date_end) {
 	$sql .= " AND d.datedon <= '".$db->idate($search_date_end)."'";
 }
+// Add where from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -328,21 +346,6 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 // --------------------------------------------------------------------
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-donation page-list bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
-
-// Example : Adding jquery code
-// print '<script type="text/javascript">
-// jQuery(document).ready(function() {
-// 	function init_myfunc()
-// 	{
-// 		jQuery("#myid").removeAttr(\'disabled\');
-// 		jQuery("#myid").attr(\'disabled\',\'disabled\');
-// 	}
-// 	init_myfunc();
-// 	jQuery("#mybutton").click(function() {
-// 		init_myfunc();
-// 	});
-// });
-// </script>';
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -437,6 +440,7 @@ print '<input type="hidden" name="type" value="'.$type.'">';
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/don/stats/index.php?'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewDonation'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/don/card.php?action=create', '', $permissiontoadd);
 
@@ -563,7 +567,7 @@ if ($conf->main_checkbox_left_column) {
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.rowid", "", $param, "", $sortfield, $sortorder);
 $totalarray['nbfield']++;
 if (getDolGlobalString('DONATION_USE_THIRDPARTIES')) {
-	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "d.fk_soc", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 } else {
 	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "d.societe", "", $param, "", $sortfield, $sortorder);
@@ -602,10 +606,10 @@ while ($i < $imaxinloop) {
 
 	$donationstatic->setVarsFromFetchObj($obj);
 
-	$donationstatic->id = $obj->rowid;
-	$donationstatic->ref = $obj->rowid;
+	$donationstatic->id = (int) $obj->rowid;
+	$donationstatic->ref = ($obj->ref ? $obj->ref : $obj->rowid);
 	$donationstatic->date = $db->jdate($obj->datedon);
-	$donationstatic->status = $obj->status;
+	$donationstatic->status = (int) $obj->status;
 	$donationstatic->lastname = $obj->lastname;
 	$donationstatic->firstname = $obj->firstname;
 	$object = $donationstatic;
@@ -625,7 +629,7 @@ while ($i < $imaxinloop) {
 		if (!empty($obj->socid) && $company->id > 0) {
 			$donationstatic->societe = $company->getNomUrl(1);
 		} else {
-			$donationstatic->societe = $obj->societe;
+			$donationstatic->societe = (string) $obj->societe;  // Value from sql query
 		}
 
 		$object = $donationstatic;
@@ -687,8 +691,7 @@ while ($i < $imaxinloop) {
 			print "<td>";
 			if ($obj->pid) {
 				$projectstatic->id = $obj->pid;
-				$projectstatic->ref = $obj->ref;
-				$projectstatic->id = $obj->pid;
+				$projectstatic->ref = $obj->pref;
 				$projectstatic->public = $obj->public;
 				$projectstatic->title = $obj->title;
 				print $projectstatic->getNomUrl(1);
@@ -700,7 +703,7 @@ while ($i < $imaxinloop) {
 		print '<td class="right"><span class="amount">'.price($obj->amount).'</span></td>';
 
 		// Status
-		print '<td class="center">'.$donationstatic->LibStatut($obj->status, 5).'</td>';
+		print '<td class="center">'.$donationstatic->LibStatut($donationstatic->status, 5).'</td>';
 
 		// Action column
 		if (empty($conf->main_checkbox_left_column)) {

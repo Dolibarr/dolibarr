@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin                <regis.houssin@inodbox.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  * Copyright (C) 2013      Juanjo Menent				<jmenent@2byte.es>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -46,11 +46,16 @@ class mod_arctic extends ModeleNumRefFicheinter
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
+	 * @var string Name of model
 	 * @deprecated Use $name, getName()
 	 * @see $name
 	 */
 	public $nom = 'arctic';
+
+	/**
+	 * @var int		Position
+	 */
+	public $position = 60;
 
 	/**
 	 * @var string model name

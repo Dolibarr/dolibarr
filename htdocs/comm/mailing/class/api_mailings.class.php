@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2025		Cloned from htdocs/comm/propal/class/api_proposals.class.php then modified
  * Copyright (C) 2025		Jon Bendtsen <jon.bendtsen.github@jonb.dk>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -374,7 +375,7 @@ class Mailings extends DolibarrApi
 		if ($cloningResult > 0) {
 			return $this->get($cloningResult);
 		} else {
-			throw new RestException(500, $this->mailing->error);
+			throw new RestException(500, $this->mailing->errorsToString());
 		}
 	}
 
@@ -465,7 +466,7 @@ class Mailings extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->mailing->array_options[$index] = $this->_checkValForAPI($field, $val, $this->mailing);
+					$this->mailing->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->mailing);
 				}
 				continue;
 			}
@@ -476,7 +477,7 @@ class Mailings extends DolibarrApi
 		if ($this->mailing->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->mailing->error);
+			throw new RestException(500, $this->mailing->errorsToString());
 		}
 	}
 
@@ -513,7 +514,7 @@ class Mailings extends DolibarrApi
 		}
 
 		if (!$this->mailing->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete Mass mailing : '.$this->mailing->error);
+			throw new RestException(500, 'Error when delete Mass mailing : '.$this->mailing->errorsToString());
 		}
 
 		return array(
@@ -586,7 +587,7 @@ class Mailings extends DolibarrApi
 		if ($this->mailing_target->update(DolibarrApiAccess::$user) > 0) {
 			return $this->getTarget($id, $targetid);
 		} else {
-			throw new RestException(500, $this->mailing_target->error);
+			throw new RestException(500, $this->mailing_target->errorsToString());
 		}
 	}
 
@@ -761,7 +762,7 @@ class Mailings extends DolibarrApi
 		}
 
 		if (!$this->mailing_target->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete Mass mailing target: '.$this->mailing->error);
+			throw new RestException(500, 'Error when delete Mass mailing target: '.$this->mailing->errorsToString());
 		}
 
 		return array(
@@ -808,7 +809,7 @@ class Mailings extends DolibarrApi
 
 		$count = $this->mailing->countNbOfTargets('all');
 		if (!$this->mailing->delete_targets()) {
-			throw new RestException(500, 'Error when delete targets of Mass mailing : '.$this->mailing->error);
+			throw new RestException(500, 'Error when delete targets of Mass mailing : '.$this->mailing->errorsToString());
 		}
 
 		return array(
@@ -855,7 +856,7 @@ class Mailings extends DolibarrApi
 
 		$count = $this->mailing->countNbOfTargets('all');
 		if (!$this->mailing->reset_targets_status(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when reset targets status of Mass mailing : '.$this->mailing->error);
+			throw new RestException(500, 'Error when reset targets status of Mass mailing : '.$this->mailing->errorsToString());
 		}
 
 		return array(
@@ -904,7 +905,7 @@ class Mailings extends DolibarrApi
 			throw new RestException(304, 'Nothing done. May be object is already draft');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error : '.$this->mailing->error);
+			throw new RestException(500, 'Error : '.$this->mailing->errorsToString());
 		}
 
 		$this->mailing->fetchObjectLinked();
@@ -956,7 +957,7 @@ class Mailings extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating Mass mailing: '.$this->mailing->error);
+			throw new RestException(500, 'Error when validating Mass mailing: '.$this->mailing->errorsToString());
 		}
 
 		$this->mailing->fetchObjectLinked();
@@ -1147,9 +1148,12 @@ class Mailings extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{

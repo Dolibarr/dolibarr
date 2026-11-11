@@ -3,8 +3,8 @@
  * Copyright (C) 2004-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2024	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Herve Prot				<herve.prot@symeos.com>
- * Copyright (C) 2019-2024  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019-2026  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,15 +28,16 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
+
 
 // Load translation files required by page
 $langs->loadLangs(array("users"));
@@ -71,7 +72,7 @@ $pagenext = $page + 1;
 
 // Initialize a technical objects
 $object = new UserGroup($db);
-$extrafields = new ExtraFields($db);
+
 //$diroutputmassaction = $conf->mymodule->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array($contextpage)); 	// Note that conf->hooks_modules contains array of activated contexes
 
@@ -89,6 +90,9 @@ if (!$sortorder) {
 }
 
 $arrayfields = array();
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
@@ -108,12 +112,13 @@ if (!$user->hasRight("user", "user", "read") && !$user->admin) {
 	accessforbidden();
 }
 
-// Defini si peux lire/modifier utilisateurs et permissions
+// Define if user can modify other users and permissions
 $caneditperms = (isModEnabled('multicompany') && !empty($user->entity) && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') ? false : (!empty($user->admin) || $user->hasRight("user", "user", "write")));
-$permissiontodelete = $caneditperms;
+$permissiontodelete = (isModEnabled('multicompany') && !empty($user->entity) && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') ? false : (!empty($user->admin) || $user->hasRight("user", "user", "delete")));
 // Advanced permissions
 if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$caneditperms = (isModEnabled('multicompany') && !empty($user->entity) && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') ? false : ($user->admin || $user->hasRight("user", "group_advance", "write")));
+	$permissiontodelete = (isModEnabled('multicompany') && !empty($user->entity) && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') ? false : ($user->admin || $user->hasRight("user", "group_advance", "delete")));
 }
 
 
@@ -190,7 +195,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_rights as ugr ON ugr.fk_usergrou
 if (isModEnabled('multicompany') && $conf->entity == 1 && (getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE') || ($user->admin && !$user->entity))) {
 	$sql .= " WHERE g.entity IS NOT NULL";
 } else {
-	$sql .= " WHERE g.entity IN (0,".$conf->entity.")";
+	$sql .= " WHERE g.entity IN (0,".((int) $conf->entity).")";
 }
 if (!empty($search_group)) {
 	natural_search(array("g.nom", "g.note"), $search_group);
@@ -377,7 +382,7 @@ if ($conf->main_checkbox_left_column) {
 print_liste_field_titre("Group", $_SERVER["PHP_SELF"], "g.nom", '', $param, "", $sortfield, $sortorder);
 $totalarray['nbfield']++;
 //multicompany
-if (isModEnabled('multicompany') && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1) {
+if (isModEnabled('multicompany') && isset($mc) && is_object($mc) && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1) {
 	print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], "g.entity", '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
@@ -448,7 +453,6 @@ while ($i < $imaxinloop) {
 		}
 	} else {
 		// Show line of result
-		$j = 0;
 		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
 		// Action column
 		if ($conf->main_checkbox_left_column) {
@@ -469,21 +473,24 @@ while ($i < $imaxinloop) {
 		print '<td class="tdoverflowmax200">';
 		print $object->getNomUrl(1);
 		if (isModEnabled('multicompany') && !$obj->entity) {
-			print img_picto($langs->trans("GlobalGroup"), 'redstar');
+			print img_picto($langs->trans("GlobalGroup"), 'superadmin');
 		}
 		print "</td>";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
-		//multicompany
-		if (isModEnabled('multicompany') && is_object($mc) && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1) {
+
+		// Multicompany column
+		if (isModEnabled('multicompany') && isset($mc) && is_object($mc) && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1) {
 			$mc->getInfo($obj->entity);
 			print '<td class="center">'.dol_escape_htmltag($mc->label).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
-		print '<td class="center">'.dol_escape_htmltag($obj->nb).'</td>';
+
+		// Nb of users in group
+		print '<td class="center">'.($obj->nb ? dol_escape_htmltag($obj->nb) : '').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

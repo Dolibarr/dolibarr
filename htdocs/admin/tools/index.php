@@ -55,7 +55,7 @@ llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-admin page-tools_index');
 
 print load_fiche_titre($title, '', 'title_setup');
 
-print $langs->trans("SystemToolsAreaDesc").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("SystemToolsAreaDesc").'</span><br>';
 print "<br>";
 
 print info_admin($langs->trans("SystemAreaForAdminOnly")).'<br>';

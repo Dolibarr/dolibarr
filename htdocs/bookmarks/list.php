@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2022	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France         	<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         	<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,15 +25,16 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
+
+require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('other', 'admin'));
@@ -74,8 +75,11 @@ if (!$sortorder) {
 
 // Initialize Objects
 $object = new Bookmark($db);
-$extrafields = new ExtraFields($db);
+
 $arrayfields = array();
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $hookmanager->initHooks(array('bookmarklist')); // Note that conf->hooks_modules contains array
 
 if ($id > 0) {
@@ -121,6 +125,23 @@ if (empty($reshook)) {
 		$massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
 	}
 
+	// Without the permission to delete all bookmarks, a user can only delete his own bookmarks: the mass action must
+	// not delete other records than these, whatever the list of ids received.
+	if (!$user->hasRight('bookmark', 'supprimer') && is_array($toselect) && count($toselect) > 0) {
+		$ownbookmarks = array();
+		$sqlown = "SELECT rowid FROM ".MAIN_DB_PREFIX."bookmark";
+		$sqlown .= " WHERE rowid IN (".$db->sanitize(implode(',', array_map('intval', $toselect))).")";
+		$sqlown .= " AND fk_user = ".((int) $user->id);
+		$sqlown .= " AND entity IN (".getEntity('bookmark').")";
+		$resqlown = $db->query($sqlown);
+		if ($resqlown) {
+			while ($objown = $db->fetch_object($resqlown)) {
+				$ownbookmarks[] = (int) $objown->rowid;
+			}
+		}
+		$toselect = $ownbookmarks;
+	}
+
 	// Mass actions
 	$objectclass = 'Bookmark';
 	$objectlabel = 'Bookmark';
@@ -129,6 +150,7 @@ if (empty($reshook)) {
 
 	if ($action == 'delete' && $permissiontodelete) {
 		$object->fetch($id);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$res = $object->delete($user);
 		if ($res > 0) {
 			header("Location: ".$_SERVER["PHP_SELF"]);
@@ -175,6 +197,10 @@ $sql = preg_replace('/,\s*$/', '', $sql);
 $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as b LEFT JOIN ".MAIN_DB_PREFIX."user as u ON b.fk_user=u.rowid";
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action);	// Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE 1=1";
 if ($search_title) {
 	$sql .= natural_search('title', $search_title);
@@ -183,6 +209,10 @@ $sql .= " AND b.entity IN (".getEntity('bookmark').")";
 if (!$user->admin) {
 	$sql .= " AND (b.fk_user = ".((int) $user->id)." OR b.fk_user is NULL OR b.fk_user = 0)";
 }
+// Add where from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -306,7 +336,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
@@ -322,7 +352,7 @@ $totalarray['nbfield'] = 0;
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -340,7 +370,7 @@ print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "b.dateb", "", $pa
 $totalarray['nbfield']++;
 print_liste_field_titre("Position", $_SERVER["PHP_SELF"], "b.position", "", $param, '', $sortfield, $sortorder, 'right ');
 $totalarray['nbfield']++;
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -385,7 +415,7 @@ while ($i < $imaxinloop) {
 		$j = 0;
 		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -425,7 +455,6 @@ while ($i < $imaxinloop) {
 			print img_picto('', 'url', 'class="pictofixedwidth"');
 			print '<a class="" href="'.$obj->url.'"'.($obj->target ? ' target="newlink" rel="noopener"' : '').'>';
 		} else {
-			//print img_picto('', 'rightarrow', 'class="pictofixedwidth"');
 			print '<a class="" href="'.$obj->url.'">';
 		}
 		print $link;
@@ -468,7 +497,7 @@ while ($i < $imaxinloop) {
 		print '<td class="right">'.$obj->position."</td>";
 
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;

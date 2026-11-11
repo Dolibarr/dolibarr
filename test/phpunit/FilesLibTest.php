@@ -3,7 +3,8 @@
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2023		Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Joachim Kueter          <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,12 +28,11 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -486,6 +486,230 @@ class FilesLibTest extends CommonClassTest
 		// We restore user properties
 		$user->rights->facture->lire = $savpermlire;
 		$user->rights->facture->creer = $savpermcreer;
+
+		// The API maps modulepart to 'supplier_invoice' / 'supplier_order': they must use the supplier module permissions
+		if (!empty($conf->fournisseur->facture->dir_output) && !empty($conf->fournisseur->commande->dir_output)) {
+			$savpermsupplier = $user->rights->fournisseur;
+			$user->rights->fournisseur = new stdClass();
+			$user->rights->fournisseur->facture = new stdClass();
+			$user->rights->fournisseur->commande = new stdClass();
+			foreach (array('supplier_invoice' => 'facture', 'supplier_order' => 'commande') as $modulepart => $permobject) {
+				$filename = 'SI010101/SI010101.pdf';
+				$user->rights->fournisseur->$permobject->creer = 1;
+				$result = dol_check_secure_access_document($modulepart, $filename, 0, '', '', 'write');
+				$this->assertEquals(1, $result['accessallowed'], "Check write access allowed to '$modulepart/$filename':".json_encode($result));
+				$this->assertEquals($conf->fournisseur->$permobject->dir_output.'/'.$filename, $result['original_file']);
+
+				$user->rights->fournisseur->$permobject->creer = 0;
+				$result = dol_check_secure_access_document($modulepart, $filename, 0, '', '', 'write');
+				$this->assertEquals(0, $result['accessallowed'], "Check write access denied to '$modulepart/$filename':".json_encode($result));
+			}
+			$user->rights->fournisseur = $savpermsupplier;
+		}
+	}
+
+	/**
+	 * testDolCheckSecureAccessDocumentAliases
+	 *
+	 * The aliases of modulepart used by the REST API must use the permissions and the directory of the module they are an alias of.
+	 *
+	 * @return void
+	 */
+	public function testDolCheckSecureAccessDocumentAliases()
+	{
+		global $conf, $user;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+
+		$savadmin = $user->admin;
+		$user->admin = 0;
+		$filename = 'REF/REF.pdf';
+
+		$rightsallowed = new stdClass();
+		$rightsallowed->lire = 1;
+		$rightsallowed->creer = 1;
+		foreach (array('intervention' => 'ficheinter', 'proposal' => 'propal') as $modulepart => $module) {
+			if (!isModEnabled($module)) {
+				continue;
+			}
+			$savrights = $user->rights->$module ?? null;
+
+			$user->rights->$module = $rightsallowed;
+			foreach (array('read', 'write') as $mode) {
+				$result = dol_check_secure_access_document($modulepart, $filename, 0, '', '', $mode);
+				$this->assertEquals(1, $result['accessallowed'], "Check $mode access allowed to '$modulepart/$filename':".json_encode($result));
+				$this->assertEquals($conf->$module->multidir_output[$conf->entity].'/'.$filename, $result['original_file']);
+			}
+
+			$user->rights->$module = new stdClass();
+			foreach (array('read', 'write') as $mode) {
+				$result = dol_check_secure_access_document($modulepart, $filename, 0, '', '', $mode);
+				$this->assertEquals(0, $result['accessallowed'], "Check $mode access denied to '$modulepart/$filename':".json_encode($result));
+			}
+
+			$user->rights->$module = $savrights;
+		}
+
+		// A module called like an alias keeps its own directory
+		$savconfmodule = isset($conf->proposal) ? $conf->proposal : null;
+		$conf->proposal = new stdClass();
+		$conf->proposal->dir_output = DOL_DATA_ROOT.'/proposal';
+		$conf->proposal->multidir_output = array(1 => DOL_DATA_ROOT.'/proposal');
+		$result = dol_check_secure_access_document('proposal', 'REF/REF.pdf', 0, '', '', 'read');
+		$this->assertEquals(DOL_DATA_ROOT.'/proposal/REF/REF.pdf', $result['original_file']);
+		if ($savconfmodule === null) {
+			unset($conf->proposal);
+		} else {
+			$conf->proposal = $savconfmodule;
+		}
+
+		$user->admin = $savadmin;
+	}
+
+	/**
+	 * testDolCheckSecureAccessDocumentHook
+	 *
+	 * A module using the hook checkSecureAccess can grant access, and can also refuse it.
+	 *
+	 * @return void
+	 */
+	public function testDolCheckSecureAccessDocumentHook()
+	{
+		global $conf, $user, $hookmanager;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+
+		$savhookmanager = $hookmanager;
+		$savconfmodule = isset($conf->mytestmodule) ? $conf->mytestmodule : null;
+		$savadmin = $user->admin;
+
+		// A module of the generic case, with its directory
+		$conf->mytestmodule = new stdClass();
+		$conf->mytestmodule->dir_output = DOL_DATA_ROOT.'/mytestmodule';
+		$conf->mytestmodule->multidir_output = array(1 => DOL_DATA_ROOT.'/mytestmodule');
+		$filename = 'export/FA010101.zip';
+
+		// A hook of a module on the context 'main' of the page, answering what the test sets in $answer
+		$hook = new class {
+			/** @var array<string,mixed> */
+			public $results = array();
+			/** @var int */
+			public $answer = 0;
+			/** @var array<string,mixed> */
+			public $answerresults = array();
+			/**
+			 * @param array<string,mixed>	$parameters	Hook parameters
+			 * @return int
+			 */
+			public function checkSecureAccess($parameters)
+			{
+				$this->results = $this->answerresults;
+				return $this->answer;
+			}
+		};
+		$hookmanager = new HookManager($this->savdb);
+		$hookmanager->contextarray = array('main');
+		$hookmanager->hooks['main']['mytestmodule'] = $hook;
+		$hookmanager->hooksSorted['main']['50:mytestmodule'] = $hook;
+
+		// Admin, hook without opinion (0): access allowed as without hook
+		$user->admin = 1;
+		$result = dol_check_secure_access_document('mytestmodule', $filename, 0, '', '', 'read');
+		$this->assertEquals(1, $result['accessallowed'], "Admin, hook returns 0: access allowed:".json_encode($result));
+
+		// Admin, hook replaces the result and refuses access
+		$hook->answer = 1;
+		$hook->answerresults = array('accessallowed' => 0);
+		$result = dol_check_secure_access_document('mytestmodule', $filename, 0, '', '', 'read');
+		$this->assertEquals(0, $result['accessallowed'], "Admin, hook returns 1 with accessallowed 0: access refused:".json_encode($result));
+
+		// No permission, hook replaces the result and grants access (behaviour before this change, kept)
+		$user->admin = 0;
+		$hook->answerresults = array('accessallowed' => 1);
+		$result = dol_check_secure_access_document('mytestmodule', $filename, 0, '', '', 'read');
+		$this->assertEquals(1, $result['accessallowed'], "No permission, hook returns 1 with accessallowed 1: access allowed:".json_encode($result));
+
+		// No permission, hook replaces the result without saying anything about access: refused as without hook
+		$hook->answerresults = array();
+		$result = dol_check_secure_access_document('mytestmodule', $filename, 0, '', '', 'read');
+		$this->assertEquals(0, $result['accessallowed'], "No permission, hook returns 1 without accessallowed: access refused:".json_encode($result));
+
+		$user->admin = $savadmin;
+		$hookmanager = $savhookmanager;
+		if ($savconfmodule === null) {
+			unset($conf->mytestmodule);
+		} else {
+			$conf->mytestmodule = $savconfmodule;
+		}
+	}
+
+	/**
+	 * testDolCheckSecureAccessDocumentAgendaAliases
+	 *
+	 * The aliases of modulepart used by the REST API for events must use the permissions and the directory of the agenda.
+	 *
+	 * @return void
+	 */
+	public function testDolCheckSecureAccessDocumentAgendaAliases()
+	{
+		global $conf, $user;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+
+		$savadmin = $user->admin;
+		$user->admin = 0;
+
+		if (isModEnabled('agenda')) {
+			$savrights = $user->rights->agenda ?? null;
+			$filename = '1/1.pdf';
+
+			foreach (array('action', 'event') as $modulepart) {
+				$user->rights->agenda = new stdClass();
+				$user->rights->agenda->allactions = new stdClass();
+				$user->rights->agenda->allactions->read = 1;
+				$user->rights->agenda->allactions->create = 1;
+				foreach (array('read', 'write') as $mode) {
+					$result = dol_check_secure_access_document($modulepart, $filename, 0, '', '', $mode);
+					$this->assertEquals(1, $result['accessallowed'], "Check $mode access allowed to '$modulepart/$filename':".json_encode($result));
+					$this->assertEquals($conf->agenda->dir_output.'/'.$filename, $result['original_file']);
+				}
+
+				$user->rights->agenda = new stdClass();
+				foreach (array('read', 'write') as $mode) {
+					$result = dol_check_secure_access_document($modulepart, $filename, 0, '', '', $mode);
+					$this->assertEquals(0, $result['accessallowed'], "Check $mode access denied to '$modulepart/$filename':".json_encode($result));
+				}
+			}
+
+			// 'agenda' is not an alias here: it stays on the generic case (allowed to admins only, with the hook checkSecureAccess)
+			$user->rights->agenda = new stdClass();
+			$user->rights->agenda->allactions = new stdClass();
+			$user->rights->agenda->allactions->read = 1;
+			$result = dol_check_secure_access_document('agenda', $filename, 0, '', '', 'read');
+			$this->assertEquals(0, $result['accessallowed'], "Check access denied to 'agenda/$filename' for a non admin:".json_encode($result));
+			$user->admin = 1;
+			$user->rights->agenda = new stdClass();
+			$result = dol_check_secure_access_document('agenda', $filename, 0, '', '', 'read');
+			$this->assertEquals(1, $result['accessallowed'], "Check access allowed to 'agenda/$filename' for an admin:".json_encode($result));
+			$user->admin = 0;
+
+			$user->rights->agenda = $savrights;
+		}
+
+		// A module called like an alias keeps its own directory
+		$savconfmodule = isset($conf->event) ? $conf->event : null;
+		$conf->event = new stdClass();
+		$conf->event->dir_output = DOL_DATA_ROOT.'/event';
+		$conf->event->multidir_output = array(1 => DOL_DATA_ROOT.'/event');
+		$result = dol_check_secure_access_document('event', 'REF/REF.pdf', 0, '', '', 'read');
+		$this->assertEquals(DOL_DATA_ROOT.'/event/REF/REF.pdf', $result['original_file']);
+		if ($savconfmodule === null) {
+			unset($conf->event);
+		} else {
+			$conf->event = $savconfmodule;
+		}
+
+		$user->admin = $savadmin;
 	}
 
 	/**
@@ -555,5 +779,77 @@ class FilesLibTest extends CommonClassTest
 		$result = dol_move_dir($dirsrcpath, $dirdestpath, 1, 1, 1);
 		print __METHOD__." result=".$result."\n";
 		$this->assertTrue($result, 'move of directory with directory without rename needed in directory');
+	}
+
+	/**
+	 * dol_move_uploaded_file() returns a translation key when it refuses a file, so the caller can
+	 * translate it. The virus branch must return a key alone: a key with the technical message of the
+	 * antivirus appended matches no entry of errors.lang and is shown untranslated to the user.
+	 *
+	 * @return void
+	 */
+	public function testDolMoveUploadedFileReturnsATranslationKeyOnVirus()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$langs->load("errors");
+
+		// A jpg renamed as a pdf, holding javascript: dolCheckOnFileName() refuses it
+		$srcfile = $conf->admin->dir_temp.'/uploadedvirus.tmp';
+		dol_copy(dirname(__FILE__).'/file_pdf_with_js.pdf.jpg', $srcfile, '0', 1);
+
+		$destfile = $conf->admin->dir_temp.'/uploadedvirus.pdf';
+		dol_delete_file($destfile, 0, 1);
+
+		$result = dol_move_uploaded_file($srcfile, $destfile, 1, 0, 0, 1);
+		print __METHOD__." result=".$result."\n";
+
+		$this->assertSame('ErrorFileIsAnInfectedPDFWithJSInside', $result, 'A pdf with js inside must be refused with its own translation key');
+		$this->assertNotSame($result, $langs->trans($result), 'The returned code must be a key that can be translated');
+		$this->assertFalse(file_exists($destfile), 'The refused file must not have been moved to its destination');
+
+		dol_delete_file($srcfile, 0, 1);
+	}
+
+	/**
+	 * testDolConvertFile
+	 *
+	 * @return void
+	 */
+	public function testDolConvertFile()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		// If imagick not installed, you can install it with
+		// apt install imagemagick php7.4-imagick
+		if (class_exists('Imagick')) {
+			$filepdf = dirname(__FILE__).'/imgsvgwithjs.svg';
+			$fileimage = $conf->admin->dir_temp.'/testdolconvert.png';
+
+			$result = dol_convert_file($filepdf, 'png', $fileimage, '0'); // Convert first page of PDF into a file _preview.png
+			print __METHOD__." result=".$result."\n";
+			$this->assertEquals(-4, $result, 'Convert of PDF file '.$filepdf.' into image should have return an error because it is not a real PDF, but this did not happen.');
+
+			$filepdf = dirname(__FILE__).'/file_pdf_with_js.pdf.jpg';
+			$result = dol_copy($filepdf, $conf->admin->dir_temp.'/testdolconvert.pdf');
+
+			$fileimage = $conf->admin->dir_temp.'/testdolconvert.png';
+
+			$result = dol_convert_file($filepdf, 'png', $fileimage, '0'); // Convert first page of PDF into a file _preview.png
+			print __METHOD__." result=".$result."\n";
+			$this->assertEquals(1, $result, 'Failed to convert PDF file into '.$fileimage.', error '.$result);
+		} else {
+			print __METHOD__." skipped because Imagick is not installed.\n";
+
+			$this->expectNotToPerformAssertions();
+		}
 	}
 }
