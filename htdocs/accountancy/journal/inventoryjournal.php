@@ -132,10 +132,10 @@ $sql = "SELECT m.rowid as mid, m.datem, m.value as qty, m.price, m.type_mouvemen
 $sql .= " m.inventorycode, m.fk_origin, m.origintype,";
 $sql .= " p.rowid as pid, p.ref as product_ref, p.label as product_label, p.pmp, p.cost_price,";
 if (!getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
-	$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export, p.accountancy_code_stock, p.accountancy_code_cogs, p.accountancy_code_sell,";
+	$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export, p.accountancy_code_sell,";
 } else {
 	$sql .= " ppe.pmp as ppe_pmp, ppe.cost_price as ppe_cost_price,";
-	$sql .= " ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export, ppe.accountancy_code_stock, ppe.accountancy_code_cogs, ppe.accountancy_code_sell,";
+	$sql .= " ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export, ppe.accountancy_code_sell,";
 }
 $sql .= " e.rowid as warehouse_id, e.ref as warehouse_ref, e.lieu as warehouse_lieu";
 $parameters = array();

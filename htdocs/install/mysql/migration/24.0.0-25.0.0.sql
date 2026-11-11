@@ -610,12 +610,84 @@ ALTER TABLE llx_prelevement_demande ADD COLUMN fk_expensereport integer NULL AFT
 INSERT INTO llx_c_type_container (code, label, active, module, position, typecontainer, entity) VALUES ('header', 'PageHeader', 1, 'system', 32, 'container', __ENTITY__);
 INSERT INTO llx_c_type_container (code, label, active, module, position, typecontainer, entity) VALUES ('footer', 'PageFooter', 1, 'system', 33, 'container', __ENTITY__);
 
+-- Link a various payment to a thirdparty (optional) & add index and contraint
+ALTER TABLE llx_payment_various ADD COLUMN fk_soc integer DEFAULT NULL AFTER fk_projet;
+ALTER TABLE llx_payment_various ADD INDEX idx_payment_various_datep (datep);
+ALTER TABLE llx_payment_various ADD INDEX idx_payment_various_fk_bank (fk_bank);
+ALTER TABLE llx_payment_various ADD INDEX idx_payment_various_fk_projet (fk_projet);
+ALTER TABLE llx_payment_various ADD INDEX idx_payment_various_fk_soc (fk_soc);
+ALTER TABLE llx_payment_various ADD CONSTRAINT fk_payment_various_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
+
+-- Add a primary key on the 4 tables that had none (a primary key is required by Galera and by the other multi-master clusters).
+-- llx_category_bankline is a link table of categories, like the llx_categorie_* ones: its primary key is on the existing columns and replaces the unique index.
+--noqa:disable=PRS
+ALTER TABLE llx_category_bankline ADD PRIMARY KEY pk_category_bankline(lineid, fk_categ);
+--noqa:enable=PRS
+-- VMYSQL4.1 DROP INDEX uk_category_bankline_lineid ON llx_category_bankline;
+-- VPGSQL8.2 DROP INDEX uk_category_bankline_lineid;
+-- The 3 other tables get a rowid column as primary key, like the other tables.
+-- VMYSQL4.3 ALTER TABLE llx_holiday_users ADD COLUMN rowid integer AUTO_INCREMENT PRIMARY KEY;
+-- VPGSQL8.2 ALTER TABLE llx_holiday_users ADD COLUMN rowid SERIAL PRIMARY KEY;
+-- VMYSQL4.3 ALTER TABLE llx_user_param ADD COLUMN rowid integer AUTO_INCREMENT PRIMARY KEY;
+-- VPGSQL8.2 ALTER TABLE llx_user_param ADD COLUMN rowid SERIAL PRIMARY KEY;
+-- VMYSQL4.3 ALTER TABLE llx_opensurvey_user_formanswers ADD COLUMN rowid integer AUTO_INCREMENT PRIMARY KEY;
+-- VPGSQL8.2 ALTER TABLE llx_opensurvey_user_formanswers ADD COLUMN rowid SERIAL PRIMARY KEY;
+
+-- Opensurvey: the survey of format 'F' (form): type, position and mandatory flag of a question, and the keys of the 2 tables of the form.
+ALTER TABLE llx_opensurvey_formquestions ADD COLUMN type VARCHAR(16) NOT NULL DEFAULT 'radio';
+ALTER TABLE llx_opensurvey_formquestions ADD COLUMN position INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE llx_opensurvey_formquestions ADD COLUMN mandatory TINYINT NOT NULL DEFAULT 0;
+ALTER TABLE llx_opensurvey_formquestions ADD INDEX idx_opensurvey_formquestions_id_sondage (id_sondage);
+ALTER TABLE llx_opensurvey_user_formanswers ADD UNIQUE INDEX uk_opensurvey_user_formanswers (fk_user_survey, fk_question);
+ALTER TABLE llx_opensurvey_user_formanswers ADD INDEX idx_opensurvey_user_formanswers_fk_question (fk_question);
+
+-- Add the document template of an inventory, so that a generated document can be rebuilt with the same one
+ALTER TABLE llx_inventory ADD COLUMN model_pdf varchar(255) AFTER date_validation;
+
+-- Add the document template of a leave request, so that a generated document can be rebuilt with the same one
+ALTER TABLE llx_holiday ADD COLUMN model_pdf varchar(255) AFTER import_key;
+-- Add the document template of a loan, so that a generated document can be rebuilt with the same one
+ALTER TABLE llx_loan ADD COLUMN model_pdf varchar(255) AFTER fk_user_modif;
+
+-- Reference the customer gives to a line of invoice (the line of its purchase order, sent as BT-132 in an e-invoice)
+ALTER TABLE llx_facturedet ADD COLUMN ref_customer varchar(128) DEFAULT NULL AFTER ref_ext;
+-- Reference the customer gives to a line of order (the line of its purchase order, sent as BT-132 in an e-invoice)
+ALTER TABLE llx_commandedet ADD COLUMN ref_customer varchar(128) DEFAULT NULL AFTER ref_ext;
+
+-- TakePOS: store the order printer of an invoice line into a dedicated field instead of special_code
+ALTER TABLE llx_facturedet ADD COLUMN pos_printer_id integer NULL AFTER fk_warehouse;
+UPDATE llx_facturedet SET pos_printer_id = 1, special_code = 0 WHERE special_code = 4 AND fk_facture IN (SELECT rowid FROM llx_facture WHERE module_source = 'takepos' AND fk_statut = 0);
+UPDATE llx_facturedet SET special_code = 0 WHERE special_code IN (1, 2, 3) AND fk_facture IN (SELECT rowid FROM llx_facture WHERE module_source = 'takepos' AND fk_statut = 0);
+
+-- Bank accounts of users: an empty currency is the company currency, and each user has one default bank account per currency
+UPDATE llx_user_rib SET currency_code = (SELECT __DECRYPT('value')__ FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_MONNAIE' AND entity = llx_user_rib.entity) WHERE currency_code IS NULL OR currency_code = '';
+UPDATE llx_user_rib SET default_rib = 1 WHERE rowid IN (SELECT rowid FROM (SELECT MIN(rowid) as rowid FROM llx_user_rib GROUP BY fk_user, currency_code HAVING MAX(default_rib) = 0) as tmp);
+
+-- Social and fiscal tax types for Australia
+ALTER TABLE llx_c_chargesociales MODIFY COLUMN code varchar(24) NOT NULL;
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2801, 'PAYG withholding (PAYGW)',               0, 1, 'TAXAUPAYGW');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2802, 'PAYG income tax instalment (PAYGI)',     0, 1, 'TAXAUPAYGI');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2803, 'Company income tax',                     0, 1, 'TAXAUCIT');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2804, 'Fringe benefits tax (FBT)',              1, 1, 'TAXAUFBT');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2805, 'Superannuation guarantee contributions', 1, 1, 'TAXAUSUPER');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2806, 'Superannuation guarantee charge (SGC)',  1, 1, 'TAXAUSGC');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2807, 'Payroll tax (state or territory)',       1, 1, 'TAXAUPAYROLL');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2808, 'Workers compensation premium',           1, 1, 'TAXAUWORKCOMP');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2809, 'Land tax (state or territory)',          1, 1, 'TAXAULAND');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2810, 'ATO interest charges (GIC / SIC)',       0, 1, 'TAXAUGIC');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2811, 'Activity statement (BAS / IAS)',         0, 1, 'TAXAUBAS');
+
+-- Empty general accounts of thirdparties and users were stored as '-1' (value of the empty option of the select of accounting accounts)
+UPDATE llx_societe SET accountancy_code_customer_general = NULL WHERE accountancy_code_customer_general = '-1';
+UPDATE llx_societe SET accountancy_code_supplier_general = NULL WHERE accountancy_code_supplier_general = '-1';
+UPDATE llx_societe_perentity SET accountancy_code_customer_general = NULL WHERE accountancy_code_customer_general = '-1';
+UPDATE llx_societe_perentity SET accountancy_code_supplier_general = NULL WHERE accountancy_code_supplier_general = '-1';
+UPDATE llx_user SET accountancy_code_user_general = NULL WHERE accountancy_code_user_general = '-1';
+
+ALTER TABLE llx_website_page MODIFY COLUMN aliasalt text;
+ALTER TABLE llx_website_page MODIFY COLUMN htmlheader longtext;
+ALTER TABLE llx_website_page MODIFY COLUMN content longtext;
+
 ALTER TABLE llx_ai_chat_message MODIFY COLUMN content_raw mediumtext;
 
 INSERT INTO llx_c_type_resource (code, label, active) VALUES ('RES_MACHINES', 'Machines', 1);
-
--- Product stock and COGS accounting codes for perpetual inventory
-ALTER TABLE llx_product ADD COLUMN accountancy_code_stock varchar(32) AFTER accountancy_code_buy_export;
-ALTER TABLE llx_product ADD COLUMN accountancy_code_cogs varchar(32) AFTER accountancy_code_stock;
-ALTER TABLE llx_product_perentity ADD COLUMN accountancy_code_stock varchar(32) AFTER accountancy_code_buy_export;
-ALTER TABLE llx_product_perentity ADD COLUMN accountancy_code_cogs varchar(32) AFTER accountancy_code_stock;
