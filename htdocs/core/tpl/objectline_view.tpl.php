@@ -310,6 +310,10 @@ if (($line->info_bits & 2) == 2) {
 		}
 	}
 
+	// Reference the customer gives to the line (line of its purchase order)
+	if ($line instanceof OrderLine && !empty($line->ref_customer)) {
+		print '<br><span class="opacitymedium">'.$langs->trans('RefCustomerLine').':</span> '.dol_escape_htmltag($line->ref_customer);
+	}
 
 	$parameters = ['line' => $line, 'i' => & $i, 'coldisplay' => & $coldisplay];
 	$reshook = $hookmanager->executeHooks('objectLineView_BeforeProductExtrafield', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -585,7 +589,7 @@ if (!empty($line->remise_percent) && $line->special_code != 3) {
 if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 	$coldisplay++;
-	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+	if (getDolGlobalInt('INVOICE_USE_SITUATION') > 1) {
 		$previous_progress = $line->getAllPrevProgress($object->id);
 		$current_progress = $previous_progress + (float) $line->situation_percent;
 		print '<td class="linecolcycleref nowraponall right">'.$current_progress.'%</td>';

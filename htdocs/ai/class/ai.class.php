@@ -193,6 +193,7 @@ class Ai
 		}
 
 		dol_syslog("Call API for apiKey=".substr($this->apiKey, 0, 5).'***********, apiEndpoint='.$this->apiEndpoint.", model=".$model.", format=".$format);
+
 		if (getDolGlobalString("AI_DEBUG")) {
 			if (@is_writable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
 				$outputfile = $dolibarr_main_data_root."/dolibarr_ai.log";
@@ -311,13 +312,15 @@ class Ai
 					}
 				} else {
 					// OpenAI-compatible payload format (chatgpt, mistral, groq, anthropic-compat, custom, ...)
+					// The system message must come before the user message (expected order of OpenAI-compatible APIs)
 					$arrayforpayload = array(
-						'messages' => array(array('role' => 'user', 'content' => $fullInstructions)),
+						'messages' => array(),
 						'model' => $model,
 					);
 					if ($prePrompt) {
 						$arrayforpayload['messages'][] = array('role' => 'system', 'content' => $prePrompt);
 					}
+					$arrayforpayload['messages'][] = array('role' => 'user', 'content' => $fullInstructions);
 				}
 			}
 
@@ -390,12 +393,31 @@ class Ai
 			// By default, we accept only external endpoints ($dolibarr_ai_allow_local_endpoints is not set).
 			// To allow local endpoints, we must set $dolibarr_ai_allow_local_endpoints to 1 or 2 in conf.php.
 			global $dolibarr_ai_allow_local_endpoints;
-			$localurl = $dolibarr_ai_allow_local_endpoints ?? 0;
+			// An empty value ('', '0', null) must mean external endpoints only (with PHP 8, '' == 0 is false)
+			$localurl = empty($dolibarr_ai_allow_local_endpoints) ? 0 : (int) $dolibarr_ai_allow_local_endpoints;
 
 			// Parsing a document is long, so we use a response timeout of at least 90 seconds for this case
+			// For both step "ocr" and step "analyze/docparsing"
 			$timeoutresponse = 0;
 			if (in_array($function, array('docparsing', 'ocr'))) {
-				$timeoutresponse = max(90, getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
+				$timeoutresponse = max(90, getDolGlobalInt('AI_USE_RESPONSE_TIMEOUT'), getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT'));
+			}
+
+			// Hooks of the calling page context (for example 'main'): a module can refuse the request (quota...) then read the answer (token usage...)
+			global $hookmanager;
+			$hookparameters = array('service' => $this->apiService, 'model' => $model, 'function' => $function);
+			if (is_object($hookmanager)) {
+				if ($hookmanager->executeHooks('beforeAIRequest', $hookparameters) < 0) {
+					return array(
+						'error' => true,
+						'message' => $hookmanager->error,
+						'code' => 403,
+						'format' => $format,
+						'service' => $this->apiService,
+						'model' => $model,
+						'function' => $function
+					);
+				}
 			}
 
 			$response = getURLContent($this->apiEndpoint, 'POST', $payload, 1, $headers, array('http', 'https'), $localurl, -1, 0, $timeoutresponse);
@@ -440,6 +462,10 @@ class Ai
 
 			// Decode JSON response
 			$decodedResponse = json_decode($response['content'], true);
+
+			if (is_object($hookmanager) && is_array($decodedResponse) && empty($decodedResponse['error'])) {
+				$hookmanager->executeHooks('afterAIRequest', $hookparameters + array('response' => $decodedResponse));
+			}
 
 			// Extraction content
 			if (!empty($decodedResponse['error'])) {

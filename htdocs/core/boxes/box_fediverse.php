@@ -114,10 +114,11 @@ class box_fediverse extends ModeleBoxes
 
 		for ($line = 0; $line < $max && $line < $nbitems; $line++) {
 			$post = $posts[$line];
-			$title = dol_escape_htmltag($post['content']);
+			// The content is HTML whose tags were removed by the handler: its entities (&#39;, &amp;...) must be decoded before escaping
+			$title = dol_escape_htmltag(dol_html_entity_decode($post['content'], ENT_QUOTES | ENT_HTML5));
 			$date = dol_escape_htmltag($post['created_at']);
 			$href = dol_escape_htmltag($post['url']);
-			$tooltip = dol_escape_htmltag($title);
+			$tooltip = $title;	// Escaped again for the attribute by showBox()
 
 			$this->info_box_contents[$line][0] = array(
 				'td' => 'class="left" width="16"',

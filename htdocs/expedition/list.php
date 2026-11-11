@@ -66,6 +66,7 @@ $toselect   = GETPOST('toselect', 'array:int');
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
+$search_id = GETPOST('search_id', 'alpha');
 $search_ref_exp = GETPOST("search_ref_exp", 'alpha');
 $search_ref_liv = GETPOST('search_ref_liv', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
@@ -138,6 +139,7 @@ if (empty($user->socid)) {
 
 $checkedtypetiers = '0';
 $arrayfields = array(
+	'e.rowid' => array('label' => $langs->trans("TechnicalID"), 'checked' => (getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? '1' : '-1'), 'enabled' => '1'),
 	'e.ref' => array('label' => $langs->trans("Ref"), 'checked' => '1', 'position' => 1),
 	'e.ref_customer' => array('label' => $langs->trans("RefCustomer"), 'checked' => '1', 'position' => 2),
 	's.nom' => array('label' => $langs->trans("ThirdParty"), 'checked' => '1', 'position' => 3),
@@ -208,6 +210,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_user = '';
 	$search_sale = '';
 	$search_product_category = '';
+	$search_id = '';
 	$search_ref_exp = '';
 	$search_ref_liv = '';
 	$search_ref_customer = '';
@@ -550,6 +553,9 @@ if (empty($reshook)) {
 			if ($search_all) {
 				$param .= "&search_all=".urlencode($search_all);
 			}
+			if ($search_id != '') {
+				$param .= '&search_id='.urlencode($search_id);
+			}
 			if ($search_ref_exp) {
 				$param .= "&search_ref_exp=".urlencode($search_ref_exp);
 			}
@@ -787,6 +793,9 @@ if ($search_user > 0) {
 if ($search_company) {
 	$sql .= natural_search('s.nom', $search_company);
 }
+if ($search_id != '') {
+	$sql .= natural_search('e.rowid', $search_id, 1);
+}
 if ($search_ref_exp) {
 	$sql .= natural_search('e.ref', $search_ref_exp);
 }
@@ -978,6 +987,9 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 }
 if ($search_all) {
 	$param .= "&search_all=".urlencode($search_all);
+}
+if ($search_id != '') {
+	$param .= '&search_id='.urlencode($search_id);
 }
 if ($search_ref_exp) {
 	$param .= "&search_ref_exp=".urlencode($search_ref_exp);
@@ -1232,6 +1244,12 @@ if ($conf->main_checkbox_left_column) {
 	print $searchpicto;
 	print '</td>';
 }
+// Technical ID
+if (!empty($arrayfields['e.rowid']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
+	print '</td>';
+}
 // Ref
 if (!empty($arrayfields['e.ref']['checked'])) {
 	print '<td class="liste_titre">';
@@ -1406,6 +1424,10 @@ if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['e.rowid']['checked'])) {
+	print_liste_field_titre($arrayfields['e.rowid']['label'], $_SERVER["PHP_SELF"], 'e.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['e.ref']['checked'])) {
 	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['e.ref']['label'], $_SERVER["PHP_SELF"], "e.ref", "", $param, '', $sortfield, $sortorder);
@@ -1568,6 +1590,13 @@ while ($i < $imaxinloop) {
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
 			print '</td>';
+		}
+		// Technical ID
+		if (!empty($arrayfields['e.rowid']['checked'])) {
+			print '<td class="center" data-key="id">'.((int) $obj->rowid).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		// Ref
 		if (!empty($arrayfields['e.ref']['checked'])) {

@@ -28,6 +28,7 @@
  * Copyright (C) 2026		Lenin Rivas				<lenin.rivas777@gmail.com>
  * Copyright (C) 2026		Open-Dsi				<support@open-dsi.fr>
  * Copyright (C) 2026		Jose MARTINEZ				<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Joachim Kueter		<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,7 +94,7 @@ class Form
 	public $cache_demand_reason = array();
 	/** @var array<string,string> */
 	public $cache_types_fees = array();
-	/** @var array<int,array{rowid:int,type_vat:int,code:string,txtva:string,nprtva:int,localtax1:string|float|null,localtax1_type:string,localtax2:string|float|null,localtax2_type:string,label:string,labelallrates:string,labelpositiverates:string}> */
+	/** @var array<int,array{rowid:int,type_vat:int,code:string,use_default:int,txtva:string,nprtva:int,localtax1:string|float|null,localtax1_type:string,localtax2:string|float|null,localtax2_type:string,label:string,labelallrates:string,labelpositiverates:string}> */
 	public $cache_vatrates = array();
 	/** @var array<int,array{rowid:int,code:string,label:string}> */
 	public $cache_invoice_subtype = array();
@@ -1287,7 +1288,7 @@ class Form
 		}
 
 		// Split into code + number
-		$parsed = dol_parse_phone($fullPhone);
+		$parsed = dol_parse_phone($fullPhone, $this->db);
 
 		// Resolve default phone code: parsed code if set, else from country hint
 		$phonecode = !empty($parsed['code']) ? $parsed['code'] : dol_get_phone_code_from_country($this->db, $country_id_hint);
@@ -1301,12 +1302,16 @@ class Form
 		}
 
 		// Add back trunk prefix for display (e.g. "644986885" → "0644986885" for France)
-		if ($numberValue !== '' && $selectedCode !== '') {
+		// A number still starting with "+" has an unknown country code: never prefix it
+		if ($numberValue !== '' && $selectedCode !== '' && strpos($numberValue, '+') !== 0) {
 			$trunkPrefix = dol_get_trunk_prefix($this->db, $selectedCode);
 			if ($trunkPrefix !== '' && strpos($numberValue, $trunkPrefix) !== 0) {
 				$numberValue = $trunkPrefix.$numberValue;
 			}
 		}
+
+		// Keep digits only, as the visible field only accepts digits (pattern) and the JS keeps only digits on save
+		$numberValue = preg_replace('/[^0-9]/', '', $numberValue);
 
 		// Build output: hidden field (POSTed value)
 		$out = '<input type="hidden" name="'.dol_escape_htmltag($htmlname).'" id="'.dol_escape_htmltag($htmlname).'" value="'.dol_escape_htmltag($fullPhone).'">';
@@ -2081,7 +2086,7 @@ class Form
 				});' . (getDolGlobalString('CONTACT_SEARCH_AUTOFOCUS') ? '
 				jQuery("#' . $htmlidjs . '").select2("open");' : '') . '
 			});</script>';
-			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.select2-container { z-index: 1010; }</style>';
+			$out .= '<!-- force css of dropdown (attached to body) to be higher than dialog popup, but not the combo itself so it stays under the sticky top menu --><style type="text/css">body > .select2-container { z-index: 1010; }</style>';
 		} else {
 			// Immediate load of all database
 			$disableifempty = 0;
@@ -2645,9 +2650,10 @@ class Form
 	 * @param	string	$filter		Optional filter criteria. Must be a sanitized string.
 	 * @param	int		$socid		Id of thirdparty
 	 * @param	int		$maxvalue	Max value for lines that can be selected
+	 * @param	int		$projectid	Current project id. Discounts from source invoices in this project are shown first
 	 * @return	int					Return number of qualifed lines in list
 	 */
-	public function select_remises($selected, $htmlname, $filter, $socid, $maxvalue = 0)
+	public function select_remises($selected, $htmlname, $filter, $socid, $maxvalue = 0, $projectid = 0)
 	{
 		// phpcs:enable
 		global $langs, $conf;
@@ -2657,31 +2663,40 @@ class Form
 		// Search for the discounts
 		$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
 		$sql .= " re.description, re.fk_facture_source, re.fk_invoice_supplier_source";
+		if ($projectid > 0) {
+			$sql .= ", f.fk_projet as source_project_id, f.ref as source_invoice_ref";
+		}
 		if ($showsourceinvoice) {
 			// Resolve the source invoice (customer or supplier) in the main query instead of one fetch per line
 			$sql .= ", f.ref as src_cust_ref, f.datef as src_cust_date";
 			$sql .= ", ff.ref as src_supp_ref, ff.datef as src_supp_date";
 		}
 		$sql .= " FROM " . $this->db->prefix() . "societe_remise_except as re";
-		if ($showsourceinvoice) {
+		if ($showsourceinvoice || $projectid > 0) {
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "facture as f ON f.rowid = re.fk_facture_source";
+		}
+		if ($showsourceinvoice) {
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "facture_fourn as ff ON ff.rowid = re.fk_invoice_supplier_source";
 		}
 		$sql .= " WHERE re.fk_soc = " . (int) $socid;
 		$sql .= " AND re.entity = " . ((int) $conf->entity);
 		if ($filter) {
 			$sanitizedfilter = $filter;  // @phan-suppress-current-line SqlInjection
-			if ($showsourceinvoice) {
+			if ($showsourceinvoice || $projectid > 0) {
 				// The joined tables also carry a fk_facture_source column: qualify unprefixed references of the caller filter
 				$sanitizedfilter = preg_replace('/(?<![a-zA-Z0-9_.])fk_facture_source\b/', 're.fk_facture_source', $sanitizedfilter);
 			}
 			$sql .= " AND " . $sanitizedfilter;
 		}
+		$sql .= " ORDER BY";
+		if ($projectid > 0) {
+			$sql .= " " . $this->db->ifsql("f.fk_projet = " . ((int) $projectid), "0", "1") . ",";
+		}
 		if ($showsourceinvoice) {
 			// When the source invoices are shown, their date is the natural order (oldest deposit first)
-			$sql .= " ORDER BY COALESCE(ff.datef, f.datef, re.datec) ASC, re.rowid ASC";
+			$sql .= " COALESCE(ff.datef, f.datef, re.datec) ASC, re.rowid ASC";
 		} else {
-			$sql .= " ORDER BY re.description ASC";
+			$sql .= " re.description ASC, re.rowid ASC";
 		}
 
 		dol_syslog(get_class($this) . "::select_remises", LOG_DEBUG);
@@ -2709,6 +2724,12 @@ class Form
 					}
 					if (preg_match('/\(EXCESS PAID\)/', $desc)) {
 						$desc = preg_replace('/\(EXCESS PAID\)/', $langs->trans("ExcessPaid"), $desc);
+					}
+					if ($projectid > 0 && (int) $obj->source_project_id === (int) $projectid) {
+						$desc = '[' . $langs->trans('Project') . '] ' . $desc;
+						if (!$showsourceinvoice && !empty($obj->source_invoice_ref)) {
+							$desc .= ' - ' . $obj->source_invoice_ref;
+						}
 					}
 
 					$selectstring = '';
@@ -3047,7 +3068,7 @@ class Form
 			$ajaxpagesize = getDolGlobalInt('USER_LIMIT_SIZE', 20);
 
 			$out .= $this->buildSelectDolusersAjaxSelect2Script($htmlname, $urloption, $minlengthforajax, $ajaxpagesize);
-			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.select2-container { z-index: 1010; }</style>';
+			$out .= '<!-- force css of dropdown (attached to body) to be higher than dialog popup, but not the combo itself so it stays under the sticky top menu --><style type="text/css">body > .select2-container { z-index: 1010; }</style>';
 
 			return $out;
 		}
@@ -3093,7 +3114,7 @@ class Form
 			$ajaxpagesize = getDolGlobalInt('USER_LIMIT_SIZE', 20);
 
 			$out .= $this->buildSelectDolusersAjaxSelect2Script($htmlname, $urloption, $minlengthforajax, $ajaxpagesize);
-			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.select2-container { z-index: 1010; }</style>';
+			$out .= '<!-- force css of dropdown (attached to body) to be higher than dialog popup, but not the combo itself so it stays under the sticky top menu --><style type="text/css">body > .select2-container { z-index: 1010; }</style>';
 
 			return $out;
 		}
@@ -7315,6 +7336,20 @@ class Form
 							$(this).parent().find("button.ui-button:eq(2)").focus();
 						},';
 			}
+			if ($useajax == 2 && !empty($pageno)) {
+				// Closing the dialog with the close button of the title bar must behave like the button "No",
+				// otherwise the page stays on action=xxx and may hide its action buttons.
+				// The buttons set the flag formconfirmchoicedone before closing the dialog, so they are not affected.
+				$formconfirm .= '
+						beforeClose: function() {
+							if ($(this).data("formconfirmchoicedone")) {
+								return true;
+							}
+							console.log("formconfirm closed without choice, we do as if button No was clicked");
+							$(this).closest(".ui-dialog").find(".ui-dialog-buttonpane button").eq(1).trigger("click");
+							return false;
+						},';
+			}
 
 			$jsforcursor = '';
 			if ($useajax == 1) {
@@ -7372,6 +7407,7 @@ class Form
 			$formconfirm .= '
 								console.log("after post ok");
 							}
+							$(this).data("formconfirmchoicedone", 1);
 							$(this).dialog("close");
 						}
 					}, {
@@ -7406,6 +7442,7 @@ class Form
 			$formconfirm .= '
 								console.log("after post ko");
 							}
+							$(this).data("formconfirmchoicedone", 1);
 							$(this).dialog("close");
 						}
 					}';
@@ -7431,6 +7468,7 @@ class Form
 							dolSubmitConfirmForm(urljump, pageother, options, ' . $maxurllengthforget . ');';
 				}
 				$formconfirm .= '
+							$(this).data("formconfirmchoicedone", 1);
 							$(this).dialog("close");
 						}
 					}';
@@ -8063,9 +8101,10 @@ class Form
 	 * @param int 		$discount_type 	0 => customer discount, 1 => supplier discount
 	 * @param int		$filterabsolutediscount		Filter absolute discount
 	 * @param int		$filtercreditnote			Filter credit note
+	 * @param int 		$projectid 		Current project id used to prioritize related customer discounts
 	 * @return    void
 	 */
-	public function form_remise_dispo($page, $selected, $htmlname, $socid, $amount, $filter = '', $maxvalue = 0, $more = '', $hidelist = 0, $discount_type = 0, $filterabsolutediscount = 0, $filtercreditnote = 0)
+	public function form_remise_dispo($page, $selected, $htmlname, $socid, $amount, $filter = '', $maxvalue = 0, $more = '', $hidelist = 0, $discount_type = 0, $filterabsolutediscount = 0, $filtercreditnote = 0, $projectid = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -8122,7 +8161,7 @@ class Form
 					$newfilter .= ' AND (' . $sanitizedfilter . ')';
 				}
 				// output the combo of discounts
-				$nbqualifiedlines = $this->select_remises((string) $selected, $htmlname, $newfilter, $socid, $maxvalue);
+				$nbqualifiedlines = $this->select_remises((string) $selected, $htmlname, $newfilter, $socid, $maxvalue, $projectid);
 				if ($nbqualifiedlines > 0) {
 					print ' &nbsp; <input type="submit" class="button smallpaddingimp" value="' . dol_escape_htmltag($langs->trans("UseLine")) . '"';
 					if (!empty($discount_type) && $filter && $filter != "fk_invoice_supplier_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')") {
@@ -8407,7 +8446,7 @@ class Form
 
 		// entity and fk_pays are returned so a hook on loadDictionaryCache can tell two rows apart
 		// when the dictionary is read across entities (most rows carry an empty code)
-		$sql = "SELECT t.rowid, t.entity, t.fk_pays, t.type_vat, t.code, t.taux, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.recuperableonly, t.einvoice_vatex";
+		$sql = "SELECT t.rowid, t.entity, t.fk_pays, t.type_vat, t.code, t.use_default, t.taux, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.recuperableonly, t.einvoice_vatex";
 		$sql .= " FROM ".$this->db->prefix()."c_tva as t, ".$this->db->prefix()."c_country as c";
 		$sql .= " WHERE t.fk_pays = c.rowid";
 		$sql .= " AND t.active > 0";
@@ -8428,6 +8467,7 @@ class Form
 					$tmparray['fk_pays']		= (int) $obj->fk_pays;
 					$tmparray['type_vat']		= ($obj->type_vat <= 0 ? 0 : $obj->type_vat);	// Some version have type_vat corrupted with value -1
 					$tmparray['code']			= $obj->code;
+					$tmparray['use_default']	= (int) $obj->use_default;
 					$tmparray['txtva']			= $obj->taux;
 					$tmparray['nprtva']			= $obj->recuperableonly;
 					$tmparray['localtax1']	    = $obj->localtax1;
@@ -8640,7 +8680,7 @@ class Form
 				$tmpthirdparty = new Societe($this->db);
 				$tmpthirdparty->country_code = $mysoc->country_code;
 
-				$defaulttx = get_default_tva(is_object($societe_vendeuse) ? $societe_vendeuse : $tmpthirdparty, (is_object($societe_acheteuse) ? $societe_acheteuse : $tmpthirdparty), $idprod);
+				$defaulttx = get_default_tva(is_object($societe_vendeuse) ? $societe_vendeuse : $tmpthirdparty, (is_object($societe_acheteuse) ? $societe_acheteuse : $tmpthirdparty), $idprod, 0, $type_vat);
 				$defaultnpr = get_default_npr(is_object($societe_vendeuse) ? $societe_vendeuse : $tmpthirdparty, (is_object($societe_acheteuse) ? $societe_acheteuse : $tmpthirdparty), $idprod);
 
 				if (preg_match('/\((.*)\)/', $defaulttx, $reg)) {
@@ -8686,6 +8726,18 @@ class Form
 
 			if (!$options_only) {
 				$return .= '<select class="flat valignmiddle minwidth75imp maxwidth100 right" id="' . $htmlname . '" name="' . $htmlname . '"' . ($disabled ? ' disabled' : '') . $title . '>';
+			}
+
+			// When the rate to preselect has no VAT code and several rows have this rate, preselect the default one
+			// (use_default) and not the first one of the list: the VAT code decides the accounting account and the tax
+			// return box of the line, so the default one must be proposed.
+			if (!$defaultcode) {
+				foreach ($arrayofvatrates as $rate) {
+					if ($rate['code'] && !empty($rate['use_default']) && $rate['txtva'] == $defaulttx && $rate['nprtva'] == $defaultnpr) {
+						$defaultcode = $rate['code'];
+						break;
+					}
+				}
 			}
 
 			$selectedfound = false;
@@ -10317,7 +10369,7 @@ class Form
 			// Activate the auto complete using ajax call.
 			$out .= ajax_autocompleter((string) $preSelectedValue, $htmlname, $urlforajaxcall, $urloption, getDolGlobalInt($confkeyforautocompletemode), 0);
 			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.ui-autocomplete { z-index: 1010; }</style>';
-			$out .= '<input type="text" class="' . $morecss . '"' . ($disabled ? ' disabled="disabled"' : '') . ' name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . dol_escape_htmltag($placeholder) . '"' : '') . ' />';
+			$out .= '<input type="text" class="valignmiddle' . ($morecss ? ' ' . $morecss : '') . '"' . ($disabled ? ' disabled="disabled"' : '') . ' name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . dol_escape_htmltag($placeholder) . '"' : '') . ' />';
 		} else {
 			// Immediate load of table record.
 			$out .= $this->selectForFormsList($objecttmp, $htmlname, $preSelectedValue, $showempty, $searchkey, $placeholder, $morecss, $moreparams, $forcecombo, 0, $disabled, $sortfield, $filter);
@@ -12154,6 +12206,11 @@ class Form
 
 			$navurl = $_SERVER["PHP_SELF"];
 
+			// Keep the popup context (page shown inside a dialog popup iframe) on previous/next links
+			if (GETPOST('dol_openinpopup', 'aZ09') && !preg_match('/[&?]dol_openinpopup=/', $moreparam)) {
+				$moreparam .= '&dol_openinpopup='.urlencode(GETPOST('dol_openinpopup', 'aZ09'));
+			}
+
 			// Special case for token card
 			if ($paramid == 'api_token_card') {
 				if (preg_match('/\/user\/api_token/', $navurl)) {
@@ -12531,8 +12588,14 @@ class Form
 
 				if (isModEnabled('gravatar') && $email && empty($noexternsourceoverwrite)) {
 					// see https://gravatar.com/site/implement/images/php/
+					$onerror = '';
+					if (preg_match('/^\/public\/theme\/common\/user_/', $nophoto)) {
+						// For a person, if no gravatar is found (or gravatar is not reachable), fallback on the local generic image of its gender
+						$defaultimg = '404';
+						$onerror = ' onerror="' . dol_escape_htmltag('this.onerror=null; this.src=\'' . dol_escape_js(DOL_URL_ROOT . $nophoto) . '\';') . '"';
+					}
 					$ret .= '<!-- Put link to gravatar -->';
-					$ret .= '<img class="gravatar photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" alt="" title="'.dolPrintHTMLForAttribute('Gravatar avatar - '.$email).'" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="https://www.gravatar.com/avatar/' . dol_hash(strtolower(trim($email)), 'sha256', 1) . '?s=' . $width . '&d=' . $defaultimg . '">'; // gravatar accepts a sha256 hash
+					$ret .= '<img class="gravatar photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" alt="" title="'.dolPrintHTMLForAttribute('Gravatar avatar - '.$email).'" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="https://www.gravatar.com/avatar/' . dol_hash(strtolower(trim($email)), 'sha256', 1) . '?s=' . $width . '&d=' . $defaultimg . '"' . $onerror . '>'; // gravatar accepts a sha256 hash
 				} else {
 					if ($nophoto == 'company') {
 						$ret .= '<div class="divforspanimg valignmiddle inline-block center photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" alt="" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . '>' . img_picto('', 'company') . '</div>';
@@ -12658,7 +12721,8 @@ class Form
 
 					$label = $obj->name;
 					$labelhtml = $obj->name;
-					if (isModEnabled('multicompany') && !getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1) {
+					// The entity label is selected only for a superadmin on the master entity (see the SQL request above)
+					if (isModEnabled('multicompany') && !getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1 && $user->admin && !$user->entity && !empty($obj->label)) {
 						$label .= " (" . $obj->label . ")";
 						$labelhtml .= ' <span class="opacitymedium">(' . $obj->label . ')</span>';
 					}
@@ -14624,7 +14688,12 @@ class Form
 	public function getNomUrl(&$object, $withpicto = 0, $option = '', $maxlength = 0, $save_lastsearch_value = -1, $notooltip = 0, $morecss = '', $add_label = 0, $sep = ' - ')
 	{
 		if (is_object($object) && method_exists($object, 'getNomUrl')) {
-			$out = $object->getNomUrl($withpicto, $option, $maxlength, $save_lastsearch_value, $notooltip, $morecss, $add_label, $sep);
+			if ($object instanceof Categorie) {
+				// The signature of Categorie::getNomUrl() is different: ($withpicto, $option, $maxlength, $moreparam, $notooltip, $morecss, $save_lastsearch_value)
+				$out = $object->getNomUrl($withpicto, $option, $maxlength, '', $notooltip, $morecss, $save_lastsearch_value);
+			} else {
+				$out = $object->getNomUrl($withpicto, $option, $maxlength, $save_lastsearch_value, $notooltip, $morecss, $add_label, $sep);
+			}
 			return $out;
 		} else {
 			return '';

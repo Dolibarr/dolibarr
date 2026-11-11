@@ -244,6 +244,14 @@ if (GETPOST('theme', 'aZ09')) {
 // Set global MAIN_OPTIMIZEFORTEXTBROWSER (must be before login part)
 if (GETPOSTINT('textbrowser') || (!empty($conf->browser->name) && $conf->browser->name == 'textbrowser')) {   // If we must enable text browser
 	$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = 2;
+	// A detected text browser (w3m, lynx...) has no javascript engine, so we disable javascript and ajax features
+	if (!empty($conf->browser->name) && $conf->browser->name == 'textbrowser') {
+		$conf->use_javascript_ajax = 0;
+		unset($conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
+		unset($conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+		unset($conf->global->CONTACT_USE_SEARCH_TO_SELECT);
+		unset($conf->global->PROJECT_USE_SEARCH_TO_SELECT);
+	}
 }
 
 // Force HTTPS if required ($conf->file->main_force_https is 0/1 or 'https dolibarr root url')
@@ -1651,7 +1659,9 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 		}
 
 		// Add Dolibarr to Content-Security-Policy
-		$contentsecuritypolicy = preg_replace('/default-src \'self\'/', 'default-src \'self\' *.dolibarr.org', $contentsecuritypolicy);
+		if (!preg_match('/dolibarr\.org/', $contentsecuritypolicy)) {
+			$contentsecuritypolicy = preg_replace('/default-src \'self\'/', 'default-src \'self\' *.dolibarr.org', $contentsecuritypolicy);
+		}
 
 		if (!empty($contentsecuritypolicy)) {
 			header("Content-Security-Policy-Report-Only: ".$contentsecuritypolicy);
@@ -1691,7 +1701,9 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 		}
 
 		// Add Dolibarr to Content-Security-Policy
-		$contentsecuritypolicy = preg_replace('/default-src \'self\'/', 'default-src \'self\' ping.dolibarr.org', $contentsecuritypolicy);
+		if (!preg_match('/dolibarr\.org/', $contentsecuritypolicy)) {
+			$contentsecuritypolicy = preg_replace('/default-src \'self\'/', 'default-src \'self\' *.dolibarr.org', $contentsecuritypolicy);
+		}
 
 		if (!empty($contentsecuritypolicy)) {
 			header("Content-Security-Policy: ".$contentsecuritypolicy);
@@ -1769,7 +1781,10 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 	print '<!doctype html>'."\n";
 
-	print '<html lang="'.substr($langs->defaultlang, 0, 2).'">'."\n";
+	// Same value as the one given to the css file (THEME_DARKMODEENABLED can be forced on URL)
+	$darkmode = GETPOSTISSET('THEME_DARKMODEENABLED') ? GETPOSTINT('THEME_DARKMODEENABLED') : getDolGlobalInt('THEME_DARKMODEENABLED');
+	$thememode = ($darkmode == 2 ? 'dark' : ($darkmode == 1 ? 'auto' : 'light'));
+	print '<html lang="'.substr($langs->defaultlang, 0, 2).'" data-theme-mode="'.$thememode.'">'."\n";
 
 	//print '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">'."\n";
 	if (empty($disablehead)) {
@@ -1930,6 +1945,9 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 		$jsContextFiles[] = 'dolibarr-tool.seteventmessage.js'; // The first tools to help dev for easy event in js
 		$jsContextFiles[] = 'dolibarr-tool.fetch.js'; // Ajax requests with anti CSRF token and error handling
+		$jsContextFiles[] = 'dolibarr-tool.replacecontent.js'; // Replace content of the page with html received in ajax
+		$jsContextFiles[] = 'dolibarr-tool.object.js'; // Read and update an object in ajax (data, no change of the page)
+		$jsContextFiles[] = 'dolibarr-tool.card.js'; // Controller of the card of an object: refresh fields, lines and sections of the page
 
 		if (! defined('NOREQUIRETRAN')) {
 			// Langs tool see Documentation at admin/tools/ui/dolibarr-context/index.php
@@ -1937,6 +1955,12 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			$jsContextVars['MAIN_LANG_DEFAULT'] = $langs->getDefaultLang();// For langs tool
 			$jsContextVars['DOL_URL_ROOT'] = DOL_URL_ROOT;
 			$jsContextVars['DOL_LANG_INTERFACE_URL'] = dol_buildpath('public/langs/langs-tool-interface.php', 1);// For langs tool
+		}
+
+		// Hook contexts of the page, sent back by the ajax requests printing parts of the page (ex: core/ajax/objectline.php),
+		// so modules hooking them render these parts as in the page. The hook context is the one of the page, not of an object.
+		if (is_object($hookmanager)) {
+			$jsContextVars['HOOK_CONTEXTS'] = implode(',', array_diff($hookmanager->contextarray, array('main', 'login'))); // Context vars are scalar
 		}
 
 		// Context vars added by modules : the hook returns them into ->results, ex: $this->results = array('MYMODULE_VAR' => 'value');
@@ -4001,7 +4025,11 @@ if (!function_exists("llxFooter")) {
 		}
 
 		// Global html output events ($mesgs, $errors, $warnings)
-		dol_htmloutput_events($disabledoutputofmessages);
+		// A page loaded in background by an ajax tool (noflusheventmessages=1, ex: Dolibarr.tools.card) keeps them in session
+		// for the next page, its html is not displayed.
+		if (!GETPOSTINT('noflusheventmessages')) {
+			dol_htmloutput_events($disabledoutputofmessages);
+		}
 
 		// Code for search criteria persistence.
 		// $user->lastsearch_values was set by the GETPOST when form field search_xxx exists

@@ -5,8 +5,8 @@
 # --no-exit: stay into the container with a bash shell after vibe has ended
 #            (by default, when vibe is terminated, the container is terminated too)
 #
-# When the current directory is not a git clone of the Dolibarr core repository
-# (github.com/Dolibarr/dolibarr), the directory dolibarr_dev or dolibarr found
+# When the current directory is not the Dolibarr core sources (the first line of
+# its README.md file is not "# DOLIBARR ERP & CRM"), the directory dolibarr_dev or dolibarr found
 # next to the current directory is also mounted into the container, so the
 # Dolibarr sources are available into the container at the same path as on the host.
 
@@ -23,14 +23,18 @@ done
 
 echo "Launch the docker VM with Vibe harness for AI"
 
-# Detect if the current directory is a git clone of the Dolibarr core repository
-# (github.com/Dolibarr/dolibarr, or a fork of it: any remote pointing to a
-# repository named "dolibarr"): in that case it is already mounted as the
-# working directory and no other dolibarr directory must be mounted.
+# Detect if the current directory is the Dolibarr core sources (the first line of
+# the README.md file is "# DOLIBARR ERP & CRM"): in that case it is already mounted
+# as the working directory and no other dolibarr directory must be mounted.
 IS_DOLIBARR_CORE=0
-if git remote -v 2>/dev/null | grep origin | awk '{print $2}' | sed -e 's/\.git$//' -e 's#.*/##' | grep -qix dolibarr; then
+if [ -f README.md ] && [ "$(head -n 1 README.md | tr -d '\r')" = "# DOLIBARR ERP & CRM" ]; then
     IS_DOLIBARR_CORE=1
 fi
+# Previous detection, using the git remote (github.com/Dolibarr/dolibarr, or a fork of it:
+# any remote pointing to a repository named "dolibarr")
+#if git remote -v 2>/dev/null | grep origin | awk '{print $2}' | sed -e 's/\.git$//' -e 's#.*/##' | grep -qix dolibarr; then
+#    IS_DOLIBARR_CORE=1
+#fi
 
 echo IS_DOLIBARR_CORE="$IS_DOLIBARR_CORE"
 echo DOL_CTI_ADMIN_LOGIN="$DOL_CTI_ADMIN_LOGIN"
@@ -47,6 +51,10 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+# Directory containing this script (the docker-vibe build directory), whatever the current
+# directory is. Symbolic links are resolved so a link to vibes.sh (in ~/bin for example) works too.
+SCRIPT_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)
+
 # Build image
 # The build context is created on the fly: it contains the docker-vibe directory,
 # and the .pre-commit-config.yaml of the repository when it exists (it is used by
@@ -56,7 +64,7 @@ if [ -f .pre-commit-config.yaml ]; then
   CONTEXT_TAR_ARGS+=(-C "$PWD" .pre-commit-config.yaml)
 fi
 
-if ! tar -cf - -C dev/build/docker-vibe "${CONTEXT_TAR_ARGS[@]}" | sudo docker build -t docker-vibe "${BUILD_ARGS[@]}" -; then
+if ! tar -cf - -C "$SCRIPT_DIR" "${CONTEXT_TAR_ARGS[@]}" | sudo docker build -t docker-vibe "${BUILD_ARGS[@]}" -; then
     echo "ERROR: Build of the docker-vibe image failed."
     echo "The container is not started to avoid running an outdated image."
     exit 1
@@ -65,6 +73,23 @@ fi
 # Run image
 GIT_DIR=$(basename "$PWD")
 export GIT_DIR
+
+# Directory mounted as the working directory: ~/git/GIT_DIR (development context). When it does not exist
+# (production context, sources outside of ~/git), the current directory is mounted at the same path.
+WORK_DIR="$HOME/git/$GIT_DIR"
+if [ ! -d "$WORK_DIR" ]; then
+    WORK_DIR="$PWD"
+fi
+
+# Files of the host home directory mounted only when they exist (production context), as docker refuses
+# to start with a missing bind source.
+mkdir -p "$HOME/.vibe"
+HOME_MOUNTS=()
+for HOME_FILE in .gitconfig .bash_history; do
+    if [ -f "$HOME/$HOME_FILE" ]; then
+        HOME_MOUNTS+=(--mount "type=bind,src=$HOME/$HOME_FILE,dst=$HOME/$HOME_FILE")
+    fi
+done
 
 # When working on something else than the Dolibarr core (a module for example),
 # also mount the sibling directory dolibarr_dev or dolibarr (in this order of
@@ -104,6 +129,24 @@ fi
 if [ -z "${XAUTHORITY:-}" ] && [ -f "$HOME/.Xauthority" ]; then
     # X11 session without XAUTHORITY exported: the cookie is in ~/.Xauthority.
     GRAPHIC_ARGS+=(-e "XAUTHORITY=$HOME/.Xauthority" --mount "type=bind,src=$HOME/.Xauthority,dst=$HOME/.Xauthority")
+fi
+
+# Pass the audio session of the host to the container so that the voice
+# features of Vibe (microphone capture and speech playback through the
+# PortAudio library installed into the image) work into the container:
+# the container has no sound card, PortAudio must reach the audio server
+# (PulseAudio, or PipeWire that provides the same socket) of the host
+# session. The socket lives into XDG_RUNTIME_DIR, already mounted and
+# passed by the graphic section above, PULSE_SERVER points PortAudio at
+# it and the PulseAudio cookie of the host is mounted read-only so the
+# server accepts the connection. Nothing is added outside a session with
+# an audio server: Vibe then disables its voice features.
+AUDIO_ARGS=()
+if [ -n "${XDG_RUNTIME_DIR:-}" ] && [ -S "${XDG_RUNTIME_DIR}/pulse/native" ]; then
+    AUDIO_ARGS+=(-e "PULSE_SERVER=unix:${XDG_RUNTIME_DIR}/pulse/native")
+    if [ -d "$HOME/.config/pulse" ]; then
+        AUDIO_ARGS+=(--mount "type=bind,src=$HOME/.config/pulse,dst=$HOME/.config/pulse,readonly")
+    fi
 fi
 
 # Pass the Dolibarr PHPUnit credentials to the container: the REST API tests
@@ -155,6 +198,7 @@ sudo docker run --rm -it \
   -e HOST_GROUP="$(id -un)" \
   -e GH_TOKEN="$GH_TOKEN" \
   "${GRAPHIC_ARGS[@]}" \
+  "${AUDIO_ARGS[@]}" \
   "${TEST_ARGS[@]}" \
   "${LOG_ARGS[@]}" \
   "${TX_ARGS[@]}" \
@@ -162,10 +206,9 @@ sudo docker run --rm -it \
   --network=host \
   --cap-add=NET_ADMIN \
   --mount "type=bind,src=/var/run/mysqld/mysqld.sock,dst=/var/run/mysqld/mysqld.sock" \
-  --mount "type=bind,src=$HOME/git/$GIT_DIR,dst=$HOME/git/$GIT_DIR" \
+  --mount "type=bind,src=$WORK_DIR,dst=$WORK_DIR" \
   "${EXTRA_MOUNTS[@]}" \
   --mount "type=bind,src=$HOME/.vibe,dst=/home/$(id -un)/.vibe" \
-  --mount "type=bind,src=$HOME/.gitconfig,dst=$HOME/.gitconfig" \
-  --mount "type=bind,src=$HOME/.bash_history,dst=$HOME/.bash_history" \
-  -w "$HOME/git/$GIT_DIR" \
+  "${HOME_MOUNTS[@]}" \
+  -w "$WORK_DIR" \
   docker-vibe "${ARGS[@]}"
