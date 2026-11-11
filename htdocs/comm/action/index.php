@@ -800,6 +800,7 @@ function dolAgendaDayDrag(layer) {
 				el.setAttribute('data-agenda-start', newstart);
 				el.setAttribute('data-agenda-end', newstart + (oldend - oldstart));
 				el.style.top = newstart + 'px';
+				dolAgendaDayHours(el, data);
 				dolAgendaDayColumns(dolAgendaDayItems(newlayer));
 				if (newlayer !== oldlayer) {
 					dolAgendaDayColumns(dolAgendaDayItems(oldlayer));
@@ -811,6 +812,19 @@ function dolAgendaDayDrag(layer) {
 			});
 		}
 	});
+}
+function dolAgendaDayHours(el, data) {
+	// The box prints the hours in front of the title. Only the server knows how they are formatted for
+	// this user, so it hands back the string it printed and the one it must print now: swapping that
+	// exact prefix is safe whatever the format, and leaves the title, which may be truncated, alone.
+	if (!data || !data.oldhours || !data.newhours || data.oldhours === data.newhours) { return; }
+	var nodes = jQuery(el).find('a.cal_event_title').contents().filter(function () { return this.nodeType === 3; });
+	for (var i = 0; i < nodes.length; i++) {
+		if (nodes[i].nodeValue.indexOf(data.oldhours) === 0) {
+			nodes[i].nodeValue = data.newhours + nodes[i].nodeValue.slice(data.oldhours.length);
+			return;
+		}
+	}
 }
 function dolAgendaDaySnapEnd(el, boxheight) {
 	// Absolute 15 min snap of the new end, like dolAgendaDaySnapTop does for the start: a box is at
@@ -869,6 +883,7 @@ function dolAgendaDayResize(layer) {
 					return;
 				}
 				el.setAttribute('data-agenda-end', newend);
+				dolAgendaDayHours(el, data);
 				dolAgendaDayResizeHeight(el, newend - start);
 				dolAgendaDayColumns(dolAgendaDayItems(layerofel));
 				Dolibarr.tools.setEventMessage(dolAgendaGridCfg.msgsaved, 'mesgs');
