@@ -66,6 +66,14 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $TBomLineId = GETPOST('bomlineid', 'array:int');
 $lineid   = GETPOSTINT('lineid');
 $socid = GETPOSTINT("socid");
+$origin = GETPOST('origin', 'alpha');
+$originid = GETPOSTINT('originid') ? GETPOSTINT('originid') : GETPOSTINT('origin_id');
+
+if (empty($backtopageforcancel) && !empty($origin) && !empty($originid)) {
+	if ($origin == 'commande' || $origin == 'order') {
+		$backtopageforcancel = DOL_URL_ROOT.'/commande/card.php?id='.((int) $originid);
+	}
+}
 
 // Initialize a technical objects
 $object = new Mo($db);
@@ -95,13 +103,85 @@ if (empty($action) && empty($id) && empty($ref)) {
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
+$objectsrc = null;
+$orderedQty = null;
+if (($action == 'create' || $action == 'add') && !empty($origin) && !empty($originid)) {
+	$objectsrc = fetchObjectByElement($originid, $origin);
+	if (is_object($objectsrc) && $objectsrc->id > 0) {
+		if ($action == 'create') {
+			if (empty($socid) && !empty($objectsrc->socid)) {
+				$socid = (int) $objectsrc->socid;
+			}
+			if (!GETPOSTISSET('fk_soc') && !empty($objectsrc->socid)) {
+				$_POST['fk_soc'] = (int) $objectsrc->socid;
+			}
+			if (!GETPOSTISSET('fk_project') && !empty($objectsrc->fk_project)) {
+				$_POST['fk_project'] = (int) $objectsrc->fk_project;
+			}
+
+			// If lines are available in the source object (e.g. sales order)
+			if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines')) {
+				$objectsrc->fetch_lines();
+			}
+
+			if (!empty($objectsrc->lines) && is_array($objectsrc->lines)) {
+				$TProductsOrdered = array();
+				foreach ($objectsrc->lines as $srcline) {
+					if (!empty($srcline->fk_product) && (empty($srcline->product_type) || $srcline->product_type == 0) && empty($srcline->fk_parent_line)) {
+						if ($lineid > 0 && $srcline->id != $lineid) {
+							continue;
+						}
+						if (!isset($TProductsOrdered[$srcline->fk_product])) {
+							$TProductsOrdered[$srcline->fk_product] = (float) $srcline->qty;
+						} else {
+							$TProductsOrdered[$srcline->fk_product] += (float) $srcline->qty;
+						}
+					}
+				}
+
+				// If only 1 product in the order with an active BOM, auto-select it if not already set
+				if (!GETPOSTISSET('fk_bom') && !GETPOSTISSET('fk_product') && !empty($TProductsOrdered)) {
+					$sql = "SELECT b.rowid, b.fk_product, b.qty FROM " . $db->prefix() . "bom_bom as b";
+					$sql .= " WHERE b.status = 1 AND b.fk_product IN (" . $db->sanitize(implode(',', array_map('intval', array_keys($TProductsOrdered)))) . ")";
+					$sql .= " AND b.entity IN (" . getEntity('bom') . ")";
+					$sql .= " ORDER BY b.rowid ASC";
+					$resql = $db->query($sql);
+					if ($resql) {
+						if ($db->num_rows($resql) == 1) {
+							$objbom = $db->fetch_object($resql);
+							$_POST['fk_bom'] = (int) $objbom->rowid;
+							$_POST['fk_product'] = (int) $objbom->fk_product;
+							if (isset($TProductsOrdered[$objbom->fk_product]) && $TProductsOrdered[$objbom->fk_product] > 0) {
+								$orderedQty = $TProductsOrdered[$objbom->fk_product];
+							}
+						}
+					}
+				} elseif (!empty($TProductsOrdered) && GETPOSTINT('fk_bom') > 0) {
+					// User explicitly chose a BOM, check if the BOM's product is in the order
+					$sql = "SELECT b.fk_product FROM " . $db->prefix() . "bom_bom as b WHERE b.rowid = " . GETPOSTINT('fk_bom');
+					$resql = $db->query($sql);
+					if ($resql && ($objbom = $db->fetch_object($resql))) {
+						if (isset($TProductsOrdered[$objbom->fk_product]) && $TProductsOrdered[$objbom->fk_product] > 0) {
+							$orderedQty = $TProductsOrdered[$objbom->fk_product];
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
 if (GETPOSTINT('fk_bom') > 0) {
 	$objectbom->fetch(GETPOSTINT('fk_bom'));
 
 	if ($action != 'add') {
 		// We force calling parameters if we are not in the submit of creation of MO
 		$_POST['fk_product'] = $objectbom->fk_product;
-		$_POST['qty'] = $objectbom->qty;
+		if (isset($orderedQty)) {
+			$_POST['qty'] = $orderedQty;
+		} elseif (!isset($_POST['qty'])) {
+			$_POST['qty'] = $objectbom->qty;
+		}
 		$_POST['mrptype'] = $objectbom->bomtype;
 		$_POST['fk_warehouse'] = $objectbom->fk_warehouse;
 		$_POST['note_private'] = $objectbom->note_private;
@@ -160,6 +240,11 @@ if (empty($reshook)) {
 		// raw materials on the parent MO: keep a single consume line anchored on the sub-assembly
 		// product instead, so it can be found below to create the child MO.
 		$object->noFlattenBomLineIds = array_map('intval', $TBomLineId);
+		if (!empty($origin) && !empty($originid)) {
+			$object->origin = $origin;
+			$object->origin_id = $originid;
+			$object->linked_objects[$origin] = $originid;
+		}
 		include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
 		$mo_parent = $object;
@@ -329,6 +414,14 @@ if (empty($reshook)) {
 		exit;
 	}
 
+	if ($action == 'add' && !empty($permissiontoadd)) {
+		if (!empty($origin) && !empty($originid)) {
+			$object->origin = $origin;
+			$object->origin_id = $originid;
+			$object->linked_objects[$origin] = $originid;
+		}
+	}
+
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
@@ -424,10 +517,20 @@ if ($action == 'create') {
 	if ($backtopageforcancel) {
 		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 	}
+	if ($origin) {
+		print '<input type="hidden" name="origin" value="'.dol_escape_htmltag($origin).'">';
+	}
+	if ($originid) {
+		print '<input type="hidden" name="originid" value="'.((int) $originid).'">';
+	}
 
 	print dol_get_fiche_head(array(), '');
 
 	print '<table class="border centpercent tableforfieldcreate">'."\n";
+
+	if (!empty($origin) && !empty($originid) && is_object($objectsrc) && $objectsrc->id > 0) {
+		print '<tr><td class="titlefieldcreate">'.$langs->trans("Origin").'</td><td>'.$objectsrc->getNomUrl(1).'</td></tr>';
+	}
 
 	// Common attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_add.tpl.php';
@@ -446,6 +549,17 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
+	$moreparamforjs = '';
+	if (!empty($origin)) {
+		$moreparamforjs .= '&origin=' . urlencode($origin);
+	}
+	if (!empty($originid)) {
+		$moreparamforjs .= '&originid=' . ((int) $originid);
+	}
+	if (!empty($socid)) {
+		$moreparamforjs .= '&socid=' . ((int) $socid);
+	}
+
 	mrpCollapseBomManagement(); ?>
 	<script>
 		 $(document).ready(function () {
@@ -454,7 +568,7 @@ if ($action == 'create') {
 				if (jQuery('#fk_bom').val() > 0)
 				{
 					// Redirect to page with fk_bom set
-					window.location.href = '<?php echo $_SERVER["PHP_SELF"] ?>?action=create&token=<?php echo newToken(); ?>&fk_bom='+jQuery('#fk_bom').val();
+					window.location.href = '<?php echo $_SERVER["PHP_SELF"] ?>?action=create&token=<?php echo newToken(); ?><?php echo $moreparamforjs; ?>&fk_bom='+jQuery('#fk_bom').val();
 					/*
 					$.getJSON('<?php echo DOL_URL_ROOT ?>/mrp/ajax/ajax_bom.php?action=getBoms&idbom='+jQuery('#fk_bom').val(), function(data) {
 						console.log(data);
@@ -486,7 +600,7 @@ if ($action == 'create') {
 				else if (jQuery('#fk_bom').val() < 0) {
 					// Redirect to page with all fields defined except fk_bom set
 					console.log(jQuery('#fk_product').val());
-					window.location.href = '<?php echo $_SERVER["PHP_SELF"] ?>?action=create&token=<?php echo newToken(); ?>&qty='+jQuery('#qty').val()+'&mrptype='+jQuery('#mrptype').val()+'&fk_product='+jQuery('#fk_product').val()+'&label='+jQuery('#label').val()+'&fk_project='+jQuery('#fk_project').val()+'&fk_warehouse='+jQuery('#fk_warehouse').val();
+					window.location.href = '<?php echo $_SERVER["PHP_SELF"] ?>?action=create&token=<?php echo newToken(); ?><?php echo $moreparamforjs; ?>&qty='+jQuery('#qty').val()+'&mrptype='+jQuery('#mrptype').val()+'&fk_product='+jQuery('#fk_product').val()+'&label='+jQuery('#label').val()+'&fk_project='+jQuery('#fk_project').val()+'&fk_warehouse='+jQuery('#fk_warehouse').val();
 					/*
 					$('#qty').val('');
 					$("#fk_product").val('');
