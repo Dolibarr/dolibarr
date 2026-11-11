@@ -3193,6 +3193,19 @@ class Product extends CommonObject
 
 				$this->level = $level; // Store level of price edited for trigger
 
+				// The price of a variant is recalculated from its parent at each update of the parent, with its price impact.
+				// So a price set directly on a variant must update its price impact, else the next update of the parent restores the previous price.
+				if (isModEnabled('variants') && empty($this->context['variant_price_set_by_parent'])) {
+					include_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
+					$prodcomb = new ProductCombination($this->db);
+					if ($prodcomb->setVariationFromChildPrice($this, $level) < 0) {
+						$this->error = $prodcomb->error;
+						$this->errors = array_merge($this->errors, $prodcomb->errors);
+						$this->db->rollback();
+						return -1;
+					}
+				}
+
 				// Call trigger
 				if (!$notrigger) {
 					$result = $this->call_trigger('PRODUCT_PRICE_MODIFY', $user);

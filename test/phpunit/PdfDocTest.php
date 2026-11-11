@@ -496,4 +496,189 @@ class PdfDocTest extends CommonClassTest
 		$this->assertSame($sizes['space'], $sizes['spaces']);
 		$this->assertSame($sizes['space'], $sizes['newline']);
 	}
+
+	/**
+	 * Import a page of a document whose startxref does not point at a cross-reference section: beyond the end of
+	 * the file, or inside it but somewhere else. strpos() was given that offset, which throws a ValueError with
+	 * PHP 8 when it is beyond the data, and the page was not imported.
+	 *
+	 * @return void
+	 */
+	public function testPdfImportPageWithAWrongStartxref()
+	{
+		pdf_getInstance();	// Load the TCPDF and TCPDI classes and define their constants
+
+		$content = "BT /F1 24 Tf 72 700 Td (Hello TCPDI) Tj ET";
+		$objects = array(
+			1 => "<< /Type /Catalog /Pages 2 0 R >>",
+			2 => "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+			3 => "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>",
+			4 => "<< /Length ".strlen($content)." >>\nstream\n".$content."\nendstream",
+			5 => "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+		);
+		$document = $this->buildPdf($objects);
+
+		$documents = array(
+			'right' => $document,
+			// Beyond the end of the file, and inside it but not on the "xref" keyword
+			'beyond' => preg_replace('/startxref\n[0-9]+\n/', "startxref\n9999999\n", $document),
+			'inside' => preg_replace('/startxref\n[0-9]+\n/', "startxref\n10\n", $document),
+		);
+
+		$sizes = array();
+		foreach ($documents as $case => $data) {
+			$file = tempnam(sys_get_temp_dir(), 'tcpdi').'.pdf';
+			file_put_contents($file, $data);
+
+			$tcpdi = new TCPDI();
+			$this->assertSame(1, $tcpdi->setSourceFile($file), 'Case '.$case.': the document should hold one page');
+			$tpl = $tcpdi->importPage(1);
+			$tcpdi->AddPage();
+			$tcpdi->useTemplate($tpl);
+			$sizes[$case] = strlen($tcpdi->Output('', 'S'));
+			unlink($file);
+		}
+
+		// The cross-reference table of the file is found again, so the same page is imported
+		$this->assertSame($sizes['right'], $sizes['beyond']);
+		$this->assertSame($sizes['right'], $sizes['inside']);
+	}
+
+	/**
+	 * Import a page of a document that holds a dictionary with a /Length entry which is not the dictionary of a
+	 * stream - an encryption dictionary, a layer, an optional content group all have one. It was read as a stream
+	 * anyway, and /Length bytes were taken from the file: 256 MB on the file of the audit, which exhausts the
+	 * memory, and in any case the parser lost its place in the object.
+	 *
+	 * @return void
+	 */
+	public function testPdfImportPageWithANonStreamDictionaryHoldingALengthKey()
+	{
+		pdf_getInstance();	// Load the TCPDF and TCPDI classes and define their constants
+
+		$content = "BT /F1 24 Tf 72 700 Td (Hello TCPDI) Tj ET";
+		$objects = array(
+			1 => "<< /Type /Catalog /Pages 2 0 R >>",
+			2 => "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+			3 => "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R >> /Properties << /MC0 6 0 R >> >> /Contents 4 0 R >>",
+			4 => "<< /Length ".strlen($content)." >>\nstream\n".$content."\nendstream",
+			5 => "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+		);
+
+		// The same document, the dictionary of object 6 declaring two lengths it does not have. Both are written
+		// with the same number of digits, so the only thing that could change the size of the page imported is
+		// the number of bytes read after that dictionary.
+		$sizes = array();
+		foreach (array('small' => 123456789, 'huge' => 268435456) as $case => $length) {
+			$file = tempnam(sys_get_temp_dir(), 'tcpdi').'.pdf';
+			file_put_contents($file, $this->buildPdf($objects + array(6 => "<< /Length ".$length." /Kind /Layer >>")));
+
+			$tcpdi = new TCPDI();
+			$this->assertSame(1, $tcpdi->setSourceFile($file), 'Case '.$case.': the document should hold one page');
+			$tpl = $tcpdi->importPage(1);
+			$tcpdi->AddPage();
+			$tcpdi->useTemplate($tpl);
+			$sizes[$case] = strlen($tcpdi->Output('', 'S'));
+			unlink($file);
+		}
+
+		// The /Length of that dictionary is not a stream length, so it changes nothing to the page imported
+		$this->assertSame($sizes['small'], $sizes['huge']);
+	}
+	/**
+	 * Import a page whose content stream declares a /Length that is not where the stream ends. The declared value
+	 * was taken as is, so the data read was cut short or ran over the end of the stream, and the parser went on
+	 * from the wrong place.
+	 *
+	 * @return void
+	 */
+	public function testPdfImportPageWithAWrongStreamLength()
+	{
+		pdf_getInstance();	// Load the TCPDF and TCPDI classes and define their constants
+
+		$content = "BT /F1 24 Tf 72 700 Td (Hello TCPDI) Tj ET";
+		$objects = array(
+			1 => "<< /Type /Catalog /Pages 2 0 R >>",
+			2 => "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+			3 => "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>",
+			5 => "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+		);
+
+		$lengths = array('right' => strlen($content), 'short' => strlen($content) - 10, 'long' => strlen($content) + 10);
+
+		$sizes = array();
+		foreach ($lengths as $case => $length) {
+			$file = tempnam(sys_get_temp_dir(), 'tcpdi').'.pdf';
+			$object = "<< /Length ".$length." >>\nstream\n".$content."\nendstream";
+			file_put_contents($file, $this->buildPdf($objects + array(4 => $object)));
+
+			$tcpdi = new TCPDI();
+			$this->assertSame(1, $tcpdi->setSourceFile($file), 'Case '.$case.': the document should hold one page');
+			$tpl = $tcpdi->importPage(1);
+			$tcpdi->AddPage();
+			$tcpdi->useTemplate($tpl);
+			$sizes[$case] = strlen($tcpdi->Output('', 'S'));
+			unlink($file);
+		}
+
+		// The end of the stream is where "endstream" is, whatever /Length says
+		$this->assertSame($sizes['right'], $sizes['short']);
+		$this->assertSame($sizes['right'], $sizes['long']);
+	}
+	/**
+	 * Import a page of a document whose page tree does not say everything in place: the /Kids of the
+	 * /Pages node is an indirect reference to the array instead of the array itself, and the page
+	 * carries neither /Resources of its own nor /Annots. Both are allowed by the specification - any
+	 * value of a dictionary may be an indirect reference, and /Resources is inherited from the parent
+	 * node - and both are produced by real writers.
+	 *
+	 * Watched failing before the fix: the direct form imports, the indirect one does not.
+	 *
+	 * @return	void
+	 */
+	public function testPdfImportPageWhoseKidsAreIndirectAndWithoutResources()
+	{
+		pdf_getInstance();	// Load the TCPDF and TCPDI classes and define their constants
+
+		$content = "BT /F1 24 Tf 72 700 Td (Hello TCPDI) Tj ET";
+		$stream = "<< /Length ".strlen($content)." >>\nstream\n".$content."\nendstream";
+
+		// The page holds no /Resources: it inherits the ones of its parent node, as the specification says.
+		$cases = array(
+			// /Kids written in place, the form every writer of the test suite uses so far
+			'direct' => array(
+				1 => "<< /Type /Catalog /Pages 2 0 R >>",
+				2 => "<< /Type /Pages /Kids [3 0 R] /Count 1 /Resources << /Font << /F1 5 0 R >> >> >>",
+				3 => "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R >>",
+				4 => $stream,
+				5 => "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+			),
+			// The same document, with /Kids an indirect reference to the array
+			'indirect' => array(
+				1 => "<< /Type /Catalog /Pages 2 0 R >>",
+				2 => "<< /Type /Pages /Kids 6 0 R /Count 1 /Resources << /Font << /F1 5 0 R >> >> >>",
+				3 => "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R >>",
+				4 => $stream,
+				5 => "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+				6 => "[3 0 R]",
+			),
+		);
+
+		$sizes = array();
+		foreach ($cases as $case => $objects) {
+			$file = tempnam(sys_get_temp_dir(), 'tcpdi').'.pdf';
+			file_put_contents($file, $this->buildPdf($objects));
+
+			$tcpdi = new TCPDI();
+			$this->assertSame(1, $tcpdi->setSourceFile($file), 'Case '.$case.': the document should hold one page');
+			$tpl = $tcpdi->importPage(1);
+			$tcpdi->AddPage();
+			$tcpdi->useTemplate($tpl);
+			$sizes[$case] = strlen($tcpdi->Output('', 'S'));
+			unlink($file);
+		}
+
+		// Both say the same thing, so both import to the same document
+		$this->assertSame($sizes['direct'], $sizes['indirect']);
+	}
 }

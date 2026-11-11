@@ -35,7 +35,9 @@ class AiMcpApiBridgeProjectsTest extends CommonClassTest
 	{
 		$bridge = new ToolApiBridge(null);
 		$property = new ReflectionProperty(ToolApiBridge::class, 'enrichments');
-		$property->setAccessible(true);
+		if (PHP_VERSION_ID < 80100) {
+			$property->setAccessible(true);
+		}
 		$endpoints = $property->getValue($bridge);
 
 		$this->assertArrayHasKey('projects', $endpoints);
@@ -54,10 +56,14 @@ class AiMcpApiBridgeProjectsTest extends CommonClassTest
 	{
 		$bridge = new ToolApiBridge(null);
 		$property = new ReflectionProperty(ToolApiBridge::class, 'enrichments');
-		$property->setAccessible(true);
+		if (PHP_VERSION_ID < 80100) {
+			$property->setAccessible(true);
+		}
 		$endpoints = $property->getValue($bridge);
 		$method = new ReflectionMethod(ToolApiBridge::class, 'buildToolDefinition');
-		$method->setAccessible(true);
+		if (PHP_VERSION_ID < 80100) {
+			$method->setAccessible(true);
+		}
 		$definition = $method->invoke($bridge, array('class' => AiMcpProjectReadApiFixture::class, 'label' => 'projects'), 'projects', 'get', 'api_projects_get', $endpoints['projects']['methods']['get']);
 
 		$this->assertSame('api_projects_get', $definition['name']);

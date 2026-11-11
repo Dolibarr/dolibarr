@@ -314,11 +314,41 @@ abstract class CommonInvoice extends CommonObject
 	 * 	Return remain amount to pay. Property ->id and ->total_ttc must be set.
 	 *  This does not include open direct debit requests.
 	 *
-	 *  @param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
-	 *	@return		float|string			Remain of amount to pay
+	 *  @param 		int<-1,1>	$multicurrency 	Return multicurrency_amount instead of amount. -1=Return both.
+	 *	@return		float|string|array{remaintopay:float|string,remaintopay_multicurrency:float|string}	Remain of amount to pay
 	 */
 	public function getRemainToPay($multicurrency = 0)
 	{
+		if ((int) $multicurrency < 0) {
+			// Get amounts in main currency and in foreign currency with one call for each
+			$tmppaid = $this->getSommePaiement(-1);
+			$tmpdeposits = $this->getSumDepositsUsed(-1);
+			$tmpcreditnotes = $this->getSumCreditNotesUsed(-1);
+
+			$alreadypaid = 0.0;
+			$alreadypaid_multicurrency = 0.0;
+			if (is_array($tmppaid)) {
+				$alreadypaid += $tmppaid['alreadypaid'];
+				$alreadypaid_multicurrency += $tmppaid['alreadypaid_multicurrency'];
+			}
+			if (is_array($tmpdeposits)) {
+				$alreadypaid += $tmpdeposits['totaldeposits'];
+				$alreadypaid_multicurrency += $tmpdeposits['totaldeposits_multicurrency'];
+			}
+			if (is_array($tmpcreditnotes)) {
+				$alreadypaid += $tmpcreditnotes['totalcreditnotes'];
+				$alreadypaid_multicurrency += $tmpcreditnotes['totalcreditnotes_multicurrency'];
+			}
+
+			$remaintopay = price2num($this->total_ttc - $alreadypaid, 'MT');
+			$remaintopay_multicurrency = price2num($this->multicurrency_total_ttc - $alreadypaid_multicurrency, 'MT');
+			if ($this->status == self::STATUS_CLOSED && $this->close_code == 'discount_vat') {		// If invoice closed with discount for anticipated payment
+				$remaintopay = 0.0;
+				$remaintopay_multicurrency = 0.0;
+			}
+			return array('remaintopay' => $remaintopay, 'remaintopay_multicurrency' => $remaintopay_multicurrency);
+		}
+
 		$alreadypaid = 0.0;
 		$alreadypaid += $this->getSommePaiement($multicurrency);
 		$alreadypaid += $this->getSumDepositsUsed($multicurrency);
@@ -392,23 +422,23 @@ abstract class CommonInvoice extends CommonObject
 	 *  Should always be empty, except if option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is on for sale invoices (not recommended),
 	 *  of FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS is on for purchase invoices (not recommended).
 	 *
-	 * 	@param 		int 	$multicurrency 		Return multicurrency_amount instead of amount
-	 *	@return		float						Return integer <0 and set ->error if KO, Sum of deposits amount otherwise
+	 * 	@param 		int<-1,1>	$multicurrency 		Return multicurrency_amount instead of amount. -1=Return both.
+	 *	@return		float|int|array{totaldeposits:float,totaldeposits_multicurrency:float}	Return integer <0 and set ->error if KO, Sum of deposits amount otherwise
 	 *	@see getSommePaiement(), getSumCreditNotesUsed()
 	 */
 	public function getSumDepositsUsed($multicurrency = 0)
 	{
-		/*if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') {
-			// FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS was never supported for purchase invoice, so we can return 0 with no need of SQL for this case.
-			return 0.0;
-		}*/
-
 		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
 		$discountstatic = new DiscountAbsolute($this->db);
 		$result = $discountstatic->getSumDepositsUsed($this, $multicurrency);
 
-		if ($result >= 0) {
+		if (is_array($result)) {
+			$this->totaldeposits = $result['amount'];
+			$this->totaldeposits_multicurrency = $result['multicurrency_amount'];
+
+			return array('totaldeposits' => $result['amount'], 'totaldeposits_multicurrency' => $result['multicurrency_amount']);
+		} elseif ($result >= 0) {
 			if ($multicurrency) {
 				$this->totaldeposits_multicurrency = $result;
 			} else {
@@ -425,8 +455,8 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 *  Return amount (with tax) of all credit notes invoices + excess received used by invoice
 	 *
-	 * 	@param 		int 	$multicurrency 		Return multicurrency_amount instead of amount
-	 *	@return		float|string				Return string 'Error...' and set ->error if KO, Sum of credit notes and deposits amount otherwise
+	 * 	@param 		int<-1,1>	$multicurrency 		Return multicurrency_amount instead of amount. -1=Return both.
+	 *	@return		float|string|array{totalcreditnotes:float,totalcreditnotes_multicurrency:float}	Return string 'Error...' and set ->error if KO, Sum of credit notes and deposits amount otherwise
 	 *	@see getSommePaiement(), getSumDepositsUsed()
 	 */
 	public function getSumCreditNotesUsed($multicurrency = 0)
@@ -435,7 +465,12 @@ abstract class CommonInvoice extends CommonObject
 
 		$discountstatic = new DiscountAbsolute($this->db);
 		$result = $discountstatic->getSumCreditNotesUsed($this, $multicurrency);
-		if (is_numeric($result)) {
+		if (is_array($result)) {
+			$this->totalcreditnotes = $result['amount'];
+			$this->totalcreditnotes_multicurrency = $result['multicurrency_amount'];
+
+			return array('totalcreditnotes' => $result['amount'], 'totalcreditnotes_multicurrency' => $result['multicurrency_amount']);
+		} elseif (is_numeric($result)) {
 			if ($multicurrency) {
 				$this->totalcreditnotes_multicurrency = $result;
 			} else {
@@ -452,8 +487,8 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 *    	Return amount (with tax) of all converted amount for this credit note
 	 *
-	 * 		@param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
-	 *		@return		float						Return integer <0 if KO, Sum of credit notes and deposits amount otherwise
+	 * 		@param 		int<-1,1>	$multicurrency 	Return multicurrency_amount instead of amount. -1=Return both.
+	 *		@return		float|int|array{amount:float,multicurrency_amount:float}	Return integer <0 if KO, Sum of credit notes and deposits amount otherwise
 	 */
 	public function getSumFromThisCreditNotesNotUsed($multicurrency = 0)
 	{
@@ -461,7 +496,9 @@ abstract class CommonInvoice extends CommonObject
 
 		$discountstatic = new DiscountAbsolute($this->db);
 		$result = $discountstatic->getSumFromThisCreditNotesNotUsed($this, $multicurrency);
-		if ($result >= 0) {
+		if (is_array($result)) {
+			return $result;
+		} elseif ($result >= 0) {
 			return $result;
 		} else {
 			$this->error = $discountstatic->error;

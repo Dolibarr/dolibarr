@@ -758,8 +758,8 @@ class DiscountAbsolute extends CommonObject
 	 *  Should always be empty, except if option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS or FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS is on (not recommended).
 	 *
 	 *	@param		CommonInvoice	$invoice		Object invoice (customer of supplier)
-	 *  @param 		int<-1,1>	    $multicurrency 	1=Return multicurrency_amount instead of amount. TODO Add a mode multicurrency = -1 to return array with amount + multicurrency amount
-	 *	@return		int<-1,-1>|float     			Return integer <0 if KO, Sum of credit notes and deposits amount otherwise
+	 *  @param 		int<-1,1>	    $multicurrency 	1=Return multicurrency_amount instead of amount, -1=Return array with both amounts
+	 *	@return		int<-1,-1>|float|array{amount:float,multicurrency_amount:float}	Return integer <0 if KO, Sum of deposits amount otherwise
 	 */
 	public function getSumDepositsUsed($invoice, $multicurrency = 0)
 	{
@@ -784,7 +784,9 @@ class DiscountAbsolute extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			if ($multicurrency == 1) {
+			if ($multicurrency < 0) {
+				return array('amount' => (float) $obj->amount, 'multicurrency_amount' => (float) $obj->multicurrency_amount);
+			} elseif ($multicurrency == 1) {
 				return $obj->multicurrency_amount;
 			} else {
 				return $obj->amount;
@@ -799,8 +801,8 @@ class DiscountAbsolute extends CommonObject
 	 *  Return amount (with tax) of all credit notes invoices + excess received used by invoice as a payment
 	 *
 	 *	@param      CommonInvoice	  $invoice	    	Object invoice
-	 *	@param      int<-1,1>	      $multicurrency	1=Return multicurrency_amount instead of amount. TODO Add a mode multicurrency = -1 to return array with amount + multicurrency amount
-	 *	@return     float|string		        		Return string 'Error...' if KO, Sum of credit notes and excess received amount otherwise
+	 *	@param      int<-1,1>	      $multicurrency	1=Return multicurrency_amount instead of amount, -1=Return array with both amounts
+	 *	@return     float|string|array{amount:float,multicurrency_amount:float}	Return string 'Error...' if KO, Sum of credit notes and excess received amount otherwise
 	 */
 	public function getSumCreditNotesUsed($invoice, $multicurrency = 0)
 	{
@@ -825,7 +827,9 @@ class DiscountAbsolute extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			if ($multicurrency == 1) {
+			if ($multicurrency < 0) {
+				return array('amount' => (float) $obj->amount, 'multicurrency_amount' => (float) $obj->multicurrency_amount);
+			} elseif ($multicurrency == 1) {
 				return $obj->multicurrency_amount;
 			} else {
 				return $obj->amount;
@@ -839,8 +843,8 @@ class DiscountAbsolute extends CommonObject
 	 *    	Return amount (with tax) of all converted amount for this credit note
 	 *
 	 *	@param		CommonInvoice	  $invoice	    	Object invoice
-	 *	@param		int<-1,1>	      $multicurrency	Return multicurrency_amount instead of amount. TODO Add a mode multicurrency = -1 to return array with amount + multicurrency amount
-	 *	@return		int					        		Return integer <0 if KO, Sum of credit notes and deposits amount otherwise
+	 *	@param		int<-1,1>	      $multicurrency	1=Return multicurrency_amount instead of amount, -1=Return array with both amounts
+	 *	@return		int|float|array{amount:float,multicurrency_amount:float}	Return integer <0 if KO, Sum of credit notes and deposits amount otherwise
 	 */
 	public function getSumFromThisCreditNotesNotUsed($invoice, $multicurrency = 0)
 	{
@@ -863,7 +867,9 @@ class DiscountAbsolute extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			if ($multicurrency) {
+			if ($multicurrency < 0) {
+				return array('amount' => (float) $obj->amount, 'multicurrency_amount' => (float) $obj->multicurrency_amount);
+			} elseif ($multicurrency) {
 				return $obj->multicurrency_amount;
 			} else {
 				return $obj->amount;

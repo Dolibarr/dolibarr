@@ -290,7 +290,7 @@ class MCPServer
 			// The advertised surface only changes with admin configuration or an
 			// upgrade: safe to cache, but it is per-installation, not user-specific.
 			'cacheScope' => 'public',
-			'ttlMs' => 3600000,
+			'ttlMs' => getDolGlobalInt('AI_MCP_DISCOVER_TTL', 3600) * 1000,
 			'instructions' => 'Dolibarr ERP/CRM MCP server. Tools are permission-filtered per authenticated user; lists honor Dolibarr entity and rights.'
 		];
 	}
