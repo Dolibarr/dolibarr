@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ class box_graph_invoices_peryear extends ModeleBoxes
 	 * 	@param	DoliDB	$db			Database handler
 	 *  @param	string	$param		More parameters
 	 */
-	public function __construct($db, $param)
+	public function __construct($db, $param)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $user;
 
@@ -107,9 +107,9 @@ class box_graph_invoices_peryear extends ModeleBoxes
 				$endyear = GETPOSTINT($param_year);
 				$showtot = GETPOST($param_showtot, 'alpha');
 			} else {
-				$tmparray = json_decode($_COOKIE['DOLUSER_box_'.$this->boxcode], true);
-				$endyear = $tmparray['year'];
-				$showtot = $tmparray['showtot'];
+				$tmparray = (!empty($_COOKIE['DOLUSER_box_'.$this->boxcode]) ? json_decode($_COOKIE['DOLUSER_box_'.$this->boxcode], true) : array());
+				$endyear = (!empty($tmparray['year']) ? $tmparray['year'] : '');
+				$showtot = (!empty($tmparray['showtot']) ? $tmparray['showtot'] : '');
 			}
 			if (empty($showtot)) {
 				$showtot = 1;
@@ -126,7 +126,7 @@ class box_graph_invoices_peryear extends ModeleBoxes
 			$HEIGHT = '192';
 
 			$stats = new FactureStats($this->db, $socid, $mode, 0);
-			$stats->where = "f.fk_statut > 0";
+			$stats->where = "f.entity IN (".getEntity('invoice').") AND f.fk_statut > 0";
 
 			// Build graphic amount of object. $data = array(array('Lib',val1,val2,val3),...)
 			$data2 = $stats->getAmountByYear($numberyears);
@@ -176,7 +176,7 @@ class box_graph_invoices_peryear extends ModeleBoxes
 
 			if (!$mesg) {
 				$stringtoshow = '';
-				$stringtoshow .= '<script nonce="'.getNonce().'" type="text/javascript" language="javascript">
+				$stringtoshow .= '<script nonce="'.getNonce().'" type="text/javascript">
 					jQuery(document).ready(function() {
 						jQuery("#idsubimg'.$this->boxcode.'").click(function() {
 							jQuery("#idfilter'.$this->boxcode.'").toggle();
@@ -184,7 +184,7 @@ class box_graph_invoices_peryear extends ModeleBoxes
 					});
 					</script>';
 				$stringtoshow .= '<div class="center hideobject" id="idfilter'.$this->boxcode.'">'; // hideobject is to start hidden
-				$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+				$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 				$stringtoshow .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$stringtoshow .= '<input type="hidden" name="action" value="'.$refreshaction.'">';
 				$stringtoshow .= '<input type="hidden" name="page_y" value="">';

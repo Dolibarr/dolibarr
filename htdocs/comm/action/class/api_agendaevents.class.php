@@ -2,6 +2,8 @@
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025	William Mead			<william@m34d.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,10 +22,13 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
 /**
  * API class for Agenda Events
+ *
+ * @since	5.0.0	Initial implementation
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
@@ -34,10 +39,12 @@ class AgendaEvents extends DolibarrApi
 	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
+		'userownerid',
+		'type_code'
 	);
 
 	/**
-	 * @var ActionComm {@type ActionComm}
+	 * @var ActionComm {@type ActionActionCom}
 	 */
 	public $actioncomm;
 
@@ -53,12 +60,14 @@ class AgendaEvents extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of a Agenda Events object
+	 * Get agenda event
 	 *
-	 * Return an array with Agenda Events information
+	 * Return an array with agenda event information
 	 *
-	 * @param   int         $id         ID of Agenda Events
-	 * @return  Object					Object with cleaned properties
+	 * @since	5.0.0	Initial implementation
+	 *
+	 * @param	int			$id			ID of Agenda Event to get
+	 * @return	Object					Object with cleaned properties
 	 *
 	 * @throws	RestException
 	 */
@@ -71,10 +80,13 @@ class AgendaEvents extends DolibarrApi
 			$result = $this->actioncomm->initAsSpecimen();
 		} else {
 			$result = $this->actioncomm->fetch($id);
-			if ($result) {
+			if ($result > 0) {
 				$this->actioncomm->fetch_optionals();
 				$this->actioncomm->fetchObjectLinked();
 			}
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching Agenda Event : '.$this->actioncomm->errorsToString());
 		}
 		if (!$result) {
 			throw new RestException(404, 'Agenda Events not found');
@@ -91,24 +103,29 @@ class AgendaEvents extends DolibarrApi
 	}
 
 	/**
-	 * List Agenda Events
+	 * List agenda events
 	 *
-	 * Get a list of Agenda Events
+	 * Get a list of agenda events
 	 *
-	 * @param string	$sortfield			Sort field
-	 * @param string	$sortorder			Sort order
-	 * @param int		$limit				Limit for list
-	 * @param int		$page				Page number
-	 * @param string	$user_ids   		User ids filter field (owners of event). Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
-	 * @param string    $sqlfilters 		Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'%dol%') and (t.datec:<:'20160101')"
-	 * @param string    $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
-	 * @return  array						Array of order objects
+	 * @since	5.0.0	Initial implementation
+	 * @since	21.0.0	Added data pagination
+	 *
+	 * @param	string	$sortfield			Sort field
+	 * @param	string	$sortorder			Sort order
+	 * @param	int		$limit				Limit for list
+	 * @param	int		$page				Page number
+	 * @param	string	$user_ids			User ids filter field (owners of event). Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
+	 * @param	string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'%dol%') and (t.datec:<:'20160101')"
+	 * @param	string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param	bool	$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @return	array						Array of order objects
+	 * @phan-return ActionComm[]|array{data:ActionComm[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return ActionComm[]|array{data:ActionComm[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 *
+	 * @throws RestException
 	 */
 	public function index($sortfield = "t.id", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
-		global $db, $conf;
-
 		$obj_ret = array();
 
 		if (!DolibarrApiAccess::$user->hasRight('agenda', 'myactions', 'read')) {
@@ -116,7 +133,7 @@ class AgendaEvents extends DolibarrApi
 		}
 
 		// case of external user
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : 0;
+		$socid = DolibarrApiAccess::$user->socid ?: 0;
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
@@ -134,15 +151,21 @@ class AgendaEvents extends DolibarrApi
 		if ($user_ids) {
 			$sql .= " AND t.fk_user_action IN (".$this->db->sanitize($user_ids).")";
 		}
+		// $user_ids is provided by the caller, so it can not be the only owner filter. A user without the
+		// "read all actions" right must never see the events of somebody else, whatever it asks for.
+		if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'read')) {
+			$childids = DolibarrApiAccess::$user->getAllChildIds(1);
+			$sql .= " AND t.fk_user_action IN (".$this->db->sanitize(implode(',', $childids)).")";
+		}
 		if ($socid > 0) {
 			$sql .= " AND t.fk_soc = ".((int) $socid);
 		}
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND (t.fk_soc IS NULL OR ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale).")";
 			}
 		}
 		// Add sql filters
@@ -188,6 +211,9 @@ class AgendaEvents extends DolibarrApi
 		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
 		if ($pagination_data) {
 			$totalsResult = $this->db->query($sqlTotals);
+			if (!$totalsResult) {
+				throw new RestException(503, 'Error when retrieve Agenda Event list : '.$this->db->lasterror());
+			}
 			$total = $this->db->fetch_object($totalsResult)->total;
 
 			$tmp = $obj_ret;
@@ -197,7 +223,7 @@ class AgendaEvents extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -206,24 +232,29 @@ class AgendaEvents extends DolibarrApi
 	}
 
 	/**
-	 * Create Agenda Event object
+	 * Create an agenda event
 	 *
-	 * @param   array   $request_data   Request data
+	 * @since	5.0.0	Initial implementation
+	 *
+	 * @param	array	$request_data	Request data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
-	 * @return  int                     ID of Agenda Event
+	 * @return	int						ID of Agenda Event
+	 *
+	 * @throws RestException
 	 */
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('agenda', 'myactions', 'create')) {
 			throw new RestException(403, "Insufficient rights to create your Agenda Event");
 		}
+
+		// Check mandatory fields
+		$this->_validate($request_data);
+
 		if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'create') && DolibarrApiAccess::$user->id != $request_data['userownerid']) {
 			throw new RestException(403, "Insufficient rights to create an Agenda Event for owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
 		}
-
-		// Check mandatory fields
-		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
@@ -232,8 +263,26 @@ class AgendaEvents extends DolibarrApi
 				continue;
 			}
 
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->actioncomm->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->actioncomm);
+				}
+				continue;
+			}
 			$this->actioncomm->$field = $this->_checkValForAPI($field, $value, $this->actioncomm);
 		}
+
+		// Check on the sanitized value, because it is the one that create() stores into fk_soc
+		$socid = (int) $this->actioncomm->socid;
+		// External user can only create events of its own thirdparty, so link the event to it when socid is not provided
+		if (DolibarrApiAccess::$user->socid > 0 && $socid <= 0) {
+			$socid = (int) DolibarrApiAccess::$user->socid;
+			$this->actioncomm->socid = $socid;
+		}
+		if ($socid > 0 && !DolibarrApi::_checkAccessToResource('societe', $socid)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		/*if (isset($request_data["lines"])) {
 		  $lines = array();
 		  foreach ($request_data["lines"] as $line) {
@@ -251,36 +300,49 @@ class AgendaEvents extends DolibarrApi
 
 
 	/**
-	 * Update Agenda Event general fields
+	 * Update an agenda event
 	 *
-	 * @param 	int   		$id             Id of Agenda Event to update
-	 * @param 	array 		$request_data   Data
+	 * @since	11.0.0	Initial implementation
+	 *
+	 * @param	int			$id				ID of Agenda Event to update
+	 * @param	array		$request_data	Data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
-	 * @return 	Object|false				Object with cleaned properties
+	 * @return	Object						Object with cleaned properties
+	 *
+	 * @throws RestException
 	 */
 	public function put($id, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('agenda', 'myactions', 'create')) {
 			throw new RestException(403, "Insufficient rights to create your Agenda Event");
 		}
-		if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'create') && DolibarrApiAccess::$user->id != $request_data['userownerid']) {
-			throw new RestException(403, "Insufficient rights to create an Agenda Event for owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
-		}
 
 		$result = $this->actioncomm->fetch($id);
-		if ($result) {
-			$this->actioncomm->fetch_optionals();
-			$this->actioncomm->fetch_userassigned();
-			$this->actioncomm->oldcopy = clone $this->actioncomm;
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching Agenda Event : '.$this->actioncomm->errorsToString());
 		}
 		if (!$result) {
-			throw new RestException(404, 'actioncomm not found');
+			throw new RestException(404, 'Agenda Event not found');
+		}
+		$this->actioncomm->fetch_optionals();
+		$this->actioncomm->fetch_userassigned();
+		$this->actioncomm->oldcopy = clone $this->actioncomm;  // @phan-suppress-current-line PhanTypeMismatchProperty
+
+		if (!is_array($request_data)) {
+			$request_data = array();
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('actioncomm', $this->actioncomm->id, 'actioncomm', '', 'fk_soc', 'id')) {
+		// Without allactions->create, both the current owner and the new owner (if one is sent) must be the API user
+		$newuserownerid = isset($request_data['userownerid']) ? (int) $request_data['userownerid'] : (int) $this->actioncomm->userownerid;
+		if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'create') && (DolibarrApiAccess::$user->id != $this->actioncomm->userownerid || DolibarrApiAccess::$user->id != $newuserownerid)) {
+			throw new RestException(403, "Insufficient rights to update an Agenda Event of owner id ".$this->actioncomm->userownerid.' for owner id '.$newuserownerid.' Your id is '.DolibarrApiAccess::$user->id);
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('agenda', $this->actioncomm->id, 'actioncomm', '', 'fk_soc', 'id')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
 				continue;
@@ -293,28 +355,34 @@ class AgendaEvents extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->actioncomm->array_options[$index] = $this->_checkValForAPI($field, $val, $this->actioncomm);
+					$this->actioncomm->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->actioncomm);
 				}
 				continue;
 			}
 			$this->actioncomm->$field = $this->_checkValForAPI($field, $value, $this->actioncomm);
 		}
 
-		if ($this->actioncomm->update(DolibarrApiAccess::$user, 1) > 0) {
-			return $this->get($id);
+		// Returning false sent back an HTTP 200 with a body of false, so a refused update looked like a
+		// success to the caller. update() returns <= 0 on an error, which is an error for the API too.
+		if ($this->actioncomm->update(DolibarrApiAccess::$user, 1) <= 0) {
+			throw new RestException(500, 'Error when updating Agenda Event : '.$this->actioncomm->errorsToString());
 		}
 
-		return false;
+		return $this->get($id);
 	}
 
 	/**
-	 * Delete Agenda Event
+	 * Delete an agenda event
 	 *
-	 * @param   int     $id         Agenda Event ID
+	 * @since	5.0.0	Initial implementation
 	 *
-	 * @return  array
+	 * @param	int		$id		ID of Agenda Event to delete
+	 *
+	 * @return	array
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
+	 * @throws RestException
 	 */
 	public function delete($id)
 	{
@@ -323,26 +391,28 @@ class AgendaEvents extends DolibarrApi
 		}
 
 		$result = $this->actioncomm->fetch($id);
-		if ($result) {
-			$this->actioncomm->fetch_optionals();
-			$this->actioncomm->fetch_userassigned();
-			$this->actioncomm->oldcopy = clone $this->actioncomm;
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching Agenda Event : '.$this->actioncomm->errorsToString());
 		}
+		if (!$result) {
+			throw new RestException(404, 'Agenda Event not found');
+		}
+		$this->actioncomm->fetch_optionals();
+		$this->actioncomm->fetch_userassigned();
+		$this->actioncomm->oldcopy = clone $this->actioncomm;  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'delete') && DolibarrApiAccess::$user->id != $this->actioncomm->userownerid) {
 			throw new RestException(403, "Insufficient rights to delete an Agenda Event of owner id ".$this->actioncomm->userownerid.' Your id is '.DolibarrApiAccess::$user->id);
 		}
 
-		if (!$result) {
-			throw new RestException(404, 'Agenda Event not found');
-		}
-
-		if (!DolibarrApi::_checkAccessToResource('actioncomm', $this->actioncomm->id, 'actioncomm', '', 'fk_soc', 'id')) {
+		if (!DolibarrApi::_checkAccessToResource('agenda', $this->actioncomm->id, 'actioncomm', '', 'fk_soc', 'id')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (!$this->actioncomm->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete Agenda Event : '.$this->actioncomm->error);
+		// delete() is documented int<-2,1> and returns -1 or -2 on an error, and !(-1) is false, so a failed
+		// delete went past this test and the API answered 200 "Agenda Event deleted" with the event still there.
+		if ($this->actioncomm->delete(DolibarrApiAccess::$user) <= 0) {
+			throw new RestException(500, 'Error when delete Agenda Event : '.$this->actioncomm->errorsToString());
 		}
 
 		return array(
@@ -378,9 +448,12 @@ class AgendaEvents extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{

@@ -1,65 +1,150 @@
-# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-Assets = Assets
-NewAsset = New asset
-AccountancyCodeAsset = Accounting code (asset)
-AccountancyCodeDepreciationAsset = Accounting code (depreciation asset account)
-AccountancyCodeDepreciationExpense = Accounting code (depreciation expense account)
-NewAssetType=New asset type
-AssetsTypeSetup=Asset type setup
-AssetTypeModified=Asset type modified
-AssetType=Asset type
-AssetsLines=Assets
-DeleteType=Odstrániť
-DeleteAnAssetType=Delete an asset type
-ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
-ShowTypeCard=Zobraziť typu &quot;%s&quot;
-
+NewAsset=Nové aktívum
+AccountancyCodeAsset=Účtovný kód (majetok)
+AccountancyCodeDepreciationAsset=Účtovný kód (účet odpisov)
+AccountancyCodeDepreciationExpense=Účtovný kód (nákladový účet odpisov)
+AssetsLines=Aktíva
+ConfirmValidateAsset=Naozaj chcete overiť tento prvok s odkazom <b>%s</b>?
+DeleteAnAssetType=Odstráňte model aktív
+ConfirmDeleteAssetType=Naozaj chcete odstrániť tento model aktív?
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = Assets
+ModuleAssetsName=Aktíva
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = Assets description
-
-#
+ModuleAssetsDesc=Popis majetku
 # Admin page
-#
-AssetsSetup = Assets setup
-Settings = Settings
-AssetsSetupPage = Assets setup page
-ExtraFieldsAssetsType = Complementary attributes (Asset type)
-AssetsType=Asset type
-AssetsTypeId=Asset type id
-AssetsTypeLabel=Asset type label
-AssetsTypes=Assets types
-
-#
+AssetSetup=Nastavenie aktív
+AssetSetupPage=Stránka nastavenia aktív
+ExtraFieldsAssetModel=Additionnal fields (Asset's model)
+AssetsType=Model aktív
+AssetsTypeId=ID modelu majetku
+AssetsTypeLabel=Štítok modelu majetku
+AssetsTypes=Modely aktív
+ASSET_ACCOUNTANCY_CATEGORY=Účtovná skupina dlhodobého majetku
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Pomerné obdobie v dňoch pre výpočet amortizácie počas jedného roka
+ASSET_DEPRECIATION_DAY_COUNT_CONVENTION=Day count convention of the prorata temporis
+ASSET_DEPRECIATION_DAY_COUNT_CONVENTIONTooltip=How the depreciation of a <b>partial</b> period is computed, which means the first and the last year of an asset. A full annuity is always the value divided by the duration and is never impacted by this setting.<br><br>A convention defines <b>both</b> how the days of the period are counted <b>and</b> by how many days a full year is divided. The two must always match: counting real calendar days and dividing them by 360 overestimates every partial period by about 1.39 percent.<br><br><b>30/360</b>: every month counts 30 days and every year 360 days. The convention applied by most accounting firms in France.<br><b>Real days / 365</b>: real calendar days of the period, divided by 365.<br><b>Real days / real year</b>: real calendar days, each year divided by its own real length, 365 or 366. The most accurate on a period covering a leap day.<br><br>Example on an asset of 13000 depreciated over 5 years, put in service on March 10th and sold on February 23rd of the fourth year, fiscal years running from August to July. Cumulated depreciation at the disposal: 7684.44 with 30/360, 7700.27 with real days / 365, 7697.29 with real days / real year.<br><br><b>Warning</b>: changing this setting does not recompute the plans already generated. Save the depreciation options of an asset again to regenerate its plan.
+AssetDayCountConventionThirty360=30/360 - every month counts 30 days, every year 360 days (usual in France)
+AssetDayCountConventionAct365=Real days / 365 - real calendar days divided by 365
+AssetDayCountConventionActAct=Real days / real year - real calendar days, each year divided by its own length (365 or 366)
 # Menu
-#
-MenuAssets = Assets
-MenuNewAsset = New asset
-MenuTypeAssets = Type assets
-MenuListAssets = Zoznam
-MenuNewTypeAssets = Nový
-MenuListTypeAssets = Zoznam
-
-#
+MenuAssets=Aktíva
+MenuNewAsset=Nové aktívum
+MenuAssetModels=Modelové aktíva
+MenuListAssets=Zoznam
+MenuNewAssetModel=Nový model majetku
+MenuListAssetModels=Zoznam
 # Module
-#
-NewAssetType=New asset type
-NewAsset=New asset
+ConfirmDeleteAsset=Naozaj chcete odstrániť toto dielo?
+# Tab
+AssetDepreciationOptions=Možnosti odpisovania
+AssetAccountancyCodes=Účty účtovníctva
+AssetDepreciation=Odpisy
+# Asset
+Asset=aktíva
+Assets=Aktíva
+AssetReversalAmountHT=Zvratná suma (bez daní)
+AssetAcquisitionValueHT=Akvizičná suma (bez daní)
+AssetRecoveredVAT=Vrátená DPH
+AssetReversalDate=Dátum obrátenia
+AssetDateAcquisition=Dátum nadobudnutia
+AssetDateStart=Dátum spustenia
+AssetAcquisitionType=Typ akvizície
+AssetAcquisitionTypeNew=Nový
+AssetAcquisitionTypeOccasion=Použité
+AssetType=Typ aktíva
+AssetTypeIntangible=Nehmotný
+AssetTypeTangible=Hmatateľné
+AssetTypeInProgress=Prebieha
+AssetTypeFinancial=Finančné
+AssetNotDepreciated=Neodpisované
+AssetDisposal=Dispozícia
+AssetConfirmDisposalAsk=Naozaj sa chcete zbaviť aktíva <b> %s</b>
+AssetConfirmReOpenAsk=Naozaj chcete znova otvoriť dielo <b> %s</b>
+# Asset status
+AssetInDraft=Návrh
+AssetInProgress=Prebieha
+AssetDisposed=Zlikvidovaný
+AssetRecorded=Zaúčtované
+# Asset disposal
+AssetDisposalDate=Dátum likvidácie
+AssetDisposalAmount=Dispozičná hodnota
+AssetDisposalType=Typ likvidácie
+AssetDisposalDepreciated=Odpísať rok prevodu
+AssetDisposalSubjectToVat=Likvidácia podlieha DPH
+# Asset model
+AssetModel=Model aktíva
+AssetModels=Modely aktív
+# Asset depreciation options
+AssetDepreciationOptionEconomic=Ekonomické odpisy
+AssetDepreciationOptionAcceleratedDepreciation=zrýchlené odpisy (daňové)
+AssetDepreciationOptionDepreciationType=Typ odpisu
+AssetDepreciationOptionDepreciationTypeLinear=Lineárne
+AssetDepreciationOptionDepreciationTypeDegressive=Degresívne
+AssetDepreciationOptionDepreciationTypeExceptional=Výnimočné
+AssetDepreciationOptionDegressiveRate=Degresívna sadzba
+AssetDepreciationOptionDuration=Trvanie
+AssetDepreciationOptionDurationType=Zadajte trvanie
+AssetDepreciationOptionDurationTypeAnnual=Výročný
+AssetDepreciationOptionDurationTypeMonthly=Mesačne
+AssetDepreciationOptionDurationTypeDaily=Denne
+AssetDepreciationOptionRate=Sadzba (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=Odpisový základ (bez DPH)
+AssetDepreciationOptionAmountBaseDeductibleHT=Odpočítateľný základ (bez DPH)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=Celková suma posledného odpisu (bez DPH)
+# Asset accountancy codes
+AssetAccountancyCodeDepreciationEconomic=Ekonomické odpisy
+AssetAccountancyCodeAsset=aktíva
+AssetAccountancyCodeDepreciationAsset=Odpisy
+AssetAccountancyCodeDepreciationExpense=Výdavky na odpisy
+AssetAccountancyCodeValueAssetSold=Hodnota vyradeného majetku
+AssetAccountancyCodeReceivableOnAssignment=Pohľadávka pri likvidácii
+AssetAccountancyCodeProceedsFromSales=Výťažok z likvidácie
+AssetAccountancyCodeVatCollected=Inkasovaná DPH
+AssetAccountancyCodeVatDeductible=Vrátená DPH z majetku
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=zrýchlené odpisy (daňové)
+AssetAccountancyCodeAcceleratedDepreciation=Účet
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=Výdavky na odpisy
+AssetAccountancyCodeProvisionAcceleratedDepreciation=Odňatie vlastníctva/poskytnutie
+# Asset depreciation
+AssetBaseDepreciationHT=Základ odpisov (bez DPH)
+AssetDepreciationBeginDate=Začiatok odpisovania dňa
+AssetDepreciationDuration=Trvanie
+AssetDepreciationRate=Sadzba (%%)
+AssetDepreciationDate=Dátum odpisu
+AssetDepreciationHT=Odpisy (bez DPH)
+AssetCumulativeDepreciationHT=Kumulatívne odpisy (bez DPH)
+AssetResidualHT=zostatková hodnota (bez DPH)
+AssetDispatchedInBookkeeping=Zaúčtované odpisy
+AssetFutureDepreciationLine=Budúce odpisy
+AssetDepreciationReversal=Zvrat
+# Errors
+AssetErrorAssetOrAssetModelIDNotProvide=Nebolo poskytnuté ID majetku alebo nájdeného modelu
+AssetErrorFetchAccountancyCodesForMode=Chyba pri získavaní účtovných účtov pre režim odpisovania '%s'
+AssetErrorDeleteAccountancyCodesForMode=Chyba pri odstraňovaní účtovných účtov z režimu odpisovania '%s'
+AssetErrorInsertAccountancyCodesForMode=Chyba pri vkladaní účtovných účtov v režime odpisovania '%s'
+AssetErrorFetchDepreciationOptionsForMode=Chyba pri načítavaní možností pre režim odpisovania '%s'
+AssetErrorDeleteDepreciationOptionsForMode=Chyba pri odstraňovaní možností režimu odpisovania '%s'
+AssetErrorInsertDepreciationOptionsForMode=Chyba pri vkladaní možností režimu odpisovania '%s'
+AssetErrorFetchDepreciationLines=Chyba pri získavaní zaznamenaných riadkov odpisov
+AssetErrorClearDepreciationLines=Chyba pri čistení zaznamenaných odpisových línií (storno a budúce)
+AssetErrorAddDepreciationLine=Chyba pri pridávaní odpisového riadku
+AssetErrorCalculationDepreciationLines=Chyba pri výpočte odpisových riadkov (návratné a budúce)
+AssetErrorReversalDateNotProvidedForMode=Dátum zrušenia nie je uvedený pre metódu odpisovania '%s'
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=Dátum zrušenia musí byť väčší alebo rovnaký ako začiatok aktuálneho fiškálneho roka pre metódu odpisovania '%s'
+AssetErrorReversalAmountNotProvidedForMode=Pre režim odpisovania '%s' nie je suma storna poskytnutá.
+AssetErrorDegressiveDailyDurationForMode=A degressive depreciation needs a duration in years or in months for the depreciation mode '%s'.
+AssetErrorFetchCumulativeDepreciation=Chyba pri získavaní sumy akumulovaných odpisov z riadku odpisov
+AssetErrorSetLastCumulativeDepreciation=Chyba pri zaznamenávaní poslednej akumulovanej sumy odpisov

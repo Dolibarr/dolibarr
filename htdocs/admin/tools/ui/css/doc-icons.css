@@ -1,0 +1,25 @@
+.doc-icon-list-item {
+	--icon-size : 30px;
+	--icon-margin : 10px;
+	display: inline-block;
+	margin-left: 15px;
+	font-size: var(--icon-size);
+
+	line-height: calc( var(--icon-size) + var(--icon-margin));
+	width: calc( var(--icon-size) + var(--icon-margin));
+	height: calc( var(--icon-size) + var(--icon-margin));
+	text-align: center;
+}
+
+.doc-icon-list-item:hover {
+	outline: 1px solid #00000055;
+}
+
+/* fix some icon display in list */
+.doc-icon-list-item :is(.fa-toggle-on, .fa-toggle-off){
+	font-size: 1em;
+}
+
+.doc-icon-hidden-name-for-search{
+	display: none;
+}

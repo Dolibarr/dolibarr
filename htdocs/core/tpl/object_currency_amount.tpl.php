@@ -53,12 +53,15 @@ print '<!-- BEGIN object_currency_amount.tpl.php -->'."\n";
 // Multicurrency
 if (isModEnabled('multicurrency')) {
 	$colspan = 1;
-	if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+	if ($object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
 		$colspan = 2;
 	}
+
 	if ($object instanceof FactureFournisseurRec || $object instanceof FactureRec) {
 		$currencyIsEditable = ($object->suspended == $object::STATUS_SUSPENDED);
-		$colspan = 1;
+		if ($object instanceof FactureFournisseurRec) {	// Not yet supported for this case
+			$colspan = 1;
+		}
 	} else {
 		// @phan-suppress-next-line PhanUndeclaredConstantOfClass
 		$currencyIsEditable = ($object->status == $object::STATUS_DRAFT);

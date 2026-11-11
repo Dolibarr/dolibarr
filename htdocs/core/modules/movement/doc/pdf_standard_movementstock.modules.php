@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017 		Laurent Destailleur 		<eldy@stocks.sourceforge.net>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -190,7 +190,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 		}
 
 		// Load traductions files required by the page
-		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "stocks", "orders", "deliveries"));
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "stocks", "orders", "sendings"));
 
 		/**
 		 * TODO: get from object
@@ -341,7 +341,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 		if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 			$result = $this->db->query($sql);
 			$nbtotalofrecords = $this->db->num_rows($result);
-			if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+			if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 				$page = 0;
 				$offset = 0;
 			}
@@ -395,10 +395,6 @@ class pdf_standard_movementstock extends ModelePDFMovement
 				$file = $dir."/".$objectref.".pdf";
 			}
 
-			$stockFournisseur = new ProductFournisseur($this->db);
-			$supplierprices = $stockFournisseur->list_product_fournisseur_price($object->id);
-			$object->supplierprices = $supplierprices;
-
 			$productstatic = new Product($this->db);
 
 			if (!file_exists($dir)) {
@@ -446,7 +442,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Stock"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Stock")." ".$outputlangs->convToOutputCharset($object->label));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -622,7 +618,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 
 						// Lot/series
 						$pdf->SetXY($this->posxqty, $curY);
-						$pdf->MultiCell($this->posxup - $this->posxqty - 0.8, 3, $productlot->batch, 0, 'R');
+						$pdf->MultiCell($this->posxup - $this->posxqty - 0.8, 3, (string) $productlot->batch, 0, 'R');
 
 						// Inv. code
 						$pdf->SetXY($this->posxup, $curY);
@@ -720,7 +716,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 
 					// Total Qty
 					$pdf->SetXY($this->postotalht, $curY);
-					$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, $totalunit, 0, 'R', false);
+					$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, (string) $totalunit, 0, 'R', false);
 				} else {
 					dol_print_error($this->db);
 				}
@@ -794,9 +790,12 @@ class pdf_standard_movementstock extends ModelePDFMovement
 				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+				$this->warnings = $hookmanager->warnings;
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);
@@ -908,14 +907,14 @@ class pdf_standard_movementstock extends ModelePDFMovement
 		//$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxup - 1, $tab_top + 1);
-			$pdf->MultiCell($this->posxunit - $this->posxup, 2, $outputlangs->transnoentities("Inventory Code"), '', 'C');
+			$pdf->MultiCell($this->posxunit - $this->posxup, 2, $outputlangs->transnoentities("InventoryCode"), '', 'C');
 		}
 
 		//Label movement
 		//$pdf->line($this->posxunit, $tab_top, $this->posxunit, $tab_top + $tab_height);
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxunit, $tab_top + 1);
-			$pdf->MultiCell($this->posxdiscount - $this->posxunit, 2, $outputlangs->transnoentities("Label Movement"), '', 'C');
+			$pdf->MultiCell($this->posxdiscount - $this->posxunit, 2, $outputlangs->transnoentities("LabelMovement"), '', 'C');
 		}
 
 		//Origin

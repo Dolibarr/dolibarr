@@ -2,7 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -44,10 +45,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $id = GETPOST('id', 'intcomma');
 $ref = GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 $mode = GETPOST('mode', 'alpha');
 $mine = ($mode == 'mine' ? 1 : 0);
-//if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 $object = new Project($db);
 
@@ -65,11 +66,38 @@ $result = restrictedArea($user, 'projet', $id, 'projet&project');
 $langs->loadlangs(array('users', 'projects'));
 
 
+$extrafields->fetch_name_optionals_label($object->table_element);
+$object->fetch_optionals();
+
+$permissiontoadd = ($user->hasRight('projet', 'all', 'creer') || $user->hasRight('projet', 'creer'));
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
+$error = 0;
+
 /*
  * Actions
  */
 
-// None
+if ($action == 'update_extras' && $permissiontoeditextra) {
+	$object->oldcopy = dol_clone($object, 2);
+	$attribute_name = GETPOST('attribute', 'aZ09');
+	$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
+	if ($ret < 0) {
+		$error++;
+	}
+	if (!$error) {
+		$result = $object->updateExtraField($attribute_name, 'PROJECT_MODIFY');
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$error++;
+		}
+	}
+	if ($error) {
+		$action = 'edit_extras';
+	}
+}
 
 
 /*
@@ -102,6 +130,7 @@ $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader("", $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-project page-card_ganttview');
 
 $userWrite = 0;
+$param = '';
 
 if (($id > 0 && is_numeric($id)) || !empty($ref)) {
 	// To verify role of users
@@ -204,7 +233,7 @@ if (($id > 0 && is_numeric($id)) || !empty($ref)) {
 	print '</td></tr>';
 
 	// Date start - end project
-	print '<tr><td>'.$langs->trans("Dates").'</td><td>';
+	print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
 	$start = dol_print_date($object->date_start, 'day');
 	print($start ? $start : '?');
 	$end = dol_print_date($object->date_end, 'day');

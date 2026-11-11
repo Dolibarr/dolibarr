@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,12 +118,14 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
 	 *	Fonction to generate document on disk
 	 *
 	 *	@param	RemiseCheque	$object			Object RemiseCheque
-	 *	@param	string			$_dir			Directory
-	 *	@param	string			$number			Number
 	 *	@param	Translate		$outputlangs	Lang output object
-	 *	@return	int<-1,1>  						1=ok, 0=ko
+	 *	@param	string			$srctemplatepath	Full path of source template file when defined
+	 *	@param	int<0,1>		$hidedetails	1 to hide details
+	 *	@param	int<0,1>		$hidedesc	1 to hide description
+	 *	@param	int<0,1>		$hideref	1 to hide reference
+	 *	@return	int<-1,1>						1=ok, 0=ko
 	 */
-	abstract public function write_file($object, $_dir, $number, $outputlangs);
+	abstract public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0);
 	// phpcs:enable
 }
 
@@ -132,54 +134,30 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
  *  Cree un bordereau remise de cheque
  *
  * 	@param	DoliDB		$db				Database handler
- *	@param	int			$id				Object invoice (or id of invoice)
+ *	@param	int			$id				Id of cheque receipt
  *	@param	string		$message		Message
  *	@param	string		$modele			Force le modele a utiliser ('' to not force)
  *	@param	Translate	$outputlangs	Object lang a utiliser pour traduction
  *	@return int        					Return integer <0 if KO, >0 if OK
- * 	TODO Use commonDocGenerator
  */
 function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 {
-	global $conf, $langs;
+	global $langs;
 	$langs->load("bills");
 
-	$dir = DOL_DOCUMENT_ROOT."/core/modules/cheque/doc/";
+	require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 
-	// Positionne modele sur le nom du modele a utiliser
-	if (!dol_strlen($modele)) {
-		if (getDolGlobalString('CHEQUERECEIPT_ADDON_PDF')) {
-			$modele = getDolGlobalString('CHEQUERECEIPT_ADDON_PDF');
-		} else {
-			//print $langs->trans("Error")." ".$langs->trans("Error_FACTURE_ADDON_PDF_NotDefined");
-			//return 0;
-			$modele = 'blochet';
-		}
-	}
-
-	// Charge le modele
-	$file = "pdf_".$modele.".modules.php";
-	if (file_exists($dir.$file)) {
-		$classname = "pdf_".$modele;
-		require_once $dir.$file;
-
-		$obj = new $classname($db);
-		'@phan-var-force ModeleChequeReceipts $obj';
-
-		// We save charset_output to restore it because write_file can change it if needed for
-		// output format that does not support UTF8.
-		$sav_charset_output = $outputlangs->charset_output;
-		// TODO: write_file seems invalid, function is likely no longer used - delete ?
-		if ($obj->write_file($id, $outputlangs) > 0) { // @phan-suppress-current-line PhanParamTooFew,PhanPluginSuspiciousParamPosition
-			$outputlangs->charset_output = $sav_charset_output;
-			return 1;
-		} else {
-			$outputlangs->charset_output = $sav_charset_output;
-			dol_print_error($db, "chequereceipt_pdf_create Error: ".$obj->error);
-			return -1;
-		}
-	} else {
-		dol_print_error(null, $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $dir.$file));
+	$object = new RemiseCheque($db);
+	$result = $object->fetch($id);
+	if ($result < 0 || empty($object->id)) {
+		dol_print_error($db, "chequereceipt_pdf_create Error: failed to load cheque receipt id=".$id.($object->error ? " - ".$object->error : ""));
 		return -1;
 	}
+
+	// Set model to the name of the model to use
+	if (!dol_strlen($modele)) {
+		$modele = getDolGlobalString('CHEQUERECEIPT_ADDON_PDF', 'blochet');
+	}
+
+	return $object->generateDocument($modele, $outputlangs);
 }

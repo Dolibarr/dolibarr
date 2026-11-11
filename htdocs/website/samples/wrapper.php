@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+/* Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,8 +22,13 @@ if (strpos($_SERVER["PHP_SELF"], 'website/samples/wrapper.php')) {
 	die("Sample file for website module. Can't be called directly.");
 }
 if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
-	require_once './master.inc.php';
+	require_once './master.inc.php'; // @phpstan-ignore requireOnce.fileNotFound (exists only in the deployed website directory)
 } // Load master if not already loaded
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 $encoding = '';
@@ -40,6 +45,11 @@ if ($limit <= 0 || $limit > 100) {
 	$limit = 20;
 }
 
+// Security check
+if ($hashp == 'shared') {
+	httponly_accessforbidden('Bad link. Bad value for parameter hashp', 400);
+}
+
 // Parameters for RSS
 $rss = GETPOST('rss', 'aZ09');
 if ($rss) {
@@ -47,7 +57,7 @@ if ($rss) {
 }
 
 // If we have a hash public (hashp), we guess the original_file.
-if (!empty($hashp)) {
+if (!empty($hashp) && $hashp != 'shared') {
 	include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 	$ecmfile = new EcmFiles($db);
@@ -128,14 +138,15 @@ if (GETPOSTISSET('type')) {
 // Security: Delete string ../ into $original_file
 $original_file = str_replace("../", "/", $original_file);
 
+
 // Cache or not
 $cachestring = GETPOST("cache", 'aZ09');	// May be 1, or an int (delay in second of the cache if < 999999, or a timestamp), or a hash
+$cachedelay = GETPOSTINT('cachedelay') ? GETPOSTINT('cachedelay') : ((is_numeric($cachestring) && (int) $cachestring > 1 && (int) $cachestring < 999999) ? $cachestring : '3600');
 if ($cachestring || image_format_supported($original_file) >= 0) {
 	// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-	$delaycache = GETPOSTINT('cachedelay') ? GETPOSTINT('cachedelay') : ((is_numeric($cachestring) && (int) $cachestring > 1 && (int) $cachestring < 999999) ? $cachestring : '3600');
-	header('Cache-Control: max-age='.$delaycache.', public, must-revalidate');
+	header('Cache-Control: max-age='.$cachedelay.', public, must-revalidate');
 	header('Pragma: cache'); // This is to avoid having Pragma: no-cache
-	header('Expires: '.gmdate('D, d M Y H:i:s', time() + (int) $delaycache).' GMT');	// This is to avoid to have Expires set by proxy or web server
+	header('Expires: '.gmdate('D, d M Y H:i:s', time() + (int) $cachedelay).' GMT');	// This is to avoid to have Expires set by proxy or web server
 }
 
 $refname = basename(dirname($original_file)."/");
@@ -145,7 +156,7 @@ if ($rss) {
 	$format = 'rss';
 	$type = '';
 	$filename = $original_file;
-	$dir_temp = $conf->website->dir_temp;
+	$dir_temp = (string) $conf->website->dir_temp;
 
 	include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
@@ -175,7 +186,7 @@ if ($rss) {
 	require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
 	require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 
-	dol_syslog("build_exportfile Build export file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".count($filters), LOG_DEBUG);
+	dol_syslog("build_exportfile Build export file format=".$format.", type=".$type.", cachestring=".$cachestring.", filename=".$filename.", filters size=".count($filters), LOG_DEBUG);
 
 	// Clean parameters
 	if (!$filename) {
@@ -256,7 +267,7 @@ if ($rss) {
 		header('Content-Disposition: attachment; filename="'.$filename.'"');
 	}
 
-	// Ajout directives pour resoudre bug IE
+	// Add directives to fix IE bug
 	//header('Cache-Control: Public, must-revalidate');
 	//header('Pragma: public');
 	if ($cachedelay) {
@@ -269,7 +280,8 @@ if ($rss) {
 	$outputfile = $dir_temp.'/'.$filename;
 	$result = readfile($outputfile);
 	if (!$result) {
-		print 'File '.$outputfile.' was empty.';
+		dol_syslog("File ".$outputfile." was empty", LOG_WARNING);	// The path of the file is not shown on this public page
+		print 'File '.dol_escape_htmltag($filename).' was empty.';
 	}
 
 	// header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
@@ -284,7 +296,7 @@ if ($rss) {
 	$accessallowed              = empty($check_access['accessallowed']) ? '' : $check_access['accessallowed'];
 	$sqlprotectagainstexternals = empty($check_access['sqlprotectagainstexternals']) ? '' : $check_access['sqlprotectagainstexternals'];
 	$fullpath_original_file     = empty($check_access['original_file']) ? '' : $check_access['original_file']; // $fullpath_original_file is now a full path name
-	if ($hashp) {
+	if (!empty($hashp) && $hashp != 'shared') {
 		$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
 		$sqlprotectagainstexternals = '';
 	}

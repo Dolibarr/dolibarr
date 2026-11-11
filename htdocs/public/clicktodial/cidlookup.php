@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2010 Servitux Servicios Informaticos <info@servitux.es>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2010       Servitux Servicios Informaticos <info@servitux.es>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,6 +55,7 @@ include '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var Translate $langs
  */
 $phone = GETPOST('phone');
 $securitykey = GETPOST('securitykey');
@@ -76,7 +77,7 @@ if (empty($securitykey)) {
 	echo 'Securitykey is required. Check setup of clicktodial module.';
 	exit;
 }
-if ($securitykey != getDolGlobalString('CLICKTODIAL_KEY_FOR_CIDLOOKUP')) {
+if (!hash_equals(getDolGlobalString('CLICKTODIAL_KEY_FOR_CIDLOOKUP'), (string) $securitykey)) {
 	echo 'Securitykey is wrong.';
 	exit;
 }

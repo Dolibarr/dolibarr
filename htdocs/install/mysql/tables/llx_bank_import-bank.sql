@@ -23,6 +23,7 @@ CREATE TABLE llx_bank_import
 (
   rowid                 integer         AUTO_INCREMENT PRIMARY KEY,
   id_account			integer			NOT NULL,              	-- bank account ID in Dolibarr
+  fitid					varchar(255)	NULL,              		-- OFX Financial Institution Transaction ID "FITID"
   record_type 			varchar(64)   	NULL,                  	-- OFX Type of transaction: DIRECTDEBIT, XFER, OTHER or code/type of operation
   label         		varchar(255)  	NOT NULL,               -- label of operation
   record_type_origin  	varchar(255)  	NOT NULL,               -- operation code/type origin

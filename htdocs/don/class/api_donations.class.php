@@ -2,6 +2,7 @@
 /* Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2019       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 class Donations extends DolibarrApi
 {
 	/**
-	 * @var array       Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'amount'
@@ -83,6 +84,67 @@ class Donations extends DolibarrApi
 	}
 
 	/**
+	 * Get list of payments of a given donation.
+	 *
+	 * @param int $id Donation ID
+	 * @return array<int,array{rowid:int,datep:int|string,amount:float,fk_bank:int,num_payment:?string}> List of donation payments
+	 *
+	 * @url GET {id}/payments
+	 *
+	 * @throws RestException 400 Donation ID is mandatory
+	 * @throws RestException 403 Access denied
+	 * @throws RestException 404 Donation not found
+	 * @throws RestException 503 Error when retrieving donation payments
+	 */
+	public function getPayments($id)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('don', 'lire')) {
+			throw new RestException(403);
+		}
+		if (empty($id)) {
+			throw new RestException(400, 'Donation ID is mandatory');
+		}
+
+		$result = $this->don->fetch($id);
+		if ($result < 0) {
+			throw new RestException(503, 'Error when retrieving donation: '.$this->don->error);
+		}
+		if (empty($this->don->id)) {
+			throw new RestException(404, 'Donation not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('don', $this->don->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$sql = "SELECT pd.rowid, pd.datep, pd.amount, pd.fk_bank, pd.num_payment";
+		$sql .= " FROM ".MAIN_DB_PREFIX."payment_donation AS pd";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."don AS d ON d.rowid = pd.fk_donation";
+		$sql .= " WHERE pd.fk_donation = ".((int) $id);
+		$sql .= " AND d.entity IN (".getEntity('donation').")";
+		$sql .= " ORDER BY pd.datep ASC, pd.rowid ASC";
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			throw new RestException(503, 'Error when retrieving donation payments: '.$this->db->lasterror());
+		}
+
+		$payments = array();
+		while ($obj = $this->db->fetch_object($resql)) {
+			$payments[] = array(
+				'rowid' => (int) $obj->rowid,
+				'datep' => $this->db->jdate($obj->datep),
+				'amount' => (float) $obj->amount,
+				'fk_bank' => (int) $obj->fk_bank,
+				'num_payment' => $obj->num_payment
+			);
+		}
+		$this->db->free($resql);
+
+		return $payments;
+	}
+
+	/**
 	 * List donations
 	 *
 	 * Get a list of donations
@@ -92,10 +154,12 @@ class Donations extends DolibarrApi
 	 * @param int       $limit              Limit for list
 	 * @param int       $page               Page number
 	 * @param string    $thirdparty_ids     Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string    $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                       Array of order objects
+	 * @phan-return Don[]|array{data:Don[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return Don[]|array{data:Don[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 *
 	 * @throws RestException
 	 */
@@ -108,7 +172,7 @@ class Donations extends DolibarrApi
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
-		$socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $thirdparty_ids;
+		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
 
 		$sql = "SELECT t.rowid";
 		if ((!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids)) {
@@ -198,7 +262,7 @@ class Donations extends DolibarrApi
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('don', 'creer')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 
 		// Check mandatory fields
@@ -263,7 +327,7 @@ class Donations extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->don->array_options[$index] = $this->_checkValForAPI($field, $val, $this->don);
+					$this->don->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->don);
 				}
 				continue;
 			}
@@ -274,7 +338,7 @@ class Donations extends DolibarrApi
 		if ($this->don->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->don->error);
+			throw new RestException(500, $this->don->errorsToString());
 		}
 	}
 
@@ -302,7 +366,7 @@ class Donations extends DolibarrApi
 		}
 
 		if (!$this->don->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete donation : '.$this->don->error);
+			throw new RestException(500, 'Error when delete donation : '.$this->don->errorsToString());
 		}
 
 		return array(
@@ -356,16 +420,17 @@ class Donations extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating Order: '.$this->don->error);
+			throw new RestException(500, 'Error when validating Order: '.$this->don->errorsToString());
 		}
 		$result = $this->don->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Order not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('don', $this->don->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+		// test already done
+		// if (!DolibarrApi::_checkAccessToResource('don', $this->don->id)) {
+		// 	throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		// }
 
 		$this->don->fetchObjectLinked();
 
@@ -375,9 +440,12 @@ class Donations extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{

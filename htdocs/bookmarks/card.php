@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+/* Copyright (C) 2001-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2022  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2024-2025	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('bookmarks', 'other'));
+$langs->loadLangs(array('other'));
 
 
 // Get Parameters
@@ -92,9 +93,14 @@ if (($action == 'add' || $action == 'addproduct' || $action == 'update') && $per
 	if ($action == 'update') {	// Test on permission already done
 		$object->fetch(GETPOSTINT("id"));
 	}
-	// Check if null because user not admin can't set an user and send empty value here.
-	if (!empty($userid)) {
-		$object->fk_user = $userid;
+	if (!empty($user->admin)) {
+		// Only an admin can choose the owner of a bookmark (the form offers no choice to the other users)
+		if (!empty($userid)) {
+			$object->fk_user = $userid;
+		}
+	} elseif ($action != 'update') {
+		// A user that is not admin creates bookmarks for himself only, whatever is posted. On update, the owner is not changed.
+		$object->fk_user = $user->id;
 	}
 	$object->title = $title;
 	$object->url = $url;
@@ -109,6 +115,12 @@ if (($action == 'add' || $action == 'addproduct' || $action == 'update') && $per
 	if (!$url) {
 		$error++;
 		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("UrlOrLink")), null, 'errors');
+	}
+
+	if (dol_strlen($title) > 64) {	// Size of the field title in database
+		$error++;
+		$langs->load("errors");
+		setEventMessages($langs->transnoentities("ErrorFieldTooLong", $langs->transnoentitiesnoconv("BookmarkTitle")), null, 'errors');
 	}
 
 	if (!$error) {
@@ -178,32 +190,32 @@ if ($action == 'create') {
 
 	print '<table class="border centpercent tableforfieldcreate">';
 
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("BookmarkTitle").'</td><td><input id="titlebookmark" class="flat minwidth250" name="title" value="'.dol_escape_htmltag($title).'"></td><td class="hideonsmartphone"><span class="opacitymedium">'.$langs->trans("SetHereATitleForLink").'</span></td></tr>';
+	print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("BookmarkTitle"), $langs->trans("SetHereATitleForLink")).'</td><td><input id="titlebookmark" class="flat minwidth300" name="title" value="'.dolPrintHTMLForAttribute($title).'"></td></tr>';
 	dol_set_focus('#titlebookmark');
 
 	// URL
-	print '<tr><td class="fieldrequired">'.$langs->trans("UrlOrLink").'</td><td><input class="flat quatrevingtpercent minwidth500" name="url" value="'.dol_escape_htmltag($url).'"></td><td class="hideonsmartphone"><span class="opacitymedium">'.$langs->trans("UseAnExternalHttpLinkOrRelativeDolibarrLink").'</span></td></tr>';
+	print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("UrlOrLink"), $langs->trans("UseAnExternalHttpLinkOrRelativeDolibarrLink")).'</td><td><input class="flat quatrevingtpercent minwidth500" name="url" value="'.dolPrintHTMLForAttribute($url).'"></td></tr>';
 
 	// Target
-	print '<tr><td>'.$langs->trans("BehaviourOnClick").'</td><td>';
-	$liste = array(0=>$langs->trans("ReplaceWindow"), 1=>$langs->trans("OpenANewWindow"));
+	print '<tr><td>'.$form->textwithpicto($langs->trans("BehaviourOnClick"), $langs->trans("ChooseIfANewWindowMustBeOpenedOnClickOnBookmark")).'</td><td>';
+	$liste = array(0 => $langs->trans("ReplaceWindow"), 1 => $langs->trans("OpenANewWindow"));
 	$defaulttarget = 1;
 	if ($url && !preg_match('/^http/i', $url)) {
 		$defaulttarget = 0;
 	}
-	print $form->selectarray('target', $liste, GETPOSTISSET('target') ? GETPOSTINT('target') : $defaulttarget, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth300');
-	print '</td><td class="hideonsmartphone"><span class="opacitymedium">'.$langs->trans("ChooseIfANewWindowMustBeOpenedOnClickOnBookmark").'</span></td></tr>';
+	print $form->selectarray('target', $liste, GETPOSTISSET('target') ? GETPOSTINT('target') : $defaulttarget, 0, 0, 0, '', 0, 0, 0, '', 'minwidth300 maxwidth300');
+	print '</td></tr>';
 
 	// Visibility / Owner
 	print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
 	print img_picto('', 'user', 'class="pictofixedwidth"');
-	print $form->select_dolusers(GETPOSTISSET('userid') ? GETPOSTINT('userid') : $user->id, 'userid', 0, '', 0, ($user->admin ? '' : array($user->id)), '', 0, 0, 0, '', ($user->admin) ? 1 : 0, '', 'maxwidth300 widthcentpercentminusx');
-	print '</td><td class="hideonsmartphone"></td></tr>';
+	print $form->select_dolusers(GETPOSTISSET('userid') ? GETPOSTINT('userid') : $user->id, 'userid', 0, null, 0, ($user->admin ? '' : array($user->id)), '', '0', 0, 0, '', ($user->admin) ? 1 : 0, '', 'maxwidth300 widthcentpercentminusx');
+	print '</td></tr>';
 
 	// Position
 	print '<tr><td>'.$langs->trans("Position").'</td><td>';
 	print '<input class="flat width50" name="position" value="'.(GETPOSTISSET("position") ? GETPOSTINT("position") : $object->position).'">';
-	print '</td><td class="hideonsmartphone"></td></tr>';
+	print '</td></tr>';
 
 	print '</table>';
 
@@ -225,7 +237,7 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	}
 
-	print dol_get_fiche_head($head, $hselected, $langs->trans("Bookmark"), -1, 'bookmark');
+	print dol_get_fiche_head($head, $hselected, $langs->trans("Bookmark"), -1, $object->picto);
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/bookmarks/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -250,7 +262,7 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 
 	print '</td><td>';
 	if ($action == 'edit') {
-		print '<input class="flat minwidth250" name="title" value="'.(GETPOSTISSET("title") ? GETPOST("title", '', 2) : $object->title).'">';
+		print '<input class="flat minwidth250" name="title" value="'.(GETPOSTISSET("title") ? GETPOST("title", 'alphanohtml', 2) : $object->title).'">';
 	} else {
 		print dol_escape_htmltag($object->title);
 	}
@@ -278,7 +290,7 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 
 	print '<tr><td>'.$langs->trans("BehaviourOnClick").'</td><td>';
 	if ($action == 'edit') {
-		$liste = array(1=>$langs->trans("OpenANewWindow"), 0=>$langs->trans("ReplaceWindow"));
+		$liste = array(1 => $langs->trans("OpenANewWindow"), 0 => $langs->trans("ReplaceWindow"));
 		print $form->selectarray('target', $liste, GETPOSTISSET("target") ? GETPOST("target") : $object->target);
 	} else {
 		if ($object->target == '0') {
@@ -294,7 +306,7 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 	print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
 	if ($action == 'edit' && $user->admin) {
 		print img_picto('', 'user', 'class="pictofixedwidth"');
-		print $form->select_dolusers(GETPOSTISSET('userid') ? GETPOSTINT('userid') : ($object->fk_user ? $object->fk_user : ''), 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300 widthcentpercentminusx');
+		print $form->select_dolusers(GETPOSTISSET('userid') ? GETPOSTINT('userid') : ($object->fk_user ? $object->fk_user : ''), 'userid', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth300 widthcentpercentminusx');
 	} else {
 		if ($object->fk_user > 0) {
 			$fuser = new User($db);
@@ -342,7 +354,7 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 
 	// Remove
 	if ($permissiontodelete && $action != 'edit') {
-		print '<a class="butActionDelete" href="list.php?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a>'."\n";
+		print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', 'list.php?id='.$object->id.'&action=delete&token='.newToken(), '', true, array('attr' => array('class' => 'reposition')))."\n";
 	}
 
 	print '</div>';

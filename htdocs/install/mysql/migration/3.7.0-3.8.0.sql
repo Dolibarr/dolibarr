@@ -140,7 +140,7 @@ ALTER TABLE llx_product_price ADD COLUMN fk_price_expression integer DEFAULT NUL
 ALTER TABLE llx_product ADD COLUMN fifo double(24,8) AFTER pmp;
 ALTER TABLE llx_product ADD COLUMN lifo double(24,8) AFTER fifo;
 
-  
+
 --create table for user conf of printing driver
 CREATE TABLE llx_printing
 (
@@ -692,7 +692,7 @@ CREATE TABLE llx_c_holiday_types (
   rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
   code varchar(16) NOT NULL,
   label varchar(255) NOT NULL,
-  affect integer NOT NULL,	
+  affect integer NOT NULL,
   delay integer NOT NULL,
   newByMonth double(8,5) DEFAULT 0 NOT NULL,
   fk_country integer DEFAULT NULL,
@@ -818,4 +818,3 @@ update llx_opensurvey_sondage set format = 'A' where format = 'A+';
 --INSERT INTO llx_holiday_users_tmp(fk_user,fk_type,nb_holiday) SELECT fk_user,fk_type,nb_holiday FROM llx_holiday_users;
 --DROP TABLE llx_holiday_users;
 --ALTER TABLE llx_holiday_users_tmp RENAME TO llx_holiday_users;
-

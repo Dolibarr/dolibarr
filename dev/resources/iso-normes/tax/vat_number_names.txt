@@ -5,4 +5,4 @@ terms
 (fr) TVA = Taxe sur la Valeur Ajouté
 (es) NIF / CIF
 (de) USt / MwSt = UmsatzSteuer / Mehrwertsteuer
-(it) IVA 
+(it) IVA

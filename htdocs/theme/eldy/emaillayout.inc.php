@@ -18,9 +18,8 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
   .template-option {
 	text-align: center;
 	padding: 10px;
-	margin: 0 5px;
-	background: #e9e9e9;
-	border: 1px solid #ccc;
+	margin: 4px 5px;
+	background: var(--colorbackgrey);
 	border-radius: 5px;
 	cursor: pointer;
 	height: 60px;
@@ -69,7 +68,14 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	border-radius: 5px;
 	margin-bottom: 10px;
 	margin-top: 10px;
+	margin-left: -2px;
 	width: fit-content;
+	box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+
+	position: absolute;
+	z-index: 1000;
+	background-color: #fff;
+	margin-top: 14px;
   }
 
   .template-option[data-template="ai"] i {
@@ -103,6 +109,5 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
   width: 80%;
   max-height: 80px;
   margin: 0 5px;
-  padding-top: 5px;
   border-radius: 7px;
 }

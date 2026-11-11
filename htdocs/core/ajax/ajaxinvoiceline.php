@@ -18,7 +18,7 @@
 
 /**
  *       \file       htdocs/core/ajax/ajaxinvoiceline.php
- *       \brief      File to load contacts combobox
+ *       \brief      File to load list of invoices combobox
  */
 
 if (!defined('NOTOKENRENEWAL')) {

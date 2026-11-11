@@ -26,14 +26,14 @@ DROP TABLE llx_accountingtransaction;
 DROP TABLE llx_accountingdebcred;
 
 -- Already into 3.9 but we do it again to be sure
-ALTER TABLE llx_product ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx; 
-ALTER TABLE llx_product ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx; 
-ALTER TABLE llx_product_price ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx; 
-ALTER TABLE llx_product_price ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx; 
-ALTER TABLE llx_product_customer_price ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx; 
-ALTER TABLE llx_product_customer_price ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx; 
-ALTER TABLE llx_product_customer_price_log ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx; 
-ALTER TABLE llx_product_customer_price_log ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx; 
+ALTER TABLE llx_product ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx;
+ALTER TABLE llx_product ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx;
+ALTER TABLE llx_product_price ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx;
+ALTER TABLE llx_product_price ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx;
+ALTER TABLE llx_product_customer_price ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx;
+ALTER TABLE llx_product_customer_price ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx;
+ALTER TABLE llx_product_customer_price_log ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx;
+ALTER TABLE llx_product_customer_price_log ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx;
 ALTER TABLE llx_supplier_proposaldet CHANGE COLUMN fk_askpricesupplier fk_supplier_proposal integer NOT NULL;
 
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN status integer DEFAULT 1 after date_fin;
@@ -85,7 +85,7 @@ ALTER TABLE llx_product ADD COLUMN default_vat_code	varchar(10) after cost_price
 
 ALTER TABLE llx_product MODIFY COLUMN stock	real;
 
-CREATE TABLE llx_categorie_user 
+CREATE TABLE llx_categorie_user
 (
   fk_categorie 	integer NOT NULL,
   fk_user 		integer NOT NULL,
@@ -121,7 +121,7 @@ ALTER TABLE llx_facture ADD INDEX idx_facture_fk_statut (fk_statut);
 ALTER TABLE llx_facture ADD COLUMN date_pointoftax date DEFAULT NULL;
 
 UPDATE llx_projet as p set p.opp_percent = (SELECT percent FROM llx_c_lead_status as cls WHERE cls.rowid = p.fk_opp_status)  WHERE p.opp_percent IS NULL AND p.fk_opp_status IS NOT NULL;
- 
+
 ALTER TABLE llx_facturedet ADD COLUMN fk_contract_line  integer NULL AFTER rang;
 ALTER TABLE llx_facturedet_rec ADD COLUMN import_key varchar(14);
 
@@ -151,8 +151,8 @@ CREATE TABLE llx_website_page
 	rowid         integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
 	fk_website    integer,
 	pageurl       varchar(16) NOT NULL,
-	title         varchar(255),						
-	description   varchar(255),						
+	title         varchar(255),
+	description   varchar(255),
 	keywords      varchar(255),
 	content		  text,
     status        integer,
@@ -206,22 +206,22 @@ ALTER TABLE llx_paiementfourn ADD COLUMN ref varchar(30) AFTER rowid;
 ALTER TABLE llx_paiementfourn ADD COLUMN entity integer DEFAULT 1 AFTER ref;
 
 
-CREATE TABLE llx_multicurrency 
-( 
-	rowid integer AUTO_INCREMENT PRIMARY KEY, 
-	date_create datetime DEFAULT NULL, 
-	code varchar(255) DEFAULT NULL, 
-	name varchar(255) DEFAULT NULL, 
+CREATE TABLE llx_multicurrency
+(
+	rowid integer AUTO_INCREMENT PRIMARY KEY,
+	date_create datetime DEFAULT NULL,
+	code varchar(255) DEFAULT NULL,
+	name varchar(255) DEFAULT NULL,
 	entity integer DEFAULT 1,
 	fk_user integer DEFAULT NULL
 ) ENGINE=innodb;
 
-CREATE TABLE llx_multicurrency_rate 
-( 
-	rowid integer AUTO_INCREMENT PRIMARY KEY, 
-	date_sync datetime DEFAULT NULL,  
-	rate double NOT NULL DEFAULT 0, 
-	fk_multicurrency integer NOT NULL 
+CREATE TABLE llx_multicurrency_rate
+(
+	rowid integer AUTO_INCREMENT PRIMARY KEY,
+	date_sync datetime DEFAULT NULL,
+	rate double NOT NULL DEFAULT 0,
+	fk_multicurrency integer NOT NULL
 ) ENGINE=innodb;
 
 ALTER TABLE llx_societe ADD COLUMN fk_multicurrency integer;
@@ -302,7 +302,7 @@ ALTER TABLE llx_propaldet ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT
 ALTER TABLE llx_propaldet ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
 ALTER TABLE llx_propaldet ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
 
- 
+
 -- Add for recurring template invoices
 
 ALTER TABLE llx_facture_rec ADD COLUMN auto_validate integer DEFAULT 0;
@@ -459,8 +459,8 @@ ALTER TABLE llx_resource ADD COLUMN fk_user_modif   integer DEFAULT NULL;
 ALTER TABLE llx_resource ADD COLUMN fk_user_valid   integer DEFAULT NULL;
 ALTER TABLE llx_resource ADD COLUMN fk_statut       smallint NOT NULL DEFAULT '0';
 ALTER TABLE llx_resource ADD COLUMN import_key			varchar(14);
-ALTER TABLE llx_resource ADD COLUMN extraparams			varchar(255);	
- 
+ALTER TABLE llx_resource ADD COLUMN extraparams			varchar(255);
+
 ALTER TABLE llx_element_resources ADD COLUMN duree real;          -- total duration of using ressource
 
 UPDATE llx_element_resources SET resource_type = 'dolresource' WHERE resource_type = 'resource';

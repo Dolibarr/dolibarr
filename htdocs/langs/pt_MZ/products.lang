@@ -1,2 +1,5 @@
 # Dolibarr language file - Source file is en_US - products
-BarCodePrintsheet=Print barcode
+ProductOrService=Produto ou serviço
+MenuStocks=Estoques
+day=Día
+unitD=Día

@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2020 Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2020       Gauthier VERDOL             <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,9 @@
  */
 function workstationAdminPrepareHead()
 {
-	global $langs, $conf;
+	global $conf, $extrafields, $langs;
+
+	$extrafields->fetch_name_optionals_label('workstation_workstation');
 
 	$langs->load("workstation");
 
@@ -41,17 +43,14 @@ function workstationAdminPrepareHead()
 	$head[$h][2] = 'settings';
 	$h++;
 
-	/*
-	$head[$h][0] = dol_buildpath("/workstation/admin/myobject_extrafields.php", 1);
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'workstation_workstation'));
 	$head[$h][1] = $langs->trans("ExtraFields");
-	$head[$h][2] = 'myobject_extrafields';
+	$nbExtrafields = $extrafields->attributes['workstation_workstation']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
+	$head[$h][2] = 'workstation_extrafields';
 	$h++;
-	*/
-
-	/*$head[$h][0] = require_once "/admin/about.php";
-	$head[$h][1] = $langs->trans("About");
-	$head[$h][2] = 'about';
-	$h++;*/
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line

@@ -22,12 +22,12 @@ create table llx_budget
   entity		integer NOT NULL DEFAULT 1,
   label         varchar(255) NOT NULL,					-- For example 'Global budget for year' or 'Budget for each project'
   status        integer,
-  note			text,	
+  note			text,
   date_start	date,
   date_end		date,
   datec         datetime,
   tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_creat integer,
   fk_user_modif integer,
-  import_key    integer  
+  import_key    integer
 )ENGINE=innodb;

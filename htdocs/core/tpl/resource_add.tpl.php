@@ -18,6 +18,11 @@
  */
 
 /**
+ *       \file       htdocs/core/tpl/resource_add.tpl.php
+ *       \brief      Include file to add a resource
+ */
+
+/**
  * @var Conf $conf
  * @var DoliDB $db
  * @var Translate $langs

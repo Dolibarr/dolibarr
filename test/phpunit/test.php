@@ -44,14 +44,14 @@ print "\n";
 print "\n";
 
 // dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 1, 1, array())), 1, 1, 'common', 0, 1);
-print ">>> dolPrintHtml(< > bb<b>bold</b> ç &) - should not happen\n";
-print dolPrintHtml("< > bb<b>bold</b> ç &");
+print ">>> dolPrintHTML(< > bb<b>bold</b> ç &) - should not happen\n";
+print dolPrintHTML("< > bb<b>bold</b> ç &");
 print "\n";
-print ">>> dolPrintHtml(&lt; &gt; bb<b>bold</b> ç &)\n";
-print dolPrintHtml("&lt; &gt; bb<b>bold</b> ç &");
+print ">>> dolPrintHTML(&lt; &gt; bb<b>bold</b> ç &)\n";
+print dolPrintHTML("&lt; &gt; bb<b>bold</b> ç &");
 print "\n";
-print '>>> dolPrintHtml(&lt;script&gt;alert("azerty")&lt;/script&gt;)'."\n";
-print dolPrintHtml('&lt;script&gt;alert("azerty")&lt;/script&gt;');
+print '>>> dolPrintHTML(&lt;script&gt;alert("azerty")&lt;/script&gt;)'."\n";
+print dolPrintHTML('&lt;script&gt;alert("azerty")&lt;/script&gt;');
 print "\n";
 
 print "\n";

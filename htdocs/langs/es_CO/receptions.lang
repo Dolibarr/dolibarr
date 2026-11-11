@@ -27,3 +27,4 @@ NoMorePredefinedProductToDispatch=No más productos predefinidos para enviar
 ReceptionUnClassifyCloseddInDolibarr=Recepción %s re-abrir
 RestoreWithCurrentQtySaved=Rellene las cantidades con los últimos valores guardados
 ReceptionDistribution=Distribución de recepción
+AutoValidationNotPossibleWhenStockIsDecreasedOnInvoiceValidation=La validación automática no es posible cuando se reduce el stock en la validación de la factura

@@ -3,7 +3,7 @@
  * Copyright (C) 2008-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2008-2011	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2014       Teddy Andreotti    		<125155@supinfo.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,10 +42,12 @@ if (isModEnabled('ldap')) {
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_authentication
  */
 
 // Load translation files required by page
-$langs->loadLangs(array('errors', 'users', 'companies', 'ldap', 'other'));
+$langs->loadLangs(array('users', 'companies', 'ldap', 'other'));
 
 // Security check
 if (getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
@@ -129,12 +131,14 @@ if (empty($reshook)) {
 	// Action to set a temporary password and send email for reset
 	if ($action == 'buildnewpassword' && $username) {	// Test on permission not required here. This action is done anonymously.
 		$sessionkey = 'dol_antispam_value';
-		$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
+		$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) === strtolower(GETPOST('code'))));
+		unset($_SESSION[$sessionkey]);	// A code can be used only once. The page shows a new image, so a new code is set.
 
 		// Verify code
 		if (!$ok) {
 			dol_syslog('Bad value for code, password reset refused', LOG_NOTICE);
 
+			$langs->load('errors');
 			$message = '<div class="error">'.$langs->trans("ErrorBadValueForCode").'</div>';
 		} else {
 			$isanemail = preg_match('/@/', $username);
@@ -143,6 +147,15 @@ if (empty($reshook)) {
 			$result = $edituser->fetch(0, $username, '', 1, $conf->entity);
 			if ($result == 0 && $isanemail) {
 				$result = $edituser->fetch(0, '', '', 1, $conf->entity, $username);
+			}
+
+			// If the user does not have the right to change his own password
+			if ($result > 0) {
+				$edituser->loadRights('user');
+				if (!$edituser->hasRight('user', 'self', 'password')) {
+					$result = 0;
+					$edituser->error = 'USERNOTALLOWEDTOCHANGEPASS';
+				}
 			}
 
 			// Set the message to show (must be the same if login/email exists or not to avoid to guess them.
@@ -154,7 +167,7 @@ if (empty($reshook)) {
 			}
 			$messagewarning .= '</div>';
 
-			if ($result <= 0 && $edituser->error == 'USERNOTFOUND') {
+			if ($result <= 0 && ($edituser->error == 'USERNOTFOUND' || $edituser->error == 'USERNOTALLOWEDTOCHANGEPASS')) {
 				usleep(20000);	// add delay to simulate setPassword() and send_password() actions delay (0.02s)
 				$message .= $messagewarning;
 				$username = '';
@@ -166,6 +179,7 @@ if (empty($reshook)) {
 					$newpassword = $edituser->setPassword($user, '', 1);
 					if (is_int($newpassword) && $newpassword < 0) {
 						// Technical failure
+						$langs->load('errors');
 						$message = '<div class="error">'.$langs->trans("ErrorFailedToChangePassword").'</div>';
 					} else {
 						// Success to set temporary password, send email
@@ -190,11 +204,16 @@ if (empty($reshook)) {
 
 $dol_url_root = DOL_URL_ROOT;
 
-// Title
-$title = 'Dolibarr '.DOL_VERSION;
-if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-	$title = getDolGlobalString('MAIN_APPLICATION_TITLE');
+$appli = constant('DOL_APPLICATION_TITLE');
+$applicustom = getDolGlobalString('MAIN_APPLICATION_TITLE');
+if ($applicustom) {
+	$appli = (preg_match('/^\+/', $applicustom) ? $appli : '').$applicustom;
+} else {
+	$appli .= " ".DOL_VERSION;
 }
+
+// Title
+$title = $appli;	// $title is used in .tpl file
 
 // Select templates dir
 $template_dir = '';

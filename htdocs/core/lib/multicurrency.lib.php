@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2015	ATM Consulting	<support@atm-consulting.fr>
- * Copyright (C) 2018	Regis Houssin	<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2015		ATM Consulting			<support@atm-consulting.fr>
+ * Copyright (C) 2018		Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,12 +37,12 @@ function multicurrencyAdminPrepareHead()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/admin/multicurrency.php", 1);
+	$head[$h][0] = DOL_URL_ROOT."/admin/multicurrency.php";
 	$head[$h][1] = $langs->trans("Parameters");
 	$head[$h][2] = 'settings';
 	$h++;
 
-	$head[$h][0] = dol_buildpath("/multicurrency/multicurrency_rate.php", 1);
+	$head[$h][0] = DOL_URL_ROOT."/multicurrency/multicurrency_rate.php";
 	$head[$h][1] = $langs->trans("TabTitleMulticurrencyRate");
 	$head[$h][2] = 'ratelist';
 	$h++;

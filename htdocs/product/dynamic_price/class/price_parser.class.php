@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2015      Ion Agorria          <ion@agorria.com>
+/* Copyright (C) 2015       Ion Agorria         <ion@agorria.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,13 +118,13 @@ class PriceParser
 		if (in_array($code, array(9, 14, 19, 20))) { //Errors which have 0 arg
 			return $langs->trans("ErrorPriceExpression".$code);
 		} elseif (in_array($code, array(1, 2, 3, 4, 5, 8, 10, 11, 17, 21, 22))) { //Errors which have 1 arg
-			return $langs->trans("ErrorPriceExpression".$code, $info);
+			return $langs->trans("ErrorPriceExpression".$code, (string) $info);
 		} elseif (in_array($code, array(6, 23))) { //Errors which have 2 args
 			return $langs->trans("ErrorPriceExpression".$code, $info[0], $info[1]);
 		} elseif (in_array($code, array(7, 12, 13, 15, 16, 18))) { //Internal errors
-			return $langs->trans("ErrorPriceExpressionInternal", $code);
+			return $langs->trans("ErrorPriceExpressionInternal", (string) $code);
 		} else { //Unknown errors
-			return $langs->trans("ErrorPriceExpressionUnknown", $code);
+			return $langs->trans("ErrorPriceExpressionUnknown", (string) $code);
 		}
 	}
 
@@ -133,18 +134,15 @@ class PriceParser
 	 *	@param	Product	$product    	The Product object to get information
 	 *	@param	string 	$expression     The expression to parse
 	 *	@param	array<string,mixed>  	$values		Strings to replace
-	 *  @return int 					> 0 if OK, < 1 if KO
+	 *  @return int 					Return > 0 if OK, < 1 if KO
 	 */
 	public function parseExpression($product, $expression, $values)
 	{
 		global $user, $hookmanager, $extrafields;
 
 		$action = 'PARSEEXPRESSION';
-		if ($reshook = $hookmanager->executeHooks('doDynamiPrice', array(
-								'expression' => &$expression,
-								'product' => &$product,
-								'values' => &$values
-		), $this, $action)) {
+		$reshook = $hookmanager->executeHooks('doDynamicPrice', array('expression' => &$expression, 'product' => &$product, 'values' => &$values), $this, $action);
+		if ($reshook > 0) {
 			return $hookmanager->resArray['return'];
 		}
 		//Check if empty
@@ -261,7 +259,7 @@ class PriceParser
 	 *
 	 *	@param	Product				$product    	The Product object to get information
 	 *	@param	array<string,mixed>	$extra_values   Any additional values for expression
-	 *	@return int 						> 0 if OK, < 1 if KO
+	 *	@return int 								Return > 0 if OK, < 1 if KO
 	 */
 	public function parseProduct($product, $extra_values = array())
 	{
@@ -308,7 +306,7 @@ class PriceParser
 	 *
 	 *	@param	ProductFournisseur	$product_supplier   The Product supplier object to get information
 	 *	@param	array<string,mixed>	$extra_values       Any additional values for expression
-	 *  @return int 				> 0 if OK, < 1 if KO
+	 *  @return int 				Return > 0 if OK, < 1 if KO
 	 */
 	public function parseProductSupplier($product_supplier, $extra_values = array())
 	{
@@ -339,7 +337,7 @@ class PriceParser
 	 *  @param  int					$product_id    	The Product id to get information
 	 *  @param  string 				$expression     The expression to parse
 	 *  @param  array<string,mixed>	$extra_values   Any additional values for expression
-	 *  @return int 				> 0 if OK, < 1 if KO
+	 *  @return int 				Return > 0 if OK, < 1 if KO
 	 */
 	public function testExpression($product_id, $expression, $extra_values = array())
 	{

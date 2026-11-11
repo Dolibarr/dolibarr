@@ -25,6 +25,9 @@
  * @var User $user
  *
  * @var ?int<0,1> $permissionnote
+ * @var ?int<0,1> $permission
+ * @var	?string $textNotePub
+ * @var	?string $textNotePrive
  * @var string $moreparam
  * @var ?int $colwidth
  * @var string $cssclass
@@ -47,6 +50,8 @@ $note_public  = 'note_public';
 $note_private = 'note_private';
 
 if ($module == "product") {
+	'@phan-var-force Product $object';
+	/** @var Product $object */
 	$module = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 }
 $colwidth = (isset($colwidth) ? $colwidth : (empty($cssclass) ? '25' : ''));
@@ -134,10 +139,10 @@ print '<div class="tagtable border table-border tableforfield centpercent">'."\n
 print '<div class="tagtr table-border-row">'."\n";
 $editmode = (GETPOST('action', 'aZ09') == 'edit'.$note_public);
 print '<div class="tagtd tagtdnote tdtop'.($editmode ? '' : ' sensiblehtmlcontent').' table-key-border-col'.(empty($cssclass) ? '' : ' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'>'."\n";
-print $form->editfieldkey((empty($textNotePub) ? "NotePublic" : $textNotePub), $note_public, $value_public, $object, $permission, $typeofdatapub, $moreparam, 0, 0);
+print $form->editfieldkey((empty($textNotePub) ? "NotePublic" : $textNotePub), $note_public, (string) $value_public, $object, $permission, $typeofdatapub, $moreparam, 0, 0);
 print '</div>'."\n";
 print '<div class="tagtd wordbreak table-val-border-col'.($editmode ? '' : ' sensiblehtmlcontent').'">'."\n";
-print $form->editfieldval("NotePublic", $note_public, $value_public, $object, $permission, $typeofdatapub, '', null, null, $moreparam, 1)."\n";
+print $form->editfieldval("NotePublic", $note_public, (string) $value_public, $object, $permission, $typeofdatapub, '', null, null, $moreparam, 1)."\n";
 print '</div>'."\n";
 print '</div>'."\n";
 if (empty($user->socid)) {
@@ -145,10 +150,10 @@ if (empty($user->socid)) {
 	print '<div class="tagtr table-border-row">'."\n";
 	$editmode = (GETPOST('action', 'aZ09') == 'edit'.$note_private);
 	print '<div class="tagtd tagtdnote tdtop'.($editmode ? '' : ' sensiblehtmlcontent').' table-key-border-col'.(empty($cssclass) ? '' : ' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'>'."\n";
-	print $form->editfieldkey((empty($textNotePrive) ? "NotePrivate" : $textNotePrive), $note_private, $value_private, $object, $permission, $typeofdatapriv, $moreparam, 0, 0);
+	print $form->editfieldkey((empty($textNotePrive) ? "NotePrivate" : $textNotePrive), $note_private, (string) $value_private, $object, $permission, $typeofdatapriv, $moreparam, 0, 0);
 	print '</div>'."\n";
 	print '<div class="tagtd wordbreak table-val-border-col'.($editmode ? '' : ' sensiblehtmlcontent').'">'."\n";
-	print $form->editfieldval("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdatapriv, '', null, null, $moreparam, 1);
+	print $form->editfieldval("NotePrivate", $note_private, (string) $value_private, $object, $permission, $typeofdatapriv, '', null, null, $moreparam, 1);
 	print '</div>'."\n";
 	print '</div>'."\n";
 }

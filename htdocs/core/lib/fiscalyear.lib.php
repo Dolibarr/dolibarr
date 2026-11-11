@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,7 @@ function fiscalyear_prepare_head(Fiscalyear $object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/accountancy/admin/fiscalyear_card.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/accountancy/admin/fiscalyear_card.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("FiscalPeriod");
 	$head[$h][2] = 'card';
 	$h++;
@@ -46,7 +47,7 @@ function fiscalyear_prepare_head(Fiscalyear $object)
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'fiscalyear');
 
-	$head[$h][0] = DOL_URL_ROOT.'/accountancy/admin/fiscalyear_info.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/accountancy/admin/fiscalyear_info.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;

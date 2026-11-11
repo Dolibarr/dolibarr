@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2011-2013 Regis Houssin <regis.houssin@inodbox.com>
+/* Copyright (C) 2011-2013  Regis Houssin   <regis.houssin@inodbox.com>
+ * Copyright (C) 2025		MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,6 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+/**
+ * @var Conf $conf
+ * @var CommonObject $object
+ * @var Translate $langs
+ */
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -21,9 +27,9 @@ if (empty($conf) || !is_object($conf)) {
 	exit(1);
 }
 
-$objectUrl = $object->getNomUrl(0, '', 0, 1);
+$objectUrl = $object->getNomUrl(0, '', '0', 1);
 if ($object->element == 'propal') {
-	$objectUrl = DOL_URL_ROOT.'/comm/propal/card.php?id='.$object->id;
+	$objectUrl = dolBuildUrl(DOL_URL_ROOT.'/comm/propal/card.php', ['id' => $object->id]);
 }
 
 ?>
@@ -31,9 +37,8 @@ if ($object->element == 'propal') {
 <!-- START TEMPLATE IMPORT OBJECT LINKED LINES -->
 <script>
 
-$(document).ready(function(){
-	$('.objectlinked_importbtn').click(function (e) {
-
+$(function() {
+	$(document).on('click', '.objectlinked_importbtn', function(e) {
 		e.preventDefault();
 		var page = $(this).attr("href");
 
@@ -78,8 +83,9 @@ $(document).ready(function(){
 							  $( this ).dialog( "close" );
 							  $("#" + formId).append('<input type="hidden" name="action" value="import_lines_from_object" />');
 							  $("#" + formId).append('<input type="hidden" name="fromelement" value="' + fromelement + '" />');
+							  $("#" + formId).append('<input type="hidden" name="token" value="<?php print dol_escape_htmltag(newToken()); ?>" />');
 							  $("#" + formId).append('<input type="hidden" name="fromelementid" value="' + fromelementid + '" />');
-							  $("#" + formId).submit();
+							  $("#" + formId).trigger('submit');
 						},
 						"<?php echo $langs->trans("Cancel"); ?>": function() {
 						  $( this ).dialog( "close" );
@@ -93,12 +99,7 @@ $(document).ready(function(){
 		{
 			$.jnotify("<?php echo $langs->trans('ErrorNoUrl'); ?>", "error", true);
 		}
-
 	});
-
-
-
-
 });
 
 </script>

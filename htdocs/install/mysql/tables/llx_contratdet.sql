@@ -47,8 +47,6 @@ create table llx_contratdet
   remise_percent        real          DEFAULT 0,    	   -- pourcentage de remise
   subprice              double(24,8)  DEFAULT 0,           -- unit price
   subprice_ttc         	double(24,8)  DEFAULT 0,    	   -- unit price if price was entered including tax
-  price_ht              real,              		           -- prix final (obsolete)
-  remise                real          DEFAULT 0,    		             -- montant de la remise (obsolete)
   total_ht              double(24,8)  DEFAULT 0,     		   -- Total HT de la ligne toute quantite et incluant remise ligne et globale
   total_tva             double(24,8)  DEFAULT 0,	   		   -- Total TVA de la ligne toute quantite et incluant remise ligne et globale
   total_localtax1       double(24,8)  DEFAULT 0,	   		   -- Total Local tax 1 de la ligne

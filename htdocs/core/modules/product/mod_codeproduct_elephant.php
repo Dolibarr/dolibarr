@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2004       Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2009  Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2012  Regis Houssin        	<regis.houssin@inodbox.com>
+ * Copyright (C) 2011       Juanjo Menent	    	<jmenent@2byte.es>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,15 +39,20 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	public $name = 'Elephant';
 	public $version = 'dolibarr';
 
+	/**
+	 * @var int		Position of module among others
+	 */
+	public $position = 50;
+
 	// variables not inherited
 
 	/**
-	 *  @var string			String de recherche
+	 *  @var string			Search String
 	 */
 	public $searchcode;
 
 	/**
-	 *  @var int			Nombre de chiffres du compteur
+	 *  @var int			Number of digits in the counter
 	 */
 	public $numbitcounter;
 
@@ -91,12 +96,13 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Product"), $langs->transnoentities("Product"));
+		$tooltip .= $langs->trans("GenericMaskCodes1");
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4c");
 		$tooltip .= $langs->trans("GenericMaskCodes5");
-		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
+		// $tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
-		// Parametrage du prefix customers
+		// Setting of prefix customers
 		$texte .= '<tr><td>'.$langs->trans("ProductCodeModel").'</td>';
 		$texte .= '<td class="right nowraponall">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value1" placeholder="'.$langs->trans("Mask").'" value="'.getDolGlobalString('PRODUCT_ELEPHANT_MASK_PRODUCT').'"'.$disabled.'>', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 
@@ -104,7 +110,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 
 		$texte .= '</tr>';
 
-		// Parametrage du prefix suppliers
+		// Setting of prefix suppliers
 		$texte .= '<tr><td>'.$langs->trans("ServiceCodeModel").'</td>';
 		$texte .= '<td class="right nowraponall">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value2" placeholder="'.$langs->trans("Mask").'" value="'.getDolGlobalString('PRODUCT_ELEPHANT_MASK_SERVICE').'"'.$disabled.'>', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 		$texte .= '</tr>';
@@ -165,8 +171,8 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	/**
 	 * Return next value
 	 *
-	 * @param	Product		$objproduct     Object product
-	 * @param  	int		    $type       Produit ou service (0:product, 1:service)
+	 * @param	Product		$objproduct Object product
+	 * @param  	int		    $type       Product or service (0:product, 1:service)
 	 * @return 	string|-1      			Value if OK, '' if module not configured, -1 if KO
 	 */
 	public function getNextValue($objproduct = null, $type = -1)
@@ -296,7 +302,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 *
 	 *  @param	DoliDB		$db			Handler access base
 	 *  @param	string		$code		Code a verifier
-	 *  @param	Product		$product		Object product
+	 *  @param	Product		$product	Object product
 	 *  @return	int						0 if available, <0 if KO
 	 */
 	public function verif_dispo($db, $code, $product)
@@ -305,7 +311,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		$sql = "SELECT ref FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE ref = '".$db->escape($code)."'";
 		if ($product->id > 0) {
-			$sql .= " AND rowid <> ".$product->id;
+			$sql .= " AND rowid <> ".((int) $product->id);
 		}
 
 		$resql = $db->query($sql);

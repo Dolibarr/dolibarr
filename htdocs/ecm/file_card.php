@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2008-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2008-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,22 +25,23 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
-require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  *
  * @var string $dolibarr_main_url_root
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ecm/class/htmlecm.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by page
 $langs->loadLangs(array('ecm', 'companies', 'other', 'users', 'orders', 'propal', 'bills', 'contracts', 'categories'));
@@ -47,6 +49,7 @@ $langs->loadLangs(array('ecm', 'companies', 'other', 'users', 'orders', 'propal'
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$module = GETPOST('module', 'aZ09arobase');
 
 // Get parameters
 $socid = GETPOSTINT("socid");
@@ -87,7 +90,7 @@ if (!$urlfile) {
 
 // Load ecm object
 $ecmdir = new EcmDirectory($db);
-$result = $ecmdir->fetch(GETPOST("section", 'alpha'));
+$result = $ecmdir->fetch(GETPOSTINT("section"));
 if (!($result > 0)) {
 	dol_print_error($db, $ecmdir->error);
 	exit;
@@ -103,7 +106,7 @@ $filepathtodocument = $relativetodocument.$urlfile;
 
 // Try to load object from index
 $object = new EcmFiles($db);
-$extrafields = new ExtraFields($db);
+
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -133,12 +136,16 @@ if ($cancel) {
 		header("Location: ".$backtopage);
 		exit;
 	} else {
-		header('Location: '.$_SERVER["PHP_SELF"].'?urlfile='.urlencode($urlfile).'&section='.urlencode($section).($module ? '&module='.urlencode($module) : ''));
+		$paramscancel = array('urlfile' => $urlfile, 'section' => $section);
+		if ($module) {
+			$paramscancel['module'] = $module;
+		}
+		header('Location: '.dolBuildUrl($_SERVER["PHP_SELF"], $paramscancel));
 		exit;
 	}
 }
 
-// Rename file
+// Rename and/or move file
 if ($action == 'update' && $permissiontoadd) {
 	$error = 0;
 
@@ -146,13 +153,26 @@ if ($action == 'update' && $permissiontoadd) {
 	$newlabel = dol_sanitizeFileName(GETPOST('label', 'alpha'), '_', 0);
 	$shareenabled = GETPOST('shareenabled', 'alpha');
 
+	// Target directory, the current one if not changed
+	$newecmdir = $ecmdir;
+	$newsection = GETPOSTINT('newsection');
+	if ($newsection > 0 && $newsection != $ecmdir->id) {
+		$newecmdir = new EcmDirectory($db);
+		$result = $newecmdir->fetch($newsection);
+		if (!($result > 0)) {
+			dol_print_error($db, $newecmdir->error);
+			exit;
+		}
+	}
+
 	//$db->begin();
 
 	$olddir = $ecmdir->getRelativePath(0); // Relative to ecm
+	$newdir = $newecmdir->getRelativePath(0); // Relative to ecm
 	$olddirrelativetodocument = 'ecm/'.$olddir; // Relative to document
-	$newdirrelativetodocument = 'ecm/'.$olddir;
+	$newdirrelativetodocument = 'ecm/'.$newdir;
 	$olddir = $conf->ecm->dir_output.'/'.$olddir;
-	$newdir = $olddir;
+	$newdir = $conf->ecm->dir_output.'/'.$newdir;
 
 	$oldfile = $olddir.$oldlabel;
 	$newfile = $newdir.$newlabel;
@@ -166,7 +186,19 @@ if ($action == 'update' && $permissiontoadd) {
 	// Now we update index of file
 	$db->begin();
 	//print $oldfile.' - '.$newfile;
-	if ($newlabel != $oldlabel) {
+	// Compare full paths, so a move into another directory is detected even if the name is unchanged
+	if ($newfileformove != $oldfile && dol_is_file($newfileformove)) {
+		// Do not overwrite another file of the target directory
+		$langs->load('errors');
+		setEventMessages($langs->trans('ErrorDestinationAlreadyExists', $newlabel), null, 'errors');
+		$error++;
+	}
+	if (!$error && $newdir != $olddir && dol_mkdir($newdir) < 0) {
+		$langs->load('errors');
+		setEventMessages($langs->trans('ErrorFailToCreateDir', $newdir), null, 'errors');
+		$error++;
+	}
+	if (!$error && $newfileformove != $oldfile) {
 		$result = dol_move($oldfile, $newfileformove); // This include update of database
 		if (!$result) {
 			$langs->load('errors');
@@ -174,8 +206,14 @@ if ($action == 'update' && $permissiontoadd) {
 			$error++;
 		}
 
+		// Update cached number of files of both directories
+		if (!$error && $newecmdir->id != $ecmdir->id) {
+			$ecmdir->changeNbOfFiles('-');
+			$newecmdir->changeNbOfFiles('+');
+		}
+
 		// Reload object after the move
-		$result = $object->fetch(0, '', $newdirrelativetodocument.$newlabel);
+		$result = $object->fetch(0, '', $newdirrelativetodocument.basename($newfileformove));
 		if ($result < 0) {
 			dol_print_error($db, $object->error, $object->errors);
 			exit;
@@ -184,8 +222,11 @@ if ($action == 'update' && $permissiontoadd) {
 
 	if (!$error) {
 		if ($shareenabled) {
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-			$object->share = getRandomPassword(true);
+			// Keep the current key: a new one would break the links already sent
+			if (empty($object->share)) {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+				$object->share = getRandomPassword(true);
+			}
 		} else {
 			$object->share = '';
 		}
@@ -234,7 +275,7 @@ if ($action == 'update' && $permissiontoadd) {
 			$urlfile .= '.noexe';
 		}
 
-		header('Location: '.$_SERVER["PHP_SELF"].'?urlfile='.urlencode($urlfile).'&section='.urlencode($section));
+		header('Location: '.dolBuildUrl($_SERVER["PHP_SELF"], array('urlfile' => $urlfile, 'section' => $newecmdir->id)));
 		exit;
 	} else {
 		$db->rollback();
@@ -309,6 +350,14 @@ print '<table class="border centpercent tableforfield">';
 print '<tr><td class="titlefieldcreate">'.$langs->trans("ECMCreationDate").'</td><td>';
 print dol_print_date(dol_filemtime($fullpath), 'dayhour');
 print '</td></tr>';
+
+// Directory, to move the file into another one
+if ($action == 'edit') {
+	$formecm = new FormEcm($db);
+	print '<tr><td>'.$langs->trans("ECMSection").'</td><td>';
+	print img_picto('', 'object_dir', 'class="pictofixedwidth"').$formecm->selectAllSections($ecmdir->id, 'newsection', 'ecm');
+	print '</td></tr>';
+}
 /*print '<tr><td>'.$langs->trans("ECMDirectoryForFiles").'</td><td>';
 print '/ecm/'.$relativepath;
 print '</td></tr>';
@@ -341,19 +390,16 @@ print '<tr><td>';
 print $form->textwithpicto($langs->trans("DirectDownloadInternalLink"), $langs->trans("PrivateDownloadLinkDesc"));
 print '</td><td>';
 $modulepart = 'ecm';
-$forcedownload = 1;
-$rellink = '/document.php?modulepart='.$modulepart;
-if ($forcedownload) {
-	$rellink .= '&attachment=1';
-}
+$paramsrellink = array('modulepart' => $modulepart, 'attachment' => 1);
 if (!empty($object->entity)) {
-	$rellink .= '&entity='.$object->entity;
+	$paramsrellink['entity'] = $object->entity;
 }
-$rellink .= '&file='.urlencode($filepath);
+$paramsrellink['file'] = $filepath;
+$rellink = dolBuildUrl('/document.php', $paramsrellink);
 $fulllink = $urlwithroot.$rellink;
 print img_picto('', 'globe').' ';
 if ($action != 'edit') {
-	print '<input type="text" class="maxquatrevingtpercent widthcentpercentminusxx" id="downloadinternallink" name="downloadinternellink" value="'.dol_escape_htmltag($fulllink).'">';
+	print '<input type="text" class="maxquatrevingtpercent widthcentpercentminusxx small" id="downloadinternallink" name="downloadinternellink" value="'.dol_escape_htmltag($fulllink).'">';
 } else {
 	print $fulllink;
 }
@@ -372,37 +418,27 @@ if ($action != 'edit') {
 print '</td><td>';
 if (!empty($object->share)) {
 	if ($action != 'edit') {
-		$forcedownload = 0;
-
-		$paramlink = '';
-		if (!empty($object->share)) {
-			$paramlink .= ($paramlink ? '&' : '').'hashp='.$object->share; // Hash for public share
-		}
-		if ($forcedownload) {
-			$paramlink .= ($paramlink ? '&' : '').'attachment=1';
-		}
-
-		$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
+		$fulllink = $urlwithroot.'/document.php?hashp='.$object->share; // Hash for public share
 		//if (!empty($object->ref))       $fulllink.='&hashn='.$object->ref;		// Hash of file path
 		//elseif (!empty($object->label)) $fulllink.='&hashc='.$object->label;		// Hash of file content
 
 		print img_picto('', 'globe').' ';
 		if ($action != 'edit') {
-			print '<input type="text" class="quatrevingtpercent nopadding small" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
+			print '<input type="text" class="maxquatrevingtpercent widthcentpercentminusxx nopadding small downloadexternallink" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'" spellcheck="false">';
 		} else {
 			print $fulllink;
 		}
 		if ($action != 'edit') {
-			print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>'; // No target here
+			print ' <a href="'.$fulllink.'">'.img_picto($langs->trans("Download"), 'download', 'class="opacitymedium paddingrightonly"').'</a>'; // No target here
 		}
 	} else {
-		print '<input type="checkbox" name="shareenabled"'.($object->share ? ' checked="checked"' : '').' /> ';
+		print '<input type="checkbox" name="shareenabled" checked="checked" /> ';
 	}
 } else {
 	if ($action != 'edit') {
 		print '<span class="opacitymedium">'.$langs->trans("FileNotShared").'</span>';
 	} else {
-		print '<input type="checkbox" name="shareenabled"'.($object->share ? ' checked="checked"' : '').' /> ';
+		print '<input type="checkbox" name="shareenabled" /> ';
 	}
 }
 print '</td>';
@@ -425,7 +461,7 @@ if ($action == 'edit') {
 
 // Confirm deletion of a file
 if ($action == 'deletefile') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode($section), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile', $urlfile), 'confirm_deletefile', '', 1, 1);
+	print $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], array('section' => $section)), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile', $urlfile), 'confirm_deletefile', '', 1, 1);
 }
 
 if ($action != 'edit') {
@@ -433,7 +469,7 @@ if ($action != 'edit') {
 	print '<div class="tabsAction">';
 
 	if ($user->hasRight('ecm', 'setup')) {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&section='.urlencode($section).'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Edit').'</a>';
+		print '<a class="butAction" href="'.dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'edit', 'section' => $section, 'urlfile' => $urlfile)).'">'.$langs->trans('Edit').'</a>';
 	}
 
 	print '</div>';

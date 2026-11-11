@@ -27,4 +27,3 @@ create table llx_c_regions
   nom         varchar(100),
   active      tinyint DEFAULT 1 NOT NULL
 )ENGINE=innodb;
-

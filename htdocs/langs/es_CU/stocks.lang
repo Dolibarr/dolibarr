@@ -155,7 +155,6 @@ AddProduct=Agregar
 FlushInventory=Vaciar inventario
 ConfirmFlushInventory=¿Confirmas esta acción?
 InventoryFlushed=Inventario vaciado
-ExitEditMode=Salir de edición
 inventoryDeleteLine=Eliminar línea
 RegulateStock=regular existencias
 ListInventory=Lista

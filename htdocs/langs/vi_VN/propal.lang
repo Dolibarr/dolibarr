@@ -9,11 +9,11 @@ PdfCommercialProposalTitle=Đơn hàng đề xuất
 ProposalCard=Thẻ đơn hàng đề xuất
 NewProp=Đơn hàng đề xuất mới
 NewPropal=Đơn hàng đề xuất mới
-Prospect=KH tiềm năng
 DeleteProp=Xóa đơn hàng đề xuất
 ValidateProp=Xác nhận đơn hàng đề xuất
 CancelPropal=Hủy
 AddProp=Tạo đơn hàng đề xuất
+AddRenewalProp=Create renewal proposal
 ConfirmDeleteProp=Bạn có chắc chắn muốn xóa đề xuất thương mại này?
 ConfirmValidateProp=Bạn có chắc chắn muốn xác nhận đề xuất thương mại này dưới tên <b>%s</b> ?
 ConfirmCancelPropal=Bạn có chắc chắn muốn hủy đề xuất thương mại <b>%s</b> không?
@@ -23,7 +23,10 @@ AllPropals=Tất cả đơn hàng đề xuất
 SearchAProposal=Tìm kiếm đơn hàng đề xuất
 NoProposal=Không có đề xuất
 ProposalsStatistics=Thống kê đơn hàng đề xuất
+NumberOfProposals=Số lượng đề xuất
 NumberOfProposalsByMonth=Số lượng theo tháng
+AmountOfProposals=Số lượng đề xuất
+AmountOfProposalsHT=Số lượng đề xuất (chưa bao gồm thuế)
 AmountOfProposalsByMonthHT=Số tiền theo tháng (chưa thuế)
 NbOfProposals=Số lượng đơn hàng đề xuất
 ShowPropal=Hiện đơn hàng đề xuất
@@ -77,13 +80,11 @@ AvailabilityTypeAV_1W=1 tuần
 AvailabilityTypeAV_2W=2 tuần
 AvailabilityTypeAV_3W=3 tuần
 AvailabilityTypeAV_1M=1 tháng
-
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Đại diện kinh doanh theo dõi đơn hàng đề xuất
 TypeContact_propal_external_BILLING=Liên lạc khách hàng về hóa đơn
 TypeContact_propal_external_CUSTOMER=Liên hệ với khách hàng sau-up đề nghị
 TypeContact_propal_external_SHIPPING=Liên lạc khách hàng để giao hàng
-
 # Document models
 CantBeNoSign=không thể thiết lập không được ký
 CaseFollowedBy=Theo bởi trường hợp
@@ -122,3 +123,12 @@ SignSociete_rib=Ký ủy quyền
 SignPropal=Chấp nhận đề xuất
 Signed=đã ký
 SignedOnly=Chỉ có chữ ký
+ExpeditionSigned=Đã ký lô hàng
+SignExpedition=Ký hiệu lô hàng
+PROPOSAL_SHOW_SHIPPING_ADDRESS=Show shipping address
+PROPOSAL_SHOW_SHIPPING_ADDRESSMore=Compulsory indication in some countries (France, ...)
+SendReminderForExpiringProposalsTitle=Send reminder by email for expiring commercial proposals
+SendReminderForExpiringProposals=Send reminder by email to the customer when a validated commercial proposal is about to expire (parameter is number of days before end of validity to send the reminder. It can be a list of days separated by a semicolon, for example '10;5;0;-5'). The template of email to send is defined by the PROPOSAL_EMAIL_TEMPLATE_REMIND_EXPIRATION constant.
+SendingReminderForExpiringProposal=Sending reminder for expiring commercial proposal
+ProposalReminderExpirationTopic=Your commercial proposal is about to expire
+ProposalReminderExpirationContent=Your commercial proposal is about to expire on the date below. Please contact us if you want to extend it or confirm your order.

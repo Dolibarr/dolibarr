@@ -1,3 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
-ContractStatusValidated=معتمد
+ContractCard=عقد
+ContractStatusClosed=مقفول
+ServiceStatusLateShort=منتهي الصلاحية
 ServiceStatusClosed=مقفول
+Contracts=عقود
+ContractsSubscriptions=العقود / الاشتراكات

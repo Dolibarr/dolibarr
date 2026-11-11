@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,7 +96,7 @@ class modExternalRss extends DolibarrModules
 		$this->boxes = array();
 		$sql = "select name, value from ".MAIN_DB_PREFIX."const";
 		$sql .= " WHERE name like 'EXTERNAL_RSS_TITLE_%'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 		$result = $this->db->query($sql);
 		if ($result) {
 			while ($obj = $this->db->fetch_object($result)) {

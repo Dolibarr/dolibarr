@@ -159,7 +159,9 @@ if (isModEnabled('supplier_invoice')) {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="5">'.$langs->trans("SupplierInvoiceWaitingWithdraw").' <span class="opacitymedium">('.$num.')</span></th></tr>';
+		print '<th colspan="5">'.$langs->trans("SupplierInvoiceWaitingWithdraw");
+		print '<a class="badge badge-info marginleftonly" href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0&type=bank-transfer">'.$num.'</a>';
+		print '</th></tr>';
 		if ($num) {
 			while ($i < $num && $i < 20) {
 				$obj = $db->fetch_object($resql);
@@ -234,7 +236,9 @@ if (isModEnabled('salaries')) {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder rightpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="5">'.$langs->trans("SalaryInvoiceWaitingWithdraw").' <span class="opacitymedium">('.$numRow.')</span></th></tr>';
+		print '<th colspan="5">'.$langs->trans("SalaryInvoiceWaitingWithdraw");
+		print '<a class="badge badge-info marginleftonly" href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0&type=bank-transfer&sourcetype=salary">'.$numRow.'</a>';
+		print '</th></tr>';
 
 		if ($numRow) {
 			while ($j < $numRow && $j < 10) {
@@ -286,7 +290,7 @@ print '</div><div class="fichetwothirdright">';
  */
 
 $limit = 5;
-$sql = "SELECT p.rowid, p.ref, p.amount, p.datec, p.statut";
+$sql = "SELECT p.rowid, p.ref, p.amount, p.datec, p.date_trans, p.statut as status, p.type";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql .= " WHERE p.type = 'bank-transfer'";
 $sql .= " AND p.entity IN (".getEntity('invoice').")";
@@ -302,7 +306,9 @@ if ($result) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<th>'.$langs->trans("LatestBankTransferReceipts", $limit).'</th>';
+	print '<th>'.$langs->trans("LatestBankTransferReceipts", $limit);
+	print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/orders_list.php?type=bank-transfer&sortfield=p.datec&sortorder=desc"><span class="badge marginleftonly">...</span></a>';
+	print '</th>';
 	print '<th>'.$langs->trans("Date").'</th>';
 	print '<th class="right">'.$langs->trans("Amount").'</th>';
 	print '<th class="right">'.$langs->trans("Status").'</th>';
@@ -312,16 +318,23 @@ if ($result) {
 		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($result);
 
-			print '<tr class="oddeven">';
-
-			print '<td class="nowraponall">';
 			$bprev->id = $obj->rowid;
 			$bprev->ref = $obj->ref;
-			$bprev->statut = $obj->statut;
+			$bprev->type = $obj->type;
+			$bprev->amount = $obj->amount;
+			$bprev->date_trans = $db->jdate($obj->date_trans);
+			$bprev->status = $obj->status;
+
+			print '<tr class="oddeven">';
+			// Ref
+			print '<td class="nowraponall">';
 			print $bprev->getNomUrl(1);
 			print "</td>\n";
+			// Date
 			print '<td>'.dol_print_date($db->jdate($obj->datec), "dayhour")."</td>\n";
+			// Amount
 			print '<td class="right nowraponall"><span class="amount">'.price($obj->amount)."</span></td>\n";
+			// Status
 			print '<td class="right"><span class="amount">'.$bprev->getLibStatut(3)."</span></td>\n";
 
 			print "</tr>\n";

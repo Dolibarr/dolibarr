@@ -40,12 +40,13 @@ $langs->load('uxdocumentation');
 
 //
 $documentation = new Documentation($db);
+$group = 'Components';
 
 // Output html head + body - Param is Title
-$documentation->docHeader();
+$documentation->docHeader($langs->trans('DocListLinks', $group));
 
 // Set view for menu and breadcrumb
-$documentation->view = array('Components');
+$documentation->view = array($group);
 
 // Output sidebar
 $documentation->showSidebar(); ?>
@@ -56,8 +57,8 @@ $documentation->showSidebar(); ?>
 
 	<div class="doc-content-wrapper">
 
-		<h1 class="documentation-title"><?php echo $langs->trans('DocComponentsTitle'); ?></h1>
-		<p class="documentation-text"><?php echo $langs->trans('DocComponentsMainDescription'); ?></p>
+		<h1 class="documentation-title"><?php echo $langs->trans($group); ?></h1>
+		<p class="documentation-text"><?php echo $langs->trans('DocGroupIndexDescription', $group); ?></p>
 
 		<?php $documentation->showSummary(); ?>
 	</div>

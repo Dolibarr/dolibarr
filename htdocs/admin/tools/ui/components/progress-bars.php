@@ -113,7 +113,7 @@ $documentation->showSidebar(); ?>
 					'    <div class="progress-bar" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>',
 					'</div>',
 				);
-				echo $documentation->showCode($lines); ?>
+				$documentation->showCode($lines); ?>
 
 				<p class="documentation-text"><?php echo $langs->trans('DocProgressCanBeSpaced'); ?></p>
 				<div class="documentation-example">
@@ -128,7 +128,7 @@ $documentation->showSidebar(); ?>
 					'    <div class="progress-bar" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>',
 					'</div>',
 				);
-				echo $documentation->showCode($lines); ?>
+				$documentation->showCode($lines); ?>
 
 			</div>
 
@@ -172,7 +172,7 @@ $documentation->showSidebar(); ?>
 					'',
 
 				);
-				echo $documentation->showCode($lines); ?>
+				$documentation->showCode($lines); ?>
 			</div>
 
 
@@ -216,7 +216,7 @@ $documentation->showSidebar(); ?>
 					'',
 
 				);
-				echo $documentation->showCode($lines); ?>
+				$documentation->showCode($lines); ?>
 			</div>
 			<!--  -->
 
@@ -258,7 +258,7 @@ $documentation->showSidebar(); ?>
 					'',
 
 				);
-				echo $documentation->showCode($lines); ?>
+				$documentation->showCode($lines); ?>
 			</div>
 			<!--  -->
 

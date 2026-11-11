@@ -1,0 +1,60 @@
+# Dolibarr language file - Source file is en_US - subtotal
+
+#
+# Global
+#
+SubTotalModuleDesc=Редове с междинни суми и заглавия за някои документи
+#
+# Admin
+#
+SubtotalSetup=Настройка на модула за междинни суми
+MaxSubtotalLevel=Максимално ниво
+SubtotalLineBackColor=Цвят на фона на редовете от ниво %s
+NotSupportedByAllPDF=Ще работи с по-новите PDF шаблони, но не и със старите %s
+SubtotalsPredefinedTitles=Предварително зададени заглавия за междинни суми
+SubtotalsPredefinedTexts=Предварително зададени текстове за междинни суми
+SubtotalTextColumnTitle=Текст
+
+#
+# Card
+#
+AddTitleLine=Добавяне на ред със заглавие
+AddSubtotalLine=Добавяне на ред с междинна сума
+AddTextLine=Добавяне на ред с текст
+PredefinedTitle=Предварително зададено заглавие
+PredefinedText=Предварително зададен текст
+SubtotalTextContent=Текстово съдържание
+TitleNeedDesc=Трябва да въведете валидно описание, за да създадете заглавие.
+TitleAddedLevelTooHigh=Нивото на добавеното заглавие е твърде високо (вместо това е добавено с ниво %s).
+TitleEditedLevelTooHigh=Нивото на редактираното заглавие е твърде високо (вместо това е редактирано с ниво %s).
+DeleteSubtotalLine=Изтриване на реда с междинна сума
+ConfirmDeleteSubtotalLine=Сигурни ли сте, че искате да изтриете този ред с междинна сума?
+DeleteTitleLine=Изтриване на реда със заглавие
+ConfirmDeleteTitleLine=Сигурни ли сте, че искате да изтриете този ред със заглавие?
+DeleteCorrespondingSubtotalLine=Да се изтрие ли и съответният ред с междинна сума?
+SubtotalLevel=Ниво %s
+SubtotalLineDesc=Описание на реда
+SubtotalLineLevel=Ниво на реда
+ShowUPOnPDF=Показване на единичната цена в PDF
+ShowTotalExludingVATOnPDF=Показване на общата сума без ДДС в PDF
+ForcePageBreak=Принудително започване на нова страница преди заглавието
+NoTitleError=Нямате ред със заглавие или всички вече имат съответен ред с междинна сума
+CorrespondingTitleLine=Съответен ред със заглавие
+SelectVATRate=Изберете ставка на ДДС
+EnterRemisePercent=Въведете процент отстъпка
+ApplyVATForBlock=Прилагане на ДДС за този блок
+ApplyDiscountForBlock=Прилагане на отстъпка за този блок
+TitleUnderSameLevelSTLine=Заглавие от същото ниво трябва да е под реда с междинна сума на предишното заглавие.
+TitleUnderSameLevelOrGreater=Заглавието трябва да е под заглавие от същото или по-високо ниво.
+TitleAfterStLineOfSameLevelTitle=Заглавието трябва да е след реда с междинна сума на предишното заглавие.
+PreviousTitleLevelTooHigh=Предишното заглавие е с две или повече нива над преместения ред.
+STLineUnderCorrespondingTitleDesc=Редът с междинна сума трябва да е под заглавие от същото ниво със същото описание.
+STLineUnderCorrespondingTitle=Редът с междинна сума трябва да е под заглавие от същото ниво и със същото описание.
+STLineUnderTitle=Редът с междинна сума трябва да е под своето заглавие
+UnsupportedModuleError=Не можете да добавите ред с междинна сума в модул, който не го поддържа
+CorrespondingTitleNotFound=Съответното заглавие не е намерено
+
+#
+# PDF
+#
+SubtotalOf=Междинна сума за %s:

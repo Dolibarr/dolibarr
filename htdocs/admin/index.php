@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2015       Jean-François Ferry	    <jfefe@aternatik.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Joachim Kueter          <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,17 +26,17 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ * @var	Societe	$mysoc
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'companies'));
+$langs->loadLangs(array('admin', 'bills', 'companies'));
 
 $action = '';
 
@@ -51,15 +52,13 @@ $hookmanager->initHooks(array('homesetup'));
  * View
  */
 
-$form = new Form($db);
-
 $wikihelp = 'EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
 llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-index');
 
 
 print load_fiche_titre($langs->trans("SetupArea"), '', 'tools');
 
-
+// Show
 if (getDolGlobalString('MAIN_MOTD_SETUPPAGE')) {
 	$conf->global->MAIN_MOTD_SETUPPAGE = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', getDolGlobalString('MAIN_MOTD_SETUPPAGE'));
 	if (getDolGlobalString('MAIN_MOTD_SETUPPAGE')) {
@@ -70,41 +69,62 @@ if (getDolGlobalString('MAIN_MOTD_SETUPPAGE')) {
 			if (!empty($tmp[1])) {
 				$langs->load($tmp[1]);
 			}
-			$conf->global->MAIN_MOTD_SETUPPAGE = preg_replace('/__\('.preg_quote($reg[1]).'\)__/i', $langs->trans($tmp[0]), getDolGlobalString('MAIN_MOTD_SETUPPAGE'));
+			$conf->global->MAIN_MOTD_SETUPPAGE = preg_replace('/__\('.preg_quote($reg[1], '/').'\)__/i', $langs->trans($tmp[0]), getDolGlobalString('MAIN_MOTD_SETUPPAGE'));
 			$i++;
 		}
 
 		print "\n<!-- Start of welcome text for setup page -->\n";
-		print '<table width="100%" class="notopnoleftnoright"><tr><td>';
-		print dol_htmlentitiesbr($conf->global->MAIN_MOTD_SETUPPAGE);
+		print '<table class="centpercent notopnoleftnoright"><tr><td>';
+		print dol_htmlentitiesbr(getDolGlobalString('MAIN_MOTD_SETUPPAGE'));
 		print '</td></tr></table><br>';
 		print "\n<!-- End of welcome text for setup page -->\n";
 	}
 }
 
 print '<span class="opacitymedium hideonsmartphone">';
-print $langs->trans("SetupDescription1").' ';
-print $langs->trans("AreaForAdminOnly").' ';
-print $langs->trans("SetupDescription2", $langs->transnoentities("MenuCompanySetup"), $langs->transnoentities("Modules"));
+print $langs->trans("SetupDescription1").'<br>';
+
+if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY') || getDolGlobalString('MAIN_INFO_SOCIETE_SETUP_TODO_WARNING')) {
+	$setupcompanynotcomplete = 1;
+} else {
+	$setupcompanynotcomplete = 0;
+}
+
+if ($setupcompanynotcomplete) {
+	print $langs->trans("SetupDescription2", $langs->transnoentities("MenuCompanySetup"), $langs->transnoentities("Modules"));
+}
+
 print "<br><br>";
 print '</span>';
 
+
+
+// Show info depending on country if defined
+$constkey = 'MAIN_INFO_SETUP_FOR_COUNTRY_'.$mysoc->country_code;
+//$conf->global->$constkey = 'rrr';
+if (getDolGlobalString($constkey)) {
+	$langs->load("errors");
+	$warnpicto = img_warning('', 'style="padding-right: 6px;"');
+	print '<div class="warning noshadow">'.$warnpicto.$langs->trans(getDolGlobalString($constkey)).'</div>';
+}
+
+
 print '<br>';
 
+
 // Show info setup company
-if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY') || getDolGlobalString('MAIN_INFO_SOCIETE_SETUP_TODO_WARNING')) {
-	$setupcompanynotcomplete = 1;
-}
 
 print '<section class="setupsection setupcompany cursorpointer">';
 
-print img_picto('', 'company', 'class="paddingright valignmiddle double"').' '.$langs->trans("SetupDescriptionLink", DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit&token='.newToken()), $langs->transnoentities("Setup"), $langs->transnoentities("MenuCompanySetup"));
+print img_picto('', 'company', 'class="paddingright valignmiddle double"');
+print ' ';
+print '<a class="nounderlineimp fontsize-1-1" href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit&token='.newToken()).'">'.$langs->transnoentities("Setup").' - '.$langs->transnoentities("MenuCompanySetup").'</a>';
 print '<br><br>';
 print $langs->trans("SetupDescription3b");
 if (!empty($setupcompanynotcomplete)) {
 	$langs->load("errors");
-	$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"), 'style="padding-right: 6px;"');
-	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit').'">'.$warnpicto.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
+	$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"), 'style="padding-right: 10px;"');
+	print '<br><div class="warning marginrightonly"><a class="warning" href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home&action=edit&token='.newToken().'">'.$warnpicto.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
 }
 
 print '</a>';
@@ -113,11 +133,14 @@ print '</section>';
 print '<br>';
 print '<br>';
 
+
+// Show info setup modules
+
 print '<section class="setupsection setupmodules cursorpointer">';
 
 // Define $nbmodulesnotautoenabled - TODO This code is at different places
 $nbmodulesnotautoenabled = count($conf->modules);
-$listofmodulesautoenabled = array('agenda', 'fckeditor', 'export', 'import');
+$listofmodulesautoenabled = array('user', 'agenda', 'fckeditor', 'export', 'import');	// All modules with ->enabled_bydefault to true (so enabled during install)
 foreach ($listofmodulesautoenabled as $moduleautoenable) {
 	if (in_array($moduleautoenable, $conf->modules)) {
 		$nbmodulesnotautoenabled--;
@@ -125,17 +148,87 @@ foreach ($listofmodulesautoenabled as $moduleautoenable) {
 }
 
 // Show info setup module
-print img_picto('', 'cog', 'class="paddingright valignmiddle double"').' '.$langs->trans("SetupDescriptionLink", DOL_URL_ROOT.'/admin/modules.php?mainmenu=home', $langs->transnoentities("Setup"), $langs->transnoentities("Modules"));
+print img_picto('', 'cog', 'class="paddingright valignmiddle double"');
+print ' ';
+print '<a class="nounderlineimp fontsize-1-1" href="'.DOL_URL_ROOT.'/admin/modules.php?mainmenu=home">'.$langs->transnoentities("Setup").' - '.$langs->transnoentities("Modules").'</a>';
 print '<br><br>'.$langs->trans("SetupDescription4b");
-if ($nbmodulesnotautoenabled <= getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
+if ($nbmodulesnotautoenabled < getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
 	$langs->load("errors");
-	$warnpicto = img_warning($langs->trans("WarningEnableYourModulesApplications"), 'style="padding-right: 6px;"');
-	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/modules.php?mainmenu=home">'.$warnpicto.$langs->trans("WarningEnableYourModulesApplications").'</a></div>';
+	$warnpicto = img_warning($langs->trans("WarningEnableYourModulesApplications"), 'style="padding-right: 10px;"');
+	print '<br><div class="warning marginrightonly"><a class="warning" href="'.DOL_URL_ROOT.'/admin/modules.php?mainmenu=home">'.$warnpicto.$langs->trans("WarningEnableYourModulesApplications").'</a></div>';
 }
 
 print '</section>';
 
 print '<br>';
+print '<br>';
+
+
+// Show info setup modules
+
+// A country has one entry, or one entry per direction ('issue', 'receive'). A module is found if it is in the 'module'
+// list of the entry, or if its descriptor declares the country (and direction):
+// $this->module_parts = array('einvoice' => array('DE' => array('issue', 'receive')));
+$arrayofeinvoiceneed = array(
+	'FR' => array('module' => array('einvoice', 'pdpconnectfr'), 'search' => 'e-invoice'),
+	'ES' => array('search' => 'verifactu'),
+	'BE' => array('search' => 'peppol'),
+	'PL' => array('module' => array('ksef'), 'search' => 'ksef'),
+	'DE' => array(
+		'issue' => array('label' => 'EInvoiceIssueCustomerInvoices', 'search' => 'einvoice-issue-de'),
+		'receive' => array('label' => 'EInvoiceReceiveSupplierInvoices', 'search' => 'einvoice-receive-de')
+	)
+);
+
+$urleinvoice = '';
+
+if ($mysoc->country_code && in_array($mysoc->country_code, array_keys($arrayofeinvoiceneed))) {
+	$einvoiceneeds = $arrayofeinvoiceneed[$mysoc->country_code];
+	if (isset($einvoiceneeds['search'])) {
+		$einvoiceneeds = array($einvoiceneeds);
+	}
+	$einvoicetext = '';
+	foreach ($einvoiceneeds as $direction => $einvoiceneed) {
+		$modules = empty($einvoiceneed['module']) ? array() : $einvoiceneed['module'];
+		foreach (empty($conf->modules_parts['einvoice']) ? array() : $conf->modules_parts['einvoice'] as $module => $declared) {
+			'@phan-var-force array<string,string[]>|string $declared';
+			if (is_array($declared) && !empty($declared[$mysoc->country_code]) && (is_int($direction) || in_array($direction, (array) $declared[$mysoc->country_code]))) {
+				$modules[] = $module;
+			}
+		}
+		$modulefound = '';
+		foreach ($modules as $module) {
+			if (isModEnabled($module)) {
+				$modulefound = $module;
+				break;
+			}
+		}
+		if (!$modulefound) {
+			$url = DOL_URL_ROOT.'/admin/modules.php?mode=marketplace&search_keyword='.urlencode($einvoiceneed['search']);
+		} else {
+			$url = DOL_URL_ROOT.'/admin/modules.php?search_keyword='.urlencode($modulefound);
+		}
+		if (!$modulefound || !$urleinvoice) {	// The section leads to an entry without module
+			$urleinvoice = $url;
+		}
+		$einvoicetext .= '<br><br>'.(empty($einvoiceneed['label']) ? '' : $langs->trans($einvoiceneed['label']).': ');
+		if ($modulefound || getDolGlobalString('MAIN_FAKE_EINVOICE_MODULE_FOUND')) {
+			$einvoicetext .= $langs->trans("AnEInvoiceModuleHasBeenEnabled", $mysoc->country_code);
+		} else {
+			$einvoicetext .= $langs->trans("SetupDescriptionEInvoice", $mysoc->country_code);
+		}
+	}
+
+	print '<section class="setupsection setupeinvoice cursorpointer">';
+	// Show info setup module
+	print img_picto('', 'bill', 'class="paddingright valignmiddle double"');
+	print ' ';
+	print '<a class="nounderlineimp fontsize-1-1" href="'.$urleinvoice.'">'.$langs->transnoentities("EInvoice").'</a>';
+	print $einvoicetext;
+	print '</section>';
+}
+
+
 print '<br>';
 print '<br>';
 
@@ -151,6 +244,11 @@ print '<script>
 				event.preventDefault();
 				console.log("we click on setupmodules");
                 window.location.href = "'.DOL_URL_ROOT.'/admin/modules.php?mainmenu=home";
+            });
+            $(".setupeinvoice").click(function() {
+				event.preventDefault();
+				console.log("we click on setupeinvoice");
+                window.location.href = "'.$urleinvoice.'";
             });
         });
 </script>';

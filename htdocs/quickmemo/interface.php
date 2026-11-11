@@ -1,0 +1,1027 @@
+<?php
+/* Copyright (C) 2024 John BOTELLA
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+//if (! defined('NOREQUIREDB'))              define('NOREQUIREDB', '1');				// Do not create database handler $db
+//if (! defined('NOREQUIREUSER'))            define('NOREQUIREUSER', '1');				// Do not load object $user
+//if (! defined('NOREQUIRESOC'))             define('NOREQUIRESOC', '1');				// Do not load object $mysoc
+//if (! defined('NOREQUIRETRAN'))            define('NOREQUIRETRAN', '1');				// Do not load object $langs
+//if (! defined('NOSCANGETFORINJECTION'))    define('NOSCANGETFORINJECTION', '1');		// Do not check injection attack on GET parameters
+//if (! defined('NOSCANPOSTFORINJECTION'))   define('NOSCANPOSTFORINJECTION', '1');		// Do not check injection attack on POST parameters
+//if (! defined('NOCSRFCHECK'))              define('NOCSRFCHECK', '1');				// Do not check CSRF attack (test on referer + on token if option MAIN_SECURITY_CSRF_WITH_TOKEN is on).
+if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');                // Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
+//if (! defined('NOSTYLECHECK'))             define('NOSTYLECHECK', '1');				// Do not check style html tag into posted data
+if (!defined('NOREQUIREMENU')) define('NOREQUIREMENU', '1');                // If there is no need to load and show top and left menu
+if (!defined('NOREQUIREHTML')) define('NOREQUIREHTML', '1');                // If we don't need to load the html.form.class.php
+//if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX', '1');       	  	// Do not load ajax.lib.php library
+//if (! defined("NOLOGIN"))                  define("NOLOGIN", '1');					// If this page is public (can be called outside logged session). This include the NOIPCHECK too.
+//if (! defined('NOIPCHECK'))                define('NOIPCHECK', '1');					// Do not check IP defined into conf $dolibarr_main_restrict_ip
+//if (! defined("MAIN_LANG_DEFAULT"))        define('MAIN_LANG_DEFAULT', 'auto');					// Force lang to a particular value
+//if (! defined("MAIN_AUTHENTICATION_MODE")) define('MAIN_AUTHENTICATION_MODE', 'aloginmodule');	// Force authentication handler
+if (! defined("NOREDIRECTBYMAINTOLOGIN"))  define('NOREDIRECTBYMAINTOLOGIN', 1);		// The main.inc.php does not make a redirect if not logged, instead show simple error message
+//if (! defined("FORCECSP"))                 define('FORCECSP', 'none');				// Disable all Content Security Policies
+//if (! defined('CSRFCHECK_WITH_TOKEN'))     define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
+//if (! defined('NOBROWSERNOTIF'))     		 define('NOBROWSERNOTIF', '1');				// Disable browser notification
+
+
+// Load Dolibarr environment
+require '../main.inc.php';
+/**
+ * @var DoliDB $db
+ * @var User $user
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ */
+// Load required classes
+require_once DOL_DOCUMENT_ROOT . '/core/class/jsonResponse.class.php';
+require_once __DIR__ . '/class/memo.class.php';
+require_once __DIR__ . '/lib/quickmemo.lib.php';
+if (!class_exists('Validate')) {
+	require_once DOL_DOCUMENT_ROOT . '/core/class/validate.class.php';
+}
+
+// Initialize hooks for the interface
+$hookmanager->initHooks(['quickmemoInterface']);
+
+// Load translation files required by the page
+$langs->loadLangs(["quickmemo", "other", 'main']);
+
+$action = GETPOST('action');
+
+// Security check: check if the module is enabled
+if (!isModEnabled('quickmemo')) accessforbidden('Module not enabled');
+
+$jsonResponse = new JsonResponse();
+
+// Security check: basic read permission
+if (!$user || !$user->hasRight('quickmemo', 'memo', 'read')) {
+	$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
+	$jsonResponse->output();
+}
+
+// Security check: memos are for internal users only (the js interface is not loaded for external users)
+if ($user->socid > 0) {
+	$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
+	$jsonResponse->output();
+}
+
+// Execute hooks before standard actions
+$reshook = $hookmanager->executeHooks('quickMemoInterface', [], $jsonResponse, $action);
+if ($reshook < 0) {
+	$errMsg = $hookmanager->error;
+	if (!empty($hookmanager->errors)) {
+		$errMsg.= (!empty($hookmanager->error) ? '<br>' : '') . implode('<br>', $hookmanager->errors);
+	}
+	$jsonResponse->setError($errMsg);
+	$jsonResponse->output();
+}
+
+// Action Dispatcher: Routes the request to the appropriate function based on the 'action' parameter
+if ($reshook > 0) {
+	// Action handled by hook
+} elseif ($action === 'update_position') {
+	quickMemoIntefaceActionUpdatePosition($jsonResponse);
+} elseif ($action === 'update_all_positions') {
+	quickMemoIntefaceActionUpdateAllPositions($jsonResponse);
+} elseif ($action === 'list') {
+	quickMemoIntefaceActionList($jsonResponse);
+} elseif ($action === 'list_models') {
+	quickMemoIntefaceActionListModels($jsonResponse);
+} elseif ($action === 'update-color') {
+	quickMemoIntefaceActionUpdateColor($jsonResponse);
+} elseif ($action === 'update-shared-on-element') {
+	quickMemoIntefaceActionUpdateSharedOnElement($jsonResponse);
+} elseif ($action === 'update-private') {
+	quickMemoIntefaceActionUpdatePrivate($jsonResponse);
+} elseif ($action === 'archive') {
+	quickMemoIntefaceActionArchiveNote($jsonResponse);
+} elseif ($action === 'delete') {
+	quickMemoIntefaceActionDeleteNote($jsonResponse);
+} elseif ($action === 'create') {
+	quickMemoIntefaceActionCreate($jsonResponse);
+} elseif ($action === 'create_model') {
+	quickMemoIntefaceActionCreateModel($jsonResponse);
+} elseif ($action === 'delete_model') {
+	quickMemoIntefaceActionDeleteModel($jsonResponse);
+} elseif ($action === 'update_model_rank') {
+	quickMemoIntefaceActionUpdateModelRank($jsonResponse);
+} elseif ($action === 'update_note') {
+	quickMemoIntefaceActionUpdateNote($jsonResponse);
+} else {
+	$jsonResponse->setError($langs->trans('ErrorActionNotFound'));
+}
+
+$jsonResponse->output();
+
+/**
+ * Update the coordinates (X, Y), dimensions (W, H), and Z-index of a single memo.
+ * @param JsonResponse $jsonResponse The response object to populate.
+ * @return bool Returns false on failure, true on success.
+ */
+function quickMemoIntefaceActionUpdatePosition($jsonResponse)
+{
+	global $user, $langs, $db;
+
+	// Read permission is sufficient as this only affects the current user's view
+	if (!$user->hasRight('quickmemo', 'memo', 'read')) {
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
+		return false;
+	}
+
+	// Prevent moving a private note belonging to another user
+	$memo = quickMemoInterfaceFetchMemo($jsonResponse, 'QuickMemoCantMoveThisPrivateNote');
+	if (!$memo) {
+		return false;
+	}
+
+	$z = GETPOST("z", "int");
+	$x = GETPOST("x", "int");
+	$y = GETPOST("y", "int");
+	$w = GETPOST("w", "int");
+	$h = GETPOST("h", "int");
+
+	if (!$memo->updatePosition($user, (int) $x, (int) $y, (int) $w, (int) $h, (int) $z)) {
+		$jsonResponse->setError($langs->trans('UpdateError') . ' : ' . $memo->errorsToString(), JsonResponse::HTTP_INTERNAL_ERROR);
+		return false;
+	} else {
+		$jsonResponse->setSuccess();
+		$jsonResponse->data = null;
+		return true;
+	}
+}
+
+/**
+ * Batch update coordinates and Z-index for multiple memos.
+ * @param JsonResponse $jsonResponse The response object.
+ * @return bool|void
+ */
+function quickMemoIntefaceActionUpdateAllPositions($jsonResponse)
+{
+	global $user, $langs, $db;
+
+	// In case of position, read permission is enough because changing position will affect only this user not others.
+	// So he can't modify the content but can move it for himself.
+	if (!$user->hasRight('quickmemo', 'memo', 'read')) {
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
+		return false;
+	}
+
+	$json = file_get_contents('php://input');
+	$data = json_decode($json, true);
+
+	if (!is_array($data) || empty($data['memos'])) {
+		$jsonResponse->setError($langs->trans('ErrorNoDataReceived'));
+		return;
+	}
+
+	$db->begin();
+
+	foreach ($data['memos'] as $item) {
+		$memo = new Memo($db);
+		if ($memo->fetch((int) $item['id']) > 0) {
+			// Security check for private notes
+			if ($user->id != $memo->fk_user_creat && $memo->private) continue;
+			if (!quickMemoInterfaceCanAccessMemo($memo)) continue;
+
+			$memo->updatePosition(
+				$user,
+				(int) $item['x'],
+				(int) $item['y'],
+				(int) $item['w'],
+				(int) $item['h'],
+				(int) $item['z']
+			);
+		}
+	}
+
+	$db->commit();
+	$jsonResponse->setSuccess();
+
+	return true;
+}
+
+/**
+ * Create a new memo linked to an element or context.
+ * @param JsonResponse $jsonResponse The response object.
+ * @return bool Returns false on failure, true on success.
+ */
+function quickMemoIntefaceActionCreate($jsonResponse)
+{
+	global $user, $langs, $db, $conf;
+
+	if (!$user->hasRight('quickmemo', 'memo', 'write')) {
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
+		return false;
+	}
+
+	$element_id = GETPOST("element_id", "int");
+	$element_type = GETPOST("element_type");
+
+
+	if (empty($element_id) && !is_numeric($element_id) && !empty($element_type)) {
+		$jsonResponse->setError($langs->trans('ErrorNeedElementId'));
+		return false;
+	}
+
+	if (!quickMemoInterfaceCanAccessElement((string) $element_type, (int) $element_id)) {
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
+		return false;
+	}
+
+	$memo = new Memo($db);
+	$context_tab = GETPOST('context');
+	if (!in_array($context_tab, $memo->getAvailableMemoContext())) {
+		$jsonResponse->setError($langs->trans('ErrorContextUnknown'));
+		return false;
+	}
+
+	// Handle color selection with preset fallback
+	$colorPresets = Memo::getColorPreset();
+	$firstColor = !empty($colorPresets) ? $colorPresets[0] : null;
+	$memo->color = GETPOST("color");
+	if (!Memo::checkColor($memo->color)) {
+		$memo->color = $firstColor;
+	}
+
+	$memo->quick_note = GETPOST("note", quickMemoInterfaceGetNoteSecurityCheck());
+	$memo->fk_element = $element_id;
+	$memo->element_type = $element_type;
+	$memo->context_tab = $context_tab;
+	$memo->shared_on_element = GETPOST("shared_on_element", "int") ? 1 : 0;
+	$memo->private = GETPOST("private", "int") ? 1 : 0;
+
+	$memo->pos_x = GETPOST("x", "int");
+	$memo->pos_y = GETPOST("y", "int");
+	$memo->pos_w = GETPOST("w", "int");
+	$memo->pos_h = GETPOST("h", "int");
+	$memo->pos_z = GETPOST("z", "int");
+	$memo->status = Memo::STATUS_VALIDATED;
+	$memo->entity = quickMemoInterfaceGetMemoEntity((string) $element_type, (int) $element_id, (bool) $memo->shared_on_element);
+
+	$resCre = $memo->create($user);
+	if ($resCre <= 0 ) {
+		$jsonResponse->setError($langs->trans('UpdateError') . ' : ' . $memo->errorsToString(), JsonResponse::HTTP_INTERNAL_ERROR);
+		return false;
+	} else {
+		$jsonResponse->setSuccess();
+		$jsonResponse->data = new stdClass();
+		$jsonResponse->data->id = (int) $resCre;
+
+		return true;
+	}
+}
+
+
+/**
+ * Set a memo status to archived.
+ * @param JsonResponse $jsonResponse The response object.
+ * @return bool Returns false on failure, true on success.
+ */
+function quickMemoIntefaceActionArchiveNote($jsonResponse)
+{
+	global $user, $langs, $db;
+
+	if (!$user->hasRight('quickmemo', 'memo', 'write')) {
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
+		return false;
+	}
+
+	$memo = quickMemoInterfaceFetchMemo($jsonResponse, 'QuickMemoCantArchiveThisPrivateNote');
+	if (!$memo) {
+		return false;
+	}
+
+	if ($memo->setArchived($user) < 0) {
+		$jsonResponse->setError($langs->trans('UpdateError') . ' : ' . $memo->errorsToString(), JsonResponse::HTTP_INTERNAL_ERROR);
+		return false;
+	} else {
+		$jsonResponse->setSuccess();
+		$jsonResponse->data = null;
+		return true;
+	}
+}
+
+/**
+ * Transform an existing note into a template (model) for future use.
+ * @param JsonResponse $jsonResponse The response object.
+ * @return bool Returns false on failure, true on success.
+ */
+function quickMemoIntefaceActionCreateModel($jsonResponse)
+{
+	global $user, $langs, $db, $conf;
+
+	if (!$user->hasRight('quickmemo', 'memo', 'write')) {
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
+		return false;
+	}
+
+	$memo = quickMemoInterfaceFetchMemo($jsonResponse, 'QuickMemoCantChangeThisPrivateNote');
+	if (!$memo) {
+		return false;
+	}
+
+	$element_type = GETPOST("element_type");
+	if (empty($element_type)) {
+		$memo->element_type = '';
+	}
+
+	$memo->status = Memo::STATUS_TPL;
+	$memo->entity = $conf->entity;	// A template is not linked to the object anymore
+	$memo->private_tpl = GETPOST("tpl_private", "int");
+	$memo->name_tpl = GETPOST("tpl_name");
+	$memo->fk_user_creat = $user->id;
+	$memo->date_creation = dol_now();
+	$memo->fk_user_modif = null;
+	$memo->date_modification = null;
+	$memo->fk_user_archived = null;
+	$memo->date_archived = null;
+
+	if ($memo->update($user) < 0) {
+		$jsonResponse->setError($langs->trans('UpdateError') . ' : ' . $memo->errorsToString(), JsonResponse::HTTP_INTERNAL_ERROR);
+		return false;
+	} else {
+		$jsonResponse->setSuccess();
+		$jsonResponse->data = null;
+		return true;
+	}
+}
+
+
+/**
+ * Delete a memo template.
+ * @param JsonResponse $jsonResponse The response object.
+ * @return bool Returns false on failure, true on success.
+ */
+function quickMemoIntefaceActionDeleteModel($jsonResponse)
+{
+	global $user, $langs, $db;
+
+	if (!$user->hasRight('quickmemo', 'memo', 'delete')) {
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
+		return false;
+	}
+
+	$id = GETPOSTINT("id");
+
+	if ($id <= 0) {
+		$jsonResponse->setError($langs->trans('ErrorNeedModelId'));
+		return false;
+	}
+
+	$memo = new Memo($db);
+	if ($memo->fetch($id) <= 0 || !$memo->isInCurrentEntity()) {
+		$jsonResponse->setError($langs->trans('ErrorMemoNotFound'));
+		return false;
+	}
+
+	if ($memo->status != Memo::STATUS_TPL) {
+		$jsonResponse->setError($langs->trans('ErrorThisMemoIsNotATemplate'));
+		return false;
+	}
+
+	if ($user->id != $memo->fk_user_creat && $memo->private_tpl) {
+		$jsonResponse->setError($langs->trans('QuickMemoCantDeleteThisPrivateModel'));
+		return false;
+	}
+
+	if ($memo->delete($user) < 0) {
+		$jsonResponse->setError($langs->trans('UpdateError') . ' : ' . $memo->errorsToString(), JsonResponse::HTTP_INTERNAL_ERROR);
+		return false;
+	} else {
+		$jsonResponse->setSuccess();
+		$jsonResponse->data = null;
+		return true;
+	}
+}
+
+/**
+ * Update template ranking after a drag & drop operation.
+ *
+ * This is intentionally NOT implemented as a simple single UPDATE
+ * on the moved row.
+ *
+ * The ranking system is based on a continuous and ordered sequence
+ * (rank_tpl) shared by all compatible templates (same context_tab
+ * and element_type). When one element moves, the relative position
+ * of the entire set may change.
+ *
+ * For this reason we:
+ *  - Reload the full compatible dataset from database
+ *  - Rebuild the ordered list in memory
+ *  - Reinsert the moved element at its new visual position
+ *  - Recalculate a clean, continuous ranking sequence
+ *  - Persist the full sequence in a transaction
+ *
+ * This guarantees:
+ *  - No duplicated ranks
+ *  - No gaps in ranking
+ *  - Deterministic ordering
+ *  - Proper handling of private templates
+ *  - Consistency in concurrent environments
+ *
+ * A single UPDATE on the moved row would inevitably produce
+ * rank collisions or inconsistent ordering over time.
+ *
+ * @param JsonResponse $jsonResponse The response object
+ *
+ * @return bool
+ */
+function quickMemoIntefaceActionUpdateModelRank($jsonResponse)
+{
+	global $user, $langs, $db;
+
+	if (!$user->hasRight('quickmemo', 'memo', 'write')) {
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
+		return false;
+	}
+
+	$json = file_get_contents('php://input');
+	$data = json_decode($json, true);
+
+	if (!is_array($data) || empty($data['moved']['id']) || !isset($data['moved']['newPos'])) {
+		$jsonResponse->setError($langs->trans('ErrorInvalidMovedData'));
+		return false;
+	}
+
+
+
+	$movedId = (int) $data['moved']['id'];
+	$newPos  = max(1, (int) $data['moved']['newPos']);
+
+	$tmpMemo = new Memo($db);
+
+	// 1 Retrieve the moved model
+	$sql = 'SELECT rowid, element_type, context_tab
+	        FROM '.MAIN_DB_PREFIX.$tmpMemo->table_element.'
+	        WHERE rowid = '. (int) $movedId.'
+	        AND entity IN ('.getEntity($tmpMemo->element).')
+	        AND status = '. (int) Memo::STATUS_TPL;
+
+	$res = $db->query($sql);
+	if (!$res || !$db->num_rows($res)) {
+		$jsonResponse->setError($langs->trans('ErrorModelNotFound'));
+		return false;
+	}
+
+	$movedModel = $db->fetch_object($res);
+
+	// 2 Retrieve ALL compatible models
+	$sqlAll = 'SELECT rowid
+	           FROM '.MAIN_DB_PREFIX.$tmpMemo->table_element.'
+	           WHERE status = '. (int) Memo::STATUS_TPL.'
+	           AND entity IN ('.getEntity($tmpMemo->element).')
+	           AND element_type IN (\''.$db->escape($movedModel->element_type).'\', \'\')
+	           ORDER BY rank_tpl DESC';
+
+	//  AND context_tab = \''.$db->escape($movedModel->context_tab).'\'
+
+	$resAll = $db->query($sqlAll);
+	if (!$resAll) {
+		$jsonResponse->setError($db->error(), JsonResponse::HTTP_INTERNAL_ERROR);
+		return false;
+	}
+
+	$orderedIds = [];
+	while ($obj = $db->fetch_object($resAll)) {
+		$orderedIds[] = (int) $obj->rowid;
+	}
+
+	// 3 Remove the moved ID
+	$orderedIds = array_values(array_diff($orderedIds, [$movedId]));
+
+	// 4 Calculate actual index (0 based)
+	$newIndex = min(count($orderedIds), $newPos - 1);
+
+	// 5 Insert at new position
+	array_splice($orderedIds, $newIndex, 0, [$movedId]);
+
+	// 6 Clean re-indexing
+	$total = count($orderedIds);
+	$currentRank = $total;
+
+	$db->begin();
+
+	foreach ($orderedIds as $id) {
+		$sqlUp = 'UPDATE '.MAIN_DB_PREFIX.$tmpMemo->table_element.'
+		          SET rank_tpl = '.(int) $currentRank.'
+		          WHERE rowid = '.(int) $id.'
+		          AND status = '. (int) Memo::STATUS_TPL.'
+		          AND entity IN ('.getEntity($tmpMemo->element).')
+		          AND (private_tpl = 0 OR fk_user_creat = '.(int) $user->id.')';
+
+		if (!$db->query($sqlUp)) {
+			$db->rollback();
+			$jsonResponse->setError($db->error(), JsonResponse::HTTP_INTERNAL_ERROR);
+			return false;
+		}
+
+		$currentRank--;
+	}
+
+	$db->commit();
+
+	$jsonResponse->setSuccess();
+	$jsonResponse->data = null;
+	return true;
+}
+/**
+ * Permanently delete a note record from the database.
+ * @param JsonResponse $jsonResponse The response object.
+ * @return bool Returns false on failure, true on success.
+ */
+function quickMemoIntefaceActionDeleteNote($jsonResponse)
+{
+	global $user, $langs, $db;
+
+	if (!$user->hasRight('quickmemo', 'memo', 'write')) {
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
+		return false;
+	}
+
+	$memo = quickMemoInterfaceFetchMemo($jsonResponse, 'QuickMemoCantDeleteThisPrivateNote');
+	if (!$memo) {
+		return false;
+	}
+
+	if ($memo->status == Memo::STATUS_TPL) { // In case of models need check other stuff
+		$jsonResponse->setError($langs->trans('ErrorCantDeleteModel'));
+		return false;
+	}
+
+	if ($memo->delete($user) < 0) {
+		$jsonResponse->setError($langs->trans('UpdateError') . ' : ' . $memo->errorsToString(), JsonResponse::HTTP_INTERNAL_ERROR);
+		return false;
+	} else {
+		$jsonResponse->setSuccess();
+		$jsonResponse->data = null;
+		return true;
+	}
+}
+
+
+/**
+ * Update the text content of an existing note.
+ * @param JsonResponse $jsonResponse The response object.
+ * @return bool Returns false on failure, true on success.
+ */
+function quickMemoIntefaceActionUpdateNote($jsonResponse)
+{
+	global $user, $langs, $db;
+
+	if (!$user->hasRight('quickmemo', 'memo', 'write')) {
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
+		return false;
+	}
+
+	$memo = quickMemoInterfaceFetchMemo($jsonResponse, 'QuickMemoCantChangeThisPrivateNote');
+	if (!$memo) {
+		return false;
+	}
+
+	$memo->quick_note = GETPOST("note", quickMemoInterfaceGetNoteSecurityCheck());
+	$memo->tms = dol_now();
+	$memo->fk_user_modif = $user->id;
+
+	if ($memo->update($user) < 0) {
+		$jsonResponse->setError($langs->trans('UpdateError') . ' : ' . $memo->errorsToString(), JsonResponse::HTTP_INTERNAL_ERROR);
+		return false;
+	} else {
+		$jsonResponse->setSuccess();
+		$jsonResponse->data = new stdClass();
+
+		// return new memo
+		$jsonResponse->data->memo = $memo->getJsMemo($user);
+		return true;
+	}
+}
+
+/**
+ * Update the background color of a memo.
+ * @param JsonResponse $jsonResponse The response object.
+ * @return bool Returns false on failure, true on success.
+ */
+function quickMemoIntefaceActionUpdateColor($jsonResponse)
+{
+	global $user, $langs, $db;
+
+	if (!$user->hasRight('quickmemo', 'memo', 'write')) {
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
+		return false;
+	}
+
+	$color = GETPOST("color");
+	if (!Memo::checkColor($color)) {
+		$jsonResponse->setError($langs->trans('ErrorNeedValidColor'));
+		return false;
+	}
+
+	$memo = quickMemoInterfaceFetchMemo($jsonResponse, 'QuickMemoCantChangeThisPrivateNote');
+	if (!$memo) {
+		return false;
+	}
+
+	$memo->color = $color;
+
+	if ($memo->update($user) < 0) {
+		$jsonResponse->setError($langs->trans('UpdateError') . ' : ' . $memo->errorsToString(), JsonResponse::HTTP_INTERNAL_ERROR);
+		return false;
+	} else {
+		$jsonResponse->setSuccess();
+		$jsonResponse->data = new stdClass();
+
+		// return new memo
+		$jsonResponse->data->memo = $memo->getJsMemo($user);
+		return true;
+	}
+}
+
+/**
+ * Toggle visibility: Shared globally on the context or restricted to current element.
+ * @param JsonResponse $jsonResponse The response object.
+ * @return bool Returns false on failure, true on success.
+ */
+function quickMemoIntefaceActionUpdateSharedOnElement($jsonResponse)
+{
+	global $user, $langs, $db;
+
+	if (!$user->hasRight('quickmemo', 'memo', 'write')) {
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
+		return false;
+	}
+
+	$shared_on_element = GETPOST("shared_on_element", "int");
+
+	$memo = quickMemoInterfaceFetchMemo($jsonResponse, 'QuickMemoCantChangeThisPrivateNote');
+	if (!$memo) {
+		return false;
+	}
+
+	$memo->shared_on_element = $shared_on_element ? 1 : 0;
+	$memo->entity = quickMemoInterfaceGetMemoEntity((string) $memo->element_type, (int) $memo->fk_element, (bool) $memo->shared_on_element);
+
+	if ($memo->update($user) < 0) {
+		$jsonResponse->setError($langs->trans('UpdateError') . ' : ' . $memo->errorsToString(), JsonResponse::HTTP_INTERNAL_ERROR);
+		return false;
+	} else {
+		$jsonResponse->setSuccess();
+		$jsonResponse->data = null;
+		$jsonResponse->data = new stdClass();
+
+		// return new memo
+		$jsonResponse->data->memo = $memo->getJsMemo($user);
+		return true;
+	}
+}
+
+
+/**
+ * Toggle private status (visible only to creator vs shared).
+ * @param JsonResponse $jsonResponse The response object.
+ * @return bool Returns false on failure, true on success.
+ */
+function quickMemoIntefaceActionUpdatePrivate($jsonResponse)
+{
+	global $user, $langs, $db;
+
+	if (!$user->hasRight('quickmemo', 'memo', 'write')) {
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
+		return false;
+	}
+
+	$private = GETPOST("private", "int");
+
+	$memo = quickMemoInterfaceFetchMemo($jsonResponse, 'QuickMemoCantChangeThisPrivateNote');
+	if (!$memo) {
+		return false;
+	}
+
+	$memo->private = $private ? 1 : 0;
+
+	if ($memo->update($user) < 0) {
+		$jsonResponse->setError($langs->trans('UpdateError') . ' : ' . $memo->errorsToString(), JsonResponse::HTTP_INTERNAL_ERROR);
+		return false;
+	} else {
+		$jsonResponse->setSuccess();
+		$jsonResponse->data = new stdClass();
+
+		// return new memo
+		$jsonResponse->data->memo = $memo->getJsMemo($user);
+		return true;
+	}
+}
+
+/**
+ * List available template models and standard color presets.
+ * @param JsonResponse $jsonResponse The response object.
+ * @return bool|void Returns false on failure.
+ */
+function quickMemoIntefaceActionListModels($jsonResponse)
+{
+	global $user, $langs, $db;
+
+	if (!$user->hasRight('quickmemo', 'memo', 'read')) {
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
+		return false;
+	}
+
+	$element_type = GETPOST('element_type', 'alpha');
+	$context = GETPOST('context', 'alpha');
+
+	$jsonResponse->data = new stdClass();
+	$jsonResponse->data->modelTemplate = [];
+	$jsonResponse->data->presetTemplate = [];
+
+	// Get standard color list presets
+	$colorList = Memo::getColorPreset();
+
+	foreach ($colorList as $color) {
+		$default = new stdClass();
+		$default->name = '';
+		$default->color = $color;
+		$default->note = '';
+		$default->pos_w = 0;
+		$default->pos_h = 0;
+		$default->pos_x = 0;
+		$default->pos_y = 0;
+		$default->shared_on_element = 0;
+		$default->private = 0;
+		$default->user_name =  $user->getFullName($langs);
+		$default->date_creation =  dol_print_date(dol_now(), '', 'tzuserrel');
+		$default->date_change =  '';
+		$default->user_change_name = '';
+
+
+		$jsonResponse->data->presetTemplate[] = $default;
+	}
+
+	// GET all memo templates (tpl)
+	$memoStatic = new Memo($db);
+	$sql = $memoStatic->getTemplateMemosQuery($element_type, $context);
+	$resql = $db->query($sql);
+	if (!$resql) {
+		$jsonResponse->setError($db->lasterror(), JsonResponse::HTTP_INTERNAL_ERROR);
+		return;
+	}
+
+	while ($obj = $db->fetch_object($resql)) {
+		// fallback user-specific position
+		$jsonResponse->data->modelTemplate[]  = quickMemoInterfacePopulateMemoTplFromQueryObj($obj);
+	}
+
+	$jsonResponse->setSuccess();
+}
+
+/**
+ * List active notes for a specific object (element_id) or global context.
+ * @param JsonResponse $jsonResponse The response object.
+ * @return void
+ */
+function quickMemoIntefaceActionList($jsonResponse)
+{
+	global $user, $langs, $db;
+
+	if (!$user->hasRight('quickmemo', 'memo', 'read')) {
+		$jsonResponse->setError($langs->trans('NotEnoughPermissions'), JsonResponse::HTTP_FORBIDDEN);
+		return;
+	}
+
+	$element_id = GETPOSTINT('element_id');
+	$element_type = GETPOST('element_type', 'alpha');
+	$context = GETPOST('context', 'alpha');
+	$jsonResponse->data = new stdClass();
+	$jsonResponse->data->memos = [];
+	$jsonResponse->data->nbArchives = 0;
+
+	if (empty($element_id) && !empty($element_type)) {
+		$jsonResponse->setError($langs->trans('ErrorNeedElementId'));
+		return;
+	}
+
+	if (!quickMemoInterfaceCanAccessElement((string) $element_type, $element_id)) {
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
+		return;
+	}
+
+	$staticMemo = new Memo($db);
+
+	// GET all active memos
+	$sql = $staticMemo->getMemosQuery($element_type, $element_id, $context);
+	$resql = $db->query($sql);
+	if (!$resql) {
+		$jsonResponse->setError($db->lasterror(), JsonResponse::HTTP_INTERNAL_ERROR);
+		return;
+	}
+
+
+	$memos = [];
+	while ($obj = $db->fetch_object($resql)) {
+		// fallback user-specific position
+		$memos[] = quickMemoInterfacePopulateMemoFromQueryObj($obj);
+	}
+
+	$jsonResponse->data->memos = $memos;
+
+	// Count archived notes for display
+	$nbArchives = $staticMemo->countArchivedMemoQuery($element_type, $element_id, $context);
+	if ($nbArchives === false) {
+		$jsonResponse->setError($langs->trans('ErrorCountArchive'), JsonResponse::HTTP_INTERNAL_ERROR);
+		return;
+	}
+
+	$jsonResponse->data->nbArchives = $nbArchives;
+
+	$jsonResponse->setSuccess();
+}
+
+
+/**
+ * Helper to populate a JS-friendly memo object from a database record.
+ * @param object $obj Database record object.
+ * @return stdClass The populated JS-ready memo object.
+ */
+function quickMemoInterfacePopulateMemoFromQueryObj($obj)
+{
+	global $db, $langs;
+	$obj->date_creation = $db->jdate($obj->date_creation);
+	$obj->tms = $db->jdate($obj->tms);
+
+	$memo = Memo::getJsMemoDefault();
+	$memo->id = $obj->rowid;
+	$memo->color = $obj->color;
+	$memo->note = $obj->quick_note;
+	// Use user-specific position if available, otherwise fallback to default
+	$memo->pos_x = $obj->user_pos_x !== null ? (int) $obj->user_pos_x : (int) $obj->pos_x;
+	$memo->pos_y = $obj->user_pos_y !== null ? (int) $obj->user_pos_y : (int) $obj->pos_y;
+	$memo->pos_w = $obj->user_pos_w !== null ? (int) $obj->user_pos_w : (int) $obj->pos_w;
+	$memo->pos_h = $obj->user_pos_h !== null ? (int) $obj->user_pos_h : (int) $obj->pos_h;
+	$memo->pos_z = $obj->user_pos_z !== null ? (int) $obj->user_pos_z : (int) $obj->pos_z;
+
+	$memo->shared_on_element = $obj->shared_on_element;
+	$memo->private = (int) $obj->private;
+	$memo->date_creation = dol_print_date($obj->date_creation, '%d/%m/%Y %H:%M', 'tzuserrel');
+	$memo->date_change =  '';
+	if (!empty($obj->tms) && ((int) $obj->date_creation !== (int) $obj->tms || (int) $obj->fk_user_modif > 0)) {
+		$memo->date_change = dol_print_date($obj->tms, '%d/%m/%Y %H:%M', 'tzuserrel');
+	}
+
+	$memo->fk_user_creat = $obj->fk_user_creat;
+	$memo->user_name = '';
+	if ((int) $obj->fk_user_creat > 0) {
+		$userCreate = new User($db);
+		if ($userCreate->fetch((int) $obj->fk_user_creat) > 0) {
+			$memo->user_name = $userCreate->getFullName($langs);
+		}
+	}
+
+	$memo->fk_user_modif = $obj->fk_user_modif;
+	$memo->user_change_name = '';
+	if ((int) $obj->fk_user_modif > 0) {
+		$userMod = new User($db);
+		if ($userMod->fetch((int) $obj->fk_user_modif) > 0) {
+			$memo->user_change_name = $userMod->getFullName($langs);
+		}
+	}
+
+	return $memo;
+}
+
+/**
+ * Helper to populate a JS-friendly template (model) object from a database record.
+ * @param object $obj Database record object.
+ * @return stdClass The populated JS-ready template object.
+ */
+function quickMemoInterfacePopulateMemoTplFromQueryObj($obj)
+{
+	global $db, $langs, $user;
+	$obj->date_creation = $db->jdate($obj->date_creation);
+	$obj->tms = $db->jdate($obj->tms);
+
+
+	$memo = new stdClass();
+	$memo->name = $obj->name_tpl;
+	$memo->id = $obj->rowid;
+	$memo->color = $obj->color;
+	$memo->note = $obj->quick_note;
+	$memo->pos_x = $obj->user_pos_x !== null ? (int) $obj->user_pos_x : (int) $obj->pos_x;
+	$memo->pos_y = $obj->user_pos_y !== null ? (int) $obj->user_pos_y : (int) $obj->pos_y;
+	$memo->pos_w = $obj->user_pos_w !== null ? (int) $obj->user_pos_w : (int) $obj->pos_w;
+	$memo->pos_h = $obj->user_pos_h !== null ? (int) $obj->user_pos_h : (int) $obj->pos_h;
+	$memo->pos_z = $obj->user_pos_z !== null ? (int) $obj->user_pos_z : (int) $obj->pos_z;
+	$memo->rank_tpl = (int) $obj->rank_tpl;
+
+	$memo->shared_on_element = $obj->shared_on_element;
+	$memo->private = (int) $obj->private;
+	$memo->date_creation = dol_print_date($obj->date_creation, '%d/%m/%Y %H:%M', 'tzuserrel');
+	$memo->fk_user_creat = $user->id;
+	$memo->user_name =  $user->getFullName($langs);
+	$memo->date_change =  '';
+	$memo->user_change_name = '';
+
+	return $memo;
+}
+
+/**
+ * Get the entity of a memo: entity of the linked object, or current entity for global memos
+ * and memos shared on all objects of a type.
+ *
+ * @param string $element_type      Element type of the linked object ('' for global contexts like home page)
+ * @param int    $element_id        Id of the linked object
+ * @param bool   $shared_on_element Memo is shared on all objects of this type
+ * @return int
+ */
+function quickMemoInterfaceGetMemoEntity($element_type, $element_id, $shared_on_element)
+{
+	global $conf;
+
+	if (empty($element_type) || $shared_on_element || $element_id <= 0) {
+		return (int) $conf->entity;
+	}
+
+	// Object already loaded in cache by quickMemoInterfaceCanAccessElement()
+	$object = fetchObjectByElement($element_id, quickMemoInterfaceResolveElementType($element_type), '', 1);
+
+	return is_object($object) ? (int) setEntity($object) : (int) $conf->entity;
+}
+
+/**
+ * Check that current user can access a memo through the object it is attached to.
+ *
+ * @param Memo $memo Memo
+ * @return bool
+ */
+function quickMemoInterfaceCanAccessMemo($memo)
+{
+	if (!$memo->isInCurrentEntity()) {
+		return false;
+	}
+
+	// Templates are not attached to an object
+	if ($memo->status == Memo::STATUS_TPL) {
+		return true;
+	}
+
+	// A memo shared on element is displayed on all objects of the same type
+	return quickMemoInterfaceCanAccessElement((string) $memo->element_type, (int) $memo->fk_element, !empty($memo->shared_on_element));
+}
+
+/**
+ * Load the memo from the posted id and check that current user can access it.
+ *
+ * @param JsonResponse $jsonResponse    The response object, populated with error if memo is not accessible
+ * @param string       $privateErrorKey Translation key of error if memo is private to another user, '' to not check privacy
+ * @return Memo|null                    Memo, or null if not accessible
+ */
+function quickMemoInterfaceFetchMemo($jsonResponse, $privateErrorKey = '')
+{
+	global $user, $langs, $db;
+
+	$id = GETPOSTINT("id");
+	if ($id <= 0) {
+		$jsonResponse->setError($langs->trans('ErrorNeedMemoId'));
+		return null;
+	}
+
+	$memo = new Memo($db);
+	if ($memo->fetch($id) <= 0 || !$memo->isInCurrentEntity()) {
+		$jsonResponse->setError($langs->trans('ErrorMemoNotFound'));
+		return null;
+	}
+
+	if (!empty($privateErrorKey) && $user->id != $memo->fk_user_creat && $memo->private) {
+		$jsonResponse->setError($langs->trans($privateErrorKey));
+		return null;
+	}
+
+	if (!quickMemoInterfaceCanAccessMemo($memo)) {
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
+		return null;
+	}
+
+	return $memo;
+}
+
+/**
+ * Return the GETPOST filter to use for the text of a memo, same rule as other labels.
+ * By default for long text, we use 'nohtml', but we can set it to 'alphanohtml' (better security, with MAIN_SECURITY_DISALLOW_UNSECURED_TEXT).
+ * @return string Filter for GETPOST()
+ */
+function quickMemoInterfaceGetNoteSecurityCheck()
+{
+	if (getDolGlobalString('MAIN_SECURITY_DISALLOW_UNSECURED_TEXT')) {
+		return 'alphanohtml';
+	}
+	return 'nohtml';
+}

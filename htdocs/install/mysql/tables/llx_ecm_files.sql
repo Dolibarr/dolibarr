@@ -35,13 +35,17 @@ CREATE TABLE llx_ecm_files
   content			text,
   cover             varchar(32),                    -- is this file a file to use for a cover
   position          integer,                        -- position of file among others
-  gen_or_uploaded   varchar(12),                    -- 'generated' or 'uploaded'
+  gen_or_uploaded   varchar(12),                    -- 'generated' 'uploaded' 'api' 'unknown'
   extraparams		varchar(255),					-- for stocking other parameters with json format
-  date_c			datetime,
+  date_creation	datetime,
   tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_c			integer,
   fk_user_m			integer,
   note_private		text,
   note_public		text,
-  acl				text							-- for future permission 'per file'
+  acl				text,							-- for future permission 'per file'
+  geolat            double(24,8)   DEFAULT NULL,
+  geolong           double(24,8)   DEFAULT NULL,
+  geopoint          point DEFAULT NULL,
+  georesultcode     varchar(16)
 ) ENGINE=innodb;
