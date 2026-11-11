@@ -2682,6 +2682,19 @@ class Ticket extends CommonObject
 			}
 		}
 
+		if ($classname === '' && $modele !== 'mod_ticket_simple') {
+			// The configured numbering module is not available (for example an external module was removed), we fall back on the standard module
+			dol_syslog(get_class($this)."::getDefaultRef numbering module '".$modele."' not found, we fall back on 'mod_ticket_simple'", LOG_WARNING);
+			$modele = 'mod_ticket_simple';
+			foreach ($dirmodels as $reldir) {
+				$file = dol_buildpath($reldir."core/modules/ticket/".$modele.'.php', 0);
+				if (file_exists($file)) {
+					$classname = $modele;
+					break;
+				}
+			}
+		}
+
 		if ($classname !== '') {
 			$result = dol_include_once($reldir."core/modules/ticket/".$modele.'.php');
 			$modTicket = new $classname();
