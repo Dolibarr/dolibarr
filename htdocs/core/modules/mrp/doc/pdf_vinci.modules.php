@@ -9,6 +9,7 @@
  * Copyright (C) 2024-2026	MDW					 <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Josep Lluís Amador    <joseplluis@lliuretic.cat>
  * Copyright (C) 2024	   Nick Fragoulis
+ * Copyright (C) 2026      Laurent Magnin        <laurent1magnin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -154,7 +155,7 @@ class pdf_vinci extends ModelePDFMo
 		}
 
 		// Load translation files required by the page
-		$outputlangs->loadLangs(array("main", "orders", "companies", "bills", "dict", "products"));
+		$outputlangs->loadLangs(array("main", "orders", "companies", "bills", "dict", "products", "mrp", "projects", "stocks"));
 
 		global $outputlangsbis;
 		$outputlangsbis = null;
@@ -973,7 +974,7 @@ class pdf_vinci extends ModelePDFMo
 		}
 
 		// Load translation files required by the page
-		$outputlangs->loadLangs(array("main", "orders", "companies", "bills", "sendings", "mrp"));
+		$outputlangs->loadLangs(array("main", "orders", "companies", "bills", "sendings", "mrp", "projects", "stocks"));
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -1023,11 +1024,12 @@ class pdf_vinci extends ModelePDFMo
 		$pdf->SetFont('', '', $default_font_size - 1);
 		if (getDolGlobalString('PDF_SHOW_PROJECT_TITLE')) {
 			$object->fetchProject();
-			if (!empty($object->project->ref)) {
+			if (!empty($object->project->title)) {
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : pdf_truncate_text($pdf, $object->project->title, 50)), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".pdf_truncate_text($pdf, $outputlangs->convToOutputCharset($object->project->title), 50), '', 'R');
+				$posy = $pdf->getY();
 			}
 		}
 
@@ -1035,96 +1037,14 @@ class pdf_vinci extends ModelePDFMo
 			$object->fetchProject();
 			if (!empty($object->project->ref)) {
 				$outputlangs->load("projects");
-				$posy += 4;
-				$pdf->SetXY($posx, $posy);
-				$langs->load("projects");
-				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->ref) ? '' : $object->project->ref), '', 'R');
-			}
-		}
-
-		if (!empty($object->date_start_planned)) {
-			$posy += 5;
-			$pdf->SetXY($posx, $posy);
-			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("MoDate")." : ".dol_print_date($object->date_start_planned, "day", false, $outputlangs, true), '', 'R');
-		} else {
-			$posy += 5;
-			$pdf->SetXY($posx, $posy);
-			$pdf->SetTextColor(255, 0, 0);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ToApprove"), '', 'R');
-		}
-
-		// product info
-		$prodToMake = new Product($this->db);
-		$resProdToMake = $prodToMake->fetch((int) $object->fk_product);
-
-		if ($resProdToMake > 0) {
-			// ref
-			$posy += 7;
-			$pdf->SetFont('', 'B', $default_font_size + 1);
-			$pdf->SetXY($posx, $posy);
-			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $prodToMake->ref, '', 'R');
-
-			// description
-			$posy += 5;
-			$pdf->SetFont('', 'B', $default_font_size + 3);
-			$pdf->SetXY($posx, $posy);
-			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, html_entity_decode($prodToMake->description), '', 'R', false, 1, null, null, true, 0, false, true, 51, 'T', true);
-			$posy = $pdf->GetY() - 5;
-
-			// dimensions
-			$array = array_filter(array($prodToMake->length, $prodToMake->width, $prodToMake->height));
-			$dim = implode("x", $array);
-			if (!empty($dim)) {
-				$posy += 5;
-				$pdf->SetFont('', 'B', $default_font_size + 3);
+				$posy += 3;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $dim, '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefProject")." : ".$object->project->ref, '', 'R');
 			}
 		}
-
-		$posy += 5;
-		$pdf->SetFont('', 'B', $default_font_size + 3);
-		$pdf->SetXY($posx, $posy);
-		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell($w, 3, $outputlangs->transnoentities("QtyToProduce").": " .$object->qty, '', 'R');
-
-
-		$pdf->SetTextColor(0, 0, 60);
-		if (isset($object->thirdparty->code_fournisseur)) {
-			$posy += 4;
-			$pdf->SetXY($posx, $posy);
-			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("SupplierCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_fournisseur), '', 'R');
-		}
-
-		// Get contact
-		if (getDolGlobalString('DOC_SHOW_FIRST_SALES_REP')) {
-			$arrayidcontact = $object->getIdContact('internal', 'SALESREPFOLL');
-			if (count($arrayidcontact) > 0) {
-				$usertmp = new User($this->db);
-				$usertmp->fetch($arrayidcontact[0]);
-				$posy += 4;
-				$pdf->SetXY($posx, $posy);
-				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell(100, 3, $langs->trans("BuyerName")." : ".$usertmp->getFullName($langs), '', 'R');
-			}
-		}
-
-		$posy += 1;
-		$pdf->SetTextColor(0, 0, 60);
 
 		$top_shift = 0;
-		// Show list of linked objects
-		$current_y = $pdf->getY();
-		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 100, 3, 'R', $default_font_size);
-		if ($current_y < $pdf->getY()) {
-			$top_shift = $pdf->getY() - $current_y;
-		}
 
 		if ($showaddress) {
 			// Sender properties
@@ -1174,9 +1094,12 @@ class pdf_vinci extends ModelePDFMo
 			$pdf->SetFont('', '', $default_font_size - 1);
 			$pdf->MultiCell(80, 4, $carac_emetteur, 0, $ltrdirection);
 
+			// Recipient
+			if (empty($object->thirdparty) && !empty($object->fk_soc)) {
+				$object->fetch_thirdparty();
+			}
 
-
-			// If CUSTOMER contact defined on order, we use it. Note: Even if this is a supplier object, the code for external contat that follow order is 'CUSTOMER'
+			// If CUSTOMER contact defined on order, we use it.
 			$usecontact = false;
 			$arrayidcontact = $object->getIdContact('external', 'CUSTOMER');
 			if (count($arrayidcontact) > 0) {
@@ -1191,39 +1114,170 @@ class pdf_vinci extends ModelePDFMo
 				$thirdparty = $object->thirdparty;
 			}
 
-			//$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
+			$has_client = false;
+			$posy_client = 32 + $this->marge_haute + $top_shift;
+			if (is_object($thirdparty) && (!empty($thirdparty->name) || !empty($thirdparty->nom))) {
+				$has_client = true;
+				$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
+				$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), ($usecontact ? 1 : 0), 'target', $object);
 
-			//$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), $usecontact, 'target', $object);
+				// Show recipient
+				$widthrecbox = getDolGlobalInt('MAIN_PDF_USE_ISO_LOCATION') ? 92 : 100;
+				if ($this->page_largeur < 210) {
+					$widthrecbox = 84; // To work with US executive format
+				}
+				$posx_client = $this->page_largeur - $this->marge_droite - $widthrecbox;
+				if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
+					$posx_client = $this->marge_gauche;
+				}
 
-			// Show recipient
-			//$widthrecbox = 100;
-			//if ($this->page_largeur < 210) {
-			//	$widthrecbox = 84; // To work with US executive format
-			//}
-			//$posy = 32 + $this->marge_haute + $top_shift;
-			//$posx = $this->page_largeur - $this->marge_droite - $widthrecbox;
-			//if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
-			//	$posx = $this->marge_gauche;
-			//}
-			//
-			//// Show recipient frame
-			//$pdf->SetTextColor(0, 0, 0);
-			//$pdf->SetFont('', '', $default_font_size - 2);
-			//$pdf->SetXY($posx + 2, $posy - 5);
-			//$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("BillTo"), 0, $ltrdirection);
-			//$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
-			//
-			//// Show recipient name
-			//$pdf->SetXY($posx + 2, $posy + 3);
-			//$pdf->SetFont('', 'B', $default_font_size);
-			//$pdf->MultiCell($widthrecbox, 4, $carac_client_name, 0, $ltrdirection);
-			//
-			//$posy = $pdf->getY();
-			//
-			//// Show recipient information
-			//$pdf->SetFont('', '', $default_font_size - 1);
-			//$pdf->SetXY($posx + 2, $posy);
-			//$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, $ltrdirection);
+				// Show recipient frame
+				if (!getDolGlobalString('MAIN_PDF_NO_RECIPENT_FRAME')) {
+					$pdf->SetTextColor(0, 0, 0);
+					$pdf->SetFont('', '', $default_font_size - 2);
+					$pdf->SetXY($posx_client + 2, $posy_client - 5);
+					$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("BillTo"), 0, $ltrdirection);
+					$pdf->RoundedRect($posx_client, $posy_client, $widthrecbox, $hautcadre, $this->corner_radius, '1234', 'D');
+				}
+
+				// Show recipient name
+				$pdf->SetXY($posx_client + 2, $posy_client + 3);
+				$pdf->SetFont('', 'B', $default_font_size);
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
+				$pdf->MultiCell($widthrecbox - 2, 4, $carac_client_name, 0, $ltrdirection);
+
+				$posy_client = $pdf->getY();
+
+				// Show recipient information
+				$pdf->SetFont('', '', $default_font_size - 1);
+				$pdf->SetXY($posx_client + 2, $posy_client);
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
+				$pdf->MultiCell($widthrecbox - 2, 4, $carac_client, 0, $ltrdirection);
+			}
+
+			// Manufacturing details box (product, quantity, warehouse, dates, ...)
+			$posx_box = $this->marge_gauche;
+			$posy_box = 32 + $this->marge_haute + $top_shift + $hautcadre + 2;
+			$width_box = $this->page_largeur - $this->marge_gauche - $this->marge_droite;
+			$posy_curr = $posy_box + 2;
+
+			// Product info
+			$prodToMake = new Product($this->db);
+			$resProdToMake = $prodToMake->fetch((int) $object->fk_product);
+
+			// Warehouse info
+			$warehousename = '';
+			if (!empty($object->fk_warehouse) && $object->fk_warehouse > 0 && isModEnabled('stock')) {
+				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+				$warehouse = new Entrepot($this->db);
+				if ($warehouse->fetch((int) $object->fk_warehouse) > 0) {
+					$warehousename = $warehouse->ref.(!empty($warehouse->label) && $warehouse->label != $warehouse->ref ? ' - '.$warehouse->label : '');
+				}
+			}
+
+			// Line 1: Ref | Quantity | Warehouse
+			$line1_parts = array();
+			if ($resProdToMake > 0 && !empty($prodToMake->ref)) {
+				$line1_parts[] = $outputlangs->transnoentities("Ref")." : ".$prodToMake->ref;
+			}
+			if (!empty($object->qty)) {
+				$line1_parts[] = $outputlangs->transnoentities("Quantity")." : ".$object->qty;
+			}
+			if (!empty($warehousename)) {
+				$line1_parts[] = $outputlangs->transnoentities("Warehouse")." : ".$warehousename;
+			}
+			$line1 = implode(" | ", $line1_parts);
+
+			if (!empty($line1)) {
+				$pdf->SetFont('', 'B', $default_font_size);
+				$pdf->SetXY($posx_box + 2, $posy_curr);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->MultiCell($width_box - 4, 3.5, $outputlangs->convToOutputCharset($line1), 0, $ltrdirection);
+				$posy_curr = $pdf->getY();
+			}
+
+			// Line 2: Dates (Date start planned - Date end planned)
+			$datestxt = '';
+			if (!empty($object->date_start_planned) && !empty($object->date_end_planned)) {
+				$datestxt = $outputlangs->transnoentities("DateStartPlannedMo")." : ".dol_print_date($object->date_start_planned, "day", false, $outputlangs, true)." - ".$outputlangs->transnoentities("DateEndPlannedMo")." : ".dol_print_date($object->date_end_planned, "day", false, $outputlangs, true);
+			} elseif (!empty($object->date_start_planned)) {
+				$datestxt = $outputlangs->transnoentities("DateStartPlannedMo")." : ".dol_print_date($object->date_start_planned, "day", false, $outputlangs, true);
+			} elseif (!empty($object->date_end_planned)) {
+				$datestxt = $outputlangs->transnoentities("DateEndPlannedMo")." : ".dol_print_date($object->date_end_planned, "day", false, $outputlangs, true);
+			} else {
+				$datestxt = $outputlangs->transnoentities("ToApprove");
+			}
+
+			if (!empty($datestxt)) {
+				$pdf->SetFont('', '', $default_font_size - 1);
+				$pdf->SetXY($posx_box + 2, $posy_curr);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->MultiCell($width_box - 4, 3.5, $outputlangs->convToOutputCharset($datestxt), 0, $ltrdirection);
+				$posy_curr = $pdf->getY();
+			}
+
+			// Optional product description
+			if ($resProdToMake > 0 && !empty($prodToMake->description)) {
+				$posy_curr += 1;
+				$pdf->SetFont('', '', $default_font_size - 2);
+				$pdf->SetXY($posx_box + 2, $posy_curr);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->MultiCell($width_box - 4, 3, html_entity_decode($prodToMake->description), 0, $ltrdirection, false, 1, null, null, true, 0, false, true, 20, 'T', true);
+				$posy_curr = $pdf->getY();
+			}
+
+			// Optional product dimensions
+			if ($resProdToMake > 0) {
+				$array = array_filter(array($prodToMake->length, $prodToMake->width, $prodToMake->height));
+				$dim = implode("x", $array);
+				if (!empty($dim)) {
+					$posy_curr += 1;
+					$pdf->SetFont('', '', $default_font_size - 1);
+					$pdf->SetXY($posx_box + 2, $posy_curr);
+					$pdf->SetTextColor(0, 0, 60);
+					$pdf->MultiCell($width_box - 4, 3, $outputlangs->transnoentities("Dimensions")." : ".$dim, 0, $ltrdirection);
+					$posy_curr = $pdf->getY();
+				}
+			}
+
+			// Supplier code
+			if (isset($object->thirdparty->code_fournisseur)) {
+				$posy_curr += 1;
+				$pdf->SetFont('', '', $default_font_size - 1);
+				$pdf->SetXY($posx_box + 2, $posy_curr);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->MultiCell($width_box - 4, 3, $outputlangs->transnoentities("SupplierCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_fournisseur), 0, $ltrdirection);
+				$posy_curr = $pdf->getY();
+			}
+
+			// Contact
+			if (getDolGlobalString('DOC_SHOW_FIRST_SALES_REP')) {
+				$arrayidcontact = $object->getIdContact('internal', 'SALESREPFOLL');
+				if (count($arrayidcontact) > 0) {
+					$usertmp = new User($this->db);
+					$usertmp->fetch($arrayidcontact[0]);
+					$posy_curr += 1;
+					$pdf->SetFont('', '', $default_font_size - 1);
+					$pdf->SetXY($posx_box + 2, $posy_curr);
+					$pdf->SetTextColor(0, 0, 60);
+					$pdf->MultiCell($width_box - 4, 3, $langs->trans("BuyerName")." : ".$usertmp->getFullName($langs), 0, $ltrdirection);
+					$posy_curr = $pdf->getY();
+				}
+			}
+
+			// Linked objects
+			$posy_curr += 1;
+			$posy_curr = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx_box + 2, $posy_curr, $width_box - 4, 3, $ltrdirection, $default_font_size);
+
+			// Draw frame with grey border
+			$height_box = max(11, $posy_curr - $posy_box + 1.5);
+			$pdf->SetDrawColor(128, 128, 128);
+			$pdf->RoundedRect($posx_box, $posy_box, $width_box, $height_box, $this->corner_radius, '1234', 'D');
+
+			$bottom_header = $posy_box + $height_box;
+			if ($bottom_header > (80 + $this->marge_haute)) {
+				$top_shift = $bottom_header - (80 + $this->marge_haute) + 4;
+			}
 		}
 
 		return $top_shift;
