@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2026 ATM Consulting          <contact@atm-consulting.fr>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,6 +61,11 @@ class VariantsTest extends CommonClassTest
 	private static $savmultiprices;
 
 	/**
+	 * @var string					Value of PRODUIT_MULTIPRICES_LIMIT before the class changed it
+	 */
+	private static $savmultipriceslimit;
+
+	/**
 	 * @var ?int					Value of $conf->variants->enabled before the class changed it
 	 */
 	private static $savvariantsenabled;
@@ -78,6 +84,7 @@ class VariantsTest extends CommonClassTest
 		// with multiprices on.
 		self::$savmodules = $conf->modules;
 		self::$savmultiprices = getDolGlobalInt('PRODUIT_MULTIPRICES');
+		self::$savmultipriceslimit = getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT');
 		self::$savvariantsenabled = isset($conf->variants->enabled) ? $conf->variants->enabled : null;
 
 		if (!isModEnabled('variants')) {
@@ -107,6 +114,7 @@ class VariantsTest extends CommonClassTest
 		global $conf;
 
 		$conf->global->PRODUIT_MULTIPRICES = self::$savmultiprices;
+		$conf->global->PRODUIT_MULTIPRICES_LIMIT = self::$savmultipriceslimit;
 
 		parent::tearDown();
 	}
@@ -1138,5 +1146,103 @@ class VariantsTest extends CommonClassTest
 		$this->savdb->free($resql);
 
 		return empty($obj) ? '' : (string) $obj->val;
+	}
+
+	/**
+	 * A price set directly on a variant must survive the next update of its parent:
+	 * the price impact of the variant follows the price set on it.
+	 *
+	 * @return void
+	 */
+	public function testPriceSetOnVariantSurvivesUpdateOfParent()
+	{
+		global $user;
+
+		$parent = $this->createParentProduct('PHPUNITPRICEKEEP');	// 100 HT
+		$colour = $this->createAttribute('PHPUNITC20', 'Colour');
+		$blue = $this->createValue($colour->id, 'PHPUNITBLUE20', 'Blue');
+		$red = $this->createValue($colour->id, 'PHPUNITRED20', 'Red');
+
+		// Blue: price impact of +5, red: price impact of +10%
+		$combination = new ProductCombination($this->savdb);
+		$res = $combination->createProductCombination($user, $parent, array($colour->id => $blue->id), array(), array(1 => false), array(1 => 5), 0.0, 'PHPUNITPRICEKEEP_BLUE');
+		$this->assertGreaterThan(0, $res, 'create blue '.$combination->error);
+		$combination = new ProductCombination($this->savdb);
+		$res = $combination->createProductCombination($user, $parent, array($colour->id => $red->id), array(), array(1 => true), array(1 => 10), 0.0, 'PHPUNITPRICEKEEP_RED');
+		$this->assertGreaterThan(0, $res, 'create red '.$combination->error);
+
+		$blueproduct = new Product($this->savdb);
+		$blueproduct->fetch(0, 'PHPUNITPRICEKEEP_BLUE');
+		$this->assertEquals(105, (float) $blueproduct->price, 'blue starts at the price of the parent plus its impact');
+		$redproduct = new Product($this->savdb);
+		$redproduct->fetch(0, 'PHPUNITPRICEKEEP_RED');
+		$this->assertEquals(110, (float) $redproduct->price, 'red starts at the price of the parent plus 10%');
+
+		// Prices set directly on the variants
+		$this->assertGreaterThan(0, $blueproduct->updatePrice(120, 'HT', $user, 20), 'update price of blue '.$blueproduct->error);
+		$this->assertGreaterThan(0, $redproduct->updatePrice(132, 'HT', $user, 20), 'update price of red '.$redproduct->error);
+
+		$blueimpact = $this->fetchOne('product_attribute_combination', 'variation_price', 'fk_product_child = '.((int) $blueproduct->id));
+		$this->assertEquals(20, (float) $blueimpact, 'the impact of blue follows its price');
+		$redimpact = $this->fetchOne('product_attribute_combination', 'variation_price', 'fk_product_child = '.((int) $redproduct->id));
+		$redpercent = $this->fetchOne('product_attribute_combination', 'variation_price_percentage', 'fk_product_child = '.((int) $redproduct->id));
+		$this->assertEquals(32, (float) $redimpact, 'the impact of red follows its price');
+		$this->assertEquals(1, (int) $redpercent, 'the impact of red stays in percent');
+
+		// Update of the parent with the same price: the prices of the variants are kept
+		$parent->fetch($parent->id);
+		$this->assertGreaterThan(0, $parent->update($parent->id, $user), 'update of parent '.$parent->error);
+		$blueproduct->fetch($blueproduct->id);
+		$redproduct->fetch($redproduct->id);
+		$this->assertEquals(120, (float) $blueproduct->price, 'the price set on blue survives an update of the parent');
+		$this->assertEquals(132, (float) $redproduct->price, 'the price set on red survives an update of the parent');
+
+		// New price of the parent: the variants follow with their new impact
+		$this->assertGreaterThan(0, $parent->updatePrice(200, 'HT', $user, 20), 'update price of parent '.$parent->error);
+		$parent->fetch($parent->id);
+		$this->assertGreaterThan(0, $parent->update($parent->id, $user), 'update of parent '.$parent->error);
+		$blueproduct->fetch($blueproduct->id);
+		$redproduct->fetch($redproduct->id);
+		$this->assertEquals(220, (float) $blueproduct->price, 'blue keeps its impact of +20');
+		$this->assertEquals(264, (float) $redproduct->price, 'red keeps its impact of +32%');
+	}
+
+	/**
+	 * With multiprices, a price set on one level of a variant only changes the impact of this level.
+	 *
+	 * @return void
+	 */
+	public function testPriceSetOnVariantLevelSurvivesUpdateOfParent()
+	{
+		global $user, $conf;
+
+		$this->skipIfNoTable('product_attribute_combination_price_level');
+
+		$conf->global->PRODUIT_MULTIPRICES = 1;
+		$conf->global->PRODUIT_MULTIPRICES_LIMIT = 2;
+
+		$parent = $this->createParentProduct('PHPUNITLEVELKEEP');
+		$this->assertGreaterThan(0, $parent->updatePrice(100, 'HT', $user, 20, 0, 1), 'level 1 of parent '.$parent->error);
+		$this->assertGreaterThan(0, $parent->updatePrice(90, 'HT', $user, 20, 0, 2), 'level 2 of parent '.$parent->error);
+		$parent->fetch($parent->id);
+
+		$colour = $this->createAttribute('PHPUNITC21', 'Colour');
+		$blue = $this->createValue($colour->id, 'PHPUNITBLUE21', 'Blue');
+
+		$combination = new ProductCombination($this->savdb);
+		$res = $combination->createProductCombination($user, $parent, array($colour->id => $blue->id), array(), array(1 => false, 2 => false), array(1 => 5, 2 => 5), 0.0, 'PHPUNITLEVELKEEP_BLUE');
+		$this->assertGreaterThan(0, $res, 'create blue '.$combination->error);
+
+		$blueproduct = new Product($this->savdb);
+		$blueproduct->fetch(0, 'PHPUNITLEVELKEEP_BLUE');
+		$this->assertEquals(95, (float) $blueproduct->multiprices[2], 'level 2 of blue starts at 90 + 5');
+
+		$this->assertGreaterThan(0, $blueproduct->updatePrice(80, 'HT', $user, 20, 0, 2), 'level 2 of blue '.$blueproduct->error);
+
+		$parent->fetch($parent->id);
+		$this->assertGreaterThan(0, $parent->update($parent->id, $user), 'update of parent '.$parent->error);
+		$blueproduct->fetch($blueproduct->id);
+		$this->assertEquals(105, (float) $blueproduct->multiprices[1], 'level 1 of blue is unchanged');
+		$this->assertEquals(80, (float) $blueproduct->multiprices[2], 'the price set on level 2 of blue survives an update of the parent');
 	}
 }
