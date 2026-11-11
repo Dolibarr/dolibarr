@@ -452,7 +452,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					if ($objp->nature == 1 && (isModEnabled('asset') || isModEnabled('invoice') || isModEnabled('supplier_invoice'))) {
 						$nature = "various";
 					}
-					if ($objp->nature == 8) {
+					if ($objp->nature == 8 && isModEnabled('stock')) {
 						$nature = "inventory";
 					}
 					if ($objp->nature == 9) {
@@ -461,7 +461,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 
 					// To enable when page exists
 					if (!getDolGlobalString('ACCOUNTANCY_SHOW_DEVELOP_JOURNAL')) {
-						if ($nature == 'hasnew' || $nature == 'inventory') {
+						if ($nature == 'hasnew') {
 							$nature = '';
 						}
 					}

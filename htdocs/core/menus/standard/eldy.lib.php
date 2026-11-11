@@ -1917,7 +1917,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 									&& (isModEnabled('asset') || isModEnabled('invoice') || isModEnabled('supplier_invoice'))) {
 									$nature = "various";
 								}
-								if ($objp->nature == 8) {
+								if ($objp->nature == 8 && isModEnabled('stock')) {
 									$nature = "inventory";
 								}
 								if ($objp->nature == 9) {
@@ -1926,7 +1926,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 
 								// To enable when page exists
 								if (!getDolGlobalString('ACCOUNTANCY_SHOW_DEVELOP_JOURNAL')) {
-									if ($nature == 'hasnew' || $nature == 'inventory') {
+									if ($nature == 'hasnew') {
 										$nature = '';
 									}
 								}
