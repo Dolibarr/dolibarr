@@ -43,6 +43,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT .'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT .'/fourn/class/fournisseur.class.php';
+require_once DOL_DOCUMENT_ROOT .'/fourn/class/fournisseur.product.class.php';
+require_once DOL_DOCUMENT_ROOT .'/core/class/extrafields.class.php';
 
 
 // Load translation files required by the page
@@ -59,6 +61,33 @@ $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hier
 $sref = GETPOST('sref', 'alphanohtml');
 $sRefSupplier = GETPOST('srefsupplier');
 $snom = GETPOST('snom', 'alphanohtml');
+$search_barcode = GETPOST('search_barcode', 'alphanohtml');
+// Fields of the supplier price that can be filtered with a text or a numeric criterion (key of $arrayfields => array(name of the search parameter, 1 if numeric))
+$arrayofsearchableprice = array(
+	'ppf.rowid' => array('search_ppf_rowid', 1),
+	'ppf.price' => array('search_price', 1),
+	'ppf.quantity' => array('search_qty', 1),
+	'ppf.unitprice' => array('search_unitprice', 1),
+	'ppf.remise_percent' => array('search_remise_percent', 1),
+	'ppf.remise' => array('search_remise', 1),
+	'ppf.charges' => array('search_charges', 1),
+	'ppf.packaging' => array('search_packaging', 1),
+	'ppf.delivery_time_days' => array('search_delivery_time_days', 1),
+	'ppf.default_vat_code' => array('search_default_vat_code', 0),
+	'ppf.desc_fourn' => array('search_desc_fourn', 0),
+	'ppf.import_key' => array('search_import_key', 0),
+);
+$search_price_fields = array();
+foreach ($arrayofsearchableprice as $keyofsearch => $defofsearch) {
+	$valueofsearch = trim(GETPOST($defofsearch[0], 'alphanohtml'));
+	if ($valueofsearch !== '') {
+		$search_price_fields[$keyofsearch] = $valueofsearch;
+	}
+}
+$search_supplier_barcode = GETPOST('search_supplier_barcode', 'alphanohtml');
+$search_tva_tx = GETPOST('search_tva_tx', 'array:alphanohtml');
+// Keep only numeric rates
+$search_tva_tx = array_values(array_unique(array_filter(array_map('strval', array_filter($search_tva_tx, 'is_numeric')), 'strlen')));
 $type = GETPOST('type', 'alphanohtml');
 
 // Load variable for pagination
@@ -99,16 +128,46 @@ $permissiontoadd = ($user->hasRight('product', 'read') || $user->hasRight('servi
 
 // Initialize technical object
 $object = new ProductFournisseurPrice($db);
+
+// Fetch optionals attributes and labels
+$extrafields = new ExtraFields($db);
+$extrafields->fetch_name_optionals_label($object->table_element);
+$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 // Definition of array of fields for columns. Keys are the real columns of the list, so that the selector of columns
 // (multiSelectArrayWithCheckbox) controls the columns that are really output below.
 $arrayfields = array(
 	'p.ref' => array('label' => 'Ref', 'checked' => '1', 'position' => 10),
 	'ppf.ref_fourn' => array('label' => 'RefSupplierShort', 'checked' => '1', 'position' => 20),
+	'p.barcode' => array('label' => 'BarCode', 'checked' => '0', 'position' => 25),
+	'ppf.barcode' => array('label' => $langs->trans('BarCode').' ('.$langs->trans('Supplier').')', 'checked' => '0', 'position' => 26),
 	'p.label' => array('label' => 'Label', 'checked' => '1', 'position' => 30),
 	'ppf.fk_soc' => array('label' => 'Supplier', 'checked' => '1', 'position' => 40),
 	'ppf.price' => array('label' => 'BuyingPrice', 'checked' => '1', 'position' => 50),
 	'ppf.quantity' => array('label' => 'QtyMin', 'checked' => '1', 'position' => 60),
 	'ppf.unitprice' => array('label' => 'UnitPrice', 'checked' => '1', 'position' => 70),
+	'ppf.tva_tx' => array('label' => 'VATRate', 'checked' => '0', 'position' => 80),
+	'ppf.default_vat_code' => array('label' => $langs->trans('VATRate').' ('.$langs->trans('Code').')', 'checked' => '0', 'position' => 82),
+	'ppf.localtax1_tx' => array('label' => 'LT1', 'checked' => '0', 'position' => 84),
+	'ppf.localtax2_tx' => array('label' => 'LT2', 'checked' => '0', 'position' => 86),
+	'ppf.remise_percent' => array('label' => 'Discount', 'checked' => '0', 'position' => 90),
+	'ppf.remise' => array('label' => $langs->trans('Discount').' ('.$langs->trans('Amount').')', 'checked' => '0', 'position' => 95),
+	'ppf.charges' => array('label' => 'Charges', 'enabled' => (string) getDolGlobalInt('PRODUCT_CHARGES'), 'checked' => '0', 'position' => 100),
+	'ppf.packaging' => array('label' => 'PackagingForThisProduct', 'enabled' => (string) getDolGlobalInt('PRODUCT_USE_SUPPLIER_PACKAGING'), 'checked' => '0', 'position' => 110),
+	'ppf.multicurrency_unitprice' => array('label' => 'UnitPriceHTCurrency', 'enabled' => (string) (int) isModEnabled('multicurrency'), 'checked' => '0', 'position' => 120),
+	'ppf.multicurrency_price' => array('label' => 'PriceQtyMinHTCurrency', 'enabled' => (string) (int) isModEnabled('multicurrency'), 'checked' => '0', 'position' => 130),
+	'ppf.delivery_time_days' => array('label' => 'NbDaysToDelivery', 'checked' => '0', 'position' => 140),
+	'ppf.supplier_reputation' => array('label' => 'ReputationForThisProduct', 'checked' => '0', 'position' => 150),
+	'ppf.fk_availability' => array('label' => 'Availability', 'enabled' => (string) getDolGlobalInt('FOURN_PRODUCT_AVAILABILITY'), 'checked' => '0', 'position' => 160),
+	'ppf.fk_barcode_type' => array('label' => 'BarcodeType', 'enabled' => (string) (int) isModEnabled('barcode'), 'checked' => '0', 'position' => 170),
+	'ppf.datec' => array('label' => 'AppliedPricesFrom', 'checked' => '0', 'position' => 180),
+	'ppf.tms' => array('label' => 'DateModification', 'checked' => '0', 'position' => 190),
+	'ppf.multicurrency_tx' => array('label' => 'CurrencyRate', 'enabled' => (string) (int) isModEnabled('multicurrency'), 'checked' => '0', 'position' => 135),
+	'ppf.desc_fourn' => array('label' => 'Description', 'checked' => '0', 'position' => 165),
+	'ppf.fk_supplier_price_expression' => array('label' => 'PriceExpressionEditor', 'enabled' => (string) (int) isModEnabled('dynamicprices'), 'checked' => '0', 'position' => 175),
+	'ppf.fk_user' => array('label' => 'Author', 'checked' => '0', 'position' => 185),
+	'ppf.import_key' => array('label' => 'ImportId', 'checked' => '0', 'position' => 195),
+	'ppf.rowid' => array('label' => 'TechnicalID', 'checked' => '0', 'position' => 199),
+	'ppf.status' => array('label' => 'Status', 'checked' => '0', 'position' => 200),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -144,6 +203,10 @@ if (empty($reshook)) {
 		$sref = '';
 		$sRefSupplier = '';
 		$snom = '';
+		$search_tva_tx = array();
+		$search_barcode = '';
+		$search_price_fields = array();
+		$search_supplier_barcode = '';
 		$search_field1 = '';
 		$search_field2 = '';
 		$search_date_creation = '';
@@ -160,6 +223,10 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $productstatic = new Product($db);
+$productfournstatic = new ProductFournisseur($db);
+if (getDolGlobalInt('FOURN_PRODUCT_AVAILABILITY')) {
+	$form->load_cache_availability();
+}
 $companystatic = new Societe($db);
 
 $title = $langs->trans('Supplier')." - ".$langs->trans('ProductsAndServices');
@@ -173,8 +240,17 @@ if ($fourn_id) {
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = "SELECT p.rowid, p.label, p.ref, p.fk_product_type, p.entity, p.tosell, p.tobuy, p.barcode, p.fk_barcode_type,";
-$sql .= " ppf.fk_soc, ppf.ref_fourn, ppf.price as price, ppf.quantity as qty, ppf.unitprice,";
+$sql .= " ppf.fk_soc, ppf.ref_fourn, ppf.price as price, ppf.quantity as qty, ppf.unitprice, ppf.tva_tx, ppf.barcode as supplier_barcode,";
+$sql .= " ppf.rowid as ppf_rowid, ppf.default_vat_code, ppf.localtax1_tx, ppf.localtax2_tx, ppf.remise, ppf.multicurrency_tx, ppf.desc_fourn, ppf.fk_supplier_price_expression, ppf.import_key, uu.login as ppf_user_login, ppf.remise_percent, ppf.charges, ppf.packaging, ppf.multicurrency_code, ppf.multicurrency_unitprice, ppf.multicurrency_price,";
+$sql .= " ppf.delivery_time_days, ppf.supplier_reputation, ppf.fk_availability, ppf.datec as ppf_datec, ppf.tms as ppf_tms, ppf.status as ppf_status,";
+$sql .= " bt.libelle as supplier_barcode_type,";
 $sql .= " s.rowid as socid, s.nom as name";
+// Add fields from extrafields
+if (!empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
+	}
+}
 // Add fields to SELECT from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action);
@@ -191,6 +267,11 @@ if ($catid) {
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as ppf ON p.rowid = ppf.fk_product AND ppf.entity IN (".getEntity('productsupplierprice').")";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ppf.fk_soc = s.rowid AND s.entity IN (".getEntity('societe').")";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_barcode_type as bt ON ppf.fk_barcode_type = bt.rowid AND bt.entity IN (".getEntity('c_barcode_type').")";
+if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef ON ppf.rowid = ef.fk_object";
+}
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as uu ON ppf.fk_user = uu.rowid";
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -214,6 +295,20 @@ if ($catid) {
 if ($fourn_id > 0) {
 	$sql .= " AND ppf.fk_soc = ".((int) $fourn_id);
 }
+if (!empty($search_tva_tx)) {
+	$sql .= " AND ppf.tva_tx IN (".implode(',', array_map('floatval', $search_tva_tx)).")";
+}
+if ($search_barcode != '') {
+	$sql .= natural_search('p.barcode', $search_barcode);
+}
+if ($search_supplier_barcode != '') {
+	$sql .= natural_search('ppf.barcode', $search_supplier_barcode);
+}
+foreach ($search_price_fields as $keyofsearch => $valueofsearch) {
+	$sql .= natural_search($keyofsearch, $valueofsearch, $arrayofsearchableprice[$keyofsearch][1]);
+}
+// Add where from extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
 // Add WHERE filters from hooks
 $parameters = array();
@@ -303,6 +398,18 @@ if ($sRefSupplier != '') {
 if ($snom != '') {
 	$param .= '&snom='.urlencode($snom);
 }
+foreach ($search_tva_tx as $searchvatrate) {
+	$param .= '&search_tva_tx[]='.urlencode($searchvatrate);
+}
+if ($search_barcode != '') {
+	$param .= '&search_barcode='.urlencode($search_barcode);
+}
+if ($search_supplier_barcode != '') {
+	$param .= '&search_supplier_barcode='.urlencode($search_supplier_barcode);
+}
+foreach ($search_price_fields as $keyofsearch => $valueofsearch) {
+	$param .= '&'.$arrayofsearchableprice[$keyofsearch][0].'='.urlencode($valueofsearch);
+}
 if ($fourn_id > 0) {
 	$param .= '&fourn_id='.((int) $fourn_id);
 }
@@ -312,6 +419,8 @@ if ($type !== '') {
 if ($catid) {
 	$param .= '&catid='.((int) $catid);
 }
+// Add $param from extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // Add $param from hooks
 $parameters = array('param' => &$param);
@@ -365,6 +474,7 @@ if (!empty($catid)) {
 	print "</div><br>";
 }
 
+
 $moreforfilter = '';
 $topicmail = "Information";
 $modelmail = "product";
@@ -405,16 +515,60 @@ if (!empty($arrayfields['ppf.ref_fourn']['checked'])) {
 	print '<input class="flat maxwidth100" type="text" name="srefsupplier" value="'.$sRefSupplier.'">';
 	print '</td>';
 }
+if (!empty($arrayfields['p.barcode']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat maxwidth100" type="text" name="search_barcode" value="'.dol_escape_htmltag($search_barcode).'">';
+	print '</td>';
+}
+if (!empty($arrayfields['ppf.barcode']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat maxwidth100" type="text" name="search_supplier_barcode" value="'.dol_escape_htmltag($search_supplier_barcode).'">';
+	print '</td>';
+}
 if (!empty($arrayfields['p.label']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input class="flat maxwidth100" type="text" name="snom" value="'.$snom.'">';
 	print '</td>';
 }
-foreach (array('ppf.fk_soc', 'ppf.price', 'ppf.quantity', 'ppf.unitprice') as $keyofemptysearchcell) {
-	if (!empty($arrayfields[$keyofemptysearchcell]['checked'])) {
-		print '<td></td>';
+foreach (array('ppf.fk_soc', 'ppf.price', 'ppf.quantity', 'ppf.unitprice') as $keyofsearchcell) {
+	if (!empty($arrayfields[$keyofsearchcell]['checked'])) {
+		print '<td class="liste_titre'.(isset($arrayofsearchableprice[$keyofsearchcell]) ? ' right' : '').'">';
+		if (isset($arrayofsearchableprice[$keyofsearchcell])) {
+			print '<input class="flat maxwidth50 right" type="text" name="'.$arrayofsearchableprice[$keyofsearchcell][0].'" value="'.dol_escape_htmltag(isset($search_price_fields[$keyofsearchcell]) ? $search_price_fields[$keyofsearchcell] : '').'">';
+		}
+		print '</td>';
 	}
 }
+if (!empty($arrayfields['ppf.tva_tx']['checked'])) {
+	// List of VAT rates of the dictionary of VAT rates, for the country of the company
+	$form->load_cache_vatrates("'".$mysoc->country_code."'");
+	$arrayofvatrates = array();
+	foreach ($form->cache_vatrates as $vatdef) {
+		$arrayofvatrates[(string) ((float) $vatdef['txtva'])] = vatrate($vatdef['txtva'], true);
+	}
+	foreach ($search_tva_tx as $searchvatrate) {	// A selected rate that is not in the dictionary is still shown
+		if (!isset($arrayofvatrates[$searchvatrate])) {
+			$arrayofvatrates[$searchvatrate] = vatrate($searchvatrate, true);
+		}
+	}
+	uksort($arrayofvatrates, function ($a, $b) {
+		return (float) $a <=> (float) $b;
+	});
+	print '<td class="liste_titre center">';
+	print $form->multiselectarray('search_tva_tx', $arrayofvatrates, $search_tva_tx, 0, 0, 'minwidth75 maxwidth100', 0, 0);
+	print '</td>';
+}
+foreach (array('ppf.default_vat_code', 'ppf.localtax1_tx', 'ppf.localtax2_tx', 'ppf.remise_percent', 'ppf.remise', 'ppf.charges', 'ppf.packaging', 'ppf.multicurrency_unitprice', 'ppf.multicurrency_price', 'ppf.multicurrency_tx', 'ppf.delivery_time_days', 'ppf.supplier_reputation', 'ppf.fk_availability', 'ppf.desc_fourn', 'ppf.fk_barcode_type', 'ppf.fk_supplier_price_expression', 'ppf.datec', 'ppf.tms', 'ppf.fk_user', 'ppf.import_key', 'ppf.rowid', 'ppf.status') as $keyofsearchcell) {
+	if (!empty($arrayfields[$keyofsearchcell]['checked'])) {
+		print '<td class="liste_titre'.(isset($arrayofsearchableprice[$keyofsearchcell]) ? ' right' : '').'">';
+		if (isset($arrayofsearchableprice[$keyofsearchcell])) {
+			print '<input class="flat maxwidth75'.($arrayofsearchableprice[$keyofsearchcell][1] ? ' right' : '').'" type="text" name="'.$arrayofsearchableprice[$keyofsearchcell][0].'" value="'.dol_escape_htmltag(isset($search_price_fields[$keyofsearchcell]) ? $search_price_fields[$keyofsearchcell] : '').'">';
+		}
+		print '</td>';
+	}
+}
+// Extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 // Fields from hook
 $parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -443,11 +597,36 @@ if ($conf->main_checkbox_left_column) {
 $listoftitles = array(
 	'p.ref' => array('Ref', ''),
 	'ppf.ref_fourn' => array('RefSupplierShort', ''),
+	'p.barcode' => array('BarCode', ''),
+	'ppf.barcode' => array($arrayfields['ppf.barcode']['label'], ''),
 	'p.label' => array('Label', ''),
 	'ppf.fk_soc' => array('Supplier', ''),
 	'ppf.price' => array('BuyingPrice', 'right '),
 	'ppf.quantity' => array('QtyMin', 'right '),
 	'ppf.unitprice' => array('UnitPrice', 'right '),
+	'ppf.tva_tx' => array('VATRate', 'right '),
+	'ppf.default_vat_code' => array($arrayfields['ppf.default_vat_code']['label'], ''),
+	'ppf.localtax1_tx' => array('LT1', 'right '),
+	'ppf.localtax2_tx' => array('LT2', 'right '),
+	'ppf.remise_percent' => array('Discount', 'right '),
+	'ppf.remise' => array($arrayfields['ppf.remise']['label'], 'right '),
+	'ppf.charges' => array('Charges', 'right '),
+	'ppf.packaging' => array('PackagingForThisProduct', 'right '),
+	'ppf.multicurrency_unitprice' => array('UnitPriceHTCurrency', 'right '),
+	'ppf.multicurrency_price' => array('PriceQtyMinHTCurrency', 'right '),
+	'ppf.multicurrency_tx' => array('CurrencyRate', 'right '),
+	'ppf.delivery_time_days' => array('NbDaysToDelivery', 'right '),
+	'ppf.supplier_reputation' => array('ReputationForThisProduct', ''),
+	'ppf.fk_availability' => array('Availability', ''),
+	'ppf.desc_fourn' => array('Description', ''),
+	'ppf.fk_barcode_type' => array('BarcodeType', ''),
+	'ppf.fk_supplier_price_expression' => array('PriceExpressionEditor', 'right '),
+	'ppf.datec' => array('AppliedPricesFrom', 'center '),
+	'ppf.tms' => array('DateModification', 'center '),
+	'ppf.fk_user' => array('Author', ''),
+	'ppf.import_key' => array('ImportId', ''),
+	'ppf.rowid' => array('TechnicalID', 'right '),
+	'ppf.status' => array('Status', 'center '),
 );
 foreach ($listoftitles as $key => $titledef) {
 	if (!empty($arrayfields[$key]['checked'])) {
@@ -455,6 +634,8 @@ foreach ($listoftitles as $key => $titledef) {
 		$totalarray['nbfield']++;
 	}
 }
+// Extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
 $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action);
@@ -525,6 +706,20 @@ while ($i < $imaxinloop) {
 		}
 	}
 
+	if (!empty($arrayfields['p.barcode']['checked'])) {
+		print '<td>'.dol_escape_htmltag($objp->barcode).'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['ppf.barcode']['checked'])) {
+		print '<td>'.dol_escape_htmltag($objp->supplier_barcode).'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
 	if (!empty($arrayfields['p.label']['checked'])) {
 		print '<td>'.$objp->label.'</td>'."\n";
 		if (!$i) {
@@ -565,6 +760,171 @@ while ($i < $imaxinloop) {
 			$totalarray['nbfield']++;
 		}
 	}
+
+	if (!empty($arrayfields['ppf.tva_tx']['checked'])) {
+		print '<td class="right">'.(isset($objp->tva_tx) ? vatrate($objp->tva_tx, true) : '').'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['ppf.default_vat_code']['checked'])) {
+		print '<td>'.dol_escape_htmltag($objp->default_vat_code).'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['ppf.localtax1_tx']['checked'])) {
+		print '<td class="right">'.(isset($objp->localtax1_tx) ? vatrate($objp->localtax1_tx, true) : '').'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['ppf.localtax2_tx']['checked'])) {
+		print '<td class="right">'.(isset($objp->localtax2_tx) ? vatrate($objp->localtax2_tx, true) : '').'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['ppf.remise_percent']['checked'])) {
+		print '<td class="right">'.($objp->remise_percent ? price2num($objp->remise_percent).'%' : '').'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['ppf.remise']['checked'])) {
+		print '<td class="right">'.($objp->remise ? price($objp->remise) : '').'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['ppf.charges']['checked'])) {
+		print '<td class="right">'.(isset($objp->charges) ? price($objp->charges) : '').'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['ppf.packaging']['checked'])) {
+		print '<td class="right">'.(isset($objp->packaging) ? price2num($objp->packaging) : '').'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['ppf.multicurrency_unitprice']['checked'])) {
+		print '<td class="right">'.(isset($objp->multicurrency_unitprice) ? price($objp->multicurrency_unitprice, 0, $langs, 1, -1, -1, $objp->multicurrency_code) : '').'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['ppf.multicurrency_price']['checked'])) {
+		print '<td class="right">'.(isset($objp->multicurrency_price) ? price($objp->multicurrency_price, 0, $langs, 1, -1, -1, $objp->multicurrency_code) : '').'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['ppf.multicurrency_tx']['checked'])) {
+		print '<td class="right">'.(isset($objp->multicurrency_tx) ? price2num($objp->multicurrency_tx) : '').'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['ppf.delivery_time_days']['checked'])) {
+		print '<td class="right">'.$objp->delivery_time_days.'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['ppf.supplier_reputation']['checked'])) {
+		print '<td>'.(!empty($objp->supplier_reputation) && !empty($productfournstatic->reputations[$objp->supplier_reputation]) ? $productfournstatic->reputations[$objp->supplier_reputation] : '').'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['ppf.fk_availability']['checked'])) {
+		print '<td>'.(!empty($objp->fk_availability) && !empty($form->cache_availability[$objp->fk_availability]['label']) ? $form->cache_availability[$objp->fk_availability]['label'] : '').'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['ppf.desc_fourn']['checked'])) {
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag(dol_string_nohtmltag($objp->desc_fourn)).'">'.dol_escape_htmltag(dol_trunc(dol_string_nohtmltag($objp->desc_fourn), 80)).'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['ppf.fk_barcode_type']['checked'])) {
+		print '<td>'.dol_escape_htmltag($objp->supplier_barcode_type).'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['ppf.fk_supplier_price_expression']['checked'])) {
+		print '<td class="right">'.$objp->fk_supplier_price_expression.'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['ppf.datec']['checked'])) {
+		print '<td class="center nowraponall">'.dol_print_date($db->jdate($objp->ppf_datec), 'dayhour', 'tzuser').'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['ppf.tms']['checked'])) {
+		print '<td class="center nowraponall">'.dol_print_date($db->jdate($objp->ppf_tms), 'dayhour', 'tzuser').'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['ppf.fk_user']['checked'])) {
+		print '<td>'.dol_escape_htmltag($objp->ppf_user_login).'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['ppf.import_key']['checked'])) {
+		print '<td>'.dol_escape_htmltag($objp->import_key).'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['ppf.rowid']['checked'])) {
+		print '<td class="right">'.$objp->ppf_rowid.'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['ppf.status']['checked'])) {
+		print '<td class="center">'.($objp->ppf_status ? dolGetStatus($langs->transnoentitiesnoconv('Enabled'), '', '', 'status4', 3) : dolGetStatus($langs->transnoentitiesnoconv('Disabled'), '', '', 'status5', 3)).'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	// Extra fields
+	$obj = $objp;
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
 	// Fields from hook
 	$parameters = array('arrayfields' => $arrayfields, 'obj' => $objp, 'i' => $i, 'totalarray' => &$totalarray);
