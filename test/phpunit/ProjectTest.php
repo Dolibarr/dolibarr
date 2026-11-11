@@ -232,33 +232,6 @@ class ProjectTest extends CommonClassTest
 		return $localobject->fk_project;
 	}
 
-
-	/**
-	 * testProjectDelete
-	 *
-	 * @param	int		$id		Id of project
-	 * @return	void
-	 *
-	 * @depends	testTaskOther
-	 * The depends says test is run only if previous is ok
-	 */
-	public function testProjectDelete($id)
-	{
-		global $conf,$user,$langs,$db;
-		$conf = $this->savconf;
-		$user = $this->savuser;
-		$langs = $this->savlangs;
-		$db = $this->savdb;
-
-		$localobject = new Project($db);
-		$result = $localobject->fetch($id);
-		$result = $localobject->delete($user);
-
-		print __METHOD__." id=".$id." result=".$result."\n";
-		$this->assertLessThan($result, 0);
-		return $result;
-	}
-
 	/**
 	 * testProjectOdtTemplateWithoutOptionalBlocks: the ODT generator accepts a template without the blocks tasks, projectfiles and projectcontacts
 	 *
@@ -293,5 +266,32 @@ class ProjectTest extends CommonClassTest
 		}
 
 		print __METHOD__." result=".$result."\n";
+	}
+
+
+	/**
+	 * testProjectDelete
+	 *
+	 * @param	int		$id		Id of project
+	 * @return	void
+	 *
+	 * @depends	testTaskOther
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testProjectDelete($id)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new Project($db);
+		$result = $localobject->fetch($id);
+		$result = $localobject->delete($user);
+
+		print __METHOD__." id=".$id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+		return $result;
 	}
 }
