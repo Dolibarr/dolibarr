@@ -228,6 +228,11 @@ $coldisplay++;
 		}
 	}
 
+	// Reference the customer gives to the line (line of its purchase order). Kept editable when already filled.
+	if ($line instanceof OrderLine && (getDolGlobalString('MAIN_ENABLE_LINE_REF_CUSTOMER') || !empty($line->ref_customer))) {
+		print '<div class="paddingtop">'.$langs->trans('RefCustomerLine').' : <input type="text" name="line_ref_customer" id="line_ref_customer" class="width150" maxlength="128" value="'.dol_escape_htmltag(GETPOSTISSET('line_ref_customer') ? GETPOST('line_ref_customer', 'alphanohtml') : (string) $line->ref_customer).'"></div>';
+	}
+
 	// Show autofill date for recurring invoices
 	if (isModEnabled("service") && $line->product_type == 1 && ($line->element == 'facturedetrec' || $line->element == 'invoice_supplier_det_rec')) {
 		if ($line->element == 'invoice_supplier_det_rec') {
@@ -276,11 +281,6 @@ $coldisplay++;
 	}
 	print '></td>';
 
-	if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
-		$coldisplay++;
-		print '<td class="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat right width50" id="multicurrency_subprice" name="multicurrency_subprice" value="'.(GETPOSTISSET('multicurrency_subprice') ? GETPOST('multicurrency_subprice', 'alpha') : price($line->multicurrency_subprice)).'" /></td>';
-	}
-
 	if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
 		$coldisplay++;
 		$upinctax = isset($line->pu_ttc) ? $line->pu_ttc : null;
@@ -292,6 +292,11 @@ $coldisplay++;
 			print ' readonly';
 		}
 		print '></td>';
+	}
+
+	if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
+		$coldisplay++;
+		print '<td class="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat right width50" id="multicurrency_subprice" name="multicurrency_subprice" value="'.(GETPOSTISSET('multicurrency_subprice') ? GETPOST('multicurrency_subprice', 'alpha') : price($line->multicurrency_subprice)).'" /></td>';
 	}
 
 	if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
@@ -366,7 +371,7 @@ $coldisplay++;
 	// Progression for situation invoices
 	if ($object->situation_cycle_ref) {
 		$coldisplay++;
-		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') > 1) {
 			$tmp_fieldv = (GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent);
 			$old_fieldv = $line->getAllPrevProgress($line->fk_facture);
 			$fieldv = $tmp_fieldv + $old_fieldv;
@@ -661,6 +666,7 @@ jQuery(document).ready(function()
 		if (event.which != 9 && (event.which < 37 ||event.which > 40) && jQuery("#price_ht").val() != '') {
 			jQuery("#price_ttc").val('');
 			jQuery("#multicurrency_subprice").val('');
+			jQuery("#multicurrency_price_ttc").val('');
 		}
 	});
 	jQuery("#price_ttc").keyup(function(event) {
@@ -668,13 +674,23 @@ jQuery(document).ready(function()
 		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') {
 			jQuery("#price_ht").val('');
 			jQuery("#multicurrency_subprice").val('');
+			jQuery("#multicurrency_price_ttc").val('');
 		}
 	});
 	jQuery("#multicurrency_subprice").keyup(function(event) {
 		// console.log(event.which);		// discard event tag and arrows
-		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') {
+		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#multicurrency_subprice").val() != '') {
 			jQuery("#price_ht").val('');
 			jQuery("#price_ttc").val('');
+			jQuery("#multicurrency_price_ttc").val('');
+		}
+	});
+	jQuery("#multicurrency_price_ttc").keyup(function(event) {
+		// console.log(event.which);		// discard event tag and arrows
+		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#multicurrency_price_ttc").val() != '') {
+			jQuery("#price_ht").val('');
+			jQuery("#price_ttc").val('');
+			jQuery("#multicurrency_subprice").val('');
 		}
 	});
 

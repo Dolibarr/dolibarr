@@ -57,7 +57,7 @@ class mod_stocktransfer_standard extends ModeleNumRefStockTransfer
 	/**
 	 * @var int 	position
 	 */
-	public $position = 40;
+	public $position = 50;
 
 
 	/**

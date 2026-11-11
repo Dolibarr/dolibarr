@@ -108,9 +108,27 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 	if ($num) {
 		$solde_total = [];
+		$solde_others = [];
 		$i = 0;
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
+
+			$currency_code = ($obj->currency_code ? $obj->currency_code : $conf->currency);
+			$solde = (float) price2num($obj->solde, 'MU');
+			if (!array_key_exists($currency_code, $solde_total)) {
+				$solde_total[$currency_code] = 0;
+			}
+			$solde_total[$currency_code] += $solde;
+
+			// Accounts after the short list limit are summed into a line "Others"
+			if ($i >= $max) {
+				if (!array_key_exists($currency_code, $solde_others)) {
+					$solde_others[$currency_code] = 0;
+				}
+				$solde_others[$currency_code] += $solde;
+				$i++;
+				continue;
+			}
 
 			$accountstatic->id = $obj->rowid;
 			$accountstatic->ref = $obj->ref;
@@ -119,13 +137,6 @@ if ($resql) {
 			$accountstatic->account_number = $obj->account_number;
 			$accountstatic->currency_code = $obj->currency_code;
 			$accountstatic->type = $obj->courant;
-
-			$currency_code = ($obj->currency_code ? $obj->currency_code : $conf->currency);
-			$solde = (float) price2num($obj->solde, 'MU');
-			if (!array_key_exists($currency_code, $solde_total)) {
-				$solde_total[$currency_code] = 0;
-			}
-			$solde_total[$currency_code] += $solde;
 
 			print '<tr class="oddeven">';
 			print '<td>'.$accountstatic->getNomUrl(1).'</td>';
@@ -139,6 +150,16 @@ if ($resql) {
 			print '</td>';
 			print '</tr>';
 			$i++;
+		}
+
+		// Line "Others" (one per currency, because amounts in different currencies can't be added)
+		foreach ($solde_others as $currency_code => $total) {
+			print '<tr class="oddeven">';
+			print '<td colspan="2"><span class="opacitymedium">'.$langs->trans("Others").'...'.(count($solde_others) > 1 ? ' ('.dol_escape_htmltag((string) $currency_code).')' : '').'</span></td>';
+			print '<td class="nowraponall right amount">';
+			print '<span class="amount">'.price($total, 0, $langs, 1, -1, -1, $currency_code).'</span>';
+			print '</td>';
+			print '</tr>';
 		}
 
 		// Total per currency
@@ -211,7 +232,18 @@ if ($resql) {
 
 			print '<tr class="oddeven">';
 			print '<td class="nowraponall">'.$accountlinestatic->getNomUrl(1).'</td>';
-			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->label).'">'.dol_escape_htmltag($obj->label).'</td>';
+			// Translate label when it is a translation key between parenthesis (e.g. '(SupplierInvoicePayment)')
+			$labeltoshow = $obj->label;
+			$reg = array();
+			if (preg_match('/^\((.+)\)$/i', (string) $obj->label, $reg)) {
+				if ($reg[1] == 'payment_salary') {
+					$reg[1] = 'SalaryPayment';
+				}
+				if ($langs->transnoentitiesnoconv($reg[1]) != $reg[1]) {
+					$labeltoshow = $langs->transnoentitiesnoconv($reg[1]);
+				}
+			}
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($labeltoshow).'">'.dol_escape_htmltag($labeltoshow).'</td>';
 			print '<td class="nowraponall">'.$accountstatic->getNomUrl(1).'</td>';
 			print '<td class="nowraponall right amount">'.price($obj->amount, 0, $langs, 1, -1, -1, $obj->currency_code).'</td>';
 			print '</tr>';

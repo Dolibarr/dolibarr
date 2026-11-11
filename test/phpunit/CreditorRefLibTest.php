@@ -18,19 +18,22 @@
 /**
  *	\file		test/phpunit/CreditorRefLibTest.php
  *	\ingroup	test
- *	\brief		PHPUnit test for functions_creditorref.lib.php, functions_gr.lib.php
- *				and paymentref.lib.php
+ *	\brief		PHPUnit test for functions_creditorref.lib.php, functions_gr.lib.php,
+ *				paymentref.lib.php and functions_ch.lib.php
  */
 
 global $conf, $user, $langs, $db;
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+if (!defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/functions_creditorref.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/functions_gr.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/paymentref.lib.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/functions_ch.lib.php';
 
-if (empty($user->id)) {
+if (empty($user->id) && is_object($db)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->loadRights();
@@ -117,7 +120,26 @@ class CreditorRefLibTest extends CommonClassTest
 		$this->assertSame('SCOR', dolPayRefDetectScheme('RF18 5390 0754 7034'));
 		$this->assertSame('BBA', dolPayRefDetectScheme('+++000/0000/00101+++'));
 		$this->assertSame('FI', dolPayRefDetectScheme('20240015'));
+		$this->assertSame('QRR', dolPayRefDetectScheme('21 00000 00003 13947 14300 09017'));
 		$this->assertSame('', dolPayRefDetectScheme(''));
+	}
+
+	/**
+	 * A Swiss QR-IBAN has an institution id from 30000 to 31999 and needs a QR reference
+	 *
+	 * @return void
+	 */
+	public function testSwissQRIBANAndQRReference()
+	{
+		$this->assertTrue(dolCHIsQRIBAN('CH44 3199 9123 0008 8901 2'));
+		$this->assertFalse(dolCHIsQRIBAN('CH9300762011623852957'));
+		$this->assertFalse(dolCHIsQRIBAN('FR7630001007941234567890185'));
+
+		$this->assertTrue(dolCHQRReferenceIsValid('210000000003139471430009017'));
+		$this->assertTrue(dolCHQRReferenceIsValid('21 00000 00003 13947 14300 09017'));
+		$this->assertFalse(dolCHQRReferenceIsValid('210000000003139471430009018'));
+		$this->assertFalse(dolCHQRReferenceIsValid('RF18539007547034'));
+		$this->assertFalse(dolCHQRReferenceIsValid(''));
 	}
 
 	/**
@@ -140,7 +162,12 @@ class CreditorRefLibTest extends CommonClassTest
 	{
 		$this->assertSame(
 			'RF20921928000000003015873',
-			dolGRCalculateCreditorReference('8000000003015873', 1, '92192')
+			dolGRCalculateCreditorReference('8000000003015873', 1, '92192', '8')
+		);
+		// Same reference from the debt code alone, the 8 is the code usage digit
+		$this->assertSame(
+			'RF20921928000000003015873',
+			dolGRCalculateCreditorReference('3015873', 1, '92192', '8')
 		);
 	}
 
@@ -175,6 +202,7 @@ class CreditorRefLibTest extends CommonClassTest
 		$this->assertSame('', dolGRCalculateCreditorReference('1', 1, ''));
 		$this->assertSame('', dolGRCalculateCreditorReference('1', 1, '1234'), 'Four digits is not enough');
 		$this->assertSame('', dolGRCalculateCreditorReference('1', 1, '123456'), 'Six digits is too many');
+		$this->assertSame('', dolGRCalculateCreditorReference('1', 1, '12345'), 'A DIAS code always starts with 9');
 		$this->assertSame('', dolGRCalculateCreditorReference('1', 0, '92192'), 'Draft gives an empty string');
 
 		$conf->global->MAIN_INFO_SOCIETE_DIAS_CODE = $savedcode;
@@ -202,6 +230,95 @@ class CreditorRefLibTest extends CommonClassTest
 			dolGRCalculateCreditorReference('5001', 1, '92192'),
 			dolGRCalculateCreditorReference('5002', 1, '92192')
 		);
+	}
+
+	/**
+	 * Digit 10 is the DIAS code usage, never part of the debt code. A 0 to 7 there
+	 * would ask the paying bank for an amount check and most payments would be refused.
+	 *
+	 * @return void
+	 */
+	public function testGreekCodeUsageDigit()
+	{
+		global $conf;
+
+		$savedusage = getDolGlobalString('MAIN_INFO_SOCIETE_DIAS_CODE_USAGE');
+
+		$conf->global->MAIN_INFO_SOCIETE_DIAS_CODE_USAGE = '';
+		foreach (array('1', '123', '2026000045', '999999999999999') as $id) {
+			$ref = dolGRCalculateCreditorReference($id, 1, '92192');
+			$this->assertSame('8', substr($ref, 9, 1), 'Default code usage must be 8 for debt code '.$id);
+			$this->assertSame(str_pad($id, 15, '0', STR_PAD_LEFT), substr($ref, 10, 15), 'Debt code must fill the last 15 digits');
+			$this->assertTrue(dolCreditorRefIsValid($ref));
+		}
+		$this->assertSame('RF75921928000000000000123', dolGRCalculateCreditorReference('123', 1, '92192'));
+
+		$conf->global->MAIN_INFO_SOCIETE_DIAS_CODE_USAGE = '9';
+		$ref = dolGRCalculateCreditorReference('123', 1, '92192');
+		$this->assertSame('9', substr($ref, 9, 1), 'Code usage 9 from the setup');
+		$this->assertTrue(dolCreditorRefIsValid($ref));
+
+		$this->assertSame('8', substr(dolGRCalculateCreditorReference('123', 1, '92192', '8'), 9, 1), 'Parameter wins over the setup');
+		$this->assertSame('8', substr(dolGRCalculateCreditorReference('123', 1, '92192', '3'), 9, 1), 'An amount checked usage is never produced');
+
+		$conf->global->MAIN_INFO_SOCIETE_DIAS_CODE_USAGE = $savedusage;
+	}
+
+	/**
+	 * A debt code longer than 15 digits keeps its last 15, where the counter changes
+	 *
+	 * @return void
+	 */
+	public function testGreekDebtCodeTooLong()
+	{
+		$ref = dolGRCalculateCreditorReference('1234567890123456789', 1, '92192', '8');
+		$this->assertSame(25, dol_strlen($ref));
+		$this->assertSame('567890123456789', substr($ref, 10, 15));
+		$this->assertNotSame(
+			dolGRCalculateCreditorReference('2026100000000000001', 1, '92192', '8'),
+			dolGRCalculateCreditorReference('2026100000000000002', 1, '92192', '8')
+		);
+	}
+
+	/**
+	 * A DIAS reference with 0 to 7 at digit 10 checks a fixed amount
+	 *
+	 * @return void
+	 */
+	public function testGreekAmountCheckedReference()
+	{
+		$this->assertFalse(dolGRIsAmountCheckedReference(dolGRCalculateCreditorReference('123', 1, '92192', '8')));
+		$this->assertFalse(dolGRIsAmountCheckedReference(dolGRCalculateCreditorReference('123', 1, '92192', '9')));
+
+		// DIAS code 92192, amount check digit 5, same debt code, check digits recomputed
+		$payload = '921925000000000000123';
+		$amountchecked = 'RF'.dolCreditorRefCheckDigits($payload).$payload;
+		$this->assertTrue(dolCreditorRefIsValid($amountchecked));
+		$this->assertTrue(dolGRIsAmountCheckedReference($amountchecked));
+		$this->assertTrue(dolGRIsAmountCheckedReference(dolPayRefFormat($amountchecked)), 'Spaces do not matter');
+
+		$this->assertFalse(dolGRIsAmountCheckedReference('RF18539007547034'), 'Not a DIAS reference');
+		$this->assertFalse(dolGRIsAmountCheckedReference('RF00921925000000000000123'), 'Invalid check digits');
+		$this->assertFalse(dolGRIsAmountCheckedReference(''));
+
+		// Never reused as a complete reference by a greek company
+		$this->assertSame('', dolPayRefBuild($amountchecked, 1, 'GR'));
+		$this->assertSame(dolPayRefStrip(dolGRCalculateCreditorReference('123', 1, '92192', '8')), dolPayRefBuild(dolGRCalculateCreditorReference('123', 1, '92192', '8'), 1, 'GR'));
+	}
+
+	/**
+	 * A DIAS creditor code is 5 digits starting with 9
+	 *
+	 * @return void
+	 */
+	public function testGreekDiasCodeFormat()
+	{
+		$this->assertTrue(dolGRIsValidDiasCode('92192'));
+		$this->assertTrue(dolGRIsValidDiasCode('90001'));
+		$this->assertFalse(dolGRIsValidDiasCode('12345'));
+		$this->assertFalse(dolGRIsValidDiasCode('9219'));
+		$this->assertFalse(dolGRIsValidDiasCode('921920'));
+		$this->assertFalse(dolGRIsValidDiasCode(''));
 	}
 
 	/**

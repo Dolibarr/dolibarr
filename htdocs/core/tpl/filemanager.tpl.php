@@ -106,6 +106,18 @@ if (($action == 'delete' || $action == 'file_manager_delete') && empty($conf->us
 <div id="ecm-layout-north" class="toolbar largebutton">
 <?php
 
+// Keep the popup mode (no menus) on links when the file manager is open into a dialog popup
+$paramspopuparray = array();
+foreach (array('dol_hide_topmenu', 'dol_hide_leftmenu') as $tmpparam) {
+	if (GETPOSTINT($tmpparam)) {
+		$paramspopuparray[$tmpparam] = GETPOSTINT($tmpparam);
+	}
+}
+if (GETPOST('dol_openinpopup', 'aZ09')) {
+	$paramspopuparray['dol_openinpopup'] = GETPOST('dol_openinpopup', 'aZ09');
+}
+$paramspopup = (empty($paramspopuparray) ? '' : '&'.http_build_query($paramspopuparray));
+
 // Start top panel, toolbar
 print '<div class="inline-block toolbarbutton centpercent">';
 
@@ -119,7 +131,8 @@ if ($permtoadd) {
 	if (!empty($pageid)) {
 		$paramscreatedir['pageid'] = $pageid;
 	}
-	$paramscreatedir['backtopage'] = $_SERVER["PHP_SELF"].'?file_manager=1'.$websitekeyandpageid;
+	$paramscreatedir = array_merge($paramscreatedir, $paramspopuparray);
+	$paramscreatedir['backtopage'] = $_SERVER["PHP_SELF"].'?file_manager=1'.$websitekeyandpageid.$paramspopup;
 	print '<a id="acreatedir" href="'.dolBuildUrl(DOL_URL_ROOT.'/ecm/dir_add_card.php', $paramscreatedir).'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
 	print img_picto('', 'folder-plus', '', 0, 0, 0, '', 'size15x marginrightonly');
 	print '</a>';
@@ -144,7 +157,7 @@ if ($module == 'ecm') {
 }
 if ($permtoadd && GETPOSTISSET('website')) {	// If on file manager to manage medias of a web site
 	// @phan-suppress-next-line PhanTypeExpectedObjectPropAccess
-	print '<a id="agenerateimgwebp" href="'.dolBuildUrl($_SERVER["PHP_SELF"], array('action' => 'confirmconvertimgwebp', 'website' => $website->ref), true).'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
+	print '<a id="agenerateimgwebp" href="'.dolBuildUrl($_SERVER["PHP_SELF"], array_merge(array('action' => 'confirmconvertimgwebp', 'website' => $website->ref), $paramspopuparray), true).'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
 	print img_picto('', 'images', '', 0, 0, 0, '', 'size15x flip marginrightonly');
 	print '</a>';
 } elseif ($permtoadd && $module == 'ecm') {	// If on file manager medias in ecm
@@ -258,7 +271,7 @@ if ($action == 'confirmconvertimgwebp') {
 	if ($module == 'medias') {
 		$formquestion['website'] = array('type' => 'hidden', 'value' => $website->ref, 'name' => 'website');  // @phan-suppress-current-line PhanTypeExpectedObjectPropAccess
 	}
-	$paramsconvertimgwebp = array();
+	$paramsconvertimgwebp = $paramspopuparray;
 	if (!empty($sortfield)) {
 		$paramsconvertimgwebp['sortfield'] = $sortfield;
 	}

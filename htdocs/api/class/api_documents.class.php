@@ -4,7 +4,7 @@
  * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2016   	Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2023   	Romain Neil             <contact@romain-neil.fr>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  * Copyright (C) 2025-2026	Charlene Benke			<charlene@patas-monkey.com>
@@ -85,6 +85,10 @@ class Documents extends DolibarrApi
 		if ($modulepart == 'task' || $modulepart == 'project_task') {
 			$modulepart = 'project_task';
 		}
+		// 'agenda' uses the generic case of dol_check_secure_access_document() that only allows admins. Other users need the agenda permissions of 'actions'.
+		if ($modulepart == 'agenda' && empty(DolibarrApiAccess::$user->admin)) {
+			$modulepart = 'actions';
+		}
 
 		//--- Finds and returns the document
 		$entity = $conf->entity;
@@ -110,6 +114,10 @@ class Documents extends DolibarrApi
 		}
 		if (!$accessallowed) {
 			throw new RestException(403);
+		}
+		// Check permission on the object the document is attached to (thirdparties of a restricted sales representative, ...)
+		if (!checkUserAccessToDocumentObject(DolibarrApiAccess::$user, $modulepart, $relativefile, 'read')) {
+			throw new RestException(403, 'Access not allowed to the object of this document');
 		}
 
 		if (DolibarrApiAccess::$user->socid > 0) {
@@ -147,7 +155,7 @@ class Documents extends DolibarrApi
 	 *
 	 * Test sample 1: { "modulepart": "invoice", "original_file": "FA1701-001/FA1701-001.pdf", "doctemplate": "crabe", "langcode": "fr_FR" }.
 	 *
-	 * Supported modules: invoice, order, proposal, contract, supplier invoice, shipment, mrp
+	 * Supported modules: invoice, supplier_invoice, order, proposal, contract, shipment, mrp, expensereport, holiday, product, stock, intervention
 	 *
 	 * @since	7.0.0	Initial implementation, support for invoice, order and proposal documents
 	 * @since	18.0.0	Added support for contract and suppliers invoice documents
@@ -156,7 +164,7 @@ class Documents extends DolibarrApi
 	 * @since	23.0.0	Added support for expense report documents
 	 * @since	23.0.0	Added support for product documents
 	 *
-	 * @param   string  $modulepart		Name of module or area concerned by file download ('thirdparty', 'member', 'proposal', 'supplier_proposal', 'order', 'supplier_order', 'invoice', 'supplier_invoice', 'shipment', 'project',  ...)
+	 * @param   string  $modulepart		Name of module or area concerned by document generation ('invoice', 'supplier_invoice', 'order', 'proposal', 'contract', 'shipment', 'mrp', 'expensereport', 'holiday', 'product', 'stock', 'intervention')
 	 * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: IN201701-999/IN201701-999.pdf).
 	 * @param	string	$doctemplate	Set here the doc template to use for document generation (If not set, use the default template).
 	 * @param	string	$langcode		Language code like 'en_US', 'fr_FR', 'es_ES', ... (If not set, use the default language).
@@ -168,7 +176,7 @@ class Documents extends DolibarrApi
 	 *
 	 * @throws	RestException	400		Bad value for parameter modulepart or original_file
 	 * @throws	RestException	403		Access denied
-	 * @throws	RestException	404		Invoice, Order, Proposal, Contract or Shipment not found
+	 * @throws	RestException	404		Object or generated file not found
 	 * @throws	RestException	500		Error generating document
 	 * @throws	RestException	501		File not found
 	 */
@@ -214,6 +222,10 @@ class Documents extends DolibarrApi
 		if (!$accessallowed) {
 			throw new RestException(403);
 		}
+		// Check permission on the object the document is attached to (thirdparties of a restricted sales representative, ...)
+		if (!checkUserAccessToDocumentObject(DolibarrApiAccess::$user, $modulepart, $relativefile, 'write')) {
+			throw new RestException(403, 'Access not allowed to the object of this document');
+		}
 
 		if (DolibarrApiAccess::$user->socid > 0) {
 			if ($sqlprotectagainstexternals) {
@@ -237,188 +249,71 @@ class Documents extends DolibarrApi
 		$hidedesc = !getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 0 : 1;
 		$hideref = !getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 0 : 1;
 
-		$templateused = '';
-
+		// Find the object the document is generated for (its ref is the file name without extension)
 		if ($modulepart == 'facture' || $modulepart == 'invoice') {
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 			$tmpobject = new Facture($this->db);
-			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
-			if (!$result) {
-				throw new RestException(404, 'Invoice not found');
-			}
-
-			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
-			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
-			if ($result <= 0) {
-				throw new RestException(500, 'Error generating document');
-			}
-		} elseif ($modulepart == 'facture_fournisseur' || $modulepart == 'invoice_supplier') {
-			require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
+			$objectlabel = 'Invoice';
+		} elseif ($modulepart == 'facture_fournisseur' || $modulepart == 'invoice_supplier' || $modulepart == 'supplier_invoice') {
+			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 			$tmpobject = new FactureFournisseur($this->db);
-			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
-			if (!$result) {
-				throw new RestException(404, 'Supplier invoice not found');
-			}
-
-			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
-			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
-			if ($result < 0) {
-				throw new RestException(500, 'Error generating document');
-			}
+			$objectlabel = 'Supplier invoice';
 		} elseif ($modulepart == 'commande' || $modulepart == 'order') {
 			require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 			$tmpobject = new Commande($this->db);
-			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
-			if (!$result) {
-				throw new RestException(404, 'Order not found');
-			}
-			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
-			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
-			if ($result <= 0) {
-				throw new RestException(500, 'Error generating document');
-			}
+			$objectlabel = 'Order';
 		} elseif ($modulepart == 'propal' || $modulepart == 'proposal') {
 			require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 			$tmpobject = new Propal($this->db);
-			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
-			if (!$result) {
-				throw new RestException(404, 'Proposal not found');
-			}
-			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
-			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
-			if ($result <= 0) {
-				throw new RestException(500, 'Error generating document');
-			}
+			$objectlabel = 'Proposal';
 		} elseif ($modulepart == 'contrat' || $modulepart == 'contract') {
-			require_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
-
+			require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 			$tmpobject = new Contrat($this->db);
-			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
-
-			if (!$result) {
-				throw new RestException(404, 'Contract not found');
-			}
-
-			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
-			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
-
-			if ($result <= 0) {
-				throw new RestException(500, 'Error generating document');
-			}
+			$objectlabel = 'Contract';
 		} elseif ($modulepart == 'expedition' || $modulepart == 'shipment') {
-			require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
-
+			require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 			$tmpobject = new Expedition($this->db);
-			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
-
-			if (!$result) {
-				throw new RestException(404, 'Shipment not found');
-			}
-
-			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
-			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
-
-			if ($result <= 0) {
-				throw new RestException(500, 'Error generating document');
-			}
+			$objectlabel = 'Shipment';
 		} elseif ($modulepart == 'mrp') {
-			require_once DOL_DOCUMENT_ROOT . '/mrp/class/mo.class.php';
-
+			require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 			$tmpobject = new Mo($this->db);
-			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
-
-			if (!$result) {
-				throw new RestException(404, 'MO not found');
-			}
-
-			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
-			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
-
-			if ($result <= 0) {
-				throw new RestException(500, 'Error generating document');
-			}
+			$objectlabel = 'MO';
 		} elseif ($modulepart == 'expensereport') {
 			require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
-
 			$tmpobject = new ExpenseReport($this->db);
-			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
-
-			if (!$result) {
-				throw new RestException(404, 'Expense report not found');
-			}
-
-			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
-			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
-
-			if ($result <= 0) {
-				throw new RestException(500, 'Error generating document');
-			}
+			$objectlabel = 'Expense report';
 		} elseif ($modulepart == 'holiday') {
 			require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
-
 			$tmpobject = new Holiday($this->db);
-			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
-
-			if (!$result) {
-				throw new RestException(404, 'Holiday not found');
-			}
-
-			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
-			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
-
-			if ($result <= 0) {
-				throw new RestException(500, 'Error generating document');
-			}
+			$objectlabel = 'Holiday';
 		} elseif ($modulepart == 'product') {
-			require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
-
+			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 			$tmpobject = new Product($this->db);
-			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
-
-			if (!$result) {
-				throw new RestException(404, 'Product not found');
-			}
-
-			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
-			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
-
-			if ($result <= 0) {
-				throw new RestException(500, 'Error generating document');
-			}
+			$objectlabel = 'Product';
 		} elseif ($modulepart == 'stock' || $modulepart == 'entrepot') {
-			require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';
-
+			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 			$tmpobject = new Entrepot($this->db);
-			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
-
-			if (!$result) {
-				throw new RestException(404, 'Warehouse not found');
-			}
-
-			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
-			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
-
-			if ($result <= 0) {
-				throw new RestException(500, 'Error generating document');
-			}
-		} elseif ($modulepart == 'fichinter' || $modulepart == 'intervention') {
-			require_once DOL_DOCUMENT_ROOT . '/fichinter/class/fichinter.class.php';
-
+			$objectlabel = 'Warehouse';
+		} elseif ($modulepart == 'fichinter' || $modulepart == 'ficheinter' || $modulepart == 'intervention') {
+			require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 			$tmpobject = new Fichinter($this->db);
-			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
-
-			if (!$result) {
-				throw new RestException(404, 'Intervention not found');
-			}
-
-			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
-			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
-
-			if ($result <= 0) {
-				throw new RestException(500, 'Error generating document');
-			}
+			$objectlabel = 'Intervention';
 		} else {
 			throw new RestException(403, 'Generation not available for this modulepart');
+		}
+
+		$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching '.$objectlabel);
+		}
+		if ($result == 0) {
+			throw new RestException(404, $objectlabel.' not found');
+		}
+
+		$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
+		$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		if ($result <= 0) {
+			throw new RestException(500, 'Error generating document');
 		}
 
 		$filename = basename($original_file);
@@ -436,7 +331,7 @@ class Documents extends DolibarrApi
 	 * List all documents of an element
 	 *
 	 * Use element ID or Ref.
-	 * Supported modules: thirdparty, user, member, proposal, order, supplier_order, shipment, invoice, supplier_invoice, product, event, expensereport, knowledgemanagement, category, contract, project, project_task
+	 * Supported modules: thirdparty, user, member, proposal, order, supplier_order, shipment, invoice, supplier_invoice, product, event, expensereport, knowledgemanagement, category, contract, project, project_task, intervention, stock
 	 *
 	 * @since	7.0.0	Initial implementation
 	 *
@@ -473,9 +368,26 @@ class Documents extends DolibarrApi
 
 		$id = (empty($id) ? 0 : $id);
 
-		if ($modulepart == 'facture_fournisseur') {
-			$modulepart = 'supplier_invoice';	// Alias unknown by fetchObjectByElement()
-		}
+		// Aliases unknown by fetchObjectByElement() or by the check of permission on module below
+		$modulepartaliases = array(
+			'agenda' => 'action',
+			'event' => 'action',
+			'company' => 'societe',
+			'thirdparty' => 'societe',
+			'entrepot' => 'stock',
+			'facture_fournisseur' => 'supplier_invoice',
+			'invoice_supplier' => 'supplier_invoice',
+			'fichinter' => 'ficheinter',
+			'intervention' => 'ficheinter',
+			'order_supplier' => 'supplier_order',
+			'produit' => 'product',
+			'propale' => 'propal',
+			'proposal' => 'propal',
+			'shipping' => 'shipment',
+			'socpeople' => 'contact',
+			'task' => 'project_task',
+		);
+		$modulepart = $modulepartaliases[$modulepart] ?? $modulepart;
 
 		// Define $object
 		$object = fetchObjectByElement($id, $modulepart, $ref);		// Note that we don't mind id and ref, we want to get a valid instantiated $object but not necessarily initialized
@@ -487,12 +399,25 @@ class Documents extends DolibarrApi
 		if ($object->element == 'invoice_supplier' && $object->id > 0) {
 			// Supplier invoices are stored under a hashed subdir, as in the other methods of this file
 			$upload_dir = getMultidirOutput($object).'/'.get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').dol_sanitizeFileName($object->ref);
+		} elseif ($object->element == 'mo') {
+			// The element of a manufacturing order is 'mo' but its module is 'mrp', as in mrp/mo_document.php
+			$upload_dir = (string) getMultidirOutput($object, 'mrp', 1);
+		} elseif ($object->element == 'contact' && $object->id > 0) {
+			// Contacts are stored into a subdir of the module of third parties, as in contact/document.php
+			$upload_dir = getMultidirOutput($object, 'societe').'/contact/'.dol_sanitizeFileName($object->ref);
 		} else {
 			$upload_dir = (string) getMultidirOutput($object, '', 1);
 		}
 
 		// Check object-level permissions
-		$ok = checkUserAccessToObject(DolibarrApiAccess::$user, array($object->element), $object, $object->table_element, '');
+		$feature = $object->element;
+		$dbt_select = 'rowid';
+		if ($object->element == 'action') {
+			// The check on owner and attendees of an event is done on feature 'agenda' only, and the primary key of its table is id
+			$feature = 'agenda';
+			$dbt_select = 'id';
+		}
+		$ok = checkUserAccessToObject(DolibarrApiAccess::$user, array($feature), $object, $object->table_element, '', 'fk_soc', $dbt_select);
 		if (empty($ok)) {
 			throw new RestException(403, 'Access not allowed to this object (refused by checkUserAccessToObject)');
 		}
@@ -504,7 +429,7 @@ class Documents extends DolibarrApi
 			}
 		} elseif ($modulepart == 'user') {
 			// Can get doc if has permission to read all user or if it is user itself
-			if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && DolibarrApiAccess::$user->id != $id) {
+			if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && DolibarrApiAccess::$user->id != $object->id) {
 				throw new RestException(403);
 			}
 		} elseif ($modulepart == 'adherent' || $modulepart == 'member') {
@@ -656,7 +581,10 @@ class Documents extends DolibarrApi
 								$fileitem['keywords'] = $line->keywords;
 								$fileitem['cover'] = $line->cover;
 								$fileitem['share'] = $line->share;
-								$fileitem['date_c'] = $line->date_c;
+								// The property was renamed into date_creation; the key of the answer keeps its name,
+								// so that the clients already reading date_c are not broken a second time.
+								$fileitem['date_c'] = $line->date_creation;
+								$fileitem['date_creation'] = $line->date_creation;
 								$fileitem['agenda_id'] = $line->agenda_id;
 								$fileitem['fk_user_c'] = $line->fk_user_c;
 								$fileitem['fk_user_m'] = $line->fk_user_m;
@@ -700,13 +628,101 @@ class Documents extends DolibarrApi
 				'pagination' => [
 					'total' => (int) $countarray,
 					'page' => $page, // count starts from 0
-					'page_count' => (int) ceil((int) $countarray / $limit),
+					'page_count' => (int) ceil((int) $countarray / max(1, (int) $limit)),
 					'limit' => $limit
 				]
 			];
 		}
 
 		return $filearray;
+	}
+
+
+	/**
+	 * Return the list of files and subdirectories of a directory of a documents area not linked to an object
+	 *
+	 * Supported areas: ecm (manual tree of the DMS module), medias (public medias of the website module).
+	 *
+	 * @since	25.0.0	Initial implementation
+	 *
+	 * @param   string 	$modulepart		Name of the area ('ecm' or 'medias')
+	 * @param	string	$subdir			Directory to list, relative to the root of the area ('' for the root)
+	 * @param	int		$recursive		1=Also list the content of the subdirectories
+	 * @param	string	$search			Return only entries whose name contains this string
+	 * @param	string	$sortfield		Sort criteria ('name','date','size')
+	 * @param	string	$sortorder		Sort order ('asc' or 'desc')
+	 * @param	int		$limit			List limit
+	 * @param	int		$page			Page number
+	 * @param	bool	$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @return	array<array{name:string,relativename:string,type:string,date:int,size:int}>|array{data:array<array{name:string,relativename:string,type:string,date:int,size:int}>,pagination:array{total:int,page:int,page_count:int,limit:int}}	Array of files and directories
+	 * @phan-return array<array{name:string,relativename:string,type:string,date:int,size:int}>|array{data:array<array{name:string,relativename:string,type:string,date:int,size:int}>,pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return array<array{name:string,relativename:string,type:string,date:int,size:int}>|array{data:array<array{name:string,relativename:string,type:string,date:int,size:int}>,pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 *
+	 * @url GET /directory
+	 *
+	 * @throws	RestException	400		Bad value for a parameter
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		Directory not found
+	 */
+	public function getDocumentsListByDirectory($modulepart, $subdir = '', $recursive = 0, $search = '', $sortfield = 'name', $sortorder = 'asc', $limit = 100, $page = 0, $pagination_data = false)
+	{
+		global $conf;
+
+		if (!in_array($modulepart, array('ecm', 'medias'))) {
+			throw new RestException(400, 'bad value for parameter modulepart, only ecm and medias are supported');
+		}
+		if ($modulepart == 'ecm' && !isModEnabled('ecm')) {
+			throw new RestException(400, 'Module ECM is not enabled');
+		}
+		$subdir = trim((string) $subdir, '/');
+		if (preg_match('/\.\./', $subdir) || preg_match('/[<>|]/', $subdir)) {
+			throw new RestException(400, 'bad value for parameter subdir');
+		}
+		if (!in_array($sortfield, array('name', 'date', 'size'))) {
+			$sortfield = 'name';
+		}
+
+		$check_access = dol_check_secure_access_document($modulepart, $subdir, $conf->entity, DolibarrApiAccess::$user, '', 'read');
+		if (empty($check_access['accessallowed'])) {
+			throw new RestException(403);
+		}
+		$dir = rtrim($check_access['original_file'], '/');
+		if (!dol_is_dir($dir)) {
+			throw new RestException(404, 'Directory '.$subdir.' not found in area '.$modulepart);
+		}
+
+		$filter = ($search !== '' ? preg_quote($search, '/') : '');
+		$excludefilter = array('^\.', '(\.meta|_preview.*\.png)$', '^temp$', '^CVS$', '^thumbs$');
+		$filearray = dol_dir_list($dir, 'all', $recursive ? 1 : 0, $filter, $excludefilter, $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
+
+		$countarray = count($filearray);
+		$filearray = array_slice($filearray, $limit * $page, $limit);
+
+		// Return paths relative to the root of the area, so they can be used as original_file of /download
+		$result = array();
+		foreach ($filearray as $fileitem) {
+			$result[] = array(
+				'name' => $fileitem['name'],
+				'relativename' => ($subdir !== '' ? $subdir.'/' : '').$fileitem['relativename'],
+				'type' => ($fileitem['type'] == 'dir' ? 'dir' : 'file'),
+				'date' => (int) $fileitem['date'],
+				'size' => (int) $fileitem['size']
+			);
+		}
+
+		if ($pagination_data) {
+			$result = array(
+				'data' => $result,
+				'pagination' => array(
+					'total' => (int) $countarray,
+					'page' => (int) $page,
+					'page_count' => (int) ceil((int) $countarray / max(1, (int) $limit)),
+					'limit' => (int) $limit
+				)
+			);
+		}
+
+		return $result;
 	}
 
 
@@ -762,7 +778,9 @@ class Documents extends DolibarrApi
 	 */
 	public function post($filename, $modulepart, $ref = '', $subdir = '', $filecontent = '', $fileencoding = '', $overwriteifexists = 0, $createdirifnotexists = 1, $position = 0, $cover = '', $array_options = [], $generateThumbs = 0, $share = 0)
 	{
-		global $conf;
+		dol_syslog(__METHOD__.'::begin', LOG_DEBUG);
+		global $conf, $langs;
+
 
 		$modulepartorig = $modulepart;
 
@@ -857,7 +875,8 @@ class Documents extends DolibarrApi
 				require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 				$object = new Propal($this->db);
 			} elseif ($modulepart == 'agenda' || $modulepart == 'action' || $modulepart == 'event') {
-				$modulepart = 'agenda';
+				// 'agenda' uses the generic case of dol_check_secure_access_document() that only allows admins. Other users need the agenda permissions of 'actions'.
+				$modulepart = (empty(DolibarrApiAccess::$user->admin) ? 'actions' : 'agenda');
 				require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
 				$object = new ActionComm($this->db);
 			} elseif ($modulepart == 'contact' || $modulepart == 'socpeople') {
@@ -934,6 +953,10 @@ class Documents extends DolibarrApi
 			if (empty($tmp['accessallowed'])) {
 				throw new RestException(403, 'Access not allowed to upload file into this directory');
 			}
+			// Check permission on the object the document is attached to (thirdparties of a restricted sales representative, ...)
+			if (!checkUserAccessToDocumentObject(DolibarrApiAccess::$user, $modulepart, $relativefile.'/'.$original_file, 'write')) {
+				throw new RestException(403, 'Access not allowed to the object of this document');
+			}
 			$upload_dir = $tmp['original_file']; // No dirname here, tmp['original_file'] is already the dir because dol_check_secure_access_document was called with param original_file that is only the dir
 			/*} else {
 				if (!DolibarrApiAccess::$user->hasRight('ecm', 'upload')) {
@@ -952,6 +975,10 @@ class Documents extends DolibarrApi
 			if ($modulepart == 'member') {
 				$modulepart = 'adherent';
 			}
+			// 'agenda' uses the generic case of dol_check_secure_access_document() that only allows admins. Other users need the agenda permissions of 'actions'.
+			if ($modulepart == 'agenda' && empty(DolibarrApiAccess::$user->admin)) {
+				$modulepart = 'actions';
+			}
 
 			// Test on permissions
 			if ($modulepart != 'ecm') {
@@ -960,12 +987,24 @@ class Documents extends DolibarrApi
 				if (empty($tmp['accessallowed'])) {
 					throw new RestException(403, 'Access not allowed to upload file into this directory');
 				}
+				// Check permission on the object the document is attached to (thirdparties of a restricted sales representative, ...)
+				if (!checkUserAccessToDocumentObject(DolibarrApiAccess::$user, $modulepart, $relativefile.'/'.$original_file, 'write')) {
+					throw new RestException(403, 'Access not allowed to the object of this document');
+				}
 				$upload_dir = $tmp['original_file']; // No dirname here, tmp['original_file'] is already the dir because dol_check_secure_access_document was called with param original_file that is only the dir
 			} else {
 				if (!DolibarrApiAccess::$user->hasRight('ecm', 'upload')) {
 					throw new RestException(403, 'Missing permission to upload files in ECM module');
 				}
-				$upload_dir = $conf->medias->multidir_output[$conf->entity];
+				if (!isModEnabled('ecm') || empty($conf->ecm->dir_output)) {
+					throw new RestException(400, 'Module ECM is not enabled');
+				}
+				$relativefile = $subdir;
+				if (preg_match('/\.\./', $subdir) || preg_match('/[<>|]/', $subdir)) {
+					throw new RestException(400, 'Bad value for parameter subdir');
+				}
+				// Manual area of the ECM module: the free tree of directories
+				$upload_dir = $conf->ecm->dir_output.($subdir !== '' ? '/'.$subdir : '');
 			}
 
 			if (empty($upload_dir) || $upload_dir == '/') {
@@ -1023,7 +1062,15 @@ class Documents extends DolibarrApi
 			$checkvirusarray = dolCheckVirus($src_file, $dest_file);
 			if (count($checkvirusarray)) {
 				dol_syslog('Files.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$dest_file.'") KO with antivirus: errors='.implode(',', $checkvirusarray), LOG_WARNING);
-				throw new RestException(500, 'ErrorFileIsInfectedWithAVirus: '.implode(',', $checkvirusarray));
+				// Differentiate based on the error key in the array
+				$errorkey = array_keys($checkvirusarray)[0];
+				$langs->load('errors');
+				if (in_array($errorkey, array('ErrorFileIsInfectedKnownVirus', 'ErrorAntivirusNotAvailable', 'ErrorFileIsInfectedWithAVirus'))) {
+					$restmsg = $langs->trans($errorkey);
+				} else {
+					$restmsg = $langs->trans('ErrorFileIsInfectedWithAVirus'); // fallback
+				}
+				throw new RestException(500, $restmsg . ': ' . implode(',', $checkvirusarray));
 			}
 		}
 
@@ -1128,6 +1175,10 @@ class Documents extends DolibarrApi
 		if ($modulepart == 'task') {
 			$modulepart = 'project_task';
 		}
+		// 'agenda' uses the generic case of dol_check_secure_access_document() that only allows admins. Other users need the agenda permissions of 'actions'.
+		if ($modulepart == 'agenda' && empty(DolibarrApiAccess::$user->admin)) {
+			$modulepart = 'actions';
+		}
 
 		//--- Finds and returns the document
 		$entity = $conf->entity;
@@ -1153,6 +1204,10 @@ class Documents extends DolibarrApi
 		}
 		if (!$accessallowed) {
 			throw new RestException(403);
+		}
+		// Check permission on the object the document is attached to (thirdparties of a restricted sales representative, ...)
+		if (!checkUserAccessToDocumentObject(DolibarrApiAccess::$user, $modulepart, $relativefile, 'write')) {
+			throw new RestException(403, 'Access not allowed to the object of this document');
 		}
 
 		if (DolibarrApiAccess::$user->socid > 0) {

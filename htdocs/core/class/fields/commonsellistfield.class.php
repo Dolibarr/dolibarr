@@ -303,6 +303,10 @@ class CommonSellistField extends CommonField
 						// TODO rework for dependency with a date or a multiselect
 						$sql .= " AND " . $this->db->sanitize($optionsParams['parentField']) . " = '" . $this->db->escape($fieldInfos->optionsSqlDependencyValue) . "'";
 					}
+					// Manage text searched (from AJAX), on the label fields
+					if (isset($fieldInfos->optionsSqlSearch) && $fieldInfos->optionsSqlSearch !== '' && !empty($optionsParams['labelFields'])) {
+						$sql .= natural_search($optionsParams['labelFields'], $fieldInfos->optionsSqlSearch, 0);
+					}
 					// Only selected values
 					if (!empty($selectedValues)) {
 						$sanitizedSqlIn = "'" . implode("','", array_map(array($this->db, 'escape'), $selectedValues)) . "'";

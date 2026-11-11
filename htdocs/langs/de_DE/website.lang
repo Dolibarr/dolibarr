@@ -18,7 +18,7 @@ WEBSITE_HTACCESS=Website  .htaccess Datei
 WEBSITE_MANIFEST_JSON=Website manifest.json Datei
 WEBSITE_KEYWORDSDesc=Verwenden Sie ein Komma, um Werte zu trennen
 EnterHereReadmeInformation=Geben Sie hier eine Beschreibung der Website ein. Wenn Sie Ihre Website als Vorlage verteilen, wird die Datei in das Template-Paket aufgenommen.
-EnterHereLicenseInformation=Geben Sie hier die LIZENZ des Codes der Website ein. Wenn Sie Ihre Website als Vorlage verteilen, wird die Datei in das Temprate-Paket aufgenommen.
+EnterHereLicenseInformation=Geben Sie hier die LIZENZ des Codes der Website ein. Wenn Sie Ihre Website als Vorlage verteilen, wird die Datei in das Template-Paket aufgenommen.
 HtmlHeaderPage=HTML Header (Nur für diese Seite)
 PageNameAliasHelp=Name oder Alias der Seite. <br>Dieser Alias wird auch zum erstellen einer SEO URL verwendet, wenn die Website auf einem Virtuellen Webserver läuft. Verwenden Sie der Button "<strong>%s</strong>" um den Alias zu ändern.
 EditTheWebSiteForACommonHeader=Hinweis: Um einen personalisierten Header für alles Seiten zu erstellen, muss der Header auf Site-Level bearbeitet werden, anstelle auf Seiten-/Containerebene.
@@ -51,12 +51,12 @@ ToDeployYourWebsiteOnLiveYouHave3Solutions=Um diese Website live zu schalten, st
 SetHereVirtualHost=<u>Verwendung mit Apache/Nginx/... </u> <br> Erstellen Sie auf Ihrem Webserver (Apache, Nginx, ...) einen dedizierten virtuellen Host mit aktiviertem PHP und einem Stammverzeichnis unter <br> <strong>%s</strong>
 ExampleToUseInApacheVirtualHostConfig=Beispiel für die Einrichtung eines virtuellen Apache-Hosts
 YouCanAlsoTestWithPHPS=<u>Verwendung mit eingebettetem PHP-Server</u><br>In der Entwicklungsumgebung können Sie die Site auch mit dem eingebetteten PHP-Webserver testen, indem Sie
-YouCanAlsoDeployToAnotherWHP=<u>Betreiben Sie Ihre Website bei einem Dolibarr-Webhosting-Anbieter. </u><br>Wenn Sie im Internet keinen Web-Server wie Apache oder NGinx haben, können Sie Ihre Website exportieren und und in eine andere Dolibarr-Instanz importieren, die von einem anderen Dolibarr-Hosting-Anbieter bereitgestellt wird, der eine vollständige Integration mit dem Website-Modul anbietet. Eine Liste Liste einiger Dolibarr-Hosting-Anbieter finden Sie unter <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
+YouCanAlsoDeployToAnotherWHP=<u>Betreiben Sie Ihre Website bei einem Dolibarr-Webhosting-Anbieter</u><br>Wenn Sie im Internet keinen Web-Server wie Apache oder NGinx haben, können Sie Ihre Website exportieren und in eine andere Dolibarr-Instanz importieren, die von einem anderen Dolibarr-Hosting-Anbieter bereitgestellt wird, der eine vollständige Integration mit dem Website-Modul anbietet. Eine Liste einiger Dolibarr-Hosting-Anbieter finden Sie unter <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
 CheckVirtualHostPerms=Überprüfen Sie auch, ob der User des virtuellen Hosts (z.B. www-data) über die Berechtigungen <strong>%s</strong> für Dateien in <br> <strong>%s</strong> verfügt.
 ReadPerm=Lesen
 WritePerm=Schreiben
 TestDeployOnWeb=Test/Bereitstellung im Web
-PreviewSiteServedByWebServer=Die <u>Vorschau %s in einem neuen Tab</u><br><br>%s wird durch einen externen Webserver (Wie Apache, Nginx, IIS) ausgeliefert. Dieser Server muss installiert und eingerichtet sein, bevor Sie den Verzeichnis <br><strong>%s</strong> anzeigen können.<br> URL, die von dem externen Server bereitgestellt wird: <br><strong>%s</strong>
+PreviewSiteServedByWebServer=<u>Vorschau von %s in einem neuen Tab.</u><br><br>%s wird von einem externen Webserver (wie Apache, Nginx, IIS) ausgeliefert. Sie müssen diesen Server installieren und einrichten, bevor Sie ihn auf das folgende Verzeichnis verweisen:<br><strong>%s</strong><br>Vom externen Server bereitgestellte URL:<br><strong>%s</strong>
 PreviewSiteServedByDolibarr=<u>Vorschau %s in einem neuen Tab.</u><br><br>Die %s wird von Dolibarr Server bereitgestellt, sod ass kein zusätzliches Web Server (wie Apache, Nginx, IIS) installiert werden muss.<br>Der Nachteil besteht darin, dass die URLs der Seiten nicht benutzerfreundlich sind und mit dem Pfad Ihrer Dolibarr-Installation beginnen.<br>Von Dolibarr bereitgestellte URL:<br><strong>%s</strong><br><br>Um die Bereitstellung oder den Test mit Ihrem eigenen externen Web-Server (wie Apache, Nginx, Lighttp) durchzuführen, verwenden Sie den Link "%s".
 VirtualHostUrlNotDefined=Die URL des virtuellen Hosts, der von einem externen Webserver bereit gestellt wird, ist nicht definiert
 NoPageYet=Noch keine Seiten
@@ -65,12 +65,13 @@ SyntaxHelp=Hilfe zu Programmierfragen
 YouCanEditHtmlSourceckeditor=Sie können den HTML-Quellcode über die Schaltfläche "HTML-Code bearbeiten" im Editor bearbeiten.
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> Sie können PHP-Code mit folgenden Tags <strong>&lt;?php ?&gt;</strong> einfügen. Die folgenden globalen Variablen sind verfügbar: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> Sie können mit folgender Syntax auch Inhalte einer anderen Seite/eines anderen Containers einbinden:<br><strong>&lt;?php includeContainer('Alias_des_einzubindenden_Containers'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> Sie können eine Weiterleitung zu einer anderen Seite/einem anderen Container mit der folgenden Syntax erstellen (Hinweis: Keinen Inhalt vor der Umleitung ausgeben): <br><strong>&lt;?php redirectToContainer('Alias_des_Containers_zu_dem_umgeleitet_werden_soll'); ?&gt;</strong><br>Sie können auch eine Umleitung mit GET-Parametern vornehmen:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> Um einen Link zu einer anderen Seite hinzuzufügen, verwenden Sie die Syntax:<br><strong>&lt;a href="Alias_der_zu_verlinkenden_mit.php"&gt;myLink&lt;a&gt;</strong><br><br>
 YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> Sie können <strong>SEO-Titel und Meta-Tags </strong> (Titel, Schlüsselwörter, Beschreibung) dynamisch festlegen. Definieren Sie einfach die folgenden Variablen <br> <code>define('__SEO_PAGE_TITLE__', "Titelwert …");</code><br> <code>define('__SEO_PAGE_KEYWORDS__', 'keyword1, keyword2, keyword3 …');</code><br> <code>define('__SEO_PAGE_DESC__', "Beschreibung …");</code><br>
-YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> Um einen <strong>Link zum Herunterladen</strong> einer Datei bereitzustellen, die im <strong>Dokumenten</strong> Verzeichnis gespeichert ist, verwenden Sie den <strong>document.php</strong> Wrapper:<br>Beispiel für ein Datei in Dokumente/ECM (muss protokolliert werden), Syntax ist:<br><strong>&lt;a href="/Dokument.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>Für ein Datei in Dokumente/Medien (setzen Sie Verzeichnisrechte für den öffentlichen Zugriff) lautet die Syntax:<br><strong>&lt;a href="/Dokument.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
+YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> Um einen <strong>Link zum Herunterladen</strong> einer Datei einzufügen, die im Verzeichnis <strong>documents</strong> gespeichert ist, verwenden Sie den Wrapper <strong>document.php</strong>:<br>Beispiel für eine Datei in documents/ecm (Anmeldung erforderlich), die Syntax lautet:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>Für eine Datei in documents/medias (Verzeichnis mit öffentlichem Zugriff) lautet die Syntax:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSourced=Für ein Datei, die mit einem Freigabelink geteilt wird (offener Zugriff unter Verwendung des Freigabe-Hash-Schlüssels der Datei), lautet die Syntax:<br><strong>&lt;a href="/Dokument.php?hashp=publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> Um ein <strong>Bild</strong> , das im Verzeichnis <strong>medias</strong> gespeichert ist (Verzeichnis für den öffentlichen Zugriff konfiguriert), verwenden Sie den relativen Pfad, beginnend mit <strong>/medias</strong>, Beispiel:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> Um ein <strong>Bild</strong> einzufügen, das im Verzeichnis <strong>medias</strong> gespeichert ist (Verzeichnis mit öffentlichem Zugriff), verwenden Sie den relativen Pfad, beginnend mit <strong>/medias</strong>, Beispiel:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=Für ein Bild, das mit einem freigegebenen Link geteilt wird (offener Zugriff mithilfe des Freigabe-Hashs der Datei), verwenden Sie den Wrapper: <br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=Um die URL des Bildes eines PHP Objektes zu erhalten, verwenden Sie<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($Objekt , 1, "_small") ?&gt;"&gt;</strong><br>
-YouCanEditHtmlSource4=Um die URL eines Bildes im HTML-Inhalt eines Artikels abzurufen, verwenden Sie <br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource4=Um die URL eines Bildes im HTML-Inhalt eines Artikels abzurufen, verwenden Sie<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource5=<br><span class="fa fa-edit paddingright"></span> Damit ein Teil der Seite im Modus <strong>Inline bearbeiten</strong> geändert werden kann, fügen Sie seinem Tag die Attribute <strong>contenteditable="true"</strong> und <strong>id</strong> hinzu. Er darf keinen PHP-Code enthalten, nur Text mit Formatierungs-Tags (fett, Farbe, Schriftgröße...), Links, Absätze, Überschriften, Listen und div, Beispiel:<br><strong>&lt;p id="intro" contenteditable="true"&gt;Mein &lt;b&gt;Text&lt;/b&gt;&lt;/p&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>Weitere Beispiele für HTML oder dynamischen Code finden Sie in <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">der Wiki-Dokumentation</a>.<br>
 ClonePage=Seite/Container klonen
 CloneSite=Website klonen
@@ -88,6 +89,8 @@ ImportSite=Website-Vorlage importieren
 IDOfPage=ID der Seite
 Banner=Banner
 BlogPost=Blog Eintrag
+PageHeader=Kopfzeile
+PageFooter=Fußzeile
 WebsiteAccount=Website Konto
 WebsiteAccounts=Website Konten
 AddWebsiteAccount=Website-Konto erstellen
@@ -119,7 +122,7 @@ NoWebSiteCreateOneFirst=Bisher wurde noch keine Website erstellt. Erstellen sie 
 GoTo=Gehe zu
 DynamicPHPCodeContainsAForbiddenInstruction=Sie fügen dynamischen PHP-Code hinzu, der die PHP-Anweisung '<strong>%s</strong>' enthält. Diese Anweisung ist standardmäßig verboten für dynamischen Inhalt (siehe versteckte Optionen WEBSITE_PHP_ALLOW_xxx, um die Liste der erlaubten Befehle zu erweitern).
 NotAllowedToAddDynamicContent=Sie haben keine Berechtigung, dynamische PHP-Inhalte in Websites hinzuzufügen oder zu bearbeiten. Fragen Sie nach der Berechtigung oder lassen Sie einfach den Code in den PHP-Tags unverändert.
-NotAllowedToAddDynamicContentDisabledGlobaly=Sie können derzeit keine dynamischen PHP-Inhalte auf dieser Website hinzufügen oder bearbeiten (auch wenn Sie die Berechtigung dazu haben), da diese Funktion zuerst global aktiviert werden muss, indem der Parameter %s=1 in der conf.php Datei gesetzt wird.<br>Bearbeiten Sie Ihre conf.php Datei, um diesen Parameter hinzuzufügen, oder bitten Sie Ihren Administrator oder Support, dies für Sie vorzunehmen.
+NotAllowedToAddDynamicContentDisabledGlobaly=Sie können derzeit keine dynamischen PHP-Inhalte auf dieser Website hinzufügen oder bearbeiten (auch wenn Sie die Berechtigung dazu haben), da diese Funktion zuerst global aktiviert werden muss, indem der Parameter %s=1 in der conf.php Datei gesetzt wird.<br>Bearbeiten Sie Ihre conf.php Datei, um diesen Parameter hinzuzufügen, oder bitten Sie Ihren Administrator oder Ihr Support-Team, dies für Sie vorzunehmen.
 ReplaceWebsiteContent=Inhalt der Website suchen oder ersetzen
 DeleteAlsoJs=Auch alle Javascript-Dateien der Website löschen?
 DeleteAlsoMedias=Auch alle Mediadateien der Website löschen?
@@ -140,10 +143,10 @@ MainLanguage=Hauptsprache
 OtherLanguages=Andere Sprachen
 UseManifest=Eine manifest.json-Datei bereitstellen
 PublicAuthorAlias=Autor-Alias (öffentlich)
-AvailableLanguagesAreDefinedIntoWebsiteProperties=Verfügbare Sprachen werden in Website-Eigenschaften definiert
+AvailableLanguagesAreDefinedIntoWebsiteProperties=Verfügbare Sprachen werden in den Website-Eigenschaften definiert
 ReplacementDoneInXPages=Ersetzt in %s Seiten oder Containern
 RSSFeed=RSS Feed
-RSSFeedDesc=Über diese URL können Sie einen RSS-Feed mit den neuesten Artikeln vom Typ "Blogpost" abrufen
+RSSFeedDesc=Über diese URL können Sie einen RSS-Feed mit den neuesten Artikeln vom Typ 'blogpost' abrufen
 PagesRegenerated=%s Seite(n)/Container neu generiert
 RegenerateWebsiteContent=Website-Cache-Dateien neu generieren
 AllowedInFrames=In Frames erlaubt
@@ -151,6 +154,7 @@ DefineListOfAltLanguagesInWebsiteProperties=Definiere eine Liste aller verfügba
 GenerateSitemaps=Die sitemap.xml-Datei der Website generieren
 ConfirmGenerateSitemaps=Wenn Sie dies bestätigen, löschen Sie die vorhandene Sitemap-Datei ...
 ConfirmSitemapsCreation=Bestätigen Sie die Sitemap-Generierung
+ConfirmSetAsHomePage=Are you sure you want to set the page <b>%s</b> as the home page of the website?
 SitemapGenerated=Sitemap-Datei <b> %s </b> generiert
 ImportFavicon=Favicon
 ErrorFaviconType=Favicon muss png sein
@@ -509,3 +513,13 @@ ThisDirectoryIsEmpty=Dieses Verzeichnis ist leer
 WrittenBy=Geschrieben von %s
 ImportOfWebsiteTemplateIncludingPHPIsAllowedIf=Der Import von Website-Vorlagen mit dynamischem Inhalt in PHP ist nur zulässig, wenn $dolibarr_website_allow_custom_php in conf.php auf 2 gesetzt ist.
 ImportOfWebsiteTemplateIncludingPHPIsDisabled=Der Import von Website-Vorlagen mit dynamischem Inhalt in PHP erfordert, dass $dolibarr_website_allow_custom_php in der Datei conf.php auf 1 oder 2 gesetzt wird, um erlaubt zu sein.
+CurrentPageVersion=Aktuelle Seite
+ListOfPageVersions=Liste der archivierten Versionen der Seite (bei jedem Speichern einer Änderung, z. B. am HTML-Quelltext, wird eine Sicherungsdatei der Seite erstellt)
+EditInLineAllowedAreas=Im Modus Inline bearbeiten können Tags mit contenteditable="true", einer id und ohne PHP-Code darin geändert werden; sie werden gespeichert, sobald Sie sie verlassen. Textformatierung (fett, Farbe, Schriftgröße...), Links, Absätze, Überschriften und Listen sind erlaubt, Bilder und anderes HTML können nur im HTML-Quellcode geändert werden.
+ErrorEditInlineElementNoId=Dieses Element hat contenteditable="true", aber keine id und kann daher nicht inline bearbeitet werden.
+ErrorEditInlineElementNotFound=Im Quellcode der Seite wurde kein Element mit der id %s und contenteditable="true" gefunden.
+ErrorEditInlineElementNotUnique=Die id %s wird im Quellcode der Seite von mehreren Elementen mit contenteditable="true" verwendet.
+ErrorEditInlineElementWithPhp=Das Element mit der id %s enthält im Quellcode der Seite PHP-Code und kann daher nur im HTML-Quellcode geändert werden.
+ErrorEditInlineElementNotAllowedHtml=Das Element mit der id %s enthält HTML, das nicht inline bearbeitet werden kann (Bild, Formular, Script, Kommentar, andere Tags oder Attribute...), und kann daher nur im HTML-Quellcode geändert werden.
+ErrorEditInlineElementNotPlainText=Das Element mit der id %s enthält im Quellcode der Seite HTML, kann inline aber nur als reiner Text bearbeitet werden; es kann daher nur im HTML-Quellcode geändert werden.
+ErrorEditInlineContentNotAllowed=Der neue Inhalt des Elements mit der id %s enthält nicht erlaubte HTML-Tags oder -Attribute und wurde daher nicht gespeichert.

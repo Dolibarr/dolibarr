@@ -1285,7 +1285,7 @@ class Website extends CommonObject
 	 */
 	public function importWebSite($pathtofile)
 	{
-		global $conf, $mysoc, $user;
+		global $conf, $langs, $mysoc, $user;
 
 		$error = 0;
 
@@ -1405,19 +1405,24 @@ class Website extends CommonObject
 		dolSaveJsFile($conf->website->dir_output.'/'.$object->ref.'/javascript.js.php', $jscontent);
 
 
-		// Now generate the manifest.json.php
-		$filemanifestjson = dol_osencode($conf->website->dir_temp.'/'.$object->ref.'/containers/manifest.json.php');
+		// Now generate the manifest.json (old templates provide a manifest.json.php with a PHP wrapper around the JSON content)
+		$filemanifestjson = dol_osencode($conf->website->dir_temp.'/'.$object->ref.'/containers/manifest.json');
+		if (!dol_is_file($conf->website->dir_temp.'/'.$object->ref.'/containers/manifest.json')) {
+			$filemanifestjson = dol_osencode($conf->website->dir_temp.'/'.$object->ref.'/containers/manifest.json.php');
+		}
 		$manifestjsoncontent = @file_get_contents($filemanifestjson);
 		// Clean the manifestjson file to remove php code and get only html part
 		$manifestjsoncontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP( \?>)?\n*/ims', '', $manifestjsoncontent);
-		// Check there is no PHP content into the imported file (must be only HTML + JS)
+		// Check there is no PHP content into the imported file (must be only JSON)
 		$phpcontent = dolKeepOnlyPhpCode($manifestjsoncontent);
 		if ($phpcontent) {
-			$this->error = 'Error: you try to import a website with a page with PHP dynamic content in '.$filename.'.';
+			$this->error = 'Error: you try to import a website with a page with PHP dynamic content in manifest.json.';
 			$this->errors[] = $this->error;
 			return -1;
 		}
-		dolSaveManifestJson($conf->website->dir_output.'/'.$object->ref.'/manifest.json.php', $manifestjsoncontent);
+		$manifestjsoncontent = trim($manifestjsoncontent);
+		dolSaveManifestJson($conf->website->dir_output.'/'.$object->ref.'/manifest.json', ($manifestjsoncontent ? $manifestjsoncontent."\n" : ''));
+		dol_delete_file($conf->website->dir_output.'/'.$object->ref.'/manifest.json.php');
 
 
 		// Now generate the master.inc.php page
@@ -1433,7 +1438,7 @@ class Website extends CommonObject
 		if (dol_is_dir($conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey')) {
 			$result = dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref, '0', 1);
 			if ($result < 0) {
-				$this->error = 'Failed to copy files into '.$conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref.'.';
+				$this->error = 'Failed to copy medias images from '.$conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey into '.$conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref.'.';
 				dol_syslog($this->error, LOG_WARNING);
 				$this->errors[] = $this->error;
 				return -5;
@@ -1444,7 +1449,7 @@ class Website extends CommonObject
 		if (dol_is_dir($conf->website->dir_temp.'/'.$object->ref.'/medias/js/websitekey')) {
 			$result = dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/js/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref, '0', 1);
 			if ($result < 0) {
-				$this->error = 'Failed to copy files into '.$conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref.'.';
+				$this->error = 'Failed to copy medias js into '.$conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref.'.';
 				dol_syslog($this->error, LOG_WARNING);
 				$this->errors[] = $this->error;
 				return -6;
@@ -1454,6 +1459,42 @@ class Website extends CommonObject
 		$sqlfile = $conf->website->dir_temp."/".$object->ref.'/website_pages.sql';
 
 		$result = dolReplaceInFile($sqlfile, $arrayreplacement);
+
+		// Warn if source contains 4-byte UTF-8 chars (emojis...) but the target MySQL table or connection charset (utf8/utf8mb3) can't store them
+		if (in_array($this->db->type, array('mysql', 'mysqli'))) {
+			$sqlfilecontent = (string) file_get_contents($sqlfile);
+			if (preg_match('/[\xF0-\xF4][\x80-\xBF]{3}/', $sqlfilecontent)) {
+				$collation = '';
+				$infotable = $this->db->DDLInfoTable(MAIN_DB_PREFIX.'website_page');
+				foreach ($infotable as $infocolumn) {
+					if ($infocolumn[0] == 'content') {
+						$collation = (string) $infocolumn[2];
+						break;
+					}
+				}
+				if ($collation && !preg_match('/^utf8mb4/i', $collation)) {
+					$langs->load("website");
+					$this->warnings[] = $langs->trans("WarningWebsiteTemplateHas4BytesCharsButDatabaseNotUtf8mb4", MAIN_DB_PREFIX.'website_page', $collation);
+					dol_syslog(__METHOD__." The sql file contains 4-byte UTF-8 chars but table collation is ".$collation, LOG_WARNING);
+				}
+				// The connection charset must also be utf8mb4, else 4-byte chars are rejected before reaching the table
+				$connectioncharset = '';
+				$resqlcharset = $this->db->query("SHOW SESSION VARIABLES LIKE 'character_set_connection'");
+				if ($resqlcharset) {
+					$objcharset = $this->db->fetch_object($resqlcharset);
+					if ($objcharset) {
+						$connectioncharset = (string) $objcharset->Value;
+					}
+					$this->db->free($resqlcharset);
+				}
+				if ($connectioncharset && !preg_match('/^utf8mb4/i', $connectioncharset)) {
+					$langs->load("website");
+					$this->warnings[] = $langs->trans("WarningWebsiteTemplateHas4BytesCharsButConnectionNotUtf8mb4", $connectioncharset);
+					dol_syslog(__METHOD__." The sql file contains 4-byte UTF-8 chars but database connection charset is ".$connectioncharset, LOG_WARNING);
+				}
+			}
+			unset($sqlfilecontent);
+		}
 
 		$this->db->begin();
 
@@ -1507,6 +1548,22 @@ class Website extends CommonObject
 				if ($newid) {
 					$objectpagestatic->fetch($newid);
 
+					// Reject imported values that are embedded into generated PHP code or used as file names
+					if (preg_match('/[^\w\-]/', (string) $objectpagestatic->type_container) || preg_match('/[^\w\-]/', (string) $objectpagestatic->lang)) {
+						$this->errors[] = 'Bad value for type_container or lang of page ID '.$newid;
+						$error++;
+						continue;
+					}
+					if (is_array($aliasesarray)) {
+						foreach ($aliasesarray as $aliasshortcuttocreate) {
+							if (preg_match('/[^\w\-]/', trim($aliasshortcuttocreate))) {
+								$this->errors[] = 'Bad value for alias of page ID '.$newid;
+								$error++;
+								continue 2;
+							}
+						}
+					}
+
 					// We write the pageX.tpl.php
 					$filetpl = $conf->website->dir_output.'/'.$object->ref.'/page'.$newid.'.tpl.php';
 					$result = dolSavePageContent($filetpl, $object, $objectpagestatic);
@@ -1527,6 +1584,9 @@ class Website extends CommonObject
 							$this->error = 'Error: you try to import a website with a page with PHP dynamic content without having permissions for that.';
 							$this->errors[] = $this->error;
 							$error++;
+							// Do not keep on disk a file with unauthorized PHP content
+							dol_delete_file($filetpl, 0, 0, 0, null, false, 0);
+							continue;
 						}
 					}
 
@@ -1656,6 +1716,21 @@ class Website extends CommonObject
 			}
 			$filewrapper = $pathofwebsite.'/wrapper.php';
 			dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $object);	// This includes also a version of index.php into sublanguage directories
+
+			// Migrate the old manifest.json.php (JSON with a PHP wrapper) into a static manifest.json now that pages link to manifest.json
+			$filemanifestjsonold = $pathofwebsite.'/manifest.json.php';
+			if (dol_is_file($filemanifestjsonold)) {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/website2.lib.php';
+				if (!dol_is_file($pathofwebsite.'/manifest.json')) {
+					$manifestjsoncontent = (string) @file_get_contents($filemanifestjsonold);
+					$manifestjsoncontent = trim(preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP( \?>)?\n*/ims', '', $manifestjsoncontent));
+					if (!dolKeepOnlyPhpCode($manifestjsoncontent)) {	// Never copy PHP code into the static file
+						dolSaveManifestJson($pathofwebsite.'/manifest.json', ($manifestjsoncontent ? $manifestjsoncontent."\n" : ''));
+					}
+				}
+				dol_delete_file($filemanifestjsonold);
+			}
 		}
 
 		// Erase cache files
