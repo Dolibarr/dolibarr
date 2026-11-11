@@ -212,7 +212,7 @@ print '<!-- Tools quick setup -->';
 print '<div class="info">' . $langs->trans("ToolAccessControlHelp") . '<br>' . $langs->trans("ToolAccessControlHelp2") . '</div>';
 print '<br>';
 
-print '<div class="marginleftonly" style="display:flex; flex-wrap:wrap; gap:40px; margin-top:15px; padding-top:15px;">';
+print '<div class="neutral" style="display:flex; flex-wrap:wrap; gap:40px; margin-top:15px; padding-top:15px;">';
 
 // Presets For Chat Assistant
 print '<div>';
