@@ -22,11 +22,404 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/ai/class/mcptool.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ai/tools/api_bridge.class.php';
 
+require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
+$emailSendLoaders = spl_autoload_functions();
+try {
+	require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/fourn/class/api_supplier_orders.class.php';
+} finally {
+	foreach (array_reverse($emailSendLoaders) as $emailSendLoader) {
+		if (!in_array($emailSendLoader, spl_autoload_functions(), true)) {
+			spl_autoload_register($emailSendLoader, true, true);
+		}
+	}
+	unset($emailSendLoaders, $emailSendLoader);
+}
+
+
 /**
  * Exercise metadata, confirmation, precheck and dispatch with local fixtures.
  */
 class ApiSupplierOrderHeaderUpdateTest extends CommonClassTest
 {
+	/** @var SupplierOrderMailSendFixture Email service */
+	private $service;
+	/** @var CommandeFournisseur Email order */
+	private $order;
+	/** @var User Email actor */
+	private $actor;
+	/** @var mixed Previous API user */
+	private $previousApiUser;
+	/** @var mixed Previous root URL */
+	private $previousRootUrl;
+	/** @return void */
+	private function setUpEmail(): void
+	{
+		global $conf, $dolibarr_main_url_root;
+		$this->previousRootUrl = $dolibarr_main_url_root;
+		$dolibarr_main_url_root = 'http://localhost';
+		$this->previousApiUser = DolibarrApiAccess::$user;
+		$conf = clone $conf;
+		$conf->global = clone $conf->global;
+		$conf->entity = 1;
+		$conf->modules = array('supplier_order' => 1);
+		$conf->global->MAIN_DISABLE_ALL_MAILS = 0;
+		$conf->global->MAIN_MAIL_FORCE_CONTENT_TYPE_TO_HTML = 0;
+		$conf->global->SUPPLIER_ORDER_SENDBYEMAIL_FOR_ALL_STATUS = 0;
+		$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
+		$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO = '';
+		$conf->global->MAIN_MAIL_FORCE_SENDTO = '';
+		$conf->global->MAIN_MAIL_FORCE_FROM = '';
+		$conf->global->MAIN_MAIL_FORCE_NOT_SENDING_TO = '';
+		$this->actor = $this->createStub(User::class);
+		$this->actor->id = 7;
+		$this->actor->socid = 0;
+		$this->actor->email = 'buyer@example.org';
+		$this->actor->method('hasRight')->willReturn(true);
+		DolibarrApiAccess::$user = $this->actor;
+		$this->order = new CommandeFournisseur(null);
+		$this->order->id = 42;
+		$this->order->ref = 'PO-42';
+		$this->order->entity = 1;
+		$this->order->socid = 3;
+		$this->order->status = 2;
+		$this->order->lines = array();
+		$this->service = new SupplierOrderMailSendFixture(null);
+		SupplierOrderMailTransportFixture::$attempts = 0;
+		SupplierOrderMailTransportFixture::$succeed = true;
+		SupplierOrderMailTransportFixture::$throw = false;
+	}
+
+	/** @return array<string,mixed> Message input */
+	private function message()
+	{
+		return array('subject' => 'Delivery of PO-42', 'body' => "Please confirm delivery.\nThank you.", 'to' => array('supplier@example.org'));
+	}
+
+	/** @return void */
+	public function testEmailTemplateDefaultSelectionRenderingAndExplicitChoice()
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+		$this->order = $this->createStub(CommandeFournisseur::class);
+		$this->order->id = 42;
+		$this->order->ref = 'PO-42';
+		$this->order->lines = array();
+		$this->order->thirdparty = (object) array('email' => 'supplier@example.org');
+		$this->order->method('fetch_thirdparty')->willReturn(1);
+		$this->actor->signature = 'Buyer';
+		foreach (array(0, 8) as $id) {
+			$form = $this->createMock(FormMail::class);
+			$form->substit = array('__REF__' => 'PO-42');
+			$form->substit_lines = array();
+			$template = (object) array('id' => 8, 'label' => 'Purchase order', 'topic' => 'Order __REF__',
+				'content' => 'Hello<br>Order __REF__<br>__SENDEREMAIL_SIGNATURE__', 'content_lines' => '',
+				'email_from' => '', 'email_tocc' => 'copy@example.org', 'email_tobcc' => '', 'joinfiles' => 1);
+			$form->expects($this->once())->method('getEMailTemplate')->with(null, 'order_supplier_send', $this->actor,
+				$this->anything(), $id, 1, '', $id ? -1 : 1)->willReturn($template);
+			$this->service->form = $form;
+			$prepared = $this->service->prepare($this->order, $this->actor, array('template_id' => $id));
+			$this->assertSame('Order PO-42', $prepared['preview']['subject']);
+			$this->assertStringContainsString("Order PO-42\nBuyer", $prepared['preview']['body']);
+			$this->assertSame('copy@example.org', $prepared['preview']['cc']);
+			$this->assertSame(array(), $prepared['preview']['attachments']);
+			$this->assertTrue($prepared['preview']['template']['attachment_suggested']);
+		}
+		$form = $this->createStub(FormMail::class);
+		$form->method('getEMailTemplate')->willReturn((object) array('id' => 0));
+		$this->service->form = $form;
+		$this->expectException(\Luracast\Restler\RestException::class);
+		$this->expectExceptionCode(404);
+		$this->service->prepare($this->order, $this->actor, array('template_id' => 99));
+	}
+
+	/** @return void */
+	public function testEmailUnsafeInputAndNativeAttachmentValidation()
+	{
+		$this->service->realFiles = true;
+		foreach (array(
+			array('subject' => "Hello\r\nBcc: someone@example.org"), array('body' => ''), array('from_type' => 'arbitrary'),
+			array('to' => array("a@example.org\nBcc: b@example.org")), array('bcc' => 'secret@example.org'),
+			array('attachments' => array('../secret.pdf')), array('attachments' => array('/tmp/secret.pdf')),
+			array('attachments' => array('secret.txt')), array('unknown' => 1), array('template_id' => -1)
+		) as $changes) {
+			try {
+				$this->service->prepare($this->order, $this->actor, array_replace($this->message(), $changes));
+				$this->fail('Unsafe input accepted');
+			} catch (\Luracast\Restler\RestException $e) {
+				$this->assertSame(400, $e->getCode());
+			}
+		}
+		$this->assertSame(0, SupplierOrderMailTransportFixture::$attempts);
+	}
+
+	/** @return void */
+	public function testEmailNativePdfConstructionUsesExistingFileOnly()
+	{
+		global $conf;
+		$this->service->realFiles = true;
+		$this->service->native = true;
+		$args = $this->message();
+		$args['attachments'] = array('Expense report - Bill Restaurant.pdf');
+		foreach (array('mail', 'smtps', 'swiftmailer') as $mode) {
+			$conf->global->MAIN_MAIL_SENDMODE = $mode;
+			$prepared = $this->service->prepare($this->order, $this->actor, $args);
+			$this->assertSame(hash_file('sha256', __DIR__.'/../fixtures/'.$args['attachments'][0]), $prepared['preview']['attachments'][0]['sha256']);
+			$this->assertSame('text', $prepared['preview']['format']);
+			if ($mode === 'swiftmailer') {
+				$cache = new ReflectionProperty(Swift_Mime_SimpleMimeEntity::class, 'cache');
+				if (PHP_VERSION_ID < 80100) {
+					$cache->setAccessible(true);
+				}
+				$this->assertInstanceOf(Swift_KeyCache_ArrayKeyCache::class, $cache->getValue($this->service->lastMail->message));
+				$attachments = 0;
+				foreach ($this->service->lastMail->message->getChildren() as $child) {
+					if ($child instanceof Swift_Mime_Attachment) {
+						$attachments++;
+						$this->assertSame(file_get_contents(__DIR__.'/../fixtures/'.$args['attachments'][0]), $child->getBody());
+						$this->assertInstanceOf(Swift_KeyCache_ArrayKeyCache::class, $cache->getValue($child));
+					}
+				}
+				$this->assertSame(1, $attachments);
+			}
+		}
+		$this->assertSame(0, SupplierOrderMailTransportFixture::$attempts);
+	}
+
+	/** @return void */
+	public function testEmailDisabledTransportAndHistoryFailure()
+	{
+		global $conf;
+		$args = $this->message();
+		$prepared = $this->service->prepare($this->order, $this->actor, $args);
+		$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
+		$this->assertEmailRefused($args, $prepared['expected_hash'], 409);
+		$this->assertSame(0, SupplierOrderMailTransportFixture::$attempts);
+		$conf->global->MAIN_DISABLE_ALL_MAILS = 0;
+		$this->service->recordSuccess = false;
+		$result = $this->service->send($this->order, $this->actor, $args, $prepared['expected_hash']);
+		$this->assertFalse($result['history_recorded']);
+		$this->assertSame(1, SupplierOrderMailTransportFixture::$attempts);
+	}
+
+	/** @return void */
+	public function testEmailAgendaAcceptsContextAndPreservesLegacyCallers()
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modAgenda_ActionsAuto.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+		$trigger = new InterfaceActionsAuto(null);
+		$copy = new ReflectionMethod($trigger, 'setEmailFields');
+		if (PHP_VERSION_ID < 80100) {
+			$copy->setAccessible(true);
+		}
+		$event = $this->createStub(ActionComm::class);
+		$fields = array('email_msgid' => 'message@example.org', 'email_subject' => 'Purchase order',
+			'email_from' => 'buyer@example.org', 'email_reply_to' => 'reply@example.org',
+			'email_to' => 'supplier@example.org', 'email_tocc' => 'copy@example.org',
+			'email_tobcc' => 'archive@example.org', 'errors_to' => 'errors@example.org');
+		$this->order->context = $fields;
+		$copy->invoke($trigger, $event, $this->order);
+		foreach ($fields as $field => $value) {
+			$this->assertSame($value, $event->$field);
+			$this->assertFalse(property_exists($this->order, $field));
+		}
+		$legacy = $this->createStub(ActionComm::class);
+		foreach ($fields as $field => $value) {
+			$legacy->$field = $value;
+		}
+		$copy->invoke($trigger, $event, $legacy);
+		foreach ($fields as $field => $value) {
+			$this->assertSame($value, $event->$field);
+		}
+		$legacy->context = array('email_subject' => 'New subject', 'email_tobcc' => '');
+		$copy->invoke($trigger, $event, $legacy);
+		$this->assertSame('New subject', $event->email_subject);
+		$this->assertNull($event->email_tobcc);
+		$this->assertSame($fields['email_to'], $event->email_to);
+	}
+
+	/** @return void */
+	public function testEmailStatelessPreparationAndExplicitRepeat()
+	{
+		$args = $this->message();
+		$prepared = $this->service->prepare($this->order, $this->actor, $args);
+		$this->assertSame(0, SupplierOrderMailTransportFixture::$attempts);
+		$this->assertSame($args['body'], $prepared['preview']['body']);
+		$this->assertArrayNotHasKey('preparation_token', $prepared);
+		foreach (array(1, 2) as $attempt) {
+			$result = $this->service->send($this->order, $this->actor, $args, $prepared['expected_hash']);
+			$this->assertSame('sent', $result['status']);
+			$this->assertSame('unknown', $result['delivery_status']);
+			$this->assertSame($attempt, SupplierOrderMailTransportFixture::$attempts);
+		}
+	}
+
+	/** @return void */
+	public function testEmailChangesRequireReviewAgain()
+	{
+		global $conf;
+		$args = $this->message();
+		$args['attachments'] = array('PO-42.pdf');
+		foreach (array('order', 'recipient', 'attachment', 'sender', 'body', 'actor', 'entity') as $change) {
+			$prepared = $this->service->prepare($this->order, $this->actor, $args);
+			if ($change === 'order') {
+				$this->order->ref .= '-changed';
+			} elseif ($change === 'recipient') {
+				$this->service->forcedRecipient = 'other@example.org';
+			} elseif ($change === 'attachment') {
+				$this->service->content .= 'changed';
+			} elseif ($change === 'sender') {
+				$this->actor->email = 'other-buyer@example.org';
+			} elseif ($change === 'actor') {
+				$this->actor->id++;
+			} elseif ($change === 'entity') {
+				$conf->entity++;
+			} else {
+				$args['body'] .= ' changed';
+			}
+			$this->assertEmailRefused($args, $prepared['expected_hash'], 409);
+		}
+		$this->assertSame(0, SupplierOrderMailTransportFixture::$attempts);
+	}
+
+	/** @return void */
+	public function testEmailTransportFailuresAreNeverRetriedInternally()
+	{
+		$args = $this->message();
+		$prepared = $this->service->prepare($this->order, $this->actor, $args);
+		SupplierOrderMailTransportFixture::$succeed = false;
+		$this->assertEmailRefused($args, $prepared['expected_hash'], 502);
+		$this->assertSame(1, SupplierOrderMailTransportFixture::$attempts);
+		SupplierOrderMailTransportFixture::$throw = true;
+		$this->assertEmailRefused($args, $prepared['expected_hash'], 502);
+		$this->assertSame(2, SupplierOrderMailTransportFixture::$attempts);
+	}
+
+	/** @return void */
+	public function testEmailReplyAccessAndOwnershipAreRechecked()
+	{
+		$args = $this->message();
+		$args['reply_to_event_id'] = 12;
+		$this->service->reply = (object) array('elementid' => 42, 'elementtype' => 'order_supplier',
+			'code' => 'AC_ORDER_SUPPLIER_SENTBYMAIL', 'email_msgid' => 'previous@example.org');
+		$prepared = $this->service->prepare($this->order, $this->actor, $args);
+		$this->assertSame('<previous@example.org>', $prepared['preview']['in_reply_to']);
+		$this->service->reply->elementid = 43;
+		$this->assertEmailRefused($args, $prepared['expected_hash'], 400);
+		$this->service->reply->elementid = 42;
+		$this->service->reply->email_msgid = 'changed@example.org';
+		$this->assertEmailRefused($args, $prepared['expected_hash'], 409);
+		$this->service->denyReply = true;
+		$this->assertEmailRefused($args, $prepared['expected_hash'], 403);
+		$this->assertSame(0, SupplierOrderMailTransportFixture::$attempts);
+	}
+
+	/** @param array<string,mixed> $args Message
+	 * @param string $hash Fingerprint
+	 * @param int $code Expected status
+	 * @return void
+	 */
+	private function assertEmailRefused(array $args, $hash, $code)
+	{
+		try {
+			$this->service->send($this->order, $this->actor, $args, $hash);
+			$this->fail('Send should be refused');
+		} catch (\Luracast\Restler\RestException $e) {
+			$this->assertSame($code, $e->getCode());
+		}
+	}
+
+	/** @return void */
+	public function testEmailNativeLoggingRecordsActualMessageAndRollsBackFailures()
+	{
+		global $conf;
+		$conf->modules['agenda'] = 1;
+		$conf->global->MAIN_AGENDA_ACTIONAUTO_ORDER_SUPPLIER_SENTBYMAIL = 1;
+		$database = new SupplierOrderMailLogDatabaseFixture();
+		$service = new SupplierOrderMailSendFixture($database);
+		$mail = new SupplierOrderMailTransportFixture();
+		$mail->addr_from = 'sender@example.org';
+		$mail->addr_to = 'supplier@example.org';
+		$mail->addr_cc = 'cc@example.org';
+		$mail->addr_bcc = 'bcc@example.org';
+		foreach (array(1, -1) as $triggerResult) {
+			$order = $this->createMock(CommandeFournisseur::class);
+			$order->context = array('existing' => 'preserved');
+			$order->expects($this->once())->method('call_trigger')->with('ORDER_SUPPLIER_SENTBYMAIL', $this->actor)->willReturnCallback(function () use ($order, $triggerResult) {
+				$this->assertSame('Delivery of PO-42', $order->context['email_subject']);
+				$this->assertSame('supplier@example.org', $order->context['email_to']);
+				$this->assertSame('bcc@example.org', $order->context['email_tobcc']);
+				return $triggerResult;
+			});
+			$this->assertSame($triggerResult > 0, $service->logNative($order, $this->actor, $this->message(), $mail));
+			$this->assertSame(array('existing' => 'preserved'), $order->context);
+			$this->assertFalse(property_exists($order, 'email_subject'));
+			$this->assertStringContainsString('Please confirm delivery.', $order->actionmsg);
+		}
+		$this->assertSame(1, $database->commits);
+		$this->assertSame(1, $database->rollbacks);
+	}
+
+
+	/** @return void */
+	public function testEmailNativeMailPreviewIncludesGlobalAndSupplierCopiesAndOverrides()
+	{
+		global $conf;
+		$conf->global->MAIN_MAIL_SENDMODE = 'mail';
+		$conf->global->MAIN_MAIL_AUTOCOPY_TO = 'global@example.org';
+		$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO = 'supplier-archive@example.org';
+		$this->service->native = true;
+		$prepared = $this->service->prepare($this->order, $this->actor, $this->message());
+		$this->assertStringContainsString('global@example.org', $prepared['preview']['bcc']);
+		$this->assertStringContainsString('supplier-archive@example.org', $prepared['preview']['bcc']);
+		$conf->global->MAIN_MAIL_FORCE_SENDTO = 'sandbox@example.org';
+		$prepared = $this->service->prepare($this->order, $this->actor, $this->message());
+		$this->assertSame('sandbox@example.org', $prepared['preview']['to']);
+		$this->assertSame('', $prepared['preview']['bcc']);
+		$this->assertSame(0, SupplierOrderMailTransportFixture::$attempts);
+	}
+
+
+	/** @return void */
+	public function testEmailRestRechecksStatusAndRightsAndForbidsEditingTheSendBody()
+	{
+		$endpoint = new SupplierOrderEmailEndpointFixture();
+		$endpoint->service = $this->service;
+		$endpoint->order = $this->createMock(CommandeFournisseur::class);
+		$endpoint->order->id = 42;
+		$endpoint->order->ref = 'PO-42';
+		$endpoint->order->lines = array();
+		$endpoint->order->status = 2;
+		$endpoint->order->method('fetch')->with(42)->willReturn(1);
+		$prepared = $endpoint->prepareEmail(42, $this->message());
+		foreach (array('status', 'rights', 'access', 'external', 'body') as $denial) {
+			$endpoint->order->status = 2;
+			DolibarrApiAccess::$user = $this->actor;
+			$send = array('message' => $this->message(), 'expected_hash' => $prepared['expected_hash']);
+			if ($denial === 'status') {
+				$endpoint->order->status = 0;
+			} elseif ($denial === 'access') {
+				SupplierOrderEmailEndpointFixture::$allowed = false;
+			} elseif ($denial === 'body') {
+				$send['body'] = 'Unconfirmed change';
+			} else {
+				$actor = $this->createStub(User::class);
+				$actor->id = 7;
+				$actor->socid = $denial === 'external' ? 3 : 0;
+				$actor->method('hasRight')->willReturn($denial === 'external');
+				DolibarrApiAccess::$user = $actor;
+			}
+			try {
+				$endpoint->sendEmail(42, $send);
+				$this->fail('Send should be refused');
+			} catch (\Luracast\Restler\RestException $e) {
+				$this->assertContains($e->getCode(), array(400, 403, 409));
+			}
+			SupplierOrderEmailEndpointFixture::$allowed = true;
+		}
+		$this->assertSame(0, SupplierOrderMailTransportFixture::$attempts);
+	}
+
+
 	/** @var ApiSupplierOrderHeaderBridgeFixture Bridge fixture */
 	private $bridge;
 	/** @var mixed Previous translator */
@@ -38,6 +431,10 @@ class ApiSupplierOrderHeaderUpdateTest extends CommonClassTest
 	protected function setUp(): void
 	{
 		parent::setUp();
+		if (strpos(method_exists($this, 'name') ? $this->name() : $this->getName(), 'testEmail') === 0) {
+			$this->setUpEmail();
+			return;
+		}
 
 		global $langs, $user;
 		$this->previousLangs = $langs;
@@ -51,6 +448,14 @@ class ApiSupplierOrderHeaderUpdateTest extends CommonClassTest
 	/** @return void */
 	protected function tearDown(): void
 	{
+		if (strpos(method_exists($this, 'name') ? $this->name() : $this->getName(), 'testEmail') === 0) {
+			global $dolibarr_main_url_root;
+			$dolibarr_main_url_root = $this->previousRootUrl;
+			DolibarrApiAccess::$user = $this->previousApiUser;
+			parent::tearDown();
+			return;
+		}
+
 		global $langs, $user;
 		$langs = $this->previousLangs;
 		$user = $this->previousUser;
@@ -391,5 +796,202 @@ class ApiSupplierOrderHeaderEndpointFixture
 		}
 		self::$received = ['id' => $id, 'body' => $request_data];
 		return ['id' => $id];
+	}
+}
+
+/** Transport seam: no test can deliver real mail or create temporary files. */
+class SupplierOrderMailSendFixture extends SupplierOrderMail
+{
+	public $forcedRecipient = '';
+	public $records = 0;
+	public $recordSuccess = true;
+	public $native = false;
+	public $reply;
+	public $denyReply = false;
+	public $content = '%PDF-1.4 original';
+	public $form;
+	public $realFiles = false;
+	public $lastMail;
+
+	/** @return FormMail Native form fixture */
+	protected function mailForm()
+	{
+		return $this->form ?: parent::mailForm();
+	}
+
+	/** @param CommandeFournisseur $order Order
+	 * @return string Existing fixtures directory
+	 */
+	protected function attachmentDirectory($order)
+	{
+		return __DIR__.'/../fixtures';
+	}
+
+	/** @param int $eventId Event ID
+	 * @return object Accessible event
+	 */
+	protected function replyEvent($eventId)
+	{
+		if ($this->denyReply) {
+			throw new \Luracast\Restler\RestException(403, 'Agenda permission revoked');
+		}
+		return $this->reply;
+	}
+
+	/** @param CommandeFournisseur $order Order
+	 * @param mixed[] $names Names
+	 * @return array<array{name:string,content:string,path:string}> In-memory documents
+	 */
+	protected function readAttachments($order, array $names)
+	{
+		if ($this->realFiles) {
+			return parent::readAttachments($order, $names);
+		}
+		return $names ? array(array('name' => $names[0], 'content' => $this->content, 'path' => '/unused.pdf')) : array();
+	}
+
+	/** @param CMailFile $mail Test transport
+	 * @param User $actor User
+	 * @return bool Acceptance
+	 */
+	protected function transmit($mail, $actor)
+	{
+		if (!($mail instanceof SupplierOrderMailTransportFixture)) {
+			throw new RuntimeException('A real transport is forbidden in this test');
+		}
+		return parent::transmit($mail, $actor);
+	}
+
+	/** @param CommandeFournisseur $order Order
+	 * @param User $actor User
+	 * @param array<string,mixed> $message Content
+	 * @param CMailFile $mail Transport
+	 * @return bool Native log result
+	 */
+	public function logNative($order, $actor, array $message, $mail)
+	{
+		return parent::recordSent($order, $actor, $message, $mail);
+	}
+
+	/** @param CommandeFournisseur $order Order
+	 * @param User $actor User
+	 * @param array<string,mixed> $message Content
+	 * @param string[] $paths Paths
+	 * @param string[] $names Names
+	 * @return CMailFile Test transport
+	 */
+	protected function buildMail($order, $actor, array $message, array $paths, array $names)
+	{
+		if ($this->native) {
+			$this->lastMail = parent::buildMail($order, $actor, $message, $paths, $names);
+			return $this->lastMail;
+		}
+		$mail = new SupplierOrderMailTransportFixture();
+		$mail->addr_from = $message['from'];
+		$mail->reply_to = $message['from'];
+		$mail->addr_to = $this->forcedRecipient ?: $message['to'];
+		$mail->addr_cc = $message['cc'];
+		$mail->addr_bcc = $message['bcc'];
+		return $mail;
+	}
+
+	/** @param CommandeFournisseur $order Order
+	 * @param User $actor User
+	 * @param array<string,mixed> $message Content
+	 * @param CMailFile $mail Transport
+	 * @return bool Recording result
+	 */
+	protected function recordSent($order, $actor, array $message, $mail)
+	{
+		$this->records++;
+		return $this->recordSuccess;
+	}
+}
+
+/** Never calls a real transport. */
+class SupplierOrderMailTransportFixture extends CMailFile
+{
+	public static $attempts = 0;
+	public static $succeed = true;
+	public static $throw = false;
+
+	/** Constructor without native mail initialization. */
+	public function __construct()
+	{
+		$this->msgid = 'fixture@example.org';
+	}
+
+	/** @return bool Simulated transport result */
+	public function sendfile()
+	{
+		self::$attempts++;
+		if (self::$throw) {
+			throw new RuntimeException('Simulated interruption');
+		}
+		return self::$succeed;
+	}
+}
+
+/** Execute the real REST checks with a resource decision fixture. */
+class SupplierOrderEmailEndpointFixture extends SupplierOrders
+{
+	public $service;
+	public static $allowed = true;
+
+	/** No database constructor. */
+	public function __construct()
+	{
+	}
+
+	/**
+	 * @return SupplierOrderMailSendFixture Test service
+	 */
+	protected function emailService()
+	{
+		return $this->service;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * @param string $resource Resource
+	 * @param mixed $resource_id Record ID
+	 * @param string $dbtablename Table
+	 * @param string $feature2 Subfeature
+	 * @param string $dbt_keyfield Third party column
+	 * @param string $dbt_select Primary key
+	 * @param string $parenttableforentity Parent table
+	 * @return bool Access decision
+	 */
+	protected static function _checkAccessToResource($resource, $resource_id = 0, $dbtablename = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid', $parenttableforentity = '')
+	{
+		return self::$allowed;
+	}
+	// phpcs:enable
+}
+
+/** Transaction recorder; never connects to a database. */
+class SupplierOrderMailLogDatabaseFixture
+{
+	public $commits = 0;
+	public $rollbacks = 0;
+
+	/** @return int Success */
+	public function begin()
+	{
+		return 1;
+	}
+
+	/** @return int Success */
+	public function commit()
+	{
+		$this->commits++;
+		return 1;
+	}
+
+	/** @return int Success */
+	public function rollback()
+	{
+		$this->rollbacks++;
+		return 1;
 	}
 }
