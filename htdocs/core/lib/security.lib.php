@@ -938,6 +938,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 	$params = explode('&', $tableandshare);
 	$dbtablename = (!empty($params[0]) ? $params[0] : '');
 	$sharedelement = (!empty($params[1]) ? $params[1] : $dbtablename);
+	$tablegivenbycaller = !empty($params[0]);	// The table of the object given by the caller must not be replaced by the default table of the feature
 
 	foreach ($featuresarray as $feature) {
 		$sql = '';
@@ -955,7 +956,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if ($feature == 'category') {
 			$feature = 'categorie';
 		}
-		if ($feature == 'produit') {
+		if (!$tablegivenbycaller && $feature == 'produit') {
 			// The module (and its permissions) is named 'produit', but the table of the product object is 'llx_product'
 			$dbtablename = 'product';
 		}
