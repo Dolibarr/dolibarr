@@ -758,4 +758,17 @@ moduleNameMismatch=Warning, the module file contains a directory in root called 
 rootDirWarning=Warning, a module file can contain only 1 root directory with the same name as the module (into the root of zip or into the htdocs directory). We found %s files/directories into the root of module. If this module is a meta-package (a module embedding several other modules), you must include a file metapackage.conf with list of all embedded module names in directory "%s"
 NoDataRelatedTo=No data found related to this object
 
+AIWriteInvalidLineArgument=Invalid value for line update argument: %s.
+AISupplierWorkflowArgument=Invalid or ambiguous supplier order argument: %s.
+AIMakeSupplierOrderStatus=Only an approved %s can be recorded as placed: %s.
+AIReceiveSupplierOrderStatus=Only a sent or partially received %s can receive products: %s.
+AISupplierReceiptLine=Select a product line belonging to this supplier order.
+AISupplierReceiptProduct=This receipt tool supports stockable products without batch or serial tracking. Use the reception interface for other products.
+AISupplierReceiptRemaining=The quantity exceeds the amount remaining on this line: %s.
+AISupplierReceiptReadFailed=Could not check the quantity already received. No receipt was created.
+AIPreviewMakeSupplierOrder=Record %s as placed on %s using %s? Comment: %s. This does not send an email.
+AIPreviewReceiveSupplierOrder=Receive on %s: %s, quantity %s into warehouse %s, unit stock cost %s.
+AIPreviewSupplierReceiptOptions=Close if fully received: %s. Comment: %s. Update stock on dispatch: %s. Confirm this receipt?
+AISupplierReceiptStockRequired=Enable the stock module before receiving supplier order products.
+AISupplierReceiptTransactionFailed=The supplier receipt transaction could not be completed.
 AIWriteInvalidLineDeletionArgument=Invalid argument for deleting a line: %s. Give the order and exactly one line identifier, position or product reference.

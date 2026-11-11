@@ -2037,8 +2037,9 @@ function dol_meta_create($object)
 				$nblines = 0;
 			}
 			$client = $object->thirdparty->name." ".$object->thirdparty->address." ".$object->thirdparty->zip." ".$object->thirdparty->town;
+			$objectdate = (property_exists($object, 'date') ? $object->date : '');	// @phan-suppress-current-line PhanUndeclaredProperty
 			$meta = "REFERENCE=\"".$object->ref."\"
-			DATE=\"" . dol_print_date(property_exists($object, 'date') ? $object->date : '', '')."\"  // @phan-suppress-current-line PhanUndeclaredProperty
+			DATE=\"" . dol_print_date($objectdate, '')."\"
 			NB_ITEMS=\"" . $nblines."\"
 			CLIENT=\"" . $client."\"
 			AMOUNT_EXCL_TAX=\"" . $object->total_ht."\"

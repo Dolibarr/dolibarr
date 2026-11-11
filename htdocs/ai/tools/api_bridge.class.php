@@ -2523,6 +2523,29 @@ class ToolApiBridge extends McpTool
 			$this->enrichments[$key]['methods']['delete'] = $this->deleteMethod($d[0], $d[1], $d[2]);
 		}
 
+		foreach (array('makeOrder' => 'make_order', 'receiveOrder' => 'receive_order') as $method => $suffix) {
+			$receive = $method === 'receiveOrder';
+			$this->enrichments['supplier_orders']['methods'][$method] = array(
+				'suffix' => $suffix, 'module' => $receive ? 'stock' : 'supplier_order',
+				'description' => $receive ? 'Receive ONE supplier order line into a warehouse. The user confirms the quantity, warehouse and whether to close when fully received. Batch/serial tracked products and returns are not supported.' : 'Record an approved supplier order as placed with the supplier, with its date and ordering method. This records the action; it does not send an email. The user confirms first.',
+				'write' => array(
+					'kind' => 'action', 'supplier_workflow' => $method, 'object' => 'CommandeFournisseur',
+					'label' => 'supplier order', 'target' => 'id', 'lookup' => 'ref',
+					'right' => array('fournisseur', 'commande', 'creer'), 'read_right' => array('fournisseur', 'commande', 'lire'),
+					'additional_rights' => array($receive && isModEnabled('reception') ? array('reception', 'creer') : array('fournisseur', 'commande', $receive ? 'receptionner' : 'commander')),
+					'access' => array('fournisseur', 'commande_fournisseur', 'commande'),
+					'states' => $receive ? array(3, 4) : array(2),
+					'state_error' => $receive ? 'AIReceiveSupplierOrderStatus' : 'AIMakeSupplierOrderStatus',
+					'preview' => $receive ? 'AIPreviewReceiveSupplierOrder' : 'AIPreviewMakeSupplierOrder',
+					'required' => $receive ? array('id', 'lineid', 'qty', 'warehouse', 'closeopenorder') : array('id', 'date', 'method')
+				),
+				'params' => array('id' => 'Supplier order ID or exact reference.', 'comment' => 'Optional comment recorded with the action.') + ($receive ? array(
+					'lineid' => 'ID of one line belonging to this order.', 'qty' => 'Positive quantity received, no more than the remaining quantity.',
+					'warehouse' => 'Open warehouse ID, reference or name.', 'closeopenorder' => '0 to keep open, 1 to close only if everything has been received.'
+				) : array('date' => 'Date placed: Unix timestamp or YYYY-MM-DD in your time zone.', 'method' => 'Active ordering method ID, code or label, for example OrderByEMail.'))
+			);
+		}
+
 		// Lines of a draft: changed or removed, never on a validated document.
 		$lines = array(
 			'proposals' => array('commercial proposal', 'Propal', array('propal', 'creer'), 'product'),
@@ -2536,6 +2559,10 @@ class ToolApiBridge extends McpTool
 			$this->enrichments[$key]['methods']['putLine'] = $this->lineMethod('update', $l[0], $l[1], $l[2], $l[3]);
 			$this->enrichments[$key]['methods']['deleteLine'] = $this->lineMethod('delete', $l[0], $l[1], $l[2], $l[3]);
 		}
+		$supplierOrderLine = $this->lineMethod('update', 'supplier order', 'CommandeFournisseur', array('fournisseur', 'commande', 'creer'), 'supplier_order');
+		$supplierOrderLine['write']['read_right'] = array('fournisseur', 'commande', 'lire');
+		$supplierOrderLine['write']['access'] = array('fournisseur', 'commande_fournisseur', 'commande');
+		$this->enrichments['supplier_orders']['methods']['putLine'] = $supplierOrderLine;
 		$supplierOrderDeleteLine = $this->lineMethod('delete', 'supplier order', 'CommandeFournisseur', array('fournisseur', 'commande', 'creer'), 'product');
 		$supplierOrderDeleteLine['write']['read_right'] = array('fournisseur', 'commande', 'lire');
 		$supplierOrderDeleteLine['write']['access'] = array('fournisseur', 'commande_fournisseur', 'commande');
@@ -2853,7 +2880,7 @@ class ToolApiBridge extends McpTool
 	 * @param  string   $label   Document name, as the model reads it.
 	 * @param  string   $class   Business class of the document.
 	 * @param  string[] $right   Right needed to write.
-	 * @param  string   $profile Line shape: 'product', 'supplier', 'contract' or 'intervention'.
+	 * @param  string   $profile Line shape: 'product', 'supplier', 'supplier_order', 'contract' or 'intervention'.
 	 * @return array{suffix:string,description:string,write:array<string,mixed>,params:array<string,string>} Method enrichment.
 	 */
 	private function lineMethod($action, $label, $class, array $right, $profile)
@@ -3952,7 +3979,7 @@ class ToolApiBridge extends McpTool
 		$meta = $this->methodMetaFor($toolName);
 		$write = isset($meta['write']) ? $meta['write'] : array();
 		if (!empty($write['right'])) {
-			return empty($write['read_right']) ? array($write['right']) : array($write['right'], $write['read_right']);
+			return array_merge(empty($write['read_right']) ? array($write['right']) : array($write['right'], $write['read_right']), $write['additional_rights'] ?? array());
 		}
 
 		// A read method may declare the rights it needs on top of the
@@ -4322,6 +4349,24 @@ class ToolApiBridge extends McpTool
 	private function normaliseWriteArgs(array $args, array $write = array())
 	{
 		$this->unresolvedProducts = array();
+		if (!empty($write['supplier_workflow'])) {
+			return $this->normaliseSupplierOrderWorkflow($args, $write);
+		}
+		if (($write['line_profile'] ?? '') === 'supplier_order') {
+			global $langs;
+			$langs->load('other');
+			if (!$this->user || !$this->user->hasRight('fournisseur', 'commande', 'lire') || !$this->user->hasRight('fournisseur', 'commande', 'creer')) {
+				throw new InvalidArgumentException($langs->transnoentitiesnoconv('NotEnoughPermissions'));
+			}
+			if (array_key_exists('request_data', $args)) {
+				$body = is_string($args['request_data']) ? json_decode($args['request_data'], true) : $args['request_data'];
+				if (!is_array($body)) {
+					throw new InvalidArgumentException($langs->transnoentitiesnoconv('AIWriteInvalidLineArgument', 'request_data'));
+				}
+				unset($args['request_data']);
+				$args = array_merge($body, $args);
+			}
+		}
 		if (($write['object'] ?? '') === 'CommandeFournisseur' && ($write['line_action'] ?? '') === 'delete') {
 			return $this->normaliseSupplierOrderLineDeletion($args, $write);
 		}
@@ -5832,6 +5877,165 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Prepare one supplier workflow action, including all pre-confirmation checks.
+	 *
+	 * @param array<string,mixed> $args User arguments.
+	 * @param array<string,mixed> $write Method metadata.
+	 * @return array<string,mixed> Arguments rebuilt for REST.
+	 */
+	private function normaliseSupplierOrderWorkflow(array $args, array $write)
+	{
+		global $langs;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+		$langs->loadLangs(array('main', 'other', 'orders'));
+		$this->resetWriteState();
+		$receive = $write['supplier_workflow'] === 'receiveOrder';
+		if ($receive && !isModEnabled('stock')) {
+			throw new InvalidArgumentException($langs->transnoentitiesnoconv('AISupplierReceiptStockRequired'));
+		}
+		$rights = array_merge(array($write['right'], $write['read_right']), $write['additional_rights']);
+		foreach ($rights as $right) {
+			if (!$this->user || !$this->user->hasRight($right[0], $right[1], $right[2] ?? '')) {
+				throw new InvalidArgumentException($langs->transnoentitiesnoconv('NotEnoughPermissions'));
+			}
+		}
+		$allowed = $receive ? array('id', 'lineid', 'qty', 'warehouse', 'closeopenorder', 'comment', 'requestState') : array('id', 'date', 'method', 'comment', 'requestState');
+		foreach ($args as $argumentName => $value) {
+			if (!in_array($argumentName, $allowed, true) || (!is_string($value) && !is_int($value) && !is_float($value))) {
+				throw new InvalidArgumentException($langs->transnoentitiesnoconv('AISupplierWorkflowArgument', $argumentName));
+			}
+		}
+		foreach ($write['required'] as $field) {
+			if (!isset($args[$field]) || trim((string) $args[$field]) === '') {
+				throw new InvalidArgumentException($langs->transnoentitiesnoconv('AIWriteMissingField', $field));
+			}
+		}
+		$id = $args['id'];
+		if ((!is_string($id) && !is_int($id)) || (is_numeric($id) && (!ctype_digit((string) $id) || (int) $id <= 0)) || (isset($args['comment']) && !is_string($args['comment']))) {
+			throw new InvalidArgumentException($langs->transnoentitiesnoconv('AISupplierWorkflowArgument', 'id / comment'));
+		}
+		$this->writeTarget = $this->resolveWriteTarget($write, $id);
+		$out = array('id' => $this->writeTarget ? (int) $this->writeTarget->id : $id, 'comment' => $args['comment'] ?? '');
+		$error = $this->precheckTargetWrite($write, $out);
+		if ($error !== '') {
+			throw new InvalidArgumentException($error);
+		}
+		if (!$receive) {
+			$date = $args['date'];
+			$out['date'] = ctype_digit((string) $date) ? (int) $date : $this->writeDate('date', $date, 0);
+			if (empty($out['date']) || $out['date'] <= 0) {
+				throw new InvalidArgumentException($langs->transnoentitiesnoconv('AISupplierWorkflowArgument', 'date'));
+			}
+			$matches = array();
+			foreach ($this->supplierOrderInputMethods() as $method) {
+				if ((string) $args['method'] === (string) $method['id'] || dol_strtolower((string) $args['method']) === dol_strtolower($method['code']) || dol_strtolower((string) $args['method']) === dol_strtolower($method['label'])) {
+					$matches[] = $method;
+				}
+			}
+			if (count($matches) !== 1) {
+				throw new InvalidArgumentException($langs->transnoentitiesnoconv('AISupplierWorkflowArgument', 'method'));
+			}
+			$out['method'] = $matches[0]['id'];
+			$out['_method_label'] = $matches[0]['label'];
+
+			return $out;
+		}
+		if (!ctype_digit((string) $args['lineid']) || (int) $args['lineid'] <= 0 || !is_numeric($args['qty']) || !is_finite((float) $args['qty']) || (float) $args['qty'] <= 0 || !in_array($args['closeopenorder'], array(0, 1, '0', '1'), true)) {
+			throw new InvalidArgumentException($langs->transnoentitiesnoconv('AISupplierWorkflowArgument', 'lineid / qty / closeopenorder'));
+		}
+		$line = null;
+		foreach ($this->writeTarget->lines as $candidate) {
+			if ((int) $candidate->id === (int) $args['lineid']) {
+				$line = $candidate;
+				break;
+			}
+		}
+		if (!$line || empty($line->fk_product)) {
+			throw new InvalidArgumentException($langs->transnoentitiesnoconv('AISupplierReceiptLine'));
+		}
+		$product = $this->fetchBusinessObject('Product', (int) $line->fk_product);
+		if (!$product || !$this->canAccessWriteObject(array('product', '', ''), (int) $product->id) || !empty($product->status_batch) || ((int) $product->type !== 0 && (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') || empty($product->stockable_product)))) {
+			throw new InvalidArgumentException($langs->transnoentitiesnoconv('AISupplierReceiptProduct'));
+		}
+		$remaining = (float) $line->qty - $this->supplierOrderReceivedQuantity((int) $out['id'], (int) $line->id);
+		if ((float) $args['qty'] > $remaining) {
+			throw new InvalidArgumentException($langs->transnoentitiesnoconv('AISupplierReceiptRemaining', (string) $remaining));
+		}
+		$warehouse = $this->supplierOrderWarehouse($args['warehouse']);
+		if (!$warehouse || (int) $warehouse->status !== 1 || !$this->canAccessWriteObject(array('stock', 'entrepot', ''), (int) $warehouse->id)) {
+			throw new InvalidArgumentException($langs->transnoentitiesnoconv('AISupplierWorkflowArgument', 'warehouse'));
+		}
+		$cost = (float) $line->subprice;
+		if (!getDolGlobalString('STOCK_EXCLUDE_DISCOUNT_FOR_PMP')) {
+			$cost = (float) price2num($cost * (100 - (float) $line->remise_percent) / 100, 'MU');
+		}
+		$out['lines'] = array(array('id' => (int) $line->id, 'fk_product' => (int) $line->fk_product, 'qty' => (float) $args['qty'], 'warehouse' => (int) $warehouse->id, 'price' => $cost, 'comment' => $out['comment'], 'eatby' => 0, 'sellby' => 0, 'batch' => '', 'notrigger' => 0));
+		$out['closeopenorder'] = (int) $args['closeopenorder'];
+		$out['_line_label'] = $this->lineName($line);
+		$out['_warehouse_label'] = $warehouse->ref;
+
+		return $out;
+	}
+
+	/**
+	 * Active ordering methods, matching the supplier order card dictionary.
+	 *
+	 * @return array<int,array{id:int,code:string,label:string}>
+	 */
+	protected function supplierOrderInputMethods()
+	{
+		global $langs;
+
+		$langs->load('orders');
+
+		$result = $this->db->query('SELECT rowid, code, libelle FROM '.$this->db->prefix().'c_input_method WHERE active = 1');
+		$methods = array();
+		while ($result && ($row = $this->db->fetch_object($result))) {
+			$label = $langs->transnoentitiesnoconv($row->code);
+			$methods[] = array('id' => (int) $row->rowid, 'code' => (string) $row->code, 'label' => $label === $row->code ? (string) $row->libelle : $label);
+		}
+
+		return $methods;
+	}
+
+	/**
+	 * Count pending and accepted receipts of this particular order line.
+	 *
+	 * @param int $orderid Order ID, already checked for access.
+	 * @param int $lineid Line belonging to that order.
+	 * @return float
+	 */
+	protected function supplierOrderReceivedQuantity($orderid, $lineid)
+	{
+		global $langs;
+
+		$result = $this->db->query('SELECT SUM(qty) AS qty FROM '.$this->db->prefix().'receptiondet_batch WHERE fk_element = '.((int) $orderid).' AND fk_elementdet = '.((int) $lineid).' AND status IN (0, 1)');
+		$row = $result ? $this->db->fetch_object($result) : null;
+		if (!$row) {
+			throw new InvalidArgumentException($langs->transnoentitiesnoconv('AISupplierReceiptReadFailed'));
+		}
+
+		return (float) $row->qty;
+	}
+
+	/**
+	 * Resolve an open warehouse by ID, reference or label in the current entities.
+	 *
+	 * @param mixed $value Warehouse selector.
+	 * @return Entrepot|null
+	 */
+	protected function supplierOrderWarehouse($value)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+		$id = $this->resolveWarehouse($value);
+		$warehouse = new Entrepot($this->db);
+
+		return $id > 0 && $warehouse->fetch($id) > 0 ? $warehouse : null;
+	}
+
+	/**
 	 * Arguments of a write on an existing record (update, validation, deletion,
 	 * payment): the record found from what the user said, and only what the
 	 * REST method may receive.
@@ -5847,7 +6051,13 @@ class ToolApiBridge extends McpTool
 		$kind = (string) $write['kind'];
 		$field = (string) ($write['target'] ?? 'id');
 		$given = $args[$field] ?? ($args['ref'] ?? '');
+		if (($write['line_profile'] ?? '') === 'supplier_order' && ((!is_int($given) && !is_string($given)) || (is_numeric($given) && (!ctype_digit((string) $given) || (int) $given <= 0)))) {
+			throw new InvalidArgumentException($langs->transnoentitiesnoconv('AIWriteInvalidLineArgument', 'id'));
+		}
 		$this->writeTarget = $this->resolveWriteTarget($write, $given);
+		if (($write['line_profile'] ?? '') === 'supplier_order' && (!$this->writeTarget || !$this->canAccessWriteObject($write['access'], (int) $this->writeTarget->id))) {
+			throw new InvalidArgumentException($langs->transnoentitiesnoconv('AIWriteRecordNotFound', 'supplier order', (string) $given));
+		}
 		$out = array($field => ($this->writeTarget ? (int) $this->writeTarget->id : $given));
 
 		// Arguments read from the target record (the website of a page): a different value given is refused.
@@ -5923,7 +6133,14 @@ class ToolApiBridge extends McpTool
 		}
 
 		if ($kind === 'line') {
-			return $this->normaliseLineArgs($args, $write, $out);
+			$out = $this->normaliseLineArgs($args, $write, $out);
+			if (($write['line_profile'] ?? '') === 'supplier_order') {
+				$error = $this->precheckTargetWrite($write, $out);
+				if ($error !== '') {
+					throw new InvalidArgumentException($error);
+				}
+			}
+			return $out;
 		}
 
 		return $out;	// delete: the record alone
@@ -6004,6 +6221,16 @@ class ToolApiBridge extends McpTool
 				continue;
 			}
 			$name = (isset($aliases[$name]) && !isset($args[$aliases[$name]])) ? $aliases[$name] : $name;
+			if ($profile === 'supplier_order') {
+				$numeric = in_array($name, array('qty', 'subprice', 'remise_percent', 'tva_tx'), true);
+				if (($numeric && (!is_numeric($value) || !is_finite((float) $value)))
+					|| ($name === 'desc' && !is_string($value))
+					|| (in_array($name, array('line', 'lineid', 'unit'), true) && (!is_string($value) && !is_int($value)))
+					|| ($name === 'lineid' && (!ctype_digit((string) $value) || (int) $value <= 0))
+					|| ($name === 'line' && is_numeric($value) && (!ctype_digit((string) $value) || (int) $value <= 0))) {
+					throw new InvalidArgumentException($langs->transnoentitiesnoconv('AIWriteInvalidLineArgument', $name));
+				}
+			}
 			if (in_array($name, array('line', 'lineid'), true) && $action !== 'add') {
 				continue;
 			}
@@ -6095,6 +6322,19 @@ class ToolApiBridge extends McpTool
 				$body += array('date' => dol_now(), 'duration' => 0);
 			} else {
 				$out['lineid'] = $line ? (int) $line->id : 0;
+			}
+			$out['_body'] = $body;
+			return $out;
+		}
+
+		// Supplier orders already implement partial updates in REST. Sending old
+		// prices or tax fields would override its TTC, currency and VAT preservation.
+		if ($profile === 'supplier_order') {
+			$out['lineid'] = $line ? (int) $line->id : 0;
+			$body = $changes;
+			if (array_key_exists('unit', $body)) {
+				$body['fk_unit'] = $body['unit'];
+				unset($body['unit']);
 			}
 			$out['_body'] = $body;
 			return $out;
@@ -6675,6 +6915,14 @@ class ToolApiBridge extends McpTool
 		$what = $obj ? $this->describeRecord($obj) : (string) ($args[$write['target'] ?? 'id'] ?? '');
 		$kind = (string) $write['kind'];
 
+		if (!empty($write['supplier_workflow'])) {
+			if ($write['supplier_workflow'] === 'makeOrder') {
+				return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $what, dol_print_date($args['date'], 'dayhour', 'tzuser'), $args['_method_label'], $args['comment']));
+			}
+			$line = $args['lines'][0];
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $what, $args['_line_label'], $line['qty'], $args['_warehouse_label'], price($line['price'])).' '.$langs->transnoentitiesnoconv('AIPreviewSupplierReceiptOptions', $langs->transnoentitiesnoconv($args['closeopenorder'] ? 'Yes' : 'No'), $args['comment'], $langs->transnoentitiesnoconv(isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER') ? 'Yes' : 'No')));
+		}
+
 		if ($kind === 'update') {
 			$changes = array();
 			// Partial changes of a content: show each fragment replaced and its replacement
@@ -7227,6 +7475,8 @@ class ToolApiBridge extends McpTool
 	 */
 	public function execute(string $name, array $args)
 	{
+		global $langs;
+
 		// A generic tool runs the original tool of the object it names.
 		$target = $this->mergedToolTarget($name, $args);
 		if ($target !== null) {
@@ -7422,7 +7672,11 @@ class ToolApiBridge extends McpTool
 			// Core can print an error page while refusing access (reproducible on
 			// the REST route): keep it out of the JSON answer, in the log instead.
 			ob_start();
+			$receiveTransaction = ($writemeta['supplier_workflow'] ?? '') === 'receiveOrder';
 			try {
+				if ($receiveTransaction && !$this->db->begin()) {
+					throw new RuntimeException($langs->transnoentitiesnoconv('AISupplierReceiptTransactionFailed'));
+				}
 				$result = call_user_func_array([$api, $method], $callArgs);
 				// Serialize API return (cleaned objects) into plain arrays for the MCP client.
 				$output = json_decode(json_encode($result), true);
@@ -7479,7 +7733,15 @@ class ToolApiBridge extends McpTool
 				if ($epkey === 'documents' && $method === 'getDocumentsListByDirectory') {
 					$output = $this->projectDirectoryList($output, (string) ($args['modulepart'] ?? ''));
 				}
+				if ($receiveTransaction) {
+					if (!$this->db->commit()) {
+						throw new RuntimeException($langs->transnoentitiesnoconv('AISupplierReceiptTransactionFailed'));
+					}
+				}
 			} catch (Throwable $e) {
+				if ($receiveTransaction) {
+					$this->db->rollback();
+				}
 				$code = (int) $e->getCode();
 				$message = $e->getMessage();
 				$detail = '';

@@ -46,15 +46,42 @@ require '../../../main.inc.php';
  * @var User $user
  */
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 
 $langs->loadLangs(array('errors', 'resource'));
 
 $id = GETPOSTINT('id');
 $newdatetime = GETPOST('newdatetime', 'alpha');
+// Optional. Set by a resize of the box by its bottom edge: the start does not move and the end is
+// given, instead of following the start by the same delta as it does for a move.
+$newenddatetime = GETPOST('newenddatetime', 'alpha');
 
 top_httphead('application/json');
 
 $response = array('error' => 0, 'message' => '');
+
+/**
+ * Return the hours the calendar views print in front of the label of an event of the hourly grids,
+ * for the given start and end. Those grids only hold events that begin and end on the same day, so
+ * the day to render is the day of the start.
+ *
+ * @param	ActionComm	$event	The event, used for its type only
+ * @param	int			$datep	Start of the event
+ * @param	int|string	$datef	End of the event, empty when it has none
+ * @return	string				The hours as the box shows them
+ */
+function agenda_event_hour_range_of_day($event, $datep, $datef)
+{
+	$event->date_start_in_calendar = $datep;
+	$event->date_end_in_calendar = $datef;
+
+	return agenda_event_hour_range(
+		$event,
+		dol_print_date($datep, '%Y', 'tzuserrel'),
+		dol_print_date($datep, '%m', 'tzuserrel'),
+		dol_print_date($datep, '%d', 'tzuserrel')
+	);
+}
 
 $object = new ActionComm($db);
 $result = $object->fetch($id);
@@ -62,12 +89,13 @@ $result = $object->fetch($id);
 if ($result <= 0) {
 	$response['error'] = 1;
 	$response['message'] = $langs->trans('ErrorRecordNotFound');
-} elseif (!is_string($newdatetime) || !preg_match('/^[0-9]{14}$/', $newdatetime)) {
+} elseif (!is_string($newdatetime) || !preg_match('/^[0-9]{14}$/', $newdatetime)
+	|| ($newenddatetime !== '' && (!is_string($newenddatetime) || !preg_match('/^[0-9]{14}$/', $newenddatetime)))) {
 	$response['error'] = 1;
 	$response['message'] = $langs->trans('ErrorBadParameters');
 } else {
 	$hookmanager->initHooks(array('actioncard'));
-	$parameters = array('id' => $id, 'newdatetime' => $newdatetime);
+	$parameters = array('id' => $id, 'newdatetime' => $newdatetime, 'newenddatetime' => $newenddatetime);
 	$actionmove = 'mupdatetime';
 	$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $actionmove);
 
@@ -97,15 +125,34 @@ if ($result <= 0) {
 				'tzuserrel'
 			);
 
-			if (empty($newdatep)) {
-				$response['error'] = 1;
-				$response['message'] = $langs->trans('ErrorBadParameters');
-			} elseif ($newdatep != $object->datep) {
-				$newdatef = $object->datef;
-				if (!empty($newdatef)) {
+			$newdatef = $object->datef;
+			if (!empty($newdatep)) {
+				if ($newenddatetime !== '') {
+					// Resize: the end is absolute, the start does not move. An event that had no end
+					// gets one here, which is what gives the box its height from now on.
+					$newdatef = dol_mktime(
+						(int) substr($newenddatetime, 8, 2),
+						(int) substr($newenddatetime, 10, 2),
+						(int) substr($newenddatetime, 12, 2),
+						(int) substr($newenddatetime, 4, 2),
+						(int) substr($newenddatetime, 6, 2),
+						(int) substr($newenddatetime, 0, 4),
+						'tzuserrel'
+					);
+				} elseif (!empty($newdatef)) {
 					$newdatef += $newdatep - $object->datep;
 				}
+			}
 
+			// 15 minutes is the step the grid snaps a resize to, so a box can never ask for less.
+			// A request that does did not come from the grid.
+			if (empty($newdatep) || ($newenddatetime !== '' && empty($newdatef))) {
+				$response['error'] = 1;
+				$response['message'] = $langs->trans('ErrorBadParameters');
+			} elseif ($newenddatetime !== '' && $newdatef - $newdatep < 15 * 60) {
+				$response['error'] = 1;
+				$response['message'] = $langs->trans('ErrorBadParameters');
+			} elseif ($newdatep != $object->datep || $newdatef != $object->datef) {
 				$conflicts = $object->checkResourceConflicts($newdatep, $newdatef);
 
 				if ($conflicts === -1) {
@@ -115,6 +162,11 @@ if ($result <= 0) {
 					$response['error'] = 1;
 					$response['message'] = $object->formatResourceConflicts($conflicts, $langs);
 				} else {
+					// The box prints the hours in front of the label and only the server knows how they
+					// are formatted for this user, so hand back the ones it showed and the ones it must
+					// show now. The caller swaps the text of the box it already has on screen.
+					$response['oldhours'] = agenda_event_hour_range_of_day($object, $object->datep, $object->datef);
+
 					$object->datep = $newdatep;
 					$object->datef = $newdatef;
 
@@ -124,8 +176,10 @@ if ($result <= 0) {
 						$db->rollback();
 						$response['error'] = 1;
 						$response['message'] = $object->error;
+						unset($response['oldhours']);
 					} else {
 						$db->commit();
+						$response['newhours'] = agenda_event_hour_range_of_day($object, $newdatep, $newdatef);
 					}
 				}
 			}
