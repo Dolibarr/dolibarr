@@ -6655,7 +6655,7 @@ if ($action == 'create') {
 		print '</tr>';
 
 		// Payments already done (from payment on this invoice)
-		$sql = 'SELECT p.datep as dp, p.ref, p.num_paiement as num_payment, p.rowid, p.fk_bank,';
+		$sql = 'SELECT p.datep as dp, p.ref, p.num_paiement as num_payment, p.rowid, p.fk_bank, p.pos_change,';
 		$sql .= ' c.code as payment_code, c.libelle as payment_label,';
 		$sql .= ' pf.amount,';
 		$sql .= ' ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal, ba.currency_code as bacurrency_code';
@@ -6667,6 +6667,7 @@ if ($action == 'create') {
 		$sql .= ' AND p.entity IN ('.getEntity('invoice').')';
 		$sql .= ' ORDER BY p.datep, p.tms';
 
+		$totalposchange = 0;
 		$result = $db->query($sql);
 		if ($result) {
 			$num = $db->num_rows($result);
@@ -6735,6 +6736,8 @@ if ($action == 'create') {
 					print '<td class="right"><span class="amount">'.price($sign * $objp->amount).'</span></td>';
 
 					print '</tr>';
+
+					$totalposchange += (float) $objp->pos_change;
 					$i++;
 				}
 			}
@@ -6742,6 +6745,15 @@ if ($action == 'create') {
 			$db->free($result);
 		} else {
 			dol_print_error($db);
+		}
+
+		// Change given back to the customer: shown for all TakePOS sales
+		if ($object->module_source == 'takepos') {
+			$langs->load("cashdesk");
+			print '<tr>';
+			print '<td colspan="'.($nbcols + 1).'" class="right"><span class="opacitymedium">'.$langs->trans("Change").'</span></td>';
+			print '<td class="right"><span class="amount">'.price($totalposchange).'</span></td>';
+			print '</tr>';
 		}
 
 		if ($object->type != Facture::TYPE_CREDIT_NOTE) {
