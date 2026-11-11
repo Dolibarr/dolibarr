@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=Утверждена
 StatusReceptionProcessedShort=Обработано
 ReceptionSheet=Лист поступления
 ValidateReception=подтвердить прием
+DeleteReception=Delete reception
 ConfirmDeleteReception=Вы уверены, что хотите удалить это поступление?
 ConfirmValidateReception=Вы действительно хотите подтвердить это поступление со ссылкой <b>%s</b>?
 ConfirmCancelReception=Вы уверены, что хотите отменить это поступление?

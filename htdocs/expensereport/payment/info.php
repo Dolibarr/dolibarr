@@ -36,6 +36,7 @@ require '../../main.inc.php';
  * @var User $user
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
 
@@ -61,7 +62,15 @@ if ($user->isExternalUser()) {
 	$socid = $user->isExternalUser();
 }
 
-$result = restrictedArea($user, 'expensereport', $object->fk_expensereport, 'expensereport');
+// Load the parent expense report so restrictedArea() can also check the user hierarchy
+$expensereport = new ExpenseReport($db);
+if ($object->fk_expensereport > 0) {
+	if ($expensereport->fetch($object->fk_expensereport) <= 0) {
+		accessforbidden();
+	}
+}
+
+$result = restrictedArea($user, 'expensereport', ($expensereport->id > 0 ? $expensereport : 0), 'expensereport');
 
 
 /*

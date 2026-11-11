@@ -69,7 +69,6 @@ DOL_VALUE_DAY=Hisob-faktura kuni
 DOL_VALUE_DAY_LETTERS=Xatlar bilan hisob-faktura kuni
 DOL_LINE_FEED_REVERSE=Qatorli uzatma teskari
 InvoiceID=Hisob-faktura identifikatori
-InvoiceRef=Hisob-faktura
 DOL_PRINT_OBJECT_LINES=Hisob-faktura satrlari
 DOL_VALUE_CUSTOMER_FIRSTNAME=Mijozning ismi
 DOL_VALUE_CUSTOMER_LASTNAME=Mijozning familiyasi

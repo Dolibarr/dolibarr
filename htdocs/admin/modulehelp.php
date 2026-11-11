@@ -401,6 +401,24 @@ if ($mode == 'desc') {
 
 	$text .= '<br><span class="opacitymedium">'.$langs->trans("Version").':</span> '.$version;
 
+	// Show PHP and Dolibarr min/max versions required by module (only when they are defined)
+	$arrayofversionstrings = array();
+	if (!empty($objMod->phpmin)) {
+		$arrayofversionstrings[] = 'PHP >= '.(is_array($objMod->phpmin) ? versiontostring($objMod->phpmin) : $objMod->phpmin);
+	}
+	if (!empty($objMod->phpmax)) {
+		$arrayofversionstrings[] = 'PHP <= '.(is_array($objMod->phpmax) ? versiontostring($objMod->phpmax) : $objMod->phpmax);
+	}
+	if (!empty($objMod->need_dolibarr_version)) {
+		$arrayofversionstrings[] = 'Dolibarr >= '.(is_array($objMod->need_dolibarr_version) ? versiontostring($objMod->need_dolibarr_version) : $objMod->need_dolibarr_version);
+	}
+	if (!empty($objMod->max_dolibarr_version)) {
+		$arrayofversionstrings[] = 'Dolibarr <= '.(is_array($objMod->max_dolibarr_version) ? versiontostring($objMod->max_dolibarr_version) : $objMod->max_dolibarr_version);
+	}
+	if (count($arrayofversionstrings)) {
+		$text .= '<br><span class="opacitymedium">'.$langs->trans("RequiredVersions").':</span> '.implode(' - ', $arrayofversionstrings);
+	}
+
 	$text .= '<br>';
 
 	$moduledesclong = $objMod->getDescLong();

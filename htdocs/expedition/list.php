@@ -49,6 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 // Load translation files required by the page
@@ -65,6 +66,7 @@ $toselect   = GETPOST('toselect', 'array:int');
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
+$search_id = GETPOST('search_id', 'alpha');
 $search_ref_exp = GETPOST("search_ref_exp", 'alpha');
 $search_ref_liv = GETPOST('search_ref_liv', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
@@ -86,6 +88,7 @@ $search_datereceipt_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datereceipt_
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_user = GETPOST('search_user', 'intcomma');
 $search_sale = GETPOST('search_sale', 'intcomma');
+$search_fk_user_author = GETPOST('search_fk_user_author', 'int');
 $search_categ_cus = GETPOST("search_categ_cus", 'intcomma');
 $search_product_category = GETPOST('search_product_category', 'intcomma');
 
@@ -136,6 +139,7 @@ if (empty($user->socid)) {
 
 $checkedtypetiers = '0';
 $arrayfields = array(
+	'e.rowid' => array('label' => $langs->trans("TechnicalID"), 'checked' => (getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? '1' : '-1'), 'enabled' => '1'),
 	'e.ref' => array('label' => $langs->trans("Ref"), 'checked' => '1', 'position' => 1),
 	'e.ref_customer' => array('label' => $langs->trans("RefCustomer"), 'checked' => '1', 'position' => 2),
 	's.nom' => array('label' => $langs->trans("ThirdParty"), 'checked' => '1', 'position' => 3),
@@ -156,8 +160,9 @@ $arrayfields = array(
 	'l.ref' => array('label' => $langs->trans("DeliveryRef"), 'checked' => '1', 'position' => 1010, 'enabled' => (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? '1' : '0')),
 	'l.date_delivery' => array('label' => $langs->trans("DateReceived"), 'position' => 1020, 'checked' => '1', 'enabled' => (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? '1' : '0')),
 	'e.billed' => array('label' => $langs->trans("Billed"), 'checked' => '1', 'position' => 1100, 'enabled' => 'getDolGlobalString("WORKFLOW_BILL_ON_SHIPMENT") !== "0"'),
-	'e.note_public' => array('label' => 'NotePublic', 'checked' => '0', 'enabled' => (string) (int) (!getDolGlobalString('MAIN_LIST_HIDE_PUBLIC_NOTES')), 'position' => 135),
-	'e.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'enabled' => (string) (int) (!getDolGlobalString('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'position' => 140),
+	'e.note_public' => array('label' => 'NotePublic', 'checked' => '0', 'enabled' => (string) (int) (!getDolGlobalString('MAIN_LIST_ALLOW_PUBLIC_NOTES')), 'position' => 135),
+	'e.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'enabled' => (string) (int) (!getDolGlobalString('MAIN_LIST_ALLOW_PRIVATE_NOTES')), 'position' => 140),
+	'e.fk_user_author' => array('label' => $langs->trans("Author"), 'checked' => '0', 'position' => 510),
 );
 
 // Extra fields
@@ -205,6 +210,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_user = '';
 	$search_sale = '';
 	$search_product_category = '';
+	$search_id = '';
 	$search_ref_exp = '';
 	$search_ref_liv = '';
 	$search_ref_customer = '';
@@ -226,6 +232,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_datereceipt_end = '';
 	$search_status = '';
 	$search_signed_status = '';
+	$search_fk_user_author = '';
 	$toselect = array();
 	$search_array_options = array();
 	$search_categ_cus = 0;
@@ -241,8 +248,8 @@ if (empty($reshook)) {
 	$uploaddir = $conf->expedition->dir_output.'/sending';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-	if ($massaction == 'confirm_createbills') {   // Create bills from sendings.
-		$sendings = GETPOST('toselect', 'array:int');
+	if (!$error && $massaction == 'confirm_createbills') {   // Create bills from sendings.
+		$sendings = $toselect;	// Ids already checked for access by the mass actions include
 		$createbills_onebythird = GETPOST('createbills_onebythird', 'int');
 		$validate_invoices = GETPOST('validate_invoices', 'int');
 
@@ -361,10 +368,15 @@ if (empty($reshook)) {
 					$num = count($lines);
 
 					for ($i = 0; $i < $num; $i++) {
+						// A standalone shipment line (SHIPMENT_STANDALONE) has no price nor VAT: use the selling price of the product for this customer
+						if (empty($expd->origin_id)) {
+							shippingSetStandaloneLineSellPrice($lines[$i], $expd->thirdparty);
+						}
+
 						$desc = ($lines[$i]->desc ? $lines[$i]->desc : '');
 						// If we build one invoice for several sendings, we must put the ref of sending on the invoice line
 						if (!empty($createbills_onebythird)) {
-							$desc = dol_concatdesc($desc, $langs->trans("Order").': '.$expdCmdSrc->ref. ' - '. $langs->trans("Shipment").': '.$expd->ref.($expd->date_shipping ? ' - '.dol_print_date($expd->date_shipping, 'day') : ''));
+							$desc = dol_concatdesc($desc, (!empty($expd->origin_id) ? $langs->trans("Order").': '.$expdCmdSrc->ref. ' - ' : '').$langs->trans("Shipment").': '.$expd->ref.($expd->date_shipping ? ' - '.dol_print_date($expd->date_shipping, 'day') : ''));
 						}
 
 						if ($lines[$i]->subprice < 0 && !getDolGlobalString('INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN')) {
@@ -541,6 +553,9 @@ if (empty($reshook)) {
 			if ($search_all) {
 				$param .= "&search_all=".urlencode($search_all);
 			}
+			if ($search_id != '') {
+				$param .= '&search_id='.urlencode($search_id);
+			}
 			if ($search_ref_exp) {
 				$param .= "&search_ref_exp=".urlencode($search_ref_exp);
 			}
@@ -682,7 +697,7 @@ if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
 $sql .= " s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ";
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
-$sql .= " e.date_creation as date_creation, e.tms as date_modification,e.note_public, e.note_private,";
+$sql .= " e.date_creation as date_creation, e.tms as date_modification, e.note_public, e.note_private, e.fk_user_author,";
 $sql .= " u.login";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -747,6 +762,9 @@ if ($search_ref_customer != '') {
 if ($search_billed != '' && $search_billed >= 0) {
 	$sql .= " AND e.billed = ".((int) $search_billed);
 }
+if ($search_fk_user_author > 0) {
+	$sql .= ' AND e.fk_user_author = '.((int) $search_fk_user_author);
+}
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);
 }
@@ -774,6 +792,9 @@ if ($search_user > 0) {
 }
 if ($search_company) {
 	$sql .= natural_search('s.nom', $search_company);
+}
+if ($search_id != '') {
+	$sql .= natural_search('e.rowid', $search_id, 1);
 }
 if ($search_ref_exp) {
 	$sql .= natural_search('e.ref', $search_ref_exp);
@@ -967,6 +988,9 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 if ($search_all) {
 	$param .= "&search_all=".urlencode($search_all);
 }
+if ($search_id != '') {
+	$param .= '&search_id='.urlencode($search_id);
+}
 if ($search_ref_exp) {
 	$param .= "&search_ref_exp=".urlencode($search_ref_exp);
 }
@@ -1032,6 +1056,9 @@ if ($search_status != '') {
 if ($search_signed_status != '' && $search_signed_status >= 0) {
 	$param .= '&search_signed_status='.urlencode($search_signed_status);
 }
+if ($search_fk_user_author > 0) {
+	$param .= '&search_fk_user_author='.urlencode((string) $search_fk_user_author);
+}
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
@@ -1068,7 +1095,7 @@ $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars i
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/expedition/stats/index.php?mode=statistics'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewSending'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/expedition/card.php?action=create2', '', $user->hasRight('expedition', 'creer'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewSending'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/expedition/card.php?action=create', '', $user->hasRight('expedition', 'creer'));
 
 $i = 0;
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -1217,6 +1244,12 @@ if ($conf->main_checkbox_left_column) {
 	print $searchpicto;
 	print '</td>';
 }
+// Technical ID
+if (!empty($arrayfields['e.rowid']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
+	print '</td>';
+}
 // Ref
 if (!empty($arrayfields['e.ref']['checked'])) {
 	print '<td class="liste_titre">';
@@ -1346,6 +1379,12 @@ if (!empty($arrayfields['e.tms']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
+// Author
+if (!empty($arrayfields['e.fk_user_author']['checked'])) {
+	print '<td class="liste_titre maxwidthonsmartphone center">';
+	print $form->select_dolusers($search_fk_user_author, 'search_fk_user_author', 1);
+	print '</td>';
+}
 // Status
 if (!empty($arrayfields['e.fk_statut']['checked'])) {
 	print '<td class="liste_titre right parentonrightofpage">';
@@ -1383,6 +1422,10 @@ print '<tr class="liste_titre">';
 // Action column
 if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['e.rowid']['checked'])) {
+	print_liste_field_titre($arrayfields['e.rowid']['label'], $_SERVER["PHP_SELF"], 'e.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['e.ref']['checked'])) {
@@ -1467,6 +1510,10 @@ if (!empty($arrayfields['e.tms']['checked'])) {
 	print_liste_field_titre($arrayfields['e.tms']['label'], $_SERVER["PHP_SELF"], "e.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['e.fk_user_author']['checked'])) {
+	print_liste_field_titre($arrayfields['e.fk_user_author']['label'], $_SERVER["PHP_SELF"], "e.fk_user_author", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['e.fk_statut']['checked'])) {
 	print_liste_field_titre($arrayfields['e.fk_statut']['label'], $_SERVER["PHP_SELF"], "e.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
@@ -1543,6 +1590,13 @@ while ($i < $imaxinloop) {
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
 			print '</td>';
+		}
+		// Technical ID
+		if (!empty($arrayfields['e.rowid']['checked'])) {
+			print '<td class="center" data-key="id">'.((int) $obj->rowid).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		// Ref
 		if (!empty($arrayfields['e.ref']['checked'])) {
@@ -1735,6 +1789,19 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['e.tms']['checked'])) {
 			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Author
+		if (!empty($arrayfields['e.fk_user_author']['checked'])) {
+			$userstatic = new User($db);
+			print '<td class="center">';
+			if ($obj->fk_user_author > 0) {
+				$userstatic->fetch($obj->fk_user_author);
+				print $userstatic->getNomUrl(1);
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

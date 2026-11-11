@@ -405,28 +405,34 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	}
 
 	// Multicurrency
-	if ($multicurrency_tx != 1) {
+	if ($multicurrency_tx != 1 || ($multicurrency_code && !empty($conf->currency) && $multicurrency_code != $conf->currency)) {
 		if ($multicurrency_code) {
 			$savMAIN_MAX_DECIMALS_UNIT = getDolGlobalString('MAIN_MAX_DECIMALS_UNIT');
 			$savMAIN_MAX_DECIMALS_TOT = getDolGlobalString('MAIN_MAX_DECIMALS_TOT');
 			$savMAIN_ROUNDING_RULE_TOT = getDolGlobalString('MAIN_ROUNDING_RULE_TOT');
 
-			// Set parameter for currency accurency according to the value of $multicurrency_code (this is because a foreign currency may have different rounding rules)
+			// Set parameter for currency accuracy according to the value of $multicurrency_code (this is because a foreign currency may have different rounding rules)
 			$keyforforeignMAIN_MAX_DECIMALS_UNIT = 'MAIN_MAX_DECIMALS_UNIT_'.$multicurrency_code;
 			$keyforforeignMAIN_MAX_DECIMALS_TOT = 'MAIN_MAX_DECIMALS_TOT_'.$multicurrency_code;
 			$keyforforeignMAIN_ROUNDING_RULE_TOT = 'MAIN_ROUNDING_RULE_TOT_'.$multicurrency_code;
-			if (getDolGlobalString($keyforforeignMAIN_ROUNDING_RULE_TOT)) {
-				$conf->global->MAIN_MAX_DECIMALS_UNIT = getDolGlobalString($keyforforeignMAIN_MAX_DECIMALS_UNIT);
-				$conf->global->MAIN_MAX_DECIMALS_TOT = getDolGlobalString($keyforforeignMAIN_MAX_DECIMALS_TOT);
-				$conf->global->MAIN_ROUNDING_RULE_TOT = getDolGlobalString($keyforforeignMAIN_ROUNDING_RULE_TOT);
+			if (getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY') || getDolGlobalString($keyforforeignMAIN_ROUNDING_RULE_TOT)) {
+				if (getDolGlobalString($keyforforeignMAIN_MAX_DECIMALS_UNIT) !== '') {
+					$conf->global->MAIN_MAX_DECIMALS_UNIT = getDolGlobalString($keyforforeignMAIN_MAX_DECIMALS_UNIT);
+				}
+				if (getDolGlobalString($keyforforeignMAIN_MAX_DECIMALS_TOT) !== '') {
+					$conf->global->MAIN_MAX_DECIMALS_TOT = getDolGlobalString($keyforforeignMAIN_MAX_DECIMALS_TOT);
+				}
+				if (getDolGlobalString($keyforforeignMAIN_ROUNDING_RULE_TOT) !== '') {
+					$conf->global->MAIN_ROUNDING_RULE_TOT = getDolGlobalString($keyforforeignMAIN_ROUNDING_RULE_TOT);
+				}
 			}
 		}
 
-		// Recall function using the multicurrency price as reference price. We must set param $multicurrency_tx to 1 to avoid infinite loop.
+		// Recall function using the multicurrency price as reference price. We must set param $multicurrency_tx to 1 and $multicurrency_code to '' to avoid infinite loop.
 		$newresult = calcul_price_total($qty, $pu_devise, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, 0, $price_base_type, $info_bits, $type, $seller, $localtaxes_array, $progress, 1, 0, '');  // pu_devise is normally arg#15, here as arg#2 @phan-suppress-current-line PhanPluginSuspiciousParamPosition
 
 		if ($multicurrency_code) {
-			// Restore setup of currency accurency
+			// Restore setup of currency accuracy
 			$conf->global->MAIN_MAX_DECIMALS_UNIT = $savMAIN_MAX_DECIMALS_UNIT;  // @phan-suppress-current-line PhanPossiblyUndeclaredVariable
 			$conf->global->MAIN_MAX_DECIMALS_TOT = $savMAIN_MAX_DECIMALS_TOT;  // @phan-suppress-current-line PhanPossiblyUndeclaredVariable
 			$conf->global->MAIN_ROUNDING_RULE_TOT = $savMAIN_ROUNDING_RULE_TOT;  // @phan-suppress-current-line PhanPossiblyUndeclaredVariable

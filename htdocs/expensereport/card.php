@@ -1213,7 +1213,7 @@ if (empty($reshook)) {
 			if (is_array($arrayoffiles) && !empty($arrayoffiles[0])) {
 				include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 				$entityprefix = ($conf->entity != '1') ? $conf->entity.'/' : '';
-				$relativepath = 'expensereport/'.$object->ref.'/'.$arrayoffiles[0];
+				$relativepath = $entityprefix.'expensereport/'.$object->ref.'/'.$arrayoffiles[0];
 				$ecmfiles = new EcmFiles($db);
 				$ecmfiles->fetch(0, '', $relativepath);
 				$fk_ecm_files = $ecmfiles->id;
@@ -1390,7 +1390,8 @@ if (empty($reshook)) {
 			$arrayoffiles = GETPOST('attachfile', 'array');
 			if (is_array($arrayoffiles) && !empty($arrayoffiles[0])) {
 				include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
-				$relativepath = 'expensereport/'.$object->ref.'/'.$arrayoffiles[0];
+				$entityprefix = ($conf->entity != '1') ? $conf->entity.'/' : '';
+				$relativepath = $entityprefix.'expensereport/'.$object->ref.'/'.$arrayoffiles[0];
 				$ecmfiles = new EcmFiles($db);
 				$ecmfiles->fetch(0, '', $relativepath);
 				$fk_ecm_files = $ecmfiles->id;
@@ -2198,7 +2199,7 @@ if ($action == 'create') {
 					print '<td class="center linecolcarcategory">'.$langs->trans('CarCategory').'</td>';
 				}
 				print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
-				print '<td class="right linecolvat">'.$langs->trans('VAT').'</td>';
+				print '<td class="right linecolvat">'.$form->textwithpicto($langs->trans('VAT'), $langs->trans('ExpenseReportVatRateHelp')).'</td>';
 				print '<td class="right linecolpriceuht">'.$langs->trans('PriceUHT').'</td>';
 				print '<td class="right linecolpriceuttc">'.$langs->trans('PriceUTTC').'</td>';
 				print '<td class="right linecolqty">'.$langs->trans('Qty').'</td>';
@@ -2323,13 +2324,9 @@ if ($action == 'create') {
 
 						// Unit price HT
 						print '<td class="right linecolunitht">';
-						if (!empty($line->value_unit_ht)) {
-							print price($line->value_unit_ht);
-						} else {
-							$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $line->vatrate));
-							$pricenettoshow = price2num((float) $line->value_unit / (1 + (float) $tmpvat / 100), 'MU');
-							print price($pricenettoshow);
-						}
+						$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $line->vatrate));
+						$pricenettoshow = price2num((float) $line->value_unit / (1 + (float) $tmpvat / 100), 'MU');
+						print price($pricenettoshow);
 						print '</td>';
 
 						print '<td class="right linecolunitttc">'.price($line->value_unit).'</td>';
@@ -2349,7 +2346,7 @@ if ($action == 'create') {
 
 							$result = $ecmfilesstatic->fetch($line->fk_ecm_files);
 							if ($result > 0) {
-								$relativepath = preg_replace('/expensereport\//', '', $ecmfilesstatic->filepath);
+								$relativepath = preg_replace('/^([0-9]+\/)?expensereport\//', '', $ecmfilesstatic->filepath);
 								$fileinfo = pathinfo($ecmfilesstatic->filepath.'/'.$ecmfilesstatic->filename);
 								if (image_format_supported($fileinfo['basename']) > 0) {
 									$minifile = getImageFileNameForSize($fileinfo['basename'], '_mini'); // For new thumbs using same ext (in lower case however) than original
@@ -2439,63 +2436,56 @@ if ($action == 'create') {
 							$colspan++;
 						}
 
-						print '<!-- line of expense report -->'."\n";
-						print '<tr class="tredited">';
-
-						print '<td class="center">';
-						print $numline;
-						print '</td>';
-
-						print '<td colspan="'.($colspan - 1).'" class="liste_titre"> ';
-						print '<a href="" class="commonlink auploadnewfilenow reposition">'.$langs->trans("UploadANewFileNow");
-						print img_picto($langs->trans("UploadANewFileNow"), 'chevron-down', '', 0, 0, 0, '', 'marginleftonly');
-						print '</a>';
 						if (!getDolGlobalString('EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES')) {
-							print ' &nbsp; - &nbsp; <a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("AttachTheNewLineToTheDocument");
-							print img_picto($langs->trans("AttachTheNewLineToTheDocument"), 'chevron-down', '', 0, 0, 0, '', 'marginleftonly');
+							print '<!-- line of expense report -->'."\n";
+							print '<tr class="tredited">';
+
+							print '<td class="center">';
+							print $numline;
+							print '</td>';
+
+							print '<td colspan="'.($colspan - 1).'" class="liste_titre"> ';
+							print '<a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("LinkTheLineToADocument");
+							print img_picto($langs->trans("LinkTheLineToADocument"), 'chevron-down', '', 0, 0, 0, '', 'marginleftonly');
 							print '</a>';
-						}
 
-						print '<!-- Code to open/close section to submit or link files in edit mode -->'."\n";
-						print '<script type="text/javascript">'."\n";
-						print '$(document).ready(function() {
-        				        $( ".auploadnewfilenow" ).click(function() {
-        				            jQuery(".truploadnewfilenow").toggle();
-                                    jQuery(".trattachnewfilenow").hide();
-                                    return false;
-                                });
-        				        $( ".aattachtodoc" ).click(function() {
-        				            jQuery(".trattachnewfilenow").toggle();
-                                    jQuery(".truploadnewfilenow").hide();
-                                    return false;
-                                });';
-						if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array'))) {
-							print 'jQuery(".trattachnewfilenow").toggle();'."\n";
-						}
-						print '
-                        		jQuery("form[name=\"expensereport\"]").submit(function() {
-                            		if (jQuery(".truploadnewfilenow").is(":hidden")) {
-                                		jQuery("input[name=\"sendit\"]").val("");
-                            		}
-                        		});
-                    		';
-						print '
-                            });
-        				    ';
-						print '</script>'."\n";
-						print '</td></tr>';
-
-						$filenamelinked = '';
-						if ($line->fk_ecm_files > 0) {
-							$result = $ecmfilesstatic->fetch($line->fk_ecm_files);
-							if ($result > 0) {
-								$filenamelinked = $ecmfilesstatic->filename;
+							print '<!-- Code to open/close section to submit or link files in edit mode -->'."\n";
+							print '<script type="text/javascript">'."\n";
+							print '$(document).ready(function() {
+	        				        $( ".aattachtodoc" ).click(function() {
+										/* Show both sections (existing files and upload form) if one of them is hidden, else hide both */
+										var showsection = (jQuery(".trattachnewfilenow, .truploadnewfilenow").filter(":hidden").length > 0);
+	        				            jQuery(".trattachnewfilenow, .truploadnewfilenow").toggle(showsection);
+	                                    return false;
+	                                });';
+							if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array'))) {
+								print 'jQuery(".trattachnewfilenow, .truploadnewfilenow").show();'."\n";
 							}
-						}
+							print '
+	                        		jQuery("form[name=\"expensereport\"]").submit(function() {
+	                            		if (jQuery(".truploadnewfilenow").is(":hidden")) {
+	                                		jQuery("input[name=\"sendit\"]").val("");
+	                            		}
+	                        		});
+	                    		';
+							print '
+	                            });
+	        				    ';
+							print '</script>'."\n";
+							print '</td></tr>';
 
-						$tredited = 'tredited';	// Case the addfile and linkto file is used for edit (used by following tpl)
-						include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_addfile.tpl.php';
-						include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_linktofile.tpl.php';
+							$filenamelinked = '';
+							if ($line->fk_ecm_files > 0) {
+								$result = $ecmfilesstatic->fetch($line->fk_ecm_files);
+								if ($result > 0) {
+									$filenamelinked = $ecmfilesstatic->filename;
+								}
+							}
+
+							$tredited = 'tredited';	// Case the addfile and linkto file is used for edit (used by following tpl)
+							include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_linktofile.tpl.php';
+							include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_addfile.tpl.php';
+						}
 
 						print '<tr class="oddeven tredited">';
 
@@ -2539,7 +2529,7 @@ if ($action == 'create') {
 
 						// Unit price
 						print '<td class="right">';
-						print '<input type="text" min="0" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag(price2num((!empty($line->value_unit_ht) ? $line->value_unit_ht : ""))).'"'.$taxlessUnitPriceDisabled.' />';
+						print '<input type="text" min="0" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value=""'.$taxlessUnitPriceDisabled.' />';
 						print '</td>';
 
 						// Unit price with tax
@@ -2600,63 +2590,58 @@ if ($action == 'create') {
 					$nbLinks = Link::count($db, $object->element, $object->id);
 				}
 
-				// Add line with link to add new file or attach to an existing file
-				print '<tr class="liste_titre">';
-				print '<td colspan="'.$colspan.'" class="liste_titre expensereportautoload">';
-				print '<a href="" class="commonlink auploadnewfilenow reposition">'.$langs->trans("UploadANewFileNow");
-				print img_picto($langs->trans("UploadANewFileNow"), 'chevron-down', '', 0, 0, 0, '', 'marginleftonly');
-				print '</a>';
 				if (!getDolGlobalString('EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES')) {
-					print ' &nbsp; - &nbsp; <a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("AttachTheNewLineToTheDocument");
-					print img_picto($langs->trans("AttachTheNewLineToTheDocument"), 'chevron-down', '', 0, 0, 0, '', 'marginleftonly');
+					// Add line with link to add new file or attach to an existing file
+					print '<tr class="liste_titre">';
+					print '<td colspan="'.$colspan.'" class="liste_titre expensereportautoload">';
+					print '<a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("LinkTheLineToADocument");
+					print img_picto($langs->trans("LinkTheLineToADocument"), 'chevron-down', '', 0, 0, 0, '', 'marginleftonly');
 					print '</a>';
-				}
 
-				print '<!-- Code to open/close section to submit or link files in the form to add new line -->'."\n";
-				print '<script type="text/javascript">'."\n";
-				print '$(document).ready(function() {
-				        $( ".auploadnewfilenow" ).click(function() {
-							console.log("We click on toggle of auploadnewfilenow");
-				            jQuery(".truploadnewfilenow").toggle();
-                            jQuery(".trattachnewfilenow").hide();
-							if (jQuery(".truploadnewfilenow").is(":hidden")) {
-                            	jQuery("input[name=\"sendit\"]").prop("name", "senditdisabled");
-                            } else {
-                                jQuery("input[name=\"senditdisabled\"]").prop("name", "sendit");
-                            }
-							// TODO Switch css fa-chevron-dow and add fa-chevron-up
-                            return false;
-                        });
-				        $( ".aattachtodoc" ).click(function() {
-							console.log("We click on toggle of aattachtodoc");
-				            jQuery(".trattachnewfilenow").toggle();
-                            jQuery(".truploadnewfilenow").hide();
-							// TODO Switch css fa-chevron-dow and add fa-chevron-up
-                            return false;
-                        });'."\n";
-				if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array')) && $action != 'updateline') {
-					print 'jQuery(".trattachnewfilenow").show();'."\n";
-				}
-				print '
-						jQuery("form[name=\"expensereport\"]").submit(function() {
-							if (jQuery(".truploadnewfilenow").is(":hidden")) {
-								/* When section to send file is not expanded, we disable the button sendit that submit form to add a new file, so button to submit line will work. */
-								jQuery("input[name=\"sendit\"]").val("");
-								jQuery("input[name=\"sendit\"]").prop("name", "senditdisabled");
-							} else {
-								jQuery("input[name=\"senditdisabled\"]").prop("name", "sendit");
-							}
-						});
-					';
-				print '
-                    });
-				    ';
-				print '</script>'."\n";
-				print '</td></tr>';
+					print '<!-- Code to open/close section to submit or link files in the form to add new line -->'."\n";
+					print '<script type="text/javascript">'."\n";
+					print '$(document).ready(function() {
+					        $( ".aattachtodoc" ).click(function() {
+								console.log("We click on toggle of aattachtodoc");
+								/* Show both sections (existing files and upload form) if one of them is hidden, else hide both */
+								var showsection = (jQuery(".trattachnewfilenow, .truploadnewfilenow").filter(":hidden").length > 0);
+					            jQuery(".trattachnewfilenow, .truploadnewfilenow").toggle(showsection);
+								if (jQuery(".truploadnewfilenow").is(":hidden")) {
+	                            	jQuery("input[name=\"sendit\"]").prop("name", "senditdisabled");
+	                            } else {
+	                                jQuery("input[name=\"senditdisabled\"]").prop("name", "sendit");
+	                            }
+								// TODO Switch css fa-chevron-dow and add fa-chevron-up
+	                            return false;
+	                        });'."\n";
+					if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array')) && $action != 'updateline') {
+						print 'jQuery(".trattachnewfilenow, .truploadnewfilenow").show();'."\n";
+					}
+					if (GETPOSTISSET('sendit')) {
+						// After an upload, the section of existing files is already visible, so we also show the upload form
+						print 'jQuery(".truploadnewfilenow").show();'."\n";
+					}
+					print '
+							jQuery("form[name=\"expensereport\"]").submit(function() {
+								if (jQuery(".truploadnewfilenow").is(":hidden")) {
+									/* When section to send file is not expanded, we disable the button sendit that submit form to add a new file, so button to submit line will work. */
+									jQuery("input[name=\"sendit\"]").val("");
+									jQuery("input[name=\"sendit\"]").prop("name", "senditdisabled");
+								} else {
+									jQuery("input[name=\"senditdisabled\"]").prop("name", "sendit");
+								}
+							});
+						';
+					print '
+	                    });
+					    ';
+					print '</script>'."\n";
+					print '</td></tr>';
 
-				$tredited = '';	// Case the addfile and linkto file is used for edit (used by following tpl)
-				include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_linktofile.tpl.php';
-				include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_addfile.tpl.php';
+					$tredited = '';	// Case the addfile and linkto file is used for edit (used by following tpl)
+					include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_linktofile.tpl.php';
+					include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_addfile.tpl.php';
+				}
 
 				print '<tr class="liste_titre expensereportcreate">';
 				print '<td></td>';
@@ -2669,7 +2654,7 @@ if ($action == 'create') {
 					print '<td>'.$langs->trans('CarCategory').'</td>';
 				}
 				print '<td class="expensereportcreatedescription">'.$langs->trans('Description').'</td>';
-				print '<td class="right expensereportcreatevat">'.$langs->trans('VAT').'</td>';
+				print '<td class="right expensereportcreatevat">'.$form->textwithpicto($langs->trans('VAT'), $langs->trans('ExpenseReportVatRateHelp')).'</td>';
 				print '<td class="right expensereportcreatepriceuth">'.$langs->trans('PriceUHT').'</td>';
 				print '<td class="right expensereportcreatepricettc">'.$langs->trans('PriceUTTC').'</td>';
 				print '<td class="right expensereportcreateqty">'.$langs->trans('Qty').'</td>';
@@ -2721,7 +2706,7 @@ if ($action == 'create') {
 					$conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS = 'none';
 				}
 				// We must use null, null for seller and buyer as we don't know them for expense report.
-				print $form->load_tva('vatrate', (!empty($vatrate) ? $vatrate : $defaultvat), null, null, 0, 0, '', false, 1);
+				print $form->load_tva('vatrate', ((isset($vatrate) && $vatrate !== '') ? $vatrate : $defaultvat), null, null, 0, 0, '', false, 1);
 				print '</td>';
 
 				// Unit price net

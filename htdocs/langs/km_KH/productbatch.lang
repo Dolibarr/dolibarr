@@ -47,9 +47,13 @@ HideLots=លាក់ច្រើន។
 OutOfOrder=ដាច់​សណ្តាប់ធ្នាប់
 InWorkingOrder=នៅក្នុងលំដាប់ការងារ
 ToReplace=ជំនួស
-CantMoveNonExistantSerial=កំហុស។ អ្នកស្នើសុំការផ្លាស់ប្តូរនៅលើកំណត់ត្រាសម្រាប់ស៊េរីដែលមិនមានទៀតទេ។ ប្រហែលជាអ្នកយកស៊េរីដូចគ្នានៅលើឃ្លាំងដូចគ្នាច្រើនដងក្នុងការដឹកជញ្ជូនដូចគ្នា ឬវាត្រូវបានប្រើដោយការដឹកជញ្ជូនផ្សេងទៀត។ ដកការដឹកជញ្ជូននេះចេញ ហើយរៀបចំមួយផ្សេងទៀត។
+CantMoveNonExistantSerial=Error: You requested a stock movement on a record for a serial that no longer exists. Maybe you used the same serial in the same warehouse several times in the same shipment or it was used by another shipment. Remove this shipment and prepare another one.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=តារាងឡូតិ៍ដំណើរការជួសជុលមិនពេញលេញជាមួយប៉ារ៉ាម៉ែត្រ '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= តម្រូវ​ឱ្យ​មាន​ការ​កែ​តម្រូវ​ដោយ​សារ​តែ​លេខ​សៀរៀល​តែ​មួយ​គត់។
 ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
 ForceBatchesNeedStockManagement=A product with batch/lot management must be managed in stock (stock management force to yes)
 BatchInformationNotfound=Batch information not found
+EnterMultipleSerialNumbers=Enter multiple serial numbers
+EnterOneSerialNumberPerLine=Type, paste or scan the serial numbers, one per line
+NbOfSerialNumbersDetected=%s serial number(s) detected
+ErrorDuplicateSerialNumberInList=Serial number %s is present several times in the list

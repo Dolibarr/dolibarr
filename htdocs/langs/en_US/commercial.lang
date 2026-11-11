@@ -34,6 +34,7 @@ DoneActions=Completed events
 ToDoActions=Incomplete events
 SendPropalRef=Submission of commercial proposal %s
 SendOrderRef=Submission of order %s
+SendSupplierOrderRef=Submission of purchase order %s
 StatusNotApplicable=Not applicable
 StatusActionToDo=To do
 StatusActionDone=Complete

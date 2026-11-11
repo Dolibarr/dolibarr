@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2015-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2020       Maxime DEMAREST     <maxime@indelog.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
@@ -69,7 +69,7 @@ function loan_prepare_head($object)
 
 	if (!getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
 		$nbNote = (empty($object->note_private) ? 0 : 1) + (empty($object->note_public) ? 0 : 1);
-		$head[$tab][0] = DOL_URL_ROOT."/loan/note.php?id=".$object->id;
+		$head[$tab][0] = DOL_URL_ROOT."/core/note.php?element=loan&id=".$object->id;
 		$head[$tab][1] = $langs->trans("Notes");
 		if ($nbNote > 0) {
 			$head[$tab][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
@@ -315,6 +315,19 @@ function loanChargeTypes()
 		0 => 'Insurance',
 		1 => 'LoanChargeAccountFee',
 		2 => 'LoanChargeOtherFee',
+	);
+}
+
+/**
+ * Interest bases of a loan.
+ *
+ * @return array<int,string>	interest_basis => translation key
+ */
+function loanInterestBases()
+{
+	return array(
+		0 => 'LoanInterestBasisPeriod',
+		1 => 'LoanInterestBasisDaily',
 	);
 }
 
@@ -591,4 +604,66 @@ function loanRateAt($history, $current, $date)
 		return (float) $found->rate_new;
 	}
 	return ($first !== null ? (float) $first->rate_old : (float) $current);
+}
+
+/**
+ * Next payment of a loan that has no schedule, worked out from the loan and the payments already made: due on the
+ * first payment date after the last payment; interest on the capital left for that period, at the rate in force
+ * on that date (daily or per period); capital so that the remaining payments repay the capital left (less the
+ * balloon), the last payment repaying all that is left; charge from the charge type of the loan.
+ *
+ * @param	DoliDB	$db		Database handler
+ * @param	Loan	$loan	Loan (fetched)
+ * @return	?array{date:int,term:int,capital:float,interest:float,charge:float}	Null if nothing is left to repay
+ */
+function loanNextPayment($db, $loan)
+{
+	require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
+
+	$frequency = ((int) $loan->frequency > 0 ? (int) $loan->frequency : 12);
+	$datestart = (int) $loan->datestart;
+	$nbterm = (int) $loan->nbterm;
+
+	// Payments already made
+	$paidcapital = 0.0;
+	$lastdate = 0;
+	$sql = "SELECT amount_capital, datep FROM ".MAIN_DB_PREFIX."payment_loan WHERE fk_loan = ".((int) $loan->id);
+	$resql = $db->query($sql);
+	while ($resql && ($obj = $db->fetch_object($resql))) {
+		$paidcapital += (float) $obj->amount_capital;
+		$lastdate = max($lastdate, (int) $db->jdate($obj->datep));
+	}
+	$capital = (float) price2num((float) $loan->capital - $paidcapital, 'MT');
+	if ($capital <= 0 || empty($datestart) || $nbterm <= 0) {
+		return null;
+	}
+
+	// First payment date after the last payment (index 0 = first payment of the loan)
+	$index = 0;
+	if ($lastdate) {
+		while ($index < $nbterm - 1 && loanTermDate($datestart, $index, $frequency) <= $lastdate) {
+			$index++;
+		}
+	}
+	$date = loanTermDate($datestart, $index, $frequency);
+
+	$rate = loanRateAt(loanFetchChanges($db, $loan->id), (float) $loan->rate, $date);
+	$days = ((int) $loan->interest_basis ? loanPeriodDays($datestart, $index + 1, $frequency) : 0);
+	$interest = (float) price2num($capital * loanPeriodRate($rate, $frequency, (int) $loan->interest_basis, $days) / 100, 'MT');
+
+	$left = $nbterm - $index;
+	if ($left <= 1) {
+		$amort = $capital;	// last payment: all that is left (with the balloon if any)
+	} else {
+		$calc = new LoanSchedule($db);
+		$mens = (float) price2num($calc->calcMonthlyPayments($capital, $rate / 100, $left, $frequency, (int) $loan->interest_basis, (float) $loan->balloon_amount), 'MT');
+		$amort = (float) price2num($mens - $interest, 'MT');
+	}
+
+	list($charge, $chargeregul) = loanChargePerPayment($loan->insurance_amount, $loan->charge_per_payment, $nbterm);
+	if ($index == 0) {
+		$charge = (float) price2num($charge + $chargeregul, 'MT');
+	}
+
+	return array('date' => $date, 'term' => $index + 1, 'capital' => $amort, 'interest' => $interest, 'charge' => $charge);
 }

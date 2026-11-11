@@ -60,6 +60,12 @@
 
 	const _awaitHooks = {};  // Async hooks storage
 
+	// Data of the last execution of sticky hooks, replayed to late listeners : hookName => data
+	const _stickyHooks = new Map();
+
+	// Pending Dolibarr.whenTool() calls : toolName => [resolve]
+	const _toolWaiters = new Map();
+
 	// Debug flag (disabled by default)
 	let _debug = false;
 
@@ -181,6 +187,10 @@
 			const { overwrite = false, triggerHook = true } = options;
 
 			_storeEntry(_tools, 'Tool', name, value, overwrite);
+
+			// Resolve pending whenTool() calls, even if the hook is not triggered
+			(_toolWaiters.get(name) || []).forEach(resolve => resolve(value));
+			_toolWaiters.delete(name);
 
 			this.log(`Tool defined: ${name}, triggerHook: ${triggerHook}, overwrite: ${overwrite} `);
 			if (triggerHook) {
@@ -338,9 +348,17 @@
 		 * Executes a hook-like JS event with CustomEvent.
 		 * @param {string} hookName Hook identifier
 		 * @param {object} data Extra information passed to listeners
+		 * @param {Object} [options]
+		 * @param {boolean} [options.sticky=false] Keep data of this execution, listeners added later with Dolibarr.on()
+		 *                                         are called immediately with it (used for one time events like Init or Ready)
 		 */
-		executeHook(hookName, data = {}) {
+		executeHook(hookName, data = {}, options = {}) {
 			this.log(`Hook executed: ${hookName}`);
+
+			// Stored before dispatch : listeners added during dispatch are not called by EventTarget, they get the replay instead
+			if (options.sticky) {
+				_stickyHooks.set(hookName, data);
+			}
 
 			const ev = new CustomEvent(hookName, { detail: data });
 
@@ -445,12 +463,24 @@
 
 		/**
 		 * Registers an event listener.
+		 * If the event is sticky and was already executed (ex: Init, Ready), the callback is called immediately with its data.
+		 *
 		 * @param {string} eventName Event to listen to
 		 * @param {function} callback Listener function
+		 * @param {Object} [options]
+		 * @param {boolean} [options.once=false] Remove the listener after its first call
 		 */
-		on(eventName, callback) {
+		on(eventName, callback, options = {}) {
+			const once = !!options.once;
+
+			if (once && _stickyHooks.has(eventName)) {
+				callback(_stickyHooks.get(eventName));
+				return;
+			}
+
 			// Create a proxy to extract e.detail
-			const proxy = function(e) {
+			const proxy = (e) => {
+				if (once) this.off(eventName, callback);
 				callback(e.detail);
 			};
 
@@ -460,6 +490,61 @@
 
 			// Attach proxy to the internal EventTarget
 			_events.addEventListener(eventName, proxy);
+
+			// Replay sticky event already executed
+			if (_stickyHooks.has(eventName)) {
+				callback(_stickyHooks.get(eventName));
+			}
+		},
+
+		/**
+		 * Wait for the Dolibarr context to be ready (DOM loaded, Init done, tools defined).
+		 * Works even if called after the Ready event.
+		 *
+		 * @param {function} [callback] Optional function called with the Ready data
+		 * @returns {Promise<Object>} Resolved with the Ready data
+		 */
+		ready(callback) {
+			return new Promise(resolve => {
+				this.on('Ready', data => {
+					if (typeof callback === 'function') callback(data);
+					resolve(data);
+				}, { once: true });
+			});
+		},
+
+		/**
+		 * Wait for a tool to be defined.
+		 * Works even if the tool is defined without triggering the defineTool hook.
+		 *
+		 * @param {string} name Tool name
+		 * @param {Object} [options]
+		 * @param {number} [options.timeout=0] Reject after this delay in ms, 0 to wait without limit
+		 * @returns {Promise<*>} Resolved with the tool
+		 */
+		whenTool(name, options = {}) {
+			if (_tools.has(name)) {
+				return Promise.resolve(_tools.get(name).value);
+			}
+
+			return new Promise((resolve, reject) => {
+				let timer = null;
+				const waiter = value => {
+					if (timer) clearTimeout(timer);
+					resolve(value);
+				};
+
+				if (!_toolWaiters.has(name)) _toolWaiters.set(name, []);
+				_toolWaiters.get(name).push(waiter);
+
+				if (options.timeout > 0) {
+					timer = setTimeout(() => {
+						const waiters = _toolWaiters.get(name) || [];
+						waiters.splice(waiters.indexOf(waiter), 1);
+						reject(new Error(`Dolibarr: tool '${name}' not defined after ${options.timeout} ms`));
+					}, options.timeout);
+				}
+			});
 		},
 
 		/**
@@ -543,7 +628,7 @@
 	(function triggerDolibarrHooks() {
 		// Fire Init first
 		const fireInit = () => {
-			Dolibarr.executeHook('Init', { context: Dolibarr });
+			Dolibarr.executeHook('Init', { context: Dolibarr }, { sticky: true });
 			Dolibarr.log('Context Init done');
 
 			// Only after Init is done, fire Ready
@@ -551,7 +636,7 @@
 		};
 
 		const fireReady = () => {
-			Dolibarr.executeHook('Ready', { context: Dolibarr });
+			Dolibarr.executeHook('Ready', { context: Dolibarr }, { sticky: true });
 			Dolibarr.log('Context Ready done');
 		};
 
