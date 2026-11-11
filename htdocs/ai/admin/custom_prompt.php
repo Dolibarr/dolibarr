@@ -302,7 +302,7 @@ print '<br>';
 
 // Custom models
 if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
-	print load_fiche_titre($langs->trans("AIModelForFeature", $arrayofai[$aiservice]['label']), '', '');
+	print load_fiche_titre($langs->trans("AIModelForFeature", $arrayofai[$aiservice]['label']), '', 'fa-brain');
 
 	print $formSetup->generateOutput(true);
 }
@@ -311,7 +311,7 @@ print '<br>';
 print '<br>';
 print '<br>';
 
-print load_fiche_titre($langs->trans("AIPromptForFeatures", $arrayofai[$aiservice]['label']), $newcardbutton, '');
+print load_fiche_titre($langs->trans("AIPromptForFeatures", $arrayofai[$aiservice]['label']), $newcardbutton, 'fa-comment-dots');
 
 if ($action == 'deleteproperty') {
 	$formconfirm = $form->formconfirm(
