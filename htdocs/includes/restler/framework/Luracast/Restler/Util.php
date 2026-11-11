@@ -39,7 +39,7 @@ class Util
             }
             return false;
         }
-        return !(boolean)strpos('|bool|boolean|int|float|string|', $type);
+        return !(bool)strpos('|bool|boolean|int|float|string|', $type);
     }
 
     /**

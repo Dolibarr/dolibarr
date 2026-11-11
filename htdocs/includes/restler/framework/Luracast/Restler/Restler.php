@@ -1058,7 +1058,9 @@ class Restler extends EventDispatcher
                     $object,
                     $o->methodName
                 );
-                $reflectionMethod->setAccessible(true);
+                if (PHP_VERSION_ID < 80100) {
+                    $reflectionMethod->setAccessible(true);
+                }
                 $result = $reflectionMethod->invokeArgs(
                     $object,
                     $o->parameters
@@ -1090,7 +1092,7 @@ class Restler extends EventDispatcher
             );
     }
 
-    public function composeHeaders(RestException $e = null)
+    public function composeHeaders(?RestException $e = null)
     {
         //only GET method should be cached if allowed by API developer
         $expires = $this->requestMethod == 'GET' ? Defaults::$headerExpires : 0;
