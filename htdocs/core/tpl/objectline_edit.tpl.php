@@ -435,7 +435,7 @@ $coldisplay++;
 	<td colspan="<?php echo $coldisplay - (!getDolGlobalString('MAIN_VIEW_LINE_NUMBER') ? 0 : 1) ?>">
 	<?php
 	echo $langs->trans('ServiceLimitedDuration').' ';
-	echo '<span id="lbl_prefix">'.$langs->trans('From').'</span>'.' ';
+	echo '<span id="lbl_prefix">'.$langs->trans('From').'</span> ';
 	?>
 	<?php
 	$prefillDates = false;
@@ -457,9 +457,9 @@ $coldisplay++;
 	$hourmin = getDolGlobalInt('MAIN_USE_HOURMIN_IN_DATE_RANGE');
 	print $form->selectDate($line->date_start, 'date_start', $hourmin, $hourmin, $line->date_start ? 0 : 1, "updateline", 1, 0);
 	print '<span id="wrapper_date_end" style="display: none;">';
-    print ' '.$langs->trans('to').' ';
-    print $form->selectDate($line->date_end, 'date_end', $hourmin, $hourmin, $line->date_end ? 0 : 1, "updateline", 1, 0);
-    print ' <a href="#" id="btn_hide_end_date" class="marginleftonly opacitymedium" style="display:none; text-decoration:none;" title="'.$langs->trans('Remove').'"><span class="fa fa-minus-circle valignmiddle"></span></a>';
+	print ' '.$langs->trans('to').' ';
+	print $form->selectDate($line->date_end, 'date_end', $hourmin, $hourmin, $line->date_end ? 0 : 1, "updateline", 1, 0);
+	print ' <a href="#" id="btn_hide_end_date" class="marginleftonly opacitymedium" style="display:none; text-decoration:none;" title="'.$langs->trans('Remove').'"><span class="fa fa-minus-circle valignmiddle"></span></a>';
 	print '</span>';
 	print ' <a href="#" id="btn_toggle_end_date" class="marginleftonly opacitymedium" style="text-decoration:none;" title="'.$langs->trans('AddEndDate').'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
 	if ($prefillDates) {
