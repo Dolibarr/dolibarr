@@ -933,35 +933,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 							if ($event->type_code != 'HOLIDAY' && $event->type_code != 'BIRTHDAY') {
 								if (empty($event->fulldayevent)) {
 									// Show hours (start ... end)
-									$tmpyearstart  = dol_print_date($event->date_start_in_calendar, '%Y', 'tzuserrel');
-									$tmpmonthstart = dol_print_date($event->date_start_in_calendar, '%m', 'tzuserrel');
-									$tmpdaystart   = dol_print_date($event->date_start_in_calendar, '%d', 'tzuserrel');
-									$tmpyearend    = dol_print_date($event->date_end_in_calendar, '%Y', 'tzuserrel');
-									$tmpmonthend   = dol_print_date($event->date_end_in_calendar, '%m', 'tzuserrel');
-									$tmpdayend     = dol_print_date($event->date_end_in_calendar, '%d', 'tzuserrel');
-
-									// Hour start
-									if ($tmpyearstart == $annee && $tmpmonthstart == $mois && $tmpdaystart == $jour) {
-										$daterange .= dol_print_date($event->date_start_in_calendar, 'hour', 'tzuserrel');
-										if ($event->date_end_in_calendar && $event->date_start_in_calendar != $event->date_end_in_calendar) {
-											if ($tmpyearstart == $tmpyearend && $tmpmonthstart == $tmpmonthend && $tmpdaystart == $tmpdayend) {
-												$daterange .= '-';
-											}
-											//else
-											//print '...';
-										}
-									}
-									if ($event->date_end_in_calendar && $event->date_start_in_calendar != $event->date_end_in_calendar) {
-										if ($tmpyearstart != $tmpyearend || $tmpmonthstart != $tmpmonthend || $tmpdaystart != $tmpdayend) {
-											$daterange .= '...';
-										}
-									}
-									// Hour end
-									if ($event->date_end_in_calendar && $event->date_start_in_calendar != $event->date_end_in_calendar) {
-										if ($tmpyearend == $annee && $tmpmonthend == $mois && $tmpdayend == $jour) {
-											$daterange .= dol_print_date($event->date_end_in_calendar, 'hour', 'tzuserrel');
-										}
-									}
+									$daterange .= agenda_event_hour_range($event, $annee, $mois, $jour);
 								} else {
 									if ($showinfo) {
 										print $langs->trans("EventOnFullDay")."<br>\n";
@@ -1741,6 +1713,53 @@ function agenda_get_birthday_events($db, $langs, $user, $mode, $month, $day, $ye
 	}
 
 	return $num;
+}
+
+/**
+ * Return the hours of a timed event as the calendar views print them in front of its label, for the day
+ * given by $annee/$mois/$jour: "10:30-11:30" for an event of that day, "10:30" when it has no end or an
+ * end equal to its start, "10:30..." and "...11:30" for the two days of an event that crosses midnight.
+ * The caller is responsible for the full-day case, which the views word instead of printing hours.
+ *
+ * @param	ActionComm	$event	Event with date_start_in_calendar and date_end_in_calendar set
+ * @param	int|string	$annee	Year of the day being printed
+ * @param	int|string	$mois	Month of the day being printed
+ * @param	int|string	$jour	Day of the month being printed
+ * @return	string				The hours, or '' when the event has nothing to show on that day
+ */
+function agenda_event_hour_range($event, $annee, $mois, $jour)
+{
+	$daterange = '';
+
+	$tmpyearstart  = dol_print_date($event->date_start_in_calendar, '%Y', 'tzuserrel');
+	$tmpmonthstart = dol_print_date($event->date_start_in_calendar, '%m', 'tzuserrel');
+	$tmpdaystart   = dol_print_date($event->date_start_in_calendar, '%d', 'tzuserrel');
+	$tmpyearend    = dol_print_date($event->date_end_in_calendar, '%Y', 'tzuserrel');
+	$tmpmonthend   = dol_print_date($event->date_end_in_calendar, '%m', 'tzuserrel');
+	$tmpdayend     = dol_print_date($event->date_end_in_calendar, '%d', 'tzuserrel');
+
+	// Hour start
+	if ($tmpyearstart == $annee && $tmpmonthstart == $mois && $tmpdaystart == $jour) {
+		$daterange .= dol_print_date($event->date_start_in_calendar, 'hour', 'tzuserrel');
+		if ($event->date_end_in_calendar && $event->date_start_in_calendar != $event->date_end_in_calendar) {
+			if ($tmpyearstart == $tmpyearend && $tmpmonthstart == $tmpmonthend && $tmpdaystart == $tmpdayend) {
+				$daterange .= '-';
+			}
+		}
+	}
+	if ($event->date_end_in_calendar && $event->date_start_in_calendar != $event->date_end_in_calendar) {
+		if ($tmpyearstart != $tmpyearend || $tmpmonthstart != $tmpmonthend || $tmpdaystart != $tmpdayend) {
+			$daterange .= '...';
+		}
+	}
+	// Hour end
+	if ($event->date_end_in_calendar && $event->date_start_in_calendar != $event->date_end_in_calendar) {
+		if ($tmpyearend == $annee && $tmpmonthend == $mois && $tmpdayend == $jour) {
+			$daterange .= dol_print_date($event->date_end_in_calendar, 'hour', 'tzuserrel');
+		}
+	}
+
+	return $daterange;
 }
 
 /**

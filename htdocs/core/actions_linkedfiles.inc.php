@@ -190,6 +190,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 			}
 			setEventMessages($langs->trans("FileWasRemoved", $urlfile), null, 'mesgs');
 		} else {
+			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFailToDeleteFile", $urlfile), null, 'errors');
 		}
 	} elseif ($linkid) {	// delete of external link

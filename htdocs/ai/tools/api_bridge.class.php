@@ -255,6 +255,13 @@ class ToolApiBridge extends McpTool
 	private $routes = [];
 
 	/**
+	 * Lines of the REST API source files read by toolApiRights(), keyed by file path.
+	 *
+	 * @var array<string, array<int, string>>
+	 */
+	private $apiSourceCache = array();
+
+	/**
 	 * Endpoints found by discoverEndpoints(), keyed by name. Filled on the first
 	 * getDefinitions() call.
 	 *
@@ -2559,6 +2566,10 @@ class ToolApiBridge extends McpTool
 			$this->enrichments[$key]['methods']['putLine'] = $this->lineMethod('update', $l[0], $l[1], $l[2], $l[3]);
 			$this->enrichments[$key]['methods']['deleteLine'] = $this->lineMethod('delete', $l[0], $l[1], $l[2], $l[3]);
 		}
+		$supplierOrderLine = $this->lineMethod('update', 'supplier order', 'CommandeFournisseur', array('fournisseur', 'commande', 'creer'), 'supplier_order');
+		$supplierOrderLine['write']['read_right'] = array('fournisseur', 'commande', 'lire');
+		$supplierOrderLine['write']['access'] = array('fournisseur', 'commande_fournisseur', 'commande');
+		$this->enrichments['supplier_orders']['methods']['putLine'] = $supplierOrderLine;
 		$supplierOrderDeleteLine = $this->lineMethod('delete', 'supplier order', 'CommandeFournisseur', array('fournisseur', 'commande', 'creer'), 'product');
 		$supplierOrderDeleteLine['write']['read_right'] = array('fournisseur', 'commande', 'lire');
 		$supplierOrderDeleteLine['write']['access'] = array('fournisseur', 'commande_fournisseur', 'commande');
@@ -2876,7 +2887,7 @@ class ToolApiBridge extends McpTool
 	 * @param  string   $label   Document name, as the model reads it.
 	 * @param  string   $class   Business class of the document.
 	 * @param  string[] $right   Right needed to write.
-	 * @param  string   $profile Line shape: 'product', 'supplier', 'contract' or 'intervention'.
+	 * @param  string   $profile Line shape: 'product', 'supplier', 'supplier_order', 'contract' or 'intervention'.
 	 * @return array{suffix:string,description:string,write:array<string,mixed>,params:array<string,string>} Method enrichment.
 	 */
 	private function lineMethod($action, $label, $class, array $right, $profile)
@@ -4347,6 +4358,21 @@ class ToolApiBridge extends McpTool
 		$this->unresolvedProducts = array();
 		if (!empty($write['supplier_workflow'])) {
 			return $this->normaliseSupplierOrderWorkflow($args, $write);
+		}
+		if (($write['line_profile'] ?? '') === 'supplier_order') {
+			global $langs;
+			$langs->load('other');
+			if (!$this->user || !$this->user->hasRight('fournisseur', 'commande', 'lire') || !$this->user->hasRight('fournisseur', 'commande', 'creer')) {
+				throw new InvalidArgumentException($langs->transnoentitiesnoconv('NotEnoughPermissions'));
+			}
+			if (array_key_exists('request_data', $args)) {
+				$body = is_string($args['request_data']) ? json_decode($args['request_data'], true) : $args['request_data'];
+				if (!is_array($body)) {
+					throw new InvalidArgumentException($langs->transnoentitiesnoconv('AIWriteInvalidLineArgument', 'request_data'));
+				}
+				unset($args['request_data']);
+				$args = array_merge($body, $args);
+			}
 		}
 		if (($write['object'] ?? '') === 'CommandeFournisseur' && ($write['line_action'] ?? '') === 'delete') {
 			return $this->normaliseSupplierOrderLineDeletion($args, $write);
@@ -6032,7 +6058,13 @@ class ToolApiBridge extends McpTool
 		$kind = (string) $write['kind'];
 		$field = (string) ($write['target'] ?? 'id');
 		$given = $args[$field] ?? ($args['ref'] ?? '');
+		if (($write['line_profile'] ?? '') === 'supplier_order' && ((!is_int($given) && !is_string($given)) || (is_numeric($given) && (!ctype_digit((string) $given) || (int) $given <= 0)))) {
+			throw new InvalidArgumentException($langs->transnoentitiesnoconv('AIWriteInvalidLineArgument', 'id'));
+		}
 		$this->writeTarget = $this->resolveWriteTarget($write, $given);
+		if (($write['line_profile'] ?? '') === 'supplier_order' && (!$this->writeTarget || !$this->canAccessWriteObject($write['access'], (int) $this->writeTarget->id))) {
+			throw new InvalidArgumentException($langs->transnoentitiesnoconv('AIWriteRecordNotFound', 'supplier order', (string) $given));
+		}
 		$out = array($field => ($this->writeTarget ? (int) $this->writeTarget->id : $given));
 
 		// Arguments read from the target record (the website of a page): a different value given is refused.
@@ -6108,7 +6140,14 @@ class ToolApiBridge extends McpTool
 		}
 
 		if ($kind === 'line') {
-			return $this->normaliseLineArgs($args, $write, $out);
+			$out = $this->normaliseLineArgs($args, $write, $out);
+			if (($write['line_profile'] ?? '') === 'supplier_order') {
+				$error = $this->precheckTargetWrite($write, $out);
+				if ($error !== '') {
+					throw new InvalidArgumentException($error);
+				}
+			}
+			return $out;
 		}
 
 		return $out;	// delete: the record alone
@@ -6189,6 +6228,16 @@ class ToolApiBridge extends McpTool
 				continue;
 			}
 			$name = (isset($aliases[$name]) && !isset($args[$aliases[$name]])) ? $aliases[$name] : $name;
+			if ($profile === 'supplier_order') {
+				$numeric = in_array($name, array('qty', 'subprice', 'remise_percent', 'tva_tx'), true);
+				if (($numeric && (!is_numeric($value) || !is_finite((float) $value)))
+					|| ($name === 'desc' && !is_string($value))
+					|| (in_array($name, array('line', 'lineid', 'unit'), true) && (!is_string($value) && !is_int($value)))
+					|| ($name === 'lineid' && (!ctype_digit((string) $value) || (int) $value <= 0))
+					|| ($name === 'line' && is_numeric($value) && (!ctype_digit((string) $value) || (int) $value <= 0))) {
+					throw new InvalidArgumentException($langs->transnoentitiesnoconv('AIWriteInvalidLineArgument', $name));
+				}
+			}
 			if (in_array($name, array('line', 'lineid'), true) && $action !== 'add') {
 				continue;
 			}
@@ -6280,6 +6329,19 @@ class ToolApiBridge extends McpTool
 				$body += array('date' => dol_now(), 'duration' => 0);
 			} else {
 				$out['lineid'] = $line ? (int) $line->id : 0;
+			}
+			$out['_body'] = $body;
+			return $out;
+		}
+
+		// Supplier orders already implement partial updates in REST. Sending old
+		// prices or tax fields would override its TTC, currency and VAT preservation.
+		if ($profile === 'supplier_order') {
+			$out['lineid'] = $line ? (int) $line->id : 0;
+			$body = $changes;
+			if (array_key_exists('unit', $body)) {
+				$body['fk_unit'] = $body['unit'];
+				unset($body['unit']);
 			}
 			$out['_body'] = $body;
 			return $out;
@@ -7689,7 +7751,6 @@ class ToolApiBridge extends McpTool
 				}
 				$code = (int) $e->getCode();
 				$message = $e->getMessage();
-				$detail = '';
 				if ($message === '') {
 					// Core throws bare RestException(403) in places: give the model
 					// something to reason on instead of an empty string.
@@ -7709,19 +7770,17 @@ class ToolApiBridge extends McpTool
 					global $langs;
 					dol_syslog(get_class($this).'::execute '.$name.' '.$message, LOG_DEBUG);
 					$langs->loadLangs(array('main', 'errors'));
-					// A 403 that explains itself (e.g. PHP code of a website page changed) is kept for the model, so it can correct its call.
+					// A 403 that explains itself (e.g. PHP code of a website page changed) becomes the error, so the caller can correct its call.
 					if ($code == 403 && $e->getMessage() !== '' && !preg_match('/^(Forbidden|Access not allowed)/i', $e->getMessage())) {
-						$detail = $e->getMessage();
+						$message = $e->getMessage();
+					} else {
+						$message = $langs->transnoentitiesnoconv($code == 404 ? 'ErrorRecordNotFound' : 'NotEnoughPermissions');
 					}
-					$message = $langs->transnoentitiesnoconv($code == 404 ? 'ErrorRecordNotFound' : 'NotEnoughPermissions');
 				}
 				$output = [
 					"error" => $message,
 					"http_status" => ($code > 0 ? $code : 500)
 				];
-				if ($detail !== '') {
-					$output['detail'] = $detail;
-				}
 				// The API answers 404 for an object with no files: that is an empty
 				// list, unless the object itself does not exist. For a download,
 				// 404 means the file itself is missing: keep the error.
@@ -7796,22 +7855,11 @@ class ToolApiBridge extends McpTool
 	 */
 	public function toolApiUrl(string $name)
 	{
-		$this->getDefinitions();	// ensure routes are built
-		if (empty($this->routes[$name])) {
+		$found = $this->toolApiMethod($name);
+		if ($found === null) {
 			return '';
 		}
-		list($key, $method) = $this->routes[$name];
-		$epkey = (string) ($this->enrichments[$key]['endpoint'] ?? $key);
-		if (empty($this->endpoints[$epkey]) || !$this->resolveEndpointClass($epkey)) {
-			return '';
-		}
-		// With definitions read from the cache, the class name is known but its file (and the API base classes) are not loaded yet
-		$this->loadApiRuntime();
-		require_once $this->endpoints[$epkey]['path'];
-		if (!method_exists($this->endpoints[$epkey]['class'], $method)) {
-			return '';
-		}
-		$rm = new ReflectionMethod($this->endpoints[$epkey]['class'], $method);
+		list($epkey, $method, $rm) = $found;
 		if (preg_match('/@url\s+(GET|POST|PUT|PATCH|DELETE)\s+(\S*)/i', (string) $rm->getDocComment(), $reg)) {
 			$path = trim($reg[2], '/');
 			return dol_strtoupper($reg[1]).' /'.$epkey.($path !== '' ? '/'.$path : '');
@@ -7827,5 +7875,80 @@ class ToolApiBridge extends McpTool
 		}
 
 		return '';
+	}
+
+	/**
+	 * Rights the REST API method of a bridge tool tests, read from its source code: the checks
+	 * "if (!DolibarrApiAccess::$user->hasRight(...)) { throw" of the method and of the methods of its class it calls.
+	 *
+	 * @param  string $name Tool name.
+	 * @return array<int,array<int,string>> Rights triples found, empty when none can be identified (generic tool...).
+	 */
+	public function toolApiRights(string $name)
+	{
+		$found = $this->toolApiMethod($name);
+		if ($found === null) {
+			return array();
+		}
+		$class = $found[2]->getDeclaringClass();
+
+		$rights = array();
+		$todo = array($found[2]);
+		$done = array();
+		while (!empty($todo)) {
+			$rm = array_shift($todo);
+			$file = (string) $rm->getFileName();
+			if (isset($done[$rm->getName()]) || $file === '') {
+				continue;
+			}
+			$done[$rm->getName()] = 1;
+			if (!isset($this->apiSourceCache[$file])) {
+				$this->apiSourceCache[$file] = (array) file($file);
+			}
+			$src = implode('', array_slice($this->apiSourceCache[$file], $rm->getStartLine() - 1, $rm->getEndLine() - $rm->getStartLine() + 1));
+
+			preg_match_all('/if\s*\(\s*!\s*DolibarrApiAccess::\$user->hasRight\(\s*[\'"]([\w@]+)[\'"]\s*,\s*[\'"](\w+)[\'"]\s*(?:,\s*[\'"](\w*)[\'"]\s*)?\)\s*\)\s*\{\s*throw\b/', $src, $regs, PREG_SET_ORDER);
+			foreach ($regs as $reg) {
+				$triple = empty($reg[3]) ? array($reg[1], $reg[2]) : array($reg[1], $reg[2], $reg[3]);
+				$rights[implode('/', $triple)] = $triple;
+			}
+			// Follow the methods of the class called by the API method itself (get() calls _fetch() that tests the right)
+			if (count($done) == 1 && preg_match_all('/\$this->(\w+)\(/', $src, $calls)) {
+				foreach (array_unique($calls[1]) as $callee) {
+					if ($class->hasMethod($callee)) {
+						$todo[] = $class->getMethod($callee);
+					}
+				}
+			}
+		}
+
+		return array_values($rights);
+	}
+
+	/**
+	 * REST API method a bridge tool calls.
+	 *
+	 * @param  string $name Tool name.
+	 * @return array{0:string,1:string,2:ReflectionMethod}|null Endpoint key, method name and its reflection, or null when the tool calls no identifiable API method.
+	 */
+	private function toolApiMethod(string $name)
+	{
+		$this->getDefinitions();	// ensure routes are built
+		if (empty($this->routes[$name])) {
+			return null;
+		}
+		list($key, $method) = $this->routes[$name];
+		$epkey = (string) ($this->enrichments[$key]['endpoint'] ?? $key);
+		if (empty($this->endpoints[$epkey]) || !$this->resolveEndpointClass($epkey)) {
+			return null;
+		}
+		// With definitions read from the cache, the class name is known but its file (and the API base classes) are not loaded yet
+		$this->loadApiRuntime();
+		require_once $this->endpoints[$epkey]['path'];
+		if (!method_exists($this->endpoints[$epkey]['class'], $method)) {
+			return null;
+		}
+
+		return array($epkey, $method, new ReflectionMethod($this->endpoints[$epkey]['class'], $method));
 	}
 }

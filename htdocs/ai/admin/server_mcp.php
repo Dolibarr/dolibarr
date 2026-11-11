@@ -158,6 +158,18 @@ if ($action == 'update_external') {
 		}
 	}
 
+	// Cache duration (in seconds) returned as ttlMs by server/discover. Empty means default value.
+	if (GETPOSTISSET('AI_MCP_DISCOVER_TTL')) {
+		if (GETPOST('AI_MCP_DISCOVER_TTL', 'alphanohtml') !== '') {
+			$res = dolibarr_set_const($db, "AI_MCP_DISCOVER_TTL", max(0, GETPOSTINT('AI_MCP_DISCOVER_TTL')), 'int', 0, '', $conf->entity);
+		} else {
+			$res = dolibarr_del_const($db, "AI_MCP_DISCOVER_TTL", $conf->entity);
+		}
+		if ($res < 0) {
+			$error++;
+		}
+	}
+
 	// Checkbox has its own form, flagged by a hidden field because an unchecked checkbox is not posted
 	if (GETPOSTISSET('AI_MCP_BEHIND_BASIC_AUTH_FORM')) {
 		$res = dolibarr_set_const($db, "AI_MCP_BEHIND_BASIC_AUTH", GETPOSTINT("AI_MCP_BEHIND_BASIC_AUTH"), 'int', 0, '', $conf->entity);
@@ -463,12 +475,22 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	print '<td></td>';
 	print '</tr>';
 
+	// Cache duration of the server/discover answer
+	print '<tr class="oddeven">';
+	print '<td>'.$form->textwithpicto($langs->trans("McpDiscoverTtl"), $langs->trans("McpDiscoverTtlHelp")).'</td>';
+	print '<td>';
+	print '<input type="number" min="0" class="width75" id="AI_MCP_DISCOVER_TTL" name="AI_MCP_DISCOVER_TTL" value="'.getDolGlobalInt('AI_MCP_DISCOVER_TTL', 3600).'"> '.$langs->trans("Seconds");
+	print '</td>';
+	print '<td></td>';
+	print '</tr>';
+
 	print '</table>';
 	print '</div>';
 
-	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
+	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; </div>';
 
 	print '</form>';
+	print '<br>';
 
 	print '<br>';
 
