@@ -2931,6 +2931,8 @@ MistralVibeWebConnectorAuth=Then choose the custom authentication and add the HT
 MCPServerBehindBasicAuth=My server is behind a HTTP Basic authentication
 MCPServerBehindBasicAuthHelp=The <b>Authorization</b> header is then used for the Basic authentication, so the MCP API key is sent into the <b>DOLAPIKEY</b> header. In the examples, replace %s with the base64 encoding of the login:password of the Basic authentication (for example with the command: echo -n 'login:password' | base64)
 MCPEndpointTestHelp=You can test yourself the answer of the MCP server to the request of the list of tools by pasting this URL into your browser: %s
+McpDiscoverTtl=Cache duration of the server description
+McpDiscoverTtlHelp=Duration returned to the MCP clients (field <b>ttlMs</b> of the answer to <b>server/discover</b>) during which they can keep the capabilities of the server in cache before asking them again. 0 = no cache.
 AIProviderConfigTitle=AI Provider Configuration
 AIProvider=AI Provider
 NoAIProviderSelected=No AI Provider Selected
