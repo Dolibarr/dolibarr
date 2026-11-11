@@ -396,8 +396,8 @@ print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 // Status search
 print '<td class="liste_titre center">';
-$status_options = array('' => $langs->trans("All"), 'success' => $langs->trans("Success"), 'confirm' => $langs->trans("Confirm"), 'error' => $langs->trans("Error"));
-print $form->selectarray('search_status', $status_options, $search_status, 0, 0, 0, '', 1);  // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
+$array_status = array('' => $langs->trans("All"), 'success' => $langs->trans("Success"), 'confirm' => $langs->trans("Confirm"), 'error' => $langs->trans("Error"));
+print $form->selectarray('search_status', $array_status, $search_status, 0, 0, 0, '', 1);
 print '</td>';
 // Search buttons
 print '<td class="liste_titre center">';
