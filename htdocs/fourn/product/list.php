@@ -297,9 +297,9 @@ if ($fourn_id > 0) {
 	$sql .= " AND ppf.fk_soc = ".((int) $fourn_id);
 }
 if (!empty($search_tva_tx)) {
-	$sql .= " AND ppf.tva_tx IN (".implode(',', array_map(function ($vatrate) {
+	$sql .= " AND ppf.tva_tx IN (".$db->sanitize(implode(',', array_map(function (string $vatrate): string {
 		return (string) ((float) $vatrate);
-	}, $search_tva_tx)).")";
+	}, $search_tva_tx)), 0, 0, 0, 0).")";
 }
 if ($search_barcode != '') {
 	$sql .= natural_search('p.barcode', $search_barcode);
@@ -554,7 +554,7 @@ if (!empty($arrayfields['ppf.tva_tx']['checked'])) {
 			$arrayofvatrates[$searchvatrate] = vatrate($searchvatrate, true);
 		}
 	}
-	uksort($arrayofvatrates, function ($a, $b) {
+	uksort($arrayofvatrates, function (string $a, string $b): int {
 		return (float) $a <=> (float) $b;
 	});
 	print '<td class="liste_titre center">';
