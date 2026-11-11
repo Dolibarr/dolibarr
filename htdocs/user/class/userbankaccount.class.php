@@ -93,10 +93,14 @@ class UserBankAccount extends Account
 	 */
 	public function create($user, $notrigger = 0)
 	{
+		global $conf;
+
 		$now = dol_now();
 
-		$sql = "INSERT INTO ".$this->db->prefix()."user_rib (fk_user, datec)";
-		$sql .= " VALUES (".((int) $this->userid).", '".$this->db->idate($now)."')";
+		// Store the entity of the current context explicitly. If omitted, the column default (1) is used, so a record
+		// created from another entity (multicompany) would be rejected by the entity check of user/bank.php on edit.
+		$sql = "INSERT INTO ".$this->db->prefix()."user_rib (entity, fk_user, datec)";
+		$sql .= " VALUES (".((int) $conf->entity).", ".((int) $this->userid).", '".$this->db->idate($now)."')";
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->affected_rows($resql)) {
