@@ -255,6 +255,13 @@ class ToolApiBridge extends McpTool
 	private $routes = [];
 
 	/**
+	 * Lines of the REST API source files read by toolApiRights(), keyed by file path.
+	 *
+	 * @var array<string, array<int, string>>
+	 */
+	private $apiSourceCache = array();
+
+	/**
 	 * Endpoints found by discoverEndpoints(), keyed by name. Filled on the first
 	 * getDefinitions() call.
 	 *
@@ -7848,22 +7855,11 @@ class ToolApiBridge extends McpTool
 	 */
 	public function toolApiUrl(string $name)
 	{
-		$this->getDefinitions();	// ensure routes are built
-		if (empty($this->routes[$name])) {
+		$found = $this->toolApiMethod($name);
+		if ($found === null) {
 			return '';
 		}
-		list($key, $method) = $this->routes[$name];
-		$epkey = (string) ($this->enrichments[$key]['endpoint'] ?? $key);
-		if (empty($this->endpoints[$epkey]) || !$this->resolveEndpointClass($epkey)) {
-			return '';
-		}
-		// With definitions read from the cache, the class name is known but its file (and the API base classes) are not loaded yet
-		$this->loadApiRuntime();
-		require_once $this->endpoints[$epkey]['path'];
-		if (!method_exists($this->endpoints[$epkey]['class'], $method)) {
-			return '';
-		}
-		$rm = new ReflectionMethod($this->endpoints[$epkey]['class'], $method);
+		list($epkey, $method, $rm) = $found;
 		if (preg_match('/@url\s+(GET|POST|PUT|PATCH|DELETE)\s+(\S*)/i', (string) $rm->getDocComment(), $reg)) {
 			$path = trim($reg[2], '/');
 			return dol_strtoupper($reg[1]).' /'.$epkey.($path !== '' ? '/'.$path : '');
@@ -7879,5 +7875,80 @@ class ToolApiBridge extends McpTool
 		}
 
 		return '';
+	}
+
+	/**
+	 * Rights the REST API method of a bridge tool tests, read from its source code: the checks
+	 * "if (!DolibarrApiAccess::$user->hasRight(...)) { throw" of the method and of the methods of its class it calls.
+	 *
+	 * @param  string $name Tool name.
+	 * @return array<int,array<int,string>> Rights triples found, empty when none can be identified (generic tool...).
+	 */
+	public function toolApiRights(string $name)
+	{
+		$found = $this->toolApiMethod($name);
+		if ($found === null) {
+			return array();
+		}
+		$class = $found[2]->getDeclaringClass();
+
+		$rights = array();
+		$todo = array($found[2]);
+		$done = array();
+		while (!empty($todo)) {
+			$rm = array_shift($todo);
+			$file = (string) $rm->getFileName();
+			if (isset($done[$rm->getName()]) || $file === '') {
+				continue;
+			}
+			$done[$rm->getName()] = 1;
+			if (!isset($this->apiSourceCache[$file])) {
+				$this->apiSourceCache[$file] = (array) file($file);
+			}
+			$src = implode('', array_slice($this->apiSourceCache[$file], $rm->getStartLine() - 1, $rm->getEndLine() - $rm->getStartLine() + 1));
+
+			preg_match_all('/if\s*\(\s*!\s*DolibarrApiAccess::\$user->hasRight\(\s*[\'"]([\w@]+)[\'"]\s*,\s*[\'"](\w+)[\'"]\s*(?:,\s*[\'"](\w*)[\'"]\s*)?\)\s*\)\s*\{\s*throw\b/', $src, $regs, PREG_SET_ORDER);
+			foreach ($regs as $reg) {
+				$triple = empty($reg[3]) ? array($reg[1], $reg[2]) : array($reg[1], $reg[2], $reg[3]);
+				$rights[implode('/', $triple)] = $triple;
+			}
+			// Follow the methods of the class called by the API method itself (get() calls _fetch() that tests the right)
+			if (count($done) == 1 && preg_match_all('/\$this->(\w+)\(/', $src, $calls)) {
+				foreach (array_unique($calls[1]) as $callee) {
+					if ($class->hasMethod($callee)) {
+						$todo[] = $class->getMethod($callee);
+					}
+				}
+			}
+		}
+
+		return array_values($rights);
+	}
+
+	/**
+	 * REST API method a bridge tool calls.
+	 *
+	 * @param  string $name Tool name.
+	 * @return array{0:string,1:string,2:ReflectionMethod}|null Endpoint key, method name and its reflection, or null when the tool calls no identifiable API method.
+	 */
+	private function toolApiMethod(string $name)
+	{
+		$this->getDefinitions();	// ensure routes are built
+		if (empty($this->routes[$name])) {
+			return null;
+		}
+		list($key, $method) = $this->routes[$name];
+		$epkey = (string) ($this->enrichments[$key]['endpoint'] ?? $key);
+		if (empty($this->endpoints[$epkey]) || !$this->resolveEndpointClass($epkey)) {
+			return null;
+		}
+		// With definitions read from the cache, the class name is known but its file (and the API base classes) are not loaded yet
+		$this->loadApiRuntime();
+		require_once $this->endpoints[$epkey]['path'];
+		if (!method_exists($this->endpoints[$epkey]['class'], $method)) {
+			return null;
+		}
+
+		return array($epkey, $method, new ReflectionMethod($this->endpoints[$epkey]['class'], $method));
 	}
 }

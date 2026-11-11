@@ -300,6 +300,17 @@ $newbutton .= '</a>';
 
 print '<br>';
 
+// Custom models
+if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
+	print load_fiche_titre($langs->trans("AIModelForFeature", $arrayofai[$aiservice]['label']), '', '');
+
+	print $formSetup->generateOutput(true);
+}
+
+print '<br>';
+print '<br>';
+print '<br>';
+
 print load_fiche_titre($langs->trans("AIPromptForFeatures", $arrayofai[$aiservice]['label']), $newcardbutton, '');
 
 if ($action == 'deleteproperty') {
@@ -423,8 +434,6 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 		}
 		print '<br>';
 	} else {
-		print '<br>';
-
 		foreach ($currentConfigurations as $confkey => $config) {
 			if (!empty($confkey) && !preg_match('/^[a-z]+$/i', $confkey)) {	// Ignore empty saved setup
 				continue;
@@ -536,13 +545,6 @@ if (is_array($runfail) && !empty($runfail['model'])) {
 		}
 	}
 	print info_admin($msg, 0, 0, 'warning');
-}
-
-// Custom models
-if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
-	print load_fiche_titre($langs->trans("AIModelForFeature", $arrayofai[$aiservice]['label']), '', '');
-
-	print $formSetup->generateOutput(true);
 }
 
 // Test form of the OCR function, hidden by default and shown by clicking on the "Test OCR" button placed after
