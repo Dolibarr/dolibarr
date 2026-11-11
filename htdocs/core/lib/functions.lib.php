@@ -12209,4 +12209,3 @@ function getListLimitFromScreenHeight()
 
 	return $default;
 }
-
