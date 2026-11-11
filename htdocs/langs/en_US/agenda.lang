@@ -224,3 +224,6 @@ STOCKTRANSFER_UNVALIDATEInDolibarr=Stock transfer %s set back to draft.
 STOCKTRANSFER_MODIFYInDolibarr=Stock transfer %s modified.
 ExtEventOrganizer=Organizer
 ExtEventAttendees=Attendees
+AGENDA_AUTOREFRESH_ENABLED=Refresh the calendar views automatically
+AGENDA_AUTOREFRESH_ENABLEDHelp=The day, week and month views show, without a reload, the events created or modified by other users since the page was opened.
+AGENDA_AUTOREFRESH_FREQUENCY=Frequency of the automatic refresh

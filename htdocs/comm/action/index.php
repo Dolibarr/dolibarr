@@ -611,35 +611,8 @@ $s = '';
 
 
 $showextcals = $listofextcals;
-$bookcalcalendars = array();
-
 // Load Bookcal Calendars
-if (isModEnabled("bookcal")) {
-	$sql = "SELECT ba.rowid, bc.label, bc.ref, bc.rowid as id_cal";
-	$sql .= " FROM ".MAIN_DB_PREFIX."bookcal_availabilities as ba";
-	$sql .= " JOIN ".MAIN_DB_PREFIX."bookcal_calendar as bc";
-	$sql .= " ON bc.rowid = ba.fk_bookcal_calendar";
-	$sql .= " WHERE bc.status = 1";
-	$sql .= " AND ba.status = 1";
-	$sql .= " AND bc.entity IN (".getEntity('agenda').")";	// bookcal is a "virtual view" of agenda
-	if (!empty($filtert) && $filtert != '-1') {
-		$sql .= " AND bc.visibility IN (".$db->sanitize($filtert, 0, 0, 0, 0).")";
-	}
-	$resql = $db->query($sql);
-	if ($resql) {
-		$num = $db->num_rows($resql);
-		$i = 0;
-		while ($i < $num) {
-			$objp = $db->fetch_object($resql);
-			$label = !empty($objp->label) ? $objp->label : $objp->ref;
-			$bookcalcalendars["calendars"][$objp->id_cal] = array("id" => $objp->id_cal, "label" => $label);
-			$bookcalcalendars["availabilitieslink"][$objp->rowid] = $objp->id_cal;
-			$i++;
-		}
-	} else {
-		dol_print_error($db);
-	}
-}
+$bookcalcalendars = agenda_get_bookcal_calendars($db, (string) $filtert);
 
 if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	$s .= "\n".'<!-- Div to calendars selectors -->'."\n";
@@ -888,6 +861,98 @@ jQuery(document).on('dolagenda:relayout', function () {
 	jQuery('.agendadaylayer').each(function () { dolAgendaDayLayout(this); });
 });
 JSDAYVIEW;
+		$s .= "\n";
+	}
+	if (getDolGlobalString('AGENDA_AUTOREFRESH_ENABLED') && ($mode == 'show_day' || $mode == 'show_week' || $mode == 'show_month' || empty($mode))) {
+		// Fetch, every few seconds, the events created or modified since the last check and put them in
+		// place without reloading the page. ajax/ajaxrefreshevents.php is the server side half.
+		$s .= 'var dolAgendaRefreshCfg = '.json_encode([
+			'url' => DOL_URL_ROOT.'/comm/action/ajax/ajaxrefreshevents.php',
+			'delay' => max(30, getDolGlobalInt('AGENDA_AUTOREFRESH_FREQUENCY', 60)) * 1000,
+			'since' => dol_now(),
+			'params' => [
+				'mode' => (empty($mode) ? 'show_month' : $mode),
+				'year' => (int) $year,
+				'month' => (int) $month,
+				'day' => (int) $day,
+				'firstdaytoshow' => (int) $firstdaytoshow,
+				'lastdaytoshow' => (int) $lastdaytoshow,
+				// The filters as this page resolved them: the server applies the permissions again
+				'filters' => json_encode([
+					'filter' => (string) $filter,
+					'filtert' => (string) $filtert,
+					'usergroup' => (string) $usergroup,
+					'resourceid' => (int) $resourceid,
+					'actioncode' => $actioncode,
+					'pid' => (int) $pid,
+					'socid' => (int) $socid,
+					'type' => (string) $type,
+					'status' => (string) $status,
+					'search_categ_cus' => (int) $search_categ_cus,
+				]),
+			],
+		], JSON_HEX_TAG).';'."\n";
+		$s .= <<<'JSAUTOREFRESH'
+(function () {
+	var since = dolAgendaRefreshCfg.since, running = false;
+	function dolAgendaRefreshFits(ev) {
+		var t = jQuery(ev.target);
+		if (!t.length) { return false; }
+		if (!t.hasClass('agendadaylayer')) { return true; }
+		// The grid only shows the hours that had events when the page was built
+		var ms = /data-agenda-start="(\d+)"/.exec(ev.html), me = /data-agenda-end="(\d+)"/.exec(ev.html);
+		if (!ms || !me) { return true; }
+		var start = parseInt(ms[1], 10), end = Math.max(parseInt(me[1], 10), start + 20);
+		return start >= parseInt(t.attr('data-begin-min'), 10) && end <= parseInt(t.attr('data-end-min'), 10);
+	}
+	function dolAgendaRefreshBusy() {
+		// A box being dragged, resized or saved would be replaced under the mouse
+		return jQuery('.ui-draggable-dragging, .ui-resizable-resizing, .ui-sortable-helper, .agendadaylayer .ui-draggable-disabled').length > 0;
+	}
+	function dolAgendaRefresh() {
+		if (running || document.hidden || dolAgendaRefreshBusy()) { return; }
+		running = true;
+		jQuery.ajax({type: 'POST', url: dolAgendaRefreshCfg.url, dataType: 'json', data: jQuery.extend({}, dolAgendaRefreshCfg.params, {
+			since: since,
+			token: jQuery('#searchFormList input[name=token]').val()
+		})}).done(function (data) {
+			// A drag may have started while the request was on its way: drop the answer, and as since does not
+			// move, the next turn asks for the same events again
+			if (!data || data.error || dolAgendaRefreshBusy()) { return; }
+			// An event on a day or at an hour the page has no room for: only a reload can show it
+			for (var i = 0; i < data.newevents.length; i++) {
+				if (!dolAgendaRefreshFits(data.newevents[i])) { location.reload(); return; }
+			}
+			since = data.checktime;
+			// One remove then one append per event covers a new event, a change in place and a move to another
+			// day alike. An event over several days comes once per day: its old boxes are removed only once.
+			var removed = {};
+			jQuery.each(data.newevents, function (i, ev) {
+				if (!removed[ev.eventid]) {
+					jQuery('[data-agenda-event-id="' + ev.eventid + '"]').remove();
+					removed[ev.eventid] = true;
+				}
+				var target = jQuery(ev.target);
+				target.append(ev.html);
+				if (typeof Dolibarr !== 'undefined' && Dolibarr.initNewContent) {
+					Dolibarr.initNewContent(target.children('[data-agenda-event-id="' + ev.eventid + '"]').get(0));
+				}
+			});
+			// Side by side layout, drag and resize of the boxes of the hourly grids
+			if (data.newevents.length && typeof dolAgendaDayLayout === 'function') {
+				jQuery('.agendadaylayer').each(function () { dolAgendaDayLayout(this); });
+			}
+		}).always(function () {
+			running = false;
+		});
+	}
+	setInterval(dolAgendaRefresh, dolAgendaRefreshCfg.delay);
+	// Back on a tab that was hidden: catch up at once instead of waiting for the next turn
+	document.addEventListener('visibilitychange', function () {
+		if (!document.hidden) { dolAgendaRefresh(); }
+	});
+})();
+JSAUTOREFRESH;
 		$s .= "\n";
 	}
 	$s .= '});'."\n";
