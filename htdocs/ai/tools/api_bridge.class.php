@@ -2559,6 +2559,10 @@ class ToolApiBridge extends McpTool
 			$this->enrichments[$key]['methods']['putLine'] = $this->lineMethod('update', $l[0], $l[1], $l[2], $l[3]);
 			$this->enrichments[$key]['methods']['deleteLine'] = $this->lineMethod('delete', $l[0], $l[1], $l[2], $l[3]);
 		}
+		$supplierOrderLine = $this->lineMethod('update', 'supplier order', 'CommandeFournisseur', array('fournisseur', 'commande', 'creer'), 'supplier_order');
+		$supplierOrderLine['write']['read_right'] = array('fournisseur', 'commande', 'lire');
+		$supplierOrderLine['write']['access'] = array('fournisseur', 'commande_fournisseur', 'commande');
+		$this->enrichments['supplier_orders']['methods']['putLine'] = $supplierOrderLine;
 		$supplierOrderDeleteLine = $this->lineMethod('delete', 'supplier order', 'CommandeFournisseur', array('fournisseur', 'commande', 'creer'), 'product');
 		$supplierOrderDeleteLine['write']['read_right'] = array('fournisseur', 'commande', 'lire');
 		$supplierOrderDeleteLine['write']['access'] = array('fournisseur', 'commande_fournisseur', 'commande');
@@ -2876,7 +2880,7 @@ class ToolApiBridge extends McpTool
 	 * @param  string   $label   Document name, as the model reads it.
 	 * @param  string   $class   Business class of the document.
 	 * @param  string[] $right   Right needed to write.
-	 * @param  string   $profile Line shape: 'product', 'supplier', 'contract' or 'intervention'.
+	 * @param  string   $profile Line shape: 'product', 'supplier', 'supplier_order', 'contract' or 'intervention'.
 	 * @return array{suffix:string,description:string,write:array<string,mixed>,params:array<string,string>} Method enrichment.
 	 */
 	private function lineMethod($action, $label, $class, array $right, $profile)
@@ -4347,6 +4351,21 @@ class ToolApiBridge extends McpTool
 		$this->unresolvedProducts = array();
 		if (!empty($write['supplier_workflow'])) {
 			return $this->normaliseSupplierOrderWorkflow($args, $write);
+		}
+		if (($write['line_profile'] ?? '') === 'supplier_order') {
+			global $langs;
+			$langs->load('other');
+			if (!$this->user || !$this->user->hasRight('fournisseur', 'commande', 'lire') || !$this->user->hasRight('fournisseur', 'commande', 'creer')) {
+				throw new InvalidArgumentException($langs->transnoentitiesnoconv('NotEnoughPermissions'));
+			}
+			if (array_key_exists('request_data', $args)) {
+				$body = is_string($args['request_data']) ? json_decode($args['request_data'], true) : $args['request_data'];
+				if (!is_array($body)) {
+					throw new InvalidArgumentException($langs->transnoentitiesnoconv('AIWriteInvalidLineArgument', 'request_data'));
+				}
+				unset($args['request_data']);
+				$args = array_merge($body, $args);
+			}
 		}
 		if (($write['object'] ?? '') === 'CommandeFournisseur' && ($write['line_action'] ?? '') === 'delete') {
 			return $this->normaliseSupplierOrderLineDeletion($args, $write);
@@ -6032,7 +6051,13 @@ class ToolApiBridge extends McpTool
 		$kind = (string) $write['kind'];
 		$field = (string) ($write['target'] ?? 'id');
 		$given = $args[$field] ?? ($args['ref'] ?? '');
+		if (($write['line_profile'] ?? '') === 'supplier_order' && ((!is_int($given) && !is_string($given)) || (is_numeric($given) && (!ctype_digit((string) $given) || (int) $given <= 0)))) {
+			throw new InvalidArgumentException($langs->transnoentitiesnoconv('AIWriteInvalidLineArgument', 'id'));
+		}
 		$this->writeTarget = $this->resolveWriteTarget($write, $given);
+		if (($write['line_profile'] ?? '') === 'supplier_order' && (!$this->writeTarget || !$this->canAccessWriteObject($write['access'], (int) $this->writeTarget->id))) {
+			throw new InvalidArgumentException($langs->transnoentitiesnoconv('AIWriteRecordNotFound', 'supplier order', (string) $given));
+		}
 		$out = array($field => ($this->writeTarget ? (int) $this->writeTarget->id : $given));
 
 		// Arguments read from the target record (the website of a page): a different value given is refused.
@@ -6108,7 +6133,14 @@ class ToolApiBridge extends McpTool
 		}
 
 		if ($kind === 'line') {
-			return $this->normaliseLineArgs($args, $write, $out);
+			$out = $this->normaliseLineArgs($args, $write, $out);
+			if (($write['line_profile'] ?? '') === 'supplier_order') {
+				$error = $this->precheckTargetWrite($write, $out);
+				if ($error !== '') {
+					throw new InvalidArgumentException($error);
+				}
+			}
+			return $out;
 		}
 
 		return $out;	// delete: the record alone
@@ -6189,6 +6221,16 @@ class ToolApiBridge extends McpTool
 				continue;
 			}
 			$name = (isset($aliases[$name]) && !isset($args[$aliases[$name]])) ? $aliases[$name] : $name;
+			if ($profile === 'supplier_order') {
+				$numeric = in_array($name, array('qty', 'subprice', 'remise_percent', 'tva_tx'), true);
+				if (($numeric && (!is_numeric($value) || !is_finite((float) $value)))
+					|| ($name === 'desc' && !is_string($value))
+					|| (in_array($name, array('line', 'lineid', 'unit'), true) && (!is_string($value) && !is_int($value)))
+					|| ($name === 'lineid' && (!ctype_digit((string) $value) || (int) $value <= 0))
+					|| ($name === 'line' && is_numeric($value) && (!ctype_digit((string) $value) || (int) $value <= 0))) {
+					throw new InvalidArgumentException($langs->transnoentitiesnoconv('AIWriteInvalidLineArgument', $name));
+				}
+			}
 			if (in_array($name, array('line', 'lineid'), true) && $action !== 'add') {
 				continue;
 			}
@@ -6280,6 +6322,19 @@ class ToolApiBridge extends McpTool
 				$body += array('date' => dol_now(), 'duration' => 0);
 			} else {
 				$out['lineid'] = $line ? (int) $line->id : 0;
+			}
+			$out['_body'] = $body;
+			return $out;
+		}
+
+		// Supplier orders already implement partial updates in REST. Sending old
+		// prices or tax fields would override its TTC, currency and VAT preservation.
+		if ($profile === 'supplier_order') {
+			$out['lineid'] = $line ? (int) $line->id : 0;
+			$body = $changes;
+			if (array_key_exists('unit', $body)) {
+				$body['fk_unit'] = $body['unit'];
+				unset($body['unit']);
 			}
 			$out['_body'] = $body;
 			return $out;
