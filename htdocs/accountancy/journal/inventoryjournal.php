@@ -745,5 +745,5 @@ if (empty($action) || $action == 'view') {
 	// End of page
 	llxFooter();
 }
-$db->close();
 
+$db->close();
