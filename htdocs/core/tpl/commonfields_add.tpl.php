@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2017  		Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		Benjamin Falière		<benjamin@faliere.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +51,7 @@ foreach ($object->fields as $key => $val) {
 	// Discard if field is a hidden field on form
 	// Ensure $val['visible'] is treated as an integer
 	$visible = (int) $val['visible'];
-	if (abs($visible) != 1 && abs($visible) != 3) {
+	if (abs($visible) != 1 && abs($visible) != 3 && abs($visible) != 6) {
 		continue;
 	}
 
@@ -69,18 +70,20 @@ foreach ($object->fields as $key => $val) {
 	}
 	print '"';
 	print '>';
+	print '<label for="'.$key.'" class="block">';
 	if (!empty($val['help'])) {
 		print $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
 	} else {
 		print $langs->trans($val['label']);
 	}
+	print '</label>';
 	print '</td>';
 	print '<td class="valuefieldcreate">';
 	if (!empty($val['picto'])) {
 		print img_picto('', $val['picto'], '', 0, 0, 0, '', 'pictofixedwidth');
 	}
 	if (in_array($val['type'], array('int', 'integer'))) {
-		$value = GETPOSTINT($key);
+		$value = GETPOST($key);	// We must not use GETPOSTINT in creation form because value can still be ""
 	} elseif ($val['type'] == 'double') {
 		$value = price2num(GETPOST($key, 'alphanohtml'));
 	} elseif (preg_match('/^text/', $val['type'])) {
@@ -90,7 +93,12 @@ foreach ($object->fields as $key => $val) {
 		} else {
 			$check = 'nohtml';
 		}
-		$value = GETPOST($key, $check);
+		if (getDolGlobalString('MAIN_SECURITY_DISALLOW_UNSECURED_TEXT')) {
+			$security_check = 'alphanohtml';
+		} else {
+			$security_check = $check;
+		}
+		$value = GETPOST($key, $security_check);
 	} elseif (preg_match('/^html/', $val['type'])) {
 		$tmparray = explode(':', $val['type']);
 		if (!empty($tmparray[1])) {
@@ -119,6 +127,9 @@ foreach ($object->fields as $key => $val) {
 			print img_picto('', 'language', 'class="pictofixedwidth"');
 			print $formadmin->select_language($value, $key, 0, array(), 1, 0, 0, 'minwidth300', 2);
 		} else {
+			if (isset($val['notnull']) && $val['notnull'] > 0 && empty($value)) {
+				// $value = 'ifone'; 	// TODO Implement this
+			}
 			print $object->showInputField($val, $key, $value, '', '', '', 0);
 		}
 	}

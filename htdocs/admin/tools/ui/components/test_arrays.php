@@ -1,17 +1,43 @@
 <?php
 /* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 
 // Load Dolibarr environment
-@include '../../main.inc.php';
+require '../../../../main.inc.php';
+
+/**
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var int $dolibarr_main_prod
+ */
 
 // Security
 if ($dolibarr_main_prod) {
 	accessforbidden('Access forbidden when $dolibarr_main_prod is set to 1');
 }
+// Protection if external user
+if ($user->socid > 0) {
+	accessforbidden();
+}
 
-
+$optioncss = GETPOST('optioncsss', 'alpha');
 
 /*
  * View
@@ -19,7 +45,9 @@ if ($dolibarr_main_prod) {
 
 $form = new Form($db);
 
-$usedolheader = 1; // 1 = Test inside a dolibarr page, 0 = Use hard coded header
+// 1 = Test inside a dolibarr page, 0 = Use hard coded header
+// Using a dolibarr constant avoid phpstan hardcoded value always true or false
+$usedolheader = getDolGlobalInt('MAIN_TEST_UI_IN_DOLIBARR_PAGE', 1);
 
 // HEADER
 //--------
@@ -38,16 +66,16 @@ if (empty($usedolheader)) {
 	<meta name="author" content="Dolibarr Development Team">
 	<title>Test page</title>
 	<!-- Includes for JQuery (Ajax library) -->
-	<link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/css/base/jquery-ui.css" />
-	<!-- <link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css" /> -->
+	<link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/public/includes/jquery/css/base/jquery-ui.css" />
+	<!-- <link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/public/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css" /> -->
 	<link rel="stylesheet" type="text/css" title="default" href="<?php echo DOL_URL_ROOT ?>/theme/eldy/style.css.php<?php echo (GETPOST("dol_use_jmobile") == 1) ? '?dol_use_jmobile=1&dol_optimize_smallscreen=1' : ''; ?>" />
 	<!-- Includes JS for JQuery -->
-	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/js/jquery.min.js"></script>
+	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/public/includes/jquery/js/jquery.min.js"></script>
 	<!-- migration fixes for removed Jquery functions -->
-	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/js/jquery-migrate.min.js"></script>
-	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/tablednd/jquery.tablednd.0.6.min.js"></script>
-	<!-- <script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/datatables/media/js/jquery.dataTables.js"></script> -->
-	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/select2/select2.min.js?version=4.0.0-beta"></script>
+	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/public/includes/jquery/js/jquery-migrate.min.js"></script>
+	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/public/includes/jquery/plugins/tablednd/jquery.tablednd.0.6.min.js"></script>
+	<!-- <script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/public/includes/jquery/plugins/datatables/media/js/jquery.dataTables.js"></script> -->
+	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/public/includes/jquery/plugins/select2/select2.min.js?version=4.0.0-beta"></script>
 	</head>
 
 	<body style="padding: 10px;">
@@ -58,17 +86,17 @@ if (empty($usedolheader)) {
 	$arraycss = array();
 	$arrayjs = array();
 	/*
-	$arraycss=array('/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css',
-			'/includes/jquery/plugins/datatables/extensions/ColReorder/css/colReorder.dataTables.min.css'
+	$arraycss=array('/public/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css',
+			'/public/includes/jquery/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css',
+			'/public/includes/jquery/plugins/datatables/extensions/ColReorder/css/colReorder.dataTables.min.css'
 	);
-	$arrayjs=array('/includes/jquery/plugins/datatables/media/js/jquery.dataTables.js',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/js/dataTables.buttons.js',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.colVis.min.js',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.flash.min.js',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.print.min.js',
-			'/includes/jquery/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js',
+	$arrayjs=array('/public/includes/jquery/plugins/datatables/media/js/jquery.dataTables.js',
+			'/public/includes/jquery/plugins/datatables/extensions/Buttons/js/dataTables.buttons.js',
+			'/public/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.colVis.min.js',
+			'/public/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js',
+			'/public/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.flash.min.js',
+			'/public/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.print.min.js',
+			'/public/includes/jquery/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js',
 			'/includes/jszip/jszip.min.js',
 			'/includes/pdfmake/pdfmake.min.js',
 			'/includes/pdfmake/vfs_fonts.js'
@@ -110,7 +138,7 @@ This page is a sample of page using tables. It is designed to make test with<br>
 <br><hr><br>Example 0b: Table with div+form+div containing a select that should be overflowed and truncated => Use this to align text or form<br>
 
 <div class="tagtable centpercent">
-	<form action="xxx" method="POST" class="tagtr">
+	<form action="xxx" method="POST" class="tagtr" spellcheck="false">
 	<div class="tagtd maxwidthonsmartphone" style="overflow: hidden; white-space: nowrap;"> <!-- If you remove max-width, the jmobile overflow does not work -->
 	<select name="hidedetails" class="centpercentonsmartphone"><option>aaaaaaaaaaaaaaafd sf sf gfd gfds fsd  gfd fhfg hf dhfg hg fhfgdhfgdh gh gfdhdgf h gfdh dfhg dfgh dfgh fdgh gfd hfd hfd gs fgdf gaaaa</option><option>gdfs gdf g sdfg dfg fdsg dsfg dfs gdfs gds fgs  gdfdf gd</option></select>
 	</div>
@@ -163,15 +191,14 @@ $productspecimen = new Product($db);
 $productspecimen->initAsSpecimen();
 $object = $productspecimen;
 $param = '';
-$actioncode = '';
-$status = '';
-$filter = '';
-$filtert = '';
-$socid = 0;
-$type = 0;
-$usergroup = 0;
-
-$sortfield = 'aaa';
+$actioncode = getDolGlobalString('MAIN_TEST_UI_ACTION_CODE'); // '' by default
+$status = getDolGlobalString('MAIN_TEST_UI_STATUS'); // '' by default;
+$filter = getDolGlobalString('MAIN_TEST_UI_FILTER'); // '' by default;
+$filtert = getDolGlobalString('MAIN_TEST_UI_FILTERT'); // '' by default;
+$socid = getDolGlobalInt('MAIN_TEST_UI_SOCID', 0); // 0 by default;
+$type = getDolGlobalInt('MAIN_TEST_UI_TYPE', 0); // 0 by default;
+$usergroup = getDolGlobalInt('MAIN_TEST_UI_USERGROUP', 0); // 0 by default;
+$sortfield = getDolGlobalString('MAIN_TEST_UI_SORTFIELD', 'aaa'); // 'aaa' by default;
 $sortorder = 'ASC';
 $tasksarray = array(1, 2, 3); // To force having several lines
 $tagidfortablednd = 'tablelines3';
@@ -183,7 +210,7 @@ if (!empty($conf->use_javascript_ajax)) {
 }
 
 $nav = '';
-$nav .= '<form name="dateselect" action="'.$_SERVER["PHP_SELF"].'?mode=show_peruser'.$param.'">';
+$nav .= '<form name="dateselect" action="'.$_SERVER["PHP_SELF"].'?mode=show_peruser'.$param.'" spellcheck="false">';
 if ($actioncode || GETPOSTISSET('actioncode')) {
 	$nav .= '<input type="hidden" name="actioncode" value="'.$actioncode.'">';
 }
@@ -242,18 +269,16 @@ $cate_arbo = array('field1' => 'value1d into the select list D', 'field2' => 'va
 $moreforfilter .= $form->selectarray('search_ddd', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, '', 'maxwidth300', 1); // List with js combo forced
 $moreforfilter .= '</div>';
 
-if (!empty($moreforfilter)) {
-	print '<div class="liste_titre liste_titre_bydiv centpercent">';
-	print $moreforfilter;
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
-	print '</div>';
-}
+print '<div class="liste_titre liste_titre_bydiv centpercent">';
+print $moreforfilter;
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+print '</div>';
 
 ?>
 
-<table class="stripe row-border order-column centpercent tagtable liste<?php echo $moreforfilter ? " listwithfilterbefore" : ""; ?>" id="tablelines3">
+<table class="stripe row-border order-column centpercent tagtable liste<?php echo /* $moreforfilter ? */ " listwithfilterbefore" /* : "" */; ?>" id="tablelines3">
 <thead>
 <tr class="liste_titre">
 <?php print getTitleFieldOfList($langs->trans('title1'), 0, $_SERVER["PHP_SELF"], 'aaa', '', '', 'align="left"', $sortfield, $sortorder); ?>
@@ -357,13 +382,13 @@ if (!empty($conf->use_javascript_ajax)) {
 		<div class="tagtd tdlineupdown">lll</div>
 	</div>
 <!-- Using form into div make Firefox crazy (page loading does not end) -->
-<!--	<form class="liste_titre" method="POST" action="1.php">
+<!--	<form class="liste_titre" method="POST" action="1.php" spellcheck="false">
 		<div>line1<input type="hidden" name="cartitem" value="1"></div>
 		<div><label><input type="checkbox" name="hidedetails" value="2"> A checkbox inside a cell</label></div>
 		<div><input name="count" value="4"></div>
 		<div><input type="submit" name="count2" class="button noshadow" value="aaa"></div>
 	</form>
-	<form class="impair" method="POST" action="2.php">
+	<form class="impair" method="POST" action="2.php" spellcheck="false">
 		<div>line2<input type="hidden" name="cartitem" value="2"></div>
 		<div><select name="hidedetails"><option>aaaaaaaaaaaaaaafd sf sf gfd gfd gs fgdf gaaaa</option><option>gdfs gdf g sdfg dfg fdsg dsfg dfs gdfs gds fgs  gdfdf gd</option></select></div>
 		<div><input name="countb" value="4"></div>

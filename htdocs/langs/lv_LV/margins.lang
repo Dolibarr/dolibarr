@@ -31,9 +31,9 @@ UseDiscountOnTotal=Par starpsummu
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Nosaka, ja globālā atlaide tiek uzskatīts par produktu, pakalpojumu, vai tikai starpsumma starpības aprēķinu.
 MARGIN_TYPE=Buying/Cost price suggested by default for margin calculation
 MargeType1=Marža par labāko pārdevēja cenu
-MargeType2=Margin on Weighted Average Price (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=Ienesīguma cena
-MarginTypeDesc=* Marža par labāko iepirkuma cenu = Pārdošanas cena - Labākā pārdevēja cena, kas noteikta uz produkta kartes <br> * Maržināmais vidējais cena (WAP) = Pārdošanas cena - Produkta vidējā cena (WAP) vai labākā pārdevēja cena, ja WAP vēl nav definēts < br> * Marža par izmaksām = Pārdošanas cena - Izmaksas, kas noteiktas uz produkta kartes vai WAP, ja nav noteikta izmaksu cena vai labākā pārdevēja cena, ja WAP vēl nav definēts
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=Pašizmaksa
 UnitCharges=Vienības izmaksas
 Charges=Maksas
@@ -43,4 +43,7 @@ rateMustBeNumeric=Likmei jābūt skaitliskai vērtībai
 markRateShouldBeLesserThan100=Likmei jābūt zemākai par 100
 ShowMarginInfos=Show margin infos
 CheckMargins=Margins detail
-MarginPerSaleRepresentativeWarning=Atskaites par starpību katram lietotājam izmanto saiti starp trešajām personām un tirdzniecības pārstāvjiem, lai aprēķinātu katra pārdošanas pārstāvja rezervi. Tā kā dažām trešajām pusēm var nebūt īpaša pārdošanas pārstāvja, un dažas trešās personas var būt saistītas ar vairākām, dažas summas var neiekļaut šajā pārskatā (ja nav pārdošanas pārstāvja), un daži var parādīties dažādās pozīcijās (par katru pārdošanas pārstāvi) .
+MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any dedicated sale representative and some third parties may be linked to several, some amounts may not be included in this report (if there is no sale representative) and some may appear on different lines (for each sale representative).
+MarginUpdateLinkedBuyingPrice=Suggest to propagate the cost price modified on a line to all the lines of the linked proposals, orders and invoices that has the same product (users will decide yes or no at eachmodification)
+UpdateLinkedBuyingPrice=Update the cost price on all lines (with the same product) of the linked documents
+UpdateLinkedBuyingPriceQuestion=The cost price of this line has changed. Apply it to the lines of the linked documents that has the same product ?

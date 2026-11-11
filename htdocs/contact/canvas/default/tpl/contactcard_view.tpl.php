@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012 Regis Houssin <regis.houssin@inodbox.com>
+/* Copyright (C) 2010-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,10 +17,13 @@
  */
 
 /**
+ * @var Canvas $this
  * @var Conf $conf
  * @var Contact $object
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $canvas
  */
 
 // Protection to avoid direct call of template
@@ -155,7 +158,7 @@ if (empty($user->socid)) {
 	}
 
 	if ($user->hasRight('societe', 'contact', 'supprimer')) {
-		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=delete&token='.newToken().'&canvas='.$canvas.'">'.$langs->trans('Delete').'</a>';
+		print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=delete&token='.newToken().'&canvas='.$canvas, '', true, array('attr' => array('class' => 'reposition')))."\n";
 	}
 
 	print '</div><br>';

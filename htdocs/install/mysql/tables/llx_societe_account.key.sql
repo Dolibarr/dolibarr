@@ -22,11 +22,13 @@ ALTER TABLE llx_societe_account ADD INDEX idx_societe_account_fk_website (fk_web
 ALTER TABLE llx_societe_account ADD INDEX idx_societe_account_fk_soc (fk_soc);
 -- END MODULEBUILDER INDEXES
 
-ALTER TABLE llx_societe_account ADD UNIQUE INDEX uk_societe_account_login_website_soc(entity, fk_soc, login, site, fk_website);
+-- Only one unique login in the same website (note: we can still have the same login in database for 2 different companies if fk_website is null)
+ALTER TABLE llx_societe_account ADD UNIQUE INDEX uk_societe_account_login_website(entity, login, site, fk_website);
+-- Only one unique login in the same external account in the same company
 ALTER TABLE llx_societe_account ADD UNIQUE INDEX uk_societe_account_key_account_soc(entity, fk_soc, key_account, site, fk_website);
+
 
 -- Table website does not always exists
 --ALTER TABLE llx_societe_account ADD CONSTRAINT llx_societe_account_fk_website FOREIGN KEY (fk_website) REFERENCES llx_website(rowid);
 
 ALTER TABLE llx_societe_account ADD CONSTRAINT llx_societe_account_fk_societe FOREIGN KEY (fk_soc) REFERENCES llx_societe(rowid);
-

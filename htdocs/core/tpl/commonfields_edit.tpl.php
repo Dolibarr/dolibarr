@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2017-2019  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+/* Copyright (C) 2017-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,6 +27,7 @@
 /**
  * @var CommonObject $object
  * @var Conf $conf
+ * @var DoliDB $db
  * @var Form $form
  * @var FormAdmin $formadmin
  * @var Translate $langs
@@ -91,7 +92,12 @@ foreach ($object->fields as $key => $val) {
 		} else {
 			$check = 'nohtml';
 		}
-		$value = GETPOSTISSET($key) ? GETPOST($key, $check) : $object->$key;
+		if (getDolGlobalString('MAIN_SECURITY_DISALLOW_UNSECURED_TEXT')) {
+			$security_check = 'alphanohtml';
+		} else {
+			$security_check = $check;
+		}
+		$value = GETPOSTISSET($key) ? GETPOST($key, $security_check) : $object->$key;
 	} elseif (preg_match('/^html/', $val['type'])) {
 		$tmparray = explode(':', $val['type']);
 		if (!empty($tmparray[1])) {

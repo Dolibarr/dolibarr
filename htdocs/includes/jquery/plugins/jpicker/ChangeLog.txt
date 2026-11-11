@@ -84,7 +84,7 @@ ______________
 
 1.0.8
   Moved all images into a few sprites - now using backgroundPosition to change color maps and bars instead of changing the image - this should be faster to download and run.
-   
+
 1.0.7
   RENAMED CSS FILE TO INCLUDE VERSION NUMBER!!! YOU MUST USE THIS VERSIONED CSS FILE!!! There will be no need to do your own CSS version number increments from now on.
   Added opacity feedback to color preview boxes.

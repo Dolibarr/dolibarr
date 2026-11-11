@@ -7,7 +7,7 @@
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2021       Charlene Benke      	<charlene@patas-monkey.com>
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
 *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,6 @@ if (!defined('DOL_INC_FOR_VERSION_ERROR')) {
 require_once '../filefunc.inc.php';
 
 
-
 // Define DOL_DOCUMENT_ROOT used for install/upgrade process
 if (!defined('DOL_DOCUMENT_ROOT')) {
 	define('DOL_DOCUMENT_ROOT', '..');
@@ -45,15 +44,24 @@ if (!defined('DOL_DOCUMENT_ROOT')) {
 require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/html.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+'
+@phan-var-force ?string $dolibarr_main_url_root_alt
+@phan-var-force ?string $dolibarr_main_document_root_alt
+@phan-var-force ?string $dolibarr_main_db_prefix
+';
+
+$realpathconf = realpath(DOL_DOCUMENT_ROOT.'/core/class/conf.class.php');
 
 $conf = new Conf();
 
 // Force $_REQUEST["logtohtml"]
 $_REQUEST["logtohtml"] = 1;
 
-// Correction PHP_SELF (ex pour apache via caudium) car PHP_SELF doit valoir URL relative
+// Fix PHP_SELF (e.g. for apache via caudium) because PHP_SELF must be a relative URL
 // et non path absolu.
 if (isset($_SERVER["DOCUMENT_URI"]) && $_SERVER["DOCUMENT_URI"]) {
 	$_SERVER["PHP_SELF"] = $_SERVER["DOCUMENT_URI"];
@@ -63,8 +71,6 @@ if (isset($_SERVER["DOCUMENT_URI"]) && $_SERVER["DOCUMENT_URI"]) {
 $includeconferror = '';
 
 
-// Define vars
-$conffiletoshowshort = "conf.php";
 // Define localization of conf file
 $conffile = "../conf/conf.php";
 $conffiletoshow = "htdocs/conf/conf.php";
@@ -91,7 +97,7 @@ $long_options = array(
  * @param string $header  the message to signal to the user
  * @return void
  */
-function usage($program, $header)
+function install_usage($program, $header)
 {
 	echo $header."\n";
 	echo "  php ".$program." [options] [script options]\n";
@@ -144,7 +150,7 @@ if (php_sapi_name() === "cli" && (float) PHP_VERSION > 7.0) {
 				break;
 			case 'h':
 			case 'help':
-				usage($argv[0], "Usage:");
+				install_usage($argv[0], "Usage:");
 				exit(0);
 		}
 	}
@@ -184,7 +190,7 @@ if (php_sapi_name() === "cli" && (float) PHP_VERSION > 7.0) {
 	// typo right now.
 	if (count($unknown_options) > 0) {
 		echo "Unknown option: ".array_values($unknown_options)[0]."\n";
-		usage($argv[0], "Usage:");
+		install_usage($argv[0], "Usage:");
 		exit(1);
 	}
 
@@ -214,10 +220,14 @@ if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) >
 		}
 
 		// Clean parameters
-		$dolibarr_main_data_root = isset($dolibarr_main_data_root) ? trim($dolibarr_main_data_root) : DOL_DOCUMENT_ROOT.'/../documents';
-		$dolibarr_main_url_root         = isset($dolibarr_main_url_root) ? trim($dolibarr_main_url_root) : '';
-		$dolibarr_main_url_root_alt     = isset($dolibarr_main_url_root_alt) ? trim($dolibarr_main_url_root_alt) : '';
-		$dolibarr_main_document_root    = isset($dolibarr_main_document_root) ? trim($dolibarr_main_document_root) : '';
+		// isset() is true on an empty string, which would let DOL_DATA_ROOT
+		// resolve to '' and the lock file to /install.lock (rejected by a
+		// restrictive open_basedir). Use !empty() so an empty value falls
+		// back to the default relative documents path.
+		$dolibarr_main_data_root = !empty($dolibarr_main_data_root) ? trim($dolibarr_main_data_root) : DOL_DOCUMENT_ROOT.'/../documents';
+		$dolibarr_main_url_root = isset($dolibarr_main_url_root) ? trim($dolibarr_main_url_root) : '';
+		$dolibarr_main_url_root_alt = isset($dolibarr_main_url_root_alt) ? trim($dolibarr_main_url_root_alt) : '';
+		$dolibarr_main_document_root = isset($dolibarr_main_document_root) ? trim($dolibarr_main_document_root) : '';
 		$dolibarr_main_document_root_alt = isset($dolibarr_main_document_root_alt) ? trim($dolibarr_main_document_root_alt) : '';
 
 		// Remove last / or \ on directories or url value
@@ -239,10 +249,10 @@ if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) >
 
 		// Create conf object
 		if (!empty($dolibarr_main_document_root)) {
-			$result = conf($dolibarr_main_document_root);
+			$result = conf($dolibarr_main_document_root, $realpathconf);
 		}
 		// Load database driver
-		if ($result) {
+		if ($result > 0) {
 			if (!empty($dolibarr_main_document_root) && !empty($dolibarr_main_db_type)) {
 				$result = include_once $dolibarr_main_document_root."/core/db/".$dolibarr_main_db_type.'.class.php';
 				if (!$result) {
@@ -260,13 +270,13 @@ if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) >
 $conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
 
 // Define prefix
-if (!isset($dolibarr_main_db_prefix) || !$dolibarr_main_db_prefix) {
+if (empty($dolibarr_main_db_prefix)) {
 	$dolibarr_main_db_prefix = 'llx_';
 }
-define('MAIN_DB_PREFIX', (isset($dolibarr_main_db_prefix) ? $dolibarr_main_db_prefix : ''));
+define('MAIN_DB_PREFIX', $dolibarr_main_db_prefix);
 
 define('DOL_CLASS_PATH', 'class/'); // Filesystem path to class dir
-define('DOL_DATA_ROOT', (isset($dolibarr_main_data_root) ? $dolibarr_main_data_root : DOL_DOCUMENT_ROOT.'/../documents'));
+define('DOL_DATA_ROOT', (!empty($dolibarr_main_data_root) ? $dolibarr_main_data_root : DOL_DOCUMENT_ROOT.'/../documents'));
 define('DOL_MAIN_URL_ROOT', (isset($dolibarr_main_url_root) ? $dolibarr_main_url_root : '')); // URL relative root
 $uri = preg_replace('/^http(s?):\/\//i', '', constant('DOL_MAIN_URL_ROOT')); // $uri contains url without http*
 $suburi = strstr($uri, '/'); // $suburi contains url without domain
@@ -414,10 +424,11 @@ if (GETPOST('lang', 'aZ09')) {
 /**
  * Load conf file (file must exists)
  *
- * @param	string		$dolibarr_main_document_root		Root directory of Dolibarr bin files
+ * @param	string		$dolibarr_main_document_root		Root directory of Dolibarr program files
+ * @param	?string		$realpathconf						Real path of conf class if class was already included
  * @return	int												Return integer <0 if KO, >0 if OK
  */
-function conf($dolibarr_main_document_root)
+function conf($dolibarr_main_document_root, $realpathconf = null)
 {
 	global $conf;
 	global $dolibarr_main_db_type;
@@ -432,18 +443,25 @@ function conf($dolibarr_main_document_root)
 	global $dolibarr_main_instance_unique_id;
 	global $dolibarr_main_cookie_cryptkey;
 
-	$return = include_once $dolibarr_main_document_root.'/core/class/conf.class.php';
+	if ($realpathconf) {
+		if (realpath($dolibarr_main_document_root.'/core/class/conf.class.php') != $realpathconf) {
+			print 'Warning: You are running files from directory ('.preg_replace('/core\/class\/conf\.class\.php$/', '', $realpathconf).') that differs from the directory already defined into the existing conf.php file ($dolibarr_main_document_root = '.$dolibarr_main_document_root.').';
+			die(-1);
+		}
+	}
+
+	$return = @include_once $dolibarr_main_document_root.'/core/class/conf.class.php';
 	if (!$return) {
 		return -1;
 	}
 
 	$conf = new Conf();
-	$conf->db->type = trim($dolibarr_main_db_type);
-	$conf->db->host = trim($dolibarr_main_db_host);
-	$conf->db->port = trim($dolibarr_main_db_port);
-	$conf->db->name = trim($dolibarr_main_db_name);
-	$conf->db->user = trim($dolibarr_main_db_user);
-	$conf->db->pass = (empty($dolibarr_main_db_pass) ? '' : trim($dolibarr_main_db_pass));
+	$conf->db->type = trim((string) $dolibarr_main_db_type);
+	$conf->db->host = trim((string) $dolibarr_main_db_host);
+	$conf->db->port = trim((string) $dolibarr_main_db_port);
+	$conf->db->name = trim((string) $dolibarr_main_db_name);
+	$conf->db->user = trim((string) $dolibarr_main_db_user);
+	$conf->db->pass = (empty($dolibarr_main_db_pass) ? '' : trim((string) $dolibarr_main_db_pass));
 
 	// Mysql driver support has been removed in favor of mysqli
 	if ($conf->db->type == 'mysql') {
@@ -562,24 +580,25 @@ function pHeader($subtitle, $next, $action = 'set', $param = '', $forcejqueryurl
 	print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";
 	print '<meta name="generator" content="Dolibarr installer">'."\n";
 	print '<link rel="stylesheet" type="text/css" href="default.css">'."\n";
+	print '<link rel="stylesheet" type="text/css" href="../public/theme/common/fontawesome-5/css/all.min.css?layout=classic">'."\n";
 
 	print '<!-- Includes CSS for JQuery -->'."\n";
 	if ($jQueryUiCustomPath) {
 		print '<link rel="stylesheet" type="text/css" href="'.$jQueryUiCustomPath.'css/'.$jquerytheme.'/jquery-ui.min.css" />'."\n"; // JQuery
 	} else {
-		print '<link rel="stylesheet" type="text/css" href="../includes/jquery/css/'.$jquerytheme.'/jquery-ui.min.css" />'."\n"; // JQuery
+		print '<link rel="stylesheet" type="text/css" href="../public/includes/jquery/css/'.$jquerytheme.'/jquery-ui.min.css" />'."\n"; // JQuery
 	}
 
 	print '<!-- Includes JS for JQuery -->'."\n";
 	if ($jQueryCustomPath) {
 		print '<script type="text/javascript" src="'.$jQueryCustomPath.'jquery.min.js"></script>'."\n";
 	} else {
-		print '<script type="text/javascript" src="../includes/jquery/js/jquery.min.js"></script>'."\n";
+		print '<script type="text/javascript" src="../public/includes/jquery/js/jquery.min.js"></script>'."\n";
 	}
 	if ($jQueryUiCustomPath) {
 		print '<script type="text/javascript" src="'.$jQueryUiCustomPath.'jquery-ui.min.js"></script>'."\n";
 	} else {
-		print '<script type="text/javascript" src="../includes/jquery/js/jquery-ui.min.js"></script>'."\n";
+		print '<script type="text/javascript" src="../public/includes/jquery/js/jquery-ui.min.js"></script>'."\n";
 	}
 
 	print '<title>'.$langs->trans("DolibarrSetup").'</title>'."\n";
@@ -589,7 +608,7 @@ function pHeader($subtitle, $next, $action = 'set', $param = '', $forcejqueryurl
 
 	print '<div class="divlogoinstall" style="text-align:center">';
 	print '<img class="imglogoinstall" src="../theme/dolibarr_logo.svg" alt="Dolibarr logo" width="300px"><br>';
-	print DOL_VERSION;
+	print '<span class="opacitymedium">'.DOL_VERSION.'</span>';
 	print '</div><br>';
 
 	print '<span class="titre">';

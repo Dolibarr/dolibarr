@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018       Quentin Vial-Gouteyron      <quentin.vial-gouteyron@atm-consulting.fr>
- * Copyright (C) 2019-2024  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,6 +52,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 	{
 		global $conf, $langs, $mysoc;
 
+		// Load translation files required by the page
 		$langs->loadLangs(array("main", "companies"));
 
 		$this->db = $db;
@@ -102,13 +103,15 @@ class doc_generic_reception_odt extends ModelePdfReception
 	{
 		global $conf, $langs;
 
-		$langs->load("companies");
-		$langs->load("errors");
+		// Load translation files required by the page
+		$langs->loadLangs(array("companies", "errors"));
 
 		$form = new Form($this->db);
 
+		$odtPath = trim(getDolGlobalString('RECEPTION_ADDON_PDF_ODT_PATH'));
+
 		$texte = $this->description.".<br>\n";
-		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="page_y" value="">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
@@ -118,7 +121,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 		// List of directories area
 		$texte .= '<tr><td>';
 		$texttitle = $langs->trans("ListOfDirectories");
-		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim($conf->global->RECEPTION_ADDON_PDF_ODT_PATH)));
+		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', $odtPath));
 		$listoffiles = array();
 		foreach ($listofdir as $key => $tmpdir) {
 			$tmpdir = trim($tmpdir);
@@ -142,36 +145,42 @@ class doc_generic_reception_odt extends ModelePdfReception
 		$texthelp .= '<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp .= $langs->transnoentitiesnoconv("FullListOnOnlineDocumentation"); // This contains an url, we don't modify it
 
-		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
-		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
-		$texte .= '<textarea class="flat" cols="60" name="value1">';
-		$texte .= getDolGlobalString('RECEPTION_ADDON_PDF_ODT_PATH');
-		$texte .= '</textarea>';
-		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.$langs->trans("Modify").'">';
-		$texte .= '<br></div></div>';
-
 		// Scan directories
 		$nbofiles = count($listoffiles);
-		if (getDolGlobalString('RECEPTION_ADDON_PDF_ODT_PATH')) {
-			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>';
+		if (!empty($odtPath)) {
+			$texte .= '<span class="opacitylow">'.$langs->trans("NumberOfModelFilesFound").': <b>';
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
 			$texte .= count($listoffiles);
 			//$texte.=$nbofiles?'</a>':'';
-			$texte .= '</b>';
+			$texte .= '</b></span><br>';
 		}
 		if ($nbofiles) {
-			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
+			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx opacitylow">';
 			// Show list of found files
 			foreach ($listoffiles as $file) {
-				$texte .= '- '.$file['name'].' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=receptions/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a>';
+				$texte .= '- '.$file['name'];
+				$texte .= ' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=receptions/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a>';
 				$texte .= ' &nbsp; <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?modulepart=doctemplates&keyforuploaddir=RECEPTION_ADDON_PDF_ODT_PATH&action=deletefile&token='.newToken().'&file='.urlencode(basename($file['name'])).'">'.img_picto('', 'delete').'</a>';
 				$texte .= '<br>';
 			}
 			$texte .= '</div>';
 		}
+
+		$texte .= '<br>';
+		// Link to show/hide the area to manage directories of ODT models and template files
+		$texte .= '<span class="classlink cursorpointer" onclick="javascript: jQuery(\'.div_odtmodelsof'.get_class($this).'\').toggle();">'.img_picto('', 'add').' '.$langs->trans("UploadNewTemplate").'...</span>';
+		$texte .= '<div class="div_odtmodelsof'.get_class($this).'" style="display: none; margin-top: 6px;">';
+		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
+		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
+		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
+		$texte .= $odtPath;
+		$texte .= '</textarea>';
+		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
+		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
+		$texte .= '<br></div></div>';
+
 		// Add input to upload a new template file.
-		$texte .= '<div>'.$langs->trans("UploadNewTemplate");
+		$texte .= '<div>';
 		$maxfilesizearray = getMaxFileSizeArray();
 		$maxmin = $maxfilesizearray['maxmin'];
 		if ($maxmin > 0) {
@@ -180,6 +189,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 		$texte .= ' <input type="file" name="uploadfile">';
 		$texte .= '<input type="hidden" value="RECEPTION_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
 		$texte .= '<input type="submit" class="button smallpaddingimp reposition" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+		$texte .= '</div>';
 		$texte .= '</div>';
 
 		$texte .= '</td>';
@@ -244,7 +254,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 
 			$object->fetch_thirdparty();
 
-			$dir = !empty($conf->reception->multidir_output[$object->entity]) ? $conf->reception->multidir_output[$object->entity] : $conf->reception->dir_output;
+			$dir = !empty($conf->reception->multidir_output[$object->entity ?? $conf->entity]) ? $conf->reception->multidir_output[$object->entity ?? $conf->entity] : $conf->reception->dir_output;
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
@@ -379,17 +389,27 @@ class doc_generic_reception_odt extends ModelePdfReception
 					$array_thirdparty_contact = $this->get_substitutionarray_contact($contactobject, $outputlangs, 'contact');
 				}
 
-				$tmparray = array_merge($substitutionarray, $array_object_from_properties, $array_user, $array_soc, $array_thirdparty, $array_objet, $array_other, $array_thirdparty_contact);
+				$array_reception = $this->getSubstitutionarrayReception($object, $outputlangs);
+
+				$tmparray = array_merge($substitutionarray, $array_object_from_properties, $array_user, $array_soc, $array_thirdparty, $array_objet, $array_other, $array_thirdparty_contact, $array_reception);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 
 				// Call the ODTSubstitution hook
 				$parameters = array('odfHandler' => &$odfHandler, 'file' => $file, 'object' => $object, 'outputlangs' => $outputlangs, 'substitutionarray' => &$tmparray);
 				$reshook = $hookmanager->executeHooks('ODTSubstitution', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+
+				// retrieve the constant to apply a ratio for image size or set the ratio to 1
+				if (getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO')) {
+					$ratio = (float) getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO');
+				} else {
+					$ratio = 1;
+				}
+
 				foreach ($tmparray as $key => $value) {
 					try {
 						if (preg_match('/logo$/', $key)) { // Image
 							if (file_exists($value)) {
-								$odfHandler->setImage($key, $value);
+								$odfHandler->setImage($key, $value, $ratio);
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
@@ -412,6 +432,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 				if ($foundtagforlines) {
 					$linenumber = 0;
 					foreach ($object->lines as $line) {
+						/** @var ReceptionLineBatch $line */
 						$linenumber++;
 						$tmparray = $this->get_substitutionarray_lines($line, $outputlangs);
 						complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
@@ -484,5 +505,75 @@ class doc_generic_reception_odt extends ModelePdfReception
 		}
 
 		return -1;
+	}
+
+	/**
+	 * Values a reception document needs that the generic object substitutions do not give:
+	 * its dates as text, the warehouses its lines went to, and its weight with its unit.
+	 *
+	 * @param	Reception	$object			Reception
+	 * @param	Translate	$outputlangs	Language object for output
+	 * @return	array<string,string>		Array of substitution key -> value
+	 */
+	public function getSubstitutionarrayReception($object, $outputlangs)
+	{
+		$warehouses = array();
+		$ids = array();
+		foreach ($object->lines as $line) {
+			if (!empty($line->fk_entrepot) && $line->fk_entrepot > 0) {
+				$ids[(int) $line->fk_entrepot] = (int) $line->fk_entrepot;
+			}
+		}
+		if (!empty($ids)) {
+			// One query for every line, rather than one query per line
+			$sql = "SELECT rowid, ref, lieu FROM ".MAIN_DB_PREFIX."entrepot";
+			$sanitizedids = implode(',', array_map('intval', $ids));
+			$sql .= " WHERE rowid IN (".$sanitizedids.")";
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$warehouses[] = $obj->lieu ? $obj->ref.' ('.$obj->lieu.')' : $obj->ref;
+				}
+				$this->db->free($resql);
+			}
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+
+		$weight = '';
+		if ($object->trueWeight !== '' && $object->trueWeight !== null) {
+			$weight = $object->trueWeight.' '.measuringUnitString(0, "weight", (int) $object->weight_units, 1, $outputlangs);
+		}
+
+		// The supplier orders the goods were received against. A fetched reception
+		// carries no origin of its own, but each of its lines names the order it
+		// dispatches, so the refs are read from there, in one query for every line.
+		$originrefs = array();
+		$orderids = array();
+		foreach ($object->lines as $line) {
+			if (!empty($line->fk_commande) && $line->fk_commande > 0) {
+				$orderids[(int) $line->fk_commande] = (int) $line->fk_commande;
+			}
+		}
+		if (!empty($orderids)) {
+			$sanitizedorderids = implode(',', array_map('intval', $orderids));
+			$sql = "SELECT ref FROM ".MAIN_DB_PREFIX."commande_fournisseur";
+			$sql .= " WHERE rowid IN (".$sanitizedorderids.")";
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$originrefs[] = $obj->ref;
+				}
+				$this->db->free($resql);
+			}
+		}
+
+		return array(
+			'object_origin_ref' => implode(', ', $originrefs),
+			'object_date_delivery_locale' => dol_print_date($object->date_delivery, 'day', 'tzuser', $outputlangs),
+			'object_date_valid_locale' => dol_print_date($object->date_valid, 'day', 'tzuser', $outputlangs),
+			'object_warehouse' => implode(', ', $warehouses),
+			'object_weight' => $weight,
+		);
 	}
 }

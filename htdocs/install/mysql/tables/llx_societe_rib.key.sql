@@ -1,5 +1,6 @@
 -- ===================================================================
--- Copyright (C) 2016 Laurent Destailleur <eldy@users.sourceforge.net>
+-- Copyright (C) 2016		Laurent Destailleur	<eldy@users.sourceforge.net>
+-- Copyright (C) 2024		Regis Houssin		<regis.houssin@inodbox.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,6 +18,6 @@
 -- ===================================================================
 
 
-ALTER TABLE llx_societe_rib ADD UNIQUE INDEX uk_societe_rib(label, fk_soc);
+ALTER TABLE llx_societe_rib ADD UNIQUE INDEX uk_societe_rib(entity, label, fk_soc);
 
 ALTER TABLE llx_societe_rib ADD CONSTRAINT llx_societe_rib_fk_societe FOREIGN KEY (fk_soc) REFERENCES llx_societe(rowid);

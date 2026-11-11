@@ -26,5 +26,7 @@ create table llx_links
   url               VARCHAR(255) NOT NULL,          -- link url
   label             VARCHAR(255) NOT NULL,          -- link label
   objecttype        VARCHAR(255) NOT NULL,          -- object type in Dolibarr
-  objectid          INTEGER NOT NULL
+  objectid          INTEGER NOT NULL,
+  share				varchar(128) NULL,				-- contains hash for file sharing
+  share_pass		varchar(32) NULL				-- password to access the file (encoded with dolEncrypt)
 )ENGINE=innodb;

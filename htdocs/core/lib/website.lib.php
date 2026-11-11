@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Joachim Kueter				<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +34,7 @@
  */
 function dolStripPhpCode($str, $replacewith = '')
 {
-	$str = str_replace('<?=', '<?php', $str);
+	$str = str_replace('<?=', '<?php echo', $str);	// replace a bad practice
 
 	$newstr = '';
 
@@ -77,9 +78,9 @@ function dolStripPhpCode($str, $replacewith = '')
  */
 function dolKeepOnlyPhpCode($str)
 {
-	$str = str_replace('<?=', '<?php', $str);
+	$str = str_replace('<?=', '<?php echo', $str);
 	$str = str_replace('<?php', '__LTINTPHP__', $str);
-	$str = str_replace('<?', '<?php', $str);			// replace the short_open_tag. It is recommended to set this is Off in php.ini
+	$str = str_replace('<?', '<?php', $str);			// replace the short_open_tag. It is recommended to set this to Off in php.ini
 	$str = str_replace('__LTINTPHP__', '<?php', $str);
 
 	$newstr = '';
@@ -105,7 +106,81 @@ function dolKeepOnlyPhpCode($str)
 			}
 		}
 	}
-	return $newstr;
+	return str_replace(array("\r\n", "\r"), array("\n", "\n"), $newstr);
+}
+
+/**
+ * Replace one fragment of a page content with another one. The fragment must be found once and only once.
+ * If the exact fragment is not found, a match ignoring the differences of spaces, tabs and line feeds is tried.
+ *
+ * @param 	string	$content		Current content of the page
+ * @param 	string	$oldfragment	Fragment of the current content to replace (must not be empty)
+ * @param 	string	$newfragment	New fragment (empty string to remove the old fragment)
+ * @return 	array{nbfound:int,content:string}	Number of times the fragment was found and the new content (unchanged if nbfound is not 1)
+ * @see dolKeepOnlyPhpCode()
+ */
+function dolReplaceFragmentOfPageContent($content, $oldfragment, $newfragment)
+{
+	$content = (string) $content;
+	$oldfragment = (string) $oldfragment;
+	if (trim($oldfragment) === '') {
+		return array('nbfound' => 0, 'content' => $content);
+	}
+
+	$nbfound = substr_count($content, $oldfragment);
+	if ($nbfound == 1) {
+		$pos = strpos($content, $oldfragment);
+		return array('nbfound' => 1, 'content' => substr_replace($content, (string) $newfragment, (int) $pos, strlen($oldfragment)));
+	}
+	if ($nbfound > 1) {
+		return array('nbfound' => $nbfound, 'content' => $content);
+	}
+
+	// Not found as is: the fragment may have been copied with other spaces or line feeds
+	$quotedwords = array();
+	foreach ((array) preg_split('/\s+/', trim($oldfragment)) as $word) {
+		$quotedwords[] = preg_quote((string) $word, '/');
+	}
+	$regex = '/'.implode('\s+', $quotedwords).'/u';
+	$matches = array();
+	$nbfound = (int) preg_match_all($regex, $content, $matches, PREG_OFFSET_CAPTURE);
+	if ($nbfound == 1) {
+		return array('nbfound' => 1, 'content' => substr_replace($content, (string) $newfragment, (int) $matches[0][0][1], strlen($matches[0][0][0])));
+	}
+
+	return array('nbfound' => $nbfound, 'content' => $content);
+}
+
+/**
+ * Apply a list of replacements to a page content, in order (to move an element: remove it, then add it elsewhere).
+ * Each fragment 'old' must be found once and only once in the content as left by the previous replacements.
+ *
+ * @param 	string	$content		Current content of the page
+ * @param 	mixed	$replacements	List of array('old' => fragment to replace, 'new' => its replacement, empty to remove it)
+ * @return 	array{error:string,index:int,nbfound:int,content:string}	error is '' if OK, 'badformat', 'notfound' or 'notunique' (index = position of the failing replacement, from 0)
+ * @see dolReplaceFragmentOfPageContent()
+ */
+function dolApplyReplacementsToPageContent($content, $replacements)
+{
+	$content = (string) $content;
+	if (!is_array($replacements) || empty($replacements)) {
+		return array('error' => 'badformat', 'index' => 0, 'nbfound' => 0, 'content' => $content);
+	}
+
+	$originalcontent = $content;	// returned unchanged if one replacement fails: all or nothing
+	$index = 0;
+	foreach (array_values($replacements) as $index => $replacement) {
+		if (!is_array($replacement) || !isset($replacement['old']) || !is_string($replacement['old']) || trim($replacement['old']) === '' || (isset($replacement['new']) && !is_string($replacement['new']))) {
+			return array('error' => 'badformat', 'index' => $index, 'nbfound' => 0, 'content' => $originalcontent);
+		}
+		$result = dolReplaceFragmentOfPageContent($content, $replacement['old'], (string) ($replacement['new'] ?? ''));
+		if ($result['nbfound'] != 1) {
+			return array('error' => ($result['nbfound'] == 0 ? 'notfound' : 'notunique'), 'index' => $index, 'nbfound' => $result['nbfound'], 'content' => $originalcontent);
+		}
+		$content = $result['content'];
+	}
+
+	return array('error' => '', 'index' => $index, 'nbfound' => 1, 'content' => $content);
 }
 
 /**
@@ -225,6 +300,205 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 }
 
 /**
+ * Return the elements with contenteditable="true" and an id found into the source of a page, with what is needed to
+ * edit them with the mode "Edit inline".
+ * An element can be edited if its id is unique and if its content into the source has no php code and only text or the
+ * html tags and attributes accepted by dolWebsiteCheckEditInlineHtml().
+ *
+ * @param	string	$content	Source of the page (html with php code)
+ * @return	array<string,array{tag:string,pos:int,len:int,mode:string,blocks:int,error:string}>	Elements found, the key is the id.
+ *								pos and len are the position and length of the content of the element into $content.
+ *								mode is 'text' (only text and <br>), 'html' (accepted html) or '' if the element can not be edited.
+ *								blocks is 1 if block tags (p, h1, ul...) are allowed into the element.
+ *								error is the translation key of the reason why the element can not be edited.
+ */
+function dolWebsiteGetEditInlineElements($content)
+{
+	// Tags that can contain block tags. Content of other tags (p, h1, span...) can contain only inline tags.
+	$blocktags = array('article', 'aside', 'blockquote', 'dd', 'details', 'div', 'fieldset', 'figcaption', 'footer', 'header', 'li', 'main', 'nav', 'section', 'td', 'th');
+	$voidtags = array('area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'source', 'track', 'wbr');
+
+	// Position of the php code, an element inside a php string can not be edited
+	$phpparts = array();
+	preg_match_all('/<\?.*?(\?>|$)/s', $content, $regphp, PREG_OFFSET_CAPTURE);
+	foreach ($regphp[0] as $phppart) {
+		$phpparts[] = array($phppart[1], $phppart[1] + strlen($phppart[0]));
+	}
+
+	$elements = array();
+
+	// Opening tags with contenteditable="true". A tag with php code inside is not found (the "<" of "<?php" stops the search).
+	preg_match_all('/<([a-z][a-z0-9]*)(?=[^<>]*\scontenteditable="true")[^<>]*>/i', $content, $regtags, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
+	foreach ($regtags as $regtag) {
+		if (!preg_match('/\sid="([^"]+)"/', $regtag[0][0], $regid)) {
+			continue;
+		}
+		$id = $regid[1];
+		$tag = strtolower($regtag[1][0]);
+		if (in_array($tag, $voidtags) || substr($regtag[0][0], -2) == '/>') {
+			continue;
+		}
+		if (isset($elements[$id])) {
+			$elements[$id]['mode'] = '';
+			$elements[$id]['error'] = 'ErrorEditInlineElementNotUnique';
+			continue;
+		}
+
+		$element = array('tag' => $tag, 'pos' => $regtag[0][1] + strlen($regtag[0][0]), 'len' => 0, 'mode' => '', 'blocks' => (in_array($tag, $blocktags) ? 1 : 0), 'error' => '');
+
+		// Search the closing tag of the element, counting the tags with the same name that are opened and closed inside.
+		// If the result is wrong because of a tag into a comment or a php string, the content found has a "<!--" or a "<?"
+		// and is refused below.
+		$level = 1;
+		$offset = $element['pos'];
+		$end = -1;
+		while (preg_match('/<(\/?)'.$tag.'(?=[\s\/>])[^>]*>/i', $content, $regnext, PREG_OFFSET_CAPTURE, $offset)) {
+			$offset = $regnext[0][1] + strlen($regnext[0][0]);
+			if ($regnext[1][0] == '/') {
+				$level--;
+				if ($level == 0) {
+					$end = $regnext[0][1];
+					break;
+				}
+			} elseif (substr($regnext[0][0], -2) != '/>') {
+				$level++;
+			}
+		}
+
+		$inphp = false;
+		foreach ($phpparts as $phppart) {
+			if ($regtag[0][1] >= $phppart[0] && $regtag[0][1] < $phppart[1]) {
+				$inphp = true;
+			}
+		}
+
+		if ($end >= 0) {
+			$element['len'] = $end - $element['pos'];
+		}
+		$inner = substr($content, $element['pos'], $element['len']);
+		if ($inphp || strpos($inner, '<?') !== false) {
+			$element['error'] = 'ErrorEditInlineElementWithPhp';
+		} elseif ($end < 0) {
+			$element['error'] = 'ErrorEditInlineElementNotAllowedHtml';
+		} elseif (!preg_match('/<(?!br\s*\/?>)/i', $inner)) {
+			$element['mode'] = 'text';
+		} elseif (dolWebsiteCheckEditInlineHtml($inner, $element['blocks'])) {
+			$element['mode'] = 'html';
+		} else {
+			$element['error'] = 'ErrorEditInlineElementNotAllowedHtml';
+		}
+
+		$elements[$id] = $element;
+	}
+
+	return $elements;
+}
+
+/**
+ * Check that a html content has only the tags and attributes that can be saved with the mode "Edit inline": text with
+ * formatting (bold, color, font size...), links and, if allowed, paragraphs, titles, lists and div.
+ * There is no image (their links into the preview are not the ones of the source), no php code and no javascript.
+ *
+ * @param	string	$html		Html content
+ * @param	int		$blocks		1=Block tags (p, h1, ul, div...) are allowed, 0=Only inline tags are allowed
+ * @return	bool				True if content is allowed
+ * @see dolWebsiteGetEditInlineElements()
+ */
+function dolWebsiteCheckEditInlineHtml($html, $blocks = 1)
+{
+	$allowedtags = array('a', 'b', 'br', 'em', 'i', 's', 'span', 'strong', 'sub', 'sup', 'u');
+	if ($blocks) {
+		$allowedtags = array_merge($allowedtags, array('blockquote', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li', 'ol', 'p', 'ul'));
+	}
+	$allowedattributes = array('class', 'href', 'rel', 'style', 'target', 'title');
+	$allowedschemes = array('http', 'https', 'mailto', 'tel');
+
+	$ok = true;
+	// Remove the allowed tags. Any other "<" (other tag, comment, php code, tag with unquoted attribute value...) stays.
+	$rest = preg_replace_callback(
+		'/<(\/?)([a-z][a-z0-9]*)((?:\s+[a-z][a-z0-9_-]*(?:\s*=\s*(?:"[^"]*"|\'[^\']*\'))?)*)\s*\/?>/i',
+		/**
+		 * @param	array<int,string>	$m	Array of matches
+		 * @return	string					Empty string, the tag is removed
+		 */
+		function ($m) use ($allowedtags, $allowedattributes, $allowedschemes, &$ok) {
+			if (!in_array(strtolower($m[2]), $allowedtags) || ($m[1] == '/' && trim($m[3]) != '')) {
+				$ok = false;
+				return '';
+			}
+			preg_match_all('/([a-z][a-z0-9_-]*)(?:\s*=\s*(?:"([^"]*)"|\'([^\']*)\'))?/i', $m[3], $regattrs, PREG_SET_ORDER);
+			foreach ($regattrs as $regattr) {
+				$name = strtolower($regattr[1]);
+				$value = html_entity_decode((isset($regattr[2]) ? $regattr[2] : '').(isset($regattr[3]) ? $regattr[3] : ''), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+				$value = preg_replace('/[\x00-\x20]+/', '', $value);	// Browsers ignore these chars into a scheme (java&#9;script:)
+				if (!in_array($name, $allowedattributes)) {
+					$ok = false;
+				} elseif ($name == 'href' && preg_match('/^([a-z][a-z0-9+.\-]*):/i', $value, $regscheme) && !in_array(strtolower($regscheme[1]), $allowedschemes)) {
+					$ok = false;
+				} elseif ($name == 'style' && preg_match('/url\(|expression|javascript|@import|\\\\|[<>]/i', $value)) {
+					$ok = false;
+				}
+			}
+			return '';
+		},
+		$html
+	);
+
+	return $ok && $rest !== null && strpos($rest, '<') === false;
+}
+
+/**
+ * Restore the links of a html content edited into the preview of a page (mode "Edit inline") as they are into the source
+ * of the page. The links of the preview are changed by dolWebsiteReplacementOfLinks().
+ *
+ * @param	Website	$website	Web site object
+ * @param	string	$html		Html content edited into the preview
+ * @param	string	$oldhtml	Html content of the element into the source of the page, before the change
+ * @return	string				Html content with the links of the source
+ */
+function dolWebsiteRestoreLinksOfEditInline($website, $html, $oldhtml)
+{
+	// Links of the source, the key is the link into the preview
+	$links = array();
+	preg_match_all('/\shref="([^"]*)"/i', $oldhtml, $reg);
+	foreach ($reg[1] as $link) {
+		if (preg_match('/href="([^"]*)"/', dolWebsiteReplacementOfLinks($website, ' href="'.$link.'"'), $regpreview)) {
+			$links[html_entity_decode($regpreview[1], ENT_QUOTES | ENT_HTML5, 'UTF-8')] = $link;
+		}
+	}
+
+	$urlofwebsite = DOL_URL_ROOT.'/website/index.php?website='.$website->ref.'&';
+
+	$result = preg_replace_callback(
+		'/(\shref=")([^"]*)(")/i',
+		/**
+		 * @param	array<int,string>	$m	Array of matches
+		 * @return	string					Attribute href with the link of the source
+		 */
+		function ($m) use ($links, $urlofwebsite) {
+			$link = html_entity_decode($m[2], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+			if (isset($links[$link])) {
+				return $m[1].$links[$link].$m[3];
+			}
+			// Link to a page of the website not found into the source of the element (copied from another element)
+			if (strpos($link, $urlofwebsite) === 0) {
+				$param = substr($link, strlen($urlofwebsite));
+				if (preg_match('/^pageref=([^&#]+)(?:&([^#]*))?(#.*)?$/', $param, $regparam)) {
+					return $m[1].dol_escape_htmltag($regparam[1].'.php'.(empty($regparam[2]) ? '' : '?'.$regparam[2]).(empty($regparam[3]) ? '' : $regparam[3])).$m[3];
+				}
+				if (preg_match('/^pageid=\d+(#.*)?$/', $param, $regparam)) {
+					return $m[1].dol_escape_htmltag('/'.(empty($regparam[1]) ? '' : $regparam[1])).$m[3];
+				}
+			}
+			return $m[0];
+		},
+		$html
+	);
+
+	return ($result === null ? $html : $result);
+}
+
+/**
  * Converts smiley string into the utf8 sequence.
  * @param	string		$content			Content to replace
  * @return	string							Replacement of all smiley strings with their utf8 code
@@ -286,12 +560,12 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = 0)
 	global $db, $langs, $conf, $user;
 	global $dolibarr_main_url_root, $dolibarr_main_data_root;
 	global $website;
-	global $includehtmlcontentopened;
+	global $includehtmlcontentopened;	// $includehtmlcontentopened is the level of includes (start at 0 for main page, 1 for first level include, ...)
 	'@phan-var-force Website $website';
 
 	$nbrep = 0;
 
-	dol_syslog("dolWebsiteOutput start - contenttype=".$contenttype." containerid=".$containerid." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR') ? '1' : '')." USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER') ? '1' : '').' includehtmlcontentopened='.$includehtmlcontentopened);
+	dol_syslog("dolWebsiteOutput start - contenttype=".$contenttype." containerid=".$containerid.(defined('USEDOLIBARREDITOR') ? ' USEDOLIBARREDITOR=1' : '').(defined('USEDOLIBARRSERVER') ? ' USEDOLIBARRSERVER=1' : '').' includehtmlcontentopened='.$includehtmlcontentopened);
 
 	//print $containerid.' '.$content;
 
@@ -509,14 +783,15 @@ function dolWebsiteSaveContent($content)
 /**
  * Make a redirect to another container.
  *
- * @param 	string	$containerref		Ref of container to redirect to (Example: 'mypage' or 'mypage.php').
- * @param 	string	$containeraliasalt	Ref of alternative aliases to redirect to.
- * @param 	int		$containerid		Id of container.
- * @param	int<0,1>	$permanent			0=Use temporary redirect 302, 1=Use permanent redirect 301
- * @param 	array<string,mixed>	$parameters			Array of parameters to append to the URL.
+ * @param 	string		$containerref			Ref of container to redirect to (Example: 'mypage' or 'mypage.php').
+ * @param 	string		$containeraliasalt		Ref of alternative aliases to redirect to.
+ * @param 	int			$containerid			Id of container.
+ * @param	int<0,1>	$permanent				0=Use temporary redirect 302 (default), 1=Use permanent redirect 301
+ * @param 	array<string,mixed>	$parameters		Array of parameters to append to the URL.
+ * @param	int<0,1>	$parampropagation		0=Do not propagate query parameter in URL when doing the redirect, 1=Keep parameters (default)
  * @return  void
  */
-function redirectToContainer($containerref, $containeraliasalt = '', $containerid = 0, $permanent = 0, $parameters = array())
+function redirectToContainer($containerref, $containeraliasalt = '', $containerid = 0, $permanent = 0, $parameters = array(), $parampropagation = 1)
 {
 	global $db, $website;
 	'@phan-var-force Website $website';
@@ -529,7 +804,7 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 		include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 		$tmpwebsitepage = new WebsitePage($db);
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-		$result = $tmpwebsitepage->fetch(0, $website->id, '', $containeraliasalt);
+		$result = $tmpwebsitepage->fetch(0, (string) $website->id, '', $containeraliasalt);
 		if ($result > 0) {
 			$containerref = $tmpwebsitepage->pageurl;
 		} else {
@@ -553,11 +828,11 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 			include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 			$tmpwebsitepage = new WebsitePage($db);
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			$result = $tmpwebsitepage->fetch(0, $website->id, $containerref);
+			$result = $tmpwebsitepage->fetch(0, (string) $website->id, $containerref);
 			unset($tmpwebsitepage);
 		}
 		if ($result > 0) {
-			$currenturi = $_SERVER["REQUEST_URI"];	// Example: /public/website/index.php?website=mywebsite.com&pageref=mywebsite-home&nocache=1708177483
+			$currenturi = $_SERVER["REQUEST_URI"];	// Example: /public/website/index.php?website=mywebsite.com&pageref=mywebsite-home&cache=3600
 			$regtmp = array();
 			if (preg_match('/&pageref=([^&]+)/', $currenturi, $regtmp)) {
 				if ($regtmp[0] == $containerref) {
@@ -572,7 +847,9 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 		}
 	} else { // When page called from virtual host server
 		$newurl = '/'.$containerref.'.php';
-		$newurl .= (empty($_SERVER["QUERY_STRING"]) ? '' : '?'.$_SERVER["QUERY_STRING"]);
+		if ($parampropagation) {
+			$newurl .= (empty($_SERVER["QUERY_STRING"]) ? '' : '?'.$_SERVER["QUERY_STRING"]);
+		}
 	}
 
 	if ($newurl) {
@@ -593,14 +870,16 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 
 
 /**
- * Clean an HTML page to report only content, so we can include it into another page.
- * It outputs content of file sanitized from html and body part.
+ * Execute content of a php page and report result to be included into another page.
+ * It outputs content of file where the html and body part have been removed.
  *
  * @param 	string	$containerref		Path to file to include (must be a page from website root. Example: 'mypage.php' means 'mywebsite/mypage.php')
  * @param 	int		$once				If set to 1, we use include_once.
+ * @param	int		$cachedelay			A cache delay in seconds.
+ * @param	string	$cachekey			Add a key into the name of the cache so the includeContainer can use different cache content for the same page.
  * @return  void
  */
-function includeContainer($containerref, $once = 0)
+function includeContainer($containerref, $once = 0, $cachedelay = 0, $cachekey = '')
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
 	global $includehtmlcontentopened;
@@ -614,6 +893,11 @@ function includeContainer($containerref, $once = 0)
 	}
 
 	$fullpathfile = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.$websitekey.'/'.$containerref;
+	$fullpathcache = '';
+	// If we ask to use the cache delay
+	if ($cachedelay > 0 && !getDolGlobalString("WEBSITE_DISABLE_CACHE_OF_CONTAINERS")) {
+		$fullpathcache = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/temp/'.$websitekey.'-'.$websitepage->id.'-'.$containerref.($cachekey ? '-'.$cachekey : '').'.cache';
+	}
 
 	if (empty($includehtmlcontentopened)) {
 		$includehtmlcontentopened = 0;
@@ -626,28 +910,57 @@ function includeContainer($containerref, $once = 0)
 
 	//dol_syslog("Include container ".$containerref.' includehtmlcontentopened='.$includehtmlcontentopened);
 
-	// file_get_contents is not possible. We must execute code with include
-	//$content = file_get_contents($fullpathfile);
-	//print preg_replace(array('/^.*<body[^>]*>/ims','/<\/body>.*$/ims'), array('', ''), $content);*/
-
-	ob_start();
-	if ($once) {
-		$res = @include_once $fullpathfile;
-	} else {
-		$res = @include $fullpathfile;
-	}
-	$tmpoutput = ob_get_contents();
-	ob_end_clean();
-
 	// We don't print info messages for pages of type library or service
 	if (!empty($websitepage->type_container) && !in_array($websitepage->type_container, array('library', 'service'))) {
-		print "\n".'<!-- include '.$websitekey.'/'.$containerref.(is_object($websitepage) ? ' parent id='.$websitepage->id : '').' level = '.$includehtmlcontentopened.' -->'."\n";
+		print "\n".'<!-- include '.$websitekey.'/'.$containerref.($cachekey ? ' cachekey='.$cachekey : '').(is_object($websitepage) ? ' parent id='.$websitepage->id : '').' level='.$includehtmlcontentopened.' -->'."\n";
 	}
-	print preg_replace(array('/^.*<body[^>]*>/ims', '/<\/body>.*$/ims'), array('', ''), $tmpoutput);
 
-	if (!$res) {
-		print 'ERROR: FAILED TO INCLUDE PAGE '.$containerref.".\n";
+	$tmpoutput = '';
+
+	if ($cachedelay > 0 && $fullpathcache) {
+		if (is_file($fullpathcache)) {
+			// Get the last modification time of the file
+			$lastModifiedTime = filemtime($fullpathcache);
+
+			// Get the current time
+			$currentTime = time();
+
+			// Check if the file is not older than X seconds
+			if (($currentTime - $lastModifiedTime) <= $cachedelay) {
+				// The file is too recent
+				$tmpoutput = file_get_contents($fullpathcache);
+			}
+		}
 	}
+
+	if (empty($tmpoutput)) {
+		// file_get_contents is not possible because we must execute code with include
+		//$content = file_get_contents($fullpathfile);
+		//print preg_replace(array('/^.*<body[^>]*>/ims','/<\/body>.*$/ims'), array('', ''), $content);*/
+
+		ob_start();
+		if ($once) {
+			$res = @include_once $fullpathfile;
+		} else {
+			$res = @include $fullpathfile;
+		}
+		$tmpoutput = ob_get_contents();
+		ob_end_clean();
+
+		if (!$res) {
+			print 'ERROR: FAILED TO INCLUDE PAGE '.$containerref."(once=".$once.")\n";
+		} else {
+			$tmpoutput = preg_replace(array('/^.*<body[^>]*>/ims', '/<\/body>.*$/ims'), array('', ''), $tmpoutput);
+
+			// Save the content into cache file if content is lower than 10M
+			if ($fullpathcache && strlen($tmpoutput) < 10000000) {
+				file_put_contents($fullpathcache, $tmpoutput);
+				dolChmod($fullpathcache);
+			}
+		}
+	}
+
+	print $tmpoutput;
 
 	$includehtmlcontentopened--;
 }
@@ -690,7 +1003,7 @@ function getStructuredData($type, $data = array())
 			"offers": {
 				"@type": "Offer",
 				"price": "'.dol_escape_json($data['price']).'",
-				"priceCurrency": "'.dol_escape_json($data['currency'] ? $data['currency'] : $conf->currency).'"
+				"priceCurrency": "'.dol_escape_json($data['currency'] ? $data['currency'] : getDolCurrency()).'"
 			}
 		}'."\n";
 		$ret .= '</script>'."\n";
@@ -740,13 +1053,13 @@ function getStructuredData($type, $data = array())
 
 			$pageurl = $websitepage->pageurl;
 			$title = $websitepage->title;
-			$image = $websitepage->image;
+			$image = getImageFromHtmlContent($websitepage->content);
 			$companyname = $mysoc->name;
 			$description = $websitepage->description;
 
 			$pageurl = str_replace('__WEBSITE_KEY__', $website->ref, $pageurl);
 			$title = str_replace('__WEBSITE_KEY__', $website->ref, $title);
-			$image = '/medias'.(preg_match('/^\//', $image) ? '' : '/').str_replace('__WEBSITE_KEY__', $website->ref, $image);
+			$imagepath = '/medias'.(preg_match('/^\//', $image) ? '' : '/').str_replace('__WEBSITE_KEY__', $website->ref, $image);
 			$companyname = str_replace('__WEBSITE_KEY__', $website->ref, $companyname);
 			$description = str_replace('__WEBSITE_KEY__', $website->ref, $description);
 
@@ -759,10 +1072,14 @@ function getStructuredData($type, $data = array())
 				    "@type": "WebPage",
 				    "@id": "'.dol_escape_json($pageurl).'"
 				  },
-				  "headline": "'.dol_escape_json($title).'",
+				  "headline": "'.dol_escape_json($title).'",';
+			if ($image) {
+				$ret .= '
 				  "image": [
-				    "'.dol_escape_json($image).'"
-				   ],
+				    "'.dol_escape_json($imagepath).'"
+				   ],';
+			}
+			$ret .= '
 				  "dateCreated": "'.dol_print_date($websitepage->date_creation, 'dayhourrfc').'",
 				  "datePublished": "'.dol_print_date($websitepage->date_creation, 'dayhourrfc').'",
 				  "dateModified": "'.dol_print_date($websitepage->date_modification, 'dayhourrfc').'",
@@ -775,7 +1092,7 @@ function getStructuredData($type, $data = array())
 				     "name": "'.dol_escape_json($companyname).'",
 				     "logo": {
 				        "@type": "ImageObject",
-				        "url": "/wrapper.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo).'"
+				        "url": "/wrapper.php?modulepart=mycompany&file='.urlencode('logos/'.$mysoc->logo).'"
 				     }
 				   },'."\n";
 			if ($websitepage->keywords) {
@@ -821,7 +1138,7 @@ function getStructuredData($type, $data = array())
 				"offers": {
 					"@type": "Offer",
 					"url": "https://example.com/anvil",
-					"priceCurrency": "'.dol_escape_json($data['currency'] ? $data['currency'] : $conf->currency).'",
+					"priceCurrency": "'.dol_escape_json($data['currency'] ? $data['currency'] : getDolCurrency()).'",
 					"price": "'.dol_escape_json($data['price']).'",
 					"itemCondition": "https://schema.org/UsedCondition",
 					"availability": "https://schema.org/InStock",
@@ -1023,7 +1340,7 @@ function getNbOfImagePublicURLOfObject($object)
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
 		if ($obj) {
-			$nb = $obj->nb;
+			$nb = (int) $obj->nb;
 		}
 	}
 
@@ -1037,10 +1354,11 @@ function getNbOfImagePublicURLOfObject($object)
  * @param	Object	$object			Object
  * @param	int		$no				Numero of image (if there is several images. 1st one by default)
  * @param   string  $extName        Extension to differentiate thumb file name ('', '_small', '_mini')
+ * @param	int		$cover			1=Sort with cover then position, -1=Filter on cover last then position, 0=Exclude cover and filter on position first
  * @return  string					HTML img content or '' if no image found
  * @see getNbOfImagePublicURLOfObject(), getPublicFilesOfObject(), getImageFromHtmlContent()
  */
-function getImagePublicURLOfObject($object, $no = 1, $extName = '')
+function getImagePublicURLOfObject($object, $no = 1, $extName = '', $cover = 1)
 {
 	global $db;
 
@@ -1055,7 +1373,12 @@ function getImagePublicURLOfObject($object, $no = 1, $extName = '')
 	$sql .= " WHERE entity IN (".getEntity($object->element).")";
 	$sql .= " AND src_object_type = '".$db->escape($object->element)."' AND src_object_id = ".((int) $object->id);	// Filter on object
 	$sql .= " AND ".$db->regexpsql('filename', $regexforimg, 1);
-	$sql .= $db->order("cover,position,rowid", "ASC,ASC,ASC");
+	$sql .= ($cover ? "" : " AND cover <> 1");
+	if ($cover == 1) {
+		$sql .= $db->order("cover,position,rowid", "ASC,ASC,ASC");
+	} else {
+		$sql .= $db->order("cover,position,rowid", "DESC,ASC,ASC");
+	}
 
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -1178,6 +1501,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
 	'@phan-var-force Website $website';
+	/** @var Website $website */
 
 	$error = 0;
 	$arrayresult = array('code' => '', 'list' => array());
@@ -1239,15 +1563,17 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 			$sql .= " AND wp.type_container IN (".$db->sanitize($typestring, 1).")";
 		}
 		$sql .= " AND (";
-		$searchalgo = '';
+		$sqlsearchalgo = '';
 		if (preg_match('/meta/', $algo)) {
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.title LIKE '%".$db->escape($db->escapeforlike($searchstring))."%' OR wp.description LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.keywords LIKE '".$db->escape($db->escapeforlike($searchstring)).",%' OR wp.keywords LIKE '% ".$db->escape($db->escapeforlike($searchstring))."%'"; // TODO Use a better way to scan keywords
+			// TODO Use a better way to scan keywords
+			$sqlsearchalgo .= "wp.title LIKE '%".$db->escape($db->escapeforlike($searchstring))."%' OR wp.description LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
+			$sqlsearchalgo .= " OR wp.pageurl LIKE '%".$db->escape($db->escapeforlike($searchstring))."%' OR wp.aliasalt LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
+			$sqlsearchalgo .= " OR wp.keywords LIKE '".$db->escape($db->escapeforlike($searchstring)).",%' OR wp.keywords LIKE '% ".$db->escape($db->escapeforlike($searchstring))."%'";
 		}
 		if (preg_match('/content/', $algo)) {
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.content LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
+			$sqlsearchalgo .= ($sqlsearchalgo ? ' OR ' : '')."wp.content LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
 		}
-		$sql .= $searchalgo;
+		$sql .= $sqlsearchalgo;
 		if (is_array($otherfilters) && !empty($otherfilters['category'])) {
 			$sql .= ' AND cwp.fk_website_page = wp.rowid AND cwp.fk_categorie = '.((int) $otherfilters['category']);
 		}
@@ -1289,7 +1615,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 		$filejs = $pathofwebsite.'/javascript.js.php';
 		$filerobot = $pathofwebsite.'/robots.txt';
 		$filehtaccess = $pathofwebsite.'/.htaccess';
-		$filemanifestjson = $pathofwebsite.'/manifest.json.php';
+		$filemanifestjson = $pathofwebsite.'/manifest.json';
 		$filereadme = $pathofwebsite.'/README.md';
 
 		$filecontent = file_get_contents($filehtmlheader);
@@ -1343,6 +1669,10 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
  */
 function getImageFromHtmlContent($htmlContent, $imageNumber = 1)
 {
+	if (empty($htmlContent)) {
+		return '';
+	}
+
 	$dom = new DOMDocument();
 
 	libxml_use_internal_errors(false);	// Avoid to fill memory with xml errors
@@ -1354,7 +1684,9 @@ function getImageFromHtmlContent($htmlContent, $imageNumber = 1)
 	}
 
 	// Load HTML content into object
-	$dom->loadHTML($htmlContent);
+	// We add the @ to avoid verbose warnings logsin the error.log file. For example:
+	// "PHP message: PHP Warning:  DOMDocument::loadHTML(): Tag section invalid in Entity, line: ...", etc.
+	@$dom->loadHTML($htmlContent);
 
 	// Re-enable HTML load errors
 	libxml_clear_errors();
@@ -1364,7 +1696,7 @@ function getImageFromHtmlContent($htmlContent, $imageNumber = 1)
 
 	// Check if nb of image is valid
 	if ($imageNumber > 0 && $imageNumber <= $images->length) {
-		// Récupère l'image correspondante (index - 1 car $imageNumber est 1-based)
+		// Get the corresponding image (index - 1 because $imageNumber is 1-based)
 		$img = $images->item($imageNumber - 1);
 		if ($img instanceof DOMElement) {
 			return $img->getAttribute('src');
@@ -1457,9 +1789,14 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 					dol_mkdir(dirname($filetosave));
 
 					$fp = fopen($filetosave, "w");
-					fwrite($fp, $tmpgeturl['content']);
-					fclose($fp);
-					dolChmod($filetosave);
+					if ($fp) {
+						fwrite($fp, $tmpgeturl['content']);
+						fclose($fp);
+						dolChmod($filetosave);
+					} else {
+						setEventMessages('Error failed to open file '.$filetosave.' for writing', null, 'errors');
+						//print 'Failed to open file '.$filetosave.' for writing.';
+					}
 				}
 			}
 		}
@@ -1522,9 +1859,15 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 					dol_mkdir(dirname($filetosave));
 
 					$fp = fopen($filetosave, "w");
-					fwrite($fp, $tmpgeturl['content']);
-					fclose($fp);
-					dolChmod($filetosave);
+					if ($fp) {
+						fwrite($fp, $tmpgeturl['content']);
+						fclose($fp);
+						dolChmod($filetosave);
+					} else {
+						$error++;
+						setEventMessages('Error failed to open file '.$filetosave.' for writing', null, 'errors');
+						$action = 'create';
+					}
 				}
 			}
 		}
@@ -1543,19 +1886,43 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
  */
 function getNewsDetailsById($postId)
 {
-	global $db;
+	global $db, $user, $langs;
 
 	if (empty($postId)) {
 		return -1;
 	}
 
-	$sql = "SELECT p.title, p.description, p.date_creation, p.image
-            FROM ".MAIN_DB_PREFIX."website_page as p
-            WHERE p.rowid = ".(intval($postId));
+	// Security: Filter by entity and published status
+	// Join with website table to get entity, and filter by entity and status
+	$sql = "SELECT p.title, p.description, p.date_creation, p.image, p.fk_user_creat, w.entity as website_entity";
+	$sql .= " FROM ".MAIN_DB_PREFIX."website_page as p";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."website as w ON p.fk_website = w.rowid";
+	$sql .= " WHERE p.rowid = ".((int) $postId);
+
+	// Add entity filter
+	$sql .= " AND w.entity IN (".getEntity('website').")";
+
+	// Only show published pages (status = 1) unless user has write permission
+	if (!$user->hasRight('website', 'write')) {
+		$sql .= " AND p.status = 1";
+	}
 
 	$resql = $db->query($sql);
 	if ($resql) {
-		return $db->fetch_array($resql);
+		$row = $db->fetch_array($resql);
+		if ($row) {
+			// Load user fullname for the creator
+			if (!empty($row['fk_user_creat'])) {
+				require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+				$user_creat = new User($db);
+				$user_creat->fetch($row['fk_user_creat']);
+				$row['user_fullname'] = $user_creat->getFullName($langs, 0, 1);
+			} else {
+				$row['user_fullname'] = '';
+			}
+			return $row;
+		}
+		return -1;
 	} else {
 		return -1;
 	}

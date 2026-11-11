@@ -1,0 +1,48 @@
+.processing-feedback {
+	background-size: 30px 30px !important;
+	background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.05) 25%, transparent 25%, transparent 50%, rgba(0, 0, 0, 0.05) 50%, rgba(0, 0, 0, 0.05) 75%, transparent 75%, transparent) !important;
+	animation: input-background-loader 0.5s linear infinite;
+
+}
+
+@keyframes input-background-loader {
+	from {
+		background-position: 0 0;
+	}
+	to {
+		background-position: 60px 30px;
+	}
+}
+
+
+.success-feedback{
+	animation: 1s ease-out success-feedback-animation;
+}
+
+@-webkit-keyframes success-feedback-animation {
+	0% {
+		outline: 3px solid  rgba(255, 255, 255, 0);
+	}
+	20% {
+		outline: 3px solid  #8cd55b;
+	}
+	100% {
+		outline: 3px solid  rgba(255, 255, 255, 0);
+	}
+}
+
+.fail-feedback {
+	animation: 1s ease-out fail-feedback-animation;
+}
+
+@-webkit-keyframes fail-feedback-animation {
+	0% {
+		outline: 3px solid rgba(255, 255, 255, 0);
+	}
+	20% {
+		outline: 3px solid #d55b5b;
+	}
+	100% {
+		outline: 3px solid rgba(255, 255, 255, 0);
+	}
+}

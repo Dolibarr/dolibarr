@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +44,7 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 	 * 	@param	DoliDB	$db			Database handler
 	 *  @param	string	$param		More parameters
 	 */
-	public function __construct($db, $param)
+	public function __construct($db, $param)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $user;
 
@@ -87,6 +88,9 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 
 		$dir = ''; // We don't need a path because image file will not be saved into disk
 		$prefix = '';
+		$mesg = '';
+		$px1 = null;
+		$px2 = null;
 		$socid = 0;
 		if ($user->socid) {
 			$socid = $user->socid;
@@ -161,12 +165,12 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 					$px1->SetMaxValue($px1->GetCeilMaxValue());
 					$px1->SetWidth($WIDTH);
 					$px1->SetHeight($HEIGHT);
-					$px1->SetYLabel($langs->trans("NumberOfOrders"));
+					$px1->SetYLabel($langs->trans("NumberOfSupplierOrders"));
 					$px1->SetShading(3);
 					$px1->SetHorizTickIncrement(1);
 					$px1->SetCssPrefix("cssboxes");
 					$px1->mode = 'depth';
-					$px1->SetTitle($langs->trans("NumberOfOrdersByMonth"));
+					$px1->SetTitle($langs->trans("NumberOfSupplierOrdersByMonth"));
 
 					$px1->draw($filenamenb, $fileurlnb);
 				}
@@ -207,7 +211,7 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 					$px2->SetHorizTickIncrement(1);
 					$px2->SetCssPrefix("cssboxes");
 					$px2->mode = 'depth';
-					$px2->SetTitle($langs->trans("AmountOfOrdersByMonthHT"));
+					$px2->SetTitle($langs->trans("AmountOfSupplierOrdersByMonthHT"));
 
 					$px2->draw($filenamenb, $fileurlnb);
 				}
@@ -228,14 +232,14 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 					});
 					</script>';
 				$stringtoshow .= '<div class="center hideobject" id="idfilter'.$this->boxcode.'">'; // hideobject is to start hidden
-				$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+				$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 				$stringtoshow .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$stringtoshow .= '<input type="hidden" name="action" value="'.$refreshaction.'">';
 				$stringtoshow .= '<input type="hidden" name="page_y" value="">';
 				$stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSER_box_'.$this->boxcode.':year,shownb,showtot">';
-				$stringtoshow .= '<input type="checkbox" id="'.$param_shownb.'" name="'.$param_shownb.'"'.($shownb ? ' checked' : '').'><label for="'.$param_shownb.'"> '.$langs->trans("NumberOfOrdersByMonth").'</label>';
+				$stringtoshow .= '<input type="checkbox" id="'.$param_shownb.'" name="'.$param_shownb.'"'.($shownb ? ' checked' : '').'><label for="'.$param_shownb.'"> '.$langs->trans("NumberOfSupplierOrdersByMonth").'</label>';
 				$stringtoshow .= ' &nbsp; ';
-				$stringtoshow .= '<input type="checkbox" id="'.$param_showtot.'" name="'.$param_showtot.'"'.($showtot ? ' checked' : '').'><label for="'.$param_showtot.'"> '.$langs->trans("AmountOfOrdersByMonthHT").'</label>';
+				$stringtoshow .= '<input type="checkbox" id="'.$param_showtot.'" name="'.$param_showtot.'"'.($showtot ? ' checked' : '').'><label for="'.$param_showtot.'"> '.$langs->trans("AmountOfSupplierOrdersByMonthHT").'</label>';
 				$stringtoshow .= '<br>';
 				$stringtoshow .= $langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$endyear.'">';
 				$stringtoshow .= '<input type="image" class="reposition inline-block valigntextbottom" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"), 'refresh.png', '', 0, 1).'">';
@@ -245,14 +249,14 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 					$stringtoshow .= '<div class="fichecenter">';
 					$stringtoshow .= '<div class="fichehalfleft">';
 				}
-				if ($shownb) {
+				if ($shownb && $px1 !== null) {
 					$stringtoshow .= $px1->show();
 				}
 				if ($shownb && $showtot) {
 					$stringtoshow .= '</div>';
 					$stringtoshow .= '<div class="fichehalfright">';
 				}
-				if ($showtot) {
+				if ($showtot && $px2 !== null) {
 					$stringtoshow .= $px2->show();
 				}
 				if ($shownb && $showtot) {

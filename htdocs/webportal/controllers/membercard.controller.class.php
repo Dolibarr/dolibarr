@@ -2,6 +2,7 @@
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,17 +25,13 @@
  */
 
 require_once DOL_DOCUMENT_ROOT . '/webportal/class/html.formcardwebportal.class.php';
+require_once DOL_DOCUMENT_ROOT . '/webportal/controllers/abstractcard.controller.class.php';
 
 /**
  * Class for MemberCardController
  */
-class MemberCardController extends Controller
+class MemberCardController extends AbstractCardController
 {
-	/**
-	 * @var FormCardWebPortal Form for card
-	 */
-	protected $formCard;
-
 	/**
 	 * Check current access to controller
 	 *
@@ -79,7 +76,7 @@ class MemberCardController extends Controller
 		$permissionnote = 0;
 		$permissiondellink = 0;
 		$formCardWebPortal = new FormCardWebPortal($this->db);
-		$formCardWebPortal->init('member', $context->logged_member->id, $permissiontoread, $permissiontoadd, $permissiontodelete, $permissionnote, $permissiondellink);
+		$formCardWebPortal->init('member', $context->logged_member->id, (int) $permissiontoread, (int) $permissiontoadd, $permissiontodelete, $permissionnote, $permissiondellink);
 
 		// hook for action
 		$hookRes = $this->hookDoAction();
@@ -90,32 +87,5 @@ class MemberCardController extends Controller
 		$this->formCard = $formCardWebPortal;
 
 		return 1;
-	}
-
-	/**
-	 * Display
-	 *
-	 * @return  void
-	 */
-	public function display()
-	{
-		$context = Context::getInstance();
-		if (!$context->controllerInstance->checkAccess()) {
-			$this->display404();
-			return;
-		}
-
-		$this->loadTemplate('header');
-		$this->loadTemplate('menu');
-		$this->loadTemplate('hero-header-banner');
-
-		$hookRes = $this->hookPrintPageView();
-		if (empty($hookRes)) {
-			print '<main class="container">';
-			print $this->formCard->elementCard($context);
-			print '</main>';
-		}
-
-		$this->loadTemplate('footer');
 	}
 }

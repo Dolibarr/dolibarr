@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -50,16 +50,27 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk"));
 
-$floor = GETPOSTINT('floor');
-if ($floor == "") {
+if (GETPOSTISSET('floor')) {
+	$floor = GETPOSTINT('floor');
+} else {
+	// No floor requested: open the lowest floor that has tables (floor 1 for tables created before v20, floor 0 since), or floor 1 when there is no table yet
 	$floor = 1;
+	$sql = "SELECT MIN(floor) as minfloor FROM ".MAIN_DB_PREFIX."takepos_floor_tables";
+	$sql .= " WHERE entity IN (".getEntity('takepos').")";
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
+		if ($obj && !is_null($obj->minfloor)) {
+			$floor = (int) $obj->minfloor;
+		}
+	}
 }
 $id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $left = GETPOST('left', 'alpha');
 $top = GETPOST('top', 'alpha');
 
-$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Ba or Restaurant
+$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
 
 $newname = GETPOST('newname', 'alpha');
 $mode = GETPOST('mode', 'alpha');
@@ -74,15 +85,22 @@ if (!$user->hasRight('takepos', 'run')) {
  */
 
 if ($action == "getTables" && $user->hasRight('takepos', 'run')) {
-	$sql = "SELECT rowid, entity, label, leftpos, toppos, floor FROM ".MAIN_DB_PREFIX."takepos_floor_tables WHERE floor = ".((int) $floor)." AND entity IN (".getEntity('takepos').")";
-	$resql = $db->query($sql);
 	$rows = array();
+
+	$sql = "SELECT rowid, entity, label, leftpos, toppos, floor";
+	$sql .= " FROM ".MAIN_DB_PREFIX."takepos_floor_tables";
+	$sql .= " WHERE floor = ".((int) $floor)." AND entity IN (".getEntity('takepos').")";
+
+	$resql = $db->query($sql);
 	while ($row = $db->fetch_array($resql)) {
+		$tmpplace = (int) $row['rowid'];
+
 		$invoice = new Facture($db);
-		$result = $invoice->fetch('', '(PROV-POS'.$_SESSION['takeposterminal'].'-'.$row['rowid'].')');
+		$result = $invoice->fetch(0, '(PROV-POS'.$_SESSION['takeposterminal'].'-'.$tmpplace.')');
 		if ($result > 0) {
 			$row['occupied'] = "red";
 		}
+
 		$rows[] = $row;
 	}
 
@@ -114,7 +132,7 @@ if ($action == "updatename" && $user->hasRight('takepos', 'run')) {
 }
 
 if ($action == "add" && $user->hasRight('takepos', 'run')) {
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."takepos_floor_tables(entity, label, leftpos, toppos, floor) VALUES (".$conf->entity.", '', '45', '45', ".((int) $floor).")";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."takepos_floor_tables(entity, label, leftpos, toppos, floor) VALUES (".((int) $conf->entity).", '', '45', '45', ".((int) $floor).")";
 	$asdf = $db->query($sql);
 	$db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables SET label = rowid WHERE label = ''"); // No empty table names
 }
@@ -231,13 +249,13 @@ $( document ).ready(function() {
 <div style="position: absolute; left: 25%; bottom: 8%; width:50%; height:3%;">
 	<center>
 	<h1>
-	<?php if ($floor > 1) { ?>
-	<img class="valignmiddle" src="./img/arrow-prev.png" width="5%" onclick="location.href='floors.php?floor=<?php if ($floor > 1) {
+	<?php if ($floor > 0) { ?>
+	<img class="valignmiddle" src="./img/arrow-prev.png" width="5%" onclick="location.href='floors.php?floor=<?php if ($floor > 0) {
 		$floor--;
 		echo $floor;
 		$floor++;
 																											 } else {
-																												 echo "1";
+																												 echo "0";
 																											 } ?>';">
 	<?php } ?>
 	<span class="valignmiddle"><?php echo $langs->trans("Floor")." ".$floor; ?></span>

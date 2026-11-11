@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017		ATM Consulting			<support@atm-consulting.fr>
  * Copyright (C) 2017		Pierre-Henry Favre		<phf@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -73,7 +73,7 @@ class ExpenseReportIk extends CommonObject
 
 	/**
 	 * Attribute object linked with database
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'ID', 'enabled' => 1, 'index' => 1, 'visible' => -1, 'position' => 10),
@@ -164,7 +164,7 @@ class ExpenseReportIk extends CommonObject
 
 		$sql = 'SELECT rowid, label, entity, active';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'c_exp_tax_cat';
-		$sql .= ' WHERE entity IN (0, '.getEntity($this->element).')';
+		$sql .= ' WHERE entity IN (0, '.getEntity('c_exp_tax_cat').')';
 		if ($mode == 1) {
 			$sql .= ' AND active = 1';
 		} elseif ($mode == 2) {
@@ -224,7 +224,7 @@ class ExpenseReportIk extends CommonObject
 			$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'c_exp_tax_cat c ON (r.fk_c_exp_tax_cat = c.rowid)';
 		}
 		$sql .= ' WHERE r.fk_c_exp_tax_cat = '.((int) $fk_c_exp_tax_cat);
-		$sql .= " AND r.entity IN(0, ".getEntity($this->element).")";
+		$sql .= " AND r.entity IN(0, ".getEntity('c_exp_tax_range').")";
 		if ($active) {
 			$sql .= ' AND r.active = 1 AND c.active = 1';
 		}
@@ -261,7 +261,7 @@ class ExpenseReportIk extends CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'c_exp_tax_range r';
 		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'c_exp_tax_cat c ON (r.fk_c_exp_tax_cat = c.rowid)';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'expensereport_ik i ON (r.rowid = i.fk_range)';
-		$sql .= ' WHERE r.entity IN (0, '.getEntity($this->element).')';
+		$sql .= ' WHERE r.entity IN (0, '.getEntity('c_exp_tax_range').')';
 		$sql .= ' ORDER BY r.fk_c_exp_tax_cat, r.range_ik';
 
 		dol_syslog(get_called_class().'::getAllRanges', LOG_DEBUG);
@@ -300,7 +300,7 @@ class ExpenseReportIk extends CommonObject
 		$sql = 'SELECT MAX(counted) as nbRange FROM (';
 		$sql .= ' SELECT COUNT(*) as counted';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'c_exp_tax_range r';
-		$sql .= ' WHERE r.entity IN (0, '.getEntity($this->element).')';
+		$sql .= ' WHERE r.entity IN (0, '.getEntity('c_exp_tax_range').')';
 		if ($default_c_exp_tax_cat > 0) {
 			$sql .= ' AND r.fk_c_exp_tax_cat = '.((int) $default_c_exp_tax_cat);
 		}

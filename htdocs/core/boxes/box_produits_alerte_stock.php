@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2005-2012 Maxime Kohlhaas      <mko@atm-consulting.fr>
- * Copyright (C) 2015-2021 Frédéric France      <frederic.france@netlogic.fr>
- * Copyright (C) 2015      Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2005-2012  Maxime Kohlhaas         <mko@atm-consulting.fr>
+ * Copyright (C) 2015-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2015       Juanjo Menent	        <jmenent@2byte.es>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 
 /**
  *	\file       htdocs/core/boxes/box_produits_alerte_stock.php
- *	\ingroup    produits
+ *	\ingroup    product
  *	\brief      Module to generate box of products with too low stock
  */
 
@@ -39,7 +39,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 	public $boxcode = "productsalertstock";
 	public $boximg = "object_product";
 	public $boxlabel = "BoxProductsAlertStock";
-	public $depends = array("produit");
+	public $depends = array("product");
 
 	/**
 	 *  Constructor
@@ -47,14 +47,14 @@ class box_produits_alerte_stock extends ModeleBoxes
 	 *  @param  DoliDB	$db      	Database handler
 	 *  @param	string	$param		More parameters
 	 */
-	public function __construct($db, $param = '')
+	public function __construct($db, $param = '')  // @phpstan-ignore constructor.unusedParameter
 	{
-		global $conf, $user;
+		global $user;
 
 		$this->db = $db;
 
 		$listofmodulesforexternal = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
-		$tmpentry = array('enabled' => ((isModEnabled("product") || isModEnabled("service")) && isModEnabled('stock')), 'perms' => $user->hasRight('stock', 'lire'), 'module' => 'product|service|stock');
+		$tmpentry = array('enabled' => (int) ((isModEnabled("product") || isModEnabled("service")) && isModEnabled('stock')), 'perms' => (string) (int) $user->hasRight('stock', 'lire'), 'module' => 'product|service|stock');
 		$showmode = isVisibleToUserType(($user->socid > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
 		$this->hidden = ($showmode != 1);
 		$this->urltoaddentry = DOL_URL_ROOT.'/product/card.php?action=create';
@@ -69,7 +69,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $conf, $hookmanager;
+		global $user, $langs, $hookmanager;
 
 		$this->max = $max;
 
@@ -163,7 +163,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 						$price_base_type = $langs->trans($objp->price_base_type);
 						$price = ($objp->price_base_type == 'HT') ? price($objp->price) : $price = price($objp->price_ttc);
 					} else { //Parse the dynamic price
-						$productstatic->fetch($objp->rowid, '', '', 1);
+						$productstatic->fetch($objp->rowid, '', '', '1');
 
 						require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 						$priceparser = new PriceParser($this->db);

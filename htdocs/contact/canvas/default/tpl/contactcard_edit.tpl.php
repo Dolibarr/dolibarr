@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin <regis.houssin@inodbox.com>
+/* Copyright (C) 2010       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,9 +17,12 @@
  */
 
 /**
+ * @var Canvas $this
  * @var Conf $conf
  * @var Contact $object
  * @var Translate $langs
+ *
+ * @var string $canvas
  */
 
 // Protection to avoid direct call of template

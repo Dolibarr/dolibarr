@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2019		Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2019		Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,6 +18,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @var ?Conf $conf
+ * @var CommonObject $object
+ * @var User $user
+ */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -32,8 +38,10 @@ global $noMoreLinkedObjectBlockAfter;
 
 $langs = $GLOBALS['langs'];
 '@phan-var-force Translate $langs';
+/** @var Translate $langs */
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
-'@phan-var-force array<string,MyObject> $linkedObjectBlock';
+'@phan-var-force MyObject[] $linkedObjectBlock';
+/** @var MyObject[] $linkedObjectBlock */
 
 // Load translation files required by the page
 $langs->load("mymodule");

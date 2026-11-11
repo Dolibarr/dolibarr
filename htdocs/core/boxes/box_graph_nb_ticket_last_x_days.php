@@ -2,8 +2,8 @@
 /* Module descriptor for ticket system
  * Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
  * Copyright (C) 2016       Christophe Battarel     <christophe@altairis.fr>
- * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,9 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 {
 	public $boxcode = "box_graph_nb_ticket_last_x_days";
 	public $boximg  = "ticket";
+	/**
+	 * @var string
+	 */
 	public $boxlabel;
 	public $depends = array("ticket");
 
@@ -43,7 +46,7 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
-	public function __construct($db, $param = '')
+	public function __construct($db, $param = '')  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $langs;
 		$langs->load("boxes");
@@ -76,21 +79,26 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 		$badgeStatus7 = '#baa32b';
 		$badgeStatus8 = '#993013';
 		$badgeStatus9 = '#e7f0f0';
-		if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php')) {
-			include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+		$theme_vars_file = dol_getThemeFilePath('theme_vars.inc.php');
+		if ($theme_vars_file) {
+			include $theme_vars_file;
 		}
 		$this->max = $max;
 
 
-		$param_day = 'DOLUSER_ticket_last_days';
-		if (GETPOST($param_day)) {
-			if (GETPOST($param_day) >= 15) {
-				$days = 14;
-			} else {
-				$days = GETPOST($param_day);
-			}
+		// Field name must be <cookiename>_<key> so DOL_AUTOSET_COOKIE in main.inc.php can save it into cookie DOLUSER_ticket_last_days
+		$param_day = 'DOLUSER_ticket_last_days_days';
+		$autosetarray = preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
+		if (in_array('DOLUSER_ticket_last_days', $autosetarray)) {
+			$days = GETPOSTINT($param_day);
 		} else {
+			$tmparray = (!empty($_COOKIE['DOLUSER_ticket_last_days']) ? json_decode($_COOKIE['DOLUSER_ticket_last_days'], true) : array());
+			$days = ((is_array($tmparray) && !empty($tmparray['days'])) ? (int) $tmparray['days'] : 0);
+		}
+		if ($days <= 0) {
 			$days = 7;
+		} elseif ($days >= 15) {
+			$days = 14;
 		}
 		require_once DOL_DOCUMENT_ROOT."/ticket/class/ticket.class.php";
 		$text = $langs->trans("BoxTicketLastXDays", $days).'&nbsp;'.img_picto('', 'filter.png', 'id="idsubimgDOLUSER_ticket_last_days" class="linkobject"');
@@ -106,7 +114,8 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 		if ($user->hasRight('ticket', 'read')) {
 			$sql = "SELECT CAST(t.datec AS DATE) as datec, COUNT(t.datec) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
-			$sql .= " WHERE CAST(t.datec AS DATE) > '".$this->db->idate($minimumdatec)."'";
+			$sql .= " WHERE t.entity IN (".getEntity('ticket').")";
+			$sql .= " AND CAST(t.datec AS DATE) > '".$this->db->idate($minimumdatec)."'";
 			$sql .= " GROUP BY CAST(t.datec AS DATE)";
 
 			$resql = $this->db->query($sql);
@@ -143,7 +152,7 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 				});
 				</script>';
 			$stringtoshow .= '<div class="center hideobject" id="idfilterDOLUSER_ticket_last_days">'; // hideobject is to start hidden
-			$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+			$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			$stringtoshow .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$stringtoshow .= '<input type="hidden" name="action" value="refresh">';
 			$stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSER_ticket_last_days:days">';

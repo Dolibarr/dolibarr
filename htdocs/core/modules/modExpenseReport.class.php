@@ -3,7 +3,7 @@
  * Copyright (C) 2015  		Laurent Destailleur  		<eldy@users.sourceforge.net>
  * Copyright (C) 2023  		Alexandre Spangaro   		<aspangaro@easya.solutions>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /**
  * 		\defgroup   expensereport	Module expensereport
- *      \brief      Module to manage expense report. Replace old module Deplacement.
+ *      \brief      Module to manage expense report.
  *      \file       htdocs/core/modules/modExpenseReport.class.php
  *      \ingroup    expensereport
  *      \brief      Description and activation file for the module ExpenseReport
@@ -41,7 +41,7 @@ class modExpenseReport extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf, $user; // Required by some include code
+		global $conf, $user; // Required by the extrafieldsinexport.inc.php
 
 		$this->db = $db;
 		$this->numero = 770;
@@ -57,62 +57,67 @@ class modExpenseReport extends DolibarrModules
 		$this->picto = 'trip';
 
 		// Data directories to create when module is enabled.
-		$this->dirs = array("/expensereport/temp");
-		$r = 0;
+		$this->dirs = ["/expensereport/temp"];
 
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module.
-		$this->config_page_url = array('expensereport.php');
+		$this->config_page_url = ['expensereport.php'];
 
 		// Dependencies
 		$this->hidden = false; // A condition to hide module
-		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
-		// $this->conflictwith = array("modDeplacement"); // Deactivate for access on old information
-		$this->requiredby = array(); // List of modules id to disable if this one is disabled
-		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(3, 7); // Minimum version of Dolibarr required by module
-		$this->langfiles = array("companies", "trips");
+		$this->depends = []; // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = []; // List of modules id to disable if this one is disabled
+		$this->langfiles = ["companies", "trips"];
 
 		// Constants
-		$this->const = array(); // List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 0 or 'allentities')
-		$r = 0;
-
-		$this->const[$r][0] = "EXPENSEREPORT_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "standard";
-		$this->const[$r][3] = 'Name of manager to build PDF expense reports documents';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "EXPENSEREPORT_ADDON";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_expensereport_jade";
-		$this->const[$r][3] = 'Name of manager to generate expense report ref number';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "MAIN_DELAY_EXPENSEREPORTS";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "15";
-		$this->const[$r][3] = 'Tolerance delay (in days) before alert for expense reports to approve';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "MAIN_DELAY_EXPENSEREPORTS_TO_PAY";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "15";
-		$this->const[$r][3] = 'Tolerance delay (in days) before alert for expense reports to pay';
-		$this->const[$r][4] = 0;
-		$r++;
+		$this->const = [ // List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 0 or 'allentities')
+			[
+				"EXPENSEREPORT_ADDON_PDF",
+				"chaine",
+				"standard",
+				'Name of manager to build PDF expense reports documents',
+				0,
+			],
+			[
+				"EXPENSEREPORT_ADDON",
+				"chaine",
+				"mod_expensereport_jade",
+				'Name of manager to generate expense report ref number',
+				0,
+			],
+			[
+				"EXPENSEREPORT_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/expensereports",
+				"",
+				0,
+			],
+			[
+				"MAIN_DELAY_EXPENSEREPORTS",
+				"chaine",
+				"15",
+				'Tolerance delay (in days) before alert for expense reports to approve',
+				0,
+			],
+			[
+				"MAIN_DELAY_EXPENSEREPORTS_TO_PAY",
+				"chaine",
+				"15",
+				'Tolerance delay (in days) before alert for expense reports to pay',
+				0,
+			],
+		];
 
 		// Array to add new pages in new tabs
-		$this->tabs[] = array();
+		$this->tabs[] = [];
 
 		// Boxes
-		$this->boxes = array(); // List of boxes
+		$this->boxes = [
+			['file' => 'box_expensereports_to_approve.php', 'enabledbydefaulton' => 'Home'],
+		];
 		$r = 0;
 
 		// Permissions
-		$this->rights = array(); // Permission array used by this module
+		$this->rights = []; // Permission array used by this module
 		$this->rights_class = 'expensereport';
 
 		$this->rights[$r][0] = 771;
@@ -184,7 +189,7 @@ class modExpenseReport extends DolibarrModules
 		$this->export_icon[$r] = 'trip';
 		$this->export_permission[$r] = array(array("expensereport", "export"));
 		$this->export_fields_array[$r] = array(
-			'd.rowid' => "TripId", 'd.ref' => 'Ref', 'd.date_debut' => 'DateStart', 'd.date_fin' => 'DateEnd', 'd.date_create' => 'DateCreation', 'd.date_approve' => 'DateApprove',
+			'd.rowid' => "TripId", 'd.ref' => 'Ref', 'd.date_debut' => 'DateStart', 'd.date_fin' => 'DateEnd', 'd.date_creation' => 'DateCreation', 'd.date_approve' => 'DateApprove',
 			'd.total_ht' => "TotalHT", 'd.total_tva' => 'TotalVAT', 'd.total_ttc' => 'TotalTTC',
 			'd.fk_statut' => 'Status', 'd.paid' => 'Paid',
 			'd.note_private' => 'NotePrivate', 'd.note_public' => 'NotePublic', 'd.detail_cancel' => 'MOTIF_CANCEL', 'd.detail_refuse' => 'MOTIF_REFUS',
@@ -196,7 +201,7 @@ class modExpenseReport extends DolibarrModules
 			'user_rib.owner_address' => 'BankAccountOwnerAddress'
 		);
 		$this->export_TypeFields_array[$r] = array(
-			'd.rowid' => 'Numeric', 'd.ref' => 'Text', 'd.date_debut' => 'Date', 'd.date_fin' => 'Date', 'd.date_create' => 'Date', 'd.date_approve' => 'Date',
+			'd.rowid' => 'Numeric', 'd.ref' => 'Text', 'd.date_debut' => 'Date', 'd.date_fin' => 'Date', 'd.date_creation' => 'Date', 'd.date_approve' => 'Date',
 			'd.total_ht' => "Numeric", 'd.total_tva' => 'Numeric', 'd.total_ttc' => 'Numeric',
 			'd.fk_statut' => "Numeric", 'd.paid' => 'Numeric',
 			'd.note_private' => 'Text', 'd.note_public' => 'Text', 'd.detail_cancel' => 'Text', 'd.detail_refuse' => 'Text',
@@ -239,6 +244,11 @@ class modExpenseReport extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as p ON ed.fk_projet = p.rowid';
 		$this->export_sql_end[$r] .= ' WHERE ed.fk_expensereport = d.rowid AND d.fk_user_author = u.rowid';
 		$this->export_sql_end[$r] .= ' AND d.entity IN ('.getEntity('expensereport').')';
+		if (is_object($user) && !$user->hasRight('expensereport', 'readall') && !$user->hasRight('expensereport', 'lire_tous')
+			&& (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || !$user->hasRight('expensereport', 'writeall_advance'))) {
+			$childids = $user->getAllChildIds(1);
+			$this->export_sql_end[$r] .= ' AND d.fk_user_author IN ('.$this->db->sanitize(implode(',', $childids)).')';
+		}
 	}
 
 	/**
@@ -261,10 +271,10 @@ class modExpenseReport extends DolibarrModules
 		// Remove permissions and default values
 		$this->remove($options);
 
-		$sql = array(
+		$sql = [
 			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard_expensereport' AND type='expensereport' AND entity = ".((int) $conf->entity),
 			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard_expensereport','expensereport',".((int) $conf->entity).")"
-		);
+		];
 
 		return $this->_init($sql, $options);
 	}

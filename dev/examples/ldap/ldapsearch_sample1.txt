@@ -24,6 +24,5 @@
 #  ldapsearch -h hostname -p 389 -x -D "cn=manager,o=somecompany.com" -w password -b "ou=people,dc=teclib,dc=infra"
 #  ldapsearch -h hostname -p 389 -x -D "cn=manager,o=somecompany.com" -w password -b "o=somecompany.com" "(objectclass=*)"
 #
-# Example to test a ldap search: 
+# Example to test a ldap search:
 #  ldapsearch -h hostname -p 389 -x -z 5 -b 'OU=Collaborateurs,OU=Utilisateurs,OU=MyCompany,DC=bocal,DC=lan' -D 'CN=UserAdmin,OU=Informatique,OU=Utilisateurs,OU=MyCompany,DC=bocal,DC=lan' -w password
-

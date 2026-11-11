@@ -24,4 +24,3 @@ create table llx_c_hrm_department
   label 		varchar(128),
   active  		tinyint DEFAULT 1  NOT NULL
 )ENGINE=innodb;
-

@@ -26,6 +26,7 @@ The following behaviors are expected and requested of all community members:
 *   Refrain from demeaning, discriminatory, or harassing behavior and speech.
 *   Be mindful of your surroundings and of your fellow participants. Alert community leaders if you notice a dangerous situation, someone in distress, or violations of this Code of Conduct, even if they seem inconsequential.
 *   Remember that community event venues may be shared with members of the public; please be respectful to all patrons of these locations.
+*   Using English language in all communication (even "bad english", or auto translated english, is better than any other language).
 
 ## 4. Unacceptable Behavior
 
@@ -42,6 +43,7 @@ The following behaviors are considered harassment and are unacceptable within ou
 *   Deliberate intimidation, stalking or following (online or in person).
 *   Advocating for, or encouraging, any of the above behavior.
 *   Sustained disruption of community events, including talks and presentations.
+*   Publishing message repeatdly with links to external site orvideos that are not related to the subject of the discussion.
 
 ## 5. Consequences of Unacceptable Behavior
 
@@ -82,3 +84,6 @@ This Code of Conduct is distributed under a [Creative Commons Attribution-ShareA
 Portions of text derived from the [Django Code of Conduct](https://www.djangoproject.com/conduct/) and the [Geek Feminism Anti-Harassment Policy](https://geekfeminism.wikia.com/wiki/Conference_anti-harassment/Policy).
 
 Retrieved on November 22, 2016 from [https://citizencodeofconduct.org/](http://citizencodeofconduct.org/)
+
+Enhanced for Dolibarr project.
+

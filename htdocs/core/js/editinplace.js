@@ -25,8 +25,8 @@ $(document).ready(function() {
 	var element = $('#jeditable_element').html();
 	var table_element = $('#jeditable_table_element').html();
 	var fk_element = $('#jeditable_fk_element').html();
-	
-	
+
+
 	if ($('.editval_string').length > 0) {
 		$('.editval_string').editable(urlSaveInPlace, {
 			type		: 'text',
@@ -69,7 +69,7 @@ $(document).ready(function() {
 			$('#editval_' + $(this).attr('id').substr(8)).show().click();
 		});
 	}
-	
+
 	if ($('.editval_textarea').length > 0) {
 		$('.editval_textarea').editable(urlSaveInPlace, {
 			type		: 'textarea',
@@ -117,7 +117,7 @@ $(document).ready(function() {
 			$('#editval_' + $(this).attr('id')).show().click();
 		});
 	}
-	
+
 	if (typeof ckeditorConfig != 'undefined') {
 		$('.editval_ckeditor').editable(urlSaveInPlace, {
 			type		: 'ckeditor',
@@ -170,7 +170,7 @@ $(document).ready(function() {
 			$('#editval_' + $(this).attr('id')).show().click();
 		});
 	}
-	
+
 	if ($('.editval_numeric').length > 0) {
 		$('.editval_numeric').editable(urlSaveInPlace, {
 			type		: 'text',
@@ -213,7 +213,7 @@ $(document).ready(function() {
 			$('#editval_' + $(this).attr('id')).show().click();
 		});
 	}
-	
+
 	if ($('.editval_datepicker').length > 0) {
 		$('.editval_datepicker').editable(urlSaveInPlace, {
 			type		: 'datepicker',
@@ -253,7 +253,7 @@ $(document).ready(function() {
 			$('#editval_' + $(this).attr('id')).show().click();
 		});
 	}
-	
+
 	if ($('.editval_select').length > 0) {
 		$('.editval_select').editable(urlSaveInPlace, {
 			type		: 'select',
@@ -298,7 +298,7 @@ $(document).ready(function() {
 			$('#editval_' + $(this).attr('id')).show().click();
 		});
 	}
-	
+
 	// for test only (not stable)
 	if ($('.editval_autocomplete').length > 0) {
 		$('.editval_autocomplete').editable(urlSaveInPlace, {
@@ -345,7 +345,7 @@ $(document).ready(function() {
 			$('#editval_' + $(this).attr('id')).show().click();
 		});
 	}
-	
+
 	function getParameters(obj, type) {
 		var htmlname		= $(obj).attr('id').substr(8);
 		var element			= $('#element_' + htmlname).val();
@@ -355,7 +355,7 @@ $(document).ready(function() {
 		var savemethod		= $('#savemethod_' + htmlname).val();
 		var ext_element		= $('#ext_element_' + htmlname).val();
 		var timestamp		= $('#timestamp').val();
-		
+
 		return {
 			type: type,
 			element: element,
@@ -367,7 +367,7 @@ $(document).ready(function() {
 			ext_element: ext_element
 		};
 	}
-	
+
 	function getResult(obj, result) {
 		var res = $.parseJSON(result);
 		if (res.error) {
@@ -379,7 +379,7 @@ $(document).ready(function() {
 			} else {
 				$.jnotify(res.error, "error", true);
 			}
-			
+
 		} else {
 			var htmlname = $(obj).attr('id').substr(8);
 			var successmsg = $( '#successmsg_' + htmlname ).val();
@@ -392,7 +392,7 @@ $(document).ready(function() {
 			$('#viewval_' + htmlname).show();
 		}
 	}
-	
+
 	function getDefault(settings) {
 		var htmlname = $(settings).attr('id').substr(8);
 		$('#editval_' + htmlname).hide();

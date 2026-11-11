@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,9 +25,9 @@
  */
 
 /**
- *      \file       htdocs/admin/faitdivers.php
- *      \ingroup    faitdivers
- *      \brief      Page to setupe module Socialnetworks
+ *      \file       htdocs/admin/fediverse.php
+ *      \ingroup    fedivers
+ *      \brief      Page to setup fedivers in module Socialnetworks
  */
 
 //load Dolibarr environment
@@ -120,8 +120,8 @@ if ($action == 'add') {
 
 		$boxlabel = '(SocialNetwoksInformations)';
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file, note)";
-		$sql .= " VALUES ('box_fediverse.php', '".$db->escape($socialNetworkName)."')";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file, note, entity)";
+		$sql .= " VALUES ('box_fediverse.php', '".$db->escape($socialNetworkName)."', ".((int) $conf->entity).")";
 
 		if (!$db->query($sql)) {
 			dol_print_error($db);
@@ -129,9 +129,13 @@ if ($action == 'add') {
 		} else {
 			$jsonData = json_encode($socialNetworkData);
 			$result = dolibarr_set_const($db, "SOCIAL_NETWORKS_DATA_".$socialNetworkName, $jsonData, 'chaine', 0, '', $conf->entity);
+			if ($result <= 0) {
+				$error++;
+				setEventMessages($langs->trans("ErrorInputRequired"), null, 'errors');
+			}
 		}
 	}
-	if ($result) {
+	if (!$error) {
 		$db->commit();
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
@@ -145,7 +149,7 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes') {
 	$error = 0;
 	$key = GETPOST('key', 'alpha');
 	$name = '';
-	$sqlgetName = "SELECT note FROM ".MAIN_DB_PREFIX."boxes_def WHERE rowid=".((int) $key);
+	$sqlgetName = "SELECT note FROM ".MAIN_DB_PREFIX."boxes_def WHERE rowid = ".((int) $key)." AND file = 'box_fediverse.php' AND entity = ".((int) $conf->entity);
 
 	$resqName = $db->query($sqlgetName);
 	if ($resqName) {
@@ -156,12 +160,13 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes') {
 	$db->begin();
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
-	$sql .= " WHERE entity = ".$conf->entity;
+	$sql .= " WHERE entity = ".((int) $conf->entity);
 	$sql .= " AND box_id = ".((int) $key);
 	$resql1 = $db->query($sql);
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def";
 	$sql .= " WHERE rowid = ".((int) $key);
+	$sql .= " AND file = 'box_fediverse.php' AND entity = ".((int) $conf->entity);	// Only a social network box of this entity
 	$resql2 = $db->query($sql);
 
 	if (!$resql1 || !$resql2) {
@@ -184,12 +189,18 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes') {
 if ($action == 'updatesocialnetwork') {
 	$error = 0;
 	$id = GETPOST('key', 'alpha');
-	$name = GETPOST('socialnetwork_name');
-	$url = GETPOST('socialnetwork_url');
+	$url = GETPOST('socialnetwork_url', 'alpha');
+	// The name is the key of the setup and of the widget, and the type of network: it is not changed, it is read from the widget
+	$name = '';
+	$resqName = $db->query("SELECT note FROM ".MAIN_DB_PREFIX."boxes_def WHERE rowid = ".((int) $id)." AND file = 'box_fediverse.php' AND entity = ".((int) $conf->entity));
+	if ($resqName && ($objName = $db->fetch_object($resqName))) {
+		$name = $objName->note;
+	}
 	$paramsKey = GETPOST('paramsKey', 'array');
 	$paramsVal = GETPOST('paramsVal', 'array');
 
-	$result = dolibarr_get_const($db, "SOCIAL_NETWORKS_DATA_".$name, $conf->entity);
+	$result = getDolGlobalString("SOCIAL_NETWORKS_DATA_".$name);
+
 	$socialNetworkData = json_decode($result, true);
 
 	foreach ($paramsKey as $index => $key) {
@@ -218,6 +229,11 @@ if ($action == 'updatesocialnetwork') {
 			$socialNetworkData[$newKey] = $newValue;
 		}
 	}
+	if (empty($name) || !is_array($socialNetworkData)) {
+		$error++;
+	} elseif (!empty($url)) {
+		$socialNetworkData['url'] = $url;
+	}
 	if (!$error) {
 		$newData = json_encode($socialNetworkData);
 		$result = dolibarr_set_const($db, "SOCIAL_NETWORKS_DATA_".$name, $newData, 'chaine', 0, '', $conf->entity);
@@ -240,7 +256,9 @@ if ($action == 'editsocialnetwork' && GETPOST('confirm') == 'yes') {
 	$paramKey = GETPOST('paramkey', 'alpha');
 	$key = GETPOST('key', 'alpha');
 	$name = GETPOST('name');
-	$result = dolibarr_get_const($db, "SOCIAL_NETWORKS_DATA_".$name, $conf->entity);
+
+	$result = getDolGlobalString("SOCIAL_NETWORKS_DATA_".$name);
+
 	$socialNetworkData = json_decode($result, true);
 
 	unset($socialNetworkData[$paramKey]);
@@ -269,7 +287,8 @@ llxHeader('', $langs->trans("FediverseSetup"), '', '', 0, 0, '', '', '', 'mod-ad
 
 $head = socialnetwork_prepare_head();
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print dol_get_fiche_head($head, 'divers', $langs->trans('MenuDict'), -1, 'user', 0, $linkback, '', 0, '', 0);
 
 $title = $langs->trans("ConfigImportSocialNetwork");
@@ -277,7 +296,7 @@ $title = $langs->trans("ConfigImportSocialNetwork");
 print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', '', '', '', -1, '', 'tools', 0, '', '', -1, 0, 0, 0, '');
 
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<div class="div-table-responsive-no-min">';
@@ -344,7 +363,7 @@ foreach ($oauthservices as $key => $value) {
 
 /** @phan-var-force array<string, array{label:string, data-html:string, disable?:int, css?:string}> $oauthservices */
 if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
-	print $form->selectarray('OAUTH_SERVICE_SOCIAL_NETWORK', $oauthservicesStringKeys, (string) $conf->global->OAUTH_SERVICE_SOCIAL_NETWORK);
+	print $form->selectarray('OAUTH_SERVICE_SOCIAL_NETWORK', $oauthservicesStringKeys, (string) getDolGlobalString("OAUTH_SERVICE_SOCIAL_NETWORK"));
 } else {
 	$selectedKey = (string) getDolGlobalString('OAUTH_SERVICE_SOCIAL_NETWORK');
 	$text = isset($oauthservicesStringKeys[$selectedKey]) ? $oauthservicesStringKeys[$selectedKey]['label'] : '';
@@ -382,17 +401,17 @@ print '<script type="text/javascript">
     $(document).ready(function() {
         function toggleOAuthServiceDisplay() {
             if ($("#radio_oauth").is(":checked")) {
-                $("#oauth_service_div").show();  // Afficher le sélecteur OAuth
+                $("#oauth_service_div").show();  // Show the OAuth selector
             } else {
-                $("#oauth_service_div").hide();  // Cacher le sélecteur OAuth
+                $("#oauth_service_div").hide();  // Hide the OAuth selector
             }
         }
 
         function toggleAddParamRow() {
             if ($("#radio_oauth").is(":checked")) {
-                $("#add_param_row").hide();  // Cacher toute la ligne
+                $("#add_param_row").hide();  // Hide the entire line
             } else {
-                $("#add_param_row").show();  // Afficher toute la ligne
+                $("#add_param_row").show();  // Show the entire line
             }
         }
 
@@ -451,6 +470,7 @@ if ($action == 'editsocialnetwork' && GETPOST('paramkey', 'alpha')) {
 }
 $sql = "SELECT rowid, file, note FROM ".MAIN_DB_PREFIX."boxes_def";
 $sql .= " WHERE file = 'box_fediverse.php'";
+$sql .= " AND entity = ".((int) $conf->entity);
 $sql .= " ORDER BY note";
 
 dol_syslog("select socialnetworks boxes", LOG_DEBUG);
@@ -470,7 +490,6 @@ if ($resql) {
 		$socialNetworkUrl = $socialNetworkData['url'];
 		$socialNetworkId = $obj->rowid;
 
-		$fediverseparser = new SocialNetworkManager($socialNetworkTitle);
 		$path_fediverse = DOL_DATA_ROOT.'/fediverse/temp/'.$socialNetworkTitle;
 
 		//check if other params exist
@@ -481,10 +500,11 @@ if ($resql) {
 			}
 		}
 
+		$fediverseparser = new SocialNetworkManager($socialNetworkTitle, $authParams);
 		$result = $fediverseparser->fetchPosts($socialNetworkUrl, 5, 300, $path_fediverse, $authParams);
 
 		print "<br>";
-		print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";
+		print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" spellcheck="false">'."\n";
 		print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 
 		print '<table class="noborder centpercent">'."\n";
@@ -500,7 +520,7 @@ if ($resql) {
 
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans("Title")."</td>";
-		print '<td><input type="text" class="flat minwidth300" name="socialnetwork_name" value="'.dol_escape_htmltag($socialNetworkTitle).'" '.($action != "editsocialnetwork" ? 'disabled' : '').'></td>';
+		print '<td><input type="text" class="flat minwidth300" name="socialnetwork_name" value="'.dol_escape_htmltag($socialNetworkTitle).'" disabled></td>';
 		print '</tr>'."\n";
 
 		print '<tr class="oddeven">';
@@ -595,7 +615,7 @@ $db->close();
 function _isInBoxListFediverse(int $id, array $boxlist)
 {
 	foreach ($boxlist as $box) {
-		if ($box->boxcode === "lastfediverseinfos") {
+		if ($box->boxcode === "lastfediverseinfos" && (int) $box->box_id === $id) {
 			return true;
 		}
 	}

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018      Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,19 +25,15 @@
  *  \ingroup    datapolicy
  *  \brief      Description and activation file for the module datapolicy
  */
+
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
-
-// The class name should start with a lower case mod for Dolibarr to pick it up
-// so we ignore the Squiz.Class.ValidClassName.NotCamelCaps rule.
-// @codingStandardsIgnoreStart
 /**
  *  Description and activation class for module datapolicy
  */
 class modDataPolicy extends DolibarrModules
 {
-	// @codingStandardsIgnoreEnd
 	/**
 	 * Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -69,7 +66,7 @@ class modDataPolicy extends DolibarrModules
 		$this->descriptionlong = "";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = 'experimental';
+		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where datapolicy is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.
@@ -92,16 +89,13 @@ class modDataPolicy extends DolibarrModules
 
 		// Dependencies
 		$this->hidden = false; // A condition to hide module
-		$this->depends = array('always'=>'modCron'); // List of module class names as string that must be enabled if this module is enabled
+		$this->depends = array('always' => 'modCron'); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
 		$this->langfiles = array("datapolicy");
-		$this->phpmin = array(5, 3); // Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(7, 0); // Minimum version of Dolibarr required by module
-		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
-		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+		$this->warnings_activation = array();
+		$this->warnings_activation_ext = array();
 		//$this->automatic_activation = array('FR'=>'datapolicyWasAutomaticallyActivatedBecauseOfYourCountryChoice');
-		//$this->always_enabled = true;								// If true, can't be disabled
 		// Constants
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
 		// Example: $this->const=array(0=>array('datapolicy_MYNEWCONST1','chaine','myvalue','This is a constant to add',1),
@@ -119,15 +113,8 @@ class modDataPolicy extends DolibarrModules
 			array('DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT', 'chaine', '', $langs->trans('NUMBER_MONTH_BEFORE_DELETION'), 0),
 			array('DATAPOLICY_CONTACT_FOURNISSEUR', 'chaine', '', $langs->trans('NUMBER_MONTH_BEFORE_DELETION'), 0),
 			array('DATAPOLICY_ADHERENT', 'chaine', '', $langs->trans('NUMBER_MONTH_BEFORE_DELETION'), 0),
+			array('DATAPOLICY_RECRUITMENT_CANDIDATURE', 'chaine', '', $langs->trans('NUMBER_MONTH_BEFORE_DELETION'), 0),
 		);
-
-		//$country = explode(":", getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY'));
-
-		// Some keys to add into the overwriting translation tables
-		/* $this->overwrite_translation = array(
-		  'en_US:ParentCompany'=>'Parent company or reseller',
-		  'fr_FR:ParentCompany'=>'Maison mère ou revendeur'
-		  ) */
 
 		if (!isModEnabled('datapolicy')) {
 			$conf->datapolicy = new stdClass();
@@ -178,14 +165,15 @@ class modDataPolicy extends DolibarrModules
 		$this->cronjobs = array(
 			0 => array('label' => 'DATAPOLICYJob', 'jobtype' => 'method', 'class' => 'datapolicy/class/datapolicycron.class.php', 'objectname' => 'DataPolicyCron', 'method' => 'cleanDataForDataPolicy', 'parameters' => '', 'comment' => 'Clean data', 'frequency' => 1, 'unitfrequency' => 86400, 'status' => 1, 'test' => 'isModEnabled("datapolicy")'),
 		);
+
 		// Example: $this->cronjobs=array(0=>array('label'=>'My label', 'jobtype'=>'method', 'class'=>'/dir/class/file.class.php', 'objectname'=>'MyClass', 'method'=>'myMethod', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'status'=>0, 'test'=>true),
 		//                                1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24, 'status'=>0, 'test'=>true)
 		// );
 		// Permissions
 		$this->rights = array(); // Permission array used by this module
+
 		// Main menu entries
 		$this->menu = array(); // List of menus to add
-		$r = 0;
 	}
 
 	/**
@@ -198,13 +186,13 @@ class modDataPolicy extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
+		/*
 		global $langs;
 
 		// Create extrafields
 		include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
 
-		/*
 		// Extrafield contact
 		$result1 = $extrafields->addExtraField('datapolicy_consentement', $langs->trans("DATAPOLICY_consentement"), 'boolean', 101, 3, 'thirdparty', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicy', '$conf->datapolicy->enabled');
 		$result1 = $extrafields->addExtraField('datapolicy_opposition_traitement', $langs->trans("DATAPOLICY_opposition_traitement"), 'boolean', 102, 3, 'thirdparty', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicy', '$conf->datapolicy->enabled');

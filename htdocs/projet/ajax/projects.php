@@ -4,6 +4,7 @@
  * Copyright (C) 2007-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +46,6 @@ if (!defined('NOREQUIREHTML')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -61,6 +61,7 @@ $discard_closed = GETPOSTINT('discardclosed');
 
 // Security check
 restrictedArea($user, 'projet', 0, 'projet&project');
+
 
 /*
  * View
@@ -78,7 +79,7 @@ if (empty($mode) || $mode != 'gettasks') {
 	$searchkey = (GETPOSTISSET($htmlname) ? GETPOST($htmlname, 'aZ09') : '');
 
 	$formproject = new FormProjets($db);
-	$arrayresult = $formproject->select_projects_list($socid, '', '', 0, 0, 1, $discard_closed, 0, 0, 1, $searchkey);
+	$arrayresult = $formproject->select_projects_list($socid, 0, '', 0, 0, 1, $discard_closed, 0, 0, 1, $searchkey);
 
 	$db->close();
 
@@ -93,7 +94,7 @@ if ($mode == 'gettasks') {
 	top_httphead();
 
 	$formproject = new FormProjets($db);
-	$formproject->selectTasks((!empty($socid) ? $socid : -1), 0, 'taskid', 24, 1, '1', 1, 0, 0, 'maxwidth500', GETPOSTINT('projectid'), '');
+	$formproject->selectTasks((!empty($socid) ? $socid : -1), 0, 'taskid', 64, 1, '1', 1, 0, 0, 'maxwidth500', (string) GETPOSTINT('projectid'), '');
 
 	$db->close();
 

@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2016  Jean-François FERRY <hello@librethic.io>
  * Copyright (C) 2016       Christophe Battarel <christophe@altairis.fr>
  * Copyright (C) 2018-2021  Frédéric France     <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,9 @@ class box_last_ticket extends ModeleBoxes
 {
 	public $boxcode = "box_last_ticket";
 	public $boximg  = "ticket";
+	/**
+	 * @var string
+	 */
 	public $boxlabel;
 	public $depends = array("ticket");
 
@@ -41,7 +44,7 @@ class box_last_ticket extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
-	public function __construct($db, $param = '')
+	public function __construct($db, $param = '')  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $langs;
 		$langs->load("boxes");
@@ -70,19 +73,15 @@ class box_last_ticket extends ModeleBoxes
 			'limit' => dol_strlen($text),
 		);
 
-		$this->info_box_contents[0][0] = array(
-			'td' => 'class="left"',
-			'text' => $langs->trans("BoxLastTicketContent"),
-		);
 
 		if ($user->hasRight('ticket', 'read')) {
 			$sql = "SELECT t.rowid as id, t.ref, t.track_id, t.fk_soc, t.fk_user_create, t.fk_user_assign, t.subject, t.message, t.fk_statut as status, t.type_code, t.category_code, t.severity_code, t.datec, t.date_read, t.date_close, t.origin_email,";
 			$sql .= " type.label as type_label, category.label as category_label, severity.label as severity_label,";
 			$sql .= " s.nom as company_name, s.email as socemail, s.client, s.fournisseur";
 			$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_type as type ON type.code=t.type_code";
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_category as category ON category.code=t.category_code";
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_severity as severity ON severity.code=t.severity_code";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_type as type ON type.code = t.type_code AND type.entity = t.entity";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_category as category ON category.code = t.category_code AND category.entity = t.entity";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_severity as severity ON severity.code = t.severity_code AND severity.entity = t.entity";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid=t.fk_soc";
 			$sql .= " WHERE t.entity IN (".getEntity('ticket').")";
 			//          $sql.= " AND e.rowid = er.fk_event";

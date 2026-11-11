@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ class box_services_expired extends ModeleBoxes
 	public $boxcode = "expiredservices"; // id of box
 	public $boximg = "object_contract";
 	public $boxlabel = "BoxOldestExpiredServices";
-	public $depends = array("contrat"); // conf->propal->enabled
+	public $depends = array("contract");
 
 	/**
 	 *  Constructor
@@ -41,7 +41,7 @@ class box_services_expired extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
-	public function __construct($db, $param)
+	public function __construct($db, $param)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $user;
 
@@ -72,22 +72,24 @@ class box_services_expired extends ModeleBoxes
 		$this->info_box_head = array('text' => $langs->trans("BoxLastExpiredServices", $max));
 
 		if ($user->hasRight('contrat', 'lire')) {
+			$langs->load("contracts");
+
 			// Select contracts with at least one expired service
 			$sql = "SELECT ";
 			$sql .= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat, c.ref_customer, c.ref_supplier,";
 			$sql .= " s.nom as name, s.rowid as socid, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
 			$sql .= " MIN(cd.date_fin_validite) as date_line, COUNT(cd.rowid) as nb_services";
 			$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe s, ".MAIN_DB_PREFIX."contratdet as cd";
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE cd.statut = 4 AND cd.date_fin_validite <= '".$this->db->idate($now)."'";
-			$sql .= " AND c.entity = ".$conf->entity;
+			$sql .= " AND c.entity = ".((int) $conf->entity);
 			$sql .= " AND c.fk_soc=s.rowid AND cd.fk_contrat=c.rowid AND c.statut > 0";
 			if ($user->socid) {
 				$sql .= ' AND c.fk_soc = '.((int) $user->socid);
 			}
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			$sql .= " GROUP BY c.rowid, c.ref, c.statut, c.date_contrat, c.ref_customer, c.ref_supplier, s.nom, s.rowid";
@@ -123,6 +125,7 @@ class box_services_expired extends ModeleBoxes
 					$contract->id = $objp->rowid;
 					$contract->ref = $objp->ref;
 					$contract->statut = $objp->fk_statut;
+					$contract->status = $objp->fk_statut;
 					$contract->ref_customer = $objp->ref_customer;
 					$contract->ref_supplier = $objp->ref_supplier;
 

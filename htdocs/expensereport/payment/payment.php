@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,10 +26,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
-require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,6 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'trips'));
@@ -48,13 +47,28 @@ $amounts = array();
 $accountid = GETPOSTINT('accountid');
 $cancel = GETPOST('cancel');
 
-// Security check
-$socid = 0;
-if ($user->socid > 0) {
-	$socid = $user->socid;
+// $id is the id of the expense report to pay (see link on expensereport/card.php)
+$object = new ExpenseReport($db);
+if ($id > 0 || !empty($ref)) {
+	$result = $object->fetch($id, $ref);
+	if ($result <= 0) {
+		recordNotFound();
+	}
 }
 
-$permissiontoadd = $user->hasRight('expensereport', 'creer');
+// Security check
+$socid = 0;
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
+}
+
+// Check the user can read this expense report: entity, and author in his hierarchy unless readall.
+// Not restrictedArea(), that would also ask for 'creer' with action=create, the link of expensereport/card.php.
+if (!$user->hasRight('expensereport', 'lire') || !checkUserAccessToObject($user, array('expensereport'), $object, 'expensereport')) {
+	accessforbidden();
+}
+
+$permissiontoadd = $user->hasRight('expensereport', 'to_paid');
 
 
 /*
@@ -75,6 +89,10 @@ if ($action == 'add_payment' && $permissiontoadd) {
 	if (!$result) {
 		$error++;
 		setEventMessages($expensereport->error, $expensereport->errors, 'errors');
+	}
+	if (!$error && $expensereport->status != ExpenseReport::STATUS_APPROVED) {
+		$error++;
+		setEventMessages($langs->trans('StatusOfRefMustBe', $expensereport->ref, $langs->transnoentitiesnoconv('Approved')), null, 'errors');
 	}
 
 	$datepaid = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
@@ -111,6 +129,12 @@ if ($action == 'add_payment' && $permissiontoadd) {
 			$error++;
 			setEventMessages('ErrorNoPaymentDefined', null, 'errors');
 		}
+		// A payment can't be higher than the remainder to pay
+		$remaintopay = (float) price2num($expensereport->total_ttc - $expensereport->getSumPayments(), 'MT');
+		if (!$error && (float) price2num(array_sum($amounts), 'MT') > $remaintopay) {
+			$error++;
+			setEventMessages($langs->trans('PaymentHigherThanReminderToPay'), null, 'errors');
+		}
 
 		if (!$error) {
 			$db->begin();
@@ -145,7 +169,9 @@ if ($action == 'add_payment' && $permissiontoadd) {
 
 			if (!$error) {
 				$payment->fetch($paymentid);
-				if ($expensereport->total_ttc - $payment->amount == 0) {
+				// Set the expense report as paid when the sum of all its payments (not only this one) reaches its total
+				$remaintopay = price2num($expensereport->total_ttc - $expensereport->getSumPayments(), 'MT');
+				if ($remaintopay <= 0) {
 					$result = $expensereport->setPaid($expensereport->id, $user);
 					if (!($result > 0)) {
 						setEventMessages($payment->error, $payment->errors, 'errors');
@@ -225,6 +251,7 @@ if ($action == 'create' || empty($action)) {
 	$sql .= " FROM ".MAIN_DB_PREFIX."payment_expensereport as p, ".MAIN_DB_PREFIX."expensereport as e";
 	$sql .= " WHERE p.fk_expensereport = e.rowid AND p.fk_expensereport = ".((int) $id);
 	$sql .= ' AND e.entity IN ('.getEntity('expensereport').')';
+	$sumpaid = 0;
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
@@ -248,7 +275,7 @@ if ($action == 'create' || empty($action)) {
 
 	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
 	$datepaid = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
-	$datepayment = ($datepaid == '' ? (!getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '') : $datepaid);
+	$datepayment = ($datepaid == '' ? (getDolGlobalString('MAIN_AUTOFILL_DATE') ? '' : -1) : $datepaid);
 	print $form->selectDate($datepayment, '', 0, 0, 0, "add_payment", 1, 1);
 	print "</td>";
 	print '</tr>';
@@ -314,7 +341,7 @@ if ($action == 'create' || empty($action)) {
 			$namef = "amount_".$objp->id;
 			$nameRemain = "remain_".$objp->id; // autofill remainder amount
 			if (!empty($conf->use_javascript_ajax)) { // autofill remainder amount
-				print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->total_ttc - $sumpaid)."'"); // autofill remainder amount
+				print img_picto("Auto fill", 'rightarrow.png', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->total_ttc - $sumpaid)."'"); // autofill remainder amount
 			}
 			$remaintopay = $objp->total_ttc - $sumpaid; // autofill remainder amount
 			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">'; // autofill remainder amount

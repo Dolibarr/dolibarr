@@ -1,4 +1,10 @@
 {
+	"config": {
+	    "platform": {
+	      "php": "7.1.3"
+	    }
+	},
+
     "name": "maximebf/debugbar",
     "description": "Debug bar in the browser for php application",
     "keywords": ["debug", "debugbar"],
@@ -21,10 +27,6 @@
         "psr/log": "^1|^2|^3",
         "symfony/var-dumper": "^4|^5|^6"
     },
-    "require-dev": {
-        "phpunit/phpunit": ">=7.5.20 <10.0",
-        "twig/twig": "^1.38|^2.7|^3.0"
-    },
     "autoload": {
         "psr-4": {
             "DebugBar\\": "src/DebugBar/"
@@ -34,10 +36,5 @@
         "kriswallsmith/assetic": "The best way to manage assets",
         "monolog/monolog": "Log using Monolog",
         "predis/predis": "Redis storage"
-    },
-     "extra": {
-        "branch-alias": {
-            "dev-master": "1.18-dev"
-        }
     }
 }

@@ -27,4 +27,3 @@ create table llx_product_association
   rang                  integer DEFAULT 0,
   import_key            varchar(14) DEFAULT NULL
 )ENGINE=innodb;
-

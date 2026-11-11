@@ -25,10 +25,7 @@
 }
 
 .corps {
-font-family: "Lucida Grande",Verdana,Arial,sans-serif;
-font-size: 14px;
 margin: auto;
-padding: 20px;
 overflow-x: auto;
 border: 2px solid #999999;
 background-color: #fff;
@@ -248,15 +245,12 @@ span.sousbandeaulangue {
 	margin-right:6px;
 	float:right;
 }
-/*corps de la page index.php*/
+/* main part of the survey online vote page */
 div.corps{
-	font-size:12px;
-	font-family:arial, sans-serif;
 	position:static;
 	padding:15px;
 }
-div.corps  table{
-	font-family:arial, sans-serif;
+div.corps table {
 	font-size:12px;
 	font-weight:bold;
 }

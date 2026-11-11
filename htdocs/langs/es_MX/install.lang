@@ -18,6 +18,7 @@ URLRoot=URL raíz
 CheckToForceHttps=Marque esta opción para forzar conexiones seguras (https).<br>Esto requiere que el servidor web esté configurado con un certificado SSL.
 DatabaseType=Tipo de base de datos
 ServerPortDescription=Puerto del servidor de base de datos. Mantenga vacía si no se conoce.
+DatabaseServer=Servidor de base de datos
 AdminPassword=Contraseña para el propietario de la base de datos de Dolibarr.
 DatabaseSuperUserAccess=Servidor de base de datos - acceso de Superusuario
 ServerConnection=Conexión con el servidor

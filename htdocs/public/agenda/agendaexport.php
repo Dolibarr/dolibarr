@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2024  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,24 +59,29 @@ if (!defined('NOIPCHECK')) {
 /**
  * Header function
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @param 	string		$title				Title
  * @param 	string		$head				Head array
  * @param 	int    		$disablejs			More content into html header
  * @param 	int    		$disablehead		More content into html header
  * @param 	string[]|string	$arrayofjs			Array of complementary js files
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
+ * @param 	string			$ws					Website ref if we are called from a website
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [], $ws = '')  // @phan-suppress-current-line PhanRedefineFunction
 {
 	print '<html><title>Export agenda cal</title><body>';
 }
 /**
  * Footer function
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @return	void
  */
-function llxFooterVierge()
+function llxFooterVierge()  // @phan-suppress-current-line PhanRedefineFunction
 {
 	print '</body></html>';
 }
@@ -90,7 +96,6 @@ if (is_numeric($entity)) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -98,12 +103,10 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
  * @var Translate $langs
  * @var User $user
  */
-$object = new ActionComm($db);
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
-// Not older than
-if (!getDolGlobalString('MAIN_AGENDA_EXPORT_PAST_DELAY')) {
-	$conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY = 100; // default limit
-}
+$agenda = new ActionComm($db);
+
 
 // Define format, type and filter
 $format = 'ical';
@@ -149,8 +152,9 @@ if (GETPOST("actioncode", 'alpha')) {
 if (GETPOSTINT("notolderthan")) {
 	$filters['notolderthan'] = GETPOSTINT("notolderthan");
 } else {
-	$filters['notolderthan'] = getDolGlobalString('MAIN_AGENDA_EXPORT_PAST_DELAY', 100);
+	$filters['notolderthan'] = getDolGlobalInt('MAIN_AGENDA_EXPORT_PAST_DELAY', 100);
 }
+// Max security limit by default to 1000
 if (GETPOSTINT("limit")) {
 	$filters['limit'] = GETPOSTINT("limit");
 } else {
@@ -201,7 +205,7 @@ if ($reshook < 0) {
 	llxFooterVierge();
 } elseif (empty($reshook)) {
 	// Check exportkey
-	if (!GETPOST("exportkey") || getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY') != GETPOST("exportkey")) {
+	if (!GETPOST("exportkey") || !hash_equals(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY'), (string) GETPOST("exportkey"))) {
 		$user->loadRights();
 
 		top_httphead();
@@ -287,7 +291,6 @@ if ($shortfilename == 'dolibarrcalendar') {
 	exit;
 }
 
-$agenda = new ActionComm($db);
 
 $cachedelay = 0;
 if (getDolGlobalString('MAIN_AGENDA_EXPORT_CACHE')) {
@@ -311,7 +314,8 @@ if ($format == 'ical' || $format == 'vcal') {
 		}
 		//$attachment = false;
 		$contenttype = 'text/calendar';
-		if (GETPOSTISSET("contenttype")) {
+		// Only types that can not be rendered as HTML, else the labels of events would be interpreted by the browser
+		if (GETPOSTISSET("contenttype") && in_array(GETPOST("contenttype"), array('text/calendar', 'text/plain'))) {
 			$contenttype = GETPOST("contenttype");
 		}
 		//$contenttype='text/plain';
@@ -336,7 +340,8 @@ if ($format == 'ical' || $format == 'vcal') {
 		$outputfile = $conf->agenda->dir_temp.'/'.$filename;
 		$result = readfile($outputfile);
 		if (!$result) {
-			print 'File '.$outputfile.' was empty.';
+			dol_syslog("File ".$outputfile." was empty", LOG_WARNING);	// The path of the file is not shown on this public page
+			print 'File was empty.';
 		}
 
 		//header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
@@ -359,7 +364,8 @@ if ($format == 'rss') {
 		}
 		//$attachment = false;
 		$contenttype = 'application/rss+xml';
-		if (GETPOSTISSET("contenttype")) {
+		// Only types that can not be rendered as HTML, else the labels of events would be interpreted by the browser
+		if (GETPOSTISSET("contenttype") && in_array(GETPOST("contenttype"), array('application/rss+xml', 'text/plain'))) {
 			$contenttype = GETPOST("contenttype");
 		}
 		//$contenttype='text/plain';
@@ -374,7 +380,7 @@ if ($format == 'rss') {
 			header('Content-Disposition: inline; filename="'.$filename.'"');
 		}
 
-		// Ajout directives pour resoudre bug IE
+		// Add directives to fix IE bug
 		//header('Cache-Control: Public, must-revalidate');
 		//header('Pragma: public');
 		if ($cachedelay) {
@@ -389,7 +395,8 @@ if ($format == 'rss') {
 		$outputfile = $conf->agenda->dir_temp.'/'.$filename;
 		$result = readfile($outputfile);
 		if (!$result) {
-			print 'File '.$outputfile.' was empty.';
+			dol_syslog("File ".$outputfile." was empty", LOG_WARNING);	// The path of the file is not shown on this public page
+			print 'File was empty.';
 		}
 
 		// header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));

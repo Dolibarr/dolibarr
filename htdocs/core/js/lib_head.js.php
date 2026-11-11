@@ -2,8 +2,8 @@
 /* Copyright (C) 2005-2018  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,49 +26,48 @@
  * 				JQuery (providing object $) and JQuery-UI (providing $datepicker) libraries must be loaded before this file.
  */
 
-if (!defined('NOREQUIRESOC')) {
-	define('NOREQUIRESOC', '1');
-}
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', 1);
-}
-if (!defined('NOTOKENRENEWAL')) {
-	define('NOTOKENRENEWAL', 1);
-}
-if (!defined('NOLOGIN')) {
-	define('NOLOGIN', 1);
-}
-if (!defined('NOREQUIREMENU')) {
-	define('NOREQUIREMENU', 1);
-}
-if (!defined('NOREQUIREHTML')) {
-	define('NOREQUIREHTML', 1);
-}
-if (!defined('NOREQUIREAJAX')) {
-	define('NOREQUIREAJAX', '1');
-}
+if (!defined('MAIN_ALREADY_INCLUDED')) {
+	if (!defined('NOREQUIRESOC')) {
+		define('NOREQUIRESOC', '1');
+	}
+	if (!defined('NOCSRFCHECK')) {
+		define('NOCSRFCHECK', 1);
+	}
+	if (!defined('NOTOKENRENEWAL')) {
+		define('NOTOKENRENEWAL', 1);
+	}
+	if (!defined('NOLOGIN')) {
+		define('NOLOGIN', 1);
+	}
+	if (!defined('NOREQUIREMENU')) {
+		define('NOREQUIREMENU', 1);
+	}
+	if (!defined('NOREQUIREHTML')) {
+		define('NOREQUIREHTML', 1);
+	}
+	if (!defined('NOREQUIREAJAX')) {
+		define('NOREQUIREAJAX', '1');
+	}
 
-session_cache_limiter('public');
+	session_cache_limiter('public');
 
-require_once '../../main.inc.php';
+	require_once '../../main.inc.php';
+}
 /**
  * @var Conf $conf
  * @var Translate $langs
  */
 
-/*
+
+/**
  * View
  */
-
-// Define javascript type
-top_httphead('text/javascript; charset=UTF-8');
-// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache)) {
+if (!defined('MAIN_ALREADY_INCLUDED')) {
+	// Define javascript type
+	top_httphead('text/javascript; charset=UTF-8');
+	// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
 	header('Cache-Control: max-age=10800, public, must-revalidate');
-} else {
-	header('Cache-Control: no-cache');
 }
-
 
 
 // Define tradMonths javascript array (we define this in datepicker AND in parent page to avoid errors with IE8)
@@ -148,7 +147,31 @@ if ($thousand == 'Space') {
 ?>
 // Javascript libraries for Dolibarr ERP CRM (https://www.dolibarr.org)
 
-// For jQuery date picker
+
+/*
+ * To start/stop Block UI
+ */
+
+function dolBlockUI(message = 'Loading...', indicatorUrl = '<?php echo DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif" ; ?>') {
+	const block = document.getElementById('dol-block-ui');
+	if (block != null) {
+		const msgDiv = block.querySelector('.message');
+		if (msgDiv != null) {
+			msgDiv.innerText = message;
+			msgDiv.style.backgroundImage = `url('${indicatorUrl}')`;
+			block.style.display = 'flex';
+		}
+	}
+}
+function dolUnblockUI() {
+	document.getElementById('dol-block-ui').style.display = 'none';
+}
+
+
+/*
+ * For jQuery date picker
+ */
+
 var tradMonths = <?php echo json_encode($tradMonths) ?>;
 var tradMonthsShort = <?php echo json_encode($tradMonthsShort) ?>;
 var tradDays = <?php echo json_encode($tradDays) ?>;
@@ -168,24 +191,24 @@ $(document).ready(function() {
 });
 
 jQuery(function($){
-	$.datepicker.regional['<?php echo $langs->defaultlang ?>'] = {
-		closeText: '<?php echo $langs->trans("Close2") ?>',
-		prevText: '<?php echo $langs->trans("Previous") ?>',
-		nextText: '<?php echo $langs->trans("Next") ?>',
-		currentText: '<?php echo $langs->trans("Now") ?>',
+	$.datepicker.regional[<?php echo "'".dol_escape_js($langs->defaultlang)."'"; ?>] = {
+		closeText: <?php echo "'".dol_escape_js($langs->trans("Close2"))."'"; ?>,
+		prevText: <?php echo "'".dol_escape_js($langs->trans("Previous"))."'"; ?>,
+		nextText: <?php echo "'".dol_escape_js($langs->trans("Next"))."'"; ?>,
+		currentText: <?php echo "'".dol_escape_js($langs->trans("Now"))."'"; ?>,
 		monthNames: tradMonths,
 		monthNamesShort: tradMonthsShort,
 		dayNames: tradDays,
 		dayNamesShort: tradDaysShort,
 		dayNamesMin: tradDaysMin,
-		weekHeader: '<?php echo $langs->trans("Week"); ?>',
-		dateFormat: '<?php echo $langs->trans("FormatDateShortJQuery"); ?>',	/* Note dd/mm/yy means year on 4 digit in jquery format */
-		firstDay: <?php echo(isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : '1'); ?>,
+		weekHeader: <?php echo "'".dol_escape_js($langs->trans("Week"))."'"; ?>,
+		dateFormat: <?php echo "'".dol_escape_js($langs->trans("FormatDateShortJQuery"))."'"; ?>,	/* Note dd/mm/yy means year on 4 digit in jquery format */
+		firstDay: <?php echo getDolGlobalInt('MAIN_START_WEEK', 1); ?>,
 		isRTL: <?php echo($langs->trans("DIRECTION") == 'rtl' ? 'true' : 'false'); ?>,
 		showMonthAfterYear: false,  	/* TODO add specific to country	*/
 		 yearSuffix: ''			/* TODO add specific to country */
 	};
-	$.datepicker.setDefaults($.datepicker.regional['<?php echo $langs->defaultlang ?>']);
+	$.datepicker.setDefaults($.datepicker.regional[<?php echo "'".dol_escape_js($langs->defaultlang)."'"; ?>]);
 });
 
 
@@ -195,16 +218,16 @@ jQuery(function($){
  */
 
 var select2arrayoflanguage = {
-	matches: function (matches) { return matches + " <?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2ResultFoundUseArrows")); ?>"; },
-	noResults: function () { return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2NotFound")); ?>"; },
+	matches: function (matches) { return matches + <?php echo "' ".dol_escape_js($langs->transnoentitiesnoconv("Select2ResultFoundUseArrows"))."'"; ?>; },
+	noResults: function () { return <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2NotFound"))."'"; ?>; },
 	inputTooShort: function (input) {
 		var n = input.minimum;
 		/*console.log(input); console.log(input.minimum);*/
-		if (n > 1) return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2Enter")); ?> " + n + " <?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacters")); ?>";
-			else return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2Enter")); ?> " + n + " <?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacter")); ?>"
+		if (n > 1) return <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2Enter"))." '"; ?> + n + <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacters"))."'"; ?>;
+			else return <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2Enter"))." '"; ?> + n + <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacter"))."'"; ?>
 		},
-	loadMore: function (pageNumber) { return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2LoadingMoreResults")); ?>"; },
-	searching: function () { return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2SearchInProgress")); ?>"; }
+	loadMore: function (pageNumber) { return <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2LoadingMoreResults"))."'"; ?>; },
+	searching: function () { return <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2SearchInProgress"))."'"; ?>; }
 };
 
 
@@ -222,38 +245,62 @@ function getObjectFromID(id){
 	return theObject;
 }
 
-// Called after selection of a date to save details into detailed fields
+// Called after the selection or typing of a date to save details into detailed fields
 function dpChangeDay(dateFieldID, format)
 {
-	//showDP.datefieldID=dateFieldID;
-	console.log("Call dpChangeDay, we save date into detailed fields from format = "+format);
+	console.log("Call dpChangeDay, we save date from field "+dateFieldID+" into detailed fields from format = "+format);
 
-	var thefield=getObjectFromID(dateFieldID);
-	var thefieldday=getObjectFromID(dateFieldID+"day");
-	var thefieldmonth=getObjectFromID(dateFieldID+"month");
-	var thefieldyear=getObjectFromID(dateFieldID+"year");
+	var thefield = getObjectFromID(dateFieldID);
+	var thefieldday = getObjectFromID(dateFieldID+"day");
+	var thefieldmonth = getObjectFromID(dateFieldID+"month");
+	var thefieldyear = getObjectFromID(dateFieldID+"year");
 
-	var date=getDateFromFormat(thefield.value, format);
-	//console.log(date);
+	console.log("string date value is " + thefield.value);
+
+	var date = getDateFromFormat(thefield.value, format);
+
 	if (date)
 	{
-		thefieldday.value=date.getDate();
-		if(thefieldday.onchange) thefieldday.onchange.call(thefieldday);
-		thefieldmonth.value=date.getMonth()+1;
-		if(thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
-		thefieldyear.value=date.getFullYear();
-		if(thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
+		thefieldday.value = date.getDate();
+		if (thefieldday.onchange) thefieldday.onchange.call(thefieldday);
+		thefieldmonth.value = date.getMonth()+1;
+		if (thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
+		thefieldyear.value = date.getFullYear();
+		if (thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
+
+		return 1;
 	}
-	else
-	{
-		thefieldday.value='';
-		if(thefieldday.onchange) thefieldday.onchange.call(thefieldday);
-		thefieldmonth.value='';
-		if(thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
-		thefieldyear.value='';
-		if(thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
+
+	// Replace yyyy into yy
+	newformat = format.replace(/yyyy/g, 'yy');
+	if (newformat != format) {
+		console.log("dpChangeDay, we try now from format = "+newformat);
+
+		var date = getDateFromFormat(thefield.value, newformat);
+		//console.log(date);
+		if (date)
+		{
+			thefieldday.value = date.getDate();
+			if (thefieldday.onchange) thefieldday.onchange.call(thefieldday);
+			thefieldmonth.value = date.getMonth()+1;
+			if (thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
+			thefieldyear.value = date.getFullYear();
+			if (thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
+
+			return 2;
+		}
 	}
+
+	thefieldday.value = '';
+	if (thefieldday.onchange) thefieldday.onchange.call(thefieldday);
+	thefieldmonth.value = '';
+	if (thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
+	thefieldyear.value = '';
+	if (thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
+
+	return 0;
 }
+
 
 /*
  * =================================================================
@@ -273,7 +320,7 @@ function formatDate(date,format)
 {
 	// alert('formatDate date='+date+' format='+format);
 
-	// Force parameters en chaine
+	// Force parameters to string
 	format=format+"";
 
 	var result="";
@@ -316,7 +363,6 @@ function formatDate(date,format)
 	return result;
 }
 
-
 /*
  * =================================================================
  * Function: getDateFromFormat(date_string, format_string)
@@ -337,13 +383,13 @@ function formatDate(date,format)
  * Licence: GPL
  * ==================================================================
  */
-function getDateFromFormat(val,format)
+function getDateFromFormat(val, format)
 {
 	// alert('getDateFromFormat val='+val+' format='+format);
 
-	// Force parameters en chaine
-	val=val+"";
-	format=format+"";
+	// Force parameters to string
+	val = val+"";
+	format = format+"";
 
 	if (val == '') return 0;
 
@@ -356,17 +402,14 @@ function getDateFromFormat(val,format)
 	var seconde=now.getSeconds();
 
 	var i=0;
-	var d=0;    // -d- follows the date string while -i- follows the format
-				// string
+	var d=0;    // -d- follows the date string while -i- follows the format string
 
 	while (i < format.length)
 	{
 		c=format.charAt(i);	// Recupere char du format
 		substr="";
 		j=i;
-		while ((format.charAt(j)==c) && (j < format.length))	// Recupere char
-																// successif
-																// identiques
+		while ((format.charAt(j)==c) && (j < format.length))	// Get successive similar characters
 		{
 			substr += format.charAt(j++);
 		}
@@ -462,10 +505,14 @@ function getIntegerInString(str,i,minlength,maxlength)
  */
 function urlencode(s) {
 	var news = s;
+	if (typeof news === "number") {
+		news = news.toString();
+	}
 	news = news.replace(/\+/gi,'%2B');
 	news = news.replace(/&/gi,'%26');
 	return news;
 }
+
 
 /*
  * =================================================================
@@ -525,37 +572,49 @@ function cleanSerialize(expr) {
 
 
 /*
- * =================================================================
- * Purpose: Display a temporary message in input text fields (For showing help message on
- *          input field).
- * Input:   fieldId
- * Input:   message
- * Author:  Regis Houssin
+ * Purpose: Fonction to open a confirm popup on a click of a link
+ * Input:   msg
+ * Input:   id
+ * Input:   popupWidth
+ * Input:   popupHeight
+ * Input:   disableCancelButton
  * Licence: GPL
- * ==================================================================
+ * See also document_preview() that also maje a dialogforpopup.dialog().
+ * See also newpopup that use window.open.
  */
-function displayMessage(fieldId,message) {
-	var textbox = document.getElementById(fieldId);
-	if (textbox.value == '') {
-		textbox.style.color = 'grey';
-		textbox.value = message;
-	}
-}
+function confirmDolibarr(msg, id, popupWidth = 400, popupHeight = 300, disableCancelButton = 0) {
+	let alink = document.getElementById(id);
+	let title = <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Note"))."'"; ?>;
 
-/*
- * =================================================================
- * Purpose: Hide a temporary message in input text fields (For showing help message on
- *          input field).
- * Input:   fiedId
- * Input:   message
- * Author:  Regis Houssin
- * Licence: GPL
- * ==================================================================
- */
-function hideMessage(fieldId,message) {
-	var textbox = document.getElementById(fieldId);
-	textbox.style.color = 'black';
-	if (textbox.value == message) textbox.value = '';
+	if (alink.getAttribute("data-alreadyclicked") === "1") {
+		return true;
+	}
+
+	console.log("Call confirmDolibarr disableCancelButton="+disableCancelButton);
+
+	let buttons = {};
+	if (disableCancelButton === 0) {
+		buttons[<?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Cancel"))."'"; ?>] = function () {
+		   $(this).dialog("close");
+		};
+	}
+	buttons[<?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Confirm"))."'"; ?>] = function () {
+		console.log("We click OK"); $(this).dialog("close"); alink.setAttribute("data-alreadyclicked", "1"); alink.click(); return false;
+	};
+
+	new Promise(res => {
+			$("#dialogforpopup").text(msg).dialog({
+			  closeOnEscape: true,
+			  resizable: true,
+			  modal: true,
+			  width: popupWidth,
+			  height: popupHeight,
+			  title: title,
+			  buttons: buttons
+			});
+		});
+
+	return false;
 }
 
 
@@ -639,8 +698,19 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 				});
 			}
 		});
+
+		// Execute js context Dolibarr Hooks
+		if (typeof Dolibarr != 'undefined') {
+			Dolibarr.executeHook('setConstant', {url : saved_url, code, input, entity, strict, forcereload, userid, token, value, userconst});
+		}
+
 		if (forcereload) {
 			var url = window.location.href;
+
+			/* reset action param */
+			url = url.replace(/action=\w+/g, '');
+
+			/* reset dol_resetcache param */
 			if (url.indexOf('dol_resetcache') < 0) {
 				if (url.indexOf('?') > -1) {
 					url = url + "&dol_resetcache=1";
@@ -648,6 +718,8 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 					url = url + "?dol_resetcache=1";
 				}
 			}
+
+			/* reset page_y param */
 			var page_y = $(document).scrollTop();
 			url = url.replace(/page_y=\d+/g, '');
 			if (page_y > 0) {
@@ -664,7 +736,7 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 			//location.reload();
 			return false;
 		}
-	}).fail(function(error) { console.log("Error, we force reload"); location.reload(); });	/* When it fails, we always force reload to have setEventErrorMessages in session visible */
+	}).fail(function(error) { console.error("Error, we force reload"); location.reload(); });	/* When it fails, we always force reload to have setEventErrorMessages in session visible */
 
 	return true;
 }
@@ -738,6 +810,12 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
 				});
 			}
 		});
+
+		// Execute js context Dolibarr Hooks
+		if (typeof Dolibarr != 'undefined') {
+			Dolibarr.executeHook('delConstant', {url : saved_url, code, input, entity, strict, forcereload, userid, token, userconst});
+		}
+
 		if (forcereload) {
 			var url = window.location.href;
 			if (url.indexOf('dol_resetcache') < 0) {
@@ -905,12 +983,15 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 				})
 				.addClass( "ui-widget ui-widget-content ui-corner-left dolibarrcombobox" );
 
-			input.data("ui-autocomplete")._renderItem = function( ul, item ) {
-				return $("<li>")
-					.data( "ui-autocomplete-item", item ) // jQuery UI > 1.10.0
-					.append( "<a>" + item.label + "</a>" )
-					.appendTo( ul );
-			};
+			const widgetInstance = input.data("ui-autocomplete");
+			if (widgetInstance) {
+				widgetInstance._renderItem = function( ul, item ) {
+					return $("<li>")
+						.data( "ui-autocomplete-item", item ) // jQuery UI > 1.10.0
+						.append( "<a>" + item.label + "</a>" )
+						.appendTo( ul );
+				};
+			}
 
 			this.button = $( "<button type=\'button\'>&nbsp;</button>" )
 				.attr( "tabIndex", -1 )
@@ -953,16 +1034,17 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 /**
  * Function to output a dialog box for copy/paste
  *
- * @param	text	Text to put into copy/paste area
- * @param	text2	Text to put under the copy/paste area
+ * @param	text		Text to put into copy/paste area
+ * @param	text2		Text to put under the copy/paste area
+ * @param   popupTitle	Text to show as title
  */
-function copyToClipboard(text,text2)
+function copyToClipboard(text, text2, popupTitle = '')
 {
 	text = text.replace(/<br>/g,"\n");
 	var newElem = '<textarea id="coordsforpopup" style="border: none; width: 90%; height: 120px;">'+text+'</textarea><br><br>'+text2;
 	/* alert(newElem); */
 	$("#dialogforpopup").html(newElem);
-	$("#dialogforpopup").dialog();
+	$("#dialogforpopup").dialog({title: popupTitle});
 	$("#coordsforpopup").select();
 
 	return false;
@@ -975,7 +1057,7 @@ function copyToClipboard(text,text2)
  * @param	url			Url
  * @param	title  		Title of popup
  * @return	boolean		False
- * @see document_preview()
+ * @see document_preview() and confirmDolibarr()
  */
 function newpopup(url, title) {
 	var argv = newpopup.arguments;
@@ -993,14 +1075,15 @@ function newpopup(url, title) {
 }
 
 /**
- * Function show document preview. It uses the "dialog" function.
- * The a tag around the img must have the src='', class='documentpreview', mime='image/xxx', target='_blank' from getAdvancedPreviewUrl().
+ * Function to show a document preview popup. It uses the "dialog" function.
+ * The "a" tag around the "img" must have the src='', class='documentpreview', mime='image/xxx', target='_blank' from getAdvancedPreviewUrl().
  *
  * @param 	file 		Url
  * @param 	type 		Mime file type ("image/jpeg", "application/pdf", "text/html")
  * @param 	title		Title of popup
  * @return	void
- * @see newpopup()
+ * @see also confirmDolibarr() that also make a dialogforpopup.dialog()
+ * @see also newpopup()that use window.open
  */
 function document_preview(file, type, title)
 {
@@ -1011,77 +1094,95 @@ function document_preview(file, type, title)
 
 	if ($.inArray(type, ValidImageTypes) < 0) {
 		/* Not an image */
-		var width='85%';
-		var object_width='100%';
-		var height = ($( window ).height() - 60) * 0.90;
-		var object_height='98%';
+		var object_width = '100%';
+		var object_height = '98%';
+
+		var popupWidth = '85%';
+		var popupHeight = $( window ).height() * 0.90 - 100;
 
 		show_preview('notimage');
 
 	} else {
 		/* This is an image */
-		var object_width=0;
-		var object_height=0;
+		var object_width = 0;
+		var object_height = 0;
 
 		var img = new Image();
 
+		img.src = file;
 		img.onload = function() {
-			object_width = this.width;
-			object_height = this.height;
+			object_width = this.width;		/* the real width of image */
+			object_height = this.height;	/* the real height of image */
 
-			width = $( window ).width()*0.90;
-			console.log("object_width="+object_width+" window width="+width);
-			if(object_width < width){
+			/* Complete title with size of image */
+			title = title + ' (' + object_width + ' x ' + object_height + ')';
+
+			popupWidth = $( window ).width() * 0.85 - 50;
+			console.log("object_width="+object_width+" popup window width="+popupWidth);
+			if (object_width < popupWidth) {
 				console.log("Object width is small, we set width of popup according to image width.");
-				width = object_width + 30
+				popupWidth = object_width + 50
 			}
-			height = $( window ).height()*0.85;
-			console.log("object_height="+object_height+" window height="+height);
-			if(object_height < height){
+			if (popupWidth < 250) {	/* Set a minimal width because we need to have neough space for the buttons */
+				popupWidth = 250;
+			}
+
+			popupHeight = $( window ).height() * 0.90 - 160;
+			console.log("object_height="+object_height+" popup window height="+popupHeight);
+			if (object_height < (popupHeight - 160)) {
 				console.log("Object height is small, we set height of popup according to image height.");
-				height = object_height + 80
-			}
-			else
-			{
+				popupHeight = object_height + 160
+			} else {
 				showOriginalSizeButton = true;
 			}
+
+			console.log("popupWidth="+popupWidth+" popupHeight="+popupHeight);
 
 			show_preview('image');
 
 		};
-		img.src = file;
-
 	}
 
+	/* This function is local to document_preview. Variables like file, type, title, object_width and object_height are global inside this function */
 	function show_preview(mode) {
-		/* console.log("mode="+mode+" file="+file+" type="+type+" width="+width+" height="+height); */
-		var newElem = '<object name="objectpreview" data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'" param="noparam"></object>';
+		/* console.log("mode="+mode+" file="+file+" type="+type+" title=title+" width="+popupWidth+" height="+popupHeight); */
+		/* The content of the object tag is displayed by the browser when it cannot render the
+		   document itself. Chrome on Android does not render a PDF inside an object, so without
+		   this the preview area stays empty and the file cannot be reached at all. */
+		var newElem = '<object name="objectpreview" data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'" param="noparam">';
+		newElem += '<a href="'+file+'" target="_blank" rel="noopener noreferrer">'+<?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Download"))."'"; ?>+'</a>';
+		newElem += '</object>';
 
 		optionsbuttons = {}
-		if (mode == 'image' && showOriginalSizeButton)
-		{
+		if (mode == 'image') {
 			var curRot = 0;
+			var savMaxHeight = 0;
 			optionsbuttons = {
-				"<?php echo dol_escape_js($langs->transnoentitiesnoconv("OriginalSize")); ?>": function() { console.log("Click on original size"); jQuery(".ui-dialog-content.ui-widget-content > object").css({ "max-height": "none" }); },
-				"<?php echo dol_escape_js($langs->transnoentitiesnoconv("RotateImage")); ?>": function() { curRot += 90; jQuery(".ui-dialog-content.ui-widget-content > object").css("transform","rotate(" + curRot + "deg)"); },
-				"<?php echo dol_escape_js($langs->transnoentitiesnoconv("CloseWindow")); ?>": function() { $( this ).dialog( "close" ); }
+				<?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("RotateImage"))."'"; ?>: function() { curRot += 90; jQuery(".ui-dialog-content.ui-widget-content > object").css("transform","rotate(" + curRot + "deg)"); },
+				<?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("CloseWindowShort"))."'"; ?>: function() { $( this ).dialog( "close" ); }
 				};
+			if (showOriginalSizeButton) {
+				optionsbuttons = {
+					<?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("OriginalSize"))."'"; ?>: function() { console.log("Click on original size button"); savMaxHeight = jQuery(".ui-dialog-content.ui-widget-content > object").css("max-height"); console.log("savMaxHeight="+savMaxHeight); jQuery(".ui-dialog-content.ui-widget-content > object").css({ "max-height": (savMaxHeight == "none" ? "100%" : "none") }); },
+					  ...optionsbuttons
+				};
+			}
 		}
 
+		$("#dialogforpopup").addClass("center");
 		$("#dialogforpopup").html(newElem);
 
 		$("#dialogforpopup").dialog({
 			closeOnEscape: true,
 			resizable: true,
-			width: width,
-			height: height,
+			width: popupWidth,
+			height: popupHeight,
 			modal: true,
 			title: title,
 			buttons: optionsbuttons
 		});
 
-		if (showOriginalSizeButton)
-		{
+		if (showOriginalSizeButton) {
 			jQuery(".ui-dialog-content.ui-widget-content > object").css({ "max-height": "100%", "width": "auto", "margin-left": "auto", "margin-right": "auto", "display": "block" });
 		}
 	}
@@ -1102,48 +1203,109 @@ function getParameterByName(name, valueifnotfound)
 	return results === null ? valueifnotfound : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
-/**
- * Get the list of operators for a given field type
+/*
+ * Submit the form of a confirm box. Jump to the target url with a GET, but submit a POST form
+ * instead when this url is too long to be accepted by the web server ("Request-URI Too Long").
+ *
+ * @param	urljump				Target url with all its parameters, for the GET
+ * @param	page				Target page, used as action of the POST form
+ * @param	options				Parameters of the form, as a query string (token included)
+ * @param	maxurllength		Max length of an url we accept to use with a GET
+ * @return	void
  */
-function getOperatorsForFieldType(type) {
-	// Define the list of operators for each general field category
+function dolSubmitConfirmForm(urljump, page, options, maxurllength)
+{
+	// A double quote in a GET parameter is always refused by the WAF (waf.inc.php, type 1),
+	// while a POST body is checked with type 0 which does not apply that rule. So a value
+	// containing a double quote must be posted, whatever the url length is.
+	var hasquote = urljump.indexOf('%22') >= 0 || urljump.indexOf('"') >= 0;
+
+	if (urljump.length <= maxurllength && !hasquote) {
+		location.href = urljump;
+		return;
+	}
+
+	console.log("dolSubmitConfirmForm: url is "+urljump.length+" chars long"+(hasquote ? " or contains a double quote" : "")+", we submit a POST form instead of a GET");
+
+	var form = document.createElement("form");
+	form.method = "POST";
+	form.action = page;
+	form.style.display = "none";
+
+	options.split("&").forEach(function(param) {
+		if (param === "") return;
+		var pos = param.indexOf("=");
+		var input = document.createElement("input");
+		input.type = "hidden";
+		input.name = (pos < 0 ? param : param.substring(0, pos));
+		input.value = (pos < 0 ? "" : decodeURIComponent(param.substring(pos + 1)));
+		form.appendChild(input);
+	});
+
+	document.body.appendChild(form);
+	form.submit();
+}
+
+/**
+ * Get the list of possible operators for a given field type that we can use in the generic filter.
+ */
+function getOperatorsForFieldType(type, maybenull = 0) {
+	console.log('Get list of operators for type='+type);
+
+	// Define the list of operators for each general field category (keys starting with 'separator' are shown as a non selectable separator)
 	const operatorList = {
+		selectlink: {
+			Is: <?php print "'".dol_escape_js($langs->trans('Is'))."'"; ?>,
+			IsNot: <?php print "'".dol_escape_js($langs->trans('IsNot'))."'"; ?>,
+			separator1: '--------',
+			IsInList: <?php print "'".dol_escape_js($langs->trans('IsInList'))."'"; ?>,
+			IsNotInList: <?php print "'".dol_escape_js($langs->trans('IsNotInList'))."'"; ?>
+		},
 		text: {
-			Contains: '<?php print dol_escape_js($langs->trans('Contains')); ?>',
-			DoesNotContain: '<?php print dol_escape_js($langs->trans('DoesNotContain')); ?>',
-			Is: '<?php print dol_escape_js($langs->trans('Is')); ?>',
-			IsNot: '<?php print dol_escape_js($langs->trans('IsNot')); ?>',
-			StartsWith: '<?php print dol_escape_js($langs->trans('StartsWith')); ?>',
-			EndsWith: '<?php print dol_escape_js($langs->trans('EndsWith')); ?>'
+			Is: <?php print "'".dol_escape_js($langs->trans('Is'))."'"; ?>,
+			IsNot: <?php print "'".dol_escape_js($langs->trans('IsNot'))."'"; ?>,
+			separator1: '--------',
+			Contains: <?php print "'".dol_escape_js($langs->trans('Contains'))."'"; ?>,
+			DoesNotContain: <?php print "'".dol_escape_js($langs->trans('DoesNotContain'))."'"; ?>,
+			separator2: '--------',
+			StartsWith: <?php print "'".dol_escape_js($langs->trans('StartsWith'))."'"; ?>,
+			EndsWith: <?php print "'".dol_escape_js($langs->trans('EndsWith'))."'"; ?>,
+			separator3: '--------',
+			IsInList: <?php print "'".dol_escape_js($langs->trans('IsInList'))."'"; ?>,
+			IsNotInList: <?php print "'".dol_escape_js($langs->trans('IsNotInList'))."'"; ?>
 		},
 		number: {
-			'=': '<?php print dol_escape_js($langs->trans('Is')); ?>',
-			'!=': '<?php print dol_escape_js($langs->trans('IsNot')); ?>',
-			'<': '<?php print dol_escape_js($langs->trans('IsLowerThan')); ?>',
-			'>': '<?php print dol_escape_js($langs->trans('IsHigherThan')); ?>',
-			'<=': '<?php print dol_escape_js($langs->trans('IsLowerThanOrEqual')); ?>',
-			'>=': '<?php print dol_escape_js($langs->trans('IsHigherThanOrEqual')); ?>',
+			'=': <?php print "'".dol_escape_js($langs->trans('Is'))."'"; ?>,
+			'!=': <?php print "'".dol_escape_js($langs->trans('IsNot'))."'"; ?>,
+			separator1: '--------',
+			'<': <?php print "'".dol_escape_js($langs->trans('IsLowerThan'))."'"; ?>,
+			'>': <?php print "'".dol_escape_js($langs->trans('IsHigherThan'))."'"; ?>,
+			'<=': <?php print "'".dol_escape_js($langs->trans('IsLowerThanOrEqual'))."'"; ?>,
+			'>=': <?php print "'".dol_escape_js($langs->trans('IsHigherThanOrEqual'))."'"; ?>,
+			separator2: '--------',
+			IsInList: <?php print "'".dol_escape_js($langs->trans('IsInList'))."'"; ?>,
+			IsNotInList: <?php print "'".dol_escape_js($langs->trans('IsNotInList'))."'"; ?>,
 		},
 		date: {
-			Is: '<?php print dol_escape_js($langs->trans('Is')); ?>',
-			IsNot: '<?php print dol_escape_js($langs->trans('IsNot')); ?>',
-			IsBefore: '<?php print dol_escape_js($langs->trans('IsBefore')); ?>',
-			IsAfter: '<?php print dol_escape_js($langs->trans('IsAfter')); ?>',
-			IsOnOrBefore: '<?php print dol_escape_js($langs->trans('IsOnOrBefore')); ?>',
-			IsOnOrAfter: '<?php print dol_escape_js($langs->trans('IsOnOrAfter')); ?>'
+			Is: <?php print "'".dol_escape_js($langs->trans('Is'))."'"; ?>,
+			IsNot: <?php print "'".dol_escape_js($langs->trans('IsNot'))."'"; ?>,
+			separator1: '--------',
+			IsBefore: <?php print "'".dol_escape_js($langs->trans('IsBefore'))."'"; ?>,
+			IsAfter: <?php print "'".dol_escape_js($langs->trans('IsAfter'))."'"; ?>,
+			IsOnOrBefore: <?php print "'".dol_escape_js($langs->trans('IsOnOrBefore'))."'"; ?>,
+			IsOnOrAfter: <?php print "'".dol_escape_js($langs->trans('IsOnOrAfter'))."'"; ?>
 		},
 		html: {
 			Contains: '<?php print $langs->trans('Contains'); ?>'
 		}
 	};
 
-
 	// Determine the general category for the given type using regex
 	let generalType = "";
 
-	console.log('Get list of operators for type='+type);
-
-	if (/^(varchar|char|text|blob|nchar|mediumtext|longtext)\(\d+\)$/i.test(type) || /^(varchar)$/i.test(type)) {
+	if (/^select$/i.test(type) || /^link$/i.test(type)) {
+		generalType = "selectlink";
+	} else if (/^(varchar|char|text|blob|nchar|mediumtext|longtext)\(\d+\)$/i.test(type) || /^(varchar|mail|phone|ip)$/i.test(type)) {
 		generalType = "text";
 	} else if (/^(int|integer|float|double|decimal|numeric)(\(\d+,\d+\))?$/i.test(type)) {
 		generalType = "number";
@@ -1155,7 +1317,15 @@ function getOperatorsForFieldType(type) {
 		generalType = "html";
 	} else {
 		// Handle unknown or unsupported types
+		console.log("The type of field "+type+" is not supported");
 		return [];
+	}
+
+	// If maybenull is true, then append the "IsDefined" and "IsNotDefined" operators
+	if (maybenull === 1) {
+		operatorList[generalType]["separatordefined"] = '--------';
+		operatorList[generalType]["IsDefined"] = <?php print "'".dol_escape_js($langs->trans('IsDefined'))."'"; ?>;
+		operatorList[generalType]["IsNotDefined"] = <?php print "'".dol_escape_js($langs->trans('IsNotDefined'))."'"; ?>;
 	}
 
 	// Return the operators for the general type, or an empty array if not found
@@ -1167,6 +1337,8 @@ function getOperatorsForFieldType(type) {
  */
 function generateFilterString(column, operator, context, fieldType) {
 	let filter = "";
+
+	console.log("generateFilterString column="+column+" operator="+operator+" context="+context+" fieldType="+fieldType);
 
 	switch (operator) {
 		case "Contains":
@@ -1186,6 +1358,25 @@ function generateFilterString(column, operator, context, fieldType) {
 			break;
 		case "EndsWith":
 			filter = column + " like \'%" + context + "\'";
+			break;
+		case "IsInList":
+		case "IsNotInList": {
+			// The value is a list of values separated with spaces or commas. We forge directly the universal filter syntax.
+			// Values are quoted, except for numeric fields (quotes and parenthesis are not allowed into values).
+			const isnumericfield = /^(int|integer|float|double|decimal|numeric|tinyint|smallint)/i.test(fieldType);
+			const listofvalues = String(context).replace(/['()]/g, "").split(/[\s,]+/).filter(function(v) { return v !== ""; }).map(function(v) {
+				return ((isnumericfield && /^-?[0-9]+(\.[0-9]+)?$/.test(v)) ? v : "\'" + v + "\'");
+			});
+			if (listofvalues.length > 0) {
+				filter = "(" + column + (operator === "IsNotInList" ? ":notin:" : ":in:") + listofvalues.join(",") + ")";
+			}
+			break;
+		}
+		case "IsDefined":
+			filter = column + ":isnot:null";
+			break;
+		case "IsNotDefined":
+			filter = column + ":is:null";
 			break;
 		case "=":
 			filter = column + " = \'" + context + "\'";
@@ -1273,8 +1464,10 @@ function generateFilterString(column, operator, context, fieldType) {
 	}
 })();
 
+
 // Another solution, easier, to build a javascript rounding function
 function dolroundjs(number, decimals) { return +(Math.round(number + "e+" + decimals) + "e-" + decimals); }
+
 
 /**
  * Function similar to PHP price()
@@ -1303,7 +1496,7 @@ function pricejs(amount, mode = 'MT', currency_code = '', force_locale = '') {
 	var amountAsLocalizedString;
 	var useIntl = Boolean(Intl && Intl.NumberFormat);
 	var nDigits;
-	if (currency_code === 'auto') currency_code = <?php echo json_encode($conf->currency) ?>;
+	if (currency_code === 'auto') currency_code = <?php echo json_encode(getDolCurrency()) ?>;
 
 	if (mode === 'MU') nDigits = main_rounding_unit;
 	else if (mode === 'MT') nDigits = main_rounding_tot;
@@ -1368,6 +1561,7 @@ function pricejs(amount, mode = 'MT', currency_code = '', force_locale = '') {
  */
 function price2numjs(amount) {
 	if (amount == '') return '';
+	if (amount == null) return '';	/* null or undefined */
 
 	var dec = <?php echo json_encode($dec) ?>;
 	var thousand = <?php echo json_encode($thousand) ?>;
@@ -1434,11 +1628,47 @@ $(document).ready(function() {
 	<?php
 } ?>
 
+// Allow focus into select2 components (their dropdown is appended to body) when they are used into a modal jQuery UI dialog.
+// Without this, the modal dialog steals the focus of the select2 search field so typing does not filter the list.
+if (typeof $.ui != 'undefined' && typeof $.ui.dialog == 'function') {
+	$.widget("ui.dialog", $.ui.dialog, {
+		_allowInteraction: function(event) {
+			return !!$(event.target).closest(".select2-container").length || this._super(event);
+		}
+	});
+}
 
 
 jQuery(document).ready(function() {
+	// Code to remove the separator spaces of a professional id pasted into a field that never holds one
+	// (SIREN "849 943 618", SIRET "849 943 618 00012"). Cleaning the pasted text before it is inserted
+	// makes the maxlength of the field apply to the id itself instead of to its presentation: without
+	// this the browser silently truncates the paste and the user records an id short of a few digits.
+	// Same for the dots of a field marked with data-profidnodot (SIREN "849.943.618").
+	jQuery(document).on("paste", "input[data-profidnospace], input[data-profidnodot]", function(event) {
+		var clipboardData = (event.originalEvent || event).clipboardData;
+		if (!clipboardData) {
+			return;
+		}
+		var pastedText = clipboardData.getData("text");
+		var cleanedText = pastedText;
+		if (this.hasAttribute("data-profidnospace")) {
+			cleanedText = cleanedText.replace(/\s+/g, "");
+		}
+		if (this.hasAttribute("data-profidnodot")) {
+			cleanedText = cleanedText.replace(/\.+/g, "");
+		}
+		if (cleanedText == pastedText) {
+			return;		// Nothing to remove, leave the paste to the browser
+		}
+		event.preventDefault();
+		// insertText keeps the undo history and, unlike setRangeText, is subject to the maxlength
+		document.execCommand("insertText", false, cleanedText);
+	});
+
+
 	// Force to hide menus when page is inside an iFrame so we can show any page into a dialog popup
-	if (window.location && window.location.pathname.indexOf("externalsite/frametop.php") == -1 && window.location !== window.parent.location ) {
+	if (window.location && window.location.pathname.indexOf("core/frames.php") == -1 && window.location.pathname.indexOf("externalsite/frametop.php") == -1 && window.location !== window.parent.location ) {
 		console.log("Page is detected to be into an iframe, we hide by CSS the menus");
 		// The page is in an iframe
 		jQuery(".side-nav-vert, .side-nav, .websitebar").hide();
@@ -1446,12 +1676,12 @@ jQuery(document).ready(function() {
 
 	}
 
+
 	// Code to set tooltip on search field
-	jQuery('table.liste tr.liste_titre_filter td.liste_titre input[name^="search"][type=text]:not(".maxwidthdate")').attr('title', '<?php echo dol_escape_js($langs->transnoentities("SearchSyntaxTooltipForStringOrNum")) ?>');
-});
+	jQuery('table.liste tr.liste_titre_filter td.liste_titre input[name^="search"][type=text]:not(".maxwidthdate")').attr('title', <?php echo "'".dol_escape_js($langs->transnoentities("SearchSyntaxTooltipForStringOrNum"))."'"; ?>);
 
 
-jQuery(document).ready(function() {
+	// Code to toggle dropdown components
 	jQuery(document).on("click", ".butAction.dropdown-toggle", function(event) {
 		console.log("Click on .butAction.dropdown-toggle");
 		let parentHolder = jQuery(event.target).parent();
@@ -1475,61 +1705,316 @@ jQuery(document).ready(function() {
 		let viewportBottom = $(window).scrollTop() + $(window).height();
 
 		// Change dropdown Up/Down orientation if dropdown is close to bottom viewport
-		if(parentHolder.hasClass('open')
+		if (parentHolder.hasClass('open')
 			&& dropDownContentBottom > viewportBottom // Check bottom of dropdown is behind viewport
 			&& dropDownContentTop - dropDownContentHeight > 0 // check if set dropdown to --up will not go over the top of document
-		){
+		) {
 			parentHolder.addClass("--up");
-		}else{
+		} else {
 			parentHolder.removeClass("--up");
 		}
 
 		// Change dropdown left/right offset if dropdown is close to left viewport
-		if(parentHolder.hasClass('open') && dropDownContentLeft < 0){
+		if (parentHolder.hasClass('open') && dropDownContentLeft < 0) {
 			parentHolder.addClass("--left");
-		}else{
+		} else {
 			parentHolder.removeClass("--left");
 		}
 	});
+
 
 	// Close drop down
 	jQuery(document).on("click", function(event) {
 		// search if click was outside drop down
 		if (!$(event.target).closest('.butAction.dropdown-toggle').length) {
-			/* console.log("click close butAction - we click outside"); */
+			/* console.log("click close butAction - we click outside"); // disabled because too verbose */
 			let parentholder = jQuery(".butAction.dropdown-toggle").closest(".dropdown.open");
 			if (parentholder){
-				// Hide the menus.
+				// Hide the dropdown.
 				parentholder.removeClass("open --up --left");
 			}
 		}
 	});
+
+
 });
+
+
+// Code to manage the js for combo list with dependencies (called by extrafields_view.tpl.php)
+function showOptions(child_list, parent_list) {
+	var parentInput = $("select[name="+parent_list+"]");
+	if (parentInput.length === 0) { // when parent extra-field is in view mode and the child is edited directly on card (on line edit)
+		parentInput = $("input[name="+parent_list+"]");
+	}
+	if (parentInput.length > 0) {
+		var val = parentInput.val();
+		var parentVal = parent_list + ":" + val;
+		if (val > 0) {
+			$("select[name=\""+child_list+"\"] option[parent]").prop("disabled", true).hide(); // hide not work with select2 element so disabled it
+			$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").prop('disabled', false).show(); // show not work with select2 element so enabled it
+		} else {
+			$("select[name=\""+child_list+"\"] option").prop("disabled", false).show(); // show not work with select2 element so enabled it
+		}
+	}
+}
+function setListDependencies() {
+		console.log("setListDependencies");
+		jQuery("select option[parent]").parent().each(function() {
+			/* Skip selects inside line item extrafield containers — those are
+			 * handled by setListDependencies_extra() generated by getJSListDependancies().
+			 * Both handlers binding on the same select would race showOptions()
+			 * (prop disabled) against showOptions_extra() (clone/remove/append)
+			 * and leave the child options permanently disabled. See #36880. */
+			if ($(this).closest('[id^="extrafield_lines_area"]').length > 0) {
+				return;
+			}
+			var child_list = $(this).attr("name");
+			var parent = $(this).find("option[parent]:first").attr("parent");
+			var infos = parent.split(":");
+			var parent_list = infos[0];
+			showOptions(child_list, parent_list);
+
+			/* Activate the handler to call showOptions on each future change */
+			$("select[name=\""+parent_list+"\"]").change(function() {
+				showOptions(child_list, parent_list);
+			});
+		});
+}
 
 
 <?php
 if (!getDolGlobalString('MAIN_DISABLE_SELECT2_FOCUS_PROTECTION') && !defined('DISABLE_SELECT2_FOCUS_PROTECTION')) {
 	?>
-/*
+/**
  * Hacky fix for a bug in select2 with jQuery 3.6.4's new nested-focus "protection"
- * This fix needs to click a second time when clicking into a combo with ajax (see Test4d and Test5a in test_forms.php
+ * This fix the need to click a second time when clicking into a combo with ajax (see Test4d and Test5a in test_forms.php
  * see: https://github.com/select2/select2/issues/5993
  * see: https://github.com/jquery/jquery/issues/4382
  *
  * TODO: Recheck with the select2 GH issue and remove once this is fixed on their side
  */
+
+if (typeof jQuery.fn.on === 'function') {
+
 $(document).on('select2:open', (e) => {
-	console.log("Execute the focus (click on combo or use space when on component");
+	console.log("Execute the focus (click on combo or use space when on component)");
 	const target = $(e.target);
 	if (target && target.length) {
 		let id = target[0].id || target[0].name;
-		if (id.substr(-2) == "[]") id = id.substr(0,id.length-2);
+		if (id.substr(-2) == '[]') {
+			id = id.substr(0,id.length-2);
+		}
 		document.querySelector('input[aria-controls*='+id+']').focus();
 	}
 });
+
+}
 	<?php
 }
 ?>
 
+
+/**
+ * Code to manage drag and drop inside kanban group by view - handles sortable columns and item movement between status columns
+ */
+
+$(document).ready(function() {
+	if ($('.kanban .column').length > 0) {
+		$('.kanban .column').sortable({
+			items: '.kanban-draggable',
+			connectWith: '.kanban .column',
+			cursor: 'move',
+			opacity: 0.8,
+			tolerance: 'pointer',
+			start: function(_, ui) {
+				ui.item.data('original-column', ui.item.parent());
+				ui.placeholder.height(ui.item.outerHeight());
+			},
+			receive: function(_, ui) {
+				var originalColumn = ui.item.data('original-column');
+				var newColumn = $(this);
+
+				if (!originalColumn.is(newColumn)) {
+					onKanbanColumnChange(ui.item, newColumn);
+				}
+			}
+		});
+	}
+});
+
+/**
+ * Function called when an item is moved to a different column
+ *
+ * @param {jQuery} item - The dragged item
+ * @param {jQuery} newColumn - The new column
+ */
+function onKanbanColumnChange(item, newColumn) {
+	console.log("Call onKanbanColumnChange");
+	var originalColumn = item.data('original-column');
+	var field = newColumn.data('groupbyfield');
+	var data = {
+		field: field,
+		element: item.data('element'),
+		id: item.data('itemid'),
+		/* Token of the current page: this file is cached by the browser, so it must not contain a token */
+		token: jQuery("meta[name=anti-csrf-currenttoken]").attr("content")
+	};
+	/* The column of the records without any value uses the id 'undefined', saved as 0 like the "Undefined" entry of the dictionary */
+	var value = newColumn.data('groupbyid');
+	data['ajaxfield_'+field] = (value === 'undefined' ? 0 : value);
+	jQuery.ajax({
+		method: 'POST',
+		url: '<?php echo DOL_URL_ROOT; ?>/core/ajax/objectfield.php',
+		data: data,
+		context: document.body,
+		dataType: 'json',
+		success: function(response) {
+			if (!response || !response.result) {
+				onKanbanColumnChangeFailed(item, originalColumn, response ? response.msg : '');
+				return;
+			}
+			/* Record is saved, the new column becomes the reference for the next move */
+			item.data('original-column', newColumn);
+			if (newColumn.hasClass('kanbancollapsed')) {
+				item.hide();
+			}
+		},
+		error: function(xhr) {
+			onKanbanColumnChangeFailed(item, originalColumn, (xhr.responseJSON && xhr.responseJSON.msg) ? xhr.responseJSON.msg : xhr.status+' '+xhr.statusText);
+		}
+	});
+}
+
+/**
+ * Function called when the new value of a dragged item could not be saved. Moves the item back
+ * to the column it came from, so the view never shows a value that is not into the database.
+ *
+ * @param {jQuery} item				The dragged item
+ * @param {jQuery} originalColumn	The column the item came from
+ * @param {string} errormessage		Error to show
+ * @return {void}
+ */
+function onKanbanColumnChangeFailed(item, originalColumn, errormessage) {
+	console.error("onKanbanColumnChange failed: "+errormessage);
+	if (originalColumn && originalColumn.length) {
+		originalColumn.append(item);
+	}
+	var msg = '<?php echo dol_escape_js($langs->transnoentities('ErrorFailedToUpdateRecord')); ?>'+' '+errormessage;
+	if (typeof jQuery.jnotify === 'function') {
+		jQuery.jnotify(msg, 'error', true);
+	} else {
+		window.alert(msg);
+	}
+}
+
+
+if (typeof jQuery.fn.on === 'function') {
+
+/*
+ * Intuitive table selection (with keyboard selection)
+ */
+$(function() {
+
+	// MAIN_ROW_SINGLECLICK_TOSELECT: when enabled, a plain click anywhere on
+	// a .row-with-select row (not on a link/button/field) also toggles its
+	// checkbox, in addition to the Ctrl/Shift+click behaviour below.
+	let rowSingleClickToSelect = <?php echo getDolGlobalInt('MAIN_ROW_SINGLECLICK_TOSELECT') ? 'true' : 'false'; ?>;
+
+	/**
+	 * @param {jQuery}  el
+	 * @param {Integer}  status
+	 */
+	let setLastClickedRowStatus = function (el, status = 1){
+		$('.row-with-select').attr('data-is-last-changed', 0);
+		el.attr('data-is-last-changed', status === 0 ? 0 : 1);
+	}
+
+	/**
+	 * Remove data-is-last-changed on double click
+	 * Because if data-is-last-changed is present the user can't select text
+	 */
+	$(document).on("dblclick", ".row-with-select", function(e) {
+		$('.row-with-select[data-is-last-changed]').removeAttr( 'data-is-last-changed' );
+	});
+
+	/**
+	 * DISABLE on click a and button
+	 * Because Ctrl + Click on link is also used for open ion a new tab
+	 * we need to block select tool
+	 */
+	$(document).on("click", ".row-with-select a, .row-with-select button", function (e) {
+		// we need to block select tool
+		if (e.ctrlKey) {
+			e.stopPropagation();
+		}
+	});
+
+	$(document).on("mousedown click", ".row-with-select input.checkforselect", function (e) {
+		// Prevents automatic change of “checked”
+		e.preventDefault();
+		e.stopPropagation(); // parent click trigger will be done below
+
+		let parentRow = $(this).closest(".row-with-select");
+
+		// this part of code prevent weird behavior when user (ctrl or maj) + click directly on checkbox
+		// We simulate a click on the parent line
+		console.log("Emulate click on parent line");
+		parentRow.trigger({
+			type: "click",
+			ctrlKey: !e.shiftKey, // simulate ctrlKey click will automatically prop activate the checkbox with parent event but not if shift key is pressed.
+			metaKey: !e.shiftKey, // simulate metaKey click will automatically prop activate the checkbox with parent event but not if shift key is pressed.
+			shiftKey: e.shiftKey,
+			originalEvent: e
+		});
+
+	});
+
+	$(document).on("click", ".row-with-select", function (e) {
+		console.log("A click on line was done");
+
+		let checkBox = $(this).find('.checkforselect');
+		let nextCheckStatus = !checkBox.is(':checked')
+
+		if (e.ctrlKey || e.metaKey) {
+			// Add line to selection
+			if (checkBox) {
+				checkBox.prop('checked', nextCheckStatus).trigger('change');
+			}
+			setLastClickedRowStatus($(this), 1);
+		}
+
+		if (e.shiftKey) {
+			let lastLastChanged = $(this).closest('table').find('.row-with-select[data-is-last-changed="1"]');
+
+			if (lastLastChanged.length>0) {
+				// Add all lines to selection beetwin last selected line
+				if ($(this).index() === lastLastChanged.index()) {
+					return null;
+				}
+
+				if ($(this).index() < lastLastChanged.index()) {
+					$(this).nextUntil(lastLastChanged, ".row-with-select" ).find('.checkforselect').prop('checked', nextCheckStatus).trigger('change');
+				}else{
+					lastLastChanged.nextUntil($(this), ".row-with-select" ).find('.checkforselect').prop('checked', nextCheckStatus).trigger('change');
+				}
+
+
+				lastLastChanged.find('.checkforselect').prop('checked', nextCheckStatus).trigger('change');
+				checkBox.prop('checked', nextCheckStatus).trigger('change');
+
+				setLastClickedRowStatus($(this), 1);
+			}
+		}
+
+		if (!e.ctrlKey && !e.metaKey && !e.shiftKey && rowSingleClickToSelect) {
+			if (!$(e.target).closest('a, button, input, select, textarea, label').length) {
+				checkBox.prop('checked', nextCheckStatus).trigger('change');
+				setLastClickedRowStatus($(this), 1);
+			}
+		}
+	});
+});
+
+}
 
 // End of lib_head.js.php

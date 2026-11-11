@@ -2,6 +2,7 @@
 /* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
  * Copyright (C) 2023  	Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +70,10 @@ $invoice = new Facture($db);
 if ($invoiceid > 0) {
 	$invoice->fetch($invoiceid);
 } else {
-	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture";
+	$sql .= " WHERE ref = '(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+	$sql .= " AND entity IN (".getEntity('invoice').")";
+
 	$resql = $db->query($sql);
 	$obj = $db->fetch_object($resql);
 	if ($obj) {
@@ -109,8 +113,8 @@ if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || getDolGlobalString
 	var editAction = '';
 	var editNumber = '';
 	var htmlBtnOK = '<span style="font-size: 14pt;">OK</span>';
-	var htmlReductionPercent = '<?php echo dol_escape_js($htmlReductionPercent); ?>';
-	var htmlReductionAmount = '<?php echo dol_escape_js($htmlReductionAmount); ?>';
+	var htmlReductionPercent = <?php echo "'".dol_escape_js($htmlReductionPercent)."'" ; ?>;
+	var htmlReductionAmount = <?php echo "'".dol_escape_js($htmlReductionAmount)."'" ; ?>;
 
 	/**
 	 * Reset values
@@ -206,7 +210,7 @@ if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || getDolGlobalString
 				parent.$.colorbox.close();
 			});
 		} else if (reductionType === 'amount') {
-			var desc = "<?php echo dol_escape_js($langs->transnoentities('Reduction')); ?>";
+			var desc = <?php echo "'".dol_escape_js($langs->transnoentities('Reduction'))."'" ; ?>;
 			parent.$("#poslines").load("invoice.php?action=freezone&token=<?php echo newToken(); ?>&place=<?php echo $place; ?>&number=-"+reductionNumber+"&desc="+desc, function() {
 				Reset();
 				parent.$.colorbox.close();

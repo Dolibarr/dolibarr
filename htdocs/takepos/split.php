@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2021		Andreu Bisquerra		<jove@bisquerra.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,41 +63,16 @@ if (!$user->hasRight('takepos', 'run')) {
  * Actions
  */
 
-if ($action=="split" && $user->hasRight('takepos', 'run')) {
+if ($action == "split" && $user->hasRight('takepos', 'run')) {
 	$line = GETPOSTINT('line');
 	$split = GETPOSTINT('split');
-	if ($split==1) { // Split line
+	$invoice = null;
+	$placeid = 0;
+	// The line can only be taken from the draft invoice of this terminal it is moved from
+	$sourceref = '(PROV-POS'.$_SESSION["takeposterminal"].'-'.($split == 1 ? $place : 'SPLIT').')';
+	if ($split == 1) { // Split line
 		$invoice = new Facture($db);
-		$ret = $invoice->fetch('', '(PROV-POS'.$_SESSION["takeposterminal"].'-SPLIT)');
-		if ($ret > 0) {
-			$placeid = $invoice->id;
-		} else {
-			$constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
-			$invoice->socid =getDolGlobalInt($constforcompanyid);
-			$invoice->date = dol_now();
-			$invoice->module_source = 'takepos';
-			$invoice->pos_source = $_SESSION["takeposterminal"];
-			$invoice->entity = !empty($_SESSION["takeposinvoiceentity"]) ? $_SESSION["takeposinvoiceentity"] : $conf->entity;
-			if ($invoice->socid <= 0) {
-				$langs->load('errors');
-				dol_htmloutput_errors($langs->trans("ErrorModuleSetupNotComplete", "TakePos"), [], 1);
-			} else {
-				$placeid = $invoice->create($user);
-				if ($placeid < 0) {
-					dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
-				}
-				$sql = "UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-SPLIT)' where rowid=".$placeid;
-				$db->query($sql);
-			}
-		}
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set fk_facture=".$placeid." where rowid=".$line;
-		$db->query($sql);
-	} elseif ($split==0) { // Unsplit line
-		$invoice = new Facture($db);
-		if ($place=="SPLIT") {
-			$place="0";
-		} // Avoid move line to the same place (from SPLIT to SPLIT place)
-		$ret = $invoice->fetch('', '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')');
+		$ret = $invoice->fetch(0, '(PROV-POS'.$_SESSION["takeposterminal"].'-SPLIT)');
 		if ($ret > 0) {
 			$placeid = $invoice->id;
 		} else {
@@ -114,17 +90,61 @@ if ($action=="split" && $user->hasRight('takepos', 'run')) {
 				if ($placeid < 0) {
 					dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
 				}
-				$sql = "UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid=".$placeid;
+
+				$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET ref='(PROV-POS".$_SESSION["takeposterminal"]."-SPLIT)'";
+				$sql .= " WHERE rowid = ".((int) $placeid);
 				$db->query($sql);
 			}
 		}
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set fk_facture=".$placeid." where rowid=".$line;
-		$db->query($sql);
+		if ($placeid > 0) {
+			$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET fk_facture = ".((int) $placeid)." WHERE rowid = ".((int) $line);
+			$sql .= " AND fk_facture IN (SELECT f.rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.ref = '".$db->escape($sourceref)."'";
+			$sql .= " AND f.fk_statut = ".Facture::STATUS_DRAFT." AND f.entity IN (".getEntity('invoice')."))";
+			$db->query($sql);
+		}
+	} elseif ($split == 0) { // Unsplit line
+		$invoice = new Facture($db);
+		if ($place == "SPLIT") {
+			$place = "0";
+		} // Avoid move line to the same place (from SPLIT to SPLIT place)
+		$ret = $invoice->fetch(0, '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')');
+		if ($ret > 0) {
+			$placeid = $invoice->id;
+		} else {
+			$constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
+			$invoice->socid = getDolGlobalInt($constforcompanyid);
+			$invoice->date = dol_now();
+			$invoice->module_source = 'takepos';
+			$invoice->pos_source = $_SESSION["takeposterminal"];
+			$invoice->entity = !empty($_SESSION["takeposinvoiceentity"]) ? $_SESSION["takeposinvoiceentity"] : $conf->entity;
+			if ($invoice->socid <= 0) {
+				$langs->load('errors');
+				dol_htmloutput_errors($langs->trans("ErrorModuleSetupNotComplete", "TakePos"), [], 1);
+			} else {
+				$placeid = $invoice->create($user);
+				if ($placeid < 0) {
+					dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
+				}
+
+				$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+				$sql .= " WHERE rowid = ".((int) $placeid);
+				$db->query($sql);
+			}
+		}
+		if ($placeid > 0) {
+			$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET fk_facture = ".((int) $placeid)." WHERE rowid = ".((int) $line);
+			$sql .= " AND fk_facture IN (SELECT f.rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.ref = '".$db->escape($sourceref)."'";
+			$sql .= " AND f.fk_statut = ".Facture::STATUS_DRAFT." AND f.entity IN (".getEntity('invoice')."))";
+			$db->query($sql);
+		}
 	}
-	$invoice->fetch('', '(PROV-POS'.$_SESSION["takeposterminal"].'-SPLIT)');
-	$invoice->update_price();
-	$invoice->fetch('', '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')');
-	$invoice->update_price();
+	if ($invoice !== null) {
+		$invoice->fetch(0, '(PROV-POS'.$_SESSION["takeposterminal"].'-SPLIT)');
+		$invoice->update_price();
+
+		$invoice->fetch(0, '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')');
+		$invoice->update_price();
+	}
 }
 
 
@@ -133,20 +153,13 @@ if ($action=="split" && $user->hasRight('takepos', 'run')) {
  */
 
 $invoice = new Facture($db);
-if (isset($invoiceid) && $invoiceid > 0) {
+$invoiceid = 0; // Invoice does not exist yet
+$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref = '".$db->escape("(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")")."'";
+$resql = $db->query($sql);
+$obj = $db->fetch_object($resql);
+if ($obj) {
+	$invoiceid = $obj->rowid;
 	$invoice->fetch($invoiceid);
-} else {
-	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
-	$resql = $db->query($sql);
-	$obj = $db->fetch_object($resql);
-	if ($obj) {
-		$invoiceid = $obj->rowid;
-	}
-	if (!isset($invoiceid)) {
-		$invoiceid = 0; // Invoice does not exist yet
-	} else {
-		$invoice->fetch($invoiceid);
-	}
 }
 
 $arrayofcss = array('/takepos/css/pos.css.php');

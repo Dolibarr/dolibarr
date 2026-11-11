@@ -2,7 +2,7 @@
 /*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
  * Copyright (C) 2003-2010 Frederico Caldeira Knabben
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * == BEGIN LICENSE ==
@@ -299,9 +299,6 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 {
 	global $user;
 
-	if (!isset($_FILES)) {
-		global $_FILES;	// @phan-suppress-current-line PhanPluginConstantVariableNull
-	}
 	$sErrorNumber = '0';
 	$sFileName = '';
 
@@ -323,6 +320,8 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 		//$sFileName = SanitizeFileName($sFileName);
 		$sFileName = dol_sanitizeFileName($sFileName);
 
+		dol_syslog("FileUpload sFileName=".$sFileName);
+
 		$sOriginalFileName = $sFileName;
 
 		// Get the extension.
@@ -339,7 +338,7 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 		}*/
 		if (!$permissiontouploadmediaisok) {
 			dol_syslog("connector.lib.php Try to upload a file with no permission");
-			$sErrorNumber = '202';
+			$sErrorNumber = '204';
 		}
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
@@ -389,7 +388,7 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 
 				if (file_exists($sFilePath)) {
 					//previous checks failed, try once again
-					if (isset($isImageValid) && $imgsupported === -1 && IsImageValid($sFilePath, $sExtension) === false) {
+					if ($imgsupported === -1 && IsImageValid($sFilePath, $sExtension) === false) {
 						dol_syslog("connector.lib.php IsImageValid is ko");
 						@unlink($sFilePath);
 						$sErrorNumber = '202';
@@ -397,9 +396,9 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 						$detectHtml = DetectHtml($sFilePath);
 						if ($detectHtml === true || $detectHtml == -1) {
 							// Note that is is a simple test and not reliable. Security does not rely on this.
-							dol_syslog("connector.lib.php DetectHtml is ko");
+							dol_syslog("connector.lib.php DetectHtml is ko detectHtml=".$detectHtml.", we delete the file.");
 							@unlink($sFilePath);
-							$sErrorNumber = '202';
+							$sErrorNumber = '205';
 						}
 					}
 				}
@@ -513,7 +512,7 @@ function GetUrlFromPath($resourceType, $folderPath, $sCommand)
  */
 function RemoveExtension($fileName)
 {
-	return substr($fileName, 0, strrpos($fileName, '.'));
+	return dol_substr($fileName, 0, strrpos($fileName, '.'));
 }
 
 /**
@@ -638,9 +637,6 @@ function CreateServerFolder($folderPath, $lastFolder = null)
  */
 function GetRootPath()
 {
-	if (!isset($_SERVER)) {
-		global $_SERVER;  // @phan-suppress-current-line PhanPluginConstantVariableNull
-	}
 	$sRealPath = realpath('./');
 	// #2124 ensure that no slash is at the end
 	$sRealPath = rtrim($sRealPath, "\\/");
@@ -964,13 +960,11 @@ function DetectHtml($filePath)
 {
 	$fp = @fopen($filePath, 'rb');
 
-	//open_basedir restriction, see #1906
-	if ($fp === false || !flock($fp, LOCK_SH)) {
+	if ($fp === false) {
 		return -1;
 	}
 
 	$chunk = fread($fp, 1024);
-	flock($fp, LOCK_UN);
 	fclose($fp);
 
 	$chunk = strtolower($chunk);

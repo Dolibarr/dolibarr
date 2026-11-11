@@ -18,6 +18,7 @@ GCP_connectionStatus=Estado en línea
 GCP_Type=Tipo de impresora
 PrintIPPDesc=Este controlador permite enviar documentos directamente a una impresora. Requiere un sistema Linux con CUPS instalado.
 PRINTIPP_HOST=Servidor de impresión
+PRINTIPP_SSL=Utilice SSL
 NoDefaultPrinterDefined=No se ha definido una impresora predeterminada
 DefaultPrinter=Impresora predeterminada
 IPP_Uri=Impresora Uri

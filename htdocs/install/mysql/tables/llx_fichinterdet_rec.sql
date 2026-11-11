@@ -57,6 +57,6 @@ create table llx_fichinterdet_rec
 	fk_code_ventilation	integer NOT NULL DEFAULT 0,
 	special_code		integer UNSIGNED NULL DEFAULT 0,
 	fk_unit				integer NULL DEFAULT NULL,
-	import_key			varchar(14) NULL DEFAULT NULL
-
+	import_key			varchar(14) NULL DEFAULT NULL,
+	extraparams			varchar(255)				 		-- to stock other parameters in json format
 )ENGINE=innodb;

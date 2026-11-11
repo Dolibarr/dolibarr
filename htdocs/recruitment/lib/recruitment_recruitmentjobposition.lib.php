@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) ---Put here your own copyright and developer email---
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -69,7 +69,7 @@ function recruitmentjobpositionPrepareHead($object)
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = DOL_URL_ROOT . '/recruitment/recruitmentjobposition_note.php?id=' . $object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/core/note.php', ['element' => 'recruitmentjobposition', 'id' => $object->id]);
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbNote . '</span>';
@@ -138,10 +138,9 @@ function getPublicJobPositionUrl($mode, $ref = '', $localorexternal = 0)
 	}
 
 	$out = $urltouse . '/public/recruitment/view.php?ref=' . ($mode ? '<span style="color: #666666">' : '') . $ref . ($mode ? '</span>' : '');
-	/*if (!empty($conf->global->RECRUITMENT_SECURITY_TOKEN))
-	{
-		if (empty($conf->global->RECRUITMENT_SECURITY_TOKEN)) $out .= '&securekey='.urlencode($conf->global->RECRUITMENT_SECURITY_TOKEN);
-		else $out .= '&securekey='.urlencode(dol_hash($conf->global->RECRUITMENT_SECURITY_TOKEN, '2'));
+	/*if (getDolGlobalString('RECRUITMENT_SECURITY_TOKEN')) {
+		if (!getDolGlobalString('RECRUITMENT_SECURITY_TOKEN')) $out .= '&securekey='.urlencode(getDolGlobalString('RECRUITMENT_SECURITY_TOKEN'));
+		else $out .= '&securekey='.urlencode(dol_hash(getDolGlobalString('RECRUITMENT_SECURITY_TOKEN'), '2'));
 	}*/
 
 	// For multicompany

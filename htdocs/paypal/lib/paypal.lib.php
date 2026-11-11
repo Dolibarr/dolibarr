@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2011-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2008-2012	Laurent Destailleur	    <eldy@users.sourceforge.net>
+ * Copyright (C) 2011-2012	Regis Houssin		    <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,7 +128,7 @@ function print_paypal_redirect($paymentAmount, $currencyCodeType, $paymentType, 
 		$desc
 	);
 
-	dol_syslog("print_paypal_redirect resArray=".var_export($resArray, true), LOG_DEBUG);
+	dol_syslog("print_paypal_redirect resArray=".formatLogObject($resArray), LOG_DEBUG);
 
 	$ack = strtoupper($resArray["ACK"]);
 	if ($ack == "SUCCESS" || $ack == "SUCCESSWITHWARNING") {
@@ -295,6 +296,20 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
 	if ($ack == "SUCCESS" || $ack == "SUCCESSWITHWARNING") {
 		$token = urldecode($resArray["TOKEN"]);
 		$_SESSION['TOKEN'] = $token;
+
+		// Save the data needed by paymentok.php in database (key = PayPal token, propagated in the return url), so they are found even if the session cookie is lost
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+		$resultsave = onlinePaymentSessionSave('paypal', $token, array(
+			'fulltag' => $tag,
+			'FinalPaymentAmt' => $paymentAmount,
+			'currencyCodeType' => $currencyCodeType,
+			'ipaddress' => $_SESSION['ipaddress'],
+			'payerID' => '',
+			'paymentType' => $paymentType
+		));
+		if ($resultsave < 0) {
+			dol_syslog("Failed to save the data of the payment ".$token." into llx_onlinepayment_session", LOG_ERR, 0, '_payment');
+		}
 	}
 
 	return $resArray;
@@ -458,7 +473,7 @@ function hash_call($methodName, $nvpStr)
 
 	// TODO problem with triggers
 	$API_version = "98.0";
-	if (getDolGlobalString('PAYPAL_API_SANDBOX') || GETPOST('forcesandbox', 'alpha')) {		// We can force sand box with param 'forcesandbox'
+	if (getDolGlobalString('PAYPAL_API_SANDBOX')/* || GETPOST('forcesandbox', 'alpha') */) {		// We can force sand box with param 'forcesandbox'
 		$API_Endpoint = "https://api-3t.sandbox.paypal.com/nvp";
 		$API_Url = "https://www.sandbox.paypal.com/webscr?cmd=_express-checkout&token=";
 	} else {
@@ -467,25 +482,15 @@ function hash_call($methodName, $nvpStr)
 	}
 
 	// Clean parameters
-	$PAYPAL_API_USER = "";
-	if (getDolGlobalString('PAYPAL_API_USER')) {
-		$PAYPAL_API_USER = getDolGlobalString('PAYPAL_API_USER');
-	}
-	$PAYPAL_API_PASSWORD = "";
-	if (getDolGlobalString('PAYPAL_API_PASSWORD')) {
-		$PAYPAL_API_PASSWORD = getDolGlobalString('PAYPAL_API_PASSWORD');
-	}
-	$PAYPAL_API_SIGNATURE = "";
-	if (getDolGlobalString('PAYPAL_API_SIGNATURE')) {
-		$PAYPAL_API_SIGNATURE = getDolGlobalString('PAYPAL_API_SIGNATURE');
-	}
-	$PAYPAL_API_SANDBOX = "";
-	if (getDolGlobalString('PAYPAL_API_SANDBOX')) {
-		$PAYPAL_API_SANDBOX = getDolGlobalString('PAYPAL_API_SANDBOX');
-	}
+	$PAYPAL_API_USER = getDolGlobalString('PAYPAL_API_USER');
+	$PAYPAL_API_PASSWORD = getDolGlobalString('PAYPAL_API_PASSWORD');
+	$PAYPAL_API_SIGNATURE = getDolGlobalString('PAYPAL_API_SIGNATURE');
+	$PAYPAL_API_SANDBOX = getDolGlobalString('PAYPAL_API_SANDBOX');
 	// TODO END problem with triggers
 
 	dol_syslog("Paypal API endpoint ".$API_Endpoint);
+
+	// TODO Replace this part with getURLContent()
 
 	//setting the curl parameters.
 	$ch = curl_init();
@@ -495,7 +500,7 @@ function hash_call($methodName, $nvpStr)
 	 print $nvpStr;
 	 exit;*/
 	curl_setopt($ch, CURLOPT_URL, $API_Endpoint);
-	curl_setopt($ch, CURLOPT_VERBOSE, 1);
+	curl_setopt($ch, CURLOPT_VERBOSE, true);
 	// TLSv1 by default or change to TLSv1.2 in module configuration
 	curl_setopt($ch, CURLOPT_SSLVERSION, (!getDolGlobalString('PAYPAL_SSLVERSION') ? 1 : $conf->global->PAYPAL_SSLVERSION));
 
@@ -512,13 +517,13 @@ function hash_call($methodName, $nvpStr)
 
 	//turning off the server and peer verification(TrustManager Concept).
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, ($ssl_verifypeer ? true : false));
-	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, ($ssl_verifypeer ? true : false));
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, ($ssl_verifypeer ? 2 : 0));
 
-	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, !getDolGlobalString('MAIN_USE_CONNECT_TIMEOUT') ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT);
-	curl_setopt($ch, CURLOPT_TIMEOUT, !getDolGlobalString('MAIN_USE_RESPONSE_TIMEOUT') ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT);
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 5));
+	curl_setopt($ch, CURLOPT_TIMEOUT, getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
 
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($ch, CURLOPT_POST, 1);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_POST, true);
 
 	//if USE_PROXY constant set to true in Constants.php, then only proxy will be enabled.
 	if ($USE_PROXY) {

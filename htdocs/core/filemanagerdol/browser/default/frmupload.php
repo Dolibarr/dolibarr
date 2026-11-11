@@ -134,7 +134,10 @@ function OnUploadCompleted( errorNumber, data )
 			alert( 'A file with the same name is already available. The uploaded file has been renamed to "' + data + '"' );
 			break;
 		case 202:
-			alert( 'Invalid file (Bad extension)' );
+			alert( 'Invalid file (Bad extension reported by image_format_supported or other)' );
+			break;
+		case 205:
+			alert( 'Invalid file (Bad file reported by DetectHtml)' );
 			break;
 		default:
 			alert( 'Error on file upload. Error number: ' + errorNumber );

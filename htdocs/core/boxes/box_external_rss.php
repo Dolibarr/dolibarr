@@ -3,8 +3,8 @@
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2015-2025  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024      MDW                  <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,9 @@ class box_external_rss extends ModeleBoxes
 	public $boxlabel = "BoxLastRssInfos";
 	public $depends = array("externalrss");
 
+	/**
+	 * @var string
+	 */
 	public $paramdef; // Params of box definition (not user params)
 
 	/**
@@ -69,7 +72,7 @@ class box_external_rss extends ModeleBoxes
 
 		$this->max = $max;
 
-		// On recupere numero de param de la boite
+		// Retrieve box param number
 		$reg = array();
 		preg_match('/^([0-9]+) /', $this->paramdef, $reg);
 		$site = $reg[1];
@@ -121,7 +124,9 @@ class box_external_rss extends ModeleBoxes
 
 			// Feed common fields
 			$href = $item['link'];
-			$title = urldecode($item['title']);
+			// urldecode() can give back HTML tags (%3C...%3E) that were removed by the parser, and the text of the box is
+			// shown with no escaping when it starts with <img, <div or <span
+			$title = dol_string_nohtmltag(urldecode($item['title']), 0);
 			$date = empty($item['date_timestamp']) ? null : $item['date_timestamp']; // date will be empty if conversion into timestamp failed
 			if ($rssparser->getFormat() == 'rss') {   // If RSS
 				if (!$date && isset($item['pubdate'])) {
@@ -137,6 +142,9 @@ class box_external_rss extends ModeleBoxes
 				//$item['dc']['publisher']
 			}
 			if ($rssparser->getFormat() == 'atom') {	// If Atom
+				if (!$date && !empty($item['pubDate'])) {
+					$date = $item['pubDate'];
+				}
 				if (!$date && isset($item['issued'])) {
 					$date = $item['issued'];
 				}
@@ -180,26 +188,27 @@ class box_external_rss extends ModeleBoxes
 			$description = str_replace("\r\n", "", $description);
 			$tooltip .= '<br>'.$description;
 
+			// Note: Escaping of value will be done by the showBox rendering method.
 			$this->info_box_contents[$line][0] = array(
 				'td' => 'class="left" width="16"',
 				'text' => img_picto('', 'rss'),
 				'url' => $href,
-				'tooltip' => dol_escape_htmltag($tooltip),
+				'tooltip' => $tooltip,
 				'target' => 'newrss',
 			);
 
 			$this->info_box_contents[$line][1] = array(
 				'td' => 'class="tdoverflowmax300"',
-				'text' => dol_escape_htmltag($title),
+				'text' => $title,
 				'url' => $href,
-				'tooltip' => dol_escape_htmltag($tooltip),
+				'tooltip' => $tooltip,
 				'maxlength' => 0,
 				'target' => 'newrss',
 			);
 
 			$this->info_box_contents[$line][2] = array(
 				'td' => 'class="right nowraponall"',
-				'text' => dol_escape_htmltag($date),
+				'text' => $date,
 			);
 		}
 	}

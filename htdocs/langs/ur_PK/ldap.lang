@@ -29,3 +29,5 @@ LDAPPasswordHashType=پاس ورڈ ہیش کی قسم
 LDAPPasswordHashTypeExample=سرور پر استعمال ہونے والے پاس ورڈ ہیش کی قسم
 SupportedForLDAPExportScriptOnly=صرف ایل ڈی اے پی ایکسپورٹ اسکرپٹ سے تعاون یافتہ ہے۔
 SupportedForLDAPImportScriptOnly=صرف ایک ldap امپورٹ اسکرپٹ سے تعاون یافتہ ہے۔
+LDAPUserAccountControl = userAccountControl آن تخلیق (فعال ڈائریکٹری)
+LDAPUserAccountControlExample = 512 نارمل اکاؤنٹ / 546 نارمل اکاؤنٹ + کوئی پاسورڈ + غیر فعال (دیکھیں: https://fr.wikipedia.org/wiki/Active_Directory)

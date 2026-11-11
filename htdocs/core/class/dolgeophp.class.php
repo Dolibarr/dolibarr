@@ -77,14 +77,14 @@ class DolGeoPHP
 	 */
 	public function getXYString($value)
 	{
-		$value = '';
+		$newvalue = '';
 
 		$geom = geoPHP::load($value, 'wkt');
 		if ($geom) {
 			'@phan-var-force Geometry $geom';
-			$value = $geom->x().' '.$geom->y();
+			$newvalue = $geom->x().' '.$geom->y();
 		}
-		return $value;
+		return $newvalue;
 	}
 
 	/**
@@ -95,14 +95,14 @@ class DolGeoPHP
 	 */
 	public function getPointString($value)
 	{
-		$value = '';
+		$newvalue = '';
 
 		$geom = geoPHP::load($value, 'wkt');
 		if ($geom) {
 			'@phan-var-force Geometry $geom';
-			$value = get_class($geom) . ' : '. $geom->numPoints() . ' Points';
+			$newvalue = get_class($geom) . ' : '. $geom->numPoints() . ' Points';
 		}
-		return $value;
+		return $newvalue;
 	}
 
 	/**
@@ -115,10 +115,15 @@ class DolGeoPHP
 	{
 		$value_key = '';
 
-		$geom = geoPHP::load($geojson, 'json');
-		if ($geom) {
-			'@phan-var-force Geometry $geom';
-			$value_key = $geom->out('wkt');
+		try {
+			$geom = geoPHP::load($geojson, 'json');
+			if ($geom) {
+				'@phan-var-force Geometry $geom';
+				$value_key = $geom->out('wkt');
+			}
+		} catch (Exception $e) {
+			// Do nothing
+			$value_key = 'Error: Bad value for property';
 		}
 		return $value_key;
 	}

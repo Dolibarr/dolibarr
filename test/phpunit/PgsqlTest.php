@@ -25,16 +25,18 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/core/db/pgsql.class.php';
+if (!defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/db/pgsql.class.php';
 
 $langs->load("dict");
 
-if (empty($user->id)) {
+if (empty($user->id) && is_object($db)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->loadRights();
@@ -115,13 +117,20 @@ class PgsqlTest extends CommonClassTest
 		$sql = "SELECT a.b, GROUP_CONCAT(a.c) FROM table GROUP BY a.b";
 		$result = $tmpdb->convertSQLFromMysql($sql);
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, "SELECT a.b, STRING_AGG(a.c, ',') FROM table GROUP BY a.b", 'Test GROUP_CONCAT (without SEPARATOR)');
+		$this->assertEquals($result, "SELECT a.b, STRING_AGG(a.c::TEXT, ','::TEXT) FROM table GROUP BY a.b", 'Test GROUP_CONCAT (without SEPARATOR)');
 
 		// Test GROUP_CONCAT (with SEPARATOR)
 		$sql = "SELECT a.b, GROUP_CONCAT(a.c SEPARATOR ',') FROM table GROUP BY a.b";
 		$result = $tmpdb->convertSQLFromMysql($sql);
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, "SELECT a.b, STRING_AGG(a.c, ',') FROM table GROUP BY a.b", 'Test GROUP_CONCAT (with SEPARATOR)');
+		$this->assertEquals($result, "SELECT a.b, STRING_AGG(a.c::TEXT, ','::TEXT) FROM table GROUP BY a.b", 'Test GROUP_CONCAT (with SEPARATOR)');
+
+		// Test CREATE TABLE
+		$sql = "CREATE TABLE llx_blockedlog ( rowid integer AUTO_INCREMENT PRIMARY KEY, tms	timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, action varchar(50), amounts real NOT NULL, signature varchar(100) NOT NULL, signature_line varchar(100) NOT NULL, element varchar(50), fk_object integer, ref_object varchar(100), date_object	datetime, object_data	text, fk_user	integer, entity integer DEFAULT 1 NOT NULL, certified integer ) ENGINE=innodb;";
+		$result = $tmpdb->convertSQLFromMysql($sql);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, "CREATE TABLE llx_blockedlog (  rowid SERIAL PRIMARY KEY, tms timestamp without time zone DEFAULT now() NOT NULL  , action varchar(50), amounts real NOT NULL, signature varchar(100) NOT NULL, signature_line varchar(100) NOT NULL, element varchar(50), fk_object integer, ref_object varchar(100), date_object timestamp, object_data text, fk_user integer, entity integer DEFAULT 1 NOT NULL, certified integer );");
+
 
 		return $result;
 	}

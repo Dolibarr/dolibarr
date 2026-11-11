@@ -1,7 +1,7 @@
 <?php
-/*
 /* Copyright (C) 2004-2017	Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,12 +24,26 @@
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by stylesheet');
 }
+/**
+ * @var string $badgeDanger
+ * @var string $badgeSuccess
+ * @var string $badgeWarning
+ * @var string $colorblind_deuteranopes_badgeDanger
+ * @var string $colorblind_deuteranopes_badgeSuccess
+ * @var string $topMenuFontSize
+ */
+'
+@phan-var-force string $badgeDanger
+@phan-var-force string $badgeSuccess
+@phan-var-force string $badgeWarning
+@phan-var-force string $colorblind_deuteranopes_badgeDanger
+@phan-var-force string $colorblind_deuteranopes_badgeSuccess
+@phan-var-force string $topMenuFontSize
+';
 ?>
-/* <style type="text/css" > */
+/* IDE Hack <style type="text/css"> */
 
-.mainmenu::before{
-	/* font part */
-	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
+.mainmenu::before, .mainmenu span::before {
 	font-weight: 900;
 	font-style: normal;
 	font-variant: normal;
@@ -38,8 +52,9 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	-webkit-font-smoothing: antialiased;
 	text-align:center;
 	text-decoration:none;
-	color: var(--colortextbackhmenu);
-	/* font-size: <?php echo $topMenuFontSize; ?>; */
+}
+.mainmenu:not(.fab)::before, .mainmenu:not(.fab) span:not(.fab)::before {
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
 }
 
 div.mainmenu.menu {
@@ -84,6 +99,9 @@ div.mainmenu.generic4::before {
 }
 .fa-link, .fa-unlink {
 	color: #555;
+}
+.fa-project-diagram:before {
+	font-size: 0.9em;
 }
 
 /* Define square Dolibarr logo in pure CSS */

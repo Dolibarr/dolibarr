@@ -1,5 +1,6 @@
 -- ========================================================================
--- Copyright (C) 2018-2022  OpenDSI             <support@open-dsi.fr>
+-- Copyright (C) 2018-2022	OpenDSI					<support@open-dsi.fr>
+-- Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -56,8 +57,10 @@ CREATE TABLE llx_asset(
 
     date_creation           datetime        NOT NULL,
     tms                     timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    date_valid              datetime,
     fk_user_creat           integer         NOT NULL,
     fk_user_modif           integer,
+    fk_user_valid           integer,
     last_main_doc           varchar(255),
     import_key              varchar(14),
     model_pdf               varchar(255),

@@ -1,6 +1,6 @@
 #!/usr/bin/env php
 <?php
-/* Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -46,10 +46,9 @@ const PREFIXES = [
 /**
  * Expand tabs in string to spaces.
  *
- * @param $str      String in which to expand the tabs to spaces
- * @param $tabWidth Width to use for a tabstop
- *
- * @return string   Expanded string value.
+ * @param string	$str		String in which to expand the tabs to spaces
+ * @param int		$tabWidth	Width to use for a tabstop
+ * @return string	Expanded string value.
  */
 function expandTabs($str, $tabWidth)
 {
@@ -71,11 +70,11 @@ function expandTabs($str, $tabWidth)
 /**
  * Update or add copyright notice in a file
  *
- * @param $filename string Path to the file to modify
- * @param $fileType string Filetype identification for the file
- * @param $name     string Name of developer to add in header
- * @param $email    string Email for the developer
- * @return          bool   True if license was updated
+ * @param string	$filename	Path to the file to modify
+ * @param string	$fileType	Filetype identification for the file
+ * @param string	$name		Name of developer to add in header
+ * @param string	$email		Email for the developer
+ * @return bool		True if license was updated
  */
 function updateCopyrightNotice($filename, $fileType, $name, $email)
 {
@@ -125,9 +124,11 @@ function updateCopyrightNotice($filename, $fileType, $name, $email)
 	$matches = array();
 	if (preg_match($pattern, $lines, $matches)) {
 		$existingYear = $matches['last'];
+		$startYear = null;
 		if (array_key_exists('start', $matches)) {
 			$startYear = $matches['start'];
-		} else {
+		}
+		if (empty($startYear)) {
 			$startYear = $existingYear;
 		}
 
@@ -135,7 +136,6 @@ function updateCopyrightNotice($filename, $fileType, $name, $email)
 		if ($existingYear !== date('Y')) {
 			// Extend the year range to the current year
 			$updatedNotice = preg_replace('/(?:\d{4}-)?\d{4}\s+/', $startYear . '-' . date('Y') . "\t", $matches[0]);
-
 			// Replace the old notice with the updated one in the file
 			file_put_contents($filename, preg_replace($pattern, $updatedNotice, file_get_contents($filename)));
 			return true; // Change detected
@@ -183,6 +183,11 @@ if ($argc < 2) {
 	exit(1);
 }
 
+// Retrieve Git user information (once for all files)
+$gitUserInfo = getGitUserInfo();
+$name = $gitUserInfo['name'];
+$email = $gitUserInfo['email'];
+
 // Process each filename provided
 $changesDetected = false;
 for ($i = 1; $i < $argc; $i++) {
@@ -191,14 +196,9 @@ for ($i = 1; $i < $argc; $i++) {
 	// Determine file type based on extension
 	$fileType = pathinfo($filename, PATHINFO_EXTENSION);
 
-	// Retrieve Git user information
-	$gitUserInfo = getGitUserInfo();
-	$name = $gitUserInfo['name'];
-	$email = $gitUserInfo['email'];
-
 	// Update or add copyright notice based on file type
 	$changeDetected = updateCopyrightNotice($filename, $fileType, $name, $email);
-	$changesDetected |= $changeDetected;
+	$changesDetected = $changesDetected || $changeDetected;
 	if ($changeDetected) {
 		echo "Copyright notice updated in '$filename'" . PHP_EOL;
 	}

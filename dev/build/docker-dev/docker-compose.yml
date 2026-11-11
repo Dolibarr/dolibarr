@@ -1,0 +1,52 @@
+---
+networks:
+    internal-pod:
+        internal: true
+    external-pod:
+        internal: false
+
+services:
+    mariadb:
+        image: mariadb:latest
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassfordev}
+            MYSQL_DATABASE: dolibarr
+        ports:
+            - "3306:3306"
+        networks:
+            - internal-pod
+            - external-pod
+    web:
+        build: .
+        environment:
+            HOST_USER_ID: ${HOST_USER_ID:-1000}
+            HOST_GROUP_ID: ${HOST_GROUP_ID:-1000}
+            PHP_INI_DATE_TIMEZONE: ${PHP_INI_DATE_TIMEZONE:-'UTC'}
+            PHP_INI_MEMORY_LIMIT: ${PHP_INI_MEMORY_LIMIT:-128M}
+            DOLI_DB_SERVER: mariadb
+            DOLI_DATABASE: dolibarr
+            DOLI_DB_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassfordev}
+            DOLI_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassfordev}
+        volumes:
+            - ../../../htdocs:/var/www/html/
+            - ../../../documents:/var/www/documents
+        ports:
+            - "${HTTP_PORT:-8082}:80"
+            - "9000:9000"
+        depends_on:
+            - mail
+        networks:
+            - internal-pod
+            - external-pod
+        extra_hosts:
+            - "localhost.localdomain:127.0.0.1"
+            - "host.docker.internal:host-gateway"
+
+    mail:
+        image: maildev/maildev
+        ports:
+            - "8081:1080"
+            - "25:1025"
+        networks:
+            - internal-pod
+            - external-pod

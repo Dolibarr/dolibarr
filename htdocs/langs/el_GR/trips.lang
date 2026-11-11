@@ -81,6 +81,7 @@ ExpenseReportsToPay=Αναφορές εξόδων για πληρωμή
 ExpensesArea=Τομέας αναφοράς εξόδων
 FeesKilometersOrAmout=Ποσότητα ή χιλιόμετρα
 LastExpenseReports=Τελευταίες %s αναφορές εξόδων
+LinkTheLineToADocument=Link the line to a document
 ListOfFees=Λίστα χρεώσεων
 ListOfTrips=Λίστα αναφορών εξόδων
 ListToApprove=Σε αναμονή για έγκριση
@@ -121,7 +122,6 @@ ValideTrip=Έγκριση αναφοράς εξόδων
 ExpenseReportPayments=πληρωμές αναφορών εξόδων
 TaxUndefinedForThisCategory = Ο φόρος δεν έχει καθοριστεί για αυτήν την κατηγορία
 errorComputeTtcOnMileageExpense=Σφάλμα κατά τον υπολογισμό του κόστους ταξιδιού
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Μόνο τα στοιχεία σε κατάσταση πρόχειρου μπορούν να διαγραφούν στη μαζική δράση
 
 ## Dictionary
 EX_BRE=Πρωινό γεύμα
@@ -157,3 +157,6 @@ TF_PEAGE=Διόδια
 TF_TAXI=Ταξί
 TF_TRAIN=Τρένο
 TF_TRIP=Μεταφορικά
+FailedToSetPaid=Αποτυχία ορισμού ως πληρωμένο
+FailedToSetToCancel=Η ακύρωση απέτυχε
+NobodyHasPermissionToValidateExpenseReport=Κανείς δεν έχει άδεια επικύρωσης αναφοράς εξόδων.

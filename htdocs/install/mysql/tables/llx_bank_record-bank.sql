@@ -1,0 +1,33 @@
+-- ===================================================================
+-- Copyright (C) 2025 Florian HENRY  <florian.henry@scopen.fr>
+-- Copyright (C) 2025 Laurent MAGNIN  <laurent.magnin@evarisk.com>
+--
+-- This program is free software; you can redistribute it and/or modify
+-- it under the terms of the GNU General Public License as published by
+-- the Free Software Foundation; either version 3 of the License, or
+-- (at your option) any later version.
+--
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General Public License for more details.
+--
+-- You should have received a copy of the GNU General Public License
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
+--
+-- ===================================================================
+
+-- Table to receive manual import of a bank statement
+-- Try to match compatibility with external module banking to capitalize on knowledge but removed fields for advanced features.
+
+CREATE TABLE llx_bank_record
+(
+  rowid             integer     AUTO_INCREMENT PRIMARY KEY,
+  ref 				varchar(50) NOT NULL,
+  fk_bank			integer		NOT NULL,
+  dt_from			date		NOT NULL,
+  dt_to				date		NOT NULL,
+  date_creation datetime NOT NULL,
+  date_valid datetime NULL,
+  tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)ENGINE=innodb;

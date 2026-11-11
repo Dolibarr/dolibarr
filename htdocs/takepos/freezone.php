@@ -2,6 +2,7 @@
 /* Copyright (C) 2018 Andreu Bisquerra	<jove@bisquerra.com>
  * Copyright (C) 2020 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +43,6 @@ if (!defined('NOREQUIREAJAX')) {
 
 // Load Dolibarr environment
 require '../main.inc.php'; // Load $user and permissions
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
@@ -60,7 +60,7 @@ $langs->loadLangs(array("bills", "cashdesk"));
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'); // $place is id of table for Bar or Restaurant
 
-$invoiceid = GETPOST('invoiceid', 'int');
+$invoiceid = GETPOSTINT('invoiceid');
 
 $idline = GETPOSTINT('idline');
 $action = GETPOST('action', 'aZ09');
@@ -74,7 +74,7 @@ $invoice = new Facture($db);
 if ($invoiceid > 0) {
 	$invoice->fetch($invoiceid);
 } else {
-	$invoice->fetch('', '(PROV-POS'.$_SESSION['takeposterminal'].'-'.$place.')');
+	$invoice->fetch(0, '(PROV-POS'.$_SESSION['takeposterminal'].'-'.$place.')');
 }
 
 
@@ -101,7 +101,7 @@ top_htmlhead('', '', 0, 0, $arrayofjs, $arrayofcss);
 <body>
 
 <script>
-	var vatRate = '<?php echo dol_escape_js($vatRateDefault); ?>';
+	var vatRate = <?php echo "'".dol_escape_js($vatRateDefault)."'" ; ?>;
 
 	/**
 	 * Apply new VAT rate

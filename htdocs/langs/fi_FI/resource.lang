@@ -34,5 +34,6 @@ ResourceTypeCode=Resurssityypin koodi
 ImportDataset_resource_1=Resurssit
 ErrorResourcesAlreadyInUse=Jotkut resurssit ovat käytössä
 ErrorResourceUseInEvent=%s käytetty %s tapahtumassa
-MaxUsers=Henkilöiden enimmäismäärä (paikat, istuimet, jne.)
+MaxUsers=Maximum number of users
+MaxUsersResourceDesc=If the resource can be used by several people at once (car, room, ...), you can enter here the maximum number of users allowed to use the resource at the same time (number of seats, places, ...).
 MaxUsersLabel=Henkilöiden enimmäismäärä

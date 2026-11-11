@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * Note: in this context Entity == Company.
  */
@@ -21,7 +21,7 @@ class ActionsMulticompany
 	public $db;
 
 	/**
-	 * @param string $login
+	 * @param bool|string $login
 	 * @param bool $bool1
 	 * @param bool $bool2
 	 * @return array<int,string>
@@ -31,7 +31,7 @@ class ActionsMulticompany
 	}
 
 	/**
-	 * @param string $entity
+	 * @param int $entity
 	 * @return void
 	 */
 	public function getInfo($entity)

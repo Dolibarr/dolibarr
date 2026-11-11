@@ -2,8 +2,8 @@
 /* Copyright (C) 2005      Patrick Rouillon     <patrick@rouillon.net>
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,12 +55,15 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 $object = new Reception($db);
+$typeobject = '';
+$origin = '';
+$objectsrc = null;
 if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
 	$object->fetch_thirdparty();
 
 	if (!empty($object->origin)) {
-		$origin = $object->origin;
+		$origin = (string) $object->origin;
 		$typeobject = $object->origin;
 
 		$object->fetch_origin();
@@ -79,11 +82,12 @@ if ($user->socid > 0) {
 }
 
 // TODO Test on reception module on only
-if ($origin == 'reception') {
-	$result = restrictedArea($user, $origin, $object->id);
+$result = -1;
+if (isModEnabled("reception") || $origin == 'reception' || empty($origin)) {
+	$result = restrictedArea($user, 'reception', $object->id);
 } else {
 	if ($origin == 'supplierorder' || $origin == 'order_supplier') {
-		$result = restrictedArea($user, 'fournisseur', $object, 'commande_fournisseur', 'commande');
+		$result = restrictedArea($user, 'fournisseur', $object->origin_id, 'commande_fournisseur', 'commande');
 	} elseif (!$user->hasRight($origin, 'lire') && !$user->hasRight($origin, 'read')) {
 		accessforbidden();
 	}
@@ -118,7 +122,8 @@ if ($action == 'addcontact' && $user->hasRight('reception', 'creer')) {
 	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
-	} else {
+	} elseif ($objectsrc !== null) {
+		$mesgs = array();
 		if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
 			$mesg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
@@ -128,10 +133,10 @@ if ($action == 'addcontact' && $user->hasRight('reception', 'creer')) {
 		}
 		setEventMessages($mesg, $mesgs, 'errors');
 	}
-} elseif ($action == 'swapstatut' && $user->hasRight('reception', 'creer')) {
+} elseif ($action == 'swapstatut' && $user->hasRight('reception', 'creer') && $objectsrc !== null) {
 	// bascule du statut d'un contact
 	$result = $objectsrc->swapContactStatus(GETPOSTINT('ligne'));
-} elseif ($action == 'deletecontact' && $user->hasRight('reception', 'creer')) {
+} elseif ($action == 'deletecontact' && $user->hasRight('reception', 'creer') && $objectsrc !== null) {
 	// Efface un contact
 	$result = $objectsrc->delete_contact(GETPOSTINT("lineid"));
 
@@ -180,14 +185,14 @@ if ($id > 0 || !empty($ref)) {
 	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>';
-		if (0) {    // Do not change on reception
+		if (0) {	// @phpstan-ignore-line  Do not change on reception
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify' && $permissiontoadd) {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+				$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
-			if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
+			if ($objectsrc !== null && !empty($objectsrc->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($objectsrc->fk_project);
 				$morehtmlref .= $proj->getNomUrl(1);
@@ -251,9 +256,12 @@ if ($id > 0 || !empty($ref)) {
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
 	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
 	foreach ($dirtpls as $reldir) {
-		$res = @include dol_buildpath($reldir.'/contacts.tpl.php');
-		if ($res) {
-			break;
+		$file = dol_buildpath($reldir.'/contacts.tpl.php');
+		if (file_exists($file)) {
+			$res = @include $file;
+			if ($res) {
+				break;
+			}
 		}
 	}
 }

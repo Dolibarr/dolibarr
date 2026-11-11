@@ -1,36 +1,39 @@
 <?php
 /*
  * Copyright (C) 2024 Anthony Damhet <a.damhet@progiseize.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
- * This program and files/directory inner it is free software: you can
- * redistribute it and/or modify it under the terms of the
- * GNU Affero General Public License (AGPL) as published by
- * the Free Software Foundation, either version 3 of the License, or
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU AGPL for more details.
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU AGPL
- * along with this program. If not, see <https://www.gnu.org/licenses/agpl-3.0.html>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-$res=0;
-if (! $res && file_exists("../../main.inc.php")) : $res=@include '../../main.inc.php';
-endif;
-if (! $res && file_exists("../../../main.inc.php")) : $res=@include '../../../main.inc.php';
-endif;
-if (! $res && file_exists("../../../../main.inc.php")) : $res=@include '../../../../main.inc.php';
-endif;
+// Load Dolibarr environment
+require '../../../../main.inc.php';
+
+/**
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Protection if external user
-if ($user->socid > 0) : accessforbidden();
-endif;
+if ($user->socid > 0) {
+	accessforbidden();
+}
 
 // Includes
-dol_include_once('admin/tools/ui/class/documentation.class.php');
+require_once DOL_DOCUMENT_ROOT . '/admin/tools/ui/class/documentation.class.php';
 
 // Load documentation translations
 $langs->load('uxdocumentation');
@@ -38,8 +41,13 @@ $langs->load('uxdocumentation');
 //
 $documentation = new Documentation($db);
 
+$morejs = [
+	'/includes/ace/src/ace.js',
+	'/includes/ace/src/ext-statusbar.js',
+	'/includes/ace/src/ext-language_tools.js',
+];
 // Output html head + body - Param is Title
-$documentation->docHeader('Badges');
+$documentation->docHeader('Badges', $morejs);
 
 // Set view for menu and breadcrumb
 // Menu must be set in constructor of documentation class
@@ -49,7 +57,7 @@ $documentation->view = array('Components','Badges');
 $documentation->showSidebar(); ?>
 
 <div class="doc-wrapper">
-		
+
 		<?php $documentation->showBreadCrumb(); ?>
 
 		<div class="doc-content-wrapper">
@@ -82,7 +90,7 @@ $documentation->showSidebar(); ?>
 					'<h5>Example heading <span class="badge badge-secondary">New</span></h5>',
 					'<h6>Example heading <span class="badge badge-secondary">New</span></h6>'
 				);
-				echo $documentation->showCode($lines); ?>
+				$documentation->showCode($lines); ?>
 
 				<p class="documentation-text"><?php echo $langs->trans('DocBadgeUseOnLinksOrButtons'); ?></p>
 				<div class="documentation-example">
@@ -97,7 +105,7 @@ $documentation->showSidebar(); ?>
 					'	Notifications <span class="badge badge-primary">4</span>',
 					'</button>',
 				);
-				echo $documentation->showCode($lines); ?>
+				$documentation->showCode($lines); ?>
 
 				<div class="warning">
 					<p class="documentation-text"><?php echo $langs->trans('DocBadgeWarningAriaHidden1'); ?></p>
@@ -119,7 +127,7 @@ $documentation->showSidebar(); ?>
 					'	<span class="sr-only">unread messages</span>',
 					'</button>',
 				);
-				echo $documentation->showCode($lines); ?>
+				$documentation->showCode($lines); ?>
 			</div>
 
 			<!-- Contextual variations -->
@@ -147,7 +155,7 @@ $documentation->showSidebar(); ?>
 					'<span class="badge badge-light">Light</span>',
 					'<span class="badge badge-dark">Dark</span>',
 				);
-				echo $documentation->showCode($lines); ?>
+				$documentation->showCode($lines); ?>
 				<div class="warning">
 					<p class="documentation-text"><strong><?php echo $langs->trans('DocBadgeContextualVariationsWarning1'); ?></strong></p>
 					<p class="documentation-text"><?php echo $langs->trans('DocBadgeContextualVariationsWarning2'); ?></p>
@@ -168,7 +176,7 @@ $documentation->showSidebar(); ?>
 				for ($i = 0; $i <= 9; $i++) :
 					$lines[] = '<span class="badge badge-status'.$i.'">status-'.$i.'</span>';
 				endfor;
-				echo $documentation->showCode($lines); ?>
+				$documentation->showCode($lines); ?>
 			</div>
 
 			<!-- Pill badges -->
@@ -202,7 +210,7 @@ $documentation->showSidebar(); ?>
 				for ($i = 0; $i <= 9; $i++) :
 					$lines[] = '<span class="badge badge-pill badge-status'.$i.'">status-'.$i.'</span>';
 				endfor;
-				echo $documentation->showCode($lines); ?>
+				$documentation->showCode($lines); ?>
 			</div>
 
 			<!-- Dot badges -->
@@ -236,7 +244,7 @@ $documentation->showSidebar(); ?>
 				for ($i = 0; $i <= 9; $i++) :
 					$lines[] = '<span class="badge badge-dot badge-status'.$i.'"></span>';
 				endfor;
-				echo $documentation->showCode($lines); ?>
+				$documentation->showCode($lines); ?>
 			</div>
 
 			<!-- Links -->
@@ -270,7 +278,7 @@ $documentation->showSidebar(); ?>
 				for ($i = 0; $i <= 9; $i++) :
 					$lines[] = '<a href="#" class="badge badge-status'.$i.'" >status'.$i.'</a>';
 				endfor;
-				echo $documentation->showCode($lines); ?>
+				$documentation->showCode($lines); ?>
 			</div>
 
 			<!-- Use badge helper function -->
@@ -284,6 +292,7 @@ $documentation->showSidebar(); ?>
 				</div>
 				<?php
 				$lines = array(
+					"<?php ",
 					"/**",
 					" * Function dolGetBadge",
 					" *",
@@ -293,12 +302,13 @@ $documentation->showSidebar(); ?>
 					" * @param  string  \$mode   Default '' , 'pill', 'dot'",
 					" * @param  string  \$url    the url for link",
 					" * ... See more: core/lib/functions.lib.php ",
+					"*/",
 					"",
-					"<?php print dolGetBadge('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'primary'); ?>",
-					"<?php print dolGetBadge('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'danger', 'pill'); ?>",
-					"<?php print dolGetBadge('your label for accessibility', 'your label', 'warning', 'dot'); ?>",
+					"print dolGetBadge('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'primary');",
+					"print dolGetBadge('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'danger', 'pill');",
+					"print dolGetBadge('your label for accessibility', 'your label', 'warning', 'dot');",
 				);
-				echo $documentation->showCode($lines); ?>
+				$documentation->showCode($lines, 'php'); ?>
 			</div>
 
 			<!--  -->

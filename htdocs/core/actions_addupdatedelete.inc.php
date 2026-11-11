@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2017-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Jose Martinez           <jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,15 +40,19 @@
 @phan-var-force string $hidedetails
 @phan-var-force string $hidedesc
 @phan-var-force string $hideref
+@phan-var-force ?string $confirm
+@phan-var-force ?int $lineid
+@phan-var-force ?int $id
 ';
 /**
  * @var Conf $conf
- * @var CommonObject $object
- * @var CommonObject $this
  * @var DoliDB $db
  * @var ExtraFields $extrafields
  * @var Translate $langs
  * @var User $user
+ *
+ * @var CommonObject $object
+ * @var CommonObject $this
  *
  * @var ?string $action
  * @var ?string $cancel
@@ -56,20 +61,16 @@
  * @var string $permissiontodelete
  * @var string $backurlforlist
  * @var ?string $backtopage
+ * @var ?string $backtopageforcancel
  * @var ?string $noback
  * @var ?string $triggermodname
  * @var string $hidedetails
  * @var string $hidedesc
  * @var string $hideref
+ * @var ?string $confirm
+ * @var ?int $lineid
+ * @var ?int $id
  */
-// $action or $cancel must be defined
-// $object must be defined
-// $permissiontoadd must be defined
-// $permissiontodelete must be defined
-// $backurlforlist must be defined
-// $backtopage may be defined
-// $noback may be defined
-// $triggermodname may be defined
 
 $hidedetails = isset($hidedetails) ? $hidedetails : '';
 $hidedesc = isset($hidedesc) ? $hidedesc : '';
@@ -121,9 +122,19 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 		if (preg_match('/^text/', $object->fields[$key]['type'])) {
 			$tmparray = explode(':', $object->fields[$key]['type']);
 			if (!empty($tmparray[1])) {
-				$value = GETPOST($key, $tmparray[1]);
+				$check = $tmparray[1];
 			} else {
-				$value = GETPOST($key, 'nohtml');
+				$check = 'nohtml';
+			}
+			if (getDolGlobalString('MAIN_SECURITY_DISALLOW_UNSECURED_TEXT')) {
+				$security_check = 'alphanohtml';
+			} else {
+				$security_check = $check;
+			}
+			if (!empty($tmparray[1])) {
+				$value = GETPOST($key, $security_check);
+			} else {
+				$value = GETPOST($key, $security_check);
 				if (!empty($object->fields[$key]['arrayofkeyval']) && !empty($object->fields[$key]['multiinput'])) {
 					$tmparraymultiselect = GETPOST($key.'_multiselect', 'array');
 					foreach ($tmparraymultiselect as $tmpvalue) {
@@ -148,15 +159,14 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			$value = price2num(GETPOST($key, 'alphanohtml')); // To fix decimal separator according to lang setup
 		} elseif ($object->fields[$key]['type'] == 'boolean') {
 			$value = ((GETPOST($key) == '1' || GETPOST($key) == 'on') ? 1 : 0);
-		} elseif ($object->fields[$key]['type'] == 'reference') {
-			$tmparraykey = array_keys($object->param_list);
-			$value = $tmparraykey[GETPOST($key)].','.GETPOST($key.'2');
 		} elseif (preg_match('/^chkbxlst:(.*)/', $object->fields[$key]['type']) || $object->fields[$key]['type'] == 'checkbox') {
 			$value = '';
 			$values_arr = GETPOST($key, 'array');
 			if (!empty($values_arr)) {
 				$value = implode(',', $values_arr);
 			}
+		} elseif (isset($object->fields[$key]['type']) && $object->fields[$key]['type'] == 'password') {
+			$value = GETPOST($key, 'password');
 		} else {
 			if ($key == 'lang') {
 				$value = GETPOST($key, 'aZ09') ? GETPOST($key, 'aZ09') : "";
@@ -164,17 +174,22 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 				$value = GETPOST($key, 'alphanohtml');
 			}
 		}
+
+		// Foreign keys case
 		if (preg_match('/^integer:/i', $object->fields[$key]['type']) && $value == '-1') {
 			$value = ''; // This is an implicit foreign key field
 		}
 		if (!empty($object->fields[$key]['foreignkey']) && $value == '-1') {
 			$value = ''; // This is an explicit foreign key field
 		}
+		if ((preg_match('/^sellist/i', $object->fields[$key]['type']) || $object->fields[$key]['type'] == 'select') && $value === '0') {
+			$value = ''; // sellist / select blank option posts "0"; normalize to '' so notnull check works on PHP 8.0+ (see github.com/Dolibarr/dolibarr/issues/38199)
+		}
 
 		//var_dump($key.' '.$value.' '.$object->fields[$key]['type'].' '.$object->fields[$key]['notnull']);
 
 		$object->$key = $value;
-		if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && isset($val['default']) && $val['default'] == '(PROV)') {
+		if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && isset($val['default']) && $val['default'] === '(PROV)') {
 			$object->$key = '(PROV)';
 		}
 		if ($key == 'pass_crypted') {
@@ -280,9 +295,19 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		if (preg_match('/^text/', $object->fields[$key]['type'])) {
 			$tmparray = explode(':', $object->fields[$key]['type']);
 			if (!empty($tmparray[1])) {
-				$value = GETPOST($key, $tmparray[1]);
+				$check = $tmparray[1];
 			} else {
-				$value = GETPOST($key, 'nohtml');
+				$check = 'nohtml';
+			}
+			if (getDolGlobalString('MAIN_SECURITY_DISALLOW_UNSECURED_TEXT')) {
+				$security_check = 'alphanohtml';
+			} else {
+				$security_check = $check;
+			}
+			if (!empty($tmparray[1])) {
+				$value = GETPOST($key, $security_check);
+			} else {
+				$value = GETPOST($key, $security_check);
 				if (!empty($object->fields[$key]['arrayofkeyval']) && !empty($object->fields[$key]['multiinput'])) {
 					$tmparraymultiselect = GETPOST($key.'_multiselect', 'array');
 					foreach ($tmparraymultiselect as $keytmp => $tmpvalue) {
@@ -311,14 +336,14 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 			$value = price2num(GETPOST($key, 'alphanohtml')); // To fix decimal separator according to lang setup
 		} elseif ($object->fields[$key]['type'] == 'boolean') {
 			$value = ((GETPOST($key, 'aZ09') == 'on' || GETPOST($key, 'aZ09') == '1') ? 1 : 0);
-		} elseif ($object->fields[$key]['type'] == 'reference') {
-			$value = array_keys($object->param_list)[GETPOST($key)].','.GETPOST($key.'2');
 		} elseif (preg_match('/^chkbxlst:/', $object->fields[$key]['type']) || $object->fields[$key]['type'] == 'checkbox') {
 			$value = '';
 			$values_arr = GETPOST($key, 'array');
 			if (!empty($values_arr)) {
 				$value = implode(',', $values_arr);
 			}
+		} elseif (isset($object->fields[$key]['type']) && $object->fields[$key]['type'] == 'password') {
+			$value = GETPOST($key, 'password');
 		} else {
 			if ($key == 'lang') {
 				$value = GETPOST($key, 'aZ09');
@@ -326,17 +351,30 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 				$value = GETPOST($key, 'alphanohtml');
 			}
 		}
+
+		// Foreign keys case
 		if (preg_match('/^integer:/i', $object->fields[$key]['type']) && $value == '-1') {
 			$value = ''; // This is an implicit foreign key field
 		}
 		if (!empty($object->fields[$key]['foreignkey']) && $value == '-1') {
 			$value = ''; // This is an explicit foreign key field
 		}
+		if ((preg_match('/^sellist/i', $object->fields[$key]['type']) || $object->fields[$key]['type'] == 'select') && $value === '0') {
+			$value = ''; // sellist / select blank option posts "0"; normalize to '' so notnull check works on PHP 8.0+ (see github.com/Dolibarr/dolibarr/issues/38199)
+		}
 
 		$object->$key = $value;
-		if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && (!isset($val['default']) || is_null($val['default']))) {
-			$error++;
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
+
+		if ($key == 'pass_crypted' && property_exists($object, 'pass')) {
+			if (GETPOST("pass", "password")) {	// If not provided, we do not change it. We never erase a password with empty.
+				$object->pass = GETPOST("pass", "password");
+			}
+			// TODO Manadatory for password not yet managed
+		} else {
+			if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && (!isset($val['default']) || is_null($val['default']))) {
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
+			}
 		}
 
 		// Validation of fields values
@@ -413,12 +451,18 @@ if (preg_match('/^set(\w+)$/', $action, $reg) && GETPOSTINT('id') > 0 && !empty(
 }
 
 // Action to update one extrafield
-if ($action == "update_extras" && GETPOSTINT('id') > 0 && !empty($permissiontoadd)) {
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
+
+if ($action == "update_extras" && GETPOSTINT('id') > 0 && !empty($permissiontoeditextra)) {
 	$object->fetch(GETPOSTINT('id'));
 
 	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
-	$attribute = GETPOST('attribute', 'alphanohtml');
+	$attribute = GETPOST('attribute', 'aZ09');
 
 	$error = 0;
 
@@ -429,7 +473,7 @@ if ($action == "update_extras" && GETPOSTINT('id') > 0 && !empty($permissiontoad
 		setEventMessages($extrafields->error, $object->errors, 'errors');
 		$action = 'edit_extras';
 	} else {
-		$result = $object->updateExtraField($attribute, empty($triggermodname) ? '' : $triggermodname, $user);
+		$result = $object->updateExtraField($attribute, empty($triggermodname) ? '' : $triggermodname, $user);	// TODO Remove $triggermodname to use $object->TRIGGER_PREFIX.'_MODIFY' instead
 		if ($result > 0) {
 			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			$action = 'view';
@@ -442,7 +486,7 @@ if ($action == "update_extras" && GETPOSTINT('id') > 0 && !empty($permissiontoad
 }
 
 // Action to delete
-if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
+if ($action == 'confirm_delete' && $confirm == 'yes' && !empty($permissiontodelete)) {
 	if (!($object->id > 0)) {
 		dol_print_error(null, 'Error, object must be fetched before being deleted');
 		exit;
@@ -493,7 +537,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissionto
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
 		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && is_object($object->thirdparty)) {
@@ -525,9 +569,10 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissionto
 
 // Action validate object
 if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd) {
-	if ($object->element == 'inventory' && !empty($include_sub_warehouse)) {
-		// Can happen when the conf INVENTORY_INCLUDE_SUB_WAREHOUSE is set
-		$result = $object->validate($user, false, $include_sub_warehouse);
+	if ($object->element == 'inventory') {
+		// $include_sub_warehouse can be set when the conf INVENTORY_INCLUDE_SUB_WAREHOUSE is set,
+		// $startmode says how the lines are initialized (empty = use the setup default)
+		$result = $object->validate($user, false, (empty($include_sub_warehouse) ? 0 : $include_sub_warehouse), (empty($startmode) ? '' : $startmode));
 	} else {
 		$result = $object->validate($user);
 	}
@@ -538,7 +583,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd) {
 			if (method_exists($object, 'generateDocument')) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -575,7 +620,7 @@ if ($action == 'confirm_close' && $confirm == 'yes' && $permissiontoadd) {
 			if (method_exists($object, 'generateDocument')) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -619,7 +664,7 @@ if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissiontoadd) {
 			if (method_exists($object, 'generateDocument')) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && is_object($object->thirdparty)) {

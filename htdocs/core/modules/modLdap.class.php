@@ -2,6 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,27 +68,26 @@ class modLdap extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 
 		// Constants
-		$this->const = array(
-		0=>array('LDAP_SERVER_TYPE', 'chaine', 'openldap', '', 0),
-		1=>array('LDAP_SERVER_PROTOCOLVERSION', 'chaine', '3', '', 0),
-		2=>array('LDAP_SERVER_HOST', 'chaine', 'localhost', '', 0),
-		3=>array('LDAP_USER_DN', 'chaine', 'ou=users,dc=example,dc=com', '', 0),
-		4=>array('LDAP_GROUP_DN', 'chaine', 'ou=groups,dc=example,dc=com', '', 0),
-		5=>array('LDAP_FILTER_CONNECTION', 'chaine', '&(objectClass=inetOrgPerson)', '', 0),
-		6=>array('LDAP_FIELD_LOGIN', 'chaine', 'uid', '', 0),
-		7=>array('LDAP_FIELD_FULLNAME', 'chaine', 'cn', '', 0),
-		8=>array('LDAP_FIELD_NAME', 'chaine', 'sn', '', 0),
-		9=>array('LDAP_FIELD_FIRSTNAME', 'chaine', 'givenname', '', 0),
-		10=>array('LDAP_FIELD_MAIL', 'chaine', 'mail', '', 0),
-		11=>array('LDAP_FIELD_PHONE', 'chaine', 'telephonenumber', '', 0),
-		12=>array('LDAP_FIELD_FAX', 'chaine', 'facsimiletelephonenumber', '', 0),
-		13=>array('LDAP_FIELD_MOBILE', 'chaine', 'mobile', '', 0),
-		14=>array('LDAP_GROUP_FILTER', 'chaine', '&(objectClass=groupOfNames)', '', 0),
-		15=>array('LDAP_USERACCOUNTCONTROL', 'int', 512, '', 0),
-		);
+		$this->const = [
+			['LDAP_SERVER_TYPE', 'chaine', 'openldap', '', 0],
+			['LDAP_SERVER_PROTOCOLVERSION', 'chaine', '3', '', 0],
+			['LDAP_SERVER_HOST', 'chaine', 'localhost', '', 0],
+			['LDAP_USER_DN', 'chaine', 'ou=users,dc=example,dc=com', '', 0],
+			['LDAP_GROUP_DN', 'chaine', 'ou=groups,dc=example,dc=com', '', 0],
+			['LDAP_FILTER_CONNECTION', 'chaine', '&(objectClass=inetOrgPerson)', '', 0],
+			['LDAP_FIELD_LOGIN', 'chaine', 'uid', '', 0],
+			['LDAP_FIELD_FULLNAME', 'chaine', 'cn', '', 0],
+			['LDAP_FIELD_NAME', 'chaine', 'sn', '', 0],
+			['LDAP_FIELD_FIRSTNAME', 'chaine', 'givenname', '', 0],
+			['LDAP_FIELD_MAIL', 'chaine', 'mail', '', 0],
+			['LDAP_FIELD_PHONE', 'chaine', 'telephonenumber', '', 0],
+			['LDAP_FIELD_FAX', 'chaine', 'facsimiletelephonenumber', '', 0],
+			['LDAP_FIELD_MOBILE', 'chaine', 'mobile', '', 0],
+			['LDAP_GROUP_FILTER', 'chaine', '&(objectClass=groupOfNames)', '', 0],
+			['LDAP_USERACCOUNTCONTROL', 'int', 512, '', 0],
+		];
 
 		// Boxes
 		$this->boxes = array();
