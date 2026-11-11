@@ -51,6 +51,9 @@ $langs->loadLangs(array('errors', 'resource'));
 
 $id = GETPOSTINT('id');
 $newdatetime = GETPOST('newdatetime', 'alpha');
+// Optional. Set by a resize of the box by its bottom edge: the start does not move and the end is
+// given, instead of following the start by the same delta as it does for a move.
+$newenddatetime = GETPOST('newenddatetime', 'alpha');
 
 top_httphead('application/json');
 
@@ -62,12 +65,13 @@ $result = $object->fetch($id);
 if ($result <= 0) {
 	$response['error'] = 1;
 	$response['message'] = $langs->trans('ErrorRecordNotFound');
-} elseif (!is_string($newdatetime) || !preg_match('/^[0-9]{14}$/', $newdatetime)) {
+} elseif (!is_string($newdatetime) || !preg_match('/^[0-9]{14}$/', $newdatetime)
+	|| ($newenddatetime !== '' && (!is_string($newenddatetime) || !preg_match('/^[0-9]{14}$/', $newenddatetime)))) {
 	$response['error'] = 1;
 	$response['message'] = $langs->trans('ErrorBadParameters');
 } else {
 	$hookmanager->initHooks(array('actioncard'));
-	$parameters = array('id' => $id, 'newdatetime' => $newdatetime);
+	$parameters = array('id' => $id, 'newdatetime' => $newdatetime, 'newenddatetime' => $newenddatetime);
 	$actionmove = 'mupdatetime';
 	$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $actionmove);
 
@@ -97,15 +101,34 @@ if ($result <= 0) {
 				'tzuserrel'
 			);
 
-			if (empty($newdatep)) {
-				$response['error'] = 1;
-				$response['message'] = $langs->trans('ErrorBadParameters');
-			} elseif ($newdatep != $object->datep) {
-				$newdatef = $object->datef;
-				if (!empty($newdatef)) {
+			$newdatef = $object->datef;
+			if (!empty($newdatep)) {
+				if ($newenddatetime !== '') {
+					// Resize: the end is absolute, the start does not move. An event that had no end
+					// gets one here, which is what gives the box its height from now on.
+					$newdatef = dol_mktime(
+						(int) substr($newenddatetime, 8, 2),
+						(int) substr($newenddatetime, 10, 2),
+						(int) substr($newenddatetime, 12, 2),
+						(int) substr($newenddatetime, 4, 2),
+						(int) substr($newenddatetime, 6, 2),
+						(int) substr($newenddatetime, 0, 4),
+						'tzuserrel'
+					);
+				} elseif (!empty($newdatef)) {
 					$newdatef += $newdatep - $object->datep;
 				}
+			}
 
+			// 15 minutes is the step the grid snaps a resize to, so a box can never ask for less.
+			// A request that does did not come from the grid.
+			if (empty($newdatep) || ($newenddatetime !== '' && empty($newdatef))) {
+				$response['error'] = 1;
+				$response['message'] = $langs->trans('ErrorBadParameters');
+			} elseif ($newenddatetime !== '' && $newdatef - $newdatep < 15 * 60) {
+				$response['error'] = 1;
+				$response['message'] = $langs->trans('ErrorBadParameters');
+			} elseif ($newdatep != $object->datep || $newdatef != $object->datef) {
 				$conflicts = $object->checkResourceConflicts($newdatep, $newdatef);
 
 				if ($conflicts === -1) {
