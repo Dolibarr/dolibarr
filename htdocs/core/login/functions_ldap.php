@@ -105,10 +105,10 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 		// Define $userSearchFilter
 		$userSearchFilter = "";
 		if (empty($dolibarr_main_auth_ldap_filter)) {
-			$userSearchFilter = "(".$ldapuserattr."=".$usertotest.")";
+			$userSearchFilter = "(".$ldapuserattr."=".ldap_escape($usertotest, '', LDAP_ESCAPE_FILTER).")";
 		} else {
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrderInternal
-			$userSearchFilter = str_replace('%1%', $usertotest, $dolibarr_main_auth_ldap_filter);
+			$userSearchFilter = str_replace('%1%', ldap_escape($usertotest, '', LDAP_ESCAPE_FILTER), $dolibarr_main_auth_ldap_filter);
 		}
 
 		// If admin login or ldap auth filter provided
@@ -140,7 +140,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 		// Forge LDAP user and password to test with them
 		// If LDAP need a dn with login like "uid=jbloggs,ou=People,dc=foo,dc=com", default dn may work even if previous code with
 		// admin login no executed.
-		$ldap->searchUser = $ldapuserattr."=".$usertotest.",".$ldapdn; // Default dn (will work if LDAP accept a dn with login value inside)
+		$ldap->searchUser = $ldapuserattr."=".ldap_escape($usertotest, '', LDAP_ESCAPE_DN).",".$ldapdn; // Default dn (will work if LDAP accept a dn with login value inside)
 		// However, if LDAP requires a DN with a name like "cn=Jhon Bloggs,ou=People,dc=foo,dc=com", the previous part must have been executed to have
 		// dn detected into ldapUserDN.
 		if ($resultFetchLdapUser && !empty($ldap->ldapUserDN)) {

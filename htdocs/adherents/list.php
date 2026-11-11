@@ -65,7 +65,7 @@ $groupby = GETPOST('groupby', 'aZ09');	// Example: $groupby = 'p.fk_opp_status' 
 
 // Search fields
 $search = GETPOST("search", 'alpha');
-$search_id = GETPOST('search_id', 'int');
+$search_id = trim(GETPOST('search_id', 'alpha'));	// Can contains a numeric test like ">10" or "!= 34"
 $search_ref = GETPOST("search_ref", 'alpha');
 $search_lastname = GETPOST("search_lastname", 'alpha');
 $search_firstname = GETPOST("search_firstname", 'alpha');
@@ -105,6 +105,14 @@ $search_datec_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datec_start_month')
 $search_datec_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datec_end_month'), GETPOSTINT('search_datec_end_day'), GETPOSTINT('search_datec_end_year'));
 $search_datem_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datem_start_month'), GETPOSTINT('search_datem_start_day'), GETPOSTINT('search_datem_start_year'));
 $search_datem_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datem_end_month'), GETPOSTINT('search_datem_end_day'), GETPOSTINT('search_datem_end_year'));
+$search_datefin_start = '';
+if (checkdate(GETPOSTINT('search_datefin_start_month'), GETPOSTINT('search_datefin_start_day'), GETPOSTINT('search_datefin_start_year'))) {
+	$search_datefin_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datefin_start_month'), GETPOSTINT('search_datefin_start_day'), GETPOSTINT('search_datefin_start_year'));
+}
+$search_datefin_end = '';
+if (checkdate(GETPOSTINT('search_datefin_end_month'), GETPOSTINT('search_datefin_end_day'), GETPOSTINT('search_datefin_end_year'))) {
+	$search_datefin_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datefin_end_month'), GETPOSTINT('search_datefin_end_day'), GETPOSTINT('search_datefin_end_year'));
+}
 
 $filter = GETPOST("filter", 'alpha');
 if ($filter) {
@@ -303,6 +311,8 @@ if (empty($reshook)) {
 		$search_datec_end = '';
 		$search_datem_start = '';
 		$search_datem_end = '';
+		$search_datefin_start = '';
+		$search_datefin_end = '';
 		$search_array_options = array();
 	}
 
@@ -368,14 +378,16 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Create external user
+	// create subscription
 	if ($action == 'createsubscription_confirm' && $confirm == "yes" && $user->hasRight('adherent', 'cotisation', 'creer')) {	// Same permission as the subscription form of a member
 		$tmpmember = new Adherent($db);
 		$adht = new AdherentType($db);
-		$label = GETPOST("label");
+		$note = GETPOST('note', 'restricthtml');
+
 		$nbcreated = 0;
 		$now = dol_now();
 		$amount = price2num(GETPOST('amount', 'alpha'));
+		$error_array = array();
 		// Honour MEMBER_SUBSCRIPTION_SUGGEST_END_OF_MONTH and
 		// MEMBER_SUBSCRIPTION_SUGGEST_END_OF_YEAR the same way as the
 		// single subscription form (adherents/subscription.php), otherwise
@@ -403,9 +415,10 @@ if (empty($reshook)) {
 						$datesubendthismember = dol_time_plus_duree(dol_time_plus_duree($now, $delay, $delayunit), -1, 'd');
 					}
 				}
-				$result = $tmpmember->subscription($now, (float) $amount, 0, '', '', '', '', '', $datesubendthismember);
+				$result = $tmpmember->subscription($now, (float) $amount, 0, '', $note, '', '', '', $datesubendthismember);
 				if ($result < 0) {
 					$error++;
+					$error_array[$id] = $tmpmember->getNomUrl(1) . '&mdash;' . $tmpmember->error;
 				} else {
 					$nbcreated++;
 				}
@@ -418,7 +431,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("XSubsriptionCreated", $nbcreated), null, 'mesgs');
 			$db->commit();
 		} else {
-			setEventMessages($langs->trans("XSubsriptionErrors", $error), null, 'mesgs');
+			setEventMessages($langs->trans("XSubsriptionErrors", $error), $error_array, 'errors');
 			$db->rollback();
 		}
 	}
@@ -446,6 +459,9 @@ $title = $langs->trans("Members");
 $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
 $morejs = array();
 $morecss = array();
+
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 
 
 // Build and execute select
@@ -490,8 +506,12 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = 
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on (s.rowid = d.fk_soc)";
 
 // SQL Alias adherent_type
-$sql .= ", ".MAIN_DB_PREFIX."adherent_type as t";
-$sql .= " WHERE d.fk_adherent_type = t.rowid";
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."adherent_type as t ON t.rowid = d.fk_adherent_type";
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+$sql .= " WHERE 1 = 1";
 
 $searchCategoryContactList = $search_categ ? array($search_categ) : array();
 $searchCategoryContactOperator = 0;
@@ -558,8 +578,8 @@ if ($search_status != '') {
 if ($search_morphy != '' && $search_morphy != '-1') {
 	$sql .= natural_search("d.morphy", $search_morphy);
 }
-if ($search_id) {
-	$sql .= natural_search("d.rowid", $search_id);
+if ($search_id != '') {
+	$sql .= natural_search("d.rowid", $search_id, 1);
 }
 if ($search_ref) {
 	$sql .= natural_search("d.ref", $search_ref);
@@ -571,7 +591,12 @@ if ($search_firstname) {
 	$sql .= natural_search("d.firstname", $search_firstname);
 }
 if ($search_lastname) {
-	$sql .= natural_search("d.lastname", $search_lastname);
+	if (empty($arrayfields['d.firstname']['checked'])) {
+		// Firstname is shown into the lastname column, so search on both
+		$sql .= natural_search(array("d.lastname", "d.firstname"), $search_lastname);
+	} else {
+		$sql .= natural_search("d.lastname", $search_lastname);
+	}
 }
 if ($search_gender != '' && $search_gender != '-1') {
 	$sql .= natural_search("d.gender", $search_gender);
@@ -629,6 +654,12 @@ if ($search_datem_start) {
 }
 if ($search_datem_end) {
 	$sql .= " AND d.tms <= '".$db->idate($search_datem_end)."'";
+}
+if ($search_datefin_start) {
+	$sql .= " AND d.datefin >= '".$db->idate($search_datefin_start)."'";
+}
+if ($search_datefin_end) {
+	$sql .= " AND d.datefin <= '".$db->idate($search_datefin_end)."'";
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -715,6 +746,9 @@ if ($groupby != '') {
 }
 if ($search_all != "") {
 	$query += ['search_all' => $search_all];
+}
+if ($search_id != '') {
+	$query += ['search_id' => $search_id];
 }
 if ($search_ref) {
 	$query += ['search_ref' => $search_ref];
@@ -803,6 +837,21 @@ if ($search_datem_end) {
 		'search_datem_end_day' => dol_print_date($search_datem_end, '%d'),
 		'search_datem_end_month' => dol_print_date($search_datem_end, '%m'),
 		'search_datem_end_year' => dol_print_date($search_datem_end, '%Y'),
+	];
+}
+
+if ($search_datefin_start) {
+	$query += [
+		'search_datefin_start_day' => dol_print_date($search_datefin_start, '%d'),
+		'search_datefin_start_month' => dol_print_date($search_datefin_start, '%m'),
+		'search_datefin_start_year' => dol_print_date($search_datefin_start, '%Y'),
+	];
+}
+if ($search_datefin_end) {
+	$query += [
+		'search_datefin_end_day' => dol_print_date($search_datefin_end, '%d'),
+		'search_datefin_end_month' => dol_print_date($search_datefin_end, '%m'),
+		'search_datefin_end_year' => dol_print_date($search_datefin_end, '%Y'),
 	];
 }
 
@@ -895,7 +944,7 @@ if ($massaction == 'createsubscription') {
 	$formquestion = array(
 		array('label' => $langs->trans("DateSubscription"), 'type' => 'other', 'value' => $date),
 		array('label' => $langs->trans("Amount"), 'type' => 'text', 'value' => price($amount, 0, '', 0), 'name' => 'amount'),
-		array('label' => $langs->trans("Label"), 'type' => 'text', 'value' => '', 'name' => 'label'),
+		array('label' => $langs->trans("Note"), 'type' => 'text', 'value' => '', 'name' => 'note'),
 		array('type' => 'separator'),
 		array('label' => $langs->trans("MoreActions"), 'type' => 'other', 'value' => $langs->trans("None").' '.img_warning($langs->trans("WarningNoComplementaryActionDone"))),
 	);
@@ -913,8 +962,6 @@ if ($search_all) {
 	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>'."\n";
 }
 
-$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -959,7 +1006,7 @@ if ($conf->main_checkbox_left_column) {
 // Line numbering
 if (!empty($arrayfields['d.rowid']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<input class="width50" type="text" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 
@@ -1150,9 +1197,18 @@ if (!empty($arrayfields['d.import_key']['checked'])) {
 // End of subscription date
 if (!empty($arrayfields['d.datefin']['checked'])) {
 	print '<td class="liste_titre center">';
-	//$selectarray = array('-1'=>'', 'withoutsubscription'=>$langs->trans("WithoutSubscription"), 'uptodate'=>$langs->trans("UpToDate"), 'outofdate'=>$langs->trans("OutOfDate"));
-	$selectarray = array('-1' => '', 'waitingsubscription' => $langs->trans("WaitingSubscription"), 'uptodate' => $langs->trans("UpToDate"), 'outofdate' => $langs->trans("OutOfDate"));
-	print $form->selectarray('search_filter', $selectarray, $search_filter);
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_datefin_start ? $search_datefin_start : -1, 'search_datefin_start_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_datefin_end ? $search_datefin_end : -1, 'search_datefin_end_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
+	// The combo is also shown when a filter is already set (for example by a link from the menu or the members dashboard)
+	if (getDolGlobalString('MEMBER_SHOW_COMBO_OF_STATUS_FOR_END_DATE_FILTER') || ($search_filter && $search_filter != '-1')) {
+		//$selectarray = array('-1'=>'', 'withoutsubscription'=>$langs->trans("WithoutSubscription"), 'uptodate'=>$langs->trans("UpToDate"), 'outofdate'=>$langs->trans("OutOfDate"));
+		$selectarray = array('-1' => '', 'waitingsubscription' => $langs->trans("WaitingSubscription"), 'uptodate' => $langs->trans("UpToDate"), 'outofdate' => $langs->trans("OutOfDate"));
+		print $form->selectarray('search_filter', $selectarray, $search_filter);
+	}
 	print '</td>';
 }
 
@@ -1430,9 +1486,15 @@ while ($i < $imaxinloop) {
 		}
 		// Lastname
 		if (!empty($arrayfields['d.lastname']['checked'])) {
-			print '<td class="tdoverflowmax125">';
+			print '<td class="tdlineheightsmall">';
+			print '<div class="tdoverflowmax125 inline-block lineheightsmall">';
 			print $memberstatic->getNomUrl(0, 0, 'card', 'lastname');
 			//print $obj->lastname;
+			// Show firstname under the lastname when firstname column is not enabled
+			if (empty($arrayfields['d.firstname']['checked']) && !empty($obj->firstname)) {
+				print '<br><span class="spantitle">'.dolPrintHTML($obj->firstname).'</span>';
+			}
+			print '</div>';
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;

@@ -224,8 +224,8 @@ class Societe extends CommonObject
 		'euid' => array('type' => 'varchar(20)', 'label' => 'EUIDShort', 'enabled' => 1, 'visible' => -1, 'position' => 213),
 		'capital' => array('type' => 'double(24,8)', 'label' => 'Capital', 'enabled' => 1, 'visible' => -1, 'position' => 215),
 		'fk_stcomm' => array('type' => 'integer', 'label' => 'CommercialStatus', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 220),
-		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 225),
-		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 230),
+		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 225, 'uieditable' => 1),
+		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 230, 'uieditable' => 1),
 		'client' => array('type' => 'tinyint(4)', 'label' => 'Customer', 'enabled' => 1, 'visible' => -1, 'position' => 240),
 		'fournisseur' => array('type' => 'tinyint(4)', 'label' => 'Supplier', 'enabled' => 1, 'visible' => -1, 'position' => 245),
 		'supplier_account' => array('type' => 'varchar(32)', 'label' => 'Supplier account', 'enabled' => 1, 'visible' => -1, 'position' => 250),
@@ -1000,7 +1000,6 @@ class Societe extends CommonObject
 		}
 	}
 
-
 	/**
 	 *    Create third party in database.
 	 *    $this->code_client = -1 and $this->code_fournisseur = -1 means automatic assignment.
@@ -1771,6 +1770,12 @@ class Societe extends CommonObject
 			$sql .= ", fk_multicurrency = ".(int) $this->fk_multicurrency;
 			$sql .= ", multicurrency_code = '".$this->db->escape($this->multicurrency_code)."'";
 			$sql .= ", model_pdf = '".$this->db->escape((string) $this->model_pdf)."'";
+			// Default warehouse of the thirdparty. Updated only when it can be edited from the GUI (stock module and
+			// SOCIETE_ASK_FOR_WAREHOUSE on, see comm/card.php) and when the property is set, so a caller that did not
+			// load it does not erase it. A value <= 0 removes the link.
+			if (isModEnabled('stock') && getDolGlobalString('SOCIETE_ASK_FOR_WAREHOUSE') && isset($this->fk_warehouse) && $this->fk_warehouse !== '') {
+				$sql .= ", fk_warehouse = ".((int) $this->fk_warehouse > 0 ? (int) $this->fk_warehouse : "null");
+			}
 			$sql .= " WHERE rowid = ".(int) $id;
 
 			$resql = $this->db->query($sql);
@@ -2101,7 +2106,8 @@ class Societe extends CommonObject
 
 				$this->country_id   = $obj->country_id;
 				$this->country_code = $obj->country_id ? $obj->country_code : '';
-				$this->country = $obj->country_id ? (($langs->transnoentities('Country'.$obj->country_code) != 'Country'.$obj->country_code) ? $langs->transnoentities('Country'.$obj->country_code) : $obj->country) : '';
+				// $langs may be null when called from a page with NOREQUIRETRAN (like viewimage.php)
+				$this->country = $obj->country_id ? ((is_object($langs) && $langs->transnoentities('Country'.$obj->country_code) != 'Country'.$obj->country_code) ? $langs->transnoentities('Country'.$obj->country_code) : $obj->country) : '';
 
 				$this->state_id     = $obj->state_id;
 				$this->state_code   = $obj->state_code;
@@ -2109,7 +2115,7 @@ class Societe extends CommonObject
 				$this->region_code  = $obj->region_code;
 				$this->state        = ($obj->state != '-' ? $obj->state : '');
 
-				$transcode = $langs->trans('StatusProspect'.$obj->fk_stcomm);
+				$transcode = (is_object($langs) ? $langs->trans('StatusProspect'.$obj->fk_stcomm) : 'StatusProspect'.$obj->fk_stcomm);
 				$label = ($transcode != 'StatusProspect'.$obj->fk_stcomm ? $transcode : $obj->stcomm);
 				$this->stcomm_id = $obj->fk_stcomm; // id status prospect
 				$this->status_prospect_label = $label; // label status prospect
@@ -2956,7 +2962,14 @@ class Societe extends CommonObject
 		if ($this->id > 0) {
 			// Separate VAT code from VAT rate string
 			// Discount type determines who is buyer and seller
-			$taxes = getTaxesFromId($vatrate, ($discount_type == 0 ? $this : $mysoc), ($discount_type == 0 ? $mysoc : $this), 0);
+			$buyer = ($discount_type == 0 ? $this : $mysoc);
+			$seller = ($discount_type == 0 ? $mysoc : $this);
+			$taxes = getTaxesFromId($vatrate, $buyer, $seller, 0);
+			// Local tax rates for this buyer/seller pair determined by get_localtax() (0 if not applicable)
+			$localtax1_tx = (float) get_localtax($vatrate, 1, $buyer, $seller);
+			$localtax2_tx = (float) get_localtax($vatrate, 2, $buyer, $seller);
+			$localtax1_type = ($localtax1_tx ? (int) ($taxes['localtax1_type'] ?? 0) : 0);
+			$localtax2_type = ($localtax2_tx ? (int) ($taxes['localtax2_type'] ?? 0) : 0);
 			$reg = array();
 			$vat_src_code = '';
 			if (preg_match('/\((.*)\)/', $vatrate, $reg)) {
@@ -2981,7 +2994,7 @@ class Societe extends CommonObject
 
 			$vat_tx = (float) price2num($vatrate);
 
-			$discount->generateFromAmount($remise, ($price_base_type == 'TTC' ? 1 : 0), $vat_tx, $taxes['localtax1'], $taxes['localtax2'], (int) $taxes['localtax1_type'], (int) $taxes['localtax2_type']);
+			$discount->generateFromAmount($remise, ($price_base_type == 'TTC' ? 1 : 0), $vat_tx, $localtax1_tx, $localtax2_tx, $localtax1_type, $localtax2_type);
 
 			$discount->vat_src_code = $vat_src_code;
 
@@ -3615,21 +3628,21 @@ class Societe extends CommonObject
 		if (empty($option) || preg_match('/prospect/', $option)) {
 			if (($this->client == 2 || $this->client == 3) && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS')) {
 				$s .= '<'.$tag.' class="customer-back opacitymedium" title="'.dolPrintHTMLForAttribute($langs->trans("Prospect")).'"';
-				$s .= $tag == 'a' ? ' href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id.'"' : '';
+				$s .= $tag == 'a' ? ' href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id.'" tabindex="-1"' : '';
 				$s .= '>'.dol_substr($langs->trans("Prospect"), 0, 1).'</'.$tag.'>';
 			}
 		}
 		if (empty($option) || preg_match('/customer/', $option)) {
 			if (($this->client == 1 || $this->client == 3) && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS')) {
 				$s .= '<'.$tag.' class="customer-back" title="'.dolPrintHTMLForAttribute($langs->trans("Customer")).'"';
-				$s .= $tag == 'a' ? ' href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id.'"' : '';
+				$s .= $tag == 'a' ? ' href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id.'" tabindex="-1"' : '';
 				$s .= '>'.dol_substr($langs->trans("Customer"), 0, 1).'</'.$tag.'>';
 			}
 		}
 		if (empty($option) || preg_match('/supplier/', $option)) {
 			if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $this->fournisseur) {
 				$s .= '<'.$tag.' class="vendor-back" title="'.dolPrintHTMLForAttribute($langs->trans("Supplier")).'"';
-				$s .= $tag == 'a' ? ' href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id.'"' : '';
+				$s .= $tag == 'a' ? ' href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id.'" tabindex="-1"' : '';
 				$s .= '>'.dol_substr($langs->trans("Supplier"), 0, 1).'</'.$tag.'>';
 			}
 		}
@@ -4258,6 +4271,10 @@ class Societe extends CommonObject
 
 				// Set code count in $mod->code
 				$result = $mod->get_code($this->db, $this, $type);
+				if ($result < 0) {
+					$this->error = $mod->error;
+					$this->errors = $mod->errors;
+				}
 
 				if ($type == 'customer') {
 					$this->code_compta_client = $mod->code;
@@ -4798,7 +4815,7 @@ class Societe extends CommonObject
 					$noemail = $obj->nb;
 					if (empty($noemail)) {
 						// TODO Add $unsubscribegroup
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe(email, entity, date_creat) VALUES ('".$this->db->escape($this->email)."', ".getEntity('mailing', 0).", '".$this->db->idate(dol_now())."')";
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe(email, entity, date_creation) VALUES ('".$this->db->escape($this->email)."', ".getEntity('mailing', 0).", '".$this->db->idate(dol_now())."')";
 						$resql = $this->db->query($sql);
 						if (!$resql) {
 							$error++;
@@ -5482,6 +5499,52 @@ class Societe extends CommonObject
 	}
 
 	/**
+	 * Remain to pay for one invoice if it counts in getOutstandingBills() "opened" (same rules as tiles).
+	 *
+	 * @param	Facture|FactureFournisseur	$invoice	Invoice with id set (and fetched fields)
+	 * @param	'customer'|'supplier'		$mode		'customer' or 'supplier'
+	 * @param	int<0,1>					$late		0 all outstanding, 1 only past due date
+	 * @return	float						Remain to pay in scope, 0 if invoice is out of scope
+	 */
+	public function getInvoiceRemainToPayInOutstanding($invoice, $mode = 'customer', $late = 0)
+	{
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+		if ($invoice->paye != 0
+			|| $invoice->statut == $invoice::STATUS_DRAFT
+			|| $invoice->statut == $invoice::STATUS_ABANDONED
+			|| $invoice->statut == $invoice::STATUS_CLOSED) {
+			return 0;
+		}
+
+		$paiement = $invoice->getSommePaiement();
+		$creditnotes = $invoice->getSumCreditNotesUsed();
+		$deposits = $invoice->getSumDepositsUsed();
+
+		$remaintopay = (float) price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits, 'MT');
+
+		if ($mode == 'supplier') {
+			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+			if ($invoice->type == FactureFournisseur::TYPE_CREDIT_NOTE && $invoice->isCreditNoteUsed()) {
+				$remaintopay -= (float) $invoice->getSumFromThisCreditNotesNotUsed();
+			}
+		}
+
+		if ($remaintopay <= 0) {
+			return 0;
+		}
+
+		if (!empty($late)) {
+			$today = dol_get_first_hour(dol_now('tzuser'));
+			if (empty($invoice->date_lim_reglement) || $invoice->date_lim_reglement >= $today) {
+				return 0;
+			}
+		}
+
+		return $remaintopay;
+	}
+
+	/**
 	 *  Return amount of bill not yet paid and total of all invoices
 	 *
 	 *  @param     'customer'|'supplier'|''	$mode	'customer' or 'supplier'
@@ -5547,6 +5610,14 @@ class Societe extends CommonObject
 			$sql .= " AND entity IN (".getEntity('facture_fourn').")";
 		} else {
 			$sql .= " AND entity IN (".getEntity('invoice').")";
+		}
+		// Invoices before this date (YYYY-MM-DD) are excluded from the outstanding amount (history migrated or settled elsewhere)
+		$reg = array();
+		if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', getDolGlobalString('SOCIETE_OUTSTANDING_BILLS_FROM_DATE'), $reg)) {
+			$fromdate = dol_mktime(0, 0, 0, (int) $reg[2], (int) $reg[3], (int) $reg[1]);
+			if ($fromdate) {
+				$sql .= " AND datef >= '".$this->db->idate($fromdate)."'";
+			}
 		}
 
 		dol_syslog("getOutstandingBills", LOG_DEBUG);
@@ -5863,6 +5934,50 @@ class Societe extends CommonObject
 			$dbs->query('DELETE FROM '.MAIN_DB_PREFIX.'societe_commerciaux WHERE rowid = '.((int) $obj->rowid));
 		}
 
+		// Bank accounts have a unique key (entity, label, fk_soc): process duplicates before moving lines
+		$sql = 'SELECT o.rowid as origin_rowid, o.label, o.type as o_type, d.type as d_type,';
+		$sql .= ' o.iban_prefix as o_iban, d.iban_prefix as d_iban';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_rib as o';
+		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'societe_rib as d ON d.label = o.label AND d.fk_soc = '.(int) $dest_id;
+		$sql .= ' WHERE o.fk_soc = '.(int) $origin_id;
+
+		$resql = $dbs->query($sql);
+		if (!$resql) {
+			return false;
+		}
+		while ($obj = $dbs->fetch_object($resql)) {
+			if ($obj->o_type == 'ban' && $obj->d_type == 'ban' && !empty($obj->o_iban) && $obj->o_iban === $obj->d_iban) {
+				// Real duplicate (same IBAN): delete the one of the old thirdparty
+				$res = $dbs->query('DELETE FROM '.MAIN_DB_PREFIX.'societe_rib WHERE rowid = '.(int) $obj->origin_rowid);
+			} else {
+				// Same label but different account or card: rename to keep both (label is varchar(180), part of unique key)
+				$suffix = ' (fusion '.(int) $origin_id.')';
+				$newlabel = dol_trunc($obj->label, 180 - dol_strlen($suffix), 'right', 'UTF-8', 1).$suffix;
+				// Make sure the new label is not already used by one of the two thirdparties
+				$i = 2;
+				while ($dbs->fetch_object($dbs->query("SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib WHERE label = '".$dbs->escape($newlabel)."' AND fk_soc IN (".(int) $origin_id.", ".(int) $dest_id.")"))) {
+					$newlabel = dol_trunc($obj->label, 180 - dol_strlen($suffix.' '.$i), 'right', 'UTF-8', 1).$suffix.' '.$i;
+					$i++;
+				}
+				$res = $dbs->query("UPDATE ".MAIN_DB_PREFIX."societe_rib SET label = '".$dbs->escape($newlabel)."' WHERE rowid = ".(int) $obj->origin_rowid);
+			}
+			if (!$res) {
+				return false;
+			}
+		}
+
+		// Only one default account per type: the one of the kept thirdparty wins, those of the old thirdparty are set to 0
+		$resql = $dbs->query("SELECT DISTINCT type FROM ".MAIN_DB_PREFIX."societe_rib WHERE fk_soc = ".(int) $dest_id." AND default_rib = 1");
+		if (!$resql) {
+			return false;
+		}
+		while ($obj = $dbs->fetch_object($resql)) {
+			$res = $dbs->query("UPDATE ".MAIN_DB_PREFIX."societe_rib SET default_rib = 0 WHERE fk_soc = ".(int) $origin_id." AND type = '".$dbs->escape($obj->type)."'");
+			if (!$res) {
+				return false;
+			}
+		}
+
 		// The table llx_societe_extrafields must NOT be in this list because we don't care about the old thirdparty extrafields that are managed directly into mergeCompany.
 		// Do not include llx_societe because it will be replaced later.
 		$tables = array(
@@ -6105,6 +6220,12 @@ class Societe extends CommonObject
 		}
 
 		if (!$error) {
+			// The introspection of the tables must not be done into the SQL transaction below
+			$listOfInstalledTables = array();
+			foreach (array('delivery', 'mrp_mo', 'don', 'partnership', 'fichinter', 'ticket') as $tableName) {
+				$listOfInstalledTables[$tableName] = $this->db->DDLListTables((string) $conf->db->name, $this->db->prefix().$tableName);
+			}
+
 			$this->db->begin();
 
 			// Recopy some data
@@ -6224,22 +6345,22 @@ class Societe extends CommonObject
 					'Societe' => '/societe/class/societe.class.php',
 					//'SocieteAccount', 'SocietePrice', 'SocieteRib',... are processed into the replaceThirdparty of Societe.
 				);
-				if ($this->db->DDLListTables((string) $conf->db->name, $this->db->prefix().'delivery')) {
+				if (!empty($listOfInstalledTables['delivery'])) {
 					$objects['Delivery'] = '/delivery/class/delivery.class.php';
 				}
-				if ($this->db->DDLListTables((string) $conf->db->name, $this->db->prefix().'mrp_mo')) {
+				if (!empty($listOfInstalledTables['mrp_mo'])) {
 					$objects['Mo'] = '/mrp/class/mo.class.php';
 				}
-				if ($this->db->DDLListTables((string) $conf->db->name, $this->db->prefix().'don')) {
+				if (!empty($listOfInstalledTables['don'])) {
 					$objects['Don'] = '/don/class/don.class.php';
 				}
-				if ($this->db->DDLListTables((string) $conf->db->name, $this->db->prefix().'partnership')) {
+				if (!empty($listOfInstalledTables['partnership'])) {
 					$objects['PartnerShip'] = '/partnership/class/partnership.class.php';
 				}
-				if ($this->db->DDLListTables((string) $conf->db->name, $this->db->prefix().'fichinter')) {
+				if (!empty($listOfInstalledTables['fichinter'])) {
 					$objects['Fichinter'] = '/fichinter/class/fichinter.class.php';
 				}
-				if ($this->db->DDLListTables((string) $conf->db->name, $this->db->prefix().'ticket')) {
+				if (!empty($listOfInstalledTables['ticket'])) {
 					$objects['Ticket'] = '/ticket/class/ticket.class.php';
 				}
 

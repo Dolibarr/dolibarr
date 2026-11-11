@@ -109,9 +109,7 @@ if (GETPOST('mode') == 'virtualcard') {
 $v = new vCard();
 $output = $v->buildVCardString($object, $company, $langs);
 
-$filename = trim(urldecode($v->getFileName())); // "Nom prenom.vcf"
-$filenameurlencoded = dol_sanitizeFileName(urlencode($filename));
-//$filename = dol_sanitizeFileName($filename);
+$filename = $v->getFileName(); // "Nom prenom.vcf", already sanitized
 
 top_httphead('text/x-vcard; name="'.$filename.'"');
 

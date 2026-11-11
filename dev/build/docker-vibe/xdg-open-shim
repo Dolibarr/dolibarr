@@ -1,0 +1,28 @@
+#!/bin/sh
+# xdg-open replacement for the docker-vibe container, installed as
+# /usr/local/bin/xdg-open by the Dockerfile. The image contains no desktop
+# environment, so the real xdg-open of xdg-utils would have nothing to work
+# with: this shim forwards the URL or file to the host, through open-on-host
+# (see open-on-host).
+#
+# The Rust TUI of Vibe (vibe-rs) opens the links of the chat with xdg-open,
+# ignoring the BROWSER environment variable (only the Python parts of Vibe
+# honor it): without this shim, the clicks on the links of the chat do
+# nothing inside the container.
+
+arg="$1"
+if [ -z "$arg" ]; then
+    echo "xdg-open: no URL or file provided" >&2
+    exit 1
+fi
+
+# Convert a file path into a file:// URI so the portal opens it on the host.
+# Anything already carrying a scheme (http:, https:, file:, mailto:, ...) is
+# kept as is.
+case "$arg" in
+    [a-zA-Z][a-zA-Z0-9+.-]*:*) ;;
+    /*) arg="file://$arg" ;;
+    *) arg="file://$(pwd)/$arg" ;;
+esac
+
+exec /usr/local/bin/open-on-host "$arg"

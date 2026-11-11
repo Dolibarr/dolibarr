@@ -651,6 +651,11 @@ if ($search_warehouse > 0) {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
+// Add $param from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object);	// Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
+
 // List of mass actions available
 $arrayofmassactions = array();
 if ($permissiontoadd) {
@@ -786,7 +791,7 @@ if ($conf->main_checkbox_left_column) {
 	print '</td>';
 }
 if (!empty($arrayfields['u.rowid']['checked'])) {
-	print '<td class="liste_titre"><input type="text" name="search_rowid" class="maxwidth50" value="'.$search_rowid.'"></td>';
+	print '<td class="liste_titre center"><input class="searchstring width50" type="text" name="search_rowid" value="'.dolPrintLabelForAttribute($search_rowid).'"></td>';
 }
 if (!empty($arrayfields['u.login']['checked'])) {
 	print '<td class="liste_titre"><input type="text" name="search_login" class="maxwidth50" value="'.$search_login.'"></td>';
@@ -909,7 +914,7 @@ if ($conf->main_checkbox_left_column) {
 }
 if (!empty($arrayfields['u.rowid']['checked'])) {
 	// @phan-suppress-next-line PhanTypeInvalidDimOffset
-	print_liste_field_titre($arrayfields['u.rowid']['label'], $_SERVER['PHP_SELF'], "u.rowid", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['u.rowid']['label'], $_SERVER['PHP_SELF'], "u.rowid", "", $param, "", $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.login']['checked'])) {
@@ -1130,7 +1135,7 @@ while ($i < $imaxinloop) {
 		}
 		// TechnicalID
 		if (!empty($arrayfields['u.rowid']['checked'])) {
-			print '<td class="nowraponall">'.dolPrintHTML((string) $obj->rowid).'</td>';
+			print '<td class="center nowraponall">'.dolPrintHTML((string) $obj->rowid).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1361,13 +1366,7 @@ while ($i < $imaxinloop) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'u.salary';
 			}
-			if (!isset($totalarray['val'])) {
-				$totalarray['val'] = array();
-			}
-			if (!isset($totalarray['val']['u.salary'])) {
-				$totalarray['val']['u.salary'] = 0;
-			}
-			$totalarray['val']['u.salary'] += $obj->salary;
+			$totalarray['val']['u.salary'] = (float) $totalarray['val']['u.salary'] + (float) $obj->salary;
 		}
 
 		// Hourly rate

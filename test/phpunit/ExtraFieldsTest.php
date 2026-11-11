@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2026 Jam <jambalaya.pyoncafe@gmail.com>
+ * Copyright (C) 2026		ATM Consulting		<support@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,12 +27,14 @@
 global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+if (!defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/class/extrafields.class.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
-if (empty($user->id)) {
+if (empty($user->id) && is_object($db)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->loadRights();
@@ -179,5 +182,44 @@ class ExtraFieldsTest extends CommonClassTest
 		$this->assertStringContainsString('value="childofb"', $out);
 		$this->assertStringContainsString('selected', $out);
 		$this->assertStringContainsString('value="childofa"', $out);
+	}
+
+	/**
+	 * Data provider for testIsEmptyValue
+	 *
+	 * @return array<string,array{0:mixed,1:string,2:bool}>
+	 */
+	public static function isEmptyValueProvider()
+	{
+		return array(
+			'int null' => array(null, 'int', true),
+			'int empty string' => array('', 'int', true),
+			'int zero string' => array('0', 'int', false),
+			'int zero' => array(0, 'int', false),
+			'int value' => array('5', 'int', false),
+			'double zero string' => array('0', 'double', false),
+			'double zero decimal' => array('0.00', 'double', false),
+			'price zero string' => array('0', 'price', false),
+			'varchar zero string' => array('0', 'varchar', true),
+			'varchar value' => array('abc', 'varchar', false),
+			'select empty' => array('0', 'select', true),
+			'sellist zero' => array('0', 'sellist', true),
+			'link minus one' => array('-1', 'link', true),
+		);
+	}
+
+	/**
+	 * Zero is a valid value for a mandatory numeric extrafield.
+	 *
+	 * @param	mixed	$value		Value to test
+	 * @param	string	$type		Extrafield type
+	 * @param	bool	$expected	Expected result
+	 * @return	void
+	 *
+	 * @dataProvider isEmptyValueProvider
+	 */
+	public function testIsEmptyValue($value, $type, $expected)
+	{
+		$this->assertSame($expected, ExtraFields::isEmptyValue($value, $type));
 	}
 }

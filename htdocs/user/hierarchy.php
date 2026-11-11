@@ -92,6 +92,9 @@ if (isModEnabled('salaries') && $contextpage == 'employeelist' && $search_employ
 
 $childids = $user->getAllChildIds(1);
 
+// Initialize the hook context after the subordinates are computed, so hooks only change the users tree shown on the page
+$hookmanager->initHooks(array('userhierarchy'));
+
 
 
 /*

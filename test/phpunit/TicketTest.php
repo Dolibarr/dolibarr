@@ -28,10 +28,9 @@
 global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql'); // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/user/class/usergroup.class.php';
 require_once dirname(__FILE__).'/../../htdocs/ticket/class/ticket.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -67,10 +66,12 @@ class TicketTest extends CommonClassTest
 		$localobject = new Ticket($db);
 		$localobject->initAsSpecimen();
 		$localobject->ref = '';
+		$transactionlevel = $db->transaction_opened;
 		$result = $localobject->create($user);
 
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(-3, $result, $localobject->error.join(',', $localobject->errors));
+		$this->assertEquals($transactionlevel, $db->transaction_opened, 'create() failing on verify must not rollback the caller transaction');
 
 		// Try to create one with correct values
 		$localobject = new Ticket($db);
@@ -81,6 +82,34 @@ class TicketTest extends CommonClassTest
 		$this->assertGreaterThan(0, $result, $localobject->error.join(',', $localobject->errors));
 
 		return $result;
+	}
+
+	/**
+	 * Test Tickets::_ticketContactTypeExists via reflection.
+	 *
+	 * @return	void
+	 */
+	public function testTicketContactTypeExists()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once dirname(__FILE__).'/../../htdocs/ticket/class/api_tickets.class.php';
+
+		$api = new Tickets();
+		$method = new ReflectionMethod('Tickets', '_ticketContactTypeExists');
+		$method->setAccessible(true);
+
+		// Known active seed types for element 'ticket'
+		$this->assertTrue($method->invoke($api, 'SUPPORTTEC', 'internal'), 'SUPPORTTEC/internal should exist');
+		$this->assertTrue($method->invoke($api, 'SUPPORTCLI', 'external'), 'SUPPORTCLI/external should exist');
+		// Wrong source for the code (SUPPORTTEC is internal only)
+		$this->assertFalse($method->invoke($api, 'SUPPORTTEC', 'external'), 'SUPPORTTEC is internal only');
+		// Unknown code
+		$this->assertFalse($method->invoke($api, 'NOT_A_REAL_CODE', 'external'), 'Unknown code must be false');
 	}
 
 	/**

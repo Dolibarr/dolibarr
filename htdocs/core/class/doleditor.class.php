@@ -247,6 +247,9 @@ class DolEditor
 				$out   .= ' cols="'.$this->cols.'"';
 			}
 			$out .= ' '.($moreparam ? $moreparam : '');
+			if (!preg_match('/spellcheck=/i', (string) $moreparam)) {
+				$out .= ' spellcheck="true"';	// Free text: enable back the spell checker disabled on the body of the page
+			}
 			$out .= ' class="flat '.dol_string_nohtmltag($this->toolbarname).' '.$morecss.'">';
 			$out .= htmlspecialchars($this->content);
 			$out .= '</textarea>';

@@ -259,7 +259,7 @@ class FichinterRec extends Fichinter
 						0,
 						$fichintsrc->lines[$i]->product_type,
 						$fichintsrc->lines[$i]->special_code,
-						!empty($fichintsrc->lines[$i]->label) ? $fichintsrc->lines[$i]->label : "",
+						"",
 						(string) $fichintsrc->lines[$i]->fk_unit
 					);
 

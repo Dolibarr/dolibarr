@@ -2,6 +2,7 @@
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -164,12 +165,12 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 					$px1->SetMaxValue($px1->GetCeilMaxValue());
 					$px1->SetWidth($WIDTH);
 					$px1->SetHeight($HEIGHT);
-					$px1->SetYLabel($langs->trans("NumberOfOrders"));
+					$px1->SetYLabel($langs->trans("NumberOfSupplierOrders"));
 					$px1->SetShading(3);
 					$px1->SetHorizTickIncrement(1);
 					$px1->SetCssPrefix("cssboxes");
 					$px1->mode = 'depth';
-					$px1->SetTitle($langs->trans("NumberOfOrdersByMonth"));
+					$px1->SetTitle($langs->trans("NumberOfSupplierOrdersByMonth"));
 
 					$px1->draw($filenamenb, $fileurlnb);
 				}
@@ -210,7 +211,7 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 					$px2->SetHorizTickIncrement(1);
 					$px2->SetCssPrefix("cssboxes");
 					$px2->mode = 'depth';
-					$px2->SetTitle($langs->trans("AmountOfOrdersByMonthHT"));
+					$px2->SetTitle($langs->trans("AmountOfSupplierOrdersByMonthHT"));
 
 					$px2->draw($filenamenb, $fileurlnb);
 				}
@@ -236,9 +237,9 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 				$stringtoshow .= '<input type="hidden" name="action" value="'.$refreshaction.'">';
 				$stringtoshow .= '<input type="hidden" name="page_y" value="">';
 				$stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSER_box_'.$this->boxcode.':year,shownb,showtot">';
-				$stringtoshow .= '<input type="checkbox" id="'.$param_shownb.'" name="'.$param_shownb.'"'.($shownb ? ' checked' : '').'><label for="'.$param_shownb.'"> '.$langs->trans("NumberOfOrdersByMonth").'</label>';
+				$stringtoshow .= '<input type="checkbox" id="'.$param_shownb.'" name="'.$param_shownb.'"'.($shownb ? ' checked' : '').'><label for="'.$param_shownb.'"> '.$langs->trans("NumberOfSupplierOrdersByMonth").'</label>';
 				$stringtoshow .= ' &nbsp; ';
-				$stringtoshow .= '<input type="checkbox" id="'.$param_showtot.'" name="'.$param_showtot.'"'.($showtot ? ' checked' : '').'><label for="'.$param_showtot.'"> '.$langs->trans("AmountOfOrdersByMonthHT").'</label>';
+				$stringtoshow .= '<input type="checkbox" id="'.$param_showtot.'" name="'.$param_showtot.'"'.($showtot ? ' checked' : '').'><label for="'.$param_showtot.'"> '.$langs->trans("AmountOfSupplierOrdersByMonthHT").'</label>';
 				$stringtoshow .= '<br>';
 				$stringtoshow .= $langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$endyear.'">';
 				$stringtoshow .= '<input type="image" class="reposition inline-block valigntextbottom" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"), 'refresh.png', '', 0, 1).'">';

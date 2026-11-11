@@ -76,22 +76,26 @@ class box_invoices_dispute extends ModeleBoxes
 		$conf->global->MAIN_ACTIVATE_FILECACHE = 1;
 
 
-		$textHead = $langs->trans("InvoicesDispute").' - '.$langs->trans("LastXMonthRolling", $nbofperiod);
+		$textHead = $langs->trans("InvoicesDispute");
 		$this->info_box_head = array(
 			'text' => $textHead,
 			'limit' => dol_strlen($textHead),
 		);
 
-		// compute the year limit to show
+		// compute the date limit for lost and won disputes
 		$tmpdate = dol_time_plus_duree(dol_now(), -1 * $nbofperiod, "m");
+		$tmparray = dol_getdate($tmpdate);
 
 		// list the summary of the bills
 		if (isModEnabled('invoice') && $user->hasRight("facture", "lire")) {
-			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-			$facturestatic = new Facture($this->db);
+			// Init the 3 lines always visible: open (any date), lost and won (last months)
+			$data = array(
+				1 => array('nb' => 0, 'mnttot' => 0, 'label' => $langs->trans("DisputesOpenInProgress"), 'datefilter' => false),
+				8 => array('nb' => 0, 'mnttot' => 0, 'label' => $langs->trans("DisputesLostLastXMonths", $nbofperiod), 'datefilter' => true),
+				9 => array('nb' => 0, 'mnttot' => 0, 'label' => $langs->trans("DisputesWonLastXMonths", $nbofperiod), 'datefilter' => true),
+			);
 
-			$data = array();
-			$sql = "SELECT f.dispute_status, f.fk_statut, SUM(f.total_ttc) as mnttot, COUNT(*) as nb";
+			$sql = "SELECT f.dispute_status, SUM(f.total_ttc) as mnttot, COUNT(*) as nb";
 			$sql .= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -105,18 +109,16 @@ class box_invoices_dispute extends ModeleBoxes
 				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
 			$sql .= " AND f.fk_soc = s.rowid";
-			$sql .= " AND f.dispute_status > 0";
-			$sql .= " AND f.datef >= '".$this->db->idate($tmpdate)."'";
-			$sql .= " GROUP BY f.dispute_status, f.fk_statut";
-			$sql .= " ORDER BY f.dispute_status ASC";
+			$sql .= " AND (f.dispute_status = 1 OR (f.dispute_status IN (8, 9) AND f.datef >= '".$this->db->idate($tmpdate)."'))";
+			$sql .= " GROUP BY f.dispute_status";
 
 			$result = $this->db->query($sql);
 			if ($result) {
-				$num = $this->db->num_rows($result);
-				$j = 0;
-				while ($j < $num) {
-					$data[$j] = $this->db->fetch_object($result);
-					$j++;
+				while ($obj = $this->db->fetch_object($result)) {
+					if (isset($data[$obj->dispute_status])) {
+						$data[$obj->dispute_status]['nb'] = (int) $obj->nb;
+						$data[$obj->dispute_status]['mnttot'] = $obj->mnttot;
+					}
 				}
 
 				$this->db->free($result);
@@ -124,62 +126,50 @@ class box_invoices_dispute extends ModeleBoxes
 				dol_print_error($this->db);
 			}
 
-			if (!empty($data)) {
-				$j = 0;
-				while ($j < count($data)) {
-					$billurlparam = "search_dispute_status=".$data[$j]->dispute_status;
-					// Column picto
-					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="left" width="16"',
-						'tooltip' => $langs->trans('Bills').'&nbsp;'.$facturestatic->LibStatut(1, $data[$j]->fk_statut, 0, -1, -1, array("dispute_status" => $data[$j]->dispute_status)),
-						'url' => DOL_URL_ROOT."/compta/facture/list.php?".$billurlparam."&mainmenu=accountancy&leftmenu=customers_bills",
-						'logo' => 'bill',
-					);
-
-					// Column label
-					$this->info_box_contents[$line][1] = array(
-						'td' => '',
-						'text' => $langs->trans("Bills")."&nbsp;".$facturestatic->LibStatut(1, $data[$j]->fk_statut, 0, -1, -1, array("dispute_status" => $data[$j]->dispute_status)),
-					);
-
-					// Column value
-					$this->info_box_contents[$line][2] = array(
-						'td' => 'class="right"',
-						'tooltip' => $langs->trans('Bills').'&nbsp;'.$facturestatic->LibStatut(1, $data[$j]->fk_statut, 0, -1, -1, array("dispute_status" => $data[$j]->dispute_status)),
-						'textnoformat' => '<a href="'.DOL_URL_ROOT."/compta/facture/list.php?".$billurlparam.'&mainmenu=accountancy&leftmenu=customers_bills"><div class="center badge badge-danger nounderlineimp">'.$data[$j]->nb.'</div></a>',
-					);
-
-					// Column amount
-					$this->info_box_contents[$line][3] = array(
-						'td' => 'class="nowraponall right amount"',
-						'text' => price($data[$j]->mnttot, 1, $langs, 0, 0, -1, $conf->currency)
-					);
-
-					// We add only for the current year
-					$totalnb += $data[$j]->nb;
-
-					$this->info_box_contents[$line][4] = array(
-						'td' => 'class="right" width="18"',
-						'text' => $facturestatic->LibStatut(1, $data[$j]->fk_statut, 3, -1, -1, array("dispute_status" => $data[$j]->dispute_status)),
-					);
-					$line++;
-					$j++;
+			foreach ($data as $disputestatus => $val) {
+				$billurl = DOL_URL_ROOT."/compta/facture/list.php?search_dispute_status=".((int) $disputestatus);
+				if ($val['datefilter']) {
+					$billurl .= "&search_date_startday=".((int) $tmparray['mday'])."&search_date_startmonth=".((int) $tmparray['mon'])."&search_date_startyear=".((int) $tmparray['year']);
 				}
-				if (count($data) == 0) {
-					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
-						'text' => $langs->trans("NoRecordedInvoices"),
-					);
-					$line++;
+				$billurl .= "&mainmenu=accountancy&leftmenu=customers_bills";
+
+				if ($disputestatus == 1) {
+					$badgeclass = ($val['nb'] > 0 ? 'badge badge-danger' : 'badge badge-status4');
+				} else {
+					//$badgeclass = ($val['nb'] > 0 ? 'badge badge-info' : 'badge badge-info');
+					$badgeclass = 'badge badge-info';
 				}
+
+				// Column picto
+				$this->info_box_contents[$line][0] = array(
+					'td' => 'class="left" width="16"',
+					'tooltip' => $val['label'],
+					'url' => $billurl,
+					'logo' => 'bill',
+				);
+
+				// Column label
+				$this->info_box_contents[$line][1] = array(
+					'td' => '',
+					'text' => $val['label'],
+				);
+
+				// Column value
+				$this->info_box_contents[$line][2] = array(
+					'td' => 'class="right"',
+					'tooltip' => $val['label'],
+					'textnoformat' => '<a href="'.$billurl.'" class="nounderlineimp"><span class="center '.$badgeclass.'">'.$val['nb'].'</span></a>',
+				);
+
+				// Column amount
+				$this->info_box_contents[$line][3] = array(
+					'td' => 'class="nowraponall right amount"',
+					'text' => price($val['mnttot'], 1, $langs, 0, 0, -1, $conf->currency)
+				);
+
+				$line++;
 			}
 		}
-		// Add the sum in the bottom of the boxes
-		$this->info_box_contents[$line][0] = array('tr' => 'class="liste_total_wrap"');
-		$this->info_box_contents[$line][1] = array('td' => 'class="liste_total left" ', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
-		$this->info_box_contents[$line][2] = array('td' => 'class="liste_total right" ', 'text' => (string) $totalnb);
-		$this->info_box_contents[$line][3] = array('td' => 'class="liste_total right" ', 'text' => '');
-		$this->info_box_contents[$line][4] = array('td' => 'class="liste_total right" ', 'text' => "");
 
 		$conf->global->MAIN_ACTIVATE_FILECACHE = $savMAIN_ACTIVATE_FILECACHE;
 	}

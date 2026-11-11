@@ -464,7 +464,7 @@ class FieldsManager
 			$fieldKey = $matches[1];
 			$fieldInfos = $this->getFieldInfosFromExtraField($object, $extrafields, $fieldKey, $mode, $params);
 		} elseif (preg_match('/^' . $patternObjectPrefix . '(.*)/i', $key, $matches)) {
-			$fieldKey = $matches[2];
+			$fieldKey = $matches[1];
 			$fieldInfos = $this->getFieldInfosFromObjectField($object, $fieldKey, $mode, $params);
 		}
 
