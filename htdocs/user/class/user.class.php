@@ -17,6 +17,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Lenin Rivas				<lenin.rivas777@gmail.com>
  * Copyright (C) 2026		Anthony Berton			<anthony.berton@bb2a.fr>
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -352,6 +353,11 @@ class User extends CommonObject
 	 * @var UserGroup[]	To store list of groups of user (used by API /info for example)
 	 */
 	public $user_group_list;
+
+	/**
+	 * @var int[]	Entities of the group membership, loaded by UserGroup::listUsersForGroup()
+	 */
+	public $usergroup_entity;
 
 	/**
 	 * @var array<string,int> Cache array of already loaded permissions
@@ -1117,6 +1123,10 @@ class User extends CommonObject
 
 		if (empty($this->id)) {
 			$this->error = 'Try to call addrights on an object user with an empty id';
+			return -1;
+		}
+		if (getDolGlobalInt('MAIN_USER_PERMISSIONS_ONLY_BY_GROUPS')) {
+			$this->error = 'PermissionsManagedByGroupsOnly';
 			return -1;
 		}
 
@@ -2233,6 +2243,11 @@ class User extends CommonObject
 		// phpcs:enable
 		global $conf;
 
+		// Permissions are given by user groups only
+		if (getDolGlobalInt('MAIN_USER_PERMISSIONS_ONLY_BY_GROUPS')) {
+			return 0;
+		}
+
 		$rd = array();
 		$num = 0;
 		$sql = "SELECT id FROM ".$this->db->prefix()."rights_def";
@@ -2327,6 +2342,9 @@ class User extends CommonObject
 		$this->user_modification_id = $user->id;
 
 		$this->accountancy_code_user_general = trim((string) $this->accountancy_code_user_general);
+		if ($this->accountancy_code_user_general === '-1') {	// '-1' is the value of the empty option of the select of accounting accounts
+			$this->accountancy_code_user_general = '';
+		}
 		$this->accountancy_code				= trim((string) $this->accountancy_code);
 		$this->color						= trim(str_replace('#', '', (string) $this->color));
 		$this->dateemployment				= empty($this->dateemployment) ? '' : $this->dateemployment;
@@ -2560,7 +2578,7 @@ class User extends CommonObject
 					$tmpobj = new Contact($this->db);
 					$result = $tmpobj->fetch($this->contact_id);
 
-					if ($result >= 0) {
+					if ($result > 0) {
 						$tmpobj->civility_code = $this->civility_code;
 						$tmpobj->firstname = $this->firstname;
 						$tmpobj->lastname = $this->lastname;
@@ -3573,9 +3591,6 @@ class User extends CommonObject
 		$return .= '</span>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-		}
-		if (property_exists($this, 'label')) {
-			$return .= '<br><span class="info-box-label opacitymedium">'.$this->label.'</span>';
 		}
 		if ($this->email) {
 			$return .= '<br><span class="info-box-label opacitymedium small">'.img_picto('', 'email').' '.$this->email.'</span>';

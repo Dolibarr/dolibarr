@@ -539,6 +539,11 @@ if ($search_stock_physique) {
 /*if ($eatby)		$param.="&eatby=".$eatby;
 if ($sellby)	$param.="&sellby=".$sellby;*/
 
+// Add $param from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action);	// Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
+
 llxHeader("", $title, $helpurl, $texte, 0, 0, '', '', '', 'mod-product page-reassortlot');
 
 print '<form id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">'."\n";

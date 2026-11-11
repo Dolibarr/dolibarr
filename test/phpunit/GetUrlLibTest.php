@@ -29,11 +29,13 @@
 global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/geturl.lib.php';
+if (!defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/geturl.lib.php';
 
-if (empty($user->id)) {
+if (empty($user->id) && is_object($db)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->loadRights();
@@ -310,6 +312,49 @@ class GetUrlLibTest extends CommonClassTest
 
 
 	/**
+	 * An IPv6 address that carries a private IPv4 address (IPv4-mapped, NAT64, 6to4...) must be refused like this IPv4.
+	 *
+	 * @return void
+	 */
+	public function testIsIPAllowedEmbeddedIPv4()
+	{
+		$this->assertEquals('127.0.0.1', getIPv4EmbeddedInIPv6('::ffff:127.0.0.1'));
+		$this->assertEquals('127.0.0.1', getIPv4EmbeddedInIPv6('::ffff:7f00:1'));
+		$this->assertEquals('127.0.0.1', getIPv4EmbeddedInIPv6('::127.0.0.1'));
+		$this->assertEquals('127.0.0.1', getIPv4EmbeddedInIPv6('64:ff9b::7f00:1'));
+		$this->assertEquals('127.0.0.1', getIPv4EmbeddedInIPv6('2002:7f00:1::'));
+		$this->assertEquals('', getIPv4EmbeddedInIPv6('127.0.0.1'));
+		$this->assertEquals('', getIPv4EmbeddedInIPv6('::1'));
+		$this->assertEquals('', getIPv4EmbeddedInIPv6('::'));
+		$this->assertEquals('', getIPv4EmbeddedInIPv6('2606:4700:4700::1111'));
+		$this->assertEquals('', getIPv4EmbeddedInIPv6('not an ip'));
+
+		// External URL only: refused
+		$refused = array(
+			'127.0.0.1', '10.1.2.3', '169.254.169.254', '::1', 'fe80::1',
+			'::ffff:127.0.0.1', '::ffff:7f00:1', '::ffff:10.0.0.1', '::ffff:192.168.1.1', '::ffff:169.254.169.254',
+			'::127.0.0.1', '64:ff9b::7f00:1', '64:ff9b::a00:1', '2002:7f00:1::', '2002:a00:1::',
+			'100.64.0.1', '100.127.255.254', '198.18.0.1', '198.19.255.254', '::ffff:100.64.0.1',
+		);
+		foreach ($refused as $ip) {
+			$this->assertNotEmpty(isIPAllowed($ip, 0), $ip.' must be refused when only external URLs are allowed');
+		}
+
+		// External URL only: accepted
+		$accepted = array('8.8.8.8', '100.63.255.255', '100.128.0.1', '198.17.255.255', '198.20.0.1', '2606:4700:4700::1111', '::ffff:8.8.8.8', '64:ff9b::808:808', '2002:808:808::');
+		foreach ($accepted as $ip) {
+			$this->assertEmpty(isIPAllowed($ip, 0), $ip.' must be accepted when only external URLs are allowed');
+		}
+
+		// Local URL only: a mapped private IPv4 is local, a mapped public IPv4 is not
+		$this->assertEmpty(isIPAllowed('::ffff:127.0.0.1', 1));
+		$this->assertEmpty(isIPAllowed('::1', 1));
+		$this->assertNotEmpty(isIPAllowed('::ffff:8.8.8.8', 1));
+		$this->assertNotEmpty(isIPAllowed('::ffff:169.254.169.254', 1), 'A metadata server is refused even when local URLs are allowed');
+	}
+
+
+	/**
 	 * testGetURLContent
 	 *
 	 * @return int
@@ -432,6 +477,8 @@ class GetUrlLibTest extends CommonClassTest
 			'api-key: secret',
 			'DOLAPIKEY: secret',
 			'x-goog-api-key: secret',
+			'Client-Secret: secret',
+			'Client-Id: kept',
 			'X-Custom: kept',
 			'Content-Type: application/json',
 			'malformed header without colon',
@@ -439,9 +486,30 @@ class GetUrlLibTest extends CommonClassTest
 
 		$result = removeCredentialHeaders($headers);
 
-		$this->assertSame(['Accept: application/json', 'X-Custom: kept', 'Content-Type: application/json', 'malformed header without colon'], $result, 'Every credential header must be removed, whatever its case, and the other ones kept in order');
+		$this->assertSame(['Accept: application/json', 'Client-Id: kept', 'X-Custom: kept', 'Content-Type: application/json', 'malformed header without colon'], $result, 'Every credential header must be removed, whatever its case, and the other ones kept in order');
 
 		$this->assertSame([], removeCredentialHeaders([]));
 		$this->assertSame([], removeCredentialHeaders('not an array'));	// @phpstan-ignore-line
+	}
+
+	/**
+	 * testMaskSecretsForLog
+	 *
+	 * @return	void
+	 */
+	public function testMaskSecretsForLog()
+	{
+		$result = maskSecretsForLog('https://maps.googleapis.com/maps/api/geocode/json?address=Paris&key=AIzaSyABCDEF');
+		$this->assertSame('https://maps.googleapis.com/maps/api/geocode/json?address=Paris&key=AIz...', $result, 'The API key in the query string must be masked');
+
+		$result = maskSecretsForLog('https://example.com/api?api_key=abcdef&page=2&access_token=tok123#anchor');
+		$this->assertSame('https://example.com/api?api_key=abc...&page=2&access_token=tok...#anchor', $result, 'Each secret parameter must be masked, the other ones kept');
+
+		$result = maskSecretsForLog('https://example.com/page?address=keyboard&id=4');
+		$this->assertSame('https://example.com/page?address=keyboard&id=4', $result, 'An URL without secret must not be modified');
+
+		$request = "GET /api?key=AIzaSy123 HTTP/1.1\r\nHost: example.com\r\nAuthorization: Bearer eyJhbGciOi\r\nAccept: */*\r\nCookie: DOLSESSID_xxx=secret\r\n\r\n";
+		$result = maskSecretsForLog($request);
+		$this->assertSame("GET /api?key=AIz... HTTP/1.1\r\nHost: example.com\r\nAuthorization: Bea...\r\nAccept: */*\r\nCookie: DOL...\r\n\r\n", $result, 'Secrets in the request line and in the credential headers must be masked');
 	}
 }

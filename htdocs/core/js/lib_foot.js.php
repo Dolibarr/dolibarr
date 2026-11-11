@@ -246,6 +246,38 @@ print '
     });
 ' . "\n";
 
+// Code to disable submit buttons once form is submitted
+print "\n/* JS CODE TO DISABLE buttons with class disableonsubmit once form is submitted, to avoid duplicate submissions */\n";
+print '
+    jQuery(document).ready(function() {
+        jQuery(document).on("submit", "form", function(event) {
+            if (event.isDefaultPrevented() || (this.target && this.target != "_self")) {
+                return;
+            }
+            var $buttons = jQuery(this).find(".disableonsubmit");
+            if ($buttons.length == 0) {
+                return;
+            }
+            /* Flag is set synchronously, so a second very fast click is blocked even before buttons are disabled */
+            if (jQuery(this).data("dolsubmitted")) {
+                console.log("Form already submitted, we discard this new submission");
+                event.preventDefault();
+                return;
+            }
+            jQuery(this).data("dolsubmitted", true);
+            /* Disable after a timeout so the clicked button is still included into the submitted data */
+            setTimeout(function() { $buttons.prop("disabled", true); }, 0);
+        });
+        /* Enable buttons again if page is restored from browser cache (back button) */
+        jQuery(window).on("pageshow", function(event) {
+            if (event.originalEvent && event.originalEvent.persisted) {
+                jQuery("form").removeData("dolsubmitted");
+                jQuery(".disableonsubmit").prop("disabled", false);
+            }
+        });
+    });
+' . "\n";
+
 // Code to manage Copy To Clipboard click
 print "\n/* JS CODE TO ENABLE ClipBoard copy paste */\n";
 // Suppress because dol_escape_js is wrapped in '' @phan-suppress-next-line FunctionMissingSingleQuoteWrapping

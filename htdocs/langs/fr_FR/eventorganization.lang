@@ -119,7 +119,6 @@ EventRegistrationAreClosed=Les inscriptions aux événements sont fermées
 DateMustBeBeforeThan=%s doit être avant %s
 DateMustBeAfterThan=%s doit être après %s
 MaxNbOfAttendeesReached=Le nombre maximum de participants a été atteint
-NewSubscription=Inscription
 OrganizationEventConfRequestWasReceived=Votre suggestion de conférence a été reçue
 OrganizationEventBoothRequestWasReceived=Votre demande de stand a bien été reçue
 OrganizationEventPaymentOfBoothWasReceived=Le règlement de votre stand a été enregsitré

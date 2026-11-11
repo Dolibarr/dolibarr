@@ -194,6 +194,7 @@ function dolCreditorRefIsValid($ref)
  *
  * @param	string	$ref	Stored payment reference
  * @return	string			'SCOR' for ISO 11649, 'BBA' for Belgian OGM-VCS,
+ *							'QRR' for a Swiss QR reference,
  *							'FI' for a Finnish national reference, '' if unknown
  */
 function dolPayRefDetectScheme($ref)
@@ -208,6 +209,9 @@ function dolPayRefDetectScheme($ref)
 	}
 	if (dol_substr(dolPayRefStrip($ref), 0, 2) === 'RF') {
 		return 'SCOR';
+	}
+	if (preg_match('/^\d{27}$/', dolPayRefStrip($ref))) {
+		return 'QRR';
 	}
 	if (ctype_digit(dolPayRefStrip($ref))) {
 		return 'FI';

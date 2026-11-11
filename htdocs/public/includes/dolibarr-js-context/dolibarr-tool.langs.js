@@ -18,6 +18,8 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		let domainsLoaded = {}; // { en_US: Set(['main','other']), fr_FR: Set([...]) }
 		if (!domainsLoaded[currentLocale]) domainsLoaded[currentLocale] = new Set();
 		let domainsRequested = new Set();     // Set of domain names that were requested at least once
+		let dbPromise = null; // Shared IndexedDB connection, see getDB()
+		let currentDb = null;
 
 
 
@@ -25,7 +27,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		 * Open or create IndexedDB for caching translations
 		 * @returns {Promise<IDBDatabase>}
 		 */
-		async function openDB(clear = false) {
+		async function openDB() {
 
 			// Generate a unique name per instance
 			const dbName = await getSafeDbName();
@@ -36,16 +38,40 @@ document.addEventListener('Dolibarr:Init', function(e) {
 					const db = e.target.result;
 					if (!db.objectStoreNames.contains('langs')) db.createObjectStore('langs');
 				};
-				request.onsuccess = async () => {
+				request.onsuccess = () => {
 					const db = request.result;
-					if (clear) {
-						const tx = db.transaction('langs', 'readwrite');
-						tx.objectStore('langs').clear();
-					}
+					// Release the connection if another tab wants to delete or upgrade the database
+					db.onversionchange = () => closeDB(db);
 					resolve(db);
 				};
 				request.onerror = () => reject(request.error);
 			});
+		}
+
+		/**
+		 * Get the shared IndexedDB connection, opened only once
+		 * @returns {Promise<IDBDatabase>}
+		 */
+		function getDB() {
+			if (!dbPromise) {
+				dbPromise = openDB().then(db => (currentDb = db)).catch(err => {
+					dbPromise = null;
+					throw err;
+				});
+			}
+			return dbPromise;
+		}
+
+		/**
+		 * Close the shared IndexedDB connection
+		 * @param {IDBDatabase} db
+		 */
+		function closeDB(db) {
+			db.close();
+			if (db === currentDb) {
+				currentDb = null;
+				dbPromise = null;
+			}
 		}
 
 		// Create a secure DB name
@@ -83,7 +109,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		 */
 		async function getCache(domain, locale) {
 			try {
-				const db = await openDB();
+				const db = await getDB();
 				const tx = db.transaction('langs', 'readonly');
 				const store = tx.objectStore('langs');
 				return new Promise((resolve, reject) => {
@@ -104,7 +130,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		 */
 		async function setCache(domain, locale, data) {
 			try {
-				const db = await openDB();
+				const db = await getDB();
 				const tx = db.transaction('langs', 'readwrite');
 				const store = tx.objectStore('langs');
 				const dolibarrVersion = Dolibarr.getContextVar('DOL_VERSION', 0);
@@ -122,7 +148,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 
 
 			try {
-				const db = await openDB(true);
+				const db = await getDB();
 				await new Promise((resolve, reject) => {
 					const tx = db.transaction('langs', 'readwrite');
 					const store = tx.objectStore('langs');
@@ -133,10 +159,10 @@ document.addEventListener('Dolibarr:Init', function(e) {
 					tx.onerror = () => reject(tx.error);
 					tx.onabort = () => reject(tx.error);
 				});
-				db.close();
 
 				// Delete database
 				if(rebuildDatabase) {
+					closeDB(db);
 					const dbName = await getSafeDbName();
 					await new Promise((resolve, reject) => {
 						const deleteRequest = indexedDB.deleteDatabase(dbName);
@@ -266,7 +292,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 
 				for (const domain of toReload) {
 					// load(domain, locale) accepte le param locale ; l'appel charge et met domainsLoaded
-					if (domainsLoaded[locale].size === 0) {
+					if (!domainsLoaded[locale].has(domain)) {
 						await load(domain, locale);
 					}
 				}

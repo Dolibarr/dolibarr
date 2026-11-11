@@ -50,9 +50,20 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk"));
 
-$floor = GETPOSTINT('floor');
-if ($floor == "") {
+if (GETPOSTISSET('floor')) {
+	$floor = GETPOSTINT('floor');
+} else {
+	// No floor requested: open the lowest floor that has tables (floor 1 for tables created before v20, floor 0 since), or floor 1 when there is no table yet
 	$floor = 1;
+	$sql = "SELECT MIN(floor) as minfloor FROM ".MAIN_DB_PREFIX."takepos_floor_tables";
+	$sql .= " WHERE entity IN (".getEntity('takepos').")";
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
+		if ($obj && !is_null($obj->minfloor)) {
+			$floor = (int) $obj->minfloor;
+		}
+	}
 }
 $id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');

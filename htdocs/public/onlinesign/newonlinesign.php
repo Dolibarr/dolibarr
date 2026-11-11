@@ -71,7 +71,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
 // Load translation files
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "members", "paybox", "stripe", "propal", "commercial"));
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "members", "stripe", "propal", "commercial"));
 
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
@@ -157,7 +157,7 @@ if ($source == 'proposal') {
 } elseif ($source == 'societe_rib') {
 	$securekeyseed = getDolGlobalString('SOCIETE_RIB_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
 } elseif ($source == 'order') {
-	$securekeyseed = getDolGlobalString('ORDER_ONLINE_SIGNATURE_SECURITY_TOKEN');
+	$securekeyseed = getDolGlobalString('ORDER_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
 } else {
 	$securekeyseed = getDolGlobalString(dol_strtoupper((string) $source).'_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
 }

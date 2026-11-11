@@ -182,6 +182,7 @@ class Subscription extends CommonObject
 	public function create($user, $notrigger = 0)
 	{
 		global $langs;
+		dol_syslog(__METHOD__.'::begin', LOG_DEBUG);
 
 		$error = 0;
 
@@ -206,6 +207,19 @@ class Subscription extends CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 		$member = new Adherent($this->db);
 		$result = $member->fetch($this->fk_adherent);
+
+		// Check if member status allows subscription creation
+		$allowedStatusesStr = getDolGlobalString('MEMBER_SUBSCRIPTION_ALLOWED_FOR_STATUS');
+		if ($allowedStatusesStr === '') {
+			$allowedStatusesStr = Adherent::STATUS_DRAFT.','.Adherent::STATUS_RESILIATED.','.Adherent::STATUS_VALIDATED;
+		}
+		$allowedStatuses = array_map('intval', explode(',', $allowedStatusesStr));
+		if (!in_array((int) $member->statut, $allowedStatuses, true)) {
+			$this->error = $langs->trans('ErrorSubscriptionNotAllowed', $member->getLibStatut(1));
+			dol_syslog(get_class($this).'::create User='.$user->id.' tried to create subscription for member='.$member->id.' with status='.$member->statut.', allowed='.$allowedStatusesStr, LOG_WARNING);
+			$this->db->rollback();
+			return -1;
+		}
 
 		if ($this->fk_type == null) {	// If type not defined, we use the type of member
 			$type = $member->typeid;
@@ -243,6 +257,18 @@ class Subscription extends CommonObject
 				$error++;
 				$this->error = $member->error;
 				$this->errors[] = $this->error;
+			}
+		}
+
+		// Recording a subscription means the person became a member: validate a draft member
+		if (!$error && (int) $member->statut == Adherent::STATUS_DRAFT) {
+			$result = $member->validate($user);
+			if ($result < 0) {
+				$error++;
+				$this->error = $langs->trans('ErrorValidationFailed', $member->error);
+				dol_syslog(get_class($this).': ErrorValidationFailed for member='.$member->id, LOG_ERR);
+			} else {
+				dol_syslog('Auto-validated member '.$member->id.' upon subscription creation', LOG_INFO);
 			}
 		}
 

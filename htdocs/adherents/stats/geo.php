@@ -229,22 +229,25 @@ print dol_get_fiche_head($head, (string) $tab, '', -1, '');
 // Print title
 if (!count($data)) {
 	print '<span class="opacitymedium">'.$langs->trans("NoValidatedMemberYet").'</span><br>';
+	print '<div class="info">'.$langs->trans("DraftMembersAreExcluded").'</div>';
 	print '<br>';
 } else {
+	print '<div class="info">';
 	if (empty($mode) || $mode == 'memberbycountry') {
-		print '<span class="opacitymedium">'.$langs->trans("MembersByCountryDesc");
+		print $langs->trans("MembersByCountryDesc");
 		if (getDolGlobalString("GOOGLE_SHOW_COUNTRY_GRAPH")) {
 			print $langs->trans("MembersByCountryDesc2");
 		}
-		print '</span><br>';
+		print '<br>';
 	} elseif ($mode == 'memberbystate') {
-		print '<span class="opacitymedium">'.$langs->trans("MembersByStateDesc").'</span><br>';
+		print $langs->trans("MembersByStateDesc").'<br>';
 	} elseif ($mode == 'memberbytown') {
-		print '<span class="opacitymedium">'.$langs->trans("MembersByTownDesc").'</span><br>';
+		print $langs->trans("MembersByTownDesc").'<br>';
 	} elseif ($mode == 'memberbyregion') {
-		print '<span class="opacitymedium">'.$langs->trans("MembersByRegion").'</span><br>'; //+
+		print $langs->trans("MembersByRegion").'<br>'; //+
 	}
-	print '<span class="opacitymedium">'.$langs->trans("DraftMembersAreExcluded").'</span><br>';
+	print $langs->trans("DraftMembersAreExcluded");
+	print '</div>';
 	print '<br>';
 }
 

@@ -348,7 +348,7 @@ if ($action == "importSignature") {
 							$response = "error in trigger " . $object->error;
 						} else {
 							$soc = new Societe($db);
-							$soc->id = $object->socid;
+							$soc->fetch($object->socid);
 							$result = $soc->setAsCustomer();
 							if ($result < 0) {
 								$error++;
