@@ -37,6 +37,7 @@ require '../../main.inc.php';
  * @var DoliDB $db
  * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
+ * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  */
@@ -87,7 +88,7 @@ foreach ($arrayofsearchableprice as $keyofsearch => $defofsearch) {
 $search_supplier_barcode = GETPOST('search_supplier_barcode', 'alphanohtml');
 $search_tva_tx = GETPOST('search_tva_tx', 'array:alphanohtml');
 // Keep only numeric rates
-$search_tva_tx = array_values(array_unique(array_filter(array_map('strval', array_filter($search_tva_tx, 'is_numeric')), 'strlen')));
+$search_tva_tx = array_values(array_unique(array_map('strval', array_filter($search_tva_tx, 'is_numeric'))));
 $type = GETPOST('type', 'alphanohtml');
 
 // Load variable for pagination
@@ -296,7 +297,9 @@ if ($fourn_id > 0) {
 	$sql .= " AND ppf.fk_soc = ".((int) $fourn_id);
 }
 if (!empty($search_tva_tx)) {
-	$sql .= " AND ppf.tva_tx IN (".implode(',', array_map('floatval', $search_tva_tx)).")";
+	$sql .= " AND ppf.tva_tx IN (".implode(',', array_map(function ($vatrate) {
+		return (string) ((float) $vatrate);
+	}, $search_tva_tx)).")";
 }
 if ($search_barcode != '') {
 	$sql .= natural_search('p.barcode', $search_barcode);
