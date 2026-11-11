@@ -19,7 +19,7 @@
 -- de l'install et tous les sigles '--' sont supprimés.
 --
 
--- Descriptif des plans comptables UK ENG-BASE 
+-- Descriptif des plans comptables UK ENG-BASE
 -- ID 70000 - 79999
 -- ADD 700000 to rowid # Do no remove this comment --
 

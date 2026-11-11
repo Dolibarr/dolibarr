@@ -105,7 +105,6 @@ AdherentNotLinkedToThirdParty
 AdvTgtUse
 Agents
 AllFilesDidAlreadyExist
-AlreadyInV7
 AmountOfReceptions
 AmountOfReceptionsByMonthHT
 AmountOfShipments
@@ -130,7 +129,6 @@ AvailabilityType
 BAN
 BI
 BOMs
-Back
 Bad value for email, email was not verified by Google
 Bad value for returned userinfo[aud]
 Bad value for returned userinfo[exp]. Token expired.
@@ -146,8 +144,6 @@ Barcode
 BarcodeDesc
 BarcodeStickersMask
 BillOfMaterialsLine
-BlockLogNeedAmountsValue
-BlockLogNeedElement
 BlockedLogAuthorityNeededToStoreYouFingerprintsInNonAlterableRemote
 BlockedLogAuthorityUrl
 BlockedLogSetup
@@ -175,7 +171,6 @@ Child of
 ClassNotFound
 Clear
 ClickToDial
-Clients
 Clone
 CloneAffectation
 CloneChanges
@@ -261,7 +256,6 @@ Dictionaries
 DictionaryEmpty
 DictionaryNameUpdated
 Directory
-DisabledByOptionADD_UNSPLASH_LOGIN_BACKGROUND
 Document
 Documentation
 Dolibarr
@@ -326,7 +320,6 @@ ErrorFailedToGetListOfNotificationsToSend
 ErrorFailedToLoadBankAccount
 ErrorFailedToLoadDiscount
 ErrorFailedToSetNewPassword
-ErrorFaviconMustBeASquaredImage
 ErrorFileNameInvalid
 ErrorImportOfChartLimitedToCurrentChart
 ErrorMAIN_ROUNDING_RULE_TOTCanMAIN_MAX_DECIMALS_TOT
@@ -403,7 +396,6 @@ Filename
 FilteredFrom
 Flashy
 ForcedByGlobalSetup
-Form for public lead registration has not been enabled
 Free
 FreeLegalTextOnReceptions
 FrequencyPer_
@@ -462,7 +454,6 @@ Level
 Lifetime
 LinkedElementsInvalidDeleted
 LinkedToAConcialitedTransaction
-ListOfAttendeesPerConference
 ListTicketsLinkToContract
 Load
 LocalTaxReport
@@ -546,7 +537,6 @@ NoEstablishmentFound
 NoMail
 NoModuleFound
 NoOperations
-NoPasswordGenerationRuleConfigured
 NoReader
 NoRecordedUnpaidInvoices
 NoRecords
@@ -626,7 +616,6 @@ Poll
 Posts
 PredefinedInterventional
 PrevRangeToThisRange
-PreviousFingerprint
 Print
 PrintDriver
 PrintModule
@@ -806,7 +795,6 @@ TicketTypeShort
 TimeOnly
 Timezone
 ToGetBack
-ToPay
 Token
 Tooltip
 TooltipEditAndRevertStockMovement
@@ -948,7 +936,6 @@ Don
 ECM
 EmptyMessageNotAllowedError
 ErrorInputRequired
-ErrorLDAPFunctionsAreDisabledOnThisPHP
 ErrorUpdating
 Extra
 FailedToConnectToSFTPAfterSSHAuthentication
@@ -1023,7 +1010,6 @@ TicketMessageMailSignatureText
 TicketSetupPage
 Timeline
 Transfer
-TryAnotherConnectionMode
 UndefinedKey
 UnknownType
 UpdateMember

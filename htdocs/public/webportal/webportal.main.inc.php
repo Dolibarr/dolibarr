@@ -107,6 +107,7 @@ require_once DOL_DOCUMENT_ROOT . '/webportal/class/webportalpartnership.class.ph
 //}
 
 $context = Context::getInstance();
+$context->initController();
 
 $hookmanager->initHooks(array('main', 'webportal'));
 
@@ -133,7 +134,13 @@ if (!defined('WEBPORTAL_NOREQUIRETRAN') || (!defined('WEBPORTAL_NOLOGIN') && !em
 /*
  * Phase authentication / login
  */
-if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->accessNeedLoggedUser)) {
+if (getDolGlobalInt('WEBPORTAL_LOGIN_BY_MODULE') && !empty($conf->modules_parts['webportallogin']) && is_array($conf->modules_parts['webportallogin'])) {
+	foreach ($conf->modules_parts['webportallogin'] as $module => $file) {
+		$path=dol_buildpath("/$module/$file");
+		include_once $path;
+		break;
+	}
+} elseif (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->accessNeedLoggedUser)) {
 	$error = 0;
 
 	// Hooks for security access
@@ -142,12 +149,13 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 		"webportal_sessionname" => $sessionname,
 		"webportal_anti_spam_session_key" => $anti_spam_session_key,
 	);
-	$reshook = $hookmanager->executeHooks('beforeLoginAuthentication', $parameters, $context);
+	$reshook = $hookmanager->executeHooks('webPortalBeforeLoginAuthentication', $parameters, $context);
 	if ($reshook < 0) {
 		$error++;
 	} elseif (empty($reshook)) {
 		$admin_error_messages = array();
 		$webportal_logged_thirdparty_account_id = isset($_SESSION["webportal_logged_thirdparty_account_id"]) && $_SESSION["webportal_logged_thirdparty_account_id"] > 0 ? $_SESSION["webportal_logged_thirdparty_account_id"] : 0;
+		$webportal_logged_member_account_id = isset($_SESSION["webportal_logged_member_account_id"]) && $_SESSION["webportal_logged_member_account_id"] > 0 ? $_SESSION["webportal_logged_member_account_id"] : 0;
 
 		if (!$context->userIsLog()) {
 			// It is not already authenticated and it requests the login / password
@@ -158,7 +166,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 			if ($action == 'login') {
 				$login = GETPOST('login', 'alphanohtml');
 				$password = GETPOST('password', 'password');
-				// $security_code = GETPOST('security_code', 'alphanohtml');
+				$security_code = GETPOST('security_code', 'alphanohtml');
 
 				if (empty($login)) {
 					$context->setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login")), 'errors');
@@ -173,31 +181,52 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 					$error++;
 				}
 				// check security graphic code
-				//if (!$error && (array_key_exists($anti_spam_session_key, $_SESSION) === false ||
-				//		(strtolower($_SESSION[$anti_spam_session_key]) !== strtolower($security_code)))
-				//) {
-				//	$context->setEventMessage($langs->trans("ErrorBadValueForCode"), 'errors');
-				//	if (empty($focus_element)) $focus_element = 'security_code';
-				//	$error++;
-				//}
+				if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_WEBPORTAL')) {
+					$ok = (array_key_exists($anti_spam_session_key, $_SESSION) && (strtolower($_SESSION[$anti_spam_session_key]) == strtolower($security_code)));
+					if (!$ok) {
+						$error++;
+						$context->setEventMessage($langs->trans("ErrorBadValueForCode"), 'errors');
+						if (empty($focus_element)) {
+							$focus_element = 'security_code';
+						}
+					}
+				}
 
-				if (!$error) {
+				if (!$error && (isModEnabled('societe') && !getDolGlobalInt('WEBPORTAL_LOGIN_BY_MEMBER_ACCOUNT'))) {
 					// fetch third-party account from login and account type
 					$thirdparty_account_id = $context->getThirdPartyAccountFromLogin($login, $password);
 					if ($thirdparty_account_id <= 0) {
 						$error++;
 						dol_syslog($langs->transnoentitiesnoconv('WebPortalErrorFetchThirdPartyAccountFromLogin', $login), LOG_WARNING);
-						$context->setEventMessage($langs->transnoentitiesnoconv('WebPortalErrorAuthentication'), 'errors');
 					} else {
 						$_SESSION["webportal_logged_thirdparty_account_id"] = $thirdparty_account_id;
 						$webportal_logged_thirdparty_account_id = $thirdparty_account_id;
 						$context->controller = 'default';
 						$context->initController();
 					}
+				} elseif (!$error && isModEnabled('member') && getDolGlobalInt('WEBPORTAL_LOGIN_BY_MEMBER_ACCOUNT') && !getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
+					// fetch member account from login
+					$member_account_id = $context->getMemberAccountFromLogin($login, $password);
+					if ($member_account_id <= 0) {
+						$error++;
+						dol_syslog($langs->transnoentitiesnoconv('WebPortalErrorFetchMemberAccountFromLogin', $login), LOG_WARNING);
+					} else {
+						$_SESSION["webportal_logged_member_account_id"] = $member_account_id;
+						$webportal_logged_member_account_id = $member_account_id;
+						$context->controller = 'default';
+						$context->initController();
+					}
+				} else {
+					$error++;
+					dol_syslog($langs->transnoentitiesnoconv('WebPortalErrorNoFetchMethod'), LOG_WARNING);
+				}
+
+				if ($error) {
+					$context->setEventMessage($langs->transnoentitiesnoconv('WebPortalErrorAuthentication'), 'errors');
 				}
 			}
 
-			if (empty($webportal_logged_thirdparty_account_id)) {
+			if (empty($webportal_logged_thirdparty_account_id) && empty($webportal_logged_member_account_id)) {
 				// Set cookie for timeout management
 				if (getDolGlobalString('MAIN_SESSION_TIMEOUT')) {
 					dolSetCookie($sessiontimeout, getDolGlobalString('MAIN_SESSION_TIMEOUT'), 0);
@@ -209,21 +238,35 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 		}
 
 		if (!$error && $context->userIsLog()) {
+			$logged_member = null;
+			$websiteaccount = null;
 			// We are already into an authenticated session
-			$websiteaccount = new SocieteAccount($db);
-			$result = $websiteaccount->fetch($webportal_logged_thirdparty_account_id);
+			if (isModEnabled('member') && getDolGlobalInt('WEBPORTAL_LOGIN_BY_MEMBER_ACCOUNT') && !getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
+				// get member
+				$logged_member = new WebPortalMember($db);
+				$result = $logged_member->fetch($webportal_logged_member_account_id);
+				if ($result <= 0) {
+					$error++;
 
-			if ($result <= 0) {
-				$error++;
+					// Account has been removed after login
+					dol_syslog("Can't load member account (ID: $webportal_logged_member_account_id) even if session logged.", LOG_ERR);
 
-				// Account has been removed after login
-				dol_syslog("Can't load third-party account (ID: $webportal_logged_thirdparty_account_id) even if session logged.", LOG_WARNING);
-				session_destroy();
-				session_set_cookie_params(0, '/', null, !empty($dolibarr_main_force_https), true); // Add tag secure and httponly on session cookie
-				session_name($sessionname);
-				session_start();
+					$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedMember', (string) $webportal_logged_member_account_id);
+					dol_syslog($error_msg, LOG_ERR);
+					$context->setEventMessage($error_msg, 'errors');
+				}
+			} else {
+				$websiteaccount = new SocieteAccount($db);
+				$result = $websiteaccount->fetch($webportal_logged_thirdparty_account_id);
 
-				$context->setEventMessage($langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedThirdPartyAccount', $webportal_logged_thirdparty_account_id), 'errors');
+				if ($result <= 0) {
+					$error++;
+
+					// Account has been removed after login
+					dol_syslog("Can't load third-party account (ID: $webportal_logged_thirdparty_account_id) even if session logged.", LOG_ERR);
+
+					$context->setEventMessage($langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedThirdPartyAccount', $webportal_logged_thirdparty_account_id), 'errors');
+				}
 			}
 
 			if (!$error) {
@@ -243,71 +286,97 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 						$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedUser', (string) $user_id);
 						dol_syslog($error_msg, LOG_ERR);
 						$context->setEventMessages($error_msg, null, 'errors');
+					} else {
+						$logged_user->socid = !empty($logged_member) && $logged_member->socid > 0
+							? $logged_member->socid
+							: (!empty($websiteaccount) && $websiteaccount->fk_soc > 0 ? $websiteaccount->fk_soc : 0);
+						if ($logged_user->socid <= 0) {
+							$error++;
+							$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorNoThirdPartyScope');
+							dol_syslog($error_msg, LOG_ERR);
+							$context->setEventMessage($error_msg, 'errors');
+						}
 					}
 				}
 
-				if (!$error) {
-					// get third-party
-					$logged_thirdparty = $websiteaccount->thirdparty;
-					if (!$logged_thirdparty || !($logged_thirdparty->id > 0)) {
-						$result = $websiteaccount->fetch_thirdparty();
-						if ($result < 0) {
-							$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedThirdParty', (string) $websiteaccount->fk_soc);
-							//dol_syslog("Can't load third-party (ID: ".$websiteaccount->fk_soc.") even if session logged.", LOG_ERR);
-							dol_syslog($error_msg, LOG_ERR);
-							$context->setEventMessage($error_msg, 'errors');
-							$error++;
-						}
-					}
-
+				if (!getDolGlobalInt('WEBPORTAL_LOGIN_BY_MEMBER_ACCOUNT')) {
 					if (!$error) {
+						// get third-party
 						$logged_thirdparty = $websiteaccount->thirdparty;
+						if (!$logged_thirdparty || !($logged_thirdparty->id > 0)) {
+							$result = $websiteaccount->fetch_thirdparty();
 
-						// get member
-						$logged_member = new WebPortalMember($db);
-						$result = $logged_member->fetch(0, '', $websiteaccount->thirdparty->id);
-						if ($result < 0) {
-							$error++;
-							$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedMember', (string) $websiteaccount->thirdparty->id);
-							dol_syslog($error_msg, LOG_ERR);
-							$context->setEventMessage($error_msg, 'errors');
-						}
-
-						if (!$error && $logged_member->id > 0) {
-							// get partnership
-							$logged_partnership = new WebPortalPartnership($db);
-							// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-							$result = $logged_partnership->fetch(0, '', $logged_member->id, $websiteaccount->thirdparty->id);
 							if ($result < 0) {
-								$error++;
-								$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedPartnership', (string) $websiteaccount->thirdparty->id, (string) $logged_member->id);
+								$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedThirdParty', (string) $websiteaccount->fk_soc);
+								//dol_syslog("Can't load third-party (ID: ".$websiteaccount->fk_soc.") even if session logged.", LOG_ERR);
 								dol_syslog($error_msg, LOG_ERR);
 								$context->setEventMessage($error_msg, 'errors');
+								$error++;
 							}
 						}
 
 						if (!$error) {
-							if ($logged_thirdparty->default_lang != $langs->defaultlang && !defined('WEBPORTAL_NOREQUIRETRAN')) {
-								if (!is_object($langs)) { // This can occurs when calling page with NOREQUIRETRAN defined, however we need langs for error messages.
-									include_once DOL_DOCUMENT_ROOT . '/core/class/translate.class.php';
-									$langs = new Translate("", $conf);
-									$langs->setDefaultLang($logged_thirdparty->default_lang);
+							$logged_thirdparty = $websiteaccount->thirdparty;
+
+							// get member
+							$logged_member = new WebPortalMember($db);
+							$result = $logged_member->fetch(0, '', $websiteaccount->thirdparty->id);
+							if ($result < 0) {
+								$error++;
+								$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedMember', (string) $websiteaccount->thirdparty->id);
+								dol_syslog($error_msg, LOG_ERR);
+								$context->setEventMessage($error_msg, 'errors');
+							}
+
+							if (isModEnabled('partnership') && !$error && $logged_member->id > 0) {
+								// get partnership
+								$logged_partnership = new WebPortalPartnership($db);
+								// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+								$result = $logged_partnership->fetch(0, '', $logged_member->id, $websiteaccount->thirdparty->id);
+								if ($result < 0) {
+									$error++;
+									$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedPartnership', (string) $websiteaccount->thirdparty->id, (string) $logged_member->id);
+									dol_syslog($error_msg, LOG_ERR);
+									$context->setEventMessage($error_msg, 'errors');
 								}
-								$langs->loadLangs(array('website', 'main'));
 							}
 
-							$context->logged_user = $logged_user;
-							$context->logged_thirdparty = $logged_thirdparty;
-							$context->logged_member = $logged_member;
-							if (!empty($logged_partnership)) {
-								$context->logged_partnership = $logged_partnership;
-							}
+							if (!$error) {
+								if ($logged_thirdparty->default_lang != $langs->defaultlang && !defined('WEBPORTAL_NOREQUIRETRAN')) {
+									if (!is_object($langs)) { // This can occurs when calling page with NOREQUIRETRAN defined, however we need langs for error messages.
+										include_once DOL_DOCUMENT_ROOT . '/core/class/translate.class.php';
+										$langs = new Translate("", $conf);
+										$langs->setDefaultLang($logged_thirdparty->default_lang);
+									}
+									$langs->loadLangs(array('website', 'main'));
+								}
 
-							global $user; // set global user as logged user (used for hooks in external modules)
-							$user = $context->logged_user;
+								$context->logged_thirdparty = $logged_thirdparty;
+								if (!empty($logged_partnership)) {
+									$context->logged_partnership = $logged_partnership;
+								}
+							}
 						}
 					}
 				}
+
+				if (!$error) {
+					$context->logged_user = $logged_user;
+					if (!empty($logged_member)) {
+						$context->logged_member = $logged_member;
+					}
+
+					global $user; // set global user as logged user (used for hooks in external modules)
+					$user = $context->logged_user;
+				}
+			}
+
+			if ($error) {
+				// Authentication context could not be fully rebuilt for this already-logged session: destroy the session to force re-authentication and avoid leaving the user in a half-authenticated state.
+				session_destroy();
+				session_set_cookie_params(0, '/', null, !empty($dolibarr_main_force_https), true); // Add tag secure and httponly on session cookie
+				session_name($sessionname);
+				session_start();
 			}
 		}
 	}
@@ -318,7 +387,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 			"webportal_sessionname" => $sessionname,
 			"webportal_anti_spam_session_key" => $anti_spam_session_key,
 		);
-		$reshook = $hookmanager->executeHooks('afterLoginFailed', $parameters, $context);
+		$reshook = $hookmanager->executeHooks('webPortalAfterLoginFailed', $parameters, $context);
 		if ($reshook < 0) {
 			$error++;
 		}
@@ -328,7 +397,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 			"webportal_sessionname" => $sessionname,
 			"webportal_anti_spam_session_key" => $anti_spam_session_key,
 		);
-		$reshook = $hookmanager->executeHooks('afterLogin', $parameters, $context);
+		$reshook = $hookmanager->executeHooks('webPortalAfterLogin', $parameters, $context);
 		if ($reshook < 0) {
 			$error++;
 		}

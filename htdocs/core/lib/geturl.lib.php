@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2008-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,22 +30,25 @@
  * - you can set MAIN_SECURITY_ANTI_SSRF_SERVER_IP to set static ip of server
  * - common local lookup ips like 127.*.*.* are automatically added
  *
- * You can enable constant MAIN_CURL_DEBUG to get detail of output/input into dolibarr_curl.logfile.
+ * To test there is no error, you can do:  if (empty($resultget['curl_error_no']) && $resultget['http_code'] == 200) ...
  *
- * @param	string	  	$url 			    URL to call.
+ * You can enable constant MAIN_CURL_DEBUG to get detail of output/input into dolibarr_curl.log file.
+ *
+ * @param	string	  					$url 			    URL to call.
  * @param	'POST'|'GET'|'HEAD'|'PUT'|'PATCH'|'PUTALREADYFORMATED'|'POSTALREADYFORMATED'|'PATCHALREADYFORMATED'|'DELETE'	$postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PATCH', 'PUTALREADYFORMATED', 'POSTALREADYFORMATED', 'PATCHALREADYFORMATED', 'DELETE'
- * @param	string    	$param			    Parameters of URL (x=value1&y=value2) or may be a formatted content with $postorget='PUTALREADYFORMATED'
- * @param	int<0,1>  	$followlocation		0=Do not follow, 1=Follow location.
- * @param	string[]  	$addheaders			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
- * @param	string[]  	$allowedschemes		List of schemes that are allowed ('http' + 'https' only by default)
- * @param	int<0,2>  	$localurl			0=Only external URL are possible, 1=Only local URL, 2=Both external and local URL are allowed.
- * @param	int<-1,1>  	$ssl_verifypeer		-1=Auto (no ssl check on dev, check on prod), 0=No ssl check, 1=Always ssl check
- * @param	int			$timeoutconnect		Timeout connect
- * @param	int			$timeoutresponse	Timeout response
- * @param	array<int, mixed>	$otherCurlOptions	Array of other curl options to set. Example: array(CURLOPT_SSL_VERIFYPEER => false)
+ * @param	string|array<mixed,mixed>	$param			    Parameters of URL (x=value1&y=value2 urlencoded even with POST) or may be a formatted content with $postorget='POSTALREADYFORMATED/PUTALREADYFORMATED'
+ * @param	int<0,1>  					$followlocation		0=Do not follow, 1=Follow location (301, 302, 303, 307, 308; 5 hops max). Credential headers are not sent to another host and a POST becomes a GET on 301/302/303, as libcurl does.
+ * @param	string[]  					$addheaders			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
+ * @param	string[]  					$allowedschemes		List of schemes that are allowed ('http' + 'https' only by default)
+ * @param	int<0,2>  					$localurl			0=Only external URL are possible, 1=Only local URL, 2=Both external and local URL are allowed.
+ * @param	int<-1,1>  					$ssl_verifypeer		-1=Auto (no ssl check on dev, check on prod), 0=No ssl check, 1=Always ssl check
+ * @param	int							$timeoutconnect		Timeout for connection time
+ * @param	int							$timeoutresponse	Timeout for total time including connection
+ * @param	array<int,mixed>|null		$otherCurlOptions	Array of other curl options to set. Example: array(CURLOPT_SSL_VERIFYPEER => false)
+ * @param	string						$morelogsuffix		If set to a string '_suffix', some logs are also added into the file "dolibarr_suffix.log"
  * @return	array{http_code:int,content:string,curl_error_no:int,curl_error_msg:string}    Returns an associative array containing the response from the server array('http_code'=>http response code, 'content'=>response, 'curl_error_no'=>errno, 'curl_error_msg'=>errmsg...)
  */
-function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 1, $addheaders = array(), $allowedschemes = array('http', 'https'), $localurl = 0, $ssl_verifypeer = -1, $timeoutconnect = 0, $timeoutresponse = 0, $otherCurlOptions = array())
+function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 1, $addheaders = array(), $allowedschemes = array('http', 'https'), $localurl = 0, $ssl_verifypeer = -1, $timeoutconnect = 0, $timeoutresponse = 0, $otherCurlOptions = array(), $morelogsuffix = '')
 {
 	// Get global variables for proxy use
 	$USE_PROXY = getDolGlobalInt('MAIN_PROXY_USE');
@@ -54,9 +57,22 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	$PROXY_USER = getDolGlobalString('MAIN_PROXY_USER');
 	$PROXY_PASS = getDolGlobalString('MAIN_PROXY_PASS');
 
-	dol_syslog("getURLContent postorget=".$postorget." URL=".$url." param=".$param);
+	dol_syslog("getURLContent postorget=".$postorget." URL=".maskSecretsForLog($url));
+	if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
+		dol_syslog("getURLContent postorget=".$postorget." URL=".$url." json_encode(param)=".json_encode($param), LOG_DEBUG, 0, '_curl');
+	}
+	if ($morelogsuffix) {
+		dol_syslog("getURLContent postorget=".$postorget." URL=".$url." json_encode(param)=".json_encode($param), LOG_DEBUG, 0, $morelogsuffix);
+	}
 
 	if (!function_exists('curl_init')) {
+		if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
+			dol_syslog("getURLContent PHP curl library must be installed", LOG_DEBUG, 0, '_curl');
+		}
+		if ($morelogsuffix) {
+			dol_syslog("getURLContent PHP curl library must be installed", LOG_DEBUG, 0, $morelogsuffix);
+		}
+
 		return array('http_code' => 500, 'content' => '', 'curl_error_no' => 1, 'curl_error_msg' => 'PHP curl library must be installed');
 	}
 
@@ -67,7 +83,9 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	 print $USE_PROXY."-".$gv_ApiErrorURL."<br>";
 	 print $nvpStr;
 	 exit;*/
-	curl_setopt($ch, CURLOPT_VERBOSE, true);
+	// The verbose output goes to the stderr of the process (Apache error log, output of a cron job...) and includes the request
+	// headers with their credentials, so it is only enabled together with the curl debug log.
+	curl_setopt($ch, CURLOPT_VERBOSE, getDolGlobalInt('MAIN_CURL_DEBUG') ? true : false);
 	curl_setopt($ch, CURLOPT_USERAGENT, 'Dolibarr geturl function');	// set the Dolibarr user agent name
 
 	// We use @ here because this may return warning if safe mode is on or open_basedir is on (following location is forbidden when safe mode is on).
@@ -128,15 +146,22 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 				$redir_list["FTPS"] = 1;
 			}
 		}
+	} else {
+		return array('http_code' => 500, 'content' => '', 'curl_error_no' => 1, 'curl_error_msg' => 'Parameter allowedschemes of getURLContent must be an array of protocol schemes');
 	}
 
 	$newtimeoutconnect = ($timeoutconnect ? $timeoutconnect : getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 5));
 	$newtimeoutresponse = ($timeoutresponse ? $timeoutresponse : getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
 
-	dol_syslog("getURLContent newtimeoutconnect=".$newtimeoutconnect." newtimeoutresponse=".$newtimeoutresponse);
+	if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
+		dol_syslog("getURLContent newtimeoutconnect=".$newtimeoutconnect." newtimeoutresponse=".$newtimeoutresponse, LOG_DEBUG, 0, '_curl');
+	}
+	if ($morelogsuffix) {
+		dol_syslog("getURLContent newtimeoutconnect=".$newtimeoutconnect." newtimeoutresponse=".$newtimeoutresponse, LOG_DEBUG, 0, $morelogsuffix);
+	}
 
-	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $newtimeoutconnect);
-	curl_setopt($ch, CURLOPT_TIMEOUT, $newtimeoutresponse);
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $newtimeoutconnect);	// Timeout for connection
+	curl_setopt($ch, CURLOPT_TIMEOUT, $newtimeoutresponse);			// Timeout for total time including connection
 
 	// limit size of downloaded files.
 	$maxsize = getDolGlobalInt('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED');
@@ -149,6 +174,31 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	//curl_setopt($ch, CURLOPT_SAFE_UPLOAD, true);	// PHP 5.5
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // We want response
+
+	// Accept a compressed response (gzip, deflate, br... whatever this libcurl supports): libcurl decodes it, so 'content' is the
+	// plain body. Note that the response headers (HEAD, MAIN_CURL_GET_RESPONSE_HEADER) still show the Content-Encoding.
+	curl_setopt($ch, CURLOPT_ENCODING, '');
+
+	$responsebuffer = '';
+	$responsetoolarge = false;
+	if ($maxsize) {
+		// CURLOPT_MAXFILESIZE counts the bytes received on the wire, so a compressed response can decode into much more than the
+		// limit: the decoded bytes are counted too, and the transfer is aborted as soon as they exceed the limit.
+		/**
+		 * @param	CurlHandle|resource	$curl	The curl handle (a resource before PHP 8)
+		 * @param	string				$data	Chunk of decoded body (and of header when CURLOPT_HEADER is set)
+		 * @return	int							Number of bytes handled, less than strlen($data) aborts the transfer
+		 */
+		$writefunction = function ($curl, $data) use (&$responsebuffer, &$responsetoolarge, $maxsize) {
+			if (strlen($responsebuffer) + strlen($data) > $maxsize * 1024) {
+				$responsetoolarge = true;
+				return 0;	// Less than strlen($data): libcurl aborts the transfer with CURLE_WRITE_ERROR (23)
+			}
+			$responsebuffer .= $data;
+			return strlen($data);
+		};
+		curl_setopt($ch, CURLOPT_WRITEFUNCTION, $writefunction);
+	}
 	if ($postorget == 'POST') {
 		curl_setopt($ch, CURLOPT_POST, true); // POST
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $param); // Setting param x=a&y=z as POST fields
@@ -184,6 +234,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	} elseif ($postorget == 'HEAD') {
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'HEAD'); // HTTP request is 'HEAD'
 		curl_setopt($ch, CURLOPT_NOBODY, true);
+		curl_setopt($ch, CURLOPT_HEADER, true);
 	} elseif ($postorget == 'DELETE') {
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE'); // POST
 	} else {
@@ -192,7 +243,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	//if USE_PROXY constant set at begin of this method.
 	if ($USE_PROXY) {
-		dol_syslog("getURLContent set proxy to ".$PROXY_HOST.":".$PROXY_PORT." - ".$PROXY_USER.":".$PROXY_PASS);
+		dol_syslog("getURLContent set proxy to ".$PROXY_HOST.":".$PROXY_PORT." - ".$PROXY_USER.":".($PROXY_PASS ? '****' : ''));
 		//curl_setopt ($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP); // Curl 7.10
 		curl_setopt($ch, CURLOPT_PROXY, $PROXY_HOST.":".$PROXY_PORT);
 		if ($PROXY_USER) {
@@ -201,7 +252,19 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	}
 
 	if (is_array($otherCurlOptions)) {
+		// Options that would bypass the anti SSRF check done below on each hop (redirections are followed by hand so that every hop
+		// is checked, and the connection is pinned to the IP that was checked): they are ignored whatever the caller asks.
+		$forbiddencurloptions = [CURLOPT_FOLLOWLOCATION, CURLOPT_URL, CURLOPT_RESOLVE, CURLOPT_PROXY, CURLOPT_PROTOCOLS, CURLOPT_REDIR_PROTOCOLS];
+		foreach (['CURLOPT_CONNECT_TO', 'CURLOPT_UNIX_SOCKET_PATH', 'CURLOPT_ABSTRACT_UNIX_SOCKET', 'CURLOPT_PRE_PROXY'] as $constname) {
+			if (defined($constname)) {
+				$forbiddencurloptions[] = constant($constname);
+			}
+		}
 		foreach ($otherCurlOptions as $option => $value) {
+			if (in_array($option, $forbiddencurloptions, true)) {
+				dol_syslog("getURLContent curl option ".$option." can not be set with otherCurlOptions, ignored", LOG_WARNING);
+				continue;
+			}
 			curl_setopt($ch, $option, $value);
 		}
 	}
@@ -213,6 +276,9 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	do {
 		if ($maxRedirection < 1) {
+			if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
+				dol_syslog("getURLContent http_code=400 Maximum number of redirections reached", LOG_DEBUG, 0, '_curl');
+			}
 			return array('http_code' => 400, 'content' => 'Maximum number of redirections reached', 'curl_error_no' => 1, 'curl_error_msg' => 'Maximum number of redirections reached');
 		}
 
@@ -220,34 +286,45 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 		// Parse $newUrl
 		$newUrlArray = parse_url($newUrl);
-		$hosttocheck = $newUrlArray['host'];
+		if (!is_array($newUrlArray) || (empty($newUrlArray['host']) && empty($newUrlArray['path']))) {
+			// parse_url() returns false on a malformed URL (like 'http:///path')
+			return array('http_code' => 400, 'content' => '', 'curl_error_no' => 1, 'curl_error_msg' => 'Bad URL '.$newUrl);
+		}
+		$hosttocheck = !empty($newUrlArray['host']) ? $newUrlArray['host'] : $newUrlArray['path'];
 		$hosttocheck = str_replace(array('[', ']'), '', $hosttocheck); // Remove brackets of IPv6
 
 		// Deny some reserved host names
-		if (in_array($hosttocheck, array('metadata.google.internal'))) {
+		if (in_array(strtolower($hosttocheck), array('metadata.google.internal'))) {
 			$info['http_code'] = 400;
 			$info['content'] = 'Error bad hostname '.$hosttocheck.' (Used by Google metadata). This value for hostname is not allowed.';
+			if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
+				dol_syslog("getURLContent http_code=400 ".$info['content'], LOG_DEBUG, 0, '_curl');
+			}
 			return array('http_code' => 400, 'content' => $info['content'], 'curl_error_no' => 1, 'curl_error_msg' => $info['content']);
 		}
 
+		// Discard a host name that is a plain integer (decimal like 2130706433, hex like 0x7f000001, octal like 017700000001): the
+		// gethostbyname() fallback of resolveDns() would turn it into an IP (127.0.0.1 for these three) while it is not a host name.
+		// Only integers are refused: a single label host name made of hex letters, like 'db' or 'cafe', is a legitimate host name.
+		if (preg_match('/^(0x[0-9a-f]+|[0-9]+)$/i', $hosttocheck)) {
+			return array('http_code' => 400, 'content' => '', 'curl_error_no' => 1, 'curl_error_msg' => 'Host is a numeric address that is not allowed');
+		}
+
 		// Clean host name $hosttocheck to convert it into an IP $iptocheck
-		if (in_array($hosttocheck, array('localhost', 'localhost.domain'))) {
+		if (filter_var($hosttocheck, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6)) {
+			$iptocheck = $hosttocheck;	// Already an IP (v4, or v6 without its brackets), nothing to resolve
+		} elseif (in_array($hosttocheck, array('localhost', 'localhost.domain'))) {
 			$iptocheck = '127.0.0.1';
 		} elseif (in_array($hosttocheck, array('ip6-localhost', 'ip6-loopback'))) {
 			$iptocheck = '::1';
 		} else {
 			// Resolve $hosttocheck to get the IP $iptocheck
-			if (function_exists('gethostbyname')) {
-				$iptocheck = gethostbyname($hosttocheck);
-			} else {
-				$iptocheck = $hosttocheck;
-			}
-			// TODO Resolve ip v6
+			$iptocheck = resolveDns($hosttocheck);
 		}
 
-		// Check $iptocheck is an IP (v4 or v6), if not clear value.
-		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6)) {	// This is not an IP, we clean data
-			$iptocheck = '0'; //
+		// Check $iptocheck is an IP (v4 or v6). resolveDns() returns the host name itself when the resolution failed.
+		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6)) {	// This is not an IP
+			return array('http_code' => 400, 'content' => '', 'curl_error_no' => 1, 'curl_error_msg' => 'Host '.$hosttocheck.' can not be resolved into an IP');
 		}
 
 		if ($iptocheck) {
@@ -255,14 +332,20 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 			if ($tmpresult) {
 				$info['http_code'] = 400;
 				$info['content'] = $tmpresult;
+				if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
+					dol_syslog("getURLContent http_code=400 ".$info['content'], LOG_DEBUG, 0, '_curl');
+				}
 				return array('http_code' => 400, 'content' => $tmpresult, 'curl_error_no' => 1, 'curl_error_msg' => $tmpresult);
 			}
 		}
 
 		if ($iptocheck) {
 			// Set CURLOPT_CONNECT_TO so curl will not try another resolution that may give a different result. Possible only on PHP v7+
+			// Format is "host:port:ip:port". Port fields MUST use %s, not %d: an empty port (default 80/443) must stay empty so it matches "any port" and pins to the same port. With %d the empty string becomes 0 ("host:0:ip:0"), never matches the real port, and libcurl ignores the pin, re-opening a DNS-rebinding SSRF bypass.
 			if (defined('CURLOPT_CONNECT_TO')) {
-				$connect_to = array(sprintf("%s:%d:%s:%d", $newUrlArray['host'], empty($newUrlArray['port']) ? '' : $newUrlArray['port'], $iptocheck, empty($newUrlArray['port']) ? '' : $newUrlArray['port']));
+				// An IPv6 must be in brackets, like in a URL, else libcurl can not tell it from the port separators ("host:80:::1:80" fails with "No valid port number in connect to host string").
+				$ipforconnect = (strpos($iptocheck, ':') !== false) ? '['.$iptocheck.']' : $iptocheck;
+				$connect_to = array(sprintf("%s:%s:%s:%s", $newUrlArray['host'], empty($newUrlArray['port']) ? '' : $newUrlArray['port'], $ipforconnect, empty($newUrlArray['port']) ? '' : $newUrlArray['port']));
 				//var_dump($newUrlArray);
 				//var_dump($connect_to);
 				curl_setopt($ch, CURLOPT_CONNECT_TO, $connect_to);
@@ -280,30 +363,58 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		*/
 
 		// Getting response from server
+		$responsebuffer = '';
+		$responsetoolarge = false;
 		$response = curl_exec($ch);		// return false on error, result on success
+		if ($maxsize) {
+			// With a write function, curl_exec() returns true instead of the response: the response is what the function collected
+			$response = ($response === false || $responsetoolarge) ? false : $responsebuffer;
+		}
 
 		$info = curl_getinfo($ch); // Reading of request must be done after sending request
 		$http_code = $info['http_code'];
 
-		if ($followlocation && ($http_code == 301 || $http_code == 302 || $http_code == 303 || $http_code == 307)) {
+		if ($followlocation && in_array($http_code, [301, 302, 303, 307, 308]) && !empty($info['redirect_url'])) {
 			$newUrl = $info['redirect_url'];
 			$maxRedirection--;
-			// TODO Use $info['local_ip'] and $info['primary_ip'] ?
+
+			// Redirections are followed by hand, so that every hop goes through the anti SSRF check above, which means the options set
+			// before this loop are still there for the next hop. When libcurl follows a redirection itself, it does not send the
+			// Authorization header to another host and it turns a POST into a GET on 301/302/303: do the same here.
+			$currenthost = (is_array($newUrlArray) && !empty($newUrlArray['host'])) ? $newUrlArray['host'] : '';
+			$nexthost = (string) parse_url($newUrl, PHP_URL_HOST);
+			if (strtolower($nexthost) != strtolower($currenthost)) {
+				// The credentials were meant for the host that was called, not for the one it redirects to.
+				$addheaders = removeCredentialHeaders($addheaders);
+				curl_setopt($ch, CURLOPT_HTTPHEADER, $addheaders);
+			}
+			if (in_array($http_code, [301, 302, 303]) && !in_array($postorget, ['GET', 'HEAD'])) {
+				// Same as libcurl and browsers: the redirected request is a GET without the body of the POST/PUT/PATCH.
+				$postorget = 'GET';
+				curl_setopt($ch, CURLOPT_CUSTOMREQUEST, null);
+				curl_setopt($ch, CURLOPT_HTTPGET, true);
+			}
 			continue;
 		}
 
 		$http_code = 0;
-	} while ($http_code);
+	} while ($http_code);	// Stop if http_code is 0
 
 	$request = curl_getinfo($ch, CURLINFO_HEADER_OUT); // Reading of request must be done after sending request
 
-	dol_syslog("getURLContent request=".$request);
+	dol_syslog("getURLContent request without content body=".maskSecretsForLog((string) $request));
 	if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
 		// This may contains binary data, so we don't output response by default.
-		dol_syslog("getURLContent request=".$request, LOG_DEBUG, 0, '_curl');
-		dol_syslog("getURLContent response =".$response, LOG_DEBUG, 0, '_curl');
+		dol_syslog("getURLContent request without body=".$request, LOG_DEBUG, 0, '_curl');
+		dol_syslog("getURLContent response=".$response, LOG_DEBUG, 0, '_curl');
 	}
-	dol_syslog("getURLContent response size=".strlen($response)); // This may contains binary data, so we don't output it
+	if ($morelogsuffix) {
+		// This may contains binary data, so we don't output response by default.
+		dol_syslog("getURLContent request without body=".$request, LOG_DEBUG, 0, $morelogsuffix);
+		dol_syslog("getURLContent response=".$response, LOG_DEBUG, 0, $morelogsuffix);
+	}
+
+	dol_syslog("getURLContent response size=".strlen($response)); // This $response may contains binary data, so we don't output it
 
 	$rep = array();
 	if (curl_errno($ch)) {
@@ -317,8 +428,20 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		$rep['http_code'] = 0;
 		$rep['curl_error_no'] = curl_errno($ch);
 		$rep['curl_error_msg'] = curl_error($ch);
+		if ($responsetoolarge) {
+			// The transfer was aborted by our write function (error 23): report it like libcurl does for its own size check
+			$rep['curl_error_no'] = 63;	// CURLE_FILESIZE_EXCEEDED
+			$rep['curl_error_msg'] = 'Maximum file size exceeded';
+		}
 
 		dol_syslog("getURLContent response array is ".implode(',', $rep));
+
+		if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
+			dol_syslog("getURLContent curl_error_no=".$rep['curl_error_no']." curl_error_msg=".$rep['curl_error_msg'], LOG_DEBUG, 0, '_curl');
+		}
+		if ($morelogsuffix) {
+			dol_syslog("getURLContent curl_error_no=".$rep['curl_error_no']." curl_error_msg=".$rep['curl_error_msg'], LOG_DEBUG, 0, $morelogsuffix);
+		}
 	} else {
 		//$info = curl_getinfo($ch);
 
@@ -333,7 +456,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		// Add more keys to $rep
 		if ($response) {
 			$rep['content'] = (string) $response;
-			if (getDolGlobalInt('MAIN_CURL_GET_RESPONSE_HEADER')) { // In this case, response contains header + body
+			if ($postorget == 'HEAD' || getDolGlobalInt('MAIN_CURL_GET_RESPONSE_HEADER')) { // In this case, response contains header + body
 				$rep['header'] = substr($rep['content'], 0, intval($rep['header_size']));
 				$rep['content'] = substr($rep['content'], intval($rep['header_size']));
 			}
@@ -354,6 +477,138 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 }
 
 /**
+ * Remove, from a list of HTTP request headers, the ones that carry a credential (Authorization, Cookie, API key headers...).
+ * Used by getURLContent() when a redirection leads to another host: the credentials were meant for the host that was called,
+ * not for the one it redirects to.
+ *
+ * @param	string[]	$headers	Array of header lines, like array('Accept: application/json', 'Authorization: Bearer xxx')
+ * @return	string[]				Same array without the credential headers
+ */
+function removeCredentialHeaders($headers)
+{
+	if (!is_array($headers)) {
+		return [];
+	}
+
+	$credentialheaders = getCredentialHeaderNames();
+
+	$ret = [];
+	foreach ($headers as $header) {
+		$name = strtolower(trim((string) strstr((string) $header, ':', true)));
+		if (in_array($name, $credentialheaders)) {
+			continue;
+		}
+		$ret[] = $header;
+	}
+
+	return $ret;
+}
+
+/**
+ * Return the names (lower case) of the HTTP request headers that carry a credential.
+ *
+ * @return	string[]	Array of header names
+ */
+function getCredentialHeaderNames()
+{
+	return ['authorization', 'proxy-authorization', 'cookie', 'x-api-key', 'api-key', 'apikey', 'x-auth-token', 'x-access-token', 'x-goog-api-key', 'dolapikey', 'client-secret'];
+}
+
+/**
+ * Mask the secrets (API keys, tokens, passwords...) found into an URL or into the header of a HTTP request, so it can be
+ * written into the logs. Only the first 3 characters of each secret are kept.
+ * Example: 'https://maps.googleapis.com/maps/api/geocode/json?address=x&key=AIzaSyXXX' => '...&key=AIz...'
+ *
+ * @param	string	$string		URL, or header of a HTTP request (one header per line)
+ * @return	string				Same string with secrets masked
+ */
+function maskSecretsForLog($string)
+{
+	// Parameters of the query string (into an URL or into the first line of a request header)
+	$string = (string) preg_replace('/([?&](?:[a-z0-9_.-]*(?:key|token|secret|password|passwd|pwd|signature)|pass)=[^&#\s]{0,3})[^&#\s]*/i', '$1...', $string);
+
+	// Header lines carrying a credential
+	$headernames = implode('|', array_map(function (string $name): string {
+		return preg_quote($name, '/');
+	}, getCredentialHeaderNames()));
+	$string = (string) preg_replace('/^((?:'.$headernames.')[ \t]*:[ \t]*[^\r\n]{0,3})[^\r\n]*/im', '$1...', $string);
+
+	return $string;
+}
+
+
+/**
+ * Resolve a hostname into its IP
+ *
+ * @param	string	$hosttocheck		Hostname to check
+ * @return	string						First ip found (IP v4 or IP v6). If resolution fails, the $hosttocheck is returned.
+ */
+function resolveDns($hosttocheck)
+{
+	$iptocheck = null;
+
+	// Resolve $hosttocheck to get the IP $iptocheck
+	if (function_exists('dns_get_record') && !getDolGlobalString('MAIN_DISABLE_DNS_GET_RECORD_FOR_IP_RESOLUTION')) {
+		try {
+			// A failed resolution (host not found, DNS server failure) raises a PHP warning, that we silence: the caller handles the "not resolved" case.
+			// The try/catch is still needed when an error handler converts warnings into exceptions (the @ does not prevent that).
+			$records = @dns_get_record($hosttocheck, DNS_A + DNS_AAAA);
+
+			if (!empty($records[0]) && is_array($records[0]) && !empty($records[0]['ip'])) {			// We take the first one
+				$iptocheck = $records[0]['ip'];
+			} elseif (!empty($records[0]) && is_array($records[0]) && !empty($records[0]['ipv6'])) {	// We take the first one
+				$iptocheck = $records[0]['ipv6'];
+			}
+		} catch (Exception $e) {
+			// Nothing done
+		}
+	} elseif (function_exists('gethostbyname')) {	// resolve only ipv4
+		$iptocheck = gethostbyname($hosttocheck);
+	} else {
+		$iptocheck = $hosttocheck;
+	}
+
+	if ($iptocheck === null) {
+		$iptocheck = $hosttocheck;
+	}
+	return $iptocheck;
+}
+
+
+/**
+ * Return the IPv4 address carried by an IPv6 address, if any (the IPv6 address is then a way to reach this IPv4 address).
+ * Covers IPv4-mapped ::ffff:a.b.c.d, IPv4-compatible ::a.b.c.d, NAT64 64:ff9b::/96 and 6to4 2002::/16.
+ *
+ * @param	string	$ip		IP to analyse
+ * @return	string			The IPv4 address (like '127.0.0.1') or '' if $ip is not an IPv6 address that carries an IPv4 address
+ */
+function getIPv4EmbeddedInIPv6($ip)
+{
+	if (strpos($ip, ':') === false) {
+		return '';
+	}
+	// Native strlen()/substr() are used on purpose: $packed is binary data, not a text string.
+	$packed = @inet_pton($ip);
+	if ($packed === false || strlen($packed) != 16) {
+		return '';
+	}
+
+	$ipv4bytes = '';
+	if (substr($packed, 0, 10) === str_repeat("\x00", 10) && substr($packed, 10, 2) === "\xff\xff") {
+		$ipv4bytes = substr($packed, 12, 4);	// ::ffff:0:0/96 IPv4-mapped
+	} elseif (substr($packed, 0, 12) === str_repeat("\x00", 12) && substr($packed, 12, 3) !== str_repeat("\x00", 3)) {
+		$ipv4bytes = substr($packed, 12, 4);	// ::/96 IPv4-compatible (:: and ::1 are excluded, filter_var() knows them as reserved)
+	} elseif (substr($packed, 0, 12) === "\x00\x64\xff\x9b".str_repeat("\x00", 8)) {
+		$ipv4bytes = substr($packed, 12, 4);	// 64:ff9b::/96 NAT64
+	} elseif (substr($packed, 0, 2) === "\x20\x02") {
+		$ipv4bytes = substr($packed, 2, 4);		// 2002::/16 6to4
+	}
+
+	return ($ipv4bytes !== '' ? (string) inet_ntop($ipv4bytes) : '');
+}
+
+
+/**
  * Is IP allowed
  *
  * @param 	string	$iptocheck		IP to check
@@ -362,10 +617,23 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
  */
 function isIPAllowed($iptocheck, $localurl)
 {
+	// An IPv6 that carries an IPv4 (like ::ffff:127.0.0.1) reaches this IPv4, but filter_var() does not see it as private or reserved.
+	// So checks are done on the carried IPv4.
+	$embeddedipv4 = getIPv4EmbeddedInIPv6($iptocheck);
+	if ($embeddedipv4 !== '') {
+		$iptocheck = $embeddedipv4;
+	}
+
 	if ($localurl == 0) {	// Only external url allowed (dangerous, may allow to get malware)
 		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
-			// Deny ips like 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 0.0.0.0/8, 169.254.0.0/16, 127.0.0.0/8 et 240.0.0.0/4, ::1/128, ::/128, ::ffff:0:0/96, fe80::/10...
+			// Deny ips like 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 0.0.0.0/8, 169.254.0.0/16, 127.0.0.0/8 et 240.0.0.0/4, ::1/128, ::/128, fe80::/10...
 			$errormsg = 'Error bad hostname IP (private or reserved range). Must be an external URL.';
+			return $errormsg;
+		}
+		// Ranges not known as reserved by filter_var(): shared address space 100.64.0.0/10 (carriers, clouds) and benchmarking 198.18.0.0/15.
+		$iplong = ip2long($iptocheck);
+		if ($iplong !== false && ((($iplong & 0xFFC00000) === 0x64400000) || (($iplong & 0xFFFE0000) === 0xC6120000))) {
+			$errormsg = 'Error bad hostname IP (shared or benchmarking range). Must be an external URL.';
 			return $errormsg;
 		}
 		if (!empty($_SERVER["SERVER_ADDR"]) && $iptocheck == $_SERVER["SERVER_ADDR"]) {
@@ -392,7 +660,13 @@ function isIPAllowed($iptocheck, $localurl)
 	// Common check on ip (local and external)
 	// See list on https://tagmerge.com/gist/a7b9d57ff8ec11d63642f8778609a0b8
 	// Not evasive url that ar enot IP are excluded by test on IP v4/v6 validity.
+	// The link-local ones are already refused above when only external URLs are allowed, but not when local URLs are ($localurl = 1
+	// or 2), and 168.63.129.16 is in the public address space anyway.
 	$arrayofmetadataserver = array(
+		'169.254.169.254' => 'AWS, GCP, Azure, OpenStack, DigitalOcean...',
+		'fd00:ec2::254' => 'AWS (IPv6)',
+		'169.254.170.2' => 'AWS ECS',
+		'168.63.129.16' => 'Azure',
 		'100.100.100.200' => 'Alibaba',
 		'192.0.0.192' => 'Oracle',
 		'192.80.8.124' => 'Packet',
@@ -416,6 +690,7 @@ function isIPAllowed($iptocheck, $localurl)
  * @param	string	  $url 				    Full URL or Email.
  * @param	int	 	  $mode					0=return 'mydomain', 1=return 'mydomain.com', 2=return 'abc.mydomain.com'
  * @return	string						    Returns domaine name
+ * @see getRootURLFromURL()
  */
 function getDomainFromURL($url, $mode = 0)
 {
@@ -471,6 +746,7 @@ function getDomainFromURL($url, $mode = 0)
  *
  * @param	string	  $url 				    Full URL.
  * @return	string						    Returns root url
+ * @see getDomainFromURL()
  */
 function getRootURLFromURL($url)
 {

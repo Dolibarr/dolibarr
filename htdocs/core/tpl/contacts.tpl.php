@@ -2,7 +2,7 @@
 /* Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015-2016  Charlie BENKE 	        <charlie@patas-monkey.com>
- * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2021-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					    <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Solution Libre SAS	<contact@solution-libre.fr>
  *
@@ -26,14 +26,17 @@
  * $preselectedtypeofcontact may be defined or not
  */
 /**
- * @var ?CommonObject $object
- * @var ?CommonObject $objectsrc
  * @var DoliDB $db
  * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var ?CommonObject $object
+ * @var ?CommonObject $objectsrc
  * @var ?string $permission
+ * @var ?int $withproject
+ * @®ar ?int $userAlreadySelected
  */
 '
 @phan-var-force ?CommonObject $object
@@ -285,11 +288,13 @@ foreach (array('internal', 'external') as $source) {
 		}
 
 		if ($contact['source'] == 'internal') {
-			$entry->status = $contact['statuscontact'];
-			$entry->status_html = $userstatic->LibStatut($contact['statuscontact'], 3);
+			$entry->status = $contact['statuscontact'] ? $contact['status'] : 0;		// statuscontact=status of contact, status=status of link
+			$entry->status_html = $userstatic->LibStatut($entry->status == 4 ? 1 : 0, 3);
+			$entry->status_html = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $object->id).'&action=swapstatut&token='.newToken().'&ligne='.((int) $entry->id).(!empty($withproject) ? '&withproject=1' : '').'">'.$entry->status_html.'</a>';
 		} elseif ($contact['source'] == 'external') {
-			$entry->status = $contact['statuscontact'];
-			$entry->status_html = $contactstatic->LibStatut($contact['statuscontact'], 3);
+			$entry->status = $contact['statuscontact'] ? $contact['status'] : 0;		// statuscontact=status of contact, status=status of link
+			$entry->status_html = $contactstatic->LibStatut($entry->status == 4 ? 1 : 0, 3);
+			$entry->status_html = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $object->id).'&action=swapstatut&token='.newToken().'&ligne='.((int) $entry->id).(!empty($withproject) ? '&withproject=1' : '').'">'.$entry->status_html.'</a>';
 		}
 
 		$list[] = $entry;
@@ -325,7 +330,7 @@ $param = 'id='.$object->id.'&mainmenu=home';
 
 // Show list of contact links
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="action" value="list">';
@@ -358,7 +363,7 @@ foreach ($list as $entry) {
 		print ($tmpuser->id > 0 ? img_picto($langs->trans("ThisContactHasAUser", $tmpuser->getFullName($langs), $entry->contact_name), 'info') : '');
 	}
 	print '</td>';
-	print '<td class="tdoverflowmax200" data-type_id="' . ((int) $entry->type_id) . '" data-type="' . dol_escape_htmltag($entry->type) . '">'.dol_escape_htmltag($entry->type).'</td>';
+	print '<td class="tdoverflowmax200" data-type_id="' . ((int) $entry->type_id) . '" data-type="' . dol_escape_htmltag($entry->type) . '">'.dol_escape_htmltag($langs->trans($entry->type)).'</td>';
 	print '<td class="tdoverflowmax200 center" data-status_id="' . ((int) $entry->status) . '">'.$entry->status_html.'</td>';
 
 	if ($permission) {

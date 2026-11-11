@@ -22,12 +22,12 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-/* Inspire de PDF_Label
+/* Inspired by PDF_Label
  * PDF_Label - PDF label editing
  * @package PDF_Label
  * @author Laurent PASSEBECQ <lpasseb@numericable.fr>
  * @copyright 2003 Laurent PASSEBECQ
- * disponible ici : http://www.fpdf.org/fr/script/script29.php
+ * available here : http://www.fpdf.org/fr/script/script29.php
  */
 
 //-------------------------------------------------------------------
@@ -60,7 +60,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
 
 /**
- *	Class to generate stick sheet with format Avery or other personalised
+ *	Class to generate stick sheet with format Avery or other personalised format
  */
 abstract class CommonStickerGenerator extends CommonDocGenerator
 {
@@ -70,50 +70,104 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	public $db;
 
 	/**
-	 * @var string
+	 * @var string Code of format
 	 */
-	public $code; // Code of format
+	public $code;
 
 	// phpcs:disable PEAR.NamingConventions.ValidVariableName.PublicUnderscore
 	// protected
-	// Name of stick
-	protected $_Avery_Name = '';
-	// Code of stick
-	protected $_Avery_Code = '';
-	// Marge de gauche de l'etiquette
-	protected $_Margin_Left = 0;
-	// marge en haut de la page avant la premiere etiquette
-	protected $_Margin_Top = 0;
-	// Espace horizontal entre 2 bandes d'etiquettes
-	protected $_X_Space = 0;
-	// Espace vertical entre 2 bandes d'etiquettes
-	protected $_Y_Space = 0;
-	// NX Nombre d'etiquettes sur la largeur de la page
-	protected $_X_Number = 0;
-	// NY Number of labels on the height of a page
-	protected $_Y_Number = 0;
-	// width of label
-	protected $_Width = 0;
-	// Height of label
-	protected $_Height = 0;
-	// Height of characters
-	protected $_Char_Size = 10;
-	// Height by default of a line
-	protected $_Line_Height = 10;
-	// Type of metric.. Will help to calculate good values
-	protected $_Metric = 'mm';
-	// Type of metric for the doc..
-	protected $_Metric_Doc = 'mm';
-	protected $_COUNTX = 1;
-	protected $_COUNTY = 1;
-	protected $_First = 1;
 	/**
-	 * @var ?array{name:string,paper-size:'custom'|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:int,custom_x:float,custom_y:float}
+	 * @var string Name of the label sheet
+	 */
+	protected $_Avery_Name = '';
+
+	/**
+	 * @var string Code of the labal sheet
+	 */
+	protected $_Avery_Code = '';
+
+	/**
+	 * @var float Left margin of the label
+	 */
+	protected $_Margin_Left = 0;
+
+	/**
+	 * @var float top margin of the page before the first label
+	 */
+	protected $_Margin_Top = 0;
+
+	/**
+	 * @var float Horizontal space between 2 columns of labels
+	 */
+	protected $_X_Space = 0;
+
+	/**
+	 * @var float Vertical space between 2 rows of labels
+	 */
+	protected $_Y_Space = 0;
+
+	/**
+	 * @var int<0,max> NX Number of labels on the width of the page
+	 */
+	protected $_X_Number = 0;
+
+	/**
+	 * @var int<0,max> NY Number of labels on the height of a page
+	 */
+	protected $_Y_Number = 0;
+
+	/**
+	 * @var float Label Width
+	 */
+	protected $_Width = 0;
+
+	/**
+	 * @var float Label Height
+	 */
+	protected $_Height = 0;
+
+	/**
+	 * @var float Character Height
+	 */
+	protected $_Char_Size = 10;
+
+	/**
+	 * @var float Default Height of a line
+	 */
+	protected $_Line_Height = 10;
+
+	/**
+	 * @var 'in'|'mm' Type of metric.. Will help to calculate good values
+	 */
+	protected $_Metric = 'mm';
+
+	/**
+	 * @var 'in'|'mm' Type of metric for the doc..
+	 */
+	protected $_Metric_Doc = 'mm';
+
+	/**
+	 * @var int<0,max>
+	 */
+	protected $_COUNTX = 1;
+
+	/**
+	 * @var int<0,max>
+	 */
+	protected $_COUNTY = 1;
+
+	/**
+	 * @var int<0,max>
+	 */
+	protected $_First = 1;
+
+	/**
+	 * @var ?array{name:string,paper-size:'custom'|array{0:float,1:float},orientation:string,metric:'in'|'mm',marginLeft:float,marginTop:float,NX:int<0,max>,NY:int<0,max>,SpaceX:float,SpaceY:float,width:float,height:float,font-size:int,custom_x:float,custom_y:float}
 	 */
 	public $Tformat;
 
 	/**
-	 * @var ?array<string,array{name:string,paper-size:'custom'|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:int,custom_x:float,custom_y:float}>
+	 * @var ?array<string,array{name:string,paper-size:'custom'|array{0:float,1:float},orientation:string,metric:'in'|'mm',marginLeft:float,marginTop:float,NX:int<0,max>,NY:int<0,max>,SpaceX:float,SpaceY:float,width:float,height:float,font-size:int,custom_x:float,custom_y:float}>
 	 */
 	public $_Avery_Labels;
 	// phpcs:enable
@@ -181,8 +235,8 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	 * @param 	int		$y1					Y1
 	 * @param 	int		$x2					X2
 	 * @param 	int		$y2					Y2
-	 * @param 	int		$epaisseur			Epaisseur
-	 * @param 	int		$nbPointilles		Nb pointilles
+	 * @param 	int		$epaisseur			Thickness
+	 * @param 	int		$nbPointilles		Nb of dots
 	 * @return	void
 	 */
 	protected function _Pointille(&$pdf, $x1 = 0, $y1 = 0, $x2 = 210, $y2 = 297, $epaisseur = 1, $nbPointilles = 15)
@@ -192,7 +246,7 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 		$length = abs($x1 - $x2);
 		$hauteur = abs($y1 - $y2);
 		if ($length > $hauteur) {
-			$Pointilles = ($length / $nbPointilles) / 2; // taille des pointilles
+			$Pointilles = ($length / $nbPointilles) / 2; // size of the dots
 		} else {
 			$Pointilles = ($hauteur / $nbPointilles) / 2;
 		}
@@ -200,9 +254,9 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 			for ($j = $i; $j <= ($i + $Pointilles); $j++) {
 				if ($j <= ($x2 - 1)) {
 					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-					$pdf->Line($j, $y1, $j + 1, $y1); // on trace le pointill? du haut, point par point
+					$pdf->Line($j, $y1, $j + 1, $y1); // we trace the top dot, point by point
 					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-					$pdf->Line($j, $y2, $j + 1, $y2); // on trace le pointill? du bas, point par point
+					$pdf->Line($j, $y2, $j + 1, $y2); // we trace the bottom dot, point by point
 				}
 			}
 		}
@@ -210,9 +264,9 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 			for ($j = $i; $j <= ($i + $Pointilles); $j++) {
 				if ($j <= ($y2 - 1)) {
 					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-					$pdf->Line($x1, $j, $x1, $j + 1); // on trace le pointill? du haut, point par point
+					$pdf->Line($x1, $j, $x1, $j + 1); // we trace the top dot, point by point
 					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-					$pdf->Line($x2, $j, $x2, $j + 1); // on trace le pointill? du bas, point par point
+					$pdf->Line($x2, $j, $x2, $j + 1); // we trace the bottom dot, point by point
 				}
 			}
 		}
@@ -221,14 +275,14 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * protected Function realisant une croix aux 4 coins des cartes
+	 * protected Function making a cross at the 4 corners of the labels
 	 *
 	 * @param TCPDF $pdf                PDF reference
-	 * @param int   $x1					X1
-	 * @param int	$y1					Y1
-	 * @param int	$x2					X2
-	 * @param int	$y2					Y2
-	 * @param float	$epaisseur			Epaisseur
+	 * @param float $x1					X1
+	 * @param float	$y1					Y1
+	 * @param float	$x2					X2
+	 * @param float	$y2					Y2
+	 * @param float	$epaisseur			Thickness
 	 * @param int	$taille             Size
 	 * @return void
 	 *
@@ -241,16 +295,16 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 
 		$pdf->SetLineWidth($epaisseur);
 		$lg = $taille / 2;
-		// croix haut gauche
+		// top left cross
 		$pdf->Line($x1, $y1 - $lg, $x1, $y1 + $lg);
 		$pdf->Line($x1 - $lg, $y1, $x1 + $lg, $y1);
-		// croix bas gauche
+		// bottom left cross
 		$pdf->Line($x1, $y2 - $lg, $x1, $y2 + $lg);
 		$pdf->Line($x1 - $lg, $y2, $x1 + $lg, $y2);
-		// croix haut droit
+		// top right cross
 		$pdf->Line($x2, $y1 - $lg, $x2, $y1 + $lg);
 		$pdf->Line($x2 - $lg, $y1, $x2 + $lg, $y1);
-		// croix bas droit
+		// bottom right cross
 		$pdf->Line($x2, $y2 - $lg, $x2, $y2 + $lg);
 		$pdf->Line($x2 - $lg, $y2, $x2 + $lg, $y2);
 
@@ -262,8 +316,8 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	 * $src and $dest must be 'in' or 'mm'
 	 *
 	 * @param float     $value  value
-	 * @param string    $src    from ('in' or 'mm')
-	 * @param string    $dest   to ('in' or 'mm')
+	 * @param 'in'|'mm' $src    from ('in' or 'mm')
+	 * @param 'in'|'mm' $dest   to ('in' or 'mm')
 	 * @return float    value   value after conversion
 	 */
 	private function convertMetric($value, $src, $dest)
@@ -305,7 +359,7 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	 * protected Set format
 	 *
 	 * @param    TCPDF     $pdf     PDF reference
-	 * @param    array{metric:string,name:string,code?:string,marginLeft:float,marginTop:float,SpaceX:float,SpaceY:float,NX:int,NY:int,width:float,height:float,font-size:int}	$format  Format
+	 * @param    array{metric:'in'|'mm',name:string,code?:string,marginLeft:float,marginTop:float,SpaceX:float,SpaceY:float,NX:int<0,max>,NY:int<0,max>,width:float,height:float,font-size:int}	$format  Format
 	 * @return   void
 	 */
 	protected function _Set_Format(&$pdf, $format)

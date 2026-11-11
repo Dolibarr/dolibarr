@@ -3,7 +3,9 @@
  * Copyright (C) 2014       Juanjo Menent	        <jmenent@2byte.es>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024       Christophe Battarel	    <christophe@altairis.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Nick Fragoulis
+ * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -174,7 +176,14 @@ class ReceptionLineBatch extends CommonObjectLine
 	 */
 	public $cost_price = 0;
 
-
+	/**
+	 * @var string Supplier ref for the product on this reception line
+	 */
+	public $ref_fourn;
+	/**
+	 * @var int rang of line
+	 */
+	public $rang;
 
 
 	/**
@@ -249,6 +258,18 @@ class ReceptionLineBatch extends CommonObjectLine
 			return -1;
 		}
 
+
+		if (empty($this->rang)) {
+			$this->rang = 0;
+		}
+
+		// Rank to use
+		$ranktouse = $this->rang;
+		if ($ranktouse == -1) {
+			$rangmax = $this->line_max($this->fk_reception);
+			$ranktouse = $rangmax + 1;
+		}
+
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
 		$sql .= "fk_product,";
@@ -264,8 +285,12 @@ class ReceptionLineBatch extends CommonObjectLine
 		$sql .= "batch,";
 		$sql .= "eatby,";
 		$sql .= "sellby,";
+		$sql .= "fk_unit,";
+		$sql .= "description,";
+		$sql .= "rang,";
 		$sql .= "fk_reception,";
-		$sql .= "cost_price";
+		$sql .= "cost_price,";
+		$sql .= "ref_fourn";
 		$sql .= ") VALUES (";
 		$sql .= " ".(!isset($this->fk_product) ? 'NULL' : (int) $this->fk_product).",";
 		$sql .= " ".(!isset($this->fk_element) ? 'NULL' : (int) $this->fk_element).",";
@@ -280,8 +305,12 @@ class ReceptionLineBatch extends CommonObjectLine
 		$sql .= " ".(!isset($this->batch) ? 'NULL' : "'".$this->db->escape($this->batch)."'").",";
 		$sql .= " ".(!isset($this->eatby) || dol_strlen((string) $this->eatby) == 0 ? 'NULL' : "'".$this->db->idate($this->eatby)."'").",";
 		$sql .= " ".(!isset($this->sellby) || dol_strlen((string) $this->sellby) == 0 ? 'NULL' : "'".$this->db->idate($this->sellby)."'").",";
+		$sql .= " ".((int) $this->fk_unit);
+		$sql .= ", '".(empty($this->description) ? '' : $this->db->escape($this->description))."'";
+		$sql .= ", ".((int) $ranktouse).",";
 		$sql .= " ".((int) $this->fk_reception).",";
-		$sql .= " ".(!isset($this->cost_price) ? '0' : (float) $this->cost_price);
+		$sql .= " ".(!isset($this->cost_price) ? '0' : (float) $this->cost_price).",";
+		$sql .= " ".(!isset($this->ref_fourn) ? 'NULL' : "'".$this->db->escape($this->ref_fourn)."'");
 		$sql .= ")";
 
 		$this->db->begin();
@@ -330,6 +359,110 @@ class ReceptionLineBatch extends CommonObjectLine
 
 
 	/**
+	 *	Insert line into database
+	 *
+	 *	@param      User	$user			User that modify
+	 *	@param      int		$notrigger		1 = disable triggers
+	 *	@return     int						Return integer <0 if KO, line id >0 if OK
+	 */
+	public function insert($user = null, $notrigger = 0)
+	{
+		global $langs;
+		$error = 0;
+
+		// Check parameters
+		$origin_id = $this->origin_id;
+		if ($origin_id > 0) {
+			if ((empty($this->fk_reception)
+				|| (empty($this->fk_elementdet))
+				|| !is_numeric($this->qty))) {
+				$langs->load('errors');
+				$this->errors[] = $langs->trans('ErrorMandatoryParametersNotProvided');
+				return -1;
+			}
+		} else {
+			if (empty($this->fk_reception) || !is_numeric($this->qty)) {
+				$langs->load('errors');
+				$this->errors[] = $langs->trans('ErrorMandatoryParametersNotProvided');
+				return -1;
+			}
+		}
+		$this->db->begin();
+
+		if (empty($this->rang)) {
+			$this->rang = 0;
+		}
+
+		// Rank to use
+		$ranktouse = $this->rang;
+		if ($ranktouse == -1) {
+			$rangmax = $this->line_max($this->fk_reception);
+			$ranktouse = $rangmax + 1;
+		}
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."receptiondet_batch (";
+		$sql .= "fk_reception";
+		$sql .= ", fk_entrepot";
+		$sql .= ", fk_elementdet";
+		$sql .= ", fk_product";
+		$sql .= ", element_type";
+		$sql .= ", qty";
+		$sql .= ", fk_unit";
+		$sql .= ", description";
+		$sql .= ", rang";
+		$sql .= ") VALUES (";
+		$sql .= ((int) $this->fk_reception);
+		$sql .= ", ".(empty($this->fk_entrepot) ? 'NULL' : ((int) $this->fk_entrepot));
+		$sql .= ", ".(empty($this->fk_elementdet) ? 'NULL' : ((int) $this->fk_elementdet));
+		$sql .= ", ".(empty($this->fk_product) ? 'NULL' : ((int) $this->fk_product));
+		$sql .= ", '".(empty($this->element_type) ? 'order' : $this->db->escape($this->element_type))."'";
+		$sql .= ", ".price2num($this->qty, 'MS');
+		$sql .= ", ".((int) $this->fk_unit);
+		$sql .= ", '".(empty($this->description) ? '' : $this->db->escape($this->description))."'";
+		$sql .= ", ".((int) $ranktouse);
+		$sql .= ")";
+
+		dol_syslog(get_class($this)."::insert", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."receptiondet_batch");
+
+
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
+
+
+			if (!$error && !$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('LINERECEPTION_INSERT', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+
+			if ($error) {
+				foreach ($this->errors as $errmsg) {
+					dol_syslog(__METHOD__.' '.$errmsg, LOG_ERR);
+					$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+				}
+			}
+		} else {
+			$error++;
+		}
+
+		if ($error) {
+			$this->db->rollback();
+			return -1;
+		} else {
+			$this->db->commit();
+			return $this->id;
+		}
+	}
+
+	/**
 	 *  Load object in memory from the database
 	 *
 	 *  @param	int		$id    	Id object
@@ -351,10 +484,14 @@ class ReceptionLineBatch extends CommonObjectLine
 		$sql .= " t.comment,";
 		$sql .= " t.status,";
 		$sql .= " t.tms,";
-		$sql .= " t.batch,";
+		$sql .= " t.batch, t.cost_price, t.ref_fourn,";
 		$sql .= " t.eatby,";
 		$sql .= " t.sellby,";
-		$sql .= " t.fk_reception";
+		$sql .= " t.fk_unit,";
+		$sql .= " t.description,";
+		$sql .= " t.rang,";
+		$sql .= " t.fk_reception,";
+		$sql .= " t.extraparams";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		if ($ref) {
 			$sql .= " WHERE t.ref = '".$this->db->escape($ref)."'";
@@ -376,7 +513,6 @@ class ReceptionLineBatch extends CommonObjectLine
 				$this->origin_line_id = $obj->fk_elementdet;
 				$this->element_type = $obj->element_type;
 				$this->origin_type = $obj->element_type;
-
 				$this->fk_product = $obj->fk_product;
 				$this->qty = $obj->qty;
 				$this->fk_entrepot = $obj->fk_entrepot;
@@ -386,9 +522,15 @@ class ReceptionLineBatch extends CommonObjectLine
 				$this->status = $obj->status;
 				$this->tms = $this->db->jdate($obj->tms);
 				$this->batch = $obj->batch;
+				$this->cost_price = $obj->cost_price;
+				$this->ref_fourn = $obj->ref_fourn;
 				$this->eatby = $this->db->jdate($obj->eatby);
 				$this->sellby = $this->db->jdate($obj->sellby);
+				$this->description = $obj->description;
+				$this->fk_unit = $obj->fk_unit;
+				$this->rang = $obj->rang;
 				$this->fk_reception = $obj->fk_reception;
+				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				$this->fetch_optionals();
 			}
@@ -444,25 +586,27 @@ class ReceptionLineBatch extends CommonObjectLine
 		}
 
 
-
 		// Check parameters
 		// Put here code to add a control on parameters values
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-		$sql .= " fk_element=".(isset($this->fk_element) ? $this->fk_element : "null").",";
-		$sql .= " fk_product=".(isset($this->fk_product) ? $this->fk_product : "null").",";
-		$sql .= " fk_elementdet=".(isset($this->fk_elementdet) ? $this->fk_elementdet : "null").",";
-		$sql .= " qty=".(isset($this->qty) ? $this->qty : "null").",";
-		$sql .= " fk_entrepot=".(isset($this->fk_entrepot) ? $this->fk_entrepot : "null").",";
-		$sql .= " fk_user=".(isset($this->fk_user) ? $this->fk_user : "null").",";
+		$sql .= " fk_element=".(isset($this->fk_element) ? ((int) $this->fk_element) : "null").",";
+		$sql .= " fk_product=".(isset($this->fk_product) ? ((int) $this->fk_product) : "null").",";
+		$sql .= " fk_elementdet=".(isset($this->fk_elementdet) ? ((int) $this->fk_elementdet) : "null").",";
+		$sql .= " qty=".(isset($this->qty) ? ((float) $this->qty) : "null").",";
+		$sql .= " fk_entrepot=".(isset($this->fk_entrepot) ? ((int) $this->fk_entrepot) : "null").",";
+		$sql .= " fk_user=".(isset($this->fk_user) ? ((int) $this->fk_user) : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " comment=".(isset($this->comment) ? "'".$this->db->escape($this->comment)."'" : "null").",";
-		$sql .= " status=".(isset($this->status) ? $this->status : "null").",";
+		$sql .= " status=".(isset($this->status) ? ((int) $this->status) : "null").",";
 		$sql .= " tms=".(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " batch=".(isset($this->batch) ? "'".$this->db->escape($this->batch)."'" : "null").",";
-		$sql .= " eatby=".(dol_strlen((string) $this->eatby) != 0 ? "'".$this->db->idate($this->eatby)."'" : 'null').",";
-		$sql .= " sellby=".(dol_strlen((string) $this->sellby) != 0 ? "'".$this->db->idate($this->sellby)."'" : 'null');
+		$sql .= " cost_price=".(isset($this->cost_price) ? ((float) $this->cost_price) : "0").",";
+		$sql .= " ref_fourn=".(isset($this->ref_fourn) ? "'".$this->db->escape($this->ref_fourn)."'" : "null").",";
+		$sql .= " eatby=".(dol_strlen((string) $this->eatby) != 0 ? "'".$this->db->idate((int) $this->eatby)."'" : 'null').",";
+		$sql .= " sellby=".(dol_strlen((string) $this->sellby) != 0 ? "'".$this->db->idate((int) $this->sellby)."'" : 'null').",";
+		$sql .= " fk_unit = ".((int) $this->fk_unit);
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -521,16 +665,15 @@ class ReceptionLineBatch extends CommonObjectLine
 
 		$this->db->begin();
 
-		if (!$error) {
-			if (!$notrigger) {
-				// Call triggers
-				$result = $this->call_trigger('LINERECEPTION_DELETE', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
+		if (!$notrigger) {
+			// Call triggers
+			$result = $this->call_trigger('LINERECEPTION_DELETE', $user);
+			if ($result < 0) {
+				$error++;
 			}
+			// End call triggers
 		}
+
 
 		// Remove extrafields
 		if (!$error) {
@@ -616,7 +759,6 @@ class ReceptionLineBatch extends CommonObjectLine
 			return -1;
 		}
 	}
-
 
 
 	/**
@@ -706,6 +848,7 @@ class ReceptionLineBatch extends CommonObjectLine
 		return 1;
 	}
 
+
 	/**
 	 * Load object in memory from the database
 	 *
@@ -735,7 +878,10 @@ class ReceptionLineBatch extends CommonObjectLine
 		$sql .= " t.tms,";
 		$sql .= " t.batch,";
 		$sql .= " t.eatby,";
-		$sql .= " t.sellby";
+		$sql .= " t.sellby,";
+		$sql .= " t.fk_unit,";
+		$sql .= " t.description,";
+		$sql .= " t.rang";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 
 		// Manage filter
@@ -755,7 +901,7 @@ class ReceptionLineBatch extends CommonObjectLine
 				}
 			}
 			if (count($sqlwhere) > 0) {
-				$sql .= ' WHERE '.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+				$sql .= ' WHERE '.implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere);
 			}
 
 			$filter = '';
@@ -800,6 +946,9 @@ class ReceptionLineBatch extends CommonObjectLine
 				$line->batch = $obj->batch;
 				$line->eatby = $this->db->jdate($obj->eatby);
 				$line->sellby = $this->db->jdate($obj->sellby);
+				$line->description = $obj->description;
+				$line->fk_unit = $obj->fk_unit;
+				$line->rang = $obj->rang;
 				$line->fetch_optionals();
 
 				$this->lines[$line->id] = $line;

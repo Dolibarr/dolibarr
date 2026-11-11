@@ -46,6 +46,10 @@ IPP_Color=A colori
 IPP_Device=Periferica
 IPP_Media=Supporto
 IPP_Supported=Tipo di supporto
+STATE_IPP_idle=Idle printer
+STATE_IPP_none=Nulla
+IPP_COLOR_print-black=Black and White
+IPP_COLOR_print-color=Color
 DirectPrintingJobsDesc=Questa pagina elenca i processi di stampa attivi per le stampanti disponibili.
 GoogleAuthNotConfigured=Google OAuth setup not done. Enable module OAuth and set a Google ID/Secret.
 GoogleAuthConfigured=Google OAuth credentials were found into setup of module OAuth.
@@ -53,4 +57,4 @@ PrintingDriverDescprintgcp=Credenziali per la stampa con Google Cloud Print.
 PrintingDriverDescprintipp=Variabili di configurazione per la stampa di tazze driver.
 PrintTestDescprintgcp=Lista delle stampanti Google Cloud Print.
 PrintTestDescprintipp=Elenco di stampanti per tazze.
-Testbbbb
+PrinterLocation=Printer location

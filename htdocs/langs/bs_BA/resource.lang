@@ -34,5 +34,6 @@ ResourceTypeCode=Šifra vrste resursa
 ImportDataset_resource_1=Resursi
 ErrorResourcesAlreadyInUse=Neki resursi su u upotrebi
 ErrorResourceUseInEvent=%s korišten u %s događaju
-MaxUsers=Maksimalan broj korisnika (mjesta, sjedišta itd.)
+MaxUsers=Maximum number of users
+MaxUsersResourceDesc=If the resource can be used by several people at once (car, room, ...), you can enter here the maximum number of users allowed to use the resource at the same time (number of seats, places, ...).
 MaxUsersLabel=Maksimalan broj korisnika

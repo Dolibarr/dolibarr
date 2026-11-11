@@ -19,6 +19,7 @@
  * @var Conf $conf
  * @var Translate $langs
  * @var string $servicename
+ * @var int $onlinepaymentlinksinpopup	If 1, the box to build payment urls is shown into a dialog popup opened by the link with id "linkforonlinepaymentlinks"
  */
 '
 @phan-var-force string $servicename
@@ -33,120 +34,178 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
 print '<!-- BEGIN PHP TEMPLATE ONLINEPAYMENTLINKS -->';
 
+$showinpopup = (!empty($onlinepaymentlinksinpopup) && !empty($conf->use_javascript_ajax));
+if ($showinpopup) {
+	print '<div id="dialogforonlinepaymentlinks" class="hidden">';
+}
+
+print '<div'.($showinpopup ? '' : ' class="info"').'>';	// No info box style when shown into the popup
+
+$morespacebetweenlinks = ($showinpopup ? '<br>' : '');	// More space between each link proposal into the popup
+
 // Url list
 print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br><br>';
+print $morespacebetweenlinks;
 print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount", $servicename).':</span><br>';
-print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'free')."</strong><br><br>\n";
+print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'free', '', 10)."</strong><br><br>\n";
+print $morespacebetweenlinks;
 
 if (isModEnabled('order')) {
 	print '<div id="order"></div>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnOrder", $servicename).':</span><br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'order')."</strong><br>\n";
-	if (getDolGlobalString('PAYMENT_SECURITY_TOKEN') && getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
+	if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
 		$langs->load("orders");
 		print '<form action="'.$_SERVER["PHP_SELF"].'#order" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 
-		print $langs->trans("EnterRefToBuildUrl", $langs->transnoentitiesnoconv("Order")).': ';
-		print '<input type="text class="flat" id="generate_order_ref" name="generate_order_ref" value="'.GETPOST('generate_order_ref', 'alpha').'" size="10">';
-		print '<input type="submit" class="none reposition button smallpaddingimp" value="'.$langs->trans("GetSecuredUrl").'">';
+		print $langs->trans("EnterRefToBuildUrl", $langs->transnoentitiesnoconv("Order")).':<br>';
+		print '<input type="text" class="flat valignmiddle" id="generate_order_ref" name="generate_order_ref" value="'.GETPOST('generate_order_ref', 'alpha').'" size="10">';
+		print '<input type="submit" class="none reposition button smallpaddingimp valignmiddle" value="'.$langs->trans("GetSecuredUrl").'">';
 		if (GETPOST('generate_order_ref', 'alpha')) {
 			$url = getOnlinePaymentUrl(0, 'order', GETPOST('generate_order_ref', 'alpha'));
-			print '<div class="urllink"><input type="text" class="wordbreak quatrevingtpercent" value="';
+			print '<div class="urllinkno"><input type="text" class="wordbreak quatrevingtpercent" value="';
 			print $url;
-			print '"></div>'."\n";
+			print '" spellcheck="false"></div>'."\n";
 		}
 		print '</form>';
 	}
 	print '<br>';
+	print $morespacebetweenlinks;
 }
 if (isModEnabled('invoice')) {
 	print '<div id="invoice"></div>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnInvoice", $servicename).':</span><br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'invoice')."</strong><br>\n";
-	if (getDolGlobalString('PAYMENT_SECURITY_TOKEN') && getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
+	if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
 		$langs->load("bills");
 		print '<form action="'.$_SERVER["PHP_SELF"].'#invoice" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 
-		print $langs->trans("EnterRefToBuildUrl", $langs->transnoentitiesnoconv("Invoice")).': ';
-		print '<input type="text class="flat" id="generate_invoice_ref" name="generate_invoice_ref" value="'.GETPOST('generate_invoice_ref', 'alpha').'" size="10">';
-		print '<input type="submit" class="none reposition button smallpaddingimp" value="'.$langs->trans("GetSecuredUrl").'">';
+		print $langs->trans("EnterRefToBuildUrl", $langs->transnoentitiesnoconv("Invoice")).':<br>';
+		print '<input type="text" class="flat valignmiddle" id="generate_invoice_ref" name="generate_invoice_ref" value="'.GETPOST('generate_invoice_ref', 'alpha').'" size="10">';
+		print '<input type="submit" class="none reposition button smallpaddingimp valignmiddle" value="'.$langs->trans("GetSecuredUrl").'">';
 		if (GETPOST('generate_invoice_ref', 'alpha')) {
 			$url = getOnlinePaymentUrl(0, 'invoice', GETPOST('generate_invoice_ref', 'alpha'));
-			print '<div class="urllink"><input type="text" class="wordbreak quatrevingtpercent" value="';
+			print '<div class="urllinkno"><input type="text" class="wordbreak quatrevingtpercent" value="';
 			print $url;
-			print '"></div>'."\n";
+			print '" spellcheck="false"></div>'."\n";
 		}
 		print '</form>';
 	}
 	print '<br>';
+	print $morespacebetweenlinks;
 }
 if (isModEnabled('contract')) {
 	print '<div id="contractline"></div>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnContractLine", $servicename).':</span><br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'contractline')."</strong><br>\n";
-	if (getDolGlobalString('PAYMENT_SECURITY_TOKEN') && getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
+	if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
 		$langs->load("contracts");
 		print '<form action="'.$_SERVER["PHP_SELF"].'#contractline" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 
-		print $langs->trans("EnterRefToBuildUrl", $langs->transnoentitiesnoconv("ContractLine")).': ';
-		print '<input type="text class="flat" id="generate_contract_ref" name="generate_contract_ref" value="'.GETPOST('generate_contract_ref', 'alpha').'" size="10">';
-		print '<input type="submit" class="none reposition button smallpaddingimp" value="'.$langs->trans("GetSecuredUrl").'">';
+		print $langs->trans("EnterRefToBuildUrl", $langs->transnoentitiesnoconv("ContractLine")).':<br>';
+		print '<input type="text" class="flat valignmiddle" id="generate_contract_ref" name="generate_contract_ref" value="'.GETPOST('generate_contract_ref', 'alpha').'" size="10">';
+		print '<input type="submit" class="none reposition button smallpaddingimp valignmiddle" value="'.$langs->trans("GetSecuredUrl").'">';
 		if (GETPOST('generate_contract_ref')) {
 			$url = getOnlinePaymentUrl(0, 'contractline', GETPOST('generate_contract_ref', 'alpha'));
-			print '<div class="urllink"><input type="text" class="wordbreak quatrevingtpercent" value="';
+			print '<div class="urllinkno"><input type="text" class="wordbreak quatrevingtpercent" value="';
 			print $url;
-			print '"></div>'."\n";
+			print '" spellcheck="false"></div>'."\n";
 		}
 		print '</form>';
 	}
 	print '<br>';
+	print $morespacebetweenlinks;
 }
 if (isModEnabled('member')) {
 	print '<div id="membersubscription"></div>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnMemberSubscription", $servicename).':</span><br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'membersubscription')."</strong><br>\n";
-	if (getDolGlobalString('PAYMENT_SECURITY_TOKEN') && getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
+	if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
 		$langs->load("members");
 		print '<form action="'.$_SERVER["PHP_SELF"].'#membersubscription" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 
-		print $langs->trans("EnterRefToBuildUrl", $langs->transnoentitiesnoconv("Member")).': ';
-		print '<input type="text class="flat" id="generate_member_ref" name="generate_member_ref" value="'.GETPOST('generate_member_ref', 'alpha').'" size="10">';
-		print '<input type="submit" class="none reposition button smallpaddingimp" value="'.$langs->trans("GetSecuredUrl").'">';
+		print $langs->trans("EnterRefToBuildUrl", $langs->transnoentitiesnoconv("Member")).':<br>';
+		print '<input type="text" class="flat valignmiddle" id="generate_member_ref" name="generate_member_ref" value="'.GETPOST('generate_member_ref', 'alpha').'" size="10">';
+		print '<input type="submit" class="none reposition button smallpaddingimp valignmiddle" value="'.$langs->trans("GetSecuredUrl").'">';
 		if (GETPOST('generate_member_ref')) {
 			$url = getOnlinePaymentUrl(0, 'membersubscription', GETPOST('generate_member_ref', 'alpha'));
-			print '<div class="urllink"><input type="text" class="wordbreak quatrevingtpercent" value="';
+			print '<div class="urllinkno"><input type="text" class="wordbreak quatrevingtpercent" value="';
 			print $url;
-			print '"></div>'."\n";
+			print '" spellcheck="false"></div>'."\n";
 		}
 		print '</form>';
 	}
 	print '<br>';
+	print $morespacebetweenlinks;
 }
 if (isModEnabled('don')) {
 	print '<div id="donation"></div>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnDonation", $servicename).':</span><br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'donation')."</strong><br>\n";
-	if (getDolGlobalString('PAYMENT_SECURITY_TOKEN') && getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
+	if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
 		$langs->load("members");
 		print '<form action="'.$_SERVER["PHP_SELF"].'#donation" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 
-		print $langs->trans("EnterRefToBuildUrl", $langs->transnoentitiesnoconv("Don")).': ';
-		print '<input type="text class="flat" id="generate_donation_ref" name="generate_donation_ref" value="'.GETPOST('generate_donation_ref', 'alpha').'" size="10">';
-		print '<input type="submit" class="none reposition button smallpaddingimp" value="'.$langs->trans("GetSecuredUrl").'">';
+		print $langs->trans("EnterRefToBuildUrl", $langs->transnoentitiesnoconv("Don")).':<br>';
+		print '<input type="text" class="flat valignmiddle" id="generate_donation_ref" name="generate_donation_ref" value="'.GETPOST('generate_donation_ref', 'alpha').'" size="10">';
+		print '<input type="submit" class="none reposition button smallpaddingimp valignmiddle" value="'.$langs->trans("GetSecuredUrl").'">';
 		if (GETPOST('generate_donation_ref')) {
-			print '<div class="urllink"><input type="text" class="wordbreak quatrevingtpercent" value="';
+			print '<div class="urllinkno"><input type="text" class="wordbreak quatrevingtpercent" value="';
 			$url = getOnlinePaymentUrl(0, 'donation', GETPOST('generate_donation_ref', 'alpha'));
 			print $url;
-			print '"></div>'."\n";
+			print '" spellcheck="false"></div>'."\n";
 		}
 		print '</form>';
 	}
 	print '<br>';
+	print $morespacebetweenlinks;
+}
+
+if ($showinpopup) {
+	print '<div class="info">'.$langs->trans("YouCanAddTagOnUrl").'</div>';	// Into the popup, the main box has no info style, so we add it on this message
+} else {
+	print $langs->trans("YouCanAddTagOnUrl");
+}
+
+print '</div>';
+
+// Into the popup, this info box is shown at the bottom
+if (isModEnabled('website')) {
+	print info_admin($langs->trans("YouCanEmbedOnWebsite"));
+}
+
+if ($showinpopup) {
+	print '</div>';
+
+	// Reopen the popup after a submit of a reference, so the calculated url is visible
+	$reopenpopup = 0;
+	foreach (array('order', 'invoice', 'contract', 'member', 'donation') as $tmpobjecttype) {
+		if (GETPOST('generate_'.$tmpobjecttype.'_ref', 'alpha')) {
+			$reopenpopup = 1;
+		}
+	}
+
+	print '<script nonce="'.getNonce().'" type="text/javascript">
+	jQuery(document).ready(function () {
+		jQuery("#dialogforonlinepaymentlinks").dialog({
+			autoOpen: '.($reopenpopup ? 'true' : 'false').',
+			modal: true,
+			width: "80%",
+			maxHeight: (window.innerHeight - 100),
+			title: \''.dol_escape_js($langs->transnoentitiesnoconv("GetAPaymentLink")).'\'
+		});
+		jQuery("#linkforonlinepaymentlinks").click(function () {
+			console.log("Click on linkforonlinepaymentlinks, we open the popup");
+			jQuery("#dialogforonlinepaymentlinks").dialog("open");
+			return false;
+		});
+	});
+	</script>';
 }
 
 $constname = 'PAYMENT_SECURITY_TOKEN';
@@ -155,10 +214,5 @@ $constname = 'PAYMENT_SECURITY_TOKEN';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 print dolJSToSetRandomPassword($constname);
 
-print info_admin($langs->trans("YouCanAddTagOnUrl"));
-
-if (isModEnabled('website')) {
-	print info_admin($langs->trans("YouCanEmbedOnWebsite"));
-}
 
 print '<!-- END PHP TEMPLATE ONLINEPAYMENTLINKS -->';

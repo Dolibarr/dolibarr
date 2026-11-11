@@ -4,7 +4,7 @@
  * Copyright (C) 2020       Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2022       ATM Consulting          <contact@atm-consulting.fr>
  * Copyright (C) 2022       OpenDSI                 <support@open-dsi.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
@@ -26,6 +26,7 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
 /**
@@ -136,7 +137,9 @@ class Proposals extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('propal', 'lire')) {
 			throw new RestException(403);
 		}
-
+		if (empty($id) && empty($ref) && empty($ref_ext)) {
+			throw new RestException(400, 'No ID or Ref provided');
+		}
 		$result = $this->propal->fetch($id, $ref, $ref_ext);
 		if (!$result) {
 			throw new RestException(404, 'Commercial Proposal not found');
@@ -187,6 +190,8 @@ class Proposals extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false, $loadlinkedobjects = 0)
 	{
+		global $hookmanager;
+
 		if (!DolibarrApiAccess::$user->hasRight('propal', 'lire')) {
 			throw new RestException(403);
 		}
@@ -201,7 +206,6 @@ class Proposals extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
-
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."propal AS t";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe AS s ON (s.rowid = t.fk_soc)";
@@ -213,11 +217,14 @@ class Proposals extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
+		$parameters = array();
+		$hookmanager->executeHooks('printFieldListWhere', $parameters, $this->propal); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
@@ -304,11 +311,24 @@ class Proposals extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
+		global $conf;
 		if (!DolibarrApiAccess::$user->hasRight('propal', 'creer')) {
 			throw new RestException(403, "Insufficiant rights");
 		}
+
 		// Check mandatory fields
-		$result = $this->_validate($request_data);
+		$this->_validate($request_data);
+
+		// Check thirdparty validity
+		$socid = (int) $request_data['socid'];
+		$thirdpartytmp = new Societe($this->db);
+		$thirdparty_result = $thirdpartytmp->fetch($socid);
+		if ($thirdparty_result < 1) {
+			throw new RestException(404, 'Thirdparty with id='.$socid.' not found or not allowed');
+		}
+		if (!DolibarrApi::_checkAccessToResource('societe', $thirdpartytmp->id)) {
+			throw new RestException(404, 'Thirdparty with id='.$thirdpartytmp->id.' not found or not allowed');
+		}
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
@@ -316,18 +336,17 @@ class Proposals extends DolibarrApi
 				$this->propal->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
+			if ($field == 'id') {
+				throw new RestException(400, 'Creating with id field is forbidden');
+			}
+			if ($field == 'entity' && ((int) $value) != ((int) $conf->entity)) {
+				throw new RestException(403, 'Creating with entity='.((int) $value).' MUST be the same entity='.((int) $conf->entity).' as your API user/key belongs to');
+			}
 
 			$this->propal->$field = $this->_checkValForAPI($field, $value, $this->propal);
 		}
-		/*if (isset($request_data["lines"])) {
-		  $lines = array();
-		  foreach ($request_data["lines"] as $line) {
-			array_push($lines, (object) $line);
-		  }
-		  $this->propal->lines = $lines;
-		}*/
 		if ($this->propal->create(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, "Error creating order", array_merge(array($this->propal->error), $this->propal->errors));
+			throw new RestException(500, "Error creating proposal", array_merge(array($this->propal->error), $this->propal->errors));
 		}
 
 		return ((int) $this->propal->id);
@@ -449,7 +468,7 @@ class Proposals extends DolibarrApi
 		if ($updateRes > 0) {
 			return $updateRes;
 		} else {
-			throw new RestException(400, $this->propal->error);
+			throw new RestException(400, $this->propal->errorsToString());
 		}
 	}
 
@@ -584,6 +603,10 @@ class Proposals extends DolibarrApi
 			throw new RestException(404, 'Proposal line not found');
 		}
 
+		if ($propalline->fk_propal != $id) {
+			throw new RestException(403, 'Line does not belong to this proposal');
+		}
+
 		$updateRes = $this->propal->updateline(
 			$lineid,
 			isset($request_data->subprice) ? $request_data->subprice : $propalline->subprice,
@@ -652,7 +675,7 @@ class Proposals extends DolibarrApi
 		if ($updateRes > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(405, $this->propal->error);
+			throw new RestException(405, $this->propal->errorsToString());
 		}
 	}
 	/**
@@ -696,48 +719,117 @@ class Proposals extends DolibarrApi
 	 *
 	 * @since	10.0.0	Initial implementation
 	 *
-	 * @param int    $id             Id of commercial proposal to update
-	 * @param int    $contactid      Id of external or internal contact to add
-	 * @param string $type           Type of the external contact (BILLING, SHIPPING, CUSTOMER), internal contact (SALESREPFOLL)
-	 * @param string $source         Source of the contact (internal, external)
+	 * @param int    $id            Id of commercial proposal to update
+	 * @param int    $contactid     Id of contact to add
+	 * @param string $type          Type (code in dictionary) of the contact (BILLING, SHIPPING, CUSTOMER + possibly your own)
+	 * @param string $source		internal=Contact intern (llx_user), external=Contact extern (llx_socpeople)
+	 * @param int    $notrigger		0=Enable all triggers (default), 1=Disable all triggers
 	 * @return array
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
-	 * @url	POST {id}/contact/{contactid}/{type}/{source}
+	 * @url	POST {id}/contact/{contactid}/{type}
 	 *
+	 * @throws RestException 400
 	 * @throws RestException 401
 	 * @throws RestException 404
+	 * @throws RestException 503
 	 */
-	public function postContact($id, $contactid, $type, $source = 'external')
+	public function postContact($id, $contactid, $type, $source = 'external', $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('propal', 'creer')) {
 			throw new RestException(403);
 		}
 
-		$result = $this->propal->fetch($id);
+		// test source
+		if (empty($source)) {
+			throw new RestException(400, 'Source can not be empty');
+		}
+		$sql_distinct_source = "SELECT DISTINCT source";
+		$sql_distinct_source .= " FROM ".MAIN_DB_PREFIX."c_type_contact";
+		$sql_distinct_source .= " WHERE element LIKE 'propal'";
+		$sql_distinct_source .= " AND source is NOT NULL";
+		$sql_distinct_source .= " AND active != 0";
+		$source_result = $this->db->query($sql_distinct_source);
+		$source_array = array();
 
+		if ($source_result) {
+			$num = $this->db->num_rows($source_result);
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($source_result);
+				$source_kind = (string) $obj->source;
+				array_push($source_array, $source_kind);
+				dol_syslog("source_kind=".$source_kind);
+				$i++;
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieving a list of propal contact sources: '.$this->db->lasterror());
+		}
+		if (!in_array($source, (array) $source_array, true)) {
+			throw new RestException(400, 'Combo of Source='.$source.' and Type='.$type.' not found in dictionary with active proposal contact types');
+		}
+
+		// test type
+		if (empty($type)) {
+			throw new RestException(400, 'type can not be empty');
+		}
+		// variable called type here, but code in dictionary and database
+		$sql_distinct_type = "SELECT DISTINCT code";
+		$sql_distinct_type .= " FROM ".MAIN_DB_PREFIX."c_type_contact";
+		$sql_distinct_type .= " WHERE element LIKE 'propal'";
+		$sql_distinct_type .= " AND source='".$this->db->escape($source)."'";
+		$sql_distinct_type .= " AND code is NOT NULL";
+		$sql_distinct_type .= " AND active != 0";
+		$type_result = $this->db->query($sql_distinct_type);
+		$type_array = array();
+
+		if ($type_result) {
+			$num = $this->db->num_rows($type_result);
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($type_result);
+				// variable called type here, but code in dictionary and database
+				$type_kind = (string) $obj->code;
+				array_push($type_array, $type_kind);
+				dol_syslog("type_kind=".$type_kind);
+				$i++;
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieving a list of propal contact types: '.$this->db->lasterror());
+		}
+		if (!in_array($type, (array) $type_array, true)) {
+			throw new RestException(400, 'Combo of Type='.$type.' and Source='.$source.' not found in dictionary with active proposal contact types');
+		}
+
+		// tests done, let's get it
+		$result = $this->propal->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Proposal not found');
 		}
-
-		if (!in_array($source, array('internal', 'external'), true)) {
-			throw new RestException(500, 'Availables sources: internal OR external');
-		}
-
-		if ($source == 'external' && !in_array($type, array('BILLING', 'SHIPPING', 'CUSTOMER'), true)) {
-			throw new RestException(500, 'Availables external types: BILLING, SHIPPING OR CUSTOMER');
-		}
-
-		if ($source == 'internal' && !in_array($type, array('SALESREPFOLL'), true)) {
-			throw new RestException(500, 'Availables internal types: SALESREPFOLL');
-		}
-
 		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->propal->add_contact($contactid, $type, $source);
+		$result = $this->propal->add_contact($contactid, $type, $source, $notrigger);
+
+		if ($result == 0) {
+			throw new RestException(400, 'Already exists: Contact='.$contactid.' is already linked to the proposal='.$id.' as source='.$source.' and type='.$type);
+		} elseif ($result == -1) {
+			throw new RestException(400, 'Wrong contact='.$contactid);
+		} elseif ($result == -2) {
+			throw new RestException(400, 'Wrong type='.$type);
+		} elseif ($result == -3) {
+			throw new RestException(400, 'Not allowed contacts');
+		} elseif ($result == -4) {
+			throw new RestException(400, 'ErrorCommercialNotAllowedForThirdparty');
+		} elseif ($result == -5) {
+			throw new RestException(400, 'Trigger failed');
+		} elseif ($result == -6) {
+			throw new RestException(400, 'DB_ERROR_RECORD_ALREADY_EXISTS');
+		} elseif ($result == -7) {
+			throw new RestException(400, 'Some other error');
+		}
 
 		if (!$result) {
 			throw new RestException(500, 'Error when added the contact');
@@ -746,7 +838,7 @@ class Proposals extends DolibarrApi
 		return array(
 			'success' => array(
 				'code' => 200,
-				'message' => 'Contact linked to the proposal'
+				'message' => 'Contact='.$contactid.' linked to the proposal='.$id.' as '.$source.' '.$type
 			)
 		);
 	}
@@ -815,7 +907,9 @@ class Proposals extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('propal', 'creer')) {
 			throw new RestException(403);
 		}
-
+		if ($id == 0) {
+			throw new RestException(400, 'No proposal with id=0 can exist');
+		}
 		$result = $this->propal->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Proposal not found');
@@ -835,7 +929,7 @@ class Proposals extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->propal->array_options[$index] = $this->_checkValForAPI($field, $val, $this->propal);
+					$this->propal->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->propal);
 				}
 				continue;
 			}
@@ -845,18 +939,18 @@ class Proposals extends DolibarrApi
 
 		// update end of validity date
 		if (empty($this->propal->fin_validite) && !empty($this->propal->duree_validite) && !empty($this->propal->date_creation)) {
-			$this->propal->fin_validite = $this->propal->date_creation + ($this->propal->duree_validite * 24 * 3600);
+			$this->propal->fin_validite = $this->propal->date_creation + (int) ($this->propal->duree_validite * 24 * 3600);
 		}
 		if (!empty($this->propal->fin_validite)) {
 			if ($this->propal->set_echeance(DolibarrApiAccess::$user, $this->propal->fin_validite) < 0) {
-				throw new RestException(500, $this->propal->error);
+				throw new RestException(500, $this->propal->errorsToString());
 			}
 		}
 
 		if ($this->propal->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->propal->error);
+			throw new RestException(500, $this->propal->errorsToString());
 		}
 	}
 
@@ -877,6 +971,10 @@ class Proposals extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('propal', 'supprimer')) {
 			throw new RestException(403);
 		}
+		if ($id == 0) {
+			throw new RestException(400, 'No proposal with id=0 can exist');
+		}
+
 		$result = $this->propal->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Commercial Proposal not found');
@@ -887,7 +985,7 @@ class Proposals extends DolibarrApi
 		}
 
 		if (!$this->propal->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete Commercial Proposal : '.$this->propal->error);
+			throw new RestException(500, 'Error when delete Commercial Proposal : '.$this->propal->errorsToString());
 		}
 
 		return array(
@@ -929,7 +1027,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(304, 'Nothing done. May be object is already draft');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error : '.$this->propal->error);
+			throw new RestException(500, 'Error : '.$this->propal->errorsToString());
 		}
 
 		$result = $this->propal->fetch($id);
@@ -988,7 +1086,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating Commercial Proposal: '.$this->propal->error);
+			throw new RestException(500, 'Error when validating Commercial Proposal: '.$this->propal->errorsToString());
 		}
 
 		$result = $this->propal->fetch($id);
@@ -1041,7 +1139,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already closed');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when closing Commercial Proposal: '.$this->propal->error);
+			throw new RestException(500, 'Error when closing Commercial Proposal: '.$this->propal->errorsToString());
 		}
 
 		$result = $this->propal->fetch($id);
@@ -1087,7 +1185,7 @@ class Proposals extends DolibarrApi
 
 		$result = $this->propal->classifyBilled(DolibarrApiAccess::$user);
 		if ($result < 0) {
-			throw new RestException(500, 'Error : '.$this->propal->error);
+			throw new RestException(500, 'Error : '.$this->propal->errorsToString());
 		}
 
 		$result = $this->propal->fetch($id);
@@ -1133,9 +1231,12 @@ class Proposals extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{

@@ -56,4 +56,4 @@ MailSent = Die Email wurde verschickt
 NUMBER_MONTH_BEFORE_DELETION = Anzahl der Monate bis zum Löschen
 TheFollowingFieldsAreReplaceWith=Einige Felder werden durch einen eindeutigen Wert ersetzt:
 OtherFieldsAreReplaceWithStaticValues=Einige andere Felder werden durch einen statischen Wert ersetzt:
-QualifiedNumber=Qualifizierte Zahl
+QualifiedNumber=Anzahl der qualifizierten Datensätze

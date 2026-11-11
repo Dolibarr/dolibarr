@@ -122,7 +122,6 @@ AddInventoryProduct=Agregar producto al inventario
 FlushInventory=Inventario sobrante
 ConfirmFlushInventory=¿Confirma usted esta acción?
 InventoryFlushed=Inventario eliminado
-ExitEditMode=Edición de salida
 inventoryDeleteLine=Eliminar línea
 RegulateStock=Regular el stock
 StockSupportServices=Servicios de gestión de stock.

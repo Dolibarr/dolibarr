@@ -78,12 +78,12 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 			$entitycol = 'entity';
 
 			$sql = "SELECT rowid, login, entity, pass, pass_crypted, datestartvalidity, dateendvalidity, flagdelsessionsbefore";
-			$sql .= " FROM ".$table;
-			$sql .= " WHERE (".$usernamecol1." = '".$db->escape($usertotest)."'";
+			$sql .= " FROM ".$db->sanitize($table);
+			$sql .= " WHERE (".$db->sanitize($usernamecol1)." = '".$db->escape($usertotest)."'";
 			if (preg_match('/@/', $usertotest)) {
-				$sql .= " OR ".$usernamecol2." = '".$db->escape($usertotest)."'";
+				$sql .= " OR ".$db->sanitize($usernamecol2)." = '".$db->escape($usertotest)."'";
 			}
-			$sql .= ") AND ".$entitycol." IN (0,".($entity ? ((int) $entity) : 1).")";
+			$sql .= ") AND ".$db->sanitize($entitycol)." IN (0,".($entity ? ((int) $entity) : 1).")";
 			$sql .= " AND statut = 1";
 			// Order is required to firstly found the user into entity, then the superadmin.
 			// For the case (TODO: we must avoid that) a user has renamed its login with same value than a user in entity 0.
@@ -122,7 +122,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 					// For compatibility with very old versions
 					if (!$passok) {
 						if ((!$passcrypted || $passtyped)
-							&& ($passclear && ($passtyped == $passclear))) {
+							&& ($passclear && hash_equals((string) $passclear, (string) $passtyped))) {
 							$passok = true;
 							dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentication ok - found old pass in database", LOG_WARNING);
 						}

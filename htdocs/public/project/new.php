@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -77,7 +77,7 @@ $action = GETPOST('action', 'aZ09');
 $langs->loadLangs(array("members", "companies", "install", "other", "projects"));
 
 if (!getDolGlobalString('PROJECT_ENABLE_PUBLIC')) {
-	print $langs->trans("Form for public lead registration has not been enabled");
+	print $langs->trans("FormForPublicLeadRegistrationHasNotBeenEnabled");
 	exit;
 }
 
@@ -107,9 +107,10 @@ if (empty($conf->project->enabled)) {
  * @param 	int    		$disablehead		More content into html header
  * @param 	string[]|string	$arrayofjs			Array of complementary js files
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
+ * @param 	string			$ws					Website ref if we are called from a website
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [], $ws = '')  // @phan-suppress-current-line PhanRedefineFunction
 {
 	global $conf, $langs, $mysoc;
 
@@ -209,7 +210,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 			}
 			$thirdparty->email = GETPOST('email', 'alpha');
 			$thirdparty->address = GETPOST('address', 'alpha');
-			$thirdparty->zip = GETPOST('zip', 'int');
+			$thirdparty->zip = GETPOST('zipcode', 'alphanohtml');
 			$thirdparty->town = GETPOST('town', 'alpha');
 			$thirdparty->country_id = GETPOSTINT('country_id');
 			$thirdparty->state_id = GETPOSTINT('state_id');

@@ -5,8 +5,9 @@
  * Copyright (C) 2011-2013  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015-2022  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2023  		Joachim Kueter			<git-jk@bloxera.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Michael Wallis			<mh.wallis@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +31,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-if (isModEnabled('accounting')) {
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-}
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -42,6 +38,11 @@ if (isModEnabled('accounting')) {
  * @var Translate $langs
  * @var User $user
  */
+
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+if (isModEnabled('accounting')) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'objects', 'companies', 'products'));
@@ -166,7 +167,7 @@ if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
 }
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans('TaxSetup'), $linkback, 'title_setup');
 
@@ -175,7 +176,7 @@ print load_fiche_titre($langs->trans('TaxSetup'), $linkback, 'title_setup');
 if (empty($mysoc->tva_assuj)) {
 	print $langs->trans("YourCompanyDoesNotUseVAT").'<br>';
 } else {
-	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
@@ -206,7 +207,7 @@ if (empty($mysoc->tva_assuj)) {
 	print '</tr>';
 
 	print '<tr class="oddeven"><td><label for="deadline_day_vat">'.$langs->trans("DeadlineDayVATSubmission").'</label></td><td>';
-	print '<input placeholder="'.$langs->trans("Example").':21" name="deadline_day_vat" id="deadline_day_vat" class="minwidth200" value="'.(getDolGlobalString('MAIN_INFO_TVA_DAY_DEADLINE_SUBMISSION') ? $conf->global->MAIN_INFO_TVA_DAY_DEADLINE_SUBMISSION : '').'">';
+	print '<input placeholder="'.$langs->trans("Example").':21" name="deadline_day_vat" id="deadline_day_vat" class="minwidth200" value="'.getDolGlobalString('MAIN_INFO_TVA_DAY_DEADLINE_SUBMISSION').'">';
 	print '</td></tr>';
 
 	$key = 'CREATE_NEW_VAT_WITHOUT_AUTO_PAYMENT';
@@ -233,10 +234,8 @@ if (empty($mysoc->tva_assuj)) {
 	print '<tr class="oddeven"><td><input type="radio" id="tax_mode1" name="tax_mode" value="1"'.($tax_mode == 1 ? ' checked' : '').'> <label for="tax_mode1">'.$langs->trans('OptionVATDebitOption').'</label></td>';
 	print '<td>'.nl2br($langs->trans('OptionVatDebitOptionDesc'))."</td></tr>\n";
 	// On payment for both products and services
-	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
-		print '<tr class="oddeven"><td><input type="radio" id="tax_mode2"  name="tax_mode" value="2"'.($tax_mode == 2 ? ' checked' : '').'> <label for="tax_mode2">'.$langs->trans('OptionPaymentForProductAndServices').'</label></td>';
-		print '<td>'.nl2br($langs->trans('OptionPaymentForProductAndServicesDesc'))."</td></tr>\n";
-	}
+	print '<tr class="oddeven"><td><input type="radio" id="tax_mode2" name="tax_mode" value="2"'.($tax_mode == 2 ? ' checked' : '').'> <label for="tax_mode2">'.$langs->trans('OptionPaymentForProductAndServices').'</label></td>';
+	print '<td>'.nl2br($langs->trans('OptionPaymentForProductAndServicesDesc'))."</td></tr>\n";
 	print "</table>\n";
 	print '</div>';
 

@@ -59,7 +59,7 @@ insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_M
 --
 -- IHM
 --
-insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SIZE_LISTE_LIMIT','20','chaine','Maximum length of lists',0,__ENTITY__);
+--insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SIZE_LISTE_LIMIT','10','chaine','Maximum length of lists',0,__ENTITY__);
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SIZE_SHORTLIST_LIMIT','3','chaine','Maximum length of short lists',0,__ENTITY__);
 
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_MENU_STANDARD','eldy_menu.php','chaine','Menu manager for internal users',0,__ENTITY__);
@@ -68,6 +68,7 @@ insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_M
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_MENUFRONT_SMARTPHONE','eldy_menu.php','chaine','Menu manager for external users using smartphones',0,__ENTITY__);
 
 insert into llx_const (name, value, type, note, visible, entity) values ('THEME_ELDY_USEBORDERONTABLE', '1', 'chaine', 'Enable the border in theme',0,__ENTITY__);
+insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_DISABLE_METEO', '1', 'chaine', 'Disable the weather block on dashboard',0,__ENTITY__);
 
 
 --
@@ -113,4 +114,3 @@ INSERT INTO llx_const (name, value, type, visible, entity) VALUES ('PRODUCT_PRIC
 -- Membership
 --
 INSERT INTO llx_const (name, value, type, visible, entity) VALUES ('ADHERENT_LOGIN_NOT_REQUIRED', '1', 'string', 0, __ENTITY__);
-

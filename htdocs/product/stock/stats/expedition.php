@@ -30,12 +30,6 @@
 
 // Load Dolibarr environment
 require '../../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -43,6 +37,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'products', 'supplier_proposal', 'productbatch'));
@@ -83,8 +82,8 @@ if (empty($sortfield)) {
 	$sortfield = "exp.date_creation";
 }
 
-$search_month = GETPOSTINT('search_month');
-$search_year = GETPOSTINT('search_year');
+$search_month = GETPOST('search_month');	// Can be ''
+$search_year = GETPOST('search_year');	// Can be '''
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	$search_month = '';
@@ -123,14 +122,13 @@ if ($id > 0 || !empty($ref)) {
 
 	$helpurl = '';
 	$shortlabel = dol_trunc($object->batch, 16);
-	$title = $langs->trans('Batch')." ".$shortlabel." - ".$langs->trans('Referers');
+	$title = $langs->trans('Batch')." ".$shortlabel." - ".$langs->trans('ReferringItems');
 	$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 
 	llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-stock-stats_expedition');
 
 	if ($result > 0) {
 		$head = productlot_prepare_head($object);
-		$titre = $langs->trans("CardProduct".$object->type);
 		$picto = 'lot';
 		$morehtmlref = '';
 		print dol_get_fiche_head($head, 'referers', $langs->trans("Batch"), -1, $object->picto);
@@ -153,7 +151,7 @@ if ($id > 0 || !empty($ref)) {
 		print '<div class="fichecenter">';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border centpercent tableforfield" width="100%">';
+		print '<table class="border centpercent tableforfield">';
 
 
 		// Product
@@ -211,19 +209,24 @@ if ($id > 0 || !empty($ref)) {
 		//      // Other attributes
 		//      include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
-		print '<table class="border centpercent tableforfield" width="100%">';
+		print '<br>';
+
+		print '<table class="noborder centpercent tableforfield">';
 
 		$nboflines = show_stats_for_batch($object, $socid);
 
 		print "</table>";
 
 		print '</div>';
+
+
+
 		print '<div class="clearboth"></div>';
 
 		print dol_get_fiche_end();
 
 		if ($showmessage && $nboflines > 1) {
-			print '<span class="opacitymedium">'.$langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers")).'</span>';
+			print '<span class="opacitymedium">'.$langs->trans("ClickOnALinkOfColumn", $langs->transnoentitiesnoconv("ReferringItems")).'</span>';
 		} elseif ($user->hasRight('expedition', 'lire')) {
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client,";
 			$sql .= " exp.ref, exp.date_creation, exp.fk_statut as statut, exp.rowid as facid,";
@@ -360,6 +363,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<td></td>';
 				print "</table>";
 				print '</div>';
+
 				print '</form>';
 			} else {
 				dol_print_error($db);

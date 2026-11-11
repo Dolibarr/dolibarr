@@ -15,7 +15,7 @@
 --
 
 --
--- Do not place a comment at the end of the line, as this file is parsed 
+-- Do not place a comment at the end of the line, as this file is parsed
 -- during installation and all '--' symbols are removed.
 --
 -- Ne pas placer de commentaire en fin de ligne, ce fichier est parsé lors

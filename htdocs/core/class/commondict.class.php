@@ -55,12 +55,12 @@ abstract class CommonDict
 	public $entity;
 
 	/**
-	 * @var string 		The code
+	 * @var ?string 		The code
 	 */
 	public $code;
 
 	/**
-	 * @var string 		The label
+	 * @var ?string 		The label
 	 */
 	public $label;
 
@@ -68,4 +68,19 @@ abstract class CommonDict
 	 * @var ?int<0,1>	1 if the entry is active, 0 if not
 	 */
 	public $active;
+
+	/**
+	 * @var array<string,mixed>	Context of the call, like 'createfromclone'
+	 */
+	public $context = array();
+
+	/**
+	 * Method to output saved errors
+	 *
+	 * @return	string		String with errors
+	 */
+	public function errorsToString()
+	{
+		return $this->error.(is_array($this->errors) && count($this->errors) > 0 ? (($this->error != '' ? ', ' : '').implode(', ', $this->errors)) : '');
+	}
 }

@@ -22,18 +22,11 @@
 /**
  * \file       htdocs/expedition/messaging.php
  * \ingroup    shipping
- * \brief      Page with events on Shipping
+ * \brief      Page with events on Shipments
  */
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/expedition.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/sendings.lib.php';
-
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -41,6 +34,11 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/sendings.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/expedition.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/sendings.lib.php';
 
 // Load translation files required by the page
 $langs->load("sendings");
@@ -67,25 +65,26 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if (GETPOST('actioncode', 'array')) {
-	$actioncode = GETPOST('actioncode', 'array', 3);
+if (GETPOSTISARRAY('actioncode')) {
+	$actioncode = GETPOST('actioncode', 'array:alpha', 3);
 	if (!count($actioncode)) {
 		$actioncode = '0';
+	} else {
+		$actioncode = implode(',', $actioncode);
 	}
 } else {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ? GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
 }
+
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
-$hookmanager->initHooks(array('shippingcardinfo'));
+$hookmanager->initHooks(array('shippingcardinfo', 'globalcard'));
 
 // Security check
 $id = GETPOSTINT("id");
 $socid = 0;
 // Shipping module doesn't typically have a draft status, so simplified restrictedArea
-$result = restrictedArea($user, 'expedition', $id, 'expedition&shipping');
-
 if (!$user->hasRight('expedition', 'lire')) {
 	accessforbidden();
 }
@@ -101,8 +100,12 @@ $object = new Expedition($db);
 if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
 	$object->fetch_thirdparty();
-	$object->info($object->id);
+	//$object->info($object->id);
 }
+if ($object->id > 0) {
+	$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+}
+$result = restrictedArea($user, 'expedition', $id, 'expedition&shipping');
 
 $parameters = array('id' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks

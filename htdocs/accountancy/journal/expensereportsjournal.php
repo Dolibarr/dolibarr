@@ -3,12 +3,12 @@
  * Copyright (C) 2007-2010	Jean Heimburger				<jean@tiaris.info>
  * Copyright (C) 2011		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin				<regis.houssin@inodbox.com>
- * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2013-2016	Olivier Geffroy				<jeff@jeffinfo.com>
  * Copyright (C) 2013-2016	Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2018		Eric Seigne					<eric.seigne@cap-rel.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,17 @@
  * \ingroup		Accountancy (Double entries)
  * \brief		Page with expense reports journal
  */
+
+// Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -39,17 +49,8 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
-$langs->loadLangs(array("commercial", "compta", "bills", "other", "accountancy", "trips", "errors"));
+$langs->loadLangs(array("commercial", "compta", "bills", "other", "accountancy", "trips"));
 
 $id_journal = GETPOSTINT('id_journal');
 $action = GETPOST('action', 'aZ09');
@@ -146,7 +147,7 @@ $sql .= " JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = er.fk_user_author";
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-$sql .= " WHERE er.fk_statut > 0";
+$sql .= " WHERE er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseReport::STATUS_CLOSED.")";	// Same statuses as for binding: a validated, refused or canceled report must not be journalized
 $sql .= " AND erd.fk_code_ventilation > 0";
 $sql .= " AND er.entity IN (".getEntity('expensereport', 0).")"; // We don't share object for accountancy
 if ($date_start && $date_end) {
@@ -195,7 +196,7 @@ if ($result) {
 		$compta_user = (!empty($obj->user_accountancy_account)) ? $obj->user_accountancy_account : $account_salary;
 		$compta_fees = $obj->compte;
 
-		$vatdata = getTaxesFromId($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), $mysoc, $mysoc, 0);
+		$vatdata = getTaxesFromId($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), $mysoc, $mysoc, 0, 2);
 		$compta_tva = (!empty($vatdata['accountancy_code_buy']) ? $vatdata['accountancy_code_buy'] : $account_vat);
 		$compta_localtax1 = (!empty($vatdata['accountancy_code_buy']) ? $vatdata['accountancy_code_buy'] : $account_vat);
 		$compta_localtax2 = (!empty($vatdata['accountancy_code_buy']) ? $vatdata['accountancy_code_buy'] : $account_vat);
@@ -212,7 +213,6 @@ if ($result) {
 		}
 		$taber[$obj->rowid]["ref"] = $obj->ref;
 		$taber[$obj->rowid]["comments"] = $obj->comments;
-		$taber[$obj->rowid]["fk_expensereportdet"] = $obj->erdid;
 
 		// Avoid warnings
 		if (!isset($tabttc[$obj->rowid][$compta_user])) {
@@ -312,8 +312,8 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 					$bookkeeping->doc_ref = $val["ref"];
 					$bookkeeping->date_creation = $now;
 					$bookkeeping->doc_type = 'expense_report';
-					$bookkeeping->fk_doc = $key;
-					$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
+					$bookkeeping->fk_doc = (int) $key;
+					$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 
 					$bookkeeping->subledger_account = $tabuser[$key]['user_accountancy_code'];
 					$bookkeeping->subledger_label = $tabuser[$key]['name'];
@@ -356,23 +356,34 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 		if (!$errorforline) {
 			foreach ($tabht[$key] as $k => $mt) {
 				if ($mt) {
+					if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
+						$accountingaccount = new AccountingAccount($db);
+						$accountingaccount->fetch(0, $k, true);
+						$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
+					} else {
+						$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
+					}
+
+					$account_label = $accountingaccount->label;
+
 					// get compte id and label
-					if ($accountingaccount->fetch(0, $k, true)) {
+					if ($accountingaccount->id > 0) {
 						$bookkeeping = new BookKeeping($db);
 						$bookkeeping->doc_date = $val["date"];
 						$bookkeeping->doc_ref = $val["ref"];
 						$bookkeeping->date_creation = $now;
 						$bookkeeping->doc_type = 'expense_report';
-						$bookkeeping->fk_doc = $key;
-						$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
+						$bookkeeping->fk_doc = (int) $key;
+						$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->subledger_label = '';
 
 						$bookkeeping->numero_compte = $k;
-						$bookkeeping->label_compte = $accountingaccount->label;
+						$bookkeeping->label_compte = $account_label;
 
-						$bookkeeping->label_operation = $bookkeepingstatic->accountingLabelForOperation($userstatic->name, '', $accountingaccount->label);
+						$bookkeeping->label_operation = $bookkeepingstatic->accountingLabelForOperation($userstatic->name, '', $account_label);
+
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
 						$bookkeeping->debit = ($mt > 0) ? $mt : 0;
@@ -418,12 +429,12 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 
 				foreach ($arrayofvat[$key] as $k => $mt) {
 					if ($mt) {
-						if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
+						if (empty($conf->cache['accountingaccountincurrententity_vat'][$k])) {
 							$accountingaccount = new AccountingAccount($db);
 							$accountingaccount->fetch(0, $k, true);
-							$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
+							$conf->cache['accountingaccountincurrententity_vat'][$k] = $accountingaccount;
 						} else {
-							$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
+							$accountingaccount = $conf->cache['accountingaccountincurrententity_vat'][$k];
 						}
 
 						$account_label = $accountingaccount->label;
@@ -434,8 +445,8 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 						$bookkeeping->doc_ref = $val["ref"];
 						$bookkeeping->date_creation = $now;
 						$bookkeeping->doc_type = 'expense_report';
-						$bookkeeping->fk_doc = $key;
-						$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
+						$bookkeeping->fk_doc = (int) $key;
+						$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->subledger_label = '';
@@ -493,6 +504,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 			$db->rollback();
 
 			if ($error >= 10) {
+				$langs->load('errors');
 				setEventMessages($langs->trans("ErrorTooManyErrorsProcessStopped"), null, 'errors');
 				break; // Break in the foreach
 			}
@@ -583,7 +595,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 				print '"'.$date.'"'.$sep;
 				print '"'.$val["ref"].'"'.$sep;
 				print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
-				print '"'.csvClean($bookkeepingstatic->accountingLabelForOperation($userstatic->name, '', $langs->trans("VAT").implode($def_tva[$key][$k]).' %')).'"'.$sep;
+				print '"'.csvClean($bookkeepingstatic->accountingLabelForOperation($userstatic->name, '', $langs->trans("VAT").(isset($def_tva[$key]) ? implode($def_tva[$key][$k]) : '').' %')).'"'.$sep;
 				print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
 				print '"'.($mt < 0 ? price(-$mt) : '').'"';
 				print "\n";
@@ -707,7 +719,7 @@ if (empty($action) || $action == 'view') {
 	$bookkeepingstatic = new BookKeeping($db);
 
 	foreach ($taber as $key => $val) {
-		$expensereportstatic->id = $key;
+		$expensereportstatic->id = (int) $key;
 		$expensereportstatic->ref = $val["ref"];
 		$expensereportlinestatic->comments = html_entity_decode(dol_trunc($val["comments"], 32));
 

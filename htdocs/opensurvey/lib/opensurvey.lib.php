@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014 Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+/* Copyright (C) 2013 		Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2014 		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -142,7 +142,7 @@ function get_server_name()
 }
 
 /**
- * Fonction vérifiant l'existance et la valeur non vide d'une clé d'un tableau
+ * Function to verify that an array key exists and is not empty.
  *
  * @param   string  $name       Key to test
  * @param   ?array<string,null|mixed|mixed[]>   $tableau    Array in which searching key ($_POST by default)
@@ -159,11 +159,11 @@ function issetAndNoEmpty($name, $tableau = null)
 
 
 /**
- * Fonction permettant de générer les URL pour les sondage
+ * Function for generating URLs for surveys.
  *
- * @param   string    $id     L'identifiant du sondage
- * @param   bool      $admin  True pour générer une URL pour l'administration d'un sondage, False pour un URL publique
- * @return  string            L'url pour le sondage
+ * @param   string    $id     Survey ID
+ * @param   bool      $admin  True to generate a URL for survey administration, False for a public URL
+ * @return  string            The url of the survey
  */
 function getUrlSondage($id, $admin = false)
 {
@@ -197,13 +197,15 @@ function dol_survey_random($car)
 /**
  * Add a poll
  *
+ * @param	Opensurveyquestion[]	$questions	Questions of a poll of format 'F' (form), saved with the poll
  * @return	void
  */
-function ajouter_sondage()
+function ajouter_sondage($questions = array())
 {
 	global $db, $user;
 
 	require_once DOL_DOCUMENT_ROOT.'/opensurvey/class/opensurveysondage.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/opensurvey/class/opensurveyquestion.class.php';
 
 	$sondage = dol_survey_random(16);
 
@@ -214,8 +216,8 @@ function ajouter_sondage()
 	$opensurveysondage = new Opensurveysondage($db);
 	$opensurveysondage->id_sondage = $sondage;
 	$opensurveysondage->description = $_SESSION['description'];
-	$opensurveysondage->mail_admin = $_SESSION['adresse'];
-	$opensurveysondage->nom_admin = $_SESSION['nom'];
+	$opensurveysondage->mail_admin = isset($_SESSION['adresse']) ? $_SESSION['adresse'] : '';
+	$opensurveysondage->nom_admin = isset($_SESSION['nom']) ? $_SESSION['nom'] : '';
 	$opensurveysondage->title = $_SESSION['title'];
 	$opensurveysondage->date_fin = $_SESSION['champdatefin'];
 	$opensurveysondage->format = $_SESSION['formatsondage'];
@@ -224,11 +226,26 @@ function ajouter_sondage()
 	$opensurveysondage->allow_spy = $allow_spy;
 	$opensurveysondage->sujet = $_SESSION['toutchoix'];
 
+	$db->begin();
+
 	$res = $opensurveysondage->create($user);
 
 	if ($res < 0) {
+		$db->rollback();
 		dol_print_error($db);
+		return;
 	}
+
+	foreach ($questions as $question) {
+		$question->id_sondage = $sondage;
+		if ($question->create() < 0) {
+			$db->rollback();
+			dol_print_error($db, $question->error);
+			return;
+		}
+	}
+
+	$db->commit();
 
 	unset($_SESSION["title"]);
 	unset($_SESSION["nom"]);
@@ -245,4 +262,42 @@ function ajouter_sondage()
 
 	header("Location: ".$urlback);
 	exit();
+}
+
+/**
+ * Send to the owner of a survey the email that says that somebody answered, if the survey asks for it
+ *
+ * @param	Opensurveysondage	$object		Survey
+ * @param	string				$nom		Name of the respondent
+ * @return	void
+ */
+function opensurveyNotifyNewVote($object, $nom)
+{
+	global $db, $conf, $langs;
+
+	if (empty($object->mailsonde)) {
+		return;
+	}
+
+	if ($object->fk_user_creat) {
+		$userstatic = new User($db);
+		$userstatic->fetch($object->fk_user_creat);
+		$email = $userstatic->email;
+	} else {
+		$email = $object->mail_admin;
+	}
+
+	// The linked user may not have an email set
+	if ($email) {
+		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+
+		$application = getDolGlobalString('MAIN_APPLICATION_TITLE', 'Dolibarr ERP/CRM');
+
+		$link = getUrlSondage($object->id_sondage, true);
+		$link = '<a href="'.$link.'">'.$link.'</a>';
+		$body = str_replace('\n', '<br>', $langs->transnoentities('EmailSomeoneVoted', $nom, $link));
+
+		$cmailfile = new CMailFile("[".$application."] ".$langs->trans("Poll").': '.$object->title, $email, getDolGlobalString('MAIN_MAIL_EMAIL_FROM'), $body, array(), array(), array(), '', '', 0, -1);
+		$cmailfile->sendfile();
+	}
 }

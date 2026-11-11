@@ -77,6 +77,7 @@
 -- Peru
 -- Portugal
 -- Romania     -> only for Departments/Counties
+-- République démocratique du Congo     -> only for Departments/Counties
 -- San Salvador
 -- Slovakia
 -- Slovenia
@@ -232,6 +233,34 @@ insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 9
 
 -- Colombie Regions (id country=70)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 70, 7001, '', 0, 'Colombie');
+
+-- Regions DRC (id country=73)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (73, 7301, 'Kinshasa', 0, 'Kinshasa', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (73, 7302, 'Matadi', 0, 'Kongo Central', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (73, 7303, 'Kenge', 0, 'Kwango', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (73, 7304, 'Bandundu', 0, 'Kwilu', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (73, 7305, 'Inongo', 0, 'Mai-Ndombe', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (73, 7306, 'Tshikapa', 0, 'Kasaï', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (73, 7307, 'Kananga', 0, 'Kasaï-Central', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (73, 7308, 'Mbuji-Mayi', 0, 'Kasaï-Oriental', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (73, 7309, 'Kabinda', 0, 'Lomami', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (73, 7310, 'Lusambo', 0, 'Sankuru', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (73, 7311, 'Kindu', 0, 'Maniema', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (73, 7312, 'Bukavu', 0, 'Sud-Kivu', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (73, 7313, 'Goma', 0, 'Nord-Kivu', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (73, 7314, 'Bunia', 0, 'Ituri', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (73, 7315, 'Isiro', 0, 'Haut-Uélé', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (73, 7316, 'Buta', 0, 'Bas-Uélé', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (73, 7317, 'Kisangani', 0, 'Tshopo', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (73, 7318, 'Boende', 0, 'Tshuapa', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (73, 7319, 'Mbandaka', 0, 'Équateur', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (73, 7320, 'Lisala', 0, 'Mongala', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (73, 7321, 'Gbadolite', 0, 'Nord-Ubangi', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (73, 7322, 'Gemena', 0, 'Sud-Ubangi', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (73, 7323, 'Kamina', 0, 'Haut-Lomami', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (73, 7324, 'Kolwezi', 0, 'Lualaba', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (73, 7325, 'Lubumbashi', 0, 'Haut-Katanga', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (73, 7326, 'Kalemie', 0, 'Tanganyika', 1);
 
 
 -- Croatia Regions (id country=76)
@@ -442,6 +471,10 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1
 -- Portugal Regions (rowid country=25)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 25, 15001, 'PT',  NULL, 'Portugal');
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 25, 15002, 'PT9', NULL, 'Azores-Madeira');
+
+
+-- République démocratique du Congo Region (id country=73)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 73, 7301, '', 0, 'République démocratique du Congo');
 
 
 -- Romania Regions (id country=188)

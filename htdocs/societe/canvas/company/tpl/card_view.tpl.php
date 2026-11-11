@@ -20,10 +20,12 @@
  * @var Conf $conf
  * @var CommonObject $this
  * @var DoliDB $db
+ * @var FormFile $formfile
  * @var Translate $langs
  * @var User $user
  *
  * @var string $canvas
+ * @var int $socid
  */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -33,6 +35,7 @@ if (empty($conf) || !is_object($conf)) {
 
 
 $soc = $GLOBALS['objcanvas']->control->object;
+$socid = $soc->id;
 
 
 print "<!-- BEGIN PHP TEMPLATE CARD_VIEW.TPL.PHP COMPANY -->\n";
@@ -58,13 +61,6 @@ if ($this->control->tpl['js_checkVatPopup']) {
 	<td width="20%"><?php echo $langs->trans('ThirdPartyName'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['showrefnav']; ?></td>
 </tr>
-
-<?php if (getDolGlobalString('SOCIETE_USEPREFIX')) { ?>
-<tr>
-	<td><?php echo $langs->trans('Prefix'); ?></td>
-	<td colspan="3"><?php echo $this->control->tpl['prefix_comm']; ?></td>
-</tr>
-<?php } ?>
 
 <?php if ($this->control->tpl['client']) { ?>
 <tr>
@@ -276,9 +272,9 @@ for ($i = 1; $i <= 4; $i++) {
 
 <?php if ($user->hasRight('societe', 'supprimer')) { ?>
 	<?php if ($conf->use_javascript_ajax) { ?>
-		<span id="action-delete" class="butActionDelete"><?php echo $langs->trans('Delete'); ?></span>
+		<?php echo dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&action=delete&token='.newToken().'&canvas='.urlencode($canvas), 'action-delete', true, array('attr' => array('class' => 'reposition')))."\n"; ?>
 	<?php } else { ?>
-		<a class="butActionDelete" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&action=delete&token='.newToken().'&canvas='.urlencode($canvas); ?>"><?php echo $langs->trans('Delete'); ?></a>
+		<?php echo dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&action=delete&token='.newToken().'&canvas='.urlencode($canvas), '', true, array('attr' => array('class' => 'reposition')))."\n"; ?>
 	<?php } ?>
 <?php } ?>
 </div>
@@ -297,7 +293,7 @@ $urlsource = $_SERVER["PHP_SELF"]."?socid=".$socid;
 $genallowed = $user->hasRight('societe', 'lire');
 $delallowed = $user->hasRight('societe', 'creer');
 
-print $formfile->showdocuments('company', $socid, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $objcanvas->control->object->default_lang);
+print $formfile->showdocuments('company', $socid, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 ?>
 
 </td>
@@ -315,7 +311,7 @@ $result = show_subsidiaries($conf, $langs, $db, $soc);
 $result = show_contacts($conf, $langs, $db, $soc);
 
 // Projects list
-$result = show_projects($conf, $langs, $db, $soc);
+$result = show_projects($conf, $langs, $db, $soc, $_SERVER["PHP_SELF"].'?socid='.$socid, 1, '', '');
 ?>
 
 <!-- END PHP TEMPLATE -->

@@ -1,8 +1,8 @@
 #!/usr/bin/env php
 <?php
 /**
- * Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2008 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2008  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -23,7 +23,7 @@
 /**
  * \file scripts/members/sync_members_dolibarr2ldap.php
  * \ingroup ldap member
- * \brief Script de mise a jour des adherents dans LDAP depuis base Dolibarr
+ * \brief Script to update members in LDAP from the Dolibarr database
  */
 
 if (!defined('NOSESSION')) {
@@ -91,7 +91,7 @@ if (!empty($dolibarr_main_db_readonly)) {
 $now = $argv[1];
 
 print "Mails sending disabled (useless in batch mode)\n";
-$conf->global->MAIN_DISABLE_ALL_MAILS = 1; // On bloque les mails
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1; 	// We block email sending
 print "\n";
 print "----- Synchronize all records from Dolibarr database:\n";
 print "type=".$conf->db->type."\n";

@@ -1,7 +1,7 @@
 <?php
 /**
  * Copyright (C) 2020 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,6 +74,22 @@ if ($action == 'getDurationUnitByProduct' && $user->hasRight('product', 'lire'))
 	exit();
 }
 
+if ($action == 'getDurationByProduct' && $user->hasRight('product', 'lire')) {
+	$product = new Product($db);
+	$res = $product->fetch($idproduct);
+
+	$cUnit = new CUnits($db);
+	$fk_unit = $cUnit->getUnitFromCode((string) $product->duration_unit, 'short_label', 'time');
+
+	$result = array(
+		'fk_unit' => $fk_unit,
+		'duration_value' => ($product->duration_value > 0 ? $product->duration_value : 1)
+	);
+
+	echo json_encode($result);
+	exit();
+}
+
 if ($action == 'getWorkstationByProduct' && $user->hasRight('product', 'lire')) {
 	$product = new Product($db);
 	$res = $product->fetch($idproduct);
@@ -86,7 +102,7 @@ if ($action == 'getWorkstationByProduct' && $user->hasRight('product', 'lire')) 
 		$error = 'NOT FOUND';
 	} else {
 		$error = null;
-		$result['defaultWk']=$product->fk_default_workstation;
+		$result['defaultWk'] = $product->fk_default_workstation;
 	}
 
 	$result['error']=$error;

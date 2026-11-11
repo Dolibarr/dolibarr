@@ -241,9 +241,10 @@ ALTER TABLE llx_accounting_account ADD COLUMN centralized tinyint DEFAULT 0 NOT 
 UPDATE llx_accounting_account as acc SET acc.centralized = 1 WHERE acc.account_number in (SELECT value  FROM llx_const WHERE name IN (__ENCRYPT('ACCOUNTING_ACCOUNT_CUSTOMER')__,__ENCRYPT('ACCOUNTING_ACCOUNT_SUPPLIER')__,__ENCRYPT('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT')__,__ENCRYPT('ACCOUNTING_ACCOUNT_EXPENSEREPORT')__));
 
 -- invert constant STOCK_ALLOW_NEGATIVE_TRANSFER because it was automatically set to 1, deleting the user config.
-INSERT INTO llx_const (name, entity, value, type, visible, note) SELECT DISTINCT 'STOCK_DISALLOW_NEGATIVE_TRANSFER', entity, '1', 'chaine', 0, '' FROM llx_const as c1 WHERE NOT EXISTS (SELECT rowid FROM llx_const as c2 WHERE c2.name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND c2.value = '1' AND c2.entity = c1.entity);
+INSERT INTO llx_const (name, entity, value, type, visible, note) SELECT DISTINCT 'STOCK_DISALLOW_NEGATIVE_TRANSFER', entity, '1', 'chaine', 0, '' FROM llx_const as c1 WHERE c1.entity <> 0 AND NOT EXISTS (SELECT rowid FROM llx_const as c2 WHERE c2.name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND c2.value = '1' AND c2.entity = c1.entity);
 UPDATE llx_const SET name = 'STOCK_DISALLOW_NEGATIVE_TRANSFER', value = '1' WHERE name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND value = '0';
-DELETE FROM llx_const WHERE name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND value = '1';
+-- Do not delete this const, otherwise the 'INSERT INTO...' will be triggered on next update
+-- DELETE FROM llx_const WHERE name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND value = '1';
 
 ALTER TABLE llx_links ADD COLUMN  share varchar(128) NULL AFTER objectid;
 ALTER TABLE llx_links ADD COLUMN  share_pass varchar(32) NULL AFTER share;
@@ -329,5 +330,12 @@ ALTER TABLE llx_blockedlog ADD COLUMN debuginfo mediumtext;
 ALTER TABLE llx_webhook_history ADD COLUMN trigger_code text NOT NULL;
 ALTER TABLE llx_webhook_history ADD COLUMN error_message text;
 ALTER TABLE llx_webhook_history MODIFY COLUMN url varchar(255);
+
+UPDATE llx_c_socialnetworks SET icon = 'fa-mastodon' WHERE icon = '' AND code = 'mastodon';
+
+-- Performance: speed up variants/list.php on multi-entity installs with many attributes (see #29985)
+ALTER TABLE llx_product_attribute ADD INDEX idx_product_attribute_entity (entity);
+
+ALTER TABLE llx_adherent MODIFY COLUMN societe VARCHAR(128);
 
 -- end of migration

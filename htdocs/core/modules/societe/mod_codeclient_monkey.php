@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2007	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +118,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 
 		// First, we get the max value (response immediate car champ indexe)
 		$posindice = strlen($prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(".$db->sanitize($field)." FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
+		$sql = "SELECT MAX(CAST(SUBSTRING(".$db->sanitize($field)." FROM ".((int) $posindice).") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql .= " WHERE ".$db->sanitize($field)." LIKE '".$db->escape($prefix)."____-%'";
 		$sql .= " AND entity IN (".getEntity('societe').")";
@@ -218,7 +218,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		}
 		$sql .= " AND entity IN (".getEntity('societe').")";
 		if ($soc->id > 0) {
-			$sql .= " AND rowid <> ".$soc->id;
+			$sql .= " AND rowid <> ".((int) $soc->id);
 		}
 
 		dol_syslog(get_class($this)."::verif_dispo", LOG_DEBUG);

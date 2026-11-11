@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,6 +26,7 @@
 
 // $action must be defined
 // $object must be defined
+// $id must be defined
 // $permissiondellink must be defined
 
 /**
@@ -34,8 +35,16 @@
  * @var Translate $langs
  *
  * @var string $action
+ * @var int $id
  * @var int $permissiondellink
+ * @var int $id
  */
+'
+@phan-var-force CommonObject $object
+@phan-var-force string $action
+@phan-var-force int $permissiondellink
+@phan-var-force int $id
+';
 
 $dellinkid = GETPOSTINT('dellinkid');
 $addlink = GETPOST('addlink', 'alpha');
@@ -82,8 +91,32 @@ if ($action == 'addlinkbyref' && !empty($permissiondellink) && !$cancellink && $
 
 // Delete link in table llx_element_element
 if ($action == 'dellink' && !empty($permissiondellink) && !$cancellink && $dellinkid > 0) {
-	$result = $object->deleteObjectLinked(0, '', 0, '', $dellinkid);
-	$object->clearObjectLinkedCache();
+	if (empty($object->id) && $id > 0) {
+		$object->fetch($id);
+	}
+	// The link must involve the current object, else any link could be deleted by its rowid alone
+	$linkfound = false;
+	if ($object->id > 0) {
+		$elementtypes = array_unique([$object->getElementType(), $object->element]);
+		$sqlelementtypes = "'".implode("','", array_map([$db, 'escape'], $elementtypes))."'";
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."element_element";
+		$sql .= " WHERE rowid = ".((int) $dellinkid);
+		$sql .= " AND ((fk_source = ".((int) $object->id)." AND sourcetype IN (".$db->sanitize($sqlelementtypes, 1)."))";
+		$sql .= " OR (fk_target = ".((int) $object->id)." AND targettype IN (".$db->sanitize($sqlelementtypes, 1).")))";
+		$resql = $db->query($sql);
+		if ($resql && $db->num_rows($resql) > 0) {
+			$linkfound = true;
+		}
+	}
+
+	$result = 0;
+	if (!$linkfound) {
+		setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
+	} else {
+		$result = $object->deleteObjectLinked(0, '', 0, '', $dellinkid);
+		$object->clearObjectLinkedCache();
+	}
+
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}

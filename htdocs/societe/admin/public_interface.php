@@ -92,7 +92,7 @@ $form = new Form($db);
 $help_url = '';
 llxHeader('', $langs->trans("CompanySetup"), $help_url);
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans("CompanySetup"), $linkback, 'title_setup');
 
@@ -106,6 +106,8 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print dol_get_fiche_head($head, 'publicurl', '', -1, 'company');
 
+
+print '<div class="info">';
 
 print '<span class="opacitymedium">'.$langs->trans("PublicInterfaceCompanyDesc").'</span><br><br>';
 
@@ -126,8 +128,8 @@ if (!getDolGlobalString('SOCIETE_ENABLE_PUBLIC')) {
 print $enabledisablehtml;
 print '<input type="hidden" id="SOCIETE_ENABLE_PUBLIC" name="SOCIETE_ENABLE_PUBLIC" value="'.(!getDolGlobalString('SOCIETE_ENABLE_PUBLIC') ? 0 : 1).'">';
 
+print '</div>';
 
-print '<br>';
 
 
 print dol_get_fiche_end();

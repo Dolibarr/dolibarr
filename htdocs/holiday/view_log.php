@@ -2,9 +2,9 @@
 /* Copyright (C) 2007-2016	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2011		Dimitri Mouillard			<dmouillard@teclib.com>
  * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,15 @@
 // Load Dolibarr environment
 require '../main.inc.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Security check (access forbidden for external user too)
 if (!$user->hasRight('holiday', 'define_holiday') || $user->socid > 0) {
 	accessforbidden();
@@ -39,14 +48,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('users', 'other', 'holiday'));
@@ -62,7 +63,7 @@ $contextpage        = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ'
 $backtopage         = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss          = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
-$search_id          = GETPOST('search_id', 'alphanohtml');
+$search_id          = trim(GETPOST('search_id', 'alpha'));	// Can contains a numeric test like ">10" or "!= 34"
 $search_month       = GETPOSTINT('search_month');
 $search_year        = GETPOSTINT('search_year');
 $search_employee    = GETPOST('search_employee', "intcomma");
@@ -92,7 +93,7 @@ if (!$sortorder) {
 
 // Initialize a technical objects
 $object = new Holiday($db);
-$extrafields = new ExtraFields($db);
+
 //$diroutputmassaction = $conf->mymodule->dir_output . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('leavemovementlist')); // Note that conf->hooks_modules contains array
 
@@ -198,17 +199,17 @@ $sqlwhere = '';
 
 if (!empty($search_year) && $search_year > 0) {
 	if (!empty($search_month) && $search_month > 0) {
-		$from_date  = dol_get_first_day($search_year, $search_month, 1);
-		$to_date    = dol_get_last_day($search_year, $search_month, 1);
+		$from_date = dol_get_first_day($search_year, $search_month, 1);
+		$to_date = dol_get_last_day($search_year, $search_month, 1);
 	} else {
-		$from_date  = dol_get_first_day($search_year, 1, 1);
-		$to_date    = dol_get_last_day($search_year, 12, 1);
+		$from_date = dol_get_first_day($search_year, 1, 1);
+		$to_date = dol_get_last_day($search_year, 12, 1);
 	}
 
 	$sqlwhere .= "AND date_action BETWEEN '".$db->idate($from_date)."' AND '".$db->idate($to_date)."'";
 }
 
-if (!empty($search_id) && $search_id > 0) {
+if ($search_id != '') {
 	$sqlwhere .= natural_search('rowid', $search_id, 1);
 }
 if (!empty($search_validator) && $search_validator > 0) {
@@ -258,8 +259,8 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
-if (!empty($search_id)) {
-	$param .= '&search_status='.urlencode($search_status);
+if ($search_id != '') {
+	$param .= '&search_id='.urlencode($search_id);
 }
 if (!empty($search_month) && $search_month > 0) {
 	$param .= '&search_month='.urlencode((string) ($search_month));
@@ -286,7 +287,7 @@ if (!empty($search_new_solde)) {
 	$param .= '&search_new_solde='.urlencode($search_new_solde);
 }
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -323,7 +324,7 @@ $disabled = 0;
 $include = '';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -333,7 +334,7 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 print '<tr class="liste_titre_filter">';
 
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -342,7 +343,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 
 // Filter Id
 if (!empty($arrayfields['cpl.rowid']['checked'])) {
-	print '<td class="liste_titre"><input type="text" class="maxwidth50" name="search_id" value="'.$search_id.'"></td>';
+	print '<td class="liste_titre center"><input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'"></td>';
 }
 
 // Filter: Date
@@ -415,7 +416,7 @@ if (!empty($arrayfields['cpl.new_solde']['checked'])) {
 }
 
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -425,11 +426,11 @@ print '</tr>';
 
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 }
 if (!empty($arrayfields['cpl.rowid']['checked'])) {
-	print_liste_field_titre($arrayfields['cpl.rowid']['label'], $_SERVER["PHP_SELF"], 'cpl.rowid', '', '', '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cpl.rowid']['label'], $_SERVER["PHP_SELF"], 'cpl.rowid', '', '', '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['cpl.date_action']['checked'])) {
 	print_liste_field_titre($arrayfields['cpl.date_action']['label'], $_SERVER["PHP_SELF"], 'date_action', '', '', '', $sortfield, $sortorder, 'center ');
@@ -456,7 +457,7 @@ if (!empty($arrayfields['cpl.new_solde']['checked'])) {
 	print_liste_field_titre($arrayfields['cpl.new_solde']['label'], $_SERVER["PHP_SELF"], 'new_solde', '', '', '', $sortfield, $sortorder, 'right ');
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 }
 print '</tr>';
@@ -488,13 +489,13 @@ while ($i < min($num, $limit)) {
 	print '<tr class="oddeven">';
 
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td></td>';
 	}
 
 	// Id
 	if (!empty($arrayfields['cpl.rowid']['checked'])) {
-		print '<td>'.$holidaylogstatic->id.'</td>';
+		print '<td class="center">'.$holidaylogstatic->id.'</td>';
 	}
 
 	// Date
@@ -560,7 +561,7 @@ while ($i < min($num, $limit)) {
 	}
 
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td></td>';
 	}
 

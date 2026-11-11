@@ -2,6 +2,7 @@
 /*
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (c) 2025       Schaffhauser sébastien      <sebastien@webmaster67.fr>
+ * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation.
@@ -52,13 +53,13 @@ class SharedDocumentsController extends AbstractDocumentController
 		$current_subdir = $_POST['subdir'] ?? $_GET['subdir'] ?? '';
 		if (!empty($current_subdir)) {
 			$parts = explode('/', $current_subdir);
-			$safe_parts = array();
+			$sanitized_filenames = array();
 			foreach ($parts as $part) {
 				if ($part !== '.' && $part !== '..') {
-					$safe_parts[] = dol_sanitizeFileName($part);
+					$sanitized_filenames[] = dol_sanitizeFileName($part);
 				}
 			}
-			$this->sanitized_subdir = implode('/', $safe_parts);
+			$this->sanitized_subdir = implode('/', $sanitized_filenames);
 		}
 
 		$context->title = html_entity_decode($langs->trans('SharedDocuments'));
@@ -127,12 +128,18 @@ class SharedDocumentsController extends AbstractDocumentController
 
 		// 5. Define functions to build navigation and download links
 		$linkBuilder = array(
-			'dir' => /** @param array<string, mixed> $dir */
+			'dir' => /**
+					  * @param array<string, mixed> $dir
+					  * @return string
+					  */
 				function (array $dir) use ($baseUrl, $sanitized_subdir) {
 					$new_subdir = (!empty($sanitized_subdir) ? $sanitized_subdir . '/' : '') . $dir['name'];
 					return $baseUrl . '&subdir=' . urlencode($new_subdir);
 				},
-			'file' => /** @param array<string, mixed> $file */
+			'file' => /**
+					   * @param array<string, mixed> $file
+					   * @return string
+					   */
 				function (array $file) use ($shared_dir_name, $sanitized_subdir) {
 					$file_path = $shared_dir_name . '/' . (!empty($sanitized_subdir) ? $sanitized_subdir . '/' : '') . $file['name'];
 					return DOL_URL_ROOT . '/document.php?modulepart=ecm&file=' . urlencode($file_path);

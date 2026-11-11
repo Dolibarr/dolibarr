@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2024        Anthony Damhet        <a.damhet@progiseize.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
  */
 
 /**
- *    \file       htdocs/admint/tools/ui/class/uidoc.class.php
+ *    \file       htdocs/admint/tools/ui/class/documentation.class.php
  *    \ingroup    ui
  *    \brief      File of class to manage UI documentation
  */
@@ -30,21 +31,21 @@ class Documentation
 	/**
 	 * Views
 	 *
-	 * @var array
+	 * @var array{}|array<int,string>
 	 */
 	public $view = array();
 
 	/**
 	 * Menu - Set in setMenu in order to use dol_buildpath and called in constructor
 	 *
-	 * @var array
+	 * @var array<array{url?: string, summary?: array<string,string>, submenu?: array<string,mixed>}>
 	 */
 	public $menu = array();
 
 	/**
 	 * Summary - Set in setSummary and called in constructor
 	 *
-	 * @var array
+	 * @var array<int,string>
 	 */
 	public $summary = array();
 
@@ -75,9 +76,9 @@ class Documentation
 	}
 
 	/**
-	 *    Set Documentation Menu
+	 * Set Documentation Menu
 	 *
-	 * @return mixed false if error, void if no errors
+	 * @return boolean 		False if error, true if OK
 	 */
 	private function setMenu()
 	{
@@ -87,7 +88,7 @@ class Documentation
 
 		// Go back to Dolibarr
 		$this->menu['BackToDolibarr'] = array(
-			'url' => DOL_URL_ROOT,
+			'url' => dol_buildpath('modulebuilder/index.php', 1),
 			'icon' => 'fas fa-arrow-left',
 			'submenu' => array(),
 		);
@@ -154,17 +155,24 @@ class Documentation
 					'summary' => array(
 						'DocBasicUsage' => '#seteventmessagesection-basicusage',
 						'DocSetEventMessageContextualVariations' => '#seteventmessagesection-contextvariations',
+						'DocSetEventMessageJsContext' => '#titlesection-tool-seteventmessage',
 					)
 				),
 				'Inputs' => array(
 					'url' => dol_buildpath($this->baseUrl.'/components/inputs.php', 1),
-					'icon' => 'fas fa-comments',
+					'icon' => 'far fa-edit',
 					'submenu' => array(),
 					'summary' => array(
 						'DocBasicUsage' => '#setinputssection-basicusage',
 						'DocHelperFunctionsInputUsage' => '#setinputssection-helperfunctions',
 						'DocHelperFunctionsGetSearchFilterToolInput' => '#setinputssection-getSearchFilterToolInput',
 					)
+				),
+				'ExperimentalUxInputAjaxFeedback' => array(
+					'url' => dol_buildpath($this->baseUrl.'/content/input-feedback.php', 1),
+					'icon' => 'far fa-share-square',
+					'submenu' => array(),
+					'summary' => array(),
 				),
 			),
 		);
@@ -201,6 +209,13 @@ class Documentation
 					'submenu' => array(),
 					'summary' => array(),
 				),
+
+				'FreezeTooltip' => array(
+					'url' => dol_buildpath($this->baseUrl.'/content/freeze-tooltip.php', 1),
+					'icon' => 'far fa-comment',
+					'submenu' => array(),
+					'summary' => array(),
+				),
 			)
 		);
 
@@ -222,7 +237,48 @@ class Documentation
 			)
 		);
 
-
+		// Elements
+		$this->menu['UxDolibarrContext'] = array(
+			'url' => dol_buildpath($this->baseUrl.'/dolibarr-context/index.php', 1),
+			'icon' => 'fab fa-fort-awesome',
+			'submenu' => array(
+				'UxDolibarrContextHowItWork' => array(
+					'url' => dol_buildpath($this->baseUrl.'/dolibarr-context/index.php', 1),
+					'icon' => 'fab fa-fort-awesome',
+					'submenu' => array(),
+					'summary' => array(
+						'Introduction' => '#titlesection-basicusage',
+						'ConsoleHelp' => '#titlesection-console-help',
+						'JSDolibarrhooks' => '#titlesection-hooks',
+						'JSDolibarrhooksReadyVsInit' => '#titlesection-event-init-vs-ready',
+						'JSDolibarrhooksLateScripts' => '#titlesection-late-scripts',
+						'JSDolibarrAwaitHooks' => '#titlesection-await-hooks',
+						'JSDolibarrhooksAjaxSpecial' => '#titlesection-dom-initnewcontent',
+						'ExampleOfCreatingNewContextTool' => '#titlesection-create-tool-example',
+						'JSContextCompatAndDeprecations' => '#titlesection-compat',
+						'SetEventMessageTool' => '#titlesection-tool-seteventmessage',
+						'FetchTool' => '#titlesection-tool-fetch',
+						'ReplaceContentTool' => '#titlesection-tool-replacecontent',
+						'ObjectTool' => '#titlesection-tool-object',
+						'CardTool' => '#titlesection-tool-card',
+						'SetAndUseContextVars' => '#titlesection-contextvars',
+						'AddContextVarsFromModule' => '#titlesection-contextvars-module',
+					),
+				),
+				'UxDolibarrContextLangsTool' => array(
+					'url' => dol_buildpath($this->baseUrl.'/dolibarr-context/langs-tool.php', 1),
+					'icon' => 'far fa-flag',
+					'submenu' => array(),
+					'summary' => array(),
+				),
+				'UxDolibarrContextKnowsHooks' => array(
+					'url' => dol_buildpath($this->baseUrl.'/dolibarr-context/knows-hooks.php', 1),
+					'icon' => 'fa fa-anchor',
+					'submenu' => array(),
+					'summary' => array(),
+				),
+			)
+		);
 
 		// Elements
 		$this->menu['ExperimentalUx'] = array(
@@ -239,19 +295,13 @@ class Documentation
 						'ExperimentalUxContributionTitle' => '#experimental-ux-contribution',
 					),
 				),
-
-				'ExperimentalUxFreezeTooltip' => array(
-					'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/freeze-tooltip/index.php', 1),
-					'icon' => 'fas fa-flask',
+				'UxMenuTooltipTheme' => array(
+					'url' => dol_buildpath($this->baseUrl.'/experimental/tooltip-themes/index.php', 1),
+					'icon' => 'fas fa-comment',
 					'submenu' => array(),
-					'summary' => array(),
-				),
-
-				'ExperimentalUxInputAjaxFeedback' => array(
-					'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/input-feedback/index.php', 1),
-					'icon' => 'fas fa-flask',
-					'submenu' => array(),
-					'summary' => array(),
+					'summary' => array(
+						'Introduction' => '#ux-introduction',
+						'TooltipThemesAndOrientation' => '#tooltip-themes',),
 				),
 			)
 		);
@@ -265,6 +315,8 @@ class Documentation
 		if ($reshook < 0) {
 			return false;
 		}
+
+		return true;
 	}
 
 	/**
@@ -339,10 +391,10 @@ class Documentation
 	}
 
 	/**
-	 *    Recursive function to set Menu
+	 * Recursive function to set Menu
 	 *
-	 * @param array $menu  $this->menu or submenus
-	 * @param int   $level level of menu
+	 * @param array<string, mixed> 	$menu 	Menu entry or submenu
+	 * @param int   $level 		Level of menu
 	 * @return void
 	 */
 	private function displayMenu($menu, $level = 0)
@@ -363,7 +415,7 @@ class Documentation
 			print ((!empty($item['submenu'])) ? '<i class="submenu-toggle fas fa-chevron-right" aria-hidden="true"></i>' : '');
 			print '</a>';
 			if (!empty($item['submenu'])) {
-				$this->displayMenu($item['submenu'], $level); // Appel récursif pour afficher les sous-menus
+				$this->displayMenu($item['submenu'], $level); // Recursive call to show submenu
 			}
 			echo '</li>';
 		}
@@ -371,7 +423,8 @@ class Documentation
 	}
 
 	/**
-	 *    Output breadcrumb
+	 * Output breadcrumb
+	 *
 	 * @return void
 	 */
 	public function showBreadcrumb()
@@ -411,22 +464,33 @@ class Documentation
 	 */
 	public function showSummary($showsubmenu = 1, $showsubmenu_summary = 1)
 	{
+		global $langs;
+
 		$i = 0;
 		$menu_entry = [];
 		if (!empty($this->view)) {
-			// On se place au bon niveau
+			// Set the correct menu depth (level)
 			foreach ($this->view as $view) {
 				$i++;
 				if ($i == 1) {
-					$menu_entry = $this->menu[$view];
+					$menu_entry = $this->menu[$view] ?? [];
 				} else {
-					$menu_entry = $menu_entry['submenu'][$view];
+					$menu_entry = $menu_entry['submenu'][$view] ?? [];
 				}
 			}
 		}
 
 		if (!empty($menu_entry['summary']) || (!empty($menu_entry['submenu']) && $showsubmenu)) {
-			print '<div class="summary-wrapper">';
+			// Summary with links to sections of the page: shown in a sticky column on large screens (see documentation.css and documentation.js)
+			$hasanchors = false;
+			foreach ($menu_entry['summary'] ?? [] as $summary_link) {
+				if (strpos($summary_link, '#') === 0) {
+					$hasanchors = true;
+					break;
+				}
+			}
+
+			print '<div class="summary-wrapper'.($hasanchors ? ' summary-toc' : '').'" data-toc-title="'.dolPrintHTMLForAttribute($langs->transnoentities('DocPageSummary')).'" data-toc-backtop="'.dolPrintHTMLForAttribute($langs->transnoentities('DocBackToTop')).'">';
 			$this->displaySummary($menu_entry);
 			print '</div>';
 		}
@@ -434,10 +498,10 @@ class Documentation
 
 
 	/**
-	 *    Recursive function for Automatic Summary
+	 * Recursive function for Automatic Summary
 	 *
-	 * @param array $menu  					$this->menu or submenus
-	 * @param int   $level 					level of menu
+	 * @param array<string,mixed> 	$menu 	Menu entry or submenu
+	 * @param int   $level 					Level of menu
 	 * @param int   $showsubmenu 			Show Sub menus: 0 = No, 1 = Yes
 	 * @param int   $showsubmenu_summary 	Show summary of sub menus: 0 = No, 1 = Yes
 	 * @return void
@@ -471,7 +535,13 @@ class Documentation
 		if ($showsubmenu && !empty($menu['submenu'])) {
 			foreach ($menu['submenu'] as $key => $item) {
 				print '<li class="summary-title ">';
+
+				if (!empty($item['url'])) {
+					print '<h3 class="level-'.$level.'"><a href="'.dolBuildUrl($item['url']).'" >'.$langs->trans($key).'</a></h3>';
+				} else {
 					print '<h3 class="level-'.$level.'">'.$langs->trans($key).'</h3>';
+				}
+
 				if ($showsubmenu_summary) {
 					$this->displaySummary($item, $level);
 				}
@@ -482,10 +552,10 @@ class Documentation
 	}
 
 	/**
-	 *    Output a View Code area
+	 * Output a View Code area
 	 *
-	 * @param array $lines Lines of code to show
-	 * @param string $option Source code language ('html', 'php' etc)
+	 * @param array<int,string> 	$lines 		Lines of code to show
+	 * @param string 				$option 	Source code language ('html', 'php' etc)
 	 * @return void
 	 */
 	public function showCode($lines = array(), $option = 'html')
@@ -503,5 +573,44 @@ class Documentation
 		$doleditor = new DolEditor(md5($content), $content, '', 0, 'Basic', 'In', true, false, 'ace', 0, '99%', 1);
 		print $doleditor->Create(1, '', false, '', $option);
 		print '</div>';
+	}
+
+
+	/**
+	 * Generate lorem ipsum
+	 *
+	 * @param int  $paragraphCount nb paragraph you need
+	 * @param int  $wordsPerParagraph nb words per paragraph you need
+	 * @param bool $html return html formatted paragraph
+	 * @return string
+	 */
+	static public function generateLoremIpsum($paragraphCount = 3, $wordsPerParagraph = 50, $html = true)
+	{
+		$baseText = "Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur Excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum";
+
+		$words = explode(" ", $baseText);
+		$paragraphs = [];
+
+		for ($p = 0; $p < $paragraphCount; $p++) {
+			$sentence = [];
+			for ($i = 0; $i < $wordsPerParagraph; $i++) {
+				$word = $words[array_rand($words)];
+
+				// Randomly add a comma
+				if ($i > 2 && rand(0, 10) > 8) {
+					$word .= ",";
+				}
+
+				$sentence[] = $word;
+			}
+
+			$paragraphText = ucfirst(implode(" ", $sentence)) . ".";
+			if ($html) {
+				$paragraphText = "<p>$paragraphText</p>";
+			}
+			$paragraphs[] = $paragraphText;
+		}
+
+		return implode($html ? "\n" : "\n\n", $paragraphs);
 	}
 }

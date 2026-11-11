@@ -4,6 +4,7 @@
  * Copyright (C) 2013-2014 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2022      Anthony Berton     	<anthony.berton@bb2a.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,10 +62,10 @@ class InterfaceNotification extends DolibarrTriggers
 	 * All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
 	 *
 	 * @param string		$action		Event action code
-	 * @param Object		$object     Object
+	 * @param CommonObject	$object     Object
 	 * @param User		    $user       Object user
 	 * @param Translate 	$langs      Object langs
-	 * @param conf		    $conf       Object conf
+	 * @param Conf		    $conf       Object conf
 	 * @return int         				Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
@@ -99,7 +100,7 @@ class InterfaceNotification extends DolibarrTriggers
 		$notify = new Notify($this->db);
 		$resultSend = $notify->send($action, $object);
 		if ($resultSend < 0) {
-			$this->errors = array_merge(empty($this->errors) ? array() : $this->errors, $notify->errors);
+			$this->errors = array_merge(empty($this->errors) ? array() : $this->errors, empty($notify->error) ? array() : array($notify->error), $notify->errors);
 			return $resultSend;
 		}
 

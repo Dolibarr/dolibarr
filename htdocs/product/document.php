@@ -69,7 +69,10 @@ if ($user->socid) {
 }
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('productdocuments'));
+$hookmanager->initHooks([
+	'productdocument',
+	'productdocuments' // Deprecated : standard hook name have no s
+]);
 
 // Get parameters
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -89,8 +92,8 @@ if (!$sortfield) {
 	$sortfield = "position_name";
 }
 
-$upload_dir = '';
-$upload_dirold = '';
+$upload_dir = null;
+$upload_dirold = null;
 // Initialize objects
 $object = new Product($db);
 if ($id > 0 || !empty($ref)) {
@@ -164,8 +167,6 @@ if ($action == 'filemerge' && $permissiontoadd) {
 	if (empty($is_refresh)) {
 		$filetomerge_file_array = GETPOST('filetoadd');
 
-		$filetomerge_file_array = GETPOST('filetoadd');
-
 		$lang_id = null;
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$lang_id = GETPOST('lang_id', 'aZ09');
@@ -224,12 +225,12 @@ if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
 llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-card_document');
 
 
-if ($object->id > 0) {
+if ($object->id > 0 && $upload_dir !== null) {
 	$head = product_prepare_head($object);
 	$titre = $langs->trans("CardProduct".$object->type);
 	$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 
-	print dol_get_fiche_head($head, 'documents', $titre, -1, $picto);
+	print dol_get_fiche_head($head, 'documents', $titre, -1, $picto, 0, '', '', 0, '', 1);
 
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -241,7 +242,7 @@ if ($object->id > 0) {
 	// Build file list
 	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 
-	if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {    // For backward compatibility, we scan also old dirs
+	if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO') && $upload_dirold !== null) {    // For backward compatibility, we scan also old dirs
 		$filearrayold = dol_dir_list($upload_dirold, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 		$filearray = array_merge($filearray, $filearrayold);
 	}
@@ -316,7 +317,7 @@ if ($object->id > 0) {
 
 		$filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$', 'name', SORT_ASC, 1);
 
-		if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {    // For backward compatibility, we scan also old dirs
+		if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO') && $upload_dirold !== null) {    // For backward compatibility, we scan also old dirs
 			$filearray = array_merge($filearray, dol_dir_list($upload_dirold, "files", 0, '', '\.meta$', 'name', SORT_ASC, 1));
 		}
 

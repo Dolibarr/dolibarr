@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2011-2019	Juanjo Menent	    	<jmenent@2byte.es>
  * Copyright (C) 2018		Charlene Benke			<charlie@patas-monkey.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,12 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 	// variables inherited from ModelNumRefHolidays class
 	public $name = 'Immaculate';
 	public $version = 'dolibarr';
+
+	/**
+	 * @var int position
+	 */
+	public $position = 100;
+
 
 	/**
 	 *	Constructor
@@ -132,7 +138,7 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 			return 0;
 		}
 
-		$numFinal = get_next_value($db, $mask, 'holiday', 'ref', '', $objsoc, $holiday->date_create);
+		$numFinal = get_next_value($db, $mask, 'holiday', 'ref', '', $objsoc, $holiday->date_creation);
 
 		return  $numFinal;
 	}

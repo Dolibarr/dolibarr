@@ -5,7 +5,8 @@
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Ari Elbaz (elarifr)     <github@accedinfo.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Jose Martinez           <jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,6 +72,11 @@ class AccountingAccount extends CommonObject
 	 * @var int ID
 	 */
 	public $rowid;
+
+	/**
+	 * @var string Ref
+	 */
+	public $ref;
 
 	/**
 	 * Date creation record (datec)
@@ -181,7 +187,7 @@ class AccountingAccount extends CommonObject
 		global $conf;
 
 		if ($rowid || $account_number) {
-			$sql  = "SELECT a.rowid as rowid, a.datec, a.tms, a.fk_pcg_version, a.pcg_type, a.account_number, a.account_parent, a.label, a.labelshort, a.fk_accounting_category, a.fk_user_author, a.fk_user_modif, a.active, a.reconcilable";
+			$sql  = "SELECT a.rowid as rowid, a.datec, a.tms, a.fk_pcg_version, a.pcg_type, a.account_number, a.account_parent, a.label, a.labelshort, a.fk_accounting_category, a.fk_user_author, a.fk_user_modif, a.active, a.reconcilable, a.extraparams";
 			$sql .= ", ca.label as category_label";
 			$sql .= " FROM ".$this->db->prefix().$this->table_element." as a";
 			$sql .= " LEFT JOIN ".$this->db->prefix()."c_accounting_category as ca ON a.fk_accounting_category = ca.rowid";
@@ -190,7 +196,7 @@ class AccountingAccount extends CommonObject
 				$sql .= " a.rowid = ".(int) $rowid;
 			} elseif ($account_number) {
 				$sql .= " a.account_number = '".$this->db->escape($account_number)."'";
-				$sql .= " AND a.entity = ".$conf->entity;
+				$sql .= " AND a.entity = ".((int) $conf->entity);
 			}
 			if (!empty($limittocurrentchart)) {
 				$sql .= ' AND a.fk_pcg_version IN (SELECT pcg_version FROM '.$this->db->prefix().'accounting_system WHERE rowid = '.((int) getDolGlobalInt('CHARTOFACCOUNTS')).')';
@@ -226,6 +232,7 @@ class AccountingAccount extends CommonObject
 					$this->active = $obj->active;
 					$this->status = $obj->active;
 					$this->reconcilable = $obj->reconcilable;
+					$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 					return $this->id;
 				} else {
@@ -401,6 +408,9 @@ class AccountingAccount extends CommonObject
 		$sql .= " WHERE fk_code_ventilation=".((int) $this->id).")";
 		$sql .= "UNION";
 		$sql .= " (SELECT fk_code_ventilation FROM ".$this->db->prefix()."facture_fourn_det";
+		$sql .= " WHERE fk_code_ventilation=".((int) $this->id).")";
+		$sql .= " UNION";
+		$sql .= " (SELECT fk_code_ventilation FROM ".$this->db->prefix()."expensereport_det";
 		$sql .= " WHERE fk_code_ventilation=".((int) $this->id).")";
 
 		dol_syslog(get_class($this)."::checkUsage", LOG_DEBUG);
@@ -728,6 +738,9 @@ class AccountingAccount extends CommonObject
 	/**
 	 * Return a suggested account (from chart of accounts) to bind
 	 *
+	 * Two hooks are available: 'accountancyBindingCalculation' replaces the whole calculation,
+	 * 'afterAccountancyBindingCalculation' adjusts the result it returns.
+	 *
 	 * @param 	Societe 							$buyer 				Object buyer
 	 * @param 	Societe 							$seller 			Object seller
 	 * @param 	Product 							$product 			Product object sell or buy
@@ -875,7 +888,8 @@ class AccountingAccount extends CommonObject
 			}
 
 			// Manage Deposit
-			if (getDolGlobalString('ACCOUNTING_ACCOUNT_' . strtoupper($type) . '_DEPOSIT')) {
+			$account_deposit = getDolGlobalString('ACCOUNTING_ACCOUNT_' . strtoupper($type) . '_DEPOSIT');
+			if (!empty($account_deposit) && $account_deposit != '-1') {
 				if ($factureDet->desc == "(DEPOSIT)" || $facture->type == $facture::TYPE_DEPOSIT) {
 					$accountdeposittoventilated = new self($this->db);
 					if ($type == 'customer') {
@@ -931,7 +945,7 @@ class AccountingAccount extends CommonObject
 					$suggestedid = $this->accountingaccount_codetotid_cache[$code_l];
 				}
 			}
-			return array(
+			$return = array(
 				'suggestedaccountingaccountbydefaultfor' => $suggestedaccountingaccountbydefaultfor,
 				'suggestedaccountingaccountfor' => $suggestedaccountingaccountfor,
 				'suggestedid' => $suggestedid,
@@ -939,6 +953,38 @@ class AccountingAccount extends CommonObject
 				'code_p' => $code_p,
 				'code_t' => $code_t,
 			);
+
+			// Execute hook afterAccountancyBindingCalculation
+			// Allows a module to adjust the result computed above, instead of having to replace the whole
+			// calculation with the accountancyBindingCalculation hook. A key returned by the hook overwrites
+			// the computed one, a key left out keeps its computed value.
+			$parameters['return'] = $return;
+			$reshookafter = $hookmanager->executeHooks('afterAccountancyBindingCalculation', $parameters); // Note that $action and $object may have been modified by some hooks
+			if ($reshookafter < 0) {
+				$this->error = $hookmanager->error;
+				$this->errors = $hookmanager->errors;
+				return -1;
+			}
+			if (array_key_exists('suggestedaccountingaccountbydefaultfor', $hookmanager->resArray)) {
+				$return['suggestedaccountingaccountbydefaultfor'] = $hookmanager->resArray['suggestedaccountingaccountbydefaultfor'];
+			}
+			if (array_key_exists('suggestedaccountingaccountfor', $hookmanager->resArray)) {
+				$return['suggestedaccountingaccountfor'] = $hookmanager->resArray['suggestedaccountingaccountfor'];
+			}
+			if (array_key_exists('suggestedid', $hookmanager->resArray)) {
+				$return['suggestedid'] = $hookmanager->resArray['suggestedid'];
+			}
+			if (array_key_exists('code_l', $hookmanager->resArray)) {
+				$return['code_l'] = $hookmanager->resArray['code_l'];
+			}
+			if (array_key_exists('code_p', $hookmanager->resArray)) {
+				$return['code_p'] = $hookmanager->resArray['code_p'];
+			}
+			if (array_key_exists('code_t', $hookmanager->resArray)) {
+				$return['code_t'] = $hookmanager->resArray['code_t'];
+			}
+
+			return $return;
 		} else {
 			if (is_array($hookmanager->resArray) && !empty($hookmanager->resArray)) {
 				return $hookmanager->resArray;

@@ -117,8 +117,8 @@ class modPaypal extends DolibarrModules
 			'url'=>'/paypal/importpayments.php',
 			'langs'=>'paypal',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>501,
-			'enabled'=>'$conf->paypal->enabled && isModEnabled("banque") && $conf->global->MAIN_FEATURES_LEVEL >= 2',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->banque->consolidate',	// Use 'perms'=>'$user->hasRight("mymodule","level1","level2")' if you want your menu with a permission rules
+			'enabled'=>'isModEnabled("paypal")  && isModEnabled("bank")',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'perms'=>'$user->hasRight("banque", "consolidate")',	// Use 'perms'=>'$user->hasRight("mymodule","level1","level2")' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2
 		);				                // 0=Menu for internal users, 1=external users, 2=both
@@ -194,5 +194,25 @@ class modPaypal extends DolibarrModules
 		// $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
 		// $this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture';
 		// $r++;
+	}
+
+	/**
+	 *  Function called when module is enabled.
+	 *  The init function adds constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *  It also creates a bank account for the online payments if module Bank is enabled and no bank account is set yet.
+	 *
+	 *  @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *  @return     int<-1,1>          	1 if OK, <=0 if KO
+	 */
+	public function init($options = '')
+	{
+		$result = $this->_init(array(), $options);
+
+		if ($result > 0) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+			onlinePaymentCreateDefaultBankAccount($this->db, 'PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS', 'PAYPAL', 'PayPal');
+		}
+
+		return $result;
 	}
 }

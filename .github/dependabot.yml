@@ -9,6 +9,9 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    # Prefix PR titles with a keyword accepted by ci-on-pull-checkdesc.yml
+    commit-message:
+      prefix: "QUAL"
     allow:
       # Allow production updates only (can do a AND, several entries are doing a OR)
       - dependency-type: "production"

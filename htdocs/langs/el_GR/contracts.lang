@@ -31,6 +31,10 @@ MenuClosedServices=Τερματισμένες Υπηρεσίες
 NewContract=Νέα σύμβαση
 NewContractSubscription=Νέα σύμβαση ή συνδρομή
 AddContract=Δημιουργία σύμβασης
+ContractType=τύπος Σύμβασης
+CustomerContract=Σύμβαση πελάτη
+SupplierContract=Σύμβαση Προμηθευτή
+LastSupplierContracts=Τελευταίες %s συμβάσεις προμηθευτών
 DeleteAContract=Διαγραφή Σύμβασης
 ActivateAllOnContract=Ενεργοποίηση όλων των υπηρεσιών
 CloseAContract=Τερματισμός Σύμβασης
@@ -103,7 +107,13 @@ ConfirmCloneContract=Είστε σίγουροι ότι θέλετε να αντ
 LowerDateEndPlannedShort=Κατώτερη προγραμματισμένη ημερομηνία λήξης των ενεργών υπηρεσιών
 SendContractRef=Στοιχεία σύμβασης __REF__
 OtherContracts=Άλλες συμβάσεις
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Στατιστικά στοιχεία Σύμβασης
+NbOfContracts=Αριθμός συμβάσεων
+NumberOfContractsByMonth=Αριθμός συμβάσεων ανά μήνα
+AmountOfServices=Αριθμός υπηρεσιών
+AmountOfServicesByMonthHT=Αριθμός υπηρεσιών (χωρίς φόρους) ανά μήνα
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Εκπρόσωπος πωλήσεων αρμόδιος για την υπογραφή της σύμβασης
 TypeContact_contrat_internal_SALESREPFOLL=Εκπρόσωπος πωλήσεων υπεύθυνος για τη σύμβαση
 TypeContact_contrat_external_BILLING=Επαφή λογιστηρίου πελάτη
@@ -114,3 +124,7 @@ ShowClosedServices=Εμφάνιση τερματισμένων υπηρεσιώ�
 HideClosedServices=Απόκρυψη τερματισμένων υπηρεσιών
 UserStartingService=Χρήστης που εκκίνησε την υπηρεσία
 UserClosingService=Χρήστης που τερμάτισε την υπηρεσία
+SendReminderForExpiredServicesTitle=Αποστολή υπενθύμισης μέσω email για υπηρεσίες σύμβασης που λήγουν
+SendReminderForExpiredServices=Αποστολή υπενθύμισης μέσω email στον πελάτη όταν μια εκτελούμενη υπηρεσία σύμβασης πρόκειται να λήξει (η παράμετρος είναι ο αριθμός ημερών πριν από το τέλος της υπηρεσίας για την αποστολή της υπενθύμισης. Μπορεί να είναι μια λίστα ημερών διαχωρισμένων με ερωτηματικό, για παράδειγμα '10;5;0;-5'). Το πρότυπο email που θα σταλεί ορίζεται στη ρύθμιση της ενότητας Σύμβαση .
+DescCONTRACT_EMAIL_TEMPLATE_REMIND_EXPIRATION=Πρότυπο email για χρήση για την αποστολή υπενθύμισης μέσω email όταν μια υπηρεσία σύμβασης πρόκειται να λήξει
+ContractID=Αναγνωριστικό Σύμβασης

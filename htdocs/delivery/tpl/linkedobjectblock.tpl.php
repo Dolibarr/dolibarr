@@ -18,6 +18,24 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ *  \file		htdocs/delivery/tpl/linkedobjectblock.tpl.php
+ *  \ingroup	delivery
+ *  \brief		Template to show objects linked to deliveries
+ */
+
+/**
+ * @var Translate $langs
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var User $user
+ *
+ * @var CommonObject $object
+ * @var int $noMoreLinkedObjectBlockAfter
+ * @var int $showImportButton
+ * @var Delivery[] $linkedObjectBlock
+ */
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -25,19 +43,6 @@ if (empty($conf) || !is_object($conf)) {
 }
 
 print "<!-- BEGIN PHP TEMPLATE delivery/tpl/linkedobjectblock.tpl.php -->\n";
-
-global $user;
-global $noMoreLinkedObjectBlockAfter;
-
-$langs = $GLOBALS['langs'];
-'@phan-var-force Translate $langs';
-/**
- * @var CommonObject $object
- * @var Translate $langs
- */
-$linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
-'@phan-var-force CommonObject[] $linkedObjectBlock';
-/** @var Delivery[] $linkedObjectBlock */
 
 // Load translation files required by the page
 $langs->load('sendings');
@@ -58,13 +63,14 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		$trclass .= ' liste_sub_total';
 	}
 	echo '<tr class="'.$trclass.'" >';
-	echo '<td class="linkedcol-element tdoverflowmax100">'.$langs->trans("Delivery");
+	echo '<td class="linkedcol-element tdoverflowmax100">';
 	if (!empty($showImportButton) && getDolGlobalString('MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES')) {
-		print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, 0).'&amp;action=selectlines&amp;token='.newToken().'" data-element="'.$objectlink->element.'" data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';
+		print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, 0).'&amp;action=selectlines&amp;token='.newToken().'" data-element="'.$objectlink->element.'" data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a>';
 	}
+	echo $langs->trans("DeliveryOrder");
 	echo '</td>';
 	echo '<td class="linkedcol-name tdoverflowmax150" >'.$objectlink->getNomUrl(1).'</td>';
-	echo '<td class="linkedcol-ref">'.$objectlink->ref.'</td>';
+	echo '<td class="linkedcol-ref tdoverflowmax150">'.$objectlink->ref.'</td>';
 	echo '<td class="linkedcol-date center">'.dol_print_date($objectlink->date_delivery, 'day').'</td>';
 	echo '<td class="linkedcol-amount right">';
 	if ($user->hasRight('delivery', 'read')) {

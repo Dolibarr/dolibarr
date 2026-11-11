@@ -50,12 +50,32 @@ require_once __DIR__.'/../webportal.main.inc.php'; // __DIR__ allow this script 
 /**
  * @var Conf $conf
  * @var Translate $langs
- *
- * @var	string	$dolibarr_nocache
  */
 
+/**
+ _____   ____   _____   ____
+|_   _| |  _ \ |_   _| |  _ \
+  | |   | | | |  | |   | | | |
+  | |   | |_| |  | |   | |_| |
+  |_|   |____/   |_|   |____/
+
+TODO: This is a CSS file — remove all PHP.
+If you want customizations, use custom.css.php.
+Before doing so, ask yourself if it’s really necessary.
+
+You can also add a body class such as:
+  - direction-ltr
+  - direction-rtl
+  - login-form-right
+to change CSS behavior based on context.
+*/
+
+
+// TODO : USE CSS VAR(--font-family)
 $fontlist = 'arial,tahoma,verdana,helvetica';
 $colorbacktitle1 = '#fff';
+
+// TODO remove hard coded direction and use body.direction-rtl or body.direction-ltr in css code
 $langs->load("main", 0, 1);
 $right = ($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right');
 $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
@@ -63,21 +83,28 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
 // Define css type
 top_httphead('text/css');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache)) {
-	header('Cache-Control: max-age=10800, public, must-revalidate');
-} else {
-	header('Cache-Control: no-cache');
-}
+header('Cache-Control: max-age=10800, public, must-revalidate');
 ?>
 @charset "UTF-8";
 
 @import "pico.css.php";
 @import "mixin.css";
 @import "login.css";
-
+@import "badges.css";
+@import "title-buttons.css";
+@import "nav.css";
+@import "card.css";
+@import "dialog.css";
+@import "btn.css";
+@import "form-input-special.css";
 /**
 This file can overwrite default pico css
  */
+
+
+.maxwidthdate {
+	max-width: 110px;
+}
 
 
 /**
@@ -123,10 +150,6 @@ ul.menu-entries-alt {
 	display: none;
 }
 
-.maxwidthdate {
-	max-width: 110px;
-}
-
 @media (max-width: 576px) {
 	ul.brand li.brand {
 		padding-left: 0px;
@@ -138,8 +161,6 @@ ul.menu-entries-alt {
 		display: block;
 	}
 }
-
-
 
 
 /**
@@ -224,7 +245,7 @@ a:link, a:visited, a:hover, a:active, .classlink {
 .btn-filter-icon{
   --icon-url : var(--icon-time);
   --icon-size : 16px;
-
+  vertical-align: middle;
   display: inline-block;
   width: auto;
 }
@@ -253,6 +274,10 @@ a:link, a:visited, a:hover, a:active, .classlink {
   white-space: nowrap;
 }
 
+.btn-download-link:not(:first-child){
+	margin-left: 10px;
+}
+
 /**
 Home Styles
  */
@@ -260,15 +285,11 @@ Home Styles
 
 }
 
-
-
 :root {
 	--colorbackbody: #fff;
 	--colortext: #000;
 }
 
-
-.width150 { width: 150px; }
 
 
 /* ============================================================================== */
@@ -330,6 +351,7 @@ table.dp {
 	width: 180px;
 	background-color: var(--inputbackgroundcolor);
 	border-top: solid 2px #DDDDDD;
+	/* TODO remove hard coded direction and use body.direction-rtl or body.direction-ltr in css code */
 	border-<?php print $left; ?>: solid 2px #DDDDDD;
 	border-<?php print $right; ?>: solid 1px #222222;
 	border-bottom: solid 1px #222222;
@@ -437,3 +459,57 @@ table.dp {
 {
 	line-height: 1em !important;
 }
+
+
+
+/* ============================================================================== */
+/*  Text utilities                                                                */
+/* ============================================================================== */
+
+.text-center {
+	text-align: center;
+}
+.text-right {
+	text-align: right;
+}
+
+/**
+ * PHONE INPUT (picto + phone code select + number on one line)
+ */
+.valuefield:has(> select.selectphonecode) {
+	display: flex;
+	align-items: center;
+	gap: calc(var(--form-element-spacing-horizontal) * 0.5);
+	margin-bottom: var(--form-input-margin-bottom);
+}
+.valuefield:has(> select.selectphonecode) > .select2.select2-container {
+	flex: 0 0 auto;
+	width: auto !important;
+	min-width: 7em;
+	margin-bottom: 0;
+}
+.valuefield:has(> select.selectphonecode) > input[type="tel"] {
+	flex: 1 1 auto;
+	margin-bottom: 0;
+}
+/* Dropdown list wider than the phone code select, to show country name and code on one line */
+.select2-dropdown:has(.select2-results__options[id$="_code-results"]) {
+	min-width: 18em;
+}
+.select2-results__options[id$="_code-results"] .select2-results__option {
+	white-space: nowrap;
+}
+.select2-selection__rendered .flag-sprite, .select2-results__option .flag-sprite {
+	vertical-align: middle;
+	margin-<?php print $right; ?>: 4px;
+}
+
+/**
+ * FLAGS (used by the phone code select)
+ */
+<?php
+if (!defined('ISLOADEDBYSTEELSHEET')) {
+	define('ISLOADEDBYSTEELSHEET', '1');
+}
+$path = '';
+include DOL_DOCUMENT_ROOT.'/theme/eldy/flags-sprite.inc.php';

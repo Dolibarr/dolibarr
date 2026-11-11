@@ -56,4 +56,4 @@ MailSent = L'email a été envoyé
 NUMBER_MONTH_BEFORE_DELETION = Nombre de mois avant la suppression
 TheFollowingFieldsAreReplaceWith=Certains champs seront remplacés par une valeur unique :
 OtherFieldsAreReplaceWithStaticValues=Certains autres champs sont remplacés par une valeur statique :
-QualifiedNumber=Numéro qualifié
+QualifiedNumber=Nombre d'enregistrements qualifiés

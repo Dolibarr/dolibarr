@@ -57,7 +57,7 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
 require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php";
 
-$langs->loadLangs(array("main", "errors"));
+$langs->loadLangs(array("main"));
 
 // Global variables
 $version = constant('DOL_VERSION');
@@ -110,7 +110,7 @@ if (!empty($dolibarr_main_db_readonly)) {
 }
 
 print "Mails sending disabled (useless in batch mode)\n";
-$conf->global->MAIN_DISABLE_ALL_MAILS = 1; // On bloque les mails
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1; // We block email sending
 print "\n";
 print "----- Synchronize all records from LDAP database:\n";
 print "host=" . getDolGlobalString('LDAP_SERVER_HOST')."\n";
@@ -188,6 +188,7 @@ if ($result >= 0) {
 		}
 
 		if (!$error || $forcecommit) {
+			$langs->load('errors');
 			if (!$error) {
 				print $langs->transnoentities("NoErrorCommitIsDone")."\n";
 			} else {

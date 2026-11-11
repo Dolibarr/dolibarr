@@ -142,7 +142,7 @@ class PhpCollector extends DataCollector implements Renderable
 	 * @param string $fileName File where error is generated.
 	 * @param int    $line     Line number where error is generated.
 	 *
-	 * @return void
+	 * @return true	Error is handled, PHP standard handler is not called
 	 */
 	public function errorHandler($severity, $message, $fileName, $line)
 	{
@@ -158,6 +158,8 @@ class PhpCollector extends DataCollector implements Renderable
 				];
 			}
 		}
+
+		return true;
 	}
 
 	/**
@@ -183,11 +185,13 @@ class PhpCollector extends DataCollector implements Renderable
 			E_USER_ERROR => 'USER_ERROR',
 			E_USER_WARNING => 'USER_WARNING',
 			E_USER_NOTICE => 'USER_NOTICE',
-			E_STRICT => 'STRICT',
 			E_RECOVERABLE_ERROR => 'RECOVERABLE_ERROR',
 			E_DEPRECATED => 'DEPRECATED',
 			E_USER_DEPRECATED => 'USER_DEPRECATED',
 		];
+		if (version_compare(phpversion(), '8.4', '<')) {
+			$errors[E_STRICT] = 'STRICT';
+		}
 
 		$result = '';
 		if (isset($errors[$type])) {

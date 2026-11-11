@@ -246,7 +246,7 @@ class modWebhook extends DolibarrModules
 			//      'frequency' => 2,
 			//      'unitfrequency' => 3600,
 			//      'status' => 0,
-			//      'test' => '$conf->webhook->enabled',
+			//      'test' => 'isModEnabled('webhook')',
 			//      'priority' => 50,
 			//  ),
 		);

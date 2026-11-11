@@ -32,9 +32,11 @@ CREATE TABLE llx_supplier_proposal (
   fk_user_cloture integer DEFAULT NULL,
   fk_statut	smallint DEFAULT 0 NOT NULL,	-- 0=draft, 1=validated, 2=accepted, 3=refused, 4=billed/closed
   price double DEFAULT 0,
-  remise_percent double DEFAULT 0,
-  remise_absolue double DEFAULT 0,
-  remise double DEFAULT 0,
+
+  remise_percent double DEFAULT 0,          -- deprecated, not used
+  remise_absolue double DEFAULT 0,          -- deprecated, not used
+  remise double DEFAULT 0,                  -- deprecated, not used
+
   total_ht double(24,8) DEFAULT 0,
   total_tva double(24,8) DEFAULT 0,
   localtax1 double(24,8) DEFAULT 0,
