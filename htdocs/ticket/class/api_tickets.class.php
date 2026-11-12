@@ -79,6 +79,7 @@ class Tickets extends DolibarrApi
 	 * @param   int         	$contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
 	 * @return  Object							Object with cleaned properties
 	 *
+	 * @throws RestException 400
 	 * @throws RestException 401
 	 * @throws RestException 403
 	 * @throws RestException 404
@@ -151,15 +152,11 @@ class Tickets extends DolibarrApi
 		}
 
 		// Check parameters
-		if (($id < 0) && !$track_id && !$ref) {
+		if (($id <= 0) && !$track_id && !$ref) {
 			throw new RestException(400, 'Wrong parameters');
 		}
-		if (empty($id) && empty($ref) && empty($track_id)) {
-			$result = $this->ticket->initAsSpecimen();
-		} else {
-			$result = $this->ticket->fetch($id, $ref, $track_id);
-		}
-		if (!$result) {
+		$result = $this->ticket->fetch($id, $ref, $track_id);
+		if ($result <= 0) {
 			throw new RestException(404, 'Ticket not found');
 		}
 
@@ -307,13 +304,7 @@ class Tickets extends DolibarrApi
 			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$ticket_static = new Ticket($this->db);
-				if ($ticket_static->fetch($obj->rowid)) {
-					if ($ticket_static->fk_user_assign > 0) {
-						$userStatic = new User($this->db);
-						$userStatic->fetch($ticket_static->fk_user_assign);
-						//$ticket_static->fk_user_assign_string = dolGetFirstLastname($userStatic->firstname, $userStatic->lastname);
-					}
-
+				if ($ticket_static->fetch($obj->rowid) > 0) {
 					if ($loadcontacts) {
 						// Add external contacts ids
 						$tmparray = $ticket_static->liste_contact(-1, 'external', 1);
@@ -346,7 +337,7 @@ class Tickets extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
