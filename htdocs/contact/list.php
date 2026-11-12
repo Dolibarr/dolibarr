@@ -597,6 +597,10 @@ if ($search_priv != '0' && $search_priv != '1') {
 		$sql .= " AND (p.priv='1' AND p.fk_user_creat=".((int) $user->id).")";
 	}
 }
+// An internal user who cannot see all third parties sees only contacts without third party or contacts of its third parties
+if (!$user->hasRight('societe', 'client', 'voir') && empty($socid)) {
+	$sql .= " AND (p.fk_soc IS NULL OR EXISTS (SELECT sc.fk_soc FROM ".$db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $user->id)."))";
+}
 // Search on sale representative
 if (!empty($search_sale) && $search_sale != '-1') {
 	if ($search_sale == -2) {
@@ -1139,6 +1143,9 @@ $reshook = $hookmanager->executeHooks('printNewCardButton', $parameters, $object
 if (empty($reshook)) {
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+	if (empty($user->socid) && $contextpage != 'poslist') {	// Statistics are on all the contacts, so they are not available to external users
+		$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', dolBuildUrl(DOL_URL_ROOT.'/contact/stats/geo.php', ['mode' => 'contactbycountry']), '', 1, array('morecss' => 'reposition'));
+	}
 	$newcardbutton .= dolGetButtonTitleSeparator();
 	if ($contextpage != 'poslist') {
 		$newcardbutton .= dolGetButtonTitle($langs->trans('NewContactAddress'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?action=create', '', $permissiontoadd);
