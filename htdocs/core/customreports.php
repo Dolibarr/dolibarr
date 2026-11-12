@@ -34,6 +34,13 @@
  * $search_groupby = array('t.column2');
  * $customreportkey='abc';
  * include DOL_DOCUMENT_ROOT.'/core/customreports.php';
+ *
+ * To show the full tool into a tab of another PHP page (the parent page prints the header and the tabs, and shows this
+ * tab when it receives its own value for the parameter tabfamily, value that is kept by the forms and links of the tool):
+ *
+ * define('USE_CUSTOM_REPORT_AS_TAB', 1);
+ * $customreportobjecttype = 'order';		// Object type preselected
+ * include DOL_DOCUMENT_ROOT.'/core/customreports.php';
  */
 
 /**
@@ -44,9 +51,11 @@
  * @var User $user
  *
  * @var ?int[]		$toselect  			Items selected on page, only used to see if not empty here
+ * @var ?string		$customreportobjecttype	Object type preselected when page is shown as a tab of another page
  */
 '
 @phan-var-force ?int[] $toselect
+@phan-var-force ?string $customreportobjecttype
 ';
 
 // Initialise values
@@ -54,7 +63,9 @@ $tabfamily = null;
 $objecttype = null;
 
 if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
-	require '../main.inc.php';
+	if (!defined('USE_CUSTOM_REPORT_AS_TAB')) {		// When shown as a tab, main.inc.php is already loaded by the parent page
+		require '../main.inc.php';
+	}
 
 	// Get parameters
 	$action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
@@ -64,6 +75,13 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	$objecttype = (string) GETPOST('objecttype', 'aZ09arobase');
 	if ($objecttype == '-1') {	// -1 is the empty value of the combo of object types
 		$objecttype = '';
+	}
+	if (defined('USE_CUSTOM_REPORT_AS_TAB')) {
+		// When shown as a tab, the parameter mode is used by the parent page, and the parent page defines the object type preselected
+		$mode = '';
+		if (!GETPOSTISSET('objecttype') && !empty($customreportobjecttype)) {
+			$objecttype = (string) $customreportobjecttype;
+		}
 	}
 	$tabfamily  = GETPOST('tabfamily', 'aZ09');
 
@@ -210,10 +228,13 @@ $ObjectClassName = '';
 $arrayoftype = array(
 	'thirdparty' => array('label' => 'ThirdParties', 'picto' => 'company', 'ObjectClassName' => 'Societe', 'enabled' => isModEnabled('societe'), 'ClassPath' => "/societe/class/societe.class.php", 'langs' => 'companies'),
 	'contact' => array('label' => 'Contacts', 'picto' => 'contact', 'ObjectClassName' => 'Contact', 'enabled' => isModEnabled('societe'), 'ClassPath' => "/contact/class/contact.class.php"),
+	'product' => array('label' => 'ProductsAndServices', 'picto' => 'product', 'ObjectClassName' => 'Product', 'enabled' => (isModEnabled('product') || isModEnabled('service')), 'ClassPath' => "/product/class/product.class.php", 'langs' => 'products'),
 	'proposal' => array('label' => 'Proposals', 'picto' => 'proposal', 'ObjectClassName' => 'Propal', 'enabled' => isModEnabled('propal'), 'ClassPath' => "/comm/propal/class/propal.class.php", 'langs' => 'propal'),
 	'proposaldet' => array('label' => 'ProposalLines', 'picto' => 'proposal', 'ObjectClassName' => 'PropaleLigne', 'enabled' => isModEnabled('propal'), 'ClassPath' => "/comm/propal/class/propaleligne.class.php", 'langs' => 'propal'),
 	'order' => array('label' => 'Orders', 'picto' => 'order', 'ObjectClassName' => 'Commande', 'enabled' => isModEnabled('order'), 'ClassPath' => "/commande/class/commande.class.php", 'langs' => 'orders'),
 	'orderdet' => array('label' => 'SaleOrderLines', 'picto' => 'order', 'ObjectClassName' => 'OrderLine', 'enabled' => isModEnabled('order'), 'ClassPath' => "/commande/class/orderline.class.php", 'langs' => 'orders'),
+	'shipping' => array('label' => 'Shipments', 'picto' => 'dolly', 'ObjectClassName' => 'Expedition', 'enabled' => isModEnabled('shipping'), 'ClassPath' => "/expedition/class/expedition.class.php", 'langs' => 'sendings'),
+	'reception' => array('label' => 'Receptions', 'picto' => 'dollyrevert', 'ObjectClassName' => 'Reception', 'enabled' => isModEnabled('reception'), 'ClassPath' => "/reception/class/reception.class.php", 'langs' => 'receptions'),
 	'invoice' => array('label' => 'Invoices', 'picto' => 'bill', 'ObjectClassName' => 'Facture', 'enabled' => isModEnabled('invoice'), 'ClassPath' => "/compta/facture/class/facture.class.php", 'langs' => 'bills'),
 	'invoice_template' => array('label' => 'PredefinedInvoices', 'picto' => 'bill', 'ObjectClassName' => 'FactureRec', 'enabled' => isModEnabled('invoice'), 'ClassPath' => "/compta/facture/class/facture-rec.class.php", 'langs' => 'bills'),
 	'contract' => array('label' => 'Contracts', 'picto' => 'contract', 'ObjectClassName' => 'Contrat', 'enabled' => isModEnabled('contract'), 'ClassPath' => "/contrat/class/contrat.class.php", 'langs' => 'contracts'),
@@ -442,7 +463,7 @@ if ($features) {
 $form = new Form($db);
 $formother = new FormOther($db);
 
-if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
+if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE') && !defined('USE_CUSTOM_REPORT_AS_TAB')) {
 	llxHeader('', $langs->transnoentitiesnoconv('CustomReports'), '');
 
 	if (empty($head)) {
@@ -604,7 +625,7 @@ if (count($sanitized_search_groupby)) {
 			$regs = array();
 			if (isset($object->fields[$gvalwithoutprefix])) {
 				if (!empty($object->fields[$gvalwithoutprefix]['arrayofkeyval'])) {
-					$valuetranslated = $object->fields[$gvalwithoutprefix]['arrayofkeyval'][$obj->val];
+					$valuetranslated = $object->fields[$gvalwithoutprefix]['arrayofkeyval'][$obj->val] ?? null;
 					if (is_null($valuetranslated)) {
 						$valuetranslated = $langs->transnoentitiesnoconv("UndefinedKey");
 					}
@@ -1253,7 +1274,10 @@ if ($sql) {
 
 				// Define $xlabel
 				if (!empty($object->fields[$xvalwithoutprefix]['arrayofkeyval'])) {
-					$xlabel = $object->fields[$xvalwithoutprefix]['arrayofkeyval'][$obj->$fieldforxkey];
+					$xlabel = $object->fields[$xvalwithoutprefix]['arrayofkeyval'][$obj->$fieldforxkey] ?? null;
+					if (!is_null($xlabel)) {
+						$xlabel = $langs->transnoentitiesnoconv($xlabel);	// Values of arrayofkeyval are translation keys
+					}
 				}
 				$labeltouse = (($xlabel || $xlabel == '0') ? dol_trunc($xlabel, 20, 'middle') : ($xlabel === '' ? $langs->transnoentitiesnoconv("Empty") : $langs->transnoentitiesnoconv("NotDefined")));
 
@@ -1335,7 +1359,10 @@ if ($sql) {
 
 				// Define $xlabel
 				if (!empty($object->fields[$xvalwithoutprefix]['arrayofkeyval'])) {
-					$xlabel = $object->fields[$xvalwithoutprefix]['arrayofkeyval'][$obj->$fieldforxkey];
+					$xlabel = $object->fields[$xvalwithoutprefix]['arrayofkeyval'][$obj->$fieldforxkey] ?? null;
+					if (!is_null($xlabel)) {
+						$xlabel = $langs->transnoentitiesnoconv($xlabel);	// Values of arrayofkeyval are translation keys
+					}
 				}
 
 				$labeltouse = (($xlabel || $xlabel == '0') ? dol_trunc($xlabel, 20, 'middle') : ($xlabel === '' ? $langs->transnoentitiesnoconv("Empty") : $langs->transnoentitiesnoconv("NotDefined")));
@@ -1427,7 +1454,7 @@ if ($sql && !defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 }
 
 
-if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
+if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE') && !defined('USE_CUSTOM_REPORT_AS_TAB')) {
 	print dol_get_fiche_end();
 
 	llxFooter();
