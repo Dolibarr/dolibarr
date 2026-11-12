@@ -524,6 +524,9 @@ if (empty($reshook)) {
 if ($search_status == '' && empty($search_all)) {
 	$search_status = 1; // display active thirdparty only by default
 }
+if ($type == 't' && ($search_type == '' || $search_type == '-1')) {
+	$search_type = '1,2,3'; // No nature (the select sends -1, the purge empties it): keep customers and prospects of the POS list
+}
 
 
 
