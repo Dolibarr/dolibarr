@@ -584,7 +584,7 @@ function deletePerms($file)
  *
  * Kept for backward compatibility: this is a public core function that external modules may call.
  * The signature and the 1/-1 contract are unchanged, the body delegates to
- * DescriptorRightsSyncService.
+ * PermissionsBlock::sync().
  *
  * @param	string		$file			filename or path
  * @param	array<int,string[]>	$permissions permissions existing in file
@@ -597,7 +597,7 @@ function deletePerms($file)
  */
 function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $module, $action)
 {
-	require_once DOL_DOCUMENT_ROOT.'/modulebuilder/class/RightsSyncService.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/modulebuilder/class/PermissionsBlock.class.php';
 
 	$module = (string) $module;
 	$objectname = (string) $objectname;
@@ -610,55 +610,35 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
 		$module = (string) preg_replace('/^mod|\.class\.php$/', '', basename($file));
 	}
 
-	try {
-		switch ((int) $action) {
-			case -2:
-				$cmd = RightsSyncCommand::forObjectCreation($module, $file, $permissions, $objectname);
-				break;
-			case -1:
-				$cmd = RightsSyncCommand::forObjectDeletion($module, $file, $permissions, $objectname);
-				break;
-			case 1:
-				$cmd = RightsSyncCommand::forRightAddition(
-					$module,
-					$file,
-					$permissions,
-					(string) ($right[4] ?? ''),
-					(string) ($right[1] ?? ''),
-					(string) ($right[5] ?? '')
-				);
-				break;
-			case 2:
-				$cmd = RightsSyncCommand::forRightUpdate(
-					$module,
-					$file,
-					$permissions,
-					(int) $key,
-					(string) ($right[4] ?? ''),
-					(string) ($right[1] ?? ''),
-					(string) ($right[5] ?? '')
-				);
-				break;
-			case 0:
-				$cmd = RightsSyncCommand::forRightDeletion($module, $file, $permissions, (int) $key);
-				break;
-			default:
-				dol_syslog('reWriteAllPermissions got an unknown action: '.$action, LOG_WARNING);
-				return -1;
-		}
-	} catch (\InvalidArgumentException $e) {
-		dol_syslog('reWriteAllPermissions '.$e->getMessage(), LOG_WARNING);
+	$actions = array(
+		-2 => PermissionsBlock::SYNC_ADD_OBJECT,
+		-1 => PermissionsBlock::SYNC_DELETE_OBJECT,
+		0 => PermissionsBlock::SYNC_DELETE_RIGHT,
+		1 => PermissionsBlock::SYNC_ADD_RIGHT,
+		2 => PermissionsBlock::SYNC_UPDATE_RIGHT,
+	);
+	if (!isset($actions[(int) $action])) {
+		dol_syslog('reWriteAllPermissions got an unknown action: '.$action, LOG_WARNING);
 		return -1;
 	}
+	if ((int) $action >= 1) {
+		// For a right addition or update, the object, label and crud code come from $right
+		$objectname = (string) ($right[4] ?? '');
+	}
 
-	$report = (new DescriptorRightsSyncService())->sync($cmd);
+	$report = PermissionsBlock::sync(
+		$file,
+		$actions[(int) $action],
+		$permissions,
+		$module,
+		$objectname,
+		(int) $key,
+		(string) ($right[1] ?? ''),
+		(string) ($right[5] ?? '')
+	);
 
 	// The historical contract reports a skipped object creation as a failure.
-	if ($report->skipped > 0) {
-		return -1;
-	}
-
-	return $report->toLegacyReturnCode();
+	return (empty($report['conflicts']) && !$report['skipped']) ? 1 : -1;
 }
 
 /**
@@ -1660,7 +1640,7 @@ function renderModuleBuilderAccessPolicyBlock(AccessPolicyConfig $policy): strin
 {
 	$block = "// Access policy defined with ModuleBuilder, see MyObject::\$accesspolicy\n";
 	$block .= "try {\n";
-	$block .= "\t\$permissiontoread = ".$policy->getExpression()->toPhp().";\n";
+	$block .= "\t\$permissiontoread = ".$policy->toPhp().";\n";
 	$block .= "} catch (Throwable \$e) {\n";
 	$block .= "\tdol_syslog(__FILE__.': access policy evaluation failed, access denied: '.\$e->getMessage(), LOG_ERR);\n";
 	$block .= "\t\$permissiontoread = false;\n";

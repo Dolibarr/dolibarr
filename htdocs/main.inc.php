@@ -1112,6 +1112,11 @@ if (!defined('NOLOGIN')) {
 		// New session for this login has started.
 		$error = 0;
 
+		// The authentication has just succeeded: a fresh session id, so an id known before the login (session fixation) is worth nothing
+		if (session_status() === PHP_SESSION_ACTIVE && !session_regenerate_id(true)) {
+			dol_syslog("Session id could not be regenerated after the login", LOG_WARNING);
+		}
+
 		// Store value into session (values always stored)
 		$_SESSION["dol_login"] = $user->login;
 		$_SESSION["dol_logindate"] = dol_now('gmt');
@@ -1781,7 +1786,10 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 	print '<!doctype html>'."\n";
 
-	print '<html lang="'.substr($langs->defaultlang, 0, 2).'">'."\n";
+	// Same value as the one given to the css file (THEME_DARKMODEENABLED can be forced on URL)
+	$darkmode = GETPOSTISSET('THEME_DARKMODEENABLED') ? GETPOSTINT('THEME_DARKMODEENABLED') : getDolGlobalInt('THEME_DARKMODEENABLED');
+	$thememode = ($darkmode == 2 ? 'dark' : ($darkmode == 1 ? 'auto' : 'light'));
+	print '<html lang="'.substr($langs->defaultlang, 0, 2).'" data-theme-mode="'.$thememode.'">'."\n";
 
 	//print '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">'."\n";
 	if (empty($disablehead)) {
@@ -1942,6 +1950,9 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 		$jsContextFiles[] = 'dolibarr-tool.seteventmessage.js'; // The first tools to help dev for easy event in js
 		$jsContextFiles[] = 'dolibarr-tool.fetch.js'; // Ajax requests with anti CSRF token and error handling
+		$jsContextFiles[] = 'dolibarr-tool.replacecontent.js'; // Replace content of the page with html received in ajax
+		$jsContextFiles[] = 'dolibarr-tool.object.js'; // Read and update an object in ajax (data, no change of the page)
+		$jsContextFiles[] = 'dolibarr-tool.card.js'; // Controller of the card of an object: refresh fields, lines and sections of the page
 
 		if (! defined('NOREQUIRETRAN')) {
 			// Langs tool see Documentation at admin/tools/ui/dolibarr-context/index.php
@@ -4019,7 +4030,11 @@ if (!function_exists("llxFooter")) {
 		}
 
 		// Global html output events ($mesgs, $errors, $warnings)
-		dol_htmloutput_events($disabledoutputofmessages);
+		// A page loaded in background by an ajax tool (noflusheventmessages=1, ex: Dolibarr.tools.card) keeps them in session
+		// for the next page, its html is not displayed.
+		if (!GETPOSTINT('noflusheventmessages')) {
+			dol_htmloutput_events($disabledoutputofmessages);
+		}
 
 		// Code for search criteria persistence.
 		// $user->lastsearch_values was set by the GETPOST when form field search_xxx exists

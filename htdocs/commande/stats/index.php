@@ -50,6 +50,7 @@ $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
 $mode = GETPOSTISSET("mode") ? GETPOST("mode", 'aZ09') : 'customer';
+$tabfamily = GETPOST('tabfamily', 'aZ09');	// 'orderstats' to show the tab with the custom reports tool
 
 $hookmanager->initHooks(array('orderstats', 'globalcard'));
 
@@ -154,6 +155,46 @@ if ($mode == 'supplier') {
 }
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
+
+// The custom reports tool supports customer orders only and is not available to external users
+$showtabcustomreports = ($mode == 'customer' && empty($user->socid));
+
+$h = 0;
+$head = array();
+$head[$h][0] = DOL_URL_ROOT.'/commande/stats/index.php?mode='.$mode;
+$head[$h][1] = $langs->trans("ByMonthYear");
+$head[$h][2] = 'byyear';
+$h++;
+
+if ($showtabcustomreports) {
+	$head[$h][0] = DOL_URL_ROOT.'/commande/stats/index.php?tabfamily=orderstats';
+	$head[$h][1] = $langs->trans("Custom");
+	$head[$h][2] = 'customreports';
+	$h++;
+}
+
+$type = 'order_stats';
+
+if ($mode == 'supplier') {
+	$type = 'supplier_order_stats';
+}
+
+complete_head_from_modules($conf, $langs, null, $head, $h, $type);
+
+// Show the tab with the custom reports tool
+if ($showtabcustomreports && $tabfamily == 'orderstats') {
+	print dol_get_fiche_head($head, 'customreports', '', -1);
+
+	define('USE_CUSTOM_REPORT_AS_TAB', 1);
+	$customreportobjecttype = 'order';
+	include DOL_DOCUMENT_ROOT.'/core/customreports.php';
+
+	print dol_get_fiche_end();
+
+	llxFooter();
+	$db->close();
+	exit;
+}
 
 dol_mkdir($dir);
 
@@ -331,21 +372,6 @@ foreach ($data as $val) {
 if (!count($arrayyears)) {
 	$arrayyears[$nowyear] = $nowyear;
 }
-
-$h = 0;
-$head = array();
-$head[$h][0] = DOL_URL_ROOT.'/commande/stats/index.php?mode='.$mode;
-$head[$h][1] = $langs->trans("ByMonthYear");
-$head[$h][2] = 'byyear';
-$h++;
-
-$type = 'order_stats';
-
-if ($mode == 'supplier') {
-	$type = 'supplier_order_stats';
-}
-
-complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 
 print dol_get_fiche_head($head, 'byyear', '', -1);
 

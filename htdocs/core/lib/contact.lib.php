@@ -181,6 +181,62 @@ function contact_prepare_head(Contact $object)
 }
 
 /**
+ *  Return array head with list of tabs to view statistics on contacts
+ *
+ *  @param	Contact		$object		Contact (used by tabs added by external modules)
+ *  @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
+ */
+function contact_stats_prepare_head($object)
+{
+	global $conf, $langs, $user;
+
+	$h = 0;
+	$head = array();
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/contact/stats/geo.php', ['mode' => 'contactbycountry']);
+	$head[$h][1] = $langs->trans("Country");
+	$head[$h][2] = 'statscountry';
+	$h++;
+
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/contact/stats/geo.php', ['mode' => 'contactbyregion']);
+	$head[$h][1] = $langs->trans("Region");
+	$head[$h][2] = 'statsregion';
+	$h++;
+
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/contact/stats/geo.php', ['mode' => 'contactbystate']);
+	$head[$h][1] = $langs->trans("State");
+	$head[$h][2] = 'statsstate';
+	$h++;
+
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/contact/stats/geo.php', ['mode' => 'contactbytown']);
+	$head[$h][1] = $langs->trans('Town');
+	$head[$h][2] = 'statstown';
+	$h++;
+
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/contact/stats/byproperties.php');
+	$head[$h][1] = $langs->trans('ContactsByNature');
+	$head[$h][2] = 'statsbyproperties';
+	$h++;
+
+	// Tab with the custom reports tool (it does not filter on sales representatives, so it needs the permission to see all third parties)
+	if (empty($user->socid) && $user->hasRight('societe', 'client', 'voir')) {
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/contact/stats/geo.php', ['tabfamily' => 'contactstats']);
+		$head[$h][1] = $langs->trans("Custom");
+		$head[$h][2] = 'customreports';
+		$h++;
+	}
+
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'contact_stats');
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'contact_stats', 'remove');
+
+	return $head;
+}
+
+/**
  * 		Show html area for list of projects
  *
  *		@param	Conf		$conf			Object conf

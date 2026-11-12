@@ -203,6 +203,7 @@ Before writing any code, the agent **must**:
 - Use `dol_syslog()` for all logging (with appropriate log level: `LOG_DEBUG`, `LOG_WARNING`, `LOG_ERR`)
 - Do not leave `var_dump()`, `print_r()`, or `die()` in committed code
 - Use Dolibarr's `setEventMessages()` to display user-facing messages
+- Log files are called `dolibarr_*.log`
 
 ---
 

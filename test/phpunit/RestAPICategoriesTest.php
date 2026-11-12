@@ -166,6 +166,11 @@ class RestAPICategoriesTest extends AbstractRestAPITest
 
 		$this->getUrl('categories/'.$category_id_customer, $test, 'PUT', array("type" => "notatype"), 400);
 
+		// The type of a category cannot be changed
+		$this->getUrl('categories/'.$category_id_customer, $test, 'PUT', array("type" => "product"), 400);
+		$result = $this->getUrl('categories/'.$category_id_customer, $test, 'GET');
+		$this->assertEquals(2, $result['content']['type'], "$test Type must not be changed");
+
 		$this->getUrl('categories/'.$category_id_customer, $test, 'DELETE');
 		$this->getUrl('categories/'.$category_id_product, $test, 'DELETE');
 	}
@@ -259,6 +264,62 @@ class RestAPICategoriesTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * testRestCategoryListForObjectContact
+	 *
+	 * @return void
+	 */
+	public function testRestCategoryListForObjectContact()
+	{
+		$test = "List categories of a contact";
+
+		$result = $this->getUrl('contacts', $test, 'POST', array("lastname" => "API test categories ".mt_rand(0, 99999999)));
+		$contact_id = (int) $result['content'];
+		$this->assertGreaterThan(0, $contact_id, "$test Id of contact is not > 0");
+
+		$result = $this->getUrl('categories/object/contact/'.$contact_id, $test, 'GET');
+		$this->assertEquals(200, $result['http_code'], "$test Must be allowed for an admin");
+		$this->assertIsArray($result['content'], "$test Result must be a list");
+
+		$this->getUrl('contacts/'.$contact_id, $test, 'DELETE');
+	}
+
+	/**
+	 * testRestCategoryListForObjectUser
+	 *
+	 * @return void
+	 */
+	public function testRestCategoryListForObjectUser()
+	{
+		$test = "List categories of a user";
+
+		$result = $this->getUrl('categories/object/user/1', $test, 'GET');
+		$this->assertEquals(200, $result['http_code'], "$test Must be allowed for an admin");
+		$this->assertIsArray($result['content'], "$test Result must be a list");
+	}
+
+	/**
+	 * testRestCategoryListForObjectPageAfterLast
+	 *
+	 * @return void
+	 */
+	public function testRestCategoryListForObjectPageAfterLast()
+	{
+		$test = "List categories of an object with a page after the last one";
+
+		$category_id = $this->createCategory($test, 2);	// customer
+		$this->getUrl('categories/'.$category_id.'/objects/customer/1', $test, 'POST', array());
+
+		$result = $this->getUrl('categories/object/customer/1', $test, 'GET', array('limit' => 1, 'page' => 0));
+		$this->assertCount(1, $result['content'], "$test First page must have one category");
+
+		$result = $this->getUrl('categories/object/customer/1', $test, 'GET', array('limit' => 1, 'page' => 100000));
+		$this->assertCount(0, $result['content'], "$test A page after the last one must be empty, not the first page");
+
+		$this->getUrl('categories/'.$category_id.'/objects/customer/1', $test, 'DELETE');
+		$this->getUrl('categories/'.$category_id, $test, 'DELETE');
+	}
+
+	/**
 	 * testRestCategoryLinkUnlink
 	 *
 	 * @return void
@@ -307,5 +368,55 @@ class RestAPICategoriesTest extends AbstractRestAPITest
 		$test = "Unlink an object from a category that does not exist";
 
 		$this->getUrl('categories/999999999/objects/customer/1', $test, 'DELETE', null, 404);
+	}
+
+	/**
+	 * testRestCategoryLinkUnlinkObjectNotFound
+	 *
+	 * @return void
+	 */
+	public function testRestCategoryLinkUnlinkObjectNotFound()
+	{
+		$test = "Link and unlink a third party that does not exist";
+
+		$category_id = $this->createCategory($test, 2);	// customer
+
+		$this->getUrl('categories/'.$category_id.'/objects/customer/999999999', $test, 'POST', array(), 404);
+		$this->getUrl('categories/'.$category_id.'/objects/customer/999999999', $test, 'DELETE', null, 404);
+		$this->getUrl('categories/'.$category_id.'/objects/customer/ref/APITESTNOTFOUND'.mt_rand(0, 99999999), $test, 'POST', array(), 404);
+		$this->getUrl('categories/'.$category_id.'/objects/customer/ref/APITESTNOTFOUND'.mt_rand(0, 99999999), $test, 'DELETE', null, 404);
+
+		$this->getUrl('categories/'.$category_id, $test, 'DELETE');
+	}
+
+	/**
+	 * testRestCategoryLinkUnlinkContactByRef
+	 *
+	 * @return void
+	 */
+	public function testRestCategoryLinkUnlinkContactByRef()
+	{
+		$test = "Link and unlink a contact by its external ref";
+
+		$ref_ext = "APITESTCAT".mt_rand(0, 99999999);
+		$result = $this->getUrl('contacts', $test, 'POST', array("lastname" => "API test categories ".$ref_ext, "ref_ext" => $ref_ext));
+		$contact_id = (int) $result['content'];
+		$this->assertGreaterThan(0, $contact_id, "$test Id of contact is not > 0");
+
+		$category_id = $this->createCategory($test, 'contact');
+
+		$result = $this->getUrl('categories/'.$category_id.'/objects/contact/ref/'.$ref_ext, $test, 'POST', array());
+		$this->assertEquals(200, $result['content']['success']['code'] ?? null, "$test Link must succeed");
+
+		$result = $this->getUrl('categories/object/contact/'.$contact_id, $test, 'GET');
+		$this->assertContains($category_id, array_map('intval', array_column($result['content'], 'id')), "$test Category must be listed for the contact");
+
+		$result = $this->getUrl('categories/'.$category_id.'/objects/contact/ref/'.$ref_ext, $test, 'DELETE');
+		$this->assertEquals(200, $result['content']['success']['code'] ?? null, "$test Unlink must succeed");
+
+		$this->getUrl('categories/'.$category_id.'/objects/contact/ref/'.$ref_ext.'NOTFOUND', $test, 'POST', array(), 404);
+
+		$this->getUrl('categories/'.$category_id, $test, 'DELETE');
+		$this->getUrl('contacts/'.$contact_id, $test, 'DELETE');
 	}
 }
