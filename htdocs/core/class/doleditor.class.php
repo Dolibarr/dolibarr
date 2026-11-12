@@ -331,6 +331,10 @@ class DolEditor
                                                         breakAfterClose : true
                                                     });
                                                 },
+												contentDom : function(ev) {
+													/* Use the same font than the Dolibarr page into the editable area (also called after switching back from Source mode) */
+													this.document.appendStyleText(\'.cke_editable { font-size: \' + jQuery(\'body\').css(\'font-size\') + \'; font-family: \' + jQuery(\'body\').css(\'font-family\') + \'; }\');
+												},
 										},
 									disableNativeSpellChecker: '.(getDolGlobalString('CKEDITOR_NATIVE_SPELLCHECKER') ? 'false' : 'true');
 
