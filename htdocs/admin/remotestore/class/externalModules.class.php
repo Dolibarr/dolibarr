@@ -442,6 +442,9 @@ class ExternalModules
 		$html       = "";
 		$last_month = dol_now() - (30 * 24 * 60 * 60);
 		$dolibarrversiontouse = DOL_VERSION;	// full string with version
+		// On an alpha, beta or rc version, modules validated for the previous major version are not yet validated but can be installed
+		$isalphaorbeta = (bool) preg_match('/alpha|beta|rc/i', $dolibarrversiontouse);
+		$currentmajorversion = (int) $dolibarrversiontouse;
 
 		$this->products = array();
 
@@ -566,21 +569,19 @@ class ExternalModules
 		$this->numberTotalOfPages = (int) ceil(max($fileProductsTotal / $this->per_page, $customFileProductsTotalMax / $this->per_page, $dolistoreProductsTotal / $this->per_page));
 
 		// Merge all sources (github modules have priority on dolistore, the additional repos have priority on the community repo).
-		$this->products = $dolistoreProducts;
-		// array_unshift() below adds each product at the top, which reverses the order, so we reverse each sorted source first
-		foreach (array_merge(array_reverse($fileProducts), array_reverse($customFileProducts)) as $fileProduct) {
-			$id = $fileProduct['id'];
-			if ($id > 0) {
-				if (empty($this->products[$id])) {		// Not already present in array
-					array_unshift($this->products, $fileProduct);
-				} else {
-					$this->products[$id] = $fileProduct;
-					$this->products[$id]['category'] = $fileProduct['category'];
+		// The list is grouped by provider (additional repos, community repo, then DoliStore), each source being already sorted.
+		// Products are indexed with a string key (DoliStore id if known), so a product already added by a source with higher priority is not added twice.
+		$mergedProducts = array();
+		$nbproductswithoutid = 0;
+		foreach (array($customFileProducts, $fileProducts, $dolistoreProducts) as $sourceProducts) {
+			foreach ($sourceProducts as $sourceProduct) {
+				$key = ((int) $sourceProduct['id'] > 0) ? 'id'.((int) $sourceProduct['id']) : 'noid'.(++$nbproductswithoutid);
+				if (!isset($mergedProducts[$key])) {
+					$mergedProducts[$key] = $sourceProduct;
 				}
-			} else {
-				array_unshift($this->products, $fileProduct);
 			}
 		}
+		$this->products = array_values($mergedProducts);
 
 
 		$i = 0;
@@ -630,6 +631,15 @@ class ExternalModules
 					// Compatible
 					$version = '<span class="compatible hideonsmartphone">'.$langs->trans(
 						'CompatibleUpTo',
+						$dolibarrversiontouse,
+						$product["dolibarr_min"],
+						$product["dolibarr_max"]
+					).'</span>';
+					$compatible = '';
+				} elseif ($maxknown && $isalphaorbeta && (int) str_replace(array('v', 'V'), '', $product["dolibarr_max"]) == ($currentmajorversion - 1)) {
+					// Not yet validated (current version is an alpha, beta or rc and max is the previous major version), but install is allowed
+					$version = '<span class="notvalidated">'.$langs->trans(
+						'NotValidatedWithYourVersion',
 						$dolibarrversiontouse,
 						$product["dolibarr_min"],
 						$product["dolibarr_max"]
@@ -813,7 +823,8 @@ class ExternalModules
 			$html .= '</h2>';
 
 			$html .= '<small class="appDateCreation appRef"> ';
-			if (empty($product['tms'])) {
+			// When the list is sorted by date, we show the creation date (the one used for the sort), else the modification date
+			if (empty($product['tms']) || (substr($this->sortby, 0, 6) == 'datec_' && !empty($product['datec']))) {
 				$html .= img_picto($langs->trans('DateCreation'), 'calendar', 'class="pictofixedwidth"').'<span class="opacitymedium"><span class="hideonsmartphone">'.$langs->trans("DateCreation").': </span>';
 				$html .= (!empty($product['datec']) ? dol_print_date(dol_stringtotime($product['datec']), 'day') : $langs->trans("Unknown")).'</span>';
 			} else {

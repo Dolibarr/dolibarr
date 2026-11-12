@@ -119,6 +119,9 @@ div.divsearchfield {
 .compatibleafterupdate {
     color: orange;
 }
+.notvalidated {
+    color: orange;
+}
 .compatible {
     color: rgb(0,135,160);
 }
