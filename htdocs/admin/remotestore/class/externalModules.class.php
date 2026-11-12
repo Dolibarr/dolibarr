@@ -409,13 +409,13 @@ class ExternalModules
 		foreach ($organized_tree as $key => $value) {
 			if ($value['label'] != "Versions" && $value['label'] != "Specials") {
 				$html .= '<li' . ($current == $value['rowid'] ? ' class="active"' : '') . '>';
-				$html .= '<a href="?mode=marketplace&categorie=' . $value['rowid'] . ($sortparam ? '&' . $sortparam : '') . '">' . $value['label'] . '</a>';
+				$html .= '<a class="reposition" href="?mode=marketplace&categorie=' . $value['rowid'] . ($sortparam ? '&' . $sortparam : '') . '">' . $value['label'] . '</a>';
 				if (isset($value['children'])) {
 					$html .= '<ul>';
 					usort($value['children'], $this->buildSorter('position'));
 					foreach ($value['children'] as $key_children => $value_children) {
 						$html .= '<li' . ($current == $value_children['rowid'] ? ' class="active"' : '') . '>';
-						$html .= '<a href="?mode=marketplace&categorie=' . $value_children['rowid'] . ($sortparam ? '&' . $sortparam : '') . '" title="' . dol_escape_htmltag(strip_tags($value_children['description'])) . '">' . $value_children['label'] . '</a>';
+						$html .= '<a class="reposition" href="?mode=marketplace&categorie=' . $value_children['rowid'] . ($sortparam ? '&' . $sortparam : '') . '" title="' . dol_escape_htmltag(strip_tags($value_children['description'])) . '">' . $value_children['label'] . '</a>';
 						$html .= '</li>';
 					}
 					$html .= '</ul>';
