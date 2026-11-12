@@ -477,13 +477,19 @@ print '<td class="right">'.$langs->trans("AmountAverage").'</td>';
 print '<td class="right">%</td>';
 print '</tr>';
 
+// Lines after $MAXLINES are hidden and shown with the link "More..."
+$MAXLINES = 5;
+$nbline = 0;
+$cssline = '';
 $oldyear = 0;
 foreach ($data as $val) {
 	$year = (int) $val['year'];
 	while ($year && $oldyear > $year + 1) {	// If we have empty year
 		$oldyear--;
+		$nbline++;
+		$cssline = ($nbline > $MAXLINES ? ' hidden statsyearmorelines' : '');
 
-		print '<tr class="oddeven" height="24">';
+		print '<tr class="oddeven'.$cssline.'" height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$oldyear.'</a></td>';
 		// Empty year just after a year with records: delta is -100% (a decrease is green for suppliers)
 		$isyearbeforeval = ($oldyear == $year + 1);
@@ -507,7 +513,10 @@ foreach ($data as $val) {
 		$greenavg = (empty($val['avg_diff']) || $val['avg_diff'] >= 0);
 	}
 
-	print '<tr class="oddeven" height="24">';
+	$nbline++;
+	$cssline = ($nbline > $MAXLINES ? ' hidden statsyearmorelines' : '');
+
+	print '<tr class="oddeven'.$cssline.'" height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
 	print '<td class="right opacitylow '.($greennb ? 'growthup' : 'growthdown').'">'.(isset($val['nb_diff']) ? ($val['nb_diff'] < 0 ? '' : '+').round($val['nb_diff']).'%' : '').'</td>';
@@ -517,6 +526,12 @@ foreach ($data as $val) {
 	print '<td class="right opacitylow '.($greenavg ? 'growthup' : 'growthdown').'">'.(isset($val['avg_diff']) ? ($val['avg_diff'] < 0 ? '' : '+').round($val['avg_diff']).'%' : '').'</td>';
 	print '</tr>';
 	$oldyear = $year;
+}
+
+if ($nbline > $MAXLINES) {
+	print '<tr class="liste_total"><td colspan="7" class="center">';
+	print '<a href="#" class="showmoreoptions" onclick="jQuery(\'.statsyearmorelines\').toggle(); jQuery(this).toggle(); return false;">'.img_picto('', 'chevron-down', 'class="paddingright"').$langs->trans("More").'...</a>';
+	print '</td></tr>';
 }
 
 print '</table>';
