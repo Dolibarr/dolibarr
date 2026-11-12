@@ -5272,6 +5272,15 @@ class ToolApiBridge extends McpTool
 					}
 				}
 			}
+			if ($kind === 'shipment' && (!getDolGlobalInt('SHIPMENTS_ALLOW_FREE_LINES') || getDolGlobalString('MAIN_DISABLE_FREE_LINES'))) {
+				// The REST create refuses a line with no product unless free lines
+				// are allowed on shipments: say it before the user is asked to approve.
+				foreach ($lines as $line) {
+					if (!is_array($line) || empty($line['fk_product'])) {
+						return $langs->transnoentitiesnoconv('AIWriteShipmentLineNeedsProduct', (string) (is_array($line) ? ($line['desc'] ?? '') : ''));
+					}
+				}
+			}
 
 			return '';
 		}
