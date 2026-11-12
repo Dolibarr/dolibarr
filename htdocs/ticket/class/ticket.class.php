@@ -1237,6 +1237,8 @@ class Ticket extends CommonObject
 				$this->deleteEcmFiles(1);
 
 				$dir = DOL_DATA_ROOT.'/'.$this->element.'/'.$this->ref;
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
 				// For remove dir
 				if (dol_is_dir($dir)) {
 					if (!dol_delete_dir_recursive($dir)) {
