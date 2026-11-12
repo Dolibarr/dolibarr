@@ -1523,7 +1523,9 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		$param .= '&search_status=' . urlencode((string) ($search_status));
 	}
 	if (count($search_roles) > 0) {
-		$param .= implode('&search_roles[]=', $search_roles);
+		foreach ($search_roles as $search_role) {
+			$param .= '&search_roles[]='.urlencode($search_role);
+		}
 	}
 	if ($search_name != '') {
 		$param .= '&search_name=' . urlencode($search_name);

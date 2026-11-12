@@ -275,7 +275,7 @@ $arrayfields['region.nom'] = array('label' => "Region", 'position' => 67, 'check
 $arrayfields['country.code_iso'] = array('label' => "Country", 'position' => 68, 'checked' => '0');
 if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 	$arrayfields['s.nom'] = array('label' => "ThirdParty", 'position' => 113, 'checked' => '1');
-	$arrayfields['s.name_alias'] = array('label' => "AliasNameShort", 'position' => 114, 'checked' => '1');
+	$arrayfields['s.name_alias'] = array('label' => "AliasNameShort", 'position' => 114, 'checked' => '0');
 }
 
 $arrayfields['unsubscribed'] = array(
@@ -1084,7 +1084,9 @@ if ($search_import_key != '') {
 	$param .= '&search_import_key='.urlencode($search_import_key);
 }
 if (count($search_roles) > 0) {
-	$param .= implode('&search_roles[]=', $search_roles);
+	foreach ($search_roles as $search_role) {
+		$param .= '&search_roles[]='.urlencode($search_role);
+	}
 }
 if ($search_birthday_start) {
 	$param .= '&search_birthday_start='.urlencode(dol_print_date($search_birthday_start, '%d')).'&search_birthday_startmonth='.urlencode(dol_print_date($search_birthday_start, '%m')).'&search_birthday_startyear='.urlencode(dol_print_date($search_birthday_start, '%Y'));
