@@ -358,10 +358,10 @@ class pdf_valued_inventory extends pdf_standard_inventory
 		$pdf->SetXY($this->marge_gauche, $posy + 17);
 		$note = $outputlangs->transnoentities("InventoryValuedNote");
 		if ($nbzero) {
-			$note .= ' '.$outputlangs->transnoentities("InventoryValuedNbZero", $nbzero);
+			$note .= ' '.$outputlangs->transnoentities("InventoryValuedNbZero", (string) $nbzero);
 		}
 		if ($nbnovalue) {
-			$note .= ' '.$outputlangs->transnoentities("InventoryValuedNbNoValue", $nbnovalue);
+			$note .= ' '.$outputlangs->transnoentities("InventoryValuedNbNoValue", (string) $nbnovalue);
 		}
 		$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $note, 0, 'L');
 
