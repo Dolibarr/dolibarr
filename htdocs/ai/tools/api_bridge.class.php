@@ -6248,8 +6248,20 @@ class ToolApiBridge extends McpTool
 			$report = $this->writeTarget;
 			$remain = ($report instanceof ExpenseReport) ? (float) price2num((float) $report->total_ttc - (float) $report->getSumPayments(), 'MT') : 0.0;
 			$amount = (isset($args['amount']) && $args['amount'] !== '') ? (float) price2num($args['amount'], 'MT') : $remain;
-			$mode = $this->resolvePaymentMode($args['payment_mode'] ?? ($args['fk_typepayment'] ?? ''));
-			$account = isModEnabled('bank') ? $this->resolveBankAccount($args['bank_account'] ?? ($args['accountid'] ?? '')) : 0;
+			// How and from where are only asked for a report that can be paid (approved, 5):
+			// another one is refused for that reason first.
+			$payable = ($report instanceof ExpenseReport) && (int) $report->status === 5 && $remain > 0;
+			$mode = $payable ? $this->resolvePaymentMode($args['payment_mode'] ?? ($args['fk_typepayment'] ?? '')) : 0;
+			$account = ($payable && isModEnabled('bank')) ? $this->resolveBankAccount($args['bank_account'] ?? ($args['accountid'] ?? '')) : 0;
+			if ($mode > 0 && $account > 0) {
+				// Core refuses it once the payment is written: a cash account takes cash only.
+				require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+				$bank = new Account($this->db);
+				if ($bank->fetch($account) > 0 && (int) $bank->type === Account::TYPE_CASH && dol_getIdFromCode($this->db, (string) $mode, 'c_paiement', 'id', 'code', 1) !== 'LIQ') {
+					$langs->load('errors');
+					$this->writeProblems[] = $langs->transnoentitiesnoconv('ErrorCashAccountAcceptsOnlyCashMoney');
+				}
+			}
 			$date = trim((string) ($args['date'] ?? ($args['datep'] ?? '')));
 			$stamp = ($date !== '') ? $this->writeDate('date', $date, 0) : null;
 			if ($stamp === null) {
