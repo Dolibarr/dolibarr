@@ -1675,7 +1675,7 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 		} elseif (!empty($totalarray['pos'][$i])) {
 			print '<td class="right">';
 			// @phan-suppress-next-line PhanTypeInvalidDimOffset
-			if (isset($totalarray['type'][$i]) && $totalarray['type'][$i] == 'duration') {
+			if (isset($totalarray['type'][$i]) && $totalarray['type'][$i] == 'duration') { // @phpstan-ignore isset.offset ('type' is empty here but the printFieldListValue hooks get $totalarray by reference and can fill it)
 				print(!empty($totalarray['val'][$totalarray['pos'][$i]]) ? convertSecondToTime($totalarray['val'][$totalarray['pos'][$i]], 'allhourmin') : 0);
 			} else {
 				print price(!empty($totalarray['val'][$totalarray['pos'][$i]]) ? $totalarray['val'][$totalarray['pos'][$i]] : 0);
