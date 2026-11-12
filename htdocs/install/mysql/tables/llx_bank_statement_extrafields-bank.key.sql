@@ -1,6 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2025 Florian HENRY  <florian.henry@scopen.fr>
--- Copyright (C) 2025 Laurent MAGNIN  <laurent.magnin@evarisk.com>
+-- Copyright (C) 2026 Laurent MAGNIN  <laurent.magnin@evarisk.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,7 +16,4 @@
 --
 -- ===================================================================
 
--- Table to receive manual import of a bank statement
--- Try to match compatibility with external module banking to capitalize on knowledge but removed fields for advanced features.
-
-ALTER TABLE llx_bank_record ADD CONSTRAINT bank_record_fk_bank FOREIGN KEY (fk_bank) REFERENCES llx_bank_account (rowid);
+ALTER TABLE llx_bank_statement_extrafields ADD UNIQUE INDEX uk_bank_statement_extrafields (fk_object);
