@@ -27,6 +27,10 @@ The following changes may create regressions for some external modules, but were
 * Old per-module URLs (commande/note.php?id=X, fourn/facture/note.php?facid=X, adherents/note.php?id=X, bom/bom_note.php?id=X, comm/mailing/note.php?id=X, contact/note.php?id=X, product/note.php?id=X,
   hrm/job_note.php?id=X, user/note.php?id=X, etc. — 41 paths total) 404 after this PR — no redirect is provided. Any external bookmark, saved link, or third-party module linking directly to one of
   these paths will need updating to core/note.php?element=<key>&id=X. All in-tree references (tab links, tooltip icons, list-view links) were found and updated.
+* The constants API_LOGINS_ALLOWED_FOR_GET_EXTRAFIELDS, API_LOGINS_ALLOWED_FOR_GET_COMPANY, API_LOGINS_ALLOWED_FOR_CONST_READ,
+  API_LOGINS_ALLOWED_FOR_INTEGRITY_CHECK and API_LOGINS_ALLOWED_FOR_GET_MODULES now accept a list of logins separated by ';'
+  (like MAIN_ONLY_LOGIN_ALLOWED). Before, only one login was allowed and a value like 'login1;login2' matched no user.
+  Check the value of these constants: every login in the list now gets access to the related setup API endpoints.
 
 
 ***** ChangeLog for 24.0.3 compared to 24.0.2 *****
