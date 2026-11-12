@@ -179,7 +179,7 @@ if (empty($reshook)) {
 		$currentchart = getDolGlobalInt('CHARTOFACCOUNTS');
 		if ($currentchart > 0 && $chartofaccounts != $currentchart && $action != 'confirm_change_chart') {
 			foreach (array('facturedet', 'facture_fourn_det', 'expensereport_det') as $tablebound) {
-				$sql = "SELECT COUNT(d.rowid) as nb FROM ".MAIN_DB_PREFIX.$tablebound." as d";
+				$sql = "SELECT COUNT(d.rowid) as nb FROM ".MAIN_DB_PREFIX.$db->sanitize($tablebound)." as d";
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = d.fk_code_ventilation";
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as s ON s.pcg_version = aa.fk_pcg_version";
 				$sql .= " WHERE s.rowid = ".((int) $currentchart)." AND aa.entity = ".((int) $conf->entity);
