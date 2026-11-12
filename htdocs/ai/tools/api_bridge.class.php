@@ -336,6 +336,13 @@ class ToolApiBridge extends McpTool
 	private $writeRefusedFields = [];
 
 	/**
+	 * Expense types of the dictionary, read once per request: rowid => code, label and nature.
+	 *
+	 * @var null|array<int,array{code:string,label:string,type:int}>
+	 */
+	private $expenseTypes = null;
+
+	/**
 	 * Line of the last line write: the line found, its position, the changes.
 	 *
 	 * @var array{line:?object,position:int,changes:array<string,mixed>}
@@ -2704,6 +2711,32 @@ class ToolApiBridge extends McpTool
 				'date_end' => "End date YYYY-MM-DD."
 			)
 		);
+
+		// Expense reports: the report for a period, then its expenses one by one, as the card does.
+		$this->enrichments['expensereports']['methods']['post'] = array(
+			'suffix' => 'create',
+			'description' => "Create a DRAFT expense report for a period. It is created empty: add its expenses one by one with the line tool (object: expensereports). Give date_debut and date_fin, the first and last day the expenses cover. It is for the acting user unless fk_user_author names an employee of his team. The user confirms before anything is written.",
+			'write' => array(
+				'preview' => 'AIPreviewCreateExpenseReport',
+				'required' => array('date_debut', 'date_fin'),
+				'object' => 'ExpenseReport',
+				'employee' => 'fk_user_author',
+				'args' => array('_employee', '_period'),
+				'dates' => array('date_debut', 'date_fin'),
+				'right' => array('expensereport', 'creer')
+			),
+			'params' => array(
+				'date_debut' => "First day of the period, YYYY-MM-DD.",
+				'date_fin' => "Last day of the period, YYYY-MM-DD.",
+				'fk_user_author' => "Employee the report is for: rowid or login, 'me' for yourself (default).",
+				'fk_user_validator' => "Rowid of the user who will approve it. Default: the approver set on the employee, else his manager.",
+				'note_public' => "Public note.",
+				'note_private' => "Private note."
+			)
+		);
+		foreach (array('postLine' => 'add', 'putLine' => 'update', 'deleteLine' => 'delete') as $method => $action) {
+			$this->enrichments['expensereports']['methods'][$method] = $this->lineMethod($action, 'expense report', 'ExpenseReport', array('expensereport', 'creer'), 'expense');
+		}
 	}
 
 	/**
@@ -2907,16 +2940,31 @@ class ToolApiBridge extends McpTool
 		if ($profile === 'supplier') {
 			unset($fields['desc']);	// FactureFournisseur::updateline() keeps the old text
 		}
+		if ($profile === 'expense') {
+			// A line of an expense report: what was spent, when, how much, tax included.
+			$fields = array(
+				'date' => "Date of the expense, YYYY-MM-DD.",
+				'type' => "Kind of expense: a code or a name of the expense types of this Dolibarr (e.g. TF_LUNCH, hotel, toll, mileage).",
+				'qty' => "Quantity: 1 by default, the kilometres for a mileage line.",
+				'value_unit' => "Unit amount INCLUDING tax.",
+				'vatrate' => "VAT rate shown on the receipt, in % (0 when there is none).",
+				'comments' => "Free text: supplier, place, reason.",
+				'project' => "Project the expense is for: rowid or ref."
+			);
+		}
 		$which = array(
-			'line' => "The line: its position as shown on the document (1 = first), or its product ref or label.",
+			'line' => ($profile === 'expense') ? "The line: its position on the report (1 = first), or words of its type or comment." : "The line: its position as shown on the document (1 = first), or its product ref or label.",
 			'lineid' => "Rowid of the line, when known from a read of the document."
 		);
 		$params = array('id' => "The draft ".$label.": rowid, or its ref.");
 		if ($action === 'add') {
 			$description = "Add ONE line (work done) to a DRAFT ".$label.". Give 'id', desc, and date and duration. The user confirms before anything is written.";
+			if ($profile === 'expense') {
+				$description = "Add ONE expense to a DRAFT ".$label.", one call per receipt. Give 'id', date, type and value_unit (the amount INCLUDING tax), plus qty and vatrate when they are not 1 and 0. The user confirms before anything is written.";
+			}
 			$params += $fields;
 		} elseif ($action === 'update') {
-			$description = "Change ONE line of a DRAFT ".$label.". Give 'id', the line ('line' or 'lineid') and ONLY what changes: ".implode(', ', array_keys($fields)).". The product of a line cannot be changed: delete the line and add another. The user confirms before anything is written.";
+			$description = "Change ONE line of a DRAFT ".$label.". Give 'id', the line ('line' or 'lineid') and ONLY what changes: ".implode(', ', array_keys($fields)).".".($profile === 'expense' ? "" : " The product of a line cannot be changed: delete the line and add another.")." The user confirms before anything is written.";
 			$params += $which + $fields;
 		} else {
 			$description = "Delete ONE line of a DRAFT ".$label.". Give 'id' and the line ('line' or 'lineid'). The user confirms before anything is written.";
@@ -5443,7 +5491,8 @@ class ToolApiBridge extends McpTool
 			'Expedition' => '/expedition/class/expedition.class.php',
 			'WebsitePage' => '/website/class/websitepage.class.php',
 			'Website' => '/website/class/website.class.php',
-			'Cronjob' => '/cron/class/cronjob.class.php'
+			'Cronjob' => '/cron/class/cronjob.class.php',
+			'ExpenseReport' => '/expensereport/class/expensereport.class.php'
 		);
 	}
 
@@ -5485,7 +5534,7 @@ class ToolApiBridge extends McpTool
 		}
 		require_once DOL_DOCUMENT_ROOT.$paths[$class];
 		$obj = new $class($this->db);
-		'@phan-var-force Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Contact|Project|Task|Ticket|Fichinter|Contrat|Reception|Expedition|WebsitePage|Website|Cronjob $obj';
+		'@phan-var-force Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Contact|Project|Task|Ticket|Fichinter|Contrat|Reception|Expedition|WebsitePage|Website|Cronjob|ExpenseReport $obj';
 		if ((int) $id > 0) {
 			$found = ($obj->fetch((int) $id) > 0);
 		} elseif ($obj instanceof Contact || $obj instanceof Societe) {
@@ -5578,6 +5627,14 @@ class ToolApiBridge extends McpTool
 			'Fichinter' => array('ficheinter', '', ''),
 			'Website' => array('website', '', '')
 		);
+		// An expense report is reached by its employee, his managers and its approver: the
+		// hierarchy rule of core needs the record itself, as the REST class passes it.
+		if ($class === 'ExpenseReport') {
+			$report = $this->fetchRecord('ExpenseReport', (int) $id);
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+
+			return ($report instanceof ExpenseReport) && (bool) checkUserAccessToObject($this->user, array('expensereport'), $report, '', '', 'fk_soc', 'rowid');
+		}
 		// A website page has no entity: it is reached through its website, as the REST class checks it.
 		if ($class === 'WebsitePage') {
 			$page = $this->fetchRecord('WebsitePage', (int) $id);
@@ -5635,6 +5692,13 @@ class ToolApiBridge extends McpTool
 		}
 		if ($obj instanceof Ticket && (string) $obj->subject !== '') {
 			$parts[] = (string) $obj->subject;
+		}
+		// An expense report belongs to an employee, not to a third party.
+		if ($obj instanceof ExpenseReport && (int) $obj->fk_user_author > 0) {
+			$employee = new User($this->db);
+			if ($employee->fetch((int) $obj->fk_user_author) > 0) {
+				$parts[] = $employee->getFullName($langs);
+			}
 		}
 		if ($this->socidOf($obj) > 0) {
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -6222,6 +6286,10 @@ class ToolApiBridge extends McpTool
 		$profile = (string) $write['line_profile'];
 		$doc = $this->writeTarget;
 		$aliases = array('quantity' => 'qty', 'unit_price' => 'subprice', 'price' => 'subprice', 'pu_ht' => 'subprice', 'description' => 'desc', 'label' => 'desc', 'vat_rate' => 'tva_tx', 'discount' => 'remise_percent', 'fk_unit' => 'unit', 'line_id' => 'lineid', 'rowid' => 'lineid', 'position' => 'line', 'product_ref' => 'line', 'product' => 'line');
+		if ($profile === 'expense') {
+			// An expense is said differently: an amount including tax, a comment, a kind of expense.
+			$aliases = array('quantity' => 'qty', 'amount' => 'value_unit', 'total' => 'value_unit', 'total_ttc' => 'value_unit', 'price' => 'value_unit', 'unit_price' => 'value_unit', 'subprice' => 'value_unit', 'description' => 'comments', 'desc' => 'comments', 'label' => 'comments', 'comment' => 'comments', 'vat_rate' => 'vatrate', 'tva_tx' => 'vatrate', 'vat' => 'vatrate', 'fee_type' => 'type', 'type_fees_code' => 'type', 'fk_c_type_fees' => 'type', 'category' => 'type', 'fk_project' => 'project', 'line_id' => 'lineid', 'rowid' => 'lineid', 'position' => 'line');
+		}
 		$changes = array();
 		foreach ($args as $name => $value) {
 			if (in_array($name, array('id', 'ref', 'requestState'), true) || substr((string) $name, 0, 1) === '_') {
@@ -6312,10 +6380,55 @@ class ToolApiBridge extends McpTool
 				unset($changes['date']);
 			}
 		}
+		if ($profile === 'expense') {
+			foreach (array('value_unit', 'vatrate') as $num) {
+				if (isset($changes[$num])) {
+					$changes[$num] = (float) price2num($changes[$num]);
+				}
+			}
+			if (isset($changes['type'])) {
+				$changes['type'] = $this->resolveExpenseType($changes['type']);
+			}
+			if (isset($changes['project']) && (string) $changes['project'] !== '') {
+				$project = $this->resolveWriteTarget(array('object' => 'Project', 'lookup' => 'ref'), $changes['project']);
+				if ($project instanceof Project && $this->userCanReach('Project', (int) $project->id)) {
+					$changes['project'] = (int) $project->id;
+				} else {
+					$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteProjectNotFound', (string) $changes['project']);
+					unset($changes['project']);
+				}
+			}
+		}
 		$this->writeLine = array('line' => $line, 'position' => $position, 'changes' => $changes);
 
 		if ($action === 'delete') {
 			$out['lineid'] = $line ? (int) $line->id : 0;
+			return $out;
+		}
+		if ($profile === 'expense') {
+			// The REST methods read every field of the line: what the user did not
+			// change is sent back as the line has it, a VAT code with its rate.
+			$typeid = (int) ($changes['type'] ?? ($line ? $line->fk_c_type_fees : 0));
+			$types = $this->expenseTypes();
+			$vatrate = $changes['vatrate'] ?? ($line ? (float) $line->vatrate : 0);
+			if (!array_key_exists('vatrate', $changes) && $line && !empty($line->vat_src_code)) {
+				$vatrate = $vatrate.' ('.$line->vat_src_code.')';
+			}
+			$out['_body'] = array(
+				'date' => $changes['date'] ?? ($line ? (int) $line->dates : null),
+				'fk_c_type_fees' => $typeid,
+				'qty' => $changes['qty'] ?? ($line ? (float) $line->qty : 1),
+				'value_unit' => $changes['value_unit'] ?? ($line ? (float) $line->value_unit : null),
+				'vatrate' => $vatrate,
+				'comments' => (string) ($changes['comments'] ?? ($line ? $line->comments : '')),
+				'fk_project' => (int) ($changes['project'] ?? ($line ? $line->fk_project : 0)),
+				'fk_c_exp_tax_cat' => (int) ($line ? $line->fk_c_exp_tax_cat : 0),
+				'type' => (int) ($types[$typeid]['type'] ?? 0),
+				'fk_ecm_files' => (int) ($line ? $line->fk_ecm_files : 0)
+			);
+			if ($action !== 'add') {
+				$out['lineid'] = $line ? (int) $line->id : 0;
+			}
 			return $out;
 		}
 		if ($profile === 'intervention') {
@@ -6390,6 +6503,121 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Employee of a new expense report, and the words naming it in the confirmation.
+	 *
+	 * The report is for the acting user unless another employee is named, by rowid
+	 * or login. The REST create only accepts oneself or a user of one's hierarchy:
+	 * anyone else is refused here, before the user is asked to approve.
+	 *
+	 * @param  array<string,mixed> $args  Arguments, dates already read.
+	 * @param  string              $field Field carrying the employee.
+	 * @return array<string,mixed>        Arguments with the employee rowid, the default approver and the '_' words of the sentence.
+	 */
+	private function normaliseExpenseReportEmployee(array $args, $field)
+	{
+		global $langs;
+
+		$langs->load('other');
+		$me = ($this->user instanceof User) ? (int) $this->user->id : 0;
+		$given = $args[$field] ?? ($args['user'] ?? ($args['employee'] ?? ''));
+		unset($args['user'], $args['employee']);
+		$employee = null;
+		if ($given === '' || $given === null || $given === 'me' || (is_numeric($given) && (int) $given === $me)) {
+			$employee = ($this->user instanceof User) ? $this->user : null;
+		} elseif ($this->db) {
+			$employee = new User($this->db);
+			$found = is_numeric($given) ? $employee->fetch((int) $given) : $employee->fetch(0, (string) $given);
+			if ($found <= 0 || (int) $employee->status !== 1) {
+				$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteRecordNotFound', 'user', (string) $given);
+				$employee = null;
+			}
+		}
+		if ($employee instanceof User) {
+			$args[$field] = (int) $employee->id;
+			if ((int) $employee->id !== $me
+				&& !(getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $this->user->hasRight('expensereport', 'writeall_advance'))
+				&& !in_array((int) $employee->id, $this->user->getAllChildIds(1))) {
+				$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteExpenseReportNotYourTeam', $employee->getFullName($langs));
+			}
+			// The approver the card proposes: the one set on the employee, else his manager.
+			if (empty($args['fk_user_validator'])) {
+				$approver = !empty($employee->fk_user_expense_validator) ? (int) $employee->fk_user_expense_validator : (int) $employee->fk_user;
+				if ($approver > 0) {
+					$args['fk_user_validator'] = $approver;
+				}
+			}
+			$args['_employee'] = $employee->getFullName($langs);
+		}
+		$from = is_numeric($args['date_debut'] ?? '') ? dol_print_date((int) $args['date_debut'], 'day') : '';
+		$to = is_numeric($args['date_fin'] ?? '') ? dol_print_date((int) $args['date_fin'], 'day') : '';
+		$args['_period'] = $from.' - '.$to;
+		if ($from !== '' && $to !== '' && (int) $args['date_fin'] < (int) $args['date_debut']) {
+			$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteExpenseReportPeriod');
+		}
+
+		return $args;
+	}
+
+	/**
+	 * Expense types of the dictionary, as the user reads them.
+	 *
+	 * @return array<int,array{code:string,label:string,type:int}> Rowid => code, label, nature (0 product, 1 service).
+	 */
+	private function expenseTypes()
+	{
+		global $langs;
+
+		if ($this->expenseTypes === null) {
+			$this->expenseTypes = array();
+			if ($this->db) {
+				$langs->load('trips');
+				$resql = $this->db->query("SELECT id, code, label, type FROM ".$this->db->prefix()."c_type_fees WHERE active = 1 ORDER BY code");
+				while ($resql && ($obj = $this->db->fetch_object($resql))) {
+					// Translated by its code, as the card shows it, else its own label.
+					$label = $langs->transnoentitiesnoconv((string) $obj->code);
+					if ($label === (string) $obj->code) {
+						$label = $langs->transnoentitiesnoconv((string) $obj->label);
+					}
+					$this->expenseTypes[(int) $obj->id] = array('code' => (string) $obj->code, 'label' => $label, 'type' => (int) $obj->type);
+				}
+			}
+		}
+
+		return $this->expenseTypes;
+	}
+
+	/**
+	 * Label of an expense type.
+	 *
+	 * @param  int    $id Rowid of the type, 0 for none.
+	 * @return string
+	 */
+	private function expenseTypeLabel($id)
+	{
+		$types = $this->expenseTypes();
+
+		return isset($types[(int) $id]) ? $types[(int) $id]['label'] : '';
+	}
+
+	/**
+	 * Expense type from the words of the user: its rowid, its code, or its name.
+	 *
+	 * @param  mixed $value What was said.
+	 * @return int          Rowid, 0 when none or several fit (the reason is in writeProblems).
+	 */
+	private function resolveExpenseType($value)
+	{
+		$list = array();
+		$names = array();
+		foreach ($this->expenseTypes() as $id => $t) {
+			$list[$id] = array($t['code'], $t['label']);
+			$names[] = $t['label'].' ('.$t['code'].')';
+		}
+
+		return $this->pickOne($list, $value, $names, 'AIWriteWhichExpenseType', 'AIWriteExpenseTypeNotFound', 'AIWriteNoExpenseType', false);
+	}
+
+	/**
 	 * Lines of a document, as a numbered list for a message: position, product, quantity.
 	 *
 	 * @param  CommonObject $doc Document with its lines.
@@ -6417,6 +6645,10 @@ class ToolApiBridge extends McpTool
 	 */
 	private function lineName($l)
 	{
+		if (isset($l->fk_c_type_fees)) {
+			// An expense: its kind, then what the employee wrote about it.
+			return trim($this->expenseTypeLabel((int) $l->fk_c_type_fees).' '.dol_string_nohtmltag((string) ($l->comments ?? '')));
+		}
 		$ref = (string) ($l->product_ref ?? ($l->ref ?? ''));
 		$label = (string) ($l->product_label ?? '');
 		$text = trim(dol_string_nohtmltag((string) ($l->desc ?? ($l->description ?? ''))));
@@ -6505,6 +6737,9 @@ class ToolApiBridge extends McpTool
 			if (isset($args[$field]) && is_numeric($args[$field])) {
 				$args[$field] = (int) round((float) $args[$field] * 3600);
 			}
+		}
+		if (!empty($write['employee'])) {
+			$args = $this->normaliseExpenseReportEmployee($args, (string) $write['employee']);
 		}
 		if (!empty($write['subtype'])) {
 			$args = $this->normaliseInvoiceSubtype($args, (string) $write['object']);
@@ -7017,9 +7252,34 @@ class ToolApiBridge extends McpTool
 		$line = $this->writeLine['line'];
 		$changes = $this->writeLine['changes'];
 		$position = (string) $this->writeLine['position'];
-		$labels = array('qty' => 'Qty', 'subprice' => 'PriceUHT', 'remise_percent' => 'Discount', 'tva_tx' => 'VAT', 'desc' => 'Description', 'unit' => 'Unit', 'date' => 'Date', 'duration' => 'Duration');
+		$labels = array('qty' => 'Qty', 'subprice' => 'PriceUHT', 'remise_percent' => 'Discount', 'tva_tx' => 'VAT', 'desc' => 'Description', 'unit' => 'Unit', 'date' => 'Date', 'duration' => 'Duration', 'value_unit' => 'PriceUTTC', 'vatrate' => 'VAT', 'comments' => 'Comments', 'type' => 'Type', 'project' => 'Project');
 		$text = array();
 		foreach ($changes as $name => $new) {
+			if ($write['line_profile'] === 'expense') {
+				// An expense line: its kind and its project by name, its date as stored, amounts including tax.
+				if ($name === 'type') {
+					$old = $line ? $this->expenseTypeLabel((int) $line->fk_c_type_fees) : '';
+					$new = $this->expenseTypeLabel((int) $new);
+				} elseif ($name === 'project') {
+					$old = $line ? (string) ($line->projet_ref ?? '') : '';
+					$project = $this->fetchRecord('Project', (int) $new);
+					$new = ($project instanceof Project) ? (string) $project->ref : (string) $new;
+				} elseif ($name === 'date') {
+					$old = ($line && !empty($line->dates)) ? dol_print_date((int) $line->dates, 'day') : '';
+					$new = dol_print_date((int) $new, 'day');
+				} elseif ($name === 'value_unit') {
+					$old = $line ? price((float) $line->value_unit) : '';
+					$new = price((float) $new);
+				} elseif ($name === 'comments') {
+					$old = $line ? dol_trunc(dol_string_nohtmltag((string) $line->comments), 40) : '';
+					$new = dol_trunc(dol_string_nohtmltag((string) $new), 40);
+				} else {
+					$old = $line ? (string) ((float) ($line->$name ?? 0)) : '';
+					$new = (string) ((float) $new);
+				}
+				$text[] = $langs->transnoentitiesnoconv($labels[$name]).' '.($write['line_action'] === 'add' ? '' : $old.' → ').$new;
+				continue;
+			}
 			$old = $line ? ($line->{$name === 'unit' ? 'fk_unit' : ($name === 'subprice' && isset($line->pu_ht) ? 'pu_ht' : $name)} ?? null) : null;
 			if ($name === 'desc') {
 				$old = $line ? ($line->desc ?? ($line->description ?? '')) : '';
@@ -7052,7 +7312,18 @@ class ToolApiBridge extends McpTool
 		$name = $line ? dol_trunc($this->lineName($line), 60) : '';
 		if ($write['line_action'] === 'delete') {
 			$amount = ($line && isset($line->total_ht)) ? ', '.price((float) $line->total_ht) : '';
+			if ($line && $write['line_profile'] === 'expense') {
+				$amount = ', '.price((float) $line->total_ttc);	// an expense is known by what was paid
+			}
 			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $position, $what, $name.(isset($line->qty) ? ' x '.((float) $line->qty) : '').$amount));
+		}
+		if ($line && $write['line_profile'] === 'expense') {
+			// The new total of the expense, tax included.
+			if (array_key_exists('qty', $changes) || array_key_exists('value_unit', $changes)) {
+				$text[] = $langs->transnoentitiesnoconv('TotalTTC').' '.price((float) $line->total_ttc).' → '.price(price2num(((float) ($changes['qty'] ?? $line->qty)) * ((float) ($changes['value_unit'] ?? $line->value_unit)), 'MT'));
+			}
+
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $position, $what, $name, implode(', ', $text)));
 		}
 		// The new total of the line, as core will compute it before taxes.
 		if ($line && (array_key_exists('qty', $changes) || array_key_exists('subprice', $changes) || array_key_exists('remise_percent', $changes))) {
@@ -7162,7 +7433,14 @@ class ToolApiBridge extends McpTool
 			if ($write['line_action'] === 'update' && !$changes) {
 				return $langs->transnoentitiesnoconv('AIWriteNothingToChange');
 			}
-			if ($write['line_action'] === 'add' && trim((string) ($changes['desc'] ?? '')) === '') {
+			if ($write['line_action'] === 'add' && $write['line_profile'] === 'expense') {
+				// The REST method demands them, and none has a default worth guessing.
+				foreach (array('date', 'type', 'value_unit') as $needed) {
+					if (!isset($changes[$needed]) || $changes[$needed] === '') {
+						return $langs->transnoentitiesnoconv('AIWriteMissingField', $needed);
+					}
+				}
+			} elseif ($write['line_action'] === 'add' && trim((string) ($changes['desc'] ?? '')) === '') {
 				return $langs->transnoentitiesnoconv('AIWriteMissingField', 'desc');
 			}
 			if (array_key_exists('qty', $changes) && (float) $changes['qty'] <= 0) {
