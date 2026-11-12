@@ -7374,7 +7374,7 @@ class ToolApiBridge extends McpTool
 		if ($obj instanceof ExpenseReport && $write['preview'] === 'AIPreviewSubmitExpenseReport' && (int) $obj->fk_user_validator > 0) {
 			$approver = new User($this->db);
 			if ($approver->fetch((int) $obj->fk_user_validator) > 0) {
-				$what .= ', '.$langs->transnoentitiesnoconv('AIPreviewApprover', $approver->getFullName($langs));
+				return dol_escape_htmltag($langs->transnoentitiesnoconv('AIPreviewSubmitExpenseReportTo', $what, $approver->getFullName($langs)));
 			}
 		}
 
