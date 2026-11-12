@@ -682,6 +682,9 @@ function getEntity($element, $shared = 1, $currentobject = null)
 		case 'invoice_supplier':
 			$element = 'supplier_invoice';
 			break; // "/fourn/class/fournisseur.facture.class.php"
+		case 'facturerec':
+			$element = 'invoice';
+			break; // "/compta/facture/class/facture-rec.class.php", template invoices are shared like invoices
 	}
 
 	if (is_object($mc)) {

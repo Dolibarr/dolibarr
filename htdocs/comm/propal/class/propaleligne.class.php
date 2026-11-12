@@ -364,6 +364,8 @@ class PropaleLigne extends CommonObjectLine
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 'fk_propal@propal';	// The entity is the one of the parent proposal
 	}
 
 	/**

@@ -244,6 +244,10 @@ $arrayoftype = array(
 	'ticket' => array('label' => 'Ticket', 'picto' => 'ticket', 'ObjectClassName' => 'Ticket', 'enabled' => isModEnabled('ticket')),
 	'member' => array('langs' => 'members', 'label' => 'Adherent', 'picto' => 'member', 'ObjectClassName' => 'Adherent', 'enabled' => isModEnabled('member'), 'ClassPath' => "/adherents/class/adherent.class.php"),
 	'cotisation' => array('langs' => 'members', 'label' => 'Subscriptions', 'picto' => 'member', 'ObjectClassName' => 'Subscription', 'enabled' => isModEnabled('member'), 'ClassPath' => "/adherents/class/subscription.class.php"),
+	// The custom reports do not filter on the salaries of the user and its subordinates, so the permission to read all salaries is required
+	'salary' => array('langs' => 'salaries', 'label' => 'Salaries', 'picto' => 'salary', 'ObjectClassName' => 'Salary', 'enabled' => (isModEnabled('salaries') && $user->hasRight('salaries', 'readall')), 'ClassPath' => "/salaries/class/salary.class.php"),
+	// The custom reports do not filter on the expense reports of the user and its subordinates, so the permission to read all expense reports is required
+	'expensereport' => array('langs' => 'trips', 'label' => 'ExpenseReports', 'picto' => 'trip', 'ObjectClassName' => 'ExpenseReport', 'enabled' => (isModEnabled('expensereport') && ($user->hasRight('expensereport', 'readall') || $user->hasRight('expensereport', 'lire_tous'))), 'ClassPath' => "/expensereport/class/expensereport.class.php"),
 );
 
 
@@ -268,6 +272,11 @@ if ($reshook < 0) {
 			$arrayoftype[$key] = $val;
 		}
 	}
+}
+
+// An object type of a disabled module, or not allowed to the user, must not be loaded even if forced in the URL
+if ($objecttype && isset($arrayoftype[$objecttype]['enabled']) && !dol_eval((string) $arrayoftype[$objecttype]['enabled'], 1, 1, '1')) {
+	$objecttype = '';
 }
 
 // Load the main $object for statistics
@@ -471,6 +480,23 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE') && !defined('USE_CUSTOM_REPORT_AS_T
 	} else {
 		print dol_get_fiche_head($head, 'customreports', $title, -1, $picto);
 	}
+}
+
+// If the user is not allowed to read the selected type of object, we show only the error, without running any request on data
+if (!$resultcheck) {
+	print '<div class="error">';
+	print $langs->trans("NotEnoughPermissions");
+	print '</div>';
+
+	if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE') && !defined('USE_CUSTOM_REPORT_AS_TAB')) {
+		print dol_get_fiche_end();
+
+		llxFooter();
+		$db->close();
+		exit;
+	}
+
+	return;		// When included into another page, the parent page ends the page
 }
 
 // Define $newarrayoftype that is array of object available for report
@@ -709,11 +735,6 @@ if (count($sanitized_search_groupby)) {
 //var_dump($arrayofvaluesforgroupby);exit;
 
 
-if (!$resultcheck) {
-	print '<div class="error">';
-	print $langs->trans("NotEnoughPermissions");
-	print '</div>';
-}
 
 
 
