@@ -202,6 +202,7 @@ trait CommonPeople
 		}
 		if ($this->element === 'user' && $this instanceof User) {
 			$contactid = $this->contact_id;
+			// @phan-suppress-next-line PhanUndeclaredProperty
 			$thirdpartyid = empty($object->fk_soc) ? 0 : $object->fk_soc;
 		}
 		if ($this->element == 'recruitmentcandidature' && $this instanceof RecruitmentCandidature) {

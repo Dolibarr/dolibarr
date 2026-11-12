@@ -88,6 +88,7 @@ $rawRequestLog = "";
 $rawResponseLog = "";
 $providerUsed = "offline";
 $errorDetails = "";
+$adapter = null;	// LLM adapter, set only when an AI API is called
 
 $assistantEnabled = getDolGlobalInt('AI_ASSISTANT_ENABLED', 0);
 $serviceKey = getDolGlobalString('AI_API_SERVICE');
@@ -883,7 +884,8 @@ try {
 					}
 				}
 
-				$histBudget = 6000;
+				$histBudget = getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 200000);	// in characters
+				$histTurnMaxSize = $histBudget;	// cap of one turn, same as the whole budget
 				foreach ($histTurns as $turn) {
 					if (is_array($turn) && !empty($turn['id'])) {
 						$turn = $histRows[(int) $turn['id']] ?? null;
@@ -901,8 +903,8 @@ try {
 						$hdata = json_decode((string) preg_replace('/^\[[^\]]*\]\s*/', '', $htext), true);
 						$htext = $guard->maskNames($htext, array_merge($aiNamesToMask, aiThirdpartyNamesToMask($db, $user, $htext, $dynamicStopWords, $hdata)));
 					}
-					if (dol_strlen($htext) > 1500) {
-						$htext = dol_substr($htext, 0, 1500).' ...';
+					if (dol_strlen($htext) > $histTurnMaxSize) {
+						$htext = dol_substr($htext, 0, $histTurnMaxSize).' ...';
 					}
 					if ($guard) {
 						$htext = $guard->mask($htext);
@@ -1244,7 +1246,10 @@ try {
 				$hasPdf = $hasPdf || ($att['mime'] === 'application/pdf');
 			}
 			$attachmentWords = '/\b(?:file|files|pdf|document|image_url|image|attachment|content.?type|mime|multimodal|vision)\b/i';
-			if (!empty($attachments) && preg_match($attachmentWords, $reason)) {
+			if ($adapter !== null && $adapter->lastTruncated) {
+				// The answer was cut by the max tokens limit: retrying the same request gives the same cut answer
+				$message = $langs->transnoentitiesnoconv('AIAnswerTruncated', $reason);
+			} elseif (!empty($attachments) && preg_match($attachmentWords, $reason)) {
 				$message = $langs->transnoentitiesnoconv($hasPdf ? 'AIProviderRejectedPdf' : 'AIProviderRejectedAttachment', getAiAssistantProviderLabel(), $reason);
 			} elseif (UniversalLLMAdapter::isModelUnavailableError($reason)) {
 				// The chosen model is unknown or retired at the provider: rephrasing
@@ -1898,14 +1903,14 @@ function classifyIntentUniversal(string $query, Translate $langs)
  *
  * This function narrows down the available tools by matching their assigned
  * categories against the detected intent categories. Tools tagged as "global"
- * are always considered, but may be excluded when more specific categories
- * are active to avoid overly generic matches.
+ * (the default of McpTool::getCategories()) are always kept, as they apply to
+ * any object (navigation, tools of external modules without categories, ...).
  *
  * Behavior:
  * - If no categories are provided, or only "global" is present, all tools are returned.
  * - Tools are included if they share at least one category with the target categories.
- * - Tools with only the "global" category are excluded when specific categories are active.
- * - If filtering results in fewer than 3 tools, the full tool list is returned as a fallback.
+ * - Tools with the "global" category are always included.
+ * - If fewer than 3 tools match a detected category, the full tool list is returned as a fallback.
  *
  *
  * @param array<int,array<string,mixed>> $allTools          List of all available tools.
@@ -1921,19 +1926,20 @@ function filterToolsProfessional(array $allTools, array $activeCategories)
 
 	$targetCategories = array_merge(['global'], $activeCategories);
 	$filtered = [];
+	$nbMatchingCategory = 0;	// Tools kept for a detected category, not only because they are global
 
 	foreach ($allTools as $tool) {
 		$toolCats = $tool['categories'] ?? ['global'];
 		if (count(array_intersect($toolCats, $targetCategories)) > 0) {
-			if (count($activeCategories) > 0 && $toolCats === ['global']) {
-				continue;
-			}
 			$filtered[] = $tool;
+			if (count(array_intersect($toolCats, $activeCategories)) > 0) {
+				$nbMatchingCategory++;
+			}
 		}
 	}
 
-	if (count($filtered) < 3) {
-		dol_syslog("AI Filter: Too few tools (" . count($filtered) . "). Reverting to full schema.", LOG_WARNING);
+	if ($nbMatchingCategory < 3) {
+		dol_syslog("AI Filter: Too few tools (" . $nbMatchingCategory . ") for the detected categories. Reverting to full schema.", LOG_WARNING);
 		return $allTools;
 	}
 

@@ -106,6 +106,7 @@ $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'a
 $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 'alpha');
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
+$search_project = GETPOST('search_project', 'alpha');
 $search_status = GETPOST('search_status', 'intcomma');
 $search_note_private = GETPOST('search_note_private', 'alpha');
 $search_note_public = GETPOST('search_note_public', 'alpha');
@@ -212,6 +213,7 @@ $arrayfields = array(
 	'sp.multicurrency_total_vat' => array('label' => 'MulticurrencyAmountVAT', 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1')),
 	'sp.multicurrency_total_ttc' => array('label' => 'MulticurrencyAmountTTC', 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1')),
 	'sp.fk_projet' => array('label' => $langs->trans("RefProject"), 'checked' => '1', 'enabled' => (!isModEnabled("project") ? '0' : '1')),
+	'p.title' => array('label' => $langs->trans("ProjectLabel"), 'checked' => '0', 'enabled' => (!isModEnabled("project") ? '0' : '1')),
 	'u.login' => array('label' => $langs->trans("Author"), 'checked' => '1', 'position' => 10),
 	'sp.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => '0', 'position' => 500),
 	'sp.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => '0', 'position' => 500),
@@ -279,6 +281,7 @@ if (empty($reshook)) {
 		$search_multicurrency_montant_vat = '';
 		$search_multicurrency_montant_ttc = '';
 		$search_project_ref = '';
+		$search_project = '';
 		$search_login = '';
 		$search_product_category = '';
 		$searchCategorySupplierPropalList = array();
@@ -371,7 +374,7 @@ $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
-$sql .= ', '.MAIN_DB_PREFIX.'supplier_proposal as sp';
+$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'supplier_proposal as sp ON sp.fk_soc = s.rowid';
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (sp.rowid = ef.fk_object)";
 }
@@ -381,11 +384,16 @@ if ($search_all) {
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON sp.fk_user_author = u.rowid';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = sp.fk_projet";
 if ($search_user > 0) {
-	$sql .= ", ".MAIN_DB_PREFIX."element_contact as c";
-	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_contact as c";
+	$sql .= " ON c.element_id = sp.rowid AND c.fk_socpeople = ".((int) $search_user);
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."c_type_contact as tc";
+	$sql .= " ON c.fk_c_type_contact = tc.rowid AND tc.element='supplier_proposal' AND tc.source='internal'";
 }
-$sql .= ' WHERE sp.fk_soc = s.rowid';
-$sql .= ' AND sp.entity IN ('.getEntity('supplier_proposal').')';
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+$sql .= ' WHERE sp.entity IN ('.getEntity('supplier_proposal').')';
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);
 }
@@ -447,6 +455,9 @@ if ($search_multicurrency_montant_ttc != '') {
 if ($search_project_ref != '') {
 	$sql .= natural_search("p.ref", $search_project_ref);
 }
+if ($search_project != '') {
+	$sql .= natural_search("p.title", $search_project);
+}
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
@@ -478,9 +489,6 @@ if ($search_date_valid_end) {
 if ($search_sale > 0) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
 }*/
-if ($search_user > 0) {
-	$sql .= " AND c.fk_c_type_contact = tc.rowid AND tc.element='supplier_proposal' AND tc.source='internal' AND c.element_id = sp.rowid AND c.fk_socpeople = ".((int) $search_user);
-}
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
@@ -710,6 +718,9 @@ if ($resql) {
 	if ($search_project_ref >= 0) {
 		$param .= "&search_project_ref=".urlencode($search_project_ref);
 	}
+	if ($search_project != '') {
+		$param .= "&search_project=".urlencode($search_project);
+	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
@@ -718,6 +729,11 @@ if ($resql) {
 	}
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+
+	// Add $param from hooks
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters);	// Note that $action and $object may have been modified by hook
+	$param .= $hookmanager->resPrint;
 
 	// List of mass actions available
 	$arrayofmassactions = array(
@@ -851,6 +867,12 @@ if ($resql) {
 	if (!empty($arrayfields['sp.fk_projet']['checked'])) {
 		print '<td class="liste_titre">';
 		print '<input type="text" class="flat width100" name="search_project_ref" value="'.$search_project_ref.'">';
+		print '</td>';
+	}
+	// Project label
+	if (!empty($arrayfields['p.title']['checked'])) {
+		print '<td class="liste_titre">';
+		print '<input type="text" class="flat width100" name="search_project" value="'.dol_escape_htmltag($search_project).'">';
 		print '</td>';
 	}
 	if (!empty($arrayfields['s.nom']['checked'])) {
@@ -1028,6 +1050,10 @@ if ($resql) {
 
 	if (!empty($arrayfields['sp.fk_projet']['checked'])) {
 		print_liste_field_titre($arrayfields['sp.fk_projet']['label'], $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
+	}
+	if (!empty($arrayfields['p.title']['checked'])) {
+		print_liste_field_titre($arrayfields['p.title']['label'], $_SERVER["PHP_SELF"], "p.title", "", $param, '', $sortfield, $sortorder);
 		$totalarray['nbfield']++;
 	}
 
@@ -1238,9 +1264,21 @@ if ($resql) {
 				$projectstatic->id = $obj->project_id;
 				$projectstatic->ref = $obj->project_ref;
 				$projectstatic->title = $obj->project_title;
-				print '<td>';
+				print '<td class="tdoverflowmax150">';
 				if ($obj->project_id > 0) {
 					print $projectstatic->getNomUrl(1);
+				}
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+
+			// Project label
+			if (!empty($arrayfields['p.title']['checked'])) {
+				print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->project_title).'">';
+				if ($obj->project_id > 0) {
+					print '<span class="spantitle">'.dol_escape_htmltag($obj->project_title).'</span>';
 				}
 				print '</td>';
 				if (!$i) {

@@ -2037,8 +2037,9 @@ function dol_meta_create($object)
 				$nblines = 0;
 			}
 			$client = $object->thirdparty->name." ".$object->thirdparty->address." ".$object->thirdparty->zip." ".$object->thirdparty->town;
+			$objectdate = (property_exists($object, 'date') ? $object->date : '');	// @phan-suppress-current-line PhanUndeclaredProperty
 			$meta = "REFERENCE=\"".$object->ref."\"
-			DATE=\"" . dol_print_date($object->date, '')."\"
+			DATE=\"" . dol_print_date($objectdate, '')."\"
 			NB_ITEMS=\"" . $nblines."\"
 			CLIENT=\"" . $client."\"
 			AMOUNT_EXCL_TAX=\"" . $object->total_ht."\"
@@ -3112,11 +3113,17 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$modulepart = 'user';
 	} elseif ($modulepart == 'tva') {
 		$modulepart = 'tax-vat';
+	} elseif (($modulepart == 'action' || $modulepart == 'event') && empty($conf->$modulepart->dir_output)) {
+		// Aliases of the REST API are not used if a module with this name has its own directory
+		$modulepart = 'actions';
 	} elseif ($modulepart == 'expedition' && strpos($original_file, 'receipt/') === 0) {
 		// Fix modulepart delivery
 		$modulepart = 'delivery';
-	} elseif ($modulepart == 'propale') {
+	} elseif ($modulepart == 'propale' || ($modulepart == 'proposal' && empty($conf->$modulepart->dir_output))) {
 		$modulepart = 'propal';
+	} elseif ($modulepart == 'intervention' && empty($conf->$modulepart->dir_output)) {
+		// Aliases of the REST API are not used if a module with this name has its own directory
+		$modulepart = 'fichinter';
 	}
 
 	// If modulepart is composed of an objectpart@modulepart, we keep modulepart.
