@@ -1454,7 +1454,9 @@ if ($mode == 'marketplace') {
 
 		print '<tr class="oddeven nohover" height="100">'."\n";
 		print '<td class="hideonsmartphone center width150 nopaddingleftimp nopaddingrightimp"><a href="'.dol_escape_htmltag($url).'" target="_blank" rel="noopener noreferrer external">'.img_picto('', 'fa-code-branch', 'class="size2x"').'</a></td>';
-		print '<td class="minwidth500imp smallonsmartphone"><span class="opacitymedium">'.$langs->trans("AdditionalModulesSourceDesc").'</span><br>';
+		// Show 'Label - Description' of the source, or the generic description if the source was defined with the old format (no label)
+		$customsourcetitle = $customsource['label'].(($customsource['label'] !== '' && $customsource['description'] !== '') ? ' - ' : '').$customsource['description'];
+		print '<td class="minwidth500imp smallonsmartphone"><span class="opacitymedium">'.($customsourcetitle !== '' ? dolPrintLabel($customsourcetitle) : $langs->trans("AdditionalModulesSourceDesc")).'</span><br>';
 		print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.dol_escape_htmltag($url).'" target="_blank" rel="noopener noreferrer external">'.dol_escape_htmltag($url).'</a>';
 		if ($customsource['branch']) {
 			print '<!-- &nbsp; '.img_picto($langs->trans("Branch"), 'fa-code-branch', 'class="pictofixedwidth"').dol_escape_htmltag($customsource['branch']).' -->';

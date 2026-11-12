@@ -317,9 +317,9 @@ function cleanSecurityCSP($securitycsp)
 				$securitycsp = preg_replace('/style-src\s+/', 'style-src *.stripe.com ', $securitycsp);
 			}
 		}
-		// We check if default-src contains self, unsafe-inline, unsafe-eval, *.dolibarr.org, and paypal or stripe if enabled (if not the app will not work correctly)
+		// We check if default-src contains self, unsafe-inline, unsafe-eval, *.dolibarr.org, *.dolistore.com, *.githubusercontent.com, and paypal or stripe if enabled (if not the app will not work correctly)
 		if (!preg_match('/default-src/', $securitycsp)) {
-			$securitycsp .= (preg_match('/;\s*$/', $securitycsp) ? '' : '; ').' default-src \'self\' \'unsafe-inline\' \'unsafe-eval\' *.dolibarr.org';
+			$securitycsp .= (preg_match('/;\s*$/', $securitycsp) ? '' : '; ').' default-src \'self\' \'unsafe-inline\' \'unsafe-eval\' *.dolibarr.org *.dolistore.com *.githubusercontent.com';
 			if (isModEnabled('paypal')) {
 				$securitycsp .= ' *.paypal.com';
 			}
@@ -333,6 +333,12 @@ function cleanSecurityCSP($securitycsp)
 			}
 			if (isModEnabled('stripe') && !preg_match('/default-src[^;]*stripe/', $securitycsp)) {
 				$securitycsp = preg_replace('/default-src\s+/', 'default-src *.stripe.com ', $securitycsp);
+			}
+			if (!preg_match('/default-src[^;]*githubusercontent\.com/', $securitycsp)) {
+				$securitycsp = preg_replace('/default-src\s+/', 'default-src *.githubusercontent.com ', $securitycsp);
+			}
+			if (!preg_match('/default-src[^;]*dolistore\.com/', $securitycsp)) {
+				$securitycsp = preg_replace('/default-src\s+/', 'default-src *.dolistore.com ', $securitycsp);
 			}
 			if (!preg_match('/default-src[^;]*dolibarr\.org/', $securitycsp)) {
 				$securitycsp = preg_replace('/default-src\s+/', 'default-src *.dolibarr.org ', $securitycsp);

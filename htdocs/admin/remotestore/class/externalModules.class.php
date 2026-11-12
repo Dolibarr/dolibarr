@@ -65,7 +65,7 @@ class ExternalModules
 	public $cache_file;
 
 	/**
-	 * @var array<string,array{url:string,branch:string,const_enable:string,raw_base_url:string,file_source_url:string,cache_file:string,status:int,error:string}> Additional GitHub mono repositories of modules (from MAIN_ADD_EXTERNAL_MODULES_SOURCE), indexed by a key
+	 * @var array<string,array{label:string,description:string,url:string,branch:string,const_enable:string,raw_base_url:string,file_source_url:string,cache_file:string,status:int,error:string}> Additional GitHub mono repositories of modules (from MAIN_ADD_EXTERNAL_MODULES_SOURCE), indexed by a key
 	 */
 	public $custom_sources = array();
 
@@ -168,22 +168,41 @@ class ExternalModules
 		$this->cache_file = DOL_DATA_ROOT.'/admin/temp/remote_github_modules_file.yaml';
 
 		// For the additional modules repositories (GitHub mono repositories with same structure than the community repository)
-		// MAIN_ADD_EXTERNAL_MODULES_SOURCE is a comma separated list of 'URL[:branch]'
-		// Example: 'https://github.com/DoliCloud/dolimods:master,https://github.com/owner/repo:develop'
-		// If the branch is not provided, 'main' is used.
+		// MAIN_ADD_EXTERNAL_MODULES_SOURCE is a semicolon separated list of 'Label:URL[:branch[:Description]]'
+		// Example: 'DoliMods:https://github.com/DoliCloud/dolimods:master:Modules of DoliCloud;My repo:https://github.com/owner/repo:develop:My modules'
+		// If the branch is not provided, 'main' is used. The old format, a comma separated list of 'URL[:branch]', is still supported.
+		$customsourceentries = array();
+		foreach (explode(';', getDolGlobalString('MAIN_ADD_EXTERNAL_MODULES_SOURCE')) as $customsource) {
+			$customsource = trim($customsource);
+			if (preg_match('/^https?:\/\//i', $customsource)) {
+				// Old format with no label: the entry may be a comma separated list of 'URL[:branch]'
+				$customsourceentries = array_merge($customsourceentries, explode(',', $customsource));
+			} else {
+				$customsourceentries[] = $customsource;
+			}
+		}
+
 		$i = 0;
-		foreach (explode(',', getDolGlobalString('MAIN_ADD_EXTERNAL_MODULES_SOURCE')) as $customsource) {
+		foreach ($customsourceentries as $customsource) {
 			$customsource = trim($customsource);
 			if ($customsource === '') {
 				continue;
 			}
 			$i++;
 
+			$label = '';
+			$description = '';
 			$url = $customsource;
 			$branch = '';
 			$reg = array();
-			// A ':' followed by a string with no '/' at the end is the branch (the ':' of 'https:' is never followed by such a string)
-			if (preg_match('/^(.+):([\w.\/-]+)$/', $customsource, $reg) && strpos($reg[2], '/') === false) {
+			if (preg_match('/^([^:]*):(https?:\/\/[^:]+)(?::([^:]*)(?::(.*))?)?$/is', $customsource, $reg)) {
+				// New format 'Label:URL[:branch[:Description]]' (the URL contains no ':' except the one of its scheme)
+				$label = trim($reg[1]);
+				$url = trim($reg[2]);
+				$branch = trim($reg[3] ?? '');
+				$description = trim($reg[4] ?? '');
+			} elseif (preg_match('/^(.+):([\w.\/-]+)$/', $customsource, $reg) && strpos($reg[2], '/') === false) {
+				// Old format 'URL:branch': a ':' followed by a string with no '/' at the end is the branch (the ':' of 'https:' is never followed by such a string)
 				$url = $reg[1];
 				$branch = $reg[2];
 			}
@@ -204,6 +223,8 @@ class ExternalModules
 			$key = ($owner ? strtoupper(preg_replace('/[^a-zA-Z0-9]/', '_', $owner.'_'.$repo)) : 'INVALID'.$i);
 
 			$this->custom_sources[$key] = array(
+				'label' => $label,
+				'description' => $description,
 				'url' => $url,
 				'branch' => $branch,
 				'const_enable' => 'MAIN_ENABLE_EXTERNALMODULES_CUSTOM_'.$key,
@@ -257,7 +278,7 @@ class ExternalModules
 				$this->custom_sources[$key]['status'] = dol_is_file($customsource['cache_file']) ? 1 : 0;
 				$nbcustomsourcesok += $this->custom_sources[$key]['status'];
 			} else {
-				$this->custom_sources[$key]['error'] = 'Each value of MAIN_ADD_EXTERNAL_MODULES_SOURCE must be a GitHub repository URL like https://github.com/owner/repo or https://github.com/owner/repo:branch';
+				$this->custom_sources[$key]['error'] = 'Each value of MAIN_ADD_EXTERNAL_MODULES_SOURCE must be like Label:https://github.com/owner/repo:branch:Description (the URL must be a GitHub repository URL)';
 			}
 		}
 
