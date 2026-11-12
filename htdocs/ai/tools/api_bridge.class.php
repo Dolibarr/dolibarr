@@ -6524,8 +6524,8 @@ class ToolApiBridge extends McpTool
 		$given = $args[$field] ?? ($args['user'] ?? ($args['employee'] ?? ''));
 		unset($args['user'], $args['employee']);
 		$employee = null;
-		if ($given === '' || $given === null || $given === 'me' || (is_numeric($given) && (int) $given === $me)) {
-			$employee = ($this->user instanceof User) ? $this->user : null;
+		if ($given === '' || $given === 'me' || (is_numeric($given) && (int) $given === $me)) {
+			$employee = ($me > 0) ? $this->user : null;
 		} elseif ($this->db) {
 			$employee = new User($this->db);
 			$found = is_numeric($given) ? $employee->fetch((int) $given) : $employee->fetch(0, (string) $given);
