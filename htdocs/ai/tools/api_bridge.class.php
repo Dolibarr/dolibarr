@@ -345,6 +345,13 @@ class ToolApiBridge extends McpTool
 	private $expenseTypes = null;
 
 	/**
+	 * VAT rates an expense line may carry, read once per request: the rates of the VAT dictionary for the country of the company.
+	 *
+	 * @var null|float[]
+	 */
+	private $expenseVatRates = null;
+
+	/**
 	 * Line of the last line write: the line found, its position, the changes.
 	 *
 	 * @var array{line:?object,position:int,changes:array<string,mixed>}
@@ -2948,8 +2955,8 @@ class ToolApiBridge extends McpTool
 				'date' => "Date of the expense, YYYY-MM-DD.",
 				'type' => "Kind of expense: a code or a name of the expense types of this Dolibarr (e.g. TF_LUNCH, hotel, toll, mileage).",
 				'qty' => "Quantity: 1 by default, the kilometres for a mileage line.",
-				'value_unit' => "Unit amount INCLUDING tax.",
-				'vatrate' => "VAT rate shown on the receipt, in % (0 when there is none).",
+				'value_unit' => "Unit amount INCLUDING tax. On a receipt with several VAT rates, the amount including tax of the one rate of this line.",
+				'vatrate' => "VAT rate shown on the receipt for this amount, in % (0 when there is none). One rate per line, among the rates of the VAT dictionary of the company: another rate is refused with the list.",
 				'comments' => "Free text: supplier, place, reason.",
 				'project' => "Project the expense is for: rowid or ref."
 			);
@@ -2962,7 +2969,7 @@ class ToolApiBridge extends McpTool
 		if ($action === 'add') {
 			$description = "Add ONE line (work done) to a DRAFT ".$label.". Give 'id', desc, and date and duration. The user confirms before anything is written.";
 			if ($profile === 'expense') {
-				$description = "Add ONE expense to a DRAFT ".$label.", one call per receipt. Give 'id', date, type and value_unit (the amount INCLUDING tax), plus qty and vatrate when they are not 1 and 0. The user confirms before anything is written.";
+				$description = "Add ONE expense to a DRAFT ".$label.": one call per receipt, and one per VAT rate when a receipt shows several (a restaurant bill with food and drinks: one line per rate, each with the amount INCLUDING tax of that rate, the lines adding up to the total paid). Give 'id', date, type and value_unit (the amount INCLUDING tax), plus qty and vatrate when they are not 1 and 0. The user confirms before anything is written.";
 			}
 			$params += $fields;
 		} elseif ($action === 'update') {
@@ -6385,8 +6392,14 @@ class ToolApiBridge extends McpTool
 		if ($profile === 'expense') {
 			foreach (array('value_unit', 'vatrate') as $num) {
 				if (isset($changes[$num])) {
-					$changes[$num] = (float) price2num($changes[$num]);
+					// A rate may come as it is printed: "5,5 %".
+					$changes[$num] = (float) price2num(is_string($changes[$num]) ? trim(str_replace('%', '', $changes[$num])) : $changes[$num]);
 				}
+			}
+			if (isset($changes['vatrate']) && !$this->isExpenseVatRate($changes['vatrate'])) {
+				// As on the card, which only offers the rates of the dictionary: a restaurant bill
+				// with several rates is several lines, never one line at a rate made up for it.
+				$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteExpenseVatRateUnknown', (string) $changes['vatrate'], implode(', ', $this->expenseVatRates()));
 			}
 			if (isset($changes['type'])) {
 				$changes['type'] = $this->resolveExpenseType($changes['type']);
@@ -6586,6 +6599,50 @@ class ToolApiBridge extends McpTool
 		}
 
 		return $this->expenseTypes;
+	}
+
+	/**
+	 * VAT rates an expense line may carry: those of the VAT dictionary for the
+	 * country of the company, as the expense report card offers them, and 0.
+	 *
+	 * @return float[] Rates in percent, ascending.
+	 */
+	private function expenseVatRates()
+	{
+		global $mysoc;
+
+		if ($this->expenseVatRates === null) {
+			$rates = array('0' => 0.0);
+			if ($this->db && is_object($mysoc) && !empty($mysoc->country_code)) {
+				require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+				$form = new Form($this->db);
+				$form->load_cache_vatrates("'".$this->db->escape($mysoc->country_code)."'");
+				foreach ($form->cache_vatrates as $rate) {
+					$rates[(string) (float) $rate['txtva']] = (float) $rate['txtva'];
+				}
+			}
+			sort($rates);
+			$this->expenseVatRates = $rates;
+		}
+
+		return $this->expenseVatRates;
+	}
+
+	/**
+	 * Whether a VAT rate is one an expense line may carry.
+	 *
+	 * @param  float $rate Rate in percent.
+	 * @return bool
+	 */
+	private function isExpenseVatRate($rate)
+	{
+		foreach ($this->expenseVatRates() as $known) {
+			if (abs($known - (float) $rate) < 0.0001) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
