@@ -2258,7 +2258,7 @@ while ($i < $imaxinloop) {
 		}
 		// Sales Representative
 		if (!empty($arrayfields['sales.representative']['checked'])) {
-			print '<td class="nowraponall tdoverflowmax150">';
+			print '<td class="nowraponall tdoverflowmax100">';
 			$listsalesrepresentatives = $companystatic->getSalesRepresentatives($user);
 			$nbofsalesrepresentative = count($listsalesrepresentatives);
 			if ($nbofsalesrepresentative > 6) {
