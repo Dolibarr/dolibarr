@@ -2746,6 +2746,61 @@ class ToolApiBridge extends McpTool
 		foreach (array('postLine' => 'add', 'putLine' => 'update', 'deleteLine' => 'delete') as $method => $action) {
 			$this->enrichments['expensereports']['methods'][$method] = $this->lineMethod($action, 'expense report', 'ExpenseReport', array('expensereport', 'creer'), 'expense');
 		}
+
+		// The life of an expense report after its draft: submitted by the employee, approved
+		// or refused, then paid. Each step in the statuses and with the right of its button
+		// on the card; who may reach the report is the hierarchy rule of core.
+		$this->enrichments['expensereports']['methods']['validate'] = $this->validateMethod('expense report', 'ExpenseReport', 'AIPreviewSubmitExpenseReport', array('expensereport', 'creer'), array('notrigger' => 0), '');
+		$this->enrichments['expensereports']['methods']['validate']['description'] = "Submit a DRAFT expense report for approval, as the Save and validate button of the card does: it gets its definitive reference, its expenses can no longer be changed and it waits for its approver. Give 'id' (rowid, or its ref, e.g. (PROV12)). Unlike the card, this does not email the approver. The user confirms before anything is written.";
+		$steps = array(
+			'approve' => array('approve', "Approve an expense report that waits for approval, as the Approve button of the card does. Give 'id' (rowid, or its ref).", array(2), 'AIWriteExpenseReportNotSubmitted', 'AIPreviewApproveExpenseReport', array('expensereport', 'approve'), array()),
+			'deny' => array('deny', "Refuse an expense report that waits for approval or is already approved, as the Deny button of the card does. Give 'id' (rowid, or its ref) and 'details', the reason the employee will read.", array(2, 5), 'AIWriteExpenseReportNotDeniable', 'AIPreviewDenyExpenseReport', array('expensereport', 'approve'), array('details' => "Reason of the refusal, read by the employee.")),
+			'setPaid' => array('set_paid', "Classify an APPROVED expense report as paid WITHOUT recording a payment, as the Classify paid button of the card does. To record the payment itself (amount, bank account), use api_expensereports_payment_create, which classifies the report paid once nothing remains. Give 'id' (rowid, or its ref).", array(5), 'AIWriteExpenseReportNotApproved', 'AIPreviewSetPaidExpenseReport', array('expensereport', 'to_paid'), array()),
+			'setToDraft' => array('set_to_draft', "Set an expense report that waits for approval, or was refused, back to DRAFT, so that its expenses can be corrected and it can be submitted again. Give 'id' (rowid, or its ref).", array(2, 99), 'AIWriteExpenseReportNotReopenable', 'AIPreviewReopenExpenseReport', array('expensereport', 'creer'), array())
+		);
+		foreach ($steps as $method => $s) {
+			$this->enrichments['expensereports']['methods'][$method] = array(
+				'suffix' => $s[0],
+				'description' => $s[1]." The user confirms before anything is written.",
+				'write' => array(
+					'kind' => 'action',
+					'preview' => $s[4],
+					'object' => 'ExpenseReport',
+					'label' => 'expense report',
+					'target' => 'id',
+					'lookup' => 'ref',
+					'states' => $s[2],
+					'state_error' => $s[3],
+					'pass' => array_keys($s[6]),
+					'needs' => array_keys($s[6]),
+					'right' => $s[5]
+				) + ($method === 'setToDraft' ? array() : array('fixed' => array('notrigger' => 0))),
+				'params' => array('id' => "The expense report: rowid, or its ref.") + $s[6]
+			);
+		}
+		// Its payment to the employee: what remains by default, the report classified paid by core once nothing does.
+		$this->enrichments['expensereports']['methods']['addPayment'] = array(
+			'suffix' => 'payment_create',
+			'description' => "Record the payment of an APPROVED expense report to its employee. Give 'id' (rowid, or its ref), and 'amount' only for a partial payment: by default what remains is paid, and the report is classified paid once nothing remains. payment_mode is how it was paid (transfer, cheque, cash, or a code like VIR, CHQ, LIQ); bank_account is the account the money left (name or rowid, may be omitted when there is only one). The user confirms before anything is written.",
+			'write' => array(
+				'kind' => 'payment',
+				'preview' => 'AIPreviewPayExpenseReport',
+				'object' => 'ExpenseReport',
+				'label' => 'expense report',
+				'target' => 'id',
+				'lookup' => 'ref',
+				'right' => array('expensereport', 'to_paid')
+			),
+			'params' => array(
+				'id' => "The approved expense report: rowid, or its ref.",
+				'amount' => "Amount paid. Omit to pay what remains.",
+				'payment_mode' => "How it was paid: transfer, cheque, cash, or a payment code.",
+				'bank_account' => "Bank account the money left: name, ref or rowid. Omit when there is only one.",
+				'date' => "Payment date YYYY-MM-DD. Omit for today.",
+				'num_payment' => "Cheque or transfer number.",
+				'comment' => "Note."
+			)
+		);
 	}
 
 	/**
@@ -6187,6 +6242,36 @@ class ToolApiBridge extends McpTool
 			return $out;
 		}
 
+		if ($kind === 'payment' && ($write['object'] ?? '') === 'ExpenseReport') {
+			// The payment of an expense report: the REST method takes it as one body,
+			// the amount under the rowid of the report, the date as a timestamp.
+			$report = $this->writeTarget;
+			$remain = ($report instanceof ExpenseReport) ? (float) price2num((float) $report->total_ttc - (float) $report->getSumPayments(), 'MT') : 0.0;
+			$amount = (isset($args['amount']) && $args['amount'] !== '') ? (float) price2num($args['amount'], 'MT') : $remain;
+			$mode = $this->resolvePaymentMode($args['payment_mode'] ?? ($args['fk_typepayment'] ?? ''));
+			$account = isModEnabled('bank') ? $this->resolveBankAccount($args['bank_account'] ?? ($args['accountid'] ?? '')) : 0;
+			$date = trim((string) ($args['date'] ?? ($args['datep'] ?? '')));
+			$stamp = ($date !== '') ? $this->writeDate('date', $date, 0) : null;
+			if ($stamp === null) {
+				$stamp = dol_now();	// today when none was given; an unreadable one is already refused
+			}
+			$out['paymentid'] = $mode;
+			$out['accountid'] = $account;
+			$out['datepaye'] = dol_print_date($stamp, 'dayrfc');
+			$out['_amount'] = $amount;
+			$out['_remain'] = $remain;
+			$out['_body'] = array(
+				'fk_typepayment' => $mode,
+				'datep' => $stamp,
+				'amounts' => array((string) $out[$field] => (string) $amount),
+				'accountid' => $account,
+				'num_payment' => (string) ($args['num_payment'] ?? ''),
+				'note_public' => (string) ($args['comment'] ?? ($args['note_public'] ?? ''))
+			);
+
+			return $out;
+		}
+
 		if ($kind === 'payment') {
 			$invoice = $this->writeTarget;
 			$remain = ($invoice instanceof Facture) ? (float) $invoice->getRemainToPay() : 0.0;
@@ -7262,9 +7347,23 @@ class ToolApiBridge extends McpTool
 				}
 			}
 
-			$how = $langs->transnoentitiesnoconv('AIPreviewPaymentHow', ($code !== '' ? $langs->transnoentitiesnoconv('PaymentType'.$code) : ''), $account, dol_print_date(dol_stringtotime((string) $args['datepaye']), 'day'));
+			// Money received goes into the account, money paid to an employee leaves it.
+			$how = $langs->transnoentitiesnoconv($write['object'] === 'ExpenseReport' ? 'AIPreviewPaymentHowOut' : 'AIPreviewPaymentHow', ($code !== '' ? $langs->transnoentitiesnoconv('PaymentType'.$code) : ''), $account, dol_print_date(dol_stringtotime((string) $args['datepaye']), 'day'));
 
 			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], price((float) ($args['_amount'] ?? 0)), $what, $how));
+		}
+
+		// An action said with the words it carries: the reason of a refusal.
+		$needs = array_values((array) ($write['needs'] ?? array()));
+		if (!empty($needs)) {
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $what, dol_trunc(dol_string_nohtmltag((string) ($args[(string) $needs[0]] ?? '')), 200)));
+		}
+		// An expense report submitted: who will approve it.
+		if ($obj instanceof ExpenseReport && $write['preview'] === 'AIPreviewSubmitExpenseReport' && (int) $obj->fk_user_validator > 0) {
+			$approver = new User($this->db);
+			if ($approver->fetch((int) $obj->fk_user_validator) > 0) {
+				$what .= ', '.$langs->transnoentitiesnoconv('AIPreviewApprover', $approver->getFullName($langs));
+			}
 		}
 
 		// Other actions: who the record goes to, or the other way to end it.
@@ -7472,6 +7571,12 @@ class ToolApiBridge extends McpTool
 			if (!in_array((int) $obj->status, (array) $write['states'], true)) {
 				return $langs->transnoentitiesnoconv((string) $write['state_error'], $label, (string) $obj->ref);
 			}
+			// What the action cannot go without: the reason of a refusal.
+			foreach ((array) ($write['needs'] ?? array()) as $needed) {
+				if (trim((string) ($args[(string) $needed] ?? '')) === '') {
+					return $langs->transnoentitiesnoconv('AIWriteMissingField', (string) $needed);
+				}
+			}
 			if (array_key_exists('fk_user_assign', $args) && (int) $args['fk_user_assign'] > 0) {
 				$assignee = new User($this->db);
 				if ($assignee->fetch((int) $args['fk_user_assign']) <= 0 || (int) $assignee->status !== 1) {
@@ -7520,15 +7625,17 @@ class ToolApiBridge extends McpTool
 		}
 		if ($kind === 'payment') {
 			$remain = (float) ($args['_remain'] ?? 0);
-			if ((int) $obj->status !== 1 || !empty($obj->paye) || $remain <= 0) {
-				return $langs->transnoentitiesnoconv('AIWriteInvoiceNotPayable', (string) $obj->ref);
+			$report = ($write['object'] === 'ExpenseReport');
+			// An invoice is paid once validated, an expense report once approved (5).
+			if ($report ? ((int) $obj->status !== 5 || $remain <= 0) : ((int) $obj->status !== 1 || !empty($obj->paye) || $remain <= 0)) {
+				return $langs->transnoentitiesnoconv($report ? 'AIWriteExpenseReportNotPayable' : 'AIWriteInvoiceNotPayable', (string) $obj->ref);
 			}
 			$amount = (float) ($args['_amount'] ?? 0);
 			if ($amount <= 0) {
 				return $langs->transnoentitiesnoconv('AIWritePaymentAmountInvalid');
 			}
 			if ($amount > $remain) {
-				return $langs->transnoentitiesnoconv('AIWritePaymentTooHigh', price($amount), (string) $obj->ref, price($remain));
+				return $langs->transnoentitiesnoconv($report ? 'AIWriteExpensePaymentTooHigh' : 'AIWritePaymentTooHigh', price($amount), (string) $obj->ref, price($remain));
 			}
 		}
 
@@ -7936,7 +8043,8 @@ class ToolApiBridge extends McpTool
 			// in, so the body is rebuilt here from everything it sent.
 			if ($pname === 'request_data') {
 				// A line write: the body normaliseLineArgs() built, unchanged values included.
-				if ($writekind === 'line') {
+				// A payment taken as one body by its REST method: the one normaliseTargetArgs() built.
+				if ($writekind === 'line' || ($writekind === 'payment' && isset($args['_body']))) {
 					$callArgs[] = (array) ($args['_body'] ?? array());
 					continue;
 				}
