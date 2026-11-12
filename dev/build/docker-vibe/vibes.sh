@@ -277,6 +277,7 @@ done
 if [ "${#MAIL_LOG_GIDS[@]}" -gt 0 ]; then
     LOG_ARGS+=(-e "HOST_MAIL_LOG_GIDS=${MAIL_LOG_GIDS[*]}")
 fi
+echo "LOG_ARGS=${LOG_ARGS[@]}"
 
 # Share the Transifex credentials of the host with the tx client of the container (read-only mount).
 TX_ARGS=()
