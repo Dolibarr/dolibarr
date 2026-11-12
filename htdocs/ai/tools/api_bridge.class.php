@@ -2458,6 +2458,47 @@ class ToolApiBridge extends McpTool
 		if ($shipmentMovesStock) {
 			$this->enrichments['shipments']['methods']['validate']['description'] .= " On this Dolibarr, validating a shipment takes the shipped goods out of stock.";
 		}
+		// Close a validated reception or shipment (processed, delivered), or set it back to
+		// draft to correct it: the two other status moves of the cards, same rights as the
+		// cards, confirmed. Core reverses the stock movements of a reopened document itself.
+		foreach (array(
+			'receptions' => array('supplier reception', 'Reception', array('reception', 'creer'), $advanced ? array('reception', 'reception_advance', 'validate') : array('reception', 'creer'), array(1, 2), 'AIPreviewCloseReception', 'AIPreviewReopenReception', $receptionMovesStock),
+			'shipments' => array('shipment', 'Expedition', array('expedition', 'creer'), array('expedition', 'creer'), array(1), 'AIPreviewCloseShipment', 'AIPreviewReopenShipment', $shipmentMovesStock)
+		) as $key => $a) {
+			$this->enrichments[$key]['methods']['close'] = array(
+				'suffix' => 'close',
+				'description' => "Close a VALIDATED ".$a[0]." (mark it processed), as the Close button of the card does. Give 'id' (rowid, or its ref). The user confirms before anything is written.",
+				'write' => array(
+					'kind' => 'action',
+					'preview' => $a[5],
+					'object' => $a[1],
+					'label' => $a[0],
+					'target' => 'id',
+					'lookup' => 'ref',
+					'states' => array(1),
+					'state_error' => 'AIWriteNotValidatedClose',
+					'fixed' => array('notrigger' => 0),
+					'right' => $a[2]
+				),
+				'params' => array('id' => "The validated ".$a[0].": rowid, or its ref.")
+			);
+			$this->enrichments[$key]['methods']['setToDraft'] = array(
+				'suffix' => 'set_to_draft',
+				'description' => "Set a validated ".$a[0]." back to DRAFT so its lines and header can be corrected, as the Modify button of the card does. Give 'id' (rowid, or its ref). The user confirms before anything is written.".($a[7] ? " On this Dolibarr the stock movements of its validation are reversed." : ""),
+				'write' => array(
+					'kind' => 'action',
+					'preview' => $a[6],
+					'object' => $a[1],
+					'label' => $a[0],
+					'target' => 'id',
+					'lookup' => 'ref',
+					'states' => $a[4],
+					'state_error' => 'AIWriteNotValidatedReopen',
+					'right' => $a[3]
+				),
+				'params' => array('id' => "The validated ".$a[0].": rowid, or its ref.")
+			);
+		}
 
 		// A payment: the distributed method, the only one that takes an amount.
 		$this->enrichments['invoices']['methods']['addPaymentDistributed'] = array(
@@ -2494,7 +2535,9 @@ class ToolApiBridge extends McpTool
 			'supplier_invoices' => array('supplier invoice', 'FactureFournisseur', array('fournisseur', 'facture', 'supprimer')),
 			'supplier_proposals' => array('supplier proposal', 'SupplierProposal', array('supplier_proposal', 'supprimer')),
 			'contracts' => array('contract', 'Contrat', array('contrat', 'supprimer')),
-			'interventions' => array('intervention', 'Fichinter', array('ficheinter', 'supprimer'))
+			'interventions' => array('intervention', 'Fichinter', array('ficheinter', 'supprimer')),
+			'receptions' => array('supplier reception', 'Reception', array('reception', 'supprimer')),
+			'shipments' => array('shipment', 'Expedition', array('expedition', 'supprimer'))
 		);
 		foreach ($deletes as $key => $d) {
 			$this->enrichments[$key]['methods']['delete'] = $this->deleteMethod($d[0], $d[1], $d[2]);
@@ -2507,7 +2550,9 @@ class ToolApiBridge extends McpTool
 			'invoices' => array('customer invoice', 'Facture', array('facture', 'creer'), 'product'),
 			'supplier_invoices' => array('supplier invoice', 'FactureFournisseur', array('fournisseur', 'facture', 'creer'), 'supplier'),
 			'contracts' => array('contract', 'Contrat', array('contrat', 'creer'), 'contract'),
-			'interventions' => array('intervention', 'Fichinter', array('ficheinter', 'creer'), 'intervention')
+			'interventions' => array('intervention', 'Fichinter', array('ficheinter', 'creer'), 'intervention'),
+			'receptions' => array('supplier reception', 'Reception', array('reception', 'creer'), 'logistic'),
+			'shipments' => array('shipment', 'Expedition', array('expedition', 'creer'), 'logistic')
 		);
 		foreach ($lines as $key => $l) {
 			$this->enrichments[$key]['methods']['putLine'] = $this->lineMethod('update', $l[0], $l[1], $l[2], $l[3]);
@@ -2548,6 +2593,15 @@ class ToolApiBridge extends McpTool
 		$this->enrichments['interventions']['methods']['put'] = $this->headerUpdateMethod('intervention', 'Fichinter', array('ficheinter', 'creer'), array('ficheinter', 'lire'), array('ficheinter', '', ''), 'fichinter', array(
 			'description' => array($text, 'Description'), 'ref_client' => array($text, 'RefCustomer'), 'note_public' => array($text, 'NotePublic'), 'note_private' => array($text, 'NotePrivate'),
 			'fk_project' => array($project, 'Project')
+		));
+		// Logistic documents: the supplier's or customer's reference, the carrier's tracking number, the planned date, the notes.
+		$this->enrichments['receptions']['methods']['put'] = $this->headerUpdateMethod('supplier reception', 'Reception', array('reception', 'creer'), array('reception', 'lire'), array('reception', '', ''), 'reception', array(
+			'ref_supplier' => array($text, 'RefSupplier'), 'tracking_number' => array($text, 'TrackingNumber'), 'date_delivery' => array($date, 'DateDeliveryPlanned'),
+			'note_public' => array($text, 'NotePublic'), 'note_private' => array($text, 'NotePrivate')
+		));
+		$this->enrichments['shipments']['methods']['put'] = $this->headerUpdateMethod('shipment', 'Expedition', array('expedition', 'creer'), array('expedition', 'lire'), array('expedition', '', ''), 'expedition', array(
+			'ref_customer' => array($text, 'RefCustomer'), 'tracking_number' => array($text, 'TrackingNumber'), 'date_delivery' => array($date, 'DateDeliveryPlanned'),
+			'note_public' => array($text, 'NotePublic'), 'note_private' => array($text, 'NotePrivate')
 		));
 
 		$this->enrichments['interventions']['methods']['post'] = array(
@@ -2795,6 +2849,13 @@ class ToolApiBridge extends McpTool
 		);
 		if ($profile === 'supplier') {
 			unset($fields['desc']);	// FactureFournisseur::updateline() keeps the old text
+		}
+		if ($profile === 'logistic') {
+			// A reception or shipment line moves stock: its quantity and its warehouse, nothing priced.
+			$fields = array(
+				'qty' => "New quantity.",
+				'warehouse' => "New warehouse, by name or rowid."
+			);
 		}
 		$which = array(
 			'line' => "The line: its position as shown on the document (1 = first), or its product ref or label.",
@@ -5454,6 +5515,25 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Name of a warehouse for a confirmation sentence: its ref, or the rowid when unknown.
+	 *
+	 * @param  int    $id Rowid of the warehouse, 0 for none.
+	 * @return string
+	 */
+	private function warehouseLabel($id)
+	{
+		if ((int) $id <= 0) {
+			return '-';
+		}
+		$resql = $this->db->query("SELECT ref, lieu FROM ".$this->db->prefix()."entrepot WHERE rowid = ".((int) $id));
+		if ($resql && ($obj = $this->db->fetch_object($resql))) {
+			return (string) ($obj->ref !== '' ? $obj->ref : $obj->lieu);
+		}
+
+		return (string) $id;
+	}
+
+	/**
 	 * Open warehouse from the words of the user, or the only one there is.
 	 *
 	 * @param  mixed $value Name, ref or rowid given; empty when none was said.
@@ -5800,7 +5880,20 @@ class ToolApiBridge extends McpTool
 		$action = (string) $write['line_action'];
 		$profile = (string) $write['line_profile'];
 		$doc = $this->writeTarget;
-		$aliases = array('quantity' => 'qty', 'unit_price' => 'subprice', 'price' => 'subprice', 'pu_ht' => 'subprice', 'description' => 'desc', 'label' => 'desc', 'vat_rate' => 'tva_tx', 'discount' => 'remise_percent', 'fk_unit' => 'unit', 'line_id' => 'lineid', 'rowid' => 'lineid', 'position' => 'line', 'product_ref' => 'line', 'product' => 'line');
+		if ($profile === 'logistic' && $doc) {
+			// A reception line is loaded without the ref of its product: name it, so the
+			// line can be found by its product and the confirmation says which one it is.
+			foreach ((array) $doc->lines as $l) {
+				if (empty($l->product_ref) && !empty($l->fk_product)) {
+					$prod = $this->fetchBusinessObject('Product', (int) $l->fk_product);
+					if ($prod instanceof Product) {
+						$l->product_ref = $prod->ref;
+						$l->product_label = $prod->label;
+					}
+				}
+			}
+		}
+		$aliases = array('quantity' => 'qty', 'unit_price' => 'subprice', 'price' => 'subprice', 'pu_ht' => 'subprice', 'description' => 'desc', 'label' => 'desc', 'vat_rate' => 'tva_tx', 'discount' => 'remise_percent', 'fk_unit' => 'unit', 'line_id' => 'lineid', 'rowid' => 'lineid', 'position' => 'line', 'product_ref' => 'line', 'product' => 'line', 'warehouse_id' => 'warehouse', 'fk_entrepot' => 'warehouse', 'entrepot' => 'warehouse');
 		$changes = array();
 		foreach ($args as $name => $value) {
 			if (in_array($name, array('id', 'ref', 'requestState'), true) || substr((string) $name, 0, 1) === '_') {
@@ -5832,7 +5925,7 @@ class ToolApiBridge extends McpTool
 			foreach (array_values((array) $doc->lines) as $i => $l) {
 				if ($byid || is_numeric($wanted)) {
 					// By rowid, or by its position on the document (1 = first).
-					if ($byid ? ((int) $l->id === (int) $wanted) : ((int) $wanted === $i + 1)) {
+					if ($byid ? ((int) ($l->id ?? $l->rowid) === (int) $wanted) : ((int) $wanted === $i + 1)) {
 						$found[$i + 1] = $l;
 					}
 					continue;
@@ -5884,7 +5977,7 @@ class ToolApiBridge extends McpTool
 		$this->writeLine = array('line' => $line, 'position' => $position, 'changes' => $changes);
 
 		if ($action === 'delete') {
-			$out['lineid'] = $line ? (int) $line->id : 0;
+			$out['lineid'] = $line ? (int) ($line->id ?? $line->rowid) : 0;
 			return $out;
 		}
 		if ($profile === 'intervention') {
@@ -5897,15 +5990,29 @@ class ToolApiBridge extends McpTool
 			if ($action === 'add') {
 				$body += array('date' => dol_now(), 'duration' => 0);
 			} else {
-				$out['lineid'] = $line ? (int) $line->id : 0;
+				$out['lineid'] = $line ? (int) ($line->id ?? $line->rowid) : 0;
 			}
 			$out['_body'] = $body;
+			return $out;
+		}
+		if ($profile === 'logistic') {
+			// Reception and shipment lines: the REST putLine() takes the quantity and the
+			// warehouse as positional parameters; what is not given stays as it is.
+			$out['lineid'] = $line ? (int) ($line->id ?? $line->rowid) : 0;
+			$out['qty'] = array_key_exists('qty', $changes) ? (float) $changes['qty'] : (float) ($line->qty ?? ($line->qty_shipped ?? 0));
+			$warehouse = (int) ($line->fk_entrepot ?? ($line->entrepot_id ?? 0));
+			if (array_key_exists('warehouse', $changes)) {
+				$warehouse = $this->resolveWarehouse($changes['warehouse']);
+				$changes['warehouse'] = $warehouse;	// the preview names it from its rowid
+				$this->writeLine['changes'] = $changes;
+			}
+			$out['warehouse_id'] = $warehouse;
 			return $out;
 		}
 
 		// Every value the REST updateline() reads, from the line itself, so only what
 		// the user changed is changed (most REST putLine() pass absent fields as null).
-		$out['lineid'] = $line ? (int) $line->id : 0;
+		$out['lineid'] = $line ? (int) ($line->id ?? $line->rowid) : 0;
 		$body = array();
 		if ($line) {
 			$keep = array('desc', 'label', 'subprice', 'qty', 'remise_percent', 'tva_tx', 'localtax1_tx', 'localtax2_tx', 'info_bits', 'date_start', 'date_end', 'product_type', 'fk_parent_line', 'fk_fournprice', 'pa_ht', 'special_code', 'fk_unit', 'ref_ext', 'rang', 'situation_percent', 'fk_product', 'ref_supplier', 'date_start_real', 'date_end_real');
@@ -6160,12 +6267,20 @@ class ToolApiBridge extends McpTool
 		$line = $this->writeLine['line'];
 		$changes = $this->writeLine['changes'];
 		$position = (string) $this->writeLine['position'];
-		$labels = array('qty' => 'Qty', 'subprice' => 'PriceUHT', 'remise_percent' => 'Discount', 'tva_tx' => 'VAT', 'desc' => 'Description', 'unit' => 'Unit', 'date' => 'Date', 'duration' => 'Duration');
+		$langs->load('stocks');
+		$labels = array('qty' => 'Qty', 'subprice' => 'PriceUHT', 'remise_percent' => 'Discount', 'tva_tx' => 'VAT', 'desc' => 'Description', 'unit' => 'Unit', 'date' => 'Date', 'duration' => 'Duration', 'warehouse' => 'Warehouse');
 		$text = array();
 		foreach ($changes as $name => $new) {
 			$old = $line ? ($line->{$name === 'unit' ? 'fk_unit' : ($name === 'subprice' && isset($line->pu_ht) ? 'pu_ht' : $name)} ?? null) : null;
 			if ($name === 'desc') {
 				$old = $line ? ($line->desc ?? ($line->description ?? '')) : '';
+			}
+			if ($name === 'warehouse') {
+				// A reception or shipment line: the warehouse it is in, by name.
+				$old = $this->warehouseLabel((int) ($line ? ($line->fk_entrepot ?? ($line->entrepot_id ?? 0)) : 0));
+				$new = $this->warehouseLabel((int) $new);
+				$text[] = $langs->transnoentitiesnoconv($labels[$name]).' '.$old.' → '.$new;
+				continue;
 			}
 			if ($name === 'unit') {
 				$old = $this->unitLabel((int) $old);
@@ -6197,8 +6312,8 @@ class ToolApiBridge extends McpTool
 			$amount = ($line && isset($line->total_ht)) ? ', '.price((float) $line->total_ht) : '';
 			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $position, $what, $name.(isset($line->qty) ? ' x '.((float) $line->qty) : '').$amount));
 		}
-		// The new total of the line, as core will compute it before taxes.
-		if ($line && (array_key_exists('qty', $changes) || array_key_exists('subprice', $changes) || array_key_exists('remise_percent', $changes))) {
+		// The new total of the line, as core will compute it before taxes (a logistic line has no amount).
+		if ($line && $write['line_profile'] !== 'logistic' && (array_key_exists('qty', $changes) || array_key_exists('subprice', $changes) || array_key_exists('remise_percent', $changes))) {
 			$qty = (float) ($changes['qty'] ?? $line->qty);
 			$pu = (float) ($changes['subprice'] ?? ($line->pu_ht ?? $line->subprice));
 			$rem = (float) ($changes['remise_percent'] ?? $line->remise_percent);
