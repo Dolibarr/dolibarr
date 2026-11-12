@@ -378,8 +378,20 @@ class Tickets extends DolibarrApi
 		// Check mandatory fields
 		$this->_validate($request_data);
 
-		// Check thirdparty validity
+		// The thirdparty can be given with socid or fk_soc, but only fk_soc is saved by create()
 		$socid = (int) ($request_data['socid'] ?? 0);
+		$fk_soc = (int) ($request_data['fk_soc'] ?? 0);
+		if ($socid > 0 && $fk_soc > 0 && $socid != $fk_soc) {
+			throw new RestException(400, 'socid='.$socid.' and fk_soc='.$fk_soc.' must not be different');
+		}
+		$socid = max($socid, $fk_soc, 0);
+		// Same as the ticket card: an external user creates tickets for its own thirdparty
+		if ($socid == 0 && DolibarrApiAccess::$user->socid > 0) {
+			$socid = (int) DolibarrApiAccess::$user->socid;
+		}
+		unset($request_data['socid'], $request_data['fk_soc']);
+
+		// Check thirdparty validity
 		if ($socid > 0) {
 			$thirdpartytmp = new Societe($this->db);
 			$thirdparty_result = $thirdpartytmp->fetch($socid);
@@ -407,6 +419,8 @@ class Tickets extends DolibarrApi
 
 			$this->ticket->$field = $this->_checkValForAPI($field, $value, $this->ticket);
 		}
+		$this->ticket->fk_soc = $socid;
+		$this->ticket->socid = $socid;
 		if (empty($this->ticket->ref)) {
 			$this->ticket->ref = $ticketstatic->getDefaultRef();
 		}

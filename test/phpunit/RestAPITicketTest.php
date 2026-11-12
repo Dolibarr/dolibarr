@@ -153,6 +153,73 @@ class RestAPITicketTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * Create a ticket linked to a thirdparty with socid or fk_soc
+	 *
+	 * @return void
+	 */
+	public function testRestTicketCreateWithThirdparty()
+	{
+		$test = "Create a ticket linked to a thirdparty";
+
+		$result = $this->getUrl('thirdparties', $test, 'POST', array("name" => "testRestTicket".mt_rand()));
+		$socid = (int) $result['content'];
+		$this->assertGreaterThan(0, $socid, "$test Id of thirdparty is not > 0");
+		array_push($this->objectstodelete, 'thirdparties/'.$socid);
+
+		foreach (array('socid', 'fk_soc') as $key) {
+			$data = array(
+				"subject" => "Ticket created via the REST API with ".$key,
+				"message" => "Message of the ticket created via the REST API with ".$key,
+				$key => $socid,
+			);
+			$result = $this->getUrl('tickets', "$test with $key", 'POST', $data);
+			$ticket_id = (int) $result['content'];
+			$this->assertGreaterThan(0, $ticket_id, "$test with $key Id of ticket is not > 0");
+			array_unshift($this->objectstodelete, 'tickets/'.$ticket_id);
+
+			$result = $this->getUrl('tickets/'.$ticket_id, "$test with $key");
+			$this->assertEquals($socid, (int) ($result['content']['fk_soc'] ?? 0), "$test with $key The ticket must be linked to the thirdparty");
+		}
+
+		// The same thirdparty given with both keys is accepted
+		$data = array(
+			"subject" => "Ticket created via the REST API with socid and fk_soc",
+			"message" => "Message of the ticket created via the REST API with socid and fk_soc",
+			"socid" => $socid,
+			"fk_soc" => $socid,
+		);
+		$result = $this->getUrl('tickets', "$test with socid and fk_soc", 'POST', $data);
+		$ticket_id = (int) $result['content'];
+		$this->assertGreaterThan(0, $ticket_id, "$test with socid and fk_soc Id of ticket is not > 0");
+		array_unshift($this->objectstodelete, 'tickets/'.$ticket_id);
+	}
+
+	/**
+	 * Create a ticket with a thirdparty that does not exist, or with two different thirdparties
+	 *
+	 * @return void
+	 */
+	public function testRestTicketCreateWithBadThirdparty()
+	{
+		$test = "Create a ticket with a bad thirdparty";
+
+		$data = array(
+			"subject" => "Ticket created via the REST API",
+			"message" => "Message of the ticket created via the REST API",
+		);
+		foreach (array('socid', 'fk_soc') as $key) {
+			$this->getUrl('tickets', "$test with unknown $key", 'POST', array_merge($data, array($key => 999999999)), 404);
+		}
+
+		$result = $this->getUrl('thirdparties', $test, 'POST', array("name" => "testRestTicket".mt_rand()));
+		$socid = (int) $result['content'];
+		$this->assertGreaterThan(0, $socid, "$test Id of thirdparty is not > 0");
+		array_push($this->objectstodelete, 'thirdparties/'.$socid);
+
+		$this->getUrl('tickets', "$test with different socid and fk_soc", 'POST', array_merge($data, array("socid" => $socid, "fk_soc" => 999999999)), 400);
+	}
+
+	/**
 	 * Unlink internal and external contacts linked to a ticket
 	 *
 	 * @return void
