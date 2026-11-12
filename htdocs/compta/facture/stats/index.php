@@ -53,6 +53,7 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 $langs->loadLangs(array('bills', 'companies', 'other'));
 
 $mode = GETPOST("mode") ? GETPOST("mode") : 'customer';
+$tabfamily = GETPOST('tabfamily', 'aZ09');	// 'invoicestats' to show the tab with the custom reports tool
 
 $hookmanager->initHooks(array('invoicestats', 'globalcard'));
 
@@ -145,6 +146,45 @@ if ($mode == 'supplier') {
 }
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
+
+// The custom reports tool supports customer invoices only and is not available to external users
+$showtabcustomreports = ($mode == 'customer' && empty($user->socid));
+
+$h = 0;
+$head = array();
+$head[$h][0] = DOL_URL_ROOT.'/compta/facture/stats/index.php?mode='.urlencode($mode);
+$head[$h][1] = $langs->trans("ByMonthYear");
+$head[$h][2] = 'byyear';
+$h++;
+
+if ($showtabcustomreports) {
+	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/stats/index.php?tabfamily=invoicestats';
+	$head[$h][1] = $langs->trans("Custom");
+	$head[$h][2] = 'customreports';
+	$h++;
+}
+
+$type = 'invoice_stats';
+if ($mode == 'supplier') {
+	$type = 'supplier_invoice_stats';
+}
+
+complete_head_from_modules($conf, $langs, null, $head, $h, $type);
+
+// Show the tab with the custom reports tool
+if ($showtabcustomreports && $tabfamily == 'invoicestats') {
+	print dol_get_fiche_head($head, 'customreports', '', -1);
+
+	define('USE_CUSTOM_REPORT_AS_TAB', 1);
+	$customreportobjecttype = 'invoice';
+	include DOL_DOCUMENT_ROOT.'/core/customreports.php';
+
+	print dol_get_fiche_end();
+
+	llxFooter();
+	$db->close();
+	exit;
+}
 
 dol_mkdir($dir);
 
@@ -308,20 +348,6 @@ if (!count($arrayyears)) {
 	$arrayyears[$nowyear] = $nowyear;
 }
 
-
-$h = 0;
-$head = array();
-$head[$h][0] = DOL_URL_ROOT.'/compta/facture/stats/index.php?mode='.urlencode($mode);
-$head[$h][1] = $langs->trans("ByMonthYear");
-$head[$h][2] = 'byyear';
-$h++;
-
-$type = 'invoice_stats';
-if ($mode == 'supplier') {
-	$type = 'supplier_invoice_stats';
-}
-
-complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 
 print dol_get_fiche_head($head, 'byyear', '', -1);
 

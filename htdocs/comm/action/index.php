@@ -1894,7 +1894,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 		// The grid, 1 px per minute, the same scale as the day view. Each day is its own layer, shifted up by
 		// the first hour shown because show_day_events() positions an event from midnight.
 		echo ' <tr class="trcalweekgrid">'."\n";
-		echo '  <td class="tdfordaytitle width100 tdtop">';
+		echo '  <td class="tdfordaytitle width100 valigntop nopaddingtopimp nopaddingbottomimp">';
 		print '<div class="agendaweekhours" style="position: relative; height: '.$gridheight.'px;">';
 		for ($h = $begin_h; $h < $end_h; $h++) {
 			print '<div class="agendadayhour small opacitymedium" style="position: absolute; left: 4px; top: '.((($h - $begin_h) * 60) + 2).'px;">'.dol_print_date($h * 3600, 'hour', 'gmt').'</div>';
@@ -1903,7 +1903,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 		echo "</td>\n";
 		for ($iter_day = 0; $iter_day < 7; $iter_day++) {
 			$dateint = $weekdates[$iter_day];
-			echo '  <td class="'.$weekdayinfo[$iter_day]['style'].' tdtop" valign="top">';
+			echo '  <td class="'.$weekdayinfo[$iter_day]['style'].' valigntop nopaddingtopimp nopaddingbottomimp" valign="top">';
 			print '<div class="agendadaygrid" style="position: relative; height: '.$gridheight.'px;">';
 			for ($h = $begin_h; $h < $end_h; $h++) {
 				foreach (array(0, 30) as $slotmin) {

@@ -40,6 +40,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
+$tabfamily = GETPOST('tabfamily', 'aZ09');	// 'ticketstats' to show the tab with the custom reports tool
+
 $hookmanager->initHooks(array('ticketstats', 'globalcard'));
 
 if (!$user->hasRight('ticket', 'read')) {
@@ -101,6 +103,42 @@ $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewTicket'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('ticket', 'write'));
 
 print_barre_liste($langs->trans('Tickets'), 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, $langs->trans("Statistics"), $object->picto, 0, $newcardbutton, '', 0, 0, 0, 1);   // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
+
+// The custom reports tool is not available to external users
+$showtabcustomreports = empty($user->socid);
+
+$h = 0;
+$head = array();
+$head[$h][0] = DOL_URL_ROOT.'/ticket/stats/index.php';
+$head[$h][1] = $langs->trans("ByMonthYear");
+$head[$h][2] = 'byyear';
+$h++;
+
+if ($showtabcustomreports) {
+	$head[$h][0] = DOL_URL_ROOT.'/ticket/stats/index.php?tabfamily=ticketstats';
+	$head[$h][1] = $langs->trans("Custom");
+	$head[$h][2] = 'customreports';
+	$h++;
+}
+
+$type = 'ticket_stats';
+
+complete_head_from_modules($conf, $langs, null, $head, $h, $type);
+
+// Show the tab with the custom reports tool
+if ($showtabcustomreports && $tabfamily == 'ticketstats') {
+	print dol_get_fiche_head($head, 'customreports', '', -1);
+
+	define('USE_CUSTOM_REPORT_AS_TAB', 1);
+	$customreportobjecttype = 'ticket';
+	include DOL_DOCUMENT_ROOT.'/core/customreports.php';
+
+	print dol_get_fiche_end();
+
+	llxFooter();
+	$db->close();
+	exit;
+}
 
 dol_mkdir($dir);
 
@@ -164,17 +202,6 @@ foreach ($data as $val) {
 if (!count($arrayyears)) {
 	$arrayyears[$nowyear] = $nowyear;
 }
-
-$h = 0;
-$head = array();
-$head[$h][0] = DOL_URL_ROOT.'/ticket/stats/index.php';
-$head[$h][1] = $langs->trans("ByMonthYear");
-$head[$h][2] = 'byyear';
-$h++;
-
-$type = 'ticket_stats';
-
-complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 
 print dol_get_fiche_head($head, 'byyear', '', -1);
 
