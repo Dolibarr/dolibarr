@@ -1784,7 +1784,7 @@ function classifyIntentUniversal(string $query, Translate $langs)
 	$isLatin = !isComplexScript($query);
 	$searchQuery = $isLatin ? strtolower(dol_string_unaccent($query)) : $query;
 
-	$langs->loadLangs(array("main", "bills", "orders", "propal", "companies", "products", "projects", "dict", "sendings", "receptions", "ticket", "members", "agenda", "interventions"));
+	$langs->loadLangs(array("main", "bills", "orders", "propal", "companies", "products", "projects", "dict", "sendings", "receptions", "ticket", "members", "agenda", "interventions", "trips"));
 
 	// Vocabulary rule: every object family whose tools exist must light up the
 	// categories those tools carry (see ApiBridge::ENDPOINT_CATEGORIES), or the
@@ -1797,8 +1797,11 @@ function classifyIntentUniversal(string $query, Translate $langs)
 		'billing' => [
 			// Member/Subscription: members and subscriptions tools are
 			// categorized ['thirdparty', 'billing'].
-			'keys'     => ['Bill', 'Invoice', 'Payment', 'Cheque', 'VAT', 'BillStatusUnpaid', 'BillStatusPaid', 'BillStatusDraft', 'Member', 'Subscription'],
-			'synonyms' => ['paid', 'unpaid', 'pay', 'money', 'cost', 'amount', 'overdue', 'member', 'membership', 'subscription', 'cotisation', 'adhesion']
+			// Expense report ('Trips' is its UI key): the expense reports tools
+			// are categorized ['billing'], and "add this lunch with a customer to
+			// my expense report" must not be left to the 'thirdparty' tools alone.
+			'keys'     => ['Bill', 'Invoice', 'Payment', 'Cheque', 'VAT', 'BillStatusUnpaid', 'BillStatusPaid', 'BillStatusDraft', 'Member', 'Subscription', 'Trips'],
+			'synonyms' => ['paid', 'unpaid', 'pay', 'money', 'cost', 'amount', 'overdue', 'member', 'membership', 'subscription', 'cotisation', 'adhesion', 'expense', 'frais']
 		],
 		'commercial' => [
 			// 'Reception' and 'Shipment' matter: create_other_document (the tool
@@ -1839,7 +1842,7 @@ function classifyIntentUniversal(string $query, Translate $langs)
 		global $conf;
 		$langsEnUs = new Translate('', $conf);
 		$langsEnUs->setDefaultLang('en_US');
-		$langsEnUs->loadLangs(array('main', 'bills', 'companies', 'products', 'projects', 'orders', 'propal', 'stocks', 'other', 'ticket', 'members', 'agenda', 'interventions'));
+		$langsEnUs->loadLangs(array('main', 'bills', 'companies', 'products', 'projects', 'orders', 'propal', 'stocks', 'other', 'ticket', 'members', 'agenda', 'interventions', 'trips'));
 	}
 
 	$detectedCategories = [];

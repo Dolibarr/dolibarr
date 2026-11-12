@@ -192,7 +192,8 @@ class ToolApiBridge extends McpTool
 			'description' => "Add ONE line to a DRAFT document. Set 'object' to the type of the document and 'id' to the document. The user confirms before anything is written.",
 			'object' => 'Type of the draft document to add the line to.',
 			'params' => array(
-				'id' => 'The draft document: rowid (required). For an intervention, its ref is accepted too.'
+				'id' => 'The draft document: rowid (required). For an intervention or an expense report, its ref is accepted too.',
+				'date' => 'Date of the line, YYYY-MM-DD: the day of the work done (intervention) or of the expense (expense report).'
 			)
 		),
 		'api_objects_line_update' => array(
@@ -201,7 +202,8 @@ class ToolApiBridge extends McpTool
 			'description' => "Change ONE line of a DRAFT document. Set 'object' to the type of the document. The user confirms before anything is written.",
 			'object' => 'Type of the draft document whose line is changed.',
 			'params' => array(
-				'id' => 'The draft document: rowid, or its ref (required).'
+				'id' => 'The draft document: rowid, or its ref (required).',
+				'date' => 'New date of the line, YYYY-MM-DD: the day of the work done (intervention) or of the expense (expense report).'
 			)
 		),
 		'api_objects_line_delete' => array(
