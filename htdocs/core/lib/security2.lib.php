@@ -151,7 +151,7 @@ if (!function_exists('dol_loginfunction')) {
 
 		// Title
 		$appli = constant('DOL_APPLICATION_TITLE');
-		$title = $appli.(getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '' : ' '.constant('DOL_VERSION'));
+		$title = $appli.((getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') || getDolGlobalInt('MAIN_HIDE_VERSION')) ? '' : ' '.constant('DOL_VERSION'));
 
 		$customapplication = getDolGlobalString('MAIN_APPLICATION_TITLE');
 		if ($customapplication) {
@@ -162,6 +162,10 @@ if (!function_exists('dol_loginfunction')) {
 			}
 		}
 		$titletruedolibarrversion = constant('DOL_VERSION'); // $title used by login template after the @ to inform of true Dolibarr version
+		if (getDolGlobalInt('MAIN_HIDE_VERSION')) {
+			// Keep the pattern x.y.z expected by webviews, without the maintenance number
+			$titletruedolibarrversion = preg_replace('/^(\d+\.\d+)\..*$/', '\1.x', $titletruedolibarrversion);
+		}
 
 		// Note: $conf->css looks like '/theme/eldy/style.css.php'
 		/*

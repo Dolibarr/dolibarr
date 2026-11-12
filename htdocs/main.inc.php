@@ -1779,7 +1779,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		}
 		$hookmanager->initHooks(array("main"));
 
-		$ext = 'layout='.(empty($conf->browser->layout) ? '' : $conf->browser->layout).'&version='.urlencode(DOL_VERSION);
+		$ext = 'layout='.(empty($conf->browser->layout) ? '' : $conf->browser->layout).'&version='.urlencode(getDolVersionForUrl());
 
 		print "<head>\n";
 
@@ -1914,7 +1914,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		 * see Documentation at admin/tools/ui/dolibarr-context/index.php
 		 */
 		$jsContextVars = [
-			'DOL_VERSION' => DOL_VERSION,
+			'DOL_VERSION' => getDolVersionForUrl(),
 			'DOL_URL_ROOT' => DOL_URL_ROOT,
 		];
 
@@ -3985,7 +3985,7 @@ if (!function_exists("llxFooter")) {
 		global $contextpage, $page, $limit, $mode;
 		global $dolibarr_distrib;
 
-		$ext = 'layout='.urlencode($conf->browser->layout).'&version='.urlencode(DOL_VERSION);
+		$ext = 'layout='.urlencode($conf->browser->layout).'&version='.urlencode(getDolVersionForUrl());
 
 		// Hook to add more things on all pages within fiche DIV
 		$llxfooter = '';
