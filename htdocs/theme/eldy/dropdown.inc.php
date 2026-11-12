@@ -781,6 +781,10 @@ input.globalsearch-input.vmenusearchselectcombo {
 	text-decoration: none;
 	cursor: pointer;
 }
+/* records are indented under the title of their section */
+.globalsearch-results a.globalsearch-item.globalsearch-record {
+	padding-left: 30px;
+}
 .globalsearch-results a.globalsearch-item:hover, .globalsearch-results a.globalsearch-item.globalsearch-current {
 	background: var(--colorbacklinepairhover, #eef2f7);
 	text-decoration: none;
