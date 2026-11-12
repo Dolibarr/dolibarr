@@ -2868,6 +2868,7 @@ MarketplaceSortNewest=By provider then newest first
 MarketplaceSortOldest=By provider then oldest first
 MarketplaceSortNameAsc=By provider then name (A to Z)
 MarketplaceSortNameDesc=By provider then name (Z to A)
+MarketplaceLastUpdate=Update
 StillInDevelopment=In development
 SeeValueIntoConfPhp=Some sensitive data in database are encrypted using this key. Without it, system backup and restoration is still possible but sensitive data (Tokens, BAN) would remain obfuscated and you will need to regenerate them.
 SeeValueIntoConfPhp2=For security purposes, this value can only be read by a system user, that has a file system access to the conf/conf.php file. If you need a non system backup, without encrypted data, you can use the "export" menu to export your data in clear CSV files.

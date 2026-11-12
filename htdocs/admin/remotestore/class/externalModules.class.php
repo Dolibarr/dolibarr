@@ -823,13 +823,15 @@ class ExternalModules
 			$html .= '</h2>';
 
 			$html .= '<small class="appDateCreation appRef"> ';
-			// When the list is sorted by date, we show the creation date (the one used for the sort), else the modification date
-			if (empty($product['tms']) || (substr($this->sortby, 0, 6) == 'datec_' && !empty($product['datec']))) {
-				$html .= img_picto($langs->trans('DateCreation'), 'calendar', 'class="pictofixedwidth"').'<span class="opacitymedium"><span class="hideonsmartphone">'.$langs->trans("DateCreation").': </span>';
-				$html .= (!empty($product['datec']) ? dol_print_date(dol_stringtotime($product['datec']), 'day') : $langs->trans("Unknown")).'</span>';
-			} else {
-				$html .= img_picto($langs->trans('DateModification'), 'calendar', 'class="pictofixedwidth"').'<span class="opacitymedium">'.dol_print_date(dol_stringtotime($product['tms']), 'day').'</span>';
+			// We show the creation date (the one used for the sort by date), with the date of last update if it was done a later day
+			$datecreation = (!empty($product['datec']) ? dol_stringtotime($product['datec']) : 0);
+			$dateupdate = (!empty($product['tms']) ? dol_stringtotime($product['tms']) : 0);
+			$html .= img_picto($langs->trans('DateCreation'), 'calendar', 'class="pictofixedwidth"').'<span class="opacitymedium">';
+			$html .= ($datecreation ? dol_print_date($datecreation, 'day') : $langs->trans("Unknown"));
+			if ($dateupdate && (!$datecreation || dol_print_date($dateupdate, '%Y%m%d') > dol_print_date($datecreation, '%Y%m%d'))) {
+				$html .= ' ('.$langs->trans("MarketplaceLastUpdate").': '.dol_print_date($dateupdate, 'day').')';
 			}
+			$html .= '</span>';
 			$html .= ' &nbsp; &nbsp; ';
 
 			$html .= '<div class="appSource inline-block valigntop">';
@@ -848,7 +850,6 @@ class ExternalModules
 			$html .= '</small><br>';
 
 
-			$html .= '&nbsp;';
 			if (!empty($product['phpmin']) && $product['phpmin'] != 'unknown') {
 				$html .= ' <span class="badge-secondary small" style="padding: 3px; border-radius: 5px">PHP min '.$product['phpmin'].'</span>';
 			}
