@@ -1999,6 +1999,7 @@ YourCompanyDoesNotUseVAT=Your company has been defined to not use VAT (Home - Se
 AccountancyCodeSell=Sale account. code
 AccountancyCodeBuy=Purchase account. code
 CREATE_NEW_VAT_WITHOUT_AUTO_PAYMENT=Keep the checkbox “Automatically create the payment” empty by default when creating a new tax
+MAIN_USE_VAT_OF_PRODUCT_FOR_CUSTOMER_OUT_OF_EEC=Suggest the VAT rate of the product, instead of 0, for customers outside the European Union, companies included
 ##### Agenda #####
 AgendaSetup = Events and agenda module setup
 AGENDA_DEFAULT_FILTER_TYPE = Automatically set this type of event in search filter of agenda view
