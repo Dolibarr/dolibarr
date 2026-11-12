@@ -2039,6 +2039,10 @@ class Products extends DolibarrApi
 			throw new RestException(404, 'Product not found');
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
+			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+		}
+
 		$prodcomb = new ProductCombination($this->db);
 
 		$result = $prodcomb->createProductCombination(DolibarrApiAccess::$user, $this->product, $cleanedFeatures, array(), $price_impact_is_percent, (is_numeric($price_impact) ? (float) $price_impact : false), (is_numeric($weight_impact) ? (float) $weight_impact : false), $reference, $ref_ext);
@@ -2100,6 +2104,10 @@ class Products extends DolibarrApi
 		$result = $this->product->fetch(0, trim($ref));
 		if (!$result) {
 			throw new RestException(404, 'Product not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
+			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
 		}
 
 		$prodcomb = new ProductCombination($this->db);

@@ -301,6 +301,10 @@ class Boms extends DolibarrApi
 			throw new RestException(404, 'Bom not found');
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('bom', $this->bom->id, 'bom_bom')) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$result = $this->bom->validate(DolibarrApiAccess::$user, $notrigger);
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
