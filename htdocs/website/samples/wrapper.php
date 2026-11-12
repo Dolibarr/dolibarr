@@ -19,6 +19,13 @@ $original_file = GETPOST("file", "alpha");
 $l = GETPOST('l', 'aZ09');
 $limit = GETPOST('limit', 'int');
 
+// Security check
+if ($hashp == 'shared') {
+	http_response_code(400);
+	print 'Bad link. Bad value for parameter hashp';
+	exit(1);
+}
+
 // Parameters for RSS
 $rss = GETPOST('rss', 'aZ09');
 if ($rss) {
@@ -44,7 +51,9 @@ if (!empty($hashp)) {
 				$original_file = (($tmp[1] ? $tmp[1].'/' : '').$ecmfile->filename); // this is relative to module dir
 				//var_dump($original_file); exit;
 			} else {
+				http_response_code(401);
 				print 'Bad link. File is from another module part.';
+				exit(1);
 			}
 		} else {
 			$modulepart = $moduleparttocheck;
@@ -229,7 +238,7 @@ if ($rss) {
 	$accessallowed              = empty($check_access['accessallowed']) ? '' : $check_access['accessallowed'];
 	$sqlprotectagainstexternals = empty($check_access['sqlprotectagainstexternals']) ? '' : $check_access['sqlprotectagainstexternals'];
 	$fullpath_original_file     = empty($check_access['original_file']) ? '' : $check_access['original_file']; // $fullpath_original_file is now a full path name
-	if ($hashp) {
+	if (!empty($hashp) && $hashp != 'shared') {
 		$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
 		$sqlprotectagainstexternals = '';
 	}
