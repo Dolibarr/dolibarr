@@ -2641,6 +2641,7 @@ LargeModern=Large - Modern
 SpecialCharActivation=Enable the button to open a virtual keyboard to enter special characters
 DeleteExtrafield=Delete extrafield
 ConfirmDeleteExtrafield=Do you confirm deletion of the field %s ? All data saved in this field will be definitely deleted
+ConfirmDeleteExtrafieldOfModule=Warning: you try to delete the field <b>%s</b> used by the module <b>%s</b>. All data saved in this field will be definitely deleted. If you still use this module, you should not delete this field as it may break the module. Do you confirm deletion ?
 ConfirmDeleteSetup=Are you sure you want to delete the setup for %s ?
 ExtraFieldsSupplierInvoicesRec=Additionnal fields (templates invoices)
 ExtraFieldsSupplierInvoicesLinesRec=Additionnal fields (template invoice lines)
