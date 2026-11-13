@@ -249,6 +249,9 @@ class Menubase
 		$sql .= " AND position = ".((int) $this->position);
 		$sql .= " AND url = '".$this->db->escape($this->url)."'";
 		$sql .= " AND entity IN (0, ".((int) $conf->entity).")";
+		if ($this->fk_menu == -1) {
+			$sql .= " AND fk_mainmenu = '".$this->db->escape($this->fk_mainmenu)."'";
+		}
 
 		$result = $this->db->query($sql);
 		if ($result) {
