@@ -793,4 +793,4 @@ DepositSplitAutomaticallyApplied=The available credit was larger than the remain
 ConfirmSplitDiscountBeforeApply=The selected credit (<b>%s</b>) is larger than the remaining amount to pay. It will be split in two: <b>%s</b> applied to this invoice and <b>%s</b> kept as an available credit for later use. Do you want to continue?
 InvoiceRateRealigned=Invoice exchange rate aligned on the real rate (%s)
 
-SituationWeightedProgressHelp=Progress weighted by line amounts excluding tax at 100%, after line discounts. Cumulative in legacy mode; invoice progress in progressive mode. A dash means the net amount at 100% is zero or unavailable.
+SituationWeightedProgressHelp=Progress weighted by line amounts excluding tax at 100%, after line discounts. Cumulative in legacy mode; invoice progress in progressive mode. Total rows show the cumulated amount billed excluding tax divided by the latest situation's amount at 100%. A dash means the net amount at 100% is zero or unavailable.

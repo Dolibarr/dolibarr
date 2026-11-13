@@ -6367,9 +6367,10 @@ class Facture extends CommonInvoice
 	 * Lines must already be loaded. Progress follows the native storage mode:
 	 * cumulative in legacy mode, incremental in progressive mode.
 	 *
+	 * @param float|null $billedAmount Cumulated HT amount to express against this situation's amount at 100%, or null for line progress
 	 * @return float|null Weighted percentage, null when the net amount at 100% is zero
 	 */
-	public function getSituationProgress()
+	public function getSituationProgress($billedAmount = null)
 	{
 		global $mysoc;
 
@@ -6391,7 +6392,7 @@ class Facture extends CommonInvoice
 			$progress += $weight * (float) $line->situation_percent;
 		}
 
-		return $total != 0.0 ? $progress / $total : null;
+		return $total != 0.0 ? ($billedAmount === null ? $progress : $billedAmount * 100) / $total : null;
 	}
 
 	/**
