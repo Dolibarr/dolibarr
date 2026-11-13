@@ -873,7 +873,7 @@ if (empty($reshook)) {
 			// Update a line
 			// Clean parameters
 
-			if (!$object->fetch($id) > 0) {
+			if ($object->fetch($id) <= 0) {
 				dol_print_error($db);
 			}
 			$object->fetch_thirdparty();
