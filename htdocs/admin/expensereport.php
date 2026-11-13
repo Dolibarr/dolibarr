@@ -163,21 +163,46 @@ if ($action == 'updateMask') {
 	$draft = GETPOST('EXPENSEREPORT_DRAFT_WATERMARK', 'alpha');
 	$res2 = dolibarr_set_const($db, "EXPENSEREPORT_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
 
+	// Yes/No options are not provided when edited with the ajax switch (javascript on)
 	$res3 = 0;
 	if (isModEnabled('project') && GETPOSTISSET('EXPENSEREPORT_PROJECT_IS_REQUIRED')) {  // Option may not be provided
 		$res3 = dolibarr_set_const($db, 'EXPENSEREPORT_PROJECT_IS_REQUIRED', GETPOSTINT('EXPENSEREPORT_PROJECT_IS_REQUIRED'), 'chaine', 0, '', $conf->entity);
 	}
 
-	$dates = GETPOSTINT('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH');
-	$res4 = dolibarr_set_const($db, 'EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH', intval($dates), 'chaine', 0, '', $conf->entity);
+	$res4 = 0;
+	if (GETPOSTISSET('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH')) {
+		$dates = GETPOSTINT('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH');
+		$res4 = dolibarr_set_const($db, 'EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH', intval($dates), 'chaine', 0, '', $conf->entity);
+	}
 
-	$amounts = GETPOSTINT('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY');
-	$res5 = dolibarr_set_const($db, 'EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY', intval($amounts), 'chaine', 0, '', $conf->entity);
+	$res5 = 0;
+	if (GETPOSTISSET('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY')) {
+		$amounts = GETPOSTINT('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY');
+		$res5 = dolibarr_set_const($db, 'EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY', intval($amounts), 'chaine', 0, '', $conf->entity);
+	}
 
-	$linesblocked = GETPOSTINT('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES');
-	$res6 = dolibarr_set_const($db, 'EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES', intval($linesblocked), 'chaine', 0, '', $conf->entity);
+	$res6 = 0;
+	if (GETPOSTISSET('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES')) {
+		$linesblocked = GETPOSTINT('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES');
+		$res6 = dolibarr_set_const($db, 'EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES', intval($linesblocked), 'chaine', 0, '', $conf->entity);
+	}
 
-	if (!($res1 > 0) || !($res2 > 0) || !($res3 >= 0) || !($res4 > 0) || !($res5 > 0) || !($res6 > 0)) {
+	$res7 = 0;
+	if (GETPOSTISSET('EXPENSEREPORT_SEND_EMAIL_ON_STATUS_VALIDATION')) {
+		$res7 = dolibarr_set_const($db, 'EXPENSEREPORT_SEND_EMAIL_ON_STATUS_VALIDATION', GETPOSTINT('EXPENSEREPORT_SEND_EMAIL_ON_STATUS_VALIDATION'), 'chaine', 0, '', $conf->entity);
+	}
+
+	$res8 = 0;
+	if (GETPOSTISSET('EXPENSEREPORT_SEND_EMAIL_ON_STATUS_APPROVAL')) {
+		$res8 = dolibarr_set_const($db, 'EXPENSEREPORT_SEND_EMAIL_ON_STATUS_APPROVAL', GETPOSTINT('EXPENSEREPORT_SEND_EMAIL_ON_STATUS_APPROVAL'), 'chaine', 0, '', $conf->entity);
+	}
+
+	$res9 = 0;
+	if (GETPOSTISSET('EXPENSEREPORT_SEND_EMAIL_ON_STATUS_PAID')) {
+		$res9 = dolibarr_set_const($db, 'EXPENSEREPORT_SEND_EMAIL_ON_STATUS_PAID', GETPOSTINT('EXPENSEREPORT_SEND_EMAIL_ON_STATUS_PAID'), 'chaine', 0, '', $conf->entity);
+	}
+
+	if (!($res1 > 0) || !($res2 > 0) || !($res3 >= 0) || !($res4 >= 0) || !($res5 >= 0) || !($res6 >= 0) || !($res7 >= 0) || !($res8 >= 0) || !($res9 >= 0)) {
 		$error++;
 	}
 
@@ -379,26 +404,72 @@ if (isModEnabled('project')) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans('ProjectIsRequiredOnExpenseReports');
 	print '</td><td class="right">';
-	print $form->selectyesno('EXPENSEREPORT_PROJECT_IS_REQUIRED', getDolGlobalString('EXPENSEREPORT_PROJECT_IS_REQUIRED') ? 1 : 0, 1);
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('EXPENSEREPORT_PROJECT_IS_REQUIRED');
+	} else {
+		print $form->selectyesno('EXPENSEREPORT_PROJECT_IS_REQUIRED', getDolGlobalString('EXPENSEREPORT_PROJECT_IS_REQUIRED') ? 1 : 0, 1);
+	}
 	print '</td></tr>';
 }
 
 print '<tr class="oddeven"><td>';
 print $langs->trans('PrefillExpenseReportDatesWithCurrentMonth');
 print '</td><td class="right">';
-print $form->selectyesno('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH', getDolGlobalString('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH') ? 1 : 0, 1);
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH');
+} else {
+	print $form->selectyesno('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH', getDolGlobalString('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH') ? 1 : 0, 1);
+}
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans('ForceExpenseReportsLineAmountsIncludingTaxesOnly');
 print '</td><td class="right">';
-print $form->selectyesno('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY', getDolGlobalString('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY') ? 1 : 0, 1);
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY');
+} else {
+	print $form->selectyesno('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY', getDolGlobalString('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY') ? 1 : 0, 1);
+}
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans('BlockExpenseReportLineCreationIfNotBetweenDates');
 print '</td><td class="right">';
-print $form->selectyesno('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES', getDolGlobalString('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES') ? 1 : 0, 1);
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES');
+} else {
+	print $form->selectyesno('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES', getDolGlobalString('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES') ? 1 : 0, 1);
+}
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>';
+print $langs->trans('ExpenseReportSendEmailOnStatusValidation');
+print '</td><td class="right">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('EXPENSEREPORT_SEND_EMAIL_ON_STATUS_VALIDATION');
+} else {
+	print $form->selectyesno('EXPENSEREPORT_SEND_EMAIL_ON_STATUS_VALIDATION', getDolGlobalString('EXPENSEREPORT_SEND_EMAIL_ON_STATUS_VALIDATION') ? 1 : 0, 1);
+}
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>';
+print $langs->trans('ExpenseReportSendEmailOnStatusApproval');
+print '</td><td class="right">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('EXPENSEREPORT_SEND_EMAIL_ON_STATUS_APPROVAL');
+} else {
+	print $form->selectyesno('EXPENSEREPORT_SEND_EMAIL_ON_STATUS_APPROVAL', getDolGlobalString('EXPENSEREPORT_SEND_EMAIL_ON_STATUS_APPROVAL') ? 1 : 0, 1);
+}
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>';
+print $langs->trans('ExpenseReportSendEmailOnStatusPaid');
+print '</td><td class="right">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('EXPENSEREPORT_SEND_EMAIL_ON_STATUS_PAID');
+} else {
+	print $form->selectyesno('EXPENSEREPORT_SEND_EMAIL_ON_STATUS_PAID', getDolGlobalString('EXPENSEREPORT_SEND_EMAIL_ON_STATUS_PAID') ? 1 : 0, 1);
+}
 print '</td></tr>';
 
 print '</table>';
