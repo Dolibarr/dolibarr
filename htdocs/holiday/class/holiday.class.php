@@ -2000,7 +2000,7 @@ class Holiday extends CommonObject
 				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 					$sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
 					$sql .= " WHERE ((ug.fk_user = u.rowid";
-					$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";
+					$sql .= " AND ug.entity IN (".getEntity('usergroup_user')."))";
 					$sql .= " OR u.entity = 0)"; // Show always superadmin
 				} else {
 					$sql .= " WHERE u.entity IN (".getEntity('user').")";
@@ -2090,7 +2090,7 @@ class Holiday extends CommonObject
 				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 					$sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
 					$sql .= " WHERE ((ug.fk_user = u.rowid";
-					$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";
+					$sql .= " AND ug.entity IN (".getEntity('usergroup_user')."))";
 					$sql .= " OR u.entity = 0)"; // Show always superadmin
 				} else {
 					$sql .= " WHERE u.entity IN (".getEntity('user').")";
