@@ -1914,7 +1914,7 @@ class FormMail extends Form
 			$out .= '<div id="product-dropdown-container" class="email-layout-container hidden" style="margin-top: 8px; display:none;">';
 			$out .= '<label for="product-select">'.img_picto('', 'product', 'class="pictofixedwidth"').$langs->trans("Product").' : </label>';
 			$out .= '<!-- select component for selection of product -->'."\n";
-			$out .= $form->select_produits(0, 'product-select', '', 0, 0, -1, 2, '', 0, array(), 0, '1', 0, 'inline-block valignmiddle', 0, '', null, 1);
+			$out .= $form->select_produits(0, 'product-select', '', 0, 0, -1, 2, '', 0, array(), 0, '1', 0, 'minwidth125 inline-block valignmiddle', 0, '', null, 1);
 			// TODO multiselectarray is ok only for very small list but is ok for multiselect. We need a multiselect ok with ajax for long list
 			//$out .= self::multiselectarray('product-select', $productArray, array(), 0, 0, 'minwidth200 select-template');
 			$out .= ' <input type="submit" class="smallpaddingimp button reposition" name="submit" id="product-submit" value="'.dolPrintHTMLForAttribute($langs->trans("Select")).'">';

@@ -519,7 +519,8 @@ print '<script>
 			keysource = $(this).find(":selected").data("sourcetype");
 			$("#select_source_MAIN_SECURITY_FORCECSP").val($(this).val());
 			console.log("We hide and show fields");
-			if (keysource == "data" || keysource == "input") {
+			/* For data:, no additional value is shown, so we can add it directly (like blob:) */
+			if (keysource == "input") {
 				$(".div_input_data_MAIN_SECURITY_FORCECSP").css("display", "inline-block");
 				$("#btn_MAIN_SECURITY_FORCECSP").prop("disabled",true);
 			} else {
