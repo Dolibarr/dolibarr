@@ -432,12 +432,13 @@ class TraceableDB extends DoliDB
 	 * @param   string $passwd password
 	 * @param   string $name name of database (not used for mysql, used for pgsql)
 	 * @param   int    $port Port of database server
+	 * @param   bool   $forcenew Force opening of a genuinely new connection instead of reusing one already opened to the same server/database in this process (relevant for pgsql only)
 	 * @return  resource            Database access handler
 	 * @see     close()
 	 */
-	public function connect($host, $login, $passwd, $name, $port = 0)
+	public function connect($host, $login, $passwd, $name, $port = 0, $forcenew = false)
 	{
-		return $this->db->connect($host, $login, $passwd, $name, $port);
+		return $this->db->connect($host, $login, $passwd, $name, $port, $forcenew);
 	}
 
 	/**
@@ -705,7 +706,7 @@ class TraceableDB extends DoliDB
 	 * List information of columns into a table.
 	 *
 	 * @param   string 			$table 		Name of table
-	 * @return  array<array<string,mixed>>	Array with information on table
+	 * @return  array<array<mixed>>			Array with information on table (one array with numeric keys per column)
 	 */
 	public function DDLInfoTable($table)
 	{

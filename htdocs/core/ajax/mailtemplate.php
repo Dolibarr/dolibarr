@@ -69,6 +69,18 @@ $langs->load("mails");
 
 top_httphead();
 
+// Security checks: Verify user has required permissions for the requested template type
+$template = GETPOST('template', 'alpha');
+if (!empty($template)) {
+	// Check permissions based on template type
+	if ($template == 'news' && !$user->hasRight('website', 'read')) {
+		accessforbidden('You do not have permission to access website news');
+	}
+	if ($template == 'product' && !$user->hasRight('product', 'read') && !$user->hasRight('service', 'read')) {
+		accessforbidden('You do not have permission to access products');
+	}
+}
+
 // TODO Replace with ID of template
 if (GETPOSTISSET('template')) {
 	$templatefile = DOL_DOCUMENT_ROOT.'/install/doctemplates/maillayout/'.dol_sanitizeFileName(GETPOST('template')).'.html';
@@ -197,7 +209,14 @@ if (GETPOSTISSET('template')) {
 								</div>
 							</div>';
 			} elseif ($template == "product") {
-				$product = getProductForEmailTemplate($Id);
+				// Ignore an empty choice (id '' or -1 when the selection is cleared) and a product not found
+				if ((int) $Id <= 0) {
+					continue;
+				}
+				$product = getProductForEmailTemplate((int) $Id);
+				if (!is_array($product) || empty($product['ref'])) {
+					continue;
+				}
 
 				$productList .= '<div style="width:100%; padding: 20px;">
 									<div>

@@ -73,7 +73,7 @@ $hookmanager->initHooks(array('newpayment'));
 global $dolibarr_main_url_root;
 
 // Load translation files
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paypal", "stripe")); // File with generic data
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paypal", "stripe")); // File with generic data
 
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
@@ -82,10 +82,11 @@ $errmsg = '';
 $error = 0;
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id');
+$suffix = GETPOST("suffix", 'aZ09');
 $securekeyreceived = GETPOST("securekey");
 $securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.((int) $id), 'md5');
 
-if ($securekeytocompare != $securekeyreceived) {
+if (!hash_equals($securekeytocompare, (string) $securekeyreceived)) {
 	print $langs->trans('MissingOrBadSecureKey');
 	exit;
 }
@@ -103,6 +104,10 @@ $resultproject = $project->fetch((int) $id);
 if ($resultproject < 0) {
 	$error++;
 	$errmsg .= $project->error;
+}
+// The secure key is only valid for an existing project of the current entity
+if ($resultproject <= 0 || !in_array((int) $project->entity, array_map('intval', explode(',', getEntity('project'))))) {
+	httponly_accessforbidden('Project not found');
 }
 
 // Security check
@@ -125,7 +130,9 @@ $listOfConferences .= '<td>'.$langs->trans('Note').'</td></tr>';
 $sql = "SELECT a.id, a.fk_action, a.datep, a.datep2, a.label, a.fk_soc, a.note, ca.libelle as label
 		FROM ".MAIN_DB_PREFIX."actioncomm as a
 		INNER JOIN ".MAIN_DB_PREFIX."c_actioncomm as ca ON (a.fk_action = ca.id)
-		WHERE a.status < 2";
+		WHERE a.status < 2
+		AND a.fk_project = ".((int) $project->id)."
+		AND a.entity IN (".getEntity('agenda').")";
 
 $sqlforconf = $sql." AND ca.module='conference@eventorganization'";
 //$sqlforbooth = $sql." AND ca.module='booth@eventorganization'";
@@ -193,6 +200,9 @@ if ($idvote > 0) {
 		if ($resultconforbooth <= 0) {
 			$error++;
 			$errmsg .= $conforbooth->error;
+		} elseif ((int) $conforbooth->fk_project != (int) $project->id) {
+			// The vote must be for a conference or booth of the project of the secure key
+			$votestatus = 'err';
 		} else {
 			// Process to vote
 			$conforbooth->num_vote++;

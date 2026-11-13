@@ -18,11 +18,15 @@
 /**
  * \file    test/phpunit/NamingContractTest.php
  * \ingroup modulebuilder
- * \brief   Unit tests for NamingContract and StrictNamingContractValidator.
+ * \brief   Unit tests for NamingContract.
  */
 
+global $conf,$user,$langs,$db,$mysoc;
+if (!defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__) . '/../../htdocs/modulebuilder/class/NamingContract.class.php';
-require_once dirname(__FILE__) . '/../../htdocs/modulebuilder/class/NamingContractValidator.class.php';
 
 /**
  * @backupGlobals disabled
@@ -32,7 +36,7 @@ require_once dirname(__FILE__) . '/../../htdocs/modulebuilder/class/NamingContra
  * @phan-file-suppress PhanNoopNew
  */
 /** @phpstan-ignore class.notFound */
-class NamingContractTest extends \PHPUnit\Framework\TestCase
+class NamingContractTest extends CommonClassTest
 {
 	// ── NamingContract — properties ───────────────────────────────────────
 
@@ -243,15 +247,14 @@ class NamingContractTest extends \PHPUnit\Framework\TestCase
 		new NamingContract('Invoice', 'INVOICE');
 	}
 
-	// ── StrictNamingContractValidator — validateContent ──────────────────
+	// ── NamingContract — validateContent ──────────────────────────────────
 
 	/**
 	 * @return void
 	 */
 	public function testValidatorCatchesResidualMyobjectLowercase(): void
 	{
-		$validator = new StrictNamingContractValidator();
-		$errors    = $validator->validateContent('$obj = new myobject($db);', 'test.php');
+		$errors    = NamingContract::validateContent('$obj = new myobject($db);', 'test.php');
 		$this->assertNotEmpty($errors); // @phpstan-ignore method.notFound
 		$this->assertStringContainsString('myobject', $errors[0]); // @phpstan-ignore method.notFound
 	}
@@ -261,8 +264,7 @@ class NamingContractTest extends \PHPUnit\Framework\TestCase
 	 */
 	public function testValidatorCatchesResidualMyobjectMixedCase(): void
 	{
-		$validator = new StrictNamingContractValidator();
-		$errors    = $validator->validateContent('class MyObject extends CommonObject', 'test.php');
+		$errors    = NamingContract::validateContent('class MyObject extends CommonObject', 'test.php');
 		$this->assertNotEmpty($errors); // @phpstan-ignore method.notFound
 	}
 
@@ -271,8 +273,7 @@ class NamingContractTest extends \PHPUnit\Framework\TestCase
 	 */
 	public function testValidatorCatchesResidualMymodule(): void
 	{
-		$validator = new StrictNamingContractValidator();
-		$errors    = $validator->validateContent("isModEnabled('mymodule')", 'test.php');
+		$errors    = NamingContract::validateContent("isModEnabled('mymodule')", 'test.php');
 		$this->assertNotEmpty($errors); // @phpstan-ignore method.notFound
 		$this->assertStringContainsString('mymodule', $errors[0]); // @phpstan-ignore method.notFound
 	}
@@ -282,9 +283,8 @@ class NamingContractTest extends \PHPUnit\Framework\TestCase
 	 */
 	public function testValidatorAcceptsNonRenamableBeginMarker(): void
 	{
-		$validator = new StrictNamingContractValidator();
 		$content   = "/* BEGIN MODULEBUILDER API MYOBJECT */\n\t/* END MODULEBUILDER API MYOBJECT */";
-		$errors    = $validator->validateContent($content, 'test.php');
+		$errors    = NamingContract::validateContent($content, 'test.php');
 		$this->assertEmpty($errors); // @phpstan-ignore method.notFound
 	}
 
@@ -293,56 +293,7 @@ class NamingContractTest extends \PHPUnit\Framework\TestCase
 	 */
 	public function testValidatorAcceptsCleanContent(): void
 	{
-		$validator = new StrictNamingContractValidator();
-		$errors    = $validator->validateContent('$obj = new Invoice($db);', 'test.php');
+		$errors    = NamingContract::validateContent('$obj = new Invoice($db);', 'test.php');
 		$this->assertEmpty($errors); // @phpstan-ignore method.notFound
-	}
-
-	// ── StrictNamingContractValidator — other methods ────────────────────
-
-	/**
-	 * @return void
-	 */
-	public function testValidatorValidatesMatchingTriggerFilename(): void
-	{
-		$nc        = new NamingContract('Invoice');
-		$validator = new StrictNamingContractValidator();
-		$this->assertTrue( // @phpstan-ignore method.notFound
-			$validator->validateTriggerFilename('interface_99_modInvoice_InvoiceTriggers.class.php', $nc)
-		);
-	}
-
-	/**
-	 * @return void
-	 */
-	public function testValidatorRejectsResidualTriggerFilename(): void
-	{
-		$nc        = new NamingContract('Invoice');
-		$validator = new StrictNamingContractValidator();
-		$this->assertFalse( // @phpstan-ignore method.notFound
-			$validator->validateTriggerFilename('interface_99_modMyModule_MyModuleTriggers.class.php', $nc)
-		);
-	}
-
-	/**
-	 * @return void
-	 */
-	public function testValidatorValidatesMatchingClassName(): void
-	{
-		$nc        = new NamingContract('Invoice', 'Request');
-		$validator = new StrictNamingContractValidator();
-		$this->assertTrue($validator->validateClassName('Request', $nc)); // @phpstan-ignore method.notFound
-		$this->assertFalse($validator->validateClassName('MyObject', $nc)); // @phpstan-ignore method.notFound
-	}
-
-	/**
-	 * @return void
-	 */
-	public function testValidatorValidatesRightsKey(): void
-	{
-		$nc        = new NamingContract('invoice', 'request');
-		$validator = new StrictNamingContractValidator();
-		$this->assertTrue($validator->validateRightsKey('invoice.request.read', $nc)); // @phpstan-ignore method.notFound
-		$this->assertFalse($validator->validateRightsKey('mymodule.myobject.read', $nc)); // @phpstan-ignore method.notFound
 	}
 }

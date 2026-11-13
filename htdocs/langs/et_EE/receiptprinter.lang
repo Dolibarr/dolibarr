@@ -69,7 +69,6 @@ DOL_VALUE_DAY=Arve päev
 DOL_VALUE_DAY_LETTERS=Arvete päev kirjades
 DOL_LINE_FEED_REVERSE=Reavahetus tagurpidi
 InvoiceID=Arve ID
-InvoiceRef=Arve viide
 DOL_PRINT_OBJECT_LINES=Arve read
 DOL_VALUE_CUSTOMER_FIRSTNAME=Kliendi eesnimi
 DOL_VALUE_CUSTOMER_LASTNAME=Kliendi perekonnanimi

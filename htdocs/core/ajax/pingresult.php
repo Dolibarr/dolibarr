@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2019-2023		Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,10 +41,14 @@ if (!defined('NOREQUIRESOC')) {
 if (!defined('NOREQUIRETRAN')) {
 	define('NOREQUIRETRAN', '1');
 }
+if (!defined('CSRFCHECK_WITH_TOKEN')) {
+	define('CSRFCHECK_WITH_TOKEN', '1'); // This page saves constants: the token is required even in GET mode (the js callers send it)
+}
 
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -54,12 +58,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
  */
 
 $action = GETPOST('action', 'aZ09');
-$hash_unique_id = GETPOST('hash_unique_id', 'alpha');
-$hash_algo = GETPOST('hash_algo', 'alpha');
+
+// The hash of the instance unique id is computed here from the configuration, it is not taken from the request: the value saved
+// into MAIN_FIRST_PING_OK_ID / MAIN_FIRST_REGISTRATION_OK_ID is the identifier of this instance and must not be forgeable.
+$hash_unique_id = getHashUniqueIdOfRegistration('sha256');
 
 
 // Security check
-// None. Being connected is enough.
+// Being connected is enough (the ping is sent by any user from the home page), the token is required (CSRFCHECK_WITH_TOKEN).
 
 
 /*

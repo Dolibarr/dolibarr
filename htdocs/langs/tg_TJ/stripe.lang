@@ -5,7 +5,7 @@ StripeOrCBDoPayment=Бо корти кредитӣ ё Stripe пардохт ку
 FollowingUrlAreAvailableToMakePayments=URL -ҳои зерин барои пешниҳоди саҳифа ба муштарӣ барои пардохт дар объектҳои Dolibarr дастрасанд
 PaymentForm=Шакли пардохт
 WelcomeOnPaymentPage=Хуш омадед ба хидмати пардохти онлайни мо
-ThisScreenAllowsYouToPay=Ин экран ба шумо имкон медиҳад, ки пардохти онлайнро ба %s пардохт кунед.
+ThisScreenAllowsYouToPay=This screen allows you to make an online payment to %s.
 ThisIsInformationOnPayment=Ин маълумот дар бораи пардохт аст
 ToComplete=Барои анҷом додан
 YourEMail=Почтаи электронӣ барои гирифтани тасдиқи пардохт
@@ -25,7 +25,7 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL барои пешниҳоди %s с
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL барои пешниҳоди як саҳифаи пардохти онлайнии %s барои обунаи аъзо
 ToOfferALinkForOnlinePaymentOnDonation=URL барои пешниҳоди %s саҳифаи пардохти онлайн барои пардохти хайрия
 YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
-YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful or failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Stripe худро бо url <b> %s </b> танзим кунед, то пардохт ҳангоми тасдиқи Stripe ба таври худкор эҷод карда шавад.
 AccountParameter=Параметрҳои ҳисоб
 UsageParameter=Параметрҳои истифода
@@ -110,3 +110,4 @@ PAYBOX_PBX_RANG=Value for PBX Rang
 PAYBOX_PBX_IDENTIFIANT=Value for PBX ID
 PAYBOX_HMAC_KEY=HMAC key
 FeatureNotUsedAccordingtoSetup=Feature not used according to your %s setup
+PaymentRecordedButPostPocessingKo=Your payment was recorded by the payment system. However, it appears that our post-payment processing could not be fully completed. We were alerted and will try to solve this soon. We recommend you to not try to pay a second time, and send us a screenshot of this page by email to be sure so we take into account the issue.

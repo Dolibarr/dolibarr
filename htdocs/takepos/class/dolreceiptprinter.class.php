@@ -725,31 +725,31 @@ class dolReceiptPrinter extends Printer
 
 		$this->template = str_replace('{dol_value_customer_firstname}', $object->thirdparty->firstname, $this->template);
 		$this->template = str_replace('{dol_value_customer_lastname}', $object->thirdparty->lastname, $this->template);
-		$this->template = str_replace('{dol_value_customer_mail}', $object->thirdparty->email, $this->template);
-		$this->template = str_replace('{dol_value_customer_phone}', $object->thirdparty->phone, $this->template);
+		$this->template = str_replace('{dol_value_customer_mail}', (string) $object->thirdparty->email, $this->template);
+		$this->template = str_replace('{dol_value_customer_phone}', (string) $object->thirdparty->phone, $this->template);
 		//$this->template = str_replace('<dol_value_customer_mobile>', $object->thirdparty->mobile, $this->template);
-		$this->template = str_replace('{dol_value_customer_tax_number}', $object->thirdparty->tva_intra, $this->template);
+		$this->template = str_replace('{dol_value_customer_tax_number}', (string) $object->thirdparty->tva_intra, $this->template);
 		//$this->template = str_replace('<dol_value_customer_account_balance>', $object->customer_account_balance, $this->template);
 		//$this->template = str_replace('<dol_value_customer_points>', $object->customer_points, $this->template);
 
 		$this->template = str_replace('{dol_value_mysoc_name}', $mysoc->name, $this->template);
-		$this->template = str_replace('{dol_value_mysoc_address}', $mysoc->address, $this->template);
-		$this->template = str_replace('{dol_value_mysoc_zip}', $mysoc->zip, $this->template);
-		$this->template = str_replace('{dol_value_mysoc_town}', $mysoc->town, $this->template);
+		$this->template = str_replace('{dol_value_mysoc_address}', (string) $mysoc->address, $this->template);
+		$this->template = str_replace('{dol_value_mysoc_zip}', (string) $mysoc->zip, $this->template);
+		$this->template = str_replace('{dol_value_mysoc_town}', (string) $mysoc->town, $this->template);
 		$this->template = str_replace('{dol_value_mysoc_country}', $mysoc->country, $this->template);
-		$this->template = str_replace('{dol_value_mysoc_idprof1}', $mysoc->idprof1, $this->template);
-		$this->template = str_replace('{dol_value_mysoc_idprof2}', $mysoc->idprof2, $this->template);
-		$this->template = str_replace('{dol_value_mysoc_idprof3}', $mysoc->idprof3, $this->template);
-		$this->template = str_replace('{dol_value_mysoc_idprof4}', $mysoc->idprof4, $this->template);
-		$this->template = str_replace('{dol_value_mysoc_idprof5}', $mysoc->idprof5, $this->template);
-		$this->template = str_replace('{dol_value_mysoc_idprof6}', $mysoc->idprof6, $this->template);
-		$this->template = str_replace('{dol_value_mysoc_tva_intra}', $mysoc->tva_intra, $this->template);
+		$this->template = str_replace('{dol_value_mysoc_idprof1}', (string) $mysoc->idprof1, $this->template);
+		$this->template = str_replace('{dol_value_mysoc_idprof2}', (string) $mysoc->idprof2, $this->template);
+		$this->template = str_replace('{dol_value_mysoc_idprof3}', (string) $mysoc->idprof3, $this->template);
+		$this->template = str_replace('{dol_value_mysoc_idprof4}', (string) $mysoc->idprof4, $this->template);
+		$this->template = str_replace('{dol_value_mysoc_idprof5}', (string) $mysoc->idprof5, $this->template);
+		$this->template = str_replace('{dol_value_mysoc_idprof6}', (string) $mysoc->idprof6, $this->template);
+		$this->template = str_replace('{dol_value_mysoc_tva_intra}', (string) $mysoc->tva_intra, $this->template);
 		$this->template = str_replace('{dol_value_mysoc_capital}', (string) $mysoc->capital, $this->template);
-		$this->template = str_replace('{dol_value_mysoc_url}', $mysoc->url, $this->template);
+		$this->template = str_replace('{dol_value_mysoc_url}', (string) $mysoc->url, $this->template);
 
 		$this->template = str_replace('{dol_value_vendor_firstname}', $user->firstname, $this->template);
 		$this->template = str_replace('{dol_value_vendor_lastname}', $user->lastname, $this->template);
-		$this->template = str_replace('{dol_value_vendor_mail}', $user->email, $this->template);
+		$this->template = str_replace('{dol_value_vendor_mail}', (string) $user->email, $this->template);
 
 		$parameters = array('object' => $object);
 		$action = '';
@@ -797,9 +797,10 @@ class dolReceiptPrinter extends Printer
 			$nboflines = count($vals);
 			for ($tplline = 0; $tplline < $nboflines; $tplline++) {
 				//var_dump($vals[$tplline]['value']);
+				$tagvalue = $vals[$tplline]['value'] ?? '';	// A tag without text has no 'value' key
 				switch ($vals[$tplline]['tag']) {
 					case 'DOL_PRINT_TEXT':
-						$this->printer->text($vals[$tplline]['value']);
+						$this->printer->text($tagvalue);
 						break;
 					case 'DOL_PRINT_OBJECT_LINES':
 						foreach ($object->lines as $line) {
@@ -879,7 +880,7 @@ class dolReceiptPrinter extends Printer
 						$this->printer->text($title.$spaces.str_pad(price($object->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
 						break;
 					case 'DOL_PRINT_CURR_DATE':
-						if (strlen($vals[$tplline]['value']) < 2) {
+						if (dol_strlen($tagvalue) < 2) {
 							$this->printer->text(date('d/m/Y H:i:s')."\n");
 						} else {
 							$this->printer->text(date($vals[$tplline]['value'])."\n");
@@ -910,9 +911,9 @@ class dolReceiptPrinter extends Printer
 						// $vals[$tplline]['value'] -> barcode($content, $type)
 						// var_dump($vals[$tplline]['value']);
 						try {
-							$this->printer->barcode($vals[$tplline]['value']);
+							$this->printer->barcode($tagvalue);
 						} catch (Exception $e) {
-							$this->errors[] = 'Invalid Barcode value: '.$vals[$tplline]['value'];
+							$this->errors[] = 'Invalid Barcode value: '.$tagvalue;
 							$error++;
 						}
 						break;
@@ -930,7 +931,7 @@ class dolReceiptPrinter extends Printer
 						break;
 					case 'DOL_PRINT_QRCODE':
 						// $vals[$tplline]['value'] -> qrCode($content, $ec, $size, $model)
-						$this->printer->qrcode($vals[$tplline]['value']);
+						$this->printer->qrcode($tagvalue);
 						break;
 					case 'DOL_CUT_PAPER_FULL':
 						$this->printer->cut(Printer::CUT_FULL);
@@ -976,7 +977,7 @@ class dolReceiptPrinter extends Printer
 						break;
 					case 'DOL_PRINT_ORDER_LINES':
 						foreach ($object->lines as $line) {
-							if ($line->special_code == $this->orderprinter) {
+							if ($line->pos_printer_id == -$this->orderprinter) {
 								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen((string) $line->qty) - 10 - 1;
 								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 								$this->printer->text($line->ref.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
@@ -1028,7 +1029,7 @@ class dolReceiptPrinter extends Printer
 
 						if (!$reshook || $reshook < 0) {
 							$this->printer->text($vals[$tplline]['tag']);
-							$this->printer->text($vals[$tplline]['value']);
+							$this->printer->text($tagvalue);
 							$this->errors[] = 'UnknowTag: &lt;'.strtolower($vals[$tplline]['tag']).'&gt;';
 							$error++;
 						}
@@ -1091,6 +1092,15 @@ class dolReceiptPrinter extends Printer
 	 */
 	public function initPrinter($printerid)
 	{
+		// The escpos-php library requires the PHP intl extension (IntlBreakIterator). Without it, the first
+		// call to Printer::text() raises a fatal "Class IntlBreakIterator not found" error that the catch
+		// blocks below cannot handle. Report a clear error (return > 0 so callers skip the print) instead of
+		// letting the print crash.
+		if (!extension_loaded('intl')) {
+			$this->errors[] = 'The receipt printer requires the PHP intl extension, which is not loaded on this server.';
+			return 1;
+		}
+
 		if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
 			$this->connector = new DummyPrintConnector();
 			$this->printer = new Printer($this->connector, $this->profile);

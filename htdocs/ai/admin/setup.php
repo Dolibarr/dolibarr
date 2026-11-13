@@ -89,15 +89,6 @@ foreach ($arrayofai as $ia => $iarecord) {
 	$item->defaultFieldValue = '';
 	$item->cssClass = 'minwidth500';*/
 
-	// API Key
-	$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_KEY')->setAsSecureKey();	// Name of constant must end with _KEY so it is encrypted when saved into database.
-	$item->nameText = $langs->trans("AI_API_KEY").' ('.$ialabel.')';
-	$item->defaultFieldValue = '';
-	$item->fieldParams['hideGenerateButton'] = 1;
-	$item->fieldParams['trClass'] = 'iaservice '.$ia;
-	$item->cssClass = 'minwidth500 text-security input'.$ia;
-	$item->helpText = '<span class="helptoshow">HelpToShow</span>';
-
 	// API URL
 	$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_URL');	// Name of constant must end with _KEY so it is encrypted when saved into database.
 	$item->nameText = $langs->trans("AI_API_URL").' ('.$ialabel.')';
@@ -107,7 +98,36 @@ foreach ($arrayofai as $ia => $iarecord) {
 	if ($ia == 'custom') {
 		$item->fieldAttr['placeholder'] = 'https://domainofapi.com/v1/';
 	}
+
+	// API Key
+	$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_KEY')->setAsSecureKey();	// Name of constant must end with _KEY so it is encrypted when saved into database.
+	$item->nameText = $langs->trans("AI_API_KEY").' ('.$ialabel.')';
+	$item->defaultFieldValue = '';
+	$item->fieldParams['hideGenerateButton'] = 1;
+	$item->fieldParams['showEyeButton'] = 1;
+	$item->fieldParams['trClass'] = 'iaservice '.$ia;
+	$item->cssClass = 'minwidth500 text-security input'.$ia;
+	$item->helpText = '<span class="helptoshow">HelpToShow</span>';
+
+	// Max tokens of the answers (required by the Anthropic API, optional for the others)
+	if ($ia == 'anthropic') {
+		$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_MAX_TOKENS')->setAsNumber(1);
+		$item->nameText = $langs->trans("AI_API_MAX_TOKENS").' ('.$ialabel.')';
+		$item->defaultFieldValue = '1024';
+		$item->fieldParams['trClass'] = 'iaservice '.$ia;
+		$item->cssClass = 'width100 input'.$ia;
+		$item->helpText = $langs->trans("AI_API_MAX_TOKENSHelp");
+	}
 }
+
+// Response timeout of the AI calls (row shown by javascript only when an AI service is selected)
+$item = $formSetup->newItem('AI_USE_RESPONSE_TIMEOUT')->setAsNumber(0);
+$item->nameText = $langs->trans("AI_USE_RESPONSE_TIMEOUT");
+$item->defaultFieldValue = '';
+$item->fieldParams['trClass'] = 'iaservicechosen';
+$item->cssClass = 'width75';
+$item->fieldAttr['placeholder'] = (string) getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30);
+$item->helpText = $langs->trans("AI_USE_RESPONSE_TIMEOUTHelp", getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
 
 $setupnotempty = + count($formSetup->items);
 
@@ -154,6 +174,7 @@ print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 $head = aiAdminPrepareHead();
 print dol_get_fiche_head($head, 'settings', $langs->trans($title), -1, "ai");
 
+print '<br>';
 
 if ($action == 'edit') {
 	print $formSetup->generateOutput(true);
@@ -163,7 +184,7 @@ if ($action == 'edit') {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
 	print '</div>';
 } else {
-	print '<br>'.$langs->trans("NothingToSetup");
+	print $langs->trans("NothingToSetup");
 }
 
 
@@ -176,6 +197,11 @@ print '<script type="text/javascript">
 		function showHideAIService(aiservice) {
 			console.log("showHideAIService: We select the AI service "+aiservice);
 			jQuery(".iaservice").hide();
+			if (aiservice != "-1" && aiservice != "") {
+				jQuery(".iaservicechosen").show();
+			} else {
+				jQuery(".iaservicechosen").hide();
+			}
 
 			if (aiservice != "-1") {
 				jQuery(".iaservice."+aiservice).show();
@@ -189,7 +215,7 @@ foreach ($arrayofai as $key => $airecord) {
 		print ', ';
 	}
 	$i++;
-	print dol_escape_js($key).': \''.dol_escape_js($airecord['url']).'\'';
+	print dol_sanitizeKeyCode($key).': \''.dol_escape_js($airecord['url']).'\'';
 }
 print '};
 				const arrayofextlink = {';
@@ -202,7 +228,7 @@ foreach ($arrayofai as $key => $airecord) {
 		print ', ';
 	}
 	$i++;
-	print dol_escape_js($key).': \''.dol_escape_js($airecord['setup']).'\'';
+	print dol_sanitizeKeyCode($key).': \''.dol_escape_js($airecord['setup']).'\'';
 }
 print '};
 				console.log("Check URL for .iaurl."+aiservice+" .input"+aiservice);

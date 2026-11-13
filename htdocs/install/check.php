@@ -65,7 +65,7 @@ $checksok = 1;
 $setuplang = GETPOST("selectlang", 'aZ09', 3) ? GETPOST("selectlang", 'aZ09', 3) : $langs->getDefaultLang();
 $langs->setDefaultLang($setuplang);
 
-$langs->loadLangs(array("install", "errors"));
+$langs->loadLangs(array("install", "admin"));
 
 // Now we load forced/pre-set values from install.forced.php file.
 $useforcedwizard = false;
@@ -92,9 +92,9 @@ print '<h3><img class="valignmiddle inline-block paddingright" src="../public/th
 print '<span class="inline-block valignmiddle">'.$langs->trans("MiscellaneousChecks")."</span></h3>\n";
 
 // Check browser
-$useragent = $_SERVER['HTTP_USER_AGENT'];
+$useragent = $_SERVER['HTTP_USER_AGENT'] ?? '';
 if (!empty($useragent)) {
-	$tmp = getBrowserInfo($_SERVER["HTTP_USER_AGENT"]);
+	$tmp = getBrowserInfo($useragent);
 	$browserversion = $tmp['browserversion'];
 	$browsername = $tmp['browsername'];
 	if ($browsername == 'ie' && $browserversion < 7) {
@@ -171,12 +171,16 @@ if (!extension_loaded("mbstring")) {
 	$extensionok[] = 'MBString';
 }
 
-// Check for json extension
+// Check for json extension. Dolibarr calls json_encode() and json_decode() in hundreds of places
+// and has no fallback for them, so without this extension nothing runs at all: this one is blocking.
 if (!extension_loaded("json")) {
-	$extensionko[] = 'JSON';
-	// $checksok = 0; // If ko, just warning. So check must still be 1 (otherwise no way to install)
+	$langs->load("errors");
+	print img_picto('', 'warning', 'class="pictofixedwidth error"');
+	print $langs->trans("ErrorPHPDoesNotSupport", '<b>JSON</b>')."<br>\n";
+	$checksok = 0;
 } else {
-	$extensionok[] = 'JSON';
+	print img_picto('', 'tick', 'class="pictofixedwidth"');
+	print $langs->trans("PHPSupport", '<b>JSON</b>')."<br>\n";
 }
 
 // Check if GD is supported (we need GD for image conversion)
@@ -208,6 +212,17 @@ if (!function_exists("simplexml_load_string")) {
 	// $checksok = 0;       // If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
 	$extensionok[] = 'Xml';
+}
+
+// Check if Dom is supported. Dolibarr uses DOMDocument to sanitize html, so a page can not even be rendered without it.
+if (!extension_loaded("dom")) {
+	$langs->load("errors");
+	print img_picto('', 'warning', 'class="pictofixedwidth warning"');
+	print $langs->trans("ErrorPHPDoesNotSupport", "Dom")."<br>\n";
+	// $checksok = 0;	// If ko, just warning. So check must still be 1 (otherwise no way to install)
+} else {
+	print img_picto('', 'tick', 'class="pictofixedwidth"');
+	print $langs->trans("PHPSupport", "Dom")."<br>\n";
 }
 
 // Check if UTF8 is supported
@@ -253,6 +268,7 @@ if (!empty($extensionok)) {
 }
 if (!empty($extensionko)) {
 	//print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle pictofixedwidth"> ';
+	$langs->load('errors');
 	print img_picto('', 'warning', 'class="pictofixedwidth error"');
 	print $langs->trans("ErrorPHPDoesNotSupport", '<b>'.implode(', ', $extensionko).'</b>')."<br>\n";
 }
@@ -481,14 +497,15 @@ if (!file_exists($conffile)) {
 		$choice .= '<td class="nowrap center firstcolumn"><b>'.$langs->trans("FreshInstall").'</b>';
 		$choice .= '</td>';
 		$choice .= '<td class="listofchoicesdesc">';
-		$choice .= $langs->trans("FreshInstallDesc");
 		if (empty($dolibarr_main_db_host)) {	// This means install process was not run
-			$choice .= '<br>';
 			//print $langs->trans("InstallChoiceRecommanded",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_UPGRADE);
-			$choice .= '<div class="><br>';
+			$choice .= '<div class=">';
 			$choice .= '<div class="ok suggestedchoice">'.$langs->trans("InstallChoiceSuggested").'</div>';
 			$choice .= '</div>';
+			$choice .= '<br><br>';
 		}
+
+		$choice .= '<span class="opacitymedium">'.$langs->trans("FreshInstallDesc").'</span>';
 
 		$choice .= '</td>';
 		$choice .= '<td class="center lastcolumn">';
@@ -580,18 +597,20 @@ if (!file_exists($conffile)) {
 			$choice .= '<tr'.($recommended_choice ? ' class="choiceselected"' : '').'>';
 			$choice .= '<td class="nowrap center firstcolumn"><span class="opacitymedium">'.$langs->trans("Upgrade").'</span><br><b>'.$newversionfrom.$newversionfrombis.' -> '.$newversionto.'</b></td>';
 			$choice .= '<td class="listofchoicesdesc">';
-			$choice .= $langs->trans("UpgradeDesc");
 
 			if ($recommended_choice) {
-				$choice .= '<br>';
 				//print $langs->trans("InstallChoiceRecommanded",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_UPGRADE);
-				$choice .= '<div class=""><br>';
+				$choice .= '<div class="">';
 				$choice .= '<div class="ok suggestedchoice">'.$langs->trans("InstallChoiceSuggested").'</div>';
 				if ($count < count($migarray)) {	// There are other choices after
 					print $langs->trans("MigrateIsDoneStepByStep", DOL_VERSION);
 				}
-				$choice .= '</div>';
+				$choice .= '</div><br><br>';
 			}
+
+			$choice .= '<span class="opacitymedium">';
+			$choice .= $langs->trans("UpgradeDesc");
+			$choice .= '</span>';
 
 			$choice .= '</td>';
 			$choice .= '<td class="center lastcolumn">';
@@ -638,7 +657,7 @@ if (!file_exists($conffile)) {
 		// Array of install choices
 		krsort($available_choices, SORT_NATURAL);
 		print"\n";
-		print '<table width="100%" class="listofchoices">';
+		print '<table class="centpercent listofchoices">';
 		foreach ($available_choices as $choice) {
 			print $choice;
 		}
@@ -679,7 +698,7 @@ $("div#AShowChoices").click(function() {
 
 /*
 $(".runupgrade").click(function() {
-	return confirm("'.dol_escape_js($langs->transnoentitiesnoconv("WarningUpgrade"), 0, 1).'");
+	return confirm(\''.dol_escape_js($langs->transnoentitiesnoconv("WarningUpgrade"), 0, 1).'\');
 });
 */
 

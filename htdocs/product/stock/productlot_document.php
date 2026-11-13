@@ -126,7 +126,8 @@ if ($user->socid > 0) { // Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
 }
-//restrictedArea($user, 'productbatch');
+
+restrictedArea($user, 'produit|service', $object->id, 'product_lot');
 if (!$permissiontoread) {
 	accessforbidden();
 }
@@ -163,7 +164,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-stock_p
 
 if ($object->id) {
 	$head = productlot_prepare_head($object);
-	print dol_get_fiche_head($head, 'documents', $langs->trans("Batch"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'documents', $langs->trans("Batch"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 
 	$parameters = array();

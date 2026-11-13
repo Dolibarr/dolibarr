@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2020-2024	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,13 @@
  * $search_groupby = array('t.column2');
  * $customreportkey='abc';
  * include DOL_DOCUMENT_ROOT.'/core/customreports.php';
+ *
+ * To show the full tool into a tab of another PHP page (the parent page prints the header and the tabs, and shows this
+ * tab when it receives its own value for the parameter tabfamily, value that is kept by the forms and links of the tool):
+ *
+ * define('USE_CUSTOM_REPORT_AS_TAB', 1);
+ * $customreportobjecttype = 'order';		// Object type preselected
+ * include DOL_DOCUMENT_ROOT.'/core/customreports.php';
  */
 
 /**
@@ -44,9 +51,11 @@
  * @var User $user
  *
  * @var ?int[]		$toselect  			Items selected on page, only used to see if not empty here
+ * @var ?string		$customreportobjecttype	Object type preselected when page is shown as a tab of another page
  */
 '
 @phan-var-force ?int[] $toselect
+@phan-var-force ?string $customreportobjecttype
 ';
 
 // Initialise values
@@ -54,7 +63,9 @@ $tabfamily = null;
 $objecttype = null;
 
 if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
-	require '../main.inc.php';
+	if (!defined('USE_CUSTOM_REPORT_AS_TAB')) {		// When shown as a tab, main.inc.php is already loaded by the parent page
+		require '../main.inc.php';
+	}
 
 	// Get parameters
 	$action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
@@ -62,6 +73,16 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 
 	$mode = GETPOST('mode', 'alpha');
 	$objecttype = (string) GETPOST('objecttype', 'aZ09arobase');
+	if ($objecttype == '-1') {	// -1 is the empty value of the combo of object types
+		$objecttype = '';
+	}
+	if (defined('USE_CUSTOM_REPORT_AS_TAB')) {
+		// When shown as a tab, the parameter mode is used by the parent page, and the parent page defines the object type preselected
+		$mode = '';
+		if (!GETPOSTISSET('objecttype') && !empty($customreportobjecttype)) {
+			$objecttype = (string) $customreportobjecttype;
+		}
+	}
 	$tabfamily  = GETPOST('tabfamily', 'aZ09');
 
 	$search_measures = GETPOST('search_measures', 'array:alphanohtml');
@@ -172,9 +193,12 @@ if (!isset($search_graph)) {
 if (!empty($object)) {
 	$objecttype = $object->element.($object->module ? '@'.$object->module : '');
 }
-if ((!is_string($objecttype) || empty($objecttype)) && isModEnabled('societe')) {
-	$objecttype = 'thirdparty';
+if (!is_string($objecttype)) {	// No object type is preselected
+	$objecttype = '';
 }
+/*if ((!is_string($objecttype) || empty($objecttype)) && isModEnabled('societe')) {
+	$objecttype = 'thirdparty';
+}*/
 '@phan-var-force string $objecttype';  // Help phan that suggests $objecttype can be null
 
 require_once DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php";
@@ -187,8 +211,8 @@ require_once DOL_DOCUMENT_ROOT."/core/class/dolgraph.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php";
 
-// Load traductions files requiredby by page
-$langs->loadLangs(array("companies", "other", "exports", "sendings"));
+// Load traductions files requiredby by page (stocks is for labels of linked warehouses in tables of fields)
+$langs->loadLangs(array("companies", "other", "exports", "sendings", "stocks"));
 
 $extrafields = new ExtraFields($db);
 
@@ -204,19 +228,31 @@ $ObjectClassName = '';
 $arrayoftype = array(
 	'thirdparty' => array('label' => 'ThirdParties', 'picto' => 'company', 'ObjectClassName' => 'Societe', 'enabled' => isModEnabled('societe'), 'ClassPath' => "/societe/class/societe.class.php", 'langs' => 'companies'),
 	'contact' => array('label' => 'Contacts', 'picto' => 'contact', 'ObjectClassName' => 'Contact', 'enabled' => isModEnabled('societe'), 'ClassPath' => "/contact/class/contact.class.php"),
+	'product' => array('label' => 'ProductsAndServices', 'picto' => 'product', 'ObjectClassName' => 'Product', 'enabled' => (isModEnabled('product') || isModEnabled('service')), 'ClassPath' => "/product/class/product.class.php", 'langs' => 'products'),
 	'proposal' => array('label' => 'Proposals', 'picto' => 'proposal', 'ObjectClassName' => 'Propal', 'enabled' => isModEnabled('propal'), 'ClassPath' => "/comm/propal/class/propal.class.php", 'langs' => 'propal'),
 	'proposaldet' => array('label' => 'ProposalLines', 'picto' => 'proposal', 'ObjectClassName' => 'PropaleLigne', 'enabled' => isModEnabled('propal'), 'ClassPath' => "/comm/propal/class/propaleligne.class.php", 'langs' => 'propal'),
 	'order' => array('label' => 'Orders', 'picto' => 'order', 'ObjectClassName' => 'Commande', 'enabled' => isModEnabled('order'), 'ClassPath' => "/commande/class/commande.class.php", 'langs' => 'orders'),
 	'orderdet' => array('label' => 'SaleOrderLines', 'picto' => 'order', 'ObjectClassName' => 'OrderLine', 'enabled' => isModEnabled('order'), 'ClassPath' => "/commande/class/orderline.class.php", 'langs' => 'orders'),
+	'shipping' => array('label' => 'Shipments', 'picto' => 'dolly', 'ObjectClassName' => 'Expedition', 'enabled' => isModEnabled('shipping'), 'ClassPath' => "/expedition/class/expedition.class.php", 'langs' => 'sendings'),
+	'reception' => array('label' => 'Receptions', 'picto' => 'dollyrevert', 'ObjectClassName' => 'Reception', 'enabled' => isModEnabled('reception'), 'ClassPath' => "/reception/class/reception.class.php", 'langs' => 'receptions'),
 	'invoice' => array('label' => 'Invoices', 'picto' => 'bill', 'ObjectClassName' => 'Facture', 'enabled' => isModEnabled('invoice'), 'ClassPath' => "/compta/facture/class/facture.class.php", 'langs' => 'bills'),
 	'invoice_template' => array('label' => 'PredefinedInvoices', 'picto' => 'bill', 'ObjectClassName' => 'FactureRec', 'enabled' => isModEnabled('invoice'), 'ClassPath' => "/compta/facture/class/facture-rec.class.php", 'langs' => 'bills'),
+	'supplier_proposal' => array('label' => 'SupplierProposals', 'picto' => 'supplier_proposal', 'ObjectClassName' => 'SupplierProposal', 'enabled' => isModEnabled('supplier_proposal'), 'ClassPath' => "/supplier_proposal/class/supplier_proposal.class.php", 'langs' => 'supplier_proposal'),
+	// The permission check done later on the vendor order or invoice tests only the read permission on vendors, so the read permission on the object is tested here
+	'supplier_order' => array('label' => 'SuppliersOrders', 'picto' => 'supplier_order', 'ObjectClassName' => 'CommandeFournisseur', 'enabled' => (isModEnabled('supplier_order') && $user->hasRight('fournisseur', 'commande', 'lire')), 'ClassPath' => "/fourn/class/fournisseur.commande.class.php", 'langs' => 'orders'),
+	'supplier_invoice' => array('label' => 'SupplierInvoices', 'picto' => 'supplier_invoice', 'ObjectClassName' => 'FactureFournisseur', 'enabled' => (isModEnabled('supplier_invoice') && $user->hasRight('fournisseur', 'facture', 'lire')), 'ClassPath' => "/fourn/class/fournisseur.facture.class.php", 'langs' => 'suppliers'),
 	'contract' => array('label' => 'Contracts', 'picto' => 'contract', 'ObjectClassName' => 'Contrat', 'enabled' => isModEnabled('contract'), 'ClassPath' => "/contrat/class/contrat.class.php", 'langs' => 'contracts'),
 	'contractdet' => array('label' => 'ContractLines', 'picto' => 'contract', 'ObjectClassName' => 'ContratLigne', 'enabled' => isModEnabled('contract'), 'ClassPath' => "/contrat/class/contrat.class.php", 'langs' => 'contracts'),
+	'fichinter' => array('label' => 'Interventions', 'picto' => 'intervention', 'ObjectClassName' => 'Fichinter', 'enabled' => isModEnabled('intervention'), 'ClassPath' => "/fichinter/class/fichinter.class.php", 'langs' => 'interventions'),
 	'bom' => array('label' => 'BOM', 'picto' => 'bom', 'ObjectClassName' => 'Bom', 'enabled' => isModEnabled('bom')),
 	'mrp' => array('label' => 'MO', 'picto' => 'mrp', 'ObjectClassName' => 'Mo', 'enabled' => isModEnabled('mrp'), 'ClassPath' => "/mrp/class/mo.class.php"),
 	'ticket' => array('label' => 'Ticket', 'picto' => 'ticket', 'ObjectClassName' => 'Ticket', 'enabled' => isModEnabled('ticket')),
 	'member' => array('langs' => 'members', 'label' => 'Adherent', 'picto' => 'member', 'ObjectClassName' => 'Adherent', 'enabled' => isModEnabled('member'), 'ClassPath' => "/adherents/class/adherent.class.php"),
 	'cotisation' => array('langs' => 'members', 'label' => 'Subscriptions', 'picto' => 'member', 'ObjectClassName' => 'Subscription', 'enabled' => isModEnabled('member'), 'ClassPath' => "/adherents/class/subscription.class.php"),
+	// The custom reports do not filter on the salaries of the user and its subordinates, so the permission to read all salaries is required
+	'salary' => array('langs' => 'salaries', 'label' => 'Salaries', 'picto' => 'salary', 'ObjectClassName' => 'Salary', 'enabled' => (isModEnabled('salaries') && $user->hasRight('salaries', 'readall')), 'ClassPath' => "/salaries/class/salary.class.php"),
+	// The custom reports do not filter on the expense reports of the user and its subordinates, so the permission to read all expense reports is required
+	'expensereport' => array('langs' => 'trips', 'label' => 'ExpenseReports', 'picto' => 'trip', 'ObjectClassName' => 'ExpenseReport', 'enabled' => (isModEnabled('expensereport') && ($user->hasRight('expensereport', 'readall') || $user->hasRight('expensereport', 'lire_tous'))), 'ClassPath' => "/expensereport/class/expensereport.class.php"),
 );
 
 
@@ -241,6 +277,11 @@ if ($reshook < 0) {
 			$arrayoftype[$key] = $val;
 		}
 	}
+}
+
+// An object type of a disabled module, or not allowed to the user, must not be loaded even if forced in the URL
+if ($objecttype && isset($arrayoftype[$objecttype]['enabled']) && !dol_eval((string) $arrayoftype[$objecttype]['enabled'], 1, 1, '1')) {
+	$objecttype = '';
 }
 
 // Load the main $object for statistics
@@ -304,7 +345,7 @@ forgeSQLFromUniversalSearchCriteria($search_component_params_input, $errorstr);	
 if ($errorstr) {
 	$value = $search_component_params_input;
 
-	$value = preg_replace('/([a-z\.]+)\s*([!<>=]+|in|notin|like|notlike)\s*/', '\1:\2:', $value); // Clean string 'x < 10' into 'x:<:10' so we can then explode on space to get all AND tests to do
+	$value = preg_replace('/([a-z0-9_\.]+)\s*([!<>=]+|in|notin|like|notlike)\s*/', '\1:\2:', $value); // Clean string 'x < 10' into 'x:<:10' so we can then explode on space to get all AND tests to do
 	$value = preg_replace('/\s*\|\s*/', '|', $value);
 	//var_dump($value);
 
@@ -364,7 +405,7 @@ if ($errorstr) {
 		$i2++; // a criteria for 1 more field was added to string
 
 		if ($newres) {
-			$res = $res.($res ? ' AND ' : '').($i2 > 1 ? '(' : '').$newres.($i2 > 1 ? ')' : '');
+			$res = $res.($res ? ' AND ' : '').($i3 > 1 ? '(' : '').$newres.($i3 > 1 ? ')' : '');
 		}
 		$i1++;
 	}
@@ -414,7 +455,11 @@ if (!empty($object->element_for_permission)) {
 // Test on permission can be done on a given selected feature only
 
 // Security check (do not stop here, get only result to show message later)
-$resultcheck = restrictedArea($user, $features, 0, '', '', 'fk_soc', 'rowid', 0, 1);
+if ($features) {
+	$resultcheck = restrictedArea($user, $features, 0, '', '', 'fk_soc', 'rowid', 0, 1);
+} else {
+	$resultcheck = 1;	// No object type selected yet, so there is no data to protect
+}
 
 
 /*
@@ -432,7 +477,7 @@ $resultcheck = restrictedArea($user, $features, 0, '', '', 'fk_soc', 'rowid', 0,
 $form = new Form($db);
 $formother = new FormOther($db);
 
-if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
+if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE') && !defined('USE_CUSTOM_REPORT_AS_TAB')) {
 	llxHeader('', $langs->transnoentitiesnoconv('CustomReports'), '');
 
 	if (empty($head)) {
@@ -440,6 +485,23 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	} else {
 		print dol_get_fiche_head($head, 'customreports', $title, -1, $picto);
 	}
+}
+
+// If the user is not allowed to read the selected type of object, we show only the error, without running any request on data
+if (!$resultcheck) {
+	print '<div class="error">';
+	print $langs->trans("NotEnoughPermissions");
+	print '</div>';
+
+	if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE') && !defined('USE_CUSTOM_REPORT_AS_TAB')) {
+		print dol_get_fiche_end();
+
+		llxFooter();
+		$db->close();
+		exit;
+	}
+
+	return;		// When included into another page, the parent page ends the page
 }
 
 // Define $newarrayoftype that is array of object available for report
@@ -551,6 +613,25 @@ if (count($sanitized_search_groupby)) {
 			$sql .= forgeSQLFromUniversalSearchCriteria($search_component_params_hidden, $errormessage);
 		}
 		*/
+		// Add the AND parts of the filter that use only the field of the group by, so the count of distinct values takes them into account
+		if ($search_component_params_hidden) {
+			$fieldofgroupby = preg_replace('/\-(year|month|day)$/', '', $gvalsanitized);
+			$sqlwhere = '';
+			foreach (dolForgeExplodeAnd($search_component_params_hidden) as $andpart) {
+				$matches = array();
+				preg_match_all('/\(([a-zA-Z0-9_\.]+):[<>!=insotlke]+:/i', $andpart, $matches);
+				if (!empty($matches[1]) && count(array_unique($matches[1])) == 1 && $matches[1][0] == $fieldofgroupby) {
+					$errormessage = '';
+					$tmpsql = forgeSQLFromUniversalSearchCriteria($andpart, $errormessage, 0, 0, 1);
+					if (!$errormessage) {
+						$sqlwhere .= $tmpsql;
+					}
+				}
+			}
+			if ($sqlwhere) {
+				$sql .= " WHERE 1 = 1".$sqlwhere;
+			}
+		}
 
 		$sql .= " LIMIT ".((int) ($MAXUNIQUEVALFORGROUP + 1));
 
@@ -575,7 +656,7 @@ if (count($sanitized_search_groupby)) {
 			$regs = array();
 			if (isset($object->fields[$gvalwithoutprefix])) {
 				if (!empty($object->fields[$gvalwithoutprefix]['arrayofkeyval'])) {
-					$valuetranslated = $object->fields[$gvalwithoutprefix]['arrayofkeyval'][$obj->val];
+					$valuetranslated = $object->fields[$gvalwithoutprefix]['arrayofkeyval'][$obj->val] ?? null;
 					if (is_null($valuetranslated)) {
 						$valuetranslated = $langs->transnoentitiesnoconv("UndefinedKey");
 					}
@@ -659,11 +740,6 @@ if (count($sanitized_search_groupby)) {
 //var_dump($arrayofvaluesforgroupby);exit;
 
 
-if (!$resultcheck) {
-	print '<div class="error">';
-	print $langs->trans("NotEnoughPermissions");
-	print '</div>';
-}
 
 
 
@@ -687,7 +763,11 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 	$viewmode .= '<div class="divadvancedsearchfield">';
 	$arrayofgraphs = array('bars' => 'Bars', 'lines' => 'Lines'); // also 'pies'
 	$viewmode .= '<div class="inline-block opacitymedium"><span class="fas fa-chart-area paddingright" title="'.$langs->trans("Graph").'"></span>'.$langs->trans("Graph").'</div> ';
-	$viewmode .= $form->selectarray('search_graph', $arrayofgraphs, $search_graph, 0, 0, 0, '', 1, 0, 0, '', 'graphtype width100');
+	// The class onrightofpage allows to align the popup list on the right of the select component (so it can't go out of screen on the right).
+	// For this the select must also be inside a parent with class parentonrightofpage (and a fixed width to avoid the parent to be enlarged when the dropdown list is open).
+	$viewmode .= '<div class="inline-block width100 parentonrightofpage">';
+	$viewmode .= $form->selectarray('search_graph', $arrayofgraphs, $search_graph, 0, 0, 0, '', 1, 0, 0, '', 'graphtype width100 onrightofpage');
+	$viewmode .= '</div>';
 	$viewmode .= '</div>';
 
 	$num = 0;
@@ -696,7 +776,7 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 	$newcardbutton = '';
 	$limit = 0;
 
-	print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 1, 0, 1, $viewmode);
+	print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, 'nomarginbottom', $limit, 1, 0, 1, $viewmode);
 
 
 	foreach ($newarrayoftype as $tmpkey => $tmpval) {
@@ -707,10 +787,10 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 	print '<div class="liste_titre liste_titre_bydiv liste_titre_bydiv_inlineblock liste_titre_bydiv_nothingafter centpercent">';
 
 	// Select object
-	print '<div class="divadvancedsearchfield center floatnone">';
-	print '<div class="inline-block"><span class="opacitymedium">'.$langs->trans("StatisticsOn").'</span></div> ';
-
-	print $form->selectarray('objecttype', $newarrayoftype, $objecttype, 0, 0, 0, '', 1, 0, 0, '', 'minwidth250', 1, '', 0, 1);
+	print '<div class="divadvancedsearchfield floatnone">';
+	//print '<div class="inline-block"><span class="opacitymedium">'.$langs->trans("StatisticsOn").'</span></div> ';
+	print img_picto('', 'generic', 'class="paddingright pictofixedwidth linkobject boxfilter"');
+	print $form->selectarray('objecttype', $newarrayoftype, $objecttype, $langs->trans("StatisticsOn"), 0, 0, '', 1, 0, 0, '', 'minwidth250 customreportsobjecttype noborderfocus', 1, '', 0, 1);
 	if (empty($conf->use_javascript_ajax)) {
 		print '<input type="submit" class="button buttongen button-save nomargintop" name="changeobjecttype" value="'.$langs->trans("Refresh").'">';
 	} else {
@@ -719,31 +799,50 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 	        jQuery(document).ready(function() {
 	        	jQuery("#objecttype").change(function() {
 	        		console.log("Reload for "+jQuery("#objecttype").val());
-	                location.href = "'.$_SERVER["PHP_SELF"].'?objecttype="+jQuery("#objecttype").val()+"'.($tabfamily ? '&tabfamily='.urlencode($tabfamily) : '').(GETPOSTINT('show_search_component_params_hidden') ? '&show_search_component_params_hidden='.((int) GETPOSTINT('show_search_component_params_hidden')) : '').'";
+	                location.href = "'.$_SERVER["PHP_SELF"].'?objecttype="+jQuery("#objecttype").val()+"&focusonfilter=1'.($tabfamily ? '&tabfamily='.urlencode($tabfamily) : '').(GETPOSTINT('show_search_component_params_hidden') ? '&show_search_component_params_hidden='.((int) GETPOSTINT('show_search_component_params_hidden')) : '').'";
 	        	});
 	        });
 	    </script>';
 	}
+	// When no object type is selected, the focus goes on the combo of object types
+	if (empty($objecttype)) {
+		print '<script nonce="'.getNonce().'">jQuery(document).ready(function() {
+			var objecttypeselection = jQuery("#objecttype").next(".select2").find(".select2-selection");
+			(objecttypeselection.length ? objecttypeselection : jQuery("#objecttype")).trigger("focus");
+		});</script>';
+	}
 	print '</div><div class="clearboth"></div>';
 
-	if (!empty($newarrayoftype)) {
+	// The components to select the filter, measures, X axis and group by are shown only once an object type is selected
+	if (!empty($newarrayoftype) && !empty($object)) {
 		// Filter (you can use param &show_search_component_params_hidden=1 for debug)
 		if (!empty($object)) {
-			print '<div class="divadvancedsearchfield">';
+			print '<div class="divadvancedsearchfield divadvancedsearchfieldusf">';
 			print $form->searchComponent(array($object->element => $object->fields), $search_component_params, array(), $search_component_params_hidden, $arrayoffilterfields);
 			print '</div>';
+			// After a change of the object type, the page is reloaded with focusonfilter=1 so the focus goes on the filter
+			if (GETPOSTINT('focusonfilter')) {
+				print '<script nonce="'.getNonce().'">jQuery(document).ready(function() { jQuery("#search_component_params_input").trigger("focus"); });</script>';
+			}
 		}
 
 		// YAxis (add measures into array)
 		$count = 0;
 		//var_dump($arrayofmesures);
 		print '<div class="divadvancedsearchfield clearboth">';
-		print '<div class="inline-block"><span class="fas fa-ruler-combined paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("Measures")).'"></span><span class="fas fa-caret-left caretleftaxis" title="'.dol_escape_htmltag($langs->trans("Measures")).'"></span></div>';
+		print '<!-- measureComponent -->'."\n";
+		print '<div class="divadvancedsearchfieldcomp centpercent inline-block">';
+		print '<span class="inline-block"><span class="fas fa-ruler-combined paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("Measures")).'"></span><span class="fas fa-caret-left caretleftaxis" title="'.dol_escape_htmltag($langs->trans("Measures")).'"></span></span>';
 		$simplearrayofmesures = array();
 		foreach ($arrayofmesures as $key => $val) {
 			$simplearrayofmesures[$key] = $arrayofmesures[$key]['label'];
 		}
-		print $form->multiselectarray('search_measures', $simplearrayofmesures, $sanitized_search_measures, 0, 0, 'minwidth300 widthcentpercentminusx', 1, 0, '', '', $langs->transnoentitiesnoconv("Measures"));	// Fill the array $arrayofmeasures with possible fields
+		if (empty($conf->use_javascript_ajax)) {
+			print $form->multiselectarray('search_measures', $simplearrayofmesures, $sanitized_search_measures, 0, 0, 'minwidth200 maxwidth300 combolargelist', 1, 0, '', '', $langs->transnoentitiesnoconv("Measures"));	// Fill the array $arrayofmeasures with possible fields
+		} else {
+			print customReportsSelectMeasures('search_measures', $arrayofmesures, $sanitized_search_measures, $langs->transnoentitiesnoconv("Measures"));
+		}
+		print '</div>';
 		print '</div>';
 
 		// XAxis
@@ -751,18 +850,26 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 		print '<div class="divadvancedsearchfield">';
 		print '<div class="inline-block"><span class="fas fa-ruler-combined paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("XAxis")).'"></span><span class="fas fa-caret-down caretdownaxis" title="'.dol_escape_htmltag($langs->trans("XAxis")).'"></span></div>';
 		//var_dump($arrayofxaxis);
-		print $formother->selectXAxisField($object, $sanitized_search_xaxis, $arrayofxaxis, $langs->trans("XAxis"), 'minwidth300 maxwidth400 widthcentpercentminusx');	// Fill the array $arrayofxaxis with possible fields
+		if (empty($conf->use_javascript_ajax)) {
+			print $formother->selectXAxisField($object, $sanitized_search_xaxis, $arrayofxaxis, $langs->trans("XAxis"), 'minwidth200 maxwidth300 combolargelist');	// Fill the array $arrayofxaxis with possible fields
+		} else {
+			print customReportsSelectXAxis('search_xaxis', $arrayofxaxis, $sanitized_search_xaxis, $langs->transnoentitiesnoconv("XAxis"));
+		}
 		print '</div>';
 
 		// Group by
 		$count = 0;
 		print '<div class="divadvancedsearchfield">';
 		print '<div class="inline-block opacitymedium"><span class="fas fa-ruler-horizontal paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("GroupBy")).'"></span></div>';
-		print $formother->selectGroupByField($object, $sanitized_search_groupby, $arrayofgroupby, 'minwidth250 maxwidth300 widthcentpercentminusx', $langs->trans("GroupBy"));	// Fill the array $arrayofgroupby with possible fields
+		if (empty($conf->use_javascript_ajax)) {
+			print $formother->selectGroupByField($object, $sanitized_search_groupby, $arrayofgroupby, 'minwidth200 maxwidth300 combolargelist', $langs->trans("GroupBy"));	// Fill the array $arrayofgroupby with possible fields
+		} else {
+			print customReportsSelectGroupBy('search_groupby', $arrayofgroupby, $sanitized_search_groupby, $langs->transnoentitiesnoconv("GroupBy"));
+		}
 		print '</div>';
 	}
 
-	if ($mode == 'grid') {
+	if ($mode == 'grid' && !empty($object)) {
 		// YAxis
 		print '<div class="divadvancedsearchfield">';
 		foreach ($object->fields as $key => $val) {
@@ -823,9 +930,9 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 		print '</div>';
 	}
 
-	if (!empty($newarrayoftype)) {
+	if (!empty($newarrayoftype) && !empty($object)) {
 		print '<div class="divadvancedsearchfield">';
-		print '<input type="submit" class="button buttongen button-save nomargintop" value="'.$langs->trans("Refresh").'">';
+		print '<button type="submit" class="butAction nomargintop customreportsrefresh">'.$langs->trans("Refresh").'</button>';
 		print '</div>';
 	}
 
@@ -909,7 +1016,7 @@ if (!empty($sanitized_search_measures) && !empty($sanitized_search_xaxis)) {
 	}
 
 	// Init the list of tables added. We include by default always the main table.
-	$listoftablesalreadyadded = array($object->table_element => $object->table_element);
+	$listoftablesalreadyadded = array('t' => 't');	// List of table aliases already joined (the same table may be joined several times with different aliases)
 
 	// Add LEFT JOIN for all parent tables mentioned into the Xaxis
 	//var_dump($arrayofxaxis); var_dump($sanitized_search_xaxis);
@@ -917,19 +1024,20 @@ if (!empty($sanitized_search_measures) && !empty($sanitized_search_xaxis)) {
 		if (!empty($arrayofxaxis[$val])) {
 			$tmpval = explode('.', $val);
 			//var_dump($arrayofgroupby);
-			$tmpforloop = dolExplodeIntoArray($arrayofxaxis[$val]['tablefromt'], ',');
-			foreach ($tmpforloop as $tmptable => $tmptablealias) {
-				if (! in_array($tmptable, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
+			$tmpforloop = explode(',', $arrayofxaxis[$val]['tablefromt']);
+			foreach ($tmpforloop as $tmptableandalias) {
+				list($tmptable, $tmptablealias) = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+				if (! in_array($tmptablealias, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
 					$tmpforexplode = explode('__', $tmptablealias);
 					$endpart = end($tmpforexplode);
 					$parenttableandfield = preg_replace('/__'.$endpart.'$/', '', $tmptablealias).'.'.$endpart;
 
 					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$tmptable." as ".$db->sanitize($tmptablealias)." ON ".$db->sanitize($parenttableandfield)." = ".$db->sanitize($tmptablealias).".rowid";
-					$listoftablesalreadyadded[$tmptable] = $tmptable;
+					$listoftablesalreadyadded[$tmptablealias] = $tmptablealias;
 
 					if (preg_match('/^te/', $tmpval[0]) && preg_replace('/^t_/', 'te_', $tmptablealias) == $tmpval[0]) {
 						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$tmptable."_extrafields as ".$db->sanitize($tmpval[0])." ON ".$db->sanitize($tmpval[0]).".fk_object = ".$db->sanitize($tmptablealias).".rowid";
-						$listoftablesalreadyadded[$tmptable] = $tmptable;
+						$listoftablesalreadyadded[$tmptablealias] = $tmptablealias;
 					}
 				}
 			}
@@ -944,19 +1052,20 @@ if (!empty($sanitized_search_measures) && !empty($sanitized_search_xaxis)) {
 		if (!empty($arrayofgroupby[$val])) {
 			$tmpval = explode('.', $val);
 			//var_dump($arrayofgroupby[$val]); var_dump($tmpval);
-			$tmpforloop = dolExplodeIntoArray($arrayofgroupby[$val]['tablefromt'], ',');
-			foreach ($tmpforloop as $tmptable => $tmptablealias) {
-				if (! in_array($tmptable, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
+			$tmpforloop = explode(',', $arrayofgroupby[$val]['tablefromt']);
+			foreach ($tmpforloop as $tmptableandalias) {
+				list($tmptable, $tmptablealias) = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+				if (! in_array($tmptablealias, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
 					$tmpforexplode = explode('__', $tmptablealias);
 					$endpart = end($tmpforexplode);
 					$parenttableandfield = preg_replace('/__'.$endpart.'$/', '', $tmptablealias).'.'.$endpart;
 
 					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$tmptable." as ".$db->sanitize($tmptablealias)." ON ".$db->sanitize($parenttableandfield)." = ".$db->sanitize($tmptablealias).".rowid";
-					$listoftablesalreadyadded[$tmptable] = $tmptable;
+					$listoftablesalreadyadded[$tmptablealias] = $tmptablealias;
 
 					if (preg_match('/^te/', $tmpval[0]) && preg_replace('/^t_/', 'te_', $tmptablealias) == $tmpval[0]) {
 						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$tmptable."_extrafields as ".$db->sanitize($tmpval[0])." ON ".$db->sanitize($tmpval[0]).".fk_object = ".$db->sanitize($tmptablealias).".rowid";
-						$listoftablesalreadyadded[$tmptable] = $tmptable;
+						$listoftablesalreadyadded[$tmptablealias] = $tmptablealias;
 					}
 				}
 			}
@@ -971,19 +1080,20 @@ if (!empty($sanitized_search_measures) && !empty($sanitized_search_xaxis)) {
 		if (!empty($arrayofmesures[$val])) {
 			$tmpval = explode('.', $val);
 			//var_dump($arrayofgroupby);
-			$tmpforloop = dolExplodeIntoArray($arrayofmesures[$val]['tablefromt'], ',');
-			foreach ($tmpforloop as $tmptable => $tmptablealias) {
-				if (! in_array($tmptable, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
+			$tmpforloop = explode(',', $arrayofmesures[$val]['tablefromt']);
+			foreach ($tmpforloop as $tmptableandalias) {
+				list($tmptable, $tmptablealias) = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+				if (! in_array($tmptablealias, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
 					$tmpforexplode = explode('__', $tmptablealias);
 					$endpart = end($tmpforexplode);
 					$parenttableandfield = preg_replace('/__'.$endpart.'$/', '', $tmptablealias).'.'.$endpart;
 
 					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$tmptable." as ".$db->sanitize($tmptablealias)." ON ".$db->sanitize($parenttableandfield)." = ".$db->sanitize($tmptablealias).".rowid";
-					$listoftablesalreadyadded[$tmptable] = $tmptable;
+					$listoftablesalreadyadded[$tmptablealias] = $tmptablealias;
 
 					if (preg_match('/^te/', $tmpval[0]) && preg_replace('/^t_/', 'te_', $tmptablealias) == $tmpval[0]) {
 						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$tmptable."_extrafields as ".$db->sanitize($tmpval[0])." ON ".$db->sanitize($tmpval[0]).".fk_object = ".$db->sanitize($tmptablealias).".rowid";
-						$listoftablesalreadyadded[$tmptable] = $tmptable;
+						$listoftablesalreadyadded[$tmptablealias] = $tmptablealias;
 					}
 				}
 			}
@@ -1006,19 +1116,20 @@ if (!empty($sanitized_search_measures) && !empty($sanitized_search_xaxis)) {
 		foreach ($fieldsUsedInFilter as $key => $val) {
 			if (!empty($arrayoffilterfields[$val])) {
 				$tmpval = explode('.', $val);
-				$tmpforloop = dolExplodeIntoArray($arrayoffilterfields[$val]['tablefromt'], ',');
-				foreach ($tmpforloop as $tmptable => $tmptablealias) {
-					if (! in_array($tmptable, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
+				$tmpforloop = explode(',', $arrayoffilterfields[$val]['tablefromt']);
+				foreach ($tmpforloop as $tmptableandalias) {
+					list($tmptable, $tmptablealias) = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+					if (! in_array($tmptablealias, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
 						$tmpforexplode = explode('__', $tmptablealias);
 						$endpart = end($tmpforexplode);
 						$parenttableandfield = preg_replace('/__'.$endpart.'$/', '', $tmptablealias).'.'.$endpart;
 
 						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$tmptable." as ".$db->sanitize($tmptablealias)." ON ".$db->sanitize($parenttableandfield)." = ".$db->sanitize($tmptablealias).".rowid";
-						$listoftablesalreadyadded[$tmptable] = $tmptable;
+						$listoftablesalreadyadded[$tmptablealias] = $tmptablealias;
 
 						if (preg_match('/^te/', $tmpval[0]) && preg_replace('/^t_/', 'te_', $tmptablealias) == $tmpval[0]) {
 							$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$tmptable."_extrafields as ".$db->sanitize($tmpval[0])." ON ".$db->sanitize($tmpval[0]).".fk_object = ".$db->sanitize($tmptablealias).".rowid";
-							$listoftablesalreadyadded[$tmptable] = $tmptable;
+							$listoftablesalreadyadded[$tmptablealias] = $tmptablealias;
 						}
 					}
 				}
@@ -1189,7 +1300,10 @@ if ($sql) {
 
 				// Define $xlabel
 				if (!empty($object->fields[$xvalwithoutprefix]['arrayofkeyval'])) {
-					$xlabel = $object->fields[$xvalwithoutprefix]['arrayofkeyval'][$obj->$fieldforxkey];
+					$xlabel = $object->fields[$xvalwithoutprefix]['arrayofkeyval'][$obj->$fieldforxkey] ?? null;
+					if (!is_null($xlabel)) {
+						$xlabel = $langs->transnoentitiesnoconv($xlabel);	// Values of arrayofkeyval are translation keys
+					}
 				}
 				$labeltouse = (($xlabel || $xlabel == '0') ? dol_trunc($xlabel, 20, 'middle') : ($xlabel === '' ? $langs->transnoentitiesnoconv("Empty") : $langs->transnoentitiesnoconv("NotDefined")));
 
@@ -1271,7 +1385,10 @@ if ($sql) {
 
 				// Define $xlabel
 				if (!empty($object->fields[$xvalwithoutprefix]['arrayofkeyval'])) {
-					$xlabel = $object->fields[$xvalwithoutprefix]['arrayofkeyval'][$obj->$fieldforxkey];
+					$xlabel = $object->fields[$xvalwithoutprefix]['arrayofkeyval'][$obj->$fieldforxkey] ?? null;
+					if (!is_null($xlabel)) {
+						$xlabel = $langs->transnoentitiesnoconv($xlabel);	// Values of arrayofkeyval are translation keys
+					}
 				}
 
 				$labeltouse = (($xlabel || $xlabel == '0') ? dol_trunc($xlabel, 20, 'middle') : ($xlabel === '' ? $langs->transnoentitiesnoconv("Empty") : $langs->transnoentitiesnoconv("NotDefined")));
@@ -1363,7 +1480,7 @@ if ($sql && !defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 }
 
 
-if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
+if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE') && !defined('USE_CUSTOM_REPORT_AS_TAB')) {
 	print dol_get_fiche_end();
 
 	llxFooter();

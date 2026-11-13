@@ -251,7 +251,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		}
 
 		if ($this->_COUNTX == $this->_X_Number) {
-			// Si on est en bout de page, alors on repart sur une nouvelle page
+			// If we are at the end of the page, then start a new page
 			$this->_COUNTX = 0;
 			$this->_COUNTY = 0;
 		}
@@ -338,7 +338,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		$pdf->setAutoPageBreak(false);
 
 		$this->_Metric_Doc = $this->Tformat['metric'];
-		// Permet de commencer l'impression de l'etiquette desiree dans le cas ou la page a deja service
+		// Allows starting the print of the desired label in case the page has already been used
 		$posX = 1;
 		$posY = 1;
 		if ($posX > 0) {

@@ -46,7 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyreport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancycategory.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("errors", "admin", "companies", "resource", "holiday", "accountancy", "hrm"));
+$langs->loadLangs(array("admin", "companies", "resource", "holiday", "accountancy", "hrm"));
 
 $action = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view';
 $confirm = GETPOST('confirm', 'alpha');
@@ -256,7 +256,11 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			$sql .= $db->sanitize($tabrowid[$id]).",";
 		}
 		$sql .= $db->sanitize($tabfieldinsert[$id]);
-		$sql .= ",active)";
+		$sql .= ",active";
+		if (getDolGlobalInt('ACCOUNTING_ENABLE_MULTI_REPORT')) {
+			$sql .= ",fk_report";	// The group is created into the report currently selected
+		}
+		$sql .= ")";
 		$sql .= " VALUES(";
 
 		// List of values
@@ -278,7 +282,11 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			}
 			$i++;
 		}
-		$sql .= ",1)";
+		$sql .= ",1";
+		if (getDolGlobalInt('ACCOUNTING_ENABLE_MULTI_REPORT')) {
+			$sql .= ",".((int) max(1, $search_report));
+		}
+		$sql .= ")";
 
 		dol_syslog("actionadd", LOG_DEBUG);
 		$result = $db->query($sql);
@@ -287,6 +295,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			$_POST = array('id' => $id); // Clean $_POST array, we keep only
 		} else {
 			if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$langs->load('errors');
 				setEventMessages($langs->transnoentities("ErrorRecordAlreadyExists"), null, 'errors');
 			} else {
 				dol_print_error($db);
@@ -701,10 +710,7 @@ if ($tabname[$id]) {
 
 	print "</tr>";
 
-	$colspan = count($fieldlist) + 3;
-	if ($id == 32) {
-		$colspan++;
-	}
+	$colspan = count($fieldlist) + 4;
 }
 
 print '</table>';

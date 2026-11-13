@@ -306,7 +306,7 @@ class pdf_timespent extends ModelePDFProjects
 
 					// Description of line
 					$ref = $object->lines[$i]->ref;
-					$libelleline = $object->lines[$i]->label;
+					$labelline = $object->lines[$i]->label;
 					//$progress=($object->lines[$i]->progress?$object->lines[$i]->progress.'%':'');
 					$datestart = dol_print_date($object->lines[$i]->date_start, 'day');
 					$dateend = dol_print_date($object->lines[$i]->date_end, 'day');
@@ -317,7 +317,7 @@ class pdf_timespent extends ModelePDFProjects
 					$pdf->startTransaction();
 					// Label
 					$pdf->SetXY($this->posxlabel, $curY);
-					$pdf->MultiCell($this->posxtimespent - $this->posxlabel, 3, $outputlangs->convToOutputCharset($libelleline), 0, 'L');
+					$pdf->MultiCell($this->posxtimespent - $this->posxlabel, 3, $outputlangs->convToOutputCharset($labelline), 0, 'L');
 					$pageposafter = $pdf->getPage();
 					if ($pageposafter > $pageposbefore) {	// There is a pagebreak
 						$pdf->rollbackTransaction(true);
@@ -327,7 +327,7 @@ class pdf_timespent extends ModelePDFProjects
 						// Label
 						$pdf->SetXY($this->posxlabel, $curY);
 						$posybefore = $pdf->GetY();
-						$pdf->MultiCell($this->posxtimespent - $this->posxlabel, 3, $outputlangs->convToOutputCharset($libelleline), 0, 'L');
+						$pdf->MultiCell($this->posxtimespent - $this->posxlabel, 3, $outputlangs->convToOutputCharset($labelline), 0, 'L');
 						$pageposafter = $pdf->getPage();
 						$posyafter = $pdf->GetY();
 						if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// There is no space left for total+free text
@@ -375,7 +375,7 @@ class pdf_timespent extends ModelePDFProjects
 								// Label
 								$pdf->SetXY($this->posxlabel, $curY);
 								$posybefore = $pdf->GetY();
-								$pdf->MultiCell($this->posxtimespent - $this->posxlabel, 3, $outputlangs->convToOutputCharset($libelleline), 0, 'L');
+								$pdf->MultiCell($this->posxtimespent - $this->posxlabel, 3, $outputlangs->convToOutputCharset($labelline), 0, 'L');
 								$pageposafter = $pdf->getPage();
 								$posyafter = $pdf->GetY();
 							}

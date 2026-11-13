@@ -62,7 +62,7 @@ class Import
 	public $array_import_types;
 
 	/**
-	 * @var int[]
+	 * @var bool[]
 	 */
 	public $array_import_perms;
 
@@ -117,7 +117,7 @@ class Import
 	public $array_import_updatekeys;
 
 	/**
-	 * @var array<''|array<string,string>>
+	 * @var array<int,string[]>	Update keys preselected on the screen, as field aliases
 	 */
 	public $array_import_preselected_updatekeys;
 
@@ -263,8 +263,28 @@ class Import
 							}
 						}
 
+						// Test permissions specific to the dataset (if defined). A permission on 'user' with no sub-level means admin only.
+						$bool = true;
+						if (isset($module->import_permission[$r]) && is_array($module->import_permission[$r])) {
+							foreach ($module->import_permission[$r] as $perm) {
+								if (!empty($perm[2])) {
+									$bool = $user->hasRight($perm[0], $perm[1], $perm[2]);
+								} elseif (!empty($perm[1])) {
+									$bool = $user->hasRight($perm[0], $perm[1]);
+								} else {
+									$bool = false;
+								}
+								if ($perm[0] == 'user' && $user->admin) {
+									$bool = true;
+								}
+								if (!$bool) {
+									break;
+								}
+							}
+						}
+
 						// Permission
-						$this->array_import_perms[$i] = $user->hasRight('import', 'run');
+						$this->array_import_perms[$i] = ($user->hasRight('import', 'run') && $bool);
 						// Icon
 						$this->array_import_icon[$i] = (isset($module->import_icon[$r]) ? $module->import_icon[$r] : $module->picto);
 						// Code of dataset export
@@ -286,8 +306,7 @@ class Import
 						// Array of columns allowed as UPDATE options
 						$this->array_import_updatekeys[$i] = (isset($module->import_updatekeys_array[$r]) ? $module->import_updatekeys_array[$r] : '');
 						// Array of columns preselected as UPDATE options
-						// import_preselected_updatekeys_array does not exist - backward compatibility ?  @phan-suppress-next-line PhanUndeclaredProperty
-						$this->array_import_preselected_updatekeys[$i] = (isset($module->import_preselected_updatekeys_array[$r]) ? $module->import_preselected_updatekeys_array[$r] : '');
+						$this->array_import_preselected_updatekeys[$i] = (isset($module->import_preselected_updatekeys_array[$r]) ? $module->import_preselected_updatekeys_array[$r] : array());
 						// Array of examples
 						$this->array_import_examplevalues[$i] = (isset($module->import_examplevalues_array[$r]) ? $module->import_examplevalues_array[$r] : '');
 						// Table of conversion rules for a value from another source (key=field, value=array of rules)

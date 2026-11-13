@@ -41,7 +41,7 @@ class modTicket extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs, $conf;
+		global $langs, $conf, $user;
 		$langs->load("ticket");
 
 		$this->db = $db;
@@ -122,6 +122,7 @@ class modTicket extends DolibarrModules
 			['MAIN_SECURITY_ENABLECAPTCHA_TICKET', 'chaine', getDolGlobalInt('MAIN_SECURITY_ENABLECAPTCHA_TICKET'), 'Enable captcha code by default', 0],
 			['TICKET_SHOW_COMPANY_LOGO', 'chaine', getDolGlobalInt('TICKET_SHOW_COMPANY_LOGO', 1), 'Enable logo header on ticket public page', 0],
 			['TICKET_SHOW_COMPANY_FOOTER', 'chaine', getDolGlobalInt('TICKET_SHOW_COMPANY_FOOTER', 1), 'Enable footer on ticket public page', 0],
+			['TICKET_EMAIL_TEMPLATE_REMIND_STALE', 'emailtemplate:ticket', '(SendingReminderForStaleTicket)', 'Email template used to remind the assigned user of a late ticket (see TICKET_DELAY_BEFORE_FIRST_RESPONSE and TICKET_DELAY_SINCE_LAST_RESPONSE)', 0],
 		];
 
 		/*
@@ -211,6 +212,27 @@ class modTicket extends DolibarrModules
 			]
 		);
 
+		// Cronjobs
+		$arraydate = dol_getdate(dol_now());
+		$datestart = dol_mktime(22, 0, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
+		$this->cronjobs = array(
+			0 => array(
+				'label' => 'SendReminderForStaleTicketsTitle',
+				'jobtype' => 'method',
+				'class' => 'ticket/class/ticket.class.php',
+				'objectname' => 'Ticket',
+				'method' => 'sendReminderForStaleTickets',
+				'parameters' => '',
+				'comment' => 'SendReminderForStaleTickets',
+				'frequency' => 1,
+				'unitfrequency' => 3600 * 24,
+				'priority' => 50,
+				'status' => 1,
+				'test' => 'isModEnabled("ticket")',
+				'datestart' => $datestart
+			),
+		);
+
 		// Boxes
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
 		$this->boxes = [
@@ -226,46 +248,46 @@ class modTicket extends DolibarrModules
 		$this->rights = []; // Permission array used by this module
 
 		$r = 0;
-		$this->rights[$r][0] = 56001; // id de la permission
-		$this->rights[$r][1] = "Read ticket"; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 56001; // Permission id (must not be already used)
+		$this->rights[$r][1] = "Read ticket"; // Permission label
+		$this->rights[$r][2] = 'r'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'read';
 
 		$r++;
-		$this->rights[$r][0] = 56002; // id de la permission
-		$this->rights[$r][1] = "Create les tickets"; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 56002; // Permission id (must not be already used)
+		$this->rights[$r][1] = "Create les tickets"; // Permission label
+		$this->rights[$r][2] = 'w'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'write';
 
 		$r++;
-		$this->rights[$r][0] = 56003; // id de la permission
-		$this->rights[$r][1] = "Delete les tickets"; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 56003; // Permission id (must not be already used)
+		$this->rights[$r][1] = "Delete les tickets"; // Permission label
+		$this->rights[$r][2] = 'd'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'delete';
 
 		$r++;
-		$this->rights[$r][0] = 56004; // id de la permission
-		$this->rights[$r][1] = "Manage tickets"; // libelle de la permission
-		//$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 56004; // Permission id (must not be already used)
+		$this->rights[$r][1] = "Manage tickets"; // Permission label
+		//$this->rights[$r][2] = 'd'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'manage_advance';
 
 		$r++;
-		$this->rights[$r][0] = 56006; // id de la permission
-		$this->rights[$r][1] = "Export ticket"; // libelle de la permission
-		//$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 56006; // Permission id (must not be already used)
+		$this->rights[$r][1] = "Export ticket"; // Permission label
+		//$this->rights[$r][2] = 'd'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'export';
 
 		/* Seems not used and in conflict with societe->client->voir (see all thirdparties)
 		$r++;
-		$this->rights[$r][0] = 56005; // id de la permission
-		$this->rights[$r][1] = 'See all tickets, even if not assigned to (not effective for external users, always restricted to the thirdpardy they depends on)'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 56005; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'See all tickets, even if not assigned to (not effective for external users, always restricted to the thirdpardy they depends on)'; // Permission label
+		$this->rights[$r][2] = 'r'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'view';
 		$this->rights[$r][5] = 'all';
 		*/
@@ -391,6 +413,10 @@ class modTicket extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'ticket_extrafields as extra on (t.rowid = extra.fk_object)';
 		$this->export_sql_end[$r] .= ' WHERE 1 = 1';
 		$this->export_sql_end[$r] .= ' AND t.entity IN ('.getEntity('ticket').')';
+		if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
+			// Restrict to tickets with no thirdparty or with a thirdparty the user is sales representative of
+			$this->export_sql_end[$r] .= ' AND (t.fk_soc IS NULL OR EXISTS (SELECT sc.fk_soc FROM '.MAIN_DB_PREFIX.'societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = '.((int) $user->id).'))';
+		}
 		$r++;
 	}
 

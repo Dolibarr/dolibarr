@@ -208,7 +208,7 @@ if (empty($reshook)) {
 			$searched_companies = $object->searchSocidByEmail($origin_email, 0);
 
 			// Look for an existing contact with this email address
-			// The first contact found is used to dtermine the tracking contact
+			// The first contact found is used to determine the tracking contact
 			$contacts = $object->searchContactByEmail($origin_email);
 			if (!is_array($contacts)) {
 				$contacts = array();
@@ -538,10 +538,17 @@ if (empty($reshook)) {
 					//setEventMessages($langs->trans('YourTicketSuccessfullySaved'), null, 'mesgs');
 
 					// Make a redirect to avoid to have ticket submitted twice if we make back
-					$messagetoshow = $langs->trans('MesgInfosPublicTicketCreatedWithTrackId', '{s1}', '{s2}');
-					$messagetoshow = str_replace(array('{s1}', '{s2}'), array('<strong>'.$object->track_id.'</strong>', '<strong>'.$object->ref.'</strong>'), $messagetoshow);
-					setEventMessages($messagetoshow, null, 'warnings');
-					setEventMessages($langs->trans('PleaseRememberThisId'), null, 'warnings');
+					// The track_id is a proof of control of the email address, so it is sent by email only (showing it would allow to read other tickets of this email)
+					if (getDolGlobalString('TICKET_SHOW_TRACK_ID_ON_PUBLIC_CREATION')) {
+						$messagetoshow = $langs->trans('MesgInfosPublicTicketCreatedWithTrackId', '{s1}', '{s2}');
+						$messagetoshow = str_replace(array('{s1}', '{s2}'), array('<strong>'.$object->track_id.'</strong>', '<strong>'.$object->ref.'</strong>'), $messagetoshow);
+						setEventMessages($messagetoshow, null, 'warnings');
+						setEventMessages($langs->trans('PleaseRememberThisId'), null, 'warnings');
+					} else {
+						$messagetoshow = $langs->trans('MesgInfosPublicTicketCreatedWithRef', '{s1}');
+						$messagetoshow = str_replace('{s1}', '<strong>'.dol_escape_htmltag($object->ref).'</strong>', $messagetoshow);
+						setEventMessages($messagetoshow, null, 'warnings');
+					}
 
 					header("Location: index.php".(!empty($entity) && isModEnabled('multicompany') ? '?entity='.$entity : ''));
 					exit;

@@ -110,7 +110,7 @@ div.divsearchfield {
     width: 120px;
 }
 .updatedApp{
-    background-color: #25a580;
+    background-color: rgb(0,135,160);
     line-height: 1em;
 }
 .notcompatible {
@@ -119,8 +119,11 @@ div.divsearchfield {
 .compatibleafterupdate {
     color: orange;
 }
+.notvalidated {
+    color: orange;
+}
 .compatible {
-    color: #25a580;
+    color: rgb(0,135,160);
 }
 tr.app {
     height: 200px;
@@ -253,6 +256,7 @@ span.details{
     }
     #listing-content{
         width: 75%;
+        min-width: 0;   /* Override the min-width: 100% of .div-table-responsive so the list stays at the right of the categories */
         float: right;
     }
 }

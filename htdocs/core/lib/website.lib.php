@@ -2,6 +2,7 @@
 /* Copyright (C) 2017 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Joachim Kueter				<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,6 +107,80 @@ function dolKeepOnlyPhpCode($str)
 		}
 	}
 	return str_replace(array("\r\n", "\r"), array("\n", "\n"), $newstr);
+}
+
+/**
+ * Replace one fragment of a page content with another one. The fragment must be found once and only once.
+ * If the exact fragment is not found, a match ignoring the differences of spaces, tabs and line feeds is tried.
+ *
+ * @param 	string	$content		Current content of the page
+ * @param 	string	$oldfragment	Fragment of the current content to replace (must not be empty)
+ * @param 	string	$newfragment	New fragment (empty string to remove the old fragment)
+ * @return 	array{nbfound:int,content:string}	Number of times the fragment was found and the new content (unchanged if nbfound is not 1)
+ * @see dolKeepOnlyPhpCode()
+ */
+function dolReplaceFragmentOfPageContent($content, $oldfragment, $newfragment)
+{
+	$content = (string) $content;
+	$oldfragment = (string) $oldfragment;
+	if (trim($oldfragment) === '') {
+		return array('nbfound' => 0, 'content' => $content);
+	}
+
+	$nbfound = substr_count($content, $oldfragment);
+	if ($nbfound == 1) {
+		$pos = strpos($content, $oldfragment);
+		return array('nbfound' => 1, 'content' => substr_replace($content, (string) $newfragment, (int) $pos, strlen($oldfragment)));
+	}
+	if ($nbfound > 1) {
+		return array('nbfound' => $nbfound, 'content' => $content);
+	}
+
+	// Not found as is: the fragment may have been copied with other spaces or line feeds
+	$quotedwords = array();
+	foreach ((array) preg_split('/\s+/', trim($oldfragment)) as $word) {
+		$quotedwords[] = preg_quote((string) $word, '/');
+	}
+	$regex = '/'.implode('\s+', $quotedwords).'/u';
+	$matches = array();
+	$nbfound = (int) preg_match_all($regex, $content, $matches, PREG_OFFSET_CAPTURE);
+	if ($nbfound == 1) {
+		return array('nbfound' => 1, 'content' => substr_replace($content, (string) $newfragment, (int) $matches[0][0][1], strlen($matches[0][0][0])));
+	}
+
+	return array('nbfound' => $nbfound, 'content' => $content);
+}
+
+/**
+ * Apply a list of replacements to a page content, in order (to move an element: remove it, then add it elsewhere).
+ * Each fragment 'old' must be found once and only once in the content as left by the previous replacements.
+ *
+ * @param 	string	$content		Current content of the page
+ * @param 	mixed	$replacements	List of array('old' => fragment to replace, 'new' => its replacement, empty to remove it)
+ * @return 	array{error:string,index:int,nbfound:int,content:string}	error is '' if OK, 'badformat', 'notfound' or 'notunique' (index = position of the failing replacement, from 0)
+ * @see dolReplaceFragmentOfPageContent()
+ */
+function dolApplyReplacementsToPageContent($content, $replacements)
+{
+	$content = (string) $content;
+	if (!is_array($replacements) || empty($replacements)) {
+		return array('error' => 'badformat', 'index' => 0, 'nbfound' => 0, 'content' => $content);
+	}
+
+	$originalcontent = $content;	// returned unchanged if one replacement fails: all or nothing
+	$index = 0;
+	foreach (array_values($replacements) as $index => $replacement) {
+		if (!is_array($replacement) || !isset($replacement['old']) || !is_string($replacement['old']) || trim($replacement['old']) === '' || (isset($replacement['new']) && !is_string($replacement['new']))) {
+			return array('error' => 'badformat', 'index' => $index, 'nbfound' => 0, 'content' => $originalcontent);
+		}
+		$result = dolReplaceFragmentOfPageContent($content, $replacement['old'], (string) ($replacement['new'] ?? ''));
+		if ($result['nbfound'] != 1) {
+			return array('error' => ($result['nbfound'] == 0 ? 'notfound' : 'notunique'), 'index' => $index, 'nbfound' => $result['nbfound'], 'content' => $originalcontent);
+		}
+		$content = $result['content'];
+	}
+
+	return array('error' => '', 'index' => $index, 'nbfound' => 1, 'content' => $content);
 }
 
 /**
@@ -222,6 +297,205 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 	//if ($contenttype == 'html') { print $content;exit; }
 
 	return $content;
+}
+
+/**
+ * Return the elements with contenteditable="true" and an id found into the source of a page, with what is needed to
+ * edit them with the mode "Edit inline".
+ * An element can be edited if its id is unique and if its content into the source has no php code and only text or the
+ * html tags and attributes accepted by dolWebsiteCheckEditInlineHtml().
+ *
+ * @param	string	$content	Source of the page (html with php code)
+ * @return	array<string,array{tag:string,pos:int,len:int,mode:string,blocks:int,error:string}>	Elements found, the key is the id.
+ *								pos and len are the position and length of the content of the element into $content.
+ *								mode is 'text' (only text and <br>), 'html' (accepted html) or '' if the element can not be edited.
+ *								blocks is 1 if block tags (p, h1, ul...) are allowed into the element.
+ *								error is the translation key of the reason why the element can not be edited.
+ */
+function dolWebsiteGetEditInlineElements($content)
+{
+	// Tags that can contain block tags. Content of other tags (p, h1, span...) can contain only inline tags.
+	$blocktags = array('article', 'aside', 'blockquote', 'dd', 'details', 'div', 'fieldset', 'figcaption', 'footer', 'header', 'li', 'main', 'nav', 'section', 'td', 'th');
+	$voidtags = array('area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'source', 'track', 'wbr');
+
+	// Position of the php code, an element inside a php string can not be edited
+	$phpparts = array();
+	preg_match_all('/<\?.*?(\?>|$)/s', $content, $regphp, PREG_OFFSET_CAPTURE);
+	foreach ($regphp[0] as $phppart) {
+		$phpparts[] = array($phppart[1], $phppart[1] + strlen($phppart[0]));
+	}
+
+	$elements = array();
+
+	// Opening tags with contenteditable="true". A tag with php code inside is not found (the "<" of "<?php" stops the search).
+	preg_match_all('/<([a-z][a-z0-9]*)(?=[^<>]*\scontenteditable="true")[^<>]*>/i', $content, $regtags, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
+	foreach ($regtags as $regtag) {
+		if (!preg_match('/\sid="([^"]+)"/', $regtag[0][0], $regid)) {
+			continue;
+		}
+		$id = $regid[1];
+		$tag = strtolower($regtag[1][0]);
+		if (in_array($tag, $voidtags) || substr($regtag[0][0], -2) == '/>') {
+			continue;
+		}
+		if (isset($elements[$id])) {
+			$elements[$id]['mode'] = '';
+			$elements[$id]['error'] = 'ErrorEditInlineElementNotUnique';
+			continue;
+		}
+
+		$element = array('tag' => $tag, 'pos' => $regtag[0][1] + strlen($regtag[0][0]), 'len' => 0, 'mode' => '', 'blocks' => (in_array($tag, $blocktags) ? 1 : 0), 'error' => '');
+
+		// Search the closing tag of the element, counting the tags with the same name that are opened and closed inside.
+		// If the result is wrong because of a tag into a comment or a php string, the content found has a "<!--" or a "<?"
+		// and is refused below.
+		$level = 1;
+		$offset = $element['pos'];
+		$end = -1;
+		while (preg_match('/<(\/?)'.$tag.'(?=[\s\/>])[^>]*>/i', $content, $regnext, PREG_OFFSET_CAPTURE, $offset)) {
+			$offset = $regnext[0][1] + strlen($regnext[0][0]);
+			if ($regnext[1][0] == '/') {
+				$level--;
+				if ($level == 0) {
+					$end = $regnext[0][1];
+					break;
+				}
+			} elseif (substr($regnext[0][0], -2) != '/>') {
+				$level++;
+			}
+		}
+
+		$inphp = false;
+		foreach ($phpparts as $phppart) {
+			if ($regtag[0][1] >= $phppart[0] && $regtag[0][1] < $phppart[1]) {
+				$inphp = true;
+			}
+		}
+
+		if ($end >= 0) {
+			$element['len'] = $end - $element['pos'];
+		}
+		$inner = substr($content, $element['pos'], $element['len']);
+		if ($inphp || strpos($inner, '<?') !== false) {
+			$element['error'] = 'ErrorEditInlineElementWithPhp';
+		} elseif ($end < 0) {
+			$element['error'] = 'ErrorEditInlineElementNotAllowedHtml';
+		} elseif (!preg_match('/<(?!br\s*\/?>)/i', $inner)) {
+			$element['mode'] = 'text';
+		} elseif (dolWebsiteCheckEditInlineHtml($inner, $element['blocks'])) {
+			$element['mode'] = 'html';
+		} else {
+			$element['error'] = 'ErrorEditInlineElementNotAllowedHtml';
+		}
+
+		$elements[$id] = $element;
+	}
+
+	return $elements;
+}
+
+/**
+ * Check that a html content has only the tags and attributes that can be saved with the mode "Edit inline": text with
+ * formatting (bold, color, font size...), links and, if allowed, paragraphs, titles, lists and div.
+ * There is no image (their links into the preview are not the ones of the source), no php code and no javascript.
+ *
+ * @param	string	$html		Html content
+ * @param	int		$blocks		1=Block tags (p, h1, ul, div...) are allowed, 0=Only inline tags are allowed
+ * @return	bool				True if content is allowed
+ * @see dolWebsiteGetEditInlineElements()
+ */
+function dolWebsiteCheckEditInlineHtml($html, $blocks = 1)
+{
+	$allowedtags = array('a', 'b', 'br', 'em', 'i', 's', 'span', 'strong', 'sub', 'sup', 'u');
+	if ($blocks) {
+		$allowedtags = array_merge($allowedtags, array('blockquote', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li', 'ol', 'p', 'ul'));
+	}
+	$allowedattributes = array('class', 'href', 'rel', 'style', 'target', 'title');
+	$allowedschemes = array('http', 'https', 'mailto', 'tel');
+
+	$ok = true;
+	// Remove the allowed tags. Any other "<" (other tag, comment, php code, tag with unquoted attribute value...) stays.
+	$rest = preg_replace_callback(
+		'/<(\/?)([a-z][a-z0-9]*)((?:\s+[a-z][a-z0-9_-]*(?:\s*=\s*(?:"[^"]*"|\'[^\']*\'))?)*)\s*\/?>/i',
+		/**
+		 * @param	array<int,string>	$m	Array of matches
+		 * @return	string					Empty string, the tag is removed
+		 */
+		function ($m) use ($allowedtags, $allowedattributes, $allowedschemes, &$ok) {
+			if (!in_array(strtolower($m[2]), $allowedtags) || ($m[1] == '/' && trim($m[3]) != '')) {
+				$ok = false;
+				return '';
+			}
+			preg_match_all('/([a-z][a-z0-9_-]*)(?:\s*=\s*(?:"([^"]*)"|\'([^\']*)\'))?/i', $m[3], $regattrs, PREG_SET_ORDER);
+			foreach ($regattrs as $regattr) {
+				$name = strtolower($regattr[1]);
+				$value = html_entity_decode((isset($regattr[2]) ? $regattr[2] : '').(isset($regattr[3]) ? $regattr[3] : ''), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+				$value = preg_replace('/[\x00-\x20]+/', '', $value);	// Browsers ignore these chars into a scheme (java&#9;script:)
+				if (!in_array($name, $allowedattributes)) {
+					$ok = false;
+				} elseif ($name == 'href' && preg_match('/^([a-z][a-z0-9+.\-]*):/i', $value, $regscheme) && !in_array(strtolower($regscheme[1]), $allowedschemes)) {
+					$ok = false;
+				} elseif ($name == 'style' && preg_match('/url\(|expression|javascript|@import|\\\\|[<>]/i', $value)) {
+					$ok = false;
+				}
+			}
+			return '';
+		},
+		$html
+	);
+
+	return $ok && $rest !== null && strpos($rest, '<') === false;
+}
+
+/**
+ * Restore the links of a html content edited into the preview of a page (mode "Edit inline") as they are into the source
+ * of the page. The links of the preview are changed by dolWebsiteReplacementOfLinks().
+ *
+ * @param	Website	$website	Web site object
+ * @param	string	$html		Html content edited into the preview
+ * @param	string	$oldhtml	Html content of the element into the source of the page, before the change
+ * @return	string				Html content with the links of the source
+ */
+function dolWebsiteRestoreLinksOfEditInline($website, $html, $oldhtml)
+{
+	// Links of the source, the key is the link into the preview
+	$links = array();
+	preg_match_all('/\shref="([^"]*)"/i', $oldhtml, $reg);
+	foreach ($reg[1] as $link) {
+		if (preg_match('/href="([^"]*)"/', dolWebsiteReplacementOfLinks($website, ' href="'.$link.'"'), $regpreview)) {
+			$links[html_entity_decode($regpreview[1], ENT_QUOTES | ENT_HTML5, 'UTF-8')] = $link;
+		}
+	}
+
+	$urlofwebsite = DOL_URL_ROOT.'/website/index.php?website='.$website->ref.'&';
+
+	$result = preg_replace_callback(
+		'/(\shref=")([^"]*)(")/i',
+		/**
+		 * @param	array<int,string>	$m	Array of matches
+		 * @return	string					Attribute href with the link of the source
+		 */
+		function ($m) use ($links, $urlofwebsite) {
+			$link = html_entity_decode($m[2], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+			if (isset($links[$link])) {
+				return $m[1].$links[$link].$m[3];
+			}
+			// Link to a page of the website not found into the source of the element (copied from another element)
+			if (strpos($link, $urlofwebsite) === 0) {
+				$param = substr($link, strlen($urlofwebsite));
+				if (preg_match('/^pageref=([^&#]+)(?:&([^#]*))?(#.*)?$/', $param, $regparam)) {
+					return $m[1].dol_escape_htmltag($regparam[1].'.php'.(empty($regparam[2]) ? '' : '?'.$regparam[2]).(empty($regparam[3]) ? '' : $regparam[3])).$m[3];
+				}
+				if (preg_match('/^pageid=\d+(#.*)?$/', $param, $regparam)) {
+					return $m[1].dol_escape_htmltag('/'.(empty($regparam[1]) ? '' : $regparam[1])).$m[3];
+				}
+			}
+			return $m[0];
+		},
+		$html
+	);
+
+	return ($result === null ? $html : $result);
 }
 
 /**
@@ -1341,7 +1615,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 		$filejs = $pathofwebsite.'/javascript.js.php';
 		$filerobot = $pathofwebsite.'/robots.txt';
 		$filehtaccess = $pathofwebsite.'/.htaccess';
-		$filemanifestjson = $pathofwebsite.'/manifest.json.php';
+		$filemanifestjson = $pathofwebsite.'/manifest.json';
 		$filereadme = $pathofwebsite.'/README.md';
 
 		$filecontent = file_get_contents($filehtmlheader);
@@ -1612,19 +1886,43 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
  */
 function getNewsDetailsById($postId)
 {
-	global $db;
+	global $db, $user, $langs;
 
 	if (empty($postId)) {
 		return -1;
 	}
 
-	$sql = "SELECT p.title, p.description, p.date_creation, p.image
-            FROM ".MAIN_DB_PREFIX."website_page as p
-            WHERE p.rowid = ".(intval($postId));
+	// Security: Filter by entity and published status
+	// Join with website table to get entity, and filter by entity and status
+	$sql = "SELECT p.title, p.description, p.date_creation, p.image, p.fk_user_creat, w.entity as website_entity";
+	$sql .= " FROM ".MAIN_DB_PREFIX."website_page as p";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."website as w ON p.fk_website = w.rowid";
+	$sql .= " WHERE p.rowid = ".((int) $postId);
+
+	// Add entity filter
+	$sql .= " AND w.entity IN (".getEntity('website').")";
+
+	// Only show published pages (status = 1) unless user has write permission
+	if (!$user->hasRight('website', 'write')) {
+		$sql .= " AND p.status = 1";
+	}
 
 	$resql = $db->query($sql);
 	if ($resql) {
-		return $db->fetch_array($resql);
+		$row = $db->fetch_array($resql);
+		if ($row) {
+			// Load user fullname for the creator
+			if (!empty($row['fk_user_creat'])) {
+				require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+				$user_creat = new User($db);
+				$user_creat->fetch($row['fk_user_creat']);
+				$row['user_fullname'] = $user_creat->getFullName($langs, 0, 1);
+			} else {
+				$row['user_fullname'] = '';
+			}
+			return $row;
+		}
+		return -1;
 	} else {
 		return -1;
 	}

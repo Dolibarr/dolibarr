@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2014 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,12 +58,12 @@ class HookManager
 	public $contextarray = array();
 
 	/**
-	 * array<string,array<string,null|string|CommonHookActions>> 	Array with instantiated classes
+	 * @var array<string,array<string,null|string|CommonHookActions>> 	Array with instantiated classes
 	 */
 	public $hooks = array();
 
 	/**
-	 * array<string,array<string,null|string|CommonHookActions>> 	Array with instantiated classes sorted by hook priority
+	 * @var array<string,array<string,null|string|CommonHookActions>> 	Array with instantiated classes sorted by hook priority
 	 */
 	public $hooksSorted = array();
 
@@ -122,6 +122,13 @@ class HookManager
 		// For backward compatibility
 		if (!is_array($arraycontext)) {
 			$arraycontext = array($arraycontext);
+		}
+
+		// Contexts already initialized on this instance: their actions classes were loaded at that time (the loop below would find
+		// them all "already loaded" and do nothing). This method is called on every getNomUrl(), showOutputField()... so on a
+		// list page the same contexts come back hundreds of times.
+		if (!array_diff($arraycontext, $this->contextarray)) {
+			return 1;
 		}
 
 		$this->contextarray = array_unique(array_merge($arraycontext, $this->contextarray)); // All contexts are concatenated but kept unique
@@ -201,7 +208,7 @@ class HookManager
 	 *  @param		array<string,mixed>	$parameters		Array of parameters
 	 *  @phpstan-param T $object
 	 *  @param		null|Object|array<int|string,mixed>|string	$object			Object to use hooks on  @phan-ignore-reference
-	 *  @param		string				$action			Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
+	 *  @param		string				$action			Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete', 'validate', 'builddoc', ...)
 	 *  @return		int<-1,1>							For 'addreplace' hooks (doActions, formConfirm, formObjectOptions, pdf_xxx,...): 	Return 0 if we want to keep standard actions, >0 if we want to stop/replace standard actions, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
 	 *                                  			    For 'output' hooks (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...):	Return 0 if we want to keep standard actions, >0 uf we want to stop/replace standard actions (at least one > 0 and replacement will be done), <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
 	 *                                  			    All types can also return some values into an array ->results that will be merged into this->resArray for caller.

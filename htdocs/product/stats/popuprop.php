@@ -6,7 +6,7 @@
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -166,6 +166,14 @@ if ((string) $type == '1') {
 $head[$h][2] = 'popularity';
 $h++;
 
+// The custom reports tool is not available to external users
+if (empty($user->socid)) {
+	$head[$h][0] = DOL_URL_ROOT.'/product/stats/index.php?tabfamily=productstats';
+	$head[$h][1] = $langs->trans("Custom");
+	$head[$h][2] = 'customreports';
+	$h++;
+}
+
 
 print dol_get_fiche_head($head, 'popularity', '', -1);
 
@@ -224,7 +232,6 @@ if (!empty($mode) && $mode != '-1') {
 		dol_print_error($db);
 	}
 }
-//var_dump($infoprod);
 
 
 

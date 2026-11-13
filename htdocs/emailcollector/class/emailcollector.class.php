@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Vincent de Grandpré	<vincent@de-grandpre.quebec>
+ * Copyright (C) 2026		Joachim Kueter		<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +45,7 @@ require_once DOL_DOCUMENT_ROOT .'/recruitment/class/recruitmentcandidature.class
 require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';                      // Third-Party
 require_once DOL_DOCUMENT_ROOT .'/supplier_proposal/class/supplier_proposal.class.php';  // Supplier Proposal
 require_once DOL_DOCUMENT_ROOT .'/ticket/class/ticket.class.php';                        // Ticket
+require_once DOL_DOCUMENT_ROOT .'/adherents/class/adherent.class.php';             		 // Member/Adherent
 //require_once DOL_DOCUMENT_ROOT .'/expensereport/class/expensereport.class.php';        // Expense Report
 //require_once DOL_DOCUMENT_ROOT .'/holiday/class/holiday.class.php';                    // Holidays (leave request)
 
@@ -261,7 +263,7 @@ class EmailCollector extends CommonObject
 	 */
 	public $filters;
 	/**
-	 * @var array<array{type:string,actionparam:string,status:int,position:int}>
+	 * @var array<int,array{id:int,type:string,actionparam:string,status:int,position?:int}>
 	 */
 	public $actions;
 
@@ -324,10 +326,12 @@ class EmailCollector extends CommonObject
 		}
 
 		// Translate some data of arrayofkeyval
-		foreach ($this->fields as $key => $val) {
-			if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
-				foreach ($val['arrayofkeyval'] as $key2 => $val2) {
-					$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
+		if (is_object($langs)) {
+			foreach ($this->fields as $key => $val) {
+				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+					foreach ($val['arrayofkeyval'] as $key2 => $val2) {
+						$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
+					}
 				}
 			}
 		}
@@ -789,7 +793,7 @@ class EmailCollector extends CommonObject
 	{
 		$this->actions = array();
 
-		$sql = 'SELECT rowid, type, actionparam, status';
+		$sql = 'SELECT rowid, type, actionparam, status, position';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'emailcollector_emailcollectoraction';
 		$sql .= ' WHERE fk_emailcollector = '.((int) $this->id);
 		$sql .= ' ORDER BY position';
@@ -800,7 +804,7 @@ class EmailCollector extends CommonObject
 			$i = 0;
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
-				$this->actions[$obj->rowid] = array('id' => $obj->rowid, 'type' => $obj->type, 'actionparam' => $obj->actionparam, 'status' => $obj->status);
+				$this->actions[$obj->rowid] = array('id' => $obj->rowid, 'type' => $obj->type, 'actionparam' => $obj->actionparam, 'status' => $obj->status, 'position' => $obj->position);
 				$i++;
 			}
 			$this->db->free($resql);
@@ -1238,6 +1242,7 @@ class EmailCollector extends CommonObject
 					$expire = false;
 					if (is_object($tokenobj) && method_exists($tokenobj, 'getEndOfLife')) {
 						$endOfLife = $tokenobj->getEndOfLife();
+						// time() is used internally in token @phan-suppress-next-line DolibarrForbiddenFunctionPlugin
 						if ($endOfLife !== -9002 && $endOfLife !== -9001 && time() > ($endOfLife - 30)) {
 							$expire = true;
 						}
@@ -1269,8 +1274,10 @@ class EmailCollector extends CommonObject
 						$refreshtoken = $tokenobj->getRefreshToken();
 						$tokenobj = $apiService->refreshAccessToken($tokenobj);
 
-						// We have to save the token because answer give it only once
-						$tokenobj->setRefreshToken($refreshtoken);
+						// Keep the previous refresh token only when the provider did not return a new one.
+						if (empty($tokenobj->getRefreshToken())) {
+							$tokenobj->setRefreshToken($refreshtoken);
+						}
 						$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
 					}
 					$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
@@ -1648,34 +1655,34 @@ class EmailCollector extends CommonObject
 					$tmprulevaluearray = explode('*', $rule['rulevalue']);	// Search on abc*def means searching on 'abc' and on 'def'
 					if (count($tmprulevaluearray) >= 2) {
 						foreach ($tmprulevaluearray as $tmprulevalue) {
-							$search .= ($search ? ' ' : '').$not.'FROM "'.str_replace('"', '', $tmprulevalue).'"';
+							$search .= ' '.$not.'FROM "'.str_replace('"', '', $tmprulevalue).'"';
 						}
 					} else {
-						$search .= ($search ? ' ' : '').$not.'FROM "'.str_replace('"', '', $rule['rulevalue']).'"';
+						$search .= ' '.$not.'FROM "'.str_replace('"', '', $rule['rulevalue']).'"';
 					}
 				}
 				if ($rule['type'] == 'to') {
 					$tmprulevaluearray = explode('*', $rule['rulevalue']);	// Search on abc*def means searching on 'abc' and on 'def'
 					if (count($tmprulevaluearray) >= 2) {
 						foreach ($tmprulevaluearray as $tmprulevalue) {
-							$search .= ($search ? ' ' : '').$not.'TO "'.str_replace('"', '', $tmprulevalue).'"';
+							$search .= ' '.$not.'TO "'.str_replace('"', '', $tmprulevalue).'"';
 						}
 					} else {
-						$search .= ($search ? ' ' : '').$not.'TO "'.str_replace('"', '', $rule['rulevalue']).'"';
+						$search .= ' '.$not.'TO "'.str_replace('"', '', $rule['rulevalue']).'"';
 					}
 				}
 				if ($rule['type'] == 'bcc') {
-					$search .= ($search ? ' ' : '').$not.'BCC';
+					$search .= ' '.$not.'BCC';
 				}
 				if ($rule['type'] == 'cc') {
-					$search .= ($search ? ' ' : '').$not.'CC';
+					$search .= ' '.$not.'CC';
 				}
 				if ($rule['type'] == 'subject') {
 					if ($not) {
 						//$search .= ($search ? ' ' : '').'NOT BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
 						$searchfilterexcludesubjectarray[] = $rule['rulevalue'];
 					} else {
-						$search .= ($search ? ' ' : '').'SUBJECT "'.str_replace('"', '', $rule['rulevalue']).'"';
+						$search .= ' SUBJECT "'.str_replace('"', '', $rule['rulevalue']).'"';
 					}
 				}
 				if ($rule['type'] == 'body') {
@@ -1684,11 +1691,11 @@ class EmailCollector extends CommonObject
 						$searchfilterexcludebodyarray[] = $rule['rulevalue'];
 					} else {
 						// Warning: Google doesn't implement IMAP properly, and only matches whole words,
-						$search .= ($search ? ' ' : '').'BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
+						$search .= ' BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
 					}
 				}
 				if ($rule['type'] == 'header') {
-					$search .= ($search ? ' ' : '').$not.'HEADER '.$rule['rulevalue'];
+					$search .= ' '.$not.'HEADER '.$rule['rulevalue'];
 				}
 
 				/* seems not used */
@@ -1701,22 +1708,22 @@ class EmailCollector extends CommonObject
 				 }*/
 
 				if ($rule['type'] == 'seen') {
-					$search .= ($search ? ' ' : '').$not.'SEEN';
+					$search .= ' '.$not.'SEEN';
 				}
 				if ($rule['type'] == 'unseen') {
-					$search .= ($search ? ' ' : '').$not.'UNSEEN';
+					$search .= ' '.$not.'UNSEEN';
 				}
 				if ($rule['type'] == 'unanswered') {
-					$search .= ($search ? ' ' : '').$not.'UNANSWERED';
+					$search .= ' '.$not.'UNANSWERED';
 				}
 				if ($rule['type'] == 'answered') {
-					$search .= ($search ? ' ' : '').$not.'ANSWERED';
+					$search .= ' '.$not.'ANSWERED';
 				}
 				if ($rule['type'] == 'smaller') {
-					$search .= ($search ? ' ' : '').$not.'SMALLER "'.str_replace('"', '', $rule['rulevalue']).'"';
+					$search .= ' '.$not.'SMALLER "'.str_replace('"', '', $rule['rulevalue']).'"';
 				}
 				if ($rule['type'] == 'larger') {
-					$search .= ($search ? ' ' : '').$not.'LARGER "'.str_replace('"', '', $rule['rulevalue']).'"';
+					$search .= ' '.$not.'LARGER "'.str_replace('"', '', $rule['rulevalue']).'"';
 				}
 
 				// Rules to filter after the search imap
@@ -1760,7 +1767,7 @@ class EmailCollector extends CommonObject
 				}
 				if ($fromdate > 0) {
 					// IMAP SINCE works by day; keep a 1-day overlap so we don't miss emails left unprocessed (e.g. discarded by filters).
-					$search .= ($search ? ' ' : '').'SINCE '.date('j-M-Y', $fromdate - 86400); // SENTSINCE not supported. Date must be X-Abc-9999 (X on 1 digit if < 10)
+					$search .= ' SINCE '.date('j-M-Y', $fromdate - 86400); // SENTSINCE not supported. Date must be X-Abc-9999 (X on 1 digit if < 10)
 				}
 				//$search.=($search?' ':'').'SINCE 8-Apr-2018';
 			}
@@ -1869,7 +1876,7 @@ class EmailCollector extends CommonObject
 		$arrayofemailtodelete = array();	// Track email to delete to make the deletion at end.
 
 		// Loop on each email found
-		if (!$error && !empty($arrayofemail) && count($arrayofemail) > 0 && $connection !== false) {
+		if (!$error && !empty($arrayofemail) && count($arrayofemail) > 0) {
 			// Loop to get part html and plain
 			/*
 			 0 multipart/mixed
@@ -1891,10 +1898,6 @@ class EmailCollector extends CommonObject
 			$richarrayofemail = array();
 
 			foreach ($arrayofemail as $imapemail) {
-				if ($nbemailprocessed > 1000) {
-					break; // Do not process more than 1000 email per launch (this is a different protection than maxnbcollectedpercollect)
-				}
-
 				// GET header and overview datas
 				if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 					'@phan-var-force Webklex\PHPIMAP\Message $imapemail';
@@ -1922,6 +1925,10 @@ class EmailCollector extends CommonObject
 
 			$iforemailloop = 0;
 			foreach ($richarrayofemail as $tmpval) {
+				if ($nbemailprocessed > 1000) {
+					break; // Do not process more than 1000 email per launch (this is a different protection than maxnbcollectedpercollect)
+				}
+
 				$iforemailloop++;
 
 				$imapemail = $tmpval['imapemail'];
@@ -2171,8 +2178,12 @@ class EmailCollector extends CommonObject
 				} else {
 					$getMsg = $this->getmsg($connection, $imapemail); // This set global var $charset, $htmlmsg, $plainmsg, $attachments
 					if ($getMsg < 0) {
-						$this->errors = array_merge($this->errors, [$this->error]);
-						return $getMsg;
+						// We can't read this email. We do not stop the collect, so the other emails are still processed and moved,
+						// but this email is not processed and stays into the source directory.
+						$error++;
+						$this->errors[] = 'Failed to read email '.$this->uidAsString($imapemail).', the email stays into the source directory';	// The IMAP error was already added by getmsg()
+						$operationslog .= '<br>Failed to read email '.$this->uidAsString($imapemail).', the email stays into the source directory';
+						continue;
 					}
 				}
 				'@phan-var-force Webklex\PHPIMAP\Attachment[] $attachments';
@@ -2593,11 +2604,11 @@ class EmailCollector extends CommonObject
 							if ($trackid) {
 								$projectfoundby = 'trackid ('.$trackid.')';
 							}
-							if (empty($contactid)) {
+							/* if (empty($contactid)) {
 								$contactid = $projectstatic->fk_contact;
-							}
+							} */
 							if (empty($thirdpartyid)) {
-								$thirdpartyid = $projectstatic->fk_soc;
+								$thirdpartyid = $projectstatic->socid;
 							}
 						}
 					}
@@ -2723,6 +2734,7 @@ class EmailCollector extends CommonObject
 
 				// Now do all operations for the email (extract variables and creating data)
 				if ($mode < 2) {	// 0=Mode production, 1=Mode test (read IMAP and try SQL update then rollback), 2=Mode test with no SQL updates
+					$isnewobject = 0;	// Set to 1 when an action of this email creates the object (ticket...)
 					foreach ($this->actions as $operation) {
 						$errorforthisaction = 0;
 						$ticketalreadyexists = 0;
@@ -3112,7 +3124,6 @@ class EmailCollector extends CommonObject
 											if (!$errorforactions) {
 												// Search state by name or code (for country if defined)
 												if (!empty($contactstatic->state)) {
-													require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 													$result = dol_getIdFromCode($this->db, $contactstatic->state, 'c_departements', 'nom', 'rowid');
 													if (empty($result)) {
 														$errorforactions++;
@@ -3126,7 +3137,6 @@ class EmailCollector extends CommonObject
 														$operationslog .= '<br>We set property state_id='.dol_escape_htmltag($result);
 													}
 												} elseif (!empty($contactstatic->state_code)) {
-													require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 													$result = dol_getIdFromCode($this->db, $contactstatic->state_code, 'c_departements', 'code_departement', 'rowid');
 													if (empty($result)) {
 														$errorforactions++;
@@ -3203,7 +3213,7 @@ class EmailCollector extends CommonObject
 								$actioncomm->percentage  = -1; // Not applicable
 								$actioncomm->socid       = $thirdpartystatic->id;
 								$actioncomm->contact_id = $contactstatic->id;
-								$actioncomm->socpeopleassigned = (!empty($contactstatic->id) ? array($contactstatic->id) : array());
+								$actioncomm->socpeopleassigned = (!empty($contactstatic->id) ? array($contactstatic->id => $contactstatic->id) : array());
 								$actioncomm->authorid    = $user->id; // User saving action
 								$actioncomm->userownerid = $user->id; // Owner of action
 								// Fields when action is an email (content should be added into note)
@@ -3263,8 +3273,21 @@ class EmailCollector extends CommonObject
 													dol_mkdir($destdir);
 												}
 												if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+													$skippedatt = 0;
 													foreach ($attachments as $attachment) {
-														$attachment->save($destdir.'/');
+														try {
+															$filename = (string) $attachment->getName();
+														} catch (Throwable $e) {
+															$filename = '';
+														}
+														if (!$this->isAllowedAttachmentFilename($filename)) {
+															$skippedatt++;
+															continue;
+														}
+														$this->saveAttachment($destdir, $filename, (string) $attachment->getContent());
+													}
+													if ($skippedatt > 0) {
+														$operationslog .= '<br>Skipped '.$skippedatt.' attachment(s) due to allowed extensions filter';
 													}
 												} else {
 													$this->getmsg($connection, $imapemail, $destdir);
@@ -3280,18 +3303,32 @@ class EmailCollector extends CommonObject
 							}
 						} elseif ($operation['type'] == 'recordjoinpiece') {
 							$data = [];
+							$skippedatt = 0;
 							if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 								foreach ($attachments as $attachment) {
-									if ($attachment->getName() === 'undefined') {
+									try {
+										$filename = (string) $attachment->getName();
+									} catch (Throwable $e) {
+										$filename = '';
+									}
+									if (!$this->isAllowedAttachmentFilename($filename)) {
+										$skippedatt++;
 										continue;
 									}
-									$data[$attachment->getName()] = $attachment->getContent();
+									$data[$filename] = $attachment->getContent();
 								}
 							} else {
 								$pj = getAttachments($imapemail, $connection);
 								foreach ($pj as $key => $val) {
+									if (!$this->isAllowedAttachmentFilename((string) $val['filename'])) {
+										$skippedatt++;
+										continue;
+									}
 									$data[$val['filename']] = getFileData($imapemail, (string) $val['pos'], $val['type'], $connection);
 								}
+							}
+							if ($skippedatt > 0) {
+								$operationslog .= '<br>Skipped '.$skippedatt.' attachment(s) due to allowed extensions filter';
 							}
 							if (count($data) > 0) {
 								$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."user WHERE email LIKE '%".$this->db->escape($email_from)."%'";
@@ -3398,8 +3435,8 @@ class EmailCollector extends CommonObject
 									include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 									$hookmanager = new HookManager($this->db);
 								}
-								$hookmanager->initHooks(array('emailcolector'));
-								$parameters = array('arrayobject' => $arrayobject);
+								$hookmanager->initHooks(array('emailcolector', 'emailcollector'));
+								$parameters = array('arrayobject' => $arrayobject, 'data' => $data);	// data: attachments content by file name
 								$reshook = $hookmanager->executeHooks('addmoduletoeamailcollectorjoinpiece', $parameters);    // Note that $action and $object may have been modified by some hooks
 								if ($reshook > 0) {
 									$arrayobject = $hookmanager->resArray;
@@ -3538,7 +3575,8 @@ class EmailCollector extends CommonObject
 										if ($savesocid > 0) {
 											if ($savesocid != $projecttocreate->socid) {
 												$errorforactions++;
-												setEventMessages('You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$projecttocreate->socid.') by setting socid in operation with a different value', null, 'errors');
+												$this->error = 'You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$projecttocreate->socid.') by setting socid in operation with a different value';
+												$this->errors[] = $this->error;
 											}
 										} else {
 											if ($projecttocreate->socid > 0) {
@@ -3579,18 +3617,25 @@ class EmailCollector extends CommonObject
 													dol_mkdir($destdir);
 												}
 												if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+													$skippedatt = 0;
 													foreach ($attachments as $attachment) {
 														// $attachment->save($destdir.'/');
-														$typeattachment = (string) $attachment->getDisposition();
-														$filename = $attachment->getFilename();
+														$filename = $attachment->getName();
+														if (!$this->isAllowedAttachmentFilename((string) $filename)) {
+															$skippedatt++;
+															continue;
+														}
 														$content = $attachment->getContent();
 														$this->saveAttachment($destdir, $filename, $content);
+													}
+													if ($skippedatt > 0) {
+														$operationslog .= '<br>Skipped '.$skippedatt.' attachment(s) due to allowed extensions filter';
 													}
 												} else {
 													$getMsg = $this->getmsg($connection, $imapemail, $destdir);
 													if ($getMsg < 0) {
-														$this->errors = array_merge($this->errors, [$this->error]);
-														return $getMsg;
+														// Error for this email only (the IMAP error was already added by getmsg()): its transaction is rolled back and it stays into the source directory
+														$errorforactions++;
 													}
 												}
 
@@ -3693,7 +3738,8 @@ class EmailCollector extends CommonObject
 										if ($savesocid > 0) {
 											if ($savesocid != $tickettocreate->socid) {
 												$errorforactions++;
-												setEventMessages('You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$tickettocreate->socid.') by setting socid in operation with a different value', null, 'errors');
+												$this->error = 'You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$tickettocreate->socid.') by setting socid in operation with a different value';
+												$this->errors[] = $this->error;
 											}
 										} else {
 											if ($tickettocreate->socid > 0) {
@@ -3734,24 +3780,34 @@ class EmailCollector extends CommonObject
 											$this->error = 'Failed to create ticket: '.$langs->trans($tickettocreate->error);
 											$this->errors = $tickettocreate->errors;
 										} else {
+											// Created ticket is the object of the email for next actions and hooks
+											$objectemail = $tickettocreate;
+											$isnewobject = 1;
 											if ($attachments) {
 												$destdir = $conf->ticket->dir_output.'/'.$tickettocreate->ref;
 												if (!dol_is_dir($destdir)) {
 													dol_mkdir($destdir);
 												}
 												if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+													$skippedatt = 0;
 													foreach ($attachments as $attachment) {
 														// $attachment->save($destdir.'/');
-														$typeattachment = (string) $attachment->getDisposition();
 														$filename = $attachment->getName();
+														if (!$this->isAllowedAttachmentFilename((string) $filename)) {
+															$skippedatt++;
+															continue;
+														}
 														$content = $attachment->getContent();
 														$this->saveAttachment($destdir, $filename, $content);
+													}
+													if ($skippedatt > 0) {
+														$operationslog .= '<br>Skipped '.$skippedatt.' attachment(s) due to allowed extensions filter';
 													}
 												} else {
 													$getMsg = $this->getmsg($connection, $imapemail, $destdir);
 													if ($getMsg < 0) {
-														$this->errors = array_merge($this->errors, [$this->error]);
-														return $getMsg;
+														// Error for this email only (the IMAP error was already added by getmsg()): its transaction is rolled back and it stays into the source directory
+														$errorforactions++;
 													}
 												}
 
@@ -3832,7 +3888,8 @@ class EmailCollector extends CommonObject
 								 if ($savesocid > 0) {
 								 if ($savesocid != $candidaturetocreate->socid) {
 								 $errorforactions++;
-								 setEventMessages('You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$candidaturetocreate->socid.') by setting socid in operation with a different value', null, 'errors');
+								 $this->error = 'You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$candidaturetocreate->socid.') by setting socid in operation with a different value';
+								 $this->errors[] = $this->error;
 								 }
 								 } else {
 								 if ($candidaturetocreate->socid > 0)
@@ -3870,7 +3927,7 @@ class EmailCollector extends CommonObject
 								include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 								$hookmanager = new HookManager($this->db);
 							}
-							$hookmanager->initHooks(['emailcolector']);
+							$hookmanager->initHooks(array('emailcolector', 'emailcollector'));
 
 							$parameters = array(
 								'connection' =>  $connection,
@@ -3890,6 +3947,8 @@ class EmailCollector extends CommonObject
 								'subject' => $subject,
 								'header' => $header,
 								'attachments' => $attachments,
+								'new' => $isnewobject,
+								'cc' => (getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP') && is_object($imapemail) ? $imapemail->get('cc') : null),
 								'savedattachments' => $savedattachments,
 								'savedattachmentsdir' => $savedattachmentsdir,
 							);
@@ -3898,6 +3957,7 @@ class EmailCollector extends CommonObject
 							if ($reshook < 0) {
 								$errorforthisaction++;
 								$this->error = $hookmanager->resPrint;
+								$this->errors[] = (!empty($hookmanager->resPrint) ? $hookmanager->resPrint : 'Hook doCollectImapOneCollector returned an error');
 								if (!empty($hookmanager->resPrint)) {
 									$operationslog .= '<br>Hook error: '.dol_escape_htmltag($hookmanager->resPrint);
 								}
@@ -3917,7 +3977,9 @@ class EmailCollector extends CommonObject
 				}
 
 				// Error for email or not ?
-				if (!$errorforactions) {
+				// Note: we must test also $errorforemail (set for example by an error of SQL request to find the object linked to the
+				// email), because the transaction of the email is rolled back if $errorforemail is set, so the email must not be moved.
+				if (!$errorforactions && !$errorforemail) {
 					if (!empty($targetdir)) {
 						if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 							// Move mail using PHP-IMAP
@@ -3941,7 +4003,10 @@ class EmailCollector extends CommonObject
 						}
 					}
 				} else {
+					// This email is not moved into the target directory, so it stays into the source directory and will be processed again by next collect
 					$errorforemail++;
+					$this->errors[] = 'Error during processing of email with MsgId '.dol_escape_htmltag($msgid).', the email stays into the source directory';
+					$operationslog .= '<br>Error during processing of email, the email stays into the source directory';
 				}
 
 
@@ -3984,7 +4049,9 @@ class EmailCollector extends CommonObject
 			$output .= ' (defaultlang='.$langs->defaultlang.')';
 		}
 
-		// Disconnect
+		// Move emails into the target directory, then disconnect.
+		// Note: $arrayofemailtodelete contains only the emails whose operations succeeded, so we move them even if another email
+		// of this collect had an error (that email is not into $arrayofemailtodelete and stays into the source directory).
 		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 			// We sort to move/delete array with the more recent first (with higher number) so renumbering does not affect number of others to delete
 			krsort($arrayofemailtodelete, SORT_NUMERIC);
@@ -3994,7 +4061,7 @@ class EmailCollector extends CommonObject
 
 				$operationslog .= "<br> move email ".$imapemailnum.($mode > 0 ? ' (test)' : '');
 
-				if (empty($mode) && empty($error)) {
+				if (empty($mode)) {
 					$tmptargetdir = $targetdir;
 					if (!getDolGlobalString('MAIL_DISABLE_UTF7_ENCODE_OF_DIR')) {
 						$tmptargetdir = $this->getEncodedUtf7($targetdir);
@@ -4015,7 +4082,7 @@ class EmailCollector extends CommonObject
 				}
 			}
 
-			if (empty($mode) && empty($error)) {
+			if (empty($mode)) {
 				dol_syslog("Expunge", LOG_DEBUG);
 				$operationslog .= "<br>Expunge";
 
@@ -4029,7 +4096,7 @@ class EmailCollector extends CommonObject
 
 				$operationslog .= "<br> delete email ".$imapemail." ".$msgid.($mode > 0 ? ' (test)' : '');
 
-				if (empty($mode) && empty($error)) {
+				if (empty($mode)) {
 					$res = imap_mail_move($connection, $imapemail, $targetdir, CP_UID);
 					if (!$res) {
 						// $errorforemail++;  // Not in loop, not needed, not initialised
@@ -4043,7 +4110,7 @@ class EmailCollector extends CommonObject
 				}
 			}
 
-			if (empty($mode) && empty($error)) {
+			if (empty($mode)) {
 				dol_syslog("Expunge", LOG_DEBUG);
 				$operationslog .= "<br>Expunge";
 
@@ -4188,48 +4255,15 @@ class EmailCollector extends CommonObject
 		// ATTACHMENT
 		// Any part with a filename is an attachment,
 		// so an attached text file (type 0) is not mistaken as the message.
-		if (!empty($params['filename']) || !empty($params['name'])) {
+		if ((!empty($params['filename']) || !empty($params['name'])) && $this->isAllowedAttachmentFilename((string) ($params['filename'] ?? $params['name']))) {
 			// filename may be given as 'Filename' or 'Name' or both
 			$filename = $params['filename'] ?? $params['name'];
 			// filename may be encoded, so see imap_mime_header_decode()
 			$attachments[$filename] = $data; // this is a problem if two files have same name
 
 			if (strlen($destdir)) {
-				if (substr($destdir, -1) != '/') {
-					$destdir .= '/';
-				}
-
-				// Get file name (with extension)
-				$file_name_complete = $filename;
-				$destination = $destdir.$file_name_complete;
-
-				// Extract file extension
-				$extension = pathinfo($file_name_complete, PATHINFO_EXTENSION);
-
-				// Extract file name without extension
-				$file_name = pathinfo($file_name_complete, PATHINFO_FILENAME);
-
-				// Save an original file name variable to track while renaming if file already exists
-				$file_name_original = $file_name;
-
-				// Increment file name by 1
-				$num = 1;
-
-				/**
-				 * Check if the same file name already exists in the upload folder,
-				 * append increment number to the original filename
-				 */
-				while (file_exists($destdir.$file_name.".".$extension)) {
-					$file_name = $file_name_original . ' (' . $num . ')';
-					$file_name_complete = $file_name . "." . $extension;
-					$destination = $destdir.$file_name_complete;
-					$num++;
-				}
-
-				$destination = dol_sanitizePathName($destination);
-
-				file_put_contents($destination, $data);
-				dolChmod($destination);
+				// Same name sanitization and same rules as for an uploaded file (see saveAttachment())
+				$this->saveAttachment($destdir, $filename, $data);
 			}
 		}
 
@@ -4407,6 +4441,9 @@ class EmailCollector extends CommonObject
 			if ($origName === '' || $origName === 'undefined') {
 				$origName = 'attachment-'.$index;
 			}
+			if (!$this->isAllowedAttachmentFilename($origName)) {
+				continue;
+			}
 			if ($content === '') {
 				continue;
 			}
@@ -4436,7 +4473,11 @@ class EmailCollector extends CommonObject
 					$n++;
 				}
 
-				$this->saveAttachment($destdir, $finalName, $content);
+				$resultsave = $this->saveAttachment($destdir, $finalName, $content);
+				if (!is_string($resultsave)) {
+					continue;	// Not saved (refused by the antivirus or error)
+				}
+				$finalName = basename($resultsave);	// The name may have been changed (suffix .noexe, no dot at the beginning...)
 				$seenHashes[$contentHash] = $finalName;
 			}
 
@@ -4459,6 +4500,48 @@ class EmailCollector extends CommonObject
 	}
 
 	/**
+	 * Check if an attachment filename is allowed by configuration.
+	 *
+	 * An empty EMAILCOLLECTOR_ALLOWED_ATTACHMENT_EXTENSIONS value keeps the current behavior and accepts every filename.
+	 * Otherwise, only the configured extensions are accepted, case-insensitively.
+	 *
+	 * @param 	string	$filename	Filename as provided by IMAP
+	 * @return 	bool
+	 */
+	private function isAllowedAttachmentFilename($filename)
+	{
+		static $allowedExtRaw = null;
+		static $allowedExtMap = null;
+
+		$raw = trim(getDolGlobalString('EMAILCOLLECTOR_ALLOWED_ATTACHMENT_EXTENSIONS'));
+		if ($raw === '') {
+			return true;
+		}
+
+		if ($allowedExtRaw !== $raw) {
+			$allowedExtRaw = $raw;
+			$allowedExtMap = array();
+			$tokens = preg_split('/[\s,;]+/', strtolower($raw));
+			if (is_array($tokens)) {
+				foreach ($tokens as $token) {
+					$token = (string) preg_replace('/[^a-z0-9]+/', '', ltrim(trim($token), '.'));
+					if ($token !== '') {
+						$allowedExtMap[$token] = true;
+					}
+				}
+			}
+		}
+
+		// Ignore an invalid configuration instead of blocking every attachment.
+		if (empty($allowedExtMap)) {
+			return true;
+		}
+
+		$extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+		return $extension !== '' && !empty($allowedExtMap[$extension]);
+	}
+
+	/**
 	 * saveAttachment
 	 *
 	 * @param  string 		$destdir	destination
@@ -4468,10 +4551,19 @@ class EmailCollector extends CommonObject
 	 */
 	private function saveAttachment($destdir, $filename, $content)
 	{
+		global $conf;
+
 		require_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';
 
-		$destdir = dol_sanitizePathName($destdir);
+		$destdir = dol_sanitizePathName($destdir, '_', 0);	// The directory is not built from the email, so we keep its accents
 		$filename = dol_sanitizeFileName($filename);
+		// Same rules as for an uploaded file: no control character, no dot or space at the end (removed by some OS, so the
+		// extension tested would not be the real one), no dot at the beginning (hidden or setup file like .htaccess)
+		$filename = preg_replace('/[\x00-\x1F\x7F]/', '', $filename);
+		$filename = preg_replace('/^\.+/', '', rtrim($filename, '. '));
+		if ($filename === '') {
+			$filename = 'attachment';
+		}
 
 		if (!file_exists($destdir)) {
 			if (dol_mkdir($destdir) < 0) {
@@ -4480,19 +4572,48 @@ class EmailCollector extends CommonObject
 		}
 
 		$tmp = explode('.', $filename);
-		$ext = array_pop($tmp);
+		$ext = (count($tmp) > 1 ? '.' . array_pop($tmp) : '');	// A file name with no dot has no extension
 		$filename = implode('.', $tmp);
 
+		// Same rule as for an uploaded file (see dol_move_uploaded_file()): a file with an executable content gets the suffix .noexe,
+		// so it can't be run on demand if the documents directory is inside the web root
+		if (isAFileWithExecutableContent($filename . $ext) && !getDolGlobalString('MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED')) {
+			$ext .= '.noexe';
+		}
+
 		$i = 1;
-		$filepath = $destdir . (preg_match('/\/$/', $destdir) ? '' : '/') . $filename . '.' . $ext;
+		$filepath = $destdir . (preg_match('/\/$/', $destdir) ? '' : '/') . $filename . $ext;
 
 		while (file_exists($filepath)) {
-			$filepath = $destdir . (preg_match('/\/$/', $destdir) ? '' : '/') . $filename . '(' . $i . ').' . $ext;
+			$filepath = $destdir . (preg_match('/\/$/', $destdir) ? '' : '/') . $filename . '(' . $i . ')' . $ext;
 			$i++;
 		}
 
-		file_put_contents($filepath, $content);
+		// Same rule as for an uploaded file: the antivirus checks the content before it is moved into the documents. It is
+		// written first into a temporary file with a neutral name, as the name of the attachment comes from the email.
+		$tmpdir = $conf->admin->dir_temp;
+		if (!dol_is_dir($tmpdir)) {
+			dol_mkdir($tmpdir);
+		}
+		$tmpfile = $tmpdir.'/emailcollector_attachment_'.dol_hash(uniqid((string) mt_rand(), true), 'md5');
+		if (file_put_contents($tmpfile, $content) === false) {
+			return -1;	// Nothing saved, so nothing to index
+		}
+		$checkvirusarray = dolCheckVirus($tmpfile, $filepath);
+		if (count($checkvirusarray)) {
+			dol_syslog('EmailCollector::saveAttachment File "'.$filepath.'" KO with antivirus: errors='.implode(',', $checkvirusarray), LOG_WARNING);
+			dol_delete_file($tmpfile, 0, 0, 0, null, false, 0);
+			return -1;
+		}
+		if (!dol_move($tmpfile, $filepath, '0', 0, 0, 0)) {
+			dol_delete_file($tmpfile, 0, 0, 0, null, false, 0);
+			return -1;	// Nothing saved, so nothing to index
+		}
+
 		dolChmod($filepath);
+
+		// The name of the file saved, with its extension and the suffix added if a file with the same name already exists
+		$filename = basename($filepath);
 
 		if (image_format_supported($filename) == 1) {
 			$tmparraysize = getDefaultImageSizes();

@@ -215,9 +215,7 @@ class mailing_xinputfile extends MailingTargets
 				$langs->load("errors");
 				if ($resupload < 0) {	// Unknown error
 					$this->error = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
-				} elseif (preg_match('/ErrorFileIsInfectedWithAVirus/', $resupload)) {	// Files infected by a virus
-					$this->error = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
-				} else { // Known error
+				} else { // Known error, $resupload is a translation key
 					$this->error = '<div class="error">'.$langs->trans($resupload).'</div>';
 				}
 			}

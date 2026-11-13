@@ -47,6 +47,8 @@ $action = GETPOST('action', 'aZ09');	// 'getSellerVATRates' or 'getBuyerVATRates
 $htmlname	= GETPOST('htmlname', 'alpha');
 $selected	= (GETPOST('selected') ? GETPOST('selected') : '-1');
 $productid = (GETPOSTINT('productid') ? GETPOSTINT('productid') : 0);
+$mode = (GETPOSTINT('mode') == 1 ? 1 : 0);	// 1 = add the VAT code to the value of the options, as load_tva() $mode
+$type_vat = (in_array(GETPOSTINT('type_vat'), array(1, 2)) ? GETPOSTINT('type_vat') : 0);	// 0 = all, 1 = sales, 2 = purchases
 
 // Security check
 $result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
@@ -83,7 +85,7 @@ if (!empty($id) && !empty($action) && !empty($htmlname)) {
 	}
 
 	$return = array();
-	$return['value']	= $form->load_tva('tva_tx', $selected, $seller, $buyer, $productid, 0, '', true);
+	$return['value']	= $form->load_tva('tva_tx', $selected, $seller, $buyer, $productid, 0, '', true, $mode, $type_vat);
 	$return['num'] = $form->num;
 	$return['error']	= $form->error;
 

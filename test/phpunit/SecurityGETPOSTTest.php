@@ -25,7 +25,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 
@@ -87,6 +87,7 @@ class SecurityGETPOSTTest extends CommonClassTest
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		// Force default mode
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
@@ -321,8 +322,10 @@ class SecurityGETPOSTTest extends CommonClassTest
 		//$_POST["param0"] = 'A real string with <a href="rrr" title="aabb">aaa</a> and " inside content';
 		$result = GETPOST("param0", 'restricthtml');
 		$resultexpected = 'A real string with <a href="rrr" title=\'aa"bb\'>aaa</a> and " and \' and &amp; inside content';
+		// The HTML5 serializer of libxml >= 2.14 rewrites the attribute title='aa"bb' into title="aa&quot;bb"
+		$resultexpected2 = 'A real string with <a href="rrr" title="aa&quot;bb">aaa</a> and " and \' and &amp; inside content';
 		print __METHOD__." result for param0=".$result."\n";
-		$this->assertEquals($resultexpected, $result, 'Test on param0');
+		$this->assertContains($result, array($resultexpected, $resultexpected2), 'Test on param0');
 
 		$result = GETPOST("param15b", 'restricthtml');		// param15b = <img onerror<=alert(document.domain)> src=>0xbeefed that is a dangerous string
 		print __METHOD__." result for param15b=".$result."\n";

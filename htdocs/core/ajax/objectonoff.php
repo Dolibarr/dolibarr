@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,9 @@ if (!defined('NOREQUIREAJAX')) {
 }
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
+}
+if (!defined('CSRFCHECK_WITH_TOKEN')) {
+	define('CSRFCHECK_WITH_TOKEN', '1'); // Token is required even in GET mode
 }
 
 // Load Dolibarr environment
@@ -86,9 +89,25 @@ if (!empty($user->socid)) {
 	}
 }
 
+// This page is an on/off switch only, so only values 0 and 1 are allowed
+if (!in_array($value, array(0, 1), true)) {
+	httponly_accessforbidden("Bad value for parameter value: Only 0 or 1 is allowed.");	// This includes the exit.
+}
+
+// Elements whose status field is a simple on/off flag (not a workflow status that must be changed by validate/approve/... methods).
+$elementswithonoffstatus = array('societe', 'websitepage');
+
+// External modules can allow their own element/field with the hook checkObjectOnOffAllowed (return 1 to allow) of context 'ajaxobjectonoff'
+$hookmanager->initHooks(array('ajaxobjectonoff'));
+$parameters = array('element' => $element, 'field' => $field, 'value' => $value);
+$reshook = $hookmanager->executeHooks('checkObjectOnOffAllowed', $parameters, $object, $action);
+if ($reshook < 0) {
+	httponly_accessforbidden("Refused by hook: ".$hookmanager->error);	// This includes the exit.
+}
+
 // We check permission.
 // Check is done on $user->rights->element->create or $user->rights->element->subelement->create (because $action = 'set')
-if (preg_match('/stat[u][st]$/', $field) || ($field == 'evenunsubscribe' && $object->table_element == 'mailing')) {
+if ($reshook > 0 || (in_array($field, array('status', 'statut'), true) && in_array($element, $elementswithonoffstatus, true)) || ($field == 'evenunsubscribe' && $object->table_element == 'mailing')) {
 	restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission);
 } elseif ($element == 'product' && in_array($field, array('status', 'status_buy', 'status_batch', 'tosell', 'tobuy', 'tobatch'))) {	// Special case for products
 	restrictedArea($user, 'produit|service', $object, 'product&product', '', '', 'rowid');

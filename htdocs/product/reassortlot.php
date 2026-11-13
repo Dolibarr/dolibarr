@@ -7,7 +7,7 @@
  * Copyright (C) 2016       Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2019       Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2021       Noé Cendrier			<noe.cendrier@altairis.fr>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -457,14 +457,10 @@ if ($num == 1 && GETPOST('autojumpifoneonly') && ($search_all || $snom || $sref)
 	exit;
 }
 
-if (isset($type)) {
-	if ($type == 1) {
-		$texte = $langs->trans("Services");
-	} else {
-		$texte = $langs->trans("Products");
-	}
+if ($type == 1) {
+	$texte = $langs->trans("Services");
 } else {
-	$texte = $langs->trans("ProductsAndServices");
+	$texte = $langs->trans("Products");
 }
 $texte .= ' ('.$langs->trans("StocksByLotSerial").')';
 
@@ -542,6 +538,11 @@ if ($search_stock_physique) {
 }
 /*if ($eatby)		$param.="&eatby=".$eatby;
 if ($sellby)	$param.="&sellby=".$sellby;*/
+
+// Add $param from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action);	// Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
 
 llxHeader("", $title, $helpurl, $texte, 0, 0, '', '', '', 'mod-product page-reassortlot');
 

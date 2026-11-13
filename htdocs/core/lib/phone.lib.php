@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2026	Open-Dsi	<support@open-dsi.fr>
+ * Copyright (C) 2026		MDW			<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,12 +26,16 @@
  * Parse a stored phone number into country code and number parts
  *
  * Stored format is "+{code} {number}" (e.g. "+33 644986885").
+ * A code glued to the number or followed by formatting (e.g. "+33644986885" or
+ * "+33(0)6 44 98 68 85", from imports or old data) is recognized when $db is provided,
+ * using the longest phone code known in llx_c_country.
  * If no code is found, returns empty code and the full string as number.
  *
- * @param	string	$phone		Stored phone number
+ * @param	string		$phone		Stored phone number
+ * @param	?DoliDB		$db			Database handler, used to recognize a code glued to the number
  * @return	array{code:string,number:string}	Array with 'code' and 'number' keys
  */
-function dol_parse_phone($phone)
+function dol_parse_phone($phone, $db = null)
 {
 	$phone = trim((string) $phone);
 	if ($phone === '') {
@@ -39,17 +44,57 @@ function dol_parse_phone($phone)
 
 	if (strpos($phone, '+') === 0) {
 		$pos = strpos($phone, ' ');
-		if ($pos !== false) {
+		if ($pos !== false && preg_match('/^\+[0-9]+$/', substr($phone, 0, $pos))) {
 			return array(
 				'code' => substr($phone, 0, $pos),
 				'number' => substr($phone, $pos + 1)
 			);
 		}
-		// Phone starts with + but has no space: try to keep it as-is in code
+		// Code glued to the number or followed by formatting (e.g. "+33612345678", "+33(0)9 72 36 76 46"):
+		// look for the longest known phone code
+		if ($db !== null) {
+			$digits = preg_replace('/[^0-9]/', '', str_replace('(0)', '', substr($phone, 1)));
+			$phonecodes = dol_get_all_phone_codes($db);
+			for ($len = 4; $len >= 1; $len--) {
+				$candidate = substr($digits, 0, $len);
+				if (strlen($digits) > $len && in_array($candidate, $phonecodes, true)) {
+					return array('code' => '+'.$candidate, 'number' => substr($digits, $len));
+				}
+			}
+		}
 		return array('code' => '', 'number' => $phone);
 	}
 
 	return array('code' => '', 'number' => $phone);
+}
+
+/**
+ * Get the list of all distinct phone codes known in llx_c_country
+ *
+ * @param	DoliDB	$db		Database handler
+ * @return	string[]		List of distinct phone codes, without "+" (e.g. array('33','32','1684'))
+ */
+function dol_get_all_phone_codes($db)
+{
+	static $cache = null;
+	if ($cache !== null) {
+		return $cache;
+	}
+
+	$cache = array();
+	$sql = "SELECT DISTINCT phone_code FROM ".$db->prefix()."c_country";
+	$sql .= " WHERE phone_code IS NOT NULL AND phone_code != 0";
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			$cache[] = (string) $obj->phone_code;
+		}
+		$db->free($resql);
+	} else {
+		dol_syslog("dol_get_all_phone_codes: ".$db->lasterror(), LOG_ERR);
+	}
+
+	return $cache;
 }
 
 /**
@@ -83,7 +128,7 @@ function dol_build_phone($db, $code, $number)
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
-			if ($obj && isset($obj->trunk_prefix) && $obj->trunk_prefix !== '' && $obj->trunk_prefix !== null) {
+			if ($obj && isset($obj->trunk_prefix) && $obj->trunk_prefix !== '') {
 				$prefix = $obj->trunk_prefix;
 				if (strpos($number, $prefix) === 0) {
 					$number = substr($number, strlen($prefix));
@@ -121,7 +166,7 @@ function dol_get_trunk_prefix($db, $phone_code)
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
-		if ($obj && isset($obj->trunk_prefix) && $obj->trunk_prefix !== '' && $obj->trunk_prefix !== null) {
+		if ($obj && isset($obj->trunk_prefix) && $obj->trunk_prefix !== '') {
 			$db->free($resql);
 			return $obj->trunk_prefix;
 		}
@@ -129,6 +174,72 @@ function dol_get_trunk_prefix($db, $phone_code)
 	}
 
 	return '';
+}
+
+/**
+ * Get the list of all distinct national trunk prefixes known in llx_c_country
+ *
+ * @param	DoliDB	$db		Database handler
+ * @return	string[]		List of distinct non-empty trunk prefixes (e.g. array('0','1','8','06'))
+ */
+function dol_get_all_trunk_prefixes($db)
+{
+	static $cache = null;
+	if ($cache !== null) {
+		return $cache;
+	}
+
+	$cache = array();
+	$sql = "SELECT DISTINCT trunk_prefix FROM ".$db->prefix()."c_country";
+	$sql .= " WHERE trunk_prefix IS NOT NULL AND trunk_prefix != ''";
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			$cache[] = $obj->trunk_prefix;
+		}
+		$db->free($resql);
+	}
+
+	return $cache;
+}
+
+/**
+ * Build a natural_search() SQL fragment for a phone/fax field, tolerant of the
+ * international storage format "+{code} {number}" vs a national search input
+ * (e.g. searching "0645821542" must still match stored "+33 645821542").
+ *
+ * @param	DoliDB			$db			Database handler
+ * @param	string|string[]	$fields		Field(s) to search, same as natural_search()
+ * @param	string			$value		Raw value entered by the user
+ * @param	int				$nofirstand	1=Do not output the first 'AND'
+ * @return	string			SQL to append to the query ('' if no value)
+ */
+function dol_natural_search_phone($db, $fields, $value, $nofirstand = 0)
+{
+	$value = trim((string) $value);
+	if ($value === '') {
+		return '';
+	}
+
+	$stripped = preg_replace('/[\s\-\.\(\)]/', '', $value);
+
+	$candidates = array($stripped);
+	if (strpos($stripped, '+') !== 0) {
+		foreach (dol_get_all_trunk_prefixes($db) as $prefix) {
+			if ($prefix !== '' && strpos($stripped, $prefix) === 0) {
+				$candidates[] = substr($stripped, strlen($prefix));
+			}
+		}
+	}
+
+	$candidates = array_values(array_unique(array_filter($candidates, /** @return bool */ function (string $c) {
+		return $c !== '';
+	})));
+	if (empty($candidates)) {
+		$candidates = array($value);
+	}
+
+	return natural_search($fields, implode('|', $candidates), 0, $nofirstand);
 }
 
 /**

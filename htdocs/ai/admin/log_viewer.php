@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026		Nick Fragoulis
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,34 +23,62 @@
  * \brief AI Request Log Viewer with Payload Inspection
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 /**
+ * The main.inc.php has been included so the following variable are now defined:
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
- * @var Form $form
  */
-require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/ai/lib/ai.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/ai/class/airequestlog.class.php';
 
-// Load translations
+// Load translation files required by the page
 $langs->loadLangs(array("admin", "other"));
 
-// Parameters
-$action = GETPOST('action', 'aZ09');
-$massaction = GETPOST('massaction', 'alpha');
-$confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'ailoglist';
-$optioncss = GETPOST('optioncss', 'alpha');
-$mode = GETPOST('mode', 'alpha');
+// Get parameters
+$action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'view', 'purge', 'confirm_purge', 'delete', ...
+$massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
+$confirm    = GETPOST('confirm', 'alpha'); // Result of a confirmation
+$cancel     = GETPOST('cancel', 'alpha'); // We click on a Cancel button
+$toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'ailoglist'; // To manage different context of search
+$optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$mode       = GETPOST('mode', 'aZ'); // The display mode ('list', ...)
 
-// Search parameters for all columns
-$search_date_start = dol_mktime(0, 0, 0, GETPOSTINT('search_date_startmonth'), GETPOSTINT('search_date_startday'), GETPOSTINT('search_date_startyear'));
-$search_date_end = dol_mktime(23, 59, 59, GETPOSTINT('search_date_endmonth'), GETPOSTINT('search_date_endday'), GETPOSTINT('search_date_endyear'));
+// Load variable for pagination
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
+	$page = 0;
+}
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
+// Initialize technical objects
+$object = new AiRequestLog($db);
+$hookmanager->initHooks(array($contextpage)); 	// Note that conf->hooks_modules contains array of activated contexes
+
+// Default sort order (if not yet defined by previous GETPOST)
+if (!$sortfield) {
+	$sortfield = "l.date_request";
+}
+if (!$sortorder) {
+	$sortorder = "DESC";
+}
+
+// Initialize array of search criteria
+$search_date_start = GETPOSTDATE('search_date_start', '', 'tzuserrel');
+$search_date_end = GETPOSTDATE('search_date_end', 'end', 'tzuserrel');
 $search_user = GETPOST('search_user', 'alpha');
 $search_query = GETPOST('search_query', 'alpha');
 $search_tool = GETPOST('search_tool', 'alpha');
@@ -57,38 +86,38 @@ $search_provider = GETPOST('search_provider', 'alpha');
 $search_time_min = GETPOST('search_time_min', 'alpha');
 $search_time_max = GETPOST('search_time_max', 'alpha');
 $search_status = GETPOST('search_status', 'alpha');
-
-// Pagination parameters
-$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTINT("page");
-if (empty($page) || $page == -1) {
-	$page = 0;
+if ($search_status == '-1') {
+	$search_status = '';
 }
-$offset = $limit * $page;
-if (!$sortfield) $sortfield = "l.date_request";
-if (!$sortorder) $sortorder = "DESC";
 
-// Initialize array of search criteria
-$search_array = array(
-	'search_date_start' => $search_date_start,
-	'search_date_end' => $search_date_end,
-	'search_user' => $search_user,
-	'search_query' => $search_query,
-	'search_tool' => $search_tool,
-	'search_provider' => $search_provider,
-	'search_time_min' => $search_time_min,
-	'search_time_max' => $search_time_max,
-	'search_status' => $search_status
+// Definition of array of fields for columns
+$arrayfields = array(
+	'l.date_request' => array('label' => 'Date', 'checked' => '1', 'enabled' => '1', 'position' => 10),
+	'u.login' => array('label' => 'User', 'checked' => '1', 'enabled' => '1', 'position' => 20),
+	'l.query_text' => array('label' => 'Query', 'checked' => '1', 'enabled' => '1', 'position' => 30),
+	'l.tool_name' => array('label' => 'MCPTool', 'checked' => '1', 'enabled' => '1', 'position' => 40),
+	'l.provider' => array('label' => 'Provider', 'checked' => '1', 'enabled' => '1', 'position' => 50),
+	'l.execution_time' => array('label' => 'Time', 'checked' => '1', 'enabled' => '1', 'position' => 60),
+	'l.tokens_output' => array('label' => 'Tokens', 'checked' => '1', 'enabled' => '1', 'position' => 70, 'help' => 'input / output (thinking included)'),
+	'cost' => array('label' => 'Cost', 'checked' => '1', 'enabled' => '1', 'position' => 80),
+	'l.status' => array('label' => 'Status', 'checked' => '1', 'enabled' => '1', 'position' => 90),
 );
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
-// Access Control
-if (!$user->admin) {
-	accessforbidden();
-}
+$arrayfields = dol_sort_array($arrayfields, 'position');
+
+// Permissions
+$permissiontoread = $user->admin;
+$permissiontodelete = $user->admin;
+
+// Security check
 if (!isModEnabled('ai')) {
 	accessforbidden('Module AI not activated.');
+}
+if (!$permissiontoread) {
+	accessforbidden();
 }
 
 
@@ -96,290 +125,596 @@ if (!isModEnabled('ai')) {
  * Actions
  */
 
-$error = '';
-if ($action == 'purge' && $confirm == 'yes') {
-	$db->begin();
-
-	$sql = "DELETE FROM " . MAIN_DB_PREFIX . "ai_request_log";
-	$sql .= " WHERE entity IN (" . getEntity('airequestlog') . ")";
-
-	$resql = $db->query($sql);
-
-	if ($resql) {
-		$nbDeleted = $db->affected_rows($resql);
-		$db->commit();
-		setEventMessages($langs->trans("LogsCleared") . " (" . $nbDeleted . ")", null, 'mesgs');
-	} else {
-		$db->rollback();
-		setEventMessages($db->lasterror(), null, 'errors');
-	}
-
-	header('Location: ' . $_SERVER["PHP_SELF"]);
-	exit;
-}
-
-// Purge selection
-if ($massaction == 'purge' && !empty($toselect) && is_array($toselect)) {
-	$db->begin();
-
-	foreach ($toselect as $id) {
-		$sql = "DELETE FROM " . MAIN_DB_PREFIX . "ai_request_log";
-		$sql .= " WHERE rowid = " . ((int) $id);
-		$sql .= " AND entity IN (" . getEntity('airequestlog') . ")";
-
-		$resql = $db->query($sql);
-		if (!$resql) {
-			$error++;
-			$db->rollback();
-			setEventMessages($db->lasterror(), null, 'errors');
-			break;
-		}
-	}
-
-	if (!$error) {
-		$db->commit();
-		setEventMessages($langs->trans("SelectedLogsDeleted"), null, 'mesgs');
-	} else {
-		$db->rollback();
-	}
-
+if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';
 }
-
-// Clear filter action
-if (GETPOST('button_removefilter', 'alpha') || GETPOST('button_removefilter_x', 'alpha')) {
-	$search_date_start = '';
-	$search_date_end = '';
-	$search_user = '';
-	$search_query = '';
-	$search_tool = '';
-	$search_provider = '';
-	$search_time_min = '';
-	$search_time_max = '';
-	$search_status = '';
-	// Reset page
-	$page = 0;
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+	$massaction = '';
 }
+
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+
+if (empty($reshook)) {
+	// Selection of new fields
+	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+
+	// Purge search criteria
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+		$search_date_start = '';
+		$search_date_end = '';
+		$search_user = '';
+		$search_query = '';
+		$search_tool = '';
+		$search_provider = '';
+		$search_time_min = '';
+		$search_time_max = '';
+		$search_status = '';
+		$toselect = array();
+	}
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
+		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha')) {
+		$massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
+	}
+
+	// Mass action delete (confirmation step is done by massactions_pre.tpl.php)
+	if ($action == 'delete' && $confirm == 'yes' && $permissiontodelete) {
+		if (empty($toselect)) {
+			setEventMessages($langs->trans("NoRecordSelected"), null, 'warnings');
+		} else {
+			$sql = "DELETE FROM ".$db->prefix()."ai_request_log";
+			$sql .= " WHERE rowid IN (".$db->sanitize(implode(',', $toselect)).")";
+			$sql .= " AND entity IN (".getEntity('airequestlog').")";
+
+			$resql = $db->query($sql);
+			if ($resql) {
+				setEventMessages($langs->trans("SelectedLogsDeleted")." (".$db->affected_rows($resql).")", null, 'mesgs');
+				$toselect = array();
+			} else {
+				setEventMessages($db->lasterror(), null, 'errors');
+			}
+		}
+		$action = 'list';
+	}
+
+	// Purge all logs (confirmation step is done by the formconfirm of action 'purge')
+	if ($action == 'confirm_purge' && $confirm == 'yes' && $permissiontodelete) {
+		$sql = "DELETE FROM ".$db->prefix()."ai_request_log";
+		$sql .= " WHERE entity IN (".getEntity('airequestlog').")";
+
+		$resql = $db->query($sql);
+		if ($resql) {
+			setEventMessages($langs->trans("LogsCleared")." (".$db->affected_rows($resql).")", null, 'mesgs');
+			header('Location: '.$_SERVER["PHP_SELF"]);
+			exit;
+		}
+		setEventMessages($db->lasterror(), null, 'errors');
+		$action = 'list';
+	}
+}
+
 
 
 /*
  * View
  */
 
-// Initialize array of search criteria for the view
+$form = new Form($db);
+
+$now = dol_now();
+
+$title = $langs->trans("AIRequestLogs");
+$help_url = '';
+$morejs = array();
+$morecss = array();
+
+
+// Build and execute select
+// --------------------------------------------------------------------
+$sql = "SELECT l.rowid, l.date_request, l.query_text, l.tool_name, l.provider, l.execution_time, l.status, l.error_msg,";
+$sql .= " l.raw_request_payload, l.raw_response_payload, l.tokens_input, l.tokens_output, l.model,";
+$sql .= " u.login";
+// Add fields from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+$sql = preg_replace('/,\s*$/', '', $sql);
+
+$sqlfields = $sql; // $sql fields to remove for count total
+
+$sql .= " FROM ".$db->prefix()."ai_request_log as l";
+$sql .= " LEFT JOIN ".$db->prefix()."user as u ON l.fk_user = u.rowid";
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+$sql .= " WHERE l.entity IN (".getEntity('airequestlog').")";
+if ($search_date_start) {
+	$sql .= " AND l.date_request >= '".$db->idate($search_date_start)."'";
+}
+if ($search_date_end) {
+	$sql .= " AND l.date_request <= '".$db->idate($search_date_end)."'";
+}
+if ($search_user != '') {
+	$sql .= natural_search('u.login', $search_user);
+}
+if ($search_query != '') {
+	$sql .= natural_search('l.query_text', $search_query);
+}
+if ($search_tool != '') {
+	$sql .= natural_search('l.tool_name', $search_tool);
+}
+if ($search_provider != '') {
+	$sql .= natural_search('l.provider', $search_provider);
+}
+if ($search_time_min != '') {
+	$sql .= " AND l.execution_time >= ".((float) price2num($search_time_min));
+}
+if ($search_time_max != '') {
+	$sql .= " AND l.execution_time <= ".((float) price2num($search_time_max));
+}
+if ($search_status != '') {
+	$sql .= " AND l.status = '".$db->escape($search_status)."'";
+}
+// Add where from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
+// Count total nb of records
+$nbtotalofrecords = '';
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+		$page = 0;
+		$offset = 0;
+	}
+	$db->free($resql);
+}
+
+// Token/cost totals over the SAME filter (not only the displayed page),
+// grouped by model so the cost uses each model's own configured price.
+$totIn = 0;
+$totOut = 0;
+$totCost = 0.0;
+$costComplete = true;
+$sqlforsum = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT l.model, SUM(l.tokens_input) as tin, SUM(l.tokens_output) as tout', $sql);
+$sqlforsum .= " GROUP BY l.model";
+$resql = $db->query($sqlforsum);
+if ($resql) {
+	while ($sumrow = $db->fetch_object($resql)) {
+		$totIn += (int) $sumrow->tin;
+		$totOut += (int) $sumrow->tout;
+		$price = aiModelPrice((string) $sumrow->model);
+		if ($price) {
+			$totCost += ((int) $sumrow->tin * $price['in'] + (int) $sumrow->tout * $price['out']) / 1000000;
+		} elseif ((int) $sumrow->tin + (int) $sumrow->tout > 0) {
+			$costComplete = false;	// tokens exist for a model without a configured price
+		}
+	}
+	$db->free($resql);
+} else {
+	dol_print_error($db);
+}
+
+// Complete request and execute it with limit
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
+
+$resql = $db->query($sql);
+if (!$resql) {
+	dol_print_error($db);
+	exit;
+}
+
+$num = $db->num_rows($resql);
+
+
+$arrayofselected = is_array($toselect) ? $toselect : array();
+
 $param = '';
-if ($contextpage != $_SERVER["PHP_SELF"]) {
+if (!empty($mode)) {
+	$param .= '&mode='.urlencode($mode);
+}
+if (!empty($contextpage) && $contextpage != 'ailoglist') {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
-foreach ($search_array as $key => $val) {
-	if (!empty($val) || $val === '0') {
-		$param .= '&' . urlencode($key) . '=' . urlencode($val);
-	}
+if ($optioncss != '') {
+	$param .= '&optioncss='.urlencode($optioncss);
 }
-
-llxHeader('', $langs->trans("AIRequestLogs"), '');
-
-
-// Build WHERE clause
-$where = array();
-
-$where[] = "l.entity IN (" . getEntity('airequestlog') . ")";
-
 if ($search_date_start) {
-	$where[] = "l.date_request >= '" . $db->escape(date('Y-m-d H:i:s', $search_date_start)) . "'";
+	$param .= '&search_date_startday='.GETPOSTINT('search_date_startday');
+	$param .= '&search_date_startmonth='.GETPOSTINT('search_date_startmonth');
+	$param .= '&search_date_startyear='.GETPOSTINT('search_date_startyear');
 }
 if ($search_date_end) {
-	$where[] = "l.date_request <= '" . $db->escape(date('Y-m-d H:i:s', $search_date_end)) . "'";
+	$param .= '&search_date_endday='.GETPOSTINT('search_date_endday');
+	$param .= '&search_date_endmonth='.GETPOSTINT('search_date_endmonth');
+	$param .= '&search_date_endyear='.GETPOSTINT('search_date_endyear');
 }
-if ($search_user) {
-	$where[] = "u.login LIKE '%" . $db->escape($search_user) . "%'";
+if ($search_user != '') {
+	$param .= '&search_user='.urlencode($search_user);
 }
-if ($search_query) {
-	$where[] = "l.query_text LIKE '%" . $db->escape($search_query) . "%'";
+if ($search_query != '') {
+	$param .= '&search_query='.urlencode($search_query);
 }
-if ($search_tool) {
-	$where[] = "l.tool_name LIKE '%" . $db->escape($search_tool) . "%'";
+if ($search_tool != '') {
+	$param .= '&search_tool='.urlencode($search_tool);
 }
-if ($search_provider) {
-	$where[] = "l.provider LIKE '%" . $db->escape($search_provider) . "%'";
+if ($search_provider != '') {
+	$param .= '&search_provider='.urlencode($search_provider);
 }
-if ($search_time_min) {
-	$where[] = "l.execution_time >= " . floatval($search_time_min);
+if ($search_time_min != '') {
+	$param .= '&search_time_min='.urlencode($search_time_min);
 }
-if ($search_time_max) {
-	$where[] = "l.execution_time <= " . floatval($search_time_max);
+if ($search_time_max != '') {
+	$param .= '&search_time_max='.urlencode($search_time_max);
 }
-if ($search_status) {
-	$where[] = "l.status = '" . $db->escape($search_status) . "'";
+if ($search_status != '') {
+	$param .= '&search_status='.urlencode($search_status);
+}
+// Add $param from hooks
+$parameters = array('param' => &$param);
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
+
+// Use Post/Redirect/Get for filter submissions so browser history contains a
+// reconstructible GET request instead of a POST that requires confirmation.
+$filterSearchSubmitted = GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha');
+$filterResetSubmitted = GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha');
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($filterSearchSubmitted || $filterResetSubmitted)) {
+	$redirectUrl = dolBuildUrl($_SERVER['PHP_SELF'], array(
+		'formfilteraction' => 'list',
+		'sortfield' => $sortfield,
+		'sortorder' => $sortorder,
+	));
+	$redirectUrl .= $param;
+	header('Location: '.$redirectUrl, true, 303);
+	exit;
 }
 
-$whereSQL = '';
-if (!empty($where)) {
-	$whereSQL = ' WHERE ' . implode(' AND ', $where);
+// Output page
+// --------------------------------------------------------------------
+
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-ai page-admin_log_viewer bodyforlist');
+
+// Confirmation to purge all logs
+if ($action == 'purge') {
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ClearAllLogs"), $langs->trans("ConfirmDeleteAllLogs"), 'confirm_purge', '', 'no', 1);
 }
 
-// Get total count for pagination
-$sqlCount = "SELECT COUNT(l.rowid) as total
-             FROM " . MAIN_DB_PREFIX . "ai_request_log as l
-             LEFT JOIN " . MAIN_DB_PREFIX . "user as u ON l.fk_user = u.rowid";
-$sqlCount .= $whereSQL;
-$resqlCount = $db->query($sqlCount);
-$totalRecords = $resqlCount ? $db->fetch_object($resqlCount)->total : 0;
+// List of mass actions available
+$arrayofmassactions = array();
+if (!empty($permissiontodelete)) {
+	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
+}
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete'))) {
+	$arrayofmassactions = array();
+}
+$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-
-$sql = "SELECT l.rowid, u.login, l.date_request, l.query_text, l.tool_name, l.provider, l.execution_time, l.status, l.error_msg, l.raw_request_payload, l.raw_response_payload
-        FROM " . MAIN_DB_PREFIX . "ai_request_log as l
-        LEFT JOIN " . MAIN_DB_PREFIX . "user as u ON l.fk_user = u.rowid";
-$sql .= $whereSQL;
-$sql .= $db->order($sortfield, $sortorder);
-$sql .= $db->plimit($limit, $offset);
-
-$resql = $db->query($sql);
-$num = $db->num_rows($resql);
-
-// Create object for list
-$object = new stdClass();
-$object->total = $totalRecords;
-
-$title = $langs->trans("AIRequestLogs");
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalRecords, 'title_ai', 0, '', '', $limit, 1, 0, 0, '');
-
-print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '" name="limitform">';
-print '<input type="hidden" name="token" value="' . newToken() . '">';
+print '<form method="POST" id="searchFormList" spellcheck="false" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+if ($optioncss != '') {
+	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+}
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="action" value="list">';
-
-// Add all search parameters to preserve them when changing the limit
-foreach ($search_array as $key => $val) {
-	if (!empty($val) || $val === '0') {
-		print '<input type="hidden" name="' . $key . '" value="' . dol_escape_htmltag($val) . '">';
-	}
-}
-
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
-print '<tr>';
-print '<td class="right">';
-print $langs->trans("Show") . ': ';
-print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
-
-// Create array of options for limit
- $arrayoflimit = array(5, 10, 20, 50, 100, 500, 1000);
-print '<select class="flat" name="limit" onchange="this.form.submit()">';
-foreach ($arrayoflimit as $val) {
-	print '<option value="'.$val.'"';
-	if ($limit == $val) print ' selected';
-	print '>'.$val.'</option>';
-}
-
-print '</select>';
-print ' ' . $langs->trans("Entries");
-print '</td>';
-print '</tr>';
-print '</table>';
-print '</div>';
-print '</form>';
-
-// Display form for filters
-print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '" name="search_form">';
-print '<input type="hidden" name="token" value="' . newToken() . '">';
-print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-print '<input type="hidden" name="sortfield" value="' . $sortfield . '">';
-print '<input type="hidden" name="sortorder" value="' . $sortorder . '">';
-print '<input type="hidden" name="page" value="' . $page . '">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="page_y" value="">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
-print '<div class="div-table-responsive">';
-print '<table class="tagtable liste listwithfilterbefore">'."\n";
 
-// Fields title
-print '<tr class="liste_titre">';
-print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "l.date_request", "", $param, '', $sortfield, $sortorder);
-print_liste_field_titre("User", $_SERVER["PHP_SELF"], "u.login", "", $param, '', $sortfield, $sortorder);
-print_liste_field_titre("Query", $_SERVER["PHP_SELF"], "l.query_text", "", $param, '', $sortfield, $sortorder);
-print_liste_field_titre("MCPTool", $_SERVER["PHP_SELF"], "l.tool_name", "", $param, '', $sortfield, $sortorder);
-print_liste_field_titre("Provider", $_SERVER["PHP_SELF"], "l.provider", "", $param, '', $sortfield, $sortorder);
-print_liste_field_titre("Time", $_SERVER["PHP_SELF"], "l.execution_time", "", $param, 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "l.status", "", $param, 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre('', $_SERVER["PHP_SELF"], "", "", $param, 'align="center"');
-print '</tr>';
-// Search row
+$newcardbutton = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ClearAllLogs'), '', 'fa fa-trash', $_SERVER["PHP_SELF"].'?action=purge&token='.newToken(), '', $permissiontodelete);
+
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'ai', 0, $newcardbutton, '', $limit, 0, 0, 1);
+
+// Add code for pre mass action (confirmation)
+$topicmail = '';
+$modelmail = '';
+$objecttmp = new AiRequestLog($db);
+$trackid = '';
+include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+
+// Filtered totals: tokens and, when prices are configured, the exact cost
+// (each model's tokens priced with its own AI_MODEL_PRICES_JSON entry).
+if ($totIn + $totOut > 0) {
+	print '<div class="opacitymedium paddingbottom">';
+	print $langs->trans("Total").': '.price($totIn, 0, $langs, 0, 0, 0).' in / '.price($totOut, 0, $langs, 0, 0, 0).' out';
+	print ' &nbsp;&mdash;&nbsp; '.price($totCost, 0, $langs, 1, -1, 4).($costComplete ? '' : ' (+ '.$langs->trans("Unknown").')');
+	print ' &nbsp;<span title="AI_MODEL_PRICES_JSON, price per 1M tokens, e.g. {&quot;gemini-2.5-flash&quot;:{&quot;in&quot;:0.30,&quot;out&quot;:2.50},&quot;default&quot;:{&quot;in&quot;:1,&quot;out&quot;:3}}">'.img_info('').'</span>';
+	print '</div>';
+}
+
+$moreforfilter = '';
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+if (empty($reshook)) {
+	$moreforfilter .= $hookmanager->resPrint;
+} else {
+	$moreforfilter = $hookmanager->resPrint;
+}
+
+if (!empty($moreforfilter)) {
+	print '<div class="liste_titre liste_titre_bydiv centpercent">';
+	print $moreforfilter;
+	print '</div>';
+}
+
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+$selectedfields = $htmlofselectarray;
+$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
+print '<table class="tagtable nobottomiftotal noborder liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+
+// Fields title search
+// --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
-// Date search
-print '<td class="liste_titre">';
-print $form->selectDate($search_date_start, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
-print ' - ';
-print $form->selectDate($search_date_end, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("To"));
-print '</td>';
-// User search
-print '<td class="liste_titre"><input type="text" name="search_user" value="' . dol_escape_htmltag($search_user) . '" class="maxwidth100"></td>';
-// Query search
-print '<td class="liste_titre"><input type="text" name="search_query" value="' . dol_escape_htmltag($search_query) . '" class="maxwidth150"></td>';
-// Tool search
-print '<td class="liste_titre"><input type="text" name="search_tool" value="' . dol_escape_htmltag($search_tool) . '" class="maxwidth100"></td>';
-// Provider search
-print '<td class="liste_titre"><input type="text" name="search_provider" value="' . dol_escape_htmltag($search_provider) . '" class="maxwidth100"></td>';
-// Time search
-print '<td class="liste_titre center">';
-print '<input type="text" name="search_time_min" value="' . dol_escape_htmltag($search_time_min) . '" size="3" placeholder="' . dol_escape_htmltag($langs->trans('Min')) . '">';
-print '<input type="text" name="search_time_max" value="' . dol_escape_htmltag($search_time_max) . '" size="3" placeholder="' . dol_escape_htmltag($langs->trans('Max')) . '">';
-// Status search
-print '<td class="liste_titre center">';
-$status_options = array('' => $langs->trans("All"), 'success' => $langs->trans("Success"), 'confirm' => $langs->trans("Confirm"), 'error' => $langs->trans("Error"));
-print $form->selectarray('search_status', $status_options, $search_status, 0, 0, 0, '', 1);  // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
-print '</td>';
-// Search buttons
-print '<td class="liste_titre center">';
-$searchpicto = img_picto($langs->trans("Search"), 'search.png', '', 0, 1);
-print '<input type="image" class="liste_titre" name="button_search" src="' . $searchpicto . '" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
-$clearpicto = img_picto($langs->trans("RemoveFilter"), 'searchclear.png', '', 0, 1);
-print '<input type="image" class="liste_titre" name="button_removefilter" src="' . $clearpicto . '" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '">';
-print '</td>';
-print '</tr>';
+// Action column
+if ($conf->main_checkbox_left_column) {
+	print '<td class="liste_titre center maxwidthsearch">';
+	$searchpicto = $form->showFilterButtons('left');
+	print $searchpicto;
+	print '</td>';
+}
+// Date
+if (!empty($arrayfields['l.date_request']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_start ? $search_date_start : '', 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'), 'tzuserrel');
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_end ? $search_date_end : '', 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'), 'tzuserrel');
+	print '</div>';
+	print '</td>';
+}
+// User
+if (!empty($arrayfields['u.login']['checked'])) {
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_user" value="'.dolPrintHTMLForAttribute($search_user).'"></td>';
+}
+// Query
+if (!empty($arrayfields['l.query_text']['checked'])) {
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth150" name="search_query" value="'.dolPrintHTMLForAttribute($search_query).'"></td>';
+}
+// Tool
+if (!empty($arrayfields['l.tool_name']['checked'])) {
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_tool" value="'.dolPrintHTMLForAttribute($search_tool).'"></td>';
+}
+// Provider
+if (!empty($arrayfields['l.provider']['checked'])) {
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_provider" value="'.dolPrintHTMLForAttribute($search_provider).'"></td>';
+}
+// Time
+if (!empty($arrayfields['l.execution_time']['checked'])) {
+	print '<td class="liste_titre center nowraponall">';
+	print '<input type="text" class="flat width40" name="search_time_min" value="'.dolPrintHTMLForAttribute($search_time_min).'" placeholder="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv('Min')).'">';
+	print '<input type="text" class="flat width40" name="search_time_max" value="'.dolPrintHTMLForAttribute($search_time_max).'" placeholder="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv('Max')).'">';
+	print '</td>';
+}
+// Tokens and Cost columns carry no filter
+if (!empty($arrayfields['l.tokens_output']['checked'])) {
+	print '<td class="liste_titre"></td>';
+}
+if (!empty($arrayfields['cost']['checked'])) {
+	print '<td class="liste_titre"></td>';
+}
+// Status
+if (!empty($arrayfields['l.status']['checked'])) {
+	print '<td class="liste_titre center parentonrightofpage">';
+	$arrayofstatus = array('success' => $langs->trans("Success"), 'confirm' => $langs->trans("Confirm"), 'error' => $langs->trans("Error"));
+	print $form->selectarray('search_status', $arrayofstatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100 search_status width100 onrightofpage', 1);
+	print '</td>';
+}
+// Fields from hook
+$parameters = array('arrayfields' => $arrayfields);
+$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+// Details column
+print '<td class="liste_titre"></td>';
+// Action column
+if (!$conf->main_checkbox_left_column) {
+	print '<td class="liste_titre center maxwidthsearch">';
+	$searchpicto = $form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
+}
+print '</tr>'."\n";
 
-// Mass action buttons
+$totalarray = array();
+$totalarray['nbfield'] = 0;
+
+// Fields title label
+// --------------------------------------------------------------------
 print '<tr class="liste_titre">';
-print '<td class="liste_titre" colspan="8">';
-print '<div class="center">';
-print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=purge&token='.newToken().'" onclick="return confirm(\''.$langs->trans("ConfirmDeleteAllLogs").'\');">'.$langs->trans("ClearAllLogs").'</a></div>';
-print '</div>';
-print '</td>';
-print '</tr>';
+// Action column
+if ($conf->main_checkbox_left_column) {
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['l.date_request']['checked'])) {
+	print_liste_field_titre($arrayfields['l.date_request']['label'], $_SERVER["PHP_SELF"], "l.date_request", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['u.login']['checked'])) {
+	print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], "u.login", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['l.query_text']['checked'])) {
+	print_liste_field_titre($arrayfields['l.query_text']['label'], $_SERVER["PHP_SELF"], "l.query_text", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['l.tool_name']['checked'])) {
+	print_liste_field_titre($arrayfields['l.tool_name']['label'], $_SERVER["PHP_SELF"], "l.tool_name", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['l.provider']['checked'])) {
+	print_liste_field_titre($arrayfields['l.provider']['label'], $_SERVER["PHP_SELF"], "l.provider", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['l.execution_time']['checked'])) {
+	print_liste_field_titre($arrayfields['l.execution_time']['label'], $_SERVER["PHP_SELF"], "l.execution_time", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['l.tokens_output']['checked'])) {
+	print_liste_field_titre($arrayfields['l.tokens_output']['label'], $_SERVER["PHP_SELF"], "l.tokens_output", "", $param, '', $sortfield, $sortorder, 'center ', $arrayfields['l.tokens_output']['help']);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['cost']['checked'])) {
+	print_liste_field_titre($arrayfields['cost']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['l.status']['checked'])) {
+	print_liste_field_titre($arrayfields['l.status']['label'], $_SERVER["PHP_SELF"], "l.status", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+// Hook fields
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
+$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+// Details column
+print_liste_field_titre('', $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
+$totalarray['nbfield']++;
+// Action column
+if (!$conf->main_checkbox_left_column) {
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	$totalarray['nbfield']++;
+}
+print '</tr>'."\n";
 
-if ($resql && $num > 0) {
-	$i = 0;
-	while ($obj = $db->fetch_object($resql)) {
-		print '<tr class="oddeven">';
 
-		// Date
-		print '<td>' . dol_print_date($db->jdate($obj->date_request), 'dayhour') . '</td>';
+// Loop on record
+// --------------------------------------------------------------------
+$i = 0;
+$savnbfield = $totalarray['nbfield'];
+$totalarray = array();
+$totalarray['nbfield'] = 0;
+$imaxinloop = ($limit ? min($num, $limit) : $num);
+while ($i < $imaxinloop) {
+	$obj = $db->fetch_object($resql);
+	if (empty($obj)) {
+		break; // Should not happen
+	}
 
-		// User
-		print '<td>' . ($obj->login ? dol_escape_htmltag($obj->login) : $langs->trans("Unknown")) . '</td>';
+	// Show line of result
+	print '<tr data-rowid="'.((int) $obj->rowid).'" class="oddeven row-with-select">';
 
-		// Query - properly escaped
-		$shortQuery = dol_trunc($obj->query_text, 60);
-		print '<td title="' . dol_escape_htmltag($obj->query_text) . '">' . dol_escape_htmltag($shortQuery) . '</td>';
+	// Action column
+	if ($conf->main_checkbox_left_column) {
+		print '<td class="nowrap center">';
+		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($obj->rowid, $arrayofselected)) {
+				$selected = 1;
+			}
+			print '<input id="cb'.((int) $obj->rowid).'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.((int) $obj->rowid).'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
 
-		// Tool
-		print '<td>' . dol_escape_htmltag($obj->tool_name) . '</td>';
+	// Date
+	if (!empty($arrayfields['l.date_request']['checked'])) {
+		print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->date_request), 'dayhour', 'tzuserrel').'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
 
-		// Provider
-		print '<td>' . dol_escape_htmltag($obj->provider) . '</td>';
+	// User
+	if (!empty($arrayfields['u.login']['checked'])) {
+		print '<td class="tdoverflowmax150">'.($obj->login ? dolPrintLabel($obj->login) : $langs->trans("Unknown")).'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
 
-		// Time
-		$timeColor = ($obj->execution_time > 5) ? 'color:red;' : '';
-		print '<td style="' . $timeColor . '" align="center">' . round($obj->execution_time, 2) . 's</td>';
+	// Query
+	if (!empty($arrayfields['l.query_text']['checked'])) {
+		print '<td title="'.dolPrintHTMLForAttribute((string) $obj->query_text).'">'.dolPrintLabel(dol_trunc((string) $obj->query_text, 60)).'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
 
-		// Status
+	// Tool
+	if (!empty($arrayfields['l.tool_name']['checked'])) {
+		print '<td class="tdoverflowmax150">'.dolPrintLabel((string) $obj->tool_name).'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	// Provider
+	if (!empty($arrayfields['l.provider']['checked'])) {
+		print '<td class="tdoverflowmax150">'.dolPrintLabel((string) $obj->provider).'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	// Time
+	if (!empty($arrayfields['l.execution_time']['checked'])) {
+		print '<td class="center nowraponall'.($obj->execution_time > 5 ? ' error' : '').'">'.round((float) $obj->execution_time, 2).'s</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	// Tokens (input / output) and cost, when the provider reported usage
+	$hasusage = (isset($obj->tokens_input) || isset($obj->tokens_output));
+	if (!empty($arrayfields['l.tokens_output']['checked'])) {
+		if ($hasusage) {
+			print '<td class="center nowraponall" title="'.dolPrintHTMLForAttribute((string) $obj->model).'">'.((int) $obj->tokens_input).' / '.((int) $obj->tokens_output).'</td>';
+		} else {
+			print '<td class="center opacitymedium">-</td>';
+		}
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+	if (!empty($arrayfields['cost']['checked'])) {
+		$price = ($hasusage ? aiModelPrice((string) $obj->model) : null);
+		if ($price) {
+			$cost = ((int) $obj->tokens_input * $price['in'] + (int) $obj->tokens_output * $price['out']) / 1000000;
+			print '<td class="center nowraponall">'.price($cost, 0, $langs, 1, -1, 4).'</td>';
+		} else {
+			print '<td class="center opacitymedium">-</td>';
+		}
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	// Status
+	if (!empty($arrayfields['l.status']['checked'])) {
 		$badge = 'badge-status0';
 		if ($obj->status == $langs->transnoentitiesnoconv("Success")) {
 			$badge = 'badge-status4'; // Green
@@ -390,84 +725,112 @@ if ($resql && $num > 0) {
 		if ($obj->status == $langs->transnoentitiesnoconv('Error')) {
 			$badge = 'badge-status8'; // Red
 		}
-		print '<td align="center"><span class="badge ' . $badge . '">' . dol_escape_htmltag($obj->status) . '</span></td>';
+		print '<td class="center"><span class="badge '.$badge.'">'.dolPrintLabel((string) $obj->status).'</span></td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
 
-		// Details Button (Triggers Modal)
-		// We embed data attributes securely with proper UTF-8 handling
-		$reqSafe = base64_encode($obj->raw_request_payload);
-		$resSafe = base64_encode($obj->raw_response_payload);
-		$errSafe = base64_encode($obj->error_msg);
+	// Fields from hook
+	$parameters = array('arrayfields' => $arrayfields, 'object' => $object, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
+	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
-		print '<td align="center">';
-		print '<a href="#" class="button button-small" onclick="openLogModal(this)"
-				data-req="' . dol_escape_htmltag($reqSafe) . '"
-				data-res="' . dol_escape_htmltag($resSafe) . '"
-				data-err="' . dol_escape_htmltag($errSafe) . '">';
-		print '<span class="fa fa-search-plus"></span> ' . $langs->trans("View");
-		print '</a>';
+	// Details button (opens the popup with the payloads, provided base64 encoded to keep UTF-8 safe)
+	print '<td class="center nowraponall">';
+	print '<a href="#" class="ailogshowdetails"';
+	print ' data-req="'.dolPrintHTMLForAttribute(base64_encode((string) $obj->raw_request_payload)).'"';
+	print ' data-res="'.dolPrintHTMLForAttribute(base64_encode((string) $obj->raw_response_payload)).'"';
+	print ' data-err="'.dolPrintHTMLForAttribute(base64_encode((string) $obj->error_msg)).'">';
+	print img_picto('', 'search', 'class="pictofixedwidth"').$langs->trans("Detail");
+	print '</a>';
+	print '</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
+
+	// Action column
+	if (empty($conf->main_checkbox_left_column)) {
+		print '<td class="nowrap center">';
+		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($obj->rowid, $arrayofselected)) {
+				$selected = 1;
+			}
+			print '<input id="cb'.((int) $obj->rowid).'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.((int) $obj->rowid).'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
 
-		print '</tr>';
-		$i++;
-	}
-} else {
-	$colspan = 8;
-	print '<tr><td colspan="' . $colspan . '" class="opacitymedium">' . $langs->trans("NoLogsFound");
-	if (!empty($where)) {
-		print ' ' . $langs->trans("MatchingSearchCriteria");
-	}
-	print '. ' . $langs->trans("TryAskingAI") . '.</td></tr>';
+	print '</tr>'."\n";
+
+	$i++;
 }
-print '</table></div>';
 
-print '</form>';
+// If no record found
+if ($num == 0) {
+	$colspan = $savnbfield;
+	$hassearchfilter = ($search_date_start || $search_date_end || $search_user != '' || $search_query != '' || $search_tool != '' || $search_provider != '' || $search_time_min != '' || $search_time_max != '' || $search_status != '');
+	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoLogsFound");
+	if ($hassearchfilter) {
+		print ' '.$langs->trans("MatchingSearchCriteria");
+	}
+	print '. '.$langs->trans("TryAskingAI").'.</span></td></tr>';
+}
 
-// --- MODAL HTML & JS ---
-?>
-<div id="logModal" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; overflow:auto; background-color:rgba(0,0,0,0.5);">
-	<div style="background-color:#fff; margin:5% auto; padding:20px; border:1px solid #888; width:80%; max-width:900px; border-radius:8px; box-shadow:0 4px 8px rgba(0,0,0,0.2);">
-		<span style="float:right; font-size:28px; font-weight:bold; cursor:pointer;" onclick="document.getElementById('logModal').style.display='none'">&times;</span>
-		<h2><?php echo $langs->trans("LogDetails"); ?></h2>
 
-		<h3><?php echo $langs->trans("ErrorWarning"); ?></h3>
-		<div id="modalError" style="background:#fff0f0; border:1px solid #ffcdd2; color:#d32f2f; padding:10px; border-radius:4px; display:none;"></div>
+$db->free($resql);
 
-		<div style="display:flex; gap:20px; margin-top:15px;">
-			<div style="flex:1;">
-				<h3><?php echo $langs->trans("RequestPayload"); ?></h3>
-				<textarea id="modalReq" style="width:100%; height:300px; font-family:monospace; font-size:12px; border:1px solid #ccc;" readonly></textarea>
-			</div>
-			<div style="flex:1;">
-				<h3><?php echo $langs->trans("ResponsePayload"); ?></h3>
-				<textarea id="modalRes" style="width:100%; height:300px; font-family:monospace; font-size:12px; border:1px solid #ccc;" readonly></textarea>
-			</div>
-		</div>
+$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
+$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
 
-		<div style="text-align:right; margin-top:15px;">
-			<button class="button" onclick="document.getElementById('logModal').style.display='none'"><?php echo $langs->trans("Close"); ?></button>
-		</div>
-	</div>
-</div>
+print '</table>'."\n";
+print '</div>'."\n";
 
-<script>
+print '</form>'."\n";
+
+
+// Popup to show the details (error, request and response payloads) of a log line
+print '<div id="ailogdetailspopup" class="hidden">'."\n";
+print '<div id="modalErrorBlock" class="hidden marginbottomonly">';
+print '<div class="titre">'.$langs->trans("ErrorWarning").'</div>';
+print '<div id="modalError" class="error"></div>';
+print '</div>';
+print '<div class="fichecenter">';
+print '<div class="fichehalfleft">';
+print '<div class="titre">'.$langs->trans("RequestPayload").'</div>';
+print '<textarea id="modalReq" class="centpercent small" rows="25" style="font-family: monospace;" readonly></textarea>';
+print '</div>';
+print '<div class="fichehalfright">';
+print '<div class="titre">'.$langs->trans("ResponsePayload").'</div>';
+print '<textarea id="modalRes" class="centpercent small" rows="25" style="font-family: monospace;" readonly></textarea>';
+print '</div>';
+print '</div>';
+print '</div>'."\n";
+
+print '<script nonce="'.getNonce().'">
 // UTF-8 safe base64 decoding function
 function base64ToUtf8(str) {
 	// Going backwards: from bytestream, to percent-encoding, to original string.
-	return decodeURIComponent(atob(str).split('').map(function(c) {
-		return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-	}).join(''));
+	return decodeURIComponent(atob(str).split(\'\').map(function(c) {
+		return \'%\' + (\'00\' + c.charCodeAt(0).toString(16)).slice(-2);
+	}).join(\'\'));
 }
 
 // Function to decode Unicode escape sequences in JSON strings
 function decodeUnicodeEscapes(str) {
 	// First, try to parse as JSON to handle escaped Unicode properly
 	try {
-		// If it's a JSON string, parse and stringify to decode escapes
+		// If it is a JSON string, parse and stringify to decode escapes
 		const parsed = JSON.parse(str);
 		return JSON.stringify(parsed, null, 2);
 	} catch (e) {
 		// If not valid JSON, try to decode Unicode escapes in the string
-		return str.replace(/\\u([0-9a-fA-F]{4})/g, function(match, p1) {
+		return str.replace(/\\\\u([0-9a-fA-F]{4})/g, function(match, p1) {
 			return String.fromCharCode(parseInt(p1, 16));
 		});
 	}
@@ -475,20 +838,20 @@ function decodeUnicodeEscapes(str) {
 
 // Sanitize HTML to prevent XSS
 function escapeHtml(text) {
-	const div = document.createElement('div');
+	const div = document.createElement(\'div\');
 	div.textContent = text;
 	return div.innerHTML;
 }
 
 function openLogModal(btn) {
 	// Decode Base64 safely with UTF-8 support
-	const reqBase64 = btn.getAttribute('data-req') || '';
-	const resBase64 = btn.getAttribute('data-res') || '';
-	const errBase64 = btn.getAttribute('data-err') || '';
+	const reqBase64 = btn.getAttribute(\'data-req\') || \'\';
+	const resBase64 = btn.getAttribute(\'data-res\') || \'\';
+	const errBase64 = btn.getAttribute(\'data-err\') || \'\';
 
-	let req = '';
-	let res = '';
-	let err = '';
+	let req = \'\';
+	let res = \'\';
+	let err = \'\';
 
 	try {
 		// Decode Unicode escape sequences
@@ -505,28 +868,43 @@ function openLogModal(btn) {
 			err = decodeUnicodeEscapes(err);
 		}
 	} catch (e) {
-		console.error('Error decoding base64:', e);
+		console.error(\'Error decoding base64:\', e);
 		// Fallback to regular atob if UTF-8 decoding fails
-		req = reqBase64 ? atob(reqBase64) : '';
-		res = resBase64 ? atob(resBase64) : '';
-		err = errBase64 ? atob(errBase64) : '';
+		req = reqBase64 ? atob(reqBase64) : \'\';
+		res = resBase64 ? atob(resBase64) : \'\';
+		err = errBase64 ? atob(errBase64) : \'\';
 	}
 
-	// Sanitize content before setting it
-	document.getElementById('modalReq').value = req || '(<?php echo $langs->trans("NoRequestPayload"); ?>)';
-	document.getElementById('modalRes').value = res || '(<?php echo $langs->trans("NoResponsePayload"); ?>)';
+	// Set content as plain values (no HTML interpretation)
+	jQuery("#modalReq").val(req || \'('.dol_escape_js($langs->transnoentitiesnoconv("NoRequestPayload")).')\');
+	jQuery("#modalRes").val(res || \'('.dol_escape_js($langs->transnoentitiesnoconv("NoResponsePayload")).')\');
 
-	const errDiv = document.getElementById('modalError');
 	if (err) {
-		errDiv.innerText = err;
-		errDiv.style.display = 'block';
+		jQuery("#modalError").text(err);
+		jQuery("#modalErrorBlock").show();
 	} else {
-		errDiv.style.display = 'none';
+		jQuery("#modalErrorBlock").hide();
 	}
 
-	document.getElementById('logModal').style.display = 'block';
+	jQuery("#ailogdetailspopup").dialog({
+		autoOpen: false,
+		closeOnEscape: true,
+		modal: true,
+		width: \'80%\',
+		maxHeight: window.innerHeight - 60,
+		title: \''.dol_escape_js($langs->transnoentitiesnoconv("LogDetails")).'\'
+	});
+	jQuery("#ailogdetailspopup").dialog("open");
 }
-</script>
 
-<?php
+jQuery(document).ready(function() {
+	jQuery(".ailogshowdetails").on("click", function(event) {
+		event.preventDefault();
+		openLogModal(this);
+	});
+});
+</script>'."\n";
+
+// End of page
 llxFooter();
+$db->close();

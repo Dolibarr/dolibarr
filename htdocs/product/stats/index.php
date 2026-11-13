@@ -57,6 +57,7 @@ $search_year   = GETPOSTINT('search_year');
 $search_categ  = GETPOSTINT('search_categ');
 $notab = GETPOSTINT('notab');
 $type = GETPOST('type', 'alpha');	// Can be '' or '0' or '1'
+$tabfamily = GETPOST('tabfamily', 'aZ09');	// 'productstats' to show the tab with the custom reports tool
 
 $error = 0;
 $mesg = '';
@@ -230,6 +231,29 @@ if ((!($id > 0) && empty($ref)) || $notab) {
 	}
 	$head[$h][2] = 'popularity';
 	$h++;
+
+	// The custom reports tool is not available to external users
+	if (empty($user->socid)) {
+		$head[$h][0] = DOL_URL_ROOT.'/product/stats/index.php?tabfamily=productstats';
+		$head[$h][1] = $langs->trans("Custom");
+		$head[$h][2] = 'customreports';
+		$h++;
+	}
+
+	// Show the tab with the custom reports tool
+	if (empty($user->socid) && $tabfamily == 'productstats') {
+		print dol_get_fiche_head($head, 'customreports', '', -1);
+
+		define('USE_CUSTOM_REPORT_AS_TAB', 1);
+		$customreportobjecttype = 'product';
+		include DOL_DOCUMENT_ROOT.'/core/customreports.php';
+
+		print dol_get_fiche_end();
+
+		llxFooter();
+		$db->close();
+		exit;
+	}
 
 	print dol_get_fiche_head($head, 'chart', '', -1);
 }
@@ -575,7 +599,7 @@ if ($result || !($id > 0)) {
 			} else {
 				$dategenerated = ($mesg ? '<span class="error">'.$mesg.'</span>' : $langs->trans("ChartNotGenerated"));
 			}
-			$linktoregenerate = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?'.(GETPOSTISSET('id') ? 'id='.GETPOSTINT('id') : 'id='.$object->id).(((string) $type != '' && $type != '-1') ? '&type='.((int) $type) : '').'&action=recalcul&mode='.urlencode($mode).'&search_year='.((int) $search_year).($search_categ > 0 ? '&search_categ='.((int) $search_categ) : '').'">';
+			$linktoregenerate = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?'.(GETPOSTISSET('id') ? 'id='.GETPOSTINT('id') : 'id='.$object->id).(((string) $type != '' && $type != '-1') ? '&type='.((int) $type) : '').'&action=recalcul&token='.newToken().'&mode='.urlencode($mode).'&search_year='.((int) $search_year).($search_categ > 0 ? '&search_categ='.((int) $search_categ) : '').'">';
 			$linktoregenerate .= img_picto($langs->trans("ReCalculate").' ('.$dategenerated.')', 'refresh');
 			$linktoregenerate .= '</a>';
 

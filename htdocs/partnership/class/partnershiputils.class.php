@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2021 NextGestion  <contact@nextgestion.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +86,7 @@ class PartnershipUtils
 		}
 
 		$partnership = new Partnership($this->db);
-		$MAXPERCALL = (!getDolGlobalString('PARTNERSHIP_MAX_EXPIRATION_CANCEL_PER_CALL') ? 25 : $conf->global->PARTNERSHIP_MAX_EXPIRATION_CANCEL_PER_CALL); // Limit to 25 per call
+		$MAXPERCALL = getDolGlobalInt('PARTNERSHIP_MAX_EXPIRATION_CANCEL_PER_CALL', 25); // Limit to 25 per call
 
 		$langs->loadLangs(array("partnership", "member"));
 
@@ -194,14 +194,14 @@ class PartnershipUtils
 
 							$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
 							$msg     = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
-							$from = dol_string_nospecial($conf->global->MAIN_INFO_SOCIETE_NOM, ' ', array(",")).' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
+							$from = dol_string_nospecial(getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), ' ', array(",")).' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
 
 							// We are in the case of autocancellation subscription because of missing backlink
 							$fk_partner = $object->fk_member;
 
 							$adherent = new Adherent($this->db);
 							$adherent->fetch($object->fk_member);
-							$sendto = $adherent->email;
+							$sendto = (string) $adherent->email;
 
 							$trackid = 'par'.$object->id;
 							$sendcontext = 'standard';
@@ -420,9 +420,9 @@ class PartnershipUtils
 
 									$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
 									$msg     = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
-									$from = dol_string_nospecial($conf->global->MAIN_INFO_SOCIETE_NOM, ' ', array(",")).' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
+									$from = dol_string_nospecial(getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), ' ', array(",")).' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
 
-									$sendto = $obj->email;
+									$sendto = (string) $obj->email;
 
 									$trackid = 'par'.$object->id;
 									$sendcontext = 'standard';

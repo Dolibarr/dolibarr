@@ -11,7 +11,7 @@
  * Copyright (C) 2017       Juanjo Menent      	    <jmenent@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2020       Open-Dsi                <support@open-dsi.fr>
- * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2021-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Anthony Berton          <anthony.berton@bb2a.fr>
  * Copyright (C) 2023       William Mead            <william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -52,6 +52,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/phone.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 if (isModEnabled('category')) {
@@ -80,7 +81,7 @@ $mode = GETPOST("mode", 'alpha');
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_cti = preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml'))); // Phone number without any special chars
 
-$search_id = GETPOST("search_id", 'int');
+$search_id = trim(GETPOST("search_id", 'alpha'));	// Can contains a numeric test like ">10" or "!= 34"
 $search_nom = trim(GETPOST("search_nom", 'restricthtml'));
 $search_alias = trim(GETPOST("search_alias", 'restricthtml'));
 $search_nom_only = trim(GETPOST("search_nom_only", 'restricthtml'));
@@ -168,7 +169,7 @@ $search_date_modif_end = dol_mktime(23, 59, 59, $search_date_modif_endmonth, $se
 $type = GETPOST('type', 'alpha');
 $place = GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'; // $place is string id of table for Bar or Restaurant
 
-$diroutputmassaction = $conf->societe->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = isModEnabled('societe') ? $conf->societe->dir_output.'/temp/massgeneration/'.$user->id : '';
 
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -298,7 +299,7 @@ $checkstcomm = (in_array($contextpage, array('prospectlist')) ? '1' : '0');
 $arrayfields = array(
 	's.rowid' => array('label' => "TechnicalID", 'position' => 1, 'checked' => '-1', 'enabled' => '1'),
 	's.nom' => array('label' => "ThirdPartyName", 'position' => 2, 'checked' => '1'),
-	's.name_alias' => array('label' => "AliasNameShort", 'position' => 3, 'checked' => '1'),
+	's.name_alias' => array('label' => "AliasNameShort", 'position' => 3, 'checked' => '0'),
 	's.ref_ext' => array('label' => "RefExt", 'position' => 4, 'checked' => '-1', 'enabled' => (string) getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT')),
 	's.barcode' => array('label' => "Gencod", 'position' => 5, 'checked' => '1', 'enabled' => (string) (int) isModEnabled('barcode')),
 	's.code_client' => array('label' => "CustomerCodeShort", 'position' => 10, 'checked' => $checkedcustomercode),
@@ -523,6 +524,9 @@ if (empty($reshook)) {
 if ($search_status == '' && empty($search_all)) {
 	$search_status = 1; // display active thirdparty only by default
 }
+if ($type == 't' && ($search_type == '' || $search_type == '-1')) {
+	$search_type = '1,2,3'; // No nature (the select sends -1, the purge empties it): keep customers and prospects of the POS list
+}
 
 
 
@@ -561,6 +565,10 @@ if ($type == 'f' && (empty($search_type) || ($search_type == '4'))) {
 	$title = $langs->trans("Suppliers");
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+
+
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 
 
 // Select every potentials, and note each potentials which fit in search parameters
@@ -649,12 +657,12 @@ if (!empty($search_sale) && $search_sale != '-1') {
 	$search_sale_req = implode(',', $search_sale_req);
 
 	if (count($search_sale) == 1 && in_array('-2', $search_sale)) {
-		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid)";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('s.rowid', 0, 1);
 	} elseif (count($search_sale) > 0 && !in_array('-2', $search_sale)) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid AND sc.fk_user IN (".$db->sanitize($search_sale_req)."))";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('s.rowid', $db->sanitize($search_sale_req));
 	} elseif (count($search_sale) > 0 && in_array('-2', $search_sale)) {
-		$sql .= " AND (EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid AND sc.fk_user IN (".$db->sanitize($search_sale_req)."))";
-		$sql .= " OR NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid))";
+		$sql .= " AND (".getSalesRepresentativeSqlFilter('s.rowid', $db->sanitize($search_sale_req));
+		$sql .= " OR ".getSalesRepresentativeSqlFilter('s.rowid', 0, 1).")";
 	}
 }
 
@@ -721,7 +729,7 @@ if ($search_all) {
 if (strlen($search_cti)) {
 	$sql .= natural_search('s.phone', $search_cti);
 }
-if ($search_id > 0) {
+if ($search_id != '') {
 	$sql .= natural_search("s.rowid", $search_id, 1);
 }
 if (empty($arrayfields['s.name_alias']['checked']) && $search_nom) {
@@ -730,7 +738,6 @@ if (empty($arrayfields['s.name_alias']['checked']) && $search_nom) {
 	if ($search_nom) {
 		$sql .= natural_search("s.nom", $search_nom);
 	}
-
 	if ($search_alias) {
 		$sql .= natural_search("s.name_alias", $search_alias);
 	}
@@ -778,13 +785,13 @@ if ($search_noemail) {
 	$sql .= " AND EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = '".$db->escape($search_email)."' AND unsubscribegroup = '' AND entity IN (".getEntity('societe')."))";
 }
 if (strlen($search_phone)) {
-	$sql .= natural_search("s.phone", $search_phone);
+	$sql .= dol_natural_search_phone($db, "s.phone", $search_phone);
 }
 if (strlen($search_phone_mobile)) {
-	$sql .= natural_search("s.phone_mobile", $search_phone_mobile);
+	$sql .= dol_natural_search_phone($db, "s.phone_mobile", $search_phone_mobile);
 }
 if (strlen($search_fax)) {
-	$sql .= natural_search("s.fax", $search_fax);
+	$sql .= dol_natural_search_phone($db, "s.fax", $search_fax);
 }
 if ($search_url) {
 	$sql .= natural_search("s.url", $search_url);
@@ -1005,8 +1012,8 @@ if (is_array($search_sale)) {
 		$param .= '&search_sale[]=' . urlencode($sale_id);
 	}
 }
-if ($search_id > 0) {
-	$param .= "&search_id=".((int) $search_id);
+if ($search_id != '') {
+	$param .= "&search_id=".urlencode($search_id);
 }
 if ($search_nom != '') {
 	$param .= "&search_nom=".urlencode($search_nom);
@@ -1248,6 +1255,10 @@ if (empty($reshook)) {
 		}
 		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+		if (empty($user->socid)) {	// Statistics are on all the third parties, so they are not available to external users
+			$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', dolBuildUrl(DOL_URL_ROOT.'/societe/stats/geo.php', ['mode' => 'thirdpartybycountry']), '', 1, array('morecss' => 'reposition'));
+		}
+		$newcardbutton .= dolGetButtonTitleSeparator();
 		$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url, '', $user->hasRight('societe', 'creer'));
 	} elseif ($user->hasRight('societe', 'creer')) {
 		$url = DOL_URL_ROOT.'/societe/card.php?action=create&type=t&contextpage=poslist&optioncss=print&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type=t&contextpage=poslist&nomassaction=1&optioncss=print&place='.$place);
@@ -1258,7 +1269,7 @@ if (empty($reshook)) {
 	$newcardbutton = $hookmanager->resPrint;
 }
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off">'."\n";
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off" spellcheck="false">'."\n";
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -1364,13 +1375,11 @@ if (!empty($moreforfilter)) {
 	print '</div>';
 }
 
-$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= ((count($arrayofmassactions) && $contextpage != 'poslist') ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+print '<table class="tagtable nobottomiftotal noborder liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 // Fields title search
 // --------------------------------------------------------------------
@@ -1383,8 +1392,8 @@ if ($conf->main_checkbox_left_column) {
 	print '</td>';
 }
 if (!empty($arrayfields['s.rowid']['checked'])) {
-	print '<td class="liste_titre" data-key="id">';
-	print '<input class="flat searchstring" type="text" name="search_id" size="1" value="'.dol_escape_htmltag($search_id).'">';
+	print '<td class="liste_titre center" data-key="id">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
@@ -1693,7 +1702,7 @@ if ($conf->main_checkbox_left_column) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.rowid']['checked'])) {
-	print_liste_field_titre($arrayfields['s.rowid']['label'], $_SERVER["PHP_SELF"], "s.rowid", "", $param, ' data-key="id"', $sortfield, $sortorder, '');
+	print_liste_field_titre($arrayfields['s.rowid']['label'], $_SERVER["PHP_SELF"], "s.rowid", "", $param, ' data-key="id"', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
@@ -1956,7 +1965,7 @@ while ($i < $imaxinloop) {
 		$j = 0;
 		print '<tr data-rowid="'.$companystatic->id.'" class="oddeven row-with-select"';
 		if ($contextpage == 'poslist') {
-			print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.urlencode($place).'\'"';
+			print ' onclick="location.href=\'list.php?action=change&token='.newToken().'&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.urlencode($place).'\'"';
 		}
 		print '>';
 
@@ -1976,7 +1985,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		if (!empty($arrayfields['s.rowid']['checked'])) {
-			print '<td class="tdoverflowmax50" data-key="id">';
+			print '<td class="center tdoverflowmax50" data-key="id">';
 			print dol_escape_htmltag($obj->rowid);
 			print "</td>\n";
 			if (!$i) {
@@ -1984,20 +1993,27 @@ while ($i < $imaxinloop) {
 			}
 		}
 		if (!empty($arrayfields['s.nom']['checked'])) {
-			print '<td'.(getDolGlobalString('MAIN_SOCIETE_SHOW_COMPLETE_NAME') ? '' : ' class="tdoverflowmax200"').' data-key="ref">';
+			print '<td class="tdlineheightsmall" data-key="ref">';
+			print '<div class="tdoverflowmax200 inline-block lineheightsmall">';
 			if ($contextpage == 'poslist') {
-				print dol_escape_htmltag($companystatic->name);
+				print dolPrintHTML($companystatic->name);
 			} else {
-				print $companystatic->getNomUrl(1, '', 100, 0, 1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
+				print $companystatic->getNomUrl(1, '', 100, 0, 1, 1, '', 'valignmiddle', 1);
+				if (empty($arrayfields['s.name_alias']['checked'])) {
+					print '<br><span class="spantitle">'.dolPrintHTML($companystatic->name_alias).'</span>';
+				}
 			}
+			print '</div>';
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->name_alias).'">';
-			print dol_escape_htmltag($companystatic->name_alias);
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($companystatic->name_alias).'">';
+			print '<span class="spantitle">';
+			print dolPrintHTML($companystatic->name_alias);
+			print '</span>';
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2005,8 +2021,8 @@ while ($i < $imaxinloop) {
 		}
 		// Ref ext
 		if (!empty($arrayfields['s.ref_ext']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->ref_ext).'">';
-			print dol_escape_htmltag($companystatic->ref_ext);
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($companystatic->ref_ext).'">';
+			print dolPrintHTML($companystatic->ref_ext);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2014,14 +2030,14 @@ while ($i < $imaxinloop) {
 		}
 		// Barcode
 		if (!empty($arrayfields['s.barcode']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->barcode).'">'.dol_escape_htmltag($companystatic->barcode).'</td>';
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($companystatic->barcode).'">'.dolPrintHTML($companystatic->barcode).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Customer code
 		if (!empty($arrayfields['s.code_client']['checked'])) {
-			print '<td class="nowraponall">'.dol_escape_htmltag($companystatic->code_client).'</td>';
+			print '<td class="nowraponall">'.dolPrintHTML($companystatic->code_client).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -2035,49 +2051,49 @@ while ($i < $imaxinloop) {
 		}
 		// Account customer code
 		if (!empty($arrayfields['s.code_compta']['checked'])) {
-			print '<td>'.dol_escape_htmltag($companystatic->code_compta_client).'</td>';
+			print '<td>'.dolPrintHTML($companystatic->code_compta_client).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Account supplier code
 		if (!empty($arrayfields['s.code_compta_fournisseur']['checked'])) {
-			print '<td>'.dol_escape_htmltag($companystatic->code_compta_fournisseur).'</td>';
+			print '<td>'.dolPrintHTML($companystatic->code_compta_fournisseur).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Address
 		if (!empty($arrayfields['s.address']['checked'])) {
-			print '<td class="tdoverflowmax250" title="'.dol_escape_htmltag($companystatic->address).'">'.dol_escape_htmltag($companystatic->address).'</td>';
+			print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttribute($companystatic->address).'">'.dolPrintHTML($companystatic->address).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Zip
 		if (!empty($arrayfields['s.zip']['checked'])) {
-			print "<td>".dol_escape_htmltag($companystatic->zip)."</td>\n";
+			print "<td>".dolPrintHTML($companystatic->zip)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Town
 		if (!empty($arrayfields['s.town']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->town).'">'.dol_escape_htmltag($companystatic->town)."</td>\n";
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($companystatic->town).'">'.dolPrintHTML($companystatic->town)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// State
 		if (!empty($arrayfields['state.nom']['checked'])) {
-			print "<td>".dol_escape_htmltag($obj->state_name)."</td>\n";
+			print "<td>".dolPrintHTML($obj->state_name)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Region
 		if (!empty($arrayfields['region.nom']['checked'])) {
-			print "<td>".dol_escape_htmltag($obj->region_name)."</td>\n";
+			print "<td>".dolPrintHTML($obj->region_name)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -2097,8 +2113,8 @@ while ($i < $imaxinloop) {
 			$typenArray = $formcompany->typent_array(1);
 			$labeltypeofcompany = empty($typenArray[$obj->typent_code]) ? '' : $typenArray[$obj->typent_code];
 
-			print '<td class="center tdoverflowmax125" title="'.dol_escape_htmltag($labeltypeofcompany).'">';
-			print dol_escape_htmltag($labeltypeofcompany);
+			print '<td class="center tdoverflowmax125" title="'.dolPrintHTMLForAttribute($labeltypeofcompany).'">';
+			print dolPrintHTML($labeltypeofcompany);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2144,7 +2160,7 @@ while ($i < $imaxinloop) {
 		// Email
 		if (!empty($arrayfields['s.email']['checked'])) {
 			$showinvalidemail = (int) !getDolGlobalInt('MAIN_SHOW_INVALID_EMAIL_IN_LIST'); // to avoid slow display
-			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->email).'">'.dol_print_email($obj->email, $obj->rowid, $obj->rowid, 1, 0, $showinvalidemail, 1)."</td>\n";
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute((string) $obj->email).'">'.dol_print_email((string) $obj->email, $obj->rowid, $obj->rowid, 1, 0, $showinvalidemail, 1)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -2242,7 +2258,7 @@ while ($i < $imaxinloop) {
 		}
 		// Sales Representative
 		if (!empty($arrayfields['sales.representative']['checked'])) {
-			print '<td class="nowraponall tdoverflowmax150">';
+			print '<td class="nowraponall tdoverflowmax100">';
 			$listsalesrepresentatives = $companystatic->getSalesRepresentatives($user);
 			$nbofsalesrepresentative = count($listsalesrepresentatives);
 			if ($nbofsalesrepresentative > 6) {

@@ -115,7 +115,7 @@ class FormAI extends Form
 
 		$messageaiwait = '<i class="fa fa-spinner fa-spin fa-2x fa-fw valignmiddle marginrightonly"></i>'.$langs->trans("AIProcessingPleaseWait", getDolGlobalString('AI_API_SERVICE', 'chatgpt'));
 
-		$htmlContent = preg_replace('/[^a-z0-9_]/', '', $htmlContent);
+		$htmlContent = preg_replace('/[^a-z0-9_]/i', '', $htmlContent);
 
 		$out = '';
 		if (empty($onlyenhancements) || in_array($onlyenhancements, array('textgenerationemail', 'textgenerationwebpage'))) {
@@ -143,7 +143,7 @@ class FormAI extends Form
 			$out .= '</div>';
 		}
 
-		if (empty($onlyenhancements) || in_array($onlyenhancements, array('textrephrase'))) {
+		if (empty($onlyenhancements) || in_array($onlyenhancements, array('textrephraser'))) {
 			$stylearray = getListForAIRephraseStyle();
 			$out .= ($out ? '<div style="height: 10px;"></div>' : '');
 			$out .= '<div id="ai_rephraser'.$htmlContent.'" class="ai_rephraser'.$htmlContent.' paddingtop paddingbottom ai_feature">';
@@ -167,6 +167,15 @@ class FormAI extends Form
 
 		if ($function == 'imagegeneration') {
 			$out .= '<div id="ai_image_result" class="margintoponly"></div>'; // Div for displaying the generated image
+		}
+
+		// Delay before hiding the wait message: same response timeout than the one used by Ai::generateContent()
+		$aitimeoutresponse = getDolGlobalInt('AI_USE_RESPONSE_TIMEOUT');
+		if ($aitimeoutresponse <= 0) {
+			$aitimeoutresponse = getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30);
+		}
+		if ($aitimeoutresponse <= 0) {
+			$aitimeoutresponse = 30;
 		}
 
 		$out .= "</div>\n";
@@ -248,6 +257,9 @@ class FormAI extends Form
 					} else {
 						texttomodify = $('#'+htmlname).val();	/* for input or textarea */
 					}
+					if (window.ace && $('#'+htmlname+'aceeditorid').length) {
+						texttomodify = window.ace.edit(htmlname+'aceeditorid').getSession().getValue();	/* for ACE editor */
+					}
 					if (functionai == 'texttranslation') {
 						/*
 						if (CKEDITOR.instances) {
@@ -300,6 +312,10 @@ class FormAI extends Form
 						instructions = $(element).val();
 					} else {
 						instructions = userprompt;
+						/* For a web page or an email, the existing content is sent too so the AI can modify it instead of generating it from scratch */
+						if ((functionai == 'textgenerationwebpage' || functionai == 'textgenerationemail') && userprompt && texttomodify && texttomodify.trim() != '') {
+							instructions = userprompt + '\\n\\nApply this instruction to the following existing content of the ' + (functionai == 'textgenerationemail' ? 'email' : 'page') + ', and return the full modified content (if the instruction asks for a new content, ignore the existing one):\\n' + texttomodify;
+						}
 					}
 
 					/* Show message API running */
@@ -310,7 +326,7 @@ class FormAI extends Form
 					setTimeout(function() {
 						timeoutfinished = 1;
 						$('#ai_status_message".$htmlContent."').hide();
-					}, 30000);
+					}, ".((int) $aitimeoutresponse * 1000).");
 
 					console.log('Instruction forged by javascript = '+instructions);
 
@@ -396,7 +412,6 @@ class FormAI extends Form
 					}
 				});
 			} else {
-
 				// set editor in readonly
 				if (CKEDITOR.instances[htmlname]) {
 					CKEDITOR.instances[htmlname].setReadOnly(1);
@@ -417,6 +432,10 @@ class FormAI extends Form
 
 						jQuery('#'+htmlname).val(response);		// If #htmlcontent is a input name or textarea
 						jQuery('#'+htmlname).html(response).trigger('change');	// If #htmlContent is a div and trigger event change for extrafield update
+
+						if (window.ace && jQuery('#'+htmlname+'aceeditorid').length) {
+							window.ace.edit(htmlname+'aceeditorid').getSession().setValue(response);	// If field is an ACE editor
+						}
 						//jQuery('#'+htmlname+'preview').val(response);
 
 						if (CKEDITOR.instances) {

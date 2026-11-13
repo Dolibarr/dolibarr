@@ -1,8 +1,10 @@
 <?php
-/* Copyright (C) 2016   Jean-François Ferry     <hello@librethic.io>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
+/* Copyright (C) 2016		Jean-François Ferry     <hello@librethic.io>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Nick Fragoulis
+ * Copyright (C) 2026		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +24,13 @@ use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
 /**
  * API class for ticket object
+ *
+ * @since	8.0.0	Initial implementation
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
@@ -44,7 +49,6 @@ class Tickets extends DolibarrApi
 	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS_MESSAGES = array(
-		'track_id',
 		'message'
 	);
 
@@ -68,6 +72,8 @@ class Tickets extends DolibarrApi
 	 *
 	 * Return an array with ticket information
 	 *
+	 * @since	8.0.0	Initial implementation
+	 *
 	 * @param	int				$id				ID of ticket
 	 * @param   int         	$contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
 	 * @return  Object							Object with cleaned properties
@@ -85,6 +91,8 @@ class Tickets extends DolibarrApi
 	 * Get properties of a Ticket object from track id
 	 *
 	 * Return an array with ticket information
+	 *
+	 * @since	8.0.0	Initial implementation
 	 *
 	 * @param	string			$track_id		Tracking ID of ticket
 	 * @param   int         	$contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
@@ -105,6 +113,8 @@ class Tickets extends DolibarrApi
 	 * Get properties of a Ticket object from ref
 	 *
 	 * Return an array with ticket information
+	 *
+	 * @since	8.0.0	Initial implementation
 	 *
 	 * @param	string			$ref			Reference for ticket
 	 * @param   int         	$contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
@@ -216,6 +226,8 @@ class Tickets extends DolibarrApi
 	 *
 	 * Get a list of tickets
 	 *
+	 * @since	8.0.0	Initial implementation
+	 *
 	 * @param int       $socid      		Filter list with thirdparty ID
 	 * @param string	$sortfield			Sort field
 	 * @param string	$sortorder			Sort order
@@ -258,9 +270,9 @@ class Tickets extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		// Add sql filters
@@ -344,9 +356,15 @@ class Tickets extends DolibarrApi
 	/**
 	 * Create ticket object
 	 *
+	 * Optional key "contacts": an array of objects to link on creation, each:
+	 *   { "id": int (or "contactid"), "type": string (contact type code), "source": "external"|"internal" (default external) }
+	 * The whole creation is atomic: if any contact is invalid, the ticket is not created (rollback + error).
+	 *
+	 * @since	8.0.0	Initial implementation
+	 *
 	 * @param array $request_data   Request data
-	 * @phan-param ?array<string,string> $request_data
-	 * @phpstan-param ?array<string,string> $request_data
+	 * @phan-param ?array<string,mixed> $request_data
+	 * @phpstan-param ?array<string,mixed> $request_data
 	 * @return int  ID of ticket
 	 */
 	public function post($request_data = null)
@@ -360,7 +378,7 @@ class Tickets extends DolibarrApi
 		$this->_validate($request_data);
 
 		// Check thirdparty validity
-		$socid = (int) $request_data['socid'];
+		$socid = (int) ($request_data['socid'] ?? 0);
 		if ($socid > 0) {
 			$thirdpartytmp = new Societe($this->db);
 			$thirdparty_result = $thirdpartytmp->fetch($socid);
@@ -371,6 +389,13 @@ class Tickets extends DolibarrApi
 				throw new RestException(404, 'Thirdparty with id='.$thirdpartytmp->id.' not found or not allowed');
 			}
 		}
+
+		// Extract contacts to link after ticket creation (not a Ticket property to assign in the loop below)
+		$contacts = array();
+		if (isset($request_data['contacts']) && is_array($request_data['contacts'])) {
+			$contacts = $request_data['contacts'];
+		}
+		unset($request_data['contacts']);
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
@@ -388,15 +413,39 @@ class Tickets extends DolibarrApi
 			$this->ticket->track_id = generate_random_id(16);
 		}
 
+		// Pre-validate contacts (format + type) BEFORE creating the ticket, so a malformed payload
+		// does not create a ticket (and fire its creation triggers) only to roll it back afterwards.
+		$contactsToLink = array();
+		if (!empty($contacts)) {
+			foreach ($contacts as $contact) {
+				$contactsToLink[] = $this->_normalizeAndValidateContact($contact);
+			}
+		}
+
+		$this->db->begin();
+
 		if ($this->ticket->create(DolibarrApiAccess::$user) < 0) {
+			$this->db->rollback();
 			throw new RestException(500, "Error creating ticket", array_merge(array($this->ticket->error), $this->ticket->errors));
 		}
+
+		if (!empty($contactsToLink)) {
+			foreach ($contactsToLink as $contact) {
+				$result = $this->ticket->add_contact($contact['id'], $contact['type'], $contact['source']);
+				// Rolls back the transaction and throws a RestException on any failure
+				$this->_addContactResultOrThrow($result, $contact['id'], $contact['type'], $contact['source']);
+			}
+		}
+
+		$this->db->commit();
 
 		return $this->ticket->id;
 	}
 
 	/**
-	 * Add a new message to an existing ticket identified by property ->track_id into request.
+	 * Add a new message to an existing ticket identified by property ->id, ->ref or ->track_id into request.
+	 *
+	 * @since	8.0.0	Initial implementation
 	 *
 	 * @param array $request_data   Request data
 	 * @phan-param ?array<string,mixed> $request_data
@@ -404,6 +453,11 @@ class Tickets extends DolibarrApi
 	 * @return int|array  ID of ticket, or ticket/action IDs when requested
 	 * @phan-return int|array{ticket_id:int,action_id:int}
 	 * @phpstan-return int|array{ticket_id:int,action_id:int}
+	 *
+	 * @throws RestException 400 Missing message, missing ticket identifier, identifiers of different tickets or bad attachment
+	 * @throws RestException 403 Access denied
+	 * @throws RestException 404 Ticket not found
+	 * @throws RestException 500 Error when saving an attachment or creating the message
 	 */
 	public function postNewMessage($request_data = null)
 	{
@@ -436,20 +490,29 @@ class Tickets extends DolibarrApi
 			$this->ticket->$field = $this->_checkValForAPI($field, $value, $this->ticket);
 		}
 		$ticketMessageText = $this->ticket->message;
+		$requestedId = (int) $this->ticket->id;
+		$requestedRef = (string) $this->ticket->ref;
+		$requestedTrackId = (string) $this->ticket->track_id;
 		// Allow targeting the ticket by id or ref, not only track_id
-		if (!empty($this->ticket->id)) {
-			$result = $this->ticket->fetch($this->ticket->id);
-		} elseif (!empty($this->ticket->ref)) {
-			$result = $this->ticket->fetch(0, $this->ticket->ref);
+		if (!empty($requestedId)) {
+			$result = $this->ticket->fetch($requestedId);
+		} elseif ($requestedRef !== '') {
+			$result = $this->ticket->fetch(0, $requestedRef);
 		} else {
-			$result = $this->ticket->fetch(0, '', $this->ticket->track_id);
+			$result = $this->ticket->fetch(0, '', $requestedTrackId);
 		}
-		if (!$result) {
+		if ($result <= 0) {
 			throw new RestException(404, 'Ticket not found');
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('ticket', $this->ticket->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// When several identifiers are given, they must all point to the same ticket
+		if ((!empty($requestedId) && $requestedRef !== '' && $requestedRef !== (string) $this->ticket->ref)
+			|| ((!empty($requestedId) || $requestedRef !== '') && $requestedTrackId !== '' && $requestedTrackId !== (string) $this->ticket->track_id)) {
+			throw new RestException(400, 'The id, ref and track_id given do not point to the same ticket');
 		}
 
 		$this->ticket->message = $ticketMessageText;
@@ -466,67 +529,76 @@ class Tickets extends DolibarrApi
 				throw new RestException(500, 'Error while trying to create directory '.$destdir);
 			}
 
-			foreach ($attachments as $attachment) {
-				if (!is_array($attachment) || empty($attachment['filename'])) {
-					continue;
-				}
+			try {
+				foreach ($attachments as $attachment) {
+					if (!is_array($attachment) || empty($attachment['filename'])) {
+						continue;
+					}
 
-				$filename = dol_sanitizeFileName($attachment['filename']);
-				if (empty($filename)) {
-					continue;
-				}
+					$filename = dol_sanitizeFileName($attachment['filename']);
+					if (empty($filename)) {
+						continue;
+					}
 
-				$filecontent = isset($attachment['filecontent']) ? $attachment['filecontent'] : '';
-				$fileencoding = isset($attachment['fileencoding']) ? $attachment['fileencoding'] : '';
-				$content = ($fileencoding === 'base64') ? base64_decode($filecontent) : $filecontent;
-				if ($content === false) {
-					throw new RestException(400, 'Failed to decode attachment '.$filename);
-				}
+					$filecontent = isset($attachment['filecontent']) ? $attachment['filecontent'] : '';
+					$fileencoding = isset($attachment['fileencoding']) ? $attachment['fileencoding'] : '';
+					$content = ($fileencoding === 'base64') ? base64_decode($filecontent) : $filecontent;
+					if ($content === false) {
+						throw new RestException(400, 'Failed to decode attachment '.$filename);
+					}
 
-				$destfile = $destdir.'/'.$filename;
-				if (is_file($destfile)) {
-					$pathinfo = pathinfo($filename);
-					$suffix = ' - '.dol_print_date(dol_now(), 'dayhourlog');
-					$extension = !empty($pathinfo['extension']) ? '.'.$pathinfo['extension'] : '';
-					$basename = !empty($pathinfo['filename']) ? $pathinfo['filename'] : preg_replace('/\.[^.]+$/', '', $filename);
-					$destfile = $destdir.'/'.$basename.$suffix.$extension;
-				}
+					$destfile = $destdir.'/'.$filename;
+					if (is_file($destfile)) {
+						$pathinfo = pathinfo($filename);
+						$suffix = ' - '.dol_print_date(dol_now(), 'dayhourlog');
+						$extension = !empty($pathinfo['extension']) ? '.'.$pathinfo['extension'] : '';
+						$basename = !empty($pathinfo['filename']) ? $pathinfo['filename'] : preg_replace('/\.[^.]+$/', '', $filename);
+						$destfile = $destdir.'/'.$basename.$suffix.$extension;
+					}
 
-				$destfiletmp = DOL_DATA_ROOT.'/admin/temp/'.basename($destfile);
-				if (!dol_is_dir(dirname($destfiletmp))) {
-					dol_mkdir(dirname($destfiletmp));
-				}
+					$destfiletmp = DOL_DATA_ROOT.'/admin/temp/'.basename($destfile);
+					if (!dol_is_dir(dirname($destfiletmp))) {
+						dol_mkdir(dirname($destfiletmp));
+					}
 
-				$fhandle = @fopen($destfiletmp, 'w');
-				if (!$fhandle) {
-					throw new RestException(500, "Failed to open file '".$destfiletmp."' for write");
-				}
-				$nbofbyteswrote = fwrite($fhandle, $content);
-				fclose($fhandle);
-				if ($nbofbyteswrote === false) {
-					throw new RestException(500, "Failed to write file '".$destfiletmp."'");
-				}
+					$fhandle = @fopen($destfiletmp, 'w');
+					if (!$fhandle) {
+						throw new RestException(500, "Failed to open file '".$destfiletmp."' for write");
+					}
+					$nbofbyteswrote = fwrite($fhandle, $content);
+					fclose($fhandle);
+					if ($nbofbyteswrote === false) {
+						throw new RestException(500, "Failed to write file '".$destfiletmp."'");
+					}
 
-				$moreinfo = array(
-					'description' => 'File uploaded using ticket API',
-					'src_object_type' => $this->ticket->element,
-					'src_object_id' => $this->ticket->id,
-					'gen_or_uploaded' => 'uploaded'
-				);
-				$resultmove = dol_move($destfiletmp, $destfile, '0', 1, 0, 1, $moreinfo);
-				if (!$resultmove) {
-					throw new RestException(500, "Failed to move file into '".$destfile."'");
-				}
+					$moreinfo = array(
+						'description' => 'File uploaded using ticket API',
+						'src_object_type' => $this->ticket->element,
+						'src_object_id' => $this->ticket->id,
+						'gen_or_uploaded' => 'uploaded'
+					);
+					// Move the temporary file at its final emplacement, never overwriting an existing file
+					$resultmove = dol_move($destfiletmp, $destfile, '0', 0, 0, 1, $moreinfo);
+					if (!$resultmove) {
+						throw new RestException(500, "Failed to move file into '".$destfile."'");
+					}
 
-				$filename_list[] = $destfile;
-				$mimefilename_list[] = basename($destfile);
-				$mimetype_list[] = !empty($attachment['mimetype']) ? $attachment['mimetype'] : '';
+					$filename_list[] = $destfile;
+					$mimefilename_list[] = basename($destfile);
+					$mimetype_list[] = !empty($attachment['mimetype']) ? $attachment['mimetype'] : '';
+				}
+			} catch (RestException $e) {
+				// Do not keep the attachments already saved for a message that is not created
+				$this->_deleteMessageAttachments($filename_list);
+				throw $e;
 			}
 		}
 
 		$actionid = $this->ticket->createTicketMessage(DolibarrApiAccess::$user, 0, $filename_list, $mimetype_list, $mimefilename_list);
 		if ($actionid <= 0) {
-			throw new RestException(500, 'Error when creating ticket');
+			// Do not keep the attachments saved for a message that is not created
+			$this->_deleteMessageAttachments($filename_list);
+			throw new RestException(500, 'Error when creating the ticket message: '.$this->ticket->errorsToString());
 		}
 		if ($return_action_id) {
 			return array('ticket_id' => $this->ticket->id, 'action_id' => $actionid);
@@ -537,11 +609,22 @@ class Tickets extends DolibarrApi
 	/**
 	 * Update ticket
 	 *
+	 * The thirdparty can be given with socid or fk_soc. The status and the assigned
+	 * user can not be changed here: use the close and assign requests. The id, entity,
+	 * ref, track id, author and dates set by core are ignored.
+	 *
+	 * @since	8.0.0	Initial implementation
+	 *
 	 * @param 	int   	$id             	Id of ticket to update
 	 * @param 	array 	$request_data   	Data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object						Updated object
+	 *
+	 * @throws	RestException	400 socid and fk_soc are different, or status or assigned user changed
+	 * @throws	RestException	403 Not allowed
+	 * @throws	RestException	404 Ticket or thirdparty not found
+	 * @throws	RestException	500 Error when updating
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -549,8 +632,7 @@ class Tickets extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$result = $this->ticket->fetch($id);
-		if (!$result) {
+		if ($this->ticket->fetch((int) $id) <= 0) {
 			throw new RestException(404, 'Ticket not found');
 		}
 
@@ -558,8 +640,42 @@ class Tickets extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		if (!is_array($request_data)) {
+			$request_data = array();
+		}
+
+		// Status and assignment have their own routes, which run the checks, the triggers and the contact update
+		foreach (array('status', 'fk_statut', 'statut') as $field) {
+			if (isset($request_data[$field]) && (int) $request_data[$field] != (int) $this->ticket->status) {
+				throw new RestException(400, 'The status can not be changed with this request, use POST /tickets/{id}/close or POST /tickets/{id}/assign');
+			}
+		}
+		if (isset($request_data['fk_user_assign']) && (int) $request_data['fk_user_assign'] != (int) $this->ticket->fk_user_assign) {
+			throw new RestException(400, 'The assigned user can not be changed with this request, use POST /tickets/{id}/assign');
+		}
+
+		// Fields that are set by core and must not be changed
+		foreach (array('id', 'entity', 'ref', 'track_id', 'fk_user_create', 'datec', 'date_creation', 'date_close', 'status', 'fk_statut', 'statut', 'fk_user_assign') as $field) {
+			unset($request_data[$field]);
+		}
+
+		// The thirdparty can be given with socid or fk_soc, but only fk_soc is saved by update()
+		$socid = null;
+		if (isset($request_data['socid']) || isset($request_data['fk_soc'])) {
+			$socid = (int) ($request_data['socid'] ?? $request_data['fk_soc']);
+			if (isset($request_data['socid'], $request_data['fk_soc']) && (int) $request_data['socid'] != (int) $request_data['fk_soc']) {
+				throw new RestException(400, 'socid='.((int) $request_data['socid']).' and fk_soc='.((int) $request_data['fk_soc']).' must not be different');
+			}
+			$socid = max($socid, 0);
+		}
+		unset($request_data['socid'], $request_data['fk_soc']);
+
+		// Same as the ticket card: an external user can not change the thirdparty of a ticket
+		if ($socid !== null && DolibarrApiAccess::$user->socid > 0 && $socid != (int) $this->ticket->fk_soc) {
+			throw new RestException(403, 'Changing the thirdparty of a ticket is not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		// Check thirdparty validity
-		$socid = (int) $request_data['socid'];
 		if ($socid > 0) {
 			$thirdpartytmp = new Societe($this->db);
 			$thirdparty_result = $thirdpartytmp->fetch($socid);
@@ -578,9 +694,6 @@ class Tickets extends DolibarrApi
 				continue;
 			}
 
-			if ($field == 'id') {
-				continue;
-			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
 					$this->ticket->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->ticket);
@@ -590,16 +703,142 @@ class Tickets extends DolibarrApi
 
 			$this->ticket->$field = $this->_checkValForAPI($field, $value, $this->ticket);
 		}
+		if ($socid !== null) {
+			$this->ticket->fk_soc = $socid;
+			$this->ticket->socid = $socid;
+		}
 
 		if ($this->ticket->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->ticket->error);
+			throw new RestException(500, $this->ticket->errorsToString());
 		}
 	}
 
 	/**
+	 * Close a ticket, or cancel it
+	 *
+	 * Same as the Close and Abandon buttons of the ticket card: the status, the
+	 * closing date and the progress are set by core, and the TICKET_CLOSE trigger
+	 * runs (notifications, linked interventions).
+	 *
+	 * @since	25.0.0	Initial implementation
+	 *
+	 * @param	int		$id			Ticket ID
+	 * @param	int		$cancel		1 to cancel (abandon) the ticket instead of closing it
+	 * @return	Object				Ticket after the change
+	 *
+	 * @url POST {id}/close
+	 *
+	 * @throws	RestException	403 Not allowed
+	 * @throws	RestException	404 Ticket not found
+	 * @throws	RestException	409 Ticket already closed or canceled
+	 * @throws	RestException	500 Error when closing
+	 */
+	public function close($id, $cancel = 0)
+	{
+		if (!$this->canManage()) {
+			throw new RestException(403);
+		}
+		if ($this->ticket->fetch((int) $id) <= 0) {
+			throw new RestException(404, 'Ticket not found');
+		}
+		if (!DolibarrApi::_checkAccessToResource('ticket', $this->ticket->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		if (in_array((int) $this->ticket->status, array(Ticket::STATUS_CLOSED, Ticket::STATUS_CANCELED), true)) {
+			throw new RestException(409, 'Ticket is already closed or canceled');
+		}
+		if ($this->ticket->close(DolibarrApiAccess::$user, $cancel ? 1 : 0) <= 0) {
+			throw new RestException(500, 'Error when closing the ticket: '.$this->ticket->errorsToString());
+		}
+
+		return $this->get((int) $id);
+	}
+
+	/**
+	 * Assign a ticket to a user, or unassign it
+	 *
+	 * Same as the assignment of the ticket card: the status follows the
+	 * assignment, the TICKET_ASSIGNED trigger runs (notification of the user) and
+	 * the internal "SUPPORTTEC" contact of the ticket becomes the assigned user.
+	 *
+	 * @since	25.0.0	Initial implementation
+	 *
+	 * @param	int		$id					Ticket ID
+	 * @param	int		$fk_user_assign		Rowid of an active user, 0 to unassign
+	 * @return	Object						Ticket after the change
+	 *
+	 * @url POST {id}/assign
+	 *
+	 * @throws	RestException	400 Unknown or inactive user
+	 * @throws	RestException	403 Not allowed
+	 * @throws	RestException	404 Ticket not found
+	 * @throws	RestException	500 Error when assigning
+	 */
+	public function assign($id, $fk_user_assign = 0)
+	{
+		if (!$this->canManage()) {
+			throw new RestException(403);
+		}
+		if ($this->ticket->fetch((int) $id) <= 0) {
+			throw new RestException(404, 'Ticket not found');
+		}
+		if (!DolibarrApi::_checkAccessToResource('ticket', $this->ticket->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		$fk_user_assign = (int) $fk_user_assign;
+		if ($fk_user_assign > 0) {
+			$assignee = new User($this->db);
+			if ($assignee->fetch($fk_user_assign) <= 0 || (int) $assignee->status !== 1) {
+				throw new RestException(400, 'User '.$fk_user_assign.' not found or not active');
+			}
+		}
+
+		$previous = (int) $this->ticket->fk_user_assign;
+		$this->db->begin();
+		$error = 0;
+		if ($this->ticket->assignUser(DolibarrApiAccess::$user, $fk_user_assign) < 0) {
+			$error++;
+		}
+		// The internal support contact follows the assignment, as on the card.
+		if (!$error && $previous > 0) {
+			foreach ($this->ticket->listeContact(-1, 'internal', 0, 'SUPPORTTEC') as $contact) {
+				if ((int) $contact['id'] !== $fk_user_assign && $this->ticket->delete_contact($contact['rowid']) < 0) {
+					$error++;
+				}
+			}
+		}
+		if (!$error && $fk_user_assign > 0 && $fk_user_assign !== $previous && $this->ticket->add_contact($fk_user_assign, 'SUPPORTTEC', 'internal') < 0) {
+			$error++;
+		}
+		if ($error) {
+			$this->db->rollback();
+			throw new RestException(500, 'Error when assigning the ticket: '.$this->ticket->errorsToString());
+		}
+		$this->db->commit();
+
+		return $this->get((int) $id);
+	}
+
+	/**
+	 * Whether the API user may close and assign tickets, as on the ticket card.
+	 *
+	 * @return bool
+	 */
+	private function canManage()
+	{
+		if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+			return (bool) DolibarrApiAccess::$user->hasRight('ticket', 'manage_advance');
+		}
+
+		return (bool) DolibarrApiAccess::$user->hasRight('ticket', 'write');
+	}
+
+	/**
 	 * Delete ticket
+	 *
+	 * @since	8.0.0	Initial implementation
 	 *
 	 * @param   int     $id   Ticket ID
 	 * @return  array
@@ -675,7 +914,136 @@ class Tickets extends DolibarrApi
 			}
 			$ticket[$field] = $data[$field];
 		}
+		// The ticket can be targeted by its id, ref or track_id, at least one of them is required
+		$hasidentifier = false;
+		foreach (array('id', 'ref', 'track_id') as $field) {
+			if (isset($data[$field]) && (string) $data[$field] !== '' && (string) $data[$field] !== '0') {
+				$hasidentifier = true;
+				$ticket[$field] = $data[$field];
+			}
+		}
+		if (!$hasidentifier) {
+			throw new RestException(400, "id, ref or track_id field missing");
+		}
 		return $ticket;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Delete the attachment files saved for a message that could not be created, with their entries in the ECM index.
+	 *
+	 * @param	string[]	$files	Full paths of the files to delete
+	 * @return	void
+	 */
+	private function _deleteMessageAttachments(array $files): void
+	{
+		// phpcs:enable
+		foreach ($files as $file) {
+			dol_delete_file($file, 1, 1, 0, $this->ticket);
+		}
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Check that an active contact type (code + source) exists for the ticket element.
+	 *
+	 * @param	string	$type	Contact type code (c_type_contact.code)
+	 * @param	string	$source	'internal' or 'external'
+	 * @return	bool			True if the active type exists for element 'ticket'
+	 */
+	private function _ticketContactTypeExists(string $type, string $source): bool
+	{
+		// phpcs:enable
+		$sql = "SELECT tc.rowid";
+		$sql .= " FROM ".$this->db->prefix()."c_type_contact as tc";
+		$sql .= " WHERE tc.element = 'ticket'";
+		$sql .= " AND tc.source = '".$this->db->escape($source)."'";
+		$sql .= " AND tc.code = '".$this->db->escape($type)."'";
+		$sql .= " AND tc.active = 1";
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			return false;
+		}
+		$exists = ($this->db->num_rows($resql) > 0);
+		$this->db->free($resql);
+
+		return $exists;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Validate and normalize one contact entry from the API payload.
+	 * Called before any DB write, so it throws without rolling back.
+	 *
+	 * @param	mixed	$contact	Associative array {id|contactid:int, type:string, source?:string}
+	 * @phan-param	array{id?:int,contactid?:int,type?:string,source?:string}|mixed	$contact
+	 * @return	array				Normalized contact array{id:int,type:string,source:string}
+	 * @phan-return	array{id:int,type:string,source:string}
+	 * @throws	RestException
+	 */
+	private function _normalizeAndValidateContact($contact): array
+	{
+		// phpcs:enable
+		if (!is_array($contact)) {
+			throw new RestException(400, 'Each element of "contacts" must be an object with id, type and optional source');
+		}
+
+		$contactid = 0;
+		if (isset($contact['id'])) {
+			$contactid = (int) $contact['id'];
+		} elseif (isset($contact['contactid'])) {
+			$contactid = (int) $contact['contactid'];
+		}
+		$type = isset($contact['type']) ? trim((string) $contact['type']) : '';
+		$source = isset($contact['source']) ? (string) $contact['source'] : 'external';
+
+		if ($contactid <= 0) {
+			throw new RestException(400, 'Contact "id" is required and must be a positive integer');
+		}
+		if ($type === '') {
+			throw new RestException(400, 'Contact "type" (contact type code) is required');
+		}
+		if ($source !== 'internal' && $source !== 'external') {
+			throw new RestException(400, 'Contact "source" must be "internal" or "external"');
+		}
+		// Validate the type upfront so add_contact()'s ambiguous "0" return can only mean "already linked"
+		if (!$this->_ticketContactTypeExists($type, $source)) {
+			throw new RestException(400, 'Contact type "'.$type.'" not found or inactive for source "'.$source.'"');
+		}
+
+		return array('id' => $contactid, 'type' => $type, 'source' => $source);
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Map the return code of Ticket::add_contact() to an API response.
+	 * Assumes a DB transaction is open: rolls it back and throws on any failure.
+	 *
+	 * @param	int		$result		Return code of add_contact()
+	 * @param	int		$contactid	Contact id that was linked
+	 * @param	string	$type		Contact type code
+	 * @param	string	$source		'internal' or 'external'
+	 * @return	void
+	 * @throws	RestException
+	 */
+	private function _addContactResultOrThrow(int $result, int $contactid, string $type, string $source): void
+	{
+		// phpcs:enable
+		if ($result > 0) {
+			return;
+		}
+
+		$this->db->rollback();
+		if ($result == 0) {
+			// Type was validated upfront, so the only remaining 0 case is "already linked"
+			throw new RestException(409, 'Contact id='.$contactid.' is already linked to the ticket as source='.$source.' type='.$type);
+		} elseif ($result == -1) {
+			throw new RestException(404, 'Contact id='.$contactid.' not found');
+		} elseif ($result == -3 || $result == -4) {
+			throw new RestException(403, 'Not allowed to link contact id='.$contactid);
+		}
+		throw new RestException(500, 'Error linking contact id='.$contactid, array_merge(array($this->ticket->error), $this->ticket->errors));
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
@@ -774,6 +1142,8 @@ class Tickets extends DolibarrApi
 	/**
 	 * Add a contact type of given ticket
 	 *
+	 * @since	24.0.0	Initial implementation
+	 *
 	 * @param int    $id            Id of ticket to update
 	 * @param int    $contactid     Id of contact to add
 	 * @param string $type          Type (code in dictionary) of the contact (BILLING, SHIPPING, CUSTOMER + possibly your own)
@@ -824,7 +1194,7 @@ class Tickets extends DolibarrApi
 		if ($source == "external") {
 			// Check external contact exists
 			$sqlCheckExternalContact = "SELECT 1 as exist";
-			$sqlCheckExternalContact .= " FROM llx_socpeople";
+			$sqlCheckExternalContact .= " FROM ".MAIN_DB_PREFIX."socpeople";
 			$sqlCheckExternalContact .= " WHERE rowid = " . intval($contactid);
 			$result = $this->db->query($sqlCheckExternalContact);
 
@@ -834,7 +1204,7 @@ class Tickets extends DolibarrApi
 		} else {
 			// Check internal contact exists
 			$sqlCheckInternalContact = "SELECT 1 as exist";
-			$sqlCheckInternalContact .= " FROM llx_user";
+			$sqlCheckInternalContact .= " FROM ".MAIN_DB_PREFIX."user";
 			$sqlCheckInternalContact .= " WHERE rowid = " . intval($contactid);
 			$result = $this->db->query($sqlCheckInternalContact);
 
@@ -885,7 +1255,8 @@ class Tickets extends DolibarrApi
 	/**
 	 * Unlink a contact type of given ticket
 	 *
-	 * @since	12.0.0	Initial implementation
+	 * @since	24.0.0	Initial implementation
+	 *
 	 * @param int    $id             Id of ticket to update
 	 * @param int    $contactid      Id of contact
 	 * @param string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER).
@@ -897,7 +1268,9 @@ class Tickets extends DolibarrApi
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
+	 * @throws RestException 400
 	 * @throws RestException 401
+	 * @throws RestException 403
 	 * @throws RestException 404
 	 * @throws RestException 500 System error
 	 */
@@ -912,13 +1285,16 @@ class Tickets extends DolibarrApi
 		if (empty($source)) {
 			throw new RestException(400, 'Source can not be empty');
 		}
+		if (!in_array($source, array('internal', 'external'), true)) {
+			throw new RestException(400, 'Source must be internal or external');
+		}
 		// test type
 		if (empty($type)) {
 			throw new RestException(400, 'type can not be empty');
 		}
 
 		$result = $this->ticket->fetch($id);
-		if (!$result) {
+		if ($result <= 0) {
 			throw new RestException(404, 'Ticket not found');
 		}
 
@@ -927,14 +1303,24 @@ class Tickets extends DolibarrApi
 		}
 
 		$contacts = $this->ticket->liste_contact(-1, $source);
+		if (!is_array($contacts)) {
+			throw new RestException(500, 'Error when reading the contacts of the ticket: '.$this->ticket->errorsToString());
+		}
+
+		$found = false;
 		foreach ($contacts as $contact) {
 			if ($contact['id'] == $contactid && $contact['code'] == $type) {
+				$found = true;
 				$result = $this->ticket->delete_contact($contact['rowid']);
 
-				if (!$result) {
-					throw new RestException(500, 'Error when deleting the contact '.$contact['rowid']);
+				if ($result <= 0) {
+					throw new RestException(500, 'Error when deleting the contact '.$contact['rowid'].': '.$this->ticket->errorsToString());
 				}
 			}
+		}
+
+		if (!$found) {
+			throw new RestException(404, 'Contact id='.$contactid.' with type='.$type.' and source='.$source.' not linked to ticket');
 		}
 
 		return array(

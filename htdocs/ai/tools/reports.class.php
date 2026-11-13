@@ -2,7 +2,7 @@
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
  * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
- * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,10 @@ class ToolReports extends McpTool
 	 */
 	public function getDefinitions(): array
 	{
-		return [
+		$listofreporttools = [];
+
+		/*
+		$listofreporttools[] =
 			[
 				"name" => "get_thirdparty_transactions",
 				"description" => "Generate a list of raw transactions (Invoices, Orders) for a specific thirdparty.",
@@ -72,8 +75,8 @@ class ToolReports extends McpTool
 					"properties" => [
 						"thirdparty_id" => ["type" => "integer", "description" => "The unique ID of the thirdparty."],
 						"thirdparty_name" => ["type" => "string", "description" => "The name of the thirdparty."],
-						"date_start" => ["type" => "string", "description" => "Start date (YYYY-MM-DD)."],
-						"date_end" => ["type" => "string", "description" => "End date (YYYY-MM-DD)."],
+						"date_start" => ["type" => "string", "description" => "Start date (YYYY-MM-DD). Compute it from the current date when the user says a relative period like this month."],
+						"date_end" => ["type" => "string", "description" => "End date (YYYY-MM-DD). Compute it from the current date when the user says a relative period."],
 						"transaction_type" => [
 							"type" => "string",
 							"enum" => ["all", "invoices", "orders", "proposals"],
@@ -86,8 +89,10 @@ class ToolReports extends McpTool
 						["required" => ["thirdparty_name"]]
 					]
 				]
-			],
-			[
+			];
+		*/
+
+		$listofreporttools[] = [
 				"name" => "get_sales_report",
 				"description" => "Generate a sales/revenue report. If a Thirdparty is provided, it returns a detailed breakdown for that customer. Otherwise, it returns a global summary.",
 				"inputSchema" => [
@@ -97,8 +102,8 @@ class ToolReports extends McpTool
 							"type" => "integer",
 							"description" => "Optional: The ID of the customer."
 						],
-						"date_start" => ["type" => "string", "description" => "Start date (YYYY-MM-DD)."],
-						"date_end" => ["type" => "string", "description" => "End date (YYYY-MM-DD)."],
+						"date_start" => ["type" => "string", "description" => "Start date (YYYY-MM-DD). Compute it from the current date when the user says a relative period like this month."],
+						"date_end" => ["type" => "string", "description" => "End date (YYYY-MM-DD). Compute it from the current date when the user says a relative period."],
 						"group_by" => [
 							"type" => "string",
 							"enum" => ["thirdparty", "product", "month"],
@@ -108,8 +113,9 @@ class ToolReports extends McpTool
 					],
 					"required" => ["date_start", "date_end"]
 				]
-			],
-			[
+			];
+
+		$listofreporttools[] = [
 				"name" => "get_purchase_report",
 				"description" => "Generate a purchase/expense report. If a Supplier is provided, it returns a detailed breakdown. Otherwise, it returns a global summary.",
 				"inputSchema" => [
@@ -119,8 +125,8 @@ class ToolReports extends McpTool
 							"type" => "integer",
 							"description" => "Optional: The ID of the supplier."
 						],
-						"date_start" => ["type" => "string", "description" => "Start date (YYYY-MM-DD)."],
-						"date_end" => ["type" => "string", "description" => "End date (YYYY-MM-DD)."],
+						"date_start" => ["type" => "string", "description" => "Start date (YYYY-MM-DD). Compute it from the current date when the user says a relative period like this month."],
+						"date_end" => ["type" => "string", "description" => "End date (YYYY-MM-DD). Compute it from the current date when the user says a relative period."],
 						"group_by" => [
 							"type" => "string",
 							"enum" => ["supplier", "product", "month"],
@@ -130,8 +136,9 @@ class ToolReports extends McpTool
 					],
 					"required" => ["date_start", "date_end"]
 				]
-			],
-			[
+			];
+
+		$listofreporttools[] = [
 				"name" => "get_inventory_report",
 				"description" => "Generate an inventory report showing current stock levels and valuation.",
 				"inputSchema" => [
@@ -142,20 +149,41 @@ class ToolReports extends McpTool
 						"include_zero_stock" => ["type" => "boolean", "default" => false]
 					]
 				]
-			],
-			[
+			];
+
+		$listofreporttools[] = [
 				"name" => "get_financial_report",
 				"description" => "Generate a summary financial report (Income vs Expense) for a period.",
 				"inputSchema" => [
 					"type" => "object",
 					"properties" => [
-						"date_start" => ["type" => "string", "description" => "Start date (YYYY-MM-DD)."],
-						"date_end" => ["type" => "string", "description" => "End date (YYYY-MM-DD)."]
+						"date_start" => ["type" => "string", "description" => "Start date (YYYY-MM-DD). Compute it from the current date when the user says a relative period like this month."],
+						"date_end" => ["type" => "string", "description" => "End date (YYYY-MM-DD). Compute it from the current date when the user says a relative period."]
 					],
 					"required" => ["date_start", "date_end"]
 				]
-			],
-		];
+			];
+
+			return $listofreporttools;
+	}
+
+	/**
+	 * Aggregated reports: the widest data reach of any tool class.
+	 *
+	 * @param string $toolName Tool being executed.
+	 * @return array<int,array<int,string>>|string Rights required, or a RIGHTS_* constant.
+	 */
+	public function getRequiredRights(string $toolName)
+	{
+		$map = array(
+			'get_sales_report' => array(array('facture', 'lire')),
+			'get_purchase_report' => array(array('fournisseur', 'facture', 'lire')),
+			'get_inventory_report' => array(array('produit', 'lire'), array('stock', 'lire')),
+			'get_financial_report' => array(array('facture', 'lire'), array('fournisseur', 'facture', 'lire')),
+			'get_thirdparty_transactions' => array(array('societe', 'lire'), array('facture', 'lire'))
+		);
+
+		return isset($map[$toolName]) ? $map[$toolName] : self::RIGHTS_UNDECLARED;
 	}
 
 	/**
@@ -179,8 +207,8 @@ class ToolReports extends McpTool
 	public function execute(string $name, array $args)
 	{
 		switch ($name) {
-			case 'get_thirdparty_transactions':
-				return $this->getThirdpartyTransactions($args);
+			/*case 'get_thirdparty_transactions':
+				return $this->getThirdpartyTransactions($args); */
 			case 'get_sales_report':
 				return $this->getSalesReport($args);
 			case 'get_purchase_report':
@@ -192,6 +220,28 @@ class ToolReports extends McpTool
 			default:
 				return ["error" => "Tool function '$name' not found."];
 		}
+	}
+
+	/**
+	 * Return the SQL filter restricting rows to the thirdparties the user can see:
+	 * external users see only their company, sales reps without "see all" only their customers.
+	 *
+	 * @param string $alias Alias of the table holding the fk_soc column.
+	 * @return string SQL condition starting with " AND ", or '' when no restriction.
+	 */
+	private function getThirdpartyRestrictionSql($alias)
+	{
+		if (!is_object($this->user)) {
+			return " AND 1 = 0";
+		}
+		if ($this->user->socid > 0) {
+			return " AND ".$this->db->sanitize($alias).".fk_soc = ".((int) $this->user->socid);
+		}
+		if (!$this->user->hasRight('societe', 'client', 'voir')) {
+			return " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE ".$this->db->sanitize($alias).".fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $this->user->id).")";
+		}
+
+		return '';
 	}
 
 	/**
@@ -233,7 +283,7 @@ class ToolReports extends McpTool
 	 * Generate a sales/revenue report.
 	 *
 	 * @param array<string, mixed> $args Input arguments (date_start, date_end, limit, etc.)
-	 * @return array<int, array<string, string>> List of sales with localized keys and values.
+	 * @return array<int, array<string, string>>|array{rows:array<int,array<string,string>>,chart:array<string,mixed>} List of rows, or {rows, chart} when grouped.
 	 */
 	private function getSalesReport(array $args): array
 	{
@@ -249,10 +299,13 @@ class ToolReports extends McpTool
 
 		$list      = [];
 		$totalSum  = 0.0;
+		$chartLabels = [];
+		$chartData   = [];
 		// Status Filter: Valid (1) and Paid (2). Exclude Draft (0) and Abandoned (3).
 		$dateRange = " AND f.datef >= '" . $this->db->idate($dateStart)
 			. "' AND f.datef <= '" . $this->db->idate($dateEnd)
-			. "' AND f.fk_statut IN (1, 2)";
+			. "' AND f.fk_statut IN (1, 2)"
+			. $this->getThirdpartyRestrictionSql('f');
 
 		// CASE 1 -- Detailed list for a specific thirdparty.
 		if ($socid) {
@@ -333,6 +386,8 @@ class ToolReports extends McpTool
 			if ($resql) {
 				while ($r = $this->db->fetch_object($resql)) {
 					$totalSum += (float) $r->total_amount;
+					$chartLabels[] = $r->group_key ? $r->group_key : $langs->transnoentitiesnoconv('Unknown');
+					$chartData[]   = (float) $r->total_amount;
 					$list[] = [
 						$colName                                  => $r->group_key ? $r->group_key : $langs->transnoentitiesnoconv('Unknown'),
 						$langs->transnoentitiesnoconv("Number")   => (int) $r->count_inv,
@@ -363,6 +418,19 @@ class ToolReports extends McpTool
 			];
 		}
 
+		// Grouped results carry a chart payload the chat renders as a bar/line
+		// chart; the rows stay in 'rows' so the model and the table are unchanged.
+		if (!empty($chartData)) {
+			return array(
+				'rows'  => $list,
+				'chart' => array(
+					'type'    => ($groupBy === 'month' ? 'line' : 'bar'),
+					'labels'  => $chartLabels,
+					'datasets' => array(array('label' => $langs->transnoentitiesnoconv('Amount'), 'data' => $chartData)),
+				),
+			);
+		}
+
 		return $list;
 	}
 
@@ -372,6 +440,7 @@ class ToolReports extends McpTool
 	 * @param array<string, mixed> $args Input arguments.
 	 * @return array<int, array<string, string>> Combined list of transactions.
 	 */
+	/*
 	private function getThirdpartyTransactions(array $args): array
 	{
 		global $langs;
@@ -504,12 +573,13 @@ class ToolReports extends McpTool
 
 		return $list;
 	}
+	*/
 
 	/**
 	 * Generate a purchase/expense report.
 	 *
 	 * @param array<string, mixed> $args Input arguments.
-	 * @return array<int, array<string, string>> List of purchases or groups.
+	 * @return array<int, array<string, string>>|array{rows:array<int,array<string,string>>,chart:array<string,mixed>} List of rows, or {rows, chart} when grouped.
 	 */
 	private function getPurchaseReport(array $args): array
 	{
@@ -523,6 +593,8 @@ class ToolReports extends McpTool
 		$dateEnd = dol_stringtotime($args['date_end']);
 		$list = [];
 		$totalSum = 0.0;
+		$chartLabels = [];
+		$chartData = [];
 
 		// Detailed report for a specific Supplier
 		if ($socid) {
@@ -533,7 +605,7 @@ class ToolReports extends McpTool
 					AND f.fk_soc = " . (int) $socid . "
 					AND f.datef >= '" . $this->db->idate($dateStart) . "'
 					AND f.datef <= '" . $this->db->idate($dateEnd) . "'
-					AND f.fk_statut > 0
+					AND f.fk_statut > 0" . $this->getThirdpartyRestrictionSql('f') . "
 					ORDER BY f.datef DESC";
 
 			$resql = $this->db->query($sql);
@@ -571,7 +643,7 @@ class ToolReports extends McpTool
 				WHERE f.entity IN (" . getEntity('facture_fourn') . ")
 				AND f.datef >= '" . $this->db->idate($dateStart) . "'
 				AND f.datef <= '" . $this->db->idate($dateEnd) . "'
-				AND f.fk_statut > 0
+				AND f.fk_statut > 0" . $this->getThirdpartyRestrictionSql('f') . "
 				GROUP BY group_key
 				ORDER BY total_amount DESC";
 
@@ -579,6 +651,8 @@ class ToolReports extends McpTool
 			if ($resql) {
 				while ($r = $this->db->fetch_object($resql)) {
 					$totalSum += (float) $r->total_amount;
+					$chartLabels[] = $r->group_key ? $r->group_key : $langs->transnoentitiesnoconv('Unknown');
+					$chartData[] = (float) $r->total_amount;
 					$list[] = [
 						$colName => $r->group_key ? $r->group_key : $langs->transnoentitiesnoconv('Unknown'),
 						$langs->transnoentitiesnoconv("Number") => $r->count_inv,
@@ -607,6 +681,18 @@ class ToolReports extends McpTool
 			$summary[$langs->transnoentitiesnoconv("Number")] = "";
 		}
 		$list[] = $summary;
+
+		// Same contract as getSalesReport: grouped results carry a chart payload.
+		if (!empty($chartData)) {
+			return array(
+				'rows'  => $list,
+				'chart' => array(
+					'type'    => ($groupBy === 'month' ? 'line' : 'bar'),
+					'labels'  => $chartLabels,
+					'datasets' => array(array('label' => $langs->transnoentitiesnoconv('Amount'), 'data' => $chartData)),
+				),
+			);
+		}
 
 		return $list;
 	}
@@ -711,22 +797,22 @@ class ToolReports extends McpTool
 		$dateEnd = dol_stringtotime($args['date_end']);
 
 		// Income (Customer Invoices - Validated/Paid, no Drafts)
-		$sqlIncome = "SELECT SUM(total_ttc) as total FROM " . MAIN_DB_PREFIX . "facture
+		$sqlIncome = "SELECT SUM(f.total_ttc) as total FROM " . MAIN_DB_PREFIX . "facture as f
 					  WHERE entity IN (" . getEntity('facture') . ")
 					  AND datef >= '" . $this->db->idate($dateStart) . "'
 					  AND datef <= '" . $this->db->idate($dateEnd) . "'
-					  AND fk_statut IN (1, 2)";
+					  AND fk_statut IN (1, 2)" . $this->getThirdpartyRestrictionSql('f');
 
 		$resIncome = $this->db->query($sqlIncome);
 		$objIncome = $this->db->fetch_object($resIncome);
 		$income = $objIncome && $objIncome->total ? (float) $objIncome->total : 0.0;
 
 		// Expenses (Supplier Invoices - Validated, no Drafts)
-		$sqlExpense = "SELECT SUM(total_ttc) as total FROM " . MAIN_DB_PREFIX . "facture_fourn
+		$sqlExpense = "SELECT SUM(f.total_ttc) as total FROM " . MAIN_DB_PREFIX . "facture_fourn as f
 					   WHERE entity IN (" . getEntity('facture_fourn') . ")
 					   AND datef >= '" . $this->db->idate($dateStart) . "'
 					   AND datef <= '" . $this->db->idate($dateEnd) . "'
-					   AND fk_statut > 0";
+					   AND fk_statut > 0" . $this->getThirdpartyRestrictionSql('f');
 
 		$resExpense = $this->db->query($sqlExpense);
 		$objExpense = $this->db->fetch_object($resExpense);

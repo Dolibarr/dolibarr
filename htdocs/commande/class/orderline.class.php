@@ -15,6 +15,7 @@
  * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,6 +90,11 @@ class OrderLine extends CommonOrderLine
 	 * @var string External ref
 	 */
 	public $ref_ext;
+
+	/**
+	 * @var string Reference the customer gives to this line (line of its purchase order)
+	 */
+	public $ref_customer;
 
 	/**
 	 * @var int
@@ -192,6 +198,7 @@ class OrderLine extends CommonOrderLine
 		'fk_unit' => array('type' => 'integer:CUnits:core/class/cunits.class.php', 'label' => 'Unit', 'enabled' => 1, 'visible' => -1, 'position' => 170),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 175),
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 180),
+		'ref_customer' => array('type' => 'varchar(128)', 'label' => 'RefCustomerLine', 'enabled' => 1, 'visible' => 0, 'position' => 182),
 		'fk_commandefourndet' => array('type' => 'integer:CommandeFournisseurLigne:fourn/class/fournisseur.commande.class.php', 'label' => 'SupplierOrderLine', 'enabled' => 1, 'visible' => -1, 'position' => 185),
 		'fk_multicurrency' => array('type' => 'integer:MultiCurrency:multicurrency/class/multicurrency.class.php', 'label' => 'Currency', 'enabled' => 1, 'visible' => -1, 'position' => 190),
 		'multicurrency_code' => array('type' => 'varchar(3)', 'label' => 'CurrencyCode', 'enabled' => 1, 'visible' => -1, 'position' => 195),
@@ -213,6 +220,8 @@ class OrderLine extends CommonOrderLine
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 'fk_commande@commande';	// The entity is the one of the parent order
 	}
 
 	/**
@@ -224,7 +233,7 @@ class OrderLine extends CommonOrderLine
 	public function fetch($rowid)
 	{
 		$sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_parent_line, cd.fk_product, cd.product_type, cd.label as custom_label, cd.description, cd.price, cd.qty, cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx,';
-		$sql .= ' cd.remise, cd.remise_percent, cd.fk_remise_except, cd.subprice, cd.ref_ext,';
+		$sql .= ' cd.remise, cd.remise_percent, cd.fk_remise_except, cd.subprice, cd.subprice_ttc, cd.ref_ext, cd.ref_customer,';
 		$sql .= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.fk_product_fournisseur_price as fk_fournprice, cd.buy_price_ht as pa_ht, cd.rang, cd.special_code,';
 		$sql .= ' cd.fk_unit,';
 		$sql .= ' cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc,';
@@ -254,7 +263,9 @@ class OrderLine extends CommonOrderLine
 			$this->qty              = $objp->qty;
 			$this->price            = $objp->price;
 			$this->subprice         = $objp->subprice;
+			$this->subprice_ttc     = $objp->subprice_ttc;
 			$this->ref_ext          = $objp->ref_ext;
+			$this->ref_customer     = $objp->ref_customer;
 			$this->vat_src_code     = $objp->vat_src_code;
 			$this->tva_tx           = $objp->tva_tx;
 			$this->localtax1_tx		= $objp->localtax1_tx;
@@ -447,6 +458,9 @@ class OrderLine extends CommonOrderLine
 		if (empty($this->remise_percent)) {
 			$this->remise_percent = 0;
 		}
+		if (empty($this->subprice_ttc)) {
+			$this->subprice_ttc = 0;
+		}
 		if (empty($this->info_bits)) {
 			$this->info_bits = 0;
 		}
@@ -462,7 +476,7 @@ class OrderLine extends CommonOrderLine
 
 		// if buy price not defined (if = ''), we set the buyprice as configured in margin admin setup
 		if ($this->pa_ht == 0 && $pa_ht_isemptystring) {
-			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product);
+			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product, $this->qty);
 			if ($result < 0) {
 				return $result;
 			} else {
@@ -479,9 +493,9 @@ class OrderLine extends CommonOrderLine
 
 		// Insert line into database
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet';
-		$sql .= ' (fk_commande, fk_parent_line, label, description, qty, ref_ext,';
+		$sql .= ' (fk_commande, fk_parent_line, label, description, qty, ref_ext, ref_customer,';
 		$sql .= ' vat_src_code, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
-		$sql .= ' fk_product, product_type, remise_percent, subprice, price, fk_remise_except,';
+		$sql .= ' fk_product, product_type, remise_percent, subprice, subprice_ttc, price, fk_remise_except,';
 		$sql .= ' special_code, rang, fk_product_fournisseur_price, buy_price_ht,';
 		$sql .= ' info_bits, total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, date_start, date_end,';
 		$sql .= ' fk_unit,';
@@ -493,6 +507,7 @@ class OrderLine extends CommonOrderLine
 		$sql .= " '".$this->db->escape($this->desc)."',";
 		$sql .= " '".price2num($this->qty)."',";
 		$sql .= " '".$this->db->escape($this->ref_ext)."',";
+		$sql .= " ".(empty($this->ref_customer) ? "null" : "'".$this->db->escape($this->ref_customer)."'").",";
 		$sql .= " ".(empty($this->vat_src_code) ? "''" : "'".$this->db->escape($this->vat_src_code)."'").",";
 		$sql .= " '".price2num($this->tva_tx)."',";
 		$sql .= " '".price2num($this->localtax1_tx)."',";
@@ -503,6 +518,7 @@ class OrderLine extends CommonOrderLine
 		$sql .= " ".((int) $this->product_type).",";
 		$sql .= " '".price2num($this->remise_percent)."',";
 		$sql .= " ".(price2num($this->subprice) !== '' ? price2num($this->subprice) : "null").",";
+		$sql .= " ".price2num($this->subprice_ttc).",";
 		$sql .= " ".($this->price != '' ? "'".price2num($this->price)."'" : "null").",";
 		$sql .= ' '.(!empty($this->fk_remise_except) ? ((int) $this->fk_remise_except) : "null").',';
 		$sql .= ' '.((int) $this->special_code).',';
@@ -596,6 +612,9 @@ class OrderLine extends CommonOrderLine
 		if (empty($this->qty)) {
 			$this->qty = 0;
 		}
+		if (empty($this->subprice_ttc)) {
+			$this->subprice_ttc = 0;
+		}
 		if (empty($this->total_localtax1)) {
 			$this->total_localtax1 = 0;
 		}
@@ -638,7 +657,7 @@ class OrderLine extends CommonOrderLine
 
 		// if buy price not defined, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0 && $pa_ht_isemptystring) {
-			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product);
+			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product, $this->qty);
 			if ($result < 0) {
 				return $result;
 			} else {
@@ -660,7 +679,9 @@ class OrderLine extends CommonOrderLine
 		$sql .= " , localtax2_type='".$this->db->escape($this->localtax2_type)."'";
 		$sql .= " , qty=".price2num($this->qty);
 		$sql .= " , ref_ext='".$this->db->escape($this->ref_ext)."'";
+		$sql .= " , ref_customer=".(empty($this->ref_customer) ? "null" : "'".$this->db->escape($this->ref_customer)."'");
 		$sql .= " , subprice=".price2num($this->subprice);
+		$sql .= " , subprice_ttc=".price2num($this->subprice_ttc);
 		$sql .= " , remise_percent=".price2num($this->remise_percent);
 		$sql .= " , price=".price2num($this->price); // TODO A virer
 		$sql .= " , remise=".price2num($this->remise); // TODO A virer

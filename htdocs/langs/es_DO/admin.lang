@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - admin
+ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\myapp\\mydocumentdir\\mysubdir<br>/home/myapp/mydocumentdir/mysubdir<br>DOL_DATA_ROOT/ecm/ecmdir
 OldVATRates=Tasa de ITBIS antigua
 NewVATRates=Tasa de ITBIS nueva
 Permission91=Consultar impuestos e ITBIS

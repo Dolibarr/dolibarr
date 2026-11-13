@@ -2,7 +2,7 @@
 /* Module descriptor for ticket system
  * Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
  * Copyright (C) 2016       Christophe Battarel     <christophe@altairis.fr>
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -79,21 +79,26 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 		$badgeStatus7 = '#baa32b';
 		$badgeStatus8 = '#993013';
 		$badgeStatus9 = '#e7f0f0';
-		if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php')) {
-			include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+		$theme_vars_file = dol_getThemeFilePath('theme_vars.inc.php');
+		if ($theme_vars_file) {
+			include $theme_vars_file;
 		}
 		$this->max = $max;
 
 
-		$param_day = 'DOLUSER_ticket_last_days';
-		if (GETPOST($param_day)) {
-			if (GETPOST($param_day) >= 15) {
-				$days = 14;
-			} else {
-				$days = GETPOST($param_day);
-			}
+		// Field name must be <cookiename>_<key> so DOL_AUTOSET_COOKIE in main.inc.php can save it into cookie DOLUSER_ticket_last_days
+		$param_day = 'DOLUSER_ticket_last_days_days';
+		$autosetarray = preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
+		if (in_array('DOLUSER_ticket_last_days', $autosetarray)) {
+			$days = GETPOSTINT($param_day);
 		} else {
+			$tmparray = (!empty($_COOKIE['DOLUSER_ticket_last_days']) ? json_decode($_COOKIE['DOLUSER_ticket_last_days'], true) : array());
+			$days = ((is_array($tmparray) && !empty($tmparray['days'])) ? (int) $tmparray['days'] : 0);
+		}
+		if ($days <= 0) {
 			$days = 7;
+		} elseif ($days >= 15) {
+			$days = 14;
 		}
 		require_once DOL_DOCUMENT_ROOT."/ticket/class/ticket.class.php";
 		$text = $langs->trans("BoxTicketLastXDays", $days).'&nbsp;'.img_picto('', 'filter.png', 'id="idsubimgDOLUSER_ticket_last_days" class="linkobject"');

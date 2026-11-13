@@ -260,7 +260,7 @@ class Context
 		//** below the addition of DocumentListController adding files by third party attached documents
 		$this->addControllerDefinition('documentlist', $defaultControllersPath . 'documentlist.controller.class.php', 'DocumentListController');
 		//** Below is the addition to the menu of the DocumentUtileController.class.php controller in order to share via the GED (documents) "Documentscomptes"
-		$this->addControllerDefinition('documentutile', $defaultControllersPath . 'documentutile.controller.class.php', 'DocumentUtileController');
+		$this->addControllerDefinition('shareddocuments', $defaultControllersPath . 'shareddocuments.controller.class.php', 'SharedDocumentsController');
 		$this->addControllerDefinition('viewimage', $defaultControllersPath . 'viewimage.controller.class.php', 'ViewImageController');
 
 		// Hooks for init controller
@@ -297,7 +297,7 @@ class Context
 		$fileName = basename($path);
 		$needle = '.controller.class.php';
 		$length = strlen($needle);
-		$isControllerFile = $length > 0 ? substr($fileName, -$length) === $needle : true;
+		$isControllerFile = $length > 0 ? dol_substr($fileName, -$length) === $needle : true;
 		if (!$isControllerFile) {
 			$this->setError('Error: controller definition ' . $fileName);
 			return false;

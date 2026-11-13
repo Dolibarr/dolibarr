@@ -215,8 +215,8 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " ".(!isset($this->code) ? "NULL" : "'".$this->db->escape($this->code)."'").",";
 		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").",";
 		$sql .= " ".(!isset($this->range_account) ? 'NULL' : "'".$this->db->escape($this->range_account)."'").",";
-		$sql .= " ".(!isset($this->sens) ? 'NULL' : "'".$this->db->escape((string) $this->sens)."'").",";
-		$sql .= " ".(!isset($this->category_type) ? 'NULL' : "'".$this->db->escape((string) $this->category_type)."'").",";
+		$sql .= " ".(!isset($this->sens) ? "NULL" : ((int) $this->sens)).",";
+		$sql .= " ".(!isset($this->category_type) ? "NULL" : ((int) $this->category_type)).",";
 		$sql .= " ".(!isset($this->formula) ? 'NULL' : "'".$this->db->escape($this->formula)."'").",";
 		$sql .= " ".(!isset($this->position) ? 'NULL' : ((int) $this->position)).",";
 		$sql .= " ".(!isset($this->fk_country) ? 'NULL' : ((int) $this->fk_country)).",";
@@ -864,7 +864,17 @@ class AccountancyCategory // extends CommonObject
 			$pcgvercode = $pcgverid;
 		}
 
-		if (!empty($cat_id)) {
+		if (!empty($cat_id) && getDolGlobalInt('ACCOUNTING_ENABLE_MULTI_REPORT')) {
+			// Multi report system: accounts of a group are into table accounting_category_account
+			$sql = "SELECT t.rowid, t.account_number, t.label as account_label";
+			$sql .= " FROM ".$this->db->prefix()."accounting_account as t";
+			$sql .= " INNER JOIN ".$this->db->prefix()."accounting_category_account as aca ON aca.fk_accounting_account = t.rowid";
+			$sql .= " WHERE aca.fk_accounting_category = ".((int) $cat_id);
+			$sql .= " AND t.entity = ".((int) $conf->entity);
+			$sql .= " AND t.active = 1";
+			$sql .= " AND t.fk_pcg_version = '".$this->db->escape($pcgvercode)."'";
+			$sql .= " ORDER BY t.account_number";
+		} elseif (!empty($cat_id)) {
 			$sql = "SELECT t.rowid, t.account_number, t.label as account_label";
 			$sql .= " FROM ".$this->db->prefix()."accounting_account as t";
 			$sql .= " WHERE t.fk_accounting_category = ".((int) $cat_id);

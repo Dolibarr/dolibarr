@@ -768,25 +768,42 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 			$dayoffset = 0;
 			$monthoffset = 0;
 			$yearoffset = 0;
+			$monthlyanchor = 0;
+			$monthlyoccurrence = 0;
+			// Timezone in which days, months and years are added to build the next occurrences. It must be the
+			// same as the one used by the dol_mktime() calls below. Without it, dol_time_plus_duree() adds the
+			// delay in UTC, so it keeps the elapsed time instead of the wall clock and a series that crosses a
+			// daylight saving time change is shifted by one hour (a weekly 9:00 event becomes 8:00).
+			$tzforrecurrence = 'tzserver';
+			if ($tzforfullday) {	// Full day events are stored in GMT, so adding the delay in GMT is correct
+				$tzforrecurrence = 'gmt';
+			} elseif (!empty($_SESSION['dol_tz_string'])) {
+				try {
+					$tmptz = new DateTimeZone($_SESSION['dol_tz_string']);
+					$tzforrecurrence = $tmptz->getName();
+				} catch (Exception $e) {	// Fall back on the timezone of the server, like dol_mktime() does
+					dol_syslog("Warning dol_tz_string contains an invalid value ".json_encode($_SESSION['dol_tz_string']), LOG_WARNING);
+					$tzforrecurrence = 'tzserver';
+				}
+			}
 			// We set first date of recurrence and offsets
 			if ($selectedrecurrulefreq == 'WEEKLY' && !empty($selectedrecurrulebyday)) {
 				$firstdatearray = dol_get_first_day_week(GETPOSTINT("apday"), GETPOSTINT("apmonth"), GETPOSTINT("apyear"));
 				$datep = dol_mktime($fulldayevent ? 0 : GETPOSTINT("aphour"), $fulldayevent ? 0 : GETPOSTINT("apmin"), $fulldayevent ? 0 : GETPOSTINT("apsec"), $firstdatearray['month'], $firstdatearray['first_day'], $firstdatearray['year'], $tzforfullday ? $tzforfullday : 'tzuserrel');
-				$datep = dol_time_plus_duree($datep, $selectedrecurrulebyday + 6, 'd');//We begin the week after
+				$datep = dol_time_plus_duree($datep, $selectedrecurrulebyday + 6, 'd', 0, $tzforrecurrence);//We begin the week after
 				$dayoffset = 7;
 				$monthoffset = 0;
 				$yearoffset = 0;
 			} elseif ($selectedrecurrulefreq == 'MONTHLY' && !empty($selectedrecurrulebymonthday)) {
-				$firstday = $selectedrecurrulebymonthday;
-				$firstmonth = GETPOST("apday") > $selectedrecurrulebymonthday ? GETPOSTINT("apmonth") + 1 : GETPOSTINT("apmonth");//We begin the month after
-				$datep = dol_mktime($fulldayevent ? 0 : GETPOSTINT("aphour"), $fulldayevent ? 0 : GETPOSTINT("apmin"), $fulldayevent ? 0 : GETPOSTINT("apsec"), $firstmonth, $firstday, GETPOSTINT("apyear"), $tzforfullday ? $tzforfullday : 'tzuserrel');
-				$datep = dol_time_plus_duree($datep, 1, 'm');//We begin the month after
+				$monthlyanchor = (int) $object->datep;
+				$monthlyoccurrence = 1;
+				$datep = dol_time_plus_duree($monthlyanchor, $monthlyoccurrence, 'm', 1, $tzforrecurrence);
 				$dayoffset = 0;
 				$monthoffset = 1;
 				$yearoffset = 0;
 			} elseif ($selectedrecurrulefreq == 'YEARLY' && !empty($selectedrecurrulebyyearmonthday)) {
 				$datep = dol_mktime($fulldayevent ? 0 : GETPOSTINT("aphour"), $fulldayevent ? 0 : GETPOSTINT("apmin"), $fulldayevent ? 0 : GETPOSTINT("apsec"), GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), $tzforfullday ? $tzforfullday : 'tzuserrel');
-				$datep = dol_time_plus_duree($datep, 1, 'y');//We begin the year after
+				$datep = dol_time_plus_duree($datep, 1, 'y', 0, $tzforrecurrence);//We begin the year after
 				$dayoffset = 0;
 				$monthoffset = 0;
 				$yearoffset = 1;
@@ -794,10 +811,17 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 				$error++;
 			}
 			// End date
-			// Set date of end of event
+			// Set date of end of event. The delay is added in the same timezone as the start date, so the
+			// wall clock of the end date is kept too. But when the start date falls into an hour that does
+			// not exist (spring forward), it is moved forward and may end up after the end date, so in that
+			// case only we rebuild the end date from the duration of the submitted event.
+			$durationofevent = (strval($datef) != '' && strval($object->datep) != '') ? ((int) $datef - (int) $object->datep) : 0;
 			$deltatime = num_between_day($object->datep, $datep);
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-			$datef = dol_time_plus_duree($datef, $deltatime, 'd');
+			$datef = dol_time_plus_duree($datef, $deltatime, 'd', 0, $tzforrecurrence);
+			if ($durationofevent > 0 && $datef <= $datep) {
+				$datef = $datep + $durationofevent;
+			}
 
 			while ($datep <= $repeateventlimitdate && !$error) {
 				$finalobject = clone $object;
@@ -882,12 +906,21 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 				}
 
 				// increment date for recurrent events
-				$datep = dol_time_plus_duree($datep, $dayoffset, 'd');
-				$datep = dol_time_plus_duree($datep, $monthoffset, 'm');  // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
-				$datep = dol_time_plus_duree($datep, $yearoffset, 'y');  // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
-				$datef = dol_time_plus_duree($datef, $dayoffset, 'd');
-				$datef = dol_time_plus_duree($datef, $monthoffset, 'm');  // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
-				$datef = dol_time_plus_duree($datef, $yearoffset, 'y');  // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
+				if ($selectedrecurrulefreq == 'MONTHLY' && !empty($selectedrecurrulebymonthday)) {
+					$monthlyoccurrence++;
+					$datep = dol_time_plus_duree($monthlyanchor, $monthlyoccurrence, 'm', 1, $tzforrecurrence);
+					$datef = dol_time_plus_duree($datep, $deltatime, 'd', 0, $tzforrecurrence);  // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
+				} else {
+					$datep = dol_time_plus_duree($datep, $dayoffset, 'd', 0, $tzforrecurrence);
+					$datep = dol_time_plus_duree($datep, $monthoffset, 'm', 0, $tzforrecurrence);  // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
+					$datep = dol_time_plus_duree($datep, $yearoffset, 'y', 0, $tzforrecurrence);  // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
+					$datef = dol_time_plus_duree($datef, $dayoffset, 'd', 0, $tzforrecurrence);
+					$datef = dol_time_plus_duree($datef, $monthoffset, 'm', 0, $tzforrecurrence);  // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
+					$datef = dol_time_plus_duree($datef, $yearoffset, 'y', 0, $tzforrecurrence);  // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
+				}
+				if ($durationofevent > 0 && $datef <= $datep) {
+					$datef = $datep + $durationofevent;
+				}
 			}
 		}
 
@@ -1102,61 +1135,17 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 		}
 
 		if (!$error) {
-			// check if an event resource is already in use
-			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $object->element == 'action') {
-				$eventDateStart = $object->datep;
-				$eventDateEnd = $object->datef;
-
-				$sql  = "SELECT er.rowid, r.ref as r_ref, ac.id as ac_id, ac.label as ac_label";
-				$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."resource as r ON r.rowid = er.resource_id AND er.resource_type = 'dolresource'";
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as ac ON ac.id = er.element_id AND er.element_type = '".$db->escape($object->element)."'";
-				$sql .= " WHERE ac.id <> ".((int) $object->id);
-				$sql .= " AND er.resource_id IN (";
-				$sql .= " SELECT resource_id FROM ".MAIN_DB_PREFIX."element_resources";
-				$sql .= " WHERE element_id = ".((int) $object->id);
-				$sql .= " AND element_type = '".$db->escape($object->element)."'";
-				$sql .= " AND busy = 1";
-				$sql .= ")";
-				$sql .= " AND er.busy = 1";
-				$sql .= " AND (";
-
-				// event date start between ac.datep and ac.datep2 (if datep2 is null we consider there is no end)
-				$sql .= " (ac.datep <= '".$db->idate($eventDateStart)."' AND (ac.datep2 IS NULL OR ac.datep2 >= '".$db->idate($eventDateStart)."'))";
-				// event date end between ac.datep and ac.datep2
-				if (!empty($eventDateEnd)) {
-					$sql .= " OR (ac.datep <= '".$db->idate($eventDateEnd)."' AND (ac.datep2 >= '".$db->idate($eventDateEnd)."'))";
-				}
-				// event date start before ac.datep and event date end after ac.datep2
-				$sql .= " OR (";
-				$sql .= "ac.datep >= '".$db->idate($eventDateStart)."'";
-				if (!empty($eventDateEnd)) {
-					$sql .= " AND (ac.datep2 IS NOT NULL AND ac.datep2 <= '".$db->idate($eventDateEnd)."')";
-				}
-				$sql .= ")";
-
-				$sql .= ")";
-				$resql = $db->query($sql);
-				if (!$resql) {
-					$error++;
-					$object->error = $db->lasterror();
-					$object->errors[] = $object->error;
-				} else {
-					if ($db->num_rows($resql) > 0) {
-						// Resource already in use
-						$error++;
-						$object->error = $langs->trans('ErrorResourcesAlreadyInUse').' : ';
-						while ($obj = $db->fetch_object($resql)) {
-							$object->error .= '<br> - '.$langs->trans('ErrorResourceUseInEvent', $obj->r_ref, $obj->ac_label.' ['.$obj->ac_id.']');
-						}
-						$object->errors[] = $object->error;
-					}
-					$db->free($resql);
-				}
-
-				if ($error) {
-					setEventMessages($object->error, $object->errors, 'errors');
-				}
+			// Check that no resource attached to this event is already booked on the same slot
+			$conflicts = $object->checkResourceConflicts($object->datep, $object->datef);
+			if ($conflicts === -1) {
+				$error++;
+				$object->errors[] = $object->error;
+				setEventMessages($object->error, $object->errors, 'errors');
+			} elseif (!empty($conflicts)) {
+				$error++;
+				$object->error = $object->formatResourceConflicts($conflicts, $langs);
+				$object->errors[] = $object->error;
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 
@@ -1254,19 +1243,72 @@ if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes
 	$object->fetch_userassigned();
 	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
-	$result = $object->delete($user);
+	if (GETPOST('deletescope', 'aZ09') == 'serie' && !empty($object->recurid)) {
+		// A recurring event is not a master event with occurrences but N independent events, so the
+		// whole series is deleted event by event, all of them or none of them.
+		$idsofserie = $object->getIdsOfRecurringSerie();
 
-	if ($result >= 0) {
-		header("Location: index.php");
-		exit;
+		if (!is_array($idsofserie)) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		} else {
+			$error = 0;
+			$nbdeleted = 0;
+
+			$db->begin();
+
+			foreach ($idsofserie as $idtodelete) {
+				$eventofserie = new ActionComm($db);
+				if ($eventofserie->fetch($idtodelete) <= 0) {
+					$error++;
+					setEventMessages($eventofserie->error, $eventofserie->errors, 'errors');
+					break;
+				}
+
+				// The permission is checked again on each event of the series: a user allowed on its
+				// own events only must not delete the series when one event belongs to someone else.
+				if (!$user->hasRight('agenda', 'allactions', 'delete')
+					&& !(($eventofserie->authorid == $user->id || $eventofserie->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'delete'))) {
+					$error++;
+					setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
+					break;
+				}
+
+				$eventofserie->fetch_optionals();
+				$eventofserie->oldcopy = dol_clone($eventofserie, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+
+				if ($eventofserie->delete($user) < 0) {
+					$error++;
+					setEventMessages($eventofserie->error, $eventofserie->errors, 'errors');
+					break;
+				}
+				$nbdeleted++;
+			}
+
+			if ($error) {
+				$db->rollback();
+			} else {
+				$db->commit();
+				setEventMessages($langs->trans("RecordsDeleted", $nbdeleted), null, 'mesgs');
+				header("Location: index.php");
+				exit;
+			}
+		}
 	} else {
-		setEventMessages($object->error, $object->errors, 'errors');
+		$result = $object->delete($user);
+
+		if ($result >= 0) {
+			header("Location: index.php");
+			exit;
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 }
 
 /*
- * Action move update, used when user move an event in calendar by drag'n drop
- * TODO Move this into page comm/action/index that trigger this call by the drag and drop of event.
+ * Action move update, used when user moves an event in calendar by drag'n drop.
+ * The agenda calendar UI now calls comm/action/ajax/ajaxmoveevent.php instead (Ajax, no
+ * page reload); this handler is kept as a standalone POST entry point for any other caller.
  */
 if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate' && $usercancreate) {
 	$error = 0;
@@ -1275,7 +1317,7 @@ if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate' && $usercancr
 	$smin = (int) dol_print_date($object->datep, "%M", 'tzuserrel');
 
 	$newdate = GETPOST('newdate', 'alpha');
-	if (empty($newdate) || strpos($newdate, 'dayevent_') != 0) {
+	if (empty($newdate) || strpos($newdate, 'dayevent_') !== 0) {
 		header("Location: ".$backtopage, true, 307);
 		exit;
 	}
@@ -1290,61 +1332,16 @@ if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate' && $usercancr
 		$object->datep = $datep;
 
 		if (!$error) {
-			// check if an event resource is already in use
-			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $object->element == 'action') {
-				$eventDateStart = $object->datep;
-				$eventDateEnd = $object->datef;
-
-				$sql  = "SELECT er.rowid, r.ref as r_ref, ac.id as ac_id, ac.label as ac_label";
-				$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."resource as r ON r.rowid = er.resource_id AND er.resource_type = 'dolresource'";
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as ac ON ac.id = er.element_id AND er.element_type = '".$db->escape($object->element)."'";
-				$sql .= " WHERE ac.id <> ".((int) $object->id);
-				$sql .= " AND er.resource_id IN (";
-				$sql .= " SELECT resource_id FROM ".MAIN_DB_PREFIX."element_resources";
-				$sql .= " WHERE element_id = ".((int) $object->id);
-				$sql .= " AND element_type = '".$db->escape($object->element)."'";
-				$sql .= " AND busy = 1";
-				$sql .= ")";
-				$sql .= " AND er.busy = 1";
-				$sql .= " AND (";
-
-				// event date start between ac.datep and ac.datep2 (if datep2 is null we consider there is no end)
-				$sql .= " (ac.datep <= '".$db->idate($eventDateStart)."' AND (ac.datep2 IS NULL OR ac.datep2 >= '".$db->idate($eventDateStart)."'))";
-				// event date end between ac.datep and ac.datep2
-				if (!empty($eventDateEnd)) {
-					$sql .= " OR (ac.datep <= '".$db->idate($eventDateEnd)."' AND (ac.datep2 >= '".$db->idate($eventDateEnd)."'))";
-				}
-				// event date start before ac.datep and event date end after ac.datep2
-				$sql .= " OR (";
-				$sql .= "ac.datep >= '".$db->idate($eventDateStart)."'";
-				if (!empty($eventDateEnd)) {
-					$sql .= " AND (ac.datep2 IS NOT NULL AND ac.datep2 <= '".$db->idate($eventDateEnd)."')";
-				}
-				$sql .= ")";
-
-				$sql .= ")";
-				$resql = $db->query($sql);
-				if (!$resql) {
-					$error++;
-					$object->error = $db->lasterror();
-					$object->errors[] = $object->error;
-				} else {
-					if ($db->num_rows($resql) > 0) {
-						// Resource already in use
-						$error++;
-						$object->error = $langs->trans('ErrorResourcesAlreadyInUse').' : ';
-						while ($obj = $db->fetch_object($resql)) {
-							$object->error .= '<br> - '.$langs->trans('ErrorResourceUseInEvent', $obj->r_ref, $obj->ac_label.' ['.$obj->ac_id.']');
-						}
-						$object->errors[] = $object->error;
-					}
-					$db->free($resql);
-				}
-
-				if ($error) {
-					setEventMessages($object->error, $object->errors, 'errors');
-				}
+			$conflicts = $object->checkResourceConflicts($object->datep, $object->datef);
+			if ($conflicts === -1) {
+				$error++;
+				$object->errors[] = $object->error;
+				setEventMessages($object->error, $object->errors, 'errors');
+			} elseif (!empty($conflicts)) {
+				$error++;
+				$object->error = $object->formatResourceConflicts($conflicts, $langs);
+				$object->errors[] = $object->error;
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 
@@ -1370,7 +1367,7 @@ if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate' && $usercancr
 
 // Actions to delete doc
 $upload_dir = $conf->agenda->dir_output.'/'.dol_sanitizeFileName($object->ref);
-$permissiontoadd = ($user->hasRight('agenda', 'allactions', 'create') || (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'read')));
+$permissiontoadd = ($user->hasRight('agenda', 'allactions', 'create') || (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create')));
 if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
@@ -1818,19 +1815,9 @@ if ($action == 'create') {
 		}
 		print img_picto('', 'contact', 'class="pictofixedwidth"');
 
-		if (getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT') && $conf->use_javascript_ajax) {
-			// FIXME Use a select without the "multiple" (not supported when CONTACT_USE_SEARCH_TO_SELECT is on) or allow use only when $object->socid is set...
-			/*
-			 $selected = array_keys($object->socpeopleassigned);
-			 print $form->select_contact(getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? 0 : $object->socid, $selected, 'socpeopleassigned', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', false, 0, 0, []);
-			 */
-			$sav = getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT');
-			$conf->global->CONTACT_USE_SEARCH_TO_SELECT = 0;
-			print $form->selectcontacts(GETPOSTISSET('socid') ? GETPOSTINT('socid') : $select_contact_default, $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'minwidth300 widthcentpercentminusxx maxwidth500', 0, 0, 0, [], 'multiple', 'contactid');
-			$conf->global->CONTACT_USE_SEARCH_TO_SELECT = $sav;
-		} else {
-			print $form->selectcontacts(GETPOSTISSET('socid') ? GETPOSTINT('socid') : $select_contact_default, $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'minwidth300 widthcentpercentminusxx maxwidth500', 0, 0, 0, [], 'multiple', 'contactid');
-		}
+		// select_contact() itself renders the ajax select2 combo when CONTACT_USE_SEARCH_TO_SELECT is on
+		// (nokeyifsocid=false so a $socid does not force it off), or the full-list combo otherwise.
+		print $form->select_contact(GETPOSTISSET('socid') ? GETPOSTINT('socid') : $select_contact_default, $preselectedids, 'socpeopleassigned', 1, '', '', 0, 'minwidth300 widthcentpercentminusxx maxwidth500', false, 0, 0, array(), '', 'contactid', '', '', true);
 
 		print '</td></tr>';
 	}
@@ -2130,7 +2117,34 @@ if ($id > 0 && $action != 'create') {
 
 	// Deletion confirmation action
 	if ($action == 'delete') {
-		print $form->formconfirm("card.php?id=".urlencode((string) ($id)), $langs->trans("DeleteAction"), $langs->trans("ConfirmDeleteAction"), "confirm_delete", '', '', 1);
+		$formquestion = array();
+
+		// A recurring series is N independent events, so without this choice, undoing a series
+		// created by mistake or due to a data entry error, means deleting its events one by one.
+		if (!empty($object->recurid)) {
+			$idsofserie = $object->getIdsOfRecurringSerie();
+
+			if (is_array($idsofserie) && count($idsofserie) > 1) {
+				// The ids are sorted by date, so the first and the last event give the period covered
+				$firstofserie = new ActionComm($db);
+				$firstofserie->fetch($idsofserie[0]);
+				$lastofserie = new ActionComm($db);
+				$lastofserie->fetch($idsofserie[count($idsofserie) - 1]);
+
+				$formquestion[] = array(
+					'type' => 'radio',
+					'name' => 'deletescope',
+					'label' => $langs->trans("ThisEventIsPartOfARecurringSerie"),
+					'default' => 'event',
+					'values' => array(
+						'event' => $langs->trans("DeleteThisEventOnly"),
+						'serie' => $langs->trans("DeleteAllEventsOfTheSerie", count($idsofserie), dol_print_date($firstofserie->datep, 'day'), dol_print_date($lastofserie->datep, 'day'))
+					)
+				);
+			}
+		}
+
+		print $form->formconfirm("card.php?id=".urlencode((string) ($id)), $langs->trans("DeleteAction"), $langs->trans("ConfirmDeleteAction"), "confirm_delete", $formquestion, '', 1);
 	}
 
 	if ($action == 'edit') {
@@ -2211,7 +2225,8 @@ if ($id > 0 && $action != 'create') {
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td>'.$object->id.'</td></tr>';
 
 		// Title
-		print '<tr><td class="fieldrequired'.(!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? ' titlefieldcreate' : '').'">'.$langs->trans("Title").'</td><td><input type="text" name="label" class="soixantepercent" value="'.$object->label.'"></td></tr>';
+		print '<tr><td class="fieldrequired'.(!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? ' titlefieldcreate' : '').'">'.$langs->trans("Title").'</td>';
+		print '<td><input type="text" name="label" class="soixantepercent" value="'.dolPrintHTMLForAttribute($object->label).'"></td></tr>';
 
 		// Type of event
 		if (getDolGlobalString('AGENDA_USE_EVENT_TYPE') && $object->elementtype != "ticket") {
@@ -2400,20 +2415,10 @@ if ($id > 0 && $action != 'create') {
 			print '<div class="maxwidth200onsmartphone">';
 
 			print img_picto('', 'contact', 'class="paddingrightonly"');
-			if (getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT') && $conf->use_javascript_ajax) {
-				// FIXME Use the select_contact supporting the "multiple"
-				/*
-				$selected = array_keys($object->socpeopleassigned);
-				print $form->select_contact(getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? 0 : $object->socid, $selected, 'socpeopleassigned', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', false, 0, 0, []);
-				*/
-				$sav = getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT');
-				$conf->global->CONTACT_USE_SEARCH_TO_SELECT = 0;
-				print $form->selectcontacts(getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? 0 : ($object->socid > 0 ? $object->socid : -1), array_keys($object->socpeopleassigned), 'socpeopleassigned[]', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', 0, 0, 0, [], 'multiple', 'contactid');
-				$conf->global->CONTACT_USE_SEARCH_TO_SELECT = $sav;
-			} else {
-				// Warning: MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT will hangs on large databases
-				print $form->selectcontacts(getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? 0 : $object->socid, array_keys($object->socpeopleassigned), 'socpeopleassigned[]', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', 0, 0, 0, [], 'multiple', 'contactid');
-			}
+			// Warning: MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT will hangs on large databases.
+			// select_contact() itself renders the ajax select2 combo when CONTACT_USE_SEARCH_TO_SELECT is on
+			// (nokeyifsocid=false so a $socid does not force it off), or the full-list combo otherwise.
+			print $form->select_contact(getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? 0 : ($object->socid > 0 ? $object->socid : -1), array_keys($object->socpeopleassigned), 'socpeopleassigned', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', false, 0, 0, array(), '', 'contactid', '', '', true);
 			print '</div>';
 			print '</td>';
 			print '</tr>';
@@ -2659,7 +2664,7 @@ if ($id > 0 && $action != 'create') {
 
 		print '</form>';
 	} else {
-		print dol_get_fiche_head($head, 'card', $langs->trans("Action"), -1, 'action');
+		print dol_get_fiche_head($head, 'card', $langs->trans("Action"), -1, 'action', 0, '', '', 0, '', 1);
 
 		$formconfirm = '';
 
@@ -3042,13 +3047,13 @@ if ($id > 0 && $action != 'create') {
 
 			if ($user->hasRight('agenda', 'allactions', 'create') ||
 			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'))) {
-				print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="card.php?action=clone&object='.$object->element.'&id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
+				print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("ToClone"), $langs->trans("ToClone"), 'clone', 'card.php?action=clone&token='.newToken().'&object='.$object->element.'&id='.$object->id, '', true, array('attr' => array('class' => 'reposition'))).'</div>';
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("ToClone").'</a></div>';
 			}
 
 			if ($usercandelete) {
-				print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a></div>';
+				print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', true, array('attr' => array('class' => 'reposition'))).'</div>'."\n";
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Delete").'</a></div>';
 			}

@@ -111,6 +111,9 @@ $arrayfields = array(
 	'ba.label'			=> array('label' => "BankAccount", 'checked' => '1', 'position' => 70, 'enabled' => (string) (int) (isModEnabled("bank"))),
 	'pd.amount'			=> array('label' => "Amount", 'checked' => '1', 'position' => 80),
 );
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 $optioncss = GETPOST('optioncss', 'alpha');
@@ -194,6 +197,10 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON (b.rowid = pd.fk_bank)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON (ba.rowid = b.fk_account)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (s.rowid = d.fk_soc)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON (c.id = pd.fk_typepayment)";
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE d.entity IN (".getEntity('donation').")";
 
 if ($search_ref) {
@@ -318,6 +325,11 @@ if ($search_payment_num) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
+
+// Add $param from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action);	// Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
 
 print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 if ($optioncss != '') {
@@ -639,6 +651,11 @@ while ($i < $imaxinloop) {
 			$totalarray['val']['amount'] += $obj->amount;
 		}
 	}
+
+	// Fields from hook
+	$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
+	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
 	if (!$conf->main_checkbox_left_column) {
 		print '<td class="nowrap center">';
