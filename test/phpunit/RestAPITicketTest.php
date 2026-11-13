@@ -187,6 +187,82 @@ class RestAPITicketTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * Update a ticket, fields set by core and workflow fields must not be changed
+	 *
+	 * @return void
+	 */
+	public function testRestTicketUpdate()
+	{
+		$test = "Update a ticket";
+
+		$ticket_id = $this->createTicket($test);
+		$result = $this->getUrl('tickets/'.$ticket_id, $test);
+		$track_id = (string) $result['content']['track_id'];
+		$status = (int) $result['content']['status'];
+		$this->assertNotEmpty($track_id, "$test The ticket must have a track id");
+
+		$data = array(
+			"subject" => "Ticket updated via the REST API",
+			"track_id" => "testRestTicketTrackId".mt_rand(),
+			"status" => $status,
+		);
+		$result = $this->getUrl('tickets/'.$ticket_id, $test, 'PUT', $data);
+		$this->assertEquals("Ticket updated via the REST API", $result['content']['subject'] ?? null, "$test The subject must be returned updated");
+
+		$result = $this->getUrl('tickets/'.$ticket_id, $test);
+		$this->assertEquals("Ticket updated via the REST API", $result['content']['subject'] ?? null, "$test The subject must be saved");
+		$this->assertEquals($track_id, $result['content']['track_id'] ?? null, "$test The track id must not be changed");
+
+		// The status and the assigned user have their own requests
+		$this->getUrl('tickets/'.$ticket_id, "$test with another status", 'PUT', array("status" => ($status == 8 ? 9 : 8)), 400);
+		$this->getUrl('tickets/'.$ticket_id, "$test with another assigned user", 'PUT', array("fk_user_assign" => ((int) ($result['content']['fk_user_assign'] ?? 0) == 1 ? 0 : 1)), 400);
+		$result = $this->getUrl('tickets/'.$ticket_id, $test);
+		$this->assertEquals($status, (int) $result['content']['status'], "$test The status must not be changed");
+	}
+
+	/**
+	 * Update the thirdparty of a ticket with socid or fk_soc
+	 *
+	 * @return void
+	 */
+	public function testRestTicketUpdateThirdparty()
+	{
+		$test = "Update the thirdparty of a ticket";
+
+		$ticket_id = $this->createTicket($test);
+
+		$result = $this->getUrl('thirdparties', $test, 'POST', array("name" => "testRestTicketUpdate".mt_rand()));
+		$socid = (int) $result['content'];
+		$this->assertGreaterThan(0, $socid, "$test Id of thirdparty is not > 0");
+		array_push($this->objectstodelete, 'thirdparties/'.$socid);
+
+		$this->getUrl('tickets/'.$ticket_id, "$test with socid", 'PUT', array("socid" => $socid));
+		$result = $this->getUrl('tickets/'.$ticket_id, "$test with socid");
+		$this->assertEquals($socid, (int) ($result['content']['fk_soc'] ?? 0), "$test with socid The ticket must be linked to the thirdparty");
+
+		$this->getUrl('tickets/'.$ticket_id, "$test with an unknown fk_soc", 'PUT', array("fk_soc" => 999999999), 404);
+		$this->getUrl('tickets/'.$ticket_id, "$test with different socid and fk_soc", 'PUT', array("socid" => $socid, "fk_soc" => 999999999), 400);
+		$result = $this->getUrl('tickets/'.$ticket_id, $test);
+		$this->assertEquals($socid, (int) ($result['content']['fk_soc'] ?? 0), "$test The thirdparty must not be changed by refused requests");
+
+		$this->getUrl('tickets/'.$ticket_id, "$test with fk_soc 0", 'PUT', array("fk_soc" => 0));
+		$result = $this->getUrl('tickets/'.$ticket_id, "$test with fk_soc 0");
+		$this->assertEmpty($result['content']['fk_soc'] ?? null, "$test with fk_soc 0 The ticket must no longer be linked to the thirdparty");
+	}
+
+	/**
+	 * Update a ticket that does not exist
+	 *
+	 * @return void
+	 */
+	public function testRestTicketUpdateUnknownTicket()
+	{
+		$test = "Update a ticket that does not exist";
+
+		$this->getUrl('tickets/999999999', $test, 'PUT', array("subject" => "Ticket updated via the REST API"), 404);
+	}
+
+	/**
 	 * Unlink a contact that is not linked to a ticket
 	 *
 	 * @return void

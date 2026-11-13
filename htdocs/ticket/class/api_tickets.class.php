@@ -587,6 +587,10 @@ class Tickets extends DolibarrApi
 	/**
 	 * Update ticket
 	 *
+	 * The thirdparty can be given with socid or fk_soc. The status and the assigned
+	 * user can not be changed here: use the close and assign requests. The id, entity,
+	 * ref, track id, author and dates set by core are ignored.
+	 *
 	 * @since	8.0.0	Initial implementation
 	 *
 	 * @param 	int   	$id             	Id of ticket to update
@@ -594,6 +598,11 @@ class Tickets extends DolibarrApi
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object						Updated object
+	 *
+	 * @throws	RestException	400 socid and fk_soc are different, or status or assigned user changed
+	 * @throws	RestException	403 Not allowed
+	 * @throws	RestException	404 Ticket or thirdparty not found
+	 * @throws	RestException	500 Error when updating
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -601,8 +610,7 @@ class Tickets extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$result = $this->ticket->fetch($id);
-		if (!$result) {
+		if ($this->ticket->fetch((int) $id) <= 0) {
 			throw new RestException(404, 'Ticket not found');
 		}
 
@@ -610,8 +618,42 @@ class Tickets extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		if (!is_array($request_data)) {
+			$request_data = array();
+		}
+
+		// Status and assignment have their own routes, which run the checks, the triggers and the contact update
+		foreach (array('status', 'fk_statut', 'statut') as $field) {
+			if (isset($request_data[$field]) && (int) $request_data[$field] != (int) $this->ticket->status) {
+				throw new RestException(400, 'The status can not be changed with this request, use POST /tickets/{id}/close or POST /tickets/{id}/assign');
+			}
+		}
+		if (isset($request_data['fk_user_assign']) && (int) $request_data['fk_user_assign'] != (int) $this->ticket->fk_user_assign) {
+			throw new RestException(400, 'The assigned user can not be changed with this request, use POST /tickets/{id}/assign');
+		}
+
+		// Fields that are set by core and must not be changed
+		foreach (array('id', 'entity', 'ref', 'track_id', 'fk_user_create', 'datec', 'date_creation', 'date_close', 'status', 'fk_statut', 'statut', 'fk_user_assign') as $field) {
+			unset($request_data[$field]);
+		}
+
+		// The thirdparty can be given with socid or fk_soc, but only fk_soc is saved by update()
+		$socid = null;
+		if (isset($request_data['socid']) || isset($request_data['fk_soc'])) {
+			$socid = (int) ($request_data['socid'] ?? $request_data['fk_soc']);
+			if (isset($request_data['socid'], $request_data['fk_soc']) && (int) $request_data['socid'] != (int) $request_data['fk_soc']) {
+				throw new RestException(400, 'socid='.((int) $request_data['socid']).' and fk_soc='.((int) $request_data['fk_soc']).' must not be different');
+			}
+			$socid = max($socid, 0);
+		}
+		unset($request_data['socid'], $request_data['fk_soc']);
+
+		// Same as the ticket card: an external user can not change the thirdparty of a ticket
+		if ($socid !== null && DolibarrApiAccess::$user->socid > 0 && $socid != (int) $this->ticket->fk_soc) {
+			throw new RestException(403, 'Changing the thirdparty of a ticket is not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		// Check thirdparty validity
-		$socid = (int) ($request_data['socid'] ?? 0);
 		if ($socid > 0) {
 			$thirdpartytmp = new Societe($this->db);
 			$thirdparty_result = $thirdpartytmp->fetch($socid);
@@ -630,9 +672,6 @@ class Tickets extends DolibarrApi
 				continue;
 			}
 
-			if ($field == 'id') {
-				continue;
-			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
 					$this->ticket->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->ticket);
@@ -641,6 +680,10 @@ class Tickets extends DolibarrApi
 			}
 
 			$this->ticket->$field = $this->_checkValForAPI($field, $value, $this->ticket);
+		}
+		if ($socid !== null) {
+			$this->ticket->fk_soc = $socid;
+			$this->ticket->socid = $socid;
 		}
 
 		if ($this->ticket->update(DolibarrApiAccess::$user) > 0) {
