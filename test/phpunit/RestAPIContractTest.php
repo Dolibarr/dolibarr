@@ -298,6 +298,52 @@ class RestAPIContractTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * testRestContractPaginationLimitZero
+	 *
+	 * @return void
+	 */
+	public function testRestContractPaginationLimitZero()
+	{
+		$test = "Pagination data with limit=0";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$other_contract_id = $this->createContract($test);
+
+			try {
+				$this->createContractLine($contract_id, $test);
+				$this->createContractLine($contract_id, $test);
+
+				// limit=0 means no limit: must not fail with a division by zero, everything is on 1 page
+				$data = array("sqlfilters" => "(t.rowid:in:".$contract_id.",".$other_contract_id.")", "limit" => 0, "pagination_data" => "true");
+				$result = $this->getUrl('contracts', "$test (list)", 'GET', $data);
+				$this->assertEquals(200, $result['http_code'], "$test (list) Return code must be 200");
+				$this->assertCount(2, $result['content']['data'], "$test (list) All contracts must be returned");
+				$this->assertEquals(2, $result['content']['pagination']['total'], "$test (list) Total");
+				$this->assertEquals(1, $result['content']['pagination']['page_count'], "$test (list) Everything is on 1 page");
+
+				// limit=1: 2 contracts on 2 pages
+				$data["limit"] = 1;
+				$result = $this->getUrl('contracts', "$test (list, limit=1)", 'GET', $data);
+				$this->assertCount(1, $result['content']['data'], "$test (list, limit=1) Only 1 contract must be returned");
+				$this->assertEquals(2, $result['content']['pagination']['page_count'], "$test (list, limit=1) 2 pages");
+
+				$data = array("limit" => 0, "pagination_data" => "true");
+				$result = $this->getUrl('contracts/'.$contract_id.'/lines', "$test (lines)", 'GET', $data);
+				$this->assertEquals(200, $result['http_code'], "$test (lines) Return code must be 200");
+				$this->assertCount(2, $result['content']['data'], "$test (lines) All lines must be returned");
+				$this->assertEquals(2, $result['content']['pagination']['total'], "$test (lines) Total");
+				$this->assertEquals(1, $result['content']['pagination']['page_count'], "$test (lines) Everything is on 1 page");
+			} finally {
+				$this->getUrl('contracts/'.$other_contract_id, "$test (cleanup other contract)", 'DELETE');
+			}
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
+	}
+
+	/**
 	 * testRestContractPostExtrafieldHtml
 	 *
 	 * @return void
