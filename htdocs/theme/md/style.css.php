@@ -992,6 +992,12 @@ input.pageplusone {
 	font-size: 95%;
 	opacity: 0.5;
 }
+.growthup {
+	color: #080;
+}
+.growthdown {
+	color: #968822;
+}
 .fontsizeunset {
 	font-size: unset !important;
 }
