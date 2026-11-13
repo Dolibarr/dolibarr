@@ -1922,6 +1922,8 @@ class EmailCollector extends CommonObject
 			// Sort email found by ascending date
 			$richarrayofemail = dol_sort_array($richarrayofemail, 'date', 'asc');
 
+			$maxemailsize = getDolGlobalInt('EMAILCOLLECTOR_MAX_EMAIL_SIZE');	// Max size of an email in bytes (0 = no limit)
+			$nbemailtoobig = 0;
 
 			$iforemailloop = 0;
 			foreach ($richarrayofemail as $tmpval) {
@@ -2153,6 +2155,22 @@ class EmailCollector extends CommonObject
 					// Removed emojis
 					$overview[0]->subject = removeEmoji($overview[0]->subject, getDolGlobalInt('MAIN_EMAIL_COLLECTOR_ACCEPT_EMOJIS', 1));
 				}
+
+				// Discard emails too big, before loading body and attachments
+				if ($maxemailsize > 0) {
+					if (getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')) {
+						$emailsize = strlen((string) $imapemail->getRawBody());	// @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
+					} else {
+						$emailsize = empty($overview[0]->size) ? 0 : (int) $overview[0]->size;
+					}
+					if ($emailsize > $maxemailsize) {
+						$nbemailprocessed++;
+						$nbemailtoobig++;
+						dol_syslog(" Discarded - Email size ".$emailsize." is greater than EMAILCOLLECTOR_MAX_EMAIL_SIZE", LOG_WARNING);
+						continue; // Exclude email
+					}
+				}
+
 				// GET IMAP email structure/content
 				global $htmlmsg, $plainmsg, $charset, $attachments;
 
@@ -3213,7 +3231,7 @@ class EmailCollector extends CommonObject
 								$actioncomm->percentage  = -1; // Not applicable
 								$actioncomm->socid       = $thirdpartystatic->id;
 								$actioncomm->contact_id = $contactstatic->id;
-								$actioncomm->socpeopleassigned = (!empty($contactstatic->id) ? array($contactstatic->id) : array());
+								$actioncomm->socpeopleassigned = (!empty($contactstatic->id) ? array($contactstatic->id => $contactstatic->id) : array());
 								$actioncomm->authorid    = $user->id; // User saving action
 								$actioncomm->userownerid = $user->id; // Owner of action
 								// Fields when action is an email (content should be added into note)
@@ -4041,6 +4059,9 @@ class EmailCollector extends CommonObject
 			}
 
 			$output = $langs->trans('XEmailsDoneYActionsDone', $nbemailprocessed, $nbemailok, $nbactiondone);
+			if ($nbemailtoobig) {
+				$output .= ' - '.$langs->trans('XEmailsTooBigDiscarded', $nbemailtoobig, $maxemailsize);
+			}
 
 			dol_syslog("End of loop on emails", LOG_INFO, -1);
 		} else {

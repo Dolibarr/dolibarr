@@ -464,6 +464,10 @@ class Mos extends DolibarrApi
 			throw new RestException(404, 'MO not found');
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('mrp', $this->mo->id, 'mrp_mo')) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		if ($this->mo->status != Mo::STATUS_VALIDATED && $this->mo->status != Mo::STATUS_INPROGRESS) {
 			throw new RestException(405, 'Error bad status of MO');
 		}
@@ -845,6 +849,10 @@ class Mos extends DolibarrApi
 		$result = $this->mo->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'MO not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('mrp', $this->mo->id, 'mrp_mo')) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if ($this->mo->status != Mo::STATUS_VALIDATED && $this->mo->status != Mo::STATUS_INPROGRESS) {

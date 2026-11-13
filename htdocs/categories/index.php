@@ -51,6 +51,7 @@ $mode = GETPOST('mode', 'aZ09');
 if (empty($mode)) {
 	$mode = 'hierarchy';
 }
+$search_type = GETPOST('search_type', 'alphanohtml');
 
 $categstatic = new Categorie($db);
 
@@ -70,8 +71,19 @@ if (!$permissiontoread) {
 
 
 /*
+ * Actions
+ */
+
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+	$search_type = '';
+}
+
+
+/*
  * View
  */
+
+$form = new Form($db);
 
 $title = $langs->trans("Categories");
 
@@ -111,14 +123,19 @@ foreach ($categstatic->MAP_ID as $key => $idtype) {
 		$arrayofcateg[$idtype]['label'] = $langs->transnoentitiesnoconv("ProductsAndServices");
 		$arrayofcateg[$idtype]['labelwithoutaccent'] = dol_string_unaccent($langs->transnoentitiesnoconv("ProductsAndServices"));
 	}
+
+	// Filter on the label of the type (case and accent insensitive)
+	if ($search_type !== '' && strpos(dol_strtolower($arrayofcateg[$idtype]['labelwithoutaccent']), dol_strtolower(dol_string_unaccent($search_type))) === false) {
+		unset($arrayofcateg[$idtype]);
+	}
 }
 $arrayofcateg = dol_sort_array($arrayofcateg, 'labelwithoutaccent', 'asc', 1, 0, 1);
 
 print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', '', '', '', count($arrayofcateg), count($arrayofcateg), $categstatic->picto, 0, '', '', -1, 0, 1, 1);
 
-print '<span class="opacitymedium">';
-print $langs->trans("CategorieListOfType").'...<br>';
-print '</span>';
+print '<div class="info">';
+print $langs->trans("CategorieListOfType").'...';
+print '</div>';
 
 // Define $nbmodulesnotautoenabled - TODO This code is at different places
 $nbmodulesnotautoenabled = count($conf->modules);
@@ -136,9 +153,19 @@ if ($user->admin && $nbmodulesnotautoenabled < getDolGlobalInt('MAIN_MIN_NB_ENAB
 
 print '<br>';
 
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+
 print '<div class="aaa">';
 
 print '<table class="liste nohover centpercent noborder">';
+
+// Line with the search filters
+print '<tr class="liste_titre_filter">';
+print '<td class="liste_titre"><input type="text" class="flat maxwidth200" name="search_type" value="'.dolPrintHTMLForAttribute($search_type).'"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre center maxwidthsearch">'.$form->showFilterButtons().'</td>';
+print '</tr>';
 
 print '<tr class="liste_titre"><td>'.$langs->trans("Type").'</td>';
 print '<td class="center">'.$langs->trans("NumberOfCategories").'</td>';
@@ -194,6 +221,8 @@ foreach ($arrayofcateg as $idtype => $val) {
 print "</table>\n";
 
 print '</div>';
+
+print '</form>';
 
 // End of page
 llxFooter();
