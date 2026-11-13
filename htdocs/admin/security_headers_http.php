@@ -317,9 +317,10 @@ function cleanSecurityCSP($securitycsp)
 				$securitycsp = preg_replace('/style-src\s+/', 'style-src *.stripe.com ', $securitycsp);
 			}
 		}
-		// We check if default-src contains self, unsafe-inline, unsafe-eval, *.dolibarr.org, *.dolistore.com, *.githubusercontent.com, and paypal or stripe if enabled (if not the app will not work correctly)
+		// We check if default-src contains self, unsafe-inline, unsafe-eval, data:, *.dolibarr.org, *.dolistore.com, *.githubusercontent.com, and paypal or stripe if enabled (if not the app will not work correctly)
+		// Note: data: is required to show images embedded with data: (for example in some email layouts)
 		if (!preg_match('/default-src/', $securitycsp)) {
-			$securitycsp .= (preg_match('/;\s*$/', $securitycsp) ? '' : '; ').' default-src \'self\' \'unsafe-inline\' \'unsafe-eval\' *.dolibarr.org *.dolistore.com *.githubusercontent.com';
+			$securitycsp .= (preg_match('/;\s*$/', $securitycsp) ? '' : '; ').' default-src \'self\' \'unsafe-inline\' \'unsafe-eval\' data: *.dolibarr.org *.dolistore.com *.githubusercontent.com';
 			if (isModEnabled('paypal')) {
 				$securitycsp .= ' *.paypal.com';
 			}
@@ -342,6 +343,9 @@ function cleanSecurityCSP($securitycsp)
 			}
 			if (!preg_match('/default-src[^;]*dolibarr\.org/', $securitycsp)) {
 				$securitycsp = preg_replace('/default-src\s+/', 'default-src *.dolibarr.org ', $securitycsp);
+			}
+			if (!preg_match('/default-src[^;]*data:/', $securitycsp)) {
+				$securitycsp = preg_replace('/default-src\s+/', 'default-src data: ', $securitycsp);
 			}
 			if (!preg_match('/default-src[^;]*unsafe-eval/', $securitycsp)) {
 				$securitycsp = preg_replace('/default-src\s+/', 'default-src \'unsafe-eval\' ', $securitycsp);
