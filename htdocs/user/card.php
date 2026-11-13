@@ -2186,6 +2186,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 					}
 				} else {
 					print '<span class="opacitymedium">'.$langs->trans("Disabled").'</span>';
+					if (dolTotpIsRequired($db, $object)) {
+						print ' '.img_warning($langs->trans("TOTPRequiredNotSetUp"));
+					}
 				}
 				print '<div class="left inline-block">';
 				$s = '<!-- MAIN_SECURITY_ALLOW_TOTP -->'.img_edit('');

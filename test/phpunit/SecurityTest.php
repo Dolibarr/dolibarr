@@ -1957,4 +1957,59 @@ class SecurityTest extends CommonClassTest
 
 		return 0;
 	}
+
+	/**
+	 * testDolTotpIsRequired
+	 *
+	 * @return	int
+	 */
+	public function testDolTotpIsRequired()
+	{
+		global $conf, $db;
+
+		$constnames = array('MAIN_SECURITY_ALLOW_TOTP', 'MAIN_SECURITY_TOTP_REQUIRED_FOR_INTERNAL', 'MAIN_SECURITY_TOTP_REQUIRED_FOR_EXTERNAL', 'MAIN_SECURITY_TOTP_REQUIRED_FOR_GROUPS');
+		$saved = array();
+		foreach ($constnames as $constname) {
+			$saved[$constname] = getDolGlobalString($constname);
+			$conf->global->$constname = '';
+		}
+		// Without an encryption key no TOTP can be saved, so none is ever required
+		$canstore = (strpos(dolEncrypt('totp'), 'dolcrypt:') === 0);
+
+		$internal = new User($db);
+		$internal->id = 1;
+		$internal->socid = 0;
+		$external = new User($db);
+		$external->id = 1;
+		$external->socid = 1;
+
+		$conf->global->MAIN_SECURITY_TOTP_REQUIRED_FOR_INTERNAL = 1;
+		$this->assertFalse(dolTotpIsRequired($db, $internal), 'Never required while the TOTP is not allowed');
+
+		$conf->global->MAIN_SECURITY_ALLOW_TOTP = 1;
+		$this->assertEquals($canstore, dolTotpIsRequired($db, $internal), 'Required for an internal user');
+		$this->assertFalse(dolTotpIsRequired($db, $external), 'Not required for an external user by the option for internal users');
+
+		$conf->global->MAIN_SECURITY_TOTP_REQUIRED_FOR_INTERNAL = 0;
+		$conf->global->MAIN_SECURITY_TOTP_REQUIRED_FOR_EXTERNAL = 1;
+		$this->assertFalse(dolTotpIsRequired($db, $internal), 'Not required for an internal user by the option for external users');
+		$this->assertEquals($canstore, dolTotpIsRequired($db, $external), 'Required for an external user');
+
+		// The rescue option of conf.php refuses any enrollment: requiring one would lock the user on the setup page
+		global $dolibarr_main_disable_totp;
+		$savdisabletotp = isset($dolibarr_main_disable_totp) ? $dolibarr_main_disable_totp : null;
+		$dolibarr_main_disable_totp = '1';
+		$this->assertFalse(dolTotpIsRequired($db, $external), 'Never required while the 2FA is disabled by dolibarr_main_disable_totp');
+		$dolibarr_main_disable_totp = $savdisabletotp;
+
+		$conf->global->MAIN_SECURITY_TOTP_REQUIRED_FOR_EXTERNAL = 0;
+		$conf->global->MAIN_SECURITY_TOTP_REQUIRED_FOR_GROUPS = '-1,abc';
+		$this->assertFalse(dolTotpIsRequired($db, $internal), 'Not required for a user in none of the groups, the values that are not ids being ignored');
+
+		foreach ($saved as $constname => $value) {
+			$conf->global->$constname = $value;
+		}
+
+		return 0;
+	}
 }
