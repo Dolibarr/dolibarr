@@ -524,7 +524,7 @@ class Websites extends DolibarrApi
 			$this->websitepage->status = WebsitePage::STATUS_DRAFT;
 		}
 		if (is_null($this->websitepage->aliasalt)) {
-			$this->websitepage->aliasalt = '';	// Field is notnull (same default as web interface)
+			$this->websitepage->aliasalt = '';	// Same default as web interface
 		}
 		$this->websitepage->pageurl = preg_replace('/\.php$/i', '', trim((string) $this->websitepage->pageurl));
 		$this->websitepage->ref = $this->websitepage->pageurl;
