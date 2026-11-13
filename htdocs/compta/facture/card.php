@@ -6532,7 +6532,7 @@ if ($action == 'create') {
 					print '<td></td>';
 					print '<td align="center" >'.(($prev_invoice->type == Facture::TYPE_CREDIT_NOTE) ? $langs->trans('situationInvoiceShortcode_AS') : $langs->trans('situationInvoiceShortcode_S')).$prev_invoice->situation_counter.'</td>';
 					$weightedProgress = $prev_invoice->getSituationProgress();
-					print '<td class="right">'.($weightedProgress === null ? '&ndash;' : price($weightedProgress, 0, $langs, 1, getDolGlobalInt('INVOICE_SITUATION_PROGRESS_DECIMALS', 2)).' %').'</td>';
+					print '<td class="right">'.($weightedProgress === null ? '&ndash;' : price($weightedProgress, 0, $langs, 1, getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'), 'MT').' %').'</td>';
 					print '<td class="right"><span class="amount">'.price($prev_invoice->total_ht).'</span></td>';
 					print '<td class="right"><span class="amount">'.price($prev_invoice->total_ttc).'</span></td>';
 					print '<td class="right">'.$prev_invoice->getLibStatut(3, $tmptotalallpayments).'</td>';
@@ -6556,7 +6556,7 @@ if ($action == 'create') {
 			print '<td></td>';
 			print '<td class="center">'.(($object->type == Facture::TYPE_CREDIT_NOTE) ? $langs->trans('situationInvoiceShortcode_AS') : $langs->trans('situationInvoiceShortcode_S')).$object->situation_counter.'</td>';
 			$weightedProgress = $object->getSituationProgress();
-			print '<td class="right">'.($weightedProgress === null ? '&ndash;' : price($weightedProgress, 0, $langs, 1, getDolGlobalInt('INVOICE_SITUATION_PROGRESS_DECIMALS', 2)).' %').'</td>';
+			print '<td class="right">'.($weightedProgress === null ? '&ndash;' : price($weightedProgress, 0, $langs, 1, getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'), 'MT').' %').'</td>';
 			print '<td class="right"><span class="amount">'.price($object->total_ht).'</span></td>';
 			print '<td class="right"><span class="amount">'.price($object->total_ttc).'</span></td>';
 			print '<td class="right">'.$object->getLibStatut(3, $totalallpayments).'</td>';
@@ -6600,7 +6600,7 @@ if ($action == 'create') {
 					print '<td></td>';
 					print '<td class="center">'.(($next_invoice->type == Facture::TYPE_CREDIT_NOTE) ? $langs->trans('situationInvoiceShortcode_AS') : $langs->trans('situationInvoiceShortcode_S')).$next_invoice->situation_counter.'</td>';
 					$weightedProgress = $next_invoice->getSituationProgress();
-					print '<td class="right">'.($weightedProgress === null ? '&ndash;' : price($weightedProgress, 0, $langs, 1, getDolGlobalInt('INVOICE_SITUATION_PROGRESS_DECIMALS', 2)).' %').'</td>';
+					print '<td class="right">'.($weightedProgress === null ? '&ndash;' : price($weightedProgress, 0, $langs, 1, getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'), 'MT').' %').'</td>';
 					print '<td class="right"><span class="amount">'.price($next_invoice->total_ht).'</span></td>';
 					print '<td class="right"><span class="amount">'.price($next_invoice->total_ttc).'</span></td>';
 					print '<td class="right">'.$next_invoice->getLibStatut(3, $next_totalpaid + $next_totalcreditnotes + $next_totaldeposits).'</td>';
