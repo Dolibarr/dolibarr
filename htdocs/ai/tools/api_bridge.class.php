@@ -6496,7 +6496,7 @@ class ToolApiBridge extends McpTool
 			if (isset($changes['vatrate']) && !$this->isExpenseVatRate($changes['vatrate'])) {
 				// As on the card, which only offers the rates of the dictionary: a restaurant bill
 				// with several rates is several lines, never one line at a rate made up for it.
-				$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteExpenseVatRateUnknown', (string) $changes['vatrate'], implode(', ', $this->expenseVatRates()));
+				$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteExpenseVatRateUnknown', (string) $changes['vatrate'], implode(', ', array_map('strval', $this->expenseVatRates())));
 			}
 			if (isset($changes['type'])) {
 				$changes['type'] = $this->resolveExpenseType($changes['type']);
