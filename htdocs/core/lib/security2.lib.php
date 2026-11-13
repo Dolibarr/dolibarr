@@ -945,6 +945,64 @@ function dolTotpIsDisabledByConf()
 }
 
 /**
+ *  Tell if the security setup requires the TOTP two-factor authentication for a user: for all the internal users, all the external
+ *  users or the members of some groups. Never required when this instance can't store a secret, so nobody is locked out of its setup.
+ *
+ *  @param		DoliDB		$db				Database handler
+ *  @param		User		$user			User to test
+ *  @return		bool						True if this user must use a TOTP
+ *  @see dolTotpMustEnroll()
+ */
+function dolTotpIsRequired($db, $user)
+{
+	if (!getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') || empty($user->id)) {
+		return false;
+	}
+
+	$required = (empty($user->socid) ? getDolGlobalInt('MAIN_SECURITY_TOTP_REQUIRED_FOR_INTERNAL') : getDolGlobalInt('MAIN_SECURITY_TOTP_REQUIRED_FOR_EXTERNAL')) > 0;
+	$groupids = array_filter(array_map('intval', explode(',', getDolGlobalString('MAIN_SECURITY_TOTP_REQUIRED_FOR_GROUPS'))));
+	if (!$required && !empty($groupids)) {
+		$sql = "SELECT COUNT(ug.rowid) as nb FROM ".$db->prefix()."usergroup_user as ug";
+		$sql .= " WHERE ug.fk_user = ".((int) $user->id)." AND ug.fk_usergroup IN (".$db->sanitize(implode(',', $groupids)).")";
+		$resql = $db->query($sql);
+		if (!$resql) {
+			dol_syslog("dolTotpIsRequired ".$db->lasterror(), LOG_ERR);
+			$required = true;	// We fail closed: the user is asked to set up a TOTP rather than let in with the password only
+		} else {
+			$obj = $db->fetch_object($resql);
+			$required = !empty($obj->nb);
+			$db->free($resql);
+		}
+	}
+
+	// dolTotpSaveEnrollment() refuses to store a secret in clear: requiring a TOTP would then lock out the users concerned, the admin included
+	if ($required && strpos(dolEncrypt('totp'), 'dolcrypt:') !== 0) {
+		dol_syslog("dolTotpIsRequired: the setup requires a TOTP but this instance has no encryption key or no openssl to store one", LOG_WARNING);
+		return false;
+	}
+
+	return $required;
+}
+
+/**
+ *  Tell if the logged user must set up a TOTP before going further: the security setup requires one for this user, none is set up yet,
+ *  and the session was opened with a mode that asks for the second step.
+ *
+ *  @param		DoliDB		$db				Database handler
+ *  @param		User		$user			Logged user
+ *  @return		bool						True if this user must set up a TOTP first
+ *  @see dolTotpIsRequired()
+ */
+function dolTotpMustEnroll($db, $user)
+{
+	if (empty($_SESSION['dol_authmode']) || !in_array($_SESSION['dol_authmode'], array('dolibarr', 'ldap'))) {
+		return false;	// The second step is asked only with these modes, the others check the user their own way
+	}
+
+	return dolTotpIsRequired($db, $user) && dolTotpGetEnrollment($db, $user->id) === null;
+}
+
+/**
  *  Start the second step of a two-factor authentication, just after a password has been validated.
  *  The session is not opened here: we only remember that the first step succeeded, so a code can be asked for in the next request.
  *

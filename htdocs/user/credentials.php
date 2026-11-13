@@ -156,6 +156,10 @@ if ($id > 0) {
 	$permissiontoeditpasswordandsend = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password"))) && (empty($user->socid) || $user->socid == $object->socid);
 }
 
+// A user to whom the security setup imposes a TOTP can set it up without the permission to change their password: this page is the only one they can reach
+$mustenrolltotp = ($id > 0 && $user->id == $id && dolTotpMustEnroll($db, $user));
+$permissiontoenrolltotp = ($id > 0 && $user->id == $id && ($permissiontoeditpasswordandsee || $mustenrolltotp));
+
 
 /*
  * Actions
@@ -192,7 +196,7 @@ if (empty($reshook)) {
 	}
 
 	// Action to start a TOTP enrollment. A user enrolls only for themselves, so the secret is never known by anybody else.
-	if ($action == 'addtotp' && $permissiontoeditpasswordandsee && $user->id == $object->id && getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') && !dolTotpIsDisabledByConf()) {
+	if ($action == 'addtotp' && $permissiontoenrolltotp && getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') && !dolTotpIsDisabledByConf()) {
 		if (dolTotpGetEnrollment($db, $object->id) !== null) {
 			setEventMessages($langs->trans("TOTPAlreadyEnrolled"), null, 'warnings');
 			$action = '';
@@ -204,7 +208,7 @@ if (empty($reshook)) {
 
 	// Action to confirm a TOTP enrollment with a first valid code, which proves the application is correctly set up.
 	// The user is authenticated and sees the secret on the same page, so there is nothing to guess: the attempts are capped only to be safe.
-	if ($action == 'confirmtotp' && $permissiontoeditpasswordandsee && $user->id == $object->id && getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') && !dolTotpIsDisabledByConf()) {
+	if ($action == 'confirmtotp' && $permissiontoenrolltotp && getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') && !dolTotpIsDisabledByConf()) {
 		$enroll = empty($_SESSION['dol_totp_enroll'][$object->id]) ? array() : $_SESSION['dol_totp_enroll'][$object->id];
 		if (empty($enroll['secret']) || $enroll['expire'] < dol_now()) {
 			unset($_SESSION['dol_totp_enroll'][$object->id]);
@@ -229,6 +233,10 @@ if (empty($reshook)) {
 					unset($_SESSION['dol_totp_enroll'][$object->id]);
 					dol_syslog("Two-factor authentication enabled for ".$object->login, LOG_NOTICE);
 					setEventMessages($langs->trans("TOTPEnrolled"), null, 'mesgs');
+					if ($mustenrolltotp) {	// The setup was the only thing left to do: the user can now use the application
+						header('Location: '.DOL_URL_ROOT.'/');
+						exit;
+					}
 					$action = '';
 				} elseif ($result == -2) {
 					unset($_SESSION['dol_totp_enroll'][$object->id]);
@@ -243,7 +251,7 @@ if (empty($reshook)) {
 	}
 
 	// Action to give up an enrollment in progress: the candidate secret is dropped, a new enrollment will show a new one
-	if ($action == 'canceltotp' && $permissiontoeditpasswordandsee && $user->id == $object->id) {
+	if ($action == 'canceltotp' && $permissiontoenrolltotp) {
 		unset($_SESSION['dol_totp_enroll'][$object->id]);
 		$action = '';
 	}
@@ -258,6 +266,14 @@ if (empty($reshook)) {
 		}
 		$action = '';
 	}
+}
+
+// A user who must set up a TOTP gets the setup panel right away, with a new secret when the previous one has expired
+if ($mustenrolltotp && $action != 'addtotp') {
+	if (empty($_SESSION['dol_totp_enroll'][$id]) || $_SESSION['dol_totp_enroll'][$id]['expire'] < dol_now()) {
+		$_SESSION['dol_totp_enroll'][$id] = array('secret' => dolTotpNewSecret(), 'expire' => dol_now() + 600);
+	}
+	$action = 'addtotp';
 }
 
 
@@ -275,7 +291,17 @@ if ($action == 'addtotp') {	// This page shows the secret of an enrollment, it m
 	header("Cache-Control: no-cache, no-store, must-revalidate, max-age=0");
 }
 
+if ($mustenrolltotp) {	// Nothing else can be reached until the setup is done, so no menu
+	$conf->dol_hide_topmenu = 1;
+	$conf->dol_hide_leftmenu = 1;
+}
+
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-credentials');
+
+if ($mustenrolltotp) {
+	print load_fiche_titre($langs->trans("TOTPRequired"), '', 'fa-lock');
+	print '<div class="warning">'.$langs->trans("TOTPRequiredExplain").'</div>';
+}
 
 $param = '';
 // Keep the popup context (see dolButtonToOpenUrlInDialogPopup()) on all links and forms of the page, so the layout of the popup is kept
@@ -313,10 +339,20 @@ if ($action == 'addtotp' && $user->id == $object->id && !empty($_SESSION['dol_to
 	print '<div>'.$langs->trans("TOTPConfirmCode").' ';
 	print '<input type="text" name="totpcode" class="width75" autocomplete="off" inputmode="numeric" maxlength="8" autofocus>';
 	print ' <input type="submit" class="button small" value="'.$langs->trans("Validate").'">';
-	print ' <a class="button button-cancel small" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $object->id).'&action=canceltotp&token='.newToken().$param.'">'.$langs->trans("Cancel").'</a>';
+	if ($mustenrolltotp) {	// No way back to the application before the setup is done: the user can only leave
+		print ' <a class="button button-cancel small" href="'.dolPrintHTMLForAttributeUrl(DOL_URL_ROOT.'/user/logout.php?token='.newToken()).'">'.$langs->trans("Logout").'</a>';
+	} else {
+		print ' <a class="button button-cancel small" href="'.dolPrintHTMLForAttributeUrl($_SERVER["PHP_SELF"].'?id='.((int) $object->id).'&action=canceltotp&token='.newToken().$param).'">'.$langs->trans("Cancel").'</a>';
+	}
 	print '</div>';
 	print '</div><br>';
 	print '</form>';
+}
+
+if ($mustenrolltotp) {	// The setup panel is all a user who must enroll can use
+	llxFooter();
+	$db->close();
+	exit;
 }
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -335,7 +371,7 @@ print $hiddenpopupinputs;
 
 // A user has at most one enrollment, and enrolls only for themselves
 $totpenrollment = dolTotpGetEnrollment($db, $object->id);
-$cancreatetotp = ($permissiontoeditpasswordandsee && $user->id == $object->id && getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') && !dolTotpIsDisabledByConf() && $totpenrollment === null);
+$cancreatetotp = ($permissiontoenrolltotp && getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') && !dolTotpIsDisabledByConf() && $totpenrollment === null);
 
 // When the enrollment is not possible, the tooltip of the button gives the reason
 $newbuttonstatus = 1;
