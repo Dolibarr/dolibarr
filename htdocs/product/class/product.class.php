@@ -3060,9 +3060,10 @@ class Product extends CommonObject
 	 * @param  int    $socid           Id societe pour filtrer sur une societe
 	 * @param  string $filtrestatut    Id statut pour filtrer sur un statut
 	 * @param  int    $forVirtualStock Ignore rights filter for virtual stock calculation. Set when load_stats_commande is used for virtual stock calculation.
+	 * @param  int    $dateofvirtualstock Date of virtual stock. Only orders with a delivery date before this date, or with no delivery date, are counted.
 	 * @return integer                 Array of stats in $this->stats_commande (nb=nb of order, qty=qty ordered), <0 if ko or >0 if ok
 	 */
-	public function load_stats_commande($socid = 0, $filtrestatut = '', $forVirtualStock = 0)
+	public function load_stats_commande($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $dateofvirtualstock = null)
 	{
 		// phpcs:enable
 		global $conf, $user, $hookmanager, $action;
@@ -3087,6 +3088,9 @@ class Product extends CommonObject
 		}
 		if ($filtrestatut <> '') {
 			$sql .= " AND c.fk_statut in (".$this->db->sanitize($filtrestatut).")";
+		}
+		if (!empty($dateofvirtualstock)) {
+			$sql .= " AND (c.date_livraison IS NULL OR c.date_livraison <= '".$this->db->idate($dateofvirtualstock)."')";
 		}
 
 		$result = $this->db->query($sql);
@@ -3129,6 +3133,9 @@ class Product extends CommonObject
 					$sql .= " JOIN ".$this->db->prefix()."element_element as el ON ((el.fk_target = f.rowid AND el.targettype = 'facture' AND sourcetype = 'commande') OR (el.fk_source = f.rowid AND el.targettype = 'commande' AND sourcetype = 'facture'))";
 					$sql .= " JOIN ".$this->db->prefix()."commande as c ON el.fk_source = c.rowid";
 					$sql .= " WHERE c.fk_statut IN (".$this->db->sanitize($filtrestatut).") AND c.facture = 0 AND fd.fk_product = ".((int) $this->id);
+					if (!empty($dateofvirtualstock)) {
+						$sql .= " AND (c.date_livraison IS NULL OR c.date_livraison <= '".$this->db->idate($dateofvirtualstock)."')";
+					}
 
 					dol_syslog(__METHOD__.":: sql $sql", LOG_NOTICE);
 					$resql = $this->db->query($sql);
@@ -3151,6 +3158,9 @@ class Product extends CommonObject
 					$sql .= " JOIN ".MAIN_DB_PREFIX."element_element as el ON ((el.fk_target = f.rowid AND el.targettype = 'facture' AND sourcetype = 'commande') OR (el.fk_source = f.rowid AND el.targettype = 'commande' AND sourcetype = 'facture'))";
 					$sql .= " JOIN ".MAIN_DB_PREFIX."commande as c ON el.fk_source = c.rowid";
 					$sql .= " WHERE c.fk_statut IN (".$this->db->sanitize($filtrestatut).") AND f.fk_statut > ".Facture::STATUS_DRAFT." AND fd.fk_product = ".((int) $this->id);
+					if (!empty($dateofvirtualstock)) {
+						$sql .= " AND (c.date_livraison IS NULL OR c.date_livraison <= '".$this->db->idate($dateofvirtualstock)."')";
+					}
 
 					dol_syslog(__METHOD__.":: sql $sql", LOG_NOTICE);
 					$resql = $this->db->query($sql);
@@ -3249,9 +3259,10 @@ class Product extends CommonObject
 	 * @param   string      $filtrestatut           [=''] Ids order status separated by comma
 	 * @param   int         $forVirtualStock        Ignore rights filter for virtual stock calculation.
 	 * @param   string      $filterShipmentStatus   [=''] Ids shipment status separated by comma
+	 * @param   int         $dateofvirtualstock     Date of virtual stock. Same filter on the order delivery date as load_stats_commande().
 	 * @return  int                                 Array of stats in $this->stats_expedition, <0 if ko or >0 if ok
 	 */
-	public function load_stats_sending($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $filterShipmentStatus = '')
+	public function load_stats_sending($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $filterShipmentStatus = '', $dateofvirtualstock = null)
 	{
 		// phpcs:enable
 		global $conf, $user, $hookmanager, $action;
@@ -3283,6 +3294,9 @@ class Product extends CommonObject
 		}
 		if (!empty($filterShipmentStatus)) {
 			$sql .= " AND e.fk_statut IN (".$this->db->sanitize($filterShipmentStatus).")";
+		}
+		if (!empty($dateofvirtualstock)) {
+			$sql .= " AND (c.date_livraison IS NULL OR c.date_livraison <= '".$this->db->idate($dateofvirtualstock)."')";
 		}
 
 		$result = $this->db->query($sql);
@@ -5658,7 +5672,7 @@ class Product extends CommonObject
 		//dol_syslog("load_virtual_stock");
 
 		if (isModEnabled('commande')) {
-			$result = $this->load_stats_commande(0, '1,2', 1);
+			$result = $this->load_stats_commande(0, '1,2', 1, $dateofvirtualstock);
 			if ($result < 0) {
 				dol_print_error($this->db, $this->error);
 			}
@@ -5672,7 +5686,7 @@ class Product extends CommonObject
 			} elseif (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
 				$filterShipmentStatus = Expedition::STATUS_CLOSED;
 			}
-			$result = $this->load_stats_sending(0, '1,2', 1, $filterShipmentStatus);
+			$result = $this->load_stats_sending(0, '1,2', 1, $filterShipmentStatus, $dateofvirtualstock);
 			if ($result < 0) {
 				dol_print_error($this->db, $this->error);
 			}
