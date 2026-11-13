@@ -11,7 +11,7 @@
 # screenshot pasted into the description of the PR or into one of its comments. A PR is considered as a change of
 # User Interface if its title starts with the keyword UXUI or it modifies UI files (.tpl, .css, .scss, .html,
 # .js, .vue and htdocs/theme/, except into htdocs/includes and dev directories). The second job runs only when
-# the first job is green.
+# the first job is green. This check is skipped if the title of the PR contains "No visual change".
 name: Check PR title and description
 
 # Note: pull_request_target gives a write token even for PRs from forks. This is safe because
@@ -113,6 +113,12 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_BODY: ${{ github.event.pull_request.body }}
         run: |
+          # Exception: the author declares into the title of the PR that the PR has no visual change
+          if printf '%s' "$PR_TITLE" | grep -Fiq 'No visual change'; then
+            echo "The title of the PR contains 'No visual change'. No screenshot required."
+            exit 0
+          fi
+
           UI_RELATED=0
           REASON=""
 
