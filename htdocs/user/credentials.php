@@ -192,7 +192,7 @@ if (empty($reshook)) {
 	}
 
 	// Action to start a TOTP enrollment. A user enrolls only for themselves, so the secret is never known by anybody else.
-	if ($action == 'addtotp' && $permissiontoeditpasswordandsee && $user->id == $object->id && getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP')) {
+	if ($action == 'addtotp' && $permissiontoeditpasswordandsee && $user->id == $object->id && getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') && !dolTotpIsDisabledByConf()) {
 		if (dolTotpGetEnrollment($db, $object->id) !== null) {
 			setEventMessages($langs->trans("TOTPAlreadyEnrolled"), null, 'warnings');
 			$action = '';
@@ -204,7 +204,7 @@ if (empty($reshook)) {
 
 	// Action to confirm a TOTP enrollment with a first valid code, which proves the application is correctly set up.
 	// The user is authenticated and sees the secret on the same page, so there is nothing to guess: the attempts are capped only to be safe.
-	if ($action == 'confirmtotp' && $permissiontoeditpasswordandsee && $user->id == $object->id && getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP')) {
+	if ($action == 'confirmtotp' && $permissiontoeditpasswordandsee && $user->id == $object->id && getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') && !dolTotpIsDisabledByConf()) {
 		$enroll = empty($_SESSION['dol_totp_enroll'][$object->id]) ? array() : $_SESSION['dol_totp_enroll'][$object->id];
 		if (empty($enroll['secret']) || $enroll['expire'] < dol_now()) {
 			unset($_SESSION['dol_totp_enroll'][$object->id]);
@@ -278,6 +278,14 @@ if ($action == 'addtotp') {	// This page shows the secret of an enrollment, it m
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-credentials');
 
 $param = '';
+// Keep the popup context (see dolButtonToOpenUrlInDialogPopup()) on all links and forms of the page, so the layout of the popup is kept
+$hiddenpopupinputs = '';
+foreach (array('dol_openinpopup' => GETPOST('dol_openinpopup', 'aZ09'), 'dol_hide_topmenu' => GETPOSTINT('dol_hide_topmenu'), 'dol_hide_leftmenu' => GETPOSTINT('dol_hide_leftmenu')) as $key => $val) {
+	if (!empty($val)) {
+		$param .= '&'.$key.'='.urlencode((string) $val);
+		$hiddenpopupinputs .= '<input type="hidden" name="'.$key.'" value="'.dolPrintHTMLForAttribute((string) $val).'">';
+	}
+}
 
 
 // Section TOTP
@@ -290,6 +298,7 @@ if ($action == 'addtotp' && $user->id == $object->id && !empty($_SESSION['dol_to
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="confirmtotp">';
 	print '<input type="hidden" name="id" value="'.((int) $object->id).'">';
+	print $hiddenpopupinputs;
 	print '<div class="info">';
 	print '<div class="paddingbottom">'.$langs->trans("TOTPScanQrCode").'</div>';
 
@@ -304,7 +313,7 @@ if ($action == 'addtotp' && $user->id == $object->id && !empty($_SESSION['dol_to
 	print '<div>'.$langs->trans("TOTPConfirmCode").' ';
 	print '<input type="text" name="totpcode" class="width75" autocomplete="off" inputmode="numeric" maxlength="8" autofocus>';
 	print ' <input type="submit" class="button small" value="'.$langs->trans("Validate").'">';
-	print ' <a class="button button-cancel small" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $object->id).'&action=canceltotp&token='.newToken().'">'.$langs->trans("Cancel").'</a>';
+	print ' <a class="button button-cancel small" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $object->id).'&action=canceltotp&token='.newToken().$param.'">'.$langs->trans("Cancel").'</a>';
 	print '</div>';
 	print '</div><br>';
 	print '</form>';
@@ -320,14 +329,36 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="page_y" value="">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
+print $hiddenpopupinputs;
 
 //$tmpurlforbutton = 'javascript:console.log("open add totp form");jQuery(".divsectiontotp").toggle(); void(0);';
 
 // A user has at most one enrollment, and enrolls only for themselves
 $totpenrollment = dolTotpGetEnrollment($db, $object->id);
-$cancreatetotp = ($permissiontoeditpasswordandsee && $user->id == $object->id && getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') && $totpenrollment === null);
+$cancreatetotp = ($permissiontoeditpasswordandsee && $user->id == $object->id && getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') && !dolTotpIsDisabledByConf() && $totpenrollment === null);
 
-$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addtotp&token='.newToken(), '', $cancreatetotp ? 1 : 0);
+// When the enrollment is not possible, the tooltip of the button gives the reason
+$newbuttonstatus = 1;
+$newbuttonhelp = '';
+if (!$cancreatetotp) {
+	if ($totpenrollment !== null) {
+		$newbuttonstatus = -2;
+		$newbuttonhelp = $langs->transnoentitiesnoconv("TOTPAlreadyEnrolled");
+	} elseif (!getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP')) {
+		$newbuttonstatus = -2;
+		$newbuttonhelp = $langs->transnoentitiesnoconv("FeatureDisabled");
+	} elseif (dolTotpIsDisabledByConf()) {
+		$newbuttonstatus = -2;
+		$newbuttonhelp = $langs->transnoentitiesnoconv("TOTPDisabledByConf");
+	} elseif ($permissiontoeditpasswordandsee && $user->id != $object->id) {
+		$newbuttonstatus = -2;
+		$newbuttonhelp = $langs->transnoentitiesnoconv("TOTPEnrollOnlyForYourself");
+	} else {
+		$newbuttonstatus = 0;	// Not enough permissions
+	}
+}
+
+$newcardbutton = dolGetButtonTitle($langs->trans('New'), $newbuttonhelp, 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addtotp&token='.newToken().$param, '', $newbuttonstatus);
 
 //$listoftotps = $user->fetchAll($sortorder, $sortfield, 1000, 0, "(fk_user:=:".((int) $object->id).") AND (service:=:'dolibarr_totp')", true);
 $nbtotalofrecords = $num = ($totpenrollment === null ? 0 : 1);
@@ -347,7 +378,7 @@ print '</div><br>';
 
 // Confirmation of the removal, which puts this user back to a password only login
 if ($action == 'deletetotp' && $permissiontoeditpasswordandsee) {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.((int) $object->id), $langs->trans('TOTPDisable'), $langs->trans('TOTPConfirmDisable', $object->login), 'confirm_deletetotp', '', 0, 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.((int) $object->id).$param, $langs->trans('TOTPDisable'), $langs->trans('TOTPConfirmDisable', $object->login), 'confirm_deletetotp', '', 0, 1);
 }
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
@@ -365,14 +396,14 @@ print '</tr>'."\n";
 if ($totpenrollment !== null) {
 	print '<tr class="oddeven">';
 	if (is_array($totpenrollment)) {
-		print '<td>'.dol_print_date($totpenrollment['datec'], 'dayhour').'</td>';
-		print '<td>'.($totpenrollment['lastaccess'] ? dol_print_date($totpenrollment['lastaccess'], 'dayhour') : '<span class="opacitymedium">'.$langs->trans("Never").'</span>').'</td>';
+		print '<td>'.dol_print_date($totpenrollment['datec'], 'dayhour', 'tzuserrel').'</td>';
+		print '<td>'.($totpenrollment['lastaccess'] ? dol_print_date($totpenrollment['lastaccess'], 'dayhour', 'tzuserrel') : '<span class="opacitymedium">'.$langs->trans("Never").'</span>').'</td>';
 	} else {
 		print '<td colspan="2"><span class="error">'.$langs->trans("TOTPUnreadableEnrollment").'</span></td>';	// The row exists but can't be read: only the removal is possible
 	}
 	print '<td class="center nowraponall">';
 	if ($permissiontoeditpasswordandsee) {
-		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $object->id).'&action=deletetotp&token='.newToken().'">'.img_delete($langs->trans("TOTPDisable")).'</a>';
+		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $object->id).'&action=deletetotp&token='.newToken().$param.'">'.img_delete($langs->trans("TOTPDisable")).'</a>';
 	}
 	print '</td>';
 	print '</tr>';
