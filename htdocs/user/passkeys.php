@@ -52,10 +52,10 @@ if ($object->fetch($id, '', '', 1) <= 0) {
 // Security check
 $result = restrictedArea($user, 'user', $id, 'user', 'user');
 
-// Same permissions than to edit the password of the user. A passkey can be added by the user himself only:
-// the private key is created on his own device.
+// Same permissions than to edit the password of the user. A passkey can be added by an internal user himself only:
+// the private key is created on his own device (same check than core/ajax/passkeyregister.php).
 $permissiontoeditpasswordandsee = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password") && $user->admin)) && (empty($user->socid) || $user->socid == $object->socid);
-$permissiontoadd = ($user->id == $id && $permissiontoeditpasswordandsee && passkeyIsEnabled());
+$permissiontoadd = ($user->id == $id && empty($user->socid) && $permissiontoeditpasswordandsee && passkeyIsEnabled());
 
 if (!$permissiontoeditpasswordandsee) {
 	accessforbidden();
