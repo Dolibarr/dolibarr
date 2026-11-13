@@ -231,6 +231,42 @@ class ProjectTest extends CommonClassTest
 		return $localobject->fk_project;
 	}
 
+	/**
+	 * testProjectOdtTemplateWithoutOptionalBlocks: the ODT generator accepts a template without the blocks tasks, projectfiles and projectcontacts
+	 *
+	 * @return	void
+	 */
+	public function testProjectOdtTemplateWithoutOptionalBlocks()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/modules/project/doc/doc_generic_project_odt.modules.php';
+
+		$project = new Project($db);
+		$project->initAsSpecimen();
+		$project->ref = 'ODFTEST31043';
+		$this->assertGreaterThan(0, $project->create($user));
+		// A contact is needed to run the block of the contacts
+		$this->assertGreaterThan(0, $project->add_contact($user->id, 'PROJECTLEADER', 'internal'));
+
+		$objdoc = new doc_generic_project_odt($db);
+		try {
+			// An ODT with none of the blocks of a project template, then the template of the project that has all of them
+			$result = $objdoc->write_file($project, $langs, DOL_DOCUMENT_ROOT.'/install/doctemplates/invoices/template_invoice.odt');
+			$this->assertEquals(1, $result);
+			$result = $objdoc->write_file($project, $langs, DOL_DOCUMENT_ROOT.'/install/doctemplates/projects/template_project.odt');
+			$this->assertEquals(1, $result);
+		} finally {
+			dol_delete_dir_recursive($conf->project->dir_output.'/'.$project->ref);
+		}
+
+		print __METHOD__." result=".$result."\n";
+	}
+
 
 	/**
 	 * testProjectDelete

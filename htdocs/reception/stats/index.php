@@ -42,6 +42,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
+$tabfamily = GETPOST('tabfamily', 'aZ09');	// 'receptionstats' to show the tab with the custom reports tool
+
 $hookmanager->initHooks(array('receptionstats', 'globalcard'));
 
 $action = '';
@@ -102,7 +104,43 @@ $newcardbutton .= dolGetButtonTitle($langs->trans('NewSending'), '', 'fa fa-plus
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
-$dir = (!empty($conf->reception->multidir_temp[$conf->entity]) ? $conf->reception->multidir_temp[$conf->entity] : $conf->service->multidir_temp[$conf->entity]);
+// The custom reports tool is not available to external users
+$showtabcustomreports = empty($user->socid);
+
+$h = 0;
+$head = array();
+$head[$h][0] = DOL_URL_ROOT.'/reception/stats/index.php';
+$head[$h][1] = $langs->trans("ByMonthYear");
+$head[$h][2] = 'byyear';
+$h++;
+
+if ($showtabcustomreports) {
+	$head[$h][0] = DOL_URL_ROOT.'/reception/stats/index.php?tabfamily=receptionstats';
+	$head[$h][1] = $langs->trans("Custom");
+	$head[$h][2] = 'customreports';
+	$h++;
+}
+
+$type = 'reception_stats';
+
+complete_head_from_modules($conf, $langs, null, $head, $h, $type);
+
+// Show the tab with the custom reports tool
+if ($showtabcustomreports && $tabfamily == 'receptionstats') {
+	print dol_get_fiche_head($head, 'customreports', '', -1);
+
+	define('USE_CUSTOM_REPORT_AS_TAB', 1);
+	$customreportobjecttype = 'reception';
+	include DOL_DOCUMENT_ROOT.'/core/customreports.php';
+
+	print dol_get_fiche_end();
+
+	llxFooter();
+	$db->close();
+	exit;
+}
+
+$dir =(!empty($conf->reception->multidir_temp[$conf->entity]) ? $conf->reception->multidir_temp[$conf->entity] : $conf->service->multidir_temp[$conf->entity]);
 dol_mkdir($dir);
 
 $stats = new ReceptionStats($db, $socid, '', ($userid > 0 ? $userid : 0));
@@ -235,17 +273,6 @@ foreach ($data as $val) {
 if (!count($arrayyears)) {
 	$arrayyears[$nowyear] = $nowyear;
 }
-
-$h = 0;
-$head = array();
-$head[$h][0] = DOL_URL_ROOT.'/reception/stats/index.php';
-$head[$h][1] = $langs->trans("ByMonthYear");
-$head[$h][2] = 'byyear';
-$h++;
-
-$type = 'reception_stats';
-
-complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 
 print dol_get_fiche_head($head, 'byyear', '', -1);
 

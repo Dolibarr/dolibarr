@@ -992,6 +992,12 @@ input.pageplusone {
 	font-size: 95%;
 	opacity: 0.5;
 }
+.growthup {
+	color: #080;
+}
+.growthdown {
+	color: #968822;
+}
 .fontsizeunset {
 	font-size: unset !important;
 }
@@ -2647,7 +2653,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.login_vertical_align {
 		padding-left: 0;
 	}
-	.login_table input#username, .login_table input#password, .login_table input#securitycode {
+	.login_table input#username, .login_table input#password, .login_table input#securitycode, .login_table input#totpcode {
 		margin-left: 5px !important;
 	}
 	div#login_left, div#login_right {
@@ -3809,7 +3815,7 @@ form#login {
 
 	border-top:solid 1px #f8f8f8;
 }
-.login_table input#username, .login_table input#password, .login_table input#securitycode{
+.login_table input#username, .login_table input#password, .login_table input#securitycode, .login_table input#totpcode{
 	/* border: none; */
 	/* border-bottom: solid 1px rgba(180,180,180,.4); */
 	padding: 5px;
@@ -3818,7 +3824,7 @@ form#login {
 	margin-top: 5px;
 	margin-bottom: 5px;
 }
-.login_table input#username:focus, .login_table input#password:focus, .login_table input#securitycode:focus {
+.login_table input#username:focus, .login_table input#password:focus, .login_table input#securitycode:focus, .login_table input#totpcode:focus {
 	outline: none !important;
 }
 .login_table .trinputlogin {

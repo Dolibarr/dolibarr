@@ -1136,7 +1136,7 @@ while ($i < $imaxinloop) {
 
 	// Start date
 	if (!empty($arrayfields['a.datep']['checked'])) {
-		print '<td class="center nowraponall'.($event_start_date_css ? ' '.$event_start_date_css.'x' : '').'"><span>';
+		print '<td class="center nowraponall tdlineheightsmall'.($event_start_date_css ? ' '.$event_start_date_css.'x' : '').'"><span>';
 		if (empty($obj->fulldayevent)) {
 			print '<div class="center inline-block lineheightsmall">';
 			print dol_print_date($db->jdate($obj->dp), 'dayreduceformat', 'tzuserrel');

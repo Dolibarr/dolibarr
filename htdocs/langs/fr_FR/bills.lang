@@ -402,6 +402,8 @@ RemoveDiscount=Supprimer remise
 WatermarkOnDraftBill=Filigrane sur les brouillons de factures (aucun si vide)
 InvoiceNotChecked=Aucune facture n'a été sélectionnée
 ConfirmCloneInvoice=Êtes-vous sûr de vouloir cloner cette facture <b>%s</b> ?
+CloneRefCustomer=Référence client ?
+CloneRefCustomerHelp=Copiez également la référence client de facture dans le nouveau facture (attention, cela signifie que vous obtiendrez plusieurs factures avec la référence facture connue de votre client).
 DisabledBecauseReplacedInvoice=Action désactivée car facture remplacée
 DescTaxAndDividendsArea=Cet écran résume la liste de toutes les paiements réalisés pour des dépenses particulières. Seuls les paiements de l'année choisie sont inclus ici.
 NbOfPayments=Nb de paiements
@@ -788,4 +790,5 @@ CreditNotesCreated=%s avoir(s) créé(s)
 ThisMassActionIsOnlyForInvoices=Cette action de masse est uniquement disponible pour factures
 # Deposit/credit split in the invoice currency (option MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS)
 DepositSplitAutomaticallyApplied=Le crédit disponible était supérieur au montant restant à payer. et a été divisé automatiquement : %s a été appliqué à ce facture, %s a été conservé comme crédit disponible pour une utilisation ultérieure.
+ConfirmSplitDiscountBeforeApply=Le crédit sélectionné (<b>%s</b>) est supérieur au montant restant à payer. Il sera divisé en deux : <b>%s</b> appliqué à ce facture et <b>%s<span </b> est conservé comme crédit disponible pour une utilisation ultérieure. Voulez-vous continuer ?
 InvoiceRateRealigned=Échange facture aligné sur le véritable taux (%s)
