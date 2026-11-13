@@ -2181,6 +2181,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 					if (!is_array($totpenrollment)) {
 						print ' '.img_warning($langs->trans("TOTPUnreadableEnrollment"));
 					}
+					if (dolTotpIsDisabledByConf()) {
+						print ' '.img_warning($langs->trans("TOTPDisabledByConf"));
+					}
 				} else {
 					print '<span class="opacitymedium">'.$langs->trans("Disabled").'</span>';
 				}

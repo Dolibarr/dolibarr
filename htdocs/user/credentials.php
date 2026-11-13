@@ -192,7 +192,7 @@ if (empty($reshook)) {
 	}
 
 	// Action to start a TOTP enrollment. A user enrolls only for themselves, so the secret is never known by anybody else.
-	if ($action == 'addtotp' && $permissiontoeditpasswordandsee && $user->id == $object->id && getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP')) {
+	if ($action == 'addtotp' && $permissiontoeditpasswordandsee && $user->id == $object->id && getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') && !dolTotpIsDisabledByConf()) {
 		if (dolTotpGetEnrollment($db, $object->id) !== null) {
 			setEventMessages($langs->trans("TOTPAlreadyEnrolled"), null, 'warnings');
 			$action = '';
@@ -204,7 +204,7 @@ if (empty($reshook)) {
 
 	// Action to confirm a TOTP enrollment with a first valid code, which proves the application is correctly set up.
 	// The user is authenticated and sees the secret on the same page, so there is nothing to guess: the attempts are capped only to be safe.
-	if ($action == 'confirmtotp' && $permissiontoeditpasswordandsee && $user->id == $object->id && getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP')) {
+	if ($action == 'confirmtotp' && $permissiontoeditpasswordandsee && $user->id == $object->id && getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') && !dolTotpIsDisabledByConf()) {
 		$enroll = empty($_SESSION['dol_totp_enroll'][$object->id]) ? array() : $_SESSION['dol_totp_enroll'][$object->id];
 		if (empty($enroll['secret']) || $enroll['expire'] < dol_now()) {
 			unset($_SESSION['dol_totp_enroll'][$object->id]);
@@ -335,7 +335,7 @@ print $hiddenpopupinputs;
 
 // A user has at most one enrollment, and enrolls only for themselves
 $totpenrollment = dolTotpGetEnrollment($db, $object->id);
-$cancreatetotp = ($permissiontoeditpasswordandsee && $user->id == $object->id && getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') && $totpenrollment === null);
+$cancreatetotp = ($permissiontoeditpasswordandsee && $user->id == $object->id && getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') && !dolTotpIsDisabledByConf() && $totpenrollment === null);
 
 // When the enrollment is not possible, the tooltip of the button gives the reason
 $newbuttonstatus = 1;
@@ -347,6 +347,9 @@ if (!$cancreatetotp) {
 	} elseif (!getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP')) {
 		$newbuttonstatus = -2;
 		$newbuttonhelp = $langs->transnoentitiesnoconv("FeatureDisabled");
+	} elseif (dolTotpIsDisabledByConf()) {
+		$newbuttonstatus = -2;
+		$newbuttonhelp = $langs->transnoentitiesnoconv("TOTPDisabledByConf");
 	} elseif ($permissiontoeditpasswordandsee && $user->id != $object->id) {
 		$newbuttonstatus = -2;
 		$newbuttonhelp = $langs->transnoentitiesnoconv("TOTPEnrollOnlyForYourself");

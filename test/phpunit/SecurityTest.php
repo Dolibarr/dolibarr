@@ -1945,6 +1945,16 @@ class SecurityTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('otpauth://totp/MyCompany:mylogin?secret='.$secret.'&issuer=MyCompany&algorithm=SHA1&digits=6&period=30', $result, 'Test of the otpauth URI');
 
+		// The rescue option $dolibarr_main_disable_totp of conf.php skips the second step: the login is returned at once
+		global $dolibarr_main_disable_totp;
+		$savdisabletotp = isset($dolibarr_main_disable_totp) ? $dolibarr_main_disable_totp : null;
+		$dolibarr_main_disable_totp = '0';
+		$this->assertFalse(dolTotpIsDisabledByConf(), 'The 2FA must be enabled when dolibarr_main_disable_totp is 0');
+		$dolibarr_main_disable_totp = '1';
+		$this->assertTrue(dolTotpIsDisabledByConf(), 'The 2FA must be disabled when dolibarr_main_disable_totp is 1');
+		$this->assertEquals('mylogin', dolTotpStartSecondFactor($this->savdb, 'mylogin', 1), 'With the 2FA disabled in conf.php, the password must be enough');
+		$dolibarr_main_disable_totp = $savdisabletotp;
+
 		return 0;
 	}
 }
