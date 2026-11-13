@@ -591,14 +591,17 @@ class Fichinter extends CommonObject
 	 *	Set status to draft
 	 *
 	 *	@param		User	$user	User that set draft
-	 *	@return		int			    Return integer <0 if KO, >0 if OK
+	 *	@return		int			    Return integer <0 if KO, 0 if nothing done (intervention not in validated status), >0 if OK
 	 */
 	public function setDraft($user)
 	{
 		$error = 0;
 
-		// Protection
-		if ($this->status <= self::STATUS_DRAFT) {
+		// Protection: only a validated intervention can go back to draft (same rule as the "Modify"
+		// button of the card). A billed, closed or canceled intervention must not be reset to draft.
+		if ($this->status != self::STATUS_VALIDATED) {
+			$this->error = 'ErrorObjectHasWrongStatus';
+			dol_syslog(get_class($this)."::setDraft action abandoned: intervention is not in validated status", LOG_WARNING);
 			return 0;
 		}
 
