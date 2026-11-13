@@ -139,30 +139,30 @@ if (empty($user->socid)) {
 
 $checkedtypetiers = '0';
 $arrayfields = array(
-	'e.rowid' => array('label' => $langs->trans("TechnicalID"), 'checked' => (getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? '1' : '-1'), 'enabled' => '1'),
-	'e.ref' => array('label' => $langs->trans("Ref"), 'checked' => '1', 'position' => 1),
-	'e.ref_customer' => array('label' => $langs->trans("RefCustomer"), 'checked' => '1', 'position' => 2),
-	's.nom' => array('label' => $langs->trans("ThirdParty"), 'checked' => '1', 'position' => 3),
-	's.town' => array('label' => $langs->trans("Town"), 'checked' => '1', 'position' => 4),
-	's.zip' => array('label' => $langs->trans("Zip"), 'checked' => '-1', 'position' => 5),
-	'state.nom' => array('label' => $langs->trans("StateShort"), 'checked' => '0', 'position' => 6),
-	'country.code_iso' => array('label' => $langs->trans("Country"), 'checked' => '0', 'position' => 7),
-	'typent.code' => array('label' => $langs->trans("ThirdPartyType"), 'checked' => $checkedtypetiers, 'position' => 8),
-	'e.date_delivery' => array('label' => $langs->trans("DateDeliveryPlanned"), 'checked' => '1', 'position' => 9),
-	'e.date_expedition' => array('label' => $langs->trans("DateShipping"), 'checked' => '1', 'position' => 10),
-	'e.fk_shipping_method' => array('label' => $langs->trans('SendingMethod'), 'checked' => '1', 'position' => 11),
-	'e.tracking_number' => array('label' => $langs->trans("TrackingNumber"), 'checked' => '1', 'position' => 12),
-	'e.weight' => array('label' => $langs->trans("Weight"), 'checked' => '0', 'position' => 13),
-	'e.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => '0', 'position' => 500),
-	'e.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => '0', 'position' => 500),
-	'e.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => '1', 'position' => 1000),
+	'e.rowid' => array('label' => "TechnicalID", 'checked' => (getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? '1' : '-1'), 'enabled' => '1'),
+	'e.ref' => array('label' => "Ref", 'checked' => '1', 'position' => 1),
+	'e.ref_customer' => array('label' => "RefCustomer", 'checked' => '0', 'position' => 2),
+	's.nom' => array('label' => "ThirdParty", 'checked' => '1', 'position' => 3),
+	's.town' => array('label' => "Town", 'checked' => '1', 'position' => 4),
+	's.zip' => array('label' => "Zip", 'checked' => '-1', 'position' => 5),
+	'state.nom' => array('label' => "StateShort", 'checked' => '0', 'position' => 6),
+	'country.code_iso' => array('label' => "Country", 'checked' => '0', 'position' => 7),
+	'typent.code' => array('label' => "ThirdPartyType", 'checked' => $checkedtypetiers, 'position' => 8),
+	'e.date_delivery' => array('label' => "DateDeliveryPlanned", 'checked' => '1', 'position' => 9),
+	'e.date_expedition' => array('label' => "DateShipping", 'checked' => '1', 'position' => 10),
+	'e.fk_shipping_method' => array('label' => 'SendingMethod', 'checked' => '1', 'position' => 11),
+	'e.tracking_number' => array('label' => "TrackingNumber", 'checked' => '1', 'position' => 12),
+	'e.weight' => array('label' => "Weight", 'checked' => '0', 'position' => 13),
+	'e.datec' => array('label' => "DateCreation", 'checked' => '0', 'position' => 500),
+	'e.tms' => array('label' => "DateModificationShort", 'checked' => '0', 'position' => 500),
+	'e.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
 	'e.signed_status' => array('label' => 'Signed status', 'checked' => '0', 'position' => 1001),
-	'l.ref' => array('label' => $langs->trans("DeliveryRef"), 'checked' => '1', 'position' => 1010, 'enabled' => (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? '1' : '0')),
-	'l.date_delivery' => array('label' => $langs->trans("DateReceived"), 'position' => 1020, 'checked' => '1', 'enabled' => (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? '1' : '0')),
-	'e.billed' => array('label' => $langs->trans("Billed"), 'checked' => '1', 'position' => 1100, 'enabled' => 'getDolGlobalString("WORKFLOW_BILL_ON_SHIPMENT") !== "0"'),
+	'l.ref' => array('label' => "DeliveryRef", 'checked' => '1', 'position' => 1010, 'enabled' => (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? '1' : '0')),
+	'l.date_delivery' => array('label' => "DateReceived", 'position' => 1020, 'checked' => '1', 'enabled' => (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? '1' : '0')),
+	'e.billed' => array('label' => "Billed", 'checked' => '1', 'position' => 1100, 'enabled' => 'getDolGlobalString("WORKFLOW_BILL_ON_SHIPMENT") !== "0"'),
 	'e.note_public' => array('label' => 'NotePublic', 'checked' => '0', 'enabled' => (string) (int) (!getDolGlobalString('MAIN_LIST_ALLOW_PUBLIC_NOTES')), 'position' => 135),
 	'e.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'enabled' => (string) (int) (!getDolGlobalString('MAIN_LIST_ALLOW_PRIVATE_NOTES')), 'position' => 140),
-	'e.fk_user_author' => array('label' => $langs->trans("Author"), 'checked' => '0', 'position' => 510),
+	'e.fk_user_author' => array('label' => "Author", 'checked' => '0', 'position' => 510),
 );
 
 // Extra fields
@@ -1393,9 +1393,9 @@ if (!empty($arrayfields['e.fk_statut']['checked'])) {
 }
 // Signed status
 if (!empty($arrayfields['e.signed_status']['checked'])) {
-	print '<td class="liste_titre center">';
+	print '<td class="liste_titre center parentonrightofpage">';
 	$list_signed_status = $object->getSignedStatusLocalisedArray();
-	print $form->selectarray('search_signed_status', $list_signed_status, $search_signed_status, 1, 0, 0, '', 1, 0, 0, '', 'search_status');
+	print $form->selectarray('search_signed_status', $list_signed_status, $search_signed_status, 1, 0, 0, '', 1, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
 // Status billed
@@ -1623,7 +1623,7 @@ while ($i < $imaxinloop) {
 
 		// Third party
 		if (!empty($arrayfields['s.nom']['checked'])) {
-			print '<td class="tdoverflowmax150">';
+			print '<td class="tdoverflowmax125">';
 			print $companystatic->getNomUrl(1);
 			print '</td>';
 			if (!$i) {

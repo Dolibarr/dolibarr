@@ -239,7 +239,7 @@ class FormProjets extends Form
 						$labeltoshow = dol_trunc($obj->ref, 18);
 						//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 						//else $labeltoshow.=' ('.$langs->trans("Private").')';
-						$labeltoshow .= ', ' . dol_trunc($obj->title, $maxlength);
+						$labeltoshow .= ' - ' . dol_trunc($obj->title, $maxlength);
 						if ($obj->name) {
 							$labeltoshow .= ' - ' . $obj->name;
 							if ($obj->name_alias) {
