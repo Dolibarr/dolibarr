@@ -5130,7 +5130,7 @@ div.pagination li {
 
 div.pagination li.pagination a,
 div.pagination li.pagination span {
-  padding: 6px 12px;
+  padding: 5px 12px;
   padding-top: 8px;
   line-height: 1.42857143;
   color: var(--color-black);

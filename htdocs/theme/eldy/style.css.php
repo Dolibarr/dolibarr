@@ -5389,7 +5389,7 @@ li.pagination.paginationpage.paginationpageleft, li.pagination.paginationpage.pa
 }
 div.pagination li.pagination a,
 div.pagination li.pagination span {
-  padding: 6px 12px;
+  padding: 5px 12px;
   line-height: 1.42857143;
   text-decoration: none;
   background-repeat: repeat-x;
