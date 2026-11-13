@@ -231,6 +231,11 @@ ALTER TABLE llx_facture ADD INDEX idx_facture_situation_cycle_ref (situation_cyc
 -- Reduce response times with high transaction volume
 ALTER TABLE llx_facture ADD INDEX idx_facture_status_date (paye, fk_statut, datef);
 
+-- Index on (fk_product, fk_contrat) replaces the redundant index on fk_product alone (it must be created before the drop, as the foreign key fk_contratdet_fk_product needs an index)
+ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_fkproduct_fkcontrat (fk_product, fk_contrat);
+-- VMYSQL4.1 DROP INDEX idx_contratdet_fk_product ON llx_contratdet;
+-- VPGSQL8.2 DROP INDEX idx_contratdet_fk_product;
+
 -- Short-lived tombstone log of deleted agenda events (see llx_deletion_log.sql).
 CREATE TABLE llx_deletion_log(
 	rowid			integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
