@@ -187,6 +187,12 @@ class AllTests
 		$suite->addTestSuite('AiMcpApiBridgeDocumentsTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeProjectsTest.php';
 		$suite->addTestSuite('AiMcpApiBridgeProjectsTest');
+		require_once dirname(__FILE__).'/AiMcpApiBridgeSupplierOrderLinesTest.php';
+		$suite->addTestSuite('AiMcpApiBridgeSupplierOrderLinesTest');
+		require_once dirname(__FILE__).'/AiMcpApiBridgeSupplierOrderWorkflowTest.php';
+		$suite->addTestSuite('AiMcpApiBridgeSupplierOrderWorkflowTest');
+		require_once dirname(__FILE__).'/AiMcpApiBridgeSupplierOrderDeleteLineTest.php';
+		$suite->addTestSuite('AiMcpApiBridgeSupplierOrderDeleteLineTest');
 		require_once dirname(__FILE__).'/ApiExplorerAccessControlTest.php';
 		$suite->addTestSuite('ApiExplorerAccessControlTest');
 		require_once dirname(__FILE__).'/ApiListStatusFilterTest.php';
@@ -221,10 +227,14 @@ class AllTests
 		$suite->addTestSuite('FilesLibTest');
 		require_once dirname(__FILE__).'/MenusStandardLibTest.php';
 		$suite->addTestSuite('MenusStandardLibTest');
+		require_once dirname(__FILE__).'/CommonFieldsViewTplTest.php';
+		$suite->addTestSuite('CommonFieldsViewTplTest');
 		require_once dirname(__FILE__).'/InstallRepairEcmTest.php';
 		$suite->addTestSuite('InstallRepairEcmTest');
 		require_once dirname(__FILE__).'/InstallRepairImagesTest.php';
 		$suite->addTestSuite('InstallRepairImagesTest');
+		require_once dirname(__FILE__).'/InstallRepairMailingTest.php';
+		$suite->addTestSuite('InstallRepairMailingTest');
 		require_once dirname(__FILE__).'/GetUrlLibTest.php';
 		$suite->addTestSuite('GetUrlLibTest');
 		require_once dirname(__FILE__).'/JsonLibTest.php';
@@ -290,6 +300,8 @@ class AllTests
 		$suite->addTestSuite('DAVLibTest');
 		require_once dirname(__FILE__).'/CMailFileTest.php';
 		$suite->addTestSuite('CMailFileTest');
+		require_once dirname(__FILE__).'/DolReceiptPrinterTest.php';
+		$suite->addTestSuite('DolReceiptPrinterTest');
 
 		require_once dirname(__FILE__).'/CommonObjectTest.php';
 		$suite->addTestSuite('CommonObjectTest');
@@ -467,6 +479,8 @@ class AllTests
 			$suite->addTestSuite('RestAPIUserTest');
 			require_once dirname(__FILE__).'/RestAPIAgendaEventsPutTest.php';
 			$suite->addTestSuite('RestAPIAgendaEventsPutTest');
+			require_once dirname(__FILE__).'/RestAPIAgendaEventsGetTest.php';
+			$suite->addTestSuite('RestAPIAgendaEventsGetTest');
 			require_once dirname(__FILE__).'/RestAPIContactTest.php';
 			$suite->addTestSuite('RestAPIContactTest');
 			require_once dirname(__FILE__).'/RestAPIDocumentTest.php';
@@ -489,6 +503,8 @@ class AllTests
 			$suite->addTestSuite('RestAPIAgendaEventsTest');
 			require_once dirname(__FILE__).'/RestAPIContractTest.php';
 			$suite->addTestSuite('RestAPIContractTest');
+			require_once dirname(__FILE__).'/RestAPITicketTest.php';
+			$suite->addTestSuite('RestAPITicketTest');
 
 			// Old WS
 			require_once dirname(__FILE__).'/WebservicesProductsTest.php';

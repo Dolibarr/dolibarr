@@ -206,8 +206,10 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 	$reg = array();
 	if (preg_match('/^common([a-z,]*)/', $noescapetags, $reg)) {
 		$noescapetags = 'html,body,a,b,em,hr,i,u,ul,ol,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody,h1,h2,h3,h4,h5,h6,h7,h8,h9';
+		// Add also the other content tags kept by the 'common' list of dol_string_onlythesehtmltags()
+		$noescapetags .= ',abbr,blockquote,cite,dl,dd,dt,ins,pre,q,s,strike,sub,sup,thead,tfoot';
 		// Add also html5 tags
-		$noescapetags .= ',header,footer,nav,section,menu,menuitem';
+		$noescapetags .= ',article,header,footer,nav,section,menu,menuitem';
 		if (!empty($reg[1])) {
 			$noescapetags .= $reg[1];
 		}
@@ -416,7 +418,7 @@ function dolButtonToOpenExportDialog($name, $label, $buttonstring, $exportSiteNa
 	$out .= '    jQuery("#custom-dialog-' . $name . '").dialog({';
 	$out .= '      autoOpen: false,';
 	$out .= '      modal: true,';
-	$out .= '      height: 310,';
+	$out .= '      height: 330,';
 	$out .= '      width: "40%",';
 	$out .= '      title: \'' . dol_escape_js($label) . '\',';
 	$out .= '    });';
@@ -695,27 +697,66 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		if (empty($tabsname)) {
 			$tabsname = str_replace("@", "", $picto);
 		}
-		$out .= '<div id="moretabs' . $tabsname . '" class="inline-block tabsElem valignmiddle">';
-		if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2) {
-			$out .= '<div class="tab valignmiddle"><a href="#" class="tab moretab inline-block tabunactive valignmiddle"><span class="fa fa-angle-down"></span> <span class="opacitymedium">+' . $nbintab . '</span></a></div>'; // Do not use "reposition" class in the "More".
+		$withmorebutton = (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2);
+		$out .= '<div id="moretabs' . dol_escape_htmltag($tabsname) . '" class="inline-block tabsElem valignmiddle">';
+		if ($withmorebutton) {
+			$out .= '<div class="tab valignmiddle"><a href="#" class="tab moretab inline-block tabunactive valignmiddle" role="button" aria-haspopup="true" aria-expanded="false" aria-controls="moretabsList' . dol_escape_htmltag($tabsname) . '"><span class="fa fa-angle-down"></span> <span class="opacitymedium">+' . $nbintab . '</span></a></div>'; // Do not use "reposition" class in the "More".
 		}
-		$out .= '<div id="moretabsList' . $tabsname . '" style="width: ' . $widthofpopup . 'px; position: absolute; ' . $left . ': -999em; text-align: ' . $left . '; margin:0px; padding:2px; z-index:10;">';
+		// The list stays readable by screen readers when the button is not output (MAIN_OPTIMIZEFORTEXTBROWSER >= 2)
+		$out .= '<div id="moretabsList' . dol_escape_htmltag($tabsname) . '" style="width: ' . $widthofpopup . 'px; position: absolute; ' . $left . ': -999em; text-align: ' . $left . '; margin:0px; padding:2px; z-index:10;' . ($withmorebutton ? ' visibility: hidden;' : '') . '">';
 		$out .= $outmore;
 		$out .= '</div>';
 		$out .= '<div></div>';
 		$out .= "</div>\n";
 
 		$out .= '<script nonce="' . getNonce() . '">';
-		$out .= "$('#moretabs" . $tabsname . "').mouseenter( function() {
-			var x = this.offsetLeft, y = this.offsetTop;
-			console.log('mouseenter " . $left . " x='+x+' y='+y+' window.innerWidth='+window.innerWidth);
-			if ((window.innerWidth - x) < " . ($widthofpopup + 10) . ") {
-				$('#moretabsList" . $tabsname . "').css('" . $right . "','8px');
+		$out .= "(function() {
+			var moretabs = $('#moretabs" . dol_escape_js($tabsname) . "'), moretabsList = $('#moretabsList" . dol_escape_js($tabsname) . "'), morebutton = moretabs.find('a.moretab');
+			var hoveropen = false;
+			function showMoreTabs(show) {
+				if (show) {
+					var x = moretabs[0].offsetLeft;
+					if ((window.innerWidth - x) < " . ($widthofpopup + 10) . ") {
+						moretabsList.css('" . $right . "', '8px');
+					}
+					moretabsList.css('" . $left . "', 'auto');
+				} else {
+					moretabsList.css('" . $left . "', '-999em');
+				}
+				if (morebutton.length) {
+					moretabsList.css('visibility', show ? 'visible' : 'hidden');
+					morebutton.attr('aria-expanded', show ? 'true' : 'false');
+				}
 			}
-			$('#moretabsList" . $tabsname . "').css('" . $left . "','auto');
+			moretabs.on('pointerenter', function(e) {
+				if (e.originalEvent.pointerType == 'mouse') { hoveropen = true; showMoreTabs(true); }
 			});
+			moretabs.on('pointerleave', function(e) {
+				if (e.originalEvent.pointerType == 'mouse') { hoveropen = false; showMoreTabs(false); }
+			});
+			morebutton.on('click', function(e) {
+				e.preventDefault();
+				showMoreTabs(hoveropen || morebutton.attr('aria-expanded') != 'true');
+			});
+			morebutton.on('keydown', function(e) {
+				if (e.key == 'Enter' || e.key == ' ') {
+					e.preventDefault();
+					showMoreTabs(morebutton.attr('aria-expanded') != 'true');
+				}
+			});
+			moretabs.on('keydown', function(e) {
+				if (e.key == 'Escape' && morebutton.attr('aria-expanded') == 'true') {
+					showMoreTabs(false);
+					morebutton.trigger('focus');
+				}
+			});
+			moretabs.on('focusout', function(e) {
+				if (!hoveropen && !$.contains(moretabs[0], e.relatedTarget)) {
+					showMoreTabs(false);
+				}
+			});
+		})();
 		";
-		$out .= "$('#moretabs" . $tabsname . "').mouseleave( function() { console.log('mouseleave " . $left . "'); $('#moretabsList" . $tabsname . "').css('" . $left . "','-999em');});";
 		$out .= "</script>";
 	}
 
@@ -1632,6 +1673,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'company' => '#6c6aa8',
 				'contact' => '#6c6aa8',
 				'cron' => '#555',
+				'depositslip' => '#a69944',
 				'dynamicprice' => '#a69944',
 				'edit' => '#444',
 				'note' => '#999',
@@ -1800,6 +1842,7 @@ function getImgPictoConv($mode = 'fa')
 			'chevron-double-down' => 'angle-double-down',
 			'chevron-double-top' => 'angle-double-up',
 			'donation' => 'gift',
+			'depositslip' => 'hand-holding-usd',
 			'dynamicprice' => 'hand-holding-usd',
 			'setup' => 'cog',
 			'companies' => 'building',

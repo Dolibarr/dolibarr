@@ -706,7 +706,7 @@ class TraceableDB extends DoliDB
 	 * List information of columns into a table.
 	 *
 	 * @param   string 			$table 		Name of table
-	 * @return  array<array<string,mixed>>	Array with information on table
+	 * @return  array<array<mixed>>			Array with information on table (one array with numeric keys per column)
 	 */
 	public function DDLInfoTable($table)
 	{

@@ -44,7 +44,7 @@ As the Developer:
 7. Commit your changes - follow rules of [Commits](#commits).
 8. Make your pull requests - follow rules of [Pull Requests](#pull-requests). See also [Make a pull request](https://help.github.com/articles/creating-a-pull-request).
 
-If a CI error is thrown, the developer must fix it (The maintener will not process it). This is true even if the CI error is reported an another line of code than the one you modified. This is the principle of solidarity of Dolibarr project.
+If a CI error is thrown, the developer must fix it (The maintainer will not process it). This is true even if the CI error is reported an another line of code than the one you modified. This is the principle of solidarity of Dolibarr project.
 
 If a conflict is reported (so PR is not mergeable, status "Mergeable" appear on the PR itself), the developer must fix it too, also if the conflict is not the fault of yourself. Again the principle of solidarity rules.
 
@@ -60,7 +60,7 @@ As the Release Maintainer:
 9. A tag will be added to take a snapshot of the code with all the changes approved by PR Maintainers, when ready to do a release.
 
 
-Note: Mainteners of a branch can directly commit to the project (in their branch) without a PR. Of course anyone can check commit history and comment!
+Note: Maintainers of a branch can directly commit to the project (in their branch) without a PR. Of course anyone can check commit history and comment!
 
 
 <span id="branches" name="branches"></span>
@@ -84,7 +84,7 @@ Pull Requests on old branches are still going to be merged and propagated into n
 
 - As the Developer: Do not submit changes into files xx_XX/afile.lang. They are language files and are updated/synced automatically from Transifex. If you need to add a new language file, just add it for the en_US language.
 
-- As the Developor: For code contribution on stable branches (non develop), PR must contains 1 and only 1 bug fix at once.
+- As the Developer: For code contribution on stable branches (non develop), PR must contains 1 and only 1 bug fix at once.
 
 - As the Release Maintainer: The Release Maintainer will decide to make a new release as soon as the planning of the release is reached and the code in the branch to release reach the status of "No more known serious bugs". 
 
@@ -101,11 +101,11 @@ Use clear commit messages with the following structure:
 LONGDESC
 ```
 
-We provide a [.gitmessage](/.gitmessage) file to help you fit the template.
+We provide a [gitmessage](/dev/setup/git/gitmessage) file to help you fit the template.
 
 You can add it to your git configuration using:
 ```
-git config --local commit.template .gitmessage
+git config --local commit.template dev/setup/git/gitmessage
 ```
 
 with
@@ -172,7 +172,7 @@ If your PR contains more than 10 files, it is not an atomic PR.
 
 ### Submit a sample first
 
-When submitting code changes with similare patterns in different files in a PR, first try to submit a first one for one file. 
+When submitting code changes with similar patterns in different files in a PR, first try to submit a first one for one file. 
 If first PR is accepted, you could reproduce it for more files but do not try to send all PR before the first one is accepted.
 
 ### Description of PR
@@ -191,7 +191,7 @@ Your Pull Request (PR) must pass the Continuous Integration checks and code qual
 ### Change on translation files
 
 Never include changes on non en_US files:Translation are managed by transifex and files for local languages are erased during synchronization with Transifex.
-Only mainteners car push change on non en_US files (for the transifex synchronization process).
+Only maintainers car push change on non en_US files (for the transifex synchronization process).
 
 ### PR that need pre-approbation
 

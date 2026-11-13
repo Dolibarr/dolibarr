@@ -1403,6 +1403,7 @@ if ($action == 'create') {
 			'name' 		=> 'signed_status',
 			'select_show_empty' => 0,
 			'label'		=> '<span class="fieldrequired">'.$langs->trans('SignStatus').'</span>',
+			'morecss'	=> 'minwidth200',
 			'values'	=> $object->getSignedStatusLocalisedArray()
 		];
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SignIntervention'), $text, 'confirm_sign', $formquestion, 0, 1);
@@ -1950,7 +1951,7 @@ if ($action == 'create') {
 				// Date intervention
 				print '<td class="center nowrap">';
 				$now = dol_now();
-				$timearray = dol_getdate($now);
+				$timearray = dol_getdate($now + getDolGlobalInt('FICHINTER_DEFAULT_START', 0));
 				if (!GETPOSTINT('diday')) {
 					if (getDolGlobalInt('FICHINTER_DATE_WITHOUT_HOUR')) {
 						$timewithnohour = dol_mktime(0, 0, 0, $timearray['mon'], $timearray['mday'], $timearray['year']);
@@ -1974,7 +1975,8 @@ if ($action == 'create') {
 					if (getDolGlobalString('INTERVENTION_ADDLINE_FREEDUREATION')) {
 						$selectmode = 'text';
 					}
-					$form->select_duration('duration', (!GETPOSTINT('durationhour') && !GETPOSTINT('durationmin')) ? 3600 : (60 * 60 * GETPOSTINT('durationhour') + 60 * GETPOSTINT('durationmin')), 0, $selectmode);
+					$defaultDuration = getDolGlobalInt('FICHINTER_DEFAULT_DURATION', 3600);
+					$form->select_duration('duration', (!GETPOSTINT('durationhour') && !GETPOSTINT('durationmin')) ? $defaultDuration : (60 * 60 * GETPOSTINT('durationhour') + 60 * GETPOSTINT('durationmin')), 0, $selectmode);
 				}
 				print '</td>';
 

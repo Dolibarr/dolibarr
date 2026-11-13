@@ -1122,6 +1122,18 @@ class FunctionsLibTest extends CommonClassTest
 		$input = '<i class="abc">xxx</i>';
 		$after = dol_textishtml($input);
 		$this->assertTrue($after, 'Test with i tag and class;');
+		$input = '<blockquote style="color: #8e44ad;">xxx</blockquote>';
+		$after = dol_textishtml($input);
+		$this->assertTrue($after, 'Test with blockquote tag and style');
+		$input = '<pre>a < b</pre>';
+		$after = dol_textishtml($input);
+		$this->assertTrue($after, 'Test with pre tag');
+		$input = '<dl><dt>a</dt><dd>b</dd></dl>';
+		$after = dol_textishtml($input);
+		$this->assertTrue($after, 'Test with dl tag');
+		$input = "<section style=\"padding: 30px;\">\n<h2 style=\"color: #2c3e50;\">Title</h2>\n</section>";
+		$after = dol_textishtml($input);
+		$this->assertTrue($after, 'Test with section tag and style');
 
 		// False
 		$input = 'xxx < br>';
@@ -3208,5 +3220,49 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals(-1, fetchObjectByElement(0, 'product_error'), 'a PHP internal class is never instantiated');
 
 		$conf->modules = $savmodules;
+	}
+
+	/**
+	 * testDolGetFicheHeadMoreTabsIsAccessible
+	 *
+	 * @return void
+	 */
+	public function testDolGetFicheHeadMoreTabsIsAccessible()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/html.lib.php';
+
+		$savedconsts = array();
+		foreach (array('MAIN_MAXTABS_IN_CARD', 'MAIN_OPTIMIZEFORTEXTBROWSER') as $constname) {
+			$savedconsts[$constname] = (property_exists($conf->global, $constname) ? $conf->global->$constname : null);
+		}
+		$conf->global->MAIN_MAXTABS_IN_CARD = 2;
+		$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = 0;
+
+		$links = array();
+		for ($i = 0; $i < 5; $i++) {
+			$links[$i] = array('/test.php?tab='.$i, 'Tab'.$i, 'tab'.$i);
+		}
+		$out = dol_get_fiche_head($links, 'tab0', '', 0, '', 0, '', '', 0, 'unittest');
+
+		foreach ($savedconsts as $constname => $constvalue) {
+			if ($constvalue === null) {
+				unset($conf->global->$constname);
+			} else {
+				$conf->global->$constname = $constvalue;
+			}
+		}
+
+		// The "+" must be operable without a mouse and announce the list it opens
+		$this->assertSame(1, preg_match('/<a href="#" class="[^"]*moretab[^"]*" role="button" aria-haspopup="true" aria-expanded="false" aria-controls="moretabsListunittest">/', $out));
+		$this->assertStringContainsString('id="moretabsListunittest"', $out);
+		$this->assertStringContainsString('e.preventDefault()', $out);
+		$this->assertStringContainsString("'Escape'", $out);
+		$this->assertStringNotContainsString('console.log', $out);
 	}
 }

@@ -1440,6 +1440,7 @@ if ($action == 'create') {	// aaa
 			}*/
 
 			print '</table>';
+			print '<br>';
 
 			// Message
 			print '<div class="previewemail" style="padding-top: 10px; background: '.($object->bgcolor ? (preg_match('/^#/', $object->bgcolor) ? '' : '#').$object->bgcolor : 'white').'">';

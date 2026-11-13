@@ -414,3 +414,68 @@ function repairOrphanFiles($db, $modulepart, $directory, $documentroot, $confirm
 	}
 	return $report;
 }
+
+/**
+ * Migrate one mailing's legacy files inside its owner's native directory.
+ *
+ * @param Mailing $mailing Mailing with id, ref and entity loaded
+ * @param string $directory Owner's native mailing directory
+ * @param string $documentroot Installation's documents directory
+ * @param bool $ambiguous Other mailings in this entity use the same legacy bucket
+ * @param bool $confirmed Apply moves; false only reports planned moves
+ * @return array{files:list<array{source:string,target:string}>,error:string}
+ */
+function repairMailingFiles($mailing, $directory, $documentroot, $ambiguous = false, $confirmed = false)
+{
+	global $conf;
+	$report = array('files' => array(), 'error' => '');
+	if ($mailing->id <= 0 || $mailing->entity <= 0 || !repairImagePathIsSafe($directory.'/'.$mailing->id, $directory, $documentroot)) {
+		$report['error'] = 'RepairMailingFailed';
+		return $report;
+	}
+	$origin = $directory.'/'.get_exdir($mailing->id, 2, 0, 1, $mailing, 'mailing');
+	// Calculate the destination without changing the administrator's persisted path setting.
+	$hadsetting = isset($conf->global->MAILING_USE_NEW_PATH_FOR_FILES);
+	$previoussetting = $hadsetting ? $conf->global->MAILING_USE_NEW_PATH_FOR_FILES : null;
+	$conf->global->MAILING_USE_NEW_PATH_FOR_FILES = 1;
+	$destination = $directory.'/'.get_exdir($mailing->id, 0, 0, 1, $mailing, 'mailing');
+	if ($hadsetting) {
+		$conf->global->MAILING_USE_NEW_PATH_FOR_FILES = $previoussetting;
+	} else {
+		unset($conf->global->MAILING_USE_NEW_PATH_FOR_FILES);
+	}
+	if (!repairImagePathIsSafe($origin, $directory, $documentroot) || !repairImagePathIsSafe($destination, $directory, $documentroot) || $origin === $destination) {
+		$report['error'] = 'RepairMailingFailed';
+		return $report;
+	}
+	if (!dol_is_dir($origin)) {
+		return $report;
+	}
+	if (!is_readable(dol_osencode($origin))) {
+		$report['error'] = 'RepairMailingFailed';
+		return $report;
+	}
+	$files = dol_dir_list($origin, 'files', 1, '', null, 'name', SORT_ASC, 0, 1, '', 1);
+	if (!empty($files) && $ambiguous) {
+		$report['error'] = 'RepairMailingAmbiguous';
+		return $report;
+	}
+	foreach ($files as $file) {
+		$source = $file['fullname'];
+		$target = $destination.'/'.substr($source, strlen($origin) + 1);
+		if (!repairImagePathIsSafe($source, $directory, $documentroot) || !repairImagePathIsSafe($target, $directory, $documentroot) || file_exists(dol_osencode($target))) {
+			$report['error'] = 'RepairMailingFailed';
+			return $report; // Refuse the entire mailing before moving any file on a collision.
+		}
+		$report['files'][] = array('source' => $source, 'target' => $target);
+	}
+	if ($confirmed) {
+		foreach ($report['files'] as $file) {
+			if (dol_mkdir(dirname($file['target'])) < 0 || !dol_move($file['source'], $file['target'], '0', 0, 0, 1, array(), (int) $mailing->entity)) {
+				$report['error'] = 'RepairMailingFailed';
+				break;
+			}
+		}
+	}
+	return $report;
+}

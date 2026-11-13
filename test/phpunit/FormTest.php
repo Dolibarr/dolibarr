@@ -2,6 +2,7 @@
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Joachim Kueter		<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -866,6 +867,53 @@ class FormTest extends CommonClassTest
 
 		$this->assertStringContainsString('value="Remaining unpaid (Due date)"', $html, 'Subject');
 		$this->assertStringContainsString('Due date - Remaining unpaid', $html, 'Body');
+	}
+
+	/**
+	 * testFormconfirmCloseButtonBehavesLikeNo
+	 *
+	 * With useajax=2, the button No reloads the page with confirm=no. Closing the dialog with the close
+	 * button of the title bar must do the same, otherwise the page stays on action=xxx (that may hide
+	 * the action buttons). With useajax=1, the button No only closes the dialog, so nothing is added.
+	 *
+	 * @return void
+	 */
+	public function testFormconfirmCloseButtonBehavesLikeNo()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$savajax = $conf->use_javascript_ajax;
+		$savjmobile = $conf->dol_use_jmobile;
+		$conf->use_javascript_ajax = 1;
+		$conf->dol_use_jmobile = 0;
+		$savlayout = $conf->browser->layout ?? null;
+		$conf->browser->layout = 'classic';
+
+		$form = new Form($db);
+		$html2 = $form->formconfirm('card.php?facid=1', 'Title', 'Question', 'confirm_valid', '', 'yes', 2);
+		$html1 = $form->formconfirm('card.php?facid=1', 'Title', 'Question', 'confirm_valid', '', 'yes', 1);
+		$htmlbutton = $form->formconfirm('card.php?facid=1', 'Title', 'Question', 'confirm_valid', '', 'yes', 'mybutton');
+
+		$conf->use_javascript_ajax = $savajax;
+		$conf->dol_use_jmobile = $savjmobile;
+		$conf->browser->layout = $savlayout;
+
+		// useajax=2: the close of the dialog without a choice triggers the button No, that jumps to pageno
+		$this->assertStringContainsString("var pageno='card.php?facid=1&action=confirm_valid&confirm=no';", $html2);
+		$this->assertStringContainsString('beforeClose: function() {', $html2);
+		$this->assertStringContainsString('if ($(this).data("formconfirmchoicedone")) {', $html2);
+		$this->assertStringContainsString('.find(".ui-dialog-buttonpane button").eq(1).trigger("click");', $html2);
+		// Each button sets the flag before it closes the dialog, so it is not handled as a close without choice
+		$this->assertSame(substr_count($html2, '$(this).dialog("close");'), substr_count($html2, '$(this).data("formconfirmchoicedone", 1);'));
+		$this->assertSame(2, substr_count($html2, '$(this).data("formconfirmchoicedone", 1);'));
+
+		// useajax=1 or a button name: the button No does not reload the page, so the close is unchanged
+		$this->assertStringNotContainsString('beforeClose', $html1);
+		$this->assertStringNotContainsString('beforeClose', $htmlbutton);
 	}
 
 	/**

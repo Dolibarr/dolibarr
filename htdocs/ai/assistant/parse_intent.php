@@ -88,6 +88,7 @@ $rawRequestLog = "";
 $rawResponseLog = "";
 $providerUsed = "offline";
 $errorDetails = "";
+$adapter = null;	// LLM adapter, set only when an AI API is called
 
 $assistantEnabled = getDolGlobalInt('AI_ASSISTANT_ENABLED', 0);
 $serviceKey = getDolGlobalString('AI_API_SERVICE');
@@ -179,6 +180,7 @@ try {
 			'category' => array('/categories/class/categorie.class.php', 'Categorie', 'category (tag)', 'categorie', 'lire'),
 			'knowledgerecord' => array('/knowledgemanagement/class/knowledgerecord.class.php', 'KnowledgeRecord', 'knowledge article', 'knowledgemanagement', 'knowledgerecord', 'read'),
 			'recruitmentjobposition' => array('/recruitment/class/recruitmentjobposition.class.php', 'RecruitmentJobPosition', 'job position', 'recruitment', 'recruitmentjobposition', 'read'),
+			'websitepage' => array('/website/class/websitepage.class.php', 'WebsitePage', 'website page', 'website', 'read'),
 			// Deliberately absent: user and salary (privacy/SEC precedent
 			// #40313) - personal data cards never feed the prompt.
 		);
@@ -241,6 +243,17 @@ try {
 					$aiPageContextLine .= " - in particular, this thirdparty id is the socid/customer id for any create or search tool";
 				}
 				$aiPageContextLine .= ". NEVER ask the user for ids already given here; pass names/refs the user wrote (products, etc.) directly in the matching ref arguments - tools resolve them.";
+				if ($ctxElement === 'websitepage') {
+					// A website page is known by its alias inside its website. The page has no entity: the website
+					// fetch filters on it, so the context is dropped for a page of a website of another entity.
+					$aiPageContextLine = '';
+					require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
+					$ctxWebsite = new Website($db);
+					if ($ctxWebsite->fetch((int) $ctxObj->fk_website) > 0) {
+						$aiPageContextLine = "The user is currently viewing the page with alias \"".$ctxObj->pageurl."\" (page id ".(int) $ctxObj->id.") of the website with ref \"".$ctxWebsite->ref."\" (website id ".(int) $ctxWebsite->id.").";
+						$aiPageContextLine .= " When the user says \"this page\"/\"it\", use this page id as the pageid argument and this website id as the id argument of the website tools. NEVER ask the user for ids already given here.";
+					}
+				}
 				if (getDolGlobalString("AI_DEBUG")) {
 					dol_syslog("AI Pro: page context accepted: ".$ctxElement." #".$ctxId, LOG_INFO, 0, '_ai');
 				}
@@ -430,8 +443,7 @@ try {
 	// Privacy guard level 2: the phrase becomes "socid:N" so the name never reaches the provider.
 	// When several fit, or for a single word that is part of the whole name, the user chooses before anything
 	// is sent: the answer is built locally and the choice comes back with the same request.
-	// Privacy guard level 0 or 1: the name stays and the id is added "Name (socid:N)" when only one fits.
-	// Otherwise the phrase is left as written and the model searches it (no question).
+	// Privacy guard level 0 or 1: no lookup, the phrase is left as written and the model searches it (no question).
 	$aiNamesToMask = array();	// names masked in everything sent: query, history, tool results
 	$tpChoices = (!empty($data['thirdparty_choices']) && is_array($data['thirdparty_choices'])) ? $data['thirdparty_choices'] : array();
 	// An attached document is data, not the request: the third parties it names
@@ -446,7 +458,9 @@ try {
 		}
 	}
 
-	$tpFound = aiFindThirdpartiesInText($db, $user, $query, aiThirdpartyNatureHint($query, $langs), $dynamicStopWords);
+	// Only under privacy guard level 2: below it, the request is sent as written (no "Name (socid:N)" added into
+	// text the user wants written as is, like "add hello" when a third party is named "Hello").
+	$tpFound = !empty($doRedactNames) ? aiFindThirdpartiesInText($db, $user, $query, aiThirdpartyNatureHint($query, $langs), $dynamicStopWords) : array();
 
 	$tpAsk = null;
 	$tpReplace = array();
@@ -471,14 +485,12 @@ try {
 		// A weak match (one word that is not the whole name) is confirmed by the
 		// user, even when the word is not the start of the name ("Jensen" for "Jon Jensen LLC").
 		// Under the guard the question is local.
-		$weak = (!$mt['exact'] && $mt['words'] === 1 && (empty($doRedactNames) || !$mt['first']));
+		$weak = (!$mt['exact'] && $mt['words'] === 1 && !$mt['first']);
 		if ($socidChosen < 0) {
 			if (count($visibleIds) === 1 && !$weak) {
 				$socidChosen = $visibleIds[0];
 			} elseif (count($visibleIds) === 0) {
-				$socidChosen = 0;	// nothing to offer: masked under the guard level 2, left as written otherwise
-			} elseif (empty($doRedactNames)) {
-				$socidChosen = 0;	// several or a weak match: the name may reach the provider, so left as written for the model to search
+				$socidChosen = 0;	// nothing to offer: the name is masked
 			} else {
 				if ($tpAsk === null) {
 					$tpAsk = $mt;
@@ -487,7 +499,7 @@ try {
 			}
 		}
 		if ($socidChosen > 0) {
-			$tpReplace[] = array($mt['start'], $mt['end'], empty($doRedactNames) ? $mt['raw'].' (socid:'.$socidChosen.')' : 'socid:'.$socidChosen);
+			$tpReplace[] = array($mt['start'], $mt['end'], 'socid:'.$socidChosen);
 		}
 	}
 
@@ -768,6 +780,7 @@ try {
 				$aiPageContextLine = $guard->mask($doRedactNames ? $guard->maskNames($aiPageContextLine, $ctxNamesToMask) : $aiPageContextLine);
 			}
 			$systemPrompt .= "Page context: ".$aiPageContextLine."\n";
+			$systemPrompt .= "If the user asks which page or record they are on, answer from this page context with respond_to_user, without calling another tool.\n";
 		}
 		// The acting user's identity: the rowid alone lets the model resolve
 		// 'me' in sqlfilters (__USER_ID__ covers it too) and in user fields of
@@ -883,7 +896,8 @@ try {
 					}
 				}
 
-				$histBudget = 6000;
+				$histBudget = getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 200000);	// in characters
+				$histTurnMaxSize = $histBudget;	// cap of one turn, same as the whole budget
 				foreach ($histTurns as $turn) {
 					if (is_array($turn) && !empty($turn['id'])) {
 						$turn = $histRows[(int) $turn['id']] ?? null;
@@ -901,8 +915,8 @@ try {
 						$hdata = json_decode((string) preg_replace('/^\[[^\]]*\]\s*/', '', $htext), true);
 						$htext = $guard->maskNames($htext, array_merge($aiNamesToMask, aiThirdpartyNamesToMask($db, $user, $htext, $dynamicStopWords, $hdata)));
 					}
-					if (dol_strlen($htext) > 1500) {
-						$htext = dol_substr($htext, 0, 1500).' ...';
+					if (dol_strlen($htext) > $histTurnMaxSize) {
+						$htext = dol_substr($htext, 0, $histTurnMaxSize).' ...';
 					}
 					if ($guard) {
 						$htext = $guard->mask($htext);
@@ -1244,7 +1258,10 @@ try {
 				$hasPdf = $hasPdf || ($att['mime'] === 'application/pdf');
 			}
 			$attachmentWords = '/\b(?:file|files|pdf|document|image_url|image|attachment|content.?type|mime|multimodal|vision)\b/i';
-			if (!empty($attachments) && preg_match($attachmentWords, $reason)) {
+			if ($adapter !== null && $adapter->lastTruncated) {
+				// The answer was cut by the max tokens limit: retrying the same request gives the same cut answer
+				$message = $langs->transnoentitiesnoconv('AIAnswerTruncated', $reason);
+			} elseif (!empty($attachments) && preg_match($attachmentWords, $reason)) {
 				$message = $langs->transnoentitiesnoconv($hasPdf ? 'AIProviderRejectedPdf' : 'AIProviderRejectedAttachment', getAiAssistantProviderLabel(), $reason);
 			} elseif (UniversalLLMAdapter::isModelUnavailableError($reason)) {
 				// The chosen model is unknown or retired at the provider: rephrasing
@@ -1898,14 +1915,14 @@ function classifyIntentUniversal(string $query, Translate $langs)
  *
  * This function narrows down the available tools by matching their assigned
  * categories against the detected intent categories. Tools tagged as "global"
- * are always considered, but may be excluded when more specific categories
- * are active to avoid overly generic matches.
+ * (the default of McpTool::getCategories()) are always kept, as they apply to
+ * any object (navigation, tools of external modules without categories, ...).
  *
  * Behavior:
  * - If no categories are provided, or only "global" is present, all tools are returned.
  * - Tools are included if they share at least one category with the target categories.
- * - Tools with only the "global" category are excluded when specific categories are active.
- * - If filtering results in fewer than 3 tools, the full tool list is returned as a fallback.
+ * - Tools with the "global" category are always included.
+ * - If fewer than 3 tools match a detected category, the full tool list is returned as a fallback.
  *
  *
  * @param array<int,array<string,mixed>> $allTools          List of all available tools.
@@ -1921,19 +1938,20 @@ function filterToolsProfessional(array $allTools, array $activeCategories)
 
 	$targetCategories = array_merge(['global'], $activeCategories);
 	$filtered = [];
+	$nbMatchingCategory = 0;	// Tools kept for a detected category, not only because they are global
 
 	foreach ($allTools as $tool) {
 		$toolCats = $tool['categories'] ?? ['global'];
 		if (count(array_intersect($toolCats, $targetCategories)) > 0) {
-			if (count($activeCategories) > 0 && $toolCats === ['global']) {
-				continue;
-			}
 			$filtered[] = $tool;
+			if (count(array_intersect($toolCats, $activeCategories)) > 0) {
+				$nbMatchingCategory++;
+			}
 		}
 	}
 
-	if (count($filtered) < 3) {
-		dol_syslog("AI Filter: Too few tools (" . count($filtered) . "). Reverting to full schema.", LOG_WARNING);
+	if ($nbMatchingCategory < 3) {
+		dol_syslog("AI Filter: Too few tools (" . $nbMatchingCategory . ") for the detected categories. Reverting to full schema.", LOG_WARNING);
 		return $allTools;
 	}
 
