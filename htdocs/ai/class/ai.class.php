@@ -423,7 +423,12 @@ class Ai
 							fwrite($fp, $prePrompt."\n");
 						}
 						fwrite($fp, "HTTP Header\n");
-						fwrite($fp, var_export($headers, true)."\n");
+						// The API key is masked (only the 5 first chars are kept) so it is not written in clear into the log file
+						$headersforlog = $headers;
+						if ((string) $this->apiKey !== '') {
+							$headersforlog = str_replace((string) $this->apiKey, dol_substr((string) $this->apiKey, 0, 5).'***********', $headers);
+						}
+						fwrite($fp, var_export($headersforlog, true)."\n");
 						fwrite($fp, "Payload\n");
 						fwrite($fp, var_export($payload, true)."\n");
 
