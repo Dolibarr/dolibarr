@@ -1,0 +1,21 @@
+# sqlfluff setup
+
+sqlfluff is a SQL linter, run on sql files by the pre-commit hook sqlfluff-lint.
+
+The configuration is stored into this directory (and not at root of repository), so it does
+not pollute the root directory. It is loaded thanks to the option
+
+> --config dev/setup/sqlfluff/config
+
+that is set into the file .pre-commit-config.yaml.
+
+To run the linter manually, use:
+
+> sqlfluff lint --config dev/setup/sqlfluff/config .
+
+To fix violations automatically (check the diff after!), use:
+
+> sqlfluff fix --config dev/setup/sqlfluff/config mydatabase.sql
+
+Note that some sql files are excluded from the hook (see .pre-commit-config.yaml):
+migration scripts and data files have a legacy SQL style that can not be rewritten.

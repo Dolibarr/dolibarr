@@ -48,7 +48,7 @@ class RemiseCheque extends CommonObject
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'payment';
+	public $picto = 'depositslip';
 
 	/**
 	 * @var string
@@ -565,7 +565,7 @@ class RemiseCheque extends CommonObject
 			$response->label = $langs->trans("BankChecksToReceipt");
 			$response->labelShort = $langs->trans("BankChecksToReceiptShort");
 			$response->url = DOL_URL_ROOT.'/compta/paiement/cheque/index.php?leftmenu=checks&amp;mainmenu=bank';
-			$response->img = img_object('', "payment");
+			$response->img = img_object('', $this->picto);
 
 			$obj = $this->db->fetch_object($resql);
 			if ($obj) {

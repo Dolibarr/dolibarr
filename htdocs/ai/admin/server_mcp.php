@@ -487,9 +487,10 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	print '</table>';
 	print '</div>';
 
-	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
+	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; </div>';
 
 	print '</form>';
+	print '<br>';
 
 	print '<br>';
 

@@ -96,7 +96,9 @@ class Interventions extends DolibarrApi
 		}
 
 		$result = $this->fichinter->fetch($id, $ref, $ref_ext);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving intervention : '.$this->fichinter->errorsToString());
+		} elseif ($result == 0) {
 			throw new RestException(404, 'Intervention not found');
 		}
 
@@ -220,7 +222,11 @@ class Interventions extends DolibarrApi
 			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$fichinter_static = new Fichinter($this->db);
-				if ($fichinter_static->fetch($obj->rowid)) {
+				$result_fetch = $fichinter_static->fetch($obj->rowid);
+				if ($result_fetch < 0) {
+					throw new RestException(500, 'Error when retrieving intervention : '.$fichinter_static->errorsToString());
+				}
+				if ($result_fetch > 0) {
 					if ($contact_type) {
 						$fichinter_static->contacts_ids = $fichinter_static->liste_contact(-1, $contact_type, 1);
 					}
@@ -314,7 +320,9 @@ class Interventions extends DolibarrApi
 		}
 
 		$result = $this->fichinter->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving intervention : '.$this->fichinter->errorsToString());
+		} elseif ($result == 0) {
 			throw new RestException(404, 'Fichinter not found');
 		}
 
@@ -360,6 +368,7 @@ class Interventions extends DolibarrApi
 	 *
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		Intervention not found
+	 * @throws	RestException	500		Error when retrieving the intervention
 	 */
 	public function getLines($id)
 	{
@@ -368,7 +377,9 @@ class Interventions extends DolibarrApi
 		}
 
 		$result = $this->fichinter->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving intervention : '.$this->fichinter->errorsToString());
+		} elseif ($result == 0) {
 			throw new RestException(404, 'Intervention not found');
 		}
 
@@ -410,7 +421,9 @@ class Interventions extends DolibarrApi
 		}
 
 		$result = $this->fichinter->fetch($id);
-		if ($result <= 0) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving intervention : '.$this->fichinter->errorsToString());
+		} elseif ($result == 0) {
 			throw new RestException(404, 'Intervention not found');
 		}
 
@@ -482,7 +495,9 @@ class Interventions extends DolibarrApi
 			throw new RestException(403);
 		}
 		$result = $this->fichinter->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving intervention : '.$this->fichinter->errorsToString());
+		} elseif ($result == 0) {
 			throw new RestException(404, 'Intervention not found');
 		}
 
@@ -530,7 +545,9 @@ class Interventions extends DolibarrApi
 			throw new RestException(403, "Insufficiant rights");
 		}
 		$result = $this->fichinter->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving intervention : '.$this->fichinter->errorsToString());
+		} elseif ($result == 0) {
 			throw new RestException(404, 'Intervention not found');
 		}
 
@@ -583,7 +600,9 @@ class Interventions extends DolibarrApi
 			throw new RestException(403, "Insufficiant rights");
 		}
 		$result = $this->fichinter->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving intervention : '.$this->fichinter->errorsToString());
+		} elseif ($result == 0) {
 			throw new RestException(404, 'Intervention not found');
 		}
 
@@ -630,7 +649,9 @@ class Interventions extends DolibarrApi
 		}
 
 		$result = $this->fichinter->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving intervention : '.$this->fichinter->errorsToString());
+		} elseif ($result == 0) {
 			throw new RestException(404, 'Intervention not found');
 		}
 
@@ -675,18 +696,24 @@ class Interventions extends DolibarrApi
 	 *
 	 * @url		POST	{id}/settodraft
 	 *
-	 * @throws RestException 304
-	 * @throws RestException 403
-	 * @throws RestException 404
-	 * @throws RestException 500 System error
+	 * @throws	RestException	304		Intervention already in draft status
+	 * @throws	RestException	403		Access denied or intervention not in validated status
+	 * @throws	RestException	404		Intervention not found
+	 * @throws	RestException	500		Error when setting the intervention to draft
 	 */
 	public function settodraft($id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'creer')) {
 			throw new RestException(403, "Insufficiant rights");
 		}
+		// Same permission as the "Modify" button of the intervention card
+		if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !DolibarrApiAccess::$user->hasRight('ficheinter', 'ficheinter_advance', 'unvalidate')) {
+			throw new RestException(403, "Insufficiant rights");
+		}
 		$result = $this->fichinter->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving intervention : '.$this->fichinter->errorsToString());
+		} elseif ($result == 0) {
 			throw new RestException(404, 'Intervention not found');
 		}
 
@@ -696,10 +723,13 @@ class Interventions extends DolibarrApi
 
 		$result = $this->fichinter->setDraft(DolibarrApiAccess::$user);
 		if ($result == 0) {
-			throw new RestException(304, 'Nothing done. . May be object is already set as draft.');
+			if ($this->fichinter->status == Fichinter::STATUS_DRAFT) {
+				throw new RestException(304, 'Nothing done. Intervention is already in draft status');
+			}
+			throw new RestException(403, 'Intervention not in validated status : '.$this->fichinter->getLibStatut(1));
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when closing intervention: '.$this->fichinter->errorsToString());
+			throw new RestException(500, 'Error when setting intervention to draft: '.$this->fichinter->errorsToString());
 		}
 
 		$this->fichinter->fetchObjectLinked();
@@ -732,7 +762,9 @@ class Interventions extends DolibarrApi
 			throw new RestException(403);
 		}
 		$result = $this->fichinter->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving intervention : '.$this->fichinter->errorsToString());
+		} elseif ($result == 0) {
 			throw new RestException(404, 'Interventional not found');
 		}
 
@@ -750,8 +782,8 @@ class Interventions extends DolibarrApi
 		}
 
 		$result = $this->fichinter->fetch($id);
-		if (!$result) {
-			throw new RestException(404, 'Interventional not found');
+		if ($result <= 0) {
+			throw new RestException(500, 'Error when retrieving intervention : '.$this->fichinter->errorsToString());
 		}
 
 		return $this->_cleanObjectDatas($this->fichinter);
@@ -778,7 +810,9 @@ class Interventions extends DolibarrApi
 		}
 
 		$result = $this->fichinter->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving intervention : '.$this->fichinter->errorsToString());
+		} elseif ($result == 0) {
 			throw new RestException(404, 'Interventional not found');
 		}
 
@@ -829,7 +863,9 @@ class Interventions extends DolibarrApi
 
 		$result = $this->fichinter->fetch($id);
 
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving intervention : '.$this->fichinter->errorsToString());
+		} elseif ($result == 0) {
 			throw new RestException(404, 'Interventional not found');
 		}
 
@@ -858,8 +894,8 @@ class Interventions extends DolibarrApi
 		}
 
 		$result = $this->fichinter->fetch($id);
-		if (!$result) {
-			throw new RestException(404, 'Interventional not found');
+		if ($result <= 0) {
+			throw new RestException(500, 'Error when retrieving intervention : '.$this->fichinter->errorsToString());
 		}
 
 		return $this->_cleanObjectDatas($this->fichinter);
@@ -890,7 +926,9 @@ class Interventions extends DolibarrApi
 		}
 
 		$result = $this->fichinter->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving intervention : '.$this->fichinter->errorsToString());
+		} elseif ($result == 0) {
 			throw new RestException(404, 'Intervention not found');
 		}
 
