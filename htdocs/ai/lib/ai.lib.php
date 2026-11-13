@@ -1140,7 +1140,7 @@ function getAiChatAssistantHtml($mode = 'page', $openconversation = 0)
 	if ($defaultModel !== '') {
 		$autoLabel .= ' ('.$defaultModel.')';
 	}
-	$out .= '<option value="" data-picto="ai-picto-sparkle">'.dol_escape_htmltag($autoLabel).'</option>';
+	$out .= '<option value="" data-picto="fa fa-magic">'.dol_escape_htmltag($autoLabel).'</option>';
 	$out .= '</select>';
 	//$out .= ajax_combobox("model-select");
 
