@@ -357,6 +357,10 @@ function cleanSecurityCSP($securitycsp)
 				$securitycsp = preg_replace('/default-src\s+/', 'default-src \'self\' ', $securitycsp);
 			}
 		}
+		// We check if img-src, when defined, contains data: (img-src replaces default-src for images, so data: must also be there)
+		if (preg_match('/img-src/', $securitycsp) && !preg_match('/img-src[^;]*data:/', $securitycsp)) {
+			$securitycsp = preg_replace('/img-src\s+/', 'img-src data: ', $securitycsp);
+		}
 	}
 	$securitycsp = preg_replace('/\s+/', ' ', $securitycsp);
 
