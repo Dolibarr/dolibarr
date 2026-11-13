@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2017       Laurent Destailleur      <eldy@users.sourceforge.net>
- * Copyright (C) 2023-2026  Frédéric France          <frederic.france@free.fr>
+/* Copyright (C) 2017       Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2023-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2026		John BOTELLA
- * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1426,6 +1427,14 @@ class Memo extends CommonObject
 		self::completeMemoContextMapping($contextTabMapping, 'index');
 		self::completeMemoContextMapping($contextTabMapping, 'card', 'globalcard');
 
+		// List and index pages, after card so a card page that also inits a list context keeps its card memos
+		foreach (self::getListIndexContexts() as $listIndexContext => $listIndexProperties) {
+			if ($onlyActiveModules && !self::canAccessListIndexContext($listIndexProperties)) {
+				continue;
+			}
+			self::completeMemoContextMapping($contextTabMapping, $listIndexContext);
+		}
+
 		$staticMemo = new self($db);
 		$hookmanager->initHooks(array($staticMemo->element.'dao'));
 		$parameters = array(
@@ -1481,6 +1490,163 @@ class Memo extends CommonObject
 		}
 
 		return $result;
+	}
+
+	/**
+	 * List and index pages supporting memos.
+	 * Key is the Dolibarr hook context, also used as memo context. Memos of these pages are not linked to an object.
+	 * 'modules': modules separated by '|', one must be enabled.
+	 * 'rights': permissions separated by '|' (levels separated by ':'), one is enough to read the page.
+	 *
+	 * @return array<string, array{modules:string, rights:string}>
+	 */
+	public static function getListIndexContexts()
+	{
+		return array(
+			// Index pages
+			'accountancyindex' => array('modules' => 'accounting|comptabilite', 'rights' => 'accounting:mouvements:lire|accounting:bind:write|compta:resultat:lire'),
+			'activityindex' => array('modules' => 'project', 'rights' => 'projet:lire'),
+			'categoryindex' => array('modules' => 'category', 'rights' => 'categorie:lire'),
+			'commercialindex' => array('modules' => 'societe', 'rights' => 'societe:lire'),
+			'contractindex' => array('modules' => 'contract', 'rights' => 'contrat:lire'),
+			'donationindex' => array('modules' => 'don', 'rights' => 'don:lire'),
+			'expensereportindex' => array('modules' => 'expensereport', 'rights' => 'expensereport:lire'),
+			'hrmindex' => array('modules' => 'hrm|holiday|expensereport|recruitment', 'rights' => 'hrm:all:read|holiday:read|expensereport:lire|recruitment:recruitmentjobposition:read'),
+			'interventionindex' => array('modules' => 'intervention', 'rights' => 'ficheinter:lire'),
+			'invoiceindex' => array('modules' => 'invoice|supplier_invoice', 'rights' => 'facture:lire|fournisseur:facture:lire|supplier_invoice:lire'),
+			'mailingindex' => array('modules' => 'mailing', 'rights' => 'mailing:lire'),
+			'membersindex' => array('modules' => 'member', 'rights' => 'adherent:lire'),
+			'mrpindex' => array('modules' => 'mrp|bom', 'rights' => 'mrp:read|bom:read'),
+			'opensurveyindex' => array('modules' => 'opensurvey', 'rights' => 'opensurvey:read'),
+			'ordersindex' => array('modules' => 'order', 'rights' => 'commande:lire'),
+			'orderssuppliersindex' => array('modules' => 'supplier_order', 'rights' => 'fournisseur:commande:lire|supplier_order:lire'),
+			'productindex' => array('modules' => 'product|service', 'rights' => 'produit:lire|service:lire'),
+			'projectsindex' => array('modules' => 'project', 'rights' => 'projet:lire'),
+			'proposalindex' => array('modules' => 'propal', 'rights' => 'propal:lire'),
+			'receptionindex' => array('modules' => 'reception', 'rights' => 'reception:lire'),
+			'sendingindex' => array('modules' => 'shipping', 'rights' => 'expedition:lire'),
+			'specialexpensesindex' => array('modules' => 'tax|salaries', 'rights' => 'tax:charges:lire|salaries:read'),
+			'stockindex' => array('modules' => 'stock', 'rights' => 'stock:lire'),
+			'suppliersproposalsindex' => array('modules' => 'supplier_proposal', 'rights' => 'supplier_proposal:lire'),
+			'thirdpartiesindex' => array('modules' => 'societe', 'rights' => 'societe:lire|societe:contact:lire'),
+			'ticketsindex' => array('modules' => 'ticket|knowledgemanagement', 'rights' => 'ticket:read|knowledgemanagement:knowledgerecord:read'),
+			// List pages
+			'accountancycustomerlist' => array('modules' => 'accounting', 'rights' => 'accounting:bind:write|accounting:mouvements:lire'),
+			'accountancyexpensereportlist' => array('modules' => 'accounting', 'rights' => 'accounting:bind:write|accounting:mouvements:lire'),
+			'accountancysupplierlist' => array('modules' => 'accounting', 'rights' => 'accounting:bind:write|accounting:mouvements:lire'),
+			'agendalist' => array('modules' => 'agenda', 'rights' => 'agenda:myactions:read'),
+			'assetmodellist' => array('modules' => 'asset', 'rights' => 'asset:read|asset:model_advance:read'),
+			'bankaccountlist' => array('modules' => 'bank', 'rights' => 'banque:lire'),
+			'banktransactionlist' => array('modules' => 'bank', 'rights' => 'banque:lire'),
+			'bomlist' => array('modules' => 'bom', 'rights' => 'bom:read'),
+			'bookkeepinglist' => array('modules' => 'accounting', 'rights' => 'accounting:mouvements:lire'),
+			'bookmarklist' => array('modules' => 'bookmark', 'rights' => 'bookmark:lire'),
+			'cabyprodservlist' => array('modules' => 'accounting|comptabilite', 'rights' => 'compta:resultat:lire|accounting:comptarapport:lire'),
+			'casoclist' => array('modules' => 'accounting|comptabilite', 'rights' => 'compta:resultat:lire|accounting:comptarapport:lire'),
+			'checkmarginlist' => array('modules' => 'margin', 'rights' => 'margins:liretous'),
+			'chequelist' => array('modules' => 'bank', 'rights' => 'banque:lire|banque:cheque'),
+			'comptafileslist' => array('modules' => 'accounting|comptabilite', 'rights' => 'compta:resultat:lire|accounting:comptarapport:lire'),
+			'contactlist' => array('modules' => 'societe', 'rights' => 'societe:contact:lire'),
+			'contractlist' => array('modules' => 'contract', 'rights' => 'contrat:lire'),
+			'contractservicelist' => array('modules' => 'contract', 'rights' => 'contrat:lire'),
+			'defineholidaylist' => array('modules' => 'holiday', 'rights' => 'holiday:read'),
+			'directdebitcredittransferlist' => array('modules' => 'bank', 'rights' => 'banque:lire'),
+			'donationlist' => array('modules' => 'don', 'rights' => 'don:lire'),
+			'donlist' => array('modules' => 'don', 'rights' => 'don:lire'),
+			'evaluationlist' => array('modules' => 'hrm', 'rights' => 'hrm:evaluation:read'),
+			'expensereportlist' => array('modules' => 'expensereport', 'rights' => 'expensereport:lire'),
+			'holidaylist' => array('modules' => 'holiday', 'rights' => 'holiday:read'),
+			'interventionlist' => array('modules' => 'intervention', 'rights' => 'ficheinter:lire'),
+			'intracommreportlist' => array('modules' => 'intracommreport', 'rights' => 'intracommreport:read'),
+			'inventorylist' => array('modules' => 'stock', 'rights' => 'stock:lire'),
+			'invoicelist' => array('modules' => 'invoice', 'rights' => 'facture:lire'),
+			'invoicereclist' => array('modules' => 'invoice', 'rights' => 'facture:lire'),
+			'joblist' => array('modules' => 'hrm', 'rights' => 'hrm:all:read'),
+			'knowledgerecordlist' => array('modules' => 'knowledgemanagement', 'rights' => 'knowledgemanagement:knowledgerecord:read'),
+			'leavemovementlist' => array('modules' => 'holiday', 'rights' => 'holiday:read'),
+			'marginagentlist' => array('modules' => 'margin', 'rights' => 'margins:liretous'),
+			'margincustomerlist' => array('modules' => 'margin', 'rights' => 'margins:liretous'),
+			'marginproductlist' => array('modules' => 'margin', 'rights' => 'margins:liretous'),
+			'memberlist' => array('modules' => 'member', 'rights' => 'adherent:lire'),
+			'mrpmolist' => array('modules' => 'mrp', 'rights' => 'mrp:read'),
+			'orderlist' => array('modules' => 'order', 'rights' => 'commande:lire'),
+			'paymentexpensereportlist' => array('modules' => 'expensereport', 'rights' => 'expensereport:lire'),
+			'paymentlist' => array('modules' => 'invoice', 'rights' => 'facture:lire'),
+			'paymentsupplierlist' => array('modules' => 'supplier_invoice', 'rights' => 'fournisseur:facture:lire|supplier_invoice:lire'),
+			'positionlist' => array('modules' => 'hrm', 'rights' => 'hrm:all:read'),
+			'product_lotlist' => array('modules' => 'productbatch', 'rights' => 'produit:lire|service:lire'),
+			'productattributelist' => array('modules' => 'variants', 'rights' => 'variants:read'),
+			'productreassortlist' => array('modules' => 'product|service', 'rights' => 'produit:lire|service:lire'),
+			'productservicelist' => array('modules' => 'product|service', 'rights' => 'produit:lire|service:lire'),
+			'projectlist' => array('modules' => 'project', 'rights' => 'projet:lire'),
+			'propallist' => array('modules' => 'propal', 'rights' => 'propal:lire'),
+			'reassortlotlist' => array('modules' => 'productbatch', 'rights' => 'produit:lire|service:lire'),
+			'receptionlist' => array('modules' => 'reception', 'rights' => 'reception:lire'),
+			'recruitmentjobpositionlist' => array('modules' => 'recruitment', 'rights' => 'recruitment:recruitmentjobposition:read'),
+			'resourcelist' => array('modules' => 'resource', 'rights' => 'resource:read'),
+			'salarieslist' => array('modules' => 'salaries', 'rights' => 'salaries:read'),
+			'salestaxeslist' => array('modules' => 'tax', 'rights' => 'tax:charges:lire'),
+			'sclist' => array('modules' => 'tax', 'rights' => 'tax:charges:lire'),
+			'shipmentlist' => array('modules' => 'shipping', 'rights' => 'expedition:lire'),
+			'skilllist' => array('modules' => 'hrm', 'rights' => 'hrm:all:read'),
+			'stocklist' => array('modules' => 'stock', 'rights' => 'stock:lire'),
+			'stockreplenishlist' => array('modules' => 'stock', 'rights' => 'produit:lire|service:lire'),
+			'stocktransferlist' => array('modules' => 'stocktransfer', 'rights' => 'stocktransfer:stocktransfer:read'),
+			'subscriptionlist' => array('modules' => 'member', 'rights' => 'adherent:cotisation:lire'),
+			'supplier_proposallist' => array('modules' => 'supplier_proposal', 'rights' => 'supplier_proposal:lire'),
+			'supplierbalencelist' => array('modules' => 'societe', 'rights' => 'societe:lire'),
+			'supplierinvoicelist' => array('modules' => 'supplier_invoice', 'rights' => 'fournisseur:facture:lire|supplier_invoice:lire'),
+			'supplierinvoicereclist' => array('modules' => 'supplier_invoice', 'rights' => 'fournisseur:facture:lire|supplier_invoice:lire'),
+			'supplierorderlist' => array('modules' => 'supplier_order', 'rights' => 'fournisseur:commande:lire|supplier_order:lire'),
+			'supplierpricelist' => array('modules' => 'product|service', 'rights' => 'produit:lire|service:lire'),
+			'supplierturnoverbyprodservlist' => array('modules' => 'accounting|comptabilite', 'rights' => 'compta:resultat:lire|accounting:comptarapport:lire'),
+			'supplierturnoverbythirdpartylist' => array('modules' => 'accounting|comptabilite', 'rights' => 'compta:resultat:lire|accounting:comptarapport:lire'),
+			'surveylist' => array('modules' => 'opensurvey', 'rights' => 'opensurvey:read'),
+			'tasklist' => array('modules' => 'project', 'rights' => 'projet:lire'),
+			'thirdpartylist' => array('modules' => 'societe', 'rights' => 'societe:lire'),
+			'ticketlist' => array('modules' => 'ticket', 'rights' => 'ticket:read'),
+			'userlist' => array('modules' => 'user', 'rights' => 'user:user:lire'),
+			'withdrawalsreceiptslineslist' => array('modules' => 'prelevement|paymentbybanktransfer', 'rights' => 'prelevement:bons:lire|paymentbybanktransfer:read'),
+			'withdrawalsreceiptslist' => array('modules' => 'prelevement|paymentbybanktransfer', 'rights' => 'prelevement:bons:lire|paymentbybanktransfer:read'),
+			'withdrawalsreceiptsrejectedlist' => array('modules' => 'prelevement|paymentbybanktransfer', 'rights' => 'prelevement:bons:lire|paymentbybanktransfer:read'),
+			'withdrawalstodolist' => array('modules' => 'prelevement|paymentbybanktransfer', 'rights' => 'prelevement:bons:lire|paymentbybanktransfer:read'),
+			'workstationlist' => array('modules' => 'workstation', 'rights' => 'workstation:workstation:read'),
+		);
+	}
+
+	/**
+	 * Check that a list or index page context is enabled and readable by current user
+	 *
+	 * @param array{modules:string, rights:string} $properties Properties of context from getListIndexContexts()
+	 * @return bool
+	 */
+	public static function canAccessListIndexContext($properties)
+	{
+		global $user;
+
+		if (empty($user) || empty($user->id)) {
+			return false;
+		}
+
+		$moduleEnabled = false;
+		foreach (explode('|', $properties['modules']) as $module) {
+			if (isModEnabled($module)) {
+				$moduleEnabled = true;
+				break;
+			}
+		}
+		if (!$moduleEnabled) {
+			return false;
+		}
+
+		foreach (explode('|', $properties['rights']) as $right) {
+			$levels = explode(':', $right);
+			if ($user->hasRight($levels[0], $levels[1] ?? '', $levels[2] ?? '')) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 
