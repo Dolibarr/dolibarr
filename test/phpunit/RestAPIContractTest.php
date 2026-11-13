@@ -152,6 +152,50 @@ class RestAPIContractTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * testRestContractDeleteLineUnknownLine
+	 *
+	 * @return void
+	 */
+	public function testRestContractDeleteLineUnknownLine()
+	{
+		$test = "Delete a line that does not exist";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$this->getUrl('contracts/'.$contract_id.'/lines/999999999', $test, 'DELETE', null, 404);
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
+	}
+
+	/**
+	 * testRestContractDeleteLine
+	 *
+	 * @return void
+	 */
+	public function testRestContractDeleteLine()
+	{
+		$test = "Delete a line";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$line_id = $this->createContractLine($contract_id, $test);
+			$kept_line_id = $this->createContractLine($contract_id, $test);
+
+			$this->getUrl('contracts/'.$contract_id.'/lines/'.$line_id, $test, 'DELETE');
+
+			$result = $this->getUrl('contracts/'.$contract_id.'/lines', "$test (read after delete)", 'GET');
+			$line_ids = array_map('intval', array_column($result['content'], 'id'));
+			$this->assertNotContains($line_id, $line_ids, "$test Deleted line must be gone");
+			$this->assertContains($kept_line_id, $line_ids, "$test Other line must be kept");
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
+	}
+
+	/**
 	 * testRestContractActivateLineUnknownLine
 	 *
 	 * @return void
@@ -292,6 +336,52 @@ class RestAPIContractTest extends AbstractRestAPITest
 			$result = $this->getUrl('contracts/'.$contract_id.'/lines', "$test (read after unactivate)", 'GET');
 			$this->assertEquals(5, $result['content'][0]['statut'] ?? '', "$test Line must be closed");
 			$this->assertNotEmpty($result['content'][0]['date_end_real'] ?? '', "$test Line must have a real end date");
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
+	}
+
+	/**
+	 * testRestContractPaginationLimitZero
+	 *
+	 * @return void
+	 */
+	public function testRestContractPaginationLimitZero()
+	{
+		$test = "Pagination data with limit=0";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$other_contract_id = $this->createContract($test);
+
+			try {
+				$this->createContractLine($contract_id, $test);
+				$this->createContractLine($contract_id, $test);
+
+				// limit=0 means no limit: must not fail with a division by zero, everything is on 1 page
+				$data = array("sqlfilters" => "(t.rowid:in:".$contract_id.",".$other_contract_id.")", "limit" => 0, "pagination_data" => "true");
+				$result = $this->getUrl('contracts', "$test (list)", 'GET', $data);
+				$this->assertEquals(200, $result['http_code'], "$test (list) Return code must be 200");
+				$this->assertCount(2, $result['content']['data'], "$test (list) All contracts must be returned");
+				$this->assertEquals(2, $result['content']['pagination']['total'], "$test (list) Total");
+				$this->assertEquals(1, $result['content']['pagination']['page_count'], "$test (list) Everything is on 1 page");
+
+				// limit=1: 2 contracts on 2 pages
+				$data["limit"] = 1;
+				$result = $this->getUrl('contracts', "$test (list, limit=1)", 'GET', $data);
+				$this->assertCount(1, $result['content']['data'], "$test (list, limit=1) Only 1 contract must be returned");
+				$this->assertEquals(2, $result['content']['pagination']['page_count'], "$test (list, limit=1) 2 pages");
+
+				$data = array("limit" => 0, "pagination_data" => "true");
+				$result = $this->getUrl('contracts/'.$contract_id.'/lines', "$test (lines)", 'GET', $data);
+				$this->assertEquals(200, $result['http_code'], "$test (lines) Return code must be 200");
+				$this->assertCount(2, $result['content']['data'], "$test (lines) All lines must be returned");
+				$this->assertEquals(2, $result['content']['pagination']['total'], "$test (lines) Total");
+				$this->assertEquals(1, $result['content']['pagination']['page_count'], "$test (lines) Everything is on 1 page");
+			} finally {
+				$this->getUrl('contracts/'.$other_contract_id, "$test (cleanup other contract)", 'DELETE');
+			}
 		} finally {
 			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
 		}

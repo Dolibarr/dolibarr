@@ -85,6 +85,17 @@ if [ -n "${HOST_APACHE_LOG_GID:-}" ] && [ "$HOST_APACHE_LOG_GID" != "0" ]; then
     fi
     usermod --append --groups "$LOG_GROUP" "$USER_NAME"
 fi
+# Same for the groups owning the mail logs of the host (mounted by vibes.sh), given as a list of GIDs.
+for LOG_GID in ${HOST_MAIL_LOG_GIDS:-}; do
+    if [ "$LOG_GID" != "0" ]; then
+        LOG_GROUP=$(getent group "$LOG_GID" | cut -d: -f1)
+        if [ -z "$LOG_GROUP" ]; then
+            LOG_GROUP="hostmaillog$LOG_GID"
+            groupadd --gid "$LOG_GID" "$LOG_GROUP"
+        fi
+        usermod --append --groups "$LOG_GROUP" "$USER_NAME"
+    fi
+done
 
 
 # Allow the user to become root inside the container with a passwordless sudo

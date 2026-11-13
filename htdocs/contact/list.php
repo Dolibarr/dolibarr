@@ -1223,9 +1223,12 @@ if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 	}
 }
 
-$moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= $formcompany->showRoles("search_roles", $objecttmp, 'edit', $search_roles, 'minwidth500', $langs->transnoentitiesnoconv('ContactRoles'));
-$moreforfilter .= '</div>';
+// Filter on contact roles is shown only if option is set (or if a filter on roles is already active, so it can be removed)
+if (getDolGlobalString('CONTACT_SHOW_FILTER_CONTACT_HAS_ROLE') || count($search_roles) > 0) {
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= $formcompany->showRoles("search_roles", $objecttmp, 'edit', $search_roles, 'minwidth500', $langs->transnoentitiesnoconv('ContactRoles'));
+	$moreforfilter .= '</div>';
+}
 
 print '<div class="liste_titre liste_titre_bydiv centpercent">';
 print $moreforfilter;
