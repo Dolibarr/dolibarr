@@ -946,7 +946,8 @@ function dolTotpIsDisabledByConf()
 
 /**
  *  Tell if the security setup requires the TOTP two-factor authentication for a user: for all the internal users, all the external
- *  users or the members of some groups. Never required when this instance can't store a secret, so nobody is locked out of its setup.
+ *  users or the members of some groups. Never required when this instance can't store a secret, nor when the rescue option of conf.php
+ *  disables the two-factor authentication (an enrollment is then refused), so nobody is locked out of its setup.
  *
  *  @param		DoliDB		$db				Database handler
  *  @param		User		$user			User to test
@@ -955,7 +956,7 @@ function dolTotpIsDisabledByConf()
  */
 function dolTotpIsRequired($db, $user)
 {
-	if (!getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') || empty($user->id)) {
+	if (!getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') || dolTotpIsDisabledByConf() || empty($user->id)) {
 		return false;
 	}
 

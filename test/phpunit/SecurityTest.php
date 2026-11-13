@@ -1995,6 +1995,13 @@ class SecurityTest extends CommonClassTest
 		$this->assertFalse(dolTotpIsRequired($db, $internal), 'Not required for an internal user by the option for external users');
 		$this->assertEquals($canstore, dolTotpIsRequired($db, $external), 'Required for an external user');
 
+		// The rescue option of conf.php refuses any enrollment: requiring one would lock the user on the setup page
+		global $dolibarr_main_disable_totp;
+		$savdisabletotp = isset($dolibarr_main_disable_totp) ? $dolibarr_main_disable_totp : null;
+		$dolibarr_main_disable_totp = '1';
+		$this->assertFalse(dolTotpIsRequired($db, $external), 'Never required while the 2FA is disabled by dolibarr_main_disable_totp');
+		$dolibarr_main_disable_totp = $savdisabletotp;
+
 		$conf->global->MAIN_SECURITY_TOTP_REQUIRED_FOR_EXTERNAL = 0;
 		$conf->global->MAIN_SECURITY_TOTP_REQUIRED_FOR_GROUPS = '-1,abc';
 		$this->assertFalse(dolTotpIsRequired($db, $internal), 'Not required for a user in none of the groups, the values that are not ids being ignored');
