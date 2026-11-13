@@ -1476,6 +1476,7 @@ if ($action == 'create') {
 $help_url = 'EN:Module_Shipments|FR:Module_Expéditions|ES:M&oacute;dulo_Expediciones|DE:Modul_Lieferungen';
 
 $arrayofjs = (isModEnabled('productbatch') && !empty($conf->use_javascript_ajax)) ? array('/core/js/lib_batchlines_toggle.js') : array();
+$arrayofjs[] = '/expedition/js/stockpreview.js';
 
 llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, '', '', 'mod-expedition page-card');
 
