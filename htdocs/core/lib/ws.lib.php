@@ -92,7 +92,7 @@ function check_authentication($authentication, &$error, &$errorcode, &$errorlabe
 				$login = '';
 			}
 
-			if (!empty($login) && dolTotpGetEnrollment($db, $fuser->id) !== null) {
+			if (!empty($login) && !dolTotpIsDisabledByConf() && dolTotpGetEnrollment($db, $fuser->id) !== null) {
 				// A password alone must not be enough for a user with a two-factor authentication, and the web services have no other credential
 				dol_syslog("Web service access refused for ".$login.": two-factor authentication is enabled", LOG_WARNING);
 				$login = '';

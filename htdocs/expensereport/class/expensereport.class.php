@@ -303,18 +303,18 @@ class ExpenseReport extends CommonObject
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 20),
 		'ref_number_int' => array('type' => 'integer', 'label' => 'Ref number int', 'enabled' => 1, 'visible' => -1, 'position' => 25),
 		'ref_ext' => array('type' => 'integer', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 30),
-		'total_ht' => array('type' => 'double(24,8)', 'label' => 'Total ht', 'enabled' => 1, 'visible' => -1, 'position' => 35),
-		'total_tva' => array('type' => 'double(24,8)', 'label' => 'Total tva', 'enabled' => 1, 'visible' => -1, 'position' => 40),
+		'total_ht' => array('type' => 'double(24,8)', 'label' => 'AmountHT', 'enabled' => 1, 'visible' => -1, 'position' => 35, 'isameasure' => 1),
+		'total_tva' => array('type' => 'double(24,8)', 'label' => 'AmountVAT', 'enabled' => 1, 'visible' => -1, 'position' => 40, 'isameasure' => 1),
 		'localtax1' => array('type' => 'double(24,8)', 'label' => 'Localtax1', 'enabled' => 1, 'visible' => -1, 'position' => 45),
 		'localtax2' => array('type' => 'double(24,8)', 'label' => 'Localtax2', 'enabled' => 1, 'visible' => -1, 'position' => 50),
-		'total_ttc' => array('type' => 'double(24,8)', 'label' => 'Total ttc', 'enabled' => 1, 'visible' => -1, 'position' => 55),
-		'date_debut' => array('type' => 'date', 'label' => 'Date debut', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 60),
-		'date_fin' => array('type' => 'date', 'label' => 'Date fin', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 65),
-		'date_valid' => array('type' => 'datetime', 'label' => 'Date valid', 'enabled' => 1, 'visible' => -1, 'position' => 75),
-		'date_approve' => array('type' => 'datetime', 'label' => 'Date approve', 'enabled' => 1, 'visible' => -1, 'position' => 80),
-		'date_refuse' => array('type' => 'datetime', 'label' => 'Date refuse', 'enabled' => 1, 'visible' => -1, 'position' => 85),
-		'date_cancel' => array('type' => 'datetime', 'label' => 'Date cancel', 'enabled' => 1, 'visible' => -1, 'position' => 90),
-		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 100),
+		'total_ttc' => array('type' => 'double(24,8)', 'label' => 'AmountTTC', 'enabled' => 1, 'visible' => -1, 'position' => 55, 'isameasure' => 1),
+		'date_debut' => array('type' => 'date', 'label' => 'DateStart', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 60),
+		'date_fin' => array('type' => 'date', 'label' => 'DateEnd', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 65),
+		'date_valid' => array('type' => 'datetime', 'label' => 'DateValidation', 'enabled' => 1, 'visible' => -1, 'position' => 75),
+		'date_approve' => array('type' => 'datetime', 'label' => 'DateApprove', 'enabled' => 1, 'visible' => -1, 'position' => 80),
+		'date_refuse' => array('type' => 'datetime', 'label' => 'DATE_REFUS', 'enabled' => 1, 'visible' => -1, 'position' => 85),
+		'date_cancel' => array('type' => 'datetime', 'label' => 'DATE_CANCEL', 'enabled' => 1, 'visible' => -1, 'position' => 90),
+		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'User', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 100),
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -1, 'position' => 105),
 		'fk_user_valid' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'visible' => -1, 'position' => 110),
 		'fk_user_validator' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'visible' => -1, 'position' => 115),
@@ -336,11 +336,11 @@ class ExpenseReport extends CommonObject
 		'multicurrency_total_tva' => array('type' => 'double(24,8)', 'label' => 'Multicurrency total tva', 'enabled' => 1, 'visible' => -1, 'position' => 205),
 		'multicurrency_total_ttc' => array('type' => 'double(24,8)', 'label' => 'Multicurrency total ttc', 'enabled' => 1, 'visible' => -1, 'position' => 210),
 		'extraparams' => array('type' => 'varchar(255)', 'label' => 'Extraparams', 'enabled' => 1, 'visible' => -1, 'position' => 220),
-		'date_creation' => array('type' => 'datetime', 'label' => 'Date create', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 300),
-		'tms' => array('type' => 'timestamp', 'label' => 'Tms', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 305),
+		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 300),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 305),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -1, 'position' => 1000),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 1010),
-		'fk_statut' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 500),
+		'fk_statut' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 500, 'arrayofkeyval' => array(0 => 'Draft', 2 => 'ValidatedWaitingApproval', 4 => 'Canceled', 5 => 'Approved', 6 => 'Paid', 99 => 'Refused')),
 	);
 
 	/**
@@ -351,6 +351,8 @@ class ExpenseReport extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 		$this->total_ht = 0;
 		$this->total_ttc = 0;
 		$this->total_tva = 0;
