@@ -524,6 +524,9 @@ if (empty($reshook)) {
 if ($search_status == '' && empty($search_all)) {
 	$search_status = 1; // display active thirdparty only by default
 }
+if ($type == 't' && ($search_type == '' || $search_type == '-1')) {
+	$search_type = '1,2,3'; // No nature (the select sends -1, the purge empties it): keep customers and prospects of the POS list
+}
 
 
 
@@ -2255,7 +2258,7 @@ while ($i < $imaxinloop) {
 		}
 		// Sales Representative
 		if (!empty($arrayfields['sales.representative']['checked'])) {
-			print '<td class="nowraponall tdoverflowmax150">';
+			print '<td class="nowraponall tdoverflowmax100">';
 			$listsalesrepresentatives = $companystatic->getSalesRepresentatives($user);
 			$nbofsalesrepresentative = count($listsalesrepresentatives);
 			if ($nbofsalesrepresentative > 6) {

@@ -120,6 +120,12 @@ Otherwise, provide the token with the environment variable `TX_TOKEN` (for examp
 When the directory `/var/log/apache2` exists on the host, `vibes.sh` mounts it read-only at the same path into the container, so the agent can read the Apache logs (for example `tail /var/log/apache2/error.log`).
 The directory is owned by the group `adm` on Debian/Ubuntu and is not readable by others: the user of the container is added to the group with the same GID by `docker-entrypoint.sh`.
 
+## Mail logs of the host
+
+The files `/var/log/mail.log`, `/var/log/phpmail.log` and `/var/log/phpsendmail.log` are each mounted read-only at the same path into the container when they exist on the host (for example `tail /var/log/mail.log`).
+The user of the container is added by `docker-entrypoint.sh` to the groups owning these files (except `root`), so they can be read.
+A bind mount follows the file and not its name: after a rotation of the log on the host (logrotate), the container keeps showing the old file until it is restarted.
+
 ## No email can be delivered
 
 No MTA is installed into the image (no postfix, no exim, no sendmail daemon, ...). The binary `/usr/sbin/sendmail` is a stub that stores the emails it receives into the directory `/var/mail/outbox/` instead of delivering them:

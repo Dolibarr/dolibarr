@@ -221,6 +221,7 @@ MigrationApiRestTokens=Migrer les clés API de utilisateur vers llx_oauth_token
 MigratedTokens=%s jeton(s) migré(s)
 InitAHMACKeyForBlockedLog=Initialisation de la constante BLOCKEDLOG_HMAC_KEY pour le nouveau chiffrement HMAC du module de journalisation inaltérable
 MigrationAlreadyDone=Cette migration semble avoir déjà été effectuée.
+Repair=Réparation
 RepairEcmEntity=Entité pour la réparation de l'index ECM uniquement
 RepairEcmHeading=Vérifiez les entrées d'index manquantes pour l'entité %s.
 RepairEcmSummary=Entrées vérifiées : %s. Fichiers manquants : %s. Entrées d'index supprimées : %s. Chemins non sécurisés ou indisponibles ignorés : %s.
@@ -230,3 +231,14 @@ RepairEcmDirectoryUnavailable=Le répertoire des documents est inaccessible ou i
 RepairEcmDatabaseError=La réparation de l'index ECM a échoué. Aucun nettoyage réussi n'a pu être signalé ; veuillez consulter les journaux de la base de données.
 RepairEcmInvalidToken=La réparation de l'index ECM nécessite une requête POST avec un jeton de sécurité valide. Rechargez cette page et et utilisez le bouton de réparation.
 RepairEcmCompleted=Réparation de l'index ECM terminée pour l'entité %s : %s entrées d'index supprimées.
+RepairImagesCompleted=Réparation d'image terminée pour l'entité %s.
+RepairImagesInvalidToken=La réparation d'images nécessite une requête POST avec un jeton de sécurité valide. Rechargez cette page et et utilisez le bouton de réparation.
+RepairImagesDirectoryUnavailable=Le répertoire d'images est inaccessible ou illisible. Aucun fichier n'a été modifié.
+RepairImagesFailed=Certains fichiers image n'ont pas pu être réparés. Consultez les journaux de l'installateur et pour obtenir les résultats de la réparation.
+RepairImagesEntity=Entité pour cette réparation d'image
+
+RepairOrphanFilesFailed=Certains fichiers orphelins n'ont pas pu être vérifiés ni supprimés. Des objets existants et des chemins illisibles (erreurs de base de données et) doivent être résolus avant de réessayer.
+RepairOrphanDirectoryNotConfigured=Entité %s, module %s : aucun répertoire de documents natif n'est configuré. Les fichiers ont été conservés.
+
+RepairMailingFailed=Certains fichiers de messagerie n'ont pas pu être migrés. Vérifiez les chemins d'accès, les fichiers de destination existants et les journaux d'installation de et.
+RepairMailingAmbiguous=Plusieurs listes de diffusion de cette entité partagent ce répertoire hérité. Ses fichiers ont été conservés ; veuillez identifier leurs propriétaires avant de les migrer.
