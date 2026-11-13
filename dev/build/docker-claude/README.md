@@ -94,3 +94,8 @@ The outbound SMTP ports are blocked like for docker-vibe. To start a container t
 ````
 DOCKER_ALLOW_SMTP=1 claudes
 ````
+
+### Mail logs of the host
+Like for docker-vibe, the files `/var/log/mail.log`, `/var/log/phpmail.log` and `/var/log/phpsendmail.log` are each mounted
+read-only at the same path into the container when they exist on the host, and the user of the container is added to the groups
+owning them (except `root`). After a rotation of the log on the host, the container keeps showing the old file until it is restarted.
