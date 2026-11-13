@@ -370,7 +370,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 	}
 
 	// Number of interventions to validate or process
-	if (isModEnabled('ficheinter') && !getDolGlobalString('MAIN_DISABLE_BLOCK_FICHINTER') && $user->hasRight('ficheinter', 'lire') && !$user->socid) {
+	if (isModEnabled('intervention') && !getDolGlobalString('MAIN_DISABLE_BLOCK_FICHINTER') && $user->hasRight('ficheinter', 'lire') && !$user->socid) {
 		include_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 		$board = new Fichinter($db);
 		$dashboardlines[$board->element.'_draft'] = $board->load_board($user, 'draft');
