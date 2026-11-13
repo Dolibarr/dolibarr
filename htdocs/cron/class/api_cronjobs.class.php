@@ -127,7 +127,7 @@ class Cronjobs extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => count($tmp),
 				'page' => $page,
-				'page_count' => ceil(count($tmp) / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil(count($tmp) / $limit) : 1),
 				'limit' => $limit
 			];
 		}

@@ -201,6 +201,7 @@ EmailOptedOut=Email owner has requested to not contact him with this email anymo
 EvenUnsubscribe=Include opt-out emails
 EvenUnsubscribeDesc=Include opt-out emails when you select emails as targets. Useful for mandatory service emails for example.
 XEmailsDoneYActionsDone=%s emails pre-qualified, %s emails successfully processed (for %s operations done)
+XEmailsTooBigDiscarded=%s emails discarded because bigger than %s bytes (option EMAILCOLLECTOR_MAX_EMAIL_SIZE)
 YouCanMakeSomeInstructionForEmail=You can make some instructions for your Email (Example: generate image in email template...)
 ModelTemplate=Email template
 YouCanChooseAModelForYouMailContent= You can choose one of template models or generate one with AI

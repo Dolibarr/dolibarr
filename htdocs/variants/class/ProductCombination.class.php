@@ -5,6 +5,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025       William Mead            <william@m34d.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -652,6 +653,9 @@ class ProductCombination
 
 
 		if ($child->update($child->id, $user) > 0) {
+			// The price of the variant is calculated here from its parent, so its price impact must not be recalculated from it
+			$child->context['variant_price_set_by_parent'] = 1;
+
 			$new_vat = $parent->tva_tx;
 			$new_npr = $parent->tva_npr;
 
@@ -732,6 +736,99 @@ class ProductCombination
 		$this->error = $child->error;
 		$this->errors = $child->errors;
 		return -1;
+	}
+
+	/**
+	 * Set the price impact of a variant from a price set directly on the variant, so that the next update of its parent,
+	 * which recalculates the price of the variant from the price of the parent and the price impact, keeps this price.
+	 * A price impact in percent stays in percent, unless the price of the parent is 0.
+	 * This method is called by Product::updatePrice(), but not when the price is set by the parent (updateProperties()).
+	 *
+	 * @param	Product	$child		Variant product whose price has just been updated
+	 * @param	int		$level		Price level updated (0 or 1 when multiprices are disabled)
+	 * @return	int					0 if nothing to do (not a variant or same price impact), 1 if the price impact was updated, <0 if KO
+	 */
+	public function setVariationFromChildPrice(Product $child, $level)
+	{
+		$fk_parent = $this->fetchByFkProductChild($child->id, 1);
+		if ($fk_parent < 0) {
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+			return -1;
+		}
+		if ($fk_parent == 0) {
+			return 0;
+		}
+
+		$parent = new Product($this->db);
+		if ($parent->fetch($fk_parent) <= 0) {
+			$this->error = $parent->error;
+			$this->errors[] = $this->error;
+			return -1;
+		}
+
+		// Same prices as the ones used by updateProperties(): the price of the parent in its price base type
+		$level = max(1, (int) $level);
+		$pricelevel = null;
+		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
+			$basetype = empty($parent->multiprices_base_type[$level]) ? 'HT' : $parent->multiprices_base_type[$level];
+			$parentprice = (float) ($basetype == 'TTC' ? ($parent->multiprices_ttc[$level] ?? 0) : ($parent->multiprices[$level] ?? 0));
+			$childprice = (float) ($basetype == 'TTC' ? ($child->multiprices_ttc[$level] ?? 0) : ($child->multiprices[$level] ?? 0));
+
+			// Each level has its own price impact (a level without its own impact uses the one of the combination, which must not change for the other levels)
+			if ($this->fetchCombinationPriceLevels($level) < 0 || empty($this->combination_price_levels[$level])) {
+				$this->error = 'Error fetching combination price level '.$level;
+				$this->errors[] = $this->error;
+				return -1;
+			}
+			$pricelevel = $this->combination_price_levels[$level];
+			$oldvariation = (float) $pricelevel->variation_price;
+			$percentage = (bool) $pricelevel->variation_price_percentage;
+		} else {
+			$basetype = $parent->price_base_type;
+			$parentprice = (float) ($basetype == 'TTC' ? $parent->price_ttc : $parent->price);
+			$childprice = (float) ($basetype == 'TTC' ? $child->price_ttc : $child->price);
+			$oldvariation = (float) $this->variation_price;
+			$percentage = (bool) $this->variation_price_percentage;
+		}
+
+		if ($percentage && $parentprice != 0) {
+			$variation = (float) price2num(($childprice / $parentprice - 1) * 100, 8);
+		} else {
+			$percentage = false;
+			$variation = (float) price2num($childprice - $parentprice, 'MU');
+		}
+
+		if ($pricelevel === null) {
+			if ($variation == $oldvariation && $percentage == (bool) $this->variation_price_percentage) {
+				return 0;
+			}
+			$sql = "UPDATE ".$this->db->prefix()."product_attribute_combination";
+			$sql .= " SET variation_price = ".((float) $variation).", variation_price_percentage = ".((int) $percentage);
+			$sql .= " WHERE rowid = ".((int) $this->id);
+			if (!$this->db->query($sql)) {
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
+				return -1;
+			}
+			$this->variation_price = $variation;
+			$this->variation_price_percentage = $percentage;
+		} else {
+			if ($variation == $oldvariation && $percentage == (bool) $pricelevel->variation_price_percentage) {
+				return 0;
+			}
+			$pricelevel->variation_price = $variation;
+			$pricelevel->variation_price_percentage = $percentage;
+			if ($pricelevel->save() < 0) {
+				$this->error = $pricelevel->error;
+				$this->errors[] = $this->error;
+				return -1;
+			}
+		}
+
+		dol_syslog(__METHOD__." price impact of variant ".$child->id." set to ".$variation.($percentage ? '%' : '')." for level ".$level);
+
+		return 1;
 	}
 
 	/**
