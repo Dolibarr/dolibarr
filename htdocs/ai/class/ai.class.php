@@ -62,7 +62,7 @@ class Ai
 
 
 	const AI_DEFAULT_PROMPT_FOR_EMAIL = 'You are an email editor. Return only the content of the message. Do not add explanation.';	// Note: This instruction will also be completed by generateContent() to manage text versus HTML content.
-	const AI_DEFAULT_PROMPT_FOR_WEBPAGE = 'You are a website editor. Return all HTML content inside a section tag. Do not add explanation.';
+	const AI_DEFAULT_PROMPT_FOR_WEBPAGE = 'You are a website editor. Return all HTML content inside a section tag with an attribute id="<randomhash>" and contenteditable="true". Do not add explanation.';
 	const AI_DEFAULT_PROMPT_FOR_TEXT_TRANSLATION = 'You are a translator, answer with one and only one translation with no comment and explanation.';
 	const AI_DEFAULT_PROMPT_FOR_TEXT_SUMMARIZE = 'You are a writer, make the answer in the same language than the original text to summarize.';
 	const AI_DEFAULT_PROMPT_FOR_TEXT_SPELLCHECKER = 'You are a proofreader, write your response in the same language as the original text in order to correct spelling and grammar errors. If there is carriage return or line feed in original message, keep them. Keep also any HTML or markdown formatting without changing it or adding one, just fix spelling and grammar errors in text content. Answer with the corrected text and the original HTML formatting if there was, with no additional comment and explanation even to highlight the fixed errors.';
@@ -128,6 +128,29 @@ class Ai
 		}
 
 		return $model;
+	}
+
+	/**
+	 * Return the label of the AI service and of the model used for a feature (e.g. "ChatGPT (OpenAI) - gpt-5.6").
+	 *
+	 * @param	string	$function	Code of the feature ('textgeneration', 'textgenerationwebpage', 'imagegeneration', ...)
+	 * @param	string	$model		Model name, or '' or 'auto'
+	 * @return	string				Label of service and model, or '' if no valid AI service is set
+	 */
+	public function getServiceAndModelLabel($function = 'textgeneration', $model = 'auto')
+	{
+		$arrayofai = getListOfAIServices();
+		if (empty($this->apiService) || $this->apiService == '-1' || empty($arrayofai[$this->apiService]['label'])) {
+			return '';
+		}
+
+		$label = $arrayofai[$this->apiService]['label'];
+		$model = $this->getModel($model, $function);
+		if (!empty($model)) {
+			$label .= ' - '.$model;
+		}
+
+		return $label;
 	}
 
 	/**
@@ -444,9 +467,10 @@ class Ai
 			// An empty value ('', '0', null) must mean external endpoints only (with PHP 8, '' == 0 is false)
 			$localurl = empty($dolibarr_ai_allow_local_endpoints) ? 0 : (int) $dolibarr_ai_allow_local_endpoints;
 
+			// Response timeout dedicated to AI calls. If not set (0), getURLContent() will use MAIN_USE_RESPONSE_TIMEOUT.
+			$timeoutresponse = getDolGlobalInt('AI_USE_RESPONSE_TIMEOUT');
 			// Parsing a document is long, so we use a response timeout of at least 90 seconds for this case
 			// For both step "ocr" and step "analyze/docparsing"
-			$timeoutresponse = 0;
 			if (in_array($function, array('docparsing', 'ocr'))) {
 				$timeoutresponse = max(90, getDolGlobalInt('AI_USE_RESPONSE_TIMEOUT'), getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT'));
 			}
