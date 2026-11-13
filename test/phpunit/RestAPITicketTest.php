@@ -471,4 +471,66 @@ class RestAPITicketTest extends AbstractRestAPITest
 
 		$this->getUrl('tickets/999999999/contact/1/SUPPORTTEC', $test, 'DELETE', array("source" => "internal"), 404);
 	}
+
+	/**
+	 * Get a ticket by id, ref and track id
+	 *
+	 * @return void
+	 */
+	public function testRestTicketGet()
+	{
+		$test = "Get a ticket";
+
+		$ticket_id = $this->createTicket($test);
+
+		$result = $this->getUrl('tickets/'.$ticket_id, $test);
+		$this->assertEquals($ticket_id, (int) $result['content']['id'], "$test Id of ticket returned by GET tickets/{id}");
+		$ref = $result['content']['ref'];
+		$track_id = $result['content']['track_id'];
+		$this->assertNotEmpty($ref, "$test Ref of ticket must not be empty");
+		$this->assertNotEmpty($track_id, "$test Track id of ticket must not be empty");
+
+		$result = $this->getUrl('tickets/ref/'.urlencode($ref), $test);
+		$this->assertEquals($ticket_id, (int) $result['content']['id'], "$test Id of ticket returned by GET tickets/ref/{ref}");
+
+		$result = $this->getUrl('tickets/track_id/'.urlencode($track_id), $test);
+		$this->assertEquals($ticket_id, (int) $result['content']['id'], "$test Id of ticket returned by GET tickets/track_id/{track_id}");
+	}
+
+	/**
+	 * Get a ticket with id 0 or a ticket that does not exist
+	 *
+	 * @return void
+	 */
+	public function testRestTicketGetNotFound()
+	{
+		$test = "Get a ticket that does not exist";
+
+		// Id 0 must not return a specimen ticket
+		$this->getUrl('tickets/0', $test, 'GET', null, 400);
+		$this->getUrl('tickets/999999999', $test, 'GET', null, 404);
+		$this->getUrl('tickets/ref/RefOfTicketThatDoesNotExist', $test, 'GET', null, 404);
+		$this->getUrl('tickets/track_id/TrackIdOfTicketThatDoesNotExist', $test, 'GET', null, 404);
+	}
+
+	/**
+	 * List tickets with no limit and pagination data
+	 *
+	 * @return void
+	 */
+	public function testRestTicketListNoLimitWithPagination()
+	{
+		$test = "List tickets with limit 0 and pagination data";
+
+		$ticket_id = $this->createTicket($test);
+
+		$result = $this->getUrl('tickets', $test, 'GET', array('limit' => 0, 'pagination_data' => 'true'));
+		$this->assertArrayHasKey('pagination', $result['content'], "$test Result must contain the pagination data");
+		$this->assertGreaterThanOrEqual(1, $result['content']['pagination']['total'], "$test Total must count the created ticket");
+		$this->assertEquals(1, $result['content']['pagination']['page_count'], "$test With no limit, there is only one page");
+		$ids = array_map(static function ($ticket) {
+			return (int) $ticket['id'];
+		}, $result['content']['data']);
+		$this->assertContains($ticket_id, $ids, "$test The created ticket must be in the list");
+	}
 }
