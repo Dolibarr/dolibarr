@@ -1572,6 +1572,7 @@ class ToolApiBridge extends McpTool
 
 		$this->addReadEndpoints();
 		$this->addWritesOnExistingRecords();
+		$this->addStatusChanges($this->setupValue('MAIN_USE_ADVANCED_PERMS'));
 		$this->addCreateFields();
 		// Modules answer last so their enrichment keys can never shadow a core one.
 		$this->loadExternalEnrichments();
@@ -2761,6 +2762,106 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Status changes of the sale documents, as the buttons of their cards: each
+	 * one is refused before the confirmation when the card would not offer it
+	 * (status, setup, rights and the other conditions of the button).
+	 *
+	 * @param  string $advanced Value of MAIN_USE_ADVANCED_PERMS.
+	 * @return void
+	 */
+	private function addStatusChanges($advanced)
+	{
+		// Commercial proposals.
+		$this->enrichments['proposals']['methods']['settodraft'] = $this->statusMethod(
+			'set_draft', 'commercial proposal', 'Propal', 'AIPreviewProposalToDraft',
+			array(1), 'AIWriteNotValidatedToDraft', array(), array('propal', 'creer'), array(),
+			"Set a VALIDATED commercial proposal back to draft, so its lines and header can be edited again, as the Modify button of the proposal does."
+		);
+		// Signed or refused: the confirmation says which, and the model may say it in words.
+		$this->enrichments['proposals']['methods']['close'] = $this->statusMethod(
+			'close', 'commercial proposal', 'Propal', 'AIPreviewProposalSigned',
+			array(1), 'AIWriteProposalNotOpen', array('close_status'),
+			$advanced ? array('propal', 'propal_advance', 'close') : array('propal', 'creer'), $advanced ? array('propal', 'creer') : array(),
+			"Close a VALIDATED commercial proposal as signed (status 2) or refused (status 3), as the \"Accept/Refuse\" button of the proposal does. Give 'status' (2 or 3, or the words signed or refused), and 'note_private' for a note on why.",
+			array(
+				'status' => "2 signed (accepted), 3 refused (not signed).",
+				'note_private' => "Private note on the closing, optional."
+			),
+			array('status', 'note_private'),
+			array('notrigger' => 0, 'note_public' => ''),
+			array('PROPAL_SKIP_ACCEPT_REFUSE'), '',
+			array(
+				'preview_by' => array('status' => array(3 => 'AIPreviewProposalRefused')),
+				'pass_words' => array('status' => array('signed' => 2, 'accepted' => 2, 'refused' => 3, 'notsigned' => 3, 'not signed' => 3))
+			)
+		);
+		$this->enrichments['proposals']['methods']['setinvoiced'] = $this->statusMethod(
+			'set_billed', 'commercial proposal', 'Propal', 'AIPreviewProposalBilled',
+			array(2), 'AIWriteProposalNotSignedToBill', array('proposal_invoice'),
+			$advanced ? array('propal', 'propal_advance', 'close') : array('propal', 'creer'), $advanced ? array('propal', 'creer') : array(),
+			"Classify a SIGNED commercial proposal as billed, as the \"Classify billed\" button of the proposal does.",
+			array(), array(), array(),
+			array('PROPOSAL_ARE_NOT_BILLABLE')
+		);
+
+		// Sale orders.
+		$this->enrichments['orders']['methods']['settodraft'] = $this->statusMethod(
+			'set_draft', 'sale order', 'Commande', 'AIPreviewOrderToDraft',
+			array(1, 2), 'AIWriteNotValidatedToDraft', array('order_editable'), array('commande', 'creer'), array(),
+			"Set a VALIDATED sale order back to draft, so its lines and header can be edited again, as the Modify button of the order does. When validating the order moved stock, the stock goes back: give 'warehouse' (name or rowid) unless there is only one.",
+			array('warehouse' => "Warehouse the stock goes back into: name or rowid. Only needed when the order moved stock and there are several warehouses."),
+			array(), array(), array(), 'STOCK_CALCULATE_ON_VALIDATE_ORDER'
+		);
+		$this->enrichments['orders']['methods']['close'] = $this->statusMethod(
+			'close', 'sale order', 'Commande', 'AIPreviewOrderDelivered',
+			array(1, 2), 'AIWriteOrderNotDeliverable', array(),
+			$advanced ? array('commande', 'order_advance', 'close') : array('commande', 'creer'), $advanced ? array('commande', 'creer') : array(),
+			"Classify a VALIDATED or in-process sale order as delivered (closed), as the \"Classify delivered\" button of the order does.",
+			array(), array(), array('notrigger' => 0)
+		);
+		$this->enrichments['orders']['methods']['setinvoiced'] = $this->statusMethod(
+			'set_billed', 'sale order', 'Commande', 'AIPreviewOrderBilled',
+			array(1, 2, 3), 'AIWriteOrderNotBillableStatus', array('not_billed', 'not_negative'), array('commande', 'creer'), array(),
+			"Classify a validated sale order not billed yet as billed, as the \"Classify billed\" button of the order does.",
+			array(), array(), array(),
+			array('ORDER_DISABLE_CLASSIFY_BILLED_FROM_ORDER', 'WORKFLOW_BILL_ON_SHIPMENT')
+		);
+		$this->enrichments['orders']['methods']['reopen'] = $this->statusMethod(
+			'reopen', 'sale order', 'Commande', 'AIPreviewOrderReopen',
+			array(3, -1), 'AIWriteOrderNotClosed', array('order_reopen'), array('commande', 'creer'), array(),
+			"Reopen a delivered (closed) or canceled sale order, as the ReOpen button of the order does: it is validated again and no longer classified billed.",
+			array(), array(), array(),
+			array('ORDER_REOPEN_TO_DRAFT')
+		);
+
+		// Customer invoices. Paid here means nothing is left to pay: closing an
+		// invoice partially paid or abandoned needs a reason and stays on its card.
+		$this->enrichments['invoices']['methods']['settodraft'] = $this->statusMethod(
+			'set_draft', 'customer invoice', 'Facture', 'AIPreviewInvoiceToDraft',
+			array(1), 'AIWriteNotValidatedToDraft', array('invoice_editable'),
+			$advanced ? array('facture', 'invoice_advance', 'unvalidate') : array('facture', 'creer'), $advanced ? array('facture', 'creer') : array(),
+			"Set a VALIDATED customer invoice with no payment back to draft, so it can be edited again, as the Modify button of the invoice does. When validating the invoice moved stock, the stock goes back: give 'warehouse' (name or rowid) unless there is only one.",
+			array('warehouse' => "Warehouse the stock goes back into: name or rowid. Only needed when the invoice moved stock and there are several warehouses."),
+			array(), array(),
+			array('INVOICE_CAN_NEVER_BE_EDITED'), 'STOCK_CALCULATE_ON_BILL'
+		);
+		$this->enrichments['invoices']['methods']['settopaid'] = $this->statusMethod(
+			'set_paid', 'customer invoice', 'Facture', 'AIPreviewInvoicePaid',
+			array(1), 'AIWriteInvoiceNotOpen', array('invoice_settled'), array('facture', 'paiement'), array('facture', 'creer'),
+			"Classify paid a VALIDATED customer invoice on which nothing is left to pay, as the \"Classify paid\" button of the invoice does. To record a payment, use the payment tool instead.",
+			array(), array(), array('close_code' => '', 'close_note' => '')
+		);
+		$this->enrichments['invoices']['methods']['settounpaid'] = $this->statusMethod(
+			'reopen', 'customer invoice', 'Facture', 'AIPreviewInvoiceReopen',
+			array(1, 2, 3), 'AIWriteInvoiceNotClosed', array('invoice_reopen'),
+			$advanced ? array('facture', 'invoice_advance', 'reopen') : array('facture', 'creer'), $advanced ? array('facture', 'creer') : array(),
+			"Reopen a paid or abandoned customer invoice, as the ReOpen button of the invoice does: it is unpaid again.",
+			array(), array(), array(),
+			array('INVOICE_DISALLOW_REOPEN')
+		);
+	}
+
+	/**
 	 * What every create may also carry: the extra fields of the record, and on
 	 * an invoice its subtype. The card asks for the mandatory ones before it
 	 * creates anything, so the create tools do the same: a required extra field
@@ -2930,6 +3031,63 @@ class ToolApiBridge extends McpTool
 				'right' => $right
 			),
 			'params' => array('id' => "The draft ".$label.": rowid, or its ref.")
+		);
+	}
+
+	/**
+	 * Enrichment of a status change of a document (back to draft, signed,
+	 * billed, delivered, paid, reopened), refused before the confirmation when
+	 * the card of the document would not offer its button.
+	 *
+	 * @param  string               $suffix      Tool name suffix.
+	 * @param  string               $label       Document name, as the model reads it.
+	 * @param  string               $class       Business class of the document.
+	 * @param  string               $preview     Translation key of the confirmation.
+	 * @param  int[]                $states      Statuses in which the card offers the button.
+	 * @param  string               $stateError  Translation key of the refusal in another status.
+	 * @param  string[]             $card        Other conditions of the button, checked by precheckStatusChange().
+	 * @param  string[]             $right       Right the card asks for.
+	 * @param  string[]             $readright   Right the REST method checks too, when not the same.
+	 * @param  string               $description Description for the model.
+	 * @param  array<string,string> $params      Arguments other than the document.
+	 * @param  string[]             $pass        Arguments given to the REST method as the model sends them.
+	 * @param  array<string,mixed>  $fixed       Arguments the call always carries, whatever the model sends.
+	 * @param  string[]             $setupOff    Setup constants that remove the button from the card, so the tool too.
+	 * @param  string               $stock       Constant that makes the validation move stock (the stock goes back), '' for none.
+	 * @param  array<string,mixed>  $extra       Other keys of the write: 'preview_by' (a confirmation per value of an argument), 'pass_words' (values said in words).
+	 * @return array<string,mixed>               Method enrichment.
+	 */
+	private function statusMethod($suffix, $label, $class, $preview, array $states, $stateError, array $card, array $right, array $readright, $description, array $params = array(), array $pass = array(), array $fixed = array(), array $setupOff = array(), $stock = '', array $extra = array())
+	{
+		$write = array(
+			'kind' => 'action',
+			'preview' => $preview,
+			'object' => $class,
+			'label' => $label,
+			'target' => 'id',
+			'lookup' => 'ref',
+			'states' => $states,
+			'state_error' => $stateError,
+			'card' => $card,
+			'pass' => $pass,
+			'fixed' => $fixed,
+			'right' => $right
+		);
+		if ($readright) {
+			$write['read_right'] = $readright;
+		}
+		if ($stock !== '') {
+			$write['stock'] = $stock;
+			$write['stock_back'] = true;
+		}
+		$write = array_merge($write, $extra);
+
+		return array(
+			'suffix' => $suffix,
+			'setup_off' => $setupOff,
+			'description' => $description." Give 'id' (the ".$label.": rowid, or its ref). The user confirms before anything is written.",
+			'write' => $write,
+			'params' => array_merge(array('id' => "The ".$label.": rowid, or its ref."), $params)
 		);
 	}
 
@@ -3340,6 +3498,10 @@ class ToolApiBridge extends McpTool
 				if (!empty($meta['setup']) && !$this->setupAllows((array) $meta['setup'])) {
 					continue;
 				}
+				// A button the setup removes from the card: no tool either.
+				if (!empty($meta['setup_off']) && $this->setupAllows((array) $meta['setup_off'])) {
+					continue;
+				}
 				if (!method_exists($ep['class'], $method)) {
 					continue;	// whitelisted method absent in this Dolibarr version
 				}
@@ -3594,10 +3756,10 @@ class ToolApiBridge extends McpTool
 		foreach (array('MAIN_USE_ADVANCED_PERMS', 'PRODUCT_PRICE_UNIQ', 'PRODUIT_CUSTOMER_PRICES') as $const) {
 			$signature .= '|'.$const.'='.getDolGlobalString($const);
 		}
-		// The setup modes some methods depend on: turning one on shows its tools at once.
+		// The setup modes some methods depend on: turning one on (or off) shows or hides its tools at once.
 		foreach ($this->enrichments as $meta) {
 			foreach (($meta['methods'] ?? array()) as $mmeta) {
-				foreach ((array) ($mmeta['setup'] ?? array()) as $const) {
+				foreach (array_merge((array) ($mmeta['setup'] ?? array()), (array) ($mmeta['setup_off'] ?? array())) as $const) {
 					$signature .= '|'.$const.'='.getDolGlobalString($const);
 				}
 			}
@@ -6190,6 +6352,12 @@ class ToolApiBridge extends McpTool
 		}
 
 		if ($kind === 'action') {
+			// A value the model may say in words (signed, refused): its code.
+			foreach ((array) ($write['pass_words'] ?? array()) as $name => $words) {
+				if (isset($args[$name]) && !is_array($args[$name]) && isset($words[dol_strtolower(trim((string) $args[$name]))])) {
+					$args[$name] = $words[dol_strtolower(trim((string) $args[$name]))];
+				}
+			}
 			// An action taking more than its record (who to assign it to, cancel).
 			foreach ((array) ($write['pass'] ?? array()) as $name) {
 				if (array_key_exists($name, $args) && !is_array($args[$name])) {
@@ -7038,6 +7206,13 @@ class ToolApiBridge extends McpTool
 		$what = $obj ? $this->describeRecord($obj) : (string) ($args[$write['target'] ?? 'id'] ?? '');
 		$kind = (string) $write['kind'];
 
+		// A status change saying which way it goes (signed or refused).
+		foreach ((array) ($write['preview_by'] ?? array()) as $name => $keys) {
+			if (isset($args[$name]) && !is_array($args[$name]) && isset($keys[(int) $args[$name]])) {
+				$write['preview'] = $keys[(int) $args[$name]];
+			}
+		}
+
 		if (!empty($write['supplier_workflow'])) {
 			if ($write['supplier_workflow'] === 'makeOrder') {
 				return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $what, dol_print_date($args['date'], 'dayhour', 'tzuser'), $args['_method_label'], $args['comment']));
@@ -7108,6 +7283,10 @@ class ToolApiBridge extends McpTool
 			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 			$wh = new Entrepot($this->db);
 			if ($wh->fetch((int) $args['idwarehouse']) > 0) {
+				if (!empty($write['stock_back'])) {
+					// Back to draft: the stock the validation took goes back.
+					return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $what).' '.$langs->transnoentitiesnoconv('AIPreviewStockBackTo', (string) $wh->ref));
+				}
 				$what .= ', '.$langs->transnoentitiesnoconv('AIPreviewStockFrom', (string) $wh->ref);
 			}
 		}
@@ -7273,7 +7452,7 @@ class ToolApiBridge extends McpTool
 				}
 			}
 
-			return '';
+			return $this->precheckStatusChange($write, $obj, $args);
 		}
 		if ($kind === 'line') {
 			if ((int) $obj->status !== 0) {
@@ -7333,6 +7512,94 @@ class ToolApiBridge extends McpTool
 		$meta = $this->methodMetaFor($toolName);
 
 		return isset($meta['write']) ? $meta['write'] : array();
+	}
+
+	/**
+	 * The conditions besides its status that the card puts on the button of a
+	 * status change, as listed in the 'card' of the write.
+	 *
+	 * @param  array<string,mixed> $write The 'write' enrichment of the tool.
+	 * @param  CommonObject        $obj   The document.
+	 * @param  array<string,mixed> $args  Normalised arguments.
+	 * @return string                     Why the status cannot change, or '' when it can.
+	 */
+	private function precheckStatusChange(array $write, $obj, array $args)
+	{
+		global $langs;
+
+		$label = (string) $write['label'];
+		$ref = (string) $obj->ref;
+		foreach ((array) ($write['card'] ?? array()) as $check) {
+			if ($check === 'close_status' && !in_array((int) ($args['status'] ?? 0), array(2, 3), true)) {
+				return $langs->transnoentitiesnoconv('AIWriteProposalCloseHow', $ref);
+			}
+			if ($check === 'proposal_invoice' && $obj instanceof Propal && getDolGlobalString('WORKFLOW_PROPAL_NEED_INVOICE_TO_BE_CLASSIFIED_BILLED')) {
+				$invoices = $obj->getInvoiceArrayList();
+				if (!is_array($invoices) || count($invoices) === 0) {
+					return $langs->transnoentitiesnoconv('AIWriteProposalNoInvoice', $ref);
+				}
+			}
+			if ($check === 'order_editable' && (int) $obj->status === 2 && !getDolGlobalString('EDIT_ORDER_SHIPMENT_ON_PROCESS')) {
+				return $langs->transnoentitiesnoconv((string) $write['state_error'], $label, $ref);
+			}
+			if ($check === 'not_billed' && !empty($obj->billed)) {
+				return $langs->transnoentitiesnoconv('AIWriteStatusAlreadyBilled', $label, $ref);
+			}
+			if ($check === 'not_negative' && (float) $obj->total_ttc < 0) {
+				return $langs->transnoentitiesnoconv('AIWriteStatusNegativeTotal', $label, $ref);
+			}
+			if ($check === 'order_reopen' && !empty($obj->billed) && getDolGlobalInt('ORDER_DONT_REOPEN_BILLED')) {
+				return $langs->transnoentitiesnoconv('AIWriteOrderBilledNoReopen', $ref);
+			}
+			if (!$obj instanceof Facture) {
+				continue;
+			}
+			if ($check === 'invoice_editable') {
+				// The Modify button: not in accounting, no payment, last of its cycle, not replaced.
+				if ($obj->getVentilExportCompta() != 0) {
+					return $langs->transnoentitiesnoconv('AIWriteInvoiceInAccounting', $ref);
+				}
+				if (!getDolGlobalString('INVOICE_CAN_BE_EDITED_EVEN_IF_PAYMENT_DONE') && (price2num($obj->getRemainToPay(), 'MT') != price2num($obj->total_ttc, 'MT', 1) || !empty($obj->paye))) {
+					return $langs->transnoentitiesnoconv('AIWriteInvoiceHasPayment', $ref);
+				}
+				if (!$obj->is_last_in_cycle()) {
+					return $langs->transnoentitiesnoconv('AIWriteInvoiceNotLastInCycle', $ref);
+				}
+				if ($obj->getIdReplacingInvoice() > 0) {
+					return $langs->transnoentitiesnoconv('AIWriteInvoiceReplaced', $ref);
+				}
+			}
+			if ($check === 'invoice_settled') {
+				// Nothing left to pay. A balance closed without its payment needs a reason, on the card.
+				$remain = (float) price2num($obj->getRemainToPay(), 'MT');
+				if (!empty($obj->paye) || ((int) $obj->type === Facture::TYPE_DEPOSIT && (float) $obj->total_ttc <= 0)) {
+					return $langs->transnoentitiesnoconv((string) $write['state_error'], $label, $ref);
+				}
+				if ($remain != 0) {
+					return $langs->transnoentitiesnoconv('AIWriteInvoiceRemainToPay', $ref, price($remain));
+				}
+			}
+			if ($check === 'invoice_reopen') {
+				if ((int) $obj->status === 1 && empty($obj->paye)) {
+					return $langs->transnoentitiesnoconv((string) $write['state_error'], $label, $ref);
+				}
+				if ((string) $obj->close_code === Facture::CLOSECODE_REPLACED && $obj->getIdReplacingInvoice() > 0) {
+					return $langs->transnoentitiesnoconv('AIWriteInvoiceReplaced', $ref);
+				}
+				if (in_array((int) $obj->type, array(Facture::TYPE_CREDIT_NOTE, Facture::TYPE_DEPOSIT, Facture::TYPE_SITUATION), true)) {
+					// Turned into a discount: reopening it would count the money twice.
+					require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+					$discount = new DiscountAbsolute($this->db);
+					if ($discount->fetch(0, (int) $obj->id) > 0) {
+						return $langs->transnoentitiesnoconv('AIWriteInvoiceDiscountUsed', $ref);
+					}
+				} elseif (!in_array((int) $obj->type, array(Facture::TYPE_STANDARD, Facture::TYPE_REPLACEMENT), true)) {
+					return $langs->transnoentitiesnoconv((string) $write['state_error'], $label, $ref);
+				}
+			}
+		}
+
+		return '';
 	}
 
 	/**
