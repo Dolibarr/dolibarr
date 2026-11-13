@@ -336,7 +336,7 @@ if ($action == 'create2') {
 	$hselected = (string) $h;
 	$h++;
 
-	print load_fiche_titre($title, '', 'bank_account');
+	print load_fiche_titre($title, '', 'depositslip');
 } else {
 	$result = $object->fetch($id, $ref);
 	if ($result < 0) {
@@ -353,7 +353,7 @@ if ($action == 'create2') {
 	//  $head[$h][1] = $langs->trans("Info");
 	//  $h++;
 
-	print dol_get_fiche_head($head, $hselected, $langs->trans("Cheques"), -1, 'payment');
+	print dol_get_fiche_head($head, $hselected, $langs->trans("Cheques"), -1, 'depositslip');
 
 	/*
 	 * Confirmation of slip's delete
@@ -393,9 +393,9 @@ if ($action == 'create2') {
 
 	$labeltype = ($langs->trans("PaymentType".$type) != "PaymentType".$type ? $langs->trans("PaymentType".$type) : $type);
 	if ($type == 'CHQ') {
-		print '<span class="opacitymedium">'.$langs->trans("SelectChequeTransactionAndGenerate").'</span><br><br>'."\n";
+		print '<div class="info">'.$langs->trans("SelectChequeTransactionAndGenerate").'</div><br>'."\n";
 	} else {
-		print '<span class="opacitymedium">'.$langs->trans("SelectPaymentTransactionAndGenerate", $labeltype).'</span><br><br>'."\n";
+		print '<div class="info">'.$langs->trans("SelectPaymentTransactionAndGenerate", $labeltype).'</div><br>'."\n";
 	}
 
 	print '<form class="nocellnopadd" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -449,7 +449,7 @@ if ($action == 'create2') {
 	print '<input type="submit" class="button small" name="filter" value="'.dol_escape_htmltag($langs->trans("ToFilter")).'">';
 	if ($search_date_start || $search_date_end || $filteraccountid > 0) {
 		print ' &nbsp; ';
-		print '<input type="submit" class="button" name="removefilter small" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+		print '<a href="'.dolPrintHTMLForAttributeUrl($_SERVER["PHP_SELF"].'?action=create2&removefilter=1'.($type ? '&type='.urlencode($type) : '')).'">'.$langs->trans("RemoveFilter").'</a>';
 	}
 	print '</div>';
 	print '</form>';
@@ -511,12 +511,14 @@ if ($action == 'create2') {
         <script type="text/javascript">
         jQuery(document).ready(function()
         {
-            jQuery("#checkall_'.$bid.'").click(function()
+            jQuery("#checkall_'.$bid.'").click(function(event)
             {
+                event.preventDefault();	/* Do not follow the href="#" (it scrolls to the top of page) */
                 jQuery(".checkforremise_'.$bid.'").prop(\'checked\', true);
             });
-            jQuery("#checknone_'.$bid.'").click(function()
+            jQuery("#checknone_'.$bid.'").click(function(event)
             {
+                event.preventDefault();	/* Do not follow the href="#" (it scrolls to the top of page) */
                 jQuery(".checkforremise_'.$bid.'").prop(\'checked\', false);
             });
         });
@@ -539,7 +541,7 @@ if ($action == 'create2') {
 
 		print '<tr class="liste_titre">';
 		if ($conf->main_checkbox_left_column) {
-			print '<td class="center">'.$langs->trans("Select")."<br>";
+			print '<td class="center">';
 			if ($conf->use_javascript_ajax) {
 				print '<a href="#" id="checkall_'.$bid.'">'.$langs->trans("All").'</a> / <a href="#" id="checknone_'.$bid.'">'.$langs->trans("None").'</a>';
 			}
@@ -559,7 +561,7 @@ if ($action == 'create2') {
 		print '<td class="center">'.$langs->trans("Payment")."</td>\n";
 		print '<td class="center">'.$langs->trans("LineRecord")."</td>\n";
 		if (empty($conf->main_checkbox_left_column)) {
-			print '<td class="center">'.$langs->trans("Select")."<br>";
+			print '<td class="center">';
 			if ($conf->use_javascript_ajax) {
 				print '<a href="#" id="checkall_'.$bid.'">'.$langs->trans("All").'</a> / <a href="#" id="checknone_'.$bid.'">'.$langs->trans("None").'</a>';
 			}

@@ -377,6 +377,17 @@ $dolibarr_main_restrict_ip='';
 //
 $dolibarr_nocsrfcheck='0';
 
+// dolibarr_main_disable_totp
+// ==========================
+// Rescue option to disable the two-factor authentication (TOTP) for all users, for example if an administrator
+// has lost the device with the authenticator application. A password is then enough to log in (web, API, DAV, web services).
+// Remove this parameter (or set it to 0) as soon as the problem is solved.
+// Default value: 0
+// Possible values: 0 or 1
+// Examples:
+// $dolibarr_main_disable_totp='1';
+//
+
 // dolibarr_api_count_always_enabled
 // =================================
 // Set this value to 1 so disabling the count of each API call will not be possible from the admin setup pages.

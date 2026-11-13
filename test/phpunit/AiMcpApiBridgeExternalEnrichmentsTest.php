@@ -63,7 +63,9 @@ class AiMcpApiBridgeExternalEnrichmentsTest extends CommonClassTest
 	private function enrichmentsOf(ToolApiBridge $bridge)
 	{
 		$property = new ReflectionProperty(ToolApiBridge::class, 'enrichments');
-		$property->setAccessible(true);
+		if (PHP_VERSION_ID < 80100) {
+			$property->setAccessible(true);
+		}
 		return $property->getValue($bridge);
 	}
 
