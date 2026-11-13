@@ -3332,7 +3332,7 @@ if (!GETPOST('hide_websitemenu')) {
 			}
 
 			// Edit website properties
-			print '<a href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($object->ref).'&pageid='.((int) $pageid).'&action=editcss&token='.newToken().'" class="button bordertransp valignmiddle" title="'.dol_escape_htmltag($langs->trans("EditCss")).'"'.$disabled.'>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($object->ref).'&pageid='.((int) $pageid).'&action=editcss&token='.newToken().'" class="button bordertransp buttonpictoonly valignmiddle" title="'.dol_escape_htmltag($langs->trans("EditCss")).'"'.$disabled.'>';
 			print img_picto('', 'setup');
 			print '<span class="hideonsmartphone paddingleft">'.dol_escape_htmltag($langs->trans("EditCss")).'</span>';
 			print '</a>';
