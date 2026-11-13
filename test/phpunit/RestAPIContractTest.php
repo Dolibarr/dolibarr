@@ -342,6 +342,115 @@ class RestAPIContractTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * Data of a contract line, with every field read by POST and PUT contracts/{id}/lines
+	 *
+	 * @param string	$desc	Description of the line
+	 *
+	 * @return array<string,mixed>
+	 */
+	private function getLineData($desc)
+	{
+		return array(
+			"desc" => $desc,
+			"subprice" => 20,
+			"qty" => 2,
+			"tva_tx" => 0,
+			"localtax1_tx" => 0,
+			"localtax2_tx" => 0,
+			"remise_percent" => 0,
+			"fk_product" => 0,
+			"date_start" => null,
+			"date_end" => null,
+			"date_start_real" => null,
+			"date_end_real" => null,
+			"price_base_type" => "HT",
+			"subprice_excl_tax" => 0,
+			"info_bits" => 0,
+			"fk_fournprice" => null,	// read by POST
+			"fk_fourn_price" => null,	// read by PUT
+			"pa_ht" => 5,
+			"array_options" => array(),
+			"fk_unit" => null,
+		);
+	}
+
+	/**
+	 * Read one line of a contract
+	 *
+	 * @param int		$contract_id	Id of the contract
+	 * @param int		$line_id		Id of the line
+	 * @param string	$test			Text to be added to output
+	 *
+	 * @return array<string,mixed>		The line
+	 */
+	private function getContractLine($contract_id, $line_id, $test)
+	{
+		$result = $this->getUrl('contracts/'.$contract_id.'/lines', "$test (read lines)", 'GET');
+		$found = array();
+		foreach ($result['content'] as $line) {
+			if ((int) $line['id'] === $line_id) {
+				$found = $line;
+				break;
+			}
+		}
+		$this->assertNotEmpty($found, "$test Line $line_id not found in contract $contract_id");
+
+		return $found;
+	}
+
+	/**
+	 * testRestContractPutLineUnknownLine
+	 *
+	 * @return void
+	 */
+	public function testRestContractPutLineUnknownLine()
+	{
+		$test = "Update a line that does not exist";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$this->getUrl('contracts/'.$contract_id.'/lines/999999999', $test, 'PUT', $this->getLineData("Updated"), 404);
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
+	}
+
+	/**
+	 * testRestContractPutLineKeepsPosition
+	 *
+	 * @return void
+	 */
+	public function testRestContractPutLineKeepsPosition()
+	{
+		$test = "Update a line without rang";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$line_ids = array();
+			foreach (array(1, 2) as $rang) {
+				$data = $this->getLineData("API test service ".$rang);
+				$data["rang"] = $rang;
+				$result = $this->getUrl('contracts/'.$contract_id.'/lines', "$test (create line $rang)", 'POST', $data);
+				$line_ids[$rang] = (int) $result['content'];
+				$this->assertGreaterThan(0, $line_ids[$rang], "$test Id of line $rang is not > 0");
+			}
+
+			$line = $this->getContractLine($contract_id, $line_ids[2], "$test (before update)");
+			$this->assertEquals(2, $line['rang'] ?? '', "$test Second line must be at position 2 before update");
+
+			$this->getUrl('contracts/'.$contract_id.'/lines/'.$line_ids[2], $test, 'PUT', $this->getLineData("Updated"));
+
+			$line = $this->getContractLine($contract_id, $line_ids[2], "$test (after update)");
+			$this->assertEquals("Updated", $line['description'] ?? '', "$test Line must be updated");
+			$this->assertEquals(2, $line['rang'] ?? '', "$test Position of the line must be kept");
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
+	}
+
+	/**
 	 * testRestContractPaginationLimitZero
 	 *
 	 * @return void
