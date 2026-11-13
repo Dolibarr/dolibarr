@@ -449,7 +449,7 @@ if ($action == 'create2') {
 	print '<input type="submit" class="button small" name="filter" value="'.dol_escape_htmltag($langs->trans("ToFilter")).'">';
 	if ($search_date_start || $search_date_end || $filteraccountid > 0) {
 		print ' &nbsp; ';
-		print '<input type="submit" class="button" name="removefilter small" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+		print '<a href="'.dolPrintHTMLForAttributeUrl($_SERVER["PHP_SELF"].'?action=create2&removefilter=1'.($type ? '&type='.urlencode($type) : '')).'">'.$langs->trans("RemoveFilter").'</a>';
 	}
 	print '</div>';
 	print '</form>';
