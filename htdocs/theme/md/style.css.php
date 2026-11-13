@@ -6825,6 +6825,10 @@ span#morelines {
 	margin: 2px 4px 2px 4px  !important;
 	line-height: normal;
 }
+.websitebar button.button, .websitebar button.buttonDelete {
+	/* Align height of native button elements with sibling anchor buttons (button keeps UA font-size) */
+	font-size: inherit;
+}
 .websitebar input.button.bordertransp, .websitebar input.buttonDelete.bordertransp {
 	color: #444 !important;
 	text-shadow: none;
