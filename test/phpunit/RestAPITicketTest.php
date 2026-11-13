@@ -461,6 +461,42 @@ class RestAPITicketTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * Add a message with an attachment with executable content to a ticket: it must be saved with .noexe
+	 *
+	 * @return void
+	 */
+	public function testRestTicketNewMessageAttachmentNoExe()
+	{
+		global $conf;
+
+		$test = "Add a message with a php attachment to a ticket";
+
+		$ticket_id = $this->createTicket($test);
+		$result = $this->getUrl('tickets/'.$ticket_id, $test);
+		$ref = (string) $result['content']['ref'];
+		$this->assertNotEmpty($ref, "$test The ticket must have a ref");
+
+		$filename = 'testRestTicket'.mt_rand().'.php';
+		$data = array(
+			"id" => $ticket_id,
+			"message" => "Message with a php attachment added via the REST API",
+			"attachments" => array(
+				array("filename" => $filename, "filecontent" => base64_encode("<?php echo 'test';"), "fileencoding" => "base64"),
+			),
+		);
+		$result = $this->getUrl('tickets/newmessage', $test, 'POST', $data);
+		$this->assertEquals($ticket_id, (int) $result['content'], "$test The id of the ticket must be returned");
+
+		$destdir = $conf->ticket->dir_output.'/'.$ref;
+		if (getDolGlobalString('MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED')) {
+			$this->assertFileExists($destdir.'/'.$filename, "$test The php attachment must be saved");
+		} else {
+			$this->assertFileExists($destdir.'/'.$filename.'.noexe', "$test The php attachment must be saved with .noexe");
+			$this->assertFileNotExistsCompat($destdir.'/'.$filename, "$test The php attachment must not be saved with its executable name");
+		}
+	}
+
+	/**
 	 * Unlink a contact of a ticket that does not exist
 	 *
 	 * @return void
