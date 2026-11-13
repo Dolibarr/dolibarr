@@ -589,6 +589,28 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * testRestInterventionRoutesNotFound
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionRoutesNotFound()
+	{
+		$test = "Call routes on an intervention that does not exist";
+
+		$this->getUrl('interventions/999999999', $test, 'GET', null, 404);
+		$this->getUrl('interventions/999999999', $test, 'PUT', array("note_private" => "Not found"), 404);
+		$this->getUrl('interventions/999999999/lines', $test, 'GET', null, 404);
+		$this->getUrl('interventions/999999999/lines/1', $test, 'PUT', $this->lineData(), 404);
+		$this->getUrl('interventions/999999999/lines/1', $test, 'DELETE', null, 404);
+		$this->getUrl('interventions/999999999/validate', $test, 'POST', array("notrigger" => 0), 404);
+		$this->getUrl('interventions/999999999/close', $test, 'POST', array("notrigger" => 0), 404);
+		$this->getUrl('interventions/999999999/settodraft', $test, 'POST', array(), 404);
+		$this->getUrl('interventions/999999999/contacts', $test, 'GET', null, 404);
+		$this->addInterventionContact($test, 999999999, 1, 'INTERREPFOLL', 'internal', 404);
+		$this->getUrl('interventions/999999999/contact/1/INTERREPFOLL', $test, 'DELETE', null, 404);
+	}
+
+	/**
 	 * Close an intervention
 	 *
 	 * @param string	$test				Text to be added to output
