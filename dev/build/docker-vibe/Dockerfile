@@ -36,6 +36,7 @@ RUN apt-get update \
 		php-ast \
 		php-curl \
 		php-mysql \
+		php-pgsql \
 		php-mbstring \
 		php-xml \
 		php-gd \
@@ -46,6 +47,7 @@ RUN apt-get update \
 		php-imagick \
 		php-cli \
 		pgloader \
+		postgresql-client \
 		python3 \
 		python3-pip \
 		shellcheck \
@@ -69,9 +71,13 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | UV_INSTALL_DIR=/usr/local/bin s
 # libglib2.0-bin provides gdbus, used by open-on-host to reach the
 # xdg-desktop-portal of the host session. wl-clipboard is the Wayland native
 # equivalent of xclip (also used by pyperclip). See README.md.
+# The packages downloaded by uv and composer are cached into /root/.cache (wheels, zips),
+# duplicating into the image files already installed: the caches are removed into the
+# same RUN, so they never enter a layer.
 RUN mkdir -p /opt/vibe \
     && uv venv /opt/vibe \
-    && uv pip install --python /opt/vibe/bin/python mistral-vibe pyperclip
+    && uv pip install --python /opt/vibe/bin/python mistral-vibe pyperclip \
+    && rm -rf /root/.cache/uv
 
 ENV PATH="/opt/vibe/bin:$PATH"
 
@@ -83,8 +89,7 @@ ENV BROWSER="/usr/local/bin/open-on-host"
 
 
 # Install RTK - Rust Token Killer
-RUN curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/master/install.sh | sh \
-    && cp /root/.local/bin/rtk /usr/local/bin/rtk \
+RUN curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/master/install.sh | RTK_INSTALL_DIR=/usr/local/bin sh \
     && chmod +x /usr/local/bin/rtk \
     && rtk --version \
     && rtk gain
@@ -110,7 +115,8 @@ RUN mkdir -p /opt/php-tools \
 	&& ln -s /opt/php-tools/vendor/bin/phan /usr/local/bin/phan \
 	&& ln -s /opt/php-tools/vendor/bin/phpstan /usr/local/bin/phpstan \
 	&& ln -s /opt/php-tools/vendor/bin/phpcs /usr/local/bin/phpcs \
-	&& ln -s /opt/php-tools/vendor/bin/phpcbf /usr/local/bin/phpcbf
+	&& ln -s /opt/php-tools/vendor/bin/phpcbf /usr/local/bin/phpcbf \
+	&& rm -rf /root/.cache/composer
 
 
 # Install pre-commit - tool to manage git hooks (see https://pre-commit.com and dev/setup/pre-commit/README.md)
@@ -118,7 +124,8 @@ RUN mkdir -p /opt/php-tools \
 RUN uv venv /opt/pre-commit \
     && uv pip install --python /opt/pre-commit/bin/python pre-commit \
     && ln -s /opt/pre-commit/bin/pre-commit /usr/local/bin/pre-commit \
-    && pre-commit --version
+    && pre-commit --version \
+    && rm -rf /root/.cache/uv
 
 
 # Preload the pre-commit hooks environments of the repository into the image,

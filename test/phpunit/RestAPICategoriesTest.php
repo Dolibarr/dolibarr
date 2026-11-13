@@ -176,6 +176,35 @@ class RestAPICategoriesTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * testRestCategoryDuplicateLabel
+	 *
+	 * @return void
+	 */
+	public function testRestCategoryDuplicateLabel()
+	{
+		$test = "Create or update a category with the label of another one";
+
+		$label = "API test duplicate ".mt_rand(0, 99999999);
+		$result = $this->getUrl('categories', $test, 'POST', array("label" => $label, "type" => 2));
+		$category_id = (int) $result['content'];
+		$this->assertGreaterThan(0, $category_id, "$test Id of category is not > 0");
+
+		// Same label at the same level of the same type
+		$this->getUrl('categories', $test, 'POST', array("label" => $label, "type" => 2), 409);
+
+		$result = $this->getUrl('categories', $test, 'POST', array("label" => $label." other", "type" => 2));
+		$category_id_other = (int) $result['content'];
+		$this->assertGreaterThan(0, $category_id_other, "$test Id of category is not > 0");
+
+		$this->getUrl('categories/'.$category_id_other, $test, 'PUT', array("label" => $label), 409);
+		$result = $this->getUrl('categories/'.$category_id_other, $test, 'GET');
+		$this->assertEquals($label." other", $result['content']['label'], "$test Label must not be changed");
+
+		$this->getUrl('categories/'.$category_id_other, $test, 'DELETE');
+		$this->getUrl('categories/'.$category_id, $test, 'DELETE');
+	}
+
+	/**
 	 * testRestCategoryPostExtrafields
 	 *
 	 * @return void
