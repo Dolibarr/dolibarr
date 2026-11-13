@@ -3349,7 +3349,13 @@ function dol_get_fiche_end($notab = 0)
  */
 function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldid = 'rowid', $fieldref = 'ref', $morehtmlref = '', $moreparam = '', $nodbprefix = 0, $morehtmlleft = '', $morehtmlstatus = '', $onlybanner = 0, $morehtmlright = '')
 {
-	global $conf, $form, $user, $langs, $hookmanager, $action;
+	global $conf, $form, $user, $langs, $hookmanager, $action, $db;
+
+	// $form is created by the top or left menu, so it may not exist when menus are hidden (dol_hide_topmenu and dol_hide_leftmenu)
+	if (!is_object($form)) {
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+		$form = new Form($db);
+	}
 
 	$error = 0;
 
