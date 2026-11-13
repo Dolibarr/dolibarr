@@ -29,6 +29,7 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/bom/class/bom.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/class/cunits.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
@@ -97,5 +98,56 @@ class BOMTest extends CommonClassTest
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 		return $result;
+	}
+
+	/**
+	 * A product used at several levels of the tree with different units of the same unit type
+	 * must be cumulated once converted, not added raw.
+	 *
+	 * @return void
+	 */
+	public function testBOMGetNetNeedsCumulatesMixedUnits()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$cunits = new CUnits($db);
+		$idhour = $cunits->getUnitFromCode('H', 'code', 'time');
+		$idminute = $cunits->getUnitFromCode('MI', 'code', 'time');
+
+		$childline = new BOMLine($db);
+		$childline->fk_product = 101;
+		$childline->qty = 15;
+		$childline->fk_unit = $idminute;
+
+		$childbom = new BOM($db);
+		$childbom->id = 2;
+		$childbom->qty = 1;
+		$childbom->lines = array($childline);
+
+		$serviceline = new BOMLine($db);
+		$serviceline->fk_product = 101;
+		$serviceline->qty = 1;
+		$serviceline->fk_unit = $idhour;
+
+		$subassemblyline = new BOMLine($db);
+		$subassemblyline->fk_product = 200;
+		$subassemblyline->qty = 1;
+		$subassemblyline->childBom = array($childbom);
+
+		$localobject = new BOM($db);
+		$localobject->id = 1;
+		$localobject->qty = 1;
+		$localobject->lines = array($serviceline, $subassemblyline);
+
+		$TNetNeeds = array();
+		$localobject->getNetNeeds($TNetNeeds, 1);
+
+		print __METHOD__." qty=".$TNetNeeds[101]['qty']."\n";
+		$this->assertEquals($idhour, $TNetNeeds[101]['fk_unit']);
+		$this->assertEquals(1.25, $TNetNeeds[101]['qty']);
 	}
 }
