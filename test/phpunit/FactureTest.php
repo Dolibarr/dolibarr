@@ -1018,6 +1018,63 @@ class FactureTest extends CommonClassTest
 	}
 
 	/**
+	 * Check HT weighting, discounts, zero progress and the native storage modes.
+	 *
+	 * @return void
+	 */
+	public function testSituationWeightedProgress()
+	{
+		global $conf, $db;
+
+		$savedconf = $conf;
+		$conf = clone $conf;
+		$conf->global = clone $conf->global;
+		$conf->global->MAIN_MAX_DECIMALS_TOT = 2;
+		$conf->global->MAIN_APPLY_DISCOUNT_ON_UNIT_PRICE_THEN_ROUND_BEFORE_MULTIPLICATION_BY_QTY = '';
+		try {
+			// Each line is [unit price HT, quantity, discount %, progress %, product type].
+			$cases = array(
+				array(19.0, array(array(9000, 1, 0, 10, 0), array(1000, 1, 0, 100, 1))),
+				array(10.0, array(array(9000, 1, 0, 0, 0), array(1000, 1, 0, 100, 1))),
+				array(50.0, array(array(2000, 1, 50, 0, 0), array(1000, 1, 0, 100, 1))),
+				array(25.0, array(array(1000, 3, 0, 0, 0), array(1000, 1, 0, 100, 1))),
+				array(0.0, array(array(1000, 1, 0, 0, 0))),
+				array(100.0, array(array(1000, 1, 0, 100, 0))),
+				array(25.0, array(array(-1000, 1, 0, 25, 0))),
+				array(50.0, array(array(2000, 1, 0, 50, 0), array(-1000, 1, 0, 50, 1))),
+				array(20.0, array(array(1000, 1, 0, 20, 0), array(9999, 1, 0, 100, 9))),
+				array(null, array()),
+				array(null, array(array(0, 1, 0, 100, 0))),
+				array(null, array(array(1000, 1, 100, 50, 0))),
+				array(null, array(array(1000, 1, 0, 50, 0), array(-1000, 1, 0, 50, 1))),
+			);
+			foreach (array(1, 2) as $mode) {
+				$conf->global->INVOICE_USE_SITUATION = $mode;
+				foreach ($cases as $case) {
+					$invoice = new Facture($db);
+					$invoice->lines = array();
+					foreach ($case[1] as $values) {
+						$line = new FactureLigne($db);
+						$line->subprice = $values[0];
+						$line->qty = $values[1];
+						$line->remise_percent = $values[2];
+						$line->situation_percent = $values[3];
+						$line->product_type = $values[4];
+						$invoice->lines[] = $line;
+					}
+					if ($case[0] === null) {
+						$this->assertSame(null, $invoice->getSituationProgress());
+					} else {
+						$this->assertEqualsWithDelta($case[0], $invoice->getSituationProgress(), 0.000001);
+					}
+				}
+			}
+		} finally {
+			$conf = $savedconf;
+		}
+	}
+
+	/**
 	 * Edit an object to test updates
 	 *
 	 * @param   Facture $localobject        Object Facture

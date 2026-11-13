@@ -6363,6 +6363,38 @@ class Facture extends CommonInvoice
 	}
 
 	/**
+	 * Get the line progress weighted by the amounts excluding tax at 100%.
+	 * Lines must already be loaded. Progress follows the native storage mode:
+	 * cumulative in legacy mode, incremental in progressive mode.
+	 *
+	 * @return float|null Weighted percentage, null when the net amount at 100% is zero
+	 */
+	public function getSituationProgress()
+	{
+		global $mysoc;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
+
+		$total = 0.0;
+		$progress = 0.0;
+		foreach ($this->lines as $line) {
+			if ($line->product_type != 0 && $line->product_type != 1) {
+				continue;
+			}
+			// Recalculate at 100%, including lines whose current progress is zero.
+			$amounts = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, 0, 0, 0, 0, 'HT', 0, $line->product_type, $mysoc, array('0', '0', '0', '0'));
+			if (!isset($amounts[0])) {
+				return null;
+			}
+			$weight = (float) $amounts[0];
+			$total += $weight;
+			$progress += $weight * (float) $line->situation_percent;
+		}
+
+		return $total != 0.0 ? $progress / $total : null;
+	}
+
+	/**
 	 * Currently used for documents generation : to know if retained warranty need to be displayed
 	 * @return bool
 	 */

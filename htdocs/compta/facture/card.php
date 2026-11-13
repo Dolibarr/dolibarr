@@ -6508,9 +6508,7 @@ if ($action == 'create') {
 			print '<td></td>';
 			print '<td class="center">'.$langs->trans('Situation').'</td>';
 
-			if (isModEnabled("bank")) {
-				print '<td class="right"></td>';
-			}
+			print '<td class="right">'.$form->textwithpicto($langs->trans('Progress'), $langs->trans('SituationWeightedProgressHelp')).'</td>';
 			print '<td class="right">'.$langs->trans('AmountHT').'</td>';
 			print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
 			print '<td width="18">&nbsp;</td>';
@@ -6533,9 +6531,8 @@ if ($action == 'create') {
 					print '<td>'.$prev_invoice->getNomUrl(1).'</td>';
 					print '<td></td>';
 					print '<td align="center" >'.(($prev_invoice->type == Facture::TYPE_CREDIT_NOTE) ? $langs->trans('situationInvoiceShortcode_AS') : $langs->trans('situationInvoiceShortcode_S')).$prev_invoice->situation_counter.'</td>';
-					if (isModEnabled("bank")) {
-						print '<td class="right"></td>';
-					}
+					$weightedProgress = $prev_invoice->getSituationProgress();
+					print '<td class="right">'.($weightedProgress === null ? '&ndash;' : price($weightedProgress, 0, $langs, 1, getDolGlobalInt('INVOICE_SITUATION_PROGRESS_DECIMALS', 2)).' %').'</td>';
 					print '<td class="right"><span class="amount">'.price($prev_invoice->total_ht).'</span></td>';
 					print '<td class="right"><span class="amount">'.price($prev_invoice->total_ttc).'</span></td>';
 					print '<td class="right">'.$prev_invoice->getLibStatut(3, $tmptotalallpayments).'</td>';
@@ -6558,9 +6555,8 @@ if ($action == 'create') {
 			print '<td>'.$object->getNomUrl(1).'</td>';
 			print '<td></td>';
 			print '<td class="center">'.(($object->type == Facture::TYPE_CREDIT_NOTE) ? $langs->trans('situationInvoiceShortcode_AS') : $langs->trans('situationInvoiceShortcode_S')).$object->situation_counter.'</td>';
-			if (isModEnabled("bank")) {
-				print '<td class="right"></td>';
-			}
+			$weightedProgress = $object->getSituationProgress();
+			print '<td class="right">'.($weightedProgress === null ? '&ndash;' : price($weightedProgress, 0, $langs, 1, getDolGlobalInt('INVOICE_SITUATION_PROGRESS_DECIMALS', 2)).' %').'</td>';
 			print '<td class="right"><span class="amount">'.price($object->total_ht).'</span></td>';
 			print '<td class="right"><span class="amount">'.price($object->total_ttc).'</span></td>';
 			print '<td class="right">'.$object->getLibStatut(3, $totalallpayments).'</td>';
@@ -6581,9 +6577,7 @@ if ($action == 'create') {
 				$i++;
 			}
 			print '</td>';
-			if (isModEnabled("bank")) {
-				print '<td></td>';
-			}
+			print '<td></td>';
 			print '<td class="right"><b>'.price($total_global_ht).'</b></td>';
 			print '<td class="right"><b>'.price($total_global_ttc).'</b></td>';
 			print '<td width="18">&nbsp;</td>';
@@ -6605,9 +6599,8 @@ if ($action == 'create') {
 					print '<td>'.$next_invoice->getNomUrl(1).'</td>';
 					print '<td></td>';
 					print '<td class="center">'.(($next_invoice->type == Facture::TYPE_CREDIT_NOTE) ? $langs->trans('situationInvoiceShortcode_AS') : $langs->trans('situationInvoiceShortcode_S')).$next_invoice->situation_counter.'</td>';
-					if (isModEnabled("bank")) {
-						print '<td class="right"></td>';
-					}
+					$weightedProgress = $next_invoice->getSituationProgress();
+					print '<td class="right">'.($weightedProgress === null ? '&ndash;' : price($weightedProgress, 0, $langs, 1, getDolGlobalInt('INVOICE_SITUATION_PROGRESS_DECIMALS', 2)).' %').'</td>';
 					print '<td class="right"><span class="amount">'.price($next_invoice->total_ht).'</span></td>';
 					print '<td class="right"><span class="amount">'.price($next_invoice->total_ttc).'</span></td>';
 					print '<td class="right">'.$next_invoice->getLibStatut(3, $next_totalpaid + $next_totalcreditnotes + $next_totaldeposits).'</td>';
@@ -6619,9 +6612,7 @@ if ($action == 'create') {
 
 				print '<tr class="oddeven">';
 				print '<td colspan="3" class="right"></td>';
-				if (isModEnabled("bank")) {
-					print '<td class="right"></td>';
-				}
+				print '<td class="right"></td>';
 				print '<td class="right"><b>'.price($total_global_ht).'</b></td>';
 				print '<td class="right"><b>'.price($total_global_ttc).'</b></td>';
 				print '<td width="18">&nbsp;</td>';
