@@ -152,6 +152,50 @@ class RestAPIContractTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * testRestContractDeleteLineUnknownLine
+	 *
+	 * @return void
+	 */
+	public function testRestContractDeleteLineUnknownLine()
+	{
+		$test = "Delete a line that does not exist";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$this->getUrl('contracts/'.$contract_id.'/lines/999999999', $test, 'DELETE', null, 404);
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
+	}
+
+	/**
+	 * testRestContractDeleteLine
+	 *
+	 * @return void
+	 */
+	public function testRestContractDeleteLine()
+	{
+		$test = "Delete a line";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$line_id = $this->createContractLine($contract_id, $test);
+			$kept_line_id = $this->createContractLine($contract_id, $test);
+
+			$this->getUrl('contracts/'.$contract_id.'/lines/'.$line_id, $test, 'DELETE');
+
+			$result = $this->getUrl('contracts/'.$contract_id.'/lines', "$test (read after delete)", 'GET');
+			$line_ids = array_map('intval', array_column($result['content'], 'id'));
+			$this->assertNotContains($line_id, $line_ids, "$test Deleted line must be gone");
+			$this->assertContains($kept_line_id, $line_ids, "$test Other line must be kept");
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
+	}
+
+	/**
 	 * testRestContractActivateLineUnknownLine
 	 *
 	 * @return void
