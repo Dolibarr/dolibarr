@@ -24,6 +24,7 @@
  */
 
 require_once __DIR__."/AbstractRestAPITest.php";
+require_once __DIR__."/../../htdocs/contrat/class/contrat.class.php";
 
 /**
  * Class for PHPUnit tests
@@ -149,6 +150,58 @@ class RestAPIContractTest extends AbstractRestAPITest
 		$this->assertGreaterThan(0, $line_id, "$test Id of line is not > 0");
 
 		return $line_id;
+	}
+
+	/**
+	 * Call the API with POST and check the answer is 304 Not Modified, which has no JSON body
+	 *
+	 * @param string				$endpoint	Endpoint - "contracts/id/validate"
+	 * @param string				$test_title	Text to be added to output
+	 * @param array<string,mixed>	$data		Data that will be JSON encoded
+	 * @return void
+	 */
+	private function assertPostNotModified($endpoint, $test_title, $data)
+	{
+		$addheaders = array(
+			'Content-Type: application/json', 'Accept: application/json', "DOLAPIKEY: ".$this->api_key
+		);
+
+		$result = getURLContent($this->api_url.'/'.$endpoint, 'POST', json_encode($data), 1, $addheaders, array('http', 'https'), 2);
+
+		$this->assertEquals(0, $result['curl_error_no'], $test_title." Should not have a curl error");
+		$this->assertEquals(304, $result['http_code'], $test_title." HTTP code must be 304".PHP_EOL.json_encode($result, JSON_PRETTY_PRINT));
+	}
+
+	/**
+	 * testRestContractValidate
+	 *
+	 * @return void
+	 */
+	public function testRestContractValidate()
+	{
+		$test = "Validate a draft contract, then validate it again";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$this->createContractLine($contract_id, $test);
+
+			$this->getUrl('contracts/'.$contract_id.'/validate', $test, 'POST', array("notrigger" => 0));
+
+			$result = $this->getUrl('contracts/'.$contract_id, "$test (read after validate)", 'GET');
+			$this->assertEquals(Contrat::STATUS_VALIDATED, $result['content']['status'] ?? null, "$test Contract must be validated");
+			$ref = $result['content']['ref'] ?? '';
+			$this->assertNotEmpty($ref, "$test Validated contract must have a ref");
+			$this->assertStringNotContainsString('PROV', $ref, "$test Validated contract must not keep its draft ref");
+
+			$this->assertPostNotModified('contracts/'.$contract_id.'/validate', "$test (validate again)", array("notrigger" => 0));
+
+			$result = $this->getUrl('contracts/'.$contract_id, "$test (read after second validate)", 'GET');
+			$this->assertEquals(Contrat::STATUS_VALIDATED, $result['content']['status'] ?? null, "$test Contract must still be validated");
+			$this->assertEquals($ref, $result['content']['ref'] ?? '', "$test Ref must not change");
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
 	}
 
 	/**

@@ -1229,6 +1229,20 @@ if (!defined('NOLOGIN')) {
 		}
 	}
 
+	// Check if user must set up a two-factor authentication before going further: when the security setup requires one and it is not done yet,
+	// only the setup page of the user, the logout and the page of a password to change (asked for first) can be reached. Checked on every page.
+	if (getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') && (getDolGlobalInt('MAIN_SECURITY_TOTP_REQUIRED_FOR_INTERNAL') || getDolGlobalInt('MAIN_SECURITY_TOTP_REQUIRED_FOR_EXTERNAL') || getDolGlobalString('MAIN_SECURITY_TOTP_REQUIRED_FOR_GROUPS'))) {
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+		if (dolTotpMustEnroll($db, $user)) {
+			// SCRIPT_NAME and not PHP_SELF, which ends with the path info anybody can add to the URL (/societe/list.php/user/logout.php)
+			$isallowed = ((preg_match('/\/user\/credentials\.php$/', $_SERVER['SCRIPT_NAME']) && GETPOSTINT('id') == $user->id) || preg_match('/\/user\/(logout|changepassword)\.php$/', $_SERVER['SCRIPT_NAME']));
+			if (!$isallowed) {
+				header('Location: '.DOL_URL_ROOT.'/user/credentials.php?id='.((int) $user->id));
+				exit;
+			}
+		}
+	}
+
 	// If user admin, we force the rights-based modules
 	if ($user->admin) {
 		$user->rights->user->user->lire = 1;
@@ -1827,6 +1841,9 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		$appletouchicon = DOL_URL_ROOT.'/theme/apple-touch-icon.png';
 		if (!empty($mysoc->logo_squarred_mini)) {
 			$favicon = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
+		}
+		if (!empty($mysoc->logo_squarred)) {
+			$appletouchicon = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode('logos/'.$mysoc->logo_squarred);
 		}
 		if (getDolGlobalString('MAIN_FAVICON_URL')) {
 			$favicon = getDolGlobalString('MAIN_FAVICON_URL');

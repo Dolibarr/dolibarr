@@ -954,7 +954,8 @@ class Contracts extends DolibarrApi
 	 *   "notrigger": 0
 	 * }
 	 *
-	 * @throws RestException 304 Not Modified
+	 * @throws RestException 304 Not Modified if the contract is not a draft
+	 * @throws RestException 400 Bad Request if the contract ID is 0
 	 * @throws RestException 403 Access denied
 	 * @throws RestException 404 Not found
 	 * @throws RestException 500 Error
@@ -976,10 +977,12 @@ class Contracts extends DolibarrApi
 			throw new RestException(403, 'Access to this contract is not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->contract->validate(DolibarrApiAccess::$user, '', $notrigger);
-		if ($result == 0) {
-			throw new RestException(304, 'Error nothing done. May be object is already validated');
+		// Contrat::validate() does not check the status: it would fire the CONTRACT_VALIDATE trigger again
+		if ($this->contract->status != Contrat::STATUS_DRAFT) {
+			throw new RestException(304, 'Error nothing done. Contract is not a draft');
 		}
+
+		$result = $this->contract->validate(DolibarrApiAccess::$user, '', $notrigger);
 		if ($result < 0) {
 			throw new RestException(500, 'Error when validating Contract: '.$this->contract->errorsToString());
 		}
