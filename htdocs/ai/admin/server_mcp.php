@@ -158,6 +158,18 @@ if ($action == 'update_external') {
 		}
 	}
 
+	// Cache duration (in seconds) returned as ttlMs by server/discover. Empty means default value.
+	if (GETPOSTISSET('AI_MCP_DISCOVER_TTL')) {
+		if (GETPOST('AI_MCP_DISCOVER_TTL', 'alphanohtml') !== '') {
+			$res = dolibarr_set_const($db, "AI_MCP_DISCOVER_TTL", max(0, GETPOSTINT('AI_MCP_DISCOVER_TTL')), 'int', 0, '', $conf->entity);
+		} else {
+			$res = dolibarr_del_const($db, "AI_MCP_DISCOVER_TTL", $conf->entity);
+		}
+		if ($res < 0) {
+			$error++;
+		}
+	}
+
 	// Checkbox has its own form, flagged by a hidden field because an unchecked checkbox is not posted
 	if (GETPOSTISSET('AI_MCP_BEHIND_BASIC_AUTH_FORM')) {
 		$res = dolibarr_set_const($db, "AI_MCP_BEHIND_BASIC_AUTH", GETPOSTINT("AI_MCP_BEHIND_BASIC_AUTH"), 'int', 0, '', $conf->entity);
@@ -258,8 +270,6 @@ print '<br>';
 
 if (getDolGlobalString('AI_MCP_ENABLED')) {
 	/*
-	print load_fiche_titre($langs->trans("PrivateModeTitle"), '', 'fas fa-lock');
-
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
@@ -370,7 +380,6 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	*/
 
 	// External Access Configuration
-	print load_fiche_titre($langs->trans("AiMcpExternalAccess"), '', 'fas fa-lock-open');
 
 	// A new key makes the current one useless for the tools already using it: ask first
 	if ($action == 'ask_generate_key') {
@@ -383,6 +392,8 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
+
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td></td><td></td></tr>';
 
 	// Service User
 	print '<tr class="oddeven">';
@@ -424,27 +435,6 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	// Name of the environment variable holding the key, suffixed with the database name so several instances can share the same .env file
 	$mcpapikeyenvname = 'DOLIBARR_MCP_API_KEY_'.dol_strtoupper(preg_replace('/[^a-zA-Z0-9_]/', '_', $conf->db->name));
 
-	print '<tr class="oddeven">';
-	print '<td>MCP Endpoint URL</td>';
-	print '<td>';
-	print '<input type="text" id="endpoint" value="'.$endpoint.'" readonly style="width:600px; border:none; background:transparent;">';
-	print '</td>';
-	print '<td></td>';
-	print '</tr>';
-
-	print '</table>';
-	print '</div>';
-
-	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
-
-	print '</form>';
-
-	print '<br>';
-
-	// Configuration Examples
-	print '<br>';
-	print '<div style="background:#fcfcfc; border:1px solid #eee; padding:15px; border-radius:5px;">';
-
 	// Server behind a HTTP Basic authentication: the Authorization header is then taken, so the key goes into the DOLAPIKEY header
 	$behindbasicauth = getDolGlobalInt('AI_MCP_BEHIND_BASIC_AUTH');
 	$basicauthplaceholder = 'BASE64_OF_LOGIN:PASSWORD';
@@ -457,6 +447,57 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	} elseif (!empty($_SERVER['PHP_AUTH_USER'])) {
 		$basicauthvalue = base64_encode($_SERVER['PHP_AUTH_USER'].':'.(empty($_SERVER['PHP_AUTH_PW']) ? '' : $_SERVER['PHP_AUTH_PW']));
 	}
+	// If option was never set, enable it by default when a Basic authentication is detected
+	if (getDolGlobalString('AI_MCP_BEHIND_BASIC_AUTH') === '' && $basicauthvalue != $basicauthplaceholder) {
+		$behindbasicauth = 1;
+	}
+	// Custom connector of Mistral Vibe web: the Basic authentication credentials, if any, are put into the URL
+	$vibeweburl = $endpoint;
+	if ($behindbasicauth) {
+		$credentials = 'LOGIN:PASSWORD';
+		$decoded = ($basicauthvalue != $basicauthplaceholder) ? base64_decode($basicauthvalue, true) : false;
+		if (!empty($_SERVER['PHP_AUTH_USER'])) {
+			$credentials = rawurlencode($_SERVER['PHP_AUTH_USER']).':'.rawurlencode(empty($_SERVER['PHP_AUTH_PW']) ? '' : $_SERVER['PHP_AUTH_PW']);
+		} elseif ($decoded !== false && strpos($decoded, ':') !== false) {
+			list($basiclogin, $basicpass) = explode(':', $decoded, 2);
+			$credentials = rawurlencode($basiclogin).':'.rawurlencode($basicpass);
+		}
+		$vibeweburl = preg_replace('/^(https?:\/\/)/i', '${1}'.$credentials.'@', $endpoint);
+	}
+	// URL to test in a browser the answer of the MCP server with the list of tools
+	$testurl = $vibeweburl.'?DOLAPIKEY='.urlencode($apiKey ? $apiKey : 'YOUR_KEY_HERE').'&debug=1';
+
+	print '<tr class="oddeven">';
+	print '<td>'.$form->textwithpicto('MCP Endpoint URL', $langs->trans("MCPEndpointTestHelp", '<br><br><span class="wordbreak">'.$testurl.'</span>'), 1, 'info', '', 1, 3, 'mcpendpointtest').'</td>';
+	print '<td>';
+	print '<input type="text" id="endpoint" value="'.$endpoint.'" readonly style="width:600px; border:none; background:transparent;">';
+	print '</td>';
+	print '<td></td>';
+	print '</tr>';
+
+	// Cache duration of the server/discover answer
+	print '<tr class="oddeven">';
+	print '<td>'.$form->textwithpicto($langs->trans("McpDiscoverTtl"), $langs->trans("McpDiscoverTtlHelp")).'</td>';
+	print '<td>';
+	print '<input type="number" min="0" class="width75" id="AI_MCP_DISCOVER_TTL" name="AI_MCP_DISCOVER_TTL" value="'.getDolGlobalInt('AI_MCP_DISCOVER_TTL', 3600).'"> '.$langs->trans("Seconds");
+	print '</td>';
+	print '<td></td>';
+	print '</tr>';
+
+	print '</table>';
+	print '</div>';
+
+	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; </div>';
+
+	print '</form>';
+	print '<br>';
+
+	print '<br>';
+
+	// Configuration Examples
+	print '<br>';
+	print '<div style="background:#fcfcfc; border:1px solid #eee; padding:15px; border-radius:5px;">';
+
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update_external">';
@@ -476,6 +517,14 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 		echo htmlspecialchars($langs->transnoentitiesnoconv("MistralVibeConfigEnv", '~/.vibe/.env')."\n");
 		echo htmlspecialchars($mcpapikeyenvname.'="'.($apiKey ? $apiKey : "YOUR_KEY_HERE").'"');
 	}
+	print '</pre>';
+
+	print '<br><strong>' . $langs->trans("MistralVibeWebConnector") . '</strong><br>';
+	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto; margin-top:10px; white-space: break-spaces;">';
+	echo htmlspecialchars($langs->transnoentitiesnoconv("MistralVibeWebConnectorUrl")."\n");
+	echo htmlspecialchars($vibeweburl."\n\n");
+	echo htmlspecialchars($langs->transnoentitiesnoconv("MistralVibeWebConnectorAuth", 'DOLAPIKEY')."\n");
+	echo htmlspecialchars($apiKey ? $apiKey : "YOUR_KEY_HERE");
 	print '</pre>';
 
 	// Command line to declare the MCP server into Claude Code

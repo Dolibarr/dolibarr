@@ -76,6 +76,12 @@ $action = GETPOST('action', 'aZ09');
  */
 $error = 0;
 
+// The bank account is required when the module Bank is enabled, otherwise the online payments can't be recorded
+if ($action == 'setvalue' && $user->admin && isModEnabled('bank') && GETPOSTINT('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS') <= 0) {
+	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
+	$action = '';
+}
+
 if ($action == 'setvalue' && $user->admin) {
 	$db->begin();
 
@@ -417,7 +423,7 @@ print '<input class="minwidth300" type="text" name="ONLINE_PAYMENT_CREDITOR" val
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
-print $langs->trans("BankAccount").'</td><td>';
+print '<span'.(isModEnabled('bank') ? ' class="fieldrequired"' : '').'>'.$langs->trans("BankAccount").'</span></td><td>';
 print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 $form->select_comptes(getDolGlobalString('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS'), 'STRIPE_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
 print '</td></tr>';
@@ -618,7 +624,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>Payout</td>';
-print '<td class="width300"></td>';
+print '<td></td>';
 print "</tr>\n";
 
 // Param to record automatically payouts (received from IPN payout.paid and payout.created)
@@ -658,14 +664,15 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("UrlGenerationParameters").'</td>';
+print '<td>'.$langs->trans("LinksToMakeAPayment").'</td>';
 print '<td></td>';
 print "</tr>\n";
 
 // Payment token for URL
 print '<tr class="oddeven"><td>';
 print $langs->trans("SecurityToken").'</td><td>';
-print '<input class="minwidth300" type="text" id="PAYMENT_SECURITY_TOKEN" name="PAYMENT_SECURITY_TOKEN" value="' . getDolGlobalString('PAYMENT_SECURITY_TOKEN').'" spellcheck="false">';
+print '<input class="minwidth400 input-icon-password" type="password" id="PAYMENT_SECURITY_TOKEN" name="PAYMENT_SECURITY_TOKEN" value="' . getDolGlobalString('PAYMENT_SECURITY_TOKEN').'" spellcheck="false">';
+print showEyeForField('eyePAYMENT_SECURITY_TOKEN', 'PAYMENT_SECURITY_TOKEN');
 if (!empty($conf->use_javascript_ajax)) {
 	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 }
@@ -674,6 +681,13 @@ if (getDolGlobalString('PAYMENT_SECURITY_ACCEPT_ANY_TOKEN')) {
 	print img_warning($langs->trans("WarningTheHiddenOptionIsOn", 'PAYMENT_SECURITY_ACCEPT_ANY_TOKEN'), '', 'pictowarning marginleftonly');
 }
 print '</td></tr>';
+
+// Link to open the popup to get the url of a payment
+if (!empty($conf->use_javascript_ajax)) {
+	print '<tr class="oddeven"><td colspan="2" class="center">';
+	print '<a href="#" id="linkforonlinepaymentlinks">'.img_picto('', 'globe', 'class="pictofixedwidth"').$langs->trans("GetAPaymentLink").'</a>';
+	print '</td></tr>';
+}
 
 print '</table>';
 print '</div>';
@@ -688,14 +702,18 @@ print '<br><br><br>';
 
 
 $token = '';
+$onlinepaymentlinksinpopup = 1;
 include DOL_DOCUMENT_ROOT.'/core/tpl/onlinepaymentlinks.tpl.php';
 
 
-print info_admin($langs->trans("ExampleOfTestCreditCard", '4242424242424242 (no 3DSecure) or 4000000000003063 (3DSecure required) or 4000002760003184 (3DSecure2 required on all transaction) or 4000003800000446 (3DSecure2 required, the off-session allowed)', '4000000000000101', '4000000000000069', '4000000000000341').'. '.$langs->trans('SeeAlso', 'https://docs.stripe.com/testing?testing-method=card-numbers'));
+// Show test credit cards and test bank accounts into the same info box
+$texttestexamples = $langs->trans("ExampleOfTestCreditCard", '4242424242424242 (no 3DSecure) or 4000000000003063 (3DSecure required) or 4000002760003184 (3DSecure2 required on all transaction) or 4000003800000446 (3DSecure2 required, the off-session allowed)', '4000000000000101', '4000000000000069', '4000000000000341').'. '.$langs->trans('SeeAlso', 'https://docs.stripe.com/testing?testing-method=card-numbers');
 
 if (getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT')) {
-	print info_admin($langs->trans("ExampleOfTestBankAcountForSEPA", 'AT611904300234573201 (pending->succeed) or AT861904300235473202 (pending->failed)').'. '.$langs->trans('SeeAlso', 'https://docs.stripe.com/testing?payment-method=sepa-direct-debit'));
+	$texttestexamples .= '<br><br>'.$langs->trans("ExampleOfTestBankAcountForSEPA", 'AT611904300234573201 (pending->succeed) or AT861904300235473202 (pending->failed)').'. '.$langs->trans('SeeAlso', 'https://docs.stripe.com/testing?payment-method=sepa-direct-debit');
 }
+
+print info_admin($texttestexamples);
 
 
 

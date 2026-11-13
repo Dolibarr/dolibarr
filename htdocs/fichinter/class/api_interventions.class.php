@@ -96,7 +96,9 @@ class Interventions extends DolibarrApi
 		}
 
 		$result = $this->fichinter->fetch($id, $ref, $ref_ext);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving intervention : '.$this->fichinter->errorsToString());
+		} elseif ($result == 0) {
 			throw new RestException(404, 'Intervention not found');
 		}
 
@@ -220,7 +222,11 @@ class Interventions extends DolibarrApi
 			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$fichinter_static = new Fichinter($this->db);
-				if ($fichinter_static->fetch($obj->rowid)) {
+				$result_fetch = $fichinter_static->fetch($obj->rowid);
+				if ($result_fetch < 0) {
+					throw new RestException(500, 'Error when retrieving intervention : '.$fichinter_static->errorsToString());
+				}
+				if ($result_fetch > 0) {
 					if ($contact_type) {
 						$fichinter_static->contacts_ids = $fichinter_static->liste_contact(-1, $contact_type, 1);
 					}
@@ -314,7 +320,9 @@ class Interventions extends DolibarrApi
 		}
 
 		$result = $this->fichinter->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving intervention : '.$this->fichinter->errorsToString());
+		} elseif ($result == 0) {
 			throw new RestException(404, 'Fichinter not found');
 		}
 
@@ -360,6 +368,7 @@ class Interventions extends DolibarrApi
 	 *
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		Intervention not found
+	 * @throws	RestException	500		Error when retrieving the intervention
 	 */
 	public function getLines($id)
 	{
@@ -368,7 +377,9 @@ class Interventions extends DolibarrApi
 		}
 
 		$result = $this->fichinter->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving intervention : '.$this->fichinter->errorsToString());
+		} elseif ($result == 0) {
 			throw new RestException(404, 'Intervention not found');
 		}
 
@@ -396,29 +407,23 @@ class Interventions extends DolibarrApi
 	 *
 	 * @url		POST	{id}/lines
 	 *
-	 * @return	int		0 if ok, <0 if ko
+	 * @return	int		ID of the new line
 	 *
-	 * @throws RestException
+	 * @throws	RestException	400		Mandatory field missing
+	 * @throws	RestException	403		Access denied or intervention not in draft status
+	 * @throws	RestException	404		Intervention not found
+	 * @throws	RestException	500		Error when adding the line
 	 */
 	public function postLine($id, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'creer')) {
 			throw new RestException(403, "Insufficiant rights");
 		}
-		// Check mandatory fields
-		$result = $this->_validateLine($request_data);
 
-		foreach ($request_data as $field => $value) {
-			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->fichinter->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
-				continue;
-			}
-
-			$this->fichinter->$field = $this->_checkValForAPI($field, $value, $this->fichinter);
-		}
-
-		if (!$result) {
+		$result = $this->fichinter->fetch($id);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving intervention : '.$this->fichinter->errorsToString());
+		} elseif ($result == 0) {
 			throw new RestException(404, 'Intervention not found');
 		}
 
@@ -426,18 +431,47 @@ class Interventions extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$updateRes = $this->fichinter->addLine(
+		if ($this->fichinter->status != Fichinter::STATUS_DRAFT) {
+			throw new RestException(403, 'Intervention not in draft status : '.$this->fichinter->getLibStatut(1));
+		}
+
+		// Check mandatory fields
+		$this->_validateLine($request_data);
+
+		$objectline = new FichinterLigne($this->db);
+
+		if (isset($request_data['caller'])) {
+			// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+			$this->fichinter->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+		}
+
+		$desc = $this->_checkValForAPI('description', $request_data['description'], $objectline);
+		$date = (int) sanitizeVal($request_data['date'], 'int');
+		$duration = (int) sanitizeVal($request_data['duration'], 'int');
+		$rang = isset($request_data['rang']) ? (int) sanitizeVal($request_data['rang'], 'int') : -1;
+
+		$array_options = array();
+		if (isset($request_data['array_options']) && is_array($request_data['array_options'])) {
+			foreach ($request_data['array_options'] as $index => $val) {
+				$array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $objectline);
+			}
+		}
+
+		$updateRes = $this->fichinter->addline(
 			DolibarrApiAccess::$user,
-			$id,
-			$this->fichinter->description,
-			$this->fichinter->date,
-			$this->fichinter->duration
+			$this->fichinter->id,
+			$desc,
+			$date,
+			$duration,
+			$array_options,
+			0,
+			$rang
 		);
 
 		if ($updateRes > 0) {
 			return $updateRes;
 		} else {
-			throw new RestException(400, $this->fichinter->errorsToString());
+			throw new RestException(500, 'Error when adding line to intervention : '.$this->fichinter->errorsToString());
 		}
 	}
 
@@ -451,7 +485,9 @@ class Interventions extends DolibarrApi
 	 * @phan-return array<string,array{code:int,message:string}>
 	 * @phpstan-return array<string,array{code:int,message:string}>
 	 *
-	 * @throws RestException
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		Intervention not found
+	 * @throws	RestException	500		Error when deleting the intervention
 	 */
 	public function delete($id)
 	{
@@ -459,7 +495,9 @@ class Interventions extends DolibarrApi
 			throw new RestException(403);
 		}
 		$result = $this->fichinter->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving intervention : '.$this->fichinter->errorsToString());
+		} elseif ($result == 0) {
 			throw new RestException(404, 'Intervention not found');
 		}
 
@@ -467,7 +505,7 @@ class Interventions extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (!$this->fichinter->delete(DolibarrApiAccess::$user)) {
+		if ($this->fichinter->delete(DolibarrApiAccess::$user) <= 0) {
 			throw new RestException(500, 'Error when delete intervention : '.$this->fichinter->errorsToString());
 		}
 
@@ -496,7 +534,10 @@ class Interventions extends DolibarrApi
 	 *
 	 * @return	Object
 	 *
-	 * @throws RestException
+	 * @throws	RestException	304		Intervention already validated
+	 * @throws	RestException	403		Access denied or intervention not in draft status
+	 * @throws	RestException	404		Intervention not found
+	 * @throws	RestException	500		Error when validating the intervention
 	 */
 	public function validate($id, $notrigger = 0)
 	{
@@ -504,7 +545,9 @@ class Interventions extends DolibarrApi
 			throw new RestException(403, "Insufficiant rights");
 		}
 		$result = $this->fichinter->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving intervention : '.$this->fichinter->errorsToString());
+		} elseif ($result == 0) {
 			throw new RestException(404, 'Intervention not found');
 		}
 
@@ -514,7 +557,10 @@ class Interventions extends DolibarrApi
 
 		$result = $this->fichinter->setValid(DolibarrApiAccess::$user, $notrigger);
 		if ($result == 0) {
-			throw new RestException(304, 'Error nothing done. May be object is already validated');
+			if ($this->fichinter->status == Fichinter::STATUS_VALIDATED) {
+				throw new RestException(304, 'Error nothing done. May be object is already validated');
+			}
+			throw new RestException(403, 'Intervention not in draft status : '.$this->fichinter->getLibStatut(1));
 		}
 		if ($result < 0) {
 			throw new RestException(500, 'Error when validating Intervention: '.$this->fichinter->errorsToString());
@@ -543,8 +589,10 @@ class Interventions extends DolibarrApi
 	 *
 	 * @return	Object
 	 *
-	 * @throws RestException
-	 *
+	 * @throws	RestException	304		Intervention already closed
+	 * @throws	RestException	403		Access denied or intervention in draft status
+	 * @throws	RestException	404		Intervention not found
+	 * @throws	RestException	500		Error when closing the intervention
 	 */
 	public function close($id, $notrigger = 0)
 	{
@@ -552,7 +600,9 @@ class Interventions extends DolibarrApi
 			throw new RestException(403, "Insufficiant rights");
 		}
 		$result = $this->fichinter->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving intervention : '.$this->fichinter->errorsToString());
+		} elseif ($result == 0) {
 			throw new RestException(404, 'Intervention not found');
 		}
 
@@ -562,7 +612,10 @@ class Interventions extends DolibarrApi
 
 		$result = $this->fichinter->setClose(DolibarrApiAccess::$user, $notrigger);
 		if ($result == 0) {
-			throw new RestException(304, 'Error nothing done. May be object is already closed');
+			if ($this->fichinter->status == Fichinter::STATUS_CLOSED) {
+				throw new RestException(304, 'Error nothing done. May be object is already closed');
+			}
+			throw new RestException(403, 'Intervention in draft status, it must be validated before being closed');
 		}
 		if ($result < 0) {
 			throw new RestException(500, 'Error when closing Intervention: '.$this->fichinter->errorsToString());
@@ -585,7 +638,7 @@ class Interventions extends DolibarrApi
 	 *
 	 * @throws RestException 403
 	 * @throws RestException 404
-	 * @throws RestException 405
+	 * @throws RestException 500
 	 *
 	 * @url DELETE /{id}/lines/{lineid}
 	 */
@@ -596,16 +649,18 @@ class Interventions extends DolibarrApi
 		}
 
 		$result = $this->fichinter->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving intervention : '.$this->fichinter->errorsToString());
+		} elseif ($result == 0) {
 			throw new RestException(404, 'Intervention not found');
-		}
-
-		if ($this->fichinter->status != 0) {
-			throw new RestException(403, 'Intervention not in draft status : '.$this->fichinter->getLibStatut(1));
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('ficheinter', $this->fichinter->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		if ($this->fichinter->status != 0) {
+			throw new RestException(403, 'Intervention not in draft status : '.$this->fichinter->getLibStatut(1));
 		}
 
 		$objectline = new FichinterLigne($this->db);
@@ -619,9 +674,14 @@ class Interventions extends DolibarrApi
 		$updateRes = $objectline->deleteLine(DolibarrApiAccess::$user);
 
 		if ($updateRes >= 0) {
-			return $this->_cleanObjectDatas($this->fichinter);
+			$result = $this->fichinter->fetch($id);
+			if ($result > 0) {
+				return $this->_cleanObjectDatas($this->fichinter);
+			} else {
+				throw new RestException(500, $this->fichinter->errorsToString());
+			}
 		} else {
-			throw new RestException(405, $this->fichinter->errorsToString());
+			throw new RestException(500, $objectline->errorsToString());
 		}
 	}
 
@@ -636,18 +696,24 @@ class Interventions extends DolibarrApi
 	 *
 	 * @url		POST	{id}/settodraft
 	 *
-	 * @throws RestException 304
-	 * @throws RestException 403
-	 * @throws RestException 404
-	 * @throws RestException 500 System error
+	 * @throws	RestException	304		Intervention already in draft status
+	 * @throws	RestException	403		Access denied or intervention not in validated status
+	 * @throws	RestException	404		Intervention not found
+	 * @throws	RestException	500		Error when setting the intervention to draft
 	 */
 	public function settodraft($id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'creer')) {
 			throw new RestException(403, "Insufficiant rights");
 		}
+		// Same permission as the "Modify" button of the intervention card
+		if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !DolibarrApiAccess::$user->hasRight('ficheinter', 'ficheinter_advance', 'unvalidate')) {
+			throw new RestException(403, "Insufficiant rights");
+		}
 		$result = $this->fichinter->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving intervention : '.$this->fichinter->errorsToString());
+		} elseif ($result == 0) {
 			throw new RestException(404, 'Intervention not found');
 		}
 
@@ -657,10 +723,13 @@ class Interventions extends DolibarrApi
 
 		$result = $this->fichinter->setDraft(DolibarrApiAccess::$user);
 		if ($result == 0) {
-			throw new RestException(304, 'Nothing done. . May be object is already set as draft.');
+			if ($this->fichinter->status == Fichinter::STATUS_DRAFT) {
+				throw new RestException(304, 'Nothing done. Intervention is already in draft status');
+			}
+			throw new RestException(403, 'Intervention not in validated status : '.$this->fichinter->getLibStatut(1));
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when closing intervention: '.$this->fichinter->errorsToString());
+			throw new RestException(500, 'Error when setting intervention to draft: '.$this->fichinter->errorsToString());
 		}
 
 		$this->fichinter->fetchObjectLinked();
@@ -681,7 +750,9 @@ class Interventions extends DolibarrApi
 	 * @return  object
 	 *
 	 * @throws RestException 304
+	 * @throws RestException 400 Contact already linked with this type, or type of contact not valid
 	 * @throws RestException 401
+	 * @throws RestException 403
 	 * @throws RestException 404
 	 * @throws RestException 500 System error
 	 */
@@ -691,7 +762,9 @@ class Interventions extends DolibarrApi
 			throw new RestException(403);
 		}
 		$result = $this->fichinter->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving intervention : '.$this->fichinter->errorsToString());
+		} elseif ($result == 0) {
 			throw new RestException(404, 'Interventional not found');
 		}
 
@@ -703,10 +776,14 @@ class Interventions extends DolibarrApi
 		if ($result < 0) {
 			throw new RestException(500, 'Error : '.$this->fichinter->errorsToString());
 		}
+		if ($result == 0) {
+			// add_contact() returns 0 both when the contact is already linked with this type and when the type code is not valid
+			throw new RestException(400, 'Contact='.$fk_socpeople.' is already linked to the intervention='.$id.' as source='.$source.' and type='.$type_contact.', or this type is not valid');
+		}
 
 		$result = $this->fichinter->fetch($id);
-		if (!$result) {
-			throw new RestException(404, 'Interventional not found');
+		if ($result <= 0) {
+			throw new RestException(500, 'Error when retrieving intervention : '.$this->fichinter->errorsToString());
 		}
 
 		return $this->_cleanObjectDatas($this->fichinter);
@@ -733,7 +810,9 @@ class Interventions extends DolibarrApi
 		}
 
 		$result = $this->fichinter->fetch($id);
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving intervention : '.$this->fichinter->errorsToString());
+		} elseif ($result == 0) {
 			throw new RestException(404, 'Interventional not found');
 		}
 
@@ -750,6 +829,9 @@ class Interventions extends DolibarrApi
 			$socpeoples = $this->fichinter->liste_contact(-1, 'internal', 0, $type);
 		} else {
 			$socpeoples = array();
+		}
+		if (!is_array($contacts) || !is_array($socpeoples)) {
+			throw new RestException(500, 'Error when reading contacts: '.$this->fichinter->errorsToString());
 		}
 
 		$contacts = array_merge($contacts, $socpeoples);
@@ -769,6 +851,7 @@ class Interventions extends DolibarrApi
 	 * @url	DELETE {id}/contact/{contactid}/{type}
 	 *
 	 * @throws RestException 401
+	 * @throws RestException 403
 	 * @throws RestException 404
 	 * @throws RestException 500 System error
 	 */
@@ -780,32 +863,50 @@ class Interventions extends DolibarrApi
 
 		$result = $this->fichinter->fetch($id);
 
-		if (!$result) {
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving intervention : '.$this->fichinter->errorsToString());
+		} elseif ($result == 0) {
 			throw new RestException(404, 'Interventional not found');
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('ficheinter', $this->fichinter->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+		$found = false;
 		foreach (array('internal', 'external') as $source) {
 			$contacts = $this->fichinter->liste_contact(-1, $source);
+			if (!is_array($contacts)) {
+				throw new RestException(500, 'Error when reading contacts: '.$this->fichinter->errorsToString());
+			}
 
 			foreach ($contacts as $contact) {
 				if ($contact['id'] == $contactid && $contact['code'] == $type) {
+					$found = true;
 					$result = $this->fichinter->delete_contact($contact['rowid']);
-					if (!$result) {
+					if ($result < 0) {
 						throw new RestException(500, 'Error when deleted the contact');
 					}
 				}
 			}
 		}
+		if (!$found) {
+			throw new RestException(404, 'Contact not found');
+		}
+
+		$result = $this->fichinter->fetch($id);
+		if ($result <= 0) {
+			throw new RestException(500, 'Error when retrieving intervention : '.$this->fichinter->errorsToString());
+		}
+
 		return $this->_cleanObjectDatas($this->fichinter);
 	}
 
 	/**
 	 * Update a line of an intervention
 	 *
-	 * @param	int		$id					ID of order to update
+	 * @since	23.0.0	Initial implementation
+	 *
+	 * @param	int		$id					ID of intervention to update
 	 * @param	int		$lineid				ID of line to update
 	 * @param	array	$request_data		Intervention line data
 	 * @phan-param ?array<string,string> $request_data
@@ -820,17 +921,23 @@ class Interventions extends DolibarrApi
 	 */
 	public function putLine($id, $lineid, $request_data)
 	{
-		$result = $this->fichinter->fetch($id);
-		if (!$result) {
-			throw new RestException(404, 'Intervention not found');
+		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'creer')) {
+			throw new RestException(403);
 		}
 
-		if ($this->fichinter->status != 0) {
-			throw new RestException(403, 'Intervention not in draft status : '.$this->fichinter->getLibStatut(1));
+		$result = $this->fichinter->fetch($id);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving intervention : '.$this->fichinter->errorsToString());
+		} elseif ($result == 0) {
+			throw new RestException(404, 'Intervention not found');
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('ficheinter', $this->fichinter->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		if ($this->fichinter->status != 0) {
+			throw new RestException(403, 'Intervention not in draft status : '.$this->fichinter->getLibStatut(1));
 		}
 
 		$objectline = new FichinterLigne($this->db);

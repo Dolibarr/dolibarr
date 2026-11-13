@@ -85,6 +85,17 @@ if [ -n "${HOST_APACHE_LOG_GID:-}" ] && [ "$HOST_APACHE_LOG_GID" != "0" ]; then
     fi
     usermod --append --groups "$LOG_GROUP" "$USER_NAME"
 fi
+# Same for the groups owning the mail logs of the host (mounted by vibes.sh), given as a list of GIDs.
+for LOG_GID in ${HOST_MAIL_LOG_GIDS:-}; do
+    if [ "$LOG_GID" != "0" ]; then
+        LOG_GROUP=$(getent group "$LOG_GID" | cut -d: -f1)
+        if [ -z "$LOG_GROUP" ]; then
+            LOG_GROUP="hostmaillog$LOG_GID"
+            groupadd --gid "$LOG_GID" "$LOG_GROUP"
+        fi
+        usermod --append --groups "$LOG_GROUP" "$USER_NAME"
+    fi
+done
 
 
 # Allow the user to become root inside the container with a passwordless sudo
@@ -165,9 +176,21 @@ done
 
 echo "VIBE_OPTIONS=$VIBE_OPTIONS"
 
+# Use the agent agent-power only when its file exists into the project (.vibe/agents) or the user (~/.vibe/agents)
+# directory, otherwise vibe fails to start: it is then launched with its default agent.
+USER_HOME=$(getent passwd "$USER_NAME" | cut -d: -f6)
+VIBE_AGENT_OPTIONS=""
+if [ -f "$WORKDIR/.vibe/agents/agent-power.toml" ] || [ -f "$USER_HOME/.vibe/agents/agent-power.toml" ]; then
+    VIBE_AGENT_OPTIONS="--agent agent-power"
+else
+    echo "No agent-power.toml found into $WORKDIR/.vibe/agents nor $USER_HOME/.vibe/agents, vibe is launched with its default agent."
+fi
+
+echo "VIBE_AGENT_OPTIONS=$VIBE_AGENT_OPTIONS"
+
 # Execute order. Once vibe has ended, stay into the container only when --no-exit was provided.
 if [ "$KEEP_CONTAINER" = "1" ]; then
-    exec runuser -u "$USER_NAME" -- "bash" --rcfile /etc/bash.bashrc -i -c 'vibe --agent agent-power '"$VIBE_OPTIONS"'; exec bash'
+    exec runuser -u "$USER_NAME" -- "bash" --rcfile /etc/bash.bashrc -i -c 'vibe '"$VIBE_AGENT_OPTIONS $VIBE_OPTIONS"'; exec bash'
 else
-    exec runuser -u "$USER_NAME" -- "bash" --rcfile /etc/bash.bashrc -i -c 'vibe --agent agent-power '"$VIBE_OPTIONS"
+    exec runuser -u "$USER_NAME" -- "bash" --rcfile /etc/bash.bashrc -i -c 'vibe '"$VIBE_AGENT_OPTIONS $VIBE_OPTIONS"
 fi

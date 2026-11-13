@@ -65,6 +65,8 @@ $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $confirm = GETPOST('confirm', 'alpha');
 
 $chartofaccounts = GETPOSTINT('chartofaccounts');
+$nbboundlines = 0;
+$nbbookkeeping = 0;
 
 $permissiontoadd = $user->hasRight('accounting', 'chartofaccount');
 $permissiontodelete = $user->hasRight('accounting', 'chartofaccount');
@@ -167,11 +169,35 @@ if (empty($reshook)) {
 		$search_active = "";
 		$search_array_options = array();
 	}
-	if ((GETPOSTINT('valid_change_chart') && GETPOSTINT('chartofaccounts') > 0)	// explicit click on button 'Change and load' with js on
+	if ($action == 'confirm_change_chart' && $confirm != 'yes') {
+		$action = '';
+	} elseif ((GETPOSTINT('valid_change_chart') && GETPOSTINT('chartofaccounts') > 0)	// explicit click on button 'Change and load' with js on
 		|| (GETPOSTINT('chartofaccounts') > 0 && GETPOSTINT('chartofaccounts') != getDolGlobalInt('CHARTOFACCOUNTS'))) {	// a submit of form is done and chartofaccounts combo has been modified
 		$error = 0;
 
-		if ($chartofaccounts > 0 /* && $permissiontoadd */) {
+		// Nothing is migrated to the new chart, so ask for a confirmation if the current chart is already used
+		$currentchart = getDolGlobalInt('CHARTOFACCOUNTS');
+		if ($currentchart > 0 && $chartofaccounts != $currentchart && $action != 'confirm_change_chart') {
+			foreach (array('facturedet', 'facture_fourn_det', 'expensereport_det') as $tablebound) {
+				$sql = "SELECT COUNT(d.rowid) as nb FROM ".MAIN_DB_PREFIX.$db->sanitize($tablebound)." as d";
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = d.fk_code_ventilation";
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as s ON s.pcg_version = aa.fk_pcg_version";
+				$sql .= " WHERE s.rowid = ".((int) $currentchart)." AND aa.entity = ".((int) $conf->entity);
+				$resql = $db->query($sql);
+				if ($resql && ($obj = $db->fetch_object($resql))) {
+					$nbboundlines += (int) $obj->nb;
+				}
+			}
+			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping WHERE entity = ".((int) $conf->entity);
+			$resql = $db->query($sql);
+			if ($resql && ($obj = $db->fetch_object($resql))) {
+				$nbbookkeeping = (int) $obj->nb;
+			}
+		}
+
+		if ($nbboundlines + $nbbookkeeping > 0) {
+			$action = 'ask_change_chart';
+		} elseif ($chartofaccounts > 0 /* && $permissiontoadd */) {
 			$country_code = '';
 			// Get language code for this $chartofaccounts
 			$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_country as c, '.MAIN_DB_PREFIX.'accounting_system as a';
@@ -265,6 +291,11 @@ llxHeader('', $langs->trans("ListAccounts"), $help_url, '', 0, 0, '', '', '', 'm
 
 if ($action == 'delete') {
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('DeleteAccount'), $langs->trans('ConfirmDeleteAccount'), 'confirm_delete', '', 0, 1);
+	print $formconfirm;
+}
+if ($action == 'ask_change_chart') {
+	$question = $langs->trans('ConfirmChangeChartOfAccountsWithData', $nbboundlines, $nbbookkeeping);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?valid_change_chart=1&chartofaccounts='.((int) $chartofaccounts), $langs->trans('ChangeAndLoad'), $question, 'confirm_change_chart', '', 0, 1, 0, 600);
 	print $formconfirm;
 }
 

@@ -274,7 +274,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 
 			// Check module cron is activated
 			if (!isModEnabled('cron')) {
-				print "Canceled - Module Scheduled jobs (cron) not activated into entity ".$line->entity."\n";
+				print "\nCanceled - Module Scheduled jobs (cron) not activated into entity ".$line->entity."\n";
 				dol_syslog("cron_run_jobs.php: Canceled - Module Scheduled jobs (cron) not activated into entity ".$line->entity, LOG_INFO);
 				continue;
 			}

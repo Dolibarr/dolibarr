@@ -439,8 +439,11 @@ if (!empty($morelogincontent)) {
 if (isset($conf->file->main_authentication) && $conf->file->main_authentication == 'googleoauth') {
 	$forgetpasslink = '';
 }
+if ($totppending) {
+	$forgetpasslink = '';	// Replaced by a link to cancel the two-factor authentication step
+}
 
-if ($forgetpasslink || $helpcenterlink) {
+if ($forgetpasslink || $helpcenterlink || $totppending) {
 	$moreparam = '';
 	if ($dol_hide_topmenu) {
 		$moreparam .= (strpos($moreparam, '?') === false ? '?' : '&').'dol_hide_topmenu='.$dol_hide_topmenu;
@@ -457,6 +460,12 @@ if ($forgetpasslink || $helpcenterlink) {
 
 	echo '<br>';
 	echo '<div class="center" style="margin-top: 5px;">';
+	if ($totppending) {
+		// Back to the login and password form of the same page, main.inc.php removes the pending second step
+		echo '<a class="alogin alogincanceltotp" href="'.$php_self.'&amp;actionlogin=canceltotp&amp;token='.newToken().'">';
+		echo $langs->trans('Cancel');
+		echo '</a>';
+	}
 	if ($forgetpasslink) {
 		$url = DOL_URL_ROOT.'/user/passwordforgotten.php'.$moreparam;
 		if (getDolGlobalString('MAIN_PASSWORD_FORGOTLINK')) {
@@ -467,7 +476,7 @@ if ($forgetpasslink || $helpcenterlink) {
 		echo '</a>';
 	}
 
-	if ($forgetpasslink && $helpcenterlink) {
+	if (($forgetpasslink || $totppending) && $helpcenterlink) {
 		echo '&nbsp;-&nbsp;';
 	}
 
@@ -618,10 +627,6 @@ if (getDolGlobalString('MAIN_EASTER_EGG_COMMITSTRIP')) {
 	<?php
 }
 ?>
-
-<!-- authentication mode = <?php echo $main_authentication ?> -->
-<!-- cookie name used for this session = <?php echo $session_name ?> -->
-<!-- urlfrom in this session = <?php echo isset($_SESSION["urlfrom"]) ? $_SESSION["urlfrom"] : ''; ?> -->
 
 <!-- Common footer is not used for login page, this is same than footer but inside login tpl -->
 

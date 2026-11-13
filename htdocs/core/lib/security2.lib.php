@@ -609,7 +609,7 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
  *
  * @param		string 		$htmlname			HTML name of element to insert key into
  * @param		string		$htmlnameofbutton	HTML name of button
- * @param		int			$generic			1=Return a generic pass, 0=Return a pass following setup rules
+ * @param		int<0,2>	$generic			0=Return a pass following setup rules, 1=Return a generic key (32 chars), 2=Return a generic password (16 chars)
  * @return		string		    				HTML javascript code to set a password
  * @see getRandomPassword()
  */
@@ -628,7 +628,7 @@ function dolJSToSetRandomPassword($htmlname, $htmlnameofbutton = 'generate_token
 				console.log(\'dolJSToSetRandomPassword: We click on the button '.dol_escape_js($htmlnameofbutton).' to suggest a key. anti-csrf-currenttoken is \'+currenttoken+\'. We will fill '.dol_escape_js($htmlname).'\');
 				jQuery.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
             		action: \'getrandompassword\',
-            		generic: '.($generic ? '1' : '0').',
+            		generic: '.((int) $generic).',
 					token: currenttoken
 				},
 				function(result) {
@@ -936,6 +936,19 @@ function dolTotpDeleteEnrollment($db, $fk_user)
 }
 
 /**
+ *  Return if the two-factor authentication is disabled for the whole instance by the parameter $dolibarr_main_disable_totp of conf.php.
+ *  This is a rescue option: when it is set, a password is enough to log in, even for a user with a TOTP enrollment.
+ *
+ *  @return		bool		True if the two-factor authentication is disabled
+ */
+function dolTotpIsDisabledByConf()
+{
+	global $dolibarr_main_disable_totp;
+
+	return !empty($dolibarr_main_disable_totp);
+}
+
+/**
  *  Start the second step of a two-factor authentication, just after a password has been validated.
  *  The session is not opened here: we only remember that the first step succeeded, so a code can be asked for in the next request.
  *
@@ -948,6 +961,11 @@ function dolTotpDeleteEnrollment($db, $fk_user)
 function dolTotpStartSecondFactor($db, $login, $entity)
 {
 	global $conf, $langs;
+
+	if (dolTotpIsDisabledByConf()) {	// Rescue option of conf.php, checked first so it works even if the enrollment can't be read
+		dol_syslog("dolTotpStartSecondFactor: two-factor authentication is disabled by dolibarr_main_disable_totp in conf.php, the password is enough for ".$login, LOG_WARNING);
+		return $login;
+	}
 
 	$tmpuser = new User($db);
 	if ($tmpuser->fetch(0, $login, '', 0, ($entity > 0 ? $entity : -1)) <= 0) {	// Just validated but not loadable: we fail closed rather than skip the second factor

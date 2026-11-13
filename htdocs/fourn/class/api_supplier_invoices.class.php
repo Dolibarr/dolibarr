@@ -397,6 +397,7 @@ class SupplierInvoices extends DolibarrApi
 	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @throws RestException 304
+	 * @throws RestException 400
 	 * @throws RestException 403
 	 * @throws RestException 404
 	 * @throws RestException 405
@@ -404,6 +405,8 @@ class SupplierInvoices extends DolibarrApi
 	 */
 	public function validate($id, $idwarehouse = 0, $notrigger = 0)
 	{
+		global $langs;
+
 		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "facture", "creer")) {
 			throw new RestException(403);
 		}
@@ -415,6 +418,15 @@ class SupplierInvoices extends DolibarrApi
 		$result = $this->invoice->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Invoice not found');
+		}
+
+		if ($this->invoice->status <= FactureFournisseur::STATUS_DRAFT
+			&& !preg_match('/^'.preg_quote($langs->trans("CopyOf").' ', '/').'/', $this->invoice->ref_supplier)
+			&& count($this->invoice->lines) <= 0) {
+			$langs->load("errors");
+			$errorMessage = $langs->trans("ErrorObjectMustHaveLinesToBeValidated", $this->invoice->ref);
+			dol_syslog(__METHOD__.' '.$errorMessage, LOG_WARNING);
+			throw new RestException(400, $errorMessage);
 		}
 
 		$result = $this->invoice->validate(DolibarrApiAccess::$user, '', $idwarehouse, $notrigger);
@@ -986,7 +998,7 @@ class SupplierInvoices extends DolibarrApi
 	 */
 	public function getLines($id)
 	{
-		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "facture", "creer")) {
+		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "facture", "lire")) {
 			throw new RestException(403);
 		}
 		if (!DolibarrApi::_checkAccessToResource('fournisseur', $id, 'facture_fourn', 'facture')) {
@@ -1062,7 +1074,9 @@ class SupplierInvoices extends DolibarrApi
 			$request_data->info_bits,
 			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
 			$request_data->product_type,
-			$request_data->rang,
+			// -1 is the "append at the end" value of addline(). An absent rang is null, which empty() turns into 0,
+			// so without this every line added through the API is stored with rang 0 instead of being appended.
+			isset($request_data->rang) ? $request_data->rang : -1,
 			0,
 			$request_data->array_options,
 			$request_data->fk_unit,
@@ -1096,6 +1110,7 @@ class SupplierInvoices extends DolibarrApi
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 Not found
+	 * @throws RestException 405 Supplier invoice is not in draft status
 	 * @throws RestException 304 Error
 	 */
 	public function putLine($id, $lineid, $request_data = null)
@@ -1119,6 +1134,9 @@ class SupplierInvoices extends DolibarrApi
 		}
 		if ($invoiceline->fk_facture_fourn != $this->invoice->id) {
 			throw new RestException(403, 'Line does not belong to this supplier invoice');
+		}
+		if ((int) $this->invoice->status !== FactureFournisseur::STATUS_DRAFT) {
+			throw new RestException(405, 'Supplier invoice must be in draft status to update lines');
 		}
 
 		$request_data = (object) $request_data;
@@ -1175,6 +1193,7 @@ class SupplierInvoices extends DolibarrApi
 	 * @throws RestException 400 Bad parameters
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 Not found
+	 * @throws RestException 405 Supplier invoice is not in draft status
 	 * @throws RestException 405 Error
 	 */
 	public function deleteLine($id, $lineid)
@@ -1201,6 +1220,9 @@ class SupplierInvoices extends DolibarrApi
 		}
 		if ($invoiceline->fk_facture_fourn != $this->invoice->id) {
 			throw new RestException(403, 'Line does not belong to this supplier invoice');
+		}
+		if ((int) $this->invoice->status !== FactureFournisseur::STATUS_DRAFT) {
+			throw new RestException(405, 'Supplier invoice must be in draft status to delete lines');
 		}
 
 		$updateRes = $this->invoice->deleteLine($lineid);

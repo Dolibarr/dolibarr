@@ -282,7 +282,7 @@ class TCPDI extends FPDF_TPL {
         $annots = $parser->getPageAnnotations();
 
         if (is_array($annots) && $annots[0] == PDF_TYPE_ARRAY // It's an array
-                && is_array($annots[1]) && count($annots[1]) > 1) // It's not empty - there are annotations for this page
+                && is_array($annots[1]) && count($annots[1]) > 0) // It's not empty - there are annotations for this page
         {
         	if (!isset($this->_obj_stack[$fn])) {
                 $this->_obj_stack[$fn] = array();
@@ -296,7 +296,7 @@ class TCPDI extends FPDF_TPL {
 
         if (is_array($annots) && $annots[0] == PDF_TYPE_OBJECT // We got an object
                 && is_array($annots[1]) && $annots[1][0] == PDF_TYPE_ARRAY // It's an array
-                && is_array($annots[1][1]) && count($annots[1][1]) > 1) // It's not empty - there are annotations for this page
+                && is_array($annots[1][1]) && count($annots[1][1]) > 0) // It's not empty - there are annotations for this page
         {
         	if (!isset($this->_obj_stack[$fn])) {
                 $this->_obj_stack[$fn] = array();
@@ -505,7 +505,10 @@ class TCPDI extends FPDF_TPL {
 
             $this->_out('/Resources ');
 
-            if (isset($tpl['resources'])) {
+            // @CHANGE DOL getPageResources() returns false when no node of the page tree carries any, and
+            // isset() is true for false: the value was written as a dictionary, which wrote nothing at all
+            // after "/Resources". Fall back on the default set instead.
+            if (!empty($tpl['resources'])) {
                 $this->current_parser =& $tpl['parser'];
                 $this->pdf_write_value($tpl['resources']); // "n" will be changed
             } else {

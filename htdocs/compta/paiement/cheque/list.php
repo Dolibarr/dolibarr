@@ -170,10 +170,13 @@ $sql .= $hookmanager->resPrint;
 
 $sqlfields = $sql; // $sql fields to remove for count total
 
-$sql .= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc,";
-$sql .= " ".MAIN_DB_PREFIX."bank_account as ba";
-$sql .= " WHERE bc.fk_bank_account = ba.rowid";
-$sql .= " AND bc.entity = ".((int) $conf->entity);
+$sql .= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc";
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."bank_account as ba ON ba.rowid = bc.fk_bank_account";
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+$sql .= " WHERE bc.entity = ".((int) $conf->entity);
 
 // Search criteria
 if ($search_ref) {
@@ -264,6 +267,11 @@ if ($resql) {
 		$param .= '&search_account='.urlencode((string) ($search_account));
 	}
 
+	// Add $param from hooks
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters);	// Note that $action and $object may have been modified by hook
+	$param .= $hookmanager->resPrint;
+
 	$url = DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=create2';
 
 	$newcardbutton  = '';
@@ -286,7 +294,7 @@ if ($resql) {
 
 
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-	print_barre_liste($langs->trans("MenuChequeDeposits"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'bank_account', 0, $newcardbutton, '', $limit);
+	print_barre_liste($langs->trans("MenuChequeDeposits"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'depositslip', 0, $newcardbutton, '', $limit);
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
@@ -549,6 +557,11 @@ if ($resql) {
 						$totalarray['nbfield']++;
 					}
 				}
+
+				// Fields from hook
+				$parameters = array('arrayfields' => $arrayfields, 'obj' => $objp, 'i' => $i, 'totalarray' => &$totalarray);
+				$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+				print $hookmanager->resPrint;
 
 				// Action column
 				if (!$conf->main_checkbox_left_column) {
