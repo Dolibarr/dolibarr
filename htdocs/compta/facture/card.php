@@ -6605,6 +6605,7 @@ if ($action == 'create') {
 					$next_totaldeposits = $next_invoice->getSumDepositsUsed(0);
 					$total_next_ht += $next_invoice->total_ht;
 					$total_next_ttc += $next_invoice->total_ttc;
+					$current_situation_counter[] = (($next_invoice->type == Facture::TYPE_CREDIT_NOTE) ? -1 : 1) * $next_invoice->situation_counter;
 
 					print '<tr class="oddeven">';
 					print '<td>'.$next_invoice->getNomUrl(1).'</td>';
@@ -6622,7 +6623,19 @@ if ($action == 'create') {
 				$total_global_ttc += $total_next_ttc;
 
 				print '<tr class="oddeven">';
-				print '<td colspan="3" class="right"></td>';
+				print '<td colspan="2" class="left"><b>'.$langs->trans('SituationCurrentCycle').'</b></td>';
+				print '<td>';
+				$i = 0;
+				foreach ($current_situation_counter as $sit) {
+					$curSign = $sit > 0 ? '+' : '-';
+					$curType = $sit > 0 ? $langs->trans('situationInvoiceShortcode_S') : $langs->trans('situationInvoiceShortcode_AS');
+					if ($i > 0) {
+						print ' '.$curSign.' ';
+					}
+					print $curType.abs($sit);
+					$i++;
+				}
+				print '</td>';
 				$globalProgress = $situationInvoice->getSituationProgress($total_global_ht);
 				print '<td class="right"><b>'.($globalProgress === null ? '&ndash;' : price($globalProgress, 0, $langs, 1, getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'), 'MT').' %').'</b></td>';
 				print '<td class="right"><b>'.price($total_global_ht).'</b></td>';
