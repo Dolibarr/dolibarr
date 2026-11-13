@@ -1476,6 +1476,12 @@ class SecurityTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($stringtotest, $result, 'Error');
 
+		// For a string with tags of the 'common' list like blockquote, pre or sup (they must be kept and not escaped)
+		$stringtotest = '<p>Text</p><blockquote style="color: #8e44ad;">Quote</blockquote><pre>Code</pre><sup>2</sup><dl><dt>a</dt><dd>b</dd></dl>';
+		$result = dolPrintHTML($stringtotest);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($stringtotest, $result, 'Error, a tag of the common list was escaped');
+
 
 		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
@@ -1773,7 +1779,11 @@ class SecurityTest extends CommonClassTest
 		$result = dol_htmlwithnojs($test, 0, 'restricthtml');
 		print __METHOD__." result=".$result."\n";
 		$normalizedresult = trim(preg_replace('/>\s*</', '><', str_replace(array("\r", "\n", "\t"), ' ', $result)));
-		$this->assertEquals('<div id="a1" data-foo="x" aria-label="z" role="note"><table border="1"><tr><td colspan="2" rowspan="1">c</td></tr></table><span itemprop="name" foo="bar">t</span><img src="data:image/png;base64,AAAA" srcset="j.png 2x" alt="i"></div>', $normalizedresult, 'Test sanitizing attributes with MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES=0 is ko');
+		// The values "alert(1)" and "b" left by the removal of onxxx= are dropped by tidy or libxml < 2.14, but kept as attribute names by the HTML5 parser of libxml >= 2.14
+		$this->assertContains($normalizedresult, array(
+			'<div id="a1" data-foo="x" aria-label="z" role="note"><table border="1"><tr><td colspan="2" rowspan="1">c</td></tr></table><span itemprop="name" foo="bar">t</span><img src="data:image/png;base64,AAAA" srcset="j.png 2x" alt="i"></div>',
+			'<div id="a1" data-foo="x" aria-label="z" role="note" "alert(1)"><table border="1"><tr><td colspan="2" rowspan="1" "b">c</td></tr></table><span itemprop="name" foo="bar">t</span><img src="data:image/png;base64,AAAA" srcset="j.png 2x" alt="i"></div>'
+		), 'Test sanitizing attributes with MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES=0 is ko');
 
 
 		// Test emoticons
