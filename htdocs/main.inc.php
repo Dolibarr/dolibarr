@@ -580,6 +580,11 @@ if (!defined('NOLOGIN')) {
 		// It is not already authenticated and it requests the login / password
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
+		// Link "Cancel" shown when a two-factor authentication code is asked, or 2FA disabled in conf.php: back to the login and password form
+		if (GETPOST('actionlogin', 'aZ09') == 'canceltotp' || dolTotpIsDisabledByConf()) {
+			unset($_SESSION['dol_totp_pending']);
+		}
+
 		$dol_dst_observed = GETPOSTINT("dst_observed", 3);
 		$dol_dst_first = GETPOSTINT("dst_first", 3);
 		$dol_dst_second = GETPOSTINT("dst_second", 3);
@@ -1111,6 +1116,11 @@ if (!defined('NOLOGIN')) {
 	if (!isset($_SESSION["dol_login"])) {
 		// New session for this login has started.
 		$error = 0;
+
+		// The authentication has just succeeded: a fresh session id, so an id known before the login (session fixation) is worth nothing
+		if (session_status() === PHP_SESSION_ACTIVE && !session_regenerate_id(true)) {
+			dol_syslog("Session id could not be regenerated after the login", LOG_WARNING);
+		}
 
 		// Store value into session (values always stored)
 		$_SESSION["dol_login"] = $user->login;

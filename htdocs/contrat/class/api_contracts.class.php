@@ -218,7 +218,7 @@ class Contracts extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -402,7 +402,7 @@ class Contracts extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page,
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -478,13 +478,17 @@ class Contracts extends DolibarrApi
 	 *
 	 * @param int   $id             Id of contrat to update
 	 * @param int   $lineid         Id of line to update
-	 * @param array $request_data   Contractline data
+	 * @param array $request_data   Contractline data. Omit rang to keep the line position.
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 *
 	 * @url	PUT {id}/lines/{lineid}
 	 *
-	 * @return Object|bool
+	 * @return Object
+	 *
+	 * @throws RestException 403 Access denied
+	 * @throws RestException 404 Not found
+	 * @throws RestException 500 Error when updating the line
 	 */
 	public function putLine($id, $lineid, $request_data = null)
 	{
@@ -502,7 +506,8 @@ class Contracts extends DolibarrApi
 		}
 
 		$contractline = new ContratLigne($this->db);
-		if ($contractline->fetch($lineid) <= 0) {
+		// ContratLigne::fetch() also returns 1 when no line is found, so the id must be checked too
+		if ($contractline->fetch($lineid) <= 0 || empty($contractline->id)) {
 			throw new RestException(404, 'Contract line not found');
 		}
 		if ($contractline->fk_contrat != $this->contract->id) {
@@ -532,7 +537,8 @@ class Contracts extends DolibarrApi
 			$request_data->fk_fourn_price,
 			$request_data->pa_ht,
 			$request_data->array_options,
-			$request_data->fk_unit
+			$request_data->fk_unit,
+			$request_data->rang ?? $contractline->rang
 		);
 
 		if ($updateRes > 0) {
@@ -625,7 +631,7 @@ class Contracts extends DolibarrApi
 			}
 			return $this->_cleanObjectDatas($result);
 		} else {
-			throw new RestException(500, implode(';', $this->contract->errors));
+			throw new RestException(500, 'Error when updating contract line: '.$this->contract->errorsToString());
 		}
 	}
 
@@ -753,8 +759,9 @@ class Contracts extends DolibarrApi
 	 *
 	 * @return array|mixed
 	 *
-	 * @throws RestException 401
-	 * @throws RestException 404
+	 * @throws RestException 403 Access denied
+	 * @throws RestException 404 Not found
+	 * @throws RestException 405 Error when deleting the line
 	 */
 	public function deleteLine($id, $lineid)
 	{
@@ -772,7 +779,8 @@ class Contracts extends DolibarrApi
 		}
 
 		$contractline = new ContratLigne($this->db);
-		if ($contractline->fetch($lineid) <= 0) {
+		// ContratLigne::fetch() also returns 1 when no line is found, so the id must be checked too
+		if ($contractline->fetch($lineid) <= 0 || empty($contractline->id)) {
 			throw new RestException(404, 'Contract line not found');
 		}
 		if ($contractline->fk_contrat != $this->contract->id) {

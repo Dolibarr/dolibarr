@@ -169,6 +169,15 @@ class FormAI extends Form
 			$out .= '<div id="ai_image_result" class="margintoponly"></div>'; // Div for displaying the generated image
 		}
 
+		// Delay before hiding the wait message: same response timeout than the one used by Ai::generateContent()
+		$aitimeoutresponse = getDolGlobalInt('AI_USE_RESPONSE_TIMEOUT');
+		if ($aitimeoutresponse <= 0) {
+			$aitimeoutresponse = getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30);
+		}
+		if ($aitimeoutresponse <= 0) {
+			$aitimeoutresponse = 30;
+		}
+
 		$out .= "</div>\n";
 		$out .= "<script type='text/javascript'>
 			$(document).ready(function() {
@@ -317,7 +326,7 @@ class FormAI extends Form
 					setTimeout(function() {
 						timeoutfinished = 1;
 						$('#ai_status_message".$htmlContent."').hide();
-					}, 30000);
+					}, ".((int) $aitimeoutresponse * 1000).");
 
 					console.log('Instruction forged by javascript = '+instructions);
 

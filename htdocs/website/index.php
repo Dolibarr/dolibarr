@@ -5255,6 +5255,15 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 
 		$showlinktolayoutlabel = $langs->trans("FillPageWithALayout");
 		$showlinktoailabel = $langs->trans("FillPageWithAIContent");
+		if ($showlinktoai) {
+			// Add the AI service and model that will be used
+			require_once DOL_DOCUMENT_ROOT.'/ai/class/ai.class.php';
+			$aiobj = new Ai($db);
+			$aiservicemodellabel = $aiobj->getServiceAndModelLabel($showlinktoai);
+			if ($aiservicemodellabel) {
+				$showlinktoailabel .= ' ('.dol_escape_htmltag($aiservicemodellabel).')';
+			}
+		}
 		$htmlname = 'content';
 		// Fill $out
 		include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
@@ -5525,6 +5534,13 @@ if ($action == 'editsource') {
 		$showlinktolayout = '';
 		$showlinktoai = 'textgenerationwebpage';
 		$showlinktoailabel = $langs->trans("FillPageWithAIContent");
+		// Add the AI service and model that will be used
+		require_once DOL_DOCUMENT_ROOT.'/ai/class/ai.class.php';
+		$aiobj = new Ai($db);
+		$aiservicemodellabel = $aiobj->getServiceAndModelLabel($showlinktoai);
+		if ($aiservicemodellabel) {
+			$showlinktoailabel .= ' ('.dol_escape_htmltag($aiservicemodellabel).')';
+		}
 		$htmlname = 'PAGE_CONTENT';
 		$out = '';
 		// Fill $out
