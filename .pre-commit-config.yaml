@@ -278,6 +278,7 @@ repos:
     rev: 4.2.0
     hooks:
       - id: sqlfluff-lint
+        args: [--config=dev/setup/sqlfluff/config]
         #stages: [pre-commit, manual]  # manual needed for ci
         stages: [manual]  # manual needed for ci
         exclude: (?x)^

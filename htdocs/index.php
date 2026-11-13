@@ -155,13 +155,14 @@ if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
 // Security warning if install.lock file is missing or if conf file is writable
 if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
 	$messagetoshow = '';
+	$securitywarnings = array();	// Security warnings to show merged into one div
 
 	// Check if install lock file is present
 	$lockfile = DOL_DATA_ROOT.'/install.lock';
 	if (!empty($lockfile) && !file_exists($lockfile) && is_dir(DOL_DOCUMENT_ROOT."/install")) {
 		$langs->load("errors");
 		//if (!empty($message)) $message.='<br>';
-		$messagetoshow .= info_admin($langs->transnoentities("WarningLockFileDoesNotExists", DOL_DATA_ROOT).' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, 'warning', 'clearboth');
+		$securitywarnings[] = info_admin($langs->transnoentities("WarningLockFileDoesNotExists", DOL_DATA_ROOT).' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 1, 'warning');
 	}
 
 	// Conf files must be in read only mode
@@ -175,8 +176,13 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
 		//  @phpstan-ignore-next-line
 		if (is_writable($conffile)) {
 			$langs->load("errors");
-			$messagetoshow .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, 'warning', 'clearboth');
+			$securitywarnings[] = info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 1, 'warning');
 		}
+	}
+
+	if (!empty($securitywarnings)) {
+		// Each warning has its own picto (info_admin called with nodiv), all wrapped into the same div as the one built by info_admin()
+		$messagetoshow .= '<div class="wordbreak warning info_admin clearboth">'.implode('<br><br>', $securitywarnings).'</div>';
 	}
 
 	$tmpobject = new stdClass();
@@ -187,7 +193,7 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
 	}
 	if ($messagetoshow) {	// $message is an HTML string.
 		print '<!-- show security warning -->';
-		print dol_string_onlythesehtmltags($messagetoshow, 1, 0, 0, 0, array('div', 'span', 'b'));
+		print dol_string_onlythesehtmltags($messagetoshow, 1, 0, 0, 0, array('div', 'span', 'b', 'br'));
 	}
 }
 

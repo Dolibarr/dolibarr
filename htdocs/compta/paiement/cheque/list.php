@@ -294,7 +294,7 @@ if ($resql) {
 
 
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-	print_barre_liste($langs->trans("MenuChequeDeposits"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'bank_account', 0, $newcardbutton, '', $limit);
+	print_barre_liste($langs->trans("MenuChequeDeposits"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'depositslip', 0, $newcardbutton, '', $limit);
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields

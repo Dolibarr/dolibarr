@@ -76,7 +76,7 @@ ShipmentIncrementStockOnDelete = Restaurer le stock lors de la suppression
 WarningShipmentDeleteStockMovement=Cette livraison a déjà généré des mouvements de stock. Si le stock n'est pas rétabli, le stock réduire reste après la suppression et de son document source.
 ConfirmSignShipping=Confirmer la signature expédition
 ConfirmUnsignShipping=Confirmer la désinscription expédition
-SignShipping=Panneau expédition
+SignShipping=Signer expédition
 UnsignShipping=Annuler la signature expédition
 
 # Deliveries
