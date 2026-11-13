@@ -257,6 +257,8 @@ class Fichinter extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
 	}
 
 	/**
@@ -639,7 +641,7 @@ class Fichinter extends CommonObject
 	 *
 	 *	@param		User		$user		User that validate
 	 *  @param		int			$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return		int						Return integer <0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, 0 if nothing done (intervention not in draft status), >0 if OK
 	 */
 	public function setValid($user, $notrigger = 0)
 	{
@@ -648,7 +650,9 @@ class Fichinter extends CommonObject
 
 		$error = 0;
 
-		if ($this->status != self::STATUS_VALIDATED) {
+		// Only a draft intervention can be validated. Any other status would leave the database
+		// unchanged (UPDATE filtered on fk_statut = 0) while ref, files and triggers are processed.
+		if ($this->status == self::STATUS_DRAFT) {
 			$this->db->begin();
 
 			$now = dol_now();
@@ -751,6 +755,9 @@ class Fichinter extends CommonObject
 				return -1;
 			}
 		}
+
+		$this->error = 'ErrorObjectMustHaveStatusDraftToBeValidated';
+		dol_syslog(get_class($this)."::setValid action abandoned: intervention is not in draft status", LOG_WARNING);
 
 		return 0;
 	}
@@ -875,7 +882,7 @@ class Fichinter extends CommonObject
 	 *
 	 * 	@param      User	$user       Object user that close
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
-	 *	@return		int					Return integer <0 if KO, >0 if OK
+	 *	@return		int					Return integer <0 if KO, 0 if nothing done (already closed or still draft), >0 if OK
 	 */
 	public function setClose($user, $notrigger = 0)
 	{
@@ -884,6 +891,12 @@ class Fichinter extends CommonObject
 		$error = 0;
 
 		if ($this->status == self::STATUS_CLOSED) {
+			return 0;
+		} elseif ($this->status == self::STATUS_DRAFT) {
+			// A draft intervention must be validated before being closed. The UPDATE below is filtered
+			// on fk_statut > 0, so going on would run the trigger without changing anything.
+			$this->error = 'ErrorObjectHasWrongStatus';
+			dol_syslog(get_class($this)."::setClose action abandoned: intervention is in draft status", LOG_WARNING);
 			return 0;
 		} else {
 			$this->db->begin();

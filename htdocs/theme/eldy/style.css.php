@@ -300,6 +300,7 @@ if ($tmpval <= 460) {
 } else {
 	$colortextbackhmenu = '000000';
 }
+$colortextbackhmenu = colorGetReadableTextColor($colorbackhmenu1, $colortextbackhmenu, ($colortextbackhmenu == 'FFFFFF' ? '000000' : 'FFFFFF'));
 
 $colorbackvmenu1 = implode(',', colorStringToArray($colorbackvmenu1)); // Normalize value to 'x,y,z'
 $tmppart = explode(',', $colorbackvmenu1);
@@ -309,6 +310,7 @@ if ($tmpval <= 460) {
 } else {
 	$colortextbackvmenu = '222222';
 }
+$colortextbackvmenu = colorGetReadableTextColor($colorbackvmenu1, $colortextbackvmenu, ($colortextbackvmenu == 'FFFFFF' ? '222222' : 'FFFFFF'));
 
 $colortopbordertitle1 = implode(',', colorStringToArray($colortopbordertitle1)); // Normalize value to 'x,y,z'
 
@@ -323,6 +325,8 @@ if ($colortexttitle == '') {
 		$colortexttitle = '000000';
 		$colorshadowtitle = 'FFFFFF';
 	}
+	$colortexttitle = colorGetReadableTextColor($colorbacktitle1, $colortexttitle, ($colortexttitle == 'FFFFFF' ? '000000' : 'FFFFFF'));
+	$colorshadowtitle = ($colortexttitle == 'FFFFFF' ? '888888' : 'FFFFFF');
 } else {
 	$colorshadowtitle = '888888';
 }
@@ -335,6 +339,7 @@ if ($tmpval <= 460) {
 } else {
 	$colortextbacktab = '000000';
 }
+$colortextbacktab = colorGetReadableTextColor($colorbacktabcard1, $colortextbacktab, ($colortextbacktab == 'FFFFFF' ? '000000' : 'FFFFFF'));
 
 
 // Format color value to match expected format (may be 'FFFFFF' or '255,255,255')
@@ -477,8 +482,8 @@ $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobal
 	--tableforfieldcolor:#666;
 	--amountremaintopaycolor:#880000;
 	--amountpaymentcomplete:#008855;
-	--amountremaintopaybackcolor:none;
-	--productlinestockod: #002200;
+	--amountremaintopaybackcolor:inherit;
+	--productlinestockok: #002200;
 	--productlinestocktoolow: #884400;
 	--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #fff, #fff, #fff, #e4efe8);
 	--tablevalidbgcolor: rgb(252, 248, 227);
@@ -536,7 +541,7 @@ if (getDolGlobalInt('THEME_DARKMODEENABLED')) {
 	            --tableforfieldcolor:rgb(220,220,220);
 	            --amountremaintopaycolor:rgb(252,84,91);
 	            --amountpaymentcomplete:rgb(101,184,77);
-	            --amountremaintopaybackcolor:rbg(245,130,46);
+	            --amountremaintopaybackcolor:rgb(245,130,46);
 				--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #000, #000, #000, #274231);
 				--tablevalidbgcolor: rgb(80, 64, 33);
 				--colorblack: #fff;
@@ -783,10 +788,10 @@ section.setupsection {
 	padding: 20px !important;
 	background-color: var(--colorbackgrey);
 	border-radius: 5px;
-	box-shadow: 0 0 4px rgb(0, 0, 0, 0.18);
+	box-shadow: 1px 1px 4px rgb(0, 0, 0, 0.18);
 }
 section.setupsection:hover {
-	box-shadow: 0 0 5px #aaa;
+	box-shadow: 1px 1px 5px #aaa;
 }
 
 
@@ -1095,6 +1100,12 @@ input.pageplusone {
 .colorblack.totalnboflines {
 	font-size: 90%;
 	opacity: 0.5;
+}
+.growthup {
+	color: #080;
+}
+.growthdown {
+	color: #968822;
 }
 .fontsizeunset {
 	font-size: unset !important;
@@ -3067,11 +3078,20 @@ td.showDragHandle {
 }
 <?php } ?>
 
-@media screen and (prefers-color-scheme: dark) {
+<?php
+if (getDolGlobalInt('THEME_DARKMODEENABLED')) {
+	if (getDolGlobalInt('THEME_DARKMODEENABLED') != 2) {
+		print "@media screen and (prefers-color-scheme: dark) {\n";
+	} else {
+		print "@media not print {\n";
+	} ?>
 	.side-nav-vert {
 		border-bottom: 1px solid #888;
 	}
+	<?php
+	print "}\n";
 }
+?>
 
 .side-nav {
 <?php if (getDolGlobalString('THEME_STICKY_TOPMENU') == 'scrollleftmenu_after_mainpage') { ?>
@@ -3786,7 +3806,7 @@ div.menu_titre {
 	padding-<?php print $right; ?>: 2px;
 	font-family: Roboto,<?php echo $fontlist; ?>;
 	font-weight: 400;
-	opacity: 0.9;
+	opacity: 0.95;
 }
 
 div.mainmenu {
@@ -4026,7 +4046,7 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 	box-shadow: 0 2px 23px 2px rgba(0, 0, 0, <?php print getDolGlobalInt('THEME_DARKMODEENABLED') ? 0.4 : 0.2; ?>), 0 2px 6px rgba(60, 60, 60, 0.15);
 	border-radius: 5px;
 }
-.login_table input#username, .login_table input#password, .login_table input#securitycode {
+.login_table input#username, .login_table input#password, .login_table input#securitycode, .login_table input#totpcode {
 	/* border: none; */
 	border-bottom: solid 1px rgba(160,160,160,.4);
 	padding: 8px;
@@ -4036,7 +4056,7 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 	margin-bottom: 5px;
 	margin-right: 10px;
 }
-.login_table input#username:focus, .login_table input#password:focus, .login_table input#securitycode:focus {
+.login_table input#username:focus, .login_table input#password:focus, .login_table input#securitycode:focus, .login_table input#totpcode:focus {
 	outline: none !important;
 }
 .login_table .trinputlogin {
@@ -4053,7 +4073,7 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 	padding-left: 10px;
 	width: 14px;
 }
-.login_table .tdinputlogin input#username, .login_table .tdinputlogin input#password, .login_table .tdinputlogin input#securitycode {
+.login_table .tdinputlogin input#username, .login_table .tdinputlogin input#password, .login_table .tdinputlogin input#securitycode, .login_table .tdinputlogin input#totpcode {
 	font-size: 1.1em;
 }
 /* Serve as reference for icon that toggles showing the password */
@@ -4234,7 +4254,7 @@ div.login_block_user {
 .alogin:hover, .atoplogin:hover {
 	text-decoration:underline !important;
 }
-.alogin.aloginpasswordforgotten, .alogin.aloginpasswordforgotten:hover, .alogin.aloginhelp, .alogin.aloginhelp:hover {
+.alogin.aloginpasswordforgotten, .alogin.aloginpasswordforgotten:hover, .alogin.aloginhelp, .alogin.aloginhelp:hover, .alogin.alogincanceltotp, .alogin.alogincanceltotp:hover {
 	opacity: 0.5;
 }
 
@@ -5332,6 +5352,9 @@ div.refaddress div.address {
 }
 div.refidno form {
 	display: inline-block;
+	/* Negative vertical margins so the edit form (select2 28px + button) does not increase the line height of the banner */
+	margin-top: -4px;
+	margin-bottom: -4px;
 }
 
 div.pagination {

@@ -228,6 +228,11 @@ $coldisplay++;
 		}
 	}
 
+	// Reference the customer gives to the line (line of its purchase order). Kept editable when already filled.
+	if ($line instanceof OrderLine && (getDolGlobalString('MAIN_ENABLE_LINE_REF_CUSTOMER') || !empty($line->ref_customer))) {
+		print '<div class="paddingtop">'.$langs->trans('RefCustomerLine').' : <input type="text" name="line_ref_customer" id="line_ref_customer" class="width150" maxlength="128" value="'.dol_escape_htmltag(GETPOSTISSET('line_ref_customer') ? GETPOST('line_ref_customer', 'alphanohtml') : (string) $line->ref_customer).'"></div>';
+	}
+
 	// Show autofill date for recurring invoices
 	if (isModEnabled("service") && $line->product_type == 1 && ($line->element == 'facturedetrec' || $line->element == 'invoice_supplier_det_rec')) {
 		if ($line->element == 'invoice_supplier_det_rec') {
@@ -366,7 +371,7 @@ $coldisplay++;
 	// Progression for situation invoices
 	if ($object->situation_cycle_ref) {
 		$coldisplay++;
-		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') > 1) {
 			$tmp_fieldv = (GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent);
 			$old_fieldv = $line->getAllPrevProgress($line->fk_facture);
 			$fieldv = $tmp_fieldv + $old_fieldv;

@@ -315,8 +315,12 @@ $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as d";
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (d.rowid = ef.fk_object)";
 }
-$sql .= ", ".MAIN_DB_PREFIX."user as u";
-$sql .= " WHERE d.fk_user_author = u.rowid AND d.entity IN (".getEntity('expensereport').")";
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = d.fk_user_author";
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+$sql .= " WHERE d.entity IN (".getEntity('expensereport').")";
 // Search all
 if (!empty($search_all)) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
@@ -492,6 +496,11 @@ if ($search_status >= 0) {
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+
+// Add $param from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action);	// Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
 
 // List of mass actions available
 $arrayofmassactions = array(
@@ -897,7 +906,7 @@ if ($num > 0) {
 				}
 				if (!empty($obj->note_private) || !empty($obj->note_public)) {
 					print ' <span class="note">';
-					print '<a href="'.DOL_URL_ROOT.'/expensereport/note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"), 'object_generic').'</a>';
+					print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/core/note.php', ['element' => 'expensereport', 'id' => $obj->rowid]).'">'.img_picto($langs->trans("ViewPrivateNote"), 'object_generic').'</a>';
 					print '</span>';
 				}
 				$filename = dol_sanitizeFileName($obj->ref);

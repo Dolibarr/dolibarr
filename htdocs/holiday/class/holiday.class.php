@@ -67,7 +67,7 @@ class Holiday extends CommonObject
 	public $fk_user;
 
 	/**
-	 * @var int|string
+	 * @var integer|''|null		Object creation date
 	 */
 	public $date_creation = '';
 
@@ -171,6 +171,11 @@ class Holiday extends CommonObject
 	 * @var int ID
 	 */
 	public $fk_type;
+
+	/**
+	 * @var string	Name of the document template used to build the document of the leave request
+	 */
+	public $model_pdf;
 
 	/**
 	 * @var array<int,array{id:int,rowid:int,ref:string,fk_user:int,fk_type:int,date_creation:int|'',date_modification:int|'',description:string,date_debut:string,date_fin:string,date_debut_gmt:string,date_fin_gmt:string,halfday:int,statut:int,status:int,fk_validator:int,date_valid:mixed,fk_user_valid:mixed,date_approval:int|'',fk_user_approve:int,date_refuse:int|'',fk_user_refuse:int,date_cancel:int|'',fk_user_cancel:int,detail_refuse:string,user_firstname:string,user_lastname:string,user_login:string,user_statut:int,user_status:int,user_photo:string,validator_firstname:string,validator_lastname:string,validator_login:string,validator_statut:int,validator_status:int,validator_photo:string}>
@@ -445,6 +450,8 @@ class Holiday extends CommonObject
 		$sql .= " cp.note_public,";
 		$sql .= " cp.fk_user_create,";
 		$sql .= " cp.fk_type,";
+		$sql .= " cp.model_pdf,";
+		$sql .= " cp.extraparams,";
 		$sql .= " cp.entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as cp";
 		if ($id > 0) {
@@ -488,7 +495,9 @@ class Holiday extends CommonObject
 				$this->note_public = $obj->note_public;
 				$this->fk_user_create = $obj->fk_user_create;
 				$this->fk_type = $obj->fk_type;
+				$this->model_pdf = $obj->model_pdf;
 				$this->entity = $obj->entity;
+				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				$this->fetch_optionals();
 
@@ -2939,5 +2948,38 @@ class Holiday extends CommonObject
 			// The $this->errors will be concatenated to the output by the function that call this method.
 		}
 		return ($error ? 1 : 0);
+	}
+
+	/**
+	 *  Create a document onto disk according to template module.
+	 *
+	 *  @param	string		$modele			Force template to use ('' to not force)
+	 *  @param	Translate	$outputlangs	Object lang to use for translation
+	 *  @param	int<0,1>	$hidedetails	Hide details of lines
+	 *  @param	int<0,1>	$hidedesc		Hide description
+	 *  @param	int<0,1>	$hideref		Hide ref
+	 *  @param	?array<string,mixed>	$moreparams	Array to provide more information
+	 *  @return	int<-1,1>					0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
+	{
+		global $langs;
+
+		$langs->load("holiday");
+		$outputlangs->load("holiday");
+
+		if (!dol_strlen($modele)) {
+			$modele = 'generic_holiday_odt';
+
+			if (!empty($this->model_pdf)) {
+				$modele = $this->model_pdf;
+			} elseif (getDolGlobalString('HOLIDAY_ADDON_PDF')) {
+				$modele = getDolGlobalString('HOLIDAY_ADDON_PDF');
+			}
+		}
+
+		$modelpath = "core/modules/holiday/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
 }

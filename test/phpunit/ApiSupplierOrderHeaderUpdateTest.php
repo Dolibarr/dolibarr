@@ -100,7 +100,7 @@ class ApiSupplierOrderHeaderUpdateTest extends CommonClassTest
 			$this->bridge->execute('api_supplier_orders_update', $args);
 			$this->assertSame($changes, ApiSupplierOrderHeaderEndpointFixture::$received['body']);
 			$preview = $this->bridge->writeConfirmationPreview('api_supplier_orders_update', $args);
-			$this->assertStringContainsString('array_options.options_reference: "old" → "new"', $preview);
+			$this->assertStringContainsString(dol_escape_htmltag('array_options.options_reference: "old" → "new"'), $preview);
 			$this->assertStringNotContainsString('options_other', $preview);
 			$this->assertStringNotContainsString('{', $preview);
 		}
@@ -116,7 +116,7 @@ class ApiSupplierOrderHeaderUpdateTest extends CommonClassTest
 		$this->assertSame($changes, ApiSupplierOrderHeaderEndpointFixture::$received['body']);
 		$preview = $this->bridge->writeConfirmationPreview('api_supplier_orders_update', $args);
 		foreach (['1970-01-01 00:00:00 UTC', 'Project: null → null', 'NotePrivate: null → ""', 'options_zero: null → 0', 'options_null: null → null', 'options_empty: null → ""'] as $expected) {
-			$this->assertStringContainsString($expected, $preview);
+			$this->assertStringContainsString(dol_escape_htmltag($expected), $preview);
 		}
 	}
 
@@ -125,7 +125,9 @@ class ApiSupplierOrderHeaderUpdateTest extends CommonClassTest
 	{
 		$metadata = new ReflectionProperty(ToolApiBridge::class, 'enrichments');
 		if (PHP_VERSION_ID < 80100) {
-			$metadata->setAccessible(true);
+			if (PHP_VERSION_ID < 80100) {
+				$metadata->setAccessible(true);
+			}
 		}
 		$enrichments = $metadata->getValue($this->bridge);
 		$enrichments['supplier_orders']['methods']['put']['write']['defaults'] = ['qty' => 1, 'note_public' => 'default'];
@@ -192,7 +194,7 @@ class ApiSupplierOrderHeaderUpdateTest extends CommonClassTest
 	{
 		$preview = $this->bridge->writeConfirmationPreview('api_supplier_orders_update', ['ref' => 'PO-42', 'ref_supplier' => 'NEW']);
 		foreach (['PO-42', 'Example supplier', 'OLD', 'NEW', '→'] as $expected) {
-			$this->assertStringContainsString($expected, $preview);
+			$this->assertStringContainsString(dol_escape_htmltag($expected), $preview);
 		}
 	}
 
@@ -200,8 +202,8 @@ class ApiSupplierOrderHeaderUpdateTest extends CommonClassTest
 	public function testPreviewShowsReadableDeliveryDatesAndFieldLabels()
 	{
 		$preview = $this->bridge->writeConfirmationPreview('api_supplier_orders_update', ['id' => 42, 'delivery_date' => 1735776000, 'note_public' => 'Visible note']);
-		$this->assertStringContainsString('DeliveryDate: 2024-01-01 00:00:00 UTC → 2025-01-02 00:00:00 UTC', $preview);
-		$this->assertStringContainsString('NotePublic: null → "Visible note"', $preview);
+		$this->assertStringContainsString(dol_escape_htmltag('DeliveryDate: 2024-01-01 00:00:00 UTC → 2025-01-02 00:00:00 UTC'), $preview);
+		$this->assertStringContainsString(dol_escape_htmltag('NotePublic: null → "Visible note"'), $preview);
 		$this->assertStringNotContainsString('1704067200', $preview);
 		$this->assertStringNotContainsString('1735776000', $preview);
 	}
@@ -219,12 +221,16 @@ class ApiSupplierOrderHeaderUpdateTest extends CommonClassTest
 	{
 		$metadata = new ReflectionProperty(ToolApiBridge::class, 'enrichments');
 		if (PHP_VERSION_ID < 80100) {
-			$metadata->setAccessible(true);
+			if (PHP_VERSION_ID < 80100) {
+				$metadata->setAccessible(true);
+			}
 		}
 		$write = $metadata->getValue($this->bridge)['supplier_orders']['methods']['put']['write'];
 		$schemaMethod = new ReflectionMethod(ToolApiBridge::class, 'updateInputSchema');
 		if (PHP_VERSION_ID < 80100) {
-			$schemaMethod->setAccessible(true);
+			if (PHP_VERSION_ID < 80100) {
+				$schemaMethod->setAccessible(true);
+			}
 		}
 		$schema = $schemaMethod->invoke($this->bridge, $write);
 		$this->assertFalse($schema['additionalProperties']);
@@ -280,6 +286,14 @@ class ApiSupplierOrderHeaderLanguageFixture
 	public function trans($key, ...$values)
 	{
 		return $key.($values ? ' '.implode(' ', $values) : '');
+	}
+	/** @param string $key Translation key
+	 * @param mixed ...$values Substitution values
+	 * @return string Preview text
+	 */
+	public function transnoentitiesnoconv($key, ...$values)
+	{
+		return $this->trans($key, ...$values);
 	}
 }
 
@@ -353,12 +367,16 @@ class ApiSupplierOrderHeaderBridgeFixture extends ToolApiBridge
 	{
 		$routes = new ReflectionProperty(ToolApiBridge::class, 'routes');
 		if (PHP_VERSION_ID < 80100) {
-			$routes->setAccessible(true);
+			if (PHP_VERSION_ID < 80100) {
+				$routes->setAccessible(true);
+			}
 		}
 		$routes->setValue($this, ['api_supplier_orders_update' => ['supplier_orders', 'put']]);
 		$endpoints = new ReflectionProperty(ToolApiBridge::class, 'endpoints');
 		if (PHP_VERSION_ID < 80100) {
-			$endpoints->setAccessible(true);
+			if (PHP_VERSION_ID < 80100) {
+				$endpoints->setAccessible(true);
+			}
 		}
 		$endpoints->setValue($this, ['supplier_orders' => ['path' => __FILE__, 'class' => ApiSupplierOrderHeaderEndpointFixture::class]]);
 		return [];

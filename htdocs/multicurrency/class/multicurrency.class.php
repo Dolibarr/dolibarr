@@ -74,7 +74,7 @@ class MultiCurrency extends CommonObject
 	public $name;
 
 	/**
-	 * @var mixed Sample property 2
+	 * @var int|''|null		Object creation date
 	 */
 	public $date_creation;
 
@@ -232,7 +232,7 @@ class MultiCurrency extends CommonObject
 				$this->name = $obj->name;
 				$this->code = $obj->code;
 				$this->entity = $obj->entity;
-				$this->date_creation = $obj->date_creation;
+				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->fk_user = $obj->fk_user;
 
 				$this->fetchAllCurrencyRate();

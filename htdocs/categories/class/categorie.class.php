@@ -477,7 +477,7 @@ class Categorie extends CommonObject
 		}
 
 		$sql = "SELECT rowid, fk_parent, entity, label, description, color, position, fk_soc, visible, type, ref_ext";
-		$sql .= ", date_creation, tms, fk_user_creat, fk_user_modif, import_key";
+		$sql .= ", date_creation, tms, fk_user_creat, fk_user_modif, import_key, extraparams";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
 		if ($id) {
 			$sql .= " WHERE rowid = ".((int) $id);
@@ -511,6 +511,7 @@ class Categorie extends CommonObject
 				$this->user_creation_id = (int) $res['fk_user_creat'];
 				$this->user_modification_id = (int) $res['fk_user_modif'];
 				$this->import_key = $res['import_key'];
+				$this->extraparams = !empty($res['extraparams']) ? (array) json_decode($res['extraparams'], true) : array();
 
 				// Retrieve all extrafields
 				// fetch optionals attributes and labels
@@ -665,9 +666,10 @@ class Categorie extends CommonObject
 	 *
 	 *	@param	User	$user	Object user
 	 *  @param	int<0,1>		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 * 	@return	int<-2,1>		1 : OK
+	 * 	@return	int<-3,1>		1 : OK
 	 *          				-1 : SQL error
 	 *          				-2 : invalid category
+	 *          				-3 : a category with the same label already exists at the same level
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -709,7 +711,8 @@ class Categorie extends CommonObject
 		if ($this->already_exists()) {
 			$this->error = $langs->trans("ImpossibleUpdateCat");
 			$this->error .= " : ".$langs->trans("CategoryExistsAtSameLevel");
-			return -1;
+			dol_syslog($this->error, LOG_WARNING);
+			return -3;
 		}
 
 		$this->db->begin();
@@ -1212,15 +1215,13 @@ class Categorie extends CommonObject
 				dol_print_error($this->db);
 			}
 
-			if (($limit >= (int) $nbtotalofrecords) && $page > 0) {
-				return [];
+			if ($resql) {
+				$this->db->free($resql);
 			}
 
-			if (($page * $limit) >= (int) $nbtotalofrecords) {	// if total resultset is smaller or equal then paging size (filtering), goto and load page 0
-				$page = 0;
-				$offset = 0;
+			if ($page > 0 && ($page * $limit) >= (int) $nbtotalofrecords) {	// requested page is after the last one, so there is nothing to return
+				return [];
 			}
-			$this->db->free($resql);
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);

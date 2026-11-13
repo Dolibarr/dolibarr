@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2010  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2017  Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2015-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
@@ -110,7 +110,7 @@ function contact_prepare_head(Contact $object)
 	// Notes
 	if (!getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
 		$nbNote = (empty($object->note_private) ? 0 : 1) + (empty($object->note_public) ? 0 : 1);
-		$head[$tab][0] = dolBuildUrl(DOL_URL_ROOT.'/contact/note.php', ['id' => $object->id]);
+		$head[$tab][0] = dolBuildUrl(DOL_URL_ROOT.'/core/note.php', ['element' => 'contact', 'id' => $object->id]);
 		$head[$tab][1] = $langs->trans("Note");
 		if ($nbNote > 0) {
 			$head[$tab][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
@@ -176,6 +176,62 @@ function contact_prepare_head(Contact $object)
 	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'contact', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'contact', 'remove');
+
+	return $head;
+}
+
+/**
+ *  Return array head with list of tabs to view statistics on contacts
+ *
+ *  @param	Contact		$object		Contact (used by tabs added by external modules)
+ *  @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
+ */
+function contact_stats_prepare_head($object)
+{
+	global $conf, $langs, $user;
+
+	$h = 0;
+	$head = array();
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/contact/stats/geo.php', ['mode' => 'contactbycountry']);
+	$head[$h][1] = $langs->trans("Country");
+	$head[$h][2] = 'statscountry';
+	$h++;
+
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/contact/stats/geo.php', ['mode' => 'contactbyregion']);
+	$head[$h][1] = $langs->trans("Region");
+	$head[$h][2] = 'statsregion';
+	$h++;
+
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/contact/stats/geo.php', ['mode' => 'contactbystate']);
+	$head[$h][1] = $langs->trans("State");
+	$head[$h][2] = 'statsstate';
+	$h++;
+
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/contact/stats/geo.php', ['mode' => 'contactbytown']);
+	$head[$h][1] = $langs->trans('Town');
+	$head[$h][2] = 'statstown';
+	$h++;
+
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/contact/stats/byproperties.php');
+	$head[$h][1] = $langs->trans('ContactsByNature');
+	$head[$h][2] = 'statsbyproperties';
+	$h++;
+
+	// Tab with the custom reports tool (it does not filter on sales representatives, so it needs the permission to see all third parties)
+	if (empty($user->socid) && $user->hasRight('societe', 'client', 'voir')) {
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/contact/stats/geo.php', ['tabfamily' => 'contactstats']);
+		$head[$h][1] = $langs->trans("Custom");
+		$head[$h][2] = 'customreports';
+		$h++;
+	}
+
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'contact_stats');
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'contact_stats', 'remove');
 
 	return $head;
 }

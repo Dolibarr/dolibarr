@@ -194,25 +194,16 @@ body.ai-fullpage {
     min-width: 0;
 }
 
-/* Mode selector restyled as a pill: a sparkle on the left, a chevron on the
- * right (both as background SVGs so the native <select> is kept for a11y). */
+/* Mode selector restyled as a pill. No background image (no url), the native
+ * <select> keeps its own arrow (and is kept for a11y). */
 .engine-select {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    padding: 6px 28px 6px 30px;
+    padding: 6px 6px 6px 9px;
     border-radius: 5px;
     border: 1px solid var(--ai-border);
     font-size: 0.8rem;
     font-weight: 500;
     color: var(--ai-text);
     background-color: var(--ai-surface);
-    background-image:
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%237c5cff'%3E%3Cpath d='M12 2l2.2 6.3L20.5 11l-6.3 2.2L12 20l-2.2-6.3L3.5 11l6.3-2.2z'/%3E%3C/svg%3E"),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-    background-repeat: no-repeat, no-repeat;
-    background-position: left 9px center, right 9px center;
-    background-size: 14px 14px, 12px 12px;
     max-width: 200px;
     min-width: 0;
     cursor: pointer;
@@ -220,15 +211,6 @@ body.ai-fullpage {
 
 .engine-select:hover {
     background-color: var(--ai-surface-2);
-}
-
-/* Sparkle picto of the 'Auto' model, same as the one of the native select pill */
-.ai-picto-sparkle {
-    display: inline-block;
-    width: 14px;
-    height: 14px;
-    vertical-align: middle;
-    background: no-repeat center / 14px 14px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%237c5cff'%3E%3Cpath d='M12 2l2.2 6.3L20.5 11l-6.3 2.2L12 20l-2.2-6.3L3.5 11l6.3-2.2z'/%3E%3C/svg%3E");
 }
 
 /* Same width limits when the selects are rendered with select2 */
