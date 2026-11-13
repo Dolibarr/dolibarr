@@ -58,6 +58,7 @@ ShipmentCreationIsDoneFromOrder=For the moment, creation of a new Shipment fully
 CreateSimpleShipment=However, your Dolibarr administrator can enable the creation of a simple Shipment from Shipments module setup page.
 SHIPMENT_STANDALONE=Allow to create shipments without sales order
 ShipmentStandaloneCantBeDisabled=%s shipments without sales order exist. This option can't be disabled while they exist.
+SHIPMENTS_ALLOW_FREE_LINES=Allow lines without product (free text) on shipments without sales order
 ShipmentLine=Shipment line
 ProductQtyInCustomersOrdersRunning=Product quantity from open sales orders
 ProductQtyInSuppliersOrdersRunning=Product quantity from open purchase orders
