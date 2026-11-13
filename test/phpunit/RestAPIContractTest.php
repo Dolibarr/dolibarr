@@ -298,6 +298,113 @@ class RestAPIContractTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * Read the only line of a contract
+	 *
+	 * @param int		$contract_id	Id of the contract
+	 * @param string	$test			Text to be added to output
+	 *
+	 * @return array<string,mixed>	The line
+	 */
+	private function getOnlyContractLine($contract_id, $test)
+	{
+		$result = $this->getUrl('contracts/'.$contract_id.'/lines', "$test (read lines)", 'GET');
+		$this->assertCount(1, $result['content'], "$test Contract must have one line");
+
+		return $result['content'][0];
+	}
+
+	/**
+	 * testRestContractPostLineHT
+	 *
+	 * @return void
+	 */
+	public function testRestContractPostLineHT()
+	{
+		$test = "Add a line priced excluding tax";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$data = array("desc" => "API test service HT", "subprice" => 100, "qty" => 2, "tva_tx" => 20, "price_base_type" => "HT");
+			$result = $this->getUrl('contracts/'.$contract_id.'/lines', $test, 'POST', $data);
+			$this->assertGreaterThan(0, (int) $result['content'], "$test Id of line is not > 0");
+
+			$line = $this->getOnlyContractLine($contract_id, $test);
+			$this->assertEquals(100, (float) $line['subprice'], "$test Unit price excl. tax");
+			$this->assertEquals(200, (float) $line['total_ht'], "$test Total excl. tax");
+			$this->assertEquals(240, (float) $line['total_ttc'], "$test Total incl. tax");
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
+	}
+
+	/**
+	 * testRestContractPostLineTTC
+	 *
+	 * @return void
+	 */
+	public function testRestContractPostLineTTC()
+	{
+		$test = "Add a line priced including tax";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$data = array("desc" => "API test service TTC", "subprice_inc_tax" => 120, "qty" => 2, "tva_tx" => 20, "price_base_type" => "TTC");
+			$result = $this->getUrl('contracts/'.$contract_id.'/lines', $test, 'POST', $data);
+			$this->assertGreaterThan(0, (int) $result['content'], "$test Id of line is not > 0");
+
+			$line = $this->getOnlyContractLine($contract_id, $test);
+			$this->assertEquals(100, (float) $line['subprice'], "$test Unit price excl. tax");
+			$this->assertEquals(200, (float) $line['total_ht'], "$test Total excl. tax");
+			$this->assertEquals(240, (float) $line['total_ttc'], "$test Total incl. tax");
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
+	}
+
+	/**
+	 * testRestContractPostLineTTCDeprecatedField
+	 *
+	 * @return void
+	 */
+	public function testRestContractPostLineTTCDeprecatedField()
+	{
+		$test = "Add a line priced including tax with the deprecated subprice_excl_tax field";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$data = array("desc" => "API test service TTC", "subprice_excl_tax" => 120, "qty" => 1, "tva_tx" => 20, "price_base_type" => "TTC");
+			$this->getUrl('contracts/'.$contract_id.'/lines', $test, 'POST', $data);
+
+			$line = $this->getOnlyContractLine($contract_id, $test);
+			$this->assertEquals(100, (float) $line['subprice'], "$test Unit price excl. tax");
+			$this->assertEquals(120, (float) $line['total_ttc'], "$test Total incl. tax");
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
+	}
+
+	/**
+	 * testRestContractPostLineError
+	 *
+	 * @return void
+	 */
+	public function testRestContractPostLineError()
+	{
+		$test = "Add a free line without description";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$this->getUrl('contracts/'.$contract_id.'/lines', $test, 'POST', array("desc" => "", "subprice" => 10, "qty" => 1), 500);
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
+	}
+
+	/**
 	 * testRestContractPostExtrafieldHtml
 	 *
 	 * @return void
