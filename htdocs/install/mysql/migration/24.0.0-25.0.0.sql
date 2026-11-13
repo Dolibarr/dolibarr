@@ -691,3 +691,9 @@ ALTER TABLE llx_website_page MODIFY COLUMN content longtext;
 ALTER TABLE llx_ai_chat_message MODIFY COLUMN content_raw mediumtext;
 
 INSERT INTO llx_c_type_resource (code, label, active) VALUES ('RES_MACHINES', 'Machines', 1);
+
+-- Module QuickMemo moved from the id 141916 (range of external modules) to the core id 55020: rename its permission ids 141916xx into 55020xx
+UPDATE llx_rights_def SET id = id - 14191600 + 5502000 WHERE id IN (14191611, 14191612, 14191613);
+UPDATE llx_user_rights SET fk_id = fk_id - 14191600 + 5502000 WHERE fk_id IN (14191611, 14191612, 14191613);
+UPDATE llx_usergroup_rights SET fk_id = fk_id - 14191600 + 5502000 WHERE fk_id IN (14191611, 14191612, 14191613);
+DELETE FROM llx_rights_def WHERE id IN (14191611, 14191612, 14191613);
