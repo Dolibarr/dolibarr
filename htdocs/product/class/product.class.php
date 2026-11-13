@@ -5680,7 +5680,7 @@ class Product extends CommonObject
 		}
 		if (isModEnabled("supplier_order")) {
 			$filterStatus = empty($conf->global->SUPPLIER_ORDER_STATUS_FOR_VIRTUAL_STOCK) ? '3,4' : $conf->global->SUPPLIER_ORDER_STATUS_FOR_VIRTUAL_STOCK;
-			if (isset($includedraftpoforvirtual)) {
+			if (!empty($includedraftpoforvirtual)) {
 				$filterStatus = '0,1,2,'.$filterStatus;	// 1,2 may have already been inside $filterStatus but it is better to have twice than missing $filterStatus does not include them
 			}
 			$result = $this->load_stats_commande_fournisseur(0, $filterStatus, 1, $dateofvirtualstock);
@@ -5692,7 +5692,7 @@ class Product extends CommonObject
 		if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && empty($conf->reception->enabled)) {
 			// Case module reception is not used
 			$filterStatus = '4';
-			if (isset($includedraftpoforvirtual)) {
+			if (!empty($includedraftpoforvirtual)) {
 				$filterStatus = '0,'.$filterStatus;
 			}
 			$result = $this->load_stats_reception(0, $filterStatus, 1, $dateofvirtualstock);
@@ -5704,7 +5704,7 @@ class Product extends CommonObject
 		if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && isModEnabled("reception")) {
 			// Case module reception is used
 			$filterStatus = '4';
-			if (isset($includedraftpoforvirtual)) {
+			if (!empty($includedraftpoforvirtual)) {
 				$filterStatus = '0,'.$filterStatus;
 			}
 			$result = $this->load_stats_reception(0, $filterStatus, 1, $dateofvirtualstock); // Use same tables than when module reception is not used.
