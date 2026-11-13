@@ -206,6 +206,102 @@ class RestAPITicketTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * Add a message to a ticket targeted by its id, without track_id
+	 *
+	 * @return void
+	 */
+	public function testRestTicketNewMessageById()
+	{
+		$test = "Add a message to a ticket targeted by its id";
+
+		$ticket_id = $this->createTicket($test);
+
+		$result = $this->getUrl('tickets/newmessage', $test, 'POST', array("id" => $ticket_id, "message" => "Message added by id via the REST API"));
+		$this->assertEquals($ticket_id, (int) $result['content'], "$test The id of the ticket must be returned");
+	}
+
+	/**
+	 * Add a message to a ticket targeted by its ref, without track_id
+	 *
+	 * @return void
+	 */
+	public function testRestTicketNewMessageByRef()
+	{
+		$test = "Add a message to a ticket targeted by its ref";
+
+		$ticket_id = $this->createTicket($test);
+		$result = $this->getUrl('tickets/'.$ticket_id, $test);
+		$ref = (string) $result['content']['ref'];
+		$this->assertNotEmpty($ref, "$test The ticket must have a ref");
+
+		$result = $this->getUrl('tickets/newmessage', $test, 'POST', array("ref" => $ref, "message" => "Message added by ref via the REST API"));
+		$this->assertEquals($ticket_id, (int) $result['content'], "$test The id of the ticket must be returned");
+	}
+
+	/**
+	 * Add a message without any identifier of the ticket
+	 *
+	 * @return void
+	 */
+	public function testRestTicketNewMessageWithoutIdentifier()
+	{
+		$test = "Add a message without id, ref or track_id";
+
+		$this->getUrl('tickets/newmessage', $test, 'POST', array("message" => "Message without ticket"), 400);
+	}
+
+	/**
+	 * Add a message with an id and a track_id of two different tickets
+	 *
+	 * @return void
+	 */
+	public function testRestTicketNewMessageIdentifiersOfDifferentTickets()
+	{
+		$test = "Add a message with the id and the track_id of two different tickets";
+
+		$ticket_id = $this->createTicket($test);
+		$other_ticket_id = $this->createTicket($test);
+		$result = $this->getUrl('tickets/'.$other_ticket_id, $test);
+		$other_track_id = (string) $result['content']['track_id'];
+		$this->assertNotEmpty($other_track_id, "$test The ticket must have a track_id");
+
+		$data = array("id" => $ticket_id, "track_id" => $other_track_id, "message" => "Message for two different tickets");
+		$this->getUrl('tickets/newmessage', $test, 'POST', $data, 400);
+	}
+
+	/**
+	 * Add a message with an attachment to a ticket
+	 *
+	 * @return void
+	 */
+	public function testRestTicketNewMessageWithAttachment()
+	{
+		global $conf;
+
+		$test = "Add a message with an attachment to a ticket";
+
+		$ticket_id = $this->createTicket($test);
+		$result = $this->getUrl('tickets/'.$ticket_id, $test);
+		$ref = (string) $result['content']['ref'];
+		$this->assertNotEmpty($ref, "$test The ticket must have a ref");
+
+		$filename = 'testRestTicket'.mt_rand().'.txt';
+		$data = array(
+			"id" => $ticket_id,
+			"message" => "Message with an attachment added via the REST API",
+			"attachments" => array(
+				array("filename" => $filename, "filecontent" => base64_encode("Content of the attachment"), "fileencoding" => "base64", "mimetype" => "text/plain"),
+			),
+		);
+		$result = $this->getUrl('tickets/newmessage', $test, 'POST', $data);
+		$this->assertEquals($ticket_id, (int) $result['content'], "$test The id of the ticket must be returned");
+
+		$destdir = $conf->ticket->dir_output.'/'.$ref;
+		$this->assertFileExists($destdir.'/'.$filename, "$test The attachment must be saved into the directory of the ticket");
+		$this->assertEquals("Content of the attachment", file_get_contents($destdir.'/'.$filename), "$test The attachment must be decoded");
+	}
+
+	/**
 	 * Unlink a contact with a source that is neither internal nor external
 	 *
 	 * @return void
