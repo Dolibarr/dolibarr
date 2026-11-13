@@ -206,8 +206,10 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 	$reg = array();
 	if (preg_match('/^common([a-z,]*)/', $noescapetags, $reg)) {
 		$noescapetags = 'html,body,a,b,em,hr,i,u,ul,ol,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody,h1,h2,h3,h4,h5,h6,h7,h8,h9';
+		// Add also the other content tags kept by the 'common' list of dol_string_onlythesehtmltags()
+		$noescapetags .= ',abbr,blockquote,cite,dl,dd,dt,ins,pre,q,s,strike,sub,sup,thead,tfoot';
 		// Add also html5 tags
-		$noescapetags .= ',header,footer,nav,section,menu,menuitem';
+		$noescapetags .= ',article,header,footer,nav,section,menu,menuitem';
 		if (!empty($reg[1])) {
 			$noescapetags .= $reg[1];
 		}
@@ -1671,6 +1673,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'company' => '#6c6aa8',
 				'contact' => '#6c6aa8',
 				'cron' => '#555',
+				'depositslip' => '#a69944',
 				'dynamicprice' => '#a69944',
 				'edit' => '#444',
 				'note' => '#999',
@@ -1839,6 +1842,7 @@ function getImgPictoConv($mode = 'fa')
 			'chevron-double-down' => 'angle-double-down',
 			'chevron-double-top' => 'angle-double-up',
 			'donation' => 'gift',
+			'depositslip' => 'hand-holding-usd',
 			'dynamicprice' => 'hand-holding-usd',
 			'setup' => 'cog',
 			'companies' => 'building',
