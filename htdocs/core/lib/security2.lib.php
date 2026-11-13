@@ -932,6 +932,19 @@ function dolTotpDeleteEnrollment($db, $fk_user)
 }
 
 /**
+ *  Return if the two-factor authentication is disabled for the whole instance by the parameter $dolibarr_main_disable_totp of conf.php.
+ *  This is a rescue option: when it is set, a password is enough to log in, even for a user with a TOTP enrollment.
+ *
+ *  @return		bool		True if the two-factor authentication is disabled
+ */
+function dolTotpIsDisabledByConf()
+{
+	global $dolibarr_main_disable_totp;
+
+	return !empty($dolibarr_main_disable_totp);
+}
+
+/**
  *  Start the second step of a two-factor authentication, just after a password has been validated.
  *  The session is not opened here: we only remember that the first step succeeded, so a code can be asked for in the next request.
  *
@@ -944,6 +957,11 @@ function dolTotpDeleteEnrollment($db, $fk_user)
 function dolTotpStartSecondFactor($db, $login, $entity)
 {
 	global $conf, $langs;
+
+	if (dolTotpIsDisabledByConf()) {	// Rescue option of conf.php, checked first so it works even if the enrollment can't be read
+		dol_syslog("dolTotpStartSecondFactor: two-factor authentication is disabled by dolibarr_main_disable_totp in conf.php, the password is enough for ".$login, LOG_WARNING);
+		return $login;
+	}
 
 	$tmpuser = new User($db);
 	if ($tmpuser->fetch(0, $login, '', 0, ($entity > 0 ? $entity : -1)) <= 0) {	// Just validated but not loadable: we fail closed rather than skip the second factor

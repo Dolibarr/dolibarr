@@ -580,6 +580,11 @@ if (!defined('NOLOGIN')) {
 		// It is not already authenticated and it requests the login / password
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
+		// Link "Cancel" shown when a two-factor authentication code is asked, or 2FA disabled in conf.php: back to the login and password form
+		if (GETPOST('actionlogin', 'aZ09') == 'canceltotp' || dolTotpIsDisabledByConf()) {
+			unset($_SESSION['dol_totp_pending']);
+		}
+
 		$dol_dst_observed = GETPOSTINT("dst_observed", 3);
 		$dol_dst_first = GETPOSTINT("dst_first", 3);
 		$dol_dst_second = GETPOSTINT("dst_second", 3);
