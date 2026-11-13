@@ -220,6 +220,8 @@ class OrderLine extends CommonOrderLine
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 'fk_commande@commande';	// The entity is the one of the parent order
 	}
 
 	/**

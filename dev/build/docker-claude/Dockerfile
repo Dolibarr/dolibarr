@@ -31,6 +31,7 @@ RUN apt-get update \
 		php-ast \
 		php-curl \
 		php-mysql \
+		php-pgsql \
 		php-mbstring \
 		php-xml \
 		php-gd \
@@ -41,6 +42,7 @@ RUN apt-get update \
 		php-imagick \
 		php-cli \
 		pgloader \
+		postgresql-client \
 		python3 \
 		python3-pip \
 		shellcheck \
@@ -81,8 +83,7 @@ ENV BROWSER="/usr/local/bin/open-on-host"
 
 
 # Install RTK - Rust Token Killer
-RUN curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/master/install.sh | sh \
-    && cp /root/.local/bin/rtk /usr/local/bin/rtk \
+RUN curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/master/install.sh | RTK_INSTALL_DIR=/usr/local/bin sh \
     && chmod +x /usr/local/bin/rtk \
     && rtk --version \
     && rtk gain
@@ -108,15 +109,20 @@ RUN mkdir -p /opt/php-tools \
 	&& ln -s /opt/php-tools/vendor/bin/phan /usr/local/bin/phan \
 	&& ln -s /opt/php-tools/vendor/bin/phpstan /usr/local/bin/phpstan \
 	&& ln -s /opt/php-tools/vendor/bin/phpcs /usr/local/bin/phpcs \
-	&& ln -s /opt/php-tools/vendor/bin/phpcbf /usr/local/bin/phpcbf
+	&& ln -s /opt/php-tools/vendor/bin/phpcbf /usr/local/bin/phpcbf \
+	&& rm -rf /root/.cache/composer
 
 
 # Install pre-commit - tool to manage git hooks (see https://pre-commit.com and dev/setup/pre-commit/README.md)
 # Hooks configuration for Dolibarr is the file .pre-commit-config.yaml at repository root.
 # Installed into the system python because the git hook generated on the host runs "/usr/bin/python3 -m pre_commit".
+# The packages downloaded by uv and composer are cached into /root/.cache (wheels, zips),
+# duplicating into the image files already installed: the caches are removed into the
+# same RUN, so they never enter a layer.
 RUN uv pip install --system --break-system-packages pre-commit \
     && /usr/bin/python3 -m pre_commit --version \
-    && pre-commit --version
+    && pre-commit --version \
+    && rm -rf /root/.cache/uv
 
 
 # Preload the pre-commit hooks environments of the repository into the image,

@@ -273,6 +273,7 @@ function dol_print_object_info($object, $usetable = 0)
 			print ': ';
 		}
 		$userstatic = new User($db);
+		// user_validation is not defined in Dolibarr code @phan-suppress-next-line PhanUndeclaredProperty
 		$userstatic->fetch($object->user_validation_id ? $object->user_validation_id : $object->user_validation);
 		if ($userstatic->id) {
 			print $userstatic->getNomUrl(-1, '', 0, 0, 0);
@@ -318,6 +319,7 @@ function dol_print_object_info($object, $usetable = 0)
 			}
 		} else {
 			$userstatic = new User($db);
+			// user_approve is not defined in Dolibarr code @phan-suppress-next-line PhanUndeclaredProperty
 			$userstatic->fetch($object->user_approve_id ? $object->user_approve_id : $object->user_approve);
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
