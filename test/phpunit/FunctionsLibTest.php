@@ -1122,6 +1122,18 @@ class FunctionsLibTest extends CommonClassTest
 		$input = '<i class="abc">xxx</i>';
 		$after = dol_textishtml($input);
 		$this->assertTrue($after, 'Test with i tag and class;');
+		$input = '<blockquote style="color: #8e44ad;">xxx</blockquote>';
+		$after = dol_textishtml($input);
+		$this->assertTrue($after, 'Test with blockquote tag and style');
+		$input = '<pre>a < b</pre>';
+		$after = dol_textishtml($input);
+		$this->assertTrue($after, 'Test with pre tag');
+		$input = '<dl><dt>a</dt><dd>b</dd></dl>';
+		$after = dol_textishtml($input);
+		$this->assertTrue($after, 'Test with dl tag');
+		$input = "<section style=\"padding: 30px;\">\n<h2 style=\"color: #2c3e50;\">Title</h2>\n</section>";
+		$after = dol_textishtml($input);
+		$this->assertTrue($after, 'Test with section tag and style');
 
 		// False
 		$input = 'xxx < br>';
