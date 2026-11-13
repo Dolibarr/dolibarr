@@ -60,7 +60,14 @@ $langs->load("modulebuilder");
 
 if ($action == 'delete') {
 	$attributekey = GETPOST('attrname', 'aZ09');
-	print $form->formconfirm($_SERVER['PHP_SELF']."?attrname=$attributekey&elementtype=".urlencode($pagekeyforurl), $langs->trans("DeleteExtrafield"), $langs->trans("ConfirmDeleteExtrafield", $attributekey), "confirm_delete", '', 0, 1);
+	$extrafields->fetch_name_optionals_label($elementtype);
+	// If the field is owned by a module, we warn that deleting it may break the module
+	if (!empty($extrafields->attributes[$elementtype]['module'][$attributekey])) {
+		$textconfirm = $langs->trans("ConfirmDeleteExtrafieldOfModule", $attributekey, $extrafields->attributes[$elementtype]['module'][$attributekey]);
+	} else {
+		$textconfirm = $langs->trans("ConfirmDeleteExtrafield", $attributekey);
+	}
+	print $form->formconfirm($_SERVER['PHP_SELF']."?attrname=$attributekey&elementtype=".urlencode($pagekeyforurl), $langs->trans("DeleteExtrafield"), $textconfirm, "confirm_delete", '', 0, 1);
 }
 
 ?>
