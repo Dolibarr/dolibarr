@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2026		John BOTELLA
  * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -170,4 +171,165 @@ function quickMemoInterfaceResolveElementType($element_type)
 	}
 
 	return $cache[$element_type];
+}
+
+/**
+ * SQL filter on memos (alias t) keeping only memos the current user can read.
+ * Same rules as quickMemoInterfaceCanAccessElement() (restrictedArea()), as SQL to avoid one check per memo.
+ *
+ * @return string SQL condition starting with ' AND '
+ */
+function quickMemoGetMemoAccessSqlFilter()
+{
+	global $db;
+
+	require_once __DIR__.'/../class/memo.class.php';
+
+	// Memos not linked to an object (home, list or index page): context must be available to user
+	$contexts = array();
+	foreach (Memo::getAvailableMemoContext() as $context) {
+		$contexts[] = "'".$db->escape($context)."'";
+	}
+	$conditions = array('t.status = '.Memo::STATUS_TPL);
+	if (!empty($contexts)) {
+		$conditions[] = "(COALESCE(t.element_type, '') = '' AND t.context_tab IN (".$db->sanitize(implode(',', $contexts), 1)."))";
+	}
+
+	// Memos linked to an object: read permission on the module, then on the object
+	$sql = "SELECT DISTINCT element_type FROM ".$db->prefix()."quickmemo_memo";
+	$sql .= " WHERE element_type IS NOT NULL AND element_type <> ''";
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			$elementType = (string) $obj->element_type;
+			if (!quickMemoInterfaceCanAccessElement($elementType, 0, true)) {
+				continue;
+			}
+			$condition = "t.element_type = '".$db->escape($elementType)."'";
+			$objectCondition = quickMemoGetElementAccessSqlCondition($elementType);
+			if ($objectCondition !== '') {
+				// A memo shared on element is displayed on all objects of the type, module permission is enough
+				$condition .= " AND (t.shared_on_element = 1 OR ".$objectCondition.")";
+			}
+			$conditions[] = "(".$condition.")";
+		}
+		$db->free($resql);
+	} else {
+		dol_syslog(__FUNCTION__.' '.$db->lasterror(), LOG_ERR);
+	}
+
+	return " AND (".implode(' OR ', $conditions).")";
+}
+
+/**
+ * SQL condition on t.fk_element restricting memos of an element type to the objects current user can read.
+ * Same rules as checkUserAccessToObject() for an internal user restricted to his third parties, an external user,
+ * projects, hierarchy (holiday, expense report, evaluation), bookmarks and private contacts.
+ *
+ * @param string $element_type Element type stored on the memo
+ * @return string              SQL condition, '' when module permission is enough
+ */
+function quickMemoGetElementAccessSqlCondition($element_type)
+{
+	global $db, $user;
+
+	$object = fetchObjectByElement(0, quickMemoInterfaceResolveElementType($element_type), '', 0);
+	if (!is_object($object) || empty($object->element) || empty($object->table_element)) {
+		return '0 = 1';
+	}
+	$module = !empty($object->module) ? $object->module : getElementProperties($element_type)['module'];
+	$table = $db->prefix().$db->sanitize($object->table_element);
+	$exists = "EXISTS (SELECT 1 FROM ".$table." as dbt";
+
+	$feature = $module;
+	if ($module == 'societe' && $object->element == 'contact') {
+		$feature = 'contact';
+	} elseif (in_array($module, array('projet', 'project')) && $object->element == 'project_task') {
+		$feature = 'project_task';
+	}
+
+	$isExternal = ($user->socid > 0);
+	$isRestricted = (!$isExternal && isModEnabled('societe') && !$user->hasRight('societe', 'client', 'voir'));
+	$salesRepIds = array((int) $user->id);
+	if ($isRestricted && getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
+		$salesRepIds = array_merge($salesRepIds, (array) $user->getAllChildIds());
+	}
+	$salesRepIdList = implode(',', array_map('intval', $salesRepIds));
+
+	// Same lists as checkUserAccessToObject()
+	$checkTables = array('asset', 'loan', 'localtax', 'paiement', 'paiementfourn', 'pos_cash_fence', 'tva', 'workstation_workstation', 'chargesociales');
+	$noCheckTables = array('hrm_job', 'hrm_job_user', 'hrm_skill');
+	$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'payment_sc', 'payment_vat', 'payment_donation', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment', 'chargesociales', 'knowledgemanagement', 'stock', 'stockmovement', 'workstation');
+	$checkParentSoc = array('agenda', 'contact', 'contrat', 'ticket', 'stocktransfer');
+	$noCheck = array('barcode', 'webhook');
+
+	$conditions = array();
+	if (in_array($object->table_element, $checkTables) || in_array($object->table_element, $noCheckTables)) {
+		if ($isExternal) {
+			return '0 = 1';
+		}
+	} elseif (in_array($feature, $check) || in_array($feature, $noCheck)) {
+		// Entity only, memo entity is already filtered
+	} elseif ($feature == 'societe') {
+		if ($isExternal) {
+			$conditions[] = "t.fk_element = ".((int) $user->socid);
+		} elseif ($isRestricted) {
+			$conditions[] = "EXISTS (SELECT 1 FROM ".$db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_element AND sc.fk_user IN (".$db->sanitize($salesRepIdList)."))";
+		}
+	} elseif (in_array($feature, $checkParentSoc)) {
+		// Allowed when the object is not linked to a third party
+		if ($isExternal) {
+			$conditions[] = $exists." WHERE dbt.rowid = t.fk_element AND dbt.fk_soc = ".((int) $user->socid).")";
+		} elseif ($isRestricted) {
+			$conditions[] = $exists." LEFT JOIN ".$db->prefix()."societe_commerciaux as sc ON sc.fk_soc = dbt.fk_soc AND sc.fk_user = ".((int) $user->id)." WHERE dbt.rowid = t.fk_element AND (dbt.fk_soc IS NULL OR sc.fk_soc IS NOT NULL))";
+		}
+		if ($feature == 'contact') {
+			$conditions[] = "NOT ".$exists." WHERE dbt.rowid = t.fk_element AND dbt.priv = 1 AND (dbt.fk_user_creat IS NULL OR dbt.fk_user_creat <> ".((int) $user->id)."))";
+		}
+	} elseif (in_array($feature, array('projet', 'project', 'project_task'))) {
+		if (isModEnabled('project') && !$user->hasRight('projet', 'all', 'lire')) {
+			require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+			$projectStatic = new Project($db);
+			$projectIds = $projectStatic->getProjectsAuthorizedForUser($user, 0, 1, 0);
+			$projectIds = ($projectIds !== '' ? $projectIds : '0');
+			if ($feature == 'project_task') {
+				$conditions[] = $exists." WHERE dbt.rowid = t.fk_element AND dbt.fk_projet IN (".$db->sanitize($projectIds)."))";
+			} else {
+				$conditions[] = "t.fk_element IN (".$db->sanitize($projectIds).")";
+			}
+		}
+	} elseif ($isExternal || $isRestricted) {
+		// Default: object must be linked to a third party of the user
+		$columns = $db->DDLDescTable($table, 'fk_soc');
+		if (!$columns || !$db->num_rows($columns)) {
+			return '0 = 1';
+		}
+		if ($isExternal) {
+			$conditions[] = $exists." WHERE dbt.rowid = t.fk_element AND dbt.fk_soc = ".((int) $user->socid).")";
+		} else {
+			$conditions[] = $exists.", ".$db->prefix()."societe_commerciaux as sc WHERE dbt.rowid = t.fk_element AND sc.fk_soc = dbt.fk_soc AND sc.fk_user IN (".$db->sanitize($salesRepIdList)."))";
+		}
+	}
+
+	// Hierarchy: own objects and those of subordinates
+	if (in_array($feature, array('holiday', 'expensereport', 'hrm'))) {
+		$childIds = (array) $user->getAllChildIds(1);
+		$childIds[] = (int) $user->id;
+		$childIdList = implode(',', array_map('intval', $childIds));
+		if ($feature == 'holiday' && !$user->hasRight('holiday', 'readall')) {
+			$conditions[] = $exists." WHERE dbt.rowid = t.fk_element AND (dbt.fk_user IN (".$db->sanitize($childIdList).") OR dbt.fk_validator IN (".$db->sanitize($childIdList).")))";
+		} elseif ($feature == 'expensereport' && !$user->hasRight('expensereport', 'readall')) {
+			$approver = ($user->hasRight('expensereport', 'approve') ? " OR dbt.fk_user_validator = ".((int) $user->id) : "");
+			$conditions[] = $exists." WHERE dbt.rowid = t.fk_element AND (dbt.fk_user_author IN (".$db->sanitize($childIdList).")".$approver."))";
+		} elseif ($feature == 'hrm' && $object->element == 'evaluation' && !$user->hasRight('hrm', 'evaluation', 'readall')) {
+			$conditions[] = $exists." WHERE dbt.rowid = t.fk_element AND dbt.fk_user IN (".$db->sanitize($childIdList)."))";
+		}
+	}
+
+	// Bookmarks: public or owned by user
+	if ($feature == 'bookmark' && empty($user->admin)) {
+		$conditions[] = $exists." WHERE dbt.rowid = t.fk_element AND (dbt.fk_user IS NULL OR dbt.fk_user <= 0 OR dbt.fk_user = ".((int) $user->id)."))";
+	}
+
+	return implode(' AND ', $conditions);
 }

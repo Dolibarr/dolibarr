@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2023		Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2026		John BOTELLA
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,7 +100,8 @@ class ActionsQuickMemo extends CommonHookActions
 			'context' => $context,
 		];
 
-		if (!empty($object) && is_object($object) && isset($object->element)) {
+		// Memos of list and index pages are not linked to the object of the page
+		if (!array_key_exists($context, Memo::getListIndexContexts()) && !empty($object) && is_object($object) && isset($object->element)) {
 			$jsConfVars = array_merge([
 				'archivesUrlParams' => '&search_fk_element='. (int) $object->id .'&search_element_type='.$object->element,
 				'elementId' => (int) $object->id,

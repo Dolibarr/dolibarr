@@ -3,6 +3,7 @@
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026		John BOTELLA
  * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +41,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 // load module libraries
 include_once __DIR__.'/class/memo.class.php';
+include_once __DIR__.'/lib/quickmemo.lib.php';
 // for other modules
 //dol_include_once('/othermodule/class/otherobject.class.php');
 
@@ -345,6 +347,9 @@ $sql .= ' AND ('.implode(' OR ', [
 		'( t.status = '.Memo::STATUS_VALIDATED.' AND t.private = 0 OR t.fk_user_creat = '.(int) $user->id.' )',
 		'( t.status = '.Memo::STATUS_TPL.' AND t.private_tpl = 0 OR t.fk_user_creat = '.(int) $user->id.' )',
 ]).') ';
+
+// Only memos current user can read (context of page, permission on module and object)
+$sql .= quickMemoGetMemoAccessSqlFilter();
 
 
 
