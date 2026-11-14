@@ -129,6 +129,60 @@ class DoliDBTest extends CommonClassTest
 	}
 
 	/**
+	 * testGetValueGetColumn
+	 *
+	 * @return	void
+	 */
+	public function testGetValueGetColumn()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		print __METHOD__.' db->type = '.$db->type."\n";
+
+		$table = $db->prefix().'c_country';
+
+		// getValue() without bound value
+		$nb = $db->getValue("SELECT COUNT(*) FROM ".$table);
+		$this->assertNotFalse($nb, 'getValue() failed: '.$db->lasterror());
+		$this->assertGreaterThan(0, (int) $nb);
+
+		$code = $db->getValue("SELECT code FROM ".$table." WHERE rowid = 1");
+		$this->assertNotNull($code);
+		$this->assertNotFalse($code);
+
+		// No row -> null (not false, that is a failure)
+		$this->assertNull($db->getValue("SELECT code FROM ".$table." WHERE rowid = -1"));
+
+		// Failure -> false
+		$this->assertFalse($db->getValue("SELECT code FROM ".$db->prefix()."tmp_table_that_does_not_exist"));
+		$this->assertNotEmpty($db->lasterror());
+
+		// getValue() with bound values, the same result than without
+		$this->assertSame($code, $db->getValue("SELECT code FROM ".$table." WHERE rowid = ?", array(1)));
+		$this->assertNull($db->getValue("SELECT code FROM ".$table." WHERE rowid = ?", array(-1)));
+		// A quote in a bound value is not a syntax error
+		$this->assertNull($db->getValue("SELECT code FROM ".$table." WHERE code = ?", array("a'b\"c")));
+
+		// getColumn()
+		$codes = $db->getColumn("SELECT code FROM ".$table." WHERE rowid IN (1, 2, 3) ORDER BY rowid LIMIT 10");
+		$this->assertIsArray($codes, 'getColumn() failed: '.$db->lasterror());
+		$this->assertCount(3, $codes);
+		$this->assertSame($code, $codes[0]);
+
+		$codes2 = $db->getColumn("SELECT code FROM ".$table." WHERE rowid BETWEEN 1 AND ? ORDER BY rowid LIMIT 10", array(3));
+		$this->assertSame($codes, $codes2);
+
+		$this->assertSame(array(), $db->getColumn("SELECT code FROM ".$table." WHERE rowid = -1 LIMIT 10"));
+		$this->assertFalse($db->getColumn("SELECT code FROM ".$db->prefix()."tmp_table_that_does_not_exist LIMIT 10"));
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
 	 * testPrepareExecute
 	 *
 	 * @return	void
