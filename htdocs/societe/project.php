@@ -57,6 +57,10 @@ $toselect = GETPOST('toselect', 'array:int');
 
 // Security check
 $socid = GETPOSTINT('socid');
+$mode = GETPOST('mode', 'aZ09');	// 'lead' or 'project' to split opportunities from projects (issue #23821)
+if ($mode != 'lead' && $mode != 'project') {
+	$mode = '';
+}
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -125,7 +129,7 @@ if ($socid) {
 
 	$result = $object->fetch($socid);
 
-	$title = $langs->trans("Projects");
+	$title = $langs->trans($mode == 'lead' ? "Opportunities" : "Projects");
 	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 		$title = $object->name." - ".$title;
 	}
@@ -133,7 +137,7 @@ if ($socid) {
 
 	$head = societe_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'project', $langs->trans("ThirdParty"), -1, 'company');
+	print dol_get_fiche_head($head, ($mode == 'lead' ? 'opportunity' : 'project'), $langs->trans("ThirdParty"), -1, 'company');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -180,7 +184,11 @@ if ($socid) {
 	print '<br>';
 	$params = array();
 	$backtopage = $_SERVER['PHP_SELF'].'?socid='.$object->id;
-	$newcardbutton = dolGetButtonTitle($langs->trans("NewProject"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?action=create&socid='.$object->id.'&backtopageforcancel='.urlencode($backtopage), '', 1, $params);
+	if ($mode == 'lead') {
+		$newcardbutton = dolGetButtonTitle($langs->trans("AddOpportunity"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?action=create&usage_opportunity=1&socid='.$object->id.'&backtopageforcancel='.urlencode($backtopage), '', 1, $params);
+	} else {
+		$newcardbutton = dolGetButtonTitle($langs->trans("NewProject"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?action=create&socid='.$object->id.'&backtopageforcancel='.urlencode($backtopage), '', 1, $params);
+	}
 
 	if (empty($conf->dol_optimize_smallscreen)) {
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'">';
@@ -194,7 +202,7 @@ if ($socid) {
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
 
-	$result = show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1, $newcardbutton, $massactionbutton);
+	$result = show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id.($mode ? '&mode='.$mode : ''), 1, $newcardbutton, $massactionbutton, $mode);
 
 	if (empty($conf->dol_optimize_smallscreen)) {
 		print '</form>';
