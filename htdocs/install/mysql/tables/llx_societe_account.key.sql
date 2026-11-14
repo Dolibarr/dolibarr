@@ -15,6 +15,7 @@
 
 
 -- BEGIN MODULEBUILDER INDEXES
+ALTER TABLE llx_societe_account ADD INDEX idx_societe_account_rowid (rowid);
 ALTER TABLE llx_societe_account ADD INDEX idx_societe_account_login (login);
 ALTER TABLE llx_societe_account ADD INDEX idx_societe_account_status (status);
 ALTER TABLE llx_societe_account ADD INDEX idx_societe_account_fk_website (fk_website);

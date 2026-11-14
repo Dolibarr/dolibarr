@@ -14,5 +14,6 @@
 -- along with this program.  If not, see https://www.gnu.org/licenses/.
 
 
+ALTER TABLE llx_quickmemo_memo ADD INDEX idx_quickmemo_memo_rowid (rowid);
 ALTER TABLE llx_quickmemo_memo ADD INDEX idx_quickmemo_memo_element (fk_element, element_type);
 ALTER TABLE llx_quickmemo_memo ADD INDEX idx_quickmemo_memo_status (status);

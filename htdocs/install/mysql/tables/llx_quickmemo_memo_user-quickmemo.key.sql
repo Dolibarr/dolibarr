@@ -13,4 +13,5 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see https://www.gnu.org/licenses/.
 
+ALTER TABLE llx_quickmemo_memo_user ADD INDEX idx_quickmemo_memo_rowid (fk_memo);
 ALTER TABLE llx_quickmemo_memo_user ADD UNIQUE INDEX uk_memo_user (fk_memo, fk_user);

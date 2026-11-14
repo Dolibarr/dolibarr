@@ -15,6 +15,7 @@
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 -- ========================================================================
 
+ALTER TABLE llx_asset_model ADD INDEX idx_asset_model_rowid (rowid);
 ALTER TABLE llx_asset_model ADD INDEX idx_asset_model_ref (ref);
 ALTER TABLE llx_asset_model ADD INDEX idx_asset_model_pays (fk_pays);
 ALTER TABLE llx_asset_model ADD UNIQUE INDEX uk_asset_model (entity, ref);

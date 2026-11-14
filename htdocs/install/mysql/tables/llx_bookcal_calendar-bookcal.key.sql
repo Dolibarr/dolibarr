@@ -15,6 +15,7 @@
 
 
 -- BEGIN MODULEBUILDER INDEXES
+ALTER TABLE llx_bookcal_calendar ADD INDEX idx_bookcal_calendar_rowid (rowid);
 ALTER TABLE llx_bookcal_calendar ADD INDEX idx_bookcal_calendar_ref (ref);
 ALTER TABLE llx_bookcal_calendar ADD INDEX idx_bookcal_calendar_fk_soc (fk_soc);
 ALTER TABLE llx_bookcal_calendar ADD INDEX idx_bookcal_calendar_fk_project (fk_project);

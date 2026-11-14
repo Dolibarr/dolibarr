@@ -15,6 +15,7 @@
 
 
 -- BEGIN MODULEBUILDER INDEXES
+ALTER TABLE llx_stocktransfer_stocktransferline ADD INDEX idx_stocktransfer_stocktransferline_rowid (rowid);
 -- END MODULEBUILDER INDEXES
 
 --ALTER TABLE llx_stocktransfer_stocktransferline ADD UNIQUE INDEX uk_stocktransfer_stocktransferline_fieldxy(fieldx, fieldy);

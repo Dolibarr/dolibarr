@@ -15,6 +15,7 @@
 -- along with this program.  If not, see https://www.gnu.org/licenses/.
 -- ========================================================================
 
+ALTER TABLE llx_asset_depreciation ADD INDEX idx_asset_depreciation_rowid (rowid);
 ALTER TABLE llx_asset_depreciation ADD INDEX idx_asset_depreciation_fk_asset (fk_asset);
 ALTER TABLE llx_asset_depreciation ADD INDEX idx_asset_depreciation_depreciation_mode (depreciation_mode);
 ALTER TABLE llx_asset_depreciation ADD INDEX idx_asset_depreciation_ref (ref);
