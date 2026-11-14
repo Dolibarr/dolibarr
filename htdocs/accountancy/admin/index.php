@@ -157,7 +157,7 @@ $accounting_mode = getDolGlobalString('ACCOUNTING_MODE', 'CREANCES-DETTES');
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
-if (in_array($action, array('setACCOUNTANCY_ER_DATE_RECORD', 'setACCOUNTING_BANK_CONCILIATED'))) {
+if (in_array($action, array('setACCOUNTANCY_ER_DATE_RECORD', 'setACCOUNTING_BANK_CONCILIATED', 'setACCOUNTING_BOOK_EXCHANGE_DIFFERENCE'))) {
 	$constname = preg_replace('/^set/', '', $action);
 	$constvalue = GETPOSTINT('value');
 	$res = dolibarr_set_const($db, $constname, $constvalue, 'yesno', 0, '', $conf->entity);
@@ -703,6 +703,21 @@ if (getDolGlobalString('ACCOUNTING_DISABLE_TRANSFER_ON_DISCOUNTS')) {
 	print '</a></td>';
 }
 print '</tr>';
+
+if (isModEnabled('multicurrency')) {
+	print '<tr class="oddeven">';
+	print '<td>'.$form->textwithpicto($langs->trans("ACCOUNTING_BOOK_EXCHANGE_DIFFERENCE"), $langs->trans("ACCOUNTING_BOOK_EXCHANGE_DIFFERENCE_DESC")).'</td>';
+	if (getDolGlobalInt('ACCOUNTING_BOOK_EXCHANGE_DIFFERENCE')) {
+		print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setACCOUNTING_BOOK_EXCHANGE_DIFFERENCE&value=0">';
+		print img_picto($langs->trans("Activated"), 'switch_on');
+		print '</a></td>';
+	} else {
+		print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setACCOUNTING_BOOK_EXCHANGE_DIFFERENCE&value=1">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+		print '</a></td>';
+	}
+	print '</tr>';
+}
 
 if (!getDolGlobalString('ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS')) {
 	print '<tr class="oddeven">';
