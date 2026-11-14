@@ -3449,6 +3449,45 @@ function top_menu_bookmark()
 }
 
 /**
+ * Return the input of the global search box that shows the matching records while typing (option MAIN_SEARCHBOX_SHOW_RECORDS)
+ *
+ * @param	string		$htmlid			Id of the input. The panel with the results has the id $htmlid.'-results'.
+ * @param	string		$morecss		More css classes for the input
+ * @param	array<string,array{text:string,url:string}>	$arraysections	Sections of the search box, shown before the minimum number of characters is typed. Empty array to show nothing.
+ * @param	string		$container		Css selector of an element that gets the class 'globalsearch-active' while records are shown
+ * @param	string		$moreattr		More attributes for the input
+ * @return	string						HTML content
+ */
+function globalSearchInput($htmlid, $morecss = '', $arraysections = array(), $container = '', $moreattr = '')
+{
+	global $conf, $langs;
+
+	$minchars = max(1, getDolGlobalInt('MAIN_SEARCHBOX_MIN_CHARS', 3));
+
+	$sections = array();
+	foreach ($arraysections as $section) {
+		$sections[] = array('text' => $section['text'], 'url' => $section['url']);
+	}
+
+	$html = '<input type="search" name="search_all" id="'.dol_escape_htmltag($htmlid).'" class="globalsearch-input'.($morecss ? ' '.$morecss : '').'"';
+	$html .= ' placeholder="'.dol_escape_htmltag($langs->trans('Search')).'" title="'.dol_escape_htmltag($langs->trans('Search').' ('.$conf->browser->stringforfirstkey.' s)').'"';
+	$html .= ' autocomplete="off" spellcheck="false" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="'.dol_escape_htmltag($htmlid).'-results"';
+	$html .= ' data-url="'.dol_escape_htmltag(DOL_URL_ROOT.'/core/ajax/globalsearch.php').'"';
+	$html .= ' data-minchars="'.$minchars.'"';
+	$html .= ' data-sections="'.dol_escape_htmltag(json_encode($sections)).'"';
+	$html .= ($container ? ' data-container="'.dol_escape_htmltag($container).'"' : '');
+	$html .= ' data-text-typemore="'.dol_escape_htmltag($langs->trans('SearchBoxTypeMore', $minchars)).'"';
+	$html .= ' data-text-noresult="'.dol_escape_htmltag($langs->trans('NoRecordFound')).'"';
+	$html .= ' data-text-seeall="'.dol_escape_htmltag($langs->trans('SeeAll')).'"';
+	$html .= ' data-text-searchinlist="'.dol_escape_htmltag($langs->trans('SearchBoxSearchIntoList')).'"';
+	$html .= ($moreattr ? ' '.$moreattr : '').'>';
+	$html .= '<div id="'.dol_escape_htmltag($htmlid).'-results" class="globalsearch-results" role="listbox" aria-label="'.dol_escape_htmltag($langs->trans('Search')).'" hidden></div>';
+	$html .= '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/globalsearch.js?v='.urlencode(DOL_VERSION).'"></script>';
+
+	return $html;
+}
+
+/**
  * Build the tooltip on top menu search
  *
  * @return  string                  HTML content
@@ -3463,7 +3502,12 @@ function top_menu_search()
 	$arrayresult = array();
 	include DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php'; // This sets $arrayresult
 
-	$searchInput = '<input type="search" name="search_all" title="'.dol_escape_htmltag($conf->browser->stringforfirstkey.' s').'" id="top-global-search-input" class="dropdown-search-input search_component_input" placeholder="'.$langs->trans('Search').'" autocomplete="off">';
+	if (getDolGlobalString('MAIN_SEARCHBOX_SHOW_RECORDS')) {
+		// The list of sections stays shown below the input until enough characters are typed
+		$searchInput = globalSearchInput('top-global-search-input', 'dropdown-search-input search_component_input', array(), '#topmenu-global-search-dropdown');
+	} else {
+		$searchInput = '<input type="search" name="search_all" title="'.dol_escape_htmltag($conf->browser->stringforfirstkey.' s').'" id="top-global-search-input" class="dropdown-search-input search_component_input" placeholder="'.$langs->trans('Search').'" autocomplete="off">';
+	}
 
 	$defaultAction = '';
 	$buttonList = '<div class="dropdown-global-search-button-list" >';
@@ -3514,6 +3558,10 @@ function top_menu_search()
 
         // prevent submitting form on press ENTER
         jQuery("#top-global-search-input").keydown(function (e) {
+            /* When the matching records are shown, keys are managed by globalsearch.js */
+            if (jQuery(this).hasClass("globalsearch-input") && jQuery(this).val().trim().length >= parseInt(jQuery(this).data("minchars"))) {
+                return;
+            }
             if (e.keyCode == 13 || e.keyCode == 40) {
                 var inputs = $(this).parents("form").eq(0).find(":button");
                 if (inputs[inputs.index(this) + 1] != null) {
@@ -3636,8 +3684,10 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 		}
 		$selected = -1;
 		if (!getDolGlobalString('MAIN_USE_TOP_MENU_SEARCH_DROPDOWN')) {
+			$showrecords = (!empty($conf->use_javascript_ajax) && getDolGlobalString('MAIN_SEARCHBOX_SHOW_RECORDS'));
+
 			// Select with select2 is awful on smartphone. TODO Is this still true with select2 v4 ?
-			if ($conf->browser->layout == 'phone') {
+			if ($conf->browser->layout == 'phone' && !$showrecords) {
 				$conf->global->MAIN_USE_OLD_SEARCH_FORM = 1;
 			}
 
@@ -3645,7 +3695,13 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 			$arrayresult = array();
 			include DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php'; // This make initHooks('searchform') then set $arrayresult
 
-			if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_USE_OLD_SEARCH_FORM')) {
+			if ($showrecords && !getDolGlobalString('MAIN_USE_OLD_SEARCH_FORM')) {
+				// Search box showing the matching records while typing
+				$searchform .= '<div class="globalsearch-left" role="search">';
+				$searchform .= '<span class="fa fa-search globalsearch-picto" aria-hidden="true"></span>';
+				$searchform .= globalSearchInput('globalsearch-left-input', 'vmenusearchselectcombo', $arrayresult, '', 'accesskey="s"');
+				$searchform .= '</div>';
+			} elseif (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_USE_OLD_SEARCH_FORM')) {
 				//$textsearch = $langs->trans("Search");
 				$textsearch = '<span class="fa fa-search paddingright pictofixedwidth"></span>'.$langs->trans("Search");
 				$searchform .= $form->selectArrayFilter('searchselectcombo', $arrayresult, (string) $selected, 'accesskey="s"', 1, 0, (getDolGlobalString('MAIN_SEARCHBOX_CONTENT_LOADED_BEFORE_KEY') ? 0 : 1), 'vmenusearchselectcombo', 1, $textsearch, 1, $conf->browser->stringforfirstkey.' s');
@@ -3697,7 +3753,11 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 		        });
 
 		        var openGlobalSearchDropDown = function() {
-		            jQuery("#searchselectcombo").select2(\'open\');
+		            if (jQuery("#globalsearch-left-input").length) {
+		                jQuery("#globalsearch-left-input").focus();
+		            } else {
+		                jQuery("#searchselectcombo").select2(\'open\');
+		            }
 		        }
 			</script>';
 		}

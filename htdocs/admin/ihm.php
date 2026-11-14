@@ -546,6 +546,12 @@ if ($mode == 'other') {
 	print '</td>';
 	print '</tr>';
 
+	// Show the matching records while typing into the search box
+	print '<tr class="oddeven"><td>' . img_picto('', 'search', 'class="pictofixedwidth"'). ' '.$form->textwithpicto($langs->trans("SearchBoxShowRecords"), $langs->trans("SearchBoxShowRecordsDesc", max(1, getDolGlobalInt('MAIN_SEARCHBOX_MIN_CHARS', 3)), max(1, getDolGlobalInt('MAIN_SEARCHBOX_NB_RECORDS', 5)))) .'</td><td>';
+	print ajax_constantonoff("MAIN_SEARCHBOX_SHOW_RECORDS", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
+	print '</td>';
+	print '</tr>';
+
 	// Show bugtrack link
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("ShowBugTrackLink", $langs->transnoentitiesnoconv("FindBug")), $langs->trans("ShowBugTrackLinkDesc"));
