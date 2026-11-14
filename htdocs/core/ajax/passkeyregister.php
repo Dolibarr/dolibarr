@@ -77,7 +77,7 @@ top_httphead('application/json');
 $result = array('success' => false);
 
 try {
-	if ($action == 'getoptions') {
+	if ($action == 'getoptions') {	// Test on permission already done
 		$setuperror = passkeyCheckSetup();
 		if ($setuperror) {
 			throw new Exception($setuperror);
@@ -114,7 +114,7 @@ try {
 		);
 
 		$result = array('success' => true, 'options' => $args);
-	} elseif ($action == 'verify') {
+	} elseif ($action == 'verify') {	// Test on permission already done
 		$sessiondata = (empty($_SESSION['passkey_register']) ? array() : $_SESSION['passkey_register']);
 		unset($_SESSION['passkey_register']);	// A challenge can be used only once
 
@@ -171,6 +171,11 @@ try {
 	dol_syslog("passkeyregister action=".$action." error: ".$e->getMessage(), LOG_WARNING);
 	$result = array('success' => false, 'error' => $e->getMessage());
 }
+
+
+/*
+ * View
+ */
 
 print json_encode($result);
 

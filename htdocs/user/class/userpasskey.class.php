@@ -171,7 +171,8 @@ class UserPasskey extends CommonObject
 	 */
 	public function fetch($id, $credential_id = '')
 	{
-		$sql = "SELECT ".$this->getSqlFields();
+		$sql = "SELECT ";
+		$sql .= $this->getSqlFields();
 		$sql .= " FROM ".$this->db->prefix().$this->table_element;
 		if ($id > 0) {
 			$sql .= " WHERE rowid = ".((int) $id);
@@ -209,7 +210,8 @@ class UserPasskey extends CommonObject
 	{
 		$list = array();
 
-		$sql = "SELECT ".$this->getSqlFields();
+		$sql = "SELECT ";
+		$sql .= $this->getSqlFields();
 		$sql .= " FROM ".$this->db->prefix().$this->table_element;
 		$sql .= " WHERE fk_user = ".((int) $fk_user);
 		$sql .= " AND service = '".$this->db->escape(self::SERVICE)."'";
