@@ -479,3 +479,61 @@ function repairMailingFiles($mailing, $directory, $documentroot, $ambiguous = fa
 	}
 	return $report;
 }
+
+/**
+ * Restore a user's missing photo and thumbnails without overwriting existing files.
+ *
+ * @param int $id User id
+ * @param string $photo Stored photo filename
+ * @param string $directory Owner's native user directory (entity 1 for global users)
+ * @param string $documentroot Installation's documents directory
+ * @param bool $confirmed Apply the repair; false only reports planned copies
+ * @return array{files:list<array{source:string,target:string}>,error:string}
+ */
+function repairUserPicture($id, $photo, $directory, $documentroot, $confirmed = false)
+{
+	$report = array('files' => array(), 'error' => '');
+	if ($id <= 0 || $photo === '' || $photo !== dol_sanitizeFileName($photo) || basename($photo) !== $photo) {
+		$report['error'] = 'ErrorWrongParameters';
+		return $report;
+	}
+	if (!repairImagePathIsSafe($directory.'/'.$id, $directory, $documentroot)) {
+		$report['error'] = 'RepairImagesDirectoryUnavailable';
+		return $report;
+	}
+	$pictureuser = new User(null);
+	$pictureuser->id = $id;
+	$pictureuser->ref = (string) $id;
+	$targetdirectory = $directory.'/'.get_exdir(0, 0, 0, 0, $pictureuser, 'user').'photos';
+	$oldhierarchy = substr(sprintf('%08d', $id), -1, 1).'/'.substr(sprintf('%08d', $id), -2, 1);
+	// Both historical layouts predate the current <id>/photos directory.
+	$sourcedirectories = array($directory.'/'.$id, $directory.'/'.$oldhierarchy);
+	$extension = pathinfo($photo, PATHINFO_EXTENSION);
+	$stem = $extension !== '' ? substr($photo, 0, -strlen($extension) - 1) : $photo;
+	foreach (array($photo, 'thumbs/'.$stem.'_small'.($extension !== '' ? '.'.$extension : ''), 'thumbs/'.$stem.'_mini'.($extension !== '' ? '.'.$extension : '')) as $relativefile) {
+		$target = $targetdirectory.'/'.$relativefile;
+		if (!repairImagePathIsSafe($target, $directory, $documentroot)) {
+			$report['error'] = 'RepairImagesFailed';
+			continue;
+		}
+		if (file_exists(dol_osencode($target))) {
+			continue;
+		}
+		foreach ($sourcedirectories as $sourcedirectory) {
+			$source = $sourcedirectory.'/'.$relativefile;
+			if (!repairImagePathIsSafe($source, $directory, $documentroot)) {
+				$report['error'] = 'RepairImagesFailed';
+				break;
+			}
+			if (!dol_is_file($source)) {
+				continue;
+			}
+			$report['files'][] = array('source' => $source, 'target' => $target);
+			if ($confirmed && (dol_mkdir(dirname($target)) < 0 || dol_copy($source, $target, '0', 0) <= 0)) {
+				$report['error'] = 'RepairImagesFailed';
+			}
+			break;
+		}
+	}
+	return $report;
+}
