@@ -32,6 +32,7 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.facture.class.php';
 require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.facture-rec.class.php';
+require_once dirname(__FILE__).'/../../htdocs/fourn/class/paiementfourn.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
@@ -229,5 +230,54 @@ class FactureFournisseurTest extends CommonClassTest
 		} finally {
 			date_default_timezone_set($savtz);
 		}
+	}
+
+	/**
+	 * A payment in the invoice currency that settles its whole remaining amount closes the supplier invoice,
+	 * even when converting that amount gives one cent less than the sum of the converted lines.
+	 *
+	 * @return	void
+	 */
+	public function testFactureFournisseurPaidInInvoiceCurrencyIsClosed()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$rate = 1.0862009;
+		$unitpriceininvoicecurrency = 100.10;
+
+		$invoice = new FactureFournisseur($db);
+		$invoice->initAsSpecimen();
+		$invoice->lines = array();
+		$invoice->ref_supplier = 'PAIDININVOICECURRENCY'.dol_now();
+		$invoice->multicurrency_code = 'USD';
+		$invoice->multicurrency_tx = $rate;
+		$this->assertLessThan($invoice->create($user), 0, 'FactureFournisseur::create failed: '.$invoice->error);
+		for ($i = 0; $i < 2; $i++) {
+			$result = $invoice->addline('Line in invoice currency', 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 'HT', 0, -1, 0, array(), null, 0, $unitpriceininvoicecurrency);
+			$this->assertLessThan($result, 0, 'FactureFournisseur::addline failed: '.$invoice->error);
+		}
+		$this->assertLessThan($invoice->validate($user), 0, 'FactureFournisseur::validate failed: '.$invoice->error);
+		$invoice->fetch($invoice->id);
+
+		$amountininvoicecurrency = (float) price2num($invoice->multicurrency_total_ttc, 'MT');
+		$this->assertNotEquals((float) price2num($amountininvoicecurrency / $rate, 'MT'), (float) price2num($invoice->total_ttc, 'MT'), 'Test needs lines whose converted sum differs from the converted total');
+
+		$payment = new PaiementFourn($db);
+		$payment->datepaye = dol_now();
+		$payment->multicurrency_amounts = array($invoice->id => $amountininvoicecurrency);
+		$payment->multicurrency_code = array($invoice->id => 'USD');
+		$payment->multicurrency_tx = array($invoice->id => $rate);
+		$payment->paiementcode = 'LIQ';
+		$payment->paiementid = dol_getIdFromCode($db, $payment->paiementcode, 'c_paiement', 'code', 'id', 1);
+		$paymentid = $payment->create($user, 1);
+		$this->assertLessThan($paymentid, 0, 'PaiementFourn::create failed: '.$payment->error);
+
+		$invoice->fetch($invoice->id);
+		$this->assertEquals((float) price2num($invoice->total_ttc, 'MT'), (float) price2num($payment->amount, 'MT'), 'Payment amount in company currency differs from the invoice total');
+		$this->assertEquals(FactureFournisseur::STATUS_CLOSED, $invoice->status, 'Supplier invoice fully paid in its currency is not closed');
 	}
 }
