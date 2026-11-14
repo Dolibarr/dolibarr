@@ -17,7 +17,6 @@
 -- ============================================================================
 
 ALTER TABLE llx_projet_task_dependency ADD UNIQUE INDEX uk_projet_task_dependency (fk_task, fk_task_depend);
-ALTER TABLE llx_projet_task_dependency ADD INDEX idx_projet_task_dependency_fk_task (fk_task);
 ALTER TABLE llx_projet_task_dependency ADD INDEX idx_projet_task_dependency_fk_task_depend (fk_task_depend);
 
 ALTER TABLE llx_projet_task_dependency ADD CONSTRAINT fk_projet_task_dependency_fk_task FOREIGN KEY (fk_task) REFERENCES llx_projet_task (rowid);
