@@ -9399,6 +9399,24 @@ div.clipboardCPValue.hidewithsize {
 	opacity:0.8;
 	filter: blur(1px) grayscale(90%);
 }
+.dropzoneattachfile {
+	margin: 0 12px 0 0;
+	padding: 4px 12px;
+	border: 2px dashed var(--colortextlink);
+	border-radius: 6px;
+	color: var(--colortextlink);
+	opacity: 0.6;
+	white-space: nowrap;
+	cursor: copy;
+}
+.dropzoneattachfile.dropzoneattachfileover, .dropzoneattachfile.dropzoneattachfilebusy {
+	opacity: 1;
+	border-style: solid;
+	background-color: var(--colorbacklinepairhover);
+}
+.dropzoneattachfile.dropzoneattachfilebusy {
+	cursor: progress;
+}
 .dragDropAreaMessage {
 	position: absolute;
 	left:50%;

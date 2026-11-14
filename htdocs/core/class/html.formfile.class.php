@@ -1420,6 +1420,17 @@ class FormFile
 
 			// Show title of list of existing files
 			$morehtmlright = '';
+
+			// Area next to the + button where files can be dropped. They are uploaded with the form to add a file
+			// ($moreoptions['afteruploadtitle']), so exactly as with the + button. It also shows the user that files
+			// can be added by drag and drop. Not on smartphones, where files can't be dragged.
+			$showdropzone = (!empty($moreoptions['showhideaddbutton']) && !empty($moreoptions['afteruploadtitle']) && $conf->use_javascript_ajax && $permtoeditline && empty($conf->dol_optimize_smallscreen));
+			if ($showdropzone) {
+				$morehtmlright .= '<span class="dropzoneattachfile inline-block valignmiddle" title="'.dolPrintHTMLForAttribute($langs->trans("DropFileToAddItToObject")).'">';
+				$morehtmlright .= img_picto('', 'file-upload', 'class="pictofixedwidth"').$langs->trans("DropFilesHere");
+				$morehtmlright .= '</span>';
+			}
+
 			if (!empty($moreoptions['showhideaddbutton']) && $conf->use_javascript_ajax) {
 				$tmpurlforbutton = 'javascript:console.log("open add file form"); if (jQuery(".divattachnewfile").is(":hidden")) { jQuery(".divattachnewfile").removeClass("hidden"); jQuery(".divattachnewfile input[type=\'file\']").first().click(); } else { jQuery(".divattachnewfile").addClass("hidden"); } void(0);';
 				$morehtmlright .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $tmpurlforbutton, '', $permtoeditline);
@@ -1431,6 +1442,54 @@ class FormFile
 			if (!empty($moreoptions) && $moreoptions['afteruploadtitle']) {
 				print '<!-- Add form from $moreoptions[\'afteruploadtitle\'] -->';
 				print '<div class="divattachnewfile'.((!empty($moreoptions['showhideaddbutton']) && $conf->use_javascript_ajax) ? ' hidden' : '').'">'.$moreoptions['afteruploadtitle'].'</div>';
+			}
+			if ($showdropzone) {
+				print "\n<!-- JS CODE TO UPLOAD THE FILES DROPPED ON .dropzoneattachfile -->\n";
+				print '<script>
+				jQuery(document).ready(function() {
+					function dropzoneHasFiles(ev) {
+						var types = ev.originalEvent.dataTransfer ? ev.originalEvent.dataTransfer.types : null;
+						return !!types && jQuery.inArray("Files", types) !== -1;
+					}
+					/* stopPropagation(): the tab may also be a drop area (dol_get_fiche_head() with $dragdropfile), that would upload the files a second time */
+					jQuery(".dropzoneattachfile").on("dragenter dragover", function(ev) {
+						ev.stopPropagation();
+						if (!dropzoneHasFiles(ev)) {
+							return;
+						}
+						ev.preventDefault();
+						ev.originalEvent.dataTransfer.dropEffect = "copy";
+						jQuery(this).addClass("dropzoneattachfileover");
+						/* Remove the highlight of the drop area of the tab, it blurs this zone */
+						jQuery(".highlightDragDropArea").removeClass("highlightDragDropArea");
+						jQuery(".dragDropAreaMessage").addClass("hidden");
+					}).on("dragleave", function(ev) {
+						if (!jQuery.contains(this, ev.originalEvent.relatedTarget)) {
+							jQuery(this).removeClass("dropzoneattachfileover");
+						}
+					}).on("drop", function(ev) {
+						ev.preventDefault();
+						ev.stopPropagation();
+						jQuery(this).removeClass("dropzoneattachfileover");
+						var files = ev.originalEvent.dataTransfer ? ev.originalEvent.dataTransfer.files : null;
+						var input = jQuery(".divattachnewfile input[type=\'file\']").get(0);
+						var button = jQuery(".divattachnewfile input[type=\'submit\'][name=\'sendit\']").get(0);
+						if (!files || !files.length || !input || !button || input.disabled || button.disabled) {
+							return;
+						}
+						if (files.length > 1 && !input.multiple) {
+							/* The form accepts only one file */
+							var onefile = new DataTransfer();
+							onefile.items.add(files[0]);
+							files = onefile.files;
+						}
+						console.log("dropzoneattachfile: upload of "+files.length+" file(s) with the form to add a file");
+						input.files = files;
+						jQuery(this).addClass("dropzoneattachfilebusy");
+						button.click();	/* click() and not submit(), so the name of the button (sendit) is sent */
+					});
+				});
+				</script>'."\n";
 			}
 
 			// Show the table
