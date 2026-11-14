@@ -261,6 +261,61 @@ class Fichinter extends CommonObject
 		$this->ismultientitymanaged = 1;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Load intervention indicators for the home workboard.
+	 *
+	 * @param User $user User whose accessible interventions are counted
+	 * @param 'draft'|'validated' $mode Intervention state to count
+	 * @return WorkboardResponse|int<-1,-1> Indicators, or -1 on failure
+	 */
+	public function load_board($user, $mode)
+	{
+		// phpcs:enable
+		global $langs;
+
+		if ($user->socid || !$user->hasRight('ficheinter', 'lire') || !in_array($mode, array('draft', 'validated'), true)) {
+			return -1;
+		}
+
+		$status = ($mode == 'draft' ? self::STATUS_DRAFT : self::STATUS_VALIDATED);
+		$sql = "SELECT COUNT(f.rowid) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
+		$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
+		$sql .= " AND f.fk_statut = ".((int) $status);
+		if (!$user->hasRight('societe', 'client', 'voir')) {
+			$sql .= " AND (EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $user->id).")";
+			if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
+				$userschilds = $user->getAllChildIds();
+				if ($userschilds) {
+					$sql .= " OR EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user IN (".$this->db->sanitize(implode(',', $userschilds))."))";
+				}
+			}
+			$sql .= ")";
+		}
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		$obj = $this->db->fetch_object($resql);
+		$this->db->free($resql);
+		if (!$obj) {
+			return -1;
+		}
+
+		$response = new WorkboardResponse();
+		$response->id = $this->element.'_'.$mode;
+		$response->label = $langs->trans($mode == 'draft' ? 'ToValidate' : 'ToProcess');
+		$response->url = DOL_URL_ROOT.'/fichinter/list.php?search_status='.$status;
+		$response->img = img_object('', $this->picto);
+		$response->nbtodo = (int) $obj->nb;
+		$response->warning_delay = 0;
+		return $response;
+	}
+
 	/**
 	 *  Load indicators into this->nb for board
 	 *
