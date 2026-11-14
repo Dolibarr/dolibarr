@@ -56,6 +56,7 @@ if (is_numeric($entity)) {
 }
 include '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -81,20 +82,8 @@ $response = "";
 
 $type = $mode;
 
-global $dolibarr_main_instance_unique_id;
-$defaultsalt = substr(dol_hash('dolibarr'.$dolibarr_main_instance_unique_id, 'sha256'), 0, 32);		// Fallback if no specific salt was set
-
 // Security check
-$securekeyseed = '';
-if ($type == 'proposal') {
-	$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
-} elseif ($type == 'contract') {
-	$securekeyseed = getDolGlobalString('CONTRACT_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
-} elseif ($type == 'fichinter') {
-	$securekeyseed = getDolGlobalString('FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
-} else {
-	$securekeyseed = getDolGlobalString(strtoupper($type).'_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
-}
+$securekeyseed = getOnlineSignatureSecuritySeed($type);
 
 if (empty($SECUREKEY) || !dol_verifyHash($securekeyseed . $type . $ref . (!isModEnabled('multicompany') ? '' : $entity), $SECUREKEY, '0')) {
 	// Link may have expired because of a change into the keys used to forge the signature.
