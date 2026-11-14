@@ -110,8 +110,9 @@ ALTER TABLE llx_categorie_mo ADD CONSTRAINT fk_categorie_mo_categorie_rowid FORE
 ALTER TABLE llx_categorie_mo ADD CONSTRAINT fk_categorie_mo_fk_mo_rowid FOREIGN KEY (fk_mo) REFERENCES llx_mrp_mo (rowid);
 
 ALTER TABLE llx_facture ADD COLUMN fk_thirdparty_rib_id integer NULL;
-ALTER TABLE llx_facture_fourn ADD COLUMN fk_thirdparty_rib_id integer NULL;
+ALTER TABLE llx_facture ADD COLUMN amount_retained_warranty double(24,8) DEFAULT 0 NOT NULL AFTER retained_warranty;
 
+ALTER TABLE llx_facture_fourn ADD COLUMN fk_thirdparty_rib_id integer NULL;
 ALTER TABLE llx_facture_fourn ADD COLUMN payment_reference varchar(25);
 ALTER TABLE llx_facture_fourn ADD COLUMN dispute_status	integer DEFAULT 0;
 
