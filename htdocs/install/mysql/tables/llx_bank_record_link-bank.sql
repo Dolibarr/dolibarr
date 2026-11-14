@@ -19,6 +19,7 @@
 
 -- Table to receive manual import of a bank statement
 -- Try to match compatibility with external module banking to capitalize on knowledge but removed fields for advanced features.
+-- Deprecated: replaced by native lines table llx_bank_statement_det
 
 CREATE TABLE llx_bank_record_link
 (

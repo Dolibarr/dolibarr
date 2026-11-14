@@ -730,3 +730,51 @@ ALTER TABLE llx_subscription DROP INDEX idx_subscription_fk_adherent;
 
 -- Remove index of llx_quickmemo_memo_user on fk_memo (duplicate of uk_memo_user). Mysql only: with pgsql, this name is the one of an index of llx_quickmemo_memo
 -- VMYSQL4.1 DROP INDEX idx_quickmemo_memo_rowid ON llx_quickmemo_memo_user;
+
+-- Bank statement lines / transactions (ISO 20022 camt.053 & MT940)
+ALTER TABLE llx_bank_import RENAME TO llx_bank_statement_det;
+
+ALTER TABLE llx_bank_statement_det MODIFY COLUMN id_account integer NULL DEFAULT 0;
+ALTER TABLE llx_bank_statement_det MODIFY COLUMN record_type_origin varchar(255) NULL;
+ALTER TABLE llx_bank_statement_det MODIFY COLUMN label_origin varchar(255) NULL;
+ALTER TABLE llx_bank_statement_det MODIFY COLUMN amount_debit double(24,8) NULL DEFAULT 0;
+ALTER TABLE llx_bank_statement_det MODIFY COLUMN amount_credit double(24,8) NULL DEFAULT 0;
+ALTER TABLE llx_bank_statement_det MODIFY COLUMN datec datetime NULL;
+ALTER TABLE llx_bank_statement_det MODIFY COLUMN fk_user_author integer NULL DEFAULT 0;
+ALTER TABLE llx_bank_statement_det MODIFY COLUMN datas text NULL;
+
+ALTER TABLE llx_bank_statement_det ADD COLUMN fk_bank_statement integer NOT NULL AFTER rowid;
+ALTER TABLE llx_bank_statement_det ADD COLUMN amount double(24,8) NOT NULL AFTER vdate;
+ALTER TABLE llx_bank_statement_det ADD COLUMN currency_code varchar(3) DEFAULT 'EUR' AFTER amount;
+ALTER TABLE llx_bank_statement_det ADD COLUMN charges_amount double(24,8) DEFAULT 0 AFTER currency_code;
+ALTER TABLE llx_bank_statement_det ADD COLUMN end_to_end_id varchar(64) NULL AFTER label;
+ALTER TABLE llx_bank_statement_det ADD COLUMN acct_svcr_ref varchar(64) NULL AFTER end_to_end_id;
+ALTER TABLE llx_bank_statement_det ADD COLUMN mandate_id varchar(64) NULL AFTER acct_svcr_ref;
+ALTER TABLE llx_bank_statement_det ADD COLUMN check_number varchar(32) NULL AFTER mandate_id;
+ALTER TABLE llx_bank_statement_det ADD COLUMN counterparty_name varchar(255) NULL AFTER check_number;
+ALTER TABLE llx_bank_statement_det ADD COLUMN counterparty_iban varchar(34) NULL AFTER counterparty_name;
+ALTER TABLE llx_bank_statement_det ADD COLUMN counterparty_bic varchar(11) NULL AFTER counterparty_iban;
+ALTER TABLE llx_bank_statement_det ADD COLUMN remittance_unstructured text NULL AFTER counterparty_bic;
+ALTER TABLE llx_bank_statement_det ADD COLUMN remittance_structured varchar(140) NULL AFTER remittance_unstructured;
+ALTER TABLE llx_bank_statement_det ADD COLUMN bank_tx_code varchar(16) NULL AFTER remittance_structured;
+ALTER TABLE llx_bank_statement_det ADD COLUMN proprietary_code varchar(32) NULL AFTER bank_tx_code;
+ALTER TABLE llx_bank_statement_det ADD COLUMN fk_soc integer NULL AFTER fitid;
+ALTER TABLE llx_bank_statement_det ADD COLUMN fk_bank integer NULL AFTER fk_soc;
+
+ALTER TABLE llx_bank_statement_det ADD INDEX idx_bank_statement_det_fk_bank_statement (fk_bank_statement);
+ALTER TABLE llx_bank_statement_det ADD INDEX idx_bank_statement_det_bdate (bdate);
+ALTER TABLE llx_bank_statement_det ADD INDEX idx_bank_statement_det_vdate (vdate);
+ALTER TABLE llx_bank_statement_det ADD INDEX idx_bank_statement_det_end_to_end_id (end_to_end_id);
+ALTER TABLE llx_bank_statement_det ADD INDEX idx_bank_statement_det_fk_bank (fk_bank);
+ALTER TABLE llx_bank_statement_det ADD INDEX idx_bank_statement_det_fk_soc (fk_soc);
+ALTER TABLE llx_bank_statement_det ADD INDEX idx_bank_statement_det_status (status);
+
+CREATE TABLE llx_bank_statement_det_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)
+) ENGINE=innodb;
+
+ALTER TABLE llx_bank_statement_det_extrafields ADD UNIQUE INDEX uk_bank_statement_det_extrafields (fk_object);
