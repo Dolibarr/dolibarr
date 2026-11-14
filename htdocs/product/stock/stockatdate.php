@@ -319,6 +319,8 @@ if ($productid > 0) {
 if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 	$sql .= " AND p.fk_product_type = 0";
 }
+$excludefilter = Entrepot::getSqlFilterExcludingVariantParents($db, 'p.rowid');
+$sql .= $excludefilter;
 if ($search_ref) {
 	$sql .= natural_search('p.ref', $search_ref);
 }
