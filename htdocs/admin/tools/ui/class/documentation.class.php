@@ -303,6 +303,18 @@ class Documentation
 						'Introduction' => '#ux-introduction',
 						'TooltipThemesAndOrientation' => '#tooltip-themes',),
 				),
+				'UxMenuAjaxCardEdition' => array(
+					'url' => dol_buildpath($this->baseUrl.'/experimental/ajax-card-edition/index.php', 1),
+					'icon' => 'fas fa-bolt',
+					'submenu' => array(),
+					'summary' => array(
+						'Introduction' => '#ajax-card-edition-introduction',
+						'AjaxCardEditionEnable' => '#ajax-card-edition-enable',
+						'AjaxCardEditionWhat' => '#ajax-card-edition-what',
+						'FieldEditTool' => '#titlesection-tool-fieldedit',
+						'LineEditTool' => '#titlesection-tool-lineedit',
+					),
+				),
 			)
 		);
 
