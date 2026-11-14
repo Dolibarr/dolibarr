@@ -68,8 +68,8 @@ if ($documentation === null || !($documentation instanceof Documentation)) { ret
 	</p>
 	<ul>
 		<li><code>setField(field, value, options)</code> saves one field with <code>core/ajax/objectfield.php</code>. Only fields editable from the UI can be saved: <code>'uieditable' => 1</code> in <code>$fields</code>, see <code>CommonObject::isFieldEditableFromUi()</code>. Returns the data of the response <code>{element, id, field, value, html, fields, tms}</code>, where <code>html</code> is the new value formatted for display and <code>fields</code> the updated field and the other fields changed by the update. For a field with several inputs, like a date, <code>value</code> is an object with the suffixes of the inputs of <code>showInputField()</code>: <code>{day: 15, month: 10, year: 2026}</code>.</li>
-		<li><code>fetchFields(fields, options)</code> reads the values of fields with <code>core/ajax/objectfield.php</code>: <code>{field: {value, html}}</code>, the html being output by <code>CommonObject::ajaxOutputField()</code>. Only fields readable from the UI are returned, see <code>CommonObject::isFieldReadableFromUi()</code>. With the option <code>input: true</code>, the input of the fields editable from the UI is returned too (<code>CommonObject::ajaxInputField()</code>).</li>
-		<li><code>fetchLines(lineIds, options)</code> reads the html of document lines with <code>core/ajax/objectline.php</code>, as printed in the card, and the ids of all the lines in the order of the card.</li>
+		<li><code>fetchFields(fields, options)</code> reads the values of fields with <code>core/ajax/objectfield.php</code>: <code>{field: {value, html}}</code>, the html being output by <code>CommonObject::ajaxOutputField()</code> (the totals with their currency). Only fields readable from the UI are returned, see <code>CommonObject::isFieldReadableFromUi()</code>. With the option <code>input: true</code>, the input of the fields editable from the UI is returned too (<code>CommonObject::ajaxInputField()</code>).</li>
+		<li><code>fetchLines(lineIds, options)</code> reads the html of document lines with <code>core/ajax/objectline.php</code>, as printed in the card, and the ids of all the lines in the order of the card. The event messages waiting in session are returned in <code>eventMessages</code> and displayed.</li>
 		<li><code>on(eventName, callback)</code> listens to the <code>object:*</code> hooks of this object only, and returns a function to remove the listener.</li>
 	</ul>
 	<p>
@@ -128,13 +128,14 @@ if ($documentation === null || !($documentation instanceof Documentation)) { ret
 		<li><code>setField(field, value, options)</code> saves a field (see Object tool), then refreshes the fields displayed changed by the update. Option <code>target</code>: element whose content is replaced by the new value.</li>
 		<li><code>refreshFields(fields, options)</code> refreshes the values of fields displayed in the page, all the fields displayed when <code>fields</code> is not given. A value is displayed in a container <code>[data-dol-field][data-dol-element][data-dol-id]</code>, or <code>[data-dol-field]</code> without element for the object of the card, like the totals of the cards: <code>&lt;td data-dol-field="total_ht"&gt;</code>.</li>
 		<li><code>reload({sections, lines, fields}, options)</code> replaces the sections (CSS selectors) and the document lines (rows <code>tr#row-{id}</code>) by their new version. The lines are loaded alone with <code>core/ajax/objectline.php</code>, the sections with the card loaded without its lines (<code>nolines=1</code>), the requests in parallel. A line not in the page yet is inserted at its place, a line deleted is removed from the page. When lines are reloaded, the fields displayed in the page (totals...) are refreshed in the same time: give <code>fields</code> to choose them, <code>[]</code> for none. <code>reloadSection(selector)</code> and <code>reloadLine(lineId)</code> are shortcuts.</li>
+		<li><code>postCard(data, options)</code> posts data to the card, like a form of the card submitted (ex: <code>action=updateline</code>), without reloading the page. The card answers without its lines (<code>nolines=1</code>) and keeps the event messages of the action in session (<code>noflusheventmessages=1</code>): they are returned and displayed by the next call of <code>fetchLines()</code> or <code>reload()</code> with lines, in <code>eventMessages</code>. When the card redirects after the action (most cards after adding or deleting a line), the redirect is not followed and <code>postCard()</code> returns <code>null</code>.</li>
 		<li><code>on(eventName, callback)</code> listens to the <code>card:*</code> hooks of this card only.</li>
 	</ul>
 	<p>
-		Options of the controller, used when it is created: <code>tms</code> is the date of modification of the object displayed (set later if the controller did not know it yet), <code>url</code> the url of the card used to reload lines and sections, the current page without action parameters by default.
+		Options of the controller, used when it is created: <code>tms</code> is the date of modification of the object displayed (set later if the controller did not know it yet), <code>url</code> the url of the card used to reload sections and post actions, the current page without action parameters by default.
 	</p>
 	<p>
-		<code>reload()</code> returns the new elements (<code>null</code> if not found, or line deleted), <code>fields</code> the fields refreshed <code>{field: {value, html}}</code>, <code>lineids</code> the ids of all the lines of the object in the order of the card and <code>tms</code> its date of modification (when lines or fields are refreshed), and <code>document</code> the card loaded (when sections are asked).
+		<code>reload()</code> returns the new elements (<code>null</code> if not found, or line deleted), <code>fields</code> the fields refreshed <code>{field: {value, html}}</code>, <code>eventMessages</code> the messages kept in session by <code>postCard()</code> (when lines are asked), <code>lineids</code> the ids of all the lines of the object in the order of the card and <code>tms</code> its date of modification (when lines or fields are refreshed), and <code>document</code> the card loaded (when sections are asked).
 	</p>
 
 	<h3>Specializations and parts</h3>
@@ -174,6 +175,9 @@ if ($documentation === null || !($documentation instanceof Documentation)) { ret
 		<b>Note:</b> loading the card renews the anti CSRF token of the session. The tokens of the page (meta tags, and forms if the token is renewed on each call) are updated with the ones of the card loaded.
 	</p>
 	<p>
-		<b>Note:</b> the card is loaded in background with the parameter <code>noflusheventmessages=1</code>: it does not display the event messages waiting in session, they are kept for the next page.
+		<b>Note:</b> a page loaded with the parameter <code>noflusheventmessages=1</code> does not display the event messages, they are kept in session for the next <code>JsonResponse</code> (<code>JsonResponse::addSessionEventMessages()</code>).
+	</p>
+	<p>
+		The edition of the cards in place is done by the parts <code>Dolibarr.tools.card.fields</code> and <code>Dolibarr.tools.card.lines</code> of this tool (experimental, see <a href="<?php echo dol_buildpath($documentation->baseUrl.'/experimental/ajax-card-edition/index.php', 1); ?>">Experimental UX - Ajax edition of cards</a>).
 	</p>
 </div>
