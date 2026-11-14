@@ -196,7 +196,7 @@ $result = $ldap->connectBind();
 if ($result > 0) {
 	$info = $object->_load_ldap_info();
 	$dn = $object->_load_ldap_dn($info, 1);
-	$search = "(".$object->_load_ldap_dn($info, 2).")";
+	$search = $ldap->restrictToUserFilter("(".$object->_load_ldap_dn($info, 2).")");
 
 	$records = $ldap->getAttribute($dn, $search);
 
