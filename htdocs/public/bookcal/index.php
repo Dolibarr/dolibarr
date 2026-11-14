@@ -324,7 +324,7 @@ if ($tzparam === '' && empty($action)) {
 	print '<script>
 	try {
 		var bookcaltz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-		if (bookcaltz && bookcaltz != "'.dol_escape_js($tzvisitor).'") {
+		if (bookcaltz && bookcaltz != \''.dol_escape_js($tzvisitor).'\') {
 			var bookcalurl = new URL(window.location.href);
 			bookcalurl.searchParams.set("tz", bookcaltz);
 			window.location.replace(bookcalurl.toString());
@@ -600,7 +600,7 @@ if ($action == 'afteradd') {
 					action: "verifyavailability",
 					id: '.((int) $id).',
 					datetocheck: $(this).children("div").data("datetime"),
-					tz: "'.dol_escape_js($tzvisitor).'",
+					tz: \''.dol_escape_js($tzvisitor).'\',
 					token: "'.currentToken().'",
 				}
 			}).done(function (data) {
