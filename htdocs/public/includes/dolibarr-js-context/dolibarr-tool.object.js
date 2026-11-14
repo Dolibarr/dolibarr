@@ -115,23 +115,30 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		}
 
 		/**
-		 * Read the html of document lines with core/ajax/objectline.php
+		 * Read the html of document lines with core/ajax/objectline.php.
+		 * The event messages waiting in session (ex: kept by a card loaded with noflusheventmessages=1) are returned and displayed
+		 * (unless option showEventMessages is false).
 		 * @param {number[]} lineIds
 		 * @param {Object} [options] Options of Dolibarr.tools.fetch (showErrors, signal...)
+		 * @param {string} [options.action] 'editline' for the edit form of one line (rows of objectline_edit.tpl.php)
 		 * @param {string} [options.page] Path of the card, like /comm/propal/card.php, so the links of the lines are the ones of the card
 		 * @param {string} [options.hookContexts] Hook contexts of the page that printed the lines, separated by a comma (ex: 'propalcard,globalcard'),
 		 *   so modules hooking the lines render them as in this page
-		 * @returns {Promise<{lines: Object<number, string|null>, lineids: number[], tms: number|null}>}
+		 * @returns {Promise<{lines: Object<number, string|null>, lineids: number[], tms: number|null, eventMessages: Object}>}
 		 */
-		fetchLines(lineIds, options = {}) {
-			const { page = '', hookContexts = '', ...fetchOptions } = options;
+		async fetchLines(lineIds, options = {}) {
+			const { action = '', page = '', hookContexts = '', ...fetchOptions } = options;
 			const params = { element: this.element, id: this.id, lineids: lineIds.join(',') };
 			if (page) params.page = page;
 			if (hookContexts) params.hookcontexts = hookContexts;
+			if (action) params.action = action;
 
-			return Dolibarr.tools.fetch.get(Dolibarr.getContextVar('DOL_URL_ROOT') + '/core/ajax/objectline.php', params, {
-				responseType: 'json', unwrap: true, ...fetchOptions,
+			// A GET with an action needs the anti CSRF token (MAIN_SECURITY_CSRF_WITH_TOKEN = 3 by default)
+			const response = await Dolibarr.tools.fetch.get(Dolibarr.getContextVar('DOL_URL_ROOT') + '/core/ajax/objectline.php', params, {
+				responseType: 'json', token: !!action, ...fetchOptions, unwrap: false,
 			});
+
+			return { ...response.data, eventMessages: response.eventMessages || {} };
 		}
 
 		/**

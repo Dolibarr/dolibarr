@@ -40,8 +40,9 @@ var Dolibarr = {
 		 * @param {boolean} [options.token] Add the anti CSRF token, default true except for GET and HEAD
 		 * @param {string} [options.responseType='auto'] 'auto', 'json', 'text' or 'response'
 		 * @param {boolean} [options.showErrors=true] Display errors with setEventMessage
+		 * @param {boolean} [options.showEventMessages=true] For a JsonResponse, display its eventMessages (PHP setEventMessages())
 		 * @param {number} [options.timeout=0] Abort after this delay in ms
-		 * @param {boolean} [options.unwrap=false] For a JsonResponse {result, msg, newToken, data, debug}, return only data
+		 * @param {boolean} [options.unwrap=false] For a JsonResponse {result, msg, newToken, data, debug, eventMessages}, return only data
 		 * @returns {Promise<*>} Parsed response body, throws Dolibarr.tools.fetch.Error {message, status, data, response}
 		 */
 		fetch: Object.assign(function(url, options) {}, {
@@ -88,7 +89,7 @@ var Dolibarr = {
 		 *   element: string, id: number, tms: number,
 		 *   setField: function(string, *, Object=): Promise<Object|null>,
 		 *   fetchFields: function(string[], Object=): Promise<{element: string, id: number, fields: Object, tms: number|null}>,
-		 *   fetchLines: function(number[], Object=): Promise<{lines: Object, lineids: number[], tms: number|null}>,
+		 *   fetchLines: function(number[], Object=): Promise<{lines: Object, lineids: number[], tms: number|null, eventMessages: Object}>,
 		 *   on: function(string, function): function
 		 * }}
 		 */
@@ -105,7 +106,7 @@ var Dolibarr = {
 		 * @returns {{
 		 *   element: string, id: number, tms: number, url: string, object: Object,
 		 *   setField: function(string, *, Object=): Promise<Object|null>,
-		 *   reload: function({sections?: string[], lines?: number[], fields?: string[]|null}, Object=): Promise<{sections: Object, lines: Object, fields: Object, lineids: number[]|null, tms: number|null, document: Document|null}>,
+		 *   reload: function({sections?: string[], lines?: number[], fields?: string[]|null}, Object=): Promise<{sections: Object, lines: Object, fields: Object, eventMessages: Object, lineids: number[]|null, tms: number|null, document: Document|null}>,
 		 *   reloadSection: function(string, Object=): Promise<HTMLElement|null>,
 		 *   reloadLine: function(number, Object=): Promise<HTMLElement|null>,
 		 *   refreshFields: function(string[]=, Object=): Promise<Object>,
@@ -115,6 +116,7 @@ var Dolibarr = {
 		 *   fetchLines: function(number[], Object=): Promise<Object>,
 		 *   replaceLine: function(number, string, number[]): HTMLElement|null,
 		 *   removeLine: function(number): null,
+		 *   postCard: function(FormData|Object, Object=): Promise<Document>,
 		 *   fetchCardWithoutLines: function(Object=): Promise<Document>,
 		 *   replaceFrom: function(Document, string): HTMLElement|null,
 		 *   on: function(string, function): function
@@ -137,6 +139,18 @@ var Dolibarr = {
 			 * @param {Object} api
 			 */
 			definePart(name, api) {},
+
+			/**
+			 * Part fields: edition of the fields of a card in ajax (experimental), see Form::isAjaxFieldEdit()
+			 */
+			fields: {
+				/**
+				 * Open the edition of the field of an edit link printed by Form::editfieldkey()
+				 * @param {HTMLElement} link
+				 * @returns {Promise<boolean>} False if the edition can not be opened here (the url of the link must then be used)
+				 */
+				open: function(link) {},
+			},
 		}),
 
 		/**
