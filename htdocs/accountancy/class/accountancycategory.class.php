@@ -3,6 +3,7 @@
  * Copyright (C) 2016-2026	Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Michael Wallis          <mh.wallis@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,6 +123,11 @@ class AccountancyCategory // extends CommonObject
 	 * @var Object[] Lines display
 	 */
 	public $lines_display;
+
+	/**
+	 * @var array<string,array<array{id:int,account_number:string,account_label:string}>> Active accounts of a chart of accounts, per chart
+	 */
+	private $chartaccountscache = array();
 
 	/**
 	 * @var float Sum debit credit
@@ -840,12 +846,14 @@ class AccountancyCategory // extends CommonObject
 	/**
 	 * Get all accounting account of a given custom group (or a list of custom groups).
 	 * You must choose between first parameter (personalized group) or the second (free criteria filter)
+	 * When ACCOUNTING_GROUP_RANGE_AS_RULE is on (default) and the group of $cat_id has an account range that is a list
+	 * of prefixes, the accounts of the group are the accounts in that range, see getCptsCatByRange().
 	 *
 	 * @param 	int 		$cat_id 						Id if personalized accounting group/category
 	 * @param 	string 		$sanitizedpredefinedgroupwhere 	Sql criteria filter to select accounting accounts. This value must be sanitized and not come from an input of a user.
 	 * 														Example: "pcg_type = 'EXPENSE' AND fk_pcg_version = 'xx'"
 	 * 														Example: "fk_accounting_category = 99"
-	 * @return	never|array<array{id:int,account_number:string,account_label:string}>|int<-1,-1>		Array of accounting accounts or -1 if error
+	 * @return	never|array<array{id:int,account_number:string,account_label:string,by_range?:int}>|int<-1,-1>		Array of accounting accounts or -1 if error
 	 * @see getCats(), getCatsCpts()
 	 */
 	public function getCptsCat($cat_id, $sanitizedpredefinedgroupwhere = '')
@@ -862,6 +870,13 @@ class AccountancyCategory // extends CommonObject
 		$pcgvercode = dol_getIdFromCode($this->db, (string) $pcgverid, 'accounting_system', 'rowid', 'pcg_version');
 		if (empty($pcgvercode)) {
 			$pcgvercode = $pcgverid;
+		}
+
+		if (!empty($cat_id) && getDolGlobalInt('ACCOUNTING_GROUP_RANGE_AS_RULE', 1)) {
+			$byrange = $this->getCptsCatByRange((int) $cat_id, (string) $pcgvercode);
+			if (is_array($byrange) || $byrange < 0) {
+				return $byrange;
+			}
 		}
 
 		if (!empty($cat_id) && getDolGlobalInt('ACCOUNTING_ENABLE_MULTI_REPORT')) {
@@ -915,6 +930,117 @@ class AccountancyCategory // extends CommonObject
 
 			return -1;
 		}
+	}
+
+	/**
+	 * Get the accounting accounts of a custom group from its account range.
+	 *
+	 * The accounts of the group are the active accounts of the chart whose number is in the range, whatever the custom
+	 * group set on the account. It does not depend on the other groups: an account in the ranges of two groups of a report
+	 * is in both (the report warns about it).
+	 *
+	 * @param	int		$cat_id			Id of the custom group
+	 * @param	string	$pcgvercode		Code of the chart of accounts
+	 * @return	array<array{id:int,account_number:string,account_label:string,by_range:int}>|int<-1,0>	Accounts, 0 if the group has no valid range (accounts are then those set on the account), -1 if error
+	 * @see isValidAccountRange(), isAccountInRange()
+	 */
+	public function getCptsCatByRange($cat_id, $pcgvercode)
+	{
+		global $conf;
+
+		$sql = "SELECT range_account, category_type FROM ".$this->db->prefix().$this->table_element." WHERE rowid = ".((int) $cat_id);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = "Error ".$this->db->lasterror();
+			return -1;
+		}
+		$obj = $this->db->fetch_object($resql);
+		if (!$obj || !empty($obj->category_type) || !self::isValidAccountRange((string) $obj->range_account)) {
+			return 0;
+		}
+		$range = (string) $obj->range_account;
+
+		if (!isset($this->chartaccountscache[$pcgvercode])) {
+			$this->chartaccountscache[$pcgvercode] = array();
+			$sql = "SELECT t.rowid, t.account_number, t.label as account_label";
+			$sql .= " FROM ".$this->db->prefix()."accounting_account as t";
+			$sql .= " WHERE t.entity = ".((int) $conf->entity);
+			$sql .= " AND t.active = 1";
+			$sql .= " AND t.fk_pcg_version = '".$this->db->escape($pcgvercode)."'";
+			$sql .= " ORDER BY t.account_number";
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->error = "Error ".$this->db->lasterror();
+				return -1;
+			}
+			while ($obj = $this->db->fetch_object($resql)) {
+				$this->chartaccountscache[$pcgvercode][] = array(
+					'id' => (int) $obj->rowid,
+					'account_number' => (string) $obj->account_number,
+					'account_label' => (string) $obj->account_label,
+				);
+			}
+		}
+
+		$data = array();
+		foreach ($this->chartaccountscache[$pcgvercode] as $account) {
+			if (self::isAccountInRange($range, $account['account_number'])) {
+				$account['by_range'] = 1;
+				$data[] = $account;
+			}
+		}
+		return $data;
+	}
+
+	/**
+	 * Is an account range of a custom group a valid range, that selects accounts?
+	 *
+	 * A valid range is a list of account number prefixes separated by commas, each one optionally starting
+	 * with ! to leave it out, and with at least one prefix that is not left out. Trailing x are ignored
+	 * ("7xxxxx" is the prefix "7"). Example: "4,!4900". Any other text (like "Example: 7xxxxx" or
+	 * "6000-6099") is only a comment.
+	 *
+	 * @param	string	$range	Account range of the group (field range_account)
+	 * @return	bool			True if it is a valid range
+	 */
+	public static function isValidAccountRange($range)
+	{
+		$hasinclude = false;
+		foreach (explode(',', $range) as $item) {
+			$item = trim($item);
+			if (!preg_match('/^(!?)([0-9A-Za-z]*[0-9][0-9A-Za-z]*)$/', $item, $reg)) {
+				return false;
+			}
+			if ($reg[1] === '') {
+				$hasinclude = true;
+			}
+		}
+		return $hasinclude;
+	}
+
+	/**
+	 * Is an account number in an account range?
+	 *
+	 * @param	string	$range		A valid account range (see isValidAccountRange()), example "4,!4900"
+	 * @param	string	$number		Account number
+	 * @return	bool				True if the number starts with a prefix of the range, and with none of the left out prefixes
+	 */
+	public static function isAccountInRange($range, $number)
+	{
+		$found = false;
+		foreach (explode(',', $range) as $item) {
+			$item = trim($item);
+			$exclude = (substr($item, 0, 1) === '!');
+			$prefix = rtrim($exclude ? substr($item, 1) : $item, 'xX');
+			if ($prefix === '' || strpos($number, $prefix) !== 0) {
+				continue;
+			}
+			if ($exclude) {
+				return false;
+			}
+			$found = true;
+		}
+		return $found;
 	}
 
 
