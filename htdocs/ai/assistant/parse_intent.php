@@ -37,7 +37,9 @@ if (!defined('NOREQUIREHTML')) {
 if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', 1);
 }
-if (!defined('NOCSRFCHECK')) {		// TODO Enable the CSRF check
+// The payload is read from the raw php://input body, so the CSRF token cannot be checked by
+// main.inc.php. It is checked explicitly below by aiCheckCsrfToken().
+if (!defined('NOCSRFCHECK')) {
 	define('NOCSRFCHECK', 1);
 }
 
@@ -62,6 +64,10 @@ global $db, $user, $conf, $langs;
 if (!$user->hasRight('ai', 'assistant', 'use')) {
 	accessforbidden();
 }
+
+// This endpoint sends data to the LLM provider on behalf of the user and can chain tool
+// executions, so it must not be reachable from another site.
+aiCheckCsrfToken('ai/assistant/parse_intent.php');
 
 ob_start();
 top_httphead('application/json');
