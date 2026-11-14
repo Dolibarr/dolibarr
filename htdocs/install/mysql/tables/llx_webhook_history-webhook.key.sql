@@ -15,7 +15,6 @@
 
 
 -- BEGIN MODULEBUILDER INDEXES
-ALTER TABLE llx_webhook_history ADD INDEX idx_webhook_history_rowid (rowid);
 --ALTER TABLE llx_webhook_history ADD UNIQUE INDEX uk_webhook_history_ref (ref);
 ALTER TABLE llx_webhook_history ADD INDEX idx_webhook_history_status (status);
 -- END MODULEBUILDER INDEXES

@@ -18,7 +18,5 @@
 -- Table of transaction template for accounting
 -- ============================================================================
 
-ALTER TABLE llx_accounting_transaction_template ADD INDEX idx_accounting_transaction_template_rowid (rowid);
-ALTER TABLE llx_accounting_transaction_template ADD INDEX idx_accounting_transaction_template_code (code);
 
 ALTER TABLE llx_accounting_transaction_template ADD UNIQUE INDEX uk_accounting_transaction_template_code (code, entity);
