@@ -9,6 +9,8 @@ if (empty($context) || !is_object($context)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
+global $hookmanager, $langs;
+
 '@phan-var-force Context $context';
 /**
  * @var Context $context
@@ -19,7 +21,15 @@ if (empty($context) || !is_object($context)) {
 /** @var array<string,array<string,mixed>> $navMenu */
 $navMenu = array();
 /** @var array<string,array<string,mixed>> $navGroupMenu */
-$navGroupMenu = array();
+$navGroupMenu = array(
+	'administrative' => array(
+		'id' => 'administrative',
+		'rank' => -1,
+		'url' => '',
+		'name' => $langs->trans('WebPortalGroupMenuAdmin'),
+		'children' => array()
+	),
+);
 '@phan-var-force array<string,array<string,mixed>> $navGroupMenu';
 /** @var array<string,array<string,mixed>> $navUserMenu */
 $navUserMenu = array();
@@ -58,6 +68,16 @@ if ($context->userIsLog()) {
 		);
 	}
 
+	// menu contracts
+	if (isModEnabled('contract') && getDolGlobalInt('WEBPORTAL_CONTRACT_LIST_ACCESS')) {
+		$navMenu['contract_list'] = array(
+			'id' => 'contract_list',
+			'rank' => 35,
+			'url' => $context->getControllerUrl('contractlist'),
+			'name' => $langs->trans('WebPortalContractListMenu'),
+			'group' => 'administrative'
+		);
+	}
 	// menu documents (GED)
 	if (getDolGlobalInt('WEBPORTAL_DOCUMENT_LIST_ACCESS')) {
 		$navMenu['document_list'] = array(
