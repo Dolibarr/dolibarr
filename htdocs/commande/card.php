@@ -3777,6 +3777,17 @@ if ($action == 'create' && $usercancreate) {
 						'url' => '/contrat/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid,
 					];
 				}
+
+				// Create MO (Manufacturing Order)
+				if (isModEnabled('mrp') && !getDolGlobalInt('COMMANDE_DISABLE_ADD_MO')) {
+					$arrayforbutaction[] = array(
+						'lang' => 'mrp',
+						'enabled' => (isModEnabled("mrp") && ($object->status == Commande::STATUS_VALIDATED || $object->status == Commande::STATUS_SHIPMENTONPROCESS || $object->status == Commande::STATUS_CLOSED)),
+						'perm' => $user->hasRight('mrp', 'write'),
+						'label' => 'CreateMO',
+						'url' => '/mrp/mo_card.php?action=create&amp;origin=' . urlencode($object->element) . '&amp;originid=' . ((int) $object->id) . '&amp;socid=' . ((int) $object->socid),
+					);
+				}
 				/*if (isModEnabled('contract') && ($object->status == Commande::STATUS_VALIDATED || $object->status == Commande::STATUS_SHIPMENTONPROCESS || $object->status == Commande::STATUS_CLOSED)) {
 					$langs->load("contracts");
 
