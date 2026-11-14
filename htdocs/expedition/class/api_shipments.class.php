@@ -5,6 +5,7 @@
  * Copyright (C) 2025		Charlene Benke  		<charlene@patas-monkey.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025       Nick Fragoulis
+ * Copyright (C) 2026       Marukome0743
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -245,6 +246,8 @@ class Shipments extends DolibarrApi
 		}
 
 		if (isset($request_data["lines"])) {
+			require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+
 			$lines = array();
 			foreach ($request_data["lines"] as $line) {
 				$shipmentline = new ExpeditionLigne($this->db);
@@ -265,6 +268,14 @@ class Shipments extends DolibarrApi
 				if (is_array($detail_batch) || is_object($detail_batch)) {
 					$shipmentline->detail_batch = $detail_batch;
 				}
+
+				// Expedition::create() expands a kit into its components only when the line carries its product.
+				// Without this, the kit is stored as a parent line with a warehouse and no child lines.
+				$orderline = new OrderLine($this->db);
+				if ($orderline->fetch($shipmentline->fk_elementdet) > 0 && (empty($orderline->product_type) || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES'))) {
+					$shipmentline->fk_product = (int) $orderline->fk_product;
+				}
+
 				$lines[] = $shipmentline;
 			}
 			$this->shipment->lines = $lines;
@@ -280,7 +291,7 @@ class Shipments extends DolibarrApi
 	/**
 	 * Create a standalone shipment (no source order) and its free lines
 	 *
-	 * @param   mixed   $lines   Lines of the request: fk_product, description, qty, fk_unit, rang, array_options
+	 * @param   mixed   $lines   Lines of the request: fk_product, description, qty, fk_unit, entrepot_id, rang, array_options
 	 * @return  int              ID of shipment created
 	 * @throws  RestException
 	 */
@@ -315,8 +326,8 @@ class Shipments extends DolibarrApi
 				$error = 'Field qty is mandatory';
 			} elseif ($qty < 0) {
 				$error = 'Field qty cannot be negative';
-			} elseif ($fk_product <= 0 && getDolGlobalString('MAIN_DISABLE_FREE_LINES')) {
-				$error = 'Field fk_product is mandatory (MAIN_DISABLE_FREE_LINES is on)';
+			} elseif ($fk_product <= 0 && (!getDolGlobalInt('SHIPMENTS_ALLOW_FREE_LINES') || getDolGlobalString('MAIN_DISABLE_FREE_LINES'))) {
+				$error = 'Field fk_product is mandatory (free shipment lines are disabled)';
 			} elseif ($fk_product <= 0 && $description === '') {
 				$error = 'A line needs a fk_product or a description';
 			} elseif ($fk_product > 0) {
@@ -334,10 +345,14 @@ class Shipments extends DolibarrApi
 
 			$array_options = (isset($line['array_options']) && is_array($line['array_options'])) ? $line['array_options'] : array();
 			$rang = (int) ($line['rang'] ?? 0);
+			// Same field as the lines of a shipment created from an order. Without a warehouse, the line moves no stock.
+			$entrepot_id = (int) ($line['entrepot_id'] ?? 0);
 
-			if ($this->shipment->addlinefree($qty, 'shipping', $fk_product, $fk_unit, $rang > 0 ? $rang : -1, $description, 0, $array_options) <= 0) {
+			$addResult = $this->shipment->addlinefree($qty, 'shipping', $fk_product, $fk_unit, $rang > 0 ? $rang : -1, $description, 0, $array_options, $entrepot_id);
+			if ($addResult <= 0) {
 				$this->db->rollback();
-				throw new RestException(500, "Error creating shipment line", array_merge(array($this->shipment->error), $this->shipment->errors));
+				// -1 missing warehouse, -3 not enough stock, -4 batch product: bad request from the caller.
+				throw new RestException(in_array($addResult, array(-1, -3, -4), true) ? 400 : 500, "Error creating shipment line", array_merge(array($this->shipment->error), $this->shipment->errors));
 			}
 		}
 
@@ -389,6 +404,7 @@ class Shipments extends DolibarrApi
 	 * A line can only be added while the shipment is still a draft, before any stock movement.
 	 * Lines managed by lot/serial (batch) are not supported here (the quantity is
 	 * split by lot in expeditiondet_batch) - use the dedicated dispatch flow instead.
+	 * Kits are not supported here either: only POST /shipments expands a kit into its components.
 	 *
 	 * @param int    $id                 Id of shipment to update
 	 * @param int    $fk_origin_line     Id of the order line shipped by this line (mandatory for a shipment created from an order)	{@from body}{@required false}
@@ -479,6 +495,17 @@ class Shipments extends DolibarrApi
 		}
 		if (isModEnabled('productbatch') && !empty($orderline->product_tobatch)) {
 			throw new RestException(405, 'Adding a batch/lot managed shipment line is not supported through this endpoint. Use the dedicated dispatch flow instead.');
+		}
+
+		// Only Expedition::create() expands a kit into its components. A kit added here would be stored as a parent line
+		// with a warehouse and no child lines: validation consumes the components, but cancel() and delete() do not restore them.
+		$lineproductid = (int) $fk_product > 0 ? (int) $fk_product : (int) $orderline->fk_product;
+		if ($lineproductid > 0 && getDolGlobalInt('PRODUIT_SOUSPRODUITS') && !getDolGlobalInt('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE')) {
+			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+			$lineproduct = new Product($this->db);
+			if ($lineproduct->fetch($lineproductid) > 0 && $lineproduct->hasFatherOrChild(1) > 0) {
+				throw new RestException(405, 'Adding a kit shipment line is not supported through this endpoint. Create the shipment with its lines instead.');
+			}
 		}
 
 		// addline() stacks the line in memory and runs native validation

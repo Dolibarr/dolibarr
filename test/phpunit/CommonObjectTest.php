@@ -1931,4 +1931,37 @@ class CommonObjectTest extends CommonClassTest
 			return strpos($code, 'OBJECT_LINK_') !== 0;
 		}));
 	}
+
+	/**
+	 *  testRoundQtyToPackaging
+	 *
+	 *  @return void
+	 */
+	public function testRoundQtyToPackaging()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new Commande($db);
+
+		// Rounded up to the next multiple of the packaging, the sign is kept
+		$this->assertEquals(6, $localobject->roundQtyToPackaging(1, 6), '1 with packaging 6');
+		$this->assertEquals(12, $localobject->roundQtyToPackaging(7, 6), '7 with packaging 6');
+		$this->assertEquals(12, $localobject->roundQtyToPackaging(12, 6), '12 with packaging 6');
+		$this->assertEquals(-12, $localobject->roundQtyToPackaging(-7, 6), '-7 with packaging 6');
+		$this->assertEquals(0.3, $localobject->roundQtyToPackaging(0.25, 0.1), '0.25 with packaging 0.1');
+		// A multiple of a decimal packaging is kept (fmod(0.5, 0.1) is 0.0999..., not 0)
+		$this->assertEquals(3, $localobject->roundQtyToPackaging(3, 1.5), '3 with packaging 1.5');
+		$this->assertEquals(0.5, $localobject->roundQtyToPackaging(0.5, 0.1), '0.5 with packaging 0.1');
+		$this->assertEquals(1, $localobject->roundQtyToPackaging(1, 0.1), '1 with packaging 0.1');
+		$this->assertEquals(2.2, $localobject->roundQtyToPackaging(2.2, 0.1), '2.2 with packaging 0.1');
+		// No packaging: quantity unchanged
+		$this->assertEquals(7, $localobject->roundQtyToPackaging(7, 0), '7 with packaging 0');
+		$this->assertEquals(7, $localobject->roundQtyToPackaging(7, null), '7 with packaging null');
+
+		print __METHOD__." OK\n";
+	}
 }

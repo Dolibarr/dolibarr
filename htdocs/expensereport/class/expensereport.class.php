@@ -159,9 +159,9 @@ class ExpenseReport extends CommonObject
 
 	// Create
 	/**
-	 * @var int|string
+	 * @var int|''|null		Object creation date
 	 */
-	public $date_create;
+	public $date_creation;
 
 	/**
 	 * @var int ID of user creator
@@ -303,18 +303,18 @@ class ExpenseReport extends CommonObject
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 20),
 		'ref_number_int' => array('type' => 'integer', 'label' => 'Ref number int', 'enabled' => 1, 'visible' => -1, 'position' => 25),
 		'ref_ext' => array('type' => 'integer', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 30),
-		'total_ht' => array('type' => 'double(24,8)', 'label' => 'Total ht', 'enabled' => 1, 'visible' => -1, 'position' => 35),
-		'total_tva' => array('type' => 'double(24,8)', 'label' => 'Total tva', 'enabled' => 1, 'visible' => -1, 'position' => 40),
+		'total_ht' => array('type' => 'double(24,8)', 'label' => 'AmountHT', 'enabled' => 1, 'visible' => -1, 'position' => 35, 'isameasure' => 1),
+		'total_tva' => array('type' => 'double(24,8)', 'label' => 'AmountVAT', 'enabled' => 1, 'visible' => -1, 'position' => 40, 'isameasure' => 1),
 		'localtax1' => array('type' => 'double(24,8)', 'label' => 'Localtax1', 'enabled' => 1, 'visible' => -1, 'position' => 45),
 		'localtax2' => array('type' => 'double(24,8)', 'label' => 'Localtax2', 'enabled' => 1, 'visible' => -1, 'position' => 50),
-		'total_ttc' => array('type' => 'double(24,8)', 'label' => 'Total ttc', 'enabled' => 1, 'visible' => -1, 'position' => 55),
-		'date_debut' => array('type' => 'date', 'label' => 'Date debut', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 60),
-		'date_fin' => array('type' => 'date', 'label' => 'Date fin', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 65),
-		'date_valid' => array('type' => 'datetime', 'label' => 'Date valid', 'enabled' => 1, 'visible' => -1, 'position' => 75),
-		'date_approve' => array('type' => 'datetime', 'label' => 'Date approve', 'enabled' => 1, 'visible' => -1, 'position' => 80),
-		'date_refuse' => array('type' => 'datetime', 'label' => 'Date refuse', 'enabled' => 1, 'visible' => -1, 'position' => 85),
-		'date_cancel' => array('type' => 'datetime', 'label' => 'Date cancel', 'enabled' => 1, 'visible' => -1, 'position' => 90),
-		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 100),
+		'total_ttc' => array('type' => 'double(24,8)', 'label' => 'AmountTTC', 'enabled' => 1, 'visible' => -1, 'position' => 55, 'isameasure' => 1),
+		'date_debut' => array('type' => 'date', 'label' => 'DateStart', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 60),
+		'date_fin' => array('type' => 'date', 'label' => 'DateEnd', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 65),
+		'date_valid' => array('type' => 'datetime', 'label' => 'DateValidation', 'enabled' => 1, 'visible' => -1, 'position' => 75),
+		'date_approve' => array('type' => 'datetime', 'label' => 'DateApprove', 'enabled' => 1, 'visible' => -1, 'position' => 80),
+		'date_refuse' => array('type' => 'datetime', 'label' => 'DATE_REFUS', 'enabled' => 1, 'visible' => -1, 'position' => 85),
+		'date_cancel' => array('type' => 'datetime', 'label' => 'DATE_CANCEL', 'enabled' => 1, 'visible' => -1, 'position' => 90),
+		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'User', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 100),
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -1, 'position' => 105),
 		'fk_user_valid' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'visible' => -1, 'position' => 110),
 		'fk_user_validator' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'visible' => -1, 'position' => 115),
@@ -336,11 +336,11 @@ class ExpenseReport extends CommonObject
 		'multicurrency_total_tva' => array('type' => 'double(24,8)', 'label' => 'Multicurrency total tva', 'enabled' => 1, 'visible' => -1, 'position' => 205),
 		'multicurrency_total_ttc' => array('type' => 'double(24,8)', 'label' => 'Multicurrency total ttc', 'enabled' => 1, 'visible' => -1, 'position' => 210),
 		'extraparams' => array('type' => 'varchar(255)', 'label' => 'Extraparams', 'enabled' => 1, 'visible' => -1, 'position' => 220),
-		'date_create' => array('type' => 'datetime', 'label' => 'Date create', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 300),
-		'tms' => array('type' => 'timestamp', 'label' => 'Tms', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 305),
+		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 300),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 305),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -1, 'position' => 1000),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 1010),
-		'fk_statut' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 500),
+		'fk_statut' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 500, 'arrayofkeyval' => array(0 => 'Draft', 2 => 'ValidatedWaitingApproval', 4 => 'Canceled', 5 => 'Approved', 6 => 'Paid', 99 => 'Refused')),
 	);
 
 	/**
@@ -351,6 +351,8 @@ class ExpenseReport extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 		$this->total_ht = 0;
 		$this->total_ttc = 0;
 		$this->total_tva = 0;
@@ -402,7 +404,7 @@ class ExpenseReport extends CommonObject
 		$sql .= ",total_tva";
 		$sql .= ",date_debut";
 		$sql .= ",date_fin";
-		$sql .= ",date_create";
+		$sql .= ",date_creation";
 		$sql .= ",fk_user_creat";
 		$sql .= ",fk_user_author";
 		$sql .= ",fk_user_validator";
@@ -571,7 +573,6 @@ class ExpenseReport extends CommonObject
 		$this->fk_user_author = $fk_user_author; // Note fk_user_author is not the 'author' but the guy the expense report is for.
 		$this->fk_user_valid = 0;
 		$this->fk_user_approve = 0;
-		$this->date_create = '';
 		$this->date_creation = '';
 		$this->date_validation = '';
 		$this->date_approve = '';
@@ -633,8 +634,8 @@ class ExpenseReport extends CommonObject
 		$sql .= " total_ht = ".((float) $this->total_ht);
 		$sql .= " , total_ttc = ".((float) $this->total_ttc);
 		$sql .= " , total_tva = ".((float) $this->total_tva);
-		if (!empty($this->date_create)) {
-			$sql .= " , date_create = '".$this->db->idate($this->date_create)."'";
+		if (!empty($this->date_creation)) {
+			$sql .= " , date_creation = '".$this->db->idate($this->date_creation)."'";
 		}
 		$sql .= " , date_debut = '".$this->db->idate($this->date_debut)."'";
 		$sql .= " , date_fin = '".$this->db->idate($this->date_fin)."'";
@@ -698,10 +699,10 @@ class ExpenseReport extends CommonObject
 		$sql .= " d.date_refuse, d.date_cancel,"; // ACTIONS
 		$sql .= " d.total_ht, d.total_ttc, d.total_tva,";
 		$sql .= " d.localtax1 as total_localtax1, d.localtax2 as total_localtax2,";
-		$sql .= " d.date_debut, d.date_fin, d.date_create, d.tms as date_modif, d.date_valid, d.date_approve,"; // DATES (datetime)
+		$sql .= " d.date_debut, d.date_fin, d.date_creation, d.tms as date_modif, d.date_valid, d.date_approve,"; // DATES (datetime)
 		$sql .= " d.fk_user_creat, d.fk_user_author, d.fk_user_modif, d.fk_user_validator,";
 		$sql .= " d.fk_user_valid, d.fk_user_approve,";
-		$sql .= " d.fk_statut as status, d.fk_c_paiement, d.paid";
+		$sql .= " d.fk_statut as status, d.fk_c_paiement, d.paid, d.extraparams";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as d";
 		if ($ref) {
 			$sql .= " WHERE d.ref = '".$this->db->escape($ref)."'";
@@ -738,7 +739,7 @@ class ExpenseReport extends CommonObject
 				$this->date_fin         = $this->db->jdate($obj->date_fin);
 				$this->date_valid       = $this->db->jdate($obj->date_valid);
 				$this->date_approve     = $this->db->jdate($obj->date_approve);
-				$this->date_create      = $this->db->jdate($obj->date_create);
+				$this->date_creation      = $this->db->jdate($obj->date_creation);
 				$this->date_modif       = $this->db->jdate($obj->date_modif);
 				$this->date_refuse      = $this->db->jdate($obj->date_refuse);
 				$this->date_cancel      = $this->db->jdate($obj->date_cancel);
@@ -771,6 +772,7 @@ class ExpenseReport extends CommonObject
 				$this->status                   = (int) $obj->status;
 				$this->fk_c_paiement            = $obj->fk_c_paiement;
 				$this->paid                     = $obj->paid;
+				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				if ($this->status == self::STATUS_APPROVED || $this->status == self::STATUS_CLOSED) {
 					$user_valid = new User($this->db);
@@ -923,7 +925,7 @@ class ExpenseReport extends CommonObject
 		global $conf;
 
 		$sql = "SELECT f.rowid,";
-		$sql .= " f.date_create as datec,";
+		$sql .= " f.date_creation as datec,";
 		$sql .= " f.tms as date_modification,";
 		$sql .= " f.date_valid as datev,";
 		$sql .= " f.date_approve as datea,";
@@ -982,7 +984,7 @@ class ExpenseReport extends CommonObject
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
 		$this->entity = 1;
-		$this->date_create = $now;
+		$this->date_creation = $now;
 		$this->date_debut = $now;
 		$this->date_fin = $now;
 		$this->date_valid = $now;

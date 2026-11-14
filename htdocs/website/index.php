@@ -261,7 +261,8 @@ $filehtaccess = $pathofwebsite.'/.htaccess';
 $filetpl = $pathofwebsite.'/page'.$pageid.'.tpl.php';
 $fileindex = $pathofwebsite.'/index.php';
 $filewrapper = $pathofwebsite.'/wrapper.php';
-$filemanifestjson = $pathofwebsite.'/manifest.json.php';
+$filemanifestjson = $pathofwebsite.'/manifest.json';
+$filemanifestjsonold = $pathofwebsite.'/manifest.json.php';	// Old name of manifest file when it was containing PHP code
 $filereadme = $pathofwebsite.'/README.md';
 $filelicense = $pathofwebsite.'/LICENSE';
 $filemaster = $pathofwebsite.'/master.inc.php';
@@ -1473,6 +1474,19 @@ if ($action == 'confirm_deletesite' && $confirm == 'yes' && $permissiontodelete)
 	}
 }
 
+// Delete an archived version of a page (only the backup file page<pageid>.tpl.php.v<timestamp> is removed)
+if ($action == 'deletepageversion' && $permissiontodelete && !empty($filetplversion)) {
+	$result = dol_delete_file($filetplversion, 0, 0, 0, null, false, 0);
+	if ($result) {
+		setEventMessages($langs->trans("FileWasRemoved", dol_basename($filetplversion)), null, 'mesgs');
+		header("Location: ".$_SERVER["PHP_SELF"].'?website='.urlencode($websitekey).'&pageid='.((int) $pageid));
+		exit;
+	} else {
+		setEventMessages($langs->trans("ErrorFailToDeleteFile", dol_basename($filetplversion)), null, 'errors');
+	}
+	$action = 'preview';
+}
+
 // Delete page (from website page menu)
 if (GETPOSTISSET('pageid') && $action == 'delete' && $permissiontodelete && !GETPOST('file_manager')) {
 	$error = 0;
@@ -1820,6 +1834,15 @@ if ($action == 'updatecss' && $usercanedit) {
 			// Security analysis
 			$errorphpcheck = checkPHPCode($phpfullcodestringold, $phpfullcodestring);	// Contains the setEventMessages
 
+			// Apache directives (AddType, SetHandler, php_value...) can lead to code execution, so modifying .htaccess requires permission writephp
+			if (!$errorphpcheck && !$user->hasRight('website', 'writephp')) {
+				$htaccesscontentold = (dol_is_file($filehtaccess) ? trim((string) file_get_contents($filehtaccess)) : '');
+				if (str_replace("\r\n", "\n", $dataposted) !== str_replace("\r\n", "\n", $htaccesscontentold)) {
+					$errorphpcheck++;
+					setEventMessages($langs->trans("NotAllowedToEditHtaccess"), null, 'errors');
+				}
+			}
+
 			if (!$errorphpcheck) {
 				if ($dataposted) {
 					$htaccesscontent = '';
@@ -1841,39 +1864,21 @@ if ($action == 'updatecss' && $usercanedit) {
 			$dataposted = trim(GETPOST('WEBSITE_MANIFEST_JSON', 'restricthtmlallowunvalid'));
 			$dataposted = str_replace('<?=', '<?php', $dataposted);
 
-			// Manifest.json file
-			$phpfullcodestringold = '';
+			// Manifest.json file. It is a static JSON file, so PHP code is not allowed into it.
 			$phpfullcodestring = dolKeepOnlyPhpCode($dataposted);
 
-			// Security analysis
-			$errorphpcheck = checkPHPCode($phpfullcodestringold, $phpfullcodestring);	// Contains the setEventMessages
-
-			if (!$errorphpcheck) {
-				$manifestjsoncontent = '';
-
-				$manifestjsoncontent .= "<?php // BEGIN PHP\n";
-				$manifestjsoncontent .= '$websitekey=basename(__DIR__);'."\n";
-				$manifestjsoncontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded\n"; // For the css, we need to set path of master using the dirname of css file.
-				$manifestjsoncontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
-				$manifestjsoncontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
-				$manifestjsoncontent .= "ob_start();\n";
-				$manifestjsoncontent .= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
-				$manifestjsoncontent .= "header('Content-type: application/manifest+json');\n";
-				$manifestjsoncontent .= "// END PHP ?>\n";
-
-				$manifestjsoncontent .= $dataposted."\n";
-
-				$manifestjsoncontent .= '<?php // BEGIN PHP'."\n";
-				$manifestjsoncontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "manifest");'."\n";
-				$manifestjsoncontent .= "// END PHP\n";
+			if ($phpfullcodestring) {
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorPHPNotAllowedInManifest"), null, 'errors');
+				$error++;
+			} else {
+				$manifestjsoncontent = ($dataposted ? $dataposted."\n" : '');
 
 				$result = dolSaveManifestJson($filemanifestjson, $manifestjsoncontent);
-				if (!$result) {
+				if ($result === false) {	// Result can be 0 when manifest is empty
 					$error++;
 					setEventMessages('Failed to write file '.$filemanifestjson, null, 'errors');
 				}
-			} else {
-				$error++;
 			}
 
 
@@ -2640,21 +2645,23 @@ if ($action == 'exportsite' && $user->hasRight('website', 'export')) {
 
 // Overwrite site
 if ($action == 'overwritesite' && $user->hasRight('website', 'export')) {
-	if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')) {
-		// Generate a zip of the website
-		$fileofzip = $object->exportWebSite();
-		$pathToExport = GETPOST('export_path');
-		if ($fileofzip) {
-			// Uncompress the exported web site into a destination directory
-			$result = $object->overwriteTemplate($fileofzip, $pathToExport);
-			if ($result < 0) {
-				setEventMessages($object->error, $object->errors, 'errors');
-				$action = 'preview';
-			}
-		} else {
+	// Generate a zip of the website
+	$fileofzip = $object->exportWebSite();
+	$pathToExport = GETPOST('export_path');
+	if ($fileofzip) {
+		// Save the export path entered by user to prefill it next time (must be done before overwriteTemplate() that redirects on success)
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		dol_set_user_param($db, $conf, $user, array('WEBSITE_EXPORT_PATH_'.$object->id => $pathToExport));
+
+		// Uncompress the exported web site into a destination directory
+		$result = $object->overwriteTemplate($fileofzip, $pathToExport);
+		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'preview';
 		}
+	} else {
+		setEventMessages($object->error, $object->errors, 'errors');
+		$action = 'preview';
 	}
 }
 // Regenerate site
@@ -2764,6 +2771,9 @@ if ($action == 'importsiteconfirm' && $usercanedit) {
 
 					$result = $object->importWebSite($fileofzip);
 
+					if (!empty($object->warnings)) {
+						setEventMessages('', $object->warnings, 'warnings');
+					}
 					if ($result < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$action = 'importsite';
@@ -3113,7 +3123,7 @@ llxHeader('', $langs->trans("Website").(empty($website->ref) ? '' : ' - '.$websi
 
 print "\n";
 print '<!-- Open form common to all pages generated by website/index.php -->'."\n";
-print '<form action="'.$_SERVER["PHP_SELF"].($action == 'file_manager' ? '?uploadform=1' : '').'" method="POST" enctype="multipart/form-data" class="websiteformtoolbar">'."\n";
+print '<form action="'.$_SERVER["PHP_SELF"].(($action == 'file_manager' || $action == 'importsite') ? '?uploadform=1' : '').'" method="POST" enctype="multipart/form-data" class="websiteformtoolbar">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 print '<input type="hidden" name="dol_openinpopup" value="'.$dol_openinpopup.'">';
@@ -3169,6 +3179,7 @@ if ($action != 'preview' && $action != 'editcontent' && $action != 'editsource' 
 
 $websitepage = null;
 $disabled = '';
+$syntaxhelp = '';
 if (!GETPOST('hide_websitemenu')) {
 	if (!$user->hasRight('website', 'write')) {
 		$disabled = ' disabled="disabled"';
@@ -3208,6 +3219,10 @@ if (!GETPOST('hide_websitemenu')) {
 		$disabled = ' disabled="disabled"';
 		$morecss = 'opacitymedium cursordefault';
 	}
+
+	// When editing the source of a page, the other tools of the website and page are visible but disabled
+	$websitetoolsdisabled = ($action == 'editsource' || $action == 'editcontent');
+	$morecsstoolsdisabled = ($websitetoolsdisabled ? ' opacitymedium nopointervent' : '');
 
 	//var_dump($objectpage);exit;
 	print '<div class="centpercent websitebar'.(GETPOST('dol_openinpopup', 'aZ09') ? ' hiddenforpopup' : '').'">'."\n";
@@ -3306,11 +3321,16 @@ if (!GETPOST('hide_websitemenu')) {
 		}
 
 
-		print '<span class="websiteselection">';
+		print '<span class="websiteselection'.$morecsstoolsdisabled.'">';
 
-		if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite')) {
+		if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite' || $action == 'importsite' || $websitetoolsdisabled)) {
+			if ($websitetoolsdisabled) {
+				$disabled = ' disabled="disabled"';
+				$disabledexport = ' disabled="disabled"';
+			}
+
 			// Edit website properties
-			print '<a href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($object->ref).'&pageid='.((int) $pageid).'&action=editcss&token='.newToken().'" class="button bordertransp valignmiddle" title="'.dol_escape_htmltag($langs->trans("EditCss")).'"'.$disabled.'>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($object->ref).'&pageid='.((int) $pageid).'&action=editcss&token='.newToken().'" class="button bordertransp buttonpictoonly valignmiddle" title="'.dol_escape_htmltag($langs->trans("EditCss")).'"'.$disabled.'>';
 			print img_picto('', 'setup');
 			print '<span class="hideonsmartphone paddingleft">'.dol_escape_htmltag($langs->trans("EditCss")).'</span>';
 			print '</a>';
@@ -3324,21 +3344,25 @@ if (!GETPOST('hide_websitemenu')) {
 			}
 
 			if ($atleastonepage) {
-				print '<input type="submit" class="button bordertransp" disabled="disabled" value="'.dol_escape_htmltag($importlabel).'" name="importsite">';
+				print '<button type="submit" class="button bordertransp valignmiddle" disabled="disabled" value="1" name="importsite" title="'.dol_escape_htmltag($importlabel).'">';
 			} else {
-				print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($importlabel).'" name="importsite">';
+				print '<button type="submit" class="button bordertransp valignmiddle"'.$disabled.' value="1" name="importsite" title="'.dol_escape_htmltag($importlabel).'">';
 			}
+			print img_picto('', 'upload');
+			print '<span class="hideonsmartphone paddingleft">'.dol_escape_htmltag($importlabel).'</span>';
+			print '</button>';
 
 			// // Export web site
-			$extraCssClass = getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE') ? 'hideobject' : '';
-			print '<input type="submit" class="button bordertransp ' . $extraCssClass . '" ' . $disabledexport . ' value="' . dol_escape_htmltag($exportlabel) . '" name="exportsite">';
+			// This button is kept hidden into the DOM, the export dialog simulates a click on it to download the zip
+			print '<button type="submit" class="button bordertransp valignmiddle hideobject" style="display: none;" '. $disabledexport . ' value="1" name="exportsite" title="'.dol_escape_htmltag($exportlabel).'">';
+			print img_picto('', 'download');
+			print '<span class="hideonsmartphone paddingleft">'.dol_escape_htmltag($exportlabel).'</span>';
+			print '</button>';
 
-			if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')) {
-				// Overwrite template in sources
-				$overwriteGitUrl = $_SERVER["PHP_SELF"] . '?action=overwritesite&website=' . urlencode($website->ref);
-				print dolButtonToOpenExportDialog('exportpopup', $langs->trans('ExportOptions'), $langs->trans('ExportSite'), 'exportsite', $overwriteGitUrl, $website);
-				//print '<a href="'.$_SERVER["PHP_SELF"].'?action=overwritesite&website='.urlencode($website->ref).'" class="button bordertransp hideobject" title="'.dol_escape_htmltag($langs->trans("ExportIntoGIT").". Directory ".getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')).'">'.dol_escape_htmltag($langs->trans("ExportIntoGIT")).'</a>';
-			}
+			// Button to open the dialog with the export options (download zip or export into a directory)
+			$overwriteGitUrl = $_SERVER["PHP_SELF"] . '?action=overwritesite&website=' . urlencode($website->ref);
+			print dolButtonToOpenExportDialog('exportpopup', $langs->trans('ExportOptions'), $langs->trans('ExportSite'), 'exportsite', $overwriteGitUrl, $website);
+			//print '<a href="'.$_SERVER["PHP_SELF"].'?action=overwritesite&website='.urlencode($website->ref).'" class="button bordertransp hideobject" title="'.dol_escape_htmltag($langs->trans("ExportIntoGIT").". Directory ".getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')).'">'.dol_escape_htmltag($langs->trans("ExportIntoGIT")).'</a>';
 
 			// Clone web site
 			print '<button type="submit" class="button bordertransp buttonpictoonly"'.$disabled.' value="1" name="createfromclone" title="'.dol_escape_htmltag($langs->trans("CloneSite")).'">'.img_picto('', 'clone_nocolor', 'class="fa-rotate-90"').'</button>';
@@ -3373,14 +3397,21 @@ if (!GETPOST('hide_websitemenu')) {
 
 		print '</span>';
 
-		if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite')) {
+		if ($websitetoolsdisabled) {
+			$disabled = ($user->hasRight('website', 'write') ? '' : ' disabled="disabled"');
+		}
+
+		// The media popup tool must also be available when editing the source of a page
+		if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite' || $action == 'importsite' || $action == 'editsource' || $action == 'editcontent')) {
 			print '<span class="websiteselection">';
 
 			print dolButtonToOpenUrlInDialogPopup('file_manager', $langs->transnoentitiesnoconv("MediaFiles"), '<span class="fa fa-image"></span>', '/website/index.php?action=file_manager&website='.urlencode($website->ref).'&section_dir='.urlencode('image/'.$website->ref.'/'), $disabled, 'classlink button bordertransp buttonpictoonly');
 
 			if (isModEnabled('category')) {
+				print '<span class="'.$morecsstoolsdisabled.'">';
 				//print '<a href="'.DOL_URL_ROOT.'/categories/categorie_list.php?leftmenu=website&dol_hide_leftmenu=1&nosearch=1&type=website_page&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("Categories")).'"><span class="fa fa-tags"></span></a>';
-				print dolButtonToOpenUrlInDialogPopup('categories', $langs->transnoentitiesnoconv("Categories"), '<span class="fa fa-tags"></span>', '/categories/categorie_list.php?leftmenu=website&nosearch=1&type='.urlencode(Categorie::TYPE_WEBSITE_PAGE).'&website='.urlencode($website->ref), $disabled, 'classlink button bordertransp buttonpictoonly');
+				print dolButtonToOpenUrlInDialogPopup('categories', $langs->transnoentitiesnoconv("Categories"), '<span class="fa fa-tags"></span>', '/categories/categorie_list.php?leftmenu=website&nosearch=1&type='.urlencode(Categorie::TYPE_WEBSITE_PAGE).'&website='.urlencode($website->ref), ($websitetoolsdisabled ? ' disabled="disabled"' : $disabled), 'classlink button bordertransp buttonpictoonly');
+				print '</span>';
 			}
 
 			print '</span>';
@@ -3555,7 +3586,7 @@ if (!GETPOST('hide_websitemenu')) {
 			$out = '';
 
 			$out .= '<span class="websiteselection nopaddingrightimp">';
-			$out .= '<select name="pageversion" id="pageversion" class="minwidth100 maxwidth200onsmartphone" title="'.dol_escape_htmltag($langs->trans("ListOfPageVersions")).'">';
+			$out .= '<select name="pageversion" id="pageversion" class="minwidth100 maxwidth100onsmartphone" title="'.dol_escape_htmltag($langs->trans("ListOfPageVersions")).'"'.(($websitetoolsdisabled && empty($pageversion)) ? ' disabled="disabled"' : '').'>';
 			$out .= '<option value="0"'.(empty($pageversion) ? ' selected' : '').' class="opacitymedium">';
 			$out .= $langs->trans("CurrentPageVersion");
 			$out .= '</option>';
@@ -3650,9 +3681,9 @@ if (!GETPOST('hide_websitemenu')) {
 
 		print '</span>';
 
-		if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite') {
+		if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite' || $websitetoolsdisabled) {
 			$disabled = '';
-			if (!$user->hasRight('website', 'write')) {
+			if (!$user->hasRight('website', 'write') || $websitetoolsdisabled) {
 				$disabled = ' disabled="disabled"';
 			}
 
@@ -3731,7 +3762,7 @@ if (!GETPOST('hide_websitemenu')) {
 					print $formconfirm;
 				}
 
-				print '<span class="websiteselection">';
+				print '<span class="websiteselection'.$morecsstoolsdisabled.'">';
 
 				// Edit web page properties
 				print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editmeta&token='.newToken().'" class="button bordertransp valignmiddle" title="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'"'.$disabled.'>';
@@ -3757,7 +3788,7 @@ if (!GETPOST('hide_websitemenu')) {
 
 				// Switch include dynamic content / edit inline
 				print '<!-- button EditInLine and ShowSubcontainers -->'."\n";
-				print '<div class="websiteselectionsection inline-block">';
+				print '<div class="websiteselectionsection inline-block'.$morecsstoolsdisabled.'">';
 
 				// Force to show subcontainers if we are in setup mode
 				if ($objectpage->type_container == 'setup') {
@@ -3766,7 +3797,7 @@ if (!GETPOST('hide_websitemenu')) {
 
 				if ($objectpage->type_container != 'setup') {
 					print '<div class="inline-block marginrightonly">';	// Button includes dynamic content
-					print $langs->trans("ShowSubcontainers");
+					print $langs->trans($conf->dol_optimize_smallscreen ? "ShowSubcontainersShort" : "ShowSubcontainers");
 					if (!getDolGlobalString('WEBSITE_SUBCONTAINERSINLINE')) {
 						print '<a class="nobordertransp nohoverborder marginleftonlyshort valignmiddle"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=setshowsubcontainers&token='.newToken().'">'.img_picto($langs->trans("ShowSubContainersOnOff", $langs->transnoentitiesnoconv("Off")), 'switch_off', '', 0, 0, 0, '', 'nomarginleft').'</a>';
 					} else {
@@ -3778,14 +3809,14 @@ if (!GETPOST('hide_websitemenu')) {
 				print '<div class="inline-block marginrightonly">';	// Button edit inline
 
 				print '<span id="switchckeditorinline">';
-				print $langs->trans("EditInLine");
+				print $langs->trans($conf->dol_optimize_smallscreen ? "Edit" : "EditInLine");
 				print '</span>';
 
 				// Enable edit inline of the elements with contenteditable="true" and an id. Which elements can be edited and how
 				// is found from the source of the page (no php code, only text or formatting tags, ...), see dolWebsiteGetEditInlineElements().
 				// Elements with formatting tags are edited with CKEditor, elements with only text inside that CKEditor can't edit
 				// (span, a, li...) are edited as plain text. The content is checked again when it is saved.
-				if (getDolGlobalString('WEBSITE_EDITINLINE') && empty($filetplversion) && $usercanedit) {
+				if (getDolGlobalString('WEBSITE_EDITINLINE') && empty($filetplversion) && $usercanedit && !$websitetoolsdisabled) {
 					$editinlineelements = array();
 					foreach (dolWebsiteGetEditInlineElements($websitepage->content) as $id => $element) {
 						$editinlineelements[$id] = array(
@@ -3951,7 +3982,7 @@ if (!GETPOST('hide_websitemenu')) {
 				print '</div>';
 
 				// Set page as homepage
-				print '<span class="websiteselection">';
+				print '<span class="websiteselection'.$morecsstoolsdisabled.'">';
 				if ($object->fk_default_home > 0 && $pageid == $object->fk_default_home) {
 					//$disabled=' disabled="disabled"';
 					//print '<span class="button bordertransp disabled"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'"><span class="fas fa-home"></span></span>';
@@ -3969,6 +4000,11 @@ if (!GETPOST('hide_websitemenu')) {
 					$disabled = ' disabled="disabled"';
 					$title = $langs->trans("NotEnoughPermissions");
 					$url = '#';
+				} elseif (!empty($filetplversion)) {
+					// An archived version is selected: delete only this version, whatever the status of the page
+					$disabled = '';
+					$title = $langs->trans("Delete");
+					$url = $_SERVER["PHP_SELF"].'?action=deletepageversion&token='.newToken().'&pageid='.((int) $websitepage->id).'&pageversion='.((int) $pageversion).'&website='.urlencode($website->ref);
 				} elseif ($websitepage->status != $websitepage::STATUS_DRAFT) {
 					$disabled = ' disabled="disabled"';
 					$title = $langs->trans("WebpageMustBeDisabled", $langs->transnoentitiesnoconv($websitepage->LibStatut(0, 0)));
@@ -3984,6 +4020,11 @@ if (!GETPOST('hide_websitemenu')) {
 		}
 
 		//print '</span>';	// end website selection
+
+		// Restore $disabled, it is used later by the save buttons of the edit mode
+		if ($websitetoolsdisabled) {
+			$disabled = '';
+		}
 
 		print '<span class="websitetools">';
 
@@ -4027,13 +4068,15 @@ if (!GETPOST('hide_websitemenu')) {
 			if (!$user->hasRight('website', 'write')) {
 				$disabled = ' disabled';
 			}
-			if ($action == 'editsource' || $action == 'editmeta') {
+			// When an archived version of the page is selected, the source can only be viewed, not saved
+			$nosavebutton = ($action == 'editsource' && !empty($pageversion));
+			if (($action == 'editsource' || $action == 'editmeta') && !$nosavebutton) {
 				print '<input type="submit" accesskey="s" title="'.dol_escape_htmltag($conf->browser->stringforfirstkey.' s').'" id="savefileandstay" class="button buttonforacesave hideonsmartphone small'.$disabled.'" value="'.dol_escape_htmltag($langs->trans("SaveAndStay")).'" name="updateandstay">';
 			}
 			if (preg_match('/^create/', $action)) {
 				print '<input type="submit" id="savefile" class="button buttonforacesave button-save small'.$disabled.'" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 			}
-			if (preg_match('/^edit/', $action)) {
+			if (preg_match('/^edit/', $action) && !$nosavebutton) {
 				print '<input type="submit" id="savefile" class="button buttonforacesave button-save small'.$disabled.'" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 			}
 			if ($action != 'preview') {
@@ -4044,7 +4087,8 @@ if (!GETPOST('hide_websitemenu')) {
 		print '</span>'; // end websitetools
 
 		print '<span class="websitehelp">';
-		if ($action == 'editsource' || $action == 'editcontent' || GETPOST('editsource', 'alpha') || GETPOST('editcontent', 'alpha')) {
+		// No syntax help when viewing the source of an archived version of the page (it can't be saved)
+		if (($action == 'editsource' || $action == 'editcontent' || GETPOST('editsource', 'alpha') || GETPOST('editcontent', 'alpha')) && !($action == 'editsource' && !empty($pageversion))) {
 			$url = 'https://wiki.dolibarr.org/index.php/Module_Website';
 
 			$htmltext = '<small>';
@@ -4060,11 +4104,18 @@ if (!GETPOST('hide_websitemenu')) {
 			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSourceMore", $url);
 			$htmltext .= '<br>';
 			$htmltext .= '</small>';
-			if ($conf->browser->layout == 'phone') {
-				print $form->textwithpicto('', $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
+			if ($action == 'editsource') {
+				// For the status bar of the ACE editor: aligned on right, text hidden on smartphone but not the picto
+				$syntaxhelp = '<span class="pull-right">'.$form->textwithpicto('<span class="hideonsmartphone opacitymedium">'.$langs->trans("SyntaxHelp").'</span> '.img_help(2, $langs->trans("SyntaxHelp")), $htmltext, 1, 'none', 'inline-block', 1, 2, 'tooltipsubstitution').'</span>';
+			} elseif ($conf->browser->layout == 'phone') {
+				$syntaxhelp = $form->textwithpicto('', $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
 			} else {
 				//img_help(($tooltiptrigger != '' ? 2 : 1), $alt)
-				print $form->textwithpicto($langs->trans("SyntaxHelp").' '.img_help(2, $langs->trans("SyntaxHelp")), $htmltext, 1, 'none', 'inline-block', 1, 2, 'tooltipsubstitution');
+				$syntaxhelp = $form->textwithpicto($langs->trans("SyntaxHelp").' '.img_help(2, $langs->trans("SyntaxHelp")), $htmltext, 1, 'none', 'inline-block', 1, 2, 'tooltipsubstitution');
+			}
+			// In source edition mode, the syntax help is shown into the status bar of the ACE editor instead
+			if ($action != 'editsource') {
+				print $syntaxhelp;
 			}
 		}
 		print '</span>'; // end websitehelp
@@ -4198,7 +4249,8 @@ if ($action == 'editcss') {
 	}
 
 	if (!GETPOSTISSET('WEBSITE_MANIFEST_JSON')) {
-		$manifestjsoncontent = @file_get_contents($filemanifestjson);
+		// Read the manifest.json file, or the old manifest.json.php file if the website was not yet migrated
+		$manifestjsoncontent = @file_get_contents(dol_is_file($filemanifestjson) ? $filemanifestjson : $filemanifestjsonold);
 		// Clean the manifestjson file to remove php code and get only html part
 		$manifestjsoncontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP( \?>)?\n*/ims', '', $manifestjsoncontent);
 	} else {
@@ -4371,7 +4423,7 @@ if ($action == 'editcss') {
 	print '</td><td>';
 
 	$poscursor = array('x' => GETPOST('WEBSITE_HTACCESS_x'), 'y' => GETPOST('WEBSITE_HTACCESS_y'));
-	$doleditor = new DolEditor('WEBSITE_HTACCESS', $htaccesscontent, '', 220, 'ace', 'In', true, false, 'ace', 0, '100%', 0, $poscursor);
+	$doleditor = new DolEditor('WEBSITE_HTACCESS', $htaccesscontent, '', 220, 'ace', 'In', true, false, 'ace', 0, '100%', ($user->hasRight('website', 'writephp') ? 0 : 1), $poscursor);
 	print $doleditor->Create(1, '', true, $langs->trans("File").' .htaccess', 'text');
 
 	print '</td></tr>';
@@ -4737,8 +4789,12 @@ if ($action == 'importsite') {
 		if ($maxmin > 0) {
 			print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
 		}
+		// Tooltip with max size limit, shown on the upload button
+		$menudolibarrsetupmax = $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Security");
+		$tooltiptext = $langs->trans("ThisLimitIsDefinedInSetupAt", $menudolibarrsetupmax, $maxfilesizearray['max'], $maxfilesizearray['maxphptoshowparam'], $maxfilesizearray['maxphptoshow']);
+
 		print '<input class="flat minwidth400" type="file" name="userfile[]" accept=".zip">';
-		print '<input type="submit" class="button small" name="buttonsubmitimportfile" value="'.dol_escape_htmltag($langs->trans("Upload")).'">';
+		print '<input type="submit" class="button small classfortooltip" name="buttonsubmitimportfile" value="'.dol_escape_htmltag($langs->trans("Upload")).'" title="'.dolPrintHTMLForAttribute($tooltiptext).'" data-delayfortooltip="1000">';
 		print '<input type="submit" class="button button-cancel small" name="preview" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 		print '<br><br><br>';
 	} else {
@@ -4864,6 +4920,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		$pageusermodifid = 0;
 		$pageauthoralias = '';
 		$pagestatus = 1;
+		$pagekeephistory = 5;
 	}
 	if (GETPOST('WEBSITE_TITLE', 'alpha')) {
 		$pagetitle = str_replace(array('<', '>'), '', GETPOST('WEBSITE_TITLE', 'alphanohtml'));
@@ -5192,6 +5249,15 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 
 		$showlinktolayoutlabel = $langs->trans("FillPageWithALayout");
 		$showlinktoailabel = $langs->trans("FillPageWithAIContent");
+		if ($showlinktoai) {
+			// Add the AI service and model that will be used
+			require_once DOL_DOCUMENT_ROOT.'/ai/class/ai.class.php';
+			$aiobj = new Ai($db);
+			$aiservicemodellabel = $aiobj->getServiceAndModelLabel($showlinktoai);
+			if ($aiservicemodellabel) {
+				$showlinktoailabel .= ' ('.dol_escape_htmltag($aiservicemodellabel).')';
+			}
+		}
 		$htmlname = 'content';
 		// Fill $out
 		include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
@@ -5428,7 +5494,7 @@ if ($action == 'editsource') {
 	$contentforedit .= $objectpage->content;
 
 	// If an archived version of the page is selected, we load its content into the editor,
-	// so saving the page will restore this old version as the current one
+	// for viewing only: the save buttons are not shown (see $nosavebutton)
 	if (!empty($filetplversion)) {
 		$contentoffile = @file_get_contents($filetplversion);
 		if ($contentoffile) {
@@ -5462,12 +5528,24 @@ if ($action == 'editsource') {
 		$showlinktolayout = '';
 		$showlinktoai = 'textgenerationwebpage';
 		$showlinktoailabel = $langs->trans("FillPageWithAIContent");
+		// Add the AI service and model that will be used
+		require_once DOL_DOCUMENT_ROOT.'/ai/class/ai.class.php';
+		$aiobj = new Ai($db);
+		$aiservicemodellabel = $aiobj->getServiceAndModelLabel($showlinktoai);
+		if ($aiservicemodellabel) {
+			$showlinktoailabel .= ' ('.dol_escape_htmltag($aiservicemodellabel).')';
+		}
 		$htmlname = 'PAGE_CONTENT';
 		$out = '';
 		// Fill $out
 		include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
 
 		$titlecontent .= ' &nbsp; '.$out;
+	}
+
+	// Add the syntax help into the status bar of the ACE editor (not set when viewing an archived version)
+	if (!empty($syntaxhelp)) {
+		$titlecontent .= ' &nbsp; '.$syntaxhelp;
 	}
 
 	$doleditor = new DolEditor('PAGE_CONTENT', $contentforedit, '', $maxheightwin, 'Full', '', true, true, 'ace', ROWS_5, '40%', 0, $poscursor);

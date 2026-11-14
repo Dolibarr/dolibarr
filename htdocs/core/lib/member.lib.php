@@ -105,7 +105,7 @@ function member_prepare_head(Adherent $object)
 	if (!empty($object->note_public)) {
 		$nbNote++;
 	}
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/note.php', ['id' => $object->id]);
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/core/note.php', ['element' => 'adherents', 'id' => $object->id]);
 	$head[$h][1] = $langs->trans("Note");
 	$head[$h][2] = 'note';
 	if ($nbNote > 0) {
@@ -283,7 +283,7 @@ function member_admin_prepare_head()
  */
 function member_stats_prepare_head($object)
 {
-	global $conf, $langs;
+	global $conf, $langs, $user;
 
 	$h = 0;
 	$head = array();
@@ -312,6 +312,13 @@ function member_stats_prepare_head($object)
 	$head[$h][2] = 'statsbyproperties';
 	$h++;
 
+	// Tab with the custom reports tool (not available to external users)
+	if (empty($user->socid)) {
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/stats/geo.php', ['tabfamily' => 'memberstats']);
+		$head[$h][1] = $langs->trans("Custom");
+		$head[$h][2] = 'customreports';
+		$h++;
+	}
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
@@ -333,7 +340,7 @@ function member_stats_prepare_head($object)
  */
 function membership_stats_prepare_head($object)
 {
-	global $langs, $conf;
+	global $langs, $conf, $user;
 
 	$h = 0;
 	$head = array();
@@ -342,6 +349,14 @@ function membership_stats_prepare_head($object)
 	$head[$h][1] = $langs->trans("Subscriptions");
 	$head[$h][2] = 'statssubscription';
 	$h++;
+
+	// Tab with the custom reports tool (not available to external users)
+	if (empty($user->socid)) {
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/stats/index.php', ['tabfamily' => 'membershipstats']);
+		$head[$h][1] = $langs->trans("Custom");
+		$head[$h][2] = 'customreports';
+		$h++;
+	}
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line

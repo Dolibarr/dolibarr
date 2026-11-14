@@ -329,7 +329,7 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
  * @param	string		$sqlfilters		Filter as an Universal Search string.
  * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
  * @param	?Object		$object			Object used
- * @return	array<array{rowid:string,label:string,name:string,path:string,level1name:string,fullname:string,fullpath_orig:string,date_c:string,date_m:string,type:string,keywords:string,cover:string,position:int,acl:string,share:string,description:string}> Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)
+ * @return	array<array{rowid:string,label:string,name:string,path:string,level1name:string,fullname:string,fullpath_orig:string,date_creation:string,date_m:string,type:string,keywords:string,cover:string,position:int,acl:string,share:string,description:string}> Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)
  * @see dol_dir_list()
  */
 function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $sortcriteria = "name", $sortorder = SORT_ASC, $mode = 0, $sqlfilters = "", $object = null)
@@ -341,7 +341,7 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
 	}
 
 	$sql = "SELECT rowid, label, entity, filename, filepath, fullpath_orig, keywords, cover, gen_or_uploaded, extraparams,";
-	$sql .= " date_c, tms as date_m, fk_user_c, fk_user_m, acl, position, share";
+	$sql .= " date_creation, tms as date_m, fk_user_c, fk_user_m, acl, position, share";
 	if ($mode) {
 		$sql .= ", description";
 	}
@@ -384,7 +384,7 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
 					"level1name" => $level1name,
 					"fullname" => DOL_DATA_ROOT.'/'.$obj->filepath.'/'.$obj->filename,
 					"fullpath_orig" => $obj->fullpath_orig,
-					"date_c" => $db->jdate($obj->date_c),
+					"date_creation" => $db->jdate($obj->date_creation),
 					"date_m" => $db->jdate($obj->date_m),
 					"type" => 'file',
 					"keywords" => $obj->keywords,
@@ -445,6 +445,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 	if (in_array($modulepart, array('produit', 'product')) && getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 		// TODO Remove this when PRODUCT_USE_OLD_PATH_FOR_PHOTO will be removed
 		global $object;
+		'@phan-var-force CommonObject $object';
 		if (!empty($object->id)) {
 			if (isModEnabled("product")) {
 				$upload_dirold = $conf->product->multidir_output[$object->entity ?? $conf->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
@@ -2036,8 +2037,9 @@ function dol_meta_create($object)
 				$nblines = 0;
 			}
 			$client = $object->thirdparty->name." ".$object->thirdparty->address." ".$object->thirdparty->zip." ".$object->thirdparty->town;
+			$objectdate = (property_exists($object, 'date') ? $object->date : '');	// @phan-suppress-current-line PhanUndeclaredProperty
 			$meta = "REFERENCE=\"".$object->ref."\"
-			DATE=\"" . dol_print_date($object->date, '')."\"
+			DATE=\"" . dol_print_date($objectdate, '')."\"
 			NB_ITEMS=\"" . $nblines."\"
 			CLIENT=\"" . $client."\"
 			AMOUNT_EXCL_TAX=\"" . $object->total_ht."\"
@@ -3111,11 +3113,17 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$modulepart = 'user';
 	} elseif ($modulepart == 'tva') {
 		$modulepart = 'tax-vat';
+	} elseif (($modulepart == 'action' || $modulepart == 'event') && empty($conf->$modulepart->dir_output)) {
+		// Aliases of the REST API are not used if a module with this name has its own directory
+		$modulepart = 'actions';
 	} elseif ($modulepart == 'expedition' && strpos($original_file, 'receipt/') === 0) {
 		// Fix modulepart delivery
 		$modulepart = 'delivery';
-	} elseif ($modulepart == 'propale') {
+	} elseif ($modulepart == 'propale' || ($modulepart == 'proposal' && empty($conf->$modulepart->dir_output))) {
 		$modulepart = 'propal';
+	} elseif ($modulepart == 'intervention' && empty($conf->$modulepart->dir_output)) {
+		// Aliases of the REST API are not used if a module with this name has its own directory
+		$modulepart = 'fichinter';
 	}
 
 	// If modulepart is composed of an objectpart@modulepart, we keep modulepart.
@@ -3428,7 +3436,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->tax->dir_output.'/'.($modulepartsuffix != 'tax' ? $modulepartsuffix.'/' : '').$original_file;
 	} elseif (($modulepart == 'actions' || $modulepart == 'actioncomm') && !empty($conf->agenda->dir_output)) {
 		// Wrapping for events
-		if ($fuser->hasRight('agenda', 'myactions', $read)) {
+		if ($fuser->hasRight('agenda', 'allactions', $read)) {
+			$accessallowed = 1;
+		} elseif ($fuser->hasRight('agenda', 'myactions', $read)) {
 			$accessallowed = 1;
 			// If we known $id of project, call checkUserAccessToObject to check permission on the given agenda event on properties and assigned users
 			if ($refname && !preg_match('/^specimen/i', $original_file)) {
@@ -3639,14 +3649,14 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if ($fuser->hasRight('fournisseur', 'commande', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
-		$original_file = $conf->fournisseur->commande->dir_output.'/'.$original_file;
+		$original_file = (!empty($conf->fournisseur->commande->multidir_output[$entity]) ? $conf->fournisseur->commande->multidir_output[$entity] : $conf->fournisseur->commande->dir_output).'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE ref='".$db->escape($refname)."' AND entity = ".((int) $conf->entity);
 	} elseif (($modulepart == 'facture_fournisseur' || $modulepart == 'invoice_supplier' || $modulepart == 'supplier_invoice') && !empty($conf->fournisseur->facture->dir_output)) {
 		// Wrapping for supplier invoices
 		if ($fuser->hasRight('fournisseur', 'facture', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
-		$original_file = $conf->fournisseur->facture->dir_output.'/'.$original_file;
+		$original_file = (!empty($conf->fournisseur->facture->multidir_output[$entity]) ? $conf->fournisseur->facture->multidir_output[$entity] : $conf->fournisseur->facture->dir_output).'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture_fourn WHERE ref='".$db->escape($refname)."' AND entity=".((int) $conf->entity);
 	} elseif ($modulepart == 'supplier_payment') {
 		// Wrapping for supplier payments
@@ -3693,12 +3703,14 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->expedition->dir_output."/".(strpos($original_file, 'sending/') === 0 ? '' : 'sending/').$original_file;
 		//$original_file = $conf->expedition->dir_output."/".$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."expedition WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('expedition').")";
 	} elseif (($modulepart == 'livraison' || $modulepart == 'delivery') && !empty($conf->expedition->dir_output)) {
 		// Delivery Note Wrapping
 		if ($fuser->hasRight('expedition', 'delivery', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->expedition->dir_output."/".(strpos($original_file, 'receipt/') === 0 ? '' : 'receipt/').$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."delivery WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('delivery').")";
 	} elseif ($modulepart == 'actionsreport' && !empty($conf->agenda->dir_temp)) {
 		// Wrapping for actions
 		if ($fuser->hasRight('agenda', 'allactions', $read) || preg_match('/^specimen/i', $original_file)) {
@@ -4157,6 +4169,7 @@ function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathre
 function dragAndDropFileUpload($htmlname)
 {
 	global $object, $langs;
+	'@phan-var-force CommonObject $object';
 
 	// Every generated javascript string that carries an interpolated value is delimited by a single quote, so
 	// dol_escape_js() is called with the mode 1 everywhere below: it escapes a single quote and leaves a double

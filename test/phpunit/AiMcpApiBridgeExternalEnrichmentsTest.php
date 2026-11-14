@@ -63,7 +63,9 @@ class AiMcpApiBridgeExternalEnrichmentsTest extends CommonClassTest
 	private function enrichmentsOf(ToolApiBridge $bridge)
 	{
 		$property = new ReflectionProperty(ToolApiBridge::class, 'enrichments');
-		$property->setAccessible(true);
+		if (PHP_VERSION_ID < 80100) {
+			$property->setAccessible(true);
+		}
 		return $property->getValue($bridge);
 	}
 
@@ -115,7 +117,7 @@ class AiMcpApiBridgeExternalEnrichmentsTest extends CommonClassTest
 
 		$this->assertSame('support tickets', $enrichments['tickets']['label']);
 		// A method the module never declared but core has proves the merge kept core's.
-		$this->assertArrayHasKey('getByTrackId', $enrichments['tickets']['methods']);
+		$this->assertArrayHasKey('postNewMessage', $enrichments['tickets']['methods']);
 	}
 
 	/**

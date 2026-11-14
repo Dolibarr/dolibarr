@@ -377,6 +377,17 @@ $dolibarr_main_restrict_ip='';
 //
 $dolibarr_nocsrfcheck='0';
 
+// dolibarr_main_disable_totp
+// ==========================
+// Rescue option to disable the two-factor authentication (TOTP) for all users, for example if an administrator
+// has lost the device with the authenticator application. A password is then enough to log in (web, API, DAV, web services).
+// Remove this parameter (or set it to 0) as soon as the problem is solved.
+// Default value: 0
+// Possible values: 0 or 1
+// Examples:
+// $dolibarr_main_disable_totp='1';
+//
+
 // dolibarr_api_count_always_enabled
 // =================================
 // Set this value to 1 so disabling the count of each API call will not be possible from the admin setup pages.
@@ -465,6 +476,18 @@ $dolibarr_cron_allow_cli='0';
 // Examples: '1'
 //
 // $dolibarr_allow_localurl_for_webhooks = '0';
+
+// dolibarr_ai_allow_local_endpoints
+// =================================
+// Define which endpoints of AI services (module AI and AI assistant) can be called.
+// 0 = only external endpoints are allowed (local and private network IP addresses are refused).
+// 1 = only local endpoints are allowed (for example a local LLM server like Ollama). External AI services are refused.
+// 2 = both external and local endpoints are allowed.
+// Warning: values 1 and 2 allow requests to your local network (network scan risk), set them only if you use a local AI server.
+// Default value: '0'
+// Examples: '0', '1' or '2'
+//
+// $dolibarr_ai_allow_local_endpoints = '0';
 
 // dolibarr_allow_unsecured_select_in_extrafields_filter
 // =====================================================

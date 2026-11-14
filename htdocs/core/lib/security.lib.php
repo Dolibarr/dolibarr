@@ -818,7 +818,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
  */
 function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file, $mode = 'read')
 {
-	// Moduleparts of documents linked to a thirdparty: modulepart => array(element used to fetch the object, feature for restrictedArea())
+	// Moduleparts of documents linked to a thirdparty: modulepart => array(element used to fetch the object, feature for restrictedArea(), [table for restrictedArea(), [feature2 for restrictedArea()]])
 	$modulepartlinkedtothirdparty = array(
 		'societe' => array('societe', 'societe'),
 		'company' => array('societe', 'societe'),
@@ -832,12 +832,12 @@ function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file
 		'proposal' => array('propal', 'propal'),
 		'commande' => array('commande', 'commande'),
 		'order' => array('commande', 'commande'),
-		'commande_fournisseur' => array('order_supplier', 'order_supplier'),
-		'order_supplier' => array('order_supplier', 'order_supplier'),
-		'supplier_order' => array('order_supplier', 'order_supplier'),
-		'facture_fournisseur' => array('invoice_supplier', 'invoice_supplier'),
-		'invoice_supplier' => array('invoice_supplier', 'invoice_supplier'),
-		'supplier_invoice' => array('invoice_supplier', 'invoice_supplier'),
+		'commande_fournisseur' => array('order_supplier', 'fournisseur', 'commande_fournisseur', 'commande'),
+		'order_supplier' => array('order_supplier', 'fournisseur', 'commande_fournisseur', 'commande'),
+		'supplier_order' => array('order_supplier', 'fournisseur', 'commande_fournisseur', 'commande'),
+		'facture_fournisseur' => array('invoice_supplier', 'fournisseur', 'facture_fourn', 'facture'),
+		'invoice_supplier' => array('invoice_supplier', 'fournisseur', 'facture_fourn', 'facture'),
+		'supplier_invoice' => array('invoice_supplier', 'fournisseur', 'facture_fourn', 'facture'),
 		'contract' => array('contrat', 'contrat'),
 		'contrat' => array('contrat', 'contrat'),
 		'fichinter' => array('fichinter', 'ficheinter'),
@@ -900,8 +900,10 @@ function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file
 	}
 
 	if (is_object($object) && $object->id > 0) {
+		$tableandshare = (empty($modulepartlinkedtothirdparty[$modulepart][2]) ? '' : $modulepartlinkedtothirdparty[$modulepart][2]);
+		$feature2 = (empty($modulepartlinkedtothirdparty[$modulepart][3]) ? '' : $modulepartlinkedtothirdparty[$modulepart][3]);
 		// Call checkUserAccessToObject() directly (module permission already checked by dol_check_secure_access_document())
-		return checkUserAccessToObject($user, array($modulepartlinkedtothirdparty[$modulepart][1]), $object, '', '', 'fk_soc', 'rowid') ? 1 : 0;
+		return checkUserAccessToObject($user, array($modulepartlinkedtothirdparty[$modulepart][1]), $object, $tableandshare, $feature2, 'fk_soc', 'rowid') ? 1 : 0;
 	}
 
 	// Object not found (file outside the directory of an object or faked path like 'REF/./file'): refused to users restricted to some thirdparties
@@ -984,6 +986,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$dbtablename = 'facture_fourn';
 		}
 		if (!$tablegivenbycaller && $feature == 'produit') {
+			// The module (and its permissions) is named 'produit', but the table of the product object is 'llx_product'
 			$dbtablename = 'product';
 		}
 		if (!$tablegivenbycaller && $feature == 'ficheinter') {
@@ -1055,7 +1058,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		// to the users that this rule applies to.
 		// The rule is selected on the table and not on the element of the object, because $object is an id and not
 		// an object for most of the callers, the card of an asset and the card of a workstation included.
-		if (!empty($objectid) && in_array($dbtablename, array('asset', 'loan', 'localtax', 'paiement', 'paiementfourn', 'pos_cash_fence', 'tva', 'workstation_workstation', 'hrm_job', 'hrm_job_user', 'hrm_skill'))) {
+		if (!empty($objectid) && in_array($dbtablename, array('asset', 'loan', 'localtax', 'paiement', 'paiementfourn', 'pos_cash_fence', 'tva', 'workstation_workstation', 'hrm_job', 'hrm_job_user', 'hrm_skill', 'chargesociales'))) {
 			// None of these objects is linked to a third party, so an external user can own none of them. The
 			// default rule refused him through a link that does not exist, we must refuse him explicitly instead,
 			// otherwise the rules below, which do not look at the third party of the user at all, would grant it.

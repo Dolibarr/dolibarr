@@ -988,9 +988,9 @@ class pdf_sponge extends ModelePDFFactures
 					}
 
 					// Collect total by value of vat rate into $this->tva_array
-					// Lines are already stored as delta (not cumulative) once INVOICE_USE_SITUATION=2, so no ratio must be reapplied here (same guard as CommonObject::update_price())
+					// Lines are already stored as delta (not cumulative) once INVOICE_USE_SITUATION != 1, so no ratio must be reapplied here (same guard as CommonObject::update_price())
 					if ($object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE && $object->lines[$i]->product_type != 9) {
-						$prev_progress = getDolGlobalInt('INVOICE_USE_SITUATION') == 2 ? 0 : $object->lines[$i]->get_prev_progress($object->id);
+						$prev_progress = (!$object->isSituationInvoice() || getDolGlobalInt('INVOICE_USE_SITUATION') != 1) ? 0 : $object->lines[$i]->get_prev_progress($object->id);
 
 						if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation
 							if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
@@ -1052,6 +1052,9 @@ class pdf_sponge extends ModelePDFFactures
 						if (empty($this->tva_array[$vatrate . ($vatcode ? ' (' . $vatcode . ')' : '')]['amount'])) {
 							$this->tva_array[$vatrate . ($vatcode ? ' (' . $vatcode . ')' : '')]['amount'] = 0;
 						}
+						$vatkey = $vatrate . ($vatcode ? ' (' . $vatcode . ')' : '');
+						$previouslocaltax1 = empty($this->tva_array[$vatkey]['localtax1']) ? 0 : $this->tva_array[$vatkey]['localtax1'];
+						$previouslocaltax2 = empty($this->tva_array[$vatkey]['localtax2']) ? 0 : $this->tva_array[$vatkey]['localtax2'];
 						if (getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {
 							if (empty($this->tva_array[$vatrate . ($vatcode ? ' (' . $vatcode . ')' : '')]['tot_ht'])) {
 								$this->tva_array[$vatrate . ($vatcode ? ' (' . $vatcode . ')' : '')]['tot_ht'] = 0;
@@ -1059,6 +1062,10 @@ class pdf_sponge extends ModelePDFFactures
 							$this->tva_array[$vatrate . ($vatcode ? ' (' . $vatcode . ')' : '')] = array('vatrate' => $vatrate, 'vatcode' => $vatcode, 'amount' => $this->tva_array[$vatrate . ($vatcode ? ' (' . $vatcode . ')' : '')]['amount'] + $tvaligne, 'tot_ht' => $this->tva_array[$vatrate . ($vatcode ? ' (' . $vatcode . ')' : '')]['tot_ht'] + $object->lines[$i]->total_ht);
 						} else {
 							$this->tva_array[$vatrate . ($vatcode ? ' (' . $vatcode . ')' : '')] = array('vatrate' => $vatrate, 'vatcode' => $vatcode, 'amount' => $this->tva_array[$vatrate . ($vatcode ? ' (' . $vatcode . ')' : '')]['amount'] + $tvaligne);
+						}
+						if (getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {
+							$this->tva_array[$vatkey]['localtax1'] = $previouslocaltax1 + $localtax1ligne;
+							$this->tva_array[$vatkey]['localtax2'] = $previouslocaltax2 + $localtax2ligne;
 						}
 					}
 
@@ -1173,7 +1180,7 @@ class pdf_sponge extends ModelePDFFactures
 
 				// Add terms to sale
 				$termsofsalefilename = getDolGlobalString('MAIN_INFO_INVOICE_TERMSOFSALE');
-				if (getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE') && $termsofsalefilename) {
+				if ($this->mustAddTermsOfSale($object, 'INVOICE') && $termsofsalefilename) {
 					$termsofsale = $conf->invoice->dir_output.'/'.$termsofsalefilename;
 					if (!empty($conf->invoice->multidir_output[$object->entity ?? $conf->entity])) {
 						$termsofsale = $conf->invoice->multidir_output[$object->entity ?? $conf->entity].'/'.$termsofsalefilename;
@@ -1397,59 +1404,62 @@ class pdf_sponge extends ModelePDFFactures
 		$object->total_tva = (float) $object->total_tva;
 
 		// Show VAT details
-		if ($object->total_tva != 0 && getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {
+		$showlocaltax1 = ((float) $object->total_localtax1 != 0);
+		$showlocaltax2 = ((float) $object->total_localtax2 != 0);
+		if (($object->total_tva != 0 || $showlocaltax1 || $showlocaltax2) && getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {
+			// Columns: rate, net total, VAT amount, [tax 2], [tax 3], total. Same overall width (100) as before.
+			$columns = array(array('VAT', 'rate'), array('NetTotal', 'tot_ht'), array('VATAmount', 'amount'));
+			if ($showlocaltax1) {
+				$columns[] = array($outputlangs->transcountrynoentities('LT1', $mysoc->country_code), 'localtax1');
+			}
+			if ($showlocaltax2) {
+				$columns[] = array($outputlangs->transcountrynoentities('LT2', $mysoc->country_code), 'localtax2');
+			}
+			$columns[] = array('AmountTotal', 'total');
+			$colwidth = 100 / count($columns);
+
 			$pdf->SetFillColor(224, 224, 224);
-
 			$pdf->SetFont('', '', $default_font_size - 2);
-			$pdf->SetXY($this->marge_gauche, $posy);
-			$titre = $outputlangs->transnoentities("VAT");
-			$pdf->MultiCell(25, 4, $titre, 0, 'L', true);
+			$headerlines = 1;
+			foreach ($columns as $colnum => $column) {
+				$columns[$colnum][0] = in_array($column[1], array('localtax1', 'localtax2')) ? $column[0] : $outputlangs->transnoentities($column[0]);
+				$headerlines = max($headerlines, $pdf->getNumLines($columns[$colnum][0], $colwidth));
+			}
+			$nexty = $posy;
+			foreach ($columns as $colnum => $column) {
+				$pdf->SetXY($this->marge_gauche + $colnum * $colwidth, $posy);
+				$pdf->MultiCell($colwidth, 4 * $headerlines, $column[0], 0, 'L', true);
+				$nexty = max($nexty, $pdf->GetY());
+			}
 
-			$pdf->SetFont('', '', $default_font_size - 2);
-			$pdf->SetXY($this->marge_gauche + 25, $posy);
-			$titre = $outputlangs->transnoentities("NetTotal");
-			$pdf->MultiCell(25, 4, $titre, 0, 'L', true);
-
-			$pdf->SetFont('', '', $default_font_size - 2);
-			$pdf->SetXY($this->marge_gauche + 50, $posy);
-			$titre = $outputlangs->transnoentities("VATAmount");
-			$pdf->MultiCell(25, 4, $titre, 0, 'L', true);
-
-			$pdf->SetFont('', '', $default_font_size - 2);
-			$pdf->SetXY($this->marge_gauche + 75, $posy);
-			$titre = $outputlangs->transnoentities("AmountTotal");
-			$pdf->MultiCell(25, 4, $titre, 0, 'L', true);
-
-			$posy = $pdf->GetY();
-			$tot_ht = 0;
-			$tot_tva = 0;
-			$tot_ttc = 0;
+			$posy = $nexty;
 
 			foreach ($this->tva_array as $tvakey => $tvaval) {
-				$pdf->SetFont('', '', $default_font_size - 2);
-				$pdf->SetXY($this->marge_gauche, $posy);
-				$titre = round((float) $tvakey, 2) . "%";
-				$pdf->MultiCell(25, 4, $titre, 0, 'L');
+				$localtax1 = (($showlocaltax1 && !empty($tvaval['localtax1'])) ? $tvaval['localtax1'] : 0);
+				$localtax2 = (($showlocaltax2 && !empty($tvaval['localtax2'])) ? $tvaval['localtax2'] : 0);
+				$nexty = $posy;
+				foreach ($columns as $colnum => $column) {
+					if ($column[1] == 'rate') {
+						$titre = round((float) $tvakey, 2) . "%";
+						if (($showlocaltax1 || $showlocaltax2) && !empty($tvaval['vatcode'])) {
+							$titre .= ' (' . $tvaval['vatcode'] . ')';
+						}
+					} elseif ($column[1] == 'total') {
+						$titre = price($tvaval['tot_ht'] + $tvaval['amount'] + $localtax1 + $localtax2);
+					} elseif ($column[1] == 'localtax1') {
+						$titre = price($localtax1);
+					} elseif ($column[1] == 'localtax2') {
+						$titre = price($localtax2);
+					} else {
+						$titre = price($tvaval[$column[1]]);
+					}
+					$pdf->SetFont('', '', $default_font_size - 2);
+					$pdf->SetXY($this->marge_gauche + $colnum * $colwidth, $posy);
+					$pdf->MultiCell($colwidth, 4, $titre, 0, 'L');
+					$nexty = max($nexty, $pdf->GetY());
+				}
 
-				$pdf->SetFont('', '', $default_font_size - 2);
-				$pdf->SetXY($this->marge_gauche + 25, $posy);
-				$titre = price($tvaval['tot_ht']);
-				$pdf->MultiCell(25, 4, $titre, 0, 'L');
-				$tot_ht += $tvaval['tot_ht'];
-
-				$pdf->SetFont('', '', $default_font_size - 2);
-				$pdf->SetXY($this->marge_gauche + 50, $posy);
-				$titre = price($tvaval['amount']);
-				$pdf->MultiCell(25, 4, $titre, 0, 'L');
-				$tot_tva += $tvaval['amount'];
-
-				$pdf->SetFont('', '', $default_font_size - 2);
-				$pdf->SetXY($this->marge_gauche + 75, $posy);
-				$titre = price($tvaval['tot_ht'] + $tvaval['amount']);
-				$pdf->MultiCell(25, 4, $titre, 0, 'L');
-				$tot_ttc += ($tvaval['tot_ht'] + $tvaval['amount']);
-
-				$posy = $pdf->GetY();
+				$posy = $nexty;
 			}
 		}
 
@@ -2581,7 +2591,7 @@ class pdf_sponge extends ModelePDFFactures
 			$carac_client_name = is_object($thirdparty) ? pdfBuildThirdpartyName($thirdparty, $outputlangs) : '';
 
 			$mode = 'target';
-			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), ($usecontact ? 1 : 0), $mode, $object);
+			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), ($usecontact ? 1 : 0), $mode, $object, 'SHIPPING');
 
 			// Show recipient
 			$widthrecbox = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 92 : 100;

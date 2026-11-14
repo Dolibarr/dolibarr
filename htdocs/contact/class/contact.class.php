@@ -240,7 +240,7 @@ class Contact extends CommonObject
 	 */
 	public $socid;		// both socid and fk_soc are used
 	/**
-	 * @var int
+	 * @var int Thirdparty ID
 	 */
 	public $fk_soc;		// both socid and fk_soc are used
 
@@ -2948,7 +2948,7 @@ class Contact extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 					$noemail = $obj->nb;
 					if (empty($noemail)) {
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe(email, entity, date_creat) VALUES ('".$this->db->escape($this->email)."', ".getEntity('mailing', 0).", '".$this->db->idate(dol_now())."')";
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe(email, entity, date_creation) VALUES ('".$this->db->escape($this->email)."', ".getEntity('mailing', 0).", '".$this->db->idate(dol_now())."')";
 						$resql = $this->db->query($sql);
 						if (!$resql) {
 							$error++;

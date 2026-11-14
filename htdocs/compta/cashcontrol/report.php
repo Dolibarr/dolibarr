@@ -63,9 +63,14 @@ $summaryonly = GETPOSTINT('summaryonly');		// May be used for ticket Z
 $object = new CashControl($db);
 $object->fetch($id);
 
-//$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
-$sortorder = 'ASC';
-$sortfield = 'b.datev,b.dateo,b.rowid';
+//$limit = GETPOST('limit')?GETPOST('limit', 'int'):$conf->liste_limit;
+// The SQL request always reads the lines by date then rowid (see below), the sort only applies to the display.
+$sortfields = array('f.ref', 'p.datep', 'ba.ref', 'cp.code', 'amount');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = (strtolower(GETPOST('sortorder', 'aZ09comma')) == 'desc' ? 'DESC' : 'ASC');
+if (!in_array($sortfield, $sortfields)) {
+	$sortfield = 'p.datep';
+}
 
 $arrayfields = array(
 	'b.rowid' => array('label' => $langs->trans("Ref"), 'checked' => 1),
@@ -193,7 +198,10 @@ if ($resql) {
 		print '<br>';
 	}
 
-	$param = '';
+	$param = '&id='.((int) $id);
+	if (GETPOST('contextpage', 'aZ09')) {
+		$param .= '&contextpage='.urlencode(GETPOST('contextpage', 'aZ09'));
+	}
 
 	if (!$summaryonly) {
 		print '<div class="div-table-responsive">';
@@ -201,12 +209,12 @@ if ($resql) {
 
 		// Fields title
 		print '<tr class="liste_titre">';
-		print_liste_field_titre($arrayfields['b.rowid']['label'], $_SERVER['PHP_SELF'], 'b.rowid', '', $param, '', $sortfield, $sortorder);
-		print_liste_field_titre($arrayfields['b.dateo']['label'], $_SERVER['PHP_SELF'], 'b.dateo', '', $param, '"', $sortfield, $sortorder, 'center ');
+		print_liste_field_titre($arrayfields['b.rowid']['label'], $_SERVER['PHP_SELF'], 'f.ref', '', $param, '', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['b.dateo']['label'], $_SERVER['PHP_SELF'], 'p.datep', '', $param, '"', $sortfield, $sortorder, 'center ');
 		print_liste_field_titre($arrayfields['ba.ref']['label'], $_SERVER['PHP_SELF'], 'ba.ref', '', $param, '', $sortfield, $sortorder, '');
 		print_liste_field_titre($arrayfields['cp.code']['label'], $_SERVER['PHP_SELF'], 'cp.code', '', $param, '', $sortfield, $sortorder, 'right ');
-		print_liste_field_titre($arrayfields['b.debit']['label'], $_SERVER['PHP_SELF'], 'b.amount', '', $param, '', $sortfield, $sortorder, 'right ');
-		print_liste_field_titre($arrayfields['b.credit']['label'], $_SERVER['PHP_SELF'], 'b.amount', '', $param, '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre($arrayfields['b.debit']['label'], $_SERVER['PHP_SELF'], 'amount', '', $param, '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre($arrayfields['b.credit']['label'], $_SERVER['PHP_SELF'], 'amount', '', $param, '', $sortfield, $sortorder, 'right ');
 		print "</tr>\n";
 	}
 
@@ -225,6 +233,7 @@ if ($resql) {
 	$amountpertype = array();
 
 	$totalarray = array('nbfield' => 0, 'pos' => array(), 'val' => array('totaldebfield' => 0, 'totalcredfield' => 0));
+	$rowstoprint = array();
 	while ($i < $num) {
 		$objp = $db->fetch_object($resql);
 
@@ -315,6 +324,7 @@ if ($resql) {
 
 		// List of all invoices
 		if (!$summaryonly) {
+			ob_start();
 			print '<tr class="oddeven">';
 
 			// Ref
@@ -379,12 +389,36 @@ if ($resql) {
 			}
 
 			print "</tr>";
+			$rowstoprint[] = array('html' => ob_get_clean(), 'pos' => $i, 'f.ref' => (string) $invoicetmp->ref, 'p.datep' => (int) $db->jdate($objp->datep),
+				'ba.ref' => (string) $bankaccount->ref, 'cp.code' => (string) $objp->code, 'amount' => (float) $objp->amount);
 		}
 
 		$i++;
 	}
 
 	if (!$summaryonly) {
+		// Lines sorted for the display only. Equal values keep the order of the request (chronological).
+		usort(
+			$rowstoprint,
+			/**
+			 * Compare two lines to print
+			 *
+			 * @param	array<string,mixed>	$a	First line
+			 * @param	array<string,mixed>	$b	Second line
+			 * @return	int						Result of the comparison
+			 */
+			function (array $a, array $b) use ($sortfield, $sortorder): int {
+				$cmp = is_string($a[$sortfield]) ? strnatcasecmp($a[$sortfield], $b[$sortfield]) : ($a[$sortfield] <=> $b[$sortfield]);
+				if ($sortorder == 'DESC') {
+					$cmp = -$cmp;
+				}
+				return $cmp ? $cmp : ($a['pos'] <=> $b['pos']);
+			}
+		);
+		foreach ($rowstoprint as $rowtoprint) {
+			print $rowtoprint['html'];
+		}
+
 		// Show total line
 		$moreinfoontotal = ' ('.$num.' '.$langs->trans($num > 1 ? "Invoices" : "Invoice").')';		// Used in the .tpl
 		include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';

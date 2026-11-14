@@ -85,12 +85,14 @@ if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
 	$userschilds = array();
 }
 
+$search_id = GETPOST('search_id', 'alpha');
 $search_ref = GETPOST('search_ref') ? GETPOST('search_ref', 'alpha') : GETPOST('search_inter', 'alpha');
 $search_ref_client = GETPOST('search_ref_client', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
 $search_alias = GETPOST('search_alias', 'alpha');
 $search_desc = GETPOST('search_desc', 'alpha');
 $search_projet_ref = GETPOST('search_projet_ref', 'alpha');
+$search_project = GETPOST('search_project', 'alpha');
 $search_contrat_ref = GETPOST('search_contrat_ref', 'alpha');
 $search_status = GETPOST('search_status', 'alpha');
 $search_signed_status = GETPOST('search_signed_status', 'alpha');
@@ -165,11 +167,13 @@ if (getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
 
 // Definition of fields for list
 $arrayfields = array(
+	'f.rowid' => array('label' => 'TechnicalID', 'checked' => (getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? '1' : '-1'), 'enabled' => '1'),
 	'f.ref' => array('label' => 'Ref', 'checked' => '1'),
 	'f.ref_client' => array('label' => 'RefCustomer', 'checked' => '1'),
 	's.nom' => array('label' => 'ThirdParty', 'checked' => '1'),
 	's.name_alias' => array('label' => 'AliasNameShort', 'checked' => '0'),
 	'pr.ref' => array('label' => 'Project', 'checked' => '1', 'enabled' => (!isModEnabled('project') ? '0' : '1')),
+	'pr.title' => array('label' => 'ProjectLabel', 'checked' => '0', 'enabled' => (!isModEnabled('project') ? '0' : '1')),
 	'c.ref' => array('label' => 'Contract', 'checked' => '1', 'enabled' => (empty($conf->contrat->enabled) ? '0' : '1')),
 	'f.description' => array('label' => 'Description', 'checked' => '1'),
 	'f.datec' => array('label' => 'DateCreation', 'checked' => '0', 'position' => 500),
@@ -229,12 +233,14 @@ if (empty($reshook)) {
 
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+		$search_id = '';
 		$search_ref = "";
 		$search_ref_client = "";
 		$searchCategoryFichinterList = array();
 		$search_company = "";
 		$search_alias = "";
 		$search_projet_ref = "";
+		$search_project = "";
 		$search_contrat_ref = "";
 		$search_desc = "";
 		$search_status = "";
@@ -296,6 +302,10 @@ foreach ($arrayfields as $tmpkey => $tmpval) {
 		break;
 	}
 }
+// The table of lines is joined only if a field of lines is shown, so do not search into it otherwise
+if (!$atleastonefieldinlines) {
+	unset($fieldstosearchall['fd.description']);
+}
 
 $sql = "SELECT";
 $sql .= " f.ref, f.ref_client, f.rowid, f.fk_statut as status, f.signed_status as signed_status, f.description, f.datec as date_creation, f.tms as date_modification, f.note_public, f.note_private,";
@@ -344,6 +354,9 @@ $sql .= $hookmanager->resPrint;
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE f.entity IN (".getEntity('intervention').")";
 $sql .= " AND f.fk_soc = s.rowid";
+if ($search_id != '') {
+	$sql .= natural_search('f.rowid', $search_id, 1);
+}
 if ($search_ref) {
 	$sql .= natural_search('f.ref', $search_ref);
 }
@@ -358,6 +371,9 @@ if ($search_alias) {
 }
 if ($search_projet_ref) {
 	$sql .= natural_search('pr.ref', $search_projet_ref);
+}
+if ($search_project != '' && isModEnabled('project')) {
+	$sql .= natural_search('pr.title', $search_project);
 }
 if ($search_contrat_ref) {
 	$sql .= natural_search('c.ref', $search_contrat_ref);
@@ -533,6 +549,9 @@ if ($searchCategoryFichinterOperator == 1) {
 foreach ($searchCategoryFichinterList as $searchCategoryFichinter) {
 	$param .= "&search_category_fichinter_list[]=".urlencode($searchCategoryFichinter);
 }
+if ($search_id != '') {
+	$param .= '&search_id='.urlencode($search_id);
+}
 if ($search_ref) {
 	$param .= "&search_ref=".urlencode($search_ref);
 }
@@ -550,6 +569,9 @@ if ($search_desc) {
 }
 if ($search_projet_ref) {
 	$param .= "&search_projet_ref=".urlencode($search_projet_ref);
+}
+if ($search_project != '') {
+	$param .= "&search_project=".urlencode($search_project);
 }
 if ($search_contrat_ref) {
 	$param .= "&search_contrat_ref=".urlencode($search_contrat_ref);
@@ -699,6 +721,11 @@ if ($conf->main_checkbox_left_column) {
 	print $searchpicto;
 	print '</td>';
 }
+if (!empty($arrayfields['f.rowid']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
+	print '</td>';
+}
 if (!empty($arrayfields['f.ref']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_ref" value="'.$search_ref.'" size="8">';
@@ -722,6 +749,11 @@ if (!empty($arrayfields['s.name_alias']['checked'])) {
 if (!empty($arrayfields['pr.ref']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_projet_ref" value="'.$search_projet_ref.'" size="8">';
+	print '</td>';
+}
+if (!empty($arrayfields['pr.title']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat maxwidth100" name="search_project" value="'.dol_escape_htmltag($search_project).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['c.ref']['checked'])) {
@@ -818,6 +850,10 @@ if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['f.rowid']['checked'])) {
+	print_liste_field_titre($arrayfields['f.rowid']['label'], $_SERVER["PHP_SELF"], 'f.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['f.ref']['checked'])) {
 	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['f.ref']['label'], $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
@@ -837,6 +873,10 @@ if (!empty($arrayfields['s.name_alias']['checked'])) {
 }
 if (!empty($arrayfields['pr.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['pr.ref']['label'], $_SERVER["PHP_SELF"], "pr.ref", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['pr.title']['checked'])) {
+	print_liste_field_titre($arrayfields['pr.title']['label'], $_SERVER["PHP_SELF"], "pr.title", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['c.ref']['checked'])) {
@@ -974,6 +1014,14 @@ while ($i < $imaxinloop) {
 			}
 		}
 
+		// Technical ID
+		if (!empty($arrayfields['f.rowid']['checked'])) {
+			print '<td class="center" data-key="id">'.((int) $obj->rowid).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
 		// Picto + Ref
 		if (!empty($arrayfields['f.ref']['checked'])) {
 			print "<td>";
@@ -988,7 +1036,7 @@ while ($i < $imaxinloop) {
 			if (!empty($obj->note_private)) {
 				$warnornote .= ($warnornote ? ' ' : '');
 				$warnornote .= '<span class="note">';
-				$warnornote .= '<a href="note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"), 'object_generic').'</a>';
+				$warnornote .= '<a href="'.DOL_URL_ROOT.'/core/note.php?element=fichinter&id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"), 'object_generic').'</a>';
 				$warnornote .= '</span>';
 			}
 			if ($warnornote) {
@@ -1052,6 +1100,17 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Project label
+		if (!empty($arrayfields['pr.title']['checked'])) {
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->projet_title).'">';
+			if ($obj->projet_id > 0) {
+				print '<span class="spantitle">'.dol_escape_htmltag($obj->projet_title).'</span>';
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		// Contract
 		if (!empty($arrayfields['c.ref']['checked']) && $contratstatic !== null) {
 			print '<td class="tdoverflowmax150">';
@@ -1068,7 +1127,9 @@ while ($i < $imaxinloop) {
 			}
 		}
 		if (!empty($arrayfields['f.description']['checked'])) {
-			print '<td>'.dol_trunc(dolGetFirstLineOfText(dol_string_nohtmltag($obj->description, 1)), 48).'</td>';
+			print '<td>';
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintLabel(dol_trunc(dolGetFirstLineOfText(dol_string_nohtmltag($obj->description, 1)), 48)).'</div>';
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

@@ -296,7 +296,7 @@ if (!getDolGlobalString('AGENDA_DISABLE_EXT')) {
 				'cachedelay' => getDolGlobalInt('AGENDA_EXT_CACHE'.$i, 0),
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				'default' => dol_string_nohtmltag(getDolGlobalString($default)),
-				'buggedfile' => dol_string_nohtmltag(getDolGlobalString($buggedfile, ''))
+				'buggedfile' => dol_string_nohtmltag(getDolGlobalString($buggedfile))
 			);
 		}
 	}
@@ -315,7 +315,10 @@ if (!getDolGlobalString('AGENDA_DISABLE_EXT')) {
 		$default = 'AGENDA_EXT_ACTIVEBYDEFAULT_'.$user->id.'_'.$i;
 		$buggedfile = 'AGENDA_EXT_BUGGEDFILE_'.$user->id.'_'.$i;
 
-		if (getDolUserString($source) && getDolUserString($name)) {
+		// A calendar set up before the switch of the user setup page existed holds no AGENDA_EXT_ENABLED_x_y
+		// at all, so the default here keeps it in the list instead of hiding it on upgrade. This is
+		// why it differs from the global calendars above, where a missing constant means disabled.
+		if (getDolUserString($source) && getDolUserString($name) && getDolUserString($enabled, '1')) {
 			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
 			$listofextcals[] = array(
 				'type' => 'usersetup',
@@ -326,7 +329,7 @@ if (!getDolGlobalString('AGENDA_DISABLE_EXT')) {
 				'cachedelay' => getDolUserInt('AGENDA_EXT_CACHE_'.$user->id.'_'.$i, 0),
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				'default' => dol_string_nohtmltag(getDolUserString($default)),
-				'buggedfile' => dol_string_nohtmltag($buggedfile)
+				'buggedfile' => dol_string_nohtmltag(getDolUserString($buggedfile))
 			);
 		}
 	}
@@ -643,11 +646,11 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 
 	$s .= '<script type="text/javascript">'."\n";
 	$s .= 'jQuery(document).ready(function () {'."\n";
-	$s .= 'jQuery(".check_birthday").click(function() { console.log("Toggle class .family_birthday"); jQuery(".family_birthday").toggle(); });'."\n";
+	$s .= 'jQuery(".check_birthday").click(function() { console.log("Toggle class .family_birthday"); jQuery(".family_birthday").toggle(); jQuery(document).trigger("dolagenda:relayout"); });'."\n";
 	$s .= 'jQuery(".check_holiday").click(function() { console.log("Toggle class .family_holiday"); jQuery(".family_holiday").toggle(); jQuery(this).closest("form").submit(); });'."\n";
 	if (isModEnabled("bookcal") && !empty($bookcalcalendars["calendars"])) {
 		foreach ($bookcalcalendars["calendars"] as $key => $value) {
-			$s .= 'jQuery(".check_bookcal_calendar_'.$value['id'].'").click(function() { console.log("Toggle Bookcal Calendar '.$value['id'].'"); jQuery(".family_bookcal_calendar_'.$value['id'].'").toggle(); });'."\n";
+			$s .= 'jQuery(".check_bookcal_calendar_'.$value['id'].'").click(function() { console.log("Toggle Bookcal Calendar '.$value['id'].'"); jQuery(".family_bookcal_calendar_'.$value['id'].'").toggle(); jQuery(document).trigger("dolagenda:relayout"); });'."\n";
 		}
 	}
 	if ($mode == "show_week" || $mode == "show_month" || empty($mode)) {
@@ -663,6 +666,244 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 		$s .= 'console.log("Found url on href of a.cal_event"+newurl+", we submit form with actionmove=mupdate");'."\n";
 		$s .= 'frm.attr("action", newurl).children("#newdate").val(newval);frm.submit();}'."\n";
 		$s .= '});'."\n";
+	}
+	if ($mode == 'show_day' || ($mode == 'show_week' && !getDolGlobalString('AGENDA_WEEK_VIEW_NO_HOURLY_GRID'))) {
+		// Day and week views: side by side layout of the events that overlap in the positioned grid.
+		// It works on every .agendadaylayer of the page, so the seven columns of a week need no variant.
+		$s .= 'var dolAgendaGridCfg = '.json_encode([
+			'url' => DOL_URL_ROOT.'/comm/action/ajax/ajaxmovetimeevent.php',
+			'msgsaved' => $langs->transnoentitiesnoconv('RecordSaved'),
+		], JSON_HEX_TAG).';'."\n";
+		$s .= <<<'JSDAYVIEW'
+function dolAgendaDayColumns(items) {
+	var sorted = items.slice().sort(function (a, b) { return (a.start - b.start) || ((b.end - b.start) - (a.end - a.start)); });
+	var cluster = [], colends = [], clusterend = -1;
+	function flush() {
+		var n = colends.length;
+		cluster.forEach(function (it) {
+			it.el.style.left = (it.col * 100 / n) + '%';
+			it.el.style.right = (100 - (it.col + 1) * 100 / n) + '%';
+			it.el.style.width = 'auto';
+		});
+		cluster = []; colends = []; clusterend = -1;
+	}
+	sorted.forEach(function (it) {
+		if (cluster.length && it.start >= clusterend) { flush(); }
+		var col = -1;
+		for (var c = 0; c < colends.length; c++) { if (colends[c] <= it.start) { col = c; break; } }
+		if (col < 0) { col = colends.length; colends.push(0); }
+		colends[col] = it.end;
+		it.col = col;
+		cluster.push(it);
+		clusterend = Math.max(clusterend, it.end);
+	});
+	if (cluster.length) { flush(); }
+}
+function dolAgendaDayItems(layer) {
+	var items = [];
+	jQuery(layer).children('.event[data-agenda-start]').each(function () {
+		if (jQuery(this).is(':hidden')) { return; }
+		var s = parseInt(this.getAttribute('data-agenda-start'), 10);
+		var e = parseInt(this.getAttribute('data-agenda-end'), 10);
+		items.push({el: this, start: s, end: Math.max(e, s + 20)});
+	});
+
+	return items;
+}
+function dolAgendaDayLayout(layer) {
+	dolAgendaDayColumns(dolAgendaDayItems(layer));
+	dolAgendaDayDrag(layer);
+	dolAgendaDayResize(layer);
+}
+function dolAgendaDaySnapTop(el, ui) {
+	var layer = el.parentNode;
+	var begin = parseInt(layer.getAttribute('data-begin-min'), 10);
+	var end = parseInt(layer.getAttribute('data-end-min'), 10);
+	var boxheight = parseInt(el.style.height, 10);
+	var oldstart = parseInt(el.getAttribute('data-agenda-start'), 10);
+	// Absolute 15 min snap of the new start, with a dead zone so that a small move keeps the old start
+	var rawdelta = ui.position.top - ui.originalPosition.top;
+	var newstart = (Math.abs(rawdelta) < 8) ? oldstart : Math.round((oldstart + rawdelta) / 15) * 15;
+	// The upper bound never goes above the old start: a box near midnight can be taller than the time left
+	return Math.max(begin, Math.min(newstart, Math.max(oldstart, end - boxheight)));
+}
+function dolAgendaDayLayerAt(clientx) {
+	// The day under the pointer. The layers of a week are side by side and never overlap,
+	// so the horizontal position alone names the column.
+	var found = null;
+	jQuery('.agendadaylayer').each(function () {
+		var r = this.getBoundingClientRect();
+		if (clientx >= r.left && clientx < r.right) { found = this; return false; }
+	});
+	return found;
+}
+function dolAgendaDayDrag(layer) {
+	// More than one layer on the page means the week grid: there the box can also change day
+	var manydays = jQuery('.agendadaylayer').length > 1;
+	jQuery(layer).children('.event.movable[data-agenda-event-id]').not('.ui-draggable').draggable({
+		axis: manydays ? false : 'y',
+		zIndex: 100,
+		start: function () {
+			if (!manydays) { return; }
+			// .agendadaycolumn clips its own layer, so the box would be cut at the edge of its day
+			// as soon as the drag enters the next column. Only the column being dragged from has to
+			// let it out: an ancestor clips its descendants, never its siblings' content.
+			jQuery(this).closest('.agendadaycolumn').css('overflow', 'visible');
+			// The layout gives the box a left and a right, which is what sets its width. Draggable only
+			// writes left, so a box dragged sideways would stretch to the right edge of its day instead
+			// of moving. Hold the width for the drag; the layout gives the percentages back at the end.
+			var w = jQuery(this).outerWidth();
+			this.style.right = 'auto';
+			this.style.width = w + 'px';
+		},
+		// Without this, grabbing the resize handle at the bottom edge moves the event instead
+		cancel: '.ui-resizable-handle',
+		drag: function (event, ui) {
+			ui.position.top = dolAgendaDaySnapTop(this, ui);
+		},
+		stop: function (event, ui) {
+			var el = this;
+			var oldlayer = el.parentNode;
+			if (manydays) { jQuery(el).closest('.agendadaycolumn').css('overflow', 'hidden'); }
+			// Released outside every column (the hour gutter, outside the table): keep the day
+			var newlayer = (manydays && event && typeof event.clientX === 'number') ? (dolAgendaDayLayerAt(event.clientX) || oldlayer) : oldlayer;
+			var oldstart = parseInt(el.getAttribute('data-agenda-start'), 10);
+			var oldend = parseInt(el.getAttribute('data-agenda-end'), 10);
+			// ui.position is the value drag already snapped and clamped; don't snap it again here
+			var newstart = Math.round(ui.position.top);
+			// Nothing moved. The layout is still run: a drag that went sideways and came back left a
+			// pixel left on the box, and only the layout puts the column percentages back.
+			if (newstart === oldstart && newlayer === oldlayer) {
+				el.style.top = oldstart + 'px';
+				dolAgendaDayColumns(dolAgendaDayItems(oldlayer));
+				return;
+			}
+			var hh = ('0' + Math.floor(newstart / 60)).slice(-2);
+			var mm = ('0' + (newstart % 60)).slice(-2);
+			// No second drag of this box until the server answered
+			jQuery(el).draggable('disable');
+			jQuery.ajax({type: 'POST', url: dolAgendaGridCfg.url, dataType: 'json', data: {
+				id: el.getAttribute('data-agenda-event-id'),
+				newdatetime: newlayer.getAttribute('data-agenda-date') + hh + mm + '00',
+				token: jQuery('#searchFormList input[name=token]').val()
+			}}).done(function (data) {
+				jQuery(el).draggable('enable');
+				if (data.error) {
+					el.style.top = oldstart + 'px';
+					dolAgendaDayColumns(dolAgendaDayItems(oldlayer));
+					Dolibarr.tools.setEventMessage(data.message, 'errors');
+					return;
+				}
+				if (newlayer !== oldlayer) {
+					newlayer.appendChild(el);
+				}
+				el.setAttribute('data-agenda-start', newstart);
+				el.setAttribute('data-agenda-end', newstart + (oldend - oldstart));
+				el.style.top = newstart + 'px';
+				dolAgendaDayHours(el, data);
+				dolAgendaDayColumns(dolAgendaDayItems(newlayer));
+				if (newlayer !== oldlayer) {
+					dolAgendaDayColumns(dolAgendaDayItems(oldlayer));
+				}
+				Dolibarr.tools.setEventMessage(dolAgendaGridCfg.msgsaved, 'mesgs');
+			}).fail(function () {
+				// Transport failure: we don't know whether the server saved the move, show the real state
+				location.reload();
+			});
+		}
+	});
+}
+function dolAgendaDayHours(el, data) {
+	// The box prints the hours in front of the title. Only the server knows how they are formatted for
+	// this user, so it hands back the string it printed and the one it must print now: swapping that
+	// exact prefix is safe whatever the format, and leaves the title, which may be truncated, alone.
+	if (!data || !data.oldhours || !data.newhours || data.oldhours === data.newhours) { return; }
+	var nodes = jQuery(el).find('a.cal_event_title').contents().filter(function () { return this.nodeType === 3; });
+	for (var i = 0; i < nodes.length; i++) {
+		if (nodes[i].nodeValue.indexOf(data.oldhours) === 0) {
+			nodes[i].nodeValue = data.newhours + nodes[i].nodeValue.slice(data.oldhours.length);
+			return;
+		}
+	}
+}
+function dolAgendaDaySnapEnd(el, boxheight) {
+	// Absolute 15 min snap of the new end, like dolAgendaDaySnapTop does for the start: a box is at
+	// least 20 px tall whatever its duration, so snapping the height would land on 10:05 or 11:20.
+	// The end never goes past the last hour the grid shows, nor closer than the step to the start.
+	var start = parseInt(el.getAttribute('data-agenda-start'), 10);
+	var gridend = parseInt(el.parentNode.getAttribute('data-end-min'), 10);
+	return Math.max(start + 15, Math.min(Math.round((start + boxheight) / 15) * 15, gridend));
+}
+function dolAgendaDayResizeHeight(el, minutes) {
+	// Same floor as the server rendering: a very short event still shows a box that can be grabbed
+	el.style.height = Math.max(minutes, 20) + 'px';
+}
+function dolAgendaDayResize(layer) {
+	var boxes = jQuery(layer).children('.event.movable[data-agenda-event-id]').not('.ui-resizable');
+	boxes.resizable({
+		handles: 's',
+		minHeight: 15,
+		resize: function (event, ui) {
+			ui.size.height = dolAgendaDaySnapEnd(this, ui.size.height) - parseInt(this.getAttribute('data-agenda-start'), 10);
+			// Resizable writes a width too; the side by side layout is what owns it
+			ui.size.width = ui.originalSize.width;
+		},
+		stop: function (event, ui) {
+			var el = this;
+			var layerofel = el.parentNode;
+			var start = parseInt(el.getAttribute('data-agenda-start'), 10);
+			var oldend = parseInt(el.getAttribute('data-agenda-end'), 10);
+			var newend = dolAgendaDaySnapEnd(el, ui.size.height);
+			// Resizable writes a width in pixels, the side by side layout drives the box with a left
+			// and a right instead, so the layout is what puts the column back in both branches below.
+			if (newend === oldend) {
+				dolAgendaDayResizeHeight(el, oldend - start);
+				dolAgendaDayColumns(dolAgendaDayItems(layerofel));
+				return;
+			}
+			var hh = ('0' + Math.floor(newend / 60)).slice(-2);
+			var mm = ('0' + (newend % 60)).slice(-2);
+			var hhstart = ('0' + Math.floor(start / 60)).slice(-2);
+			var mmstart = ('0' + (start % 60)).slice(-2);
+			// No second resize and no drag of this box until the server answered
+			jQuery(el).resizable('disable');
+			jQuery(el).draggable('disable');
+			jQuery.ajax({type: 'POST', url: dolAgendaGridCfg.url, dataType: 'json', data: {
+				id: el.getAttribute('data-agenda-event-id'),
+				newdatetime: layerofel.getAttribute('data-agenda-date') + hhstart + mmstart + '00',
+				newenddatetime: layerofel.getAttribute('data-agenda-date') + hh + mm + '00',
+				token: jQuery('#searchFormList input[name=token]').val()
+			}}).done(function (data) {
+				jQuery(el).resizable('enable');
+				jQuery(el).draggable('enable');
+				if (data.error) {
+					dolAgendaDayResizeHeight(el, oldend - start);
+					dolAgendaDayColumns(dolAgendaDayItems(layerofel));
+					Dolibarr.tools.setEventMessage(data.message, 'errors');
+					return;
+				}
+				el.setAttribute('data-agenda-end', newend);
+				dolAgendaDayHours(el, data);
+				dolAgendaDayResizeHeight(el, newend - start);
+				dolAgendaDayColumns(dolAgendaDayItems(layerofel));
+				Dolibarr.tools.setEventMessage(dolAgendaGridCfg.msgsaved, 'mesgs');
+			}).fail(function () {
+				// Transport failure: we don't know whether the server saved the resize, show the real state
+				location.reload();
+			});
+		}
+	});
+	// The box has overflow: hidden and the handle of the theme sits at bottom: -5px, so only two of
+	// its seven pixels would be inside the box, and the grip would be nearly impossible to catch.
+	boxes.children('.ui-resizable-s').css({bottom: '0', height: '6px'});
+}
+jQuery('.agendadaylayer').each(function () { dolAgendaDayLayout(this); });
+// Run the layout again when events are shown or hidden by the calendar checkboxes
+jQuery(document).on('dolagenda:relayout', function () {
+	jQuery('.agendadaylayer').each(function () { dolAgendaDayLayout(this); });
+});
+JSDAYVIEW;
+		$s .= "\n";
 	}
 	$s .= '});'."\n";
 	$s .= '</script>'."\n";
@@ -692,10 +933,12 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 					    jQuery(".family_ext" + name.replace("check_ext", "")).hide();
 					}
 				});
+				jQuery(document).trigger("dolagenda:relayout");
 
 				jQuery("div input[name^=\"check_ext\"]").click(function() {
 					var name = $(this).attr("name");
 					jQuery(".family_ext" + name.replace("check_ext", "")).toggle();
+					jQuery(document).trigger("dolagenda:relayout");
 				});
 			});' . "\n";
 		$s .= '</script>'."\n";
@@ -1519,9 +1762,19 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	print_actions_filter($form, $canedit, $status, $year, $month, $day, $check_birthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroupids, '', $resourceid);
 	print '</div>';
 
+	// Hidden option AGENDA_WEEK_VIEW_NO_HOURLY_GRID: keep the former flat list of events per day, which is
+	// denser when a day holds many events, instead of the hourly grid.
+	$weekhourlygrid = !getDolGlobalString('AGENDA_WEEK_VIEW_NO_HOURLY_GRID');
+
+	// maxscreenheightless300 also with the grid, as for the month view: its max-height combined with the overflow-x:auto
+	// of div-table-responsive-no-min gives a scrollbar on the calendar area only, instead of on the whole page.
 	print '<div class="div-table-responsive-no-min sectioncalendarbyweek maxscreenheightless300">';
 	print '<table class="centpercent noborder nocellnopadd cal_pannel cal_month listwithfilterbefore">';
-	print ' <tr class="liste_titre">';
+	print ' <tr class="liste_titre stickyagenda">';
+	if ($weekhourlygrid) {
+		// The column of the hour labels, empty in the header
+		print '  <td class="tdfordaytitle width100"></td>'."\n";
+	}
 	$i = 0;
 	while ($i < 7) {
 		echo '  <td class="center bold uppercase tdfordaytitle">'.$langs->trans("Day".(($i + (getDolGlobalInt('MAIN_START_WEEK', 1))) % 7))."</td>\n";
@@ -1529,7 +1782,21 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	}
 	echo " </tr>\n";
 
-	echo ' <tr class="trcalweek">'."\n";
+	// tr.trcalweek carries height: 300px in the themes, which is right when the cell holds the events of the
+	// day but leaves 300 px of white above the grid when it only holds the title bar of each day.
+	echo ' <tr class="'.($weekhourlygrid ? 'trcalweektitle' : 'trcalweek').'">'."\n";
+	if ($weekhourlygrid) {
+		echo '  <td class="tdfordaytitle width100"></td>'."\n";
+	}
+
+	$weekdayinfo = array();
+	$weekhourlybuckets = array();
+	// show_day_events() fills each entry by reference, which phan does not follow: without
+	// this it infers the empty shape array{} and refuses the 'allday' offset below.
+	'@phan-var-force array<int,array<string,string[]>> $weekhourlybuckets';
+	/**
+	 * @var array<int,array<string,string[]>> $weekhourlybuckets
+	 */
 
 	for ($iter_day = 0; $iter_day < 7; $iter_day++) {
 		// Show days of the current week
@@ -1552,12 +1819,114 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 			$style = 'cal_today';
 		}
 
-		echo '  <td class="'.$style.'" width="14%" valign="top">';
-		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-		show_day_events($db, $tmpday, $tmpmonth, $tmpyear, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 0, $bookcalcalendars);
+		$weekdayinfo[$iter_day] = array('day' => $tmpday, 'month' => $tmpmonth, 'year' => $tmpyear, 'style' => $style);
+
+		echo '  <td class="'.$style.'" width="'.($weekhourlygrid ? '13' : '14').'%" valign="top">';
+		if ($weekhourlygrid) {
+			// show_day_events() still prints the title bar of the day, which is what this row is for, and
+			// collects the html of the events instead of printing it. They are placed by the grid below.
+			$weekhourlybuckets[$iter_day] = array();
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+			show_day_events($db, $tmpday, $tmpmonth, $tmpyear, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 0, $bookcalcalendars, $weekhourlybuckets[$iter_day]);
+		} else {
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+			show_day_events($db, $tmpday, $tmpmonth, $tmpyear, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 0, $bookcalcalendars);
+		}
 		echo "  </td>\n";
 	}
 	echo " </tr>\n";
+
+	if ($weekhourlygrid) {
+		// All-day, multi-day, birthday and holiday events: one row above the grid, one cell per day
+		echo ' <tr class="trcalweekallday">'."\n";
+		echo '  <td class="tdfordaytitle width100"></td>'."\n";
+		for ($iter_day = 0; $iter_day < 7; $iter_day++) {
+			$dateint = sprintf("%04d", $weekdayinfo[$iter_day]['year']).sprintf("%02d", $weekdayinfo[$iter_day]['month']).sprintf("%02d", $weekdayinfo[$iter_day]['day']);
+			echo '  <td class="'.$weekdayinfo[$iter_day]['style'].'" valign="top">';
+			// height: auto against .agendacell { height: 60px } of the themes: a day of the week can hold
+			// several all-day events (a holiday calendar for each country subscribed to), and they would
+			// otherwise overflow the row and be drawn over the grid below.
+			// dayevent_YYYYMMDD and .sortable put back the drag of an event to another day, which the
+			// hourly grid of the week took away: the drag&drop JS reads the id of the closest .dayevent,
+			// and card.php expects a value that starts with dayevent_ (see its actionmove=mupdate block).
+			// min-height because jQuery sortable takes its drop zone from this div, not from the cell:
+			// a day with no all-day event is 0 pixel high with height: auto, so it can never be dropped on.
+			print '<div id="dayevent_'.$dateint.'" class="dayevent sortable centpercent agendacell" style="height: auto; min-height: 60px;">';
+			if (!empty($weekhourlybuckets[$iter_day]['allday'])) {
+				foreach ($weekhourlybuckets[$iter_day]['allday'] as $eventhtml) {
+					print $eventhtml;
+				}
+			}
+			print '</div>';
+			echo "  </td>\n";
+		}
+		echo " </tr>\n";
+
+		// Hour range: the working hours, widened so that every timed event of the week is fully visible.
+		// The seven days share one range, otherwise the columns would not line up.
+		$tmp = explode('-', str_replace(' ', '', getDolGlobalString('MAIN_DEFAULT_WORKING_HOURS', '9-18')));
+		$begin_h = ((int) $tmp[0] >= 0 && (int) $tmp[0] <= 23) ? (int) $tmp[0] : 9;
+		$end_h = (isset($tmp[1]) && (int) $tmp[1] >= 1 && (int) $tmp[1] <= 24) ? (int) $tmp[1] : 18;
+		if ($end_h <= $begin_h) {
+			$end_h = $begin_h + 1;
+		}
+		$weekdates = array();
+		for ($iter_day = 0; $iter_day < 7; $iter_day++) {
+			$weekdates[] = sprintf("%04d", $weekdayinfo[$iter_day]['year']).sprintf("%02d", $weekdayinfo[$iter_day]['month']).sprintf("%02d", $weekdayinfo[$iter_day]['day']);
+		}
+		foreach ($eventarray as $daykey => $dayevents) {
+			if (!in_array(dol_print_date($daykey, '%Y%m%d', 'gmt'), $weekdates, true)) {
+				continue;
+			}
+			foreach ($dayevents as $dayevent) {
+				$dayminutes = agenda_event_day_minutes($dayevent);
+				if ($dayminutes === null) {
+					continue;
+				}
+				$begin_h = min($begin_h, intdiv($dayminutes[0], 60));
+				$end_h = max($end_h, (int) ceil(max($dayminutes[1], $dayminutes[0] + 20) / 60));
+			}
+		}
+		$end_h = min($end_h, 24);
+		$gridheight = ($end_h - $begin_h) * 60;
+
+		// The grid, 1 px per minute, the same scale as the day view. Each day is its own layer, shifted up by
+		// the first hour shown because show_day_events() positions an event from midnight.
+		echo ' <tr class="trcalweekgrid">'."\n";
+		echo '  <td class="tdfordaytitle width100 valigntop nopaddingtopimp nopaddingbottomimp">';
+		print '<div class="agendaweekhours" style="position: relative; height: '.$gridheight.'px;">';
+		for ($h = $begin_h; $h < $end_h; $h++) {
+			print '<div class="agendadayhour small opacitymedium" style="position: absolute; left: 4px; top: '.((($h - $begin_h) * 60) + 2).'px;">'.dol_print_date($h * 3600, 'hour', 'gmt').'</div>';
+		}
+		print '</div>';
+		echo "</td>\n";
+		for ($iter_day = 0; $iter_day < 7; $iter_day++) {
+			$dateint = $weekdates[$iter_day];
+			echo '  <td class="'.$weekdayinfo[$iter_day]['style'].' valigntop nopaddingtopimp nopaddingbottomimp" valign="top">';
+			print '<div class="agendadaygrid" style="position: relative; height: '.$gridheight.'px;">';
+			for ($h = $begin_h; $h < $end_h; $h++) {
+				foreach (array(0, 30) as $slotmin) {
+					$top = ($h - $begin_h) * 60 + $slotmin;
+					print '<div class="agendadayline'.($slotmin ? ' opacitymedium' : '').'" style="position: absolute; left: 0; right: 0; top: '.$top.'px; border-top: 1px solid var(--colortopbordertitle1);"></div>';
+				}
+			}
+			print '<div class="agendadaycolumn" id="daycolumn_'.$dateint.'" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; overflow: hidden;">';
+			print '<div class="agendadaylayer" id="daylayer_'.$dateint.'" data-agenda-date="'.$dateint.'" data-begin-min="'.($begin_h * 60).'" data-end-min="'.($end_h * 60).'" style="position: absolute; left: 0; right: 0; top: -'.($begin_h * 60).'px; height: 1440px;">';
+			foreach ($weekhourlybuckets[$iter_day] as $slotkey => $slotevents) {
+				if ($slotkey === 'allday') {
+					continue;
+				}
+				foreach ($slotevents as $eventhtml) {
+					print $eventhtml;
+				}
+			}
+			print '</div>';
+			print '</div>';
+			print '</div>';
+			echo "  </td>\n";
+		}
+		echo " </tr>\n";
+	}
 
 	print "</table>\n";
 	print '</div>';
@@ -1587,10 +1956,12 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	print_actions_filter($form, $canedit, $status, $year, $month, $day, $check_birthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroupids, '', $resourceid);
 	print '</div>';
 
+	// maxscreenheightless300 as for the month and week views: its max-height combined with the overflow-x:auto of
+	// div-table-responsive-no-min gives a scrollbar on the calendar area only, and stickyagenda keeps the title visible.
 	print '<div class="div-table-responsive-no-min sectioncalendarbyday maxscreenheightless300">';
 	echo '<table class="tagtable centpercent noborder nocellnopadd cal_pannel cal_month listwithfilterbefore" style="margin-bottom: 10px !important;">';
 
-	echo ' <tr class="tagtr liste_titre">';
+	echo ' <tr class="tagtr liste_titre stickyagenda">';
 	echo '  <td class="tagtd center bold uppercase">'.$langs->trans("Day".$arraytimestamp['wday'])."</td>\n";
 	echo " </tr>\n";
 
@@ -1605,57 +1976,81 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 
 	print '<tr class="trcalday"><td class="tdtop">';
 
-	/* WIP View per hour */
-	$useviewhour = 0;
-	if ($useviewhour) {
-		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
+	print '<div class="div-table-responsive-no-min">';
 
-		$maxheightwin = (isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheight"] > 500) ? ($_SESSION["dol_screenheight"] - 200) : 660; // Also into index.php file
+	$hourlybuckets = array();
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+	show_day_events($db, $day, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 0, $bookcalcalendars, $hourlybuckets);
 
-		echo '<div style="max-height: '.$maxheightwin.'px;">';
-		echo '<div class="tagtable centpercent calendarviewcontainer">';
-
-		$maxnbofchar = 80;
-
-		$tmp = explode('-', getDolGlobalString('MAIN_DEFAULT_WORKING_HOURS'));
-		$minhour = round((float) $tmp[0], 0);
-		$maxhour = round((float) $tmp[1], 0);
-		if ($minhour > 23) {
-			$minhour = 23;
+	// All-day, multi-day, birthday and holiday events: a fixed row above the grid.
+	// It is wrapped in its own tagtable: a tagtr with a single tagtd forms a 1-column table, while the hourly
+	// grid below is a 2-column one (label + slot), and mixing both column counts in one shared anonymous table
+	// breaks the column-width negotiation of the browser for both. The tagtable itself also needs centpercent:
+	// with a single cell whose only width is its own centpercent, a display:table of width auto cannot resolve
+	// that percentage and shrinks to the width of the content instead.
+	$dateint = sprintf("%04d", $year).sprintf("%02d", $month).sprintf("%02d", $day);
+	print '<div class="tagtable centpercent">';
+	print '<div class="tagtr">';
+	print '<div id="alldayevent_'.$dateint.'" class="tagtd centpercent agendacell '.$style.'">';
+	if (!empty($hourlybuckets['allday'])) {
+		foreach ($hourlybuckets['allday'] as $eventhtml) {
+			print $eventhtml;
 		}
-		if ($maxhour < 1) {
-			$maxhour = 1;
-		}
-		if ($maxhour <= $minhour) {
-			$maxhour = $minhour + 1;
-		}
-
-		$i = 0;
-		$j = 0;
-		while ($i < 24) {
-			echo ' <div class="tagtr calendarviewcontainertr">'."\n";
-			echo '  <div class="tagtd width100 tdtop">'.dol_print_date($i * 3600, 'hour', 'gmt').'</div>';
-			echo '  <div class="tagtd '.$style.' tdtop"></div>'."\n";
-			echo ' </div>'."\n";
-			$i++;
-			$j++;
-		}
-
-		echo '</div></div>';
-
-		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-		show_day_events($db, $day, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 1, $bookcalcalendars);
-
-		print '</div>';
-	} else {
-		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-
-		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-		show_day_events($db, $day, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 0, $bookcalcalendars);
-
-		print '</div>';
 	}
+	print '</div>';
+	print '</div>';
+	print '</div>';
 
+	// Hour range: the working hours, widened so that every timed event of the day is fully visible
+	$tmp = explode('-', str_replace(' ', '', getDolGlobalString('MAIN_DEFAULT_WORKING_HOURS', '9-18')));
+	$begin_h = ((int) $tmp[0] >= 0 && (int) $tmp[0] <= 23) ? (int) $tmp[0] : 9;
+	$end_h = (isset($tmp[1]) && (int) $tmp[1] >= 1 && (int) $tmp[1] <= 24) ? (int) $tmp[1] : 18;
+	if ($end_h <= $begin_h) {
+		$end_h = $begin_h + 1;
+	}
+	foreach ($eventarray as $daykey => $dayevents) {
+		if (dol_print_date($daykey, '%Y%m%d', 'gmt') != $dateint) {
+			continue;
+		}
+		foreach ($dayevents as $dayevent) {
+			$dayminutes = agenda_event_day_minutes($dayevent);
+			if ($dayminutes === null) {
+				continue;
+			}
+			$begin_h = min($begin_h, intdiv($dayminutes[0], 60));
+			$end_h = max($end_h, (int) ceil(max($dayminutes[1], $dayminutes[0] + 20) / 60));
+		}
+	}
+	$end_h = min($end_h, 24);
+
+	// The grid, 1 px per minute. The hour labels and the lines are placed at the same scale as the events, so
+	// the alignment does not depend on the height of a row. The event boxes are positioned from midnight (see
+	// show_day_events()), so the layer that holds them is shifted up by the first hour displayed.
+	print '<div class="agendadaygrid" style="position: relative; height: '.(($end_h - $begin_h) * 60).'px;">';
+	for ($h = $begin_h; $h < $end_h; $h++) {
+		foreach (array(0, 30) as $slotmin) {
+			$top = ($h - $begin_h) * 60 + $slotmin;
+			print '<div class="agendadayline'.($slotmin ? ' opacitymedium' : '').'" style="position: absolute; left: 0; right: 0; top: '.$top.'px; border-top: 1px solid var(--colortopbordertitle1);"></div>';
+			if (!$slotmin) {
+				print '<div class="agendadayhour small opacitymedium" style="position: absolute; left: 4px; top: '.($top + 2).'px;">'.dol_print_date($h * 3600, 'hour', 'gmt').'</div>';
+			}
+		}
+	}
+	print '<div class="agendadaycolumn" id="daycolumn_'.$dateint.'" style="position: absolute; top: 0; bottom: 0; left: 100px; right: 0; overflow: hidden;">';
+	print '<div class="agendadaylayer" id="daylayer_'.$dateint.'" data-agenda-date="'.$dateint.'" data-begin-min="'.($begin_h * 60).'" data-end-min="'.($end_h * 60).'" style="position: absolute; left: 0; right: 0; top: -'.($begin_h * 60).'px; height: 1440px;">';
+	foreach ($hourlybuckets as $slotkey => $slotevents) {
+		if ($slotkey === 'allday') {
+			continue;
+		}
+		foreach ($slotevents as $eventhtml) {
+			print $eventhtml;
+		}
+	}
+	print '</div>';
+	print '</div>';
+	print '</div>';
+
+	print '</div>';
 
 	print '</td></tr>';
 

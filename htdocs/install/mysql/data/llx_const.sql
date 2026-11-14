@@ -68,6 +68,7 @@ insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_M
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_MENUFRONT_SMARTPHONE','eldy_menu.php','chaine','Menu manager for external users using smartphones',0,__ENTITY__);
 
 insert into llx_const (name, value, type, note, visible, entity) values ('THEME_ELDY_USEBORDERONTABLE', '1', 'chaine', 'Enable the border in theme',0,__ENTITY__);
+insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_DISABLE_METEO', '1', 'chaine', 'Disable the weather block on dashboard',0,__ENTITY__);
 
 
 --
