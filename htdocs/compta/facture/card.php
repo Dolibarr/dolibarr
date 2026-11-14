@@ -6499,6 +6499,7 @@ if ($action == 'create') {
 
 		// List of previous situation invoices
 		if (($object->situation_cycle_ref > 0) && getDolGlobalString('INVOICE_USE_SITUATION')) {
+			$situationInvoice = $object;
 			print '<!-- List of situation invoices -->';
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder paymenttable centpercent situationstable">';
@@ -6508,9 +6509,7 @@ if ($action == 'create') {
 			print '<td></td>';
 			print '<td class="center">'.$langs->trans('Situation').'</td>';
 
-			if (isModEnabled("bank")) {
-				print '<td class="right"></td>';
-			}
+			print '<td class="right">'.$form->textwithpicto($langs->trans('Progress'), $langs->trans('SituationWeightedProgressHelp')).'</td>';
 			print '<td class="right">'.$langs->trans('AmountHT').'</td>';
 			print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
 			print '<td width="18">&nbsp;</td>';
@@ -6521,6 +6520,9 @@ if ($action == 'create') {
 
 				$current_situation_counter = array();
 				foreach ($object->tab_previous_situation_invoice as $prev_invoice) {
+					if ($prev_invoice->type == Facture::TYPE_SITUATION) {
+						$situationInvoice = $prev_invoice;
+					}
 					$tmptotalallpayments = $prev_invoice->getSommePaiement(0);
 					$tmptotalallpayments += $prev_invoice->getSumDepositsUsed(0);
 					$tmptotalallpayments += $prev_invoice->getSumCreditNotesUsed(0);
@@ -6533,9 +6535,8 @@ if ($action == 'create') {
 					print '<td>'.$prev_invoice->getNomUrl(1).'</td>';
 					print '<td></td>';
 					print '<td align="center" >'.(($prev_invoice->type == Facture::TYPE_CREDIT_NOTE) ? $langs->trans('situationInvoiceShortcode_AS') : $langs->trans('situationInvoiceShortcode_S')).$prev_invoice->situation_counter.'</td>';
-					if (isModEnabled("bank")) {
-						print '<td class="right"></td>';
-					}
+					$weightedProgress = $prev_invoice->getSituationProgress();
+					print '<td class="right">'.($weightedProgress === null ? '&ndash;' : price($weightedProgress, 0, $langs, 1, getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'), 'MT').' %').'</td>';
 					print '<td class="right"><span class="amount">'.price($prev_invoice->total_ht).'</span></td>';
 					print '<td class="right"><span class="amount">'.price($prev_invoice->total_ttc).'</span></td>';
 					print '<td class="right">'.$prev_invoice->getLibStatut(3, $tmptotalallpayments).'</td>';
@@ -6551,6 +6552,9 @@ if ($action == 'create') {
 			$total_global_ttc += $total_prev_ttc;
 			$total_global_ht += $object->total_ht;
 			$total_global_ttc += $object->total_ttc;
+			if ($object->type == Facture::TYPE_SITUATION) {
+				$situationInvoice = $object;
+			}
 
 			$current_situation_counter[] = (($object->type == Facture::TYPE_CREDIT_NOTE) ? -1 : 1) * $object->situation_counter;
 
@@ -6558,9 +6562,8 @@ if ($action == 'create') {
 			print '<td>'.$object->getNomUrl(1).'</td>';
 			print '<td></td>';
 			print '<td class="center">'.(($object->type == Facture::TYPE_CREDIT_NOTE) ? $langs->trans('situationInvoiceShortcode_AS') : $langs->trans('situationInvoiceShortcode_S')).$object->situation_counter.'</td>';
-			if (isModEnabled("bank")) {
-				print '<td class="right"></td>';
-			}
+			$weightedProgress = $object->getSituationProgress();
+			print '<td class="right">'.($weightedProgress === null ? '&ndash;' : price($weightedProgress, 0, $langs, 1, getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'), 'MT').' %').'</td>';
 			print '<td class="right"><span class="amount">'.price($object->total_ht).'</span></td>';
 			print '<td class="right"><span class="amount">'.price($object->total_ttc).'</span></td>';
 			print '<td class="right">'.$object->getLibStatut(3, $totalallpayments).'</td>';
@@ -6581,9 +6584,8 @@ if ($action == 'create') {
 				$i++;
 			}
 			print '</td>';
-			if (isModEnabled("bank")) {
-				print '<td></td>';
-			}
+			$globalProgress = $situationInvoice->getSituationProgress($total_global_ht);
+			print '<td class="right"><b>'.($globalProgress === null ? '&ndash;' : price($globalProgress, 0, $langs, 1, getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'), 'MT').' %').'</b></td>';
 			print '<td class="right"><b>'.price($total_global_ht).'</b></td>';
 			print '<td class="right"><b>'.price($total_global_ttc).'</b></td>';
 			print '<td width="18">&nbsp;</td>';
@@ -6595,19 +6597,22 @@ if ($action == 'create') {
 				$total_next_ht = $total_next_ttc = 0;
 
 				foreach ($object->tab_next_situation_invoice as $next_invoice) {
+					if ($next_invoice->type == Facture::TYPE_SITUATION) {
+						$situationInvoice = $next_invoice;
+					}
 					$next_totalpaid = $next_invoice->getSommePaiement(0);
 					$next_totalcreditnotes = $next_invoice->getSumCreditNotesUsed(0);
 					$next_totaldeposits = $next_invoice->getSumDepositsUsed(0);
 					$total_next_ht += $next_invoice->total_ht;
 					$total_next_ttc += $next_invoice->total_ttc;
+					$current_situation_counter[] = (($next_invoice->type == Facture::TYPE_CREDIT_NOTE) ? -1 : 1) * $next_invoice->situation_counter;
 
 					print '<tr class="oddeven">';
 					print '<td>'.$next_invoice->getNomUrl(1).'</td>';
 					print '<td></td>';
 					print '<td class="center">'.(($next_invoice->type == Facture::TYPE_CREDIT_NOTE) ? $langs->trans('situationInvoiceShortcode_AS') : $langs->trans('situationInvoiceShortcode_S')).$next_invoice->situation_counter.'</td>';
-					if (isModEnabled("bank")) {
-						print '<td class="right"></td>';
-					}
+					$weightedProgress = $next_invoice->getSituationProgress();
+					print '<td class="right">'.($weightedProgress === null ? '&ndash;' : price($weightedProgress, 0, $langs, 1, getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'), 'MT').' %').'</td>';
 					print '<td class="right"><span class="amount">'.price($next_invoice->total_ht).'</span></td>';
 					print '<td class="right"><span class="amount">'.price($next_invoice->total_ttc).'</span></td>';
 					print '<td class="right">'.$next_invoice->getLibStatut(3, $next_totalpaid + $next_totalcreditnotes + $next_totaldeposits).'</td>';
@@ -6618,10 +6623,21 @@ if ($action == 'create') {
 				$total_global_ttc += $total_next_ttc;
 
 				print '<tr class="oddeven">';
-				print '<td colspan="3" class="right"></td>';
-				if (isModEnabled("bank")) {
-					print '<td class="right"></td>';
+				print '<td colspan="2" class="left"><b>'.$langs->trans('SituationCurrentCycle').'</b></td>';
+				print '<td>';
+				$i = 0;
+				foreach ($current_situation_counter as $sit) {
+					$curSign = $sit > 0 ? '+' : '-';
+					$curType = $sit > 0 ? $langs->trans('situationInvoiceShortcode_S') : $langs->trans('situationInvoiceShortcode_AS');
+					if ($i > 0) {
+						print ' '.$curSign.' ';
+					}
+					print $curType.abs($sit);
+					$i++;
 				}
+				print '</td>';
+				$globalProgress = $situationInvoice->getSituationProgress($total_global_ht);
+				print '<td class="right"><b>'.($globalProgress === null ? '&ndash;' : price($globalProgress, 0, $langs, 1, getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'), 'MT').' %').'</b></td>';
 				print '<td class="right"><b>'.price($total_global_ht).'</b></td>';
 				print '<td class="right"><b>'.price($total_global_ttc).'</b></td>';
 				print '<td width="18">&nbsp;</td>';

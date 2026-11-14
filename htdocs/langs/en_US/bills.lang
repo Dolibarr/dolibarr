@@ -427,6 +427,7 @@ ListOfPreviousSituationInvoices=List of previous situation invoices
 ListOfNextSituationInvoices=List of next situation invoices
 ListOfSituationInvoices=List of situation invoices
 SituationTotalAfterInvoice=Situation after invoice
+SituationCurrentCycle=Current cycle situation
 CurrentSituationTotal=Total current situation
 DisabledBecauseNotEnouthCreditNote=To remove a situation invoice from cycle, this invoice's credit note total must cover this invoice total
 RemoveSituationFromCycle=Remove this invoice from cycle
@@ -792,3 +793,5 @@ ThisMassActionIsOnlyForInvoices=This mass action is only available for invoices
 DepositSplitAutomaticallyApplied=The available credit was larger than the remaining amount to pay and was split automatically: %s applied to this invoice, %s kept as an available credit for later use.
 ConfirmSplitDiscountBeforeApply=The selected credit (<b>%s</b>) is larger than the remaining amount to pay. It will be split in two: <b>%s</b> applied to this invoice and <b>%s</b> kept as an available credit for later use. Do you want to continue?
 InvoiceRateRealigned=Invoice exchange rate aligned on the real rate (%s)
+
+SituationWeightedProgressHelp=Progress weighted by line amounts excluding tax at 100%, after line discounts. Cumulative in legacy mode; invoice progress in progressive mode. Total rows show the cumulated amount billed excluding tax divided by the latest situation's amount at 100%. A dash means the net amount at 100% is zero or unavailable.
