@@ -4012,9 +4012,10 @@ function dragAndDropFileUpload($htmlname)
 					error:function() {
 						console.log("Error Uploading.", arguments)
 						if (arguments[0].status == 403) {
-							window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_js((string) $object->id).'&seteventmessages=ErrorUploadPermissionDenied:errors";
+							window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_js((string) $object->id).'&seteventmessages=ErrorUploadFileDragDropPermissionDenied:errors";
+						} else {
+							window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_js((string) $object->id).'&seteventmessages=ErrorUploadFileDragDrop:errors";
 						}
-						window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_js((string) $object->id).'&seteventmessages=ErrorUploadFileDragDropPermissionDenied:errors";
 					},
 				})
 			});
