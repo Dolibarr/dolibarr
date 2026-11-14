@@ -632,7 +632,8 @@ if (!defined('NOLOGIN')) {
 		}
 
 		// Verification security graphic code
-		if ($test && GETPOST('actionlogin', 'aZ09') == 'login' && GETPOST("username", "alpha", 2) && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA') && !isset($_SESSION['dol_bypass_antispam'])) {
+		// Not done for the return of a passkey login: only the mode 'passkey' is then tested (see later), with a login already validated by the passkey.
+		if ($test && GETPOST('actionlogin', 'aZ09') == 'login' && GETPOST("username", "alpha", 2) && !(GETPOSTINT('afterpasskeyloginreturn') && in_array('passkey', $authmode)) && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA') && !isset($_SESSION['dol_bypass_antispam'])) {
 			$ok = false;
 
 			// Use the captcha handler to validate
@@ -744,6 +745,9 @@ if (!defined('NOLOGIN')) {
 		if (GETPOST('beforeoauthloginredirect') || GETPOST('afteroauthloginreturn')) {	// For oauth login
 			$goontestloop = true;
 		}
+		if (GETPOSTINT('afterpasskeyloginreturn')) {	// For passkey login
+			$goontestloop = true;
+		}
 		if (!empty($_COOKIE['login_dolibarr'])) {	// TODO For ? Remove this ?
 			$goontestloop = true;
 		}
@@ -797,6 +801,16 @@ if (!defined('NOLOGIN')) {
 							break;
 						}
 					}
+				}
+			}
+
+			// The mode 'passkey' is tested alone, and only when the login page submits a login validated by a passkey.
+			// A passkey is a two-factor authentication on its own: no TOTP code is asked after it (see dolTotpStartSecondFactor() below).
+			if (in_array('passkey', $authmode)) {
+				if (GETPOSTINT('afterpasskeyloginreturn')) {
+					$authmode = array('passkey');
+				} else {
+					$authmode = array_values(array_diff($authmode, array('passkey')));
 				}
 			}
 
