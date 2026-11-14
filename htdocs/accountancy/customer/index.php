@@ -161,6 +161,7 @@ if ($action == 'validatehistory' && $user->hasRight('accounting', 'bind', 'write
 	$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa3 ON ".$db->sanitize($alias_product_perentity).".accountancy_code_sell_export = aa3.account_number AND aa3.active = 1 AND aa3.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa3.entity = ".((int) $conf->entity);
 	$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa4 ON ".$db->sanitize($alias_societe_perentity).".accountancy_code_sell = aa4.account_number        AND aa4.active = 1 AND aa4.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa4.entity = ".((int) $conf->entity);
 	$sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
+	$sql .= " AND NOT (f.fk_statut = ".Facture::STATUS_ABANDONED." AND COALESCE(f.close_code, '') = '".$db->escape(Facture::CLOSECODE_ABANDONED)."')";
 	$sql .= " AND l.product_type <= 2";
 	$sql .= " AND f.entity IN (".getEntity('invoice', 0).")"; // We don't share object for accountancy
 	if (getDolGlobalInt('ACCOUNTING_DATE_START_BINDING')) {
@@ -370,6 +371,7 @@ if (getDolGlobalInt('ACCOUNTING_DATE_START_BINDING')) {
 	$sql .= " AND f.datef >= '".$db->idate(getDolGlobalInt('ACCOUNTING_DATE_START_BINDING'))."'";
 }
 $sql .= " AND f.fk_statut > 0";
+$sql .= " AND NOT (f.fk_statut = ".Facture::STATUS_ABANDONED." AND COALESCE(f.close_code, '') = '".$db->escape(Facture::CLOSECODE_ABANDONED)."')";
 $sql .= " AND fd.product_type <= 2";
 $sql .= " AND f.entity IN (".getEntity('invoice', 0).")"; // We don't share object for accountancy
 $sql .= " AND aa.account_number IS NULL";
