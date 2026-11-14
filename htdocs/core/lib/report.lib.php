@@ -122,7 +122,7 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 	print dol_print_date($builddate, 'dayhour');
 	print '</td>';
 	if ($variant) {
-		print '<td>'.($exportlink ? $langs->trans("Export").': '.$exportlink : '').'</td>';
+		print '<td>'.$exportlink.'</td>';
 	}
 	print '</tr>'."\n";
 
