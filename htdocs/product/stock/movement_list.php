@@ -1181,8 +1181,44 @@ $modelmail = "movementstock";
 $objecttmp = new MouvementStock($db);
 $trackid = 'mov'.$warehouse->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+
+// Types of origin of a movement (types handled by get_origin()), used by the confirmation of the reverse and by the filter
+$arrayoforigintypes = array(
+	'commande' => $langs->trans('Order'),
+	'shipping' => $langs->trans('Shipment'),
+	'facture' => $langs->trans('Invoice'),
+	'order_supplier' => $langs->trans('SupplierOrder'),
+	'invoice_supplier' => $langs->trans('SupplierInvoice'),
+	'reception' => $langs->trans('Reception'),
+	'inventory' => $langs->trans('Inventory'),
+	'mo' => $langs->trans('ManufacturingOrder'),
+	'user' => $langs->trans('User'),
+	'none' => $langs->trans('None'),
+);
+
 if ($massaction == 'prereverse' && count($toselect) <= getDolGlobalInt('MAIN_LIMIT_FOR_MASS_ACTIONS', 1000)) {
-	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassReverse"), $langs->trans("ConfirmMassReverseQuestion", count($toselect)), "confirm_reverse", null, '', 0, 200, 500, 1, 'Yes');
+	$question = $langs->trans("ConfirmMassReverseQuestion", count($toselect));
+	$heightconfirm = 200;
+
+	// The selected movements may have been recorded by an object (order, invoice, manufacturing order...). If this object is
+	// later canceled or deleted, it may reverse its stock movement too, so the stock would be reversed a second time: we warn
+	// with the list of the types of origin of the selection.
+	$labelsoforigintypes = array();
+	$sql = "SELECT DISTINCT m.origintype FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
+	$sql .= " WHERE m.rowid IN (".$db->sanitize(implode(',', array_map('intval', $toselect))).")";
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			$tmporigintype = (empty($obj->origintype) ? 'none' : $obj->origintype);
+			$labelsoforigintypes[$tmporigintype] = (empty($arrayoforigintypes[$tmporigintype]) ? preg_replace('/@.*$/', '', $tmporigintype) : $arrayoforigintypes[$tmporigintype]);
+		}
+	}
+	if (count(array_diff(array_keys($labelsoforigintypes), array('none'))) > 0) {
+		$question .= '<br><br>'.img_warning().' '.$langs->trans("WarningReverseStockMovementOfObjects", dol_escape_htmltag(implode(', ', $labelsoforigintypes)));
+		$heightconfirm = 300;
+	}
+
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassReverse"), $question, "confirm_reverse", null, '', 0, $heightconfirm, 500, 1, 'Yes');
 }
 
 
@@ -1306,18 +1342,6 @@ if (!empty($arrayfields['origin']['checked'])) {
 	// Note: 'project' is not offered because _create() moves it to fk_projet and clears origintype,
 	// so no movement can ever carry origintype='project'.
 	print '<td class="liste_titre left">';
-	$arrayoforigintypes = array(
-		'commande' => $langs->trans('Order'),
-		'shipping' => $langs->trans('Shipment'),
-		'facture' => $langs->trans('Invoice'),
-		'order_supplier' => $langs->trans('SupplierOrder'),
-		'invoice_supplier' => $langs->trans('SupplierInvoice'),
-		'reception' => $langs->trans('Reception'),
-		'inventory' => $langs->trans('Inventory'),
-		'mo' => $langs->trans('ManufacturingOrder'),
-		'user' => $langs->trans('User'),
-		'none' => $langs->trans('None'),
-	);
 	print '<select id="search_origintype" name="search_origintype" class="maxwidth150">';
 	print '<option value=""'.(($search_origintype == '') ? ' selected="selected"' : '').'>&nbsp;</option>';
 	foreach ($arrayoforigintypes as $keyorigintype => $valorigintype) {
