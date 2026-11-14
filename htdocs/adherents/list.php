@@ -466,207 +466,24 @@ $htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arra
 
 // Build and execute select
 // --------------------------------------------------------------------
-$sql = "SELECT";
-$sql .= " d.rowid, d.ref, d.login, d.lastname, d.firstname, d.gender, d.societe as company, d.fk_soc as socid,";
-$sql .= " d.civility, d.datefin, d.address, d.zip, d.town, d.state_id, d.country,";
-$sql .= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.birth, d.public, d.photo,";
-$sql .= " d.fk_adherent_type as type_id, d.morphy, d.statut as status, d.datec as date_creation, d.tms as date_modification,";
-$sql .= " d.note_private, d.note_public, d.import_key,";
-$sql .= " s.nom,";
-$sql .= " ".$db->ifsql("d.societe IS NULL", "s.nom", "d.societe")." as companyname,";
-$sql .= " t.libelle as type, t.subscription, t.amount, t.minimumamount,";
-$sql .= " state.code_departement as state_code, state.nom as state_name";
+$searchcriteria = array(
+	'id' => $search_id, 'ref' => $search_ref, 'lastname' => $search_lastname, 'firstname' => $search_firstname,
+	'gender' => $search_gender, 'civility' => $search_civility, 'company' => $search_company, 'login' => $search_login,
+	'address' => $search_address, 'zip' => $search_zip, 'town' => $search_town, 'state' => $search_state,
+	'country' => $search_country, 'phone' => $search_phone, 'phone_perso' => $search_phone_perso,
+	'phone_mobile' => $search_phone_mobile, 'type' => $search_type, 'amount' => $search_amount,
+	'minimumamount' => $search_minimumamount, 'email' => $search_email, 'no_email' => $search_no_email,
+	'categ' => $search_categ, 'morphy' => $search_morphy, 'import_key' => $search_import_key,
+	'filter' => $search_filter, 'status' => $search_status, 'all' => $search_all,
+	'datec_start' => $search_datec_start, 'datec_end' => $search_datec_end,
+	'datem_start' => $search_datem_start, 'datem_end' => $search_datem_end,
+	'datefin_start' => $search_datefin_start, 'datefin_end' => $search_datefin_end,
+	'array_options' => $search_array_options,
+);
+$listparts = $object->getListSqlParts($searchcriteria, array('extrafields' => $extrafields, 'fieldstosearchall' => $fieldstosearchall, 'arrayfields' => $arrayfields), $hookmanager, $action);
 
-if (isModEnabled('mailing')) {
-	$sql .= ", (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = d.email) as unsubscribed";
-}
-
-// Add fields from extrafields
-if (!empty($extrafields->attributes[$object->table_element]['label'])) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : "");
-	}
-}
-
-// Add fields from hooks
-$parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-$sql .= $hookmanager->resPrint;
-$sql = preg_replace('/,\s*$/', '', $sql);
-
-$sqlfields = $sql; // $sql fields to remove for count total
-
-// SQL Alias adherent
-$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
-if (!empty($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (d.rowid = ef.fk_object)";
-}
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = d.country)";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = d.state_id)";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on (s.rowid = d.fk_soc)";
-
-// SQL Alias adherent_type
-$sql .= " INNER JOIN ".MAIN_DB_PREFIX."adherent_type as t ON t.rowid = d.fk_adherent_type";
-// Add table from hooks
-$parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-$sql .= $hookmanager->resPrint;
-$sql .= " WHERE 1 = 1";
-
-$searchCategoryContactList = $search_categ ? array($search_categ) : array();
-$searchCategoryContactOperator = 0;
-// Search for tag/category ($searchCategoryContactList is an array of ID)
-if (!empty($searchCategoryContactList)) {
-	$searchCategoryContactSqlList = array();
-	$listofcategoryid = '';
-	foreach ($searchCategoryContactList as $searchCategoryContact) {
-		if (intval($searchCategoryContact) == -2) {
-			$searchCategoryContactSqlList[] = "NOT EXISTS (SELECT ck.fk_categorie FROM ".MAIN_DB_PREFIX."categorie_member as ck WHERE d.rowid = ck.fk_member)";
-		} elseif (intval($searchCategoryContact) > 0) {
-			if ($searchCategoryContactOperator == 0) {
-				$searchCategoryContactSqlList[] = " EXISTS (SELECT ck.fk_categorie FROM ".MAIN_DB_PREFIX."categorie_member as ck WHERE d.rowid = ck.fk_member AND ck.fk_categorie = ".((int) $searchCategoryContact).")";
-			} else {
-				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryContact);
-			}
-		}
-	}
-	if ($listofcategoryid) {
-		$searchCategoryContactSqlList[] = " EXISTS (SELECT ck.fk_categorie FROM ".MAIN_DB_PREFIX."categorie_member as ck WHERE d.rowid = ck.fk_member AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
-	}
-	if ($searchCategoryContactOperator == 1) {
-		if (!empty($searchCategoryContactSqlList)) {
-			$sql .= " AND (".implode(' OR ', $searchCategoryContactSqlList).")";
-		}
-	} else {
-		if (!empty($searchCategoryContactSqlList)) {
-			$sql .= " AND (".implode(' AND ', $searchCategoryContactSqlList).")";
-		}
-	}
-}
-
-$sql .= " AND d.entity IN (".getEntity('adherent').")";
-if ($search_all) {
-	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
-}
-if ($search_type > 0) {
-	$sql .= " AND t.rowid=".((int) $search_type);
-}
-if ($search_amount != '') {
-	$sql .= natural_search('t.amount', $search_amount, 1);
-}
-if ($search_minimumamount != '') {
-	$sql .= natural_search('t.minimumamount', $search_minimumamount, 1);
-}
-if ($search_filter == 'withoutsubscription') {
-	$sql .= " AND (datefin IS NULL)";
-}
-if ($search_filter == 'waitingsubscription') {
-	$sql .= " AND (datefin IS NULL AND t.subscription = '1')";
-}
-if ($search_filter == 'uptodate') {
-	//$sql .= " AND (datefin >= '".$db->idate($now)."')";
-	// Up to date subscription OR no subscription required
-	$sql .= " AND (datefin >= '".$db->idate($now)."' OR (datefin IS NULL AND t.subscription = '0'))";
-}
-if ($search_filter == 'outofdate') {
-	$sql .= " AND (datefin < '".$db->idate($now)."')";
-}
-if ($search_status != '') {
-	// Can be a number or comma separated list of numbers
-	$sql .= " AND d.statut in (".$db->sanitize($db->escape($search_status)).")";
-}
-if ($search_morphy != '' && $search_morphy != '-1') {
-	$sql .= natural_search("d.morphy", $search_morphy);
-}
-if ($search_id != '') {
-	$sql .= natural_search("d.rowid", $search_id, 1);
-}
-if ($search_ref) {
-	$sql .= natural_search("d.ref", $search_ref);
-}
-if ($search_civility) {
-	$sql .= natural_search("d.civility", $search_civility);
-}
-if ($search_firstname) {
-	$sql .= natural_search("d.firstname", $search_firstname);
-}
-if ($search_lastname) {
-	if (empty($arrayfields['d.firstname']['checked'])) {
-		// Firstname is shown into the lastname column, so search on both
-		$sql .= natural_search(array("d.lastname", "d.firstname"), $search_lastname);
-	} else {
-		$sql .= natural_search("d.lastname", $search_lastname);
-	}
-}
-if ($search_gender != '' && $search_gender != '-1') {
-	$sql .= natural_search("d.gender", $search_gender);
-}
-if ($search_login) {
-	$sql .= natural_search("d.login", $search_login);
-}
-if ($search_company) {
-	$sql .= natural_search(array("s.nom", "d.societe"), $search_company);
-}
-if ($search_email) {
-	$sql .= natural_search("d.email", $search_email);
-}
-if ($search_no_email != -1 && $search_no_email > 0) {
-	$sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = d.email) > 0";
-}
-if ($search_no_email != -1 && $search_no_email == 0) {
-	$sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = d.email) = 0 AND d.email IS NOT NULL AND d.email <> ''";
-}
-if ($search_address) {
-	$sql .= natural_search("d.address", $search_address);
-}
-if ($search_town) {
-	$sql .= natural_search("d.town", $search_town);
-}
-if ($search_zip) {
-	$sql .= natural_search("d.zip", $search_zip);
-}
-if ($search_state) {
-	$sql .= natural_search("state.nom", $search_state);
-}
-if ($search_phone) {
-	$sql .= dol_natural_search_phone($db, "d.phone", $search_phone);
-}
-if ($search_phone_perso) {
-	$sql .= dol_natural_search_phone($db, "d.phone_perso", $search_phone_perso);
-}
-if ($search_phone_mobile) {
-	$sql .= dol_natural_search_phone($db, "d.phone_mobile", $search_phone_mobile);
-}
-if ($search_country) {
-	$sql .= " AND d.country IN (".$db->sanitize($search_country).')';
-}
-if ($search_import_key) {
-	$sql .= natural_search("d.import_key", $search_import_key);
-}
-if ($search_datec_start) {
-	$sql .= " AND d.datec >= '".$db->idate($search_datec_start)."'";
-}
-if ($search_datec_end) {
-	$sql .= " AND d.datec <= '".$db->idate($search_datec_end)."'";
-}
-if ($search_datem_start) {
-	$sql .= " AND d.tms >= '".$db->idate($search_datem_start)."'";
-}
-if ($search_datem_end) {
-	$sql .= " AND d.tms <= '".$db->idate($search_datem_end)."'";
-}
-if ($search_datefin_start) {
-	$sql .= " AND d.datefin >= '".$db->idate($search_datefin_start)."'";
-}
-if ($search_datefin_end) {
-	$sql .= " AND d.datefin <= '".$db->idate($search_datefin_end)."'";
-}
-// Add where from extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
-// Add where from hooks
-$parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-$sql .= $hookmanager->resPrint;
+$sqlfields = $listparts['sqlselect'];	// $sql fields to remove for count total
+$sql = $listparts['sqlselect'].$listparts['sqlfrom'].$listparts['sqlwhere'];
 
 // Count total nb of records
 $nbtotalofrecords = '';
