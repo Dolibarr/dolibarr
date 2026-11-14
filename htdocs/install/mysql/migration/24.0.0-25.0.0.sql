@@ -727,3 +727,7 @@ ALTER TABLE llx_projet DROP INDEX idx_projet_ref;
 ALTER TABLE llx_projet_task_dependency DROP INDEX idx_projet_task_dependency_fk_task;
 ALTER TABLE llx_societe_perentity DROP INDEX idx_societe_perentity_fk_soc;
 ALTER TABLE llx_subscription DROP INDEX idx_subscription_fk_adherent;
+
+-- Rename index of llx_quickmemo_memo_user that had the name of an index of llx_quickmemo_memo (so not created with pgsql where index names are global)
+-- VMYSQL4.1 DROP INDEX idx_quickmemo_memo_rowid ON llx_quickmemo_memo_user;
+ALTER TABLE llx_quickmemo_memo_user ADD INDEX idx_quickmemo_memo_user_fk_memo (fk_memo);
