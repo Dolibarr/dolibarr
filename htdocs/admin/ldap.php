@@ -101,6 +101,9 @@ if (empty($reshook)) {
 		if (!dolibarr_set_const($db, 'LDAP_SERVER_USE_TLS', GETPOST("usetls", 'aZ09'), 'chaine', 0, '', $conf->entity)) {
 			$error++;
 		}
+		if (!dolibarr_set_const($db, 'LDAP_SERVER_TLS_IGNORE_CERT', GETPOST("tlsignorecert", 'aZ09'), 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
 		if (!dolibarr_set_const($db, 'LDAP_SYNCHRO_ACTIVE', GETPOST("activesynchro", 'aZ09'), 'chaine', 0, '', $conf->entity)) {
 			$error++;
 		}
@@ -243,6 +246,10 @@ print '</td><td><span class="opacitymedium">'.$langs->trans("LDAPServerDnExample
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPServerUseTLS").'</td><td>';
 print $form->selectyesno('usetls', getDolGlobalInt('LDAP_SERVER_USE_TLS'), 1);
 print '</td><td><span class="opacitymedium">'.$langs->trans("LDAPServerUseTLSExample").'</span></td></tr>';
+
+// Ignore SSL Certs
+print '<tr class="oddeven"><td>'.$langs->trans("LDAPServerTLSIgnoreCert").'</td><td>';
+print $form->selectyesno('tlsignorecert', getDolGlobalInt('LDAP_SERVER_TLS_IGNORE_CERT'), 1);
 
 // Password hash type
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPPasswordHashType").'</td><td>';
