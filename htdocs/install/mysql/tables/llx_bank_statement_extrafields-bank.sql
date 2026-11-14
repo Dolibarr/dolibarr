@@ -1,6 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2025 Florian HENRY  <florian.henry@scopen.fr>
--- Copyright (C) 2025 Laurent MAGNIN  <laurent.magnin@evarisk.com>
+-- Copyright (C) 2026 Laurent MAGNIN  <laurent.magnin@evarisk.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,17 +16,10 @@
 --
 -- ===================================================================
 
--- Table to receive manual import of a bank statement
--- Try to match compatibility with external module banking to capitalize on knowledge but removed fields for advanced features.
-
-CREATE TABLE llx_bank_record
+CREATE TABLE llx_bank_statement_extrafields
 (
-  rowid             integer     AUTO_INCREMENT PRIMARY KEY,
-  ref 				varchar(50) NOT NULL,
-  fk_bank			integer		NOT NULL,
-  dt_from			date		NOT NULL,
-  dt_to				date		NOT NULL,
-  date_creation datetime NOT NULL,
-  date_valid datetime NULL,
-  tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-)ENGINE=innodb;
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)
+) ENGINE=innodb;

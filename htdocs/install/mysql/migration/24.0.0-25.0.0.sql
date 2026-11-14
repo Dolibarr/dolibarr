@@ -702,3 +702,35 @@ UPDATE llx_rights_def SET id = id - 14191600 + 5502000 WHERE id IN (14191611, 14
 UPDATE llx_user_rights SET fk_id = fk_id - 14191600 + 5502000 WHERE fk_id IN (14191611, 14191612, 14191613);
 UPDATE llx_usergroup_rights SET fk_id = fk_id - 14191600 + 5502000 WHERE fk_id IN (14191611, 14191612, 14191613);
 DELETE FROM llx_rights_def WHERE id IN (14191611, 14191612, 14191613);
+
+-- Rename llx_bank_record into standard llx_bank_statement and complete schema with standard Dolibarr card fields and ISO 20022 statement fields
+ALTER TABLE llx_bank_record RENAME TO llx_bank_statement;
+
+ALTER TABLE llx_bank_statement ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER ref;
+ALTER TABLE llx_bank_statement ADD COLUMN ref_ext varchar(255) NULL AFTER entity;
+ALTER TABLE llx_bank_statement ADD COLUMN opening_balance double(24,8) NULL DEFAULT NULL AFTER dt_to;
+ALTER TABLE llx_bank_statement ADD COLUMN closing_balance double(24,8) NULL DEFAULT NULL AFTER opening_balance;
+ALTER TABLE llx_bank_statement ADD COLUMN total_debit double(24,8) NULL DEFAULT NULL AFTER closing_balance;
+ALTER TABLE llx_bank_statement ADD COLUMN total_credit double(24,8) NULL DEFAULT NULL AFTER total_debit;
+ALTER TABLE llx_bank_statement ADD COLUMN nb_operations integer NULL DEFAULT NULL AFTER total_credit;
+ALTER TABLE llx_bank_statement ADD COLUMN status smallint DEFAULT 0 NOT NULL AFTER nb_operations;
+ALTER TABLE llx_bank_statement ADD COLUMN fk_user_author integer NULL DEFAULT NULL AFTER status;
+ALTER TABLE llx_bank_statement ADD COLUMN fk_user_modif integer NULL DEFAULT NULL AFTER fk_user_author;
+ALTER TABLE llx_bank_statement ADD COLUMN fk_user_valid integer NULL DEFAULT NULL AFTER fk_user_modif;
+ALTER TABLE llx_bank_statement ADD COLUMN note_private text NULL DEFAULT NULL AFTER fk_user_valid;
+ALTER TABLE llx_bank_statement ADD COLUMN note_public text NULL DEFAULT NULL AFTER note_private;
+ALTER TABLE llx_bank_statement ADD COLUMN model_pdf varchar(255) NULL DEFAULT NULL AFTER note_public;
+ALTER TABLE llx_bank_statement ADD COLUMN last_main_doc varchar(255) NULL DEFAULT NULL AFTER model_pdf;
+ALTER TABLE llx_bank_statement ADD COLUMN import_key varchar(14) NULL DEFAULT NULL;
+
+ALTER TABLE llx_bank_statement ADD INDEX idx_bank_statement_entity (entity);
+
+CREATE TABLE llx_bank_statement_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)
+) ENGINE=innodb;
+
+ALTER TABLE llx_bank_statement_extrafields ADD UNIQUE INDEX uk_bank_statement_extrafields (fk_object);
