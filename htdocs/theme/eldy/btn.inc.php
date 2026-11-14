@@ -464,6 +464,37 @@ table.table-fiche-title tr.titre td.col-right a.btnTitle {
 }
 <?php } ?>
 
+<?php if (getDolGlobalString('MAIN_GROUP_GENERIC_ACTION_BUTTONS')) { ?>
+/* Generic buttons (edit, email, clone, delete) on a first row, object specific buttons on a second row */
+div.tabsAction.tabsActionGroupGeneric {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	align-items: center;
+}
+div.tabsAction.tabsActionGroupGeneric > * {
+	order: 10;
+}
+div.tabsAction.tabsActionGroupGeneric > [data-action-type="edit"] {
+	order: 1;
+}
+div.tabsAction.tabsActionGroupGeneric > [data-action-type="email"] {
+	order: 2;
+}
+div.tabsAction.tabsActionGroupGeneric > [data-action-type="clone"] {
+	order: 3;
+}
+div.tabsAction.tabsActionGroupGeneric > [data-action-type="delete"], div.tabsAction.tabsActionGroupGeneric > .divButAction:has(> [data-action-type="delete"]) {
+	order: 4;
+}
+div.tabsAction.tabsActionGroupGeneric::after {
+	content: "";
+	flex-basis: 100%;
+	height: 0;
+	order: 5;
+}
+<?php } ?>
+
 
 /*
  * BTN LINK (used with <a/> tag in general but not with <button/>)
