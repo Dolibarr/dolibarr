@@ -317,9 +317,10 @@ function cleanSecurityCSP($securitycsp)
 				$securitycsp = preg_replace('/style-src\s+/', 'style-src *.stripe.com ', $securitycsp);
 			}
 		}
-		// We check if default-src contains self, unsafe-inline, unsafe-eval, *.dolibarr.org, and paypal or stripe if enabled (if not the app will not work correctly)
+		// We check if default-src contains self, unsafe-inline, unsafe-eval, data:, *.dolibarr.org, *.dolistore.com, *.githubusercontent.com, and paypal or stripe if enabled (if not the app will not work correctly)
+		// Note: data: is required to show images embedded with data: (for example in some email layouts)
 		if (!preg_match('/default-src/', $securitycsp)) {
-			$securitycsp .= (preg_match('/;\s*$/', $securitycsp) ? '' : '; ').' default-src \'self\' \'unsafe-inline\' \'unsafe-eval\' *.dolibarr.org';
+			$securitycsp .= (preg_match('/;\s*$/', $securitycsp) ? '' : '; ').' default-src \'self\' \'unsafe-inline\' \'unsafe-eval\' data: *.dolibarr.org *.dolistore.com *.githubusercontent.com';
 			if (isModEnabled('paypal')) {
 				$securitycsp .= ' *.paypal.com';
 			}
@@ -334,8 +335,17 @@ function cleanSecurityCSP($securitycsp)
 			if (isModEnabled('stripe') && !preg_match('/default-src[^;]*stripe/', $securitycsp)) {
 				$securitycsp = preg_replace('/default-src\s+/', 'default-src *.stripe.com ', $securitycsp);
 			}
+			if (!preg_match('/default-src[^;]*githubusercontent\.com/', $securitycsp)) {
+				$securitycsp = preg_replace('/default-src\s+/', 'default-src *.githubusercontent.com ', $securitycsp);
+			}
+			if (!preg_match('/default-src[^;]*dolistore\.com/', $securitycsp)) {
+				$securitycsp = preg_replace('/default-src\s+/', 'default-src *.dolistore.com ', $securitycsp);
+			}
 			if (!preg_match('/default-src[^;]*dolibarr\.org/', $securitycsp)) {
 				$securitycsp = preg_replace('/default-src\s+/', 'default-src *.dolibarr.org ', $securitycsp);
+			}
+			if (!preg_match('/default-src[^;]*data:/', $securitycsp)) {
+				$securitycsp = preg_replace('/default-src\s+/', 'default-src data: ', $securitycsp);
 			}
 			if (!preg_match('/default-src[^;]*unsafe-eval/', $securitycsp)) {
 				$securitycsp = preg_replace('/default-src\s+/', 'default-src \'unsafe-eval\' ', $securitycsp);
@@ -346,6 +356,10 @@ function cleanSecurityCSP($securitycsp)
 			if (!preg_match('/default-src[^;]*self/', $securitycsp)) {
 				$securitycsp = preg_replace('/default-src\s+/', 'default-src \'self\' ', $securitycsp);
 			}
+		}
+		// We check if img-src, when defined, contains data: (img-src replaces default-src for images, so data: must also be there)
+		if (preg_match('/img-src/', $securitycsp) && !preg_match('/img-src[^;]*data:/', $securitycsp)) {
+			$securitycsp = preg_replace('/img-src\s+/', 'img-src data: ', $securitycsp);
 		}
 	}
 	$securitycsp = preg_replace('/\s+/', ' ', $securitycsp);
@@ -513,7 +527,8 @@ print '<script>
 			keysource = $(this).find(":selected").data("sourcetype");
 			$("#select_source_MAIN_SECURITY_FORCECSP").val($(this).val());
 			console.log("We hide and show fields");
-			if (keysource == "data" || keysource == "input") {
+			/* For data:, no additional value is shown, so we can add it directly (like blob:) */
+			if (keysource == "input") {
 				$(".div_input_data_MAIN_SECURITY_FORCECSP").css("display", "inline-block");
 				$("#btn_MAIN_SECURITY_FORCECSP").prop("disabled",true);
 			} else {

@@ -503,6 +503,11 @@ if ($ext == 'csv') {
 		$param .= '&dateyear='.GETPOSTINT('dateyear');
 	}
 
+	// Add $param from hooks
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action);	// Note that $action and $object may have been modified by hook
+	$param .= $hookmanager->resPrint;
+
 	// TODO Move this into the title line ?
 	print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'stock', 0, '', '', $limit, 0, 0, 1);
 
@@ -855,6 +860,10 @@ if ($ext == 'csv') {
 		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("EnterADateCriteria").'</span></td></tr>';
 	} else {
 		print '<tr class="liste_total">';
+		// Action column
+		if ($conf->main_checkbox_left_column) {
+			print '<td></td>';
+		}
 		print '<td>'.$langs->trans("Totalforthispage").'</td>';
 		print '<td></td>';
 		if ($mode == 'future') {
@@ -875,7 +884,10 @@ if ($ext == 'csv') {
 			print '<td></td>';
 			print '<td class="right">'.($productid > 0 ? price(price2num($totalcurrentstock, 'MS')) : '').'</td>';
 		}
-		print '<td></td>';
+		// Action column
+		if (!$conf->main_checkbox_left_column) {
+			print '<td></td>';
+		}
 		print '</tr>';
 	}
 

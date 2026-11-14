@@ -469,7 +469,8 @@ $configfileparameters = array(
 	'?dolibarr_mailing_limit_sendbyday' => 'Limit nb of email sent per day',
 	'?dolibarr_mail_allow_unrestricted_smtp_target' => 'Allow unrestricted SMTP target for emails',
 	'?dolibarr_strict_mode' => 'Strict mode for php syntax is on/off',
-	'?dolibarr_nocsrfcheck' => 'Disable CSRF security checks'
+	'?dolibarr_nocsrfcheck' => 'Disable CSRF security checks',
+	'?dolibarr_main_disable_totp' => 'Disable two-factor authentication (TOTP)'
 );
 
 print '<div class="div-table-responsive-no-min">';
@@ -562,7 +563,7 @@ foreach ($configfileparameters as $key => $value) {
 				if (empty($valuetoshow)) {
 					print img_warning($langs->trans('SwitchThisForABetterSecurity', 1));
 				}
-			} elseif ($newkey == 'dolibarr_nocsrfcheck') {
+			} elseif ($newkey == 'dolibarr_nocsrfcheck' || $newkey == 'dolibarr_main_disable_totp') {
 				print ${$newkey};
 
 				$valuetoshow = ${$newkey};

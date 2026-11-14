@@ -1476,6 +1476,12 @@ class SecurityTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($stringtotest, $result, 'Error');
 
+		// For a string with tags of the 'common' list like blockquote, pre or sup (they must be kept and not escaped)
+		$stringtotest = '<p>Text</p><blockquote style="color: #8e44ad;">Quote</blockquote><pre>Code</pre><sup>2</sup><dl><dt>a</dt><dd>b</dd></dl>';
+		$result = dolPrintHTML($stringtotest);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($stringtotest, $result, 'Error, a tag of the common list was escaped');
+
 
 		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
@@ -1773,7 +1779,11 @@ class SecurityTest extends CommonClassTest
 		$result = dol_htmlwithnojs($test, 0, 'restricthtml');
 		print __METHOD__." result=".$result."\n";
 		$normalizedresult = trim(preg_replace('/>\s*</', '><', str_replace(array("\r", "\n", "\t"), ' ', $result)));
-		$this->assertEquals('<div id="a1" data-foo="x" aria-label="z" role="note"><table border="1"><tr><td colspan="2" rowspan="1">c</td></tr></table><span itemprop="name" foo="bar">t</span><img src="data:image/png;base64,AAAA" srcset="j.png 2x" alt="i"></div>', $normalizedresult, 'Test sanitizing attributes with MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES=0 is ko');
+		// The values "alert(1)" and "b" left by the removal of onxxx= are dropped by tidy or libxml < 2.14, but kept as attribute names by the HTML5 parser of libxml >= 2.14
+		$this->assertContains($normalizedresult, array(
+			'<div id="a1" data-foo="x" aria-label="z" role="note"><table border="1"><tr><td colspan="2" rowspan="1">c</td></tr></table><span itemprop="name" foo="bar">t</span><img src="data:image/png;base64,AAAA" srcset="j.png 2x" alt="i"></div>',
+			'<div id="a1" data-foo="x" aria-label="z" role="note" "alert(1)"><table border="1"><tr><td colspan="2" rowspan="1" "b">c</td></tr></table><span itemprop="name" foo="bar">t</span><img src="data:image/png;base64,AAAA" srcset="j.png 2x" alt="i"></div>'
+		), 'Test sanitizing attributes with MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES=0 is ko');
 
 
 		// Test emoticons
@@ -1934,6 +1944,71 @@ class SecurityTest extends CommonClassTest
 		$result = dolTotpGetUri('mylogin', $secret, 'MyCompany');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('otpauth://totp/MyCompany:mylogin?secret='.$secret.'&issuer=MyCompany&algorithm=SHA1&digits=6&period=30', $result, 'Test of the otpauth URI');
+
+		// The rescue option $dolibarr_main_disable_totp of conf.php skips the second step: the login is returned at once
+		global $dolibarr_main_disable_totp;
+		$savdisabletotp = isset($dolibarr_main_disable_totp) ? $dolibarr_main_disable_totp : null;
+		$dolibarr_main_disable_totp = '0';
+		$this->assertFalse(dolTotpIsDisabledByConf(), 'The 2FA must be enabled when dolibarr_main_disable_totp is 0');
+		$dolibarr_main_disable_totp = '1';
+		$this->assertTrue(dolTotpIsDisabledByConf(), 'The 2FA must be disabled when dolibarr_main_disable_totp is 1');
+		$this->assertEquals('mylogin', dolTotpStartSecondFactor($this->savdb, 'mylogin', 1), 'With the 2FA disabled in conf.php, the password must be enough');
+		$dolibarr_main_disable_totp = $savdisabletotp;
+
+		return 0;
+	}
+
+	/**
+	 * testDolTotpIsRequired
+	 *
+	 * @return	int
+	 */
+	public function testDolTotpIsRequired()
+	{
+		global $conf, $db;
+
+		$constnames = array('MAIN_SECURITY_ALLOW_TOTP', 'MAIN_SECURITY_TOTP_REQUIRED_FOR_INTERNAL', 'MAIN_SECURITY_TOTP_REQUIRED_FOR_EXTERNAL', 'MAIN_SECURITY_TOTP_REQUIRED_FOR_GROUPS');
+		$saved = array();
+		foreach ($constnames as $constname) {
+			$saved[$constname] = getDolGlobalString($constname);
+			$conf->global->$constname = '';
+		}
+		// Without an encryption key no TOTP can be saved, so none is ever required
+		$canstore = (strpos(dolEncrypt('totp'), 'dolcrypt:') === 0);
+
+		$internal = new User($db);
+		$internal->id = 1;
+		$internal->socid = 0;
+		$external = new User($db);
+		$external->id = 1;
+		$external->socid = 1;
+
+		$conf->global->MAIN_SECURITY_TOTP_REQUIRED_FOR_INTERNAL = 1;
+		$this->assertFalse(dolTotpIsRequired($db, $internal), 'Never required while the TOTP is not allowed');
+
+		$conf->global->MAIN_SECURITY_ALLOW_TOTP = 1;
+		$this->assertEquals($canstore, dolTotpIsRequired($db, $internal), 'Required for an internal user');
+		$this->assertFalse(dolTotpIsRequired($db, $external), 'Not required for an external user by the option for internal users');
+
+		$conf->global->MAIN_SECURITY_TOTP_REQUIRED_FOR_INTERNAL = 0;
+		$conf->global->MAIN_SECURITY_TOTP_REQUIRED_FOR_EXTERNAL = 1;
+		$this->assertFalse(dolTotpIsRequired($db, $internal), 'Not required for an internal user by the option for external users');
+		$this->assertEquals($canstore, dolTotpIsRequired($db, $external), 'Required for an external user');
+
+		// The rescue option of conf.php refuses any enrollment: requiring one would lock the user on the setup page
+		global $dolibarr_main_disable_totp;
+		$savdisabletotp = isset($dolibarr_main_disable_totp) ? $dolibarr_main_disable_totp : null;
+		$dolibarr_main_disable_totp = '1';
+		$this->assertFalse(dolTotpIsRequired($db, $external), 'Never required while the 2FA is disabled by dolibarr_main_disable_totp');
+		$dolibarr_main_disable_totp = $savdisabletotp;
+
+		$conf->global->MAIN_SECURITY_TOTP_REQUIRED_FOR_EXTERNAL = 0;
+		$conf->global->MAIN_SECURITY_TOTP_REQUIRED_FOR_GROUPS = '-1,abc';
+		$this->assertFalse(dolTotpIsRequired($db, $internal), 'Not required for a user in none of the groups, the values that are not ids being ignored');
+
+		foreach ($saved as $constname => $value) {
+			$conf->global->$constname = $value;
+		}
 
 		return 0;
 	}

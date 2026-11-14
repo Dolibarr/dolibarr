@@ -7,6 +7,7 @@ RUN apt-get update \
 		bash \
 		bash-completion \
 		ca-certificates \
+        cairosvg \
 		composer \
         vim \
 		wget \
@@ -30,6 +31,7 @@ RUN apt-get update \
 		php-ast \
 		php-curl \
 		php-mysql \
+		php-pgsql \
 		php-mbstring \
 		php-xml \
 		php-gd \
@@ -40,9 +42,11 @@ RUN apt-get update \
 		php-imagick \
 		php-cli \
 		pgloader \
+		postgresql-client \
 		python3 \
 		python3-pip \
 		shellcheck \
+		sox \
 		sshpass \
 		sudo \
 		time \
@@ -79,8 +83,7 @@ ENV BROWSER="/usr/local/bin/open-on-host"
 
 
 # Install RTK - Rust Token Killer
-RUN curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/master/install.sh | sh \
-    && cp /root/.local/bin/rtk /usr/local/bin/rtk \
+RUN curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/master/install.sh | RTK_INSTALL_DIR=/usr/local/bin sh \
     && chmod +x /usr/local/bin/rtk \
     && rtk --version \
     && rtk gain
@@ -106,15 +109,20 @@ RUN mkdir -p /opt/php-tools \
 	&& ln -s /opt/php-tools/vendor/bin/phan /usr/local/bin/phan \
 	&& ln -s /opt/php-tools/vendor/bin/phpstan /usr/local/bin/phpstan \
 	&& ln -s /opt/php-tools/vendor/bin/phpcs /usr/local/bin/phpcs \
-	&& ln -s /opt/php-tools/vendor/bin/phpcbf /usr/local/bin/phpcbf
+	&& ln -s /opt/php-tools/vendor/bin/phpcbf /usr/local/bin/phpcbf \
+	&& rm -rf /root/.cache/composer
 
 
 # Install pre-commit - tool to manage git hooks (see https://pre-commit.com and dev/setup/pre-commit/README.md)
 # Hooks configuration for Dolibarr is the file .pre-commit-config.yaml at repository root.
 # Installed into the system python because the git hook generated on the host runs "/usr/bin/python3 -m pre_commit".
+# The packages downloaded by uv and composer are cached into /root/.cache (wheels, zips),
+# duplicating into the image files already installed: the caches are removed into the
+# same RUN, so they never enter a layer.
 RUN uv pip install --system --break-system-packages pre-commit \
     && /usr/bin/python3 -m pre_commit --version \
-    && pre-commit --version
+    && pre-commit --version \
+    && rm -rf /root/.cache/uv
 
 
 # Preload the pre-commit hooks environments of the repository into the image,
@@ -139,26 +147,10 @@ RUN if [ -f /tmp/pre-commit-warmup/.pre-commit-config.yaml ]; then \
 # that stores the emails it receives into /var/mail/outbox instead of delivering them, so
 # the code and the tests that send emails (the Dolibarr send mode "PHP mail function") run
 # without error but no email ever leaves the container.
-RUN cat > /usr/sbin/sendmail <<'EOF'
-#!/bin/sh
-# Sendmail stub installed by the docker-claude image (see dev/build/docker-vibe/README.md).
-# No MTA is installed in this image: emails received here are stored into /var/mail/outbox
-# and are never delivered anywhere.
-
-umask 000
-
-outbox=/var/mail/outbox
-mkdir -p "$outbox" 2>/dev/null || exit 0
-
-file="$outbox/$(date +%Y%m%d_%H%M%S%N)_$$.eml"
-{
-    echo "X-SendmailStub-Args: $*"
-    echo
-    cat
-} > "$file" 2>/dev/null
-
-exit 0
-EOF
+# Do not use a heredoc into a RUN: the classic builder (used when docker buildx is not
+# installed) silently ignores its content, so the files are copied from the build context
+# (sendmail-stub and bashrc-prompt are shared with docker-vibe, see claudes.sh).
+COPY sendmail-stub /usr/sbin/sendmail
 
 RUN chmod 755 /usr/sbin/sendmail \
     && mkdir -p /var/mail/outbox \
@@ -179,29 +171,11 @@ RUN chmod 755 /usr/sbin/sendmail \
     && rm -f /var/mail/outbox/*.eml
 
 
-# Prompt
-RUN cat >> /etc/bash.bashrc <<'EOF'
-
-git_branch() {
-    git branch --show-current 2>/dev/null
-}
-
-alias egrep='egrep --color=auto'
-alias fgrep='fgrep --color=auto'
-alias grep='grep --color=auto'
-alias l='ls -CF'
-alias la='ls -A'
-alias ll='ls -alF'
-alias ls='ls --color=auto'
-
-export HISTSIZE=10000
-export HISTFILESIZE=20000
-
-shopt -s histappend
-PROMPT_COMMAND="history -a; history -n${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
-
-PS1='\[\e[1;31m\][CONTAINER]\[\e[0m\] \[\e[1;34m\]\w\[\e[0m\] \[\e[1;32m\]$(git_branch)\[\e[0m\] \$ '
-EOF
+# Prompt (no heredoc into a RUN, see the sendmail stub above)
+COPY bashrc-prompt /tmp/bashrc-prompt
+RUN cat /tmp/bashrc-prompt >> /etc/bash.bashrc \
+    && rm -f /tmp/bashrc-prompt \
+    && grep -q "git_branch()" /etc/bash.bashrc
 
 WORKDIR /workspace
 

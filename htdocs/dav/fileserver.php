@@ -154,9 +154,9 @@ $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(
 			return false;
 		}
 
-		// A password alone must not be enough for a user with a two-factor authentication, and the DAV access has no other credential
-		if (dolTotpGetEnrollment($db, $user->id) !== null) {
-			dol_syslog("DAV access refused for ".$username.": two-factor authentication is enabled", LOG_WARNING);
+		// A password alone must not be enough for a user with a two-factor authentication, or who must set one up, and the DAV access has no other credential
+		if (!dolTotpIsDisabledByConf() && (dolTotpGetEnrollment($db, $user->id) !== null || dolTotpIsRequired($db, $user))) {
+			dol_syslog("DAV access refused for ".$username.": two-factor authentication is enabled or required", LOG_WARNING);
 			return false;
 		}
 

@@ -511,13 +511,22 @@ class Contacts extends DolibarrApi
 			$this->contact->$field = $this->_checkValForAPI($field, $value, $this->contact);
 		}
 
+		$this->db->begin();
+
 		if ($this->contact->update($id, DolibarrApiAccess::$user, 0, 'update') <= 0) {
+			$this->db->rollback();
 			throw new RestException(500, $this->contact->errorsToString());
 		}
 
 		if (isModEnabled('mailing') && !empty($this->contact->email) && isset($this->contact->no_email)) {
-			$this->contact->setNoEmail($this->contact->no_email);
+			// Update mass emailing flag into table mailing_unsubscribe, contact is not updated if this fails
+			if ($this->contact->setNoEmail($this->contact->no_email) < 0) {
+				$this->db->rollback();
+				throw new RestException(500, 'Error when setting no_email of contact: '.$this->contact->errorsToString());
+			}
 		}
+
+		$this->db->commit();
 
 		return $this->get($id);
 	}
@@ -569,6 +578,8 @@ class Contacts extends DolibarrApi
 	/**
 	 * Create a user account object from contact (external user)
 	 *
+	 * If the password is missing or empty, the user is created without password and can't log in.
+	 *
 	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param	int		$id				ID of contact
@@ -580,7 +591,7 @@ class Contacts extends DolibarrApi
 	 * @url	POST {id}/createUser
 	 * @suppress PhanPluginUnknownArrayMethodParamType  Luracast limitation
 	 *
-	 * @throws	RestException	400 Login or password missing
+	 * @throws	RestException	400 Login missing or empty
 	 * @throws	RestException	403 Insufficient rights
 	 * @throws	RestException	404 Contact not found
 	 * @throws	RestException	409 Contact already has a user, or login or email already used by another user
@@ -588,11 +599,8 @@ class Contacts extends DolibarrApi
 	 */
 	public function createUser($id, $request_data = null)
 	{
-		if (!isset($request_data["login"])) {
-			throw new RestException(400, "login field missing");
-		}
-		if (!isset($request_data["password"])) {
-			throw new RestException(400, "password field missing");
+		if (!isset($request_data["login"]) || trim((string) $request_data["login"]) === '') {
+			throw new RestException(400, "login field missing or empty");
 		}
 
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'lire')) {
@@ -621,7 +629,7 @@ class Contacts extends DolibarrApi
 
 		// Check mandatory fields
 		$login = $request_data["login"];
-		$password = $request_data["password"];
+		$password = (string) ($request_data["password"] ?? '');
 
 		$this->db->begin();
 
@@ -633,10 +641,13 @@ class Contacts extends DolibarrApi
 			throw new RestException($result == -6 ? 409 : 500, 'User not created: '.$useraccount->errorsToString());
 		}
 		// password parameter not used in create_from_contact
-		$resultpassword = $useraccount->setPassword(DolibarrApiAccess::$user, $password);
-		if (is_int($resultpassword) && $resultpassword <= 0) {
-			$this->db->rollback();
-			throw new RestException(500, 'Error when setting password of user: '.$useraccount->errorsToString());
+		// Without password, the user is kept without password: setPassword() would set a random one the caller never sees
+		if ($password !== '') {
+			$resultpassword = $useraccount->setPassword(DolibarrApiAccess::$user, $password);
+			if (is_int($resultpassword) && $resultpassword <= 0) {
+				$this->db->rollback();
+				throw new RestException(500, 'Error when setting password of user: '.$useraccount->errorsToString());
+			}
 		}
 
 		$this->db->commit();

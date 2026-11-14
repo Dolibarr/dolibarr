@@ -178,7 +178,7 @@ class Websites extends DolibarrApi
 			$obj_ret['pagination'] = array(
 				'total' => (int) $total,
 				'page' => $page,
-				'page_count' => (int) ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			);
 		}
@@ -278,7 +278,7 @@ class Websites extends DolibarrApi
 			$obj_ret['pagination'] = array(
 				'total' => (int) $total,
 				'page' => $page,
-				'page_count' => (int) ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			);
 		}
@@ -325,6 +325,129 @@ class Websites extends DolibarrApi
 		// Check that the page belongs to the website
 		if ($this->websitepage->fk_website != $this->website->id) {
 			throw new RestException(404, 'Page not found for this website');
+		}
+
+		return $this->_cleanObjectDatas($this->websitepage);
+	}
+
+	/**
+	 * List pages of all websites
+	 *
+	 * Get a list of pages (and blog posts), whatever is their website
+	 *
+	 * @param   string  $sortfield      Sort field
+	 * @param   string  $sortorder      Sort order
+	 * @param   int     $limit          Limit for list
+	 * @param   int     $page           Page number
+	 * @param   string  $sqlfilters     Other criteria to filter answers separated by a comma. Syntax example "(t.fk_website:=:1) and (t.type_container:=:'blogpost')"
+	 * @param   string  $properties     Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @return  array                   Array of website page objects
+	 * @phan-return WebsitePage[]
+	 * @phpstan-return WebsitePage[]
+	 *
+	 * @url     GET pages
+	 *
+	 * @throws  RestException   400     Bad sqlfilters
+	 * @throws  RestException   403     Access denied
+	 * @throws  RestException   503     Error retrieving list of pages
+	 */
+	public function indexAllPages($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
+	{
+		if (!DolibarrApiAccess::$user->hasRight('website', 'read')) {
+			throw new RestException(403);
+		}
+
+		$obj_ret = array();
+
+		$sql = "SELECT t.rowid, t.pageurl";
+		$sql .= " FROM ".$this->db->prefix()."website_page as t";
+		$sql .= " INNER JOIN ".$this->db->prefix()."website as w ON w.rowid = t.fk_website";
+		$sql .= " WHERE w.entity IN (".getEntity('website').")";
+
+		// Add sql filters
+		if ($sqlfilters) {
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			}
+		}
+
+		$sqlTotals = str_replace('SELECT t.rowid, t.pageurl', 'SELECT count(t.rowid) as total', $sql);
+
+		$sql .= $this->db->order($sortfield, $sortorder);
+		if ($limit) {
+			if ($page < 0) {
+				$page = 0;
+			}
+			$offset = $limit * $page;
+			$sql .= $this->db->plimit($limit + 1, $offset);
+		}
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			$i = 0;
+			while ($i < $min) {
+				$obj = $this->db->fetch_object($result);
+				$page_static = new WebsitePage($this->db);
+				if ($page_static->fetch($obj->rowid) > 0) {
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($page_static), $properties);
+				}
+				$i++;
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieve page list : '.$this->db->lasterror());
+		}
+
+		if ($page > 0) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = array();
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = array(
+				'total' => (int) $total,
+				'page' => $page,
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
+				'limit' => $limit
+			);
+		}
+
+		return $obj_ret;
+	}
+
+	/**
+	 * Get properties of a website page by its id only
+	 *
+	 * Return an array with page information. The website of the page is found from the page.
+	 *
+	 * @param   int     $pageid         ID of page
+	 * @return  array|mixed             Object with cleaned properties
+	 * @phan-return WebsitePage
+	 * @phpstan-return WebsitePage
+	 *
+	 * @url     GET pages/{pageid}
+	 *
+	 * @throws  RestException   403     Access denied
+	 * @throws  RestException   404     Page not found
+	 */
+	public function getPageById($pageid)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('website', 'read')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->websitepage->fetch($pageid);
+		if ($result <= 0) {
+			throw new RestException(404, 'Page not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('website', $this->websitepage->fk_website)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($this->websitepage);
@@ -401,7 +524,7 @@ class Websites extends DolibarrApi
 			$this->websitepage->status = WebsitePage::STATUS_DRAFT;
 		}
 		if (is_null($this->websitepage->aliasalt)) {
-			$this->websitepage->aliasalt = '';	// Field is notnull (same default as web interface)
+			$this->websitepage->aliasalt = '';	// Same default as web interface
 		}
 		$this->websitepage->pageurl = preg_replace('/\.php$/i', '', trim((string) $this->websitepage->pageurl));
 		$this->websitepage->ref = $this->websitepage->pageurl;
@@ -467,12 +590,15 @@ class Websites extends DolibarrApi
 	 *
 	 * Update a page of a website by its ID. The request data can include any field
 	 * of the website_page table (title, description, content, pageurl, status, etc.).
+	 * To change only parts of the content, give instead of content a list content_replacements
+	 * of {"old": fragment of the current content, found once and only once, "new": its replacement},
+	 * applied in order (all or nothing). For example, to move an element: remove it, then add it elsewhere.
 	 *
 	 * @param   int     $id             ID of website
 	 * @param   int     $pageid         ID of page to update
 	 * @param   array   $request_data   Page data
-	 * @phan-param ?array<string,string> $request_data
-	 * @phpstan-param ?array<string,string> $request_data
+	 * @phan-param ?array<string,mixed> $request_data
+	 * @phpstan-param ?array<string,mixed> $request_data
 	 * @return  array|mixed				Object after update
 	 * @phan-return WebsitePage
 	 * @phpstan-return WebsitePage
@@ -510,6 +636,26 @@ class Websites extends DolibarrApi
 
 		// Keep the old PHP content to detect if PHP content changed
 		$phpfullcodestringold = dolKeepOnlyPhpCode($this->websitepage->content);
+
+		// Partial changes of the content: each fragment 'old' of content_replacements is replaced with its 'new', in order
+		if (is_array($request_data) && array_key_exists('content_replacements', $request_data)) {
+			if (array_key_exists('content', $request_data)) {
+				throw new RestException(400, 'Give either content (the whole new content) or content_replacements (partial changes), not both');
+			}
+			$replacement = dolApplyReplacementsToPageContent((string) $this->websitepage->content, $request_data['content_replacements']);
+			$numreplacement = $replacement['index'] + 1;
+			if ($replacement['error'] == 'badformat') {
+				throw new RestException(400, 'content_replacements must be a list of {"old": fragment of the current content (not empty), "new": its replacement (empty to remove it)}. Error on replacement '.$numreplacement.'.');
+			}
+			if ($replacement['error'] == 'notfound') {
+				throw new RestException(400, 'The fragment "old" of replacement '.$numreplacement.' was not found in the content of the page (as left by the previous replacements). Read the page again and copy the fragment exactly. Nothing was changed.');
+			}
+			if ($replacement['error'] == 'notunique') {
+				throw new RestException(400, 'The fragment "old" of replacement '.$numreplacement.' was found '.$replacement['nbfound'].' times in the content of the page. Give a longer fragment so it is found only once. Nothing was changed.');
+			}
+			$request_data['content'] = $replacement['content'];
+			unset($request_data['content_replacements']);
+		}
 
 		// Apply request data to the page object
 		foreach ($request_data as $field => $value) {
@@ -634,6 +780,9 @@ class Websites extends DolibarrApi
 		unset($object->validation);
 		unset($object->user_validation_id);
 		unset($object->tms);
+		unset($object->newid);
+		unset($object->object_type);
+		unset($object->fk_object);
 
 		return $object;
 	}

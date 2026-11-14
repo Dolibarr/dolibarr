@@ -155,7 +155,7 @@ class Documents extends DolibarrApi
 	 *
 	 * Test sample 1: { "modulepart": "invoice", "original_file": "FA1701-001/FA1701-001.pdf", "doctemplate": "crabe", "langcode": "fr_FR" }.
 	 *
-	 * Supported modules: invoice, order, proposal, contract, supplier invoice, shipment, mrp
+	 * Supported modules: invoice, supplier_invoice, order, proposal, contract, shipment, mrp, expensereport, holiday, product, stock, intervention
 	 *
 	 * @since	7.0.0	Initial implementation, support for invoice, order and proposal documents
 	 * @since	18.0.0	Added support for contract and suppliers invoice documents
@@ -164,7 +164,7 @@ class Documents extends DolibarrApi
 	 * @since	23.0.0	Added support for expense report documents
 	 * @since	23.0.0	Added support for product documents
 	 *
-	 * @param   string  $modulepart		Name of module or area concerned by file download ('thirdparty', 'member', 'proposal', 'supplier_proposal', 'order', 'supplier_order', 'invoice', 'supplier_invoice', 'shipment', 'project',  ...)
+	 * @param   string  $modulepart		Name of module or area concerned by document generation ('invoice', 'supplier_invoice', 'order', 'proposal', 'contract', 'shipment', 'mrp', 'expensereport', 'holiday', 'product', 'stock', 'intervention')
 	 * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: IN201701-999/IN201701-999.pdf).
 	 * @param	string	$doctemplate	Set here the doc template to use for document generation (If not set, use the default template).
 	 * @param	string	$langcode		Language code like 'en_US', 'fr_FR', 'es_ES', ... (If not set, use the default language).
@@ -176,7 +176,7 @@ class Documents extends DolibarrApi
 	 *
 	 * @throws	RestException	400		Bad value for parameter modulepart or original_file
 	 * @throws	RestException	403		Access denied
-	 * @throws	RestException	404		Invoice, Order, Proposal, Contract or Shipment not found
+	 * @throws	RestException	404		Object or generated file not found
 	 * @throws	RestException	500		Error generating document
 	 * @throws	RestException	501		File not found
 	 */
@@ -249,188 +249,71 @@ class Documents extends DolibarrApi
 		$hidedesc = !getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 0 : 1;
 		$hideref = !getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 0 : 1;
 
-		$templateused = '';
-
+		// Find the object the document is generated for (its ref is the file name without extension)
 		if ($modulepart == 'facture' || $modulepart == 'invoice') {
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 			$tmpobject = new Facture($this->db);
-			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
-			if (!$result) {
-				throw new RestException(404, 'Invoice not found');
-			}
-
-			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
-			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
-			if ($result <= 0) {
-				throw new RestException(500, 'Error generating document');
-			}
-		} elseif ($modulepart == 'facture_fournisseur' || $modulepart == 'invoice_supplier') {
-			require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
+			$objectlabel = 'Invoice';
+		} elseif ($modulepart == 'facture_fournisseur' || $modulepart == 'invoice_supplier' || $modulepart == 'supplier_invoice') {
+			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 			$tmpobject = new FactureFournisseur($this->db);
-			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
-			if (!$result) {
-				throw new RestException(404, 'Supplier invoice not found');
-			}
-
-			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
-			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
-			if ($result < 0) {
-				throw new RestException(500, 'Error generating document');
-			}
+			$objectlabel = 'Supplier invoice';
 		} elseif ($modulepart == 'commande' || $modulepart == 'order') {
 			require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 			$tmpobject = new Commande($this->db);
-			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
-			if (!$result) {
-				throw new RestException(404, 'Order not found');
-			}
-			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
-			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
-			if ($result <= 0) {
-				throw new RestException(500, 'Error generating document');
-			}
+			$objectlabel = 'Order';
 		} elseif ($modulepart == 'propal' || $modulepart == 'proposal') {
 			require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 			$tmpobject = new Propal($this->db);
-			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
-			if (!$result) {
-				throw new RestException(404, 'Proposal not found');
-			}
-			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
-			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
-			if ($result <= 0) {
-				throw new RestException(500, 'Error generating document');
-			}
+			$objectlabel = 'Proposal';
 		} elseif ($modulepart == 'contrat' || $modulepart == 'contract') {
-			require_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
-
+			require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 			$tmpobject = new Contrat($this->db);
-			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
-
-			if (!$result) {
-				throw new RestException(404, 'Contract not found');
-			}
-
-			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
-			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
-
-			if ($result <= 0) {
-				throw new RestException(500, 'Error generating document');
-			}
+			$objectlabel = 'Contract';
 		} elseif ($modulepart == 'expedition' || $modulepart == 'shipment') {
-			require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
-
+			require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 			$tmpobject = new Expedition($this->db);
-			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
-
-			if (!$result) {
-				throw new RestException(404, 'Shipment not found');
-			}
-
-			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
-			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
-
-			if ($result <= 0) {
-				throw new RestException(500, 'Error generating document');
-			}
+			$objectlabel = 'Shipment';
 		} elseif ($modulepart == 'mrp') {
-			require_once DOL_DOCUMENT_ROOT . '/mrp/class/mo.class.php';
-
+			require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 			$tmpobject = new Mo($this->db);
-			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
-
-			if (!$result) {
-				throw new RestException(404, 'MO not found');
-			}
-
-			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
-			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
-
-			if ($result <= 0) {
-				throw new RestException(500, 'Error generating document');
-			}
+			$objectlabel = 'MO';
 		} elseif ($modulepart == 'expensereport') {
 			require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
-
 			$tmpobject = new ExpenseReport($this->db);
-			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
-
-			if (!$result) {
-				throw new RestException(404, 'Expense report not found');
-			}
-
-			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
-			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
-
-			if ($result <= 0) {
-				throw new RestException(500, 'Error generating document');
-			}
+			$objectlabel = 'Expense report';
 		} elseif ($modulepart == 'holiday') {
 			require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
-
 			$tmpobject = new Holiday($this->db);
-			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
-
-			if (!$result) {
-				throw new RestException(404, 'Holiday not found');
-			}
-
-			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
-			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
-
-			if ($result <= 0) {
-				throw new RestException(500, 'Error generating document');
-			}
+			$objectlabel = 'Holiday';
 		} elseif ($modulepart == 'product') {
-			require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
-
+			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 			$tmpobject = new Product($this->db);
-			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
-
-			if (!$result) {
-				throw new RestException(404, 'Product not found');
-			}
-
-			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
-			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
-
-			if ($result <= 0) {
-				throw new RestException(500, 'Error generating document');
-			}
+			$objectlabel = 'Product';
 		} elseif ($modulepart == 'stock' || $modulepart == 'entrepot') {
-			require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';
-
+			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 			$tmpobject = new Entrepot($this->db);
-			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
-
-			if (!$result) {
-				throw new RestException(404, 'Warehouse not found');
-			}
-
-			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
-			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
-
-			if ($result <= 0) {
-				throw new RestException(500, 'Error generating document');
-			}
-		} elseif ($modulepart == 'fichinter' || $modulepart == 'intervention') {
-			require_once DOL_DOCUMENT_ROOT . '/fichinter/class/fichinter.class.php';
-
+			$objectlabel = 'Warehouse';
+		} elseif ($modulepart == 'fichinter' || $modulepart == 'ficheinter' || $modulepart == 'intervention') {
+			require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 			$tmpobject = new Fichinter($this->db);
-			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
-
-			if (!$result) {
-				throw new RestException(404, 'Intervention not found');
-			}
-
-			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
-			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
-
-			if ($result <= 0) {
-				throw new RestException(500, 'Error generating document');
-			}
+			$objectlabel = 'Intervention';
 		} else {
 			throw new RestException(403, 'Generation not available for this modulepart');
+		}
+
+		$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching '.$objectlabel);
+		}
+		if ($result == 0) {
+			throw new RestException(404, $objectlabel.' not found');
+		}
+
+		$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
+		$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		if ($result <= 0) {
+			throw new RestException(500, 'Error generating document');
 		}
 
 		$filename = basename($original_file);
@@ -745,7 +628,7 @@ class Documents extends DolibarrApi
 				'pagination' => [
 					'total' => (int) $countarray,
 					'page' => $page, // count starts from 0
-					'page_count' => (int) ceil((int) $countarray / $limit),
+					'page_count' => (int) ceil((int) $countarray / max(1, (int) $limit)),
 					'limit' => $limit
 				]
 			];

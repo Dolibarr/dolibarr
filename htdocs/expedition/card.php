@@ -769,7 +769,7 @@ if (empty($reshook)) {
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'confirm_sign' && $confirm == 'yes' && $user->hasRight('expedition', 'creer')) {
+	} elseif ($action == 'confirm_sign' && $confirm == 'yes' && $user->hasRight('expedition', 'creer') && getDolGlobalInt('EXPEDITION_ALLOW_MANUAL_SIGN')) {
 		$result = $object->setSignedStatus($user, GETPOSTINT('signed_status'), 0, 'SHIPPING_MODIFY');
 		if ($result >= 0) {
 			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
@@ -777,7 +777,7 @@ if (empty($reshook)) {
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'confirm_unsign' && $confirm == 'yes' && $user->hasRight('expedition', 'creer')) {
+	} elseif ($action == 'confirm_unsign' && $confirm == 'yes' && $user->hasRight('expedition', 'creer') && getDolGlobalInt('EXPEDITION_ALLOW_MANUAL_SIGN')) {
 		$result = $object->setSignedStatus($user, Expedition::$SIGNED_STATUSES['STATUS_NO_SIGNATURE'], 0, 'SHIPPING_MODIFY');
 		if ($result >= 0) {
 			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
@@ -1398,7 +1398,7 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-	} elseif ($action == 'confirm_sign' && $confirm == 'yes' && $permissiontoadd) {
+	} elseif ($action == 'confirm_sign' && $confirm == 'yes' && $permissiontoadd && getDolGlobalInt('EXPEDITION_ALLOW_MANUAL_SIGN')) {
 		$result = $object->setSignedStatus($user, GETPOSTINT('signed_status'), 0, 'SHIPPING_MODIFY');
 		if ($result >= 0) {
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
@@ -1423,7 +1423,7 @@ if (empty($reshook)) {
 		} else {
 			$mesg = $object->error;
 		}
-	} elseif ($action == 'confirm_unsign' && $confirm == 'yes' && $permissiontoadd) {
+	} elseif ($action == 'confirm_unsign' && $confirm == 'yes' && $permissiontoadd && getDolGlobalInt('EXPEDITION_ALLOW_MANUAL_SIGN')) {
 		$result = $object->setSignedStatus($user, Expedition::$SIGNED_STATUSES['STATUS_NO_SIGNATURE'], 0, 'SHIPPING_MODIFY');
 		if ($result >= 0) {
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
@@ -1475,7 +1475,9 @@ if ($action == 'create') {
 
 $help_url = 'EN:Module_Shipments|FR:Module_Expéditions|ES:M&oacute;dulo_Expediciones|DE:Modul_Lieferungen';
 
-llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-expedition page-card');
+$arrayofjs = (isModEnabled('productbatch') && !empty($conf->use_javascript_ajax)) ? array('/core/js/lib_batchlines_toggle.js') : array();
+
+llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, '', '', 'mod-expedition page-card');
 
 if (empty($action)) {
 	$action = 'view';
@@ -2723,6 +2725,16 @@ if ($action == 'create' && $usercancreate) {
 
 	$num_prod = count($lines);
 
+	$withBatchToggle = isModEnabled('productbatch') && !empty($conf->use_javascript_ajax);
+	$showBatchByDefault = !$withBatchToggle || getDolGlobalInt('SHIPMENT_SHOW_ALL_BATCH_BY_DEFAULT', 1);
+	$hasBatchLines = false;
+	foreach ($lines as $tmpline) {
+		if (!empty($tmpline->product_tobatch) && !empty($tmpline->detail_batch)) {
+			$hasBatchLines = true;
+			break;
+		}
+	}
+
 	if (!empty($object->origin) && $object->origin_id > 0) {
 		$typeobject = $object->origin;
 		$origin = (string) $object->origin;  // Cast to string because origin is type hinted as object too.
@@ -2820,7 +2832,7 @@ if ($action == 'create' && $usercancreate) {
 	}
 
 	// Confirm sign
-	if ($action == 'sign') {
+	if ($action == 'sign' && getDolGlobalInt('EXPEDITION_ALLOW_MANUAL_SIGN')) {
 		$text = $langs->trans('ConfirmSignShipping');
 		if (isModEnabled('notification')) {
 			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
@@ -2834,13 +2846,14 @@ if ($action == 'create' && $usercancreate) {
 			'name' 		=> 'signed_status',
 			'select_show_empty' => 0,
 			'label'		=> '<span class="fieldrequired">' . $langs->trans('SignStatus') . '</span>',
+			'morecss'	=> 'minwidth200',
 			'values'	=> $object->getSignedStatusLocalisedArray()
 		];
 		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('SignShipping'), $text, 'confirm_sign', $formquestion, 0, 1);
 	}
 
 	// Confirm unsign
-	if ($action == 'unsign') {
+	if ($action == 'unsign' && getDolGlobalInt('EXPEDITION_ALLOW_MANUAL_SIGN')) {
 		$text = $langs->trans('ConfirmUnsignShipping');
 		if (isModEnabled('notification')) {
 			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
@@ -3305,7 +3318,11 @@ if ($action == 'create' && $usercancreate) {
 			}
 
 			if (isModEnabled('productbatch')) {
-				print '<td class="left linecolbatch">' . $langs->trans("Batch") . '</td>';
+				print '<td class="left linecolbatch">' . $langs->trans("Batch");
+				if ($withBatchToggle && $hasBatchLines) {
+					print '<br>' . getBatchLinesToggleHeader($langs, $showBatchByDefault);
+				}
+				print '</td>';
 			}
 		}
 		print '<td class="center linecolweight">' . $langs->trans("CalculatedWeight") . '</td>';
@@ -3711,19 +3728,12 @@ if ($action == 'create' && $usercancreate) {
 							print '<!-- Detail of lot -->';
 							print '<td class="linecolbatch">';
 							if ($lines[$i]->product_tobatch) {
-								$detail = '';
-								foreach ($lines[$i]->detail_batch as $dbatch) {	// $dbatch is instance of ExpeditionLineBatch
-									$detail .= $langs->trans("Batch") . ': ' . $dbatch->batch;
-									if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
-										$detail .= ' - ' . $langs->trans("SellByDate") . ': ' . dol_print_date($dbatch->sellby, "day");
+								if (is_array($lines[$i]->detail_batch) && count($lines[$i]->detail_batch) > 0) {
+									print $langs->trans("NbOfLots", count($lines[$i]->detail_batch));
+									if ($withBatchToggle) {
+										print getBatchLineToggleLink('exp' . $lines[$i]->id, $showBatchByDefault);
 									}
-									if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
-										$detail .= ' - ' . $langs->trans("EatByDate") . ': ' . dol_print_date($dbatch->eatby, "day");
-									}
-									$detail .= ' - ' . $langs->trans("Qty") . ': ' . $dbatch->qty;
-									$detail .= '<br>';
 								}
-								print $form->textwithtooltip(img_picto('', 'object_barcode') . ' ' . $langs->trans("DetailBatchNumber"), $detail);
 							} else {
 								print $langs->trans("NA");
 							}
@@ -3807,6 +3817,44 @@ if ($action == 'create' && $usercancreate) {
 					}
 				}
 				print "</tr>";
+
+				// Lines of lots/serial numbers
+				if (isModEnabled('productbatch') && $lines[$i]->product_tobatch && is_array($lines[$i]->detail_batch) && !($action == 'editline' && $lines[$i]->id == $line_id)) {
+					foreach ($lines[$i]->detail_batch as $dbatch) {	// $dbatch is instance of ExpeditionLineBatch
+						print '<tr class="oddeven nodrag nodrop" ' . getBatchLineChildRowAttributes('exp' . $lines[$i]->id, $showBatchByDefault) . '>';
+						if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
+							print '<td class="linecolnum"></td>';
+						}
+						print '<td class="linecoldescription"></td>';
+						print '<td class="linecolqty"></td>';
+						if ($origin_id > 0) {
+							print '<td class="linecolqtyinothershipments"></td>';
+						}
+						print '<td class="linecolqtytoship center">' . $dbatch->qty . ' ' . $unit_order . '</td>';
+						if (isModEnabled('stock')) {
+							print '<td class="linecolwarehousesource tdoverflowmax200">';
+							$warehouse_id = !empty($dbatch->fk_warehouse) ? $dbatch->fk_warehouse : $lines[$i]->entrepot_id;
+							if ($warehouse_id > 0) {
+								if (!isset($conf->cache['warehouse'][$warehouse_id])) {
+									$warehouse = new Entrepot($db);
+									$warehouse->fetch($warehouse_id);
+									$conf->cache['warehouse'][$warehouse_id] = $warehouse;
+								}
+								print $conf->cache['warehouse'][$warehouse_id]->getNomUrl(1);
+							}
+							print '</td>';
+						}
+						print '<td class="linecolbatch nowraponall">' . getBatchLotNomUrl($db, $form, $langs, (int) $lines[$i]->fk_product, (string) $dbatch->batch, $dbatch->sellby, $dbatch->eatby) . '</td>';
+						print '<td class="linecolweight"></td>';
+						print '<td class="linecolvolume"></td>';
+						if ($object->status == Expedition::STATUS_DRAFT) {
+							print '<td class="linecoledit"></td>';
+							print '<td class="linecoldelete"></td>';
+							print '<td class="linecolmove"></td>';
+						}
+						print '</tr>';
+					}
+				}
 			} elseif (empty($reshook) && $lines[$i]->product_type == "9") {
 				$objectsrc = new OrderLine($db);
 				$objectsrc->fetch($lines[$i]->origin_line_id);
@@ -3882,7 +3930,7 @@ if ($action == 'create' && $usercancreate) {
 			}
 
 			// Sign (to set to status "Signed" without using the online signature page)
-			if ($object->status > Expedition::STATUS_DRAFT) {
+			if ($object->status > Expedition::STATUS_DRAFT && getDolGlobalInt('EXPEDITION_ALLOW_MANUAL_SIGN')) {
 				if ($object->signed_status != Expedition::$SIGNED_STATUSES['STATUS_SIGNED_ALL']) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=sign&token=' . newToken() . '">' . $langs->trans("SignShipping") . '</a></div>';
 				} else {

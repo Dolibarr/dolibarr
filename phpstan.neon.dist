@@ -46,6 +46,7 @@ parameters:
 			- htdocs/includes/php-iban/*
 			- htdocs/includes/phpoffice/*
 			- htdocs/includes/printipp/*
+			- htdocs/includes/report-uri/*
 			- htdocs/includes/Psr/*
 			- htdocs/includes/restler/*
 			- htdocs/includes/sabre/*

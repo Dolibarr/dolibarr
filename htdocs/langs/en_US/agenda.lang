@@ -205,6 +205,7 @@ ThirdPartyBookCalHelp=Event booked in this calendar will be automatically linked
 AppointmentDuration = Appointment Duration : %s
 BookingSuccessfullyBooked=Your booking has been saved
 BookingReservationHourAfter=We confirm the reservation of our meeting at the date %s
+BookCalTimezoneOfDates=Dates and hours are shown in the timezone: %s
 BookcalBookingTitle=Online appointment
 Transparency = Transparency
 ReadMore = Read more

@@ -74,6 +74,22 @@ if ($action == 'getDurationUnitByProduct' && $user->hasRight('product', 'lire'))
 	exit();
 }
 
+if ($action == 'getDurationByProduct' && $user->hasRight('product', 'lire')) {
+	$product = new Product($db);
+	$res = $product->fetch($idproduct);
+
+	$cUnit = new CUnits($db);
+	$fk_unit = $cUnit->getUnitFromCode((string) $product->duration_unit, 'short_label', 'time');
+
+	$result = array(
+		'fk_unit' => $fk_unit,
+		'duration_value' => ($product->duration_value > 0 ? $product->duration_value : 1)
+	);
+
+	echo json_encode($result);
+	exit();
+}
+
 if ($action == 'getWorkstationByProduct' && $user->hasRight('product', 'lire')) {
 	$product = new Product($db);
 	$res = $product->fetch($idproduct);
