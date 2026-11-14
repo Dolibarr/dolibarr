@@ -16,6 +16,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2026		Nick Fragoulis
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -557,10 +558,19 @@ class Commande extends CommonOrder
 		}
 		$this->newref = dol_sanitizeFileName($num);
 
+		// An order set back to draft while shipments were in process (see EDIT_ORDER_SHIPMENT_ON_PROCESS) must go back
+		// to status "shipment in process", not to "validated", when it already has validated shipments.
+		$newstatus = self::STATUS_VALIDATED;
+		$savedexpeditions = $this->expeditions;
+		if ($this->loadExpeditions(1) > 0) {
+			$newstatus = self::STATUS_SHIPMENTONPROCESS;
+		}
+		$this->expeditions = $savedexpeditions;
+
 		// Validate
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " SET ref = '".$this->db->escape($num)."',";
-		$sql .= " fk_statut = ".self::STATUS_VALIDATED.",";
+		$sql .= " fk_statut = ".((int) $newstatus).",";
 		$sql .= " date_valid = '".$this->db->idate($now)."',";
 		$sql .= " fk_user_valid = ".($user->id > 0 ? (int) $user->id : "null").",";
 		$sql .= " fk_user_modif = ".((int) $user->id);
@@ -658,8 +668,8 @@ class Commande extends CommonOrder
 		// Set new ref and current status
 		if (!$error) {
 			$this->ref = $num;
-			$this->statut = self::STATUS_VALIDATED;	// deprecated
-			$this->status = self::STATUS_VALIDATED;
+			$this->statut = $newstatus;	// deprecated
+			$this->status = $newstatus;
 		}
 
 		if (!$error) {
