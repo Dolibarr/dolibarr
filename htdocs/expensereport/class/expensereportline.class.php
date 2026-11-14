@@ -203,6 +203,16 @@ class ExpenseReportLine extends CommonObjectLine
 	public $multicurrency_tx;
 
 	/**
+	 * @var float	Unit price without taxes in the currency of the expense report
+	 */
+	public $multicurrency_subprice;
+
+	/**
+	 * @var float	Unit price with taxes in the currency of the expense report
+	 */
+	public $multicurrency_subprice_ttc;
+
+	/**
 	 * @var float
 	 */
 	public $multicurrency_total_ht;
@@ -254,6 +264,8 @@ class ExpenseReportLine extends CommonObjectLine
 		$sql = 'SELECT fde.rowid, fde.fk_expensereport, fde.fk_c_type_fees, fde.fk_c_exp_tax_cat, fde.fk_projet as fk_project, fde.date,';
 		$sql .= ' fde.tva_tx as vatrate, fde.vat_src_code, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc, fde.fk_ecm_files,';
 		$sql .= ' fde.localtax1_tx, fde.localtax2_tx, fde.localtax1_type, fde.localtax2_type, fde.total_localtax1, fde.total_localtax2, fde.rule_warning_message,';
+		$sql .= ' fde.fk_multicurrency, fde.multicurrency_code, fde.multicurrency_subprice, fde.multicurrency_subprice_ttc,';
+		$sql .= ' fde.multicurrency_total_ht, fde.multicurrency_total_tva, fde.multicurrency_total_ttc,';
 		$sql .= ' ctf.code as type_fees_code, ctf.label as type_fees_libelle, fde.tcheck_file,';
 		$sql .= ' pjt.rowid as projet_id, pjt.title as projet_title, pjt.ref as projet_ref';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'expensereport_det as fde';
@@ -296,6 +308,14 @@ class ExpenseReportLine extends CommonObjectLine
 			$this->total_ttc = $objp->total_ttc;
 			$this->total_localtax1 = $objp->total_localtax1;
 			$this->total_localtax2 = $objp->total_localtax2;
+
+			$this->fk_multicurrency = $objp->fk_multicurrency;
+			$this->multicurrency_code = $objp->multicurrency_code;
+			$this->multicurrency_subprice = $objp->multicurrency_subprice;
+			$this->multicurrency_subprice_ttc = $objp->multicurrency_subprice_ttc;
+			$this->multicurrency_total_ht = $objp->multicurrency_total_ht;
+			$this->multicurrency_total_tva = $objp->multicurrency_total_tva;
+			$this->multicurrency_total_ttc = $objp->multicurrency_total_ttc;
 
 			$this->fk_ecm_files = $objp->fk_ecm_files;
 			$this->tcheck_file = $objp->tcheck_file;
@@ -346,7 +366,9 @@ class ExpenseReportLine extends CommonObjectLine
 		$sql .= ' comments, qty, value_unit,';
 		$sql .= ' total_ht, total_tva, total_ttc,';
 		$sql .= ' total_localtax1, total_localtax2,';
-		$sql .= ' date, rule_warning_message, fk_c_exp_tax_cat, fk_ecm_files)';
+		$sql .= ' date, rule_warning_message, fk_c_exp_tax_cat, fk_ecm_files,';
+		$sql .= ' fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_subprice_ttc,';
+		$sql .= ' multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc)';
 		$sql .= " VALUES (".((int) $this->fk_expensereport).",";
 		$sql .= " ".((int) $this->fk_c_type_fees).",";
 		$sql .= " ".((int) (!empty($this->fk_project) && $this->fk_project > 0) ? ((int) $this->fk_project) : ((!empty($this->fk_projet) && $this->fk_projet > 0) ? ((int) $this->fk_projet) : 'null')).",";
@@ -367,7 +389,14 @@ class ExpenseReportLine extends CommonObjectLine
 		$sql .= " '".$this->db->idate($this->date)."',";
 		$sql .= " ".(empty($this->rule_warning_message) ? 'null' : "'".$this->db->escape($this->rule_warning_message)."'").",";
 		$sql .= " ".((int) $this->fk_c_exp_tax_cat).",";
-		$sql .= " ".($this->fk_ecm_files > 0 ? ((int) $this->fk_ecm_files) : 'null');
+		$sql .= " ".($this->fk_ecm_files > 0 ? ((int) $this->fk_ecm_files) : 'null').",";
+		$sql .= " ".($this->fk_multicurrency > 0 ? ((int) $this->fk_multicurrency) : 'null').",";
+		$sql .= " ".(empty($this->multicurrency_code) ? 'null' : "'".$this->db->escape($this->multicurrency_code)."'").",";
+		$sql .= " ".((float) price2num($this->multicurrency_subprice)).",";
+		$sql .= " ".((float) price2num($this->multicurrency_subprice_ttc)).",";
+		$sql .= " ".((float) price2num($this->multicurrency_total_ht)).",";
+		$sql .= " ".((float) price2num($this->multicurrency_total_tva)).",";
+		$sql .= " ".((float) price2num($this->multicurrency_total_ttc));
 		$sql .= ")";
 
 		$resql = $this->db->query($sql);
@@ -493,6 +522,13 @@ class ExpenseReportLine extends CommonObjectLine
 		$sql .= ", rule_warning_message='".$this->db->escape($this->rule_warning_message)."'";
 		$sql .= ", fk_c_exp_tax_cat = ".((int) $this->fk_c_exp_tax_cat);
 		$sql .= ", fk_ecm_files = ".($this->fk_ecm_files > 0 ? ((int) $this->fk_ecm_files) : 'null');
+		$sql .= ", fk_multicurrency = ".($this->fk_multicurrency > 0 ? ((int) $this->fk_multicurrency) : 'null');
+		$sql .= ", multicurrency_code = ".(empty($this->multicurrency_code) ? 'null' : "'".$this->db->escape($this->multicurrency_code)."'");
+		$sql .= ", multicurrency_subprice = ".((float) price2num($this->multicurrency_subprice));
+		$sql .= ", multicurrency_subprice_ttc = ".((float) price2num($this->multicurrency_subprice_ttc));
+		$sql .= ", multicurrency_total_ht = ".((float) price2num($this->multicurrency_total_ht, 'MT'));
+		$sql .= ", multicurrency_total_tva = ".((float) price2num($this->multicurrency_total_tva, 'MT'));
+		$sql .= ", multicurrency_total_ttc = ".((float) price2num($this->multicurrency_total_ttc, 'MT'));
 		if ($this->fk_c_type_fees) {
 			$sql .= ", fk_c_type_fees = ".((int) $this->fk_c_type_fees);
 		} else {
