@@ -545,6 +545,7 @@ ModuleCompanyCodePanicum=Return an empty accounting code.
 ModuleCompanyCodeDigitaria=Returns a compound accounting code according to the name of the third party. The code consists of a prefix that can be defined in the first position followed by the number of characters defined in the third party code.
 ModuleCompanyCodeCustomerDigitaria=%s followed by the truncated customer name by the number of characters: %s for the customer accounting code.
 ModuleCompanyCodeSupplierDigitaria=%s followed by the truncated supplier name by the number of characters: %s for the supplier accounting code.
+WarningDigitariaCodeLengthNotMatchingAccountLength=The generated accounting code length (prefix + number of characters) should equal the auxiliary account length (%s), otherwise the general ledger pads the code with trailing zeros.
 ModuleCompanyCodeMinga=Returns a numeric accounting code taken from a range of numbers, like the debtor and creditor accounts of the German charts of accounts SKR03/SKR04 used with DATEV.
 ModuleCompanyCodeCustomerMinga=Customer accounting codes from %s to %s
 ModuleCompanyCodeSupplierMinga=Vendor accounting codes from %s to %s
