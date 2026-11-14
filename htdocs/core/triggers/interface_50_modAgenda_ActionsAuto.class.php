@@ -1637,15 +1637,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 					$actioncomm->datef         = $object->email_date;
 				}
 			}
-			$actioncomm->email_msgid   = empty($object->email_msgid) ? null : $object->email_msgid;
-			$actioncomm->email_from    = empty($object->email_from) ? null : $object->email_from;
-			$actioncomm->email_reply_to = empty($object->email_reply_to) ? null : $object->email_reply_to;
-			$actioncomm->email_subject = empty($object->email_subject) ? null : $object->email_subject;
-			$actioncomm->email_to      = empty($object->email_to) ? null : $object->email_to;
-			$actioncomm->email_tocc    = empty($object->email_tocc) ? null : $object->email_tocc;
-			$actioncomm->email_tobcc   = empty($object->email_tobcc) ? null : $object->email_tobcc;
-			$actioncomm->email_subject = empty($object->email_subject) ? null : $object->email_subject;
-			$actioncomm->errors_to     = empty($object->errors_to) ? null : $object->errors_to;
+			$this->setEmailFields($actioncomm, $object);
 		}
 
 		// Object linked (if link is for thirdparty, contact or project, it is a recording error. We should not have links in link table
@@ -1726,6 +1718,21 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 			dol_syslog("interface_modAgenda_ActionsAuto.class.php: ".$this->error, LOG_ERR);
 			return -1;
+		}
+	}
+
+	/**
+	 * Copy transient mail metadata to the agenda, preserving legacy property callers.
+	 *
+	 * @param ActionComm $actioncomm Agenda event to populate
+	 * @param CommonObject $object Trigger source with optional email metadata in context
+	 * @return void
+	 */
+	protected function setEmailFields($actioncomm, $object)
+	{
+		foreach (array('email_msgid', 'email_from', 'email_reply_to', 'email_subject', 'email_to', 'email_tocc', 'email_tobcc', 'errors_to') as $field) {
+			$value = array_key_exists($field, $object->context) ? $object->context[$field] : ($object->$field ?? null);
+			$actioncomm->$field = empty($value) ? null : $value;
 		}
 	}
 }

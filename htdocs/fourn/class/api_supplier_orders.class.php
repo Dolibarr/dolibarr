@@ -88,6 +88,95 @@ class SupplierOrders extends DolibarrApi
 	}
 
 	/**
+	 * Prepare a plain-text supplier order email for review, without sending.
+	 *
+	 * Body fields: subject and body (optional overrides); template_id (0 for default);
+	 * to, cc, bcc (lists of bare email
+	 * addresses); from_type (user, company, robot); attachments (existing PDF
+	 * filenames); reply_to_event_id (an accessible sent email of this order).
+	 * Omitted to defaults to the supplier email; omitted attachments means none.
+	 * Returns effective recipients including automatic copies and an expected_hash for comparison.
+	 * No draft is stored. Templates are rendered as plain text. Attachment suggestions
+	 * never attach files automatically. PDF generation is a separate explicit document action.
+	 *
+	 * @param int $id Supplier order ID
+	 * @param array<string,mixed> $request_data Message fields
+	 * @return array<string,mixed> Message preview and comparison fingerprint
+	 * @url POST {id}/emails/prepare
+	 * @throws RestException
+	 */
+	public function prepareEmail($id, $request_data = null)
+	{
+		$this->checkEmailOrder($id);
+		if (!is_array($request_data)) {
+			throw new RestException(400, 'An email object is required');
+		}
+		return $this->emailService()->prepare($this->order, DolibarrApiAccess::$user, $request_data);
+	}
+
+	/**
+	 * Send a reviewed supplier order email. Each successful call sends a new email.
+	 *
+	 * The body contains message (the original preparation input) and expected_hash.
+	 * The hash detects changes, not human consent. This endpoint is not idempotent;
+	 * clients must not automatically retry failed, interrupted or successful calls.
+	 * Transport acceptance is not proof of delivery. No order status is changed.
+	 *
+	 * @param int $id Supplier order ID
+	 * @param array<string,mixed> $request_data Object containing message and expected_hash
+	 * @return array<string,mixed> Transport result
+	 * @url POST {id}/emails/send
+	 * @throws RestException
+	 */
+	public function sendEmail($id, $request_data = null)
+	{
+		$this->checkEmailOrder($id);
+		if (!is_array($request_data) || count($request_data) !== 2
+			|| !isset($request_data['message'], $request_data['expected_hash'])
+			|| !is_array($request_data['message']) || !is_string($request_data['expected_hash'])) {
+			throw new RestException(400, 'Only message and expected_hash are accepted');
+		}
+		return $this->emailService()->send($this->order, DolibarrApiAccess::$user, $request_data['message'], $request_data['expected_hash']);
+	}
+
+	/**
+	 * Recheck native send rights, object access and permitted status on both requests.
+	 *
+	 * @param int $id Supplier order ID
+	 * @return void
+	 */
+	protected function checkEmailOrder($id)
+	{
+		$actor = DolibarrApiAccess::$user;
+		if (empty($actor->id) || !empty($actor->socid) || !isModEnabled('supplier_order')
+			|| !$actor->hasRight('fournisseur', 'commande', 'lire') || !$actor->hasRight('fournisseur', 'commande', 'commander')) {
+			throw new RestException(403, 'Internal supplier order read and order permissions are required');
+		}
+		if ((!is_int($id) && (!is_string($id) || !ctype_digit($id))) || filter_var($id, FILTER_VALIDATE_INT) === false || (int) $id < 1) {
+			throw new RestException(400, 'Invalid supplier order ID');
+		}
+		$result = $this->order->fetch((int) $id);
+		if ($result < 0) {
+			throw new RestException(503, 'Unable to fetch supplier order');
+		}
+		if (!$result) {
+			throw new RestException(404, 'Supplier order not found');
+		}
+		if (!static::_checkAccessToResource('fournisseur', $this->order->id, 'commande_fournisseur', 'commande')) {
+			throw new RestException(403, 'Supplier order access denied');
+		}
+		if (!in_array((int) $this->order->status, array(2, 3, 4, 5), true) && !getDolGlobalString('SUPPLIER_ORDER_SENDBYEMAIL_FOR_ALL_STATUS')) {
+			throw new RestException(409, 'Supplier order is not in a state that allows email');
+		}
+	}
+
+	/** @return SupplierOrderMail Email preparation service */
+	protected function emailService()
+	{
+		return new SupplierOrderMail($this->db);
+	}
+
+	/**
 	 * List orders
 	 *
 	 * Get a list of supplier orders
@@ -1454,5 +1543,497 @@ class SupplierOrders extends DolibarrApi
 			$order[$field] = $data[$field];
 		}
 		return $order;
+	}
+}
+
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+
+/** Prepare and compare effective messages without storing drafts or temporary files. */
+class SupplierOrderMail
+{
+	/** @var DoliDB Database handler */
+	private $db;
+	/** Maximum combined size of existing PDF attachments. */
+	const MAX_BYTES = 10485760;
+
+	/**
+	 * @param DoliDB $db Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
+
+	/**
+	 * Prepare a plain-text message without sending it or generating documents.
+	 *
+	 * @param CommandeFournisseur $order Authorized order
+	 * @param User $actor Acting user
+	 * @param array<string,mixed> $input Message fields
+	 * @return array<string,mixed> Effective message preview and comparison fingerprint
+	 */
+	public function prepare($order, $actor, array $input)
+	{
+		$prepared = $this->compile($order, $actor, $input);
+		return array_intersect_key($prepared, array_flip(array("preview", "expected_hash")));
+	}
+
+	/**
+	 * @param CommandeFournisseur $order Authorized order
+	 * @param User $actor Acting user
+	 * @param array<string,mixed> $input Message fields
+	 * @return array<string,mixed> Effective message and native transport
+	 */
+	private function compile($order, $actor, array $input)
+	{
+		global $conf;
+		$allowed = array('subject', 'body', 'to', 'cc', 'bcc', 'from_type', 'attachments', 'reply_to_event_id', 'template_id');
+		if (array_diff(array_keys($input), $allowed)) {
+			throw new RestException(400, 'Unknown email field');
+		}
+		$template = array();
+		if (isset($input['template_id']) || !isset($input['subject'], $input['body'])) {
+			$template = $this->template($order, $actor, $input['template_id'] ?? 0);
+			$input += $template['fields'];
+		}
+		foreach (array('subject', 'body') as $field) {
+			if (!isset($input[$field]) || !is_string($input[$field]) || trim($input[$field]) === '' || strpos($input[$field], "\0") !== false) {
+				throw new RestException(400, 'A non-empty '.$field.' is required');
+			}
+		}
+		if (dol_strlen($input['subject']) > 255 || preg_match('/[\r\n]/', $input['subject']) || strlen($input['body']) > 100000) {
+			throw new RestException(400, 'Invalid subject or message too large');
+		}
+		if (getDolGlobalString('MAIN_MAIL_FORCE_CONTENT_TYPE_TO_HTML')) {
+			throw new RestException(409, 'This endpoint requires plain-text email; forced HTML is enabled');
+		}
+		$fromType = $input['from_type'] ?? 'user';
+		if (!is_string($fromType) || !in_array($fromType, array('user', 'company', 'robot'), true)) {
+			throw new RestException(400, 'from_type must be user, company or robot');
+		}
+		if (!array_key_exists('to', $input)) {
+			if ($order->fetch_thirdparty() <= 0) {
+				throw new RestException(409, 'Cannot read the supplier email address');
+			}
+			$input['to'] = array($order->thirdparty->email);
+		}
+		$message = array(
+			'subject' => $input['subject'], 'body' => $input['body'], 'from_type' => $fromType, 'from' => isset($input['from_type']) || empty($template['sender']) ? $this->sender($actor, $fromType) : $template['sender'],
+			'to' => $this->addresses($input['to']), 'cc' => $this->addresses($input['cc'] ?? array()),
+			'bcc' => $this->addresses($input['bcc'] ?? array()), 'in_reply_to' => ''
+		);
+		if ($message['to'] === '') {
+			throw new RestException(400, 'At least one recipient is required');
+		}
+		if (isset($input['reply_to_event_id'])) {
+			$message['in_reply_to'] = $this->replyMessageId($order, $input['reply_to_event_id']);
+			$message['reply_to_event_id'] = (int) $input['reply_to_event_id'];
+		}
+		$attachments = $input['attachments'] ?? array();
+		if (!is_array($attachments) || count($attachments) > 10 || array_values($attachments) !== $attachments) {
+			throw new RestException(400, 'attachments must be a list of at most ten PDF filenames');
+		}
+		$files = $this->readAttachments($order, $attachments);
+		$manifest = array();
+		foreach ($files as $file) {
+			$manifest[] = array('name' => $file['name'], 'size' => strlen($file['content']), 'sha256' => hash('sha256', $file['content']));
+		}
+		$mail = $this->buildMail($order, $actor, $message, array_column($files, 'path'), array_column($files, 'name'));
+		$preview = $this->preview($order, $message, $mail, $manifest);
+		$preview['template'] = $template['preview'] ?? null;
+		// Detect document replacement while the native transport was being constructed.
+		if ($files !== $this->readAttachments($order, $attachments)) {
+			throw new RestException(409, 'An attachment changed; prepare the email again');
+		}
+		return array('preview' => $preview, 'message' => $message, 'mail' => $mail,
+			'expected_hash' => hash('sha256', $this->encode(array((int) $conf->entity, (int) $actor->id, $this->orderHash($order), $preview))));
+	}
+
+	/**
+	 * Rebuild and compare the reviewed email, then attempt native transport once.
+	 * This stateless endpoint is not idempotent: clients must not automatically retry.
+	 *
+	 * @param CommandeFournisseur $order Freshly authorized order
+	 * @param User $actor Acting user
+	 * @param array<string,mixed> $input Original preparation input
+	 * @param string $expectedHash Reviewed preview fingerprint, not an authorization token
+	 * @return array<string,mixed> Transport result, not a delivery receipt
+	 */
+	public function send($order, $actor, array $input, $expectedHash)
+	{
+		if (!is_string($expectedHash) || !preg_match('/^[a-f0-9]{64}$/D', $expectedHash)) {
+			throw new RestException(400, 'A preparation expected_hash is required');
+		}
+		if (getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
+			throw new RestException(409, 'Email sending is disabled');
+		}
+		$prepared = $this->compile($order, $actor, $input);
+		if (!hash_equals($prepared['expected_hash'], $expectedHash)) {
+			throw new RestException(409, 'The effective email or order changed; prepare and review it again');
+		}
+		$mail = $prepared['mail'];
+		try {
+			$accepted = $this->transmit($mail, $actor);
+		} catch (Throwable $e) {
+			dol_syslog(__METHOD__.': mail transport outcome unknown', LOG_ERR);
+			throw new RestException(502, 'Mail transport outcome is unknown. Do not retry automatically');
+		}
+		if (!$accepted) {
+			throw new RestException(502, 'Mail transport did not report success; delivery may be unknown. Do not retry automatically');
+		}
+		return array('status' => 'sent', 'message_id' => $mail->msgid, 'delivery_status' => 'unknown',
+			'history_recorded' => $this->recordSent($order, $actor, $prepared['message'], $mail));
+	}
+
+	/**
+	 * Render an accessible native template as plain text before review.
+	 *
+	 * @param CommandeFournisseur $order Order
+	 * @param User $actor Acting user
+	 * @param mixed $id Zero selects the default template
+	 * @return array<string,mixed> Rendered defaults and template metadata
+	 */
+	protected function template($order, $actor, $id)
+	{
+		global $langs, $user;
+		if ((!is_int($id) && (!is_string($id) || !ctype_digit($id)))
+			|| filter_var($id, FILTER_VALIDATE_INT) === false || (int) $id < 0) {
+			throw new RestException(400, 'Invalid template_id');
+		}
+		if ($order->fetch_thirdparty() <= 0) {
+			throw new RestException(409, 'Cannot read the supplier for template substitutions');
+		}
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+		$outputlangs = clone $langs;
+		if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($order->thirdparty->default_lang)) {
+			$outputlangs->setDefaultLang($order->thirdparty->default_lang);
+		}
+		$outputlangs->loadLangs(array('main', 'other', 'commercial', 'orders', 'companies'));
+		$formmail = $this->mailForm();
+		$template = $formmail->getEMailTemplate($this->db, 'order_supplier_send', $actor, $outputlangs, (int) $id, 1, '', $id > 0 ? -1 : 1);
+		if (!is_object($template) || ($id > 0 && (int) $template->id !== (int) $id)) {
+			throw new RestException(404, 'Accessible active supplier order email template not found');
+		}
+		$previousUser = $user;
+		$user = $actor;
+		try {
+			$formmail->setSubstitFromObject($order, $outputlangs);
+			$formmail->substit['__SENDEREMAIL_SIGNATURE__'] = $actor->signature;
+			$formmail->substit['__EMAIL__'] = $order->thirdparty->email;
+			$formmail->substit['__CHECK_READ__'] = '';
+			$lines = '';
+			foreach ($formmail->substit_lines as $line) {
+				$lines .= make_substitutions($template->content_lines, $line, $outputlangs)."\n";
+			}
+			$formmail->substit['__LINES__'] = $lines;
+			$rendered = array();
+			foreach (array('subject' => $template->topic ?: $outputlangs->transnoentitiesnoconv('SendSupplierOrderRef', $order->ref),
+				'body' => $template->content, 'sender' => $template->email_from,
+				'cc' => $template->email_tocc, 'bcc' => $template->email_tobcc) as $field => $value) {
+				$rendered[$field] = dol_string_nohtmltag(make_substitutions((string) $value, $formmail->substit, $outputlangs), 0, 'UTF-8', 1);
+			}
+			$fields = array('subject' => $rendered['subject'], 'body' => $rendered['body']);
+			foreach (array('cc', 'bcc') as $field) {
+				if (trim($rendered[$field]) !== '') {
+					$fields[$field] = array_map('trim', explode(',', $rendered[$field]));
+				}
+			}
+			return array('fields' => $fields, 'sender' => trim($rendered['sender']) === '' ? '' : $this->addresses(array(trim($rendered['sender']))),
+				'preview' => array('id' => (int) $template->id, 'label' => $template->label,
+					'attachment_suggested' => !empty($template->joinfiles)));
+		} finally {
+			$user = $previousUser;
+		}
+	}
+
+	/** @return FormMail Native template reader and substitution builder */
+	protected function mailForm()
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+		return new FormMail($this->db);
+	}
+
+	/**
+	 * @param User $actor Acting user
+	 * @param string $type Sender source
+	 * @return string Configured sender
+	 */
+	private function sender($actor, $type)
+	{
+		$address = $type === 'user' ? $actor->email : getDolGlobalString($type === 'company' ? 'MAIN_INFO_SOCIETE_MAIL' : 'MAIN_MAIL_EMAIL_FROM');
+		return $this->addresses(array($address));
+	}
+
+	/**
+	 * @param mixed $addresses List of bare email addresses
+	 * @return string Validated recipient list
+	 */
+	private function addresses($addresses)
+	{
+		if (!is_array($addresses) || array_values($addresses) !== $addresses || count($addresses) > 20) {
+			throw new RestException(400, 'Recipients must be a list of at most twenty email addresses');
+		}
+		foreach ($addresses as $address) {
+			if (!is_string($address) || preg_match('/[\r\n\x00,;<>]/', $address) || !isValidEmail($address)) {
+				throw new RestException(400, 'Invalid email address');
+			}
+		}
+		return implode(', ', array_unique($addresses));
+	}
+
+	/**
+	 * @param CommandeFournisseur $order Order
+	 * @param mixed[] $names Existing PDF filenames
+	 * @return array<array{name:string,content:string,path:string}> Exact attachment bytes
+	 */
+	protected function readAttachments($order, array $names)
+	{
+		$files = array();
+		$total = 0;
+		$root = realpath($this->attachmentDirectory($order));
+		foreach ($names as $name) {
+			if (!is_string($name) || $name === '' || dol_sanitizeFileName($name) !== $name
+				|| preg_match('/[\/\\\\\x00-\x1f]/', $name) || dol_strtolower(pathinfo($name, PATHINFO_EXTENSION)) !== 'pdf') {
+				throw new RestException(400, 'Only PDF filenames directly attached to this order are allowed');
+			}
+			$path = $root ? realpath($root.'/'.$name) : false;
+			if (!$path || dirname($path) !== $root || !dol_is_file($path) || !is_readable($path)) {
+				throw new RestException(404, 'Order attachment not found');
+			}
+			$content = file_get_contents($path, false, null, 0, self::MAX_BYTES + 1);
+			if ($content === false || strncmp($content, '%PDF-', 5) !== 0 || ($total += strlen($content)) > self::MAX_BYTES) {
+				throw new RestException(400, 'Attachments must be PDFs totalling at most 10 MiB');
+			}
+			$files[] = array('name' => $name, 'content' => $content, 'path' => $path);
+		}
+		return $files;
+	}
+
+	/**
+	 * @param CommandeFournisseur $order Order
+	 * @return string Order document directory
+	 */
+	protected function attachmentDirectory($order)
+	{
+		return (string) getMultidirOutput($order, '', 1);
+	}
+
+	/**
+	 * Build the native transport without sending. Its effective recipients include all configured overrides.
+	 *
+	 * @param CommandeFournisseur $order Order
+	 * @param User $actor Acting user
+	 * @param array<string,mixed> $message Message
+	 * @param string[] $paths Existing order PDF paths
+	 * @param string[] $names Attachment names
+	 * @return CMailFile Mail transport
+	 */
+	protected function buildMail($order, $actor, array $message, array $paths, array $names)
+	{
+		global $user;
+		$previousUser = $user;
+		$user = $actor;
+		$swiftCache = null;
+
+		try {
+			$mode = getDolGlobalString('MAIN_MAIL_SENDMODE_STANDARD');
+			if ($mode === '' || $mode === 'default') {
+				$mode = getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail');
+			}
+			if ($mode === 'swiftmailer') {
+				require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lexer/lib/Doctrine/Common/Lexer/AbstractLexer.php';
+				require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/autoload.php';
+				require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lib/swift_required.php';
+				// Bound attachment size allows an in-memory native cache, with no disk spool.
+				$container = Swift_DependencyContainer::getInstance();
+				$swiftCache = $container->lookup('cache');
+				$container->register('cache')->asValue($container->lookup('cache.array'));
+			}
+
+			$bcc = $message['bcc'];
+			$auto = getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO');
+			if ($auto !== '') {
+				$bcc .= ($bcc !== '' ? ', ' : '').$auto;
+			}
+			$mail = new CMailFile($message['subject'], $message['to'], $message['from'], $message['body'], $paths,
+				array_fill(0, count($paths), 'application/pdf'), $names, $message['cc'], $bcc, 0, 0, '', '',
+				'sord'.$order->id, '', 'standard', '', '', $message['in_reply_to'], $message['in_reply_to']);
+			if ($mail->error || $mail->errors || !$mail->addr_to) {
+				throw new RestException(400, 'Cannot construct the email with the current mail configuration');
+			}
+			foreach (array($mail->addr_from, $mail->addr_to, $mail->addr_cc, $mail->addr_bcc) as $addresses) {
+				if (dol_strlen($addresses) > 255) {
+					throw new RestException(400, 'An effective address list exceeds the agenda storage limit of 255 characters');
+				}
+			}
+			// Match the native transport's recipient-count checks before issuing a preparation.
+			$totalRecipients = 0;
+			foreach (array('TO' => $mail->addr_to, 'CC' => $mail->addr_cc, 'BCC' => $mail->addr_bcc) as $kind => $list) {
+				$count = count(explode(',', $list));
+				$totalRecipients += $count;
+				if ($count > (getDolGlobalInt('MAIL_MAX_NB_OF_RECIPIENTS_'.$kind.'_IN_SAME_EMAIL') ?: 10)) {
+					throw new RestException(400, 'Effective recipient count exceeds the configured mail limit');
+				}
+			}
+			if ($totalRecipients > (getDolGlobalInt('MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL') ?: 10)) {
+				throw new RestException(400, 'Effective recipient count exceeds the configured total mail limit');
+			}
+			if ($mail->sendmode === 'swiftmailer' && is_object($mail->message)) {
+				foreach ($mail->message->getChildren() as $attachment) {
+					$attachment->setBody($attachment->getBody());
+				}
+			}
+			return $mail;
+		} finally {
+			if ($swiftCache !== null) {
+				Swift_DependencyContainer::getInstance()->register('cache')->asValue($swiftCache);
+			}
+
+			$user = $previousUser;
+		}
+	}
+
+	/**
+	 * @param CommandeFournisseur $order Order
+	 * @param array<string,mixed> $message Message
+	 * @param CMailFile $mail Native transport
+	 * @param array<array{name:string,size:int,sha256:string}> $manifest Attachment fingerprints
+	 * @return array<string,mixed> Effective preview
+	 */
+	private function preview($order, array $message, $mail, array $manifest)
+	{
+		return array('order_id' => (int) $order->id, 'order_ref' => $order->ref,
+			'from' => $mail->addr_from, 'reply_to' => $mail->reply_to, 'to' => $mail->addr_to, 'cc' => $mail->addr_cc, 'bcc' => $mail->addr_bcc,
+			'subject' => $message['subject'], 'body' => $message['body'], 'format' => 'text',
+			'in_reply_to' => $message['in_reply_to'], 'attachments' => $manifest);
+	}
+
+	/**
+	 * @param CommandeFournisseur $order Order
+	 * @return string Fingerprint of the business content used to prepare the email
+	 */
+	private function orderHash($order)
+	{
+		$headerFields = array('id', 'entity', 'ref', 'socid', 'status', 'ref_supplier', 'total_ht', 'total_tva', 'total_ttc',
+			'delivery_date', 'date_commande', 'cond_reglement_id', 'mode_reglement_id', 'note_public', 'note_private',
+			'fk_project', 'multicurrency_code', 'multicurrency_tx', 'multicurrency_total_ttc', 'array_options',
+			'fk_incoterms', 'location_incoterms', 'fk_warehouse', 'deposit_percent', 'remise_percent', 'fk_account',
+			'total_localtax1', 'total_localtax2', 'multicurrency_total_ht', 'multicurrency_total_tva');
+		$header = array_intersect_key(get_object_vars($order), array_flip($headerFields));
+		$lines = array();
+		$lineFields = array('id', 'rowid', 'fk_product', 'desc', 'description', 'qty', 'subprice', 'pu_ht', 'tva_tx',
+			'remise_percent', 'total_ht', 'total_tva', 'total_ttc', 'product_type', 'date_start', 'date_end', 'array_options',
+			'localtax1_tx', 'localtax2_tx', 'localtax1_type', 'localtax2_type', 'multicurrency_subprice',
+			'multicurrency_total_ht', 'multicurrency_total_tva', 'multicurrency_total_ttc', 'ref_supplier', 'fk_unit', 'rang');
+		foreach ($order->lines as $line) {
+			$lines[] = array_intersect_key(get_object_vars($line), array_flip($lineFields));
+		}
+		return hash('sha256', $this->encode(array($header, $lines)));
+	}
+
+	/**
+	 * @param array<mixed> $data State or fingerprint values
+	 * @return string JSON without silently dropping invalid text
+	 */
+	private function encode(array $data)
+	{
+		$json = json_encode($data);
+		if ($json === false) {
+			throw new RestException(400, 'Email data must contain valid UTF-8 text');
+		}
+		return $json;
+	}
+
+	/**
+	 * @param CommandeFournisseur $order Order
+	 * @param mixed $eventId Previous outgoing email event
+	 * @return string Validated Message-ID
+	 */
+	protected function replyMessageId($order, $eventId)
+	{
+		if ((!is_int($eventId) && (!is_string($eventId) || !ctype_digit($eventId)))
+			|| filter_var($eventId, FILTER_VALIDATE_INT) === false || (int) $eventId <= 0) {
+			throw new RestException(400, 'Invalid reply_to_event_id');
+		}
+		$event = $this->replyEvent((int) $eventId);
+		if ((int) $event->elementid !== (int) $order->id || $event->elementtype !== 'order_supplier'
+			|| $event->code !== 'AC_ORDER_SUPPLIER_SENTBYMAIL' || empty($event->email_msgid)
+			|| preg_match('/[\r\n\x00]/', $event->email_msgid)) {
+			throw new RestException(400, 'The reply event must be an accessible sent email of this order with a Message-ID');
+		}
+		$messageId = trim($event->email_msgid, '<>');
+		if (!preg_match('/^[^<>\s]+@[^<>\s]+$/D', $messageId)) {
+			throw new RestException(400, 'The previous email has an invalid Message-ID');
+		}
+		return '<'.$messageId.'>';
+	}
+
+	/**
+	 * @param int $eventId Agenda event ID
+	 * @return object Accessible agenda event
+	 */
+	protected function replyEvent($eventId)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/api_agendaevents.class.php';
+		$agenda = new AgendaEvents();
+		return $agenda->get($eventId);
+	}
+
+	/**
+	 * @param CMailFile $mail Native mail transport
+	 * @param User $actor Acting user
+	 * @return bool Transport acceptance
+	 */
+	protected function transmit($mail, $actor)
+	{
+		global $user;
+		$previousUser = $user;
+		$user = $actor;
+		try {
+			return (bool) $mail->sendfile();
+		} finally {
+			$user = $previousUser;
+		}
+	}
+
+	/**
+	 * Record the native sent-email trigger after transport success, never retrying the transport on log failure.
+	 *
+	 * @param CommandeFournisseur $order Order
+	 * @param User $actor Acting user
+	 * @param array<string,mixed> $message Message
+	 * @param CMailFile $mail Native mail transport
+	 * @return bool Whether the trigger succeeded with agenda tracking enabled
+	 */
+	protected function recordSent($order, $actor, array $message, $mail)
+	{
+		$order->actiontypecode = 'AC_EMAIL';
+		$order->actionmsg = dol_nl2br(dol_escape_htmltag($message['body']));
+		$order->actionmsg2 = $message['subject'];
+		$order->sendtoid = array();
+		$previousContext = $order->context;
+		$fields = array('email_msgid' => $mail->msgid, 'email_subject' => $message['subject'],
+			'email_from' => $mail->addr_from, 'email_reply_to' => $mail->reply_to, 'email_to' => $mail->addr_to, 'email_tocc' => $mail->addr_cc, 'email_tobcc' => $mail->addr_bcc);
+		foreach ($fields as $key => $value) {
+			$order->context[$key] = $value;
+		}
+		$this->db->begin();
+		try {
+			if ($order->call_trigger('ORDER_SUPPLIER_SENTBYMAIL', $actor) < 0) {
+				$this->db->rollback();
+				return false;
+			}
+			if (!$this->db->commit()) {
+				return false;
+			}
+			return isModEnabled('agenda') && getDolGlobalString('MAIN_AGENDA_ACTIONAUTO_ORDER_SUPPLIER_SENTBYMAIL') !== '';
+		} catch (Throwable $e) {
+			$this->db->rollback();
+			dol_syslog(__METHOD__.': sent mail could not be recorded', LOG_ERR);
+			return false;
+		} finally {
+			$order->context = $previousContext;
+		}
 	}
 }
