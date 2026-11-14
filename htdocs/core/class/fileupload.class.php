@@ -92,6 +92,10 @@ class FileUpload
 			// Special cases to forge $object_ref used to forge $upload_dir
 			if ($element == 'invoice_supplier') {
 				$object_ref = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$object_ref;
+			} elseif ($element == 'societe') {
+				// The documents of a thirdparty are stored into a directory named with its id (see societe/document.php),
+				// its ref is its name. Using the ref stored the file into a directory the "Linked files" tab never reads.
+				$object_ref = get_exdir(0, 0, 0, 1, $object, $element);
 			} elseif ($element == 'project_task') {
 				$parentForeignKey = 'fk_project';
 				$parentClass = 'Project';
