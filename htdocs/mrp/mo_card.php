@@ -108,6 +108,7 @@ $orderedQty = null;
 if (($action == 'create' || $action == 'add') && !empty($origin) && !empty($originid)) {
 	$objectsrc = fetchObjectByElement($originid, $origin);
 	if (is_object($objectsrc) && $objectsrc->id > 0) {
+		'@phan-var-force Commande|Propal|Contrat $objectsrc';
 		if ($action == 'create') {
 			if (empty($socid) && !empty($objectsrc->socid)) {
 				$socid = (int) $objectsrc->socid;
