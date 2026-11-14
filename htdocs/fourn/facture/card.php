@@ -4705,9 +4705,9 @@ if ($action == 'create') {
 					$ventilExportCompta = $object->getVentilExportCompta(); // Should be 0 since the sum of payments are zero. But we keep the protection.
 
 					if ($ventilExportCompta == 0) {
-						print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans('Modify').'</a>';
+						print dolGetButtonAction($langs->trans('Modify'), '', 'edit', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken(), '', true, ['attr' => ['class' => ($conf->use_javascript_ajax ? 'reposition' : '')]]);
 					} else {
-						print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseDispatchedInBookkeeping").'">'.$langs->trans('Modify').'</span>';
+						print dolGetButtonAction($langs->trans("DisabledBecauseDispatchedInBookkeeping"), $langs->trans('Modify'), 'edit', '', '', -1);
 					}
 				}
 

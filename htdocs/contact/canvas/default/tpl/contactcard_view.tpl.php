@@ -150,7 +150,7 @@ if (!empty($this->control->tpl['action_delete'])) {
 if (empty($user->socid)) {
 	print '<div class="tabsAction">';
 	if ($user->hasRight('societe', 'contact', 'creer')) {
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=edit&token='.newToken().'&canvas='.$canvas.'">'.$langs->trans('Modify').'</a>';
+		print dolGetButtonAction($langs->trans('Modify'), '', 'edit', $_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=edit&token='.newToken().'&canvas='.$canvas);
 	}
 
 	if (!$this->control->tpl['user_id'] && $user->hasRight('user', 'user', 'creer')) {

@@ -3814,7 +3814,7 @@ if ($action == 'create') {
 				}*/
 				// Edit
 				if ($object->status == Propal::STATUS_VALIDATED && $usercancreate) {
-					print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=modif&token=' . newToken() . '">' . $langs->trans('Modify') . '</a>';
+					print dolGetButtonAction($langs->trans('Modify'), '', 'edit', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=modif&token=' . newToken());
 				}
 
 				// ReOpen

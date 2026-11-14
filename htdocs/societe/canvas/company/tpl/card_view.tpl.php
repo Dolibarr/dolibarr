@@ -267,7 +267,7 @@ for ($i = 1; $i <= 4; $i++) {
 
 <div class="tabsAction">
 <?php if ($user->hasRight('societe', 'creer')) { ?>
-<a class="butAction" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&action=edit&token='.newToken().'&canvas='.urlencode($canvas); ?>"><?php echo $langs->trans("Modify"); ?></a>
+	<?php echo dolGetButtonAction($langs->trans("Modify"), '', 'edit', $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&action=edit&token='.newToken().'&canvas='.urlencode($canvas)); ?>
 <?php } ?>
 
 <?php if ($user->hasRight('societe', 'supprimer')) { ?>

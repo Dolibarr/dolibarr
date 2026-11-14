@@ -940,7 +940,7 @@ if ($action == 'create') {
 			}
 
 			if ($user->hasRight('banque', 'configurer') && $object->status == $object::STATUS_OPEN) {
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a>';
+				print dolGetButtonAction($langs->trans("Modify"), '', 'edit', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id);
 			}
 
 			if ($user->hasRight('banque', 'configurer') && $object->status == $object::STATUS_OPEN) {

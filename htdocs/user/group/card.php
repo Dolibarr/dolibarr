@@ -401,7 +401,7 @@ if ($action == 'create') {
 			}
 
 			if ($permissiontoedit) {
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
+				print dolGetButtonAction($langs->trans("Modify"), '', 'edit', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken());
 			}
 
 			if ($permissiontodisable) {

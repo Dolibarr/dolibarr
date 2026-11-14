@@ -466,7 +466,7 @@ if ($action != 'edit' && $action != 'delete' && $action != 'deletefile') {
 	print '<div class="tabsAction">';
 
 	if ($permissiontoadd) {
-		print '<a class="butAction" href="'.dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'edit', 'module' => $module, 'section' => $section), true).'">'.$langs->trans('Edit').'</a>';
+		print dolGetButtonAction($langs->trans('Edit'), '', 'edit', dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'edit', 'module' => $module, 'section' => $section), true));
 	}
 
 	if ($permissiontoadd) {
