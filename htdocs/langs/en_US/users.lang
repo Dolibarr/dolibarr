@@ -262,4 +262,6 @@ PasskeyErrorInsecure=The passkey was not created: the browser considers this pag
 LoginWithPasskey=Login with a passkey
 PasskeyLoginFailed=Login with a passkey failed.
 PasskeyErrorUnknown=This passkey is unknown or no longer valid
+PasskeyRequiredForLogin=The security setup requires a two-factor authentication for this account: log in with your passkey.
+PasskeyInsteadOfTOTP=You can also add a passkey instead: a login with a passkey is a two-factor authentication too.
 BackToUserCard=Back to user card

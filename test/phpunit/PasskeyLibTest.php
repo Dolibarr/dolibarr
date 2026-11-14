@@ -189,4 +189,25 @@ class PasskeyLibTest extends CommonClassTest
 		$this->assertEquals('', passkeyBase64UrlDecode('YW+j'), 'Standard base64 characters must be refused');
 		$this->assertEquals('', passkeyBase64UrlDecode('YW J'));
 	}
+
+	/**
+	 * testPasskeyUserHasPasskey
+	 *
+	 * @return  void
+	 */
+	public function testPasskeyUserHasPasskey()
+	{
+		global $conf, $db;
+
+		$conf->file->main_authentication = 'dolibarr';
+		$this->assertFalse(passkeyUserHasPasskey($db, 1), 'Never true when the mode passkey is not enabled');
+
+		if (!passkeyIsAvailable()) {
+			$this->markTestSkipped('The WebAuthn library needs PHP 8.0 or higher with openssl');
+		}
+
+		$conf->file->main_authentication = 'dolibarr,passkey';
+		$this->assertFalse(passkeyUserHasPasskey($db, 0), 'False without user');
+		$this->assertFalse(passkeyUserHasPasskey($db, 999999999), 'False for a user without passkey');
+	}
 }
