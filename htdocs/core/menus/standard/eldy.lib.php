@@ -11,6 +11,7 @@
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2025       Josep Lluís Amador          <joseplluis@lliuretic.cat>
+ * Copyright (C) 2026       Pierre Ardoin <developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1982,6 +1983,10 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 
 				// Account Balance
 				$newmenu->add("/accountancy/bookkeeping/balance.php?mainmenu=accountancy&leftmenu=accountancy_accountancy", $langs->trans("AccountBalance"), 1, $user->hasRight('accounting', 'mouvements', 'lire'));
+
+				// Adjustments
+				$newmenu->add('/accountancy/customerdeposits.php?mainmenu=accountancy&leftmenu=accountancy_accountancy_customerdeposits', $langs->trans('MenuAccountancyAdjustments'), 1, $user->hasRight('accounting', 'comptarapport', 'lire'));
+				$newmenu->add('/accountancy/customerdeposits.php?mainmenu=accountancy&leftmenu=accountancy_accountancy_customerdeposits', $langs->trans('CustomerDepositControl'), 2, $user->hasRight('accounting', 'comptarapport', 'lire'));
 
 				// Export accountancy
 				$newmenu->add("/accountancy/bookkeeping/export.php?mainmenu=accountancy&leftmenu=accountancy_accountancy", $langs->trans("MenuExportAccountancy"), 1, $user->hasRight('accounting', 'mouvements', 'lire'));
