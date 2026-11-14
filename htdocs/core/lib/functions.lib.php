@@ -378,6 +378,21 @@ function getDolGlobalFloat($key, $default = 0)
 }
 
 /**
+ * Return the version to add into URLs of CSS and JS files.
+ * With MAIN_HIDE_VERSION, a hash of the version is returned: the version is not disclosed but the browser cache is still refreshed after an upgrade.
+ *
+ * @return string		Version or hash of version
+ */
+function getDolVersionForUrl()
+{
+	global $conf;
+	if (getDolGlobalInt('MAIN_HIDE_VERSION')) {
+		return substr(hash('sha256', DOL_VERSION.(empty($conf->file->instance_unique_id) ? '' : $conf->file->instance_unique_id)), 0, 8);
+	}
+	return DOL_VERSION;
+}
+
+/**
  * Return a Dolibarr global constant boolean value.
  * The constants $conf->global->xxx are loaded by the script master.inc.php included at begin of any PHP page.
  *
