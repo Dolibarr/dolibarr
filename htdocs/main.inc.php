@@ -4052,8 +4052,8 @@ if (!function_exists("llxFooter")) {
 		}
 
 		// Global html output events ($mesgs, $errors, $warnings)
-		// A page loaded in background by an ajax tool (noflusheventmessages=1, ex: Dolibarr.tools.card) keeps them in session
-		// for the next page, its html is not displayed.
+		// A page loaded in background by an ajax tool (noflusheventmessages=1) keeps them in session:
+		// they are returned to the ajax tool by the next JsonResponse (JsonResponse::addSessionEventMessages()).
 		if (!GETPOSTINT('noflusheventmessages')) {
 			dol_htmloutput_events($disabledoutputofmessages);
 		}

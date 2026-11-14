@@ -25,6 +25,7 @@
  *                  so modules hooking the lines render them as in this page.
  *                  Answer is a JsonResponse, data contains the html of each line (null if the line does not exist anymore)
  *                  and the ids of all the lines of the object in the order of the card, to insert or remove lines.
+ *                  The event messages kept in session by a card loaded with noflusheventmessages=1 are returned in the answer.
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -139,6 +140,9 @@ $jsonResponse->data = array(
 	'lineids' => $alllineids,
 	'tms' => empty($object->date_modification) ? null : (int) $object->date_modification,
 );
+
+// Messages of the actions of a card loaded in background (noflusheventmessages=1), ex: error when a line is saved
+$jsonResponse->addSessionEventMessages();
 
 $jsonResponse->setSuccess();
 $jsonResponse->output();
