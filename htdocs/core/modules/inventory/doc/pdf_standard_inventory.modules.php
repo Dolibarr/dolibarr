@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2026	Jose MARTINEZ	<jose.martinez@pichinov.com>
+/* Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
  * Copyright (C) 2026		MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -72,6 +72,11 @@ class pdf_standard_inventory extends ModelePDFInventory
 	 * @var Societe Issuer object
 	 */
 	public $emetteur;
+
+	/**
+	 * @var string Translation key of the document title (models extending this one can change it)
+	 */
+	public $titlekey = 'Inventory';
 
 	/**
 	 * @var float Column positions
@@ -501,7 +506,7 @@ class pdf_standard_inventory extends ModelePDFInventory
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$title = $outputlangs->transnoentities("Inventory");
+		$title = $outputlangs->transnoentities($this->titlekey);
 		if (!$recorded) {
 			$title .= ' - '.$outputlangs->transnoentities("Draft");
 		}
@@ -519,7 +524,8 @@ class pdf_standard_inventory extends ModelePDFInventory
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Date")." : ".dol_print_date($this->db->jdate($object->date_inventory), "day", false, $outputlangs, true), '', 'R');
+			$dateinventory = is_numeric($object->date_inventory) ? (int) $object->date_inventory : $this->db->jdate($object->date_inventory); // fetch() already returns a timestamp
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Date")." : ".dol_print_date($dateinventory, "day", false, $outputlangs, true), '', 'R');
 		}
 		if (!$isspecimen && !empty($object->title)) {
 			$posy += 4;
