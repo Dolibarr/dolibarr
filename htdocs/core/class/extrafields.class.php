@@ -47,7 +47,7 @@ class ExtraFields
 	public $db;
 
 	/**
-	 * @var array<string,array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed>,list:array<string,int|string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,cssview:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities:array<string,string>,alwayseditable:array<string,int<0,1>>,personal_data:array<string,int<0,1>>,emptyonclone:array<string,int<0,1>>,loaded?:int,count:int,aiprompt:array<string,string>}> New array to store extrafields definition  Note: count set as present to avoid static analysis notices
+	 * @var array<string,array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed>,list:array<string,int|string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,cssview:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities:array<string,string>,alwayseditable:array<string,int<0,1>>,personal_data:array<string,int<0,1>>,emptyonclone:array<string,int<0,1>>,module:array<string,string>,loaded?:int,count:int,aiprompt:array<string,string>}> New array to store extrafields definition  Note: count set as present to avoid static analysis notices
 	 */
 	public $attributes = array();
 
@@ -170,7 +170,8 @@ class ExtraFields
 	 *  @param  string  		$enabled  		 	Condition to have the field enabled or not
 	 *  @param	int<0,1>		$totalizable		Is a measure. Must show a total on lists
 	 *  @param  int<0,1>        $printable          Is extrafield displayed on PDF
-	 *  @param	array<string,mixed>	$moreparams		More parameters. Example: array('css'=>, 'csslist'=>Css on list, 'cssview'=>...)
+	 *  @param	array<string,mixed>	$moreparams		More parameters. Example: array('css'=>, 'csslist'=>Css on list, 'cssview'=>..., 'module'=>'mymodule')
+	 *                                              Use 'module' to declare the module that owns the field (a warning is shown when deleting it from setup).
 	 *  @param	string			$aiprompt			Ai prompt value
 	 *  @param	int<0,1>		$emptyonclone		Is attribute to be emptied after object clone
 	 *  @param	int<0,1>		$showintooltip		Is attribute to be show on tooltip
@@ -186,6 +187,8 @@ class ExtraFields
 		if (empty($label)) {
 			return -1;
 		}
+
+		global $conf;
 
 		$result = 0;
 
@@ -219,6 +222,14 @@ class ExtraFields
 			if ($result2 > 0
 				|| ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 				|| ($type == 'separate' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS')) {
+				// If field already exists, we still set the owner module if provided
+				if ($result2 <= 0 && is_array($moreparams) && !empty($moreparams['module'])) {
+					$sql = "UPDATE ".$this->db->prefix()."extrafields SET module = '".$this->db->escape($moreparams['module'])."'";
+					$sql .= " WHERE name = '".$this->db->escape($attrname)."'";
+					$sql .= " AND elementtype = '".$this->db->escape($elementtype)."'";
+					$sql .= " AND entity = ".((int) ($entity === '' ? $conf->entity : $entity));
+					$this->db->query($sql);
+				}
 				$this->error = '';
 				$this->errno = '0';
 				return 1;
@@ -253,7 +264,8 @@ class ExtraFields
 	 *  @param  string  		$enabled  		 	Condition to have the field enabled or not
 	 *  @param  int<0,1>		$totalizable		Is a measure. Must show a total on lists
 	 *  @param  int<0,1>        $printable          Is extrafield displayed on PDF
-	 *  @param  array<string,mixed>	$moreparams		More parameters. Example: array('css'=>, 'csslist'=>Css on list, 'cssview'=>...)
+	 *  @param  array<string,mixed>	$moreparams		More parameters. Example: array('css'=>, 'csslist'=>Css on list, 'cssview'=>..., 'module'=>'mymodule')
+	 *                                              If 'module' is not provided, the current owner module of the field is kept.
 	 *	@param	int<0,1>		$emptyonclone		Is attribute to be emptied after object clone
 	 *  @param  int<0,1>		$showintooltip		Show in tooltip
 	 *  @param	int<0,1>		$personal_data		Is attribute a personal data (RGPD,nLPD/LGPD)
@@ -506,6 +518,10 @@ class ExtraFields
 		if (!empty($moreparams) && !empty($moreparams['cssview'])) {
 			$cssview = $moreparams['cssview'];
 		}
+		$module = '';
+		if (!empty($moreparams) && !empty($moreparams['module'])) {
+			$module = $moreparams['module'];
+		}
 
 		if (!empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname) && !is_numeric($attrname)) {
 			if (is_array($param) && count($param) > 0) {
@@ -546,7 +562,8 @@ class ExtraFields
 			$sql .= " aiprompt,";
 			$sql .= " emptyonclone,";
 			$sql .= " showintooltip,";
-			$sql .= " personal_data";
+			$sql .= " personal_data,";
+			$sql .= " module";
 			$sql .= " )";
 			$sql .= " VALUES('".$this->db->escape($attrname)."',";
 			$sql .= " '".$this->db->escape($label)."',";
@@ -577,7 +594,8 @@ class ExtraFields
 			$sql .= " '".$this->db->escape($aiprompt)."',";
 			$sql .= " ".((int) $emptyonclone).' ,';
 			$sql .= " ".((int) $showintooltip).' ,';
-			$sql .= " ".((int) $personal_data);
+			$sql .= " ".((int) $personal_data).",";
+			$sql .= " ".($module ? "'".$this->db->escape($module)."'" : "null");
 			$sql .= ')';
 
 			if ($this->db->query($sql)) {
@@ -954,6 +972,26 @@ class ExtraFields
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname)) {
 			$this->db->begin();
 
+			// If owner module is not provided, we keep the current one (record is deleted and inserted again below)
+			if (is_array($moreparams) && isset($moreparams['module'])) {
+				$module = (string) $moreparams['module'];
+			} else {
+				$module = '';
+				$sql_module = "SELECT module FROM ".$this->db->prefix()."extrafields";
+				$sql_module .= " WHERE name = '".$this->db->escape($attrname)."'";
+				$sql_module .= " AND entity IN (0, ".($entity === '' ? ((int) $conf->entity) : ((int) $entity)).")";
+				$sql_module .= " AND elementtype = '".$this->db->escape($elementtype)."'";
+				$sql_module .= " AND module IS NOT NULL";
+				$resql_module = $this->db->query($sql_module);
+				if ($resql_module) {
+					$obj_module = $this->db->fetch_object($resql_module);
+					if ($obj_module) {
+						$module = (string) $obj_module->module;
+					}
+					$this->db->free($resql_module);
+				}
+			}
+
 			if (is_array($param) && count($param) > 0) {
 				$params = serialize($param);
 			} elseif (is_array($param)) {
@@ -1009,7 +1047,8 @@ class ExtraFields
 			$sql .= " aiprompt,";
 			$sql .= " showintooltip,";
 			$sql .= " emptyonclone,";
-			$sql .= " personal_data";
+			$sql .= " personal_data,";
+			$sql .= " module";
 			$sql .= ") VALUES (";
 			$sql .= "'".$this->db->escape($attrname)."',";
 			$sql .= " ".($entity === '' ? ((int) $conf->entity) : ((int) $entity)).",";
@@ -1040,7 +1079,8 @@ class ExtraFields
 			$sql .= " '".$this->db->escape($aiprompt)."',";
 			$sql .= " ".((int) $showintooltip)." ,";
 			$sql .= " ".((int) $emptyonclone)." ,";
-			$sql .= " ".((int) $personal_data);
+			$sql .= " ".((int) $personal_data).",";
+			$sql .= " ".($module ? "'".$this->db->escape($module)."'" : "null");
 			$sql .= ")";
 
 			$resql2 = $this->db->query($sql);
@@ -1096,7 +1136,7 @@ class ExtraFields
 
 		// We should not have several time this request. If we have, there is some optimization to do by calling a simple $extrafields->fetch_optionals() in top of code and not into subcode
 		$sql = "SELECT rowid, name, label, type, size, elementtype, fieldunique, fieldrequired, param, pos, alwayseditable, emptyonclone, perms, langs, list, printable, showintooltip, totalizable, fielddefault, fieldcomputed, entity, enabled, help, aiprompt";
-		$sql .= " , css, cssview, csslist, personal_data";
+		$sql .= " , css, cssview, csslist, personal_data, module";
 		$sql .= " FROM ".$this->db->prefix()."extrafields";
 		//$sql.= " WHERE entity IN (0,".((int) $conf->entity).")";    // Filter is done later
 		if ($elementtype && $elementtype != 'all') {
@@ -1154,6 +1194,7 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['cssview'][$tab->name] = $tab->cssview;
 					$this->attributes[$tab->elementtype]['csslist'][$tab->name] = $tab->csslist;
 					$this->attributes[$tab->elementtype]['personal_data'][$tab->name] = $tab->personal_data;
+					$this->attributes[$tab->elementtype]['module'][$tab->name] = (string) $tab->module;
 
 					$this->attributes[$tab->elementtype]['loaded'] = 1;
 					$count++;
