@@ -437,7 +437,11 @@ $coldisplay++;
 	<?php if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) { ?>
 		<td class="linecolnum center"></td>
 	<?php } ?>
-	<td colspan="<?php echo $coldisplay - (!getDolGlobalString('MAIN_VIEW_LINE_NUMBER') ? 0 : 1) ?>"><?php echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' '; ?>
+	<td colspan="<?php echo $coldisplay - (!getDolGlobalString('MAIN_VIEW_LINE_NUMBER') ? 0 : 1) ?>">
+	<?php
+	echo $langs->trans('ServiceLimitedDuration').' ';
+	echo '<span id="lbl_prefix">'.$langs->trans('From').'</span> ';
+	?>
 	<?php
 	$prefillDates = false;
 	$date_start_prefill = 0;
@@ -457,13 +461,67 @@ $coldisplay++;
 	}
 	$hourmin = getDolGlobalInt('MAIN_USE_HOURMIN_IN_DATE_RANGE');
 	print $form->selectDate($line->date_start, 'date_start', $hourmin, $hourmin, $line->date_start ? 0 : 1, "updateline", 1, 0);
+	print '<span id="wrapper_date_end" style="display: none;">';
 	print ' '.$langs->trans('to').' ';
 	print $form->selectDate($line->date_end, 'date_end', $hourmin, $hourmin, $line->date_end ? 0 : 1, "updateline", 1, 0);
+	print ' <a href="#" id="btn_hide_end_date" class="marginleftonly opacitymedium" style="display:none; text-decoration:none;" title="'.$langs->trans('Remove').'"><span class="fa fa-minus-circle valignmiddle"></span></a>';
+	print '</span>';
+	print ' <a href="#" id="btn_toggle_end_date" class="marginleftonly opacitymedium" style="text-decoration:none;" title="'.$langs->trans('AddEndDate').'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
 	if ($prefillDates) {
 		echo ' <span class="small"><a href="#" id="prefill_service_dates">'.$langs->trans('FillWithLastServiceDates').'</a></span>';
 	}
 
 	print '<script>';
+	?>
+	$(document).ready(function() {
+		const labelOnThe = '<?php echo dol_escape_js($langs->trans('OnThe')); ?>' || 'On the';
+		const labelFrom = '<?php echo dol_escape_js($langs->trans('From')); ?>' || 'From';
+		function updateDateMode() {
+			var endVal = $.trim($('#date_end').val());
+			var endDay = $('#date_endday').val();
+			if ((endVal !== '' && endVal !== 'undefined') || (endDay > 0)) {
+				$('#wrapper_date_end').show();
+				$('#lbl_prefix').text(labelFrom);
+				$('#btn_toggle_end_date').hide();
+				$('#btn_hide_end_date').show();
+			} else {
+				$('#wrapper_date_end').hide();
+				$('#lbl_prefix').text(labelOnThe);
+				$('#btn_toggle_end_date').show();
+				$('#btn_hide_end_date').hide();
+			}
+		}
+		$('#btn_toggle_end_date').on('click', function(e) {
+			e.preventDefault();
+			$('#wrapper_date_end').show();
+			$('#lbl_prefix').text(labelFrom);
+			$(this).hide();
+			$('#btn_hide_end_date').show();
+			$('#date_end').focus();
+		});
+		$('#btn_hide_end_date').on('click', function(e) {
+			e.preventDefault();
+			$('#date_end').val('');
+			$('#date_endday').val('');
+			$('#date_endmonth').val('');
+			$('#date_endyear').val('');
+			if($('#date_endhour').length) $('#date_endhour').val('');
+			if($('#date_endmin').length) $('#date_endmin').val('');
+			$('#wrapper_date_end').hide();
+			$('#lbl_prefix').text(labelOnThe);
+			$(this).hide();
+			$('#btn_toggle_end_date').show();
+		});
+		$('#date_end').on('change keyup', function() {
+			if ($.trim($(this).val()) !== '') {
+				$('#lbl_prefix').text(labelFrom);
+				$('#btn_toggle_end_date').hide();
+				$('#btn_hide_end_date').show();
+			}
+		});
+		updateDateMode();
+	});
+	<?php
 	if ($prefillDates) {
 		?>
 		function prefill_service_dates()
