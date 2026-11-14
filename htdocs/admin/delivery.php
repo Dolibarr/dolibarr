@@ -222,16 +222,21 @@ $head = expedition_admin_prepare_head();
 print dol_get_fiche_head($head, 'receivings', $langs->trans("Receivings"), -1, 'shipment');
 
 
-print '<br>';
+print '<div class="neutral">';
 print '<div class="inline-block valignmiddle">'.$langs->trans("DeliveriesOrderAbility").'</div>';
 if (!getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 	print ' <a class="inline-block valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=activate_delivery&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 } else {
 	print ' <a class="inline-block valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=disable_delivery&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
 }
+print '</div>';
 
-print '<br><br><span class="opacitymedium">'.info_admin($langs->trans("NoNeedForDeliveryReceipts"), 0, 1).'</span>';
-print '<br><br>';
+if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
+	print '<div class="warning">'.info_admin($langs->trans("NoNeedForDeliveryReceipts"), 0, 1).'</div>';
+} else {
+	print '<br><span class="opacitymedium">'.info_admin($langs->trans("NoNeedForDeliveryReceipts"), 0, 1).'</span>';
+}
+print '<br>';
 print '<br>';
 
 

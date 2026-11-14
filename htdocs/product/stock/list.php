@@ -124,7 +124,7 @@ $usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $us
 
 // Definition of array of fields for columns
 $arrayfields = array(
-	'stockqty' => array('type' => 'float', 'label' => 'PhysicalStock', 'enabled' => '1', 'visible' => -2, 'checked' => '0', 'position' => 170),
+	'stockqty' => array('type' => 'float', 'label' => 'PhysicalStock', 'enabled' => '1', 'visible' => 2, 'checked' => '1', 'position' => 170),
 	'estimatedstockvaluesell' => array('type' => 'float', 'label' => 'EstimatedStockValueSell', 'enabled' => '1', 'checked' => '1', 'visible' => 2, 'position' => 172),
 );
 if ($usercancreadsupplierprice) {
@@ -835,7 +835,7 @@ while ($i < $imaxinloop) {
 
 		// Stock qty
 		if (!empty($arrayfields["stockqty"]['checked'])) {
-			print '<td class="right">'.price(price2num($obj->stockqty, 'MS')).'</td>';
+			print '<td class="right">'.price(price2num($obj->stockqty, 'MS'), 0, '', 0, 0).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

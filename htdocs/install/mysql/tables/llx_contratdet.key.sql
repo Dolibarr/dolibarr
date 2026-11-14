@@ -20,7 +20,7 @@
 
 
 ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_fk_contrat (fk_contrat);
-ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_fk_product (fk_product);
+ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_fkproduct_fkcontrat (fk_product, fk_contrat);
 ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_date_ouverture_prevue (date_ouverture_prevue);
 ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_date_ouverture (date_ouverture);
 ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_date_fin_validite (date_fin_validite);

@@ -231,6 +231,11 @@ ALTER TABLE llx_facture ADD INDEX idx_facture_situation_cycle_ref (situation_cyc
 -- Reduce response times with high transaction volume
 ALTER TABLE llx_facture ADD INDEX idx_facture_status_date (paye, fk_statut, datef);
 
+-- Index on (fk_product, fk_contrat) replaces the redundant index on fk_product alone (it must be created before the drop, as the foreign key fk_contratdet_fk_product needs an index)
+ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_fkproduct_fkcontrat (fk_product, fk_contrat);
+-- VMYSQL4.1 DROP INDEX idx_contratdet_fk_product ON llx_contratdet;
+-- VPGSQL8.2 DROP INDEX idx_contratdet_fk_product;
+
 -- Short-lived tombstone log of deleted agenda events (see llx_deletion_log.sql).
 CREATE TABLE llx_deletion_log(
 	rowid			integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -691,3 +696,9 @@ ALTER TABLE llx_website_page MODIFY COLUMN content longtext;
 ALTER TABLE llx_ai_chat_message MODIFY COLUMN content_raw mediumtext;
 
 INSERT INTO llx_c_type_resource (code, label, active) VALUES ('RES_MACHINES', 'Machines', 1);
+
+-- Module QuickMemo moved from the id 141916 (range of external modules) to the core id 55020: rename its permission ids 141916xx into 55020xx
+UPDATE llx_rights_def SET id = id - 14191600 + 5502000 WHERE id IN (14191611, 14191612, 14191613);
+UPDATE llx_user_rights SET fk_id = fk_id - 14191600 + 5502000 WHERE fk_id IN (14191611, 14191612, 14191613);
+UPDATE llx_usergroup_rights SET fk_id = fk_id - 14191600 + 5502000 WHERE fk_id IN (14191611, 14191612, 14191613);
+DELETE FROM llx_rights_def WHERE id IN (14191611, 14191612, 14191613);

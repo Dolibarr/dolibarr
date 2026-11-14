@@ -2181,12 +2181,18 @@ if ($action == 'create' || $action == 'adduserldap') {
 					if (!is_array($totpenrollment)) {
 						print ' '.img_warning($langs->trans("TOTPUnreadableEnrollment"));
 					}
+					if (dolTotpIsDisabledByConf()) {
+						print ' '.img_warning($langs->trans("TOTPDisabledByConf"));
+					}
 				} else {
 					print '<span class="opacitymedium">'.$langs->trans("Disabled").'</span>';
+					if (dolTotpIsRequired($db, $object)) {
+						print ' '.img_warning($langs->trans("TOTPRequiredNotSetUp"));
+					}
 				}
 				print '<div class="left inline-block">';
-				$s = '<!-- MAIN_SECURITY_ALLOW_TOTP --><span class="fa fa-pen valignmiddle btnTitle-icon"></span>';
-				print dolButtonToOpenUrlInDialogPopup('openpopuptoaddcredential', $langs->transnoentitiesnoconv("Edit"), $s, '/user/credentials.php?id='.$object->id.'&token='.newToken());
+				$s = '<!-- MAIN_SECURITY_ALLOW_TOTP -->'.img_edit('');
+				print dolButtonToOpenUrlInDialogPopup('openpopuptoaddcredential', $langs->transnoentitiesnoconv("Edit"), $s, '/user/credentials.php?id='.$object->id.'&token='.newToken(), '', 'editfielda marginleftonly');
 				print '</div></div>';
 				print '</td></tr>';
 			}
@@ -2234,8 +2240,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 					print $langs->trans("APIKeys");
 					print '</a>';*/
 					print '<div class="left inline-block">';
-					$s = '<!-- API_IN_TOKEN_TABLE --><span class="fa fa-pen valignmiddle btnTitle-icon"></span>';
-					print dolButtonToOpenUrlInDialogPopup('openpopuptoaddapitoken', $langs->transnoentitiesnoconv("APIKeys"), $s, '/user/api_token/list.php?id='.$object->id.'&token='.newToken());
+					$s = '<!-- API_IN_TOKEN_TABLE -->'.img_edit('');
+					print dolButtonToOpenUrlInDialogPopup('openpopuptoaddapitoken', $langs->transnoentitiesnoconv("APIKeys"), $s, '/user/api_token/list.php?id='.$object->id.'&token='.newToken(), '', 'editfielda marginleftonly');
 					print '</div>';
 					print '</div>';
 				} else {

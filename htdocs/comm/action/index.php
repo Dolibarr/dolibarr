@@ -1831,12 +1831,11 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	// denser when a day holds many events, instead of the hourly grid.
 	$weekhourlygrid = !getDolGlobalString('AGENDA_WEEK_VIEW_NO_HOURLY_GRID');
 
-	// No maxscreenheightless300 with the grid, for the same reason as the day view: a max-height combined
-	// with the overflow-x:auto of div-table-responsive-no-min forces overflow-y to auto as well, which gives
-	// an inner scrollbar instead of letting the page itself scroll.
-	print '<div class="div-table-responsive-no-min sectioncalendarbyweek'.($weekhourlygrid ? '' : ' maxscreenheightless300').'">';
+	// maxscreenheightless300 also with the grid, as for the month view: its max-height combined with the overflow-x:auto
+	// of div-table-responsive-no-min gives a scrollbar on the calendar area only, instead of on the whole page.
+	print '<div class="div-table-responsive-no-min sectioncalendarbyweek maxscreenheightless300">';
 	print '<table class="centpercent noborder nocellnopadd cal_pannel cal_month listwithfilterbefore">';
-	print ' <tr class="liste_titre">';
+	print ' <tr class="liste_titre stickyagenda">';
 	if ($weekhourlygrid) {
 		// The column of the hour labels, empty in the header
 		print '  <td class="tdfordaytitle width100"></td>'."\n";
@@ -1959,7 +1958,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 		// The grid, 1 px per minute, the same scale as the day view. Each day is its own layer, shifted up by
 		// the first hour shown because show_day_events() positions an event from midnight.
 		echo ' <tr class="trcalweekgrid">'."\n";
-		echo '  <td class="tdfordaytitle width100 tdtop">';
+		echo '  <td class="tdfordaytitle width100 valigntop nopaddingtopimp nopaddingbottomimp">';
 		print '<div class="agendaweekhours" style="position: relative; height: '.$gridheight.'px;">';
 		for ($h = $begin_h; $h < $end_h; $h++) {
 			print '<div class="agendadayhour small opacitymedium" style="position: absolute; left: 4px; top: '.((($h - $begin_h) * 60) + 2).'px;">'.dol_print_date($h * 3600, 'hour', 'gmt').'</div>';
@@ -1968,7 +1967,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 		echo "</td>\n";
 		for ($iter_day = 0; $iter_day < 7; $iter_day++) {
 			$dateint = $weekdates[$iter_day];
-			echo '  <td class="'.$weekdayinfo[$iter_day]['style'].' tdtop" valign="top">';
+			echo '  <td class="'.$weekdayinfo[$iter_day]['style'].' valigntop nopaddingtopimp nopaddingbottomimp" valign="top">';
 			print '<div class="agendadaygrid" style="position: relative; height: '.$gridheight.'px;">';
 			for ($h = $begin_h; $h < $end_h; $h++) {
 				foreach (array(0, 30) as $slotmin) {
@@ -2022,14 +2021,12 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	print_actions_filter($form, $canedit, $status, $year, $month, $day, $check_birthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroupids, '', $resourceid);
 	print '</div>';
 
-	// No maxscreenheightless300 here (unlike month and week): the hourly grid is much taller than the old
-	// flat list, and the max-height of maxscreenheightless300, combined with the overflow-x:auto of the shared
-	// div-table-responsive-no-min rule, forces overflow-y to auto too (per the CSS spec, when only one axis is
-	// set to a non-visible value), which gives an inner scrollbar instead of letting the page itself scroll.
-	print '<div class="div-table-responsive-no-min sectioncalendarbyday">';
+	// maxscreenheightless300 as for the month and week views: its max-height combined with the overflow-x:auto of
+	// div-table-responsive-no-min gives a scrollbar on the calendar area only, and stickyagenda keeps the title visible.
+	print '<div class="div-table-responsive-no-min sectioncalendarbyday maxscreenheightless300">';
 	echo '<table class="tagtable centpercent noborder nocellnopadd cal_pannel cal_month listwithfilterbefore" style="margin-bottom: 10px !important;">';
 
-	echo ' <tr class="tagtr liste_titre">';
+	echo ' <tr class="tagtr liste_titre stickyagenda">';
 	echo '  <td class="tagtd center bold uppercase">'.$langs->trans("Day".$arraytimestamp['wday'])."</td>\n";
 	echo " </tr>\n";
 

@@ -666,9 +666,10 @@ class Categorie extends CommonObject
 	 *
 	 *	@param	User	$user	Object user
 	 *  @param	int<0,1>		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 * 	@return	int<-2,1>		1 : OK
+	 * 	@return	int<-3,1>		1 : OK
 	 *          				-1 : SQL error
 	 *          				-2 : invalid category
+	 *          				-3 : a category with the same label already exists at the same level
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -710,7 +711,8 @@ class Categorie extends CommonObject
 		if ($this->already_exists()) {
 			$this->error = $langs->trans("ImpossibleUpdateCat");
 			$this->error .= " : ".$langs->trans("CategoryExistsAtSameLevel");
-			return -1;
+			dol_syslog($this->error, LOG_WARNING);
+			return -3;
 		}
 
 		$this->db->begin();

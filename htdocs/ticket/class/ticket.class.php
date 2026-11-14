@@ -1237,6 +1237,8 @@ class Ticket extends CommonObject
 				$this->deleteEcmFiles(1);
 
 				$dir = DOL_DATA_ROOT.'/'.$this->element.'/'.$this->ref;
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
 				// For remove dir
 				if (dol_is_dir($dir)) {
 					if (!dol_delete_dir_recursive($dir)) {
@@ -2679,6 +2681,19 @@ class Ticket extends CommonObject
 			if (file_exists($file)) {
 				$classname = $modele;
 				break;
+			}
+		}
+
+		if ($classname === '' && $modele !== 'mod_ticket_simple') {
+			// The configured numbering module is not available (for example an external module was removed), we fall back on the standard module
+			dol_syslog(get_class($this)."::getDefaultRef numbering module '".$modele."' not found, we fall back on 'mod_ticket_simple'", LOG_WARNING);
+			$modele = 'mod_ticket_simple';
+			foreach ($dirmodels as $reldir) {
+				$file = dol_buildpath($reldir."core/modules/ticket/".$modele.'.php', 0);
+				if (file_exists($file)) {
+					$classname = $modele;
+					break;
+				}
 			}
 		}
 

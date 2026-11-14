@@ -739,6 +739,11 @@ while ($i < $imaxinloop) {
 			}
 		}
 
+		// Fields from hook
+		$parameters = array('arrayfields' => $arrayfields, 'obj' => $objp, 'i' => $i, 'totalarray' => &$totalarray);
+		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+
 		// Action column
 		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
