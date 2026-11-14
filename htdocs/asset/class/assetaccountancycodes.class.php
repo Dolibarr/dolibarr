@@ -241,7 +241,7 @@ class AssetAccountancyCodes extends CommonObject
 	 */
 	public function updateAccountancyCodes($user, $asset_id = 0, $asset_model_id = 0, $notrigger = 0)
 	{
-		global $langs, $hookmanager;
+		global $conf, $langs, $hookmanager;
 		dol_syslog(__METHOD__ . " user_id=".$user->id.", asset_id=".$asset_id.", asset_model_id=".$asset_model_id.", notrigger=".$notrigger);
 
 		$error = 0;
@@ -266,6 +266,43 @@ class AssetAccountancyCodes extends CommonObject
 		if ($error) {
 			dol_syslog(__METHOD__ . " Error check parameters: " . $this->errorsToString(), LOG_ERR);
 			return -1;
+		}
+
+		// Check new or modified codes against the active chart of accounts, otherwise they reach the journal unchecked.
+		// Untouched codes are kept, so that a change of chart does not make existing records impossible to save.
+		if (isModEnabled('accounting')) {
+			$current = new AssetAccountancyCodes($this->db);
+			$current->fetchAccountancyCodes($asset_id, $asset_model_id);
+			foreach ($this->accountancy_codes_fields as $mode_key => $mode_info) {
+				foreach (array_keys($mode_info['fields']) as $field_key) {
+					$accountancy_code = isset($this->accountancy_codes[$mode_key][$field_key]) ? trim((string) $this->accountancy_codes[$mode_key][$field_key]) : '';
+					if ($accountancy_code === '' || $accountancy_code === '-1') {
+						continue;
+					}
+					$stored = isset($current->accountancy_codes[$mode_key][$field_key]) ? trim((string) $current->accountancy_codes[$mode_key][$field_key]) : '';
+					if ($accountancy_code === $stored) {
+						continue;	// unchanged, kept as it is
+					}
+					$sql = "SELECT aa.rowid FROM " . MAIN_DB_PREFIX . "accounting_account as aa";
+					$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
+					$sql .= " AND asy.rowid = " . getDolGlobalInt('CHARTOFACCOUNTS');
+					$sql .= " WHERE aa.account_number = '" . $this->db->escape($accountancy_code) . "'";
+					$sql .= " AND aa.active = 1";
+					$sql .= " AND aa.entity = " . ((int) $conf->entity);
+					$resql = $this->db->query($sql);
+					if (!$resql) {
+						$this->errors[] = $this->db->lasterror();
+						$error++;
+					} elseif (!$this->db->num_rows($resql)) {
+						$this->errors[] = $langs->trans('AssetErrorAccountancyCodeNotFound', $accountancy_code);
+						$error++;
+					}
+				}
+			}
+			if ($error) {
+				dol_syslog(__METHOD__ . " Error check accountancy codes: " . $this->errorsToString(), LOG_ERR);
+				return -1;
+			}
 		}
 
 		$this->db->begin();
