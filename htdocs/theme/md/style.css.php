@@ -4394,6 +4394,17 @@ img.toolbarbutton {
 li.expanded > a.fmdirlia.jqft.ecmjqft {
 	font-weight: bold !important;
 }
+/* Marker after the name of a directory that has sub directories: closed or open */
+li.lidirecmwithsubdir > a.fmdirlia::after {
+	content: "\25B8";
+	display: inline-block;	/* not underlined with the name */
+	padding-left: 6px;
+	opacity: 0.6;
+	font-weight: normal;
+}
+li.lidirecmwithsubdir.expanded > a.fmdirlia::after {
+	content: "\25BE";
+}
 
 .divfmdirlia {
 	width: calc(100% - 100px);

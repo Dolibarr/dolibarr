@@ -467,7 +467,8 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 
 						$nboflinesshown++;
 
-						print '<li class="directory '.$collapsedorexpanded.' lidirecm">'; // collapsed is opposite if expanded
+						// lidirecmwithsubdir: the directory has sub directories, the theme shows a marker after its name
+						print '<li class="directory '.$collapsedorexpanded.' lidirecm'.($nbofsubdir > 0 ? ' lidirecmwithsubdir' : '').'">'; // collapsed is opposite if expanded
 
 						//print '<div class="divfmdirlia inline-block">';	// Disabled, this break the javascrip component
 						print '<a class="fmdirlia jqft ecmjqft" href="';
