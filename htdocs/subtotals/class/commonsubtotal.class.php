@@ -882,13 +882,64 @@ trait CommonSubtotal
 
 	/**
 	 * Retrieve the background color associated with a specific subtotal level.
+	 * A positive level asks for the color of a title line (header of the block), a negative one
+	 * for the color of a subtotal line (footer of the block). When no color is defined for the
+	 * footer, the color of the header is used, so the behaviour stays the same as before the
+	 * footer color was introduced.
 	 *
 	 * @param int|float $level The level of the subtotal for which the color is requested.
-	 * @return string|null The background color in hexadecimal format or null if not set.
+	 * @return string The background color in hexadecimal format, empty if not set.
 	 */
 	public function getSubtotalColors($level)
 	{
-		return getDolGlobalString('SUBTOTAL_BACK_COLOR_LEVEL_'.abs($level));
+		$color = '';
+		if ($level < 0) {
+			$color = getDolGlobalString('SUBTOTAL_FOOT_COLOR_LEVEL_'.abs($level));
+		}
+		if (empty($color)) {
+			$color = getDolGlobalString('SUBTOTAL_BACK_COLOR_LEVEL_'.abs($level));
+		}
+		return $color;
+	}
+
+	/**
+	 * Retrieve the text color associated with a specific subtotal level.
+	 * A positive level asks for the color of a title line (header of the block), a negative one for the
+	 * color of a subtotal line (footer of the block). When no color is defined for the footer, the color
+	 * of the header is used. An empty return value means no color was set, so the caller decides one
+	 * from the background color, which is the behaviour of the module when no text color is configured.
+	 *
+	 * @param int|float $level The level of the subtotal for which the text color is requested.
+	 * @return string The text color in hexadecimal format, empty if not set.
+	 */
+	public function getSubtotalTextColors($level)
+	{
+		$color = '';
+		if ($level < 0) {
+			$color = getDolGlobalString('SUBTOTAL_FOOT_TEXT_COLOR_LEVEL_'.abs($level));
+		}
+		if (empty($color)) {
+			$color = getDolGlobalString('SUBTOTAL_TEXT_COLOR_LEVEL_'.abs($level));
+		}
+		return $color;
+	}
+
+	/**
+	 * Return the CSS color to use for the content of a subtotal line, ready to be put in a style
+	 * attribute. When no text color is configured for the level, a color is chosen from the background
+	 * color so the text stays readable.
+	 *
+	 * @param int|float	$level		Level of the subtotal line (>0 for a title line, <0 for a subtotal line)
+	 * @param string	$darkcolor	Color to use on a light background when no text color is configured
+	 * @return string				A CSS color
+	 */
+	public function getSubtotalCssTextColor($level, $darkcolor = 'black')
+	{
+		$color = $this->getSubtotalTextColors($level);
+		if (!empty($color)) {
+			return '#'.$color;
+		}
+		return colorIsLight($this->getSubtotalColors($level)) ? $darkcolor : 'white';
 	}
 
 	/**
