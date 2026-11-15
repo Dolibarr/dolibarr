@@ -1729,6 +1729,7 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 						if (empty($nolog)) {
 							dol_syslog("Removed file ".$filename, LOG_DEBUG);
 						}
+						dolDeleteFileVersions($filename);
 
 						// Delete entry into ecm database
 						$rel_filetodelete = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filename);
@@ -1786,6 +1787,7 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 				if (empty($nolog)) {
 					dol_syslog("Removed file ".$filename, LOG_DEBUG);
 				}
+				dolDeleteFileVersions($filename);
 
 				// Delete entry into ecm database
 				$rel_filetodelete = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filename);
@@ -1814,6 +1816,32 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 
 		return $ok;
 	}
+}
+
+/**
+ *  Remove the previous versions of a file, kept into the hidden sub directory .versions of its directory when the file
+ *  was replaced by an upload (see MAIN_DOCUMENT_KEEP_VERSIONS). The directory .versions is removed too once empty, so
+ *  it does not prevent the deletion of its parent directory.
+ *
+ *  @param	string	$file	Full path of the file that was deleted (filesystem encoded)
+ *  @return	void
+ *  @see archiveOrBackupFile()
+ */
+function dolDeleteFileVersions($file)
+{
+	$versionsdir = dirname($file).'/.versions';
+	if (basename(dirname($file)) == '.versions' || !is_dir($versionsdir)) {
+		return;
+	}
+	$listofversions = glob(str_replace(array('[', ']'), array('\[', '\]'), $versionsdir.'/'.basename($file)).'.v*');
+	if (is_array($listofversions)) {
+		foreach ($listofversions as $versionfile) {
+			if (preg_match('/\.v\d+$/', $versionfile)) {
+				@unlink($versionfile);
+			}
+		}
+	}
+	@rmdir($versionsdir);	// Fails, as expected, if other files still have versions
 }
 
 /**
@@ -2214,6 +2242,13 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
 						setEventMessages($langs->trans("ErrorFilenameReserved", $destfile), null, 'errors');
 						return -1;
 					}
+				}
+
+				// The file is replaced by the upload: keep a copy of the current one as a previous version, into the hidden
+				// sub directory .versions (named file.ext.v<timestamp>), if the option is on. A copy, so the current file
+				// is kept if the upload fails.
+				if ($allowoverwrite && getDolGlobalInt('MAIN_DOCUMENT_KEEP_VERSIONS') > 0 && dol_is_file($destfull)) {
+					archiveOrBackupFile($destfull, getDolGlobalInt('MAIN_DOCUMENT_KEEP_VERSIONS'), dirname($destfull).'/.versions', 'v', 'copy');
 				}
 
 				// Move file from source directory to final destination. Check for virus is also embedded and a .noexe may also be appended on file name.
@@ -3155,7 +3190,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	// Find the subdirectory name as the reference. For example original_file='10/myfile.pdf' -> refname='10'
 	if (empty($refname)) {
 		$refname = basename(dirname($original_file)."/");
-		if ($refname == 'thumbs' || $refname == 'temp') {
+		if ($refname == 'thumbs' || $refname == 'temp' || $refname == '.versions') {	// .versions: previous versions of the files of the object
 			// If we get the thumbs directory, we must go one step higher. For example original_file='10/thumbs/myfile_small.jpg' -> refname='10'
 			$refname = basename(dirname(dirname($original_file))."/");
 		}
@@ -4339,7 +4374,10 @@ JS;
 function archiveOrBackupFile($srcfile, $max_versions = 5, $archivedir = '', $suffix = "v", $moveorcopy = 'move')
 {
 	$base_file_pattern = ($archivedir ? $archivedir : dirname($srcfile)).'/'.basename($srcfile).".".$suffix;
-	$files_in_directory = glob($base_file_pattern . "*");
+	$files_in_directory = glob(str_replace(array('[', ']'), array('\[', '\]'), $base_file_pattern) . "*");
+	if (!is_array($files_in_directory)) {
+		$files_in_directory = array();
+	}
 
 	// Extract the modification timestamps for each file
 	$files_with_timestamps = [];
@@ -4358,7 +4396,9 @@ function archiveOrBackupFile($srcfile, $max_versions = 5, $archivedir = '', $suf
 
 		// Find the latest file by timestamp
 		foreach ($files_with_timestamps as $index => $file_info) {
-			if ($latest_file === null || (is_array($latest_file) && $file_info['timestamp'] > $latest_file['timestamp'])) {
+			// For backups made during the same second, the name (with a higher timestamp, see below) gives the latest
+			if ($latest_file === null || (is_array($latest_file) && ($file_info['timestamp'] > $latest_file['timestamp']
+				|| ($file_info['timestamp'] == $latest_file['timestamp'] && strnatcmp($file_info['file'], $latest_file['file']) > 0)))) {
 				$latest_file = $file_info;
 				$latest_index = $index;
 			}
@@ -4377,8 +4417,16 @@ function archiveOrBackupFile($srcfile, $max_versions = 5, $archivedir = '', $suf
 		}
 	}
 
+	// The backup is saved into $archivedir (if defined) with the suffix $suffix, as the files searched above
+	if ($archivedir && !dol_is_dir($archivedir)) {
+		dol_mkdir($archivedir);
+	}
 	$timestamp = dol_now('gmt');
-	$new_backup = $srcfile . ".v" . $timestamp;
+	// A backup made during the same second as the previous one must not replace it
+	while (file_exists(dol_osencode($base_file_pattern . $timestamp))) {
+		$timestamp++;
+	}
+	$new_backup = $base_file_pattern . $timestamp;
 
 	// Move or copy the original file to the new backup with the timestamp
 	if ($moveorcopy == 'move') {
