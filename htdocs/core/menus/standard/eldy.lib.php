@@ -1917,7 +1917,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 									&& (isModEnabled('asset') || isModEnabled('invoice') || isModEnabled('supplier_invoice'))) {
 									$nature = "various";
 								}
-								if ($objp->nature == 8 && isModEnabled('stock')) {
+								if ($objp->nature == 8 && isModEnabled('stock') && getDolGlobalString('ACCOUNTING_INVENTORY_MODE') && getDolGlobalString('ACCOUNTING_INVENTORY_MODE') != 'none') {
 									$nature = "inventory";
 								}
 								if ($objp->nature == 9) {

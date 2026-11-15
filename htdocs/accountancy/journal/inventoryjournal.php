@@ -61,7 +61,10 @@ if ($in_bookkeeping == '') {
 }
 $search_type_movement = GETPOST('search_type_movement', 'aZ09');
 if ($search_type_movement == '') {
-	$search_type_movement = 'all';
+	$search_type_movement = getDolGlobalString('ACCOUNTING_INVENTORY_MODE', 'all');
+	if ($search_type_movement == 'none' || $search_type_movement == '') {
+		$search_type_movement = 'all';
+	}
 }
 
 $now = dol_now();
@@ -574,6 +577,10 @@ if (empty($action) || $action == 'view') {
 	$varlink = 'id_journal='.$id_journal;
 
 	journalHead($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
+
+	if (!getDolGlobalString('ACCOUNTING_INVENTORY_MODE') || getDolGlobalString('ACCOUNTING_INVENTORY_MODE') == 'none') {
+		print '<br><div class="info">'.img_info().' '.$langs->trans("InventoryJournalDisabledHelp", dol_buildpath('/accountancy/admin/index.php?mainmenu=accountancy&leftmenu=accountancy_admin', 1)).'</div>';
+	}
 
 	if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') != 'blockedonclosed') {
 		$sql = "SELECT COUNT(rowid) as nb FROM ".$db->prefix()."accounting_fiscalyear WHERE entity = ".((int) $conf->entity);

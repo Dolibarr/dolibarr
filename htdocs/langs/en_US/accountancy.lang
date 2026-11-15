@@ -663,3 +663,11 @@ AllStockMovements=All stock movements (Increases & Decreases)
 StockDecreasesOnly=Stock decreases only (Shipments / Sales / COGS)
 StockIncreasesOnly=Stock increases only (Receptions / Purchases / Inputs)
 ByDefaultProductCogsAccount=By default, the account defined in Default Accounts (COGS) will be used if not defined on the product card.
+ACCOUNTING_INVENTORY_MODE=Mode to journalize stock movements
+ACCOUNTING_INVENTORY_MODE_Desc=Select how stock movements are journalized into the accounting General Ledger (Periodic inventory vs Perpetual inventory).
+PeriodicInventory=Periodic inventory
+PerpetualInventory=Perpetual inventory
+OptionModeNone=Disabled
+ShipmentsSalesCOGS=Shipments / Sales / COGS
+ReceptionsPurchases=Receptions / Purchases
+InventoryJournalDisabledHelp=Stock movement journalization is currently disabled. You can select an active mode in <a href="%s">Accounting - Setup - General</a>.

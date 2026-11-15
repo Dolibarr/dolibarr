@@ -452,7 +452,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					if ($objp->nature == 1 && (isModEnabled('asset') || isModEnabled('invoice') || isModEnabled('supplier_invoice'))) {
 						$nature = "various";
 					}
-					if ($objp->nature == 8 && isModEnabled('stock')) {
+					if ($objp->nature == 8 && isModEnabled('stock') && getDolGlobalString('ACCOUNTING_INVENTORY_MODE') && getDolGlobalString('ACCOUNTING_INVENTORY_MODE') != 'none') {
 						$nature = "inventory";
 					}
 					if ($objp->nature == 9) {
