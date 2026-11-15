@@ -8099,6 +8099,26 @@ td.gtaskheading.gstartdate, td.gtaskheading.genddate {
 	border-top: none;
 }
 
+/* Area where files can be dropped to upload them into the selected directory of the file manager (filemanager.tpl.php) */
+.dropzoneecm {
+	padding: 4px 12px;
+	border: 2px dashed var(--colortextlink);
+	border-radius: 6px;
+	color: var(--colortextlink);
+	opacity: 0.6;
+	white-space: nowrap;
+	cursor: copy;
+}
+.dropzoneecm ~ div {
+	display: inline-block;
+	vertical-align: middle;
+}
+.dropzoneecm.dropzoneecmover {
+	opacity: 1;
+	border-style: solid;
+	background-color: var(--colorbacklinepairhover);
+}
+
 /* ============================================================================== */
 /*  jFileTree                                                                     */
 /* ============================================================================== */

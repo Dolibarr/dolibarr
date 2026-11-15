@@ -96,6 +96,7 @@ $(document).ready(function() {
 			jQuery("#section_id").val(id);
 			jQuery("#section").val(id);
 			jQuery('#<?php echo $nameforformuserfile ?>').show();
+			jQuery('#<?php echo $nameforformuserfile ?>_dropzone').show();	// Area to drop files, see filemanager.tpl.php
 			console.log("We also execute the loadandshowpreview() that is on the onclick of each li defined by ajaxdirtree");
 		}
 		// The loadanshowpreview is also call by the 'onclick' set on each li return by ajaxdirtree

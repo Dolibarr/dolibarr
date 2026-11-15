@@ -231,7 +231,72 @@ if ((!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE
 	print '<!-- Start form to attach new file in filemanager.tpl.php sectionid='.$section.' sectiondir='.$sectiondir.' -->'."\n";
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 	$formfile = new FormFile($db);
-	print $formfile->form_attach_new_file($_SERVER["PHP_SELF"], 'none', 0, ($section ? $section : -1), $permtoupload, 48, null, '', 0, '', 0, $nameforformuserfile, '', $sectiondir, empty($formalreadyopen) ? 0 : $formalreadyopen, 0, 0, 1);
+	$formattachnewfile = $formfile->form_attach_new_file($_SERVER["PHP_SELF"], 'none', 0, ($section ? $section : -1), $permtoupload, 48, null, '', 0, '', 0, $nameforformuserfile, '', $sectiondir, empty($formalreadyopen) ? 0 : $formalreadyopen, 0, 0, 1);
+
+	// Area where files can be dropped: they are put into the form to attach a new file and the form is sent, so they
+	// are uploaded exactly as with the button Upload, into the selected directory. It is shown and hidden with the form
+	// (see enablefiletreeajax.tpl.php). Not on smartphones, where files can't be dragged.
+	if ($permtoupload && getDolGlobalString('MAIN_UPLOAD_DOC') && !empty($conf->use_javascript_ajax) && empty($conf->dol_optimize_smallscreen)) {
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+		$maxfilesizearray = getMaxFileSizeArray();
+		$maxuploadsize = (int) $maxfilesizearray['maxmin'] * 1024;
+		$hiddendropzone = ((empty($section) || $section == -1) && ($module != 'medias'));
+		print '<span id="'.$nameforformuserfile.'_dropzone" class="dropzoneecm inline-block valignmiddle marginrightonly"'.($hiddendropzone ? ' style="display: none"' : '').' title="'.dolPrintHTMLForAttribute($langs->trans("ECMDropFilesHereTitle")).'">';
+		print img_picto('', 'file-upload', 'class="pictofixedwidth"').$langs->trans("ECMDropFilesHere");
+		print '</span>';
+		print '<script>
+		jQuery(document).ready(function() {
+			var form = document.getElementById("'.dol_escape_js($nameforformuserfile).'");
+			var zone = document.getElementById("'.dol_escape_js($nameforformuserfile).'_dropzone");
+			var fileinput = form ? form.querySelector("input[type=file]") : null;
+			var sendit = form ? form.querySelector("input[name=sendit]") : null;
+			if (!zone || !fileinput || !sendit || fileinput.disabled) {
+				if (zone) { zone.remove(); }
+				return;
+			}
+			var maxsize = '.$maxuploadsize.';
+			zone.addEventListener("dragover", function(e) {
+				e.preventDefault();
+				e.dataTransfer.dropEffect = "copy";
+				zone.classList.add("dropzoneecmover");
+			});
+			zone.addEventListener("dragleave", function(e) {
+				if (!zone.contains(e.relatedTarget)) { zone.classList.remove("dropzoneecmover"); }
+			});
+			zone.addEventListener("drop", function(e) {
+				e.preventDefault();
+				zone.classList.remove("dropzoneecmover");
+				var files = e.dataTransfer ? e.dataTransfer.files : null;
+				if (!files || !files.length) { return; }
+				for (var i = 0; i < files.length; i++) {
+					if (maxsize > 0 && files[i].size > maxsize) {
+						alert("'.dol_escape_js($langs->transnoentitiesnoconv("ECMFileTooBigForUpload", '__FILE__', dol_print_size($maxuploadsize, 1, 1))).'".replace("__FILE__", files[i].name));
+						return;
+					}
+				}
+				/* Files with the name of a file already in the directory: replace them (OK) or do not upload them (Cancel) */
+				var existing = {};
+				document.querySelectorAll("#ecmfileview tr[data-filename]").forEach(function(tr) { existing[tr.getAttribute("data-filename")] = 1; });
+				var duplicates = Array.prototype.filter.call(files, function(f) { return existing[f.name]; }).map(function(f) { return f.name; });
+				var overwrite = form.querySelector("input[name=overwritefile]");
+				if (overwrite) { overwrite.checked = false; }
+				if (duplicates.length) {
+					if (confirm("'.dol_escape_js($langs->transnoentitiesnoconv("ECMFilesAlreadyExist", '__FILES__')).'".replace("__FILES__", duplicates.join(", ")))) {
+						if (overwrite) { overwrite.checked = true; }
+					} else {
+						var kept = new DataTransfer();
+						Array.prototype.forEach.call(files, function(f) { if (!existing[f.name]) { kept.items.add(f); } });
+						if (!kept.files.length) { return; }
+						files = kept.files;
+					}
+				}
+				fileinput.files = files;
+				sendit.click();	/* click and not submit(), so the name sendit is sent */
+			});
+		});
+		</script>';
+	}
+	print $formattachnewfile;
 } else {
 	print '&nbsp;';
 }
