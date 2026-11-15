@@ -331,8 +331,10 @@ function dol_print_object_info($object, $usetable = 0)
 		if (!empty($object->date_approve) || !empty($object->date_approval)) {
 			print ' - ';
 			print '<div class="valignmiddle inline-block">';
+			// date_approve and date_approval are not defined in all Dolibarr objects @phan-suppress-next-line PhanUndeclaredProperty
 			print dol_print_date($object->date_approve ? $object->date_approve : $object->date_approval, 'dayhour', 'tzserver');
 			if ($deltadateforuser) {
+				// date_approve and date_approval are not defined in all Dolibarr objects @phan-suppress-next-line PhanUndeclaredProperty
 				print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_approve ? $object->date_approve : $object->date_approval, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
 			}
 			print '</div>';
