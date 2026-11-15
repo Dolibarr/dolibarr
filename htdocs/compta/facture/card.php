@@ -1745,7 +1745,7 @@ if (empty($reshook)) {
 						$exp = new Expedition($db);
 						$exp->fetch($object->origin_id);
 						$exp->fetchObjectLinked();
-						if (is_array($exp->linkedObjectsIds['commande']) && count($exp->linkedObjectsIds['commande']) > 0) {
+						if (!empty($exp->linkedObjectsIds['commande']) && is_array($exp->linkedObjectsIds['commande'])) {	// A shipment without sales order (SHIPMENT_STANDALONE) has no linked order
 							foreach ($exp->linkedObjectsIds['commande'] as $key => $value) {
 								$object->linked_objects['commande'] = $value;
 							}
