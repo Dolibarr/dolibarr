@@ -9,7 +9,9 @@ SubTotalModuleDesc=Subtotal and title lines for certain documents
 #
 SubtotalSetup=Subtotals module setup
 MaxSubtotalLevel=Maximum level
-SubtotalLineBackColor=Level %s lines background color
+SubtotalBackColor=Background color
+SubtotalTextColor=Text color
+SubtotalFootColorScreenOnly=When empty, the subtotal line keeps the colors of its title line.
 NotSupportedByAllPDF=Will work with newer PDF but not with old ones %s
 SubtotalsPredefinedTitles=Subtotals predefined titles
 SubtotalsPredefinedTexts=Subtotals predefined texts
