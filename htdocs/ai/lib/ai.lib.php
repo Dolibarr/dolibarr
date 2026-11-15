@@ -487,6 +487,28 @@ function ai_log_request($db, $user, $query, array $response, $provider, float $t
 }
 
 /**
+ * Price (in/out, per 1M tokens, in the admin's own currency and contract) for a
+ * model, from the JSON map AI_MODEL_PRICES_JSON, e.g.
+ *   {"gemini-2.5-flash":{"in":0.30,"out":2.50},"default":{"in":1,"out":3}}
+ * Cost is computed at DISPLAY time, so a price update re-prices the history.
+ *
+ * @param string $model Model id as logged
+ * @return array{in:float,out:float}|null Price entry, or null when not configured
+ */
+function aiModelPrice($model)
+{
+	static $prices = null;
+	if ($prices === null) {
+		$prices = json_decode(getDolGlobalString('AI_MODEL_PRICES_JSON', '{}'), true);
+		if (!is_array($prices)) {
+			$prices = array();
+		}
+	}
+	$entry = $prices[$model] ?? ($prices['default'] ?? null);
+	return (is_array($entry) && isset($entry['in'], $entry['out'])) ? array('in' => (float) $entry['in'], 'out' => (float) $entry['out']) : null;
+}
+
+/**
  * Get list for AI summarize
  *
  * @return array<int|string,mixed>

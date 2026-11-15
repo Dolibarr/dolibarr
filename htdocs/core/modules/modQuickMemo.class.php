@@ -332,25 +332,10 @@ class modQuickMemo extends DolibarrModules
 		$this->menu[$r++] = array(
 			'fk_menu' => 'fk_mainmenu=tools',
 			'type' => 'left',
-			'titre' => 'Memo',
+			'titre' => 'Memos',
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth valignmiddle"'),
 			'mainmenu' => 'tools',
 			'leftmenu' => 'memo',
-			'url' => '/quickmemo/memo_list.php',
-			'langs' => 'quickmemo',
-			'position' => 1000 + $r,
-			'enabled' => 'isModEnabled("quickmemo")',
-			'perms' => '1',
-			'target' => '',
-			'user' => 2,
-			'object' => 'Memo'
-		);
-		$this->menu[$r++] = array(
-			'fk_menu' => 'fk_mainmenu=tools,fk_leftmenu=memo',
-			'type' => 'left',
-			'titre' => 'List Memo',
-			'mainmenu' => 'tools',
-			'leftmenu' => 'quickmemo_memo_list',
 			'url' => '/quickmemo/memo_list.php',
 			'langs' => 'quickmemo',
 			'position' => 1000 + $r,

@@ -31,6 +31,7 @@ RUN apt-get update \
 		php-ast \
 		php-curl \
 		php-mysql \
+		php-pgsql \
 		php-mbstring \
 		php-xml \
 		php-gd \
@@ -41,6 +42,7 @@ RUN apt-get update \
 		php-imagick \
 		php-cli \
 		pgloader \
+		postgresql-client \
 		python3 \
 		python3-pip \
 		shellcheck \

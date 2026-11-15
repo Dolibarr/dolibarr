@@ -46,6 +46,7 @@ require '../../../main.inc.php';
  * @var User $user
  */
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 
 $langs->loadLangs(array('errors', 'resource'));
 
@@ -58,6 +59,29 @@ $newenddatetime = GETPOST('newenddatetime', 'alpha');
 top_httphead('application/json');
 
 $response = array('error' => 0, 'message' => '');
+
+/**
+ * Return the hours the calendar views print in front of the label of an event of the hourly grids,
+ * for the given start and end. Those grids only hold events that begin and end on the same day, so
+ * the day to render is the day of the start.
+ *
+ * @param	ActionComm	$event	The event, used for its type only
+ * @param	int			$datep	Start of the event
+ * @param	int|string	$datef	End of the event, empty when it has none
+ * @return	string				The hours as the box shows them
+ */
+function agenda_event_hour_range_of_day($event, $datep, $datef)
+{
+	$event->date_start_in_calendar = $datep;
+	$event->date_end_in_calendar = $datef;
+
+	return agenda_event_hour_range(
+		$event,
+		dol_print_date($datep, '%Y', 'tzuserrel'),
+		dol_print_date($datep, '%m', 'tzuserrel'),
+		dol_print_date($datep, '%d', 'tzuserrel')
+	);
+}
 
 $object = new ActionComm($db);
 $result = $object->fetch($id);
@@ -138,6 +162,11 @@ if ($result <= 0) {
 					$response['error'] = 1;
 					$response['message'] = $object->formatResourceConflicts($conflicts, $langs);
 				} else {
+					// The box prints the hours in front of the label and only the server knows how they
+					// are formatted for this user, so hand back the ones it showed and the ones it must
+					// show now. The caller swaps the text of the box it already has on screen.
+					$response['oldhours'] = agenda_event_hour_range_of_day($object, $object->datep, $object->datef);
+
 					$object->datep = $newdatep;
 					$object->datef = $newdatef;
 
@@ -147,8 +176,10 @@ if ($result <= 0) {
 						$db->rollback();
 						$response['error'] = 1;
 						$response['message'] = $object->error;
+						unset($response['oldhours']);
 					} else {
 						$db->commit();
+						$response['newhours'] = agenda_event_hour_range_of_day($object, $newdatep, $newdatef);
 					}
 				}
 			}

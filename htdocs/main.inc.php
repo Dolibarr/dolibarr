@@ -1112,6 +1112,11 @@ if (!defined('NOLOGIN')) {
 		// New session for this login has started.
 		$error = 0;
 
+		// The authentication has just succeeded: a fresh session id, so an id known before the login (session fixation) is worth nothing
+		if (session_status() === PHP_SESSION_ACTIVE && !session_regenerate_id(true)) {
+			dol_syslog("Session id could not be regenerated after the login", LOG_WARNING);
+		}
+
 		// Store value into session (values always stored)
 		$_SESSION["dol_login"] = $user->login;
 		$_SESSION["dol_logindate"] = dol_now('gmt');

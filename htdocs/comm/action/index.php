@@ -800,6 +800,7 @@ function dolAgendaDayDrag(layer) {
 				el.setAttribute('data-agenda-start', newstart);
 				el.setAttribute('data-agenda-end', newstart + (oldend - oldstart));
 				el.style.top = newstart + 'px';
+				dolAgendaDayHours(el, data);
 				dolAgendaDayColumns(dolAgendaDayItems(newlayer));
 				if (newlayer !== oldlayer) {
 					dolAgendaDayColumns(dolAgendaDayItems(oldlayer));
@@ -811,6 +812,19 @@ function dolAgendaDayDrag(layer) {
 			});
 		}
 	});
+}
+function dolAgendaDayHours(el, data) {
+	// The box prints the hours in front of the title. Only the server knows how they are formatted for
+	// this user, so it hands back the string it printed and the one it must print now: swapping that
+	// exact prefix is safe whatever the format, and leaves the title, which may be truncated, alone.
+	if (!data || !data.oldhours || !data.newhours || data.oldhours === data.newhours) { return; }
+	var nodes = jQuery(el).find('a.cal_event_title').contents().filter(function () { return this.nodeType === 3; });
+	for (var i = 0; i < nodes.length; i++) {
+		if (nodes[i].nodeValue.indexOf(data.oldhours) === 0) {
+			nodes[i].nodeValue = data.newhours + nodes[i].nodeValue.slice(data.oldhours.length);
+			return;
+		}
+	}
 }
 function dolAgendaDaySnapEnd(el, boxheight) {
 	// Absolute 15 min snap of the new end, like dolAgendaDaySnapTop does for the start: a box is at
@@ -869,6 +883,7 @@ function dolAgendaDayResize(layer) {
 					return;
 				}
 				el.setAttribute('data-agenda-end', newend);
+				dolAgendaDayHours(el, data);
 				dolAgendaDayResizeHeight(el, newend - start);
 				dolAgendaDayColumns(dolAgendaDayItems(layerofel));
 				Dolibarr.tools.setEventMessage(dolAgendaGridCfg.msgsaved, 'mesgs');
@@ -1879,7 +1894,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 		// The grid, 1 px per minute, the same scale as the day view. Each day is its own layer, shifted up by
 		// the first hour shown because show_day_events() positions an event from midnight.
 		echo ' <tr class="trcalweekgrid">'."\n";
-		echo '  <td class="tdfordaytitle width100 tdtop">';
+		echo '  <td class="tdfordaytitle width100 valigntop nopaddingtopimp nopaddingbottomimp">';
 		print '<div class="agendaweekhours" style="position: relative; height: '.$gridheight.'px;">';
 		for ($h = $begin_h; $h < $end_h; $h++) {
 			print '<div class="agendadayhour small opacitymedium" style="position: absolute; left: 4px; top: '.((($h - $begin_h) * 60) + 2).'px;">'.dol_print_date($h * 3600, 'hour', 'gmt').'</div>';
@@ -1888,7 +1903,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 		echo "</td>\n";
 		for ($iter_day = 0; $iter_day < 7; $iter_day++) {
 			$dateint = $weekdates[$iter_day];
-			echo '  <td class="'.$weekdayinfo[$iter_day]['style'].' tdtop" valign="top">';
+			echo '  <td class="'.$weekdayinfo[$iter_day]['style'].' valigntop nopaddingtopimp nopaddingbottomimp" valign="top">';
 			print '<div class="agendadaygrid" style="position: relative; height: '.$gridheight.'px;">';
 			for ($h = $begin_h; $h < $end_h; $h++) {
 				foreach (array(0, 30) as $slotmin) {

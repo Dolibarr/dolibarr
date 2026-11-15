@@ -291,7 +291,7 @@ print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 $head = aiAdminPrepareHead();
 print dol_get_fiche_head($head, 'custom', $langs->trans($title), -1, "ai");
 
-$newcardbutton = dolGetButtonTitle($langs->trans('NewCustomPrompt'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=create', '', 1);
+$newcardbutton = dolGetButtonTitle($langs->trans('NewCustomPrompt'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=create', '', 1, array('morecss' => 'reposition'));
 /*
 $newbutton = '<a href="'.$_SERVER["PHP_SELF"].'?action=create" title="'.$langs->trans("NewCustomPrompt").'">';
 $newbutton .= img_picto('', 'add');
@@ -300,7 +300,18 @@ $newbutton .= '</a>';
 
 print '<br>';
 
-print load_fiche_titre($langs->trans("AIPromptForFeatures", $arrayofai[$aiservice]['label']), $newcardbutton, '');
+// Custom models
+if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
+	print load_fiche_titre($langs->trans("AIModelForFeature", $arrayofai[$aiservice]['label']), '', 'fa-brain');
+
+	print $formSetup->generateOutput(true);
+}
+
+print '<br>';
+print '<br>';
+print '<br>';
+
+print load_fiche_titre($langs->trans("AIPromptForFeatures", $arrayofai[$aiservice]['label']), $newcardbutton, 'fa-comment-dots');
 
 if ($action == 'deleteproperty') {
 	$formconfirm = $form->formconfirm(
@@ -417,14 +428,18 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 	if (empty($currentConfigurations)) {
 		if ($action != 'create') {
 			print '<!-- no custom prompt-->'."\n";
-			print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
-			print '<br>';
+			print '<table class="noborder centpercent">';
+			print '<tr class="liste_titre">';
+			print '<td>'.$langs->trans("CustomPromptTitle").'</td>';
+			print '</tr>';
+			print '<tr class="oddeven">';
+			print '<td><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
+			print '</tr>';
+			print '</table>';
 			print '<br>';
 		}
 		print '<br>';
 	} else {
-		print '<br>';
-
 		foreach ($currentConfigurations as $confkey => $config) {
 			if (!empty($confkey) && !preg_match('/^[a-z]+$/i', $confkey)) {	// Ignore empty saved setup
 				continue;
@@ -536,13 +551,6 @@ if (is_array($runfail) && !empty($runfail['model'])) {
 		}
 	}
 	print info_admin($msg, 0, 0, 'warning');
-}
-
-// Custom models
-if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
-	print load_fiche_titre($langs->trans("AIModelForFeature", $arrayofai[$aiservice]['label']), '', '');
-
-	print $formSetup->generateOutput(true);
 }
 
 // Test form of the OCR function, hidden by default and shown by clicking on the "Test OCR" button placed after
