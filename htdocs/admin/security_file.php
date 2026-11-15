@@ -103,6 +103,9 @@ if ($action == 'updateform') {
 
 		$res3 = dolibarr_set_const($db, 'MAIN_UPLOAD_DOC', GETPOST('MAIN_UPLOAD_DOC', 'alpha'), 'chaine', 0, '', $conf->entity);
 		$res4 = dolibarr_set_const($db, "MAIN_UMASK", $tmpumask, 'chaine', 0, '', $conf->entity);
+		if (dolibarr_set_const($db, "MAIN_DOCUMENT_RETENTION_YEARS", max(0, GETPOSTINT('MAIN_DOCUMENT_RETENTION_YEARS')), 'chaine', 0, '', $conf->entity) <= 0) {
+			$res4 = 0;
+		}
 		$res5 = dolibarr_set_const($db, "MAIN_ANTIVIRUS_COMMAND", trim($antivircommand), 'chaine', 0, '', $conf->entity);
 		$res6 = dolibarr_set_const($db, "MAIN_ANTIVIRUS_PARAM", trim($antivirparam), 'chaine', 0, '', $conf->entity);
 		$res7 = dolibarr_set_const($db, "MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION", GETPOST('MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION', 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -276,6 +279,16 @@ if (getDolGlobalString('MAIN_ANTIVIRUS_UPLOAD_ON')) {
 	print "</td>";
 	print '</tr>';
 }
+
+// Number of years to keep the documents: shown as a hint, nothing is deleted or blocked
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("DocumentRetentionYears").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("DocumentRetentionYearsDesc").'</span>';
+print '</td>';
+print '<td class="nowrap">';
+print '<input class="flat width75 right" name="MAIN_DOCUMENT_RETENTION_YEARS" type="number" min="0" spellcheck="false" value="'.getDolGlobalInt('MAIN_DOCUMENT_RETENTION_YEARS').'"> '.$langs->trans("Years");
+print '</td>';
+print '</tr>';
 
 print '</table>';
 print '</div>';

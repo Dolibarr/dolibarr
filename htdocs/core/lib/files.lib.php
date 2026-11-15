@@ -2491,6 +2491,31 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 }
 
 /**
+ *  Date until which a file should be kept, when a number of years to keep the documents is defined (option
+ *  MAIN_DOCUMENT_RETENTION_YEARS): the end of the fiscal year of the date of the file, plus this number of years.
+ *  Counting from the end of the fiscal year gives a date that is never earlier than the usual legal rules (for example
+ *  5 years after the record was made, or 10 years after the end of the fiscal year).
+ *
+ *  @param	int		$filedate	Date of the file (timestamp)
+ *  @return	int					Date until which the file should be kept (timestamp), or 0 if no number of years is defined
+ */
+function dolGetFileKeepUntilDate($filedate)
+{
+	$years = getDolGlobalInt('MAIN_DOCUMENT_RETENTION_YEARS');
+	if ($years <= 0 || empty($filedate)) {
+		return 0;
+	}
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+	$startmonth = max(1, min(12, getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1)));
+	$endmonth = ($startmonth == 1 ? 12 : $startmonth - 1);
+	$tmparray = dol_getdate((int) $filedate);
+	$endyear = ((int) $tmparray['mon'] > $endmonth ? (int) $tmparray['year'] + 1 : (int) $tmparray['year']);
+
+	return (int) dol_get_last_day($endyear + $years, $endmonth);
+}
+
+/**
  *  Delete files into database index using search criteria.
  *
  *  @param      string			$dir			Directory name (full real path without ending /)

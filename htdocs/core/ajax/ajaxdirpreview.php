@@ -587,6 +587,12 @@ if ($useajax) {
 	print '    console.log("We click on button with class deletefilelink, param='.$param.', we set urlfile to "+jQuery(this).attr("rel"));'."\n";
 	print '    jQuery("#urlfile").val(jQuery(this).attr("rel"));'."\n";
 	//print '    jQuery("#section_dir").val(\'aaa\');'."\n";
+	// The file may still have to be kept (number of years to keep the documents): add the warning to the question
+	print '    jQuery("#dialog-confirm-deletefile .deletefilekeepuntil").remove();'."\n";
+	print '    if (jQuery(this).attr("data-keepuntilwarning")) {'."\n";
+	print '      var dialogcontent = jQuery("#dialog-confirm-deletefile").children("div").first();'."\n";	// The question is into a first div that takes all the height of the dialog
+	print '      (dialogcontent.length ? dialogcontent : jQuery("#dialog-confirm-deletefile")).append(jQuery("<div class=\"deletefilekeepuntil warning margintoponly\"></div>").text(jQuery(this).attr("data-keepuntilwarning")));'."\n";
+	print '    }'."\n";
 	print '    jQuery("#dialog-confirm-deletefile").dialog("open");'."\n";
 	print '    return false;'."\n";
 	print '  });'."\n";

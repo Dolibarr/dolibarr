@@ -351,6 +351,17 @@ print '<tr><td class="titlefieldcreate">'.$langs->trans("ECMCreationDate").'</td
 print dol_print_date(dol_filemtime($fullpath), 'dayhour');
 print '</td></tr>';
 
+// Date until which the file should be kept (number of years to keep the documents)
+$keepuntil = dolGetFileKeepUntilDate((int) dol_filemtime($fullpath));
+if ($keepuntil) {
+	print '<tr><td>'.$form->textwithpicto($langs->trans("FileKeepUntil"), $langs->trans("FileKeepUntilHelp", getDolGlobalInt('MAIN_DOCUMENT_RETENTION_YEARS'))).'</td><td>';
+	print dol_print_date($keepuntil, 'day');
+	if ($keepuntil < dol_now()) {
+		print ' <span class="opacitymedium">('.$langs->trans("FileKeepUntilPassed").')</span>';
+	}
+	print '</td></tr>';
+}
+
 // Directory, to move the file into another one
 if ($action == 'edit') {
 	$formecm = new FormEcm($db);

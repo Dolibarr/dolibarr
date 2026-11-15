@@ -408,6 +408,8 @@ ErrorCantUseRazIfNoYearInMask=Error, can't use option @ to reset counter each ye
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Error, can't use option @ if sequence {yy}{mm} or {yyyy}{mm} is not in mask.
 UMask=UMask parameter for new files on Unix/Linux/BSD/Mac file system.
 UMaskExplanation=This parameter allow you to define permissions set by default on files created by Dolibarr on server (during upload for example).<br>It must be the octal value (for example, 0666 means read and write for everyone.). Recommended value is 0600 or 0660<br>This parameter is useless on a Windows server.
+DocumentRetentionYears=Number of years to keep documents (legal retention)
+DocumentRetentionYearsDesc=Shown as a hint only: the date until which each file should be kept is shown, and a warning is given before deleting a file that should still be kept. Nothing is deleted or blocked. The date is the end of the fiscal year of the file date, plus this number of years. 0 = not used.
 SeeWikiForAllTeam=Take a look at the Wiki page for a list of contributors and their organization
 UseACacheDelay= Delay for caching export response in seconds (0 or empty for no cache)
 DisableLinkToHelp=Hide the link to the online help "<b>%s</b>"
