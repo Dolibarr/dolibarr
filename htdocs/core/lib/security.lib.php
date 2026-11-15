@@ -869,7 +869,7 @@ function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file
 
 	// Find the subdirectory name as the reference
 	$refname = basename(dirname($original_file)."/");
-	if ($refname == 'thumbs' || $refname == 'temp') {
+	if ($refname == 'thumbs' || $refname == 'temp' || $refname == '.versions') {	// .versions: previous versions of the files of the object
 		$refname = basename(dirname(dirname($original_file))."/");
 	}
 

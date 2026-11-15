@@ -194,7 +194,7 @@ if ($action == 'refreshmanual' && $permissiontoread) {
 	$diroutputslash .= '/';
 
 	// Scan directory tree on disk
-	$disktree = dol_dir_list($conf->ecm->dir_output, 'directories', 1, '', '^temp$', '', 0, 0);
+	$disktree = dol_dir_list($conf->ecm->dir_output, 'directories', 1, '', array('^temp$', '^\.'), '', 0, 0);	// Hidden directories, like .versions, are not manual directories
 
 	// Scan directory tree in database
 	$treesqldir = $ecmdirstatic->get_full_arbo(0);

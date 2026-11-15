@@ -411,8 +411,9 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 				// All dirs
 				$nboflinesshown = 0;
 				foreach ($files as $file) {
-					// $file can be '.', '..', 'temp', or 'My dir' or 'My file'
-					if (in_array($file, array('temp', '.', '..'))) {
+					// $file can be '.', '..', 'temp', or 'My dir' or 'My file'. Hidden entries (like the directory .versions
+					// with the previous versions of the files) are not shown.
+					if (in_array($file, array('temp', '.', '..')) || strpos($file, '.') === 0) {
 						continue;
 					}
 

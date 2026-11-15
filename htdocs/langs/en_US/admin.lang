@@ -2808,6 +2808,8 @@ AttributeCodeHelp=A code of your choice (without special chars and spaces) to id
 WarningOnlineSignature=WARNING: Please note that this function allows a person (customer, supplier...) to insert, online, the image of his signature in the PDF document. As for a handwritten signature, such a signature can be made by anyone and does not have the same legal value as a legal electronic signature system going through an authorized trusted third party. If you need this level of security, you can contact an integrator for more information or check for addons on %s.
 UploadExtensionRestriction=List of forbidden file extensions to upload
 UploadExtensionRestrictionExemple=htm, html, shtml, js, php
+DocumentKeepVersions=Number of previous versions to keep when a file is replaced
+DocumentKeepVersionsDesc=When an upload replaces a file with the same name ("%s"), the current file is first kept as a previous version, which can be downloaded from the list of files. 0 = no previous versions are kept.
 Privileges=Privileges
 FieldsLinked=Fields Linked
 PDF_XXX_SHOW_PRICE_INCL_TAX=Show column Price including tax
