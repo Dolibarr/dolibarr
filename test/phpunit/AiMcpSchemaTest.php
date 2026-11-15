@@ -191,7 +191,9 @@ class AiMcpSchemaTest extends CommonClassTest
 	{
 		$refl = new ReflectionClass('ToolApiBridge');
 		$method = $refl->getMethod('liftInlineTags');
-		$method->setAccessible(true);
+		if (PHP_VERSION_ID < 80100) {
+			$method->setAccessible(true);
+		}
 		$bridge = $refl->newInstanceWithoutConstructor();
 
 		$constraints = [];

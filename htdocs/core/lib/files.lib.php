@@ -2037,8 +2037,9 @@ function dol_meta_create($object)
 				$nblines = 0;
 			}
 			$client = $object->thirdparty->name." ".$object->thirdparty->address." ".$object->thirdparty->zip." ".$object->thirdparty->town;
+			$objectdate = (property_exists($object, 'date') ? $object->date : '');	// @phan-suppress-current-line PhanUndeclaredProperty
 			$meta = "REFERENCE=\"".$object->ref."\"
-			DATE=\"" . dol_print_date($object->date, '')."\"
+			DATE=\"" . dol_print_date($objectdate, '')."\"
 			NB_ITEMS=\"" . $nblines."\"
 			CLIENT=\"" . $client."\"
 			AMOUNT_EXCL_TAX=\"" . $object->total_ht."\"
@@ -3112,11 +3113,17 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$modulepart = 'user';
 	} elseif ($modulepart == 'tva') {
 		$modulepart = 'tax-vat';
+	} elseif (($modulepart == 'action' || $modulepart == 'event') && empty($conf->$modulepart->dir_output)) {
+		// Aliases of the REST API are not used if a module with this name has its own directory
+		$modulepart = 'actions';
 	} elseif ($modulepart == 'expedition' && strpos($original_file, 'receipt/') === 0) {
 		// Fix modulepart delivery
 		$modulepart = 'delivery';
-	} elseif ($modulepart == 'propale') {
+	} elseif ($modulepart == 'propale' || ($modulepart == 'proposal' && empty($conf->$modulepart->dir_output))) {
 		$modulepart = 'propal';
+	} elseif ($modulepart == 'intervention' && empty($conf->$modulepart->dir_output)) {
+		// Aliases of the REST API are not used if a module with this name has its own directory
+		$modulepart = 'fichinter';
 	}
 
 	// If modulepart is composed of an objectpart@modulepart, we keep modulepart.
@@ -3133,6 +3140,17 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	$sqlprotectagainstexternals = '';
 	$ret = array();
 	$checksecureaccesshook = false;
+
+	// Security: Remove '.', '..' and empty segments ('/' -> '//') from $original_file. Without this, the reference
+	// of the object extracted from the subdirectory can be faked with a path like 'REF/./file' or 'REF//file':
+	// the reference resolved is '.' or '', the fetch of the object fails and some checks of permission are skipped.
+	$pathsegments = explode('/', $original_file);
+	foreach ($pathsegments as $key => $pathsegment) {
+		if ($pathsegment === '.' || $pathsegment === '..' || $pathsegment === '') {
+			unset($pathsegments[$key]);
+		}
+	}
+	$original_file = implode('/', $pathsegments);
 
 	// Find the subdirectory name as the reference. For example original_file='10/myfile.pdf' -> refname='10'
 	if (empty($refname)) {
@@ -3321,8 +3339,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			if ($refname && !$fuser->hasRight('holiday', 'readall') && !preg_match('/^specimen/i', $original_file)) {
 				include_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 				$tmpholiday = new Holiday($db);
-				$tmpholiday->fetch(0, $refname);
-				$accessallowed = checkUserAccessToObject($user, array('holiday'), $tmpholiday, 'holiday', '', '', 'rowid', '');
+				$resultfetch = $tmpholiday->fetch(0, $refname);
+				// If the object of the document can not be resolved, we refuse the access
+				$accessallowed = ($resultfetch > 0) ? checkUserAccessToObject($user, array('holiday'), $tmpholiday, 'holiday', '', '', 'rowid', '') : 0;
 			}
 		}
 		$original_file = $conf->holiday->dir_output.'/'.$original_file;
@@ -3353,8 +3372,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			if ($refname && !$fuser->hasRight('expensereport', 'readall') && !preg_match('/^specimen/i', $original_file)) {
 				include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 				$tmpexpensereport = new ExpenseReport($db);
-				$tmpexpensereport->fetch(0, $refname);
-				$accessallowed = checkUserAccessToObject($user, array('expensereport'), $tmpexpensereport, 'expensereport', '', '', 'rowid', '');
+				$resultfetch = $tmpexpensereport->fetch(0, $refname);
+				// If the object of the document can not be resolved, we refuse the access
+				$accessallowed = ($resultfetch > 0) ? checkUserAccessToObject($user, array('expensereport'), $tmpexpensereport, 'expensereport', '', '', 'rowid', '') : 0;
 			}
 		}
 		$original_file = $conf->expensereport->dir_output.'/'.$original_file;
@@ -3437,10 +3457,15 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			if ($refname && !preg_match('/^specimen/i', $original_file)) {
 				include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 				$tmpobject = new ActionComm($db);
-				$tmpobject->fetch((int) $refname);
-				$accessallowed = checkUserAccessToObject($user, array('agenda'), $tmpobject->id, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id', '');
-				if ($user->socid && $tmpobject->socid) {
-					$accessallowed = checkUserAccessToObject($user, array('societe'), $tmpobject->socid);
+				$resultfetch = $tmpobject->fetch((int) $refname);
+				if ($resultfetch > 0) {
+					$accessallowed = checkUserAccessToObject($user, array('agenda'), $tmpobject->id, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id', '');
+					if ($user->socid && $tmpobject->socid) {
+						$accessallowed = checkUserAccessToObject($user, array('societe'), $tmpobject->socid);
+					}
+				} else {
+					// If the event of the document can not be resolved, we refuse the access
+					$accessallowed = 0;
 				}
 			}
 		}
@@ -3618,8 +3643,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			if ($refname && !preg_match('/^specimen/i', $original_file)) {
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$tmpproject = new Project($db);
-				$tmpproject->fetch(0, $refname);
-				$accessallowed = checkUserAccessToObject($user, array('projet'), $tmpproject->id, 'projet&project', '', '', 'rowid', '');
+				$resultfetch = $tmpproject->fetch(0, $refname);
+				// If the project of the document can not be resolved, checkUserAccessToObject is skipped so we refuse the access
+				$accessallowed = ($resultfetch > 0) ? checkUserAccessToObject($user, array('projet'), $tmpproject->id, 'projet&project', '', '', 'rowid', '') : 0;
 			}
 		}
 		$original_file = $conf->project->multidir_output[$entity].'/'.$original_file;
@@ -3631,8 +3657,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			if ($refname && !preg_match('/^specimen/i', $original_file)) {
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 				$tmptask = new Task($db);
-				$tmptask->fetch(0, $refname);
-				$accessallowed = checkUserAccessToObject($user, array('projet_task'), $tmptask->id, 'projet_task&project', '', '', 'rowid', '');
+				$resultfetch = $tmptask->fetch(0, $refname);
+				// If the task of the document can not be resolved, checkUserAccessToObject is skipped so we refuse the access
+				$accessallowed = ($resultfetch > 0) ? checkUserAccessToObject($user, array('projet_task'), $tmptask->id, 'projet_task&project', '', '', 'rowid', '') : 0;
 			}
 		}
 		$original_file = $conf->project->multidir_output[$entity].'/'.$original_file;

@@ -393,6 +393,71 @@ class Opensurveyquestion extends CommonObject
 	}
 
 	/**
+	 * Return the respondents of a survey with their answers, in one query.
+	 *
+	 * @param	string	$idsondage	Id of the survey (id_sondage)
+	 * @return	array<int,array{id:int,name:string,date:int|string,ip:string,answers:array<int,string>}>|int<-1,-1>	Respondents with the id of the respondent as key (answers: value with the id of the question as key), or -1 if error
+	 */
+	public function fetchRespondents($idsondage)
+	{
+		$sql = "SELECT us.id_users, us.nom, us.ip, us.date_creation, fa.fk_question, fa.reponses";
+		$sql .= " FROM ".MAIN_DB_PREFIX."opensurvey_user_studs as us";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."opensurvey_user_formanswers as fa ON fa.fk_user_survey = us.id_users";
+		$sql .= " WHERE us.id_sondage = '".$this->db->escape($idsondage)."'";
+		$sql .= " ORDER BY us.id_users, fa.fk_question";
+
+		dol_syslog(get_class($this)."::fetchRespondents", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		$list = array();
+		while ($obj = $this->db->fetch_object($resql)) {
+			$idusers = (int) $obj->id_users;
+			if (!isset($list[$idusers])) {
+				$list[$idusers] = array('id' => $idusers, 'name' => (string) $obj->nom, 'date' => $this->db->jdate($obj->date_creation), 'ip' => (string) $obj->ip, 'answers' => array());
+			}
+			if ($obj->fk_question !== null) {
+				$list[$idusers]['answers'][(int) $obj->fk_question] = (string) $obj->reponses;
+			}
+		}
+		$this->db->free($resql);
+
+		return $list;
+	}
+
+	/**
+	 * Count the answers given to a question with a choice of answers (type radio or checkbox).
+	 *
+	 * @param	array<int,array{answers:array<int,string>}>	$respondents	Respondents, as returned by fetchRespondents()
+	 * @return	array{counts:array<string,int>,answered:int}				Number of respondents for each available answer, and number of respondents that answered the question
+	 */
+	public function countAnswers($respondents)
+	{
+		$counts = array();
+		foreach ($this->getAvailableAnswers() as $answer) {
+			$counts[$answer] = 0;
+		}
+
+		$answered = 0;
+		foreach ($respondents as $respondent) {
+			if (!isset($respondent['answers'][$this->id]) || $respondent['answers'][$this->id] === '') {
+				continue;
+			}
+			$answered++;
+			foreach (preg_split('/\n/', $respondent['answers'][$this->id]) as $value) {
+				if (isset($counts[$value])) {	// The answers that are not (any more) into the available answers are not counted
+					$counts[$value]++;
+				}
+			}
+		}
+
+		return array('counts' => $counts, 'answered' => $answered);
+	}
+
+	/**
 	 * Update the question into the database
 	 *
 	 * @return	int		Return integer <0 if KO, >0 if OK

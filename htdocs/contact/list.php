@@ -275,7 +275,7 @@ $arrayfields['region.nom'] = array('label' => "Region", 'position' => 67, 'check
 $arrayfields['country.code_iso'] = array('label' => "Country", 'position' => 68, 'checked' => '0');
 if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 	$arrayfields['s.nom'] = array('label' => "ThirdParty", 'position' => 113, 'checked' => '1');
-	$arrayfields['s.name_alias'] = array('label' => "AliasNameShort", 'position' => 114, 'checked' => '1');
+	$arrayfields['s.name_alias'] = array('label' => "AliasNameShort", 'position' => 114, 'checked' => '0');
 }
 
 $arrayfields['unsubscribed'] = array(
@@ -596,6 +596,10 @@ if ($search_priv != '0' && $search_priv != '1') {
 	if ($search_priv == '1') {
 		$sql .= " AND (p.priv='1' AND p.fk_user_creat=".((int) $user->id).")";
 	}
+}
+// An internal user who cannot see all third parties sees only contacts without third party or contacts of its third parties
+if (!$user->hasRight('societe', 'client', 'voir') && empty($socid)) {
+	$sql .= " AND (p.fk_soc IS NULL OR EXISTS (SELECT sc.fk_soc FROM ".$db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $user->id)."))";
 }
 // Search on sale representative
 if (!empty($search_sale) && $search_sale != '-1') {
@@ -1080,7 +1084,9 @@ if ($search_import_key != '') {
 	$param .= '&search_import_key='.urlencode($search_import_key);
 }
 if (count($search_roles) > 0) {
-	$param .= implode('&search_roles[]=', $search_roles);
+	foreach ($search_roles as $search_role) {
+		$param .= '&search_roles[]='.urlencode($search_role);
+	}
 }
 if ($search_birthday_start) {
 	$param .= '&search_birthday_start='.urlencode(dol_print_date($search_birthday_start, '%d')).'&search_birthday_startmonth='.urlencode(dol_print_date($search_birthday_start, '%m')).'&search_birthday_startyear='.urlencode(dol_print_date($search_birthday_start, '%Y'));
@@ -1090,6 +1096,11 @@ if ($search_birthday_end) {
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+
+// Add $param from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action);	// Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
 
 // List of mass actions available
 $arrayofmassactions = array(
@@ -1134,6 +1145,9 @@ $reshook = $hookmanager->executeHooks('printNewCardButton', $parameters, $object
 if (empty($reshook)) {
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+	if (empty($user->socid) && $contextpage != 'poslist') {	// Statistics are on all the contacts, so they are not available to external users
+		$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', dolBuildUrl(DOL_URL_ROOT.'/contact/stats/geo.php', ['mode' => 'contactbycountry']), '', 1, array('morecss' => 'reposition'));
+	}
 	$newcardbutton .= dolGetButtonTitleSeparator();
 	if ($contextpage != 'poslist') {
 		$newcardbutton .= dolGetButtonTitle($langs->trans('NewContactAddress'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?action=create', '', $permissiontoadd);
@@ -1209,9 +1223,12 @@ if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 	}
 }
 
-$moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= $formcompany->showRoles("search_roles", $objecttmp, 'edit', $search_roles, 'minwidth500', $langs->transnoentitiesnoconv('ContactRoles'));
-$moreforfilter .= '</div>';
+// Filter on contact roles is shown only if option is set (or if a filter on roles is already active, so it can be removed)
+if (getDolGlobalString('CONTACT_SHOW_FILTER_CONTACT_HAS_ROLE') || count($search_roles) > 0) {
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= $formcompany->showRoles("search_roles", $objecttmp, 'edit', $search_roles, 'minwidth500', $langs->transnoentitiesnoconv('ContactRoles'));
+	$moreforfilter .= '</div>';
+}
 
 print '<div class="liste_titre liste_titre_bydiv centpercent">';
 print $moreforfilter;

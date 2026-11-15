@@ -114,14 +114,14 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$error = 0;
 
-	$backurlforlist = dolBuildUrl('/webhook/target_list.php', ['mode' => 'modulesetup']);
+	$backurlforlist = dolBuildUrl(DOL_URL_ROOT.'/webhook/target_list.php', ['mode' => 'modulesetup']);
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = dolBuildUrl('/webhook/target_card.php', ['id' => ((!empty($id) && $id > 0) ? $id : '__ID__')]);
+				$backtopage = dolBuildUrl(DOL_URL_ROOT.'/webhook/target_card.php', ['id' => ((!empty($id) && $id > 0) ? $id : '__ID__')]);
 			}
 		}
 	}
@@ -185,7 +185,7 @@ if (empty($reshook)) {
 		if (empty($response['curl_error_no']) && $response['http_code'] >= 200 && $response['http_code'] < 300) {
 			setEventMessages($langs->trans("Success"), null);
 		} else {
-			$errormsg = "The WebHook for triggercode: ".$triggercode." failed to do the GET of URL ".$url." with httpcode=".(!empty($response['http_code']) ? $response['http_code'] : "")." curl_error_no=".(!empty($response['curl_error_no']) ? $response['curl_error_no'] : "");
+			$errormsg = "The WebHook for triggercode: ".$triggercode." failed to do the POST to URL ".$url." with httpcode=".(!empty($response['http_code']) ? $response['http_code'] : "")." curl_error_no=".(!empty($response['curl_error_no']) ? $response['curl_error_no'] : "");
 			setEventMessages($langs->trans($errormsg), null, 'errors');
 		}
 	}

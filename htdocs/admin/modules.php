@@ -90,6 +90,7 @@ $options['per_page']  		= 11;
 $options['no_page']   		= (GETPOSTINT('no_page') ? GETPOSTINT('no_page') : 1);
 $options['categorie'] 		= (GETPOSTINT('categorie') ? GETPOSTINT('categorie') : 0);
 $options['search']    		= GETPOST('search_keyword', 'alpha');
+$options['sortby']    		= GETPOST('sortby', 'aZ09');
 
 // If it is a new search, we reset page to 1
 if (GETPOST('buttonsubmit', 'alphanohtml', 2)) {
@@ -1424,36 +1425,15 @@ if ($mode == 'marketplace') {
 	print '</tr>';
 
 
-	// Source Community github
-	$url = 'https://github.com/Dolibarr/dolibarr-community-modules';
-
-	print '<tr class="oddeven nohover" height="100">'."\n";
-	print '<td class="hideonsmartphone center width150 nopaddingleftimp nopaddingrightimp"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth100" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg"></a></td>';
-	print '<td class="minwidth500imp smallonsmartphone"><span class="opacitymedium">'.$langs->trans("CommunityModulesDesc").'</span><br>';
-	print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
-	print '<td>';
-	print ajax_constantonoff('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY', array(), null, 0, 0, 1);
-	print '</td>';
-	print '<td class="center">';
-	if (!getDolGlobalString('MAIN_DISABLE_EXTERNALMODULES_COMMUNITY') && getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY')) {
-		$messagetoadd = '<br><br><span class="small">Content of the repository index file '.$remotestore->file_source_url.' should be in the local cache file '.$remotestore->cache_file;
-		$messagetoadd .= ' (Date: '.dol_print_date(dol_filemtime($remotestore->cache_file), 'dayhour', 'tzuserrel').')</span>';
-		if ($remotestore->githubFileError) {
-			$messagetoadd .= '<br><span class="error small">'.$remotestore->githubFileError.'</span>';
-		}
-		print $remotestore->libStatus($remotestore->githubFileStatus, 2, $messagetoadd);
-	}
-	print '</td>';
-	print '</tr>';
-
-
 	// Sources additional github repositories (defined by MAIN_ADD_EXTERNAL_MODULES_SOURCE)
 	foreach ($remotestore->custom_sources as $customsource) {
 		$url = $customsource['url'];
 
 		print '<tr class="oddeven nohover" height="100">'."\n";
 		print '<td class="hideonsmartphone center width150 nopaddingleftimp nopaddingrightimp"><a href="'.dol_escape_htmltag($url).'" target="_blank" rel="noopener noreferrer external">'.img_picto('', 'fa-code-branch', 'class="size2x"').'</a></td>';
-		print '<td class="minwidth500imp smallonsmartphone"><span class="opacitymedium">'.$langs->trans("AdditionalModulesSourceDesc").'</span><br>';
+		// Show 'Label - Description' of the source, or the generic description if the source was defined with the old format (no label)
+		$customsourcetitle = $customsource['label'].(($customsource['label'] !== '' && $customsource['description'] !== '') ? ' - ' : '').$customsource['description'];
+		print '<td class="minwidth500imp smallonsmartphone"><span class="opacitymedium">'.($customsourcetitle !== '' ? dolPrintLabel($customsourcetitle) : $langs->trans("AdditionalModulesSourceDesc")).'</span><br>';
 		print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.dol_escape_htmltag($url).'" target="_blank" rel="noopener noreferrer external">'.dol_escape_htmltag($url).'</a>';
 		if ($customsource['branch']) {
 			print '<!-- &nbsp; '.img_picto($langs->trans("Branch"), 'fa-code-branch', 'class="pictofixedwidth"').dol_escape_htmltag($customsource['branch']).' -->';
@@ -1477,6 +1457,29 @@ if ($mode == 'marketplace') {
 		print '</td>';
 		print '</tr>';
 	}
+
+
+	// Source Community github
+	$url = 'https://github.com/Dolibarr/dolibarr-community-modules';
+
+	print '<tr class="oddeven nohover" height="100">'."\n";
+	print '<td class="hideonsmartphone center width150 nopaddingleftimp nopaddingrightimp"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth100" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg"></a></td>';
+	print '<td class="minwidth500imp smallonsmartphone"><span class="opacitymedium">'.$langs->trans("CommunityModulesDesc").'</span><br>';
+	print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
+	print '<td>';
+	print ajax_constantonoff('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY', array(), null, 0, 0, 1);
+	print '</td>';
+	print '<td class="center">';
+	if (!getDolGlobalString('MAIN_DISABLE_EXTERNALMODULES_COMMUNITY') && getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY')) {
+		$messagetoadd = '<br><br><span class="small">Content of the repository index file '.$remotestore->file_source_url.' should be in the local cache file '.$remotestore->cache_file;
+		$messagetoadd .= ' (Date: '.dol_print_date(dol_filemtime($remotestore->cache_file), 'dayhour', 'tzuserrel').')</span>';
+		if ($remotestore->githubFileError) {
+			$messagetoadd .= '<br><span class="error small">'.$remotestore->githubFileError.'</span>';
+		}
+		print $remotestore->libStatus($remotestore->githubFileStatus, 2, $messagetoadd);
+	}
+	print '</td>';
+	print '</tr>';
 
 
 	// Source Marketplace DoliStore
@@ -1515,6 +1518,27 @@ if ($mode == 'marketplace') {
 	print "</table>\n";
 	print '</div>';
 
+	if ($remotestore->numberOfProviders == 0) {
+		// No provider online: explain, just under the providers, why there is no list of modules
+		$unreachablesources = array();
+		foreach ($remotestore->custom_sources as $customsource) {
+			if (getDolGlobalInt($customsource['const_enable'])) {
+				$unreachablesources[] = preg_replace('/^https?:\/\//', '', $customsource['url']);
+			}
+		}
+		if (getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY')) {
+			$unreachablesources[] = 'github.com/Dolibarr/dolibarr-community-modules';
+		}
+		if (getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_DOLISTORE')) {
+			$unreachablesources[] = 'DoliStore';
+		}
+		if (empty($unreachablesources)) {
+			print info_admin($langs->trans("MarketplaceNoProviderEnabled"), 0, 0, '1', '');
+		} else {
+			print info_admin($langs->trans("MarketplaceNoProviderReachable", dol_escape_htmltag(implode(', ', $unreachablesources))), 0, 0, 'warning', '');
+		}
+	}
+
 	print dol_get_fiche_end();
 
 	print '<br>';
@@ -1529,9 +1553,9 @@ if ($mode == 'marketplace') {
 
 		//print '<span class="opacitymedium hideonsmartphone">'.$langs->trans('DOLISTOREdescriptionLong').'</span><br><br>';
 
-		$categories_tree = $remotestore->getCategories($options['categorie']);		// Call API to get the categories
+		$products_list = $remotestore->getProducts($options, $modules);	// Get list of product from all sources. Done before getCategories() so category links keep the sort.
 
-		$products_list = $remotestore->getProducts($options, $modules);	// Get list of product from all sources
+		$categories_tree = $remotestore->getCategories($options['categorie']);		// Call API to get the categories
 
 		$previouslink = $remotestore->get_previous_link();
 
@@ -1546,6 +1570,18 @@ if ($mode == 'marketplace') {
 					<input type="hidden" name="page_y" value="">
 					<div class="divsearchfield">
 						<input name="search_keyword" placeholder="<?php echo $langs->trans('Keyword') ?>" id="search_keyword" type="text" class="minwidth200" value="<?php echo dolPrintHTMLForAttribute($options['search']) ?>" spellcheck="false">
+					</div>
+					<div class="divsearchfield">
+						<?php
+						$sortbyarray = array(
+							'datec_desc' => $langs->trans('MarketplaceSortNewest'),
+							'datec_asc' => $langs->trans('MarketplaceSortOldest'),
+							'label_asc' => $langs->trans('MarketplaceSortNameAsc'),
+							'label_desc' => $langs->trans('MarketplaceSortNameDesc'),
+						);
+						// Changing the sort submits the form with the search button, so the list goes back to page 1
+						print $form->selectarray('sortby', $sortbyarray, $remotestore->sortby, 0, 0, 0, 'onchange="this.form.elements[\'buttonsubmit\'].click()" title="'.dolPrintHTMLForAttribute($langs->trans('SortOrder')).'"', 0, 0, 0, '', 'minwidth150');
+						?>
 					</div>
 					<div class="divsearchfield">
 						<input name="buttonsubmit" class="button buttongen reposition" value="<?php echo $langs->trans('Search') ?>" type="submit">
