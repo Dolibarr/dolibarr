@@ -35,13 +35,11 @@ Also, note that we are a project developed by volunteers and have no funds for b
 ## Hunting vulnerabilities on Dolibarr
 
 We believe that the future of software is online SaaS. This means software is more and more critical and no technology is perfect. Working with skilled security researchers is crucial in identifying weaknesses in our technology.
-
 If you believe you've found a security bug in our service, we are happy to work with you to resolve the issue promptly.
-We plan to re-open our bug bounty program (closed at the end of 2024) in the future, but this is not yet available.
+However, our project is a community project and we can't provide any bounty or reward.
 
 Any type of denial-of-service attack is strictly forbidden, as well as any interference with network equipment and Dolibarr infrastructure.
-
-We recommend installing Dolibarr ERP CRM on your own server (like most Open Source software, download and use is free: [https://www.dolibarr.org/download](https://www.dolibarr.org/download)) to get access to every side of the application.
+So we recommend installing Dolibarr ERP CRM on your own server (like most Open Source software, download and use is free: [https://www.dolibarr.org/download](https://www.dolibarr.org/download)) to get access to every side of the application.
 
 
 ### User Agent

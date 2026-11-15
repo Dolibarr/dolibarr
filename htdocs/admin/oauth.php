@@ -444,6 +444,9 @@ if (count($listinsetup) > 0) {
 		print '<tr class="oddeven value">';
 		print '<td><label for="'.$key[2].'">'.$langs->trans("OAUTH_SECRET").'</label></td>';
 		print '<td><input type="password" size="100" id="'.$key[2].'" name="'.$key[2].'" value="'.getDolGlobalString($key[2]).'">';
+		if (getDolGlobalString($key[2])) {
+			print showEyeForField('eye'.$key[2], $key[2]);
+		}
 		print '</td>';
 		print '<td></td>';
 		print '</tr>';

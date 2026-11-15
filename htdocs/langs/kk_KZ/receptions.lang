@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=Тексерілді
 StatusReceptionProcessedShort=Өңделді
 ReceptionSheet=Қабылдау парағы
 ValidateReception=Қабылдауды растау
+DeleteReception=Delete reception
 ConfirmDeleteReception=Бұл қабылдауды шынымен жойғыңыз келе ме?
 ConfirmValidateReception=Are you sure you want to validate this reception with the reference <b>%s</b>?
 ConfirmCancelReception=Бұл қабылдаудан бас тартқыңыз келетініне сенімдісіз бе?

@@ -26,14 +26,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-include_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-include_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
-include_once DOL_DOCUMENT_ROOT.'/product/inventory/lib/inventory.lib.php';
-include_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
-include_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -41,6 +33,13 @@ include_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
  * @var Translate $langs
  * @var User $user
  */
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+include_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+include_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
+include_once DOL_DOCUMENT_ROOT.'/product/inventory/lib/inventory.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+include_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("stocks", "other", "productbatch"));
@@ -124,9 +123,10 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 	$paramwithsearch .= '&limit='.((int) $limit);
 }
 
-// Sort by warehouse/product or product/warehouse
-$sortfield .= ',' . ($sortfield == 'e.ref' ? 'p.ref' : 'e.ref') . ',id.batch,id.rowid';
-$sortorder .= ',' . $sortorder.",ASC,ASC";
+// Sort by warehouse/product or product/warehouse, in the SQL requests only: the form sends back $sortfield and $sortorder,
+// so adding the secondary sort to them would add it again at each submit.
+$sortfieldforsql = $sortfield . ',' . ($sortfield == 'e.ref' ? 'p.ref' : 'e.ref') . ',id.batch,id.rowid';
+$sortorderforsql = $sortorder . ',' . $sortorder.",ASC,ASC";
 
 if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$permissiontoadd = $user->hasRight('stock', 'creer');
@@ -160,12 +160,12 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$error = 0;
 
-	if ($action == 'cancel_record' && $permissiontoupdatestock) {
+	if ($action == 'cancel_record' && $confirm == 'yes' && $permissiontoupdatestock && $object->status == $object::STATUS_VALIDATED) {
 		$object->setCanceled($user);
 	}
 
 	// Close inventory by recording the stock movements
-	if ($action == 'update' && $permissiontoupdatestock && $object->status == $object::STATUS_VALIDATED) {
+	if ($action == 'update' && $confirm == 'yes' && $permissiontoupdatestock && $object->status == $object::STATUS_VALIDATED) {
 		$stockmovment = new MouvementStock($db);
 		$stockmovment->setOrigin($object->element, $object->id);
 
@@ -210,7 +210,17 @@ if (empty($reshook)) {
 				// Get the real quantity in stock now, but before the stock move for inventory.
 				$realqtynow = $product_static->stock_warehouse[$line->fk_warehouse]->real;
 				if (isModEnabled('productbatch') && $product_static->hasbatch()) {
-					$realqtynow = $product_static->stock_warehouse[$line->fk_warehouse]->detail_batch[$line->batch]->qty;
+					// Search the lot without case sensitivity, like the database (and the stock movement) does,
+					// otherwise a lot typed with another case is seen as empty and the full counted qty is added.
+					$realqtynow = 0;
+					if (!empty($product_static->stock_warehouse[$line->fk_warehouse]->detail_batch)) {
+						foreach ($product_static->stock_warehouse[$line->fk_warehouse]->detail_batch as $tmpbatchnumber => $tmpdetailbatch) {
+							if (dol_strtolower((string) $tmpbatchnumber) == dol_strtolower((string) $line->batch)) {
+								$realqtynow = $tmpdetailbatch->qty;
+								break;
+							}
+						}
+					}
 				}
 
 				if (!is_null($qty_view)) {
@@ -305,7 +315,7 @@ if (empty($reshook)) {
 		$sql .= ' LEFT JOIN ' . $db->prefix() . 'product as p ON id.fk_product = p.rowid';
 		$sql .= ' LEFT JOIN ' . $db->prefix() . 'entrepot as e ON id.fk_warehouse = e.rowid';
 		$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
-		$sql .= $db->order($sortfield, $sortorder);
+		$sql .= $db->order($sortfieldforsql, $sortorderforsql);
 		$sql .= $db->plimit($limit, $offset);
 
 		$db->begin();
@@ -381,6 +391,12 @@ if (empty($reshook)) {
 
 	$backurlforlist = DOL_URL_ROOT.'/product/inventory/list.php';
 	$backtopage = DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&page='.$page.$paramwithsearch;
+
+	// Action 'update' of this page is the recording of the inventory (done above or refused), never the
+	// generic update of the object: it would overwrite the fields of the inventory with empty values.
+	if ($action == 'update') {	// Test on permission not required, this only resets the action and does nothing
+		$action = '';
+	}
 
 	// Actions cancel, add, update, delete or clone
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -1073,7 +1089,7 @@ $sql .= ' FROM ' . $db->prefix() . 'inventorydet as id';
 $sql .= ' LEFT JOIN ' . $db->prefix() . 'product as p ON id.fk_product = p.rowid';
 $sql .= ' LEFT JOIN ' . $db->prefix() . 'entrepot as e ON id.fk_warehouse = e.rowid';
 $sql .= ' WHERE id.fk_inventory = ' . ((int) $object->id);
-$sql .= $db->order($sortfield, $sortorder);
+$sql .= $db->order($sortfieldforsql, $sortorderforsql);
 $sql .= $db->plimit($limit, $offset);
 
 $cacheOfProducts = array();

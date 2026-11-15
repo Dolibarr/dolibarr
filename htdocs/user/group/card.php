@@ -464,6 +464,10 @@ if ($action == 'create') {
 
 				$object->fetch($object->id, '', true);	// true to force load of all users, member of the group
 
+				// Allow modules to filter the members shown (the members of the group are not changed)
+				$parameters = array('members' => &$object->members);
+				$reshook = $hookmanager->executeHooks('filterGroupMembers', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
 				if (!empty($object->members)) {
 					foreach ($object->members as $useringroup) {
 						print '<tr class="oddeven">';

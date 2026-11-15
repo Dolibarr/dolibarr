@@ -256,7 +256,11 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			$sql .= $db->sanitize($tabrowid[$id]).",";
 		}
 		$sql .= $db->sanitize($tabfieldinsert[$id]);
-		$sql .= ",active)";
+		$sql .= ",active";
+		if (getDolGlobalInt('ACCOUNTING_ENABLE_MULTI_REPORT')) {
+			$sql .= ",fk_report";	// The group is created into the report currently selected
+		}
+		$sql .= ")";
 		$sql .= " VALUES(";
 
 		// List of values
@@ -278,7 +282,11 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			}
 			$i++;
 		}
-		$sql .= ",1)";
+		$sql .= ",1";
+		if (getDolGlobalInt('ACCOUNTING_ENABLE_MULTI_REPORT')) {
+			$sql .= ",".((int) max(1, $search_report));
+		}
+		$sql .= ")";
 
 		dol_syslog("actionadd", LOG_DEBUG);
 		$result = $db->query($sql);

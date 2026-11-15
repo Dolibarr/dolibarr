@@ -220,6 +220,10 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 .butActionDelete:hover {
 	box-shadow: 0px 0px 4px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
 }
+/* Keep the danger color on hover, just slightly darker (the inset of .butAction:hover is too dark for this light background) */
+.butAction.butActionDanger:hover {
+	box-shadow: 0px 0px 6px rgba(50,50,50,0.4), inset 0px 0px 200px rgba(0,0,0,0.06);
+}
 .button.button-cancel:hover:not(.buttongen) {
 	box-shadow: 0px 0px 4px 1px rgba(50, 50, 50, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
@@ -235,8 +239,22 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
   font-weight: 900;            /* obligatoire pour la version "solid" */
   font-size: 14px;				/* using 1em does not work */
   /* vertical-align: middle; */
+  display: inline-block;		/* required for transform on a pseudo element */
+  transform: rotate(90deg);
 }
 
+
+/* Button Email */
+#action-email .textbutton, .butAction.butActionEmail .textbutton {
+  font-size: 0;
+  display: inline-block;
+}
+#action-email .textbutton::before, .butAction.butActionEmail .textbutton::before {
+  content: "\f0e0";            /* fas fa-envelope */
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;            /* required for the "solid" version */
+  font-size: 14px;				/* using 1em does not work */
+}
 
 /* Button Delete */
 #action-delete .textbutton, .butAction.butActionDelete .textbutton {

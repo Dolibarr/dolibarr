@@ -65,6 +65,7 @@ DefaultPuttingPricesUpToDate=By default update prices with current known prices 
 DefaultPuttingDescUpToDate=By default update descriptions with current known descriptions on cloning a proposal
 UseCustomerContactAsPropalRecipientIfExist=Use contact/address with type 'Contact following-up proposal' if defined instead of third party address as proposal recipient address
 ConfirmClonePropal=Are you sure you want to clone the commercial proposal <b>%s</b>?
+CloneRefCustomerHelpPropal=Copy the customer reference of the proposal into the new proposal too.
 ConfirmReOpenProp=Are you sure you want to open back the commercial proposal <b>%s</b>?
 ProposalsAndProposalsLines=Commercial proposal and lines
 ProposalLine=Proposal line

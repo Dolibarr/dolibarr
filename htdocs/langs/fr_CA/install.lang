@@ -17,7 +17,6 @@ ServerAddressDescription=Nom ou adresse IP du serveur de base de données. Gén�
 DatabasePrefix=Préfixe de la table de base de données
 DatabasePrefixDescription=Préfixe de la table de base de données. Si vide, la valeur par défaut est llx_.
 AdminLogin=Compte utilisateur pour le propriétaire de la base de données Dolibarr.
-CreateUser=Créer un compte utilisateur ou accorder une autorisation de compte utilisateur sur la base de données Dolibarr
 CheckToCreateDatabase=Cochez la case si la base de données n'existe pas encore et doit donc être créée.<br>Dans ce cas, vous devez également renseigner le nom d'utilisateur et le mot de passe du compte superutilisateur en bas de cette page.
 CheckToCreateUser=Cochez la case si :<br>le compte utilisateur de la base de données n'existe pas encore et doit donc être créé, ou<br>si le compte utilisateur existe mais que la base de données n'existe pas et que des autorisations doivent être accordées.<br>Dans ce cas, vous devez saisir le compte utilisateur et le mot de passe ainsi que <b>également</b> le nom du compte superutilisateur et le mot de passe au bas de cette page. Si cette case n'est pas cochée, le propriétaire et le mot de passe de la base de données doivent déjà exister.
 DatabaseRootLoginDescription=Nom du compte superutilisateur (pour créer de nouvelles bases de données ou de nouveaux utilisateurs), obligatoire si la base de données ou son propriétaire n'existe pas déjà.

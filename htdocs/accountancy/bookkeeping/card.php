@@ -117,6 +117,7 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 
 $permissiontoadd = $user->hasRight('accounting', 'mouvements', 'creer');
 $permissiontodelete = $user->hasRight('accounting', 'mouvements', 'supprimer');
+$caneditalllabels = 0;
 $numRefModel = getDolGlobalString('BOOKKEEPING_ADDON', 'mod_bookkeeping_neon');
 
 /*
@@ -397,6 +398,69 @@ if (empty($reshook)) {
 				exit;
 			}
 		}
+	}
+
+	// Update the operation label on all transaction lines.
+	if ($action == 'confirm_setalllabels' && $confirm == 'yes' && $permissiontoadd) {
+		if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+			accessforbidden();
+		}
+
+		$newlabeloperation = trim(GETPOST('labeloperationforalllines', 'alphanohtml'));
+
+		if ($newlabeloperation === '') {
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('LabelOperation')), null, 'errors');
+		} else {
+			$db->begin();
+
+			$bookkeepinglabels = new BookKeeping($db);
+			$result = $bookkeepinglabels->fetchAllPerMvt($piece_num, $mode);
+
+			if ($result < 0) {
+				$error++;
+				setEventMessages($bookkeepinglabels->error, $bookkeepinglabels->errors, 'errors');
+			} elseif (empty($bookkeepinglabels->linesmvt)) {
+				$error++;
+				setEventMessages($langs->trans('NoRecordFound'), null, 'errors');
+			} else {
+				// Refuse the whole operation if any line is locked.
+				foreach ($bookkeepinglabels->linesmvt as $bookkeepingline) {
+					if (!empty($bookkeepingline->date_validation)) {
+						$error++;
+						setEventMessages($langs->trans('ForbiddenTransactionAlreadyValidated'), null, 'errors');
+						break;
+					}
+
+					if (!empty($bookkeepingline->date_export)) {
+						$error++;
+						setEventMessages($langs->trans('ForbiddenTransactionAlreadyExported'), null, 'errors');
+						break;
+					}
+				}
+			}
+
+			if (!$error) {
+				$result = $bookkeepinglabels->updateByMvt($piece_num, 'label_operation', $newlabeloperation, $mode);
+
+				if ($result < 0) {
+					$error++;
+					setEventMessages($bookkeepinglabels->error, $bookkeepinglabels->errors, 'errors');
+				}
+			}
+
+			if ($error) {
+				$db->rollback();
+			} else {
+				$db->commit();
+
+				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+
+				header('Location: '.$_SERVER['PHP_SELF'].'?piece_num='.(int) $piece_num.'&mode='.urlencode($mode).'&type='.urlencode($type).'&backtopage='.urlencode($backtopage));
+				exit;
+			}
+		}
+
+		$action = '';
 	}
 
 	if ($action == 'setdate' && $permissiontoadd) {
@@ -1141,13 +1205,38 @@ if ($action == 'create') {
 				}
 
 				print '</div>';
+
+				$caneditalllabels = $permissiontoadd && !$atleastonevalidated && !$atleastoneexported;
+
+				// Display the bulk label editing dialog.
+				if ($action == 'editalllabels' && $caneditalllabels) {
+					$currentlabeloperation = '';
+
+					foreach ($object->linesmvt as $bookkeepingline) {
+						$currentlabeloperation = $bookkeepingline->label_operation;
+						break;
+					}
+
+					$formquestion = array(
+						array(
+							'type' => 'text',
+							'name' => 'labeloperationforalllines',
+							'label' => $langs->trans('LabelOperation'),
+							'value' => GETPOSTISSET('labeloperationforalllines') ? GETPOST('labeloperationforalllines', 'alphanohtml') : $currentlabeloperation,
+						),
+					);
+
+					$confirm_url = $_SERVER['PHP_SELF'] .'?piece_num='.(int) $piece_num .'&mode='.urlencode($mode) .'&type='.urlencode($type) .'&backtopage='.urlencode($backtopage);
+
+					print $form->formconfirm($confirm_url, $langs->trans('UpdateAllOperationLabels'), $langs->trans('ConfirmUpdateAllOperationLabels'), 'confirm_setalllabels', $formquestion, '', 0);
+				}
 			}
 
 			// List of movements
 			print load_fiche_titre($langs->trans("ListeMvts"), '', '');
 
 			if (empty($object->date_validation)) {
-				print '<form action="' . $_SERVER["PHP_SELF"] . '?piece_num=' . ((int) $object->piece_num) . '" method="POST">';
+				print '<form action="' . $_SERVER["PHP_SELF"] . '?piece_num=' . ((int) $object->piece_num) . ($id > 0 ? '#bookkeeping-line-'.((int) $id) : '') . '" method="POST">';
 				if ($optioncss != '') {
 					print '<input type="hidden" name="optioncss" value="' . $optioncss . '">';
 				}
@@ -1175,7 +1264,16 @@ if ($action == 'create') {
 
 				print_liste_field_titre("AccountAccountingShort");
 				print_liste_field_titre("SubledgerAccount");
-				print_liste_field_titre("LabelOperation");
+				//print_liste_field_titre("LabelOperation");
+				print '<th>';
+				print $langs->trans('LabelOperation');
+				if ($caneditalllabels) {
+					$editalllabelsurl = $_SERVER['PHP_SELF'] .'?action=editalllabels&piece_num='.(int) $piece_num.'&mode='.urlencode($mode).'&type='.urlencode($type).'&backtopage='.urlencode($backtopage).'&token='.urlencode(newToken());
+					print ' <a class="editfielda reposition" href="'.dol_escape_htmltag($editalllabelsurl).'">';
+					print img_edit($langs->trans('UpdateAllOperationLabels'));
+					print '</a>';
+				}
+				print '</th>';
 				print_liste_field_titre("AccountingDebit", "", "", "", "", 'class="right"');
 				print_liste_field_titre("AccountingCredit", "", "", "", "", 'class="right"');
 				if (empty($object->date_validation)) {
@@ -1200,7 +1298,7 @@ if ($action == 'create') {
 					$total_credit += $line->credit;
 
 					if ($action == 'update' && $line->id == $id && empty($object->date_validation)) {
-						print '<tr class="oddeven" data-lineid="'.((int) $line->id).'">';
+						print '<tr class="oddeven" id="bookkeeping-line-'.((int) $line->id).'" style="scroll-margin-top: 150px;" data-lineid="'.((int) $line->id).'">';
 						print '<!-- td columns in edit mode -->';
 						print '<td>';
 						print $formaccounting->select_account((GETPOSTISSET("accountingaccount_number") ? GETPOST("accountingaccount_number", "alpha") : $line->numero_compte), 'accountingaccount_number', 1, array(), 1, 1, 'minwidth200 maxwidth500');
@@ -1211,8 +1309,8 @@ if ($action == 'create') {
 						print '<br><input type="text" class="maxwidth150" name="subledger_label" id="subledger_label" value="'.(GETPOSTISSET("subledger_label") ? GETPOST("subledger_label", "alpha") : $line->subledger_label).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccountLabel")).'">';
 						print '</td>';
 						print '<td><input type="text" class="minwidth200" name="label_operation" value="'.(GETPOSTISSET("label_operation") ? GETPOST("label_operation", "alpha") : $line->label_operation).'"></td>';
-						print '<td class="right"><input type="text" class="right width50" name="debit" value="'.(GETPOSTISSET("debit") ? GETPOST("debit", "alpha") : price($line->debit)).'"></td>';
-						print '<td class="right"><input type="text" class="right width50" name="credit" value="'.(GETPOSTISSET("credit") ? GETPOST("credit", "alpha") : price($line->credit)).'"></td>';
+						print '<td class="right"><input type="text" class="right width100" name="debit" value="'.(GETPOSTISSET("debit") ? GETPOST("debit", "alpha") : price($line->debit)).'"></td>';
+						print '<td class="right"><input type="text" class="right width100" name="credit" value="'.(GETPOSTISSET("credit") ? GETPOST("credit", "alpha") : price($line->credit)).'"></td>';
 						print '<td>';
 						print '<input type="hidden" name="id" value="'.$line->id.'">'."\n";
 						print '<input type="submit" class="button" name="update" value="'.$langs->trans("Update").'">';
@@ -1220,7 +1318,7 @@ if ($action == 'create') {
 						print "</tr>\n";
 					} elseif ((empty($line->numero_compte) || (empty($line->debit) && empty($line->credit))) && empty($object->date_validation)) {
 						if (($action == "" || $action == 'add') && $permissiontoadd) {
-							print '<tr class="oddeven" data-lineid="'.((int) $line->id).'">';
+							print '<tr class="oddeven" id="bookkeeping-line-'.((int) $line->id).'" style="scroll-margin-top: 150px;" data-lineid="'.((int) $line->id).'">';
 							print '<!-- td columns in add mode -->';
 							print '<td>';
 							print $formaccounting->select_account($action == 'add' ? GETPOST('accountingaccount_number') : '', 'accountingaccount_number', 1, array(), 1, 1, 'minwidth200 maxwidth500');
@@ -1230,13 +1328,13 @@ if ($action == 'create') {
 							print '<br><input type="text" class="maxwidth150" name="subledger_label" id="subledger_label" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccountLabel")) . '">';
 							print '</td>';
 							print '<td><input type="text" class="minwidth200" name="label_operation" value="' . dol_escape_htmltag($label_operation) . '"/></td>';
-							print '<td class="right"><input type="text" class="right width50" name="debit" value=""/></td>';
-							print '<td class="right"><input type="text" class="right width50" name="credit" value=""/></td>';
+							print '<td class="right"><input type="text" class="right width100" name="debit" value=""/></td>';
+							print '<td class="right"><input type="text" class="right width100" name="credit" value=""/></td>';
 							print '<td class="center"><input type="submit" class="button small" name="save" value="' . $langs->trans("Add") . '"></td>';
 							print "</tr>\n";
 						}
 					} else {
-						print '<tr class="oddeven" data-lineid="'.((int) $line->id).'">';
+						print '<tr class="oddeven" id="bookkeeping-line-'.((int) $line->id).'" style="scroll-margin-top: 150px;" data-lineid="'.((int) $line->id).'">';
 						print '<!-- td columns in display mode -->';
 						$resultfetch = $accountingaccount->fetch(0, $line->numero_compte, true);
 						print '<td>';
@@ -1258,7 +1356,7 @@ if ($action == 'create') {
 						print '<td class="center nowraponall">';
 						if ($permissiontoadd) {
 							if (empty($line->date_export) && empty($line->date_validation)) {
-								print '<a class="editfielda reposition" href="' . $_SERVER["PHP_SELF"] . '?action=update&id=' . $line->id . '&piece_num=' . ((int) $line->piece_num) . '&mode=' . urlencode((string) $mode) . '&token=' . urlencode(newToken()) . '">';
+								print '<a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=update&id=' . $line->id . '&piece_num=' . ((int) $line->piece_num) . '&mode=' . urlencode((string) $mode) . '&token=' . urlencode(newToken()) . '#bookkeeping-line-'.((int) $line->id).'">';
 								print img_edit('', 0, 'class="marginrightonly"');
 								print '</a> &nbsp;';
 							} else {

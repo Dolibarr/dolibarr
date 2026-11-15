@@ -138,7 +138,7 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 			return 0;
 		}
 
-		$numFinal = get_next_value($db, $mask, 'holiday', 'ref', '', $objsoc, $holiday->date_create);
+		$numFinal = get_next_value($db, $mask, 'holiday', 'ref', '', $objsoc, $holiday->date_creation);
 
 		return  $numFinal;
 	}

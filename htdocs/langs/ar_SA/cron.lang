@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = قراءة المهام المجدولة
-Permission23102 = إنشاء المهام المجدولة وتحديثها
-Permission23103 = حذف المهام المجدولة
-Permission23104 = تشغيل المهام المجدولة
 # Admin
 CronSetup=إعدادات إدارة المهام المجدولة
 URLToLaunchCronJobs=عنوان URL لفحص المهام المجدولة المستحقة وتشغيلها من المتصفح
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=في بيئة Unix، استخدم إدخال crontab ا�
 CronExplainHowToRunWin=في بيئة Microsoft™ Windows، يمكنك استخدام أدوات «المهام المجدولة» لتشغيل سطر الأوامر كل 5 دقائق
 CronMethodDoesNotExists=لا يحتوي الصنف %s على أي طريقة باسم %s
 CronMethodNotAllowed=الطريقة %s من الصنف %s مدرجة ضمن قائمة الطرق المحظورة
-CronJobDefDesc=تُعرّف قوالب المهام المجدولة في ملف واصف الوحدة. وعند تفعيل الوحدة، تُحمّل هذه القوالب وتصبح متاحة لإدارة المهام من قائمة أدوات الإدارة %s.
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=قائمة قوالب المهام المجدولة المعرّفة مسبقًا
 # Menu
 EnabledAndDisabled=المفعّلة والمعطّلة
@@ -27,7 +22,7 @@ CronDelete=حذف المهام المجدولة
 CronConfirmDelete=هل أنت متأكد من حذف هذه المهام المجدولة؟
 CronExecute=تشغيل الآن
 CronConfirmExecute=هل أنت متأكد من تشغيل هذه المهام المجدولة الآن؟
-CronInfo=تتيح وحدة المهام المجدولة جدولة المهام لتنفيذها تلقائيًا، كما يمكن تشغيلها يدويًا.
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=المهمة
 CronNone=موعد التشغيل التالي للمهمة المجدولة
 CronNotYetRan=لم تُنفّذ بعد
@@ -79,7 +74,7 @@ CronType_command=أمر Shell
 CronCannotLoadClass=تعذر تحميل ملف الصنف %s لاستخدام الصنف %s
 CronModuleNotEnabledInThisEntity=وحدة المهام المجدولة غير مفعّلة في هذا الكيان. لاستخدام الطريقة %s من الكائن %s، يجب تفعيل الوحدة.
 CronCannotLoadObject=تم تحميل ملف الصنف %s، لكن لم يُعثر فيه على الكائن %s
-UseMenuModuleToolsToAddCronJobs=انتقل إلى القائمة «<a href="%s">الرئيسية - أدوات الإدارة - المهام المجدولة</a>» لعرض المهام المجدولة وتعديلها.
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=المهمة معطّلة
 MakeLocalDatabaseDumpShort=نسخة احتياطية محلية لقاعدة البيانات
 MakeLocalDatabaseDump=إنشاء نسخة احتياطية محلية لقاعدة البيانات. المعاملات هي: نوع الضغط ('gz' أو 'bz' أو 'none')، ونوع النسخة الاحتياطية ('mysql' أو 'pgsql' أو 'auto')، والقيمة 1، ثم 'auto' أو اسم الملف المطلوب إنشاؤه، وعدد ملفات النسخ الاحتياطية المطلوب الاحتفاظ بها

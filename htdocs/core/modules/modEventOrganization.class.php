@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,6 +137,13 @@ class modEventOrganization extends DolibarrModules
 		// Constants
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 		$this->const = array(
+			[
+				"CONFERENCEORBOOTH_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/eventorganization",
+				"",
+				0,
+			],
 			[
 				'EVENTORGANIZATION_TASK_LABEL',
 				'chaine',

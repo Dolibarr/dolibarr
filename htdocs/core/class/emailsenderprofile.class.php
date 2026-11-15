@@ -183,7 +183,7 @@ class EmailSenderProfile extends CommonObject
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
-		global $hookmanager, $langs;
+		global $hookmanager;
 		$error = 0;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -201,7 +201,6 @@ class EmailSenderProfile extends CommonObject
 
 		// Clear fields
 		$object->ref = "copy_of_".$object->ref;
-		$object->title = $langs->trans("CopyOf")." ".$object->title;
 		// ...
 
 		// Create clone

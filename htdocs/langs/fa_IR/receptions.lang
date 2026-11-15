@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=تائیدشده
 StatusReceptionProcessedShort=پردازش‌شده
 ReceptionSheet=برگۀ دریافت‌کالا
 ValidateReception=Validate reception
+DeleteReception=Delete reception
 ConfirmDeleteReception=آیا می‌خواهید این دریافت‌کالا را حذف کنید؟
 ConfirmValidateReception=Are you sure you want to validate this reception with the reference <b>%s</b>?
 ConfirmCancelReception=یا مطمئنید می‌خواهید این دریافت‌کالا را لغو کنید؟

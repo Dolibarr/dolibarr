@@ -114,8 +114,8 @@ class Ctypent extends CommonDict
 			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
-		if (!$error) {
-			$this->id = $this->db->last_insert_id($this->db->prefix()."c_typent");
+		if (!$error && empty($this->id)) {
+			$this->id = $this->db->last_insert_id($this->db->prefix()."c_typent", 'id');	// When the id was given, last_insert_id() returns 0
 		}
 
 		// Commit or rollback

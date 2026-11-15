@@ -25,10 +25,9 @@
 
 global $conf, $user, $langs, $db, $mysoc;
 
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/modulebuilder.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/modulebuilder/class/AccessPolicyConfig.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -261,7 +260,7 @@ class ModuleBuilderTemplateConventionsTest extends CommonClassTest
 		}
 
 		$this->assertStringNotContainsString('COMMENTED STATUSCHANGE', $activated);
-		$this->assertMatchesRegularExpression('/^\h*print dolGetButtonAction\(.*Re-Open/m', $activated, 'Re-Open button is still commented out after activation');
+		$this->assertSame(1, preg_match('/^\h*print dolGetButtonAction\(.*Re-Open/m', $activated), 'Re-Open button is still commented out after activation');	// Not assertMatchesRegularExpression(), only available since PHPUnit 9.1
 		$this->assertPhpSourceIsParsable($activated, 'Card page is not parsable once Cancel / Re-Open is activated');
 	}
 
@@ -376,7 +375,7 @@ class ModuleBuilderTemplateConventionsTest extends CommonClassTest
 			$this->assertSame(1, substr_count($generated, $block), 'Policy block missing in '.$page);
 			$this->assertStringNotContainsString('MODULEBUILDER ACCESSPOLICY', $generated, 'Marker left in '.$page);
 			$this->assertStringNotContainsString('//restrictedArea(', $generated, 'Commented snippets left in '.$page);
-			$this->assertMatchesRegularExpression('/^if \(!\$permissiontoread\) \{\R\taccessforbidden\(\);/m', $generated, 'Default deny removed from '.$page);
+			$this->assertSame(1, preg_match('/^if \(!\$permissiontoread\) \{\R\taccessforbidden\(\);/m', $generated), 'Default deny removed from '.$page);	// Not assertMatchesRegularExpression(), only available since PHPUnit 9.1
 			$this->assertLessThan(strpos($generated, 'if (!$permissiontoread) {'."\n\taccessforbidden();"), strpos($generated, $block), 'Policy computed after the deny in '.$page);
 			$this->assertPhpSourceIsParsable($generated, $page.' is not parsable with an access policy');
 		}

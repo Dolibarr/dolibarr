@@ -497,7 +497,7 @@ class pdf_strato extends ModelePDFContract
 				}
 
 				// Add terms of sale
-				if (getDolGlobalString('MAIN_INFO_CONTRACT_TERMSOFSALE') && getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_CONTRACT')) {
+				if (getDolGlobalString('MAIN_INFO_CONTRACT_TERMSOFSALE') && $this->mustAddTermsOfSale($object, 'CONTRACT')) {
 					$termsofsalefilename = getDolGlobalString('MAIN_INFO_CONTRACT_TERMSOFSALE');
 					$termsofsale = $conf->contract->dir_output.'/'.$termsofsalefilename;
 					if (!empty($conf->contract->multidir_output[$object->entity ?? $conf->entity])) {

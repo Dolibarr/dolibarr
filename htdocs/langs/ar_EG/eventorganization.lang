@@ -67,7 +67,6 @@ EventRegistrationAreClosed=تم إغلاق التسجيل في الفعالية
 DateMustBeBeforeThan=%s يجب أن يكون قبل %s
 DateMustBeAfterThan=%s يجب أن يكون بعد %s
 MaxNbOfAttendeesReached=تم الوصول إلى الحد الأقصى لعدد المشاركين
-NewSubscription=تسجيل
 OrganizationEventBoothRequestWasReceived=تم استلام طلبك للحصول على جناح
 OrganizationEventPaymentOfBoothWasReceived=تم تسجيل دفعتك للجناح
 OrganizationEventBulkMailToAttendees=هذا تذكير بمشاركتك في الفعالية كمشارك

@@ -690,53 +690,10 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
-				// To
-				$destinataire = new User($db);
-				$destinataire->fetch($object->fk_user);
-				$emailTo = $destinataire->email;
-
-				if (!$emailTo) {
-					dol_syslog("User that request leave has no email, so we redirect directly to finished page without sending email");
-				} else {
-					// From
-					$expediteur = new User($db);
-					$expediteur->fetch($object->fk_validator);
-					//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
-					$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
-
-					// Subject
-					$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
-					if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-						$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
-					}
-
-					$subject = '['.$societeName."] ".$langs->transnoentitiesnoconv("HolidaysValidated");
-
-					// Content
-					$message = "<p>".$langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",</p>\n";
-
-					$message .= "<p>".$langs->transnoentities("HolidaysValidatedBody", dol_print_date($object->date_debut, 'day'), dol_print_date($object->date_fin, 'day'))."</p>\n";
-
-					$link = dol_buildpath('/holiday/card.php', 3).'?id='.$object->id;
-
-					$message .= "<ul>\n";
-					$message .= "<li>".$langs->transnoentitiesnoconv("ValidatedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."</li>\n";
-					$message .= "<li>".$langs->transnoentitiesnoconv("Link").' : <a href="'.$link.'" target="_blank">'.$link."</a></li>\n";
-					$message .= "</ul>\n";
-
-					$trackid = 'leav'.$object->id;
-
-					$sendtobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_HOLIDAY_TO');
-
-					$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', $sendtobcc, 0, 1, '', '', $trackid);
-
-					// Sending email
-					$result = $mail->sendfile();
-
-					if (!$result) {
-						setEventMessages($mail->error, $mail->errors, 'warnings'); // Show error, but do no make rollback, so $error is not set to 1
-						$action = '';
-					}
+				$result = $object->sendApprovalEmail();
+				if ($result < 0) {
+					setEventMessages($object->error, $object->errors, 'warnings'); // Show error, but do no make rollback, so $error is not set to 1
+					$action = '';
 				}
 			}
 
@@ -1026,12 +983,12 @@ if (empty($reshook)) {
 	 $autocopy='MAIN_MAIL_AUTOCOPY_HOLIDAY_TO';
 	 $trackid='leav'.$object->id;
 	 include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
-
-	 // Actions to build doc
-	 $upload_dir = $conf->holiday->dir_output;
-	 $permissiontoadd = $user->rights->holiday->creer;
-	 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 	 */
+
+	// Actions to build doc
+	$upload_dir = $conf->holiday->dir_output;
+	$permissiontoadd = ($user->hasRight('holiday', 'write') && $object->fk_user == $user->id) || $user->hasRight('holiday', 'writeall');
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
 
@@ -1580,7 +1537,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 				print '<tr>';
 				print '<td>'.$langs->trans('DateCreation').'</td>';
-				print '<td>'.dol_print_date($object->date_create, 'dayhour', 'tzuser').'</td>';
+				print '<td>'.dol_print_date($object->date_creation, 'dayhour', 'tzuser').'</td>';
 				print '</tr>';
 				if ($object->status == Holiday::STATUS_APPROVED || $object->status == Holiday::STATUS_CANCELED) {
 					print '<tr>';
@@ -1735,16 +1692,12 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			print '<a name="builddoc"></a>'; // ancre
 
 			// Documents
-			/* $includedocgeneration = 0;
-			if ($includedocgeneration) {
-				$objref = dol_sanitizeFileName($object->ref);
-				$relativepath = $objref.'/'.$objref.'.pdf';
-				$filedir = $conf->holiday->dir_output.'/'.$object->element.'/'.$objref;
-				$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-				$genallowed = ($user->hasRight('holiday', 'read') && $object->fk_user == $user->id) || $user->hasRight('holiday', 'readall'); // If you can read, you can build the PDF to read content
-				$delallowed = ($user->hasRight('holiday', 'write') && $object->fk_user == $user->id) || $user->hasRight('holiday', 'writeall'); // If you can create/edit, you can remove a file on card
-				print $formfile->showdocuments('holiday:Holiday', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
-			} */
+			$objref = dol_sanitizeFileName($object->ref);
+			$filedir = $conf->holiday->dir_output.'/'.$objref;
+			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
+			$genallowed = (int) (($user->hasRight('holiday', 'read') && $object->fk_user == $user->id) || $user->hasRight('holiday', 'readall')); // If you can read, you can build the PDF to read content
+			$delallowed = (int) (($user->hasRight('holiday', 'write') && $object->fk_user == $user->id) || $user->hasRight('holiday', 'writeall')); // If you can create/edit, you can remove a file on card
+			print $formfile->showdocuments('holiday:Holiday', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 
 			// Show links to link elements
 			//$tmparray = $form->showLinkToObjectBlock($object, null, array('myobject'), 1);

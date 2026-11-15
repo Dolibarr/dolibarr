@@ -43,6 +43,7 @@ require '../../main.inc.php';
  * @var string		$dolibarr_main_db_encrypted_pass
  * @var string		$dolibarr_website_allow_custom_php
  * @var string		$dolibarr_nocsrfcheck
+ * @var string		$dolibarr_main_disable_totp
  * @var string|string[]		$dolibarr_main_stream_to_disable
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -399,6 +400,12 @@ if (!empty($dolibarr_nocsrfcheck)) {
 	print '<br>';
 }
 
+if (!empty($dolibarr_main_disable_totp)) {
+	print '<strong>$dolibarr_main_disable_totp</strong>: '.dolPrintLabel($dolibarr_main_disable_totp);
+	print ' &nbsp; &nbsp;'.img_picto('', 'error').' '.$langs->trans("IfYouAreOnAProductionSetThis", 0);
+	print '<br>';
+}
+
 print '<strong>$dolibarr_main_restrict_ip</strong>: ';
 if (empty($dolibarr_main_restrict_ip)) {
 	print $langs->trans("None");
@@ -685,7 +692,7 @@ print '<br>';
 print '<strong>MAIN_SECURITY_FORCESTS</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCESTS', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": max-age=31536000; includeSubDomains)</span><br>";
 print '<br>';
 
-print '<strong>MAIN_SECURITY_FORCEPP</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCEPP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": camera=*, microphone=(), geolocation=*)</span><br>";
+print '<strong>MAIN_SECURITY_FORCEPP</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCEPP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": camera=*, microphone=(self), geolocation=*)</span><br>";
 print '<br>';
 
 if (getDolGlobalString('MAIN_SECURITY_FORCECSPRO')) {
@@ -823,7 +830,7 @@ print '<br>';
 print '<strong>MAIN_SECURITY_ANTI_SSRF_SERVER_IP</strong> = '.getDolGlobalString('MAIN_SECURITY_ANTI_SSRF_SERVER_IP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span> &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': List of static IPs of server separated with coma - '.$langs->trans("Note").': common loopback ip like 127.*.*.*, [::1] are already added)</span>')."<br>";
 print '<br>';
 
-print '<strong>MAIN_SECURITY_CSRF_WITH_TOKEN</strong> = '.getDolGlobalString('MAIN_SECURITY_CSRF_WITH_TOKEN', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 2)</span>'."<br>";
+print '<strong>MAIN_SECURITY_CSRF_WITH_TOKEN</strong> = '.getDolGlobalString('MAIN_SECURITY_CSRF_WITH_TOKEN', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 3)</span>'."<br>";
 
 print '</div>';
 

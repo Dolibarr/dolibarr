@@ -60,7 +60,8 @@ class FormCategory extends Form
 
 		$filter = '';
 		$filter .= '<div class="divsearchfield">';
-		$filter .= '<a class="unsetcolor" href="'.DOL_URL_ROOT.'/categories/categorie_list.php?mode=hierarchy&type='.urlencode($type).'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">';
+		// tabindex="-1" to keep the tag picto out of the tab order, the link remains clickable (same principle as tag pictos in Form::showCategories)
+		$filter .= '<a class="unsetcolor" tabindex="-1" href="'.DOL_URL_ROOT.'/categories/categorie_list.php?mode=hierarchy&type='.urlencode($type).'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">';
 		$filter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
 		$filter .= '</a>';
 		if ($multiselect) {

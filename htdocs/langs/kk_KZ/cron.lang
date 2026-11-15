@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = Жоспарланған жұмысты оқу
-Permission23102 = Жоспарланған тапсырманы жасаңыз/жаңартыңыз
-Permission23103 = Жоспарланған тапсырманы жою
-Permission23104 = Жоспарланған тапсырманы орындау
 # Admin
 CronSetup=Жұмысты басқаруды жоспарлау
 URLToLaunchCronJobs=Браузерден cron білікті тапсырмаларын тексеруге және іске қосуға арналған URL
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=Unix ортасында пәрмен жолын әр 5 �
 CronExplainHowToRunWin=Microsoft (tm) Windows ортасында сіз әрбір 5 минут сайын пәрмен жолын іске қосу үшін Жоспарланған тапсырмалар құралдарын пайдалана аласыз
 CronMethodDoesNotExists=%s сыныбында ешқандай әдіс жоқ %s
 CronMethodNotAllowed=%s сыныбының %s әдісі тыйым салынған әдістер тізімінде
-CronJobDefDesc=Cron жұмыс профильдері модуль дескриптор файлында анықталады. Модуль белсендірілгенде, олар жүктеледі және қол жетімді болады, осылайша сіз %s әкімші құралдарының мәзірінен тапсырмаларды басқара аласыз.
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=Алдын ала анықталған cron жұмыс профильдерінің тізімі
 # Menu
 EnabledAndDisabled=Қосылған және өшірілген
@@ -27,7 +22,7 @@ CronDelete=Жоспарланған тапсырмаларды жою
 CronConfirmDelete=Бұл жоспарланған тапсырмаларды шынымен жойғыңыз келе ме?
 CronExecute=Қазір іске қосыңыз
 CronConfirmExecute=Бұл жоспарланған тапсырмаларды дәл қазір орындағыңыз келе ме?
-CronInfo=Жоспарланған жұмыс модулі тапсырмаларды автоматты түрде орындау үшін оларды жоспарлауға мүмкіндік береді. Жұмыстарды қолмен де бастауға болады.
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=Жұмыс
 CronNone=Жоспарланған тапсырманың келесі іске қосылуы
 CronNotYetRan=Ешқашан орындалмаған
@@ -79,7 +74,7 @@ CronType_command=Shell командасы
 CronCannotLoadClass=%s сынып файлын жүктеу мүмкін емес (%s класын пайдалану үшін)
 CronModuleNotEnabledInThisEntity=Cron module not enabled in this entity (to use %s method of %s object)
 CronCannotLoadObject=%s сынып файлы жүктелді, бірақ оған %s нысаны табылмады
-UseMenuModuleToolsToAddCronJobs=Жоспарланған тапсырмаларды көру және өңдеу үшін «<a href="%s"> Басты бет - Әкімші құралдары - </a> жоспарланған тапсырмалар» мәзіріне өтіңіз.
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=Жұмыс өшірілген
 MakeLocalDatabaseDumpShort=Жергілікті дерекқордың резервтік көшірмесі
 MakeLocalDatabaseDump=Жергілікті мәліметтер қорының қоқысын жасаңыз. Параметрлер: қысу ('gz' немесе 'bz' немесе 'none'), сақтық көшірме түрі ('mysql', 'pgsql', 'auto'), 1, 'auto' немесе файл атауы, сақталатын резервтік файлдар саны

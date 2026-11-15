@@ -233,6 +233,17 @@ $(document).ready(function () {
 });
 </script>
 <?php } ?>
+<?php if (isModEnabled('ai')) { ?>
+<script>
+/* Login page reached (logout, session expired...): clear the AI chat conversations kept in sessionStorage */
+try {
+	for (var i = sessionStorage.length - 1; i >= 0; i--) {
+		var key = sessionStorage.key(i);
+		if (key && key.indexOf('aiChatHistory_') === 0) { sessionStorage.removeItem(key); }
+	}
+} catch (e) { /* storage not available */ }
+</script>
+<?php } ?>
 
 <div class="login_center center"<?php
 if (!getDolGlobalString('ADD_UNSPLASH_LOGIN_BACKGROUND')) {
@@ -296,8 +307,27 @@ if ($disablenofollow) {
 
 <div class="tagtable left centpercent" title="<?php echo $langs->trans("EnterLoginDetail"); ?>">
 
+<?php
+// Second step of a two-factor authentication: only the code is asked for. The login is posted back for the form test, main.inc.php reads it from the session.
+$totppending = !empty($_SESSION['dol_totp_pending']);
+if ($totppending) {
+	$langs->load("users");
+	?>
+<!-- Two-factor authentication code -->
+<div class="trinputlogin">
+<div class="tagtd nowraponall center valignmiddle tdinputlogin">
+	<?php if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+		?><label for="totpcode" class="hidden"><?php echo $langs->trans("TOTPEnterCode"); ?></label><?php
+	} ?>
+<span class="fa fa-key"></span>
+<input type="text" id="totpcode" maxlength="8" placeholder="<?php echo $langs->trans("TOTPEnterCode"); ?>" name="totpcode" class="flat input-icon-password minwidth150 input-nobottom" value="" tabindex="1" autofocus="autofocus" autocomplete="one-time-code" inputmode="numeric" spellcheck="false" />
+<input type="hidden" name="username" value="<?php echo dolPrintHTMLForAttribute($_SESSION['dol_totp_pending']['login']); ?>">
+</div>
+</div>
+<?php } ?>
+
 <!-- Login -->
-<?php if (!isset($conf->file->main_authentication) || $conf->file->main_authentication != 'googleoauth') { ?>
+<?php if (!$totppending && (!isset($conf->file->main_authentication) || $conf->file->main_authentication != 'googleoauth')) { ?>
 <div class="trinputlogin">
 <div class="tagtd nowraponall center valignmiddle tdinputlogin">
 	<?php if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
@@ -409,8 +439,11 @@ if (!empty($morelogincontent)) {
 if (isset($conf->file->main_authentication) && $conf->file->main_authentication == 'googleoauth') {
 	$forgetpasslink = '';
 }
+if ($totppending) {
+	$forgetpasslink = '';	// Replaced by a link to cancel the two-factor authentication step
+}
 
-if ($forgetpasslink || $helpcenterlink) {
+if ($forgetpasslink || $helpcenterlink || $totppending) {
 	$moreparam = '';
 	if ($dol_hide_topmenu) {
 		$moreparam .= (strpos($moreparam, '?') === false ? '?' : '&').'dol_hide_topmenu='.$dol_hide_topmenu;
@@ -427,6 +460,12 @@ if ($forgetpasslink || $helpcenterlink) {
 
 	echo '<br>';
 	echo '<div class="center" style="margin-top: 5px;">';
+	if ($totppending) {
+		// Back to the login and password form of the same page, main.inc.php removes the pending second step
+		echo '<a class="alogin alogincanceltotp" href="'.$php_self.'&amp;actionlogin=canceltotp&amp;token='.newToken().'">';
+		echo $langs->trans('Cancel');
+		echo '</a>';
+	}
 	if ($forgetpasslink) {
 		$url = DOL_URL_ROOT.'/user/passwordforgotten.php'.$moreparam;
 		if (getDolGlobalString('MAIN_PASSWORD_FORGOTLINK')) {
@@ -437,7 +476,7 @@ if ($forgetpasslink || $helpcenterlink) {
 		echo '</a>';
 	}
 
-	if ($forgetpasslink && $helpcenterlink) {
+	if (($forgetpasslink || $totppending) && $helpcenterlink) {
 		echo '&nbsp;-&nbsp;';
 	}
 
@@ -588,10 +627,6 @@ if (getDolGlobalString('MAIN_EASTER_EGG_COMMITSTRIP')) {
 	<?php
 }
 ?>
-
-<!-- authentication mode = <?php echo $main_authentication ?> -->
-<!-- cookie name used for this session = <?php echo $session_name ?> -->
-<!-- urlfrom in this session = <?php echo isset($_SESSION["urlfrom"]) ? $_SESSION["urlfrom"] : ''; ?> -->
 
 <!-- Common footer is not used for login page, this is same than footer but inside login tpl -->
 

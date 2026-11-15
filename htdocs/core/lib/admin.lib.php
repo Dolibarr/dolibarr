@@ -39,6 +39,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  */
 function versiontostring($versionarray)
 {
+	// Replace negative values (dev versions) with 0
+	foreach ($versionarray as $key => $val) {
+		if ((int) $val < 0) {
+			$versionarray[$key] = 0;
+		}
+	}
+
 	$string = '?';
 	if (isset($versionarray[0])) {
 		$string = $versionarray[0];
@@ -748,7 +755,7 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 	if (strcmp($value, '')) {	// true if different. Must work for $value='0' or $value=0
 		$tmpname = preg_replace('/(_TEST|_PROD)$/', '', $name);
 		if (!preg_match('/^(MAIN_LOGEVENTS|MAIN_AGENDA_ACTIONAUTO)/', $name)
-			&& (preg_match('/(_KEY|_EXPORTKEY|_SECUREKEY|_SERVERKEY|_PASS|_PASSWORD|_PW|_PW_TICKET|_PW_EMAILING|_SECRET|_TOKEN|_REFRESH)$/', $tmpname))) {
+			&& (preg_match('/(_KEY|_KEYFORHASH|_EXPORTKEY|_SECUREKEY|_SERVERKEY|_PASS|_PASSWORD|_PW|_PW_TICKET|_PW_EMAILING|_SECRET|_TOKEN|_REFRESH)$/', $tmpname))) {
 			// This seems a sensitive constant, we encrypt its value
 			// To list all sensitive constant, you can make a
 			// SELECT * from llx_const WHERE name like '%\_KEY' or name like '%\_EXPORTKEY' or name like '%\_SECUREKEY' ...
@@ -2626,14 +2633,14 @@ function GetContentPolicySources()
 		),
 		// Document directives
 		"document" => array(
-			"none" => array("label" => "self", "data-sourcetype" => "quoted"),
+			"none" => array("label" => "none", "data-sourcetype" => "quoted"),
 			"host-source" => array("label" => "host-source (*.mydomain.com)", "data-sourcetype" => "input"),
 			"self" => array("label" => "self", "data-sourcetype" => "quoted"),
 			"scheme-source" => array("label" => "scheme-source (*.mydomain.com)", "data-sourcetype" => "input"),
 		),
 		// Navigation directives
 		"navigation" => array(
-			"none" => array("label" => "self", "data-sourcetype" => "quoted"),
+			"none" => array("label" => "none", "data-sourcetype" => "quoted"),
 			"host-source" => array("label" => "host-source (*.mydomain.com)", "data-sourcetype" => "input"),
 			"self" => array("label" => "self", "data-sourcetype" => "quoted"),
 			"scheme-source" => array("label" => "scheme-source", "data-sourcetype" => "input"),

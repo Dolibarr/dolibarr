@@ -45,7 +45,7 @@ class modSalaries extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $user;
+		global $conf, $user; // $conf is required by the default value of SALARY_ADDON_PDF_ODT_PATH
 
 		$this->db = $db;
 		$this->numero = 510; // Perms from 501..519
@@ -98,6 +98,13 @@ class modSalaries extends DolibarrModules
 				"SALARIES_ACCOUNTING_ACCOUNT_CHARGE",
 				"chaine",
 				"641",
+				"",
+				0,
+			],
+			[
+				"SALARY_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/salaries",
 				"",
 				0,
 			]
@@ -185,11 +192,12 @@ class modSalaries extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_typepayment = cp.id';
 		$this->export_sql_end[$r] .= ' WHERE s.entity IN ('.getEntity('salary').')';
 		if (is_object($user) && !$user->hasRight('salaries', 'readall')) {
-			$childids = $user->getAllChildIds(1);
-			$this->export_sql_end[$r] .= ' AND s.fk_user IN ('.$this->db->sanitize(implode(',', $childids)).')';
-		}
-		if (is_object($user) && !$user->hasRight('salaries', 'readchild')) {
-			$this->export_sql_end[$r] .= ' AND s.fk_user = '.((int) $user->id);
+			if (!$user->hasRight('salaries', 'readchild')) {
+				$this->export_sql_end[$r] .= ' AND s.fk_user = '.((int) $user->id);
+			} else {
+				$childids = $user->getAllChildIds(1);
+				$this->export_sql_end[$r] .= ' AND s.fk_user IN ('.$this->db->sanitize(implode(',', $childids)).')';
+			}
 		}
 	}
 

@@ -209,7 +209,14 @@ if (GETPOSTISSET('template')) {
 								</div>
 							</div>';
 			} elseif ($template == "product") {
-				$product = getProductForEmailTemplate($Id);
+				// Ignore an empty choice (id '' or -1 when the selection is cleared) and a product not found
+				if ((int) $Id <= 0) {
+					continue;
+				}
+				$product = getProductForEmailTemplate((int) $Id);
+				if (!is_array($product) || empty($product['ref'])) {
+					continue;
+				}
 
 				$productList .= '<div style="width:100%; padding: 20px;">
 									<div>

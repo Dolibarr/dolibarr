@@ -49,7 +49,7 @@ class modQuickMemo extends DolibarrModules
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
-		$this->numero = 141916;
+		$this->numero = 55020;
 
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'quickmemo';
@@ -101,9 +101,9 @@ class modQuickMemo extends DolibarrModules
 		}
 		$compatibleHooks = array_unique($compatibleHooks);
 		// Security check
-		$compatibleHooks = array_filter($compatibleHooks, /** @return int|false */ static function (string $k) {
+		$compatibleHooks = array_values(array_filter($compatibleHooks, /** @return int|false */ static function (string $k) {
 			return preg_match('/^[a-zA-Z0-9_]+$/', $k);
-		});
+		}));
 
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
 		$this->module_parts = array(
@@ -332,25 +332,10 @@ class modQuickMemo extends DolibarrModules
 		$this->menu[$r++] = array(
 			'fk_menu' => 'fk_mainmenu=tools',
 			'type' => 'left',
-			'titre' => 'Memo',
+			'titre' => 'Memos',
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth valignmiddle"'),
 			'mainmenu' => 'tools',
 			'leftmenu' => 'memo',
-			'url' => '/quickmemo/memo_list.php',
-			'langs' => 'quickmemo',
-			'position' => 1000 + $r,
-			'enabled' => 'isModEnabled("quickmemo")',
-			'perms' => '1',
-			'target' => '',
-			'user' => 2,
-			'object' => 'Memo'
-		);
-		$this->menu[$r++] = array(
-			'fk_menu' => 'fk_mainmenu=tools,fk_leftmenu=memo',
-			'type' => 'left',
-			'titre' => 'List Memo',
-			'mainmenu' => 'tools',
-			'leftmenu' => 'quickmemo_memo_list',
 			'url' => '/quickmemo/memo_list.php',
 			'langs' => 'quickmemo',
 			'position' => 1000 + $r,

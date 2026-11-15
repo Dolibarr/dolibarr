@@ -10,6 +10,7 @@
  * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2025       Lenin Rivas			<lenin.rivas777@gmail.com>
  * Copyright (C) 2026		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,15 +127,15 @@ print '</th>';
 // Price HT / excl tax
 print '<th class="linecoluht right nowraponall">'.$langs->trans('PriceUHT').'</th>';
 
+// Price TTC / incl tax
+if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
+	print '<th class="linecoluttc right nowraponall">'.$langs->trans('PriceUTTC').'</th>';
+}
+
 // Multicurrency HT / excl tax
 if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) {
 	print '<th class="linecoluht_currency right" style="width: 80px">'.$langs->trans('PriceUHT');
 	print '&nbsp;<span class="opacitymedium">('.$langs->getCurrencySymbol($this->multicurrency_code).')</span></th>';
-}
-
-// Price TTC / incl tax
-if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
-	print '<th class="linecoluttc right nowraponall">'.$langs->trans('PriceUTTC').'</th>';
 }
 
 // Multicurrency TTC / incl tax
@@ -148,7 +149,8 @@ print '<th class="linecolqty right">'.$langs->trans('Qty').'</th>';
 
 //ShippableStatus
 if ($object->element == 'commande' && isModEnabled('stock') && isModEnabled('shipping') && !getDolGlobalString('ORDER_DISABLE_SHIPPABLE_ICON_ON_CARD') && ($object->status > 0 && $object->status < 3)) {
-	print '<th class="linecolstock center" style="width: 30px;">'.$langs->trans("ShippableStatus").'</th>';
+	$langs->load("stocks");
+	print '<th class="linecolstock center nowraponall" title="'.dol_escape_htmltag($langs->trans("Stock").' / '.$langs->trans("VirtualStock")).'">'.$langs->trans("ShippableStatus").'</th>';
 }
 
 // Unit
@@ -195,7 +197,7 @@ if (property_exists($this, 'situation_cycle_ref') && isset($this->situation_cycl
 		}
 	}
 	print '</th>';
-	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+	if (getDolGlobalInt('INVOICE_USE_SITUATION') > 1) {
 		print '<th class="linecolcycleref2 right">' . $langs->trans('SituationInvoiceProgressCurrent') . '</th>';
 	}
 	print '<th class="linecolcycleref2 right">'.$form->textwithpicto($langs->trans('TotalHT100Short'), $langs->trans('UnitPriceXQtyLessDiscount')).'</th>';

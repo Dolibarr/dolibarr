@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=E vërtetuar
 StatusReceptionProcessedShort=Të përpunuara
 ReceptionSheet=Fletë pritjeje
 ValidateReception=Vërtetoni pritjen
+DeleteReception=Delete reception
 ConfirmDeleteReception=Je i sigurt që dëshiron ta fshish këtë pritje?
 ConfirmValidateReception=Are you sure you want to validate this reception with the reference <b>%s</b>?
 ConfirmCancelReception=Je i sigurt që dëshiron ta anulosh këtë pritje?

@@ -207,6 +207,7 @@ $head = agenda_prepare_head();
 
 print dol_get_fiche_head($head, 'other', $langs->trans("Agenda"), -1, 'action');
 
+print "<br>\n";
 
 /*
  *  Miscellaneous

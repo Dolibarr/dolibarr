@@ -293,7 +293,7 @@ include DOL_DOCUMENT_ROOT . '/core/actions_sendmails.inc.php';
  *	View
  */
 
-$title = $langs->trans('Delivery');
+$title = $langs->trans('DeliveryOrder');
 
 llxHeader('', $title, 'Livraison', '', 0, 0, '', '', '', 'mod-delivery page-card');
 

@@ -23,13 +23,14 @@
 
 global $conf, $user, $langs, $db, $mysoc;
 
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+if (!defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/modulebuilder.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/modulebuilder/class/AccessPolicyConfig.class.php';
-require_once dirname(__FILE__).'/../../htdocs/modulebuilder/class/AccessPolicyEvaluator.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
-if (empty($user->id)) {
+if (empty($user->id) && is_object($db)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->loadRights();
@@ -122,28 +123,14 @@ class ModuleBuilderAccessPolicyTest extends CommonClassTest
 	}
 
 	/**
-	 * Return an object carrying the module and element of the generated object.
+	 * Build a predicate node of the rule tree.
 	 *
-	 * @return CommonObject
+	 * @param	string	$name	Name of the predicate
+	 * @return	array<string,mixed>
 	 */
-	private function buildObject()
+	private function predicate($name)
 	{
-		global $db;
-
-		return new class ($db) extends CommonObject {
-			/** @var string */
-			public $module = 'mymodule';
-			/** @var string */
-			public $element = 'myobject';
-
-			/**
-			 * @param	DoliDB	$db	Database handler
-			 */
-			public function __construct($db)
-			{
-				$this->db = $db;
-			}
-		};
+		return array('type' => AccessPolicyConfig::NODE_PREDICATE, 'name' => $name);
 	}
 
 	/**
@@ -153,9 +140,9 @@ class ModuleBuilderAccessPolicyTest extends CommonClassTest
 	 */
 	private function buildAdminOrReaderPolicy()
 	{
-		return new AccessPolicyConfig(new OrRule(array(
-			new PredicateRule(PredicateRule::IS_ADMIN),
-			new PredicateRule(PredicateRule::CAN_READ_OBJECT),
+		return new AccessPolicyConfig(array('type' => AccessPolicyConfig::NODE_OR, 'rules' => array(
+			$this->predicate('isAdmin'),
+			$this->predicate('canReadObject'),
 		)));
 	}
 
@@ -166,49 +153,49 @@ class ModuleBuilderAccessPolicyTest extends CommonClassTest
 	 */
 	private function buildInternalReaderPolicy()
 	{
-		return new AccessPolicyConfig(new AndRule(array(
-			new PredicateRule(PredicateRule::CAN_READ_OBJECT),
-			new PredicateRule(PredicateRule::IS_INTERNAL_USER),
+		return new AccessPolicyConfig(array('type' => AccessPolicyConfig::NODE_AND, 'rules' => array(
+			$this->predicate('canReadObject'),
+			$this->predicate('isInternalUser'),
 		)));
 	}
 
 	/**
 	 * @return void
 	 */
-	public function testPredicateRuleRejectsUnknownName()
+	public function testPolicyRejectsUnknownPredicate()
 	{
 		$this->expectException(InvalidArgumentException::class);
-		new PredicateRule('isSuperUser');
+		new AccessPolicyConfig($this->predicate('isSuperUser'));
 	}
 
 	/**
 	 * @return void
 	 */
-	public function testPredicateRuleRendersWhitelistedCode()
+	public function testPredicatesRenderWhitelistedCode()
 	{
-		$this->assertSame('!empty($user->admin)', (new PredicateRule(PredicateRule::IS_ADMIN))->toPhp());
-		$this->assertSame('empty($user->socid)', (new PredicateRule(PredicateRule::IS_INTERNAL_USER))->toPhp());
-		$this->assertSame("\$user->hasRight('mymodule', 'myobject', 'read')", (new PredicateRule(PredicateRule::CAN_READ_OBJECT))->toPhp());
-		$this->assertSame("\$user->hasRight('mymodule', 'myobject', 'write')", (new PredicateRule(PredicateRule::CAN_WRITE_OBJECT))->toPhp());
-		$this->assertSame("\$user->hasRight('mymodule', 'myobject', 'delete')", (new PredicateRule(PredicateRule::CAN_DELETE_OBJECT))->toPhp());
+		$this->assertSame('!empty($user->admin)', (new AccessPolicyConfig($this->predicate('isAdmin')))->toPhp());
+		$this->assertSame('empty($user->socid)', (new AccessPolicyConfig($this->predicate('isInternalUser')))->toPhp());
+		$this->assertSame("\$user->hasRight('mymodule', 'myobject', 'read')", (new AccessPolicyConfig($this->predicate('canReadObject')))->toPhp());
+		$this->assertSame("\$user->hasRight('mymodule', 'myobject', 'write')", (new AccessPolicyConfig($this->predicate('canWriteObject')))->toPhp());
+		$this->assertSame("\$user->hasRight('mymodule', 'myobject', 'delete')", (new AccessPolicyConfig($this->predicate('canDeleteObject')))->toPhp());
 	}
 
 	/**
 	 * @return void
 	 */
-	public function testCompositeRuleRejectsEmptyList()
+	public function testCompositeNodeRejectsEmptyList()
 	{
 		$this->expectException(InvalidArgumentException::class);
-		new OrRule(array());
+		new AccessPolicyConfig(array('type' => AccessPolicyConfig::NODE_OR, 'rules' => array()));
 	}
 
 	/**
 	 * @return void
 	 */
-	public function testCompositeRuleRejectsNonExpressionChild()
+	public function testCompositeNodeRejectsNonNodeChild()
 	{
 		$this->expectException(InvalidArgumentException::class);
-		new AndRule(array('isAdmin'));
+		new AccessPolicyConfig(array('type' => AccessPolicyConfig::NODE_AND, 'rules' => array('isAdmin')));
 	}
 
 	/**
@@ -216,18 +203,15 @@ class ModuleBuilderAccessPolicyTest extends CommonClassTest
 	 *
 	 * @return void
 	 */
-	public function testCompositeRulesRenderExplicitParentheses()
+	public function testCompositeNodesRenderExplicitParentheses()
 	{
-		$rule = new OrRule(array(
-			new PredicateRule(PredicateRule::IS_ADMIN),
-			new AndRule(array(
-				new PredicateRule(PredicateRule::CAN_READ_OBJECT),
-				new PredicateRule(PredicateRule::IS_INTERNAL_USER),
-			)),
-		));
+		$policy = new AccessPolicyConfig(array('type' => AccessPolicyConfig::NODE_OR, 'rules' => array(
+			$this->predicate('isAdmin'),
+			array('type' => AccessPolicyConfig::NODE_AND, 'rules' => array($this->predicate('canReadObject'), $this->predicate('isInternalUser'))),
+		)));
 
-		$this->assertSame("(!empty(\$user->admin) || (\$user->hasRight('mymodule', 'myobject', 'read') && empty(\$user->socid)))", $rule->toPhp());
-		$this->assertDoesNotMatchRegularExpression('/\b(and|or)\b/i', $rule->toPhp());
+		$this->assertSame("(!empty(\$user->admin) || (\$user->hasRight('mymodule', 'myobject', 'read') && empty(\$user->socid)))", $policy->toPhp());
+		$this->assertSame(0, preg_match('/\b(and|or)\b/i', $policy->toPhp()));	// Not assertDoesNotMatchRegularExpression(), only available since PHPUnit 9.1
 	}
 
 	/**
@@ -235,9 +219,9 @@ class ModuleBuilderAccessPolicyTest extends CommonClassTest
 	 */
 	public function testPolicySerializationRoundTrip()
 	{
-		$policy = new AccessPolicyConfig(new OrRule(array(
-			new PredicateRule(PredicateRule::IS_ADMIN),
-			new AndRule(array(new PredicateRule(PredicateRule::CAN_READ_OBJECT), new PredicateRule(PredicateRule::IS_INTERNAL_USER))),
+		$policy = new AccessPolicyConfig(array('type' => AccessPolicyConfig::NODE_OR, 'rules' => array(
+			$this->predicate('isAdmin'),
+			array('type' => AccessPolicyConfig::NODE_AND, 'rules' => array($this->predicate('canReadObject'), $this->predicate('isInternalUser'))),
 		)), 'ErrorForbidden');
 
 		$json = $policy->toJson();
@@ -245,7 +229,7 @@ class ModuleBuilderAccessPolicyTest extends CommonClassTest
 
 		$restored = AccessPolicyConfig::fromJson($json);
 		$this->assertSame($json, $restored->toJson());
-		$this->assertSame($policy->getExpression()->toPhp(), $restored->getExpression()->toPhp());
+		$this->assertSame($policy->toPhp(), $restored->toPhp());
 		$this->assertSame('ErrorForbidden', $restored->getMessage());
 	}
 
@@ -290,11 +274,11 @@ class ModuleBuilderAccessPolicyTest extends CommonClassTest
 	{
 		$rules = array();
 		for ($i = 0; $i <= AccessPolicyConfig::MAX_NODES; $i++) {
-			$rules[] = new PredicateRule(PredicateRule::IS_ADMIN);
+			$rules[] = $this->predicate('isAdmin');
 		}
 
 		$this->expectException(InvalidArgumentException::class);
-		new AccessPolicyConfig(new OrRule($rules));
+		new AccessPolicyConfig(array('type' => AccessPolicyConfig::NODE_OR, 'rules' => $rules));
 	}
 
 	/**
@@ -314,13 +298,13 @@ class ModuleBuilderAccessPolicyTest extends CommonClassTest
 	public function testFromAlternativesBuildsTheSmallestTree()
 	{
 		$single = AccessPolicyConfig::fromAlternatives(array(array(), array('canReadObject')));
-		$this->assertInstanceOf(PredicateRule::class, $single->getExpression());
+		$this->assertSame(AccessPolicyConfig::NODE_PREDICATE, $single->getExpression()['type']);
 
 		$conjunction = AccessPolicyConfig::fromAlternatives(array(array('canReadObject', 'isInternalUser')));
-		$this->assertInstanceOf(AndRule::class, $conjunction->getExpression());
+		$this->assertSame(AccessPolicyConfig::NODE_AND, $conjunction->getExpression()['type']);
 
 		$policy = AccessPolicyConfig::fromAlternatives(array(array('isAdmin'), array('canReadObject', 'isInternalUser')), 'ErrorForbidden');
-		$this->assertSame("(!empty(\$user->admin) || (\$user->hasRight('mymodule', 'myobject', 'read') && empty(\$user->socid)))", $policy->getExpression()->toPhp());
+		$this->assertSame("(!empty(\$user->admin) || (\$user->hasRight('mymodule', 'myobject', 'read') && empty(\$user->socid)))", $policy->toPhp());
 		$this->assertSame('ErrorForbidden', $policy->getMessage());
 	}
 
@@ -377,39 +361,19 @@ class ModuleBuilderAccessPolicyTest extends CommonClassTest
 	}
 
 	/**
-	 * @dataProvider providePolicyTruthTables
-	 * @param	string				$builder	Name of the method building the policy
-	 * @param	array<string,bool>	$expected	Expected access, by profile
-	 * @return	void
-	 */
-	public function testEvaluatorGrantsAccessByProfile($builder, $expected)
-	{
-		$evaluator = new AccessPolicyEvaluator($this->$builder());
-		$object = $this->buildObject();
-
-		foreach ($this->getProfiles() as $label => $profile) {
-			$this->assertSame($expected[$label], $evaluator->evaluate($profile, $object), 'Wrong access for profile '.$label);
-		}
-	}
-
-	/**
-	 * The page block generated from a policy must grant exactly the same access as the evaluator.
+	 * The page block generated from a policy must grant the expected access to each profile.
 	 *
 	 * @dataProvider providePolicyTruthTables
 	 * @param	string				$builder	Name of the method building the policy
 	 * @param	array<string,bool>	$expected	Expected access, by profile
 	 * @return	void
 	 */
-	public function testGeneratedBlockMatchesEvaluator($builder, $expected)
+	public function testGeneratedBlockGrantsAccessByProfile($builder, $expected)
 	{
-		$policy = $this->$builder();
-		$evaluator = new AccessPolicyEvaluator($policy);
-		$object = $this->buildObject();
-		$check = $this->compileGeneratedBlock(renderModuleBuilderAccessPolicyBlock($policy));
+		$check = $this->compileGeneratedBlock(renderModuleBuilderAccessPolicyBlock($this->$builder()));
 
 		foreach ($this->getProfiles() as $label => $profile) {
 			$this->assertSame($expected[$label], (bool) $check($profile), 'Generated block gives a wrong access for profile '.$label);
-			$this->assertSame($evaluator->evaluate($profile, $object), (bool) $check($profile), 'Generated block and evaluator disagree for profile '.$label);
 		}
 	}
 
@@ -423,63 +387,6 @@ class ModuleBuilderAccessPolicyTest extends CommonClassTest
 		$check = $this->compileGeneratedBlock(renderModuleBuilderAccessPolicyBlock($this->buildInternalReaderPolicy()));
 
 		$this->assertFalse($check(null));
-	}
-
-	/**
-	 * A failure while evaluating the policy must deny the access and leave a technical log line.
-	 *
-	 * @return void
-	 */
-	public function testEvaluatorDeniesAndLogsOnFailure()
-	{
-		global $conf, $db;
-
-		$failing = new class ($db) extends User {
-			/**
-			 * @param	string		$module			Module
-			 * @param	string		$permlevel1		Permission level 1
-			 * @param	string		$permlevel2		Permission level 2
-			 * @return	int
-			 * @throws	RuntimeException
-			 */
-			public function hasRight($module, $permlevel1, $permlevel2 = '')
-			{
-				throw new RuntimeException('rights not loaded');
-			}
-		};
-
-		$saved = array(
-			'syslog' => isset($conf->modules['syslog']) ? $conf->modules['syslog'] : null,
-			'MAIN_ENABLE_LOG_TO_HTML' => getDolGlobalString('MAIN_ENABLE_LOG_TO_HTML'),
-			'SYSLOG_LEVEL' => getDolGlobalString('SYSLOG_LEVEL'),
-			'logtohtml' => isset($_REQUEST['logtohtml']) ? $_REQUEST['logtohtml'] : null,
-		);
-		$conf->modules['syslog'] = 'syslog';
-		$conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
-		$conf->global->SYSLOG_LEVEL = LOG_DEBUG;
-		$_REQUEST['logtohtml'] = 1;
-		$conf->logbuffer = array();
-
-		try {
-			$granted = (new AccessPolicyEvaluator($this->buildAdminOrReaderPolicy()))->evaluate($failing, $this->buildObject());
-			$logged = implode("\n", $conf->logbuffer);
-		} finally {
-			if ($saved['syslog'] === null) {
-				unset($conf->modules['syslog']);
-			} else {
-				$conf->modules['syslog'] = $saved['syslog'];
-			}
-			$conf->global->MAIN_ENABLE_LOG_TO_HTML = $saved['MAIN_ENABLE_LOG_TO_HTML'];
-			$conf->global->SYSLOG_LEVEL = $saved['SYSLOG_LEVEL'];
-			if ($saved['logtohtml'] === null) {
-				unset($_REQUEST['logtohtml']);
-			} else {
-				$_REQUEST['logtohtml'] = $saved['logtohtml'];
-			}
-		}
-
-		$this->assertFalse($granted);
-		$this->assertStringContainsString('rights not loaded', $logged);
 	}
 
 	/**

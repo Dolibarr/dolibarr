@@ -234,21 +234,21 @@ class Receptions extends DolibarrApi
 			foreach ($request_data["lines"] as $line) {
 				$receptionline = new ReceptionLineBatch($this->db);
 
-				$receptionline->fk_product = $line['fk_product'];
-				$receptionline->fk_entrepot = $line['fk_entrepot'];
-				$receptionline->fk_element = $line['fk_element'] ?? $line['origin_id'];				// example: purchase order id.  this->origin is 'supplier_order'
-				$receptionline->origin_line_id = $line['fk_elementdet'] ?? $line['origin_line_id'];	// example: purchase order id
-				$receptionline->fk_elementdet = $line['fk_elementdet'] ?? $line['origin_line_id'];	// example: purchase order line id
-				$receptionline->origin_type = $line['element_type'] ?? $line['origin_type'];		// example 'supplier_order'
-				$receptionline->element_type = $line['element_type'] ?? $line['origin_type'];		// example 'supplier_order'
-				$receptionline->qty = $line['qty'];
+				$receptionline->fk_product = $line['fk_product'] ?? null;
+				$receptionline->fk_entrepot = $line['fk_entrepot'] ?? null;
+				$receptionline->fk_element = $line['fk_element'] ?? ($line['origin_id'] ?? null);				// example: purchase order id.  this->origin is 'supplier_order'
+				$receptionline->origin_line_id = $line['fk_elementdet'] ?? ($line['origin_line_id'] ?? null);	// example: purchase order id
+				$receptionline->fk_elementdet = $line['fk_elementdet'] ?? ($line['origin_line_id'] ?? null);	// example: purchase order line id
+				$receptionline->origin_type = $line['element_type'] ?? ($line['origin_type'] ?? null);		// example 'supplier_order'
+				$receptionline->element_type = $line['element_type'] ?? ($line['origin_type'] ?? null);		// example 'supplier_order'
+				$receptionline->qty = $line['qty'] ?? null;
 				//$receptionline->rang = $line['rang'];
-				$receptionline->array_options = $line['array_options'];
-				$receptionline->batch = $line['batch'];
-				$receptionline->eatby = $line['eatby'];
-				$receptionline->sellby = $line['sellby'];
-				$receptionline->cost_price = $line['cost_price'];
-				$receptionline->status = $line['status'];
+				$receptionline->array_options = $line['array_options'] ?? array();
+				$receptionline->batch = $line['batch'] ?? null;
+				$receptionline->eatby = $line['eatby'] ?? null;
+				$receptionline->sellby = $line['sellby'] ?? null;
+				$receptionline->cost_price = $line['cost_price'] ?? null;
+				$receptionline->status = $line['status'] ?? null;
 
 				$lines[] = $receptionline;
 			}

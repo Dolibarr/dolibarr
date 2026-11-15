@@ -145,7 +145,8 @@ try {
 }
 // access type needed to have oauth provider refreshing token
 // also note that a refresh token is sent only after a prompt
-$apiService->setAccessType('offline');
+// For login, no refresh token is needed (token is deleted once the email is read), so we use online.
+$apiService->setAccessType($forlogin ? 'online' : 'offline');
 
 
 if (!getDolGlobalString($keyforparamid)) {

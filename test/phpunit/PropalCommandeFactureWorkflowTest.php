@@ -24,11 +24,10 @@
  */
 
 global $conf,$user,$langs,$db,$mysoc;
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/comm/propal/class/propal.class.php';
 require_once dirname(__FILE__).'/../../htdocs/commande/class/commande.class.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -218,5 +217,125 @@ class PropalCommandeFactureWorkflowTest extends CommonClassTest
 		$this->assertEquals(Facture::STATUS_VALIDATED, $facture->status);
 
 		return $facture;
+	}
+
+	/**
+	 * testUpdateLinkedBuyPrice
+	 *
+	 * The cost price of a line of an order can be applied to the same product of its linked proposal and invoice.
+	 *
+	 * @return void
+	 */
+	public function testUpdateLinkedBuyPrice()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		if (!isModEnabled('margin')) {
+			$this->markTestSkipped('Module margin disabled: cost prices can not be applied to linked documents.');
+		}
+
+		$optionbefore = getDolGlobalString('MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS');
+		$conf->global->MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS = 1;
+
+		// The module Margin may not be enabled on the test database, so we enable it and give the right to change cost prices
+		$savmodmargin = $conf->modules['margin'] ?? null;
+		$conf->modules['margin'] = 'margin';
+		$savrightsmargins = isset($user->rights->margins) ? clone $user->rights->margins : null;
+		if (!isset($user->rights->margins)) {
+			$user->rights->margins = new stdClass();
+		}
+		$user->rights->margins->creer = 1;
+
+		$soc = new Societe($db);
+		$soc->name = 'PropalCommandeFactureWorkflowTest linked cost price Unittest';
+		$socid = $soc->create($user);
+		$this->assertGreaterThan(0, $socid, $soc->errorsToString());
+
+		$product = new Product($db);
+		$product->initAsSpecimen();
+		$product->ref = 'PHPUNIT_LINKED_BUYPRICE_'.dol_now();
+		$productid = $product->create($user);
+		$this->assertGreaterThan(0, $productid, $product->errorsToString());
+
+		// A proposal, an order and an invoice (kept as draft) with a line of the product
+		$propal = new Propal($db);
+		$propal->initAsSpecimen(array('tosell' => 1));
+		$commande = new Commande($db);
+		$commande->initAsSpecimen();
+		$facture = new Facture($db);
+		$facture->initAsSpecimen();
+		$lineids = array();
+		foreach (array($propal, $commande, $facture) as $document) {
+			$document->lines = array();
+			$document->socid = $socid;
+			$this->assertGreaterThan(0, $document->create($user), $document->errorsToString());
+			$lineids[$document->element] = $document->addline('Line', 100, 1, 0, 0, 0, $productid);
+			$this->assertGreaterThan(0, $lineids[$document->element], $document->errorsToString());
+		}
+		foreach (array('propal' => 10, 'commande' => 12, 'facture' => 10) as $element => $buyprice) {
+			$db->query("UPDATE ".MAIN_DB_PREFIX.$element."det SET buy_price_ht = ".((float) $buyprice)." WHERE rowid = ".((int) $lineids[$element]));
+		}
+		$commande->add_object_linked('propal', $propal->id);
+		$facture->add_object_linked('commande', $commande->id);
+
+		// The cost price of the order line is proposed on the proposal and on the invoice
+		$documents = $commande->getLinkedBuyPriceDocuments($user, $lineids['commande']);
+		$this->assertEquals(array('propal', 'facture'), array_keys($documents), 'Proposal and invoice have another cost price');
+		$this->assertEquals(12, $documents['propal']['buyprice'], 'Cost price to apply');
+		$this->assertEquals(array(), $commande->getLinkedBuyPriceDocuments($user, $lineids['commande'], 12), 'Nothing when the cost price did not change');
+		$this->assertEquals(array(), $commande->getLinkedBuyPriceDocuments(new User($db), $lineids['commande']), 'Nothing for a user without rights');
+
+		// The line must belong to the object, so a line of another order is ignored
+		$commande2 = new Commande($db);
+		$commande2->initAsSpecimen();
+		$commande2->ref = '';	// Another order is already using the ref of the specimen
+		$commande2->lines = array();
+		$commande2->socid = $socid;
+		$this->assertGreaterThan(0, $commande2->create($user), $commande2->errorsToString());
+		$lineid2 = $commande2->addline('Line', 100, 1, 0, 0, 0, $productid);
+		$db->query("UPDATE ".MAIN_DB_PREFIX."commandedet SET buy_price_ht = 99 WHERE rowid = ".((int) $lineid2));
+		$this->assertEquals(array(), $commande->getLinkedBuyPriceDocuments($user, $lineid2), 'The line must belong to the object');
+
+		// A user allowed to change cost prices and to see all customers, but to edit proposals only
+		$limiteduser = new User($db);
+		$limiteduser->rights = new stdClass();
+		$limiteduser->rights->margins = (object) array('creer' => 1);
+		$limiteduser->rights->propal = (object) array('lire' => 1, 'creer' => 1);
+		$limiteduser->rights->facture = (object) array('lire' => 1);
+		$limiteduser->rights->societe = (object) array('client' => (object) array('voir' => 1));
+		$this->assertEquals(array('propal'), array_keys($commande->getLinkedBuyPriceDocuments($limiteduser, $lineids['commande'])), 'Documents the user can not edit are ignored');
+
+		// Without the right to see all customers, the documents of a customer that is not his own are ignored
+		unset($limiteduser->rights->societe);
+		$this->assertEquals(array(), $commande->getLinkedBuyPriceDocuments($limiteduser, $lineids['commande']), 'Documents of the customers of others are ignored');
+
+		// Only the proposal is updated, the invoice has still another cost price
+		$this->assertEquals(1, $commande->updateLinkedBuyPrice($user, $lineids['commande'], array('propal' => 'on', 'facture' => '')), 'One line updated');
+		$this->assertEquals(array('facture'), array_keys($commande->getLinkedBuyPriceDocuments($user, $lineids['commande'])), 'Only the invoice is still proposed');
+
+		$conf->global->MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS = 0;
+		$this->assertEquals(array(), $commande->getLinkedBuyPriceDocuments($user, $lineids['commande']), 'Nothing when the option is off');
+		$conf->global->MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS = $optionbefore;
+		if ($savmodmargin === null) {
+			unset($conf->modules['margin']);
+		} else {
+			$conf->modules['margin'] = $savmodmargin;
+		}
+		if ($savrightsmargins === null) {
+			unset($user->rights->margins);
+		} else {
+			$user->rights->margins = $savrightsmargins;
+		}
+
+		$facture->delete($user);
+		$commande2->delete($user);
+		$commande->delete($user);
+		$propal->delete($user);
+		$product->delete($user);
+		$soc->delete($socid, $user);
 	}
 }
