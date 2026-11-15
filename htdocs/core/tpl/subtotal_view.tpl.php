@@ -75,6 +75,12 @@ if ($line->qty > 0) { ?>
 		if (array_key_exists('titleforcepagebreak', $line_options)) {
 			echo '&nbsp;' . img_picto($langs->trans("ForcePageBreak"), 'file');
 		}
+		// Button to duplicate the block (the title line, the lines it contains and the subtotal line)
+		if ($this->status == 0 && in_array($object->element, array('propal', 'commande', 'facture', 'facturerec'))) {
+			echo '&nbsp;<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $this->id . '&action=ask_duplicate_subtotalblock&token=' . newToken() . '&lineid=' . $line->id . '">';
+			echo img_picto($langs->trans("DuplicateBlock"), 'clone');
+			echo '</a>';
+		}
 		// Handling td for ref supplier
 		if (in_array($object->element, ['supplier_proposal'])) {
 			echo '<td></td>';
