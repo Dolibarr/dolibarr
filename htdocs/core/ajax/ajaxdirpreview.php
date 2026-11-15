@@ -398,7 +398,7 @@ if ($type == 'directory') {
 						'level1name' => basename($obj->filepath),
 						'relativename' => substr($obj->filepath.'/'.$obj->filename, strlen($relativedir) + 1),
 						'fullname' => $fullname,
-						'date' => dol_filemtime($fullname),
+						'date' => (string) dol_filemtime($fullname),
 						'size' => dol_filesize($fullname),
 						'perm' => dol_fileperm($fullname),
 						'type' => 'file',
@@ -412,6 +412,8 @@ if ($type == 'directory') {
 				dol_print_error($db);
 			}
 			if ($nbfoundincontent > 0) {
+				/** @var array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,foundincontent?:int}> $filearray */
+				'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,foundincontent?:int}> $filearray';
 				$filearray = dol_sort_array($filearray, $sortfield, ($sorting == SORT_DESC ? 'desc' : 'asc'));
 			}
 		}
