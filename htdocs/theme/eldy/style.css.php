@@ -7261,6 +7261,11 @@ span#morelines {
 	background: #f5f5f5 !important;
 	border: 1px solid #ccc !important;
 }
+.websitebar button.button, .websitebar button.buttonDelete {
+	/* Align height of native button elements with sibling anchor buttons (button keeps UA font-size and line-height) */
+	font-size: inherit;
+	line-height: normal;
+}
 .websiteselection {
 	/* display: inline-block; */
 	padding-<?php echo $right; ?>: 10px;

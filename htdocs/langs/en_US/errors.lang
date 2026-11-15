@@ -381,6 +381,7 @@ ErrorNoValueForSelectListType=Error, a value for this type of field is mandatory
 ErrorPaymentAmountMustNotBeNull=Error, payment amount must be defined and not zero
 ErrorOneLineContainsADisactivatedProduct=Error, at least one product is not or no more on sale or for purchase
 ErrorCalendarIsNotYetOpenOrHasBeenClosed=This calendar is not yet open or has been closed
+ErrorBookCalSlotNotAvailable=This time slot is not available or is already booked. Please select another one.
 ErrorFieldClassNotFoundForClassName=The class "%s" managing the field type "%s" is not found.
 ErrorBlockLogNeedAmountsValue=The unalterable log object needs amounts values to be set
 ErrorBlockLogNeedElement=The unalterable log object needs element type to be set
