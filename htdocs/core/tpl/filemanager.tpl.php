@@ -246,8 +246,8 @@ if ((!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE
 		print '</span>';
 		print '<script>
 		jQuery(document).ready(function() {
-			var form = document.getElementById("'.dol_escape_js($nameforformuserfile).'");
-			var zone = document.getElementById("'.dol_escape_js($nameforformuserfile).'_dropzone");
+			var form = document.getElementById(\''.dol_escape_js($nameforformuserfile).'\');
+			var zone = document.getElementById(\''.dol_escape_js($nameforformuserfile).'_dropzone\');
 			var fileinput = form ? form.querySelector("input[type=file]") : null;
 			var sendit = form ? form.querySelector("input[name=sendit]") : null;
 			if (!zone || !fileinput || !sendit || fileinput.disabled) {
@@ -270,7 +270,7 @@ if ((!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE
 				if (!files || !files.length) { return; }
 				for (var i = 0; i < files.length; i++) {
 					if (maxsize > 0 && files[i].size > maxsize) {
-						alert("'.dol_escape_js($langs->transnoentitiesnoconv("ECMFileTooBigForUpload", '__FILE__', dol_print_size($maxuploadsize, 1, 1))).'".replace("__FILE__", files[i].name));
+						alert(\''.dol_escape_js($langs->transnoentitiesnoconv("ECMFileTooBigForUpload", '__FILE__', dol_print_size($maxuploadsize, 1, 1))).'\'.replace("__FILE__", files[i].name));
 						return;
 					}
 				}
@@ -281,7 +281,7 @@ if ((!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE
 				var overwrite = form.querySelector("input[name=overwritefile]");
 				if (overwrite) { overwrite.checked = false; }
 				if (duplicates.length) {
-					if (confirm("'.dol_escape_js($langs->transnoentitiesnoconv("ECMFilesAlreadyExist", '__FILES__')).'".replace("__FILES__", duplicates.join(", ")))) {
+					if (confirm(\''.dol_escape_js($langs->transnoentitiesnoconv("ECMFilesAlreadyExist", '__FILES__')).'\'.replace("__FILES__", duplicates.join(", ")))) {
 						if (overwrite) { overwrite.checked = true; }
 					} else {
 						var kept = new DataTransfer();
