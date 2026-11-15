@@ -2338,9 +2338,10 @@ function dolSlugify($stringtoslugify)
 
 /**
  * Returns text escaped for inclusion into JavaScript code.
+ * Prefer to enclose JS strings with simple quotes in generated JS code, like 'string', and use mode 0 or 1. Mode 2 should be avoided.
  *
  * @param	int|string	$stringtoescape			String to escape
- * @param	int			$mode					0=Escape also \' and \" into \', 1=Escape \' but not \" for usage into 'string', 2=Escape \" but not \' for usage into "string", 3=Escape \' and \" with \\.
+ * @param	int			$mode					0=Escape also \' and \" into \', 1=Escape \' but not \" for usage into 'string', 2=Escape \" but not \' for usage into "string" (to avoid, prefer 'string' with mode 0 or 1), 3=Escape \' and \" with \\.
  * @param	int			$noescapebackslashn		0=Escape also \n. 1=Do not escape \n.
  * @return	string								Escaped string. Both \' and " are escaped into \' if they are escaped.
  */
