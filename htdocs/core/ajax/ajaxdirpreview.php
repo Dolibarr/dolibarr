@@ -368,6 +368,53 @@ if ($type == 'directory') {
 
 		$filter = preg_quote((string) $search_doc_ref, '/');
 		$filearray = dol_dir_list($upload_dir, "files", 1, $filter, $excludefiles, $sortfield, $sorting, 1);
+
+		// Add the files whose content, keywords or description contain the searched text, not only the files whose
+		// name contains it. They are read from the index of files (llx_ecm_files). The content is the text of the
+		// file, saved when the option MAIN_SAVE_FILE_CONTENT_AS_TEXT is on (pdftotext or docling).
+		if ((string) $search_doc_ref !== '' && strpos($upload_dir, '*') === false) {
+			$relativedir = trim((string) preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $upload_dir), '/\\');
+			$filesalreadyfound = array();
+			foreach ($filearray as $file) {
+				$filesalreadyfound[$file['fullname']] = 1;
+			}
+			$nbfoundincontent = 0;
+
+			$sql = "SELECT filepath, filename FROM ".$db->prefix()."ecm_files";
+			$sql .= " WHERE entity IN (".getEntity('ecmfiles').")";
+			$sql .= " AND (filepath = '".$db->escape($relativedir)."' OR filepath LIKE '".$db->escape($db->escapeforlike($relativedir))."/%')";
+			$sql .= natural_search(array('content', 'keywords', 'description'), (string) $search_doc_ref);
+			$resql = $db->query($sql);
+			if ($resql) {
+				while ($obj = $db->fetch_object($resql)) {
+					$fullname = DOL_DATA_ROOT.'/'.$obj->filepath.'/'.$obj->filename;
+					if (!empty($filesalreadyfound[$fullname]) || !dol_is_file($fullname)) {
+						continue;
+					}
+					// Same keys as an entry returned by dol_dir_list()
+					$filearray[] = array(
+						'name' => $obj->filename,
+						'path' => DOL_DATA_ROOT.'/'.$obj->filepath,
+						'level1name' => basename($obj->filepath),
+						'relativename' => substr($obj->filepath.'/'.$obj->filename, strlen($relativedir) + 1),
+						'fullname' => $fullname,
+						'date' => dol_filemtime($fullname),
+						'size' => dol_filesize($fullname),
+						'perm' => dol_fileperm($fullname),
+						'type' => 'file',
+						'foundincontent' => 1
+					);
+					$filesalreadyfound[$fullname] = 1;
+					$nbfoundincontent++;
+				}
+				$db->free($resql);
+			} else {
+				dol_print_error($db);
+			}
+			if ($nbfoundincontent > 0) {
+				$filearray = dol_sort_array($filearray, $sortfield, ($sorting == SORT_DESC ? 'desc' : 'asc'));
+			}
+		}
 		if (!empty($search_doc_date_start) || !empty($search_doc_date_end)) {
 			foreach ($filearray as $key => $file) {
 				$filedate = empty($file['date']) ? 0 : (int) $file['date'];
