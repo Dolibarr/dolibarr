@@ -299,7 +299,6 @@ if (isModEnabled('productbatch')) {
 		$incmode = $langs->trans('StockOnReceptionOnClosing');
 	} */
 	print info_admin($langs->transnoentitiesnoconv("WhenProductBatchModuleOnOptionAreForced", $descmode, $incmode));
-
 }
 
 
