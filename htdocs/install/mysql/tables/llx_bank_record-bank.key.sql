@@ -20,4 +20,5 @@
 -- Table to receive manual import of a bank statement
 -- Try to match compatibility with external module banking to capitalize on knowledge but removed fields for advanced features.
 
+ALTER TABLE llx_bank_record ADD INDEX idx_bank_record_entity (entity);
 ALTER TABLE llx_bank_record ADD CONSTRAINT bank_record_fk_bank FOREIGN KEY (fk_bank) REFERENCES llx_bank_account (rowid);
