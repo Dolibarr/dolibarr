@@ -2491,6 +2491,57 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 }
 
 /**
+ *  Clean a list of keywords of a file, as typed by a user: separated with commas, trimmed, without duplicates (case is
+ *  ignored) and limited to the size of the field keywords of the index (llx_ecm_files).
+ *
+ *  @param	string	$keywords	Keywords separated with commas
+ *  @return	string				Cleaned keywords, separated with ", "
+ */
+function dolCleanFileKeywords($keywords)
+{
+	$result = array();
+	foreach (explode(',', dol_string_nohtmltag((string) $keywords)) as $keyword) {
+		$keyword = trim(preg_replace('/\s+/', ' ', $keyword));
+		if ($keyword !== '' && !in_array(dol_strtolower($keyword), array_map('dol_strtolower', $result))) {
+			$result[] = $keyword;
+		}
+	}
+	$keywords = implode(', ', $result);
+	if (dol_strlen($keywords) > 750) {
+		$keywords = dol_substr($keywords, 0, 750);
+	}
+	return $keywords;
+}
+
+/**
+ *  Set the keywords of a file into the database index (llx_ecm_files), so they are shown in the lists of files and
+ *  found by the searches on documents.
+ *
+ *  @param	string			$fullpath	Full path of the file (into DOL_DATA_ROOT)
+ *  @param	string			$keywords	Keywords separated with commas
+ *  @param	?CommonObject	$object		Object the file belongs to, used for the entity
+ *  @return	int							Return integer <0 if KO, 0 if the file is not into the index, >0 if OK
+ */
+function dolSetFileKeywords($fullpath, $keywords, $object = null)
+{
+	global $db, $user;
+
+	include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+
+	$relativepath = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'[\\/]*/', '', $fullpath);
+	$ecmfile = new EcmFiles($db);
+	$result = $ecmfile->fetch(0, '', $relativepath, '', '', '', 0, (isset($object->entity) ? $object->entity : null));
+	if ($result < 0) {
+		return -1;
+	}
+	if (empty($ecmfile->id)) {
+		return 0;
+	}
+	$ecmfile->keywords = dolCleanFileKeywords($keywords);
+	return ($ecmfile->update($user) > 0 ? 1 : -1);
+}
+
+/**
  *  Delete files into database index using search criteria.
  *
  *  @param      string			$dir			Directory name (full real path without ending /)
