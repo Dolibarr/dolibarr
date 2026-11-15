@@ -485,7 +485,7 @@ class Salaries extends DolibarrApi
 		}
 
 		if ($paymentsalary->update(DolibarrApiAccess::$user) > 0) {
-			return $this->get($id);
+			return $this->_cleanObjectDatas($paymentsalary);
 		} else {
 			throw new RestException(500, $paymentsalary->error);
 		}
