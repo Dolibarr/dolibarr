@@ -84,7 +84,7 @@ if (isset($action) && !empty($action)) {
 		$diroutputslash .= '/';
 
 		// Scan directory tree on disk to get list of all directories
-		$disktree = dol_dir_list($conf->$element->dir_output, 'directories', 1, '', array('^temp$', '^\.'), '', 0, 0);	// Hidden directories, like .versions, are not manual directories
+		$disktree = dol_dir_list($conf->$element->dir_output, 'directories', 1, '', array('^temp$'), '', 0, 0);
 		//dol_syslog("Found ".count($disktree)." directories on disk");
 
 		// Scan directory tree in database
