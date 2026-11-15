@@ -77,8 +77,12 @@ top_httphead();
 if ($action) {
 	if ($action == 'getrandompassword') {	// Test on permission not required here. Endpoint can be called by anu logged user.
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-		$generic = GETPOST('generic') ? true : false;
-		echo getRandomPassword($generic);
+		$generic = GETPOSTINT('generic');	// 0=Use setup rules, 1=Generic key (32 chars), 2=Generic password (16 chars)
+		if ($generic == 2) {
+			echo getRandomPassword(true, null, 16);
+		} else {
+			echo getRandomPassword($generic ? true : false);
+		}
 	}
 } else {
 	if (GETPOST('errorcode') == 'InvalidToken') {

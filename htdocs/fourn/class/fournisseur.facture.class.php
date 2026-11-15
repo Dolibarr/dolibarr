@@ -114,6 +114,11 @@ class FactureFournisseur extends CommonInvoice
 	public $ref_supplier;
 
 	/**
+	 * @var string	Payment reference given by the supplier (QR reference of a Swiss QR bill or ISO 11649 RF reference)
+	 */
+	public $payment_reference;
+
+	/**
 	 * @var string 	Label of invoice
 	 * @deprecated	Use $label
 	 */
@@ -295,11 +300,11 @@ class FactureFournisseur extends CommonInvoice
 		'close_code' => array('type' => 'varchar(16)', 'label' => 'CloseCode', 'enabled' => 1, 'visible' => -1, 'position' => 80),
 		'close_note' => array('type' => 'varchar(128)', 'label' => 'CloseNote', 'enabled' => 1, 'visible' => -1, 'position' => 85),
 		'tva' => array('type' => 'double(24,8)', 'label' => 'Tva', 'enabled' => 1, 'visible' => -1, 'position' => 90),
-		'localtax1' => array('type' => 'double(24,8)', 'label' => 'Localtax1', 'enabled' => 1, 'visible' => -1, 'position' => 95),
-		'localtax2' => array('type' => 'double(24,8)', 'label' => 'Localtax2', 'enabled' => 1, 'visible' => -1, 'position' => 100),
-		'total_ht' => array('type' => 'double(24,8)', 'label' => 'TotalHT', 'enabled' => 1, 'visible' => -1, 'position' => 105),
-		'total_tva' => array('type' => 'double(24,8)', 'label' => 'TotalVAT', 'enabled' => 1, 'visible' => -1, 'position' => 110),
-		'total_ttc' => array('type' => 'double(24,8)', 'label' => 'TotalTTC', 'enabled' => 1, 'visible' => -1, 'position' => 115),
+		'localtax1' => array('type' => 'double(24,8)', 'label' => 'Localtax1', 'enabled' => 1, 'visible' => -1, 'position' => 95, 'isameasure' => 1),
+		'localtax2' => array('type' => 'double(24,8)', 'label' => 'Localtax2', 'enabled' => 1, 'visible' => -1, 'position' => 100, 'isameasure' => 1),
+		'total_ht' => array('type' => 'double(24,8)', 'label' => 'TotalHT', 'enabled' => 1, 'visible' => -1, 'position' => 105, 'isameasure' => 1),
+		'total_tva' => array('type' => 'double(24,8)', 'label' => 'TotalVAT', 'enabled' => 1, 'visible' => -1, 'position' => 110, 'isameasure' => 1),
+		'total_ttc' => array('type' => 'double(24,8)', 'label' => 'TotalTTC', 'enabled' => 1, 'visible' => -1, 'position' => 115, 'isameasure' => 1),
 		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'position' => 125),
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 130),
 		'fk_user_valid' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'visible' => -1, 'position' => 135),
@@ -309,6 +314,7 @@ class FactureFournisseur extends CommonInvoice
 		'fk_cond_reglement' => array('type' => 'integer', 'label' => 'PaymentTerm', 'enabled' => 1, 'visible' => -1, 'position' => 155),
 		'fk_mode_reglement' => array('type' => 'integer', 'label' => 'PaymentMode', 'enabled' => 1, 'visible' => -1, 'position' => 160),
 		'date_lim_reglement' => array('type' => 'date', 'label' => 'DateLimReglement', 'enabled' => 1, 'visible' => -1, 'position' => 165),
+		'payment_reference' => array('type' => 'varchar(35)', 'label' => 'PaymentReference', 'enabled' => 1, 'visible' => -1, 'position' => 166),
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 170),
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 175),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'ModelPdf', 'enabled' => 1, 'visible' => 0, 'position' => 180),
@@ -318,9 +324,9 @@ class FactureFournisseur extends CommonInvoice
 		'fk_multicurrency' => array('type' => 'integer', 'label' => 'MulticurrencyId', 'enabled' => 1, 'visible' => -1, 'position' => 205),
 		'multicurrency_code' => array('type' => 'varchar(255)', 'label' => 'MulticurrencyCode', 'enabled' => 1, 'visible' => -1, 'position' => 210),
 		'multicurrency_tx' => array('type' => 'double(24,8)', 'label' => 'MulticurrencyRate', 'enabled' => 1, 'visible' => -1, 'position' => 215),
-		'multicurrency_total_ht' => array('type' => 'double(24,8)', 'label' => 'MulticurrencyTotalHT', 'enabled' => 1, 'visible' => -1, 'position' => 220),
-		'multicurrency_total_tva' => array('type' => 'double(24,8)', 'label' => 'MulticurrencyTotalVAT', 'enabled' => 1, 'visible' => -1, 'position' => 225),
-		'multicurrency_total_ttc' => array('type' => 'double(24,8)', 'label' => 'MulticurrencyTotalTTC', 'enabled' => 1, 'visible' => -1, 'position' => 230),
+		'multicurrency_total_ht' => array('type' => 'double(24,8)', 'label' => 'MulticurrencyTotalHT', 'enabled' => 1, 'visible' => -1, 'position' => 220, 'isameasure' => 1),
+		'multicurrency_total_tva' => array('type' => 'double(24,8)', 'label' => 'MulticurrencyTotalVAT', 'enabled' => 1, 'visible' => -1, 'position' => 225, 'isameasure' => 1),
+		'multicurrency_total_ttc' => array('type' => 'double(24,8)', 'label' => 'MulticurrencyTotalTTC', 'enabled' => 1, 'visible' => -1, 'position' => 230, 'isameasure' => 1),
 		'date_pointoftax' => array('type' => 'date', 'label' => 'DatePointOfTax', 'enabled' => 'getDolGlobalString("INVOICE_POINTOFTAX_DATE")', 'visible' => -1, 'position' => 235),
 		'date_valid' => array('type' => 'date', 'label' => 'DateValidation', 'enabled' => 1, 'visible' => -1, 'position' => 240),
 		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'Last main doc', 'enabled' => 1, 'visible' => -1, 'position' => 245),
@@ -922,6 +928,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " t.fk_account,";
 		$sql .= " t.fk_mode_reglement,";
 		$sql .= " t.date_lim_reglement,";
+		$sql .= " t.payment_reference,";
 		$sql .= " t.note_private,";
 		$sql .= " t.note_public,";
 		$sql .= " t.model_pdf,";
@@ -1004,6 +1011,7 @@ class FactureFournisseur extends CommonInvoice
 				$this->mode_reglement_code  = $obj->mode_reglement_code;
 				$this->mode_reglement       = $obj->mode_reglement_label;
 				$this->date_echeance		= $this->db->jdate($obj->date_lim_reglement);
+				$this->payment_reference	= (string) $obj->payment_reference;
 				$this->note                 = $obj->note_private; // deprecated
 				$this->note_private			= $obj->note_private;
 				$this->note_public          = $obj->note_public;
@@ -1323,6 +1331,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " fk_mode_reglement=".(isset($this->mode_reglement_id) ? ((int) $this->mode_reglement_id) : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? ((int) $this->cond_reglement_id) : "null").",";
 		$sql .= " date_lim_reglement=".(dol_strlen((string) $this->date_echeance) != 0 ? "'".$this->db->idate($this->date_echeance)."'" : 'null').",";
+		$sql .= " payment_reference=".(!empty($this->payment_reference) ? "'".$this->db->escape($this->payment_reference)."'" : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
@@ -3447,6 +3456,25 @@ class FactureFournisseur extends CommonInvoice
 		}
 
 		return (bool) $user->hasRight("fournisseur", "facture", $mode);
+	}
+
+	/**
+	 * Check the payment reference given by the supplier before it is stored
+	 *
+	 * @param	string	$ref	Payment reference, cleaned by CompanyBankAccount::cleanPaymentReference()
+	 * @return	string			Translation key of the error, '' when it can be stored
+	 */
+	public static function checkPaymentReference($ref)
+	{
+		include_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_ch.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_creditorref.lib.php';
+
+		if (dolPayRefDetectScheme($ref) == 'QRR' && !dolCHQRReferenceIsValid($ref)) {
+			return 'ErrorQRReferenceNotValid';
+		}
+
+		return CompanyBankAccount::checkPaymentReference($ref);
 	}
 
 	/**

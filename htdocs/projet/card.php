@@ -513,13 +513,14 @@ if (empty($reshook)) {
 		if ($object->id > 0) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-			$langs->load("other");
 			$upload_dir = $conf->project->multidir_output[$object->entity ?? $conf->entity];
 			$file = $upload_dir.'/'.GETPOST('file');
 			$ret = dol_delete_file($file, 1, 0, 0, $object);
 			if ($ret) {
+				$langs->load("other");
 				setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
 			} else {
+				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
 			}
 			$action = '';

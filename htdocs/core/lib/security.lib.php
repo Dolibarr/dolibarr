@@ -986,6 +986,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$dbtablename = 'facture_fourn';
 		}
 		if (!$tablegivenbycaller && $feature == 'produit') {
+			// The module (and its permissions) is named 'produit', but the table of the product object is 'llx_product'
 			$dbtablename = 'product';
 		}
 		if (!$tablegivenbycaller && $feature == 'ficheinter') {

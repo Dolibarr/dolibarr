@@ -28,6 +28,7 @@
  * Copyright (C) 2025		Vincent Maury				<vmaury@timgroup.fr>
  * Copyright (C) 2026		Benjamin Falière			<benjamin@faliere.com>
  * Copyright (C) 2026		Pierre Ardoin				<developpeur@lesmetiersdubatiment.fr>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -682,6 +683,9 @@ function getEntity($element, $shared = 1, $currentobject = null)
 		case 'invoice_supplier':
 			$element = 'supplier_invoice';
 			break; // "/fourn/class/fournisseur.facture.class.php"
+		case 'facturerec':
+			$element = 'invoice';
+			break; // "/compta/facture/class/facture-rec.class.php", template invoices are shared like invoices
 	}
 
 	if (is_object($mc)) {
@@ -1093,28 +1097,29 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto', $saverestore = '')
  *  Note: The property $user->default_values is loaded by main.php when loading the user.
  *
  *  @param  string  $paramname   Name of parameter to found
- *  @param 'int'|'intcomma'|'array'|'array:int'|'array:intcomma'|'array:alpha'|'array:alphanohtml'|'array:aZ09'|'array:restricthtml'|'password'|'email'|'alpha'|'alphanohtml'|'nohtml'|'restricthtml'|'alphawithlgt'|'aZ09'|'aZ'|'aZ09arobase'|'aZ09comma'|'url'|'san_alpha'|'custom'|'none'|'restricthtmlallowclass'|'restricthtmlallowunvalid'|'restricthtmlallowiframe'|'restricthtmlallowlinkscript'|'' $check Type of check
- *                                                                                                                                                                                                                                                                                                                                                                                                                 '' or 'none'=no check (deprecated)
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'password'=allow characters for a password
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'email'=allow characters for an email "email@domain.com"
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'url'=allow characters for an url
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'array', 'array:restricthtml' or 'array:aZ09' to check it's an array
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'int'=check it's numeric (integer or float)
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'intcomma'=check it's integer+comma ('1,2,3,4...')
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'alphanohtml'=check there is no html content and no " and no ../    ('alpha' is an alias of 'alphanohtml')
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'alphawithlgt'=alpha with lgt and no " and no ../   (Can be used for email string like "Name <email@domain.com>")
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'aZ'=check it's a-Z only
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'aZ09'=check it's simple alpha string (recommended for keys, it includes a-Z0-9_\-\.)
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'aZ09arobase'=check it's a string for an element type ('myobject@mymodule')
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'aZ09comma'=check it's a string for a sortfield or sortorder
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'nohtml'=check there is no html content
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'restricthtml'=check html content is restricted to some tags only
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'custom'= custom filter specify $filter and $options)
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'restricthtmlallowclass'
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'restricthtmlallowunvalid'
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'restricthtmlallowiframe'
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'restricthtmlallowlinkscript'
+ *  @param 'int'|'intcomma'|'array'|'array:int'|'array:intcomma'|'array:alpha'|'array:alphanohtml'|'array:aZ09'|'array:restricthtml'|'password'|'email'|'alpha'|'alphanohtml'|'alphanohtmlquote'|'nohtml'|'restricthtml'|'alphawithlgt'|'aZ09'|'aZ'|'aZ09arobase'|'aZ09comma'|'url'|'san_alpha'|'custom'|'none'|'restricthtmlallowclass'|'restricthtmlallowunvalid'|'restricthtmlallowiframe'|'restricthtmlallowlinkscript'|'' $check Type of check
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    '' or 'none'=no check (deprecated)
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'password'=allow characters for a password
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'email'=allow characters for an email "email@domain.com"
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'url'=allow characters for an url
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'array', 'array:restricthtml' or 'array:aZ09' to check it's an array
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'int'=check it's numeric (integer or float)
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'intcomma'=check it's integer+comma ('1,2,3,4...')
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'alphanohtml'=check there is no html content and no " and no ../    ('alpha' is an alias of 'alphanohtml')
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'alphanohtmlquote'=same than 'alphanohtml' but " is replaced with ' instead of being removed
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'alphawithlgt'=alpha with lgt and no " and no ../   (Can be used for email string like "Name <email@domain.com>")
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'aZ'=check it's a-Z only
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'aZ09'=check it's simple alpha string (recommended for keys, it includes a-Z0-9_\-\.)
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'aZ09arobase'=check it's a string for an element type ('myobject@mymodule')
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'aZ09comma'=check it's a string for a sortfield or sortorder
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'nohtml'=check there is no html content
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'restricthtml'=check html content is restricted to some tags only
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'custom'= custom filter specify $filter and $options)
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'restricthtmlallowclass'
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'restricthtmlallowunvalid'
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'restricthtmlallowiframe'
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'restricthtmlallowlinkscript'
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
  *  @param  ?int	$filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for details)
  *  @param  mixed	$options     Options to pass to filter_var when $check is set to 'custom'
@@ -1125,7 +1130,7 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto', $saverestore = '')
  *      $check is 'int' ? numeric-string|'' :
  *      $check is 'array:int' ? numeric-string[]|array{} :
  *      $check is 'array' | 'array:aZ09' | 'array:alpha' | 'array:intcomma' | 'array:restricthtml' ? string[] :
- *      $check is 'alpha' | 'aZ' | 'aZ09' | 'aZ09arobase' | 'aZ09comma' | 'password' | 'email' | 'url' | 'alphanohtml' |'nohtml' | 'restricthtml' | 'alphawithlgt' | 'intcomma' | 'restricthtmlallowclass' | 'restricthtmlallowunvalid' | 'restricthtmlallowiframe' | 'restricthtmlallowlinkscript' ? string : string|array<mixed>
+ *      $check is 'alpha' | 'aZ' | 'aZ09' | 'aZ09arobase' | 'aZ09comma' | 'password' | 'email' | 'url' | 'alphanohtml' | 'alphanohtmlquote' |'nohtml' | 'restricthtml' | 'alphawithlgt' | 'intcomma' | 'restricthtmlallowclass' | 'restricthtmlallowunvalid' | 'restricthtmlallowiframe' | 'restricthtmlallowlinkscript' ? string : string|array<mixed>
  *  )
  */
 function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null, $options = null, $noreplace = 0, $nodefault = 0)
@@ -1481,10 +1486,14 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 			break;
 		case 'alpha':		// No html and no ../ and "
 		case 'alphanohtml':	// Recommended for most scalar parameters and search parameters. Not valid for json string.
+		case 'alphanohtmlquote':	// Same than 'alphanohtml' but " is replaced with ' instead of being removed
 			if (!is_array($out)) {
 				$out = trim($out);
 				do {
 					$oldstringtoclean = $out;
+					if ($check == 'alphanohtmlquote') {
+						$out = str_ireplace(array('&quot;', '&#34;', '&#0000034;', '&#x22;', '&quot', '"', '&#34', '&#0000034', '&#x22'), "'", $out);
+					}
 					// Remove html tags
 					$out = dol_string_nohtmltag($out, 0);
 					// Refuse octal syntax \999, hexa syntax \x999 and unicode syntax \u{999} by replacing the \ into / (so if it is a \ for a windows path, it is still ok).
@@ -2329,9 +2338,10 @@ function dolSlugify($stringtoslugify)
 
 /**
  * Returns text escaped for inclusion into JavaScript code.
+ * Prefer to enclose JS strings with simple quotes in generated JS code, like 'string', and use mode 0 or 1. Mode 2 should be avoided.
  *
  * @param	int|string	$stringtoescape			String to escape
- * @param	int			$mode					0=Escape also \' and \" into \', 1=Escape \' but not \" for usage into 'string', 2=Escape \" but not \' for usage into "string", 3=Escape \' and \" with \\.
+ * @param	int			$mode					0=Escape also \' and \" into \', 1=Escape \' but not \" for usage into 'string', 2=Escape \" but not \' for usage into "string" (to avoid, prefer 'string' with mode 0 or 1), 3=Escape \' and \" with \\.
  * @param	int			$noescapebackslashn		0=Escape also \n. 1=Do not escape \n.
  * @return	string								Escaped string. Both \' and " are escaped into \' if they are escaped.
  */
@@ -5188,10 +5198,11 @@ function get_localtax_by_third($local)
  *  @param	?Societe		$buyer         		Company object
  *  @param	?Societe		$seller        		Company object
  *  @param  int<0,1>		$firstparamisid     1 if first param is id into table (use this if you can)
+ *  @param  int<0,2>		$type_vat			When the rate has no code: 0=All types, 1=VAT rate for sales, 2=VAT rate for purchases
  *  @return	array{}|array{rowid:int,code:string,rate:float,localtax1:float,localtax1_type:string,localtax2:float,localtax2_type:string,npr:float,accountancy_code_sell:string,accountancy_code_buy:string} array('rowid'=> , 'code'=> ...)
  *  @see getLocalTaxesFromRate()
  */
-function getTaxesFromId($vatrate, $buyer = null, $seller = null, $firstparamisid = 1)
+function getTaxesFromId($vatrate, $buyer = null, $seller = null, $firstparamisid = 1, $type_vat = 0)
 {
 	global $db;
 
@@ -5225,6 +5236,16 @@ function getTaxesFromId($vatrate, $buyer = null, $seller = null, $firstparamisid
 		$sql .= " AND t.entity IN (" . getEntity('c_tva') . ")";
 		if ($vatratecode) {
 			$sql .= " AND t.code = '" . $db->escape($vatratecode) . "'";
+		} else {
+			// No code: several lines may have this rate (for example one for sales and one for purchases), so we take the default one of the type
+			if ($type_vat > 0) {
+				$sql .= " AND t.type_vat IN (0, " . ((int) $type_vat) . ")";
+			}
+			$sql .= " ORDER BY t.use_default DESC";
+			if ($type_vat > 0) {
+				$sql .= ", t.type_vat DESC";	// a line for sales only (or purchases only) wins over a line for both
+			}
+			$sql .= ", t.recuperableonly ASC, t.code ASC";
 		}
 	}
 
@@ -5331,10 +5352,11 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
  *  @param	int				$idprod          				Id of product or 0 if not a predefined product
  *  @param  Societe			$thirdpartytouseforcountry  	Thirdparty with a ->country_code defined (FR, US, IT, ...)
  *	@param	int				$idprodfournprice				Id product_fournisseur_price (for "supplier" proposal/order/invoice)
+ *  @param  int<0,2>		$type_vat						When the product rate is not known: 0=All types, 1=VAT rate for sales, 2=VAT rate for purchases
  *  @return float|string   					    			Vat rate to use with format 5.0 or '5.0 (XXX)'
  *  @see get_default_tva(), get_product_localtax_for_country()
  */
-function get_product_vat_for_country($idprod, $thirdpartytouseforcountry, $idprodfournprice = 0)
+function get_product_vat_for_country($idprod, $thirdpartytouseforcountry, $idprodfournprice = 0, $type_vat = 0)
 {
 	global $db, $mysoc;
 
@@ -5383,7 +5405,14 @@ function get_product_vat_for_country($idprod, $thirdpartytouseforcountry, $idpro
 			$sql .= " FROM " . MAIN_DB_PREFIX . "c_tva as t, " . MAIN_DB_PREFIX . "c_country as c";
 			$sql .= " WHERE t.active = 1 AND t.fk_pays = c.rowid AND c.code = '" . $db->escape($thirdpartytouseforcountry->country_code) . "'";
 			$sql .= " AND t.entity IN (" . getEntity('c_tva') . ")";
-			$sql .= " ORDER BY t.use_default DESC, t.taux DESC, t.code ASC, t.recuperableonly ASC";
+			if ($type_vat > 0) {
+				$sql .= " AND t.type_vat IN (0, " . ((int) $type_vat) . ")";	// Do not take the default purchase rate for a sale, nor the opposite
+			}
+			$sql .= " ORDER BY t.use_default DESC, t.taux DESC";
+			if ($type_vat > 0) {
+				$sql .= ", t.type_vat DESC";	// a line for sales only (or purchases only) wins over a line for both
+			}
+			$sql .= ", t.code ASC, t.recuperableonly ASC";
 			$sql .= $db->plimit(1);
 
 			$resql = $db->query($sql);
@@ -5501,10 +5530,11 @@ function get_product_localtax_for_country($idprod, $local, $thirdpartytouseforco
  *	@param  Societe		$thirdparty_buyer   	Object Buyer company
  *	@param  int			$idprod					Id product
  *	@param	int			$idprodfournprice		Id product_fournisseur_price (for supplier order/invoice)
+ *  @param  int<0,2>	$type_vat				When the product rate is not known: 0=All types, 1=VAT rate for sales, 2=VAT rate for purchases
  *	@return float|string   				      	Vat rate to use with format 5.0 or '5.0 (XXX)', -1 if we can't guess it
  *  @see get_default_localtax(), get_default_npr()
  */
-function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, $idprod = 0, $idprodfournprice = 0)
+function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, $idprod = 0, $idprodfournprice = 0, $type_vat = 0)
 {
 	global $mysoc, $db, $hookmanager;
 
@@ -5547,7 +5577,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 			}
 
 			if (!$isacompany) {
-				$vatvalue = get_product_vat_for_country($idprod, $thirdparty_buyer, $idprodfournprice);
+				$vatvalue = get_product_vat_for_country($idprod, $thirdparty_buyer, $idprodfournprice, $type_vat);
 				$vatrule = 'VATRULE 0';
 			}
 		}
@@ -5594,7 +5624,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 		|| (in_array($seller_country_code, array('MQ', 'GP')) && in_array($buyer_country_code, array('MQ', 'GP')))	// We should be able to manage the case of MQ, GP, ... with a deicated vat rate at previous step.
 	)) { // Warning ->country_code not always defined
 		//print 'VATRULE 3';
-		$tmpvat = get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+		$tmpvat = get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice, $type_vat);
 
 		if ($seller_country_code == 'IN' && getDolGlobalString('MAIN_SALETAX_AUTOSWITCH_I_CS_FOR_INDIA')) {
 			// Special case for india.
@@ -5629,7 +5659,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 
 		if (!$isacompany) {
 			//print 'VATRULE 5';
-			$vatvalue = get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+			$vatvalue = get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice, $type_vat);
 			$vatrule = 'VATRULE 5';
 		} else {
 			//print 'VATRULE 6';
@@ -5646,7 +5676,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	if (empty($vatrule) && getDolGlobalString('MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC') && empty($buyer_in_cee)) {
 		$isacompany = $thirdparty_buyer->isACompany();
 		if (!$isacompany) {
-			$vatvalue = get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+			$vatvalue = get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice, $type_vat);
 			$vatrule = 'VATRULE extra';
 			//print 'VATRULE extra';
 		}
@@ -5811,7 +5841,8 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 		$arrayforoldpath['product'] = 2;
 	}
 
-	if (empty($level) && array_key_exists($modulepart, $arrayforoldpath)) {
+	if (empty($level) && array_key_exists($modulepart, $arrayforoldpath)
+		&& !($modulepart === 'mailing' && getDolGlobalInt('MAILING_USE_NEW_PATH_FOR_FILES'))) {
 		$level = $arrayforoldpath[$modulepart];
 	}
 	if (!empty($level) && array_key_exists($modulepart, $arrayforoldpath)) {
@@ -7118,9 +7149,9 @@ function dol_textishtml($msg, $option = 0)
 			return true;
 		} elseif (preg_match('/<(br|hr)\/>/i', $msg)) {
 			return true;
-		} elseif (preg_match('/<(br|hr|div|font|li|p|span|strong|table)>/i', $msg)) {
+		} elseif (preg_match('/<(br|hr|div|font|li|p|span|strong|table|blockquote|pre|dl|section)>/i', $msg)) {
 			return true;
-		} elseif (preg_match('/<(br|hr|div|font|li|p|span|strong|table)\s+[^<>\/]*\/?>/i', $msg)) {
+		} elseif (preg_match('/<(br|hr|div|font|li|p|span|strong|table|blockquote|pre|dl|section)\s+[^<>\/]*\/?>/i', $msg)) {
 			return true;
 		} elseif (preg_match('/<img\s+[^<>]*src[^<>]*>/i', $msg)) {
 			return true; // must accept <img src="http://example.com/aaa.png" />
@@ -7405,6 +7436,12 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			}
 			$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'UrlToPayOnlineIfApplicable';
 			$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__'] = 'TextAndUrlToPayOnlineIfApplicable';
+			if (isModEnabled('invoice') && (!is_object($object) || $object->element == 'facture')) {
+				$substitutionarray['__PAYMENT_REFERENCE__'] = 'Structured payment reference of an invoice';
+				if (getDolGlobalString('INVOICE_ADD_FI_BARCODE') && $mysoc->country_code == 'FI') {
+					$substitutionarray['__PAYMENT_VIRTUAL_BARCODE__'] = 'Finnish virtual barcode of an invoice';
+				}
+			}
 			$substitutionarray['__SECUREKEYPAYMENT__'] = 'Security key (if key is not unique per record)';
 			$substitutionarray['__SECUREKEYPAYMENT_MEMBER__'] = 'Security key for payment on a member subscription (one key per member)';
 			$substitutionarray['__SECUREKEYPAYMENT_ORDER__'] = 'Security key for payment on an order';
@@ -7526,8 +7563,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_EMAIL_URLENCODED__'] = urlencode($object->email ?? '');
 				$substitutionarray['__THIRDPARTY_URL__'] = $object->url ?? '';
 				$substitutionarray['__THIRDPARTY_URL_URLENCODED__'] = urlencode($object->url ?? '');
-				$substitutionarray['__THIRDPARTY_PHONE__'] = dol_print_phone($object->phone);
-				$substitutionarray['__THIRDPARTY_FAX__'] = dol_print_phone($object->fax);
+				$substitutionarray['__THIRDPARTY_PHONE__'] = dol_print_phone((string) $object->phone);
+				$substitutionarray['__THIRDPARTY_FAX__'] = dol_print_phone((string) $object->fax);
 				$substitutionarray['__THIRDPARTY_ADDRESS__'] = $object->address ?? '';
 				$substitutionarray['__THIRDPARTY_ZIP__'] = $object->zip ?? '';
 				$substitutionarray['__THIRDPARTY_TOWN__'] = $object->town ?? '';
@@ -7767,6 +7804,17 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				if (getDolGlobalString('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION') && $object->element == 'facture') {
 					include_once DOL_DOCUMENT_ROOT . '/core/lib/functions_be.lib.php';
 					$substitutionarray['__PAYMENT_STRUCTURED_COMMUNICATION__'] = dolBECalculateStructuredCommunication((string) $object->ref, $object->type);
+				}
+
+				// Structured payment reference stored on the invoice
+				if ($object->element == 'facture') {
+					$substitutionarray['__PAYMENT_REFERENCE__'] = empty($object->payment_reference) ? '' : $object->payment_reference;
+				}
+
+				// Finnish virtual barcode. Reading it needs the bank account, so it is
+				// loaded only if the key is used, see the lazyload note on this function.
+				if (getDolGlobalString('INVOICE_ADD_FI_BARCODE') && $object->element == 'facture' && $mysoc->country_code == 'FI') {
+					$substitutionarray['__PAYMENT_VIRTUAL_BARCODE__@lazyload'] = '/compta/facture/class/facture.class.php:Facture:fetchAndSetSubstitution:' . $object->id;
 				}
 
 				if (getDolGlobalString('PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD') && is_object($object) && $object->element == 'propal') {

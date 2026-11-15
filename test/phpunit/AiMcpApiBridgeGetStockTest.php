@@ -104,7 +104,9 @@ class AiMcpApiBridgeGetStockTest extends CommonClassTest
 		$bridge = new ToolApiBridge($db, $user, $conf);
 
 		$prop = new ReflectionProperty('ToolApiBridge', 'enrichments');
-		$prop->setAccessible(true);
+		if (PHP_VERSION_ID < 80100) {
+			$prop->setAccessible(true);
+		}
 		$enrichments = $prop->getValue($bridge);
 		$enrichments['products']['methods']['fakeStockRead'] = array(
 			'suffix' => 'fake_stock_read',

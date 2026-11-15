@@ -79,6 +79,16 @@ header('X-Content-Type-Options: nosniff');
 $headers = dolGetRequestHeaders();
 $headers = array_change_key_case($headers, CASE_LOWER);
 
+// Log the full received request (method, URI, headers and body) into dolibarr_ai.log, with credentials masked
+/* Uncomment for debug only
+$logrequest = $_SERVER['REQUEST_METHOD'].' '.$_SERVER['REQUEST_URI']."\n";
+foreach ($headers as $hkey => $hval) {
+	$logrequest .= $hkey.': '.(string) $hval."\n";
+}
+$logrequest .= "\n".file_get_contents('php://input');
+dol_syslog('[MCP Server] Request received:'."\n".$logrequest, LOG_DEBUG, 0, '_ai');
+*/
+
 $mcpAuth = new McpAuth($db);
 
 if ($mcpAuth->authenticate() < 0) {

@@ -605,7 +605,7 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
  *
  * @param		string 		$htmlname			HTML name of element to insert key into
  * @param		string		$htmlnameofbutton	HTML name of button
- * @param		int			$generic			1=Return a generic pass, 0=Return a pass following setup rules
+ * @param		int<0,2>	$generic			0=Return a pass following setup rules, 1=Return a generic key (32 chars), 2=Return a generic password (16 chars)
  * @return		string		    				HTML javascript code to set a password
  * @see getRandomPassword()
  */
@@ -624,7 +624,7 @@ function dolJSToSetRandomPassword($htmlname, $htmlnameofbutton = 'generate_token
 				console.log(\'dolJSToSetRandomPassword: We click on the button '.dol_escape_js($htmlnameofbutton).' to suggest a key. anti-csrf-currenttoken is \'+currenttoken+\'. We will fill '.dol_escape_js($htmlname).'\');
 				jQuery.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
             		action: \'getrandompassword\',
-            		generic: '.($generic ? '1' : '0').',
+            		generic: '.((int) $generic).',
 					token: currenttoken
 				},
 				function(result) {
@@ -932,6 +932,78 @@ function dolTotpDeleteEnrollment($db, $fk_user)
 }
 
 /**
+ *  Return if the two-factor authentication is disabled for the whole instance by the parameter $dolibarr_main_disable_totp of conf.php.
+ *  This is a rescue option: when it is set, a password is enough to log in, even for a user with a TOTP enrollment.
+ *
+ *  @return		bool		True if the two-factor authentication is disabled
+ */
+function dolTotpIsDisabledByConf()
+{
+	global $dolibarr_main_disable_totp;
+
+	return !empty($dolibarr_main_disable_totp);
+}
+
+/**
+ *  Tell if the security setup requires the TOTP two-factor authentication for a user: for all the internal users, all the external
+ *  users or the members of some groups. Never required when this instance can't store a secret, nor when the rescue option of conf.php
+ *  disables the two-factor authentication (an enrollment is then refused), so nobody is locked out of its setup.
+ *
+ *  @param		DoliDB		$db				Database handler
+ *  @param		User		$user			User to test
+ *  @return		bool						True if this user must use a TOTP
+ *  @see dolTotpMustEnroll()
+ */
+function dolTotpIsRequired($db, $user)
+{
+	if (!getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') || dolTotpIsDisabledByConf() || empty($user->id)) {
+		return false;
+	}
+
+	$required = (empty($user->socid) ? getDolGlobalInt('MAIN_SECURITY_TOTP_REQUIRED_FOR_INTERNAL') : getDolGlobalInt('MAIN_SECURITY_TOTP_REQUIRED_FOR_EXTERNAL')) > 0;
+	$groupids = array_filter(array_map('intval', explode(',', getDolGlobalString('MAIN_SECURITY_TOTP_REQUIRED_FOR_GROUPS'))));
+	if (!$required && !empty($groupids)) {
+		$sql = "SELECT COUNT(ug.rowid) as nb FROM ".$db->prefix()."usergroup_user as ug";
+		$sql .= " WHERE ug.fk_user = ".((int) $user->id)." AND ug.fk_usergroup IN (".$db->sanitize(implode(',', $groupids)).")";
+		$resql = $db->query($sql);
+		if (!$resql) {
+			dol_syslog("dolTotpIsRequired ".$db->lasterror(), LOG_ERR);
+			$required = true;	// We fail closed: the user is asked to set up a TOTP rather than let in with the password only
+		} else {
+			$obj = $db->fetch_object($resql);
+			$required = !empty($obj->nb);
+			$db->free($resql);
+		}
+	}
+
+	// dolTotpSaveEnrollment() refuses to store a secret in clear: requiring a TOTP would then lock out the users concerned, the admin included
+	if ($required && strpos(dolEncrypt('totp'), 'dolcrypt:') !== 0) {
+		dol_syslog("dolTotpIsRequired: the setup requires a TOTP but this instance has no encryption key or no openssl to store one", LOG_WARNING);
+		return false;
+	}
+
+	return $required;
+}
+
+/**
+ *  Tell if the logged user must set up a TOTP before going further: the security setup requires one for this user, none is set up yet,
+ *  and the session was opened with a mode that asks for the second step.
+ *
+ *  @param		DoliDB		$db				Database handler
+ *  @param		User		$user			Logged user
+ *  @return		bool						True if this user must set up a TOTP first
+ *  @see dolTotpIsRequired()
+ */
+function dolTotpMustEnroll($db, $user)
+{
+	if (empty($_SESSION['dol_authmode']) || !in_array($_SESSION['dol_authmode'], array('dolibarr', 'ldap'))) {
+		return false;	// The second step is asked only with these modes, the others check the user their own way
+	}
+
+	return dolTotpIsRequired($db, $user) && dolTotpGetEnrollment($db, $user->id) === null;
+}
+
+/**
  *  Start the second step of a two-factor authentication, just after a password has been validated.
  *  The session is not opened here: we only remember that the first step succeeded, so a code can be asked for in the next request.
  *
@@ -944,6 +1016,11 @@ function dolTotpDeleteEnrollment($db, $fk_user)
 function dolTotpStartSecondFactor($db, $login, $entity)
 {
 	global $conf, $langs;
+
+	if (dolTotpIsDisabledByConf()) {	// Rescue option of conf.php, checked first so it works even if the enrollment can't be read
+		dol_syslog("dolTotpStartSecondFactor: two-factor authentication is disabled by dolibarr_main_disable_totp in conf.php, the password is enough for ".$login, LOG_WARNING);
+		return $login;
+	}
 
 	$tmpuser = new User($db);
 	if ($tmpuser->fetch(0, $login, '', 0, ($entity > 0 ? $entity : -1)) <= 0) {	// Just validated but not loadable: we fail closed rather than skip the second factor

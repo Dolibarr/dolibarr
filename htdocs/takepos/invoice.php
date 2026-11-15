@@ -445,6 +445,10 @@ if (empty($reshook)) {
 		$invoice = new Facture($db);
 		$invoice->fetch($placeid);
 
+		// Stock of products with lot/serial is moved below only when this call validates the draft sale.
+		// A later payment on an already validated sale must not move it a second time.
+		$invoicewasdraft = ($invoice->status == Facture::STATUS_DRAFT);
+
 		$invoice->oldcopy = dol_clone($invoice, 2);
 
 		$db->begin();
@@ -590,7 +594,7 @@ if (empty($reshook)) {
 		$warehouseid = 0;
 		// Update stock for batch products
 		if (!$error && $res >= 0) {
-			if (isModEnabled('stock') && isModEnabled('productbatch') && $allowstockchange) {
+			if (isModEnabled('stock') && isModEnabled('productbatch') && $allowstockchange && $invoicewasdraft) {
 				// Update stocks
 				dol_syslog("Now we record the stock movement for each qualified line");
 
@@ -856,6 +860,14 @@ if (empty($reshook)) {
 
 		$invoice = new Facture($db);
 		$invoice->fetch($placeid);
+
+		// The header (and what follows) must show the customer of this sale, not the one of the current cart
+		$soc = new Societe($db);
+		if ($invoice->socid > 0) {
+			$soc->fetch($invoice->socid);
+		} else {
+			$soc->fetch(getDolGlobalInt($constforcompanyid));
+		}
 	}
 
 	// If we add a line and no invoice yet, we create the invoice
@@ -1896,6 +1908,14 @@ function PrintHTMLToSlashPrint(id){
 function PrintByESCPOSOld(id){
 	console.log("PrintByESCPOSOld id=" + id);
 	$.get("<?php echo DOL_URL_ROOT; ?>/takepos/ajax/ajax.php?action=printinvoiceticket&token=<?php echo currentToken(); ?>&term=<?php echo urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : ''); ?>&id="+id, function(data, status) {
+		// The answer must be the base64url ESC/POS ticket. Anything else (login page after session loss, PHP error...) must not be sent to the printer.
+		data = $.trim(data);
+		if (!/^[A-Za-z0-9_-]+$/.test(data)) {
+			console.log("PrintByESCPOSOld: answer is not a ticket, print canceled");
+			alert("<?php echo dol_escape_js($langs->transnoentitiesnoconv("FailedToSendToPrinter")); ?>");
+			window.location.reload();	// Session lost: Dolibarr will show the login page
+			return;
+		}
 		$.ajax({
 			type: "POST",
 			url: '<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>/printer/index.php',

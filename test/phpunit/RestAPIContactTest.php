@@ -559,10 +559,52 @@ class RestAPIContactTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * testRestUpdateContactNoEmail
+	 *
+	 * Set no_email on a contact with PUT, check it is saved with a GET, then unset it.
+	 *
+	 * @return	void
+	 *
+	 * @depends testRestGetContact
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testRestUpdateContactNoEmail()
+	{
+		if (!isModEnabled('mailing')) {
+			$this->markTestSkipped('Module mailing must be enabled to test no_email');
+		}
+
+		$email = 'testrestcontactnoemail'.mt_rand().'@example.com';
+		$contactid = $this->callApi('POST', '/contacts', array("firstname" => "testRestContactNoEmail", "lastname" => "testRestContact", "email" => $email));
+		$this->assertIsInt($contactid, 'Contact creation failed: '.var_export($contactid, true));
+
+		try {
+			// Set no_email
+			$object = $this->callApi('PUTALREADYFORMATED', '/contacts/'.$contactid, array("no_email" => 1));
+			$this->assertEquals(1, $object['no_email'] ?? null, 'Update of no_email failed: '.var_export($object, true));
+
+			$object = $this->callApi('GET', '/contacts/'.$contactid);
+			$this->assertEquals(1, $object['no_email'] ?? null, 'no_email=1 must be saved: '.var_export($object, true));
+
+			// Unset no_email
+			$object = $this->callApi('PUTALREADYFORMATED', '/contacts/'.$contactid, array("no_email" => 0));
+			$this->assertEquals(0, $object['no_email'] ?? null, 'Update of no_email failed: '.var_export($object, true));
+
+			$object = $this->callApi('GET', '/contacts/'.$contactid);
+			$this->assertArrayHasKey('no_email', $object, 'GET must return no_email: '.var_export($object, true));
+			$this->assertEquals(0, $object['no_email'], 'no_email=0 must be saved: '.var_export($object, true));
+		} finally {
+			// Clean up, even if an assertion failed
+			$this->callApi('PUTALREADYFORMATED', '/contacts/'.$contactid, array("no_email" => 0));
+			$this->callApi('DELETE', '/contacts/'.$contactid);
+		}
+	}
+
+	/**
 	 * testRestCreateUserFromContact
 	 *
-	 * Create a user from a contact, then check the errors for missing fields, an unknown contact,
-	 * a contact that already has a user and a login that is already used.
+	 * Create a user from a contact, and one without password, then check the errors for a missing or empty login,
+	 * an unknown contact, a contact that already has a user and a login that is already used.
 	 *
 	 * @return	void
 	 *
@@ -584,11 +626,26 @@ class RestAPIContactTest extends AbstractRestAPITest
 			$this->assertIsInt($othercontactid, 'Contact creation failed: '.var_export($othercontactid, true));
 			$contactids[] = $othercontactid;
 
-			// Missing fields
+			// Missing or empty login
 			$object = $this->callApi('POST', '/contacts/'.$contactid.'/createUser', array("password" => $password));
 			$this->assertEquals(400, $object['error']['code'] ?? null, 'A missing login must return 400: '.var_export($object, true));
-			$object = $this->callApi('POST', '/contacts/'.$contactid.'/createUser', array("login" => $login));
-			$this->assertEquals(400, $object['error']['code'] ?? null, 'A missing password must return 400: '.var_export($object, true));
+			$object = $this->callApi('POST', '/contacts/'.$contactid.'/createUser', array("login" => "", "password" => $password));
+			if (is_int($object)) {
+				$userids[] = $object;
+			}
+			$this->assertEquals(400, $object['error']['code'] ?? null, 'An empty login must return 400: '.var_export($object, true));
+
+			// Empty password: the user is created without password
+			$nopasscontactid = $this->callApi('POST', '/contacts', array("lastname" => "testRestCreateUser".mt_rand()));
+			$this->assertIsInt($nopasscontactid, 'Contact creation failed: '.var_export($nopasscontactid, true));
+			$contactids[] = $nopasscontactid;
+			$object = $this->callApi('POST', '/contacts/'.$nopasscontactid.'/createUser', array("login" => $login.'n', "password" => ""));
+			if (is_int($object)) {
+				$userids[] = $object;
+			}
+			$this->assertIsInt($object, 'A user without password must be created: '.var_export($object, true));
+			$nopassuser = $this->callApi('GET', '/contacts/'.$nopasscontactid);
+			$this->assertEquals($object, $nopassuser['user_id'] ?? null, 'The user without password must be linked to the contact');
 
 			// Nonexistent contact
 			$object = $this->callApi('POST', '/contacts/123456789/createUser', array("login" => $login, "password" => $password));

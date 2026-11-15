@@ -21,6 +21,7 @@
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2025		Benjamin Falière			<benjamin@faliere.com>
  * Copyright (C) 2025		Anthony Berton				<anthony.berton@bb2a.fr>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -955,29 +956,35 @@ if (empty($reshook)) {
 	} elseif ($action == 'import_lines_from_object' && $usercancreate && $object->status == Propal::STATUS_DRAFT) {
 		// add lines from objectlinked
 		$fromElement = GETPOST('fromelement');
-		$fromElementid = GETPOST('fromelementid');
+		$fromElementid = GETPOSTINT('fromelementid');
 		$importLines = GETPOST('line_checkbox');
 
 		if (!empty($importLines) && is_array($importLines) && !empty($fromElement) && preg_match('/^[a-zA-Z]+$/', $fromElement) && !empty($fromElementid)) {
+			$lineParentField = '';
 			if ($fromElement == 'commande') {
 				dol_include_once('/' . $fromElement . '/class/' . $fromElement . '.class.php');
 				$lineClassName = 'OrderLine';
+				$lineParentField = 'fk_commande';
 			} elseif ($fromElement == 'propal') {
 				dol_include_once('/comm/' . $fromElement . '/class/' . $fromElement . '.class.php');
 				$lineClassName = 'PropaleLigne';
+				$lineParentField = 'fk_propal';
 			} elseif ($fromElement == 'facture') {
 				dol_include_once('/compta/' . $fromElement . '/class/' . $fromElement . '.class.php');
 				$lineClassName = 'FactureLigne';
+				$lineParentField = 'fk_facture';
 			} else {
 				$lineClassName = null;
 			}
 			$nextRang = count($object->lines) + 1;
 			$importCount = 0;
 			$error = 0;
+			// Check user can read the source object (permission, thirdparty and entity)
+			$fromElementAllowed = ($lineParentField && $fromElementid > 0 && restrictedArea($user, $fromElement, $fromElementid, '', '', 'fk_soc', 'rowid', 0, 1));
 			foreach ($importLines as $lineId) {
 				$lineId = intval($lineId);
 				$originLine = new $lineClassName($db);
-				if (intval($fromElementid) > 0 && $originLine->fetch($lineId) > 0) {
+				if ($fromElementAllowed && $originLine->fetch($lineId) > 0 && $originLine->$lineParentField == $fromElementid) {
 					$originLine->fetch_optionals();
 					$desc = $originLine->desc;
 					$pu_ht = $originLine->subprice;
@@ -3406,6 +3413,24 @@ if ($action == 'create') {
 			$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, (string) $object->mode_reglement_id, 'none');
 		}
 		print '</td></tr>';
+
+		// Structured payment reference, see core/lib/paymentref.lib.php.
+		// Only shown for the modes whose value is settled before invoicing. In the per
+		// invoice mode the reference comes from the invoice number, which does not exist
+		// yet, so anything shown here would never match the invoice the customer receives.
+		if (in_array(getDolGlobalString('INVOICE_PAYMENT_REF_MODE'), array('company', 'thirdparty'))) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/paymentref.lib.php';
+			$tmpobjectforpayref = clone $object;
+			$tmpobjectforpayref->status = 1;
+			$paymentrefpreview = dolPayRefGenerateForInvoice($tmpobjectforpayref, $user, 0);
+			if ($paymentrefpreview != '') {
+				print '<tr><td>';
+				print $form->textwithpicto($langs->trans('PaymentReference'), $langs->trans('PaymentReferenceBeforeInvoiceHelp'));
+				print '</td><td>';
+				print showValueWithClipboardCPButton(dol_escape_htmltag($paymentrefpreview));
+				print '</td></tr>';
+			}
+		}
 
 		// Delivery delay
 		print '<tr class="fielddeliverydelay"><td>';
