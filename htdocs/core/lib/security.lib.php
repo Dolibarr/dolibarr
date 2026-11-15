@@ -864,6 +864,17 @@ function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file
 		$modulepart = dol_substr($modulepart, 6);
 	}
 
+	// Security: Remove '.', '..' and empty segments ('/' -> '//') from $original_file, like done into
+	// dol_check_secure_access_document(), so the reference of the object extracted from the subdirectory
+	// can not be faked with a path like 'REF/./file' or 'REF//file' and stays the same than the one of the first check.
+	$pathsegments = explode('/', $original_file);
+	foreach ($pathsegments as $key => $pathsegment) {
+		if ($pathsegment === '.' || $pathsegment === '..' || $pathsegment === '') {
+			unset($pathsegments[$key]);
+		}
+	}
+	$original_file = implode('/', $pathsegments);
+
 	// Find the subdirectory name as the reference
 	$refname = basename(dirname($original_file)."/");
 	if ($refname == 'thumbs' || $refname == 'temp') {

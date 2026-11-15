@@ -268,6 +268,17 @@ $original_file = preg_replace('/\.\.+/', '..', $original_file);	// Replace '... 
 $original_file = str_replace('../', '/', $original_file);
 $original_file = str_replace('..\\', '/', $original_file);
 
+// Security: Remove remaining '.', '..' and empty ('//' -> '/') segments, so the reference of the object
+// extracted from the subdirectory can not be faked with a path like 'REF/./file' or 'REF//file'.
+// The reference must also stay the same than the one resolved into dol_check_secure_access_document().
+$pathsegments = explode('/', $original_file);
+foreach ($pathsegments as $key => $pathsegment) {
+	if ($pathsegment === '.' || $pathsegment === '..' || $pathsegment === '') {
+		unset($pathsegments[$key]);
+	}
+}
+$original_file = implode('/', $pathsegments);
+
 // Find the subdirectory name as the reference
 $refname = basename(dirname($original_file)."/");
 if ($refname == 'thumbs') {
