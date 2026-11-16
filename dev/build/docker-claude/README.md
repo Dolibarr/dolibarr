@@ -100,3 +100,10 @@ DOCKER_ALLOW_SMTP=1 claudes
 Like for docker-vibe, the files `/var/log/mail.log`, `/var/log/phpmail.log` and `/var/log/phpsendmail.log` are each mounted
 read-only at the same path into the container when they exist on the host, and the user of the container is added to the groups
 owning them (except `root`). After a rotation of the log on the host, the container keeps showing the old file until it is restarted.
+
+## Documents produced by the agent
+Like for docker-vibe, `claudes.sh` creates the directory `/tmp/agents_documents` on the host and mounts it at the same path into the container,
+so the documents produced by the agent for the user (reports, slides, graphs, exports, test artifacts, ...) are shared with the host
+without touching the git working directory of the project. The directory is shared between the host and all the AI agent containers
+running on it: each agent should write into a subdirectory named after itself (for example `/tmp/agents_documents/claude/`).
+Beware: `/tmp` is purged at reboot: the documents must be taken out of the host directory before a reboot of the host.
