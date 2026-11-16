@@ -35,9 +35,6 @@ define('MAIN_SECURITY_FORCECSP', "default-src 'none'; form-action 'none'; frame-
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-if (!defined('NOREQUIRETRAN')) {
-	define('NOREQUIRETRAN', '1');
-}
 if (!defined('NOCSRFCHECK')) {
 	define('NOCSRFCHECK', '1');
 }
@@ -170,6 +167,8 @@ $hashp = GETPOST('hashp', 'aZ09', 1);
 $extname = GETPOST('extname', 'alpha', 1);
 $modulepart = GETPOST('modulepart', 'alpha', 1);
 $urlsource = GETPOST('urlsource', 'alpha');
+// main.inc.php may have replaced $entity with the authenticated session entity.
+$entity = GETPOSTINT('entity');
 $entity = ($entity > 0 ? $entity : $conf->entity);
 
 // Security check

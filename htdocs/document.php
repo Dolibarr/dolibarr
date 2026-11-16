@@ -149,6 +149,8 @@ $original_file = GETPOST('file', 'alphanohtml');
 $hashp = GETPOST('hashp', 'aZ09');
 $modulepart = GETPOST('modulepart', 'alpha');
 $urlsource = GETPOST('urlsource', 'alpha');
+// main.inc.php may have replaced $entity with the authenticated session entity.
+$entity = GETPOSTINT('entity');
 $entity = ($entity > 0 ? $entity : $conf->entity);
 
 // Security check
