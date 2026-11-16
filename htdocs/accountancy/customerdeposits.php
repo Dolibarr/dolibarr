@@ -85,8 +85,8 @@ if ($clearfilters) {
 
 if (empty($date_cutoff)) {
 	$now = dol_now();
-	$sql = 'SELECT date_end FROM '.$db->prefix().'accounting_fiscalyear';
-	$sql .= ' WHERE entity IN ('.getEntity('accounting_fiscalyear').')';
+	$sql = "SELECT date_end FROM ".$db->prefix()."accounting_fiscalyear";
+	$sql .= " WHERE entity IN (".$db->sanitize(getEntity('accounting_fiscalyear')).")";
 	$sql .= " AND date_start <= '".$db->idate($now)."' AND date_end >= '".$db->idate($now)."'";
 	$sql .= $db->order('date_end', 'ASC').$db->plimit(1);
 	$resql = $db->query($sql);
