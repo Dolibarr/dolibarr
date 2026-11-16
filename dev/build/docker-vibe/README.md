@@ -108,6 +108,12 @@ The hooks environments are preloaded into the image when it is built (they are t
 They are stored into the directory `/var/cache/pre-commit`, declared with `PRE_COMMIT_HOME` in the Dockerfile, and are already present at the first run into the container.
 If the `.pre-commit-config.yaml` of the repository changes after the image was built (new revision of a hook), only the changed hooks are downloaded at the first run.
 
+## Playwright and Chromium
+
+Playwright for Python and Chromium are installed into the image, to test the pages of Dolibarr in a browser (screenshots, javascript errors).
+The browsers are into `/opt/pw-browsers` (`PLAYWRIGHT_BROWSERS_PATH`) and the full browser is also available at `/usr/local/bin/chromium`.
+Playwright is installed into the system python: run the scripts with `/usr/bin/python3`, because `python3` is the python of the Vibe venv (`/opt/vibe/bin` is first into the `PATH`).
+
 ## Transifex CLI
 
 The Transifex client `tx` is installed into the image (see https://github.com/transifex/cli).

@@ -2035,7 +2035,6 @@ if ($action == 'create') {
 			if ($object->status == ExpenseReport::STATUS_CLOSED) {
 				$rowspan += 2;
 			}
-			print "</td>";
 			print '</tr>';
 
 			print '<tr>';
@@ -2057,6 +2056,7 @@ if ($action == 'create') {
 			print '<td>'.$langs->trans("AmountTTC").'</td>';
 			print '<td class="nowrap amountcard">'.price($object->total_ttc, 1, '', 1, -1, -1, $conf->currency).'</td>';
 			print '</tr>';
+			print '</table>';
 
 			// List of payments already done
 			$canSeeBankAccount = isModEnabled('bank') && $user->hasRight('banque', 'lire');
@@ -2178,9 +2178,9 @@ if ($action == 'create') {
 			print "</table>";
 			print '</div>';
 
+			print '</div>'; // end fichehalfright
+			print '</div>'; // end fichecenter
 			print '<div class="clearboth"></div>';
-			print '</div>';
-
 
 			print '<br><br>';
 
