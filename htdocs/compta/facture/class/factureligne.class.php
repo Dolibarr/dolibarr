@@ -513,7 +513,7 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ' situation_percent, fk_prev_id,';
 		$sql .= ' fk_unit, fk_user_author, fk_user_modif,';
 		$sql .= ' fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc,';
-		$sql .= ' batch, fk_warehouse';
+		$sql .= ' batch, fk_warehouse, extraparams';
 		$sql .= ')';
 		$sql .= " VALUES (".((int) $this->fk_facture).",";
 		$sql .= " ".($this->fk_parent_line > 0 ? ((int) $this->fk_parent_line) : "null").",";
@@ -559,6 +559,9 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ", ".price2num($this->multicurrency_total_ttc);
 		$sql .= ", '".$this->db->escape($this->batch)."'";
 		$sql .= ", ".((int) $this->fk_warehouse);
+		// Keep extra parameters (for example the options of subtotal lines) when a line is copied from another one
+		$extraparams = (!empty($this->extraparams) ? dol_trunc(json_encode($this->extraparams), 250) : null);
+		$sql .= ", ".(!empty($extraparams) ? "'".$this->db->escape($extraparams)."'" : "null");
 		$sql .= ')';
 
 		dol_syslog(get_class($this)."::insert", LOG_DEBUG);
