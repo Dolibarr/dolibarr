@@ -79,7 +79,7 @@ $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_cti = preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml'))); // Phone number without any special chars
 $search_phone = GETPOST("search_phone", 'alpha');
 
-$search_id = GETPOST("search_id", "intcomma");
+$search_id = trim(GETPOST("search_id", 'alpha'));	// Can contains a numeric test like ">10" or "!= 34"
 $search_ref_ext = GETPOST("search_ref_ext", "alpha");
 $search_firstlast_only = GETPOST("search_firstlast_only", 'alpha');
 $search_lastname = GETPOST("search_lastname", 'alpha');
@@ -275,7 +275,7 @@ $arrayfields['region.nom'] = array('label' => "Region", 'position' => 67, 'check
 $arrayfields['country.code_iso'] = array('label' => "Country", 'position' => 68, 'checked' => '0');
 if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 	$arrayfields['s.nom'] = array('label' => "ThirdParty", 'position' => 113, 'checked' => '1');
-	$arrayfields['s.name_alias'] = array('label' => "AliasNameShort", 'position' => 114, 'checked' => '1');
+	$arrayfields['s.name_alias'] = array('label' => "AliasNameShort", 'position' => 114, 'checked' => '0');
 }
 
 $arrayfields['unsubscribed'] = array(
@@ -597,6 +597,10 @@ if ($search_priv != '0' && $search_priv != '1') {
 		$sql .= " AND (p.priv='1' AND p.fk_user_creat=".((int) $user->id).")";
 	}
 }
+// An internal user who cannot see all third parties sees only contacts without third party or contacts of its third parties
+if (!$user->hasRight('societe', 'client', 'voir') && empty($socid)) {
+	$sql .= " AND (p.fk_soc IS NULL OR EXISTS (SELECT sc.fk_soc FROM ".$db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $user->id)."))";
+}
 // Search on sale representative
 if (!empty($search_sale) && $search_sale != '-1') {
 	if ($search_sale == -2) {
@@ -715,7 +719,7 @@ if (strlen($search_firstlast_only)) {
 	$sql .= natural_search(array('p.lastname', 'p.firstname'), $search_firstlast_only);
 }
 
-if ($search_id > 0) {
+if ($search_id != '') {
 	$sql .= natural_search('p.rowid', $search_id, 1);
 }
 if ($search_ref_ext) {
@@ -948,8 +952,8 @@ if (!empty($search_categ_supplier) && $search_categ_supplier != '-1') {
 if ($search_all != '') {
 	$param .= '&search_all='.urlencode($search_all);
 }
-if ($search_id > 0) {
-	$param .= "&search_id=".((int) $search_id);
+if ($search_id != '') {
+	$param .= "&search_id=".urlencode($search_id);
 }
 if ($search_ref_ext) {
 	$param .= "&search_ref_ext=".urlencode($search_ref_ext);
@@ -1080,7 +1084,9 @@ if ($search_import_key != '') {
 	$param .= '&search_import_key='.urlencode($search_import_key);
 }
 if (count($search_roles) > 0) {
-	$param .= implode('&search_roles[]=', $search_roles);
+	foreach ($search_roles as $search_role) {
+		$param .= '&search_roles[]='.urlencode($search_role);
+	}
 }
 if ($search_birthday_start) {
 	$param .= '&search_birthday_start='.urlencode(dol_print_date($search_birthday_start, '%d')).'&search_birthday_startmonth='.urlencode(dol_print_date($search_birthday_start, '%m')).'&search_birthday_startyear='.urlencode(dol_print_date($search_birthday_start, '%Y'));
@@ -1090,6 +1096,11 @@ if ($search_birthday_end) {
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+
+// Add $param from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action);	// Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
 
 // List of mass actions available
 $arrayofmassactions = array(
@@ -1134,6 +1145,9 @@ $reshook = $hookmanager->executeHooks('printNewCardButton', $parameters, $object
 if (empty($reshook)) {
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+	if (empty($user->socid) && $contextpage != 'poslist') {	// Statistics are on all the contacts, so they are not available to external users
+		$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', dolBuildUrl(DOL_URL_ROOT.'/contact/stats/geo.php', ['mode' => 'contactbycountry']), '', 1, array('morecss' => 'reposition'));
+	}
 	$newcardbutton .= dolGetButtonTitleSeparator();
 	if ($contextpage != 'poslist') {
 		$newcardbutton .= dolGetButtonTitle($langs->trans('NewContactAddress'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?action=create', '', $permissiontoadd);
@@ -1209,9 +1223,12 @@ if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 	}
 }
 
-$moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= $formcompany->showRoles("search_roles", $objecttmp, 'edit', $search_roles, 'minwidth500', $langs->transnoentitiesnoconv('ContactRoles'));
-$moreforfilter .= '</div>';
+// Filter on contact roles is shown only if option is set (or if a filter on roles is already active, so it can be removed)
+if (getDolGlobalString('CONTACT_SHOW_FILTER_CONTACT_HAS_ROLE') || count($search_roles) > 0) {
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= $formcompany->showRoles("search_roles", $objecttmp, 'edit', $search_roles, 'minwidth500', $langs->transnoentitiesnoconv('ContactRoles'));
+	$moreforfilter .= '</div>';
+}
 
 print '<div class="liste_titre liste_titre_bydiv centpercent">';
 print $moreforfilter;
@@ -1238,8 +1255,8 @@ if ($conf->main_checkbox_left_column) {
 	print '</td>';
 }
 if (!empty($arrayfields['p.rowid']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input class="flat searchstring" type="text" name="search_id" size="1" value="'.dolPrintHTMLForAttribute($search_id).'">';
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['p.lastname']['checked'])) {
@@ -1445,7 +1462,7 @@ if ($conf->main_checkbox_left_column) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.rowid']['checked'])) {
-	print_liste_field_titre($arrayfields['p.rowid']['label'], $_SERVER["PHP_SELF"], "p.rowid", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['p.rowid']['label'], $_SERVER["PHP_SELF"], "p.rowid", "", $param, "", $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.lastname']['checked'])) {
@@ -1678,7 +1695,7 @@ while ($i < $imaxinloop) {
 
 		// ID
 		if (!empty($arrayfields['p.rowid']['checked'])) {
-			print '<td class="tdoverflowmax50">';
+			print '<td class="center tdoverflowmax50">';
 			print dolPrintHTML($obj->rowid);
 			print "</td>\n";
 			if (!$i) {

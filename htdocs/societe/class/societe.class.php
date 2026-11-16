@@ -2962,7 +2962,14 @@ class Societe extends CommonObject
 		if ($this->id > 0) {
 			// Separate VAT code from VAT rate string
 			// Discount type determines who is buyer and seller
-			$taxes = getTaxesFromId($vatrate, ($discount_type == 0 ? $this : $mysoc), ($discount_type == 0 ? $mysoc : $this), 0);
+			$buyer = ($discount_type == 0 ? $this : $mysoc);
+			$seller = ($discount_type == 0 ? $mysoc : $this);
+			$taxes = getTaxesFromId($vatrate, $buyer, $seller, 0);
+			// Local tax rates for this buyer/seller pair determined by get_localtax() (0 if not applicable)
+			$localtax1_tx = (float) get_localtax($vatrate, 1, $buyer, $seller);
+			$localtax2_tx = (float) get_localtax($vatrate, 2, $buyer, $seller);
+			$localtax1_type = ($localtax1_tx ? (int) ($taxes['localtax1_type'] ?? 0) : 0);
+			$localtax2_type = ($localtax2_tx ? (int) ($taxes['localtax2_type'] ?? 0) : 0);
 			$reg = array();
 			$vat_src_code = '';
 			if (preg_match('/\((.*)\)/', $vatrate, $reg)) {
@@ -2987,7 +2994,7 @@ class Societe extends CommonObject
 
 			$vat_tx = (float) price2num($vatrate);
 
-			$discount->generateFromAmount($remise, ($price_base_type == 'TTC' ? 1 : 0), $vat_tx, $taxes['localtax1'], $taxes['localtax2'], (int) $taxes['localtax1_type'], (int) $taxes['localtax2_type']);
+			$discount->generateFromAmount($remise, ($price_base_type == 'TTC' ? 1 : 0), $vat_tx, $localtax1_tx, $localtax2_tx, $localtax1_type, $localtax2_type);
 
 			$discount->vat_src_code = $vat_src_code;
 
@@ -5604,6 +5611,14 @@ class Societe extends CommonObject
 		} else {
 			$sql .= " AND entity IN (".getEntity('invoice').")";
 		}
+		// Invoices before this date (YYYY-MM-DD) are excluded from the outstanding amount (history migrated or settled elsewhere)
+		$reg = array();
+		if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', getDolGlobalString('SOCIETE_OUTSTANDING_BILLS_FROM_DATE'), $reg)) {
+			$fromdate = dol_mktime(0, 0, 0, (int) $reg[2], (int) $reg[3], (int) $reg[1]);
+			if ($fromdate) {
+				$sql .= " AND datef >= '".$this->db->idate($fromdate)."'";
+			}
+		}
 
 		dol_syslog("getOutstandingBills", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -5919,6 +5934,50 @@ class Societe extends CommonObject
 			$dbs->query('DELETE FROM '.MAIN_DB_PREFIX.'societe_commerciaux WHERE rowid = '.((int) $obj->rowid));
 		}
 
+		// Bank accounts have a unique key (entity, label, fk_soc): process duplicates before moving lines
+		$sql = 'SELECT o.rowid as origin_rowid, o.label, o.type as o_type, d.type as d_type,';
+		$sql .= ' o.iban_prefix as o_iban, d.iban_prefix as d_iban';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_rib as o';
+		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'societe_rib as d ON d.label = o.label AND d.fk_soc = '.(int) $dest_id;
+		$sql .= ' WHERE o.fk_soc = '.(int) $origin_id;
+
+		$resql = $dbs->query($sql);
+		if (!$resql) {
+			return false;
+		}
+		while ($obj = $dbs->fetch_object($resql)) {
+			if ($obj->o_type == 'ban' && $obj->d_type == 'ban' && !empty($obj->o_iban) && $obj->o_iban === $obj->d_iban) {
+				// Real duplicate (same IBAN): delete the one of the old thirdparty
+				$res = $dbs->query('DELETE FROM '.MAIN_DB_PREFIX.'societe_rib WHERE rowid = '.(int) $obj->origin_rowid);
+			} else {
+				// Same label but different account or card: rename to keep both (label is varchar(180), part of unique key)
+				$suffix = ' (fusion '.(int) $origin_id.')';
+				$newlabel = dol_trunc($obj->label, 180 - dol_strlen($suffix), 'right', 'UTF-8', 1).$suffix;
+				// Make sure the new label is not already used by one of the two thirdparties
+				$i = 2;
+				while ($dbs->fetch_object($dbs->query("SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib WHERE label = '".$dbs->escape($newlabel)."' AND fk_soc IN (".(int) $origin_id.", ".(int) $dest_id.")"))) {
+					$newlabel = dol_trunc($obj->label, 180 - dol_strlen($suffix.' '.$i), 'right', 'UTF-8', 1).$suffix.' '.$i;
+					$i++;
+				}
+				$res = $dbs->query("UPDATE ".MAIN_DB_PREFIX."societe_rib SET label = '".$dbs->escape($newlabel)."' WHERE rowid = ".(int) $obj->origin_rowid);
+			}
+			if (!$res) {
+				return false;
+			}
+		}
+
+		// Only one default account per type: the one of the kept thirdparty wins, those of the old thirdparty are set to 0
+		$resql = $dbs->query("SELECT DISTINCT type FROM ".MAIN_DB_PREFIX."societe_rib WHERE fk_soc = ".(int) $dest_id." AND default_rib = 1");
+		if (!$resql) {
+			return false;
+		}
+		while ($obj = $dbs->fetch_object($resql)) {
+			$res = $dbs->query("UPDATE ".MAIN_DB_PREFIX."societe_rib SET default_rib = 0 WHERE fk_soc = ".(int) $origin_id." AND type = '".$dbs->escape($obj->type)."'");
+			if (!$res) {
+				return false;
+			}
+		}
+
 		// The table llx_societe_extrafields must NOT be in this list because we don't care about the old thirdparty extrafields that are managed directly into mergeCompany.
 		// Do not include llx_societe because it will be replaced later.
 		$tables = array(
@@ -6161,6 +6220,12 @@ class Societe extends CommonObject
 		}
 
 		if (!$error) {
+			// The introspection of the tables must not be done into the SQL transaction below
+			$listOfInstalledTables = array();
+			foreach (array('delivery', 'mrp_mo', 'don', 'partnership', 'fichinter', 'ticket') as $tableName) {
+				$listOfInstalledTables[$tableName] = $this->db->DDLListTables((string) $conf->db->name, $this->db->prefix().$tableName);
+			}
+
 			$this->db->begin();
 
 			// Recopy some data
@@ -6280,22 +6345,22 @@ class Societe extends CommonObject
 					'Societe' => '/societe/class/societe.class.php',
 					//'SocieteAccount', 'SocietePrice', 'SocieteRib',... are processed into the replaceThirdparty of Societe.
 				);
-				if ($this->db->DDLListTables((string) $conf->db->name, $this->db->prefix().'delivery')) {
+				if (!empty($listOfInstalledTables['delivery'])) {
 					$objects['Delivery'] = '/delivery/class/delivery.class.php';
 				}
-				if ($this->db->DDLListTables((string) $conf->db->name, $this->db->prefix().'mrp_mo')) {
+				if (!empty($listOfInstalledTables['mrp_mo'])) {
 					$objects['Mo'] = '/mrp/class/mo.class.php';
 				}
-				if ($this->db->DDLListTables((string) $conf->db->name, $this->db->prefix().'don')) {
+				if (!empty($listOfInstalledTables['don'])) {
 					$objects['Don'] = '/don/class/don.class.php';
 				}
-				if ($this->db->DDLListTables((string) $conf->db->name, $this->db->prefix().'partnership')) {
+				if (!empty($listOfInstalledTables['partnership'])) {
 					$objects['PartnerShip'] = '/partnership/class/partnership.class.php';
 				}
-				if ($this->db->DDLListTables((string) $conf->db->name, $this->db->prefix().'fichinter')) {
+				if (!empty($listOfInstalledTables['fichinter'])) {
 					$objects['Fichinter'] = '/fichinter/class/fichinter.class.php';
 				}
-				if ($this->db->DDLListTables((string) $conf->db->name, $this->db->prefix().'ticket')) {
+				if (!empty($listOfInstalledTables['ticket'])) {
 					$objects['Ticket'] = '/ticket/class/ticket.class.php';
 				}
 

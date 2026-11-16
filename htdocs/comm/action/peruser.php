@@ -290,7 +290,10 @@ while ($i < $MAXAGENDA) {
 	$default = 'AGENDA_EXT_ACTIVEBYDEFAULT_'.$user->id.'_'.$i;
 	$buggedfile = 'AGENDA_EXT_BUGGEDFILE_'.$user->id.'_'.$i;
 
-	if (getDolUserString($source) && getDolUserString($name)) {
+	// A calendar set up before the switch of the user setup page existed holds no AGENDA_EXT_ENABLED_x_y
+	// at all, so the default here keeps it in the list instead of hiding it on upgrade. This is
+	// why it differs from the global calendars above, where a missing constant means disabled.
+	if (getDolUserString($source) && getDolUserString($name) && getDolUserString($enabled, '1')) {
 		// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
 		$listofextcals[] = array(
 			'type' => 'usersetup',

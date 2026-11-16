@@ -36,6 +36,7 @@ require '../../main.inc.php';
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
+ * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  */
@@ -298,6 +299,9 @@ if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'co
 					if (empty($line->remise_percent)) {
 						$line->remise_percent = (float) $order->thirdparty->remise_supplier_percent;
 					}
+					// Local tax rates of the line, as when a line is added from the supplier order card
+					$line->localtax1_tx = get_localtax($line->tva_tx, 1, $mysoc, $order->thirdparty);
+					$line->localtax2_tx = get_localtax($line->tva_tx, 2, $mysoc, $order->thirdparty);
 					$result = $order->addline(
 						$line->desc,
 						$line->subprice,
@@ -345,6 +349,9 @@ if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'co
 					if (empty($line->remise_percent)) {
 						$line->remise_percent = (float) $order->thirdparty->remise_supplier_percent;
 					}
+					// Local tax rates of the line, as when a line is added from the supplier order card
+					$line->localtax1_tx = get_localtax($line->tva_tx, 1, $mysoc, $order->thirdparty);
+					$line->localtax2_tx = get_localtax($line->tva_tx, 2, $mysoc, $order->thirdparty);
 					$order->lines[] = $line;
 				}
 				$order->cond_reglement_id = (int) $order->thirdparty->cond_reglement_supplier_id;
@@ -770,6 +777,11 @@ if (!empty($includeproductswithoutdesiredqty)) {
 if (!empty($salert)) {
 	$param .= '&salert='.urlencode($salert);
 }
+
+// Add $param from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action);	// Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
 
 $stocklabel = $langs->trans('Stock');
 $stocklabelbis = $langs->trans('Stock');

@@ -501,10 +501,8 @@ if ($resql) {
 	$title = $langs->trans("InvoiceWaitingWithdraw");
 	$picto = 'bill';
 	if ($type == 'bank-transfer') {
-		if ($sourcetype != 'salary') {
-			$title = $langs->trans("InvoiceWaitingPaymentByBankTransfer");
-		} else {
-			$title = $langs->trans("SalaryWaitingWithdraw");
+		$title = $langs->trans("WaitingForPaymentByBankTransfer");
+		if ($sourcetype == 'salary') {
 			$picto = 'salary';
 		}
 	}

@@ -79,6 +79,13 @@ if ($action == 'update') {
 		}
 	}
 
+	if (GETPOSTISSET('AI_CHAT_CONTEXT_MAX_SIZE')) {
+		$res = dolibarr_set_const($db, "AI_CHAT_CONTEXT_MAX_SIZE", max(0, GETPOSTINT("AI_CHAT_CONTEXT_MAX_SIZE")), 'int', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error++;
+		}
+	}
+
 	if (GETPOSTISSET('AI_LOG_RETENTION')) {
 		$res = dolibarr_set_const($db, "AI_LOG_RETENTION", GETPOST("AI_LOG_RETENTION"), 'int', 0, '', $conf->entity);
 		if ($res <= 0) {
@@ -207,7 +214,7 @@ $form = new Form($db);
 $apiKey = getDolGlobalString('AI_MCP_API_KEY');
 
 // Default Prompt Logic
-$defaultPromptText = " ROLE: Dolibarr ERP AI.
+$defaultPromptText = "ROLE: Dolibarr ERP AI.
 GOAL: Map user intent to specific JSON commands.
 
 CONSTRAINTS:
@@ -243,14 +250,14 @@ print '<br>';
 print '<br>';
 
 if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
-	print load_fiche_titre($langs->trans("PrivateModeTitle"), '', 'fas fa-lock');
-
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
+
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td></td></tr>';
 
 	// Input Mode
 	print '<tr class="oddeven">';
@@ -281,10 +288,12 @@ if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	print '<tr class="oddeven">';
 	print '<td>' . $form->textwithpicto($langs->trans('ObfuscatePIIData'), $langs->trans("RedactionHelp")) . '</td>';
 	print '<td>';
+	$labelredaction1 = $langs->trans("RedactionSensitiveData").' ('.$langs->trans("Recommended").')';
+	$labelredaction2 = $langs->trans("RedactionSensitiveDataAndThirdparties").' ('.$langs->trans("VersionExperimental").')';
 	$redaction_options = [
 		'0' => $langs->trans("RedactionNone"),
-		'1' => $langs->trans("RedactionSensitiveData"),
-		'2' => $langs->trans("RedactionSensitiveDataAndThirdparties")
+		'1' => array('label' => $labelredaction1, 'data-html' => dolPrintHTML($langs->trans("RedactionSensitiveData")).' <span class="opacitymedium">('.$langs->trans("Recommended").')</span>'),
+		'2' => array('label' => $labelredaction2, 'data-html' => dolPrintHTML($langs->trans("RedactionSensitiveDataAndThirdparties")).' <span class="opacitymedium">('.$langs->trans("VersionExperimental").')</span>')
 	];
 	print $form->selectarray('AI_PRIVACY_REDACTION', $redaction_options, getDolGlobalInt('AI_PRIVACY_REDACTION', 0), 0, 0, 0, '', 0, 0, 0, '', 'minwidth300');
 	print '</td>';
@@ -307,6 +316,12 @@ if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	print '<tr class="oddeven">';
 	print '<td>' . $form->textwithpicto($langs->trans("AIContextAutoExchanges"), $langs->trans("AIContextAutoExchangesHelp")) . '</td>';
 	print '<td><input class="width50" type="number" min="0" name="AI_CHAT_CONTEXT_AUTO_EXCHANGES" value="' . getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 2) . '"></td>';
+	print '</tr>';
+
+	// Max size of the context sent back with the question
+	print '<tr class="oddeven">';
+	print '<td>' . $form->textwithpicto($langs->trans("AIContextMaxSize"), $langs->trans("AIContextMaxSizeHelp")) . '</td>';
+	print '<td><input class="width100" type="number" min="0" name="AI_CHAT_CONTEXT_MAX_SIZE" value="' . getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 200000) . '"></td>';
 	print '</tr>';
 
 	// API tools in the palette of the chat input (the palette itself is always on)
@@ -335,7 +350,7 @@ if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	print '<tr class="oddeven">';
 	print '<td colspan="2">';
 	print $form->textwithpicto($langs->trans("SystemPrompt"), $langs->trans("SystemPromptHelp")) . '<br><br>';
-	$doleditor = new DolEditor('AI_INTENT_PROMPT', $currentPrompt, '', 250, 'dolibarr_notes', 'In', false, false, true, ROWS_8, '90%');
+	$doleditor = new DolEditor('AI_INTENT_PROMPT', $currentPrompt, '', 300, 'dolibarr_notes', 'In', false, false, false, ROWS_9, '90%');
 	$doleditor->Create();
 	print '</td>';
 	print '</tr>';
@@ -349,37 +364,6 @@ if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	print '<br>';
 	print '<br>';
 
-
-	// AI Provider Config and Connection testing
-	$services = getListOfAIServices();
-	$currentService = getDolGlobalString('AI_API_SERVICE');
-
-	print load_fiche_titre($langs->trans("AIProviderConfigTitle"), '', 'fa fa-plug');
-
-	if ((string) $currentService == '-1') {
-		print '<div class="warning">'.$langs->trans("NoAIProviderSelected").' <a href="'.dol_buildpath('/ai/admin/setup.php', 1).'">'.$langs->trans("ConfigureHere").'</a></div>';
-	} else {
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
-
-		print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("AIProvider").'</td><td>'.$services[$currentService]['label'].'</td></tr>';
-
-		$prefix = 'AI_API_'.strtoupper($currentService);
-		$modelVal = getDolGlobalString($prefix.'_MODEL_TEXT', $services[$currentService]['textgeneration']['default']);
-
-		print '<tr class="oddeven"><td>'.$langs->trans("AI_API_MODEL").'</td><td>'.$modelVal.'</td></tr>';
-		print '</table></div>';
-
-		print '<div class="center">';
-
-		if ($currentService && $currentService !== '-1') {
-			print '<a class="reposition button smallpaddingimp" href="'.$_SERVER['PHP_SELF'].'?action=test_provider&token='.newToken().'&service_key='.urlencode($currentService).'">'.$langs->trans('TestConnection').'</a>';
-		}
-
-		print '</div>';
-	}
-
-	print '<br><br>';
 
 	// External Access Configuration
 	/*

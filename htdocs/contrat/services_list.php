@@ -73,7 +73,7 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
-$search_id = trim(GETPOST("search_id", "int"));
+$search_id = trim(GETPOST("search_id", 'alpha'));	// Can contains a numeric test like ">10" or "!= 34"
 $search_contract_id = trim(GETPOST("search_contract_id", "int"));
 $search_name = GETPOST("search_name", 'alpha');
 $search_subprice = GETPOST("search_subprice", 'alpha');
@@ -156,7 +156,7 @@ $staticcontratligne = new ContratLigne($db);
 $companystatic = new Societe($db);
 
 $arrayfields = array(
-	'cd.rowid' => array('label' => "TechnicalID", 'checked' => (string) getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'enabled' => (string) getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'position' => 1),
+	'cd.rowid' => array('label' => "TechnicalID", 'checked' => (getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? '1' : '-1'), 'enabled' => '1', 'position' => 1),
 	'c.rowid' => array('label' => "ContractID", 'checked' => (string) getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'enabled' => (string) getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'position' => 2),
 	'c.ref' => array('label' => "Contract", 'checked' => '1', 'position' => 80),
 	'c.fk_contract_type' => array('label' => "ContractType", 'checked' => '1', 'position' => 82),
@@ -347,7 +347,7 @@ if ($search_status == "4&filter=notexpired" || ($search_status == '4' && $filter
 if ($search_status == "5") {
 	$sql .= " AND cd.statut = 5";
 }
-if ($search_id > 0) {
+if ($search_id != '') {
 	$sql .= natural_search("cd.rowid", $search_id, 1);
 }
 if ($search_contract_id > 0) {
@@ -516,7 +516,7 @@ if ($search_all != '') {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
-if ($search_id > 0) {
+if ($search_id != '') {
 	$param .= '&search_id='.urlencode($search_id);
 }
 if ($search_contract_id > 0) {
@@ -678,8 +678,8 @@ if ($conf->main_checkbox_left_column) {
 	print '</td>';
 }
 if (!empty($arrayfields['cd.rowid']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input class="flat searchstring" type="text" name="search_id" size="1" value="'.dol_escape_htmltag($search_id).'">';
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['c.rowid']['checked'])) {
@@ -827,7 +827,7 @@ if ($conf->main_checkbox_left_column) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['cd.rowid']['checked'])) {
-	print_liste_field_titre($arrayfields['cd.rowid']['label'], $_SERVER["PHP_SELF"], "cd.rowid", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cd.rowid']['label'], $_SERVER["PHP_SELF"], "cd.rowid", "", $param, "", $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['c.rowid']['checked'])) {
 	print_liste_field_titre($arrayfields['c.rowid']['label'], $_SERVER["PHP_SELF"], "c.rowid", "", $param, "", $sortfield, $sortorder);
@@ -952,7 +952,7 @@ while ($i < $imaxinloop) {
 
 	// Technical ID
 	if (!empty($arrayfields['cd.rowid']['checked'])) {
-		print '<td class="tdoverflowmax50" data-key="id">';
+		print '<td class="center tdoverflowmax50" data-key="id">';
 		print $obj->rowid;
 		print "</td>\n";
 		if (!$i) {
@@ -988,10 +988,14 @@ while ($i < $imaxinloop) {
 	}
 	// Service
 	if (!empty($arrayfields['p.description']['checked'])) {
-		print '<td class="tdoverflowmax300">';
+		print '<td class="tdoverflowmax200 tdlineheightsmall">';
 		if ($obj->pid > 0) {
-			print $productstatic->getNomUrl(1, '', 24);
-			print $obj->label ? ' - '.dol_trunc($obj->label, 16) : '';
+			print '<div class="tdoverflowmax200 inline-block lineheightsmall">';
+			print $productstatic->getNomUrl(1);
+			if (!empty($obj->label)) {
+				print '<br><span class="spantitle">'.dolPrintHTML($obj->label).'</span>';
+			}
+			print '</div>';
 			if (!empty($obj->description) && getDolGlobalString('PRODUCT_DESC_IN_LIST')) {
 				print '<br><div class="small lineheightsmall">'.dol_nl2br($obj->description).'</div>';
 			}

@@ -165,9 +165,10 @@ class Opensurveyquestion extends CommonObject
 	/**
 	 * Check the properties of the question and clean the list of available answers.
 	 *
-	 * @return	int		Return integer <0 if KO (the reason is into $this->error), >0 if OK
+	 * @param	int<0,1>	$needsurvey		1 (default) = the question must be linked to a survey, 0 = the survey is not known yet
+	 * @return	int			Return integer <0 if KO (the reason is into $this->error), >0 if OK
 	 */
-	public function check()
+	public function check($needsurvey = 1)
 	{
 		$this->question = trim($this->question);
 		if ($this->question === '') {
@@ -178,7 +179,7 @@ class Opensurveyquestion extends CommonObject
 			$this->error = 'ErrorOpenSurveyQuestionBadType';
 			return -1;
 		}
-		if (empty($this->id_sondage)) {
+		if ($needsurvey && empty($this->id_sondage)) {
 			$this->error = 'ErrorOpenSurveyQuestionNoSurvey';
 			return -1;
 		}
@@ -270,6 +271,41 @@ class Opensurveyquestion extends CommonObject
 	}
 
 	/**
+	 * Build the questions of a survey from the rows of a form. A row without text of question is ignored.
+	 * The questions are not saved, call create() on each of them.
+	 *
+	 * @param	DoliDB								$db			Database handler
+	 * @param	string								$idsondage	Id of the survey (id_sondage), can be empty if the survey is not created yet
+	 * @param	array<array{question?:string,type?:string,available_answers?:string,mandatory?:int|string}>	$rows	Rows of the form
+	 * @param	string[]							$errors		List of errors (key of translation), filled by the method
+	 * @return	Opensurveyquestion[]							Questions in the order of the rows, with the position set
+	 */
+	public static function buildList($db, $idsondage, $rows, &$errors = array())
+	{
+		$list = array();
+		foreach ($rows as $row) {
+			$text = trim(isset($row['question']) ? (string) $row['question'] : '');
+			if ($text === '') {
+				continue;
+			}
+			$question = new Opensurveyquestion($db);
+			$question->id_sondage = $idsondage;
+			$question->question = $text;
+			$question->type = isset($row['type']) ? (string) $row['type'] : self::TYPE_RADIO;
+			$question->available_answers = isset($row['available_answers']) ? (string) $row['available_answers'] : '';
+			$question->mandatory = empty($row['mandatory']) ? 0 : 1;
+			$question->position = count($list) + 1;
+			if ($question->check(0) < 0) {
+				$errors[] = $question->error;
+				continue;
+			}
+			$list[] = $question;
+		}
+
+		return $list;
+	}
+
+	/**
 	 * Create the question into the database
 	 *
 	 * @return	int		Return integer <0 if KO, Id of the new question if OK
@@ -354,6 +390,71 @@ class Opensurveyquestion extends CommonObject
 		$this->db->free($resql);
 
 		return $list;
+	}
+
+	/**
+	 * Return the respondents of a survey with their answers, in one query.
+	 *
+	 * @param	string	$idsondage	Id of the survey (id_sondage)
+	 * @return	array<int,array{id:int,name:string,date:int|string,ip:string,answers:array<int,string>}>|int<-1,-1>	Respondents with the id of the respondent as key (answers: value with the id of the question as key), or -1 if error
+	 */
+	public function fetchRespondents($idsondage)
+	{
+		$sql = "SELECT us.id_users, us.nom, us.ip, us.date_creation, fa.fk_question, fa.reponses";
+		$sql .= " FROM ".MAIN_DB_PREFIX."opensurvey_user_studs as us";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."opensurvey_user_formanswers as fa ON fa.fk_user_survey = us.id_users";
+		$sql .= " WHERE us.id_sondage = '".$this->db->escape($idsondage)."'";
+		$sql .= " ORDER BY us.id_users, fa.fk_question";
+
+		dol_syslog(get_class($this)."::fetchRespondents", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		$list = array();
+		while ($obj = $this->db->fetch_object($resql)) {
+			$idusers = (int) $obj->id_users;
+			if (!isset($list[$idusers])) {
+				$list[$idusers] = array('id' => $idusers, 'name' => (string) $obj->nom, 'date' => $this->db->jdate($obj->date_creation), 'ip' => (string) $obj->ip, 'answers' => array());
+			}
+			if ($obj->fk_question !== null) {
+				$list[$idusers]['answers'][(int) $obj->fk_question] = (string) $obj->reponses;
+			}
+		}
+		$this->db->free($resql);
+
+		return $list;
+	}
+
+	/**
+	 * Count the answers given to a question with a choice of answers (type radio or checkbox).
+	 *
+	 * @param	array<int,array{answers:array<int,string>}>	$respondents	Respondents, as returned by fetchRespondents()
+	 * @return	array{counts:array<string,int>,answered:int}				Number of respondents for each available answer, and number of respondents that answered the question
+	 */
+	public function countAnswers($respondents)
+	{
+		$counts = array();
+		foreach ($this->getAvailableAnswers() as $answer) {
+			$counts[$answer] = 0;
+		}
+
+		$answered = 0;
+		foreach ($respondents as $respondent) {
+			if (!isset($respondent['answers'][$this->id]) || $respondent['answers'][$this->id] === '') {
+				continue;
+			}
+			$answered++;
+			foreach (preg_split('/\n/', $respondent['answers'][$this->id]) as $value) {
+				if (isset($counts[$value])) {	// The answers that are not (any more) into the available answers are not counted
+					$counts[$value]++;
+				}
+			}
+		}
+
+		return array('counts' => $counts, 'answered' => $answered);
 	}
 
 	/**

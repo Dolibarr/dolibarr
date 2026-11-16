@@ -1285,7 +1285,7 @@ class Website extends CommonObject
 	 */
 	public function importWebSite($pathtofile)
 	{
-		global $conf, $mysoc, $user;
+		global $conf, $langs, $mysoc, $user;
 
 		$error = 0;
 
@@ -1405,19 +1405,24 @@ class Website extends CommonObject
 		dolSaveJsFile($conf->website->dir_output.'/'.$object->ref.'/javascript.js.php', $jscontent);
 
 
-		// Now generate the manifest.json.php
-		$filemanifestjson = dol_osencode($conf->website->dir_temp.'/'.$object->ref.'/containers/manifest.json.php');
+		// Now generate the manifest.json (old templates provide a manifest.json.php with a PHP wrapper around the JSON content)
+		$filemanifestjson = dol_osencode($conf->website->dir_temp.'/'.$object->ref.'/containers/manifest.json');
+		if (!dol_is_file($conf->website->dir_temp.'/'.$object->ref.'/containers/manifest.json')) {
+			$filemanifestjson = dol_osencode($conf->website->dir_temp.'/'.$object->ref.'/containers/manifest.json.php');
+		}
 		$manifestjsoncontent = @file_get_contents($filemanifestjson);
 		// Clean the manifestjson file to remove php code and get only html part
 		$manifestjsoncontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP( \?>)?\n*/ims', '', $manifestjsoncontent);
-		// Check there is no PHP content into the imported file (must be only HTML + JS)
+		// Check there is no PHP content into the imported file (must be only JSON)
 		$phpcontent = dolKeepOnlyPhpCode($manifestjsoncontent);
 		if ($phpcontent) {
-			$this->error = 'Error: you try to import a website with a page with PHP dynamic content in '.$filename.'.';
+			$this->error = 'Error: you try to import a website with a page with PHP dynamic content in manifest.json.';
 			$this->errors[] = $this->error;
 			return -1;
 		}
-		dolSaveManifestJson($conf->website->dir_output.'/'.$object->ref.'/manifest.json.php', $manifestjsoncontent);
+		$manifestjsoncontent = trim($manifestjsoncontent);
+		dolSaveManifestJson($conf->website->dir_output.'/'.$object->ref.'/manifest.json', ($manifestjsoncontent ? $manifestjsoncontent."\n" : ''));
+		dol_delete_file($conf->website->dir_output.'/'.$object->ref.'/manifest.json.php');
 
 
 		// Now generate the master.inc.php page
@@ -1454,6 +1459,42 @@ class Website extends CommonObject
 		$sqlfile = $conf->website->dir_temp."/".$object->ref.'/website_pages.sql';
 
 		$result = dolReplaceInFile($sqlfile, $arrayreplacement);
+
+		// Warn if source contains 4-byte UTF-8 chars (emojis...) but the target MySQL table or connection charset (utf8/utf8mb3) can't store them
+		if (in_array($this->db->type, array('mysql', 'mysqli'))) {
+			$sqlfilecontent = (string) file_get_contents($sqlfile);
+			if (preg_match('/[\xF0-\xF4][\x80-\xBF]{3}/', $sqlfilecontent)) {
+				$collation = '';
+				$infotable = $this->db->DDLInfoTable(MAIN_DB_PREFIX.'website_page');
+				foreach ($infotable as $infocolumn) {
+					if ($infocolumn[0] == 'content') {
+						$collation = (string) $infocolumn[2];
+						break;
+					}
+				}
+				if ($collation && !preg_match('/^utf8mb4/i', $collation)) {
+					$langs->load("website");
+					$this->warnings[] = $langs->trans("WarningWebsiteTemplateHas4BytesCharsButDatabaseNotUtf8mb4", MAIN_DB_PREFIX.'website_page', $collation);
+					dol_syslog(__METHOD__." The sql file contains 4-byte UTF-8 chars but table collation is ".$collation, LOG_WARNING);
+				}
+				// The connection charset must also be utf8mb4, else 4-byte chars are rejected before reaching the table
+				$connectioncharset = '';
+				$resqlcharset = $this->db->query("SHOW SESSION VARIABLES LIKE 'character_set_connection'");
+				if ($resqlcharset) {
+					$objcharset = $this->db->fetch_object($resqlcharset);
+					if ($objcharset) {
+						$connectioncharset = (string) $objcharset->Value;
+					}
+					$this->db->free($resqlcharset);
+				}
+				if ($connectioncharset && !preg_match('/^utf8mb4/i', $connectioncharset)) {
+					$langs->load("website");
+					$this->warnings[] = $langs->trans("WarningWebsiteTemplateHas4BytesCharsButConnectionNotUtf8mb4", $connectioncharset);
+					dol_syslog(__METHOD__." The sql file contains 4-byte UTF-8 chars but database connection charset is ".$connectioncharset, LOG_WARNING);
+				}
+			}
+			unset($sqlfilecontent);
+		}
 
 		$this->db->begin();
 
@@ -1675,6 +1716,21 @@ class Website extends CommonObject
 			}
 			$filewrapper = $pathofwebsite.'/wrapper.php';
 			dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $object);	// This includes also a version of index.php into sublanguage directories
+
+			// Migrate the old manifest.json.php (JSON with a PHP wrapper) into a static manifest.json now that pages link to manifest.json
+			$filemanifestjsonold = $pathofwebsite.'/manifest.json.php';
+			if (dol_is_file($filemanifestjsonold)) {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/website2.lib.php';
+				if (!dol_is_file($pathofwebsite.'/manifest.json')) {
+					$manifestjsoncontent = (string) @file_get_contents($filemanifestjsonold);
+					$manifestjsoncontent = trim(preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP( \?>)?\n*/ims', '', $manifestjsoncontent));
+					if (!dolKeepOnlyPhpCode($manifestjsoncontent)) {	// Never copy PHP code into the static file
+						dolSaveManifestJson($pathofwebsite.'/manifest.json', ($manifestjsoncontent ? $manifestjsoncontent."\n" : ''));
+					}
+				}
+				dol_delete_file($filemanifestjsonold);
+			}
 		}
 
 		// Erase cache files
@@ -1911,48 +1967,40 @@ class Website extends CommonObject
 			return -1;
 		}
 
-		$destdir = null;  // Otherwise only set when 'WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE' is not falsy.
-		$destdirrel = '';  // Otherwise only set when 'WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE' is not falsy.
+		$destdir = null;  // Filled later with the resolved export path
+		$destdirrel = '';
 		// Replace modified files into the doctemplates directory.
-		if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')) {
-			// If the user has not specified a path
-			if (empty($exportPath)) {
-				$destdirrel = 'install/doctemplates/websites/'.$website->name_template;
-				$destdir = DOL_DOCUMENT_ROOT.'/'.$destdirrel;
-			} else {
-				$exportPath = rtrim($exportPath, '/');
-				if (strpos($exportPath, '..') !== false) {
-					$this->error = "Invalid path.";
+		// If the user has not specified a path
+		if (empty($exportPath)) {
+			$destdirrel = 'install/doctemplates/websites/'.$website->name_template;
+			$destdir = DOL_DOCUMENT_ROOT.'/'.$destdirrel;
+		} else {
+			$exportPath = rtrim($exportPath, '/');
+			if (strpos($exportPath, '..') !== false) {
+				$this->error = "Invalid path.";
+				$this->errors[] = $this->error;
+				return -1;
+			}
+			// if path start with / (absolute path)
+			if (strpos($exportPath, '/') === 0 || preg_match('/^[a-zA-Z]:/', $exportPath)) {
+				if (!is_dir($exportPath)) {
+					$this->error = "The specified absolute path does not exist.";
 					$this->errors[] = $this->error;
 					return -1;
 				}
-				// if path start with / (absolute path)
-				if (strpos($exportPath, '/') === 0 || preg_match('/^[a-zA-Z]:/', $exportPath)) {
-					if (!is_dir($exportPath)) {
-						$this->error = "The specified absolute path does not exist.";
-						$this->errors[] = $this->error;
-						return -1;
-					}
 
-					if (!is_writable($exportPath)) {
-						$this->error = "The specified absolute path is not writable.";
-						$this->errors[] = $this->error;
-						return -1;
-					}
-					$destdirrel = $exportPath;
-					$destdir = $exportPath;
-				} else {
-					// relatif path
-					$destdirrel = 'install/doctemplates/websites/'.$exportPath;
-					$destdir = DOL_DOCUMENT_ROOT.'/'.$destdirrel;
+				if (!is_writable($exportPath)) {
+					$this->error = "The specified absolute path is not writable.";
+					$this->errors[] = $this->error;
+					return -1;
 				}
+				$destdirrel = $exportPath;
+				$destdir = $exportPath;
+			} else {
+				// relatif path
+				$destdirrel = 'install/doctemplates/websites/'.$exportPath;
+				$destdir = DOL_DOCUMENT_ROOT.'/'.$destdirrel;
 			}
-		}
-
-		if ($destdir === null) {
-			$this->error = "The destination path is not determined.";
-			$this->errors[] = $this->error;
-			return -1;
 		}
 
 		dol_mkdir($destdir);

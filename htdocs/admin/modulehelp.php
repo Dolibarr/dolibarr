@@ -308,9 +308,11 @@ $title = ($modulename ? $modulename : $moduledesc);
 
 print '<div class="centpercent">';
 
-$picto = 'object_'.$objMod->picto;
+// Picto of module, rendered the same way than the vignette on the module list page
+$picto = (!empty($objMod->picto) ? $objMod->picto : 'generic');
+$pictoisfullpath = (preg_match('/^\//i', $picto) ? 1 : 0);
 
-print load_fiche_titre($title, $moreinfo, $picto, 0, '', 'titlemodulehelp');
+print load_fiche_titre($title, $moreinfo, $picto, $pictoisfullpath, '', 'titlemodulehelp');
 print '<br>';
 
 print dol_get_fiche_head($head, $mode, '', -1);

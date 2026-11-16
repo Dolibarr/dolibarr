@@ -1122,7 +1122,7 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['b.rowid']['checked'])) {
 		print '<td class="liste_titre">';
-		print '<input type="text" class="flat" name="search_ref" size="2" value="'.dol_escape_htmltag($search_ref).'">';
+		print '<input type="text" class="flat" name="search_ref" size="2" value="'.dolPrintLabelForAttribute($search_ref).'">';
 		print '</td>';
 	}
 	if (!empty($arrayfields['b.label']['checked'])) {
@@ -1767,7 +1767,7 @@ if ($resql) {
 				}
 				print $tmpuser->getNomUrl(-1);
 			} elseif ($thirdstr) {
-				print $thirdstr;
+				print dolPrintLabel($thirdstr);
 			} else {
 				print '&nbsp;';
 			}
@@ -1948,31 +1948,36 @@ if ($resql) {
 
 	// Show total line
 	if (isset($totalarray['totaldebfield']) || isset($totalarray['totalcredfield'])) {
-		print '<tr class="liste_total">';
-		$i = 0;
-		while ($i < $totalarray['nbfield']) {
-			$i++;
-			if ($i == 1) {
-				if ($num < $limit && empty($offset)) {
-					print '<td class="left">'.$langs->trans("Total").'</td>';
+		$nbcurrencies = (empty($totalarray['totalpercurrency']) ? 0 : count($totalarray['totalpercurrency']));
+
+		// Show the global total line only when all lines are in the same currency (otherwise amounts would be mixed)
+		if ($nbcurrencies <= 1) {
+			print '<tr class="liste_total">';
+			$i = 0;
+			while ($i < $totalarray['nbfield']) {
+				$i++;
+				if ($i == 1) {
+					if ($num < $limit && empty($offset)) {
+						print '<td class="left">'.$langs->trans("Total").'</td>';
+					} else {
+						print '<td class="left tdoverflowmax50" title="'.$langs->trans("Totalforthispage").'">'.$langs->trans("Totalforthispage").'</td>';
+					}
+				} elseif ($totalarray['totaldebfield'] == $i) {
+					print '<td class="right"><span class="amount">'.price(-1 * $totalarray['totaldeb']).'</span></td>';
+				} elseif ($totalarray['totalcredfield'] == $i) {
+					print '<td class="right"><span class="amount">'.price($totalarray['totalcred']).'</span></td>';
+				} elseif ($i == $posconciliatecol) {
+					print '<td class="center">';
+					print '</td>';
 				} else {
-					print '<td class="left tdoverflowmax50" title="'.$langs->trans("Totalforthispage").'">'.$langs->trans("Totalforthispage").'</td>';
+					print '<td></td>';
 				}
-			} elseif ($totalarray['totaldebfield'] == $i) {
-				print '<td class="right"><span class="amount">'.price(-1 * $totalarray['totaldeb']).'</span></td>';
-			} elseif ($totalarray['totalcredfield'] == $i) {
-				print '<td class="right"><span class="amount">'.price($totalarray['totalcred']).'</span></td>';
-			} elseif ($i == $posconciliatecol) {
-				print '<td class="center">';
-				print '</td>';
-			} else {
-				print '<td></td>';
 			}
+			print '</tr>';
 		}
-		print '</tr>';
 
 		// Show one line per currency when the list holds accounts in several currencies
-		if (count($totalarray['totalpercurrency']) > 1) {
+		if ($nbcurrencies > 1) {
 			foreach ($totalarray['totalpercurrency'] as $currencycode => $totalpercurrency) {
 				print '<tr class="liste_total">';
 				$i = 0;

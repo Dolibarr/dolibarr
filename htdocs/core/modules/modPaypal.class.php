@@ -195,4 +195,24 @@ class modPaypal extends DolibarrModules
 		// $this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture';
 		// $r++;
 	}
+
+	/**
+	 *  Function called when module is enabled.
+	 *  The init function adds constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *  It also creates a bank account for the online payments if module Bank is enabled and no bank account is set yet.
+	 *
+	 *  @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *  @return     int<-1,1>          	1 if OK, <=0 if KO
+	 */
+	public function init($options = '')
+	{
+		$result = $this->_init(array(), $options);
+
+		if ($result > 0) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+			onlinePaymentCreateDefaultBankAccount($this->db, 'PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS', 'PAYPAL', 'PayPal');
+		}
+
+		return $result;
+	}
 }
