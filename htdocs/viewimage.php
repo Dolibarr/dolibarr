@@ -199,18 +199,6 @@ if ($modulepart == 'fckeditor') {
  * View
  */
 
-$cachestring = GETPOST("cache", 'aZ09');	// May be 1, or an int, or a hash
-if ($cachestring) {
-	// Important: The following code is to avoid a page request by the browser and PHP CPU at each Dolibarr page access.
-	// We are here when param cache=xxx to force a cache policy:
-	//  xxx=1 means cache of 3600s
-	//  xxx=abcdef or 123456789 means a cache of 1 week (the key will be modified to get break cache use)
-	$delaycache = ((is_numeric($cachestring) && (int) $cachestring > 1 && (int) $cachestring < 999999) ? $cachestring : '3600');
-	header('Cache-Control: max-age='.$delaycache.', public, must-revalidate');
-	header('Pragma: cache'); // This is to avoid to have Pragma: no-cache set by proxy or web server
-	header('Expires: '.gmdate('D, d M Y H:i:s', time() + (int) $delaycache).' GMT');	// This is to avoid to have Expires set by proxy or web server
-}
-
 // If we have a hash public (hashp), we guess the original_file.
 if (!empty($hashp) && $hashp != 'shared') {
 	include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
@@ -362,6 +350,19 @@ if (preg_match('/\.\./', $fullpath_original_file) || preg_match('/[<>|]/', $full
 	exit;
 }
 
+
+// Cache only responses that have passed the access and path checks.
+$cachestring = GETPOST("cache", 'aZ09');	// May be 1, or an int, or a hash
+if ($cachestring) {
+	// Important: The following code is to avoid a page request by the browser and PHP CPU at each Dolibarr page access.
+	// We are here when param cache=xxx to force a cache policy:
+	//  xxx=1 means cache of 3600s
+	//  xxx=abcdef or 123456789 means a cache of 1 week (the key will be modified to get break cache use)
+	$delaycache = ((is_numeric($cachestring) && (int) $cachestring > 1 && (int) $cachestring < 999999) ? $cachestring : '3600');
+	header('Cache-Control: max-age='.$delaycache.', public, must-revalidate');
+	header('Pragma: cache'); // This is to avoid to have Pragma: no-cache set by proxy or web server
+	header('Expires: '.gmdate('D, d M Y H:i:s', time() + (int) $delaycache).' GMT');	// This is to avoid to have Expires set by proxy or web server
+}
 
 if ($modulepart == 'barcode') {
 	$generator = GETPOST("generator", "aZ09");
