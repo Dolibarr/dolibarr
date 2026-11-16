@@ -29,6 +29,7 @@
  * Copyright (C) 2026		Benjamin Falière			<benjamin@faliere.com>
  * Copyright (C) 2026		Pierre Ardoin				<developpeur@lesmetiersdubatiment.fr>
  * Copyright (C) 2026		Nick Fragoulis
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -376,6 +377,21 @@ function getDolGlobalFloat($key, $default = 0)
 {
 	global $conf;
 	return (float) (isset($conf->global->$key) ? $conf->global->$key : $default);
+}
+
+/**
+ * Return the version to add into URLs of CSS and JS files.
+ * With MAIN_HIDE_VERSION, a hash of the version is returned: the version is not disclosed but the browser cache is still refreshed after an upgrade.
+ *
+ * @return string		Version or hash of version
+ */
+function getDolVersionForUrl()
+{
+	global $conf;
+	if (getDolGlobalInt('MAIN_HIDE_VERSION')) {
+		return substr(hash('sha256', DOL_VERSION.(empty($conf->file->instance_unique_id) ? '' : $conf->file->instance_unique_id)), 0, 8);
+	}
+	return DOL_VERSION;
 }
 
 /**
@@ -2338,9 +2354,10 @@ function dolSlugify($stringtoslugify)
 
 /**
  * Returns text escaped for inclusion into JavaScript code.
+ * Prefer to enclose JS strings with simple quotes in generated JS code, like 'string', and use mode 0 or 1. Mode 2 should be avoided.
  *
  * @param	int|string	$stringtoescape			String to escape
- * @param	int			$mode					0=Escape also \' and \" into \', 1=Escape \' but not \" for usage into 'string', 2=Escape \" but not \' for usage into "string", 3=Escape \' and \" with \\.
+ * @param	int			$mode					0=Escape also \' and \" into \', 1=Escape \' but not \" for usage into 'string', 2=Escape \" but not \' for usage into "string" (to avoid, prefer 'string' with mode 0 or 1), 3=Escape \' and \" with \\.
  * @param	int			$noescapebackslashn		0=Escape also \n. 1=Do not escape \n.
  * @return	string								Escaped string. Both \' and " are escaped into \' if they are escaped.
  */
@@ -7731,31 +7748,36 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				}
 				$extrafields->fetch_name_optionals_label($object->table_element, true);
 
-				if ($object->fetch_optionals() > 0) {	// @FIXME: Remove this, the fetch should have been done already, by the caller of getCommonSubstitutionArray()
-					if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0) {
+				// Use the extrafields already loaded into the object by the caller: no SQL access here, this function
+				// can be called thousands of times. Fetching them here also discarded values set by the caller but not
+				// saved yet (an object validated by an API or a connector inside the same write fires the notification
+				// triggers before its extrafields are stored).
+				if (!empty($object->array_options) && is_array($object->array_options)) {
+					if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label'])) {
 						foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label) {
+							$optionvalue = $object->array_options['options_' . $key] ?? null;	// Extrafields set by the caller may be partial
 							if ($extrafields->attributes[$object->table_element]['type'][$key] == 'date') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = dol_print_date($object->array_options['options_' . $key], 'day');
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_LOCALE__'] = dol_print_date($object->array_options['options_' . $key], 'day', 'tzserver', $outputlangs);
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_RFC__'] = dol_print_date($object->array_options['options_' . $key], 'dayrfc');
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = dol_print_date($optionvalue, 'day');
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_LOCALE__'] = dol_print_date($optionvalue, 'day', 'tzserver', $outputlangs);
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_RFC__'] = dol_print_date($optionvalue, 'dayrfc');
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'datetime') {
-								$datetime = $object->array_options['options_' . $key];
+								$datetime = $optionvalue;
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhour') : '');
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_LOCALE__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhour', 'tzserver', $outputlangs) : '');
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_DAY_LOCALE__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'day', 'tzserver', $outputlangs) : '');
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_RFC__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhourrfc') : '');
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'phone') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = dol_print_phone($object->array_options['options_' . $key]);
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = dol_print_phone($optionvalue);
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'price') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATED__'] = price($object->array_options['options_' . $key]);	// For compatibility
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATTED__'] = price($object->array_options['options_' . $key]);
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $optionvalue;
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATED__'] = price($optionvalue);	// For compatibility
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATTED__'] = price($optionvalue);
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'select') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = !empty($object->array_options['options_' . $key]) ? $object->array_options['options_' . $key] : '';
-								$val = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$object->array_options['options_'.$key]] ?? $object->array_options['options_'.$key];
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = !empty($optionvalue) ? $optionvalue : '';
+								$val = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$optionvalue] ?? $optionvalue;
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_LABEL__'] = $val;
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] != 'separator') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = !empty($object->array_options['options_' . $key]) ? $object->array_options['options_' . $key] : '';
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = !empty($optionvalue) ? $optionvalue : '';
 							}
 						}
 					}
