@@ -382,7 +382,7 @@ function encodedecode_dbpassconf($level = 0)
 
 	if ($fp = fopen(DOL_DOCUMENT_ROOT.'/conf/conf.php', 'r')) {
 		while (!feof($fp)) {
-			$buffer = fgets($fp, 4096);
+			$buffer = fgets($fp, 16384); // 16384 to allow very long lines in conf.php
 
 			$lineofpass = 0;
 
