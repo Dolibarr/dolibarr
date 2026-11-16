@@ -1201,7 +1201,7 @@ class Products extends DolibarrApi
 			$this->_cleanObjectDatas($tmpobj);
 		}
 
-		return $this->_cleanObjectDatas($product_fourn_list);
+		return $product_fourn_list;
 	}
 
 	/**
