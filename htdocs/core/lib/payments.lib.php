@@ -499,3 +499,50 @@ function onlinePaymentSessionPurge($datelimit)
 	$sql .= " WHERE entity = ".((int) $conf->entity)." AND date_creation <= '".$db->idate($datelimit)."'";
 	return $db->query($sql) ? 1 : -1;
 }
+
+/**
+ * Create a bank account for an online payment service and set it as the bank account of the service, if module Bank is enabled
+ * and no bank account is set yet. An existing account with the same ref is reused. Called when the payment module is enabled.
+ *
+ * @param 	DoliDB		$db				Database handler
+ * @param 	string		$constname		Name of the constant to set with the id of the bank account (ie 'STRIPE_BANK_ACCOUNT_FOR_PAYMENTS')
+ * @param 	string		$ref			Ref of the bank account (12 chars max)
+ * @param 	string		$label			Label of the bank account
+ * @return 	int							>0 if id of bank account is set, 0 if nothing to do, <0 if error
+ */
+function onlinePaymentCreateDefaultBankAccount($db, $constname, $ref, $label)
+{
+	global $conf, $mysoc, $user;
+
+	if (!isModEnabled('bank') || getDolGlobalInt($constname) > 0) {
+		return 0;
+	}
+
+	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+
+	$account = new Account($db);
+	$accountid = $account->fetch(0, $ref);
+	if ($accountid <= 0) {
+		$account->ref = $ref;
+		$account->label = $label;
+		$account->type = Account::TYPE_CURRENT;
+		$account->status = Account::STATUS_OPEN;
+		$account->currency_code = $conf->currency;
+		$account->country_id = $mysoc->country_id;
+		$account->date_solde = dol_now();
+		$account->balance = 0;
+		$account->comment = 'Bank account automatically created by the activation of the module '.$label.' to record the online payments';
+
+		$accountid = $account->create($user);
+		if ($accountid <= 0) {
+			dol_syslog(__FUNCTION__." Failed to create the bank account ".$ref.": ".$account->error, LOG_WARNING);
+			setEventMessages($account->error, $account->errors, 'warnings');
+			return -1;
+		}
+	}
+
+	dolibarr_set_const($db, $constname, $accountid, 'chaine', 0, '', $conf->entity);
+
+	return $accountid;
+}

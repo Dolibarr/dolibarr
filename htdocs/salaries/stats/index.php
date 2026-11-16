@@ -53,6 +53,7 @@ if ($socid < 0) {
 	$socid = 0;
 }
 $id = GETPOSTINT('id');
+$tabfamily = GETPOST('tabfamily', 'aZ09');	// 'salariesstats' to show the tab with the custom reports tool
 
 // Security check
 $socid = GETPOSTINT("socid");
@@ -113,6 +114,40 @@ $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewSalary'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
 
 print_barre_liste($title, 0, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
+
+// The custom reports tool does not filter on the salaries of the user and its subordinates, so it needs the permission to read all salaries
+$showtabcustomreports = (empty($user->socid) && $user->hasRight('salaries', 'readall'));
+
+$h = 0;
+$head = array();
+$head[$h][0] = DOL_URL_ROOT.'/salaries/stats/index.php';
+$head[$h][1] = $langs->trans("ByMonthYear");
+$head[$h][2] = 'byyear';
+$h++;
+
+if ($showtabcustomreports) {
+	$head[$h][0] = DOL_URL_ROOT.'/salaries/stats/index.php?tabfamily=salariesstats';
+	$head[$h][1] = $langs->trans("Custom");
+	$head[$h][2] = 'customreports';
+	$h++;
+}
+
+complete_head_from_modules($conf, $langs, null, $head, $h, 'salaries_stats');
+
+// Show the tab with the custom reports tool
+if ($showtabcustomreports && $tabfamily == 'salariesstats') {
+	print dol_get_fiche_head($head, 'customreports', '', -1);
+
+	define('USE_CUSTOM_REPORT_AS_TAB', 1);
+	$customreportobjecttype = 'salary';
+	include DOL_DOCUMENT_ROOT.'/core/customreports.php';
+
+	print dol_get_fiche_end();
+
+	llxFooter();
+	$db->close();
+	exit;
+}
 
 dol_mkdir($dir);
 
@@ -237,15 +272,6 @@ if (!count($arrayyears)) {
 	$arrayyears[$nowyear] = $nowyear;
 }
 
-
-$h = 0;
-$head = array();
-$head[$h][0] = DOL_URL_ROOT.'/salaries/stats/index.php';
-$head[$h][1] = $langs->trans("ByMonthYear");
-$head[$h][2] = 'byyear';
-$h++;
-
-complete_head_from_modules($conf, $langs, null, $head, $h, 'salaries_stats');
 
 print dol_get_fiche_head($head, 'byyear', '', -1);
 

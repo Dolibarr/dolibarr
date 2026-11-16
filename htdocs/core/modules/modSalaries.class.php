@@ -45,7 +45,7 @@ class modSalaries extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $user;
+		global $conf, $user; // $conf is required by the default value of SALARY_ADDON_PDF_ODT_PATH
 
 		$this->db = $db;
 		$this->numero = 510; // Perms from 501..519
@@ -98,6 +98,13 @@ class modSalaries extends DolibarrModules
 				"SALARIES_ACCOUNTING_ACCOUNT_CHARGE",
 				"chaine",
 				"641",
+				"",
+				0,
+			],
+			[
+				"SALARY_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/salaries",
 				"",
 				0,
 			]

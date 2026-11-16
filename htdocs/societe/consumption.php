@@ -515,6 +515,11 @@ if ($sql_select && $sql !== '') {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
 
+	// Add $param from hooks
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action);	// Note that $action and $object may have been modified by hook
+	$param .= $hookmanager->resPrint;
+
 	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, '', 0, '', 'nogreyscale', $limit);
 
 	print '<div class="div-table-responsive-no-min">';

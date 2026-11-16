@@ -56,6 +56,11 @@ class Salary extends CommonObject
 	public $module = 'salaries';
 
 	/**
+	 * @var string Name of the permission module to check (used by the custom reports tool)
+	 */
+	public $element_for_permission = 'salaries';
+
+	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'salary';
@@ -187,7 +192,7 @@ class Salary extends CommonObject
 		'fk_user' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Employee', 'enabled' => 1, 'position' => 15, 'notnull' => 1, 'visible' => 1, 'picto' => 'user'),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 20),
 		'salary' => array('type' => 'double(24,8)', 'label' => 'salary', 'enabled' => 1, 'visible' => 0, 'position' => 70),
-		'amount' => array('type' => 'double(24,8)', 'label' => 'Amount', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 80),
+		'amount' => array('type' => 'double(24,8)', 'label' => 'Amount', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 80, 'isameasure' => 1),
 		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => 0, 'position' => 90),
 		'fk_typepayment' => array('type' => 'typepayment', 'label' => 'DefaultPaymentMode', 'enabled' => 1, 'visible' => 1, 'position' => 100, 'comment' => 'Payment type'),
 		'num_payment' => array('type' => 'string', 'label' => 'Reference', 'enabled' => 1, 'visible' => 0, 'position' => 110, 'comment' => 'Reference'),
@@ -213,6 +218,7 @@ class Salary extends CommonObject
 		$this->db = $db;
 		$this->element = 'salary';
 		$this->table_element = 'salary';
+		$this->ismultientitymanaged = 1;
 		$this->isextrafieldmanaged = 1;
 
 		$this->fields['ref_ext']['visible'] = getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT');
@@ -239,20 +245,41 @@ class Salary extends CommonObject
 			return 0;
 		}
 
+		// A template chosen in the list comes as "modelname:/path/to/template.odt"
+		$srctemplatepath = '';
+		$tmp = explode(':', $model, 2);
+		if (!empty($tmp[1])) {
+			$model = $tmp[0];
+			$srctemplatepath = $tmp[1];
+		}
+
+		// Search the file of the template, under the core and under the modules that provide some.
+		// Both prefixes are tried: a model built on a template file is a doc_, not a pdf_.
 		$modelpath = 'core/modules/salaries/doc/';
-		$modelfile = $modelpath."pdf_".$model.".modules.php";
+		$modelbasename = preg_replace('/^(doc|pdf)_/', '', $model);
+		$modelfile = '';
+		$classname = '';
+		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+		foreach ($dirmodels as $reldir) {
+			foreach (array('doc', 'pdf') as $prefix) {
+				$tmpfile = dol_buildpath($reldir.$modelpath.$prefix."_".$modelbasename.".modules.php", 0);
+				if (file_exists($tmpfile)) {
+					$modelfile = $tmpfile;
+					$classname = $prefix.'_'.$modelbasename;
+					break 2;
+				}
+			}
+		}
 
-		// Check if model file exists
-		if (file_exists(DOL_DOCUMENT_ROOT.'/'.$modelfile)) {
-			require_once DOL_DOCUMENT_ROOT.'/'.$modelfile;
+		if ($modelfile !== '') {
+			require_once $modelfile;
 
-			$classname = 'pdf_'.$model;
 			if (class_exists($classname)) {
 				$module = new $classname($this->db);
 
-				// Generate the PDF
+				// Generate the document
 				/** @phan-suppress-next-line PhanPluginUnknownObjectMethodCall */
-				$result = $module->writeFile($this, $outputlangs);
+				$result = $module->writeFile($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref);
 				if ($result > 0) {
 					// Index file in database, as commonGenerateDocument() does
 					if (!empty($module->result['fullpath'])) {

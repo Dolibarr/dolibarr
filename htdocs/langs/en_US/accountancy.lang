@@ -214,6 +214,8 @@ ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Accounting account by default to r
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased within the same country (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased from EEC to another EEC country (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased and imported from any other foreign country (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_COGS_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for Cost of Goods Sold (COGS) / Stock variation (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_STOCK_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for Product Inventory / Stock asset (if empty, the purchase account is used)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the sold products (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products sold from EEC to another EEC country (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products sold and exported to any other foreign country (used if not defined in the product sheet)
@@ -326,6 +328,7 @@ ValidateHistory=Bind Automatically
 AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 DoManualBindingForFailedRecord=You have to do a manual link for the %s row(s) not linked automatically.
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot remove or disable this account of chart of account because it is used
+ConfirmChangeChartOfAccountsWithData=The current chart of accounts is already used: %s line(s) are bound to its accounts and the ledger has %s entries.<br>Changing the chart migrates nothing: bindings and entries keep the accounts of the current chart, and products, bank accounts or default accounts set to an account number missing from the new chart will no longer find it. This transition must be prepared with your accountant.<br>Change the chart of accounts anyway?
 MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
 Balancing=Balancing
 FicheVentilation=Binding card
@@ -653,6 +656,21 @@ Clone=Clone
 AlreadyReturnedAccount=Entry n°%s has already been reversed
 SuccessReturnedAccount=Entry n°%s has been reversed
 AccountancyCodeToSet=Accountancy code to set on products/services for
+DescInventoryJournal=This journal displays stock movements (shipments, receptions, sales, purchases, and inventory adjustments) and generates the corresponding Inventory Asset and Cost of Goods Sold (COGS) / Stock variation entries.
+StockAccountNotDefined=Inventory / Purchase account not defined on product or in default accounts
+CogsAccountNotDefined=COGS / Stock variation account not defined on product or in default accounts
+AllStockMovements=All stock movements (Increases & Decreases)
+StockDecreasesOnly=Stock decreases only (Shipments / Sales / COGS)
+StockIncreasesOnly=Stock increases only (Receptions / Purchases / Inputs)
+ByDefaultProductCogsAccount=By default, the account defined in Default Accounts (COGS) will be used if not defined on the product card.
+ACCOUNTING_INVENTORY_MODE=Mode to journalize stock movements
+ACCOUNTING_INVENTORY_MODE_Desc=Select how stock movements are journalized into the accounting General Ledger (Periodic inventory vs Perpetual inventory).
+PeriodicInventory=Periodic inventory
+PerpetualInventory=Perpetual inventory
+OptionModeNone=Disabled
+ShipmentsSalesCOGS=Shipments / Sales / COGS
+ReceptionsPurchases=Receptions / Purchases
+InventoryJournalDisabledHelp=Stock movement journalization is currently disabled. You can select an active mode in <a href="%s">Accounting - Setup - General</a>.
 
 ## Customer deposit control
 MenuAccountancyAdjustments=Adjustments

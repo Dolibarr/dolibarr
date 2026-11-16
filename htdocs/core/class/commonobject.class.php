@@ -1477,7 +1477,8 @@ abstract class CommonObject
 		// phpcs:enable
 		$contacts = $objFrom->liste_contact(-1, $source);
 		foreach ($contacts as $contact) {
-			if ($this->add_contact($contact['id'], $contact['fk_c_type_contact'], $contact['source']) < 0) {
+			// Type code, not id: the type id belongs to the source element and is wrong on another element type
+			if ($this->add_contact($contact['id'], $contact['code'], $contact['source']) < 0) {
 				return -1;
 			}
 		}
@@ -4247,7 +4248,7 @@ abstract class CommonObject
 		if ($absqty < (float) $packaging) {
 			return $sign * (float) $packaging;
 		}
-		if ((float) price2num(fmod($absqty, (float) $packaging), 'MS')) {
+		if ((float) price2num($absqty - round($absqty / (float) $packaging) * (float) $packaging, 'MS') != 0) {	// Not a multiple of the packaging (do not use fmod, it fails with decimal packaging)
 			$coeff = intval($absqty / (float) $packaging) + 1;
 			return $sign * (float) price2num((float) $packaging * $coeff, 'MS');
 		}
@@ -4432,18 +4433,18 @@ abstract class CommonObject
 	 *	Update total_ht, total_ttc, total_vat, total_localtax1, total_localtax2 for an object (sum of lines).
 	 *  Must be called at end of methods addline or updateline.
 	 *
-	 *	@param	int						$exclspec          	Use >0 = Exclude special product (product_type=9)
+	 *	@param	int						$excludesomelines  	Use >0 = Exclude some lines (special product with product_type=9)
 	 *  @param  'none'|'auto'|'0'|'1'	$roundingadjust		'none'=Do nothing (when properties are already correctly set), 'auto'=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND if defined, or '0'), '0'=Force mode Total of rounding, '1'=Force mode Rounding of total
 	 *  @param	int<0,1>				$nodatabaseupdate	1=Do not update database total fields of the main object. Update only properties in memory. Can be used to save SQL when this method is called several times, so we can do it only once at end.
 	 *  @param	?Societe				$seller				If roundingadjust is '0' or '1' or maybe 'auto', it means we recalculate total for lines before calculating total for object and for this, we need seller object (used to analyze lines to check corrupted data).
 	 *	@return	int<-1,1>									Return integer <0 if KO, >0 if OK
 	 */
-	public function update_price($exclspec = 0, $roundingadjust = 'auto', $nodatabaseupdate = 0, $seller = null)
+	public function update_price($excludesomelines = 0, $roundingadjust = 'auto', $nodatabaseupdate = 0, $seller = null)
 	{
 		// phpcs:enable
 		global $conf, $hookmanager, $action;
 
-		$parameters = array('exclspec' => $exclspec, 'roundingadjust' => $roundingadjust, 'nodatabaseupdate' => $nodatabaseupdate, 'seller' => $seller);
+		$parameters = array('exclspec' => $excludesomelines, 'excludesomelines' => $excludesomelines, 'roundingadjust' => $roundingadjust, 'nodatabaseupdate' => $nodatabaseupdate, 'seller' => $seller);
 		$reshook = $hookmanager->executeHooks('updateTotalPrice', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			return 1; // replacement code
@@ -4536,7 +4537,7 @@ abstract class CommonObject
 		$sql .= ', multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
 		$sql .= " FROM ".$this->db->prefix().$this->db->sanitize($this->table_element_line);
 		$sql .= " WHERE ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
-		if ($exclspec) {
+		if ($excludesomelines) {
 			$product_field = 'product_type';
 			if ($this->table_element_line == 'contratdet') {
 				$product_field = ''; // contratdet table has no product_type field
@@ -5066,8 +5067,8 @@ abstract class CommonObject
 				}
 			}
 		} else {
-			$sql .= "(fk_source = ".((int) $sourceid)." AND sourcetype = '".$this->db->escape($sourcetype)."')";
-			$sql .= " ".$this->db->sanitize($clause)." (fk_target = ".((int) $targetid)." AND targettype = '".$this->db->escape($targettype)."')";
+			$sql .= "((fk_source = ".((int) $sourceid)." AND sourcetype = '".$this->db->escape($sourcetype)."')";
+			$sql .= " ".$this->db->sanitize($clause)." (fk_target = ".((int) $targetid)." AND targettype = '".$this->db->escape($targettype)."'))";
 			if ($loadalsoobjects && $this->id > 0 && $sourceid == $this->id && $sourcetype == $this->element && $targetid == $this->id && $targettype == $this->element && $clause == 'OR') {
 				$this->linkedObjectsFullLoaded[$this->id] = true;
 			}
@@ -5284,9 +5285,9 @@ abstract class CommonObject
 					$sql .= " fk_target = " . ((int) $targetid) . " AND targettype = '" . $this->db->escape($targettype) . "'";
 					$sql .= " AND fk_source = " . ((int) $this->id) . " AND sourcetype = '" . $this->db->escape($element) . "'";
 				} else {
-					$sql .= " (fk_source = " . ((int) $this->id) . " AND sourcetype = '" . $this->db->escape($element) . "')";
+					$sql .= " ((fk_source = " . ((int) $this->id) . " AND sourcetype = '" . $this->db->escape($element) . "')";
 					$sql .= " OR";
-					$sql .= " (fk_target = " . ((int) $this->id) . " AND targettype = '" . $this->db->escape($element) . "')";
+					$sql .= " (fk_target = " . ((int) $this->id) . " AND targettype = '" . $this->db->escape($element) . "'))";
 				}
 			}
 
@@ -7454,7 +7455,7 @@ abstract class CommonObject
 							if (empty($conf->disable_compute)) {
 								// We set a global variable to $objectoffield so we can use it inside computed formula (must be before the assignment)
 								global $objectoffield;
-								$objectoffield = dol_clone($this, 2);
+								$objectoffield = dol_clone($this, 2);	// Using method 2 as we want to restrict access to scalar properties only
 								$this->array_options['options_' . $key] = dol_eval((string) $extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '2');
 							}
 						}
@@ -11753,6 +11754,9 @@ abstract class CommonObject
 						$queryarray[$field] = null;
 					}
 				}
+			} elseif ($field == 'extraparams') {
+				// The property is an array but the column holds a json string, as everywhere else in the core
+				$queryarray[$field] = (!empty($this->extraparams) ? dol_trunc(json_encode($this->extraparams), 250) : null);  // @phan-suppress-current-line SqlInjection
 			} else {
 				// Note: If $this->{$field} is not defined, it means there is a bug into definition of ->fields or a missing declaration of property
 				// We should keep the warning generated by this because it is a bug somewhere else in code, not here.
@@ -11819,6 +11823,9 @@ abstract class CommonObject
 						$this->$field = null;
 					}
 				}
+			} elseif ($field == 'extraparams') {
+				// The column holds a json string but the property is an array, as everywhere else in the core
+				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 			} else {
 				$this->$field = isset($obj->$field) ? $obj->$field : null;
 			}
@@ -11918,7 +11925,7 @@ abstract class CommonObject
 
 		if (array_key_exists('date_creation', $fieldvalues) && empty($fieldvalues['date_creation'])) {
 			$fieldvalues['date_creation'] = $this->db->idate($now);
-			$this->date_creation = $this->db->idate($now);
+			$this->date_creation = $now;
 		}
 		// For backward compatibility, if a property ->fk_user_creat exists and not filled.
 		if (array_key_exists('fk_user_creat', $fieldvalues) && !($fieldvalues['fk_user_creat'] > 0)) {

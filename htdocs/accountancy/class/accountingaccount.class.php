@@ -187,7 +187,7 @@ class AccountingAccount extends CommonObject
 		global $conf;
 
 		if ($rowid || $account_number) {
-			$sql  = "SELECT a.rowid as rowid, a.datec, a.tms, a.fk_pcg_version, a.pcg_type, a.account_number, a.account_parent, a.label, a.labelshort, a.fk_accounting_category, a.fk_user_author, a.fk_user_modif, a.active, a.reconcilable";
+			$sql  = "SELECT a.rowid as rowid, a.datec, a.tms, a.fk_pcg_version, a.pcg_type, a.account_number, a.account_parent, a.label, a.labelshort, a.fk_accounting_category, a.fk_user_author, a.fk_user_modif, a.active, a.reconcilable, a.extraparams";
 			$sql .= ", ca.label as category_label";
 			$sql .= " FROM ".$this->db->prefix().$this->table_element." as a";
 			$sql .= " LEFT JOIN ".$this->db->prefix()."c_accounting_category as ca ON a.fk_accounting_category = ca.rowid";
@@ -232,6 +232,7 @@ class AccountingAccount extends CommonObject
 					$this->active = $obj->active;
 					$this->status = $obj->active;
 					$this->reconcilable = $obj->reconcilable;
+					$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 					return $this->id;
 				} else {
@@ -407,6 +408,9 @@ class AccountingAccount extends CommonObject
 		$sql .= " WHERE fk_code_ventilation=".((int) $this->id).")";
 		$sql .= "UNION";
 		$sql .= " (SELECT fk_code_ventilation FROM ".$this->db->prefix()."facture_fourn_det";
+		$sql .= " WHERE fk_code_ventilation=".((int) $this->id).")";
+		$sql .= " UNION";
+		$sql .= " (SELECT fk_code_ventilation FROM ".$this->db->prefix()."expensereport_det";
 		$sql .= " WHERE fk_code_ventilation=".((int) $this->id).")";
 
 		dol_syslog(get_class($this)."::checkUsage", LOG_DEBUG);

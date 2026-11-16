@@ -440,13 +440,13 @@ if ($resql) {
 	}
 
 	if ($search_date_sync) {
-		$param = "&search_date_sync=".$search_date_sync;
+		$param .= "&search_date_sync=".$search_date_sync;
 	}
 	if ($search_date_sync_end) {
-		$param = "&search_date_sync_end=".$search_date_sync_end;
+		$param .= "&search_date_sync_end=".$search_date_sync_end;
 	}
 	if ($search_rate) {
-		$param = "&search_rate=".urlencode($search_rate);
+		$param .= "&search_rate=".urlencode($search_rate);
 	}
 	if ($search_code != '') {
 		$param .= "&search_code=".urlencode($search_code);
@@ -455,6 +455,12 @@ if ($resql) {
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
+	// Add $param from hooks
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters);	// Note that $action and $object may have been modified by hook
+	$param .= $hookmanager->resPrint;
+
+	$arrayofmassactions = array();
 	if ($user->admin) {
 		$arrayofmassactions['predelete'] = $langs->trans("Delete");
 	}
@@ -611,7 +617,7 @@ if ($resql) {
 				print '<td class="center">';
 				print '</td>';
 			}
-			print '<td><input class="minwidth200" name="dateinput" value="'. date('Y-m-d', dol_stringtotime($obj->date_sync)) .'" type="date"></td>';
+			print ' <td>'.$form->selectDate($db->jdate($obj->date_sync), 'dateinput', 0, 0, 1, '', 1, 1).'</td>';
 			print '<td>' . $form->selectMultiCurrency($obj->code, 'multicurrency_code', 1, "(code:<>:'".getDolCurrency()."')", true) . '</td>';
 			print '<td><input type="text" min="0" step="any" class="maxwidth100" name="rateinput" value="' . dol_escape_htmltag($obj->rate) . '">';
 			print '<input type="hidden" name="page" value="'.dol_escape_htmltag((string) $page).'">';

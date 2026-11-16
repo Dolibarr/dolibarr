@@ -1918,7 +1918,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 									&& (isModEnabled('asset') || isModEnabled('invoice') || isModEnabled('supplier_invoice'))) {
 									$nature = "various";
 								}
-								if ($objp->nature == 8) {
+								if ($objp->nature == 8 && isModEnabled('stock') && getDolGlobalString('ACCOUNTING_INVENTORY_MODE') && getDolGlobalString('ACCOUNTING_INVENTORY_MODE') != 'none') {
 									$nature = "inventory";
 								}
 								if ($objp->nature == 9) {
@@ -1927,7 +1927,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 
 								// To enable when page exists
 								if (!getDolGlobalString('ACCOUNTANCY_SHOW_DEVELOP_JOURNAL')) {
-									if ($nature == 'hasnew' || $nature == 'inventory') {
+									if ($nature == 'hasnew') {
 										$nature = '';
 									}
 								}
@@ -2248,7 +2248,7 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 
 		// Management of checks
 		if (!getDolGlobalString('BANK_DISABLE_CHECK_DEPOSIT') && isModEnabled('bank') && (isModEnabled('invoice') || getDolGlobalString('MAIN_MENU_CHEQUE_DEPOSIT_ON'))) {
-			$newmenu->add("/compta/paiement/cheque/index.php?leftmenu=checks&mainmenu=bank", $langs->trans("MenuChequeDeposits"), 0, $user->hasRight('banque', 'cheque'), '', $mainmenu, 'checks', 0, '', '', '', img_picto('', 'payment', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add("/compta/paiement/cheque/index.php?leftmenu=checks&mainmenu=bank", $langs->trans("MenuChequeDeposits"), 0, $user->hasRight('banque', 'cheque'), '', $mainmenu, 'checks', 0, '', '', '', img_picto('', 'depositslip', 'class="paddingright pictofixedwidth"'));
 			if (preg_match('/checks/', $leftmenu)) {
 				$newmenu->add("/compta/paiement/cheque/card.php?leftmenu=checks_bis&action=create2&mainmenu=bank", $langs->trans("NewChequeDeposit"), 1, $user->hasRight('banque', 'cheque'));
 				$newmenu->add("/compta/paiement/cheque/list.php?leftmenu=checks_bis&mainmenu=bank", $langs->trans("List"), 1, $user->hasRight('banque', 'cheque'));
@@ -2645,7 +2645,7 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
  */
 function get_left_menu_tools($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 'none', $type_user = 0)
 {
-	global $user, $langs;
+	global $conf, $user, $langs;
 
 	if ($mainmenu == 'tools') {
 		if (isModEnabled('category')) {
@@ -2692,6 +2692,11 @@ function get_left_menu_tools($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu 
 		} */
 
 		$newmenu->add(dolBuildUrl('/core/customreports.php', ['leftmenu' => 'customreports']), $langs->trans("BICustomReports"), 0, $user->isExternalUser() ? 0 : 1, '', $mainmenu, 'customreports', 100, '', '', '', img_picto('', 'graph', 'class="paddingright pictofixedwidth"'));
+
+		// Without javascript, the AI assistant popover of the top menu is not available, so we add a link to the AI assistant page
+		if (empty($conf->use_javascript_ajax) && isModEnabled('ai') && getDolGlobalString('AI_ASSISTANT_ENABLED')) {
+			$newmenu->add(dolBuildUrl('/ai/assistant/index.php', ['leftmenu' => 'ai']), $langs->trans("AIAssistant"), 0, $user->hasRight('ai', 'assistant', 'use'), '', $mainmenu, 'ai', 110, '', '', '', img_picto('', 'fa-magic', 'class="paddingright pictofixedwidth"'));
+		}
 	}
 }
 

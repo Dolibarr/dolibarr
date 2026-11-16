@@ -20,7 +20,7 @@ create table llx_ai_chat_message
   rowid						integer AUTO_INCREMENT PRIMARY KEY,
   fk_conversation			integer NOT NULL,
   role						varchar(16) NOT NULL,					-- user | assistant
-  content_raw				text,									-- Plain text (what pinning sends to the model)
+  content_raw				mediumtext,								-- Plain text (what pinning sends to the model)
   content_html				MEDIUMTEXT,								-- Rendered bubble, sanitized server-side at save time
   tool_name					varchar(255),
   pinned					smallint DEFAULT 0,						-- Context pin state, restored on reopen

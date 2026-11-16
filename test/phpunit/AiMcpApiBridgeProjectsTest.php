@@ -35,12 +35,15 @@ class AiMcpApiBridgeProjectsTest extends CommonClassTest
 	{
 		$bridge = new ToolApiBridge(null);
 		$property = new ReflectionProperty(ToolApiBridge::class, 'enrichments');
-		$property->setAccessible(true);
+		if (PHP_VERSION_ID < 80100) {
+			$property->setAccessible(true);
+		}
 		$endpoints = $property->getValue($bridge);
 
 		$this->assertArrayHasKey('projects', $endpoints);
-		$this->assertArrayNotHasKey('project', $endpoints);
-		$this->assertSame(array('index', 'get', 'put', 'getContacts', 'getTimespent', 'listTimespent', 'post'), array_keys($endpoints['projects']['methods']));
+		// The 'project' group only names the api_project_tasks_timespent_create tool: it calls the tasks endpoint
+		$this->assertSame('tasks', $endpoints['project']['endpoint']);
+		$this->assertSame(array('index', 'get', 'put', 'getContacts', 'post'), array_keys($endpoints['projects']['methods']));
 		$this->assertSame(array('project'), ToolApiBridge::ENDPOINT_CATEGORIES['projects']);
 	}
 
@@ -53,10 +56,14 @@ class AiMcpApiBridgeProjectsTest extends CommonClassTest
 	{
 		$bridge = new ToolApiBridge(null);
 		$property = new ReflectionProperty(ToolApiBridge::class, 'enrichments');
-		$property->setAccessible(true);
+		if (PHP_VERSION_ID < 80100) {
+			$property->setAccessible(true);
+		}
 		$endpoints = $property->getValue($bridge);
 		$method = new ReflectionMethod(ToolApiBridge::class, 'buildToolDefinition');
-		$method->setAccessible(true);
+		if (PHP_VERSION_ID < 80100) {
+			$method->setAccessible(true);
+		}
 		$definition = $method->invoke($bridge, array('class' => AiMcpProjectReadApiFixture::class, 'label' => 'projects'), 'projects', 'get', 'api_projects_get', $endpoints['projects']['methods']['get']);
 
 		$this->assertSame('api_projects_get', $definition['name']);

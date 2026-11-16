@@ -235,7 +235,7 @@ class KnowledgeManagement extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -471,6 +471,10 @@ class KnowledgeManagement extends DolibarrApi
 		}
 
 
+		if (!DolibarrApi::_checkAccessToResource('knowledgerecord', $this->knowledgerecord->id, 'knowledgemanagement_knowledgerecord')) {
+			throw new RestException(403, 'Access to instance id='.$this->knowledgerecord->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$result = $this->knowledgerecord->validate(DolibarrApiAccess::$user, $notrigger);
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
@@ -507,6 +511,10 @@ class KnowledgeManagement extends DolibarrApi
 			throw new RestException(404, 'knowledgerecord not found');
 		}
 
+
+		if (!DolibarrApi::_checkAccessToResource('knowledgerecord', $this->knowledgerecord->id, 'knowledgemanagement_knowledgerecord')) {
+			throw new RestException(403, 'Access to instance id='.$this->knowledgerecord->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
+		}
 
 		$result = $this->knowledgerecord->cancel(DolibarrApiAccess::$user, $notrigger);
 		if ($result == 0) {

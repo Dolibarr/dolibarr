@@ -138,7 +138,7 @@ class DolibarrApiAccess implements iAuthenticate
 		if (isset($_SERVER['HTTP_DOLAPIKEY'])) {        // HTTP Header entry "DOLAPIKEY: ..." can be read with $_SERVER["HTTP_DOLAPIKEY"]
 			$api_key = $_SERVER['HTTP_DOLAPIKEY']; 		// With header method (recommended)
 		} elseif (empty($api_key)) {
-			$headers = getallheaders();					// HTTP Header entry "Authorization: Bearer ..." can be read with getallheaders
+			$headers = dolGetRequestHeaders();			// HTTP Header entry "Authorization: Bearer ..." is read from the request headers
 			$api_key = preg_replace('/^Bearer\s+/i', '', empty($headers['Authorization']) ? '' : $headers['Authorization']);
 		};
 
@@ -298,7 +298,9 @@ class DolibarrApiAccess implements iAuthenticate
 				throw new RestException(401, $genericmessageerroruser);
 			}
 
-			// Check if session was unvalidated by a password change
+			// Check if session was unvalidated by a password change.
+			// Note: api/index.php defines NOSESSION, so this test is effective only for a caller running with a session. A stateless
+			// API key is a credential independent of the password: it is not revoked by a password change but by changing the key.
 			if (($fuser->flagdelsessionsbefore && !empty($_SESSION["dol_logindate"]) && $fuser->flagdelsessionsbefore > $_SESSION["dol_logindate"])) {
 				// Session is no more valid
 				dol_syslog("functions_isallowed::check_user_api_key Authentication KO for '".$login."': The user has a date for session invalidation = ".$fuser->flagdelsessionsbefore." and a session date = ".$_SESSION["dol_logindate"].". We must invalidate its sessions.");

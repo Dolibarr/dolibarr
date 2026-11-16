@@ -32,6 +32,7 @@
  * @property int 	$id
  * @property int 	$contact_id
  * @property int 	$fk_soc
+ * @property string $typent_code
  * @property string $civility_code
  * @property string $civilite
  * @property string $civility
@@ -115,7 +116,8 @@ trait CommonPeople
 		$lastname = $this->lastname;
 		$firstname = $this->firstname;
 		if (empty($lastname)) {
-			// societe is deprecated - @suppress-next-line PhanUndeclaredProperty
+			// societe is deprecated
+			// @phan-suppress-next-line PhanUndeclaredProperty
 			$lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (property_exists($this, 'nom') && isset($this->nom) ? $this->nom : (property_exists($this, 'societe') && isset($this->societe) ? $this->societe : (property_exists($this, 'company') && isset($this->company) ? $this->company : ''))))); // @phpstan-ignore-line
 		}
 
@@ -190,6 +192,7 @@ trait CommonPeople
 			$thirdpartyid = $this->id;
 		}
 		if ($this->element === 'contact' && $this instanceof Contact) {
+			// @phan-var-force Contact $this
 			$contactid = $this->id;
 			$thirdpartyid = empty($this->fk_soc) ? 0 : $this->fk_soc;
 		}
@@ -199,6 +202,7 @@ trait CommonPeople
 		}
 		if ($this->element === 'user' && $this instanceof User) {
 			$contactid = $this->contact_id;
+			// @phan-suppress-next-line PhanUndeclaredProperty
 			$thirdpartyid = empty($object->fk_soc) ? 0 : $object->fk_soc;
 		}
 		if ($this->element == 'recruitmentcandidature' && $this instanceof RecruitmentCandidature) {
