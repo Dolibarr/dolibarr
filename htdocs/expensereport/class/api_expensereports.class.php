@@ -661,6 +661,15 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		// Same source statuses as the confirm_setdraft action of expensereport/card.php (a draft report is left to the 304 below)
+		$allowedstatus = array(ExpenseReport::STATUS_DRAFT, ExpenseReport::STATUS_VALIDATED);
+		if (DolibarrApiAccess::$user->hasRight('expensereport', 'to_paid')) {
+			$allowedstatus[] = ExpenseReport::STATUS_APPROVED;
+		}
+		if (!in_array($this->expensereport->status, $allowedstatus)) {
+			throw new RestException(403, 'Expense report must be in validated'.(in_array(ExpenseReport::STATUS_APPROVED, $allowedstatus) ? ' or approved' : '').' status to be set to draft');
+		}
+
 		$result = $this->expensereport->setStatut(ExpenseReport::STATUS_DRAFT);
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already draft');
@@ -703,6 +712,11 @@ class ExpenseReports extends DolibarrApi
 
 		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// Same source statuses as the confirm_validate and confirm_save_from_refuse actions of expensereport/card.php (a validated report is left to the 304 below)
+		if (!in_array($this->expensereport->status, array(ExpenseReport::STATUS_DRAFT, ExpenseReport::STATUS_REFUSED, ExpenseReport::STATUS_VALIDATED))) {
+			throw new RestException(403, 'Expense report must be in draft or refused status to be validated');
 		}
 
 		$result = $this->expensereport->setValidate(DolibarrApiAccess::$user, $notrigger);
@@ -750,6 +764,11 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		// Same source status as the confirm_approve action of expensereport/card.php (an approved report is left to the 304 below)
+		if (!in_array($this->expensereport->status, array(ExpenseReport::STATUS_VALIDATED, ExpenseReport::STATUS_APPROVED))) {
+			throw new RestException(403, 'Expense report must be in validated status to be approved');
+		}
+
 		$result = $this->expensereport->setApproved(DolibarrApiAccess::$user, $notrigger);
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already approved');
@@ -794,6 +813,11 @@ class ExpenseReports extends DolibarrApi
 
 		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// Same source statuses as the confirm_refuse action of expensereport/card.php (a refused report is left to the 304 below)
+		if (!in_array($this->expensereport->status, array(ExpenseReport::STATUS_VALIDATED, ExpenseReport::STATUS_APPROVED, ExpenseReport::STATUS_REFUSED))) {
+			throw new RestException(403, 'Expense report must be in validated or approved status to be denied');
 		}
 
 		$result = $this->expensereport->setDeny(DolibarrApiAccess::$user, $details, $notrigger);
@@ -844,10 +868,10 @@ class ExpenseReports extends DolibarrApi
 
 		$result = $this->expensereport->setPaid($id, DolibarrApiAccess::$user, $notrigger);
 		if ($result == 0) {
-			throw new RestException(304, 'Error nothing done. May be object is already approved');
+			throw new RestException(304, 'Error nothing done. May be object is not approved or is already paid');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when approving expense report: '.$this->expensereport->errorsToString());
+			throw new RestException(500, 'Error when setting expense report to paid: '.$this->expensereport->errorsToString());
 		}
 
 		return $this->_cleanObjectDatas($this->expensereport);
@@ -886,6 +910,14 @@ class ExpenseReports extends DolibarrApi
 
 		if ($this->expensereport->status == ExpenseReport::STATUS_CANCELED) {
 			throw new RestException(403, 'Expense report already canceled');
+		}
+		// Same source statuses as the confirm_cancel action of expensereport/card.php
+		$allowedstatus = array(ExpenseReport::STATUS_VALIDATED, ExpenseReport::STATUS_APPROVED);
+		if (DolibarrApiAccess::$user->hasRight('expensereport', 'approve') || DolibarrApiAccess::$user->hasRight('expensereport', 'to_paid')) {
+			$allowedstatus[] = ExpenseReport::STATUS_CLOSED;
+		}
+		if (!in_array($this->expensereport->status, $allowedstatus)) {
+			throw new RestException(403, 'Expense report must be in validated'.(in_array(ExpenseReport::STATUS_CLOSED, $allowedstatus) ? ', approved or paid' : ' or approved').' status to be canceled');
 		}
 		$result = $this->expensereport->set_cancel(DolibarrApiAccess::$user, $detail, $notrigger);
 		if ($result < 0) {
