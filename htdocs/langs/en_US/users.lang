@@ -259,4 +259,7 @@ PasskeyErrorCredentialIdTooLong=This authenticator returns a credential ID that 
 PasskeyErrorAlreadyRegistered=This passkey is already registered
 PasskeyErrorNotAllowed=The passkey was not created: the request was canceled or refused by the browser. A browser can refuse it when the HTTPS certificate of the page is not valid (for example a self-signed certificate).
 PasskeyErrorInsecure=The passkey was not created: the browser considers this page as not secure. Browsers refuse passkeys when the HTTPS certificate of the page is not valid (for example a self-signed certificate), even if an exception was accepted for it.
+LoginWithPasskey=Login with a passkey
+PasskeyLoginFailed=Login with a passkey failed.
+PasskeyErrorUnknown=This passkey is unknown or no longer valid
 BackToUserCard=Back to user card
