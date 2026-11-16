@@ -38,6 +38,10 @@
 --noqa:disable=RF03
 
 
+-- __MEMBER_CIVILITY__ was renamed into __MEMBER_TITLE__ in v21: migrate existing e-mail templates
+UPDATE llx_c_email_templates SET topic = REPLACE(topic, '__MEMBER_CIVILITY__', '__MEMBER_TITLE__') WHERE topic LIKE '%MEMBER_CIVILITY%';
+UPDATE llx_c_email_templates SET content = REPLACE(content, '__MEMBER_CIVILITY__', '__MEMBER_TITLE__') WHERE content LIKE '%MEMBER_CIVILITY%';
+
 ALTER TABLE llx_product_lot ADD COLUMN entity integer DEFAULT 1;
 
 -- Forgotten in previous versions: sequences of renamed tables were not renamed with pgsql
