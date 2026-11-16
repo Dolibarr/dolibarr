@@ -1197,12 +1197,7 @@ class Contact extends CommonObject
 
 				return $this->id;
 			} else {
-				if (is_object($langs)) {
-					$langs->load('errors');
-					$this->error = $langs->trans("ErrorRecordNotFound");
-				} else {
-					$this->error = 'ErrorRecordNotFound';
-				}
+				$this->error = 'ErrorRecordNotFound';		// We return a technical error code. We must not translate it.
 				return 0;
 			}
 		} else {
