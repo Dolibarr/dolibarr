@@ -1419,7 +1419,12 @@ class Cronjob extends CommonObject
 			}
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."cronjob";
-			$sql .= " SET processing = 0, pid = NULL, datelastresult = '".$dbs->idate($now)."', lastresult = '-1', lastoutput = '".$dbs->escape($lastoutput)."'";
+			if (getDolGlobalInt('CRON_DISABLE_AUTO_UNLOCK')) {
+				// Keep the job locked (no automatic rerun), only record the error
+				$sql .= " SET lastoutput = '".$dbs->escape($lastoutput)."'";
+			} else {
+				$sql .= " SET processing = 0, pid = NULL, datelastresult = '".$dbs->idate($now)."', lastresult = '-1', lastoutput = '".$dbs->escape($lastoutput)."'";
+			}
 			$sql .= " WHERE rowid = ".((int) $cronjobid)." AND processing = 1 AND datelastresult IS NULL";
 			$dbs->query($sql);
 		});

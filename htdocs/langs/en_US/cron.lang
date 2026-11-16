@@ -89,6 +89,8 @@ JobXMustBeEnabled=Job %s must be enabled
 EmailIfError=Email for warning on error
 JobNotFound=Job %s not found in list of jobs (try to disable/enabled module)
 ErrorInBatch=Error when running the job %s
+CronDisableAutoUnlock=Disable the automatic unlock of interrupted jobs
+CronDisableAutoUnlockHelp=By default, a job whose process no longer exists (stale PID) or that ended unexpectedly is unlocked and run again at the next pass. Enable this option when jobs may run in another process namespace than the cron runner (containers, Kubernetes, web server and cron on different hosts): the runner cannot see their PID and would run a job twice while it is still running. An interrupted job then stays in progress until a manual action or until the CRON_MAX_DELAY_FOR_JOBS delay (in hours) is reached.
 
 # Cron Boxes
 LastExecutedScheduledJob=Last executed scheduled job

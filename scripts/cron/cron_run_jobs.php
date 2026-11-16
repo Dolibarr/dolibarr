@@ -196,7 +196,9 @@ $db->query($sql);
 
 // Also unlock jobs that have a PID but the process does not exist anymore (SIGKILL, crash, segfault, ...).
 // Without this, such a job remains stuck in processing=1 until CRON_MAX_DELAY_FOR_JOBS kicks in.
-if (function_exists('posix_kill') && function_exists('posix_get_last_error')) {
+// Disable with CRON_DISABLE_AUTO_UNLOCK when jobs can run in another process namespace (containers, web server
+// and cron runner on different hosts): the PID is not visible here, so a running job would be unlocked and run twice.
+if (!getDolGlobalInt('CRON_DISABLE_AUTO_UNLOCK') && function_exists('posix_kill') && function_exists('posix_get_last_error')) {
 	$sql = "SELECT rowid, pid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."cronjob";
 	$sql .= " WHERE processing = 1";

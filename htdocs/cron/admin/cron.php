@@ -37,6 +37,7 @@ require '../../main.inc.php';
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'cron'));
@@ -119,6 +120,13 @@ if (getDolGlobalInt('CRON_DISABLE_KEY_CHANGE') != 1) {
 	print '<input type="hidden" id="CRON_KEY" name="CRON_KEY" value="'.dol_escape_htmltag($cronkeytoshow).'">';
 }
 print '</td>';
+print '<td>&nbsp;</td>';
+print '</tr>';
+
+// Disable the automatic unlock of jobs whose process looks dead (stale PID, unexpected shutdown)
+print '<tr class="oddeven">';
+print '<td>'.$form->textwithpicto($langs->trans("CronDisableAutoUnlock"), $langs->trans("CronDisableAutoUnlockHelp")).'</td>';
+print '<td>'.ajax_constantonoff('CRON_DISABLE_AUTO_UNLOCK').'</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
 
