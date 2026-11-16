@@ -294,7 +294,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 if ($search_product_category > 0) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=cd.fk_product';
 }
-$sql .= " WHERE c.entity IN (".getEntity($object->element).")";
+$sql .= " WHERE c.entity IN (".getEntity('contract').")";
 $sql .= " AND c.rowid = cd.fk_contrat";
 if ($search_product_category > 0) {
 	$sql .= " AND cp.fk_categorie = ".((int) $search_product_category);
