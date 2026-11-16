@@ -307,6 +307,72 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 	print $formSetup->generateOutput(true);
 }
 
+// Test form of the OCR function, hidden by default and shown by clicking on the "Test OCR" button placed after
+// the input field of the model for the OCR. The button is grayed and not clickable when the field is empty
+// and no default model exists for the service.
+if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
+	print '<div id="ocrtstformdiv"'.(empty($ocrtstformvisible) ? ' style="display: none"' : '').'>';
+	print '<br><br>';
+	print load_fiche_titre($langs->trans("AITestOCRFunction"), '', '');
+
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="testocr">';
+	print '<input type="hidden" name="page_y" value="">';
+	print '<table class="noborder centpercent">';
+	print '<thead>';
+	print '<tr class="liste_titre">';
+	print '<td class="titlefield" colspan="2">'.$langs->trans("AI_API_MODEL_DOCPARSING").' : '.dolPrintLabel($modelforocr !== '' ? $modelforocr : $langs->trans("None")).'</td>';
+	print '</tr>';
+	print '</thead>';
+	print '<tbody>';
+	print '<tr class="oddeven">';
+	print '<td class="col-setup-title">'.$langs->trans("File").'</td>';
+	print '<td><input type="file" class="flat minwidth500" name="ocrtstfile" accept="application/pdf,image/png,image/jpeg,image/gif,image/bmp,image/tiff,image/webp"></td>';
+	print '</tr>';
+	print '</tbody>';
+	print '</table>';
+	print '<center><input type="submit" class="button small reposition" name="testocr" value="'.dol_escape_htmltag($langs->trans("Test")).'"></center>';
+	print '</form>';
+
+	if ($ocrtestresult !== '') {
+		print '<br><br>';
+		// Reminder of the context of the test: file name, service, model used and duration of the AI call
+		$ocrtestservicelabel = (isset($arrayofai[$ocrtestservice]['label']) && is_string($arrayofai[$ocrtestservice]['label'])) ? $arrayofai[$ocrtestservice]['label'] : $ocrtestservice;
+		print '<div class="opacitymedium">';
+		print $langs->trans("File").' : '.dolPrintLabel($ocrtestfilename).' &nbsp;-&nbsp; '.dolPrintLabel($ocrtestservicelabel);
+		print ' &nbsp;-&nbsp; '.$langs->trans("AI_API_MODEL_DOCPARSING").' : '.dolPrintLabel($ocrtestmodel);
+		print ' &nbsp;-&nbsp; '.$langs->trans("Duration").' : '.sprintf('%.1f', $ocrtestduration).' s';
+		print '</div>';
+		print '<div class="ocrtstresult"><div style="white-space: pre-wrap; line-height: 1em;" class="neutral">'.dolPrintText($ocrtestresult).'</div></div>';
+	}
+	print '</div>';
+
+	// Button "Test OCR" placed at the end of the input field of the model for the OCR, to show or hide the test form.
+	// The button is grayed and not clickable when the field is empty and no default model exists for the service.
+	print '<script nonce="'.getNonce().'">
+var ocrmodeldefaultisset = '.($ocrmodeldefault !== '' ? 'true' : 'false').';
+document.querySelectorAll("input[name=\''.dol_escape_js($ocrmodelfieldname).'\']").forEach(function (i) {
+	var b = document.createElement("a");
+	b.href = "#";
+	b.textContent = \''.dol_escape_js($langs->trans("TestOCR")).'\';
+	var refreshbuttonstate = function () {
+		b.disabled = (!i.value && !ocrmodeldefaultisset);
+		b.className = "button smallpaddingimp".concat(b.disabled ? " disabled" : "");
+	};
+	b.onclick = function () {
+		if (b.disabled) { return false; }
+		var d = document.getElementById("ocrtstformdiv");
+		if (d) { d.style.display = (d.style.display === "none" ? "" : "none"); }
+		return false;
+	};
+	i.insertAdjacentElement("afterend", b);
+	i.addEventListener("input", refreshbuttonstate);
+	refreshbuttonstate();
+});
+</script>'."\n";
+}
+
 print '<br>';
 print '<br>';
 print '<br>';
@@ -551,72 +617,6 @@ if (is_array($runfail) && !empty($runfail['model'])) {
 		}
 	}
 	print info_admin($msg, 0, 0, 'warning');
-}
-
-// Test form of the OCR function, hidden by default and shown by clicking on the "Test OCR" button placed after
-// the input field of the model for the OCR. The button is grayed and not clickable when the field is empty
-// and no default model exists for the service.
-if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
-	print '<div id="ocrtstformdiv"'.(empty($ocrtstformvisible) ? ' style="display: none"' : '').'>';
-	print '<br><br>';
-	print load_fiche_titre($langs->trans("AITestOCRFunction"), '', '');
-
-	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="testocr">';
-	print '<input type="hidden" name="page_y" value="">';
-	print '<table class="noborder centpercent">';
-	print '<thead>';
-	print '<tr class="liste_titre">';
-	print '<td class="titlefield" colspan="2">'.$langs->trans("AI_API_MODEL_DOCPARSING").' : '.dolPrintLabel($modelforocr !== '' ? $modelforocr : $langs->trans("None")).'</td>';
-	print '</tr>';
-	print '</thead>';
-	print '<tbody>';
-	print '<tr class="oddeven">';
-	print '<td class="col-setup-title">'.$langs->trans("File").'</td>';
-	print '<td><input type="file" class="flat minwidth500" name="ocrtstfile" accept="application/pdf,image/png,image/jpeg,image/gif,image/bmp,image/tiff,image/webp"></td>';
-	print '</tr>';
-	print '</tbody>';
-	print '</table>';
-	print '<center><input type="submit" class="button small reposition" name="testocr" value="'.dol_escape_htmltag($langs->trans("Test")).'"></center>';
-	print '</form>';
-
-	if ($ocrtestresult !== '') {
-		print '<br><br>';
-		// Reminder of the context of the test: file name, service, model used and duration of the AI call
-		$ocrtestservicelabel = (isset($arrayofai[$ocrtestservice]['label']) && is_string($arrayofai[$ocrtestservice]['label'])) ? $arrayofai[$ocrtestservice]['label'] : $ocrtestservice;
-		print '<div class="opacitymedium">';
-		print $langs->trans("File").' : '.dolPrintLabel($ocrtestfilename).' &nbsp;-&nbsp; '.dolPrintLabel($ocrtestservicelabel);
-		print ' &nbsp;-&nbsp; '.$langs->trans("AI_API_MODEL_DOCPARSING").' : '.dolPrintLabel($ocrtestmodel);
-		print ' &nbsp;-&nbsp; '.$langs->trans("Duration").' : '.sprintf('%.1f', $ocrtestduration).' s';
-		print '</div>';
-		print '<div class="ocrtstresult"><div style="white-space: pre-wrap; line-height: 1em;" class="neutral">'.dolPrintText($ocrtestresult).'</div></div>';
-	}
-	print '</div>';
-
-	// Button "Test OCR" placed at the end of the input field of the model for the OCR, to show or hide the test form.
-	// The button is grayed and not clickable when the field is empty and no default model exists for the service.
-	print '<script nonce="'.getNonce().'">
-var ocrmodeldefaultisset = '.($ocrmodeldefault !== '' ? 'true' : 'false').';
-document.querySelectorAll("input[name=\''.dol_escape_js($ocrmodelfieldname).'\']").forEach(function (i) {
-	var b = document.createElement("a");
-	b.href = "#";
-	b.textContent = \''.dol_escape_js($langs->trans("TestOCR")).'\';
-	var refreshbuttonstate = function () {
-		b.disabled = (!i.value && !ocrmodeldefaultisset);
-		b.className = "button smallpaddingimp".concat(b.disabled ? " disabled" : "");
-	};
-	b.onclick = function () {
-		if (b.disabled) { return false; }
-		var d = document.getElementById("ocrtstformdiv");
-		if (d) { d.style.display = (d.style.display === "none" ? "" : "none"); }
-		return false;
-	};
-	i.insertAdjacentElement("afterend", b);
-	i.addEventListener("input", refreshbuttonstate);
-	refreshbuttonstate();
-});
-</script>'."\n";
 }
 
 

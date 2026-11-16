@@ -589,6 +589,28 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * testRestInterventionRoutesNotFound
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionRoutesNotFound()
+	{
+		$test = "Call routes on an intervention that does not exist";
+
+		$this->getUrl('interventions/999999999', $test, 'GET', null, 404);
+		$this->getUrl('interventions/999999999', $test, 'PUT', array("note_private" => "Not found"), 404);
+		$this->getUrl('interventions/999999999/lines', $test, 'GET', null, 404);
+		$this->getUrl('interventions/999999999/lines/1', $test, 'PUT', $this->lineData(), 404);
+		$this->getUrl('interventions/999999999/lines/1', $test, 'DELETE', null, 404);
+		$this->getUrl('interventions/999999999/validate', $test, 'POST', array("notrigger" => 0), 404);
+		$this->getUrl('interventions/999999999/close', $test, 'POST', array("notrigger" => 0), 404);
+		$this->getUrl('interventions/999999999/settodraft', $test, 'POST', array(), 404);
+		$this->getUrl('interventions/999999999/contacts', $test, 'GET', null, 404);
+		$this->addInterventionContact($test, 999999999, 1, 'INTERREPFOLL', 'internal', 404);
+		$this->getUrl('interventions/999999999/contact/1/INTERREPFOLL', $test, 'DELETE', null, 404);
+	}
+
+	/**
 	 * Close an intervention
 	 *
 	 * @param string	$test				Text to be added to output
@@ -853,5 +875,61 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 		$intervention_id = $this->createInterventionToDelete($test);
 
 		$this->getUrl('interventions/'.$intervention_id.'/contact/1/INTERREPFOLL', $test, 'DELETE', null, 404);
+	}
+
+	/**
+	 * testRestInterventionSetToDraft
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionSetToDraft()
+	{
+		$test = "Set a validated intervention back to draft";
+
+		list($intervention_id) = $this->createInterventionWithLine($test);
+		$this->validateIntervention($test, $intervention_id);
+
+		$result = $this->getUrl('interventions/'.$intervention_id.'/settodraft', $test, 'POST', array());
+		$this->assertEquals(Fichinter::STATUS_DRAFT, $result['content']['status'] ?? null, "$test Settodraft must return the draft intervention");
+
+		$result = $this->getUrl('interventions/'.$intervention_id, $test, 'GET');
+		$this->assertEquals(Fichinter::STATUS_DRAFT, $result['content']['status'] ?? null, "$test Intervention must be draft");
+	}
+
+	/**
+	 * testRestInterventionSetToDraftAlreadyDraft
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionSetToDraftAlreadyDraft()
+	{
+		$test = "Set a draft intervention to draft";
+
+		list($intervention_id) = $this->createInterventionWithLine($test);
+
+		$this->assertPostNotModified('interventions/'.$intervention_id.'/settodraft', $test, array());
+
+		$result = $this->getUrl('interventions/'.$intervention_id, $test, 'GET');
+		$this->assertEquals(Fichinter::STATUS_DRAFT, $result['content']['status'] ?? null, "$test Intervention must stay draft");
+	}
+
+	/**
+	 * testRestInterventionSetToDraftClosed
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionSetToDraftClosed()
+	{
+		$test = "Set a closed intervention to draft";
+
+		list($intervention_id) = $this->createInterventionWithLine($test);
+		$this->validateIntervention($test, $intervention_id);
+		$this->closeIntervention($test, $intervention_id);
+
+		$result = $this->getUrl('interventions/'.$intervention_id.'/settodraft', $test, 'POST', array(), 403);
+		$this->assertStringContainsString('validated status', $result['content']['error']['message'] ?? '', "$test The status must be the reason of the refusal");
+
+		$result = $this->getUrl('interventions/'.$intervention_id, $test, 'GET');
+		$this->assertEquals(Fichinter::STATUS_CLOSED, $result['content']['status'] ?? null, "$test Intervention must stay closed");
 	}
 }

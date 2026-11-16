@@ -1,8 +1,9 @@
 # How to run Claude Code into a container.
 
 This is the equivalent of `dev/build/docker-vibe` (Mistral Vibe) for Claude Code.
-The image provides the same tools (PHP, phpunit, phpstan, phan, phpcs, hurl, gh, tx, pre-commit, rtk, mariadb client, ...)
-and the same protections (no email can be sent from the container). See `dev/build/docker-vibe/README.md` for the details
+The image provides the same tools (PHP, phpunit, phpstan, phan, phpcs, hurl, gh, tx, pre-commit, rtk, mariadb client, ...),
+including Playwright for Python and Chromium (browsers into `/opt/pw-browsers`, full browser also at `/usr/local/bin/chromium`)
+to test pages in a browser and take screenshots, and the same protections (no email can be sent from the container). See `dev/build/docker-vibe/README.md` for the details
 of the common parts. The files `open-on-host`, `xdg-open-shim`, `smtpblock.sh`, `sendmail-stub` and `bashrc-prompt` are shared with docker-vibe: they are
 taken from the directory `dev/build/docker-vibe` when the image is built.
 
@@ -94,3 +95,8 @@ The outbound SMTP ports are blocked like for docker-vibe. To start a container t
 ````
 DOCKER_ALLOW_SMTP=1 claudes
 ````
+
+### Mail logs of the host
+Like for docker-vibe, the files `/var/log/mail.log`, `/var/log/phpmail.log` and `/var/log/phpsendmail.log` are each mounted
+read-only at the same path into the container when they exist on the host, and the user of the container is added to the groups
+owning them (except `root`). After a rotation of the log on the host, the container keeps showing the old file until it is restarted.

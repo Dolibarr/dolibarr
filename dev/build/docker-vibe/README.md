@@ -108,6 +108,12 @@ The hooks environments are preloaded into the image when it is built (they are t
 They are stored into the directory `/var/cache/pre-commit`, declared with `PRE_COMMIT_HOME` in the Dockerfile, and are already present at the first run into the container.
 If the `.pre-commit-config.yaml` of the repository changes after the image was built (new revision of a hook), only the changed hooks are downloaded at the first run.
 
+## Playwright and Chromium
+
+Playwright for Python and Chromium are installed into the image, to test the pages of Dolibarr in a browser (screenshots, javascript errors).
+The browsers are into `/opt/pw-browsers` (`PLAYWRIGHT_BROWSERS_PATH`) and the full browser is also available at `/usr/local/bin/chromium`.
+Playwright is installed into the system python: run the scripts with `/usr/bin/python3`, because `python3` is the python of the Vibe venv (`/opt/vibe/bin` is first into the `PATH`).
+
 ## Transifex CLI
 
 The Transifex client `tx` is installed into the image (see https://github.com/transifex/cli).
@@ -119,6 +125,12 @@ Otherwise, provide the token with the environment variable `TX_TOKEN` (for examp
 
 When the directory `/var/log/apache2` exists on the host, `vibes.sh` mounts it read-only at the same path into the container, so the agent can read the Apache logs (for example `tail /var/log/apache2/error.log`).
 The directory is owned by the group `adm` on Debian/Ubuntu and is not readable by others: the user of the container is added to the group with the same GID by `docker-entrypoint.sh`.
+
+## Mail logs of the host
+
+The files `/var/log/mail.log`, `/var/log/phpmail.log` and `/var/log/phpsendmail.log` are each mounted read-only at the same path into the container when they exist on the host (for example `tail /var/log/mail.log`).
+The user of the container is added by `docker-entrypoint.sh` to the groups owning these files (except `root`), so they can be read.
+A bind mount follows the file and not its name: after a rotation of the log on the host (logrotate), the container keeps showing the old file until it is restarted.
 
 ## No email can be delivered
 

@@ -53,7 +53,13 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 $langs->loadLangs(array('bills', 'companies', 'other'));
 
 $mode = GETPOST("mode") ? GETPOST("mode") : 'customer';
-$tabfamily = GETPOST('tabfamily', 'aZ09');	// 'invoicestats' to show the tab with the custom reports tool
+$tabfamily = GETPOST('tabfamily', 'aZ09');	// 'invoicestats' or 'supplierinvoicestats' to show the tab with the custom reports tool
+// The custom reports tool does not keep the parameter mode, so the mode is defined by the tabfamily
+if ($tabfamily == 'supplierinvoicestats') {
+	$mode = 'supplier';
+} elseif ($tabfamily == 'invoicestats') {
+	$mode = 'customer';
+}
 
 $hookmanager->initHooks(array('invoicestats', 'globalcard'));
 
@@ -147,8 +153,9 @@ if ($mode == 'supplier') {
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
-// The custom reports tool supports customer invoices only and is not available to external users
-$showtabcustomreports = ($mode == 'customer' && empty($user->socid));
+// The custom reports tool is not available to external users
+$showtabcustomreports = empty($user->socid);
+$tabfamilycustomreports = ($mode == 'supplier' ? 'supplierinvoicestats' : 'invoicestats');
 
 $h = 0;
 $head = array();
@@ -158,7 +165,7 @@ $head[$h][2] = 'byyear';
 $h++;
 
 if ($showtabcustomreports) {
-	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/stats/index.php?tabfamily=invoicestats';
+	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/stats/index.php?tabfamily='.$tabfamilycustomreports;
 	$head[$h][1] = $langs->trans("Custom");
 	$head[$h][2] = 'customreports';
 	$h++;
@@ -172,11 +179,11 @@ if ($mode == 'supplier') {
 complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 
 // Show the tab with the custom reports tool
-if ($showtabcustomreports && $tabfamily == 'invoicestats') {
+if ($showtabcustomreports && $tabfamily == $tabfamilycustomreports) {
 	print dol_get_fiche_head($head, 'customreports', '', -1);
 
 	define('USE_CUSTOM_REPORT_AS_TAB', 1);
-	$customreportobjecttype = 'invoice';
+	$customreportobjecttype = ($mode == 'supplier' ? 'supplier_invoice' : 'invoice');
 	include DOL_DOCUMENT_ROOT.'/core/customreports.php';
 
 	print dol_get_fiche_end();
@@ -462,7 +469,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre" height="24">';
 print '<td class="center">'.$langs->trans("Year").'</td>';
-print '<td class="right">'.$langs->trans("NumberOfBills").'</td>';
+print '<td class="right">'.$langs->trans("Number").'</td>';
 print '<td class="right">%</td>';
 print '<td class="right">'.$langs->trans("AmountTotal").'</td>';
 print '<td class="right">%</td>';
@@ -470,23 +477,29 @@ print '<td class="right">'.$langs->trans("AmountAverage").'</td>';
 print '<td class="right">%</td>';
 print '</tr>';
 
+// Lines after $MAXLINES are hidden and shown with the link "More..."
+$MAXLINES = 5;
+$nbline = 0;
+$cssline = '';
 $oldyear = 0;
 foreach ($data as $val) {
 	$year = (int) $val['year'];
 	while ($year && $oldyear > $year + 1) {	// If we have empty year
 		$oldyear--;
+		$nbline++;
+		$cssline = ($nbline > $MAXLINES ? ' hidden statsyearmorelines' : '');
 
-		print '<tr class="oddeven" height="24">';
+		print '<tr class="oddeven'.$cssline.'" height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$oldyear.'</a></td>';
 		// Empty year just after a year with records: delta is -100% (a decrease is green for suppliers)
 		$isyearbeforeval = ($oldyear == $year + 1);
-		$stylenegative = ($mode == 'supplier' ? 'color: green;' : 'color: red;');
+		$classnegative = ($mode == 'supplier' ? 'growthup' : 'growthdown');
 		print '<td class="right">0</td>';
-		print '<td class="right opacitylow" style="'.$stylenegative.'">'.(($isyearbeforeval && $val['nb'] > 0) ? '-100%' : '').'</td>';
+		print '<td class="right opacitylow '.$classnegative.'">'.(($isyearbeforeval && $val['nb'] > 0) ? '-100%' : '').'</td>';
 		print '<td class="right amount">0</td>';
-		print '<td class="right opacitylow" style="'.$stylenegative.'">'.(($isyearbeforeval && $val['total'] > 0) ? '-100%' : '').'</td>';
+		print '<td class="right opacitylow '.$classnegative.'">'.(($isyearbeforeval && $val['total'] > 0) ? '-100%' : '').'</td>';
 		print '<td class="right amount">0</td>';
-		print '<td class="right opacitylow" style="'.$stylenegative.'">'.(($isyearbeforeval && $val['avg'] > 0) ? '-100%' : '').'</td>';
+		print '<td class="right opacitylow '.$classnegative.'">'.(($isyearbeforeval && $val['avg'] > 0) ? '-100%' : '').'</td>';
 		print '</tr>';
 	}
 
@@ -500,16 +513,25 @@ foreach ($data as $val) {
 		$greenavg = (empty($val['avg_diff']) || $val['avg_diff'] >= 0);
 	}
 
-	print '<tr class="oddeven" height="24">';
+	$nbline++;
+	$cssline = ($nbline > $MAXLINES ? ' hidden statsyearmorelines' : '');
+
+	print '<tr class="oddeven'.$cssline.'" height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
-	print '<td class="right opacitylow" style="'.($greennb ? 'color: green;' : 'color: red;').'">'.(isset($val['nb_diff']) ? ($val['nb_diff'] < 0 ? '' : '+').round($val['nb_diff']).'%' : '').'</td>';
+	print '<td class="right opacitylow '.($greennb ? 'growthup' : 'growthdown').'">'.(isset($val['nb_diff']) ? ($val['nb_diff'] < 0 ? '' : '+').round($val['nb_diff']).'%' : '').'</td>';
 	print '<td class="right"><span class="amount">'.price(price2num($val['total'], 'MT'), 1).'</span></td>';
-	print '<td class="right opacitylow" style="'.($greentotal ? 'color: green;' : 'color: red;').'">'.(isset($val['total_diff']) ? ($val['total_diff'] < 0 ? '' : '+').round($val['total_diff']).'%' : '').'</td>';
+	print '<td class="right opacitylow '.($greentotal ? 'growthup' : 'growthdown').'">'.(isset($val['total_diff']) ? ($val['total_diff'] < 0 ? '' : '+').round($val['total_diff']).'%' : '').'</td>';
 	print '<td class="right"><span class="amount">'.price(price2num($val['avg'], 'MT'), 1).'</span></td>';
-	print '<td class="right opacitylow" style="'.($greenavg ? 'color: green;' : 'color: red;').'">'.(isset($val['avg_diff']) ? ($val['avg_diff'] < 0 ? '' : '+').round($val['avg_diff']).'%' : '').'</td>';
+	print '<td class="right opacitylow '.($greenavg ? 'growthup' : 'growthdown').'">'.(isset($val['avg_diff']) ? ($val['avg_diff'] < 0 ? '' : '+').round($val['avg_diff']).'%' : '').'</td>';
 	print '</tr>';
 	$oldyear = $year;
+}
+
+if ($nbline > $MAXLINES) {
+	print '<tr class="liste_total"><td colspan="7" class="center">';
+	print '<a href="#" class="showmoreoptions" onclick="jQuery(\'.statsyearmorelines\').toggle(); jQuery(this).toggle(); return false;">'.img_picto('', 'chevron-down', 'class="paddingright"').$langs->trans("More").'...</a>';
+	print '</td></tr>';
 }
 
 print '</table>';

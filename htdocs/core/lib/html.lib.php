@@ -206,8 +206,10 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 	$reg = array();
 	if (preg_match('/^common([a-z,]*)/', $noescapetags, $reg)) {
 		$noescapetags = 'html,body,a,b,em,hr,i,u,ul,ol,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody,h1,h2,h3,h4,h5,h6,h7,h8,h9';
+		// Add also the other content tags kept by the 'common' list of dol_string_onlythesehtmltags()
+		$noescapetags .= ',abbr,blockquote,cite,dl,dd,dt,ins,pre,q,s,strike,sub,sup,thead,tfoot';
 		// Add also html5 tags
-		$noescapetags .= ',header,footer,nav,section,menu,menuitem';
+		$noescapetags .= ',article,header,footer,nav,section,menu,menuitem';
 		if (!empty($reg[1])) {
 			$noescapetags .= $reg[1];
 		}
@@ -830,7 +832,13 @@ function dol_get_fiche_end($notab = 0)
  */
 function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldid = 'rowid', $fieldref = 'ref', $morehtmlref = '', $moreparam = '', $nodbprefix = 0, $morehtmlleft = '', $morehtmlstatus = '', $onlybanner = 0, $morehtmlright = '')
 {
-	global $conf, $form, $user, $langs, $hookmanager, $action;
+	global $conf, $form, $user, $langs, $hookmanager, $action, $db;
+
+	// $form is created by the top or left menu, so it may not exist when menus are hidden (dol_hide_topmenu and dol_hide_leftmenu)
+	if (!is_object($form)) {
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+		$form = new Form($db);
+	}
 
 	$error = 0;
 
@@ -1671,6 +1679,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'company' => '#6c6aa8',
 				'contact' => '#6c6aa8',
 				'cron' => '#555',
+				'depositslip' => '#a69944',
 				'dynamicprice' => '#a69944',
 				'edit' => '#444',
 				'note' => '#999',
@@ -1839,6 +1848,7 @@ function getImgPictoConv($mode = 'fa')
 			'chevron-double-down' => 'angle-double-down',
 			'chevron-double-top' => 'angle-double-up',
 			'donation' => 'gift',
+			'depositslip' => 'hand-holding-usd',
 			'dynamicprice' => 'hand-holding-usd',
 			'setup' => 'cog',
 			'companies' => 'building',
@@ -3039,15 +3049,17 @@ function load_fiche_titre($title, $morehtmlright = '', $picto = 'generic', $pict
 		$picto = 'generic';
 	}
 
-	$return .= "\n";
+	$return .= "<!-- load_fiche_titre -->\n";
 	$return .= '<table ' . ($id ? 'id="' . $id . '" ' : '') . 'class="centpercent notopnoleftnoright table-fiche-title' . ($morecssontable ? ' ' . $morecssontable : '') . '">'; // margin bottom must be same than into print_barre_list
 	$return .= '<tr class="toptitle">';
 	if ($picto) {
-		$return .= '<td class="nobordernopadding widthpictotitle valignmiddle col-picto">' . img_picto('', $picto, 'class="valignmiddle pictotitle'.($morecssonpicto ? ' '.$morecssonpicto : '').'"', $pictoisfullpath) . '</td>';
+		$return .= '<td class="nobordernopadding widthpictotitle valignmiddle col-picto">';
+		$return .= img_picto('', $picto, 'class="valignbaseline pictotitle'.($morecssonpicto ? ' '.$morecssonpicto : '').'"', $pictoisfullpath);
+		$return .= '</td>';
 	}
 	$return .= '<td class="nobordernopadding valignmiddle col-title">';
 	$return .= '<div class="titre inline-block">';
-	$return .= '<span class="inline-block valignmiddle print-barre-liste">' . $title . '</span>';	// $title is already HTML sanitized content
+	$return .= '<span class="inline-block valignbaseline print-barre-liste">' . $title . '</span>';	// $title is already HTML sanitized content
 	$return .= '</div>';
 	$return .= '</td>';
 	if (dol_strlen($morehtmlcenter)) {

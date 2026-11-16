@@ -240,6 +240,20 @@ LOG_ARGS=()
 if [ -d /var/log/apache2 ]; then
     LOG_ARGS+=(-e "HOST_APACHE_LOG_GID=$(stat -c %g /var/log/apache2)" --mount "type=bind,src=/var/log/apache2,dst=/var/log/apache2,readonly")
 fi
+# Same for the mail logs of the host (MTA, PHP mail() and PHP sendmail wrapper), each file being mounted only
+# when it exists on the host. The GIDs owning them are passed so the entrypoint can add the user to these groups.
+# The mount follows the file, not its name: after a rotation on the host, the container still sees the old file.
+MAIL_LOG_GIDS=()
+for MAIL_LOG_FILE in /var/log/mail.log /var/log/phpmail.log /var/log/phpsendmail.log; do
+    if [ -f "$MAIL_LOG_FILE" ]; then
+        LOG_ARGS+=(--mount "type=bind,src=$MAIL_LOG_FILE,dst=$MAIL_LOG_FILE,readonly")
+        MAIL_LOG_GIDS+=("$(stat -c %g "$MAIL_LOG_FILE")")
+    fi
+done
+if [ "${#MAIL_LOG_GIDS[@]}" -gt 0 ]; then
+    LOG_ARGS+=(-e "HOST_MAIL_LOG_GIDS=${MAIL_LOG_GIDS[*]}")
+fi
+echo "LOG_ARGS=${LOG_ARGS[@]}"
 
 # Share the Transifex credentials of the host with the tx client of the container (read-only mount).
 TX_ARGS=()
