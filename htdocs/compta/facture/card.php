@@ -1781,6 +1781,9 @@ if (empty($reshook)) {
 									$line->situation_percent += $maxPrevSituationPercent;
 
 									//print 'New line based on invoice id '.$facture_source->tab_previous_situation_invoice[$lineIndex]->id.' fk_prev_id='.$source_fk_prev_id.' will be fk_prev_id='.$line->fk_prev_id.' '.$line->total_ht.' '.$line->situation_percent.'<br>';
+								} else {
+									// Progressive mode (or first situation): the source line holds its own delta, so the credit note cancels it with a negative progress
+									$line->situation_percent = -abs((float) $line->situation_percent);
 								}
 							}
 
