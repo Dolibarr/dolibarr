@@ -437,7 +437,7 @@ print '<br>';
 
 
 print '<strong>$dolibarr_website_allow_custom_php</strong>: ';
-if (!empty($dolibarr_website_allow_custom_php) && $dolibarr_website_allow_custom_php == 2) {
+if (!empty($dolibarr_website_allow_custom_php) && $dolibarr_website_allow_custom_php >= 2) {
 	print img_picto('', 'warning').' ';
 }
 if (empty($dolibarr_website_allow_custom_php)) {
