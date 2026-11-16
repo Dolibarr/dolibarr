@@ -990,6 +990,19 @@ class Facture extends CommonInvoice
 							break;
 						}
 
+						// Keep the extra parameters of the source line (for example the options of subtotal lines).
+						// The new line is not added to $this->lines when context is createfromclone, so we use its id.
+						if ($result > 0 && !empty($newinvoiceline->extraparams)) {
+							$newline = new FactureLigne($this->db);
+							$newline->id = $result;
+							$newline->extraparams = (array) $newinvoiceline->extraparams;
+							if ($newline->setExtraParameters() < 0) {
+								$this->setErrorsFromObject($newline);
+								$error++;
+								break;
+							}
+						}
+
 						// Defined the new fk_parent_line
 						if ($result > 0 && $newinvoiceline->product_type == 9) {
 							$fk_parent_line = $result;
