@@ -7,6 +7,8 @@ RUN apt-get update \
 		bash \
 		bash-completion \
 		ca-certificates \
+        cairosvg \
+		cmake \
 		composer \
         vim \
 		wget \
@@ -22,7 +24,11 @@ RUN apt-get update \
 		iptables \
 		jq \
 		libglib2.0-bin \
-        memcached \
+		libportaudio2 \
+		liblzma-dev \
+		libboost-iostreams-dev libboost-filesystem-dev libboost-date-time-dev \
+		libboost-program-options-dev libboost-system-dev \
+		memcached \
 		mariadb-client \
 		mariadb-server \
 		openssh-client \
@@ -30,6 +36,7 @@ RUN apt-get update \
 		php-ast \
 		php-curl \
 		php-mysql \
+		php-pgsql \
 		php-mbstring \
 		php-xml \
 		php-gd \
@@ -40,9 +47,11 @@ RUN apt-get update \
 		php-imagick \
 		php-cli \
 		pgloader \
+		postgresql-client \
 		python3 \
 		python3-pip \
 		shellcheck \
+		sox \
 		sshpass \
 		sudo \
 		time \
@@ -62,9 +71,13 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | UV_INSTALL_DIR=/usr/local/bin s
 # libglib2.0-bin provides gdbus, used by open-on-host to reach the
 # xdg-desktop-portal of the host session. wl-clipboard is the Wayland native
 # equivalent of xclip (also used by pyperclip). See README.md.
+# The packages downloaded by uv and composer are cached into /root/.cache (wheels, zips),
+# duplicating into the image files already installed: the caches are removed into the
+# same RUN, so they never enter a layer.
 RUN mkdir -p /opt/vibe \
     && uv venv /opt/vibe \
-    && uv pip install --python /opt/vibe/bin/python mistral-vibe pyperclip
+    && uv pip install --python /opt/vibe/bin/python mistral-vibe pyperclip \
+    && rm -rf /root/.cache/uv
 
 ENV PATH="/opt/vibe/bin:$PATH"
 
@@ -76,8 +89,7 @@ ENV BROWSER="/usr/local/bin/open-on-host"
 
 
 # Install RTK - Rust Token Killer
-RUN curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/master/install.sh | sh \
-    && cp /root/.local/bin/rtk /usr/local/bin/rtk \
+RUN curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/master/install.sh | RTK_INSTALL_DIR=/usr/local/bin sh \
     && chmod +x /usr/local/bin/rtk \
     && rtk --version \
     && rtk gain
@@ -103,7 +115,8 @@ RUN mkdir -p /opt/php-tools \
 	&& ln -s /opt/php-tools/vendor/bin/phan /usr/local/bin/phan \
 	&& ln -s /opt/php-tools/vendor/bin/phpstan /usr/local/bin/phpstan \
 	&& ln -s /opt/php-tools/vendor/bin/phpcs /usr/local/bin/phpcs \
-	&& ln -s /opt/php-tools/vendor/bin/phpcbf /usr/local/bin/phpcbf
+	&& ln -s /opt/php-tools/vendor/bin/phpcbf /usr/local/bin/phpcbf \
+	&& rm -rf /root/.cache/composer
 
 
 # Install pre-commit - tool to manage git hooks (see https://pre-commit.com and dev/setup/pre-commit/README.md)
@@ -111,7 +124,41 @@ RUN mkdir -p /opt/php-tools \
 RUN uv venv /opt/pre-commit \
     && uv pip install --python /opt/pre-commit/bin/python pre-commit \
     && ln -s /opt/pre-commit/bin/pre-commit /usr/local/bin/pre-commit \
-    && pre-commit --version
+    && pre-commit --version \
+    && rm -rf /root/.cache/uv
+
+
+# Install Playwright (Python) and Chromium, to test the pages of Dolibarr in a browser (screenshots, javascript errors).
+# The browsers go into /opt/pw-browsers (PLAYWRIGHT_BROWSERS_PATH), readable by the user created by the entrypoint.
+# The libraries of Chromium are listed here so the build does not depend on the distributions known by
+# "playwright install --with-deps". /usr/local/bin/chromium is the full browser, for the tools needing a Chrome binary.
+ENV PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        libasound2t64 \
+        libatk-bridge2.0-0t64 \
+        libatk1.0-0t64 \
+        libatspi2.0-0t64 \
+        libdrm2 \
+        libgbm1 \
+        libnspr4 \
+        libnss3 \
+        libxcomposite1 \
+        libxdamage1 \
+        libxfixes3 \
+        libxi6 \
+        libxkbcommon0 \
+        libxrandr2 \
+        libxres1 \
+    && rm -rf /var/lib/apt/lists/* \
+    && uv pip install --system --break-system-packages playwright \
+    && /usr/bin/python3 -m playwright install chromium \
+    && chmod -R a+rX /opt/pw-browsers \
+    && ln -s "$(ls -d /opt/pw-browsers/chromium-*/chrome-linux*/chrome | head -n 1)" /usr/local/bin/chromium \
+    && ! ldd /usr/local/bin/chromium /opt/pw-browsers/chromium_headless_shell-*/chrome-headless-shell-linux*/chrome-headless-shell | grep "not found" \
+    && /usr/bin/python3 -c 'from playwright.sync_api import sync_playwright; p = sync_playwright().start(); b = p.chromium.launch(); print("Chromium", b.version); b.close(); p.stop()' \
+    && rm -rf /root/.cache/uv /root/.cache/ms-playwright
 
 
 # Preload the pre-commit hooks environments of the repository into the image,
@@ -136,26 +183,9 @@ RUN if [ -f /tmp/pre-commit-warmup/.pre-commit-config.yaml ]; then \
 # that stores the emails it receives into /var/mail/outbox instead of delivering them, so
 # the code and the tests that send emails (the Dolibarr send mode "PHP mail function") run
 # without error but no email ever leaves the container.
-RUN cat > /usr/sbin/sendmail <<'EOF'
-#!/bin/sh
-# Sendmail stub installed by the docker-vibe image (see dev/build/docker-vibe/README.md).
-# No MTA is installed in this image: emails received here are stored into /var/mail/outbox
-# and are never delivered anywhere.
-
-umask 000
-
-outbox=/var/mail/outbox
-mkdir -p "$outbox" 2>/dev/null || exit 0
-
-file="$outbox/$(date +%Y%m%d_%H%M%S%N)_$$.eml"
-{
-    echo "X-SendmailStub-Args: $*"
-    echo
-    cat
-} > "$file" 2>/dev/null
-
-exit 0
-EOF
+# Do not use a heredoc into a RUN: the classic builder (used when docker buildx is not
+# installed) silently ignores its content, so the files are copied from the build context.
+COPY sendmail-stub /usr/sbin/sendmail
 
 RUN chmod 755 /usr/sbin/sendmail \
     && mkdir -p /var/mail/outbox \
@@ -176,29 +206,11 @@ RUN chmod 755 /usr/sbin/sendmail \
     && rm -f /var/mail/outbox/*.eml
 
 
-# Prompt
-RUN cat >> /etc/bash.bashrc <<'EOF'
-
-git_branch() {
-    git branch --show-current 2>/dev/null
-}
-
-alias egrep='egrep --color=auto'
-alias fgrep='fgrep --color=auto'
-alias grep='grep --color=auto'
-alias l='ls -CF'
-alias la='ls -A'
-alias ll='ls -alF'
-alias ls='ls --color=auto'
-
-export HISTSIZE=10000
-export HISTFILESIZE=20000
-
-shopt -s histappend
-PROMPT_COMMAND="history -a; history -n${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
-
-PS1='\[\e[1;31m\][CONTAINER]\[\e[0m\] \[\e[1;34m\]\w\[\e[0m\] \[\e[1;32m\]$(git_branch)\[\e[0m\] \$ '
-EOF
+# Prompt (no heredoc into a RUN, see the sendmail stub above)
+COPY bashrc-prompt /tmp/bashrc-prompt
+RUN cat /tmp/bashrc-prompt >> /etc/bash.bashrc \
+    && rm -f /tmp/bashrc-prompt \
+    && grep -q "git_branch()" /etc/bash.bashrc
 
 WORKDIR /workspace
 
