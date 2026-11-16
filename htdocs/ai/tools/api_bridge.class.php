@@ -1655,7 +1655,7 @@ class ToolApiBridge extends McpTool
 	 */
 	private function addReadEndpoints()
 	{
-		global $mysoc;
+		global $mysoc, $dolibarr_website_allow_custom_php;
 
 		$pagination = "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many records match.";
 
@@ -1892,6 +1892,11 @@ class ToolApiBridge extends McpTool
 
 		// Websites of the website module, with their pages and blog posts. The page content is
 		// left out of the lists (it can be large): read one page with api_websites_pages_get (by the page rowid only).
+		// PHP code in pages can be added or changed through the API only if $dolibarr_website_allow_custom_php is 3.
+		$websitephpallowed = (!empty($dolibarr_website_allow_custom_php) && (int) $dolibarr_website_allow_custom_php >= 3);
+		$websitephpcreate = ($websitephpallowed ? "PHP code (<?php ... ?>) only if the user has the permission to edit PHP content" : "no PHP code");
+		$websitephprule = ($websitephpallowed ? "PHP blocks (<?php ... ?>) can be added or changed only if the user has the permission to edit PHP content, and dangerous PHP functions are refused." : "PHP blocks (<?php ... ?>) of the current content must stay unchanged, or the change is refused.");
+		$websitephpcontent = ($websitephpallowed ? "PHP code (<?php ... ?>) is allowed only if the user has the permission to edit PHP content." : "Never add or change PHP code: keep the existing PHP blocks (<?php ... ?>) exactly as they are.");
 		$this->enrichments['websites'] = array(
 			'label' => 'websites (website module)',
 			'methods' => array(
@@ -1916,7 +1921,7 @@ class ToolApiBridge extends McpTool
 				),
 				'postPage' => array(
 					'suffix' => 'pages_create',
-					'description' => "Create a page (type_container 'page') or a blog post (type_container 'blogpost') in a website. Give id (rowid of the website), pageurl (alias, only a-z, 0-9, - and _), title and content (HTML, put inside a <section> tag, no PHP code). It is created offline (status 0) unless status 1 is given. The user confirms before anything is written.",
+					'description' => "Create a page (type_container 'page') or a blog post (type_container 'blogpost') in a website. Give id (rowid of the website), pageurl (alias, only a-z, 0-9, - and _), title and content (HTML, put inside a <section> tag, ".$websitephpcreate."). It is created offline (status 0) unless status 1 is given. The user confirms before anything is written.",
 					'write' => array(
 						'preview' => 'AIPreviewCreateWebsitePage',
 						'required' => array('id', 'pageurl', 'title'),
@@ -1930,7 +1935,7 @@ class ToolApiBridge extends McpTool
 						'pageurl' => "Alias of the page, used in its URL: only a-z, 0-9, - and _.",
 						'title' => "Title of the page.",
 						'type_container' => "Kind of page: 'page' (default) or 'blogpost' for an article of a blog.",
-						'content' => "HTML content of the page, inside a <section> tag. No PHP code.",
+						'content' => "HTML content of the page, inside a <section> tag. ".dol_ucfirst($websitephpcreate).".",
 						'description' => "Short description (meta description), 255 characters max.",
 						'keywords' => "Keywords, separated by commas.",
 						'lang' => "Language code of the page, e.g. 'en' or 'fr'. Omit for the website language.",
@@ -1940,7 +1945,7 @@ class ToolApiBridge extends McpTool
 				),
 				'putPage' => array(
 					'suffix' => 'pages_update',
-					'description' => "Change fields of an existing page or blog post of a website. Give 'pageid' (rowid of the page, from api_websites_pages_list) and ONLY the fields to change, with their new value: title, description, keywords, content, lang, author_alias, status. To change only parts of the content (move, add, remove or fix elements), read the page first with api_websites_pages_get, then give content_replacements: a list of {old, new} applied in order in ONE call, where 'old' is an exact fragment of the content (long enough to be found only once) and 'new' its replacement (empty to remove it). To MOVE an element, give 2 replacements in the same call: one that removes it, one that adds it at its new place. Do not send the whole content for that. Give 'content' only to replace the whole content (HTML, inside a <section> tag). Never give both. PHP blocks (<?php ... ?>) of the current content must stay unchanged, or the change is refused. The alias (pageurl) cannot be changed here. The user confirms before anything is written.",
+					'description' => "Change fields of an existing page or blog post of a website. Give 'pageid' (rowid of the page, from api_websites_pages_list) and ONLY the fields to change, with their new value: title, description, keywords, content, lang, author_alias, status. To change only parts of the content (move, add, remove or fix elements), read the page first with api_websites_pages_get, then give content_replacements: a list of {old, new} applied in order in ONE call, where 'old' is an exact fragment of the content (long enough to be found only once) and 'new' its replacement (empty to remove it). To MOVE an element, give 2 replacements in the same call: one that removes it, one that adds it at its new place. Do not send the whole content for that. Give 'content' only to replace the whole content (HTML, inside a <section> tag). Never give both. ".$websitephprule." The alias (pageurl) cannot be changed here. The user confirms before anything is written.",
 					'write' => array(
 						'kind' => 'update',
 						'preview' => 'AIPreviewChangeRecord',
@@ -1965,8 +1970,8 @@ class ToolApiBridge extends McpTool
 						'title' => "New title of the page.",
 						'description' => "New short description (meta description), 255 characters max.",
 						'keywords' => "New keywords, separated by commas.",
-						'content' => "New full HTML content of the page, inside a <section> tag. Never add or change PHP code: keep the existing PHP blocks (<?php ... ?>) exactly as they are.",
-						'content_replacements' => "Partial changes of the content, applied in order in one call (all or nothing): list of {\"old\": exact fragment of the current content copied character for character and found only once, \"new\": its replacement, empty string to remove it}. To move an element: [{\"old\": element, \"new\": \"\"}, {\"old\": fragment where to put it, \"new\": same fragment + element}]. Never with content. Never add or change PHP code.",
+						'content' => "New full HTML content of the page, inside a <section> tag. ".$websitephpcontent,
+						'content_replacements' => "Partial changes of the content, applied in order in one call (all or nothing): list of {\"old\": exact fragment of the current content copied character for character and found only once, \"new\": its replacement, empty string to remove it}. To move an element: [{\"old\": element, \"new\": \"\"}, {\"old\": fragment where to put it, \"new\": same fragment + element}]. Never with content. ".($websitephpallowed ? "PHP code allowed only with the permission to edit PHP content." : "Never add or change PHP code."),
 						'lang' => "New language code of the page, e.g. 'en' or 'fr'.",
 						'author_alias' => "New name of the author to show.",
 						'status' => "0 offline, 1 online."
