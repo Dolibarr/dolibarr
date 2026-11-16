@@ -973,6 +973,16 @@ if ($action == 'create') {
 				} else {
 					$label_element = $object->doc_ref;
 				}
+			} elseif ($object->doc_type === 'stock_mouvement' && !empty($object->fk_doc)) {
+				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+				$mouvementstockstatic = new MouvementStock($db);
+				$result = $mouvementstockstatic->fetch($object->fk_doc);
+
+				if ($result > 0) {
+					$label_element = $mouvementstockstatic->getNomUrl(1, 'movements').' ('.dolPrintHTML($object->doc_ref).')';
+				} else {
+					$label_element = $object->doc_ref;
+				}
 			} else {
 				$label_element = $object->doc_ref;
 			}

@@ -24,6 +24,7 @@
  */
 
 require_once __DIR__."/AbstractRestAPITest.php";
+require_once __DIR__."/../../htdocs/expensereport/class/expensereport.class.php";
 
 /**
  * Class for PHPUnit tests
@@ -116,6 +117,31 @@ class RestAPIExpenseReportTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * Create a draft expense report of the API user
+	 *
+	 * @param string	$test	Text to be added to output
+	 * @return int				Id of the expense report
+	 */
+	private function createExpenseReport($test)
+	{
+		$result = $this->getUrl('users/info', $test, 'GET');
+		$userid = (int) ($result['content']['id'] ?? 0);
+		$this->assertGreaterThan(0, $userid, "$test Id of API user is not > 0");
+
+		$now = dol_now();
+		$data = array(
+			"fk_user_author" => $userid,
+			"date_debut" => $now,
+			"date_fin" => $now,
+			"note_private" => "Created by ".get_class($this),
+		);
+		$result = $this->getUrl('expensereports', $test, 'POST', $data);
+		$this->assertGreaterThan(0, (int) $result['content'], "$test Id of expense report is not > 0");
+
+		return (int) $result['content'];
+	}
+
+	/**
 	 * Create an internal user whose supervisor is the admin user. It is deleted at end of the test.
 	 *
 	 * @param string							$test	Text to be added to output
@@ -154,13 +180,13 @@ class RestAPIExpenseReportTest extends AbstractRestAPITest
 	}
 
 	/**
-	 * Create a draft expense report with the admin user. It is deleted at end of the test.
+	 * Create a draft expense report for a user, with the admin user. It is deleted at end of the test.
 	 *
 	 * @param string	$test				Text to be added to output
 	 * @param int		$fk_user_author		Id of the user the expense report is for
 	 * @return int							Id of the expense report
 	 */
-	private function createExpenseReport($test, $fk_user_author)
+	private function createExpenseReportForUser($test, $fk_user_author)
 	{
 		$data = array(
 			"fk_user_author" => $fk_user_author,
@@ -190,6 +216,175 @@ class RestAPIExpenseReportTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * Check the status of an expense report
+	 *
+	 * @param int		$id			Id of the expense report
+	 * @param int		$status		Expected status
+	 * @param string	$test		Text to be added to output
+	 * @return void
+	 */
+	private function assertStatus($id, $status, $test)
+	{
+		$result = $this->getUrl('expensereports/'.$id, $test, 'GET');
+		$this->assertEquals($status, $result['content']['status'] ?? null, "$test Status of expense report must be ".$status);
+	}
+
+	/**
+	 * Check that every given status change is refused with a 403 and leaves the status unchanged
+	 *
+	 * @param int		$id			Id of the expense report
+	 * @param string[]	$actions	Actions to try: validate, approve, deny, cancel, settodraft
+	 * @param int		$status		Current status, that must not change
+	 * @param string	$test		Text to be added to output
+	 * @return void
+	 */
+	private function assertActionsRefused($id, $actions, $status, $test)
+	{
+		$data = array(
+			'validate' => array("notrigger" => 0),
+			'approve' => array("notrigger" => 0),
+			'deny' => array("details" => "Refused by ".get_class($this), "notrigger" => 0),
+			'cancel' => array("detail" => "Canceled by ".get_class($this), "notrigger" => 0),
+			'settodraft' => array(),
+		);
+		foreach ($actions as $action) {
+			$this->getUrl('expensereports/'.$id.'/'.$action, "$test ($action)", 'POST', $data[$action], 403);
+			$this->assertStatus($id, $status, "$test ($action)");
+		}
+	}
+
+	/**
+	 * A draft can only be validated
+	 *
+	 * @return int	Id of the validated expense report
+	 */
+	public function testRestExpenseReportValidateDraft()
+	{
+		$test = "Validate a draft expense report";
+
+		$id = $this->createExpenseReport($test);
+
+		$this->assertActionsRefused($id, array('approve', 'deny', 'cancel'), ExpenseReport::STATUS_DRAFT, $test);
+
+		$this->getUrl('expensereports/'.$id.'/validate', $test, 'POST', array("notrigger" => 0));
+		$this->assertStatus($id, ExpenseReport::STATUS_VALIDATED, $test);
+
+		return $id;
+	}
+
+	/**
+	 * A validated report can be approved
+	 *
+	 * @depends testRestExpenseReportValidateDraft
+	 *
+	 * @param int $id	Id of the validated expense report
+	 * @return int		Id of the approved expense report
+	 */
+	public function testRestExpenseReportApproveValidated($id)
+	{
+		$test = "Approve a validated expense report";
+
+		$this->getUrl('expensereports/'.$id.'/approve', $test, 'POST', array("notrigger" => 0));
+		$this->assertStatus($id, ExpenseReport::STATUS_APPROVED, $test);
+
+		return $id;
+	}
+
+	/**
+	 * An approved report can not be validated again
+	 *
+	 * @depends testRestExpenseReportApproveValidated
+	 *
+	 * @param int $id	Id of the approved expense report
+	 * @return int		Id of the paid expense report
+	 */
+	public function testRestExpenseReportApprovedRefused($id)
+	{
+		$test = "Change the status of an approved expense report";
+
+		$this->assertActionsRefused($id, array('validate'), ExpenseReport::STATUS_APPROVED, $test);
+
+		$this->getUrl('expensereports/'.$id.'/setpaid', $test, 'POST', array("notrigger" => 0));
+		$this->assertStatus($id, ExpenseReport::STATUS_CLOSED, $test);
+
+		return $id;
+	}
+
+	/**
+	 * A paid report can only be canceled, by a user who can approve or pay
+	 *
+	 * @depends testRestExpenseReportApprovedRefused
+	 *
+	 * @param int $id	Id of the paid expense report
+	 * @return int		Id of the canceled expense report
+	 */
+	public function testRestExpenseReportPaidRefused($id)
+	{
+		$test = "Change the status of a paid expense report";
+
+		$this->assertActionsRefused($id, array('validate', 'approve', 'deny', 'settodraft'), ExpenseReport::STATUS_CLOSED, $test);
+
+		$this->getUrl('expensereports/'.$id.'/cancel', $test, 'POST', array("detail" => "Canceled by ".get_class($this), "notrigger" => 0));
+		$this->assertStatus($id, ExpenseReport::STATUS_CANCELED, $test);
+
+		return $id;
+	}
+
+	/**
+	 * A canceled report can not change status
+	 *
+	 * @depends testRestExpenseReportPaidRefused
+	 *
+	 * @param int $id	Id of the canceled expense report
+	 * @return void
+	 */
+	public function testRestExpenseReportCanceledRefused($id)
+	{
+		$test = "Change the status of a canceled expense report";
+
+		$this->assertActionsRefused($id, array('validate', 'approve', 'deny', 'cancel', 'settodraft'), ExpenseReport::STATUS_CANCELED, $test);
+	}
+
+	/**
+	 * A validated report can be set back to draft
+	 *
+	 * @return void
+	 */
+	public function testRestExpenseReportSetToDraftValidated()
+	{
+		$test = "Set a validated expense report back to draft";
+
+		$id = $this->createExpenseReport($test);
+
+		$this->getUrl('expensereports/'.$id.'/validate', $test, 'POST', array("notrigger" => 0));
+		$this->assertStatus($id, ExpenseReport::STATUS_VALIDATED, $test);
+
+		$this->getUrl('expensereports/'.$id.'/settodraft', $test, 'POST', array());
+		$this->assertStatus($id, ExpenseReport::STATUS_DRAFT, $test);
+	}
+
+	/**
+	 * A refused report can not be approved, but can be validated again
+	 *
+	 * @return void
+	 */
+	public function testRestExpenseReportValidateRefused()
+	{
+		$test = "Validate a refused expense report";
+
+		$id = $this->createExpenseReport($test);
+
+		$this->getUrl('expensereports/'.$id.'/validate', $test, 'POST', array("notrigger" => 0));
+		$this->getUrl('expensereports/'.$id.'/deny', $test, 'POST', array("details" => "Refused by ".get_class($this), "notrigger" => 0));
+		$this->assertStatus($id, ExpenseReport::STATUS_REFUSED, $test);
+
+		$this->assertActionsRefused($id, array('approve', 'cancel', 'settodraft'), ExpenseReport::STATUS_REFUSED, $test);
+
+		$this->getUrl('expensereports/'.$id.'/validate', $test, 'POST', array("notrigger" => 0));
+		$this->assertStatus($id, ExpenseReport::STATUS_VALIDATED, $test);
+	}
+
+	/**
 	 * testRestExpenseReportPutAuthorInHierarchy
 	 *
 	 * @return void
@@ -201,7 +396,7 @@ class RestAPIExpenseReportTest extends AbstractRestAPITest
 		$test = "Move an expense report to a user of the hierarchy";
 
 		list($subordinate_id) = $this->createUser($test);
-		$id = $this->createExpenseReport($test, $user->id);
+		$id = $this->createExpenseReportForUser($test, $user->id);
 
 		$result = $this->getUrl('expensereports/'.$id, $test, 'PUT', array("fk_user_author" => $subordinate_id));
 		$this->assertEquals($subordinate_id, (int) ($result['content']['fk_user_author'] ?? 0), "$test Update must return the new user");
@@ -221,7 +416,7 @@ class RestAPIExpenseReportTest extends AbstractRestAPITest
 		$test = "Move an expense report to a user outside the hierarchy";
 
 		list($restricted_id, $api_key) = $this->createUser($test, array(array('expensereport', 'lire'), array('expensereport', 'creer')));
-		$id = $this->createExpenseReport($test, $restricted_id);
+		$id = $this->createExpenseReportForUser($test, $restricted_id);
 
 		// The admin user is the supervisor of the restricted user, so not in his hierarchy
 		$this->getUrl('expensereports/'.$id, $test, 'PUT', array("fk_user_author" => $user->id), 403, $api_key);
@@ -245,7 +440,7 @@ class RestAPIExpenseReportTest extends AbstractRestAPITest
 
 		$test = "Move an expense report to a user that does not exist";
 
-		$id = $this->createExpenseReport($test, $user->id);
+		$id = $this->createExpenseReportForUser($test, $user->id);
 
 		$this->getUrl('expensereports/'.$id, $test, 'PUT', array("fk_user_author" => 999999999), 400);
 		$this->assertEquals($user->id, $this->getAuthor("$test (read after refused update)", $id), "$test The user must not change");
