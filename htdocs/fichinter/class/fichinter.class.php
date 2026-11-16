@@ -306,9 +306,11 @@ class Fichinter extends CommonObject
 			return -1;
 		}
 
+		$langs->load('interventions');
 		$response = new WorkboardResponse();
 		$response->id = $this->element.'_'.$mode;
-		$response->label = $langs->trans($mode == 'draft' ? 'ToValidate' : 'ToProcess');
+		$response->label = $langs->trans($mode == 'draft' ? 'DraftInterventionsToValidate' : 'ValidatedInterventionsToProcess');
+		$response->labelShort = $langs->trans($mode == 'draft' ? 'ToValidate' : 'ToProcess');
 		$response->url = DOL_URL_ROOT.'/fichinter/list.php?search_status='.$status;
 		$response->img = img_object('', $this->picto);
 		$response->nbtodo = (int) $obj->nb;
