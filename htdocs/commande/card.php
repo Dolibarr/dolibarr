@@ -337,8 +337,43 @@ if (empty($reshook)) {
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
+	} elseif ($action == 'confirm_duplicate_subtotalblock' && $confirm == 'yes' && $usercancreate) {
+		// Duplicate a block of lines (the title line, the lines it contains and the subtotal line)
+		$langs->load('subtotals');
+		$object->fetch($id);
+		$object->fetch_thirdparty();
+
+		$result = $object->duplicateSubtotalBlock($langs, GETPOSTINT('lineid'), $user);
+		if ($result > 0) {
+			// Note: no call to line_order() here, duplicateSubtotalBlock() already renumbered all the lines
+			// Define output language
+			$outputlangs = $langs;
+			$newlang = '';
+			if (getDolGlobalInt('MAIN_MULTILANGS') && GETPOST('lang_id')) {
+				$newlang = GETPOST('lang_id');
+			}
+			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+				$newlang = $object->thirdparty->default_lang;
+			}
+			if (!empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+				$outputlangs->load('products');
+			}
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+				$ret = $object->fetch($id); // Reload to get new records
+				$result = $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
+			if ($result >= 0) {
+				header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+				exit();
+			}
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = '';
+		}
 	} elseif ($action == 'confirm_delete_subtotalline' && $confirm == 'yes' && $usercancreate) {
-		$result = $object->deleteSubtotalLine($langs, GETPOSTINT('lineid'), (bool) GETPOST('deletecorrespondingsubtotalline'), $user);
+		$result = $object->deleteSubtotalLine($langs, GETPOSTINT('lineid'), (bool) GETPOST('deletecorrespondingsubtotalline'));
 		if ($result > 0) {
 			// reorder lines
 			$object->line_order(true);
@@ -3096,6 +3131,12 @@ if ($action == 'create' && $usercancreate) {
 				$question = "ConfirmDeleteTitleLine";
 			}
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lineid=' . $lineid, $langs->trans($title), $langs->trans($question), 'confirm_delete_subtotalline', $formconfirm, 'no', 1);
+		}
+
+		// Confirmation of the duplication of a block of the subtotals module
+		if ($action == 'ask_duplicate_subtotalblock') {
+			$langs->load("subtotals");
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lineid=' . $lineid, $langs->trans("DuplicateBlock"), $langs->trans("ConfirmDuplicateBlock"), 'confirm_duplicate_subtotalblock', '', 'no', 1);
 		}
 
 		// Clone confirmation
