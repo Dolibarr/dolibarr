@@ -186,6 +186,31 @@ class Mailing extends CommonObject
 	 */
 	public $fk_project;
 
+	/**
+	 * @var string|null Mailing tag
+	 */
+	public $tag;
+
+	/**
+	 * @var string|null Sender name
+	 */
+	public $name_from;
+
+	/**
+	 * @var int|null Approving user ID
+	 */
+	public $fk_user_appro;
+
+	/**
+	 * @var string|null Approval date as returned by the database
+	 */
+	public $date_appro;
+
+	/**
+	 * @var string|null Target description
+	 */
+	public $cible;
+
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
 		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Fk project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 10),
@@ -450,7 +475,7 @@ class Mailing extends CommonObject
 				$this->date_envoi = $this->db->jdate($obj->date_envoi);
 				$this->date_modification = $this->db->jdate($obj->date_modification); // tms
 
-				$this->extraparams = (array) json_decode($obj->extraparams, true);
+				$this->extraparams = (array) json_decode((string) $obj->extraparams, true);
 
 				$this->tag = $obj->tag;
 				$this->name_from = $obj->name_from;
