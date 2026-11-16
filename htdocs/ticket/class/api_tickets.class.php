@@ -938,7 +938,6 @@ class Tickets extends DolibarrApi
 	 * Delete the attachment files saved for a message that could not be created, with their entries in the ECM index.
 	 *
 	 * @param	string[]	$files	Full paths of the files to delete
-	 * @return	void
 	 */
 	private function _deleteMessageAttachments(array $files): void
 	{
@@ -1029,7 +1028,6 @@ class Tickets extends DolibarrApi
 	 * @param	int		$contactid	Contact id that was linked
 	 * @param	string	$type		Contact type code
 	 * @param	string	$source		'internal' or 'external'
-	 * @return	void
 	 * @throws	RestException
 	 */
 	private function _addContactResultOrThrow(int $result, int $contactid, string $type, string $source): void

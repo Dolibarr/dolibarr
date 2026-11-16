@@ -12177,8 +12177,6 @@ function dolRemoveDefaultParameters(array $parameters): array
  * Need to set the experimental conf MAIN_REDIRECT_POST_AS_GET_IF_POSSIBLE to 2000 (or to the max value allowed for GET string by the web server)
  *
  * @param string $context The current page context name
- *
- * @return void
  */
 function dolRedirectPostSearchListRequestToGetIfPossible(string $context): void
 {
