@@ -181,6 +181,9 @@ print '</th>';
 
 // Fields for situation invoice
 if (property_exists($this, 'situation_cycle_ref') && isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
+	if (getDolGlobalInt('INVOICE_USE_SITUATION') > 1) {
+		print '<th class="linecolcycleref2 right">' . $langs->trans('SituationInvoiceProgressCurrent') . '</th>';
+	}
 	print '<th class="linecolcycleref right">';
 	print $langs->trans('CumulativeProgression');
 
@@ -197,9 +200,6 @@ if (property_exists($this, 'situation_cycle_ref') && isset($this->situation_cycl
 		}
 	}
 	print '</th>';
-	if (getDolGlobalInt('INVOICE_USE_SITUATION') > 1) {
-		print '<th class="linecolcycleref2 right">' . $langs->trans('SituationInvoiceProgressCurrent') . '</th>';
-	}
 	print '<th class="linecolcycleref2 right">'.$form->textwithpicto($langs->trans('TotalHT100Short'), $langs->trans('UnitPriceXQtyLessDiscount')).'</th>';
 }
 

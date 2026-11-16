@@ -2124,6 +2124,9 @@ class Facture extends CommonInvoice
 			if (!empty($this->ref)) {
 				$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 			}
+			if ($this->isSituationInvoice()) {
+				$datas['situation_cycle_ref'] = '<br><b>'.$langs->trans('SituationCycleRef').':</b> '.((int) $this->situation_cycle_ref).' ('.($this->type == self::TYPE_CREDIT_NOTE ? $langs->trans('situationInvoiceShortcode_AS') : $langs->trans('situationInvoiceShortcode_S')).((int) $this->situation_counter).')';
+			}
 			if (!$nofetch) {
 				$langs->load('companies');
 				if (empty($this->thirdparty)) {
@@ -2142,7 +2145,7 @@ class Facture extends CommonInvoice
 				}
 			}
 			if (!empty($this->date)) {
-				$datas['date'] = '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->date, 'day');
+				$datas['date'] = '<br><br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->date, 'day');
 			}
 			if (!empty($this->total_ht)) {
 				$datas['amountht'] = '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
