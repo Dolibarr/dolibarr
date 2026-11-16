@@ -122,9 +122,9 @@ class CustomerDepositReport
 		$sqlremaining = 'GREATEST(0, LEAST(GREATEST(0, pay.receipts - pay.refunds), GREATEST(0, f.total_ttc - COALESCE(credit.credited, 0))) - GREATEST(0, COALESCE(used.applied, 0)))';
 		$sqlfrom = ' FROM '.$this->db->prefix().'facture AS f';
 		$sqlfrom .= ' INNER JOIN '.$this->db->prefix().'societe AS s ON s.rowid = f.fk_soc';
-		$sqlfrom .= ' INNER JOIN ('.$sqlpayments.') AS pay ON pay.fk_facture = f.rowid';
-		$sqlfrom .= ' LEFT JOIN ('.$sqlapplications.') AS used ON used.fk_facture_source = f.rowid';
-		$sqlfrom .= ' LEFT JOIN ('.$sqlcredits.') AS credit ON credit.fk_facture_source = f.rowid';
+		$sqlfrom .= " INNER JOIN (".$sqlpayments.") AS pay ON pay.fk_facture = f.rowid";
+		$sqlfrom .= " LEFT JOIN (".$sqlapplications.") AS used ON used.fk_facture_source = f.rowid";
+		$sqlfrom .= " LEFT JOIN (".$sqlcredits.") AS credit ON credit.fk_facture_source = f.rowid";
 		$sqlfrom .= ' WHERE f.entity IN ('.$this->db->sanitize($entities).') AND f.type = '.Facture::TYPE_DEPOSIT;
 		// Keep abandoned deposits for review instead of silently losing an outstanding receipt.
 		$sqlfrom .= " AND f.fk_statut > 0 AND f.datef <= '".$this->db->escape($cutoff)."' AND pay.receipts > 0";
@@ -140,9 +140,9 @@ class CustomerDepositReport
 			$sqlfrom .= ' WHERE sc.fk_soc = f.fk_soc AND sc.fk_user = '.((int) $filter['sale']).')';
 		}
 		if (isset($filter['status']) && $filter['status'] == 'outstanding') {
-			$sqlfrom .= ' AND '.$sqlremaining.' > 0';
+			$sqlfrom .= " AND ".$sqlremaining." > 0";
 		} elseif (isset($filter['status']) && $filter['status'] == 'cleared') {
-			$sqlfrom .= ' AND '.$sqlremaining.' = 0';
+			$sqlfrom .= " AND ".$sqlremaining." = 0";
 		}
 		$resql = $this->db->query('SELECT COUNT(f.rowid) AS nb'.$sqlfrom);
 		if (!$resql) {
