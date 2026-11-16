@@ -845,6 +845,10 @@ class Contracts extends DolibarrApi
 			if ($field == 'entity' && $value != $this->contract->entity) {
 				throw new RestException(400, 'Changing entity of a contract using the APIs is not possible');
 			}
+			// The status has its own routes, which run the checks, the ref numbering and the triggers
+			if (($field == 'statut' || $field == 'status') && (int) $value != (int) $this->contract->status) {
+				throw new RestException(400, 'Changing the status of a contract is not possible with this method, use the dedicated routes');
+			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->contract->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
