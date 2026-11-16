@@ -25,7 +25,14 @@ jobs:
       - name: Check that no translation files outside htdocs/langs/en_US are modified
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
+          # A PR to synchronize translations from Transifex is allowed to modify translation files of all languages.
+          if printf '%s' "$PR_TITLE" | grep -Fiq 'transifex sync'; then
+            echo "The PR title contains 'transifex sync', so modification of translation files outside htdocs/langs/en_US is allowed."
+            exit 0
+          fi
+
           # Get the list of files changed (added or modified) by the pull request,
           # using the GitHub API so no git history is needed (no checkout).
           CHANGED_FILES=$(gh api --paginate "repos/${{ github.repository }}/pulls/${{ github.event.number }}/files?per_page=100" \
