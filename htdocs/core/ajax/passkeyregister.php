@@ -60,7 +60,9 @@ $langs->loadLangs(array('users', 'errors'));
 if (!passkeyIsEnabled()) {
 	httponly_accessforbidden('The authentication mode passkey is not enabled', 403);
 }
-if (!empty($user->socid) || !$user->hasRight('user', 'self', 'password')) {
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+// A user to whom the security setup imposes a two-factor authentication can add a passkey instead of a TOTP, even without the permission to change his password
+if (!empty($user->socid) || (!$user->hasRight('user', 'self', 'password') && !dolTotpMustEnroll($db, $user))) {
 	httponly_accessforbidden('Not allowed to manage your passkeys', 403);
 }
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {

@@ -12178,7 +12178,7 @@ function dolRemoveDefaultParameters(array $parameters): array
  *
  * @param string $context The current page context name
  *
- * @return void
+ * @return void No return value, the page is redirected and exits when the request can be sent as GET
  */
 function dolRedirectPostSearchListRequestToGetIfPossible(string $context): void
 {

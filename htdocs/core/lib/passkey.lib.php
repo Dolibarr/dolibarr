@@ -46,8 +46,26 @@ function passkeyIsEnabled()
 	return (in_array('passkey', array_map('trim', explode(',', $authentication))) && passkeyIsAvailable());
 }
 
+/**
+ * Return if a user can log in with a passkey: the authentication mode 'passkey' is enabled and the user has at least one passkey.
+ * A login with a passkey is a two-factor authentication (the device, and its biometrics or PIN), so such a user fulfills
+ * the two-factor authentication required by the security setup (see dolTotpMustEnroll() and dolTotpStartSecondFactor()).
+ *
+ * @param	DoliDB	$db			Database handler
+ * @param	int		$fk_user	Id of the user
+ * @return	bool				False also if the passkeys can't be counted, so the user is asked for a TOTP instead
+ */
+function passkeyUserHasPasskey($db, $fk_user)
+{
+	if (!passkeyIsEnabled() || empty($fk_user)) {
+		return false;
+	}
 
+	require_once DOL_DOCUMENT_ROOT.'/user/class/userpasskey.class.php';
+	$passkeystatic = new UserPasskey($db);
 
+	return ($passkeystatic->countForUser($fk_user) > 0);
+}
 
 /**
  * Return the origin (scheme://host[:port]) the browser must report in the WebAuthn client data.
