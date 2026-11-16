@@ -300,7 +300,13 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-credential
 
 if ($mustenrolltotp) {
 	print load_fiche_titre($langs->trans("TOTPRequired"), '', 'fa-lock');
-	print '<div class="warning">'.$langs->trans("TOTPRequiredExplain").'</div>';
+	print '<div class="warning">'.$langs->trans("TOTPRequiredExplain");
+	// A passkey fulfills the requirement too (see dolTotpMustEnroll())
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/passkey.lib.php';
+	if (passkeyIsEnabled() && empty($user->socid)) {
+		print '<br>'.$langs->trans("PasskeyInsteadOfTOTP").' <a href="'.DOL_URL_ROOT.'/user/passkeys.php?id='.((int) $user->id).'" target="_top">'.img_picto('', 'fa-fingerprint', 'class="pictofixedwidth"').$langs->trans("AddPasskey").'</a>';
+	}
+	print '</div>';
 }
 
 $param = '';

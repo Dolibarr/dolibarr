@@ -1250,6 +1250,11 @@ if (!defined('NOLOGIN')) {
 		if (dolTotpMustEnroll($db, $user)) {
 			// SCRIPT_NAME and not PHP_SELF, which ends with the path info anybody can add to the URL (/societe/list.php/user/logout.php)
 			$isallowed = ((preg_match('/\/user\/credentials\.php$/', $_SERVER['SCRIPT_NAME']) && GETPOSTINT('id') == $user->id) || preg_match('/\/user\/(logout|changepassword)\.php$/', $_SERVER['SCRIPT_NAME']));
+			// A passkey fulfills the requirement too: the page to add one and its ajax component can also be reached
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/passkey.lib.php';
+			if (!$isallowed && passkeyIsEnabled()) {
+				$isallowed = ((preg_match('/\/user\/passkeys\.php$/', $_SERVER['SCRIPT_NAME']) && (!GETPOSTINT('id') || GETPOSTINT('id') == $user->id)) || preg_match('/\/core\/ajax\/passkeyregister\.php$/', $_SERVER['SCRIPT_NAME']));
+			}
 			if (!$isallowed) {
 				header('Location: '.DOL_URL_ROOT.'/user/credentials.php?id='.((int) $user->id));
 				exit;
