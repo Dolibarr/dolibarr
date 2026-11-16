@@ -227,3 +227,5 @@ TakeposAmount1=Amount 1
 TakeposAmount2=Amount 2 (auto)
 TakeposCreditSplitSuccess=Credit split successfully
 TakeposCreditSplitError=Error splitting the credit: the sum of the two amounts must equal the original credit amount (%s)
+ErrorSplitSaleNotDraft=This sale is already validated or paid, it can't be split.
+CurrentSale=Current sale
