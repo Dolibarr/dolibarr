@@ -393,6 +393,13 @@ print '<td>';
 print ajax_constantonoff("TAKEPOS_CONTROL_CASH_OPENING", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
 
+// Hide the button to split a sale (useless for shops, mainly used by bars and restaurants)
+print '<tr class="oddeven"><td>';
+print $langs->trans('HideSplitSaleButton');
+print '<td>';
+print ajax_constantonoff("TAKEPOS_NO_SPLIT_SALE", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
 // Delayed Pay Button
 print '<tr class="oddeven"><td>';
 print $langs->trans('AllowDelayedPayment');

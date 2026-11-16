@@ -227,3 +227,4 @@ TakeposAmount1=Amount 1
 TakeposAmount2=Amount 2 (auto)
 TakeposCreditSplitSuccess=Credit split successfully
 TakeposCreditSplitError=Error splitting the credit: the sum of the two amounts must equal the original credit amount (%s)
+HideSplitSaleButton=Hide the "Split sale" button (mainly useful for bars and restaurants)
