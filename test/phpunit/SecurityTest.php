@@ -550,6 +550,83 @@ class SecurityTest extends CommonClassTest
 	}
 
 	/**
+	 * testCheckUserAccessToDocumentObject
+	 *
+	 * Non regression test: checkUserAccessToDocumentObject() must give to restrictedArea() the table of the object when it differs
+	 * from the modulepart (llx_socpeople for contact, llx_fichinter for ficheinter, llx_bom_bom for bom). If not, the check was done
+	 * on a table that does not exist, so the access to the documents was always refused.
+	 *
+	 * @return void
+	 */
+	public function testCheckUserAccessToDocumentObject()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+
+		$soc = new Societe($db);
+		$soc->name = 'testCheckUserAccessToDocumentObject '.mt_rand(0, 99999);
+		$soc->client = 1;
+		$soc->code_client = -1;
+		$socid = $soc->create($user);
+		$this->assertGreaterThan(0, $socid, 'Third party must be created');
+
+		$contact = new Contact($db);
+		$contact->initAsSpecimen();
+		$contact->socid = $socid;
+		$contactid = $contact->create($user);
+		$this->assertGreaterThan(0, $contactid, 'Contact must be created');
+
+		$fichinter = new Fichinter($db);
+		$fichinter->initAsSpecimen();
+		$fichinter->socid = $socid;
+		$fichinterid = $fichinter->create($user);
+		$this->assertGreaterThan(0, $fichinterid, 'Intervention must be created');
+		$fichinter->fetch($fichinterid);
+
+		$bom = new BOM($db);
+		$bom->initAsSpecimen();
+		$bom->ref = 'BOMTESTACCESS'.mt_rand(0, 99999);
+		$bomid = $bom->create($user);
+		$this->assertGreaterThan(0, $bomid, 'BOM must be created');
+		$bom->fetch($bomid);
+
+		try {
+			// A user with the permissions of the admin user, but who can see only the third parties assigned to him
+			$restricteduser = new User($db);
+			$restricteduser->fetch($user->id);
+			$restricteduser->loadRights();
+			$restricteduser->admin = 0;
+			$restricteduser->socid = 0;
+			$restricteduser->rights->societe->client->voir = 0;
+
+			$this->assertEquals(0, checkUserAccessToDocumentObject($restricteduser, 'contact', $contactid.'/photo.jpg', 'read'), 'The contact of a third party not assigned to the restricted user must be refused');
+			$this->assertEquals(0, checkUserAccessToDocumentObject($restricteduser, 'fichinter', $fichinter->ref.'/'.$fichinter->ref.'.pdf', 'read'), 'The intervention of a third party not assigned to the restricted user must be refused');
+
+			// The restricted user, once he is a sales representative of the third party
+			$this->assertGreaterThanOrEqual(0, $soc->add_commercial($user, $restricteduser->id), 'User must be added as sales representative');
+			$this->assertEquals(1, checkUserAccessToDocumentObject($restricteduser, 'contact', $contactid.'/photo.jpg', 'read'), 'The sales representative can access the documents of the contact (table llx_socpeople)');
+			$this->assertEquals(1, checkUserAccessToDocumentObject($restricteduser, 'fichinter', $fichinter->ref.'/'.$fichinter->ref.'.pdf', 'read'), 'The sales representative can access the documents of the intervention (table llx_fichinter)');
+
+			// A BOM is not linked to a third party, only its entity is checked
+			$this->assertEquals(1, checkUserAccessToDocumentObject($restricteduser, 'bom', $bom->ref.'/'.$bom->ref.'.pdf', 'read'), 'The documents of a BOM must be allowed (table llx_bom_bom)');
+			$this->assertEquals(1, checkUserAccessToDocumentObject($user, 'bom', $bom->ref.'/'.$bom->ref.'.pdf', 'read'), 'The documents of a BOM must be allowed to the admin user (table llx_bom_bom)');
+		} finally {
+			$bom->delete($user);
+			$fichinter->delete($user);
+			$contact->delete($user);
+			$soc->delete($socid, $user);
+		}
+	}
+
+	/**
 	 * testDolSanitizeUrl
 	 *
 	 * @return void

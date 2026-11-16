@@ -820,8 +820,8 @@ function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file
 		'societe' => array('societe', 'societe'),
 		'company' => array('societe', 'societe'),
 		'thirdparty' => array('societe', 'societe'),
-		'contact' => array('contact', 'contact'),
-		'socpeople' => array('contact', 'contact'),
+		'contact' => array('contact', 'contact', 'socpeople&societe'),
+		'socpeople' => array('contact', 'contact', 'socpeople&societe'),
 		'facture' => array('facture', 'facture'),
 		'invoice' => array('facture', 'facture'),
 		'propal' => array('propal', 'propal'),
@@ -837,9 +837,9 @@ function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file
 		'supplier_invoice' => array('invoice_supplier', 'fournisseur', 'facture_fourn', 'facture'),
 		'contract' => array('contrat', 'contrat'),
 		'contrat' => array('contrat', 'contrat'),
-		'fichinter' => array('fichinter', 'ficheinter'),
-		'ficheinter' => array('fichinter', 'ficheinter'),
-		'intervention' => array('fichinter', 'ficheinter'),
+		'fichinter' => array('fichinter', 'ficheinter', 'fichinter'),
+		'ficheinter' => array('fichinter', 'ficheinter', 'fichinter'),
+		'intervention' => array('fichinter', 'ficheinter', 'fichinter'),
 		'ticket' => array('ticket', 'ticket'),
 		'expedition' => array('expedition', 'expedition'),
 		'shipment' => array('expedition', 'expedition'),
@@ -884,7 +884,8 @@ function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file
 	if (empty($modulepartlinkedtothirdparty[$modulepart])) {
 		$object = fetchObjectByElement(0, $modulepart, $refname);
 		if (is_object($object)) {
-			return restrictedArea($user, $modulepart, $object, '', '', 'fk_soc', 'rowid', 0, 1, $mode);
+			// The table of the object must be provided, the default table guessed from $modulepart may not exist (llx_bom instead of llx_bom_bom, ...)
+			return restrictedArea($user, $modulepart, $object, (string) $object->table_element, '', 'fk_soc', 'rowid', 0, 1, $mode);
 		}
 		// If $modulepart is not an object type (userphoto, companylogo, memberphoto, apercuxxx, systemtools...), there is no object to check
 		return 1;
