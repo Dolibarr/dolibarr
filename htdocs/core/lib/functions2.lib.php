@@ -273,6 +273,7 @@ function dol_print_object_info($object, $usetable = 0)
 			print ': ';
 		}
 		$userstatic = new User($db);
+		// user_validation is not defined in Dolibarr code @phan-suppress-next-line PhanUndeclaredProperty
 		$userstatic->fetch($object->user_validation_id ? $object->user_validation_id : $object->user_validation);
 		if ($userstatic->id) {
 			print $userstatic->getNomUrl(-1, '', 0, 0, 0);
@@ -318,6 +319,7 @@ function dol_print_object_info($object, $usetable = 0)
 			}
 		} else {
 			$userstatic = new User($db);
+			// user_approve is not defined in Dolibarr code @phan-suppress-next-line PhanUndeclaredProperty
 			$userstatic->fetch($object->user_approve_id ? $object->user_approve_id : $object->user_approve);
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
@@ -329,8 +331,10 @@ function dol_print_object_info($object, $usetable = 0)
 		if (!empty($object->date_approve) || !empty($object->date_approval)) {
 			print ' - ';
 			print '<div class="valignmiddle inline-block">';
+			// date_approve and date_approval are not defined in all Dolibarr objects @phan-suppress-next-line PhanUndeclaredProperty
 			print dol_print_date($object->date_approve ? $object->date_approve : $object->date_approval, 'dayhour', 'tzserver');
 			if ($deltadateforuser) {
+				// date_approve and date_approval are not defined in all Dolibarr objects @phan-suppress-next-line PhanUndeclaredProperty
 				print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_approve ? $object->date_approve : $object->date_approval, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
 			}
 			print '</div>';

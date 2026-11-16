@@ -185,14 +185,21 @@ if (empty($reshook)) {
 		$fk_unit = GETPOSTINT('fk_unit');
 
 		$fk_default_workstation = 0;
-		if (!empty($idprod) && isModEnabled('workstation')) {
+		if (!empty($idprod)) {
 			$product = new Product($db);
 			$res = $product->fetch($idprod);
 			if ($res > 0 && $product->type == Product::TYPE_SERVICE) {
-				if ($fk_workstation > 0) {
-					$fk_default_workstation = $fk_workstation;
-				} else {
-					$fk_default_workstation = $product->fk_default_workstation;
+				if (isModEnabled('workstation')) {
+					if ($fk_workstation > 0) {
+						$fk_default_workstation = $fk_workstation;
+					} else {
+						$fk_default_workstation = $product->fk_default_workstation;
+					}
+				}
+				if (empty($fk_unit) && !empty($product->duration_unit)) {
+					require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+					$cUnit = new CUnits($db);
+					$fk_unit = (int) $cUnit->getUnitFromCode((string) $product->duration_unit, 'short_label', 'time');
 				}
 			}
 			if (empty($fk_unit)) {
@@ -309,6 +316,15 @@ if (empty($reshook)) {
 
 			$object->calculateCosts();
 		}
+	}
+
+	// Update duration from service lines
+	if ($action == 'updatedurationfromlines' && $permissiontoadd) {
+		$result = $object->updateDuration($user, true);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+		$action = '';
 	}
 }
 

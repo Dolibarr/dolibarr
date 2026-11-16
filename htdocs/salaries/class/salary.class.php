@@ -56,6 +56,11 @@ class Salary extends CommonObject
 	public $module = 'salaries';
 
 	/**
+	 * @var string Name of the permission module to check (used by the custom reports tool)
+	 */
+	public $element_for_permission = 'salaries';
+
+	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'salary';
@@ -187,7 +192,7 @@ class Salary extends CommonObject
 		'fk_user' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Employee', 'enabled' => 1, 'position' => 15, 'notnull' => 1, 'visible' => 1, 'picto' => 'user'),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 20),
 		'salary' => array('type' => 'double(24,8)', 'label' => 'salary', 'enabled' => 1, 'visible' => 0, 'position' => 70),
-		'amount' => array('type' => 'double(24,8)', 'label' => 'Amount', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 80),
+		'amount' => array('type' => 'double(24,8)', 'label' => 'Amount', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 80, 'isameasure' => 1),
 		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => 0, 'position' => 90),
 		'fk_typepayment' => array('type' => 'typepayment', 'label' => 'DefaultPaymentMode', 'enabled' => 1, 'visible' => 1, 'position' => 100, 'comment' => 'Payment type'),
 		'num_payment' => array('type' => 'string', 'label' => 'Reference', 'enabled' => 1, 'visible' => 0, 'position' => 110, 'comment' => 'Reference'),
@@ -213,6 +218,7 @@ class Salary extends CommonObject
 		$this->db = $db;
 		$this->element = 'salary';
 		$this->table_element = 'salary';
+		$this->ismultientitymanaged = 1;
 		$this->isextrafieldmanaged = 1;
 
 		$this->fields['ref_ext']['visible'] = getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT');

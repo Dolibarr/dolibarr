@@ -44,6 +44,7 @@ if (!defined('NOBROWSERNOTIF')) {
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/bookcal/lib/bookcal.lib.php';
 /**
  * @var DoliDB $db
  */
@@ -92,92 +93,31 @@ if ($action == 'verifyavailability') {		// Test on permission not required here 
 		exit;
 	}
 
-	// First get all ranges for the calendar
+	// Get all slots of the day selected by the visitor (day is a day in the timezone of the visitor)
 	if (!$error) {
-		// Select in database all availabilities
-		$availabilitytab = array();
-		$sql = "SELECT ba.rowid as id, ba.duration, ba.startHour, ba.endHour, ba.start, ba.end";
-		$sql .= " FROM ".MAIN_DB_PREFIX."bookcal_availabilities as ba";
-		$sql .= " WHERE ba.fk_bookcal_calendar = ".((int) $id);
-		$sql .= " AND ba.status = 1";
-		$resql = $db->query($sql);
-		if ($resql) {
-			$num = $db->num_rows($resql);
-			$i = 0;
-			while ($i < $num) {
-				$obj = $db->fetch_object($resql);
-				$starttime = $db->jdate($obj->start);
-				$endtime = $db->jdate($obj->end);
-				$offsetmin = $obj->duration % 60;
-				if ($offsetmin == 0) {
-					$offsetmin = 60;
-				}
-				$startHourstring = $obj->startHour;
-				$endHourstring = $obj->endHour;
-				if ($startHourstring <= 0) {
-					$startHourstring = 0;
-				}
-				if ($endHourstring >= 24) {
-					$endHourstring = 24;
-				}
-				$offsethour = round($obj->duration / 60);
-				// Creation of array of availabilties range
-				if ($datetocheckbooking >= $starttime && $datetocheckbooking <= $endtime) {
-					for ($hour=$startHourstring; $hour < $endHourstring; $hour+= $offsethour) {
-						for ($min=0; $min < 60; $min += $offsetmin) {
-							$hourstring = $hour;
-							$minstring = $min;
-							if ($hour < 10) {
-								$hourstring = "0".$hourstring;
-							}
-							if ($min < 10) {
-								$minstring = "0".$minstring;
-							}
-							$response["availability"][$hourstring.":".$minstring] = intval($obj->duration);
-						}
-					}
-				}
-				$i++;
-			}
-			if ($i == $num) {
-				$response["code"] = "SUCCESS";
-			} else {
-				$response["code"] = "ERROR";
-				$error ++;
-			}
-		}
+		$tzvisitor = bookcalGetVisitorTimezone(GETPOST('tz', 'alphanohtml'));
 
-		// Select also all not available ranges
-		if (!$error) {
-			$datetocheckbooking_end = dol_time_plus_duree($datetocheckbooking, 1, 'd');
+		$dateendofday = new DateTime('@'.$datetocheckbooking);
+		$dateendofday->setTimezone(new DateTimeZone($tzvisitor));
+		$dateendofday->modify('+1 day');
 
-			$sql = "SELECT b.datep, b.id";
-			$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as b";
-			$sql .= " WHERE b.datep >= '".$db->idate($datetocheckbooking)."'";
-			$sql .= " AND b.datep < '".$db->idate($datetocheckbooking_end)."'";
-			$sql .= " AND b.code = 'AC_RDV'";
-			$sql .= " AND b.status = 0";
-			$sql .= " AND b.fk_bookcal_calendar = ".((int) $id);
-			$resql = $db->query($sql);
-			if ($resql) {
-				$num = $db->num_rows($resql);
-				$i = 0;
-				while ($i < $num) {
-					$obj = $db->fetch_object($resql);
-					$datebooking = $db->jdate($obj->datep);
-					$datebookingarray = dol_getdate($datebooking);
-					$hourstring = $datebookingarray["hours"];
-					$minstring = $datebookingarray["minutes"];
-					if ($hourstring < 10) {
-						$hourstring = "0".$hourstring;
-					}
-					if ($minstring < 10) {
-						$minstring = "0".$minstring;
-					}
-					$response["availability"][$hourstring.":".$minstring] *= -1;
-					$i++;
-				}
+		$slots = bookcalGetSlots($db, $id, $datetocheckbooking, $dateendofday->getTimestamp());
+		if (is_array($slots)) {
+			$response["code"] = "SUCCESS";
+			$response["timezone"] = $tzvisitor;
+			$response["availability"] = array();
+			foreach ($slots as $slottime => $slotduration) {
+				$slotend = dol_time_plus_duree($slottime, abs($slotduration), 'i');
+				$response["availability"][] = array(
+					'datetime' => $slottime,
+					'duration' => abs($slotduration),
+					'booked' => ($slotduration < 0 ? 1 : 0),
+					'label' => bookcalPrintDate($slottime, 'hour', $tzvisitor).' - '.bookcalPrintDate($slotend, 'hour', $tzvisitor)
+				);
 			}
+		} else {
+			$response["code"] = "ERROR";
+			$error++;
 		}
 	}
 	$result = $response;

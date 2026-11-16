@@ -18,6 +18,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Lenin Rivas				<lenin.rivas777@gmail.com>
  * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -224,6 +225,24 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT . '/core/actions_dellink.inc.php';     // Must be 'include', not 'include_once'
 
 	include DOL_DOCUMENT_ROOT . '/core/actions_lineupdown.inc.php';  // Must be 'include', not 'include_once'
+
+	// Create the purchase orders of the suppliers
+	if ($action == 'confirm_createpurchaseorders' && $confirm == 'yes' && $usercancreatepurchaseorder) {
+		$result = $object->createPurchaseOrders($user);
+		if (is_array($result)) {
+			if (!empty($result['noprice'])) {
+				setEventMessages($langs->trans('ProductsWithoutSupplierPrice', implode(', ', $result['noprice'])), null, 'warnings');
+			}
+			if (!empty($result['orders'])) {
+				setEventMessages($langs->trans('OrderCreated'), null, 'mesgs');
+			}
+			header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $object->id);
+			exit;
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = '';
+		}
+	}
 
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $usercancreate) {
@@ -3093,6 +3112,11 @@ if ($action == 'create' && $usercancreate) {
 			$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('ToClone'), $langs->trans('ConfirmCloneOrder', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 		}
 
+		// Create the purchase orders confirmation
+		if ($action == 'createpurchaseorders') {
+			$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('CreatePurchaseOrdersPerSupplier'), $langs->trans('ConfirmCreatePurchaseOrders'), 'confirm_createpurchaseorders', '', 'yes', 1);
+		}
+
 		// Subtotal line form
 		if ($action == 'add_title_line') {
 			$langs->load('subtotals');
@@ -3378,6 +3402,24 @@ if ($action == 'create' && $usercancreate) {
 				$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, (string) $object->mode_reglement_id, 'none');
 			}
 			print '</td></tr>';
+
+			// Structured payment reference, see core/lib/paymentref.lib.php.
+			// Only shown for the modes whose value is settled before invoicing. In the per
+			// invoice mode the reference comes from the invoice number, which does not exist
+			// yet, so anything shown here would never match the invoice the customer receives.
+			if (in_array(getDolGlobalString('INVOICE_PAYMENT_REF_MODE'), array('company', 'thirdparty'))) {
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/paymentref.lib.php';
+				$tmpobjectforpayref = clone $object;
+				$tmpobjectforpayref->status = 1;
+				$paymentrefpreview = dolPayRefGenerateForInvoice($tmpobjectforpayref, $user, 0);
+				if ($paymentrefpreview != '') {
+					print '<tr><td>';
+					print $form->textwithpicto($langs->trans('PaymentReference'), $langs->trans('PaymentReferenceBeforeInvoiceHelp'));
+					print '</td><td>';
+					print showValueWithClipboardCPButton(dol_escape_htmltag($paymentrefpreview));
+					print '</td></tr>';
+				}
+			}
 
 			// TODO Order mode (how we receive order). Not yet implemented
 			/*
@@ -3717,6 +3759,13 @@ if ($action == 'create' && $usercancreate) {
 						'perm' => $usercancreatepurchaseorder,
 						'label' => 'AddPurchaseOrder',
 						'url' => '/fourn/commande/card.php?action=create&amp;origin=' . urlencode($object->element) . '&amp;originid=' . ((int) $object->id)
+					);
+					$arrayforbutaction[] = array(
+						'lang' => 'orders',
+						'enabled' => (isModEnabled("supplier_order") && $object->status > Commande::STATUS_DRAFT),
+						'perm' => $usercancreatepurchaseorder,
+						'label' => 'CreatePurchaseOrdersPerSupplier',
+						'url' => '/commande/card.php?id=' . ((int) $object->id) . '&amp;action=createpurchaseorders&amp;token=' . newToken()
 					);
 				}
 

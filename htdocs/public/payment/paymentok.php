@@ -2213,7 +2213,7 @@ if (empty($doactionsthenredirect)) {
 		print img_picto('', 'tick', 'class="green fa-2x"');
 		print '</center>';
 
-		if ($ispostactionok > 0) {
+		if ($ispostactionok >= 0) {	// 0 = no post action to do (ie payment of a free amount), 1 = post actions done
 			// Show a custom message
 			$key = 'ONLINE_PAYMENT_MESSAGE_OK';
 			if (getDolGlobalString($key)) {

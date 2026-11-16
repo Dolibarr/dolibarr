@@ -1508,7 +1508,7 @@ class Contrat extends CommonObject
 	 *  Insert contract line into database
 	 *
 	 *  @param	string			$desc            	Description of line
-	 *  @param  float			$pu_ht              Unit price net
+	 *  @param  float			$pu_ht              Unit price excl tax
 	 *  @param  float	 		$qty             	Quantity
 	 *  @param  float|string	$txtva           	Vat rate. Can be '19.6' or '19.6 (CODE)'
 	 *  @param  float			$txlocaltax1        Local tax 1 rate
@@ -1518,7 +1518,7 @@ class Contrat extends CommonObject
 	 *  @param  int				$date_start      	Date de debut prevue
 	 *  @param  int				$date_end        	Date de fin prevue
 	 *	@param	string			$price_base_type	HT or TTC
-	 * 	@param  float			$pu_ttc             Prix unitaire TTC
+	 * 	@param  float			$pu_ttc             Unit price inc tax
 	 * 	@param  int				$info_bits			Bits of type of lines
 	 * 	@param  int				$fk_fournprice		Fourn price id
 	 *  @param  float|string			$pa_ht				Buying price HT (Can be '' to keep AWP unchanged or a float value)
