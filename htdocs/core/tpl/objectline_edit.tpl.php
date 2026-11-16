@@ -267,11 +267,11 @@ $coldisplay++;
 		$type_tva = 2;
 	}
 	if (!$situationinvoicelinewithparent) {
-		print '<td class="right">';
+		print '<td class="right nowraponall">';
 		print $form->load_tva('tva_tx', GETPOSTISSET('tva_tx') ? GETPOST('tva_tx', 'alpha') : ($line->tva_tx.($line->vat_src_code ? (' ('.$line->vat_src_code.')') : '')), $seller, $buyer, 0, $line->info_bits, $line->product_type, false, 1, (int) $type_tva);
 		print '</td>';
 	} else {
-		print '<td class="right"><input size="1" type="text" class="flat right" name="tva_tx" value="'.price($line->tva_tx).'" readonly />%</td>';
+		print '<td class="right nowraponall"><input size="1" type="text" class="flat right" name="tva_tx" value="'.price($line->tva_tx).'" readonly />%</td>';
 	}
 
 	$coldisplay++;
@@ -370,6 +370,8 @@ $coldisplay++;
 	<?php
 	// Progression for situation invoices
 	if ($object->situation_cycle_ref) {
+		// Progress of a credit note is not editable
+		$disabledprogress = ($object->element == 'facture' && $object->type == $object::TYPE_CREDIT_NOTE) ? ' disabled' : '';	// @phan-suppress-current-line PhanUndeclaredConstantOfClass
 		$coldisplay++;
 		if (getDolGlobalInt('INVOICE_USE_SITUATION') > 1) {
 			$tmp_fieldv = (GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent);
@@ -378,11 +380,11 @@ $coldisplay++;
 
 			print '<td></td>';	// Invoice progress
 			$coldisplay++;
-			print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="'.$fieldv.'" name="progress">%';
+			print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="'.$fieldv.'" name="progress"'.$disabledprogress.'>%';
 			print ' '.$form->textwithpicto('', $langs->trans("PreviousProgress").' ('.$old_fieldv.'%)');
 			print '</td>';
 		} else {
-			print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="' . (GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent) . '" name="progress">%</td>';
+			print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="' . (GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent) . '" name="progress"'.$disabledprogress.'>%</td>';
 		}
 		$coldisplay++;
 		print '<td></td>';

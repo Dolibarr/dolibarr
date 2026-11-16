@@ -1631,6 +1631,16 @@ if (empty($reshook)) {
 				$action = 'create';
 			}
 
+			// A credit note on the remain to pay can't be used on a situation invoice cycle (the progress of lines must be cancelled)
+			if ($sourceinvoice > 0 && GETPOSTINT('invoiceAvoirWithPaymentRestAmount') == 1) {
+				$tmpsourceinvoice = new Facture($db);
+				if ($tmpsourceinvoice->fetch($sourceinvoice) > 0 && $tmpsourceinvoice->isSituationInvoice()) {
+					$error++;
+					setEventMessages($langs->trans("ErrorCreditNoteWithRestAmountNotAllowedOnSituation"), null, 'errors');
+					$action = 'create';
+				}
+			}
+
 			if (!$error) {
 				if (!empty($originentity)) {
 					$object->entity = $originentity;
@@ -3642,7 +3652,7 @@ if (empty($reshook)) {
 		$percent = $line->get_prev_progress($object->id);
 		$progress = GETPOSTFLOAT('progress', getDolGlobalInt('INVOICE_SITUATION_PROGRESS_DECIMALS', 2));
 
-		if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->situation_cycle_ref > 0) {
+		if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->situation_cycle_ref > 0 && GETPOSTISSET('progress')) {
 			// in case of situation credit note
 			if ($progress >= 0) {
 				$mesg = $langs->trans("CantBeNullOrPositive");
@@ -3761,7 +3771,10 @@ if (empty($reshook)) {
 		}
 
 		// Invoice situation
-		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+		if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->situation_cycle_ref > 0 && !GETPOSTISSET('progress')) {
+			// Progress of a credit note line is not editable (input is disabled), so we keep the current one
+			$addprogress = $line->situation_percent;
+		} elseif (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
 			$addprogress = price2num(GETPOST('progress', 'alpha'));
 		} else {
 			$previousprogress = $line->getAllPrevProgress($line->fk_facture);
