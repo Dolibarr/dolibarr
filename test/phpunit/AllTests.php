@@ -298,6 +298,8 @@ class AllTests
 		$suite->addTestSuite('DAVLibTest');
 		require_once dirname(__FILE__).'/CMailFileTest.php';
 		$suite->addTestSuite('CMailFileTest');
+		require_once dirname(__FILE__).'/DolReceiptPrinterTest.php';
+		$suite->addTestSuite('DolReceiptPrinterTest');
 
 		require_once dirname(__FILE__).'/CommonObjectTest.php';
 		$suite->addTestSuite('CommonObjectTest');
