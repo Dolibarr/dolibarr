@@ -3049,15 +3049,17 @@ function load_fiche_titre($title, $morehtmlright = '', $picto = 'generic', $pict
 		$picto = 'generic';
 	}
 
-	$return .= "\n";
+	$return .= "<!-- load_fiche_titre -->\n";
 	$return .= '<table ' . ($id ? 'id="' . $id . '" ' : '') . 'class="centpercent notopnoleftnoright table-fiche-title' . ($morecssontable ? ' ' . $morecssontable : '') . '">'; // margin bottom must be same than into print_barre_list
 	$return .= '<tr class="toptitle">';
 	if ($picto) {
-		$return .= '<td class="nobordernopadding widthpictotitle valignmiddle col-picto">' . img_picto('', $picto, 'class="valignmiddle pictotitle'.($morecssonpicto ? ' '.$morecssonpicto : '').'"', $pictoisfullpath) . '</td>';
+		$return .= '<td class="nobordernopadding widthpictotitle valignmiddle col-picto">';
+		$return .= img_picto('', $picto, 'class="valignbaseline pictotitle'.($morecssonpicto ? ' '.$morecssonpicto : '').'"', $pictoisfullpath);
+		$return .= '</td>';
 	}
 	$return .= '<td class="nobordernopadding valignmiddle col-title">';
 	$return .= '<div class="titre inline-block">';
-	$return .= '<span class="inline-block valignmiddle print-barre-liste">' . $title . '</span>';	// $title is already HTML sanitized content
+	$return .= '<span class="inline-block valignbaseline print-barre-liste">' . $title . '</span>';	// $title is already HTML sanitized content
 	$return .= '</div>';
 	$return .= '</td>';
 	if (dol_strlen($morehtmlcenter)) {

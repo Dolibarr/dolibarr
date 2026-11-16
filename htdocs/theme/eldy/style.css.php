@@ -1341,6 +1341,9 @@ th .button {
 .valignmiddle {
 	vertical-align: middle;
 }
+.valignbaseline {
+	vertical-align: baseline;
+}
 .valignbottom {
 	vertical-align: bottom;
 }
@@ -6696,7 +6699,7 @@ div.divphotoref > div > .photowithmargin, div.divphotoref > img.photowithmargin,
 
 /* height of top title */
 .fiche > table.table-fiche-title tr.toptitle, .fiche > form > table.table-fiche-title tr.toptitle {
-	height: 60px;
+	height: 54px;
 }
 /* height of other title */
 table.table-fiche-title tr.toptitle, table.table-fiche-title tr.toptitle {
