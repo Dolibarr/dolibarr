@@ -170,5 +170,5 @@ LeaveBalance=Laat saldo achter
 ListeLB=Overzicht van verlofsaldo
 LeaveType = Soort verlofsaldo
 HolidayHrInformationsPreviousMonth=Overzicht van verlof van de afgelopen maand
-HolidayHrInformationsPreviousMonthTopic=Overzicht van verlof voor de maand __VORIGE_MAAND_TEKST__
-HolidayHrInformationsPreviousMonthContent=Hieronder vindt u een overzicht van het verlof voor de maand __VORIGE_MAAND_TEKST__ voor __MIJN_BEDRIJFSNAAM__
+HolidayHrInformationsPreviousMonthTopic=Overzicht van verlof voor de maand __PREVIOUS_MONTH_TEXT__
+HolidayHrInformationsPreviousMonthContent=Hieronder vindt u een overzicht van het verlof voor de maand __PREVIOUS_MONTH_TEXT__ voor __MYCOMPANY_NAME__

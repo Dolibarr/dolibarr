@@ -168,6 +168,11 @@ class KnowledgeRecord extends CommonObject
 	 * @var string
 	 */
 	public $lang;
+
+	/**
+	 * @var ?int	Id of the group of tickets the article is suggested for
+	 */
+	public $fk_c_ticket_category;
 	// END MODULEBUILDER PROPERTIES
 
 

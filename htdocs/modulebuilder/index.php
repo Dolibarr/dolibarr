@@ -57,8 +57,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/modulebuilder.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/modulebuilder/class/NamingContractValidator.class.php';
-require_once DOL_DOCUMENT_ROOT.'/modulebuilder/class/RightsSyncService.class.php';
+require_once DOL_DOCUMENT_ROOT.'/modulebuilder/class/NamingContract.class.php';
+require_once DOL_DOCUMENT_ROOT.'/modulebuilder/class/PermissionsBlock.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 
@@ -294,8 +294,7 @@ function modulebuilderValidateGeneratedFile(string $destfile, NamingContract $nc
 	if ($content === false) {
 		return;
 	}
-	$validator = new StrictNamingContractValidator();
-	$errors = $validator->validateContent($content, $destfile);
+	$errors = NamingContract::validateContent($content, $destfile);
 	if (!empty($errors)) {
 		dol_syslog(
 			'ModuleBuilder NamingContract validation warning in ' . $destfile . ': '
@@ -310,22 +309,28 @@ function modulebuilderValidateGeneratedFile(string $destfile, NamingContract $nc
 /**
  * Run a permissions sync and report its outcome to the user.
  *
- * @param RightsSyncCommand $cmd Sync command to run
- * @return SyncReport Outcome — check hasConflicts() before claiming success or redirecting
+ * @param string                       $file        Path to the module descriptor
+ * @param string                       $action      One of the PermissionsBlock::SYNC_* constants
+ * @param array<int,array<int,string>> $permissions Rights array read from the instantiated descriptor
+ * @param string                       $module      Module name
+ * @param string                       $objectName  Object the action applies to
+ * @param int|null                     $key         Index of the right to update or delete
+ * @param string                       $label       Label of the right to add or update
+ * @param string                       $crud        Crud code of the right to add or update
+ * @return array{conflicts:string[],warnings:string[],skipped:bool} Outcome — check conflicts before claiming success or redirecting
  */
-function modulebuilderSyncRights(RightsSyncCommand $cmd): SyncReport
+function modulebuilderSyncRights(string $file, string $action, array $permissions, string $module, string $objectName = '', ?int $key = null, string $label = '', string $crud = ''): array
 {
 	global $langs;
 
-	$service = new DescriptorRightsSyncService();
-	$report = $service->sync($cmd);
+	$report = PermissionsBlock::sync($file, $action, $permissions, $module, $objectName, $key, $label, $crud);
 
-	if ($report->hasWarnings()) {
-		$safe = array_map('dol_escape_htmltag', array_slice($report->warnings, 0, 5));
+	if (!empty($report['warnings'])) {
+		$safe = array_map('dol_escape_htmltag', array_slice($report['warnings'], 0, 5));
 		setEventMessages($langs->trans('ModuleBuilderPermissionsNormalized').'<br>'.implode('<br>', $safe), null, 'warnings');
 	}
-	if ($report->hasConflicts()) {
-		$safe = array_map('dol_escape_htmltag', array_slice($report->conflicts, 0, 5));
+	if (!empty($report['conflicts'])) {
+		$safe = array_map('dol_escape_htmltag', array_slice($report['conflicts'], 0, 5));
 		setEventMessages($langs->trans('ModuleBuilderPermissionsNotChanged').'<br>'.implode('<br>', $safe), null, 'errors');
 	}
 
@@ -1648,8 +1653,8 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 				$langs->load("errors");
 				setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
 			} else {
-				$reportPerms = modulebuilderSyncRights(RightsSyncCommand::forObjectCreation($module, $moduledescriptorfile, is_array($rights) ? $rights : array(), $objectname));
-				if ($reportPerms->skipped > 0) {
+				$reportPerms = modulebuilderSyncRights($moduledescriptorfile, PermissionsBlock::SYNC_ADD_OBJECT, is_array($rights) ? $rights : array(), $module, $objectname);
+				if ($reportPerms['skipped']) {
 					$langs->load("errors");
 					setEventMessages($langs->trans("WarningPermissionAlreadyExist", $langs->transnoentities($objectname)), null, 'warnings');
 				}
@@ -2506,7 +2511,7 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname /* && $user->has
 			$langs->load("errors");
 			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
 		} else {
-			$reportPerms = modulebuilderSyncRights(RightsSyncCommand::forObjectDeletion($module, $moduledescriptorfile, is_array($permissions) ? $permissions : array(), $objectname));
+			$reportPerms = modulebuilderSyncRights($moduledescriptorfile, PermissionsBlock::SYNC_DELETE_OBJECT, is_array($permissions) ? $permissions : array(), $module, $objectname);
 			// A rights conflict deliberately does not cancel the object deletion below: the warning
 			// already told the user the leftover rights need a manual cleanup.
 		}
@@ -2874,8 +2879,8 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel) /* && 
 			$langs->load("errors");
 			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
 		} else {
-			$reportPerms = modulebuilderSyncRights(RightsSyncCommand::forRightAddition($module, $moduledescriptorfile, $permissions, $objectForPerms, $label, $crud));
-			if (!$reportPerms->hasConflicts()) {
+			$reportPerms = modulebuilderSyncRights($moduledescriptorfile, PermissionsBlock::SYNC_ADD_RIGHT, $permissions, $module, $objectForPerms, null, $label, $crud);
+			if (empty($reportPerms['conflicts'])) {
 				setEventMessages($langs->trans('PermissionAddedSuccesfuly'), null);
 
 				clearstatcache(true);
@@ -3000,8 +3005,8 @@ if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright') && 
 			$langs->load("errors");
 			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
 		} else {
-			$reportPerms = modulebuilderSyncRights(RightsSyncCommand::forRightUpdate($module, $moduledescriptorfile, $permissions, $key, $objectForPerms, $label, $crud));
-			if (!$reportPerms->hasConflicts()) {
+			$reportPerms = modulebuilderSyncRights($moduledescriptorfile, PermissionsBlock::SYNC_UPDATE_RIGHT, $permissions, $module, $objectForPerms, $key, $label, $crud);
+			if (empty($reportPerms['conflicts'])) {
 				setEventMessages($langs->trans('PermissionUpdatedSuccesfuly'), null);
 				clearstatcache(true);
 				if (function_exists('opcache_invalidate')) {
@@ -3056,8 +3061,8 @@ if ($dirins && $action == 'confirm_deleteright' && !empty($module) && GETPOSTINT
 			$langs->load("errors");
 			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
 		} else {
-			$reportPerms = modulebuilderSyncRights(RightsSyncCommand::forRightDeletion($module, $moduledescriptorfile, $permissions, $key));
-			if (!$reportPerms->hasConflicts()) {
+			$reportPerms = modulebuilderSyncRights($moduledescriptorfile, PermissionsBlock::SYNC_DELETE_RIGHT, $permissions, $module, '', $key);
+			if (empty($reportPerms['conflicts'])) {
 				setEventMessages($langs->trans('PermissionDeletedSuccesfuly'), null);
 
 				clearstatcache(true);
@@ -4578,7 +4583,7 @@ if ($module == 'initmodule') {
 				for ($i = 0; $i < AccessPolicyConfig::MAX_ALTERNATIVES; $i++) {
 					$accesspolicyselected = GETPOST('accesspolicy_'.$i, 'array:aZ09');
 					print '<span class="opacitymedium">'.dol_escape_htmltag($langs->trans($i == 0 ? "AccessPolicyFirstAlternative" : "AccessPolicyOtherAlternative", $i + 1)).'</span> &nbsp; ';
-					foreach (array_keys(PredicateRule::PREDICATES) as $predicatename) {
+					foreach (array_keys(AccessPolicyConfig::PREDICATES) as $predicatename) {
 						$checked = in_array($predicatename, $accesspolicyselected, true) ? ' checked' : '';
 						print '<span class="nowraponall"><input type="checkbox" name="accesspolicy_'.$i.'[]" id="accesspolicy_'.$i.'_'.$predicatename.'" value="'.dol_escape_htmltag($predicatename).'"'.$checked.'> ';
 						print '<label for="accesspolicy_'.$i.'_'.$predicatename.'">'.dol_escape_htmltag($langs->trans("AccessPolicyPredicate".ucfirst($predicatename))).'</label></span> &nbsp; ';

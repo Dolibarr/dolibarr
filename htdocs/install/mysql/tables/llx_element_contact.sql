@@ -21,7 +21,7 @@
 create table llx_element_contact
 (
   rowid               integer AUTO_INCREMENT PRIMARY KEY,
-  datecreate          datetime NULL, 			-- date of creation of record
+  date_creation       datetime NULL, 		-- date of creation of record
   statut              smallint DEFAULT 5, 		-- 5 disabled, 4 enabled
 
   element_id		  int NOT NULL, 		    -- ID of element.

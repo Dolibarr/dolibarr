@@ -50,7 +50,7 @@ These principles must be followed even before reviewing specific task details. V
 1.  **PHP version:** 7.2+
 2.  **Action/View Separation:** Always clearly separate page action logic (executed on POST) from pure rendering (the HTML view).
 
----
+***
 
 ## Workflow and Tasks Guidance
 
@@ -151,7 +151,7 @@ Before proposing code:
 1.  **Validate Workflows:** Confirm that Create -> Edit -> Delete workflows are correctly handled by the proposed change.
 2.  **Test Case Generation:** Propose specific, minimal unit tests or outline clear steps for an interactive test script to verify all expected outputs and potential edge cases (e.g., null inputs, permissions failure).
 
----
+***
 
 ## Comprehensive Reference Material [Reference]
 

@@ -39,6 +39,8 @@ class modLoan extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
+		global $conf; // Required by the default value of LOAN_ADDON_PDF_ODT_PATH
+
 		$this->db = $db;
 		$this->numero = 520;
 
@@ -87,6 +89,20 @@ class modLoan extends DolibarrModules
 				"LOAN_ACCOUNTING_ACCOUNT_INSURANCE",
 				"chaine",
 				"6162",
+				"",
+				0,
+			],
+			[
+				"LOAN_ADDON_PDF",
+				"chaine",
+				"generic_loan_odt",
+				'Name of document template of loan',
+				0,
+			],
+			[
+				"LOAN_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/loan",
 				"",
 				0,
 			],

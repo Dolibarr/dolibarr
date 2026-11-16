@@ -28,11 +28,26 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
  *
  * Owns everything that touches the raw text of that section: locating it, deciding whether it is
  * safe to rewrite, rendering a new one from a rights array, and writing it back in a single pass.
+ * sync() applies one ModuleBuilder action (add/delete an object, add/update/delete a right) to it.
  */
 final class PermissionsBlock
 {
 	const BEGIN_MARKER = '/* BEGIN MODULEBUILDER PERMISSIONS */';
 	const END_MARKER = '/* END MODULEBUILDER PERMISSIONS */';
+
+	/** Actions accepted by sync() */
+	const SYNC_ADD_OBJECT = 'addobject';
+	const SYNC_DELETE_OBJECT = 'deleteobject';
+	const SYNC_ADD_RIGHT = 'addright';
+	const SYNC_UPDATE_RIGHT = 'updateright';
+	const SYNC_DELETE_RIGHT = 'deleteright';
+
+	/** @var array<string,string> Label template of each standard crud code */
+	private const CRUD_LABELS = array(
+		'read' => 'Read %s object of %s',
+		'write' => 'Create/Update %s object of %s',
+		'delete' => 'Delete %s object of %s',
+	);
 
 	/**
 	 * Variables a rewritable block may mention. Anything else means the block builds its rights
@@ -368,5 +383,161 @@ final class PermissionsBlock
 		$this->innerBlock = $newInnerBlock;
 
 		return 1;
+	}
+
+	/**
+	 * Apply one ModuleBuilder action to the rights of a module descriptor and rewrite its permissions block.
+	 *
+	 * Error-first: every reason not to write is collected before the rights array is touched, and a
+	 * single conflict aborts the whole run without writing. A half-written permissions section is
+	 * worse than a stale one.
+	 *
+	 * @param string                       $file        Path to the mod<Module>.class.php descriptor to patch
+	 * @param string                       $action      One of the SYNC_* constants
+	 * @param array<int,array<int,string>> $permissions Rights array read from the instantiated descriptor
+	 * @param string                       $module      Module name, used in the labels of the rights of a new object
+	 * @param string                       $objectName  Object the action applies to, compared case-insensitively. Empty for SYNC_DELETE_RIGHT.
+	 * @param int|null                     $key         Index in $permissions of the right to update or delete
+	 * @param string                       $label       Label of the right to add or update
+	 * @param string                       $crud        Crud code of the right to add or update
+	 * @return array{conflicts:string[],warnings:string[],skipped:bool} Conflicts (nothing was written when not empty), warnings (written anyway), skipped (object already owns rights, nothing written)
+	 */
+	public static function sync(string $file, string $action, array $permissions, string $module, string $objectName = '', ?int $key = null, string $label = '', string $crud = ''): array
+	{
+		try {
+			$block = self::fromFile($file);
+		} catch (\RuntimeException $e) {
+			return self::refuseSync($file, array($e->getMessage()), array());
+		}
+
+		$conflicts = array_merge($block->detectTextConflicts(), $block->detectRightsShapeConflicts($permissions));
+		if (!empty($conflicts)) {
+			return self::refuseSync($file, $conflicts, array());
+		}
+
+		$warnings = $block->detectRightsShapeWarnings($permissions);
+
+		try {
+			$newPermissions = self::applySyncAction($action, array_values($permissions), $module, $objectName, $key, $label, $crud);
+		} catch (\InvalidArgumentException $e) {
+			return self::refuseSync($file, array($e->getMessage()), $warnings);
+		}
+		if ($newPermissions === null) {
+			return array('conflicts' => array(), 'warnings' => $warnings, 'skipped' => true);
+		}
+
+		// The action may itself produce an unusable right, e.g. a right attached to no object, which hasRight() could never match.
+		$conflicts = $block->detectRightsShapeConflicts($newPermissions);
+		if (!empty($conflicts)) {
+			return self::refuseSync($file, $conflicts, $warnings);
+		}
+
+		if ($block->write($block->render($newPermissions)) < 0) {
+			return self::refuseSync($file, array('Failed to write the permissions section of '.$file), $warnings);
+		}
+
+		return array('conflicts' => array(), 'warnings' => $warnings, 'skipped' => false);
+	}
+
+	/**
+	 * Log and return the outcome of a sync that wrote nothing.
+	 *
+	 * @param string   $file      Path to the descriptor
+	 * @param string[] $conflicts Reasons why nothing was written
+	 * @param string[] $warnings  Non-blocking problems already detected
+	 * @return array{conflicts:string[],warnings:string[],skipped:bool} Outcome of the sync
+	 */
+	private static function refuseSync(string $file, array $conflicts, array $warnings): array
+	{
+		dol_syslog('PermissionsBlock::sync refused to rewrite '.$file.': '.implode('; ', array_slice($conflicts, 0, 3)), LOG_WARNING);
+
+		return array('conflicts' => $conflicts, 'warnings' => $warnings, 'skipped' => false);
+	}
+
+	/**
+	 * Produce the rights array the descriptor should declare once the action is applied.
+	 *
+	 * @param string                       $action      One of the SYNC_* constants
+	 * @param array<int,array<int,string>> $permissions Current rights, reindexed
+	 * @param string                       $module      Module name
+	 * @param string                       $objectName  Object the action applies to
+	 * @param int|null                     $key         Index of the right to update or delete
+	 * @param string                       $label       Label of the right to add or update
+	 * @param string                       $crud        Crud code of the right to add or update
+	 * @return array<int,array<int,string>>|null New rights, or null when the object to add already owns rights
+	 * @throws \InvalidArgumentException When the action is unknown or targets a right that cannot be addressed
+	 */
+	private static function applySyncAction(string $action, array $permissions, string $module, string $objectName, ?int $key, string $label, string $crud): ?array
+	{
+		$target = dol_strtolower($objectName);
+
+		if ($action === self::SYNC_ADD_OBJECT || $action === self::SYNC_DELETE_OBJECT) {
+			if ($target === '') {
+				throw new \InvalidArgumentException('An object action on the permissions requires an object name');
+			}
+			if ($action === self::SYNC_DELETE_OBJECT) {
+				foreach ($permissions as $i => $right) {
+					if (self::rightMatches($right, $target)) {
+						unset($permissions[$i]);
+					}
+				}
+				return array_values($permissions);
+			}
+			foreach ($permissions as $right) {
+				if (self::rightMatches($right, $target)) {
+					return null;
+				}
+			}
+			foreach (self::CRUD_LABELS as $crudcode => $template) {
+				$permissions[] = array(
+					self::INDEX_LABEL => sprintf($template, $objectName, dol_ucfirst($module)),
+					self::INDEX_OBJECT => $target,
+					self::INDEX_CRUD => $crudcode,
+				);
+			}
+			return $permissions;
+		}
+
+		if ($action === self::SYNC_ADD_RIGHT) {
+			foreach ($permissions as $right) {
+				if (self::rightMatches($right, $target, $crud)) {
+					throw new \InvalidArgumentException('Permission "'.$crud.'" is already declared for object "'.$objectName.'"');
+				}
+			}
+			$permissions[] = array(self::INDEX_LABEL => $label, self::INDEX_OBJECT => $target, self::INDEX_CRUD => $crud);
+			return $permissions;
+		}
+
+		if ($action !== self::SYNC_UPDATE_RIGHT && $action !== self::SYNC_DELETE_RIGHT) {
+			throw new \InvalidArgumentException('Unknown permissions sync action: '.$action);
+		}
+		if ($key === null || !array_key_exists($key, $permissions)) {
+			throw new \InvalidArgumentException('No permission found at index '.$key.' of the descriptor rights array');
+		}
+		if ($action === self::SYNC_UPDATE_RIGHT) {
+			// Addressed by key, never by value: two rights may carry the very same label.
+			$permissions[$key] = array(self::INDEX_LABEL => $label, self::INDEX_OBJECT => $target, self::INDEX_CRUD => $crud);
+			return $permissions;
+		}
+
+		unset($permissions[$key]);
+		return array_values($permissions);
+	}
+
+	/**
+	 * Tell whether a right belongs to an object and, optionally, carries a crud code.
+	 *
+	 * @param mixed       $right  Right of the rights array
+	 * @param string      $target Lowercase object name
+	 * @param string|null $crud   Crud code to match, null to match any
+	 * @return bool True if the right matches
+	 */
+	private static function rightMatches($right, string $target, ?string $crud = null): bool
+	{
+		if (!is_array($right) || !isset($right[self::INDEX_OBJECT]) || dol_strtolower((string) $right[self::INDEX_OBJECT]) !== $target) {
+			return false;
+		}
+
+		return $crud === null || (isset($right[self::INDEX_CRUD]) && (string) $right[self::INDEX_CRUD] === $crud);
 	}
 }

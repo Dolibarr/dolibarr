@@ -70,7 +70,9 @@ class AiMcpApiBridgeTest extends CommonClassTest
 		$bridge = new ToolApiBridge($db, $user, $conf);
 
 		$method = new ReflectionMethod('ToolApiBridge', 'liftInlineTags');
-		$method->setAccessible(true);
+		if (PHP_VERSION_ID < 80100) {
+			$method->setAccessible(true);
+		}
 
 		$args = array($desc, $ptype, &$constraints);
 

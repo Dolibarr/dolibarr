@@ -567,7 +567,7 @@ class CompanyBankAccount extends Account
 		$sql .= " sr.currency_code, sr.fk_country, sr.state_id, sr.status, sr.domiciliation as address,";
 		$sql .= " sr.proprio as owner_name, sr.owner_address, sr.default_rib, sr.datec, sr.tms as datem, sr.rum, sr.frstrecur, sr.date_rum, sr.payment_reference,";
 		$sql .= " sr.stripe_card_ref, sr.stripe_account, sr.ext_payment_site,";
-		$sql .= " sr.last_main_doc, model_pdf,";
+		$sql .= " sr.last_main_doc, model_pdf, sr.extraparams,";
 		$sql .= " cc.code as country_code";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib as sr";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = sr.fk_country";
@@ -630,6 +630,8 @@ class CompanyBankAccount extends Account
 				$this->ext_payment_site = $obj->ext_payment_site;	// External system name ('StripeLive', 'StripeTest', 'StancerLive', 'StancerTest', ...)
 				$this->last_main_doc   = $obj->last_main_doc;
 				$this->model_pdf   	   = $obj->model_pdf;
+
+				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 			}
 			$this->db->free($resql);
 

@@ -409,6 +409,22 @@ abstract class CommonDocGenerator
 			'mymember_gender' => (string) $member->gender,
 			'mymember_birth_locale' => dol_print_date($member->birth, 'day', 'tzuser', $outputlangs),
 			'mymember_birth' => dol_print_date($member->birth, 'day', 'tzuser'),
+			'mymember_ref' => (string) $member->ref,
+			'mymember_civility' => (string) $member->civility,
+			'mymember_company' => (string) $member->company,
+			'mymember_morphy' => $member->getmorphylib((string) $member->morphy),
+			'mymember_type' => (string) $member->type,
+			'mymember_status' => $member->getLibStatut(1),
+			'mymember_note_public' => (string) $member->note_public,
+			'mymember_datevalid_locale' => dol_print_date($member->datevalid, 'day', 'tzuser', $outputlangs),
+			'mymember_datevalid' => dol_print_date($member->datevalid, 'day', 'tzuser'),
+			'mymember_datefin_locale' => dol_print_date($member->datefin, 'day', 'tzuser', $outputlangs),
+			'mymember_datefin' => dol_print_date($member->datefin, 'day', 'tzuser'),
+			'mymember_first_subscription_date_locale' => dol_print_date($member->first_subscription_date, 'day', 'tzuser', $outputlangs),
+			'mymember_first_subscription_date' => dol_print_date($member->first_subscription_date, 'day', 'tzuser'),
+			'mymember_last_subscription_date_locale' => dol_print_date($member->last_subscription_date, 'day', 'tzuser', $outputlangs),
+			'mymember_last_subscription_date' => dol_print_date($member->last_subscription_date, 'day', 'tzuser'),
+			'mymember_last_subscription_amount' => price($member->last_subscription_amount, 0, $outputlangs),
 		);
 		// Retrieve extrafields
 		if (is_array($member->array_options) && count($member->array_options)) {

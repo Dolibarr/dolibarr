@@ -29,6 +29,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveyquestion.class.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
 
 /**
@@ -307,6 +308,23 @@ if (GETPOSTISSET("ajoutercolonne") && $object->format == "D") {
 	}
 }
 
+// Delete a respondent of a survey of format 'F' (form), with his answers
+if ($object->format == 'F' && $action == 'confirm_deleterespondent' && GETPOST('confirm', 'alpha') == 'yes') {	// Test on permission done later
+	// Security check
+	if (!$user->hasRight('opensurvey', 'write')) {
+		accessforbidden();
+	}
+
+	$resdelete = $object->deleteVoter(GETPOSTINT('idrespondent'));
+	if ($resdelete > 0) {
+		setEventMessages($langs->trans("OpenSurveyRespondentDeleted"), null, 'mesgs');
+	} else {
+		setEventMessages($object->error ? $object->error : $langs->trans("ErrorRecordNotFound"), null, 'errors');
+	}
+	header('Location: results.php?id='.urlencode($numsondage));
+	exit;
+}
+
 // Delete line
 for ($i = 0; $i < $nblines; $i++) {
 	if (GETPOST("effaceligne".$i) || GETPOST("effaceligne".$i."_x") || GETPOST("effaceligne".$i.".x")) {	// effacelignei for chrome, effacelignei_x for firefox
@@ -479,10 +497,10 @@ print '<div class="underbanner clearboth"></div>';
 print '<table class="border tableforfield centpercent">';
 
 // Type
-$type = ($object->format == "A") ? 'classic' : 'date';
+$type = ($object->format == "A") ? 'classic' : (($object->format == "F") ? 'form' : 'date');
 print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>';
-print img_picto('', dol_buildpath('/opensurvey/img/'.($type == 'classic' ? 'chart-32.png' : 'calendar-32.png'), 1), 'width="16"', 1);
-print ' '.$langs->trans($type == 'classic' ? "TypeClassic" : "TypeDate").'</td></tr>';
+print img_picto('', dol_buildpath('/opensurvey/img/'.($type == 'date' ? 'calendar-32.png' : 'chart-32.png'), 1), 'width="16"', 1);
+print ' '.$langs->trans($type == 'classic' ? "TypeClassic" : ($type == 'form' ? "TypeForm" : "TypeDate")).'</td></tr>';
 
 // Title
 print '<tr><td>';
@@ -582,6 +600,86 @@ print '<div class="tabsAction">';
 print '<a class="butAction" href="exportcsv.php?id='.urlencode($numsondage).'">'.$langs->trans("ExportSpreadsheet").' (.CSV)</a>';
 
 print '</div>';
+
+// Results of a survey of format 'F' (form): the answers by question, then the answers of each respondent
+if ($object->format == 'F') {
+	$questionstatic = new Opensurveyquestion($db);
+	$formquestions = $questionstatic->fetchAllBySurvey($object->id_sondage);
+	$respondents = $questionstatic->fetchRespondents($object->id_sondage);
+	if (!is_array($formquestions) || !is_array($respondents)) {
+		dol_print_error($db, $questionstatic->error);
+		llxFooter();
+		$db->close();
+		exit;
+	}
+	$nbrespondents = count($respondents);
+
+	if ($action == 'ask_deleterespondent') {	// Test on permission not required, the delete is done after a confirmation that tests the permission
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.urlencode($numsondage).'&idrespondent='.GETPOSTINT('idrespondent'), $langs->trans("Delete"), $langs->trans("ConfirmDeleteRespondent"), 'confirm_deleterespondent', '', 0, 1);
+	}
+
+	print load_fiche_titre($langs->trans("OpenSurveyResultsByQuestion").' ('.$langs->trans("OpenSurveyNbRespondents", $nbrespondents).')', '', '');
+	foreach ($formquestions as $question) {
+		print '<div class="underbanner clearboth"></div>';
+		print '<strong>'.dol_escape_htmltag($question->question).'</strong><br>';
+		if (in_array($question->type, Opensurveyquestion::getTypesWithAnswers())) {
+			$result = $question->countAnswers($respondents);
+			print '<table class="noborder">';
+			foreach ($result['counts'] as $answer => $nb) {
+				$percent = ($result['answered'] > 0 ? round(100 * $nb / $result['answered']) : 0);
+				print '<tr class="oddeven"><td class="minwidth200">'.dol_escape_htmltag((string) $answer).'</td><td class="right">'.((int) $nb).'</td>';
+				print '<td class="right opacitymedium">'.((int) $percent).' %</td>';
+				print '<td><div style="background-color: #5a88c0; height: 10px; width: '.((int) $percent * 2).'px;"></div></td></tr>';
+			}
+			print '</table>';
+			print '<span class="opacitymedium">'.$langs->trans("OpenSurveyNbAnswers", $result['answered']).'</span>';
+		} else {
+			$nbanswers = 0;
+			print '<ul>';
+			foreach ($respondents as $respondent) {
+				if (isset($respondent['answers'][$question->id]) && $respondent['answers'][$question->id] !== '') {
+					$nbanswers++;
+					print '<li>'.dol_nl2br(dol_escape_htmltag($respondent['answers'][$question->id], 0, 1)).'</li>';
+				}
+			}
+			print '</ul>';
+			print '<span class="opacitymedium">'.$langs->trans("OpenSurveyNbAnswers", $nbanswers).'</span>';
+		}
+		print '<br><br>';
+	}
+
+	print load_fiche_titre($langs->trans("OpenSurveyAnswersOfRespondents"), '', '');
+	print '<div class="div-table-responsive">';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Name").'</td><td>'.$langs->trans("Date").'</td>';
+	foreach ($formquestions as $question) {
+		print '<td>'.dol_escape_htmltag($question->question).'</td>';
+	}
+	print '<td></td></tr>';
+	foreach ($respondents as $respondent) {
+		print '<tr class="oddeven"><td>'.dol_escape_htmltag($respondent['name']).'</td>';
+		print '<td class="nowraponall">'.dol_print_date($respondent['date'], 'dayhour').'</td>';
+		foreach ($formquestions as $question) {
+			$value = isset($respondent['answers'][$question->id]) ? $respondent['answers'][$question->id] : '';
+			print '<td>'.dol_nl2br(dol_escape_htmltag($value, 0, 1)).'</td>';
+		}
+		print '<td class="right">';
+		if ($user->hasRight('opensurvey', 'write')) {
+			print '<a href="'.$_SERVER["PHP_SELF"].'?id='.urlencode($numsondage).'&action=ask_deleterespondent&idrespondent='.((int) $respondent['id']).'&token='.newToken().'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
+		}
+		print '</td></tr>';
+	}
+	if ($nbrespondents == 0) {
+		print '<tr><td colspan="'.(3 + count($formquestions)).'"><span class="opacitymedium">'.$langs->trans("OpenSurveyNoAnswer").'</span></td></tr>';
+	}
+	print '</table>';
+	print '</div>';
+
+	llxFooter();
+
+	$db->close();
+	exit;
+}
 
 
 // Show form to add a new field/column

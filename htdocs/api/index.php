@@ -109,6 +109,7 @@ if (!$res) {
  * @var string	$dolibarr_api_count_always_enabled
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/lib/api.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/AutoLoader.php';
 
 call_user_func(
@@ -248,88 +249,19 @@ if (getDolGlobalString('API_RESTRICT_ON_IP')) {
 if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $reg[2] == '/swagger.json/root' || $reg[2] == '/resources.json' || $reg[2] == '/resources.json/root')) {
 	// Scan all API files to load them
 
+	// One description of what an endpoint is, shared with the AI API bridge.
+	// The classes are sorted before being registered: the API Explorer lists them
+	// in registration order and is unreadable otherwise.
 	$listofapis = array();
-
-	$modulesdir = dolGetModulesDirs();
-	foreach ($modulesdir as $dir) {
-		// Search available module
-		dol_syslog("Scan directory ".$dir." for module descriptor files, then search for API files");
-
-		$handle = @opendir(dol_osencode($dir));
-		if (is_resource($handle)) {
-			while (($file = readdir($handle)) !== false) {
-				$regmod = array();
-				if (is_readable($dir.$file) && preg_match("/^mod(.*)\.class\.php$/i", $file, $regmod)) {
-					$module = strtolower($regmod[1]);
-					$moduledirforclass = getModuleDirForApiClass($module);
-					$modulenameforenabled = $module;
-					if ($module == 'propale') {
-						$modulenameforenabled = 'propal';
-					} elseif ($module == 'supplierproposal') {
-						$modulenameforenabled = 'supplier_proposal';
-					} elseif ($module == 'ficheinter') {
-						$modulenameforenabled = 'intervention';
-					} elseif ($module == 'product' && !isModEnabled('product') && isModEnabled('service')) {
-						$modulenameforenabled = 'service';
-					}
-
-					dol_syslog("Found module file ".$file." - module=".$module." - modulenameforenabled=".$modulenameforenabled." - moduledirforclass=".$moduledirforclass);
-
-					// Defined if module is enabled
-					$enabled = true;
-					if (!isModEnabled($modulenameforenabled)) {
-						$enabled = false;
-					}
-
-					if ($enabled) {
-						// If exists, load the API class for enable module
-						// Search files named api_<object>.class.php into /htdocs/<module>/class directory
-						// @todo : use getElementProperties() function ?
-						$dir_part = dol_buildpath('/'.$moduledirforclass.'/class/');
-
-						$handle_part = @opendir(dol_osencode($dir_part));
-						if (is_resource($handle_part)) {
-							while (($file_searched = readdir($handle_part)) !== false) {
-								if ($file_searched == 'api_access.class.php') {
-									continue;
-								}
-
-								//if ($file_searched == 'api_login.class.php' && !getDolGlobalString('API_ENABLE_LOGIN_API')) {
-								//	continue;
-								//}
-
-								//dol_syslog("We scan to search api file with into ".$dir_part.$file_searched);
-
-								$regapi = array();
-								if (is_readable($dir_part.$file_searched) && preg_match("/^api_(.*)\.class\.php$/i", $file_searched, $regapi)) {
-									$classname = ucwords($regapi[1]);
-									$classname = str_replace('_', '', $classname);
-									require_once $dir_part.$file_searched;
-									if (class_exists($classname.'Api')) {
-										//dol_syslog("Found API by index.php: classname=".$classname."Api for module ".$dir." into ".$dir_part.$file_searched);
-										$listofapis[strtolower($classname.'Api')] = $classname.'Api';
-									} elseif (class_exists($classname)) {
-										//dol_syslog("Found API by index.php: classname=".$classname." for module ".$dir." into ".$dir_part.$file_searched);
-										$listofapis[strtolower($classname)] = $classname;
-									} else {
-										dol_syslog("We found an api_xxx file (".$file_searched.") but class ".$classname." does not exists after loading file", LOG_WARNING);
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
+	foreach (dolGetApiEndpoints(true, true) as $apiname => $endpoint) {
+		require_once $endpoint['path'];
+		$listofapis[$apiname] = $endpoint['class'];
 	}
-
-	// Sort the classes before adding them to Restler.
-	// The Restler API Explorer shows the classes in the order they are added and it's a mess if they are not sorted.
 	asort($listofapis);
+
 	foreach ($listofapis as $apiname => $classname) {
 		$api->r->addAPIClass($classname, $apiname);
 	}
-	//var_dump($api->r);
 }
 
 // Call one APIs or one definition of an API

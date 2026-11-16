@@ -524,6 +524,18 @@ if ($id > 0 || !empty($ref)) {
 		$sql .= $hookmanager->resPrint;
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as l";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product=p.rowid";
+		// Enable hooks to alter the SQL query (FROM)
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks(
+			'printFieldListFrom',
+			$parameters,
+			$object,
+			$action
+		);
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		}
+		$sql .= $hookmanager->resPrint;
 		$sql .= " WHERE l.fk_commande = ".((int) $objectsrc->id);
 		if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 			$sql .= " AND l.product_type = 0";

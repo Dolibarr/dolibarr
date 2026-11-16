@@ -1033,6 +1033,9 @@ function show_day_events_pertype($typeofeventcode, $day, $month, $year, $monthsh
 	$numicals = array();
 	$ymd = sprintf("%04d", $year).sprintf("%02d", $month).sprintf("%02d", $day);
 
+	if (!is_array($colorindexused)) {
+		$colorindexused = array(); // Not initialized by the page (unlike peruser.php): count(null) is a fatal error with PHP 8
+	}
 	$nextindextouse = count($colorindexused); // At first run, this is 0, so fist user has 0, next 1, ...
 	//if ($typeofeventcode && $day==1) {
 	//var_dump($eventarray);

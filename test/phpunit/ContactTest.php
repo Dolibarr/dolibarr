@@ -415,7 +415,7 @@ class ContactTest extends CommonClassTest
 
 		// Simulate a user assigned to an element, storing a user id into fk_socpeople.
 		// The id of the merged contact is used on purpose: it is the value a buggy UPDATE would move.
-		$sql = "INSERT INTO ".$db->prefix()."element_contact(datecreate, statut, element_id, fk_c_type_contact, fk_socpeople)";
+		$sql = "INSERT INTO ".$db->prefix()."element_contact(date_creation, statut, element_id, fk_c_type_contact, fk_socpeople)";
 		$sql .= " VALUES ('".$db->idate(dol_now())."', 4, 999999, ".((int) $objtype->rowid).", ".((int) $origin->id).")";
 		$this->assertNotFalse($db->query($sql), 'Cannot create the internal link fixture');
 
@@ -503,7 +503,7 @@ class ContactTest extends CommonClassTest
 		$this->assertIsObject($objtype, 'No active external type of contact found');
 
 		foreach (array($dest->id, $origin->id) as $contactid) {
-			$sql = "INSERT INTO ".$db->prefix()."element_contact(datecreate, statut, element_id, fk_c_type_contact, fk_socpeople)";
+			$sql = "INSERT INTO ".$db->prefix()."element_contact(date_creation, statut, element_id, fk_c_type_contact, fk_socpeople)";
 			$sql .= " VALUES ('".$db->idate(dol_now())."', 4, 999998, ".((int) $objtype->rowid).", ".((int) $contactid).")";
 			$this->assertNotFalse($db->query($sql), 'Cannot create the duplicated link fixture');
 		}

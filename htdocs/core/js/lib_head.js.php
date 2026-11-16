@@ -1628,6 +1628,15 @@ $(document).ready(function() {
 	<?php
 } ?>
 
+// Allow focus into select2 components (their dropdown is appended to body) when they are used into a modal jQuery UI dialog.
+// Without this, the modal dialog steals the focus of the select2 search field so typing does not filter the list.
+if (typeof $.ui != 'undefined' && typeof $.ui.dialog == 'function') {
+	$.widget("ui.dialog", $.ui.dialog, {
+		_allowInteraction: function(event) {
+			return !!$(event.target).closest(".select2-container").length || this._super(event);
+		}
+	});
+}
 
 
 jQuery(document).ready(function() {

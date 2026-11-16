@@ -74,9 +74,9 @@ class MultiCurrency extends CommonObject
 	public $name;
 
 	/**
-	 * @var mixed Sample property 2
+	 * @var int|''|null		Object creation date
 	 */
-	public $date_create;
+	public $date_creation;
 
 	/**
 	 * @var mixed Sample property 2
@@ -156,7 +156,7 @@ class MultiCurrency extends CommonObject
 		$sql .= ' code,';
 		$sql .= ' name,';
 		$sql .= ' entity,';
-		$sql .= ' date_create,';
+		$sql .= ' date_creation,';
 		$sql .= ' fk_user';
 		$sql .= ') VALUES (';
 		$sql .= " '".$this->db->escape($this->code)."',";
@@ -178,7 +178,7 @@ class MultiCurrency extends CommonObject
 
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
-			$this->date_create = $now;
+			$this->date_creation = $now;
 			$this->fk_user = $user->id;
 
 			if (empty($notrigger)) {
@@ -211,7 +211,7 @@ class MultiCurrency extends CommonObject
 	{
 		dol_syslog('MultiCurrency::fetch', LOG_DEBUG);
 
-		$sql = "SELECT c.rowid, c.name, c.code, c.entity, c.date_create, c.fk_user";
+		$sql = "SELECT c.rowid, c.name, c.code, c.entity, c.date_creation, c.fk_user";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." AS c";
 		if (!empty($code)) {
 			$sql .= " WHERE c.code = '".$this->db->escape($code)."'";
@@ -232,7 +232,7 @@ class MultiCurrency extends CommonObject
 				$this->name = $obj->name;
 				$this->code = $obj->code;
 				$this->entity = $obj->entity;
-				$this->date_create = $obj->date_create;
+				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->fk_user = $obj->fk_user;
 
 				$this->fetchAllCurrencyRate();
