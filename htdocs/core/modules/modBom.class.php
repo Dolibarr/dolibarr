@@ -125,7 +125,7 @@ class modBom extends DolibarrModules
 		//                             1=>array('BILLOFMATERIALS_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
 		// );
 		$this->const = [
-			['BOM_ADDON_PDF', 'chaine', 'generic_bom_odt', 'Name of PDF model of BOM', 0],
+			['BOM_ADDON_PDF', 'chaine', 'aurore', 'Name of PDF model of BOM', 0],
 			['BOM_ADDON', 'chaine', 'mod_bom_standard', 'Name of numbering rules of BOM', 0],
 			['BOM_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT'.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/boms', '', 0],
 		];
@@ -484,6 +484,8 @@ class modBom extends DolibarrModules
 		$sql = array(
 			//"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape('standard')."' AND type = 'bom' AND entity = ".((int) $conf->entity),
 			//"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape('standard')."', 'bom', ".((int) $conf->entity).")"
+			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape('aurore')."' AND type = 'bom' AND entity = ".((int) $conf->entity),
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape('aurore')."', 'bom', ".((int) $conf->entity).")"
 		);
 
 		return $this->_init($sql, $options);

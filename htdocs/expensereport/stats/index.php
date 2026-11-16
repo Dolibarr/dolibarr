@@ -47,6 +47,7 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 $hookmanager->initHooks(array('expensereportstats', 'globalcard'));
 
 $mode = GETPOSTISSET("mode") ? GETPOST("mode", 'aZ09') : 'customer';
+$tabfamily = GETPOST('tabfamily', 'aZ09');	// 'expensereportstats' to show the tab with the custom reports tool
 $object_status = GETPOST('object_status', 'intcomma');
 
 $userid = GETPOSTINT('userid');
@@ -90,6 +91,40 @@ $dir = $conf->expensereport->dir_temp;
 llxHeader('', $title);
 
 print load_fiche_titre($title, '', 'trip');
+
+// The custom reports tool does not filter on the expense reports of the user and its subordinates, so it needs the permission to read all expense reports
+$showtabcustomreports = (!$user->isExternalUser() && ($user->hasRight('expensereport', 'readall') || $user->hasRight('expensereport', 'lire_tous')));
+
+$h = 0;
+$head = array();
+$head[$h][0] = DOL_URL_ROOT.'/expensereport/stats/index.php';
+$head[$h][1] = $langs->trans("ByMonthYear");
+$head[$h][2] = 'byyear';
+$h++;
+
+if ($showtabcustomreports) {
+	$head[$h][0] = DOL_URL_ROOT.'/expensereport/stats/index.php?tabfamily=expensereportstats';
+	$head[$h][1] = $langs->trans("Custom");
+	$head[$h][2] = 'customreports';
+	$h++;
+}
+
+complete_head_from_modules($conf, $langs, null, $head, $h, 'trip_stats');
+
+// Show the tab with the custom reports tool
+if ($showtabcustomreports && $tabfamily == 'expensereportstats') {
+	print dol_get_fiche_head($head, 'customreports', '', -1);
+
+	define('USE_CUSTOM_REPORT_AS_TAB', 1);
+	$customreportobjecttype = 'expensereport';
+	include DOL_DOCUMENT_ROOT.'/core/customreports.php';
+
+	print dol_get_fiche_end();
+
+	llxFooter();
+	$db->close();
+	exit;
+}
 
 dol_mkdir($dir);
 
@@ -219,15 +254,6 @@ if (!count($arrayyears)) {
 	$arrayyears[$nowyear] = $nowyear;
 }
 
-
-$h = 0;
-$head = array();
-$head[$h][0] = DOL_URL_ROOT.'/expensereport/stats/index.php';
-$head[$h][1] = $langs->trans("ByMonthYear");
-$head[$h][2] = 'byyear';
-$h++;
-
-complete_head_from_modules($conf, $langs, null, $head, $h, 'trip_stats');
 
 print dol_get_fiche_head($head, 'byyear', '', -1);
 

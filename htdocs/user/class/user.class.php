@@ -17,6 +17,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Lenin Rivas				<lenin.rivas777@gmail.com>
  * Copyright (C) 2026		Anthony Berton			<anthony.berton@bb2a.fr>
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1123,6 +1124,10 @@ class User extends CommonObject
 			$this->error = 'Try to call addrights on an object user with an empty id';
 			return -1;
 		}
+		if (getDolGlobalInt('MAIN_USER_PERMISSIONS_ONLY_BY_GROUPS')) {
+			$this->error = 'PermissionsManagedByGroupsOnly';
+			return -1;
+		}
 
 		$error = 0;
 		$whereforadd = '';
@@ -1854,6 +1859,13 @@ class User extends CommonObject
 			$this->error = $this->db->lasterror();
 		}
 
+		// Remove the passkeys of the user
+		$sql = "DELETE FROM ".$this->db->prefix()."oauth_token WHERE fk_user = ".((int) $this->id)." AND service = 'passkey'";
+		if (!$error && !$this->db->query($sql)) {
+			$error++;
+			$this->error = $this->db->lasterror();
+		}
+
 		// If contact, remove link
 		if ($this->contact_id > 0) {
 			$sql = "UPDATE ".$this->db->prefix()."socpeople SET fk_user_creat = null WHERE rowid = ".((int) $this->contact_id);
@@ -2237,6 +2249,11 @@ class User extends CommonObject
 		// phpcs:enable
 		global $conf;
 
+		// Permissions are given by user groups only
+		if (getDolGlobalInt('MAIN_USER_PERMISSIONS_ONLY_BY_GROUPS')) {
+			return 0;
+		}
+
 		$rd = array();
 		$num = 0;
 		$sql = "SELECT id FROM ".$this->db->prefix()."rights_def";
@@ -2331,6 +2348,9 @@ class User extends CommonObject
 		$this->user_modification_id = $user->id;
 
 		$this->accountancy_code_user_general = trim((string) $this->accountancy_code_user_general);
+		if ($this->accountancy_code_user_general === '-1') {	// '-1' is the value of the empty option of the select of accounting accounts
+			$this->accountancy_code_user_general = '';
+		}
 		$this->accountancy_code				= trim((string) $this->accountancy_code);
 		$this->color						= trim(str_replace('#', '', (string) $this->color));
 		$this->dateemployment				= empty($this->dateemployment) ? '' : $this->dateemployment;

@@ -157,6 +157,7 @@ if (empty($reshook)) {
 		$object->label        = (string) GETPOST("libelle", "alpha");
 		$object->description  = (string) GETPOST("desc", "alpha");
 		$object->statut       = GETPOSTINT("statut");
+		$object->status       = $object->statut;
 		$object->lieu         = (string) GETPOST("lieu", "alpha");
 		$object->address      = (string) GETPOST("address", "alpha");
 		$object->zip          = (string) GETPOST("zipcode", "alpha");
@@ -222,6 +223,7 @@ if (empty($reshook)) {
 			$object->fk_project = GETPOSTINT('projectid');
 			$object->description = GETPOST("desc", 'restricthtml');
 			$object->statut = GETPOSTINT("statut");
+			$object->status = $object->statut;
 			$object->lieu = GETPOST("lieu");
 			$object->address = GETPOST("address");
 			$object->zip = GETPOST("zipcode");

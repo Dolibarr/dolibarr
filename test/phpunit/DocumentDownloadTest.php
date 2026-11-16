@@ -104,6 +104,32 @@ class DocumentDownloadTest extends \PHPUnit\Framework\TestCase
 	}
 
 	/** @return void */
+	public function testPreviousVersionKeepsNativeNameTypeAndObjectAccess()
+	{
+		mkdir($this->directory.'/documents/A/.versions', 0700, true);
+		$file = 'A/.versions/report.pdf.v1700000000';
+		file_put_contents($this->directory.'/documents/'.$file, 'Previous document');
+		foreach (array(false, true) as $batch) {
+			$state = $this->runDownload(array(
+				'selection' => array(array('modulepart' => 'propal', 'file' => $file, 'entity' => 2)),
+				'post' => array('action' => $batch ? 'downloadselected' : '', 'modulepart' => 'propal', 'file' => $file, 'entity' => 2),
+			));
+			$this->assertSame(200, $state['status']);
+			$this->assertSame(array('A/.versions/report.pdf'), $state['mimetypepaths']);
+			$this->assertSame('A', $state['secureref']);
+			$this->assertSame('A', $state['objectchecks'][0]['ref']);
+			if ($batch) {
+				$zip = new ZipArchive();
+				$this->assertTrue($zip->open($this->directory.'/response'));
+				$this->assertSame('Previous document', $zip->getFromName('report (2023-11-14 2213).pdf'));
+				$zip->close();
+			} else {
+				$this->assertSame('Previous document', $state['body']);
+			}
+		}
+	}
+
+	/** @return void */
 	public function testObjectAndEntityRestrictionsApplyBeforeAnyHook()
 	{
 		foreach (array(array('denyref' => 'B'), array('missingref' => 'B'), array('denymodule' => true), array('allowedentity' => 1)) as $restriction) {

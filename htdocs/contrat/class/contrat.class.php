@@ -282,8 +282,8 @@ class Contrat extends CommonObject
 		'signed_status' => array('type' => 'smallint(6)', 'label' => 'SignedStatus', 'enabled' => 1, 'visible' => -1, 'position' => 50, 'arrayofkeyval' => array(0 => 'NoSignature', 1 => 'SignedSender', 2 => 'SignedReceiver', 3 => 'SignedReceiverOnline', 9 => 'SignedAll')),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'visible' => -1, 'notnull' => 1, 'position' => 70),
 		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 75),
-		'fk_commercial_signature' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'SaleRepresentative Signature', 'enabled' => 1, 'visible' => -1, 'position' => 80),
-		'fk_commercial_suivi' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'SaleRepresentative follower', 'enabled' => 1, 'visible' => -1, 'position' => 85),
+		'fk_commercial_signature' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'SaleRepresentative Signature', 'enabled' => 1, 'visible' => -1, 'position' => 80, 'bi' => 0, 'comment' => 'Deprecated, replaced by a link into llx_element_contact'),
+		'fk_commercial_suivi' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'SaleRepresentative follower', 'enabled' => 1, 'visible' => -1, 'position' => 85, 'bi' => 0, 'comment' => 'Deprecated, replaced by a link into llx_element_contact'),
 		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 90),
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 105, 'searchall' => 1),
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 110, 'searchall' => 1),
@@ -1508,7 +1508,7 @@ class Contrat extends CommonObject
 	 *  Insert contract line into database
 	 *
 	 *  @param	string			$desc            	Description of line
-	 *  @param  float			$pu_ht              Unit price net
+	 *  @param  float			$pu_ht              Unit price excl tax
 	 *  @param  float	 		$qty             	Quantity
 	 *  @param  float|string	$txtva           	Vat rate. Can be '19.6' or '19.6 (CODE)'
 	 *  @param  float			$txlocaltax1        Local tax 1 rate
@@ -1518,7 +1518,7 @@ class Contrat extends CommonObject
 	 *  @param  int				$date_start      	Date de debut prevue
 	 *  @param  int				$date_end        	Date de fin prevue
 	 *	@param	string			$price_base_type	HT or TTC
-	 * 	@param  float			$pu_ttc             Prix unitaire TTC
+	 * 	@param  float			$pu_ttc             Unit price inc tax
 	 * 	@param  int				$info_bits			Bits of type of lines
 	 * 	@param  int				$fk_fournprice		Fourn price id
 	 *  @param  float|string			$pa_ht				Buying price HT (Can be '' to keep AWP unchanged or a float value)

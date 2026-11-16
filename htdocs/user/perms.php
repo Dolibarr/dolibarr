@@ -73,6 +73,10 @@ if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$caneditselfperms = ($user->id == $id && $user->hasRight("user", "self_advance", "writeperms"));
 	$caneditperms = (($caneditperms || $caneditselfperms) ? 1 : 0);
 }
+// Permissions are given by user groups only: read only
+if (getDolGlobalInt('MAIN_USER_PERMISSIONS_ONLY_BY_GROUPS')) {
+	$caneditperms = 0;
+}
 
 // Security check
 $socid = 0;
@@ -487,6 +491,9 @@ if ($user->admin) {
 		$s .= $langs->trans("YouAreUsingTheSimplePermissionsMode");
 	}
 	print info_admin($s);
+}
+if (getDolGlobalInt('MAIN_USER_PERMISSIONS_ONLY_BY_GROUPS')) {
+	print info_admin($langs->trans("PermissionsManagedByGroupsOnly").' <a href="'.dolBuildUrl(DOL_URL_ROOT.'/user/card.php', ['id' => $object->id]).'">'.$langs->trans("ListOfGroupsForUser").'</a>', 0, 0, '0');
 }
 // If edited user is an extern user, we show warning for external users
 if (!empty($object->socid)) {

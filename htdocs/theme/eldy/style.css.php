@@ -788,10 +788,10 @@ section.setupsection {
 	padding: 20px !important;
 	background-color: var(--colorbackgrey);
 	border-radius: 5px;
-	box-shadow: 0 0 4px rgb(0, 0, 0, 0.18);
+	box-shadow: 1px 1px 4px rgb(0, 0, 0, 0.18);
 }
 section.setupsection:hover {
-	box-shadow: 0 0 5px #aaa;
+	box-shadow: 1px 1px 5px #aaa;
 }
 
 
@@ -1101,6 +1101,12 @@ input.pageplusone {
 	font-size: 90%;
 	opacity: 0.5;
 }
+.growthup {
+	color: #080;
+}
+.growthdown {
+	color: #968822;
+}
 .fontsizeunset {
 	font-size: unset !important;
 }
@@ -1334,6 +1340,9 @@ th .button {
 }
 .valignmiddle {
 	vertical-align: middle;
+}
+.valignbaseline {
+	vertical-align: baseline;
 }
 .valignbottom {
 	vertical-align: bottom;
@@ -4040,7 +4049,7 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 	box-shadow: 0 2px 23px 2px rgba(0, 0, 0, <?php print getDolGlobalInt('THEME_DARKMODEENABLED') ? 0.4 : 0.2; ?>), 0 2px 6px rgba(60, 60, 60, 0.15);
 	border-radius: 5px;
 }
-.login_table input#username, .login_table input#password, .login_table input#securitycode {
+.login_table input#username, .login_table input#password, .login_table input#securitycode, .login_table input#totpcode {
 	/* border: none; */
 	border-bottom: solid 1px rgba(160,160,160,.4);
 	padding: 8px;
@@ -4050,7 +4059,7 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 	margin-bottom: 5px;
 	margin-right: 10px;
 }
-.login_table input#username:focus, .login_table input#password:focus, .login_table input#securitycode:focus {
+.login_table input#username:focus, .login_table input#password:focus, .login_table input#securitycode:focus, .login_table input#totpcode:focus {
 	outline: none !important;
 }
 .login_table .trinputlogin {
@@ -4067,7 +4076,7 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 	padding-left: 10px;
 	width: 14px;
 }
-.login_table .tdinputlogin input#username, .login_table .tdinputlogin input#password, .login_table .tdinputlogin input#securitycode {
+.login_table .tdinputlogin input#username, .login_table .tdinputlogin input#password, .login_table .tdinputlogin input#securitycode, .login_table .tdinputlogin input#totpcode {
 	font-size: 1.1em;
 }
 /* Serve as reference for icon that toggles showing the password */
@@ -4248,7 +4257,7 @@ div.login_block_user {
 .alogin:hover, .atoplogin:hover {
 	text-decoration:underline !important;
 }
-.alogin.aloginpasswordforgotten, .alogin.aloginpasswordforgotten:hover, .alogin.aloginhelp, .alogin.aloginhelp:hover {
+.alogin.aloginpasswordforgotten, .alogin.aloginpasswordforgotten:hover, .alogin.aloginhelp, .alogin.aloginhelp:hover, .alogin.alogincanceltotp, .alogin.alogincanceltotp:hover {
 	opacity: 0.5;
 }
 
@@ -4624,6 +4633,17 @@ img.toolbarbutton {
 
 li.expanded > a.fmdirlia.jqft.ecmjqft {
 	font-weight: bold !important;
+}
+/* Marker after the name of a directory that has sub directories: closed or open */
+li.lidirecmwithsubdir > a.fmdirlia::after {
+	content: "\25B8";
+	display: inline-block;	/* not underlined with the name */
+	padding-left: 6px;
+	opacity: 0.6;
+	font-weight: normal;
+}
+li.lidirecmwithsubdir.expanded > a.fmdirlia::after {
+	content: "\25BE";
 }
 
 .divfmdirlia {
@@ -5346,6 +5366,9 @@ div.refaddress div.address {
 }
 div.refidno form {
 	display: inline-block;
+	/* Negative vertical margins so the edit form (select2 28px + button) does not increase the line height of the banner */
+	margin-top: -4px;
+	margin-bottom: -4px;
 }
 
 div.pagination {
@@ -5380,7 +5403,7 @@ li.pagination.paginationpage.paginationpageleft, li.pagination.paginationpage.pa
 }
 div.pagination li.pagination a,
 div.pagination li.pagination span {
-  padding: 6px 12px;
+  padding: 5px 12px;
   line-height: 1.42857143;
   text-decoration: none;
   background-repeat: repeat-x;
@@ -6676,7 +6699,7 @@ div.divphotoref > div > .photowithmargin, div.divphotoref > img.photowithmargin,
 
 /* height of top title */
 .fiche > table.table-fiche-title tr.toptitle, .fiche > form > table.table-fiche-title tr.toptitle {
-	height: 60px;
+	height: 54px;
 }
 /* height of other title */
 table.table-fiche-title tr.toptitle, table.table-fiche-title tr.toptitle {
@@ -7251,6 +7274,11 @@ span#morelines {
 /*	line-height: normal; */
 	background: #f5f5f5 !important;
 	border: 1px solid #ccc !important;
+}
+.websitebar button.button, .websitebar button.buttonDelete {
+	/* Align height of native button elements with sibling anchor buttons (button keeps UA font-size and line-height) */
+	font-size: inherit;
+	line-height: normal;
 }
 .websiteselection {
 	/* display: inline-block; */

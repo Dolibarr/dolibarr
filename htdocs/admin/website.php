@@ -438,7 +438,7 @@ $h++;
 print dol_get_fiche_head($head, 'website', '', -1);
 
 
-print '<span class="opacitymedium">'.$langs->trans("WebsiteSetupDesc").'</span><br>';
+print '<div class="info">'.$langs->trans("WebsiteSetupDesc").'</div>';
 print "<br>\n";
 
 
@@ -523,7 +523,7 @@ if ($id) {
 
 		print '<td colspan="3" class="right">';
 		if ($action != 'edit') {
-			print '<input type="submit" class="button button-add" name="actionadd" value="'.$langs->trans("Add").'">';
+			print '<input type="submit" class="button button-add smallpaddingimp" name="actionadd" value="'.$langs->trans("Add").'">';
 		}
 		print '</td>';
 		print "</tr>";
@@ -624,9 +624,9 @@ if ($id) {
 					}
 
 					print '<td colspan="7" class="right"><a name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'">&nbsp;</a>';
-					print '<input type="submit" class="button button-edit small" name="actionmodify" value="'.$langs->trans("Modify").'">';
+					print '<input type="submit" class="button button-edit small smallpaddingimp" name="actionmodify" value="'.$langs->trans("Modify").'">';
 					print '&nbsp;';
-					print '<input type="submit" class="button button-cancel small" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+					print '<input type="submit" class="button button-cancel small smallpaddingimp" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 					print '</td>';
 				} else {
 					$tmpaction = 'view';
@@ -648,12 +648,23 @@ if ($id) {
 								$css = 'right';
 							}
 							if ($fieldlist[$field] == 'date_creation') {
-								$css .= ' nowraponall';
+								$css .= ' nowraponall tdlineheightsmall';
 							}
 							if ($fieldlist[$field] == 'lastaccess') {
-								$css .= ' nowraponall';
+								$css .= ' nowraponall tdlineheightsmall';
 							}
 							$valuetoshow = $obj->$fieldname;
+							if (in_array($fieldname, array('date_creation', 'lastaccess'))) {
+								// Same date format than the column "Date start" of the agenda list
+								$valuetoshow = '';
+								if (!empty($obj->$fieldname)) {
+									$tmpdate = $db->jdate($obj->$fieldname, ($fieldname == 'lastaccess' ? 'gmt' : 'tzserver'));	// lastaccess is stored in GMT by dolWebsiteIncrementCounter()
+									$valuetoshow = '<div class="center inline-block lineheightsmall">';
+									$valuetoshow .= dol_print_date($tmpdate, 'dayreduceformat', 'tzuserrel');
+									$valuetoshow .= '<br><span class="opacitymedium hourspan">'.dol_print_date($tmpdate, 'hourreduceformat', 'tzuserrel').'</span>';
+									$valuetoshow .= '</div>';
+								}
+							}
 
 							// Show value for field
 							if ($showfield) {
@@ -763,7 +774,11 @@ function fieldListWebsites($fieldlist, $obj = null, $tabname = '', $context = ''
 			if ($fieldlist[$field] == 'sortorder') {
 				$size = 'size="2" ';
 			}
-			print '<input type="text" '.$size.' class="flat" value="'.(isset($obj->$fieldname) ? $obj->$fieldname : '').'" name="'.$fieldlist[$field].'">';
+			$cssclass = 'flat';
+			if ($fieldlist[$field] == 'ref') {
+				$cssclass = 'maxwidth150';
+			}
+			print '<input type="text" '.$size.' class="'.$cssclass.'" value="'.(isset($obj->$fieldname) ? $obj->$fieldname : '').'" name="'.$fieldlist[$field].'">';
 			print '</td>';
 		}
 	}

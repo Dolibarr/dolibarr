@@ -355,6 +355,41 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = '';
 		}
+	} elseif ($action == 'confirm_duplicate_subtotalblock' && $confirm == 'yes' && $usercancreate) {
+		// Duplicate a block of lines (the title line, the lines it contains and the subtotal line)
+		$langs->load('subtotals');
+		$object->fetch($id);
+		$object->fetch_thirdparty();
+
+		$result = $object->duplicateSubtotalBlock($langs, GETPOSTINT('lineid'), $user);
+		if ($result > 0) {
+			// Note: no call to line_order() here, duplicateSubtotalBlock() already renumbered all the lines
+			// Define output language
+			$outputlangs = $langs;
+			$newlang = '';
+			if (getDolGlobalInt('MAIN_MULTILANGS') && GETPOST('lang_id')) {
+				$newlang = GETPOST('lang_id');
+			}
+			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+				$newlang = $object->thirdparty->default_lang;
+			}
+			if (!empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+				$outputlangs->load('products');
+			}
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+				$ret = $object->fetch($id); // Reload to get new records
+				$result = $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
+			if ($result >= 0) {
+				header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
+				exit();
+			}
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = '';
+		}
 	} elseif ($action == 'confirm_delete_subtotalline' && $confirm == 'yes' && $usercancreate) {
 		// Delete line
 		$object->fetch($id);
@@ -2016,7 +2051,7 @@ if (empty($reshook)) {
 						$exp = new Expedition($db);
 						$exp->fetch($object->origin_id);
 						$exp->fetchObjectLinked();
-						if (is_array($exp->linkedObjectsIds['commande']) && count($exp->linkedObjectsIds['commande']) > 0) {
+						if (!empty($exp->linkedObjectsIds['commande']) && is_array($exp->linkedObjectsIds['commande'])) {	// A shipment without sales order (SHIPMENT_STANDALONE) has no linked order
 							foreach ($exp->linkedObjectsIds['commande'] as $key => $value) {
 								$object->linked_objects['commande'] = $value;
 							}
@@ -3952,21 +3987,26 @@ if (empty($reshook)) {
 		&& ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA || $object->type == Facture::TYPE_SITUATION)) {
 		// add lines from objectlinked
 		$fromElement = GETPOST('fromelement', 'aZ09');
-		$fromElementid = GETPOST('fromelementid');
+		$fromElementid = GETPOSTINT('fromelementid');
 		$importLines = GETPOST('line_checkbox');
 
 		if (!empty($importLines) && is_array($importLines) && !empty($fromElement) && !empty($fromElementid)) {
 			$lineClassName = '';
+			$lineParentField = '';
 			if ($fromElement == 'commande') {
 				dol_include_once('/'.$fromElement.'/class/'.$fromElement.'.class.php');
 				$lineClassName = 'OrderLine';
+				$lineParentField = 'fk_commande';
 			} elseif ($fromElement == 'propal') {
 				dol_include_once('/comm/'.$fromElement.'/class/'.$fromElement.'.class.php');
 				$lineClassName = 'PropaleLigne';
+				$lineParentField = 'fk_propal';
 			}
 			$nextRang = count($object->lines) + 1;
 			$importCount = 0;
 			$error = 0;
+			// Check user can read the source object (permission, thirdparty and entity)
+			$fromElementAllowed = ($lineParentField && $fromElementid > 0 && restrictedArea($user, $fromElement, $fromElementid, '', '', 'fk_soc', 'rowid', 0, 1));
 			foreach ($importLines as $lineId) {
 				if ($lineClassName === '') {
 					// No class
@@ -3981,7 +4021,7 @@ if (empty($reshook)) {
 
 				$lineId = intval($lineId);
 				$originLine = new $lineClassName($db);
-				if (intval($fromElementid) > 0 && $originLine->fetch($lineId) > 0) {
+				if ($fromElementAllowed && $originLine->fetch($lineId) > 0 && $originLine->$lineParentField == $fromElementid) {
 					$originLine->fetch_optionals();
 					$desc = $originLine->desc;
 					$pu_ht = $originLine->subprice;
@@ -5745,6 +5785,12 @@ if ($action == 'create') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id.'&lineid='.$lineid, $langs->trans($title), $langs->trans($question), 'confirm_delete_subtotalline', $formconfirm, 'no', 1);
 	}
 
+	// Confirmation of the duplication of a block of the subtotals module
+	if ($action == 'ask_duplicate_subtotalblock') {
+		$langs->load("subtotals");
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id.'&lineid='.$lineid, $langs->trans("DuplicateBlock"), $langs->trans("ConfirmDuplicateBlock"), 'confirm_duplicate_subtotalblock', '', 'no', 1);
+	}
+
 	// Clone confirmation
 	if ($action == 'clone') {
 		$filter = '(s.client:IN:1,2,3)';
@@ -7045,6 +7091,9 @@ if ($action == 'create') {
 				include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 			}
 		}
+		if (!empty($conf->use_javascript_ajax) && isModEnabled('subtotals')) {
+			include DOL_DOCUMENT_ROOT.'/core/tpl/subtotal_collapse.tpl.php';
+		}
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table id="tablelines" class="noborder noshadow centpercent nomarginbottom">';
@@ -7405,9 +7454,9 @@ if ($action == 'create') {
 
 			$htmltooltip = '';
 			if ($isErasable == -6) {
-				$htmltooltip = $langs->trans('DisabledBecauseAlreadySentByEmail');
-			} elseif ($isErasable == -5) {
 				$htmltooltip = $langs->trans('DisabledBecauseAlreadyPrintedOnce');
+			} elseif ($isErasable == -5) {
+				$htmltooltip = $langs->trans('DisabledBecauseAlreadySentByEmail');
 			} elseif ($isErasable == -4) {
 				$htmltooltip = $langs->trans('DisabledBecausePayments');
 			} elseif ($isErasable == -3) {

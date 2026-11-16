@@ -138,7 +138,7 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 				if (empty($response['curl_error_no']) && $response['http_code'] >= 200 && $response['http_code'] < 300) {
 					$nbPosts++;
 				} else {
-					$errormsg = "The WebHook for triggercode ".$action." failed to do the GET URL ".$tmpobject->url." with httpcode=".(!empty($response['http_code']) ? $response['http_code'] : "")." curl_error_no=".(!empty($response['curl_error_no']) ? $response['curl_error_no'] : "");
+					$errormsg = "The WebHook for triggercode ".$action." failed to do the POST to URL ".$tmpobject->url." with httpcode=".(!empty($response['http_code']) ? $response['http_code'] : "")." curl_error_no=".(!empty($response['curl_error_no']) ? $response['curl_error_no'] : "");
 					// getURLContent returns http_code 400 with an explanation in $response['content']
 					// when the host is rejected by the SSRF protection (private/reserved range, local
 					// network, metadata server, ...). Surface that explanation so the operator can

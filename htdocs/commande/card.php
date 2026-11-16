@@ -18,6 +18,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Lenin Rivas				<lenin.rivas777@gmail.com>
  * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -225,6 +226,24 @@ if (empty($reshook)) {
 
 	include DOL_DOCUMENT_ROOT . '/core/actions_lineupdown.inc.php';  // Must be 'include', not 'include_once'
 
+	// Create the purchase orders of the suppliers
+	if ($action == 'confirm_createpurchaseorders' && $confirm == 'yes' && $usercancreatepurchaseorder) {
+		$result = $object->createPurchaseOrders($user);
+		if (is_array($result)) {
+			if (!empty($result['noprice'])) {
+				setEventMessages($langs->trans('ProductsWithoutSupplierPrice', implode(', ', $result['noprice'])), null, 'warnings');
+			}
+			if (!empty($result['orders'])) {
+				setEventMessages($langs->trans('OrderCreated'), null, 'mesgs');
+			}
+			header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $object->id);
+			exit;
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = '';
+		}
+	}
+
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $usercancreate) {
 		if (!($socid > 0)) {
@@ -318,8 +337,43 @@ if (empty($reshook)) {
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
+	} elseif ($action == 'confirm_duplicate_subtotalblock' && $confirm == 'yes' && $usercancreate) {
+		// Duplicate a block of lines (the title line, the lines it contains and the subtotal line)
+		$langs->load('subtotals');
+		$object->fetch($id);
+		$object->fetch_thirdparty();
+
+		$result = $object->duplicateSubtotalBlock($langs, GETPOSTINT('lineid'), $user);
+		if ($result > 0) {
+			// Note: no call to line_order() here, duplicateSubtotalBlock() already renumbered all the lines
+			// Define output language
+			$outputlangs = $langs;
+			$newlang = '';
+			if (getDolGlobalInt('MAIN_MULTILANGS') && GETPOST('lang_id')) {
+				$newlang = GETPOST('lang_id');
+			}
+			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+				$newlang = $object->thirdparty->default_lang;
+			}
+			if (!empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+				$outputlangs->load('products');
+			}
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+				$ret = $object->fetch($id); // Reload to get new records
+				$result = $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
+			if ($result >= 0) {
+				header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+				exit();
+			}
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = '';
+		}
 	} elseif ($action == 'confirm_delete_subtotalline' && $confirm == 'yes' && $usercancreate) {
-		$result = $object->deleteSubtotalLine($langs, GETPOSTINT('lineid'), (bool) GETPOST('deletecorrespondingsubtotalline'), $user);
+		$result = $object->deleteSubtotalLine($langs, GETPOSTINT('lineid'), (bool) GETPOST('deletecorrespondingsubtotalline'));
 		if ($result > 0) {
 			// reorder lines
 			$object->line_order(true);
@@ -1498,7 +1552,7 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				// Insert line
-				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $info_bits, 0, $price_base_type, $pu_ttc, $date_start, $date_end, $type, min($rank, count($object->lines) + 1), 0, GETPOSTINT('fk_parent_line'), (int) $fournprice, $buyingprice, $label, $array_options, $fk_unit, '', 0, (float) $pu_ht_devise);
+				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $info_bits, 0, $price_base_type, $pu_ttc, $date_start, $date_end, $type, min($rank, count($object->lines) + 1), 0, GETPOSTINT('fk_parent_line'), (int) $fournprice, $buyingprice, $label, $array_options, $fk_unit, '', 0, (float) $pu_ht_devise, '', 0, GETPOST('line_ref_customer', 'alphanohtml'));
 
 				if ($result > 0) {
 					$db->commit();
@@ -1866,7 +1920,7 @@ if (empty($reshook)) {
 				}
 			}
 
-			$result = $object->updateline(GETPOSTINT('lineid'), $description, (float) $pu, (float) $qty, (float) $remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $price_base_type, $info_bits, $date_start, $date_end, $type, GETPOSTINT('fk_parent_line'), 0, (int) $fournprice, $buyingprice, $label, $special_code, $array_options, GETPOSTINT('units'), (float) $pu_ht_devise);
+			$result = $object->updateline(GETPOSTINT('lineid'), $description, (float) $pu, (float) $qty, (float) $remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $price_base_type, $info_bits, $date_start, $date_end, $type, GETPOSTINT('fk_parent_line'), 0, (int) $fournprice, $buyingprice, $label, $special_code, $array_options, GETPOSTINT('units'), (float) $pu_ht_devise, 0, '', 0, GETPOSTISSET('line_ref_customer') ? GETPOST('line_ref_customer', 'alphanohtml') : null);
 
 
 			if ($result >= 0) {
@@ -2135,27 +2189,37 @@ if (empty($reshook)) {
 	// Add lines from objectlinked
 	if ($action == 'import_lines_from_object' && $usercancreate && $object->status == Commande::STATUS_DRAFT) {
 		$fromElement = GETPOST('fromelement');
-		$fromElementid = GETPOST('fromelementid');
+		$fromElementid = GETPOSTINT('fromelementid');
 		$importLines = GETPOST('line_checkbox');
 
 		if (!empty($importLines) && is_array($importLines) && !empty($fromElement) && preg_match('/^[a-zA-Z]+$/', $fromElement) && !empty($fromElementid)) {
+			$lineParentField = '';
 			if ($fromElement == 'commande') {
 				dol_include_once('/' . $fromElement . '/class/' . $fromElement . '.class.php');
 				$lineClassName = 'OrderLine';
+				$lineParentField = 'fk_commande';
 			} elseif ($fromElement == 'propal') {
 				dol_include_once('/comm/' . $fromElement . '/class/' . $fromElement . '.class.php');
 				$lineClassName = 'PropaleLigne';
+				$lineParentField = 'fk_propal';
 			} elseif ($fromElement == 'facture') {
 				dol_include_once('/compta/' . $fromElement . '/class/' . $fromElement . '.class.php');
 				$lineClassName = 'FactureLigne';
+				$lineParentField = 'fk_facture';
 			}
 			$nextRang = count($object->lines) + 1;
 			$importCount = 0;
 			$error = 0;
+			// Check user can read the source object (permission, thirdparty and entity)
+			$fromElementAllowed = ($lineParentField && $fromElementid > 0 && restrictedArea($user, $fromElement, $fromElementid, '', '', 'fk_soc', 'rowid', 0, 1));
 			foreach ($importLines as $lineId) {
+				if (!$fromElementAllowed) {
+					$error++;
+					continue;
+				}
 				$lineId = intval($lineId);
 				$originLine = new $lineClassName($db);
-				if (intval($fromElementid) > 0 && $originLine->fetch($lineId) > 0) {
+				if ($fromElementAllowed && $originLine->fetch($lineId) > 0 && $originLine->$lineParentField == $fromElementid) {
 					$originLine->fetch_optionals();
 					$desc = $originLine->desc;
 					$pu_ht = $originLine->subprice;
@@ -3069,6 +3133,12 @@ if ($action == 'create' && $usercancreate) {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lineid=' . $lineid, $langs->trans($title), $langs->trans($question), 'confirm_delete_subtotalline', $formconfirm, 'no', 1);
 		}
 
+		// Confirmation of the duplication of a block of the subtotals module
+		if ($action == 'ask_duplicate_subtotalblock') {
+			$langs->load("subtotals");
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lineid=' . $lineid, $langs->trans("DuplicateBlock"), $langs->trans("ConfirmDuplicateBlock"), 'confirm_duplicate_subtotalblock', '', 'no', 1);
+		}
+
 		// Clone confirmation
 		if ($action == 'clone') {
 			$filter = '(s.client:IN:1,2,3)';
@@ -3081,6 +3151,11 @@ if ($action == 'create' && $usercancreate) {
 				$formquestion[] = array('type' => 'checkbox', 'name' => 'clone_ref_customer', 'label' => $form->textwithpicto($langs->trans("CloneRefCustomer"), $langs->trans("CloneRefCustomerHelpOrder"), 1, 'help', '', 0, 3, 'clonerefcustomer'), 'value' => getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING') ? 1 : 0);
 			}
 			$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('ToClone'), $langs->trans('ConfirmCloneOrder', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+		}
+
+		// Create the purchase orders confirmation
+		if ($action == 'createpurchaseorders') {
+			$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('CreatePurchaseOrdersPerSupplier'), $langs->trans('ConfirmCreatePurchaseOrders'), 'confirm_createpurchaseorders', '', 'yes', 1);
 		}
 
 		// Subtotal line form
@@ -3369,6 +3444,24 @@ if ($action == 'create' && $usercancreate) {
 			}
 			print '</td></tr>';
 
+			// Structured payment reference, see core/lib/paymentref.lib.php.
+			// Only shown for the modes whose value is settled before invoicing. In the per
+			// invoice mode the reference comes from the invoice number, which does not exist
+			// yet, so anything shown here would never match the invoice the customer receives.
+			if (in_array(getDolGlobalString('INVOICE_PAYMENT_REF_MODE'), array('company', 'thirdparty'))) {
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/paymentref.lib.php';
+				$tmpobjectforpayref = clone $object;
+				$tmpobjectforpayref->status = 1;
+				$paymentrefpreview = dolPayRefGenerateForInvoice($tmpobjectforpayref, $user, 0);
+				if ($paymentrefpreview != '') {
+					print '<tr><td>';
+					print $form->textwithpicto($langs->trans('PaymentReference'), $langs->trans('PaymentReferenceBeforeInvoiceHelp'));
+					print '</td><td>';
+					print showValueWithClipboardCPButton(dol_escape_htmltag($paymentrefpreview));
+					print '</td></tr>';
+				}
+			}
+
 			// TODO Order mode (how we receive order). Not yet implemented
 			/*
 			print '<tr><td>';
@@ -3583,6 +3676,9 @@ if ($action == 'create' && $usercancreate) {
 					include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 				}
 			}
+			if (!empty($conf->use_javascript_ajax) && isModEnabled('subtotals')) {
+				include DOL_DOCUMENT_ROOT . '/core/tpl/subtotal_collapse.tpl.php';
+			}
 
 			print '<div class="div-table-responsive-no-min">';
 			print '<table id="tablelines" class="noborder noshadow" width="100%">';
@@ -3707,6 +3803,13 @@ if ($action == 'create' && $usercancreate) {
 						'perm' => $usercancreatepurchaseorder,
 						'label' => 'AddPurchaseOrder',
 						'url' => '/fourn/commande/card.php?action=create&amp;origin=' . urlencode($object->element) . '&amp;originid=' . ((int) $object->id)
+					);
+					$arrayforbutaction[] = array(
+						'lang' => 'orders',
+						'enabled' => (isModEnabled("supplier_order") && $object->status > Commande::STATUS_DRAFT),
+						'perm' => $usercancreatepurchaseorder,
+						'label' => 'CreatePurchaseOrdersPerSupplier',
+						'url' => '/commande/card.php?id=' . ((int) $object->id) . '&amp;action=createpurchaseorders&amp;token=' . newToken()
 					);
 				}
 

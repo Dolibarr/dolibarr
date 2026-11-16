@@ -281,6 +281,7 @@ function dol_check_secure_access_document($modulepart, $file, $entity, $user, $r
 	if (!empty($scenario['requirecontext']) && $state['contexts'] !== array(array('document'))) {
 		accessforbidden();
 	}
+	$state['secureref'] = $ref;
 	$allowedentity = isset($scenario['allowedentity']) ? $scenario['allowedentity'] : 2;
 	return array('accessallowed' => empty($scenario['denymodule']) && $entity === $allowedentity && ($modulepart !== 'systemtools' || $user->admin), 'sqlprotectagainstexternals' => '', 'original_file' => DOL_DATA_ROOT.'/'.$file);
 }
@@ -402,6 +403,8 @@ function dol_osencode($path)
  */
 function dol_mimetype($path)
 {
+	global $state;
+	$state['mimetypepaths'][] = $path;
 	return 'application/pdf';
 }
 
@@ -480,7 +483,7 @@ function dol_now()
  */
 function dol_print_date($timestamp, $format)
 {
-	return '20231114-221320';
+	return $format === '%Y-%m-%d %H%M' ? gmdate('Y-m-d Hi', $timestamp) : '20231114-221320';
 }
 
 /**

@@ -200,7 +200,7 @@ function dol_document_resolve_secure_file($modulepart, $original_file, $entity, 
 	}
 
 	$refname = basename(dirname($original_file).'/');
-	if ($refname == 'thumbs' || $refname == 'temp') {
+	if ($refname == 'thumbs' || $refname == 'temp' || $refname == '.versions') {
 		$refname = basename(dirname(dirname($original_file)).'/');
 	}
 
@@ -258,7 +258,22 @@ function dol_document_resolve_secure_file($modulepart, $original_file, $entity, 
 
 	clearstatcache();
 
+	// Previous versions retain the original extension for MIME checks and a dated download name.
+	$original_file_for_type = $original_file;
+	$versiontimestamp = 0;
+	$reg = array();
+	if (preg_match('/(^|\/)\.versions\/[^\/]+(\.v(\d+))$/', $original_file, $reg)) {
+		$original_file_for_type = substr($original_file, 0, -strlen($reg[2]));
+		$versiontimestamp = (int) $reg[3];
+	}
+
 	$filename = basename($fullpath_original_file);
+	if ($versiontimestamp) {
+		// Previous version: file.ext.v<timestamp> is downloaded as "file (date of the version).ext".
+		$filename = basename($original_file_for_type);
+		$fileext = pathinfo($filename, PATHINFO_EXTENSION);
+		$filename = ($fileext !== '' ? substr($filename, 0, -strlen($fileext) - 1) : $filename).' ('.dol_print_date($versiontimestamp, '%Y-%m-%d %H%M', 'tzuser').')'.($fileext !== '' ? '.'.$fileext : '');
+	}
 	$filename = preg_replace('/\.noexe$/i', '', $filename);
 	$fullpath_original_file_osencoded = dol_osencode($fullpath_original_file); // New file name encoded in OS encoding charset
 
@@ -274,12 +289,12 @@ function dol_document_resolve_secure_file($modulepart, $original_file, $entity, 
 	$type = GETPOST('type', 'alpha');
 	// Security: Do not let a MIME override turn an uploaded file into an executable browser page.
 	if (empty($type) || preg_match('/(html|xml|svg)/i', $type)) {
-		$type = dol_mimetype($original_file);
+		$type = dol_mimetype($original_file_for_type);
 	}
 	// Security: Force to octet-stream if file is a dangerous file. For example when it is a .noexe file
 	// We do not force if file is a javascript to be able to get js from website module with <script src="
 	// Note: Force whatever is $modulepart seems ok.
-	if (!in_array($type, array('text/x-javascript')) && !dolIsAllowedForPreview($original_file)) {
+	if (!in_array($type, array('text/x-javascript')) && !dolIsAllowedForPreview($original_file_for_type)) {
 		$type = 'application/octet-stream';
 	}
 
