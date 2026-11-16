@@ -8099,22 +8099,12 @@ td.gtaskheading.gstartdate, td.gtaskheading.genddate {
 	border-top: none;
 }
 
-/* Area where files can be dropped to upload them into the selected directory of the file manager (filemanager.tpl.php) */
-.dropzoneecm {
-	padding: 4px 12px;
-	border: 2px dashed var(--colortextlink);
-	border-radius: 6px;
-	color: var(--colortextlink);
-	opacity: 0.6;
-	white-space: nowrap;
-	cursor: copy;
+/* Field to choose files of the file manager (filemanager.tpl.php): files can be dropped on it */
+input[type="file"].ecmfiledropinput, div.tabBar input[type="file"].ecmfiledropinput {
+	border: 2px dotted var(--colortextlink);
+	border-radius: 4px;
 }
-.dropzoneecm ~ div {
-	display: inline-block;
-	vertical-align: middle;
-}
-.dropzoneecm.dropzoneecmover {
-	opacity: 1;
+input[type="file"].ecmfiledropinput.ecmfiledropinputover, div.tabBar input[type="file"].ecmfiledropinput.ecmfiledropinputover {
 	border-style: solid;
 	background-color: var(--colorbacklinepairhover);
 }
