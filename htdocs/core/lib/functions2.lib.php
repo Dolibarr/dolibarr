@@ -498,7 +498,6 @@ function dol_print_object_info($object, $usetable = 0)
 			}
 		}
 
-
 		if (!empty($object->date_rappro)) {	// Note: date_rappro is not found on Dolibarr classes
 			print ' - ';
 			print '<div class="valignmiddle inline-block">';
@@ -1000,7 +999,6 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$monthcomp = 0;
 	$yearcomp = '';
 
-
 	if ($maskraz > 0) {   // A reset is required
 		if ($maskraz == 99) {
 			$maskraz = (int) date('m', $date);
@@ -1500,7 +1498,6 @@ function check_value($mask, $value)
 	}
 	if ($maskraz >= 0) {
 		if ($maskraz == 99) {
-
 			$maskraz = (int) date('m');
 			$resetEveryMonth = true;
 		}
@@ -2001,7 +1998,6 @@ function is_ip($ip)
 }
 
 /**
-
  *  Build a login from lastname, firstname
  *
  *  @param	string		$lastname		Lastname
@@ -2502,7 +2498,6 @@ function colorAdjustBrightness($hex, $steps)
 
 	foreach ($color_parts as $color) {
 		$color   = hexdec($color); // Convert to decimal
-
 		$color   = max(0, min(255, $color + $steps)); // Adjust color
 		$return .= str_pad(dechex($color), 2, '0', STR_PAD_LEFT); // Make two char hex code
 	}
@@ -3002,7 +2997,6 @@ function acceptLocalLinktoMedia()
 	// Note that local link to a file into medias are replaced with a real link by email in CMailFile.class.php with value $urlwithroot defined like this:
 	// $urlwithouturlroot = dolGetUrlWithoutUrlRoot();
 	// $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
-
 
 	$acceptlocallinktomedia = getDolGlobalInt('MAIN_DISALLOW_MEDIAS_IN_EMAIL_TEMPLATES') ? 0 : 1;
 
@@ -3504,7 +3498,6 @@ function validateZipFile($zip, $originalfilename, $zipfile, $langs)
 	} else {
 		dol_syslog("validateZipFile OK");
 	}
-
 
 	if ($return['errormsg'] === '') {
 		$return['errormsg'] = null;
