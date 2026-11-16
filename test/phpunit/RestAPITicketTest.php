@@ -533,4 +533,35 @@ class RestAPITicketTest extends AbstractRestAPITest
 		}, $result['content']['data']);
 		$this->assertContains($ticket_id, $ids, "$test The created ticket must be in the list");
 	}
+
+	/**
+	 * Delete a ticket, then check it can not be read anymore
+	 *
+	 * @return void
+	 */
+	public function testRestTicketDelete()
+	{
+		$test = "Delete a ticket";
+
+		$ticket_id = $this->createTicket($test);
+
+		$result = $this->getUrl('tickets/'.$ticket_id, $test, 'DELETE');
+		// The ticket is deleted, so it must not be deleted again at end of the test
+		$this->objectstodelete = array_values(array_diff($this->objectstodelete, array('tickets/'.$ticket_id)));
+		$this->assertEquals(200, (int) $result['content']['success']['code'], "$test Code of the success response");
+
+		$this->getUrl('tickets/'.$ticket_id, $test, 'GET', null, 404);
+	}
+
+	/**
+	 * Delete a ticket that does not exist
+	 *
+	 * @return void
+	 */
+	public function testRestTicketDeleteUnknownTicket()
+	{
+		$test = "Delete a ticket that does not exist";
+
+		$this->getUrl('tickets/999999999', $test, 'DELETE', null, 404);
+	}
 }
