@@ -1798,6 +1798,15 @@ if ($action == 'updatecss' && $usercanedit) {
 			// Security analysis
 			$errorphpcheck = checkPHPCode($phpfullcodestringold, $phpfullcodestring);	// Contains the setEventMessages
 
+			// Apache directives (AddType, SetHandler, php_value...) can lead to code execution, so modifying .htaccess requires permission writephp
+			if (!$errorphpcheck && !$user->hasRight('website', 'writephp')) {
+				$htaccesscontentold = (dol_is_file($filehtaccess) ? trim((string) file_get_contents($filehtaccess)) : '');
+				if (str_replace("\r\n", "\n", $dataposted) !== str_replace("\r\n", "\n", $htaccesscontentold)) {
+					$errorphpcheck++;
+					setEventMessages($langs->trans("NotAllowedToEditHtaccess"), null, 'errors');
+				}
+			}
+
 			if (!$errorphpcheck) {
 				if ($dataposted) {
 					$htaccesscontent = '';
@@ -4299,7 +4308,7 @@ if ($action == 'editcss') {
 	print '</td><td>';
 
 	$poscursor = array('x' => GETPOST('WEBSITE_HTACCESS_x'), 'y' => GETPOST('WEBSITE_HTACCESS_y'));
-	$doleditor = new DolEditor('WEBSITE_HTACCESS', $htaccesscontent, '', 220, 'ace', 'In', true, false, 'ace', 0, '100%', 0, $poscursor);
+	$doleditor = new DolEditor('WEBSITE_HTACCESS', $htaccesscontent, '', 220, 'ace', 'In', true, false, 'ace', 0, '100%', ($user->hasRight('website', 'writephp') ? 0 : 1), $poscursor);
 	print $doleditor->Create(1, '', true, $langs->trans("File").' .htaccess', 'text');
 
 	print '</td></tr>';

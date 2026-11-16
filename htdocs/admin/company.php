@@ -55,7 +55,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'ad
 $page_y = GETPOSTINT('page_y');
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'companies', 'bills'));
+$langs->loadLangs(array('admin', 'companies', 'bills', 'compta'));
 
 if (!$user->admin) {
 	accessforbidden();

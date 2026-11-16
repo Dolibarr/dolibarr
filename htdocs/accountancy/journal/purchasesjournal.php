@@ -234,6 +234,7 @@ $rcclocaltax2 = getDolGlobalString('ACCOUNTING_LT2_BUY_REVERSE_CHARGES_CREDIT', 
 $rcdlocaltax2 = getDolGlobalString('ACCOUNTING_LT2_BUY_REVERSE_CHARGES_DEBIT', 'NotDefined');
 $noTaxDispatchingKeepWithLines = getDolGlobalInt('ACCOUNTING_PURCHASES_DO_NOT_DISPATCH_TAXES'); //If enabled, Tax will NOT get split off from the base entry and credited to a separate tax account (good for non-VAT countries like USA)
 $country_code_in_EEC = getCountriesInEEC();		// This make a database call but there is a cache done into $conf->cache['country_code_in_EEC']
+$supplierstatic = new Societe($db);
 
 $result = $db->query($sql);
 if ($result) {
@@ -257,11 +258,14 @@ if ($result) {
 		}
 
 		$tax_id = $obj->tva_tx . ($obj->vat_src_code ? ' (' . $obj->vat_src_code . ')' : '');
-		if (array_key_exists($tax_id, $vatdata_cache)) {
-			$vatdata = $vatdata_cache[$tax_id];
+		$suppliercountrycode = $obj->country_code ? $obj->country_code : $mysoc->country_code;
+		$vatdata_cache_key = $suppliercountrycode.'|'.$tax_id;
+		if (array_key_exists($vatdata_cache_key, $vatdata_cache)) {
+			$vatdata = $vatdata_cache[$vatdata_cache_key];
 		} else {
-			$vatdata = getTaxesFromId($tax_id, $mysoc, $mysoc, 0);
-			$vatdata_cache[$tax_id] = $vatdata;
+			$supplierstatic->country_code = $suppliercountrycode;
+			$vatdata = getTaxesFromId($tax_id, $mysoc, $supplierstatic, 0);
+			$vatdata_cache[$vatdata_cache_key] = $vatdata;
 		}
 		$compta_tva = (!empty($vatdata['accountancy_code_buy']) ? $vatdata['accountancy_code_buy'] : $cpttva);
 		$compta_localtax1 = (!empty($vatdata['accountancy_code_buy']) ? $vatdata['accountancy_code_buy'] : $cptlocaltax1);

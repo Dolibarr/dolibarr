@@ -177,7 +177,8 @@ print '</td>';
 if ($filtertype != 1) { // Product
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		$coldisplay++;
-		print '<td class="nobottom linecoluseunit">';
+		print '<td class="bordertop nobottom nowrap linecoluseunit">';
+		print $formproduct->selectMeasuringUnits("fk_unit", '', (GETPOSTISSET('fk_unit') ? GETPOST('fk_unit', 'alpha') : '0'), 1, 0);
 		print '</td>';
 	}
 } else { // Service

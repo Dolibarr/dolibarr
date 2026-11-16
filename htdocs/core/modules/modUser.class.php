@@ -316,6 +316,7 @@ class modUser extends DolibarrModules
 		$r++;
 		$this->import_code[$r] = $this->rights_class.'_'.$r;
 		$this->import_label[$r] = 'ImportDataset_user_1';
+		$this->import_permission[$r] = array(array("user"));	// Only admin (dataset allows to set admin flag, password and API key)
 		$this->import_icon[$r] = 'user';
 		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r] = array('u' => MAIN_DB_PREFIX.'user', 'extra' => MAIN_DB_PREFIX.'user_extrafields'); // List of tables to insert into (insert done in same order)

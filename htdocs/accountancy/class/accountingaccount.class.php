@@ -407,6 +407,9 @@ class AccountingAccount extends CommonObject
 		$sql .= "UNION";
 		$sql .= " (SELECT fk_code_ventilation FROM ".$this->db->prefix()."facture_fourn_det";
 		$sql .= " WHERE fk_code_ventilation=".((int) $this->id).")";
+		$sql .= " UNION";
+		$sql .= " (SELECT fk_code_ventilation FROM ".$this->db->prefix()."expensereport_det";
+		$sql .= " WHERE fk_code_ventilation=".((int) $this->id).")";
 
 		dol_syslog(get_class($this)."::checkUsage", LOG_DEBUG);
 		$resql = $this->db->query($sql);

@@ -171,6 +171,11 @@ if (!in_array($importtriggermode, array('strict_line', 'fast_bulk'), true)) {
 $objimport = new Import($db);
 $objimport->load_arrays($user, ($step == 1 ? '' : $datatoimport));
 
+// Check permission on the requested dataset
+if ($step != 1 && $datatoimport && empty($objimport->array_import_perms[0])) {
+	accessforbidden();
+}
+
 if (empty($updatekeys) && !empty($objimport->array_import_preselected_updatekeys[0])) {
 	$updatekeys = $objimport->array_import_preselected_updatekeys[0];
 }

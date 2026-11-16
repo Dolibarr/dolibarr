@@ -843,6 +843,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 						$listlines->merge();
 					}
 					$odfHandler->mergeSegment($listlines);
+				} catch (OdfExceptionSegmentNotFound $e) {
+					dol_syslog($e->getMessage(), LOG_INFO);	// No tasks block in the template is not an error
 				} catch (OdfException $e) {
 					$ExceptionTrace = $e->getTrace();
 					// no segment defined on ODT is not an error
@@ -874,6 +876,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 						$listlines->merge();
 					}
 					$odfHandler->mergeSegment($listlines);
+				} catch (OdfExceptionSegmentNotFound $e) {
+					dol_syslog($e->getMessage(), LOG_INFO);	// No project files block in the template is not an error
 				} catch (OdfException $e) {
 					$ExceptionTrace = $e->getTrace();
 					// no segment defined on ODT is not an error
@@ -927,6 +931,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 							$listlines->merge();
 						}
 						$odfHandler->mergeSegment($listlines);
+					} catch (OdfExceptionSegmentNotFound $e) {
+						dol_syslog($e->getMessage(), LOG_INFO);	// No project contacts block in the template is not an error
 					} catch (OdfException $e) {
 						$ExceptionTrace = $e->getTrace();
 						// no segment defined on ODT is not an error

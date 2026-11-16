@@ -28,6 +28,7 @@
  * Copyright (C) 2025		Vincent Maury				<vmaury@timgroup.fr>
  * Copyright (C) 2026		Benjamin Falière			<benjamin@faliere.com>
  * Copyright (C) 2026		Pierre Ardoin				<developpeur@lesmetiersdubatiment.fr>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3349,7 +3350,13 @@ function dol_get_fiche_end($notab = 0)
  */
 function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldid = 'rowid', $fieldref = 'ref', $morehtmlref = '', $moreparam = '', $nodbprefix = 0, $morehtmlleft = '', $morehtmlstatus = '', $onlybanner = 0, $morehtmlright = '')
 {
-	global $conf, $form, $user, $langs, $hookmanager, $action;
+	global $conf, $form, $user, $langs, $hookmanager, $action, $db;
+
+	// $form is created by the top or left menu, so it may not exist when menus are hidden (dol_hide_topmenu and dol_hide_leftmenu)
+	if (!is_object($form)) {
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+		$form = new Form($db);
+	}
 
 	$error = 0;
 
@@ -5031,7 +5038,10 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 	$newphoneastart = $newphoneaend = '';
 	if (!empty($addlink)) {	// Link on phone number (+ link to add action if conf->global->AGENDA_ADDACTIONFORPHONE set)
 		if ($addlink == 'tel' || $conf->browser->layout == 'phone' || (isModEnabled('clicktodial') && getDolGlobalString('CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS'))) {	// If phone or option for, we use link of phone
-			$newphoneastart = '<a href="tel:' . urlencode($phone) . '">';
+			// Keep the leading '+' of international numbers: it is allowed in a tel: URI (RFC 3966) and many
+			// softphones/CTI handlers do not decode '%2B', so they drop the '%' and dial a wrong leading '2'.
+			// Spaces were removed above, so a '+' produced here can only come from a real '+'.
+			$newphoneastart = '<a href="tel:' . str_replace('%2B', '+', urlencode($phone)) . '">';
 			$newphoneaend .= '</a>';
 		} elseif (isModEnabled('clicktodial') && $addlink == 'AC_TEL') {		// If click to dial, we use click to dial url
 			if (empty($user->clicktodial_loaded)) {
@@ -8625,12 +8635,12 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 			// Special case for india.
 			//print 'VATRULE 3b';
 			$reg = array();
-			if (preg_match('/C+S-(\d+)/', $tmpvat, $reg) && $thirdparty_seller->state_id != $thirdparty_buyer->state_id) {
-				// we must revert the C+S into I
-				$tmpvat = str_replace("C+S", "I", $tmpvat);
-			} elseif (preg_match('/I-(\d+)/', $tmpvat, $reg) && $thirdparty_seller->state_id == $thirdparty_buyer->state_id) {
-				// we must revert the I into C+S
-				$tmpvat = str_replace("I", "C+S", $tmpvat);
+			if (preg_match('/\(C\+S-(\d+(?:\.\d+)?)\)/', $tmpvat, $reg) && $thirdparty_seller->state_id != $thirdparty_buyer->state_id) {
+				// we must revert the C+S into I (rate of I-xx is xx)
+				$tmpvat = $reg[1].' (I-'.$reg[1].')';
+			} elseif (preg_match('/\(I-(\d+(?:\.\d+)?)\)/', $tmpvat, $reg) && $thirdparty_seller->state_id == $thirdparty_buyer->state_id) {
+				// we must revert the I into C+S (rate of C+S-xx is 0, xx is shared between localtax1 and localtax2)
+				$tmpvat = '0 (C+S-'.$reg[1].')';
 			}
 		}
 
@@ -9166,6 +9176,9 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 			"strong",
 			"title",
 			"table",
+			"tbody",
+			"thead",
+			"tfoot",
 			"tr",
 			"th",
 			"td",
@@ -10706,31 +10719,36 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				}
 				$extrafields->fetch_name_optionals_label($object->table_element, true);
 
-				if ($object->fetch_optionals() > 0) {	// @FIXME: Remove this, the fetch should have been done already, by the caller of getCommonSubstitutionArray()
-					if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0) {
+				// Use the extrafields already loaded into the object by the caller: no SQL access here, this function
+				// can be called thousands of times. Fetching them here also discarded values set by the caller but not
+				// saved yet (an object validated by an API or a connector inside the same write fires the notification
+				// triggers before its extrafields are stored).
+				if (!empty($object->array_options) && is_array($object->array_options)) {
+					if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label'])) {
 						foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label) {
+							$optionvalue = $object->array_options['options_' . $key] ?? null;	// Extrafields set by the caller may be partial
 							if ($extrafields->attributes[$object->table_element]['type'][$key] == 'date') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = dol_print_date($object->array_options['options_' . $key], 'day');
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_LOCALE__'] = dol_print_date($object->array_options['options_' . $key], 'day', 'tzserver', $outputlangs);
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_RFC__'] = dol_print_date($object->array_options['options_' . $key], 'dayrfc');
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = dol_print_date($optionvalue, 'day');
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_LOCALE__'] = dol_print_date($optionvalue, 'day', 'tzserver', $outputlangs);
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_RFC__'] = dol_print_date($optionvalue, 'dayrfc');
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'datetime') {
-								$datetime = $object->array_options['options_' . $key];
+								$datetime = $optionvalue;
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhour') : '');
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_LOCALE__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhour', 'tzserver', $outputlangs) : '');
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_DAY_LOCALE__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'day', 'tzserver', $outputlangs) : '');
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_RFC__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhourrfc') : '');
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'phone') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = dol_print_phone($object->array_options['options_' . $key]);
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = dol_print_phone($optionvalue);
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'price') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATED__'] = price($object->array_options['options_' . $key]);	// For compatibility
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATTED__'] = price($object->array_options['options_' . $key]);
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $optionvalue;
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATED__'] = price($optionvalue);	// For compatibility
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATTED__'] = price($optionvalue);
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'select') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = !empty($object->array_options['options_' . $key]) ? $object->array_options['options_' . $key] : '';
-								$val = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$object->array_options['options_'.$key]] ?? $object->array_options['options_'.$key];
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = !empty($optionvalue) ? $optionvalue : '';
+								$val = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$optionvalue] ?? $optionvalue;
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_LABEL__'] = $val;
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] != 'separator') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = !empty($object->array_options['options_' . $key]) ? $object->array_options['options_' . $key] : '';
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = !empty($optionvalue) ? $optionvalue : '';
 							}
 						}
 					}
@@ -15795,7 +15813,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 
 			if ($element_id > 0 || !empty($element_ref)) {
 				$ret = $objecttmp->fetch($element_id, $element_ref);
-				if ($ret >= 0) {
+				if ($ret > 0) {
 					if (empty($objecttmp->module)) {
 						$objecttmp->module = $element_prop['module'];
 					}

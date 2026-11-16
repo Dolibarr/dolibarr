@@ -110,23 +110,30 @@
 
 		/**
 		 * Defines a new secure tool.
+		 * A tool defined without overwrite is protected: it can never be replaced.
+		 * A tool defined with overwrite = true can be replaced later by another call with overwrite = true.
 		 * @param {string} name Name of the tool
 		 * @param {*} value Function, class or object
-		 * @param {boolean} overwrite Explicitly allow overwriting an existing tool
+		 * @param {boolean} overwrite false (default): the tool is immutable; true: it replaces an existing replaceable tool and may be replaced later
 		 *
 		 * See also dolibarr-context.mock.js for defining all standard Dolibarr tools and creating mock implementations to improve code completion and editor support.
 		 */
 		defineTool(name, value, overwrite = false, triggerHook = true) {
 			// Prevent silent overrides unless "overwrite" is true
-			if (!overwrite && this.checkToolExist(name)) {
-				throw new Error(`Dolibarr: Tool '${name}' already defined`);
+			if (this.checkToolExist(name)) {
+				if (!Object.getOwnPropertyDescriptor(_tools, name).configurable) {
+					throw new Error(`Dolibarr: Tool '${name}' already defined and protected`);
+				}
+				if (!overwrite) {
+					throw new Error(`Dolibarr: Tool '${name}' already defined`);
+				}
 			}
 
-			// Define the tool as read-only and non-configurable
+			// Define the tool as read-only; it stays replaceable only when defined with overwrite
 			Object.defineProperty(_tools, name, {
 				value,
 				writable: false,
-				configurable: false,
+				configurable: !!overwrite,
 				enumerable: true,
 			});
 
@@ -156,7 +163,7 @@
 		 * Defines a new context variable.
 		 * @param {string} key
 		 * @param {string|number|boolean} value
-		 * @param {boolean} overwrite Allow overwriting existing value
+		 * @param {boolean} overwrite false (default): the value is immutable; true: it replaces an existing replaceable value and may be replaced later
 		 */
 		setContextVar(key, value, overwrite = false) {
 			// Accept only string, number, or boolean
@@ -165,14 +172,20 @@
 				throw new TypeError(`Dolibarr: ContextVar '${key}' must be a string, number, or boolean`);
 			}
 
-			if (!overwrite && _contextVars.hasOwnProperty(key)) {
-				throw new Error(`Dolibarr: ContextVar '${key}' already defined`);
+			if (Object.prototype.hasOwnProperty.call(_contextVars, key)) {
+				if (!Object.getOwnPropertyDescriptor(_contextVars, key).configurable) {
+					throw new Error(`Dolibarr: ContextVar '${key}' already defined and protected`);
+				}
+				if (!overwrite) {
+					throw new Error(`Dolibarr: ContextVar '${key}' already defined`);
+				}
 			}
 
+			// Read-only; replaceable later only when set with overwrite
 			Object.defineProperty(_contextVars, key, {
 				value,
 				writable: false,
-				configurable: false,
+				configurable: !!overwrite,
 				enumerable: true
 			});
 
@@ -184,7 +197,7 @@
 		/**
 		 * Set multiple context variables
 		 * @param {Object} vars Object of key/value pairs
-		 * @param {boolean} overwrite Allow overwriting existing values
+		 * @param {boolean} overwrite false (default): the values are immutable; true: they replace existing replaceable values and may be replaced later
 		 */
 		setContextVars(vars, overwrite = false) {
 			if (typeof vars !== 'object' || vars === null) {

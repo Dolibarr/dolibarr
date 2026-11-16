@@ -1467,7 +1467,8 @@ abstract class CommonObject
 		// phpcs:enable
 		$contacts = $objFrom->liste_contact(-1, $source);
 		foreach ($contacts as $contact) {
-			if ($this->add_contact($contact['id'], $contact['fk_c_type_contact'], $contact['source']) < 0) {
+			// Type code, not id: the type id belongs to the source element and is wrong on another element type
+			if ($this->add_contact($contact['id'], $contact['code'], $contact['source']) < 0) {
 				return -1;
 			}
 		}
@@ -3884,7 +3885,7 @@ abstract class CommonObject
 		if ($absqty < (float) $packaging) {
 			return $sign * (float) $packaging;
 		}
-		if ((float) price2num(fmod($absqty, (float) $packaging), 'MS')) {
+		if ((float) price2num($absqty - round($absqty / (float) $packaging) * (float) $packaging, 'MS') != 0) {	// Not a multiple of the packaging (do not use fmod, it fails with decimal packaging)
 			$coeff = intval($absqty / (float) $packaging) + 1;
 			return $sign * (float) price2num((float) $packaging * $coeff, 'MS');
 		}
@@ -10921,7 +10922,7 @@ abstract class CommonObject
 
 		if (array_key_exists('date_creation', $fieldvalues) && empty($fieldvalues['date_creation'])) {
 			$fieldvalues['date_creation'] = $this->db->idate($now);
-			$this->date_creation = $this->db->idate($now);
+			$this->date_creation = $now;
 		}
 		// For backward compatibility, if a property ->fk_user_creat exists and not filled.
 		if (array_key_exists('fk_user_creat', $fieldvalues) && !($fieldvalues['fk_user_creat'] > 0)) {

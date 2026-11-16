@@ -864,7 +864,7 @@ class CodingPhpTest extends CommonClassTest
 				}
 			}
 
-			$this->assertTrue($ok, 'Found a test on $action, without check on permission on same line and without the comment "// Test on permission already done", in file '.$file['relativename'].'.');
+			$this->assertTrue($ok, 'Found a test on $action, without check on permission on same line and without the comment "// Test on permission (already done|done later|not required)", in file '.$file['relativename'].'.');
 		}
 	}
 

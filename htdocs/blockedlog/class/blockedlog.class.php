@@ -1243,7 +1243,16 @@ class BlockedLog
 	{
 		$aaa = null;
 		try {
-			$aaa = (object) jsonOrUnserialize($data, false);
+			$aaa = json_decode($data);
+			if ($aaa === null) {
+				// Records signed before v19 hold serialized stdClass objects, and their signature was computed on the
+				// print_r() of the decoded data. jsonOrUnserialize() forbids every class, so those sub-objects would come
+				// back as __PHP_Incomplete_Class, print_r() would render them differently and the signature would not
+				// match any more. stdClass is allowed here, and only stdClass: it declares no method at all, so it
+				// carries no __wakeup() or __destruct() to abuse, and any other class is still refused.
+				$aaa = unserialize($data, array('allowed_classes' => array('stdClass')));
+			}
+			$aaa = (object) $aaa;
 		} catch (Exception $e) {
 			// print $e->getErrs);
 		}

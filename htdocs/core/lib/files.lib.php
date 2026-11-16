@@ -3109,6 +3109,17 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	$ret = array();
 	$checksecureaccesshook = false;
 
+	// Security: Remove '.', '..' and empty segments ('/' -> '//') from $original_file. Without this, the reference
+	// of the object extracted from the subdirectory can be faked with a path like 'REF/./file' or 'REF//file':
+	// the reference resolved is '.' or '', the fetch of the object fails and some checks of permission are skipped.
+	$pathsegments = explode('/', $original_file);
+	foreach ($pathsegments as $key => $pathsegment) {
+		if ($pathsegment === '.' || $pathsegment === '..' || $pathsegment === '') {
+			unset($pathsegments[$key]);
+		}
+	}
+	$original_file = implode('/', $pathsegments);
+
 	// Find the subdirectory name as the reference. For example original_file='10/myfile.pdf' -> refname='10'
 	if (empty($refname)) {
 		$refname = basename(dirname($original_file)."/");
@@ -3292,8 +3303,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			if ($refname && !$fuser->hasRight('holiday', 'readall') && !preg_match('/^specimen/i', $original_file)) {
 				include_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 				$tmpholiday = new Holiday($db);
-				$tmpholiday->fetch(0, $refname);
-				$accessallowed = checkUserAccessToObject($user, array('holiday'), $tmpholiday, 'holiday', '', '', 'rowid', '');
+				$resultfetch = $tmpholiday->fetch(0, $refname);
+				// If the object of the document can not be resolved, we refuse the access
+				$accessallowed = ($resultfetch > 0) ? checkUserAccessToObject($user, array('holiday'), $tmpholiday, 'holiday', '', '', 'rowid', '') : 0;
 			}
 		}
 		$original_file = $conf->holiday->dir_output.'/'.$original_file;
@@ -3324,8 +3336,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			if ($refname && !$fuser->hasRight('expensereport', 'readall') && !preg_match('/^specimen/i', $original_file)) {
 				include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 				$tmpexpensereport = new ExpenseReport($db);
-				$tmpexpensereport->fetch(0, $refname);
-				$accessallowed = checkUserAccessToObject($user, array('expensereport'), $tmpexpensereport, 'expensereport', '', '', 'rowid', '');
+				$resultfetch = $tmpexpensereport->fetch(0, $refname);
+				// If the object of the document can not be resolved, we refuse the access
+				$accessallowed = ($resultfetch > 0) ? checkUserAccessToObject($user, array('expensereport'), $tmpexpensereport, 'expensereport', '', '', 'rowid', '') : 0;
 			}
 		}
 		$original_file = $conf->expensereport->dir_output.'/'.$original_file;
@@ -3400,16 +3413,23 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->tax->dir_output.'/'.($modulepartsuffix != 'tax' ? $modulepartsuffix.'/' : '').$original_file;
 	} elseif (($modulepart == 'actions' || $modulepart == 'actioncomm') && !empty($conf->agenda->dir_output)) {
 		// Wrapping for events
-		if ($fuser->hasRight('agenda', 'myactions', $read)) {
+		if ($fuser->hasRight('agenda', 'allactions', $read)) {
+			$accessallowed = 1;
+		} elseif ($fuser->hasRight('agenda', 'myactions', $read)) {
 			$accessallowed = 1;
 			// If we known $id of project, call checkUserAccessToObject to check permission on the given agenda event on properties and assigned users
 			if ($refname && !preg_match('/^specimen/i', $original_file)) {
 				include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 				$tmpobject = new ActionComm($db);
-				$tmpobject->fetch((int) $refname);
-				$accessallowed = checkUserAccessToObject($user, array('agenda'), $tmpobject->id, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id', '');
-				if ($user->socid && $tmpobject->socid) {
-					$accessallowed = checkUserAccessToObject($user, array('societe'), $tmpobject->socid);
+				$resultfetch = $tmpobject->fetch((int) $refname);
+				if ($resultfetch > 0) {
+					$accessallowed = checkUserAccessToObject($user, array('agenda'), $tmpobject->id, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id', '');
+					if ($user->socid && $tmpobject->socid) {
+						$accessallowed = checkUserAccessToObject($user, array('societe'), $tmpobject->socid);
+					}
+				} else {
+					// If the event of the document can not be resolved, we refuse the access
+					$accessallowed = 0;
 				}
 			}
 		}
@@ -3594,8 +3614,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			if ($refname && !preg_match('/^specimen/i', $original_file)) {
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$tmpproject = new Project($db);
-				$tmpproject->fetch(0, $refname);
-				$accessallowed = checkUserAccessToObject($user, array('projet'), $tmpproject->id, 'projet&project', '', '', 'rowid', '');
+				$resultfetch = $tmpproject->fetch(0, $refname);
+				// If the project of the document can not be resolved, checkUserAccessToObject is skipped so we refuse the access
+				$accessallowed = ($resultfetch > 0) ? checkUserAccessToObject($user, array('projet'), $tmpproject->id, 'projet&project', '', '', 'rowid', '') : 0;
 			}
 		}
 		$original_file = $conf->project->multidir_output[$entity].'/'.$original_file;
@@ -3607,8 +3628,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			if ($refname && !preg_match('/^specimen/i', $original_file)) {
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 				$tmptask = new Task($db);
-				$tmptask->fetch(0, $refname);
-				$accessallowed = checkUserAccessToObject($user, array('projet_task'), $tmptask->id, 'projet_task&project', '', '', 'rowid', '');
+				$resultfetch = $tmptask->fetch(0, $refname);
+				// If the task of the document can not be resolved, checkUserAccessToObject is skipped so we refuse the access
+				$accessallowed = ($resultfetch > 0) ? checkUserAccessToObject($user, array('projet_task'), $tmptask->id, 'projet_task&project', '', '', 'rowid', '') : 0;
 			}
 		}
 		$original_file = $conf->project->multidir_output[$entity].'/'.$original_file;
@@ -3618,14 +3640,14 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if ($fuser->hasRight('fournisseur', 'commande', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
-		$original_file = $conf->fournisseur->commande->dir_output.'/'.$original_file;
+		$original_file = (!empty($conf->fournisseur->commande->multidir_output[$entity]) ? $conf->fournisseur->commande->multidir_output[$entity] : $conf->fournisseur->commande->dir_output).'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE ref='".$db->escape($refname)."' AND entity = ".((int) $conf->entity);
 	} elseif (($modulepart == 'facture_fournisseur' || $modulepart == 'invoice_supplier' || $modulepart == 'supplier_invoice') && !empty($conf->fournisseur->facture->dir_output)) {
 		// Wrapping for supplier invoices
 		if ($fuser->hasRight('fournisseur', 'facture', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
-		$original_file = $conf->fournisseur->facture->dir_output.'/'.$original_file;
+		$original_file = (!empty($conf->fournisseur->facture->multidir_output[$entity]) ? $conf->fournisseur->facture->multidir_output[$entity] : $conf->fournisseur->facture->dir_output).'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture_fourn WHERE ref='".$db->escape($refname)."' AND entity=".((int) $conf->entity);
 	} elseif ($modulepart == 'supplier_payment') {
 		// Wrapping for supplier payments
@@ -3672,12 +3694,14 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->expedition->dir_output."/".(strpos($original_file, 'sending/') === 0 ? '' : 'sending/').$original_file;
 		//$original_file = $conf->expedition->dir_output."/".$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."expedition WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('expedition').")";
 	} elseif (($modulepart == 'livraison' || $modulepart == 'delivery') && !empty($conf->expedition->dir_output)) {
 		// Delivery Note Wrapping
 		if ($fuser->hasRight('expedition', 'delivery', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->expedition->dir_output."/".(strpos($original_file, 'receipt/') === 0 ? '' : 'receipt/').$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."delivery WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('delivery').")";
 	} elseif ($modulepart == 'actionsreport' && !empty($conf->agenda->dir_temp)) {
 		// Wrapping for actions
 		if ($fuser->hasRight('agenda', 'allactions', $read) || preg_match('/^specimen/i', $original_file)) {

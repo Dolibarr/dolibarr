@@ -1080,7 +1080,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 				// VAT
 				foreach ($this->tva_array as $tvakey => $tvaval) {
-					if ($tvakey != 0) {    // On affiche pas taux 0
+					if ((float) $tvakey != 0) {    // On affiche pas taux 0, $tvakey can be 'rate (code)'
 						$this->atleastoneratenotnull++;
 
 						$index++;
