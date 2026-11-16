@@ -80,6 +80,17 @@ if (GETPOSTISSET('type')) {
 // Security: Delete string ../ into $original_file
 $original_file = str_replace("../", "/", $original_file);
 
+// Security: Remove remaining '.', '..' and empty ('//' -> '/') segments, so the reference of the object
+// extracted from the subdirectory can not be faked with a path like 'REF/./file' or 'REF//file'.
+// The reference must also stay the same than the one resolved into dol_check_secure_access_document().
+$pathsegments = explode('/', $original_file);
+foreach ($pathsegments as $key => $pathsegment) {
+	if ($pathsegment === '.' || $pathsegment === '..' || $pathsegment === '') {
+		unset($pathsegments[$key]);
+	}
+}
+$original_file = implode('/', $pathsegments);
+
 // Cache or not
 if (GETPOST("cache", 'aZ09') || image_format_supported($original_file) >= 0) {
 	// Important: Following code is to avoid page request by browser and PHP CPU at

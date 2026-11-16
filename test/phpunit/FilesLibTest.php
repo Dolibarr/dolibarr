@@ -482,6 +482,15 @@ class FilesLibTest extends CommonClassTest
 		$result = dol_check_secure_access_document('facture', $filename, 0, '', '', 'write');
 		$this->assertEquals(0, $result['accessallowed']);
 
+		// Check that a faked path with '.', empty segments or a mix resolves to the same file than the clean path,
+		// so the reference extracted from the subdirectory to check the permission can not be faked ('REF/./file').
+		$user->rights->facture->lire = 1;
+		$user->rights->facture->creer = 1;
+		foreach (array('FA010101/./FA010101.pdf', 'FA010101//FA010101.pdf', 'FA010101/././FA010101.pdf', 'FA010101/.//FA010101.pdf') as $filename) {
+			$result = dol_check_secure_access_document('facture', $filename, 0, '', '', 'read');
+			$this->assertEquals(1, $result['accessallowed'], "Check access allowed to '$filename'".json_encode($result));
+			$this->assertStringEndsWith('/FA010101/FA010101.pdf', $result['original_file'], "Path of '$filename' must be normalized");
+		}
 
 		// We restore user properties
 		$user->rights->facture->lire = $savpermlire;
