@@ -639,7 +639,7 @@ function isValidVATID($company)
 		elseif ($vatprefix == 'MC') $vatprefix = 'FR';	// Monaco is using french VAT numbers
 		else $vatprefix = preg_quote($vatprefix, '/');*/
 		$vatprefix = '[a-zA-Z][a-zA-Z]';
-		if (!preg_match('/^'.$vatprefix.'[a-zA-Z0-9\-\.]{5,14}$/i', str_replace(' ', '', $company->tva_intra))) {
+		if (!preg_match('/^'.$vatprefix.'[a-zA-Z0-9\-\.]{5,14}$/i', str_replace(' ', '', (string) $company->tva_intra))) {
 			return 0;
 		}
 	}
