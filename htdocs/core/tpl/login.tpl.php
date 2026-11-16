@@ -156,7 +156,8 @@ $arrayofjs = array(
 // Javascript code for the login with a passkey. Not while a two-factor authentication code is asked.
 require_once DOL_DOCUMENT_ROOT.'/core/lib/passkey.lib.php';
 // The button is not shown if the setup is wrong: the reason is shown only to administrators on the setup page, not to visitors.
-$passkeyenabled = (passkeyIsEnabled() && !empty($conf->use_javascript_ajax) && empty($_SESSION['dol_totp_pending']) && passkeyCheckSetup() === '');
+$passkeytotppending = !empty($_SESSION['dol_totp_pending']);
+$passkeyenabled = (passkeyIsEnabled() && !empty($conf->use_javascript_ajax) && !$passkeytotppending && passkeyCheckSetup() === '');
 if ($passkeyenabled) {
 	$arrayofjs[] = '/core/js/passkey.js'.(empty($conf->dol_use_jmobile) ? '' : '?version='.urlencode(DOL_VERSION));
 }
