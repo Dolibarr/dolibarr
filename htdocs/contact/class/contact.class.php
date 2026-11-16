@@ -1026,7 +1026,9 @@ class Contact extends CommonObject
 			return -1;
 		}
 
-		$langs->loadLangs(array("dict", "companies"));
+		if (is_object($langs)) {	// $langs is null into pages with NOREQUIRETRAN, like viewimage.php
+			$langs->loadLangs(array("dict", "companies"));
+		}
 
 		$sql = "SELECT c.rowid, c.entity, c.fk_soc, c.ref_ext, c.civility as civility_code, c.name_alias, c.lastname, c.firstname,";
 		$sql .= " c.address, c.statut as status, c.zip, c.town,";
@@ -1083,7 +1085,7 @@ class Contact extends CommonObject
 				$this->ref_ext = $obj->ref_ext;
 
 				$this->civility_code = $obj->civility_code;
-				$this->civility = $obj->civility_code ? ($langs->trans("Civility".$obj->civility_code) != "Civility".$obj->civility_code ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code) : '';
+				$this->civility = $obj->civility_code ? ((is_object($langs) && $langs->trans("Civility".$obj->civility_code) != "Civility".$obj->civility_code) ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code) : '';
 
 				$this->name_alias	= $obj->name_alias;
 				$this->lastname		= $obj->lastname;
@@ -1103,7 +1105,7 @@ class Contact extends CommonObject
 
 				$this->country_id	= $obj->country_id;
 				$this->country_code	= $obj->country_id ? $obj->country_code : '';
-				$this->country		= $obj->country_id ? ($langs->trans('Country'.$obj->country_code) != 'Country'.$obj->country_code ? $langs->transnoentities('Country'.$obj->country_code) : $obj->country) : '';
+				$this->country		= $obj->country_id ? ((is_object($langs) && $langs->trans('Country'.$obj->country_code) != 'Country'.$obj->country_code) ? $langs->transnoentities('Country'.$obj->country_code) : $obj->country) : '';
 
 				$this->fk_soc		= $obj->fk_soc;		// Both fk_soc and socid are used
 				$this->socid		= $obj->fk_soc;		// Both fk_soc and socid are used
@@ -1114,7 +1116,7 @@ class Contact extends CommonObject
 
 				$this->fk_prospectlevel = $obj->fk_prospectlevel;
 
-				$transcode = $langs->trans('StatusProspect'.$obj->fk_stcommcontact);
+				$transcode = (is_object($langs) ? $langs->trans('StatusProspect'.$obj->fk_stcommcontact) : 'StatusProspect'.$obj->fk_stcommcontact);
 				$libelle = ($transcode != 'StatusProspect'.$obj->fk_stcommcontact ? $transcode : $obj->stcomm);
 				$this->stcomm_id = $obj->fk_stcommcontact; // id statut commercial
 				$this->statut_commercial = $libelle; // libelle statut commercial
@@ -1197,8 +1199,10 @@ class Contact extends CommonObject
 
 				return $this->id;
 			} else {
-				$langs->load('errors');
-				$this->error = $langs->trans("ErrorRecordNotFound");
+				if (is_object($langs)) {
+					$langs->load('errors');
+				}
+				$this->error = (is_object($langs) ? $langs->trans("ErrorRecordNotFound") : "ErrorRecordNotFound");
 				return 0;
 			}
 		} else {
