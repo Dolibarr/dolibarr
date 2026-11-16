@@ -981,7 +981,8 @@ class Facture extends CommonInvoice
 							$newinvoiceline->fk_unit,
 							$newinvoiceline->multicurrency_subprice,
 							$newinvoiceline->ref_ext,
-							1
+							1,
+							$newinvoiceline->extraparams
 						);
 
 						if ($result < 0) {
@@ -1183,15 +1184,9 @@ class Facture extends CommonInvoice
 						$_facrec->lines[$i]->fk_unit,
 						$_facrec->lines[$i]->multicurrency_subprice,
 						$_facrec->lines[$i]->ref_ext,
-						1
+						1,
+						$_facrec->lines[$i]->extraparams
 					);
-
-					foreach ($this->lines as $line) {
-						if ($line->id == $result_insert) {
-							$line->extraparams = $_facrec->lines[$i]->extraparams;
-							$line->setExtraParameters();
-						}
-					}
 
 					// Defined the new fk_parent_line
 					if ($result_insert > 0 && $_facrec->lines[$i]->product_type == 9) {
@@ -4540,6 +4535,7 @@ class Facture extends CommonInvoice
 	 *  @param	float			$pu_ht_devise				Unit price in foreign currency
 	 *  @param	string			$ref_ext		    		External reference of the line
 	 *  @param	int				$noupdateafterinsertline	No update after insert of line
+	 *  @param	array<string,mixed>|null	$extraparams		Extraparams array of the line
 	 *  @return	int             							Return integer <0 if KO, Id of line if OK
 	 */
 	public function addline(
@@ -4573,7 +4569,8 @@ class Facture extends CommonInvoice
 		$fk_unit = null,
 		$pu_ht_devise = 0,
 		$ref_ext = '',
-		$noupdateafterinsertline = 0
+		$noupdateafterinsertline = 0,
+		$extraparams = null
 	) {
 		// Deprecation warning
 		if ($label) {
@@ -4775,6 +4772,7 @@ class Facture extends CommonInvoice
 			$this->line->label = $label; // deprecated
 			$this->line->desc = $desc;
 			$this->line->ref_ext = $ref_ext;
+			$this->line->extraparams = $extraparams;
 
 			$this->line->qty = ($this->type == self::TYPE_CREDIT_NOTE ? abs((float) $qty) : (float) $qty); // For credit note, quantity is always positive and unit price negative
 			$this->line->subprice = ($apply_abs_price_on_credit_note ? -abs((float) $pu_ht) : (float) $pu_ht); // For credit note, unit price always negative, always positive otherwise

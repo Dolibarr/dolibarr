@@ -205,6 +205,63 @@ class RestAPIContractTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * testRestContractPutStatusRejected
+	 *
+	 * @return void
+	 */
+	public function testRestContractPutStatusRejected()
+	{
+		$test = "Change the status of a validated contract with PUT";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$this->createContractLine($contract_id, $test);
+			$this->getUrl('contracts/'.$contract_id.'/validate', "$test (validate)", 'POST', array("notrigger" => 0));
+			$result = $this->getUrl('contracts/'.$contract_id, "$test (read after validate)", 'GET');
+			$ref = $result['content']['ref'] ?? '';
+
+			foreach (array('statut', 'status') as $field) {
+				$this->getUrl('contracts/'.$contract_id, "$test ($field)", 'PUT', array($field => Contrat::STATUS_DRAFT), 400);
+
+				$result = $this->getUrl('contracts/'.$contract_id, "$test (read after $field)", 'GET');
+				$this->assertEquals(Contrat::STATUS_VALIDATED, $result['content']['status'] ?? null, "$test ($field) Contract must still be validated");
+				$this->assertEquals($ref, $result['content']['ref'] ?? '', "$test ($field) Ref must not change");
+			}
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
+	}
+
+	/**
+	 * testRestContractPutUnchangedStatus
+	 *
+	 * @return void
+	 */
+	public function testRestContractPutUnchangedStatus()
+	{
+		$test = "Update a contract with PUT, sending back its unchanged status";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$note = "API test note ".dol_now();
+			$data = array(
+				"statut" => Contrat::STATUS_DRAFT,
+				"status" => Contrat::STATUS_DRAFT,
+				"note_public" => $note,
+			);
+			$this->getUrl('contracts/'.$contract_id, $test, 'PUT', $data);
+
+			$result = $this->getUrl('contracts/'.$contract_id, "$test (read after update)", 'GET');
+			$this->assertEquals(Contrat::STATUS_DRAFT, $result['content']['status'] ?? null, "$test Contract must still be a draft");
+			$this->assertEquals($note, $result['content']['note_public'] ?? '', "$test Public note must be updated");
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
+	}
+
+	/**
 	 * testRestContractDeleteLineUnknownLine
 	 *
 	 * @return void
