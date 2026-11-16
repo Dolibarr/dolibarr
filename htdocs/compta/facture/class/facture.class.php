@@ -708,12 +708,12 @@ class Facture extends CommonInvoice
 
 			// Array of possible substitutions (See also file mailing-send.php that should manage same substitutions)
 			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $this);
-			$substitutionarray['__INVOICE_PREVIOUS_MONTH__'] = dol_print_date(dol_time_plus_duree($this->date, -1, 'm', 0, 'tzserver'), '%m');
+			$substitutionarray['__INVOICE_PREVIOUS_MONTH__'] = dol_print_date(dol_time_plus_duree($this->date, -1, 'm', 1, 'tzserver'), '%m');
 			$substitutionarray['__INVOICE_MONTH__'] = dol_print_date($this->date, '%m');
-			$substitutionarray['__INVOICE_NEXT_MONTH__'] = dol_print_date(dol_time_plus_duree($this->date, 1, 'm', 0, 'tzserver'), '%m');
-			$substitutionarray['__INVOICE_PREVIOUS_MONTH_TEXT__'] = dol_print_date(dol_time_plus_duree($this->date, -1, 'm', 0, 'tzserver'), '%B');
+			$substitutionarray['__INVOICE_NEXT_MONTH__'] = dol_print_date(dol_time_plus_duree($this->date, 1, 'm', 1, 'tzserver'), '%m');
+			$substitutionarray['__INVOICE_PREVIOUS_MONTH_TEXT__'] = dol_print_date(dol_time_plus_duree($this->date, -1, 'm', 1, 'tzserver'), '%B');
 			$substitutionarray['__INVOICE_MONTH_TEXT__'] = dol_print_date($this->date, '%B');
-			$substitutionarray['__INVOICE_NEXT_MONTH_TEXT__'] = dol_print_date(dol_time_plus_duree($this->date, 1, 'm', 0, 'tzserver'), '%B');
+			$substitutionarray['__INVOICE_NEXT_MONTH_TEXT__'] = dol_print_date(dol_time_plus_duree($this->date, 1, 'm', 1, 'tzserver'), '%B');
 			$substitutionarray['__INVOICE_PREVIOUS_YEAR__'] = dol_print_date(dol_time_plus_duree($this->date, -1, 'y', 0, 'tzserver'), '%Y');
 			$substitutionarray['__INVOICE_YEAR__'] = dol_print_date($this->date, '%Y');
 			$substitutionarray['__INVOICE_NEXT_YEAR__'] = dol_print_date(dol_time_plus_duree($this->date, 1, 'y', 0, 'tzserver'), '%Y');
@@ -981,7 +981,8 @@ class Facture extends CommonInvoice
 							$newinvoiceline->fk_unit,
 							$newinvoiceline->multicurrency_subprice,
 							$newinvoiceline->ref_ext,
-							1
+							1,
+							$newinvoiceline->extraparams
 						);
 
 						if ($result < 0) {
@@ -1170,15 +1171,9 @@ class Facture extends CommonInvoice
 						$_facrec->lines[$i]->fk_unit,
 						$_facrec->lines[$i]->multicurrency_subprice,
 						$_facrec->lines[$i]->ref_ext,
-						1
+						1,
+						$_facrec->lines[$i]->extraparams
 					);
-
-					foreach ($this->lines as $line) {
-						if ($line->id == $result_insert) {
-							$line->extraparams = $_facrec->lines[$i]->extraparams;
-							$line->setExtraParameters();
-						}
-					}
 
 					// Defined the new fk_parent_line
 					if ($result_insert > 0 && $_facrec->lines[$i]->product_type == 9) {
@@ -4527,6 +4522,7 @@ class Facture extends CommonInvoice
 	 *  @param	float			$pu_ht_devise				Unit price in foreign currency
 	 *  @param	string			$ref_ext		    		External reference of the line
 	 *  @param	int				$noupdateafterinsertline	No update after insert of line
+	 *  @param	array<string,mixed>|null	$extraparams		Extraparams array of the line
 	 *  @return	int             							Return integer <0 if KO, Id of line if OK
 	 */
 	public function addline(
@@ -4560,7 +4556,8 @@ class Facture extends CommonInvoice
 		$fk_unit = null,
 		$pu_ht_devise = 0,
 		$ref_ext = '',
-		$noupdateafterinsertline = 0
+		$noupdateafterinsertline = 0,
+		$extraparams = null
 	) {
 		// Deprecation warning
 		if ($label) {
@@ -4762,6 +4759,7 @@ class Facture extends CommonInvoice
 			$this->line->label = $label; // deprecated
 			$this->line->desc = $desc;
 			$this->line->ref_ext = $ref_ext;
+			$this->line->extraparams = $extraparams;
 
 			$this->line->qty = ($this->type == self::TYPE_CREDIT_NOTE ? abs((float) $qty) : (float) $qty); // For credit note, quantity is always positive and unit price negative
 			$this->line->subprice = ($apply_abs_price_on_credit_note ? -abs((float) $pu_ht) : (float) $pu_ht); // For credit note, unit price always negative, always positive otherwise
@@ -6941,6 +6939,38 @@ class Facture extends CommonInvoice
 			return $error;
 		}
 	}
+
+	/**
+	 *	Load an invoice and return the value of a substitution key that needs a database read.
+	 *	Called by make_substitutions() only when the key is present in the text, see the
+	 *	lazyload note on getCommonSubstitutionArray().
+	 *
+	 *	@param	int		$id			Id of invoice to load
+	 *	@param	string	$key		Substitution key to return, like '__PAYMENT_VIRTUAL_BARCODE__'
+	 *	@param	bool	$fetched	True if the object was already loaded by a previous call
+	 *	@return	string				Value to use for the substitution
+	 */
+	public function fetchAndSetSubstitution($id, $key, $fetched = false)
+	{
+		// Only this key needs the database, so any other one returns before the fetch
+		if ($key != '__PAYMENT_VIRTUAL_BARCODE__') {
+			return '';
+		}
+
+		// make_substitutions() keeps the object between calls and then passes $fetched
+		// as true. The object may still be empty if the previous call was for a key
+		// that returned before the fetch, so the id is checked too.
+		if ($fetched === false || empty($this->id)) {
+			if ($this->fetch($id) <= 0) {
+				return '';
+			}
+		}
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_fi.lib.php';
+
+		return (string) dolFIFormatVirtualBarcode(dolFIGetInvoiceBarcodeData($this));
+	}
+
 
 	/**
 	 * See if current invoice date is posterior to the last invoice date among validated invoices of same type.

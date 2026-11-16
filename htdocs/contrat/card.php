@@ -1453,6 +1453,7 @@ if ($action == 'create') {
 				'type' 		=> 'select',
 				'name' 		=> 'signed_status',
 				'label'		=> '<span class="fieldrequired">'.$langs->trans('SignStatus').'</span>',
+				'morecss'	=> 'minwidth200',
 				'values'	=> $object->getSignedStatusLocalisedArray()
 			];
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SignContract'), $text, 'confirm_sign', $formquestion, 0, 1);
