@@ -373,7 +373,7 @@ if (empty($reshook)) {
 			$action = '';
 		}
 	} elseif ($action == 'confirm_delete_subtotalline' && $confirm == 'yes' && $usercancreate) {
-		$result = $object->deleteSubtotalLine($langs, GETPOSTINT('lineid'), (bool) GETPOST('deletecorrespondingsubtotalline'), $user, (bool) GETPOST('deleteblocklines'));
+		$result = $object->deleteSubtotalLine($langs, GETPOSTINT('lineid'), (bool) GETPOST('deletecorrespondingsubtotalline'));
 		if ($result > 0) {
 			// reorder lines
 			$object->line_order(true);
