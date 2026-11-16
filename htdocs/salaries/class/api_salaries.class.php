@@ -463,7 +463,7 @@ class Salaries extends DolibarrApi
 		// Check the salary the payment is attached to is inside the scope of the current user
 		$salary = new Salary($this->db);
 		if ($salary->fetch($paymentsalary->fk_salary) <= 0) {
-			throw new RestException(404, 'Payment salary not found');
+			throw new RestException(404, 'Salary not found');
 		}
 		$this->_checkAccessToSalary($salary);
 
