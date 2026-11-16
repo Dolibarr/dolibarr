@@ -411,8 +411,9 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 				// All dirs
 				$nboflinesshown = 0;
 				foreach ($files as $file) {
-					// $file can be '.', '..', 'temp', or 'My dir' or 'My file'
-					if (in_array($file, array('temp', '.', '..'))) {
+					// $file can be '.', '..', 'temp', or 'My dir' or 'My file'. Hidden entries (like the directory .versions
+					// with the previous versions of the files) are not shown.
+					if (in_array($file, array('temp', '.', '..')) || strpos($file, '.') === 0) {
 						continue;
 					}
 
@@ -467,7 +468,8 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 
 						$nboflinesshown++;
 
-						print '<li class="directory '.$collapsedorexpanded.' lidirecm">'; // collapsed is opposite if expanded
+						// lidirecmwithsubdir: the directory has sub directories, the theme shows a marker after its name
+						print '<li class="directory '.$collapsedorexpanded.' lidirecm'.($nbofsubdir > 0 ? ' lidirecmwithsubdir' : '').'">'; // collapsed is opposite if expanded
 
 						//print '<div class="divfmdirlia inline-block">';	// Disabled, this break the javascrip component
 						print '<a class="fmdirlia jqft ecmjqft" href="';

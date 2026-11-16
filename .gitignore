@@ -73,6 +73,7 @@ doc/install.lock
 # Local phpstan configuration
 /phpstan.neon
 /phpstan-baseline.neon
+/phpstan_apstats.neon
 
 # Logs
 *.log
