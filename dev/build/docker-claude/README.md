@@ -77,6 +77,7 @@ Each time the image is rebuilt with changes, the previous image is kept untagged
 ````
 claudes --clean-images
 ````
+A container still running with an obsolete image prevents its removal (even with `docker rmi -f`), so the containers still using an obsolete image are stopped and removed first (the containers started by `claudes.sh` use `--rm`: stopping them removes them). Their Claude Code sessions are not lost, they are stored in `~/.claude` of the host and can be resumed with `claudes --continue`.
 
 Into the container, the directory `.claude` (with the links `skills`, `agents` and `hooks` to the same entries of `.agents`) and
 the link `CLAUDE.md` (to `.agents/AGENTS.md`) are created at the root of the repository when they do not exist, so Claude Code
