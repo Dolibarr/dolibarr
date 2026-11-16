@@ -1494,10 +1494,6 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$upload_dir = $conf->expensereport->dir_output;
-	// Security: $upload_dir is the module root, so the file to remove must be inside the directory of the current expense report
-	if ($action == 'remove_file' && (empty($object->id) || dirname(GETPOST('file', 'alpha')) !== dol_sanitizeFileName($object->ref))) {
-		accessforbidden();
-	}
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
