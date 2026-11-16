@@ -150,7 +150,7 @@ $php_self = preg_replace('/(&amp;)+/', '&amp;', $php_self);
 
 // Javascript code on logon page only to detect user tz, dst_observed, dst_first, dst_second
 $arrayofjs = array(
-	'/core/js/dst.js'.(empty($conf->dol_use_jmobile) ? '' : '?version='.urlencode(DOL_VERSION))
+	'/core/js/dst.js'.(empty($conf->dol_use_jmobile) ? '' : '?version='.urlencode(getDolVersionForUrl()))
 );
 
 // We display application title

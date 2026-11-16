@@ -109,7 +109,9 @@ if ($action == 'updateform') {
 
 		$res8 = dolibarr_set_const($db, "MAIN_SECURITY_MAXFILESIZE_DOWNLOADED", GETPOST('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED', 'alpha'), 'chaine', 0, '', $conf->entity);
 
-		if ($res3 && $res4 && $res5 && $res6 && $res7 && $res8) {
+		$res9 = dolibarr_set_const($db, "MAIN_DOCUMENT_KEEP_VERSIONS", max(0, GETPOSTINT('MAIN_DOCUMENT_KEEP_VERSIONS')), 'chaine', 0, '', $conf->entity);
+
+		if ($res3 && $res4 && $res5 && $res6 && $res7 && $res8 && $res9) {
 			setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 		}
 	}
@@ -215,6 +217,16 @@ print '</td>';
 print '<td>';
 print '<input type="text" name="MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION" class="minwidth500imp" spellcheck="false" value="'.getDolGlobalString('MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION', implode(',', getExecutableContent())).'">';
 print "</td>";
+print '</tr>';
+
+// Previous versions kept when a file is replaced by an upload
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("DocumentKeepVersions").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("DocumentKeepVersionsDesc", $langs->transnoentitiesnoconv("OverwriteIfExists")).'</span>';
+print '</td>';
+print '<td class="nowrap">';
+print '<input class="flat width75 right" name="MAIN_DOCUMENT_KEEP_VERSIONS" type="number" min="0" spellcheck="false" value="'.getDolGlobalInt('MAIN_DOCUMENT_KEEP_VERSIONS').'">';
+print '</td>';
 print '</tr>';
 
 
