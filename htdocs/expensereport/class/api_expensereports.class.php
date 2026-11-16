@@ -131,6 +131,8 @@ class ExpenseReports extends DolibarrApi
 	 * Get a list of Expense Reports
 	 *
 	 * @since	5.0.0	Initial implementation
+	 * @since	19.0.0	Added parameter $properties
+	 * @since	21.0.0	Added parameter $pagination_data
 	 *
 	 * @param	string		$sortfield			Sort field
 	 * @param	string		$sortorder			Sort order
@@ -815,7 +817,7 @@ class ExpenseReports extends DolibarrApi
 	 *   "notrigger": 0
 	 * }
 	 *
-	 * @since	22.0.0	Initial implementation
+	 * @since	24.0.0	Initial implementation
 	 *
 	 * @param	int		$id				Expense report ID
 	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
@@ -1088,6 +1090,7 @@ class ExpenseReports extends DolibarrApi
 	 * Update a payment of an expense report
 	 *
 	 * @since	20.0.0	Initial implementation
+	 * @since	24.0.2	Route changed from PUT {id}/payments to PUT {id}/payments/{idp}
 	 *
 	 * @param	int		$id				ID of ExpenseReport
 	 * @param	int		$idp			ID of paymentExpenseReport
