@@ -380,6 +380,21 @@ function getDolGlobalFloat($key, $default = 0)
 }
 
 /**
+ * Return the version to add into URLs of CSS and JS files.
+ * With MAIN_HIDE_VERSION, a hash of the version is returned: the version is not disclosed but the browser cache is still refreshed after an upgrade.
+ *
+ * @return string		Version or hash of version
+ */
+function getDolVersionForUrl()
+{
+	global $conf;
+	if (getDolGlobalInt('MAIN_HIDE_VERSION')) {
+		return substr(hash('sha256', DOL_VERSION.(empty($conf->file->instance_unique_id) ? '' : $conf->file->instance_unique_id)), 0, 8);
+	}
+	return DOL_VERSION;
+}
+
+/**
  * Return a Dolibarr global constant boolean value.
  * The constants $conf->global->xxx are loaded by the script master.inc.php included at begin of any PHP page.
  *
@@ -7738,7 +7753,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				// saved yet (an object validated by an API or a connector inside the same write fires the notification
 				// triggers before its extrafields are stored).
 				if (!empty($object->array_options) && is_array($object->array_options)) {
-					if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0) {
+					if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label'])) {
 						foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label) {
 							$optionvalue = $object->array_options['options_' . $key] ?? null;	// Extrafields set by the caller may be partial
 							if ($extrafields->attributes[$object->table_element]['type'][$key] == 'date') {
