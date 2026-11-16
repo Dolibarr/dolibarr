@@ -1415,8 +1415,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.dolPrintHTMLForAttribute($object->name).'" autofocus="autofocus" spellcheck="false">';
 			print $form->widgetForTranslation("name", $object, $permissiontoadd, 'string', 'alphanohtml', 'minwidth300');	// For some countries that need the company name in 2 languages
 			// Warn about possible duplicates while typing the name (hidden option SOCIETE_CHECK_DUPLICATE_NAME_ON_CREATE).
- 			// We keep the input text and call societe/ajax/ajaxcompanies.php, then show the first answers into a div under the input.
- 			if ($conf->use_javascript_ajax && getDolGlobalString('SOCIETE_CHECK_DUPLICATE_NAME_ON_CREATE')) {
+			// We keep the input text and call societe/ajax/ajaxcompanies.php, then show the first answers into a div under the input.
+			if ($conf->use_javascript_ajax && getDolGlobalString('SOCIETE_CHECK_DUPLICATE_NAME_ON_CREATE')) {
 				print '<div id="namecheckduplicate" class="warning hideobject" style="margin-top: 5px"></div>';
 				print '<script>
 				$(document).ready(function () {
