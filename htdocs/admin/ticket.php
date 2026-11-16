@@ -158,12 +158,6 @@ if ($action == 'updateMask') {
 			$error++;
 		}
 
-		$param_auto_assign = GETPOST('TICKET_AUTO_ASSIGN_USER_CREATE', 'alpha');
-		$res = dolibarr_set_const($db, 'TICKET_AUTO_ASSIGN_USER_CREATE', $param_auto_assign, 'chaine', 0, '', $conf->entity);
-		if (!($res > 0)) {
-			$error++;
-		}
-
 		$param_auto_notify_close = GETPOST('TICKET_NOTIFY_AT_CLOSING', 'alpha');
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFY_AT_CLOSING', $param_auto_notify_close, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
@@ -171,6 +165,11 @@ if ($action == 'updateMask') {
 		}
 	}
 
+	$param_auto_assign = GETPOSTINT('TICKET_AUTO_ASSIGN_USER_CREATE');
+	$res = dolibarr_set_const($db, 'TICKET_AUTO_ASSIGN_USER_CREATE', $param_auto_assign, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
 	$param_limit_view = GETPOST('TICKET_LIMIT_VIEW_ASSIGNED_ONLY', 'alpha');
 	$res = dolibarr_set_const($db, 'TICKET_LIMIT_VIEW_ASSIGNED_ONLY', $param_limit_view, 'chaine', 0, '', $conf->entity);
 	if (!($res > 0)) {
@@ -565,7 +564,12 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("TicketsAutoAssignTicket").'</td>';
 print '<td class="left">';
-print '<input class="minwidth100" type="text" id="TICKET_AUTO_ASSIGN_USER_CREATE" name="TICKET_AUTO_ASSIGN_USER_CREATE" value="'.getDolGlobalString('TICKET_AUTO_ASSIGN_USER_CREATE').'">';
+$arrval = array(
+	'0' => $langs->trans("TicketsAutoAssignTicketNever"),
+	'1' => $langs->trans("TicketsAutoAssignTicketIfNoneAssigned"),
+	'2' => $langs->trans("TicketsAutoAssignTicketAlways"),
+);
+print $formcategory->selectarray("TICKET_AUTO_ASSIGN_USER_CREATE", $arrval, getDolGlobalInt('TICKET_AUTO_ASSIGN_USER_CREATE'), 0, 0, 0, '', 0, 0, 0, '', 'minwidth300');
 print '</td>';
 print '<td class="center">';
 print $formcategory->textwithpicto('', $langs->trans("TicketsAutoAssignTicketHelp"), 1, 'help');
