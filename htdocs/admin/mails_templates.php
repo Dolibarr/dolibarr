@@ -413,8 +413,8 @@ if (empty($reshook)) {
 		// Check that all fields are filled
 		$ok = 1;
 		foreach ($listfield as $f => $value) {
-			// Not mandatory fields
-			if (in_array($value, ['joinfiles', 'defaultfortype', 'content', 'content_lines', 'module', 'tms', 'datec', 'email_to', 'email_tocc', 'email_tobcc'])) {
+			// Not mandatory fields (a template without topic keeps the subject of the mail, e.g. for an answer)
+			if (in_array($value, ['topic', 'joinfiles', 'defaultfortype', 'content', 'content_lines', 'module', 'tms', 'datec', 'email_to', 'email_tocc', 'email_tobcc'])) {
 				continue;
 			}
 
@@ -1547,7 +1547,8 @@ if ($action != 'create') {
 							$tmpvar = $fieldlist[$field];
 							$valuetoshow = $obj->$tmpvar;
 							if ($value == 'label' || $value == 'topic') {
-								if ($langs->trans($valuetoshow) != $valuetoshow) {
+								$valuetoshow = (string) $valuetoshow;	// topic may be null
+								if ($valuetoshow !== '' && $langs->trans($valuetoshow) != $valuetoshow) {
 									$valuetoshow = $langs->trans($valuetoshow);
 								}
 								$valuetoshow = dol_escape_htmltag($valuetoshow);
