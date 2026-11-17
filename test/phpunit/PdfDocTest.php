@@ -170,4 +170,52 @@ class PdfDocTest extends CommonClassTest
 			}
 		}
 	}
+
+	/**
+	 * testPdfGetLineTotalDiscountAmountIgnoresUnitPriceRounding
+	 *
+	 * @return void
+	 */
+	public function testPdfGetLineTotalDiscountAmountIgnoresUnitPriceRounding()
+	{
+		global $conf, $db, $langs;
+
+		$savedUnitDecimals = getDolGlobalString('MAIN_MAX_DECIMALS_UNIT');
+		$savedTotalDecimals = getDolGlobalString('MAIN_MAX_DECIMALS_TOT');
+		$conf->global->MAIN_MAX_DECIMALS_UNIT = 5;
+		$conf->global->MAIN_MAX_DECIMALS_TOT = 2;
+
+		$object = new Propal($db);
+		$object->lines = array();
+
+		// total_ht was computed from 6485 / 15300 before subprice was stored rounded to 5 decimals
+		$object->lines[0] = new PropaleLigne($db);
+		$object->lines[0]->qty = 15300;
+		$object->lines[0]->subprice = 0.42386;
+		$object->lines[0]->total_ht = 6485;
+		$object->lines[0]->multicurrency_subprice = 0.42386;
+		$object->lines[0]->multicurrency_total_ht = 6485;
+
+		$object->lines[1] = new PropaleLigne($db);
+		$object->lines[1]->qty = 3;
+		$object->lines[1]->subprice = 10;
+		$object->lines[1]->remise_percent = 10;
+		$object->lines[1]->total_ht = 27;
+
+		$object->lines[2] = new PropaleLigne($db);
+		$object->lines[2]->qty = 1;
+		$object->lines[2]->subprice = 0.99;
+		$object->lines[2]->remise_percent = 1;
+		$object->lines[2]->total_ht = 0.98;
+
+		try {
+			$this->assertEquals(0, pdfGetLineTotalDiscountAmount($object, 0, $langs, 2));
+			$this->assertEquals(0, pdfGetLineTotalDiscountAmount($object, 0, $langs, 2, 1));
+			$this->assertEquals(3, pdfGetLineTotalDiscountAmount($object, 1, $langs, 2));
+			$this->assertEquals(0.01, pdfGetLineTotalDiscountAmount($object, 2, $langs, 2));
+		} finally {
+			$conf->global->MAIN_MAX_DECIMALS_UNIT = $savedUnitDecimals;
+			$conf->global->MAIN_MAX_DECIMALS_TOT = $savedTotalDecimals;
+		}
+	}
 }

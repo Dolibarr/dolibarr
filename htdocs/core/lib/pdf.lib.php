@@ -2949,12 +2949,21 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 
 		if (empty($hidedetails) || $hidedetails > 1) {
 			if (empty($multicurrency)) {
-				$diff = (float) price2num($sign * $object->lines[$i]->subprice * (float) $object->lines[$i]->qty, 'MT', 1) - $object->lines[$i]->total_ht;
-				return (float) price2num($diff, 'MT', 1);
+				$amountBeforeDiscount = $sign * $object->lines[$i]->subprice * (float) $object->lines[$i]->qty;
+				$totalHt = $object->lines[$i]->total_ht;
+				$unitPriceDecimals = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT');
 			} else {
-				$diff = (float) price2num($sign * $object->lines[$i]->multicurrency_subprice * (float) $object->lines[$i]->qty, 'MT', 1) - $object->lines[$i]->multicurrency_total_ht;
-				return (float) price2num($diff, 'MT', 1);
+				$amountBeforeDiscount = $sign * $object->lines[$i]->multicurrency_subprice * (float) $object->lines[$i]->qty;
+				$totalHt = $object->lines[$i]->multicurrency_total_ht;
+				$unitPriceDecimals = getDolGlobalInt('MAIN_MAX_DECIMALS_CURRENCY_UNIT', getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT'));
 			}
+			// The total is computed with the unit price before it is stored rounded, so qty * subprice may drift from it by this much
+			$roundingDrift = abs((float) $object->lines[$i]->qty) * 0.5 * pow(10, -$unitPriceDecimals) + 0.5 * pow(10, -getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'));
+			if (abs($amountBeforeDiscount - $totalHt) <= $roundingDrift) {
+				return 0;
+			}
+			$diff = (float) price2num($amountBeforeDiscount, 'MT', 1) - $totalHt;
+			return (float) price2num($diff, 'MT', 1);
 		}
 	}
 	return 0;
