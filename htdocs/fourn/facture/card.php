@@ -4275,8 +4275,8 @@ if ($action == 'create') {
 				if (isModEnabled("bank")) {
 					print '<td class="right">'.$langs->trans('BankAccount').'</td>';
 				}
-				// Action
-				print '<td></td>';
+				// Action or Currency
+				print '<td class="right">'.$langs->trans('Currency').'</td>';
 				// Amount
 				print '<td class="right">'.$langs->trans('Amount').'</td>';
 				print '</tr>';
