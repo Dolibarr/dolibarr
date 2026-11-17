@@ -607,14 +607,6 @@ class Product extends CommonObject
 	 * @var ?string
 	 */
 	public $accountancy_code_buy_export;
-	/**
-	 * @var ?string
-	 */
-	public $accountancy_code_stock;
-	/**
-	 * @var ?string
-	 */
-	public $accountancy_code_cogs;
 
 	/**
 	 * @var string|int	Main Barcode value, -1 or 'auto' for auto code
@@ -1068,8 +1060,6 @@ class Product extends CommonObject
 		$this->accountancy_code_buy = trim((string) $this->accountancy_code_buy);
 		$this->accountancy_code_buy_intra = trim((string) $this->accountancy_code_buy_intra);
 		$this->accountancy_code_buy_export = trim((string) $this->accountancy_code_buy_export);
-		$this->accountancy_code_stock = trim((string) $this->accountancy_code_stock);
-		$this->accountancy_code_cogs = trim((string) $this->accountancy_code_cogs);
 		$this->accountancy_code_sell = trim((string) $this->accountancy_code_sell);
 		$this->accountancy_code_sell_intra = trim((string) $this->accountancy_code_sell_intra);
 		$this->accountancy_code_sell_export = trim((string) $this->accountancy_code_sell_export);
@@ -1082,8 +1072,6 @@ class Product extends CommonObject
 			$this->accountancy_code_buy = clean_account($this->accountancy_code_buy);
 			$this->accountancy_code_buy_intra = clean_account($this->accountancy_code_buy_intra);
 			$this->accountancy_code_buy_export = clean_account($this->accountancy_code_buy_export);
-			$this->accountancy_code_stock = clean_account($this->accountancy_code_stock);
-			$this->accountancy_code_cogs = clean_account($this->accountancy_code_cogs);
 			$this->accountancy_code_sell = clean_account($this->accountancy_code_sell);
 			$this->accountancy_code_sell_intra = clean_account($this->accountancy_code_sell_intra);
 			$this->accountancy_code_sell_export = clean_account($this->accountancy_code_sell_export);
@@ -1171,8 +1159,6 @@ class Product extends CommonObject
 						$sql .= ", accountancy_code_buy";
 						$sql .= ", accountancy_code_buy_intra";
 						$sql .= ", accountancy_code_buy_export";
-						$sql .= ", accountancy_code_stock";
-						$sql .= ", accountancy_code_cogs";
 						$sql .= ", accountancy_code_sell";
 						$sql .= ", accountancy_code_sell_intra";
 						$sql .= ", accountancy_code_sell_export";
@@ -1208,8 +1194,6 @@ class Product extends CommonObject
 						$sql .= ", '".$this->db->escape($this->accountancy_code_buy)."'";
 						$sql .= ", '".$this->db->escape($this->accountancy_code_buy_intra)."'";
 						$sql .= ", '".$this->db->escape($this->accountancy_code_buy_export)."'";
-						$sql .= ", '".$this->db->escape($this->accountancy_code_stock)."'";
-						$sql .= ", '".$this->db->escape($this->accountancy_code_cogs)."'";
 						$sql .= ", '".$this->db->escape($this->accountancy_code_sell)."'";
 						$sql .= ", '".$this->db->escape($this->accountancy_code_sell_intra)."'";
 						$sql .= ", '".$this->db->escape($this->accountancy_code_sell_export)."'";
@@ -1259,8 +1243,6 @@ class Product extends CommonObject
 								$sql .= ", accountancy_code_buy";
 								$sql .= ", accountancy_code_buy_intra";
 								$sql .= ", accountancy_code_buy_export";
-								$sql .= ", accountancy_code_stock";
-								$sql .= ", accountancy_code_cogs";
 								$sql .= ", accountancy_code_sell";
 								$sql .= ", accountancy_code_sell_intra";
 								$sql .= ", accountancy_code_sell_export";
@@ -1270,8 +1252,6 @@ class Product extends CommonObject
 								$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
 								$sql .= ", '" . $this->db->escape($this->accountancy_code_buy_intra) . "'";
 								$sql .= ", '" . $this->db->escape($this->accountancy_code_buy_export) . "'";
-								$sql .= ", '" . $this->db->escape($this->accountancy_code_stock) . "'";
-								$sql .= ", '" . $this->db->escape($this->accountancy_code_cogs) . "'";
 								$sql .= ", '" . $this->db->escape($this->accountancy_code_sell) . "'";
 								$sql .= ", '" . $this->db->escape($this->accountancy_code_sell_intra) . "'";
 								$sql .= ", '" . $this->db->escape($this->accountancy_code_sell_export) . "'";
@@ -1529,8 +1509,6 @@ class Product extends CommonObject
 		$this->accountancy_code_buy = trim((string) $this->accountancy_code_buy);
 		$this->accountancy_code_buy_intra = (!empty($this->accountancy_code_buy_intra) ? trim($this->accountancy_code_buy_intra) : '');
 		$this->accountancy_code_buy_export = trim((string) $this->accountancy_code_buy_export);
-		$this->accountancy_code_stock = trim((string) $this->accountancy_code_stock);
-		$this->accountancy_code_cogs = trim((string) $this->accountancy_code_cogs);
 		$this->accountancy_code_sell = trim((string) $this->accountancy_code_sell);
 		$this->accountancy_code_sell_intra = trim((string) $this->accountancy_code_sell_intra);
 		$this->accountancy_code_sell_export = trim((string) $this->accountancy_code_sell_export);
@@ -1543,8 +1521,6 @@ class Product extends CommonObject
 			$this->accountancy_code_buy = clean_account($this->accountancy_code_buy);
 			$this->accountancy_code_buy_intra = clean_account($this->accountancy_code_buy_intra);
 			$this->accountancy_code_buy_export = clean_account($this->accountancy_code_buy_export);
-			$this->accountancy_code_stock = clean_account($this->accountancy_code_stock);
-			$this->accountancy_code_cogs = clean_account($this->accountancy_code_cogs);
 			$this->accountancy_code_sell = clean_account($this->accountancy_code_sell);
 			$this->accountancy_code_sell_intra = clean_account($this->accountancy_code_sell_intra);
 			$this->accountancy_code_sell_export = clean_account($this->accountancy_code_sell_export);
@@ -1687,8 +1663,6 @@ class Product extends CommonObject
 				$sql .= ", accountancy_code_buy = '" . $this->db->escape($this->accountancy_code_buy) . "'";
 				$sql .= ", accountancy_code_buy_intra = '" . $this->db->escape($this->accountancy_code_buy_intra) . "'";
 				$sql .= ", accountancy_code_buy_export = '" . $this->db->escape($this->accountancy_code_buy_export) . "'";
-				$sql .= ", accountancy_code_stock = '" . $this->db->escape($this->accountancy_code_stock) . "'";
-				$sql .= ", accountancy_code_cogs = '" . $this->db->escape($this->accountancy_code_cogs) . "'";
 				$sql .= ", accountancy_code_sell= '" . $this->db->escape($this->accountancy_code_sell) . "'";
 				$sql .= ", accountancy_code_sell_intra= '" . $this->db->escape($this->accountancy_code_sell_intra) . "'";
 				$sql .= ", accountancy_code_sell_export= '" . $this->db->escape($this->accountancy_code_sell_export) . "'";
@@ -1734,8 +1708,6 @@ class Product extends CommonObject
 					$sql .= ", accountancy_code_buy";
 					$sql .= ", accountancy_code_buy_intra";
 					$sql .= ", accountancy_code_buy_export";
-					$sql .= ", accountancy_code_stock";
-					$sql .= ", accountancy_code_cogs";
 					$sql .= ", accountancy_code_sell";
 					$sql .= ", accountancy_code_sell_intra";
 					$sql .= ", accountancy_code_sell_export";
@@ -1745,8 +1717,6 @@ class Product extends CommonObject
 					$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
 					$sql .= ", '" . $this->db->escape($this->accountancy_code_buy_intra) . "'";
 					$sql .= ", '" . $this->db->escape($this->accountancy_code_buy_export) . "'";
-					$sql .= ", '" . $this->db->escape($this->accountancy_code_stock) . "'";
-					$sql .= ", '" . $this->db->escape($this->accountancy_code_cogs) . "'";
 					$sql .= ", '" . $this->db->escape($this->accountancy_code_sell) . "'";
 					$sql .= ", '" . $this->db->escape($this->accountancy_code_sell_intra) . "'";
 					$sql .= ", '" . $this->db->escape($this->accountancy_code_sell_export) . "'";
@@ -2342,10 +2312,6 @@ class Product extends CommonObject
 			$field = 'accountancy_code_buy_intra';
 		} elseif ($type == 'buy_export') {
 			$field = 'accountancy_code_buy_export';
-		} elseif ($type == 'stock') {
-			$field = 'accountancy_code_stock';
-		} elseif ($type == 'cogs') {
-			$field = 'accountancy_code_cogs';
 		} elseif ($type == 'sell') {
 			$field = 'accountancy_code_sell';
 		} elseif ($type == 'sell_intra') {
@@ -3311,9 +3277,9 @@ class Product extends CommonObject
 		$sql .= " p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.last_main_doc,";
 		$sql .= " p.surface, p.surface_units, p.volume, p.volume_units, p.barcode, p.fk_barcode_type, p.finished, p.fk_default_bom, p.mandatory_period, p.packaging,";
 		if (!getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
-			$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export, p.accountancy_code_stock, p.accountancy_code_cogs, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
+			$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
 		} else {
-			$sql .= " ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export, ppe.accountancy_code_stock, ppe.accountancy_code_cogs, ppe.accountancy_code_sell, ppe.accountancy_code_sell_intra, ppe.accountancy_code_sell_export,";
+			$sql .= " ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export, ppe.accountancy_code_sell, ppe.accountancy_code_sell_intra, ppe.accountancy_code_sell_export,";
 		}
 
 		// For MultiCompany
@@ -3375,9 +3341,9 @@ class Product extends CommonObject
 			$sql .= " p.length, p.length_units, p.width, p.width_units, p.height, p.height_units,";
 			$sql .= " p.surface, p.surface_units, p.volume, p.volume_units, p.barcode, p.fk_barcode_type, p.finished, p.fk_default_bom, p.mandatory_period, p.packaging,";
 			if (!getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
-				$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export, p.accountancy_code_stock, p.accountancy_code_cogs, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
+				$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
 			} else {
-				$sql .= " ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export, ppe.accountancy_code_stock, ppe.accountancy_code_cogs, ppe.accountancy_code_sell, ppe.accountancy_code_sell_intra, ppe.accountancy_code_sell_export,";
+				$sql .= " ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export, ppe.accountancy_code_sell, ppe.accountancy_code_sell_intra, ppe.accountancy_code_sell_export,";
 			}
 			if ($separatedEntityPMP) {
 				$sql .= " ppe.pmp,";
@@ -3470,8 +3436,6 @@ class Product extends CommonObject
 				$this->accountancy_code_buy = $obj->accountancy_code_buy;
 				$this->accountancy_code_buy_intra = $obj->accountancy_code_buy_intra;
 				$this->accountancy_code_buy_export = $obj->accountancy_code_buy_export;
-				$this->accountancy_code_stock = $obj->accountancy_code_stock;
-				$this->accountancy_code_cogs = $obj->accountancy_code_cogs;
 				$this->accountancy_code_sell = $obj->accountancy_code_sell;
 				$this->accountancy_code_sell_intra = $obj->accountancy_code_sell_intra;
 				$this->accountancy_code_sell_export = $obj->accountancy_code_sell_export;
@@ -6315,8 +6279,6 @@ class Product extends CommonObject
 						$buylabel .= '<br><b>'.$langs->trans('ProductAccountancyBuyCode').':</b> '.length_accountg($this->accountancy_code_buy);
 						$buylabel .= '<br><b>'.$langs->trans('ProductAccountancyBuyIntraCode').':</b> '.length_accountg($this->accountancy_code_buy_intra);
 						$buylabel .= '<br><b>'.$langs->trans('ProductAccountancyBuyExportCode').':</b> '.length_accountg($this->accountancy_code_buy_export);
-						$buylabel .= '<br><b>'.$langs->trans('ProductAccountancyStockCode').':</b> '.length_accountg($this->accountancy_code_stock);
-						$buylabel .= '<br><b>'.$langs->trans('ProductAccountancyCogsCode').':</b> '.length_accountg($this->accountancy_code_cogs);
 						$datas['accountancybuy'] = $buylabel;
 					}
 				}
@@ -7640,8 +7602,6 @@ class Product extends CommonObject
 				'accountancy_code_buy',
 				'accountancy_code_buy_intra',
 				'accountancy_code_buy_export',
-				'accountancy_code_stock',
-				'accountancy_code_cogs',
 				'accountancy_code_sell',
 				'accountancy_code_sell_intra',
 				'accountancy_code_sell_export'
