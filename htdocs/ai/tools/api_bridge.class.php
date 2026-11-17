@@ -1212,7 +1212,7 @@ class ToolApiBridge extends McpTool
 			'methods' => [
 				'post' => [
 					'suffix' => 'create',
-					'description' => "Create a DRAFT customer shipment (delivery note) WITHOUT a source order, as the shipment card allows when standalone shipments are enabled. Nothing is validated and no stock moves: like the lines added on the shipment card, these lines carry no warehouse, and a product tracked by lot or serial number cannot be shipped this way. The customer is mandatory: give socid, or simply the customer name. Each line names a catalogue product (product_ref or fk_product) or carries a free desc, with a qty and an optional unit. To ship an existing order, do not use this tool: tell the user to create the shipment from the order card.",
+					'description' => "Create a DRAFT customer shipment (delivery note) WITHOUT a source order, as the shipment card allows when standalone shipments are enabled. Nothing is validated and no stock moves: like the lines added on the shipment card, these lines carry no warehouse, and a product tracked by lot or serial number cannot be shipped this way. The customer is mandatory: give socid, or simply the customer name. Each line names a catalogue product (product_ref or fk_product) or carries a free desc, with a qty and an optional unit.",
 					'write' => [
 						'preview' => 'AIPreviewCreateShipment',
 						'required' => ['socid'],
@@ -2536,6 +2536,35 @@ class ToolApiBridge extends McpTool
 			);
 		}
 
+		// From one document to the next, as the buttons of the source card: an
+		// optional source on the create tool makes the new document from it.
+		$orderValidAtOnce = (bool) $this->setupValue('ORDER_VALID_AFTER_CLOSE_PROPAL');
+		if (isModEnabled('propal')) {
+			$this->addCreateSource('orders', 'from_source_proposal', $this->sourceVariant(
+				'createOrderFromProposal', 'proposalid', 'commercial proposal', 'Propal', 'Commande', 'sale order',
+				$orderValidAtOnce ? 'AIPreviewOrderFromProposalValidated' : 'AIPreviewOrderFromProposal',
+				array(2), 'AIWriteProposalNotSigned', array()
+			), "To create the order from a SIGNED commercial proposal, give its rowid or ref in 'from_source_proposal' instead of socid and lines: the customer and all the lines come from the proposal, as the \"Create order\" button of the proposal does.".($orderValidAtOnce ? " On this Dolibarr that order is validated at once." : ""));
+		}
+		if (isModEnabled('order') && !$this->setupValue('WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER')) {
+			$this->addCreateSource('invoices', 'from_source_order', $this->sourceVariant(
+				'createInvoiceFromOrder', 'orderid', 'sale order', 'Commande', 'Facture', 'customer invoice',
+				'AIPreviewInvoiceFromOrder', array(1, 2, 3), 'AIWriteOrderNotBillable', array('not_billed', 'positive_total')
+			), "To create the invoice of a VALIDATED sale order not billed yet, give its rowid or ref in 'from_source_order' instead of socid and lines: the customer and all the lines come from the order, as the \"Create bill\" button of the order does.");
+		}
+		if (isModEnabled('contract')) {
+			$this->addCreateSource('invoices', 'from_source_contract', $this->sourceVariant(
+				'createInvoiceFromContract', 'contractid', 'contract', 'Contrat', 'Facture', 'customer invoice',
+				'AIPreviewInvoiceFromContract', array(1, 2), 'AIWriteContractNotBillable', array('customer')
+			), "To create the invoice of a VALIDATED contract, give its rowid or ref in 'from_source_contract' instead of socid and lines: the customer and all the services come from the contract, as the \"Create bill\" button of the contract does.");
+		}
+		if (isModEnabled('order')) {
+			$this->addCreateSource('shipments', 'from_source_order', $this->sourceVariant(
+				'createOrderShipment', 'id', 'sale order', 'Commande', 'Expedition', 'shipment',
+				'AIPreviewShipmentFromOrder', array(1), 'AIWriteOrderNotShippable', array('first_shipment'), 'orders', 'warehouse_id'
+			), "To ship a VALIDATED sale order that has no shipment yet, give its rowid or ref in 'from_source_order' instead of socid and lines, and the warehouse the goods leave from: every line is shipped with its full quantity. A later or partial shipment is made from the order card, where the quantities left are known.", array('warehouse' => "Only with from_source_order: warehouse the goods leave from, name or rowid. May be omitted when there is only one."));
+		}
+
 		// A payment: the distributed method, the only one that takes an amount.
 		$this->enrichments['invoices']['methods']['addPaymentDistributed'] = array(
 			'suffix' => 'payment_create',
@@ -3011,6 +3040,76 @@ class ToolApiBridge extends McpTool
 			) + (count($right) === 3 ? array('read_right' => array($right[0], 'creer')) : array()),
 			'params' => $params
 		);
+	}
+
+	/**
+	 * A source the create tool of a document may take instead of its third
+	 * party and lines (an order from a proposal, an invoice from an order or a
+	 * contract, the shipment of an order): the REST method that makes the new
+	 * document from the source, refused before the confirmation when the
+	 * source card would not offer its button.
+	 *
+	 * @param  string   $method     REST method that makes the new document.
+	 * @param  string   $param      Name of the REST parameter that takes the source rowid.
+	 * @param  string   $label      Source document name, as the model reads it.
+	 * @param  string   $class      Business class of the source.
+	 * @param  string   $newClass   Business class of the document created.
+	 * @param  string   $newLabel   Name of the document created.
+	 * @param  string   $preview    Translation key of the confirmation.
+	 * @param  int[]    $states     Statuses of the source in which the card offers the button.
+	 * @param  string   $stateError Translation key of the refusal in another status.
+	 * @param  string[] $checks     Other conditions of the card: 'not_billed', 'positive_total', 'customer', 'first_shipment'.
+	 * @param  string   $endpoint   REST endpoint of the method, '' for the one of the create tool.
+	 * @param  string   $warehouse  Parameter taking a warehouse resolved from its name, '' for none.
+	 * @return array<string,mixed>  Source of the create tool.
+	 */
+	private function sourceVariant($method, $param, $label, $class, $newClass, $newLabel, $preview, array $states, $stateError, array $checks, $endpoint = '', $warehouse = '')
+	{
+		return array(
+			'method' => $method,
+			'endpoint' => $endpoint,
+			'param' => $param,
+			'write' => array(
+				'kind' => 'action',
+				'preview' => $preview,
+				'object' => $class,
+				'label' => $label,
+				'lookup' => 'ref',
+				'states' => $states,
+				'state_error' => $stateError,
+				'checks' => $checks,
+				'warehouse' => $warehouse,
+				'creates' => $newClass,
+				'creates_label' => $newLabel
+			)
+		);
+	}
+
+	/**
+	 * Give the create tool of an endpoint an optional source document.
+	 *
+	 * @param  string               $key         Enrichment key of the create tool.
+	 * @param  string               $arg         Argument naming the source.
+	 * @param  array<string,mixed>  $source      Source, from sourceVariant().
+	 * @param  string               $description Sentence added to the description of the tool.
+	 * @param  array<string,string> $params      Arguments the source needs besides itself.
+	 * @return void
+	 */
+	private function addCreateSource($key, $arg, array $source, $description, array $params = array())
+	{
+		if (empty($this->enrichments[$key]['methods']['post']['write'])) {
+			return;
+		}
+		$create = &$this->enrichments[$key]['methods']['post'];
+		$source['write']['target'] = $arg;
+		$source['write']['right'] = $create['write']['right'];
+		$create['from_source'][$arg] = $source;
+		$create['description'] .= ' '.$description;
+		$create['params'][$arg] = "The ".$source['write']['label']." the new ".$source['write']['creates_label']." is made from: rowid, or its ref. Optional.";
+		foreach ($params as $name => $text) {
+			$create['params'][$name] = $text;
+			$create['source_params'][] = $name;
+		}
 	}
 
 	/**
@@ -3756,9 +3855,9 @@ class ToolApiBridge extends McpTool
 		// them would silently keep serving the wider cached toolset for up to
 		// a full TTL (review sonikf on the initial version).
 		$signature .= '|'.getDolGlobalString('AI_MCP_API_BRIDGE_METHODS');
-		// The setup the writes are declared with: the validation right and the
-		// product fields an edit offers.
-		foreach (array('MAIN_USE_ADVANCED_PERMS', 'PRODUCT_PRICE_UNIQ', 'PRODUIT_CUSTOMER_PRICES') as $const) {
+		// The setup the writes are declared with: the validation right, the
+		// product fields an edit offers and the documents made from another one.
+		foreach (array('MAIN_USE_ADVANCED_PERMS', 'PRODUCT_PRICE_UNIQ', 'PRODUIT_CUSTOMER_PRICES', 'ORDER_VALID_AFTER_CLOSE_PROPAL', 'WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER') as $const) {
 			$signature .= '|'.$const.'='.getDolGlobalString($const);
 		}
 		// The setup modes some methods depend on: turning one on (or off) shows or hides its tools at once.
@@ -3973,8 +4072,11 @@ class ToolApiBridge extends McpTool
 				}
 				$properties[$pname] = ['type' => 'string', 'description' => $pdesc];
 			}
-			foreach ((array) ($meta['write']['required'] ?? array()) as $pname) {
-				$required[] = $pname;
+			// With a source, the third party and the lines come from it.
+			if (empty($meta['from_source'])) {
+				foreach ((array) ($meta['write']['required'] ?? array()) as $pname) {
+					$required[] = $pname;
+				}
 			}
 		}
 
@@ -5070,7 +5172,7 @@ class ToolApiBridge extends McpTool
 			return $this->writeConfirmationPreview($target, $args);
 		}
 
-		$write = $this->writeMetaFor($toolName);
+		$write = $this->writeMetaFor($toolName, $args);
 		if (empty($write)) {
 			return McpTool::NO_WRITE;
 		}
@@ -5314,7 +5416,7 @@ class ToolApiBridge extends McpTool
 	{
 		global $langs, $user;
 
-		$write = $this->writeMetaFor($toolName);
+		$write = $this->writeMetaFor($toolName, $args);
 		if (empty($write)) {
 			return '';
 		}
@@ -5495,7 +5597,7 @@ class ToolApiBridge extends McpTool
 	{
 		global $hookmanager, $langs;
 
-		$write = $this->writeMetaFor($toolName);
+		$write = $this->writeMetaFor($toolName, $args);
 		if (empty($write) || empty($this->db)) {
 			return '';
 		}
@@ -6371,6 +6473,11 @@ class ToolApiBridge extends McpTool
 			}
 			if (!empty($write['stock']) && $this->writeTarget && $this->validationMovesStock($write, $this->writeTarget)) {
 				$out['idwarehouse'] = $this->resolveWarehouse($args['warehouse'] ?? ($args['idwarehouse'] ?? ''));
+			}
+			// A document made from this one that needs a warehouse (the shipment of an order).
+			if (!empty($write['warehouse'])) {
+				$field = (string) $write['warehouse'];
+				$out[$field] = $this->resolveWarehouse($args['warehouse'] ?? ($args[$field] ?? ''));
 			}
 
 			return $out;
@@ -7283,6 +7390,15 @@ class ToolApiBridge extends McpTool
 			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview_cancel'], $what));
 		}
 
+		// A document made from this one: the warehouse its goods leave from.
+		if (!empty($write['warehouse']) && !empty($args[$write['warehouse']])) {
+			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+			$wh = new Entrepot($this->db);
+			if ($wh->fetch((int) $args[$write['warehouse']]) > 0) {
+				return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $what, (string) $wh->ref));
+			}
+		}
+
 		// Validation: the warehouse is said when the stock moves.
 		if (!empty($args['idwarehouse'])) {
 			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
@@ -7446,6 +7562,10 @@ class ToolApiBridge extends McpTool
 			return '';
 		}
 		if ($kind === 'action' && isset($write['states'])) {
+			$refusal = $this->precheckConversion($write, $obj);
+			if ($refusal !== '') {
+				return $refusal;
+			}
 			// An action other than a validation: allowed in the statuses it lists.
 			if (!in_array((int) $obj->status, (array) $write['states'], true)) {
 				return $langs->transnoentitiesnoconv((string) $write['state_error'], $label, (string) $obj->ref);
@@ -7507,16 +7627,97 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * The conditions besides its status that the source card puts on the button
+	 * of a document made from another one, as listed in the 'checks' of the write.
+	 *
+	 * @param  array<string,mixed> $write The 'write' enrichment of the tool.
+	 * @param  CommonObject        $obj   The source document.
+	 * @return string                     Why the document cannot be made, or '' when it can.
+	 */
+	private function precheckConversion(array $write, $obj)
+	{
+		global $langs;
+
+		// In another status, the status refusal comes first.
+		if (!in_array((int) $obj->status, (array) $write['states'], true)) {
+			return '';
+		}
+		$label = (string) $write['label'];
+		foreach ((array) ($write['checks'] ?? array()) as $check) {
+			if ($check === 'not_billed' && !empty($obj->billed)) {
+				return $langs->transnoentitiesnoconv('AIWriteAlreadyBilled', $label, (string) $obj->ref);
+			}
+			if ($check === 'positive_total' && (float) $obj->total_ttc < 0) {
+				return $langs->transnoentitiesnoconv('AIWriteNegativeTotal', $label, (string) $obj->ref);
+			}
+			if ($check === 'customer') {
+				require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+				$soc = new Societe($this->db);
+				if ($soc->fetch($this->socidOf($obj)) <= 0 || (int) $soc->client <= 0) {
+					return $langs->transnoentitiesnoconv('AIWriteNotACustomer', $label, (string) $obj->ref);
+				}
+			}
+			if ($check === 'first_shipment' && $obj instanceof Commande) {
+				// The REST method ships every line with its full quantity: right only for a first shipment.
+				if ($obj->countNbOfShipments() > 0) {
+					return $langs->transnoentitiesnoconv('AIWriteOrderAlreadyShipping', (string) $obj->ref);
+				}
+				$shippable = 0;
+				require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+				foreach ((array) $obj->lines as $line) {
+					if ((int) $line->fk_product <= 0 || ((int) $line->product_type !== Product::TYPE_PRODUCT && !getDolGlobalString('STOCK_SUPPORTS_SERVICES') && !getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES'))) {
+						continue;
+					}
+					$product = new Product($this->db);
+					if ($product->fetch((int) $line->fk_product) > 0 && !empty($product->status_batch)) {
+						// A lot or a serial number is chosen line by line, on the card.
+						return $langs->transnoentitiesnoconv('AIWriteOrderLotProduct', (string) $obj->ref, (string) $product->ref);
+					}
+					$shippable++;
+				}
+				if ($shippable === 0) {
+					return $langs->transnoentitiesnoconv('AIWriteOrderNothingToShip', (string) $obj->ref);
+				}
+			}
+		}
+
+		return '';
+	}
+
+	/**
 	 * The 'write' enrichment of a tool, when it has one.
 	 *
-	 * @param  string $toolName Tool name as exposed.
-	 * @return array<string,mixed> Empty when the tool is a read.
+	 * @param  string              $toolName Tool name as exposed.
+	 * @param  array<string,mixed> $args     Arguments of the call: a create given a source makes the document from it.
+	 * @return array<string,mixed>           Empty when the tool is a read.
 	 */
-	private function writeMetaFor($toolName)
+	private function writeMetaFor($toolName, array $args = array())
 	{
 		$meta = $this->methodMetaFor($toolName);
+		$source = $this->createSourceOf($meta, $args);
+		if ($source !== '') {
+			return $meta['from_source'][$source]['write'];
+		}
 
 		return isset($meta['write']) ? $meta['write'] : array();
+	}
+
+	/**
+	 * The source a create tool was given, if any.
+	 *
+	 * @param  array<string,mixed> $meta Enrichment of the method.
+	 * @param  array<string,mixed> $args Arguments of the call.
+	 * @return string                    Argument naming the source, or ''.
+	 */
+	private function createSourceOf(array $meta, array $args)
+	{
+		foreach (array_keys((array) ($meta['from_source'] ?? array())) as $arg) {
+			if (isset($args[$arg]) && !is_array($args[$arg]) && trim((string) $args[$arg]) !== '' && (string) $args[$arg] !== '0') {
+				return (string) $arg;
+			}
+		}
+
+		return '';
 	}
 
 	/**
@@ -7905,7 +8106,8 @@ class ToolApiBridge extends McpTool
 		// A model may send the record as a request_data body, or name line fields
 		// the way the custom tools do: accept both, so the write receives what the
 		// preview described.
-		$writemeta = $this->writeMetaFor($name);
+		$writemeta = $this->writeMetaFor($name, $args);
+		$source = $this->createSourceOf($this->methodMetaFor($name), $args);
 		if ($writemeta) {
 			try {
 				$args = $this->normaliseWriteArgs($args, $writemeta);
@@ -7922,6 +8124,13 @@ class ToolApiBridge extends McpTool
 		}
 		list($key, $method) = $this->routes[$name];
 		$epkey = (string) ($this->enrichments[$key]['endpoint'] ?? $key);	// REST endpoint the tool group calls
+		// A create given a source calls the REST method that makes the document from it.
+		if ($source !== '') {
+			$from = $this->enrichments[$key]['methods'][$method]['from_source'][$source];
+			$method = (string) $from['method'];
+			$epkey = (string) ($from['endpoint'] ?: $epkey);
+			$args[(string) $from['param']] = $args[$source];
+		}
 		$ep = $this->endpoints[$epkey];
 
 		// A write on a record that exists: what the call always carries, whatever
@@ -8013,6 +8222,10 @@ class ToolApiBridge extends McpTool
 				if (!empty($writemeta) && empty($writemeta['parent']) && !empty($methodmeta['params'])) {
 					$body = array_intersect_key($body, $methodmeta['params']);
 				}
+				// The arguments of a source are not fields of the record.
+				foreach (array_merge(array_keys((array) ($methodmeta['from_source'] ?? array())), (array) ($methodmeta['source_params'] ?? array())) as $field) {
+					unset($body[$field]);
+				}
 				// An update writes the allowed fields it was given, nothing else.
 				if ($writekind === 'update') {
 					$body = array_intersect_key($args, array_flip((array) $writemeta['fields']));
@@ -8088,6 +8301,14 @@ class ToolApiBridge extends McpTool
 					// validated), rather than the whole object the API returns.
 					$targetid = (int) ($args[$writemeta['target'] ?? 'id'] ?? 0);
 					$done = array('success' => true, 'id' => $targetid);
+					if (!empty($writemeta['creates'])) {
+						// A document made from the target: the new one is what the user asked for.
+						$newid = is_array($output) ? (int) ($output['id'] ?? 0) : (int) $result;
+						$sourceref = $this->refOfCreatedObject((string) $writemeta['object'], $targetid);
+						$targetid = $newid;
+						$writemeta['object'] = (string) $writemeta['creates'];
+						$done = array('success' => true, 'id' => $newid, 'from' => $sourceref);
+					}
 					if ($writekind === 'payment') {
 						$done['payment_id'] = (int) $result;
 					}
