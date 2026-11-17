@@ -137,7 +137,7 @@ class RestAPIContractTest extends AbstractRestAPITest
 			"date_start" => null,
 			"date_end" => $date_end,
 			"price_base_type" => "HT",
-			"subprice_excl_tax" => 0,
+			"subprice_inc_tax" => 0,
 			"info_bits" => 0,
 			"fk_fournprice" => null,
 			"pa_ht" => 0,
@@ -474,7 +474,7 @@ class RestAPIContractTest extends AbstractRestAPITest
 			"date_start_real" => null,
 			"date_end_real" => null,
 			"price_base_type" => "HT",
-			"subprice_excl_tax" => 0,
+			"subprice_inc_tax" => 0,
 			"info_bits" => 0,
 			"fk_fournprice" => null,	// read by POST
 			"fk_fourn_price" => null,	// read by PUT
@@ -667,29 +667,6 @@ class RestAPIContractTest extends AbstractRestAPITest
 			$this->assertEquals(100, (float) $line['subprice'], "$test Unit price excl. tax");
 			$this->assertEquals(200, (float) $line['total_ht'], "$test Total excl. tax");
 			$this->assertEquals(240, (float) $line['total_ttc'], "$test Total incl. tax");
-		} finally {
-			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
-		}
-	}
-
-	/**
-	 * testRestContractPostLineTTCDeprecatedField
-	 *
-	 * @return void
-	 */
-	public function testRestContractPostLineTTCDeprecatedField()
-	{
-		$test = "Add a line priced including tax with the deprecated subprice_excl_tax field";
-
-		$contract_id = $this->createContract($test);
-
-		try {
-			$data = array("desc" => "API test service TTC", "subprice_excl_tax" => 120, "qty" => 1, "tva_tx" => 20, "price_base_type" => "TTC");
-			$this->getUrl('contracts/'.$contract_id.'/lines', $test, 'POST', $data);
-
-			$line = $this->getOnlyContractLine($contract_id, $test);
-			$this->assertEquals(100, (float) $line['subprice'], "$test Unit price excl. tax");
-			$this->assertEquals(120, (float) $line['total_ttc'], "$test Total incl. tax");
 		} finally {
 			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
 		}

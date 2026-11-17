@@ -415,8 +415,6 @@ class Contracts extends DolibarrApi
 	 *
 	 * Unit price: give 'subprice' (excl. tax) with price_base_type 'HT' (default),
 	 * or 'subprice_inc_tax' (incl. tax) with price_base_type 'TTC'.
-	 * 'subprice_excl_tax' is a deprecated alias of 'subprice_inc_tax': despite its name,
-	 * it has always been read as the unit price including tax.
 	 *
 	 * @since	7.0.0	Initial implementation
 	 *
@@ -453,8 +451,8 @@ class Contracts extends DolibarrApi
 		$request_data->desc = sanitizeVal($request_data->desc ?? '', 'restricthtml');
 		$request_data->price_base_type = sanitizeVal($request_data->price_base_type ?? '');
 
-		// Unit price including tax, used when price_base_type is TTC. 'subprice_excl_tax' is the deprecated name of this field.
-		$subprice_inc_tax = $request_data->subprice_inc_tax ?? ($request_data->subprice_excl_tax ?? 0);
+		// Unit price including tax, used when price_base_type is TTC.
+		$subprice_inc_tax = $request_data->subprice_inc_tax ?? 0;
 
 		$updateRes = $this->contract->addline(
 			$request_data->desc,
