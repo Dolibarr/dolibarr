@@ -9399,22 +9399,31 @@ div.clipboardCPValue.hidewithsize {
 	opacity:0.8;
 	filter: blur(1px) grayscale(90%);
 }
-.dropzoneattachfile {
-	margin: 0 12px 0 0;
-	padding: 4px 12px;
+tr.dropzoneattachfilerow td {
+	padding: 12px 8px;
+	text-align: center;
 	border: 2px dashed var(--colortextlink);
-	border-radius: 6px;
 	color: var(--colortextlink);
-	opacity: 0.6;
-	white-space: nowrap;
-	cursor: copy;
+	opacity: 0.7;
+	cursor: pointer;
 }
-.dropzoneattachfile.dropzoneattachfileover, .dropzoneattachfile.dropzoneattachfilebusy {
+tr.dropzoneattachfilerow:hover td {
 	opacity: 1;
-	border-style: solid;
+}
+div.dropzoneattachfiletable.dropzoneattachfileactive {
+	outline: 2px dashed var(--colortextlink);
+	outline-offset: 2px;
+	border-radius: 6px;
+}
+div.dropzoneattachfiletable.dropzoneattachfileover, div.dropzoneattachfiletable.dropzoneattachfilebusy {
+	outline-style: solid;
 	background-color: var(--colorbacklinepairhover);
 }
-.dropzoneattachfile.dropzoneattachfilebusy {
+div.dropzoneattachfiletable.dropzoneattachfileover tr.dropzoneattachfilerow td {
+	opacity: 1;
+	border-style: solid;
+}
+div.dropzoneattachfiletable.dropzoneattachfilebusy, div.dropzoneattachfiletable.dropzoneattachfilebusy tr.dropzoneattachfilerow td {
 	cursor: progress;
 }
 .dragDropAreaMessage {
