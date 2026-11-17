@@ -28,6 +28,8 @@
  * Copyright (C) 2025		Vincent Maury				<vmaury@timgroup.fr>
  * Copyright (C) 2026		Benjamin Falière			<benjamin@faliere.com>
  * Copyright (C) 2026		Pierre Ardoin				<developpeur@lesmetiersdubatiment.fr>
+ * Copyright (C) 2026		Nick Fragoulis
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -378,6 +380,21 @@ function getDolGlobalFloat($key, $default = 0)
 }
 
 /**
+ * Return the version to add into URLs of CSS and JS files.
+ * With MAIN_HIDE_VERSION, a hash of the version is returned: the version is not disclosed but the browser cache is still refreshed after an upgrade.
+ *
+ * @return string		Version or hash of version
+ */
+function getDolVersionForUrl()
+{
+	global $conf;
+	if (getDolGlobalInt('MAIN_HIDE_VERSION')) {
+		return substr(hash('sha256', DOL_VERSION.(empty($conf->file->instance_unique_id) ? '' : $conf->file->instance_unique_id)), 0, 8);
+	}
+	return DOL_VERSION;
+}
+
+/**
  * Return a Dolibarr global constant boolean value.
  * The constants $conf->global->xxx are loaded by the script master.inc.php included at begin of any PHP page.
  *
@@ -682,6 +699,9 @@ function getEntity($element, $shared = 1, $currentobject = null)
 		case 'invoice_supplier':
 			$element = 'supplier_invoice';
 			break; // "/fourn/class/fournisseur.facture.class.php"
+		case 'facturerec':
+			$element = 'invoice';
+			break; // "/compta/facture/class/facture-rec.class.php", template invoices are shared like invoices
 	}
 
 	if (is_object($mc)) {
@@ -2334,9 +2354,10 @@ function dolSlugify($stringtoslugify)
 
 /**
  * Returns text escaped for inclusion into JavaScript code.
+ * Prefer to enclose JS strings with simple quotes in generated JS code, like 'string', and use mode 0 or 1. Mode 2 should be avoided.
  *
  * @param	int|string	$stringtoescape			String to escape
- * @param	int			$mode					0=Escape also \' and \" into \', 1=Escape \' but not \" for usage into 'string', 2=Escape \" but not \' for usage into "string", 3=Escape \' and \" with \\.
+ * @param	int			$mode					0=Escape also \' and \" into \', 1=Escape \' but not \" for usage into 'string', 2=Escape \" but not \' for usage into "string" (to avoid, prefer 'string' with mode 0 or 1), 3=Escape \' and \" with \\.
  * @param	int			$noescapebackslashn		0=Escape also \n. 1=Do not escape \n.
  * @return	string								Escaped string. Both \' and " are escaped into \' if they are escaped.
  */
@@ -5514,8 +5535,8 @@ function get_product_localtax_for_country($idprod, $local, $thirdpartytouseforco
  *	Function that return vat rate of a product line (according to seller, buyer and product vat rate)
  *   VATRULE 0: If we are in mode SERVICE_ARE_ECOMMERCE_200238EC and customer is not a company with a vat id, we use default product VAT in buyer country
  *   VATRULE 1: If seller does not use VAT, default VAT is 0. End of rule.
- *   VATRULE 2: If buyer department has a VAT rule from vat rates dictionary then it's the default VAT rate. End of rule.
- *	 VATRULE 3: If the (seller country = buyer country) then the default VAT = VAT of the product sold. End of rule.
+ *   VATRULE 2: If (seller country = buyer country) and buyer department has a VAT rule from vat rates dictionary then it's the default VAT rate. End of rule.
+ *	 VATRULE 3: If (seller country = buyer country) then the default VAT = VAT of the product sold. End of rule.
  *	 VATRULE 4: If (seller and buyer in the European Community) and (property sold = new means of transport such as car, boat, plane) then VAT by default = 0 (VAT must be paid by the buyer to the tax center of his country and not to the seller). End of rule.
  *	 VATRULE 5: If (seller and buyer in the European Community) and (buyer = individual) then VAT by default = VAT of the product sold. End of rule
  *	 VATRULE 6: If (seller and buyer in European Community) and (buyer = company) then VAT by default=0. End of rule
@@ -5590,8 +5611,8 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 		$vatrule = 'VATRULE 1';
 	}
 
-	// 'VATRULE 2' - Force VAT if a buyer department is defined on vat rates dictionary
-	if (empty($vatrule) && !empty($thirdparty_buyer->state_id)) {
+	// 'VATRULE 2' - Force VAT if seller and buyer are in the same country and a buyer department is defined on vat rates dictionary
+	if (empty($vatrule) && !empty($thirdparty_buyer->state_id) && $seller_country_code == $buyer_country_code) {
 		$sql = "SELECT d.rowid, t.taux as vat_default_rate, t.code as vat_default_code ";
 		$sql .= " FROM " . $db->prefix() . "c_tva as t";
 		$sql .= " INNER JOIN " . $db->prefix() . "c_departements as d ON t.fk_department_buyer = d.rowid";
@@ -7144,9 +7165,9 @@ function dol_textishtml($msg, $option = 0)
 			return true;
 		} elseif (preg_match('/<(br|hr)\/>/i', $msg)) {
 			return true;
-		} elseif (preg_match('/<(br|hr|div|font|li|p|span|strong|table)>/i', $msg)) {
+		} elseif (preg_match('/<(br|hr|div|font|li|p|span|strong|table|blockquote|pre|dl|section)>/i', $msg)) {
 			return true;
-		} elseif (preg_match('/<(br|hr|div|font|li|p|span|strong|table)\s+[^<>\/]*\/?>/i', $msg)) {
+		} elseif (preg_match('/<(br|hr|div|font|li|p|span|strong|table|blockquote|pre|dl|section)\s+[^<>\/]*\/?>/i', $msg)) {
 			return true;
 		} elseif (preg_match('/<img\s+[^<>]*src[^<>]*>/i', $msg)) {
 			return true; // must accept <img src="http://example.com/aaa.png" />
@@ -7431,6 +7452,12 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			}
 			$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'UrlToPayOnlineIfApplicable';
 			$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__'] = 'TextAndUrlToPayOnlineIfApplicable';
+			if (isModEnabled('invoice') && (!is_object($object) || $object->element == 'facture')) {
+				$substitutionarray['__PAYMENT_REFERENCE__'] = 'Structured payment reference of an invoice';
+				if (getDolGlobalString('INVOICE_ADD_FI_BARCODE') && $mysoc->country_code == 'FI') {
+					$substitutionarray['__PAYMENT_VIRTUAL_BARCODE__'] = 'Finnish virtual barcode of an invoice';
+				}
+			}
 			$substitutionarray['__SECUREKEYPAYMENT__'] = 'Security key (if key is not unique per record)';
 			$substitutionarray['__SECUREKEYPAYMENT_MEMBER__'] = 'Security key for payment on a member subscription (one key per member)';
 			$substitutionarray['__SECUREKEYPAYMENT_ORDER__'] = 'Security key for payment on an order';
@@ -7552,8 +7579,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_EMAIL_URLENCODED__'] = urlencode($object->email ?? '');
 				$substitutionarray['__THIRDPARTY_URL__'] = $object->url ?? '';
 				$substitutionarray['__THIRDPARTY_URL_URLENCODED__'] = urlencode($object->url ?? '');
-				$substitutionarray['__THIRDPARTY_PHONE__'] = dol_print_phone($object->phone);
-				$substitutionarray['__THIRDPARTY_FAX__'] = dol_print_phone($object->fax);
+				$substitutionarray['__THIRDPARTY_PHONE__'] = dol_print_phone((string) $object->phone);
+				$substitutionarray['__THIRDPARTY_FAX__'] = dol_print_phone((string) $object->fax);
 				$substitutionarray['__THIRDPARTY_ADDRESS__'] = $object->address ?? '';
 				$substitutionarray['__THIRDPARTY_ZIP__'] = $object->zip ?? '';
 				$substitutionarray['__THIRDPARTY_TOWN__'] = $object->town ?? '';
@@ -7721,31 +7748,36 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				}
 				$extrafields->fetch_name_optionals_label($object->table_element, true);
 
-				if ($object->fetch_optionals() > 0) {	// @FIXME: Remove this, the fetch should have been done already, by the caller of getCommonSubstitutionArray()
-					if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0) {
+				// Use the extrafields already loaded into the object by the caller: no SQL access here, this function
+				// can be called thousands of times. Fetching them here also discarded values set by the caller but not
+				// saved yet (an object validated by an API or a connector inside the same write fires the notification
+				// triggers before its extrafields are stored).
+				if (!empty($object->array_options) && is_array($object->array_options)) {
+					if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label'])) {
 						foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label) {
+							$optionvalue = $object->array_options['options_' . $key] ?? null;	// Extrafields set by the caller may be partial
 							if ($extrafields->attributes[$object->table_element]['type'][$key] == 'date') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = dol_print_date($object->array_options['options_' . $key], 'day');
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_LOCALE__'] = dol_print_date($object->array_options['options_' . $key], 'day', 'tzserver', $outputlangs);
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_RFC__'] = dol_print_date($object->array_options['options_' . $key], 'dayrfc');
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = dol_print_date($optionvalue, 'day');
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_LOCALE__'] = dol_print_date($optionvalue, 'day', 'tzserver', $outputlangs);
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_RFC__'] = dol_print_date($optionvalue, 'dayrfc');
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'datetime') {
-								$datetime = $object->array_options['options_' . $key];
+								$datetime = $optionvalue;
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhour') : '');
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_LOCALE__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhour', 'tzserver', $outputlangs) : '');
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_DAY_LOCALE__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'day', 'tzserver', $outputlangs) : '');
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_RFC__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhourrfc') : '');
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'phone') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = dol_print_phone($object->array_options['options_' . $key]);
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = dol_print_phone($optionvalue);
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'price') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATED__'] = price($object->array_options['options_' . $key]);	// For compatibility
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATTED__'] = price($object->array_options['options_' . $key]);
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $optionvalue;
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATED__'] = price($optionvalue);	// For compatibility
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATTED__'] = price($optionvalue);
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'select') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = !empty($object->array_options['options_' . $key]) ? $object->array_options['options_' . $key] : '';
-								$val = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$object->array_options['options_'.$key]] ?? $object->array_options['options_'.$key];
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = !empty($optionvalue) ? $optionvalue : '';
+								$val = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$optionvalue] ?? $optionvalue;
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_LABEL__'] = $val;
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] != 'separator') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = !empty($object->array_options['options_' . $key]) ? $object->array_options['options_' . $key] : '';
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = !empty($optionvalue) ? $optionvalue : '';
 							}
 						}
 					}
@@ -7793,6 +7825,17 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				if (getDolGlobalString('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION') && $object->element == 'facture') {
 					include_once DOL_DOCUMENT_ROOT . '/core/lib/functions_be.lib.php';
 					$substitutionarray['__PAYMENT_STRUCTURED_COMMUNICATION__'] = dolBECalculateStructuredCommunication((string) $object->ref, $object->type);
+				}
+
+				// Structured payment reference stored on the invoice
+				if ($object->element == 'facture') {
+					$substitutionarray['__PAYMENT_REFERENCE__'] = empty($object->payment_reference) ? '' : $object->payment_reference;
+				}
+
+				// Finnish virtual barcode. Reading it needs the bank account, so it is
+				// loaded only if the key is used, see the lazyload note on this function.
+				if (getDolGlobalString('INVOICE_ADD_FI_BARCODE') && $object->element == 'facture' && $mysoc->country_code == 'FI') {
+					$substitutionarray['__PAYMENT_VIRTUAL_BARCODE__@lazyload'] = '/compta/facture/class/facture.class.php:Facture:fetchAndSetSubstitution:' . $object->id;
 				}
 
 				if (getDolGlobalString('PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD') && is_object($object) && $object->element == 'propal') {
@@ -12135,7 +12178,7 @@ function dolRemoveDefaultParameters(array $parameters): array
  *
  * @param string $context The current page context name
  *
- * @return void
+ * @return void No return value, the page is redirected and exits when the request can be sent as GET
  */
 function dolRedirectPostSearchListRequestToGetIfPossible(string $context): void
 {

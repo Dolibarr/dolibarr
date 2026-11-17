@@ -375,6 +375,12 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 $sql .= ' FROM '.MAIN_DB_PREFIX.'multicurrency_rate as cr ';
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."multicurrency AS m ON cr.fk_multicurrency = m.rowid";
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+$sql .= " WHERE cr.entity IN (".getEntity('multicurrency').")";
+$sql .= " AND m.code <> '".$db->escape(getDolCurrency())."'";
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
@@ -389,8 +395,6 @@ if ($search_rate) {
 if ($search_code) {
 	$sql .= natural_search('m.code', $search_code);
 }
-$sql .= " WHERE cr.entity IN (".getEntity('multicurrency').")";
-$sql .= " AND m.code <> '".$db->escape(getDolCurrency())."'";
 
 // Add where from hooks
 $parameters = array();

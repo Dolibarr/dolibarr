@@ -214,7 +214,7 @@ $form = new Form($db);
 $apiKey = getDolGlobalString('AI_MCP_API_KEY');
 
 // Default Prompt Logic
-$defaultPromptText = " ROLE: Dolibarr ERP AI.
+$defaultPromptText = "ROLE: Dolibarr ERP AI.
 GOAL: Map user intent to specific JSON commands.
 
 CONSTRAINTS:
@@ -250,7 +250,7 @@ print '<br>';
 print '<br>';
 
 if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
@@ -350,7 +350,7 @@ if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	print '<tr class="oddeven">';
 	print '<td colspan="2">';
 	print $form->textwithpicto($langs->trans("SystemPrompt"), $langs->trans("SystemPromptHelp")) . '<br><br>';
-	$doleditor = new DolEditor('AI_INTENT_PROMPT', $currentPrompt, '', 250, 'dolibarr_notes', 'In', false, false, true, ROWS_8, '90%');
+	$doleditor = new DolEditor('AI_INTENT_PROMPT', $currentPrompt, '', 300, 'dolibarr_notes', 'In', false, false, false, ROWS_9, '90%');
 	$doleditor->Create();
 	print '</td>';
 	print '</tr>';

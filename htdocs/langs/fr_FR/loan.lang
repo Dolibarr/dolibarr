@@ -77,3 +77,4 @@ LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Compte comptable par défaut pour le capital (mo
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Compte comptable par défaut pour les intérêts (module emprunt)
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Compte comptable par défaut pour l'assurance (module emprunt)
 CreateCalcSchedule=Créer / Modifier échéancier de prêt
+TemplatePDFLoans=Modèle pour prêts PDF

@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - interventions
 Intervention=Intervention
 Interventions=Interventions
+DraftInterventionsToValidate=Draft interventions awaiting validation
+ValidatedInterventionsToProcess=Validated interventions not yet closed
 InterventionCard=Intervention card
 NewIntervention=New intervention
 AddIntervention=Create intervention

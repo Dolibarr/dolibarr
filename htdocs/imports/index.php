@@ -103,7 +103,7 @@ if ($usercanimport) {
 
 	print '<div class="divsection wordwrap center">';
 	print '<br>';
-	print $form->textwithpicto($langs->trans("FormatedImportDesc1"), $out, 1, 'help', 'valignmiddle', 1, 3, 'ttimport').'<br>';
+	print $form->textwithpicto('<span class="opacitymedium">'.$langs->trans("FormatedImportDesc1").'</span>', $out, 1, 'help', 'valignmiddle', 1, 3, 'ttimport').'<br>';
 	print '<br><br>';
 
 
@@ -156,7 +156,7 @@ if ($usercanexport) {
 
 	print '<div class="divsection wordwrap center">';
 	print '<br>';
-	print $form->textwithpicto($langs->trans("FormatedExportDesc1"), $out, 1, 'help', 'valignmiddle', 1, 3, 'ttexport').'<br>';
+	print $form->textwithpicto('<span class="opacitymedium">'.$langs->trans("FormatedExportDesc1").'</span>', $out, 1, 'help', 'valignmiddle', 1, 3, 'ttexport').'<br>';
 	print '<br><br>';
 
 	print '<div class="center">';

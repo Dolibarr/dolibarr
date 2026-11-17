@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2024 John BOTELLA
+/* Copyright (C) 2024		John BOTELLA
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -815,6 +816,12 @@ function quickMemoIntefaceActionList($jsonResponse)
 		return;
 	}
 
+	// Memos not linked to an object (home, list or index page): context must be available to user
+	if (empty($element_type) && !in_array($context, Memo::getAvailableMemoContext(), true)) {
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
+		return;
+	}
+
 	$staticMemo = new Memo($db);
 
 	// GET all active memos
@@ -971,6 +978,11 @@ function quickMemoInterfaceCanAccessMemo($memo)
 	// Templates are not attached to an object
 	if ($memo->status == Memo::STATUS_TPL) {
 		return true;
+	}
+
+	// Memo not linked to an object (home, list or index page): context must be available to user
+	if (empty($memo->element_type)) {
+		return in_array((string) $memo->context_tab, Memo::getAvailableMemoContext(), true);
 	}
 
 	// A memo shared on element is displayed on all objects of the same type

@@ -257,6 +257,65 @@ class Fichinter extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Load intervention indicators for the home workboard.
+	 *
+	 * @param User $user User whose accessible interventions are counted
+	 * @param 'draft'|'validated' $mode Intervention state to count
+	 * @return WorkboardResponse|int<-1,-1> Indicators, or -1 on failure
+	 */
+	public function load_board($user, $mode)
+	{
+		// phpcs:enable
+		global $langs;
+
+		if ($user->socid || !$user->hasRight('ficheinter', 'lire') || !in_array($mode, array('draft', 'validated'), true)) {
+			return -1;
+		}
+
+		$status = ($mode == 'draft' ? self::STATUS_DRAFT : self::STATUS_VALIDATED);
+		$sql = "SELECT COUNT(f.rowid) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
+		$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
+		$sql .= " AND f.fk_statut = ".((int) $status);
+		if (!$user->hasRight('societe', 'client', 'voir')) {
+			$sql .= " AND (EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $user->id).")";
+			if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
+				$userschilds = $user->getAllChildIds();
+				if ($userschilds) {
+					$sql .= " OR EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user IN (".$this->db->sanitize(implode(',', $userschilds))."))";
+				}
+			}
+			$sql .= ")";
+		}
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		$obj = $this->db->fetch_object($resql);
+		$this->db->free($resql);
+		if (!$obj) {
+			return -1;
+		}
+
+		$langs->load('interventions');
+		$response = new WorkboardResponse();
+		$response->id = $this->element.'_'.$mode;
+		$response->label = $langs->trans($mode == 'draft' ? 'DraftInterventionsToValidate' : 'ValidatedInterventionsToProcess');
+		$response->labelShort = $langs->trans($mode == 'draft' ? 'ToValidate' : 'ToProcess');
+		$response->url = DOL_URL_ROOT.'/fichinter/list.php?search_status='.$status;
+		$response->img = img_object('', $this->picto);
+		$response->nbtodo = (int) $obj->nb;
+		$response->warning_delay = 0;
+		return $response;
 	}
 
 	/**
@@ -460,6 +519,9 @@ class Fichinter extends CommonObject
 		$sql .= "description  = '".$this->db->escape($this->description)."'";
 		$sql .= ", duree = ".((int) $this->duration);
 		$sql .= ", ref_client = ".($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null");
+		if ((int) $this->socid > 0) {
+			$sql .= ", fk_soc = ".((int) $this->socid);
+		}
 		if ((int) $this->fk_project > 0) {
 			$sql .= ", fk_projet = ".((int) $this->fk_project);
 		}
@@ -589,14 +651,17 @@ class Fichinter extends CommonObject
 	 *	Set status to draft
 	 *
 	 *	@param		User	$user	User that set draft
-	 *	@return		int			    Return integer <0 if KO, >0 if OK
+	 *	@return		int			    Return integer <0 if KO, 0 if nothing done (intervention not in validated status), >0 if OK
 	 */
 	public function setDraft($user)
 	{
 		$error = 0;
 
-		// Protection
-		if ($this->status <= self::STATUS_DRAFT) {
+		// Protection: only a validated intervention can go back to draft (same rule as the "Modify"
+		// button of the card). A billed, closed or canceled intervention must not be reset to draft.
+		if ($this->status != self::STATUS_VALIDATED) {
+			$this->error = 'ErrorObjectHasWrongStatus';
+			dol_syslog(get_class($this)."::setDraft action abandoned: intervention is not in validated status", LOG_WARNING);
 			return 0;
 		}
 

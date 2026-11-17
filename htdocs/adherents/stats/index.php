@@ -50,6 +50,7 @@ $socid = GETPOSTINT('socid');
 if ($socid < 0) {
 	$socid = 0;
 }
+$tabfamily = GETPOST('tabfamily', 'aZ09');	// 'membershipstats' to show the tab with the custom reports tool
 
 // Security check
 if ($user->socid > 0) {
@@ -95,6 +96,23 @@ $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewSubscription'), '', 'fa fa-plus-circle', dolBuildUrl(DOL_URL_ROOT.'/adherents/list.php', ['statut' => '-1,1']), '', $user->hasRight('adherent', 'creer'));
 
 print_barre_liste($title, 0, $_SERVER["PHP_SELF"], $param, '', '', '', 0, $langs->trans("Statistics"), $membershipstatic->picto, 0, $newcardbutton, '', 0, 0, 0, 1);
+
+$head = membership_stats_prepare_head($memberstatic);
+
+// Show the tab with the custom reports tool (not available to external users)
+if (empty($user->socid) && $tabfamily == 'membershipstats') {
+	print dol_get_fiche_head($head, 'customreports', '', -1, '');
+
+	define('USE_CUSTOM_REPORT_AS_TAB', 1);
+	$customreportobjecttype = 'cotisation';
+	include DOL_DOCUMENT_ROOT.'/core/customreports.php';
+
+	print dol_get_fiche_end();
+
+	llxFooter();
+	$db->close();
+	exit;
+}
 
 $dir = $conf->member->dir_temp;
 
@@ -168,8 +186,6 @@ if (!$mesg) {
 	$px2->draw($filenameamount, $fileurlamount);
 }
 
-
-$head = membership_stats_prepare_head($memberstatic);
 
 print dol_get_fiche_head($head, 'statssubscription', '', -1, '');
 

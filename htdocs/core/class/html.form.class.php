@@ -6380,10 +6380,11 @@ class Form
 	 *
 	 * @param string $selected Preselected ID
 	 * @param int $socid Company ID
+	 * @param int<0,1> $showfirstsituation 1=After an empty option (value -1), add the choice to create the first situation invoice of a new cycle (value 0)
 	 *
 	 * @return    string                     HTML select
 	 */
-	public function selectSituationInvoices($selected = '', $socid = 0)
+	public function selectSituationInvoices($selected = '', $socid = 0, $showfirstsituation = 0)
 	{
 		global $langs;
 
@@ -6429,7 +6430,9 @@ class Form
 			dol_syslog("Error sql=" . $sql . ", error=" . $this->error, LOG_ERR);
 		}
 
-		if ($nbSituationInvoiceForThirdparty > 0) {
+		if ($showfirstsituation) {
+			$opt = '<option class="minwidth100" value="-1">&nbsp;</option><option class="minwidth100" value="0">'.$langs->trans('InvoiceFirstSituationAsk').'</option>'.$opt;
+		} elseif ($nbSituationInvoiceForThirdparty > 0) {
 			$opt = '<option class="minwidth100" value="" selected>&nbsp;</option>'.$opt;
 		} else {
 			$opt = '<option class="minwidth100" value="-1" selected>'.$langs->trans('NoSituations').'</option>';
@@ -12593,6 +12596,10 @@ class Form
 						// For a person, if no gravatar is found (or gravatar is not reachable), fallback on the local generic image of its gender
 						$defaultimg = '404';
 						$onerror = ' onerror="' . dol_escape_htmltag('this.onerror=null; this.src=\'' . dol_escape_js(DOL_URL_ROOT . $nophoto) . '\';') . '"';
+					} elseif ($nophoto == 'company') {
+						// For a company or a moral person member, if no gravatar is found (or gravatar is not reachable), fallback on the local generic company image
+						$defaultimg = '404';
+						$onerror = ' onerror="' . dol_escape_htmltag('this.onerror=null; this.src=\'' . dol_escape_js(DOL_URL_ROOT . '/public/theme/common/company.png') . '\';') . '"';
 					}
 					$ret .= '<!-- Put link to gravatar -->';
 					$ret .= '<img class="gravatar photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" alt="" title="'.dolPrintHTMLForAttribute('Gravatar avatar - '.$email).'" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="https://www.gravatar.com/avatar/' . dol_hash(strtolower(trim($email)), 'sha256', 1) . '?s=' . $width . '&d=' . $defaultimg . '"' . $onerror . '>'; // gravatar accepts a sha256 hash

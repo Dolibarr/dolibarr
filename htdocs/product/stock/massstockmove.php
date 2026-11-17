@@ -562,24 +562,26 @@ $titletoadd = $langs->trans("Select");
 $buttonrecord = $langs->trans("RecordMovements");
 $titletoaddnoent = $langs->transnoentitiesnoconv("Select");
 $buttonrecordnoent = $langs->transnoentitiesnoconv("RecordMovements");
-print '<span class="opacitymedium">'.$langs->trans("SelectProductInAndOutWareHouse", $titletoaddnoent, $buttonrecordnoent).'</span>';
 
-print '<br>';
-//print '<br>';
-
-// Form to upload a file
 print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="importCSV">';
+
+print '<div class="info">';
+print '<span class="">'.$langs->trans("SelectProductInAndOutWareHouse", $titletoaddnoent, $buttonrecordnoent).'</span>';
+
+print '<br>';
+
+// Form to upload a file
 if (!empty($conf->dol_optimize_smallscreen)) {
 	print '<br>';
 }
-print '<span class="opacitymedium">';
+print '<span class="">';
 print $langs->trans("or");
-print ' ';
+print '<br>';
 $importcsv = new ImportCsv($db, 'massstocklist');
-print $form->textwithpicto($langs->trans('SelectAStockMovementFileToImport'), $langs->transnoentitiesnoconv("InfoTemplateImport", $importcsv->separator));
-print '</span>';
+print $form->textwithpicto($langs->trans('SelectAStockMovementFileToImport'), empty($conf->dol_optimize_smallscreen) ? $langs->transnoentitiesnoconv("InfoTemplateImport", $importcsv->separator) : $langs->transnoentitiesnoconv("Import"), 1);
+print '</span> ';
 
 $maxfilesizearray = getMaxFileSizeArray();
 $maxmin = $maxfilesizearray['maxmin'];
@@ -587,9 +589,8 @@ if ($maxmin > 0) {
 	print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
 }
 print '<input type="file" name="userfile" size="20" maxlength="80"> &nbsp; &nbsp; ';
-$out = (!getDolGlobalString('MAIN_UPLOAD_DOC') ? ' disabled' : '');
-print '<input type="submit" class="button small smallpaddingimp" value="'.$langs->trans("ImportFromCSV").'"'.$out.' name="sendit">';
 $out = '';
+$tooltipsendit = '';	// The limits of upload are shown in the tooltip of the submit button
 if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
 	$max = getDolGlobalString('MAIN_UPLOAD_DOC'); // In Kb
 	$maxphp = @ini_get('upload_max_filesize'); // In unknown
@@ -643,12 +644,14 @@ if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
 	}
 
 	$langs->load('other');
-	$out .= ' ';
-	$out .= info_admin($langs->trans("ThisLimitIsDefinedInSetup", $max, $maxphptoshow), 1);
+	$tooltipsendit = $langs->transnoentitiesnoconv("ThisLimitIsDefinedInSetup", $max, $maxphptoshow);
 } else {
 	$out .= ' ('.$langs->trans("UploadDisabled").')';
 }
+print '<input type="submit" class="button small smallpaddingimp'.($tooltipsendit ? ' classfortooltip' : '').'" value="'.$langs->trans("ImportFromCSV").'"'.(!getDolGlobalString('MAIN_UPLOAD_DOC') ? ' disabled' : '').($tooltipsendit ? ' title="'.dolPrintHTMLForAttribute($tooltipsendit).'"' : '').' name="sendit">';
 print $out;
+
+print '</div>';
 
 print '</form>';
 

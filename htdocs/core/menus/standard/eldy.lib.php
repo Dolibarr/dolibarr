@@ -1917,7 +1917,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 									&& (isModEnabled('asset') || isModEnabled('invoice') || isModEnabled('supplier_invoice'))) {
 									$nature = "various";
 								}
-								if ($objp->nature == 8) {
+								if ($objp->nature == 8 && isModEnabled('stock') && getDolGlobalString('ACCOUNTING_INVENTORY_MODE') && getDolGlobalString('ACCOUNTING_INVENTORY_MODE') != 'none') {
 									$nature = "inventory";
 								}
 								if ($objp->nature == 9) {
@@ -1926,7 +1926,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 
 								// To enable when page exists
 								if (!getDolGlobalString('ACCOUNTANCY_SHOW_DEVELOP_JOURNAL')) {
-									if ($nature == 'hasnew' || $nature == 'inventory') {
+									if ($nature == 'hasnew') {
 										$nature = '';
 									}
 								}
@@ -2243,7 +2243,7 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 
 		// Management of checks
 		if (!getDolGlobalString('BANK_DISABLE_CHECK_DEPOSIT') && isModEnabled('bank') && (isModEnabled('invoice') || getDolGlobalString('MAIN_MENU_CHEQUE_DEPOSIT_ON'))) {
-			$newmenu->add("/compta/paiement/cheque/index.php?leftmenu=checks&mainmenu=bank", $langs->trans("MenuChequeDeposits"), 0, $user->hasRight('banque', 'cheque'), '', $mainmenu, 'checks', 0, '', '', '', img_picto('', 'payment', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add("/compta/paiement/cheque/index.php?leftmenu=checks&mainmenu=bank", $langs->trans("MenuChequeDeposits"), 0, $user->hasRight('banque', 'cheque'), '', $mainmenu, 'checks', 0, '', '', '', img_picto('', 'depositslip', 'class="paddingright pictofixedwidth"'));
 			if (preg_match('/checks/', $leftmenu)) {
 				$newmenu->add("/compta/paiement/cheque/card.php?leftmenu=checks_bis&action=create2&mainmenu=bank", $langs->trans("NewChequeDeposit"), 1, $user->hasRight('banque', 'cheque'));
 				$newmenu->add("/compta/paiement/cheque/list.php?leftmenu=checks_bis&mainmenu=bank", $langs->trans("List"), 1, $user->hasRight('banque', 'cheque'));

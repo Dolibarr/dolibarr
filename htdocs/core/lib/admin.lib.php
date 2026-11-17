@@ -960,6 +960,11 @@ function security_prepare_head()
 	$head[$h][2] = 'openid';
 	$h++;
 
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/security_passkey.php");
+	$head[$h][1] = $langs->trans("Passkeys");
+	$head[$h][2] = 'passkey';
+	$h++;
+
 
 	// Show permissions lines
 	$nbPerms = 0;

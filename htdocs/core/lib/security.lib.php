@@ -823,8 +823,8 @@ function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file
 		'societe' => array('societe', 'societe'),
 		'company' => array('societe', 'societe'),
 		'thirdparty' => array('societe', 'societe'),
-		'contact' => array('contact', 'contact'),
-		'socpeople' => array('contact', 'contact'),
+		'contact' => array('contact', 'contact', 'socpeople&societe'),
+		'socpeople' => array('contact', 'contact', 'socpeople&societe'),
 		'facture' => array('facture', 'facture'),
 		'invoice' => array('facture', 'facture'),
 		'propal' => array('propal', 'propal'),
@@ -840,9 +840,9 @@ function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file
 		'supplier_invoice' => array('invoice_supplier', 'fournisseur', 'facture_fourn', 'facture'),
 		'contract' => array('contrat', 'contrat'),
 		'contrat' => array('contrat', 'contrat'),
-		'fichinter' => array('fichinter', 'ficheinter'),
-		'ficheinter' => array('fichinter', 'ficheinter'),
-		'intervention' => array('fichinter', 'ficheinter'),
+		'fichinter' => array('fichinter', 'ficheinter', 'fichinter'),
+		'ficheinter' => array('fichinter', 'ficheinter', 'fichinter'),
+		'intervention' => array('fichinter', 'ficheinter', 'fichinter'),
 		'ticket' => array('ticket', 'ticket'),
 		'expedition' => array('expedition', 'expedition'),
 		'shipment' => array('expedition', 'expedition'),
@@ -867,9 +867,20 @@ function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file
 		$modulepart = dol_substr($modulepart, 6);
 	}
 
+	// Security: Remove '.', '..' and empty segments ('/' -> '//') from $original_file, like done into
+	// dol_check_secure_access_document(), so the reference of the object extracted from the subdirectory
+	// can not be faked with a path like 'REF/./file' or 'REF//file' and stays the same than the one of the first check.
+	$pathsegments = explode('/', $original_file);
+	foreach ($pathsegments as $key => $pathsegment) {
+		if ($pathsegment === '.' || $pathsegment === '..' || $pathsegment === '') {
+			unset($pathsegments[$key]);
+		}
+	}
+	$original_file = implode('/', $pathsegments);
+
 	// Find the subdirectory name as the reference
 	$refname = basename(dirname($original_file)."/");
-	if ($refname == 'thumbs' || $refname == 'temp') {
+	if ($refname == 'thumbs' || $refname == 'temp' || $refname == '.versions') {	// .versions: previous versions of the files of the object
 		$refname = basename(dirname(dirname($original_file))."/");
 	}
 
@@ -882,8 +893,9 @@ function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file
 			if (count($tmparray) > 2 && ($user->hasRight($modulepart, $tmparray[0], $mode))) {
 				$feature2 = $tmparray[0];
 			}
+			// The table of the object must be provided, the default table guessed from $modulepart may not exist (llx_bom instead of llx_bom_bom, ...)
 			// Call checkUserAccessToObject() directly (module permission already checked by dol_check_secure_access_document())
-			return checkUserAccessToObject($user, array($modulepart), $object, '', $feature2, 'fk_soc', 'rowid') ? 1 : 0;
+			return checkUserAccessToObject($user, array($modulepart), $object, (string) $object->table_element, $feature2, 'fk_soc', 'rowid') ? 1 : 0;
 		}
 		// If $modulepart is not an object type (userphoto, companylogo, memberphoto, apercuxxx, systemtools...), there is no object to check
 		return 1;
@@ -957,9 +969,6 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		//var_dump($feature);exit;
 
 		// Normalize table and feature name for compatibility
-		if ($feature == 'bom') {
-			$feature = 'bom_bom';
-		}
 		if ($feature == 'societe' && !empty($feature2) && is_array($feature2) && in_array('contact', $feature2)) {
 			$feature = 'contact';
 			$feature2 = '';
@@ -976,6 +985,9 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if (!$tablegivenbycaller && $feature == 'contract') {
 			$dbtablename = 'contrat';
 		}
+		if (!$tablegivenbycaller && $feature == 'bom') {
+			$dbtablename = 'bom_bom';
+		}
 		if (!$tablegivenbycaller && $feature == 'mrp') {
 			$dbtablename = 'mrp_mo';
 		}
@@ -986,6 +998,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$dbtablename = 'facture_fourn';
 		}
 		if (!$tablegivenbycaller && $feature == 'produit') {
+			// The module (and its permissions) is named 'produit', but the table of the product object is 'llx_product'
 			$dbtablename = 'product';
 		}
 		if (!$tablegivenbycaller && $feature == 'ficheinter') {
