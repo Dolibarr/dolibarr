@@ -1947,6 +1947,13 @@ if (empty($reshook)) {
 			}
 
 
+			if (GETPOST('type') == Facture::TYPE_SITUATION && GETPOSTINT('situations') < 0) {
+				// Empty choice in list of situations (0 is the first situation of a new cycle)
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("InvoiceSituation")), null, 'errors');
+				$error++;
+				$action = 'create';
+			}
+
 			if (GETPOST('type') == Facture::TYPE_STANDARD) {
 				if ($valuestandardinvoice < 0 || $valuestandardinvoice > 100) {
 					setEventMessages($langs->trans("ErrorAPercentIsRequired"), null, 'errors');
@@ -4710,35 +4717,30 @@ if ($action == 'create') {
 
 		if ($socid > 0) {
 			if (getDolGlobalString('INVOICE_USE_SITUATION')) {
-				// First situation invoice
+				// Situation invoice: first option is the first situation of a new cycle, next options are the next situation of an open cycle
+				if (GETPOST('origin') && GETPOST('origin') != 'facture' && GETPOST('origin') != 'commande') {
+					// From this origin, only a first situation invoice can be created
+					$opt = '<option class="minwidth100" value="-1">&nbsp;</option>';
+					$opt .= '<option class="minwidth100" value="0">'.$langs->trans('InvoiceFirstSituationAsk').'</option>';
+				} else {
+					$opt = $form->selectSituationInvoices((string) GETPOSTINT('originid'), $socid, 1);
+				}
+
 				print '<div class="listofinvoicetype"><div class="">';
-				$tmp = '<input id="radio_situation" type="radio" name="type" value="5"'.(GETPOST('type') == 5 ? ' checked' : '').'> ';
-				$tmp  = $tmp.'<label for="radio_situation" >'.$langs->trans("InvoiceFirstSituationAsk").'</label>';
-				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-				$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3, 'firstsituationonsmartphone');
-				print $desc;
-
-				// Next situation invoice
-				$opt = $form->selectSituationInvoices((string) GETPOSTINT('originid'), $socid);
-
-				//print ' &nbsp; ';
-				print '</div></div><div class="listofinvoicetype"><div>';
-
-				$tmp = '<input id="radio_situation_bis" type="radio" name="type" value="5"'.(GETPOST('type') == 5 && GETPOSTINT('originid') ? ' checked' : '');
-				if ($opt == ('<option value="0" selected>'.$langs->trans('NoSituations').'</option>') || (GETPOST('origin') && GETPOST('origin') != 'facture' && GETPOST('origin') != 'commande')) {
-					$tmp .= ' disabled';
-				}
-				$tmp .= '> ';
+				print '<script type="text/javascript">
+				jQuery(document).ready(function() {
+					jQuery("#situations").change(function() {
+						jQuery("#radio_situation_bis").prop("checked", true);
+					});
+				});
+				</script>';
+				$tmp = '<input id="radio_situation_bis" type="radio" name="type" value="5"'.(GETPOST('type') == 5 ? ' checked' : '').'> ';
 				$text = $tmp.'<label for="radio_situation_bis">'.$langs->trans("InvoiceSituationAsk").'</label> ';
-
-				$text .= '<select class="flat minwidth125" id="situations" name="situations"';
-				if ($opt == ('<option value="0" selected>'.$langs->trans('NoSituations').'</option>') || (GETPOST('origin') && GETPOST('origin') != 'facture' && GETPOST('origin') != 'commande')) {
-					$text .= ' disabled';
-				}
-				$text .= '>';
+				$text .= '<select class="flat minwidth125" id="situations" name="situations">';
 				$text .= $opt;
 				$text .= '</select>';
-				$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceSituationDesc"), 1, 'help', '', 0, 3);
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
+				$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceFirstSituationDesc").'<br><br>'.$langs->transnoentities("InvoiceSituationDesc"), 1, 'help', '', 0, 3, 'firstsituationonsmartphone');
 				print $desc;
 				print '</div></div>'."\n";
 			}
