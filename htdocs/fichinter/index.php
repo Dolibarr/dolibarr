@@ -91,7 +91,7 @@ $sql .= ", ".MAIN_DB_PREFIX."fichinter as f";
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
-$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
+$sql .= " WHERE f.entity IN (".getEntity('fichinter').")";
 $sql .= " AND f.fk_soc = s.rowid";
 if ($user->socid) {
 	$sql .= ' AND f.fk_soc = '.((int) $user->socid);
@@ -209,7 +209,7 @@ if (isModEnabled('intervention')) {
 	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
-	$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
+	$sql .= " WHERE f.entity IN (".getEntity('fichinter').")";
 	$sql .= " AND f.fk_soc = s.rowid";
 	$sql .= " AND f.fk_statut = 0";
 	if ($socid) {
@@ -261,7 +261,7 @@ $sql .= " ".MAIN_DB_PREFIX."societe as s";
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
-$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
+$sql .= " WHERE f.entity IN (".getEntity('fichinter').")";
 $sql .= " AND f.fk_soc = s.rowid";
 //$sql.= " AND c.fk_statut > 2";
 if ($socid) {
@@ -335,7 +335,7 @@ if (isModEnabled('intervention')) {
 	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
-	$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
+	$sql .= " WHERE f.entity IN (".getEntity('fichinter').")";
 	$sql .= " AND f.fk_soc = s.rowid";
 	$sql .= " AND f.fk_statut = 1";
 	if ($socid) {

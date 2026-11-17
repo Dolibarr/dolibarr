@@ -15433,9 +15433,10 @@ function getElementProperties($elementType)
 	} elseif ($elementType == 'supplier_proposal') {
 		$classpath = 'supplier_proposal/class';
 		$module = 'supplier_proposal';
-		$element = 'supplierproposal';
+		$element = 'supplier_proposal';
 		$classfile = 'supplier_proposal';
 		$subelement = 'supplierproposal';
+		$table_element = 'supplier_proposal';
 	} elseif ($elementType == 'supplier_proposaldet') {
 		$classpath = 'supplier_proposal/class';
 		$module = 'supplier_proposal';
@@ -15494,9 +15495,10 @@ function getElementProperties($elementType)
 		$module = 'cabinetmed';
 		$subelement = 'cabinetmedcons';
 		$table_element = 'cabinetmedcons';
-	} elseif ($elementType == 'fichinter') {
+	} elseif ($elementType == 'fichinter' || $elementType == 'ficheinter') {
 		$classpath = 'fichinter/class';
 		$module = 'ficheinter';
+		$element = 'fichinter';
 		$subelement = 'fichinter';
 		$table_element = 'fichinter';
 	} elseif ($elementType == 'dolresource' || $elementType == 'resource') {
@@ -15525,7 +15527,7 @@ function getElementProperties($elementType)
 		$classname = 'CommandeFournisseurLigne';
 		$table_element = 'commande_fournisseurdet';
 		$parent_element = 'commande_fournisseur';
-	} elseif ($elementType == 'invoice_supplier' || $elementType == 'supplier_invoice' || $elementType == 'facture_fourn') {
+	} elseif ($elementType == 'invoice_supplier' || $elementType == 'supplier_invoice' || $elementType == 'facture_fourn' || $elementType == 'facture_fournisseur') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
 		$classfile = 'fournisseur.facture';

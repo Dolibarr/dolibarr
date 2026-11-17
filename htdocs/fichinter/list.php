@@ -343,7 +343,7 @@ $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object
 $sql .= $hookmanager->resPrint;
 
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
-$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
+$sql .= " WHERE f.entity IN (".getEntity('fichinter').")";
 $sql .= " AND f.fk_soc = s.rowid";
 if ($search_ref) {
 	$sql .= natural_search('f.ref', $search_ref);

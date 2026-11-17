@@ -518,6 +518,35 @@ class FilesLibTest extends CommonClassTest
 	}
 
 	/**
+	 * testDolCheckSecureAccessDocumentEntity
+	 *
+	 * @return void
+	 */
+	public function testDolCheckSecureAccessDocumentEntity()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		// An entity not visible from the entity of the session must be replaced with the entity of the session
+		$entitynotvisible = (int) $conf->entity + 1000;
+
+		$filename = 'FA010101/FA010101.pdf';
+		$result = dol_check_secure_access_document('facture', $filename, (int) $conf->entity, '', '', 'read');
+		$this->assertEquals($conf->invoice->dir_output.'/'.$filename, $result['original_file'], "Check path of '$filename' for the entity of the session");
+		$result = dol_check_secure_access_document('facture', $filename, $entitynotvisible, '', '', 'read');
+		$this->assertEquals($conf->invoice->dir_output.'/'.$filename, $result['original_file'], "Check path of '$filename' for an entity not visible");
+
+		if (!empty($conf->product->dir_temp)) {
+			$filename = 'graph.png';
+			$result = dol_check_secure_access_document('graph_product', $filename, $entitynotvisible, '', '', 'read');
+			$this->assertEquals($conf->product->multidir_temp[$conf->entity].'/'.$filename, $result['original_file'], "Check path of '$filename' for an entity not visible");
+		}
+	}
+
+	/**
 	 * testDolDirMove
 	 *
 	 * @return void

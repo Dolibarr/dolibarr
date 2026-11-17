@@ -52,7 +52,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 if (isModEnabled('invoice')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
@@ -1385,17 +1385,17 @@ if ($object->id > 0) {
 	 * Latest interventions
 	 */
 	if (isModEnabled('intervention') && $user->hasRight('ficheinter', 'lire')) {
+		$fichinter_static = new Fichinter($db);
+
 		$sql = "SELECT s.nom, s.rowid, f.rowid as id, f.ref, f.fk_projet, f.fk_statut, f.duree as duration, f.datei as startdate, f.entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f";
 		$sql .= " WHERE f.fk_soc = s.rowid";
 		$sql .= " AND s.rowid = ".((int) $object->id);
-		$sql .= " AND f.entity IN (".getEntity('intervention').")";
+		$sql .= " AND f.entity IN (".getEntity($fichinter_static->element).")";
 		$sql .= " ORDER BY f.tms DESC";
 
 		$resql = $db->query($sql);
 		if ($resql) {
-			$fichinter_static = new Fichinter($db);
-
 			$num = $db->num_rows($resql);
 			if ($num > 0) {
 				print '<div class="div-table-responsive-no-min">';
