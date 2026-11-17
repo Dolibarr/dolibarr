@@ -1225,6 +1225,9 @@ th .button {
 .valignmiddle {
 	vertical-align: middle;
 }
+.valignbaseline {
+	vertical-align: baseline;
+}
 .valignbottom {
 	vertical-align: bottom;
 }
@@ -4394,6 +4397,17 @@ img.toolbarbutton {
 li.expanded > a.fmdirlia.jqft.ecmjqft {
 	font-weight: bold !important;
 }
+/* Marker after the name of a directory that has sub directories: closed or open */
+li.lidirecmwithsubdir > a.fmdirlia::after {
+	content: "\25B8";
+	display: inline-block;	/* not underlined with the name */
+	padding-left: 6px;
+	opacity: 0.6;
+	font-weight: normal;
+}
+li.lidirecmwithsubdir.expanded > a.fmdirlia::after {
+	content: "\25BE";
+}
 
 .divfmdirlia {
 	width: calc(100% - 100px);
@@ -5130,7 +5144,7 @@ div.pagination li {
 
 div.pagination li.pagination a,
 div.pagination li.pagination span {
-  padding: 6px 12px;
+  padding: 5px 12px;
   padding-top: 8px;
   line-height: 1.42857143;
   color: var(--color-black);
@@ -6296,6 +6310,12 @@ div.divphotoref > div > .photowithmargin, div.divphotoref > img.photowithmargin,
 	opacity: 0.5;
 }
 
+/* height of top title */
+.fiche > table.table-fiche-title tr.toptitle, .fiche > form > table.table-fiche-title tr.toptitle {
+	height: 54px;
+}
+
+
 table.table-fiche-title tr.toptitle {
 	height: 60px;
 }
@@ -6824,6 +6844,10 @@ span#morelines {
 	padding: 2px 4px 2px 4px !important;
 	margin: 2px 4px 2px 4px  !important;
 	line-height: normal;
+}
+.websitebar button.button, .websitebar button.buttonDelete {
+	/* Align height of native button elements with sibling anchor buttons (button keeps UA font-size) */
+	font-size: inherit;
 }
 .websitebar input.button.bordertransp, .websitebar input.buttonDelete.bordertransp {
 	color: #444 !important;
@@ -7618,6 +7642,16 @@ td.gtaskheading.gstartdate, td.gtaskheading.genddate {
 	border-top: none;
 }
 
+
+/* Field to choose files of the file manager (filemanager.tpl.php): files can be dropped on it */
+input[type="file"].ecmfiledropinput, div.tabBar input[type="file"].ecmfiledropinput {
+	border: 2px dotted var(--colortextlink);
+	border-radius: 4px;
+}
+input[type="file"].ecmfiledropinput.ecmfiledropinputover, div.tabBar input[type="file"].ecmfiledropinput.ecmfiledropinputover {
+	border-style: solid;
+	background-color: var(--colorbacklinepairhover);
+}
 
 /* ============================================================================== */
 /*  jFileTree                                                                     */

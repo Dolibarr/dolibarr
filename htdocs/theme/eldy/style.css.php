@@ -1341,6 +1341,9 @@ th .button {
 .valignmiddle {
 	vertical-align: middle;
 }
+.valignbaseline {
+	vertical-align: baseline;
+}
 .valignbottom {
 	vertical-align: bottom;
 }
@@ -4631,6 +4634,17 @@ img.toolbarbutton {
 li.expanded > a.fmdirlia.jqft.ecmjqft {
 	font-weight: bold !important;
 }
+/* Marker after the name of a directory that has sub directories: closed or open */
+li.lidirecmwithsubdir > a.fmdirlia::after {
+	content: "\25B8";
+	display: inline-block;	/* not underlined with the name */
+	padding-left: 6px;
+	opacity: 0.6;
+	font-weight: normal;
+}
+li.lidirecmwithsubdir.expanded > a.fmdirlia::after {
+	content: "\25BE";
+}
 
 .divfmdirlia {
 	width: calc(100% - 100px);
@@ -5389,7 +5403,7 @@ li.pagination.paginationpage.paginationpageleft, li.pagination.paginationpage.pa
 }
 div.pagination li.pagination a,
 div.pagination li.pagination span {
-  padding: 6px 12px;
+  padding: 5px 12px;
   line-height: 1.42857143;
   text-decoration: none;
   background-repeat: repeat-x;
@@ -6685,7 +6699,7 @@ div.divphotoref > div > .photowithmargin, div.divphotoref > img.photowithmargin,
 
 /* height of top title */
 .fiche > table.table-fiche-title tr.toptitle, .fiche > form > table.table-fiche-title tr.toptitle {
-	height: 60px;
+	height: 54px;
 }
 /* height of other title */
 table.table-fiche-title tr.toptitle, table.table-fiche-title tr.toptitle {
@@ -7260,6 +7274,11 @@ span#morelines {
 /*	line-height: normal; */
 	background: #f5f5f5 !important;
 	border: 1px solid #ccc !important;
+}
+.websitebar button.button, .websitebar button.buttonDelete {
+	/* Align height of native button elements with sibling anchor buttons (button keeps UA font-size and line-height) */
+	font-size: inherit;
+	line-height: normal;
 }
 .websiteselection {
 	/* display: inline-block; */
@@ -8092,6 +8111,16 @@ td.gtaskheading.gstartdate, td.gtaskheading.genddate {
 	border-left: none;
 	border-right: none;
 	border-top: none;
+}
+
+/* Field to choose files of the file manager (filemanager.tpl.php): files can be dropped on it */
+input[type="file"].ecmfiledropinput, div.tabBar input[type="file"].ecmfiledropinput {
+	border: 2px dotted var(--colortextlink);
+	border-radius: 4px;
+}
+input[type="file"].ecmfiledropinput.ecmfiledropinputover, div.tabBar input[type="file"].ecmfiledropinput.ecmfiledropinputover {
+	border-style: solid;
+	background-color: var(--colorbacklinepairhover);
 }
 
 /* ============================================================================== */

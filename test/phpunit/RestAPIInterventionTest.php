@@ -74,7 +74,7 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 	 * @param string		$endpoint 	Endpoint - "interventions/id"
 	 * @param string		$test_title	Text to be added to output
 	 * @param 'GET'|'POST'|'PUT'|'DELETE'	$method		Call Method
-	 * @param mixed			$data		Data that will be JSON encoded (POST/PUT) or sent as query params (GET/DELETE)
+	 * @param mixed			$data		Data that will be JSON encoded (POST/PUT, a string is sent as is) or sent as query params (GET/DELETE)
 	 * @param int			$expected_error	Expected error code
 	 * @param ?string		$api_key	API key to use instead of the one of the admin user
 	 *
@@ -85,7 +85,7 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 		$params = '';
 		$body = null;
 		if ($method === 'POST' || $method === 'PUT') {
-			$body = json_encode($data);
+			$body = is_string($data) ? $data : json_encode($data);
 		} elseif (!empty($data)) {
 			$params = '?'.http_build_query($data);
 		}
@@ -611,6 +611,49 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * testRestInterventionPut
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionPut()
+	{
+		$test = "Update an intervention";
+
+		list($intervention_id) = $this->createInterventionWithLine($test);
+
+		$result = $this->getUrl('interventions/'.$intervention_id, $test, 'PUT', array("note_private" => "Private note updated via the REST API"));
+		$this->assertEquals($intervention_id, $result['content']['id'] ?? null, "$test Put must return the intervention");
+		$this->assertEquals("Private note updated via the REST API", $result['content']['note_private'] ?? null, "$test Put must return the updated note");
+
+		$result = $this->getUrl('interventions/'.$intervention_id, $test, 'GET');
+		$this->assertEquals("Private note updated via the REST API", $result['content']['note_private'] ?? null, "$test The note must be saved");
+	}
+
+	/**
+	 * testRestInterventionPutEmptyBody
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionPutEmptyBody()
+	{
+		$test = "Update an intervention with an empty body";
+
+		list($intervention_id) = $this->createInterventionWithLine($test);
+		$this->getUrl('interventions/'.$intervention_id, $test, 'PUT', array("note_private" => "Private note before the empty update"));
+		$before = $this->getUrl('interventions/'.$intervention_id, $test, 'GET');
+
+		foreach (array('no body' => '', 'empty object' => '{}') as $label => $body) {
+			$result = $this->getUrl('interventions/'.$intervention_id, "$test ($label)", 'PUT', $body, 400);
+			$this->assertStringContainsString('non-empty', $result['content']['error']['message'] ?? '', "$test ($label) The empty body must be the reason of the refusal");
+		}
+
+		$after = $this->getUrl('interventions/'.$intervention_id, $test, 'GET');
+		foreach (array('description', 'note_private', 'note_public', 'ref_client') as $field) {
+			$this->assertEquals($before['content'][$field] ?? null, $after['content'][$field] ?? null, "$test Field $field must not change");
+		}
+	}
+
+	/**
 	 * Close an intervention
 	 *
 	 * @param string	$test				Text to be added to output
@@ -875,5 +918,61 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 		$intervention_id = $this->createInterventionToDelete($test);
 
 		$this->getUrl('interventions/'.$intervention_id.'/contact/1/INTERREPFOLL', $test, 'DELETE', null, 404);
+	}
+
+	/**
+	 * testRestInterventionSetToDraft
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionSetToDraft()
+	{
+		$test = "Set a validated intervention back to draft";
+
+		list($intervention_id) = $this->createInterventionWithLine($test);
+		$this->validateIntervention($test, $intervention_id);
+
+		$result = $this->getUrl('interventions/'.$intervention_id.'/settodraft', $test, 'POST', array());
+		$this->assertEquals(Fichinter::STATUS_DRAFT, $result['content']['status'] ?? null, "$test Settodraft must return the draft intervention");
+
+		$result = $this->getUrl('interventions/'.$intervention_id, $test, 'GET');
+		$this->assertEquals(Fichinter::STATUS_DRAFT, $result['content']['status'] ?? null, "$test Intervention must be draft");
+	}
+
+	/**
+	 * testRestInterventionSetToDraftAlreadyDraft
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionSetToDraftAlreadyDraft()
+	{
+		$test = "Set a draft intervention to draft";
+
+		list($intervention_id) = $this->createInterventionWithLine($test);
+
+		$this->assertPostNotModified('interventions/'.$intervention_id.'/settodraft', $test, array());
+
+		$result = $this->getUrl('interventions/'.$intervention_id, $test, 'GET');
+		$this->assertEquals(Fichinter::STATUS_DRAFT, $result['content']['status'] ?? null, "$test Intervention must stay draft");
+	}
+
+	/**
+	 * testRestInterventionSetToDraftClosed
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionSetToDraftClosed()
+	{
+		$test = "Set a closed intervention to draft";
+
+		list($intervention_id) = $this->createInterventionWithLine($test);
+		$this->validateIntervention($test, $intervention_id);
+		$this->closeIntervention($test, $intervention_id);
+
+		$result = $this->getUrl('interventions/'.$intervention_id.'/settodraft', $test, 'POST', array(), 403);
+		$this->assertStringContainsString('validated status', $result['content']['error']['message'] ?? '', "$test The status must be the reason of the refusal");
+
+		$result = $this->getUrl('interventions/'.$intervention_id, $test, 'GET');
+		$this->assertEquals(Fichinter::STATUS_CLOSED, $result['content']['status'] ?? null, "$test Intervention must stay closed");
 	}
 }

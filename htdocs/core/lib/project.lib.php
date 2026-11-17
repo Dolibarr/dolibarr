@@ -1248,7 +1248,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
  * @param	int 	   	$inc					Line number (start to 0, then increased by recursive call)
  * @param   int 		$parent					Id of parent task to show (0 to show all)
  * @param	?User		$fuser					Restrict list to user if defined
- * @param   Task[]		$lines					Array of lines
+ * @param   stdClass[]	$lines					Array of time spent lines (see Task::fetchTimeSpentOnTask())
  * @param   int			$level					Level (start to 0, then increased/decrease by recursive call)
  * @param   array<int,string>	$projectsrole	Array of roles user has on project
  * @param   array<int,string>	$tasksrole		Array of roles user has on task

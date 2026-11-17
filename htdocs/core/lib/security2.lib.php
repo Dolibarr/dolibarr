@@ -151,7 +151,7 @@ if (!function_exists('dol_loginfunction')) {
 
 		// Title
 		$appli = constant('DOL_APPLICATION_TITLE');
-		$title = $appli.(getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '' : ' '.constant('DOL_VERSION'));
+		$title = $appli.((getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') || getDolGlobalInt('MAIN_HIDE_VERSION')) ? '' : ' '.constant('DOL_VERSION'));
 
 		$customapplication = getDolGlobalString('MAIN_APPLICATION_TITLE');
 		if ($customapplication) {
@@ -162,6 +162,10 @@ if (!function_exists('dol_loginfunction')) {
 			}
 		}
 		$titletruedolibarrversion = constant('DOL_VERSION'); // $title used by login template after the @ to inform of true Dolibarr version
+		if (getDolGlobalInt('MAIN_HIDE_VERSION')) {
+			// Keep the pattern x.y.z expected by webviews, without the maintenance number
+			$titletruedolibarrversion = preg_replace('/^(\d+\.\d+)\..*$/', '\1.x', $titletruedolibarrversion);
+		}
 
 		// Note: $conf->css looks like '/theme/eldy/style.css.php'
 		/*
@@ -378,7 +382,7 @@ function encodedecode_dbpassconf($level = 0)
 
 	if ($fp = fopen(DOL_DOCUMENT_ROOT.'/conf/conf.php', 'r')) {
 		while (!feof($fp)) {
-			$buffer = fgets($fp, 4096);
+			$buffer = fgets($fp, 16384); // 16384 to allow very long lines in conf.php
 
 			$lineofpass = 0;
 
@@ -945,13 +949,79 @@ function dolTotpIsDisabledByConf()
 }
 
 /**
+ *  Tell if the security setup requires the TOTP two-factor authentication for a user: for all the internal users, all the external
+ *  users or the members of some groups. Never required when this instance can't store a secret, nor when the rescue option of conf.php
+ *  disables the two-factor authentication (an enrollment is then refused), so nobody is locked out of its setup.
+ *
+ *  @param		DoliDB		$db				Database handler
+ *  @param		User		$user			User to test
+ *  @return		bool						True if this user must use a TOTP
+ *  @see dolTotpMustEnroll()
+ */
+function dolTotpIsRequired($db, $user)
+{
+	if (!getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') || dolTotpIsDisabledByConf() || empty($user->id)) {
+		return false;
+	}
+
+	$required = (empty($user->socid) ? getDolGlobalInt('MAIN_SECURITY_TOTP_REQUIRED_FOR_INTERNAL') : getDolGlobalInt('MAIN_SECURITY_TOTP_REQUIRED_FOR_EXTERNAL')) > 0;
+	$groupids = array_filter(array_map('intval', explode(',', getDolGlobalString('MAIN_SECURITY_TOTP_REQUIRED_FOR_GROUPS'))));
+	if (!$required && !empty($groupids)) {
+		$sql = "SELECT COUNT(ug.rowid) as nb FROM ".$db->prefix()."usergroup_user as ug";
+		$sql .= " WHERE ug.fk_user = ".((int) $user->id)." AND ug.fk_usergroup IN (".$db->sanitize(implode(',', $groupids)).")";
+		$resql = $db->query($sql);
+		if (!$resql) {
+			dol_syslog("dolTotpIsRequired ".$db->lasterror(), LOG_ERR);
+			$required = true;	// We fail closed: the user is asked to set up a TOTP rather than let in with the password only
+		} else {
+			$obj = $db->fetch_object($resql);
+			$required = !empty($obj->nb);
+			$db->free($resql);
+		}
+	}
+
+	// dolTotpSaveEnrollment() refuses to store a secret in clear: requiring a TOTP would then lock out the users concerned, the admin included
+	if ($required && strpos(dolEncrypt('totp'), 'dolcrypt:') !== 0) {
+		dol_syslog("dolTotpIsRequired: the setup requires a TOTP but this instance has no encryption key or no openssl to store one", LOG_WARNING);
+		return false;
+	}
+
+	return $required;
+}
+
+/**
+ *  Tell if the logged user must set up a TOTP before going further: the security setup requires one for this user, none is set up yet,
+ *  and the session was opened with a mode that asks for the second step.
+ *
+ *  @param		DoliDB		$db				Database handler
+ *  @param		User		$user			Logged user
+ *  @return		bool						True if this user must set up a TOTP first
+ *  @see dolTotpIsRequired()
+ */
+function dolTotpMustEnroll($db, $user)
+{
+	if (empty($_SESSION['dol_authmode']) || !in_array($_SESSION['dol_authmode'], array('dolibarr', 'ldap'))) {
+		return false;	// The second step is asked only with these modes, the others check the user their own way
+	}
+
+	if (!dolTotpIsRequired($db, $user) || dolTotpGetEnrollment($db, $user->id) !== null) {
+		return false;
+	}
+
+	// A passkey is a two-factor authentication too: a user who has one fulfills the requirement and must log in with it (see dolTotpStartSecondFactor())
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/passkey.lib.php';
+
+	return !passkeyUserHasPasskey($db, $user->id);
+}
+
+/**
  *  Start the second step of a two-factor authentication, just after a password has been validated.
  *  The session is not opened here: we only remember that the first step succeeded, so a code can be asked for in the next request.
  *
  *  @param		DoliDB		$db				Database handler
  *  @param		string		$login			Login validated by the first step
  *  @param		int			$entity			Entity the login was tested on
- *  @return		string						The login if this user has no 2FA, or '' to ask for a code first
+ *  @return		string						The login if this user has no 2FA, or '' to ask for a code first (or to refuse the password of a user who must log in with his passkey)
  *  @see dolTotpCheckPendingLogin()
  */
 function dolTotpStartSecondFactor($db, $login, $entity)
@@ -971,6 +1041,14 @@ function dolTotpStartSecondFactor($db, $login, $entity)
 	}
 	$enrollment = dolTotpGetEnrollment($db, $tmpuser->id);
 	if ($enrollment === null) {
+		// A user to whom the security setup imposes a two-factor authentication and who has a passkey for it must log in with the passkey: the password alone is refused
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/passkey.lib.php';
+		if (dolTotpIsRequired($db, $tmpuser) && passkeyUserHasPasskey($db, $tmpuser->id)) {
+			dol_syslog("dolTotpStartSecondFactor: password refused for ".$login.", a two-factor authentication is required and this user has a passkey for it", LOG_NOTICE);
+			$langs->load("users");
+			$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("PasskeyRequiredForLogin");
+			return '';
+		}
 		return $login;		// No 2FA for this user, the password is enough
 	}
 	if (!is_array($enrollment)) {	// An enrollment exists but can't be read: we fail closed, an admin has to remove it from the user card

@@ -2075,6 +2075,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 		$tooltip = '';
 		$name = 'Unset';
 		$size = 8;
+		$class = 'flat';
 		$content = 'NoContent';
 		if ($val == 'BankCode') {
 			$name = 'code_banque';
@@ -2086,7 +2087,8 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 			$content = $bankaccount->code_guichet;
 		} elseif ($val == 'BankAccountNumber') {
 			$name = 'number';
-			$size = 18;
+			$size = 0;
+			$class = 'flat width300';
 			$content = $bankaccount->number;
 		} elseif ($val == 'BankAccountNumberKey') {
 			$name = 'cle_rib';
@@ -2122,7 +2124,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 			print $langs->trans($bankaccount->getBankFieldLabel($val));
 		}
 		print '</td>';
-		print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" value="'.dol_escape_htmltag($content).'"></td>';
+		print '<td><input type="text" class="'.$class.'"'.($size > 0 ? ' size="'.$size.'"' : '').' name="'.$name.'" value="'.dol_escape_htmltag($content).'"></td>';
 		print '</tr>';
 	}
 
@@ -2310,6 +2312,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 		$require = false;
 		$tooltip = '';
 		$size = 8;
+		$class = 'flat';
 		$name = 'Unknown';
 		$content = 'NoContent';
 
@@ -2323,7 +2326,8 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 			$content = $companybankaccount->code_guichet;
 		} elseif ($val == 'BankAccountNumber') {
 			$name = 'number';
-			$size = 18;
+			$size = 0;
+			$class = 'flat width300';
 			$content = $companybankaccount->number;
 		} elseif ($val == 'BankAccountNumberKey') {
 			$name = 'cle_rib';
@@ -2358,7 +2362,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 			print $langs->trans($companybankaccount->getBankFieldLabel($val));
 		}
 		print '</td>';
-		print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" id="'.$name.'" value="'.dol_escape_htmltag($content).'" spellcheck="false"></td>';
+		print '<td><input type="text" class="'.$class.'"'.($size > 0 ? ' size="'.$size.'"' : '').' name="'.$name.'" id="'.$name.'" value="'.dol_escape_htmltag($content).'" spellcheck="false"></td>';
 		print '</tr>';
 	}
 

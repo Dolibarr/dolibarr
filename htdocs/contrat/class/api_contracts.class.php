@@ -413,6 +413,9 @@ class Contracts extends DolibarrApi
 	/**
 	 * Add a line to given contract
 	 *
+	 * Unit price: give 'subprice' (excl. tax) with price_base_type 'HT' (default),
+	 * or 'subprice_inc_tax' (incl. tax) with price_base_type 'TTC'.
+	 *
 	 * @since	7.0.0	Initial implementation
 	 *
 	 * @param int   $id             Id of contrat to update
@@ -422,7 +425,11 @@ class Contracts extends DolibarrApi
 	 *
 	 * @url	POST {id}/lines
 	 *
-	 * @return int|bool
+	 * @return int  Id of the new contract line
+	 *
+	 * @throws RestException 403 Access denied
+	 * @throws RestException 404 Contract not found
+	 * @throws RestException 500 Error when adding the line
 	 */
 	public function postLine($id, $request_data = null)
 	{
@@ -441,34 +448,38 @@ class Contracts extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
-		$request_data->price_base_type = sanitizeVal($request_data->price_base_type);
+		$request_data->desc = sanitizeVal($request_data->desc ?? '', 'restricthtml');
+		$request_data->price_base_type = sanitizeVal($request_data->price_base_type ?? '');
+
+		// Unit price including tax, used when price_base_type is TTC.
+		$subprice_inc_tax = $request_data->subprice_inc_tax ?? 0;
 
 		$updateRes = $this->contract->addline(
 			$request_data->desc,
-			$request_data->subprice,
-			$request_data->qty,
-			$request_data->tva_tx,
-			$request_data->localtax1_tx,
-			$request_data->localtax2_tx,
-			$request_data->fk_product,
-			$request_data->remise_percent,
-			$request_data->date_start,
-			$request_data->date_end,
+			$request_data->subprice ?? 0,
+			$request_data->qty ?? 1,
+			$request_data->tva_tx ?? 0,
+			$request_data->localtax1_tx ?? 0,
+			$request_data->localtax2_tx ?? 0,
+			$request_data->fk_product ?? 0,
+			$request_data->remise_percent ?? 0,
+			$request_data->date_start ?? 0,
+			$request_data->date_end ?? 0,
 			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
-			$request_data->subprice_excl_tax,
-			$request_data->info_bits,
-			$request_data->fk_fournprice,
-			$request_data->pa_ht,
-			$request_data->array_options,
-			$request_data->fk_unit,
-			$request_data->rang
+			$subprice_inc_tax,
+			$request_data->info_bits ?? 0,
+			$request_data->fk_fournprice ?? null,
+			$request_data->pa_ht ?? 0,
+			$request_data->array_options ?? array(),
+			$request_data->fk_unit ?? null,
+			$request_data->rang ?? 0
 		);
 
 		if ($updateRes > 0) {
 			return $updateRes;
 		}
-		return false;
+
+		throw new RestException(500, 'Error when adding contract line: '.$this->contract->errorsToString());
 	}
 
 	/**
@@ -845,6 +856,10 @@ class Contracts extends DolibarrApi
 			if ($field == 'entity' && $value != $this->contract->entity) {
 				throw new RestException(400, 'Changing entity of a contract using the APIs is not possible');
 			}
+			// The status has its own routes, which run the checks, the ref numbering and the triggers
+			if (($field == 'statut' || $field == 'status') && (int) $value != (int) $this->contract->status) {
+				throw new RestException(400, 'Changing the status of a contract is not possible with this method, use the dedicated routes');
+			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->contract->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
@@ -954,7 +969,8 @@ class Contracts extends DolibarrApi
 	 *   "notrigger": 0
 	 * }
 	 *
-	 * @throws RestException 304 Not Modified
+	 * @throws RestException 304 Not Modified if the contract is not a draft
+	 * @throws RestException 400 Bad Request if the contract ID is 0
 	 * @throws RestException 403 Access denied
 	 * @throws RestException 404 Not found
 	 * @throws RestException 500 Error
@@ -976,10 +992,12 @@ class Contracts extends DolibarrApi
 			throw new RestException(403, 'Access to this contract is not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->contract->validate(DolibarrApiAccess::$user, '', $notrigger);
-		if ($result == 0) {
-			throw new RestException(304, 'Error nothing done. May be object is already validated');
+		// Contrat::validate() does not check the status: it would fire the CONTRACT_VALIDATE trigger again
+		if ($this->contract->status != Contrat::STATUS_DRAFT) {
+			throw new RestException(304, 'Error nothing done. Contract is not a draft');
 		}
+
+		$result = $this->contract->validate(DolibarrApiAccess::$user, '', $notrigger);
 		if ($result < 0) {
 			throw new RestException(500, 'Error when validating Contract: '.$this->contract->errorsToString());
 		}
