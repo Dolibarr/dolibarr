@@ -735,3 +735,12 @@ ALTER TABLE llx_subscription DROP INDEX idx_subscription_fk_adherent;
 
 -- Remove index of llx_quickmemo_memo_user on fk_memo (duplicate of uk_memo_user). Mysql only: with pgsql, this name is the one of an index of llx_quickmemo_memo
 -- VMYSQL4.1 DROP INDEX idx_quickmemo_memo_rowid ON llx_quickmemo_memo_user;
+
+-- Share of a quick memo with users or groups (a row is a user or a group, the other column is 0)
+CREATE TABLE llx_quickmemo_memo_share(
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	fk_memo integer NOT NULL,
+	fk_user integer NOT NULL DEFAULT 0,
+	fk_usergroup integer NOT NULL DEFAULT 0
+) ENGINE=innodb;
+ALTER TABLE llx_quickmemo_memo_share ADD UNIQUE INDEX uk_quickmemo_memo_share (fk_memo, fk_user, fk_usergroup);
