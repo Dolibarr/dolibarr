@@ -4089,10 +4089,12 @@ abstract class CommonObject
 		$fieldlocaltax1 = 'total_localtax1';
 		$fieldlocaltax2 = 'total_localtax2';
 		$fieldup = 'subprice';
+		$fieldupttc = '';
 		$base_price_type = 'HT';
 		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') {
 			$fieldtva = 'tva';
 			$fieldup = 'pu_ht';
+			$fieldupttc = 'pu_ttc';
 		}
 		if ($this->element == 'invoice_supplier_rec') {
 			$fieldup = 'pu_ht';
@@ -4107,6 +4109,9 @@ abstract class CommonObject
 		}
 
 		$sql = "SELECT rowid, qty, ".$this->db->sanitize($fieldup)." as up, remise_percent,";
+		if ($fieldupttc) {
+			$sql .= " ".$this->db->sanitize($fieldupttc)." as up_ttc,";
+		}
 		$sql .= " total_ht, ".$this->db->sanitize($fieldtva)." as total_tva, total_ttc, ".$this->db->sanitize($fieldlocaltax1)." as total_localtax1, ".$this->db->sanitize($fieldlocaltax2)." as total_localtax2,";
 		$sql .= ' tva_tx as vatrate, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
 		$sql .= ' info_bits, product_type,';
@@ -4191,7 +4196,9 @@ abstract class CommonObject
 						if ((float) $tmpcal[0] == (float) $obj->total_ht) {
 							// In rare cases, we can have the unit price that was not saved as original (like when adding a line from a discount of down payment). In this case, recalculation from unit price
 							// will give different results than the one stored in database (the good one are the one in database and we must not fix anything).
-							if ($obj->description != '(DEPOSIT)' && !getDolGlobalInt('MAIN_DISABLE_AUTOFIX_CORRUPTED_LINES_WHEN_TOTAL_DOES_NOT_MATCH_RECALCULATION_FROM_UP')) {
+							// A line entered including tax keeps the total including tax computed from its unit price including tax.
+							$isenteredincludingtax = ($fieldupttc && (float) $obj->total_ttc == (float) price2num($obj->up_ttc * $obj->qty * (1 - $obj->remise_percent / 100), 'MT'));
+							if ($obj->description != '(DEPOSIT)' && !$isenteredincludingtax && !getDolGlobalInt('MAIN_DISABLE_AUTOFIX_CORRUPTED_LINES_WHEN_TOTAL_DOES_NOT_MATCH_RECALCULATION_FROM_UP')) {
 								// After calculation from HT, totals sum of all part is consistent ($diff_on_current_total) + total_ht is same + we are not on a line with a bad unit amount + we have found a difference between VAT part calculated from unit price and the VAT part into database,
 								// and we ask to force the use of rounding on line (like what we did on initial calculation) so this should not happen, so we force the update of line to fix this.
 								// This part of code must be called only to fix corrupted data due to the use of the old feature to round total instead of rounding lines.
