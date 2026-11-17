@@ -257,7 +257,7 @@ if ($result) {
 		$obj = $db->fetch_object($result);
 
 		// Controls
-		$accountancy_code_supplier_general = (!empty($obj->accountancy_code_supplier_general)) ? $obj->accountancy_code_supplier_general : $cptfour;
+		$accountancy_code_supplier_general = (!empty($obj->accountancy_code_supplier_general) && $obj->accountancy_code_supplier_general != '-1') ? $obj->accountancy_code_supplier_general : $cptfour;
 		$compta_soc = getSubledgerAccountWithDefault($obj->code_compta_fournisseur, 'supplier');
 
 		$compta_prod = $obj->compte;

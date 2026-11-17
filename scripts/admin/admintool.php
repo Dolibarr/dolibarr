@@ -22,9 +22,9 @@
  */
 
 /**
- * \file scripts/tools/admintool.php
+ * \file 	scripts/admin/admintool.php
  * \ingroup core
- * \brief Execute some tools from commande line
+ * \brief 	Execute some tools from command line (manage database password encryption)
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -46,11 +46,6 @@ if (!defined('NOSESSION')) {
 	define('NOSESSION', '1');
 }
 
-// So log file will have a suffix
-if (!defined('USESUFFIXINLOG')) {
-	define('USESUFFIXINLOG', '_cron');
-}
-
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path = __DIR__.'/';
@@ -62,11 +57,6 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 require_once $path."../../htdocs/master.inc.php";
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
-require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -76,6 +66,10 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
  *
  * @var string $dolibarr_main_db_pass
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 // Check parameters
 if (!isset($argv[1]) || !$argv[1]) {
@@ -135,5 +129,5 @@ exit(0);
  */
 function usageScript($path, $script_file)
 {
-	print "Usage: ".$script_file." showpass|encodepass|decodepass\n";
+	print "Usage: ".$script_file." showpass|encodepass|decodepass 	to manipulate the Database password\n";
 }

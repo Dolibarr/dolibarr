@@ -68,6 +68,78 @@ var Dolibarr = {
 		}),
 
 		/**
+		 * Replace an element of the page, or its content, by html received in ajax.
+		 * Scripts of the html are executed and Dolibarr.initNewContent() is called on the new elements.
+		 * @param {HTMLElement|jQuery|string} target Element or CSS selector
+		 * @param {string|HTMLElement} content Html, or element of another document
+		 * @param {Object} [options]
+		 * @param {string} [options.mode='replace'] 'replace' the element, or 'inner' to replace its content
+		 * @param {boolean} [options.initNewContent=true]
+		 * @returns {HTMLElement|null}
+		 */
+		replaceContent(target, content, options) {},
+
+		/**
+		 * Get a controller of an object, to read and update it in ajax (data only, the page is not changed)
+		 * @param {string} element Element of the object, ex: 'propal'
+		 * @param {number} id
+		 * @param {Object} [options] {tms}
+		 * @returns {{
+		 *   element: string, id: number, tms: number,
+		 *   setField: function(string, *, Object=): Promise<Object|null>,
+		 *   fetchFields: function(string[], Object=): Promise<{element: string, id: number, fields: Object, tms: number|null}>,
+		 *   fetchLines: function(number[], Object=): Promise<{lines: Object, lineids: number[], tms: number|null}>,
+		 *   on: function(string, function): function
+		 * }}
+		 */
+		object: Object.assign(function(element, id, options) {}, {
+			/** Class of the controllers */
+			Controller: class {},
+		}),
+
+		/**
+		 * Get the controller of the card of an object displayed in the page (one controller by card, shared by all the scripts)
+		 * @param {string} element Element of the object, ex: 'propal'
+		 * @param {number} id
+		 * @param {Object} [options] {tms, url}
+		 * @returns {{
+		 *   element: string, id: number, tms: number, url: string, object: Object,
+		 *   setField: function(string, *, Object=): Promise<Object|null>,
+		 *   reload: function({sections?: string[], lines?: number[], fields?: string[]|null}, Object=): Promise<{sections: Object, lines: Object, fields: Object, lineids: number[]|null, tms: number|null, document: Document|null}>,
+		 *   reloadSection: function(string, Object=): Promise<HTMLElement|null>,
+		 *   reloadLine: function(number, Object=): Promise<HTMLElement|null>,
+		 *   refreshFields: function(string[]=, Object=): Promise<Object>,
+		 *   updateFields: function(Object, Object=): void,
+		 *   getFieldContainers: function(string=): HTMLElement[],
+		 *   getDisplayedFields: function(): string[],
+		 *   fetchLines: function(number[], Object=): Promise<Object>,
+		 *   replaceLine: function(number, string, number[]): HTMLElement|null,
+		 *   removeLine: function(number): null,
+		 *   fetchCardWithoutLines: function(Object=): Promise<Document>,
+		 *   replaceFrom: function(Document, string): HTMLElement|null,
+		 *   on: function(string, function): function
+		 * }}
+		 */
+		card: Object.assign(function(element, id, options) {}, {
+			/** Class of the controllers, to extend with Dolibarr.tools.card.register() */
+			Controller: class {},
+
+			/**
+			 * Specialize the cards of an element with a class extending Dolibarr.tools.card.Controller
+			 * @param {string} element
+			 * @param {{Controller: Function}} specialization
+			 */
+			register(element, specialization) {},
+
+			/**
+			 * Define a part of the card tool, available as Dolibarr.tools.card.<name>
+			 * @param {string} name
+			 * @param {Object} api
+			 */
+			definePart(name, api) {},
+		}),
+
+		/**
 		 * TThe langs tool
 		 */
 		langs: {

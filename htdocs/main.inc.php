@@ -580,6 +580,11 @@ if (!defined('NOLOGIN')) {
 		// It is not already authenticated and it requests the login / password
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
+		// Link "Cancel" shown when a two-factor authentication code is asked, or 2FA disabled in conf.php: back to the login and password form
+		if (GETPOST('actionlogin', 'aZ09') == 'canceltotp' || dolTotpIsDisabledByConf()) {
+			unset($_SESSION['dol_totp_pending']);
+		}
+
 		$dol_dst_observed = GETPOSTINT("dst_observed", 3);
 		$dol_dst_first = GETPOSTINT("dst_first", 3);
 		$dol_dst_second = GETPOSTINT("dst_second", 3);
@@ -627,7 +632,8 @@ if (!defined('NOLOGIN')) {
 		}
 
 		// Verification security graphic code
-		if ($test && GETPOST('actionlogin', 'aZ09') == 'login' && GETPOST("username", "alpha", 2) && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA') && !isset($_SESSION['dol_bypass_antispam'])) {
+		// Not done for the return of a passkey login: only the mode 'passkey' is then tested (see later), with a login already validated by the passkey.
+		if ($test && GETPOST('actionlogin', 'aZ09') == 'login' && GETPOST("username", "alpha", 2) && !(GETPOSTINT('afterpasskeyloginreturn') && in_array('passkey', $authmode)) && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA') && !isset($_SESSION['dol_bypass_antispam'])) {
 			$ok = false;
 
 			// Use the captcha handler to validate
@@ -739,6 +745,9 @@ if (!defined('NOLOGIN')) {
 		if (GETPOST('beforeoauthloginredirect') || GETPOST('afteroauthloginreturn')) {	// For oauth login
 			$goontestloop = true;
 		}
+		if (GETPOSTINT('afterpasskeyloginreturn')) {	// For passkey login
+			$goontestloop = true;
+		}
 		if (!empty($_COOKIE['login_dolibarr'])) {	// TODO For ? Remove this ?
 			$goontestloop = true;
 		}
@@ -792,6 +801,16 @@ if (!defined('NOLOGIN')) {
 							break;
 						}
 					}
+				}
+			}
+
+			// The mode 'passkey' is tested alone, and only when the login page submits a login validated by a passkey.
+			// A passkey is a two-factor authentication on its own: no TOTP code is asked after it (see dolTotpStartSecondFactor() below).
+			if (in_array('passkey', $authmode)) {
+				if (GETPOSTINT('afterpasskeyloginreturn')) {
+					$authmode = array('passkey');
+				} else {
+					$authmode = array_values(array_diff($authmode, array('passkey')));
 				}
 			}
 
@@ -1112,6 +1131,11 @@ if (!defined('NOLOGIN')) {
 		// New session for this login has started.
 		$error = 0;
 
+		// The authentication has just succeeded: a fresh session id, so an id known before the login (session fixation) is worth nothing
+		if (session_status() === PHP_SESSION_ACTIVE && !session_regenerate_id(true)) {
+			dol_syslog("Session id could not be regenerated after the login", LOG_WARNING);
+		}
+
 		// Store value into session (values always stored)
 		$_SESSION["dol_login"] = $user->login;
 		$_SESSION["dol_logindate"] = dol_now('gmt');
@@ -1216,6 +1240,25 @@ if (!defined('NOLOGIN')) {
 		if (!$isallowed) {
 			header('Location: '.DOL_URL_ROOT.'/user/changepassword.php');
 			exit;
+		}
+	}
+
+	// Check if user must set up a two-factor authentication before going further: when the security setup requires one and it is not done yet,
+	// only the setup page of the user, the logout and the page of a password to change (asked for first) can be reached. Checked on every page.
+	if (getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') && (getDolGlobalInt('MAIN_SECURITY_TOTP_REQUIRED_FOR_INTERNAL') || getDolGlobalInt('MAIN_SECURITY_TOTP_REQUIRED_FOR_EXTERNAL') || getDolGlobalString('MAIN_SECURITY_TOTP_REQUIRED_FOR_GROUPS'))) {
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+		if (dolTotpMustEnroll($db, $user)) {
+			// SCRIPT_NAME and not PHP_SELF, which ends with the path info anybody can add to the URL (/societe/list.php/user/logout.php)
+			$isallowed = ((preg_match('/\/user\/credentials\.php$/', $_SERVER['SCRIPT_NAME']) && GETPOSTINT('id') == $user->id) || preg_match('/\/user\/(logout|changepassword)\.php$/', $_SERVER['SCRIPT_NAME']));
+			// A passkey fulfills the requirement too: the page to add one and its ajax component can also be reached
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/passkey.lib.php';
+			if (!$isallowed && passkeyIsEnabled()) {
+				$isallowed = ((preg_match('/\/user\/passkeys\.php$/', $_SERVER['SCRIPT_NAME']) && (!GETPOSTINT('id') || GETPOSTINT('id') == $user->id)) || preg_match('/\/core\/ajax\/passkeyregister\.php$/', $_SERVER['SCRIPT_NAME']));
+			}
+			if (!$isallowed) {
+				header('Location: '.DOL_URL_ROOT.'/user/credentials.php?id='.((int) $user->id));
+				exit;
+			}
 		}
 	}
 
@@ -1794,7 +1837,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		}
 		$hookmanager->initHooks(array("main"));
 
-		$ext = 'layout='.(empty($conf->browser->layout) ? '' : $conf->browser->layout).'&version='.urlencode(DOL_VERSION);
+		$ext = 'layout='.(empty($conf->browser->layout) ? '' : $conf->browser->layout).'&version='.urlencode(getDolVersionForUrl());
 
 		print "<head>\n";
 
@@ -1817,6 +1860,9 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		$appletouchicon = DOL_URL_ROOT.'/theme/apple-touch-icon.png';
 		if (!empty($mysoc->logo_squarred_mini)) {
 			$favicon = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
+		}
+		if (!empty($mysoc->logo_squarred)) {
+			$appletouchicon = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode('logos/'.$mysoc->logo_squarred);
 		}
 		if (getDolGlobalString('MAIN_FAVICON_URL')) {
 			$favicon = getDolGlobalString('MAIN_FAVICON_URL');
@@ -1929,7 +1975,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		 * see Documentation at admin/tools/ui/dolibarr-context/index.php
 		 */
 		$jsContextVars = [
-			'DOL_VERSION' => DOL_VERSION,
+			'DOL_VERSION' => getDolVersionForUrl(),
 			'DOL_URL_ROOT' => DOL_URL_ROOT,
 		];
 
@@ -1945,6 +1991,9 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 		$jsContextFiles[] = 'dolibarr-tool.seteventmessage.js'; // The first tools to help dev for easy event in js
 		$jsContextFiles[] = 'dolibarr-tool.fetch.js'; // Ajax requests with anti CSRF token and error handling
+		$jsContextFiles[] = 'dolibarr-tool.replacecontent.js'; // Replace content of the page with html received in ajax
+		$jsContextFiles[] = 'dolibarr-tool.object.js'; // Read and update an object in ajax (data, no change of the page)
+		$jsContextFiles[] = 'dolibarr-tool.card.js'; // Controller of the card of an object: refresh fields, lines and sections of the page
 
 		if (! defined('NOREQUIRETRAN')) {
 			// Langs tool see Documentation at admin/tools/ui/dolibarr-context/index.php
@@ -4006,7 +4055,7 @@ if (!function_exists("llxFooter")) {
 		global $contextpage, $page, $limit, $mode;
 		global $dolibarr_distrib;
 
-		$ext = 'layout='.urlencode($conf->browser->layout).'&version='.urlencode(DOL_VERSION);
+		$ext = 'layout='.urlencode($conf->browser->layout).'&version='.urlencode(getDolVersionForUrl());
 
 		// Hook to add more things on all pages within fiche DIV
 		$llxfooter = '';
@@ -4022,7 +4071,11 @@ if (!function_exists("llxFooter")) {
 		}
 
 		// Global html output events ($mesgs, $errors, $warnings)
-		dol_htmloutput_events($disabledoutputofmessages);
+		// A page loaded in background by an ajax tool (noflusheventmessages=1, ex: Dolibarr.tools.card) keeps them in session
+		// for the next page, its html is not displayed.
+		if (!GETPOSTINT('noflusheventmessages')) {
+			dol_htmloutput_events($disabledoutputofmessages);
+		}
 
 		// Code for search criteria persistence.
 		// $user->lastsearch_values was set by the GETPOST when form field search_xxx exists

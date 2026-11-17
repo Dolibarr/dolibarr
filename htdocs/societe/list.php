@@ -524,6 +524,9 @@ if (empty($reshook)) {
 if ($search_status == '' && empty($search_all)) {
 	$search_status = 1; // display active thirdparty only by default
 }
+if ($type == 't' && ($search_type == '' || $search_type == '-1')) {
+	$search_type = '1,2,3'; // No nature (the select sends -1, the purge empties it): keep customers and prospects of the POS list
+}
 
 
 
@@ -1252,6 +1255,10 @@ if (empty($reshook)) {
 		}
 		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+		if (empty($user->socid)) {	// Statistics are on all the third parties, so they are not available to external users
+			$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', dolBuildUrl(DOL_URL_ROOT.'/societe/stats/geo.php', ['mode' => 'thirdpartybycountry']), '', 1, array('morecss' => 'reposition'));
+		}
+		$newcardbutton .= dolGetButtonTitleSeparator();
 		$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url, '', $user->hasRight('societe', 'creer'));
 	} elseif ($user->hasRight('societe', 'creer')) {
 		$url = DOL_URL_ROOT.'/societe/card.php?action=create&type=t&contextpage=poslist&optioncss=print&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type=t&contextpage=poslist&nomassaction=1&optioncss=print&place='.$place);
@@ -2251,7 +2258,7 @@ while ($i < $imaxinloop) {
 		}
 		// Sales Representative
 		if (!empty($arrayfields['sales.representative']['checked'])) {
-			print '<td class="nowraponall tdoverflowmax150">';
+			print '<td class="nowraponall tdoverflowmax100">';
 			$listsalesrepresentatives = $companystatic->getSalesRepresentatives($user);
 			$nbofsalesrepresentative = count($listsalesrepresentatives);
 			if ($nbofsalesrepresentative > 6) {

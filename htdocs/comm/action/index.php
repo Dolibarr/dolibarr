@@ -611,35 +611,8 @@ $s = '';
 
 
 $showextcals = $listofextcals;
-$bookcalcalendars = array();
-
 // Load Bookcal Calendars
-if (isModEnabled("bookcal")) {
-	$sql = "SELECT ba.rowid, bc.label, bc.ref, bc.rowid as id_cal";
-	$sql .= " FROM ".MAIN_DB_PREFIX."bookcal_availabilities as ba";
-	$sql .= " JOIN ".MAIN_DB_PREFIX."bookcal_calendar as bc";
-	$sql .= " ON bc.rowid = ba.fk_bookcal_calendar";
-	$sql .= " WHERE bc.status = 1";
-	$sql .= " AND ba.status = 1";
-	$sql .= " AND bc.entity IN (".getEntity('agenda').")";	// bookcal is a "virtual view" of agenda
-	if (!empty($filtert) && $filtert != '-1') {
-		$sql .= " AND bc.visibility IN (".$db->sanitize($filtert, 0, 0, 0, 0).")";
-	}
-	$resql = $db->query($sql);
-	if ($resql) {
-		$num = $db->num_rows($resql);
-		$i = 0;
-		while ($i < $num) {
-			$objp = $db->fetch_object($resql);
-			$label = !empty($objp->label) ? $objp->label : $objp->ref;
-			$bookcalcalendars["calendars"][$objp->id_cal] = array("id" => $objp->id_cal, "label" => $label);
-			$bookcalcalendars["availabilitieslink"][$objp->rowid] = $objp->id_cal;
-			$i++;
-		}
-	} else {
-		dol_print_error($db);
-	}
-}
+$bookcalcalendars = agenda_get_bookcal_calendars($db, (string) $filtert);
 
 if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	$s .= "\n".'<!-- Div to calendars selectors -->'."\n";
@@ -713,6 +686,7 @@ function dolAgendaDayItems(layer) {
 function dolAgendaDayLayout(layer) {
 	dolAgendaDayColumns(dolAgendaDayItems(layer));
 	dolAgendaDayDrag(layer);
+	dolAgendaDayResize(layer);
 }
 function dolAgendaDaySnapTop(el, ui) {
 	var layer = el.parentNode;
@@ -726,39 +700,84 @@ function dolAgendaDaySnapTop(el, ui) {
 	// The upper bound never goes above the old start: a box near midnight can be taller than the time left
 	return Math.max(begin, Math.min(newstart, Math.max(oldstart, end - boxheight)));
 }
+function dolAgendaDayLayerAt(clientx) {
+	// The day under the pointer. The layers of a week are side by side and never overlap,
+	// so the horizontal position alone names the column.
+	var found = null;
+	jQuery('.agendadaylayer').each(function () {
+		var r = this.getBoundingClientRect();
+		if (clientx >= r.left && clientx < r.right) { found = this; return false; }
+	});
+	return found;
+}
 function dolAgendaDayDrag(layer) {
+	// More than one layer on the page means the week grid: there the box can also change day
+	var manydays = jQuery('.agendadaylayer').length > 1;
 	jQuery(layer).children('.event.movable[data-agenda-event-id]').not('.ui-draggable').draggable({
-		axis: 'y',
+		axis: manydays ? false : 'y',
 		zIndex: 100,
+		start: function () {
+			if (!manydays) { return; }
+			// .agendadaycolumn clips its own layer, so the box would be cut at the edge of its day
+			// as soon as the drag enters the next column. Only the column being dragged from has to
+			// let it out: an ancestor clips its descendants, never its siblings' content.
+			jQuery(this).closest('.agendadaycolumn').css('overflow', 'visible');
+			// The layout gives the box a left and a right, which is what sets its width. Draggable only
+			// writes left, so a box dragged sideways would stretch to the right edge of its day instead
+			// of moving. Hold the width for the drag; the layout gives the percentages back at the end.
+			var w = jQuery(this).outerWidth();
+			this.style.right = 'auto';
+			this.style.width = w + 'px';
+		},
+		// Without this, grabbing the resize handle at the bottom edge moves the event instead
+		cancel: '.ui-resizable-handle',
 		drag: function (event, ui) {
 			ui.position.top = dolAgendaDaySnapTop(this, ui);
 		},
 		stop: function (event, ui) {
 			var el = this;
+			var oldlayer = el.parentNode;
+			if (manydays) { jQuery(el).closest('.agendadaycolumn').css('overflow', 'hidden'); }
+			// Released outside every column (the hour gutter, outside the table): keep the day
+			var newlayer = (manydays && event && typeof event.clientX === 'number') ? (dolAgendaDayLayerAt(event.clientX) || oldlayer) : oldlayer;
 			var oldstart = parseInt(el.getAttribute('data-agenda-start'), 10);
 			var oldend = parseInt(el.getAttribute('data-agenda-end'), 10);
 			// ui.position is the value drag already snapped and clamped; don't snap it again here
 			var newstart = Math.round(ui.position.top);
-			if (newstart === oldstart) { el.style.top = oldstart + 'px'; return; }
+			// Nothing moved. The layout is still run: a drag that went sideways and came back left a
+			// pixel left on the box, and only the layout puts the column percentages back.
+			if (newstart === oldstart && newlayer === oldlayer) {
+				el.style.top = oldstart + 'px';
+				dolAgendaDayColumns(dolAgendaDayItems(oldlayer));
+				return;
+			}
 			var hh = ('0' + Math.floor(newstart / 60)).slice(-2);
 			var mm = ('0' + (newstart % 60)).slice(-2);
 			// No second drag of this box until the server answered
 			jQuery(el).draggable('disable');
 			jQuery.ajax({type: 'POST', url: dolAgendaGridCfg.url, dataType: 'json', data: {
 				id: el.getAttribute('data-agenda-event-id'),
-				newdatetime: el.parentNode.getAttribute('data-agenda-date') + hh + mm + '00',
+				newdatetime: newlayer.getAttribute('data-agenda-date') + hh + mm + '00',
 				token: jQuery('#searchFormList input[name=token]').val()
 			}}).done(function (data) {
 				jQuery(el).draggable('enable');
 				if (data.error) {
 					el.style.top = oldstart + 'px';
+					dolAgendaDayColumns(dolAgendaDayItems(oldlayer));
 					Dolibarr.tools.setEventMessage(data.message, 'errors');
 					return;
+				}
+				if (newlayer !== oldlayer) {
+					newlayer.appendChild(el);
 				}
 				el.setAttribute('data-agenda-start', newstart);
 				el.setAttribute('data-agenda-end', newstart + (oldend - oldstart));
 				el.style.top = newstart + 'px';
-				dolAgendaDayColumns(dolAgendaDayItems(el.parentNode));
+				dolAgendaDayHours(el, data);
+				dolAgendaDayColumns(dolAgendaDayItems(newlayer));
+				if (newlayer !== oldlayer) {
+					dolAgendaDayColumns(dolAgendaDayItems(oldlayer));
+				}
 				Dolibarr.tools.setEventMessage(dolAgendaGridCfg.msgsaved, 'mesgs');
 			}).fail(function () {
 				// Transport failure: we don't know whether the server saved the move, show the real state
@@ -767,12 +786,188 @@ function dolAgendaDayDrag(layer) {
 		}
 	});
 }
+function dolAgendaDayHours(el, data) {
+	// The box prints the hours in front of the title. Only the server knows how they are formatted for
+	// this user, so it hands back the string it printed and the one it must print now: swapping that
+	// exact prefix is safe whatever the format, and leaves the title, which may be truncated, alone.
+	if (!data || !data.oldhours || !data.newhours || data.oldhours === data.newhours) { return; }
+	var nodes = jQuery(el).find('a.cal_event_title').contents().filter(function () { return this.nodeType === 3; });
+	for (var i = 0; i < nodes.length; i++) {
+		if (nodes[i].nodeValue.indexOf(data.oldhours) === 0) {
+			nodes[i].nodeValue = data.newhours + nodes[i].nodeValue.slice(data.oldhours.length);
+			return;
+		}
+	}
+}
+function dolAgendaDaySnapEnd(el, boxheight) {
+	// Absolute 15 min snap of the new end, like dolAgendaDaySnapTop does for the start: a box is at
+	// least 20 px tall whatever its duration, so snapping the height would land on 10:05 or 11:20.
+	// The end never goes past the last hour the grid shows, nor closer than the step to the start.
+	var start = parseInt(el.getAttribute('data-agenda-start'), 10);
+	var gridend = parseInt(el.parentNode.getAttribute('data-end-min'), 10);
+	return Math.max(start + 15, Math.min(Math.round((start + boxheight) / 15) * 15, gridend));
+}
+function dolAgendaDayResizeHeight(el, minutes) {
+	// Same floor as the server rendering: a very short event still shows a box that can be grabbed
+	el.style.height = Math.max(minutes, 20) + 'px';
+}
+function dolAgendaDayResize(layer) {
+	var boxes = jQuery(layer).children('.event.movable[data-agenda-event-id]').not('.ui-resizable');
+	boxes.resizable({
+		handles: 's',
+		minHeight: 15,
+		resize: function (event, ui) {
+			ui.size.height = dolAgendaDaySnapEnd(this, ui.size.height) - parseInt(this.getAttribute('data-agenda-start'), 10);
+			// Resizable writes a width too; the side by side layout is what owns it
+			ui.size.width = ui.originalSize.width;
+		},
+		stop: function (event, ui) {
+			var el = this;
+			var layerofel = el.parentNode;
+			var start = parseInt(el.getAttribute('data-agenda-start'), 10);
+			var oldend = parseInt(el.getAttribute('data-agenda-end'), 10);
+			var newend = dolAgendaDaySnapEnd(el, ui.size.height);
+			// Resizable writes a width in pixels, the side by side layout drives the box with a left
+			// and a right instead, so the layout is what puts the column back in both branches below.
+			if (newend === oldend) {
+				dolAgendaDayResizeHeight(el, oldend - start);
+				dolAgendaDayColumns(dolAgendaDayItems(layerofel));
+				return;
+			}
+			var hh = ('0' + Math.floor(newend / 60)).slice(-2);
+			var mm = ('0' + (newend % 60)).slice(-2);
+			var hhstart = ('0' + Math.floor(start / 60)).slice(-2);
+			var mmstart = ('0' + (start % 60)).slice(-2);
+			// No second resize and no drag of this box until the server answered
+			jQuery(el).resizable('disable');
+			jQuery(el).draggable('disable');
+			jQuery.ajax({type: 'POST', url: dolAgendaGridCfg.url, dataType: 'json', data: {
+				id: el.getAttribute('data-agenda-event-id'),
+				newdatetime: layerofel.getAttribute('data-agenda-date') + hhstart + mmstart + '00',
+				newenddatetime: layerofel.getAttribute('data-agenda-date') + hh + mm + '00',
+				token: jQuery('#searchFormList input[name=token]').val()
+			}}).done(function (data) {
+				jQuery(el).resizable('enable');
+				jQuery(el).draggable('enable');
+				if (data.error) {
+					dolAgendaDayResizeHeight(el, oldend - start);
+					dolAgendaDayColumns(dolAgendaDayItems(layerofel));
+					Dolibarr.tools.setEventMessage(data.message, 'errors');
+					return;
+				}
+				el.setAttribute('data-agenda-end', newend);
+				dolAgendaDayHours(el, data);
+				dolAgendaDayResizeHeight(el, newend - start);
+				dolAgendaDayColumns(dolAgendaDayItems(layerofel));
+				Dolibarr.tools.setEventMessage(dolAgendaGridCfg.msgsaved, 'mesgs');
+			}).fail(function () {
+				// Transport failure: we don't know whether the server saved the resize, show the real state
+				location.reload();
+			});
+		}
+	});
+	// The box has overflow: hidden and the handle of the theme sits at bottom: -5px, so only two of
+	// its seven pixels would be inside the box, and the grip would be nearly impossible to catch.
+	boxes.children('.ui-resizable-s').css({bottom: '0', height: '6px'});
+}
 jQuery('.agendadaylayer').each(function () { dolAgendaDayLayout(this); });
 // Run the layout again when events are shown or hidden by the calendar checkboxes
 jQuery(document).on('dolagenda:relayout', function () {
 	jQuery('.agendadaylayer').each(function () { dolAgendaDayLayout(this); });
 });
 JSDAYVIEW;
+		$s .= "\n";
+	}
+	if (getDolGlobalInt('AGENDA_AUTOREFRESH_FREQUENCY') > 0 && ($mode == 'show_day' || $mode == 'show_week' || $mode == 'show_month' || empty($mode))) {
+		// Fetch, every few seconds, the events created or modified since the last check and put them in
+		// place without reloading the page. ajax/ajaxrefreshevents.php is the server side half.
+		$s .= 'var dolAgendaRefreshCfg = '.json_encode([
+			'url' => DOL_URL_ROOT.'/comm/action/ajax/ajaxrefreshevents.php',
+			'delay' => max(30, getDolGlobalInt('AGENDA_AUTOREFRESH_FREQUENCY')) * 1000,
+			'since' => dol_now(),
+			'params' => [
+				'mode' => (empty($mode) ? 'show_month' : $mode),
+				'year' => (int) $year,
+				'month' => (int) $month,
+				'day' => (int) $day,
+				'firstdaytoshow' => (int) $firstdaytoshow,
+				'lastdaytoshow' => (int) $lastdaytoshow,
+				// The filters as this page resolved them: the server applies the permissions again
+				'filters' => json_encode([
+					'filter' => (string) $filter,
+					'filtert' => (string) $filtert,
+					'usergroup' => (string) $usergroup,
+					'resourceid' => (int) $resourceid,
+					'actioncode' => $actioncode,
+					'pid' => (int) $pid,
+					'socid' => (int) $socid,
+					'type' => (string) $type,
+					'status' => (string) $status,
+					'search_categ_cus' => (int) $search_categ_cus,
+				]),
+			],
+		], JSON_HEX_TAG).';'."\n";
+		$s .= <<<'JSAUTOREFRESH'
+(function () {
+	var since = dolAgendaRefreshCfg.since, running = false;
+	function dolAgendaRefreshFits(ev) {
+		var t = jQuery(ev.target);
+		if (!t.length) { return false; }
+		if (!t.hasClass('agendadaylayer')) { return true; }
+		// The grid only shows the hours that had events when the page was built
+		var ms = /data-agenda-start="(\d+)"/.exec(ev.html), me = /data-agenda-end="(\d+)"/.exec(ev.html);
+		if (!ms || !me) { return true; }
+		var start = parseInt(ms[1], 10), end = Math.max(parseInt(me[1], 10), start + 20);
+		return start >= parseInt(t.attr('data-begin-min'), 10) && end <= parseInt(t.attr('data-end-min'), 10);
+	}
+	function dolAgendaRefreshBusy() {
+		// A box being dragged, resized or saved would be replaced under the mouse
+		return jQuery('.ui-draggable-dragging, .ui-resizable-resizing, .ui-sortable-helper, .agendadaylayer .ui-draggable-disabled').length > 0;
+	}
+	function dolAgendaRefresh() {
+		if (running || document.hidden || dolAgendaRefreshBusy()) { return; }
+		running = true;
+		jQuery.ajax({type: 'POST', url: dolAgendaRefreshCfg.url, dataType: 'json', data: jQuery.extend({}, dolAgendaRefreshCfg.params, {
+			since: since,
+			token: jQuery('#searchFormList input[name=token]').val()
+		})}).done(function (data) {
+			// A drag may have started while the request was on its way: drop the answer, and as since does not
+			// move, the next turn asks for the same events again
+			if (!data || data.error || dolAgendaRefreshBusy()) { return; }
+			// An event on a day or at an hour the page has no room for: only a reload can show it
+			for (var i = 0; i < data.newevents.length; i++) {
+				if (!dolAgendaRefreshFits(data.newevents[i])) { location.reload(); return; }
+			}
+			since = data.checktime;
+			// One remove then one append per event covers a new event, a change in place and a move to another
+			// day alike. An event over several days comes once per day: its old boxes are removed only once.
+			var removed = {};
+			jQuery.each(data.newevents, function (i, ev) {
+				if (!removed[ev.eventid]) {
+					jQuery('[data-agenda-event-id="' + ev.eventid + '"]').remove();
+					removed[ev.eventid] = true;
+				}
+				var target = jQuery(ev.target);
+				target.append(ev.html);
+				if (typeof Dolibarr !== 'undefined' && Dolibarr.initNewContent) {
+					Dolibarr.initNewContent(target.children('[data-agenda-event-id="' + ev.eventid + '"]').get(0));
+				}
+			});
+			// Side by side layout, drag and resize of the boxes of the hourly grids
+			if (data.newevents.length && typeof dolAgendaDayLayout === 'function') {
+				jQuery('.agendadaylayer').each(function () { dolAgendaDayLayout(this); });
+			}
+		}).always(function () {
+			running = false;
+		});
+	}
+	setInterval(dolAgendaRefresh, dolAgendaRefreshCfg.delay);
+	// Back on a tab that was hidden: catch up at once instead of waiting for the next turn
+	document.addEventListener('visibilitychange', function () {
+		if (!document.hidden) { dolAgendaRefresh(); }
+	});
+})();
+JSAUTOREFRESH;
 		$s .= "\n";
 	}
 	$s .= '});'."\n";
@@ -1636,12 +1831,11 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	// denser when a day holds many events, instead of the hourly grid.
 	$weekhourlygrid = !getDolGlobalString('AGENDA_WEEK_VIEW_NO_HOURLY_GRID');
 
-	// No maxscreenheightless300 with the grid, for the same reason as the day view: a max-height combined
-	// with the overflow-x:auto of div-table-responsive-no-min forces overflow-y to auto as well, which gives
-	// an inner scrollbar instead of letting the page itself scroll.
-	print '<div class="div-table-responsive-no-min sectioncalendarbyweek'.($weekhourlygrid ? '' : ' maxscreenheightless300').'">';
+	// maxscreenheightless300 also with the grid, as for the month view: its max-height combined with the overflow-x:auto
+	// of div-table-responsive-no-min gives a scrollbar on the calendar area only, instead of on the whole page.
+	print '<div class="div-table-responsive-no-min sectioncalendarbyweek maxscreenheightless300">';
 	print '<table class="centpercent noborder nocellnopadd cal_pannel cal_month listwithfilterbefore">';
-	print ' <tr class="liste_titre">';
+	print ' <tr class="liste_titre stickyagenda">';
 	if ($weekhourlygrid) {
 		// The column of the hour labels, empty in the header
 		print '  <td class="tdfordaytitle width100"></td>'."\n";
@@ -1717,7 +1911,12 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 			// height: auto against .agendacell { height: 60px } of the themes: a day of the week can hold
 			// several all-day events (a holiday calendar for each country subscribed to), and they would
 			// otherwise overflow the row and be drawn over the grid below.
-			print '<div id="alldayevent_'.$dateint.'" class="centpercent agendacell" style="height: auto;">';
+			// dayevent_YYYYMMDD and .sortable put back the drag of an event to another day, which the
+			// hourly grid of the week took away: the drag&drop JS reads the id of the closest .dayevent,
+			// and card.php expects a value that starts with dayevent_ (see its actionmove=mupdate block).
+			// min-height because jQuery sortable takes its drop zone from this div, not from the cell:
+			// a day with no all-day event is 0 pixel high with height: auto, so it can never be dropped on.
+			print '<div id="dayevent_'.$dateint.'" class="dayevent sortable centpercent agendacell" style="height: auto; min-height: 60px;">';
 			if (!empty($weekhourlybuckets[$iter_day]['allday'])) {
 				foreach ($weekhourlybuckets[$iter_day]['allday'] as $eventhtml) {
 					print $eventhtml;
@@ -1759,7 +1958,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 		// The grid, 1 px per minute, the same scale as the day view. Each day is its own layer, shifted up by
 		// the first hour shown because show_day_events() positions an event from midnight.
 		echo ' <tr class="trcalweekgrid">'."\n";
-		echo '  <td class="tdfordaytitle width100 tdtop">';
+		echo '  <td class="tdfordaytitle width100 valigntop nopaddingtopimp nopaddingbottomimp">';
 		print '<div class="agendaweekhours" style="position: relative; height: '.$gridheight.'px;">';
 		for ($h = $begin_h; $h < $end_h; $h++) {
 			print '<div class="agendadayhour small opacitymedium" style="position: absolute; left: 4px; top: '.((($h - $begin_h) * 60) + 2).'px;">'.dol_print_date($h * 3600, 'hour', 'gmt').'</div>';
@@ -1768,7 +1967,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 		echo "</td>\n";
 		for ($iter_day = 0; $iter_day < 7; $iter_day++) {
 			$dateint = $weekdates[$iter_day];
-			echo '  <td class="'.$weekdayinfo[$iter_day]['style'].' tdtop" valign="top">';
+			echo '  <td class="'.$weekdayinfo[$iter_day]['style'].' valigntop nopaddingtopimp nopaddingbottomimp" valign="top">';
 			print '<div class="agendadaygrid" style="position: relative; height: '.$gridheight.'px;">';
 			for ($h = $begin_h; $h < $end_h; $h++) {
 				foreach (array(0, 30) as $slotmin) {
@@ -1822,14 +2021,12 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	print_actions_filter($form, $canedit, $status, $year, $month, $day, $check_birthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroupids, '', $resourceid);
 	print '</div>';
 
-	// No maxscreenheightless300 here (unlike month and week): the hourly grid is much taller than the old
-	// flat list, and the max-height of maxscreenheightless300, combined with the overflow-x:auto of the shared
-	// div-table-responsive-no-min rule, forces overflow-y to auto too (per the CSS spec, when only one axis is
-	// set to a non-visible value), which gives an inner scrollbar instead of letting the page itself scroll.
-	print '<div class="div-table-responsive-no-min sectioncalendarbyday">';
+	// maxscreenheightless300 as for the month and week views: its max-height combined with the overflow-x:auto of
+	// div-table-responsive-no-min gives a scrollbar on the calendar area only, and stickyagenda keeps the title visible.
+	print '<div class="div-table-responsive-no-min sectioncalendarbyday maxscreenheightless300">';
 	echo '<table class="tagtable centpercent noborder nocellnopadd cal_pannel cal_month listwithfilterbefore" style="margin-bottom: 10px !important;">';
 
-	echo ' <tr class="tagtr liste_titre">';
+	echo ' <tr class="tagtr liste_titre stickyagenda">';
 	echo '  <td class="tagtd center bold uppercase">'.$langs->trans("Day".$arraytimestamp['wday'])."</td>\n";
 	echo " </tr>\n";
 

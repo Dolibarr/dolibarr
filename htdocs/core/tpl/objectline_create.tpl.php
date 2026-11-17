@@ -180,10 +180,10 @@ if ($nolinesbefore) {
 		<?php
 		// Fields for situation invoice
 		if (property_exists($this, 'situation_cycle_ref') && isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
-			print '<td class="linecolcycleref right">'.$langs->trans('Progress').'</td>';
 			if (getDolGlobalInt('INVOICE_USE_SITUATION') > 1) {
 				print '<td class="nobottom nowrap right"></td>';
 			}
+			print '<td class="linecolcycleref right">'.$langs->trans('Progress').'</td>';
 			print '<td class="linecolcycleref2 right"></td>';
 		}
 		if (!empty($usemargins)) {
@@ -605,12 +605,12 @@ if ($nolinesbefore) {
 	<?php } ?>
 	<?php
 	if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
-		$coldisplay++;
-		print '<td class="nobottom nowrap right"><input class="flat right" type="text" size="1" value="" name="progress"><span class="opacitymedium hideonsmartphone">%</span></td>';
 		if (getDolGlobalInt('INVOICE_USE_SITUATION') > 1) {
 			$coldisplay++;
 			print '<td class="nobottom nowrap right"></td>';
 		}
+		$coldisplay++;
+		print '<td class="nobottom nowrap right"><input class="flat right" type="text" size="1" value="" name="progress"><span class="opacitymedium hideonsmartphone">%</span></td>';
 		$coldisplay++;
 		print '<td></td>';
 	}
