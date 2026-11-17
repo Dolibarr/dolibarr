@@ -19212,6 +19212,8 @@ class TCPDF {
 						// convert URL to server path
 						$imgsrc = str_replace(K_PATH_MAIN, K_PATH_URL, $imgsrc);
 					}
+					// @CHANGE DOL Keep upstream's image type detection, otherwise SVG are sent to Image()/Imagick instead of ImageSVG()
+					$type = TCPDF_IMAGES::getImageFileType($imgsrc);
 				} elseif ($this->hasExtForbiddenProtocol($imgsrc)) {
 					break;
 				} else {
