@@ -607,6 +607,16 @@ class SecurityTest extends CommonClassTest
 			$restricteduser->socid = 0;
 			$restricteduser->rights->societe->client->voir = 0;
 
+			// The object of a document is found from its subdirectory (ref, or id for contacts), also for previews
+			$documentobject = fetchObjectOfDocument('apercuficheinter', $fichinter->ref.'/'.$fichinter->ref.'.pdf_preview.png');
+			$this->assertEquals('ficheinter', $documentobject['modulepart'], 'The prefix apercu must be removed from the modulepart');
+			$this->assertEquals($fichinterid, (is_object($documentobject['object']) ? $documentobject['object']->id : 0), 'The intervention of the preview must be found');
+			$documentobject = fetchObjectOfDocument('contact', $contactid.'/./photo.jpg');
+			$this->assertEquals($contactid.'/photo.jpg', $documentobject['original_file'], 'The path must be normalized');
+			$this->assertEquals($contactid, (is_object($documentobject['object']) ? $documentobject['object']->id : 0), 'The contact must be found from its id');
+			$documentobject = fetchObjectOfDocument('ficheinter', 'NOTEXISTINGREF/NOTEXISTINGREF.pdf');
+			$this->assertNull($documentobject['object'], 'No object must be found for an unknown ref');
+
 			$this->assertEquals(0, checkUserAccessToDocumentObject($restricteduser, 'contact', $contactid.'/photo.jpg', 'read'), 'The contact of a third party not assigned to the restricted user must be refused');
 			$this->assertEquals(0, checkUserAccessToDocumentObject($restricteduser, 'fichinter', $fichinter->ref.'/'.$fichinter->ref.'.pdf', 'read'), 'The intervention of a third party not assigned to the restricted user must be refused');
 
