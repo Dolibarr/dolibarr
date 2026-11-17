@@ -58,3 +58,4 @@ ShowFile=Show file
 FullPathOrig=Full path origin
 GenOrUpload=File origin
 FileHasAnIndexedTextContent=File has an indexed text content
+ECMSearchFileNameOrContent=File name or content

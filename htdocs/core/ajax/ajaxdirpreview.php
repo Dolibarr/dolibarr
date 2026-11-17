@@ -369,10 +369,11 @@ if ($type == 'directory') {
 		$filter = preg_quote((string) $search_doc_ref, '/');
 		$filearray = dol_dir_list($upload_dir, "files", 1, $filter, $excludefiles, $sortfield, $sorting, 1);
 
-		// Add the files whose content, keywords or description contain the searched text, not only the files whose
-		// name contains it. They are read from the index of files (llx_ecm_files). The content is the text of the
-		// file, saved when the option MAIN_SAVE_FILE_CONTENT_AS_TEXT is on (pdftotext or docling).
-		if ((string) $search_doc_ref !== '' && strpos($upload_dir, '*') === false) {
+		// When the files are indexed (option MAIN_SAVE_FILE_CONTENT_AS_TEXT, pdftotext or docling, that saves the text
+		// of each file), add the files whose content, keywords or description contain the searched text, not only the
+		// files whose name contains it. They are read from the index of files (llx_ecm_files). Not done when the option
+		// is off: the request on the content may be slow.
+		if (getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT') && (string) $search_doc_ref !== '' && strpos($upload_dir, '*') === false) {
 			$relativedir = trim((string) preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $upload_dir), '/\\');
 			$filesalreadyfound = array();
 			foreach ($filearray as $file) {

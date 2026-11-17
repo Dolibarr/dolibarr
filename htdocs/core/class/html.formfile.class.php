@@ -1994,7 +1994,13 @@ class FormFile
 			// Ref
 			print '<td class="liste_titre"></td>';
 			// Name
-			print '<td class="liste_titre"><input type="text" class="maxwidth100onsmartphone search_doc_ref" name="search_doc_ref" value="'.dol_escape_htmltag($search_doc_ref).'" autocomplete="off"></td>';
+			print '<td class="liste_titre"><input type="text" class="maxwidth100onsmartphone search_doc_ref" name="search_doc_ref" value="'.dol_escape_htmltag($search_doc_ref).'"';
+			if (getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT')) {
+				// The files are indexed: the search also finds them by their content (see ajaxdirpreview.php)
+				$langs->load('ecm');
+				print ' placeholder="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("ECMSearchFileNameOrContent")).'" title="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("ECMSearchFileNameOrContent")).'"';
+			}
+			print ' autocomplete="off"></td>';
 			// Size
 			print '<td class="liste_titre"></td>';
 			// Date
