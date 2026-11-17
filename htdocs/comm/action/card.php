@@ -3040,22 +3040,22 @@ if ($id > 0 && $action != 'create') {
 		if ($action != 'edit') {
 			if ($user->hasRight('agenda', 'allactions', 'create') ||
 			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'))) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
+				print dolGetButtonAction($langs->trans("Modify"), '', 'edit', 'card.php?action=edit&token='.newToken().'&id='.$object->id);
 			} else {
-				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Modify").'</a></div>';
+				print dolGetButtonAction($langs->trans("NotAllowed"), $langs->trans("Modify"), 'edit', '', '', -1);
 			}
 
 			if ($user->hasRight('agenda', 'allactions', 'create') ||
 			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'))) {
 				print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("ToClone"), $langs->trans("ToClone"), 'clone', 'card.php?action=clone&token='.newToken().'&object='.$object->element.'&id='.$object->id, '', true, array('attr' => array('class' => 'reposition'))).'</div>';
 			} else {
-				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("ToClone").'</a></div>';
+				print dolGetButtonAction($langs->trans("NotAllowed"), $langs->trans("ToClone"), 'clone', '', '', -1);
 			}
 
 			if ($usercandelete) {
 				print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', true, array('attr' => array('class' => 'reposition'))).'</div>'."\n";
 			} else {
-				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Delete").'</a></div>';
+				print dolGetButtonAction($langs->trans("NotAllowed"), $langs->trans("Delete"), 'delete', '', '', -1);
 			}
 		}
 	}
