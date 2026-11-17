@@ -159,7 +159,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/passkey.lib.php';
 $passkeytotppending = !empty($_SESSION['dol_totp_pending']);
 $passkeyenabled = (passkeyIsEnabled() && !empty($conf->use_javascript_ajax) && !$passkeytotppending && passkeyCheckSetup() === '');
 if ($passkeyenabled) {
-	$arrayofjs[] = '/core/js/passkey.js'.(empty($conf->dol_use_jmobile) ? '' : '?version='.urlencode(DOL_VERSION));
+	$arrayofjs[] = '/core/js/passkey.js'.(empty($conf->dol_use_jmobile) ? '' : '?version='.urlencode(getDolVersionForUrl()));
 }
 
 // We display application title
