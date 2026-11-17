@@ -107,6 +107,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 	}
 
 	/** @var CommonObject|stdClass $obj */
+	'@phan-var-force CommonObject|stdClass $obj';
 	$out = '';
 
 	// Define $urlwithroot
