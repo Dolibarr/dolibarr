@@ -121,6 +121,14 @@ The project configuration is the file `.tx/config` at the repository root.
 When the file `~/.transifexrc` exists on the host, `vibes.sh` mounts it read-only at the same path into the container, so `tx` uses the API token of the host.
 Otherwise, provide the token with the environment variable `TX_TOKEN` (for example `export TX_TOKEN=...` into the container).
 
+## Documents produced by the agent
+
+`vibes.sh` creates the directory `/tmp/agents_documents` on the host and mounts it at the same path into the container, so the documents produced by the agent
+for the user (reports, slides, graphs, exports, test artifacts, ...) are shared with the host without touching the git working directory of the project.
+The directory is shared between the host and all the AI agent containers running on it: each agent should write into a subdirectory named after itself (for example `/tmp/agents_documents/vibe/`).
+The instruction to write its documents there is given to the agent into `~/.vibe/AGENTS.md` of the host (the whole `~/.vibe` is mounted into the container).
+Beware: `/tmp` is purged at reboot: the documents must be taken out of the host directory before a reboot of the host.
+
 ## Apache logs of the host
 
 When the directory `/var/log/apache2` exists on the host, `vibes.sh` mounts it read-only at the same path into the container, so the agent can read the Apache logs (for example `tail /var/log/apache2/error.log`).

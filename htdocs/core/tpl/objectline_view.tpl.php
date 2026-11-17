@@ -464,7 +464,7 @@ if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH
 	$upinctax = isset($line->subprice_ttc) ? $line->subprice_ttc : null;
 	if (!$upinctax && $line->total_ttc && $line->qty) {		// The unit price including tax was not saved, so we try to guess it
 		// Note that unit price is always for 100% of line, it is not prorata of situation percent, when total_ttc is.
-		$upinctax = price2num($line->total_ttc * ($line->situation_percent ? 100 / $line->situation_percent : 1) / (float) $line->qty, 'MU');
+		$upinctax = price2num($line->total_ttc * ($line->situation_percent ? 100 / abs((float) $line->situation_percent) : 1) / (float) $line->qty, 'MU');
 	}
 	if (!$upinctax) {
 		$upinctax = price2num($line->subprice * (1 + ((($line->info_bits & 1) ? 0 : (float) $line->tva_tx) / 100)), 'MU'); // one tax
@@ -601,9 +601,9 @@ if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 	if (getDolGlobalInt('INVOICE_USE_SITUATION') > 1) {
 		$previous_progress = $line->getAllPrevProgress($object->id);
 		$current_progress = $previous_progress + (float) $line->situation_percent;
-		print '<td class="linecolcycleref nowraponall right">'.$current_progress.'%</td>';
-		$coldisplay++;
 		print '<td  class="nowrap right">'.$line->situation_percent.'%</td>';
+		$coldisplay++;
+		print '<td class="linecolcycleref nowraponall right">'.$current_progress.'%</td>';
 		$coldisplay++;
 		$locataxes_array = getLocalTaxesFromRate($line->tva.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), 0, ($senderissupplier ? $mysoc : $object->thirdparty), ($senderissupplier ? $object->thirdparty : $mysoc));
 		$tmp = calcul_price_total($line->qty, $line->pu, $line->remise_percent, $line->txtva, -1, -1, 0, 'HT', $line->info_bits, $line->type, ($senderissupplier ? $object->thirdparty : $mysoc), $locataxes_array, 100, $object->multicurrency_tx, $line->multicurrency_subprice);

@@ -38,6 +38,10 @@
 --noqa:disable=RF03
 
 
+-- __MEMBER_CIVILITY__ was renamed into __MEMBER_TITLE__ in v21: migrate existing e-mail templates
+UPDATE llx_c_email_templates SET topic = REPLACE(topic, '__MEMBER_CIVILITY__', '__MEMBER_TITLE__') WHERE topic LIKE '%MEMBER_CIVILITY%';
+UPDATE llx_c_email_templates SET content = REPLACE(content, '__MEMBER_CIVILITY__', '__MEMBER_TITLE__') WHERE content LIKE '%MEMBER_CIVILITY%';
+
 ALTER TABLE llx_product_lot ADD COLUMN entity integer DEFAULT 1;
 
 -- Forgotten in previous versions: sequences of renamed tables were not renamed with pgsql
@@ -227,6 +231,9 @@ ALTER TABLE llx_inventory ADD COLUMN last_main_doc varchar(255) DEFAULT NULL AFT
 
 ALTER TABLE llx_facturedet ADD INDEX idx_facturedet_fk_prev_id (fk_prev_id);
 ALTER TABLE llx_facture ADD INDEX idx_facture_situation_cycle_ref (situation_cycle_ref);
+
+-- Lines of a credit note of a situation invoice cycle cancel a progress of the source lines, so their situation_percent must be negative
+UPDATE llx_facturedet SET situation_percent = -situation_percent WHERE situation_percent > 0 AND fk_facture IN (SELECT f.rowid FROM llx_facture as f WHERE f.type = 2 AND f.situation_cycle_ref > 0);
 
 -- Reduce response times with high transaction volume
 ALTER TABLE llx_facture ADD INDEX idx_facture_status_date (paye, fk_statut, datef);

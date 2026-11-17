@@ -106,15 +106,10 @@ class mod_bom_advanced extends ModeleNumRefBoms
 	 */
 	public function getExample()
 	{
-		global $langs, $mysoc;
+		global $db, $langs;
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-		$old_code_client = $mysoc->code_client;
-		$old_code_type = $mysoc->typent_code;
-		$mysoc->code_client = 'CCCCCCCCCC';
-		$mysoc->typent_code = 'TTTTTTTTTT';
-		$numExample = $this->getNextValue($mysoc, null);
-		$mysoc->code_client = $old_code_client;
-		$mysoc->typent_code = $old_code_type;
+		$numExample = $this->getNextValue(new Product($db), null);
 
 		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
