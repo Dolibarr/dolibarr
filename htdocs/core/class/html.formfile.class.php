@@ -249,7 +249,8 @@ class FormFile
 		$out .= (!empty($capture) ? ' capture="capture"' : '');
 		$out .= '>';
 		$out .= ' ';
-		if ($sectionid) {	// Show overwrite if exists for ECM module only
+		// Show overwrite if exists for ECM module, and everywhere when the replaced files are kept as previous versions
+		if ($sectionid || getDolGlobalInt('MAIN_DOCUMENT_KEEP_VERSIONS') > 0) {
 			$langs->load('link');
 			$out .= '<span class="nowraponsmartphone"><input style="margin-right: 2px;" type="checkbox" id="overwritefile" name="overwritefile" value="1">';
 			$out .= '<label for="overwritefile" class="opacitylow paddingleft paddingright">'.$langs->trans("OverwriteIfExists").'</label>';
@@ -1602,6 +1603,30 @@ class FormFile
 					// Preview link
 					if (!$editline) {
 						print $this->showPreview($file, $modulepart, $filepath, 0, '&entity='.(empty($object->entity) ? $conf->entity : $object->entity));
+					}
+
+					// Previous versions of the file, kept when it was replaced by an upload (see MAIN_DOCUMENT_KEEP_VERSIONS)
+					if (!$editline && !empty($file['fullname']) && is_dir(dol_osencode(dirname($file['fullname']).'/.versions'))) {
+						$versions = dol_dir_list(dirname($file['fullname']).'/.versions', 'files', 0, '^'.preg_quote($file['name'], '/').'\.v\d+$', null, 'name', SORT_DESC, 1, 1);
+						if (count($versions)) {
+							print '<details class="documentversions">';
+							print '<summary class="opacitymedium small">'.$langs->trans("PreviousVersionsOfFile", count($versions)).'</summary>';
+							foreach ($versions as $version) {
+								$versiontimestamp = (int) preg_replace('/^.*\.v/', '', $version['name']);
+								print '<div class="small paddingleft">';
+								print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.urlencode($modulepart);
+								if (!empty($object->entity)) {
+									print '&entity='.((int) $object->entity);
+								}
+								print '&file='.urlencode((dirname($filepath) != '.' ? dirname($filepath).'/' : '').'.versions/'.$version['name']).'">';
+								print img_picto('', 'download', 'class="paddingright"');
+								print dol_print_date($versiontimestamp, 'dayhour', 'tzuser');
+								print '</a>';
+								print ' <span class="opacitymedium">'.dol_print_size($version['size'], 1, 1).'</span>';
+								print '</div>';
+							}
+							print '</details>';
+						}
 					}
 
 					print "</td>\n";

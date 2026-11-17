@@ -58,4 +58,7 @@ ShowFile=Show file
 FullPathOrig=Full path origin
 GenOrUpload=File origin
 FileHasAnIndexedTextContent=File has an indexed text content
+ECMDropFilesOnField=Choose files, or drop them here
+ECMFilesAlreadyExist=These files already exist in this directory: %s. OK: replace them. Cancel: do not upload them.
+ECMFileTooBigForUpload=These files are larger than the maximum size allowed for uploads (%s), so they will not be uploaded: %s
 ECMSearchFileNameOrContent=File name or content

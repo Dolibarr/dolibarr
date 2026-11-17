@@ -151,7 +151,7 @@ if (!function_exists('dol_loginfunction')) {
 
 		// Title
 		$appli = constant('DOL_APPLICATION_TITLE');
-		$title = $appli.(getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '' : ' '.constant('DOL_VERSION'));
+		$title = $appli.((getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') || getDolGlobalInt('MAIN_HIDE_VERSION')) ? '' : ' '.constant('DOL_VERSION'));
 
 		$customapplication = getDolGlobalString('MAIN_APPLICATION_TITLE');
 		if ($customapplication) {
@@ -162,6 +162,10 @@ if (!function_exists('dol_loginfunction')) {
 			}
 		}
 		$titletruedolibarrversion = constant('DOL_VERSION'); // $title used by login template after the @ to inform of true Dolibarr version
+		if (getDolGlobalInt('MAIN_HIDE_VERSION')) {
+			// Keep the pattern x.y.z expected by webviews, without the maintenance number
+			$titletruedolibarrversion = preg_replace('/^(\d+\.\d+)\..*$/', '\1.x', $titletruedolibarrversion);
+		}
 
 		// Note: $conf->css looks like '/theme/eldy/style.css.php'
 		/*
@@ -378,7 +382,7 @@ function encodedecode_dbpassconf($level = 0)
 
 	if ($fp = fopen(DOL_DOCUMENT_ROOT.'/conf/conf.php', 'r')) {
 		while (!feof($fp)) {
-			$buffer = fgets($fp, 4096);
+			$buffer = fgets($fp, 16384); // 16384 to allow very long lines in conf.php
 
 			$lineofpass = 0;
 
@@ -1000,7 +1004,14 @@ function dolTotpMustEnroll($db, $user)
 		return false;	// The second step is asked only with these modes, the others check the user their own way
 	}
 
-	return dolTotpIsRequired($db, $user) && dolTotpGetEnrollment($db, $user->id) === null;
+	if (!dolTotpIsRequired($db, $user) || dolTotpGetEnrollment($db, $user->id) !== null) {
+		return false;
+	}
+
+	// A passkey is a two-factor authentication too: a user who has one fulfills the requirement and must log in with it (see dolTotpStartSecondFactor())
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/passkey.lib.php';
+
+	return !passkeyUserHasPasskey($db, $user->id);
 }
 
 /**
@@ -1010,7 +1021,7 @@ function dolTotpMustEnroll($db, $user)
  *  @param		DoliDB		$db				Database handler
  *  @param		string		$login			Login validated by the first step
  *  @param		int			$entity			Entity the login was tested on
- *  @return		string						The login if this user has no 2FA, or '' to ask for a code first
+ *  @return		string						The login if this user has no 2FA, or '' to ask for a code first (or to refuse the password of a user who must log in with his passkey)
  *  @see dolTotpCheckPendingLogin()
  */
 function dolTotpStartSecondFactor($db, $login, $entity)
@@ -1030,6 +1041,14 @@ function dolTotpStartSecondFactor($db, $login, $entity)
 	}
 	$enrollment = dolTotpGetEnrollment($db, $tmpuser->id);
 	if ($enrollment === null) {
+		// A user to whom the security setup imposes a two-factor authentication and who has a passkey for it must log in with the passkey: the password alone is refused
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/passkey.lib.php';
+		if (dolTotpIsRequired($db, $tmpuser) && passkeyUserHasPasskey($db, $tmpuser->id)) {
+			dol_syslog("dolTotpStartSecondFactor: password refused for ".$login.", a two-factor authentication is required and this user has a passkey for it", LOG_NOTICE);
+			$langs->load("users");
+			$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("PasskeyRequiredForLogin");
+			return '';
+		}
 		return $login;		// No 2FA for this user, the password is enough
 	}
 	if (!is_array($enrollment)) {	// An enrollment exists but can't be read: we fail closed, an admin has to remove it from the user card

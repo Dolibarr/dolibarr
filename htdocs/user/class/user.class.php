@@ -1859,6 +1859,13 @@ class User extends CommonObject
 			$this->error = $this->db->lasterror();
 		}
 
+		// Remove the passkeys of the user
+		$sql = "DELETE FROM ".$this->db->prefix()."oauth_token WHERE fk_user = ".((int) $this->id)." AND service = 'passkey'";
+		if (!$error && !$this->db->query($sql)) {
+			$error++;
+			$this->error = $this->db->lasterror();
+		}
+
 		// If contact, remove link
 		if ($this->contact_id > 0) {
 			$sql = "UPDATE ".$this->db->prefix()."socpeople SET fk_user_creat = null WHERE rowid = ".((int) $this->contact_id);

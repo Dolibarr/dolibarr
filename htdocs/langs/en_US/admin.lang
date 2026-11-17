@@ -545,6 +545,7 @@ ModuleCompanyCodePanicum=Return an empty accounting code.
 ModuleCompanyCodeDigitaria=Returns a compound accounting code according to the name of the third party. The code consists of a prefix that can be defined in the first position followed by the number of characters defined in the third party code.
 ModuleCompanyCodeCustomerDigitaria=%s followed by the truncated customer name by the number of characters: %s for the customer accounting code.
 ModuleCompanyCodeSupplierDigitaria=%s followed by the truncated supplier name by the number of characters: %s for the supplier accounting code.
+WarningDigitariaCodeLengthNotMatchingAccountLength=The generated accounting code length (prefix + number of characters) should equal the auxiliary account length (%s), otherwise the general ledger pads the code with trailing zeros.
 ModuleCompanyCodeMinga=Returns a numeric accounting code taken from a range of numbers, like the debtor and creditor accounts of the German charts of accounts SKR03/SKR04 used with DATEV.
 ModuleCompanyCodeCustomerMinga=Customer accounting codes from %s to %s
 ModuleCompanyCodeSupplierMinga=Vendor accounting codes from %s to %s
@@ -2809,6 +2810,8 @@ AttributeCodeHelp=A code of your choice (without special chars and spaces) to id
 WarningOnlineSignature=WARNING: Please note that this function allows a person (customer, supplier...) to insert, online, the image of his signature in the PDF document. As for a handwritten signature, such a signature can be made by anyone and does not have the same legal value as a legal electronic signature system going through an authorized trusted third party. If you need this level of security, you can contact an integrator for more information or check for addons on %s.
 UploadExtensionRestriction=List of forbidden file extensions to upload
 UploadExtensionRestrictionExemple=htm, html, shtml, js, php
+DocumentKeepVersions=Number of previous versions to keep when a file is replaced
+DocumentKeepVersionsDesc=When an upload replaces a file with the same name ("%s"), the current file is first kept as a previous version, which can be downloaded from the list of files. 0 = no previous versions are kept.
 Privileges=Privileges
 FieldsLinked=Fields Linked
 PDF_XXX_SHOW_PRICE_INCL_TAX=Show column Price including tax

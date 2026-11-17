@@ -632,7 +632,8 @@ if (!defined('NOLOGIN')) {
 		}
 
 		// Verification security graphic code
-		if ($test && GETPOST('actionlogin', 'aZ09') == 'login' && GETPOST("username", "alpha", 2) && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA') && !isset($_SESSION['dol_bypass_antispam'])) {
+		// Not done for the return of a passkey login: only the mode 'passkey' is then tested (see later), with a login already validated by the passkey.
+		if ($test && GETPOST('actionlogin', 'aZ09') == 'login' && GETPOST("username", "alpha", 2) && !(GETPOSTINT('afterpasskeyloginreturn') && in_array('passkey', $authmode)) && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA') && !isset($_SESSION['dol_bypass_antispam'])) {
 			$ok = false;
 
 			// Use the captcha handler to validate
@@ -744,6 +745,9 @@ if (!defined('NOLOGIN')) {
 		if (GETPOST('beforeoauthloginredirect') || GETPOST('afteroauthloginreturn')) {	// For oauth login
 			$goontestloop = true;
 		}
+		if (GETPOSTINT('afterpasskeyloginreturn')) {	// For passkey login
+			$goontestloop = true;
+		}
 		if (!empty($_COOKIE['login_dolibarr'])) {	// TODO For ? Remove this ?
 			$goontestloop = true;
 		}
@@ -797,6 +801,16 @@ if (!defined('NOLOGIN')) {
 							break;
 						}
 					}
+				}
+			}
+
+			// The mode 'passkey' is tested alone, and only when the login page submits a login validated by a passkey.
+			// A passkey is a two-factor authentication on its own: no TOTP code is asked after it (see dolTotpStartSecondFactor() below).
+			if (in_array('passkey', $authmode)) {
+				if (GETPOSTINT('afterpasskeyloginreturn')) {
+					$authmode = array('passkey');
+				} else {
+					$authmode = array_values(array_diff($authmode, array('passkey')));
 				}
 			}
 
@@ -1236,6 +1250,11 @@ if (!defined('NOLOGIN')) {
 		if (dolTotpMustEnroll($db, $user)) {
 			// SCRIPT_NAME and not PHP_SELF, which ends with the path info anybody can add to the URL (/societe/list.php/user/logout.php)
 			$isallowed = ((preg_match('/\/user\/credentials\.php$/', $_SERVER['SCRIPT_NAME']) && GETPOSTINT('id') == $user->id) || preg_match('/\/user\/(logout|changepassword)\.php$/', $_SERVER['SCRIPT_NAME']));
+			// A passkey fulfills the requirement too: the page to add one and its ajax component can also be reached
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/passkey.lib.php';
+			if (!$isallowed && passkeyIsEnabled()) {
+				$isallowed = ((preg_match('/\/user\/passkeys\.php$/', $_SERVER['SCRIPT_NAME']) && (!GETPOSTINT('id') || GETPOSTINT('id') == $user->id)) || preg_match('/\/core\/ajax\/passkeyregister\.php$/', $_SERVER['SCRIPT_NAME']));
+			}
 			if (!$isallowed) {
 				header('Location: '.DOL_URL_ROOT.'/user/credentials.php?id='.((int) $user->id));
 				exit;
@@ -1818,7 +1837,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		}
 		$hookmanager->initHooks(array("main"));
 
-		$ext = 'layout='.(empty($conf->browser->layout) ? '' : $conf->browser->layout).'&version='.urlencode(DOL_VERSION);
+		$ext = 'layout='.(empty($conf->browser->layout) ? '' : $conf->browser->layout).'&version='.urlencode(getDolVersionForUrl());
 
 		print "<head>\n";
 
@@ -1956,7 +1975,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		 * see Documentation at admin/tools/ui/dolibarr-context/index.php
 		 */
 		$jsContextVars = [
-			'DOL_VERSION' => DOL_VERSION,
+			'DOL_VERSION' => getDolVersionForUrl(),
 			'DOL_URL_ROOT' => DOL_URL_ROOT,
 		];
 
@@ -4036,7 +4055,7 @@ if (!function_exists("llxFooter")) {
 		global $contextpage, $page, $limit, $mode;
 		global $dolibarr_distrib;
 
-		$ext = 'layout='.urlencode($conf->browser->layout).'&version='.urlencode(DOL_VERSION);
+		$ext = 'layout='.urlencode($conf->browser->layout).'&version='.urlencode(getDolVersionForUrl());
 
 		// Hook to add more things on all pages within fiche DIV
 		$llxfooter = '';
