@@ -55,9 +55,13 @@ $result = restrictedArea($user, 'user', $id, 'user', 'user');
 // Same permissions than to edit the password of the user. A passkey can be added by an internal user himself only:
 // the private key is created on his own device (same check than core/ajax/passkeyregister.php).
 $permissiontoeditpasswordandsee = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password") && $user->admin)) && (empty($user->socid) || $user->socid == $object->socid);
-$permissiontoadd = ($user->id == $id && empty($user->socid) && $permissiontoeditpasswordandsee && passkeyIsEnabled());
+// A user to whom the security setup imposes a two-factor authentication can add a passkey instead of a TOTP,
+// even without the permission to change his password (same rule than user/credentials.php)
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+$mustenroll2fa = ($user->id == $id && dolTotpMustEnroll($db, $user));
+$permissiontoadd = ($user->id == $id && empty($user->socid) && ($permissiontoeditpasswordandsee || $mustenroll2fa) && passkeyIsEnabled());
 
-if (!$permissiontoeditpasswordandsee) {
+if (!$permissiontoeditpasswordandsee && !$mustenroll2fa) {
 	accessforbidden();
 }
 
@@ -123,6 +127,10 @@ $morehtmlright = '<a class="button smallpaddingimp" href="'.DOL_URL_ROOT.'/user/
 print load_fiche_titre($langs->trans("Passkeys").' - '.dolPrintHTML($object->getFullName($langs)), $morehtmlright, 'fa-fingerprint');
 
 print '<span class="opacitymedium">'.$langs->trans("PasskeysDesc").'</span><br><br>';
+
+if ($mustenroll2fa) {
+	print info_admin($langs->trans("TOTPRequiredExplain").' '.$langs->trans("PasskeyInsteadOfTOTP"), 0, 0, 'warning', '');
+}
 
 if (!passkeyIsEnabled()) {
 	print info_admin($langs->trans("PasskeyModeNotEnabled", 'passkey', '$dolibarr_main_authentication'), 0, 0, 'warning', '');
