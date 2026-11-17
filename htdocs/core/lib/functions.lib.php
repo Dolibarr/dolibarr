@@ -659,6 +659,9 @@ function getEntity($element, $shared = 1, $currentobject = null)
 		case 'invoice_supplier':
 			$element = 'supplier_invoice';
 			break; // "/fourn/class/fournisseur.facture.class.php"
+		case 'fichinter':
+			$element = 'intervention';
+			break; // "/fichinter/class/fichinter.class.php", interventions are shared with name 'intervention'
 	}
 
 	if (is_object($mc)) {
