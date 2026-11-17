@@ -181,11 +181,14 @@ print '</th>';
 
 // Fields for situation invoice
 if (property_exists($this, 'situation_cycle_ref') && isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
+	if (getDolGlobalInt('INVOICE_USE_SITUATION') > 1) {
+		print '<th class="linecolcycleref2 right">' . $langs->trans('SituationInvoiceProgressCurrent') . '</th>';
+	}
 	print '<th class="linecolcycleref right">';
 	print $langs->trans('CumulativeProgression');
 
 	// @phan-suppress-next-line PhanUndeclaredConstantOfClass
-	if ($object->element == 'facture' && $object->status == $object::STATUS_DRAFT) {
+	if ($object->element == 'facture' && $object->status == $object::STATUS_DRAFT && $object->type != $object::TYPE_CREDIT_NOTE) {	// No mass update of progress on a credit note
 		if (empty($disableedit) && GETPOST('mode', 'aZ09') != 'progressforalllines') {
 			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode=progressforalllines&id='.$object->id.'">'.img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickprogressforalllines opacitymedium paddingleft cursorpointer"').'</a>';
 		}
@@ -197,9 +200,6 @@ if (property_exists($this, 'situation_cycle_ref') && isset($this->situation_cycl
 		}
 	}
 	print '</th>';
-	if (getDolGlobalInt('INVOICE_USE_SITUATION') > 1) {
-		print '<th class="linecolcycleref2 right">' . $langs->trans('SituationInvoiceProgressCurrent') . '</th>';
-	}
 	print '<th class="linecolcycleref2 right">'.$form->textwithpicto($langs->trans('TotalHT100Short'), $langs->trans('UnitPriceXQtyLessDiscount')).'</th>';
 }
 

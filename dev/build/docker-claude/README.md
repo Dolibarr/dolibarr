@@ -77,6 +77,7 @@ Each time the image is rebuilt with changes, the previous image is kept untagged
 ````
 claudes --clean-images
 ````
+A container still running with an obsolete image prevents its removal (even with `docker rmi -f`), so the containers still using an obsolete image are stopped and removed first (the containers started by `claudes.sh` use `--rm`: stopping them removes them). Their Claude Code sessions are not lost, they are stored in `~/.claude` of the host and can be resumed with `claudes --continue`.
 
 Into the container, the directory `.claude` (with the links `skills`, `agents` and `hooks` to the same entries of `.agents`) and
 the link `CLAUDE.md` (to `.agents/AGENTS.md`) are created at the root of the repository when they do not exist, so Claude Code
@@ -100,3 +101,10 @@ DOCKER_ALLOW_SMTP=1 claudes
 Like for docker-vibe, the files `/var/log/mail.log`, `/var/log/phpmail.log` and `/var/log/phpsendmail.log` are each mounted
 read-only at the same path into the container when they exist on the host, and the user of the container is added to the groups
 owning them (except `root`). After a rotation of the log on the host, the container keeps showing the old file until it is restarted.
+
+## Documents produced by the agent
+Like for docker-vibe, `claudes.sh` creates the directory `/tmp/agents_documents` on the host and mounts it at the same path into the container,
+so the documents produced by the agent for the user (reports, slides, graphs, exports, test artifacts, ...) are shared with the host
+without touching the git working directory of the project. The directory is shared between the host and all the AI agent containers
+running on it: each agent should write into a subdirectory named after itself (for example `/tmp/agents_documents/claude/`).
+Beware: `/tmp` is purged at reboot: the documents must be taken out of the host directory before a reboot of the host.
