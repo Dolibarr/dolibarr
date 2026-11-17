@@ -5517,6 +5517,7 @@ function get_product_localtax_for_country($idprod, $local, $thirdpartytouseforco
  *	Function that return vat rate of a product line (according to seller, buyer and product vat rate)
  *   VATRULE 0: If we are in mode SERVICE_ARE_ECOMMERCE_200238EC and customer is not a company with a vat id, we use default product VAT in buyer country
  *   VATRULE 1: If seller does not use VAT, default VAT is 0. End of rule.
+ *   VATRULE 1b: If option MAIN_USE_VAT_OF_PRODUCT_FOR_ALL_CUSTOMERS is on, default VAT = VAT of the product sold, whatever the buyer. End of rule.
  *   VATRULE 2: If buyer department has a VAT rule from vat rates dictionary then it's the default VAT rate. End of rule.
  *	 VATRULE 3: If the (seller country = buyer country) then the default VAT = VAT of the product sold. End of rule.
  *	 VATRULE 4: If (seller and buyer in the European Community) and (property sold = new means of transport such as car, boat, plane) then VAT by default = 0 (VAT must be paid by the buyer to the tax center of his country and not to the seller). End of rule.
@@ -5591,6 +5592,13 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 		// If not, we add it and we return '0 (VATEX-EU-132-xx)'
 		$vatvalue = 0;
 		$vatrule = 'VATRULE 1';
+	}
+
+	// If option MAIN_USE_VAT_OF_PRODUCT_FOR_ALL_CUSTOMERS is on, the default VAT = VAT of the product sold, whatever the country and the type of the buyer. End of rule.
+	// Example: a venue rented in the seller country is taxed there, even for a company of another country.
+	if (empty($vatrule) && getDolGlobalString('MAIN_USE_VAT_OF_PRODUCT_FOR_ALL_CUSTOMERS')) {
+		$vatvalue = get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice, $type_vat);
+		$vatrule = 'VATRULE 1b';
 	}
 
 	// 'VATRULE 2' - Force VAT if a buyer department is defined on vat rates dictionary
@@ -5671,10 +5679,9 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 
 	// If (seller in the European Community and buyer outside the European Community and private buyer) then VAT by default = VAT of the product sold. End of rule
 	// I don't see any use case that need this rule, this case is on only if MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC set
-	// With MAIN_USE_VAT_OF_PRODUCT_FOR_CUSTOMER_OUT_OF_EEC, companies get it too (example: services related to a property located in the seller country)
-	if (empty($vatrule) && (getDolGlobalString('MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC') || getDolGlobalString('MAIN_USE_VAT_OF_PRODUCT_FOR_CUSTOMER_OUT_OF_EEC')) && empty($buyer_in_cee)) {
+	if (empty($vatrule) && getDolGlobalString('MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC') && empty($buyer_in_cee)) {
 		$isacompany = $thirdparty_buyer->isACompany();
-		if (!$isacompany || getDolGlobalString('MAIN_USE_VAT_OF_PRODUCT_FOR_CUSTOMER_OUT_OF_EEC')) {
+		if (!$isacompany) {
 			$vatvalue = get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice, $type_vat);
 			$vatrule = 'VATRULE extra';
 			//print 'VATRULE extra';
