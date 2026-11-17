@@ -178,7 +178,7 @@ class Websites extends DolibarrApi
 			$obj_ret['pagination'] = array(
 				'total' => (int) $total,
 				'page' => $page,
-				'page_count' => (int) ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			);
 		}
@@ -278,7 +278,7 @@ class Websites extends DolibarrApi
 			$obj_ret['pagination'] = array(
 				'total' => (int) $total,
 				'page' => $page,
-				'page_count' => (int) ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			);
 		}
@@ -412,7 +412,7 @@ class Websites extends DolibarrApi
 			$obj_ret['pagination'] = array(
 				'total' => (int) $total,
 				'page' => $page,
-				'page_count' => (int) ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			);
 		}
@@ -524,7 +524,7 @@ class Websites extends DolibarrApi
 			$this->websitepage->status = WebsitePage::STATUS_DRAFT;
 		}
 		if (is_null($this->websitepage->aliasalt)) {
-			$this->websitepage->aliasalt = '';	// Field is notnull (same default as web interface)
+			$this->websitepage->aliasalt = '';	// Same default as web interface
 		}
 		$this->websitepage->pageurl = preg_replace('/\.php$/i', '', trim((string) $this->websitepage->pageurl));
 		$this->websitepage->ref = $this->websitepage->pageurl;
@@ -844,8 +844,9 @@ class Websites extends DolibarrApi
 
 	/**
 	 * Check and sanitize the content of a page received by the API.
-	 * PHP code can't be added or modified through the API, even with permission website->writephp. If the page
-	 * already contains PHP code, the content can be resubmitted only if this PHP code is kept unchanged.
+	 * PHP code can't be added or modified through the API, even with permission website->writephp, except if
+	 * $dolibarr_website_allow_custom_php is 3. Otherwise, if the page already contains PHP code, the content can
+	 * be resubmitted only if this PHP code is kept unchanged.
 	 *
 	 * @param	mixed		$content				Content of page received by the API
 	 * @param	string		$phpfullcodestringold	PHP code of the current content of the page ('' for a new page)
@@ -863,12 +864,26 @@ class Websites extends DolibarrApi
 
 		$phpfullcodestring = dolKeepOnlyPhpCode($content);
 
-		// Removing all the PHP code is allowed. Adding or modifying PHP code is not.
+		// Removing all the PHP code is allowed. Adding or modifying PHP code is allowed only if $dolibarr_website_allow_custom_php is 3.
 		if ($phpfullcodestring !== '' && $phpfullcodestring !== $phpfullcodestringold) {
 			if (!DolibarrApiAccess::$user->hasRight('website', 'writephp')) {
 				throw new RestException(403, 'Permission incomplete: you are not allowed to add or modify dynamic PHP content in a website page (permission website->writephp is required). Keep the existing PHP code unchanged.');
 			}
-			throw new RestException(403, 'Adding or modifying dynamic PHP content of a website page is not allowed through the API, even with the permission to edit PHP content. Use the website editor of the application to do it, or keep the existing PHP code unchanged.');
+			global $dolibarr_website_allow_custom_php;
+			if (empty($dolibarr_website_allow_custom_php) || (int) $dolibarr_website_allow_custom_php < 3) {
+				throw new RestException(403, 'Adding or modifying dynamic PHP content of a website page is not allowed through the API, even with the permission to edit PHP content (this requires $dolibarr_website_allow_custom_php = 3 in conf.php). Use the website editor of the application to do it, or keep the existing PHP code unchanged.');
+			}
+			// Same checks of the PHP code than in the website editor (forbidden functions...). Errors are returned with setEventMessages().
+			$phpcodeold = $phpfullcodestringold;
+			$phpcodenew = $phpfullcodestring;
+			$errorsbefore = isset($_SESSION['dol_events']['errors']) ? count($_SESSION['dol_events']['errors']) : 0;
+			if (checkPHPCode($phpcodeold, $phpcodenew)) {
+				$phperrors = isset($_SESSION['dol_events']['errors']) ? array_slice($_SESSION['dol_events']['errors'], $errorsbefore) : array();
+				if (isset($_SESSION['dol_events']['errors'])) {
+					$_SESSION['dol_events']['errors'] = array_slice($_SESSION['dol_events']['errors'], 0, $errorsbefore);
+				}
+				throw new RestException(403, 'The dynamic PHP content of the page was refused: '.implode(' ', $phperrors));
+			}
 		}
 
 		if ($phpfullcodestring === '') {
@@ -877,7 +892,7 @@ class Websites extends DolibarrApi
 			return (string) sanitizeVal($content, 'restricthtmlallowclass');
 		}
 
-		// PHP code is unchanged: protect the PHP blocks so the HTML sanitizer does not remove them, then restore them
+		// PHP code is allowed: protect the PHP blocks so the HTML sanitizer does not remove them, then restore them
 		$phpblocks = array();
 		$contentwithoutphp = '';
 		$parts = preg_split('/(<\?.*?(?:\?>|\z))/s', $content, -1, PREG_SPLIT_DELIM_CAPTURE);
@@ -895,9 +910,9 @@ class Websites extends DolibarrApi
 			$newcontent = str_replace('DOLAPIPHPBLOCK'.$key.'DOLAPIPHPBLOCKEND', $phpblock, $newcontent);
 		}
 
-		// Final check: the PHP code of the content to save must be exactly the PHP code of the current page
-		if (dolKeepOnlyPhpCode($newcontent) !== $phpfullcodestringold) {
-			throw new RestException(400, 'The existing PHP code of the page could not be preserved by the HTML sanitizer of the API (PHP code is probably inside a forbidden HTML tag or attribute). Use the website editor of the application to update this page.');
+		// Final check: the PHP code of the content to save must be exactly the checked PHP code
+		if (dolKeepOnlyPhpCode($newcontent) !== $phpfullcodestring) {
+			throw new RestException(400, 'The PHP code of the page could not be preserved by the HTML sanitizer of the API (PHP code is probably inside a forbidden HTML tag or attribute). Use the website editor of the application to update this page.');
 		}
 
 		return $newcontent;

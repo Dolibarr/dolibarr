@@ -65,7 +65,7 @@ class ExternalModules
 	public $cache_file;
 
 	/**
-	 * @var array<string,array{url:string,branch:string,const_enable:string,raw_base_url:string,file_source_url:string,cache_file:string,status:int,error:string}> Additional GitHub mono repositories of modules (from MAIN_ADD_EXTERNAL_MODULES_SOURCE), indexed by a key
+	 * @var array<string,array{label:string,description:string,url:string,branch:string,const_enable:string,raw_base_url:string,file_source_url:string,cache_file:string,status:int,error:string}> Additional GitHub mono repositories of modules (from MAIN_ADD_EXTERNAL_MODULES_SOURCE), indexed by a key
 	 */
 	public $custom_sources = array();
 
@@ -168,22 +168,41 @@ class ExternalModules
 		$this->cache_file = DOL_DATA_ROOT.'/admin/temp/remote_github_modules_file.yaml';
 
 		// For the additional modules repositories (GitHub mono repositories with same structure than the community repository)
-		// MAIN_ADD_EXTERNAL_MODULES_SOURCE is a comma separated list of 'URL[:branch]'
-		// Example: 'https://github.com/DoliCloud/dolimods:master,https://github.com/owner/repo:develop'
-		// If the branch is not provided, 'main' is used.
+		// MAIN_ADD_EXTERNAL_MODULES_SOURCE is a semicolon separated list of 'Label:URL[:branch[:Description]]'
+		// Example: 'DoliMods:https://github.com/DoliCloud/dolimods:master:Modules of DoliCloud;My repo:https://github.com/owner/repo:develop:My modules'
+		// If the branch is not provided, 'main' is used. The old format, a comma separated list of 'URL[:branch]', is still supported.
+		$customsourceentries = array();
+		foreach (explode(';', getDolGlobalString('MAIN_ADD_EXTERNAL_MODULES_SOURCE')) as $customsource) {
+			$customsource = trim($customsource);
+			if (preg_match('/^https?:\/\//i', $customsource)) {
+				// Old format with no label: the entry may be a comma separated list of 'URL[:branch]'
+				$customsourceentries = array_merge($customsourceentries, explode(',', $customsource));
+			} else {
+				$customsourceentries[] = $customsource;
+			}
+		}
+
 		$i = 0;
-		foreach (explode(',', getDolGlobalString('MAIN_ADD_EXTERNAL_MODULES_SOURCE')) as $customsource) {
+		foreach ($customsourceentries as $customsource) {
 			$customsource = trim($customsource);
 			if ($customsource === '') {
 				continue;
 			}
 			$i++;
 
+			$label = '';
+			$description = '';
 			$url = $customsource;
 			$branch = '';
 			$reg = array();
-			// A ':' followed by a string with no '/' at the end is the branch (the ':' of 'https:' is never followed by such a string)
-			if (preg_match('/^(.+):([\w.\/-]+)$/', $customsource, $reg) && strpos($reg[2], '/') === false) {
+			if (preg_match('/^([^:]*):(https?:\/\/[^:]+)(?::([^:]*)(?::(.*))?)?$/is', $customsource, $reg)) {
+				// New format 'Label:URL[:branch[:Description]]' (the URL contains no ':' except the one of its scheme)
+				$label = trim($reg[1]);
+				$url = trim($reg[2]);
+				$branch = trim($reg[3] ?? '');
+				$description = trim($reg[4] ?? '');
+			} elseif (preg_match('/^(.+):([\w.\/-]+)$/', $customsource, $reg) && strpos($reg[2], '/') === false) {
+				// Old format 'URL:branch': a ':' followed by a string with no '/' at the end is the branch (the ':' of 'https:' is never followed by such a string)
 				$url = $reg[1];
 				$branch = $reg[2];
 			}
@@ -204,6 +223,8 @@ class ExternalModules
 			$key = ($owner ? strtoupper(preg_replace('/[^a-zA-Z0-9]/', '_', $owner.'_'.$repo)) : 'INVALID'.$i);
 
 			$this->custom_sources[$key] = array(
+				'label' => $label,
+				'description' => $description,
 				'url' => $url,
 				'branch' => $branch,
 				'const_enable' => 'MAIN_ENABLE_EXTERNALMODULES_CUSTOM_'.$key,
@@ -257,7 +278,7 @@ class ExternalModules
 				$this->custom_sources[$key]['status'] = dol_is_file($customsource['cache_file']) ? 1 : 0;
 				$nbcustomsourcesok += $this->custom_sources[$key]['status'];
 			} else {
-				$this->custom_sources[$key]['error'] = 'Each value of MAIN_ADD_EXTERNAL_MODULES_SOURCE must be a GitHub repository URL like https://github.com/owner/repo or https://github.com/owner/repo:branch';
+				$this->custom_sources[$key]['error'] = 'Each value of MAIN_ADD_EXTERNAL_MODULES_SOURCE must be like Label:https://github.com/owner/repo:branch:Description (the URL must be a GitHub repository URL)';
 			}
 		}
 
@@ -388,13 +409,13 @@ class ExternalModules
 		foreach ($organized_tree as $key => $value) {
 			if ($value['label'] != "Versions" && $value['label'] != "Specials") {
 				$html .= '<li' . ($current == $value['rowid'] ? ' class="active"' : '') . '>';
-				$html .= '<a href="?mode=marketplace&categorie=' . $value['rowid'] . ($sortparam ? '&' . $sortparam : '') . '">' . $value['label'] . '</a>';
+				$html .= '<a class="reposition" href="?mode=marketplace&categorie=' . $value['rowid'] . ($sortparam ? '&' . $sortparam : '') . '">' . $value['label'] . '</a>';
 				if (isset($value['children'])) {
 					$html .= '<ul>';
 					usort($value['children'], $this->buildSorter('position'));
 					foreach ($value['children'] as $key_children => $value_children) {
 						$html .= '<li' . ($current == $value_children['rowid'] ? ' class="active"' : '') . '>';
-						$html .= '<a href="?mode=marketplace&categorie=' . $value_children['rowid'] . ($sortparam ? '&' . $sortparam : '') . '" title="' . dol_escape_htmltag(strip_tags($value_children['description'])) . '">' . $value_children['label'] . '</a>';
+						$html .= '<a class="reposition" href="?mode=marketplace&categorie=' . $value_children['rowid'] . ($sortparam ? '&' . $sortparam : '') . '" title="' . dol_escape_htmltag(strip_tags($value_children['description'])) . '">' . $value_children['label'] . '</a>';
 						$html .= '</li>';
 					}
 					$html .= '</ul>';
@@ -421,6 +442,9 @@ class ExternalModules
 		$html       = "";
 		$last_month = dol_now() - (30 * 24 * 60 * 60);
 		$dolibarrversiontouse = DOL_VERSION;	// full string with version
+		// On an alpha, beta or rc version, modules validated for the previous major version are not yet validated but can be installed
+		$isalphaorbeta = (bool) preg_match('/alpha|beta|rc/i', $dolibarrversiontouse);
+		$currentmajorversion = (int) $dolibarrversiontouse;
 
 		$this->products = array();
 
@@ -545,21 +569,19 @@ class ExternalModules
 		$this->numberTotalOfPages = (int) ceil(max($fileProductsTotal / $this->per_page, $customFileProductsTotalMax / $this->per_page, $dolistoreProductsTotal / $this->per_page));
 
 		// Merge all sources (github modules have priority on dolistore, the additional repos have priority on the community repo).
-		$this->products = $dolistoreProducts;
-		// array_unshift() below adds each product at the top, which reverses the order, so we reverse each sorted source first
-		foreach (array_merge(array_reverse($fileProducts), array_reverse($customFileProducts)) as $fileProduct) {
-			$id = $fileProduct['id'];
-			if ($id > 0) {
-				if (empty($this->products[$id])) {		// Not already present in array
-					array_unshift($this->products, $fileProduct);
-				} else {
-					$this->products[$id] = $fileProduct;
-					$this->products[$id]['category'] = $fileProduct['category'];
+		// The list is grouped by provider (additional repos, community repo, then DoliStore), each source being already sorted.
+		// Products are indexed with a string key (DoliStore id if known), so a product already added by a source with higher priority is not added twice.
+		$mergedProducts = array();
+		$nbproductswithoutid = 0;
+		foreach (array($customFileProducts, $fileProducts, $dolistoreProducts) as $sourceProducts) {
+			foreach ($sourceProducts as $sourceProduct) {
+				$key = ((int) $sourceProduct['id'] > 0) ? 'id'.((int) $sourceProduct['id']) : 'noid'.(++$nbproductswithoutid);
+				if (!isset($mergedProducts[$key])) {
+					$mergedProducts[$key] = $sourceProduct;
 				}
-			} else {
-				array_unshift($this->products, $fileProduct);
 			}
 		}
+		$this->products = array_values($mergedProducts);
 
 
 		$i = 0;
@@ -609,6 +631,15 @@ class ExternalModules
 					// Compatible
 					$version = '<span class="compatible hideonsmartphone">'.$langs->trans(
 						'CompatibleUpTo',
+						$dolibarrversiontouse,
+						$product["dolibarr_min"],
+						$product["dolibarr_max"]
+					).'</span>';
+					$compatible = '';
+				} elseif ($maxknown && $isalphaorbeta && (int) str_replace(array('v', 'V'), '', $product["dolibarr_max"]) == ($currentmajorversion - 1)) {
+					// Not yet validated (current version is an alpha, beta or rc and max is the previous major version), but install is allowed
+					$version = '<span class="notvalidated">'.$langs->trans(
+						'NotValidatedWithYourVersion',
 						$dolibarrversiontouse,
 						$product["dolibarr_min"],
 						$product["dolibarr_max"]
@@ -792,12 +823,15 @@ class ExternalModules
 			$html .= '</h2>';
 
 			$html .= '<small class="appDateCreation appRef"> ';
-			if (empty($product['tms'])) {
-				$html .= img_picto($langs->trans('DateCreation'), 'calendar', 'class="pictofixedwidth"').'<span class="opacitymedium"><span class="hideonsmartphone">'.$langs->trans("DateCreation").': </span>';
-				$html .= (!empty($product['datec']) ? dol_print_date(dol_stringtotime($product['datec']), 'day') : $langs->trans("Unknown")).'</span>';
-			} else {
-				$html .= img_picto($langs->trans('DateModification'), 'calendar', 'class="pictofixedwidth"').'<span class="opacitymedium">'.dol_print_date(dol_stringtotime($product['tms']), 'day').'</span>';
+			// We show the creation date (the one used for the sort by date), with the date of last update if it was done a later day
+			$datecreation = (!empty($product['datec']) ? dol_stringtotime($product['datec']) : 0);
+			$dateupdate = (!empty($product['tms']) ? dol_stringtotime($product['tms']) : 0);
+			$html .= img_picto($langs->trans('DateCreation'), 'calendar', 'class="pictofixedwidth"').'<span class="opacitymedium">';
+			$html .= ($datecreation ? dol_print_date($datecreation, 'day') : $langs->trans("Unknown"));
+			if ($dateupdate && (!$datecreation || dol_print_date($dateupdate, '%Y%m%d') > dol_print_date($datecreation, '%Y%m%d'))) {
+				$html .= ' ('.$langs->trans("MarketplaceLastUpdate").': '.dol_print_date($dateupdate, 'day').')';
 			}
+			$html .= '</span>';
 			$html .= ' &nbsp; &nbsp; ';
 
 			$html .= '<div class="appSource inline-block valigntop">';
@@ -816,7 +850,6 @@ class ExternalModules
 			$html .= '</small><br>';
 
 
-			$html .= '&nbsp;';
 			if (!empty($product['phpmin']) && $product['phpmin'] != 'unknown') {
 				$html .= ' <span class="badge-secondary small" style="padding: 3px; border-radius: 5px">PHP min '.$product['phpmin'].'</span>';
 			}
