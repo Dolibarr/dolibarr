@@ -311,7 +311,10 @@ class Interventions extends DolibarrApi
 	 * @phpstan-param	?array<string,string>	$request_data
 	 * @return			Object					Updated object
 	 *
-	 * @throws RestException
+	 * @throws	RestException	400		Empty request body
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		Intervention not found
+	 * @throws	RestException	500		Error when retrieving or updating the intervention
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -328,6 +331,9 @@ class Interventions extends DolibarrApi
 
 		if (!DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		if (!is_array($request_data) || empty($request_data)) {
+			throw new RestException(400, 'A non-empty object of intervention changes is required');
 		}
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
