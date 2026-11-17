@@ -2014,7 +2014,7 @@ if (empty($reshook)) {
 				}
 			}
 
-			$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
+			$qty = price2num(GETPOST('qty', 'alpha'), 'MS', 2);
 
 			$result = $object->updateline(GETPOSTINT('lineid'), (float) $pu, (float) $qty, $remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $description, $price_base_type, $info_bits, $special_code, GETPOSTINT('fk_parent_line'), 0, (int) $fournprice, $buyingprice, $label, $type, $date_start, $date_end, $array_options, GETPOSTINT("units"), (float) $pu_ht_devise);
 
