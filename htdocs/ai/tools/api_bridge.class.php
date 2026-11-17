@@ -3097,19 +3097,34 @@ class ToolApiBridge extends McpTool
 	 */
 	private function addCreateSource($key, $arg, array $source, $description, array $params = array())
 	{
-		if (empty($this->enrichments[$key]['methods']['post']['write'])) {
+		/** @var array<string,mixed> $create */
+		$create = $this->enrichments[$key]['methods']['post'] ?? array();
+		/** @var array<string,mixed> $createwrite */
+		$createwrite = (array) ($create['write'] ?? array());
+		if (empty($createwrite)) {
 			return;
 		}
-		$create = &$this->enrichments[$key]['methods']['post'];
-		$source['write']['target'] = $arg;
-		$source['write']['right'] = $create['write']['right'];
-		$create['from_source'][$arg] = $source;
-		$create['description'] .= ' '.$description;
-		$create['params'][$arg] = "The ".$source['write']['label']." the new ".$source['write']['creates_label']." is made from: rowid, or its ref. Optional.";
+		/** @var array<string,mixed> $write */
+		$write = (array) ($source['write'] ?? array());
+		$write['target'] = $arg;
+		$write['right'] = $createwrite['right'] ?? array();
+		$source['write'] = $write;
+		$sources = (array) ($create['from_source'] ?? array());
+		$sources[$arg] = $source;
+		$create['from_source'] = $sources;
+		$create['description'] = (string) ($create['description'] ?? '').' '.$description;
+		$createparams = (array) ($create['params'] ?? array());
+		$createparams[$arg] = "The ".((string) ($write['label'] ?? ''))." the new ".((string) ($write['creates_label'] ?? ''))." is made from: rowid, or its ref. Optional.";
+		$sourceparams = (array) ($create['source_params'] ?? array());
 		foreach ($params as $name => $text) {
-			$create['params'][$name] = $text;
-			$create['source_params'][] = $name;
+			$createparams[$name] = $text;
+			$sourceparams[] = $name;
 		}
+		$create['params'] = $createparams;
+		if ($sourceparams) {
+			$create['source_params'] = $sourceparams;
+		}
+		$this->enrichments[$key]['methods']['post'] = $create;
 	}
 
 	/**
@@ -8126,10 +8141,10 @@ class ToolApiBridge extends McpTool
 		$epkey = (string) ($this->enrichments[$key]['endpoint'] ?? $key);	// REST endpoint the tool group calls
 		// A create given a source calls the REST method that makes the document from it.
 		if ($source !== '') {
-			$from = $this->enrichments[$key]['methods'][$method]['from_source'][$source];
-			$method = (string) $from['method'];
-			$epkey = (string) ($from['endpoint'] ?: $epkey);
-			$args[(string) $from['param']] = $args[$source];
+			$sourcemeta = (array) (((array) ($this->methodMetaFor($name)['from_source'] ?? array()))[$source] ?? array());
+			$method = (string) ($sourcemeta['method'] ?? $method);
+			$epkey = (string) (empty($sourcemeta['endpoint']) ? $epkey : $sourcemeta['endpoint']);
+			$args[(string) ($sourcemeta['param'] ?? 'id')] = $args[$source];
 		}
 		$ep = $this->endpoints[$epkey];
 
