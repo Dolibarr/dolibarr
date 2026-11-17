@@ -338,7 +338,7 @@ class Fichinter extends CommonObject
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
 		}
-		$sql .= " ".$clause." fi.entity IN (".getEntity('intervention').")";
+		$sql .= " ".$clause." fi.entity IN (".getEntity('fichinter').")";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -588,7 +588,7 @@ class Fichinter extends CommonObject
 		$sql .= " f.fk_user_author, f.fk_user_modif,";
 		$sql .= " f.duree, f.fk_projet as fk_project, f.note_public, f.note_private, f.model_pdf, f.last_main_doc, f.extraparams, fk_contrat, f.entity as entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
-		$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
+		$sql .= " WHERE f.entity IN (".getEntity('fichinter').")";
 		if ($ref) {
 			$sql .= " AND f.ref = '".$this->db->escape($ref)."'";
 		} elseif ($ref_ext) {
@@ -742,7 +742,7 @@ class Fichinter extends CommonObject
 			$sql .= ", date_valid = '".$this->db->idate($now)."'";
 			$sql .= ", fk_user_valid = ".($user->id > 0 ? (int) $user->id : "null");
 			$sql .= " WHERE rowid = ".((int) $this->id);
-			$sql .= " AND entity IN (".getEntity('intervention').")";
+			$sql .= " AND entity IN (".getEntity('fichinter').")";
 
 			$sql .= " AND fk_statut = 0";
 
@@ -977,7 +977,7 @@ class Fichinter extends CommonObject
 			$sql .= " fk_user_modif = " . ((int) $user->id);
 			$sql .= " WHERE rowid = " . ((int) $this->id);
 			$sql .= " AND fk_statut > " . self::STATUS_DRAFT;
-			$sql .= " AND entity IN (".getEntity('intervention').")";
+			$sql .= " AND entity IN (".getEntity('fichinter').")";
 
 			if ($this->db->query($sql)) {
 				if (!$notrigger) {
