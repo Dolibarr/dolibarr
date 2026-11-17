@@ -6627,8 +6627,8 @@ if ($action == 'create') {
 
 
 			print '<tr class="oddeven">';
-			print '<td colspan="2" class="left"><b>'.$langs->trans('SituationTotalAfterInvoice').'</b></td>';
-			print '<td>';
+			print '<td colspan="2" class="left"><b>'.$langs->trans('CumulativeSituation').'</b></td>';
+			print '<td class="center">';
 			$i = 0;
 			foreach ($current_situation_counter as $sit) {
 				$curSign = $sit > 0 ? '+' : '-';
