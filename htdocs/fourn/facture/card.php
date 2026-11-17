@@ -4367,7 +4367,8 @@ if ($action == 'create') {
 
 			if ($object->type != FactureFournisseur::TYPE_CREDIT_NOTE) {
 				// Total already paid
-				print '<tr><td colspan="'.($nbcols + 1).'" class="right">';
+				print '<!-- Total already paid -->';
+				print '<tr><td colspan="'.$nbcols.'" class="right">';
 				print '<span class="opacitymedium">';
 				if ($object->type != FactureFournisseur::TYPE_DEPOSIT) {
 					print $langs->trans('AlreadyPaidNoCreditNotesNoDeposits');
@@ -4376,8 +4377,8 @@ if ($action == 'create') {
 				}
 				print '</span>';
 				print '</td>';
-				//print '<td></td>';
-				print '<td class="right"'.(($totalpaid > 0) ? ' class="amountalreadypaid"' : '').'>'.price($totalpaid).'</td>';
+				print '<td class="right opacitymedium">'.$conf->currency.'</td>';
+				print '<td class="right'.(($totalpaid > 0) ? ' amountalreadypaid' : '').'">'.price($totalpaid).'</td>';
 				print '</tr>';
 
 				//$resteapayer = $object->total_ttc - $totalpaid;
@@ -4432,6 +4433,7 @@ if ($action == 'create') {
 				}
 
 				// Pay partially 'escompte'
+				print '<!-- Paid partially -->';
 				if (($object->status == FactureFournisseur::STATUS_CLOSED || $object->status == FactureFournisseur::STATUS_ABANDONED) && $object->close_code == 'discount_vat') {
 					print '<tr><td colspan="'.($nbcols + 1).'" class="right nowrap">';
 					print '<span class="opacitymedium">';
@@ -4445,6 +4447,7 @@ if ($action == 'create') {
 					$cssforamountpaymentcomplete = 'amountpaymentneutral';
 				}
 				// Paye partiellement ou Abandon 'badsupplier'
+				print '<!-- Partially paid or abandoned (bad supplier) -->';
 				if (($object->status == FactureFournisseur::STATUS_CLOSED || $object->status == FactureFournisseur::STATUS_ABANDONED) && $object->close_code == 'badsupplier') {
 					print '<tr><td colspan="'.($nbcols + 1).'" class="right nowrap">';
 					print '<span class="opacitymedium">';
@@ -4458,6 +4461,7 @@ if ($action == 'create') {
 					$cssforamountpaymentcomplete = 'amountpaymentneutral';
 				}
 				// Paye partiellement ou Abandon 'product_returned'
+				print '<!-- Partially paid or abandoned (product returned) -->';
 				if (($object->status == FactureFournisseur::STATUS_CLOSED || $object->status == FactureFournisseur::STATUS_ABANDONED) && $object->close_code == 'product_returned') {
 					print '<tr><td colspan="'.($nbcols + 1).'" class="right nowrap">';
 					print '<span class="opacitymedium">';
@@ -4471,6 +4475,7 @@ if ($action == 'create') {
 					$cssforamountpaymentcomplete = 'amountpaymentneutral';
 				}
 				// Paye partiellement ou Abandon 'abandon'
+				print '<!-- Partially paid or abandoned (abandoned) -->';
 				if (($object->status == FactureFournisseur::STATUS_CLOSED || $object->status == FactureFournisseur::STATUS_ABANDONED) && $object->close_code == 'abandon') {
 					print '<tr><td colspan="'.($nbcols + 1).'" class="right nowrap">';
 					$text = $langs->trans("HelpAbandonOther");
@@ -4490,17 +4495,19 @@ if ($action == 'create') {
 				}
 
 				// Billed
-				print '<tr><td colspan="'.($nbcols + 1).'" class="right">';
+				print '<!-- Billed -->';
+				print '<tr><td colspan="'.$nbcols.'" class="right">';
 				print '<span class="opacitymedium">';
 				print $langs->trans("Billed");
 				print '</span>';
 				print '</td>';
-				//print '<td></td>';
+				print '<td class="right opacitymedium">'.$conf->currency.'</td>';
 				print '<td class="right">'.price($object->total_ttc).'</td>';
 				print '</tr>';
 
 				// Remainder to pay
-				print '<tr><td colspan="'.($nbcols + 1).'" class="right">';
+				print '<!-- Remainder to pay -->';
+				print '<tr><td colspan="'.$nbcols.'" class="right">';
 				print '<span class="opacitymedium">';
 				print $langs->trans('RemainderToPay');
 				if ($resteapayeraffiche < 0) {
@@ -4508,13 +4515,14 @@ if ($action == 'create') {
 				}
 				print '</span>';
 				print '</td>';
-				//print '<td></td>';
+				print '<td class="right opacitymedium">'.$conf->currency.'</td>';
 				print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price($resteapayeraffiche).'</td>';
 				print '</tr>';
 
 				// Remainder to pay Multicurrency
+				print '<!-- Remainder to pay Multicurrency -->';
 				if (isModEnabled('multicurrency') && (($object->multicurrency_code && $object->multicurrency_code != $conf->currency) || $object->multicurrency_tx != 1)) {
-					print '<tr><td colspan="'.($nbcols + 1).'" class="right">';
+					print '<tr><td colspan="'.$nbcols.'" class="right">';
 					print '<span class="opacitymedium">';
 					print $langs->trans('RemainderToPayMulticurrency');
 					if ($resteapayeraffiche < 0) {
@@ -4522,7 +4530,7 @@ if ($action == 'create') {
 					}
 					print '</span>';
 					print '</td>';
-					//print '<td></td>';
+					print '<td class="right opacitymedium">'.$object->multicurrency_code.'</td>';
 					print '<td class="right'.($resteapayeraffiche ? ' amountremaintopaynoresize' : (' '.$cssforamountpaymentcomplete)).'">'.price(price2num($multicurrency_resteapayer, 'MT'), 0, $langs, 1, -1, -1, $object->multicurrency_code).'</td>';
 					print '</tr>';
 				}
@@ -4530,35 +4538,39 @@ if ($action == 'create') {
 				$cssforamountpaymentcomplete = 'amountpaymentneutral';
 
 				// Total already paid back
-				print '<tr><td colspan="'.($nbcols + 1).'" class="right">';
+				print '<!-- Total already paid back -->';
+				print '<tr><td colspan="'.$nbcols.'" class="right">';
 				print $langs->trans('AlreadyPaidBack');
 				print '</td>';
-				//print '<td></td>';
+				print '<td class="right opacitymedium">'.$conf->currency.'</td>';
 				print '<td class="right">'.price($sign * $totalpaid).'</td>';
 				print '</tr>';
 
 				// Billed
-				print '<tr><td colspan="'.($nbcols + 1).'" class="right">'.$langs->trans("Billed").'</td>';
-				//print '<td></td>';
+				print '<!-- Billed -->';
+				print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("Billed").'</td>';
+				print '<td class="right opacitymedium">'.$conf->currency.'</td>';
 				print '<td class="right">'.price($sign * $object->total_ttc).'</td>';
 				print '</tr>';
 
 				// Remainder to pay back
-				print '<tr><td colspan="'.($nbcols + 1).'" class="right">';
+				print '<!-- Remainder to pay back -->';
+				print '<tr><td colspan="'.$nbcols.'" class="right">';
 				print '<span class="opacitymedium">';
 				print $langs->trans('RemainderToPayBack');
 				if ($resteapayeraffiche > 0) {
 					print ' ('.$langs->trans('NegativeIfExcessRefunded').')';
 				}
-				print '</td>';
 				print '</span>';
-				//print '<td></td>';
+				print '</td>';
+				print '<td class="right opacitymedium">'.$conf->currency.'</td>';
 				print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price($sign * $resteapayeraffiche).'</td>';
 				print '</tr>';
 
 				// Remainder to pay back Multicurrency
+				print '<!-- Remainder to pay back Multicurrency -->';
 				if (isModEnabled('multicurrency') && (($object->multicurrency_code && $object->multicurrency_code != $conf->currency) || $object->multicurrency_tx != 1)) {
-					print '<tr><td colspan="'.($nbcols + 1).'" class="right">';
+					print '<tr><td colspan="'.$nbcols.'" class="right">';
 					print '<span class="opacitymedium">';
 					print $langs->trans('RemainderToPayBackMulticurrency');
 					if ($resteapayeraffiche > 0) {
@@ -4566,8 +4578,8 @@ if ($action == 'create') {
 					}
 					print '</span>';
 					print '</td>';
-					//print '<td></td>';
-					print '<td class="right'.($resteapayeraffiche ? ' amountremaintopaynoresize' : (' '.$cssforamountpaymentcomplete)).'">'.(!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency).' '.price(price2num($sign * $object->multicurrency_tx * $resteapayeraffiche, 'MT')).'</td>';
+					print '<td class="right opacitymedium">'.$object->multicurrency_code.'</td>';
+					print '<td class="right'.($resteapayeraffiche ? ' amountremaintopaynoresize' : (' '.$cssforamountpaymentcomplete)).'">'.price(price2num($sign * $object->multicurrency_tx * $resteapayeraffiche, 'MT')).'</td>';
 					print '</tr>';
 				}
 
