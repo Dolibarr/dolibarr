@@ -2375,7 +2375,7 @@ if ($placeid > 0) {
 		foreach ($tmplines as $line) {
 			// Allow external modules to replace the display of a line
 			$parameters = array('line' => $line, 'htmlsupplements' => $htmlsupplements, 'form' => $form);
-			$reshook = $hookmanager->executeHooks('showTakePosInvoiceLine', $parameters, $invoice, $action);    // Note that $action and $object may have been modified by some hooks
+			$reshook = $hookmanager->executeHooks('takeposShowInvoiceLine', $parameters, $invoice, $action);    // Note that $action and $object may have been modified by some hooks
 			if ($reshook < 0) {
 				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 			} elseif ($reshook > 0) {
