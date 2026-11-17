@@ -99,7 +99,7 @@ if ($invoiceid > 0) {
 	$invoicetopay->fetch($invoiceid);
 }
 $parameters = array('invoiceid' => $invoiceid, 'place' => $place);
-$reshook = $hookmanager->executeHooks('payActions', $parameters, $invoicetopay, $action);    // Note that $action and $object may have been modified by some hooks
+$reshook = $hookmanager->executeHooks('takeposPayActions', $parameters, $invoicetopay, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 } elseif ($reshook > 0) {
