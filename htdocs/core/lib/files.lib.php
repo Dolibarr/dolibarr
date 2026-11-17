@@ -3052,6 +3052,7 @@ function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(
 
 /**
  * Security check when accessing to a document (used by document.php, viewimage.php and webservices to get documents).
+ * In read mode, a document not found into the session entity is searched into the entity of its object, if shared with the session entity.
  * TODO Replace code that set $accessallowed by a call to restrictedArea()
  *
  * @param	string		$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp'). Example: 'medias', 'invoice', 'logs', 'tax-vat', ...
@@ -3076,6 +3077,11 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	if (empty($modulepart)) {
 		return 'ErrorBadParameter';
 	}
+	// Parameters received, used to search the document into the entity of its object if it is not found into the session entity
+	$modulepartparam = $modulepart;
+	$originalfileparam = $original_file;
+	$refnameparam = $refname;
+
 	if (empty($entity)) {
 		if (!isModEnabled('multicompany')) {
 			$entity = 1;
@@ -3999,6 +4005,17 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		if ($modulepart == 'memberphoto' && !$fuser->hasRight('adherent', $lire)) {
 			$accessallowed = 0;
+		}
+	}
+
+	// A document not found into the session entity may be the one of an object of another entity shared with the session entity. We then
+	// use the entity of this object (never an entity provided by the user). It is the same object than in checkUserAccessToDocumentObject().
+	if ($mode == 'read' && (int) $entity == (int) $conf->entity && isModEnabled('multicompany') && !empty($fuser->id)
+		&& !empty($original_file) && !file_exists(dol_osencode($original_file))) {
+		$documentobject = fetchObjectOfDocument($modulepartparam, $originalfileparam);
+		if (is_object($documentobject['object']) && $documentobject['object']->id > 0 && (int) $documentobject['object']->entity > 0 && (int) $documentobject['object']->entity != (int) $conf->entity) {
+			dol_syslog("dol_check_secure_access_document file not found into entity ".$conf->entity.", we use entity ".$documentobject['object']->entity." of the object of the document");
+			return dol_check_secure_access_document($modulepartparam, $originalfileparam, (int) $documentobject['object']->entity, $fuser, $refnameparam, $mode);
 		}
 	}
 

@@ -802,18 +802,15 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 }
 
 /**
- * Check that a user can access the object a document is attached to. The permission on the module must have been checked
- * before with dol_check_secure_access_document().
- * This function adds the check per object (thirdparties of a restricted sales representative, ...) by calling restrictedArea().
+ * Return the object a document is attached to, found from the modulepart and the path of the document (the subdirectory is the ref
+ * of the object, or its id for thirdparties and contacts). The object is searched into the entities visible from the current entity.
  *
- * @param	User		$user			User to check
  * @param	string		$modulepart		Modulepart of the document
  * @param	string		$original_file	Path of the file relative to the directory of the modulepart (for example 'IN2601-0001/IN2601-0001.pdf')
- * @param	string		$mode			Check permission for 'read' or 'write'
- * @return	int<0,1>					1 if access is allowed, 0 if not
- * @see dol_check_secure_access_document(), restrictedArea()
+ * @return	array{object:?CommonObject,modulepart:string,original_file:string,linkedtothirdparty:?string[]}	Object found (null if not found), modulepart and path normalized, properties of the modulepart if linked to a thirdparty (null if not)
+ * @see checkUserAccessToDocumentObject(), dol_check_secure_access_document()
  */
-function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file, $mode = 'read')
+function fetchObjectOfDocument($modulepart, $original_file)
 {
 	// Moduleparts of documents linked to a thirdparty: modulepart => array(element used to fetch the object, feature for restrictedArea(), [table for restrictedArea(), [feature2 for restrictedArea()]])
 	$modulepartlinkedtothirdparty = array(
@@ -881,8 +878,44 @@ function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file
 		$refname = basename(dirname(dirname($original_file))."/");
 	}
 
-	if (empty($modulepartlinkedtothirdparty[$modulepart])) {
+	$linkedtothirdparty = (empty($modulepartlinkedtothirdparty[$modulepart]) ? null : $modulepartlinkedtothirdparty[$modulepart]);
+	if (empty($linkedtothirdparty)) {
 		$object = fetchObjectByElement(0, $modulepart, $refname);
+	} elseif (in_array($modulepart, $modulepartwithid)) {
+		$tmparray = explode('/', ltrim($original_file, '/'));
+		$object = fetchObjectByElement((int) $tmparray[0], $linkedtothirdparty[0]);
+	} elseif (in_array($modulepart, $modulepartwithfirstdirasref)) {
+		$tmparray = explode('/', ltrim($original_file, '/'));
+		$object = fetchObjectByElement(0, $linkedtothirdparty[0], (count($tmparray) > 1 ? $tmparray[0] : ''));
+	} else {
+		$object = fetchObjectByElement(0, $linkedtothirdparty[0], $refname);
+	}
+
+	return array('object' => (is_object($object) ? $object : null), 'modulepart' => $modulepart, 'original_file' => $original_file, 'linkedtothirdparty' => $linkedtothirdparty);
+}
+
+/**
+ * Check that a user can access the object a document is attached to. The permission on the module must have been checked
+ * before with dol_check_secure_access_document().
+ * This function adds the check per object (thirdparties of a restricted sales representative, ...) by calling restrictedArea().
+ *
+ * @param	User		$user			User to check
+ * @param	string		$modulepart		Modulepart of the document
+ * @param	string		$original_file	Path of the file relative to the directory of the modulepart (for example 'IN2601-0001/IN2601-0001.pdf')
+ * @param	string		$mode			Check permission for 'read' or 'write'
+ * @return	int<0,1>					1 if access is allowed, 0 if not
+ * @see dol_check_secure_access_document(), restrictedArea(), fetchObjectOfDocument()
+ */
+function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file, $mode = 'read')
+{
+	// The object is found like into dol_check_secure_access_document() when it uses the entity of the object of the document
+	$documentobject = fetchObjectOfDocument($modulepart, $original_file);
+	$object = $documentobject['object'];
+	$modulepart = $documentobject['modulepart'];
+	$original_file = $documentobject['original_file'];
+	$linkedtothirdparty = $documentobject['linkedtothirdparty'];
+
+	if (empty($linkedtothirdparty)) {
 		if (is_object($object)) {
 			// The table of the object must be provided, the default table guessed from $modulepart may not exist (llx_bom instead of llx_bom_bom, ...)
 			return restrictedArea($user, $modulepart, $object, (string) $object->table_element, '', 'fk_soc', 'rowid', 0, 1, $mode);
@@ -891,20 +924,10 @@ function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file
 		return 1;
 	}
 
-	if (in_array($modulepart, $modulepartwithid)) {
-		$tmparray = explode('/', ltrim($original_file, '/'));
-		$object = fetchObjectByElement((int) $tmparray[0], $modulepartlinkedtothirdparty[$modulepart][0]);
-	} elseif (in_array($modulepart, $modulepartwithfirstdirasref)) {
-		$tmparray = explode('/', ltrim($original_file, '/'));
-		$object = fetchObjectByElement(0, $modulepartlinkedtothirdparty[$modulepart][0], (count($tmparray) > 1 ? $tmparray[0] : ''));
-	} else {
-		$object = fetchObjectByElement(0, $modulepartlinkedtothirdparty[$modulepart][0], $refname);
-	}
-
 	if (is_object($object) && $object->id > 0) {
-		$tableandshare = (empty($modulepartlinkedtothirdparty[$modulepart][2]) ? '' : $modulepartlinkedtothirdparty[$modulepart][2]);
-		$feature2 = (empty($modulepartlinkedtothirdparty[$modulepart][3]) ? '' : $modulepartlinkedtothirdparty[$modulepart][3]);
-		return restrictedArea($user, $modulepartlinkedtothirdparty[$modulepart][1], $object, $tableandshare, $feature2, 'fk_soc', 'rowid', 0, 1, $mode);
+		$tableandshare = (empty($linkedtothirdparty[2]) ? '' : $linkedtothirdparty[2]);
+		$feature2 = (empty($linkedtothirdparty[3]) ? '' : $linkedtothirdparty[3]);
+		return restrictedArea($user, $linkedtothirdparty[1], $object, $tableandshare, $feature2, 'fk_soc', 'rowid', 0, 1, $mode);
 	}
 
 	// Object not found (file outside the directory of an object or faked path like 'REF/./file'): refused to users restricted to some thirdparties
