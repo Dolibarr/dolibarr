@@ -140,6 +140,16 @@ span.butAction, span.butActionDelete {
 	color: #444;
 	min-width: 40px;
 }
+/* A button with class butAction must look like a link or span with class butAction, so we reset the default style of a button */
+button.butAction {
+	font-family: inherit;
+	font-size: inherit;
+	line-height: inherit;
+	border: none;
+	box-sizing: content-box;
+	-webkit-appearance: none;
+	appearance: none;
+}
 .butActionNew, .butActionNewRefused, .butActionNew:link, .butActionNew:visited, .butActionNew:hover, .butActionNew:active {
 	text-decoration: none;
 	text-transform: uppercase;
@@ -291,6 +301,20 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
   font-weight: 900;            /* required for the "solid" version */
   font-size: 14px;				/* using 1em does not work */
   /* vertical-align: middle; */
+  display: inline-block;		/* required for transform on a pseudo element */
+  transform: rotate(90deg);
+}
+
+/* Button Email */
+#action-email .textbutton, .butAction.butActionEmail .textbutton {
+  font-size: 0;
+  display: inline-block;
+}
+#action-email .textbutton::before, .butAction.butActionEmail .textbutton::before {
+  content: "\f0e0";            /* fas fa-envelope */
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;            /* required for the "solid" version */
+  font-size: 14px;				/* using 1em does not work */
 }
 
 /* Button Delete */
@@ -310,7 +334,6 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 	text-transform: uppercase;
 	font-weight: bold !important;
 
-	white-space: nowrap !important;
 	cursor: not-allowed !important;
 	margin: 0em <?php echo($dol_optimize_smallscreen ? '0.6' : '0.9'); ?>em;
 	padding: 0.6em <?php echo($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;

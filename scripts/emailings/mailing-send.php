@@ -211,16 +211,16 @@ if ($resql) {
 						$sendto = str_replace(',', ' ', dolGetFirstLastname($obj->firstname, $obj->lastname)." <".$obj->email.">");
 
 						// Make subtsitutions on topic and body
-						$other = explode(';', $obj->other);
-						$tmpfield = explode('=', $other[0], 2);
+						$other = explode(';', (string) $obj->other);
+						$tmpfield = explode('=', ($other[0] ?? ''), 2);
 						$other1 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
-						$tmpfield = explode('=', $other[1], 2);
+						$tmpfield = explode('=', ($other[1] ?? ''), 2);
 						$other2 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
-						$tmpfield = explode('=', $other[2], 2);
+						$tmpfield = explode('=', ($other[2] ?? ''), 2);
 						$other3 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
-						$tmpfield = explode('=', $other[3], 2);
+						$tmpfield = explode('=', ($other[3] ?? ''), 2);
 						$other4 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
-						$tmpfield = explode('=', $other[4], 2);
+						$tmpfield = explode('=', ($other[4] ?? ''), 2);
 						$other5 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
 						$signature = ((!empty($user->signature) && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? $user->signature : '');
 
@@ -424,6 +424,25 @@ if ($resql) {
 						}
 
 						$i++;
+					}
+
+					// Loop finished, set global status of emailing to 'sent completely' if there is no more recipient to send to.
+					// Note: $obj now contains the last recipient, so we must use $id for the emailing.
+					$sqlleft = "SELECT COUNT(mc.rowid) as nb FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
+					$sqlleft .= " WHERE mc.statut < 1 AND mc.fk_mailing = ".((int) $id);
+					$resqlleft = $db->query($sqlleft);
+					if ($resqlleft) {
+						$objleft = $db->fetch_object($resqlleft);
+						if ($objleft && (int) $objleft->nb == 0) {
+							$sql = "UPDATE ".MAIN_DB_PREFIX."mailing SET statut = 3 WHERE rowid = ".((int) $id);
+							$result_sql = $db->query($sql);
+
+							dol_syslog("update global status", LOG_DEBUG);
+							print "Update status of emailing id ".$id." to 3\n";
+						}
+					} else {
+						dol_print_error($db);
+						$error++;
 					}
 				} else {
 					$mesg = "Emailing id ".$id." has no or no more recipient to target";

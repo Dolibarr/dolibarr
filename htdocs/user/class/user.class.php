@@ -17,6 +17,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Lenin Rivas				<lenin.rivas777@gmail.com>
  * Copyright (C) 2026		Anthony Berton			<anthony.berton@bb2a.fr>
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -354,6 +355,11 @@ class User extends CommonObject
 	public $user_group_list;
 
 	/**
+	 * @var int[]	Entities of the group membership, loaded by UserGroup::listUsersForGroup()
+	 */
+	public $usergroup_entity;
+
+	/**
 	 * @var array<string,int> Cache array of already loaded permissions
 	 */
 	private $_tab_loaded = array();
@@ -483,7 +489,7 @@ class User extends CommonObject
 		'firstname' => array('type' => 'varchar(50)', 'label' => 'Firstname', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 10, 'searchall' => 1),
 		'fk_warehouse' => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php', 'label' => 'Warehouse', 'enabled' => "isModEnabled('stock')", 'visible' => 1, 'notnull' => 0, 'showoncombobox' => 1, 'index' => 1, 'position' => 50, 'searchall' => 1, 'bi' => 0),
 		'ref_employee' => array('type' => 'varchar(50)', 'label' => 'RefEmployee', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 30, 'searchall' => 1),
-		'national_registration_number' => array('type' => 'varchar(50)', 'label' => 'NationalRegistrationNumber', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 40, 'searchall' => 1)
+		'national_registration_number' => array('type' => 'varchar(50)', 'label' => 'NationalRegistrationNumber', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 0, 'index' => 1, 'position' => 40, 'searchall' => 1)
 	);
 
 	const STATUS_DISABLED = 0;
@@ -519,6 +525,12 @@ class User extends CommonObject
 		$this->rights->user->user_advance = new stdClass();
 		$this->rights->user->self_advance = new stdClass();
 		$this->rights->user->group_advance = new stdClass();
+
+		// Show the national registration number into combo lists only to users allowed to read HR personal information
+		global $user;
+		if (isModEnabled('hrm') && $user instanceof User && ($user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write'))) {
+			$this->fields['national_registration_number']['showoncombobox'] = 1;
+		}
 	}
 
 	/**
@@ -1116,6 +1128,10 @@ class User extends CommonObject
 
 		if (empty($this->id)) {
 			$this->error = 'Try to call addrights on an object user with an empty id';
+			return -1;
+		}
+		if (getDolGlobalInt('MAIN_USER_PERMISSIONS_ONLY_BY_GROUPS')) {
+			$this->error = 'PermissionsManagedByGroupsOnly';
 			return -1;
 		}
 
@@ -1794,6 +1810,32 @@ class User extends CommonObject
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 
+		// A user that still has HRM data (competency assessments, job positions, skills) must not be deleted
+		if (isModEnabled('hrm')) {
+			global $langs;
+
+			$hrmtables = array(
+				'hrm_evaluation' => array('label' => 'EvaluationCard', 'filter' => "fk_user = ".((int) $this->id)),
+				'hrm_job_user' => array('label' => 'EmployeePosition', 'filter' => "fk_user = ".((int) $this->id)),
+				'hrm_skillrank' => array('label' => 'Skill', 'filter' => "objecttype = 'user' AND fk_object = ".((int) $this->id)),
+			);
+			foreach ($hrmtables as $hrmtable => $sanitizedhrminfo) {
+				$sanitizedfilter = $sanitizedhrminfo['filter'];	// Built above from the id of the user only
+				$sql = "SELECT COUNT(rowid) as nb FROM ".$this->db->prefix().$this->db->sanitize($hrmtable)." WHERE ".$sanitizedfilter;
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					$obj = $this->db->fetch_object($resql);
+					if ($obj && $obj->nb > 0) {
+						$langs->loadLangs(array('errors', 'hrm'));
+						$this->error = $langs->trans("ErrorRecordHasAtLeastOneChildOfType", $this->login, $langs->transnoentitiesnoconv($sanitizedhrminfo['label']));
+						$this->errors[] = $this->error;
+						$this->db->rollback();
+						return -1;
+					}
+				}
+			}
+		}
+
 		// Remove rights
 		$sql = "DELETE FROM ".$this->db->prefix()."user_rights WHERE fk_user = ".((int) $this->id);
 
@@ -1811,6 +1853,20 @@ class User extends CommonObject
 
 		// Remove params
 		$sql = "DELETE FROM ".$this->db->prefix()."user_param WHERE fk_user  = ".((int) $this->id);
+		if (!$error && !$this->db->query($sql)) {
+			$error++;
+			$this->error = $this->db->lasterror();
+		}
+
+		// Remove the private bookmarks of the user (the public ones have no owner and are kept)
+		$sql = "DELETE FROM ".$this->db->prefix()."bookmark WHERE fk_user = ".((int) $this->id);
+		if (!$error && !$this->db->query($sql)) {
+			$error++;
+			$this->error = $this->db->lasterror();
+		}
+
+		// Remove the passkeys of the user
+		$sql = "DELETE FROM ".$this->db->prefix()."oauth_token WHERE fk_user = ".((int) $this->id)." AND service = 'passkey'";
 		if (!$error && !$this->db->query($sql)) {
 			$error++;
 			$this->error = $this->db->lasterror();
@@ -2108,8 +2164,15 @@ class User extends CommonObject
 		// Set properties on new user
 		$this->admin = 0;
 		$this->civility_code = $member->civility_code;
-		$this->lastname     = $member->lastname;
-		$this->firstname    = $member->firstname;
+		// A corporation member has no lastname/firstname (the name is in the company field), so use it as
+		// the user lastname, otherwise the created user would have an empty name and login (#33642).
+		if ($member->morphy == 'mor' && empty($member->lastname) && !empty($member->company)) {
+			$this->lastname = $member->company;
+			$this->firstname = '';
+		} else {
+			$this->lastname     = $member->lastname;
+			$this->firstname    = $member->firstname;
+		}
 		$this->gender		= $member->gender;
 		$this->email        = $member->email;
 		$this->fk_member    = $member->id;
@@ -2126,7 +2189,8 @@ class User extends CommonObject
 
 		if (empty($login)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-			$login = dol_buildlogin($member->lastname, $member->firstname);
+			// Use the resolved name so a corporation member (name in company field) still gets a login.
+			$login = dol_buildlogin($this->lastname, $this->firstname);
 		}
 		$this->login = $login;
 
@@ -2190,6 +2254,11 @@ class User extends CommonObject
 	{
 		// phpcs:enable
 		global $conf;
+
+		// Permissions are given by user groups only
+		if (getDolGlobalInt('MAIN_USER_PERMISSIONS_ONLY_BY_GROUPS')) {
+			return 0;
+		}
 
 		$rd = array();
 		$num = 0;
@@ -2285,6 +2354,9 @@ class User extends CommonObject
 		$this->user_modification_id = $user->id;
 
 		$this->accountancy_code_user_general = trim((string) $this->accountancy_code_user_general);
+		if ($this->accountancy_code_user_general === '-1') {	// '-1' is the value of the empty option of the select of accounting accounts
+			$this->accountancy_code_user_general = '';
+		}
 		$this->accountancy_code				= trim((string) $this->accountancy_code);
 		$this->color						= trim(str_replace('#', '', (string) $this->color));
 		$this->dateemployment				= empty($this->dateemployment) ? '' : $this->dateemployment;
@@ -2518,7 +2590,7 @@ class User extends CommonObject
 					$tmpobj = new Contact($this->db);
 					$result = $tmpobj->fetch($this->contact_id);
 
-					if ($result >= 0) {
+					if ($result > 0) {
 						$tmpobj->civility_code = $this->civility_code;
 						$tmpobj->firstname = $this->firstname;
 						$tmpobj->lastname = $this->lastname;
@@ -3531,9 +3603,6 @@ class User extends CommonObject
 		$return .= '</span>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-		}
-		if (property_exists($this, 'label')) {
-			$return .= '<br><span class="info-box-label opacitymedium">'.$this->label.'</span>';
 		}
 		if ($this->email) {
 			$return .= '<br><span class="info-box-label opacitymedium small">'.img_picto('', 'email').' '.$this->email.'</span>';

@@ -23,6 +23,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/paymentvat.class.php';
 // PaymentVAT::delete() instantiates AccountLine without requiring it; load it here
 // so deleting a bank-linked payment via the API does not throw a fatal error.
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 /**
  * API class for VAT payments (declarations of VAT to pay/collect) and their payments
@@ -437,16 +438,16 @@ class VatPayments extends DolibarrApi
 	 * Add a payment to a VAT declaration.
 	 *
 	 * @param	int		$id				ID of the VAT declaration
-	 * @param	array	$request_data	Request data (datepaye, amount, paiementtype, [num_payment], [accountid])
+	 * @param	array	$request_data	Request data (datepaye, amount, paiementtype, accountid if module bank is on, [num_payment], [note], [closepaidvat])
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	int						ID of the created payment
 	 *
 	 * @url     POST {id}/payments
 	 *
-	 * @throws RestException 400 Missing mandatory field
+	 * @throws RestException 400 Missing mandatory field, bad date, or payment refused
 	 * @throws RestException 403 Access denied
-	 * @throws RestException 500 Error when creating the payment
+	 * @throws RestException 404 VAT declaration not found
 	 */
 	public function addPayment($id, $request_data = null)
 	{
@@ -456,11 +457,24 @@ class VatPayments extends DolibarrApi
 
 		// Check mandatory fields
 		$this->_validatePayment($request_data);
+		if (isModEnabled("bank") && !((int) ($request_data['accountid'] ?? 0) > 0)) {
+			throw new RestException(400, 'accountid field missing');
+		}
+		// A day alone is taken at noon, as the payment form does
+		$datepaye = is_numeric($request_data['datepaye']) ? (int) $request_data['datepaye'] : dol_stringtotime((string) $request_data['datepaye'], 1, 1);
+		if (empty($datepaye)) {
+			throw new RestException(400, 'datepaye must be a timestamp or a date YYYY-MM-DD');
+		}
+
+		$vat = new Tva($this->db);
+		if ($vat->fetch($id) <= 0 || empty($vat->id)) {
+			throw new RestException(404, 'VAT declaration not found');
+		}
 
 		$payment = new PaymentVAT($this->db);
-		$payment->chid = $id;
-		$payment->datepaye = $request_data['datepaye'];
-		$payment->amounts = array($id => (float) $request_data['amount']);
+		$payment->chid = $vat->id;
+		$payment->datepaye = $datepaye;
+		$payment->amounts = array($vat->id => (float) $request_data['amount']);
 		$payment->paiementtype = $request_data['paiementtype'];
 		if (isset($request_data['num_payment'])) {
 			$payment->num_payment = $request_data['num_payment'];
@@ -468,14 +482,25 @@ class VatPayments extends DolibarrApi
 		if (isset($request_data['note'])) {
 			$payment->note = $request_data['note'];
 		}
+		// Same default as the payment form: a VAT declaration paid in full is closed
+		$closepaidvat = isset($request_data['closepaidvat']) ? (int) $request_data['closepaidvat'] : 1;
 
-		if ($payment->create(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, 'Error when creating VAT payment', array_merge(array($payment->error), $payment->errors));
+		// Payment and bank line are written together, or not at all
+		$this->db->begin();
+
+		if ($payment->create(DolibarrApiAccess::$user, $closepaidvat) < 0) {
+			$this->db->rollback();
+			throw new RestException(400, 'Payment error : '.$payment->errorsToString());
 		}
 
-		if (isModEnabled("bank") && !empty($request_data['accountid'])) {
-			$payment->addPaymentToBank(DolibarrApiAccess::$user, 'payment_vat', '(VATPayment)', (int) $request_data['accountid'], '', '');
+		if (isModEnabled("bank")) {
+			if ($payment->addPaymentToBank(DolibarrApiAccess::$user, 'payment_vat', '(VATPayment)', (int) $request_data['accountid'], '', '') <= 0) {
+				$this->db->rollback();
+				throw new RestException(400, 'Add payment to bank error : '.$payment->errorsToString());
+			}
 		}
+
+		$this->db->commit();
 
 		return $payment->id;
 	}

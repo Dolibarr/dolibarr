@@ -69,7 +69,6 @@ DOL_VALUE_DAY=ວັນທີຂອງໃບແຈ້ງໜີ້
 DOL_VALUE_DAY_LETTERS=ວັນທີຂອງໃບແຈ້ງໜີ້ເປັນຕົວອັກສອນ
 DOL_LINE_FEED_REVERSE=ຖອຍຫຼັງແຖວ
 InvoiceID=ລະຫັດໃບແຈ້ງໜີ້
-InvoiceRef=ເລກອ້າງອີງໃບແຈ້ງໜີ້
 DOL_PRINT_OBJECT_LINES=ລາຍການໃນໃບແຈ້ງໜີ້
 DOL_VALUE_CUSTOMER_FIRSTNAME=ຊື່ຂອງລູກຄ້າ
 DOL_VALUE_CUSTOMER_LASTNAME=ນາມສະກຸນຂອງລູກຄ້າ

@@ -137,6 +137,12 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
+// Lines can be updated only while the stock of the reception is not moved (same rule as the display of the form)
+if ($action == 'updatelines' && $permissiontoreceive && !($object->status == Reception::STATUS_DRAFT || ($object->status == Reception::STATUS_VALIDATED && !getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION')))) {
+	setEventMessages($langs->trans('StatusOfRefMustBe', $object->ref, $langs->transnoentitiesnoconv('StatusReceptionDraftShort')), null, 'errors');
+	$action = '';
+}
+
 // Update a dispatched line
 if ($action == 'updatelines' && $permissiontoreceive) {
 	$db->begin();
@@ -518,6 +524,18 @@ if ($id > 0 || !empty($ref)) {
 		$sql .= $hookmanager->resPrint;
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as l";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product=p.rowid";
+		// Enable hooks to alter the SQL query (FROM)
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks(
+			'printFieldListFrom',
+			$parameters,
+			$object,
+			$action
+		);
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		}
+		$sql .= $hookmanager->resPrint;
 		$sql .= " WHERE l.fk_commande = ".((int) $objectsrc->id);
 		if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 			$sql .= " AND l.product_type = 0";

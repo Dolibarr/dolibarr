@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = Citeşte Job programat
-Permission23102 = Creare/modificare job programat
-Permission23103 = Şterge job programat
-Permission23104 = Execută job programat
 # Admin
 CronSetup=Configurare Joburi programate
 URLToLaunchCronJobs=Adresă URL pentru verificare și lansare joburi cron calificate din browser
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=Pe mediul Unix veţi  utiliza instrumentul crontab pentr
 CronExplainHowToRunWin=În mediul Microsoft (tm) Windows, puteți utiliza instrumentele Scheduled Task pentru a executa linia de comandă la fiecare 5 minute
 CronMethodDoesNotExists=Clasa %s nu conține nicio metodă %s
 CronMethodNotAllowed=Metoda %s clasei %s este în lista de metode interzise
-CronJobDefDesc=Profilele joburilor cron sunt definite în fișierul descriptor al modulului. Când modulul este activat, acestea sunt încărcate și sunt disponibile, astfel încât să puteți administra joburile din meniul Instrumente de administrare%s.
+CronJobDefDesc=Profilurile de joburi cron sunt definite în fișierul descriptor al modulului. Atunci când modulul este activat, acestea sunt încărcate și devin disponibile, permițându-ți să gestionezi joburile din meniul instrumentelor de administrare %s.
 CronJobProfiles=Lista profilurilor de job cron predefinite
 # Menu
 EnabledAndDisabled=Activat și dezactivat
@@ -27,7 +22,7 @@ CronDelete=Şterge joburi programate
 CronConfirmDelete=Sigur doriți să ștergeți aceste joburi programate?
 CronExecute=Lansează acum
 CronConfirmExecute=Sunteți sigur că doriți să executați aceste joburi programate acum?
-CronInfo=Modulul Joburi programate permite programarea lucrărilor de sistem pentru execuţia automată. Joburile pot fi pornite și manual.
+CronInfo=Modulul Joburi programate îți permite să programezi joburile pentru a fi executate automat. Joburile pot fi pornite și manual.
 CronTask=Job
 CronNone=Următoarea rulare pentru task-ul programat
 CronNotYetRan=Niciodată executat
@@ -79,7 +74,7 @@ CronType_command=Comandă shell
 CronCannotLoadClass=Nu se poate încărca fișierul de clasă %s (pentru a folosi clasa %s)
 CronModuleNotEnabledInThisEntity=Modulul Cron nu este activat în această entitate (pentru a utiliza metoda %s a obiectului %s)
 CronCannotLoadObject=Fișierul de clasă %s a fost încărcat, dar obiectul %s nu a fost găsit în el
-UseMenuModuleToolsToAddCronJobs=Mergi în meniul "<a href="%s">Acasă - Instrumente administrare - Joburi programate</a>" pentru a vedea şi a edita joburile programate.
+UseMenuModuleToolsToAddCronJobs=Accesează meniul "<a href="%s">Acasă - Instrumente de administrare - Joburi programate</a>" pentru a vedea și edita joburile programate.
 JobDisabled=Job dezactivat
 MakeLocalDatabaseDumpShort=Backup local baza de date
 MakeLocalDatabaseDump=Creați un dump de bază de date locală. Parametrii sunt: ​​compresie ("gz" sau "bz" sau "none"), tipul de backup (mysql, pgsql, auto) 1, "auto" sau nume de fișier construit, număr de fișiere de rezervă care vor fi păstrate

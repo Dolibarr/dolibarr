@@ -6,6 +6,7 @@
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2026		Joachim Kueter				<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,6 +80,11 @@ abstract class CommonInvoice extends CommonObject
 	 * @var int Deadline for payment
 	 */
 	public $date_lim_reglement;
+
+	/**
+	 * @var ?int	Point of tax date (date of supply)
+	 */
+	public $date_pointoftax;
 
 	/**
 	 * @var ?int		Payment term ID
@@ -308,11 +314,41 @@ abstract class CommonInvoice extends CommonObject
 	 * 	Return remain amount to pay. Property ->id and ->total_ttc must be set.
 	 *  This does not include open direct debit requests.
 	 *
-	 *  @param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
-	 *	@return		float|string			Remain of amount to pay
+	 *  @param 		int<-1,1>	$multicurrency 	Return multicurrency_amount instead of amount. -1=Return both.
+	 *	@return		float|string|array{remaintopay:float|string,remaintopay_multicurrency:float|string}	Remain of amount to pay
 	 */
 	public function getRemainToPay($multicurrency = 0)
 	{
+		if ((int) $multicurrency < 0) {
+			// Get amounts in main currency and in foreign currency with one call for each
+			$tmppaid = $this->getSommePaiement(-1);
+			$tmpdeposits = $this->getSumDepositsUsed(-1);
+			$tmpcreditnotes = $this->getSumCreditNotesUsed(-1);
+
+			$alreadypaid = 0.0;
+			$alreadypaid_multicurrency = 0.0;
+			if (is_array($tmppaid)) {
+				$alreadypaid += $tmppaid['alreadypaid'];
+				$alreadypaid_multicurrency += $tmppaid['alreadypaid_multicurrency'];
+			}
+			if (is_array($tmpdeposits)) {
+				$alreadypaid += $tmpdeposits['totaldeposits'];
+				$alreadypaid_multicurrency += $tmpdeposits['totaldeposits_multicurrency'];
+			}
+			if (is_array($tmpcreditnotes)) {
+				$alreadypaid += $tmpcreditnotes['totalcreditnotes'];
+				$alreadypaid_multicurrency += $tmpcreditnotes['totalcreditnotes_multicurrency'];
+			}
+
+			$remaintopay = price2num($this->total_ttc - $alreadypaid, 'MT');
+			$remaintopay_multicurrency = price2num($this->multicurrency_total_ttc - $alreadypaid_multicurrency, 'MT');
+			if ($this->status == self::STATUS_CLOSED && $this->close_code == 'discount_vat') {		// If invoice closed with discount for anticipated payment
+				$remaintopay = 0.0;
+				$remaintopay_multicurrency = 0.0;
+			}
+			return array('remaintopay' => $remaintopay, 'remaintopay_multicurrency' => $remaintopay_multicurrency);
+		}
+
 		$alreadypaid = 0.0;
 		$alreadypaid += $this->getSommePaiement($multicurrency);
 		$alreadypaid += $this->getSumDepositsUsed($multicurrency);
@@ -386,23 +422,23 @@ abstract class CommonInvoice extends CommonObject
 	 *  Should always be empty, except if option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is on for sale invoices (not recommended),
 	 *  of FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS is on for purchase invoices (not recommended).
 	 *
-	 * 	@param 		int 	$multicurrency 		Return multicurrency_amount instead of amount
-	 *	@return		float						Return integer <0 and set ->error if KO, Sum of deposits amount otherwise
+	 * 	@param 		int<-1,1>	$multicurrency 		Return multicurrency_amount instead of amount. -1=Return both.
+	 *	@return		float|int|array{totaldeposits:float,totaldeposits_multicurrency:float}	Return integer <0 and set ->error if KO, Sum of deposits amount otherwise
 	 *	@see getSommePaiement(), getSumCreditNotesUsed()
 	 */
 	public function getSumDepositsUsed($multicurrency = 0)
 	{
-		/*if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') {
-			// FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS was never supported for purchase invoice, so we can return 0 with no need of SQL for this case.
-			return 0.0;
-		}*/
-
 		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
 		$discountstatic = new DiscountAbsolute($this->db);
 		$result = $discountstatic->getSumDepositsUsed($this, $multicurrency);
 
-		if ($result >= 0) {
+		if (is_array($result)) {
+			$this->totaldeposits = $result['amount'];
+			$this->totaldeposits_multicurrency = $result['multicurrency_amount'];
+
+			return array('totaldeposits' => $result['amount'], 'totaldeposits_multicurrency' => $result['multicurrency_amount']);
+		} elseif ($result >= 0) {
 			if ($multicurrency) {
 				$this->totaldeposits_multicurrency = $result;
 			} else {
@@ -419,8 +455,8 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 *  Return amount (with tax) of all credit notes invoices + excess received used by invoice
 	 *
-	 * 	@param 		int 	$multicurrency 		Return multicurrency_amount instead of amount
-	 *	@return		float|string				Return string 'Error...' and set ->error if KO, Sum of credit notes and deposits amount otherwise
+	 * 	@param 		int<-1,1>	$multicurrency 		Return multicurrency_amount instead of amount. -1=Return both.
+	 *	@return		float|string|array{totalcreditnotes:float,totalcreditnotes_multicurrency:float}	Return string 'Error...' and set ->error if KO, Sum of credit notes and deposits amount otherwise
 	 *	@see getSommePaiement(), getSumDepositsUsed()
 	 */
 	public function getSumCreditNotesUsed($multicurrency = 0)
@@ -429,7 +465,12 @@ abstract class CommonInvoice extends CommonObject
 
 		$discountstatic = new DiscountAbsolute($this->db);
 		$result = $discountstatic->getSumCreditNotesUsed($this, $multicurrency);
-		if (is_numeric($result)) {
+		if (is_array($result)) {
+			$this->totalcreditnotes = $result['amount'];
+			$this->totalcreditnotes_multicurrency = $result['multicurrency_amount'];
+
+			return array('totalcreditnotes' => $result['amount'], 'totalcreditnotes_multicurrency' => $result['multicurrency_amount']);
+		} elseif (is_numeric($result)) {
 			if ($multicurrency) {
 				$this->totalcreditnotes_multicurrency = $result;
 			} else {
@@ -446,8 +487,8 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 *    	Return amount (with tax) of all converted amount for this credit note
 	 *
-	 * 		@param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
-	 *		@return		float						Return integer <0 if KO, Sum of credit notes and deposits amount otherwise
+	 * 		@param 		int<-1,1>	$multicurrency 	Return multicurrency_amount instead of amount. -1=Return both.
+	 *		@return		float|int|array{amount:float,multicurrency_amount:float}	Return integer <0 if KO, Sum of credit notes and deposits amount otherwise
 	 */
 	public function getSumFromThisCreditNotesNotUsed($multicurrency = 0)
 	{
@@ -455,7 +496,9 @@ abstract class CommonInvoice extends CommonObject
 
 		$discountstatic = new DiscountAbsolute($this->db);
 		$result = $discountstatic->getSumFromThisCreditNotesNotUsed($this, $multicurrency);
-		if ($result >= 0) {
+		if (is_array($result)) {
+			return $result;
+		} elseif ($result >= 0) {
 			return $result;
 		} else {
 			$this->error = $discountstatic->error;
@@ -614,14 +657,55 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
+	 *  Check that the point of tax date of a validated invoice is not changed by an update.
+	 *  Once validated, the invoice is issued and its point of tax date decides the VAT period.
+	 *  To correct it, the invoice must be set back to draft, or a credit note must be created.
+	 *  The status is read from the database, the one of the object may have been changed (for example by the API).
+	 *
+	 *  @return	int		1 if not changed or invoice is a draft, -1 if changed on a validated invoice or error
+	 */
+	protected function checkPointOfTaxNotChanged()
+	{
+		global $langs;
+
+		if (empty($this->id)) {
+			return 1;
+		}
+
+		$sql = "SELECT fk_statut, date_pointoftax FROM ".$this->db->prefix().$this->table_element;
+		$sql .= " WHERE rowid = ".((int) $this->id);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		$obj = $this->db->fetch_object($resql);
+		$this->db->free($resql);
+		if (!$obj || (int) $obj->fk_statut == self::STATUS_DRAFT) {
+			return 1;
+		}
+
+		// Compare the days, as stored by update()
+		$olddate = substr((string) $obj->date_pointoftax, 0, 10);
+		$newdate = (dol_strlen((string) $this->date_pointoftax) != 0 ? substr($this->db->idate((int) $this->date_pointoftax), 0, 10) : '');
+		if ($olddate !== $newdate) {
+			$langs->load("bills");
+			$this->error = $langs->trans("ErrorPointOfTaxOfValidatedInvoiceCantBeChanged", $this->ref);
+			return -1;
+		}
+
+		return 1;
+	}
+
+	/**
 	 *  Return list of payments
 	 *
 	 *  @see $error Empty string '' if no error.
 	 *
 	 *	@param		string	$filtertype			1 to filter on type of payment == 'PRE' for the payment lines
 	 *  @param      int     $multicurrency  	Return multicurrency_amount instead of amount
-	 *  @param		int		$mode				0=payments + discount, 1=payments only
-	 *  @return     array<array{amount:int|float,date:int,num:string,ref:string,ref_ext?:string,fk_bank_line?:int,type:string}>		 Array with list of payments
+	 *  @param		int		$mode				0=payments + discount, 1=payments only, 2=discounts only
+	 *  @return     array<array{amount:int|float,date:string,num:string,ref:string,ref_ext?:string,fk_bank_line?:int,type:string,typeline:'payment'|'discount'}>		 Array with list of payments (date is the raw date returned by the database)
 	 */
 	public function getListOfPayments($filtertype = '', $multicurrency = 0, $mode = 0)
 	{
@@ -743,8 +827,8 @@ abstract class CommonInvoice extends CommonObject
 	 *  If invoice is transferred in bookkeeping -> no (-1)
 	 *  If invoice has a definitive ref, is not last in a situation cycle -> no (-3)
 	 *  If there is one payment -> no (-4)
-	 *  If already sent by email -> no (-5)
-	 *  If already printed -> no (-6)
+	 *  If already sent by email and hidden option INVOICE_CAN_BE_EDITED_OR_REMOVED_EVEN_IF_SENT_OR_PRINTED is not set -> no (-5)
+	 *  If already printed and hidden option INVOICE_CAN_BE_EDITED_OR_REMOVED_EVEN_IF_SENT_OR_PRINTED is not set -> no (-6)
 	 *  If running a LNE version and customer invoice was validated -> no (-7)
 	 *  Otherwise -> yes (2)
 	 *
@@ -773,12 +857,12 @@ abstract class CommonInvoice extends CommonObject
 			if ($this instanceof Facture) {
 				/* @var Facture $this */
 				// If sent by email, we refuse
-				if ((int) $this->email_sent_counter > 0) {
+				if ((int) $this->email_sent_counter > 0 && !getDolGlobalInt('INVOICE_CAN_BE_EDITED_OR_REMOVED_EVEN_IF_SENT_OR_PRINTED')) {
 					return -5;
 				}
 
 				// If printed, we refuse
-				if ((int) $this->pos_print_counter > 0) {
+				if ((int) $this->pos_print_counter > 0 && !getDolGlobalInt('INVOICE_CAN_BE_EDITED_OR_REMOVED_EVEN_IF_SENT_OR_PRINTED')) {
 					return -6;
 				}
 
@@ -917,8 +1001,8 @@ abstract class CommonInvoice extends CommonObject
 	 *  If invoice has a definitive ref, is not last in ref -> no (-2)
 	 *  If invoice has a definitive ref, is not last in a situation cycle -> no (-3)
 	 *  If there is one payment -> no (-4)
-	 *  If already sent by email -> no (-5)
-	 *  If already printed -> no (-6)
+	 *  If already sent by email and hidden option INVOICE_CAN_BE_EDITED_OR_REMOVED_EVEN_IF_SENT_OR_PRINTED is not set -> no (-5)
+	 *  If already printed and hidden option INVOICE_CAN_BE_EDITED_OR_REMOVED_EVEN_IF_SENT_OR_PRINTED is not set -> no (-6)
 	 *  If running a LNE version and customer invoice was validated -> no (-7)
 	 *  Other value (may be returned by a hook -10, -11, ...)
 	 *  Otherwise -> yes (2)
@@ -946,12 +1030,12 @@ abstract class CommonInvoice extends CommonObject
 			if ($this instanceof Facture) {
 				/* @var Facture $this */
 				// If sent by email, we refuse
-				if ((int) $this->email_sent_counter > 0) {
+				if ((int) $this->email_sent_counter > 0 && !getDolGlobalInt('INVOICE_CAN_BE_EDITED_OR_REMOVED_EVEN_IF_SENT_OR_PRINTED')) {
 					return -5;
 				}
 
 				// If printed, we refuse
-				if ((int) $this->pos_print_counter > 0) {
+				if ((int) $this->pos_print_counter > 0 && !getDolGlobalInt('INVOICE_CAN_BE_EDITED_OR_REMOVED_EVEN_IF_SENT_OR_PRINTED')) {
 					return -6;
 				}
 
@@ -1390,14 +1474,20 @@ abstract class CommonInvoice extends CommonObject
 
 		/* Define date limit */
 
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+		// Note: $this->date is midnight in the server timezone, so the delay must be added as calendar days and not as
+		// a number of seconds. A day is not always 24 hours long: when the delay crosses a daylight saving time change,
+		// adding 86400 seconds per day shifts the result by one hour and can move it to the previous day.
+
 		// 0 : adding the number of days
 		if ($cdr_type == 0) {
-			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
+			$datelim = dol_time_plus_duree($this->date, $cdr_nbjour, 'd', 0, 'tzserver');
 
-			$datelim += ($cdr_decalage * 3600 * 24);
+			$datelim = dol_time_plus_duree($datelim, $cdr_decalage, 'd', 0, 'tzserver');
 		} elseif ($cdr_type == 1) {
 			// 1 : application of the "end of the month" rule
-			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
+			$datelim = dol_time_plus_duree($this->date, $cdr_nbjour, 'd', 0, 'tzserver');
 
 			$mois = date('m', $datelim);
 			$annee = date('Y', $datelim);
@@ -1414,8 +1504,7 @@ abstract class CommonInvoice extends CommonObject
 			$datelim += ($cdr_decalage * 3600 * 24);
 		} elseif ($cdr_type == 2 && !empty($cdr_decalage)) {
 			// 2 : application of the rule, the N of the current or next month
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
+			$datelim = dol_time_plus_duree($this->date, $cdr_nbjour, 'd', 0, 'tzserver');
 
 			$date_piece = dol_mktime(0, 0, 0, (int) date('m', $datelim), (int) date('d', $datelim), (int) date('Y', $datelim), 'gmt'); // without hours, minutes and seconds
 			$date_lim_current = dol_mktime(0, 0, 0, (int) date('m', $datelim), (int) $cdr_decalage, (int) date('Y', $datelim), 'gmt'); // without hours, minutes and seconds

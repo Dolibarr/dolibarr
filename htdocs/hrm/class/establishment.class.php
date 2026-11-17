@@ -339,6 +339,19 @@ class Establishment extends CommonObject
 	 */
 	public function delete($user)
 	{
+		// An establishment still assigned to users must not be deleted
+		$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."user WHERE fk_establishment = ".((int) $this->id);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		$obj = $this->db->fetch_object($resql);
+		if ($obj && $obj->nb > 0) {
+			$this->error = 'ErrorRecordHasChildren';
+			return -2;
+		}
+
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."establishment WHERE rowid = ".((int) $this->id);

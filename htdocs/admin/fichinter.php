@@ -289,6 +289,8 @@ print "</tr>\n";
 
 clearstatcache();
 
+$arrayofmodules = array();
+
 foreach ($dirmodels as $reldir) {
 	$dir = dol_buildpath($reldir."core/modules/fichinter/");
 
@@ -298,7 +300,6 @@ foreach ($dirmodels as $reldir) {
 			while (($file = readdir($handle)) !== false) {
 				if (preg_match('/^(mod_.*)\.php$/i', $file, $reg)) {
 					$file = $reg[1];
-					$classname = dol_substr($file, 4);
 
 					require_once $dir.$file.'.php';
 
@@ -306,71 +307,80 @@ foreach ($dirmodels as $reldir) {
 
 					'@phan-var-force ModeleNumRefFicheinter $module';
 
-					if ($module->isEnabled()) {
-						// Show modules according to features level
-						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-							continue;
-						}
-						if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-							continue;
-						}
-
-
-						print '<tr class="oddeven"><td>'.$module->getName($langs)."</td><td>\n";
-						print $module->info($langs);
-						print '</td>';
-
-						// Show example of numbering model
-						print '<td class="nowrap">';
-						$tmp = $module->getExample();
-						if (preg_match('/^Error/', $tmp)) {
-							$langs->load("errors");
-							print '<div class="error">'.$langs->trans($tmp).'</div>';
-						} elseif ($tmp == 'NotConfigured') {
-							print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
-						} else {
-							print $tmp;
-						}
-						print '</td>'."\n";
-
-						print '<td class="center">';
-						if (getDolGlobalString('FICHEINTER_ADDON') == $classname) {
-							print img_picto($langs->trans("Activated"), 'switch_on');
-						} else {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($classname).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-						}
-						print '</td>';
-
-						$ficheinter = new Fichinter($db);
-						$ficheinter->initAsSpecimen();
-
-						// Info
-						$htmltooltip = '';
-						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$nextval = $module->getNextValue($mysoc, $ficheinter);
-						if ("$nextval" != $langs->trans("NotAvailable")) {   // Keep " on nextval
-							$htmltooltip .= ''.$langs->trans("NextValue").': ';
-							if ($nextval) {
-								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
-									$langs->load('errors');
-									$nextval = $langs->trans($nextval);
-								}
-								$htmltooltip .= $nextval.'<br>';
-							} else {
-								$langs->load('errors');
-								$htmltooltip .= $langs->trans($module->error).'<br>';
-							}
-						}
-						print '<td class="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 'info');
-						print '</td>';
-
-						print '</tr>';
-					}
+					$arrayofmodules[] = $module;
 				}
 			}
 			closedir($handle);
 		}
+	}
+}
+
+$arrayofmodules = dol_sort_array($arrayofmodules, 'position');
+/** @var ModeleNumRefFicheinter[] $arrayofmodules */
+'@phan-var-force ModeleNumRefFicheinter[] $arrayofmodules';
+
+foreach ($arrayofmodules as $module) {
+	$classname = dol_substr(get_class($module), 4);
+
+	// Show modules according to features level
+	if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
+		continue;
+	}
+	if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
+		continue;
+	}
+
+	if ($module->isEnabled()) {
+		print '<tr class="oddeven"><td>'.$module->getName($langs)."</td><td>\n";
+		print $module->info($langs);
+		print '</td>';
+
+		// Show example of numbering model
+		print '<td class="nowrap">';
+		$tmp = $module->getExample();
+		if (preg_match('/^Error/', $tmp)) {
+			$langs->load("errors");
+			print '<div class="error">'.$langs->trans($tmp).'</div>';
+		} elseif ($tmp == 'NotConfigured') {
+			print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
+		} else {
+			print $tmp;
+		}
+		print '</td>'."\n";
+
+		print '<td class="center">';
+		if (getDolGlobalString('FICHEINTER_ADDON') == $classname) {
+			print img_picto($langs->trans("Activated"), 'switch_on');
+		} else {
+			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($classname).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+		}
+		print '</td>';
+
+		$ficheinter = new Fichinter($db);
+		$ficheinter->initAsSpecimen();
+
+		// Info
+		$htmltooltip = '';
+		$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+		$nextval = $module->getNextValue($mysoc, $ficheinter);
+		if ("$nextval" != $langs->trans("NotAvailable")) {   // Keep " on nextval
+			$htmltooltip .= ''.$langs->trans("NextValue").': ';
+			if ($nextval) {
+				if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+					$langs->load('errors');
+					$nextval = $langs->trans($nextval);
+				}
+				$htmltooltip .= $nextval.'<br>';
+			} else {
+				$langs->load('errors');
+				$htmltooltip .= $langs->trans($module->error).'<br>';
+			}
+		}
+		print '<td class="center">';
+		print $form->textwithpicto('', $htmltooltip, 1, 'info');
+		print '</td>';
+
+		print '</tr>';
 	}
 }
 

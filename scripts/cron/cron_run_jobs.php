@@ -104,14 +104,14 @@ $hookmanager->initHooks(array('cli'));
 $now = dol_now();
 
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." - userlogin=".$userlogin." - ".dol_print_date($now, 'dayhourrfc', 'gmt')." - ".gethostname()." *****\n";
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." - userlogin=".substr($userlogin, 0, 3)."... - ".$userlogin." - ".dol_print_date($now, 'dayhourrfc', 'gmt')." - ".gethostname()." *****\n";
 
 // Show TZ of the serveur when ran from command line.
 $ini_path = php_ini_loaded_file();
 print 'TZ server = '.getServerTimeZoneString()." - set in PHP ini ".$ini_path."\n";
 
 // Check security key
-if ($key != getDolGlobalString('CRON_KEY')) {
+if (!hash_equals(getDolGlobalString('CRON_KEY'), (string) $key)) {
 	print "Error: securitykey provided ".substr($key, 0, 5)."... does not match securitykey in setup.\n";
 	exit(1);
 }
@@ -157,8 +157,8 @@ if (getDolUserString('MAIN_LANG_DEFAULT')) {
 	$langcode = getDolUserString('MAIN_LANG_DEFAULT');
 }
 if ($langs->getDefaultLang() != $langcode) {
+	$langs = new Translate('', $conf);
 	$langs->setDefaultLang($langcode);
-	$langs->tab_translate = array();
 }
 // Language Management
 $langs->loadLangs(array('main', 'admin', 'cron', 'dict'));
@@ -196,7 +196,9 @@ $db->query($sql);
 
 // Also unlock jobs that have a PID but the process does not exist anymore (SIGKILL, crash, segfault, ...).
 // Without this, such a job remains stuck in processing=1 until CRON_MAX_DELAY_FOR_JOBS kicks in.
-if (function_exists('posix_kill') && function_exists('posix_get_last_error')) {
+// Disable with CRON_DISABLE_AUTO_UNLOCK when jobs can run in another process namespace (containers, web server
+// and cron runner on different hosts): the PID is not visible here, so a running job would be unlocked and run twice.
+if (!getDolGlobalInt('CRON_DISABLE_AUTO_UNLOCK') && function_exists('posix_kill') && function_exists('posix_get_last_error')) {
 	$sql = "SELECT rowid, pid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."cronjob";
 	$sql .= " WHERE processing = 1";
@@ -274,7 +276,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 
 			// Check module cron is activated
 			if (!isModEnabled('cron')) {
-				print "Canceled - Module Scheduled jobs (cron) not activated into entity ".$line->entity."\n";
+				print "\nCanceled - Module Scheduled jobs (cron) not activated into entity ".$line->entity."\n";
 				dol_syslog("cron_run_jobs.php: Canceled - Module Scheduled jobs (cron) not activated into entity ".$line->entity, LOG_INFO);
 				continue;
 			}
@@ -302,13 +304,14 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 				$langcode = $user->conf->MAIN_LANG_DEFAULT;
 			}
 			if ($langs->getDefaultLang() != $langcode) {
+				$langs = new Translate('', $conf);
 				$langs->setDefaultLang($langcode);
-				$langs->tab_translate = array();
 				$langs->loadLangs(array('main', 'admin', 'cron', 'dict'));
 			}
 		}
 
 		if (!verifCond($line->test)) {
+			echo " - not qualified (testok=0)\n";
 			continue;
 		}
 

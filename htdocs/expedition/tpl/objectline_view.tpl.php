@@ -38,6 +38,7 @@
 
 /**
  * @var Conf $conf
+ * @var Form $form
  * @var CommonObject $this
  * @var CommonObject $object
  * @var CommonObjectLine $line
@@ -106,10 +107,16 @@ $tmpproduct = new Product($object->db);
 $tmpproduct->fetch($line->fk_product);
 $tmpexpe = new Expedition($object->db);
 if ($line->fk_product > 0) {
-	print $tmpproduct->getNomUrl(1);
-	print ' - '.$tmpproduct->label;
+	// Show the line description like the lines of a shipment created from an order
+	$text = $tmpproduct->getNomUrl(1);
+	$text .= ' - '.$tmpproduct->label;
+	$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($line->desc));
+	print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i);
+	if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
+		print (!empty($line->desc) && $line->desc != $tmpproduct->label) ? '<br>'.dol_htmlentitiesbr($line->desc) : '';
+	}
 } else {
-	print ' - '.$line->description;
+	print dol_htmlentitiesbr($line->desc);
 }
 
 // Line extrafield
@@ -140,7 +147,25 @@ if (getDolGlobalInt('PRODUCT_USE_UNITS')) {		// For product, unit is shown only 
 	print '</td>';
 }
 
-if ($this->status == 0 && $user->hasRight('expedition', 'write') && $action != 'selectlines') {
+if (isModEnabled('stock')) {
+	$coldisplay++;
+	print '<td class="linecolwarehouse">';
+	if ($line->entrepot_id > 0) {
+		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+		if (!isset($conf->cache['warehouse'][$line->entrepot_id])) {
+			$warehouse = new Entrepot($object->db);
+			if ($warehouse->fetch($line->entrepot_id) > 0) {
+				$conf->cache['warehouse'][$line->entrepot_id] = $warehouse;
+			}
+		}
+		if (isset($conf->cache['warehouse'][$line->entrepot_id])) {
+			print $conf->cache['warehouse'][$line->entrepot_id]->getNomUrl(1);
+		}
+	}
+	print '</td>';
+}
+
+if ($this->status == 0 && $user->hasRight('expedition', 'creer') && $action != 'selectlines') {
 	print '<td class="linecoledit center">';
 	$coldisplay++;
 	if (((int) $line->info_bits & 2) == 2 || !empty($disableedit)) {

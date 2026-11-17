@@ -223,6 +223,14 @@ print "<td>".$langs->trans("Parameter")."</td>\n";
 print "<td></td>\n";
 print '</tr>';
 
+// Pre fill shipment qty option
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("DontPrefillShipmentQty");
+print '</td>';
+print '<td>';
+print ajax_constantonoff('SHIPMENT_DONT_PREFILL_QTY', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, '');
+print '</td></tr>';
+
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans('SHIPPING_DISPLAY_STOCK_ENTRY_DATE');
 print '</td>';
@@ -236,6 +244,29 @@ print '</td>';
 print '<td>';
 print ajax_constantonoff('SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST');
 print '</td></tr>';
+
+// Allow shipments without sales order. It can't be disabled while such shipments exist, otherwise their lines could no longer be shown nor edited.
+// The feature is not stable yet: the option only shows up on experimental installs (MAIN_FEATURES_LEVEL >= 2)
+// or when the constant is already set (via Home - Setup - Other), so it can be inspected and cleared.
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || getDolGlobalString('SHIPMENT_STANDALONE')) {
+	$nbstandalone = 0;
+	if (getDolGlobalString('SHIPMENT_STANDALONE')) {
+		$staticshipment = new Expedition($db);
+		$nbstandalone = $staticshipment->countStandalone();
+		if ($nbstandalone < 0) {
+			setEventMessages($staticshipment->error, $staticshipment->errors, 'errors');
+		}
+	}
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans('SHIPMENT_STANDALONE').' <span class="opacitymedium">('.$langs->trans("VersionExperimental").')</span>';
+	if ($nbstandalone > 0) {
+		print '<br><span class="opacitymedium">'.$langs->trans("ShipmentStandaloneCantBeDisabled", $nbstandalone).'</span>';
+	}
+	print '</td>';
+	print '<td>';
+	print ajax_constantonoff('SHIPMENT_STANDALONE', array(), null, 0, 0, 0, 2, 0, 0, '', '', 'inline-block', 0, '', ($nbstandalone != 0 ? 1 : 0));
+	print '</td></tr>';
+}
 
 $substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
@@ -271,12 +302,12 @@ print '<td>';
 print ajax_constantonoff('EXPEDITION_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, $langs->transnoentitiesnoconv("WarningOnlineSignature", 'https://www.dolistore.com'));
 print '</td></tr>';
 
-// Pre fill shipment qty option
+// Allow manual Sign (button to set the signature status from the shipment card)
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("DontPrefillShipmentQty");
+print '<td>'.$langs->trans("AllowManualSign");
 print '</td>';
 print '<td>';
-print ajax_constantonoff('SHIPMENT_DONT_PREFILL_QTY', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, '');
+print ajax_constantonoff('EXPEDITION_ALLOW_MANUAL_SIGN', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, '');
 print '</td></tr>';
 
 // Allow services on shipments (without stock management)

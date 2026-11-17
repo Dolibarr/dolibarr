@@ -154,7 +154,7 @@ $force_install_lockinstall = (int) (!empty($force_install_lockinstall) ? $force_
 
 
 // Case the password was in forced mode
-if (@$force_install_noedit == 2 && isset($force_install_dolibarrpassword)) {
+if (@$force_install_noedit == 2 && !empty($force_install_dolibarrpassword)) {
 	$pass = $force_install_dolibarrpassword;
 	$pass_verif = $force_install_dolibarrpassword;
 }

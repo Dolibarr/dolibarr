@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Konfigurimi i modulit PayPal
-PaypalDesc=Ky modul lejon pagesën nga klientët nëpërmjet <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. Kjo mund të përdoret për një pagesë ad-hoc ose për një pagesë në lidhje me një objekt Dolibarr (faturë, porosi, ...)
+PaypalDesc=This module allows payment by customers via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. This can be used for an ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
 PaypalOrCBDoPayment=Paguani me PayPal (Kartë ose PayPal)
 PaypalDoPayment=Paguani me PayPal
 PAYPAL_API_SANDBOX=Testi i modalitetit/sandbox
@@ -19,7 +19,7 @@ NewOnlinePaymentFailed=U provua pagesa e re në internet, por dështoi
 ONLINE_PAYMENT_SENDEMAIL=Adresa e emailit për njoftimet pas çdo përpjekjeje pagese (për sukses dhe dështim)
 ReturnURLAfterPayment=URL-ja e kthimit pas pagesës
 ValidationOfOnlinePaymentFailed=Verifikimi i pagesës në internet dështoi
-PaymentSystemConfirmPaymentPageWasCalledButFailed=Faqja e konfirmimit të pagesës u thirr nga sistemi i pagesave u kthye një gabim
+PaymentSystemConfirmPaymentPageWasCalledButFailed=The payment confirmation page was called by the online payment system and returned an error
 SetExpressCheckoutAPICallFailed=Thirrja SetExpressCheckout API dështoi.
 DoExpressCheckoutPaymentAPICallFailed=Thirrja API e DoExpressCheckoutPayment dështoi.
 DetailedErrorMessage=Mesazh i detajuar i gabimit

@@ -163,10 +163,12 @@ print dol_get_fiche_head($head, 'statsbyproperties', '', -1, '');
 // Print title
 if (!count($data)) {
 	print '<span class="opacitymedium">'.$langs->trans("NoValidatedMemberYet").'</span><br>';
+	print '<div class="info">'.$langs->trans("DraftMembersAreExcluded").'</div>';
 } else {
-	print '<span class="opacitymedium">'.$langs->trans("MembersByNature").'</span><br>';
+	print '<div class="info">'.$langs->trans("MembersByNature").'<br>';
+	print $langs->trans("DraftMembersAreExcluded");
+	print '</div>';
 }
-print '<span class="opacitymedium">'.$langs->trans("DraftMembersAreExcluded").'</span><br>';
 print '<br>';
 
 // Print array

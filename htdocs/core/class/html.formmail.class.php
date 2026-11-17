@@ -162,6 +162,11 @@ class FormMail extends Form
 	public $witherrorsto;
 
 	/**
+	 * @var string					Email used for the errors-to field (default value of the errorstomail input)
+	 */
+	public $errorstomail;
+
+	/**
 	 * @var int<0,2>|string 		0=No attaches files, 1=Show attached files, 2=Can add new attached files, 'text'=Show attached files and the text
 	 */
 	public $withfile;
@@ -520,7 +525,8 @@ class FormMail extends Form
 			if (!empty($newlang)) {
 				$outputlangs = new Translate("", $conf);
 				$outputlangs->setDefaultLang($newlang);
-				$outputlangs->load('other');
+				// Same files as the language of the recipient in card_presend.tpl.php, so that the __(Key)__ of the templates are translated
+				$outputlangs->loadLangs(array('other', 'commercial', 'bills', 'orders', 'contracts', 'main', 'members', 'propal', 'products', 'supplier_proposal', 'interventions', 'receptions', 'sendings'));
 			}
 
 			// Get message template for $this->param["models"] into c_email_templates
@@ -1768,7 +1774,7 @@ class FormMail extends Form
 		if (is_object($arraydefaultmessage) && !empty($arraydefaultmessage->lang)) {
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($arraydefaultmessage->lang);
-			$outputlangs->load('other');
+			$outputlangs->loadLangs(array('other', 'commercial', 'bills', 'orders', 'contracts', 'main', 'members', 'propal', 'products', 'supplier_proposal', 'interventions', 'receptions', 'sendings'));
 		}
 
 		$defaulttopic = make_substitutions($defaulttopic, $this->substit, $outputlangs);
@@ -1899,7 +1905,7 @@ class FormMail extends Form
 			$out .= '<!-- select component for selection of blog posts -->'."\n";
 			// TODO WARNING: multiselectarray is ok only for very small list
 			$out .= self::multiselectarray('blogpost-select', $blogArray, array(), 0, 0, 'minwidth200 select-template');
-			$out .= ' <input type="submit" class="smallpaddingimp button reposition" name="submit" id="post-submit" value="'.dolPrintHTMLForAttribute($langs->trans("Select")).'">';
+			$out .= ' <input type="button" class="smallpaddingimp button reposition" id="post-submit" value="'.dolPrintHTMLForAttribute($langs->trans("Select")).'">';
 			$out .= '</div>';
 		}
 		if (in_array('product', array_keys($layouts)) && (isModEnabled('product') || isModEnabled('service'))) {
@@ -1908,10 +1914,10 @@ class FormMail extends Form
 			$out .= '<div id="product-dropdown-container" class="email-layout-container hidden" style="margin-top: 8px; display:none;">';
 			$out .= '<label for="product-select">'.img_picto('', 'product', 'class="pictofixedwidth"').$langs->trans("Product").' : </label>';
 			$out .= '<!-- select component for selection of product -->'."\n";
-			$out .= $form->select_produits(0, 'product-select', '', 0, 0, -1, 2, '', 0, array(), 0, '1', 0, 'inline-block valignmiddle', 0, '', null, 1);
+			$out .= $form->select_produits(0, 'product-select', '', 0, 0, -1, 2, '', 0, array(), 0, '1', 0, 'minwidth125 inline-block valignmiddle', 0, '', null, 1);
 			// TODO multiselectarray is ok only for very small list but is ok for multiselect. We need a multiselect ok with ajax for long list
 			//$out .= self::multiselectarray('product-select', $productArray, array(), 0, 0, 'minwidth200 select-template');
-			$out .= ' <input type="submit" class="smallpaddingimp button reposition" name="submit" id="product-submit" value="'.dolPrintHTMLForAttribute($langs->trans("Select")).'">';
+			$out .= ' <input type="button" class="smallpaddingimp button reposition" id="product-submit" value="'.dolPrintHTMLForAttribute($langs->trans("Select")).'">';
 			$out .= '</div>';
 		}
 
@@ -1985,6 +1991,13 @@ class FormMail extends Form
 				var contentHtml = $(".template-option.selected").data("content");
 
 				updateSelectedPostsContent(contentHtml, selectedIds);
+			});
+
+			/* Content is already updated when choosing in the list, so button Select just closes the layout selector (no form submit) */
+			$("#post-submit, #product-submit").click(function(event) {
+				console.log("We click on Select of the email layout, we close the layout selector");
+				event.preventDefault();
+				jQuery(".template-selector").hide();
 			});
 
 			function updateSelectedPostsContent(contentHtml, selectedIds) {

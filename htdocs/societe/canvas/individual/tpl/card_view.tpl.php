@@ -200,7 +200,7 @@ if ($this->control->tpl['action_delete']) {
 
 <?php if ($user->hasRight('societe', 'supprimer')) { ?>
 	<?php if ($conf->use_javascript_ajax) { ?>
-		<?php echo dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', '', 'action-delete', true, array('attr' => array('class' => 'reposition')))."\n"; ?>
+		<?php echo dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&action=delete&token='.newToken().'&canvas='.urlencode($canvas), 'action-delete', true, array('attr' => array('class' => 'reposition')))."\n"; ?>
 	<?php } else { ?>
 		<?php echo dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&action=delete&token='.newToken().'&canvas='.urlencode($canvas), '', true, array('attr' => array('class' => 'reposition')))."\n"; ?>
 	<?php } ?>

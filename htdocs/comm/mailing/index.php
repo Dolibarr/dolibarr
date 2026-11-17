@@ -166,10 +166,10 @@ print '</div><div class="secondcolumn fichehalfright boxhalfright" id="boxhalfri
  */
 
 $limit = 10;
-$sql  = "SELECT m.rowid, m.titre as title, m.nbemail, m.statut as status, m.date_creat, m.messtype";
+$sql  = "SELECT m.rowid, m.titre as title, m.nbemail, m.statut as status, m.date_creation, m.messtype";
 $sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
 $sql .= " WHERE m.entity = ".((int) $conf->entity);
-$sql .= " ORDER BY m.date_creat DESC";
+$sql .= " ORDER BY m.date_creation DESC";
 $sql .= $db->plimit($limit);
 
 $result = $db->query($sql);
@@ -208,7 +208,7 @@ if ($result) {
 			if (getDolGlobalInt('EMAILINGS_SUPPORT_ALSO_SMS')) {
 				print '<td class="center">'.dol_escape_htmltag($obj->messtype).'</td>';
 			}
-			print '<td class="center">'.dol_print_date($db->jdate($obj->date_creat), 'day').'</td>';
+			print '<td class="center">'.dol_print_date($db->jdate($obj->date_creation), 'day').'</td>';
 			print '<td class="center">'.($obj->nbemail ? (int) $obj->nbemail : "0").'</td>';
 			print '<td class="right">'.$mailstatic->LibStatut($obj->status, 5).'</td>';
 			print '</tr>';

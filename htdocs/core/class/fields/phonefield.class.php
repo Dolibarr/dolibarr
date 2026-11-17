@@ -70,12 +70,11 @@ class PhoneField extends CommonField
 	public function printInputField($fieldInfos, $key, $value, $keyPrefix = '', $keySuffix = '', $moreCss = '', $moreAttrib = '')
 	{
 		$moreCss = $this->getInputCss($fieldInfos, $moreCss);
-		$moreAttrib = trim((string) $moreAttrib);
-		if (empty($moreAttrib)) $moreAttrib = ' ' . $moreAttrib;
-		$autoFocus = $fieldInfos->inputAutofocus ? ' autofocus' : '';
 		$htmlName = $keyPrefix . $key . $keySuffix;
+		// Country of the object, to preselect its phone code
+		$countryId = (isset($fieldInfos->object) && is_object($fieldInfos->object) && !empty($fieldInfos->object->country_id)) ? (int) $fieldInfos->object->country_id : 0;
 
-		return self::$form->inputType('text', $htmlName, (string) $value, $htmlName, $moreCss, $moreAttrib . $autoFocus);
+		return self::$form->showPhoneInput((string) $value, $htmlName, $countryId, 'object_phoning', $moreCss);
 	}
 
 	/**

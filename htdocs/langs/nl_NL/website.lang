@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - website
 Shortname=Code
 WebsiteName=Naam van de website
-WebsiteSetupDesc=Maak hier de websites die u wilt gebruiken. Ga vervolgens naar het menu Websites om ze te bewerken.
+WebsiteSetupDesc=Maak hier de websites aan die u wilt gebruiken. Ga vervolgens naar het menu Websites om ze te bewerken.
 DeleteWebsite=Website verwijderen
 ConfirmDeleteWebsite=Weet u zeker dat u deze website wilt verwijderen? Alle pagina's en inhoud worden ook verwijderd. De geüploade bestanden (zoals in de mediasmap, de ECM-module, ...) blijven behouden.
 WEBSITE_TYPE_CONTAINER=Soort pagina / container
@@ -17,8 +17,8 @@ WEBSITE_ROBOT=Robotbestand (robots.txt)
 WEBSITE_HTACCESS=Website .htaccess bestand
 WEBSITE_MANIFEST_JSON=Website manifest.json bestand
 WEBSITE_KEYWORDSDesc=Gebruik een komma om waarden te scheiden
-EnterHereReadmeInformation=Vul hier een beschrijving van de website in. Als u uw website als sjabloon distribueert, wordt het bestand opgenomen in het temptate-pakket.
-EnterHereLicenseInformation=Voer hier de LICENTIE van de code van de website in. Als u uw website als sjabloon distribueert, wordt het bestand opgenomen in het temptate-pakket.
+EnterHereReadmeInformation=Vul hier een beschrijving van de website in. Als u uw website als sjabloon verspreidt, wordt het bestand opgenomen in het sjabloonpakket.
+EnterHereLicenseInformation=Voer hier de LICENTIE van de websitecode in. Als u uw website als sjabloon verspreidt, wordt het bestand in het sjabloonpakket opgenomen.
 HtmlHeaderPage=HTML-header (alleen voor deze pagina)
 PageNameAliasHelp=Naam of alias van de pagina. <br> Deze alias wordt ook gebruikt om een SEO-URL te veranderen wanneer de website wordt uitgevoerd vanaf een virtuele host van een webserver (zoals Apacke, Nginx, ...). Gebruik de knop "<strong>%s</strong>" om deze alias te bewerken.
 EditTheWebSiteForACommonHeader=Opmerking: als u een gepersonaliseerde koptekst voor alle pagina's wilt definiëren, moet u de koptekst op siteniveau bewerken in plaats van op de pagina/container.
@@ -51,12 +51,12 @@ ToDeployYourWebsiteOnLiveYouHave3Solutions=Om deze website live te implementeren
 SetHereVirtualHost=<u> Gebruik met Apache / NGinx / ... </u> <br> Creëer op uw webserver (Apache, Nginx, ...) een speciale virtuele host met PHP ingeschakeld en een root-directory op <br><strong> %s</strong>
 ExampleToUseInApacheVirtualHostConfig=Voorbeeld om te gebruiken in Apache virtual host setup:
 YouCanAlsoTestWithPHPS=<u>Gebruik met PHP embedded server</u><br>In de ontwikkelomgeving kunt u test de site liever met de ingebouwde PHP-webserver door deze uit te voeren
-YouCanAlsoDeployToAnotherWHP=<u>Laat uw website draaien in een Dolibarr-webhostingprovider</u><br>Als Als u geen webserver zoals Apache of NGinx beschikbaar heeft op internet, kunt u uw website exporteren en importeren naar een andere Dolibarr-instantie die wordt geleverd door een andere Dolibarr-hostingprovider die volledige integratie biedt met de Website-module. U kunt een lijst met enkele Dolibarr-hostingproviders vinden op <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
+YouCanAlsoDeployToAnotherWHP=<u>Draai uw website binnen een Dolibarr webhostingprovider</u><br>Als u geen webserver zoals Apache of Nginx beschikbaar hebt op internet, kunt u uw website exporteren en importeren naar een andere Dolibarr-instantie die wordt aangeboden door een andere Dolibarr-hostingprovider die volledige integratie met de websitemodule biedt. Een lijst met Dolibarr-hostingproviders is te vinden op https://saas.dolibarr.org
 CheckVirtualHostPerms=Controleer ook of de virtuele hostgebruiker (bijvoorbeeld www-data) <strong>%s</strong> permissies heeft voor bestanden in <br><strong>%s</strong>
 ReadPerm=Lezen
 WritePerm=Schrijven
 TestDeployOnWeb=Testen / implementeren op internet
-PreviewSiteServedByWebServer=<u>Voorbeeld %s op een nieuw tabblad.</u> <br><br> De %s wordt bediend door een externe webserver (zoals Apache, Nginx, IIS). U moet deze server installeren en instellen voordat u naar de map verwijst: <br> <strong>%s</strong> <br> URL aangeboden door externe server: <br> <strong>%s</strong>
+PreviewSiteServedByWebServer=<u>Bekijk %s in een nieuw tabblad.</u><br><br>De %s wordt aangeboden door een externe webserver (zoals Apache, Nginx, IIS). U moet deze server installeren en configureren voordat u naar de volgende map verwijst: <br><strong>%s</strong><br>URL aangeboden door externe server: <br><strong>%s</strong>
 PreviewSiteServedByDolibarr=<u>Bekijk %s in een nieuw tabblad.</u><br><br>De %s wordt bediend door de Dolibarr-server, dus er hoeft geen extra webserver (zoals Apache, Nginx, IIS) te worden geïnstalleerd.<br>Het vervelende is dat de URL's van pagina's niet gebruiksvriendelijk en begin met het pad van uw Dolibarr.<br>URL bediend door Dolibarr:<br><strong>%s</strong><br><br>Om te implementeren of testen met behulp van uw eigen externe webserver (zoals Apache, Nginx, Lighttp) gebruikt u de link "%s".
 VirtualHostUrlNotDefined=URL van de virtuele host bediend door externe webserver niet gedefinieerd
 NoPageYet=Nog geen pagina's
@@ -65,12 +65,13 @@ SyntaxHelp=Help bij specifieke syntax-tips
 YouCanEditHtmlSourceckeditor=U kunt HTML-broncode bewerken met de knop "Bron" in de editor.
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> U kunt PHP-code in deze bron opnemen met behulp van labels <strong>&lt;?php ?&gt;</strong>. De volgende globale variabelen zijn beschikbaar: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> U kunt ook inhoud van een andere pagina/container opnemen met de volgende syntaxis:<br><strong>&lt;?php includeContainer('alias_van_de_container_om_op_te_nemen'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> U kunt een omleiding naar een andere pagina/container maken met de volgende syntaxis (let op: voer geen inhoud uit vóór een omleiding):<br><strong>&lt;?php redirectToContainer('alias_van_container_om_naar_te_omleiden'); ?&gt;</strong><br>Je kunt ook een omleiding maken met GET-parameters:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> Om een link naar een andere pagina toe te voegen, gebruikt u de volgende syntaxis:<br><strong>&lt;a href="alias_van_pagina_om_naar_te_linken.php"&gt;mylink&lt;a&gt;</strong><br><br>
 YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> U kunt dynamisch <strong>de SEO-titel en -metatags</strong> instellen (titel, trefwoorden, beschrijving). Definieer eenvoudig de volgende variabelen:<br> <code>define('__SEO_PAGE_TITLE__', "Titelwaarde …");</code><br> <code>define('__SEO_PAGE_KEYWORDS__', 'trefwoord1, trefwoord2, trefwoord3 …');</code><br> <code>define('__SEO_PAGE_DESC__', "Beschrijving …");</code><br>
-YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> Om een <strong>link op te nemen om</strong> een bestand te downloaden dat is opgeslagen in de map <strong>documenten</strong>, gebruikt u de map <strong>document.php</strong> wrapper:<br>Voorbeeld, voor een bestand in documenten/ecm (moet worden geregistreerd), is de syntaxis:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>Voor een bestand in documenten/media (open directory voor openbare toegang) is de syntaxis:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
+YouCanEditHtmlSourcec=Om een link op te nemen om een bestand te downloaden dat is opgeslagen in de map documenten, gebruikt u de volgende opdracht: document.php <strong> wrapper: <br> Voorbeeld, voor een bestand in documents/ecm (moet worden gelogd), is de syntax: <br> <strong> &lt; a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>Voor een bestand in documenten/media (openbare map voor publieke toegang) is de syntax:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSourced=Voor een bestand dat wordt gedeeld met een deelkoppeling (open toegang met behulp van de hashsleutel voor delen van het bestand), is de syntaxis:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> Om een <strong>image</strong> op te nemen die is opgeslagen in de directory <strong>medias</strong> (directory die openbaar toegankelijk is), gebruikt u het relatieve pad dat begint met <strong>/medias</strong>, voorbeeld:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> Om een <strong>image</strong> op te nemen die is opgeslagen in de <strong>medias</strong>-directory (directory die openbaar toegankelijk is), gebruikt u Het relatieve pad begint met <strong>/medias</strong>, bijvoorbeeld:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=Voor een afbeelding die gedeeld wordt met een deellink (open access met behulp van de hash-sleutel voor delen van het bestand), gebruikt u de wrapper:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=To get the URL of the image of a PHP object, use<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
-YouCanEditHtmlSource4=Om de URL van een afbeelding in de HTML-inhoud van een artikel te krijgen, gebruikt u <br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource4=Om de URL van een afbeelding in de HTML-inhoud van een artikel te verkrijgen, gebruikt u de volgende code: <br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource5=<br><span class="fa fa-edit paddingright"></span> To let a part of the page be changed with mode <strong>Edit inline</strong>, add the attributes <strong>contenteditable="true"</strong> and <strong>id</strong> to its tag. It must contain no PHP code, only text with formatting tags (bold, color, font size...), links, paragraphs, titles, lists and div, example:<br><strong>&lt;p id="intro" contenteditable="true"&gt;My &lt;b&gt;text&lt;/b&gt;&lt;/p&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>Meer voorbeelden van HTML of dynamische code beschikbaar op <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">de wiki-documentatie</a>.<br>
 ClonePage=Kloon pagina/container
 CloneSite=Klonen site
@@ -88,6 +89,8 @@ ImportSite=Website template importeren
 IDOfPage=Id van pagina
 Banner=banier
 BlogPost=Blogpost
+PageHeader=Hoofd
+PageFooter=Voetnoot
 WebsiteAccount=Website account
 WebsiteAccounts=Website accounts
 AddWebsiteAccount=Maak een website-account
@@ -102,7 +105,7 @@ YouMustDefineTheHomePage=U moet eerst de standaard startpagina definiëren
 OnlyEditionOfSourceForGrabbedContentFuture=Waarschuwing: Het maken van een webpagina door een externe webpagina te importeren is voorbehouden aan ervaren gebruikers en kan alleen werken met pagina's die met HTML en CSS zijn gerenderd. Het importeren van pagina's die zijn gerenderd door JS-frameworks wordt NIET ondersteund. Afhankelijk van de complexiteit van de bronpagina zal het resultaat van de import waarschijnlijk afwijken van de originele pagina. Als de bronpagina bovendien algemene CSS-stijlen of conflicterende JavaScript-code gebruikt, kan dit het uiterlijk of de functies van de website-editor verstoren wanneer u op deze pagina werkt. Deze methode is een snelle manier om een pagina te maken voor zeer geavanceerde gebruikers wanneer de bronpagina dit toestaat, maar het is aan te raden om uw nieuwe pagina helemaal opnieuw te maken of op basis van een voorgestelde paginasjabloon. <br>Houd er ook rekening mee dat de inline-editor mogelijk niet correct werkt wanneer deze wordt gebruikt op een pagina die is opgehaald.
 OnlyEditionOfSourceForGrabbedContent=Alleen HTML-bronwijziging is mogelijk wanneer inhoud van een externe site wordt gehaald
 GrabImagesInto=Importeer ook afbeeldingen gevonden in css en pagina.
-ImagesShouldBeSavedInto=Afbeeldingen moeten worden opgeslagen in de directory
+ImagesShouldBeSavedInto=Afbeeldingen moeten in de map worden opgeslagen.
 WebsiteRootOfImages=Hoofdmap voor website-afbeeldingen
 SubdirOfPage=Subdirectory gewijd aan pagina
 AliasPageAlreadyExists=<strong>Alias-pagina %s</strong> bestaat al
@@ -119,7 +122,7 @@ NoWebSiteCreateOneFirst=Er is nog geen website gemaakt. Maak er eerst een.
 GoTo=Ga naar
 DynamicPHPCodeContainsAForbiddenInstruction=U voegt dynamische PHP-code toe die de PHP-instructie '<strong>%s</strong> 'bevat die standaard als dynamische inhoud is verboden (zie verborgen opties WEBSITE_PHP_ALLOW_xxx om de lijst met toegestane opdrachten te vergroten).
 NotAllowedToAddDynamicContent=Je hebt geen toestemming om dynamische PHP-content toe te voegen aan of te bewerken in websites. Vraag toestemming of laat de code in PHP labels ongewijzigd.
-NotAllowedToAddDynamicContentDisabledGlobaly=Je kunt momenteel geen dynamische PHP-content toevoegen of bewerken op deze website (zelfs niet als je daarvoor toestemming hebt), omdat deze functie eerst globaal moet worden ingeschakeld door de parameter %s=1 in het conf.php-bestand in te stellen.<br>Bewerk je conf.php-bestand om deze parameter toe te voegen, of vraag je beheerder of supportmedewerker dit voor je te doen.
+NotAllowedToAddDynamicContentDisabledGlobaly=Je kunt momenteel geen dynamische PHP-content toevoegen of bewerken op deze website (zelfs niet als je daarvoor toestemming hebt), omdat deze functie eerst globaal moet worden ingeschakeld door de parameter %s=1 in het conf.php-bestand in te stellen.<br>Bewerk je conf.php-bestand om deze parameter toe te voegen, of vraag je beheerder of supportteam dit voor je te doen.
 ReplaceWebsiteContent=Zoek of vervang website-inhoud
 DeleteAlsoJs=Ook alle JavaScript-bestanden specifiek voor deze website verwijderen?
 DeleteAlsoMedias=Ook alle mediabestanden specifiek voor deze website verwijderen?
@@ -140,10 +143,10 @@ MainLanguage=Hoofdtaal
 OtherLanguages=Andere talen
 UseManifest=Geef een manifest.json-bestand op
 PublicAuthorAlias=Alias van openbare auteur
-AvailableLanguagesAreDefinedIntoWebsiteProperties=Beschikbare talen zijn gedefinieerd in website-eigenschappen
+AvailableLanguagesAreDefinedIntoWebsiteProperties=De beschikbare talen worden gedefinieerd in de website-eigenschappen.
 ReplacementDoneInXPages=Vervanging gedaan in %s pagina's of containers
 RSSFeed=RSS-feeds
-RSSFeedDesc=U kunt via deze URL een RSS-feed krijgen van de nieuwste artikelen met het type 'blogpost'
+RSSFeedDesc=Je kunt een RSS-feed met de nieuwste artikelen van het type 'blogpost' ontvangen via deze URL.
 PagesRegenerated=%s pagina ('s) / container (s) her-aangemaakt
 RegenerateWebsiteContent=Genereer cachebestanden van websites opnieuw
 AllowedInFrames=Toegestaan in frames
@@ -151,6 +154,7 @@ DefineListOfAltLanguagesInWebsiteProperties=Definieer een lijst van alle beschik
 GenerateSitemaps=Genereer website sitemap.xml-bestand
 ConfirmGenerateSitemaps=Als u bevestigt, wist u het bestaande site mapbestand...
 ConfirmSitemapsCreation=Generatie van sitemap bevestigen
+ConfirmSetAsHomePage=Are you sure you want to set the page <b>%s</b> as the home page of the website?
 SitemapGenerated=Sitemap bestand <b>%s</b> gegenereerd
 ImportFavicon=Favicon
 ErrorFaviconType=Favicon moet png zijn
@@ -509,3 +513,13 @@ ThisDirectoryIsEmpty=Deze map is leeg.
 WrittenBy=Geschreven door %s
 ImportOfWebsiteTemplateIncludingPHPIsAllowedIf=Het importeren van websitetemplates met dynamische content in PHP is alleen toegestaan als $dolibarr_website_allow_custom_php is ingesteld op 2 in conf.php.
 ImportOfWebsiteTemplateIncludingPHPIsDisabled=Voor het importeren van websitetemplates met dynamische content in PHP is het nodig dat `$dolibarr_website_allow_custom_php` in `conf.php` is ingesteld op 1 of 2.
+CurrentPageVersion=Huidige pagina
+ListOfPageVersions=Lijst met gearchiveerde versies van de pagina (er wordt een back-upbestand van de pagina gemaakt telkens wanneer u een wijziging opslaat, bijvoorbeeld in de HTML-broncode).
+EditInLineAllowedAreas=In mode Edit inline, the tags with contenteditable="true", an id and no PHP code inside can be changed and are saved when you leave them. Text formatting (bold, color, font size...), links, paragraphs, titles and lists are allowed, images and other HTML can only be changed in the HTML source.
+ErrorEditInlineElementNoId=This element has contenteditable="true" but no id, so it can not be edited inline.
+ErrorEditInlineElementNotFound=No element with id %s and contenteditable="true" was found in the source of the page.
+ErrorEditInlineElementNotUnique=The id %s is used by several elements with contenteditable="true" in the source of the page.
+ErrorEditInlineElementWithPhp=The element with id %s contains PHP code in the source of the page, so it can only be changed in the HTML source.
+ErrorEditInlineElementNotAllowedHtml=The element with id %s contains HTML that can not be edited inline (image, form, script, comment, other tags or attributes...), so it can only be changed in the HTML source.
+ErrorEditInlineElementNotPlainText=The element with id %s contains HTML in the source of the page and can only be edited inline as plain text, so it can only be changed in the HTML source.
+ErrorEditInlineContentNotAllowed=The new content of the element with id %s contains HTML tags or attributes that are not allowed, so it was not saved.

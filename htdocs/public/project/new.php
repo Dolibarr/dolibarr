@@ -210,7 +210,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 			}
 			$thirdparty->email = GETPOST('email', 'alpha');
 			$thirdparty->address = GETPOST('address', 'alpha');
-			$thirdparty->zip = GETPOST('zip', 'int');
+			$thirdparty->zip = GETPOST('zipcode', 'alphanohtml');
 			$thirdparty->town = GETPOST('town', 'alpha');
 			$thirdparty->country_id = GETPOSTINT('country_id');
 			$thirdparty->state_id = GETPOSTINT('state_id');

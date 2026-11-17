@@ -147,7 +147,7 @@ class mod_evaluation_advanced extends ModeleNumRefEvaluation
 			return 0;
 		}
 
-		$date = $object->date;
+		$date = $object->date_creation;
 
 		$numFinal = get_next_value($db, $mask, 'hrm_evaluation', 'ref', '', null, $date);
 

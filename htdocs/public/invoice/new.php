@@ -440,7 +440,7 @@ $formcompany = new FormCompany($db);
 $extrafields->fetch_name_optionals_label($object->table_element); // fetch optionals attributes and labels
 
 
-llxHeaderVierge($langs->trans("NewDonation"), '', 0, 0, array(), array(), $ws);
+llxHeaderVierge($langs->trans("NewDonation"), '', 0, 0, array(), array(), $ws); // @phpstan-ignore-line
 if (!$ws) {
 	print '<br>';
 	print load_fiche_titre(img_picto('', '', 'class="pictofixedwidth"').' &nbsp; '.$langs->trans("NewDonation"), '', '', 0, '', 'center');

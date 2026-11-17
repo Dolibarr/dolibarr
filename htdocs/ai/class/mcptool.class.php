@@ -154,4 +154,67 @@ abstract class McpTool
 	{
 		return self::NO_WRITE;
 	}
+
+	/**
+	 * Reason why a write cannot run at all, checked before any confirmation.
+	 *
+	 * A write bound to fail (target record missing, in a status that refuses the
+	 * change, product not found) is refused here, so the user is not asked to
+	 * approve something that would only fail afterwards.
+	 *
+	 * @param string $toolName Tool that would run.
+	 * @param array<string,mixed> $args Arguments it would run with.
+	 * @return string Error message, or '' when the write may proceed to confirmation.
+	 */
+	public function writePrecheck(string $toolName, array $args)
+	{
+		return '';
+	}
+
+	/**
+	 * Normalize a tool input schema to ensure broad compatibility with LLM
+	 * function-calling APIs (e.g. Google Gemini, Claude, OpenAI).
+	 *
+	 * Gemini rejects schemas containing the JSON Schema "const" keyword with
+	 * HTTP 400 (Invalid JSON payload received. Unknown name "const" ...).
+	 * This method recursively converts "const": value to "enum": [value],
+	 * infers missing "type" from the const value, and drops unsupported keywords.
+	 *
+	 * @param array<string, mixed> $schema Input schema to normalize
+	 * @return array<string, mixed> Normalized input schema
+	 */
+	public static function normalizeInputSchema(array $schema): array
+	{
+		if (array_key_exists('const', $schema)) {
+			$val = $schema['const'];
+			if (!isset($schema['enum'])) {
+				$schema['enum'] = is_array($val) ? array_values($val) : array($val);
+			}
+			if (empty($schema['type'])) {
+				if (is_int($val)) {
+					$schema['type'] = 'integer';
+				} elseif (is_float($val)) {
+					$schema['type'] = 'number';
+				} elseif (is_bool($val)) {
+					$schema['type'] = 'boolean';
+				} elseif (is_string($val)) {
+					$schema['type'] = 'string';
+				} elseif (is_array($val)) {
+					$schema['type'] = (array_keys($val) === range(0, count($val) - 1)) ? 'array' : 'object';
+				}
+			}
+			unset($schema['const']);
+		}
+
+		// Drop keywords known to be rejected by strict LLM function-calling schemas
+		unset($schema['$schema'], $schema['$id']);
+
+		foreach ($schema as $key => $value) {
+			if (is_array($value)) {
+				$schema[$key] = self::normalizeInputSchema($value);
+			}
+		}
+
+		return $schema;
+	}
 }

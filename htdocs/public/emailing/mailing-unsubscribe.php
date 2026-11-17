@@ -76,7 +76,7 @@ $securitykey = GETPOST('securitykey');
 
 dol_syslog("public/emailing/mailing-unsubscribe.php : tag=".$tag." securitykey=".$securitykey, LOG_DEBUG);
 
-if ($securitykey != dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-".$tag."-".$email."-".$mtid, 'md5')) {
+if (!hash_equals(dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-".$tag."-".$email."-".$mtid, 'md5'), (string) $securitykey)) {
 	print 'Bad security key value.';
 	exit;
 }
@@ -158,7 +158,7 @@ if (! $resql) dol_print_error($db);
 */
 
 // Update status communication of email (new usage)
-$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe (date_creat, entity, email, unsubscribegroup, ip) VALUES ('".$db->idate(dol_now())."', ".((int) $obj->entity).", '".$db->escape($obj->email)."', '', '".$db->escape(getUserRemoteIP())."')";
+$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe (date_creation, entity, email, unsubscribegroup, ip) VALUES ('".$db->idate(dol_now())."', ".((int) $obj->entity).", '".$db->escape($obj->email)."', '', '".$db->escape(getUserRemoteIP())."')";
 
 $resql = $db->query($sql);
 //if (! $resql) dol_print_error($db);	No test on errors, may fail if already unsubscribed

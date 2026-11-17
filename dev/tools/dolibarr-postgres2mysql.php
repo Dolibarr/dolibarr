@@ -31,8 +31,7 @@ $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path = dirname(__FILE__) . '/';
 
-// Test si mode batch
-$sapi_type = php_sapi_name();
+// Check if we run in CLI (batch) mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute " . $script_file . " from command line, you must use PHP for CLI mode.\n";
 	exit();
@@ -45,7 +44,7 @@ define('VERSION', "2.0");
 // this is the default, it can be overridden here, or specified as the third parameter on the command line
 $config['engine'] = "InnoDB";
 
-if (!($argv[1] && $argv[2])) {
+if ($argc < 3 || empty($argv[1]) || empty($argv[2])) {
 	echo "Usage: php pg2mysql_cli.php <inputfilename> <outputfilename> [engine]\n";
 	exit();
 } else {
@@ -120,8 +119,17 @@ function formatsize($s)
  */
 function pg2mysql_large($infilename, $outfilename)
 {
-	$infp = fopen($infilename, "rt");
-	$outfp = fopen($outfilename, "wt");
+	$fh = fopen($infilename, "r");
+	if (!$fh) {
+		print 'Failed to open file '.$infilename."\n";
+		return -1;
+	}
+	$outfp = fopen($outfilename, "w");
+	if (!$outfp) {
+		print 'Failed to open file '.$outfilename."\n";
+		fclose($fh);
+		return -1;
+	}
 
 	$outputatend = '';
 	$arrayofprimaryalreadyintabledef = array();
@@ -133,15 +141,10 @@ function pg2mysql_large($infilename, $outfilename)
 	$inquotes = false;
 	$first = true;
 
-	if (empty($infp)) {
-		print 'Failed to open file '.$infilename."\n";
-		return -1;
-	}
-
 	$fs = filesize($infilename);
 	echo "Filesize: " . formatsize($fs) . "\n";
 
-	while ($instr = fgets($infp)) {
+	while ($instr = fgets($fh)) {
 		$linenum++;
 		$memusage = round(memory_get_usage(true) / 1024 / 1024);
 		$len = strlen($instr);
@@ -157,7 +160,7 @@ function pg2mysql_large($infilename, $outfilename)
 		}
 
 		if ($linenum % 10000 == 0) {
-			$currentpos = ftell($infp);
+			$currentpos = ftell($fh);
 			$percent = round($currentpos / $fs * 100);
 			$position = formatsize($currentpos);
 			printf("Reading    progress: %3d%%   position: %7s   line: %9d   sql chunk: %9d  mem usage: %4dM\r", $percent, $position, $linenum, $chunkcount, $memusage);
@@ -167,7 +170,7 @@ function pg2mysql_large($infilename, $outfilename)
 			$chunkcount++;
 
 			if ($linenum % 10000 == 0) {
-				$currentpos = ftell($infp);
+				$currentpos = ftell($fh);
 				$percent = round($currentpos / $fs * 100);
 				$position = formatsize($currentpos);
 				printf("Processing progress: %3d%%   position: %7s   line: %9d   sql chunk: %9d  mem usage: %4dM\r", $percent, $position, $linenum, $chunkcount, $memusage);
@@ -226,7 +229,7 @@ function pg2mysql_large($infilename, $outfilename)
 
 	printf("Completed! %9d lines   %9d sql chunks\n\n", $linenum, $chunkcount);
 
-	fclose($infp);
+	fclose($fh);
 	fclose($outfp);
 
 	return 0;
@@ -546,14 +549,16 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 
 		if (substr($line, 0, 15) == 'CREATE DATABASE') {
 			$matches = array();
-			preg_match('/CREATE DATABASE ([a-zA-Z0-9_]*) .* ENCODING = \'(.*)\'/', $line, $matches);
-			$output .= "CREATE DATABASE `$matches[1]` DEFAULT CHARACTER SET $matches[2];\n\n";
+			if (preg_match('/CREATE DATABASE ([a-zA-Z0-9_]*) .* ENCODING = \'(.*)\'/', $line, $matches)) {
+				$output .= "CREATE DATABASE `$matches[1]` DEFAULT CHARACTER SET $matches[2];\n\n";
+			}
 		}
 
 		if (substr($line, 0, 8) == '\\connect') {
 			$matches = array();
-			preg_match('/connect ([a-zA-Z0-9_]*)/', $line, $matches);
-			$output .= "USE `$matches[1]`;\n\n";
+			if (preg_match('/connect ([a-zA-Z0-9_]*)/', $line, $matches)) {
+				$output .= "USE `$matches[1]`;\n\n";
+			}
 		}
 
 		if (substr($line, 0, 5) == 'COPY ') {

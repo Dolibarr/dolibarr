@@ -10,6 +10,7 @@
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2026       Pierre Ardoin               <developpeur@lesmetiersdubatiment.fr>
  * Copyright (C) 2026       Alexandre Spangaro          <alexandre@inovea-conseil.com>
+ * Copyright (C) 2026       Joachim Kueter              <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -184,7 +185,7 @@ if ($action == 'specimen') {  // For orders
 	include_once DOL_DOCUMENT_ROOT.'/core/modules/modFournisseur.class.php';
 	$newmodule = new modFournisseur($db);
 
-	if ($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) {
+	if (getDolGlobalString('SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED')) {
 		// clear default rights array
 		$newmodule->rights = array();
 		// add new right
@@ -235,8 +236,6 @@ $linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore
 
 print load_fiche_titre($langs->trans("SuppliersSetup"), $linkback, 'title_setup');
 
-print "<br>";
-
 if (getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 	$head = supplier_order_admin_prepare_head();
 } else {
@@ -251,7 +250,7 @@ print dol_get_fiche_head($head, 'order', $langs->trans("Suppliers"), -1, 'compan
 $commande = new CommandeFournisseur($db);
 $commande->initAsSpecimen();
 
-printNumberingModuleList('supplier_order', 'mod_commande_fournisseur_', 'COMMANDE_SUPPLIER_ADDON_NUMBER', $langs->trans("OrdersNumberingModules"), $commande);
+printNumberingModuleList('supplier_order', 'mod_commande_fournisseur_', 'COMMANDE_SUPPLIER_ADDON_NUMBER', $langs->trans("SupplierOrdersNumberingModules"), $commande);
 
 print '<br>';
 
@@ -420,7 +419,7 @@ foreach ($substitutionarray as $key => $val) {
 $htmltext .= '</i>';
 
 print '<tr class="oddeven"><td colspan="2">';
-print $form->textwithpicto($langs->trans("FreeLegalTextOnOrders"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
+print $form->textwithpicto($langs->trans("FreeLegalTextOnSupplierOrders"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename = 'SUPPLIER_ORDER_FREE_TEXT';
 if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
 	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
@@ -463,6 +462,12 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowExternalDownload").'</td>';
 print '<td class="left" colspan="2">';
 print ajax_constantonoff('SUPPLIER_ORDER_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0, 2, 0, 1);
+print '</td></tr>';
+
+// Propose to update the supplier price and the cost price of the products when placing the order
+print '<tr class="oddeven"><td>'.$langs->trans("SupplierOrderUpdateBuyingPriceWhenOrdering").'</td>';
+print '<td colspan="2">';
+print ajax_constantonoff('SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_ON_ORDER');
 print '</td></tr>';
 
 // Notifications

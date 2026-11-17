@@ -74,6 +74,7 @@ InterLineDesc=Περιγραφή γραμμής παρέμβασης
 RepeatableIntervention=Πρότυπο παρέμβασης
 ToCreateAPredefinedIntervention=Για να δημιουργήσετε μια προκαθορισμένη ή επαναλαμβανόμενη παρέμβαση, δημιουργήστε μια κοινή παρέμβαση και μετατρέψτε την σε πρότυπο παρέμβασης
 ConfirmReopenIntervention=Είστε σίγουροι ότι θέλετε να ανοίξετε ξανά την παρέμβαση <b> %s </b>;
+ConfirmCancelIntervention=Είστε σίγουροι ότι θέλετε να ακυρώσετε την παρέμβαση <b>%s</b>;
 GenerateInter=Δημιουργία παρέμβασης
 FichinterNoContractLinked=Η παρέμβαση %s έχει δημιουργηθεί χωρίς συνδεδεμένο συμβόλαιο.
 ErrorFicheinterCompanyDoesNotExist=Η εταιρεία δεν υπάρχει. Δεν έχει δημιουργηθεί παρέμβαση.

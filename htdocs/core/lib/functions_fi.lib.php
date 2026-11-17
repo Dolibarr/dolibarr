@@ -39,6 +39,12 @@ function dolFICalculatePaymentReference($invoice_number, $statut, $use_rf)
 {
 	if ($statut >= 1) {
 		$invoice_number = preg_replace('/[^0-9]/', '', $invoice_number); // Keep only numbers
+		// Without any digit every such value would get the same reference 0000,
+		// so a bank could no longer tell the payments apart.
+		if ($invoice_number === '') {
+			dol_syslog('dolFICalculatePaymentReference: no digit in the base, no reference generated', LOG_WARNING);
+			return '';
+		}
 		$invoice_number = ltrim($invoice_number, '0'); // Remove leading zeros
 		// A finnish reference is 4 to 20 characters, check digit included, so the base
 		// is 3 to 19 digits. Leading zeros do not change the weighted sum, so padding

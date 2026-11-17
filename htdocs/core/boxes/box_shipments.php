@@ -52,7 +52,7 @@ class box_shipments extends ModeleBoxes
 
 		$this->hidden = !$user->hasRight('expedition', 'lire');
 
-		$this->urltoaddentry = DOL_URL_ROOT.'/expedition/card.php?action=create2';
+		$this->urltoaddentry = DOL_URL_ROOT.'/expedition/card.php?action=create';
 		$this->msgNoRecords = 'NoRecordedShipments';
 	}
 

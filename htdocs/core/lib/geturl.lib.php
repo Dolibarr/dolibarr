@@ -57,7 +57,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	$PROXY_USER = getDolGlobalString('MAIN_PROXY_USER');
 	$PROXY_PASS = getDolGlobalString('MAIN_PROXY_PASS');
 
-	dol_syslog("getURLContent postorget=".$postorget." URL=".$url);
+	dol_syslog("getURLContent postorget=".$postorget." URL=".maskSecretsForLog($url));
 	if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
 		dol_syslog("getURLContent postorget=".$postorget." URL=".$url." json_encode(param)=".json_encode($param), LOG_DEBUG, 0, '_curl');
 	}
@@ -243,7 +243,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	//if USE_PROXY constant set at begin of this method.
 	if ($USE_PROXY) {
-		dol_syslog("getURLContent set proxy to ".$PROXY_HOST.":".$PROXY_PORT." - ".$PROXY_USER.":".$PROXY_PASS);
+		dol_syslog("getURLContent set proxy to ".$PROXY_HOST.":".$PROXY_PORT." - ".$PROXY_USER.":".($PROXY_PASS ? '****' : ''));
 		//curl_setopt ($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP); // Curl 7.10
 		curl_setopt($ch, CURLOPT_PROXY, $PROXY_HOST.":".$PROXY_PORT);
 		if ($PROXY_USER) {
@@ -402,7 +402,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	$request = curl_getinfo($ch, CURLINFO_HEADER_OUT); // Reading of request must be done after sending request
 
-	dol_syslog("getURLContent request without content body=".$request);
+	dol_syslog("getURLContent request without content body=".maskSecretsForLog((string) $request));
 	if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
 		// This may contains binary data, so we don't output response by default.
 		dol_syslog("getURLContent request without body=".$request, LOG_DEBUG, 0, '_curl');
@@ -490,7 +490,7 @@ function removeCredentialHeaders($headers)
 		return [];
 	}
 
-	$credentialheaders = ['authorization', 'proxy-authorization', 'cookie', 'x-api-key', 'api-key', 'apikey', 'x-auth-token', 'x-access-token', 'x-goog-api-key', 'dolapikey'];
+	$credentialheaders = getCredentialHeaderNames();
 
 	$ret = [];
 	foreach ($headers as $header) {
@@ -502,6 +502,38 @@ function removeCredentialHeaders($headers)
 	}
 
 	return $ret;
+}
+
+/**
+ * Return the names (lower case) of the HTTP request headers that carry a credential.
+ *
+ * @return	string[]	Array of header names
+ */
+function getCredentialHeaderNames()
+{
+	return ['authorization', 'proxy-authorization', 'cookie', 'x-api-key', 'api-key', 'apikey', 'x-auth-token', 'x-access-token', 'x-goog-api-key', 'dolapikey', 'client-secret'];
+}
+
+/**
+ * Mask the secrets (API keys, tokens, passwords...) found into an URL or into the header of a HTTP request, so it can be
+ * written into the logs. Only the first 3 characters of each secret are kept.
+ * Example: 'https://maps.googleapis.com/maps/api/geocode/json?address=x&key=AIzaSyXXX' => '...&key=AIz...'
+ *
+ * @param	string	$string		URL, or header of a HTTP request (one header per line)
+ * @return	string				Same string with secrets masked
+ */
+function maskSecretsForLog($string)
+{
+	// Parameters of the query string (into an URL or into the first line of a request header)
+	$string = (string) preg_replace('/([?&](?:[a-z0-9_.-]*(?:key|token|secret|password|passwd|pwd|signature)|pass)=[^&#\s]{0,3})[^&#\s]*/i', '$1...', $string);
+
+	// Header lines carrying a credential
+	$headernames = implode('|', array_map(function (string $name): string {
+		return preg_quote($name, '/');
+	}, getCredentialHeaderNames()));
+	$string = (string) preg_replace('/^((?:'.$headernames.')[ \t]*:[ \t]*[^\r\n]{0,3})[^\r\n]*/im', '$1...', $string);
+
+	return $string;
 }
 
 
@@ -544,6 +576,39 @@ function resolveDns($hosttocheck)
 
 
 /**
+ * Return the IPv4 address carried by an IPv6 address, if any (the IPv6 address is then a way to reach this IPv4 address).
+ * Covers IPv4-mapped ::ffff:a.b.c.d, IPv4-compatible ::a.b.c.d, NAT64 64:ff9b::/96 and 6to4 2002::/16.
+ *
+ * @param	string	$ip		IP to analyse
+ * @return	string			The IPv4 address (like '127.0.0.1') or '' if $ip is not an IPv6 address that carries an IPv4 address
+ */
+function getIPv4EmbeddedInIPv6($ip)
+{
+	if (strpos($ip, ':') === false) {
+		return '';
+	}
+	// Native strlen()/substr() are used on purpose: $packed is binary data, not a text string.
+	$packed = @inet_pton($ip);
+	if ($packed === false || strlen($packed) != 16) {
+		return '';
+	}
+
+	$ipv4bytes = '';
+	if (substr($packed, 0, 10) === str_repeat("\x00", 10) && substr($packed, 10, 2) === "\xff\xff") {
+		$ipv4bytes = substr($packed, 12, 4);	// ::ffff:0:0/96 IPv4-mapped
+	} elseif (substr($packed, 0, 12) === str_repeat("\x00", 12) && substr($packed, 12, 3) !== str_repeat("\x00", 3)) {
+		$ipv4bytes = substr($packed, 12, 4);	// ::/96 IPv4-compatible (:: and ::1 are excluded, filter_var() knows them as reserved)
+	} elseif (substr($packed, 0, 12) === "\x00\x64\xff\x9b".str_repeat("\x00", 8)) {
+		$ipv4bytes = substr($packed, 12, 4);	// 64:ff9b::/96 NAT64
+	} elseif (substr($packed, 0, 2) === "\x20\x02") {
+		$ipv4bytes = substr($packed, 2, 4);		// 2002::/16 6to4
+	}
+
+	return ($ipv4bytes !== '' ? (string) inet_ntop($ipv4bytes) : '');
+}
+
+
+/**
  * Is IP allowed
  *
  * @param 	string	$iptocheck		IP to check
@@ -552,10 +617,23 @@ function resolveDns($hosttocheck)
  */
 function isIPAllowed($iptocheck, $localurl)
 {
+	// An IPv6 that carries an IPv4 (like ::ffff:127.0.0.1) reaches this IPv4, but filter_var() does not see it as private or reserved.
+	// So checks are done on the carried IPv4.
+	$embeddedipv4 = getIPv4EmbeddedInIPv6($iptocheck);
+	if ($embeddedipv4 !== '') {
+		$iptocheck = $embeddedipv4;
+	}
+
 	if ($localurl == 0) {	// Only external url allowed (dangerous, may allow to get malware)
 		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
-			// Deny ips like 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 0.0.0.0/8, 169.254.0.0/16, 127.0.0.0/8 et 240.0.0.0/4, ::1/128, ::/128, ::ffff:0:0/96, fe80::/10...
+			// Deny ips like 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 0.0.0.0/8, 169.254.0.0/16, 127.0.0.0/8 et 240.0.0.0/4, ::1/128, ::/128, fe80::/10...
 			$errormsg = 'Error bad hostname IP (private or reserved range). Must be an external URL.';
+			return $errormsg;
+		}
+		// Ranges not known as reserved by filter_var(): shared address space 100.64.0.0/10 (carriers, clouds) and benchmarking 198.18.0.0/15.
+		$iplong = ip2long($iptocheck);
+		if ($iplong !== false && ((($iplong & 0xFFC00000) === 0x64400000) || (($iplong & 0xFFFE0000) === 0xC6120000))) {
+			$errormsg = 'Error bad hostname IP (shared or benchmarking range). Must be an external URL.';
 			return $errormsg;
 		}
 		if (!empty($_SERVER["SERVER_ADDR"]) && $iptocheck == $_SERVER["SERVER_ADDR"]) {

@@ -1,6 +1,7 @@
 #!/usr/bin/env php
 <?php
 /* Copyright (C) 2016 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,8 +97,8 @@ $tables = array(
 	'bank' => array(0 => 'datev', 1 => 'dateo'),
 	'commande_fournisseur' => array(0 => 'date_commande', 1 => 'date_valid', 3 => 'date_creation', 4 => 'date_approve', 5 => 'date_approve2', 6 => 'date_livraison'),
 	'supplier_proposal' => array(0 => 'datec', 1 => 'date_valid', 2 => 'date_cloture'),
-	'expensereport' => array(0 => 'date_debut', 1 => 'date_fin', 2 => 'date_create', 3 => 'date_valid', 4 => 'date_approve', 5 => 'date_refuse', 6 => 'date_cancel'),
-	'holiday' => array(0 => 'date_debut', 1 => 'date_fin', 2 => 'date_create', 3 => 'date_valid', 5 => 'date_refuse', 6 => 'date_cancel'),
+	'expensereport' => array(0 => 'date_debut', 1 => 'date_fin', 2 => 'date_creation', 3 => 'date_valid', 4 => 'date_approve', 5 => 'date_refuse', 6 => 'date_cancel'),
+	'holiday' => array(0 => 'date_debut', 1 => 'date_fin', 2 => 'date_creation', 3 => 'date_valid', 5 => 'date_refuse', 6 => 'date_cancel'),
 	'ticket' => array(0 => 'datec', 1 => 'date_read', 2 => 'date_close')
 );
 

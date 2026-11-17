@@ -74,6 +74,7 @@ InterLineDesc=Serviceauftragsposition Beschreibung
 RepeatableIntervention=Vorlage für Serviceauftrag
 ToCreateAPredefinedIntervention=Für einen vordefinierten oder wiederkehrenden Serviceauftrag erstellen Sie zunächst einen gemeinsamen Serviceauftrag und konvertieren diesen anschließend in eine Vorlage
 ConfirmReopenIntervention=Möchten Sie den Serviceauftrag <b>%s</b> wieder öffnen?
+ConfirmCancelIntervention=Möchten Sie den Serviceauftrag <b>%s</b> wirklich stornieren?
 GenerateInter=Serviceauftrag erstellen
 FichinterNoContractLinked=Der Serviceauftrag %s wurde ohne verknüpften Vertrag erstellt.
 ErrorFicheinterCompanyDoesNotExist=Unternehmen existiert nicht. Serviceauftrag wurde nicht erstellt.

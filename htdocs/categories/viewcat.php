@@ -160,6 +160,11 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {	// Test on permission n
 		$tmpobject = new User($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'user';
+	} elseif ($type == Categorie::TYPE_WAREHOUSE && $user->hasRight('stock', 'creer')) {
+		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+		$tmpobject = new Entrepot($db);
+		$result = $tmpobject->fetch($removeelem);
+		$elementtype = 'warehouse';
 	} elseif ($type == Categorie::TYPE_TICKET && $user->hasRight('ticket', 'write')) {
 		require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 		$tmpobject = new Ticket($db);
@@ -339,11 +344,11 @@ $title .= ' ('.$langs->trans(empty(Categorie::$MAP_TYPE_TITLE_AREA[$type]) ? ucf
 $head = categories_prepare_head($object, $type);
 print dol_get_fiche_head($head, 'card', $langs->trans($title), -1, 'category');
 
-$backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/categories/categorie_list.php?leftmenu=cat&type='.urlencode($type));
+$backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : dolBuildUrl(DOL_URL_ROOT.'/categories/categorie_list.php', ['leftmenu' => 'cat', 'type' => $type]));
 $linkback = '<a href="'.dol_sanitizeUrl($backtolist).'">'.$langs->trans("BackToList").'</a>';
 $object->next_prev_filter = 'type:=:'.((int) $object->type);
 $object->ref = $object->label;
-$morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/categorie_list.php?leftmenu=cat&type='.urlencode($type).'">'.$langs->trans("Root").'</a>';
+$morehtmlref = '<br><div class="refidno"><a href="'.dolBuildUrl(DOL_URL_ROOT.'/categories/categorie_list.php', ['leftmenu' => 'cat', 'type' => $type]).'">'.$langs->trans("Root").'</a>';
 $morehtmlref .= ' > ';
 $ways = $object->print_all_ways("auto", '', 1, 0, 1);
 foreach ($ways as $way) {
