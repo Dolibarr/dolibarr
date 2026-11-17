@@ -47,9 +47,40 @@ function datapolicyAdminPrepareHead()
 	$head[$h][2] = 'settings';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT."/datapolicy/admin/retention.php";
+	$head[$h][1] = $langs->trans("DocumentRetention");
+	$head[$h][2] = 'retention';
+	$h++;
+
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'datapolicy');
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'datapolicy', 'remove');
 
 	return $head;
+}
+
+/**
+ * Date until which a file should be kept, when the module Data privacy is enabled and a number of years to keep
+ * business documents is set (DATAPOLICY_DOCUMENT_RETENTION_YEARS): the end of the fiscal year of the date of the
+ * file, plus this number of years. Counting from the end of the fiscal year gives a date that is never earlier than
+ * the usual legal rules (for example 5 years after the record was made, or 10 years after the end of the fiscal year).
+ * It is a hint only: nothing is deleted or blocked.
+ *
+ * @param	int		$filedate	Date of the file (timestamp)
+ * @return	int					Date until which the file should be kept (timestamp), or 0 if not used
+ */
+function datapolicyGetFileKeepUntilDate($filedate)
+{
+	$years = getDolGlobalInt('DATAPOLICY_DOCUMENT_RETENTION_YEARS');
+	if (!isModEnabled('datapolicy') || $years <= 0 || empty($filedate)) {
+		return 0;
+	}
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+	$startmonth = max(1, min(12, getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1)));
+	$endmonth = ($startmonth == 1 ? 12 : $startmonth - 1);
+	$tmparray = dol_getdate((int) $filedate);
+	$endyear = ((int) $tmparray['mon'] > $endmonth ? (int) $tmparray['year'] + 1 : (int) $tmparray['year']);
+
+	return (int) dol_get_last_day($endyear + $years, $endmonth);
 }
