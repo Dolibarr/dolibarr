@@ -557,6 +557,11 @@ class Fichinter extends CommonObject
 				// End call triggers
 			}
 
+			if ($error) {
+				$this->db->rollback();
+				return -1;
+			}
+
 			$this->db->commit();
 			return 1;
 		} else {
