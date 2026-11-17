@@ -3085,19 +3085,8 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	} elseif ((int) $entity != (int) $conf->entity) {
 		// Permissions tested are the ones of the user into the session entity $conf->entity, so the target $entity is kept only if
 		// objects of the modulepart into $entity are visible from $conf->entity (shared entities). If not, we use $conf->entity.
-		$elementforentity = preg_replace('/^apercu/', '', $modulepart);
-		$elementaliasesforentity = array(
-			'propale' => 'propal', 'company' => 'societe', 'produit' => 'product', 'service' => 'product', 'produit|service' => 'product',
-			'product_batch' => 'product', 'produitlot' => 'product', 'graph_product' => 'product', 'movement' => 'stock', 'mouvement' => 'stock',
-			'project_task' => 'project', 'fichinter' => 'intervention', 'ficheinter' => 'intervention', 'commande_fournisseur' => 'supplier_order',
-			'facture_fournisseur' => 'supplier_invoice', 'memberphoto' => 'adherent', 'bank' => 'bank_account', 'actions' => 'agenda'
-		);
-		if (preg_match('/^productstats_/i', $elementforentity)) {
-			$elementforentity = 'product';
-		} elseif (!empty($elementaliasesforentity[$elementforentity])) {
-			$elementforentity = $elementaliasesforentity[$elementforentity];
-		}
-		if (!in_array((int) $entity, array_map('intval', explode(',', getEntity($elementforentity))), true)) {
+		$elementpropforentity = getElementProperties(preg_replace('/^apercu/', '', $modulepart));
+		if (!in_array((int) $entity, array_map('intval', explode(',', getEntity($elementpropforentity['element']))), true)) {
 			dol_syslog("dol_check_secure_access_document entity ".$entity." is not visible from entity ".$conf->entity." for modulepart=".$modulepart.", so we use entity ".$conf->entity, LOG_WARNING);
 			$entity = (int) $conf->entity;
 		}

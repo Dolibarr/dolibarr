@@ -223,7 +223,7 @@ class modFicheinter extends DolibarrModules
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		}
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid';
-		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('intervention').')';
+		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('fichinter').')';
 		if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' AND (f.fk_soc IS NULL OR sc.fk_user = '.((int) $user->id).')';
 		}

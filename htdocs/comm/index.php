@@ -561,6 +561,8 @@ if ((isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
  * Draft interventions
  */
 if (isModEnabled('intervention') && is_object($fichinterstatic)) {
+	$fichinter_static = new Fichinter($db);
+
 	$sql = "SELECT f.rowid, f.ref, s.nom as name, f.fk_statut, f.duree as duration";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta as code_compta_client, s.client";
@@ -572,7 +574,7 @@ if (isModEnabled('intervention') && is_object($fichinterstatic)) {
 	if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
-	$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
+	$sql .= " WHERE f.entity IN (".getEntity($fichinter_static->element).")";
 	$sql .= " AND f.fk_soc = s.rowid";
 	$sql .= " AND f.fk_statut = 0";
 	if ($socid) {
