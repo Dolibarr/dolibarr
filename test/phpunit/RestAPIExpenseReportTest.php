@@ -321,13 +321,14 @@ class RestAPIExpenseReportTest extends AbstractRestAPITest
 	}
 
 	/**
-	 * Create an internal user whose supervisor is the admin user. The user is deleted at end of the test.
+	 * Create an internal user whose supervisor is the API user. The user is deleted at end of the test.
 	 *
-	 * @param string							$test	Text to be added to output
-	 * @param array<array{0:string,1:string}>	$rights	List of array(module, perms) to add to the user
-	 * @return array{0:int,1:string}					Id and API key of the user
+	 * @param string							$test			Text to be added to output
+	 * @param int								$apiuserid		Id of the user of the API key, set as supervisor
+	 * @param array<array{0:string,1:string}>	$rights			List of array(module, perms) to add to the user
+	 * @return array{0:int,1:string}							Id and API key of the user
 	 */
-	private function createUserOfAdmin($test, $rights)
+	private function createSubordinateOfApiUser($test, $apiuserid, $rights)
 	{
 		global $db, $user;
 
@@ -337,7 +338,8 @@ class RestAPIExpenseReportTest extends AbstractRestAPITest
 		$tmpuser->login = 'testrestexpensereport'.mt_rand(0, 99999999);
 		$tmpuser->lastname = $tmpuser->login;
 		$tmpuser->entity = 1;
-		$tmpuser->fk_user = $user->id;		// So the user is a subordinate of the admin user
+		// The supervisor must be the user of the API key (login of setUp()), not the user of the test class (id 1)
+		$tmpuser->fk_user = $apiuserid;
 
 		// The API server reads the user with its own connection, so it must be committed out of the transaction of the test class
 		$db->commit();
@@ -359,7 +361,7 @@ class RestAPIExpenseReportTest extends AbstractRestAPITest
 	}
 
 	/**
-	 * Create two subordinates of the admin user, and an expense report of the first one, validated by himself.
+	 * Create two subordinates of the API user, and an expense report of the first one, validated by himself.
 	 * The second user can read all expense reports, so only the per-user checks of cancel and settodraft refuse him.
 	 *
 	 * @param string	$test	Text to be added to output
@@ -367,8 +369,12 @@ class RestAPIExpenseReportTest extends AbstractRestAPITest
 	 */
 	private function createReportValidatedBySubordinate($test)
 	{
-		list($authorid, $authorkey) = $this->createUserOfAdmin($test, array(array('expensereport', 'lire'), array('expensereport', 'creer')));
-		list(, $otherkey) = $this->createUserOfAdmin($test, array(array('expensereport', 'lire'), array('expensereport', 'creer'), array('expensereport', 'readall')));
+		$result = $this->getUrl('users/info', $test, 'GET');
+		$apiuserid = (int) ($result['content']['id'] ?? 0);
+		$this->assertGreaterThan(0, $apiuserid, "$test Id of API user is not > 0");
+
+		list($authorid, $authorkey) = $this->createSubordinateOfApiUser($test, $apiuserid, array(array('expensereport', 'lire'), array('expensereport', 'creer')));
+		list(, $otherkey) = $this->createSubordinateOfApiUser($test, $apiuserid, array(array('expensereport', 'lire'), array('expensereport', 'creer'), array('expensereport', 'readall')));
 
 		$data = array(
 			"fk_user_author" => $authorid,
@@ -403,7 +409,7 @@ class RestAPIExpenseReportTest extends AbstractRestAPITest
 		$this->getUrl('expensereports/'.$id.'/cancel', "$test (other user)", 'POST', $data, 403, $otherkey);
 		$this->assertStatus($id, ExpenseReport::STATUS_VALIDATED, "$test (other user)");
 
-		// The supervisor of the author is not enough to cancel
+		// The API user, supervisor of the author, is not enough to cancel
 		$this->getUrl('expensereports/'.$id.'/cancel', "$test (supervisor)", 'POST', $data, 403);
 		$this->assertStatus($id, ExpenseReport::STATUS_VALIDATED, "$test (supervisor)");
 
@@ -432,7 +438,7 @@ class RestAPIExpenseReportTest extends AbstractRestAPITest
 		$this->getUrl('expensereports/'.$id.'/validate', "$test (validate again by author)", 'POST', array("notrigger" => 0), 0, $authorkey);
 		$this->assertStatus($id, ExpenseReport::STATUS_VALIDATED, $test);
 
-		// The admin user is the supervisor of the author
+		// The API user is the supervisor of the author
 		$this->getUrl('expensereports/'.$id.'/settodraft', "$test (supervisor)", 'POST', array(), 0);
 		$this->assertStatus($id, ExpenseReport::STATUS_DRAFT, "$test (supervisor)");
 	}
