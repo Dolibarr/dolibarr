@@ -43,12 +43,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 class Interventions extends DolibarrApi
 {
 	/**
-	 * @var string[]	Mandatory fields, checked when create and update object
+	 * @var string[]	Mandatory fields, checked when creating an intervention
 	 */
 	public static $FIELDS = array(
 		'socid',
-		'fk_project',
-		'description',
 	);
 
 	/**
@@ -274,7 +272,9 @@ class Interventions extends DolibarrApi
 	 * @phpstan-param	?array<string,string>	$request_data
 	 * @return			int						ID of created intervention
 	 *
-	 * @throws RestException
+	 * @throws	RestException	400		Mandatory field missing or parameter not allowed
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	500		Error when creating the intervention
 	 */
 	public function post($request_data = null)
 	{
@@ -984,7 +984,7 @@ class Interventions extends DolibarrApi
 
 
 	/**
-	 * Validate fields before create or update object
+	 * Validate fields before creating an intervention
 	 *
 	 * @param ?array<null|int|float|string> $data   Data to validate
 	 * @return array<string,null|int|float|string>
