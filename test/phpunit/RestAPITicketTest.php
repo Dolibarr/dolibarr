@@ -564,4 +564,72 @@ class RestAPITicketTest extends AbstractRestAPITest
 
 		$this->getUrl('tickets/999999999', $test, 'DELETE', null, 404);
 	}
+
+	/**
+	 * Link an external contact to a ticket, then link it again
+	 *
+	 * @return void
+	 */
+	public function testRestTicketPostContact()
+	{
+		$test = "Link an external contact to a ticket";
+
+		$ticket_id = $this->createTicket($test);
+		$result = $this->getUrl('contacts', $test, 'POST', array("lastname" => "testRestTicket".mt_rand()));
+		$contact_id = (int) $result['content'];
+		$this->assertGreaterThan(0, $contact_id, "$test Id of contact is not > 0");
+		array_push($this->objectstodelete, 'contacts/'.$contact_id);
+
+		$result = $this->getUrl('tickets/'.$ticket_id.'/contact/'.$contact_id.'/SUPPORTCLI', $test, 'POST', array("source" => "external"));
+		$this->assertEquals(200, $result['content']['success']['code'] ?? null, "$test Linking the external contact must succeed");
+		$this->assertContains($contact_id, $this->getTicketContactIds($test, $ticket_id, 'external'), "$test The external contact must be linked");
+
+		// Linking again the same contact with the same type is a conflict
+		$this->getUrl('tickets/'.$ticket_id.'/contact/'.$contact_id.'/SUPPORTCLI', $test, 'POST', array("source" => "external"), 409);
+	}
+
+	/**
+	 * Link a contact to a ticket that does not exist
+	 *
+	 * @return void
+	 */
+	public function testRestTicketPostContactUnknownTicket()
+	{
+		$test = "Link a contact to a ticket that does not exist";
+
+		$this->getUrl('tickets/999999999/contact/1/SUPPORTTEC', $test, 'POST', array("source" => "internal"), 404);
+	}
+
+	/**
+	 * Link a contact that does not exist to a ticket
+	 *
+	 * @return void
+	 */
+	public function testRestTicketPostContactUnknownContact()
+	{
+		$test = "Link a contact that does not exist to a ticket";
+
+		$ticket_id = $this->createTicket($test);
+
+		$this->getUrl('tickets/'.$ticket_id.'/contact/999999999/SUPPORTCLI', $test, 'POST', array("source" => "external"), 404);
+		$this->getUrl('tickets/'.$ticket_id.'/contact/999999999/SUPPORTTEC', $test, 'POST', array("source" => "internal"), 404);
+		$this->assertNotContains(999999999, $this->getTicketContactIds($test, $ticket_id, 'external'), "$test The external contact must not be linked");
+		$this->assertNotContains(999999999, $this->getTicketContactIds($test, $ticket_id, 'internal'), "$test The internal contact must not be linked");
+	}
+
+	/**
+	 * Link a contact to a ticket with a bad source or a contact type that does not exist
+	 *
+	 * @return void
+	 */
+	public function testRestTicketPostContactBadSourceOrType()
+	{
+		$test = "Link a contact to a ticket with a bad source or type";
+
+		$ticket_id = $this->createTicket($test);
+
+		$this->getUrl('tickets/'.$ticket_id.'/contact/1/SUPPORTTEC', $test, 'POST', array("source" => "badsource"), 400);
+		$this->getUrl('tickets/'.$ticket_id.'/contact/1/NOTATYPE', $test, 'POST', array("source" => "internal"), 400);
+		$this->assertNotContains(1, $this->getTicketContactIds($test, $ticket_id, 'internal'), "$test The internal contact must not be linked");
+	}
 }
