@@ -1222,6 +1222,7 @@ SwitchInEditModeToAddTranslation=Switch in edit mode to add translations for thi
 NotUsedForThisCustomer=Not used for this customer
 NotUsedForThisVendor=Not used for this vendor
 AmountMustBePositive=Amount must be positive
+AmountMustBeStrictlyPositive=Amount must be strictly positive
 ByStatus=By status
 InformationMessage=Information
 Used=Used

@@ -216,9 +216,14 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		$error++;
 		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST("email", "aZ09arobase"))."<br>\n";
 	}
-	if (!GETPOST('amount') || GETPOST('amount') < getDolGlobalInt('DONATION_MIN_AMOUNT')) {
+	$minamount = getDolGlobalInt('DONATION_MIN_AMOUNT');
+	if (!GETPOST('amount') || (float) price2num(GETPOST('amount', 'alpha')) <= 0 || GETPOST('amount') < $minamount) {
 		$error++;
-		$errmsg .= $langs->trans("ErrorFieldMinimumAmount", getDolGlobalInt('DONATION_MIN_AMOUNT'))."<br>\n";
+		if ($minamount > 0) {
+			$errmsg .= $langs->trans("ErrorFieldMinimumAmount", $minamount)."<br>\n";
+		} else {
+			$errmsg .= $langs->trans("AmountMustBeStrictlyPositive")."<br>\n";
+		}
 	}
 
 	// Check Captcha code if is enabled
@@ -397,7 +402,8 @@ print '<div align="center">';
 print '<div id="divsubscribe">';
 
 print '<div class="center subscriptionformhelptext opacitymedium justify">';
-print $langs->trans("NewDonationDesc", getDolGlobalString("MAIN_INFO_SOCIETE_MAIL"))."<br>\n";
+print '<br>';
+print $langs->trans("NewDonationDesc", getDolGlobalString("MAIN_INFO_SOCIETE_NOM"))."<br>\n";
 
 print '</div>';
 
@@ -515,14 +521,15 @@ if (!$action || $action == 'create') {
 	print $form->select_country($country_id, 'country_id');
 	print '</td></tr>';
 
-	// State
-	if (!getDolGlobalString('SOCIETE_DISABLE_STATE')) {
-		print '<tr id="trstate"><td>'.$langs->trans('State').'</td><td>';
-		if ($country_code) {
+	// State (row shown only when a country is selected and this country has at least one state)
+	if (!getDolGlobalString('SOCIETE_DISABLE_STATE') && $country_code) {
+		$selectstate = $formcompany->select_state(GETPOSTINT("state_id"), $country_code);
+		if (preg_match('/<option value="[1-9]/', $selectstate)) {
+			print '<tr id="trstate"><td>'.$langs->trans('State').'</td><td>';
 			print img_picto('', 'state', 'class="pictofixedwidth paddingright"');
-			print $formcompany->select_state(GETPOSTINT("state_id"), $country_code);
+			print $selectstate;
+			print '</td></tr>';
 		}
-		print '</td></tr>';
 	}
 
 	// Other attributes
@@ -536,25 +543,24 @@ if (!$action || $action == 'create') {
 	print '<tr><td><label for="public">'.$form->textwithpicto($langs->trans("donationPublic"), $publiclabel).'</label></td>';
 	print '<td><input type="checkbox" name="public" id="public"></td></tr>'."\n";
 
-	if (getDolGlobalString('DONATION_NEWFORM_PAYONLINE')) {
-		$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');
+	// Amount (always shown because it is mandatory, whatever is the online payment option)
+	$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');
 
-		// - If a min is set, we take it into account
-		$amount = max(0, (float) $amount, (float) getDolGlobalInt("DONATION_MIN_AMOUNT"));
+	// - If a min is set, we take it into account
+	$amount = max(0, (float) $amount, (float) getDolGlobalInt("DONATION_MIN_AMOUNT"));
 
-		// Clean the amount
-		$amount = price2num($amount);
-		$showedamount = $amount > 0 ? $amount : 0;
-		print '<tr><td>'.$langs->trans("donationAmount");
-		print ' <span>*</span></td><td class="nowrap">';
+	// Clean the amount
+	$amount = price2num($amount);
+	$showedamount = $amount > 0 ? $amount : 0;
+	print '<tr><td>'.$langs->trans("donationAmount");
+	print ' <span>*</span></td><td class="nowrap">';
 
-		print '<input type="text" name="amount" id="amount" class="flat amount width50" value="'.$showedamount.'">';
-		print ' '.$langs->trans("Currency".getDolCurrency()).'<span class="opacitymedium hideifautoturnover"> - ';
-		print $langs->trans("AnyAmountForDonation");
-		print '</span>';
+	print '<input type="text" name="amount" id="amount" class="flat amount width50" value="'.$showedamount.'">';
+	print ' '.$langs->trans("Currency".getDolCurrency()).'<span class="opacitymedium hideifautoturnover"> - ';
+	print $langs->trans("AnyAmountForDonation");
+	print '</span>';
 
-		print '</td></tr>';
-	}
+	print '</td></tr>';
 
 	// Comments
 	print '<tr>';
