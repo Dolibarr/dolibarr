@@ -278,7 +278,7 @@ class Mo extends CommonObject
 	 *            when generating the consume/produce lines, because the user asked to generate a child MO
 	 *            for them instead (see mo_card.php "Generate Child MO"). A single MoLine anchored on the
 	 *            sub-assembly product is created for these lines instead of recursing into the sub-BOM.
-	 *			  one -1 value in the array : none line (with a sub-BOM) will be flattened into its raw materials (used by GpaoPlus)
+	 *			  one -1 value in the array : none line (with a sub-BOM) will be flattened into its raw materials
 	 */
 	public $noFlattenBomLineIds = array();
 
