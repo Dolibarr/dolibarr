@@ -1911,7 +1911,9 @@ class Mo extends CommonObject
 		print '<td class="center">'.$form->textwithpicto($langs->trans("VirtualStock"), $langs->trans("VirtualStockDesc")).'</td>';
 		print '<td class="center">'.$langs->trans('QtyFrozen').'</td>';
 		print '<td class="center">'.$langs->trans('DisableStockChange').'</td>';
-		print '<td class="center">'.$langs->trans('MoChildGenerate').'</td>';
+		print '<td class="center">'.$langs->trans('MoChildGenerate');
+		if (getDolGlobalString('BOM_SUB_BOM')) print ' <input type="checkbox" name="bomlineid[]" id="selallbomlines" value="-1" checked="checked" title="'.$langs->trans("MoAllChildsGenerate").'">';
+		print '</td>';
 		//print '<td class="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
 		//print '<td class="center"></td>';
 		print '</tr>';
