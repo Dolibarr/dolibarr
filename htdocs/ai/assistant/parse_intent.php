@@ -374,7 +374,7 @@ try {
 	}
 
 	// Privacy (Name Resolution & Masking)
-	$langs->loadLangs(array("main", "bills", "orders", "propal", "supplier_invoice", "supplier_order", "projects", "other"));
+	$langs->loadLangs(array("main", "bills", "orders", "propal", "companies", "projects", "other"));
 
 	// Translation key of Words we want to block in any language.
 	$blockKeys = [

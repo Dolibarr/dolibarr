@@ -629,7 +629,7 @@ class Loan extends CommonObject
 		global $langs;
 
 		// Load translation files required by the page
-		$langs->loadLangs(array("customers", "bills"));
+		$langs->loadLangs(array("companies", "bills"));
 
 		unset($this->labelStatus); // Force to reset the array of status label, because label can change depending on parameters
 		// Always true because of 'unset':

@@ -800,3 +800,4 @@ ConfirmSplitDiscountBeforeApply=The selected credit (<b>%s</b>) is larger than t
 InvoiceRateRealigned=Invoice exchange rate aligned on the real rate (%s)
 
 SituationWeightedProgressHelp=Progress weighted by line amounts excluding tax at 100%, after line discounts. Cumulative in legacy mode; invoice progress in progressive mode. Total rows show the cumulated amount billed excluding tax divided by the latest situation's amount at 100%. A dash means the net amount at 100% is zero or unavailable.
+CanBeChangedWhenMakingInvoice=Can be changed when creating the invoice

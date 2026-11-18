@@ -4349,7 +4349,7 @@ class User extends CommonObject
 	{
 		global $langs;
 
-		$langs->load("user");
+		$langs->load("users");
 
 		// Set the '$modele' to the name of the document template (model) to use
 		if (!dol_strlen($modele)) {

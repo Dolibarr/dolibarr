@@ -7615,7 +7615,7 @@ class Form
 
 		$formproject = new FormProjets($this->db);
 
-		$langs->load("project");
+		$langs->load("projects");
 		if ($htmlname != "none") {
 			$out .= '<form method="post" action="' . $page . '">';
 			$out .= '<input type="hidden" name="action" value="classin">';

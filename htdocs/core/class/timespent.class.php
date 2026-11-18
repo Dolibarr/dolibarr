@@ -851,7 +851,7 @@ class TimeSpent extends CommonObject
 		$result = 0;
 		$includedocgeneration = 0;
 
-		$langs->load("timespent@timespent");
+		$langs->load("projects");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'standard_timespent';

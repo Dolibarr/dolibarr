@@ -73,7 +73,7 @@ class ActionsAi
 		if (!getDolGlobalInt('AI_EMAILCLEANER_EXPOSE_OPERATION', 0)) return 0;
 
 		$arrayoftypes = (!empty($parameters['arrayoftypes']) && is_array($parameters['arrayoftypes'])) ? $parameters['arrayoftypes'] : array();
-		$langs->load('ai');
+		$langs->load('admin');
 		$arrayoftypes['hook_ai_emailcleaner'] = $langs->trans('AIEmailCleanerOperation');
 		$this->results = $arrayoftypes;
 

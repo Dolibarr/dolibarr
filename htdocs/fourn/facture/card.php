@@ -77,9 +77,6 @@ if (isModEnabled('accounting')) {
 }
 
 $langs->loadLangs(array('bills', 'compta', 'suppliers', 'companies', 'products', 'banks', 'admin'));
-if (isModEnabled('incoterm')) {
-	$langs->load('incoterm');
-}
 
 $id = (GETPOSTINT('facid') ? GETPOSTINT('facid') : GETPOSTINT('id'));
 
