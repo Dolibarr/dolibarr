@@ -287,4 +287,102 @@ class RestAPIExpenseReportTest extends AbstractRestAPITest
 		$this->getUrl('expensereports/'.$id.'/validate', $test, 'POST', array("notrigger" => 0));
 		$this->assertStatus($id, ExpenseReport::STATUS_VALIDATED, $test);
 	}
+
+	/**
+	 * Get the id of a fee type that exists in old dictionary data
+	 *
+	 * @param string	$test	Text to be added to output
+	 * @return int				Id of the fee type TF_LUNCH
+	 */
+	private function getFeeTypeId($test)
+	{
+		global $db;
+
+		$resql = $db->query("SELECT id FROM ".MAIN_DB_PREFIX."c_type_fees WHERE code = 'TF_LUNCH'");
+		$this->assertNotFalse($resql, "$test Query of fee type must succeed");
+		$obj = $db->fetch_object($resql);
+		$feetypeid = (int) ($obj->id ?? 0);
+		$this->assertGreaterThan(0, $feetypeid, "$test Fee type TF_LUNCH must exist");
+
+		return $feetypeid;
+	}
+
+	/**
+	 * Updating a line with only some fields keeps the other fields of the line
+	 *
+	 * @return void
+	 */
+	public function testRestExpenseReportPutLinePartial()
+	{
+		global $db;
+
+		$test = "Update only the quantity of an expense report line";
+
+		$feetypeid = $this->getFeeTypeId($test);
+
+		$id = $this->createExpenseReport($test);
+
+		$data = array(
+			"date" => dol_now(),
+			"fk_c_type_fees" => $feetypeid,
+			"qty" => 1,
+			"value_unit" => 12.5,
+			"vatrate" => 10,
+			"comments" => "Line created by ".get_class($this),
+		);
+		$result = $this->getUrl('expensereports/'.$id.'/line', $test, 'POST', $data);
+		$lineid = (int) $result['content'];
+		$this->assertGreaterThan(0, $lineid, "$test Id of line is not > 0");
+
+		$before = new ExpenseReportLine($db);
+		$this->assertGreaterThan(0, $before->fetch($lineid), "$test Line must be found before update");
+
+		$this->getUrl('expensereports/'.$id.'/lines/'.$lineid, $test, 'PUT', array("qty" => 2));
+
+		$after = new ExpenseReportLine($db);
+		$this->assertGreaterThan(0, $after->fetch($lineid), "$test Line must be found after update");
+
+		$this->assertEquals(2, (float) $after->qty, "$test Quantity must be updated");
+		$this->assertEquals($feetypeid, (int) $after->fk_c_type_fees, "$test Fee type must not change");
+		$this->assertEquals(10, (float) $after->vatrate, "$test VAT rate must not change");
+		$this->assertEquals(12.5, (float) $after->value_unit, "$test Unit price must not change");
+		$this->assertEquals($before->dates, $after->dates, "$test Date must not change");
+		$this->assertEquals($before->comments, $after->comments, "$test Comment must not change");
+		$this->assertEquals(25, (float) $after->total_ttc, "$test Total with taxes must be recomputed");
+		$this->assertEqualsWithDelta(25 / 1.1, (float) $after->total_ht, 0.01, "$test Total without taxes must be recomputed");
+	}
+
+	/**
+	 * A line can not be updated through another expense report
+	 *
+	 * @return void
+	 */
+	public function testRestExpenseReportPutLineOfOtherReport()
+	{
+		global $db;
+
+		$test = "Update a line through another expense report";
+
+		$feetypeid = $this->getFeeTypeId($test);
+
+		$id = $this->createExpenseReport($test);
+		$otherid = $this->createExpenseReport($test);
+
+		$data = array(
+			"date" => dol_now(),
+			"fk_c_type_fees" => $feetypeid,
+			"qty" => 1,
+			"value_unit" => 12.5,
+			"vatrate" => 10,
+		);
+		$result = $this->getUrl('expensereports/'.$id.'/line', $test, 'POST', $data);
+		$lineid = (int) $result['content'];
+		$this->assertGreaterThan(0, $lineid, "$test Id of line is not > 0");
+
+		$this->getUrl('expensereports/'.$otherid.'/lines/'.$lineid, $test, 'PUT', array("qty" => 3), 404);
+
+		$line = new ExpenseReportLine($db);
+		$this->assertGreaterThan(0, $line->fetch($lineid), "$test Line must be found");
+		$this->assertEquals(1, (float) $line->qty, "$test Quantity must not change");
+	}
 }
