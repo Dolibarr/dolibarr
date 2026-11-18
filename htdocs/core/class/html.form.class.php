@@ -6380,10 +6380,11 @@ class Form
 	 *
 	 * @param string $selected Preselected ID
 	 * @param int $socid Company ID
+	 * @param int<0,1> $showfirstsituation 1=After an empty option (value -1), add the choice to create the first situation invoice of a new cycle (value 0)
 	 *
 	 * @return    string                     HTML select
 	 */
-	public function selectSituationInvoices($selected = '', $socid = 0)
+	public function selectSituationInvoices($selected = '', $socid = 0, $showfirstsituation = 0)
 	{
 		global $langs;
 
@@ -6402,7 +6403,9 @@ class Form
 
 		$nbSituationInvoiceForThirdparty = 0;
 
-		if ($resql && $this->db->num_rows($resql) > 0) {
+		if (!$resql) {
+			dol_syslog("Error sql=" . $sql . ", error=" . $this->db->lasterror(), LOG_ERR);
+		} elseif ($this->db->num_rows($resql) > 0) {
 			// Last seen cycle
 			$ref = 0;
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -6425,11 +6428,11 @@ class Form
 					}
 				}
 			}
-		} else {
-			dol_syslog("Error sql=" . $sql . ", error=" . $this->error, LOG_ERR);
 		}
 
-		if ($nbSituationInvoiceForThirdparty > 0) {
+		if ($showfirstsituation) {
+			$opt = '<option class="minwidth100" value="-1">&nbsp;</option><option class="minwidth100" value="0">'.$langs->trans('InvoiceFirstSituationAsk').'</option>'.$opt;
+		} elseif ($nbSituationInvoiceForThirdparty > 0) {
 			$opt = '<option class="minwidth100" value="" selected>&nbsp;</option>'.$opt;
 		} else {
 			$opt = '<option class="minwidth100" value="-1" selected>'.$langs->trans('NoSituations').'</option>';
@@ -10349,7 +10352,9 @@ class Form
 
 			// Set url and param to call to get json of the search results
 			$urlforajaxcall = DOL_URL_ROOT . '/core/ajax/selectobject.php';
-			$urloption = 'htmlname=' . urlencode($htmlname) . '&outjson=1&objectdesc=' . urlencode($objectdescorig) . (is_scalar($objectfield) ? '&objectfield='.urlencode($objectfield) : '') . ($sortfield ? '&sortfield=' . urlencode($sortfield) : '');
+			// Sign objectdesc so ajax/selectobject.php can refuse a filter or sort field forged by the client
+			$objectdeschash = hash_hmac('sha256', 'selectobject'.sanitizeVal($objectdescorig, 'alphanohtml'), $conf->file->instance_unique_id);
+			$urloption = 'htmlname=' . urlencode($htmlname) . '&outjson=1&objectdesc=' . urlencode($objectdescorig) . '&objectdeschash=' . urlencode($objectdeschash) . (is_scalar($objectfield) ? '&objectfield='.urlencode($objectfield) : '') . ($sortfield ? '&sortfield=' . urlencode($sortfield) : '');
 			//$urloption = 'htmlname=' . urlencode($htmlname) . '&outjson=1'.(is_scalar($objectfield) ? '&objectfield='.urlencode($objectfield) : '') . ($sortfield ? '&sortfield=' . urlencode($sortfield) : '');
 
 			// Hook 'selectForFormsListUrl' - Added to allow modules to modify the AJAX URL
@@ -11811,7 +11816,7 @@ class Form
 					'enabled' => isModEnabled('intervention'),
 					'perms' => 1,
 					'label' => 'LinkToIntervention',
-					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "fichinter as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('intervention') . ')',
+					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "fichinter as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('fichinter') . ')',
 				),
 				'supplier_proposal' => array(
 					'enabled' => isModEnabled('supplier_proposal'),

@@ -133,7 +133,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .bg-infobox-supplier_proposal, .bg-infobox-invoice_supplier, .bg-infobox-order_supplier {
 	<?php echo $prefix; ?>color: #599caf !important;
 }
-.bg-infobox-contrat, .bg-infobox-ticket{
+.bg-infobox-contrat, .bg-infobox-ticket, .bg-infobox-intervention{
 	<?php echo $prefix; ?>color: #46a676  !important;
 }
 .bg-infobox-bank_account{
@@ -515,7 +515,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .bg-infobox-order_supplier i.fa{
 	color: #40b0cf  !important;
 }
-.bg-infobox-contrat i.fa, .bg-infobox-ticket i.fa{
+.bg-infobox-contrat i.fa, .bg-infobox-ticket i.fa, .bg-infobox-intervention i.fa{
 	color: #20a68a  !important;
 }
 .bg-infobox-bank_account i.fa{
@@ -555,6 +555,9 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 .fa-dol-contrat:before {
 	content: "\f1e6";
+}
+.fa-dol-intervention:before {
+	content: "\f0f9";
 }
 .fa-dol-ticket:before {
 	content: "\f3ff";

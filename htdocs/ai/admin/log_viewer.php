@@ -527,7 +527,8 @@ if (!empty($arrayfields['cost']['checked'])) {
 // Status
 if (!empty($arrayfields['l.status']['checked'])) {
 	print '<td class="liste_titre center parentonrightofpage">';
-	print $form->selectarray('search_status', array('success' => $langs->trans("Success"), 'confirm' => $langs->trans("Confirm"), 'error' => $langs->trans("Error")), $search_status, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100 search_status width100 onrightofpage', 1);
+	$arrayofstatus = array('success' => $langs->trans("Success"), 'confirm' => $langs->trans("Confirm"), 'error' => $langs->trans("Error"));
+	print $form->selectarray('search_status', $arrayofstatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100 search_status width100 onrightofpage', 1);
 	print '</td>';
 }
 // Fields from hook

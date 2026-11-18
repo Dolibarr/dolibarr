@@ -69,7 +69,7 @@ create table llx_facturedet
 
   fk_code_ventilation			integer    DEFAULT 0 NOT NULL,		-- Id in table llx_accounting_bookeeping to know accounting account for product line
 
-  situation_percent real DEFAULT 100, 								-- % progression of lines invoicing
+  situation_percent real DEFAULT 100 NULL, 							-- % progression of lines invoicing. Must be negative for credit note lines if credit note was created using the feature "using the same line" (invoice and progression is canceled) and must be null if it was created using the module "remain to pay" (progression is no canceled, but payment is canceled).
   fk_prev_id        integer, 										-- id of the line in the previous situation
 
   fk_user_author	integer,                						-- user making creation

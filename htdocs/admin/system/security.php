@@ -43,6 +43,7 @@ require '../../main.inc.php';
  * @var string		$dolibarr_main_db_encrypted_pass
  * @var string		$dolibarr_website_allow_custom_php
  * @var string		$dolibarr_nocsrfcheck
+ * @var string		$dolibarr_main_disable_totp
  * @var string|string[]		$dolibarr_main_stream_to_disable
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -399,6 +400,12 @@ if (!empty($dolibarr_nocsrfcheck)) {
 	print '<br>';
 }
 
+if (!empty($dolibarr_main_disable_totp)) {
+	print '<strong>$dolibarr_main_disable_totp</strong>: '.dolPrintLabel($dolibarr_main_disable_totp);
+	print ' &nbsp; &nbsp;'.img_picto('', 'error').' '.$langs->trans("IfYouAreOnAProductionSetThis", 0);
+	print '<br>';
+}
+
 print '<strong>$dolibarr_main_restrict_ip</strong>: ';
 if (empty($dolibarr_main_restrict_ip)) {
 	print $langs->trans("None");
@@ -430,7 +437,7 @@ print '<br>';
 
 
 print '<strong>$dolibarr_website_allow_custom_php</strong>: ';
-if (!empty($dolibarr_website_allow_custom_php) && $dolibarr_website_allow_custom_php == 2) {
+if (!empty($dolibarr_website_allow_custom_php) && $dolibarr_website_allow_custom_php >= 2) {
 	print img_picto('', 'warning').' ';
 }
 if (empty($dolibarr_website_allow_custom_php)) {

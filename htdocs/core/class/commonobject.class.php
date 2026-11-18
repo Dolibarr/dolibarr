@@ -11369,7 +11369,7 @@ abstract class CommonObject
 
 		if (count($filearray)) {
 			if ($sortfield && $sortorder) {
-				$filearray = dol_sort_array($filearray, $sortfield, $sortorder);
+				$filearray = dol_sort_array($filearray, $sortfield, $sortorder, 1);
 			}
 
 			foreach ($filearray as $key => $val) {
