@@ -719,11 +719,14 @@ class FormCompany extends Form
 						var htmlname = obj.htmlname;
 						var showempty = obj.showempty;
 						console.log("Run runJsCodeForEvent-' . $htmlname . ' from selectCompaniesForNewContact id="+id+" method="+method+" showempty="+showempty+" url="+url+" htmlname="+htmlname);
+						// Token required: with MAIN_SECURITY_CSRF_WITH_TOKEN >= 3 (the default), a GET with an "action" parameter is refused without it.
+						// currentToken() and not newToken() because the called pages set NOTOKENRENEWAL (same as ajax_combobox()).
 						$.getJSON(url,
 							{
 								action: method,
 								id: id,
-								htmlname: htmlname
+								htmlname: htmlname,
+								token: "' . currentToken() . '"
 							},
 							function(response) {
 								if (response != null)
