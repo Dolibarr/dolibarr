@@ -287,4 +287,34 @@ class RestAPIExpenseReportTest extends AbstractRestAPITest
 		$this->getUrl('expensereports/'.$id.'/validate', $test, 'POST', array("notrigger" => 0));
 		$this->assertStatus($id, ExpenseReport::STATUS_VALIDATED, $test);
 	}
+
+	/**
+	 * Getting an expense report that does not exist returns a 404
+	 *
+	 * @return void
+	 */
+	public function testRestExpenseReportGetNotFound()
+	{
+		$test = "Get an expense report that does not exist";
+
+		$this->getUrl('expensereports/999999999', $test, 'GET', null, 404);
+	}
+
+	/**
+	 * Getting or updating a payment that does not exist returns a 404 about the payment
+	 *
+	 * @return void
+	 */
+	public function testRestExpenseReportPaymentNotFound()
+	{
+		$test = "Get a payment of expense report that does not exist";
+
+		$result = $this->getUrl('expensereports/payments/999999999', $test, 'GET', null, 404);
+		$this->assertStringContainsString('paymentExpenseReport not found', (string) ($result['content']['error']['message'] ?? ''), "$test The error must be about the payment");
+
+		$test = "Update a payment of expense report that does not exist";
+
+		$result = $this->getUrl('expensereports/999999999/payments/999999999', $test, 'PUT', array("amount" => 1), 404);
+		$this->assertStringContainsString('Payment of expense report not found', (string) ($result['content']['error']['message'] ?? ''), "$test The error must be about the payment");
+	}
 }
