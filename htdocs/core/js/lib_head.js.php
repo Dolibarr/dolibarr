@@ -2025,7 +2025,7 @@ $(function() {
 	if (blocks.length === 0) {
 		return;
 	}
-	let animationDuration = 500;	/* Not too fast */
+	let animationDuration = 250;
 	let hoverDelay = 150;			/* To not expand blocks when mouse just crosses titles */
 	let hoverTimer = null;
 

@@ -734,6 +734,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				'MAIN_MODULE_USER' => 'newboxdefonly', //This one must be always done and only into last targeted version)
 				'MAIN_MODULE_VARIANTS' => 'newboxdefonly',
 				'MAIN_MODULE_WEBSITE' => 'newboxdefonly',
+				'MAIN_MODULE_WORKSTATION' => 'newboxdefonly',
 			);
 
 			$result = migrate_reload_modules($db, $langs, $conf, $listofmodule);

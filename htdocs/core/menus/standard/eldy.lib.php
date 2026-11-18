@@ -1029,16 +1029,27 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 		if ($expandonhover) {
 			$hideunauthorized = getDolGlobalString('MAIN_MENU_HIDE_UNAUTHORIZED');
 			$currentblock = null;
+			$blockexpandedbysubentry = null;
 			foreach (array_keys($menu_array) as $i) {
 				if (empty($menu_array[$i]['level'])) {
 					$currentblock = $i;
 				} elseif ($currentblock !== null && !empty($menu_array[$currentblock]['enabled']) && (!empty($menu_array[$i]['enabled']) || !$hideunauthorized)) {
 					$blockswithsubentries[$currentblock] = $currentblock;
 				}
-				if ($blockexpanded === null && $currentblock !== null && !in_array($leftmenu, array('', 'none'))
+				// A block whose title matches the current leftmenu wins over a previous block having only a sub entry matching it
+				if ($currentblock !== null && !in_array($leftmenu, array('', 'none'))
 					&& ($menu_array[$i]['leftmenu'] == $leftmenu || preg_match('/[?&;]leftmenu='.preg_quote($leftmenu, '/').'([&#]|$)/', $menu_array[$i]['url']))) {
-					$blockexpanded = $currentblock;
+					if (empty($menu_array[$i]['level'])) {
+						if ($blockexpanded === null) {
+							$blockexpanded = $currentblock;
+						}
+					} elseif ($blockexpandedbysubentry === null) {
+						$blockexpandedbysubentry = $currentblock;
+					}
 				}
+			}
+			if ($blockexpanded === null) {
+				$blockexpanded = $blockexpandedbysubentry;
 			}
 		}
 		$subentriesopened = false;
@@ -1282,23 +1293,23 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 				$langs->load("errors");
 				$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"));
 			}
-			$newmenu->add(dolBuildUrl("/admin/company.php", ['mainmenu' => 'home']), $langs->trans("MenuCompanySetup").$warnpicto, 1);
+			$newmenu->add(dolBuildUrl("/admin/company.php", ['mainmenu' => 'home', 'leftmenu' => 'setup']), $langs->trans("MenuCompanySetup").$warnpicto, 1);
 			$warnpicto = '';
 			if ($nbmodulesnotautoenabled < getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled)
 				$langs->load("errors");
 				$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"));
 			}
-			$newmenu->add(dolBuildUrl("/admin/modules.php", ['mainmenu' => 'home']), $langs->trans("Modules").$warnpicto, 1);
-			$newmenu->add(dolBuildUrl("/admin/ihm.php", ['mainmenu' => 'home']), $langs->trans("GUISetup"), 1);
-			$newmenu->add(dolBuildUrl("/admin/menus.php", ['mainmenu' => 'home']), $langs->trans("Menus"), 1);
+			$newmenu->add(dolBuildUrl("/admin/modules.php", ['mainmenu' => 'home', 'leftmenu' => 'setup']), $langs->trans("Modules").$warnpicto, 1);
+			$newmenu->add(dolBuildUrl("/admin/ihm.php", ['mainmenu' => 'home', 'leftmenu' => 'setup']), $langs->trans("GUISetup"), 1);
+			$newmenu->add(dolBuildUrl("/admin/menus.php", ['mainmenu' => 'home', 'leftmenu' => 'setup']), $langs->trans("Menus"), 1);
 
-			$newmenu->add(dolBuildUrl("/admin/translation.php", ['mainmenu' => 'home']), $langs->trans("Translation"), 1);
-			$newmenu->add(dolBuildUrl("/admin/defaultvalues.php", ['mainmenu' => 'home']), $langs->trans("DefaultValues"), 1);
-			$newmenu->add(dolBuildUrl("/admin/boxes.php", ['mainmenu' => 'home']), $langs->trans("Boxes"), 1);
-			$newmenu->add(dolBuildUrl("/admin/delais.php", ['mainmenu' => 'home']), $langs->trans("MenuWarnings"), 1);
-			$newmenu->add(dolBuildUrl("/admin/security_other.php", ['mainmenu' => 'home']), $langs->trans("Security"), 1);
-			$newmenu->add(dolBuildUrl("/admin/limits.php", ['mainmenu' => 'home']), $langs->trans("MenuLimits"), 1);
-			$newmenu->add(dolBuildUrl("/admin/pdf.php", ['mainmenu' => 'home']), $langs->trans("PDF"), 1);
+			$newmenu->add(dolBuildUrl("/admin/translation.php", ['mainmenu' => 'home', 'leftmenu' => 'setup']), $langs->trans("Translation"), 1);
+			$newmenu->add(dolBuildUrl("/admin/defaultvalues.php", ['mainmenu' => 'home', 'leftmenu' => 'setup']), $langs->trans("DefaultValues"), 1);
+			$newmenu->add(dolBuildUrl("/admin/boxes.php", ['mainmenu' => 'home', 'leftmenu' => 'setup']), $langs->trans("Boxes"), 1);
+			$newmenu->add(dolBuildUrl("/admin/delais.php", ['mainmenu' => 'home', 'leftmenu' => 'setup']), $langs->trans("MenuWarnings"), 1);
+			$newmenu->add(dolBuildUrl("/admin/security_other.php", ['mainmenu' => 'home', 'leftmenu' => 'setup']), $langs->trans("Security"), 1);
+			$newmenu->add(dolBuildUrl("/admin/limits.php", ['mainmenu' => 'home', 'leftmenu' => 'setup']), $langs->trans("MenuLimits"), 1);
+			$newmenu->add(dolBuildUrl("/admin/pdf.php", ['mainmenu' => 'home', 'leftmenu' => 'setup']), $langs->trans("PDF"), 1);
 
 			$warnpicto = '';
 			/* No warning into menu entry, the message in Email setup page is enough
@@ -1313,10 +1324,10 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 				$warnpicto = img_warning($langs->trans("ErrorSetupOfEmailsNotComplete"));
 			}
 
-			$newmenu->add(dolBuildUrl("/admin/mails.php", ['mainmenu' => 'home']), $langs->trans("Emails").$warnpicto, 1);
-			$newmenu->add(dolBuildUrl("/admin/sms.php", ['mainmenu' => 'home']), $langs->trans("SMS"), 1);
-			$newmenu->add(dolBuildUrl("/admin/dict.php", ['mainmenu' => 'home']), $langs->trans("Dictionary"), 1);
-			$newmenu->add(dolBuildUrl("/admin/const.php", ['mainmenu' => 'home']), $langs->trans("OtherSetup"), 1);
+			$newmenu->add(dolBuildUrl("/admin/mails.php", ['mainmenu' => 'home', 'leftmenu' => 'setup']), $langs->trans("Emails").$warnpicto, 1);
+			$newmenu->add(dolBuildUrl("/admin/sms.php", ['mainmenu' => 'home', 'leftmenu' => 'setup']), $langs->trans("SMS"), 1);
+			$newmenu->add(dolBuildUrl("/admin/dict.php", ['mainmenu' => 'home', 'leftmenu' => 'setup']), $langs->trans("Dictionary"), 1);
+			$newmenu->add(dolBuildUrl("/admin/const.php", ['mainmenu' => 'home', 'leftmenu' => 'setup']), $langs->trans("OtherSetup"), 1);
 		}
 
 		// System tools
@@ -1399,9 +1410,9 @@ function get_left_menu_thridparties($mainmenu, &$newmenu, $usemenuhider = 1, $le
 			$newmenu->add(dolBuildUrl('/societe/index.php', ['leftmenu' => 'thirdparties']), $langs->trans("ThirdParty"), 0, $user->hasRight('societe', 'lire'), '', $mainmenu, 'thirdparties', 0, '', '', '', img_picto('', 'company', 'class="paddingright pictofixedwidth"'));
 
 			if ($user->hasRight('societe', 'creer')) {
-				$newmenu->add(dolBuildUrl('/societe/card.php', ['action' => 'create']), $langs->trans("MenuNewThirdParty"), 1);
+				$newmenu->add(dolBuildUrl('/societe/card.php', ['leftmenu' => 'thirdparties', 'action' => 'create']), $langs->trans("MenuNewThirdParty"), 1);
 				if (!$conf->use_javascript_ajax) {
-					$newmenu->add(dolBuildUrl('/societe/card.php', ['action' => 'create', 'private' => 1]), $langs->trans("MenuNewPrivateIndividual"), 1);
+					$newmenu->add(dolBuildUrl('/societe/card.php', ['leftmenu' => 'thirdparties', 'action' => 'create', 'private' => 1]), $langs->trans("MenuNewPrivateIndividual"), 1);
 				}
 			}
 		}
@@ -1459,7 +1470,7 @@ function get_left_menu_thridparties($mainmenu, &$newmenu, $usemenuhider = 1, $le
 		}
 
 		// Contacts
-		$newmenu->add("/societe/index.php?leftmenu=thirdparties", (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses")), 0, $user->hasRight('societe', 'contact', 'lire'), '', $mainmenu, 'contacts', 0, '', '', '', img_picto('', 'contact', 'class="paddingright pictofixedwidth"'));
+		$newmenu->add("/societe/index.php?leftmenu=contacts", (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses")), 0, $user->hasRight('societe', 'contact', 'lire'), '', $mainmenu, 'contacts', 0, '', '', '', img_picto('', 'contact', 'class="paddingright pictofixedwidth"'));
 
 		$newmenu->add("/contact/card.php?leftmenu=contacts&action=create", (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("NewContact") : $langs->trans("NewContactAddress")), 1, $user->hasRight('societe', 'contact', 'creer'));
 		$newmenu->add("/contact/list.php?leftmenu=contacts", $langs->trans("List"), 1, $user->hasRight('societe', 'contact', 'lire'));
@@ -2351,15 +2362,15 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 			$newmenu->add("/product/card.php?leftmenu=product&action=create&type=0", $langs->trans("NewProduct"), 1, $user->hasRight('product', 'creer'));
 			$newmenu->add("/product/list.php?leftmenu=product&type=0", $langs->trans("List"), 1, $user->hasRight('product', 'read'));
 			if (isModEnabled('stock')) {
-				$newmenu->add("/product/reassort.php?type=0", $langs->trans("MenuStocks"), 1, (int) ($user->hasRight('product', 'read') && $user->hasRight('stock', 'lire')));
+				$newmenu->add("/product/reassort.php?leftmenu=product&type=0", $langs->trans("MenuStocks"), 1, (int) ($user->hasRight('product', 'read') && $user->hasRight('stock', 'lire')));
 			}
 			if (isModEnabled('productbatch')) {
 				$langs->load("stocks");
-				$newmenu->add("/product/reassortlot.php?type=0&search_subjecttolotserial=1", $langs->trans("StocksByLotSerial"), 1, (int) ($user->hasRight('product', 'read') && $user->hasRight('stock', 'lire')));
-				$newmenu->add("/product/stock/productlot_list.php", $langs->trans("LotSerial"), 1, (int) ($user->hasRight('product', 'read') && $user->hasRight('stock', 'lire')));
+				$newmenu->add("/product/reassortlot.php?leftmenu=product&type=0&search_subjecttolotserial=1", $langs->trans("StocksByLotSerial"), 1, (int) ($user->hasRight('product', 'read') && $user->hasRight('stock', 'lire')));
+				$newmenu->add("/product/stock/productlot_list.php?leftmenu=product", $langs->trans("LotSerial"), 1, (int) ($user->hasRight('product', 'read') && $user->hasRight('stock', 'lire')));
 			}
 			if (isModEnabled('variants')) {
-				$newmenu->add("/variants/list.php", $langs->trans("VariantAttributes"), 1, $user->hasRight('product', 'read'));
+				$newmenu->add("/variants/list.php?leftmenu=product", $langs->trans("VariantAttributes"), 1, $user->hasRight('product', 'read'));
 			}
 			if (isModEnabled('propal') || isModEnabled('order') || isModEnabled('invoice') || isModEnabled('supplier_proposal') || isModEnabled('supplier_order') || isModEnabled('supplier_invoice')) {
 				if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
@@ -2381,10 +2392,10 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 			$newmenu->add("/product/list.php?leftmenu=service&type=1", $langs->trans("List"), 1, $user->hasRight('service', 'read'));
 
 			if (isModEnabled('stock') && getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
-				$newmenu->add("/product/reassort.php?type=1", $langs->trans("MenuStocks"), 1, (int) ($user->hasRight('service', 'read') && $user->hasRight('stock', 'lire')));
+				$newmenu->add("/product/reassort.php?leftmenu=service&type=1", $langs->trans("MenuStocks"), 1, (int) ($user->hasRight('service', 'read') && $user->hasRight('stock', 'lire')));
 			}
 			if (isModEnabled('variants')) {
-				$newmenu->add("/variants/list.php", $langs->trans("VariantAttributes"), 1, $user->hasRight('service', 'read'));
+				$newmenu->add("/variants/list.php?leftmenu=service", $langs->trans("VariantAttributes"), 1, $user->hasRight('service', 'read'));
 			}
 			if (isModEnabled('propal') || isModEnabled('order') || isModEnabled('invoice') || isModEnabled('supplier_proposal') || isModEnabled('supplier_order') || isModEnabled('supplier_invoice')) {
 				if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
@@ -2402,15 +2413,15 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 		if (isModEnabled('stock')) {
 			$langs->load("stocks");
 			$newmenu->add("/product/index.php?leftmenu=stock", $langs->trans("Warehouses"), 0, $user->hasRight('stock', 'lire'), '', $mainmenu, 'stock', 0, '', '', '', img_picto('', 'stock', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add("/product/stock/card.php?action=create", $langs->trans("MenuNewWarehouse"), 1, $user->hasRight('stock', 'creer'));
-			$newmenu->add("/product/stock/list.php", $langs->trans("List"), 1, $user->hasRight('stock', 'lire'));
-			$newmenu->add("/product/stock/movement_list.php", $langs->trans("Movements"), 1, $user->hasRight('stock', 'mouvement', 'lire'));
+			$newmenu->add("/product/stock/card.php?action=create&leftmenu=stock", $langs->trans("MenuNewWarehouse"), 1, $user->hasRight('stock', 'creer'));
+			$newmenu->add("/product/stock/list.php?leftmenu=stock", $langs->trans("List"), 1, $user->hasRight('stock', 'lire'));
+			$newmenu->add("/product/stock/movement_list.php?leftmenu=stock", $langs->trans("Movements"), 1, $user->hasRight('stock', 'mouvement', 'lire'));
 
-			$newmenu->add("/product/stock/massstockmove.php?init=1", $langs->trans("MassStockTransferShort"), 1, $user->hasRight('stock', 'mouvement', 'creer'));
+			$newmenu->add("/product/stock/massstockmove.php?init=1&leftmenu=stock", $langs->trans("MassStockTransferShort"), 1, $user->hasRight('stock', 'mouvement', 'creer'));
 			if (isModEnabled('supplier_order')) {
-				$newmenu->add("/product/stock/replenish.php", $langs->trans("Replenishment"), 1, (int) ($user->hasRight('stock', 'mouvement', 'creer') && $user->hasRight('fournisseur', 'lire')));
+				$newmenu->add("/product/stock/replenish.php?leftmenu=stock", $langs->trans("Replenishment"), 1, (int) ($user->hasRight('stock', 'mouvement', 'creer') && $user->hasRight('fournisseur', 'lire')));
 			}
-			$newmenu->add("/product/stock/stockatdate.php", $langs->trans("StockAtDate"), 1, (int) ($user->hasRight('product', 'read') && $user->hasRight('stock', 'lire')));
+			$newmenu->add("/product/stock/stockatdate.php?leftmenu=stock", $langs->trans("StockAtDate"), 1, (int) ($user->hasRight('product', 'read') && $user->hasRight('stock', 'lire')));
 
 			// Categories for warehouses
 			if (isModEnabled('category') && getDolGlobalString('CATEGORY_EDIT_IN_MENU_NOT_IN_POPUP')) {
@@ -2419,9 +2430,9 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 		}
 
 		if (isModEnabled('stocktransfer')) {
-			$newmenu->add('/product/stock/stocktransfer/stocktransfer_list.php', $langs->trans("ModuleStockTransferName"), 0, $user->hasRight('stocktransfer', 'stocktransfer', 'read'), '', $mainmenu, 'stocktransfer', 0, '', '', '', img_picto('', 'stock', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add('/product/stock/stocktransfer/stocktransfer_card.php?action=create', $langs->trans('StockTransferNew'), 1, $user->hasRight('stocktransfer', 'stocktransfer', 'write'));
-			$newmenu->add('/product/stock/stocktransfer/stocktransfer_list.php', $langs->trans('List'), 1, $user->hasRight('stocktransfer', 'stocktransfer', 'read'));
+			$newmenu->add('/product/stock/stocktransfer/stocktransfer_list.php?leftmenu=stocktransfer', $langs->trans("ModuleStockTransferName"), 0, $user->hasRight('stocktransfer', 'stocktransfer', 'read'), '', $mainmenu, 'stocktransfer', 0, '', '', '', img_picto('', 'stock', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add('/product/stock/stocktransfer/stocktransfer_card.php?action=create&leftmenu=stocktransfer', $langs->trans('StockTransferNew'), 1, $user->hasRight('stocktransfer', 'stocktransfer', 'write'));
+			$newmenu->add('/product/stock/stocktransfer/stocktransfer_list.php?leftmenu=stocktransfer', $langs->trans('List'), 1, $user->hasRight('stocktransfer', 'stocktransfer', 'read'));
 		}
 
 		// Inventory
@@ -2583,12 +2594,12 @@ function get_left_menu_projects($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 				$newmenu->add("/projet/tasks.php?leftmenu=tasks&action=create", $langs->trans("NewTask"), 1, $user->hasRight('projet', 'creer'));
 				$newmenu->add("/projet/tasks/list.php?leftmenu=tasks".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("List"), 1, $user->hasRight('projet', 'lire'));
 				if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
-					$newmenu->add("/projet/tasks/stats/index.php?leftmenu=projects", $langs->trans("Statistics"), 1, $user->hasRight('projet', 'lire'));
+					$newmenu->add("/projet/tasks/stats/index.php?leftmenu=tasks", $langs->trans("Statistics"), 1, $user->hasRight('projet', 'lire'));
 				}
 
 				$optionTimesheet = getDolGlobalString('PROJECT_OPEN_ALWAYS_ON_TIMESHEET', "perweek");
-				$newmenu->add("/projet/activity/".$optionTimesheet.".php?leftmenu=tasks".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("TimeEntry"), 0, $user->hasRight('projet', 'lire'), '', 'project', 'timespent', 0, '', '', '', img_picto('', 'timespent', 'class="paddingright pictofixedwidth"'));
-				$newmenu->add("/projet/tasks/time.php?leftmenu=tasks".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("List"), 1, $user->hasRight('projet', 'lire'));
+				$newmenu->add("/projet/activity/".$optionTimesheet.".php?leftmenu=timespent".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("TimeEntry"), 0, $user->hasRight('projet', 'lire'), '', 'project', 'timespent', 0, '', '', '', img_picto('', 'timespent', 'class="paddingright pictofixedwidth"'));
+				$newmenu->add("/projet/tasks/time.php?leftmenu=timespent".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("List"), 1, $user->hasRight('projet', 'lire'));
 			}
 		}
 	}
@@ -2657,7 +2668,7 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 				$newmenu->add(dolBuildUrl('/holiday/list.php', ['search_status' => 4, 'mainmenu' => 'hrm', 'leftmenu' => 'holiday']), $langs->trans("CancelCP"), 2, $user->hasRight('holiday', 'read'), '', $mainmenu, 'holiday_sm');
 				$newmenu->add(dolBuildUrl('/holiday/list.php', ['search_status' => 5, 'mainmenu' => 'hrm', 'leftmenu' => 'holiday']), $langs->trans("RefuseCP"), 2, $user->hasRight('holiday', 'read'), '', $mainmenu, 'holiday_sm');
 			}
-			$newmenu->add(dolBuildUrl('/holiday/define_holiday.php', ['mainmenu' => 'hrm']), $langs->trans("MenuConfCP"), 1, $user->hasRight('holiday', 'read'), '', $mainmenu, 'holiday_sm');
+			$newmenu->add(dolBuildUrl('/holiday/define_holiday.php', ['mainmenu' => 'hrm', 'leftmenu' => 'holiday']), $langs->trans("MenuConfCP"), 1, $user->hasRight('holiday', 'read'), '', $mainmenu, 'holiday_sm');
 			$newmenu->add(dolBuildUrl('/holiday/month_report.php', ['mainmenu' => 'hrm', 'leftmenu' => 'holiday']), $langs->trans("MenuReportMonth"), 1, $user->hasRight('holiday', 'readall'), '', $mainmenu, 'holiday_sm');
 			$newmenu->add(dolBuildUrl('/holiday/view_log.php', ['mainmenu' => 'hrm', 'leftmenu' => 'holiday']), $langs->trans("MenuLogCP"), 1, $user->hasRight('holiday', 'define_holiday'), '', $mainmenu, 'holiday_sm');
 		}
@@ -2805,11 +2816,11 @@ function get_left_menu_members($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 				$newmenu->add(dolBuildUrl('/categories/categorie_list.php', ['leftmenu'=> 'cat', 'type' => 3]), $langs->trans("Categories"), 1, $user->hasRight('categorie', 'read'), '', $mainmenu, 'cat');
 			}
 
-			$newmenu->add(dolBuildUrl('/adherents/index.php', ['leftmenu' => 'members', 'mainmenu'=> 'members']), $langs->trans("Subscriptions"), 0, $user->hasRight('adherent', 'cotisation', 'read'), '', $mainmenu, 'members', 0, '', '', '', img_picto('', 'payment', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add(dolBuildUrl('/adherents/list.php', ['leftmenu' => 'members', 'statut' => '-1,1', 'mainmenu' => 'members']), $langs->trans("NewMembership"), 1, $user->hasRight('adherent', 'cotisation', 'write'));
-			$newmenu->add(dolBuildUrl('/adherents/subscription/list.php', ['leftmenu' => 'members']), $langs->trans("List"), 1, $user->hasRight('adherent', 'cotisation', 'read'));
+			$newmenu->add(dolBuildUrl('/adherents/index.php', ['leftmenu' => 'membership', 'mainmenu'=> 'members']), $langs->trans("Subscriptions"), 0, $user->hasRight('adherent', 'cotisation', 'read'), '', $mainmenu, 'membership', 0, '', '', '', img_picto('', 'payment', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add(dolBuildUrl('/adherents/list.php', ['leftmenu' => 'membership', 'statut' => '-1,1', 'mainmenu' => 'members']), $langs->trans("NewMembership"), 1, $user->hasRight('adherent', 'cotisation', 'write'));
+			$newmenu->add(dolBuildUrl('/adherents/subscription/list.php', ['leftmenu' => 'membership']), $langs->trans("List"), 1, $user->hasRight('adherent', 'cotisation', 'read'));
 			if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
-				$newmenu->add(dolBuildUrl('/adherents/stats/index.php', ['leftmenu' => 'members']), $langs->trans("MenuMembersStats"), 1, $user->hasRight('adherent', 'read'));
+				$newmenu->add(dolBuildUrl('/adherents/stats/index.php', ['leftmenu' => 'membership']), $langs->trans("MenuMembersStats"), 1, $user->hasRight('adherent', 'read'));
 			}
 
 			// $newmenu->add(dolBuildUrl('/adherents/index.php', ['leftmenu' => 'export', 'mainmenu'=>'members']),$langs->trans("Tools"),0,$user->hasRight('adherent',  'export'), '', $mainmenu, 'export');

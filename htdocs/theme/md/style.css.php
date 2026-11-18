@@ -4166,9 +4166,9 @@ div.vmenu, td.vmenu {
 	text-align: center;
 	font-size: 0.75em;
 	opacity: 0.6;
-	margin-<?php print $right; ?>: 4px;
+	margin-<?php print $right; ?>: 8px;
 	transform: rotate(<?php print($left == 'left' ? '0' : '180'); ?>deg);
-	transition: transform 0.5s;
+	transition: transform 0.25s;
 }
 .blockvmenuexpanded .menuexpandarrow {
 	transform: rotate(90deg);
