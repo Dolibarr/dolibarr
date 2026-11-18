@@ -2276,18 +2276,18 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 		if (isModEnabled('bank')) {
 			$newmenu->add("/compta/bank/index.php?leftmenu=bank&mainmenu=bank", $langs->trans("MenuBankCash"), 0, $user->hasRight('banque', 'lire'), '', $mainmenu, 'bank', 0, '', '', '', img_picto('', 'bank_account', 'class="paddingright pictofixedwidth"'));
 
-			$newmenu->add("/compta/bank/card.php?action=create&token=" . newToken(), $langs->trans("MenuNewFinancialAccount"), 1, $user->hasRight('banque', 'configurer'));
+			$newmenu->add("/compta/bank/card.php?action=create&leftmenu=bank&token=" . newToken(), $langs->trans("MenuNewFinancialAccount"), 1, $user->hasRight('banque', 'configurer'));
 			$newmenu->add("/compta/bank/list.php?leftmenu=bank&mainmenu=bank&search_status=opened", $langs->trans("List"), 1, $user->hasRight('banque', 'lire'), '', $mainmenu, 'bank');
-			$newmenu->add("/compta/bank/bankentries_list.php", $langs->trans("ListTransactions"), 1, $user->hasRight('banque', 'lire'));
-			$newmenu->add("/compta/bank/budget.php", $langs->trans("ListTransactionsByCategory"), 1, $user->hasRight('banque', 'lire'));
+			$newmenu->add("/compta/bank/bankentries_list.php?leftmenu=bank", $langs->trans("ListTransactions"), 1, $user->hasRight('banque', 'lire'));
+			$newmenu->add("/compta/bank/budget.php?leftmenu=bank", $langs->trans("ListTransactionsByCategory"), 1, $user->hasRight('banque', 'lire'));
 
-			$newmenu->add("/compta/bank/transfer.php", $langs->trans("MenuBankInternalTransfer"), 1, $user->hasRight('banque', 'transfer'));
+			$newmenu->add("/compta/bank/transfer.php?leftmenu=bank", $langs->trans("MenuBankInternalTransfer"), 1, $user->hasRight('banque', 'transfer'));
 		}
 
 		if (isModEnabled('category') && getDolGlobalString('CATEGORY_EDIT_IN_MENU_NOT_IN_POPUP')) {
 			$langs->load("categories");
-			$newmenu->add("/categories/categorie_list.php?type=5", $langs->trans("Rubriques"), 1, $user->hasRight('categorie', 'creer'), '', $mainmenu, 'tags');
-			$newmenu->add("/categories/categorie_list.php?type=8", $langs->trans("RubriquesTransactions"), 1, $user->hasRight('banque', 'configurer'), '', $mainmenu, 'tags');
+			$newmenu->add("/categories/categorie_list.php?leftmenu=bank&type=5", $langs->trans("Rubriques"), 1, $user->hasRight('categorie', 'creer'), '', $mainmenu, 'tags');
+			$newmenu->add("/categories/categorie_list.php?leftmenu=bank&type=8", $langs->trans("RubriquesTransactions"), 1, $user->hasRight('banque', 'configurer'), '', $mainmenu, 'tags');
 		}
 
 		// Direct debit order
@@ -2295,13 +2295,13 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 			$newmenu->add("/compta/prelevement/index.php?leftmenu=withdraw&mainmenu=bank", $langs->trans("PaymentByDirectDebit"), 0, $user->hasRight('prelevement', 'bons', 'lire'), '', $mainmenu, 'withdraw', 0, '', '', '', img_picto('', 'payment', 'class="paddingright pictofixedwidth"'));
 
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == "withdraw") {
-				$newmenu->add("/compta/prelevement/create.php?mainmenu=bank&token=" . newToken(), $langs->trans("NewStandingOrder"), 1, $user->hasRight('prelevement', 'bons', 'creer'));
+				$newmenu->add("/compta/prelevement/create.php?mainmenu=bank&leftmenu=withdraw&token=" . newToken(), $langs->trans("NewStandingOrder"), 1, $user->hasRight('prelevement', 'bons', 'creer'));
 
-				$newmenu->add("/compta/prelevement/orders_list.php?mainmenu=bank", $langs->trans("List"), 1, $user->hasRight('prelevement', 'bons', 'lire'));
-				$newmenu->add("/compta/prelevement/list.php?mainmenu=bank", $langs->trans("WithdrawalsLines"), 1, $user->hasRight('prelevement', 'bons', 'lire'));
-				$newmenu->add("/compta/prelevement/rejets.php?mainmenu=bank", $langs->trans("Rejects"), 1, $user->hasRight('prelevement', 'bons', 'lire'));
+				$newmenu->add("/compta/prelevement/orders_list.php?mainmenu=bank&leftmenu=withdraw", $langs->trans("List"), 1, $user->hasRight('prelevement', 'bons', 'lire'));
+				$newmenu->add("/compta/prelevement/list.php?mainmenu=bank&leftmenu=withdraw", $langs->trans("WithdrawalsLines"), 1, $user->hasRight('prelevement', 'bons', 'lire'));
+				$newmenu->add("/compta/prelevement/rejets.php?mainmenu=bank&leftmenu=withdraw", $langs->trans("Rejects"), 1, $user->hasRight('prelevement', 'bons', 'lire'));
 				if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
-					$newmenu->add("/compta/prelevement/stats.php?mainmenu=bank", $langs->trans("Statistics"), 1, $user->hasRight('prelevement', 'bons', 'lire'));
+					$newmenu->add("/compta/prelevement/stats.php?mainmenu=bank&leftmenu=withdraw", $langs->trans("Statistics"), 1, $user->hasRight('prelevement', 'bons', 'lire'));
 				}
 			}
 		}
@@ -2311,13 +2311,13 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 			$newmenu->add("/compta/paymentbybanktransfer/index.php?leftmenu=banktransfer&mainmenu=bank", $langs->trans("PaymentByBankTransfer"), 0, $user->hasRight('paymentbybanktransfer', 'read'), '', $mainmenu, 'banktransfer', 0, '', '', '', img_picto('', 'payment', 'class="paddingright pictofixedwidth"'));
 
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == "banktransfer") {
-				$newmenu->add("/compta/prelevement/create.php?type=bank-transfer&mainmenu=bank&token=" . newToken(), $langs->trans("NewPaymentByBankTransfer"), 1, $user->hasRight('paymentbybanktransfer', 'create'));
+				$newmenu->add("/compta/prelevement/create.php?type=bank-transfer&mainmenu=bank&leftmenu=banktransfer&token=" . newToken(), $langs->trans("NewPaymentByBankTransfer"), 1, $user->hasRight('paymentbybanktransfer', 'create'));
 
-				$newmenu->add("/compta/prelevement/orders_list.php?type=bank-transfer&mainmenu=bank", $langs->trans("List"), 1, $user->hasRight('paymentbybanktransfer', 'read'));
-				$newmenu->add("/compta/prelevement/list.php?type=bank-transfer&mainmenu=bank", $langs->trans("PaymentByBankTransferLines"), 1, $user->hasRight('paymentbybanktransfer', 'read'));
-				$newmenu->add("/compta/prelevement/rejets.php?type=bank-transfer&mainmenu=bank", $langs->trans("Rejects"), 1, $user->hasRight('paymentbybanktransfer', 'read'));
+				$newmenu->add("/compta/prelevement/orders_list.php?type=bank-transfer&mainmenu=bank&leftmenu=banktransfer", $langs->trans("List"), 1, $user->hasRight('paymentbybanktransfer', 'read'));
+				$newmenu->add("/compta/prelevement/list.php?type=bank-transfer&mainmenu=bank&leftmenu=banktransfer", $langs->trans("PaymentByBankTransferLines"), 1, $user->hasRight('paymentbybanktransfer', 'read'));
+				$newmenu->add("/compta/prelevement/rejets.php?type=bank-transfer&mainmenu=bank&leftmenu=banktransfer", $langs->trans("Rejects"), 1, $user->hasRight('paymentbybanktransfer', 'read'));
 				if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
-					$newmenu->add("/compta/prelevement/stats.php?type=bank-transfer&mainmenu=bank", $langs->trans("Statistics"), 1, $user->hasRight('paymentbybanktransfer', 'read'));
+					$newmenu->add("/compta/prelevement/stats.php?type=bank-transfer&mainmenu=bank&leftmenu=banktransfer", $langs->trans("Statistics"), 1, $user->hasRight('paymentbybanktransfer', 'read'));
 				}
 			}
 		}
@@ -2325,7 +2325,7 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 		// Management of checks
 		if (!getDolGlobalString('BANK_DISABLE_CHECK_DEPOSIT') && isModEnabled('bank') && (isModEnabled('invoice') || getDolGlobalString('MAIN_MENU_CHEQUE_DEPOSIT_ON'))) {
 			$newmenu->add("/compta/paiement/cheque/index.php?leftmenu=checks&mainmenu=bank", $langs->trans("MenuChequeDeposits"), 0, $user->hasRight('banque', 'cheque'), '', $mainmenu, 'checks', 0, '', '', '', img_picto('', 'depositslip', 'class="paddingright pictofixedwidth"'));
-			if (preg_match('/checks/', $leftmenu)) {
+			if ($usemenuhider || empty($leftmenu) || preg_match('/checks/', $leftmenu)) {
 				$newmenu->add("/compta/paiement/cheque/card.php?leftmenu=checks_bis&action=create2&mainmenu=bank", $langs->trans("NewChequeDeposit"), 1, $user->hasRight('banque', 'cheque'));
 				$newmenu->add("/compta/paiement/cheque/list.php?leftmenu=checks_bis&mainmenu=bank", $langs->trans("List"), 1, $user->hasRight('banque', 'cheque'));
 			}
@@ -2334,9 +2334,9 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 		// Cash Control
 		if (isModEnabled('takepos') || isModEnabled('cashdesk')) {
 			$permtomakecashfence = ($user->hasRight('cashdesk', 'run') || $user->hasRight('takepos', 'run'));
-			$newmenu->add("/compta/cashcontrol/cashcontrol_list.php", $langs->trans("CashControl"), 0, (int) $permtomakecashfence, '', $mainmenu, 'cashcontrol', 0, '', '', '', img_picto('', 'pos', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add("/compta/cashcontrol/cashcontrol_card.php?action=create&token=" . newToken(), $langs->trans("NewCashFence"), 1, (int) $permtomakecashfence);
-			$newmenu->add("/compta/cashcontrol/cashcontrol_list.php", $langs->trans("List"), 1, (int) $permtomakecashfence);
+			$newmenu->add("/compta/cashcontrol/cashcontrol_list.php?leftmenu=cashcontrol", $langs->trans("CashControl"), 0, (int) $permtomakecashfence, '', $mainmenu, 'cashcontrol', 0, '', '', '', img_picto('', 'pos', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add("/compta/cashcontrol/cashcontrol_card.php?action=create&leftmenu=cashcontrol&token=" . newToken(), $langs->trans("NewCashFence"), 1, (int) $permtomakecashfence);
+			$newmenu->add("/compta/cashcontrol/cashcontrol_list.php?leftmenu=cashcontrol", $langs->trans("List"), 1, (int) $permtomakecashfence);
 		}
 	}
 }
@@ -2702,7 +2702,7 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 				$search_project_user = GETPOSTINT('search_project_user');
 
 				$optionTimesheet = getDolGlobalString('PROJECT_OPEN_ALWAYS_ON_TIMESHEET', "perweek");
-				$newmenu->add(dolBuildUrl('/projet/activity/'.$optionTimesheet.'.php', ['leftmenu' => 'tasks', 'search_project_user' => ($search_project_user ? $search_project_user : '')]), $langs->trans("TimeEntry"), 0, $user->hasRight('projet', 'lire'), '', $mainmenu, 'timespent', 0, '', '', '', img_picto('', 'timespent', 'class="paddingright pictofixedwidth"'));
+				$newmenu->add(dolBuildUrl('/projet/activity/'.$optionTimesheet.'.php', ['leftmenu' => 'timespent', 'search_project_user' => ($search_project_user ? $search_project_user : '')]), $langs->trans("TimeEntry"), 0, $user->hasRight('projet', 'lire'), '', $mainmenu, 'timespent', 0, '', '', '', img_picto('', 'timespent', 'class="paddingright pictofixedwidth"'));
 			}
 		}
 	}
