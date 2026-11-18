@@ -153,6 +153,73 @@ class RestAPITicketTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * Create a ticket linked to a thirdparty with socid or fk_soc
+	 *
+	 * @return void
+	 */
+	public function testRestTicketCreateWithThirdparty()
+	{
+		$test = "Create a ticket linked to a thirdparty";
+
+		$result = $this->getUrl('thirdparties', $test, 'POST', array("name" => "testRestTicket".mt_rand()));
+		$socid = (int) $result['content'];
+		$this->assertGreaterThan(0, $socid, "$test Id of thirdparty is not > 0");
+		array_push($this->objectstodelete, 'thirdparties/'.$socid);
+
+		foreach (array('socid', 'fk_soc') as $key) {
+			$data = array(
+				"subject" => "Ticket created via the REST API with ".$key,
+				"message" => "Message of the ticket created via the REST API with ".$key,
+				$key => $socid,
+			);
+			$result = $this->getUrl('tickets', "$test with $key", 'POST', $data);
+			$ticket_id = (int) $result['content'];
+			$this->assertGreaterThan(0, $ticket_id, "$test with $key Id of ticket is not > 0");
+			array_unshift($this->objectstodelete, 'tickets/'.$ticket_id);
+
+			$result = $this->getUrl('tickets/'.$ticket_id, "$test with $key");
+			$this->assertEquals($socid, (int) ($result['content']['fk_soc'] ?? 0), "$test with $key The ticket must be linked to the thirdparty");
+		}
+
+		// The same thirdparty given with both keys is accepted
+		$data = array(
+			"subject" => "Ticket created via the REST API with socid and fk_soc",
+			"message" => "Message of the ticket created via the REST API with socid and fk_soc",
+			"socid" => $socid,
+			"fk_soc" => $socid,
+		);
+		$result = $this->getUrl('tickets', "$test with socid and fk_soc", 'POST', $data);
+		$ticket_id = (int) $result['content'];
+		$this->assertGreaterThan(0, $ticket_id, "$test with socid and fk_soc Id of ticket is not > 0");
+		array_unshift($this->objectstodelete, 'tickets/'.$ticket_id);
+	}
+
+	/**
+	 * Create a ticket with a thirdparty that does not exist, or with two different thirdparties
+	 *
+	 * @return void
+	 */
+	public function testRestTicketCreateWithBadThirdparty()
+	{
+		$test = "Create a ticket with a bad thirdparty";
+
+		$data = array(
+			"subject" => "Ticket created via the REST API",
+			"message" => "Message of the ticket created via the REST API",
+		);
+		foreach (array('socid', 'fk_soc') as $key) {
+			$this->getUrl('tickets', "$test with unknown $key", 'POST', array_merge($data, array($key => 999999999)), 404);
+		}
+
+		$result = $this->getUrl('thirdparties', $test, 'POST', array("name" => "testRestTicket".mt_rand()));
+		$socid = (int) $result['content'];
+		$this->assertGreaterThan(0, $socid, "$test Id of thirdparty is not > 0");
+		array_push($this->objectstodelete, 'thirdparties/'.$socid);
+
+		$this->getUrl('tickets', "$test with different socid and fk_soc", 'POST', array_merge($data, array("socid" => $socid, "fk_soc" => 999999999)), 400);
+	}
+
+	/**
 	 * Unlink internal and external contacts linked to a ticket
 	 *
 	 * @return void
@@ -403,5 +470,98 @@ class RestAPITicketTest extends AbstractRestAPITest
 		$test = "Unlink a contact of a ticket that does not exist";
 
 		$this->getUrl('tickets/999999999/contact/1/SUPPORTTEC', $test, 'DELETE', array("source" => "internal"), 404);
+	}
+
+	/**
+	 * Get a ticket by id, ref and track id
+	 *
+	 * @return void
+	 */
+	public function testRestTicketGet()
+	{
+		$test = "Get a ticket";
+
+		$ticket_id = $this->createTicket($test);
+
+		$result = $this->getUrl('tickets/'.$ticket_id, $test);
+		$this->assertEquals($ticket_id, (int) $result['content']['id'], "$test Id of ticket returned by GET tickets/{id}");
+		$ref = $result['content']['ref'];
+		$track_id = $result['content']['track_id'];
+		$this->assertNotEmpty($ref, "$test Ref of ticket must not be empty");
+		$this->assertNotEmpty($track_id, "$test Track id of ticket must not be empty");
+
+		$result = $this->getUrl('tickets/ref/'.urlencode($ref), $test);
+		$this->assertEquals($ticket_id, (int) $result['content']['id'], "$test Id of ticket returned by GET tickets/ref/{ref}");
+
+		$result = $this->getUrl('tickets/track_id/'.urlencode($track_id), $test);
+		$this->assertEquals($ticket_id, (int) $result['content']['id'], "$test Id of ticket returned by GET tickets/track_id/{track_id}");
+	}
+
+	/**
+	 * Get a ticket with id 0 or a ticket that does not exist
+	 *
+	 * @return void
+	 */
+	public function testRestTicketGetNotFound()
+	{
+		$test = "Get a ticket that does not exist";
+
+		// Id 0 must not return a specimen ticket
+		$this->getUrl('tickets/0', $test, 'GET', null, 400);
+		$this->getUrl('tickets/999999999', $test, 'GET', null, 404);
+		$this->getUrl('tickets/ref/RefOfTicketThatDoesNotExist', $test, 'GET', null, 404);
+		$this->getUrl('tickets/track_id/TrackIdOfTicketThatDoesNotExist', $test, 'GET', null, 404);
+	}
+
+	/**
+	 * List tickets with no limit and pagination data
+	 *
+	 * @return void
+	 */
+	public function testRestTicketListNoLimitWithPagination()
+	{
+		$test = "List tickets with limit 0 and pagination data";
+
+		$ticket_id = $this->createTicket($test);
+
+		$result = $this->getUrl('tickets', $test, 'GET', array('limit' => 0, 'pagination_data' => 'true'));
+		$this->assertArrayHasKey('pagination', $result['content'], "$test Result must contain the pagination data");
+		$this->assertGreaterThanOrEqual(1, $result['content']['pagination']['total'], "$test Total must count the created ticket");
+		$this->assertEquals(1, $result['content']['pagination']['page_count'], "$test With no limit, there is only one page");
+		$ids = array_map(static function ($ticket) {
+			return (int) $ticket['id'];
+		}, $result['content']['data']);
+		$this->assertContains($ticket_id, $ids, "$test The created ticket must be in the list");
+	}
+
+	/**
+	 * Delete a ticket, then check it can not be read anymore
+	 *
+	 * @return void
+	 */
+	public function testRestTicketDelete()
+	{
+		$test = "Delete a ticket";
+
+		$ticket_id = $this->createTicket($test);
+
+		$result = $this->getUrl('tickets/'.$ticket_id, $test, 'DELETE');
+		// The ticket is deleted, so it must not be deleted again at end of the test
+		$this->objectstodelete = array_values(array_diff($this->objectstodelete, array('tickets/'.$ticket_id)));
+		$this->assertEquals(200, (int) $result['content']['success']['code'], "$test Code of the success response");
+
+		$this->getUrl('tickets/'.$ticket_id, $test, 'GET', null, 404);
+	}
+
+	/**
+	 * Delete a ticket that does not exist
+	 *
+	 * @return void
+	 */
+	public function testRestTicketDeleteUnknownTicket()
+	{
+		$test = "Delete a ticket that does not exist";
+
+		$this->getUrl('tickets/999999999', $test, 'DELETE', null, 404);
 	}
 }

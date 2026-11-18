@@ -426,8 +426,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 					}
 				}
 				// Make substitutions into odt of thirdparty
-				if ($socobject->element == 'contact') {
-					/** @var Contact $socobject */
+				if ($socobject instanceof Contact) {
 					$tmparray = $this->get_substitutionarray_contact($socobject, $outputlangs);
 				} else {
 					$tmparray = $this->get_substitutionarray_thirdparty($socobject, $outputlangs);

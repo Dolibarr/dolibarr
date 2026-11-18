@@ -160,3 +160,4 @@ TF_TRIP=Transport
 FailedToSetPaid=Impossible de définir comme payant
 FailedToSetToCancel=Échec de annuler
 NobodyHasPermissionToValidateExpenseReport=Personne n'a l'autorisation de valider les notes de frais
+ExpenseReportVatRateHelp=Saisissez la TVA taux qui vous est applicable Comptabilité, c'est-à-dire la TVA déductible dans votre déclaration de TVA. La TVA facturée par un autre pays (par exemple, le carburant ou un hôtel à l'étranger) n'est pas déductible : saisissez ce type de facture avec un taux de TVA taux de 0. Si vous récupérez cette TVA étrangère auprès de l'autre pays (dans l'UE, via la procédure de remboursement de la TVA), enregistrez-la sur un compte distinct et non comme une dépense.

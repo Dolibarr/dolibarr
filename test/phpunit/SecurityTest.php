@@ -726,6 +726,93 @@ class SecurityTest extends CommonClassTest
 
 
 	/**
+	 * testCheckUserAccessToDocumentObject
+	 *
+	 * Non regression test: checkUserAccessToDocumentObject() must give to restrictedArea() the table of the object when it differs
+	 * from the modulepart (llx_socpeople for contact, llx_fichinter for ficheinter, llx_bom_bom for bom). If not, the check was done
+	 * on a table that does not exist, so the access to the documents was always refused.
+	 *
+	 * @return void
+	 */
+	public function testCheckUserAccessToDocumentObject()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+
+		$soc = new Societe($db);
+		$soc->name = 'testCheckUserAccessToDocumentObject '.mt_rand(0, 99999);
+		$soc->client = 1;
+		$soc->code_client = -1;
+		$socid = $soc->create($user);
+		$this->assertGreaterThan(0, $socid, 'Third party must be created');
+
+		$contact = new Contact($db);
+		$contact->initAsSpecimen();
+		$contact->socid = $socid;
+		$contactid = $contact->create($user);
+		$this->assertGreaterThan(0, $contactid, 'Contact must be created');
+
+		$fichinter = new Fichinter($db);
+		$fichinter->initAsSpecimen();
+		$fichinter->socid = $socid;
+		$fichinterid = $fichinter->create($user);
+		$this->assertGreaterThan(0, $fichinterid, 'Intervention must be created');
+		$fichinter->fetch($fichinterid);
+
+		$bom = new BOM($db);
+		$bom->initAsSpecimen();
+		$bom->ref = 'BOMTESTACCESS'.mt_rand(0, 99999);
+		$bomid = $bom->create($user);
+		$this->assertGreaterThan(0, $bomid, 'BOM must be created');
+		$bom->fetch($bomid);
+
+		try {
+			// A user with the permissions of the admin user, but who can see only the third parties assigned to him
+			$restricteduser = new User($db);
+			$restricteduser->fetch($user->id);
+			$restricteduser->loadRights();
+			$restricteduser->admin = 0;
+			$restricteduser->socid = 0;
+			$restricteduser->rights->societe->client->voir = 0;
+
+			// The object of a document is found from its subdirectory (ref, or id for contacts), also for previews
+			$documentobject = fetchObjectOfDocument('apercuficheinter', $fichinter->ref.'/'.$fichinter->ref.'.pdf_preview.png');
+			$this->assertEquals('ficheinter', $documentobject['modulepart'], 'The prefix apercu must be removed from the modulepart');
+			$this->assertEquals($fichinterid, (is_object($documentobject['object']) ? $documentobject['object']->id : 0), 'The intervention of the preview must be found');
+			$documentobject = fetchObjectOfDocument('contact', $contactid.'/./photo.jpg');
+			$this->assertEquals($contactid.'/photo.jpg', $documentobject['original_file'], 'The path must be normalized');
+			$this->assertEquals($contactid, (is_object($documentobject['object']) ? $documentobject['object']->id : 0), 'The contact must be found from its id');
+			$documentobject = fetchObjectOfDocument('ficheinter', 'NOTEXISTINGREF/NOTEXISTINGREF.pdf');
+			$this->assertNull($documentobject['object'], 'No object must be found for an unknown ref');
+
+			$this->assertEquals(0, checkUserAccessToDocumentObject($restricteduser, 'contact', $contactid.'/photo.jpg', 'read'), 'The contact of a third party not assigned to the restricted user must be refused');
+			$this->assertEquals(0, checkUserAccessToDocumentObject($restricteduser, 'fichinter', $fichinter->ref.'/'.$fichinter->ref.'.pdf', 'read'), 'The intervention of a third party not assigned to the restricted user must be refused');
+
+			// The restricted user, once he is a sales representative of the third party
+			$this->assertGreaterThanOrEqual(0, $soc->add_commercial($user, $restricteduser->id), 'User must be added as sales representative');
+			$this->assertEquals(1, checkUserAccessToDocumentObject($restricteduser, 'contact', $contactid.'/photo.jpg', 'read'), 'The sales representative can access the documents of the contact (table llx_socpeople)');
+			$this->assertEquals(1, checkUserAccessToDocumentObject($restricteduser, 'fichinter', $fichinter->ref.'/'.$fichinter->ref.'.pdf', 'read'), 'The sales representative can access the documents of the intervention (table llx_fichinter)');
+
+			// A BOM is not linked to a third party, only its entity is checked
+			$this->assertEquals(1, checkUserAccessToDocumentObject($restricteduser, 'bom', $bom->ref.'/'.$bom->ref.'.pdf', 'read'), 'The documents of a BOM must be allowed (table llx_bom_bom)');
+			$this->assertEquals(1, checkUserAccessToDocumentObject($user, 'bom', $bom->ref.'/'.$bom->ref.'.pdf', 'read'), 'The documents of a BOM must be allowed to the admin user (table llx_bom_bom)');
+		} finally {
+			$bom->delete($user);
+			$fichinter->delete($user);
+			$contact->delete($user);
+			$soc->delete($socid, $user);
+		}
+	}
+
+	/**
 	 * testDolSanitizeUrl
 	 *
 	 * @return void
@@ -1944,6 +2031,71 @@ class SecurityTest extends CommonClassTest
 		$result = dolTotpGetUri('mylogin', $secret, 'MyCompany');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('otpauth://totp/MyCompany:mylogin?secret='.$secret.'&issuer=MyCompany&algorithm=SHA1&digits=6&period=30', $result, 'Test of the otpauth URI');
+
+		// The rescue option $dolibarr_main_disable_totp of conf.php skips the second step: the login is returned at once
+		global $dolibarr_main_disable_totp;
+		$savdisabletotp = isset($dolibarr_main_disable_totp) ? $dolibarr_main_disable_totp : null;
+		$dolibarr_main_disable_totp = '0';
+		$this->assertFalse(dolTotpIsDisabledByConf(), 'The 2FA must be enabled when dolibarr_main_disable_totp is 0');
+		$dolibarr_main_disable_totp = '1';
+		$this->assertTrue(dolTotpIsDisabledByConf(), 'The 2FA must be disabled when dolibarr_main_disable_totp is 1');
+		$this->assertEquals('mylogin', dolTotpStartSecondFactor($this->savdb, 'mylogin', 1), 'With the 2FA disabled in conf.php, the password must be enough');
+		$dolibarr_main_disable_totp = $savdisabletotp;
+
+		return 0;
+	}
+
+	/**
+	 * testDolTotpIsRequired
+	 *
+	 * @return	int
+	 */
+	public function testDolTotpIsRequired()
+	{
+		global $conf, $db;
+
+		$constnames = array('MAIN_SECURITY_ALLOW_TOTP', 'MAIN_SECURITY_TOTP_REQUIRED_FOR_INTERNAL', 'MAIN_SECURITY_TOTP_REQUIRED_FOR_EXTERNAL', 'MAIN_SECURITY_TOTP_REQUIRED_FOR_GROUPS');
+		$saved = array();
+		foreach ($constnames as $constname) {
+			$saved[$constname] = getDolGlobalString($constname);
+			$conf->global->$constname = '';
+		}
+		// Without an encryption key no TOTP can be saved, so none is ever required
+		$canstore = (strpos(dolEncrypt('totp'), 'dolcrypt:') === 0);
+
+		$internal = new User($db);
+		$internal->id = 1;
+		$internal->socid = 0;
+		$external = new User($db);
+		$external->id = 1;
+		$external->socid = 1;
+
+		$conf->global->MAIN_SECURITY_TOTP_REQUIRED_FOR_INTERNAL = 1;
+		$this->assertFalse(dolTotpIsRequired($db, $internal), 'Never required while the TOTP is not allowed');
+
+		$conf->global->MAIN_SECURITY_ALLOW_TOTP = 1;
+		$this->assertEquals($canstore, dolTotpIsRequired($db, $internal), 'Required for an internal user');
+		$this->assertFalse(dolTotpIsRequired($db, $external), 'Not required for an external user by the option for internal users');
+
+		$conf->global->MAIN_SECURITY_TOTP_REQUIRED_FOR_INTERNAL = 0;
+		$conf->global->MAIN_SECURITY_TOTP_REQUIRED_FOR_EXTERNAL = 1;
+		$this->assertFalse(dolTotpIsRequired($db, $internal), 'Not required for an internal user by the option for external users');
+		$this->assertEquals($canstore, dolTotpIsRequired($db, $external), 'Required for an external user');
+
+		// The rescue option of conf.php refuses any enrollment: requiring one would lock the user on the setup page
+		global $dolibarr_main_disable_totp;
+		$savdisabletotp = isset($dolibarr_main_disable_totp) ? $dolibarr_main_disable_totp : null;
+		$dolibarr_main_disable_totp = '1';
+		$this->assertFalse(dolTotpIsRequired($db, $external), 'Never required while the 2FA is disabled by dolibarr_main_disable_totp');
+		$dolibarr_main_disable_totp = $savdisabletotp;
+
+		$conf->global->MAIN_SECURITY_TOTP_REQUIRED_FOR_EXTERNAL = 0;
+		$conf->global->MAIN_SECURITY_TOTP_REQUIRED_FOR_GROUPS = '-1,abc';
+		$this->assertFalse(dolTotpIsRequired($db, $internal), 'Not required for a user in none of the groups, the values that are not ids being ignored');
+
+		foreach ($saved as $constname => $value) {
+			$conf->global->$constname = $value;
+		}
 
 		return 0;
 	}

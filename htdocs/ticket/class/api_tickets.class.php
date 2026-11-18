@@ -78,6 +78,7 @@ class Tickets extends DolibarrApi
 	 * @param   int         	$contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
 	 * @return  Object							Object with cleaned properties
 	 *
+	 * @throws RestException 400
 	 * @throws RestException 401
 	 * @throws RestException 403
 	 * @throws RestException 404
@@ -150,15 +151,11 @@ class Tickets extends DolibarrApi
 		}
 
 		// Check parameters
-		if (($id < 0) && !$track_id && !$ref) {
+		if (($id <= 0) && !$track_id && !$ref) {
 			throw new RestException(400, 'Wrong parameters');
 		}
-		if (empty($id) && empty($ref) && empty($track_id)) {
-			$result = $this->ticket->initAsSpecimen();
-		} else {
-			$result = $this->ticket->fetch($id, $ref, $track_id);
-		}
-		if (!$result) {
+		$result = $this->ticket->fetch($id, $ref, $track_id);
+		if ($result <= 0) {
 			throw new RestException(404, 'Ticket not found');
 		}
 
@@ -306,13 +303,7 @@ class Tickets extends DolibarrApi
 			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$ticket_static = new Ticket($this->db);
-				if ($ticket_static->fetch($obj->rowid)) {
-					if ($ticket_static->fk_user_assign > 0) {
-						$userStatic = new User($this->db);
-						$userStatic->fetch($ticket_static->fk_user_assign);
-						//$ticket_static->fk_user_assign_string = dolGetFirstLastname($userStatic->firstname, $userStatic->lastname);
-					}
-
+				if ($ticket_static->fetch($obj->rowid) > 0) {
 					if ($loadcontacts) {
 						// Add external contacts ids
 						$tmparray = $ticket_static->liste_contact(-1, 'external', 1);
@@ -345,7 +336,7 @@ class Tickets extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -377,8 +368,20 @@ class Tickets extends DolibarrApi
 		// Check mandatory fields
 		$this->_validate($request_data);
 
-		// Check thirdparty validity
+		// The thirdparty can be given with socid or fk_soc, but only fk_soc is saved by create()
 		$socid = (int) ($request_data['socid'] ?? 0);
+		$fk_soc = (int) ($request_data['fk_soc'] ?? 0);
+		if ($socid > 0 && $fk_soc > 0 && $socid != $fk_soc) {
+			throw new RestException(400, 'socid='.$socid.' and fk_soc='.$fk_soc.' must not be different');
+		}
+		$socid = max($socid, $fk_soc, 0);
+		// Same as the ticket card: an external user creates tickets for its own thirdparty
+		if ($socid == 0 && DolibarrApiAccess::$user->socid > 0) {
+			$socid = (int) DolibarrApiAccess::$user->socid;
+		}
+		unset($request_data['socid'], $request_data['fk_soc']);
+
+		// Check thirdparty validity
 		if ($socid > 0) {
 			$thirdpartytmp = new Societe($this->db);
 			$thirdparty_result = $thirdpartytmp->fetch($socid);
@@ -406,6 +409,8 @@ class Tickets extends DolibarrApi
 
 			$this->ticket->$field = $this->_checkValForAPI($field, $value, $this->ticket);
 		}
+		$this->ticket->fk_soc = $socid;
+		$this->ticket->socid = $socid;
 		if (empty($this->ticket->ref)) {
 			$this->ticket->ref = $ticketstatic->getDefaultRef();
 		}
@@ -844,14 +849,18 @@ class Tickets extends DolibarrApi
 	 * @return  array
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
+	 * @throws RestException 403 Access denied
+	 * @throws RestException 404 Ticket not found
+	 * @throws RestException 500 Error when deleting the ticket
 	 */
 	public function delete($id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ticket', 'delete')) {
 			throw new RestException(403);
 		}
-		$result = $this->ticket->fetch($id);
-		if (!$result) {
+		$result = $this->ticket->fetch((int) $id);
+		if ($result <= 0) {
 			throw new RestException(404, 'Ticket not found');
 		}
 
@@ -859,8 +868,8 @@ class Tickets extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (!$this->ticket->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when deleting ticket');
+		if ($this->ticket->delete(DolibarrApiAccess::$user) <= 0) {
+			throw new RestException(500, 'Error when deleting the ticket: '.$this->ticket->errorsToString());
 		}
 
 		return array(
@@ -933,7 +942,7 @@ class Tickets extends DolibarrApi
 	 * Delete the attachment files saved for a message that could not be created, with their entries in the ECM index.
 	 *
 	 * @param	string[]	$files	Full paths of the files to delete
-	 * @return	void
+	 * @return	void			No return value
 	 */
 	private function _deleteMessageAttachments(array $files): void
 	{
@@ -1024,7 +1033,7 @@ class Tickets extends DolibarrApi
 	 * @param	int		$contactid	Contact id that was linked
 	 * @param	string	$type		Contact type code
 	 * @param	string	$source		'internal' or 'external'
-	 * @return	void
+	 * @return	void			No return value, throws a RestException on failure
 	 * @throws	RestException
 	 */
 	private function _addContactResultOrThrow(int $result, int $contactid, string $type, string $source): void

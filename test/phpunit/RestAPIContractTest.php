@@ -24,6 +24,7 @@
  */
 
 require_once __DIR__."/AbstractRestAPITest.php";
+require_once __DIR__."/../../htdocs/contrat/class/contrat.class.php";
 
 /**
  * Class for PHPUnit tests
@@ -136,7 +137,7 @@ class RestAPIContractTest extends AbstractRestAPITest
 			"date_start" => null,
 			"date_end" => $date_end,
 			"price_base_type" => "HT",
-			"subprice_excl_tax" => 0,
+			"subprice_inc_tax" => 0,
 			"info_bits" => 0,
 			"fk_fournprice" => null,
 			"pa_ht" => 0,
@@ -149,6 +150,115 @@ class RestAPIContractTest extends AbstractRestAPITest
 		$this->assertGreaterThan(0, $line_id, "$test Id of line is not > 0");
 
 		return $line_id;
+	}
+
+	/**
+	 * Call the API with POST and check the answer is 304 Not Modified, which has no JSON body
+	 *
+	 * @param string				$endpoint	Endpoint - "contracts/id/validate"
+	 * @param string				$test_title	Text to be added to output
+	 * @param array<string,mixed>	$data		Data that will be JSON encoded
+	 * @return void
+	 */
+	private function assertPostNotModified($endpoint, $test_title, $data)
+	{
+		$addheaders = array(
+			'Content-Type: application/json', 'Accept: application/json', "DOLAPIKEY: ".$this->api_key
+		);
+
+		$result = getURLContent($this->api_url.'/'.$endpoint, 'POST', json_encode($data), 1, $addheaders, array('http', 'https'), 2);
+
+		$this->assertEquals(0, $result['curl_error_no'], $test_title." Should not have a curl error");
+		$this->assertEquals(304, $result['http_code'], $test_title." HTTP code must be 304".PHP_EOL.json_encode($result, JSON_PRETTY_PRINT));
+	}
+
+	/**
+	 * testRestContractValidate
+	 *
+	 * @return void
+	 */
+	public function testRestContractValidate()
+	{
+		$test = "Validate a draft contract, then validate it again";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$this->createContractLine($contract_id, $test);
+
+			$this->getUrl('contracts/'.$contract_id.'/validate', $test, 'POST', array("notrigger" => 0));
+
+			$result = $this->getUrl('contracts/'.$contract_id, "$test (read after validate)", 'GET');
+			$this->assertEquals(Contrat::STATUS_VALIDATED, $result['content']['status'] ?? null, "$test Contract must be validated");
+			$ref = $result['content']['ref'] ?? '';
+			$this->assertNotEmpty($ref, "$test Validated contract must have a ref");
+			$this->assertStringNotContainsString('PROV', $ref, "$test Validated contract must not keep its draft ref");
+
+			$this->assertPostNotModified('contracts/'.$contract_id.'/validate', "$test (validate again)", array("notrigger" => 0));
+
+			$result = $this->getUrl('contracts/'.$contract_id, "$test (read after second validate)", 'GET');
+			$this->assertEquals(Contrat::STATUS_VALIDATED, $result['content']['status'] ?? null, "$test Contract must still be validated");
+			$this->assertEquals($ref, $result['content']['ref'] ?? '', "$test Ref must not change");
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
+	}
+
+	/**
+	 * testRestContractPutStatusRejected
+	 *
+	 * @return void
+	 */
+	public function testRestContractPutStatusRejected()
+	{
+		$test = "Change the status of a validated contract with PUT";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$this->createContractLine($contract_id, $test);
+			$this->getUrl('contracts/'.$contract_id.'/validate', "$test (validate)", 'POST', array("notrigger" => 0));
+			$result = $this->getUrl('contracts/'.$contract_id, "$test (read after validate)", 'GET');
+			$ref = $result['content']['ref'] ?? '';
+
+			foreach (array('statut', 'status') as $field) {
+				$this->getUrl('contracts/'.$contract_id, "$test ($field)", 'PUT', array($field => Contrat::STATUS_DRAFT), 400);
+
+				$result = $this->getUrl('contracts/'.$contract_id, "$test (read after $field)", 'GET');
+				$this->assertEquals(Contrat::STATUS_VALIDATED, $result['content']['status'] ?? null, "$test ($field) Contract must still be validated");
+				$this->assertEquals($ref, $result['content']['ref'] ?? '', "$test ($field) Ref must not change");
+			}
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
+	}
+
+	/**
+	 * testRestContractPutUnchangedStatus
+	 *
+	 * @return void
+	 */
+	public function testRestContractPutUnchangedStatus()
+	{
+		$test = "Update a contract with PUT, sending back its unchanged status";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$note = "API test note ".dol_now();
+			$data = array(
+				"statut" => Contrat::STATUS_DRAFT,
+				"status" => Contrat::STATUS_DRAFT,
+				"note_public" => $note,
+			);
+			$this->getUrl('contracts/'.$contract_id, $test, 'PUT', $data);
+
+			$result = $this->getUrl('contracts/'.$contract_id, "$test (read after update)", 'GET');
+			$this->assertEquals(Contrat::STATUS_DRAFT, $result['content']['status'] ?? null, "$test Contract must still be a draft");
+			$this->assertEquals($note, $result['content']['note_public'] ?? '', "$test Public note must be updated");
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
 	}
 
 	/**
@@ -342,6 +452,115 @@ class RestAPIContractTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * Data of a contract line, with every field read by POST and PUT contracts/{id}/lines
+	 *
+	 * @param string	$desc	Description of the line
+	 *
+	 * @return array<string,mixed>
+	 */
+	private function getLineData($desc)
+	{
+		return array(
+			"desc" => $desc,
+			"subprice" => 20,
+			"qty" => 2,
+			"tva_tx" => 0,
+			"localtax1_tx" => 0,
+			"localtax2_tx" => 0,
+			"remise_percent" => 0,
+			"fk_product" => 0,
+			"date_start" => null,
+			"date_end" => null,
+			"date_start_real" => null,
+			"date_end_real" => null,
+			"price_base_type" => "HT",
+			"subprice_inc_tax" => 0,
+			"info_bits" => 0,
+			"fk_fournprice" => null,	// read by POST
+			"fk_fourn_price" => null,	// read by PUT
+			"pa_ht" => 5,
+			"array_options" => array(),
+			"fk_unit" => null,
+		);
+	}
+
+	/**
+	 * Read one line of a contract
+	 *
+	 * @param int		$contract_id	Id of the contract
+	 * @param int		$line_id		Id of the line
+	 * @param string	$test			Text to be added to output
+	 *
+	 * @return array<string,mixed>		The line
+	 */
+	private function getContractLine($contract_id, $line_id, $test)
+	{
+		$result = $this->getUrl('contracts/'.$contract_id.'/lines', "$test (read lines)", 'GET');
+		$found = array();
+		foreach ($result['content'] as $line) {
+			if ((int) $line['id'] === $line_id) {
+				$found = $line;
+				break;
+			}
+		}
+		$this->assertNotEmpty($found, "$test Line $line_id not found in contract $contract_id");
+
+		return $found;
+	}
+
+	/**
+	 * testRestContractPutLineUnknownLine
+	 *
+	 * @return void
+	 */
+	public function testRestContractPutLineUnknownLine()
+	{
+		$test = "Update a line that does not exist";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$this->getUrl('contracts/'.$contract_id.'/lines/999999999', $test, 'PUT', $this->getLineData("Updated"), 404);
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
+	}
+
+	/**
+	 * testRestContractPutLineKeepsPosition
+	 *
+	 * @return void
+	 */
+	public function testRestContractPutLineKeepsPosition()
+	{
+		$test = "Update a line without rang";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$line_ids = array();
+			foreach (array(1, 2) as $rang) {
+				$data = $this->getLineData("API test service ".$rang);
+				$data["rang"] = $rang;
+				$result = $this->getUrl('contracts/'.$contract_id.'/lines', "$test (create line $rang)", 'POST', $data);
+				$line_ids[$rang] = (int) $result['content'];
+				$this->assertGreaterThan(0, $line_ids[$rang], "$test Id of line $rang is not > 0");
+			}
+
+			$line = $this->getContractLine($contract_id, $line_ids[2], "$test (before update)");
+			$this->assertEquals(2, $line['rang'] ?? '', "$test Second line must be at position 2 before update");
+
+			$this->getUrl('contracts/'.$contract_id.'/lines/'.$line_ids[2], $test, 'PUT', $this->getLineData("Updated"));
+
+			$line = $this->getContractLine($contract_id, $line_ids[2], "$test (after update)");
+			$this->assertEquals("Updated", $line['description'] ?? '', "$test Line must be updated");
+			$this->assertEquals(2, $line['rang'] ?? '', "$test Position of the line must be kept");
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
+	}
+
+	/**
 	 * testRestContractPaginationLimitZero
 	 *
 	 * @return void
@@ -382,6 +601,90 @@ class RestAPIContractTest extends AbstractRestAPITest
 			} finally {
 				$this->getUrl('contracts/'.$other_contract_id, "$test (cleanup other contract)", 'DELETE');
 			}
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
+	}
+
+	/**
+	 * Read the only line of a contract
+	 *
+	 * @param int		$contract_id	Id of the contract
+	 * @param string	$test			Text to be added to output
+	 *
+	 * @return array<string,mixed>	The line
+	 */
+	private function getOnlyContractLine($contract_id, $test)
+	{
+		$result = $this->getUrl('contracts/'.$contract_id.'/lines', "$test (read lines)", 'GET');
+		$this->assertCount(1, $result['content'], "$test Contract must have one line");
+
+		return $result['content'][0];
+	}
+
+	/**
+	 * testRestContractPostLineHT
+	 *
+	 * @return void
+	 */
+	public function testRestContractPostLineHT()
+	{
+		$test = "Add a line priced excluding tax";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$data = array("desc" => "API test service HT", "subprice" => 100, "qty" => 2, "tva_tx" => 20, "price_base_type" => "HT");
+			$result = $this->getUrl('contracts/'.$contract_id.'/lines', $test, 'POST', $data);
+			$this->assertGreaterThan(0, (int) $result['content'], "$test Id of line is not > 0");
+
+			$line = $this->getOnlyContractLine($contract_id, $test);
+			$this->assertEquals(100, (float) $line['subprice'], "$test Unit price excl. tax");
+			$this->assertEquals(200, (float) $line['total_ht'], "$test Total excl. tax");
+			$this->assertEquals(240, (float) $line['total_ttc'], "$test Total incl. tax");
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
+	}
+
+	/**
+	 * testRestContractPostLineTTC
+	 *
+	 * @return void
+	 */
+	public function testRestContractPostLineTTC()
+	{
+		$test = "Add a line priced including tax";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$data = array("desc" => "API test service TTC", "subprice_inc_tax" => 120, "qty" => 2, "tva_tx" => 20, "price_base_type" => "TTC");
+			$result = $this->getUrl('contracts/'.$contract_id.'/lines', $test, 'POST', $data);
+			$this->assertGreaterThan(0, (int) $result['content'], "$test Id of line is not > 0");
+
+			$line = $this->getOnlyContractLine($contract_id, $test);
+			$this->assertEquals(100, (float) $line['subprice'], "$test Unit price excl. tax");
+			$this->assertEquals(200, (float) $line['total_ht'], "$test Total excl. tax");
+			$this->assertEquals(240, (float) $line['total_ttc'], "$test Total incl. tax");
+		} finally {
+			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
+		}
+	}
+
+	/**
+	 * testRestContractPostLineError
+	 *
+	 * @return void
+	 */
+	public function testRestContractPostLineError()
+	{
+		$test = "Add a free line without description";
+
+		$contract_id = $this->createContract($test);
+
+		try {
+			$this->getUrl('contracts/'.$contract_id.'/lines', $test, 'POST', array("desc" => "", "subprice" => 10, "qty" => 1), 500);
 		} finally {
 			$this->getUrl('contracts/'.$contract_id, "$test (cleanup contract)", 'DELETE');
 		}
