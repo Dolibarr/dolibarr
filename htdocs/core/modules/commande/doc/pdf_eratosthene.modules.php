@@ -307,7 +307,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
 				$pdf->setAutoPageBreak(true, 0);
 
-				$heightforinfotot = 40; // Height reserved to output the info and total part
+				$heightforinfotot = $this->isBankAccountShown($object) ? 50 : 40; // Height reserved to output the info and total part
 				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
 				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
@@ -366,6 +366,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
 
+				$heightforfreetext = max($heightforfreetext, $this->getFooterHeight($object, $outputlangs) - $heightforfooter);
 
 				$tab_top = 90 + $top_shift + $shipp_shift;
 				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
@@ -1134,22 +1135,20 @@ class pdf_eratosthene extends ModelePDFCommandes
 		}
 
 		// If payment mode not forced or forced to VIR, show payment with BAN
-		if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR') {
-			if ($object->fk_account > 0 || $object->fk_bank > 0 || getDolGlobalInt('FACTURE_RIB_NUMBER')) {
-				$bankid = ($object->fk_account <= 0 ? $conf->global->FACTURE_RIB_NUMBER : $object->fk_account);
-				if ($object->fk_bank > 0) {
-					$bankid = $object->fk_bank; // For backward compatibility when object->fk_account is forced with object->fk_bank
-				}
-				$account = new Account($this->db);
-				$account->fetch($bankid);
-
-				$curx = $this->marge_gauche;
-				$cury = $posy;
-
-				$posy = pdf_bank($pdf, $outputlangs, $curx, $cury, $account, 0, $default_font_size);
-
-				$posy += 2;
+		if ($this->isBankAccountShown($object)) {
+			$bankid = ($object->fk_account <= 0 ? getDolGlobalInt('FACTURE_RIB_NUMBER') : $object->fk_account);
+			if ($object->fk_bank > 0) {
+				$bankid = $object->fk_bank; // For backward compatibility when object->fk_account is forced with object->fk_bank
 			}
+			$account = new Account($this->db);
+			$account->fetch($bankid);
+
+			$curx = $this->marge_gauche;
+			$cury = $posy;
+
+			$posy = pdf_bank($pdf, $outputlangs, $curx, $cury, $account, 0, $default_font_size);
+
+			$posy += 2;
 		}
 
 		return $posy;
@@ -1906,6 +1905,44 @@ class pdf_eratosthene extends ModelePDFCommandes
 		$pagehead = array('top_shift' => $top_shift, 'shipp_shift' => $shipp_shift);
 
 		return $pagehead;
+	}
+
+	/**
+	 *	Tell if the bank account block is printed in the info area
+	 *
+	 *	@param	Commande	$object		Object to show
+	 *	@return	bool					True if the bank account is shown
+	 */
+	protected function isBankAccountShown($object)
+	{
+		if (!empty($object->mode_reglement_code) && $object->mode_reglement_code != 'VIR') {
+			return false;
+		}
+
+		return $object->fk_account > 0 || $object->fk_bank > 0 || getDolGlobalInt('FACTURE_RIB_NUMBER') != 0;
+	}
+
+	/**
+	 *	Get the height taken by the footer with its free text, measured on a throwaway PDF
+	 *
+	 *	@param	Commande	$object			Object to show
+	 *	@param	Translate	$outputlangs	Object lang for output
+	 *	@return	float						Height of the footer, in mm
+	 */
+	protected function getFooterHeight($object, $outputlangs)
+	{
+		$measurePdf = pdf_getInstance($this->format);
+		$measurePdf->setAutoPageBreak(true, 0);
+		if (class_exists('TCPDF')) {
+			$measurePdf->setPrintHeader(false);
+			$measurePdf->setPrintFooter(false);
+		}
+		$measurePdf->SetFont(pdf_getPDFFont($outputlangs));
+		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
+		$measurePdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
+		$measurePdf->AddPage();
+
+		return (float) $this->_pagefoot($measurePdf, $object, $outputlangs, 0);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
