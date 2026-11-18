@@ -287,4 +287,91 @@ class RestAPIExpenseReportTest extends AbstractRestAPITest
 		$this->getUrl('expensereports/'.$id.'/validate', $test, 'POST', array("notrigger" => 0));
 		$this->assertStatus($id, ExpenseReport::STATUS_VALIDATED, $test);
 	}
+
+	/**
+	 * Add a line without VAT to a draft expense report
+	 *
+	 * @param int		$id			Id of the expense report
+	 * @param float		$amount		Amount of the line
+	 * @param string	$test		Text to be added to output
+	 * @return int					Id of the line
+	 */
+	private function addLineWithoutVat($id, $amount, $test)
+	{
+		global $db;
+
+		// Any active expense type, without assuming a given code exists in the dictionary
+		$fk_c_type_fees = 0;
+		$resql = $db->query("SELECT id FROM ".MAIN_DB_PREFIX."c_type_fees WHERE active = 1 ORDER BY id");
+		if ($resql && ($obj = $db->fetch_object($resql))) {
+			$fk_c_type_fees = (int) $obj->id;
+		}
+		$this->assertGreaterThan(0, $fk_c_type_fees, "$test No active expense type");
+
+		$data = array(
+			"date" => dol_now(),
+			"fk_c_type_fees" => $fk_c_type_fees,
+			"qty" => 1,
+			"value_unit" => $amount,
+			"vatrate" => 0,
+			"comments" => "Line created by ".get_class($this),
+		);
+		$result = $this->getUrl('expensereports/'.$id.'/line', $test, 'POST', $data);
+		$this->assertGreaterThan(0, (int) $result['content'], "$test Id of line is not > 0");
+
+		return (int) $result['content'];
+	}
+
+	/**
+	 * Delete a line of a draft expense report and check that the totals are updated
+	 *
+	 * @return void
+	 */
+	public function testRestExpenseReportDeleteLine()
+	{
+		$test = "Delete a line of a draft expense report";
+
+		$id = $this->createExpenseReport($test);
+		$lineid1 = $this->addLineWithoutVat($id, 10, $test);
+		$lineid2 = $this->addLineWithoutVat($id, 25, $test);
+
+		$result = $this->getUrl('expensereports/'.$id, $test, 'GET');
+		$this->assertEquals(35, (float) $result['content']['total_ttc'], "$test Total before delete");
+
+		$result = $this->getUrl('expensereports/'.$id.'/lines/'.$lineid1, $test, 'DELETE');
+		$this->assertEquals(25, (float) $result['content']['total_ttc'], "$test Total returned by the delete");
+
+		$result = $this->getUrl('expensereports/'.$id.'/lines', $test, 'GET');
+		$lineids = array_map('intval', array_column($result['content'], 'id'));
+		$this->assertEquals(array($lineid2), $lineids, "$test Only the other line must remain");
+
+		$result = $this->getUrl('expensereports/'.$id, $test, 'GET');
+		$this->assertEquals(25, (float) $result['content']['total_ttc'], "$test Total after delete");
+		$this->assertEquals(25, (float) $result['content']['total_ht'], "$test Total without tax after delete");
+	}
+
+	/**
+	 * Deleting a line of another expense report returns a 404 and keeps the line
+	 *
+	 * @return void
+	 */
+	public function testRestExpenseReportDeleteLineOfOtherReport()
+	{
+		$test = "Delete a line of another expense report";
+
+		$id = $this->createExpenseReport($test);
+		$this->addLineWithoutVat($id, 10, $test);
+
+		$otherid = $this->createExpenseReport($test);
+		$otherlineid = $this->addLineWithoutVat($otherid, 20, $test);
+
+		$this->getUrl('expensereports/'.$id.'/lines/'.$otherlineid, $test, 'DELETE', null, 404);
+
+		$result = $this->getUrl('expensereports/'.$otherid.'/lines', $test, 'GET');
+		$lineids = array_map('intval', array_column($result['content'], 'id'));
+		$this->assertEquals(array($otherlineid), $lineids, "$test The line of the other report must remain");
+
+		$result = $this->getUrl('expensereports/'.$id, $test, 'GET');
+		$this->assertEquals(10, (float) $result['content']['total_ttc'], "$test Total of the report must not change");
+	}
 }
