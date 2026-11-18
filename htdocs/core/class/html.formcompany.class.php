@@ -722,6 +722,7 @@ class FormCompany extends Form
 						$.getJSON(url,
 							{
 								action: method,
+								token: \'' . currentToken() . '\',
 								id: id,
 								htmlname: htmlname
 							},
