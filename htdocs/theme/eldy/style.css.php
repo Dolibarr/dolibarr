@@ -5074,21 +5074,59 @@ table.noborder {
 .fichehalfright table.noborder, .fichehalfleft table.noborder {
 	margin: 0px 0px 0px 0px;
 }
-table.liste, table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact), table.formdoc, div.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) {
-	<?php
-	if ($userborderontable) { ?>
+<?php if ($userborderontable) { ?>
+/* Lateral borders are painted by the cells of the first and last column of each row,
+   so they can not be overpainted by the cell backgrounds when border is not collapsed and corners are rounded. */
+table.liste > tbody > tr > td:first-child, table.liste > tbody > tr > th:first-child,
+table.liste > thead > tr > td:first-child, table.liste > thead > tr > th:first-child,
+table.liste > tfoot > tr > td:first-child, table.liste > tfoot > tr > th:first-child,
+table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) > tbody > tr > td:first-child, table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) > tbody > tr > th:first-child,
+table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) > thead > tr > td:first-child, table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) > thead > tr > th:first-child,
+table.formdoc > tbody > tr > td:first-child, table.formdoc > tbody > tr > th:first-child,
+table.formdoc > thead > tr > td:first-child, table.formdoc > thead > tr > th:first-child,
+div.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) {
 	border-left: 1px solid var(--colortopbordertitle1);
-	border-right: 1px solid var(--colortopbordertitle1);
-	<?php } ?>
 }
+table.liste > tbody > tr > td:last-child, table.liste > tbody > tr > th:last-child,
+table.liste > thead > tr > td:last-child, table.liste > thead > tr > th:last-child,
+table.liste > tfoot > tr > td:last-child, table.liste > tfoot > tr > th:last-child,
+table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) > tbody > tr > td:last-child, table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) > tbody > tr > th:last-child,
+table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) > thead > tr > td:last-child, table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) > thead > tr > th:last-child,
+table.formdoc > tbody > tr > td:last-child, table.formdoc > tbody > tr > th:last-child,
+table.formdoc > thead > tr > td:last-child, table.formdoc > thead > tr > th:last-child,
+div.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) {
+	border-right: 1px solid var(--colortopbordertitle1);
+}
+<?php } ?>
 table.liste, table.noborder, table.formdoc, div.noborder {
 	width: 100%;
 	border-collapse: separate !important;
 	border-spacing: 0px;
+	margin: 0px 0px 20px 0px;
+}
+/* Top border is painted by the cells of the first row (like the bottom border painted by the cells of the last row),
+   so it can not be overpainted by the cell backgrounds when border is not collapsed and corners are rounded. */
+table.liste > *:first-child > tr:first-child > td, table.liste > *:first-child > tr:first-child > th,
+table.noborder > *:first-child > tr:first-child > td, table.noborder > *:first-child > tr:first-child > th,
+table.formdoc > *:first-child > tr:first-child > td, table.formdoc > *:first-child > tr:first-child > th,
+div.noborder:not(.paymenttable):not(.margintable) {
 	border-top-width: <?php echo $borderwidth ?>px;
 	border-top-color: var(--colortopbordertitle1);
 	border-top-style: solid;
-	margin: 0px 0px 20px 0px;
+}
+/* No top border when the table is attached under a filter bar or a title bar
+   (the liste_titre_bydiv is the header of the card, the table continues it) */
+table.liste.listwithfilterbefore > *:first-child > tr:first-child > td, table.liste.listwithfilterbefore > *:first-child > tr:first-child > th,
+table.noborder.listwithfilterbefore > *:first-child > tr:first-child > td, table.noborder.listwithfilterbefore > *:first-child > tr:first-child > th,
+table.formdoc.listwithfilterbefore > *:first-child > tr:first-child > td, table.formdoc.listwithfilterbefore > *:first-child > tr:first-child > th,
+div.liste_titre_bydiv ~ div.div-table-responsive > table > *:first-child > tr:first-child > td,
+div.liste_titre_bydiv ~ div.div-table-responsive > table > *:first-child > tr:first-child > th,
+div.liste_titre_bydiv ~ div.div-table-responsive-no-min > table > *:first-child > tr:first-child > td,
+div.liste_titre_bydiv ~ div.div-table-responsive-no-min > table > *:first-child > tr:first-child > th,
+div.liste_titre_bydiv + table > *:first-child > tr:first-child > td,
+div.liste_titre_bydiv + table > *:first-child > tr:first-child > th {
+	border-top-width: 0px;
+	border-top-style: none;
 }
 #tablelines, #tablelinesservice {
 	border-bottom-width: 1px;
@@ -5122,6 +5160,9 @@ table.noborder:not(#tablelines):not(#tablelinesservice) tr:last-of-type {
 /* CSS to remove the interline border */
 table.nointerlines tr:not(:last-child) td {
 	border-bottom: unset !important;
+}
+/* Keep the top border of the card on the first row */
+table.nointerlines tr:not(:first-child) td {
 	border-top: unset !important;
 }
 
@@ -5138,13 +5179,25 @@ table.noborder.cal_month {
 table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child td:first-child,
 table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child th:first-child,
 table.tagtable.liste:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child td:first-child,
-table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.trfirstline td:first-child {
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.trfirstline td:first-child,
+table.liste:not(.listwithfilterbefore, .paymenttable, .margintable) > *:first-child > tr:first-child > td:first-child,
+table.liste:not(.listwithfilterbefore, .paymenttable, .margintable) > *:first-child > tr:first-child > th:first-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable, .cal_month) > *:first-child > tr:first-child > td:first-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable, .cal_month) > *:first-child > tr:first-child > th:first-child,
+table.formdoc > *:first-child > tr:first-child > td:first-child,
+table.formdoc > *:first-child > tr:first-child > th:first-child {
 	border-top-left-radius: <?php echo $borderradius; ?>px;
 }
 table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child td:last-child,
 table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child th:last-child,
 table.tagtable.liste:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child th:last-child,
-table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.trfirstline td:last-child {
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.trfirstline td:last-child,
+table.liste:not(.listwithfilterbefore, .paymenttable, .margintable) > *:first-child > tr:first-child > td:last-child,
+table.liste:not(.listwithfilterbefore, .paymenttable, .margintable) > *:first-child > tr:first-child > th:last-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable, .cal_month) > *:first-child > tr:first-child > td:last-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable, .cal_month) > *:first-child > tr:first-child > th:last-child,
+table.formdoc > *:first-child > tr:first-child > td:last-child,
+table.formdoc > *:first-child > tr:first-child > th:last-child {
 	border-top-right-radius: <?php echo $borderradius; ?>px;
 }
 table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child td:first-child,
@@ -5743,6 +5796,10 @@ table.tableforservicepart1 tr td {
 .paymenttable, .margintable {
 	border-top: none !important;
 	margin: 0px 0px 0px 0px !important;
+}
+.paymenttable > *:first-child > tr:first-child > td, .paymenttable > *:first-child > tr:first-child > th,
+.margintable > *:first-child > tr:first-child > td, .margintable > *:first-child > tr:first-child > th {
+	border-top: none !important;
 }
 .bordertopimp {
 	border-top: 1px solid var(--colortopbordertitle1) !important;
