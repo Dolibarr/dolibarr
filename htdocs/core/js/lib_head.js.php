@@ -1673,6 +1673,8 @@ jQuery(document).ready(function() {
 		// The page is in an iframe
 		jQuery(".side-nav-vert, .side-nav, .websitebar").hide();
 		jQuery(".id-container").css('width', '100%');
+		// Without the left menu, #id-right must not stay a table-cell, otherwise its width is reduced to the width of its content
+		jQuery("#id-right").css({"display": "block", "width": "100%"});
 
 	}
 
