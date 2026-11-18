@@ -528,6 +528,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $need_javascript_ajax;
 
 	/**
+	 * @var int<0,1>	1 if the module must be configured after its activation to work. A warning is then shown after activation.
+	 */
+	public $need_setup = 0;
+
+	/**
 	 * @var bool
 	 */
 	public $enabled_bydefault;

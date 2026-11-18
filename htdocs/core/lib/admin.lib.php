@@ -1246,7 +1246,7 @@ function purgeSessions($mysessionid)
  *  @param      int			$withdeps  				Activate/Disable also all dependencies
  * 	@param		int			$noconfverification		Remove verification of $conf->global->MODULE_NAME variable for module
  *  @param		string		$options				Option for init
- *  @return     array{nbmodules?:int,errors:string[],nbperms?:int}	array('nbmodules'=>nb modules activated with success, 'errors=>array of error messages, 'nbperms'=>Nb permission added);
+ *  @return     array{nbmodules?:int,errors:string[],nbperms?:int,needsetup?:string[]}	array('nbmodules'=>nb modules activated with success, 'errors=>array of error messages, 'nbperms'=>Nb permission added, 'needsetup'=>array of labels of activated modules that need a setup);
  */
 function activateModule($value, $withdeps = 1, $noconfverification = 0, $options = '')
 {
@@ -1260,7 +1260,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0, $options
 		return $ret;
 	}
 
-	$ret = array('nbmodules' => 0, 'errors' => array(), 'nbperms' => 0);
+	$ret = array('nbmodules' => 0, 'errors' => array(), 'nbperms' => 0, 'needsetup' => array());
 	$modName = $value;
 	$modFile = $modName.".class.php";
 
@@ -1353,6 +1353,9 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0, $options
 						if ($activate) {
 							$ret['nbmodules'] += $resarray['nbmodules'];
 							$ret['nbperms'] += $resarray['nbperms'];
+							if (!empty($resarray['needsetup'])) {
+								$ret['needsetup'] = array_merge($ret['needsetup'], $resarray['needsetup']);
+							}
 						} else {
 							if ($activateerr) {
 								$ret['errors'][] = $activateerr;
@@ -1380,6 +1383,9 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0, $options
 	if (!count($ret['errors'])) {
 		$ret['nbmodules']++;
 		$ret['nbperms'] += (is_array($objMod->rights) ? count($objMod->rights) : 0);
+		if (!empty($objMod->need_setup)) {
+			$ret['needsetup'][] = $objMod->getName();
+		}
 	}
 
 	return $ret;

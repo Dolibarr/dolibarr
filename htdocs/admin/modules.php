@@ -481,6 +481,16 @@ if ($action == 'set' && $user->admin) {
 				dol_print_error($db);
 			}
 		}
+		// Warn when the activated module, or one of its dependencies, must be configured to work
+		if (!empty($resarray['needsetup'])) {
+			foreach ($resarray['needsetup'] as $modulelabel) {
+				$msg = $langs->trans('WarningModuleNeedSetup', $modulelabel, '{s1}');
+				$msg = str_replace('{s1}', img_picto('', 'setup'), $msg);
+				// Add an empty line to separate the message from the previous warnings shown into the same box
+				$msg = (empty($_SESSION['dol_events']['warnings']) ? '' : '<br>').$msg;
+				setEventMessages($msg, null, 'warnings');
+			}
+		}
 	}
 	header("Location: ".$_SERVER["PHP_SELF"]."?mode=".$mode.$param.($page_y ? '&page_y='.$page_y : ''));
 	exit;
