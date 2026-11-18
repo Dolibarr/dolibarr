@@ -267,9 +267,15 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 		$rowids = GETPOST('rowid', 'array:int');
 
 		if (!empty($rowids) && is_array($rowids)) {
+			$nbconciliated = 0;
 			foreach ($rowids as $row) {
 				if ($row > 0) {
 					$result = $bankline->fetch($row);
+					// Lines ticked on other pages are sent too (from the browser storage): only reconcile lines of this bank account
+					if ($result <= 0 || ($object->id > 0 && (int) $bankline->fk_account != (int) $object->id)) {
+						continue;
+					}
+					$nbconciliated++;
 					$bankline->num_releve = $num_releve; // GETPOST("num_releve");
 					$result = $bankline->update_conciliation($user, GETPOSTINT("cat"), GETPOST('confirm_reconcile', 'alpha') ? 1 : 0); // If we confirm_reconcile, we set flag 'rappro' to 1.
 					if ($result < 0) {
@@ -279,8 +285,8 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 					}
 				}
 			}
-			if (!$error && count($rowids) > 0) {
-				setEventMessages($langs->trans("XNewLinesConciliated", count($rowids)), null);
+			if (!$error && $nbconciliated > 0) {
+				setEventMessages($langs->trans("XNewLinesConciliated", $nbconciliated), null);
 			}
 		} else {
 			$error++;
@@ -998,6 +1004,8 @@ if ($resql) {
 		print '<input type="submit" class="button" name="confirm_reconcile" value="'.$langs->trans("Conciliate").'">';
 		print ' <span class="opacitymedium">'.$langs->trans("otherwise").'</span> ';
 		print '<input type="submit" class="button small" name="confirm_savestatement" value="'.$langs->trans("SaveStatementOnly").'">';
+		// Number of lines ticked on other pages of the list, sent with the ticked lines of this page (see script at the end)
+		print ' <span class="opacitymedium bankreconcileotherpages hideobject"></span>';
 		//print ' <span class="opacitymedium">'.$langs->trans("or").'</span> ';
 		//print '<input type="submit" name="cancel" class="button button-cancel small" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
@@ -2025,11 +2033,21 @@ if ($resql) {
 				if (this.checked) {
 					checked[this.value] = 1;	// Line already ticked by the server (kept after an error)
 				} else if (checked[this.value]) {
-					console.log("Restore tick of bank line "+this.value);
 					$(this).prop("checked", true).trigger("change");
 				}
 			});
 			saveChecked();
+			// Lines ticked on other pages of the list: they are sent too, and their number is shown next to the buttons
+			function otherPages() {
+				var onpage = {};
+				$("input.checkforselect").each(function() { onpage[this.value] = 1; });
+				return Object.keys(checked).filter(function(id) { return !onpage[id] && parseInt(id, 10) > 0; });
+			}
+			function showOtherPages() {
+				var nb = otherPages().length;
+				$(".bankreconcileotherpages").text(nb ? \''.dol_escape_js($langs->transnoentitiesnoconv("BankLinesTickedOnOtherPages", '__NB__')).'\'.replace("__NB__", nb) : "").toggleClass("hideobject", !nb);
+			}
+			showOtherPages();
 			$(document).on("change", "input.checkforselect", function() {
 				if (this.checked) {
 					checked[this.value] = 1;
@@ -2038,10 +2056,17 @@ if ($resql) {
 				}
 				saveChecked();
 			});
-			$("input[name=confirm_reconcile]").on("click", function() {
-				// Lines being reconciled will no longer be listed, so forget them
-				$("input.checkforselect:checked").each(function() { delete checked[this.value]; });
-				saveChecked();
+			$("input[name=confirm_reconcile], input[name=confirm_savestatement]").on("click", function() {
+				var form = $(this).closest("form");
+				form.find("input.bankreconcileotherpage").remove();
+				$.each(otherPages(), function(i, id) {
+					form.append($("<input type=\"hidden\" class=\"bankreconcileotherpage\">").attr("name", "rowid[" + id + "]").val(id));
+				});
+				if ($(this).attr("name") == "confirm_reconcile" && $.trim(form.find("input[name=num_releve]").val() || "") !== "") {
+					// Lines being reconciled will no longer be listed, so forget them (not without a statement: the server refuses)
+					checked = {};
+					saveChecked();
+				}
 			});
 		});
 		</script>';

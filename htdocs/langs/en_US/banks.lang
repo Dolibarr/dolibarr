@@ -159,6 +159,7 @@ InputReceiptNumberBis=YYYYMM
 EventualyAddCategory=Optionally, a category in which to classify the operations
 ToConciliate=To reconcile?
 ThenCheckLinesAndConciliate=Then, check the lines present in the bank statement and click
+BankLinesTickedOnOtherPages=(+ %s line(s) ticked on other pages of the list)
 DefaultRIB=Default BAN
 AllRIB=All BAN
 LabelRIB=BAN Label
