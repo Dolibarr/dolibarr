@@ -2015,6 +2015,44 @@ $(function() {
 	});
 });
 
+
+/*
+ * Left menu with MAIN_MENU_EXPAND_LEFT_LEVEL_2_ON_HOVER: the sub entries of a block are expanded when mouse stays over its title,
+ * other blocks are collapsed. A mousemove is required, so a title moving under a still mouse during animation does not expand.
+ */
+$(function() {
+	let blocks = $('.blockvmenuexpandonhover');
+	if (blocks.length === 0) {
+		return;
+	}
+	let animationDuration = 500;	/* Not too fast */
+	let hoverDelay = 150;			/* To not expand blocks when mouse just crosses titles */
+	let hoverTimer = null;
+
+	let expandBlock = function (block) {
+		if (block.hasClass('blockvmenuexpanded')) {
+			return;
+		}
+		blocks.filter('.blockvmenuexpanded').removeClass('blockvmenuexpanded').children('.menu_subentries').stop(true).slideUp(animationDuration);
+		block.addClass('blockvmenuexpanded').children('.menu_subentries').stop(true).slideDown(animationDuration);
+	};
+
+	blocks.children('.menu_titre').on('mousemove', function () {
+		let block = $(this).parent();
+		if (hoverTimer === null && !block.hasClass('blockvmenuexpanded')) {
+			hoverTimer = setTimeout(function () {
+				hoverTimer = null;
+				expandBlock(block);
+			}, hoverDelay);
+		}
+	}).on('mouseleave', function () {
+		clearTimeout(hoverTimer);
+		hoverTimer = null;
+	}).on('focusin', function () {
+		expandBlock($(this).parent());
+	});
+});
+
 }
 
 // End of lib_head.js.php

@@ -767,6 +767,24 @@ function print_end_menu_array()
 }
 
 /**
+ * Return if the left menu must show the entries under a level 0 title only when the mouse is over this title.
+ * This needs option MAIN_MENU_EXPAND_LEFT_LEVEL_2_ON_HOVER, javascript and a left menu shown as a column on a large screen.
+ *
+ * @return	bool		True if entries of the left menu are expanded on hover of their title
+ */
+function isLeftMenuExpandOnHover()
+{
+	global $conf;
+
+	return (getDolGlobalString('MAIN_MENU_EXPAND_LEFT_LEVEL_2_ON_HOVER')
+		&& !empty($conf->use_javascript_ajax)
+		&& empty($conf->dol_optimize_smallscreen)
+		&& !getDolGlobalString('MAIN_MENU_INVERT')
+		&& !getDolGlobalInt('MAIN_MENU_LEFT_DROPDOWN')
+		&& !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER'));
+}
+
+/**
  * Core function to output left menu eldy
  * Fill &$menu (example with $forcemainmenu='home' $forceleftmenu='all', return left menu tree of Home)
  *
@@ -799,6 +817,12 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 	global $usemenuhider;
 	$usemenuhider = 0;
+
+	// With MAIN_MENU_EXPAND_LEFT_LEVEL_2_ON_HOVER, sub entries of all blocks are loaded, then shown only when mouse is over their title
+	$expandonhover = (empty($noout) && isLeftMenuExpandOnHover());
+	if ($expandonhover) {
+		$usemenuhider = 1;
+	}
 
 	if (is_array($moredata) && !empty($moredata['searchform'])) {	// searchform can contains select2 code or link to show old search form or link to switch on search page
 		print "\n";
@@ -999,6 +1023,26 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 	// Show menu
 	$invert = !getDolGlobalString('MAIN_MENU_INVERT') ? "" : "invert";
 	if (empty($noout)) {
+		// With $expandonhover, find the blocks having visible sub entries, and the block to show expanded (the one of current leftmenu)
+		$blockswithsubentries = array();
+		$blockexpanded = null;
+		if ($expandonhover) {
+			$hideunauthorized = getDolGlobalString('MAIN_MENU_HIDE_UNAUTHORIZED');
+			$currentblock = null;
+			foreach (array_keys($menu_array) as $i) {
+				if (empty($menu_array[$i]['level'])) {
+					$currentblock = $i;
+				} elseif ($currentblock !== null && !empty($menu_array[$currentblock]['enabled']) && (!empty($menu_array[$i]['enabled']) || !$hideunauthorized)) {
+					$blockswithsubentries[$currentblock] = $currentblock;
+				}
+				if ($blockexpanded === null && $currentblock !== null && !in_array($leftmenu, array('', 'none'))
+					&& ($menu_array[$i]['leftmenu'] == $leftmenu || preg_match('/[?&;]leftmenu='.preg_quote($leftmenu, '/').'([&#]|$)/', $menu_array[$i]['url']))) {
+					$blockexpanded = $currentblock;
+				}
+			}
+		}
+		$subentriesopened = false;
+
 		$altok = 0;
 		$blockvmenuopened = false;
 		$lastlevel0 = '';
@@ -1011,6 +1055,10 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 			// Begin of new left menu block
 			if (empty($menu_array[$i]['level']) && $showmenu) {
+				if ($subentriesopened) {	// Should not happen, but a new block must never be inside the hidden sub entries of previous one
+					print '</div>'."\n";
+					$subentriesopened = false;
+				}
 				$altok++;
 				$blockvmenuopened = true;
 				$lastopened = true;
@@ -1019,10 +1067,14 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 						$lastopened = false;
 					}
 				}
+				$morecssblock = '';
+				if (isset($blockswithsubentries[$i])) {
+					$morecssblock = ' blockvmenuexpandonhover'.($blockexpanded === $i ? ' blockvmenuexpanded' : '');
+				}
 				if ($altok % 2 == 0) {
-					print '<div class="blockvmenu blockvmenuimpair'.$invert.($lastopened ? ' blockvmenulast' : '').($altok == 1 ? ' blockvmenufirst' : '').'">'."\n";
+					print '<div class="blockvmenu blockvmenuimpair'.$invert.($lastopened ? ' blockvmenulast' : '').($altok == 1 ? ' blockvmenufirst' : '').$morecssblock.'">'."\n";
 				} else {
-					print '<div class="blockvmenu blockvmenupair'.$invert.($lastopened ? ' blockvmenulast' : '').($altok == 1 ? ' blockvmenufirst' : '').'">'."\n";
+					print '<div class="blockvmenu blockvmenupair'.$invert.($lastopened ? ' blockvmenulast' : '').($altok == 1 ? ' blockvmenufirst' : '').$morecssblock.'">'."\n";
 				}
 			}
 
@@ -1070,6 +1122,9 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 					} else {
 						print '<span class="vmenu">';
 					}
+					if ($expandonhover) {	// Arrow before the picto, rotated down when the block is expanded. Kept invisible when there is no sub entries, for alignment.
+						print img_picto('', 'fa-chevron-right', '', 0, 0, 0, '', 'menuexpandarrow'.(isset($blockswithsubentries[$i]) ? '' : ' menuexpandarrowempty'));
+					}
 					if (!empty($menu_array[$i]['prefix'])) {
 						$reg = array();
 						if (preg_match('/^(fa[rsb]? )?fa-/', $menu_array[$i]['prefix'], $reg)) {
@@ -1089,6 +1144,9 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				} elseif ($showmenu) {                 // Not enabled but visible (so greyed)
 					print '<div class="menu_titre">'.$tabstring;
 					print '<span class="vmenudisabled" title="'.dolPrintHTMLForAttribute($menu_array[$i]['titre']).'">';
+					if ($expandonhover) {
+						print img_picto('', 'fa-chevron-right', '', 0, 0, 0, '', 'menuexpandarrow menuexpandarrowempty');
+					}
 					if (!empty($menu_array[$i]['prefix'])) {
 						$reg = array();
 						if (preg_match('/^(fa[rsb]? )?fa-/', $menu_array[$i]['prefix'], $reg)) {
@@ -1106,6 +1164,10 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				}
 				if ($showmenu) {
 					print '<div class="menu_top"></div>'."\n";
+				}
+				if (isset($blockswithsubentries[$i])) {
+					print '<div class="menu_subentries"'.($blockexpanded === $i ? '' : ' style="display: none"').'>'."\n";
+					$subentriesopened = true;
 				}
 			}
 
@@ -1147,6 +1209,10 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 			// If next is a new block or if there is nothing after
 			if (empty($menu_array[$i + 1]['level'])) {               // End menu block
+				if ($subentriesopened) {
+					print '</div>'."\n";
+					$subentriesopened = false;
+				}
 				if ($showmenu) {
 					print '<div class="menu_end"></div>'."\n";
 				}
@@ -1155,6 +1221,10 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 					$blockvmenuopened = false;
 				}
 			}
+		}
+
+		if ($subentriesopened) {
+			print '</div>'."\n";
 		}
 
 		if ($altok) {

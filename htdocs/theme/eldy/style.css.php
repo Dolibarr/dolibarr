@@ -4407,6 +4407,22 @@ input.vmenusearchselectcombo[type=text] {
 	text-overflow: ellipsis;
 	width: <?php echo $leftmenuwidth - 2; ?>px;				/* required to have overflow working. must be same than .menu_titre */
 }
+/* Arrow of left menu titles with MAIN_MENU_EXPAND_LEFT_LEVEL_2_ON_HOVER. Rotation duration must be same than slide animation in lib_head.js.php */
+.menuexpandarrow {
+	width: 10px;
+	text-align: center;
+	font-size: 0.75em;
+	opacity: 0.6;
+	margin-<?php print $right; ?>: 4px;
+	transform: rotate(<?php print($left == 'left' ? '0' : '180'); ?>deg);
+	transition: transform 0.5s;
+}
+.blockvmenuexpanded .menuexpandarrow {
+	transform: rotate(90deg);
+}
+.menuexpandarrowempty {
+	visibility: hidden;
+}
 #menu_contenu_logo { /* padding-top: 0; */ }
 .companylogo { }
 .searchform { padding-top: 10px; }
@@ -4680,7 +4696,7 @@ div.tabsElem a.tabactive::before, div.tabsElem a.tabunactive::before {
 */
 div.tabBar {
 	color: var(--colortextbacktab);
-	padding-top: 20px;
+	padding-top: 30px;
 	padding-left: 0px; padding-right: 0px;
 	padding-bottom: 2px;
 	margin: 0px 0px 30px 0px;
@@ -6119,7 +6135,7 @@ table.liste tr.oddeven:nth-of-type(even) {
 .boxtable {
 	border-bottom-width: 1px;
 	background: var(--colorbackbody);
-	border-top: <?php echo $borderwidth ?>px solid var(--colortopbordertitle1);
+	border-top: 0;
 	/* border-top: 2px solid var(--colorbackhmenu1) !important; */
 }
 .boxtable tr td.tdboxstats {

@@ -4160,6 +4160,22 @@ div.vmenu, td.vmenu {
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
+/* Arrow of left menu titles with MAIN_MENU_EXPAND_LEFT_LEVEL_2_ON_HOVER. Rotation duration must be same than slide animation in lib_head.js.php */
+.menuexpandarrow {
+	width: 10px;
+	text-align: center;
+	font-size: 0.75em;
+	opacity: 0.6;
+	margin-<?php print $right; ?>: 4px;
+	transform: rotate(<?php print($left == 'left' ? '0' : '180'); ?>deg);
+	transition: transform 0.5s;
+}
+.blockvmenuexpanded .menuexpandarrow {
+	transform: rotate(90deg);
+}
+.menuexpandarrowempty {
+	visibility: hidden;
+}
 #menu_contenu_logo { padding-right: 4px; }
 .companylogo { padding-top: 4px; }
 .searchform { padding-top: 10px; }
