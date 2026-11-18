@@ -250,15 +250,33 @@ class pdf_standard_stock extends ModelePDFStock
 				$totalunit = 0;
 				$totalvalue = $totalvaluesell = 0;
 
+				//For MultiCompany PMP per entity
+				$separatedPMP = false;
+				if (getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED') && getDolGlobalString('MULTICOMPANY_PMP_PER_ENTITY_ENABLED')) {
+					$separatedPMP = true;
+				}
+
 				$sortfield = 'p.ref';
 				$sortorder = 'ASC';
 
-				$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.pmp as ppmp, p.price, p.price_ttc, p.entity,";
+				$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.tobatch, p.fk_product_type as type, ";
+				if ($separatedPMP) {
+					$sql .= "pa.pmp as ppmp, ";
+				} else {
+					$sql .= "p.pmp as ppmp, ";
+				}
+				$sql .= "p.price, p.price_ttc, p.entity,";
 				$sql .= " ps.reel as value";
 				$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product as p";
+				if ($separatedPMP) {
+					$sql .= ", ".MAIN_DB_PREFIX."product_perentity as pa";
+				}
 				$sql .= " WHERE ps.fk_product = p.rowid";
 				$sql .= " AND ps.reel <> 0"; // We do not show if stock is 0 (no product in this warehouse)
 				$sql .= " AND ps.fk_entrepot = ".((int) $object->id);
+				if ($separatedPMP) {
+					$sql .= " AND pa.fk_product = p.rowid AND pa.entity = ".(int) $conf->entity;
+				}
 				$sql .= $this->db->order($sortfield, $sortorder);
 
 				//dol_syslog('List products', LOG_DEBUG);
