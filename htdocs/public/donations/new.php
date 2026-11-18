@@ -366,6 +366,7 @@ if (empty($reshook) && $action == 'added') {	// Test on permission not required 
 	// If we have not been redirected
 	print '<br><br>';
 	print '<div class="center">';
+	print img_picto('', 'tick', 'class="green fa-2x valignmiddle paddingright"');
 	print $langs->trans("NewDonationbyWeb").'<br>';
 	print '</div>';
 
