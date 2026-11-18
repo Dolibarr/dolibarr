@@ -1916,7 +1916,7 @@ class ToolApiBridge extends McpTool
 				),
 				'getPageById' => array(
 					'suffix' => 'pages_get',
-					'description' => "One page or blog post of a website, with its HTML content, by the rowid of the page.",
+					'description' => "Read one page or blog post of a website, with its HTML content, by the rowid of the page.",
 					'params' => array('pageid' => "Rowid of the page or blog post.")
 				),
 				'postPage' => array(

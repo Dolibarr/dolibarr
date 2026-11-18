@@ -564,6 +564,11 @@ try {
 	if ($doRedact && class_exists('PrivacyGuard')) {
 		$guard = new PrivacyGuard();
 		$query = $guard->mask($doRedactNames ? $guard->maskNames($query, $aiNamesToMask) : $query);
+	}
+	// Text of the user only, for the intent classifier: the English notes appended to $query
+	// (e.g. "the task" below) must not activate a category and filter out the tools really asked for.
+	$queryForIntent = $query;
+	if ($guard !== null) {
 		// In-context reinforcement, adjacent to the placeholders themselves:
 		// weak models weigh nearby text far more than distant system rules, and
 		// the system-rule variant alone proved insufficient in the field.
@@ -617,7 +622,7 @@ try {
 		}
 
 		// Detect if query is in a Non-Latin language (Russian, Greek, Chinese, Arabic, etc.)
-		$isComplex = isComplexScript($query);
+		$isComplex = isComplexScript($queryForIntent);
 
 		$toolsSchema = [];
 
@@ -628,7 +633,7 @@ try {
 			// prompt this module can build (documents + full schema overflow
 			// small-context models). No categories detected = full schema, as
 			// before.
-			$detectedCategories = classifyIntentUniversal($query, $langs);
+			$detectedCategories = classifyIntentUniversal($queryForIntent, $langs);
 			if (!empty($detectedCategories)) {
 				if (getDolGlobalString("AI_DEBUG")) {
 					dol_syslog("AI Pro: Non-Latin query classified into ".implode(',', $detectedCategories).". Filtering schema.", LOG_DEBUG, 0, '_ai');
@@ -642,7 +647,7 @@ try {
 			}
 		} else {
 			// Detect in which business family the query is using Hybrid (Translations + Synonyms)
-			$detectedCategories = classifyIntentUniversal($query, $langs);
+			$detectedCategories = classifyIntentUniversal($queryForIntent, $langs);
 
 			// Category filter applied to $llmToolsBase — system tools already excluded
 			$toolsSchema = filterToolsProfessional($llmToolsBase, $detectedCategories);
@@ -1796,7 +1801,7 @@ function classifyIntentUniversal(string $query, Translate $langs)
 	$isLatin = !isComplexScript($query);
 	$searchQuery = $isLatin ? strtolower(dol_string_unaccent($query)) : $query;
 
-	$langs->loadLangs(array("main", "bills", "orders", "propal", "companies", "products", "projects", "dict", "sendings", "receptions", "ticket", "members", "agenda", "interventions"));
+	$langs->loadLangs(array("main", "bills", "orders", "propal", "companies", "products", "projects", "dict", "sendings", "receptions", "ticket", "members", "agenda", "interventions", "website"));
 
 	// Vocabulary rule: every object family whose tools exist must light up the
 	// categories those tools carry (see ApiBridge::ENDPOINT_CATEGORIES), or the
@@ -1819,8 +1824,9 @@ function classifyIntentUniversal(string $query, Translate $langs)
 			// this category up or the creation tool is filtered out of the prompt
 			// and the model honestly answers it cannot create receptions.
 			// Intervention: interventions tools are ['project', 'commercial'].
-			'keys'     => ['Order', 'Proposal', 'Quote', 'SupplierOrder', 'OrderStatusDraft', 'Reception', 'Shipment', 'Delivery', 'Intervention'],
-			'synonyms' => ['sale', 'buy', 'purchase', 'contract', 'shipping', 'quote', 'reception', 'shipment', 'delivery', 'receive', 'intervention']
+			// WebSite/WebsitePage/BlogPost: websites tools (pages, blog posts) are ['commercial'].
+			'keys'     => ['Order', 'Proposal', 'Quote', 'SupplierOrder', 'OrderStatusDraft', 'Reception', 'Shipment', 'Delivery', 'Intervention', 'WebSite', 'WebsitePage', 'BlogPost'],
+			'synonyms' => ['sale', 'buy', 'purchase', 'contract', 'shipping', 'quote', 'reception', 'shipment', 'delivery', 'receive', 'intervention', 'website', 'webpage', 'blog']
 		],
 		'thirdparty' => [
 			// Ticket and agenda-event tools are ['thirdparty', 'project'];
@@ -1851,7 +1857,7 @@ function classifyIntentUniversal(string $query, Translate $langs)
 		global $conf;
 		$langsEnUs = new Translate('', $conf);
 		$langsEnUs->setDefaultLang('en_US');
-		$langsEnUs->loadLangs(array('main', 'bills', 'companies', 'products', 'projects', 'orders', 'propal', 'stocks', 'other', 'ticket', 'members', 'agenda', 'interventions'));
+		$langsEnUs->loadLangs(array('main', 'bills', 'companies', 'products', 'projects', 'orders', 'propal', 'stocks', 'other', 'ticket', 'members', 'agenda', 'interventions', 'website'));
 	}
 
 	$detectedCategories = [];

@@ -899,6 +899,30 @@ export function initAiAssistant(container) {
         }
     }
 
+    /**
+     * Tesseract language list for OCR: the user language plus English.
+     * Each language is a separate traineddata download, so keep the list short.
+     */
+    function getOcrLangList() {
+        const tesseractCodes = {
+            am: 'amh', ar: 'ara', az: 'aze', bg: 'bul', bn: 'ben', br: 'bre', bs: 'bos', ca: 'cat',
+            cs: 'ces', cy: 'cym', da: 'dan', de: 'deu', el: 'ell', es: 'spa', et: 'est', eu: 'eus',
+            fa: 'fas', fi: 'fin', fr: 'fra', gl: 'glg', he: 'heb', hi: 'hin', hr: 'hrv', hu: 'hun',
+            id: 'ind', is: 'isl', it: 'ita', ja: 'jpn', ka: 'kat', kk: 'kaz', km: 'khm', kn: 'kan',
+            ko: 'kor', ku: 'kmr', lo: 'lao', lt: 'lit', lv: 'lav', mk: 'mkd', mn: 'mon', ms: 'msa',
+            my: 'mya', nb: 'nor', ne: 'nep', nl: 'nld', pl: 'pol', pt: 'por', ro: 'ron', ru: 'rus',
+            sk: 'slk', sl: 'slv', sq: 'sqi', sr: 'srp', sv: 'swe', sw: 'swa', ta: 'tam', tg: 'tgk',
+            th: 'tha', tr: 'tur', uk: 'ukr', ur: 'urd', uz: 'uzb', vi: 'vie', zh: 'chi_sim'
+        };
+        const locale = String(config.locale || '').toLowerCase();
+        let code = tesseractCodes[locale.split('-')[0]] || '';
+        if (locale === 'zh-tw' || locale === 'zh-hk') {
+            code = 'chi_tra';
+        }
+
+        return (code && code !== 'eng') ? code + '+eng' : 'eng';
+    }
+
     async function extractTextFromImage(file) {
         try {
             statusBar.innerText = t('TryingOCR');
@@ -907,16 +931,7 @@ export function initAiAssistant(container) {
             const Tesseract = module.default || window.Tesseract;
 
             if (Tesseract) {
-                const langList =
-                    'afr+amh+ara+asm+aze+aze_cyrl+bel+ben+bod+bos+bre+bul+cat+ceb+ces+' +
-                    'chi_sim+chi_tra+chr+cos+cym+dan+deu+dzo+ell+eng+enm+' +
-                    'epo+est+eus+fao+fas+fil+fin+fra+frk+frm+fry+gla+gle+glg+' +
-                    'grc+guj+hat+heb+hin+hrv+hun+hye+iku+ind+isl+ita+ita_old+jav+jpn+' +
-                    'kan+kat+kat_old+kaz+khm+kir+kmr+kor+kor_vert+lao+lat+lav+lit+' +
-                    'ltz+mal+mar+mkd+mlt+mon+mri+msa+mya+nep+nld+nor+oci+ori+osd+' +
-                    'pan+pol+por+pus+que+ron+rus+san+sin+slk+slv+snd+spa+spa_old+' +
-                    'sqi+srp+srp_latn+sun+swa+swe+syr+tam+tat+tel+tgk+tha+tir+ton+' +
-                    'tur+uig+ukr+urd+uzb+uzb_cyrl+vie+yid+yor';
+                const langList = getOcrLangList();
 
                 const { data: { text } } = await Tesseract.recognize(
                     file,
