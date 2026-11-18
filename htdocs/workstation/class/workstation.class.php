@@ -882,7 +882,7 @@ class Workstation extends CommonObject
 	public function getNextNumRef()
 	{
 		global $langs, $conf;
-		$langs->load("workstation");
+		$langs->load("mrp");
 
 		if (!getDolGlobalString('WORKSTATION_WORKSTATION_ADDON')) {
 			$conf->global->WORKSTATION_WORKSTATION_ADDON = 'mod_workstation_standard';
@@ -949,7 +949,7 @@ class Workstation extends CommonObject
 
 		$result = 0;
 
-		$langs->load("workstation");
+		$langs->load("mrp");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'standard_workstation';

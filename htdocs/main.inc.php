@@ -2514,8 +2514,6 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 
 		// Link to Dolibarr wiki pages
 		if (!getDolGlobalString('MAIN_HELP_DISABLELINK') && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-			$langs->load("help");
-
 			$helpbaseurl = '';
 			$helppage = '';
 			$mode = '';
@@ -3441,7 +3439,6 @@ function top_menu_bookmark()
 
 	if (!defined('JS_JQUERY_DISABLE_DROPDOWN') && !empty($conf->use_javascript_ajax)) {	    // This may be set by some pages that use different jquery version to avoid errors
 		include_once DOL_DOCUMENT_ROOT.'/bookmarks/bookmarks.lib.php';
-		$langs->load("bookmarks");
 
 		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			$html .= '<div id="topmenu-bookmark-dropdown" class="atoplogin dropdown inline-block">';

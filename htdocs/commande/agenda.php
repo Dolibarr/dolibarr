@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("order", "other"));
+$langs->loadLangs(array("orders", "other"));
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');

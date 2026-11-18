@@ -795,7 +795,7 @@ class ProductFournisseurPrice extends CommonObject
 		$result = 0;
 		$includedocgeneration = 0;
 
-		$langs->load("buypricehistory@buypricehistory");
+		$langs->load("products");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'standard_productfournisseurprice';

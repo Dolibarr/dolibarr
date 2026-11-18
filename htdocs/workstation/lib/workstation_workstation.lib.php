@@ -33,7 +33,7 @@ function workstationPrepareHead($object)
 {
 	global $db, $langs, $conf;
 
-	$langs->load("workstation");
+	$langs->load("mrp");
 
 	$h = 0;
 	$head = array();

@@ -47,7 +47,7 @@ if (empty($conf) || !is_object($conf)) {
 print "<!-- BEGIN PHP TEMPLATE bom/tpl/linkedobjectblock.tpl.php -->\n";
 
 // Load translation files required by the page
-$langs->load("bom");
+$langs->load("mrp");
 
 $linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date,ref', 'desc', 0, 0, 1);
 '@phan-var-force BOM[] $linkedObjectBlock';  // Type after dol_sort_array which looses typing
