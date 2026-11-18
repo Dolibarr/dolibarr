@@ -2186,7 +2186,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 					}
 				} else {
 					print '<span class="opacitymedium">'.$langs->trans("Disabled").'</span>';
-					if (dolTotpIsRequired($db, $object)) {
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/passkey.lib.php';
+					if (dolTotpIsRequired($db, $object) && !passkeyUserHasPasskey($db, $object->id)) {	// A passkey fulfills the requirement too
 						print ' '.img_warning($langs->trans("TOTPRequiredNotSetUp"));
 					}
 				}

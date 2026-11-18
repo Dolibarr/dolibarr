@@ -69,7 +69,7 @@ class doc_generic_workstation_odt extends ModelePDFWorkstation
 		global $conf, $langs, $mysoc;
 
 		// Load translation files required by the page
-		$langs->loadLangs(array("main", "companies", "workstation", "mrp"));
+		$langs->loadLangs(array("main", "companies", "mrp"));
 
 		$this->db = $db;
 		$this->name = "ODT templates";
@@ -255,7 +255,7 @@ class doc_generic_workstation_odt extends ModelePDFWorkstation
 		$outputlangs->charset_output = 'UTF-8';
 
 		// Load translation files required by page
-		$outputlangs->loadLangs(array("main", "dict", "companies", "workstation", "mrp"));
+		$outputlangs->loadLangs(array("main", "dict", "companies", "mrp"));
 
 		if (!empty($conf->workstation->dir_output)) {
 			// If $object is id instead of object

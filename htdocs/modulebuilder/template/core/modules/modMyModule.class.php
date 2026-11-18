@@ -175,6 +175,7 @@ class modMyModule extends DolibarrModules
 		$this->need_dolibarr_version = array(19, -3); // Minimum version of Dolibarr required by module
 		// $this->max_dolibarr_version = array(19, -3); // Maximum version of Dolibarr required by module
 		$this->need_javascript_ajax = 0;
+		// $this->need_setup = 1; // Set to 1 if the module must be configured after its activation to work (a warning is shown after activation)
 
 		// Messages at activation
 		$this->warnings_activation = array(); 		// Warning to show when we activate a module. Example: array('always'='text') or array('FR'='textfr','MX'='textmx'...)

@@ -2024,7 +2024,7 @@ function noteLoadMailing()
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/emailing.lib.php';
 
 	// Load translation files required by the page
-	$langs->loadLangs(array("mails", "mailing", "companies"));
+	$langs->loadLangs(array("mails", "companies"));
 
 	// Get parameters
 	$id = GETPOSTINT('id');
@@ -3537,7 +3537,7 @@ function noteLoadTriggerHistory()
 	require_once DOL_DOCUMENT_ROOT.'/webhook/lib/webhook_triggerhistory.lib.php';
 
 	// Load translation files required by the page
-	$langs->loadLangs(array("webhook@webhook", "companies", "admin"));
+	$langs->loadLangs(array("companies", "admin"));
 
 	// Get parameters
 	$id = GETPOSTINT('id');

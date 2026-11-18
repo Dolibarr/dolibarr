@@ -89,9 +89,6 @@ if (isModEnabled('accounting')) {
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'companies', 'compta', 'products', 'banks', 'main', 'withdrawals'));
-if (isModEnabled('incoterm')) {
-	$langs->load('incoterm');
-}
 if (isModEnabled('margin')) {
 	$langs->load('margins');
 }
@@ -395,7 +392,7 @@ if (empty($reshook)) {
 		$object->fetch($id);
 		$object->fetch_thirdparty();
 
-		$result = $object->deleteSubtotalLine($langs, GETPOSTINT('lineid'), (bool) GETPOST('deletecorrespondingsubtotalline'));
+		$result = $object->deleteSubtotalLine($langs, GETPOSTINT('lineid'), (bool) GETPOST('deletecorrespondingsubtotalline'), $user, (bool) GETPOST('deleteblocklines'));
 		if ($result > 0) {
 			// reorder lines
 			$object->line_order(true);
@@ -1631,6 +1628,16 @@ if (empty($reshook)) {
 				$action = 'create';
 			}
 
+			// A credit note on the remain to pay can't be used on a situation invoice cycle (the progress of lines must be cancelled)
+			if ($sourceinvoice > 0 && GETPOSTINT('invoiceAvoirWithPaymentRestAmount') == 1) {
+				$tmpsourceinvoice = new Facture($db);
+				if ($tmpsourceinvoice->fetch($sourceinvoice) > 0 && $tmpsourceinvoice->isSituationInvoice()) {
+					$error++;
+					setEventMessages($langs->trans("ErrorCreditNoteWithRestAmountNotAllowedOnSituation"), null, 'errors');
+					$action = 'create';
+				}
+			}
+
 			if (!$error) {
 				if (!empty($originentity)) {
 					$object->entity = $originentity;
@@ -1781,6 +1788,9 @@ if (empty($reshook)) {
 									$line->situation_percent += $maxPrevSituationPercent;
 
 									//print 'New line based on invoice id '.$facture_source->tab_previous_situation_invoice[$lineIndex]->id.' fk_prev_id='.$source_fk_prev_id.' will be fk_prev_id='.$line->fk_prev_id.' '.$line->total_ht.' '.$line->situation_percent.'<br>';
+								} else {
+									// Progressive mode (or first situation): the source line holds its own delta, so the credit note cancels it with a negative progress
+									$line->situation_percent = -abs((float) $line->situation_percent);
 								}
 							}
 
@@ -1933,6 +1943,13 @@ if (empty($reshook)) {
 				$action = 'create';
 			}
 
+
+			if (GETPOST('type') == Facture::TYPE_SITUATION && GETPOSTINT('situations') < 0) {
+				// Empty choice in list of situations (0 is the first situation of a new cycle)
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("InvoiceSituation")), null, 'errors');
+				$error++;
+				$action = 'create';
+			}
 
 			if (GETPOST('type') == Facture::TYPE_STANDARD) {
 				if ($valuestandardinvoice < 0 || $valuestandardinvoice > 100) {
@@ -3574,7 +3591,7 @@ if (empty($reshook)) {
 		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), '', 2);
 		$pu_ttc_devise = price2num(GETPOST('multicurrency_price_ttc'), '', 2);
 
-		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
+		$qty = price2num(GETPOST('qty', 'alpha'), 'MS', 2);
 
 		// Define info_bits
 		$info_bits = 0;
@@ -3639,7 +3656,7 @@ if (empty($reshook)) {
 		$percent = $line->get_prev_progress($object->id);
 		$progress = GETPOSTFLOAT('progress', getDolGlobalInt('INVOICE_SITUATION_PROGRESS_DECIMALS', 2));
 
-		if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->situation_cycle_ref > 0) {
+		if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->situation_cycle_ref > 0 && GETPOSTISSET('progress')) {
 			// in case of situation credit note
 			if ($progress >= 0) {
 				$mesg = $langs->trans("CantBeNullOrPositive");
@@ -3758,7 +3775,10 @@ if (empty($reshook)) {
 		}
 
 		// Invoice situation
-		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+		if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->situation_cycle_ref > 0 && !GETPOSTISSET('progress')) {
+			// Progress of a credit note line is not editable (input is disabled), so we keep the current one
+			$addprogress = $line->situation_percent;
+		} elseif (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
 			$addprogress = price2num(GETPOST('progress', 'alpha'));
 		} else {
 			$previousprogress = $line->getAllPrevProgress($line->fk_facture);
@@ -4694,35 +4714,30 @@ if ($action == 'create') {
 
 		if ($socid > 0) {
 			if (getDolGlobalString('INVOICE_USE_SITUATION')) {
-				// First situation invoice
+				// Situation invoice: first option is the first situation of a new cycle, next options are the next situation of an open cycle
+				if (GETPOST('origin') && GETPOST('origin') != 'facture' && GETPOST('origin') != 'commande') {
+					// From this origin, only a first situation invoice can be created
+					$opt = '<option class="minwidth100" value="-1">&nbsp;</option>';
+					$opt .= '<option class="minwidth100" value="0">'.$langs->trans('InvoiceFirstSituationAsk').'</option>';
+				} else {
+					$opt = $form->selectSituationInvoices((string) GETPOSTINT('originid'), $socid, 1);
+				}
+
 				print '<div class="listofinvoicetype"><div class="">';
-				$tmp = '<input id="radio_situation" type="radio" name="type" value="5"'.(GETPOST('type') == 5 ? ' checked' : '').'> ';
-				$tmp  = $tmp.'<label for="radio_situation" >'.$langs->trans("InvoiceFirstSituationAsk").'</label>';
-				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-				$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3, 'firstsituationonsmartphone');
-				print $desc;
-
-				// Next situation invoice
-				$opt = $form->selectSituationInvoices((string) GETPOSTINT('originid'), $socid);
-
-				//print ' &nbsp; ';
-				print '</div></div><div class="listofinvoicetype"><div>';
-
-				$tmp = '<input id="radio_situation_bis" type="radio" name="type" value="5"'.(GETPOST('type') == 5 && GETPOSTINT('originid') ? ' checked' : '');
-				if ($opt == ('<option value="0" selected>'.$langs->trans('NoSituations').'</option>') || (GETPOST('origin') && GETPOST('origin') != 'facture' && GETPOST('origin') != 'commande')) {
-					$tmp .= ' disabled';
-				}
-				$tmp .= '> ';
+				print '<script type="text/javascript">
+				jQuery(document).ready(function() {
+					jQuery("#situations").change(function() {
+						jQuery("#radio_situation_bis").prop("checked", true);
+					});
+				});
+				</script>';
+				$tmp = '<input id="radio_situation_bis" type="radio" name="type" value="5"'.(GETPOST('type') == 5 ? ' checked' : '').'> ';
 				$text = $tmp.'<label for="radio_situation_bis">'.$langs->trans("InvoiceSituationAsk").'</label> ';
-
-				$text .= '<select class="flat minwidth125" id="situations" name="situations"';
-				if ($opt == ('<option value="0" selected>'.$langs->trans('NoSituations').'</option>') || (GETPOST('origin') && GETPOST('origin') != 'facture' && GETPOST('origin') != 'commande')) {
-					$text .= ' disabled';
-				}
-				$text .= '>';
+				$text .= '<select class="flat minwidth125" id="situations" name="situations">';
 				$text .= $opt;
 				$text .= '</select>';
-				$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceSituationDesc"), 1, 'help', '', 0, 3);
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
+				$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceFirstSituationDesc").'<br><br>'.$langs->transnoentities("InvoiceSituationDesc"), 1, 'help', '', 0, 3, 'firstsituationonsmartphone');
 				print $desc;
 				print '</div></div>'."\n";
 			}
@@ -5778,7 +5793,7 @@ if ($action == 'create') {
 		$title = "DeleteSubtotalLine";
 		$question = "ConfirmDeleteSubtotalLine";
 		if (GETPOST('type') == 'title') {
-			$formconfirm = array(array('type' => 'checkbox', 'name' => 'deletecorrespondingsubtotalline', 'label' => $langs->trans("DeleteCorrespondingSubtotalLine"), 'value' => 0));
+			$formconfirm = array(array('type' => 'checkbox', 'name' => 'deletecorrespondingsubtotalline', 'label' => $langs->trans("DeleteCorrespondingSubtotalLine"), 'value' => 0), array('type' => 'checkbox', 'name' => 'deleteblocklines', 'label' => $langs->trans("DeleteBlockLines"), 'value' => 0));
 			$title = "DeleteTitleLine";
 			$question = "ConfirmDeleteTitleLine";
 		}
@@ -6609,8 +6624,8 @@ if ($action == 'create') {
 
 
 			print '<tr class="oddeven">';
-			print '<td colspan="2" class="left"><b>'.$langs->trans('SituationTotalAfterInvoice').'</b></td>';
-			print '<td>';
+			print '<td colspan="2" class="left"><b>'.$langs->trans('CumulativeSituation').'</b></td>';
+			print '<td class="center">';
 			$i = 0;
 			foreach ($current_situation_counter as $sit) {
 				$curSign = $sit > 0 ? '+' : '-';

@@ -240,6 +240,7 @@ if ($massaction == 'presend') {
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
 				$listofselectedid[$toselectid] = $toselectid;
+				// fk_soc and socid are declared in child classes: @phan-suppress-next-line PhanUndeclaredProperty
 				$thirdpartyid = ($objecttmp->fk_soc ? $objecttmp->fk_soc : $objecttmp->socid);	// For proposal, order, invoice, conferenceorbooth, ...
 				if (in_array($objecttmp->element, array('societe', 'conferenceorboothattendee'))) {
 					$thirdpartyid = $objecttmp->id;

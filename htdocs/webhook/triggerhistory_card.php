@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/webhook/lib/webhook_triggerhistory.lib.php';
 
 
 // Load translation files required by the page
-$langs->loadLangs(array("webhook@webhook", "other", "admin"));
+$langs->loadLangs(array("other", "admin"));
 
 // Get parameters
 $id = GETPOSTINT('id');

@@ -1016,12 +1016,13 @@ class FactureLigne extends CommonInvoiceLine
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Returns cumulated situation_percent of all the previous lines. Used when INVOICE_USE_SITUATION != 1.
+	 * Returns cumulated situation_percent of all the previous lines excluding itself.
+	 * Used for all standard cases (so when INVOICE_USE_SITUATION != 1).
 	 * Warning: If invoice is a replacement invoice, this->fk_prev_id is id of the replaced line.
 	 *
-	 * @param  int     $invoiceid      Invoice id
+	 * @param  int     $invoiceid      			Invoice id
 	 * @param  bool    $include_credit_note		Include credit note or not
-	 * @return float                   >= 0
+	 * @return float                   			Return percent progress (usually should be between 0 and 100)
 	 * @see get_prev_progress()
 	 */
 	public function getAllPrevProgress($invoiceid, $include_credit_note = true)
@@ -1053,12 +1054,13 @@ class FactureLigne extends CommonInvoiceLine
 					$obj = $this->db->fetch_object($resql);
 					$cumulated_percent += (float) $obj->situation_percent;
 
-					if ($include_credit_note) {
+					if ($include_credit_note) {	// Includes previous credit notes too (previous one only, not itself)
 						$sql_credit_note = 'SELECT fd.situation_percent FROM '.MAIN_DB_PREFIX.'facturedet fd';
 						$sql_credit_note .= ' JOIN '.MAIN_DB_PREFIX.'facture f ON (f.rowid = fd.fk_facture) ';
 						$sql_credit_note .= " WHERE fd.fk_prev_id = ".((int) $lastprevid);
 						$sql_credit_note .= " AND f.situation_cycle_ref = ".((int) $invoicecache[$invoiceid]->situation_cycle_ref); // Prevent cycle outed
 						$sql_credit_note .= " AND f.type = ".Facture::TYPE_CREDIT_NOTE;
+						$sql_credit_note .= " AND f.rowid <> ".((int) $invoiceid);	// When invoice is a credit note, its own progress is not a previous one
 
 						$res_credit_note = $this->db->query($sql_credit_note);
 						if ($res_credit_note) {

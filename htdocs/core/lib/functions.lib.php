@@ -702,6 +702,9 @@ function getEntity($element, $shared = 1, $currentobject = null)
 		case 'facturerec':
 			$element = 'invoice';
 			break; // "/compta/facture/class/facture-rec.class.php", template invoices are shared like invoices
+		case 'fichinter':
+			$element = 'intervention';
+			break; // "/fichinter/class/fichinter.class.php", interventions are shared with name 'intervention'
 	}
 
 	if (is_object($mc)) {
@@ -5535,8 +5538,8 @@ function get_product_localtax_for_country($idprod, $local, $thirdpartytouseforco
  *	Function that return vat rate of a product line (according to seller, buyer and product vat rate)
  *   VATRULE 0: If we are in mode SERVICE_ARE_ECOMMERCE_200238EC and customer is not a company with a vat id, we use default product VAT in buyer country
  *   VATRULE 1: If seller does not use VAT, default VAT is 0. End of rule.
- *   VATRULE 2: If buyer department has a VAT rule from vat rates dictionary then it's the default VAT rate. End of rule.
- *	 VATRULE 3: If the (seller country = buyer country) then the default VAT = VAT of the product sold. End of rule.
+ *   VATRULE 2: If (seller country = buyer country) and buyer department has a VAT rule from vat rates dictionary then it's the default VAT rate. End of rule.
+ *	 VATRULE 3: If (seller country = buyer country) then the default VAT = VAT of the product sold. End of rule.
  *	 VATRULE 4: If (seller and buyer in the European Community) and (property sold = new means of transport such as car, boat, plane) then VAT by default = 0 (VAT must be paid by the buyer to the tax center of his country and not to the seller). End of rule.
  *	 VATRULE 5: If (seller and buyer in the European Community) and (buyer = individual) then VAT by default = VAT of the product sold. End of rule
  *	 VATRULE 6: If (seller and buyer in European Community) and (buyer = company) then VAT by default=0. End of rule
@@ -5611,8 +5614,8 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 		$vatrule = 'VATRULE 1';
 	}
 
-	// 'VATRULE 2' - Force VAT if a buyer department is defined on vat rates dictionary
-	if (empty($vatrule) && !empty($thirdparty_buyer->state_id)) {
+	// 'VATRULE 2' - Force VAT if seller and buyer are in the same country and a buyer department is defined on vat rates dictionary
+	if (empty($vatrule) && !empty($thirdparty_buyer->state_id) && $seller_country_code == $buyer_country_code) {
 		$sql = "SELECT d.rowid, t.taux as vat_default_rate, t.code as vat_default_code ";
 		$sql .= " FROM " . $db->prefix() . "c_tva as t";
 		$sql .= " INNER JOIN " . $db->prefix() . "c_departements as d ON t.fk_department_buyer = d.rowid";
@@ -10636,7 +10639,7 @@ function roundUpToNextMultiple($n, $x = 5)
  * @param   string $elementType       Element type (Value of $object->element or value of $object->element@$object->module). Example:
  *                                    'action', 'facture', 'project', 'project_task' or
  *                                    'myobject@mymodule' (or old syntax 'mymodule_myobject' like 'project_task')
- * @return  array{module:string,element:string,table_element:string,subelement:string,classpath:string,classfile:string,classname:string,dir_output:string,dir_temp:string,parent_element:string}		array('module'=>, 'classpath'=>, 'element'=>, 'subelement'=>, 'classfile'=>, 'classname'=>, 'dir_output'=>, 'dir_temp'=>)
+ * @return  array{module:string,element:string,table_element:string,subelement:string,classpath:string,classfile:string,classname:string,dir_output:string,dir_temp:string,parent_element:string}		Return an array('module'=>, 'classpath'=>, 'element'=>, 'subelement'=>, 'table_element'=>, 'classfile'=>, 'classname'=>, 'dir_output'=>, 'dir_temp'=>)
  * @see fetchObjectByElement(), getMultidirOutput()
  */
 function getElementProperties($elementType)
@@ -10826,9 +10829,10 @@ function getElementProperties($elementType)
 	} elseif ($elementType == 'supplier_proposal') {
 		$classpath = 'supplier_proposal/class';
 		$module = 'supplier_proposal';
-		$element = 'supplierproposal';
+		$element = 'supplier_proposal';
 		$classfile = 'supplier_proposal';
 		$subelement = 'supplierproposal';
+		$table_element = 'supplier_proposal';
 	} elseif ($elementType == 'supplier_proposaldet') {
 		$classpath = 'supplier_proposal/class';
 		$module = 'supplier_proposal';
@@ -10890,6 +10894,7 @@ function getElementProperties($elementType)
 	} elseif ($elementType == 'fichinter' || $elementType == 'ficheinter') {
 		$classpath = 'fichinter/class';
 		$module = 'ficheinter';
+		$element = 'fichinter';
 		$subelement = 'fichinter';
 		$table_element = 'fichinter';
 	} elseif ($elementType == 'dolresource' || $elementType == 'resource') {
@@ -10918,7 +10923,7 @@ function getElementProperties($elementType)
 		$classname = 'CommandeFournisseurLigne';
 		$table_element = 'commande_fournisseurdet';
 		$parent_element = 'commande_fournisseur';
-	} elseif ($elementType == 'invoice_supplier' || $elementType == 'supplier_invoice' || $elementType == 'facture_fourn') {
+	} elseif ($elementType == 'invoice_supplier' || $elementType == 'supplier_invoice' || $elementType == 'facture_fourn' || $elementType == 'facture_fournisseur') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
 		$classfile = 'fournisseur.facture';
@@ -12178,7 +12183,7 @@ function dolRemoveDefaultParameters(array $parameters): array
  *
  * @param string $context The current page context name
  *
- * @return void
+ * @return void No return value, the page is redirected and exits when the request can be sent as GET
  */
 function dolRedirectPostSearchListRequestToGetIfPossible(string $context): void
 {

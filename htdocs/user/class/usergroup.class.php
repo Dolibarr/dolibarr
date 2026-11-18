@@ -1044,7 +1044,7 @@ class UserGroup extends CommonObject
 	{
 		global $conf, $user, $langs;
 
-		$langs->load("user");
+		$langs->load("users");
 
 		// Set the model to the name of the model to use
 		if (!dol_strlen($modele)) {
