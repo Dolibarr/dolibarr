@@ -98,6 +98,12 @@ class EventAttendees extends DolibarrApi
 			throw new RestException(404, 'Event attendee with id '.$id.' not found');
 		}
 
+		// we can now check for access to the project of the attendee before deleting it
+		$allowaccess = $this->_checkAccessRights('delete', $this->event_attendees->fk_project);
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied access to the project of Event attendee');
+		}
+
 		if (!$this->event_attendees->delete(DolibarrApiAccess::$user)) {
 			throw new RestException(500, 'Error when delete event attendee : '.$this->event_attendees->error);
 		}
@@ -134,6 +140,12 @@ class EventAttendees extends DolibarrApi
 		$result = $this->event_attendees->fetch(0, $ref);
 		if (!$result) {
 			throw new RestException(404, "Event attendee with ref ".$ref." not found");
+		}
+
+		// we can now check for access to the project of the attendee before deleting it
+		$allowaccess = $this->_checkAccessRights('delete', $this->event_attendees->fk_project);
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied access to the project of Event attendee');
 		}
 
 		if (!$this->event_attendees->delete(DolibarrApiAccess::$user)) {
@@ -351,6 +363,12 @@ class EventAttendees extends DolibarrApi
 			$this->event_attendees->$field = $this->_checkValForAPI($field, $value, $this->event_attendees);
 		}
 
+		// we can now check for access to the project the attendee is attached to
+		$allowaccess = $this->_checkAccessRights('write', $this->event_attendees->fk_project);
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied access to the project of Event attendee');
+		}
+
 		if ($this->event_attendees->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating event attendee", array_merge(array($this->event_attendees->error), $this->event_attendees->errors));
 		}
@@ -392,6 +410,13 @@ class EventAttendees extends DolibarrApi
 			throw new RestException(404, 'event attendee not found');
 		}
 
+		// we can now check for access to the project of the attendee before updating it
+		$allowaccess = $this->_checkAccessRights('write', $this->event_attendees->fk_project);
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied access to the project of Event attendee');
+		}
+		$previous_project_id = $this->event_attendees->fk_project;
+
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
 				continue;
@@ -403,6 +428,14 @@ class EventAttendees extends DolibarrApi
 			}
 
 			$this->event_attendees->$field = $this->_checkValForAPI($field, $value, $this->event_attendees);
+		}
+
+		// Check access also to the new project when it was changed
+		if ($this->event_attendees->fk_project != $previous_project_id) {
+			$allowaccess = $this->_checkAccessRights('write', $this->event_attendees->fk_project);
+			if (!$allowaccess) {
+				throw new RestException(403, 'denied access to the project of Event attendee');
+			}
 		}
 
 		if ($this->event_attendees->update(DolibarrApiAccess::$user) > 0) {
@@ -443,6 +476,13 @@ class EventAttendees extends DolibarrApi
 			throw new RestException(404, 'event attendee not found');
 		}
 
+		// we can now check for access to the project of the attendee before updating it
+		$allowaccess = $this->_checkAccessRights('write', $this->event_attendees->fk_project);
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied access to the project of Event attendee');
+		}
+		$previous_project_id = $this->event_attendees->fk_project;
+
 		$newref = $ref;
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
@@ -458,6 +498,14 @@ class EventAttendees extends DolibarrApi
 			}
 
 			$this->event_attendees->$field = $this->_checkValForAPI($field, $value, $this->event_attendees);
+		}
+
+		// Check access also to the new project when it was changed
+		if ($this->event_attendees->fk_project != $previous_project_id) {
+			$allowaccess = $this->_checkAccessRights('write', $this->event_attendees->fk_project);
+			if (!$allowaccess) {
+				throw new RestException(403, 'denied access to the project of Event attendee');
+			}
 		}
 
 		if ($this->event_attendees->update(DolibarrApiAccess::$user) > 0) {
