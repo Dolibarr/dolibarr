@@ -77,6 +77,8 @@ Each time the image is rebuilt with changes, the previous image is kept untagged
 ````
 claudes --clean-images
 ````
+To only list these images (the current one, with its status against the build context, and the obsolete ones) and the containers using them, without removing anything, run `claudes --list-images`.
+A container still running with an obsolete image prevents its removal (even with `docker rmi -f`), so the containers still using an obsolete image are stopped and removed first (the containers started by `claudes.sh` use `--rm`: stopping them removes them). Their Claude Code sessions are not lost, they are stored in `~/.claude` of the host and can be resumed with `claudes --continue`.
 
 Into the container, the directory `.claude` (with the links `skills`, `agents` and `hooks` to the same entries of `.agents`) and
 the link `CLAUDE.md` (to `.agents/AGENTS.md`) are created at the root of the repository when they do not exist, so Claude Code
@@ -89,6 +91,8 @@ Claude Code is installed into the image when it is built, and its auto-updater i
 ````
 claudes --no-cache
 ````
+Without `--no-cache`, `claudes.sh` builds the image only when its build context has changed since the last build (the directory `dev/build/docker-claude` without `claudes.sh` and `README.md`, and the files shared with `docker-vibe`; a hash of it is stored as a label of the image). Otherwise the last image built is used as is, whatever the directory `claudes.sh` is launched from: after a rebuild with `claudes --no-cache` from one repository, the containers launched later from the other repositories use this new image.
+The build context does not contain any file of the repository: the pre-commit hooks are not preloaded into the image, they are kept into the directory `~/.cache/docker-claude/pre-commit` of the host, mounted into the container (see the pre-commit section of `dev/build/docker-vibe/README.md`).
 
 ### Send emails
 The outbound SMTP ports are blocked like for docker-vibe. To start a container that is allowed to send emails, run it with:

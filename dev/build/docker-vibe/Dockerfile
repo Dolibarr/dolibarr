@@ -161,21 +161,14 @@ RUN apt-get update \
     && rm -rf /root/.cache/uv /root/.cache/ms-playwright
 
 
-# Preload the pre-commit hooks environments of the repository into the image,
-# so the first run into the container does not have to download them.
+# Cache of the pre-commit hooks environments. It is not preloaded into the image (the image must not depend on the
+# .pre-commit-config.yaml of a repository): vibes.sh mounts there a directory of the host, so each hook revision is
+# downloaded once and kept for all the containers and repositories (see README.md).
 # PRE_COMMIT_HOME must be a stable path: the environments contain absolute paths and are not relocatable.
-# The .pre-commit-config.yaml is added into the build context by vibes.sh (COPY is skipped if absent).
 ENV PRE_COMMIT_HOME=/var/cache/pre-commit
 
-COPY .pre-commit-config.yaml* /tmp/pre-commit-warmup/
-RUN if [ -f /tmp/pre-commit-warmup/.pre-commit-config.yaml ]; then \
-        git init -q /tmp/pre-commit-warmup \
-        && cd /tmp/pre-commit-warmup \
-        && for i in 1 2 3; do pre-commit install-hooks && break; [ "$i" = 3 ] && exit 1; echo "pre-commit install-hooks failed, retry $i..."; sleep 10; done \
-        && cd / \
-        && rm -rf /tmp/pre-commit-warmup \
-        && chmod -R a+rwX /var/cache/pre-commit; \
-    fi
+RUN mkdir -p /var/cache/pre-commit \
+    && chmod 1777 /var/cache/pre-commit
 
 
 # Guarantee that no email can be delivered from inside the container (see README.md):
