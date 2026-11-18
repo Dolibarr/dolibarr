@@ -247,7 +247,7 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 			if (isset($val['visible']) && ! (int) dol_eval((string) $val['visible'], 1, 1, '1')) {
 				continue;
 			}
-			if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) {
+			if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key) && empty($val['arrayofkeyval'])) {	// A fk_ field with a fixed list of values is not a link to an object
 				continue;
 			}
 			if (preg_match('/^pass/', $key)) {
@@ -422,7 +422,7 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 			if (isset($val['visible']) && ! (int) dol_eval((string) $val['visible'], 1, 1, '1')) {
 				continue;
 			}
-			if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) {
+			if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key) && empty($val['arrayofkeyval'])) {	// A fk_ field with a fixed list of values is not a link to an object
 				continue;
 			}
 			if (preg_match('/^pass/', $key)) {
@@ -589,7 +589,7 @@ function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayof
 			if (isset($val['visible']) && ! (int) dol_eval((string) $val['visible'], 1, 1, '1')) {
 				continue;
 			}
-			if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) {
+			if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key) && empty($val['arrayofkeyval'])) {	// A fk_ field with a fixed list of values is not a link to an object
 				continue;
 			}
 			if (preg_match('/^pass/', $key)) {

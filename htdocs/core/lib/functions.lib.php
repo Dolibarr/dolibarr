@@ -28,6 +28,8 @@
  * Copyright (C) 2025		Vincent Maury				<vmaury@timgroup.fr>
  * Copyright (C) 2026		Benjamin Falière			<benjamin@faliere.com>
  * Copyright (C) 2026		Pierre Ardoin				<developpeur@lesmetiersdubatiment.fr>
+ * Copyright (C) 2026		Nick Fragoulis
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -378,6 +380,21 @@ function getDolGlobalFloat($key, $default = 0)
 }
 
 /**
+ * Return the version to add into URLs of CSS and JS files.
+ * With MAIN_HIDE_VERSION, a hash of the version is returned: the version is not disclosed but the browser cache is still refreshed after an upgrade.
+ *
+ * @return string		Version or hash of version
+ */
+function getDolVersionForUrl()
+{
+	global $conf;
+	if (getDolGlobalInt('MAIN_HIDE_VERSION')) {
+		return substr(hash('sha256', DOL_VERSION.(empty($conf->file->instance_unique_id) ? '' : $conf->file->instance_unique_id)), 0, 8);
+	}
+	return DOL_VERSION;
+}
+
+/**
  * Return a Dolibarr global constant boolean value.
  * The constants $conf->global->xxx are loaded by the script master.inc.php included at begin of any PHP page.
  *
@@ -682,6 +699,12 @@ function getEntity($element, $shared = 1, $currentobject = null)
 		case 'invoice_supplier':
 			$element = 'supplier_invoice';
 			break; // "/fourn/class/fournisseur.facture.class.php"
+		case 'facturerec':
+			$element = 'invoice';
+			break; // "/compta/facture/class/facture-rec.class.php", template invoices are shared like invoices
+		case 'fichinter':
+			$element = 'intervention';
+			break; // "/fichinter/class/fichinter.class.php", interventions are shared with name 'intervention'
 	}
 
 	if (is_object($mc)) {
@@ -1093,28 +1116,29 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto', $saverestore = '')
  *  Note: The property $user->default_values is loaded by main.php when loading the user.
  *
  *  @param  string  $paramname   Name of parameter to found
- *  @param 'int'|'intcomma'|'array'|'array:int'|'array:intcomma'|'array:alpha'|'array:alphanohtml'|'array:aZ09'|'array:restricthtml'|'password'|'email'|'alpha'|'alphanohtml'|'nohtml'|'restricthtml'|'alphawithlgt'|'aZ09'|'aZ'|'aZ09arobase'|'aZ09comma'|'url'|'san_alpha'|'custom'|'none'|'restricthtmlallowclass'|'restricthtmlallowunvalid'|'restricthtmlallowiframe'|'restricthtmlallowlinkscript'|'' $check Type of check
- *                                                                                                                                                                                                                                                                                                                                                                                                                 '' or 'none'=no check (deprecated)
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'password'=allow characters for a password
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'email'=allow characters for an email "email@domain.com"
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'url'=allow characters for an url
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'array', 'array:restricthtml' or 'array:aZ09' to check it's an array
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'int'=check it's numeric (integer or float)
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'intcomma'=check it's integer+comma ('1,2,3,4...')
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'alphanohtml'=check there is no html content and no " and no ../    ('alpha' is an alias of 'alphanohtml')
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'alphawithlgt'=alpha with lgt and no " and no ../   (Can be used for email string like "Name <email@domain.com>")
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'aZ'=check it's a-Z only
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'aZ09'=check it's simple alpha string (recommended for keys, it includes a-Z0-9_\-\.)
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'aZ09arobase'=check it's a string for an element type ('myobject@mymodule')
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'aZ09comma'=check it's a string for a sortfield or sortorder
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'nohtml'=check there is no html content
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'restricthtml'=check html content is restricted to some tags only
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'custom'= custom filter specify $filter and $options)
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'restricthtmlallowclass'
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'restricthtmlallowunvalid'
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'restricthtmlallowiframe'
- *                                                                                                                                                                                                                                                                                                                                                                                                                 'restricthtmlallowlinkscript'
+ *  @param 'int'|'intcomma'|'array'|'array:int'|'array:intcomma'|'array:alpha'|'array:alphanohtml'|'array:aZ09'|'array:restricthtml'|'password'|'email'|'alpha'|'alphanohtml'|'alphanohtmlquote'|'nohtml'|'restricthtml'|'alphawithlgt'|'aZ09'|'aZ'|'aZ09arobase'|'aZ09comma'|'url'|'san_alpha'|'custom'|'none'|'restricthtmlallowclass'|'restricthtmlallowunvalid'|'restricthtmlallowiframe'|'restricthtmlallowlinkscript'|'' $check Type of check
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    '' or 'none'=no check (deprecated)
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'password'=allow characters for a password
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'email'=allow characters for an email "email@domain.com"
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'url'=allow characters for an url
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'array', 'array:restricthtml' or 'array:aZ09' to check it's an array
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'int'=check it's numeric (integer or float)
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'intcomma'=check it's integer+comma ('1,2,3,4...')
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'alphanohtml'=check there is no html content and no " and no ../    ('alpha' is an alias of 'alphanohtml')
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'alphanohtmlquote'=same than 'alphanohtml' but " is replaced with ' instead of being removed
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'alphawithlgt'=alpha with lgt and no " and no ../   (Can be used for email string like "Name <email@domain.com>")
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'aZ'=check it's a-Z only
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'aZ09'=check it's simple alpha string (recommended for keys, it includes a-Z0-9_\-\.)
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'aZ09arobase'=check it's a string for an element type ('myobject@mymodule')
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'aZ09comma'=check it's a string for a sortfield or sortorder
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'nohtml'=check there is no html content
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'restricthtml'=check html content is restricted to some tags only
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'custom'= custom filter specify $filter and $options)
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'restricthtmlallowclass'
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'restricthtmlallowunvalid'
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'restricthtmlallowiframe'
+ *                                                                                                                                                                                                                                                                                                                                                                                                                                    'restricthtmlallowlinkscript'
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
  *  @param  ?int	$filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for details)
  *  @param  mixed	$options     Options to pass to filter_var when $check is set to 'custom'
@@ -1125,7 +1149,7 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto', $saverestore = '')
  *      $check is 'int' ? numeric-string|'' :
  *      $check is 'array:int' ? numeric-string[]|array{} :
  *      $check is 'array' | 'array:aZ09' | 'array:alpha' | 'array:intcomma' | 'array:restricthtml' ? string[] :
- *      $check is 'alpha' | 'aZ' | 'aZ09' | 'aZ09arobase' | 'aZ09comma' | 'password' | 'email' | 'url' | 'alphanohtml' |'nohtml' | 'restricthtml' | 'alphawithlgt' | 'intcomma' | 'restricthtmlallowclass' | 'restricthtmlallowunvalid' | 'restricthtmlallowiframe' | 'restricthtmlallowlinkscript' ? string : string|array<mixed>
+ *      $check is 'alpha' | 'aZ' | 'aZ09' | 'aZ09arobase' | 'aZ09comma' | 'password' | 'email' | 'url' | 'alphanohtml' | 'alphanohtmlquote' |'nohtml' | 'restricthtml' | 'alphawithlgt' | 'intcomma' | 'restricthtmlallowclass' | 'restricthtmlallowunvalid' | 'restricthtmlallowiframe' | 'restricthtmlallowlinkscript' ? string : string|array<mixed>
  *  )
  */
 function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null, $options = null, $noreplace = 0, $nodefault = 0)
@@ -1481,10 +1505,14 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 			break;
 		case 'alpha':		// No html and no ../ and "
 		case 'alphanohtml':	// Recommended for most scalar parameters and search parameters. Not valid for json string.
+		case 'alphanohtmlquote':	// Same than 'alphanohtml' but " is replaced with ' instead of being removed
 			if (!is_array($out)) {
 				$out = trim($out);
 				do {
 					$oldstringtoclean = $out;
+					if ($check == 'alphanohtmlquote') {
+						$out = str_ireplace(array('&quot;', '&#34;', '&#0000034;', '&#x22;', '&quot', '"', '&#34', '&#0000034', '&#x22'), "'", $out);
+					}
 					// Remove html tags
 					$out = dol_string_nohtmltag($out, 0);
 					// Refuse octal syntax \999, hexa syntax \x999 and unicode syntax \u{999} by replacing the \ into / (so if it is a \ for a windows path, it is still ok).
@@ -2329,9 +2357,10 @@ function dolSlugify($stringtoslugify)
 
 /**
  * Returns text escaped for inclusion into JavaScript code.
+ * Prefer to enclose JS strings with simple quotes in generated JS code, like 'string', and use mode 0 or 1. Mode 2 should be avoided.
  *
  * @param	int|string	$stringtoescape			String to escape
- * @param	int			$mode					0=Escape also \' and \" into \', 1=Escape \' but not \" for usage into 'string', 2=Escape \" but not \' for usage into "string", 3=Escape \' and \" with \\.
+ * @param	int			$mode					0=Escape also \' and \" into \', 1=Escape \' but not \" for usage into 'string', 2=Escape \" but not \' for usage into "string" (to avoid, prefer 'string' with mode 0 or 1), 3=Escape \' and \" with \\.
  * @param	int			$noescapebackslashn		0=Escape also \n. 1=Do not escape \n.
  * @return	string								Escaped string. Both \' and " are escaped into \' if they are escaped.
  */
@@ -5188,10 +5217,11 @@ function get_localtax_by_third($local)
  *  @param	?Societe		$buyer         		Company object
  *  @param	?Societe		$seller        		Company object
  *  @param  int<0,1>		$firstparamisid     1 if first param is id into table (use this if you can)
+ *  @param  int<0,2>		$type_vat			When the rate has no code: 0=All types, 1=VAT rate for sales, 2=VAT rate for purchases
  *  @return	array{}|array{rowid:int,code:string,rate:float,localtax1:float,localtax1_type:string,localtax2:float,localtax2_type:string,npr:float,accountancy_code_sell:string,accountancy_code_buy:string} array('rowid'=> , 'code'=> ...)
  *  @see getLocalTaxesFromRate()
  */
-function getTaxesFromId($vatrate, $buyer = null, $seller = null, $firstparamisid = 1)
+function getTaxesFromId($vatrate, $buyer = null, $seller = null, $firstparamisid = 1, $type_vat = 0)
 {
 	global $db;
 
@@ -5225,6 +5255,16 @@ function getTaxesFromId($vatrate, $buyer = null, $seller = null, $firstparamisid
 		$sql .= " AND t.entity IN (" . getEntity('c_tva') . ")";
 		if ($vatratecode) {
 			$sql .= " AND t.code = '" . $db->escape($vatratecode) . "'";
+		} else {
+			// No code: several lines may have this rate (for example one for sales and one for purchases), so we take the default one of the type
+			if ($type_vat > 0) {
+				$sql .= " AND t.type_vat IN (0, " . ((int) $type_vat) . ")";
+			}
+			$sql .= " ORDER BY t.use_default DESC";
+			if ($type_vat > 0) {
+				$sql .= ", t.type_vat DESC";	// a line for sales only (or purchases only) wins over a line for both
+			}
+			$sql .= ", t.recuperableonly ASC, t.code ASC";
 		}
 	}
 
@@ -5331,10 +5371,11 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
  *  @param	int				$idprod          				Id of product or 0 if not a predefined product
  *  @param  Societe			$thirdpartytouseforcountry  	Thirdparty with a ->country_code defined (FR, US, IT, ...)
  *	@param	int				$idprodfournprice				Id product_fournisseur_price (for "supplier" proposal/order/invoice)
+ *  @param  int<0,2>		$type_vat						When the product rate is not known: 0=All types, 1=VAT rate for sales, 2=VAT rate for purchases
  *  @return float|string   					    			Vat rate to use with format 5.0 or '5.0 (XXX)'
  *  @see get_default_tva(), get_product_localtax_for_country()
  */
-function get_product_vat_for_country($idprod, $thirdpartytouseforcountry, $idprodfournprice = 0)
+function get_product_vat_for_country($idprod, $thirdpartytouseforcountry, $idprodfournprice = 0, $type_vat = 0)
 {
 	global $db, $mysoc;
 
@@ -5383,7 +5424,14 @@ function get_product_vat_for_country($idprod, $thirdpartytouseforcountry, $idpro
 			$sql .= " FROM " . MAIN_DB_PREFIX . "c_tva as t, " . MAIN_DB_PREFIX . "c_country as c";
 			$sql .= " WHERE t.active = 1 AND t.fk_pays = c.rowid AND c.code = '" . $db->escape($thirdpartytouseforcountry->country_code) . "'";
 			$sql .= " AND t.entity IN (" . getEntity('c_tva') . ")";
-			$sql .= " ORDER BY t.use_default DESC, t.taux DESC, t.code ASC, t.recuperableonly ASC";
+			if ($type_vat > 0) {
+				$sql .= " AND t.type_vat IN (0, " . ((int) $type_vat) . ")";	// Do not take the default purchase rate for a sale, nor the opposite
+			}
+			$sql .= " ORDER BY t.use_default DESC, t.taux DESC";
+			if ($type_vat > 0) {
+				$sql .= ", t.type_vat DESC";	// a line for sales only (or purchases only) wins over a line for both
+			}
+			$sql .= ", t.code ASC, t.recuperableonly ASC";
 			$sql .= $db->plimit(1);
 
 			$resql = $db->query($sql);
@@ -5490,8 +5538,8 @@ function get_product_localtax_for_country($idprod, $local, $thirdpartytouseforco
  *	Function that return vat rate of a product line (according to seller, buyer and product vat rate)
  *   VATRULE 0: If we are in mode SERVICE_ARE_ECOMMERCE_200238EC and customer is not a company with a vat id, we use default product VAT in buyer country
  *   VATRULE 1: If seller does not use VAT, default VAT is 0. End of rule.
- *   VATRULE 2: If buyer department has a VAT rule from vat rates dictionary then it's the default VAT rate. End of rule.
- *	 VATRULE 3: If the (seller country = buyer country) then the default VAT = VAT of the product sold. End of rule.
+ *   VATRULE 2: If (seller country = buyer country) and buyer department has a VAT rule from vat rates dictionary then it's the default VAT rate. End of rule.
+ *	 VATRULE 3: If (seller country = buyer country) then the default VAT = VAT of the product sold. End of rule.
  *	 VATRULE 4: If (seller and buyer in the European Community) and (property sold = new means of transport such as car, boat, plane) then VAT by default = 0 (VAT must be paid by the buyer to the tax center of his country and not to the seller). End of rule.
  *	 VATRULE 5: If (seller and buyer in the European Community) and (buyer = individual) then VAT by default = VAT of the product sold. End of rule
  *	 VATRULE 6: If (seller and buyer in European Community) and (buyer = company) then VAT by default=0. End of rule
@@ -5501,10 +5549,11 @@ function get_product_localtax_for_country($idprod, $local, $thirdpartytouseforco
  *	@param  Societe		$thirdparty_buyer   	Object Buyer company
  *	@param  int			$idprod					Id product
  *	@param	int			$idprodfournprice		Id product_fournisseur_price (for supplier order/invoice)
+ *  @param  int<0,2>	$type_vat				When the product rate is not known: 0=All types, 1=VAT rate for sales, 2=VAT rate for purchases
  *	@return float|string   				      	Vat rate to use with format 5.0 or '5.0 (XXX)', -1 if we can't guess it
  *  @see get_default_localtax(), get_default_npr()
  */
-function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, $idprod = 0, $idprodfournprice = 0)
+function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, $idprod = 0, $idprodfournprice = 0, $type_vat = 0)
 {
 	global $mysoc, $db, $hookmanager;
 
@@ -5547,7 +5596,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 			}
 
 			if (!$isacompany) {
-				$vatvalue = get_product_vat_for_country($idprod, $thirdparty_buyer, $idprodfournprice);
+				$vatvalue = get_product_vat_for_country($idprod, $thirdparty_buyer, $idprodfournprice, $type_vat);
 				$vatrule = 'VATRULE 0';
 			}
 		}
@@ -5565,8 +5614,8 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 		$vatrule = 'VATRULE 1';
 	}
 
-	// 'VATRULE 2' - Force VAT if a buyer department is defined on vat rates dictionary
-	if (empty($vatrule) && !empty($thirdparty_buyer->state_id)) {
+	// 'VATRULE 2' - Force VAT if seller and buyer are in the same country and a buyer department is defined on vat rates dictionary
+	if (empty($vatrule) && !empty($thirdparty_buyer->state_id) && $seller_country_code == $buyer_country_code) {
 		$sql = "SELECT d.rowid, t.taux as vat_default_rate, t.code as vat_default_code ";
 		$sql .= " FROM " . $db->prefix() . "c_tva as t";
 		$sql .= " INNER JOIN " . $db->prefix() . "c_departements as d ON t.fk_department_buyer = d.rowid";
@@ -5594,7 +5643,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 		|| (in_array($seller_country_code, array('MQ', 'GP')) && in_array($buyer_country_code, array('MQ', 'GP')))	// We should be able to manage the case of MQ, GP, ... with a deicated vat rate at previous step.
 	)) { // Warning ->country_code not always defined
 		//print 'VATRULE 3';
-		$tmpvat = get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+		$tmpvat = get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice, $type_vat);
 
 		if ($seller_country_code == 'IN' && getDolGlobalString('MAIN_SALETAX_AUTOSWITCH_I_CS_FOR_INDIA')) {
 			// Special case for india.
@@ -5629,7 +5678,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 
 		if (!$isacompany) {
 			//print 'VATRULE 5';
-			$vatvalue = get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+			$vatvalue = get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice, $type_vat);
 			$vatrule = 'VATRULE 5';
 		} else {
 			//print 'VATRULE 6';
@@ -5646,7 +5695,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	if (empty($vatrule) && getDolGlobalString('MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC') && empty($buyer_in_cee)) {
 		$isacompany = $thirdparty_buyer->isACompany();
 		if (!$isacompany) {
-			$vatvalue = get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+			$vatvalue = get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice, $type_vat);
 			$vatrule = 'VATRULE extra';
 			//print 'VATRULE extra';
 		}
@@ -5811,7 +5860,8 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 		$arrayforoldpath['product'] = 2;
 	}
 
-	if (empty($level) && array_key_exists($modulepart, $arrayforoldpath)) {
+	if (empty($level) && array_key_exists($modulepart, $arrayforoldpath)
+		&& !($modulepart === 'mailing' && getDolGlobalInt('MAILING_USE_NEW_PATH_FOR_FILES'))) {
 		$level = $arrayforoldpath[$modulepart];
 	}
 	if (!empty($level) && array_key_exists($modulepart, $arrayforoldpath)) {
@@ -6202,10 +6252,10 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
  *  Note: Complementary to dol_string_onlythesehtmltags().
  *  This method is used for example by dol_htmlwithnojs() when option MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES is set to 1.
  *
- *	@param	string		$stringtoclean		String to clean
- *  @param	string[]|null	$allowed_attributes	Array of attributes to keep (null = default list)
- *  @param	int|null	$ishtml				Use 1 if string is not an HTML content. 0 if it is, null if unknown.
- *	@return string	    					String cleaned
+ *	@param	string			$stringtoclean		String to clean
+ *  @param	string[]|null	$allowed_attributes	Array of attributes to keep (null = default list + all data-* and aria-*)
+ *  @param	int|null		$ishtml				Use 1 if string is not an HTML content. 0 if it is, null if unknown.
+ *	@return string	    						String cleaned
  *
  * 	@see	dol_htmlwithnojs() dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_onlythesehtmltags() dol_string_neverthesehtmltags()
  * 	@phan-suppress PhanUndeclaredProperty
@@ -6237,14 +6287,49 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 			"type",
 			"width",
 
-			// HTML5
-			"footer",
-			"header",
-			"menu",
-			"menuitem",
-			"nav",
-			"section"
+			// Table and old formatting attributes (generated by WYSIWYG editors)
+			"align",
+			"bgcolor",
+			"border",
+			"cellpadding",
+			"cellspacing",
+			"color",
+			"colspan",
+			"face",
+			"headers",
+			"rowspan",
+			"scope",
+			"size",
+			"span",
+			"valign",
+
+			// Lists
+			"reversed",
+			"start",
+			"value",
+
+			// Accessibility, language and misc
+			"abbr",
+			"datetime",
+			"dir",
+			"hidden",
+			"itemprop",
+			"lang",
+			"role",
+			"tabindex",
+
+			// Media (attributes containing an URL like srcset, poster or cite are not allowed)
+			"autoplay",
+			"controls",
+			"loading",
+			"loop",
+			"muted",
+			"playsinline",
+			"preload"
 		);
+		$allowdataandariaattributes = true;
+	} else {
+		$allowdataandariaattributes = false;
 	}
 	// Always add content and http-equiv for meta tags, required to force encoding and keep html content in utf8 by load/saveHTML functions.
 	if (!in_array("content", $allowed_attributes)) {
@@ -6273,11 +6358,14 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 			if (!$el instanceof DOMElement) {
 				continue;
 			}
+			if ($el->getAttribute('id') === $wrapperId) {	// Do not clean our own wrapper, we need its id to retrieve it later
+				continue;
+			}
 			$attrs = $el->attributes;
 			for ($ii = $attrs->length - 1; $ii >= 0; $ii--) {
 				//var_dump($attrs->item($ii));
 				if (!empty($attrs->item($ii)->name)) {
-					if (! in_array($attrs->item($ii)->name, $allowed_attributes)) {
+					if (! in_array($attrs->item($ii)->name, $allowed_attributes) && !($allowdataandariaattributes && preg_match('/^(data|aria)-[a-z0-9_\-\.:]+$/i', $attrs->item($ii)->name))) {
 						// Delete attribute if not into allowed_attributes  @phan-suppress-next-line PhanUndeclaredMethod
 						$els->item($i)->removeAttribute($attrs->item($ii)->name);
 					} elseif (in_array($attrs->item($ii)->name, array('style'))) {
@@ -7080,9 +7168,9 @@ function dol_textishtml($msg, $option = 0)
 			return true;
 		} elseif (preg_match('/<(br|hr)\/>/i', $msg)) {
 			return true;
-		} elseif (preg_match('/<(br|hr|div|font|li|p|span|strong|table)>/i', $msg)) {
+		} elseif (preg_match('/<(br|hr|div|font|li|p|span|strong|table|blockquote|pre|dl|section)>/i', $msg)) {
 			return true;
-		} elseif (preg_match('/<(br|hr|div|font|li|p|span|strong|table)\s+[^<>\/]*\/?>/i', $msg)) {
+		} elseif (preg_match('/<(br|hr|div|font|li|p|span|strong|table|blockquote|pre|dl|section)\s+[^<>\/]*\/?>/i', $msg)) {
 			return true;
 		} elseif (preg_match('/<img\s+[^<>]*src[^<>]*>/i', $msg)) {
 			return true; // must accept <img src="http://example.com/aaa.png" />
@@ -7367,6 +7455,12 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			}
 			$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'UrlToPayOnlineIfApplicable';
 			$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__'] = 'TextAndUrlToPayOnlineIfApplicable';
+			if (isModEnabled('invoice') && (!is_object($object) || $object->element == 'facture')) {
+				$substitutionarray['__PAYMENT_REFERENCE__'] = 'Structured payment reference of an invoice';
+				if (getDolGlobalString('INVOICE_ADD_FI_BARCODE') && $mysoc->country_code == 'FI') {
+					$substitutionarray['__PAYMENT_VIRTUAL_BARCODE__'] = 'Finnish virtual barcode of an invoice';
+				}
+			}
 			$substitutionarray['__SECUREKEYPAYMENT__'] = 'Security key (if key is not unique per record)';
 			$substitutionarray['__SECUREKEYPAYMENT_MEMBER__'] = 'Security key for payment on a member subscription (one key per member)';
 			$substitutionarray['__SECUREKEYPAYMENT_ORDER__'] = 'Security key for payment on an order';
@@ -7488,8 +7582,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_EMAIL_URLENCODED__'] = urlencode($object->email ?? '');
 				$substitutionarray['__THIRDPARTY_URL__'] = $object->url ?? '';
 				$substitutionarray['__THIRDPARTY_URL_URLENCODED__'] = urlencode($object->url ?? '');
-				$substitutionarray['__THIRDPARTY_PHONE__'] = dol_print_phone($object->phone);
-				$substitutionarray['__THIRDPARTY_FAX__'] = dol_print_phone($object->fax);
+				$substitutionarray['__THIRDPARTY_PHONE__'] = dol_print_phone((string) $object->phone);
+				$substitutionarray['__THIRDPARTY_FAX__'] = dol_print_phone((string) $object->fax);
 				$substitutionarray['__THIRDPARTY_ADDRESS__'] = $object->address ?? '';
 				$substitutionarray['__THIRDPARTY_ZIP__'] = $object->zip ?? '';
 				$substitutionarray['__THIRDPARTY_TOWN__'] = $object->town ?? '';
@@ -7657,31 +7751,36 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				}
 				$extrafields->fetch_name_optionals_label($object->table_element, true);
 
-				if ($object->fetch_optionals() > 0) {	// @FIXME: Remove this, the fetch should have been done already, by the caller of getCommonSubstitutionArray()
-					if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0) {
+				// Use the extrafields already loaded into the object by the caller: no SQL access here, this function
+				// can be called thousands of times. Fetching them here also discarded values set by the caller but not
+				// saved yet (an object validated by an API or a connector inside the same write fires the notification
+				// triggers before its extrafields are stored).
+				if (!empty($object->array_options) && is_array($object->array_options)) {
+					if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label'])) {
 						foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label) {
+							$optionvalue = $object->array_options['options_' . $key] ?? null;	// Extrafields set by the caller may be partial
 							if ($extrafields->attributes[$object->table_element]['type'][$key] == 'date') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = dol_print_date($object->array_options['options_' . $key], 'day');
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_LOCALE__'] = dol_print_date($object->array_options['options_' . $key], 'day', 'tzserver', $outputlangs);
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_RFC__'] = dol_print_date($object->array_options['options_' . $key], 'dayrfc');
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = dol_print_date($optionvalue, 'day');
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_LOCALE__'] = dol_print_date($optionvalue, 'day', 'tzserver', $outputlangs);
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_RFC__'] = dol_print_date($optionvalue, 'dayrfc');
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'datetime') {
-								$datetime = $object->array_options['options_' . $key];
+								$datetime = $optionvalue;
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhour') : '');
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_LOCALE__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhour', 'tzserver', $outputlangs) : '');
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_DAY_LOCALE__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'day', 'tzserver', $outputlangs) : '');
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_RFC__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhourrfc') : '');
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'phone') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = dol_print_phone($object->array_options['options_' . $key]);
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = dol_print_phone($optionvalue);
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'price') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATED__'] = price($object->array_options['options_' . $key]);	// For compatibility
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATTED__'] = price($object->array_options['options_' . $key]);
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $optionvalue;
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATED__'] = price($optionvalue);	// For compatibility
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATTED__'] = price($optionvalue);
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'select') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = !empty($object->array_options['options_' . $key]) ? $object->array_options['options_' . $key] : '';
-								$val = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$object->array_options['options_'.$key]] ?? $object->array_options['options_'.$key];
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = !empty($optionvalue) ? $optionvalue : '';
+								$val = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$optionvalue] ?? $optionvalue;
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_LABEL__'] = $val;
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] != 'separator') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = !empty($object->array_options['options_' . $key]) ? $object->array_options['options_' . $key] : '';
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = !empty($optionvalue) ? $optionvalue : '';
 							}
 						}
 					}
@@ -7729,6 +7828,17 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				if (getDolGlobalString('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION') && $object->element == 'facture') {
 					include_once DOL_DOCUMENT_ROOT . '/core/lib/functions_be.lib.php';
 					$substitutionarray['__PAYMENT_STRUCTURED_COMMUNICATION__'] = dolBECalculateStructuredCommunication((string) $object->ref, $object->type);
+				}
+
+				// Structured payment reference stored on the invoice
+				if ($object->element == 'facture') {
+					$substitutionarray['__PAYMENT_REFERENCE__'] = empty($object->payment_reference) ? '' : $object->payment_reference;
+				}
+
+				// Finnish virtual barcode. Reading it needs the bank account, so it is
+				// loaded only if the key is used, see the lazyload note on this function.
+				if (getDolGlobalString('INVOICE_ADD_FI_BARCODE') && $object->element == 'facture' && $mysoc->country_code == 'FI') {
+					$substitutionarray['__PAYMENT_VIRTUAL_BARCODE__@lazyload'] = '/compta/facture/class/facture.class.php:Facture:fetchAndSetSubstitution:' . $object->id;
 				}
 
 				if (getDolGlobalString('PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD') && is_object($object) && $object->element == 'propal') {
@@ -8720,6 +8830,10 @@ function dolEvalSimpleCondition($s)
 		} elseif (preg_match('/^\$conf->([a-zA-Z0-9_]+)->enabled$/', $term, $reg)) {
 			$value = !empty($conf->{$reg[1]}->enabled);
 		} elseif (preg_match('/^getDolGlobal(String|Int)\(\s*[\'"]([a-zA-Z0-9_]+)[\'"]\s*\)$/', $term, $reg)) {
+			// A constant storing a secret is not evaluated here, so dol_eval() can refuse it
+			if (isASecretKey($reg[2])) {
+				return null;
+			}
 			$value = ($reg[1] == 'Int' ? (bool) getDolGlobalInt($reg[2]) : (bool) getDolGlobalString($reg[2]));
 		} elseif (preg_match('/^\$(leftmenu|mainmenu)\s*(==|!=)\s*[\'"]([a-zA-Z0-9_]*)[\'"]$/', $term, $reg)) {
 			$current = ($reg[1] == 'leftmenu' ? $leftmenu : $mainmenu);
@@ -8799,283 +8913,29 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 		dol_syslog("Use of dol_eval with parameter returnvalue = 0 is now forbidden. Please fix this", LOG_ERR);
 	}
 
-	global $dolibarr_main_use_dol_eval_new;			// experimental option, not yet ready
-	if (!empty($dolibarr_main_use_dol_eval_new)) {
-		return dol_eval_new($s);
-	} else {
-		return dol_eval_standard($s, $hideerrors, $onlysimplestring);
-	}
-}
+	global $dolibarr_main_use_dol_eval_safe;		// 0 (default)=eval() with checks, 1=same and the result is compared with the one of DolSafeEval (differences are logged), 2=DolSafeEval, that never uses eval()
 
-/**
- * Replace eval function to add more security.
- * This function is called by dol_eval(), itself called by verifCond() or trans() and transnoentitiesnoconv().
- *
- * @param 	string		$s					String to evaluate
- * @return	void|string						Nothing or return result of eval (even if type can be int, it is safer to assume string and find all potential typing issues as abs(dol_eval(...)).
- * 											If we return a string on error, it must start with 'Bad call of ...' or 'Bad string syntax to evaluate...' !!!
- * @see verifCond(), checkPHPCode() to see sanitizing rules that should be very close.
- * @phan-suppress PhanPluginUnsafeEval
- */
-function dol_eval_new($s)
-{
-	// Only this global variables can be read by eval function and returned to caller
-	global $conf,	// Read of const is done with getDolGlobalString() but we need $conf->currency for example
-	$db, $langs, $user, $website, $websitepage,
-	$action, $mainmenu, $leftmenu,
-	$mysoc,
-	$objectoffield,	// To allow the use of $objectoffield in computed fields
-
-	// Old variables used
-	$object;
-
-	if (getDolGlobalString('MAIN_ALLOW_OLD_VAR_OBJ_IN_DOL_EVAL')) {
-		global $obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $object
+	$modesafe = (empty($dolibarr_main_use_dol_eval_safe) ? 0 : (int) $dolibarr_main_use_dol_eval_safe);
+	if ($modesafe == 2) {
+		require_once DOL_DOCUMENT_ROOT.'/core/class/dolsafeeval.class.php';
+		return DolSafeEval::dolEval($s, $hideerrors, $onlysimplestring);
 	}
 
-	// PHP < 7.4.0
-	defined('T_COALESCE_EQUAL') || define('T_COALESCE_EQUAL', PHP_INT_MAX);
-	defined('T_FN') || define('T_FN', PHP_INT_MAX);
+	$result = dol_eval_standard($s, $hideerrors, $onlysimplestring);
 
-	// PHP < 8.0.0
-	defined('T_ATTRIBUTE') || define('T_ATTRIBUTE', PHP_INT_MAX);
-	defined('T_MATCH') || define('T_MATCH', PHP_INT_MAX);
-	defined('T_NAME_FULLY_QUALIFIED') || define('T_NAME_FULLY_QUALIFIED', PHP_INT_MAX);
-	defined('T_NAME_QUALIFIED') || define('T_NAME_QUALIFIED', PHP_INT_MAX);
-	defined('T_NAME_RELATIVE') || define('T_NAME_RELATIVE', PHP_INT_MAX);
-
-	// PHP < 8.1.0
-	defined('T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG') || define('T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG', PHP_INT_MAX);
-	defined('T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG') || define('T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG', PHP_INT_MAX);
-	defined('T_ENUM') || define('T_ENUM', PHP_INT_MAX);
-	defined('T_READONLY') || define('T_READONLY', PHP_INT_MAX);
-
-	// PHP < 8.4.0
-	defined('T_PRIVATE_SET') || define('T_PRIVATE_SET', PHP_INT_MAX);
-	defined('T_PROTECTED_SET') || define('T_PROTECTED_SET', PHP_INT_MAX);
-	defined('T_PUBLIC_SET') || define('T_PUBLIC_SET', PHP_INT_MAX);
-
-	$prohibited_token_ids = [
-		/*
-		 * Prohibited int tokens
-		 */
-
-		// T_AND_EQUAL', 'T_ARRAY', 'T_ARRAY_CAST', 'T_AS',
-		'T_ABSTRACT',
-		'T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG',
-		'T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG',
-		'T_ATTRIBUTE',
-		// 'T_BOOLEAN_AND', 'T_BOOLEAN_OR', 'T_BOOL_CAST', 'T_BREAK',
-		'T_BAD_CHARACTER',
-		// 'T_CASE', 'T_CLASS_C', 'T_CLONE', 'T_COALESCE', 'T_COALESCE_EQUAL', 'T_COMMENT', 'T_CONCAT_EQUAL',
-		// 'T_CONSTANT_ENCAPSED_STRING', 'T_CONTINUE', 'T_CURLY_OPEN',
-		'T_CALLABLE',
-		'T_CATCH',
-		'T_CLASS',
-		'T_CLOSE_TAG',
-		'T_CONST',
-		// 'T_DEC', 'T_DEFAULT', 'T_DIV_EQUAL', 'T_DNUMBER', 'T_DO', 'T_DOC_COMMENT',
-		// 'T_DOLLAR_OPEN_CURLY_BRACES', 'T_DOUBLE_ARROW', 'T_DOUBLE_CAST', 'T_DOUBLE_COLON',
-		'T_DECLARE',
-		'T_DIR',
-		// 'T_ELLIPSIS', 'T_ELSE', 'T_ELSEIF', 'T_EMPTY', 'T_ENCAPSED_AND_WHITESPACE', 'T_ENDFOR',
-		// 'T_ENDFOREACH', 'T_ENDIF', 'T_ENDSWITCH', 'T_ENDWHILE', 'T_END_HEREDOC',
-		'T_ECHO',
-		'T_ENDDECLARE',
-		'T_ENUM',
-		'T_EVAL',
-		'T_EXIT',
-		'T_EXTENDS',
-		// 'T_FOR', 'T_FOREACH',
-		'T_FILE',
-		'T_FINAL',
-		'T_FINALLY',
-		'T_FN',
-		'T_FUNCTION',
-		'T_FUNC_C',
-		'T_GLOBAL',
-		'T_GOTO',
-		'T_HALT_COMPILER',
-		// 'T_IF', 'T_INC', 'T_INLINE_HTML', 'T_INSTANCEOF', 'T_INT_CAST', 'T_ISSET', 'T_IS_EQUAL', 'T_IS_GREATER_OR_EQUAL',
-		// 'T_IS_IDENTICAL', 'T_IS_NOT_EQUAL', 'T_IS_NOT_IDENTICAL', 'T_IS_SMALLER_OR_EQUAL',
-		'T_IMPLEMENTS',
-		'T_INCLUDE',
-		'T_INCLUDE_ONCE',
-		'T_INSTEADOF',
-		'T_INTERFACE',
-		// 'T_LIST', 'T_LNUMBER', 'T_LOGICAL_AND', 'T_LOGICAL_OR', 'T_LOGICAL_XOR',
-		'T_LINE',
-		// 'T_MINUS_EQUAL', 'T_MOD_EQUAL', 'T_MUL_EQUAL',
-		'T_METHOD_C',
-		// 'T_NEW',
-		// 'T_NS_SEPARATOR', 'T_NUM_STRING',
-		'T_NAMESPACE',
-		// 'T_NAME_FULLY_QUALIFIED', 'T_NAME_QUALIFIED', 'T_NAME_RELATIVE', 'T_NS_C',
-		// 'T_OBJECT_CAST', 'T_OBJECT_OPERATOR', 'T_OR_EQUAL',
-		'T_OPEN_TAG',
-		'T_OPEN_TAG_WITH_ECHO',
-		// 'T_PAAMAYIM_NEKUDOTAYIM', 'T_PLUS_EQUAL', 'T_POW', 'T_POW_EQUAL',
-		'T_PRINT',
-		'T_PRIVATE',
-		'T_PROTECTED',
-		'T_PUBLIC',
-		// 'T_PROPERTY_C',
-		'T_READONLY',
-		'T_REQUIRE',
-		'T_REQUIRE_ONCE',
-		'T_RETURN',
-		// 'T_SL', 'T_SL_EQUAL', 'T_SPACESHIP', 'T_SR', 'T_SR_EQUAL', 'T_START_HEREDOC', 'T_STATIC',
-		// 'T_STRING', 'T_STRING_CAST', 'T_STRING_VARNAME', 'T_SWITCH',
-		'T_STATIC',
-		'T_THROW',
-		'T_TRAIT',
-		'T_TRAIT_C',
-		'T_TRY',
-		'T_UNSET',
-		'T_UNSET_CAST',
-		'T_USE',
-		// 'T_VARIABLE',
-		'T_VAR',
-		// 'T_WHILE', 'T_WHITESPACE',
-		// 'T_XOR_EQUAL',
-		// 'T_YIELD', 'T_YIELD_FROM',
-
-		/*
-		 * Prohibited string tokens
-		 */
-		';',
-		'`',
-	];
-
-	$prohibited_variables = [
-		'$_COOKIE',
-		'$_ENV',
-		'$_FILES',
-		'$GLOBALS',
-		'$_GET',
-		'$_POST',
-		'$_REQUEST',
-		'$_SERVER',
-		'$_SESSION',
-	];
-
-	$forbiddenphpfunctions = array();
-	$forbiddenphpmethods = array();
-
-	// Same list than in dol_eval
-	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("override_function", "session_id", "session_create_id", "session_regenerate_id"));
-	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("get_defined_functions", "get_defined_vars", "get_defined_constants", "get_declared_classes"));
-	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("function"));
-
-	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("GETPOST"));	// native dolibarr functions
-
-	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("ob_start"));
-
-	// Functions with callable parameters
-	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("call_user_func", "call_user_func_array"));
-	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("array_all", "array_any", "array_diff_ukey", "array_filter", "array_find", "array_find_key", "array_map", "array_reduce", "array_intersect_uassoc", "array_intersect_ukey", "array_walk", "array_walk_recursive"));
-	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("usort", "uasort", "uksort"));
-	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("preg_replace_callback", "preg_replace_callback_array", "header_register_callback"));
-	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("error_log", "set_error_handler", "set_exception_handler", "libxml_set_external_entity_loader", "register_shutdown_function", "register_tick_function", "unregister_tick_function"));
-	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("spl_autoload_register", "spl_autoload_unregister", "iterator_apply", "session_set_save_handler"));
-	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("forward_static_call", "forward_static_call_array", "register_postsend_function"));
-	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("readline_completion_function", "readline_callback_handler_install"));
-
-	// Exec functions
-	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("exec", "passthru", "shell_exec", "system", "proc_open", "popen"));
-	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("pcntl_alarm", "pcntl_exec", "pcntl_fork", "pcntl_waitpid", "pcntl_wait", "pcntl_wifexited", "pcntl_wifstopped", "pcntl_wifsignaled", "pcntl_wifcontinued", "pcntl_wexitstatus", "pcntl_wtermsig", "pcntl_wstopsig", "pcntl_signal"));
-	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("pcntl_signal_get_handler", "pcntl_signal_dispatch", "pcntl_get_last_error", "pcntl_strerror", "pcntl_sigprocmask", "pcntl_sigwaitinfo", "pcntl_sigtimedwait", "pcntl_getpriority", "pcntl_async_signals", "pcntl_unshare", ));
-	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("putenv", "dl", "apache_child_terminate", "apache_setenv"));
-	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_eval", "dol_eval_new", "dol_eval_standard", "executeCLI", "verifCond", "dolEncrypt", "dolDecrypt"));	// native dolibarr functions
-	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("eval", "create_function", "assert", "mb_ereg_replace")); // function with eval capabilities
-
-	// Include functions
-	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include", "require_once", "include_once"));
-
-	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_compress_dir", "dol_decode", "dol_dir_list", "dol_dir_list_in_database", "dol_delete_file", "dol_delete_dir", "dol_delete_dir_recursive", "dol_copy", "archiveOrBackupFile")); // more dolibarr functions
-	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("chdir", "dir", "fopen", "file", "file_exists", "file_get_contents", "file_put_contents", "fget", "fgetc", "fgetcsv", "flock", "fputs", "fputscsv", "fpassthru", "fscanf", "fseek", "fwrite", "is_file", "is_dir", "is_link", "mkdir", "opendir", "rmdir", "scandir", "symlink", "touch", "unlink", "umask"));
-
-	if (!getDolGlobalString('MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL')) {	// We disallow all function that allow to obfuscate the real name of a function
-		// @phpcs:ignore
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("base64" . "_" . "decode", "rawurl" . "decode", "url" . "decode", "str" . "_rot13", "hex" . "2bin", "printf", "sprintf")); // name of forbidden functions are split to avoid false positive
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_concat", "dol_concatdesc"));		// native dolibarr functions
-	}
-
-	$forbiddenphpmethods = array_merge($forbiddenphpmethods, array('invoke', 'invokeArgs'));	// Methods of ReflectionFunction to execute a function
-
-	$prohibited_functions = array_merge($forbiddenphpfunctions, $forbiddenphpmethods);
-
-	$prohibited_token_arrangements = [
-		// Variable functions "$a(", '"$a"(', "'FN_NAME'(", ('FN_NAME')()
-		' T_VARIABLE ( ',
-		' " ( ',
-		' \' ( ',
-		' T_CONSTANT_ENCAPSED_STRING ( ',
-		' ) ( ',
-	];
-
-	$tokens = token_get_all("<?php return {$s};", TOKEN_PARSE);
-
-	$tokens_arrangement = ' ';
-
-	for ($i = 2, $c = count($tokens) - 1; $i < $c; ++$i) { // ignore <?php return and ;
-		if (is_array($tokens[$i])) {
-			$token_id = $tokens[$i][0];
-			$token_value = $tokens[$i][1];
-			$token_name = token_name($tokens[$i][0]);
-		} else {
-			$token_id = $tokens[$i];
-			$token_value = $tokens[$i];
-			$token_name = $tokens[$i];
-		}
-
-		// Ignore whitespaces
-		if (T_WHITESPACE === $token_id) {
-			continue;
-		}
-
-		// Keep history to check arrangements
-		$tokens_arrangement .= "{$token_name} ";
-
-		// Prohibited Variables
-		if (
-			T_VARIABLE === $token_id
-			&& in_array($token_value, $prohibited_variables, true)
-		) {
-			return "Bad string syntax to evaluate. « {$token_value} » is prohibited in « {$s} »";
-		}
-
-		// Prohibited Functions
-		if (
-			T_STRING === $token_id
-			&& in_array($token_value, $prohibited_functions, true)
-		) {
-			return "Bad string syntax to evaluate. « {$token_value} » is prohibited in « {$s} »";
+	if ($modesafe == 1) {
+		// Shadow mode: the result of eval() is returned. DolSafeEval is only run to log the conditions it does not manage the same way.
+		require_once DOL_DOCUMENT_ROOT.'/core/class/dolsafeeval.class.php';
+		$safe = DolSafeEval::dolEval($s, $hideerrors, $onlysimplestring);
+		$regexerror = '/^(Bad call of|Bad string syntax to evaluate)|Exception during/';
+		$resultiserror = (is_string($result) && preg_match($regexerror, $result));
+		$safeiserror = (is_string($safe) && preg_match($regexerror, $safe));
+		if ($resultiserror != $safeiserror || (!$resultiserror && $safe != $result)) {
+			dol_syslog('dol_eval shadow mode: different result for "'.$s.'": eval='.json_encode($result).' DolSafeEval='.json_encode($safe), LOG_WARNING);
 		}
 	}
 
-	// Prohibited Token IDs
-	$maxi = count($prohibited_token_ids);
-	for ($i = 0; $i < $maxi; ++$i) {
-		if (false !== strpos($tokens_arrangement, " {$prohibited_token_ids[$i]} ")) {
-			return "Bad string syntax to evaluate. « {$prohibited_token_ids[$i]} » is prohibited in « {$s} »";
-		}
-	}
-
-	// Prohibited token arrangements
-	$maxi = count($prohibited_token_arrangements);
-	for ($i = 0; $i < $maxi; ++$i) {
-		if (false !== strpos($tokens_arrangement, $prohibited_token_arrangements[$i])) {
-			return "Bad string syntax to evaluate. « {$prohibited_token_arrangements[$i]} » is prohibited in « {$s} »";
-		}
-	}
-
-	// Return result
-	try {
-		return @eval("return {$s};") ?? '';
-	} catch (Throwable $ex) {
-		return "Bad string syntax to evaluate. Exception during evaluation: " . $s . " - " . $ex->getMessage();
-	}
+	return $result;
 }
 
 /**
@@ -9125,7 +8985,7 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 
 		// Set $dolibarr_main_restrict_eval_methods_array
 		if (!isset($dolibarr_main_restrict_eval_methods)) {
-			$dolibarr_main_restrict_eval_methods = 'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isExternalUser, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match';
+			$dolibarr_main_restrict_eval_methods = 'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isExternalUser, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match, floor, ceil, intdiv, fmod, sqrt, pow, exp, log, log10, sin, cos, tan, pi, is_numeric, is_nan, is_finite, intval, floatval';
 		}
 		//print '$dolibarr_main_restrict_eval_methods = '.$dolibarr_main_restrict_eval_methods."\n";
 		$dolibarr_main_restrict_eval_methods_array = explode(',', str_replace(" ", "", $dolibarr_main_restrict_eval_methods));
@@ -9290,7 +9150,7 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("pcntl_alarm", "pcntl_exec", "pcntl_fork", "pcntl_waitpid", "pcntl_wait", "pcntl_wifexited", "pcntl_wifstopped", "pcntl_wifsignaled", "pcntl_wifcontinued", "pcntl_wexitstatus", "pcntl_wtermsig", "pcntl_wstopsig", "pcntl_signal"));
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("pcntl_signal_get_handler", "pcntl_signal_dispatch", "pcntl_get_last_error", "pcntl_strerror", "pcntl_sigprocmask", "pcntl_sigwaitinfo", "pcntl_sigtimedwait", "pcntl_getpriority", "pcntl_async_signals", "pcntl_unshare", ));
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("putenv", "dl", "apache_child_terminate", "apache_setenv"));
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_eval", "dol_eval_new", "dol_eval_standard", "executeCLI", "verifCond", "dolEncrypt", "dolDecrypt"));	// native dolibarr functions
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_eval", "dol_eval_standard", "executeCLI", "verifCond", "dolEncrypt", "dolDecrypt"));	// native dolibarr functions
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("eval", "create_function", "assert", "mb_ereg_replace")); // function with eval capabilities
 
 			// Include functions
@@ -10779,7 +10639,7 @@ function roundUpToNextMultiple($n, $x = 5)
  * @param   string $elementType       Element type (Value of $object->element or value of $object->element@$object->module). Example:
  *                                    'action', 'facture', 'project', 'project_task' or
  *                                    'myobject@mymodule' (or old syntax 'mymodule_myobject' like 'project_task')
- * @return  array{module:string,element:string,table_element:string,subelement:string,classpath:string,classfile:string,classname:string,dir_output:string,dir_temp:string,parent_element:string}		array('module'=>, 'classpath'=>, 'element'=>, 'subelement'=>, 'classfile'=>, 'classname'=>, 'dir_output'=>, 'dir_temp'=>)
+ * @return  array{module:string,element:string,table_element:string,subelement:string,classpath:string,classfile:string,classname:string,dir_output:string,dir_temp:string,parent_element:string}		Return an array('module'=>, 'classpath'=>, 'element'=>, 'subelement'=>, 'table_element'=>, 'classfile'=>, 'classname'=>, 'dir_output'=>, 'dir_temp'=>)
  * @see fetchObjectByElement(), getMultidirOutput()
  */
 function getElementProperties($elementType)
@@ -10969,9 +10829,10 @@ function getElementProperties($elementType)
 	} elseif ($elementType == 'supplier_proposal') {
 		$classpath = 'supplier_proposal/class';
 		$module = 'supplier_proposal';
-		$element = 'supplierproposal';
+		$element = 'supplier_proposal';
 		$classfile = 'supplier_proposal';
 		$subelement = 'supplierproposal';
+		$table_element = 'supplier_proposal';
 	} elseif ($elementType == 'supplier_proposaldet') {
 		$classpath = 'supplier_proposal/class';
 		$module = 'supplier_proposal';
@@ -11033,6 +10894,7 @@ function getElementProperties($elementType)
 	} elseif ($elementType == 'fichinter' || $elementType == 'ficheinter') {
 		$classpath = 'fichinter/class';
 		$module = 'ficheinter';
+		$element = 'fichinter';
 		$subelement = 'fichinter';
 		$table_element = 'fichinter';
 	} elseif ($elementType == 'dolresource' || $elementType == 'resource') {
@@ -11061,7 +10923,7 @@ function getElementProperties($elementType)
 		$classname = 'CommandeFournisseurLigne';
 		$table_element = 'commande_fournisseurdet';
 		$parent_element = 'commande_fournisseur';
-	} elseif ($elementType == 'invoice_supplier' || $elementType == 'supplier_invoice' || $elementType == 'facture_fourn') {
+	} elseif ($elementType == 'invoice_supplier' || $elementType == 'supplier_invoice' || $elementType == 'facture_fourn' || $elementType == 'facture_fournisseur') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
 		$classfile = 'fournisseur.facture';
@@ -12321,7 +12183,7 @@ function dolRemoveDefaultParameters(array $parameters): array
  *
  * @param string $context The current page context name
  *
- * @return void
+ * @return void No return value, the page is redirected and exits when the request can be sent as GET
  */
 function dolRedirectPostSearchListRequestToGetIfPossible(string $context): void
 {

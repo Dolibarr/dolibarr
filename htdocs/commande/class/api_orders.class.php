@@ -303,7 +303,7 @@ class Orders extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -499,7 +499,9 @@ class Orders extends DolibarrApi
 			$request_data->origin,
 			$request_data->origin_id,
 			$request_data->multicurrency_subprice,
-			$request_data->ref_ext
+			$request_data->ref_ext,
+			0,
+			(empty($request_data->ref_customer) ? '' : (string) $request_data->ref_customer)
 		);
 
 		if ($updateRes > 0) {

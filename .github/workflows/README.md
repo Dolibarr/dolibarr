@@ -17,7 +17,7 @@ This run the actions:
 See https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#running-a-workflow-based-on-the-conclusion-of-another-workflow
 
 
-The other worklows are:
+The other workflows are:
 -----------------------
 
 - ci-on-closepr-cache-clean			to autoclose old issues.

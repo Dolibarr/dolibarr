@@ -292,6 +292,23 @@ NOTES   :
         -   imagesetpixel($imgalpha, $xpx, $ypx, $alpha);
         +   imagesetpixel($imgalpha, (int) $xpx, (int) $ypx, (int) $alpha);
 
+==> FILE   : tcpdf.php, method Image() (search for "@CHANGE DOL Preserve WebP alpha")
+    REASON : Preserve transparency of WebP images (see issue #41046). Upstream converts WebP to JPEG, so
+             transparent areas were rendered black. The WebP is decoded with GD (and resized if needed),
+             saved into a temporary PNG and passed to the existing ImagePngAlpha() handler.
+    DIFF   :
+            } elseif ($type == 'jpg') {
+                $type = 'jpeg';
+            }
+        +   // @CHANGE DOL Preserve WebP alpha via the existing PNG mask path.
+        +   if (($type === 'webp') AND ($ismask === false) AND ($imgmask === false)
+        +       AND function_exists('imagecreatefromwebp') AND function_exists('imagepng')) {
+        +       ... (decode with imagecreatefromwebp(), resize if $resize, write a temporary PNG with
+        +       imagepng(), then return $this->ImagePngAlpha($tmpwebp, ..., 'PNG', ..., $filehash)
+        +       and delete the temporary PNG in a finally block)
+        +   }
+            // Specific image handlers (defined on TCPDF_IMAGES CLASS)
+
 ==> FILE   : tcpdf_autoconfig.php (at the beginning of the file)
     REASON : DOCUMENT_ROOT fix for IIS Webserver.
     DIFF   :
@@ -430,6 +447,98 @@ NOTES   :
         +   the byte on the left is the decoded one
         +   every subsection of /Index is read
         +   the filters of a stream are read from $sdic['/Filter'], whether it is a name or an array
+
+==> FILE   : tcpdi_parser.php, functions getIndirectObject(), findObjectOffset() and findObjectOffsets()
+    REASON : The header of an object was compared to the string "num gen obj", so an object of a document that
+             does not separate the two numbers and the keyword with one single space was never found. A reference
+             to such an object is then read as a reference to the null object, and all it holds is silently lost:
+             the page imported from a document whose numbers are aligned on a column with several
+             spaces, or from one that writes a line break between them, came out empty.
+             findObjectOffset() also gave strpos() an offset read from the cross-reference table, which may be
+             beyond the end of the data: with PHP 8 that throws a ValueError instead of returning false.
+    DIFF   :
+        +   new function matchObjectHeader(), which accepts any white space between the numbers and the keyword
+            and returns the length of the header it matched, or false when the object does not start there
+        +   getIndirectObject() and findObjectOffset() look for the header with it
+        +   the key of the table of the offsets is always "num gen obj", whatever separates them in the file
+
+==> FILE   : tcpdi_parser.php, functions __construct(), decodeXref() and decodeXrefStream()
+    REASON : An encrypted document was read as if it was not. Its streams are the encrypted bytes, so the page
+             imported was a page of garbage written without any error when they are not compressed, and the
+             import stopped on an obscure "decodeFilterFlateDecode: invalid code" when they are. The /Encrypt
+             entry of the trailer was also only read when it is a reference to an object and the cross-reference
+             is a table, not when the dictionary is written in place nor when the cross-reference is a stream.
+    DIFF   :
+        +   the import of an encrypted document stops with the message "This PDF document is encrypted and
+            cannot be imported."
+        +   /Encrypt is read from the trailer of a cross-reference table, written in place or as a reference,
+            and from the dictionary of a cross-reference stream
+
+==> FILE   : tcpdi_parser.php, new function decodeFilter(), used by decodeStream() and _rebuildContentStream()
+    REASON : A deflated stream that has no end marker - the writer did not flush it, or the /Length declared is
+             shorter than the data - is refused by gzuncompress(), so the import stopped on
+             "decodeFilterFlateDecode: invalid code" while every PDF reader opens the document and draws the page.
+    DIFF   :
+        +   a FlateDecode stream that gzuncompress() refuses is decoded with inflate_add() in ZLIB_SYNC_FLUSH,
+            which returns what the data holds; the error is raised only when that fails too
+        +   the two places that decoded a stream call it instead of TCPDF_FILTERS::decodeFilter()
+
+==> FILE   : tcpdi_parser.php, function getObjectStream()
+    REASON : The list of the object numbers and their offsets at the head of an object stream was split on each
+             single white space character, so a separator of more than one character - a CRLF, two spaces -
+             gave empty values between the numbers. The offset was then a string added to /First:
+             "TypeError: Unsupported operand types: string + int", and the page was not imported at all.
+    DIFF   :
+        +   the list is split on runs of white space, and a pair is kept only when both values are numeric
+        +   the object number and the offset are cast to int before being stored
+
+==> FILE   : tcpdi_parser.php, function getXrefData()
+    REASON : The offset read from startxref was passed to strpos() without being checked. When it is beyond the
+             end of the file, PHP 8 throws "ValueError: strpos(): Argument #3 ($offset) must be contained in
+             argument #1 ($haystack)"; when it points somewhere else inside the file, the data was read as a
+             cross-reference stream and the import stopped on "Unable to find xref".
+    DIFF   :
+        +   the offset is checked to be inside the file and to be the start of a xref table or of an object
+        +   when it is neither, the last xref table of the file is used instead, and a previous section that
+            can not be found leaves what the newer ones already gave
+
+==> FILE   : tcpdi_parser.php, functions getObjectData() and getRawStream(), new function isStreamKeyword()
+    REASON : A dictionary was read as the dictionary of a stream as soon as it had a /Length entry, which other
+             dictionaries have too, and /Length bytes were then taken from the file - 256 MB on one file of the
+             audit, which exhausts the memory. The declared length was also used as is: a stream that does not
+             end there was read too short or too long, and the parser went on from the wrong place. The number
+             of the object holding an indirect length was used as the length when that object was not found.
+    DIFF   :
+        +   a dictionary is the dictionary of a stream when the keyword "stream" follows it, not when it has a
+            /Length entry
+        +   the declared length is trusted only when "endstream" really follows the data, otherwise the end of
+            the stream is looked for
+        +   the keyword "stream" is followed by ONE end-of-line marker; every CR and LF was skipped, so a stream
+            whose data starts with such a byte lost its first bytes
+        +   reading an object stops at the end of the data, instead of looping past it looking for "endobj"
+
+
+==> FILE   : tcpdi_parser.php, functions readPages(), readPage(), _getPageResources() and _getPageAnnotations(),
+             new function getKids()
+    REASON : The page tree was read as if everything were written in place. /Kids was only followed when the
+             array itself was there, while any value of a dictionary may be an indirect reference to it: a
+             document written that way imported ZERO page without any error. A page carries neither /Resources
+             nor /Annots of its own when it inherits them, and the search up the /Parent chain returns false at
+             the root of the tree, which was then indexed as an array. A page tree that refers back to a node
+             above it made the reader recurse until the memory ran out.
+    DIFF   :
+        +   new getKids(), which resolves an indirect /Kids, used by readPages() and readPage()
+        +   a node already visited is not followed again
+        +   a /Kids entry that does not resolve to an array is ignored instead of being read as one
+        +   the inherited /Resources and /Annots are tested before being used as an array
+        +   readPages() always leaves a usable page list, even without a /Root
+
+==> FILE   : tcpdi.php, function _putformxobjects()
+    REASON : getPageResources() returns false when no node of the page tree carries any, and isset() is true for
+             false: the value was written as if it were a dictionary, which wrote nothing at all after
+             "/Resources" and left the imported page without any resource dictionary.
+    DIFF   :
+        +   the default set of resources is written when the page inherits none
 
 
 

@@ -131,11 +131,12 @@ class BankAccounts extends DolibarrApi
 	 * Get account by ID.
 	 *
 	 * @param	int			$id				ID of account
+	 * @param	int			$includebalance	1 to also return the current balance of the account into the property 'balance' {@choice 0,1}
 	 * @return  Object						Object with cleaned properties
 	 *
 	 * @throws RestException
 	 */
-	public function get($id)
+	public function get($id, $includebalance = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('banque', 'lire')) {
 			throw new RestException(403);
@@ -147,7 +148,16 @@ class BankAccounts extends DolibarrApi
 			throw new RestException(404, 'account not found');
 		}
 
-		return $this->_cleanObjectDatas($account);
+		if ($includebalance) {
+			$account->balance = $account->solde(1);  // 1=Exclude future operation date (same as list and GET {id}/balance)
+		}
+
+		$account = $this->_cleanObjectDatas($account);
+		if (!$includebalance) {
+			unset($account->balance);	// Not computed: do not return the 0 set by the constructor as if it was the balance
+		}
+
+		return $account;
 	}
 
 	/**

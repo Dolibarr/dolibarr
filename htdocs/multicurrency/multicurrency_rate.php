@@ -375,6 +375,12 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 $sql .= ' FROM '.MAIN_DB_PREFIX.'multicurrency_rate as cr ';
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."multicurrency AS m ON cr.fk_multicurrency = m.rowid";
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+$sql .= " WHERE cr.entity IN (".getEntity('multicurrency').")";
+$sql .= " AND m.code <> '".$db->escape(getDolCurrency())."'";
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
@@ -389,8 +395,6 @@ if ($search_rate) {
 if ($search_code) {
 	$sql .= natural_search('m.code', $search_code);
 }
-$sql .= " WHERE cr.entity IN (".getEntity('multicurrency').")";
-$sql .= " AND m.code <> '".$db->escape(getDolCurrency())."'";
 
 // Add where from hooks
 $parameters = array();
@@ -440,13 +444,13 @@ if ($resql) {
 	}
 
 	if ($search_date_sync) {
-		$param = "&search_date_sync=".$search_date_sync;
+		$param .= "&search_date_sync=".$search_date_sync;
 	}
 	if ($search_date_sync_end) {
-		$param = "&search_date_sync_end=".$search_date_sync_end;
+		$param .= "&search_date_sync_end=".$search_date_sync_end;
 	}
 	if ($search_rate) {
-		$param = "&search_rate=".urlencode($search_rate);
+		$param .= "&search_rate=".urlencode($search_rate);
 	}
 	if ($search_code != '') {
 		$param .= "&search_code=".urlencode($search_code);
@@ -455,6 +459,12 @@ if ($resql) {
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
+	// Add $param from hooks
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters);	// Note that $action and $object may have been modified by hook
+	$param .= $hookmanager->resPrint;
+
+	$arrayofmassactions = array();
 	if ($user->admin) {
 		$arrayofmassactions['predelete'] = $langs->trans("Delete");
 	}

@@ -52,7 +52,7 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
+$langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "products", "trips", "admin"));
 
 $local = GETPOSTINT('localTaxType');
 

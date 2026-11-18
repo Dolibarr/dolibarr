@@ -936,15 +936,29 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'confirm_move' && $confirm == 'yes' && $permissiontoedit) {
 		if (GETPOST('newcid') > 0) {
+			$newcid = GETPOSTINT('newcid');
+
+			// Check the user can access the target contract
+			$result = restrictedArea($user, 'contrat', $newcid);
+
+			$newcontract = new Contrat($db);
+			$resultnewcontract = $newcontract->fetch($newcid);
+
 			$contractline = new ContratLigne($db);
 			$result = $contractline->fetch(GETPOSTINT('lineid'));
-			$contractline->fk_contrat = GETPOSTINT('newcid');
-			$result = $contractline->update($user, 1);
-			if ($result >= 0) {
-				header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
-				return;
+
+			// The line must belong to the current contract and the target contract must be another contract of the same thirdparty
+			if ($result <= 0 || $resultnewcontract <= 0 || $contractline->fk_contrat != $object->id || $newcontract->id == $object->id || $newcontract->socid != $object->socid) {
+				setEventMessages($langs->trans("ErrorBadValueForParameter", GETPOSTINT('lineid').'/'.$newcid, 'lineid/newcid'), null, 'errors');
 			} else {
-				setEventMessages($object->error, $object->errors, 'errors');
+				$contractline->fk_contrat = $newcontract->id;
+				$result = $contractline->update($user, 1);
+				if ($result >= 0) {
+					header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+					return;
+				} else {
+					setEventMessages($contractline->error, $contractline->errors, 'errors');
+				}
 			}
 		} else {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("RefNewContract")), null, 'errors');
@@ -1439,6 +1453,7 @@ if ($action == 'create') {
 				'type' 		=> 'select',
 				'name' 		=> 'signed_status',
 				'label'		=> '<span class="fieldrequired">'.$langs->trans('SignStatus').'</span>',
+				'morecss'	=> 'minwidth200',
 				'values'	=> $object->getSignedStatusLocalisedArray()
 			];
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SignContract'), $text, 'confirm_sign', $formquestion, 0, 1);

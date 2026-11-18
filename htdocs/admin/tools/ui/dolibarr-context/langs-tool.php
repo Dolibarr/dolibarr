@@ -43,7 +43,7 @@ $documentation = new Documentation($db);
 $group = 'UxDolibarrContext';
 $experimentName = 'UxDolibarrContextLangsTool';
 
-$experimentAssetsPath = dolBuildUrl('/public/includes/dolibarr-js-context');
+$experimentAssetsPath = dolBuildUrl(DOL_URL_ROOT.'/public/includes/dolibarr-js-context');
 $js = [
 	'/includes/ace/src/ace.js',
 	'/includes/ace/src/ext-statusbar.js',

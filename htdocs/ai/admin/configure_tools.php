@@ -84,11 +84,60 @@ $backtopage = GETPOST('backtopage', 'alpha');
 function aiToolIsWrite($handler, $name)
 {
 	$tool = $handler->toolsByName[$name] ?? null;
-	if (is_object($tool) && method_exists($tool, 'writeConfirmationPreview') && $tool->writeConfirmationPreview($name, array()) !== McpTool::NO_WRITE) {
-		return true;
+	if (is_object($tool) && method_exists($tool, 'writeConfirmationPreview')) {
+		try {
+			if ($tool->writeConfirmationPreview($name, array()) !== McpTool::NO_WRITE) {
+				return true;
+			}
+		} catch (Throwable $e) {
+			// A read tool answers NO_WRITE before reading its arguments: only a write refuses empty ones (supplier order workflow...)
+			return true;
+		}
 	}
 
 	return (bool) preg_match('/^(create|update|delete|add|remove|change|write|edit|validate|pay|send)/i', $name);
+}
+
+/**
+ * Permissions required to run a tool: those the tool declares, plus, for a REST API tool,
+ * those tested by the API method it calls.
+ *
+ * @param	McpHandler				$handler		Handler with the tools loaded
+ * @param	string					$name			Tool name
+ * @param	array<string,string>	$rightsLabels	Translated label of permissions, keyed by 'module/perms[/subperms]'
+ * @return	string									HTML output
+ */
+function aiToolRightsHtml($handler, $name, $rightsLabels)
+{
+	global $langs;
+
+	$tool = $handler->toolsByName[$name] ?? null;
+	if (!is_object($tool) || !method_exists($tool, 'getRequiredRights')) {
+		return '';
+	}
+	$declared = $tool->getRequiredRights($name);
+	if ($declared === McpTool::RIGHTS_UNDECLARED) {
+		return '<span class="warning">'.$langs->trans('ToolRightsUndeclared').'</span>';
+	}
+
+	$rights = is_array($declared) ? $declared : array();
+	if (method_exists($tool, 'toolApiRights')) {
+		// @phan-suppress-next-line PhanUndeclaredMethod  The method's existence is tested above.
+		$rights = array_merge($rights, $tool->toolApiRights($name));
+	}
+
+	$lines = array();
+	foreach ($rights as $right) {
+		$right = array_values((array) $right);
+		$key = ($right[0] ?? '').'/'.($right[1] ?? '').(!empty($right[2]) ? '/'.$right[2] : '');
+		$label = $rightsLabels[$key] ?? '';
+		$lines[$key] = '<li>'.($label !== '' ? dol_escape_htmltag($label).' ' : '').'<span class="opacitymedium">('.dol_escape_htmltag($key).')</span></li>';
+	}
+	if (!empty($lines)) {
+		return '<ul class="small">'.implode('', $lines).'</ul>';
+	}
+
+	return '<span class="opacitymedium">'.$langs->trans($declared === McpTool::RIGHTS_ENFORCED_DOWNSTREAM ? 'ToolRightsCheckedDownstream' : 'ToolRightsNone').'</span>';
 }
 
 $mcpHandler = new McpHandler($db, $user, $conf, McpHandler::CTX_ASSISTANT);
@@ -212,7 +261,7 @@ print '<!-- Tools quick setup -->';
 print '<div class="info">' . $langs->trans("ToolAccessControlHelp") . '<br>' . $langs->trans("ToolAccessControlHelp2") . '</div>';
 print '<br>';
 
-print '<div class="marginleftonly" style="display:flex; flex-wrap:wrap; gap:40px; margin-top:15px; padding-top:15px;">';
+print '<div class="neutral" style="display:flex; flex-wrap:wrap; gap:40px; margin-top:15px; padding-top:15px;">';
 
 // Presets For Chat Assistant
 print '<div>';
@@ -233,6 +282,27 @@ print '</div>';
 print '</div>';
 
 print '<br>';
+
+// Translated label of permissions, keyed by 'module/perms[/subperms]', to show the rights required by each tool
+$rightsLabels = array();
+$rightsModuleAliases = array('propale' => 'propal', 'produit' => 'product');	// Other names accepted by User::hasRight() for the same permissions
+$sql = "SELECT r.id, r.libelle as label, r.module, r.module_origin, r.perms, r.subperms";
+$sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r";
+$sql .= " WHERE r.entity = ".((int) $conf->entity);
+$resql = $db->query($sql);
+if ($resql) {
+	$useAdvancedPerms = getDolGlobalString('MAIN_USE_ADVANCED_PERMS');
+	while ($obj = $db->fetch_object($resql)) {
+		$rightmodule = !empty($obj->module_origin) ? $obj->module_origin : $obj->module;
+		$rightlabel = ($useAdvancedPerms &&($langs->trans("PermissionAdvanced".$obj->id) != "PermissionAdvanced".$obj->id) ? $langs->transnoentitiesnoconv("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != "Permission".$obj->id) ? $langs->transnoentitiesnoconv("Permission".$obj->id) : $langs->transnoentitiesnoconv($obj->label)));
+		foreach (array_unique(array($rightmodule, $rightsModuleAliases[$rightmodule] ?? $rightmodule)) as $tmpmodule) {
+			$rightsLabels[$tmpmodule.'/'.$obj->perms.(!empty($obj->subperms) ? '/'.$obj->subperms : '')] = $rightlabel;
+		}
+	}
+	$db->free($resql);
+} else {
+	dol_print_error($db);
+}
 
 // Tools table
 print '<div class="div-table-responsive-no-min">';
@@ -296,15 +366,31 @@ if (empty($groupedNormalTools) && empty($groupedSystemTools)) {
 			if (!$isSystem) {
 				$llmDef = cleanToolSchemaForLLM(array($def));
 				$llmJson = (string) json_encode($llmDef[0], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-				print '<a href="#" class="ai-tool-definition" data-target="aitooldef' . $groupId . '_' . dol_escape_htmltag($name) . '" data-title="' . dolPrintHTMLForAttribute($name) . '">';
-				print img_picto($langs->trans('ToolDefinitionSentToLLM'), 'info');
+				// REST API route called by the tool, when identifiable
+				$popupTitle = $name;
+				$toolObj = $mcpHandler->toolsByName[$name] ?? null;
+				if (is_object($toolObj) && method_exists($toolObj, 'toolApiUrl')) {
+					// @phan-suppress-next-line PhanUndeclaredMethod  The method's existence is tested above.
+					$apiUrl = (string) $toolObj->toolApiUrl($name);
+					if ($apiUrl !== '') {
+						$popupTitle .= ' (' . $apiUrl . ')';
+					}
+				}
+				print '<a href="#" class="ai-tool-definition" data-target="aitooldef' . $groupId . '_' . dol_escape_htmltag($name) . '" data-title="' . dolPrintHTMLForAttribute($popupTitle) . '">';
+				print img_picto($langs->trans('ToolRightsAndDefinition'), 'info');
 				print '</a>';
-				print '<div id="aitooldef' . $groupId . '_' . dol_escape_htmltag($name) . '" style="display: none;"><pre class="small">' . dol_escape_htmltag($llmJson, 0, 1) . '</pre></div>';
+				print '<div id="aitooldef' . $groupId . '_' . dol_escape_htmltag($name) . '" style="display: none;">';
+				print '<strong>' . $langs->trans('ToolRequiredPermissions') . '</strong><br>' . aiToolRightsHtml($mcpHandler, $name, $rightsLabels) . '<br><br>';
+				print '<strong>' . $langs->trans('ToolDefinitionSentToLLM') . '</strong>';
+				print '<pre class="small">' . dol_escape_htmltag($llmJson, 0, 1) . '</pre>';
+				print '</div>';
 			}
 			print '</td>';
 
 			// Tool Description (hidden on mobile)
-			print '<td class="small opacitymedium hideonsmartphone">' . dol_escape_htmltag($desc) . '</td>';
+			print '<td class="small opacitymedium hideonsmartphone">';
+			print '<div class="twolinesmax-normallineheight" title="' . dolPrintHTMLForAttribute($desc) . '">' . dol_escape_htmltag($desc) . '</div>';
+			print '</td>';
 
 			// Type Badge
 			print '<td class="center">' . $typeBadge . '</td>';

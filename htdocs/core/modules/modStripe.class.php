@@ -75,6 +75,7 @@ class modStripe extends DolibarrModules
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(5, 0); // Minimum version of Dolibarr required by module
+		$this->need_setup = 1; // The module can't work without a setup of the Stripe API keys
 		$this->langfiles = array("stripe");
 
 		// Constants
@@ -169,5 +170,25 @@ class modStripe extends DolibarrModules
 
 		// Exports
 		$r = 1;
+	}
+
+	/**
+	 *  Function called when module is enabled.
+	 *  The init function adds constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *  It also creates a bank account for the online payments if module Bank is enabled and no bank account is set yet.
+	 *
+	 *  @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *  @return     int<-1,1>          	1 if OK, <=0 if KO
+	 */
+	public function init($options = '')
+	{
+		$result = $this->_init(array(), $options);
+
+		if ($result > 0) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+			onlinePaymentCreateDefaultBankAccount($this->db, 'STRIPE_BANK_ACCOUNT_FOR_PAYMENTS', 'STRIPE', 'Stripe');
+		}
+
+		return $result;
 	}
 }

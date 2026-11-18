@@ -450,7 +450,7 @@ if (!$ws) {
 	print '<div id="divsubscribe">';
 
 	print '<div class="center subscriptionformhelptext opacitymedium justify">';
-	print $langs->trans("NewDonationDesc", getDolGlobalString("MAIN_INFO_SOCIETE_MAIL"))."<br>\n";
+	print $langs->trans("NewDonationDesc", getDolGlobalString("MAIN_INFO_SOCIETE_NOM"))."<br>\n";
 
 	print '</div>';
 }

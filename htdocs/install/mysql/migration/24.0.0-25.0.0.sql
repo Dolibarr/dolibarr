@@ -38,6 +38,10 @@
 --noqa:disable=RF03
 
 
+-- __MEMBER_CIVILITY__ was renamed into __MEMBER_TITLE__ in v21: migrate existing e-mail templates
+UPDATE llx_c_email_templates SET topic = REPLACE(topic, '__MEMBER_CIVILITY__', '__MEMBER_TITLE__') WHERE topic LIKE '%MEMBER_CIVILITY%';
+UPDATE llx_c_email_templates SET content = REPLACE(content, '__MEMBER_CIVILITY__', '__MEMBER_TITLE__') WHERE content LIKE '%MEMBER_CIVILITY%';
+
 ALTER TABLE llx_product_lot ADD COLUMN entity integer DEFAULT 1;
 
 -- Forgotten in previous versions: sequences of renamed tables were not renamed with pgsql
@@ -227,6 +231,17 @@ ALTER TABLE llx_inventory ADD COLUMN last_main_doc varchar(255) DEFAULT NULL AFT
 
 ALTER TABLE llx_facturedet ADD INDEX idx_facturedet_fk_prev_id (fk_prev_id);
 ALTER TABLE llx_facture ADD INDEX idx_facture_situation_cycle_ref (situation_cycle_ref);
+
+-- Lines of a credit note of a situation invoice cycle cancel a progress of the source lines, so their situation_percent must be negative
+UPDATE llx_facturedet SET situation_percent = -situation_percent WHERE situation_percent > 0 AND fk_facture IN (SELECT f.rowid FROM llx_facture as f WHERE f.type = 2 AND f.situation_cycle_ref > 0);
+
+-- Reduce response times with high transaction volume
+ALTER TABLE llx_facture ADD INDEX idx_facture_status_date (paye, fk_statut, datef);
+
+-- Index on (fk_product, fk_contrat) replaces the redundant index on fk_product alone (it must be created before the drop, as the foreign key fk_contratdet_fk_product needs an index)
+ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_fkproduct_fkcontrat (fk_product, fk_contrat);
+-- VMYSQL4.1 DROP INDEX idx_contratdet_fk_product ON llx_contratdet;
+-- VPGSQL8.2 DROP INDEX idx_contratdet_fk_product;
 
 -- Short-lived tombstone log of deleted agenda events (see llx_deletion_log.sql).
 CREATE TABLE llx_deletion_log(
@@ -495,7 +510,7 @@ create table llx_ai_chat_message
   rowid						integer AUTO_INCREMENT PRIMARY KEY,
   fk_conversation			integer NOT NULL,
   role						varchar(16) NOT NULL,
-  content_raw				text,
+  content_raw				mediumtext,
   content_html				MEDIUMTEXT,
   tool_name					varchar(255),
   pinned					smallint DEFAULT 0,
@@ -536,6 +551,11 @@ UPDATE llx_c_action_trigger SET elementtype = 'holiday', label = 'Holiday approv
 -- The trigger BILL_SUPPLIER_CANCELED is renamed into BILL_SUPPLIER_CANCEL to be consistent with the trigger BILL_CANCEL of customer invoices.
 -- Same values as in data/llx_c_action_trigger.sql.
 UPDATE llx_c_action_trigger SET code = 'BILL_SUPPLIER_CANCEL' WHERE code = 'BILL_SUPPLIER_CANCELED';
+
+-- On PostgreSQL, repair rowid of llx_c_type_contact that was not set as auto-incremented by migration 20
+-- VPGSQL8.2 CREATE SEQUENCE IF NOT EXISTS llx_c_type_contact_rowid_seq OWNED BY llx_c_type_contact.rowid;
+-- VPGSQL8.2 ALTER TABLE llx_c_type_contact ALTER COLUMN rowid SET DEFAULT nextval('llx_c_type_contact_rowid_seq');
+-- VPGSQL8.2 SELECT setval('llx_c_type_contact_rowid_seq', MAX(rowid)) FROM llx_c_type_contact;
 
 -- Add type of contacts for stock transfer (module is new in v25). Same values as in data/llx_c_type_contact.sql.
 INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('stocktransfer', 'internal', 'STRESP', 'Responsible for stock transfers', 1);
@@ -581,8 +601,6 @@ ALTER TABLE llx_oauth_token ADD COLUMN passkey_aaguid varchar(36) NULL;
 ALTER TABLE llx_oauth_token ADD COLUMN passkey_backup_eligible smallint NULL;
 ALTER TABLE llx_oauth_token ADD COLUMN passkey_backup_state smallint NULL;
 ALTER TABLE llx_oauth_token ADD UNIQUE INDEX uk_oauth_token_passkey_credential_id (passkey_credential_id);
--- 1 if the user must log in with a passkey, 0 if not, NULL to use the global setup MAIN_AUTHENTICATION_PASSKEY_REQUIRED
-ALTER TABLE llx_user ADD COLUMN passkey_required tinyint DEFAULT NULL AFTER force_pass_change;
 
 -- RF or national reference the supplier provides to accept payments
 ALTER TABLE llx_societe_rib ADD COLUMN payment_reference varchar(35) AFTER date_rum;
@@ -650,6 +668,73 @@ ALTER TABLE llx_commandedet ADD COLUMN ref_customer varchar(128) DEFAULT NULL AF
 ALTER TABLE llx_facturedet ADD COLUMN pos_printer_id integer NULL AFTER fk_warehouse;
 UPDATE llx_facturedet SET pos_printer_id = 1, special_code = 0 WHERE special_code = 4 AND fk_facture IN (SELECT rowid FROM llx_facture WHERE module_source = 'takepos' AND fk_statut = 0);
 UPDATE llx_facturedet SET special_code = 0 WHERE special_code IN (1, 2, 3) AND fk_facture IN (SELECT rowid FROM llx_facture WHERE module_source = 'takepos' AND fk_statut = 0);
+
+-- Bank accounts of users: an empty currency is the company currency, and each user has one default bank account per currency
+UPDATE llx_user_rib SET currency_code = (SELECT __DECRYPT('value')__ FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_MONNAIE' AND entity = llx_user_rib.entity) WHERE currency_code IS NULL OR currency_code = '';
+UPDATE llx_user_rib SET default_rib = 1 WHERE rowid IN (SELECT rowid FROM (SELECT MIN(rowid) as rowid FROM llx_user_rib GROUP BY fk_user, currency_code HAVING MAX(default_rib) = 0) as tmp);
+
+-- Social and fiscal tax types for Australia
+ALTER TABLE llx_c_chargesociales MODIFY COLUMN code varchar(24) NOT NULL;
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2801, 'PAYG withholding (PAYGW)',               0, 1, 'TAXAUPAYGW');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2802, 'PAYG income tax instalment (PAYGI)',     0, 1, 'TAXAUPAYGI');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2803, 'Company income tax',                     0, 1, 'TAXAUCIT');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2804, 'Fringe benefits tax (FBT)',              1, 1, 'TAXAUFBT');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2805, 'Superannuation guarantee contributions', 1, 1, 'TAXAUSUPER');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2806, 'Superannuation guarantee charge (SGC)',  1, 1, 'TAXAUSGC');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2807, 'Payroll tax (state or territory)',       1, 1, 'TAXAUPAYROLL');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2808, 'Workers compensation premium',           1, 1, 'TAXAUWORKCOMP');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2809, 'Land tax (state or territory)',          1, 1, 'TAXAULAND');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2810, 'ATO interest charges (GIC / SIC)',       0, 1, 'TAXAUGIC');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2811, 'Activity statement (BAS / IAS)',         0, 1, 'TAXAUBAS');
+
+-- Empty general accounts of thirdparties and users were stored as '-1' (value of the empty option of the select of accounting accounts)
+UPDATE llx_societe SET accountancy_code_customer_general = NULL WHERE accountancy_code_customer_general = '-1';
+UPDATE llx_societe SET accountancy_code_supplier_general = NULL WHERE accountancy_code_supplier_general = '-1';
+UPDATE llx_societe_perentity SET accountancy_code_customer_general = NULL WHERE accountancy_code_customer_general = '-1';
+UPDATE llx_societe_perentity SET accountancy_code_supplier_general = NULL WHERE accountancy_code_supplier_general = '-1';
+UPDATE llx_user SET accountancy_code_user_general = NULL WHERE accountancy_code_user_general = '-1';
+
+ALTER TABLE llx_website_page MODIFY COLUMN aliasalt text;
+ALTER TABLE llx_website_page MODIFY COLUMN htmlheader longtext;
+ALTER TABLE llx_website_page MODIFY COLUMN content longtext;
+
+ALTER TABLE llx_ai_chat_message MODIFY COLUMN content_raw mediumtext;
+
+INSERT INTO llx_c_type_resource (code, label, active) VALUES ('RES_MACHINES', 'Machines', 1);
+
+-- Module QuickMemo moved from the id 141916 (range of external modules) to the core id 55020: rename its permission ids 141916xx into 55020xx
+UPDATE llx_rights_def SET id = id - 14191600 + 5502000 WHERE id IN (14191611, 14191612, 14191613);
+UPDATE llx_user_rights SET fk_id = fk_id - 14191600 + 5502000 WHERE fk_id IN (14191611, 14191612, 14191613);
+UPDATE llx_usergroup_rights SET fk_id = fk_id - 14191600 + 5502000 WHERE fk_id IN (14191611, 14191612, 14191613);
+DELETE FROM llx_rights_def WHERE id IN (14191611, 14191612, 14191613);
+
+-- Remove duplicate indexes (index on columns that are already the first columns of a unique index)
+ALTER TABLE llx_accounting_category_account DROP INDEX idx_accounting_category_account_fk_accounting_category;
+ALTER TABLE llx_accounting_transaction_template DROP INDEX idx_accounting_transaction_template_code;
+ALTER TABLE llx_asset_model DROP INDEX idx_asset_model_entity;
+ALTER TABLE llx_bank DROP INDEX idx_bank_fk_account;
+ALTER TABLE llx_bom_bom DROP INDEX idx_bom_bom_ref;
+ALTER TABLE llx_c_ziptown DROP INDEX idx_c_ziptown_zip;
+ALTER TABLE llx_emailcollector_emailcollectoraction DROP INDEX idx_emailcollector_fk_emailcollector;
+ALTER TABLE llx_emailcollector_emailcollectorfilter DROP INDEX idx_emailcollector_fk_emailcollector;
+ALTER TABLE llx_eventorganization_conferenceorboothattendee DROP INDEX idx_eventorganization_conferenceorboothattendee_fk_project;
+ALTER TABLE llx_paiement_facture DROP INDEX idx_paiement_facture_fk_paiement;
+ALTER TABLE llx_paiementfourn_facturefourn DROP INDEX idx_paiementfourn_facturefourn_fk_paiement;
+ALTER TABLE llx_product DROP INDEX idx_product_barcode;
+ALTER TABLE llx_product_attribute_combination2val DROP INDEX idx_product_att_com2v_prod_combination;
+ALTER TABLE llx_product_batch DROP INDEX idx_fk_product_stock;
+ALTER TABLE llx_product_fournisseur_price DROP INDEX idx_product_barcode;
+ALTER TABLE llx_product_lot DROP INDEX idx_product_lot_barcode;
+ALTER TABLE llx_product_perentity DROP INDEX idx_product_perentity_fk_product;
+ALTER TABLE llx_product_price_by_qty DROP INDEX idx_product_price_by_qty_fk_product_price;
+ALTER TABLE llx_product_stock DROP INDEX idx_product_stock_fk_product;
+ALTER TABLE llx_projet DROP INDEX idx_projet_ref;
+ALTER TABLE llx_projet_task_dependency DROP INDEX idx_projet_task_dependency_fk_task;
+ALTER TABLE llx_societe_perentity DROP INDEX idx_societe_perentity_fk_soc;
+ALTER TABLE llx_subscription DROP INDEX idx_subscription_fk_adherent;
+
+-- Remove index of llx_quickmemo_memo_user on fk_memo (duplicate of uk_memo_user). Mysql only: with pgsql, this name is the one of an index of llx_quickmemo_memo
+-- VMYSQL4.1 DROP INDEX idx_quickmemo_memo_rowid ON llx_quickmemo_memo_user;
 
 -- Optional second approval for leave requests and expense reports
 ALTER TABLE llx_holiday ADD COLUMN fk_validator_secondary integer DEFAULT NULL;
