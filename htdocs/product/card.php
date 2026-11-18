@@ -1580,10 +1580,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						$inherited_mask_lot = getDolGlobalString('LOT_ADVANCED_MASK');
 						$inherited_mask_sn = getDolGlobalString('SN_ADVANCED_MASK');
 						print '<td id="field_mask">';
-						print $form->textwithpicto('<input type="text" class="flat minwidth175" name="batch_mask" id="batch_mask_input">', $tooltip, 1, 'help');
+						print $form->textwithpicto('<input type="text" class="flat minwidth175" name="batch_mask" id="batch_mask_input" value="'.dol_escape_htmltag(GETPOST('batch_mask', 'alpha')).'">', $tooltip, 1, 'help');
+						// Mask field must stay visible if a status using masks is already selected (case of form reloaded after a country change)
+						$showmaskfield = ($status_batch == 1 && getDolGlobalString('PRODUCTBATCH_LOT_USE_PRODUCT_MASKS') && getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_advanced')
+							|| ($status_batch == 2 && getDolGlobalString('PRODUCTBATCH_SN_USE_PRODUCT_MASKS') && getDolGlobalString('PRODUCTBATCH_SN_ADDON') == 'mod_sn_advanced');
 						print '<script type="text/javascript">
 									$(document).ready(function() {
-										$("#field_mask, #mask_option").addClass("hideobject");
+										'.($showmaskfield ? '' : '$("#field_mask, #mask_option").addClass("hideobject");').'
 										$("#status_batch").on("change", function () {
 											console.log("We change batch status");
 											var optionSelected = $("option:selected", this);
@@ -1818,7 +1821,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					}
 
 					print img_picto('', 'state', 'class="pictofixedwidth"');
-					print $formcompany->select_state($object->state_id, $object->country_code);
+					print $formcompany->select_state(GETPOSTISSET('state_id') ? GETPOSTINT('state_id') : $object->state_id, $object->country_code);
 					print '</tr>';
 				}
 			}
@@ -1864,7 +1867,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<table class="border centpercent">';
 					// VAT
 					print '<tr><td class="titlefieldcreate">'.$langs->trans("VATRate").'</td><td>';
-					$defaultva = get_default_tva($mysoc, $mysoc);
+					$defaultva = GETPOSTISSET('tva_tx') ? GETPOST('tva_tx') : get_default_tva($mysoc, $mysoc);
 					print $form->load_tva("tva_tx", $defaultva, $mysoc, $mysoc, 0, 0, '', false, 1);
 					print ajax_combobox("tva_tx");
 					print '</td></tr>';
@@ -1878,7 +1881,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					// Price
 					print '<tr><td class="titlefieldcreate">'.$langs->trans("SellingPrice").'</td>';
 					print '<td><input name="price" class="maxwidth50" value="'.(GETPOSTISSET('price') ? GETPOST('price') : $object->price).'">';
-					print $form->selectPriceBaseType(getDolGlobalString('PRODUCT_PRICE_BASE_TYPE'), "price_base_type");
+					print $form->selectPriceBaseType(GETPOSTISSET('price_base_type') ? GETPOST('price_base_type', 'aZ09') : getDolGlobalString('PRODUCT_PRICE_BASE_TYPE'), "price_base_type");
 					print ajax_combobox("select_price_base_type");
 					print '</td></tr>';
 
