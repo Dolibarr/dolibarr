@@ -290,6 +290,15 @@ class Interventions extends DolibarrApi
 				continue;
 			}
 
+			if ($field == 'array_options' && is_array($value)) {
+				$this->fichinter->fetch_optionals();	// To force the load of the extrafields definition by fetch_name_optionals_label()
+
+				foreach ($value as $index => $val) {
+					$this->fichinter->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->fichinter);
+				}
+				continue;
+			}
+
 			$this->fichinter->$field = $this->_checkValForAPI($field, $value, $this->fichinter);
 		}
 
