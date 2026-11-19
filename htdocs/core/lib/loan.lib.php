@@ -475,7 +475,9 @@ function loanRecalculateSchedule($db, $user, $loan, $lines, $from, $capital, $ra
 	}
 
 	// Write the lines: update existing ones, add the missing ones, delete the ones no longer needed
-	list($charge, $chargeregul) = loanChargePerPayment($loan->insurance_amount, $loan->charge_per_payment, $loan->nbterm);
+	// The charge of a payment is worked out from the new number of payments, as the recalculated schedule has changed it
+	$nbnew = $from + count($new);
+	list($charge, $chargeregul) = loanChargePerPayment($loan->insurance_amount, $loan->charge_per_payment, $nbnew);
 	$enddate = $lastdate;
 	foreach ($new as $i => $amounts) {
 		if ($i < $total) {
@@ -485,13 +487,13 @@ function loanRecalculateSchedule($db, $user, $loan, $lines, $from, $capital, $ra
 			$line->fk_loan = $loan->id;
 			$line->datec = dol_now();
 			$line->datep = loanTermDate($lastdate, $i - ($total - 1), $frequency);
-			$line->amount_insurance = $charge;
 			$line->fk_typepayment = (int) $lines[$total - 1]->fk_typepayment;
 			$line->fk_bank = 0;
 			$line->fk_user_creat = $user->id;
 		}
 		$line->amount_capital = $amounts[0];
 		$line->amount_interest = $amounts[1];
+		$line->amount_insurance = (float) price2num($charge + ($i == 0 ? $chargeregul : 0), 'MT');
 		$line->tms = dol_now();
 		$line->fk_user_modif = $user->id;
 		$result = ($i < $total ? $line->update($user, 0) : $line->create($user));
@@ -501,7 +503,6 @@ function loanRecalculateSchedule($db, $user, $loan, $lines, $from, $capital, $ra
 		}
 		$enddate = (int) $line->datep;
 	}
-	$nbnew = $from + count($new);
 	for ($i = $nbnew; $i < $total; $i++) {
 		if ($lines[$i]->delete($user) < 0) {
 			$res['error'] = ($lines[$i]->error ? $lines[$i]->error : 'Error');
