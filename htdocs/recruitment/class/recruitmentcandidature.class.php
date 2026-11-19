@@ -1006,7 +1006,7 @@ class RecruitmentCandidature extends CommonObject
 	public function getNextNumRef()
 	{
 		global $langs, $conf;
-		$langs->load("recruitment@recruitment");
+		$langs->load("recruitment");
 
 		if (!getDolGlobalString('RECRUITMENT_RECRUITMENTCANDIDATURE_ADDON')) {
 			$conf->global->RECRUITMENT_RECRUITMENTCANDIDATURE_ADDON = 'mod_recruitmentcandidature_standard';
@@ -1073,7 +1073,7 @@ class RecruitmentCandidature extends CommonObject
 		$result = 0;
 		$includedocgeneration = 0;
 
-		$langs->load("recruitment@recruitment");
+		$langs->load("recruitment");
 
 		if (!dol_strlen($modele)) {
 			if (getDolGlobalString('RECRUITMENTCANDIDATURE_ADDON_PDF')) {

@@ -690,6 +690,9 @@ if ($action == "create" || $action == "start") {
 	if (getDolGlobalString('TAKEPOS_NUM_TERMINALS') == '1') {
 		$selectedposnumber = 1;
 		$showempty = 0;
+	} elseif ($contextpage == 'takepos' && !empty($_SESSION['takeposterminal'])) {
+		// When opened from TakePOS, the terminal currently used by TakePOS is the default one
+		$selectedposnumber = (int) $_SESSION['takeposterminal'];
 	}
 	print $form->selectarray('posnumber', $arrayofpos, GETPOSTISSET('posnumber') ? GETPOSTINT('posnumber') : $selectedposnumber, $showempty);
 	//print '<input name="posnumber" type="text" class="maxwidth50" value="'.(GETPOSTISSET('posnumber')?GETPOST('posnumber', 'alpha'):'0').'">';

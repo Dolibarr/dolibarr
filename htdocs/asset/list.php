@@ -665,6 +665,8 @@ while ($i < $imaxinloop) {
 				print $object->getLibStatut(5);
 			} elseif ($key == 'rowid') {
 				print $object->showOutputField($val, $key, (string) $object->id, '');
+			} elseif ($key == 'label') {
+				print '<span class="opacitymedium">'.$object->showOutputField($val, $key, $object->$key, '').'</span>';
 			} else {
 				print $object->showOutputField($val, $key, $object->$key, '');
 			}

@@ -1082,7 +1082,7 @@ class Don extends CommonObject
 		$langs->load("bills");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'html_cerfafr';
+			$modele = 'pdf_standard_donation';
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;

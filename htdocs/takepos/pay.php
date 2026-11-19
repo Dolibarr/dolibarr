@@ -93,6 +93,21 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 <body>
 <?php
 
+// Allow external modules to replace the payment screen (for example to refund a credit note)
+$invoicetopay = new Facture($db);
+if ($invoiceid > 0) {
+	$invoicetopay->fetch($invoiceid);
+}
+$parameters = array('invoiceid' => $invoiceid, 'place' => $place);
+$reshook = $hookmanager->executeHooks('takeposPayActions', $parameters, $invoicetopay, $action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+} elseif ($reshook > 0) {
+	print $hookmanager->resPrint;
+	$db->close();
+	exit;
+}
+
 $usestripeterminals = 0;
 $keyforstripeterminalbank = '';
 $stripe = null;

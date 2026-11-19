@@ -49,7 +49,9 @@ class AiMcpApiBridgeUserSentinelTest extends CommonClassTest
 		$bridge = new ToolApiBridge(new stdClass(), $user, new stdClass());
 
 		$method = new ReflectionMethod('ToolApiBridge', 'resolveUserSentinels');
-		$method->setAccessible(true);
+		if (PHP_VERSION_ID < 80100) {
+			$method->setAccessible(true);
+		}
 
 		$out = $method->invoke($bridge, array(
 			'fk_user_assign' => 'me',
@@ -74,7 +76,9 @@ class AiMcpApiBridgeUserSentinelTest extends CommonClassTest
 		$bridge = new ToolApiBridge(new stdClass(), $user, new stdClass());
 
 		$method = new ReflectionMethod('ToolApiBridge', 'resolveUserSentinels');
-		$method->setAccessible(true);
+		if (PHP_VERSION_ID < 80100) {
+			$method->setAccessible(true);
+		}
 
 		$out = $method->invoke($bridge, array(
 			'subject' => 'me',
