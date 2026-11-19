@@ -2031,27 +2031,47 @@ $(function() {
 	let hoverDelay = 150;			/* To not expand blocks when mouse just crosses titles */
 	let hoverTimer = null;
 
+	let collapseBlocks = function () {
+		blocks.filter('.blockvmenuexpanded').removeClass('blockvmenuexpanded').children('.menu_subentries').stop(true).slideUp(animationDuration);
+	};
+
 	let expandBlock = function (block) {
 		if (block.hasClass('blockvmenuexpanded')) {
 			return;
 		}
-		blocks.filter('.blockvmenuexpanded').removeClass('blockvmenuexpanded').children('.menu_subentries').stop(true).slideUp(animationDuration);
+		collapseBlocks();
 		block.addClass('blockvmenuexpanded').children('.menu_subentries').stop(true).slideDown(animationDuration);
 	};
 
-	blocks.children('.menu_titre').on('mousemove', function () {
+	/* Expand the block if it has sub entries, else (block with class blockvmenucollapseonhover) collapse the expanded block */
+	let activateBlock = function (block) {
+		if (block.hasClass('blockvmenuexpandonhover')) {
+			expandBlock(block);
+		} else {
+			collapseBlocks();
+		}
+	};
+
+	let isBlockToChange = function (block) {
+		if (block.hasClass('blockvmenuexpandonhover')) {
+			return !block.hasClass('blockvmenuexpanded');
+		}
+		return blocks.filter('.blockvmenuexpanded').length > 0;
+	};
+
+	blocks.add('.blockvmenucollapseonhover').children('.menu_titre').on('mousemove', function () {
 		let block = $(this).parent();
-		if (hoverTimer === null && !block.hasClass('blockvmenuexpanded')) {
+		if (hoverTimer === null && isBlockToChange(block)) {
 			hoverTimer = setTimeout(function () {
 				hoverTimer = null;
-				expandBlock(block);
+				activateBlock(block);
 			}, hoverDelay);
 		}
 	}).on('mouseleave', function () {
 		clearTimeout(hoverTimer);
 		hoverTimer = null;
 	}).on('focusin', function () {
-		expandBlock($(this).parent());
+		activateBlock($(this).parent());
 	});
 });
 

@@ -1081,6 +1081,8 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				$morecssblock = '';
 				if (isset($blockswithsubentries[$i])) {
 					$morecssblock = ' blockvmenuexpandonhover'.($blockexpanded === $i ? ' blockvmenuexpanded' : '');
+				} elseif ($expandonhover) {	// A block without sub entries must collapse the expanded block when mouse is over its title
+					$morecssblock = ' blockvmenucollapseonhover';
 				}
 				if ($altok % 2 == 0) {
 					print '<div class="blockvmenu blockvmenuimpair'.$invert.($lastopened ? ' blockvmenulast' : '').($altok == 1 ? ' blockvmenufirst' : '').$morecssblock.'">'."\n";
