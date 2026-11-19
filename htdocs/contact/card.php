@@ -157,7 +157,7 @@ if (empty($reshook)) {
 	}
 
 	// Create user from contact
-	if ($action == 'confirm_create_user' && $confirm == 'yes' && $user->hasRight('user', 'user', 'creer')) {
+	if ($action == 'confirm_create_user' && $confirm == 'yes' && ($user->hasRight('user', 'user', 'creer') || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('user', 'user_advance', 'write') && $object->socid > 0))) {
 		// Retrieve current contact
 		$result = $object->fetch($id);
 
@@ -1588,7 +1588,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print $dolibarr_user->getLoginUrl(-1);
 		} else {
 			//print '<span class="opacitymedium">'.$langs->trans("NoDolibarrAccess").'</span>';
-			if (!$object->user_id && $user->hasRight('user', 'user', 'creer')) {
+			if (!$object->user_id && ($user->hasRight('user', 'user', 'creer') || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('user', 'user_advance', 'write') && $object->socid > 0))) {
 				print '<a class="aaa" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create_user&token='.newToken().'">'.img_picto($langs->trans("CreateDolibarrLogin"), 'add', 'class="pictofixedwidth"').$langs->trans("CreateDolibarrLogin").'</a>';
 			}
 		}
