@@ -456,14 +456,12 @@ if ($nolinesbefore) {
 		if (isModEnabled("service") && ($object->element == 'facturerec' || $object->element == 'invoice_supplier_rec')) {
 			echo '<div class="divlinefordates"><br>';
 			echo $langs->trans('AutoFillDateFrom').' ';
-			if (getDolGlobalString('INVOICE_REC_DATE_TO_YES')) {
-				$line->date_start_fill = 1;
-				$line->date_end_fill = 1;
-			}
-			echo $form->selectyesno('date_start_fill', $line->date_start_fill, 1);
+			// There is no $line in this template (it is included by formAddObjectLine()), so use the default from setup
+			$autofilldate = (getDolGlobalString('INVOICE_REC_DATE_TO_YES') ? 1 : 0);
+			echo $form->selectyesno('date_start_fill', $autofilldate, 1);
 			echo ' - ';
 			echo $langs->trans('AutoFillDateTo').' ';
-			echo $form->selectyesno('date_end_fill', $line->date_end_fill, 1);
+			echo $form->selectyesno('date_end_fill', $autofilldate, 1);
 			echo '</div>';
 		}
 		if (is_object($objectline)) {
