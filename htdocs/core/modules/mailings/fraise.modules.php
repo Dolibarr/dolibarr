@@ -258,10 +258,10 @@ class mailing_fraise extends MailingTargets
 			$sql .= " AND a.statut=-1";
 		}
 		if (GETPOST("filter", 'aZ09') == '1a') {
-			$sql .= " AND a.statut=1 AND (a.datefin >= '".$this->db->idate($now)."' OR ta.subscription = 0)";
+			$sql .= " AND a.statut=1 AND (a.datefin >= '".$this->db->idate($now)."' OR ta.subscription = '0')";
 		}
 		if (GETPOST("filter", 'aZ09') == '1b') {
-			$sql .= " AND a.statut=1 AND ((a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."') AND ta.subscription = 1)";
+			$sql .= " AND a.statut=1 AND ((a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."') AND ta.subscription = '1')";
 		}
 		if (GETPOST("filter", 'aZ09') === '0') {
 			$sql .= " AND a.statut=0";

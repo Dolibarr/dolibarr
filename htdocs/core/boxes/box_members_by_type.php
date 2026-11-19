@@ -153,7 +153,7 @@ class box_members_by_type extends ModeleBoxes
 				$sql = "SELECT count(*) as somme , d.fk_adherent_type";
 				$sql .= " FROM " . MAIN_DB_PREFIX . "adherent as d, " . MAIN_DB_PREFIX . "adherent_type as t";
 				$sql .= " WHERE d.entity IN (" . getEntity('adherent') . ")";
-				$sql .= " AND d.statut = 1 AND (d.datefin >= '" . $this->db->idate($now) . "' OR t.subscription = 0)";
+				$sql .= " AND d.statut = 1 AND (d.datefin >= '" . $this->db->idate($now) . "' OR t.subscription = '0')";
 				$sql .= " AND t.rowid = d.fk_adherent_type";
 				$sql .= " GROUP BY d.fk_adherent_type";
 
