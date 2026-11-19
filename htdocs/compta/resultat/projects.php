@@ -55,7 +55,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('compta', 'bills', 'donation', 'salaries', 'accountancy', 'loan'));
+$langs->loadLangs(array('compta', 'bills', 'donations', 'salaries', 'accountancy', 'loan'));
 
 $date_startday = GETPOSTINT('date_startday');
 $date_startmonth = GETPOSTINT('date_startmonth');

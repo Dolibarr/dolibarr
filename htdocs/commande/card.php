@@ -18,6 +18,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Lenin Rivas				<lenin.rivas777@gmail.com>
  * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,9 +82,6 @@ if (isModEnabled('variants')) {
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'sendings', 'companies', 'bills', 'propal', 'products', 'other'));
 
-if (isModEnabled('incoterm')) {
-	$langs->load('incoterm');
-}
 if (isModEnabled('margin')) {
 	$langs->load('margins');
 }
@@ -336,8 +334,43 @@ if (empty($reshook)) {
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
+	} elseif ($action == 'confirm_duplicate_subtotalblock' && $confirm == 'yes' && $usercancreate) {
+		// Duplicate a block of lines (the title line, the lines it contains and the subtotal line)
+		$langs->load('subtotals');
+		$object->fetch($id);
+		$object->fetch_thirdparty();
+
+		$result = $object->duplicateSubtotalBlock($langs, GETPOSTINT('lineid'), $user);
+		if ($result > 0) {
+			// Note: no call to line_order() here, duplicateSubtotalBlock() already renumbered all the lines
+			// Define output language
+			$outputlangs = $langs;
+			$newlang = '';
+			if (getDolGlobalInt('MAIN_MULTILANGS') && GETPOST('lang_id')) {
+				$newlang = GETPOST('lang_id');
+			}
+			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+				$newlang = $object->thirdparty->default_lang;
+			}
+			if (!empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+				$outputlangs->load('products');
+			}
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+				$ret = $object->fetch($id); // Reload to get new records
+				$result = $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
+			if ($result >= 0) {
+				header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+				exit();
+			}
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = '';
+		}
 	} elseif ($action == 'confirm_delete_subtotalline' && $confirm == 'yes' && $usercancreate) {
-		$result = $object->deleteSubtotalLine($langs, GETPOSTINT('lineid'), (bool) GETPOST('deletecorrespondingsubtotalline'), $user);
+		$result = $object->deleteSubtotalLine($langs, GETPOSTINT('lineid'), (bool) GETPOST('deletecorrespondingsubtotalline'), $user, (bool) GETPOST('deleteblocklines'));
 		if ($result > 0) {
 			// reorder lines
 			$object->line_order(true);
@@ -1730,7 +1763,7 @@ if (empty($reshook)) {
 		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), '', 2);
 		$pu_ttc_devise = price2num(GETPOST('multicurrency_price_ttc'), '', 2);
 
-		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
+		$qty = price2num(GETPOST('qty', 'alpha'), 'MS', 2);
 
 		// Prepare a price equivalent for minimum price check
 		$pu_equivalent = $pu_ht;
@@ -3090,11 +3123,17 @@ if ($action == 'create' && $usercancreate) {
 			$title = "DeleteSubtotalLine";
 			$question = "ConfirmDeleteSubtotalLine";
 			if (GETPOST('type') == 'title') {
-				$formconfirm = array(array('type' => 'checkbox', 'name' => 'deletecorrespondingsubtotalline', 'label' => $langs->trans("DeleteCorrespondingSubtotalLine"), 'value' => 0));
+				$formconfirm = array(array('type' => 'checkbox', 'name' => 'deletecorrespondingsubtotalline', 'label' => $langs->trans("DeleteCorrespondingSubtotalLine"), 'value' => 0), array('type' => 'checkbox', 'name' => 'deleteblocklines', 'label' => $langs->trans("DeleteBlockLines"), 'value' => 0));
 				$title = "DeleteTitleLine";
 				$question = "ConfirmDeleteTitleLine";
 			}
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lineid=' . $lineid, $langs->trans($title), $langs->trans($question), 'confirm_delete_subtotalline', $formconfirm, 'no', 1);
+		}
+
+		// Confirmation of the duplication of a block of the subtotals module
+		if ($action == 'ask_duplicate_subtotalblock') {
+			$langs->load("subtotals");
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lineid=' . $lineid, $langs->trans("DuplicateBlock"), $langs->trans("ConfirmDuplicateBlock"), 'confirm_duplicate_subtotalblock', '', 'no', 1);
 		}
 
 		// Clone confirmation
@@ -3383,6 +3422,24 @@ if ($action == 'create' && $usercancreate) {
 			}
 			print '</td></tr>';
 
+			// Structured payment reference, see core/lib/paymentref.lib.php.
+			// Only shown for the modes whose value is settled before invoicing. In the per
+			// invoice mode the reference comes from the invoice number, which does not exist
+			// yet, so anything shown here would never match the invoice the customer receives.
+			if (in_array(getDolGlobalString('INVOICE_PAYMENT_REF_MODE'), array('company', 'thirdparty'))) {
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/paymentref.lib.php';
+				$tmpobjectforpayref = clone $object;
+				$tmpobjectforpayref->status = 1;
+				$paymentrefpreview = dolPayRefGenerateForInvoice($tmpobjectforpayref, $user, 0);
+				if ($paymentrefpreview != '') {
+					print '<tr><td>';
+					print $form->textwithpicto($langs->trans('PaymentReference'), $langs->trans('PaymentReferenceBeforeInvoiceHelp'));
+					print '</td><td>';
+					print showValueWithClipboardCPButton(dol_escape_htmltag($paymentrefpreview));
+					print '</td></tr>';
+				}
+			}
+
 			// TODO Order mode (how we receive order). Not yet implemented
 			/*
 			print '<tr><td>';
@@ -3596,6 +3653,9 @@ if ($action == 'create' && $usercancreate) {
 				} else {
 					include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 				}
+			}
+			if (!empty($conf->use_javascript_ajax) && isModEnabled('subtotals')) {
+				include DOL_DOCUMENT_ROOT . '/core/tpl/subtotal_collapse.tpl.php';
 			}
 
 			print '<div class="div-table-responsive-no-min">';

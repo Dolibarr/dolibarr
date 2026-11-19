@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doleditor.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'fckeditor', 'website'));
+$langs->loadLangs(array('admin', 'website'));
 
 $action = GETPOST('action', 'aZ09');
 // Possible modes are:
@@ -127,6 +127,7 @@ if (GETPOST('action', 'aZ09') == 'setbackend') {
 		}
 	} else {
 		dol_syslog("admin/fckeditor.php: invalid editor backend value: ".$newbackend, LOG_WARNING);
+		$langs->load('errors');
 		setEventMessages($langs->trans("ErrorBadValue"), null, 'errors');
 	}
 }

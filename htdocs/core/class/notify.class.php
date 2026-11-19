@@ -114,6 +114,11 @@ class Notify
 	public $errors = array();
 
 	/**
+	 * @var string[] Notifications that could not be sent. They do not block the action that triggered them.
+	 */
+	public $warnings = array();
+
+	/**
 	 * @var string
 	 */
 	public $author;
@@ -657,6 +662,12 @@ class Notify
 			return 0;
 		}
 
+		// No e-mail can be sent: nothing to do, and this must not block the action that triggered the notification
+		if (getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
+			dol_syslog(get_class($this)."::send notifcode=".$notifcode.", no notification sent, e-mails are disabled by MAIN_DISABLE_ALL_MAILS", LOG_WARNING);
+			return 0;
+		}
+
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		dol_syslog(get_class($this)."::send notifcode=".$notifcode.", object id=".$object->id);
@@ -1045,13 +1056,11 @@ class Notify
 							'notification'
 						);
 
+						// A notification that cannot be sent (mail server down, address refused...) is reported as a
+						// warning: it must not block the action that triggered it (validation of an invoice...)
 						if (! empty($mailfile->error) || ! empty($mailfile->errors)) {
-							$this->error = $mailfile->error;
-							$this->errors = $mailfile->errors;
-							return -1;
-						}
-
-						if ($mailfile->sendfile()) {
+							$this->addSendWarning($from, $sendto, $mailfile);
+						} elseif ($mailfile->sendfile()) {
 							if ($obj->type_target == 'touserid') {
 								$sql = "INSERT INTO ".$this->db->prefix()."notify (daten, fk_action, fk_soc, fk_user, type, objet_type, type_target, objet_id, email)";
 								// @phan-suppress-next-line PhanUndeclaredProperty
@@ -1065,8 +1074,7 @@ class Notify
 								dol_print_error($this->db);
 							}
 						} else {
-							$error++;
-							$this->errors[] = $mailfile->error;
+							$this->addSendWarning($from, $sendto, $mailfile);
 						}
 					} else {
 						dol_syslog("No notification sent for ".$sendto." because email is empty");
@@ -1368,12 +1376,8 @@ class Notify
 					);
 
 					if (! empty($mailfile->error) || ! empty($mailfile->errors)) {
-						$this->error = $mailfile->error;
-						$this->errors = $mailfile->errors;
-						return -1;
-					}
-
-					if ($mailfile->sendfile()) {
+						$this->addSendWarning($from, $sendto, $mailfile);
+					} elseif ($mailfile->sendfile()) {
 						$sql = "INSERT INTO ".$this->db->prefix()."notify (daten, fk_action, fk_soc, fk_contact, type, type_target, objet_type, objet_id, email)";
 						// @phan-suppress-next-line PhanUndeclaredProperty
 						$sql .= " VALUES ('".$this->db->idate(dol_now())."', ".((int) $notifcodedefid).", ".((!empty($object->socid)  && $object->socid > 0) ? ((int) $object->socid) : 'null').", null, 'email', 'tofixedemail', '".$this->db->escape($object_type)."', ".((int) $object->id).", '".$this->db->escape($sendto)."')";
@@ -1381,8 +1385,7 @@ class Notify
 							dol_print_error($this->db);
 						}
 					} else {
-						$error++;
-						$this->errors[] = $mailfile->error;
+						$this->addSendWarning($from, $sendto, $mailfile);
 					}
 				}
 			}
@@ -1393,6 +1396,23 @@ class Notify
 		} else {
 			return -1 * $error;
 		}
+	}
+
+	/**
+	 * Record a notification that could not be sent: logged, and kept in $this->warnings for the user.
+	 *
+	 * @param	string		$from		Sender
+	 * @param	string		$sendto		Recipient
+	 * @param	CMailFile	$mailfile	Mail that failed
+	 * @return	void
+	 */
+	private function addSendWarning($from, $sendto, $mailfile)
+	{
+		global $langs;
+
+		$reason = $mailfile->error ? $mailfile->error : implode(', ', (array) $mailfile->errors);
+		$this->warnings[] = $langs->trans("ErrorFailedToSendMail", $from, $sendto).($reason ? ' '.$reason : '');
+		dol_syslog(get_class($this)."::send notification to ".$sendto." not sent: ".$reason, LOG_WARNING);
 	}
 
 	/**

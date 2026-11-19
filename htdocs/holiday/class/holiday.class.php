@@ -238,7 +238,7 @@ class Holiday extends CommonObject
 	public function getNextNumRef($objsoc)
 	{
 		global $langs, $conf;
-		$langs->load("order");
+		$langs->load("orders");
 
 		if (!getDolGlobalString('HOLIDAY_ADDON')) {
 			$conf->global->HOLIDAY_ADDON = 'mod_holiday_madonna';
@@ -1786,7 +1786,7 @@ class Holiday extends CommonObject
 	 */
 	public function updateSoldeCP($userID = 0, $nbHoliday = 0, $fk_type = 0)
 	{
-		global $user, $langs;
+		global $user, $langs, $conf;
 
 		$error = 0;
 
@@ -1821,7 +1821,8 @@ class Holiday extends CommonObject
 			if ($stringInDBForLastUpdate < '20000101000000') {
 				$stringInDBForLastUpdate = '20000101000000';
 			}
-			$lastUpdate = dol_stringtotime($stringInDBForLastUpdate);
+			// Read the timestamp in the same timezone used when storing it.
+			$lastUpdate = dol_stringtotime($stringInDBForLastUpdate, (empty($conf->tzuserinputkey) ? 'tzserver' : $conf->tzuserinputkey));
 			//print 'lastUpdate:'.$lastUpdate;exit;
 
 			$yearMonthLastUpdate = dol_print_date($lastUpdate, '%Y%m');
