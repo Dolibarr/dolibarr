@@ -3143,7 +3143,7 @@ class Ticket extends CommonObject
 								$sendtocc = explode(',', getDolGlobalString("TICKET_SEND_INTERNAL_CC"));
 							}
 
-							$parameters = array('sendto' => $sendto, 'sendtocc' => $sendtocc);
+							$parameters = array('sendto' => $sendto, 'sendtocc' => $sendtocc, 'mailtype' => 'internal');
 							$reshook = $hookmanager->executeHooks('updateSendtoccTicketMessage', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 							if (empty($reshook)) {
 								$sendtocc = array_merge($sendtocc, $hookmanager->resArray);
@@ -3355,7 +3355,7 @@ class Ticket extends CommonObject
 									}
 								}
 
-								$parameters = array('sendto' => $sendto, 'sendtocc' => $sendtocc);
+								$parameters = array('sendto' => $sendto, 'sendtocc' => $sendtocc, 'mailtype' => 'external');
 								$reshook = $hookmanager->executeHooks('updateSendtoccTicketMessage', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 								if (empty($reshook)) {
 									$sendtocc = array_merge($sendtocc, $hookmanager->resArray);

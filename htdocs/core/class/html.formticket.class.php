@@ -1775,6 +1775,8 @@ class FormTicket
 			$parameters = array();
 			$action = '';
 			$reshook = $hookmanager->executeHooks('printFieldTicketEmailTo', $parameters, $this, $action);
+			// Saved now: hooks run while building the core rows (fetch_thirdparty) reset resPrint.
+			$hookprint = $hookmanager->resPrint;
 			if (empty($reshook)) {
 				print '<tr class="email_line"><td class="fieldrequired">'.$langs->trans('MailRecipients');
 				print ' '.$form->textwithpicto('', $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"), 1, 'help');
@@ -1892,7 +1894,7 @@ class FormTicket
 				}
 				print '</td></tr>';
 			}
-			print $hookmanager->resPrint;
+			print $hookprint;
 		}
 
 		$uselocalbrowser = false;
