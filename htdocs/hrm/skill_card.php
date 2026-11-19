@@ -33,6 +33,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/skill.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_skill.lib.php';
 
@@ -46,7 +47,7 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_skill.lib.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('hrm', 'other', 'products'));  // why products?
+$langs->loadLangs(array('categories', 'hrm', 'other', 'products'));  // why products?
 
 // Get parameters
 $id = GETPOSTINT('id');
@@ -216,6 +217,12 @@ if (empty($reshook)) {
 	if ($action == 'classin' && $permissiontoadd) {
 		$object->setProject(GETPOSTINT('projectid'));
 	}
+	if ($action == 'settags' && isModEnabled('category') && $permissiontoadd) {
+		$result = $object->setCategories(GETPOST('categories', 'array:int'));
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
 
 	// Actions to send emails
 	$triggersendname = 'HRM_SKILL_SENTBYMAIL';
@@ -280,6 +287,13 @@ if ($action == 'create') {
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
+	if (isModEnabled('category')) {
+		// Categories
+		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
+		print $form->selectCategories(Categorie::TYPE_SKILL, 'categories', $object);
+		print '</td></tr>';
+	}
+
 
 	// SKILLDET ADD
 	//@todo stopped here ... to be continued (display of the 5 skill input fields for create action
@@ -333,6 +347,13 @@ if (($id || $ref) && $action == 'edit') {
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
+
+	if (isModEnabled('category')) {
+		// Categories
+		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
+		print $form->selectCategories(Categorie::TYPE_SKILL, 'categories', $object);
+		print '</td></tr>';
+	}
 
 	print '</table>';
 
@@ -489,6 +510,33 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	$object->fields['label']['visible'] = 0; // Already in banner
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
+
+	// Tags-Categories
+	if (isModEnabled('category')) {
+		print '<tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
+		print $langs->trans("Categories");
+		print '</td><td class="right">';
+		if ($permissiontoadd) {
+			print '<a class="editfielda" href="'.dolPrintHTMLForAttributeUrl($_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&action=edittags&token='.newToken()).'">'.img_edit().'</a>';
+		} else {
+			print '&nbsp;';
+		}
+		print '</td></tr></table>';
+		print '</td>';
+		print '<td>';
+		if ($action == 'edittags' && $permissiontoadd) {
+			print '<form method="POST" action="'.dolPrintHTMLForAttributeUrl($_SERVER['PHP_SELF'].'?id='.((int) $object->id)).'">';
+			print '<input type="hidden" name="action" value="settags">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print $form->selectCategories(Categorie::TYPE_SKILL, 'categories', $object);
+			print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.dolPrintHTMLForAttribute($langs->transnoentities("Modify")).'">';
+			print '</form>';
+		} else {
+			print $form->showCategories($object->id, Categorie::TYPE_SKILL, 1);
+		}
+		print "</td></tr>";
+	}
 
 	// Other attributes. Fields from hook formObjectOptions and Extrafields.
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
