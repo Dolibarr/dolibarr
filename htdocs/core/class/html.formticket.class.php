@@ -1891,9 +1891,8 @@ class FormTicket
 					print '<input type="hidden" name="receivercc_multiselect" value="1">';
 				}
 				print '</td></tr>';
-			} else {
-				print $hookmanager->resPrint;
 			}
+			print $hookmanager->resPrint;
 		}
 
 		$uselocalbrowser = false;
