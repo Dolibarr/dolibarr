@@ -118,6 +118,16 @@ if ($objectdesc) {
 	$filter = empty($InfoFieldList[3]) ? '' : $InfoFieldList[3];
 	$sortfield = empty($InfoFieldList[4]) ? '' : $InfoFieldList[4];
 
+	// When objectdesc comes from the client, a filter or sort field is accepted only if signed by selectForForms(),
+	// to avoid using them as an oracle to guess the value of a field the user is not allowed to read (salary, ...)
+	if (empty($objectfield) && ($filter !== '' || $sortfield !== '')) {
+		$objectdeschash = GETPOST('objectdeschash', 'aZ09');
+		$objectdeschashexpected = hash_hmac('sha256', 'selectobject'.$objectdesc, $conf->file->instance_unique_id);
+		if (empty($conf->file->instance_unique_id) || !hash_equals($objectdeschashexpected, $objectdeschash)) {
+			httponly_accessforbidden('Bad value for param objectdesc. A filter or a sort field was provided without a valid signature.');
+		}
+	}
+
 	// Load object according to $id and $element
 	$objecttmp = fetchObjectByElement(0, strtolower($InfoFieldList[0]));
 

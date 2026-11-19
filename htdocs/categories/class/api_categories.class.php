@@ -251,6 +251,8 @@ class Categories extends DolibarrApi
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 * @return int  ID of category
+	 *
+	 * @throws	RestException	409	A category with this label already exists at the same level for this type
 	 */
 	public function post($request_data = null)
 	{
@@ -284,7 +286,10 @@ class Categories extends DolibarrApi
 
 			$this->category->$field = $this->_checkValForAPI($field, $value, $this->category);
 		}
-		if ($this->category->create(DolibarrApiAccess::$user) < 0) {
+		$result = $this->category->create(DolibarrApiAccess::$user);
+		if ($result == -4) {
+			throw new RestException(409, 'A category with this label already exists at the same level for this type');
+		} elseif ($result < 0) {
 			throw new RestException(500, 'Error when creating category', array_merge(array($this->category->error), $this->category->errors));
 		}
 		return $this->category->id;
@@ -304,6 +309,8 @@ class Categories extends DolibarrApi
 	 * @return 	Object						Updated object
 	 * @phan-return Categorie
 	 * @phpstan-return Categorie
+	 *
+	 * @throws	RestException	409	A category with this label already exists at the same level for this type
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -351,8 +358,11 @@ class Categories extends DolibarrApi
 			$this->category->$field = $this->_checkValForAPI($field, $value, $this->category);
 		}
 
-		if ($this->category->update(DolibarrApiAccess::$user) > 0) {
+		$result = $this->category->update(DolibarrApiAccess::$user);
+		if ($result > 0) {
 			return $this->get($id);
+		} elseif ($result == -3) {
+			throw new RestException(409, 'A category with this label already exists at the same level for this type');
 		} else {
 			throw new RestException(500, $this->category->errorsToString());
 		}

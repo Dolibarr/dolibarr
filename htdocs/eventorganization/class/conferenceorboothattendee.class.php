@@ -1023,7 +1023,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 		$result = 0;
 
-		$langs->load("eventorganization@eventorganization");
+		$langs->load("eventorganization");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'standard_conferenceorboothattendee';

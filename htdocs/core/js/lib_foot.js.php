@@ -109,7 +109,7 @@ jQuery(function() {
 	// Initial page load
 	// --------------------------------
 	jQuery(function() {
-		initTooltipDialogs(document.body);
+		initTooltipDialogs(document.body, footerConst.classfortooltiponclicktextWidth);
 	});
 
 	// --------------------------------
