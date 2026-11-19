@@ -564,6 +564,7 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 						if (headers_sent()) {
 							print '<script>window.location.replace("'.dol_escape_js($url).'");</script>'."\n";
 							print '<a href="'.dol_escape_htmltag($url).'">Continue</a>'."\n";
+							exit;
 						} else {
 							header("Location: ".$url);
 							exit;
