@@ -190,6 +190,7 @@ print $urlforwikidoc;
 print dol_get_fiche_end();
 
 
+print '<div class="neutral">';
 print $langs->trans("EnableOpenIDConnectAuthentication");
 if (!empty($conf->use_javascript_ajax)) {
 	print ajax_constantonoff('MAIN_AUTHENTICATION_OIDC_ON', array(), null, 0, 0, 1);
@@ -200,8 +201,9 @@ if (!empty($conf->use_javascript_ajax)) {
 		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_MAIN_AUTHENTICATION_OIDC_ON&token=' . newToken() . '">' . img_picto($langs->trans("Enabled"), 'on') . '</a>';
 	}
 }
+print '</div>';
 
-print '<br><br>';
+print '<br>';
 
 
 if (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_ON')) {

@@ -98,6 +98,10 @@ if ($action == 'set') {
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_TYPE', $defaultfilter, 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_STATUS', GETPOST('AGENDA_DEFAULT_FILTER_STATUS'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_VIEW', GETPOST('AGENDA_DEFAULT_VIEW'), 'chaine', 0, '', $conf->entity);
+	if (GETPOSTISSET('AGENDA_AUTOREFRESH_FREQUENCY')) {
+		$autorefreshfrequency = GETPOSTINT('AGENDA_AUTOREFRESH_FREQUENCY');	// 0 = no automatic refresh, else seconds between two checks
+		dolibarr_set_const($db, 'AGENDA_AUTOREFRESH_FREQUENCY', ($autorefreshfrequency > 0 ? max(30, $autorefreshfrequency) : 0), 'chaine', 0, '', $conf->entity);
+	}
 
 	$defaultValues = new DefaultValues($db);
 	$result = $defaultValues->fetchAll('', '', 0, 0, "(t.page:=:'comm/action/card.php') AND (t.param:=:'complete') AND (t.user_id:=:0) AND (t.type:=:'createform') AND (t.entity:=:".((int) $conf->entity).")");
@@ -359,6 +363,15 @@ print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right parentonrightofpage">'."\n";
 $tmplist = array('' => '&nbsp;', 'show_list' => $langs->trans("ViewList"), 'show_month' => $langs->trans("ViewCal"), 'show_week' => $langs->trans("ViewWeek"), 'show_day' => $langs->trans("ViewDay"), 'show_peruser' => $langs->trans("ViewPerUser"));
 print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, getDolGlobalString('AGENDA_DEFAULT_VIEW', 'show_month'), 0, 0, 0, '', 0, 0, 0, '', 'right onrightofpage width150');
+print '</td></tr>'."\n";
+
+// AGENDA_AUTOREFRESH_FREQUENCY: 0 = no automatic refresh, else seconds between two checks
+print '<tr class="oddeven">'."\n";
+print '<td>'.$form->textwithpicto($langs->trans("AGENDA_AUTOREFRESH_FREQUENCY"), $langs->trans("AGENDA_AUTOREFRESH_FREQUENCYHelp")).'</td>'."\n";
+print '<td class="center">&nbsp;</td>'."\n";
+print '<td class="right parentonrightofpage">'."\n";
+$tmpfreqlist = array(0 => $langs->trans("Disabled"), 30 => '30 s', 60 => '1 min', 120 => '2 min', 300 => '5 min', 600 => '10 min');
+print $form->selectarray('AGENDA_AUTOREFRESH_FREQUENCY', $tmpfreqlist, getDolGlobalInt('AGENDA_AUTOREFRESH_FREQUENCY'), 0, 0, 0, '', 0, 0, 0, '', 'right onrightofpage width150');
 print '</td></tr>'."\n";
 
 // Manual or automatic

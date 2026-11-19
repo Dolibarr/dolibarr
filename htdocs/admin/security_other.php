@@ -91,7 +91,16 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	if (GETPOSTISSET('MAIN_SECURITY_MAX_NUMBER_FAILED_AUTH')) {
 		$res6 = dolibarr_set_const($db, "MAIN_SECURITY_MAX_NUMBER_FAILED_AUTH", GETPOST("MAIN_SECURITY_MAX_NUMBER_FAILED_AUTH", 'alphanohtml'), 'int', 0, '', $conf->entity);
 	}
-	if ($res1 && $res2 && $res3 && $res4 && $res5 && $res6) {
+	$res7 = 1;
+	if (GETPOSTISSET('totprequiredgroupsshown')) {	// A multiselect with nothing selected posts nothing, so the hidden field tells the list was in the form
+		$groupids = array_filter(array_map('intval', GETPOST('MAIN_SECURITY_TOTP_REQUIRED_FOR_GROUPS', 'array:int')));
+		if (!empty($groupids)) {
+			$res7 = dolibarr_set_const($db, 'MAIN_SECURITY_TOTP_REQUIRED_FOR_GROUPS', implode(',', $groupids), 'chaine', 0, '', $conf->entity);
+		} else {
+			$res7 = (dolibarr_del_const($db, 'MAIN_SECURITY_TOTP_REQUIRED_FOR_GROUPS', $conf->entity) >= 0 ? 1 : 0);
+		}
+	}
+	if ($res1 && $res2 && $res3 && $res4 && $res5 && $res6 && $res7 > 0) {
 		setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 	}
 }
@@ -146,6 +155,54 @@ if (!empty($conf->use_javascript_ajax)) {
 print "</td></tr>";
 
 print '</table>';
+
+
+print '<br>';
+
+
+// Two-factor authentication
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td colspan="3">'.$langs->trans("2FA").'</td>';
+print '<td class="right" width="100">'.$langs->trans("Status").'</td>';
+print '</tr>';
+
+$totpconsts = array('MAIN_SECURITY_ALLOW_TOTP' => 'TOTPAllow', 'MAIN_SECURITY_TOTP_REQUIRED_FOR_INTERNAL' => 'TOTPRequiredForInternal', 'MAIN_SECURITY_TOTP_REQUIRED_FOR_EXTERNAL' => 'TOTPRequiredForExternal');
+foreach ($totpconsts as $constname => $label) {
+	if ($constname != 'MAIN_SECURITY_ALLOW_TOTP' && !getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP')) {
+		continue;	// A TOTP can be required only once users can set one up
+	}
+	print '<tr class="oddeven">';
+	print '<td colspan="3">'.$langs->trans($label).'</td>';
+	print '<td class="right">';
+	if (!empty($conf->use_javascript_ajax)) {
+		print ajax_constantonoff($constname, array(), null, 0, 0, 1);	// The page is reloaded, so the lines that depend on the option follow it
+	} elseif (!getDolGlobalString($constname)) {
+		print '<a href="'.dolPrintHTMLForAttributeUrl($_SERVER['PHP_SELF'].'?action=set_'.$constname.'&token='.newToken()).'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+	} else {
+		print '<a href="'.dolPrintHTMLForAttributeUrl($_SERVER['PHP_SELF'].'?action=del_'.$constname.'&token='.newToken()).'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+	}
+	print '</td></tr>';
+}
+
+if (getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP')) {
+	print '<tr class="oddeven">';
+	print '<td colspan="2">'.$langs->trans("TOTPRequiredForGroups").'</td>';
+	print '<td colspan="2" class="right">';
+	print '<input type="hidden" name="totprequiredgroupsshown" value="1">';
+	$selectedgroups = array_filter(array_map('intval', explode(',', getDolGlobalString('MAIN_SECURITY_TOTP_REQUIRED_FOR_GROUPS'))));
+	print $form->select_dolgroups($selectedgroups, 'MAIN_SECURITY_TOTP_REQUIRED_FOR_GROUPS', 0, '', 0, '', array(), '0', true, 'minwidth300');
+	print '</td></tr>';
+}
+
+print '</table>';
+
+if (getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP')) {
+	print '<div class="opacitymedium margintoponly">'.$langs->trans("TOTPRequiredDesc").'</div>';
+	if (strpos(dolEncrypt('totp'), 'dolcrypt:') !== 0) {	// Without it no TOTP can be saved, and dolTotpIsRequired() requires none
+		print info_admin($langs->trans("TOTPNoEncryptionKey"), 0, 0, 'warning');
+	}
+}
 
 
 print '<br>';

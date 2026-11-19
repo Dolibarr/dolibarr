@@ -77,9 +77,6 @@ if (isModEnabled('project')) {
 
 $langs->loadLangs(array("receptions", "companies", "bills", 'orders', 'stocks', 'other', 'propal', 'sendings', 'productbatch'));
 
-if (isModEnabled('incoterm')) {
-	$langs->load('incoterm');
-}
 if (isModEnabled('productbatch')) {
 	$langs->load('productbatch');
 }

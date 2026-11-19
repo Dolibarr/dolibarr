@@ -228,23 +228,38 @@ print '<td>'.$langs->trans("Year").'</td>';
 print '<td class="right">'.$langs->trans("NbOfTasks").'</td>';
 print '</tr>';
 
+// Lines after $MAXLINES are hidden and shown with the link "More..."
+$MAXLINES = 5;
+$nbline = 0;
+$cssline = '';
 $oldyear = 0;
 foreach ($data_all_year as $val) {
 	$year = $val['year'];
 	while ($year && $oldyear > (int) $year + 1) {	// If we have empty year
 		$oldyear--;
+		$nbline++;
+		$cssline = ($nbline > $MAXLINES ? ' hidden statsyearmorelines' : '');
 
-		print '<tr class="oddeven">';
+		print '<tr class="oddeven'.$cssline.'">';
 		print '<td><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$oldyear.'</a></td>';
 		print '<td class="right">0</td>';
 		print '</tr>';
 	}
 
-	print '<tr class="oddeven">';
+	$nbline++;
+	$cssline = ($nbline > $MAXLINES ? ' hidden statsyearmorelines' : '');
+
+	print '<tr class="oddeven'.$cssline.'">';
 	print '<td><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
 	print '</tr>';
 	$oldyear = $year;
+}
+
+if ($nbline > $MAXLINES) {
+	print '<tr class="liste_total"><td colspan="2" class="center">';
+	print '<a href="#" class="showmoreoptions" onclick="jQuery(\'.statsyearmorelines\').toggle(); jQuery(this).toggle(); return false;">'.img_picto('', 'chevron-down', 'class="paddingright"').$langs->trans("More").'...</a>';
+	print '</td></tr>';
 }
 
 print '</table>';

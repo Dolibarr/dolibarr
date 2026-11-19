@@ -75,7 +75,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		global $langs, $mysoc;
 
 		// Translations
-		$langs->loadLangs(array("main", "bank", "withdrawals", "companies"));
+		$langs->loadLangs(array("main", "banks", "withdrawals", "companies"));
 
 		$this->db = $db;
 		$this->name = "sepamandate";

@@ -605,7 +605,7 @@ class Commande extends CommonOrder
 	public function getNextNumRef($soc)
 	{
 		global $langs, $conf;
-		$langs->load("order");
+		$langs->load("orders");
 
 		if (getDolGlobalString('COMMANDE_ADDON')) {
 			$mybool = false;
@@ -4236,7 +4236,7 @@ class Commande extends CommonOrder
 			}
 			$datas['RefCustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '.(empty($this->ref_customer) ? (empty($this->ref_client) ? '' : $this->ref_client) : $this->ref_customer);
 			if (!$nofetch) {
-				$langs->load('project');
+				$langs->load('projects');
 				if (is_null($this->project) || (is_object($this->project) && empty($this->project->id))) {
 					$res = $this->fetchProject();
 					if ($res > 0 && $this->project instanceof Project) {

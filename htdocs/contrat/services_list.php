@@ -156,7 +156,7 @@ $staticcontratligne = new ContratLigne($db);
 $companystatic = new Societe($db);
 
 $arrayfields = array(
-	'cd.rowid' => array('label' => "TechnicalID", 'checked' => (string) getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'enabled' => (string) getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'position' => 1),
+	'cd.rowid' => array('label' => "TechnicalID", 'checked' => (getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? '1' : '-1'), 'enabled' => '1', 'position' => 1),
 	'c.rowid' => array('label' => "ContractID", 'checked' => (string) getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'enabled' => (string) getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'position' => 2),
 	'c.ref' => array('label' => "Contract", 'checked' => '1', 'position' => 80),
 	'c.fk_contract_type' => array('label' => "ContractType", 'checked' => '1', 'position' => 82),
@@ -988,10 +988,14 @@ while ($i < $imaxinloop) {
 	}
 	// Service
 	if (!empty($arrayfields['p.description']['checked'])) {
-		print '<td class="tdoverflowmax300">';
+		print '<td class="tdoverflowmax200 tdlineheightsmall">';
 		if ($obj->pid > 0) {
-			print $productstatic->getNomUrl(1, '', 24);
-			print $obj->label ? ' - '.dol_trunc($obj->label, 16) : '';
+			print '<div class="tdoverflowmax200 inline-block lineheightsmall">';
+			print $productstatic->getNomUrl(1);
+			if (!empty($obj->label)) {
+				print '<br><span class="spantitle">'.dolPrintHTML($obj->label).'</span>';
+			}
+			print '</div>';
 			if (!empty($obj->description) && getDolGlobalString('PRODUCT_DESC_IN_LIST')) {
 				print '<br><div class="small lineheightsmall">'.dol_nl2br($obj->description).'</div>';
 			}

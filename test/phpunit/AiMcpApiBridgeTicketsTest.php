@@ -120,7 +120,9 @@ class AiMcpApiBridgeTicketsTest extends CommonClassTest
 	{
 		$bridge = new ToolApiBridge(null);
 		$property = new ReflectionProperty(ToolApiBridge::class, 'enrichments');
-		$property->setAccessible(true);
+		if (PHP_VERSION_ID < 80100) {
+			$property->setAccessible(true);
+		}
 		$endpoints = $property->getValue($bridge);
 
 		$this->assertArrayHasKey('tickets', $endpoints);
@@ -139,7 +141,9 @@ class AiMcpApiBridgeTicketsTest extends CommonClassTest
 	{
 		$bridge = new ToolApiBridge(null);
 		$property = new ReflectionProperty(ToolApiBridge::class, 'enrichments');
-		$property->setAccessible(true);
+		if (PHP_VERSION_ID < 80100) {
+			$property->setAccessible(true);
+		}
 		$methods = $property->getValue($bridge)['tickets']['methods'];
 
 		foreach (array('post', 'postNewMessage', 'put', 'postContact', 'deleteContact') as $method) {
@@ -169,10 +173,14 @@ class AiMcpApiBridgeTicketsTest extends CommonClassTest
 	{
 		$bridge = new ToolApiBridge(null);
 		$property = new ReflectionProperty(ToolApiBridge::class, 'enrichments');
-		$property->setAccessible(true);
+		if (PHP_VERSION_ID < 80100) {
+			$property->setAccessible(true);
+		}
 		$meta = $property->getValue($bridge)['tickets']['methods']['post'];
 		$method = new ReflectionMethod(ToolApiBridge::class, 'buildToolDefinition');
-		$method->setAccessible(true);
+		if (PHP_VERSION_ID < 80100) {
+			$method->setAccessible(true);
+		}
 
 		$definition = $method->invoke($bridge, array('class' => AiMcpTicketWriteApiFixture::class, 'label' => 'support tickets'), 'tickets', 'post', 'api_tickets_create', $meta);
 

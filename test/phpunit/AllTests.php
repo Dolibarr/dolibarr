@@ -187,6 +187,10 @@ class AllTests
 		$suite->addTestSuite('AiMcpApiBridgeDocumentsTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeProjectsTest.php';
 		$suite->addTestSuite('AiMcpApiBridgeProjectsTest');
+		require_once dirname(__FILE__).'/AiMcpApiBridgeSupplierOrderLinesTest.php';
+		$suite->addTestSuite('AiMcpApiBridgeSupplierOrderLinesTest');
+		require_once dirname(__FILE__).'/AiMcpApiBridgeSupplierOrderWorkflowTest.php';
+		$suite->addTestSuite('AiMcpApiBridgeSupplierOrderWorkflowTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeSupplierOrderDeleteLineTest.php';
 		$suite->addTestSuite('AiMcpApiBridgeSupplierOrderDeleteLineTest');
 		require_once dirname(__FILE__).'/ApiExplorerAccessControlTest.php';
@@ -233,6 +237,8 @@ class AllTests
 		$suite->addTestSuite('GetUrlLibTest');
 		require_once dirname(__FILE__).'/JsonLibTest.php';
 		$suite->addTestSuite('JsonLibTest');
+		require_once dirname(__FILE__).'/PasskeyLibTest.php';
+		$suite->addTestSuite('PasskeyLibTest');
 		require_once dirname(__FILE__).'/LoadBoardTest.php';
 		$suite->addTestSuite('LoadBoardTest');
 		require_once dirname(__FILE__).'/ImagesLibTest.php';
@@ -294,6 +300,8 @@ class AllTests
 		$suite->addTestSuite('DAVLibTest');
 		require_once dirname(__FILE__).'/CMailFileTest.php';
 		$suite->addTestSuite('CMailFileTest');
+		require_once dirname(__FILE__).'/DolReceiptPrinterTest.php';
+		$suite->addTestSuite('DolReceiptPrinterTest');
 
 		require_once dirname(__FILE__).'/CommonObjectTest.php';
 		$suite->addTestSuite('CommonObjectTest');
@@ -491,6 +499,8 @@ class AllTests
 			$suite->addTestSuite('RestAPICategoriesTest');
 			require_once dirname(__FILE__).'/RestAPIInterventionTest.php';
 			$suite->addTestSuite('RestAPIInterventionTest');
+			require_once dirname(__FILE__).'/RestAPIExpenseReportTest.php';
+			$suite->addTestSuite('RestAPIExpenseReportTest');
 			require_once dirname(__FILE__).'/RestAPIAgendaEventsTest.php';
 			$suite->addTestSuite('RestAPIAgendaEventsTest');
 			require_once dirname(__FILE__).'/RestAPIContractTest.php';
