@@ -73,16 +73,6 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 */
 	public $version = 'dolibarr';
 
-	/**
-	 * @var array<string,float> Local tax 1 amount per local tax 1 rate
-	 */
-	public $localtax1;
-
-	/**
-	 * @var array<string,float> Local tax 2 amount per local tax 2 rate
-	 */
-	public $localtax2;
-
 
 	/**
 	 *	Constructor
@@ -543,10 +533,10 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 						$this->tva[$vatrate] = 0;
 					}
 					if (empty($this->localtax1[$localtax1rate])) {
-						$this->localtax1[$localtax1rate] = 0.0;
+						$this->localtax1[$localtax1rate] = 0.0;  // @phan-suppress-current-line PhanTypeMismatchProperty
 					}
 					if (empty($this->localtax2[$localtax2rate])) {
-						$this->localtax2[$localtax2rate] = 0.0;
+						$this->localtax2[$localtax2rate] = 0.0;  // @phan-suppress-current-line PhanTypeMismatchProperty
 					}
 					$this->tva[$vatrate] += $tvaligne;
 					$this->localtax1[$localtax1rate] += $localtax1ligne;
