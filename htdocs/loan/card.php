@@ -142,6 +142,11 @@ if (empty($reshook)) {
 				$action = 'create';
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Rate")), null, 'errors');
 			}
+			if (GETPOSTFLOAT('balloon_amount') > $capital) {
+				$error++;
+				$action = 'create';
+				setEventMessages($langs->trans("ErrorLoanBalloonGreaterThanCapital"), null, 'errors');
+			}
 
 			if (!$error) {
 				$object->label = GETPOST('label');
@@ -203,6 +208,10 @@ if (empty($reshook)) {
 			if (!$capital) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("LoanCapital")), null, 'errors');
 				$action = 'edit';
+			} elseif (GETPOSTFLOAT('balloon_amount') > $capital) {
+				$error++;
+				setEventMessages($langs->trans("ErrorLoanBalloonGreaterThanCapital"), null, 'errors');
+				$action = 'edit';
 			} else {
 				$object->datestart = $datestart;
 				$object->dateend = $dateend;
@@ -238,14 +247,16 @@ if (empty($reshook)) {
 				}
 			}
 
-			$result = $object->update($user);
+			if (!$error) {
+				$result = $object->update($user);
 
-			if ($result > 0) {
-				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-				exit;
-			} else {
-				$error++;
-				setEventMessages($object->error, $object->errors, 'errors');
+				if ($result > 0) {
+					header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+					exit;
+				} else {
+					$error++;
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
 			}
 		} else {
 			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
