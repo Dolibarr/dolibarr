@@ -337,32 +337,68 @@ try {
 	// candidate pipeline (which would run regexes over megabytes of base64), and
 	// are handed to the LLM adapter as NATIVE multimodal parts — inlining base64
 	// into the text prompt makes every provider fail or hallucinate.
+	// Office documents (docx, odt, xlsx, xls, ods) are not taken natively by the LLM: they are
+	// converted here into text with the bundled libraries, so the text is obfuscated like the prompt.
+	// Every attached file is also kept on server side (ai_attachment_store()): the model gets its
+	// reference (@attachmentN) to give to an upload tool, never has to copy its content.
+	$aiCurrentAttachmentRefs = array();
+	if (strpos($query, '__FILE_ATTACHMENT__[application/vnd.') !== false) {
+		$officematches = array();
+		preg_match_all('/__FILE_ATTACHMENT__\[(application\/vnd\.[^\]]*)\]::([A-Za-z0-9+\/=\r\n]+)/', $query, $officematches, PREG_SET_ORDER);
+		foreach ($officematches as $officematch) {
+			$officetype = ai_attachment_parse_marker_type($officematch[1]);
+			$officeerror = '';
+			$officetext = ai_convert_office_attachment_to_text($officetype['mime'], $officematch[2], $officeerror);
+			if ($officetext === false) {
+				ob_end_clean();
+				echo json_encode(array(
+					"tool" => "respond_to_user",
+					"arguments" => array("message" => $officeerror)
+				));
+				exit;
+			}
+			$officeinfo = ai_attachment_store($officetype['mime'], $officetype['name'], $officematch[2]);
+			if (!empty($officeinfo)) {
+				$aiCurrentAttachmentRefs[] = $officeinfo['ref'];
+			}
+			$officepos = strpos($query, $officematch[0]);
+			if ($officepos !== false) {
+				$query = substr_replace($query, ai_attachment_describe($officeinfo)."\n".$officetext, $officepos, strlen($officematch[0]));
+			}
+		}
+	}
+
 	$attachments = array();
 	if (strpos($query, '__FILE_ATTACHMENT__') !== false) {
 		$query = preg_replace_callback(
 			'/__FILE_ATTACHMENT__\[([^\]]*)\]::([A-Za-z0-9+\/=\r\n]+)/',
 			/**
-			 * @param string[] $m Regex matches: [1] = mime type, [2] = base64 payload
+			 * @param string[] $m Regex matches: [1] = mime type (and name), [2] = base64 payload
 			 * @return string
 			 */
-			static function (array $m) use (&$attachments) {
+			static function (array $m) use (&$attachments, &$aiCurrentAttachmentRefs) {
+				$type = ai_attachment_parse_marker_type($m[1]);
 				$attachments[] = array(
-					'mime' => ($m[1] !== '' ? $m[1] : 'application/octet-stream'),
+					'mime' => $type['mime'],
 					'data' => preg_replace('/\s+/', '', $m[2])
 				);
-				return '[attached document]';
+				$info = ai_attachment_store($type['mime'], $type['name'], $m[2]);
+				if (!empty($info)) {
+					$aiCurrentAttachmentRefs[] = $info['ref'];
+				}
+				return ai_attachment_describe($info);
 			},
 			$query
 		);
 		$query = trim((string) $query);
-		if ($query === '' || $query === '[attached document]') {
+		if ($query === '' || preg_match('/^\[attached document[^\]]*\]$/', $query)) {
 			$query = 'Analyze the attached document and describe its content.';
 		}
 	}
 
 	// Server-side gate on what the browser sent: MIME allowlist, size caps,
-	// and the privacy-redaction policy (documents cannot be masked, so under
-	// enforced redaction they must not go to a cloud provider at all).
+	// and the text conversion policy (binary documents cannot be masked, so when
+	// attachments must be converted into text they must not go to a provider at all).
 	$attachmenterror = '';
 	if (!ai_validate_attachments($attachments, $attachmenterror)) {
 		ob_end_clean();
@@ -568,6 +604,11 @@ try {
 	// Text of the user only, for the intent classifier: the English notes appended to $query
 	// (e.g. "the task" below) must not activate a category and filter out the tools really asked for.
 	$queryForIntent = $query;
+	// Files kept from earlier messages: the model can still give their reference to an upload tool
+	$aiAttachmentsNote = ai_attachment_list_note($aiCurrentAttachmentRefs);
+	if ($aiAttachmentsNote !== '') {
+		$query .= "\n\n".($guard !== null ? $guard->mask($aiAttachmentsNote) : $aiAttachmentsNote);
+	}
 	if ($guard !== null) {
 		// In-context reinforcement, adjacent to the placeholders themselves:
 		// weak models weigh nearby text far more than distant system rules, and
@@ -1015,7 +1056,25 @@ try {
 			if (getDolGlobalString("AI_DEBUG")) {
 				dol_syslog("parse_intent.php call LLM - ".($isFollowup ? "step ".($followupRound + 1).": followup with the result of the search sent back by the chat" : "step 1: initial request")." (history turns: ".count($history).")", LOG_INFO, 0, '_ai');
 			}
-			$rawResponse = $adapter->generate($systemPrompt, $query, 'text', $attachments, $history);
+			// Attachments of a kind the model rejected before in the session are not sent again
+			$attachmentsForModel = ai_attachment_filter_for_model($attachments, $serviceKey, $model);
+			$aiAttachmentsHiddenNote = "\n\n(Note: the content of the attached files is not visible to you, this model does not read this type of file. You can still give their reference to a tool.)";
+			if (count($attachmentsForModel) < count($attachments)) {
+				$query .= $aiAttachmentsHiddenNote;
+			}
+			$attachments = $attachmentsForModel;	// Only what is sent, for the error messages below
+			$rawResponse = $adapter->generate($systemPrompt, $query, 'text', $attachmentsForModel, $history);
+			// The provider rejected the attachments (e.g. "Image input is not enabled for this model"):
+			// remember it for the session and ask again without them, the model still has their references.
+			if (!empty($attachmentsForModel) && is_string($rawResponse) && strpos($rawResponse, 'Error:') === 0
+				&& !UniversalLLMAdapter::isModelUnavailableError($rawResponse)
+				&& preg_match('/\b(?:file|files|pdf|document|image_url|image|images|attachment|content.?type|mime|multimodal|vision)\b/i', $rawResponse)) {
+				dol_syslog("parse_intent.php attachments rejected by ".$serviceKey."/".$model.", ask again without them: ".dol_trunc($rawResponse, 200), LOG_WARNING);
+				ai_attachment_mark_rejected_by_model($attachmentsForModel, $serviceKey, $model);
+				$attachments = array();
+				$query .= $aiAttachmentsHiddenNote;
+				$rawResponse = $adapter->generate($systemPrompt, $query, 'text', array(), $history);
+			}
 
 			// $rawResponse should be a json string with format '{"tool":..., "arguments":{text answer}}' but sometimes it is just 'text answer'
 			// Commented for production version, the raw response can already be seen into dolibarr_curl.log
@@ -2059,7 +2118,8 @@ function formatArgumentsForDisplay($arguments)
 	$formattedArgs = [];
 	foreach ($arguments as $key => $value) {
 		if (is_array($value)) {
-			$formattedArgs[] = "- {$key}: " . (empty($value) ? "(empty)" : json_encode($value, JSON_PRETTY_PRINT));
+			// Plain text, escaped by the chat: no "\/" nor "é" so a HTML fragment stays readable
+			$formattedArgs[] = "- {$key}: " . (empty($value) ? "(empty)" : json_encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
 		} else {
 			$formattedArgs[] = "- {$key}: {$value}";
 		}
