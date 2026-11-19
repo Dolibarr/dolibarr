@@ -603,7 +603,7 @@ try {
 	}
 	// Text of the user only, for the intent classifier: the English notes appended to $query
 	// (e.g. "the task" below) must not activate a category and filter out the tools really asked for.
-	$queryForIntent = $query;
+	$textForIntent = $query;
 	// Files kept from earlier messages: the model can still give their reference to an upload tool
 	$aiAttachmentsNote = ai_attachment_list_note($aiCurrentAttachmentRefs);
 	if ($aiAttachmentsNote !== '') {
@@ -663,7 +663,7 @@ try {
 		}
 
 		// Detect if query is in a Non-Latin language (Russian, Greek, Chinese, Arabic, etc.)
-		$isComplex = isComplexScript($queryForIntent);
+		$isComplex = isComplexScript($textForIntent);
 
 		$toolsSchema = [];
 
@@ -674,7 +674,7 @@ try {
 			// prompt this module can build (documents + full schema overflow
 			// small-context models). No categories detected = full schema, as
 			// before.
-			$detectedCategories = classifyIntentUniversal($queryForIntent, $langs);
+			$detectedCategories = classifyIntentUniversal($textForIntent, $langs);
 			if (!empty($detectedCategories)) {
 				if (getDolGlobalString("AI_DEBUG")) {
 					dol_syslog("AI Pro: Non-Latin query classified into ".implode(',', $detectedCategories).". Filtering schema.", LOG_DEBUG, 0, '_ai');
@@ -688,7 +688,7 @@ try {
 			}
 		} else {
 			// Detect in which business family the query is using Hybrid (Translations + Synonyms)
-			$detectedCategories = classifyIntentUniversal($queryForIntent, $langs);
+			$detectedCategories = classifyIntentUniversal($textForIntent, $langs);
 
 			// Category filter applied to $llmToolsBase — system tools already excluded
 			$toolsSchema = filterToolsProfessional($llmToolsBase, $detectedCategories);
