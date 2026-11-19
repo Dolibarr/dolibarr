@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
  */
 
 // Load translation files required by the page
-$langs->loadlangs(array('categories', 'bills', 'mrp'));
+$langs->loadlangs(array('categories', 'bills', 'hrm', 'mrp'));
 
 
 $id      = GETPOSTINT('id');
