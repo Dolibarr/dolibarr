@@ -87,7 +87,7 @@ if (!empty($action) && !empty($contextpage)) {
 			$tabparam["MAIN_POSITIONFIELDS_".$contextpage] = '';
 		}
 		$result = dol_set_user_param($db, $conf, $user, $tabparam);
-	} elseif ($action == "deletepositionfields") { // Delete the personalization of the position of fields of the user
+	} elseif ($action == "deletepositionfields") { // Test on permission not required here. Done in security check. Delete the personalization of the position of fields of the user
 		dol_syslog("Ajax deletepositionfields contextpage=".$contextpage." userid=".$userid, LOG_DEBUG);
 		// The empty value deletes the parameter, so the default position of the page is used
 		$tabparam = array("MAIN_POSITIONFIELDS_".$contextpage => '');
