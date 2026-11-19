@@ -6158,7 +6158,7 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 		// Do not enable the contenteditable when page was grabbed, ckeditor is removing span and adding borders,
 		// so editable will be available only from container created from scratch
 		//$out.='<div id="bodywebsite" class="bodywebsite"'.($objectpage->grabbed_from ? ' contenteditable="true"' : '').'>'."\n";
-		$out .= '<div id="divbodywebsite" class="bodywebsite bodywebpage-'.$objectpage->ref.'">'."\n";
+		$out .= '<div id="divbodywebsite" class="bodywebsite bodywebpage-'.$objectpage->ref.' bodywebpagetype-'.dol_sanitizeKeyCode((string) $objectpage->type_container).'">'."\n";
 
 		$newcontent = $objectpage->content;
 
