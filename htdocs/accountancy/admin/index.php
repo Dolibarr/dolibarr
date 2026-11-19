@@ -103,6 +103,21 @@ if (!getDolGlobalInt('ACCOUNTING_MANAGE_ZERO')) {
 	$item->fieldParams['tdOutputFieldClass'] = 'right';
 }
 
+if (isModEnabled('stock')) {
+	$inventory_journal_modes = array(
+		'none' => $langs->trans("OptionModeNone").' - <span class="opacitymedium small">'.$langs->trans("PeriodicInventory").'</span>',
+		'all' => $langs->trans("AllStockMovements").' - <span class="opacitymedium small">'.$langs->trans("PerpetualInventory").'</span>',
+		'decrease' => $langs->trans("StockDecreasesOnly").' - <span class="opacitymedium small">'.$langs->trans("ShipmentsSalesCOGS").'</span>',
+		'increase' => $langs->trans("StockIncreasesOnly").' - <span class="opacitymedium small">'.$langs->trans("ReceptionsPurchases").'</span>',
+	);
+	$item = $formSetup->newItem('ACCOUNTING_INVENTORY_MODE');
+	$item->setAsSelect($inventory_journal_modes);
+	$item->defaultFieldValue = 'none';
+	$item->helpText = $langs->trans('ACCOUNTING_INVENTORY_MODE_Desc');
+	$item->cssClass = 'minwidth300 maxwidth400';
+	$item->fieldParams['tdOutputFieldClass'] = 'right';
+}
+
 // Parameters ACCOUNTING_* and others
 $list = array(
 	'ACCOUNTING_LENGTH_GACCOUNT',

@@ -33,7 +33,7 @@ function emailcollectorPrepareHead($object)
 {
 	global $langs, $conf;
 
-	$langs->load("emailcollector@emailcollector");
+	$langs->load("admin");
 
 	$h = 0;
 	$head = array();

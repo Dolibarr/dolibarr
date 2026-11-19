@@ -76,9 +76,6 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array("sendings", "companies", "bills", 'orders', 'stocks', 'other', 'propal', 'productbatch'));
 
-if (isModEnabled('incoterm')) {
-	$langs->load('incoterm');
-}
 if (isModEnabled('productbatch')) {
 	$langs->load('productbatch');
 }
@@ -769,7 +766,7 @@ if (empty($reshook)) {
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'confirm_sign' && $confirm == 'yes' && $user->hasRight('expedition', 'creer')) {
+	} elseif ($action == 'confirm_sign' && $confirm == 'yes' && $user->hasRight('expedition', 'creer') && getDolGlobalInt('EXPEDITION_ALLOW_MANUAL_SIGN')) {
 		$result = $object->setSignedStatus($user, GETPOSTINT('signed_status'), 0, 'SHIPPING_MODIFY');
 		if ($result >= 0) {
 			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
@@ -777,7 +774,7 @@ if (empty($reshook)) {
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'confirm_unsign' && $confirm == 'yes' && $user->hasRight('expedition', 'creer')) {
+	} elseif ($action == 'confirm_unsign' && $confirm == 'yes' && $user->hasRight('expedition', 'creer') && getDolGlobalInt('EXPEDITION_ALLOW_MANUAL_SIGN')) {
 		$result = $object->setSignedStatus($user, Expedition::$SIGNED_STATUSES['STATUS_NO_SIGNATURE'], 0, 'SHIPPING_MODIFY');
 		if ($result >= 0) {
 			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
@@ -896,7 +893,7 @@ if (empty($reshook)) {
 			// Update a line
 			// Clean parameters
 
-			if (!$object->fetch($id) > 0) {
+			if ($object->fetch($id) <= 0) {
 				dol_print_error($db);
 			}
 			$object->fetch_thirdparty();
@@ -1398,7 +1395,7 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-	} elseif ($action == 'confirm_sign' && $confirm == 'yes' && $permissiontoadd) {
+	} elseif ($action == 'confirm_sign' && $confirm == 'yes' && $permissiontoadd && getDolGlobalInt('EXPEDITION_ALLOW_MANUAL_SIGN')) {
 		$result = $object->setSignedStatus($user, GETPOSTINT('signed_status'), 0, 'SHIPPING_MODIFY');
 		if ($result >= 0) {
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
@@ -1423,7 +1420,7 @@ if (empty($reshook)) {
 		} else {
 			$mesg = $object->error;
 		}
-	} elseif ($action == 'confirm_unsign' && $confirm == 'yes' && $permissiontoadd) {
+	} elseif ($action == 'confirm_unsign' && $confirm == 'yes' && $permissiontoadd && getDolGlobalInt('EXPEDITION_ALLOW_MANUAL_SIGN')) {
 		$result = $object->setSignedStatus($user, Expedition::$SIGNED_STATUSES['STATUS_NO_SIGNATURE'], 0, 'SHIPPING_MODIFY');
 		if ($result >= 0) {
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
@@ -2832,7 +2829,7 @@ if ($action == 'create' && $usercancreate) {
 	}
 
 	// Confirm sign
-	if ($action == 'sign') {
+	if ($action == 'sign' && getDolGlobalInt('EXPEDITION_ALLOW_MANUAL_SIGN')) {
 		$text = $langs->trans('ConfirmSignShipping');
 		if (isModEnabled('notification')) {
 			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
@@ -2846,13 +2843,14 @@ if ($action == 'create' && $usercancreate) {
 			'name' 		=> 'signed_status',
 			'select_show_empty' => 0,
 			'label'		=> '<span class="fieldrequired">' . $langs->trans('SignStatus') . '</span>',
+			'morecss'	=> 'minwidth200',
 			'values'	=> $object->getSignedStatusLocalisedArray()
 		];
 		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('SignShipping'), $text, 'confirm_sign', $formquestion, 0, 1);
 	}
 
 	// Confirm unsign
-	if ($action == 'unsign') {
+	if ($action == 'unsign' && getDolGlobalInt('EXPEDITION_ALLOW_MANUAL_SIGN')) {
 		$text = $langs->trans('ConfirmUnsignShipping');
 		if (isModEnabled('notification')) {
 			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
@@ -3929,7 +3927,7 @@ if ($action == 'create' && $usercancreate) {
 			}
 
 			// Sign (to set to status "Signed" without using the online signature page)
-			if ($object->status > Expedition::STATUS_DRAFT) {
+			if ($object->status > Expedition::STATUS_DRAFT && getDolGlobalInt('EXPEDITION_ALLOW_MANUAL_SIGN')) {
 				if ($object->signed_status != Expedition::$SIGNED_STATUSES['STATUS_SIGNED_ALL']) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=sign&token=' . newToken() . '">' . $langs->trans("SignShipping") . '</a></div>';
 				} else {

@@ -464,7 +464,7 @@ print '<td class="liste_titre center">';
 print '<input class="flat" type="text" size="3" name="search_ref_salary" value="'.$db->escape($search_ref_salary).'">';
 print '</td>';
 // Label
-print '<td class="liste_titre"><input type="text" class="flat width150" name="search_label" value="'.$db->escape($search_label).'"></td>';
+print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_label" value="'.$db->escape($search_label).'"></td>';
 // Date end period
 print '<td class="liste_titre center">';
 print '<div class="nowrapfordate">';
@@ -505,7 +505,7 @@ if (isModEnabled("bank")) {
 
 	// Account
 	print '<td class="liste_titre">';
-	$form->select_comptes($search_account, 'search_account', 0, '', 1);
+	$form->select_comptes($search_account, 'search_account', 0, '', 1, 0, 0, 'maxwidth125');
 	print '</td>';
 }
 // Amount
@@ -675,7 +675,7 @@ while ($i < $imaxinloop && $resql !== null) {
 		}
 
 		// Label payment
-		print "<td>".dol_trunc($obj->label, 40)."</td>\n";
+		print '<td class="tdoverflowmax150">'.dol_trunc($obj->label, 40)."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -697,7 +697,7 @@ while ($i < $imaxinloop && $resql !== null) {
 		if (!$i) $totalarray['nbfield']++;*/
 
 		// Employee
-		print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1)."</td>\n";
+		print '<td class="tdoverflowmax125">'.$userstatic->getNomUrl(-1)."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

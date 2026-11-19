@@ -628,7 +628,7 @@ class Documents extends DolibarrApi
 				'pagination' => [
 					'total' => (int) $countarray,
 					'page' => $page, // count starts from 0
-					'page_count' => (int) ceil((int) $countarray / $limit),
+					'page_count' => (int) ceil((int) $countarray / max(1, (int) $limit)),
 					'limit' => $limit
 				]
 			];

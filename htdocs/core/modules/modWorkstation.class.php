@@ -278,7 +278,7 @@ class modWorkstation extends DolibarrModules
 			'titre' => 'NewWorkstation',
 			'mainmenu' => 'mrp',
 			'leftmenu' => 'workstation_workstation_left_create',
-			'url' => '/workstation/workstation_card.php?action=create',
+			'url' => '/workstation/workstation_card.php?action=create&leftmenu=workstation_workstation',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'langs' => 'mrp',
 			'position' => 1100 + $r,
@@ -298,7 +298,7 @@ class modWorkstation extends DolibarrModules
 			'titre' => 'List',
 			'mainmenu' => 'mrp',
 			'leftmenu' => 'workstation_workstation_left_list',
-			'url' => '/workstation/workstation_list.php',
+			'url' => '/workstation/workstation_list.php?leftmenu=workstation_workstation',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'langs' => 'mrp',
 			'position' => 1101 + $r,

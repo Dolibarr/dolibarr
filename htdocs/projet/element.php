@@ -886,7 +886,7 @@ if (!$showdatefilter) {
 
 // Show balance for whole project
 
-$langs->loadLangs(array("suppliers", "bills", "orders", "proposals", "margins"));
+$langs->loadLangs(array("suppliers", "bills", "orders", "propal", "margins"));
 
 if (isModEnabled('stock') || isModEnabled('stocktransfer')) {
 	$langs->load('stocks');

@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta", "bills", "other", "accountancy", "loans", "banks", "admin", "dict"));
+$langs->loadLangs(array("compta", "bills", "other", "accountancy", "loan", "banks", "admin", "dict"));
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('accountancyindex'));
