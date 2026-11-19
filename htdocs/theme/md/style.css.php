@@ -8593,6 +8593,13 @@ dd.dropdowndd ul li {
 	overflow: hidden;
 	white-space: nowrap;
 }
+/* Fixed width for the dd of the multiselect array (list columns selector of list pages),
+ * whatever the length of the fields labels, and no horizontal scrollbar */
+dd.dropdowndd ul {
+	width: 260px;
+	max-width: calc(100vw - 40px);
+	overflow-x: hidden;
+}
 
 
 /* ============================================================================== */

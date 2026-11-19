@@ -2080,6 +2080,15 @@ $(function() {
 	}).on('focusin', function () {
 		activateBlock($(this).parent());
 	});
+
+	/* Click on the arrow of an expanded block collapses its sub entries instead of following the title link */
+	$('.blockvmenuexpandonhover .menuexpandarrow').on('click', function (e) {
+		let block = $(this).closest('.blockvmenuexpandonhover');
+		if (block.hasClass('blockvmenuexpanded')) {
+			e.preventDefault();
+			collapseBlocks();
+		}
+	});
 });
 
 }

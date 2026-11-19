@@ -485,10 +485,48 @@ a.dropdown-item {
 
 li.liinputsearch, div.liinputsearch {
 	position: sticky;
-	display: block;
 	top: 0;
 	z-index: 1;
 	background: inherit;
+}
+div.liinputsearch {
+	display: block;
+}
+
+/* Column selector: the line of the search area is a row with the checkbox to check all,
+ * the picto of trash to delete the personalization of the position of the fields, and the search
+ * input that fills the remaining width */
+li.liinputsearch {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding-right: 10px;
+	/* The bar of the search area, on the full width of the row (under the checkbox and the picto of trash too) */
+	border-bottom: 1px solid var(--inputbordercolor);
+}
+li.liinputsearch input[type="checkbox"],
+li.liinputsearch span.fas {
+	flex: 0 0 auto;
+}
+li.liinputsearch input[type="text"] {
+	flex: 1 1 auto;
+	width: auto;
+	min-width: 140px;
+	/* The bar is that of the row, the input has none anymore */
+	border-bottom: 0 !important;
+}
+
+/* Column selector: the label of each field fills the row and the picto of
+ * drag and drop is at the end of the row */
+.dropdown dd ul.sortable li {
+	display: flex;
+	align-items: center;
+}
+.dropdown dd ul.sortable li label {
+	flex: 1 1 auto;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 
