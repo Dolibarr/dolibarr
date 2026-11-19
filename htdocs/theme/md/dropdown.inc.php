@@ -354,6 +354,9 @@ a.top-menu-dropdown-link {
 	border-radius: 0;
 }
 
+/* Any element (picto of a module added into the group of tools of the top right menu via the hook
+ * printTopRightMenu) can apply the class topmenu-any to get the same padding as the pictos of the core. */
+.topmenu-any,
 #topmenu-tool,
 #topmenu-login-dropdown,
 #topmenu-quickadd-dropdown,
